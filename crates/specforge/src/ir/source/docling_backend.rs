@@ -27,12 +27,40 @@ const PATH_PYTHON_CANDIDATES: &[&str] = &[
 ];
 const DOCLING_HELPER_SCRIPT: &str = r###"
 import argparse
+import gc
 import json
 import os
 import re
 import sys
 from importlib import metadata
 from pathlib import Path
+
+
+def _env_int(name, default):
+    """Read an int env var, falling back to default on absence/garbage."""
+    try:
+        return int((os.environ.get(name) or "").strip())
+    except (TypeError, ValueError):
+        return default
+
+
+def detect_pdf_page_count(pdf_path):
+    """Cheaply count PDF pages without running the Docling pipeline.
+
+    Uses pypdfium2 (a Docling dependency) which only parses the page tree, so it
+    costs almost no memory. Returns None on any failure, which makes the caller
+    fall back to the unchanged single-pass conversion path.
+    """
+    try:
+        import pypdfium2 as pdfium
+
+        pdf = pdfium.PdfDocument(str(pdf_path))
+        try:
+            return len(pdf)
+        finally:
+            pdf.close()
+    except Exception:  # noqa: BLE001 - unknown count => single-pass fallback
+        return None
 
 
 def parse_args():
@@ -405,6 +433,213 @@ def extract_table_grid(element):
     return header_rows, body_rows
 
 
+class _IngestAccumulator:
+    """Cross-batch accumulators for page-range batched conversion.
+
+    All record lists and id counters live here so single-pass and page-batched
+    conversion share one extraction routine and ids/reading-order continue
+    monotonically across batches.
+    """
+
+    def __init__(self):
+        self.page_metadata_records = {}
+        self.page_artifacts = []
+        self.visual_assets = []
+        self.structured_tables = []
+        self.content_elements = []
+        self.document_sections = []
+        self.picture_counter = 0
+        self.table_counter = 0
+        self.element_reading_order = 0
+        self.document_title = None
+
+
+def process_converted_document(
+    doc, acc, page_image_root, visual_asset_root, markdown_path, backend_raw_output_path
+):
+    """Extract one converted Docling document (the whole doc in single-pass mode,
+    or one page-range batch in bounded-memory mode) into the shared accumulators.
+    Page and figure/table images are saved to disk here so the heavy image data
+    can be freed with the batch. The logic is identical to the historical
+    single-pass extraction; only the accumulators are externalized."""
+    from docling_core.types.doc import PictureItem, TableItem
+
+    # ── Page artifacts ─────────────────────────────────────────────────────────
+    for page in doc.pages.values():
+        page_number = int(page.page_no)
+        page_id = f"page_{page_number:04d}"
+        page_image_path = page_image_root / f"page-{page_number:04d}.png"
+        page_metadata_path = page_image_root / f"page-{page_number:04d}.json"
+
+        page.image.pil_image.save(page_image_path, format="PNG")
+
+        page_record = {
+            "page_id": page_id,
+            "page_number": page_number,
+            "size_points": {
+                "width": getattr(page.size, "width", None),
+                "height": getattr(page.size, "height", None),
+            },
+            "rendered_image": {
+                "path": as_posix(page_image_path),
+                "width_px": int(round(page.image.size.width)),
+                "height_px": int(round(page.image.size.height)),
+                "dpi": int(round(page.image.dpi)) if page.image.dpi is not None else None,
+            },
+            "picture_refs": [],
+            "table_refs": [],
+        }
+        acc.page_metadata_records[page_number] = {
+            "record": page_record,
+            "metadata_path": page_metadata_path,
+        }
+        acc.page_artifacts.append(
+            {
+                "page_id": page_id,
+                "page_number": page_number,
+                "page_image_path": as_posix(page_image_path),
+                "layout_metadata_path": as_posix(page_metadata_path),
+                "width_px": int(round(page.image.size.width)),
+                "height_px": int(round(page.image.size.height)),
+            }
+        )
+
+    # ── Single-pass element extraction ─────────────────────────────────────────
+    # We iterate once and collect all four categories: visual assets, structured
+    # table cell grids, typed content elements, and section headings.
+    for element, level in doc.iterate_items():
+        acc.element_reading_order += 1
+        page_number = int(element.prov[0].page_no) if getattr(element, "prov", None) else None
+        page_id = f"page_{page_number:04d}" if page_number is not None else None
+        source_ref = getattr(element, "self_ref", None)
+
+        if isinstance(element, PictureItem):
+            # ── Figure / diagram / chart ───────────────────────────────────────
+            acc.picture_counter += 1
+            asset_id = f"picture_{acc.picture_counter:04d}"
+            asset_path = visual_asset_root / f"picture-{acc.picture_counter:04d}.png"
+            element.get_image(doc).save(asset_path, "PNG")
+            if element.image is not None:
+                element.image.uri = relative_uri(markdown_path.parent, asset_path)
+            caption_text = normalize_text(element.caption_text(doc))
+            if page_number in acc.page_metadata_records:
+                acc.page_metadata_records[page_number]["record"]["picture_refs"].append(source_ref)
+            asset_kind_str = picture_asset_kind(caption_text)
+            acc.visual_assets.append({
+                "asset_id": asset_id,
+                "asset_kind": asset_kind_str,
+                "page_id": page_id,
+                "image_path": as_posix(asset_path),
+                "caption_text": caption_text,
+                "caption_source_path": as_posix(backend_raw_output_path),
+                "source_ref": source_ref,
+                "placeholder_text": None,
+                "note": None,
+                "diagram_kind": classify_diagram_kind(caption_text, asset_kind_str),
+            })
+
+        elif isinstance(element, TableItem):
+            # ── Table image + structured cell grid ────────────────────────────
+            acc.table_counter += 1
+            asset_id = f"table_{acc.table_counter:04d}"
+            asset_path = visual_asset_root / f"table-{acc.table_counter:04d}.png"
+            element.get_image(doc).save(asset_path, "PNG")
+            caption_text = normalize_text(element.caption_text(doc))
+            if page_number in acc.page_metadata_records:
+                acc.page_metadata_records[page_number]["record"]["table_refs"].append(source_ref)
+            acc.visual_assets.append({
+                "asset_id": asset_id,
+                "asset_kind": "table_region",
+                "page_id": page_id,
+                "image_path": as_posix(asset_path),
+                "caption_text": caption_text,
+                "caption_source_path": as_posix(backend_raw_output_path),
+                "source_ref": source_ref,
+                "placeholder_text": None,
+                "note": None,
+                "diagram_kind": "unknown",
+            })
+            # Extract the cell grid from the structured table representation.
+            header_rows, body_rows = extract_table_grid(element)
+            col_count = 0
+            try:
+                col_count = element.data.num_cols if element.data else 0
+            except Exception:
+                pass
+            table_kind = classify_table_kind(header_rows, body_rows, caption_text)
+            acc.structured_tables.append({
+                "table_id": asset_id,
+                "asset_id": asset_id,
+                "page_id": page_id,
+                "caption_text": caption_text,
+                "source_ref": source_ref,
+                "table_kind": table_kind,
+                "header_rows": header_rows,
+                "body_rows": body_rows,
+                "row_count": len(header_rows) + len(body_rows),
+                "col_count": col_count,
+            })
+
+        else:
+            # ── Typed text elements ───────────────────────────────────────────
+            label = getattr(element, "label", None)
+            if label is None:
+                continue
+            kind = docling_label_to_kind(label)
+            # Skip page headers/footers and unknown non-text elements.
+            if kind in ("page_header", "page_footer"):
+                continue
+            text = normalize_text(getattr(element, "text", None))
+            if not text:
+                continue
+            # Derive heading level: try element.level attribute first, then the
+            # iteration level, capping at 6.
+            heading_level = None
+            if kind == "section_header":
+                elem_level = getattr(element, "level", None)
+                if elem_level is not None:
+                    try:
+                        heading_level = max(1, min(6, int(elem_level)))
+                    except (TypeError, ValueError):
+                        pass
+                if heading_level is None and level is not None:
+                    try:
+                        heading_level = max(1, min(6, int(level)))
+                    except (TypeError, ValueError):
+                        pass
+                if heading_level is None:
+                    heading_level = 1
+
+            acc.content_elements.append({
+                "element_id": f"elem_{acc.element_reading_order:05d}",
+                "kind": kind,
+                "text": text,
+                "heading_level": heading_level,
+                "page_id": page_id,
+                "source_ref": source_ref,
+                "reading_order": acc.element_reading_order,
+            })
+
+            # Capture the first document title.
+            if kind == "title" and acc.document_title is None:
+                acc.document_title = text
+
+            # Collect section headings as a flat ordered list with classification.
+            if kind == "section_header":
+                section_idx = len(acc.document_sections) + 1
+                # Build a safe section ID from the title text.
+                safe_title = re.sub(r"[^a-z0-9]+", "_", text.lower()).strip("_")[:60]
+                acc.document_sections.append({
+                    "section_id": f"sec_{section_idx:04d}_{safe_title}",
+                    "title": text,
+                    "heading_level": heading_level or 1,
+                    "page_id": page_id,
+                    "source_ref": source_ref,
+                    "reading_order": acc.element_reading_order,
+                    "section_kind": classify_section(text),
+                })
+
+
 def main():
     args = parse_args()
 
@@ -464,202 +699,87 @@ def main():
             InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)
         }
     )
-    result = converter.convert(str(input_path))
-    doc = result.document
-
-    # ── Page artifacts ─────────────────────────────────────────────────────────
-    page_metadata_records = {}
-    page_artifacts = []
-    for page in doc.pages.values():
-        page_number = int(page.page_no)
-        page_id = f"page_{page_number:04d}"
-        page_image_path = page_image_root / f"page-{page_number:04d}.png"
-        page_metadata_path = page_image_root / f"page-{page_number:04d}.json"
-
-        page.image.pil_image.save(page_image_path, format="PNG")
-
-        page_record = {
-            "page_id": page_id,
-            "page_number": page_number,
-            "size_points": {
-                "width": getattr(page.size, "width", None),
-                "height": getattr(page.size, "height", None),
-            },
-            "rendered_image": {
-                "path": as_posix(page_image_path),
-                "width_px": int(round(page.image.size.width)),
-                "height_px": int(round(page.image.size.height)),
-                "dpi": int(round(page.image.dpi)) if page.image.dpi is not None else None,
-            },
-            "picture_refs": [],
-            "table_refs": [],
-        }
-        page_metadata_records[page_number] = {
-            "record": page_record,
-            "metadata_path": page_metadata_path,
-        }
-        page_artifacts.append(
-            {
-                "page_id": page_id,
-                "page_number": page_number,
-                "page_image_path": as_posix(page_image_path),
-                "layout_metadata_path": as_posix(page_metadata_path),
-                "width_px": int(round(page.image.size.width)),
-                "height_px": int(round(page.image.size.height)),
-            }
+    # ── Bounded-memory conversion (MEMORY-BOUNDED-INGEST.1) ─────────────────────
+    # Converting a whole large PDF at once holds a full-resolution image for every
+    # page in memory simultaneously (peak memory grows with page count), which
+    # OOM-kills the backend on big docs. Above a page threshold we convert in
+    # bounded page ranges and free each batch, so peak memory is O(batch size).
+    # Small docs (the common case, and every current corpus doc <= 500 pages) keep
+    # the exact single-pass `convert(path)` call and are byte-identical.
+    threshold = _env_int("SPECFORGE_INGEST_BATCH_THRESHOLD", 512)
+    batch_pages = max(1, _env_int("SPECFORGE_INGEST_BATCH_PAGES", 64))
+    total_pages = detect_pdf_page_count(input_path)
+    if total_pages is not None and total_pages > threshold:
+        page_batches = [
+            (lo, min(lo + batch_pages - 1, total_pages))
+            for lo in range(1, total_pages + 1, batch_pages)
+        ]
+        print(
+            f"docling: large PDF ({total_pages} pages) -> converting in "
+            f"{len(page_batches)} page-range batch(es) of <= {batch_pages} pages "
+            f"to bound peak memory",
+            file=sys.stderr,
         )
+    else:
+        page_batches = [None]
 
-    # ── Single-pass element extraction ─────────────────────────────────────────
-    # We iterate once and collect all four categories: visual assets, structured
-    # table cell grids, typed content elements, and section headings.
-    visual_assets = []
-    structured_tables = []
-    content_elements = []
-    document_sections = []
-    picture_counter = 0
-    table_counter = 0
-    element_reading_order = 0
-    document_title = None
-
-    for element, level in doc.iterate_items():
-        element_reading_order += 1
-        page_number = int(element.prov[0].page_no) if getattr(element, "prov", None) else None
-        page_id = f"page_{page_number:04d}" if page_number is not None else None
-        source_ref = getattr(element, "self_ref", None)
-
-        if isinstance(element, PictureItem):
-            # ── Figure / diagram / chart ───────────────────────────────────────
-            picture_counter += 1
-            asset_id = f"picture_{picture_counter:04d}"
-            asset_path = visual_asset_root / f"picture-{picture_counter:04d}.png"
-            element.get_image(doc).save(asset_path, "PNG")
-            if element.image is not None:
-                element.image.uri = relative_uri(markdown_path.parent, asset_path)
-            caption_text = normalize_text(element.caption_text(doc))
-            if page_number in page_metadata_records:
-                page_metadata_records[page_number]["record"]["picture_refs"].append(source_ref)
-            asset_kind_str = picture_asset_kind(caption_text)
-            visual_assets.append({
-                "asset_id": asset_id,
-                "asset_kind": asset_kind_str,
-                "page_id": page_id,
-                "image_path": as_posix(asset_path),
-                "caption_text": caption_text,
-                "caption_source_path": as_posix(backend_raw_output_path),
-                "source_ref": source_ref,
-                "placeholder_text": None,
-                "note": None,
-                "diagram_kind": classify_diagram_kind(caption_text, asset_kind_str),
-            })
-
-        elif isinstance(element, TableItem):
-            # ── Table image + structured cell grid ────────────────────────────
-            table_counter += 1
-            asset_id = f"table_{table_counter:04d}"
-            asset_path = visual_asset_root / f"table-{table_counter:04d}.png"
-            element.get_image(doc).save(asset_path, "PNG")
-            caption_text = normalize_text(element.caption_text(doc))
-            if page_number in page_metadata_records:
-                page_metadata_records[page_number]["record"]["table_refs"].append(source_ref)
-            visual_assets.append({
-                "asset_id": asset_id,
-                "asset_kind": "table_region",
-                "page_id": page_id,
-                "image_path": as_posix(asset_path),
-                "caption_text": caption_text,
-                "caption_source_path": as_posix(backend_raw_output_path),
-                "source_ref": source_ref,
-                "placeholder_text": None,
-                "note": None,
-                "diagram_kind": "unknown",
-            })
-            # Extract the cell grid from the structured table representation.
-            header_rows, body_rows = extract_table_grid(element)
-            col_count = 0
-            try:
-                col_count = element.data.num_cols if element.data else 0
-            except Exception:
-                pass
-            table_kind = classify_table_kind(header_rows, body_rows, caption_text)
-            structured_tables.append({
-                "table_id": asset_id,
-                "asset_id": asset_id,
-                "page_id": page_id,
-                "caption_text": caption_text,
-                "source_ref": source_ref,
-                "table_kind": table_kind,
-                "header_rows": header_rows,
-                "body_rows": body_rows,
-                "row_count": len(header_rows) + len(body_rows),
-                "col_count": col_count,
-            })
-
+    acc = _IngestAccumulator()
+    markdown_parts = []
+    raw_batches = []
+    for _page_batch in page_batches:
+        if _page_batch is None:
+            result = converter.convert(str(input_path))
         else:
-            # ── Typed text elements ───────────────────────────────────────────
-            label = getattr(element, "label", None)
-            if label is None:
-                continue
-            kind = docling_label_to_kind(label)
-            # Skip page headers/footers and unknown non-text elements.
-            if kind in ("page_header", "page_footer"):
-                continue
-            text = normalize_text(getattr(element, "text", None))
-            if not text:
-                continue
-            # Derive heading level: try element.level attribute first, then the
-            # iteration level, capping at 6.
-            heading_level = None
-            if kind == "section_header":
-                elem_level = getattr(element, "level", None)
-                if elem_level is not None:
-                    try:
-                        heading_level = max(1, min(6, int(elem_level)))
-                    except (TypeError, ValueError):
-                        pass
-                if heading_level is None and level is not None:
-                    try:
-                        heading_level = max(1, min(6, int(level)))
-                    except (TypeError, ValueError):
-                        pass
-                if heading_level is None:
-                    heading_level = 1
+            result = converter.convert(str(input_path), page_range=_page_batch)
+        doc = result.document
+        process_converted_document(
+            doc,
+            acc,
+            page_image_root,
+            visual_asset_root,
+            markdown_path,
+            backend_raw_output_path,
+        )
+        markdown_parts.append(doc.export_to_markdown(image_mode=ImageRefMode.REFERENCED))
+        raw_batches.append(doc.export_to_dict())
+        # Free the heavy converted document (per-page + per-figure images) before
+        # the next batch so peak memory stays bounded by the batch, not the doc.
+        del result
+        del doc
+        gc.collect()
 
-            content_elements.append({
-                "element_id": f"elem_{element_reading_order:05d}",
-                "kind": kind,
-                "text": text,
-                "heading_level": heading_level,
-                "page_id": page_id,
-                "source_ref": source_ref,
-                "reading_order": element_reading_order,
-            })
-
-            # Capture the first document title.
-            if kind == "title" and document_title is None:
-                document_title = text
-
-            # Collect section headings as a flat ordered list with classification.
-            if kind == "section_header":
-                section_idx = len(document_sections) + 1
-                # Build a safe section ID from the title text.
-                safe_title = re.sub(r"[^a-z0-9]+", "_", text.lower()).strip("_")[:60]
-                document_sections.append({
-                    "section_id": f"sec_{section_idx:04d}_{safe_title}",
-                    "title": text,
-                    "heading_level": heading_level or 1,
-                    "page_id": page_id,
-                    "source_ref": source_ref,
-                    "reading_order": element_reading_order,
-                    "section_kind": classify_section(text),
-                })
+    page_metadata_records = acc.page_metadata_records
+    page_artifacts = acc.page_artifacts
+    visual_assets = acc.visual_assets
+    structured_tables = acc.structured_tables
+    content_elements = acc.content_elements
+    document_sections = acc.document_sections
+    picture_counter = acc.picture_counter
+    table_counter = acc.table_counter
+    document_title = acc.document_title
 
     for page_number in sorted(page_metadata_records):
         entry = page_metadata_records[page_number]
         save_json(entry["metadata_path"], entry["record"])
 
-    markdown_text = doc.export_to_markdown(image_mode=ImageRefMode.REFERENCED)
+    # Markdown is a lossy convenience view; concatenate per-batch markdown (a
+    # single-pass run yields one part, byte-identical to the historical output).
+    markdown_text = "\n\n".join(markdown_parts)
     markdown_path.write_text(markdown_text, encoding="utf-8")
-    save_json(backend_raw_output_path, doc.export_to_dict())
+    # The raw backend dict is a provenance pointer only (caption_source_path). A
+    # single-pass run writes exactly the historical dict; a batched run writes the
+    # per-batch dicts under an envelope so no captured structure is lost.
+    if len(raw_batches) == 1:
+        save_json(backend_raw_output_path, raw_batches[0])
+    else:
+        save_json(
+            backend_raw_output_path,
+            {
+                "batched": True,
+                "page_batches": [list(b) for b in page_batches],
+                "documents": raw_batches,
+            },
+        )
 
     docling_version = None
     try:

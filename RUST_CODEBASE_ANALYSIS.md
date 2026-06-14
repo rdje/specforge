@@ -4,6 +4,24 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-06-14 — bounded-memory big-PDF ingestion in the Docling backend)
+
+`MEMORY-BOUNDED-INGEST.1` reworked the embedded Docling helper inside
+`ir/source/docling_backend.rs` so very large PDFs ingest with bounded peak memory. The two
+per-document extraction loops (page artifacts + element iteration) were lifted verbatim into a
+module-level `process_converted_document(doc, acc, …)` driven by an `_IngestAccumulator` (record
+lists + id counters externalized so they continue across batches). `main()` now computes a cheap
+page count (`detect_pdf_page_count` via pypdfium2) and either runs the historical single-pass
+`converter.convert(path)` (when `page_count <= SPECFORGE_INGEST_BATCH_THRESHOLD`, default 512) or
+converts in `SPECFORGE_INGEST_BATCH_PAGES`-sized page ranges (default 64) via
+`converter.convert(path, page_range=(lo,hi))`, freeing each batch's heavy converted document
+(`del`+`gc.collect()`) so peak memory is O(batch) instead of O(page count). **Architecture/risk
+note:** ingestion is no longer unbounded in memory — the path that could exhaust the host's RAM on
+a >500-page PDF is closed. The change is gated above 500p, so every current corpus doc keeps the
+exact single-pass call (byte-identical, proven). No SourceIR schema change; the `DoclingBackendSummary`
+manifest is unchanged. Verified by full `run_ci.sh` (1587) + a temp-14p single-pass-byte-identity /
+batched-correctness proof; the CHI 585p memory proof under the RAM guard is `MEMORY-BOUNDED-INGEST.2`.
+
 ## Session update (2026-06-14 — prior-memory UTF-8 OOM blocker fixed; lib 1587)
 
 `PDF-VARIANT-DIGESTION.13b.1` fixed a latent correctness/OOM defect in

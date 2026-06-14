@@ -1,4 +1,36 @@
 # DEVELOPMENT_NOTES
+## `MEMORY-BOUNDED-INGEST.1` (`2026-06-14`) — page-range batching bounds ingest memory; small docs stay byte-identical by gating, not rewriting
+- The 24 GB host crashed/rebooted in the 90→93% used-RAM danger zone (owner directive, reinforced
+  repeatedly). The CHI re-ingest (`.13c`) was the trigger: the Docling helper held a full-res image
+  for all 585 pages at once (`generate_page_images=True` @ `images_scale=2.0` over
+  `convert(whole_pdf)`), so peak memory ∝ page count. The page-count census made the cut line
+  obvious — everything we ingest OK is ≤500p; every failure is >500p.
+- Fix mechanism (verified light before coding): Docling 2.84's `convert(source, page_range=(lo,hi))`
+  (1-based inclusive) converts a bounded slice; `pypdfium2` (a Docling dep) counts pages by parsing
+  only the page tree (near-zero memory). So big docs convert in batches of `SPECFORGE_INGEST_BATCH_PAGES`
+  (default 64) and each batch's heavy converted `doc` (page/figure images) is freed (`del`+`gc.collect()`)
+  before the next — peak memory becomes O(batch).
+- **Design choice that eliminates regression risk: gate, don't rewrite.** Batching activates only
+  when `page_count > SPECFORGE_INGEST_BATCH_THRESHOLD` (default 512, ABOVE the 500p max of every
+  current doc). So all existing gold/intact docs keep the EXACT historical single-pass
+  `convert(path)` call — proven byte-identical (temp-14p before/after the refactor). The refactor
+  itself only *relocated* the two per-doc loops into `process_converted_document` and externalized
+  the accumulators into `_IngestAccumulator` (so ids/reading-order continue across batches); the
+  logic is unchanged, which is why single-pass output is bit-for-bit the same.
+- **What batching is NOT: byte-identical to a single-pass run of the same doc.** Measured on a
+  forced-batched 14p doc: structured tables, visual assets, sections, and page artifacts all match
+  exactly, `page_no` is absolute across batches (no id collisions), but content_elements differed by
+  ONE — a running page-header (`"I 2 S bus specification"`) that Docling merges across a page
+  boundary in single-pass and keeps separate per-batch. This is an inherent, benign boundary
+  artifact (boilerplate, downstream-filtered; no content/signal/table loss). It is acceptable
+  because the batched path only ever runs on docs too large to ingest single-pass at all — the real
+  alternative is a crash, not a single-pass baseline.
+- Raw `export_to_dict()` (a provenance *path* only) and markdown (a lossy convenience view) are the
+  two non-summary outputs: single-pass writes them exactly as before; batched concatenates markdown
+  with `\n\n` (a 1-element join is identity) and writes per-batch raw dicts under a `{"batched":true,…}`
+  envelope. The `DoclingBackendSummary` (the SourceIR-bearing manifest) holds only lightweight
+  records, so it accumulates across batches with no memory cost.
+
 ## `PDF-VARIANT-DIGESTION.13b.1` (`2026-06-14`) — `byte as char` is a Latin-1 cast, and chained rewrite passes turn a linear size bug exponential
 - The ACE evidence rebuild died by OS jetsam (17.2 GB RSS / 419 s / SIGKILL exit 137), not by
   panic — so there was no Rust error to read. The continuity checkpoint had already root-caused

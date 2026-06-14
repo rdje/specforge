@@ -1,3 +1,31 @@
+### `MEMORY-BOUNDED-INGEST.1` — bounded-memory ingestion of very large PDFs (page-range batching)
+Owner-directed (`2026-06-14`, after the CHI `.13c` re-ingest was memory-killed twice on the 24 GB
+host): big PDFs must ingest without exhausting RAM and crashing/rebooting the machine. Root cause —
+the embedded Docling helper (`crates/specforge/src/ir/source/docling_backend.rs`) called
+`converter.convert(whole_pdf)` with `generate_page_images=True` @ `images_scale=2.0`, holding a
+full-resolution image for **every** page in memory at once, so peak memory grows with page count;
+CHI (585p) blew past the limit. Every doc we ingest successfully is ≤500p; all failures are >500p
+(CHI 585, GIC-600 930, CoreSight SoC-600 842, SMMU-700 717, Cortex-A76 620, USB-3.2 548).
+
+Fix: the helper now converts very large PDFs in **bounded page ranges**
+(`convert(path, page_range=(lo,hi))`, Docling 2.84), persists each batch's page/figure/table images
+and lightweight records, then frees the batch (`del` + `gc.collect()`) — so peak memory is O(batch
+size), not O(page count). The two per-document extraction loops were lifted verbatim into a shared
+`process_converted_document` driven by an `_IngestAccumulator` (ids/reading-order continue across
+batches); `detect_pdf_page_count` (pypdfium2, near-zero memory) gates the path. Batching activates
+only when `page_count > SPECFORGE_INGEST_BATCH_THRESHOLD` (default **512**, above every current
+doc), and the batch size is `SPECFORGE_INGEST_BATCH_PAGES` (default **64**) — so all existing
+gold/intact docs (≤500p) keep the **exact single-pass `convert(path)` call** and are byte-identical.
+
+Verification (temp 14-page doc, no gold touched): **(A)** single-pass `source_ir.json` before vs
+after the refactor = **BYTE-IDENTICAL**; **(B)** forced batched (threshold=4, batch=4 → 4 batches)
+vs single-pass = complete and correct — Docling's `page_no` is absolute across batches (1–14, zero
+duplicate page/table/element ids), tables/visual-assets/sections match exactly, and the only delta
+is one boilerplate running-header that single-pass merges across one page boundary (benign; no
+content/signal/table loss). Python syntax py_compiled; full `scripts/run_ci.sh` GREEN (1587 tests);
+RAM held at ~85% free throughout. The CHI 585p end-to-end proof under the autonomous RAM guard is
+`MEMORY-BOUNDED-INGEST.2`, which then unblocks `PDF-VARIANT-DIGESTION.13c`.
+
 ### `PDF-VARIANT-DIGESTION.13b` — ACE measurement completes the 4-doc AMBA-matrix sweep on canonical artifacts
 With `.13b.1` unblocking it, ACE (`ihi0022_h_c…`) was re-measured this session, completing the
 `.13b` leaf (APB_d / ATB / LTI had landed pre-crash). The fresh `evidence` rebuild completes at
