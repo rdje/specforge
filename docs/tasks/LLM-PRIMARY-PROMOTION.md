@@ -3,9 +3,9 @@
 ## Metadata
 
 - Tree ID: `LLM-PRIMARY-PROMOTION`
-- Status: `active, awaiting owner decision` (`.1`–`.4` DONE `2026-06-10`; `.5` = the
-  default-flip execution, OWNER-GATED on the `.4` decision packet below; engineering
-  frontier otherwise exhausted — R1–R4 lever candidates recorded in the packet)
+- Status: `active` (`.1`–`.4` DONE `2026-06-10`; **owner AUTHORIZED the FLIP `2026-06-14`** —
+  `.5` is un-gated and ready to execute, deferred to a fresh session for signoff sharpness;
+  R1–R4 lever candidates recorded in the packet)
 - Roadmap lane: `R15e`/`R16` (extraction quality / production-readiness)
 - Created: `2026-06-10`
 - Parent context: `EXTRACTION-QUALITY-GAUGE.0`'s standing gauge made the gap VISIBLE: the
@@ -291,16 +291,22 @@ CI is untouched by construction. The alternative (stay opt-in until R1/R2 land) 
 corpus-wide error-mass reduction for ~3 recoverable facts — a poor trade, but the flip is
 deliberately the owner's call per the `.1` decision record. → `.5`.
 
-- ID: `LLM-PRIMARY-PROMOTION.5` · Status: `pending` (OWNER-GATED) · Goal: execute the owner's
-  default-flip decision (flip `--promote-constraints-llm` default for live-NLP runs, or keep
-  opt-in and schedule R1/R2 first). Blocked on: owner reads the `.4` packet. R1–R4 are
-  unowned lever candidates until then.
+- ID: `LLM-PRIMARY-PROMOTION.5` · Status: `pending` (OWNER-AUTHORIZED `2026-06-14` — un-gated;
+  ready to execute) · Goal: execute the owner's default-flip decision = **FLIP**. Make
+  `converge --promote-constraints-llm` the DEFAULT for live-NLP runs (provider-free runs stay
+  Pattern by construction; keep the flag/an explicit opt-out). Then RE-VERIFY the gold gates on
+  CANONICAL artifacts: wire-doc eval P=R=F1=1.000 ×3 + 16/16 doc recall, WIRE-BASED-100
+  (constraints/relations/temporal), serial-class no-regression (SWD/CAN/SWP/SMBus/I2S),
+  kg-bench, provider-free CI byte-stable. **PROTOCOL (2× burned): restore the Pattern baseline
+  BEFORE any promotion measurement.** Needs live Ollama (qwen2.5:14b-instruct) for the converge
+  gold-gate runs → RAM care: `ollama stop` before any ingest, watch RAM, autonomous-kill ≥85%
+  used. R1–R4 levers stay future candidates (recover the ~3 ungated-doc recall losses).
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `.5` | `pending (OWNER-GATED)` | Execute the owner's default-flip decision — the `.4` packet recommends FLIP; R1–R4 levers are the alternative-path prerequisites if the owner prefers staying opt-in |
+| 1 | `.5` | `pending (OWNER-AUTHORIZED — FLIP)` | Owner authorized the FLIP `2026-06-14` ("do each in turn, you know what needs to be done"); `.4` packet recommended it. Execute the default flip + re-verify all gold gates on canonical artifacts. Deferred to a FRESH session for signoff sharpness (heavy: live 14B converge runs + full gold-gate battery). |
 
 ## Changelog
 
@@ -358,3 +364,9 @@ deliberately the owner's call per the `.1` decision record. → `.5`.
   owner-visible default-flip decision packet written (recommendation: FLIP; the gauge
   improves on 14/15 measurable docs and the 15th dissolves per-item). `.5` = owner-gated
   flip execution. R1–R4 lever candidates recorded in the packet.
+- `2026-06-14`: **OWNER DECISION — FLIP authorized.** The owner read the `.4` packet and
+  directed proceeding ("Please whatever needs to be done… each of them in turn… you know what
+  needs to be done"). `.5` is un-gated. Execution deferred to a FRESH session for signoff
+  sharpness (the flip needs repeated live qwen2.5:14b converge runs + the full gold-gate
+  battery on canonical artifacts), with the repo left handoff-ready — see `MEMORY.md` for the
+  precise resume plan + RAM-safety protocol. No code changed in this handoff commit.
