@@ -4576,6 +4576,69 @@ fn logic_level_binding_kind_from_text(lowered: &str) -> Option<SignalConstraintK
     kind
 }
 
+/// EXTRACTION-QUALITY-GAUGE.3c — recognize a logic-level binding that is DESCRIPTIVE NARRATION of
+/// an actor's action (mechanism / waveform example), not a global invariant. The deterministic
+/// binding path ([`logic_level_binding_kind_from_text`]) mints `MustBeHigh`/`MustBeLow` from
+/// "<actor> sets <signal> HIGH"; when that sentence merely DESCRIBES what the signal does ("the
+/// transmitter sets this signal HIGH to indicate …") or NARRATES a waveform step ("At T2 the
+/// controller sets PREQ HIGH. The interface state is now P_REQUEST.") the signal goes high as part
+/// of its function — it is not *always* high — so a flat `must_be_*` constraint is an
+/// over-extraction (any real timed fact belongs in the typed temporal layer, not here). Returns
+/// `true` → the caller drops the proposed constraint.
+///
+/// Conservative and over-kill-guarded (the `.3a`/`.3b` audit lesson): fires ONLY when ALL hold —
+///   1. an ACTION bind verb is present (`set`/`sets`/`setting`/`drive`/`drives`/`driving`/`driven`)
+///      — never the static-invariant verbs (`tied`/`held`/`pulled`/`forced`), which DO encode a
+///      real always-at-this-level fact and are kept;
+///   2. NO mandatory modal (`must`/`shall`/`required`) anywhere — a mandatory binding is a real
+///      obligation and is kept;
+///   3. a DESCRIPTIVE marker is present — the phrase `this signal` (a signal-description cell), a
+///      timing anchor (`T<n>` / `T <n>`, a waveform-step narration), or a figure narration
+///      (`figure … shows`).
+///
+/// Universal grammar only (ADR 0006 — no signal/vendor name lists). Probe-confirmed gold-safe over
+/// the 78-doc persisted corpus: zero APB/AHB/AXI/SWD constraints match the frame (their obligations
+/// are phrased "X must be …" / "must drive X LOW" / static "tied HIGH").
+fn is_descriptive_narration_binding(text: &str) -> bool {
+    let lowered = text.to_ascii_lowercase();
+    let words: Vec<&str> = lowered
+        .split(|c: char| !c.is_ascii_alphanumeric())
+        .filter(|w| !w.is_empty())
+        .collect();
+
+    // (1) an ACTION bind verb (whole word, so "set" never matches "reset").
+    const ACTION_BIND_VERBS: &[&str] = &[
+        "set", "sets", "setting", "drive", "drives", "driving", "driven",
+    ];
+    if !words.iter().any(|w| ACTION_BIND_VERBS.contains(w)) {
+        return false;
+    }
+    // (2) a mandatory modal anywhere means a real obligation — keep. "must"/"shall" are modal
+    // words; "required" counts ONLY in the modal phrase "required to" (the bare adjective, as in
+    // "the required power state value", is descriptive, not an obligation).
+    const MANDATORY: &[&str] = &["must", "shall"];
+    if words.iter().any(|w| MANDATORY.contains(w)) || lowered.contains("required to") {
+        return false;
+    }
+    // (3a) signal-description cell.
+    if lowered.contains("this signal") {
+        return true;
+    }
+    // (3b) timing anchor: a `t<digits>` token (T2, T12) or a lone `t` then a digit word ("T 5").
+    let has_timing_anchor = words.iter().enumerate().any(|(i, w)| {
+        (w.starts_with('t') && w.len() > 1 && w[1..].chars().all(|c| c.is_ascii_digit()))
+            || (*w == "t"
+                && words
+                    .get(i + 1)
+                    .is_some_and(|n| n.chars().all(|c| c.is_ascii_digit())))
+    });
+    if has_timing_anchor {
+        return true;
+    }
+    // (3c) figure narration ("Figure 3-5 shows the case where … sets PREQ HIGH").
+    words.contains(&"figure") && words.contains(&"shows")
+}
+
 fn extract_dynamic_signal_constraints(
     statements: &[ExtractedStatement],
     counter: &mut usize,
@@ -4615,6 +4678,14 @@ fn extract_dynamic_signal_constraints(
         } else if let Some(kind) =
             logic_level_binding_kind_from_text(&subject_part.to_ascii_lowercase())
         {
+            // EXTRACTION-QUALITY-GAUGE.3c: a logic-level binding read off an actor's ACTION in
+            // narration ("the transmitter sets this signal HIGH to indicate …", "At T2 the
+            // controller sets PREQ HIGH") describes mechanism/example, not a global invariant —
+            // drop it (the temporal layer owns timed facts). Static invariants ("X is tied HIGH")
+            // and mandatory bindings ("must drive X LOW") are kept by construction.
+            if is_descriptive_narration_binding(&statement.text) {
+                continue;
+            }
             (kind, None)
         } else {
             continue;
@@ -16760,7 +16831,8 @@ mod tests {
     mod nlp_classification {
         use super::super::{
             StatementClass, classify_statement, collect_subject_signal_tokens,
-            extract_protocol_state_value, is_signal_value_constraint, text_before_condition_marker,
+            extract_protocol_state_value, is_descriptive_narration_binding,
+            is_signal_value_constraint, text_before_condition_marker,
         };
 
         #[test]
@@ -16832,6 +16904,67 @@ mod tests {
             // Very common in AHB specs: "HWRITE is tied HIGH for the entire burst".
             assert!(is_signal_value_constraint(
                 "HWRITE is tied HIGH for the entire burst"
+            ));
+        }
+
+        // EXTRACTION-QUALITY-GAUGE.3c — the descriptive-narration binding gate (drop a logic-level
+        // binding read off an actor's ACTION in narration, not a global invariant).
+        #[test]
+        fn descriptive_narration_signal_description_cell_is_dropped() {
+            // Signal-description cell ("this signal" marker) — CHI FLITV/LCRDV class.
+            assert!(is_descriptive_narration_binding(
+                "REQLCRDV Request L-Credit Valid. The receiver sets this signal HIGH to return a request channel L-Credit to a transmitter."
+            ));
+            assert!(is_descriptive_narration_binding(
+                "REQFLITV Request Flit Valid. The transmitter sets this signal HIGH to indicate when REQFLIT is valid."
+            ));
+        }
+
+        #[test]
+        fn descriptive_narration_timing_walkthrough_is_dropped() {
+            // Waveform-step narration — timing-anchor marker (T2 / "- T3" / "T 5").
+            assert!(is_descriptive_narration_binding(
+                "At T2, the power controller puts the required power state value on PSTATE and sets PREQ HIGH. The interface state is now P_REQUEST."
+            ));
+            assert!(is_descriptive_narration_binding(
+                "- T3 The Manager sets FABORT HIGH to request that the WRITE is aborted."
+            ));
+            assert!(is_descriptive_narration_binding(
+                "| T 5 | The Subordinate sets FRESP HIGH to start a two-cycle error response. |"
+            ));
+        }
+
+        #[test]
+        fn descriptive_narration_figure_walkthrough_is_dropped() {
+            assert!(is_descriptive_narration_binding(
+                "Figure 3-5 shows the case where the controller sets PREQ HIGH before reset deassertion."
+            ));
+        }
+
+        #[test]
+        fn mandatory_binding_is_kept() {
+            // A real obligation (must/shall) is never dropped, even with an action verb.
+            assert!(!is_descriptive_narration_binding(
+                "For read transfers, the Requester must drive all bits of PSTRB LOW."
+            ));
+            assert!(!is_descriptive_narration_binding(
+                "The Manager must set AWVALID HIGH at T2 to begin the transfer."
+            ));
+        }
+
+        #[test]
+        fn static_invariant_binding_is_kept() {
+            // Static-state verbs (tied/held/pulled/forced) encode a real always-at-this-level fact.
+            assert!(!is_descriptive_narration_binding(
+                "In this configuration this signal is tied HIGH for the entire burst."
+            ));
+        }
+
+        #[test]
+        fn action_binding_without_a_descriptive_marker_is_kept() {
+            // No "this signal" / timing anchor / figure marker → conservative keep (no over-kill).
+            assert!(!is_descriptive_narration_binding(
+                "The reset controller drives RESET HIGH on power-up."
             ));
         }
 

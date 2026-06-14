@@ -402,6 +402,69 @@ honestly-qualified) path to "human-SpecForge in Rust."
   `agent_drafted`) are regression armor if the eval-time filter ever weakens. +6 pure tests (lib
   1517). Relational-vs-value ("set to the same value as") and descriptive-narration frames stay a
   later sub-slice (`.3c`, pending).
+- ID: `EXTRACTION-QUALITY-GAUGE.3c` · Status: `done` (`2026-06-14`, CODE + full gold battery;
+  unblocked by `PDF-VARIANT-DIGESTION.13c`) · Goal: the **descriptive-narration frame** gate (the
+  larger of the two `.3c` classes; relational-value deferred to `.3d`).
+  **SHIPPED:** pure `is_descriptive_narration_binding(text)` in `ir/evidence.rs`, called in
+  `extract_dynamic_signal_constraints` in the logic-level-binding branch (Pattern path = the root
+  mint site, so it cleans BOTH surfaces — the LLM-primary recall universe is the Pattern sentence
+  set). Gate fires ONLY when: an ACTION bind verb (`set/sets/setting/drive/drives/driving/driven`,
+  never static `tied/held/pulled/forced`) is present, NO mandatory modal (`must`/`shall`/`required
+  to` — the bare adjective "required" as in "the required value" is NOT mandatory; this fixed a
+  first-cut over-keep caught by the timing-walkthrough test), AND a descriptive marker (`this
+  signal` / timing anchor `T<n>` / `figure … shows`). +6 pure tests; lib 1614 → **1620**; full
+  `scripts/run_ci.sh` GREEN (incl. a `manual_contains` clippy fix). **Verified (fresh release bin):**
+  CHI rebuilt 13 → **5** signal constraints — removing EXACTLY the 8 `*FLITV`/`*LCRDV` description
+  cells, keeping the 5 `REQ must_be_value 0/I` field-obligation rows (a DIFFERENT class — the
+  `.FIELD.4`/promotion concern, correctly untouched). **Gold-safe (per-item, on gated-Pattern
+  rebuilds with backup/restore of the promoted wire artifacts):** APB/AHB/AXI constraints
+  P=R=F1=1.000 + WIRE-BASED-100 relations 1.000 + temporal 3/3+4/4+3/3; SWD constraints/relations
+  1.000 + SWD-derivation frame/operation/state 1.000; kg-bench 156/156. **HONEST gauge note
+  (`feedback_scoring_rigor`):** the CHI NLI not-entailed RATE *rose* 69.2% → 100% (5/5) when the 8
+  descriptive constraints dropped — because the NLI judge textually entails "sets HIGH" ⇒ "is HIGH"
+  and so had ENTAILED 4 of the 8; but a *valid* strobe (`REQFLITV`) is semantically NOT an always-high
+  invariant, so per-item the cleaned surface is strictly MORE correct. The gauge is a textual
+  heuristic; the per-item semantic audit is ground truth (same precedent as `.3b`). The 5 remaining
+  100%-not-entailed REQ rows are the field-mis-attribution class a converge's now-default promotion
+  cleans (the `.4` sweep measured CHI 69.2%→16.7% promoted). Book: `pipeline/evidenceir.md` `.3c`
+  subsection (+ FIELD.4 example reconciled). The original `.3c` design follows. **Probe-first (read-only, no 14B, over all
+  78 persisted evidence docs, `source_text` of 583 signal_constraints):** the descriptive-narration
+  class = **38 records** the deterministic Pattern path mints by reading an *action* of an actor as a
+  global invariant — `logic_level_binding_kind_from_text` matches `sets|drives|driven <signal>
+  HIGH/LOW` and `extract_dynamic_signal_constraints` mints `MustBeHigh/Low`. Two sub-forms, both
+  pure narration: (a) **signal-description cells** — "The transmitter/receiver **sets this signal**
+  HIGH to indicate/return …" (CHI's 8 FLITV/LCRDV — the exact records the `.13c` gauge flagged
+  not-entailed); (b) **timing-diagram walkthrough** — "At T2, the power controller **sets PREQ
+  HIGH**. The interface state is now P\_REQUEST." / "- T3 The Manager **sets FABORT HIGH** to
+  request that the WRITE is aborted." / "Figure 3-5 **shows the case where** the controller sets
+  PREQ HIGH" (ihi0068 low-power 13, ihi0083 GPIO 13, HBM2 1). **Per-item audit: all 38 are genuine
+  errors** — a signal that GOES high as part of its function (cell) or AT a waveform step (timing)
+  is not a global `must_be_high` invariant; real timing facts belong in the temporal layer, not a
+  flat constraint. **Gold-safety proven by the probe: ZERO APB/AHB/AXI/SWD constraints match either
+  sub-form** (gold obligations are phrased "X must be …" / "must drive X LOW" / static "tied HIGH" —
+  none is actor-action narration), so the gate cannot regress the wire gold gates. **Placement
+  decision: gate the PATTERN path (`extract_dynamic_signal_constraints`), not the LLM-primary path
+  where `.3a`/`.3b` live** — because the LLM-primary extractor's recall universe IS the Pattern
+  surface's sentences, so refusing to mint at the root cleans BOTH surfaces with one deterministic,
+  14B-free-verifiable change (and most of the corpus carries the Pattern surface canonically). Gate
+  design (conservative, over-kill-guarded per the `.3a`/`.3b` lesson): drop a logic-level-binding
+  constraint ONLY when the bind verb is an ACTION verb (`set/sets/setting/drive/drives/driving/
+  driven` — NEVER the static-invariant verbs `tied/held/pulled/forced`), there is NO mandatory modal
+  (`must/shall/required`) in the subject clause, AND a descriptive marker is present (the phrase
+  `this signal`, a timing anchor `T\d+`, or a figure-narration phrase `figure … shows`). Verify:
+  re-run the corpus probe for the exact removed-constraint diff (audit every drop), gold eval ×3 +
+  SWD `--provider skip` stay 1.000, kg-bench green, full `run_ci.sh`, CHI gauge re-measured on the
+  cleaned surface. Universal grammar only (ADR 0006 — no name lists).
+- ID: `EXTRACTION-QUALITY-GAUGE.3d` · Status: `proposed` (`2026-06-14`, spun from the `.3c` probe) ·
+  Goal: the **relational-value frame** — the second `.3c` class the corpus probe surfaced. ~15 DTI
+  records (`ihi0088_g`) where "ALLOW_UW **must be equal to the value of** ALLOW_PW" is mangled into
+  `<token> must_be_value "E"` (garbage value, wrong subjects `BYPASS`/`STRW`/`EL3`): an *equality
+  between two signals/fields* has no typed slot in the constraint-kind vocabulary, so the Pattern
+  path mis-binds it. Decision pending: either a deterministic gate that refuses to mint a
+  `must_be_value` from a "equal to the value of <other>" relational sentence (honest residual), or a
+  new typed `MustEqual { other }` kind. Probe-first per-item over the persisted corpus, gold-safe
+  (no wire-doc match), like `.3c`. NVMe "This field indicates …" rows that the probe also surfaced
+  are a descriptive *field*-cell shape, not relational — out of scope here.
 - ID: `EXTRACTION-QUALITY-GAUGE.4` · Status: `done` (`2026-06-10`) · Goal: constraint dedup by
   (subject, kind, condition) in the LLM-primary extractor. Shipped: pure `dedup_constraints` —
   canonical key = the eval's `signal_constraint_record_key` (subject + kind incl. value + negation)
@@ -476,6 +539,21 @@ honestly-qualified) path to "human-SpecForge in Rust."
 
 ## Changelog
 
+- `2026-06-14`: **`.3c` DONE** — the descriptive-narration frame gate ships. Pure
+  `is_descriptive_narration_binding` in the Pattern path (`extract_dynamic_signal_constraints`)
+  drops a logic-level binding that is actor-action narration, not an invariant: an action verb
+  (`sets/drives`, never static `tied/held/pulled/forced`) + no mandatory modal (`must/shall/
+  required to`) + a descriptive marker (`this signal` / timing anchor `T<n>` / `figure … shows`).
+  Root-mint placement cleans both surfaces (the LLM-primary recall universe is the Pattern
+  sentences). +6 tests, lib 1614→1620, full `run_ci.sh` GREEN, kg-bench 156/156. Live: CHI 13→5
+  (the 8 `*FLITV`/`*LCRDV` description cells dropped; the 5 `REQ` field-obligation rows kept = a
+  separate class); ALL wire gold gates 1.000 (APB/AHB/AXI constraints+temporal, SWD frame/op/state)
+  on gated-Pattern rebuilds (promoted wire artifacts backed up + restored — non-destructive).
+  Honest gauge note: CHI not-entailed RATE rose 69.2%→100% because the NLI judge textually entails
+  "sets HIGH"⇒"is HIGH" and had entailed 4 of the 8 dropped — but a *valid* strobe is semantically
+  not always-high, so per-item the cleaned surface is strictly more correct (`feedback_scoring_rigor`;
+  same precedent as `.3b`). Relational-value ("equal to the value of", ~15 DTI records) deferred to
+  `.3d`. Book `.3c` subsection added (FIELD.4 example reconciled). See [[extraction-quality-gauge-standing]].
 - `2026-06-14`: **`.3c` UNBLOCKED** by `PDF-VARIANT-DIGESTION.13c` — the "needs a measurable
   target (CHI re-ingest)" gap is closed. CHI evidence rebuilt on canonical from its intact `.2`
   source bundle (no re-ingest) and the gauge re-measured with `qwen2.5:14b-instruct`: **9/13

@@ -1,3 +1,37 @@
+### `EXTRACTION-QUALITY-GAUGE.3c` — descriptive-narration constraint gate (DONE)
+A signal's *description* is not an *invariant*. The deterministic Pattern extractor read
+"`<actor>` sets `<signal>` HIGH/LOW" as a value binding — right for an obligation ("the Requester
+**must drive** PSTRB LOW") but wrong when the sentence merely describes what a signal does. Two
+shapes recur corpus-wide (probe over all 78 persisted evidence docs / 583 signal_constraints, no
+14B): **signal-description cells** ("The transmitter **sets this signal HIGH** to indicate when
+REQFLIT is valid" → CHI's 8 `*FLITV`/`*LCRDV`) and **timing-diagram walkthroughs** ("At T2 the
+controller **sets PREQ HIGH**" → low-power 13, GPIO 13, HBM2). A *valid* strobe is not an always-HIGH
+invariant; a waveform-step narration is not a global obligation.
+
+**Shipped:** pure `is_descriptive_narration_binding(text)` in `ir/evidence.rs`, gating
+`extract_dynamic_signal_constraints` — drop a logic-level binding when an ACTION verb
+(`set/sets/drive/drives/driven`, never the static-invariant verbs `tied/held/pulled/forced`) is
+present, there is NO mandatory modal (`must`/`shall`/`required to`), AND a descriptive marker exists
+(`this signal` / timing anchor `T<n>` / `figure … shows`). Universal grammar only (ADR 0006 — no
+signal/vendor names). Placed in the Pattern path (the root mint site), so it cleans BOTH the Pattern
+surface and the LLM-primary surface (whose recall universe is the Pattern sentences). +6 pure tests;
+lib 1614 → **1620**; full `scripts/run_ci.sh` GREEN; kg-bench 156/156.
+
+**Verified (fresh release bin):** CHI 13 → 5 signal constraints — exactly the 8 description cells
+removed, the 5 `REQ must_be_value 0/I` field-obligation rows kept (a different class). **Gold-safe**
+per-item on gated-Pattern rebuilds (promoted wire artifacts backed up + restored, non-destructive):
+APB/AHB/AXI constraints P=R=F1=1.000 + WIRE-BASED-100 relations 1.000 + temporal 3/3+4/4+3/3; SWD
+constraints/relations 1.000 + SWD-derivation frame/operation/state 1.000 — probe-confirmed gold-safe
+(no wire-doc obligation is phrased as actor-action narration). **Honest gauge note
+(`feedback_scoring_rigor`):** CHI's NLI not-entailed *rate* rose 69.2% → 100% (5/5) when the 8
+descriptive constraints dropped, because the NLI judge textually entails "sets HIGH" ⇒ "is HIGH" and
+had entailed 4 of the 8 — but per-item a valid strobe is semantically not an invariant, so the
+cleaned surface is strictly more correct; the gauge is a textual heuristic, the per-item audit is
+ground truth. The 5 remaining REQ rows are the field-mis-attribution class a converge's now-default
+promotion cleans. Relational-value frame (~15 DTI "equal to the value of") spun to `.3d`. Book:
+`pipeline/evidenceir.md` `.3c` subsection (FIELD.4 example reconciled). Owning tree:
+`docs/tasks/EXTRACTION-QUALITY-GAUGE.md`.
+
 ### `PDF-VARIANT-DIGESTION.13c` — CHI rebuild + gauge re-measure on canonical; `.13` sweep complete (DONE)
 The last leaf of the `.13` corpus re-ingest sweep. CHI (`ihi0050_g`, 585p) had its `source_ir.json`
 plus 528 MB `normalized/` bundle intact from `.2`, so **no 585p re-ingest was needed** — `specforge

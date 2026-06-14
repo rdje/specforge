@@ -1,4 +1,47 @@
 # DEVELOPMENT_NOTES
+## `EXTRACTION-QUALITY-GAUGE.3c` (`2026-06-14`) — descriptive-narration constraint gate (DONE)
+- **Why:** the `.13c` CHI gauge made the class visible — the deterministic Pattern extractor's
+  `logic_level_binding_kind_from_text` mints `MustBeHigh/Low` from "`<actor>` sets `<signal>`
+  HIGH/LOW", which is right for an obligation but wrong for a *description*. A *valid* strobe
+  (`REQFLITV`) that "the transmitter sets HIGH to indicate validity" is not an always-HIGH invariant;
+  a timing-diagram step ("At T2 the controller sets PREQ HIGH") is not a global obligation.
+- **Probe-first (no 14B, the EXTRACTION-QUALITY-GAUGE method):** scanned all 78 persisted evidence
+  docs' 583 signal_constraint `source_text`. Descriptive-narration class = 38 records: CHI 8
+  signal-description cells, low-power (ihi0068) 13 + GPIO (ihi0083) 13 timing-walkthroughs, HBM2 1.
+  Per-item audit confirmed all are over-extractions. **Gold-safety established by the probe:** ZERO
+  APB/AHB/AXI/SWD constraints match the frame (their obligations use "X must be …"/"must drive X
+  LOW"/static "tied HIGH").
+- **Placement decision (load-bearing):** the gate lives in the PATTERN path
+  (`extract_dynamic_signal_constraints`), NOT the LLM-primary path where `.3a`/`.3b` live — because
+  the LLM-primary extractor's recall universe IS the Pattern surface's sentences, so refusing to mint
+  at the root cleans BOTH surfaces with one deterministic, 14B-free-verifiable change. (`.3a`/`.3b`
+  were LLM-primary-only because they gated the LLM proposer; `.3c` removes a Pattern *minting* bug.)
+- **Gate design (conservative, over-kill-guarded — the `.3a`/`.3b` lesson):** drop only when (1) an
+  ACTION bind verb (`set/sets/setting/drive/drives/driving/driven`) is present — never the
+  static-invariant verbs `tied/held/pulled/forced` (real always-level facts); (2) NO mandatory modal
+  — `must`/`shall` as words, plus the phrase `required to` (the bare adjective "required", as in "the
+  required power state value", is descriptive, NOT mandatory — this fixed a first-cut over-keep the
+  timing-walkthrough test caught); (3) a descriptive marker — `this signal` / a timing anchor `T<n>`
+  (incl. "T 5") / a figure narration `figure … shows`. +6 pure tests (positives = the real probe
+  sentences; negatives = mandatory/static/no-marker).
+- **Verification:** lib 1614→1620; full `run_ci.sh` GREEN (one `manual_contains` clippy fix). CHI
+  rebuilt 13→5 (the 8 description cells gone; the 5 `REQ must_be_value` field-obligation rows kept = a
+  separate `.FIELD.4`/promotion class). Gold gates on gated-Pattern rebuilds (promoted wire artifacts
+  backed up to /tmp + restored — non-destructive): APB/AHB/AXI constraints 1.000 + WIRE-BASED-100
+  relations 1.000 + temporal 3/3+4/4+3/3; SWD constraints/relations 1.000 + SWD-derivation
+  frame/op/state 1.000; kg-bench 156/156.
+- **Honest gauge note (`feedback_scoring_rigor`):** the CHI NLI not-entailed RATE *rose* 69.2%→100%
+  when the 8 descriptive constraints dropped, because the NLI judge textually entails "sets HIGH" ⇒
+  "is HIGH" and had ENTAILED 4 of the 8. This is NOT a regression: per-item a valid strobe is
+  semantically not an always-high invariant, so the cleaned surface is strictly more correct. The
+  gauge is a textual heuristic; the per-item semantic audit is ground truth (same precedent as the
+  `.3b` polarity note). Documented in the book `.3c` subsection.
+- **Scope:** descriptive-narration only. Relational-value ("equal to the value of", ~15 DTI records)
+  spun to `.3d` (proposed). Book: `pipeline/evidenceir.md` `.3c` subsection added; the FIELD.4
+  "flit-valid wires stay signal constraints" example reconciled (they're correctly kept out of the
+  field surface; their descriptive must-be-high reading is now `.3c`-filtered). Owning tree:
+  `docs/tasks/EXTRACTION-QUALITY-GAUGE.md`.
+
 ## `PDF-VARIANT-DIGESTION.13c` (`2026-06-14`) — CHI rebuild + gauge re-measure on canonical (DONE; `.13` sweep complete)
 - **Why:** the last leaf of the `.13` corpus re-ingest sweep — get CHI's current-code field/constraint
   surfaces onto canonical and re-measure the quality gauge, to unblock `EXTRACTION-QUALITY-GAUGE.3c`

@@ -836,13 +836,48 @@ keeps seeing wires only, by construction.
 The discipline is identical on both surfaces: a field obligation must survive the condition-subject guard, the
 permissive-frame guard, source-grounded value recovery, and provenance-merging de-duplication, exactly like a
 signal constraint. Measured live on the persisted CHI artifact the split is visibly right: the four flit-valid
-wires (`REQFLITV`/`RSPFLITV`/`SNPFLITV`/`DATFLITV`) stay signal constraints, the `TagOp`/`PBHA` content rules
-become field records with their channel provenance (the twice-stated `TagOp` fact merged into one record
-carrying both statements), and every wire-based document (APB/AHB/AXI) carries an empty field surface with its
-signal results unchanged. One boundary is recorded honestly rather than guessed at: a field *presence*
+wires (`REQFLITV`/`RSPFLITV`/`SNPFLITV`/`DATFLITV`) are correctly kept **out** of the field surface — they are
+wires, not fields (their *descriptive* "sets this signal HIGH" reading is a separate over-extraction, filtered
+by `.3c` below) — the `TagOp`/`PBHA` content rules become field records with their channel provenance (the
+twice-stated `TagOp` fact merged into one record carrying both statements), and every wire-based document
+(APB/AHB/AXI) carries an empty field surface with its signal results unchanged. One boundary is recorded honestly rather than guessed at: a field *presence*
 requirement (*"the MPAM field must be included on the REQ and SNP channels"*) has no slot in the
 constraint-kind vocabulary yet, so such sentences currently yield nothing — a candidate future kind.
 *Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.FIELD.4`).
+
+### `EXTRACTION-QUALITY-GAUGE.3c` — a signal's *description* is not an *invariant*
+
+The deterministic extractor reads "`<actor>` sets `<signal>` HIGH/LOW" as a value binding. That is
+right for an obligation — "the Requester **must drive** PSTRB LOW" — but wrong when the sentence is
+**describing what a signal does** rather than **constraining it**. Two shapes recur across the corpus:
+
+- a **signal-description cell**: *"Request Flit Valid. The transmitter **sets this signal HIGH** to
+  indicate when REQFLIT is valid."* `REQFLITV` is a *valid* strobe — it is HIGH when there is a valid
+  flit and LOW otherwise; it is emphatically **not** always-HIGH. Reading "must be HIGH" off its
+  description is an over-extraction.
+- a **timing-diagram walkthrough**: *"At T2, the power controller **sets PREQ HIGH**. The interface
+  state is now P_REQUEST."* This narrates one moment of one example waveform; the global obligation,
+  if any, belongs in the typed temporal layer, not a flat invariant.
+
+So a logic-level binding is dropped when it is descriptive narration, recognized **structurally**
+(universal grammar, no signal or vendor names — ADR 0006): an *action* verb (`sets`/`drives`/`driven`)
+— never the static-invariant verbs `tied`/`held`/`pulled`/`forced`, which *do* encode a real
+always-at-this-level fact — together with **no** mandatory modal (`must`/`shall`/`required to`) and a
+descriptive marker (the phrase "this signal", a timing anchor `T<n>`, or a figure narration
+"Figure … shows"). A mandatory binding ("must drive PSTRB LOW") and a static invariant ("tied HIGH")
+are always kept.
+
+The gate lives in the deterministic Pattern extractor — the root mint site — so it cleans **both** the
+Pattern surface *and* the LLM-primary surface at once (the LLM-primary extractor only re-reads
+sentences the Pattern surface already found, so refusing to mint at the root removes them from its
+recall universe too). Measured live: CHI drops 13 → 5 signal constraints, removing exactly the eight
+`*FLITV`/`*LCRDV` description cells; every wire-based gold gate (APB/AHB/AXI constraints and temporal,
+SWD frame/operation/state) stays at 1.000 and `kg-bench` stays green — probe-confirmed gold-safe,
+because no wire-doc obligation is phrased as actor-action narration. One honest note on the quality
+gauge: its not-entailed *rate* can even rise when these drop, because the NLI judge textually entails
+"sets HIGH" ⇒ "is HIGH"; the gauge is a textual heuristic, while the per-item semantic audit (a valid
+strobe is not an always-high invariant) is the ground truth — so the cleaner surface is the correct one.
+*Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.3c`).
 
 ### `EXTRACTION-QUALITY-GAUGE.0` — the artifact carries its own quality measurement
 
