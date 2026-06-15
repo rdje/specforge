@@ -1,3 +1,24 @@
+### CANONICAL-PROMOTION-SWEEP — CLOSE: corpus-wide LLM-primary promotion landed on canonical (24 docs), review-gated
+Tree close. `.1` (HBM2 pilot) + `.2` (wire docs) + `.3` (non-wire scale-out, 26 docs) all met — the now-default
+LLM-primary constraint promotion is landed on the corpus's CANONICAL artifacts. Docs-only commit.
+
+- **Corpus gauge summary:** this session promoted **24 canonical docs** (23 non-wire `.3` keeps + SWD `.2`).
+  Newly-promoted aggregate **88.8% → 49.6% not-entailed** (entailed 48→125). **3 reverted** on the keep/revert
+  rule (`soc600_0701`, I2C `um10204`, NVMe — each lost a verified-correct constraint). All four wire docs
+  (APB5/AHB/AXI re-verified + SWD promoted) hold the **gold battery 1.000** (document-level). `kg-bench` 156/156
+  throughout; RAM never below 19% free (mostly 36–45%); host never near the 90→93% reboot zone.
+- **Review gate honored (the key roll-up decision):** the `.3` acceptance lists a `VALIDATION_SNAPSHOT.md`
+  refresh, but the stronger `R7-VALIDATION` review gate wins — every promotion is `promotion_status =
+  not_promoted_review_required` (local git-ignored `generated/`, NOT owner-approved). Projecting un-reviewed
+  promoted gauges into the tracked `VALIDATION_SNAPSHOT` would present un-approved canonical mutations as the
+  project's *validated* state, which the gate forbids. So `VALIDATION_SNAPSHOT.md` stays at its last reviewed
+  projection; the sweep result is recorded as a reviewable outcome in the tree + `LIVE_ACHIEVEMENT_STATUS.md` +
+  here. A future explicit-approval workflow (`R7-VALIDATION.5` design) is what would promote them.
+- **Book close-rule satisfied** by the existing `LLM-PRIMARY-PROMOTION.5` `commands/pipeline.md` promotion
+  subsection — this tree adds no user-facing capability (its output is local git-ignored, review-gated canonical
+  IR that a CLI user never sees). Only remaining buildable forward lever across the program = `CORPUS-PATTERN-
+  REUSE.4` (offline miner, RAM-heavy, gated).
+
 ### CANONICAL-PROMOTION-SWEEP.2 — wire docs: APB/AHB/AXI gold battery re-verified 1.000, SWD promoted+verified
 Wire-doc slice — the highest-risk, strictest-gated docs. Docs-only commit.
 

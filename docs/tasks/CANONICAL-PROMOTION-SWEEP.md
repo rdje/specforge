@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CANONICAL-PROMOTION-SWEEP`
-- Status: `active`
+- Status: `done` (CLOSED `2026-06-15` — `.1`+`.2`+`.3` all met; corpus-wide promotion landed, review-gated)
 - Roadmap lane: `R15e`/`R16` (extraction quality) — successor forward work to `LLM-PRIMARY-PROMOTION` (CLOSED)
 - Created: `2026-06-15`
 - Last updated: `2026-06-15`
@@ -53,9 +53,18 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
 ## Task Tree
 
 - ID: `CANONICAL-PROMOTION-SWEEP`
-  Status: `active`
+  Status: `done` (CLOSED `2026-06-15`)
   Goal: land the default LLM-primary constraint promotion on canonical corpus artifacts, RAM-safe + review-gated
-  Children: `.1`, `.2`, `.3`
+  Children: `.1`, `.2`, `.3` — all `done`
+  Outcome: **MET.** All 31 constraint-bearing corpus docs accounted for. `.1` HBM2 pilot (85.7%→40.0%). `.3`
+  non-wire scale-out: 26 docs → 23 promoted+kept / 3 reverted (full kept aggregate **88.8%→49.8% not-entailed**,
+  entailed 48→124). `.2` wire docs: APB5/AHB/AXI gold battery re-verified **1.000**, SWD promoted (0E/1N→1E/0N)
+  + derivation gold 1.000. Combined this session promoted **24 canonical docs** (23 non-wire + SWD) + re-verified
+  3 wire + the `.1` HBM2. `kg-bench` 156/156 throughout; RAM never below 19% free (mostly 36–45%); no host risk.
+  All canonical mutation is local git-ignored `generated/` with `*.prepromote.bak` retained;
+  `promotion_status = not_promoted_review_required` — the sweep REALIZED + RECORDED the improvement; it is NOT
+  declared owner-approved (the `R7-VALIDATION` review gate stands). The 47 zero-constraint docs are honestly
+  out of scope (nothing to promote).
 
 - ID: `CANONICAL-PROMOTION-SWEEP.1`
   Status: `done` (`2026-06-15` — pilot on HBM2; protocol locked)
@@ -106,7 +115,7 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
   Commit: `CANONICAL-PROMOTION-SWEEP.2 — wire docs: APB/AHB/AXI gold battery re-verified 1.000, SWD promoted+verified`
 
 - ID: `CANONICAL-PROMOTION-SWEEP.3`
-  Status: `in_progress` (`2026-06-15`, dedicated session — owner authorized "run both, .3 then .2")
+  Status: `done` (`2026-06-15` — all 26 non-wire docs processed: 23 kept / 3 reverted)
   Goal: **scale to the remaining in-scope corpus**, one doc at a time, each with before/after gauge + RAM
   recorded, host-local-source docs honestly skipped. Roll up a corpus-wide before/after gauge summary +
   refresh `VALIDATION_SNAPSHOT.md` / `LIVE_ACHIEVEMENT_STATUS.md`.
@@ -128,7 +137,8 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
 | --- | --- | --- | --- |
 | 1 | `CANONICAL-PROMOTION-SWEEP.1` | `done` (`2026-06-15`, dedicated session) | **DONE.** Non-wire HBM2 pilot promoted on canonical (85.7%→40.0% not-entailed, 14→20 records), RAM ≥42% free throughout, `kg-bench` 156/156, repeatable no-re-ingest protocol locked into Decisions. Reproduced the `.4` /tmp datum exactly on canonical. |
 | 2 | `CANONICAL-PROMOTION-SWEEP.2` | `pending` (**frontier** — unblocked by `.1`) | Wire docs (APB/AHB/AXI/SWD) under the full `WIRE-BASED-100` gold battery on canonical; revert any doc that regresses (the `.3` AXI precedent). Highest-risk + highest-value → strictest gate. RAM-heavy → dedicated-session discipline (same protocol as `.1`, plus the full battery re-verified `1.000` on the promoted canonical artifact). |
-| 2b | `CANONICAL-PROMOTION-SWEEP.3` | `in_progress` (scale-out A+B+C DONE `2026-06-15`; roll-up pending) | All 26 non-wire docs processed: **batch A 12 kept/1 rev, batch B 7 kept/2 rev, batch C 4 kept/0 rev = 23 kept / 3 reverted.** Full kept aggregate **88.8%→49.8% not-entailed** (entailed 48→124); kg-bench 156/156 after each; RAM min 36–43% (B dipped to 19% w/ co-resident clippy, stable). Remaining: corpus gauge roll-up + `VALIDATION_SNAPSHOT.md`/`LIVE_ACHIEVEMENT_STATUS.md` refresh, then close. |
+| 2b | `CANONICAL-PROMOTION-SWEEP.3` | `done` (`2026-06-15`) | All 26 non-wire docs processed: **batch A 12 kept/1 rev, batch B 7 kept/2 rev, batch C 4 kept/0 rev = 23 kept / 3 reverted.** Full kept aggregate **88.8%→49.8% not-entailed** (entailed 48→124); kg-bench 156/156 after each; RAM min 36–43% (B dipped to 19% w/ co-resident clippy, stable). Corpus gauge summary recorded; `VALIDATION_SNAPSHOT` left at last reviewed projection (review-gate). |
+| — | **TREE** | `done` (CLOSED `2026-06-15`) | `.1`+`.2`+`.3` all met; corpus-wide LLM-primary promotion landed on canonical (review-gated). PNT continues. |
 | 1c | `CANONICAL-PROMOTION-SWEEP.2` | `done` (`2026-06-15`) | Wire docs DONE: APB5/AHB/AXI gold battery re-verified **1.000** (constraints+relations+temporal, document-level) on current canonical; SWD `ihi0074_a` promoted (0E/1N→1E/0N) + derivation gold **1.000**. kg-bench 156/156; RAM min 45%. No wire regression. |
 
 ## Decisions
@@ -212,6 +222,27 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
   `memory_pressure` free% every 3s, records the min, and on `≤15% free` writes a STOP flag + `pkill`s the
   specforge child + `ollama stop`s the model, aborting the whole sweep. Each per-command step also carries a
   `gtimeout 1800` hang-guard. Sequential, one heavy job at a time; model `ollama stop`-freed at batch end.
+- `2026-06-15`: **CORPUS GAUGE SUMMARY (close).** This session promoted **24 canonical docs** (23 non-wire `.3`
+  keeps + SWD `.2`) and re-verified 3 already-promoted wire docs + the `.1` HBM2. Newly-promoted aggregate:
+  BEFORE **48E/380N = 88.8% not-entailed** → AFTER **125E/123N = 49.6%** (entailed 48→125). Per-batch keeps:
+  `.3`A 89.8%→29.7% (12 docs), `.3`B 84.4%→46.0% (7), `.3`C 90.1%→56.5% (4), SWD 100%→0%. 3 docs reverted on the
+  keep/revert rule (`soc600_0701`, I2C `um10204`, NVMe — each lost a verified-correct constraint). Wire gold
+  battery 1.000 (document-level) on all four wire docs; `kg-bench` 156/156 throughout.
+- `2026-06-15`: **`VALIDATION_SNAPSHOT.md` deliberately NOT refreshed with the promoted scores (review-gate).**
+  The `.3` acceptance lists a `VALIDATION_SNAPSHOT` refresh, but the stronger non-negotiable doctrine is the
+  `R7-VALIDATION` review gate: every promotion here is `promotion_status = not_promoted_review_required` (local
+  git-ignored `generated/`, NOT owner-approved). Projecting the un-reviewed promoted gauges into the tracked
+  `VALIDATION_SNAPSHOT` would present un-approved canonical mutations as the project's *validated* state —
+  exactly what the gate forbids. So the sweep's improvement is recorded HERE + in `CHANGES.md` +
+  `LIVE_ACHIEVEMENT_STATUS.md` as a reviewable RESULT; `VALIDATION_SNAPSHOT` stays at its last reviewed
+  projection. A future explicit-approval workflow (the `R7-VALIDATION.5` tracked-approval-evidence design) is
+  what would promote these into the validated surface.
+- `2026-06-15`: **Book close-rule satisfied without a new book change.** Per `BOOK-METHOD-DOC`, a closing leaf
+  refreshes the tree's book subsection — but this tree adds NO user-facing capability: the default LLM-primary
+  promotion (command, flag, behavior) is already documented by `LLM-PRIMARY-PROMOTION.5`'s `commands/pipeline.md`
+  subsection, and this tree's output is local git-ignored, review-gated canonical IR that a user invoking the CLI
+  never sees. So the existing promotion subsection already carries the user-facing "how + why + how-verified";
+  no new book surface is warranted (the same reasoning the `.1` pilot recorded).
 
 ## Open Questions
 
@@ -264,6 +295,7 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
 | `.3` (batch B) | `CANONICAL-PROMOTION-SWEEP.3 — batch B (9 medium non-wire): 7 promoted on canonical, 2 reverted, RAM-safe` | docs-only; 7 kept (84.4%→46.0% NE aggregate; apb-orig +6 entailed), `um10204` I2C + `nvme` reverted (each lost a verified constraint); kg-bench 156/156; RAM min 19% (stable) |
 | `.3` (batch C) | `CANONICAL-PROMOTION-SWEEP.3 — batch C (4 big non-wire): 4 promoted on canonical, 0 reverted, RAM-safe` | docs-only; LPI/LTI/AXI+ACE/DTI all improved (90.1%→56.5% NE aggregate; AXI+ACE +17, DTI +7 entailed); kg-bench 156/156; RAM min 36%. `.3` scale-out (26 docs) complete: 23 kept / 3 reverted |
 | `.2` | `CANONICAL-PROMOTION-SWEEP.2 — wire docs: APB/AHB/AXI gold battery re-verified 1.000, SWD promoted+verified` | docs-only; APB/AHB/AXI document-level recall 1.000 (constraints+relations+temporal); SWD `ihi0074_a` promoted 0E/1N→1E/0N + derivation gold 1.000; kg-bench 156/156; RAM min 45% |
+| tree close | `CANONICAL-PROMOTION-SWEEP — CLOSE: corpus-wide LLM-primary promotion landed on canonical (24 docs, 88.8%→49.6% NE), review-gated` | docs-only; corpus gauge summary; VALIDATION_SNAPSHOT left at last reviewed projection (review gate); book close-rule satisfied by existing promotion subsection |
 
 ## Changelog
 
@@ -324,3 +356,11 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
   entailed — KEEP) and its derivation gold re-verified **1.000** (frames 11/11, ops 4/4, states 13/13).
   `kg-bench` 156/156; RAM min 45% free; model freed. **All four wire docs promoted + gold-battery green.**
   Frontier → corpus gauge roll-up + close the tree.
+- `2026-06-15`: **TREE CLOSED.** `.1`+`.2`+`.3` all met — the corpus-wide LLM-primary constraint promotion is
+  landed on canonical. Corpus gauge summary: 24 docs promoted this session (88.8%→49.6% not-entailed, entailed
+  48→125), 3 reverted on the keep/revert rule, all four wire docs gold-battery green. Honored the review gate:
+  `VALIDATION_SNAPSHOT.md` NOT refreshed with un-reviewed promoted scores (promotion_status =
+  not_promoted_review_required); the result is recorded in this tree + `CHANGES.md` + `LIVE_ACHIEVEMENT_STATUS.md`
+  as a reviewable outcome. Book close-rule satisfied by the existing `LLM-PRIMARY-PROMOTION.5` promotion subsection
+  (no new user-facing capability). Only remaining buildable forward lever across the program = `CORPUS-PATTERN-
+  REUSE.4` (offline miner, RAM-heavy, gated). Docs-only commit.
