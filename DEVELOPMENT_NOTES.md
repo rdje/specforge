@@ -1,4 +1,33 @@
 # DEVELOPMENT_NOTES
+## NLP-SHALLOW-PARSE.2f (`2026-06-15`) — measured NO-GO → BUILD frontier measured-EXHAUSTED
+- **Why:** PNT advanced to the next frontier leaf `.2f` ("clause split + coordination
+  distribution"). Opened measurement-first (as `.2h`) and found it already covered.
+- **What the measurement showed:**
+  1. The canonical `.2f` example is already implemented AND tested: `extract_subject_phrase`
+     strips relative clauses (`" which "`/`" that "`/…) before subject selection, and
+     `active_object_contains_signal` scans the ENTIRE post-verb object clause for each grounded
+     signal token, so a coordinated object list distributes the verb across every grounded
+     signal. Locked by `coordinated_active_drive_extracts_real_actor_not_payload_phrase`,
+     `coordinated_active_read_extracts_all_sampled_objects`, and the `ARCHUNKEN`/`RCHUNKV`
+     relative-clause+coordination tests ("…which connects to… can drive ARCHUNKEN and RCHUNKV").
+  2. Corpus coordinated prose over the 78 `evidence_ir.json` (`drive AERR and DERR`,
+     `drive RVALID and BVALID LOW`, `drive LAMECID and LAHWATTR`) is all OBJECT coordination →
+     already covered. The only unhandled sub-case (SUBJECT coordination "Actor1 and Actor2 drive
+     X") has ≈0 grounded corpus prevalence (only noise: "current drive of the register",
+     "deasserts valid and can drive data") → speculative.
+- **Decision / how applied:** do NOT build `.2f`; mark `done` (measured NO-GO). **Tree-level:**
+  both spike-flagged "gaps" (`.2h`, `.2f`) already live in the mature production hand grammar, so
+  the gaps-first BUILD scope is empty; `.3` (SVO assembler) is reduced to a pure
+  behavior-preserving consolidation refactor with no recall/precision gain — high-risk/low-value
+  vs the wire-100%/additive/deterministic gates → `deferred`. `NLP-SHALLOW-PARSE` → STANDING
+  (build-exhausted), re-opened only by a future measured gap or an explicit owner consolidation
+  directive. This confirms the spike's "consolidation, not a recall multiplier" verdict at the
+  production level — the bigger "digest any PDF" levers remain TABLES + the VLM arm
+  (`PDF-VARIANT-DIGESTION` / `CORPUS-PATTERN-REUSE`). PNT pivots to another lever.
+- **Verification:** read-only corpus measurement + reading existing coordination tests; no
+  production code touched; no test/CI/book impact. memory-arch + KM derive-and-diff green.
+  KM card `nlp-coordination-already-handled`.
+
 ## NLP-SHALLOW-PARSE.2h (`2026-06-15`) — measured NO-GO as new code (production already handles drive/read direction)
 - **Why:** PNT picked the active frontier leaf `NLP-SHALLOW-PARSE.2h` ("light dependency:
   passive + verb sense — fix the spike's direction errors"). The tree's Acceptance Criterion #1

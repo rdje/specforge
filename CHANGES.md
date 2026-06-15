@@ -1,3 +1,29 @@
+### NLP-SHALLOW-PARSE.2f — measured NO-GO as new code → BUILD frontier measured-EXHAUSTED (docs-only)
+Second PNT slice; opened the next frontier leaf `.2f` ("clause split + coordination
+distribution") measurement-first and found it, like `.2h`, already covered in production.
+
+- **The canonical example is already implemented AND tested.** `extract_subject_phrase`
+  strips relative clauses and `active_object_contains_signal` scans the whole post-verb object
+  clause for each grounded signal — so "X, *which connects to Y,* drives Z **and** W"
+  distributes the verb across both objects. The tests `coordinated_active_drive_*` /
+  `coordinated_active_read_extracts_all_sampled_objects` (the ARCHUNKEN/RCHUNKV cases) already
+  lock this, both directions.
+- **Corpus coordinated prose is all object coordination (covered).** `drive AERR and DERR`,
+  `drive RVALID and BVALID LOW`, `drive LAMECID and LAHWATTR` — all handled. The only unhandled
+  sub-case, SUBJECT coordination ("Actor1 and Actor2 drive X"), has **≈0 grounded corpus
+  prevalence** (only noise: "current drive of the register") → speculative.
+- **Tree-level conclusion: the gaps-first BUILD frontier is measured-EXHAUSTED.** Both
+  spike-flagged "gaps" (`.2h` direction, `.2f` coordination) already live in the mature
+  production hand grammar; `.3` (SVO assembler) collapses to a pure consolidation refactor with
+  no recall/precision gain, which the wire-100%/additive/deterministic gates make
+  high-risk/low-value → `deferred`. `NLP-SHALLOW-PARSE` becomes a STANDING (build-exhausted)
+  tree. This CONFIRMS the spike's "consolidation, not a recall multiplier" verdict at the
+  production level — the bigger "digest any PDF" levers remain TABLES + the VLM arm. **PNT
+  pivots to another lever** (`CORPUS-PATTERN-REUSE.3b.3a` read-only measurement, or
+  `CANONICAL-PROMOTION-SWEEP.1` when RAM allows).
+- **No Rust change** — docs-only (task tree + KM card `nlp-coordination-already-handled` +
+  regenerated KM + TASK_TREE index + live docs).
+
 ### NLP-SHALLOW-PARSE.2h — measured NO-GO as new code (production already handles drive/read direction; docs-only)
 First PNT slice of the fresh session (frontier leaf of the active `NLP-SHALLOW-PARSE`
 tree). Opened the `.2h` "passive + verb-sense direction" build **measurement-first**

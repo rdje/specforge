@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `NLP-SHALLOW-PARSE`
-- Status: `active`
+- Status: `active` (BUILD frontier measured-EXHAUSTED `2026-06-15` — standing; `.2h`+`.2f` NO-GO, `.3` consolidation-only deferred)
 - Roadmap lane: `R16`/`R15e` (extraction)
 - Created: `2026-06-09`
 - Last updated: `2026-06-15`
@@ -135,8 +135,19 @@ the owner's go after the tempered spike result, then built incrementally and mea
 - ID: `NLP-SHALLOW-PARSE.2d` · Status: `deferred` (scope-bounded `2026-06-15` — exists: `normative_vocab.rs`) · Goal: **lemmatizer / morphology** — map verb inflections
   to one edge label; extend `normative_vocab.rs` + tiny `rust-stemmers` (Snowball) for unseen inflections.
 - ID: `NLP-SHALLOW-PARSE.2e` · Status: `deferred` (scope-bounded `2026-06-15`) · Goal: **NP/VP chunker** over POS tags; hand-roll.
-- ID: `NLP-SHALLOW-PARSE.2f` · Status: `pending` (frontier — second value piece) · Goal: **clause split +
-  coordination** — distribute "X, which connects to Y, drives Z and W"; hand-roll.
+- ID: `NLP-SHALLOW-PARSE.2f` · Status: `done` (measured NO-GO as new code, `2026-06-15`) · Goal: **clause split +
+  coordination** — distribute "X, which connects to Y, drives Z and W". **Measured resolution (`2026-06-15`, no
+  production code):** the canonical example is ALREADY implemented and tested — `coordinated_active_drive_*` /
+  `coordinated_active_read_extracts_all_sampled_objects` (`evidence.rs` test mod) prove "An interconnect *which
+  connects to components …* can drive ARCHUNKEN **and** RCHUNKV" recovers BOTH objects with `interconnect` as the
+  actor (relative-clause stripping in `extract_subject_phrase` + object-clause coordination via
+  `active_object_contains_signal`, which scans the whole post-verb clause for each grounded signal token). Corpus
+  coordinated sentences over the 78 evidence artifacts (`drive AERR and DERR`, `drive RVALID and BVALID LOW`,
+  `drive LAMECID and LAHWATTR`) are all OBJECT coordination → already covered. The only unhandled sub-case —
+  SUBJECT coordination ("Actor1 and Actor2 drive X", where `extract_subject_phrase` keeps only the nearest of the
+  two) — has **≈0 grounded corpus prevalence** (the only "A and B drive" hits are noise: "current drive of the
+  register", "deasserts valid and can drive data"). Building it would be speculative effort against zero measured
+  demand. → do NOT build; KM card `nlp-coordination-already-handled`.
 - ID: `NLP-SHALLOW-PARSE.2g` · Status: `deferred` (scope-bounded `2026-06-15` — exists: constraint negation) · Goal: **negation / modality** — `must not`/`shall`/`may`;
   extend the existing constraint-negation handling.
 - ID: `NLP-SHALLOW-PARSE.2h` · Status: `done` (measured NO-GO as new code, `2026-06-15`) · Goal:
@@ -156,17 +167,26 @@ the owner's go after the tempered spike result, then built incrementally and mea
   `actor-signal-direction-passive-active-handled`.
 - ID: `NLP-SHALLOW-PARSE.2i` · Status: `deferred` (scope-bounded `2026-06-15` — already strong: declared-signal catalog) · Goal: **grounding NER gate** — formalize the existing
   declared-signal/actor catalog as the explicit gate the parser proposes into (ADR 0006); largely exists.
-- ID: `NLP-SHALLOW-PARSE.3` · Status: `proposed` · Goal: **SVO assembler + Extractor-tier integration** —
-  wire `.2a`–`.2i` into ONE `Extractor` (the `EXTRACTOR-ARCHITECTURE` framework) emitting `ActorSignalRelation`
-  hypotheses through the grounding gate; prove ≥ the hand grammars on APB/AHB/AXI/SWD before retiring any.
+- ID: `NLP-SHALLOW-PARSE.3` · Status: `deferred` (consolidation-only, no measured recall/precision gain —
+  `2026-06-15`) · Goal: **SVO assembler + Extractor-tier integration** — wire the pieces into ONE `Extractor`
+  (the `EXTRACTOR-ARCHITECTURE` framework) emitting `ActorSignalRelation` hypotheses through the grounding gate.
+  **Reframed `2026-06-15`:** with `.2h` and `.2f` both measured NO-GO (their capabilities already live in the
+  production hand grammar), `.3` is now a PURE CONSOLIDATION refactor (unify the scattered prose grammar into one
+  Extractor) with **no recall/precision gain** — exactly what the spike rated "consolidation, not a recall
+  multiplier." Against the wire-based-100% + additive-until-proven + deterministic-byte-identical gates, a
+  behavior-preserving rewrite of the mature, well-tested grammar is high-risk / low-value. Build ONLY if a
+  concrete maintainability need arises (e.g. a future prose lever genuinely needs the unified seam) or the owner
+  directs the consolidation explicitly; never speculatively. `EXTRACTOR-ARCHITECTURE` already provides the
+  one-place-registration seam if/when needed.
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `NLP-SHALLOW-PARSE.2f` | `pending` (frontier) | **clause split + coordination distribution** — the genuine prose gap the spike isolated ("X, which connects to Y, drives Z and W" → distribute the verb over coordinated objects/actors). Now FIRST after `.2h` resolved measured-NO-GO. Build MEASURED-FIRST against the hand grammars (the existing coordination handling — e.g. `can drive ARCHUNKEN and RCHUNKV` — is partial, so the slice opens by measuring the concrete residual before any code). Wire-based APB/AHB/AXI/SWD stay 100% (hard gate); deterministic + offline; additive-until-proven. |
-| — | `NLP-SHALLOW-PARSE.2h` | `done` (measured NO-GO, `2026-06-15`) | **Resolved without production code.** Production already handles passive+active drive/read DIRECTION correctly (voice-separated verb lexicon); the spike's direction error was prototype-only; the only prose delta (the `to`/recipient frame) is negative-EV (≈0 grounded yield, value-dominant `is driven to`, document-specific recipient names, and present in wire docs so not additive-safe vs the 100% gate). See the `.2h` node + KM card `actor-signal-direction-passive-active-handled`. |
-| 2 | `NLP-SHALLOW-PARSE.3` | `proposed` | SVO assembler — wire `.2f` (+ the reused existing pieces) into ONE `Extractor` through the grounding gate; retire a hand grammar ONLY when SVO provably ≥ it. |
+| — | `NLP-SHALLOW-PARSE.2h` | `done` (measured NO-GO, `2026-06-15`) | **Resolved without production code.** Production already handles passive+active drive/read DIRECTION correctly (voice-separated verb lexicon); the spike's direction error was prototype-only; the only prose delta (the `to`/recipient frame) is negative-EV (≈0 grounded yield, value-dominant `is driven to`, document-specific recipient names, present in wire docs → not additive-safe). KM card `actor-signal-direction-passive-active-handled`. |
+| — | `NLP-SHALLOW-PARSE.2f` | `done` (measured NO-GO, `2026-06-15`) | **Resolved without production code.** Object coordination + relative-clause distribution (the canonical "…which connects to… drives Z and W" example) are ALREADY implemented and tested (`coordinated_active_drive_*` / `coordinated_active_read_*`); subject coordination has ≈0 grounded corpus prevalence → speculative. KM card `nlp-coordination-already-handled`. |
+| — | `NLP-SHALLOW-PARSE.3` | `deferred` (consolidation-only) | With `.2h`+`.2f` NO-GO, the assembler is a pure behavior-preserving refactor with no recall/precision gain — high-risk/low-value vs the wire-100%/additive/deterministic gates. Build only on a concrete maintainability need or explicit owner direction. |
+| — | (tree) | **BUILD frontier measured-EXHAUSTED** | Both spike-flagged gaps are already covered by the mature production hand grammar; the tree is `mostly done` / standing. Re-open a leaf only if a future measurement surfaces a real prose-recall/precision gap, or the owner wants the `.3` consolidation. PNT pivots to another lever (`CORPUS-PATTERN-REUSE.3b.3a` / `CANONICAL-PROMOTION-SWEEP.1`). |
 | — | `.2a`/`.2b`/`.2c`/`.2d`/`.2e`/`.2g`/`.2i` | `deferred` | **Scope-bounded out (`2026-06-15`):** the spike proved POS quality is NOT the bottleneck (hand-roll ≈ nltk) and these mostly already exist in scattered form (tokenizer `is_hardware_signal_token`, lemmatizer `normative_vocab.rs`, grounding gate = the declared-signal catalog). Build a specific one ONLY if measurement during `.2h`/`.2f`/`.3` shows it is the concrete bottleneck — not speculatively. |
 
 ## Decisions
@@ -214,6 +234,20 @@ the owner's go after the tempered spike result, then built incrementally and mea
   gap), with direct precedent (MEMORY-BOUNDED-INGEST.5 measured-DEFER, FULL-PAGE-INTENT-CAPTURE.1 NO-GO). KM
   card `actor-signal-direction-passive-active-handled`. `[[feedback_scoring_rigor]]`.
 
+- `2026-06-15`: **`.2f` MEASURED NO-GO → the gaps-first BUILD frontier is measured-EXHAUSTED.** Opened `.2f`
+  measurement-first: the canonical example ("X, *which connects to Y,* drives Z **and** W") is already
+  implemented AND tested (`coordinated_active_drive_*` / `coordinated_active_read_extracts_all_sampled_objects`),
+  object coordination is covered by `active_object_contains_signal` (it scans the whole post-verb clause for each
+  grounded signal token), and the only residual — SUBJECT coordination — has ≈0 grounded corpus prevalence. So
+  `.2f` would be speculative too. **Tree-level conclusion:** BOTH spike-flagged "gaps" (`.2h`, `.2f`) already
+  live in the mature production hand grammar, so the gaps-first BUILD scope is empty; `.3` collapses to a pure
+  consolidation refactor (no recall/precision gain) that the wire-100%/additive/deterministic gates make
+  high-risk/low-value → `deferred`. The tree becomes STANDING (build-exhausted), re-opened only by a future
+  measurement of a real prose gap or an explicit owner consolidation directive. This CONFIRMS the spike's
+  "consolidation, not a recall multiplier" verdict at the production level: the bigger "digest any PDF" levers
+  remain TABLES + the VLM arm. PNT pivots to another lever. KM card `nlp-coordination-already-handled`.
+  `[[feedback_scoring_rigor]]` / `[[project_nlp_shallow_parse_direction]]`.
+
 ## Open Questions
 
 - ~~Given the spike result (consolidation, not a recall leap), does the owner want to build the full tier now,
@@ -232,13 +266,15 @@ the owner's go after the tempered spike result, then built incrementally and mea
 | --- | --- | --- | --- |
 | `2026-06-09` | `NLP-SHALLOW-PARSE.1` | spike: general SVO (hand-roll + nltk) vs hand grammars on real APB/AXI/SWD/SWP | done — 3–8% recall; tagger-choke neutralized by grounding; consolidation-not-revolution |
 | `2026-06-15` | `NLP-SHALLOW-PARSE.2h` | read production `extract_actor_signal_relations` + `normative_vocab`; measured `by/from` vs `to` frame prevalence + subject/recipient grounding over the 78 persisted `evidence_ir.json`; checked wire-doc presence | NO-GO as new code — direction already correct (voice-separated lexicon); `to`/recipient frame negative-EV (≈0 grounded yield, value-dominant `is driven to`, wire docs AXI=10/AHB=1). No production code changed; frontier → `.2f` |
+| `2026-06-15` | `NLP-SHALLOW-PARSE.2f` | read existing coordination tests + `active_object_contains_signal`/`extract_subject_phrase`; measured coordinated-drive prose over the 78 `evidence_ir.json` | NO-GO as new code — object coordination + relative-clause distribution already implemented & tested; subject coordination ≈0 grounded corpus prevalence. No production code changed; BUILD frontier measured-exhausted; `.3` → deferred (consolidation-only) |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `NLP-SHALLOW-PARSE.1` | (earlier slice) | docs-only spike + tree; no production code |
-| `NLP-SHALLOW-PARSE.2h` | `NLP-SHALLOW-PARSE.2h — measured NO-GO …` (this slice) | docs-only measured resolution; no production code; frontier → `.2f` |
+| `NLP-SHALLOW-PARSE.2h` | `29ef963b` `NLP-SHALLOW-PARSE.2h — measured NO-GO …` | docs-only measured resolution; no production code; frontier → `.2f` |
+| `NLP-SHALLOW-PARSE.2f` | `NLP-SHALLOW-PARSE.2f — measured NO-GO …` (this slice) | docs-only measured resolution; no production code; BUILD frontier measured-exhausted |
 
 ## Changelog
 
@@ -259,3 +295,14 @@ the owner's go after the tempered spike result, then built incrementally and mea
   present → not additive-safe). Marked `.2h` `done` (NO-GO), advanced frontier to `.2f` (coordination), wrote
   KM card `actor-signal-direction-passive-active-handled`. Gaps-first discipline; measured-DEFER precedent
   (`.5`, FULL-PAGE-INTENT-CAPTURE.1).
+- `2026-06-15`: **`.2f` resolved MEASURED NO-GO → BUILD frontier measured-EXHAUSTED.** Opened `.2f`
+  measurement-first and found the canonical example ("…which connects to… drives Z and W") is ALREADY
+  implemented and TESTED (`coordinated_active_drive_*` / `coordinated_active_read_extracts_all_sampled_objects`);
+  object coordination is covered by `active_object_contains_signal`; the only residual (subject coordination)
+  has ≈0 grounded corpus prevalence → speculative. Marked `.2f` `done` (NO-GO). **Tree-level implication:** both
+  spike-flagged "gaps" (`.2h`, `.2f`) are already in the production hand grammar, so the gaps-first BUILD scope
+  is measured-exhausted; `.3` is reduced to a pure consolidation refactor (no recall/precision gain, gate-risky)
+  → `deferred`. Tree → standing (`active`, build-exhausted). KM card `nlp-coordination-already-handled`. **This
+  is the spike's "consolidation, not a recall multiplier" verdict CONFIRMED at the production level** — the
+  mature hand grammar already does what a shallow-parse tier would, so the bigger "digest any PDF" levers stay
+  TABLES + the VLM arm (`PDF-VARIANT-DIGESTION` / `CORPUS-PATTERN-REUSE`), per the spike. `[[feedback_scoring_rigor]]`.
