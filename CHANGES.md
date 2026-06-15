@@ -1,3 +1,26 @@
+### CORPUS-PATTERN-REUSE.3b.3a — first opt-in extractor: measured NO-GO (docs-only, read-only)
+PNT slice. Selected + measured the leading first-opt-in-extractor candidate for the reuse plane's
+activate-only consume contract — the parked `PDF-VARIANT-DIGESTION.9.10` prose bus-line lever
+("the/The `<NAME>` line") — read-only over the persisted 78-doc corpus. No code/extraction-path change.
+
+- **Faithful re-derivation reproduces the `.9.10` probe:** Form A fires on **5/78 docs, 0 wire-based**;
+  genuine benefit on only **2** — SMBus (`SMBCLK`/`SMBDAT`/`SMBSUS#`) and I2S (`WS`). The other 3 firings are
+  noise: I2C (`VDD`/`VSS`/`DLEN`), eMMC (`VDD`), and OpenCAPI-TL where it false-positives `AFUC2` out of
+  cache-line prose.
+- **No derived 2-wire-bus family exists (the decisive measurement).** `corpus-cluster` at the system
+  threshold (0.6) puts SMBus/I2S/I2C/OpenCAPI-TL as structural SINGLETONS and pairs eMMC only with GIC (a
+  register-heavy non-bus spec). A threshold sweep (0.40–0.60) finds no clean bus family at any cut — singletons
+  at ≥0.55, heterogeneous absence-token catch-alls at ≤0.50.
+- **Why it's a structural no-go:** the lever's safe/noisy split is **lexical** (supply rails `VDD`/`VSS`),
+  orthogonal to the **structural** fingerprint. Cluster-scoping (a structural gate) inherits the exact
+  blindness that made the supply-rail denylist forbidden, and the only learnable bus-ish cluster contains the
+  MEASURED regression doc I2C (gold precision 0.600). So cluster-scoping cannot replace the denylist; this
+  lever needs participation-based identity (the build-exhausted `NLP-SHALLOW-PARSE` path), not the reuse plane.
+- **Outcome:** closed `.3b.3a` (honest no-go), established the **structural-discrimination criterion** (a valid
+  first opt-in extractor must be safe *because of* a structural fingerprint property), EXCLUDED the serial-prose
+  levers as candidates, and spun `.3b.3a2` to continue the read-only search; `.3b.3b` (build) stays gated. KM
+  card `corpus-reuse-serial-prose-lever-not-cluster-scopable`; memory-arch + KM gates green; no Rust/CI/book change.
+
 ### NLP-SHALLOW-PARSE.2f — measured NO-GO as new code → BUILD frontier measured-EXHAUSTED (docs-only)
 Second PNT slice; opened the next frontier leaf `.2f` ("clause split + coordination
 distribution") measurement-first and found it, like `.2h`, already covered in production.

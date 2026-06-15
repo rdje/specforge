@@ -198,7 +198,7 @@ gauges (did the profile reduce misses on held-out docs?).
   design now captured in Decisions `2026-06-15` + split into `.3b.3a` (select the candidate, measurement-first)
   → `.3b.3b` (build it self-disabled + plumb the activate-only contract + measure uplift).** · Children:
   `.3b.3a`, `.3b.3b`.
-- ID: `CORPUS-PATTERN-REUSE.3b.3a` · Status: `pending` (frontier) · Goal: **SELECT + justify the first opt-in
+- ID: `CORPUS-PATTERN-REUSE.3b.3a` · Status: `done` (`2026-06-15`) · Goal: **SELECT + justify the first opt-in
   extractor, measurement-first (read-only, no extraction-path change).** Using the `corpus-cluster` profiles
   (which extractors fire per derived family) + the persisted corpus, find a candidate construction that is
   (a) measurably HELPFUL on one derived cluster, (b) too NOISY/unsafe to run default-on corpus-wide (which is
@@ -210,7 +210,48 @@ gauges (did the profile reduce misses on held-out docs?).
   fingerprint. Output: a one-candidate decision with the measured "helps family X / noisy elsewhere" evidence,
   or an honest "no safe candidate yet" with what is missing. Acceptance: a justified candidate (or honest
   no-go) recorded with measurement; no code/extraction-path change.
-- ID: `CORPUS-PATTERN-REUSE.3b.3b` · Status: `pending` (gated on `.3b.3a`) · Goal: **BUILD the selected opt-in
+  **DONE (`2026-06-15`) — MEASURED NO-GO for the leading candidate; the result SHARPENS the selection
+  criterion.** Ran the candidate measurement read-only over the persisted 78-doc corpus (current
+  `target/release/specforge`, post-`.3e`); no code/extraction-path change.
+  - **Faithful Form-A re-derivation** (the `.9.10` grammar "the/The `<ALLCAPS-id>[#]` line" over every doc's
+    `extracted_statements[].text`) reproduces the probe exactly: **fires on 5/78 docs, 0 wire-based.** Genuine
+    benefit on only 2 docs — SMBus (`SMBCLK`/`SMBDAT`/`SMBSUS#`) + I2S (`WS`); NOISE on the rest — I2C
+    (`VDD`/`VSS`/`DLEN` on top of real `SCL`/`SDA`), eMMC (`VDD` on top of real `CMD`/`DAT`), and a 5th the
+    probe did not name — OpenCAPI-TL, where Form A FALSE-POSITIVES `AFUC2` out of cache-line prose
+    ("…128-byte segments of the AFU… line").
+  - **Cluster mapping at the SYSTEM threshold (0.6)** — the decisive measurement: **none of the 5 sit in a
+    derived 2-wire-bus family.** SMBus, I2S, I2C, OpenCAPI-TL are each structural SINGLETONS; eMMC's only
+    cluster partner is GIC (a register-heavy interrupt-controller spec — family 12), not a bus. A threshold
+    sweep (0.40–0.60) confirms there is NO clean serial-bus family at any cut: at ≥0.55 the buses are
+    singletons; at ≤0.50 they dissolve into 15–32-doc heterogeneous catch-alls sharing only the trivial
+    ABSENCE token `serial_frame:b0` (OpenCAPI/CoreSight/HBM/… — not a bus family).
+  - **Why this is a structural no-go, not a threshold artifact:** the lever's safe/noisy split is **orthogonal
+    to the structural fingerprint.** SMBus (safe) and I2C (noisy) are both 2-wire buses with near-identical
+    shape; the only thing separating them is whether the doc's prose says "the `VDD` line" — a LEXICAL property
+    the structural fingerprint cannot see. Any cluster broad enough to carry SMBus's benefit also carries I2C's
+    harm — and I2C is a MEASURED doc (declared-signal gold precision 0.600, [[feedback_scoring_rigor]]), so
+    activating there REGRESSES a tracked score. The persisted `learn-priors` profile confirms it from the other
+    side: I2C falls in a support-5 bus-SHAPE profile (TileLink/I2C/HBM2/GFB) while SMBus/I2S are absent from the
+    harvest entirely — so the only learnable bus-ish cluster contains the regression doc and NOT the benefit docs.
+  - **Conclusion:** cluster-scoping (a STRUCTURAL gate) cannot resolve the `.9.10` parking reason (a LEXICAL
+    discrimination) — it inherits the exact blindness that made the supply-rail DENYLIST forbidden
+    ([[feedback_avoid_denylists_prefer_structural]]). This lever genuinely needs participation-based signal
+    identity (the `NLP-SHALLOW-PARSE` path, independently measured build-exhausted) — NOT the reuse plane. So
+    the serial-prose parked levers (`.9.10`/`.9.8b`, lexically-discriminated by construction) are EXCLUDED as
+    first-opt-in candidates. **Criterion established** (Decisions `2026-06-15`): a valid first opt-in extractor
+    must be STRUCTURALLY-discriminated — safe *because of* a structural property the fingerprint captures and
+    noisy only on docs lacking it — so a derived multi-member cluster cleanly separates "activate here" from
+    "noisy there." `.3b.3b` (build) stays correctly gated; selection continues at `.3b.3a2`. KM card
+    `corpus-reuse-serial-prose-lever-not-cluster-scopable`.
+- ID: `CORPUS-PATTERN-REUSE.3b.3a2` · Status: `pending` (frontier; succeeds the `.3b.3a` no-go) · Goal:
+  **continue first-opt-in-extractor selection under the STRUCTURAL-discrimination criterion** (`.3b.3a` measured
+  that the serial-prose levers are lexically-discriminated and so cannot be cluster-scoped). Measurement-first,
+  read-only: look for an extraction that is safe *because of* a structural property a derived multi-member
+  cluster's fingerprint captures (e.g. a family with a distinctive `fired:`/shape signature such as the CCIX
+  message-field family — family 7) and noisy/absent elsewhere, so activation aligns with the fingerprint rather
+  than a name list. Acceptance: a structurally-justified candidate (or an honest no-go) recorded with
+  measurement; no code/extraction-path change. Gates `.3b.3b`.
+- ID: `CORPUS-PATTERN-REUSE.3b.3b` · Status: `pending` (gated on `.3b.3a2`) · Goal: **BUILD the selected opt-in
   extractor self-disabled (`applies_to` defaults `false`) + plumb the persisted `ExtractionProfile` into
   `ExtractionContext` + implement the structurally-enforced activate-only `applies_to` (enable iff the doc
   fingerprint is a subset-match of the cluster signature AND the prior is not contested) + measure recall uplift
@@ -250,16 +291,19 @@ gauges (did the profile reduce misses on held-out docs?).
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `CORPUS-PATTERN-REUSE.3b.3a` | `pending` | **SELECT the first opt-in extractor, measurement-first (read-only).** Resolves the long-standing "needs a first opt-in extractor (design open)" blocker. Find a construction that helps one derived cluster but is too noisy default-on (strong candidate: the parked `PDF-VARIANT-DIGESTION.9.10` prose bus-line lever, scoped to its safe family). No code/extraction-path change. |
-| 2 | `CORPUS-PATTERN-REUSE.3b.3b` | `pending` (gated) | BUILD the selected extractor self-disabled + activate-only consume contract + measured held-out uplift. Behavioral → wire-based 100% must not regress. |
+| 1 | `CORPUS-PATTERN-REUSE.3b.3a2` | `pending` | **Continue selection under the structural-discrimination criterion.** `.3b.3a` MEASURED the leading serial-prose candidate (`.9.10` bus-line lever) a NO-GO — its safe/noisy split is lexical (supply rails), orthogonal to the structural fingerprint, so cluster-scoping can't separate benefit (SMBus/I2S, structural singletons) from harm (the measured I2C doc). Next: find a STRUCTURALLY-discriminated candidate. Read-only. |
+| 2 | `CORPUS-PATTERN-REUSE.3b.3b` | `pending` (gated) | BUILD the selected extractor self-disabled + activate-only consume contract + measured held-out uplift. Gated on a structurally-discriminated candidate from `.3b.3a2`. Behavioral → wire-based 100% must not regress. |
 | 3 | `CORPUS-PATTERN-REUSE.4` | `pending` (gated) | Offline LLM/VLM cluster pattern miner with held-out precision validation. |
 
 `.3a` DONE (the `corpus-cluster` command), `.3b.1` DONE (typed profile + derivation + surfacing), `.3b.2`
 DONE (profiles persisted into `CorpusMemory` as the 8th prior family + `learn-priors` harvest + subset-match
 lookup), `.3c` DONE (the manifest-population sweep over every repo-backed doc — profiles now carry real fired
-unions). The learn side of `.3b` is complete; `.3b.3` (activate-only consume) needs a first opt-in extractor
-and stays gated, as does `.4` (offline miner). Residual sparsity (~66 host-local-source docs) shrinks only
-when their PDFs are re-provided — honest scope, not debt.
+unions), **`.3b.3a` DONE (`2026-06-15`) — the first-opt-in candidate SELECTION measured the leading serial-prose
+lever a NO-GO (lexical-vs-structural; see Decisions) and established the structural-discrimination criterion**.
+The learn side of `.3b` is complete; the consume side `.3b.3` still needs a STRUCTURALLY-discriminated first
+opt-in extractor (`.3b.3a2` continues the read-only search) before `.3b.3b` can build, and `.4` (offline miner)
+stays gated. Residual sparsity (~66 host-local-source docs) shrinks only when their PDFs are re-provided —
+honest scope, not debt.
 
 ## Decisions
 
@@ -290,6 +334,22 @@ when their PDFs are re-provided — honest scope, not debt.
   into `ExtractionContext` + structural activate-only `applies_to` + held-out uplift), wire-based 100% a hard
   gate, every non-matching doc byte-identical by construction.
 
+- `2026-06-15`: **First opt-in extractor must be STRUCTURALLY-discriminated (criterion from the `.3b.3a`
+  measured no-go).** `.3b.3a` measured the leading candidate — the parked `.9.10` prose bus-line lever — and
+  found it NOT cluster-scopable: it fires on 5/78 docs (genuine benefit only on SMBus + I2S, both structural
+  SINGLETONS; noise / false-positives on I2C, eMMC, OpenCAPI-TL), and no derived cluster at any threshold
+  cleanly carves out a 2-wire-bus family (singletons at ≥0.55; heterogeneous absence-token catch-alls at
+  ≤0.50). Root cause is general: the lever's safe/noisy discrimination is **lexical** (supply rails
+  `VDD`/`VSS`), which is **orthogonal to the structural fingerprint** — so a structural gate (cluster-scoping)
+  inherits the same blindness that made the denylist forbidden ([[feedback_avoid_denylists_prefer_structural]]),
+  and the only learnable bus-ish cluster contains the measured-regression doc I2C (gold precision 0.600,
+  [[feedback_scoring_rigor]]). **Therefore the serial-prose parked levers (`.9.10`/`.9.8b`) are excluded as
+  first-opt-in candidates** — they need participation-based identity (the `NLP-SHALLOW-PARSE` path, build-exhausted),
+  not the reuse plane. The reusable criterion: a valid first opt-in extractor must be safe *because of* a
+  structural property the fingerprint captures (so a derived multi-member cluster separates "activate here" from
+  "noisy there"); selection continues at `.3b.3a2`. This keeps the activate-only consume machinery (`.3b.3b`)
+  honestly gated rather than built around a lever it cannot safely serve.
+
 `.1` design owned; `.2` clustering engine DONE (works over the persisted corpus). The build (`.3`–`.4`) was
 **sequenced behind `EXTRACTOR-ARCHITECTURE`** — its run manifest is the behavioral fingerprint this plane
 clusters on — and that foundation is now in place (`.8` manifest exists). `.3a` surfaces the proven engine
@@ -312,6 +372,9 @@ first (no behavior change); `.3b`/`.4` (advisory consumption + offline miner) st
 | `2026-06-09` | `CORPUS-PATTERN-REUSE.3c` | wire-based eval on FRESH re-ingested evidence (`--provider skip`) | APB/AHB/AXI constraints+relations+temporal, I2C signals, SWD: all 1.000 (WIRE-BASED-100 filtered); NVMe register_field 0 = VLM-gated dataset, register surface intact 42/42 |
 | `2026-06-09` | `CORPUS-PATTERN-REUSE.3c` | `corpus-cluster` + `learn-priors` before/after | clusters 28/14 → 30/13; non-empty family profiles 4→5; harvest 10→14 accepted, profiles 2→3; new AHB+AXI-Stream profile w/ full-support fired union |
 | `2026-06-09` | `CORPUS-PATTERN-REUSE.3c` | `cargo run -p specforge -- kg-bench` after the sweep | 151/151 pass |
+| `2026-06-15` | `CORPUS-PATTERN-REUSE.3b.3a` | faithful Form-A re-derivation over 78 persisted `evidence_ir` (read-only) | fires 5/78, 0 wire-based; benefit SMBus/I2S only; noise I2C(`VDD`/`VSS`/`DLEN`) / eMMC(`VDD`) / OpenCAPI-TL(`AFUC2` false-pos) |
+| `2026-06-15` | `CORPUS-PATTERN-REUSE.3b.3a` | `corpus-cluster` @0.6 cluster mapping of the 5 firing docs | SMBus/I2S/I2C/OpenCAPI-TL singletons; eMMC↔GIC (register family 12) — no 2-wire-bus family exists |
+| `2026-06-15` | `CORPUS-PATTERN-REUSE.3b.3a` | `corpus-cluster` threshold sweep 0.40–0.60 | no clean bus family at any cut (singletons ≥0.55; absence-token catch-alls ≤0.50) → structural no-go |
 
 ## Commit Log
 
@@ -321,6 +384,7 @@ first (no behavior change); `.3b`/`.4` (advisory consumption + offline miner) st
 | `CORPUS-PATTERN-REUSE.3b.1` | `CORPUS-PATTERN-REUSE.3b.1 — per-cluster extraction profile` | Typed `ClusterExtractionProfile` + `derive_extraction_profiles` + command surfacing; activate-only decision recorded; book + README + KM in sync |
 | `CORPUS-PATTERN-REUSE.3b.2` | `CORPUS-PATTERN-REUSE.3b.2 — persist extraction profiles into CorpusMemory` | 8th prior family (schema v6) + `learn-priors` harvest + signature-subset lookup; shared `0.6` threshold const; book + README + KM in sync |
 | `CORPUS-PATTERN-REUSE.3c` | `CORPUS-PATTERN-REUSE.3c — manifest-population sweep` (this slice) | Data/no-code: 6 repo-backed docs re-ingested/rebuilt with manifests; wire-based 100% re-verified on fresh evidence; profiles 2→3 with real fired unions |
+| `CORPUS-PATTERN-REUSE.3b.3a` | `CORPUS-PATTERN-REUSE.3b.3a — first opt-in extractor: measured no-go` | Read-only measurement: the serial-prose bus-line lever is not cluster-scopable (lexical-vs-structural); structural-discrimination criterion established; docs-only |
 
 ## Changelog
 
@@ -354,3 +418,15 @@ first (no behavior change); `.3b`/`.4` (advisory consumption + offline miner) st
   measurement-first, read-only) → `.3b.3b` (build it self-disabled + plumb the activate-only consume contract +
   measure held-out uplift, wire-based 100% a hard gate). Frontier advanced to `.3b.3a`. Docs-only ownership
   slice — no code/extraction-path change; ready for fresh-session `.3b.3a` measurement.
+- `2026-06-15`: **`.3b.3a` MEASURED NO-GO (read-only) for the leading candidate; criterion sharpened.** Ran the
+  candidate measurement over the persisted 78-doc corpus (no code change): a faithful re-derivation of the
+  `.9.10` Form-A grammar ("the/The `<ALLCAPS-id>[#]` line") reproduces the probe (5/78 docs, 0 wire-based;
+  genuine benefit only on SMBus + I2S), and the `corpus-cluster` mapping is decisive — **all 5 firing docs are
+  structural singletons (SMBus/I2S/I2C/OpenCAPI-TL) or paired with a register-heavy non-bus doc (eMMC↔GIC); no
+  derived 2-wire-bus family exists at any threshold (0.40–0.60 swept).** The lever's safe/noisy split is lexical
+  (supply rails `VDD`/`VSS`), orthogonal to the structural fingerprint, and the only learnable bus-ish cluster
+  contains the measured-regression doc I2C (gold 0.600) — so cluster-scoping can't replace the forbidden
+  denylist. Closed `.3b.3a` (no-go), recorded the **structural-discrimination criterion** in Decisions, excluded
+  the serial-prose levers as first-opt-in candidates, and spun `.3b.3a2` (continue the read-only search for a
+  structurally-discriminated candidate); `.3b.3b` stays gated. KM card
+  `corpus-reuse-serial-prose-lever-not-cluster-scopable`. Docs-only.

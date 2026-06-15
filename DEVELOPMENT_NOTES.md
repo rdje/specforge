@@ -1,4 +1,35 @@
 # DEVELOPMENT_NOTES
+## CORPUS-PATTERN-REUSE.3b.3a (`2026-06-15`) — first opt-in extractor: measured NO-GO (read-only)
+- **Why:** PNT advanced to `CORPUS-PATTERN-REUSE.3b.3a` — select + justify the FIRST opt-in extractor so the
+  reuse plane's **activate-only** consume contract (`.3b.3b`) has something to activate. The activate-only
+  machinery only earns its keep for a lever that helps one derived cluster but is too noisy default-on; the
+  leading candidate was the parked `PDF-VARIANT-DIGESTION.9.10` prose bus-line lever.
+- **What the measurement showed (no code/extraction-path change):**
+  1. **Faithful Form-A re-derivation** ("the/The `<ALLCAPS-id>[#]` line", over `extracted_statements[].text`
+     across all 78 persisted `evidence_ir`) reproduces the `.9.10` probe: fires **5/78, 0 wire-based**; genuine
+     benefit only on SMBus (`SMBCLK`/`SMBDAT`/`SMBSUS#`) + I2S (`WS`); the rest is noise — I2C
+     (`VDD`/`VSS`/`DLEN`), eMMC (`VDD`), OpenCAPI-TL (`AFUC2` false-positive from cache-line prose).
+  2. **`corpus-cluster` mapping (decisive):** all 5 firing docs are structural SINGLETONS
+     (SMBus/I2S/I2C/OpenCAPI-TL) or paired with a register-heavy non-bus doc (eMMC↔GIC, family 12). A threshold
+     sweep (0.40–0.60) shows NO clean 2-wire-bus family at any cut: singletons ≥0.55, 15–32-doc absence-token
+     (`serial_frame:b0`) catch-alls ≤0.50.
+- **Root cause (the reusable finding):** the lever's safe/noisy split is **lexical** (supply-rail names
+  `VDD`/`VSS`), which is **orthogonal to the structural fingerprint** the reuse plane clusters on. A structural
+  gate (cluster-scoping) therefore inherits the same blindness that made the supply-rail denylist forbidden —
+  and the only learnable bus-ish cluster (the persisted support-5 TileLink/I2C/HBM2/GFB profile) contains the
+  MEASURED regression doc I2C (declared-signal gold precision 0.600), not the benefit docs. So cluster-scoping
+  cannot replace the forbidden denylist; this lever genuinely needs participation-based signal identity (the
+  `NLP-SHALLOW-PARSE` path, independently measured build-exhausted).
+- **Decision:** do NOT select the serial-prose levers (`.9.10`/`.9.8b`) as the first opt-in extractor — they
+  are lexically-discriminated by construction. Established the **structural-discrimination criterion**: a valid
+  first opt-in extractor must be safe *because of* a structural property a derived multi-member cluster's
+  fingerprint captures (so activation aligns with the fingerprint, not a name list). Closed `.3b.3a` (no-go),
+  spun `.3b.3a2` to continue the read-only search (e.g. the CCIX message-field family's distinctive `fired:`
+  signature); `.3b.3b` (build the activate-only consume contract) stays correctly gated.
+- **Verification:** read-only `target/release/specforge corpus-cluster` (+ `--threshold` sweep) + a faithful
+  Python re-derivation of the Form-A grammar over the persisted corpus; memory-arch self-check + KM derive-and-diff
+  green; no Rust/CI/book change. KM card `corpus-reuse-serial-prose-lever-not-cluster-scopable`.
+
 ## NLP-SHALLOW-PARSE.2f (`2026-06-15`) — measured NO-GO → BUILD frontier measured-EXHAUSTED
 - **Why:** PNT advanced to the next frontier leaf `.2f` ("clause split + coordination
   distribution"). Opened measurement-first (as `.2h`) and found it already covered.
