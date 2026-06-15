@@ -96,14 +96,21 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
   Commit: `pending`
 
 - ID: `CANONICAL-PROMOTION-SWEEP.3`
-  Status: `pending` (gated on `.1`)
+  Status: `in_progress` (`2026-06-15`, dedicated session — owner authorized "run both, .3 then .2")
   Goal: **scale to the remaining in-scope corpus**, one doc at a time, each with before/after gauge + RAM
   recorded, host-local-source docs honestly skipped. Roll up a corpus-wide before/after gauge summary +
   refresh `VALIDATION_SNAPSHOT.md` / `LIVE_ACHIEVEMENT_STATUS.md`.
   Acceptance: every in-scope doc promoted-or-honestly-skipped with recorded evidence; corpus gauge summary
   refreshed; no wire regression anywhere; RAM-safe throughout.
-  Verification: `pending`
-  Commit: `pending`
+  Scope (inventoried `2026-06-15`): 78 evidence bundles present → **31 carry a Pattern `signal_constraints`
+  surface**; minus 4 already-promoted (AXI `ihi0022_l`, APB5 `ihi0024_e`, AHB `ihi0033_c` from
+  `LLM-PRIMARY-PROMOTION.5`; HBM2 from `.1`) minus the wire-gold SWD `ihi0074_a` (→ `.2`) = **26 non-wire
+  docs in `.3` scope**. The other 47 bundles carry 0 constraints (nothing to promote — honestly skipped).
+  Promotion runs the locked no-re-ingest protocol per doc; **keep/revert rule** (below) decides each.
+  Batch A (13 smallest, `2026-06-15`): **12 kept / 1 reverted** — see Verification Log.
+  Verification: batch A done (12 kept, 1 reverted `soc600_0701`, kg-bench 156/156, RAM min 43% free);
+  batches B/C `pending`.
+  Commit: `CANONICAL-PROMOTION-SWEEP.3 — batch A (13 smallest non-wire): 12 promoted on canonical, 1 reverted, RAM-safe`
 
 ## Current Frontier
 
@@ -111,7 +118,7 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
 | --- | --- | --- | --- |
 | 1 | `CANONICAL-PROMOTION-SWEEP.1` | `done` (`2026-06-15`, dedicated session) | **DONE.** Non-wire HBM2 pilot promoted on canonical (85.7%→40.0% not-entailed, 14→20 records), RAM ≥42% free throughout, `kg-bench` 156/156, repeatable no-re-ingest protocol locked into Decisions. Reproduced the `.4` /tmp datum exactly on canonical. |
 | 2 | `CANONICAL-PROMOTION-SWEEP.2` | `pending` (**frontier** — unblocked by `.1`) | Wire docs (APB/AHB/AXI/SWD) under the full `WIRE-BASED-100` gold battery on canonical; revert any doc that regresses (the `.3` AXI precedent). Highest-risk + highest-value → strictest gate. RAM-heavy → dedicated-session discipline (same protocol as `.1`, plus the full battery re-verified `1.000` on the promoted canonical artifact). |
-| 3 | `CANONICAL-PROMOTION-SWEEP.3` | `pending` (unblocked by `.1`, parallel to `.2`) | Scale to the rest of the in-scope corpus, one non-wire doc at a time, each with before/after gauge + RAM recorded; host-local-source docs honestly skipped. Roll up a corpus-wide gauge summary. |
+| 2b | `CANONICAL-PROMOTION-SWEEP.3` | `in_progress` (**frontier** — batch A done `2026-06-15`) | Scale to the 26 non-wire docs with constraints, one at a time, before/after gauge + RAM recorded; keep/revert rule per doc. **Batch A (13 smallest) DONE: 12 kept, 1 reverted, kg-bench 156/156, RAM min 43%.** Remaining: batch B (9 medium, 11–20 cons) + batch C (4 big — LPI 30, LTI 41, AXI+ACE 97, DTI 114). |
 
 ## Decisions
 
@@ -170,6 +177,30 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
 - `2026-06-15`: **`promotion_status` = `not_promoted_review_required` for HBM2.** The mutation is realized in
   local generated state (improvement recorded), but the canonical surface is NOT declared owner-approved; the
   `.prepromote.bak` backups stand by for revert pending review (the `R7-VALIDATION` doctrine).
+- `2026-06-15`: **Owner authorized the full sweep — "run both, .3 then .2"** (fresh dedicated session, 82% RAM
+  free, no model loaded; the recorded gate that paused after `.1` was the question, and the owner chose to run
+  the whole sweep, non-wire scale-out first then wire docs). PNT resumes here under the locked protocol.
+- `2026-06-15`: **WRITE-PATH FINDING (durable; KM `canonical-promotion-output-path-artifact-layout`):** stage
+  commands persist by the artifact's recorded `artifact_layout` (canonical `generated/<stage>/<key>/...`),
+  **not** by the input path. So passing the canonical evidence path rewrites it in place (correct promotion),
+  but running any command on a `*.prepromote.bak`/copy CLOBBERS canonical with the copy's content. The `.3`
+  driver therefore always passes canonical paths, captures BEFORE in-flow before the promote overwrites it,
+  and reverts by `cp`-ing a backup back (a plain file copy), never by *running a command* on the backup.
+- `2026-06-15`: **LOCKED KEEP/REVERT RULE for the scale-out (quality-grounded, generalizes the `.1`
+  improves-or-neutral acceptance).** Per doc, compare the NLI gauge BEFORE (Pattern surface) vs AFTER (promoted
+  surface): **REVERT** the doc iff `entailed_after < entailed_before` (promotion lost a verified-correct
+  constraint) **OR** (both surfaces are gauge-measured AND the not-entailed *fraction* worsened). **KEEP**
+  otherwise — i.e. keep improvements, gauge-neutral results, and the precision-play case where an all-not-
+  entailed Pattern surface (e.g. CHI 0E/5N, eMMC 0E/6N) correctly collapses to 0 groundable constraints
+  (removed only un-entailed claims, lost no verified one). KEEP is also what the default-`converge` pipeline
+  would produce, so canonical stays consistent with the default flip. Revert = `cp` all 4 stage `*.bak` back;
+  if a reverted doc's downstream stages were freshly created from the promoted evidence (no prior stage to
+  back up), rebuild them deterministically (`semantic`→`intent`→`adapt`) from the reverted Pattern evidence.
+- `2026-06-15`: **The RAM watchdog is integrated into the per-doc driver** (`/tmp/sweep.sh`, untracked
+  operational tooling — the watchdog the protocol mandates, not product code): a background sampler reads
+  `memory_pressure` free% every 3s, records the min, and on `≤15% free` writes a STOP flag + `pkill`s the
+  specforge child + `ollama stop`s the model, aborting the whole sweep. Each per-command step also carries a
+  `gtimeout 1800` hang-guard. Sequential, one heavy job at a time; model `ollama stop`-freed at batch end.
 
 ## Open Questions
 
@@ -192,6 +223,11 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
 | `2026-06-15` | `.1` | HBM2 AFTER `nli-verify` (promoted surface) | 8/20 not-entailed = **40.0%** (12E/8N/0A) — reproduces `.4` "85.7%→40%" EXACTLY on canonical |
 | `2026-06-15` | `.1` | RAM watchdog (3s sampling, all three 14B steps) | min **42% free** (BEFORE 43, PROMOTE 42, AFTER 42); never ≤15% free; model `ollama stop`-freed → 43% |
 | `2026-06-15` | `.1` | `specforge kg-bench` | **156/156** passed, 0 failed |
+| `2026-06-15` | `.3` batch A | 13 smallest non-wire docs, full no-re-ingest protocol each | **12 kept / 1 reverted**; aggregate over the 12 kept: BEFORE **5E/44N = 89.8% not-entailed** → AFTER **26E/11N = 29.7%** |
+| `2026-06-15` | `.3` batch A | per-doc highlights | mmu_700 4E/3N→9E/2N (7→11 recs); opencapi_3_0 0E/4N→5E/2N (4→7); opencapi_3_1 0E/8N→5E/2N (8→7); gic_600 1E/8N→2E/1N (9→3); intel_vtd 0E/4N→1E/0N (4→1); CXS 0E/2N→1E/2N; usb4_cm 0E/1N→1E/1N; soc600_0100 0E/1N→2E/1N; CHI 0E/5N→0 (precision-collapse), eMMC 0E/6N→0, i2s/soc600_0200 1→0 (all-NE Pattern removed, no verified lost — kept) |
+| `2026-06-15` | `.3` batch A | REVERT | `100806_0701_17` coresight_soc_600: 1E/1N → 0E/2N (lost its one entailed constraint) → reverted all stages to Pattern (recs2, 1E/1N), downstream rebuilt deterministically |
+| `2026-06-15` | `.3` batch A | `specforge kg-bench` (global gate) | **156/156** passed, 0 failed |
+| `2026-06-15` | `.3` batch A | RAM watchdog (3s sampling, model 9.7 GB @ 100% GPU) | **min 43% free** throughout; never ≤15% free; `ollama stop`-freed at batch end |
 
 ## Commit Log
 
@@ -199,6 +235,7 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
 | --- | --- | --- |
 | `CANONICAL-PROMOTION-SWEEP` (tree) | `CANONICAL-PROMOTION-SWEEP.0 — create tree` | ownership/scoping slice; no canonical mutation yet |
 | `.1` | `CANONICAL-PROMOTION-SWEEP.1 — non-wire HBM2 pilot: canonical promotion 85.7%→40.0%, RAM-safe, protocol locked` | docs-only commit (the canonical mutation is in git-ignored `generated/`); HBM2 promoted on canonical; protocol locked in Decisions |
+| `.3` (batch A) | `CANONICAL-PROMOTION-SWEEP.3 — batch A (13 smallest non-wire): 12 promoted on canonical, 1 reverted, RAM-safe` | docs-only (canonical mutation in git-ignored `generated/`); 12 docs promoted + kept (89.8%→29.7% NE aggregate), `soc600_0701` reverted; KM card `canonical-promotion-output-path-artifact-layout` added |
 
 ## Changelog
 
@@ -223,3 +260,14 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
   (wire docs, full gold battery) / `.3` (non-wire scale-out). KM card `canonical-promotion-no-reingest-protocol`.
   Docs-only commit (no tracked code/IR change). No README/book change (not a closing leaf; no user-facing command
   or capability change — promotion is already documented by `LLM-PRIMARY-PROMOTION.5`).
+- `2026-06-15`: **`.3` started — owner authorized "run both, .3 then .2".** Inventoried scope (78 evidence
+  bundles → 31 with constraints → 26 non-wire docs in `.3` after excluding 4 already-promoted + wire-gold SWD).
+  Locked the per-doc keep/revert rule (revert iff entailed dropped or NE-fraction worsened; else keep) and the
+  durable WRITE-PATH finding (commands persist by `artifact_layout`, not the input path → never run a command
+  on a backup; KM card added). Built the integrated-RAM-watchdog per-doc driver. **Batch A (13 smallest
+  non-wire docs) DONE:** 12 promoted on canonical and kept (aggregate over the 12: **89.8% → 29.7%
+  not-entailed**, entailed 5→26), `100806_0701_17` coresight_soc_600 reverted (lost its one entailed
+  constraint) and its downstream deterministically rebuilt to a consistent Pattern state. `kg-bench` 156/156;
+  RAM min **43% free** throughout (watchdog, model 9.7 GB @ GPU, `ollama stop`-freed). All canonical mutations
+  in git-ignored `generated/` with `*.prepromote.bak` retained; `promotion_status = not_promoted_review_required`.
+  Docs-only commit. Frontier → batch B (9 medium) + batch C (4 big).

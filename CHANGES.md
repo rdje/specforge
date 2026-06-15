@@ -1,3 +1,35 @@
+### CANONICAL-PROMOTION-SWEEP.3 (batch A) — 13 smallest non-wire docs: 12 promoted on canonical, 1 reverted, RAM-safe
+Dedicated session; owner authorized the full sweep ("run both, .3 then .2"). First scale-out slice of `.3`:
+land the now-default LLM-primary constraint promotion on the corpus's non-wire CANONICAL artifacts, RAM-safe +
+review-gated. Docs-only commit — every canonical mutation lands in git-ignored `generated/` (`*.prepromote.bak`
+retained; `promotion_status = not_promoted_review_required`).
+
+- **Scope inventoried:** 78 evidence bundles present → **31 carry a Pattern `signal_constraints` surface** →
+  after excluding 4 already-promoted (AXI/APB5/AHB from `LLM-PRIMARY-PROMOTION.5`, HBM2 from `.1`) and the
+  wire-gold SWD `ihi0074_a` (→ `.2`), **26 non-wire docs are in `.3` scope**; the other 47 bundles carry 0
+  constraints (nothing to promote — honestly skipped).
+- **Per-doc protocol = the `.1` no-re-ingest sequence** (backup → BEFORE `nli-verify` → `extract-constraints-llm`
+  promote-in-place → deterministic `semantic`/`intent`/`adapt` rebuild → AFTER `nli-verify`), driven by an
+  integrated RAM watchdog (3s `memory_pressure` sampling, abort `≤15% free`, `gtimeout 1800` per step, model
+  serialized + `ollama stop`-freed at batch end).
+- **Locked keep/revert rule:** REVERT a doc iff `entailed_after < entailed_before` (lost a verified-correct
+  constraint) OR (both surfaces measured AND the not-entailed fraction worsened); KEEP otherwise — including the
+  precision-play case where an all-not-entailed Pattern surface (CHI 0E/5N, eMMC 0E/6N) collapses to 0
+  groundable constraints (removed only un-entailed claims, lost no verified one).
+- **Batch A (13 smallest) result:** **12 kept / 1 reverted.** Aggregate over the 12 kept: BEFORE **5E/44N =
+  89.8% not-entailed** → AFTER **26E/11N = 29.7%** (entailed 5→26). Highlights: mmu_700 4E/3N→9E/2N (7→11
+  recs), opencapi_3_0 0E/4N→5E/2N (4→7), opencapi_3_1 0E/8N→5E/2N (8→7), gic_600 1E/8N→2E/1N (9→3), intel_vtd
+  0E/4N→1E/0N. Reverted: `100806_0701_17` coresight_soc_600 (1E/1N→0E/2N) → restored to a consistent Pattern
+  state (recs2, 1E/1N), downstream rebuilt deterministically.
+- **Gates:** `kg-bench` **156/156** (corpus-independent fixtures — proves no global KG regression); RAM **min
+  43% free** throughout (model 9.7 GB @ 100% GPU; never ≤15% free / ≥85% used; never the 90→93% reboot zone).
+- **Durable finding (KM card `canonical-promotion-output-path-artifact-layout`):** stage commands persist by the
+  artifact's recorded `artifact_layout` (canonical `generated/<stage>/<key>/...`), NOT the input path — so
+  promotion-in-place is correct, but running a command on a `*.prepromote.bak`/copy CLOBBERS canonical. The
+  driver always passes canonical paths and reverts by `cp` (never by running a command on a backup).
+- Frontier → batch B (9 medium, 11–20 cons) + batch C (4 big: LPI 30 / LTI 41 / AXI+ACE 97 / DTI 114), then
+  `.2` wire docs.
+
 ### CANONICAL-PROMOTION-SWEEP.1 — non-wire HBM2 pilot: canonical promotion 85.7%→40.0%, RAM-safe, protocol locked
 Dedicated session (owner-confirmed "start the pilot"). First execution leaf of the new
 `CANONICAL-PROMOTION-SWEEP` tree: land the now-default LLM-primary constraint promotion on a CANONICAL
