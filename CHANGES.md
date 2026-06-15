@@ -1,3 +1,21 @@
+### CORPUS-PATTERN-REUSE.3b.3a2 — activate-only consume: no current consumer → measured-STANDING (docs-only, read-only)
+PNT slice continuing `.3b.3a`. The serial-prose no-go GENERALIZES: a read-only survey of the `Extractor`
+framework proves the reuse plane's activate-only consume mechanism has NO valid first opt-in extractor in the
+current 78-doc corpus. No code/extraction-path change.
+
+- **ZERO production extractors override `applies_to`** (the only `false` overrides are 2 test-only `Toy`
+  fixtures), and **`ExtractionContext` carries only the per-document `statements`** — there is no cross-document
+  profile field today. So all 8 framework surfaces self-gate LOCALLY and run default-on.
+- **The activate-only niche is empty:** the cluster mechanism only helps an extractor whose applicability is NOT
+  locally determinable yet IS cross-document-predictable. But a structurally-safe extractor self-tests locally
+  (→ default-on, no cluster help needed), and the only lexically-ambiguous lever (`.9.10`) has non-clustering
+  docs. Nothing occupies the niche.
+- **Outcome:** building the activate-only plumbing (`.3b.3b`) now is YAGNI + gate-risky → it stays correctly
+  DEFERRED with a precise re-open trigger (an extraction that is cross-document-predictable-but-not-locally-testable
+  AND whose safe docs form a multi-member cluster). The CORPUS-PATTERN-REUSE **consume side `.3b.3` is now
+  measured-STANDING**; the learn side is complete; only `.4` (offline miner, gated) remains buildable. KM card
+  `corpus-reuse-activate-only-no-current-consumer`; memory-arch + KM gates green; no Rust/CI/book change.
+
 ### CORPUS-PATTERN-REUSE.3b.3a — first opt-in extractor: measured NO-GO (docs-only, read-only)
 PNT slice. Selected + measured the leading first-opt-in-extractor candidate for the reuse plane's
 activate-only consume contract — the parked `PDF-VARIANT-DIGESTION.9.10` prose bus-line lever

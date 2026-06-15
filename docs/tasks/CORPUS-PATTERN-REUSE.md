@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CORPUS-PATTERN-REUSE`
-- Status: `active` (design owned; build gated on the extractor-framework foundation + owner go)
+- Status: `active` (learn side complete; **consume side `.3b.3` measured-STANDING / built-deferred** `2026-06-15` — no valid first opt-in extractor in the current corpus; only remaining buildable leaf is `.4` offline miner, gated on owner go)
 - Roadmap lane: `R15` (cross-document learning plane) / `R16` (extraction) — builds on `CorpusMemory`
 - Created: `2026-06-09`
 - Parent: owner strategic directive (`2026-06-09`) — "we should be able to [recognize/reuse] patterns in
@@ -243,7 +243,7 @@ gauges (did the profile reduce misses on held-out docs?).
     noisy only on docs lacking it — so a derived multi-member cluster cleanly separates "activate here" from
     "noisy there." `.3b.3b` (build) stays correctly gated; selection continues at `.3b.3a2`. KM card
     `corpus-reuse-serial-prose-lever-not-cluster-scopable`.
-- ID: `CORPUS-PATTERN-REUSE.3b.3a2` · Status: `pending` (frontier; succeeds the `.3b.3a` no-go) · Goal:
+- ID: `CORPUS-PATTERN-REUSE.3b.3a2` · Status: `done` (`2026-06-15`) · Goal:
   **continue first-opt-in-extractor selection under the STRUCTURAL-discrimination criterion** (`.3b.3a` measured
   that the serial-prose levers are lexically-discriminated and so cannot be cluster-scoped). Measurement-first,
   read-only: look for an extraction that is safe *because of* a structural property a derived multi-member
@@ -251,7 +251,31 @@ gauges (did the profile reduce misses on held-out docs?).
   message-field family — family 7) and noisy/absent elsewhere, so activation aligns with the fingerprint rather
   than a name list. Acceptance: a structurally-justified candidate (or an honest no-go) recorded with
   measurement; no code/extraction-path change. Gates `.3b.3b`.
-- ID: `CORPUS-PATTERN-REUSE.3b.3b` · Status: `pending` (gated on `.3b.3a2`) · Goal: **BUILD the selected opt-in
+  **DONE (`2026-06-15`) — MEASURED NO-GO for ANY first opt-in extractor in the current corpus; the activate-only
+  consume mechanism has no valid first consumer yet → the consume side is measured-STANDING (built-deferred).**
+  Surveyed the `Extractor` framework (`ir/extractor.rs` + the registered surfaces) read-only — the structural
+  reason GENERALIZES beyond the serial-prose lever:
+  - **Every production extractor self-gates LOCALLY.** `Extractor::applies_to` defaults `true`, and the contract
+    is "a self-gating extractor (returns `[]` when its grammar does not match) needs no separate gate."
+    Measured: **ZERO production extractors override `applies_to`** (the only `false` overrides are the two
+    test-only `Toy` fixtures), and **`ExtractionContext` carries only the per-document `statements`** — there is
+    no cross-document profile field today (plumbing one in is exactly what `.3b.3b` would build). So structural
+    applicability is decided from the document's OWN content, per-document.
+  - **The niche the activate-only mechanism serves is EMPTY in this corpus.** A cluster-profile→`applies_to`
+    activation only adds value for an extractor whose applicability is (a) NOT locally determinable from the
+    document's own statements yet (b) IS predictable from cross-document cluster membership. But (i) a
+    STRUCTURALLY-safe extractor is locally self-testable → it is DEFAULT-ON and never needs the cluster
+    mechanism (how all 8 framework surfaces already work), and (ii) the one lever whose applicability is NOT
+    locally determinable — the LEXICALLY-ambiguous `.9.10` bus-line lever (`.3b.3a`) — has docs that do not
+    cluster (singletons). No extraction occupies the (b)-but-not-(a) niche.
+  - **Conclusion:** there is no valid first opt-in extractor to select in the current 78-doc corpus, so building
+    the activate-only consume plumbing (`.3b.3b`) now would be speculative (YAGNI) and gate-risky (it touches the
+    extractor path) — it stays correctly DEFERRED. The consume frontier (`.3b.3`) becomes measured-STANDING with
+    a PRECISE re-open trigger: an extraction whose applicability is cross-document-predictable-but-not-locally-testable
+    AND whose safe docs form a multi-member derived cluster (e.g. a future corpus carrying ≥2 SMBus-class variants
+    that cluster, making the bus-line lever cluster-safe). The learn side of `.3b` stays complete; `.4` (offline
+    miner) stays gated. KM card `corpus-reuse-activate-only-no-current-consumer`.
+- ID: `CORPUS-PATTERN-REUSE.3b.3b` · Status: `pending` (gated — DEFERRED until a real consumer appears, per `.3b.3a2`) · Goal: **BUILD the selected opt-in
   extractor self-disabled (`applies_to` defaults `false`) + plumb the persisted `ExtractionProfile` into
   `ExtractionContext` + implement the structurally-enforced activate-only `applies_to` (enable iff the doc
   fingerprint is a subset-match of the cluster signature AND the prior is not contested) + measure recall uplift
@@ -291,19 +315,18 @@ gauges (did the profile reduce misses on held-out docs?).
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `CORPUS-PATTERN-REUSE.3b.3a2` | `pending` | **Continue selection under the structural-discrimination criterion.** `.3b.3a` MEASURED the leading serial-prose candidate (`.9.10` bus-line lever) a NO-GO — its safe/noisy split is lexical (supply rails), orthogonal to the structural fingerprint, so cluster-scoping can't separate benefit (SMBus/I2S, structural singletons) from harm (the measured I2C doc). Next: find a STRUCTURALLY-discriminated candidate. Read-only. |
-| 2 | `CORPUS-PATTERN-REUSE.3b.3b` | `pending` (gated) | BUILD the selected extractor self-disabled + activate-only consume contract + measured held-out uplift. Gated on a structurally-discriminated candidate from `.3b.3a2`. Behavioral → wire-based 100% must not regress. |
-| 3 | `CORPUS-PATTERN-REUSE.4` | `pending` (gated) | Offline LLM/VLM cluster pattern miner with held-out precision validation. |
+| — | `CORPUS-PATTERN-REUSE.3b.3` (consume) | `measured-STANDING` (built-deferred) | `.3b.3a` + `.3b.3a2` MEASURED that the activate-only consume mechanism has NO valid first consumer in the current 78-doc corpus: structurally-safe extractors self-gate LOCALLY (all 8 surfaces are default-on; zero `applies_to` overrides), and the one lexically-ambiguous lever (`.9.10`) has docs that don't cluster. Re-open trigger: an extraction that is cross-document-predictable-but-not-locally-testable AND whose safe docs form a multi-member cluster. |
+| 1 (gated) | `CORPUS-PATTERN-REUSE.4` | `pending` (gated on owner go) | Offline LLM/VLM cluster pattern miner with held-out precision validation — the remaining buildable leaf, RAM-heavy, gated. |
 
 `.3a` DONE (the `corpus-cluster` command), `.3b.1` DONE (typed profile + derivation + surfacing), `.3b.2`
 DONE (profiles persisted into `CorpusMemory` as the 8th prior family + `learn-priors` harvest + subset-match
 lookup), `.3c` DONE (the manifest-population sweep over every repo-backed doc — profiles now carry real fired
-unions), **`.3b.3a` DONE (`2026-06-15`) — the first-opt-in candidate SELECTION measured the leading serial-prose
-lever a NO-GO (lexical-vs-structural; see Decisions) and established the structural-discrimination criterion**.
-The learn side of `.3b` is complete; the consume side `.3b.3` still needs a STRUCTURALLY-discriminated first
-opt-in extractor (`.3b.3a2` continues the read-only search) before `.3b.3b` can build, and `.4` (offline miner)
-stays gated. Residual sparsity (~66 host-local-source docs) shrinks only when their PDFs are re-provided —
-honest scope, not debt.
+unions), **`.3b.3a` + `.3b.3a2` DONE (`2026-06-15`) — the first-opt-in-extractor SELECTION is a measured NO-GO**:
+`.3b.3a` excluded the leading serial-prose lever (lexical-vs-structural), and `.3b.3a2` proved the structural
+reason generalizes (self-gating ⟹ default-on; the activate-only niche is empty in this corpus) → the **consume
+side `.3b.3` is measured-STANDING (built-deferred)** with a precise re-open trigger. The LEARN side of `.3b` is
+complete; the only remaining buildable leaf is `.4` (offline miner, RAM-heavy, gated on owner go). Residual
+sparsity (~66 host-local-source docs) shrinks only when their PDFs are re-provided — honest scope, not debt.
 
 ## Decisions
 
@@ -349,6 +372,17 @@ honest scope, not debt.
   structural property the fingerprint captures (so a derived multi-member cluster separates "activate here" from
   "noisy there"); selection continues at `.3b.3a2`. This keeps the activate-only consume machinery (`.3b.3b`)
   honestly gated rather than built around a lever it cannot safely serve.
+- `2026-06-15`: **The activate-only consume mechanism has NO valid first consumer in the current corpus →
+  consume side measured-STANDING (built-deferred) — `.3b.3a2`.** Surveying the `Extractor` framework proved the
+  `.3b.3a` no-go generalizes: structural applicability is decided per-document (`ExtractionContext` carries only
+  `statements`; `applies_to` defaults `true`; ZERO production extractors override it — all 8 surfaces self-gate
+  and are default-on), so a STRUCTURALLY-safe extractor never needs the cluster mechanism, and the only
+  lexically-ambiguous lever (`.9.10`) has non-clustering docs. The activate-only niche — applicability
+  cross-document-predictable but NOT locally testable, with the safe docs in a multi-member cluster — is empty
+  here. Building `.3b.3b` now would be speculative (YAGNI) and gate-risky (touches the extractor path), so it
+  stays DEFERRED with a precise re-open trigger (a future extraction meeting both niche conditions). This mirrors
+  the measured-DEFER/STANDING resolutions of `NLP-SHALLOW-PARSE` (build-exhausted) and `MEMORY-BOUNDED-INGEST.5`
+  ([[feedback_scoring_rigor]] — measured, not assumed). KM card `corpus-reuse-activate-only-no-current-consumer`.
 
 `.1` design owned; `.2` clustering engine DONE (works over the persisted corpus). The build (`.3`–`.4`) was
 **sequenced behind `EXTRACTOR-ARCHITECTURE`** — its run manifest is the behavioral fingerprint this plane
@@ -375,6 +409,8 @@ first (no behavior change); `.3b`/`.4` (advisory consumption + offline miner) st
 | `2026-06-15` | `CORPUS-PATTERN-REUSE.3b.3a` | faithful Form-A re-derivation over 78 persisted `evidence_ir` (read-only) | fires 5/78, 0 wire-based; benefit SMBus/I2S only; noise I2C(`VDD`/`VSS`/`DLEN`) / eMMC(`VDD`) / OpenCAPI-TL(`AFUC2` false-pos) |
 | `2026-06-15` | `CORPUS-PATTERN-REUSE.3b.3a` | `corpus-cluster` @0.6 cluster mapping of the 5 firing docs | SMBus/I2S/I2C/OpenCAPI-TL singletons; eMMC↔GIC (register family 12) — no 2-wire-bus family exists |
 | `2026-06-15` | `CORPUS-PATTERN-REUSE.3b.3a` | `corpus-cluster` threshold sweep 0.40–0.60 | no clean bus family at any cut (singletons ≥0.55; absence-token catch-alls ≤0.50) → structural no-go |
+| `2026-06-15` | `CORPUS-PATTERN-REUSE.3b.3a2` | `Extractor` framework survey (`grep`/AST of `applies_to` overrides) | ZERO production `applies_to` overrides (only 2 test-only `Toy` `false` fixtures); `ExtractionContext` = per-document `statements` only → all surfaces self-gate / default-on |
+| `2026-06-15` | `CORPUS-PATTERN-REUSE.3b.3a2` | logical analysis (read-only) | activate-only niche (cross-doc-predictable ∧ not-locally-testable ∧ clustered safe docs) is empty in this corpus → consume side measured-STANDING (built-deferred) |
 
 ## Commit Log
 
@@ -385,6 +421,7 @@ first (no behavior change); `.3b`/`.4` (advisory consumption + offline miner) st
 | `CORPUS-PATTERN-REUSE.3b.2` | `CORPUS-PATTERN-REUSE.3b.2 — persist extraction profiles into CorpusMemory` | 8th prior family (schema v6) + `learn-priors` harvest + signature-subset lookup; shared `0.6` threshold const; book + README + KM in sync |
 | `CORPUS-PATTERN-REUSE.3c` | `CORPUS-PATTERN-REUSE.3c — manifest-population sweep` (this slice) | Data/no-code: 6 repo-backed docs re-ingested/rebuilt with manifests; wire-based 100% re-verified on fresh evidence; profiles 2→3 with real fired unions |
 | `CORPUS-PATTERN-REUSE.3b.3a` | `CORPUS-PATTERN-REUSE.3b.3a — first opt-in extractor: measured no-go` | Read-only measurement: the serial-prose bus-line lever is not cluster-scopable (lexical-vs-structural); structural-discrimination criterion established; docs-only |
+| `CORPUS-PATTERN-REUSE.3b.3a2` | `CORPUS-PATTERN-REUSE.3b.3a2 — activate-only consume: no current consumer (measured-STANDING)` | Read-only `Extractor`-framework survey: structural safety ⟹ self-gating/default-on; activate-only niche empty in this corpus → consume side built-deferred; docs-only |
 
 ## Changelog
 
@@ -430,3 +467,13 @@ first (no behavior change); `.3b`/`.4` (advisory consumption + offline miner) st
   the serial-prose levers as first-opt-in candidates, and spun `.3b.3a2` (continue the read-only search for a
   structurally-discriminated candidate); `.3b.3b` stays gated. KM card
   `corpus-reuse-serial-prose-lever-not-cluster-scopable`. Docs-only.
+- `2026-06-15`: **`.3b.3a2` MEASURED NO-GO for ANY first opt-in extractor → consume side measured-STANDING.** The
+  read-only `Extractor`-framework survey proved the `.3b.3a` no-go generalizes: ZERO production extractors override
+  `applies_to` (only 2 test-only `Toy` `false` fixtures) and `ExtractionContext` carries only per-document
+  `statements`, so structural applicability is decided LOCALLY → a structurally-safe extractor is default-on and
+  never needs the cluster mechanism, while the only lexically-ambiguous lever (`.9.10`) has non-clustering docs.
+  The activate-only niche (cross-document-predictable ∧ not-locally-testable ∧ clustered safe docs) is empty in
+  this corpus, so `.3b.3b` stays correctly DEFERRED (building it now = YAGNI + gate-risk) with a precise re-open
+  trigger. Closed `.3b.3a2`; the CORPUS-PATTERN-REUSE consume frontier (`.3b.3`) is now measured-STANDING — the
+  learn side is complete and the only remaining buildable leaf is `.4` (offline miner, gated). KM card
+  `corpus-reuse-activate-only-no-current-consumer`. Docs-only.

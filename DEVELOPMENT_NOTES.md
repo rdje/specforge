@@ -1,4 +1,29 @@
 # DEVELOPMENT_NOTES
+## CORPUS-PATTERN-REUSE.3b.3a2 (`2026-06-15`) — activate-only consume: no current consumer (read-only)
+- **Why:** `.3b.3a` excluded the leading serial-prose candidate; `.3b.3a2` asks whether ANY first opt-in
+  extractor exists under the structural-discrimination criterion, so the activate-only consume side (`.3b.3b`)
+  is either unblocked or honestly resolved.
+- **What the survey showed (read-only, no code change):** the `Extractor` framework (`ir/extractor.rs`) makes
+  the `.3b.3a` no-go GENERAL. `Extractor::applies_to` defaults `true` ("a self-gating extractor needs no
+  separate gate"); **ZERO production extractors override it** (the only `false` overrides are the two test-only
+  `Toy` fixtures), and **`ExtractionContext` carries only `statements`** (per-document) — no cross-document
+  profile field. So structural applicability is decided LOCALLY, per-document.
+- **The structural argument:** a cluster-profile→`applies_to` activation only adds value when an extractor's
+  applicability is (a) NOT locally determinable yet (b) IS cross-document-predictable. A structurally-safe
+  extractor satisfies neither — it self-tests locally, so it is DEFAULT-ON and needs no cluster help (this is
+  why all 8 framework surfaces are default-on). The only lever that is NOT locally determinable — the
+  LEXICALLY-ambiguous `.9.10` bus-line lever — has non-clustering docs (`.3b.3a`). The (b)-but-not-(a) niche is
+  empty in the current corpus.
+- **Decision:** do NOT build `.3b.3b` now — it would be speculative (YAGNI) and gate-risky (touches the
+  extractor path, wire-based-100% a hard gate). The CORPUS-PATTERN-REUSE consume frontier (`.3b.3`) is
+  **measured-STANDING (built-deferred)** with a precise re-open trigger: an extraction whose applicability is
+  cross-document-predictable-but-not-locally-testable AND whose safe docs form a multi-member derived cluster.
+  Mirrors `NLP-SHALLOW-PARSE` (build-exhausted) and `MEMORY-BOUNDED-INGEST.5` (measured-defer). The learn side
+  of `.3b` stays complete; only `.4` (offline miner, RAM-heavy, gated) remains buildable.
+- **Verification:** read-only `grep`/AST survey of `applies_to` overrides + `ExtractionContext` fields; logical
+  analysis recorded; memory-arch + KM gates green; no Rust/CI/book change. KM card
+  `corpus-reuse-activate-only-no-current-consumer`.
+
 ## CORPUS-PATTERN-REUSE.3b.3a (`2026-06-15`) — first opt-in extractor: measured NO-GO (read-only)
 - **Why:** PNT advanced to `CORPUS-PATTERN-REUSE.3b.3a` — select + justify the FIRST opt-in extractor so the
   reuse plane's **activate-only** consume contract (`.3b.3b`) has something to activate. The activate-only
