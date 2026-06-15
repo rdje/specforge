@@ -924,6 +924,22 @@ fabricated record leaves the corpus (NVMe's `SANICAP NO`), every wire-based gold
 honest residual over a fabricated fact. *Authoritative tracking:*
 `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.3f`).
 
+A fifth companion gate (`.3g`) fixes a related *subject* error. Register and structure specs constantly
+cross-reference *another* register's field with dotted notation — *"Buffer Address (BADD): … aligned to
+the memory page size (**CC.MPS**). The least significant bits shall be 0."* That sentence carries a real
+obligation about `BADD`, but the extractor would also pick up `MPS` (the trailing half of the
+cross-reference `CC.MPS`) as a second subject and mint a constraint about it — even though `MPS` is just
+a pointer to a *different* register's field, not the subject of this cell. The gate is a clean structural
+test (universal `Reg.Field` cross-reference grammar, no name lists — ADR 0006): a subject is dropped only
+if *every* place it appears in the text is immediately preceded by `"<identifier>."` — i.e. it is only
+ever a dotted reference, never a name in its own right. A subject that shows up standalone even once (its
+own declaration) is always kept, so the cell's genuine subject (`BADD`) is untouched. A tempting
+shortcut — "treat any all-hex-looking token as a literal" — was tried and *rejected by measurement*,
+because real field names like `CBA` (Controller Base Address) and `BADD` happen to be spelled with only
+hex letters. The effect is again surgical: NVMe's `MPS` co-subject leaves, the wire specs are byte-
+identical (zero wire records touched), and the gold gates stay at 1.000. *Authoritative tracking:*
+`docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.3g`).
+
 ### `EXTRACTION-QUALITY-GAUGE.0` — the artifact carries its own quality measurement
 
 Every surface above is about extracting more, and extracting it correctly. This one is about

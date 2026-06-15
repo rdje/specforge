@@ -170,7 +170,7 @@ honestly-qualified) path to "human-SpecForge in Rust."
 
 ## Task Tree
 
-- ID: `EXTRACTION-QUALITY-GAUGE` · Status: `active` · Children: `.0`–`.4` (incl. `.3a`–`.3f`)
+- ID: `EXTRACTION-QUALITY-GAUGE` · Status: `active` · Children: `.0`–`.4` (incl. `.3a`–`.3g`)
 - ID: `EXTRACTION-QUALITY-GAUGE.gauge` · Status: `done` · Goal: establish the NLI-oracle not-entailed
   rate as a per-doc extraction-quality gauge; measure CHI (~83%) + APB (~29%), hand-validate (18/18).
 - ID: `EXTRACTION-QUALITY-GAUGE.1` · Status: `done` (prototype) · Goal: **entity discrimination** —
@@ -569,6 +569,37 @@ honestly-qualified) path to "human-SpecForge in Rust."
   --provider skip` of all four wire docs (constraints+relations+temporal) stays 1.000 with
   `seed_nvme_registers` unaffected; kg-bench 156/156; full `run_ci.sh` GREEN; book
   `pipeline/evidenceir.md` `.3f` note + README bullet + KM card.
+- ID: `EXTRACTION-QUALITY-GAUGE.3g` · Status: `done` (`2026-06-15`, CODE + full gold battery; PNT pick —
+  owner-chosen "EQG constraint precision" direction; the per-item NVMe audit residual orthogonal to
+  `.3e`) · Goal: the **dotted-cross-reference spurious-subject** gate.
+  **SHIPPED + VERIFIED:** pure `is_dotted_cross_reference_subject(text, subject)` in `ir/evidence.rs`
+  (drop iff the subject is a plain identifier AND every whole-word occurrence is immediately preceded by
+  `<ident>.`), wired as a `subject_signals.retain(…)` in BOTH value-binding extractors right after the
+  `.3e` retain. +2 test fns (dotted-ref dropped; standalone/own-mnemonic/mixed/absent kept), lib 1628 →
+  **1630**, `cargo fmt` clean, warning-deny clippy clean, full `run_ci.sh` GREEN, kg-bench **156/156**.
+  **Verified (fresh release bin, `.3f`+`.3g`):** NVMe `evidence --dry-run` **20 → 18** — removes exactly
+  `SANICAP NO` (`.3f`) + `MPS must_be_value 0` (`.3g`, from `CC.MPS`); `BADD`'s genuine alignment
+  obligation is KEPT; nothing added. Wire Pattern builds byte-identical (the gate alters 0 wire records);
+  gold-safe on the non-destructive temp-evidence-root eval: APB/AHB/AXI/SWD constraints + relations +
+  temporal + SWD-derivation all **1.000**; `seed_nvme_registers` 28/29 unchanged. Refuse → honest
+  residual. **Probe-first (read-only, all 78 persisted evidence
+  docs):** a constraint subject lifted from a `Reg.Field` dotted cross-reference inside the cell body —
+  the NVMe `BADD` cell "Buffer Address (BADD): Indicates the host memory address … aligned to the memory
+  page size (**CC.MPS**). The least significant bits … shall be 0" yields the genuine `BADD must_be_value
+  0` (alignment) AND a spurious co-subject `MPS` (value 0) lifted from `CC.MPS` — a cross-reference to the
+  CC register's MPS field, NOT this cell's subject. `.3e` does not reach it (the cell has no "this field
+  <verb>" marker — it reads "(BADD): Indicates …"). **Measured impact:** the class = subjects whose EVERY
+  whole-word occurrence in the source is immediately preceded by `<ident>.` — **1 record corpus-wide
+  (NVMe `MPS`), 0 wire-doc**; the pure-hex-literal alternative was REJECTED by measurement (it would
+  wrongly flag the real fields `CBA`/`BADD`, all-hex-letter names). **Fix:** pure
+  `is_dotted_cross_reference_subject(text, subject)` (drop iff every whole-word occurrence is dotted-ref-
+  prefixed) wired as a `subject_signals.retain(…)` in BOTH value-binding extractors, mirroring `.3e`;
+  universal grammar (`Reg.Field` cross-reference is a cross-vendor register-spec idiom — structural, no
+  name lists, ADR 0006). The cell's genuine subject (`BADD`, written "(BADD):") is kept. Acceptance:
+  +unit tests (dotted-ref subject dropped; standalone/own-mnemonic subject kept; mixed standalone+dotted
+  kept); NVMe `evidence --dry-run` drops `MPS` (18 with `.3f`+`.3g`); wire Pattern builds byte-identical
+  (0 records altered, proven by fresh-bin scan) → wire gold ×4 1.000; kg-bench 156/156; full `run_ci.sh`
+  GREEN; book `pipeline/evidenceir.md` `.3g` note + KM card.
 - ID: `EXTRACTION-QUALITY-GAUGE.4` · Status: `done` (`2026-06-10`) · Goal: constraint dedup by
   (subject, kind, condition) in the LLM-primary extractor. Shipped: pure `dedup_constraints` —
   canonical key = the eval's `signal_constraint_record_key` (subject + kind incl. value + negation)
@@ -643,6 +674,21 @@ honestly-qualified) path to "human-SpecForge in Rust."
 
 ## Changelog
 
+- `2026-06-15`: **`.3g` DONE** — the dotted-cross-reference spurious-subject gate ships (PNT pick;
+  owner-chosen "EQG constraint precision" direction; orthogonal sibling of `.3e`). A register/structure
+  cell that cross-references ANOTHER register's field by dotted notation ("… aligned to the memory page
+  size (`CC.MPS`)") had its trailing component (`MPS`) lifted as a spurious co-subject of the cell's own
+  obligation → fabricated `MPS must_be_value 0`. `.3e` doesn't reach it (the cell has no "this field
+  <verb>" marker). Fix: pure `is_dotted_cross_reference_subject` (drop iff every whole-word occurrence is
+  preceded by `<ident>.`; a standalone occurrence is always kept) wired into BOTH value-binding
+  extractors; universal `Reg.Field` cross-reference grammar, no name lists (ADR 0006). The pure-hex-
+  literal alternative was REJECTED by measurement (it would wrongly flag the real fields `CBA`/`BADD`).
+  +2 test fns, lib 1628→**1630**, full `run_ci.sh` GREEN, kg-bench 156/156. Live: NVMe 20→18 (`SANICAP
+  NO` from `.3f` + `MPS 0` from `.3g`; `BADD` alignment kept), 0 wire build change, wire gold ×4 1.000,
+  `seed_nvme_registers` 28/29 unchanged. Refuse → honest residual. Book `pipeline/evidenceir.md` `.3g`
+  paragraph. KM [[dotted-cross-reference-subject-gate]]. The `.3` constraint-precision program now spans
+  `.3a`–`.3g`; the remaining NVMe residuals (prose-subject `NVM`/`LBA`/`FFFF` catalog-quality class +
+  the tangled spurious-digit-value class) need deeper non-narrow work, not another micro-gate.
 - `2026-06-15`: **`.3f` DONE** — the alphabetic-value word-boundary gate ships (PNT pick; owner-chosen
   "EQG constraint precision" direction). The dynamic value binder
   `extract_discovered_state_value_from_text` matched a discovered enum value behind a normative lead

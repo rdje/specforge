@@ -1,3 +1,27 @@
+### EXTRACTION-QUALITY-GAUGE.3g — dotted-cross-reference spurious-subject gate
+PNT slice (owner-chosen "EQG constraint precision" direction, fresh session `2026-06-15`; orthogonal
+sibling of `.3e`). A constraint **precision** fix: stop the value binder lifting a cross-referenced
+register's field as a spurious co-subject.
+
+- **Bug:** a cell that cross-references another register's field by dotted notation — NVMe `BADD`'s
+  *"… aligned to the memory page size (`CC.MPS`). The least significant bits … shall be 0"* — yields the
+  genuine `BADD must_be_value 0` (alignment) AND a fabricated co-subject `MPS` lifted from `CC.MPS`
+  (a pointer to the CC register's MPS field, not this cell's subject). `.3e` doesn't reach it (no
+  "this field <verb>" marker).
+- **Fix:** pure `is_dotted_cross_reference_subject(text, subject)` — drop iff the subject is a plain
+  identifier AND every whole-word occurrence is immediately preceded by `<ident>.` (a standalone
+  occurrence is always kept) — wired into BOTH value-binding extractors after the `.3e` retain.
+  Universal `Reg.Field` cross-reference grammar, no name lists (ADR 0006). The pure-hex-literal
+  alternative was REJECTED by measurement: it would wrongly flag the real fields `CBA`/`BADD`
+  (all-hex-letter names).
+- **Verified:** +2 test fns; lib 1628 → **1630**; full `run_ci.sh` GREEN; kg-bench **156/156**. NVMe
+  `evidence --dry-run` **20 → 18** (with `.3f`: removes `SANICAP NO` + `MPS 0`; `BADD` alignment kept;
+  nothing added). Wire Pattern builds byte-identical (0 records altered) → APB/AHB/AXI/SWD constraints +
+  relations + temporal + SWD-derivation all **1.000** on the non-destructive temp-evidence-root eval;
+  `seed_nvme_registers` 28/29 unchanged. KM card `dotted-cross-reference-subject-gate`; book
+  `pipeline/evidenceir.md` `.3g` paragraph. The `.3` program now spans `.3a`–`.3g`; remaining NVMe
+  residuals (prose-subject catalog class + tangled digit-values) need deeper non-narrow work.
+
 ### EXTRACTION-QUALITY-GAUGE.3f — alphabetic-value word-boundary gate on the deterministic value binder
 PNT slice (owner-chosen "EQG constraint precision" direction, fresh session `2026-06-15`). A constraint
 **precision** fix: stop the value binder fabricating a value from a substring of a longer word.

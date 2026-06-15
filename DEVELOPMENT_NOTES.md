@@ -1,4 +1,22 @@
 # DEVELOPMENT_NOTES
+## EXTRACTION-QUALITY-GAUGE.3g (`2026-06-15`) — dotted-cross-reference spurious-subject gate
+- **Why:** PNT slice, owner-chosen "EQG constraint precision" direction. Orthogonal sibling of `.3e`:
+  another spurious *subject* class the NVMe per-item audit surfaced.
+- **Root cause:** a value-binding cell cross-references another register's field by dotted notation
+  (`CC.MPS`); the subject collector grabbed the trailing `MPS` as a co-subject of `BADD`'s obligation.
+- **Fix:** `is_dotted_cross_reference_subject` drops a subject iff every whole-word occurrence is
+  preceded by `<ident>.` — a standalone occurrence is always kept (the cell's own subject `BADD` is
+  written "(BADD):", standalone → kept). Wired into both value-binding extractors after `.3e`.
+- **Rejected alternative (measured):** "any all-hex-looking subject is a literal" — it would flag the
+  real fields `CBA` (Controller Base Address) and `BADD` (Buffer Address), whose names are spelled with
+  only hex letters. Measurement (4 hits, 3 genuine) killed it before any code.
+- **Honest scope boundary:** after `.3f`+`.3g`, the clean+narrow+universal constraint-precision gates on
+  the persisted corpus are exhausted. The remaining NVMe residuals are (a) a prose-subject catalog class
+  (`NVM`/`LBA`/`FFFF` admitted as "signals" because the register doc has no real wire catalog) and (b) a
+  tangled spurious-digit-value class (`HMDLLA 1` vs the genuine `BADD 0`/`RECFMT 0h`/`ELEN 0h`). Both
+  need deeper, non-narrow work (catalog-quality / `.FIELD` re-routing) with real gate risk — NOT another
+  one-record micro-gate (the genericity guardrail: don't overfit to one PDF).
+
 ## EXTRACTION-QUALITY-GAUGE.3f (`2026-06-15`) — alphabetic-value word-boundary gate on the value binder
 - **Why:** PNT slice, owner-chosen "EQG constraint precision" direction. Continues the `.3a`–`.3e`
   constraint-precision program. A per-item NVMe audit (read-only, no 14B) found the deterministic value

@@ -4776,6 +4776,52 @@ fn is_descriptive_field_cell_spurious_subject(text: &str, subject: &str) -> bool
     true
 }
 
+/// EXTRACTION-QUALITY-GAUGE.3g — recognize a SPURIOUS constraint subject lifted from a `Reg.Field`
+/// DOTTED CROSS-REFERENCE inside the cell body. A register/structure cell often references ANOTHER
+/// register's field by dotted notation ("… aligned to the memory page size (`CC.MPS`)"), and the
+/// deterministic value-binding path can grab that trailing component (`MPS`) as a co-subject of the
+/// cell's own obligation — minting a `must_be_*` about a field that is not the subject of THIS cell
+/// at all (the cell's real subject, e.g. `BADD`, is kept). Returns `true` for a `(text, subject)` pair
+/// → drop THAT subject (an honest residual; the genuine co-subject, if any, survives).
+///
+/// Conservative + structurally decidable: fires ONLY when `subject` is a plain identifier AND EVERY
+/// whole-word occurrence of it in `text` is immediately preceded by `<ident>.` (a dotted reference).
+/// A subject that appears even once standalone (its own declaration/mention) is never touched. This is
+/// the `Reg.Field` cross-reference idiom, universal across register specs (ADR 0006 — no name lists).
+fn is_dotted_cross_reference_subject(text: &str, subject: &str) -> bool {
+    let is_ident = |c: char| c.is_ascii_alphanumeric() || c == '_';
+    if subject.is_empty() || !subject.chars().all(is_ident) {
+        return false;
+    }
+    let lowered = text.to_ascii_lowercase();
+    let subject_lc = subject.to_ascii_lowercase();
+    let mut scan = 0usize;
+    let mut saw_occurrence = false;
+    while let Some(pos) = lowered[scan..].find(subject_lc.as_str()) {
+        let start = scan + pos;
+        let end = start + subject_lc.len();
+        let before_ok = lowered[..start]
+            .chars()
+            .next_back()
+            .is_none_or(|c| !is_ident(c));
+        let after_ok = lowered[end..].chars().next().is_none_or(|c| !is_ident(c));
+        if before_ok && after_ok {
+            // a whole-word occurrence: is it the trailing half of an `<ident>.subject` dotted ref?
+            saw_occurrence = true;
+            let mut chars_before = lowered[..start].chars().rev();
+            let dotted =
+                chars_before.next() == Some('.') && chars_before.next().is_some_and(is_ident);
+            if !dotted {
+                // a standalone (non-dotted) occurrence → a real subject, never touched.
+                return false;
+            }
+        }
+        scan = start + 1;
+    }
+    // drop only if it occurred AND every occurrence was a dotted cross-reference.
+    saw_occurrence
+}
+
 fn extract_dynamic_signal_constraints(
     statements: &[ExtractedStatement],
     counter: &mut usize,
@@ -4851,6 +4897,10 @@ fn extract_dynamic_signal_constraints(
         // field-definition cell ("… This field indicates … A value of FFFFh …" → `FFFF`); the
         // field's own mnemonic (which precedes the "This field <verb>" marker) is kept.
         subject_signals.retain(|s| !is_descriptive_field_cell_spurious_subject(&statement.text, s));
+        // EXTRACTION-QUALITY-GAUGE.3g: drop a subject lifted from a `Reg.Field` dotted cross-reference
+        // in the cell body ("… aligned to the memory page size (CC.MPS) …" → `MPS`); a subject that
+        // ever appears standalone (its own declaration) is kept.
+        subject_signals.retain(|s| !is_dotted_cross_reference_subject(&statement.text, s));
         if subject_signals.is_empty() {
             continue;
         }
@@ -6574,6 +6624,9 @@ fn extract_signal_constraints(
         // field-definition cell (CCIX `SRAM`/`DDR` enum-value names, NVMe `FFFF` hex literal); the
         // field's own leading mnemonic precedes the "This field <verb>" marker and is kept.
         subject_signals.retain(|s| !is_descriptive_field_cell_spurious_subject(text, s));
+        // EXTRACTION-QUALITY-GAUGE.3g: drop a subject lifted from a `Reg.Field` dotted cross-reference
+        // in the cell body ("… (CC.MPS) …" → `MPS`); a standalone occurrence is always kept.
+        subject_signals.retain(|s| !is_dotted_cross_reference_subject(text, s));
         if subject_signals.is_empty() {
             continue;
         }
@@ -16993,8 +17046,8 @@ mod tests {
             StatementClass, classify_statement, collect_subject_signal_tokens,
             extract_discovered_state_value_from_text, extract_protocol_state_value,
             is_descriptive_field_cell_spurious_subject, is_descriptive_narration_binding,
-            is_relational_equality_constraint, is_signal_value_constraint,
-            text_before_condition_marker,
+            is_dotted_cross_reference_subject, is_relational_equality_constraint,
+            is_signal_value_constraint, text_before_condition_marker,
         };
 
         #[test]
@@ -17256,6 +17309,36 @@ mod tests {
                 ),
                 Some("0".to_string())
             );
+        }
+
+        // EXTRACTION-QUALITY-GAUGE.3g — the dotted-cross-reference spurious-subject gate.
+        #[test]
+        fn dotted_cross_reference_subject_is_dropped() {
+            // `MPS` appears only as the trailing half of the cross-reference `CC.MPS` — not the
+            // cell's subject (which is `BADD`).
+            assert!(is_dotted_cross_reference_subject(
+                "| 63:00 | Buffer Address (BADD): Indicates the host memory address for this descriptor aligned to the memory page size (CC.MPS). The least significant bits shall be 0.",
+                "MPS"
+            ));
+        }
+
+        #[test]
+        fn standalone_or_own_subject_is_kept() {
+            // The cell's own subject `BADD` appears standalone ("(BADD):") → never touched.
+            assert!(!is_dotted_cross_reference_subject(
+                "| 63:00 | Buffer Address (BADD): Indicates the host memory address for this descriptor aligned to the memory page size (CC.MPS). The least significant bits shall be 0.",
+                "BADD"
+            ));
+            // A signal that appears both dotted AND standalone is kept (the standalone wins).
+            assert!(!is_dotted_cross_reference_subject(
+                "MPS configures the page size; the address is aligned to CC.MPS.",
+                "MPS"
+            ));
+            // A subject absent from the text is never dropped by this gate.
+            assert!(!is_dotted_cross_reference_subject(
+                "PADDR must be stable when PSEL is asserted.",
+                "PWDATA"
+            ));
         }
 
         #[test]
