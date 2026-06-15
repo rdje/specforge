@@ -118,7 +118,7 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
 | --- | --- | --- | --- |
 | 1 | `CANONICAL-PROMOTION-SWEEP.1` | `done` (`2026-06-15`, dedicated session) | **DONE.** Non-wire HBM2 pilot promoted on canonical (85.7%→40.0% not-entailed, 14→20 records), RAM ≥42% free throughout, `kg-bench` 156/156, repeatable no-re-ingest protocol locked into Decisions. Reproduced the `.4` /tmp datum exactly on canonical. |
 | 2 | `CANONICAL-PROMOTION-SWEEP.2` | `pending` (**frontier** — unblocked by `.1`) | Wire docs (APB/AHB/AXI/SWD) under the full `WIRE-BASED-100` gold battery on canonical; revert any doc that regresses (the `.3` AXI precedent). Highest-risk + highest-value → strictest gate. RAM-heavy → dedicated-session discipline (same protocol as `.1`, plus the full battery re-verified `1.000` on the promoted canonical artifact). |
-| 2b | `CANONICAL-PROMOTION-SWEEP.3` | `in_progress` (**frontier** — batch A done `2026-06-15`) | Scale to the 26 non-wire docs with constraints, one at a time, before/after gauge + RAM recorded; keep/revert rule per doc. **Batch A (13 smallest) DONE: 12 kept, 1 reverted, kg-bench 156/156, RAM min 43%.** Remaining: batch B (9 medium, 11–20 cons) + batch C (4 big — LPI 30, LTI 41, AXI+ACE 97, DTI 114). |
+| 2b | `CANONICAL-PROMOTION-SWEEP.3` | `in_progress` (**frontier** — batches A+B done `2026-06-15`) | Scale to the 26 non-wire docs with constraints, one at a time, before/after gauge + RAM recorded; keep/revert rule per doc. **Batch A (13 smallest): 12 kept, 1 reverted. Batch B (9 medium): 7 kept, 2 reverted (i2c, nvme).** Cumulative 19 kept / 3 reverted of 22; kg-bench 156/156; RAM safe. Remaining: **batch C (4 big — LPI 30, LTI 41, AXI+ACE 97, DTI 114)**. |
 
 ## Decisions
 
@@ -228,6 +228,11 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
 | `2026-06-15` | `.3` batch A | REVERT | `100806_0701_17` coresight_soc_600: 1E/1N → 0E/2N (lost its one entailed constraint) → reverted all stages to Pattern (recs2, 1E/1N), downstream rebuilt deterministically |
 | `2026-06-15` | `.3` batch A | `specforge kg-bench` (global gate) | **156/156** passed, 0 failed |
 | `2026-06-15` | `.3` batch A | RAM watchdog (3s sampling, model 9.7 GB @ 100% GPU) | **min 43% free** throughout; never ≤15% free; `ollama stop`-freed at batch end |
+| `2026-06-15` | `.3` batch B | 9 medium non-wire docs (11–20 cons), full no-re-ingest protocol each | **7 kept / 2 reverted**; aggregate over the 7 kept: BEFORE **15E/81N = 84.4% not-entailed** → AFTER **34E/29N = 46.0%** |
+| `2026-06-15` | `.3` batch B | per-doc | apb-orig `ihi0024_d` 9E/4N→15E/4N (13→19 recs, +6 entailed); opencapi_4_0 0E/15N→6E/2N (15→8); risc_v_iommu 2E/7N→5E/1N (11→6); trace_bus 0E/11N→2E/6N (11→8); axi-stream 0E/13N→1E/7N (13→8); gfb 4E/16N→5E/9N (20→14); ccix_r1_0a 0E/15N→0 (precision-collapse) |
+| `2026-06-15` | `.3` batch B | REVERT (lost a verified-correct constraint) | `um10204` I2C 3E/8N→2E/0N (entailed 3→2) and `nvme` 3E/17N→1E/1N (entailed 3→1) → both restored from backups (I2C recs11/3E8N; nvme recs20 Pattern), downstream restored from `*.bak` |
+| `2026-06-15` | `.3` batch B | `specforge kg-bench` | **156/156** passed, 0 failed |
+| `2026-06-15` | `.3` batch B | RAM watchdog (cargo-clippy IDE process co-resident, ~1.2 GB) | **min 19% free** throughout (stable, never ≤15%); host never near the 90→93% reboot zone; watchdog armed |
 
 ## Commit Log
 
@@ -236,6 +241,7 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
 | `CANONICAL-PROMOTION-SWEEP` (tree) | `CANONICAL-PROMOTION-SWEEP.0 — create tree` | ownership/scoping slice; no canonical mutation yet |
 | `.1` | `CANONICAL-PROMOTION-SWEEP.1 — non-wire HBM2 pilot: canonical promotion 85.7%→40.0%, RAM-safe, protocol locked` | docs-only commit (the canonical mutation is in git-ignored `generated/`); HBM2 promoted on canonical; protocol locked in Decisions |
 | `.3` (batch A) | `CANONICAL-PROMOTION-SWEEP.3 — batch A (13 smallest non-wire): 12 promoted on canonical, 1 reverted, RAM-safe` | docs-only (canonical mutation in git-ignored `generated/`); 12 docs promoted + kept (89.8%→29.7% NE aggregate), `soc600_0701` reverted; KM card `canonical-promotion-output-path-artifact-layout` added |
+| `.3` (batch B) | `CANONICAL-PROMOTION-SWEEP.3 — batch B (9 medium non-wire): 7 promoted on canonical, 2 reverted, RAM-safe` | docs-only; 7 kept (84.4%→46.0% NE aggregate; apb-orig +6 entailed), `um10204` I2C + `nvme` reverted (each lost a verified constraint); kg-bench 156/156; RAM min 19% (stable) |
 
 ## Changelog
 
@@ -271,3 +277,12 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
   RAM min **43% free** throughout (watchdog, model 9.7 GB @ GPU, `ollama stop`-freed). All canonical mutations
   in git-ignored `generated/` with `*.prepromote.bak` retained; `promotion_status = not_promoted_review_required`.
   Docs-only commit. Frontier → batch B (9 medium) + batch C (4 big).
+- `2026-06-15`: **`.3` batch B (9 medium non-wire docs, 11–20 constraints) DONE: 7 kept / 2 reverted.** Kept
+  aggregate **84.4% → 46.0% not-entailed** (entailed 15→34); standout apb-orig `ihi0024_d` 9E/4N→15E/4N
+  (+6 entailed, 13→19 recs), opencapi_4_0 0E/15N→6E/2N. The keep/revert rule caught two regressions where the
+  LLM-primary collapsed too aggressively and dropped a verified-correct constraint — `um10204` I2C (3E/8N→2E/0N,
+  entailed 3→2) and `nvme` (3E/17N→1E/1N, entailed 3→1) — both reverted to their Pattern surface from `*.bak`
+  (downstream restored from backup; I2C's known sensitivity reconfirmed). `kg-bench` 156/156; RAM **min 19%
+  free** (stable — a co-resident IDE `cargo clippy` held ~1.2 GB, but never near the 90→93% reboot zone; the
+  watchdog stayed armed and the host was never at risk). Cumulative `.3`: 19 kept / 3 reverted of 22 docs.
+  Frontier → batch C (4 big: LPI 30 / LTI 41 / AXI+ACE 97 / DTI 114), then `.2`.

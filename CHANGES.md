@@ -1,3 +1,21 @@
+### CANONICAL-PROMOTION-SWEEP.3 (batch B) — 9 medium non-wire docs: 7 promoted on canonical, 2 reverted, RAM-safe
+Second scale-out slice of `.3` (medium docs, 11–20 constraints). Same locked no-re-ingest protocol + integrated
+RAM watchdog + keep/revert rule. Docs-only commit (canonical mutation in git-ignored `generated/`).
+
+- **Result: 7 kept / 2 reverted.** Kept aggregate BEFORE **15E/81N = 84.4% not-entailed** → AFTER **34E/29N =
+  46.0%** (entailed 15→34). Standouts: apb-orig `ihi0024_d` 9E/4N→15E/4N (+6 entailed, 13→19 recs), opencapi_4_0
+  0E/15N→6E/2N (15→8), risc_v_iommu 2E/7N/2A→5E/1N (11→6), trace_bus 0E/11N→2E/6N, axi-stream 0E/13N→1E/7N, gfb
+  4E/16N→5E/9N (20→14), ccix_r1_0a 0E/15N→0 (precision-collapse of an all-not-entailed surface).
+- **Two regressions caught + reverted:** `um10204` I2C (3E/8N→2E/0N — entailed 3→2) and `nvme` (3E/17N→1E/1N —
+  entailed 3→1). Both dropped a verified-correct constraint when the LLM-primary surface collapsed too
+  aggressively, so the keep/revert rule reverted each to its Pattern surface from `*.prepromote.bak` (I2C
+  recs11/3E8N; nvme recs20). I2C's known sensitivity (a measured-regression doc elsewhere) reconfirmed.
+- **Gates:** `kg-bench` **156/156**; RAM **min 19% free** throughout, stable (a co-resident IDE `cargo clippy`
+  held ~1.2 GB; the host was never near the 90→93% reboot zone and the 15%-free watchdog stayed armed). Model
+  serialized + `ollama stop`-freed at batch end.
+- Cumulative `.3`: 19 kept / 3 reverted of 22 docs. Frontier → batch C (4 big: LPI 30 / LTI 41 / AXI+ACE 97 /
+  DTI 114), then `.2` wire docs.
+
 ### CANONICAL-PROMOTION-SWEEP.3 (batch A) — 13 smallest non-wire docs: 12 promoted on canonical, 1 reverted, RAM-safe
 Dedicated session; owner authorized the full sweep ("run both, .3 then .2"). First scale-out slice of `.3`:
 land the now-default LLM-primary constraint promotion on the corpus's non-wire CANONICAL artifacts, RAM-safe +
