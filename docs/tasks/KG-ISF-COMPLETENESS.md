@@ -81,18 +81,32 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   **Genericity guardrail proven:** `transmitter` is 0/0 in AXI but `Transmitter` is 22/23 in AXI-Stream —
   same token, opposite status → the drop/keep rule MUST key off "0/0 in *this* doc", never a name list
   (ADR 0006). Frontier → `.1a` then `.1b`.
-- ID: `KG-ISF-COMPLETENESS.1a` · Status: `pending` (measurement-first) · Goal: **precision — structural
-  agent-identity gate.** At relation-subject capture (evidence.rs `extract_subject_phrase` /
-  `extract_actor_phrase` / `normalize_relation_actor_name`) reject Class-A subjects by STRUCTURE
-  (function-word/verb/adverb-led, clause fragment, non-agent descriptor) — universal grammar, no name
-  list. Re-characterize the leading-token classes on the persisted corpus first; WIRE-BASED-100
-  (APB/AHB/AXI/SWD per-fact 1.000) a hard gate, verified via a fresh-Pattern temp-evidence-root eval.
+- ID: `KG-ISF-COMPLETENESS.1a` · Status: `pending` (measurement-first; gate DESIGNED from code-seam study
+  `2026-06-16`) · Goal: **precision — structural agent-identity gate.** **Seam (verified):** both prose
+  paths (`extract_subject_phrase`:3302 / `extract_actor_phrase`:3144) AND the table path funnel through
+  the ONE DRY seam `normalize_relation_actor_name`:2082 → `is_meaningful_actor_term`
+  (prior_memory.rs:607). Add the structural reject there (one edit, all paths). **Scoped gate (clean,
+  bounded, lowest-risk):** reject a candidate whose FIRST content token is a closed-class **function
+  word** (for/then/with/next/of/by/from/as/also/is/are/has/… — universal English, NOT a chip-name list,
+  ADR-0006-safe; the codebase already uses such lists — SKIP_WORDS/STOP_WORDS/SUBJECT_FOLLOWER_VERBS) OR
+  a **leading content verb** (ensures/exit/extends/…). Catches `For`/`Then it`/`with write`/`For
+  components`/`is recommended`/`is permitted`/`ensures`/`Exit from`/`next`. **Deliberately verb-LED only,
+  NOT contains-a-verb** — "contains a verb" would kill the Class-B fragment `Subordinate extends` (a real
+  Subordinate fact `.1b` should consolidate). The descriptor-noun class (`HPROT bit`/`TREADY input`/
+  `section`/`number of`/`Note`) is harder (needs a contains-declared-signal sub-gate + furniture-noun
+  handling) → a LATER leaf, not forced into `.1a`. **Measure first:** apply the predicate across all 36
+  persisted IntentIR docs and confirm it rejects ZERO high-port (≥8) actors (real-agent proxy) anywhere.
+  WIRE-BASED-100 (APB/AHB/AXI/SWD per-fact 1.000) a hard gate, verified via the `.3f`/`.3g`
+  fresh-Pattern temp-evidence-root eval; `cargo build --release` before live measurement; `run_ci.sh`
+  before declaring green.
 - ID: `KG-ISF-COMPLETENESS.1b` · Status: `pending` (measurement-first) · Goal: **completeness —
   consolidation + zero-evidence honesty.** (i) Normalize Class-B fragments to the canonical agent token
-  (strip trailing verb/adverb; "X interface"→"X"); (ii) split a coordinated "X and Y" subject; (iii) drop
-  Class-C zero-evidence actors per-doc (0 ports AND 0 rels), first re-checking provenance so a genuinely
-  declared-but-unwired agent is preserved. Explicitly NO relation synthesis for Class-C (measured
-  fabrication risk). WIRE-BASED-100 a hard gate.
+  (strip trailing verb/adverb; "X interface"→"X") — this transform must run BEFORE the `.1a` reject so
+  `Subordinate extends`→`Subordinate` is kept, not dropped (the ordering interaction found in `.1a`'s
+  code-seam study); (ii) split a coordinated "X and Y" subject; (iii) drop Class-C zero-evidence actors
+  per-doc (0 ports AND 0 rels), first re-checking provenance so a genuinely declared-but-unwired agent is
+  preserved. Explicitly NO relation synthesis for Class-C (measured fabrication risk). WIRE-BASED-100 a
+  hard gate.
 - ID: `KG-ISF-COMPLETENESS.2+` · Status: `pending` · Goal: the remaining bar dimensions per doc
   (relation completeness, signal direction/width coverage, constraint completeness via the gauge,
   behavior/temporal carry, and the ISF round-trip fidelity check), each measurement-first + gold-gated.
