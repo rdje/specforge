@@ -1,3 +1,20 @@
+### CANONICAL-PROMOTION-SWEEP.2 — wire docs: APB/AHB/AXI gold battery re-verified 1.000, SWD promoted+verified
+Wire-doc slice — the highest-risk, strictest-gated docs. Docs-only commit.
+
+- **APB5/AHB/AXI** were already promoted on canonical (`LLM-PRIMARY-PROMOTION.5`); `.2` **re-verified the full
+  gold battery on the current canonical** via `eval-extraction --provider skip` (no model — it re-runs
+  extraction on a temp copy with `artifact_layout` redirected, so the corpus is never mutated). The
+  document-level attribution-agnostic recall (the `WIRE-BASED-100.1` gold measure, immune to `statement_id`
+  drift) is **1.000** for every wire dataset: `signal_constraint`, `actor_signal_relation`, and `temporal_rule`
+  across `seed_apb/ahb/axi` + `seed_*_temporal`. (The top-level per-statement F1 dips — e.g. actor_signal_relation
+  0.333/0.000 — are the documented stale-`statement_id` attribution artifacts, not extraction loss.)
+- **SWD `ihi0074_a`** (the 4th wire-gold doc) was promoted (1 constraint, BEFORE 0E/1N → AFTER **1E/0N** — its
+  lone constraint went from not-entailed to entailed; KEEP) and its derivation gold re-verified **1.000**
+  (`serial_frame_field` 11/11, `swd_operation` 4/4, `protocol_state` 13/13 — read straight from EvidenceIR, so
+  untouched by constraint promotion).
+- **Gates:** `kg-bench` **156/156**; RAM **min 45% free**; model `ollama stop`-freed. No wire regression — all
+  four wire docs promoted with the gold battery green. Frontier → corpus gauge roll-up + close the tree.
+
 ### CANONICAL-PROMOTION-SWEEP.3 (batch C) — 4 big non-wire docs: 4 promoted on canonical, 0 reverted, RAM-safe
 Final scale-out slice of `.3` (the big docs, 30–114 constraints — the longest 14B runs). Same locked
 no-re-ingest protocol + watchdog + keep/revert rule. Docs-only commit.

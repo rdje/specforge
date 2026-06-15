@@ -84,7 +84,7 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
   Commit: `CANONICAL-PROMOTION-SWEEP.1 — non-wire HBM2 pilot: canonical promotion 85.7%→40.0%, RAM-safe, protocol locked`
 
 - ID: `CANONICAL-PROMOTION-SWEEP.2`
-  Status: `pending` (gated on `.1`)
+  Status: `done` (`2026-06-15`)
   Goal: **wire-doc canonical promotion under the full gold battery.** Promote APB/AHB/AXI/SWD canonical
   artifacts ONLY with the complete `WIRE-BASED-100` / `LLM-PRIMARY-PROMOTION.5` gold battery re-verified
   `1.000` on the promoted CANONICAL artifact (constraints + relations + temporal + SWD-derivation), reverting
@@ -92,8 +92,18 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
   strictest gate.
   Acceptance: each wire doc either promoted with the full battery `1.000` on canonical, or reverted with the
   caught regression recorded; provider-free byte-stability unaffected; RAM-safe; recorded.
-  Verification: `pending`
-  Commit: `pending`
+  Outcome: **MET.** The three AMBA wire docs (APB5 `ihi0024_e`, AHB `ihi0033_c`, AXI `ihi0022_l`) were already
+  promoted on canonical by `LLM-PRIMARY-PROMOTION.5`; `.2` **re-verified the full gold battery on the current
+  canonical** via `eval-extraction --provider skip` (no model — it re-runs extraction on a temp copy with the
+  artifact_layout redirected, so the corpus is never mutated; the document-level attribution-agnostic recall is
+  the `WIRE-BASED-100.1` gold measure, immune to `statement_id` drift): **signal_constraint, actor_signal_relation,
+  and temporal_rule all 1.000** for APB/AHB/AXI. The fourth wire-gold doc, **SWD `ihi0074_a`, was promoted**
+  (1 constraint, BEFORE 0E/1N → AFTER **1E/0N** — its one constraint went from not-entailed to entailed; KEEP)
+  and its derivation gold re-verified **1.000** (serial_frame_field 11/11, swd_operation 4/4, protocol_state
+  13/13 — constraint promotion doesn't touch those EvidenceIR-read surfaces). `kg-bench` **156/156**; RAM **min
+  45% free**; model `ollama stop`-freed. No wire regression; all four wire docs promoted + gold-battery green.
+  Verification: see Verification Log.
+  Commit: `CANONICAL-PROMOTION-SWEEP.2 — wire docs: APB/AHB/AXI gold battery re-verified 1.000, SWD promoted+verified`
 
 - ID: `CANONICAL-PROMOTION-SWEEP.3`
   Status: `in_progress` (`2026-06-15`, dedicated session — owner authorized "run both, .3 then .2")
@@ -119,7 +129,7 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
 | 1 | `CANONICAL-PROMOTION-SWEEP.1` | `done` (`2026-06-15`, dedicated session) | **DONE.** Non-wire HBM2 pilot promoted on canonical (85.7%→40.0% not-entailed, 14→20 records), RAM ≥42% free throughout, `kg-bench` 156/156, repeatable no-re-ingest protocol locked into Decisions. Reproduced the `.4` /tmp datum exactly on canonical. |
 | 2 | `CANONICAL-PROMOTION-SWEEP.2` | `pending` (**frontier** — unblocked by `.1`) | Wire docs (APB/AHB/AXI/SWD) under the full `WIRE-BASED-100` gold battery on canonical; revert any doc that regresses (the `.3` AXI precedent). Highest-risk + highest-value → strictest gate. RAM-heavy → dedicated-session discipline (same protocol as `.1`, plus the full battery re-verified `1.000` on the promoted canonical artifact). |
 | 2b | `CANONICAL-PROMOTION-SWEEP.3` | `in_progress` (scale-out A+B+C DONE `2026-06-15`; roll-up pending) | All 26 non-wire docs processed: **batch A 12 kept/1 rev, batch B 7 kept/2 rev, batch C 4 kept/0 rev = 23 kept / 3 reverted.** Full kept aggregate **88.8%→49.8% not-entailed** (entailed 48→124); kg-bench 156/156 after each; RAM min 36–43% (B dipped to 19% w/ co-resident clippy, stable). Remaining: corpus gauge roll-up + `VALIDATION_SNAPSHOT.md`/`LIVE_ACHIEVEMENT_STATUS.md` refresh, then close. |
-| 1c | `CANONICAL-PROMOTION-SWEEP.2` | `pending` (**frontier next** — unblocked) | Wire docs: re-verify the gold battery (`eval-extraction seed_apb/ahb/axi(+_temporal)` + `seed_swd_derivation`, `--provider skip` = no model) on the already-promoted APB5/AHB/AXI canonical; promote+verify SWD `ihi0074_a`, revert-on-regress. |
+| 1c | `CANONICAL-PROMOTION-SWEEP.2` | `done` (`2026-06-15`) | Wire docs DONE: APB5/AHB/AXI gold battery re-verified **1.000** (constraints+relations+temporal, document-level) on current canonical; SWD `ihi0074_a` promoted (0E/1N→1E/0N) + derivation gold **1.000**. kg-bench 156/156; RAM min 45%. No wire regression. |
 
 ## Decisions
 
@@ -239,6 +249,10 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
 | `2026-06-15` | `.3` batch C | `specforge kg-bench` | **156/156** passed, 0 failed |
 | `2026-06-15` | `.3` batch C | RAM watchdog (model 9.7 GB @ 100% GPU, no co-resident clippy) | **min 36% free** throughout; never ≤15%; `ollama stop`-freed at end |
 | `2026-06-15` | `.3` TOTAL (A+B+C) | 26 non-wire docs | **23 promoted+kept / 3 reverted**; full kept aggregate **88.8% → 49.8% not-entailed** (entailed 48→124) |
+| `2026-06-15` | `.2` | wire gold battery on current canonical, `eval-extraction --provider skip` (document-level recall) | APB/AHB/AXI **signal_constraint 1.000, actor_signal_relation 1.000, temporal_rule 1.000** (each `seed_*` + `seed_*_temporal`) — the already-promoted AMBA wire docs HOLD |
+| `2026-06-15` | `.2` | SWD `ihi0074_a` promote (driver, watchdog) | BEFORE 0E/1N → AFTER **1E/0N** (constraint became entailed; KEEP); manifest `constraints.llm_primary`; RAM min **45% free** |
+| `2026-06-15` | `.2` | SWD derivation gold re-verify (`seed_swd_derivation --provider skip`) | serial_frame_field **11/11**, swd_operation **4/4**, protocol_state **13/13** = all **1.000** (unchanged by constraint promotion) |
+| `2026-06-15` | `.2` | `specforge kg-bench` (after SWD promotion) | **156/156** passed, 0 failed |
 
 ## Commit Log
 
@@ -249,6 +263,7 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
 | `.3` (batch A) | `CANONICAL-PROMOTION-SWEEP.3 — batch A (13 smallest non-wire): 12 promoted on canonical, 1 reverted, RAM-safe` | docs-only (canonical mutation in git-ignored `generated/`); 12 docs promoted + kept (89.8%→29.7% NE aggregate), `soc600_0701` reverted; KM card `canonical-promotion-output-path-artifact-layout` added |
 | `.3` (batch B) | `CANONICAL-PROMOTION-SWEEP.3 — batch B (9 medium non-wire): 7 promoted on canonical, 2 reverted, RAM-safe` | docs-only; 7 kept (84.4%→46.0% NE aggregate; apb-orig +6 entailed), `um10204` I2C + `nvme` reverted (each lost a verified constraint); kg-bench 156/156; RAM min 19% (stable) |
 | `.3` (batch C) | `CANONICAL-PROMOTION-SWEEP.3 — batch C (4 big non-wire): 4 promoted on canonical, 0 reverted, RAM-safe` | docs-only; LPI/LTI/AXI+ACE/DTI all improved (90.1%→56.5% NE aggregate; AXI+ACE +17, DTI +7 entailed); kg-bench 156/156; RAM min 36%. `.3` scale-out (26 docs) complete: 23 kept / 3 reverted |
+| `.2` | `CANONICAL-PROMOTION-SWEEP.2 — wire docs: APB/AHB/AXI gold battery re-verified 1.000, SWD promoted+verified` | docs-only; APB/AHB/AXI document-level recall 1.000 (constraints+relations+temporal); SWD `ihi0074_a` promoted 0E/1N→1E/0N + derivation gold 1.000; kg-bench 156/156; RAM min 45% |
 
 ## Changelog
 
@@ -300,3 +315,12 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
   this batch). **`.3` non-wire scale-out COMPLETE — all 26 docs processed: 23 promoted+kept / 3 reverted; full
   kept aggregate 88.8% → 49.8% not-entailed (entailed 48→124).** Frontier → `.2` (wire-doc gold-battery
   re-verify + SWD promote) then the corpus gauge roll-up + `VALIDATION_SNAPSHOT.md` refresh.
+- `2026-06-15`: **`.2` wire docs DONE — no regression.** The three AMBA wire docs (APB5/AHB/AXI) were already
+  promoted on canonical (`LLM-PRIMARY-PROMOTION.5`); re-verified the full gold battery on the CURRENT canonical
+  via `eval-extraction --provider skip` (no model; runs on a temp copy, corpus never mutated): document-level
+  recall **signal_constraint 1.000, actor_signal_relation 1.000, temporal_rule 1.000** for all three (the dipped
+  top-level per-statement F1s are the known `statement_id`-drift attribution artifacts — `WIRE-BASED-100.1`).
+  The fourth wire-gold doc, SWD `ihi0074_a`, was promoted (0E/1N → **1E/0N**; its lone constraint became
+  entailed — KEEP) and its derivation gold re-verified **1.000** (frames 11/11, ops 4/4, states 13/13).
+  `kg-bench` 156/156; RAM min 45% free; model freed. **All four wire docs promoted + gold-battery green.**
+  Frontier → corpus gauge roll-up + close the tree.
