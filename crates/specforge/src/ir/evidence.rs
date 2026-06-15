@@ -4036,20 +4036,51 @@ fn extract_discovered_state_value_from_text(
     ordered_values.sort_by_key(|value| std::cmp::Reverse(value.len()));
     for value in ordered_values {
         let value_lower = value.to_ascii_lowercase();
-        if contains_any(
-            lowered,
-            &[
-                &format!("must be {value_lower}"),
-                &format!("shall be {value_lower}"),
-                &format!("must remain {value_lower}"),
-                &format!("shall remain {value_lower}"),
-                &format!("is {value_lower} when"),
-            ],
-        ) {
+        // EXTRACTION-QUALITY-GAUGE.3f: bind the value behind a normative lead phrase, but an
+        // ALPHABETIC enum value must match a WHOLE word — otherwise the substring binder fabricates
+        // a value off a longer word ("this field shall be `no`n-zero" → bogus `must_be_value NO`,
+        // when the real obligation is "shall be non-zero"). A numeric value keeps lenient matching so
+        // a radixed literal ("shall be `0`h") still binds. Universal grammar, no name lists (ADR 0006).
+        let bound = ["must be ", "shall be ", "must remain ", "shall remain "]
+            .iter()
+            .any(|lead| lead_binds_value(lowered, lead, &value_lower))
+            // the `is <value> when` form is inherently whole-word-bounded (the value is followed by
+            // " when" in the pattern itself), so plain containment stays correct.
+            || lowered.contains(&format!("is {value_lower} when"));
+        if bound {
             return Some(value.clone());
         }
     }
     None
+}
+
+/// EXTRACTION-QUALITY-GAUGE.3f — does `text` contain `lead` immediately followed by `value_lower`,
+/// requiring a trailing identifier boundary ONLY when the value ends in a letter? An alphabetic enum
+/// value (`NO`, `YES`, `VALID`) must match a whole word so the value binder never lifts a fabricated
+/// value out of a longer word (`no` ⊂ `non-zero`); a numeric value keeps lenient matching so a
+/// radixed literal (`0` in `0h`) still binds. `lead` carries its own trailing space, so the boundary
+/// BEFORE the value is already guaranteed. Universal grammar (ADR 0006 — no name lists).
+fn lead_binds_value(text: &str, lead: &str, value_lower: &str) -> bool {
+    if value_lower.is_empty() {
+        return false;
+    }
+    let is_ident = |c: char| c.is_ascii_alphanumeric() || c == '_';
+    let require_trailing_boundary = value_lower
+        .chars()
+        .next_back()
+        .is_some_and(|c| c.is_ascii_alphabetic());
+    let mut from = 0usize;
+    while let Some(pos) = text[from..].find(lead) {
+        let at = from + pos;
+        let after_lead = &text[at + lead.len()..];
+        if let Some(rest) = after_lead.strip_prefix(value_lower)
+            && (!require_trailing_boundary || rest.chars().next().is_none_or(|c| !is_ident(c)))
+        {
+            return true;
+        }
+        from = at + lead.len();
+    }
+    false
 }
 
 fn extract_signal_polarity_from_prose(
@@ -16960,9 +16991,10 @@ mod tests {
     mod nlp_classification {
         use super::super::{
             StatementClass, classify_statement, collect_subject_signal_tokens,
-            extract_protocol_state_value, is_descriptive_field_cell_spurious_subject,
-            is_descriptive_narration_binding, is_relational_equality_constraint,
-            is_signal_value_constraint, text_before_condition_marker,
+            extract_discovered_state_value_from_text, extract_protocol_state_value,
+            is_descriptive_field_cell_spurious_subject, is_descriptive_narration_binding,
+            is_relational_equality_constraint, is_signal_value_constraint,
+            text_before_condition_marker,
         };
 
         #[test]
@@ -17172,6 +17204,58 @@ mod tests {
                 "Reserved (RSVD): This field shall be cleared to 0h.",
                 "RSVD"
             ));
+        }
+
+        // EXTRACTION-QUALITY-GAUGE.3f — the alphabetic-value word-boundary gate on the value binder.
+        #[test]
+        fn alphabetic_value_is_not_lifted_from_a_longer_word() {
+            // NVMe SANICAP: "shall be non-zero" must NOT bind the enum value `NO` (a substring of
+            // "non-zero"). The true obligation is "shall be non-zero" — `NO` is a fabricated fragment.
+            let values: std::collections::HashSet<String> =
+                ["NO".to_string()].into_iter().collect();
+            assert_eq!(
+                extract_discovered_state_value_from_text(
+                    "if the sanitize command is supported, then this field shall be non-zero.",
+                    &values
+                ),
+                None
+            );
+        }
+
+        #[test]
+        fn alphabetic_value_binds_as_a_whole_word() {
+            // The same value DOES bind when it stands as a whole word. (The binder receives
+            // already-lowercased text from its caller; the returned value keeps its original case.)
+            let values: std::collections::HashSet<String> =
+                ["NO".to_string()].into_iter().collect();
+            assert_eq!(
+                extract_discovered_state_value_from_text("this field shall be no.", &values),
+                Some("NO".to_string())
+            );
+            // "valid" still binds the alphabetic value `VALID` (whole word, followed by a space).
+            let valid: std::collections::HashSet<String> =
+                ["VALID".to_string()].into_iter().collect();
+            assert_eq!(
+                extract_discovered_state_value_from_text(
+                    "the specified address shall be valid only under the following conditions.",
+                    &valid
+                ),
+                Some("VALID".to_string())
+            );
+        }
+
+        #[test]
+        fn numeric_value_still_binds_before_a_radix_suffix() {
+            // ELEN/RECFMT: a numeric value keeps lenient matching, so "shall be 0h" still binds `0`
+            // (the value-boundary tightening applies only to alphabetic enum values).
+            let values: std::collections::HashSet<String> = ["0".to_string()].into_iter().collect();
+            assert_eq!(
+                extract_discovered_state_value_from_text(
+                    "this field shall be 0h when deleting an entry.",
+                    &values
+                ),
+                Some("0".to_string())
+            );
         }
 
         #[test]

@@ -170,7 +170,7 @@ honestly-qualified) path to "human-SpecForge in Rust."
 
 ## Task Tree
 
-- ID: `EXTRACTION-QUALITY-GAUGE` · Status: `active` · Children: `.0`–`.4`
+- ID: `EXTRACTION-QUALITY-GAUGE` · Status: `active` · Children: `.0`–`.4` (incl. `.3a`–`.3f`)
 - ID: `EXTRACTION-QUALITY-GAUGE.gauge` · Status: `done` · Goal: establish the NLI-oracle not-entailed
   rate as a per-doc extraction-quality gauge; measure CHI (~83%) + APB (~29%), hand-validate (18/18).
 - ID: `EXTRACTION-QUALITY-GAUGE.1` · Status: `done` (prototype) · Goal: **entity discrimination** —
@@ -531,6 +531,44 @@ honestly-qualified) path to "human-SpecForge in Rust."
   21→20 (FFFF gone), CCIX r1.0a rebuild 23→15 (8 gone), wire gold ×4 stay 1.000 on gated-Pattern
   rebuilds, kg-bench green, full `run_ci.sh`. Refuse → honest residual (the field's real obligation,
   if any, rides its own mnemonic — recall of the correct subject is a separate concern).
+- ID: `EXTRACTION-QUALITY-GAUGE.3f` · Status: `done` (`2026-06-15`, CODE + full gold battery; PNT pick —
+  owner-chosen "EQG constraint precision" direction; the per-item NVMe audit under `.3e` left this
+  residual) · Goal: the **alphabetic-value word-boundary** gate on the deterministic value binder.
+  **SHIPPED + VERIFIED:** pure `lead_binds_value(text, lead, value_lower)` in `ir/evidence.rs` replaces
+  the substring `contains_any` inside `extract_discovered_state_value_from_text` (the ONE shared value
+  matcher used by `extract_dynamic_signal_constraints` `dyn_sigcon_*`) — it requires a trailing
+  identifier boundary after the matched value ONLY when the value ends in a letter; numeric values stay
+  lenient (preserve "0h"). +3 tests, lib 1625 → **1628**, `cargo fmt` clean, warning-deny clippy clean
+  (`let`-chain collapse), full `run_ci.sh` GREEN, kg-bench **156/156**. **Verified (fresh release bin):**
+  NVMe `evidence --dry-run` **20 → 19** — removes EXACTLY `dyn_sigcon_0013 SANICAP must_be_value NO`
+  (the "shall be `no`n-zero" fragment), nothing added, `message_field_records`/`timing_constraints`
+  byte-identical. **Wire-build invariance proven:** a fresh-Pattern rebuild (new bin) of all four wire
+  docs has **0** alphabetic `must_be_value` records that `.3f` would alter → OLD/NEW bins produce
+  identical wire Pattern builds. **Gold-safe (non-destructive temp-evidence-root eval, new bin):**
+  APB/AHB/AXI/SWD constraints **1.000** + relations **1.000** (content-anchored) + APB/AHB/AXI temporal
+  **3/3+4/4+3/3**; SWD-derivation frame **11/11** / operation **4/4** / state **13/13**;
+  `seed_nvme_registers` field-name recall **28/29** unchanged. Refuse → honest residual.
+  **Probe-first (read-only, no 14B, over all 78 persisted evidence docs):** the dynamic value binder
+  `extract_discovered_state_value_from_text` (`ir/evidence.rs`) matches a discovered enum value behind a
+  normative lead phrase (`must be`/`shall be`/`must remain`/`shall remain` `<value>`) with a PLAIN
+  substring `contains_any`, so an ALPHABETIC value is lifted out of a longer word: NVMe `SANICAP` mints
+  `dyn_sigcon_0013 must_be_value NO` off "this field **shall be `no`n-zero**" — the true obligations are
+  "shall be non-zero" / "shall be cleared to 0h", so `NO` is a fabricated fragment
+  (`feedback_scoring_rigor` — honest residual over a fabricated fact). **Measured fix:** require a
+  trailing identifier boundary after the matched value ONLY when the value ends in a LETTER (an
+  alphabetic enum value `NO`/`YES`/`VALID` must match a WHOLE word); a numeric value keeps lenient
+  matching so a radixed literal ("shall be `0`h" → ELEN/RECFMT, genuine) still binds. **Corpus impact
+  (measured pre-build over the 78-doc persisted surface):** removes EXACTLY 1 record (NVMe `SANICAP NO`)
+  and flips ZERO wire-doc (APB/AHB/AXI/SWD) constraints; the genuine numeric `must_be_value 0` /
+  "shall be 0h" family is untouched — the blanket after-boundary rule was REJECTED by measurement
+  (it would wrongly drop ELEN/RECFMT "shall be 0h", where `0` legitimately prefixes `0h`). Universal
+  grammar, no name lists (ADR 0006); root-cause fix in the ONE shared matcher (DRY); the `is <value>
+  when` form is inherently whole-word-bounded and unchanged. Acceptance: +unit tests (the non-zero bug
+  → None, whole-word `NO` → bound, `0h` numeric preserved, `valid` preserved); NVMe `evidence
+  --dry-run` 20→19 (SANICAP NO gone, other 19 identical); gated-Pattern rebuild + `eval-extraction
+  --provider skip` of all four wire docs (constraints+relations+temporal) stays 1.000 with
+  `seed_nvme_registers` unaffected; kg-bench 156/156; full `run_ci.sh` GREEN; book
+  `pipeline/evidenceir.md` `.3f` note + README bullet + KM card.
 - ID: `EXTRACTION-QUALITY-GAUGE.4` · Status: `done` (`2026-06-10`) · Goal: constraint dedup by
   (subject, kind, condition) in the LLM-primary extractor. Shipped: pure `dedup_constraints` —
   canonical key = the eval's `signal_constraint_record_key` (subject + kind incl. value + negation)
@@ -605,6 +643,23 @@ honestly-qualified) path to "human-SpecForge in Rust."
 
 ## Changelog
 
+- `2026-06-15`: **`.3f` DONE** — the alphabetic-value word-boundary gate ships (PNT pick; owner-chosen
+  "EQG constraint precision" direction). The dynamic value binder
+  `extract_discovered_state_value_from_text` matched a discovered enum value behind a normative lead
+  (`must be`/`shall be`/`must remain`/`shall remain` `<value>`) with a PLAIN substring `contains_any`,
+  so an alphabetic value was lifted out of a longer word: NVMe `SANICAP` minted `dyn_sigcon_0013
+  must_be_value NO` off "this field **shall be `no`n-zero**" (the real obligations are "shall be
+  non-zero" / "shall be cleared to 0h" — `NO` is a fabricated fragment, `feedback_scoring_rigor`). Fix:
+  new pure `lead_binds_value` requires a trailing identifier boundary after the value ONLY when it ends
+  in a LETTER (an alphabetic enum value matches a WHOLE word); a numeric value keeps lenient matching so
+  a radixed literal ("shall be `0`h" → ELEN/RECFMT, genuine) still binds — the blanket after-boundary
+  rule was REJECTED by measurement (it would wrongly drop "shall be 0h"). Universal grammar, no name
+  lists (ADR 0006); root-cause fix in the ONE shared matcher (DRY). +3 tests, lib 1625→**1628**, full
+  `run_ci.sh` GREEN, kg-bench 156/156. Live: NVMe 20→19 (only `SANICAP NO`), 0 wire-doc build change
+  (proven), wire gold ×4 1.000 (constraints/relations/temporal/SWD-derivation) on a non-destructive
+  fresh-Pattern temp-root eval, `seed_nvme_registers` 28/29 unchanged. Refuse → honest residual. Book
+  `pipeline/evidenceir.md` `.3f` paragraph. KM [[value-binder-alphabetic-whole-word]]. The `.3`
+  constraint-precision program now spans `.3a`–`.3f`.
 - `2026-06-15`: **`.3e` DONE** — the descriptive-field-cell spurious-subject gate ships (PNT pick; the
   `.3d`-recorded candidate future leaf). Pure `is_descriptive_field_cell_spurious_subject(text, subject)`
   in `ir/evidence.rs`, wired into BOTH value-binding extractors as a `subject_signals.retain(…)`: inside

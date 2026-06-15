@@ -1,4 +1,27 @@
 # DEVELOPMENT_NOTES
+## EXTRACTION-QUALITY-GAUGE.3f (`2026-06-15`) — alphabetic-value word-boundary gate on the value binder
+- **Why:** PNT slice, owner-chosen "EQG constraint precision" direction. Continues the `.3a`–`.3e`
+  constraint-precision program. A per-item NVMe audit (read-only, no 14B) found the deterministic value
+  binder fabricating a constraint *value* from a substring of a longer word.
+- **Root cause:** `extract_discovered_state_value_from_text` matched `"shall be {value}"` etc. with a
+  plain substring `contains_any`. With a discovered alphabetic enum value `NO`, *"this field shall be
+  **no**n-zero"* matched → `SANICAP must_be_value NO`, a fabricated fact (the real obligations are "shall
+  be non-zero" / "shall be cleared to 0h").
+- **Fix (and the rejected alternative):** new pure `lead_binds_value` requires a trailing identifier
+  boundary after the value **only when the value ends in a letter** — an alphabetic enum value must
+  match a whole word, but a numeric value stays lenient. The first design (a *blanket* after-boundary
+  rule for all values) was MEASURED and REJECTED: it removed 10 records, several of them GENUINE — `ELEN`
+  / `RECFMT` *"shall be **0h**"* (value `0` legitimately prefixes the radix suffix `h`). Measuring before
+  building is what kept this correct; the letter-only rule removes exactly the 1 fabrication and 0
+  genuine facts.
+- **Scope discipline:** the wrong-*subject* prose class (`NVM`/`FFFF`/`LBA` lifted from descriptive
+  sentences) and the spurious-*digit*-value class on descriptive cells (`HMDLLA 1`, `MPS 0`) are
+  DIFFERENT structural shapes left as honest residuals (each a separate measured slice; no denylist —
+  `feedback_avoid_denylists_prefer_structural`). One narrow gate per slice, per the owner's directive.
+- **Verification:** the value binder produces byte-identical wire Pattern builds (proven by scanning the
+  fresh-bin wire rebuilds for any alphabetic `must_be_value` the gate would touch — found 0), so the
+  non-negotiable wire-doc 1.000 bar is structurally safe, not just empirically green.
+
 ## CANONICAL-PROMOTION-SWEEP.1 (`2026-06-15`) — non-wire HBM2 canonical-promotion pilot (RAM-safe, protocol locked)
 - **Why:** the owner confirmed this is the dedicated session for `CANONICAL-PROMOTION-SWEEP.1` ("start the
   pilot"). `.1` proves the now-default LLM-primary promotion (`LLM-PRIMARY-PROMOTION.5`) lands its measured

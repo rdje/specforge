@@ -1,3 +1,29 @@
+### EXTRACTION-QUALITY-GAUGE.3f — alphabetic-value word-boundary gate on the deterministic value binder
+PNT slice (owner-chosen "EQG constraint precision" direction, fresh session `2026-06-15`). A constraint
+**precision** fix: stop the value binder fabricating a value from a substring of a longer word.
+
+- **Bug (measured, per-item):** `extract_discovered_state_value_from_text` (`ir/evidence.rs`) matched a
+  discovered enum value behind a normative lead (`must be`/`shall be`/`must remain`/`shall remain`
+  `<value>`) with a PLAIN substring `contains_any`, so an alphabetic value was lifted out of a longer
+  word. NVMe `SANICAP` minted `dyn_sigcon_0013 must_be_value NO` off *"this field shall be **no**n-zero"*
+  — the true obligations are *"shall be non-zero"* / *"shall be cleared to 0h"*, so `NO` is a fabricated
+  fragment (`feedback_scoring_rigor` — honest residual over a fabricated fact).
+- **Fix:** new pure `lead_binds_value(text, lead, value_lower)` requires a trailing identifier boundary
+  after the matched value ONLY when the value ends in a LETTER (an alphabetic enum value `NO`/`YES`/
+  `VALID` must match a WHOLE word); a numeric value keeps lenient matching so a radixed literal
+  (*"shall be `0`h"* → genuine ELEN/RECFMT) still binds. The blanket after-boundary rule was REJECTED by
+  measurement (it would wrongly drop the genuine `0h` family). Universal grammar, no name lists (ADR
+  0006); root-cause fix in the ONE shared matcher (DRY); the `is <value> when` form is inherently
+  whole-word-bounded and unchanged.
+- **Verified:** +3 unit tests; lib 1625 → **1628**; full `run_ci.sh` GREEN; kg-bench **156/156**. NVMe
+  `evidence --dry-run` **20 → 19** (removes exactly `SANICAP NO`, nothing added,
+  `message_field_records`/`timing_constraints` byte-identical). Wire-build invariance PROVEN: a fresh
+  Pattern rebuild (new bin) of all four wire docs has **0** alphabetic `must_be_value` records `.3f`
+  would alter → OLD/NEW produce identical wire builds. Gold-safe on a non-destructive temp-evidence-root
+  eval: APB/AHB/AXI/SWD constraints + relations + temporal + SWD-derivation all **1.000**;
+  `seed_nvme_registers` 28/29 unchanged. KM card `value-binder-alphabetic-whole-word`; book
+  `pipeline/evidenceir.md` `.3f` paragraph. The `.3` constraint-precision program now spans `.3a`–`.3f`.
+
 ### CANONICAL-PROMOTION-SWEEP — CLOSE: corpus-wide LLM-primary promotion landed on canonical (24 docs), review-gated
 Tree close. `.1` (HBM2 pilot) + `.2` (wire docs) + `.3` (non-wire scale-out, 26 docs) all met — the now-default
 LLM-primary constraint promotion is landed on the corpus's CANONICAL artifacts. Docs-only commit.

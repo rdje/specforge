@@ -909,6 +909,21 @@ constraints and temporal, SWD frame/operation/state) stays at 1.000 and `kg-benc
 probe-confirmed gold-safe, because a wire spec declares its signals in signal tables, never in
 "This field …" cells. *Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.3e`).
 
+A fourth companion gate (`.3f`) fixes a smaller but sharper *value* error in the same family. When the
+extractor reads a value-binding sentence, it looks for a value the document itself used, sitting behind a
+phrase like *"shall be …"*. It used to match that value as a plain substring — which means an *alphabetic*
+value such as `NO` would also match inside a longer word: *"this field shall be **no**n-zero"* wrongly
+became the fabricated fact *"SANICAP must be NO"*, when the real obligation is *"shall be non-zero"*. The
+fix is a one-line-of-reasoning rule (universal grammar, no name lists — ADR 0006): an alphabetic enum
+value must match a **whole word** (the character after it cannot continue a word), so `NO` no longer hides
+inside `non-zero`. A purely numeric value keeps the looser match on purpose, so a radix-suffixed literal
+like *"shall be `0`h"* still binds correctly (a blanket rule would have wrongly dropped those genuine
+`0h` obligations — measurement caught that before it shipped). The effect is surgical: exactly one
+fabricated record leaves the corpus (NVMe's `SANICAP NO`), every wire-based gold gate stays at 1.000
+(the value binder produces byte-identical results on the wire specs), and `kg-bench` stays green —
+honest residual over a fabricated fact. *Authoritative tracking:*
+`docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.3f`).
+
 ### `EXTRACTION-QUALITY-GAUGE.0` — the artifact carries its own quality measurement
 
 Every surface above is about extracting more, and extracting it correctly. This one is about
