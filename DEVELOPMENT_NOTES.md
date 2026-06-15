@@ -1,4 +1,38 @@
 # DEVELOPMENT_NOTES
+## NLP-SHALLOW-PARSE.2h (`2026-06-15`) — measured NO-GO as new code (production already handles drive/read direction)
+- **Why:** PNT picked the active frontier leaf `NLP-SHALLOW-PARSE.2h` ("light dependency:
+  passive + verb sense — fix the spike's direction errors"). The tree's Acceptance Criterion #1
+  requires a measured decision before any production code, so the slice opened by reading the
+  production extractor and measuring the corpus — and the measurement overturned the leaf's
+  premise.
+- **What the measurement showed:**
+  1. `extract_actor_signal_relations` (`evidence.rs` ~L2822-3039) already matches four
+     VOICE-SEPARATED patterns against `normative_vocab.rs` (`PASSIVE_DRIVES_VERBS` /
+     `ACTIVE_DRIVES_VERBS` / `PASSIVE_READS_VERBS` / `ACTIVE_READS_VERBS`). Passive =
+     `"{sig} is {verb} by|from {actor}"`; active = `"{actor} {verb} {sig}"` with
+     `active_object_contains_signal` confirming the signal is in the object clause AFTER the
+     verb. The lists are disjoint by inflection, so direction is correct BY DESIGN. The spike's
+     `manager Reads ARID` error was a generic-SVO-prototype artifact, not a production bug.
+  2. The only prose construction production does NOT handle is the `to`/recipient frame
+     (`by`/`from` = agent is handled; `to` = recipient is not). Measured over the 78 persisted
+     `evidence_ir.json`: `to {recipient}` is common lexically (~255 hits) but its grounded yield
+     is ≈0 — the subjects are messages/transactions (`event`/`notification`/`response`/`Snoop`/
+     `MSI`/`request`), which the signal-subject grounding gate rejects. `is driven to` is
+     value-dominant (`driven to zero`/`output pin`/`RSP`). Recipients are document-specific node
+     names (RN/SN/HN/PE/hart — ADR 0006, not hardcodable), and `extract_actor_phrase` does not
+     actor-ground (grabs 1-2 words after the prep), so a naive `to` frame would mint false
+     actors. Wire docs contain the frame (AXI=10, AHB=1) → NOT additive-safe vs the
+     wire-based-100% gold gate, for ≈0 benefit.
+- **Decision / how applied:** do NOT build `.2h` (would be duplicate-of-existing or negative-EV
+  / gate-risking). Marked `done` (measured NO-GO); frontier advances to `.2f` (coordination
+  distribution), itself to be opened measurement-first (existing coordination handling is
+  partial — e.g. `can drive ARCHUNKEN and RCHUNKV`). Honors measured-need + honest-residual +
+  quality-over-speed; gaps-first per the owner's scope decision. Precedent: `MEMORY-BOUNDED-INGEST.5`,
+  `FULL-PAGE-INTENT-CAPTURE.1`. KM card `actor-signal-direction-passive-active-handled`.
+- **Verification:** read-only corpus measurement (grep over `generated/evidence_ir/*/evidence_ir.json`);
+  no production code touched; no test/CI/book impact. `scripts/check_memory_architecture.sh` +
+  KM derive-and-diff green.
+
 ## 3-lever ownership/scope slice (`2026-06-15`) — own + scope all three owner-directed forward levers; handoff-ready (docs-only)
 - **Why:** at the exhausted clean-frontier decision point I surfaced the three owner-gated
   forward levers; the owner replied "do all these … when/if all are task-tree tracked then

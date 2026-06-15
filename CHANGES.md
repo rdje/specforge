@@ -1,3 +1,32 @@
+### NLP-SHALLOW-PARSE.2h — measured NO-GO as new code (production already handles drive/read direction; docs-only)
+First PNT slice of the fresh session (frontier leaf of the active `NLP-SHALLOW-PARSE`
+tree). Opened the `.2h` "passive + verb-sense direction" build **measurement-first**
+(the tree's Acceptance Criterion #1: a measured decision precedes any production code) —
+and the measurement **overturned the leaf's premise**, so no production code was written.
+
+- **Production already gets direction right, by design.** `extract_actor_signal_relations`
+  (`crates/specforge/src/ir/evidence.rs` ~L2822-3039) matches FOUR voice-separated patterns
+  against the centralized `normative_vocab.rs` lexicon — passive/active × drives/reads — with
+  disjoint inflection lists (`driven`/`drives`, `sampled`/`samples`), so a passive participle
+  never fires an active pattern. The spike's `manager Reads ARID` direction error was a
+  property of the throwaway generic-SVO prototype (naive SVO, no verb sense), **not** this hand
+  grammar. There is no production direction bug to fix.
+- **The only prose delta — the `to`/recipient frame — is negative-EV.** Measured over the 78
+  persisted `evidence_ir.json`: `to {recipient}` frames are common lexically (~255) but their
+  SUBJECTS are overwhelmingly messages/transactions (`event` 24, `notification` 19, `response`,
+  `Snoop`, `MSI`, `request`, `interrupt`), which the **signal-subject grounding gate rejects**
+  → ≈0 grounded yield; `is driven to` is value-dominant (`driven to zero` / `output pin` / `RSP`);
+  recipients are document-specific node names (RN/SN/HN/PE/hart — ADR 0006, not hardcodable);
+  and **wire docs contain the frame** (AXI=10, AHB=1) so a `to` frame is NOT additive-safe vs
+  the wire-based-100% gold gate. It is also recall (not the precision fix `.2h` was scoped as) in
+  the exact low-yield free-prose area the spike de-prioritized.
+- **Decision:** do NOT build `.2h`; mark it `done` (measured NO-GO); advance the frontier to
+  `.2f` (coordination distribution, also measured-first). Gaps-first discipline (don't rebuild
+  what exists). Direct precedent: `MEMORY-BOUNDED-INGEST.5` measured-DEFER, `FULL-PAGE-INTENT-CAPTURE.1`
+  NO-GO. KM card `actor-signal-direction-passive-active-handled` added (KM regenerated).
+- **No Rust change** — docs-only (task tree + KM card/map + live docs). No `run_ci`/book change
+  (no user-facing behavior change; the tree is not closing).
+
 ### 3-lever ownership/scope slice — own + scope all three owner-directed forward levers; handoff-ready (docs-only)
 The owner reviewed the exhausted clean PNT frontier and directed pursuing **all three**
 owner-gated forward levers ("do all these"), then "when/if all are task-tree tracked …

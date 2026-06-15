@@ -139,9 +139,21 @@ the owner's go after the tempered spike result, then built incrementally and mea
   coordination** — distribute "X, which connects to Y, drives Z and W"; hand-roll.
 - ID: `NLP-SHALLOW-PARSE.2g` · Status: `deferred` (scope-bounded `2026-06-15` — exists: constraint negation) · Goal: **negation / modality** — `must not`/`shall`/`may`;
   extend the existing constraint-negation handling.
-- ID: `NLP-SHALLOW-PARSE.2h` · Status: `pending` (frontier — FIRST value piece, the decided scope) · Goal:
-  **light dependency (passive + verb sense)** — the genuinely-new capability; fixes the spike's direction
-  errors ("Y is driven by X" ↔ "X drives Y"); hand-roll.
+- ID: `NLP-SHALLOW-PARSE.2h` · Status: `done` (measured NO-GO as new code, `2026-06-15`) · Goal:
+  **light dependency (passive + verb sense)** — fix the spike's direction errors ("Y is driven by X" ↔
+  "X drives Y"). **Measured resolution (`2026-06-15`, no production code):** the premise (production has a
+  drive/read direction bug) was OVERTURNED. `extract_actor_signal_relations` (`evidence.rs` ~L2822-3039)
+  already matches four VOICE-SEPARATED patterns against `normative_vocab.rs` — passive/active × drives/reads —
+  with disjoint inflection lists, so direction is already correct BY DESIGN; the spike's `manager Reads ARID`
+  error was a property of the throwaway generic-SVO prototype, not this hand grammar. The only prose delta —
+  the `to`/recipient transfer frame (`X is sent/returned to Y`) — is **negative-EV**: measured over the 78
+  persisted evidence artifacts its subjects are overwhelmingly messages/transactions (`event`/`notification`/
+  `response`/`Snoop`/`MSI`), which the signal-subject grounding gate rejects (≈0 grounded yield); `is driven
+  to` is value-dominant (`driven to zero`); recipients are document-specific node names (RN/SN/PE/hart — ADR
+  0006, not hardcodable); and wire docs contain the frame (AXI=10, AHB=1) so it is NOT additive-safe vs the
+  wire-based-100% gold gate. It is also recall (not the precision fix `.2h` was scoped as) in the exact
+  low-yield free-prose area the spike de-prioritized. → do NOT build; frontier advances to `.2f`. KM card
+  `actor-signal-direction-passive-active-handled`.
 - ID: `NLP-SHALLOW-PARSE.2i` · Status: `deferred` (scope-bounded `2026-06-15` — already strong: declared-signal catalog) · Goal: **grounding NER gate** — formalize the existing
   declared-signal/actor catalog as the explicit gate the parser proposes into (ADR 0006); largely exists.
 - ID: `NLP-SHALLOW-PARSE.3` · Status: `proposed` · Goal: **SVO assembler + Extractor-tier integration** —
@@ -152,9 +164,9 @@ the owner's go after the tempered spike result, then built incrementally and mea
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `NLP-SHALLOW-PARSE.2h` | `pending` | **SCOPE DECIDED `2026-06-15` (owner-delegated): BOUNDED, gaps-first — build the genuinely-new value pieces, NOT the full 9-component stack.** `.2h` (passive-voice + verb-sense direction) is FIRST: it is the one piece the spike flagged as *missing* ("none — the new capability") AND it fixes a real precision bug the spike exposed (direction errors — AXI `manager Reads ARID` when ARID is manager-DRIVEN). Self-contained, hand-rolled, reuses existing tokenization/`normative_vocab`/grounding. Wire-based APB/AHB/AXI/SWD stay 100% (hard gate); deterministic + offline. |
-| 2 | `NLP-SHALLOW-PARSE.2f` | `pending` | clause split + coordination distribution — the second real gap the spike found ("X, which connects to Y, drives Z and W"). Build after `.2h`, measured against the hand grammars. |
-| 3 | `NLP-SHALLOW-PARSE.3` | `proposed` | SVO assembler — wire `.2h`/`.2f` (+ the reused existing pieces) into ONE `Extractor` through the grounding gate; retire a hand grammar ONLY when SVO provably ≥ it. |
+| 1 | `NLP-SHALLOW-PARSE.2f` | `pending` (frontier) | **clause split + coordination distribution** — the genuine prose gap the spike isolated ("X, which connects to Y, drives Z and W" → distribute the verb over coordinated objects/actors). Now FIRST after `.2h` resolved measured-NO-GO. Build MEASURED-FIRST against the hand grammars (the existing coordination handling — e.g. `can drive ARCHUNKEN and RCHUNKV` — is partial, so the slice opens by measuring the concrete residual before any code). Wire-based APB/AHB/AXI/SWD stay 100% (hard gate); deterministic + offline; additive-until-proven. |
+| — | `NLP-SHALLOW-PARSE.2h` | `done` (measured NO-GO, `2026-06-15`) | **Resolved without production code.** Production already handles passive+active drive/read DIRECTION correctly (voice-separated verb lexicon); the spike's direction error was prototype-only; the only prose delta (the `to`/recipient frame) is negative-EV (≈0 grounded yield, value-dominant `is driven to`, document-specific recipient names, and present in wire docs so not additive-safe vs the 100% gate). See the `.2h` node + KM card `actor-signal-direction-passive-active-handled`. |
+| 2 | `NLP-SHALLOW-PARSE.3` | `proposed` | SVO assembler — wire `.2f` (+ the reused existing pieces) into ONE `Extractor` through the grounding gate; retire a hand grammar ONLY when SVO provably ≥ it. |
 | — | `.2a`/`.2b`/`.2c`/`.2d`/`.2e`/`.2g`/`.2i` | `deferred` | **Scope-bounded out (`2026-06-15`):** the spike proved POS quality is NOT the bottleneck (hand-roll ≈ nltk) and these mostly already exist in scattered form (tokenizer `is_hardware_signal_token`, lemmatizer `normative_vocab.rs`, grounding gate = the declared-signal catalog). Build a specific one ONLY if measurement during `.2h`/`.2f`/`.3` shows it is the concrete bottleneck — not speculatively. |
 
 ## Decisions
@@ -188,12 +200,27 @@ the owner's go after the tempered spike result, then built incrementally and mea
   (additive until proven). A deferred ladder leaf is built ONLY if measurement during `.2h`/`.2f`/`.3` shows it
   is the concrete bottleneck — never speculatively.
 
+- `2026-06-15`: **`.2h` MEASURED NO-GO as new production code (gaps-first discipline in action).** The first
+  build slice opened by reading production + measuring the corpus (Acceptance Criterion #1: a measured decision
+  precedes any production code). Finding: `extract_actor_signal_relations` ALREADY handles passive+active
+  drive/read DIRECTION correctly via the voice-separated `normative_vocab` lexicon — the spike's `manager Reads
+  ARID` error was a generic-SVO-prototype artifact, NOT a production bug, so the leaf's "fix direction errors"
+  premise was already satisfied. The only prose delta (the `to`/recipient transfer frame) measured negative-EV
+  over the 78 persisted evidence artifacts: ≈0 grounded yield (subjects are messages/transactions the
+  signal-subject grounding gate rejects), precision-fraught (`is driven to` is value-dominant; recipients are
+  document-specific node names — ADR 0006), and wire-doc-present (AXI=10/AHB=1 → not additive-safe vs the
+  wire-based-100% gate) — and it is recall in the exact low-yield free-prose area the spike de-prioritized. →
+  do NOT build `.2h`; advance frontier to `.2f`. This is gaps-first (don't rebuild what exists; build the real
+  gap), with direct precedent (MEMORY-BOUNDED-INGEST.5 measured-DEFER, FULL-PAGE-INTENT-CAPTURE.1 NO-GO). KM
+  card `actor-signal-direction-passive-active-handled`. `[[feedback_scoring_rigor]]`.
+
 ## Open Questions
 
 - ~~Given the spike result (consolidation, not a recall leap), does the owner want to build the full tier now,
   build only the highest-value pieces (`.2h`/`.2f`), or redirect?~~ **RESOLVED `2026-06-15`** (owner delegated
   the call; see Decisions): GO, BOUNDED, gaps-first — `.2h` then `.2f` then the `.3` assembler; the full ladder
-  deferred-unless-measured. The frontier is now `.2h`.
+  deferred-unless-measured. **Then `.2h` itself resolved measured-NO-GO (`2026-06-15`) — production already
+  covers it — so the frontier is now `.2f`.**
 
 ## Blockers
 
@@ -204,12 +231,14 @@ the owner's go after the tempered spike result, then built incrementally and mea
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-09` | `NLP-SHALLOW-PARSE.1` | spike: general SVO (hand-roll + nltk) vs hand grammars on real APB/AXI/SWD/SWP | done — 3–8% recall; tagger-choke neutralized by grounding; consolidation-not-revolution |
+| `2026-06-15` | `NLP-SHALLOW-PARSE.2h` | read production `extract_actor_signal_relations` + `normative_vocab`; measured `by/from` vs `to` frame prevalence + subject/recipient grounding over the 78 persisted `evidence_ir.json`; checked wire-doc presence | NO-GO as new code — direction already correct (voice-separated lexicon); `to`/recipient frame negative-EV (≈0 grounded yield, value-dominant `is driven to`, wire docs AXI=10/AHB=1). No production code changed; frontier → `.2f` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `NLP-SHALLOW-PARSE.1` | pending (this slice) | docs-only spike + tree; no production code |
+| `NLP-SHALLOW-PARSE.1` | (earlier slice) | docs-only spike + tree; no production code |
+| `NLP-SHALLOW-PARSE.2h` | `NLP-SHALLOW-PARSE.2h — measured NO-GO …` (this slice) | docs-only measured resolution; no production code; frontier → `.2f` |
 
 ## Changelog
 
@@ -223,3 +252,10 @@ the owner's go after the tempered spike result, then built incrementally and mea
   Hard gates unchanged (wire-based 100%, deterministic, offline, additive-until-proven). Docs-only ownership
   slice — no production code yet (the `.2h` build is the first code slice, for a fresh session). Handoff:
   ready for `.2h` implementation.
+- `2026-06-15`: **`.2h` resolved MEASURED NO-GO (no production code).** Opened the `.2h` build measurement-first
+  and found production already covers passive/active drive/read direction (voice-separated `normative_vocab`
+  lexicon); the spike's direction error was prototype-only; the only delta (the `to`/recipient frame) is
+  negative-EV (≈0 grounded yield, value-dominant `is driven to`, document-specific recipient names, wire-doc
+  present → not additive-safe). Marked `.2h` `done` (NO-GO), advanced frontier to `.2f` (coordination), wrote
+  KM card `actor-signal-direction-passive-active-handled`. Gaps-first discipline; measured-DEFER precedent
+  (`.5`, FULL-PAGE-INTENT-CAPTURE.1).
