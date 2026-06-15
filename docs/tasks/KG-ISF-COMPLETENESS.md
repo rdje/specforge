@@ -63,13 +63,36 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 - ID: `KG-ISF-COMPLETENESS.0` · Status: `done` (`2026-06-16`, docs-only ownership/scoping slice) · Goal:
   own the north star, define the checkable bar, record the measured baseline, reverse the "defer ISF"
   steer in the live docs. No code (doctrine: own before touching). Memory `project_kg_isf_completeness`.
-- ID: `KG-ISF-COMPLETENESS.1` · Status: `pending` (measurement-first) · Goal: **agent-surface fidelity**
-  — (a) a STRUCTURAL agent-identity gate that rejects prose-fragment non-agents (function-word /
-  verb-led / descriptive-multi-token subjects) without a name list, gold-safe on the wire docs; (b)
-  connect or consolidate the disconnected real agents (`producer`/`consumer`/`receiver`/`transmitter`)
-  so each real agent carries its signal relations. Measurement-first: characterize the noise's shared
-  structure + the disconnected-agent cause (alias vs genuine gap) before any code; WIRE-BASED-100 a hard
-  gate. Spun from `.0`.
+- ID: `KG-ISF-COMPLETENESS.1` · Status: `active` (measurement phase DONE `2026-06-16`; code → `.1a`/`.1b`)
+  · Goal: **agent-surface fidelity** — (a) a STRUCTURAL agent-identity gate rejecting prose-fragment
+  non-agents; (b) connect/consolidate the disconnected real agents. **Measurement DONE** (read-only over
+  the wire-doc IR; report `docs/research/agent-surface-fidelity-measurement.md`, KM card
+  `[[agent-surface-defect-taxonomy]]`): the noise splits into THREE structural classes — **A Junk** (the
+  captured "subject" is a clause/function-word/descriptor: `For components`, `HPROT bit`, `is recommended`
+  with the real subject `Manager` in the that-clause, `section`, `two-cycle response`, `TREADY input`,
+  `is permitted`); **B Fragment of a real agent** (`Subordinate extends`→`Subordinate`, `address decoder`/
+  `decoder also`→`decoder` — "*An address decoder provides HSELx*" is a genuine AHB fact —
+  `Transmitter interface`→`Transmitter`, `Subordinate and decoder`→split); **C Zero-evidence role-term**
+  (0 ports AND 0 rels, minted by the SemanticIR Phase-2 role-term scan). **`.0` hypothesis CORRECTED by
+  evidence:** the "disconnected real agents (`producer`/`consumer`/`receiver`/`transmitter`) are a
+  recoverable relation gap" claim is DISPROVEN for the wire docs — a Class-C term is a drive/read subject
+  next to a known signal ≈0 times, so synthesizing relations for them would be FABRICATION. The genuine
+  completeness win is Class-B consolidation; Class-C is dropped **per this doc's evidence**.
+  **Genericity guardrail proven:** `transmitter` is 0/0 in AXI but `Transmitter` is 22/23 in AXI-Stream —
+  same token, opposite status → the drop/keep rule MUST key off "0/0 in *this* doc", never a name list
+  (ADR 0006). Frontier → `.1a` then `.1b`.
+- ID: `KG-ISF-COMPLETENESS.1a` · Status: `pending` (measurement-first) · Goal: **precision — structural
+  agent-identity gate.** At relation-subject capture (evidence.rs `extract_subject_phrase` /
+  `extract_actor_phrase` / `normalize_relation_actor_name`) reject Class-A subjects by STRUCTURE
+  (function-word/verb/adverb-led, clause fragment, non-agent descriptor) — universal grammar, no name
+  list. Re-characterize the leading-token classes on the persisted corpus first; WIRE-BASED-100
+  (APB/AHB/AXI/SWD per-fact 1.000) a hard gate, verified via a fresh-Pattern temp-evidence-root eval.
+- ID: `KG-ISF-COMPLETENESS.1b` · Status: `pending` (measurement-first) · Goal: **completeness —
+  consolidation + zero-evidence honesty.** (i) Normalize Class-B fragments to the canonical agent token
+  (strip trailing verb/adverb; "X interface"→"X"); (ii) split a coordinated "X and Y" subject; (iii) drop
+  Class-C zero-evidence actors per-doc (0 ports AND 0 rels), first re-checking provenance so a genuinely
+  declared-but-unwired agent is preserved. Explicitly NO relation synthesis for Class-C (measured
+  fabrication risk). WIRE-BASED-100 a hard gate.
 - ID: `KG-ISF-COMPLETENESS.2+` · Status: `pending` · Goal: the remaining bar dimensions per doc
   (relation completeness, signal direction/width coverage, constraint completeness via the gauge,
   behavior/temporal carry, and the ISF round-trip fidelity check), each measurement-first + gold-gated.
@@ -82,3 +105,14 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   real-agent relation-incompleteness; the naive orphan filter disproven — junk agents carry ports).
   Frontier → `.1` (agent-surface fidelity, measurement-first). Memory `project_kg_isf_completeness`;
   reverses the `project_pdf_variant_digestion` "defer ISF" note.
+- `2026-06-16`: **`.1` MEASUREMENT DONE** (read-only, docs-only — measurement-first before any code).
+  Full per-actor port/relation census over the 4 wire docs + AXI-Stream, each noise actor's relations
+  resolved to source text. Result: the agent surface has THREE structural defect classes (A Junk /
+  B Fragment-of-real-agent / C Zero-evidence role-term). **Corrected the `.0` hypothesis with evidence:**
+  the "disconnected real agents are a recoverable relation gap" claim is DISPROVEN — Class-C terms are a
+  drive/read subject next to a known signal ≈0 times, so connecting them would be fabrication; the real
+  completeness win is Class-B consolidation, and Class-C is dropped per-doc. **Genericity guardrail
+  proven** (AXI `transmitter` 0/0 vs AXI-Stream `Transmitter` 22/23 → per-doc evidence-keyed, no name
+  list). Spun the code into `.1a` (precision structural gate) + `.1b` (consolidation + zero-evidence
+  honesty), each measurement-first + WIRE-BASED-100-gated. Report `docs/research/agent-surface-fidelity-measurement.md`;
+  KM card `agent-surface-defect-taxonomy`. No code.

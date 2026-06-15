@@ -1,3 +1,30 @@
+### KG-ISF-COMPLETENESS.1 — agent-surface fidelity: measurement DONE (read-only, docs-only)
+Measurement-first phase of `.1`, executed before any code. Read-only `python3` census over the persisted
+wire-doc IR (`generated/intent_ir` actors / `actor_ports` / `actor_signal_relations`, joined to
+`generated/evidence_ir` source text); no binary, no model, no mutation (RAM-safe, 77% free throughout).
+
+- **Finding — the agent surface has 3 structural defect classes:** **A Junk** (the captured "subject" is a
+  clause / function-word / descriptor: `For components` ← "*For components that…*", `HPROT bit` ← "*each
+  HPROT bit*", `is recommended` ← "*It is recommended that a **Manager** sets HPROT[0] HIGH*" with the real
+  subject in the that-clause, `section`, `two-cycle response`, `TREADY input`, `is permitted`); **B
+  Fragment of a real agent** (`Subordinate extends`→`Subordinate`, `address decoder`/`decoder also`→
+  `decoder` — "*An address decoder provides HSELx*" is a genuine AHB fact — `Transmitter interface`→
+  `Transmitter`, `Subordinate and decoder`→split); **C Zero-evidence role-term** (0 ports AND 0 rels,
+  minted by the SemanticIR Phase-2 role-term scan).
+- **`.0` hypothesis CORRECTED by evidence:** the claim that the disconnected agents
+  (`producer`/`consumer`/`receiver`/`transmitter`) are a *recoverable relation gap* is DISPROVEN — across
+  the 4 wire docs a Class-C term is a drive/read subject next to a known signal ≈0 times (the one AXI
+  `source` "hit" is the noun "source of read data" whose verb-subject is `Subordinate`; the SWD `state
+  machine` "hit" is "in a state"). Synthesizing relations for them would be **fabrication**. The genuine
+  completeness win is Class-B **consolidation**; Class-C is **dropped per this doc's evidence**.
+- **Genericity guardrail proven:** `transmitter` is 0/0 in AXI but `Transmitter` is 22/23 in AXI-Stream —
+  same token, opposite status → any drop/keep rule MUST key off "0/0 in *this* doc", never a global name
+  list (ADR 0006).
+- **Spun the code:** `.1a` (precision — structural agent-identity gate at relation-subject capture) and
+  `.1b` (completeness — Class-B consolidation + per-doc Class-C drop), each measurement-first with
+  WIRE-BASED-100 a hard gate. Report `docs/research/agent-surface-fidelity-measurement.md`; KM card
+  `agent-surface-defect-taxonomy`. No code; live docs + tree updated.
+
 ### KG-ISF-COMPLETENESS.0 — own the ISF-completeness north star (NEW tree, docs-only ownership/scoping)
 Owner directive (`2026-06-16`, multi-message): *"extracting for extracting is not the goal — the IntentIR
 must be complete and contain all the necessary information to be lowered to ISF; the KG shall contain

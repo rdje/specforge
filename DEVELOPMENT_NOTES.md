@@ -1,4 +1,30 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-COMPLETENESS.1 (`2026-06-16`) — agent-surface fidelity: measurement-first (read-only, no code)
+- **Why:** first work leaf of the owner's `2026-06-16` north star (complete KG/IntentIR → faithful ISF).
+  The `.0` baseline named two coexisting agent defects (precision noise + real-agent relation-incompleteness)
+  but the FIX path was unproven — so `.1` opened measurement-first per the tree's Acceptance Criterion #1.
+- **Method:** read-only `python3` over the persisted wire-doc IR (4 wire docs + AXI-Stream guardrail),
+  joining each noise actor's `actor_signal_relations` to the originating `extracted_statements` text. No
+  binary/model/mutation (RAM 77% free throughout).
+- **Finding (3 structural classes):** A **Junk** — captured "subject" is a clause/function-word/descriptor,
+  no agent (`For components`, `HPROT bit`, `is recommended` with the real subject `Manager` in the
+  that-clause, `section`, `two-cycle response`). B **Fragment of a real agent** — subject+verb/adverb or
+  coordination (`Subordinate extends`→`Subordinate`, `address decoder`/`decoder also`→`decoder`,
+  `Transmitter interface`→`Transmitter`, `Subordinate and decoder`→split); the real agent's relations are
+  stranded under the fragment so the clean role-term reads 0/0 (AHB `decoder`). C **Zero-evidence
+  role-term** — 0 ports AND 0 rels, minted by the SemanticIR Phase-2 role-term scan (`build_actors`).
+- **`.0` hypothesis CORRECTED:** "disconnected real agents are a recoverable gap" is DISPROVEN — a Class-C
+  term is a drive/read subject by a known signal ≈0 times (apparent hits are the noun "source of read
+  data" → real subject `Subordinate`, and "state machine in a state"). Connecting them = fabrication
+  (`feedback_scoring_rigor` / ADR-0006 honesty). The completeness win is Class-B consolidation; Class-C is
+  dropped per-doc.
+- **Genericity guardrail (proven, `feedback_avoid_denylists_prefer_structural`):** `transmitter` is 0/0 in
+  AXI but `Transmitter` is 22/23 in AXI-Stream → the drop/keep rule must key off "0/0 in *this* doc", never
+  a name list.
+- **Outcome:** spun `.1a` (precision structural gate) + `.1b` (consolidation + per-doc zero-evidence drop),
+  each measurement-first + WIRE-BASED-100-gated. Report `docs/research/agent-surface-fidelity-measurement.md`;
+  KM card `agent-surface-defect-taxonomy`.
+
 ## EXTRACTION-QUALITY-GAUGE.3g (`2026-06-15`) — dotted-cross-reference spurious-subject gate
 - **Why:** PNT slice, owner-chosen "EQG constraint precision" direction. Orthogonal sibling of `.3e`:
   another spurious *subject* class the NVMe per-item audit surfaced.
