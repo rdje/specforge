@@ -118,7 +118,8 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
 | --- | --- | --- | --- |
 | 1 | `CANONICAL-PROMOTION-SWEEP.1` | `done` (`2026-06-15`, dedicated session) | **DONE.** Non-wire HBM2 pilot promoted on canonical (85.7%→40.0% not-entailed, 14→20 records), RAM ≥42% free throughout, `kg-bench` 156/156, repeatable no-re-ingest protocol locked into Decisions. Reproduced the `.4` /tmp datum exactly on canonical. |
 | 2 | `CANONICAL-PROMOTION-SWEEP.2` | `pending` (**frontier** — unblocked by `.1`) | Wire docs (APB/AHB/AXI/SWD) under the full `WIRE-BASED-100` gold battery on canonical; revert any doc that regresses (the `.3` AXI precedent). Highest-risk + highest-value → strictest gate. RAM-heavy → dedicated-session discipline (same protocol as `.1`, plus the full battery re-verified `1.000` on the promoted canonical artifact). |
-| 2b | `CANONICAL-PROMOTION-SWEEP.3` | `in_progress` (**frontier** — batches A+B done `2026-06-15`) | Scale to the 26 non-wire docs with constraints, one at a time, before/after gauge + RAM recorded; keep/revert rule per doc. **Batch A (13 smallest): 12 kept, 1 reverted. Batch B (9 medium): 7 kept, 2 reverted (i2c, nvme).** Cumulative 19 kept / 3 reverted of 22; kg-bench 156/156; RAM safe. Remaining: **batch C (4 big — LPI 30, LTI 41, AXI+ACE 97, DTI 114)**. |
+| 2b | `CANONICAL-PROMOTION-SWEEP.3` | `in_progress` (scale-out A+B+C DONE `2026-06-15`; roll-up pending) | All 26 non-wire docs processed: **batch A 12 kept/1 rev, batch B 7 kept/2 rev, batch C 4 kept/0 rev = 23 kept / 3 reverted.** Full kept aggregate **88.8%→49.8% not-entailed** (entailed 48→124); kg-bench 156/156 after each; RAM min 36–43% (B dipped to 19% w/ co-resident clippy, stable). Remaining: corpus gauge roll-up + `VALIDATION_SNAPSHOT.md`/`LIVE_ACHIEVEMENT_STATUS.md` refresh, then close. |
+| 1c | `CANONICAL-PROMOTION-SWEEP.2` | `pending` (**frontier next** — unblocked) | Wire docs: re-verify the gold battery (`eval-extraction seed_apb/ahb/axi(+_temporal)` + `seed_swd_derivation`, `--provider skip` = no model) on the already-promoted APB5/AHB/AXI canonical; promote+verify SWD `ihi0074_a`, revert-on-regress. |
 
 ## Decisions
 
@@ -233,6 +234,11 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
 | `2026-06-15` | `.3` batch B | REVERT (lost a verified-correct constraint) | `um10204` I2C 3E/8N→2E/0N (entailed 3→2) and `nvme` 3E/17N→1E/1N (entailed 3→1) → both restored from backups (I2C recs11/3E8N; nvme recs20 Pattern), downstream restored from `*.bak` |
 | `2026-06-15` | `.3` batch B | `specforge kg-bench` | **156/156** passed, 0 failed |
 | `2026-06-15` | `.3` batch B | RAM watchdog (cargo-clippy IDE process co-resident, ~1.2 GB) | **min 19% free** throughout (stable, never ≤15%); host never near the 90→93% reboot zone; watchdog armed |
+| `2026-06-15` | `.3` batch C | 4 big non-wire docs (LPI 30 / LTI 41 / AXI+ACE 97 / DTI 114), full no-re-ingest protocol each | **4 kept / 0 reverted**; aggregate BEFORE **28E/254N = 90.1% not-entailed** → AFTER **64E/83N = 56.5%** |
+| `2026-06-15` | `.3` batch C | per-doc | LPI 4E/26N→8E/9N (30→17); LTI 4E/37N→12E/23N (41→35); AXI+ACE `ihi0022_h_c` 19E/78N→36E/29N (97→65, +17 entailed); DTI `ihi0088_g` 1E/113N→8E/22N (114→30, +7 entailed) |
+| `2026-06-15` | `.3` batch C | `specforge kg-bench` | **156/156** passed, 0 failed |
+| `2026-06-15` | `.3` batch C | RAM watchdog (model 9.7 GB @ 100% GPU, no co-resident clippy) | **min 36% free** throughout; never ≤15%; `ollama stop`-freed at end |
+| `2026-06-15` | `.3` TOTAL (A+B+C) | 26 non-wire docs | **23 promoted+kept / 3 reverted**; full kept aggregate **88.8% → 49.8% not-entailed** (entailed 48→124) |
 
 ## Commit Log
 
@@ -242,6 +248,7 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
 | `.1` | `CANONICAL-PROMOTION-SWEEP.1 — non-wire HBM2 pilot: canonical promotion 85.7%→40.0%, RAM-safe, protocol locked` | docs-only commit (the canonical mutation is in git-ignored `generated/`); HBM2 promoted on canonical; protocol locked in Decisions |
 | `.3` (batch A) | `CANONICAL-PROMOTION-SWEEP.3 — batch A (13 smallest non-wire): 12 promoted on canonical, 1 reverted, RAM-safe` | docs-only (canonical mutation in git-ignored `generated/`); 12 docs promoted + kept (89.8%→29.7% NE aggregate), `soc600_0701` reverted; KM card `canonical-promotion-output-path-artifact-layout` added |
 | `.3` (batch B) | `CANONICAL-PROMOTION-SWEEP.3 — batch B (9 medium non-wire): 7 promoted on canonical, 2 reverted, RAM-safe` | docs-only; 7 kept (84.4%→46.0% NE aggregate; apb-orig +6 entailed), `um10204` I2C + `nvme` reverted (each lost a verified constraint); kg-bench 156/156; RAM min 19% (stable) |
+| `.3` (batch C) | `CANONICAL-PROMOTION-SWEEP.3 — batch C (4 big non-wire): 4 promoted on canonical, 0 reverted, RAM-safe` | docs-only; LPI/LTI/AXI+ACE/DTI all improved (90.1%→56.5% NE aggregate; AXI+ACE +17, DTI +7 entailed); kg-bench 156/156; RAM min 36%. `.3` scale-out (26 docs) complete: 23 kept / 3 reverted |
 
 ## Changelog
 
@@ -286,3 +293,10 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
   free** (stable — a co-resident IDE `cargo clippy` held ~1.2 GB, but never near the 90→93% reboot zone; the
   watchdog stayed armed and the host was never at risk). Cumulative `.3`: 19 kept / 3 reverted of 22 docs.
   Frontier → batch C (4 big: LPI 30 / LTI 41 / AXI+ACE 97 / DTI 114), then `.2`.
+- `2026-06-15`: **`.3` batch C (4 big non-wire docs, 30–114 constraints) DONE: 4 kept / 0 reverted** — every
+  large doc improved. LPI 4E/26N→8E/9N (30→17), LTI 4E/37N→12E/23N (41→35), AXI+ACE `ihi0022_h_c`
+  19E/78N→36E/29N (97→65, **+17 entailed**), DTI `ihi0088_g` 1E/113N→8E/22N (114→30, **+7 entailed**). Kept
+  aggregate **90.1% → 56.5% not-entailed**. `kg-bench` 156/156; RAM **min 36% free** (no co-resident clippy
+  this batch). **`.3` non-wire scale-out COMPLETE — all 26 docs processed: 23 promoted+kept / 3 reverted; full
+  kept aggregate 88.8% → 49.8% not-entailed (entailed 48→124).** Frontier → `.2` (wire-doc gold-battery
+  re-verify + SWD promote) then the corpus gauge roll-up + `VALIDATION_SNAPSHOT.md` refresh.

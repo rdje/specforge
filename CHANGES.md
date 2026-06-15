@@ -1,3 +1,17 @@
+### CANONICAL-PROMOTION-SWEEP.3 (batch C) — 4 big non-wire docs: 4 promoted on canonical, 0 reverted, RAM-safe
+Final scale-out slice of `.3` (the big docs, 30–114 constraints — the longest 14B runs). Same locked
+no-re-ingest protocol + watchdog + keep/revert rule. Docs-only commit.
+
+- **Result: 4 kept / 0 reverted** — every large doc improved. LPI 4E/26N→8E/9N (30→17), LTI 4E/37N→12E/23N
+  (41→35), AXI+ACE `ihi0022_h_c` 19E/78N→36E/29N (97→65, **+17 entailed**), DTI `ihi0088_g` 1E/113N→8E/22N
+  (114→30, **+7 entailed**). Kept aggregate BEFORE **28E/254N = 90.1% not-entailed** → AFTER **64E/83N = 56.5%**.
+- **Gates:** `kg-bench` **156/156**; RAM **min 36% free** throughout (no co-resident clippy this batch; never
+  near the reboot zone). Model `ollama stop`-freed at end.
+- **`.3` non-wire scale-out COMPLETE** — all 26 docs across batches A+B+C: **23 promoted+kept / 3 reverted**
+  (`soc600_0701`, I2C, NVMe — each lost a verified-correct constraint). Full kept aggregate **88.8% → 49.8%
+  not-entailed** (entailed 48→124). Frontier → `.2` (wire-doc gold-battery re-verify + SWD promote), then the
+  corpus gauge roll-up.
+
 ### CANONICAL-PROMOTION-SWEEP.3 (batch B) — 9 medium non-wire docs: 7 promoted on canonical, 2 reverted, RAM-safe
 Second scale-out slice of `.3` (medium docs, 11–20 constraints). Same locked no-re-ingest protocol + integrated
 RAM watchdog + keep/revert rule. Docs-only commit (canonical mutation in git-ignored `generated/`).
