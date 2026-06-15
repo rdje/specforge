@@ -1,3 +1,27 @@
+### CANONICAL-PROMOTION-SWEEP.1 — non-wire HBM2 pilot: canonical promotion 85.7%→40.0%, RAM-safe, protocol locked
+Dedicated session (owner-confirmed "start the pilot"). First execution leaf of the new
+`CANONICAL-PROMOTION-SWEEP` tree: land the now-default LLM-primary constraint promotion on a CANONICAL
+artifact, RAM-safe + review-gated. Docs-only commit — the canonical mutation lands in git-ignored `generated/`.
+
+- **No-re-ingest path (the frontier forbids re-ingest, but `converge` always re-ingests):** `converge`'s
+  `run_convergence` calls `SourceIr::build + materialize` (Docling) every run, so the pilot ran the
+  **no-re-ingest equivalent** of converge's post-stability promotion directly on the intact canonical
+  EvidenceIR: BEFORE `nli-verify` → `extract-constraints-llm` (promote-in-place; loads `evidence_ir.json` from
+  disk, replaces `signal_constraints`, polarity-refines, dedups, manifest `constraints.llm_primary`, drops the
+  stale gauge) → deterministic `semantic`/`intent`/`adapt` rebuild → AFTER `nli-verify`.
+- **Result (HBM2 `jesd235a_2015_11_hbm2_dram`, non-wire):** gauge **85.7% → 40.0% not-entailed** (2E/12N/0A,
+  14 records → 12E/8N/0A, 20 records). This **reproduces the `LLM-PRIMARY-PROMOTION.4` REDIRECTED-`/tmp`-copy
+  datum EXACTLY on the canonical artifact** ("HBM2 grows 14→20 AND cleans 85.7%→40%") — the proven `/tmp`
+  improvement lands identically on canonical (oracle reproducibility).
+- **RAM-safe:** ≥**42% free** across all three 14B steps (3s `memory_pressure` watchdog; never ≤15% free /
+  ≥85% used; never the 90→93% reboot zone); model `ollama stop`-freed afterward. `kg-bench` **156/156**;
+  provider-free byte-stability holds by construction (`generated/` git-ignored, no tracked drift).
+- **Review-gated:** `promotion_status = not_promoted_review_required`; pre-promote `*.prepromote.bak` backups
+  retained for revert. **Repeatable per-doc protocol locked into the tree's Decisions.** Frontier → `.2` (wire
+  docs under the full `WIRE-BASED-100` gold battery, revert-on-regress) / `.3` (non-wire scale-out). KM card
+  `canonical-promotion-no-reingest-protocol`; memory-arch + KM gates green; no Rust/CI/README/book change
+  (not a closing leaf; promotion capability already documented by `LLM-PRIMARY-PROMOTION.5`).
+
 ### CORPUS-PATTERN-REUSE.3b.3a2 — activate-only consume: no current consumer → measured-STANDING (docs-only, read-only)
 PNT slice continuing `.3b.3a`. The serial-prose no-go GENERALIZES: a read-only survey of the `Extractor`
 framework proves the reuse plane's activate-only consume mechanism has NO valid first opt-in extractor in the

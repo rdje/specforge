@@ -58,7 +58,7 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
   Children: `.1`, `.2`, `.3`
 
 - ID: `CANONICAL-PROMOTION-SWEEP.1`
-  Status: `pending` (frontier)
+  Status: `done` (`2026-06-15` — pilot on HBM2; protocol locked)
   Goal: **PILOT + protocol lock (one or a few NON-wire docs).** Pick a small set of already-measured non-wire
   docs (e.g. the CHI/NVMe/CCIX class whose gauge error-classes are documented) with intact normalized bundles,
   run the default-promotion `converge` (live `--nlp-provider`, model serialized — `ollama stop` before any
@@ -69,8 +69,19 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
   Acceptance: ≥1 non-wire doc promoted on canonical with a re-measured gauge that improves-or-is-neutral and an
   honest finding; RAM stayed < ceiling (recorded); `kg-bench` green; per-doc `promotion_status` recorded; the
   repeatable protocol written into Decisions.
-  Verification: `pending`
-  Commit: `pending`
+  Outcome: **MET.** Pilot doc = `jesd235a_2015_11_hbm2_dram` (HBM2, non-wire). Because the frontier mandates
+  **no re-ingest** and `converge` always re-ingests (`SourceIr::build + materialize`), the pilot ran the
+  **no-re-ingest equivalent** of converge's post-stability promotion path directly on the intact canonical
+  EvidenceIR (protocol in Decisions). Gauge: **BEFORE 85.7% not-entailed (2E/12N/0A, 14 records) → AFTER
+  40.0% (12E/8N/0A, 20 records)** — records grew 14→20, a decisive improvement that **reproduces the `.4`
+  REDIRECTED-copy datum EXACTLY on the canonical artifact** ("HBM2 grows 14→20 AND cleans 85.7%→40%"; oracle
+  reproducibility). RAM stayed **≥42% free** across all three 14B steps (min 42, never near the 15%-free /
+  85%-used kill line, never the 90→93% reboot zone); model freed with `ollama stop` after. `kg-bench` **156/156**.
+  `promotion_status` = `not_promoted_review_required` (canonical mutation is local generated state — `generated/`
+  is git-ignored — recorded with before/after + gate evidence; pre-promote backups retained for revert).
+  Verification: `nli-verify` BEFORE/AFTER on the fresh release binary + `kg-bench 156/156`; RAM sampled every 3s
+  throughout (see Verification Log).
+  Commit: `CANONICAL-PROMOTION-SWEEP.1 — non-wire HBM2 pilot: canonical promotion 85.7%→40.0%, RAM-safe, protocol locked`
 
 - ID: `CANONICAL-PROMOTION-SWEEP.2`
   Status: `pending` (gated on `.1`)
@@ -98,9 +109,9 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `CANONICAL-PROMOTION-SWEEP.1` | `pending` (**owner-deferred `2026-06-15` to a dedicated session**) | Pilot on non-wire docs locks the RAM-safe, review-gated per-doc protocol before any wire-critical mutation. RAM-heavy (qwen2.5:14b) → run in a fresh session with full attention to the watchdog. **The owner explicitly deferred this to a dedicated session (`2026-06-15`) so it gets continuous watchdog attention; do NOT start it inside a context-heavy multi-slice turn.** Pre-flight when picked up: `ollama stop`, confirm ≥40% RAM free, pick ONE non-wire doc (CCIX/NVMe-class) with an intact evidence bundle (no re-ingest), `cargo build --release` first. |
-| 2 | `CANONICAL-PROMOTION-SWEEP.2` | `pending` (gated) | Wire docs under the full gold battery on canonical. |
-| 3 | `CANONICAL-PROMOTION-SWEEP.3` | `pending` (gated) | Scale to the rest of the in-scope corpus, one doc at a time. |
+| 1 | `CANONICAL-PROMOTION-SWEEP.1` | `done` (`2026-06-15`, dedicated session) | **DONE.** Non-wire HBM2 pilot promoted on canonical (85.7%→40.0% not-entailed, 14→20 records), RAM ≥42% free throughout, `kg-bench` 156/156, repeatable no-re-ingest protocol locked into Decisions. Reproduced the `.4` /tmp datum exactly on canonical. |
+| 2 | `CANONICAL-PROMOTION-SWEEP.2` | `pending` (**frontier** — unblocked by `.1`) | Wire docs (APB/AHB/AXI/SWD) under the full `WIRE-BASED-100` gold battery on canonical; revert any doc that regresses (the `.3` AXI precedent). Highest-risk + highest-value → strictest gate. RAM-heavy → dedicated-session discipline (same protocol as `.1`, plus the full battery re-verified `1.000` on the promoted canonical artifact). |
+| 3 | `CANONICAL-PROMOTION-SWEEP.3` | `pending` (unblocked by `.1`, parallel to `.2`) | Scale to the rest of the in-scope corpus, one non-wire doc at a time, each with before/after gauge + RAM recorded; host-local-source docs honestly skipped. Roll up a corpus-wide gauge summary. |
 
 ## Decisions
 
@@ -124,6 +135,41 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
   non-negotiable) and mutates canonical IR under a review gate, so it warrants a session that can give the
   watchdog continuous attention rather than the tail of a context-heavy multi-slice turn. No state change to the
   tree's scope — `.1` stays the frontier, now flagged owner-deferred. PNT pauses here with the repo handoff-ready.
+- `2026-06-15`: **`.1` executed in the dedicated session the owner confirmed.** Asked "is this the dedicated
+  session?" at session start; the owner said **start the pilot**. Ran it with the full RAM watchdog.
+- `2026-06-15`: **The pilot runs the NO-RE-INGEST equivalent of converge's promotion, NOT `converge` itself.**
+  `converge <source>` always re-ingests (`run_convergence` calls `SourceIr::build + materialize` →
+  Docling, RAM-heavy), which the frontier explicitly forbids ("intact evidence bundle, no re-ingest"). The
+  promotion mechanism (`extract_constraints_llm::promote_constraints`) loads the EvidenceIR **from disk** and
+  rewrites it in place, so the standalone `extract-constraints-llm` command achieves the identical canonical
+  mutation with zero ingest. converge's post-stability sequence (stabilize → promote → downstream rebuild →
+  gauge) is reproduced manually by the steps below. (KM card `canonical-promotion-no-reingest-protocol`.)
+- `2026-06-15`: **THE REPEATABLE PER-DOC PROTOCOL (locked by `.1`; `.2`/`.3` follow it):**
+  1. **Pre-flight:** `ollama stop <model>` (free the 14B); confirm **≥40% RAM free** (`memory_pressure`); ensure
+     no Docling/ingest is running (serialize the 14B vs Docling); `cargo build --release` for a fresh
+     `target/release/specforge` — **`cargo test` does NOT rebuild the bin**, and live measurement needs the
+     fresh binary.
+  2. **Backup** the canonical artifacts (`evidence_ir.json` + `semantic_ir.json` + `intent_ir.json` +
+     `adapter.json` → `*.prepromote.bak`) — revert capability for the review gate.
+  3. **BEFORE gauge:** `specforge nli-verify <evidence_ir>` (defaults `ollama` + `qwen2.5:14b-instruct`) —
+     re-measure on the fresh binary (oracle baseline; should reproduce any persisted gauge).
+  4. **PROMOTE (canonical mutation, no re-ingest):** `specforge extract-constraints-llm <evidence_ir>` — loads
+     the existing `evidence_ir.json`, replaces `signal_constraints` with the LLM-primary grounded surface
+     (polarity-refined via `apply_persisted_polarity_to_constraints`, deduped), records manifest
+     `constraints.llm_primary`, drops the stale gauge, writes back.
+  5. **Rebuild downstream (deterministic, no model):** `specforge semantic <evidence_ir>` → `intent
+     <semantic_ir>` → `adapt <intent_ir> --target isf`.
+  6. **AFTER gauge:** `specforge nli-verify <evidence_ir>` — re-measure on the promoted surface.
+  7. **Gates:** `specforge kg-bench` green; provider-free byte-stability holds by construction (the standalone
+     path touches only this doc, and `generated/` is git-ignored — no tracked drift).
+  8. **RAM watchdog:** sample `memory_pressure` free% every ~3s throughout the 14B steps; **abort at ≤15% free
+     (≥85% used)**; `ollama stop` to free the model when done.
+  9. **Record** before/after gauge + RAM trace + `promotion_status` (`not_promoted_review_required` — canonical
+     mutation stays review-gated; backups retained for revert). For **wire docs (`.2`) ONLY**: also re-verify
+     the full `WIRE-BASED-100` gold battery `1.000` on the promoted canonical artifact, else revert that doc.
+- `2026-06-15`: **`promotion_status` = `not_promoted_review_required` for HBM2.** The mutation is realized in
+  local generated state (improvement recorded), but the canonical surface is NOT declared owner-approved; the
+  `.prepromote.bak` backups stand by for revert pending review (the `R7-VALIDATION` doctrine).
 
 ## Open Questions
 
@@ -140,13 +186,19 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
-| — | — | — | (pending first promotion) |
+| `2026-06-15` | `.1` | HBM2 BEFORE `nli-verify` (fresh release bin) | 12/14 not-entailed = **85.7%** (2E/12N/0A) — reproduces persisted baseline + `.4` datum (oracle) |
+| `2026-06-15` | `.1` | HBM2 `extract-constraints-llm` (promote, no re-ingest) | 14 (Pattern) → 20 (LLM-primary grounded) → 20 (0 merged); 11 distinct sentences; manifest `constraints.llm_primary` (produced 20); gauge dropped |
+| `2026-06-15` | `.1` | HBM2 downstream rebuild (`semantic`→`intent`→`adapt`) | rc=0 all stages (deterministic, no model) |
+| `2026-06-15` | `.1` | HBM2 AFTER `nli-verify` (promoted surface) | 8/20 not-entailed = **40.0%** (12E/8N/0A) — reproduces `.4` "85.7%→40%" EXACTLY on canonical |
+| `2026-06-15` | `.1` | RAM watchdog (3s sampling, all three 14B steps) | min **42% free** (BEFORE 43, PROMOTE 42, AFTER 42); never ≤15% free; model `ollama stop`-freed → 43% |
+| `2026-06-15` | `.1` | `specforge kg-bench` | **156/156** passed, 0 failed |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `CANONICAL-PROMOTION-SWEEP` (tree) | `CANONICAL-PROMOTION-SWEEP.0 — create tree` | ownership/scoping slice; no canonical mutation yet |
+| `.1` | `CANONICAL-PROMOTION-SWEEP.1 — non-wire HBM2 pilot: canonical promotion 85.7%→40.0%, RAM-safe, protocol locked` | docs-only commit (the canonical mutation is in git-ignored `generated/`); HBM2 promoted on canonical; protocol locked in Decisions |
 
 ## Changelog
 
@@ -160,3 +212,14 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
   remaining buildable lever; the owner chose to defer the RAM-heavy live-14B pilot rather than launch it inside a
   context-heavy turn. Flagged owner-deferred in the frontier; PNT pauses with the repo handoff-ready. No scope
   change, no canonical mutation. Docs-only continuity update.
+- `2026-06-15`: **`.1` DONE in the confirmed dedicated session.** Owner answered "start the pilot" at session
+  start. Pilot doc = HBM2 (`jesd235a_2015_11_hbm2_dram`, non-wire, 14 constraints, documented `.4` improver).
+  Found that `converge` always re-ingests, so ran the **no-re-ingest equivalent** of its promotion path directly
+  on the intact canonical EvidenceIR (BEFORE `nli-verify` → `extract-constraints-llm` promote → downstream
+  rebuild → AFTER `nli-verify`). Result: **85.7% → 40.0% not-entailed, 14 → 20 records — reproduces the `.4`
+  REDIRECTED-copy datum EXACTLY on canonical** (oracle reproducibility). RAM **≥42% free** throughout (watchdog,
+  3s sampling); `kg-bench` 156/156; `promotion_status` = `not_promoted_review_required` (mutation in git-ignored
+  `generated/`; backups retained). Repeatable per-doc protocol locked into Decisions; frontier advances to `.2`
+  (wire docs, full gold battery) / `.3` (non-wire scale-out). KM card `canonical-promotion-no-reingest-protocol`.
+  Docs-only commit (no tracked code/IR change). No README/book change (not a closing leaf; no user-facing command
+  or capability change — promotion is already documented by `LLM-PRIMARY-PROMOTION.5`).

@@ -1,4 +1,40 @@
 # DEVELOPMENT_NOTES
+## CANONICAL-PROMOTION-SWEEP.1 (`2026-06-15`) — non-wire HBM2 canonical-promotion pilot (RAM-safe, protocol locked)
+- **Why:** the owner confirmed this is the dedicated session for `CANONICAL-PROMOTION-SWEEP.1` ("start the
+  pilot"). `.1` proves the now-default LLM-primary promotion (`LLM-PRIMARY-PROMOTION.5`) lands its measured
+  gauge improvement on a CANONICAL artifact (not just the `.4` REDIRECTED `/tmp` copies), and LOCKS the
+  RAM-safe, review-gated per-doc protocol the rest of the sweep follows.
+- **Key mechanic discovered — why NOT `converge`:** `converge`'s `run_convergence` (`commands/converge.rs:148`)
+  always rebuilds source via `SourceIr::build + materialize` (Docling, RAM-heavy) — i.e. it RE-INGESTS every
+  run. The frontier forbids re-ingest ("intact evidence bundle"). But the promotion mechanism
+  (`extract_constraints_llm::promote_constraints`, `:56`) loads `evidence_ir.json` **from disk** and rewrites it
+  in place, so the standalone `extract-constraints-llm` command performs the identical canonical mutation with
+  ZERO ingest. converge's post-stability sequence (stabilize → promote → downstream rebuild → gauge) is
+  reproduced manually: BEFORE `nli-verify` → `extract-constraints-llm` → `semantic`/`intent`/`adapt` (deterministic,
+  no model) → AFTER `nli-verify`.
+- **Pilot doc selection:** HBM2 (`jesd235a_2015_11_hbm2_dram`) — non-wire (no gold-battery risk), small (14
+  constraints → bounded 14B exposure), and a DOCUMENTED `.4` improver whose persisted gauge (2E/12N/0A = 85.7%)
+  matched the `.4` datum exactly, giving a built-in oracle baseline. CCIX (0 constraints — promotion no-op) and
+  the larger DTI (114) / LTI (41) were noted for `.3` scale-out.
+- **Result:** BEFORE re-measured on the fresh release binary = **85.7% not-entailed** (reproduces baseline +
+  `.4`); promote **14 (Pattern) → 20 (LLM-primary grounded) → 20 deduped** (11 distinct sentences; manifest
+  `constraints.llm_primary` produced 20; stale gauge dropped); downstream rebuilt rc=0; AFTER = **40.0%
+  not-entailed** (12E/8N/0A). The Pattern surface's noise was visible BEFORE (garbled "CKE must be R", "AERR
+  must be stable when the next cycle", duplicated `dyn_sigcon` rows) — the LLM-primary surface cleans it.
+- **RAM-safety procedure (recorded):** pre-flight 84% free, no model loaded, `cargo build --release` (the bin
+  was up-to-date). A background `memory_pressure` sampler logged free% every 3s through each 14B step; min free%
+  = **42** (BEFORE 43 / PROMOTE 42 / AFTER 42), never ≤15% (the ≥85%-used kill line), never the 90→93% reboot
+  zone. `ollama stop qwen2.5:14b-instruct` afterward → 43% free. nli-verify ~21s/~21s, promote ~43s.
+- **Gates:** `kg-bench` **156/156** (tracked fixtures, unaffected by the HBM2 mutation); provider-free
+  byte-stability holds by construction; `generated/` is git-ignored so there is NO tracked code/IR drift — the
+  landing commit is docs-only.
+- **Review-gating:** `promotion_status = not_promoted_review_required`; canonical mutation is local generated
+  state with the improvement recorded; `evidence_ir.json.prepromote.bak` (+ semantic/intent/adapter) retained
+  for revert pending owner review (`R7-VALIDATION` doctrine).
+- **Verification:** BEFORE/AFTER `nli-verify` on the fresh binary + `kg-bench 156/156` + the RAM trace. KM card
+  `canonical-promotion-no-reingest-protocol`; memory-arch + KM derive-and-diff gates green. Frontier → `.2`
+  (wire docs, full battery) / `.3` (non-wire scale-out). No Rust/CI/README/book change (not a closing leaf).
+
 ## CORPUS-PATTERN-REUSE.3b.3a2 (`2026-06-15`) — activate-only consume: no current consumer (read-only)
 - **Why:** `.3b.3a` excluded the leading serial-prose candidate; `.3b.3a2` asks whether ANY first opt-in
   extractor exists under the structural-discrimination criterion, so the activate-only consume side (`.3b.3b`)
