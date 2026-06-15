@@ -98,7 +98,7 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `CANONICAL-PROMOTION-SWEEP.1` | `pending` | Pilot on non-wire docs locks the RAM-safe, review-gated per-doc protocol before any wire-critical mutation. RAM-heavy (qwen2.5:14b) → run in a fresh session with full attention to the watchdog. |
+| 1 | `CANONICAL-PROMOTION-SWEEP.1` | `pending` (**owner-deferred `2026-06-15` to a dedicated session**) | Pilot on non-wire docs locks the RAM-safe, review-gated per-doc protocol before any wire-critical mutation. RAM-heavy (qwen2.5:14b) → run in a fresh session with full attention to the watchdog. **The owner explicitly deferred this to a dedicated session (`2026-06-15`) so it gets continuous watchdog attention; do NOT start it inside a context-heavy multi-slice turn.** Pre-flight when picked up: `ollama stop`, confirm ≥40% RAM free, pick ONE non-wire doc (CCIX/NVMe-class) with an intact evidence bundle (no re-ingest), `cargo build --release` first. |
 | 2 | `CANONICAL-PROMOTION-SWEEP.2` | `pending` (gated) | Wire docs under the full gold battery on canonical. |
 | 3 | `CANONICAL-PROMOTION-SWEEP.3` | `pending` (gated) | Scale to the rest of the in-scope corpus, one doc at a time. |
 
@@ -116,6 +116,14 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
 - `2026-06-15`: **Canonical mutation stays review-gated** (`R7-VALIDATION` `promotion_status` doctrine). Each
   promoted doc records before/after gauge + gate evidence + `not_promoted_review_required`-style status; the
   sweep makes the mutation + records the evidence, it does not declare canonical truth auto-approved.
+- `2026-06-15`: **Owner explicitly DEFERRED `.1` to a dedicated session.** After the same-session PNT loop drove
+  the two cheap/safe forward levers to measured-STANDING (`NLP-SHALLOW-PARSE` build-exhausted;
+  `CORPUS-PATTERN-REUSE` consume built-deferred), `.1` was the only remaining buildable lever. Asked the owner
+  whether to launch the RAM-heavy live-14B pilot now (RAM had headroom — 83% free, no model loaded) or defer;
+  the owner chose **defer to a dedicated session**. Rationale: this lever loads the 14B live (the host-safety
+  non-negotiable) and mutates canonical IR under a review gate, so it warrants a session that can give the
+  watchdog continuous attention rather than the tail of a context-heavy multi-slice turn. No state change to the
+  tree's scope — `.1` stays the frontier, now flagged owner-deferred. PNT pauses here with the repo handoff-ready.
 
 ## Open Questions
 
@@ -147,3 +155,8 @@ review-gated, RAM-safe, per-document execution of that sweep, NOT a new promotio
   ≥85%-used kill), the review-gating (canonical mutation stays `promotion_status`-tracked), and the wire-doc
   strict-battery gate. Frontier = `.1` pilot on non-wire docs to lock the protocol. Ownership/scoping slice —
   no canonical mutation performed; ready for fresh-session execution with the 14B model.
+- `2026-06-15`: **Owner explicitly DEFERRED `.1` to a dedicated session** (see Decisions). After the same-session
+  PNT loop closed `CORPUS-PATTERN-REUSE.3b.3a`/`.3b.3a2` (consume side measured-STANDING), `.1` became the only
+  remaining buildable lever; the owner chose to defer the RAM-heavy live-14B pilot rather than launch it inside a
+  context-heavy turn. Flagged owner-deferred in the frontier; PNT pauses with the repo handoff-ready. No scope
+  change, no canonical mutation. Docs-only continuity update.
