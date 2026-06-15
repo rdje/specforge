@@ -1442,6 +1442,17 @@
   owner-gated next decisions are the `NLP-SHALLOW-PARSE` build scope (the in-Rust
   shallow-parse NLP arm) and a flip-consistent corpus-wide canonical promotion
   sweep. The R16/R15 forward items below remain the longer-horizon frontier.
+- **NORTH STAR (`2026-06-16`, owner-directed — `KG-ISF-COMPLETENESS`):** the KG /
+  `IntentIR` must be COMPLETE (all real agents, their relations, constraints, and
+  behaviors) so it lowers FAITHFULLY to `.isf` — *"extracting for extracting is not
+  the goal."* This **reverses** the prior "defer ISF lowering" steer: ISF-lowering
+  fidelity of the KG/IntentIR is now the near-term north star, with digestion breadth +
+  `EXTRACTION-QUALITY-GAUGE` / `WIRE-BASED-100` reframed as the means to it. Note that
+  "ISF ready" ≠ "the adapter renders" — all 36 built docs already render `.isf` with
+  zero blocking reasons; the gap is IntentIR *fidelity* (precise agent set + complete
+  relations/constraints). Owned + scoped by `docs/tasks/KG-ISF-COMPLETENESS.md`
+  (checkable 6-point bar; WIRE-BASED-100 a hard gate; frontier `.1` agent-surface
+  fidelity).
 - `R16`: **PROGRAM COMPLETE** — the six sub-trees are delivered and the
   `R16-INTENT-CAPTURE` umbrella is closed (`2026-05-29`). The program
   built the mechanical-to-lower typed target, the objective

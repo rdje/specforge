@@ -1,3 +1,25 @@
+### KG-ISF-COMPLETENESS.0 — own the ISF-completeness north star (NEW tree, docs-only ownership/scoping)
+Owner directive (`2026-06-16`, multi-message): *"extracting for extracting is not the goal — the IntentIR
+must be complete and contain all the necessary information to be lowered to ISF; the KG shall contain
+everything (actors, agents, relations, constraints) for all of these PDFs."* **Reverses the prior "defer
+ISF lowering" steer.**
+
+- **Key grounded finding:** "ISF ready" ≠ "the adapter renders" — a corpus `adapt --target isf --dry-run`
+  scan shows **all 36 built docs already render `.isf` with 0 blocking reasons**. The gap is IntentIR
+  *fidelity*, not adapter renderability.
+- **Shipped (docs-only, no code):** new tree `docs/tasks/KG-ISF-COMPLETENESS.md` with a checkable 6-point
+  ISF-complete-IntentIR bar (agents / relations / signals / constraints / behaviors-temporal / ISF
+  round-trip), WIRE-BASED-100 (APB/AHB/AXI/SWD per-fact 1.000) a hard gate; registered in
+  `docs/TASK_TREE.md`; ROADMAP north-star note; resume pointer + harness memory
+  `project_kg_isf_completeness`.
+- **Measured 2-defect agent baseline (both coexist → the naive single fix is disproven):** PRECISION —
+  prose-fragment non-agents are minted as actors (AXI `for`/`note`/`then_it`/`with_write`; SWD
+  `class_x`/`number_of`/`system_has`/`read_only_field`) that would emit junk agents into `.isf`, and the
+  "drop orphan agents" filter FAILS (they carry 3–4 ports); COMPLETENESS — real agents
+  `producer`/`consumer`/`receiver`/`transmitter` carry ZERO ports/relations while `manager`/`subordinate`
+  hold 169/168 (the KG names them but never connects them to their signals, or they are unconsolidated
+  aliases). Frontier → `.1` (agent-surface fidelity, measurement-first, gold-gated).
+
 ### EXTRACTION-QUALITY-GAUGE.3g — dotted-cross-reference spurious-subject gate
 PNT slice (owner-chosen "EQG constraint precision" direction, fresh session `2026-06-15`; orthogonal
 sibling of `.3e`). A constraint **precision** fix: stop the value binder lifting a cross-referenced
