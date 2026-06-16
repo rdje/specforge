@@ -1,4 +1,31 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-TRANSACTIONS.2h (`2026-06-16`) — phase-ordering recoverability (measurement-first, docs-only)
+- **Why:** `.2i` needs to sequence each transaction's per-phase body. Before writing that, ask the `.2f`-style
+  question: is a transaction's phase ORDER reliably + universally recoverable from the document? Measurement-first +
+  honest-residual-over-fabrication doctrine — do not build an ordering that the document does not ground.
+- **What I measured (read-only over the persisted EvidenceIR statements of the wire docs; no code, no extraction
+  change):** three candidate ordering signals, scored vs the protocol-correct order:
+  - **document first-occurrence order** — correct for the LINEAR buses (APB `setup→access`, AHB `address→data`) but
+    WRONG for SWD (`data` appears before `address` in prose, opposite the packet order). The order build_transaction_phases
+    already records is first-occurrence, so this is the "free" signal — and it inverts on a non-linear protocol.
+  - **same-sentence sequencing-keyword cues** (`then`/`followed by`/`before`/`after`/`precedes`/…) — APB/AXI have ZERO;
+    SWD has 3 and they CONTRADICT (both `acknowledge→data` and `data→acknowledge` fire).
+  - **within-sentence positional precedence** (phases co-listed in one sentence, X-before-Y by token position) —
+    absent for APB/AXI; AHB `address→data` 5 vs 2 (CONFLICTING — the reverse is the legit pipelining statement "the
+    data phase of one transfer overlaps the address phase of the next"); SWD `address/data` TIED 1 v 1.
+- **Finding:** no signal is clean AND universal. The only usable majority is AHB's positional precedence (and even
+  that conflicts); everything else is absent, tied, or contradictory.
+- **Decision (honest-residual, `[[feedback_scoring_rigor]]`):** do NOT fabricate a universal phase order. A
+  majority-vote heuristic would "recover" order on 1 of 4 wire docs off a conflicting signal — un-demonstrable
+  per-item, gate-risky, silent on APB/AXI/SWD. So phase ordering is an explicit RESIDUAL. `.2i` is re-scoped:
+  compose per-phase bodies from the `.2c` membership, emit a cross-phase SEQUENCE only where the document decisively
+  grounds one (not the wire-doc norm), never an invented address→data→response. A richer ordering signal
+  (timing-diagram left-to-right phase order, VLM-tier; or a per-transaction phase-enumerating definition sentence)
+  is recorded as a future candidate, not built.
+- **Gates:** read-only/docs-only — WIRE-BASED-100 untouched; ADR-0006 ✓ (the signals measured are universal grammar,
+  no name list); `scripts/check_memory_architecture.sh` + knowledge-map derive-and-diff green. Census §4.6; KM card +
+  `KNOWLEDGE_MAP.md` (595 keys) refreshed. Frontier → `.2i`.
+
 ## KG-ISF-TRANSACTIONS.2g (`2026-06-16`) — structural transaction-PHASE recognition (measurement-first)
 - **Why:** `.2f` chose the document's own `<qualifier> phase` structure as the ordering signal for the deferred ordered
   multi-phase transaction body (bar #5). `.2g` is the first CODE slice on that path — it RECOGNISES a document's transaction

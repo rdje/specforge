@@ -1,3 +1,24 @@
+### KG-ISF-TRANSACTIONS.2h — phase-ordering recoverability (DONE, measurement-first, docs-only)
+Before `.2i` sequences each transaction's per-phase body, `.2h` asked the `.2f`-style question: is a transaction's
+phase ORDER reliably + universally recoverable from the document? Measured read-only over the persisted EvidenceIR
+statements of the wire docs (**no code, no extraction change**).
+
+- **Rejected — document first-occurrence order.** Right for the LINEAR buses (APB `setup→access`, AHB
+  `address→data`) but WRONG for SWD (`data` precedes `address` in prose, opposite the packet order).
+- **Rejected — same-sentence sequencing-keyword cues.** Sparse (APB/AXI 0) and contradictory where present (SWD
+  `acknowledge→data` and `data→acknowledge` both fire).
+- **Rejected — within-sentence positional precedence.** Absent for APB/AXI; AHB `address→data` 5 vs 2 (conflicting —
+  the reverse is the legit pipelining overlap statement); SWD `address/data` tied 1 v 1.
+- **Decision (honest-residual doctrine):** do NOT fabricate a universal phase order. A majority-vote heuristic
+  recovers only AHB (1 of 4 wire docs) off a conflicting signal — un-demonstrable per-item, gate-risky. Phase
+  ordering is an explicit residual; `.2i` composes per-phase bodies from the `.2c` membership and emits a cross-phase
+  sequence ONLY where the document decisively grounds one, never invented. Richer order (timing-diagram, VLM-tier) =
+  future candidate.
+- **Gates:** read-only/docs-only — WIRE-BASED-100 untouched; ADR-0006 ✓ (signals measured are universal grammar, no
+  name list); `check_memory_architecture.sh` + knowledge-map derive-and-diff green (`KNOWLEDGE_MAP.md` regenerated,
+  595 keys). Report census §4.6; KM card refreshed (2 answer keys). Frontier → `.2i` (membership-by-phase grouping +
+  per-phase body, ordering only where grounded).
+
 ### KG-ISF-TRANSACTIONS.2g — structural transaction-PHASE recognition (DONE, measurement-first)
 `.2f` chose the document's own `<qualifier> phase` structure as the ordering signal for the deferred ordered multi-phase
 transaction body. `.2g` is the first CODE slice on that path: it recognises a document's transaction PHASES (recognition only

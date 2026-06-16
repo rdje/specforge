@@ -130,7 +130,7 @@ grammar only, no name lists (ADR 0006); honest residual over fabrication. Scope 
 precise, accurate, step-by-step capture of ALL transactions — but delivered measurement-first, in safe
 slices, wire-docs first.
 
-## Frontier (next slice) — phase ORDERING recovery (`.2h`); `.2g` phase recognition is DONE
+## Frontier (next slice) — membership-by-phase grouping + per-phase body (`.2i`); `.2g` recognition + `.2h` ordering-measurement DONE
 
 The `.2e` checkpoint deferred the *choice* of ordering signal to "a dedicated measurement-first slice." **`.2f`
 ran that measurement (read-only, corpus-wide) and made the choice** — see the `.2f` node + `.2f` changelog
@@ -173,18 +173,35 @@ trace-bus / avalon / generic-flash / coresight `address`/`data`) — exactly par
   lib **1645**, +3 tests: `derive_phase_name` keep/reject, `build_transaction_phases` dedup/provenance) ✓. Book:
   `pipeline/intentir.md` gained "Recognizing a document's transaction phases". RECOGNITION ONLY — no body
   composition (that is `.2i`).
-- **`.2h` — phase ORDERING recovery.** Order the recognised phases as the document orders them (section/statement
-  order + same-sentence "during X … during Y" / "X phase … followed by … Y phase" / "then" cues). Measurement-first
-  on whether the order is recoverable reliably + universally; honest residual where it is not.
-- **`.2i` — membership-by-phase grouping + ordered body composition.** Group each named transaction's `.2c`
-  signal-set membership into the ordered phases (a member signal belongs to phase P iff P's statements reference it
-  — the same intersection technique as `.2c`), then compose the ordered `(transaction … <phase-1 steps> …
-  <phase-N steps> (complete …))` body (drive the phase's outputs, sample/await its inputs), reusing the per-signal
-  direction `.2c` already grounds. ISF round-trip + WIRE-BASED-100 hard gates. This is where bar #5 (step-by-step)
-  lands; anything the document does not ground stays an honest residual, never a fabricated phase ordering.
+- **`.2h` — phase ORDERING recovery. DONE (`2026-06-16`, measurement-first, docs-only — a `.2f`-style "is it
+  groundable?" slice).** Measured corpus-wide (read-only over the persisted EvidenceIR) whether a transaction's
+  phase ORDER is reliably + universally recoverable from statement prose. **Finding: it is NOT.** Three candidate
+  signals, none clean+universal: (1) **document first-occurrence order** — right for the LINEAR buses (APB
+  `setup`→`access`, AHB `address`→`data` match the protocol truth) but WRONG for SWD (`data` appears before
+  `address`, opposite the packet order); (2) **same-sentence sequencing-keyword cues** (`then`/`followed by`/
+  `before`/…) — sparse: APB/AXI have ZERO, SWD has only 3 and they CONTRADICT (`acknowledge→data` and
+  `data→acknowledge` both fire); (3) **within-sentence positional precedence** (phases co-listed in one sentence)
+  — absent for APB/AXI, majority-but-CONFLICTING for AHB (`address→data` 5 vs 2, the reverse being legit
+  pipelining overlap "the data phase of one transfer overlaps the address phase of the next"), and TIED for SWD
+  (`address/data` 1 v 1). **Decision (honest-residual doctrine): do NOT fabricate a universal phase order.** A
+  majority-vote heuristic would recover only AHB (1 of 4 wire docs) off a conflicting signal — gate-risky and
+  un-demonstrable per the scoring-rigor doctrine, and silent on APB/AXI/SWD. So phase ordering stays an explicit
+  RESIDUAL: `.2i` composes per-phase bodies from the `.2c` membership but emits a cross-phase sequence ONLY where
+  the document decisively grounds one (not the wire-doc norm), never an invented address→data→response order. A
+  richer ordering signal (timing-diagram left-to-right phase order, VLM-tier; or a per-transaction definition
+  sentence that enumerates phases in order) is recorded as a future candidate, not built. Gates: read-only/docs-only
+  — no code, WIRE-BASED-100 untouched, ADR-0006 ✓. Census §4.6; KM card refreshed.
+- **`.2i` — membership-by-phase grouping + per-phase body composition (re-scoped by `.2h`).** Group each named
+  transaction's `.2c` signal-set membership into its recognised `.2g` phases (a member signal belongs to phase P
+  iff P's statements reference it — the same intersection technique as `.2c`), then compose a per-phase body
+  (drive the phase's outputs, sample/await its inputs) reusing the per-signal direction `.2c` already grounds.
+  **Per `.2h`: the cross-phase SEQUENCE is emitted only where the document decisively grounds it; otherwise the
+  phases are composed without a claimed order (an honest residual), never a fabricated address→data→response.**
+  ISF round-trip + WIRE-BASED-100 hard gates. This is where bar #5 (step-by-step) lands as far as the document
+  grounds it.
 
-Repo is handoff-ready: `.2g` (phase recognition) is committed and fully gated; the next slice is `.2h`
-(phase ordering recovery).
+Repo is handoff-ready: `.2g` (phase recognition) + `.2h` (ordering measurement/decision) are committed and gated;
+the next slice is `.2i` (membership-by-phase grouping + per-phase body, ordering only where grounded).
 
 ## Task Tree
 
@@ -428,6 +445,23 @@ Repo is handoff-ready: `.2g` (phase recognition) is committed and fully gated; t
   absent from IntentIR) ✓; `kg-bench` 156/156 ✓; `run_ci.sh` green (lib **1645**, +3 tests) ✓. Book
   `pipeline/intentir.md` "Recognizing a document's transaction phases". Frontier → `.2h` (phase ordering recovery).
   `[[project_kg_isf_transactions]]`.
+- ID: `KG-ISF-TRANSACTIONS.2h` · Status: `done` (`2026-06-16`; measurement-first, read-only, docs-only — a
+  `.2f`-style "is it groundable?" slice) · Goal: **determine whether a transaction's phase ORDER is reliably +
+  universally recoverable**, and decide the path for `.2i`. **DONE — measured corpus-wide (read-only over the
+  persisted EvidenceIR statements; no code, no extraction change) three candidate ordering signals, none
+  clean+universal:** (1) **document first-occurrence order** — correct for the LINEAR buses (APB `setup`→`access`,
+  AHB `address`→`data` match the protocol truth) but WRONG for SWD (`data` precedes `address` in prose, opposite the
+  packet order); (2) **same-sentence sequencing-keyword cues** — sparse (APB/AXI 0) and CONTRADICTORY where present
+  (SWD `acknowledge→data` and `data→acknowledge` both fire); (3) **within-sentence positional precedence** — absent
+  for APB/AXI, majority-but-CONFLICTING for AHB (`address→data` 5 vs 2, the reverse being legit pipelining overlap),
+  TIED for SWD (`address/data` 1 v 1). **Decision (honest-residual doctrine): do NOT fabricate a universal phase
+  order.** A majority-vote heuristic recovers only AHB (1 of 4 wire docs) off a conflicting signal — gate-risky,
+  un-demonstrable per the scoring-rigor doctrine, silent on APB/AXI/SWD — so phase ordering stays an explicit
+  residual. `.2i` re-scoped: compose per-phase bodies from the `.2c` membership, emit a cross-phase SEQUENCE only
+  where the document decisively grounds one, never an invented order. Richer signal (timing-diagram left-to-right
+  phase order, VLM-tier; or per-transaction phase-enumerating definition sentence) recorded as a future candidate.
+  **Gates:** read-only/docs-only — WIRE-BASED-100 untouched ✓, ADR-0006 ✓ (no name list; the signals measured are
+  universal grammar). Census §4.6; KM card refreshed. Frontier → `.2i`. `[[project_kg_isf_transactions]]`.
 
 ## Changelog
 
@@ -569,3 +603,16 @@ Repo is handoff-ready: `.2g` (phase recognition) is committed and fully gated; t
   SemanticIR-only, never reach IntentIR/`.isf`) ✓, `kg-bench` 156/156 ✓, `run_ci.sh` green (lib **1645**, +3
   tests) ✓. Book `pipeline/intentir.md` updated; census §4.5 + KM card refreshed. Frontier → `.2h` (phase ordering
   recovery). `[[project_kg_isf_transactions]]`.
+- `2026-06-16`: **`.2h` DONE** (measurement-first, read-only, docs-only — a `.2f`-style "is it groundable?" slice).
+  **Measured corpus-wide whether a transaction's phase ORDER is reliably + universally recoverable from statement
+  prose — it is NOT.** (1) document first-occurrence order is correct for the LINEAR buses (APB `setup`→`access`,
+  AHB `address`→`data`) but WRONG for SWD (`data` before `address`); (2) same-sentence sequencing-keyword cues are
+  sparse (APB/AXI 0) and contradictory where present (SWD `acknowledge↔data` both directions); (3) within-sentence
+  positional precedence is absent (APB/AXI), majority-but-conflicting for AHB (`address→data` 5 v 2, reverse =
+  pipelining overlap), tied for SWD. **Decision: do NOT fabricate a universal order** (honest-residual doctrine; a
+  majority-vote heuristic would recover only AHB off a conflicting signal — gate-risky + un-demonstrable). `.2i`
+  re-scoped: compose per-phase bodies from the `.2c` membership, emit a cross-phase sequence ONLY where the document
+  decisively grounds one, never invented; richer signal (timing-diagram order, VLM-tier) recorded as a future
+  candidate. Gates: read-only/docs-only — WIRE-BASED-100 untouched ✓, ADR-0006 ✓. Census §4.6; KM card refreshed.
+  Frontier → `.2i` (membership-by-phase grouping + per-phase body, ordering only where grounded).
+  `[[project_kg_isf_transactions]]`.

@@ -370,6 +370,37 @@ noise. **Surfaced for the operator** via `validate <semantic-ir>`: a `transactio
 `blocking_reasons: None`; field absent from the rebuilt IntentIR) ✓; `kg-bench` 156/156 ✓; `run_ci.sh` green (lib
 **1645**, +3 tests) ✓. Frontier → `.2h` (phase ordering recovery).
 
+### 4.6 `.2h` OUTCOME (`2026-06-16`) — phase-ordering recoverability (measurement-first, docs-only)
+
+`KG-ISF-TRANSACTIONS.2h` asked the `.2f`-style question for ordering: **is a transaction's phase ORDER reliably +
+universally recoverable** from the document, so `.2i` can sequence the per-phase body? Measured read-only over the
+persisted EvidenceIR statements of the wire docs; **no code, no extraction change.**
+
+Three candidate ordering signals, scored against the protocol-correct order (APB `setup→access`, AHB
+`address→data`, SWD packet `address/request → ack → data`):
+
+| Signal | APB | AHB | AXI | SWD | Verdict |
+|---|---|---|---|---|---|
+| document first-occurrence order | `setup,access` ✓ | `address,data` ✓ | `data` (1 phase) | `data` before `address` ✗ | right on linear buses, WRONG on SWD |
+| same-sentence sequencing-keyword cues (`then`/`followed by`/…) | none | none | none | 3, CONTRADICTORY (`ack↔data`) | too sparse / inconsistent |
+| within-sentence positional precedence | none | `address→data` 5 v 2 (CONFLICTING — reverse = pipelining overlap) | none | `address/data` 1 v 1 (TIED) | absent / conflicting / tied |
+
+**No signal is clean AND universal.** First-occurrence is right only because APB/AHB are linear; it inverts on SWD.
+Positional precedence has a usable majority on AHB alone (and even there it conflicts, because "the data phase of
+one transfer overlaps the address phase of the next" is a real pipelining statement), and is absent or tied
+everywhere else.
+
+**Decision (honest-residual doctrine, `[[feedback_scoring_rigor]]`): do NOT fabricate a universal phase order.** A
+majority-vote heuristic would "recover" order on only 1 of 4 wire docs (AHB), off a conflicting signal, and be
+silent on APB/AXI/SWD — un-demonstrable per-item and gate-risky. So phase ordering is an explicit RESIDUAL: `.2i`
+composes per-phase bodies from the `.2c` membership and emits a cross-phase SEQUENCE only where the document
+decisively grounds one (not the wire-doc norm), never an invented address→data→response. A richer ordering signal
+— timing-diagram left-to-right phase order (VLM-tier), or a per-transaction definition sentence that enumerates the
+phases in order — is recorded as a future candidate, not built here.
+
+**Gates:** read-only/docs-only — WIRE-BASED-100 untouched; ADR-0006 ✓ (the signals measured are universal grammar,
+no name list). Frontier → `.2i` (membership-by-phase grouping + per-phase body, ordering only where grounded).
+
 ## 5. Owner directive — sharpened (`2026-06-16`, multi-message)
 
 The owner reinforced the requirement across several messages while this census was being finalised; the
