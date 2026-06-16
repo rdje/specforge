@@ -96,6 +96,21 @@ faithfully lowered, by the typed temporal-rule surface; re-emitting it as a fake
 gone — the timing semantics are preserved where they belong, and the transaction
 list now contains only things the document actually calls transactions.
 
+### Seeing a document's transactions at a glance
+
+Because the owner's directive is to *very quickly identify* the transactions in any
+chip-spec PDF, `specforge validate <intent-ir>` surfaces the recognized transaction set
+directly. It reports a small set of counts — how many transactions were recognized, how
+many carry a grounded signal set, how many carry a step-by-step body, how many are still
+recognition-only, and the total number of signal members across them — and, when there is
+at least one transaction, an `intent_transaction_inventory` Info finding that lists the
+transaction names with that with-signal-set / with-steps / recognition-only split. The
+finding's `related_ids` are the transaction ids, so a reviewer can drill into any single
+one. A document with no recognized transactions emits no such finding: absence is not an
+event, it is simply silence — the same honesty rule the message-field inventory follows.
+This is pure observation off the already-built `IntentIR`; it changes nothing in the
+extraction, so it can never inflate or distort what was recognized.
+
 ## What makes it canonical
 
 `IntentIR` is the stage where the pipeline tries to present the best stable typed intent surface that survived:

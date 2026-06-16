@@ -5523,6 +5523,22 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!("  initial_regular_states: {initial_regular_states}");
     println!("  state_transitions: {}", ir.state_transitions.len());
     println!("  register_records: {}", ir.register_records.len());
+    // KG-ISF-TRANSACTIONS.2d — at-a-glance transaction inventory in the human summary.
+    println!("  transactions: {}", ir.transactions.len());
+    println!(
+        "    with_signal_set: {}",
+        ir.transactions
+            .iter()
+            .filter(|t| !t.ports.is_empty())
+            .count()
+    );
+    println!(
+        "    with_steps: {}",
+        ir.transactions
+            .iter()
+            .filter(|t| !t.steps.is_empty())
+            .count()
+    );
     println!("  timing_constraints: {}", ir.timing_constraints.len());
     println!("  temporal_rules: {}", ir.temporal_rules.len());
     println!("  actor_contracts: {}", ir.actor_contracts.len());
@@ -5995,6 +6011,28 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         .iter()
         .map(|conflict| conflict.conflict_id.clone())
         .collect::<Vec<_>>();
+
+    // KG-ISF-TRANSACTIONS.2d — quick-surface transaction inventory. Read-only counts off
+    // the built IntentIR transaction surface so an operator can "very quickly identify" a
+    // document's recognised transactions, their `.2c` grounded signal-set membership
+    // (ports) and their `.2b` composed step-by-step bodies (steps) at a glance. Pure
+    // observation off already-built IR — no extraction change, WIRE-BASED-100 unaffected.
+    let transactions_with_signal_set = ir
+        .transactions
+        .iter()
+        .filter(|t| !t.ports.is_empty())
+        .count();
+    let transactions_with_steps = ir
+        .transactions
+        .iter()
+        .filter(|t| !t.steps.is_empty())
+        .count();
+    let transactions_recognition_only = ir
+        .transactions
+        .iter()
+        .filter(|t| t.steps.is_empty())
+        .count();
+    let transaction_signal_members: usize = ir.transactions.iter().map(|t| t.ports.len()).sum();
 
     let mut findings = Vec::new();
     if !ir.actor_signal_relations.is_empty() && ir.actor_ports.is_empty() {
@@ -6653,6 +6691,48 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         &negative_knowledge_prior_matches,
     );
 
+    // KG-ISF-TRANSACTIONS.2d — surface the recognised transaction inventory as an honest
+    // Info finding when it exists (named transactions with their `.2c` grounded signal-set
+    // membership and `.2b` composed step-by-step bodies). Emitted ONLY when non-empty:
+    // absence is not an event (the PDF-VARIANT-DIGESTION.11 message-field pattern). The
+    // message lists a bounded set of transaction names + the signal-set / step / recognition
+    // -only split for one-glance inspection; `related_ids` carry the transaction ids
+    // (bounded) for per-item review.
+    if !ir.transactions.is_empty() {
+        let named = ir
+            .transactions
+            .iter()
+            .take(8)
+            .map(|t| t.transaction_name.as_str())
+            .collect::<Vec<_>>()
+            .join(", ");
+        let remaining = ir.transactions.len().saturating_sub(8);
+        let name_list = if remaining > 0 {
+            format!("{named}, +{remaining} more")
+        } else {
+            named
+        };
+        findings.push(finding(
+            "intent_transaction_inventory",
+            ValidationFindingSeverity::Info,
+            "transactions",
+            format!(
+                "recognised transaction inventory: {} transaction(s) [{}] — {} with grounded signal set ({} signal member(s) total), {} with step-by-step body, {} recognition-only",
+                ir.transactions.len(),
+                name_list,
+                transactions_with_signal_set,
+                transaction_signal_members,
+                transactions_with_steps,
+                transactions_recognition_only
+            ),
+            ir.transactions
+                .iter()
+                .take(8)
+                .map(|t| t.transaction_id.clone())
+                .collect(),
+        ));
+    }
+
     let report = ValidationReportRecord {
         report_id: format!("validation_intent_ir_{artifact_fingerprint}"),
         validated_stage: IrStage::IntentIr,
@@ -6844,6 +6924,24 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             metric("initial_regular_states", initial_regular_states.to_string()),
             metric("state_transitions", ir.state_transitions.len().to_string()),
             metric("register_records", ir.register_records.len().to_string()),
+            // KG-ISF-TRANSACTIONS.2d — quick-surface transaction inventory metrics.
+            metric("transactions", ir.transactions.len().to_string()),
+            metric(
+                "transactions_with_signal_set",
+                transactions_with_signal_set.to_string(),
+            ),
+            metric(
+                "transactions_with_steps",
+                transactions_with_steps.to_string(),
+            ),
+            metric(
+                "transactions_recognition_only",
+                transactions_recognition_only.to_string(),
+            ),
+            metric(
+                "transaction_signal_members",
+                transaction_signal_members.to_string(),
+            ),
             metric(
                 "timing_constraints",
                 ir.timing_constraints.len().to_string(),
@@ -9603,6 +9701,136 @@ mod tests {
         run(ValidateArgs {
             artifact: intent_ir.artifact_layout.intent_ir_path,
         })
+    }
+
+    #[test]
+    fn validate_intent_ir_reports_transaction_inventory() -> Result<()> {
+        // KG-ISF-TRANSACTIONS.2d — the recognised transaction surface reaches the
+        // user-facing report: counts (transactions, with-signal-set, with-steps,
+        // recognition-only, total signal members) plus the Info inventory finding.
+        // Absence is not an event (no transactions → no finding), mirroring the
+        // message-field inventory (PDF-VARIANT-DIGESTION.11). The validate path is a
+        // read-only observation off built IR, so transactions are attached directly
+        // (the recognizer itself is covered by ir/intent.rs::mint_named_transaction tests).
+        use crate::ir::intent::{
+            TransactionIntent, TransactionPortDirection, TransactionPortRecord, TransactionStep,
+        };
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(&source, "# Spec\nA minimal document.\n")?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let mut intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+
+        // Negative: a document with no recognised transactions emits no inventory
+        // finding and reports a zero count (absence is not an event — the `.11` rule).
+        intent_ir.transactions.clear();
+        let empty_report =
+            validate_intent_ir(&intent_ir, "transaction_inventory_empty".to_string());
+        assert_eq!(metric_value(&empty_report, "transactions"), Some("0"));
+        assert!(!has_finding(&empty_report, "intent_transaction_inventory"));
+
+        // Positive: one corroborated transaction (`.2c` grounded signal set + `.2b`
+        // composed body) and one recognition-only transaction (no signal set, no body).
+        intent_ir.transactions = vec![
+            TransactionIntent {
+                transaction_id: "txn_named_idle_transfer".to_string(),
+                transaction_name: "idle_transfer".to_string(),
+                activation_port: Some("start".to_string()),
+                ports: vec![
+                    TransactionPortRecord {
+                        port_name: "HTRANS".to_string(),
+                        direction: TransactionPortDirection::Output,
+                        width: None,
+                    },
+                    TransactionPortRecord {
+                        port_name: "HREADY".to_string(),
+                        direction: TransactionPortDirection::Input,
+                        width: None,
+                    },
+                ],
+                steps: vec![TransactionStep::Drive {
+                    drive_name: "HTRANS".to_string(),
+                    actuals: vec!["IDLE".to_string()],
+                }],
+                source_block_ids: Vec::new(),
+                source_temporal_rule_ids: Vec::new(),
+                supporting_statement_ids: vec!["stmt_1".to_string()],
+                automation_confidence: AutomationConfidence::High,
+            },
+            TransactionIntent {
+                transaction_id: "txn_named_exclusive_transfer".to_string(),
+                transaction_name: "exclusive_transfer".to_string(),
+                activation_port: None,
+                ports: Vec::new(),
+                steps: Vec::new(),
+                source_block_ids: Vec::new(),
+                source_temporal_rule_ids: Vec::new(),
+                supporting_statement_ids: vec!["stmt_2".to_string()],
+                automation_confidence: AutomationConfidence::Medium,
+            },
+        ];
+
+        let report = validate_intent_ir(&intent_ir, "transaction_inventory".to_string());
+        assert_eq!(metric_value(&report, "transactions"), Some("2"));
+        assert_eq!(
+            metric_value(&report, "transactions_with_signal_set"),
+            Some("1")
+        );
+        assert_eq!(metric_value(&report, "transactions_with_steps"), Some("1"));
+        assert_eq!(
+            metric_value(&report, "transactions_recognition_only"),
+            Some("1")
+        );
+        // Total signal members = 2 (HTRANS + HREADY) from the one with a signal set.
+        assert_eq!(
+            metric_value(&report, "transaction_signal_members"),
+            Some("2")
+        );
+
+        assert!(has_finding(&report, "intent_transaction_inventory"));
+        let inventory = report
+            .findings
+            .iter()
+            .find(|f| f.finding_id == "intent_transaction_inventory")
+            .expect("expected the transaction inventory finding");
+        assert_eq!(inventory.severity, ValidationFindingSeverity::Info);
+        assert_eq!(inventory.category, "transactions");
+        assert!(
+            inventory.summary.contains("2 transaction(s)")
+                && inventory.summary.contains("idle_transfer")
+                && inventory.summary.contains("1 with grounded signal set"),
+            "inventory summary carries the honest counts + names: {}",
+            inventory.summary
+        );
+        assert!(
+            inventory
+                .related_ids
+                .contains(&"txn_named_idle_transfer".to_string()),
+            "transaction ids ride as related_ids for per-item review: {:?}",
+            inventory.related_ids
+        );
+
+        Ok(())
     }
 
     #[test]

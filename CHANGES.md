@@ -1,3 +1,30 @@
+### KG-ISF-TRANSACTIONS.2d — quick-surface transaction inventory on `validate <intent-ir>` (DONE)
+Implements the `.2d` measured design (owner directive: *"very quickly identify the transactions in any chip-spec
+PDF"*). The `validate <intent-ir>` path now reports the recognised transaction set directly, so an operator sees a
+document's transactions + their `.2c` grounded signal-set membership + `.2b` composed bodies at a glance. Code in
+`crates/specforge/src/commands/validate.rs` (intent path `fn validate_intent_ir` only); read-only observation off the
+already-built `IntentIR` — NO extraction change.
+
+- **Five metrics** (after `register_records`): `transactions`, `transactions_with_signal_set`,
+  `transactions_with_steps`, `transactions_recognition_only`, `transaction_signal_members` (Σ ports).
+- **Info finding** `intent_transaction_inventory` (category `transactions`), emitted ONLY when the transaction set
+  is non-empty — absence is not an event, the same honesty rule as `evidence_message_field_inventory`
+  (`PDF-VARIANT-DIGESTION.11`). Message = count + a bounded `take(8)` list of transaction names (+N more) + the
+  with-signal-set / with-steps / recognition-only split; `related_ids` = bounded `transaction_id`s for per-item review.
+- **Human summary** gains `transactions:` / `with_signal_set:` / `with_steps:` lines (mirrors the message-field
+  `containers/with_bit_range/with_byte_offset` summary precedent).
+- **Test:** `validate_intent_ir_reports_transaction_inventory` — negative (no transactions → `0` + no finding) and
+  positive (one corroborated {HTRANS out, HREADY in} + `(drive HTRANS IDLE)` body, one recognition-only → asserts all
+  five metric values + the Info finding's severity/category/summary/related_ids).
+- **Live demo** on the persisted AHB `.2c` artifact: `transactions=7` [exclusive/basic/locked/burst/waited/idle/secure],
+  `with_signal_set=6`, `with_steps=1`, `recognition_only=6`, `signal_members=15` (=2+6+3+2+1+1+0) — reproduces the
+  `.2c` membership exactly.
+- **Gates:** `scripts/run_ci.sh` green (fmt + warning-deny clippy/tests/rustdoc + mdBook; lib **1642**, +1 test);
+  `kg-bench` **156/156**; deterministic / RAM-safe / no-LLM; WIRE-BASED-100 unaffected (read-only); ADR-0006 clean
+  (universal counts, no names). Book: `pipeline/intentir.md` → "Seeing a document's transactions at a glance".
+- Tree `KG-ISF-TRANSACTIONS` stays `active`; PNT continues on the deferred work (ordered multi-phase transaction
+  BODY over the `.2c` membership + finer address/data/control/response role sub-typing).
+
 ### FSMGEN-REFRESH-INTEGRATE-2.2 — ISF feature-adoption assessment @ 8c39827f; "do we need new ISF features?"; tree CLOSED (DONE)
 Owner asked, after the `.1` bump: *"see what you can take or use from this latest FSMGEN version"* and *"are all the
 FSMGEN ISF features all you need or do you need new ones? which? for what? why?"* Read the new upstream's authority

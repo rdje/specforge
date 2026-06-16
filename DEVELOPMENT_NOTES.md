@@ -1,4 +1,35 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-TRANSACTIONS.2d (`2026-06-16`) — quick-surface transaction inventory on `validate <intent-ir>`
+- **Why:** the owner's transaction directive includes *"very quickly identify the transactions in any particular
+  chip-spec PDF"* (`[[project_kg_isf_transactions]]`, bar #2). The recognition/membership/bodies already land
+  (`.2a`/`.2b`/`.2c`), but there was no first-class way to SEE a document's recognised transaction set at a glance.
+  `.2d` adds that surface — the quick-surface candidate the `.1` census recorded — mirroring the
+  `evidence_message_field_inventory` precedent (`PDF-VARIANT-DIGESTION.11`).
+- **What landed (`crates/specforge/src/commands/validate.rs`, intent path `fn validate_intent_ir` only):**
+  - **Derived counts** (computed just before `let mut findings`): `transactions_with_signal_set`
+    (`!ports.is_empty()`), `transactions_with_steps` (`!steps.is_empty()`), `transactions_recognition_only`
+    (`steps.is_empty()`), `transaction_signal_members` (Σ `ports.len()` across transactions).
+  - **Five metrics** placed right after `register_records` in the `ValidationReportRecord`: `transactions`,
+    `transactions_with_signal_set`, `transactions_with_steps`, `transactions_recognition_only`,
+    `transaction_signal_members`.
+  - **Info finding** `intent_transaction_inventory`, category `transactions`, appended just before the report is
+    built, emitted ONLY when `!ir.transactions.is_empty()` — absence is not an event (the `.11` rule). Message =
+    count + a bounded `take(8)` transaction-name list (with a `+N more` tail) + the with-signal-set / with-steps /
+    recognition-only split; `related_ids` = `transaction_id`s bounded to `take(8)` for per-item review.
+  - **Human summary** lines `transactions:` / `with_signal_set:` / `with_steps:` in the printed intent summary,
+    mirroring the message-field `containers/with_bit_range/with_byte_offset` summary block.
+- **Design rationale:** pure read-only observation off the already-built `IntentIR`. It touches NO extraction code,
+  so it cannot inflate or distort what was recognised, and WIRE-BASED-100 is unaffected by construction. ADR-0006 is
+  clean — the surface is universal counts + the document's own transaction names, never a chip-name list. The
+  finding/test deliberately follow the message-field inventory shape so the two "inventory" surfaces stay
+  consistent and a reader learns one idiom.
+- **Verification:** new test `validate_intent_ir_reports_transaction_inventory` (negative: a doc with no
+  transactions → metric `0` + no finding; positive: one corroborated transaction with {HTRANS output, HREADY input}
+  + `(drive HTRANS IDLE)` body and one recognition-only → asserts all five metric values and the Info finding's
+  severity/category/summary/related_ids). Live demo on the persisted AHB `.2c` artifact reproduces the `.2c`
+  membership exactly: `transactions=7`, `with_signal_set=6`, `with_steps=1`, `recognition_only=6`,
+  `signal_members=15` (= 2+6+3+2+1+1+0). Gates: `scripts/run_ci.sh` green (lib **1642**, +1); `kg-bench` 156/156.
+
 ## FSMGEN-REFRESH-INTEGRATE-2.2 (`2026-06-16`) — ISF feature-adoption assessment @ pin `8c39827f`; "do we need new ISF features?"
 - **Why:** owner refreshed the `subs/fsmgen` submodule (`.1` bumped `d31b0b91 → 8c39827f`, +300) and asked
   (a) *"see what you can take or use from this latest FSMGEN version"* and (b) *"are all the FSMGEN ISF

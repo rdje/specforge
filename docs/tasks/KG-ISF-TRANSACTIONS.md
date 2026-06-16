@@ -265,11 +265,29 @@ slices, wire-docs first.
   the enum-value filter). **Deferred (honest, beyond this batch):** the ordered multi-phase BODY (sequencing
   the membership signals into address/data/response phases + the handshakes that gate them) — the membership
   is its prerequisite, now delivered; and finer address/data/control/response role sub-typing.
-- ID: `KG-ISF-TRANSACTIONS.2d` · Status: `in_progress` (`2026-06-16`, owned + measured; NO code yet — fresh
-  session resumes here) · Goal: **quick-surface** — a `validate <intent-ir>` transaction-inventory metric +
+- ID: `KG-ISF-TRANSACTIONS.2d` · Status: `done` (`2026-06-16`; measurement-first; implements the measured
+  design below byte-for-byte) · Goal: **quick-surface** — a `validate <intent-ir>` transaction-inventory metric +
   Info finding so an operator can "very quickly identify" a doc's recognised transactions + their signal-set
   membership at a glance (the owner's "very quickly identify" directive; mirrors the
   `evidence_message_field_inventory` precedent — `PDF-VARIANT-DIGESTION.11`).
+  **DONE — what landed (`crates/specforge/src/commands/validate.rs`, intent path `fn validate_intent_ir`):**
+  (1) **derived counts** (before `let mut findings`): `transactions_with_signal_set` (`!ports.is_empty()`),
+  `transactions_with_steps` (`!steps.is_empty()`), `transactions_recognition_only` (`steps.is_empty()`),
+  `transaction_signal_members` (Σ `ports.len()`); (2) **five metrics** after `register_records`: `transactions`,
+  `transactions_with_signal_set`, `transactions_with_steps`, `transactions_recognition_only`,
+  `transaction_signal_members`; (3) **Info finding** `intent_transaction_inventory` (category `transactions`),
+  emitted ONLY when `!ir.transactions.is_empty()` (absence is not an event — the `.11` rule), message = count +
+  bounded `take(8)` name list (+N more) + the with-signal-set/with-steps/recognition-only split, `related_ids` =
+  `transaction_id`s `take(8)`; (4) **human-summary** `transactions:`/`with_signal_set:`/`with_steps:` lines in the
+  printed intent summary (mirrors the message-field `containers/with_bit_range/with_byte_offset` precedent). Read-only
+  observation off built IR — NO extraction change. **Test:** `validate_intent_ir_reports_transaction_inventory`
+  (negative: no txns → 0 + no finding; positive: 1 corroborated {HTRANS out, HREADY in}+drive body + 1
+  recognition-only → asserts all 5 metrics, the Info finding severity/category/summary/related_ids). **Live demo
+  (persisted AHB `.2c` artifact):** `transactions=7` [exclusive/basic/locked/burst/waited/idle/secure], `with_signal_set=6`,
+  `with_steps=1`, `recognition_only=6`, `signal_members=15` (=2+6+3+2+1+1+0) — reproduces the `.2c` membership exactly.
+  **Gates:** `scripts/run_ci.sh` green (fmt + warning-deny clippy/tests/rustdoc + mdBook; lib **1642**, +1 test) ✓;
+  `kg-bench` **156/156** ✓; deterministic/RAM-safe/no-LLM ✓; WIRE-BASED-100 unaffected (read-only) ✓; ADR-0006 ✓
+  (no names — universal counts). Book: `pipeline/intentir.md` gained "Seeing a document's transactions at a glance".
   **Measured design (read-only, `2026-06-16`; insertion points pinned so the next session does NOT re-derive):**
   - **Surface:** the IntentIR validate path `fn validate_intent_ir` in `crates/specforge/src/commands/validate.rs`
     (transactions live on `IntentIr.transactions: Vec<TransactionIntent>`; each has `transaction_id`,
@@ -385,3 +403,18 @@ slices, wire-docs first.
   + census §4.3 + KM card refreshed. **Deferred beyond the batch:** the ordered multi-phase BODY (phase
   sequencing over the membership) + finer address/data/control/response role sub-typing; `.2d?` quick-surface
   validate-inventory candidate remains. `[[project_kg_isf_transactions]]`.
+- `2026-06-16`: **`.2d` DONE** — quick-surface transaction inventory on the `validate <intent-ir>` path
+  (`commands/validate.rs`, intent path only). Five new metrics (`transactions`, `transactions_with_signal_set`,
+  `transactions_with_steps`, `transactions_recognition_only`, `transaction_signal_members`), an Info finding
+  `intent_transaction_inventory` (category `transactions`, emitted only when non-empty — absence is not an event,
+  the `PDF-VARIANT-DIGESTION.11` message-field rule; message = count + bounded name list + the
+  signal-set/steps/recognition-only split; `related_ids` = bounded `transaction_id`s), and three human-summary
+  println lines. So an operator can "very quickly identify" a doc's recognised transactions + their `.2c` grounded
+  signal-set membership + `.2b` composed bodies at a glance. Pure read-only observation off built IR — no extraction
+  change, WIRE-BASED-100 untouched, ADR-0006 clean (universal counts, no names). New test
+  `validate_intent_ir_reports_transaction_inventory` (negative + positive). Live demo on the persisted AHB `.2c`
+  artifact: `transactions=7`, `with_signal_set=6`, `with_steps=1`, `recognition_only=6`, `signal_members=15` —
+  reproduces the `.2c` membership exactly. Gates: `scripts/run_ci.sh` green (lib **1642**, +1), `kg-bench` 156/156.
+  Book `pipeline/intentir.md` "Seeing a document's transactions at a glance". Frontier → PNT continues on the
+  deferred transaction work: ordered multi-phase transaction BODY (phase sequencing over the `.2c` membership) +
+  finer address/data/control/response role sub-typing. `[[project_kg_isf_transactions]]`.
