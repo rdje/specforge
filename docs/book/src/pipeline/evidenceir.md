@@ -115,6 +115,28 @@ documents with a recovered agent meaningfully, and every newly-recovered agent i
 trace unit, a debug-access port, an interconnect manager — while the four wire-based reference specs are
 unaffected.
 
+### Keeping the agent the document actually means
+
+The other place agents enter the model is as the *subject* of a who-drives-what relation — *"the Subordinate
+drives HRESP"*. Reading a subject out of running prose is noisier than reading a definition sentence, so the
+same relation also gets two structural clean-ups, both keyed off **universal English grammar, never a name
+list** — so they apply to any spec, including the 101st protocol the tool has never seen:
+
+- **A phrase fragment is not an agent.** When the captured subject *starts* with a function word or a verb — *"For
+  components that support …"*, *"is recommended that a Manager sets …"*, *"ensures the channel is idle"* — it is a
+  clause fragment, not an agent, and is dropped before it can become a junk actor in the `IntentIR` (and hence the
+  `.isf`). The rule looks only at the *first* word's part of speech, so a real agent that simply happens to carry
+  a leading qualifier ("All Managers") is never thrown away.
+- **A trailing scrap belongs on the real agent.** When the subject is a real agent noun with a dangling verb or
+  adverb caught alongside it — *"Subordinate extends"*, *"decoder also"* — the scrap is stripped and the relation
+  re-attributes onto the agent itself ("Subordinate", "decoder"). The relations that were stranded under the
+  fragment then merge onto the genuine agent, so the agent is connected to *all* the signals the document says it
+  drives, not just some — the model gets **more complete**, not just cleaner.
+
+The net effect is an agent surface that names every real agent once and connects it to its signals, with the
+prose noise removed — and the four wire-based reference specs stay byte-for-fact identical, so the clean-up never
+costs a real fact.
+
 ## Typical evidence-level failure modes
 
 - field tables leaking fake signals

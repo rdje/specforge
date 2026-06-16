@@ -127,3 +127,56 @@ This measured only the four wire docs + AXI-Stream (the deeply-extracted protoco
 gates on). The broader protocol corpus is scoped for `.2+`. The taxonomy and the per-doc
 evidence-keyed rule are expected to generalize, but each code slice re-measures on its own
 gold before landing.
+
+## 7. `.1b` consolidation/honesty measurement (`2026-06-16`, read-only over all 36 persisted IntentIR docs)
+
+Executed before the `.1b` code, per the tree's measurement-first rule. `python3` over
+`generated/intent_ir/<doc>/intent_ir.json` (actors / `actor_ports` / `actor_signal_relations`),
+modelling each `.1b` transform corpus-wide. **The persisted corpus is the PRE-`.1a` baseline** —
+the `.1a` rebuild materialized into a temp evidence-root, not the canonical `generated/` tree
+(the WRITE-PATH GOTCHA), so the pre-`.1a` fragment actors are still visible here, which is exactly
+what makes the `.1b` transforms measurable.
+
+### 7.1 The original `.1b` (i) is two different risk profiles
+
+Modelling the trailing-strip + `"X interface"` strip across the corpus separates them:
+
+- **Trailing verb/adverb strip — grammatically unambiguous, the clean win.** A trailing token in
+  `NON_ACTOR_LEADING_VERBS` (`extends`/`describes`/`contains`/…) or an adverb/discourse-marker
+  (`then`/`also`/`next`/`where`/`only`/…) is never part of an agent name; stripping it keeps the
+  leading noun. Ordered net effect (consolidate → `.1a` reject) over the corpus: **ZERO real agents
+  (≥8 ports) vanish**; the wire-doc completeness wins land — AHB `Subordinate extends` 4/2 +
+  `Subordinate then` 1/1 → `Subordinate` (25/23 → merges); AHB `decoder also` 4/2 → `decoder`;
+  AXI-and-ACE `Subordinate interface` only via the interface rule. Residual junk consolidates to a
+  function-word head the subsequent `.1a` reject removes (`does not`→`does`, `It also`→`It`,
+  `is used`→`is` — net-better). Descriptor-noun residue (`chapter describes`→`chapter`,
+  `section describes`→`section`, `channel(s specified`→`channel(s`) stays the deferred descriptor-noun
+  class — no worse than before. → **`.1b.i`** (this slice).
+- **`"X interface"→"X"` strip — named-block conflation risk.** On the wire set it is a clean merge
+  (`Transmitter interface`→`Transmitter` 22/23; `Subordinate interface`→`Subordinate` 51/49). But on
+  GIC `CPU interface` (the GICC, a distinct architectural block) → generic `CPU` (0/0) is WRONG, as is
+  `Q-Channel interface`→`Q-Channel`, `AXI interface`→`AXI`. The safe rule needs an "only when the
+  leading token is already a real connected agent in this doc" sub-gate — actor-set context the
+  relation-subject seam (`normalize_relation_actor_name`, a pure string fn) does not have. → **`.1b.ii`**,
+  deferred until that context is wired in.
+
+### 7.2 Coordinated "X and Y" subjects — `.1b.iii`
+
+AHB `Subordinate and decoder` 6/4 and `Exclusive Access Monitor and Subordinate` 4/2 are coordinated
+subjects whose relations belong to BOTH agents ("*the Subordinate and decoder drive HSELx*" ⇒ both).
+A split must duplicate (not move) the relations to each conjunct, then dedup against existing per-agent
+relations. Distinct enough from the trailing strip (and conjunction-led, which `.1b.i` deliberately
+excludes from the trailing set) → its own leaf.
+
+### 7.3 Class-C zero-evidence drop is far broader than the wire-doc scope — `.1b.iv`, deferred
+
+Census of 0/0 actors corpus-wide: **320 total**, split by responsibility provenance into **21
+PURE-INFERRED** (only "semantic role inferred around `X` evidence" — the unambiguous Phase-2 role-term
+phantom), **76 SECTION+INFERRED**, and **223 PROSE-GROUNDED** (a real prose sentence attached as a
+responsibility, e.g. GIC `arbiter`). The `.1`/`.1a` measurement validated "drop 0/0 per-doc" only on the
+4 wire docs; a blanket corpus-wide 0/0 drop would delete 320 actors including ones the documents
+genuinely discuss (TileLink `sender`/`sink`, NVMe `host`, GIC `arbiter`), against the owner's
+completeness north star. "PROSE-GROUNDED" is NOT a clean "genuinely-declared agent" discriminator
+(it can be a generic-vocabulary noun mention, exactly the wire-doc `source`="source of read data"
+case). So `.1b.iv` must first design a defensible re-check — most likely drop only the PURE-INFERRED
+phantoms, or keep the drop wire-doc-scoped — and re-measure on its own gold. Not forced into `.1b.i`.

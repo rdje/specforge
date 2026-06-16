@@ -1,3 +1,31 @@
+### KG-ISF-COMPLETENESS.1b.i — Class-B trailing-fragment consolidation
+The completeness half of `.1` (Class-B Fragment-of-a-real-agent). New `consolidate_trailing_fragment` in
+`ir/evidence.rs` strips a TRAILING universal verb (`NON_ACTOR_LEADING_VERBS`) or a discourse-adverb (a new
+`NON_ACTOR_TRAILING_DISCOURSE_MARKERS` const, drift-guarded ⊆ the leading function-word lexicon) off a
+relation-subject candidate, keeping the leading agent noun — wired into the same DRY seam
+`normalize_relation_actor_name` BETWEEN the meaningful check and the `.1a` reject. So `Subordinate extends`/
+`Subordinate then`→`Subordinate` and `decoder also`→`decoder` re-attribute their stranded relations onto the
+real agent (dedup merge), instead of surviving as phantom fragment actors.
+
+- **Measurement-first (read-only, all 36 IntentIR docs) split `.1b` into focused sub-leaves:** the original
+  (i) is two risk profiles — the trailing strip is grammatically unambiguous (this slice), while
+  `"X interface"→"X"` carries a named-block conflation risk (GIC `CPU interface` ≠ generic `CPU`) → deferred
+  `.1b.ii`; coordinated "X and Y" → `.1b.iii`; the Class-C 0/0 drop is 320 actors corpus-wide (only 21
+  PURE-INFERRED vs 223 PROSE-GROUNDED) validated only on wire docs → deferred `.1b.iv`.
+- **ADR-0006-safe (parts of speech, no name list).** Conjunctions are deliberately NOT stripped (a trailing
+  `and`/`or` is a coordinated subject for `.1b.iii`); the input is returned byte-identical when nothing
+  strips (preserves byte-stability for fragment-free docs); infrastructure can never surface (the full string
+  already passed the infra reject, a leading-token prefix adds no substring).
+- **Live AHB rebuild (fresh Pattern evidence→semantic→intent):** the real `Subordinate` rises 25/23 → 27/26
+  (absorbing `extends`+`then`) and `decoder` recovers 0/0 → 4/2; the three fragment actors are GONE; actors
+  25→19. **AXI no-regression:** real agents byte-identical (`Manager` 169/168, `Subordinate` 168/166,
+  `interconnect` 5/3); actors stay 21; deferred classes (descriptor-noun, Class-C, `address decoder`
+  leading-qualifier, `Manager to` trailing-preposition, coordination) correctly remain.
+- **WIRE-BASED-100 HELD 1.000** on fresh-Pattern eval (constraints AXI/APB/AHB 4/4·6/6·6/6; actor-relations
+  AXI/APB/AHB/SWD 6/6·6/6·6/6·1/1; temporal AXI/APB/AHB 3/3·3/3·4/4; SWD's lone constraint the documented
+  promotion-only 0/1). `kg-bench` 156/156; `run_ci.sh` GREEN (lib 1635 pass / 2 ignored, +2 tests). KM card
+  `agent-trailing-fragment-consolidation`.
+
 ### KG-ISF-COMPLETENESS.1a — structural agent-identity precision gate (first code in this tree)
 The precision half of `.1` (Class-A Junk). New `is_non_actor_phrase_fragment` in `ir/evidence.rs` rejects a
 relation-subject candidate whose FIRST content token is a universal closed-class function word

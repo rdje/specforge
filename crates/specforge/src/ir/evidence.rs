@@ -2275,6 +2275,75 @@ const NON_ACTOR_LEADING_VERBS: &[&str] = &[
     "included",
 ];
 
+/// Universal adverbs / discourse markers that, as a TRAILING token, dangle off an agent noun captured
+/// by the prose subject extractor ("decoder also", "Subordinate then") — the agent is the LEADING noun
+/// and the trailing marker is grammatical residue. Deliberately a SUBSET of the adverb/discourse markers
+/// already in `NON_ACTOR_LEADING_FUNCTION_WORDS` (the `trailing_discourse_markers_are_known_leading_words`
+/// drift-guard test pins that), and deliberately NOT conjunctions/prepositions: a trailing `and`/`or` is
+/// a coordinated-subject remnant that `KG-ISF-COMPLETENESS.1b.iii` splits, never strips. ADR 0006-safe
+/// (parts of speech, not names). Used by `consolidate_trailing_fragment` for the `.1b.i` consolidation.
+const NON_ACTOR_TRAILING_DISCOURSE_MARKERS: &[&str] = &[
+    "then",
+    "next",
+    "also",
+    "once",
+    "before",
+    "after",
+    "until",
+    "however",
+    "therefore",
+    "thus",
+    "hence",
+    "now",
+    "here",
+    "there",
+    "only",
+    "not",
+    "when",
+    "where",
+    "why",
+    "how",
+    "again",
+    "still",
+    "already",
+    "otherwise",
+    "instead",
+    "rather",
+    "even",
+];
+
+/// `KG-ISF-COMPLETENESS.1b.i` — Class-B trailing-fragment consolidation. The prose subject extractor
+/// sometimes captures a real agent noun with a dangling trailing verb or discourse-adverb
+/// ("Subordinate extends", "decoder also") — the agent is the LEADING noun; the trailing function-class
+/// token is residue. Strip those trailing tokens (a `NON_ACTOR_LEADING_VERB` or a
+/// `NON_ACTOR_TRAILING_DISCOURSE_MARKER`), keeping at least the leading content token, so the relation
+/// re-attributes onto the canonical agent and its stranded relations merge by dedup. Conjunction-led
+/// coordination ("X and Y") is deliberately left for `.1b.iii`. Returns the input unchanged (so the
+/// byte-identical guarantee holds for fragment-free documents) when nothing is stripped. Compares the
+/// last token by its lowercased alphabetic core, mirroring the case-agnostic `.1a` first-token rule.
+fn consolidate_trailing_fragment(value: &str) -> String {
+    let mut tokens: Vec<&str> = value.split_whitespace().collect();
+    let original_len = tokens.len();
+    while tokens.len() >= 2 {
+        let core: String = tokens[tokens.len() - 1]
+            .chars()
+            .filter(|c| c.is_ascii_alphabetic())
+            .collect::<String>()
+            .to_ascii_lowercase();
+        if core.is_empty()
+            || !(NON_ACTOR_LEADING_VERBS.contains(&core.as_str())
+                || NON_ACTOR_TRAILING_DISCOURSE_MARKERS.contains(&core.as_str()))
+        {
+            break;
+        }
+        tokens.pop();
+    }
+    if tokens.len() == original_len {
+        return value.to_string();
+    }
+    tokens.join(" ")
+}
+
 /// The first content token of a candidate actor name: the first maximal run of ASCII letters,
 /// lowercased. `None` when the candidate has no alphabetic content. Case is normalized away so the
 /// gate is case-agnostic (`feedback_case_is_soft_not_critical`).
@@ -2307,6 +2376,13 @@ fn normalize_relation_actor_name(value: &str) -> Option<String> {
     if !is_meaningful_actor_term(&actor) {
         return None;
     }
+    // KG-ISF-COMPLETENESS.1b.i — consolidate a Class-B trailing fragment to its leading agent noun
+    // ("Subordinate extends" → "Subordinate", "decoder also" → "decoder") BEFORE the .1a reject, so the
+    // relation re-attributes onto the real agent (its stranded relations merge by dedup) instead of
+    // surviving as a separate fragment actor. Infrastructure can never surface here: the full string
+    // already passed `normalize_table_actor_name`'s infra check, and a leading-token prefix introduces
+    // no new substring. The strip keeps the leading noun, which the .1a gate then judges.
+    let actor = consolidate_trailing_fragment(&actor);
     // KG-ISF-COMPLETENESS.1a — structural precision gate: a relation subject whose first content
     // token is a universal function word or a leading verb is a phrase FRAGMENT ("For components",
     // "is recommended", "ensures …"), never an agent. Both prose paths and the table relation path
@@ -14092,12 +14168,73 @@ mod tests {
                 "{keep:?} is a real agent (or a Class-B fragment) and must NOT be gated by .1a"
             );
         }
-        // The seam keeps a real agent and a Class-B fragment (the latter normalized but not dropped).
+        // The seam keeps a real agent unchanged, and now CONSOLIDATES a Class-B trailing fragment to
+        // its leading agent noun (KG-ISF-COMPLETENESS.1b.i) rather than only preserving it.
         assert_eq!(
             super::normalize_relation_actor_name("Manager").as_deref(),
             Some("Manager")
         );
-        assert!(super::normalize_relation_actor_name("Subordinate extends").is_some());
+        assert_eq!(
+            super::normalize_relation_actor_name("Subordinate extends").as_deref(),
+            Some("Subordinate")
+        );
+    }
+
+    // ── KG-ISF-COMPLETENESS.1b.i — Class-B trailing-fragment consolidation ────────────────────
+    #[test]
+    fn trailing_fragment_consolidation_strips_to_the_leading_agent_noun() {
+        // Trailing verb / discourse-adverb residue is stripped; the leading agent noun is kept, so the
+        // relation re-attributes onto the real agent. Mirrors the measured wire-doc Class-B fragments.
+        for (fragment, canonical) in [
+            ("Subordinate extends", "Subordinate"),
+            ("Subordinate then", "Subordinate"),
+            ("decoder also", "decoder"),
+            ("register allows", "register"),
+            ("register contains", "register"),
+        ] {
+            assert_eq!(
+                super::consolidate_trailing_fragment(fragment),
+                canonical,
+                "{fragment:?} should consolidate to {canonical:?}"
+            );
+            assert_eq!(
+                super::normalize_relation_actor_name(fragment).as_deref(),
+                Some(canonical),
+                "{fragment:?} must re-attribute onto {canonical:?} through the relation-actor seam"
+            );
+        }
+        // A real agent (no trailing residue) is returned byte-identical — protects the byte-stability
+        // guarantee for fragment-free documents.
+        for keep in [
+            "Manager",
+            "Subordinate",
+            "Exclusive Access Monitor",
+            "address decoder",
+        ] {
+            assert_eq!(super::consolidate_trailing_fragment(keep), keep);
+        }
+        // Never strips below the leading noun, and a conjunction is NOT a trailing strip target (it is
+        // a coordinated-subject remnant for `.1b.iii`).
+        assert_eq!(
+            super::consolidate_trailing_fragment("Subordinate and"),
+            "Subordinate and"
+        );
+        // A consolidated head that is itself a function word is then rejected by the `.1a` gate.
+        assert!(super::normalize_relation_actor_name("does not").is_none());
+        assert!(super::normalize_relation_actor_name("It also").is_none());
+    }
+
+    #[test]
+    fn trailing_discourse_markers_are_known_leading_words() {
+        // Drift-guard: the trailing-strip discourse-marker set is a SUBSET of the leading function-word
+        // lexicon (same universal grammar, different structural role). If one list is edited without the
+        // other, this fails — keeping the two lexicons from silently diverging.
+        for marker in super::NON_ACTOR_TRAILING_DISCOURSE_MARKERS {
+            assert!(
+                super::NON_ACTOR_LEADING_FUNCTION_WORDS.contains(marker),
+                "{marker:?} must also be a known leading function word"
+            );
+        }
     }
 
     #[test]

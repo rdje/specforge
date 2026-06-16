@@ -119,14 +119,58 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   independent of this actor-name gate). `kg-bench` 156/156; `run_ci.sh` GREEN (fmt + warning-deny Clippy +
   tests 1633 pass/2 ignored, +3 new + rustdoc + mdBook). KM card `[[agent-identity-structural-gate]]`.
   Frontier → `.1b`.
-- ID: `KG-ISF-COMPLETENESS.1b` · Status: `pending` (measurement-first) · Goal: **completeness —
-  consolidation + zero-evidence honesty.** (i) Normalize Class-B fragments to the canonical agent token
-  (strip trailing verb/adverb; "X interface"→"X") — this transform must run BEFORE the `.1a` reject so
-  `Subordinate extends`→`Subordinate` is kept, not dropped (the ordering interaction found in `.1a`'s
-  code-seam study); (ii) split a coordinated "X and Y" subject; (iii) drop Class-C zero-evidence actors
-  per-doc (0 ports AND 0 rels), first re-checking provenance so a genuinely declared-but-unwired agent is
-  preserved. Explicitly NO relation synthesis for Class-C (measured fabrication risk). WIRE-BASED-100 a
-  hard gate.
+- ID: `KG-ISF-COMPLETENESS.1b` · Status: `active` (umbrella; measurement DONE `2026-06-16` split it into
+  focused sub-leaves) · Goal: **completeness — consolidation + zero-evidence honesty.** Original plan:
+  (i) Normalize Class-B fragments to the canonical agent token (strip trailing verb/adverb; "X interface"→"X")
+  — this transform must run BEFORE the `.1a` reject so `Subordinate extends`→`Subordinate` is kept, not
+  dropped (the ordering interaction found in `.1a`'s code-seam study); (ii) split a coordinated "X and Y"
+  subject; (iii) drop Class-C zero-evidence actors per-doc (0 ports AND 0 rels), first re-checking
+  provenance so a genuinely declared-but-unwired agent is preserved. Explicitly NO relation synthesis for
+  Class-C (measured fabrication risk). WIRE-BASED-100 a hard gate.
+  **`.1b` MEASUREMENT DONE `2026-06-16`** (read-only over the persisted 36-doc IntentIR corpus; report
+  `docs/research/agent-surface-fidelity-measurement.md` §7) — the original (i) splits into TWO distinct
+  risk profiles, and (iii) is far broader than the wire-doc scope, so each becomes its own
+  measurement-first + WIRE-BASED-100-gated sub-leaf:
+  - **`.1b.i`** (trailing verb/adverb strip) — grammatically UNAMBIGUOUS, the clean completeness win.
+  - **`.1b.ii`** (`"X interface"→"X"` strip) — DEFERRED: a named-interface block (`CPU interface` in GIC,
+    a distinct GICC architectural entity) is NOT the generic noun `CPU`; needs an "only when the leading
+    token is already a real connected agent in this doc" sub-gate (actor-set context the relation-subject
+    seam lacks).
+  - **`.1b.iii`** (coordinated "X and Y" split) — AHB `Subordinate and decoder` 6/4,
+    `Exclusive Access Monitor and Subordinate` 4/2; needs the relations duplicated to BOTH agents.
+  - **`.1b.iv`** (Class-C zero-evidence drop) — DEFERRED beyond the wire docs: 320 Class-C 0/0 actors
+    corpus-wide, but only **21 are PURE-INFERRED** (the unambiguous Phase-2 role-term phantom); **223 are
+    PROSE-GROUNDED** + **76 SECTION+INFERRED**, and "PROSE-GROUNDED" is NOT a clean "genuinely-declared
+    agent" discriminator. The `.1`/`.1a` measurement validated the drop only on the 4 wire docs; a blanket
+    corpus-wide 0/0 drop would delete agents the owner's completeness north star wants kept. So `.1b.iv`
+    must first design a defensible provenance re-check (likely: drop only PURE-INFERRED phantoms, or scope
+    to the wire docs) — its own measurement-first leaf, NOT forced here.
+- ID: `KG-ISF-COMPLETENESS.1b.i` · Status: `done` (`2026-06-16`, measurement-first; gate LANDED +
+  WIRE-BASED-100-verified) · Goal: **Class-B trailing-fragment consolidation** — strip a TRAILING universal
+  verb (`NON_ACTOR_LEADING_VERBS`) or trailing adverb/discourse-marker (`then`/`also`/`next`/… — NOT
+  conjunctions, which are `.1b.iii` coordination) from a relation-subject candidate, keeping the leading
+  NOUN, inside `normalize_relation_actor_name` BEFORE the `.1a` reject. So `Subordinate extends`/
+  `Subordinate then`→`Subordinate`, `decoder also`→`decoder` — the stranded relations re-attribute onto
+  the real agent (dedup merges them) and the fragment actor disappears. **Measured net effect over the
+  persisted corpus (ordered consolidate→`.1a`):** ZERO real agents (≥8 ports) vanish; the wire-doc wins
+  land (AHB `Subordinate` gains `extends`+`then`'s relations, `decoder` recovers `also`'s); residual junk
+  (`does not`→`does`, `It also`→`It`, `is used`→`is`) consolidates to a function-word head the subsequent
+  `.1a` reject then removes (net-better); descriptor-noun residue (`chapter`/`section`/`channel(s`) stays
+  the deferred descriptor-noun class, no worse than before. WIRE-BASED-100 a hard gate (fresh-Pattern
+  temp-evidence-root eval); `cargo build --release` before live measure; `run_ci.sh` before green.
+  **LANDED `2026-06-16`** — new `consolidate_trailing_fragment` (`ir/evidence.rs`) + a dedicated
+  `NON_ACTOR_TRAILING_DISCOURSE_MARKERS` const (the adverb subset, drift-guarded by a test asserting it ⊆
+  `NON_ACTOR_LEADING_FUNCTION_WORDS`), wired into `normalize_relation_actor_name` between the meaningful
+  check and the `.1a` reject; returns the input byte-identical when nothing strips (preserves byte-stability
+  for fragment-free docs); infra-safe by construction (the full string already passed the infra reject, a
+  leading-token prefix adds no substring). **Live AHB rebuild (fresh Pattern evidence→semantic→intent):**
+  `Subordinate` 25/23 → **27/26** (absorbed `extends`+`then`), `decoder` 0/0 → **4/2** (recovered from
+  `also`); the three fragment actors GONE; actors 25→19. **AXI no-regression:** real agents byte-identical
+  (`Manager` 169/168, `Subordinate` 168/166, `interconnect` 5/3); actors stay 21; deferred classes remain.
+  **WIRE-BASED-100 HELD 1.000** on fresh-Pattern eval (constraints AXI/APB/AHB 4/4·6/6·6/6; actor-relations
+  AXI/APB/AHB/SWD 6/6·6/6·6/6·1/1; temporal AXI/APB/AHB 3/3·3/3·4/4; SWD lone constraint the documented
+  promotion-only 0/1, independent). `kg-bench` 156/156; `run_ci.sh` GREEN (lib 1635 pass/2 ignored, +2
+  tests). KM card `[[agent-trailing-fragment-consolidation]]`. Frontier → `.1b.ii`/`.1b.iii`/`.1b.iv`.
 - ID: `KG-ISF-COMPLETENESS.2+` · Status: `pending` · Goal: the remaining bar dimensions per doc
   (relation completeness, signal direction/width coverage, constraint completeness via the gauge,
   behavior/temporal carry, and the ISF round-trip fidelity check), each measurement-first + gold-gated.
@@ -162,3 +206,24 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   descriptor-noun class deferred per design. WIRE-BASED-100 held at 1.000 (constraints APB/AHB/AXI,
   relations ×4 docs, temporal ×3) on fresh-Pattern eval; `kg-bench` 156/156; `run_ci.sh` green (+3 tests,
   lib 1633 pass/2 ignored). KM card `agent-identity-structural-gate`. Frontier → `.1b`.
+- `2026-06-16`: **`.1b` MEASUREMENT DONE + split into sub-leaves** (read-only over the persisted 36-doc
+  IntentIR corpus, before any code). Confirmed the persisted corpus is the PRE-`.1a` baseline (the `.1a`
+  rebuild went to a temp evidence-root, not canonical — the WRITE-PATH GOTCHA). Modelled each `.1b`
+  transform corpus-wide: (i) the trailing verb/adverb strip is grammatically unambiguous and the clean
+  win; the `"X interface"→"X"` half carries a named-block conflation risk (GIC `CPU interface` ≠ `CPU`)
+  → `.1b.ii`; (iii) coordinated "X and Y" → `.1b.iii`; the Class-C 0/0 drop is 320 actors corpus-wide
+  (only 21 PURE-INFERRED vs 223 PROSE-GROUNDED + 76 SECTION+INFERRED) and validated only on wire docs
+  → `.1b.iv`, deferred until a defensible provenance re-check is designed. Report
+  `docs/research/agent-surface-fidelity-measurement.md` §7. Frontier → `.1b.i`. No code.
+- `2026-06-16`: **`.1b.i` DONE** — Class-B trailing-fragment consolidation LANDED. New
+  `consolidate_trailing_fragment` in `ir/evidence.rs` strips a trailing `NON_ACTOR_LEADING_VERBS` token or
+  a `NON_ACTOR_TRAILING_DISCOURSE_MARKERS` adverb (the latter a new const, drift-guarded ⊆ the leading
+  function-word lexicon), keeping the leading agent noun, wired into the DRY seam
+  `normalize_relation_actor_name` BEFORE the `.1a` reject — so `Subordinate extends`/`Subordinate then`→
+  `Subordinate` and `decoder also`→`decoder` re-attribute their stranded relations onto the real agent
+  (dedup merge) instead of surviving as phantom fragment actors. ADR-0006-safe (parts of speech, no name
+  list); conjunctions (coordination, `.1b.iii`) and `"X interface"` (`.1b.ii`) deliberately excluded;
+  byte-identical when nothing strips. Live AHB: `Subordinate` 25/23→27/26, `decoder` 0/0→4/2, actors
+  25→19; AXI real agents byte-identical, actors 21. WIRE-BASED-100 HELD 1.000 (constraints ×3 / relations
+  ×4 / temporal ×3) on fresh-Pattern eval; `kg-bench` 156/156; `run_ci.sh` GREEN (+2 tests, lib 1635
+  pass/2 ignored). KM card `agent-trailing-fragment-consolidation`. Frontier → `.1b.ii`/`.1b.iii`/`.1b.iv`.

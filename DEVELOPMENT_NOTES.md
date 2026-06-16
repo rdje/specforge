@@ -1,4 +1,30 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-COMPLETENESS.1b.i (`2026-06-16`) — Class-B trailing-fragment consolidation
+- **Why:** the completeness half of `.1` (Class-B). The prose subject extractor captures a real agent noun
+  with a dangling trailing verb/adverb (`Subordinate extends`, `decoder also`); because the LEADING token is
+  a noun the `.1a` gate rightly keeps it, but it survives as a SEPARATE phantom actor holding relations that
+  belong to the real agent (AHB `decoder` read 0/0 only because its `drives HSELx` relations were stranded
+  under `decoder also`).
+- **Implementation:** `consolidate_trailing_fragment(value)` in `ir/evidence.rs` strips trailing tokens that
+  are a `NON_ACTOR_LEADING_VERBS` token or a `NON_ACTOR_TRAILING_DISCOURSE_MARKERS` adverb (a new const, the
+  adverb subset of the leading function-word lexicon, pinned ⊆ it by the
+  `trailing_discourse_markers_are_known_leading_words` drift-guard test), keeping ≥1 leading content token.
+  Wired into `normalize_relation_actor_name` BETWEEN the `is_meaningful_actor_term` check and the `.1a`
+  `is_non_actor_phrase_fragment` reject — ordering matters: consolidate first so `Subordinate extends`→
+  `Subordinate` is KEPT, then `.1a` judges the clean head. The relation re-attributes onto the real agent and
+  `dedup_actor_signal_relations` merges it; the fragment, now relation-less, is never minted as a Phase-1
+  actor. Returns the input byte-identical when nothing strips (byte-stability for fragment-free docs).
+- **Scope (deliberate exclusions, ADR-0006-safe — parts of speech, no name list):** conjunctions (`and`/`or`)
+  are NOT stripped — a trailing conjunction is a coordinated-subject remnant for `.1b.iii`; `"X interface"→"X"`
+  is `.1b.ii` (a named-interface block like GIC `CPU interface` ≠ generic `CPU`, needs an actor-set sub-gate
+  the pure-string seam lacks); the Class-C 0/0 drop is `.1b.iv` (320 corpus-wide, validated only on wire docs).
+- **Verification:** measurement-first over all 36 persisted IntentIR docs (ordered consolidate→`.1a`): ZERO
+  real agents (≥8 ports) vanish; junk like `does not`→`does`/`It also`→`It` consolidates to a function-word
+  head the `.1a` reject then removes. Live AHB: `Subordinate` 25/23→27/26, `decoder` 0/0→4/2, actors 25→19;
+  AXI real agents byte-identical, actors 21. WIRE-BASED-100 1.000 (constraints ×3 / relations ×4 / temporal
+  ×3) on fresh-Pattern eval; `kg-bench` 156/156; `run_ci.sh` green (+2 tests, lib 1635 pass / 2 ignored).
+- **KM:** `agent-trailing-fragment-consolidation`. **Frontier:** `.1b.ii` / `.1b.iii` / `.1b.iv`.
+
 ## KG-ISF-COMPLETENESS.1a (`2026-06-16`) — structural agent-identity precision gate (first code)
 - **Why:** the precision half of `.1` (Class-A Junk). Prose-fragment subjects (`For components`,
   `is recommended`, `ensures`, `Exit from`, `next`, `Then it`, `with write`) were minted as actors and would
