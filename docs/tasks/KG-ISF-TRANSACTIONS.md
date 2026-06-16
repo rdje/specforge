@@ -265,10 +265,38 @@ slices, wire-docs first.
   the enum-value filter). **Deferred (honest, beyond this batch):** the ordered multi-phase BODY (sequencing
   the membership signals into address/data/response phases + the handshakes that gate them) — the membership
   is its prerequisite, now delivered; and finer address/data/control/response role sub-typing.
-- ID: `KG-ISF-TRANSACTIONS.2d?` · Status: `candidate` · Goal: **quick-surface** — a `validate`
-  transaction-inventory metric + finding (and/or CLI surface) so an operator can "very quickly identify"
-  a doc's recognised transactions at a glance (from the owner's "very quickly identify" directive).
-  Design alongside `.2a`–`.2c`; not yet scoped.
+- ID: `KG-ISF-TRANSACTIONS.2d` · Status: `in_progress` (`2026-06-16`, owned + measured; NO code yet — fresh
+  session resumes here) · Goal: **quick-surface** — a `validate <intent-ir>` transaction-inventory metric +
+  Info finding so an operator can "very quickly identify" a doc's recognised transactions + their signal-set
+  membership at a glance (the owner's "very quickly identify" directive; mirrors the
+  `evidence_message_field_inventory` precedent — `PDF-VARIANT-DIGESTION.11`).
+  **Measured design (read-only, `2026-06-16`; insertion points pinned so the next session does NOT re-derive):**
+  - **Surface:** the IntentIR validate path `fn validate_intent_ir` in `crates/specforge/src/commands/validate.rs`
+    (transactions live on `IntentIr.transactions: Vec<TransactionIntent>`; each has `transaction_id`,
+    `transaction_name`, `ports: Vec<TransactionPortRecord>` (the `.2c` grounded signal set), `steps`
+    (the `.2b` composed body), `automation_confidence`).
+  - **Derived counts** (compute alongside the other `let` bindings just before `let mut findings = Vec::new();`
+    at ~`5999`): `transactions_with_signal_set = transactions.iter().filter(|t| !t.ports.is_empty()).count()`;
+    `transactions_with_steps = …!t.steps.is_empty()…`; `transactions_recognition_only = …t.steps.is_empty()…`;
+    `transaction_signal_members = transactions.iter().map(|t| t.ports.len()).sum()`.
+  - **Metrics** (add into the `metrics: vec![ … ]` of the `ValidationReportRecord` built at ~`6656`, e.g. right
+    after `metric("register_records", …)` at ~`6846`): `transactions`, `transactions_with_signal_set`,
+    `transactions_with_steps`, `transactions_recognition_only`, `transaction_signal_members`.
+  - **Finding** (append an Info finding to `findings` just before `let report = ValidationReportRecord {` at
+    ~`6656`, so existing finding order is undisturbed): `intent_transaction_inventory`,
+    `ValidationFindingSeverity::Info`, category `"transactions"`, emitted ONLY when `!ir.transactions.is_empty()`
+    (absence is not an event — the `.11` rule); message = a one-glance summary (count + a bounded list of
+    transaction names + the with-signal-set / with-steps / recognition-only split); `related_ids` =
+    `transaction_id`s (bounded `take(8)`) for per-item review. Helpers: `metric()` `:261`, `finding()` `:268`,
+    test helpers `metric_value()` `:10019` / `has_finding()` `:10027`.
+  - **Test:** mirror `validate_evidence_ir_reports_message_field_inventory` (`:8106`); build an `IntentIr` with
+    ≥1 `TransactionIntent` (either via the `IntentIr::build` pipeline like the other `validate_intent_ir_*`
+    tests, or construct `TransactionIntent` directly — fields per `ir/intent.rs:863` / the `:2191` mint test)
+    and assert the metric values + the Info finding presence; add a zero-transactions negative assertion (no
+    finding) like the message-field test.
+  - **Gates:** deterministic, RAM-safe, no LLM; `scripts/run_ci.sh` green + `kg-bench` 156/156; WIRE-BASED-100
+    unaffected (read-only observation off built IR — no extraction change). Book close-rule: a user-visible
+    `validate` surface → add a brief note to `pipeline/intentir.md` (or `quality/validation.md`).
 
 ## Changelog
 
