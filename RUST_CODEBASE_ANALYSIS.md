@@ -4,6 +4,25 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-06-16 — KG-ISF-TRANSACTIONS.2a: structural transaction recognition; new SemanticIR surface)
+- **Public surface change:** `SemanticIr` gains a typed field `transaction_anchors: Vec<TransactionAnchorRecord>`
+  (serde-default, skip-if-empty ⇒ existing artifacts deserialize unchanged; docs that name no transactions
+  stay byte-identical). This is the recognition substrate for the transaction layer (Cue A — section
+  headings that name transactions), built in `SemanticIr::build` from the EvidenceIR section anchors the
+  builder already reads. Rationale captured because it adds a public IR field and a new EvidenceIR→SemanticIR
+  carry.
+- **`intent.rs` transaction subsystem de-hardcoded:** `recognize_digital_patterns` lost its three hardcoded
+  protocol blocks (Patterns 3/4/5 — the only ADR-0006 breach in the transaction path); a new
+  `recognize_named_transactions` + pure `mint_named_transaction` consume `SemanticIr.transaction_anchors`
+  (Cue A) and `SemanticIr.symbol_definitions` (Cue B corroboration). Patterns 1/2/6 (structural valid-ready /
+  req-ack / FIFO shapes) are unchanged.
+- **`normative_vocab.rs`** gains `TRANSACTION_HEAD_NOUNS` + `transaction_head_singular()` — the universal
+  transaction head-noun vocabulary, joining the relation-verb and logic-level lists as the single authority
+  for grammar-not-names (ADR 0006).
+- No subsystem boundary moved; the staged `Source→Evidence→Semantic→Intent→adapter` pipeline is intact (the
+  recognizer still runs at the IntentIR stage from `SemanticIr` alone — Cue A is carried forward, not a
+  back-reference to EvidenceIR). `run_ci.sh` green; lib tests +4.
+
 ## Session update (2026-06-14 — bounded-memory/disk big-PDF ingestion + built-in RAM guard + disk pre-flight in the Docling backend)
 
 `MEMORY-BOUNDED-INGEST.1` reworked the embedded Docling helper inside

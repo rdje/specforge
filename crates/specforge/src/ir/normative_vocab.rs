@@ -143,3 +143,29 @@ pub(crate) const LOGIC_HIGH_VALUES: &[&str] = &["1", "1'b1", "high", "hi", "true
 
 /// Spellings that mean logic-low (0).
 pub(crate) const LOGIC_LOW_VALUES: &[&str] = &["0", "1'b0", "low", "lo", "false"];
+
+// --- Transaction head-noun vocabulary (universal English structural "how") ---
+//
+// A protocol or platform spec names its supported transactions in section
+// headings whose head noun is one of these universal English structural words —
+// a "<qualifier> transfer / transaction / operation" (e.g. "Write transfers",
+// "Atomic transactions", "Successful read operation"). Like the relation verbs
+// and logic levels above, these are *grammar, not names* (ADR 0006): they
+// describe the transactions of ANY spec and tie the tool to none. This is the
+// single authority for the transaction-naming head nouns
+// (KG-ISF-TRANSACTIONS.2a).
+
+/// Universal head nouns that name a transaction, stored lowercased + singular.
+pub(crate) const TRANSACTION_HEAD_NOUNS: &[&str] = &["transfer", "transaction", "operation"];
+
+/// If `word` (any case, singular or plural) is a transaction head noun, return
+/// its canonical singular form; else `None`. The only plural spellings a heading
+/// uses are the regular `-s` forms.
+pub(crate) fn transaction_head_singular(word: &str) -> Option<&'static str> {
+    let lower = word.to_ascii_lowercase();
+    let singular = lower.strip_suffix('s').unwrap_or(&lower);
+    TRANSACTION_HEAD_NOUNS
+        .iter()
+        .copied()
+        .find(|head| *head == singular)
+}

@@ -15,8 +15,9 @@ use crate::ir::semantic::{
     ExplicitModuleRecord, ExplicitTopRecord, InfrastructureSignalRecord, InterfaceRecord,
     InterfaceSignalConflictRecord, RegisterRecord, RegularStateRecord, SemanticIr,
     SignalConnectivityConflictRecord, SignalConnectivityRecord, SignalConstraintRecord,
-    StateTransitionRecord, SymbolDefinitionRecord, SystemContractRecord, TemporalConflictRecord,
-    TemporalPredicateRecord, TemporalRuleRecord, TimingConstraintRecord,
+    StateTransitionRecord, SymbolDefinitionKind, SymbolDefinitionRecord, SystemContractRecord,
+    TemporalConflictRecord, TemporalPredicateRecord, TemporalRuleRecord, TimingConstraintRecord,
+    TransactionAnchorRecord,
 };
 use crate::ir::source::{
     ActorSignalRelation, AutomationConfidence, CandidateInterpretation, RelationKind,
@@ -216,6 +217,9 @@ impl IntentIr {
             &mut temporal_invariants,
             &semantic_ir,
         );
+        // KG-ISF-TRANSACTIONS.2a: structural, universal transaction recognition
+        // (replaces the removed hardcoded AHB/APB/SPI recognizers).
+        recognize_named_transactions(&mut transactions, &semantic_ir);
         let residual_decisions =
             build_residual_decisions(&context, &actors, &behaviors, &constraints);
         let intent_identity = build_intent_identity(
@@ -1305,199 +1309,16 @@ fn recognize_digital_patterns(
         }
     }
 
-    // --- Pattern 3: AHB bus protocol ---
-    let has_htrans = signal_list.contains(&"HTRANS");
-    let has_hready = signal_list.contains(&"HREADY");
-    let has_haddr = signal_list.contains(&"HADDR");
-    if has_htrans && has_hready {
-        let steps = vec![
-            TransactionStep::Await {
-                port: "HREADY".to_string(),
-                watchdog: Some(16),
-            },
-            TransactionStep::When {
-                condition: "HTRANS == NONSEQ or HTRANS == SEQ".to_string(),
-                body: vec![
-                    TransactionStep::Drive {
-                        drive_name: "HADDR".to_string(),
-                        actuals: vec!["addr_value".to_string()],
-                    },
-                    TransactionStep::Drive {
-                        drive_name: "HWRITE".to_string(),
-                        actuals: vec!["write_value".to_string()],
-                    },
-                ],
-            },
-        ];
-        let tx_id = "txn_ahb_transfer";
-        let already = transactions.iter().any(|t| t.transaction_id == tx_id);
-        if !already {
-            let mut ports = vec![
-                TransactionPortRecord {
-                    port_name: "HTRANS".to_string(),
-                    direction: TransactionPortDirection::Output,
-                    width: Some(2),
-                },
-                TransactionPortRecord {
-                    port_name: "HREADY".to_string(),
-                    direction: TransactionPortDirection::Input,
-                    width: Some(1),
-                },
-            ];
-            if has_haddr {
-                ports.push(TransactionPortRecord {
-                    port_name: "HADDR".to_string(),
-                    direction: TransactionPortDirection::Output,
-                    width: Some(32),
-                });
-            }
-            transactions.push(TransactionIntent {
-                transaction_id: tx_id.to_string(),
-                transaction_name: "ahb_transfer".to_string(),
-                activation_port: Some("HREADY".to_string()),
-                ports,
-                steps,
-                source_block_ids: Vec::new(),
-                source_temporal_rule_ids: Vec::new(),
-                supporting_statement_ids: Vec::new(),
-                automation_confidence: AutomationConfidence::Medium,
-            });
-        }
-
-        // FIFO-like invariant: "HADDR must not change when HREADY is low"
-        invariants.push(TemporalInvariantRecord {
-            invariant_id: "tinv_ahb_addr_stable".to_string(),
-            subject_signal: "HADDR".to_string(),
-            invariant_kind: TemporalInvariantKind::MustNotChange,
-            condition_signal: Some("HREADY".to_string()),
-            condition_value: Some("LOW".to_string()),
-            target_value: None,
-            source_text: "AHB protocol: address must remain stable while slave is not ready"
-                .to_string(),
-            supporting_statement_ids: Vec::new(),
-            automation_confidence: AutomationConfidence::Medium,
-        });
-    }
-
-    // --- Pattern 4: APB bus protocol ---
-    let has_psel = signal_list
-        .iter()
-        .any(|s| *s == "PSEL" || s.starts_with("PSEL"));
-    let has_penable = signal_list.contains(&"PENABLE");
-    let has_pready = signal_list.contains(&"PREADY");
-    if has_psel && has_penable {
-        let steps = vec![TransactionStep::When {
-            condition: "PSEL asserted".to_string(),
-            body: vec![
-                TransactionStep::Drive {
-                    drive_name: "PENABLE".to_string(),
-                    actuals: vec!["1".to_string()],
-                },
-                TransactionStep::Await {
-                    port: "PREADY".to_string(),
-                    watchdog: Some(16),
-                },
-            ],
-        }];
-        let tx_id = "txn_apb_transfer";
-        let already = transactions.iter().any(|t| t.transaction_id == tx_id);
-        if !already {
-            let mut ports = vec![
-                TransactionPortRecord {
-                    port_name: "PSEL".to_string(),
-                    direction: TransactionPortDirection::Output,
-                    width: Some(1),
-                },
-                TransactionPortRecord {
-                    port_name: "PENABLE".to_string(),
-                    direction: TransactionPortDirection::Output,
-                    width: Some(1),
-                },
-            ];
-            if has_pready {
-                ports.push(TransactionPortRecord {
-                    port_name: "PREADY".to_string(),
-                    direction: TransactionPortDirection::Input,
-                    width: Some(1),
-                });
-            }
-            transactions.push(TransactionIntent {
-                transaction_id: tx_id.to_string(),
-                transaction_name: "apb_transfer".to_string(),
-                activation_port: None,
-                ports,
-                steps,
-                source_block_ids: Vec::new(),
-                source_temporal_rule_ids: Vec::new(),
-                supporting_statement_ids: Vec::new(),
-                automation_confidence: AutomationConfidence::Medium,
-            });
-        }
-    }
-
-    // --- Pattern 5: SPI protocol ---
-    let has_miso = signal_list.contains(&"MISO");
-    let has_mosi = signal_list.contains(&"MOSI");
-    let has_sclk = signal_list.iter().any(|s| *s == "SCLK" || *s == "SCK");
-    if (has_miso || has_mosi) && has_sclk {
-        let steps = vec![TransactionStep::Repeat {
-            count: "8".to_string(),
-            body: vec![
-                TransactionStep::Drive {
-                    drive_name: "SCLK".to_string(),
-                    actuals: vec!["1".to_string()],
-                },
-                TransactionStep::ShiftLeft {
-                    reg: "mosi_shift".to_string(),
-                    bit: "1".to_string(),
-                },
-                TransactionStep::Sample {
-                    port: "MISO".to_string(),
-                    as_name: "miso_bit".to_string(),
-                },
-                TransactionStep::ShiftRight {
-                    reg: "miso_shift".to_string(),
-                    bit: "miso_bit".to_string(),
-                    width: Some(8),
-                },
-                TransactionStep::Drive {
-                    drive_name: "SCLK".to_string(),
-                    actuals: vec!["0".to_string()],
-                },
-            ],
-        }];
-        let tx_id = "txn_spi_transfer";
-        let already = transactions.iter().any(|t| t.transaction_id == tx_id);
-        if !already {
-            transactions.push(TransactionIntent {
-                transaction_id: tx_id.to_string(),
-                transaction_name: "spi_transfer".to_string(),
-                activation_port: None,
-                ports: vec![
-                    TransactionPortRecord {
-                        port_name: "SCLK".to_string(),
-                        direction: TransactionPortDirection::Output,
-                        width: Some(1),
-                    },
-                    TransactionPortRecord {
-                        port_name: "MOSI".to_string(),
-                        direction: TransactionPortDirection::Output,
-                        width: Some(1),
-                    },
-                    TransactionPortRecord {
-                        port_name: "MISO".to_string(),
-                        direction: TransactionPortDirection::Input,
-                        width: Some(1),
-                    },
-                ],
-                steps,
-                source_block_ids: Vec::new(),
-                source_temporal_rule_ids: Vec::new(),
-                supporting_statement_ids: Vec::new(),
-                automation_confidence: AutomationConfidence::Medium,
-            });
-        }
-    }
+    // --- Patterns 3-5 (hardcoded AHB/APB/SPI recognizers) REMOVED in
+    //     KG-ISF-TRANSACTIONS.2a (G2 de-hardcode) ---
+    // They literal-tested HTRANS/HREADY/HADDR, PSEL/PENABLE/PREADY, and
+    // MISO/MOSI/SCLK to mint `ahb_transfer` / `apb_transfer` / `spi_transfer`
+    // (with hardcoded widths + enum literals) — an ADR-0006 breach that fired
+    // spuriously on any prose mentioning those names (e.g. the project README).
+    // Transaction recognition is now structural + universal: see
+    // `recognize_named_transactions`, which mints typed transactions from the
+    // document's own section-heading vocabulary (Cue A, `transaction_anchors`)
+    // corroborated by its signal-keyed enumeration tables (Cue B).
 
     // --- Pattern 6: FIFO status ---
     let has_full = signal_list
@@ -1531,6 +1352,114 @@ fn recognize_digital_patterns(
             supporting_statement_ids: Vec::new(),
             automation_confidence: AutomationConfidence::Medium,
         });
+    }
+}
+
+/// KG-ISF-TRANSACTIONS.2a — fast, universal, structural transaction recognition.
+///
+/// Mints a typed [`TransactionIntent`] for each transaction the document NAMES in
+/// its section headings (Cue A — `SemanticIr.transaction_anchors`), corroborated
+/// by the document's own signal-keyed enumeration tables (Cue B —
+/// `SemanticIr.symbol_definitions`). This replaces the removed hardcoded protocol
+/// recognizers (`ahb_transfer` / `apb_transfer` / `spi_transfer`): recognition is
+/// keyed entirely off the document's own structure, with NO chip-spec name list
+/// (ADR 0006), so it runs on ANY protocol or platform PDF.
+///
+/// Scope (`.2a`): recognition + naming — the bar's coverage (#1) and
+/// fast/universal recognition (#2). The composed step-by-step body (`.2b`) and
+/// full signal-set membership (`.2c`) are later slices, so a recognition-only
+/// transaction carries no `steps`; the ISF emitter's `!steps.is_empty()` filter
+/// therefore holds it (recognized in the canonical IntentIR, not yet lowered)
+/// until `.2b` gives it a body — no fabrication, no silent ISF break.
+fn recognize_named_transactions(
+    transactions: &mut Vec<TransactionIntent>,
+    semantic_ir: &SemanticIr,
+) {
+    if semantic_ir.transaction_anchors.is_empty() {
+        return;
+    }
+
+    // The document's own declared-signal registry — gates Cue B so a noise enum
+    // keyed by a non-signal (e.g. a table-of-contents "TABLE" enum) cannot
+    // corroborate a transaction. Positive validation, not a denylist (ADR 0006).
+    let declared_signals: BTreeSet<String> = semantic_ir
+        .actor_signal_relations
+        .iter()
+        .map(|r| r.signal_name.to_ascii_uppercase())
+        .chain(semantic_ir.interfaces.iter().flat_map(|i| {
+            i.signal_records
+                .iter()
+                .map(|s| s.signal_name.to_ascii_uppercase())
+        }))
+        .collect();
+
+    // Cue B: map each signal-keyed enum's member name → the keyed signal, so a
+    // transaction whose qualifier matches an enumerated transfer-type/opcode is
+    // corroborated by the document's own enumeration table. Deterministic (sorted).
+    let mut enum_member_signal: BTreeMap<String, String> = BTreeMap::new();
+    for symbol in &semantic_ir.symbol_definitions {
+        if symbol.kind != SymbolDefinitionKind::Enum
+            || !declared_signals.contains(&symbol.symbol_name.to_ascii_uppercase())
+        {
+            continue;
+        }
+        for member in &symbol.members {
+            enum_member_signal
+                .entry(member.member_name.to_ascii_uppercase())
+                .or_insert_with(|| symbol.symbol_name.clone());
+        }
+    }
+
+    for anchor in &semantic_ir.transaction_anchors {
+        // Dedup: a transaction of this name may already exist (e.g. a control
+        // block or handshake transaction). The named anchor never duplicates it.
+        if transactions
+            .iter()
+            .any(|t| t.transaction_name == anchor.transaction_name)
+        {
+            continue;
+        }
+        transactions.push(mint_named_transaction(anchor, &enum_member_signal));
+    }
+}
+
+/// Build the recognition-level [`TransactionIntent`] for one named anchor.
+/// Cue B corroboration: if a qualifier token of the transaction name matches a
+/// signal-keyed enum member (`enum_member_signal`: member → keyed signal), attach
+/// the keyed signal as a recognition port and raise confidence to `High` (two
+/// independent structural cues agree). `.2a` scope is recognition + naming, so
+/// the transaction carries no body `steps` yet (added by `.2b`).
+fn mint_named_transaction(
+    anchor: &TransactionAnchorRecord,
+    enum_member_signal: &BTreeMap<String, String>,
+) -> TransactionIntent {
+    let mut ports: Vec<TransactionPortRecord> = Vec::new();
+    for token in anchor.transaction_name.split('_') {
+        if let Some(signal) = enum_member_signal.get(&token.to_ascii_uppercase())
+            && !ports.iter().any(|p| &p.port_name == signal)
+        {
+            ports.push(TransactionPortRecord {
+                port_name: signal.clone(),
+                direction: TransactionPortDirection::InOut,
+                width: None,
+            });
+        }
+    }
+    let automation_confidence = if ports.is_empty() {
+        AutomationConfidence::Medium
+    } else {
+        AutomationConfidence::High
+    };
+    TransactionIntent {
+        transaction_id: format!("txn_named_{}", sanitize_id(&anchor.transaction_name)),
+        transaction_name: anchor.transaction_name.clone(),
+        activation_port: None,
+        ports,
+        steps: Vec::new(),
+        source_block_ids: Vec::new(),
+        source_temporal_rule_ids: Vec::new(),
+        supporting_statement_ids: anchor.supporting_statement_ids.clone(),
+        automation_confidence,
     }
 }
 
@@ -2245,6 +2174,57 @@ mod tests {
             col_span: 1,
             is_header,
         }
+    }
+
+    // --- KG-ISF-TRANSACTIONS.2a: named-transaction recognition (Cue A + Cue B) ---
+
+    #[test]
+    fn mint_named_transaction_corroborates_with_signal_keyed_enum() {
+        use super::mint_named_transaction;
+        use crate::ir::semantic::TransactionAnchorRecord;
+        use std::collections::BTreeMap;
+
+        // Cue B index: enum member IDLE is keyed by the declared signal HTRANS.
+        let mut enum_member_signal: BTreeMap<String, String> = BTreeMap::new();
+        enum_member_signal.insert("IDLE".to_string(), "HTRANS".to_string());
+
+        // Corroborated: the qualifier "idle" matches enum member IDLE → the keyed
+        // signal HTRANS is attached as a recognition port and confidence is High.
+        let idle = TransactionAnchorRecord {
+            transaction_anchor_id: "txnanchor_idle_transfer".to_string(),
+            transaction_name: "idle_transfer".to_string(),
+            source_title: "IDLE transfer".to_string(),
+            section_id: "s1".to_string(),
+            supporting_statement_ids: vec!["stmt_1".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let txn = mint_named_transaction(&idle, &enum_member_signal);
+        assert_eq!(txn.transaction_id, "txn_named_idle_transfer");
+        assert_eq!(txn.transaction_name, "idle_transfer");
+        assert!(txn.steps.is_empty(), ".2a recognition is body-less");
+        assert_eq!(txn.ports.len(), 1);
+        assert_eq!(txn.ports[0].port_name, "HTRANS");
+        assert!(matches!(
+            txn.automation_confidence,
+            AutomationConfidence::High
+        ));
+        assert_eq!(txn.supporting_statement_ids, vec!["stmt_1".to_string()]);
+
+        // Uncorroborated: no qualifier matches an enum member → Medium, no ports.
+        let basic = TransactionAnchorRecord {
+            transaction_anchor_id: "txnanchor_basic_transfer".to_string(),
+            transaction_name: "basic_transfer".to_string(),
+            source_title: "3.1 Basic transfers".to_string(),
+            section_id: "s2".to_string(),
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let txn2 = mint_named_transaction(&basic, &enum_member_signal);
+        assert!(txn2.ports.is_empty());
+        assert!(matches!(
+            txn2.automation_confidence,
+            AutomationConfidence::Medium
+        ));
     }
 
     #[test]

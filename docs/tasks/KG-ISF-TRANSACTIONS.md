@@ -160,20 +160,40 @@ slices, wire-docs first.
   "transaction/transfer/operation" SECTION headings + a def-sentence, and prose+timing/flow diagrams;
   (3) **current capture** = per-channel handshakes + per-actor blobs + 3 hardcoded recognizers, none of
   which capture §2's named/composed/signal-set transactions.
-- ID: `KG-ISF-TRANSACTIONS.2a` · Status: `pending` (DESIGNED in `.1` §4; measurement-first; **the first
-  code slice**) · Goal: **G2 — fast/universal STRUCTURAL transaction recognition (de-hardcode).** Replace
-  the 3 hardcoded `recognize_digital_patterns` blocks (`ir/intent.rs` Patterns 3/4/5: the
-  `HTRANS`/`PSEL`/`MISO` literal-name tests → `ahb_transfer`/`apb_transfer`/`spi_transfer`) with a cheap,
-  deterministic, document-structural recognizer that mints a `TransactionIntent` per transaction NAMED by
-  the document's own vocabulary — keyed off (Cue A) transaction/transfer/operation **section anchors**
-  (`3.1 Write transfers`, `B4.2.1 Successful write operation`) and (Cue B) **signal-valued enumeration
-  tables** (`| HTRANS[1:0] | Type | … |`) — no literal protocol names (ADR 0006). Scope `.2a` to
-  **recognition + naming** (the bar's #1 coverage + #2 fast/universal recognition). **Measurement-first**
-  (read-only): quantify the structural recognizer's recall vs the 3 hardcoded names + confirm non-spec docs
-  (`readme`) yield ZERO before coding. **Gates:** ADR-0006 (no name lists); WIRE-BASED-100 (APB/AHB/AXI/SWD)
-  held 1.000 on fresh-Pattern temp-evidence-root eval; ISF round-trip (`adapt --target isf` → FSMGen
-  `--strict --check --json`); `readme` spurious `*_transfer` GONE (precision win); `kg-bench` + `run_ci.sh`
-  green.
+- ID: `KG-ISF-TRANSACTIONS.2a` · Status: `done` (`2026-06-16`; owner-chosen "both cues"; measurement-first;
+  **first code slice in this tree**) · Goal: **G2 — fast/universal STRUCTURAL transaction recognition
+  (de-hardcode).** **DONE:** removed the 3 hardcoded `recognize_digital_patterns` blocks (`ir/intent.rs`
+  Patterns 3/4/5: `HTRANS`/`PSEL`/`MISO` literal tests → `ahb_transfer`/`apb_transfer`/`spi_transfer` + the
+  literal `tinv_ahb_addr_stable` invariant) and replaced them with a structural, universal recognizer
+  (`recognize_named_transactions` + `mint_named_transaction`, `ir/intent.rs`) that mints a
+  `TransactionIntent` per transaction NAMED by the document's own vocabulary.
+  **"Both cues" (owner-chosen):** **Cue A (identity)** = a new SemanticIR surface `transaction_anchors`
+  (`TransactionAnchorRecord`) derived in the SemanticIR builder (`build_transaction_anchors` +
+  `derive_transaction_name`, `ir/semantic.rs`) from section headings — the data-flow gap the `.1` census
+  flagged ("a `.2a` parsing input to confirm") was RESOLVED by measurement: section anchors live only on
+  EvidenceIR, so Cue A is threaded EvidenceIR→SemanticIR→IntentIR (the recognizer runs at IntentIR from
+  `SemanticIr` alone). **Cue B (corroboration)** = the already-reachable `SemanticIr.symbol_definitions`
+  signal-keyed enums: a transaction whose qualifier matches an enum member keyed by a declared signal gets
+  the keyed signal attached + confidence `High`. The Cue-A rule is universal English structural grammar —
+  head noun ∈ {transfer,transaction,operation} (centralized in `normative_vocab::TRANSACTION_HEAD_NOUNS`),
+  head-final, generic function-word/cardinal/gerund/Example discriminators, NO chip-spec name list
+  (ADR 0006).
+  **Measurement (read-only, corpus-wide, the slice's mandated Step 1):** the structural recognizer mints
+  **212 named transactions across 42 docs** with strong precision after tuning (AHB 7 incl. `idle_transfer`
+  Cue-B-corroborated→`HTRANS` High; APB `read_transfer`/`write_transfer`; AXI 14; SWD 8; CHI full
+  catalogue) and `readme`/non-spec docs yield **ZERO** (the spurious `ahb_transfer`/`apb_transfer` firing is
+  GONE — the concrete ADR-0006 failure mode eliminated).
+  **Gates ALL GREEN:** ADR-0006 (zero hardcoded names in production `intent.rs`; new vocab is universal
+  nouns only); **WIRE-BASED-100 byte-identical before/after** (constraint/relation/temporal eval over
+  APB/AHB/AXI/SWD gold — `diff` empty: the transaction surface is orthogonal to the wire gold);
+  ISF round-trip — `adapt --target isf` emits **0 blocking_reasons** on all wire docs and introduces
+  **ZERO new** FSMGen `--strict --check --json` diagnostics (recognition-only transactions have no `steps`,
+  so the `!steps.is_empty()` ISF emit filter holds them until `.2b` gives them bodies; the pre-existing
+  full-doc `*_behavior` strict errors are unchanged and are exactly `.2b`'s re-levelling target);
+  `kg-bench` **156/156**; `run_ci.sh` GREEN (fmt + warning-deny clippy/tests/rustdoc + mdBook); lib tests
+  **+4** (`derive_transaction_name` keep/reject, `build_transaction_anchors` dedup/provenance,
+  `mint_named_transaction` Cue-B corroboration). Book: `pipeline/intentir.md` gained a "How transactions are
+  recognized" subsection (why-before-what, AHB example).
 - ID: `KG-ISF-TRANSACTIONS.2b` · Status: `pending` · Goal: **G1 — composed named transactions
   (step-by-step body + re-levelling).** Compose each recognised transaction's ordered phases/steps via ISF
   `spawn`/`do`+`await_all`, re-levelling today's per-channel handshakes into the named transaction's CHILD
@@ -220,3 +240,19 @@ slices, wire-docs first.
   description; for ALL transactions; protocol or platform; and this is a **MINIMUM / critical-path
   prerequisite** — "without this we can't move forward in our PDF→ISF tool." `KG-ISF-TRANSACTIONS` is now
   the near-term top-priority active tree. Frontier → `.2a` (measurement-first code). No code in `.1`.
+- `2026-06-16`: **`.2a` DONE** — **first code in the tree** (owner-chosen "both cues" + "bounded batch
+  .2a→.2b→.2c"). G2 de-hardcode: removed the 3 hardcoded `recognize_digital_patterns` blocks
+  (`HTRANS`/`PSEL`/`MISO` → `ahb_transfer`/`apb_transfer`/`spi_transfer` + the literal `tinv_ahb_addr_stable`
+  invariant) and replaced them with a structural, universal recognizer. **Cue A (identity)** threaded as a
+  new `SemanticIr.transaction_anchors` surface (`build_transaction_anchors`/`derive_transaction_name`,
+  `ir/semantic.rs`) — resolving the `.1`-flagged data-flow gap (section anchors are EvidenceIR-only;
+  threaded EvidenceIR→SemanticIR→IntentIR). **Cue B (corroboration)** via the reachable
+  `symbol_definitions` signal-keyed enums (`mint_named_transaction`, `ir/intent.rs`). Head nouns centralized
+  in `normative_vocab::TRANSACTION_HEAD_NOUNS`; universal grammar, no name list (ADR 0006). Measured: **212
+  named transactions / 42 docs**; AHB 7 (`idle_transfer`→`HTRANS` High-corroborated), APB read/write, AXI
+  14, SWD 8; `readme` **0** (spurious firing gone). Gates: ADR-0006 ✓, **WIRE-BASED-100 byte-identical
+  before/after** ✓, ISF round-trip 0 blockers + 0 new strict diagnostics ✓, `kg-bench` 156/156 ✓,
+  `run_ci.sh` green ✓ (+4 lib tests). Book `pipeline/intentir.md` updated. KM card `transaction-capture-census`
+  refreshed. Frontier → `.2b` (G1 composed step-by-step body + re-levelling: the named transaction becomes
+  the parent, today's per-channel handshakes its child steps; also fixes the pre-existing `*_behavior` ISF
+  strict errors). `[[project_kg_isf_transactions]]`.

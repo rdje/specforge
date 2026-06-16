@@ -62,6 +62,14 @@ pub struct SemanticIr {
     pub state_transitions: Vec<StateTransitionRecord>,
     #[serde(default)]
     pub symbol_definitions: Vec<SymbolDefinitionRecord>,
+    /// KG-ISF-TRANSACTIONS.2a: the transactions the document NAMES in its
+    /// section headings (Cue A — `<qualifier> transfer/transaction/operation`),
+    /// recovered by universal English structural grammar (no chip-spec name
+    /// list; ADR 0006). This is the recognition substrate the IntentIR
+    /// transaction recognizer mints typed transactions from. Serde-skipped
+    /// while empty ⇒ zero artifact churn on docs that name no transactions.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub transaction_anchors: Vec<TransactionAnchorRecord>,
     #[serde(default)]
     pub control_blocks: Vec<ControlBlockRecord>,
     #[serde(default)]
@@ -334,6 +342,10 @@ impl SemanticIr {
             }
         }
 
+        // KG-ISF-TRANSACTIONS.2a: recover the document's NAMED transactions from
+        // its section headings (Cue A). Structural English grammar only; ADR 0006.
+        let transaction_anchors = build_transaction_anchors(&context);
+
         Ok(Self {
             schema_version: 1,
             stage: IrStage::SemanticIr,
@@ -362,6 +374,7 @@ impl SemanticIr {
             regular_states: regular_states_with_vlm,
             state_transitions: state_transitions_with_vlm,
             symbol_definitions,
+            transaction_anchors,
             control_blocks,
             explicit_modules,
             explicit_tops,
@@ -2205,6 +2218,188 @@ fn build_state_transitions(context: &SemanticContext) -> Vec<StateTransitionReco
     }
 
     state_transitions
+}
+
+// ---------------------------------------------------------------------------
+// Transaction anchors (KG-ISF-TRANSACTIONS.2a — Cue A)
+// ---------------------------------------------------------------------------
+
+/// A transaction the document NAMES in a section heading (Cue A). The IntentIR
+/// transaction recognizer mints a typed `TransactionIntent` from each. Recovered
+/// by universal English structural grammar — no chip-spec name list (ADR 0006).
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct TransactionAnchorRecord {
+    pub transaction_anchor_id: String,
+    /// Sanitized, document-derived transaction name (e.g. `write_transfer`).
+    pub transaction_name: String,
+    /// The raw section-heading title the name was derived from (provenance).
+    pub source_title: String,
+    pub section_id: String,
+    #[serde(default)]
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+/// Universal structural stoplist: function words / cardinals whose presence in a
+/// candidate transaction-name phrase means the heading is ABOUT an aspect of a
+/// transaction (e.g. "Write transaction dependencies", "ID use for Atomic
+/// transactions"), not a transaction-defining noun phrase. Generic English
+/// grammar, never spec vocabulary (ADR 0006).
+const TXN_NAME_STOPWORDS: &[&str] = &[
+    "after", "before", "for", "of", "to", "with", "during", "per", "on", "in", "by", "as", "and",
+    "or", "that", "which", "when", "if", "from", "into", "between", "about", "than", "via",
+    "without", "one", "two", "three", "four", "five", "six", "seven", "eight",
+];
+
+/// Heading furniture words that precede a section label (e.g. "Chapter 10",
+/// "Appendix: ...", "Section A11"). Generic document structure, not spec names.
+const HEADING_FURNITURE: &[&str] = &["chapter", "appendix", "section", "part", "annex"];
+
+/// Recover the document's NAMED transactions (Cue A) from its section headings.
+/// Deterministic (heading order, first-wins dedup by derived name).
+fn build_transaction_anchors(context: &SemanticContext) -> Vec<TransactionAnchorRecord> {
+    let mut seen: BTreeSet<String> = BTreeSet::new();
+    let mut records = Vec::new();
+    for anchor in &context.section_anchors {
+        let Some(name) = derive_transaction_name(&anchor.title) else {
+            continue;
+        };
+        if !seen.insert(name.clone()) {
+            continue;
+        }
+        records.push(TransactionAnchorRecord {
+            transaction_anchor_id: format!("txnanchor_{}", name),
+            transaction_name: name,
+            source_title: anchor.title.clone(),
+            section_id: anchor.section_id.clone(),
+            supporting_statement_ids: anchor.supporting_statement_ids.clone(),
+            automation_confidence: AutomationConfidence::Medium,
+        });
+    }
+    records
+}
+
+/// Derive a sanitized, document-named transaction identity from a section-heading
+/// title, or `None` if the title is not a transaction-defining noun phrase.
+///
+/// Cue A of KG-ISF-TRANSACTIONS.2a. Universal English structural grammar ONLY —
+/// the transaction head nouns live in `normative_vocab` (the single authority)
+/// and the discriminators are generic function-word / cardinal / gerund grammar;
+/// there is NO chip-spec name list (ADR 0006), so this recognizes transactions in
+/// ANY protocol or platform PDF, keyed entirely off the document's own headings.
+fn derive_transaction_name(title: &str) -> Option<String> {
+    let trimmed = title.trim();
+    // Examples / figures / tables ILLUSTRATE a transaction; they do not define one.
+    let lead = trimmed.split_whitespace().next().unwrap_or("");
+    if matches!(
+        lead.to_ascii_lowercase().as_str(),
+        "example" | "figure" | "table"
+    ) {
+        return None;
+    }
+    let stripped = strip_trailing_parenthetical(strip_heading_prefix(trimmed)).trim();
+    if stripped.is_empty() || stripped.contains(',') {
+        return None;
+    }
+    let tokens: Vec<&str> = stripped.split_whitespace().collect();
+    if tokens.len() < 2 || tokens.len() > 5 {
+        return None;
+    }
+    // The head noun must be the FINAL token (rejects "transfer restrictions",
+    // "transaction dependencies", where the head noun sits mid-phrase).
+    let head = crate::ir::normative_vocab::transaction_head_singular(tokens[tokens.len() - 1])?;
+    let qualifiers = &tokens[..tokens.len() - 1];
+    for q in qualifiers {
+        let ql = q.to_ascii_lowercase();
+        // function words / cardinals / a mid-phrase head noun / a gerund-led verb
+        // ("Transmitting ...", "Deallocating ...") all signal a sub-topic phrasing.
+        if TXN_NAME_STOPWORDS.contains(&ql.as_str())
+            || crate::ir::normative_vocab::transaction_head_singular(q).is_some()
+            || (ql.len() > 5 && ql.ends_with("ing"))
+        {
+            return None;
+        }
+    }
+    let mut parts: Vec<String> = qualifiers.iter().map(|q| q.to_ascii_lowercase()).collect();
+    parts.push(head.to_string());
+    let name = sanitize_transaction_name(&parts.join("_"));
+    if name.is_empty() { None } else { Some(name) }
+}
+
+/// True for a leading section-label token such as `3.1`, `B4.2.1`, `10.4`,
+/// `5.5.3.` (trailing dot), `12.`, or `A11` — an optional single leading letter
+/// followed by a dotted digit run.
+fn is_section_number_token(tok: &str) -> bool {
+    let t = tok.trim_end_matches('.');
+    let rest = match t.chars().next() {
+        Some(c) if c.is_ascii_alphabetic() => &t[c.len_utf8()..],
+        Some(_) => t,
+        None => return false,
+    };
+    rest.starts_with(|c: char| c.is_ascii_digit())
+        && rest.chars().all(|c| c.is_ascii_digit() || c == '.')
+}
+
+/// Strip leading section-number tokens and heading furniture (`3.1 `,
+/// `Chapter 10 `, `Appendix: `) so only the heading's content phrase remains.
+fn strip_heading_prefix(title: &str) -> &str {
+    let mut s = title.trim_start();
+    loop {
+        let mut it = s.splitn(2, char::is_whitespace);
+        let first = it.next().unwrap_or("");
+        let rest = it.next().unwrap_or("").trim_start();
+        if first.is_empty() {
+            break;
+        }
+        if is_section_number_token(first) {
+            s = rest;
+            continue;
+        }
+        // A furniture word (optionally colon-suffixed) consumes a following
+        // section-number-like label, but never a content word.
+        let fl = first.trim_end_matches(':').to_ascii_lowercase();
+        if HEADING_FURNITURE.contains(&fl.as_str()) {
+            let mut rit = rest.splitn(2, char::is_whitespace);
+            let label = rit.next().unwrap_or("");
+            if is_section_number_token(label) {
+                s = rit.next().unwrap_or("").trim_start();
+            } else {
+                s = rest;
+            }
+            continue;
+        }
+        break;
+    }
+    s
+}
+
+/// Drop a trailing parenthetical clause (`Successful write operation (OK
+/// response)` → `Successful write operation`).
+fn strip_trailing_parenthetical(s: &str) -> &str {
+    let t = s.trim_end();
+    if t.ends_with(')')
+        && let Some(open) = t.rfind('(')
+    {
+        return t[..open].trim_end();
+    }
+    t
+}
+
+/// Sanitize a derived transaction name to lowercase `[a-z0-9_]`, collapsing
+/// runs of non-alphanumerics to a single underscore.
+fn sanitize_transaction_name(s: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    let mut prev_underscore = false;
+    for c in s.chars() {
+        if c.is_ascii_alphanumeric() {
+            out.push(c.to_ascii_lowercase());
+            prev_underscore = false;
+        } else if !prev_underscore && !out.is_empty() {
+            out.push('_');
+            prev_underscore = true;
+        }
+    }
+    out.trim_end_matches('_').to_string()
 }
 
 fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRecord> {
@@ -10502,13 +10697,15 @@ mod tests {
         ControlReferenceKind, ControlReferenceSuffix, ControlUnaryOperator, CycleWindowRecord,
         DecisionTreeComparisonOperator, DecisionTreeGuardRecord, DecisionTreeValueRecord,
         InfrastructureTopologyKind, InterfaceSignalDirection, InterfaceSignalSemanticRole,
-        SemanticArbitrationDecisionBasis, SemanticGroundingStrength, SemanticIr,
-        SignalSemanticHintSourceKind, SignalSemanticTag, SymbolDefinitionKind, SystemResetKind,
-        SystemResetPolarity, SystemResetTargetKind, SystemResetTimingRelation,
+        SemanticArbitrationDecisionBasis, SemanticContext, SemanticGroundingStrength, SemanticIr,
+        SemanticSectionContext, SignalSemanticHintSourceKind, SignalSemanticTag,
+        SymbolDefinitionKind, SystemResetKind, SystemResetPolarity, SystemResetTargetKind,
+        SystemResetTimingRelation, TransactionAnchorRecord, build_transaction_anchors,
         control_binary_operator_key, control_block_role_key, control_reference_kind_key,
         control_reference_suffix_key, control_unary_operator_key,
-        decision_tree_comparison_operator_key, is_explicit_infrastructure_component_term, is_false,
-        is_zero, split_control_header_keyword, width_hint_key,
+        decision_tree_comparison_operator_key, derive_transaction_name,
+        is_explicit_infrastructure_component_term, is_false, is_zero, split_control_header_keyword,
+        width_hint_key,
     };
 
     fn make_table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
@@ -21580,6 +21777,111 @@ mod tests {
     fn control_reference_suffix_key_width_cast() {
         let result = control_reference_suffix_key(&ControlReferenceSuffix::WidthCast { width: 16 });
         assert_eq!(result, "width:16");
+    }
+
+    // --- KG-ISF-TRANSACTIONS.2a: Cue-A transaction-name derivation ---
+
+    #[test]
+    fn derive_transaction_name_keeps_real_transaction_headings() {
+        // Real wire-doc section headings → document-named transactions. The name
+        // is the qualifier(s) + the singularized head noun; section numbers,
+        // furniture words, and trailing parentheticals are stripped.
+        let cases = [
+            ("3.1 Write transfers", "write_transfer"),
+            ("3.3 Read transfers", "read_transfer"),
+            ("Chapter 10 Exclusive Transfers", "exclusive_transfer"),
+            (
+                "B4.2.1 Successful write operation (OK response)",
+                "successful_write_operation",
+            ),
+            ("A11.1 WriteZero Transaction", "writezero_transaction"),
+            ("Atomic transactions", "atomic_transaction"),
+            ("5.5.3. Cache Operations", "cache_operation"),
+            (
+                "Chapter A11 Other write transactions",
+                "other_write_transaction",
+            ),
+        ];
+        for (title, expected) in cases {
+            assert_eq!(
+                derive_transaction_name(title).as_deref(),
+                Some(expected),
+                "title {title:?} should derive {expected:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn derive_transaction_name_rejects_non_transaction_headings() {
+        // Sub-topics / aspects of a transaction, not transaction definitions —
+        // each rejected by a distinct universal structural rule (no name list).
+        let rejected = [
+            "10.4 Exclusive Transfer restrictions", // head noun is mid-phrase
+            "A2.3.2.1 Write transaction dependencies", // trailing topic noun after head
+            "A6.4.4 ID use for Atomic transactions", // contains preposition "for"
+            "3.6.1 Burst termination after a BUSY transfer", // preposition "after"
+            "A14.4.1 Transmitting one read transaction", // gerund-led + cardinal "one"
+            "Example C2-2 Byte packed write operation", // Example: illustration, not a definition
+            "3.5. Transfers",                       // head-only after strip, too generic
+            "MTE and Atomic transactions",          // coordinated subject ("and")
+            "Introduction",                         // not a transaction at all
+            "Signal descriptions",                  // wrong head noun
+        ];
+        for title in rejected {
+            assert_eq!(
+                derive_transaction_name(title),
+                None,
+                "title {title:?} must not derive a transaction name"
+            );
+        }
+    }
+
+    #[test]
+    fn build_transaction_anchors_dedups_and_records_provenance() {
+        let context = SemanticContext {
+            statements: Vec::new(),
+            section_anchors: vec![
+                SemanticSectionContext {
+                    section_id: "s1".to_string(),
+                    title: "3.1 Write transfers".to_string(),
+                    supporting_statement_ids: vec!["stmt_1".to_string()],
+                },
+                SemanticSectionContext {
+                    // Same derived name (`write_transfer`) → deduped, first wins.
+                    section_id: "s2".to_string(),
+                    title: "3.4.1 Write transfer".to_string(),
+                    supporting_statement_ids: vec!["stmt_2".to_string()],
+                },
+                SemanticSectionContext {
+                    section_id: "s3".to_string(),
+                    title: "3.3 Read transfers".to_string(),
+                    supporting_statement_ids: vec!["stmt_3".to_string()],
+                },
+                SemanticSectionContext {
+                    // Not a transaction-defining heading → dropped.
+                    section_id: "s4".to_string(),
+                    title: "1 Introduction".to_string(),
+                    supporting_statement_ids: Vec::new(),
+                },
+            ],
+            visual_roles_by_id: HashMap::new(),
+            actor_signal_relations: Vec::new(),
+            signal_semantic_hints: Vec::new(),
+        };
+
+        let anchors = build_transaction_anchors(&context);
+        let names: Vec<&str> = anchors
+            .iter()
+            .map(|a| a.transaction_name.as_str())
+            .collect();
+        // Heading order preserved; duplicate name and non-transaction dropped.
+        assert_eq!(names, vec!["write_transfer", "read_transfer"]);
+
+        let write: &TransactionAnchorRecord = &anchors[0];
+        assert_eq!(write.transaction_anchor_id, "txnanchor_write_transfer");
+        assert_eq!(write.source_title, "3.1 Write transfers"); // first-wins provenance
+        assert_eq!(write.section_id, "s1");
+        assert_eq!(write.supporting_statement_ids, vec!["stmt_1".to_string()]);
     }
 }
 

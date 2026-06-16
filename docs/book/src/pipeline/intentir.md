@@ -7,6 +7,7 @@
 - actor responsibilities
 - canonical interface inventory
 - behavior records
+- **named transactions** — the transactions the document itself defines (reads, writes, transfer types, operations)
 - constraints
 - assumptions
 - system contract
@@ -16,6 +17,47 @@
 
 This is the stage the rest of the project is trying to reach.
 Everything earlier exists to make this artifact strong, inspectable, and reusable.
+
+## How transactions are recognized
+
+A protocol or platform specification is, in large part, a *catalogue of supported
+transactions* — an AXI read or write, an AHB transfer type, an APB read/write,
+an SWD operation. For the downstream `.isf` to be faithful, `IntentIR` has to carry
+those transactions as the document defines them.
+
+It would be tempting to teach the tool the names directly ("if you see `HTRANS`,
+emit an `ahb_transfer`"). SpecForge deliberately does **not** do that: a hardcoded
+name list is blind to the 101st protocol and rots the moment a spec is revised, and
+it fires by accident on any text that merely *mentions* those names. Instead,
+recognition is **structural and universal** — it reads the document's own structure,
+so it works on *any* chip-spec PDF and is tied to none (this is the PDF-independence
+invariant — universal grammar, no name lists, ADR 0006).
+
+Two cues, both taken from the document itself:
+
+- **Cue A — section headings that name a transaction.** A heading like
+  `3.1 Write transfers`, `Chapter 10 Exclusive Transfers`, or
+  `B4.2.1 Successful write operation` names a transaction. SpecForge strips the
+  section number and furniture, keeps the `<qualifier> transfer/transaction/operation`
+  phrase, and rejects sub-topics that only *talk about* a transaction
+  (`Write transaction dependencies`, `Exclusive Transfer restrictions`). The
+  transaction's name is the document's own words — e.g. `write_transfer`.
+- **Cue B — the document's signal-keyed enumeration tables.** A table that maps a
+  declared signal to its values (`HTRANS` → `IDLE`/`BUSY`/`NONSEQ`/`SEQ`) corroborates
+  a recognized transaction: when a transaction's name matches one of those enumerated
+  values, the keyed signal is attached and the recognition is recorded with higher
+  confidence.
+
+For example, the AHB specification yields `basic_transfer`, `burst_operation`,
+`exclusive_transfer`, `idle_transfer`, `locked_transfer`, `secure_transfer`, and
+`waited_transfer` — all from its own headings — and `idle_transfer` is additionally
+corroborated by the `HTRANS` enumeration. A document that defines no transactions
+(or a non-specification document) yields none.
+
+At this stage the transactions are **recognized and named**; their step-by-step
+bodies and full signal sets are filled in by later pipeline work, and a
+recognition-only transaction is held back from the `.isf` until it has a body, so
+nothing unfinished is silently lowered.
 
 ## What makes it canonical
 

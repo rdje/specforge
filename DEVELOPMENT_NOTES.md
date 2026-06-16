@@ -1,4 +1,44 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-TRANSACTIONS.2a (`2026-06-16`) — structural transaction recognition (G2 de-hardcode)
+- **Why:** the only protocol-aware transaction recognition in the codebase was three hardcoded blocks in
+  `recognize_digital_patterns` (`ir/intent.rs`) that literal-tested `HTRANS`/`PSEL`/`MISO` etc. to emit
+  `ahb_transfer`/`apb_transfer`/`spi_transfer` (with hardcoded widths + the literal `NONSEQ`/`SEQ`/`LOW`
+  enum values and a fabricated `tinv_ahb_addr_stable` invariant). That is an ADR-0006 breach (non-agnostic,
+  brittle) and demonstrably wrong: it minted protocol transactions on the project's own `readme` purely
+  because the prose mentions those names. The owner directed transaction capture as a critical-path
+  prerequisite and chose the "both cues" approach + a bounded `.2a→.2b→.2c` batch.
+- **Approach (measurement-first):** a read-only prototype over the persisted corpus established a precise,
+  universal Cue-A rule before any Rust, and confirmed two architecture facts: (1) `recognize_digital_patterns`
+  runs at the *IntentIR* stage from `SemanticIr` alone, and `SemanticIr` does **not** carry section anchors
+  (EvidenceIR-only) — so Cue A had to be **threaded** as a new `SemanticIr.transaction_anchors` surface
+  built where `evidence_ir.section_anchors` is in hand; (2) Cue B (`symbol_definitions` signal-keyed enums)
+  is **already reachable** at IntentIR, so it needed no threading and is used as corroboration.
+- **Implementation:**
+  - `ir/normative_vocab.rs`: `TRANSACTION_HEAD_NOUNS` + `transaction_head_singular()` — the universal
+    transaction head-noun vocabulary (transfer/transaction/operation), the single authority (alongside the
+    relation verbs and logic levels), grammar-not-names per ADR 0006.
+  - `ir/semantic.rs`: `TransactionAnchorRecord` + `SemanticIr.transaction_anchors` (serde-default,
+    skip-if-empty ⇒ zero churn on docs that name none); `build_transaction_anchors(context)` +
+    `derive_transaction_name(title)` with helpers `strip_heading_prefix` / `strip_trailing_parenthetical` /
+    `is_section_number_token` / `sanitize_transaction_name`. The derive rule: reject Example/Figure/Table;
+    strip section number + furniture + trailing parenthetical; require a head noun **final**; reject
+    qualifiers that are function words / cardinals / mid-phrase head nouns / gerund-led verbs; 2–5 tokens.
+  - `ir/intent.rs`: removed Patterns 3/4/5; added `recognize_named_transactions` (builds the declared-signal
+    registry to gate Cue B, indexes signal-keyed enum members, mints per anchor with dedup) delegating to a
+    pure `mint_named_transaction(anchor, enum_member_signal)` (Cue-B corroboration → attach keyed signal +
+    `High`; else `Medium`; recognition-only, no `steps`).
+- **Verification:** 212 named txns / 42 docs (AHB 7 incl. `idle_transfer`→`HTRANS` High; APB read/write;
+  AXI 14; SWD 8); `readme` 0. ADR-0006 grep clean (production). WIRE-BASED-100 `eval-extraction --provider
+  skip` over APB/AHB/AXI/SWD gold: `diff` of before/after rebuild EMPTY (orthogonal surface). ISF round-trip:
+  `adapt --target isf` 0 blockers on all wire docs; FSMGen `--strict --check --json` diagnostics reference
+  only pre-existing `*_behavior` blobs / a constraint-rule rendering issue — ZERO reference the named
+  transactions (they don't render: no steps → `!steps.is_empty()` filter). `kg-bench` 156/156; `run_ci.sh`
+  green; +4 lib tests (`derive_transaction_name` keep/reject, `build_transaction_anchors` dedup/provenance,
+  `mint_named_transaction` corroboration).
+- **Boundary / next:** recognition + naming only. `.2b` composes the step-by-step body (re-levelling
+  today's per-channel handshakes into the named transaction's child steps, which also fixes the pre-existing
+  `*_behavior` ISF strict errors); `.2c` enumerates each transaction's full signal set (COMPLETE + EXCLUSIVE).
+
 ## KG-ISF-TRANSACTIONS.1 (`2026-06-16`) — transaction-capture census (read-only, docs-only)
 - **Why:** the owner reinforced (multi-message) that faithful transaction capture is a MINIMUM /
   critical-path prerequisite for the PDF→ISF tool — *"without this we can't move forward."* Before any

@@ -178,6 +178,35 @@ becomes the parent, today's handshakes its child steps); **then G3 (`.2c`)** —
 transaction's full signal set with roles (address/data/control/response), **COMPLETE and EXCLUSIVE** (what
 is part of transaction X and what is NOT), reusing the channel/phase grouping the doc already declares.
 
+### 4.1 `.2a` OUTCOME (`2026-06-16`, owner-chosen "both cues") — DONE
+
+The design above was implemented as `KG-ISF-TRANSACTIONS.2a`. Two findings from the slice's own
+measurement refined the §4 plan:
+
+- **Data-flow gap RESOLVED.** The §4 cues were measured at the *EvidenceIR* vantage, but
+  `recognize_digital_patterns` runs at the *IntentIR* stage from `SemanticIr` **alone** — and `SemanticIr`
+  does **not** carry `section_anchors`/`extracted_statements` (those are EvidenceIR-only). So **Cue A had to
+  be threaded** EvidenceIR→SemanticIR→IntentIR: a new typed `SemanticIr.transaction_anchors`
+  (`TransactionAnchorRecord`), built in the SemanticIR builder where `evidence_ir.section_anchors` is in
+  hand. **Cue B was already reachable** — `SemanticIr.symbol_definitions` carries the signal-keyed
+  enumeration tables directly (AHB `HTRANS`→{IDLE,BUSY,NONSEQ,SEQ}), so no enum threading was needed; it is
+  used as corroboration (member match → attach keyed signal + raise confidence).
+- **Cue A precision needed a tight rule.** The broad §2 cue (any anchor mentioning transfer/transaction/
+  operation) has high recall but low precision (it matches sub-topics like "Write transaction
+  dependencies", "Exclusive Transfer restrictions"). The landed rule (`derive_transaction_name`,
+  `ir/semantic.rs`) keeps only a transaction-defining noun phrase: head noun **final** ∈
+  {transfer,transaction,operation} (centralized in `normative_vocab::TRANSACTION_HEAD_NOUNS`), with generic
+  function-word / cardinal / gerund / `Example`-prefix discriminators (universal English grammar, no name
+  list — ADR 0006).
+
+**Measured result:** **212 named transactions across 42 docs** (AHB 7 incl. `idle_transfer` Cue-B-
+corroborated→`HTRANS`; APB `read_transfer`/`write_transfer`; AXI 14; SWD 8; CHI full catalogue), `readme`
+and non-spec docs **0** (the spurious hardcoded firing eliminated). Gates green: ADR-0006, WIRE-BASED-100
+byte-identical before/after, ISF round-trip 0 blockers + 0 new strict diagnostics, `kg-bench` 156/156,
+`run_ci.sh`. Recognition-only transactions carry no `steps`, so the ISF emitter's `!steps.is_empty()`
+filter holds them out of the `.isf` until `.2b` gives them composed bodies — no fabrication, no silent
+break. See `docs/tasks/KG-ISF-TRANSACTIONS.md` (`.2a` node) for the full verification log.
+
 ## 5. Owner directive — sharpened (`2026-06-16`, multi-message)
 
 The owner reinforced the requirement across several messages while this census was being finalised; the

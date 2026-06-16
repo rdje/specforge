@@ -1,3 +1,35 @@
+### KG-ISF-TRANSACTIONS.2a — structural, universal transaction recognition (G2 de-hardcode) (DONE)
+First code slice in the tree (owner-chosen "both cues" + bounded batch `.2a→.2b→.2c`). Removed the three
+hardcoded `recognize_digital_patterns` blocks (`HTRANS`/`HREADY`/`HADDR` → `ahb_transfer`,
+`PSEL`/`PENABLE`/`PREADY` → `apb_transfer`, `MISO`/`MOSI`/`SCLK` → `spi_transfer`, plus the literal
+`tinv_ahb_addr_stable` invariant) — an ADR-0006 breach that fired spuriously on any prose mentioning those
+names — and replaced them with a structural, universal recognizer.
+
+- **Cue A (transaction identity)** — a new typed `SemanticIr.transaction_anchors` surface
+  (`TransactionAnchorRecord`), derived in the SemanticIR builder (`build_transaction_anchors` /
+  `derive_transaction_name`, `ir/semantic.rs`) from section headings that NAME a transaction
+  (`3.1 Write transfers`, `Chapter 10 Exclusive Transfers`, `B4.2.1 Successful write operation`). The
+  `.1` census flagged a data-flow gap ("a `.2a` parsing input to confirm"); measurement RESOLVED it —
+  section anchors live only on EvidenceIR while the recognizer runs at IntentIR from `SemanticIr` alone,
+  so Cue A is threaded EvidenceIR→SemanticIR→IntentIR. The derivation is a precise universal rule: head
+  noun ∈ {transfer,transaction,operation} (centralized in `normative_vocab::TRANSACTION_HEAD_NOUNS`),
+  head-final, with generic function-word / cardinal / gerund / `Example`-prefix discriminators that reject
+  sub-topics like "Write transaction dependencies" — no chip-spec name list (ADR 0006).
+- **Cue B (corroboration)** — the already-reachable `SemanticIr.symbol_definitions` signal-keyed enums
+  (AHB `HTRANS` → {IDLE,BUSY,NONSEQ,SEQ}); when a transaction's qualifier matches an enumerated value, the
+  keyed signal is attached and confidence is raised to `High` (`mint_named_transaction`, `ir/intent.rs`).
+- **Measured (corpus-wide):** 212 named transactions across 42 docs (AHB 7 incl. `idle_transfer`
+  corroborated → `HTRANS` High; APB `read_transfer`/`write_transfer`; AXI 14; SWD 8; CHI full catalogue);
+  `readme`/non-spec docs yield ZERO (the spurious firing eliminated — the concrete ADR-0006 failure gone).
+- **Scope** is recognition + naming; a recognition-only transaction carries no body `steps` and is held
+  out of the emitted `.isf` by the existing `!steps.is_empty()` filter until the composed step-by-step
+  body (`.2b`) and full signal-set membership (`.2c`).
+- **Gates:** ADR-0006 (zero hardcoded names in production `intent.rs`); WIRE-BASED-100 byte-identical
+  before/after (the transaction surface is orthogonal to the constraint/relation/temporal wire gold);
+  `adapt --target isf` emits 0 blocking_reasons with ZERO new FSMGen `--strict --check --json` diagnostics
+  (the pre-existing full-doc `*_behavior` strict errors are unchanged — `.2b`'s re-levelling target);
+  `kg-bench` 156/156; `run_ci.sh` green; +4 lib unit tests; book `pipeline/intentir.md` updated.
+
 ### KG-ISF-TRANSACTIONS.1 — transaction-capture census (DONE; read-only, docs-only)
 Completed the measurement-first census of how SpecForge captures transactions today, why it is
 insufficient for faithful `.isf` lowering, and the designed first code slice — no code touched. Full

@@ -14,13 +14,24 @@ answers:
 date: 2026-06-16
 tags: [kg-isf-transactions, transactions, intent-ir, isf, adr-0006, measured, north-star, ir-intent, recognize-digital-patterns, baseline]
 evidence: docs/research/transaction-capture-census.md (full census §1–§4); docs/tasks/KG-ISF-TRANSACTIONS.md (sharpened 7-point bar + .2a/.2b/.2c slices); crates/specforge/src/ir/intent.rs (synthesize_transactions + recognize_digital_patterns, the 3 hardcoded Patterns 3/4/5); generated/intent_ir/*/intent_ir.json (the transactions[] surface scanned)
-reverify: "Read docs/research/transaction-capture-census.md (the report is the authority — do NOT re-derive §1–§3). Re-run the per-doc scan: for d in generated/intent_ir/*/intent_ir.json; do jq '[.transactions[].transaction_name|select((endswith(\"_behavior\")|not) and (endswith(\"_handshake\")|not) and (.!=\"ahb_transfer\") and (.!=\"apb_transfer\") and (.!=\"spi_transfer\"))]|length' \"$d\"; done — every doc must print 0 (composed-named=0, the G1 gap) until KG-ISF-TRANSACTIONS.2b lands. jq '.transactions[].transaction_name' on the AXI doc lists 2 *_behavior + 7 *_handshake; on AHB/APB lists 2 *_behavior + 1 *_transfer (the hardcoded G2 blob). grep -n 'HTRANS\\|PSEL\\|MISO' crates/specforge/src/ir/intent.rs finds the hardcoded recognizers."
+reverify: "Read docs/research/transaction-capture-census.md (the report is the authority — do NOT re-derive §1–§3; §4.1 records the .2a outcome). POST-.2a (2026-06-16): the 3 hardcoded recognizers are GONE — grep -nE '\\\"HTRANS\\\"|\\\"PSEL\\\"|\\\"MISO\\\"|ahb_transfer|apb_transfer|spi_transfer' crates/specforge/src/ir/intent.rs finds them ONLY in the removal comment + the cfg(test) module, never production. Named recognition now lands: after rebuilding (semantic then intent), for d in generated/intent_ir/*/intent_ir.json; do jq '[.transactions[]|select(.transaction_id|startswith(\"txn_named_\"))]|length' \"$d\"; done prints AHB=7 / APB=2 / AXI=14 / SWD=8 / readme=0; jq on the AHB doc shows idle_transfer with port HTRANS at confidence high (Cue-B corroborated). The composed multi-phase BODIES (steps) remain a .2b gap — txn_named_* carry no steps yet."
 ---
 
 **Measured `2026-06-16` (`KG-ISF-TRANSACTIONS.1`, read-only, docs-only).** The baseline census of how
 SpecForge captures transactions today, why it is insufficient for faithful `.isf` lowering, and the
 designed first code slice. The full authority is `docs/research/transaction-capture-census.md`; this card
 is the greppable summary so the next session does not re-excavate it.
+
+> **STATUS UPDATE — `.2a` LANDED (`2026-06-16`):** G2 is fixed. The 3 hardcoded recognizers are REMOVED
+> and replaced by a structural universal recognizer (`recognize_named_transactions`/`mint_named_transaction`
+> in `ir/intent.rs`, fed by a new `SemanticIr.transaction_anchors` surface built by
+> `build_transaction_anchors`/`derive_transaction_name` in `ir/semantic.rs`; head nouns in
+> `normative_vocab::TRANSACTION_HEAD_NOUNS`). **Cue A** (section-heading names) is threaded
+> EvidenceIR→SemanticIR→IntentIR (section anchors are EvidenceIR-only); **Cue B** (`symbol_definitions`
+> signal-keyed enums) corroborates. Live: **212 named transactions / 42 docs** (AHB 7, APB 2, AXI 14,
+> SWD 8; `readme` 0 — spurious firing gone). So **G1's *named-recognition* gap is closed; only the
+> composed multi-phase *bodies* remain** (`.2b` — recognition-only txns carry no `steps` and are held out
+> of the `.isf` by the `!steps.is_empty()` emit filter until then). G3 signal-set membership = `.2c`.
 
 ## What the `transactions[]` surface holds today
 
