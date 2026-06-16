@@ -2079,9 +2079,239 @@ fn normalize_table_actor_name(value: &str) -> Option<String> {
     Some(actor.to_string())
 }
 
+/// Universal closed-class English function words that an agent / noun-phrase head NEVER starts
+/// with: prepositions, conjunctions, auxiliaries/copulas/modals, a non-colliding subset of
+/// pronouns, and leading adverbs/discourse markers. This is English grammar, NOT a chip-spec name
+/// list — ADR 0006-safe, and the same KIND of universal lexicon the file already keeps
+/// (`SKIP_WORDS`/`STOP_WORDS`/`SUBJECT_FOLLOWER_VERBS`). Used by `is_non_actor_phrase_fragment` for
+/// the `KG-ISF-COMPLETENESS.1a` precision gate.
+///
+/// Deliberately EXCLUDED (measurement-driven, `docs/research/agent-surface-fidelity-measurement.md`):
+/// * articles / determiners / demonstratives (`the`/`a`/`an`/`this`/`that`/`these`/`those`/`each`/
+///   `every`/`any`/`all`/`both`/`either`/`neither`/`some`/`no`/`another`) — a determiner can precede
+///   a REAL agent ("All Managers", "Any Manager"), so that is a `.1b` determiner-strip + consolidate,
+///   never an outright `.1a` reject;
+/// * the colliding pronouns `i`/`its` — "i" collides with the letter / Roman-numeral "I" and "its"
+///   with the GIC `ITS` agent (Interrupt Translation Service); case is a soft cue so we cannot lean
+///   on uppercase to tell them apart;
+/// * rare 1st/2nd-person pronouns (`we`/`you`/`he`/`she`) — they never lead a spec agent and risk
+///   colliding with short signal acronyms (e.g. `WE` write-enable).
+const NON_ACTOR_LEADING_FUNCTION_WORDS: &[&str] = &[
+    // prepositions
+    "of",
+    "to",
+    "for",
+    "with",
+    "by",
+    "from",
+    "as",
+    "at",
+    "on",
+    "in",
+    "into",
+    "onto",
+    "upon",
+    "within",
+    "without",
+    "over",
+    "under",
+    "above",
+    "below",
+    "between",
+    "among",
+    "through",
+    "during",
+    "per",
+    "via",
+    "about",
+    "against",
+    "toward",
+    "towards", //
+    // conjunctions
+    "and",
+    "or",
+    "nor",
+    "but",
+    "so",
+    "because",
+    "if",
+    "unless",
+    "although",
+    "though",
+    "whether",
+    "since",
+    "while",
+    "whereas",
+    "yet", //
+    // auxiliaries / copulas / modals
+    "is",
+    "are",
+    "was",
+    "were",
+    "be",
+    "been",
+    "being",
+    "am",
+    "has",
+    "have",
+    "had",
+    "do",
+    "does",
+    "did",
+    "will",
+    "would",
+    "shall",
+    "should",
+    "can",
+    "could",
+    "may",
+    "might",
+    "must", //
+    // pronouns (non-colliding only)
+    "it",
+    "they",
+    "them",
+    "their",
+    "who",
+    "whom",
+    "whose",
+    "which",
+    "what", //
+    // leading adverbs / discourse markers
+    "then",
+    "next",
+    "also",
+    "once",
+    "before",
+    "after",
+    "until",
+    "however",
+    "therefore",
+    "thus",
+    "hence",
+    "now",
+    "here",
+    "there",
+    "only",
+    "not",
+    "when",
+    "where",
+    "why",
+    "how",
+    "again",
+    "still",
+    "already",
+    "otherwise",
+    "instead",
+    "rather",
+    "even",
+];
+
+/// Universal English verbs that, as the FIRST token of a candidate, signal a verb-phrase FRAGMENT
+/// (the real subject is missing) rather than an agent — e.g. "ensures the Manager …", "Exit from the
+/// low-power state". DELIBERATELY verb-LED only (NOT "contains a verb") so a Class-B fragment such as
+/// "Subordinate extends" keeps its leading NOUN for `.1b` to consolidate. Excludes verbs that double
+/// as common device nouns (`monitor`/`source`/`control`/`output`/…) to avoid rejecting a legitimate
+/// single-noun agent. ADR 0006-safe (parts of speech, not names). `KG-ISF-COMPLETENESS.1a`.
+const NON_ACTOR_LEADING_VERBS: &[&str] = &[
+    "ensures",
+    "ensure",
+    "ensured",
+    "exit",
+    "exits",
+    "exited",
+    "exiting",
+    "extends",
+    "extend",
+    "extended",
+    "extending",
+    "requires",
+    "require",
+    "required",
+    "allows",
+    "allow",
+    "allowed",
+    "enables",
+    "enable",
+    "enabled",
+    "performs",
+    "perform",
+    "performed",
+    "determines",
+    "determine",
+    "determined",
+    "describes",
+    "describe",
+    "described",
+    "represents",
+    "represent",
+    "represented",
+    "specifies",
+    "specify",
+    "specified",
+    "indicates",
+    "indicate",
+    "indicated",
+    "asserts",
+    "assert",
+    "asserted",
+    "deasserts",
+    "deassert",
+    "deasserted",
+    "begins",
+    "begin",
+    "began",
+    "starts",
+    "start",
+    "started",
+    "uses",
+    "use",
+    "used",
+    "contains",
+    "contain",
+    "contained",
+    "includes",
+    "include",
+    "included",
+];
+
+/// The first content token of a candidate actor name: the first maximal run of ASCII letters,
+/// lowercased. `None` when the candidate has no alphabetic content. Case is normalized away so the
+/// gate is case-agnostic (`feedback_case_is_soft_not_critical`).
+fn first_content_token_lower(value: &str) -> Option<String> {
+    value
+        .split(|c: char| !c.is_ascii_alphabetic())
+        .find(|token| !token.is_empty())
+        .map(|token| token.to_ascii_lowercase())
+}
+
+/// `KG-ISF-COMPLETENESS.1a` — structural precision gate. A relation-subject candidate is a non-agent
+/// phrase FRAGMENT (not a real protocol agent) when its first content token is a universal function
+/// word or a leading verb — e.g. "For components", "is recommended", "ensures", "Exit from", "next".
+/// Purely structural and universal-grammar-keyed (no chip-spec name list — ADR 0006), and verb-LED
+/// only so Class-B fragments like "Subordinate extends" survive for `.1b` consolidation. Measured to
+/// reject ZERO ≥8-port actors across the persisted 36-doc corpus
+/// (`docs/research/agent-surface-fidelity-measurement.md`).
+fn is_non_actor_phrase_fragment(value: &str) -> bool {
+    match first_content_token_lower(value) {
+        Some(token) => {
+            NON_ACTOR_LEADING_FUNCTION_WORDS.contains(&token.as_str())
+                || NON_ACTOR_LEADING_VERBS.contains(&token.as_str())
+        }
+        None => false,
+    }
+}
+
 fn normalize_relation_actor_name(value: &str) -> Option<String> {
     let actor = normalize_table_actor_name(value)?;
     if !is_meaningful_actor_term(&actor) {
+        return None;
+    }
+    // KG-ISF-COMPLETENESS.1a — structural precision gate: a relation subject whose first content
+    // token is a universal function word or a leading verb is a phrase FRAGMENT ("For components",
+    // "is recommended", "ensures …"), never an agent. Both prose paths and the table relation path
+    // funnel through here, so this single edit gates them all.
+    if is_non_actor_phrase_fragment(&actor) {
         return None;
     }
 
@@ -13794,6 +14024,94 @@ mod tests {
             Some("DMSTATUS")
         );
         assert!(super::register_name_from_caption("   ").is_none());
+    }
+
+    // ── KG-ISF-COMPLETENESS.1a — structural precision agent-identity gate ────────────────────
+    #[test]
+    fn actor_identity_gate_rejects_function_word_and_verb_led_fragments() {
+        // The designed Class-A targets (the agent surface fidelity measurement) plus a sample of
+        // the function-word/verb-led fragments the corpus census surfaced. All are phrase
+        // fragments, never agents.
+        for fragment in [
+            "For",
+            "For components",
+            "Then it",
+            "with write",
+            "is recommended",
+            "is permitted",
+            "ensures",
+            "Exit from",
+            "next",
+            "next access",
+            "does not",
+            "used to",
+            "to back",
+            "are coherent",
+            "of ordered",
+            "In both",
+            "indicates",
+            "required behavior",
+        ] {
+            assert!(
+                super::is_non_actor_phrase_fragment(fragment),
+                "{fragment:?} should be rejected as a non-agent phrase fragment"
+            );
+            assert!(
+                super::normalize_relation_actor_name(fragment).is_none(),
+                "{fragment:?} must not survive the relation-actor seam"
+            );
+        }
+    }
+
+    #[test]
+    fn actor_identity_gate_keeps_real_agents_and_class_b_fragments() {
+        // Real protocol agents must survive — and so must Class-B fragments (subject + trailing
+        // verb/adverb), because `.1b` (not `.1a`) consolidates those to their leading noun. The
+        // gate is verb-LED only, so a leading NOUN keeps the candidate.
+        for keep in [
+            "Manager",
+            "Subordinate",
+            "Requester",
+            "Completer",
+            "Transmitter",
+            "Receiver",
+            "interconnect",
+            "Multiplexor",
+            "Exclusive Access Monitor",
+            // Class-B fragments (preserved for `.1b` consolidation, never dropped here):
+            "Subordinate extends",
+            "Subordinate then",
+            "address decoder",
+            "decoder also",
+            "Transmitter interface",
+            // Acronym agent whose lowercase collides with a pronoun we deliberately excluded:
+            "ITS",
+        ] {
+            assert!(
+                !super::is_non_actor_phrase_fragment(keep),
+                "{keep:?} is a real agent (or a Class-B fragment) and must NOT be gated by .1a"
+            );
+        }
+        // The seam keeps a real agent and a Class-B fragment (the latter normalized but not dropped).
+        assert_eq!(
+            super::normalize_relation_actor_name("Manager").as_deref(),
+            Some("Manager")
+        );
+        assert!(super::normalize_relation_actor_name("Subordinate extends").is_some());
+    }
+
+    #[test]
+    fn actor_identity_gate_first_token_is_case_agnostic() {
+        // Case is a soft cue: the gate keys off the lowercased first content token, and non-letter
+        // separators (arrows, punctuation) are skipped to find it.
+        assert!(super::is_non_actor_phrase_fragment("IS recommended"));
+        assert!(super::is_non_actor_phrase_fragment("(For example)"));
+        assert!(!super::is_non_actor_phrase_fragment("ITS →Distributor"));
+        assert_eq!(
+            super::first_content_token_lower("→ For").as_deref(),
+            Some("for")
+        );
+        assert_eq!(super::first_content_token_lower("123").as_deref(), None);
     }
 
     // ── PDF-VARIANT-DIGESTION.10a — `bit location` register-field vocabulary ─────────────────

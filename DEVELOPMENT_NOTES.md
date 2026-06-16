@@ -1,4 +1,29 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-COMPLETENESS.1a (`2026-06-16`) — structural agent-identity precision gate (first code)
+- **Why:** the precision half of `.1` (Class-A Junk). Prose-fragment subjects (`For components`,
+  `is recommended`, `ensures`, `Exit from`, `next`, `Then it`, `with write`) were minted as actors and would
+  emit junk agents into the IntentIR/`.isf` surface; the naive "drop orphan actors" filter fails because they
+  carry ports.
+- **Implementation:** `is_non_actor_phrase_fragment(value)` (+ `first_content_token_lower`,
+  `NON_ACTOR_LEADING_FUNCTION_WORDS`, `NON_ACTOR_LEADING_VERBS`) in `ir/evidence.rs`, called inside
+  `normalize_relation_actor_name` — the ONE DRY seam that both prose paths (`extract_subject_phrase` /
+  `extract_actor_phrase`) and the table relation path funnel through, so a single edit gates them all. The
+  rule is purely structural on the lowercased first content token (case is soft —
+  `feedback_case_is_soft_not_critical`): reject iff it is a universal function word or a leading verb.
+  ADR-0006-safe — grammar, not a name list (`feedback_avoid_denylists_prefer_structural`); the file already
+  keeps such universal lexicons (`SKIP_WORDS`/`STOP_WORDS`/`SUBJECT_FOLLOWER_VERBS`).
+- **Two measurement-driven exclusions (do NOT re-add):** (1) articles/determiners/demonstratives — a
+  determiner can precede a REAL agent (`All Managers`), so that is a `.1b` strip not a `.1a` drop; (2) `i`
+  and `its` — lowercased they collide with the letter/Roman-numeral `'I'` (a 16-port mis-extraction) and the
+  GIC `ITS` agent (8 ports). The candidate lists were corrected from this measurement BEFORE shipping code.
+- **Verb-LED only, NOT contains-a-verb:** `Subordinate extends` keeps its leading noun and survives for
+  `.1b`; the descriptor-noun precision class (`monitor`/`Note`/`HPROT bit`/`TREADY input`) is deferred.
+- **Validation:** over all 36 IntentIR docs the gate rejects ZERO ≥8-port actors (23 high-port proxies kept),
+  catches all 9 targets, 63 non-agent rejects. Live AXI rebuild: actors 24→21, junk gone, real agents at
+  identical port counts (`Manager` 169 / `Subordinate` 168 / `interconnect` 5). WIRE-BASED-100 held 1.000
+  (constraints APB/AHB/AXI + relations ×4 + temporal ×3) on fresh-Pattern eval; `kg-bench` 156/156;
+  `run_ci.sh` green (+3 tests, lib 1633 pass / 2 ignored). KM card `agent-identity-structural-gate`.
+
 ## KG-ISF-COMPLETENESS.1 (`2026-06-16`) — agent-surface fidelity: measurement-first (read-only, no code)
 - **Why:** first work leaf of the owner's `2026-06-16` north star (complete KG/IntentIR → faithful ISF).
   The `.0` baseline named two coexisting agent defects (precision noise + real-agent relation-incompleteness)

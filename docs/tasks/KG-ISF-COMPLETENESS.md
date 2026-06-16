@@ -81,8 +81,9 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   **Genericity guardrail proven:** `transmitter` is 0/0 in AXI but `Transmitter` is 22/23 in AXI-Stream —
   same token, opposite status → the drop/keep rule MUST key off "0/0 in *this* doc", never a name list
   (ADR 0006). Frontier → `.1a` then `.1b`.
-- ID: `KG-ISF-COMPLETENESS.1a` · Status: `pending` (measurement-first; gate DESIGNED from code-seam study
-  `2026-06-16`) · Goal: **precision — structural agent-identity gate.** **Seam (verified):** both prose
+- ID: `KG-ISF-COMPLETENESS.1a` · Status: `done` (`2026-06-16`, measurement-first; gate DESIGNED from
+  code-seam study + LANDED + WIRE-BASED-100-verified) · Goal: **precision — structural agent-identity
+  gate.** **Seam (verified):** both prose
   paths (`extract_subject_phrase`:3302 / `extract_actor_phrase`:3144) AND the table path funnel through
   the ONE DRY seam `normalize_relation_actor_name`:2082 → `is_meaningful_actor_term`
   (prior_memory.rs:607). Add the structural reject there (one edit, all paths). **Scoped gate (clean,
@@ -99,6 +100,25 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   WIRE-BASED-100 (APB/AHB/AXI/SWD per-fact 1.000) a hard gate, verified via the `.3f`/`.3g`
   fresh-Pattern temp-evidence-root eval; `cargo build --release` before live measurement; `run_ci.sh`
   before declaring green.
+  **LANDED `2026-06-16`** — `is_non_actor_phrase_fragment` (evidence.rs) wired into the DRY seam
+  `normalize_relation_actor_name` (one edit, all three relation paths), keyed off two universal-grammar
+  consts: `NON_ACTOR_LEADING_FUNCTION_WORDS` + `NON_ACTOR_LEADING_VERBS` (ADR-0006-safe — no chip names).
+  **Measurement (read-only, all 36 IntentIR docs) drove two corrections:** (a) DROP the colliding
+  pronouns `i`/`its` — they wrongly rejected the 16-port `'I'` and the 8-port GIC `'ITS →Distributor…'`
+  (the `ITS` agent; case is soft); (b) EXCLUDE all articles/determiners/demonstratives — a determiner can
+  precede a REAL agent (`All Managers`), which is a `.1b` strip, not a `.1a` drop. Refined gate then
+  rejected ZERO ≥8-port actors across the corpus (23 high-port real-agent proxies preserved) and caught
+  all 9 designed targets; the 63 rejects are all non-agents. **Live rebuild (AXI fresh Pattern
+  evidence→semantic→intent):** actors 24→21 (`For`/`with write`/`Then it`/`is permitted` dropped), ZERO
+  function/verb-led actors leak (confirms no leak via the direct `normalize_table_actor_name` callers),
+  real agents preserved at IDENTICAL port counts (`Manager` 169, `Subordinate` 168, `interconnect` 5),
+  and the descriptor-noun class (`exclusive`/`instruction`/`monitor`/`Note`/`Shareable`) correctly
+  REMAINS (deferred, per design). **WIRE-BASED-100 HELD on fresh-Pattern eval:** constraints APB/AHB/AXI
+  6/6 · 6/6 · 4/4 = 1.000; actor-relations APB/AHB/AXI/SWD 6/6 · 6/6 · 6/6 · 1/1 = 1.000; temporal
+  AXI/APB/AHB 3/3 · 3/3 · 4/4 = 1.000 (SWD's lone Pattern constraint stays a promotion-only 0/1,
+  independent of this actor-name gate). `kg-bench` 156/156; `run_ci.sh` GREEN (fmt + warning-deny Clippy +
+  tests 1633 pass/2 ignored, +3 new + rustdoc + mdBook). KM card `[[agent-identity-structural-gate]]`.
+  Frontier → `.1b`.
 - ID: `KG-ISF-COMPLETENESS.1b` · Status: `pending` (measurement-first) · Goal: **completeness —
   consolidation + zero-evidence honesty.** (i) Normalize Class-B fragments to the canonical agent token
   (strip trailing verb/adverb; "X interface"→"X") — this transform must run BEFORE the `.1a` reject so
@@ -130,3 +150,15 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   list). Spun the code into `.1a` (precision structural gate) + `.1b` (consolidation + zero-evidence
   honesty), each measurement-first + WIRE-BASED-100-gated. Report `docs/research/agent-surface-fidelity-measurement.md`;
   KM card `agent-surface-defect-taxonomy`. No code.
+- `2026-06-16`: **`.1a` DONE** — precision structural agent-identity gate LANDED (first code in this
+  tree). New `is_non_actor_phrase_fragment` in `ir/evidence.rs` rejects a relation-subject candidate
+  whose FIRST content token is a universal function word (`NON_ACTOR_LEADING_FUNCTION_WORDS`) or a
+  leading verb (`NON_ACTOR_LEADING_VERBS`) — ADR-0006-safe grammar, NOT a chip-name list — wired into
+  the DRY seam `normalize_relation_actor_name` so all three relation paths gate at once. Measurement-first
+  over all 36 IntentIR docs corrected the candidate lists twice (drop `i`/`its` for the `'I'`/GIC `ITS`
+  collisions; exclude articles/determiners — `All Managers` is a `.1b` strip), landing on ZERO ≥8-port
+  rejects / 9 targets caught / 63 non-agent rejects. Live AXI rebuild: actors 24→21, junk dropped, real
+  agents byte-for-byte preserved (`Manager` 169 ports, `Subordinate` 168, `interconnect` 5),
+  descriptor-noun class deferred per design. WIRE-BASED-100 held at 1.000 (constraints APB/AHB/AXI,
+  relations ×4 docs, temporal ×3) on fresh-Pattern eval; `kg-bench` 156/156; `run_ci.sh` green (+3 tests,
+  lib 1633 pass/2 ignored). KM card `agent-identity-structural-gate`. Frontier → `.1b`.

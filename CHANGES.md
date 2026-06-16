@@ -1,3 +1,30 @@
+### KG-ISF-COMPLETENESS.1a — structural agent-identity precision gate (first code in this tree)
+The precision half of `.1` (Class-A Junk). New `is_non_actor_phrase_fragment` in `ir/evidence.rs` rejects a
+relation-subject candidate whose FIRST content token is a universal closed-class function word
+(`NON_ACTOR_LEADING_FUNCTION_WORDS`) or a leading verb (`NON_ACTOR_LEADING_VERBS`) — English grammar, NOT a
+chip-name denylist (ADR 0006) — wired into the ONE DRY seam `normalize_relation_actor_name` so both prose
+paths and the table relation path gate at once.
+
+- **Measurement-first (read-only, all 36 IntentIR docs) drove two corrections before any code shipped:**
+  (a) DROP the colliding pronouns `i`/`its` — they wrongly rejected the 16-port mis-extraction `'I'` and the
+  8-port GIC `'ITS →Distributor…'` (the real `ITS` agent; case is a soft cue so it cannot disambiguate);
+  (b) EXCLUDE all articles/determiners/demonstratives — a determiner can precede a REAL agent
+  (`All Managers`), which is a `.1b` determiner-strip, not a `.1a` drop. The refined gate rejects ZERO
+  ≥8-port actors corpus-wide (23 high-port real-agent proxies preserved), catches all 9 designed targets,
+  and its 63 rejects are all non-agents.
+- **Verb-LED only, NOT contains-a-verb** — a Class-B fragment like `Subordinate extends` keeps its leading
+  NOUN and survives for `.1b` consolidation; the descriptor-noun class (`monitor`/`Note`/`exclusive`/
+  `instruction`/`Shareable`, `HPROT bit`, `TREADY input`) is neither function word nor leading verb and is
+  correctly DEFERRED to a later leaf.
+- **Live AXI rebuild (fresh Pattern evidence→semantic→intent):** actors 24→21 (`For`/`with write`/`Then it`/
+  `is permitted` dropped), ZERO function/verb-led actors leak, real agents preserved at IDENTICAL port
+  counts (`Manager` 169, `Subordinate` 168, `interconnect` 5).
+- **Verification:** WIRE-BASED-100 HELD at 1.000 on fresh-Pattern eval — constraints APB/AHB/AXI (6/6·6/6·4/4),
+  actor-relations APB/AHB/AXI/SWD (6/6·6/6·6/6·1/1), temporal AXI/APB/AHB (3/3·3/3·4/4); SWD's lone Pattern
+  constraint stays a promotion-only 0/1, independent of this actor-name gate. `kg-bench` 156/156; `run_ci.sh`
+  GREEN (fmt + warning-deny Clippy + tests 1633 pass/2 ignored, +3 new + rustdoc + mdBook). KM card
+  `agent-identity-structural-gate`. Frontier → `.1b`.
+
 ### KG-ISF-COMPLETENESS.1 — agent-surface fidelity: measurement DONE (read-only, docs-only)
 Measurement-first phase of `.1`, executed before any code. Read-only `python3` census over the persisted
 wire-doc IR (`generated/intent_ir` actors / `actor_ports` / `actor_signal_relations`, joined to
