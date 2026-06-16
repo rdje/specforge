@@ -149,12 +149,23 @@ trace-bus / avalon / generic-flash / coresight `address`/`data`) — exactly par
 (the raw `<word> phase` scan also catches function-word/cardinal/ordinal noise: `the`/`this`/`four`/`first`/…).
 
 **Designed slice sequence (each measurement-first, signoff-quality, no name lists — ADR 0006):**
-- **`.2g` — structural transaction-PHASE recognition (recognition + naming, mirrors `.2a`).** A new typed
-  `SemanticIr.transaction_phases` surface (`TransactionPhaseRecord`: phase name, source title/section, supporting
-  statement ids), built in the SemanticIR builder by a precision-gated `<qualifier> phase` recogniser that reuses
-  the proven `build_transaction_anchors`/`derive_transaction_name` machinery (head noun = `phase`; reject the
-  same stopword/cardinal/ordinal/determiner/gerund discriminators). Add a `validate` phase inventory (mirrors
-  the `.2d` transaction inventory). NO body composition yet — recognition only, held like `.2a`.
+- **`.2g` — structural transaction-PHASE recognition (recognition + naming, recognition only). STARTED — its
+  measurement-first STEP-1 (input-surface determination) is DONE; code pending.** A new typed
+  `SemanticIr.transaction_phases` surface (`TransactionPhaseRecord`: phase name, supporting statement ids,
+  confidence). **MEASURED INPUT SURFACE (`2026-06-16`, the `.2a`-style data-flow check):** the `<qualifier>
+  phase` vocabulary is **NOT in `section_anchors`** — AHB 0 / APB 0 phase-titled anchors out of 172 / 99, SWD
+  only 1 (`Data transfer phase`); it lives in **`extracted_statements` prose text** (AHB literal "Address phase"
+  / "Data phase" statements; "during the address phase … the data phase of a transfer"). So `.2g` CANNOT simply
+  reuse `build_transaction_anchors`'s clean section-heading input — it must scan `context.statements` for the
+  `<qualifier> phase` n-gram (take the token before a `phase`/`phases` head; single-word qualifier for precision).
+  It still reuses the `derive_transaction_name` *discriminator* idea (a precision gate), but prose is noisier than
+  headings, so the gate must reject more (function words / cardinals / ordinals / determiners `the`/`a`/`an`/`this`/
+  `that`/`each`/`its` / gerunds), and the gate needs the SAME corpus-wide before/after precision measurement `.2a`
+  did (clean recall of address/data/setup/access/response/turnaround on the wire docs; zero/low noise elsewhere).
+  Add a `validate` phase inventory (mirrors the `.2d` transaction inventory; SemanticIR path). NO body composition
+  yet — recognition only, held like `.2a`. **Next concrete step = write `TransactionPhaseRecord` + `build_transaction_phases`
+  (prose scan over `context.statements`) + `derive_phase_name` (precision gate) + the validate inventory + tests,
+  then run the precision-tuning measurement + full gates.**
 - **`.2h` — phase ORDERING recovery.** Order the recognised phases as the document orders them (section/statement
   order + same-sentence "during X … during Y" / "X phase … followed by … Y phase" / "then" cues). Measurement-first
   on whether the order is recoverable reliably + universally; honest residual where it is not.
@@ -381,6 +392,17 @@ Repo is handoff-ready at commit `e03cd080` (after `.2f`: `<this commit>`).
   code, no extraction change; WIRE-BASED-100 untouched; ADR-0006 ✓ (the chosen cue is universal grammar, no name list);
   `scripts/check_memory_architecture.sh` + the knowledge-map derive-and-diff green. Report: census §4.4; KM card
   `transaction-capture-census` refreshed (`.2f` status + 2 answer keys). `[[project_kg_isf_transactions]]`.
+- ID: `KG-ISF-TRANSACTIONS.2g` · Status: `in_progress` (`2026-06-16`; measurement-first STEP-1 DONE, code pending)
+  · Goal: **structural transaction-PHASE recognition** — a new typed `SemanticIr.transaction_phases`
+  (`TransactionPhaseRecord`) built by a precision-gated `<qualifier> phase` recogniser, + a `validate` phase
+  inventory; recognition only (no body composition — that is `.2i`). **STEP-1 (input-surface) DONE:** measured
+  that the `<qualifier> phase` vocabulary is in `extracted_statements` PROSE, NOT `section_anchors` (AHB 0 / APB 0
+  phase-titled anchors; SWD 1) — so `build_transaction_phases` must scan `context.statements` (prose n-gram before a
+  `phase`/`phases` head), with a precision gate stronger than `derive_transaction_name`'s (prose is noisier), tuned
+  by a corpus-wide before/after measurement like `.2a`. See the Frontier `.2g` spec above for the full design + the
+  exact next code step. **Gates (when code lands):** ADR-0006 (universal `<qualifier> phase` grammar, no name list);
+  WIRE-BASED-100 orthogonal (recognition surface, like `.2a`); ISF round-trip unchanged (phases don't lower in
+  `.2g`); `run_ci.sh` + `kg-bench` 156/156; book note for the new `validate` surface. `[[project_kg_isf_transactions]]`.
 
 ## Changelog
 
@@ -501,3 +523,10 @@ Repo is handoff-ready at commit `e03cd080` (after `.2f`: `<this commit>`).
   `.2g` (structural transaction-phase recognition, mirrors `.2a`) → `.2h` (ordering) → `.2i` (membership-by-phase +
   ordered body). Report census §4.4; KM card refreshed (`.2f` status + 2 answer keys); `KNOWLEDGE_MAP.md` regenerated.
   No code; WIRE-BASED-100 untouched; ADR-0006 ✓. Frontier → `.2g`. `[[project_kg_isf_transactions]]`.
+- `2026-06-16`: **`.2g` STARTED** (measurement-first STEP-1 DONE, code pending — docs-only). Determined the phase
+  recogniser's INPUT SURFACE: the `<qualifier> phase` vocabulary is in `extracted_statements` PROSE, **not**
+  `section_anchors` (measured: AHB 0 / APB 0 phase-titled anchors of 172 / 99; SWD 1 `Data transfer phase`). So
+  `build_transaction_phases` must scan `context.statements` (prose n-gram), NOT reuse the section-heading input
+  `build_transaction_anchors` uses — and the precision gate must be stronger than `derive_transaction_name`'s
+  (prose noise), tuned by a corpus-wide before/after measurement like `.2a`. `.2g` left `in_progress`; next = write
+  the typed surface + recogniser + validate inventory + tests, then tune + gate. No code. `[[project_kg_isf_transactions]]`.

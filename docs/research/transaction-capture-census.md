@@ -305,10 +305,15 @@ artifacts + 78 EvidenceIR artifacts; no code) and made the choice. The three `.2
 **Decision:** the ordered multi-phase body is built on a new structural **transaction-phase surface** keyed off the
 document's own `<qualifier> phase` vocabulary — NOT a mint-side reinterpretation of existing data (which would either
 fabricate ordering or require a name list). Designed slice path, each measurement-first and ADR-0006-clean:
-- **`.2g`** — structural transaction-PHASE recognition (recognition + naming only, mirrors `.2a`): a new typed
+- **`.2g`** — structural transaction-PHASE recognition (recognition + naming only): a new typed
   `SemanticIr.transaction_phases` (`TransactionPhaseRecord`), recognised by a precision-gated `<qualifier> phase`
-  rule reusing the `build_transaction_anchors`/`derive_transaction_name` machinery (head noun `phase`); plus a
-  `validate` phase inventory (mirrors `.2d`). No body composition yet.
+  rule; plus a `validate` phase inventory (mirrors `.2d`). No body composition yet. **STEP-1 (input surface) measured
+  `2026-06-16`:** the `<qualifier> phase` vocabulary is in `extracted_statements` PROSE, **not** `section_anchors`
+  (AHB 0 / APB 0 phase-titled anchors of 172 / 99; SWD 1 `Data transfer phase`) — so the recogniser scans
+  `context.statements` (prose n-gram before a `phase`/`phases` head), reusing the `derive_transaction_name`
+  *discriminator* idea (a precision gate) but NOT its section-heading input; the gate must reject more (function
+  words / cardinals / ordinals / determiners / gerunds) and be tuned by a corpus-wide before/after measurement like
+  `.2a` (clean recall of address/data/setup/access/response/turnaround on the wire docs; low noise elsewhere).
 - **`.2h`** — phase ORDERING recovery (section/statement order + "during X … during Y" / "then" / "followed by"
   cues); honest residual where the order is not reliably recoverable.
 - **`.2i`** — membership-by-phase grouping (a `.2c` member signal belongs to phase P iff P's statements reference it —
