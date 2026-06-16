@@ -1,3 +1,27 @@
+### FSMGEN-REFRESH-INTEGRATE-2.1 — bump subs/fsmgen d31b0b91 → 8c39827f (+300); CI green; reconcile pins (DONE)
+Owner-directed (`2026-06-16`): *"FSMGEN recently pushed. Please update FSMGEN submodule. then go through FSMGEN
+book/handoff/contract."* Second refresh cycle (predecessor `FSMGEN-REFRESH-INTEGRATE` closed `2026-05-29`).
+
+- **Bump:** the pinned `subs/fsmgen` read-only reference (the downstream `.isf` consumer) was checked out from the
+  committed gitlink `d31b0b91` ("ARCHITECTURE-DEBT-FRONTIER.3: defer ISF extraction") to current upstream
+  `origin/main` tip `8c39827f` — **+300 commits** (new `BACKEND-LANGUAGE-PORTABILITY-CONTRACT-FRONTIER`,
+  `IAL2-FEATURE-COMPLETENESS-FRONTIER`, `SEMANTIC-INTROSPECTION-MCP-FRONTIER` work upstream). Working tree clean;
+  `perl -c bin/fsmgen` syntax-OK.
+- **Contract canary GREEN:** the 7 fsmgen-strict tests that shell out to the real `bin/fsmgen --strict --check
+  --json` (`isf_output_passes_fsmgen_strict_validation` + the `bounded_contract` / `guarded_windowed_eventual` /
+  `symbol_surface` / `temporal_rule` / `temporal_stage` `_passes_fsmgen_strict_validation` family +
+  `transaction_steps_use_fsmgen_contract_grammar`) all PASS on the new binary — **the +300-commit bump does NOT
+  break SpecForge's emitted `.isf` contract.**
+- **Gates:** full `scripts/run_ci.sh` GREEN (`1641 passed / 0 failed / 2 ignored`; fmt + warning-deny clippy +
+  rustdoc + mdBook); `kg-bench` **156/156** (orthogonal to fsmgen, run for rigor). No Rust/IR change — gitlink + docs only.
+- **Pin-drift reconciled:** README/MEMORY still cited the pin as `c0b7eaa7`, stale by several intervening re-pins
+  (`88a7af9c → c0b7eaa7 → 43b29f5c → 92d7036b → d31b0b91`). Current-facing references updated to `8c39827f`
+  (README ×2, MEMORY); dated historical pin snapshots left as point-in-time record (no-rewrite-dated-history);
+  `KNOWLEDGE_MAP.md` is auto-derived and not hand-edited.
+- Frontier → `.2`: read the new upstream's handoff / integration / public-API-contract / mdBook thoroughly and
+  record the feature-adoption + contract-delta assessment (owner: *"see what you can take or use from this latest
+  FSMGEN version"*), then close. After the tree: resume `KG-ISF-TRANSACTIONS.2d`.
+
 ### KG-ISF-TRANSACTIONS.2c — grounded signal-set membership + boundary precision (G3) (DONE)
 Final slice of the owner-authorized bounded batch (`.2a→.2b→.2c`, 3/3) — batch COMPLETE. Measurement-first.
 Each named transaction now carries its **grounded signal-set membership** (bar #3/#4): the declared signals
