@@ -23,8 +23,8 @@ use crate::ir::semantic::{
 #[cfg(test)]
 use crate::ir::semantic::{TemporalPredicateRecord, TemporalRuleRecord};
 use crate::ir::source::{
-    AutomationConfidence, CandidateInterpretation, RegisterFieldRecord, ResidualDecisionPacket,
-    WidthHint,
+    AutomationConfidence, CandidateInterpretation, RegisterFieldRecord, RegisterRecord,
+    ResidualDecisionPacket, WidthHint,
 };
 
 // ---------------------------------------------------------------------------
@@ -751,11 +751,11 @@ impl IsfIr {
         }
 
         // --- Storage (dedup by name) ---
-        // ISF-REGISTER-RESET-EMIT.2: each register lowers to a `(storage (var …))`; when the
-        // register's documented per-field `reset_value`s compose to a clean in-width non-negative
-        // integer we also emit `(reset V)`, else the var stays reset-less (FSMGen defaults it to
-        // all-0s — byte-identical to the pre-`.2` output). The var width is unchanged here
-        // (max-field-extent); reconciling it to the true register width is ISF-REGISTER-RESET-EMIT.3.
+        // ISF-REGISTER-RESET-EMIT.2/.3: each register lowers to a `(storage (var …))` at its TRUE
+        // register width (`register_var_width` — `size_bits ⊔ max(bits_high)+1`, the `.3` fix for
+        // the prior max-field-extent mis-sizing); when the register's documented per-field
+        // `reset_value`s compose to a clean in-width non-negative integer we also emit `(reset V)`,
+        // else the var stays reset-less (FSMGen defaults it to all-0s).
         let mut seen_storage_names: BTreeSet<String> = BTreeSet::new();
         let mut storage: Vec<IsfStorageVar> = Vec::new();
         let mut reset_not_lowerable: usize = 0;
@@ -765,15 +765,7 @@ impl IsfIr {
             if !seen_storage_names.insert(name.clone()) {
                 continue;
             }
-            let width = r
-                .fields
-                .iter()
-                .filter_map(|f| match (f.bits_high, f.bits_low) {
-                    (Some(hi), Some(lo)) => Some(hi.saturating_sub(lo).saturating_add(1)),
-                    _ => None,
-                })
-                .max()
-                .unwrap_or(32);
+            let width = register_var_width(r);
             let reset = match classify_register_reset(&r.fields, width) {
                 RegisterResetOutcome::Emit(value) => Some(value),
                 RegisterResetOutcome::DeferredWidth => {
@@ -1197,6 +1189,28 @@ fn parse_reset_literal(raw: &str) -> Option<u64> {
         return s.parse::<u64>().ok();
     }
     None
+}
+
+/// The ISF storage-var width for a register: its TRUE register width (ISF-REGISTER-RESET-EMIT.3).
+/// Prefer the document's declared `size_bits` (a doc may declare a 32-bit register whose top bits
+/// are reserved/unparsed), but never below one-past-the-highest-located-field-bit
+/// (`max(bits_high)+1`) so no field is ever truncated — hence `size_bits ⊔ field_top`. Falls back
+/// to 32 only when neither a declared width nor any located field is available. This replaces the
+/// prior max-single-field-extent width, which mis-sized multi-field registers (e.g. a 32-bit
+/// register of two 16-bit fields was emitted at `(width 16)`, truncating any reset above bit 15).
+fn register_var_width(r: &RegisterRecord) -> u32 {
+    let field_top = r
+        .fields
+        .iter()
+        .filter_map(register_field_extent)
+        .map(|(hi, _)| hi.saturating_add(1))
+        .max();
+    match (r.size_bits, field_top) {
+        (Some(size), Some(top)) => size.max(top),
+        (Some(size), None) => size,
+        (None, Some(top)) => top,
+        (None, None) => 32,
+    }
 }
 
 /// The register-bit extent `(high, low)` of a field, from `bits_high`/`bits_low`, or
@@ -2457,6 +2471,60 @@ mod tests {
         assert!(matches!(
             classify_register_reset(&unlocated, 8),
             RegisterResetOutcome::NotLowerable
+        ));
+    }
+
+    fn register_with(size_bits: Option<u32>, fields: Vec<RegisterFieldRecord>) -> RegisterRecord {
+        RegisterRecord {
+            register_id: "r".to_string(),
+            register_name: "R".to_string(),
+            offset_address: None,
+            size_bits,
+            fields,
+            supporting_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        }
+    }
+
+    #[test]
+    fn register_var_width_uses_true_register_width() {
+        // Two 16-bit fields → register is 32 bits wide, not the 16-bit max-field-extent.
+        let two16 = vec![
+            reset_field(31, 16, Some("0")),
+            reset_field(15, 0, Some("0")),
+        ];
+        assert_eq!(register_var_width(&register_with(None, two16)), 32);
+        // Declared size_bits wins when it is wider than the located fields (reserved top bits).
+        let one_field = vec![reset_field(3, 0, Some("0"))];
+        assert_eq!(register_var_width(&register_with(Some(32), one_field)), 32);
+        // Never truncate a field: size_bits below the highest field bit is lifted to field_top.
+        let wide_field = vec![reset_field(23, 0, Some("0"))];
+        assert_eq!(register_var_width(&register_with(Some(8), wide_field)), 24);
+        // No located fields, no size → the 32-bit fallback (unchanged behavior).
+        assert_eq!(register_var_width(&register_with(None, vec![])), 32);
+        // size_bits with no located fields → the declared width.
+        assert_eq!(register_var_width(&register_with(Some(64), vec![])), 64);
+    }
+
+    #[test]
+    fn register_reset_emits_once_var_width_is_the_register_width() {
+        // A 32-bit register of two 16-bit fields whose composed reset (0x1234_0000) needs >16 bits:
+        // under the true register width it is now emittable (was DeferredWidth under max-field-extent).
+        let fields = vec![
+            reset_field(31, 16, Some("0x1234")),
+            reset_field(15, 0, Some("0")),
+        ];
+        let r = register_with(None, fields);
+        let w = register_var_width(&r); // 32
+        assert_eq!(w, 32);
+        assert!(matches!(
+            classify_register_reset(&r.fields, w),
+            RegisterResetOutcome::Emit(0x1234_0000)
+        ));
+        // Under the OLD max-field-extent width (16) it would have been over-width.
+        assert!(matches!(
+            classify_register_reset(&r.fields, 16),
+            RegisterResetOutcome::DeferredWidth
         ));
     }
 

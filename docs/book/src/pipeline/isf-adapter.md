@@ -221,9 +221,51 @@ Two complementary checks cover ISF output:
 
 Per the `BOOK-METHOD-DOC` standing close-rule, each tree carries a
 topically-placed implementation+verification summary; the
-task-tree files remain the machine-tracked authority. The seven
-trees below all closed at the ISF / FSMGen boundary; their `.isf`
+task-tree files remain the machine-tracked authority. The trees
+below all closed at the ISF / FSMGen boundary; their `.isf`
 adapter behaviour is captured here in one consolidated section.
+
+### `ISF-REGISTER-RESET-EMIT` — register reset values reach the `.isf`
+
+#### Why it mattered
+
+SpecForge already captured each register's per-field **reset value** (the value a field powers up
+at) and the adapter already emitted a `(storage (var …))` per register — but the reset was thrown
+away at the emit boundary, so every emitted register silently defaulted to all-zeros even when the
+PDF documented a specific power-up value. That is exactly the kind of captured intent that should
+reach the `.isf` (or be an explicit residual), not vanish.
+
+#### What this tree changed
+
+- **`.0`/`.1` (measure first).** Before writing any emitter code, a read-only sweep of the whole
+  persisted corpus established the surface: 1508 registers compose a clean integer reset, the
+  documented values are mostly numeric (with a long symbolic tail like `IMPLEMENTATION DEFINED`),
+  and — decisively — the protocol wire specs (APB/AHB/AXI/SWD) compose **zero** register resets, so
+  the change could not touch them.
+- **`.2` (emit).** The storage var gained an optional reset; a register's reset is composed from its
+  fields by placing each field's value at its bit offset, and `(reset V)` is emitted only when every
+  field carries a clean non-negative integer that fits, with no overlaps. Anything symbolic, partial,
+  or unfit is left implicit and recorded as one honest summary residual.
+- **`.3` (right-size the register).** The storage var width was the widest single *field*, which
+  under-sized multi-field registers (a 32-bit register of two 16-bit fields was emitted at
+  `(width 16)`). It now uses the true register width (`size_bits`, never below the highest field
+  bit), which both fixes that latent mis-sizing and lets a wider documented reset fit.
+
+#### What you see now
+
+A register-map document's `.isf` now carries each register's documented power-up value at its true
+width, e.g. `(var dpidr_bit_assignments (width 32) (reset 469841015))`. A register whose reset the
+document leaves symbolic or unspecified is emitted reset-less (FSMGen defaults it to all-zeros), and
+the adapter's `residual_decisions` carry a single honest summary of how many resets were not lowered
+and why. No power-up value is ever guessed.
+
+#### How it is verified
+
+Composition, parsing, width-sizing and the residual are covered by focused unit tests. On the live
+corpus (release binary): the AMBA wire specs emit **byte-identical** `.isf`; CoreSight SoC-600 gains
+183 `(reset V)` clauses; every emitted `.isf` passes FSMGen `--strict --check --json` with zero new
+diagnostics; the wire-protocol extraction gold (WIRE-BASED-100) and `kg-bench` are unchanged
+(register reset is orthogonal to the constraint/relation/temporal surfaces).
 
 ### `R6-ISF-ADAPTER` — bring the `.isf` adapter under task-tree ownership
 

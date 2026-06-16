@@ -1,3 +1,31 @@
+### ISF-REGISTER-RESET-EMIT.3 — reconcile storage-var width to the true register width (closes tree)
+Closing leaf of the tree. The ISF storage var width was the widest single *field*, which under-sized
+multi-field registers (a 32-bit register of two 16-bit fields was emitted at `(width 16)`, truncating
+any reset above bit 15). It now uses the **true register width** — `register_var_width(r)` =
+`size_bits ⊔ max(bits_high)+1` (the declared width, never below the highest located field bit so no
+field truncates; 32 fallback). This fixes the latent mis-sizing and lets the over-width composable
+resets from `.2` fit and emit.
+
+- **Implementation** (`crates/specforge/src/ir/isf_ir.rs`): new `register_var_width` replaces the
+  max-field-extent computation in the storage build; +2 unit tests (`register_var_width_uses_true_
+  register_width`, `register_reset_emits_once_var_width_is_the_register_width`).
+- **Measured (read-only, before coding):** 1045 of 2108 register vars change width (true register
+  width), **0 in wire docs** (APB/AHB/AXI/SWD register vars are unlocated/absent → fallback unchanged),
+  ~155 over-width composable resets become emittable.
+- **Live-verified (release):** AXI `.isf` **byte-identical** to the original pre-`.2` baseline (wire
+  docs 0-change); CoreSight SoC-600 storage resets **120 → 183** at corrected widths (e.g.
+  `(var dpidr_bit_assignments (width 32) (reset 469841015))`); every emitted `.isf` passes FSMGen
+  `--strict --check --json` (success / 0 errors / 0 diagnostics). NVMe and HBM2 keep their PRE-EXISTING
+  strict diagnostics — NVMe `isf_conflicting_rule_writes` on `ELEN` (a `(rule …)` conflict), HBM2
+  `+enums` `REPAIR_LANE_8` literal — which are rule/enum-lowering issues unrelated to storage, so the
+  change introduces **0 new** diagnostics (it only touches `(var …)`).
+- **Gates ALL GREEN**: ADR-0006 ✓; WIRE-BASED-100 **1.000** (constraint ×4 + temporal ×3, orthogonal) ✓;
+  wire-`.isf` byte-identical ✓; FSMGen 0-new ✓; `kg-bench` 156/156 ✓; `run_ci.sh` GREEN (lib **1651** /
+  2 ignored, **+2 tests**) ✓. **Book:** `pipeline/isf-adapter.md` gained the "Closed task trees"
+  `ISF-REGISTER-RESET-EMIT` subsection (BOOK-METHOD-DOC close-rule). **Tree CLOSED** — every composable
+  register reset reaches the `.isf` at its true width (north-star bar #6); symbolic/partial/unfit are
+  honest residuals; nothing fabricated.
+
 ### ISF-REGISTER-RESET-EMIT.2 — emit register reset values as ISF `(storage (var … (reset V)))`
 First code slice of the tree (measurement-first; policy locked by `.1`). The `.isf` adapter now lowers a
 register's documented per-field reset values to FSMGen's optional storage `(reset V)`, so an emitted

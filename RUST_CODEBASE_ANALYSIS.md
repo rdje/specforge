@@ -4,6 +4,19 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-06-16 — ISF-REGISTER-RESET-EMIT.3: storage var width = true register width; TREE CLOSED)
+- **`ir/isf_ir.rs` storage var width corrected.** New `register_var_width(r)` = `size_bits ⊔
+  max(bits_high)+1` (declared width, never below the highest located field bit; 32 fallback) replaces
+  the prior max-single-field-extent width, which mis-sized multi-field registers. The over-width
+  composable resets from `.2` now fit and emit at the true register width.
+- **Blast radius:** 1045/2108 register vars change width, **0 in wire docs** (their register fields are
+  unlocated/absent → fallback unchanged) → AXI/AHB/APB/SWD `.isf` byte-identical, WIRE-BASED-100
+  untouched. CoreSight SoC-600 storage resets 120→183; FSMGen `--strict --check` 0-new (NVMe/HBM2 keep
+  pre-existing rule-conflict/enum-literal diagnostics, orthogonal to storage). lib 1649→1651 (+2).
+- **`ISF-REGISTER-RESET-EMIT` CLOSED** (`.0`/`.1`/`.2`/`.3`). The ISF emitter now lowers a register's
+  documented reset to `(storage (var NAME (width <true>) (reset V)))` whenever it composes a clean
+  integer, with an honest residual otherwise — closing the register-reset ISF-fidelity gap.
+
 ## Session update (2026-06-16 — ISF-REGISTER-RESET-EMIT.2: register reset values reach the `.isf`)
 - **ISF emitter (`ir/isf_ir.rs`) now lowers register reset values.** `IsfStorageVar` gains
   `reset: Option<u64>`; `from_intent_ir` composes each register's reset from its per-field

@@ -1,4 +1,33 @@
 # DEVELOPMENT_NOTES
+## ISF-REGISTER-RESET-EMIT.3 (`2026-06-16`) — reconcile storage-var width to the true register width (closes tree)
+- **Why:** `.1` found 169 composable registers whose composed reset needs more bits than the var width
+  the emitter used. That width was the widest single *field* (max-field-extent), which is a latent bug
+  for multi-field registers — a 32-bit register of two 16-bit fields was `(width 16)`, so a reset above
+  bit 15 was over-width and FSMGen would fail it closed. Fixing the width both corrects that mis-sizing
+  and lets those resets emit.
+- **What changed** (`ir/isf_ir.rs`): new `register_var_width(r)` = `size_bits ⊔ max(bits_high)+1` — the
+  document's declared width, but never below one-past-the-highest-located-field-bit so no field is ever
+  truncated; falls back to 32 only when neither is available. It replaces the max-field-extent `width`
+  in the storage build; the rest of `.2`'s reset path is unchanged, so the over-width composable resets
+  now classify as `Emit` instead of `DeferredWidth`.
+- **Measurement-first** (Acceptance Criterion #1, read-only over the corpus): 1045 of 2108 register
+  vars change width, **0 of them in wire docs** (APB/AHB/AXI/SWD register vars have unlocated fields or
+  none → fallback width unchanged), ~155 over-width composable resets become emittable. So the change is
+  a correctness fix confined to register-heavy docs; the wire gold is untouched.
+- **How verified:** +2 unit tests (`register_var_width` size_bits/field_top/never-truncate/fallback;
+  an over-width reset becoming `Emit` once the var is the register width). Live (release binary): AXI
+  `.isf` byte-identical to the original pre-`.2` baseline (wire docs 0-change); CoreSight SoC-600 storage
+  resets 120→183 at corrected widths, FSMGen `--strict --check` success/0/0. Six register-heavy docs
+  strict-checked: CoreSight/CCIX/VT-d/GIC/MMU pass; NVMe and HBM2 keep a single PRE-EXISTING diagnostic
+  each — NVMe `isf_conflicting_rule_writes` on `ELEN` (a `(rule …)` write conflict), HBM2 `+enums`
+  `REPAIR_LANE_8` package-literal — neither of which references a `(var …)`/`(storage …)`/`(reset …)`,
+  so they are rule/enum-lowering issues that pre-date and are orthogonal to this tree (0 new diagnostics;
+  the change only emits/sizes storage vars). WIRE-BASED-100 1.000; `kg-bench` 156/156; `run_ci.sh` green
+  (lib 1651, +2). Book `pipeline/isf-adapter.md` gained the close-rule "Closed task trees" subsection.
+- **Tree CLOSED.** The full `.0`→`.3` arc: a register's documented reset, captured but dropped at the
+  ISF boundary, now reaches the `.isf` as `(storage (var NAME (width <true>) (reset V)))` for every
+  composable register, with symbolic/partial/unfit resets recorded as one honest adapter residual.
+
 ## ISF-REGISTER-RESET-EMIT.2 (`2026-06-16`) — emit register reset values as ISF `(storage (var … (reset V)))`
 - **Why:** `.1` proved the gap groundable (446 V>0 composable resets, all 3 CoreSight TRMs) and the
   wire-doc blast radius ZERO. This slice lowers them — the extracted register reset reaches the `.isf`
