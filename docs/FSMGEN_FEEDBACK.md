@@ -170,6 +170,28 @@ records the FSMGEN-native option and a concrete shape so FSMGEN can weigh in.
 
 ## Question / feature request (2026-06-16) — lowering a transaction's phase membership without fabricating drive VALUES or step ORDER
 
+> **ANSWERED `2026-06-16`** — FSMGEN responded in `subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`
+> (§ "2026-06-16: Transaction Phase Membership Without Fabricated Values Or Order", commits
+> `ISF-SPECFORGE-PHASE-MEMBERSHIP-RESPONSE.1`/`.2`; SPECFORGE re-pinned `subs/fsmgen`
+> `8c39827f → 030f8c273` under `FSMGEN-REFRESH-INTEGRATE-3`). **Short answer: do not fabricate either
+> value or order; no immediate FSMGen code change is needed; the right *future* feature is checked
+> transaction phase-group metadata in ISF, under its own FSMGen tree.** Per question: **(1) value-less
+> output participation → NO** — `(drive S)` is value-bearing behavior, a bare/default drive would be
+> the same fabrication; keep it in SPECFORGE IntentIR metadata/residual, emit a `drive` only when value
+> is grounded too. **(2) unordered/partial-order body → NO** — ISF bodies are intentionally
+> source-ordered, the wrong container for unordered membership; keep it outside the body. **(3)
+> phase-group metadata → YES, agreed as the future ISF shape** — checked metadata first (txn name /
+> authored phase names / member signals per phase / actor-relative role/direction / optional
+> provenance), with a hard negative rule (no implied values/schedule/HDL/SV-UVM-VHDL output until those
+> have their own contracts) and real validation; distinct from the now-shipped actor-level `(observe …)`
+> metadata; needs its own FSMGen tree (not shipped). **(4) ordering — confirmed division:** body =
+> grounded behavior+order, verification family = grounded temporal obligations, future phase-group
+> metadata = membership/phase/role facts with no behavior. **`.isf` stays the source of truth** (no
+> `.val`). **SPECFORGE action:** this validates the honest-residual stance and confirms
+> `KG-ISF-TRANSACTIONS.2i` option (a) — ship the grounded per-phase membership grouping as IntentIR
+> metadata (not ordered ISF steps), value/order as honest residual, `.isf` byte-identical; the
+> cross-`.isf` phase-group metadata surface is recorded as the future FSMGen-owned carry path.
+
 **What SPECFORGE is trying to do.** SPECFORGE is building first-class transaction
 capture (its `KG-ISF-TRANSACTIONS` work). For each transaction a chip-spec PDF defines,
 it recovers, grounded in the document: (a) the **set of signals** that participate, (b)
@@ -311,7 +333,8 @@ Last SPECFORGE submodule sync reviewed:
 
 - FSMGEN previous baseline: `9bfb9a20` (history: `955f2bb` → `32aa318` → `9bfb9a20`)
 - FSMGEN refreshed baseline: `88a7af9c` (`FSMGEN-REFRESH-INTEGRATE.1`, `2026-05-29`; +637 commits over `9bfb9a20`)
-- FSMGEN LATEST refreshed baseline: `8c39827f` (`FSMGEN-REFRESH-INTEGRATE-2.1`, `2026-06-16`; +300 commits over the intervening `d31b0b91`, itself reached via `88a7af9c → c0b7eaa7 → 43b29f5c → 92d7036b → d31b0b91`). **No contract change affects SpecForge's emitted `.isf`** — the 7 `*_passes_fsmgen_strict_validation` canaries + full `run_ci.sh` pass on the new binary, and every form SpecForge emits is still `shipped` in the `13k` matrix. The +300 commits are FSMGen-internal (compositional control-flow acceptance widening, ATL scheduling diagnostics, IAL2 feature-completeness, backend-language portability, a semantic-introspection MCP server). **Do we need NEW ISF features? — NO, not now:** the refreshed surface is sufficient for everything SpecForge extracts today and for the deferred composed multi-phase transaction body (already expressible via `spawn`/`do`+`await_all`/`(stage)`/`(repeat)` — a SpecForge BUILD gap, not an ISF gap, per the `KG-ISF-TRANSACTIONS.1` census). Per `[[feedback_isf_no_hacks]]` there is no missing abstraction being hacked around, so no FR is warranted. NEW adopt candidate (grounded, → proposed tree `ISF-REGISTER-RESET-EMIT`): register/CSR reset values `(storage (var N (width W) (reset V)))` — SpecForge extracts register-field `reset_value` + has a `(storage)` emit surface not yet fed from it. Conditional FUTURE ISF candidates (raise ONLY after SpecForge extracts the intent AND an empirical `--strict --check` probe shows ISF can't carry it): ID-based out-of-order multiple-outstanding-transaction correlation; first-class address/data/response phase-group typing. See the `FSMGEN-REFRESH-INTEGRATE-2.2` assessment in `DEVELOPMENT_NOTES.md`.
+- FSMGEN LATEST refreshed baseline: **`030f8c273`** (`FSMGEN-REFRESH-INTEGRATE-3.1`, `2026-06-16`; +9 commits over `8c39827f`, carrying FSMGen's answer to SpecForge's `2026-06-16` transaction-phase-membership question — `ISF-SPECFORGE-PHASE-MEMBERSHIP-RESPONSE.1`/`.2` — plus the shipped actor-level `(observe …)` verification metadata). **No contract change affects SpecForge's emitted `.isf`** — the 6 `*_passes_fsmgen_strict_validation` canaries + full `run_ci.sh` (`1645/0/2`) pass on the new binary, and the emitted APB `.isf` re-validates `success:true`/0-diagnostics. The phase-membership answer required no FSMGen code change; it confirms SpecForge's honest-residual `KG-ISF-TRANSACTIONS.2i` plan (metadata-only grouping). The prior baseline below remains for history.
+- FSMGEN prior refreshed baseline: `8c39827f` (`FSMGEN-REFRESH-INTEGRATE-2.1`, `2026-06-16`; +300 commits over the intervening `d31b0b91`, itself reached via `88a7af9c → c0b7eaa7 → 43b29f5c → 92d7036b → d31b0b91`). **No contract change affects SpecForge's emitted `.isf`** — the 7 `*_passes_fsmgen_strict_validation` canaries + full `run_ci.sh` pass on the new binary, and every form SpecForge emits is still `shipped` in the `13k` matrix. The +300 commits are FSMGen-internal (compositional control-flow acceptance widening, ATL scheduling diagnostics, IAL2 feature-completeness, backend-language portability, a semantic-introspection MCP server). **Do we need NEW ISF features? — NO, not now:** the refreshed surface is sufficient for everything SpecForge extracts today and for the deferred composed multi-phase transaction body (already expressible via `spawn`/`do`+`await_all`/`(stage)`/`(repeat)` — a SpecForge BUILD gap, not an ISF gap, per the `KG-ISF-TRANSACTIONS.1` census). Per `[[feedback_isf_no_hacks]]` there is no missing abstraction being hacked around, so no FR is warranted. NEW adopt candidate (grounded, → proposed tree `ISF-REGISTER-RESET-EMIT`): register/CSR reset values `(storage (var N (width W) (reset V)))` — SpecForge extracts register-field `reset_value` + has a `(storage)` emit surface not yet fed from it. Conditional FUTURE ISF candidates (raise ONLY after SpecForge extracts the intent AND an empirical `--strict --check` probe shows ISF can't carry it): ID-based out-of-order multiple-outstanding-transaction correlation; first-class address/data/response phase-group typing. See the `FSMGEN-REFRESH-INTEGRATE-2.2` assessment in `DEVELOPMENT_NOTES.md`.
 - notable reviewed surfaces (ISF, at `88a7af9c`): the ISF public-interface contract (`ISF_PUBLIC_INTERFACE_CONTRACT.md`), downstream-integration spec (`ISF_DOWNSTREAM_INTEGRATION_SPEC.md`), feature-support matrix (`13k`), and lowering reference (`13h`) — see the `FSMGEN-REFRESH-INTEGRATE.2` feature-adoption assessment in `DEVELOPMENT_NOTES.md`. Key contract point: SpecForge's nested `(contract … (eventually s (within N)))` and `(stage … (input)(output))` are now supported **compatibility aliases** (flat `within N` + `ready`/`valid` preferred); SpecForge's emission stays strict-valid. Earlier-reviewed machine surfaces (`--capability-manifest`, `--check --json`, `FSMGEN_*` diagnostic codes, `--emit-semantic-json`, support/report contracts, `--verify-hdl`) and the live mdBook at `subs/fsmgen/docs/book/` remain.
 
 ## FSMGEN Response Received
@@ -320,7 +343,7 @@ FSMGEN responded in its own tracked document:
 
 - FSMGEN submodule path: `subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`
 - initial response commit observed by SPECFORGE: `7475f07` (`Docs: track SPECFORGE feedback response`)
-- latest response baseline reviewed by SPECFORGE: `8c39827f` (`origin/main` tip; ISF contract / integration / feature-support-matrix `13k` / handoff `SPECFORGE_FEEDBACK_RESPONSE.md` re-reviewed under `FSMGEN-REFRESH-INTEGRATE-2.2`, `2026-06-16`). No response entry is dated after `2026-06-04`; the `2026-06-04` stable-predicate + `min>1`-window asks were already answered AND adopted (closed `FSMGEN-ASSERT-LOWERING`/`FSMGEN-ASSERT-MIGRATE` trees). No new SpecForge-directed ask is open. (Prior baseline: `88a7af9c`, `FSMGEN-REFRESH-INTEGRATE.2`, `2026-05-29`.)
+- latest response baseline reviewed by SPECFORGE: **`030f8c273`** (`origin/main` tip; the `2026-06-16` "Transaction Phase Membership Without Fabricated Values Or Order" response read under `FSMGEN-REFRESH-INTEGRATE-3.1`, `2026-06-16`). That entry **answers SpecForge's `2026-06-16` phase-membership question** (see the ANSWERED callout above): don't fabricate value or order, keep membership as IntentIR metadata/residual, checked phase-group metadata is the future ISF shape (its own FSMGen tree, not shipped). No SpecForge-directed ask is now open. (Prior reviewed baseline: `8c39827f`, `FSMGEN-REFRESH-INTEGRATE-2.2`, `2026-06-16`; before that `88a7af9c`, `FSMGEN-REFRESH-INTEGRATE.2`, `2026-05-29`.)
 
 SPECFORGE's planning interpretation is:
 

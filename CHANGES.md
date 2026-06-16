@@ -1,3 +1,27 @@
+### FSMGEN-REFRESH-INTEGRATE-3 — bump subs/fsmgen 8c39827f → 030f8c273 (+9); record FSMGen's phase-membership answer
+Owner asked to update the FSMGen submodule and read its response. The upstream tip `030f8c273` carries FSMGen's
+answer to SpecForge's `2026-06-16` transaction-phase-membership question (`ISF-SPECFORGE-PHASE-MEMBERSHIP-RESPONSE.1`/`.2`).
+
+- **FSMGen's answer (`subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`):** don't fabricate value or order; no
+  immediate FSMGen code change needed. **(1) value-less output participation → NO** (`(drive S)` is value-bearing;
+  keep it IntentIR metadata/residual). **(2) unordered/partial-order body → NO** (ISF bodies are source-ordered;
+  keep unordered membership outside the body). **(3) phase-group metadata → YES, the agreed future ISF shape** —
+  checked metadata (txn name / phase names / member signals per phase / actor-relative role/direction / provenance),
+  no implied values/order/HDL until its own contract, its own FSMGen tree (not shipped); distinct from the
+  now-shipped actor-level `(observe …)` metadata. **(4) ordering division confirmed** (body = behavior+order;
+  verification family = temporal obligations; future phase-group metadata = membership facts). `.isf` stays the
+  source of truth (no `.val`).
+- **Consequence:** confirms `KG-ISF-TRANSACTIONS.2i` **option (a)** — ship the grounded per-phase membership
+  grouping as IntentIR metadata, `.isf` byte-identical; value/order are honest residuals; the future ISF
+  phase-group surface is the eventual cross-`.isf` carry path (FSMGen-owned).
+- **Verified on the new binary** (per `[[feedback_verify_fsmgen_before_fr]]`): emitted APB `.isf` re-validates
+  `success:true`/0-diagnostics; the 6 `*_passes_fsmgen_strict_validation` canaries + full `scripts/run_ci.sh`
+  green (`1645 passed / 0 failed / 2 ignored`; fmt + warning-deny clippy + rustdoc + mdBook). The +9-commit bump
+  does NOT break SpecForge's emitted `.isf` contract.
+- **Reconciled:** reviewed-baseline `8c39827f → 030f8c273` + the `docs/FSMGEN_FEEDBACK.md` `2026-06-16` question
+  marked ANSWERED; README/MEMORY pin references updated; new tree `docs/tasks/FSMGEN-REFRESH-INTEGRATE-3.md`.
+- Gitlink change (tracked); no Rust/IR change. Next: implement `.2i` (option a) as its own commit.
+
 ### KG-ISF-TRANSACTIONS.2i — design measurement + FSMGEN question; body-emission PARKED pending FSMGEN (measurement-first, docs-only)
 `.2i` is meant to compose each transaction's per-phase body. Before writing it, ran the mandated measurement and an
 empirical ISF-grammar probe (**no code, no extraction change**), and the result re-scoped the slice.

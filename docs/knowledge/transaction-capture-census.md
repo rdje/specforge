@@ -31,6 +31,9 @@ answers:
   - "what FSMGen question/feature-request did KG-ISF-TRANSACTIONS.2i raise (value-less output participation / unordered-or-partial-order body / phase-group metadata / ordering-as-constraint)"
   - "why is KG-ISF-TRANSACTIONS.2i parked/blocked (waiting on FSMGEN to say how to lower phase membership without fabricating drive values or step order)"
   - "what did the .2i Rule-A per-phase grouping measurement find (clean only on AHB, empty on APB/AXI/SWD)"
+  - "what did FSMGEN answer about transaction phase membership (don't fabricate value or order; keep value-less participation + unordered membership as IntentIR metadata/residual not body steps; checked phase-group metadata is the future ISF shape on its own FSMGen tree; .isf stays source of truth, no .val)"
+  - "is KG-ISF-TRANSACTIONS.2i unparked / what is the .2i decision (yes — FSMGen confirmed option a: ship the grounded per-phase membership grouping as IntentIR metadata, .isf byte-identical)"
+  - "what fsmgen pin carries the phase-membership answer (030f8c273, FSMGEN-REFRESH-INTEGRATE-3, ISF-SPECFORGE-PHASE-MEMBERSHIP-RESPONSE.1/.2)"
 date: 2026-06-16
 tags: [kg-isf-transactions, transactions, intent-ir, isf, adr-0006, measured, north-star, ir-intent, recognize-digital-patterns, baseline, fsmgen-feedback]
 evidence: docs/research/transaction-capture-census.md (full census §1–§4); docs/tasks/KG-ISF-TRANSACTIONS.md (sharpened 7-point bar + .2a/.2b/.2c slices); crates/specforge/src/ir/intent.rs (synthesize_transactions + recognize_digital_patterns, the 3 hardcoded Patterns 3/4/5); generated/intent_ir/*/intent_ir.json (the transactions[] surface scanned)
@@ -133,6 +136,19 @@ is the greppable summary so the next session does not re-excavate it.
 > phase-group metadata / ordering-as-constraint) in the `2026-06-16` entry of `docs/FSMGEN_FEEDBACK.md`.
 > **`.2i` body-emission is PARKED pending FSMGEN's answer + owner steer;** the grounded per-phase membership
 > grouping (carried as metadata, `.isf` byte-identical) remains the safe fallback if FSMGEN has no construct.
+
+> **STATUS UPDATE — FSMGEN ANSWERED + `.2i` UNPARKED (`2026-06-16`, pin `030f8c273`,
+> `FSMGEN-REFRESH-INTEGRATE-3`).** FSMGen responded (`subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`,
+> `ISF-SPECFORGE-PHASE-MEMBERSHIP-RESPONSE.1`/`.2`): **don't fabricate value or order** — value-less `(drive S)`
+> stays IntentIR metadata/residual (drives are value-bearing behaviour), unordered membership must NOT be encoded
+> as body order (ISF bodies are source-ordered). **Checked transaction phase-group metadata is the agreed FUTURE
+> ISF shape** (txn name / authored phase names / member signals per phase / actor-relative role/direction /
+> optional provenance; checked metadata only, no implied values/order/HDL until its own contract; its own FSMGen
+> tree, not shipped). Division confirmed: body = grounded behaviour+order, verification family = grounded temporal
+> obligations, future phase-group metadata = membership/role facts. **`.isf` stays the source of truth (no `.val`).**
+> ⇒ **this CONFIRMS `.2i` option (a)** — ship the grounded per-phase membership grouping as IntentIR **metadata**
+> (not ordered ISF steps), `.isf` byte-identical; value/order are honest residuals; the future ISF phase-group
+> metadata surface (FSMGen-owned) is the eventual cross-`.isf` carry path. `.2i` UNPARKED → implement option (a).
 
 ## What the `transactions[]` surface holds today
 

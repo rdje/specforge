@@ -1,4 +1,35 @@
 # DEVELOPMENT_NOTES
+## FSMGEN-REFRESH-INTEGRATE-3 (`2026-06-16`) — pin bump to the phase-membership-response tip; `.2i` unparked
+- **Why:** owner asked to update the FSMGen submodule and read its response. The upstream tip `030f8c273`
+  (+9 over `8c39827f`) carries FSMGen's direct answer to SpecForge's `2026-06-16` transaction-phase-membership
+  question (`ISF-SPECFORGE-PHASE-MEMBERSHIP-RESPONSE.1` select / `.2` answer), plus a shipped actor-level
+  `(observe …)` passive-monitor metadata surface, an IAL1 verification-code-generation frontier, an import-tree
+  refresh, a legacy `fx` removal, and an Accellera standards reference import.
+- **FSMGen's answer (read in full from `subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`, `2026-06-16` §):**
+  don't fabricate value or order; no immediate FSMGen code change. (1) value-less output participation → NO —
+  `(drive S)` is value-bearing behaviour; a bare/default drive would be the same fabrication; keep value-less
+  participation in IntentIR metadata/residual, emit a `drive` only when value is grounded too. (2) unordered /
+  partial-order body → NO — ISF bodies are intentionally source-ordered; the body is the wrong container for
+  unordered membership; keep it outside the body. (3) phase-group metadata → YES, the agreed FUTURE ISF shape —
+  checked metadata first (txn name; authored phase/group names; member signals per phase; actor-relative
+  role/direction; optional provenance/residual notes), with a hard negative rule (no implied values/schedule/HDL/
+  SV-UVM-VHDL output until those have their own contracts) and real validation; distinct from the now-shipped
+  actor-level `(observe …)`; needs its own FSMGen tree (not shipped). (4) ordering division confirmed: body =
+  grounded behaviour+order; verification family (`assert`/`assume`/`cover`, `after`/`next`/`within`, monitors,
+  sampled-value predicates) = grounded temporal obligations; future phase-group metadata = membership/phase/role
+  facts, no behaviour. `.isf` stays the source of truth (don't chase a hypothetical `.val`).
+- **Consequence for `.2i`:** this validates the honest-residual stance and **confirms option (a)** — ship the
+  grounded per-phase membership grouping as IntentIR **metadata** (not ordered ISF steps), `.isf` byte-identical;
+  value/order are honest residuals; the future ISF phase-group metadata surface (FSMGen-owned) is the eventual
+  cross-`.isf` carry path. `.2i` unparked → implement option (a) next.
+- **Verification (per `[[feedback_verify_fsmgen_before_fr]]` — verify on the binary, not commit subjects):**
+  checked out `030f8c273` (clean working tree); the emitted APB `.isf` re-validates through the new
+  `bin/fsmgen --strict --check --json` (`success:true`, 0 diagnostics); the 6 `*_passes_fsmgen_strict_validation`
+  canaries + full `scripts/run_ci.sh` green (`1645/0/2`; fmt + warning-deny clippy + rustdoc + mdBook). No
+  strict-behaviour divergence; the +9-commit bump does not break SpecForge's emitted `.isf` contract.
+- **Reconciled:** reviewed-baseline `8c39827f → 030f8c273`; `docs/FSMGEN_FEEDBACK.md` question marked ANSWERED;
+  README ×2 + MEMORY pin references; new tree `FSMGEN-REFRESH-INTEGRATE-3`. Gitlink change only (no Rust/IR).
+
 ## KG-ISF-TRANSACTIONS.2i (`2026-06-16`) — design measurement + FSMGEN question; body-emission PARKED pending FSMGEN
 - **Why:** `.2i` is meant to compose each named transaction's per-phase body (group its `.2c` signal-set membership
   into its `.2g` phases, then drive outputs / sample inputs per phase). Before writing that — measurement-first +
