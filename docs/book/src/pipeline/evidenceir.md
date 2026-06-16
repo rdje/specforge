@@ -132,6 +132,12 @@ list** — so they apply to any spec, including the 101st protocol the tool has 
   re-attributes onto the agent itself ("Subordinate", "decoder"). The relations that were stranded under the
   fragment then merge onto the genuine agent, so the agent is connected to *all* the signals the document says it
   drives, not just some — the model gets **more complete**, not just cleaner.
+- **"Both of them" means both.** When the subject names two agents joined by *and* — *"the Subordinate and decoder
+  read HADDR"* — the relation is split so *each* agent is connected to the signal, exactly as the sentence says.
+  Only the conjunction *and* triggers this (both act); *or* is left alone, because a disjunction is ambiguous —
+  attributing the relation to an agent that might *not* act would be a fabrication, and the tool would rather stay
+  honest. This is how, for example, an AMBA AHB *decoder* — mentioned only in coordinated sentences — ends up
+  correctly connected to the address signals it reads.
 
 The net effect is an agent surface that names every real agent once and connects it to its signals, with the
 prose noise removed — and the four wire-based reference specs stay byte-for-fact identical, so the clean-up never

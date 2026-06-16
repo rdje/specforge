@@ -1,3 +1,27 @@
+### KG-ISF-COMPLETENESS.1b.iii — coordinated-subject split
+A second Class-B completeness recovery. New `split_coordinated_actor_subject` +
+`split_coordinated_actor_relations` (+ `relation_actor_id_slug`) in `ir/evidence.rs` — a post-pass in
+`actor_signal_relation_surface` between `augment_check_signal_relations_from_tables` and
+`dedup_actor_signal_relations` — replace a relation whose subject is a coordinated "X and Y"
+(*"the Subordinate and decoder read HADDR"*) with one relation per conjunct, so BOTH genuine agents are
+connected to the signal the document says they both act on, and the coordinated-fragment actor disappears.
+
+- **Universal grammar (ADR 0006, no name list).** Splits on the conjunction `and` ONLY — `or` is
+  deliberately not split (a disjunction is ambiguous; attributing the relation to an agent that may not act
+  would fabricate). Each conjunct is re-validated through the full agent gate (`normalize_relation_actor_name`,
+  i.e. the `.1a` reject + `.1b.i` consolidation); the split fires only when ≥2 conjuncts survive, else the
+  subject is left exactly as-is. Each split relation keeps the signal/relation/provenance and gets a
+  deterministic per-conjunct id (`<id>__<slug>`); duplicates merge in the existing first-wins dedup.
+- **Measured (read-only):** exactly 2 coordinated-subject actors corpus-wide, both AHB
+  (`Subordinate and decoder` 6/4, `Exclusive Access Monitor and Subordinate` 4/2), both conjuncts real
+  agents. **WIRE-BASED-100 safe:** the AHB relation gold is 6 `drives` facts on unrelated statements
+  (none coordinated), and the scorer does not penalize off-gold relations (AXI 343 rels / fp=0).
+- **Live AHB rebuild:** `decoder` 4/2 → 8/6 (now a fully-connected agent — was 0/0 before `.1b`),
+  `Subordinate` 27/26 → 32/31, `Exclusive Access Monitor` 4/2 → 5/3, the two coordinated-fragment actors
+  gone, actors 19 → 17. WIRE-BASED-100 HELD 1.000 (constraints AXI/APB/AHB + actor-relations ×4 + temporal
+  ×3); `kg-bench` 156/156; `run_ci.sh` GREEN (lib 1637 pass / 2 ignored, +2 tests). KM card
+  `agent-coordinated-subject-split`.
+
 ### KG-ISF-COMPLETENESS.1b.i — Class-B trailing-fragment consolidation
 The completeness half of `.1` (Class-B Fragment-of-a-real-agent). New `consolidate_trailing_fragment` in
 `ir/evidence.rs` strips a TRAILING universal verb (`NON_ACTOR_LEADING_VERBS`) or a discourse-adverb (a new

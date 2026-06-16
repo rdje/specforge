@@ -2394,6 +2394,92 @@ fn normalize_relation_actor_name(value: &str) -> Option<String> {
     Some(actor)
 }
 
+/// `KG-ISF-COMPLETENESS.1b.iii` — split a coordinated relation subject ("the Subordinate and decoder read
+/// HADDR") into its conjuncts. The coordinating conjunction `and` means BOTH agents act, so each side is a
+/// real relation subject. Each segment is re-validated through the full agent gate
+/// (`normalize_relation_actor_name`, i.e. the `.1a` reject + `.1b.i` consolidation), and the distinct
+/// survivors are returned in order. Returns empty when the value is not a coordination (no word-bounded
+/// `and`) or fewer than two conjuncts survive — the caller then leaves the subject exactly as-is.
+/// `or` is deliberately NOT split: a disjunction is ambiguous (only one agent acts), so splitting it would
+/// fabricate a relation. ADR 0006-safe — a closed-class conjunction, never a chip-spec name list.
+fn split_coordinated_actor_subject(value: &str) -> Vec<String> {
+    let tokens: Vec<&str> = value.split_whitespace().collect();
+    if !tokens.iter().any(|token| token.eq_ignore_ascii_case("and")) {
+        return Vec::new();
+    }
+    let mut segments: Vec<String> = Vec::new();
+    let mut current: Vec<&str> = Vec::new();
+    for token in tokens {
+        if token.eq_ignore_ascii_case("and") {
+            if !current.is_empty() {
+                segments.push(current.join(" "));
+                current.clear();
+            }
+        } else {
+            current.push(token);
+        }
+    }
+    if !current.is_empty() {
+        segments.push(current.join(" "));
+    }
+    if segments.len() < 2 {
+        return Vec::new();
+    }
+    let mut actors: Vec<String> = Vec::new();
+    for segment in segments {
+        if let Some(actor) = normalize_relation_actor_name(&segment)
+            && !actors.contains(&actor)
+        {
+            actors.push(actor);
+        }
+    }
+    actors
+}
+
+/// A deterministic, filesystem-safe token for an actor name, used to keep a split relation's id unique.
+fn relation_actor_id_slug(actor: &str) -> String {
+    actor
+        .chars()
+        .map(|c| {
+            if c.is_ascii_alphanumeric() {
+                c.to_ascii_lowercase()
+            } else {
+                '_'
+            }
+        })
+        .collect()
+}
+
+/// `KG-ISF-COMPLETENESS.1b.iii` — post-pass over the assembled relation list: replace every relation whose
+/// subject is a coordinated "X and Y" with one relation per surviving conjunct (same signal / relation /
+/// provenance, a per-conjunct-unique id), so both genuine agents are connected to the signal the document
+/// says they both act on. Non-coordinated relations pass through untouched. Runs BEFORE
+/// `dedup_actor_signal_relations`, so a split relation that duplicates an existing one is merged
+/// (first-wins by actor/signal/is_drives) and the coordinated-fragment actor disappears.
+fn split_coordinated_actor_relations(
+    relations: Vec<ActorSignalRelation>,
+) -> Vec<ActorSignalRelation> {
+    let mut out = Vec::with_capacity(relations.len());
+    for relation in relations {
+        let conjuncts = split_coordinated_actor_subject(&relation.actor_name);
+        if conjuncts.len() < 2 {
+            out.push(relation);
+            continue;
+        }
+        for actor in &conjuncts {
+            let mut split = relation.clone();
+            split.relation_id = format!(
+                "{}__{}",
+                relation.relation_id,
+                relation_actor_id_slug(actor)
+            );
+            split.actor_name = actor.clone();
+            out.push(split);
+        }
+    }
+    out
+}
+
 fn is_tie_off_actor_text(value: &str) -> bool {
     matches!(normalize_actor_term(value).as_str(), "tie off" | "tieoff")
 }
@@ -13668,7 +13754,11 @@ fn actor_signal_relation_surface(
     manifest.record(&run);
     let augmented =
         augment_check_signal_relations_from_tables(source_ir, &run.records, prior_guidance);
-    dedup_actor_signal_relations(augmented)
+    // KG-ISF-COMPLETENESS.1b.iii — split coordinated "X and Y" subjects into one relation per conjunct
+    // BEFORE dedup, so both genuine agents are connected to the signal and the coordinated-fragment actor
+    // disappears (a duplicate of an existing relation merges first-wins).
+    let split = split_coordinated_actor_relations(augmented);
+    dedup_actor_signal_relations(split)
 }
 
 #[expect(
@@ -14235,6 +14325,68 @@ mod tests {
                 "{marker:?} must also be a known leading function word"
             );
         }
+    }
+
+    // ── KG-ISF-COMPLETENESS.1b.iii — coordinated-subject split ───────────────────────────────
+    #[test]
+    fn coordinated_subject_splits_into_real_conjuncts() {
+        // "X and Y" → both real agents (mirrors the measured AHB coordinated fragments).
+        assert_eq!(
+            super::split_coordinated_actor_subject("Subordinate and decoder"),
+            vec!["Subordinate".to_string(), "decoder".to_string()]
+        );
+        assert_eq!(
+            super::split_coordinated_actor_subject("Exclusive Access Monitor and Subordinate"),
+            vec![
+                "Exclusive Access Monitor".to_string(),
+                "Subordinate".to_string()
+            ]
+        );
+        // A disjunction is ambiguous — NEVER split (would fabricate a relation for an agent that may not act).
+        assert!(super::split_coordinated_actor_subject("Manager or Subordinate").is_empty());
+        // Not a coordination at all → no split.
+        assert!(super::split_coordinated_actor_subject("Subordinate").is_empty());
+        // A conjunct that fails the agent gate is dropped; <2 survivors means the caller keeps the original.
+        assert_eq!(
+            super::split_coordinated_actor_subject("Subordinate and for"),
+            vec!["Subordinate".to_string()]
+        );
+    }
+
+    #[test]
+    fn coordinated_relation_post_pass_attributes_to_both_agents() {
+        use crate::ir::source::{ActorSignalRelation, AutomationConfidence, RelationKind};
+        let coordinated = ActorSignalRelation {
+            relation_id: "chk_asr_0007".to_string(),
+            actor_name: "Subordinate and decoder".to_string(),
+            signal_name: "HADDR".to_string(),
+            relation: RelationKind::Reads,
+            source_statement_ids: vec!["stmt_42".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let plain = ActorSignalRelation {
+            relation_id: "chk_asr_0008".to_string(),
+            actor_name: "Manager".to_string(),
+            signal_name: "HWUSER".to_string(),
+            relation: RelationKind::Drives,
+            source_statement_ids: vec!["stmt_43".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let out = super::split_coordinated_actor_relations(vec![coordinated, plain.clone()]);
+        // The coordinated relation became one per conjunct (signal/relation/provenance preserved, ids unique),
+        // and the plain relation passed through untouched.
+        assert_eq!(out.len(), 3);
+        assert_eq!(out[0].actor_name, "Subordinate");
+        assert_eq!(out[0].relation_id, "chk_asr_0007__subordinate");
+        assert_eq!(out[1].actor_name, "decoder");
+        assert_eq!(out[1].relation_id, "chk_asr_0007__decoder");
+        for r in &out[..2] {
+            assert_eq!(r.signal_name, "HADDR");
+            assert!(matches!(r.relation, RelationKind::Reads));
+            assert_eq!(r.source_statement_ids, vec!["stmt_42".to_string()]);
+        }
+        assert_eq!(out[2].actor_name, "Manager");
+        assert_eq!(out[2].relation_id, "chk_asr_0008");
     }
 
     #[test]

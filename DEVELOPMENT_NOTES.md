@@ -1,4 +1,30 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-COMPLETENESS.1b.iii (`2026-06-16`) — coordinated-subject split
+- **Why:** a second Class-B completeness recovery. A coordinated subject "X and Y" ("*the Subordinate and
+  decoder read HADDR*") was captured as a single fragment actor `Subordinate and decoder`, stranding
+  relations that belong to BOTH genuine agents — the owner's north star wants every real agent connected to
+  the signals it acts on.
+- **Implementation:** `split_coordinated_actor_subject(value)` splits on the word-bounded conjunction `and`
+  (NOT `or` — disjunction is ambiguous, splitting it would fabricate), re-validates each segment through the
+  full agent gate `normalize_relation_actor_name`, and returns the distinct survivors (empty when not a
+  coordination or <2 survive). `split_coordinated_actor_relations(relations)` is a post-pass that replaces
+  each coordinated relation with one per conjunct (same signal/relation/provenance, a deterministic
+  `<id>__<slug>` id via `relation_actor_id_slug`). Wired into `actor_signal_relation_surface` BETWEEN
+  `augment_check_signal_relations_from_tables` and `dedup_actor_signal_relations`, so the split relations
+  dedup (first-wins by actor/signal/is_drives) against existing ones and the coordinated-fragment actor —
+  having no relations left — is never minted as a Phase-1 actor. Augment is unaffected (it keys off the
+  signal, present either way).
+- **WIRE-BASED-100 risk analysis (done before coding):** the AHB relation gold is 6 `drives` facts on
+  unrelated statements (HRESP/HREADYOUT/H*USER), none coordinated, and the eval scorer does not penalize
+  off-gold relations (the `.1b.i` eval had AXI 343 rels / fp=0). So the split adds true `reads` relations on
+  other statements without touching any gold fact → safe.
+- **Verification:** measured exactly 2 coordinated subjects corpus-wide (both AHB), both conjuncts real,
+  net-new completeness after dedup (`decoder` +4 reads, `Subordinate` +3, `Exclusive Access Monitor` +1).
+  Live AHB: `decoder` 4/2→8/6, `Subordinate` 27/26→32/31, `Exclusive Access Monitor` 4/2→5/3, fragments
+  gone, actors 19→17. WIRE-BASED-100 1.000 (constraints ×3 / relations ×4 / temporal ×3); `kg-bench`
+  156/156; `run_ci.sh` green (+2 tests, lib 1637 pass / 2 ignored).
+- **KM:** `agent-coordinated-subject-split`. **Frontier:** `.1b.ii` / `.1b.iv` (deferred-with-trigger) / `.2+`.
+
 ## KG-ISF-COMPLETENESS.1b.i (`2026-06-16`) — Class-B trailing-fragment consolidation
 - **Why:** the completeness half of `.1` (Class-B). The prose subject extractor captures a real agent noun
   with a dangling trailing verb/adverb (`Subordinate extends`, `decoder also`); because the LEADING token is

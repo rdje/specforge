@@ -171,6 +171,35 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   AXI/APB/AHB/SWD 6/6·6/6·6/6·1/1; temporal AXI/APB/AHB 3/3·3/3·4/4; SWD lone constraint the documented
   promotion-only 0/1, independent). `kg-bench` 156/156; `run_ci.sh` GREEN (lib 1635 pass/2 ignored, +2
   tests). KM card `[[agent-trailing-fragment-consolidation]]`. Frontier → `.1b.ii`/`.1b.iii`/`.1b.iv`.
+- ID: `KG-ISF-COMPLETENESS.1b.iii` · Status: `done` (`2026-06-16`, measurement-first; LANDED +
+  WIRE-BASED-100-verified) · Goal: **coordinated-subject split** — a relation whose subject is a coordinated "X and Y"
+  ("*the Subordinate and decoder read HADDR*") is split into one relation per conjunct, so BOTH genuine
+  agents are connected to the signal the document says they both act on. Universal grammar (the coordinating
+  conjunction `" and "`), no name list (ADR 0006). **Restricted to `" and "` (conjunction = both);
+  deliberately NOT `" or "`** — a disjunction is ambiguous (only one acts), so splitting it would fabricate.
+  Each conjunct is re-validated through the full agent gate (`normalize_relation_actor_name`, i.e. the
+  `.1a`+`.1b.i` chain); the split fires only when ≥2 conjuncts survive, else the subject is left exactly
+  as-is. Placed as a post-pass in `actor_signal_relation_surface` BETWEEN
+  `augment_check_signal_relations_from_tables` and `dedup_actor_signal_relations`, so the split relations
+  dedup (first-wins by actor/signal/is_drives) against existing ones and the coordinated-fragment actor
+  vanishes. **Measured (read-only over the corpus):** exactly 2 coordinated-subject actors, both AHB —
+  `Subordinate and decoder` 6/4 (both conjuncts real) and `Exclusive Access Monitor and Subordinate` 4/2;
+  net-new completeness after dedup: `decoder` +4 reads (HADDR/HADDRCHK/HCTRLCHK1/HNONSEC), `Subordinate`
+  +3, `Exclusive Access Monitor` +1. **WIRE-BASED-100 safe:** the AHB relation gold is 6 `drives` facts on
+  unrelated statements (HRESP/HREADYOUT/H*USER), none coordinated, and the scorer does not penalize
+  off-gold relations (AXI 343 rels / fp=0 in the `.1b.i` eval). Hard gate via fresh-Pattern eval;
+  `run_ci.sh` before green.
+  **LANDED `2026-06-16`** — `split_coordinated_actor_subject` + `split_coordinated_actor_relations`
+  (+ `relation_actor_id_slug`) in `ir/evidence.rs`, wired as a post-pass in `actor_signal_relation_surface`
+  between `augment_check_signal_relations_from_tables` and `dedup_actor_signal_relations`. Splits on
+  word-bounded `and` only (re-validates each conjunct through `normalize_relation_actor_name`; fires only
+  when ≥2 survive, else leaves the subject as-is); the coordinated relation is REPLACED by one per conjunct
+  with a deterministic per-conjunct id (`<id>__<slug>`). **Live AHB rebuild:** the 2 coordinated-fragment
+  actors GONE, `decoder` 4/2 → **8/6** (gained the 4 coordinated reads), `Subordinate` 27/26 → **32/31**,
+  `Exclusive Access Monitor` 4/2 → **5/3**; actors 19→17. **WIRE-BASED-100 HELD 1.000** (constraints
+  AXI/APB/AHB 4/4·6/6·6/6; actor-relations AXI/APB/AHB/SWD 6/6·6/6·6/6·1/1; temporal 3/3·3/3·4/4).
+  `kg-bench` 156/156; `run_ci.sh` GREEN (lib 1637 pass/2 ignored, +2 tests). KM card
+  `[[agent-coordinated-subject-split]]`. Frontier → `.1b.ii` / `.1b.iv` (both deferred-with-trigger) / `.2+`.
 - ID: `KG-ISF-COMPLETENESS.2+` · Status: `pending` · Goal: the remaining bar dimensions per doc
   (relation completeness, signal direction/width coverage, constraint completeness via the gauge,
   behavior/temporal carry, and the ISF round-trip fidelity check), each measurement-first + gold-gated.
@@ -227,3 +256,15 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   25→19; AXI real agents byte-identical, actors 21. WIRE-BASED-100 HELD 1.000 (constraints ×3 / relations
   ×4 / temporal ×3) on fresh-Pattern eval; `kg-bench` 156/156; `run_ci.sh` GREEN (+2 tests, lib 1635
   pass/2 ignored). KM card `agent-trailing-fragment-consolidation`. Frontier → `.1b.ii`/`.1b.iii`/`.1b.iv`.
+- `2026-06-16`: **`.1b.iii` DONE** — coordinated-subject split LANDED. `split_coordinated_actor_subject` +
+  `split_coordinated_actor_relations` (+ `relation_actor_id_slug`) in `ir/evidence.rs`, a post-pass in
+  `actor_signal_relation_surface` before dedup: a relation whose subject is a coordinated "X and Y"
+  ("*the Subordinate and decoder read HADDR*") is replaced by one relation per conjunct, so BOTH genuine
+  agents connect to the signal they both act on. Splits on `and` ONLY (conjunction = both); `or` excluded
+  (disjunction = ambiguous → fabrication); each conjunct re-validated through the full agent gate; fires
+  only when ≥2 survive. Measured: 2 coordinated subjects corpus-wide (both AHB), both conjuncts real. Live
+  AHB: `decoder` 4/2→8/6, `Subordinate` 27/26→32/31, `Exclusive Access Monitor` 4/2→5/3, fragments gone,
+  actors 19→17. WIRE-BASED-100 safe — the AHB relation gold is 6 `drives` facts on unrelated statements,
+  and the scorer doesn't penalize off-gold relations (AXI 343 rels / fp=0). WIRE-BASED-100 HELD 1.000;
+  `kg-bench` 156/156; `run_ci.sh` GREEN (+2 tests, lib 1637 pass/2 ignored). KM card
+  `agent-coordinated-subject-split`. Frontier → `.1b.ii`/`.1b.iv` (deferred-with-trigger) / `.2+`.
