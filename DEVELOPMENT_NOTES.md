@@ -1,4 +1,40 @@
 # DEVELOPMENT_NOTES
+## ISF-REGISTER-RESET-EMIT.2 (`2026-06-16`) — emit register reset values as ISF `(storage (var … (reset V)))`
+- **Why:** `.1` proved the gap groundable (446 V>0 composable resets, all 3 CoreSight TRMs) and the
+  wire-doc blast radius ZERO. This slice lowers them — the extracted register reset reaches the `.isf`
+  instead of being dropped at the emit boundary (KG-ISF-COMPLETENESS north-star bar #6).
+- **What changed** (`ir/isf_ir.rs` + `ir/adapters.rs`):
+  - `IsfStorageVar` gains `reset: Option<u64>`; the render emits `(var NAME (width W) (reset V))` only
+    when `Some`, else the byte-identical `(var NAME (width W))` (so a doc with no composable reset is
+    unchanged — the byte-identity guarantee is a property of the `None` arm).
+  - `classify_register_reset(fields, var_width)` returns `Emit(V)` / `DefaultZero` / `DeferredWidth` /
+    `NotLowerable` / `NoReset`. Strictly composable = EVERY field located (`bits_high`/`bits_low`, or
+    `bits_low`+`bit_width`, or single bit) + `reset_value` parses to a non-neg int fitting its own field
+    width + no field overlap; the per-field values LSB-tile into `V`. Bounded to ≤64-bit (`u64`) — wider
+    registers stay an honest residual (the shift guards `hi>=64`/`field_width>=64` prevent overflow).
+    `Emit` requires `V>0` AND `V` fits the (unchanged, max-field-extent) var width; `V==0` → `DefaultZero`
+    (omit — FSMGen's default already represents it); over-width → `DeferredWidth` (the `.3` case).
+  - `parse_reset_literal` accepts `dec`/`0x`/`0b`/`…h` only (ADR-0006 numeric parsing, no name list);
+    everything symbolic returns `None`.
+  - Dropped resets are surfaced as ONE proportionate summary `ResidualDecisionPacket`
+    (`isf_storage_reset_not_lowered`) via a new `IsfIr.storage_reset_residuals` field + accessor, which
+    `adapters.rs` appends to the artifact `residual_decisions` exactly like `temporal_residuals` — so a
+    dropped reset is visible, the values stay in IntentIR `register_records`, and nothing is fabricated.
+- **Why a single summary residual, not per-register:** symbolic resets number in the thousands
+  corpus-wide; one packet per adapter (with the not-lowerable + deferred-width counts and the reason) is
+  the proportionate honest surface, and the full per-register data already lives in the IntentIR.
+- **How verified:** +4 focused unit tests (`parse_reset_literal` accept/reject; `classify_register_reset`
+  compose/tile/gate across Emit/DefaultZero/DeferredWidth/NotLowerable/NoReset incl. overlap/partial/
+  unlocated/over-wide-field; render emits reset only when set; residual summary). Live on the release
+  binary: AXI `.isf` byte-identical (its 71 positionless pseudo-table resets → 1 residual), CoreSight
+  SoC-600 gains 120 `(reset V)` with a normalize-out diff proving only-reset change, FSMGen
+  `--strict --check --json` success/0/0 (old also 0 → 0 new). WIRE-BASED-100 1.000 (orthogonal —
+  `eval-extraction` evaluates extraction, not the adapter); `kg-bench` 156/156; `run_ci.sh` green
+  (fmt + warning-deny clippy/tests/rustdoc + mdBook; lib 1649, +4). A clippy `collapsible_if` in
+  `parse_reset_literal` was collapsed to a let-chain.
+- **Deferred to `.3`:** the 169 composable-but-over-width registers — their reset needs the true register
+  width (`size_bits`/`max(bits_high)+1`); the current max-field-extent var width is a separate latent bug.
+
 ## ISF-REGISTER-RESET-EMIT.1 (`2026-06-16`) — corpus measurement: GO (docs-only, read-only)
 - **Why:** `.0` scoped the gap; `.2` (the emitter change) must be measurement-first — confirm a faithful
   register reset is groundable, decide the emit/residual policy, and size the wire-doc blast radius BEFORE

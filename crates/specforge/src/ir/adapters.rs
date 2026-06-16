@@ -321,6 +321,10 @@ fn build_isf_adapter_artifact(
     // artifact rather than silently lost; syntax is never fabricated.
     let mut residual_decisions = intent_ir.residual_decisions.clone();
     residual_decisions.extend(isf_model.temporal_residuals().iter().cloned());
+    // Register resets that could not be lowered to a storage `(reset V)`
+    // (ISF-REGISTER-RESET-EMIT.2) are surfaced the same way, so an un-lowered reset is
+    // visible in the artifact rather than silently dropped; no value is fabricated.
+    residual_decisions.extend(isf_model.storage_reset_residuals().iter().cloned());
 
     Ok(AdapterArtifact {
         stage: IrStage::IsfAdapter,

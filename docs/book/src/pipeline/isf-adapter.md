@@ -72,7 +72,7 @@ The adapter walks `IntentIr` and populates the typed tree:
 3. **Signals** — collected from all interfaces; clock/reset excluded; inserted into `BTreeSet` for automatic dedup
 4. **Constants** — from declared symbolic constants
 5. **Types/enums** — from type definitions and enum member-value maps
-6. **Storage** — from storage variable declarations
+6. **Storage** — one `(storage (var …))` per register map record; when the register's documented per-field reset values compose to a clean integer it also carries a `(reset V)` (see [Register reset values](#register-reset-values) below)
 7. **Drives** — one `(drive (sig val) (sig val))` entry per output signal
 8. **Transactions** — from `IntentIr` transaction intents plus control-block fallbacks; `TransactionStep` converted to typed `IsfTxnStep`
 9. **Temporal rules** — every `IntentIr.temporal_rules` entry is classified by `classify_temporal_rule` into exactly one disposition (see below)
@@ -137,6 +137,38 @@ The emitter performs a recursive tree walk:
 8. Emit `(rule <name> <condition> (<signal> <value>)...)` — one per rule
 9. Emit `(priority <higher> over <lower>)` — one per priority pair
 10. Close with `)`
+
+## Register reset values
+
+When a chip-spec PDF documents a register map, SpecForge captures each register's
+per-field **reset value** (the value the field powers up at). The `.isf` adapter lowers
+that to FSMGen's optional storage reset clause, so the emitted register carries its
+documented power-up value instead of silently defaulting to zero:
+
+```
+(storage
+  (var dpidr_bit_assignments (width 32) (reset 469841015))   ;; powers up at 0x1c013477
+  (var claimset_bit_assignments (width 2) (reset 3)))
+```
+
+**How the value is built.** A register's reset is composed from its fields by placing each
+field's reset value at the field's bit offset (the same bit-tiling used to recover register
+layouts) — `reset = field₀ << offset₀ | field₁ << offset₁ | …`. The clause is emitted **only**
+when every field carries a value that parses as a clean non-negative integer (decimal, `0x…`,
+`0b…`, or `…h`), the values do not overlap, and the result fits the register width.
+
+**Honest by default — never a guessed reset.** If any field's reset is symbolic
+(`-`, `X`, `IMPLEMENTATION DEFINED`, …), or only some fields carry a value, the register is
+emitted **without** a `(reset V)` clause — FSMGen then defaults it to all-zeros, exactly as
+before. A documented all-zeros reset is likewise left implicit (it already *is* the default).
+Whenever a documented reset is dropped this way, the adapter records a single honest summary in
+its `residual_decisions` (`isf_storage_reset_not_lowered`) saying how many were not lowered and
+why — the values themselves always remain in the IntentIR register map. No power-up value is
+ever fabricated.
+
+This affects only register-bearing documents (register maps / CSRs); the protocol wire
+specifications (APB/AHB/AXI/SWD) emit byte-identical `.isf` as before, because their signal
+tables carry no composable register reset.
 
 ## Module boundaries
 

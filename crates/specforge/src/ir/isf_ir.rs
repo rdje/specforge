@@ -23,7 +23,8 @@ use crate::ir::semantic::{
 #[cfg(test)]
 use crate::ir::semantic::{TemporalPredicateRecord, TemporalRuleRecord};
 use crate::ir::source::{
-    AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, WidthHint,
+    AutomationConfidence, CandidateInterpretation, RegisterFieldRecord, ResidualDecisionPacket,
+    WidthHint,
 };
 
 // ---------------------------------------------------------------------------
@@ -81,6 +82,11 @@ struct IsfEnum {
 struct IsfStorageVar {
     name: String,
     width: u32,
+    /// The register's documented hardware reset value, lowered to FSMGen's optional
+    /// `(reset V)` ONLY when it is a clean in-width non-negative integer composed from the
+    /// register's per-field `reset_value`s (ISF-REGISTER-RESET-EMIT.2). `None` leaves the var
+    /// reset-less — FSMGen then defaults it to all-0s, byte-identical to the pre-`.2` output.
+    reset: Option<u64>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -240,6 +246,12 @@ pub(crate) struct IsfIr {
     /// dropped obligation as an explicit residual decision instead of
     /// fabricating unsupported syntax.
     temporal_residuals: Vec<ResidualDecisionPacket>,
+    /// Register resets that were NOT lowered to a storage `(reset V)`
+    /// (ISF-REGISTER-RESET-EMIT.2): a single proportionate summary packet when ≥1
+    /// register carried a documented field reset that is symbolic / partially covered
+    /// / over-wide-for-its-var-width, so the adapter artifact records the honest gap
+    /// instead of fabricating a power-up value.
+    storage_reset_residuals: Vec<ResidualDecisionPacket>,
 }
 
 // ---------------------------------------------------------------------------
@@ -254,6 +266,13 @@ impl IsfIr {
     /// visible rather than silently lost.
     pub(crate) fn temporal_residuals(&self) -> &[ResidualDecisionPacket] {
         &self.temporal_residuals
+    }
+
+    /// Register resets that could not be lowered to a storage `(reset V)`
+    /// (ISF-REGISTER-RESET-EMIT.2). The adapter artifact appends these to its
+    /// residual-decision set so a dropped reset is visible rather than silently lost.
+    pub(crate) fn storage_reset_residuals(&self) -> &[ResidualDecisionPacket] {
+        &self.storage_reset_residuals
     }
 
     /// Number of transactions the emitter actually renders (includes the
@@ -372,7 +391,13 @@ impl IsfIr {
         if !self.storage.is_empty() {
             lines.push("  (storage".to_string());
             for v in &self.storage {
-                lines.push(format!("    (var {} (width {}))", v.name, v.width));
+                match v.reset {
+                    Some(reset) => lines.push(format!(
+                        "    (var {} (width {}) (reset {}))",
+                        v.name, v.width, reset
+                    )),
+                    None => lines.push(format!("    (var {} (width {}))", v.name, v.width)),
+                }
             }
             lines.push("  )".to_string());
         }
@@ -726,27 +751,50 @@ impl IsfIr {
         }
 
         // --- Storage (dedup by name) ---
+        // ISF-REGISTER-RESET-EMIT.2: each register lowers to a `(storage (var …))`; when the
+        // register's documented per-field `reset_value`s compose to a clean in-width non-negative
+        // integer we also emit `(reset V)`, else the var stays reset-less (FSMGen defaults it to
+        // all-0s — byte-identical to the pre-`.2` output). The var width is unchanged here
+        // (max-field-extent); reconciling it to the true register width is ISF-REGISTER-RESET-EMIT.3.
         let mut seen_storage_names: BTreeSet<String> = BTreeSet::new();
-        let storage: Vec<IsfStorageVar> = intent_ir
-            .register_records
-            .iter()
-            .filter_map(|r| {
-                let name = sanitize_isf_name(&r.register_name.to_lowercase());
-                if !seen_storage_names.insert(name.clone()) {
-                    return None;
+        let mut storage: Vec<IsfStorageVar> = Vec::new();
+        let mut reset_not_lowerable: usize = 0;
+        let mut reset_deferred_width: usize = 0;
+        for r in &intent_ir.register_records {
+            let name = sanitize_isf_name(&r.register_name.to_lowercase());
+            if !seen_storage_names.insert(name.clone()) {
+                continue;
+            }
+            let width = r
+                .fields
+                .iter()
+                .filter_map(|f| match (f.bits_high, f.bits_low) {
+                    (Some(hi), Some(lo)) => Some(hi.saturating_sub(lo).saturating_add(1)),
+                    _ => None,
+                })
+                .max()
+                .unwrap_or(32);
+            let reset = match classify_register_reset(&r.fields, width) {
+                RegisterResetOutcome::Emit(value) => Some(value),
+                RegisterResetOutcome::DeferredWidth => {
+                    reset_deferred_width += 1;
+                    None
                 }
-                let width = r
-                    .fields
-                    .iter()
-                    .filter_map(|f| match (f.bits_high, f.bits_low) {
-                        (Some(hi), Some(lo)) => Some(hi.saturating_sub(lo).saturating_add(1)),
-                        _ => None,
-                    })
-                    .max()
-                    .unwrap_or(32);
-                Some(IsfStorageVar { name, width })
-            })
-            .collect();
+                RegisterResetOutcome::NotLowerable => {
+                    reset_not_lowerable += 1;
+                    None
+                }
+                RegisterResetOutcome::DefaultZero | RegisterResetOutcome::NoReset => None,
+            };
+            storage.push(IsfStorageVar { name, width, reset });
+        }
+        let mut storage_reset_residuals: Vec<ResidualDecisionPacket> = Vec::new();
+        if reset_not_lowerable + reset_deferred_width > 0 {
+            storage_reset_residuals.push(storage_reset_residual_packet(
+                reset_not_lowerable,
+                reset_deferred_width,
+            ));
+        }
 
         // --- Named drives (one per output signal) ---
         let drives: Vec<IsfNamedDrive> = signals
@@ -1095,6 +1143,7 @@ impl IsfIr {
             rules,
             priorities,
             temporal_residuals,
+            storage_reset_residuals,
         }
     }
 }
@@ -1102,6 +1151,141 @@ impl IsfIr {
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+/// Outcome of attempting to lower a register's documented field resets to FSMGen's optional
+/// storage `(reset V)` (ISF-REGISTER-RESET-EMIT.2). Composition LSB-tiles the per-field
+/// `reset_value`s — `V = OR(parse(reset_i) << bits_low_i)` (the `recover_register_bits` discipline)
+/// — and only a clean, in-width, non-negative integer is ever emitted; everything else is honest.
+enum RegisterResetOutcome {
+    /// Strictly composable, composed `V > 0`, and `V` fits the emitted var width → emit `(reset V)`.
+    Emit(u64),
+    /// Strictly composable and `V == 0` — faithfully the FSMGen all-0s default → omit (no residual).
+    DefaultZero,
+    /// Strictly composable and `V > 0` but `V` does not fit the current (max-field-extent) var width
+    /// → omit; deferred to ISF-REGISTER-RESET-EMIT.3 (var-width reconciliation). Counts as residual.
+    DeferredWidth,
+    /// At least one field carries a `reset_value` but the register is not strictly composable
+    /// (symbolic/unparseable value, unlocated field, partial coverage, over-wide field value, or
+    /// overlapping fields) → omit; values remain in IntentIR `register_records`. Counts as residual.
+    NotLowerable,
+    /// No field carries a `reset_value` → nothing to lower, no residual.
+    NoReset,
+}
+
+/// Parse a register-field reset literal as a non-negative integer, accepting only the universal
+/// numeric notations (decimal, `0x…` hex, `0b…` binary, `…h` hex-suffix). Returns `None` for
+/// symbolic values (`-`, `X`, `IMPLEMENTATION DEFINED`, Verilog `8'h1F`, …) — ADR-0006: numeric
+/// parsing only, no chip-name list, never a guess.
+fn parse_reset_literal(raw: &str) -> Option<u64> {
+    let s = raw.trim();
+    if s.is_empty() {
+        return None;
+    }
+    if let Some(hex) = s.strip_prefix("0x").or_else(|| s.strip_prefix("0X")) {
+        return u64::from_str_radix(hex, 16).ok();
+    }
+    if let Some(bin) = s.strip_prefix("0b").or_else(|| s.strip_prefix("0B")) {
+        return u64::from_str_radix(bin, 2).ok();
+    }
+    if let Some(hex) = s.strip_suffix('h').or_else(|| s.strip_suffix('H'))
+        && !hex.is_empty()
+        && hex.bytes().all(|b| b.is_ascii_hexdigit())
+    {
+        return u64::from_str_radix(hex, 16).ok();
+    }
+    if s.bytes().all(|b| b.is_ascii_digit()) {
+        return s.parse::<u64>().ok();
+    }
+    None
+}
+
+/// The register-bit extent `(high, low)` of a field, from `bits_high`/`bits_low`, or
+/// `bits_low`+`bit_width`, or a single `bits_low` bit. `None` when the field is unlocated.
+fn register_field_extent(f: &RegisterFieldRecord) -> Option<(u32, u32)> {
+    let lo = f.bits_low?;
+    if let Some(hi) = f.bits_high {
+        if hi < lo {
+            return None;
+        }
+        Some((hi, lo))
+    } else if let Some(w) = f.bit_width {
+        if w == 0 {
+            return None;
+        }
+        Some((lo + w - 1, lo))
+    } else {
+        Some((lo, lo))
+    }
+}
+
+/// Classify a register's reset for ISF storage lowering (ISF-REGISTER-RESET-EMIT.2). *Strictly
+/// composable* iff EVERY field carries a `reset_value` that parses to a non-negative integer
+/// fitting its own field width, every field is located, and no two fields overlap; the per-field
+/// values are then LSB-tiled into the register value `V`. Bounded to ≤64-bit registers (`u64`);
+/// anything wider stays an honest residual.
+fn classify_register_reset(fields: &[RegisterFieldRecord], var_width: u32) -> RegisterResetOutcome {
+    if !fields.iter().any(|f| f.reset_value.is_some()) {
+        return RegisterResetOutcome::NoReset;
+    }
+    let mut composed: u64 = 0;
+    let mut used_mask: u64 = 0;
+    for f in fields {
+        let Some(raw) = f.reset_value.as_deref() else {
+            return RegisterResetOutcome::NotLowerable; // partial coverage
+        };
+        let Some((hi, lo)) = register_field_extent(f) else {
+            return RegisterResetOutcome::NotLowerable; // unlocated
+        };
+        let field_width = hi - lo + 1;
+        if hi >= 64 || field_width >= 64 {
+            return RegisterResetOutcome::NotLowerable; // beyond u64-safe tiling
+        }
+        let Some(value) = parse_reset_literal(raw) else {
+            return RegisterResetOutcome::NotLowerable; // symbolic
+        };
+        if value >= (1u64 << field_width) {
+            return RegisterResetOutcome::NotLowerable; // value over-wide for its field
+        }
+        let mask = ((1u64 << field_width) - 1) << lo;
+        if used_mask & mask != 0 {
+            return RegisterResetOutcome::NotLowerable; // overlapping fields
+        }
+        used_mask |= mask;
+        composed |= value << lo;
+    }
+    if composed == 0 {
+        return RegisterResetOutcome::DefaultZero;
+    }
+    if var_width >= 64 || composed < (1u64 << var_width) {
+        RegisterResetOutcome::Emit(composed)
+    } else {
+        RegisterResetOutcome::DeferredWidth
+    }
+}
+
+/// A single proportionate honesty packet recording that some register resets were not lowered to
+/// `(reset V)` (ISF-REGISTER-RESET-EMIT.2 bar #2). One summary per adapter — not one per register.
+fn storage_reset_residual_packet(
+    not_lowerable: usize,
+    deferred_width: usize,
+) -> ResidualDecisionPacket {
+    ResidualDecisionPacket {
+        packet_id: "isf_storage_reset_not_lowered".to_string(),
+        question: format!(
+            "{} register(s) carry a documented field reset that was not lowered to an ISF `(reset V)`",
+            not_lowerable + deferred_width
+        ),
+        why_unresolved: format!(
+            "{not_lowerable} not integer-lowerable (symbolic/implementation-defined value, partial \
+             field coverage, over-wide field value, or overlapping fields — the values remain in \
+             IntentIR register_records); {deferred_width} composable but over the storage-var width \
+             (deferred to ISF-REGISTER-RESET-EMIT.3 var-width reconciliation). FSMGen defaults an \
+             omitted `(reset V)` to all-0s; no value is fabricated."
+        ),
+        automation_confidence: AutomationConfidence::Medium,
+        candidate_interpretations: Vec::new(),
+    }
+}
 
 fn partition_txn_steps(steps: &[TransactionStep]) -> (Vec<TransactionStep>, Vec<TransactionStep>) {
     let mut on_steps: Vec<TransactionStep> = Vec::new();
@@ -2004,6 +2188,7 @@ mod tests {
             rules: vec![],
             priorities: vec![],
             temporal_residuals: vec![],
+            storage_reset_residuals: vec![],
         }
     }
 
@@ -2131,6 +2316,7 @@ mod tests {
         isf.storage.push(IsfStorageVar {
             name: "acc".to_string(),
             width: 8,
+            reset: None,
         });
         isf.drives.push(IsfNamedDrive {
             name: "out".to_string(),
@@ -2160,6 +2346,149 @@ mod tests {
         assert!(out.contains("  (rule r_uncond\n") || out.contains("  (rule r_uncond)"));
         assert!(out.contains("  (priority r_guarded over r_uncond)"));
         assert_eq!(paren_balance(&out), 0);
+    }
+
+    // --- ISF-REGISTER-RESET-EMIT.2: register reset lowering ---------------
+
+    fn reset_field(hi: u32, lo: u32, reset: Option<&str>) -> RegisterFieldRecord {
+        RegisterFieldRecord {
+            field_name: format!("f_{hi}_{lo}"),
+            bits_high: Some(hi),
+            bits_low: Some(lo),
+            bit_width: None,
+            access_type: None,
+            reset_value: reset.map(|s| s.to_string()),
+            description: None,
+            enumerated_values: vec![],
+        }
+    }
+
+    #[test]
+    fn parse_reset_literal_accepts_numeric_rejects_symbolic() {
+        assert_eq!(parse_reset_literal("0"), Some(0));
+        assert_eq!(parse_reset_literal("7"), Some(7));
+        assert_eq!(parse_reset_literal("0x1c"), Some(0x1c));
+        assert_eq!(parse_reset_literal("0X40"), Some(0x40));
+        assert_eq!(parse_reset_literal("0b101"), Some(0b101));
+        assert_eq!(parse_reset_literal("1Fh"), Some(0x1f));
+        assert_eq!(parse_reset_literal("  3 "), Some(3));
+        // Symbolic / non-numeric: never guessed (ADR-0006).
+        for s in [
+            "-",
+            "X",
+            "Xh",
+            "IMPLEMENTATION DEFINED",
+            "0x--",
+            "8'h1F",
+            "True",
+            "",
+        ] {
+            assert_eq!(parse_reset_literal(s), None, "should reject {s:?}");
+        }
+    }
+
+    #[test]
+    fn classify_register_reset_composes_tiles_and_gates() {
+        // Two located fields tile into a register value, fits the var width (8) → Emit.
+        // f[7:4]=0x8, f[3:0]=0xc → 0x8c.
+        let fields = vec![
+            reset_field(7, 4, Some("0x8")),
+            reset_field(3, 0, Some("0xC")),
+        ];
+        assert!(matches!(
+            classify_register_reset(&fields, 8),
+            RegisterResetOutcome::Emit(0x8c)
+        ));
+        // Same composition but the (max-field-extent) var width is only 4 → over-width → DeferredWidth.
+        assert!(matches!(
+            classify_register_reset(&fields, 4),
+            RegisterResetOutcome::DeferredWidth
+        ));
+        // All-zero documented reset → faithfully the FSMGen default → DefaultZero (omit).
+        let zeros = vec![reset_field(7, 4, Some("0")), reset_field(3, 0, Some("0b0"))];
+        assert!(matches!(
+            classify_register_reset(&zeros, 8),
+            RegisterResetOutcome::DefaultZero
+        ));
+        // A symbolic value anywhere → NotLowerable.
+        let symbolic = vec![reset_field(7, 4, Some("0x8")), reset_field(3, 0, Some("-"))];
+        assert!(matches!(
+            classify_register_reset(&symbolic, 8),
+            RegisterResetOutcome::NotLowerable
+        ));
+        // Partial coverage (a field without a reset_value) → NotLowerable.
+        let partial = vec![reset_field(7, 4, Some("0x8")), reset_field(3, 0, None)];
+        assert!(matches!(
+            classify_register_reset(&partial, 8),
+            RegisterResetOutcome::NotLowerable
+        ));
+        // A field value that overflows its own field width → NotLowerable.
+        let overwide = vec![reset_field(3, 0, Some("0x1f"))]; // 0x1f needs 5 bits, field is 4
+        assert!(matches!(
+            classify_register_reset(&overwide, 8),
+            RegisterResetOutcome::NotLowerable
+        ));
+        // Overlapping fields → NotLowerable.
+        let overlap = vec![
+            reset_field(7, 0, Some("0x1")),
+            reset_field(3, 0, Some("0x1")),
+        ];
+        assert!(matches!(
+            classify_register_reset(&overlap, 8),
+            RegisterResetOutcome::NotLowerable
+        ));
+        // No field carries a reset → NoReset.
+        let noreset = vec![reset_field(7, 0, None)];
+        assert!(matches!(
+            classify_register_reset(&noreset, 8),
+            RegisterResetOutcome::NoReset
+        ));
+        // An unlocated field carrying a reset → NotLowerable (cannot place it).
+        let unlocated = vec![RegisterFieldRecord {
+            field_name: "u".to_string(),
+            bits_high: None,
+            bits_low: None,
+            bit_width: None,
+            access_type: None,
+            reset_value: Some("1".to_string()),
+            description: None,
+            enumerated_values: vec![],
+        }];
+        assert!(matches!(
+            classify_register_reset(&unlocated, 8),
+            RegisterResetOutcome::NotLowerable
+        ));
+    }
+
+    #[test]
+    fn render_storage_var_emits_reset_only_when_set() {
+        let mut isf = minimal_isf();
+        isf.storage.push(IsfStorageVar {
+            name: "dpidr".to_string(),
+            width: 32,
+            reset: Some(0x1c01_3477),
+        });
+        isf.storage.push(IsfStorageVar {
+            name: "plain".to_string(),
+            width: 8,
+            reset: None,
+        });
+        let out = isf.render();
+        assert!(out.contains(&format!(
+            "    (var dpidr (width 32) (reset {}))",
+            0x1c01_3477u64
+        )));
+        assert!(out.contains("    (var plain (width 8))"));
+        assert!(!out.contains("(var plain (width 8) (reset"));
+        assert_eq!(paren_balance(&out), 0);
+    }
+
+    #[test]
+    fn storage_reset_residual_packet_summarizes_both_reasons() {
+        let p = storage_reset_residual_packet(3, 2);
+        assert_eq!(p.packet_id, "isf_storage_reset_not_lowered");
+        assert!(p.question.contains('5'));
+        assert!(p.why_unresolved.contains("ISF-REGISTER-RESET-EMIT.3"));
     }
 
     #[test]

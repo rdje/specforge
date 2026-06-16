@@ -4,6 +4,25 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-06-16 — ISF-REGISTER-RESET-EMIT.2: register reset values reach the `.isf`)
+- **ISF emitter (`ir/isf_ir.rs`) now lowers register reset values.** `IsfStorageVar` gains
+  `reset: Option<u64>`; `from_intent_ir` composes each register's reset from its per-field
+  `reset_value`s by LSB-tiling (`classify_register_reset` + `parse_reset_literal` +
+  `register_field_extent`, a strict-composable gate), and `render` emits
+  `(storage (var NAME (width W) (reset V)))` only for a clean in-width non-negative integer — else the
+  byte-identical reset-less form (FSMGen defaults to all-0s). This closes an ISF-fidelity gap: the
+  register reset was extracted (`RegisterFieldRecord.reset_value`) and carried to IntentIR but dropped
+  at the emit boundary.
+- **Honest-residual surface added:** `IsfIr.storage_reset_residuals` (one proportionate summary packet,
+  `isf_storage_reset_not_lowered`) flows to the adapter artifact's `residual_decisions` via
+  `ir/adapters.rs`, mirroring `temporal_residuals`. ADR-0006: numeric parsing only, no name list; no
+  value fabricated.
+- **Blast radius:** purely additive — only register-bearing docs gain `(reset V)` (live: CoreSight
+  SoC-600 +120); all protocol wire specs (APB/AHB/AXI/SWD) emit byte-identical `.isf`. FSMGen
+  `--strict --check` 0-new; lib tests 1645→1649 (+4). The storage var width is still max-field-extent
+  (a latent bug for multi-field registers) — reconciling it to the true register width is the remaining
+  `.3` leaf.
+
 ## Session update (2026-06-16 — KG-ISF-TRANSACTIONS.2g: structural transaction-PHASE recognition)
 - **New typed surface `TransactionPhaseRecord` + `SemanticIr.transaction_phases: Vec<TransactionPhaseRecord>`**
   (`ir/semantic.rs`, serde-default + skip-if-empty ⇒ pre-`.2g` artifacts deserialize unchanged and docs with no phases

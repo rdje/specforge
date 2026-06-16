@@ -1,3 +1,31 @@
+### ISF-REGISTER-RESET-EMIT.2 — emit register reset values as ISF `(storage (var … (reset V)))`
+First code slice of the tree (measurement-first; policy locked by `.1`). The `.isf` adapter now lowers a
+register's documented per-field reset values to FSMGen's optional storage `(reset V)`, so an emitted
+register carries its power-up value instead of silently defaulting to all-0s. **Purely additive — only
+register-bearing docs gain `(reset V)`; the protocol wire specs (APB/AHB/AXI/SWD) emit byte-identical `.isf`.**
+
+- **Implementation** (`crates/specforge/src/ir/isf_ir.rs`): `IsfStorageVar` gains `reset: Option<u64>`;
+  `from_intent_ir` classifies each register via the new `classify_register_reset` — LSB-tiling
+  `V = OR(parse_reset_literal(reset_i) << bits_low_i)` (the `recover_register_bits` discipline) under a
+  strict-composable gate (every field located + reset a parseable non-neg int fitting its field width +
+  no overlap, ≤64-bit) → `Emit(V>0 & fits width)` / `DefaultZero` / `DeferredWidth` / `NotLowerable` /
+  `NoReset`. `render` emits `(var NAME (width W) (reset V))` only on `Emit`, else the byte-identical
+  `(var NAME (width W))`. `parse_reset_literal` accepts only `dec`/`0x`/`0b`/`…h` — symbolic values
+  (`-`, `X`, `IMPLEMENTATION DEFINED`, Verilog `8'h1F`) are never guessed (ADR-0006, no name list).
+- **Honest residual**: dropped resets (symbolic/partial/overlap/over-width) are surfaced as ONE
+  proportionate adapter residual `isf_storage_reset_not_lowered` (`storage_reset_residuals()` →
+  `ir/adapters.rs` `residual_decisions`); the values always remain in the IntentIR register map. `V==0`
+  is left implicit (it already *is* the FSMGen default). No power-up value is ever fabricated.
+- **Live-verified** (release binary): AXI `.isf` **byte-identical** (0 emissions; its 71 pseudo-table
+  resets → 1 honest residual); CoreSight SoC-600 `.isf` gains exactly **120** `(reset V)` (the measured
+  V>0), a normalize-out diff proves the ONLY change is added `(reset V)`, and FSMGen `--strict --check
+  --json` = **success / 0 errors / 0 diagnostics** (old also 0 → **0 new**).
+- **Gates ALL GREEN**: ADR-0006 ✓; WIRE-BASED-100 **1.000** (constraint ×4 + relation document-level +
+  temporal ×3 — orthogonal; `eval-extraction` doesn't invoke the adapter) ✓; wire-`.isf` byte-identical
+  ✓; register-doc `.isf` changes ONLY by added `(reset V)` ✓; `kg-bench` 156/156 ✓; `run_ci.sh` GREEN
+  (lib **1649** pass / 2 ignored, **+4 tests**) ✓. Book: `pipeline/isf-adapter.md` gained "Register
+  reset values". Frontier → `.3` (var-width reconciliation for the 169 over-width registers).
+
 ### ISF-REGISTER-RESET-EMIT.1 — corpus measurement: GO (446 V>0 resets, wire blast radius 0, 169 width-spun .3)
 Measurement-first read-only scan of all 36 persisted `generated/intent_ir/*/intent_ir.json` to decide the
 `.2` emit/residual policy and size the blast radius before any emitter change. No code.
