@@ -1,4 +1,27 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-TRANSACTIONS.1 (`2026-06-16`) — transaction-capture census (read-only, docs-only)
+- **Why:** the owner reinforced (multi-message) that faithful transaction capture is a MINIMUM /
+  critical-path prerequisite for the PDF→ISF tool — *"without this we can't move forward."* Before any
+  code, measure how transactions are captured today and design the first slice evidence-first (measurement
+  doctrine; ADR 0006; WIRE-BASED-100 a hard gate).
+- **Method:** read-only `jq` scan of all 36 persisted IntentIR `transactions[]` (classify each entry by
+  synthesis form) + EvidenceIR structural-cue probes on AHB/APB/SWD; no build, no code, no canonical
+  mutation. Report `docs/research/transaction-capture-census.md`.
+- **Findings:** 63 entries / 16 of 36 docs = 34 `*_handshake` (transaction *phases/steps*, 2 ports) + 24
+  `*_behavior` blobs (NOT transactions; 0 ports, null activation, e.g. AXI `Manager_behavior` 32 `when`
+  steps) + 5 hardcoded `*_transfer` (`recognize_digital_patterns` Patterns 3/4/5 in `ir/intent.rs` test
+  literal `HTRANS`/`PSEL`/`MISO` → emit `ahb_transfer`/`apb_transfer`/`spi_transfer` with hardcoded
+  widths + enum values). **G1 (composed named transactions) = 0 in EVERY doc — a 100% gap.** G2 is a live
+  ADR-0006 breach (fires spuriously on `readme`). G3 incomplete (no full signal set; no membership
+  boundary). The surface is MIS-LEVELLED (phases + actor-behaviour mislabelled as transactions).
+- **First slice (`.2a`, designed, measurement-first):** replace the 3 hardcoded blocks with a structural
+  recognizer keyed off transaction/transfer/operation **section anchors** + signal-valued **enumeration
+  tables** — both confirmed present in EvidenceIR (`section_anchors`, `extracted_statements`); no
+  `enum_definitions` surface exists, so enumerations come from statement table-text + anchors. Gates:
+  ADR-0006, WIRE-BASED-100 (fresh-Pattern temp-evidence-root eval), ISF round-trip, `readme` spurious
+  firing gone, `kg-bench` + `run_ci.sh` green. Then `.2b` (G1 step-by-step) → `.2c` (G3 membership) →
+  `.2d?` (quick-surface). KM card `transaction-capture-census`; sharpened 7-point bar in the tree.
+
 ## KG-ISF-COMPLETENESS.1b.iii (`2026-06-16`) — coordinated-subject split
 - **Why:** a second Class-B completeness recovery. A coordinated subject "X and Y" ("*the Subordinate and
   decoder read HADDR*") was captured as a single fragment actor `Subordinate and decoder`, stranding

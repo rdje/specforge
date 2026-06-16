@@ -1,3 +1,32 @@
+### KG-ISF-TRANSACTIONS.1 — transaction-capture census (DONE; read-only, docs-only)
+Completed the measurement-first census of how SpecForge captures transactions today, why it is
+insufficient for faithful `.isf` lowering, and the designed first code slice — no code touched. Full
+report: `docs/research/transaction-capture-census.md` (§1 ISF target model, §2 source-form census,
+§3 current capture, §3.5 per-doc quantification, §3.6 ontology, §4 first-slice design, §5 owner directive).
+
+- **Per-doc G1/G3 quantification** (read-only scan of all 36 persisted IntentIR `transactions[]`):
+  **63 entries / 16 docs; composed-named transactions = 0 in EVERY doc → G1 is a 100% gap.** The surface
+  is built from 34 per-channel `*_handshake` (2 ports each), 24 per-actor `*_behavior` blobs (0 ports,
+  null activation), and 5 hardcoded `*_transfer` (the G2 ADR-0006 breach — fires on AHB/APB **and
+  spuriously on `readme`**, a non-spec doc, purely from prose mentioning `HTRANS`/`PSEL`).
+- **Ontology refinement — the surface is MIS-LEVELLED, not just thin:** a `*_handshake` is really a
+  transaction *phase/step*, a `*_behavior` blob is *not a transaction at all*, only `*_transfer` attempts
+  the right level (by hardcoding). So G1 is also a re-levelling (named transaction = parent; handshakes =
+  child steps).
+- **First code slice designed + structurally grounded (`.2a` G2-first):** replace the 3 hardcoded
+  `recognize_digital_patterns` blocks with a cheap, deterministic, universal structural recognizer keyed
+  off cues confirmed present in EvidenceIR — transaction/transfer/operation **section anchors**
+  (`3.1 Write transfers`, `B4.2.1 Successful write operation`) + signal-valued **enumeration tables**
+  (`| HTRANS[1:0] | Type | … |`). No new ingest, no name list (ADR 0006); also kills the `readme`
+  false-positive. Then `.2b` (G1 composed step-by-step) → `.2c` (G3 signal-set membership) → `.2d?`
+  (quick-surface).
+- **Owner multi-message reinforcement captured** (sharpened 7-point bar + Criticality in
+  `docs/tasks/KG-ISF-TRANSACTIONS.md`): recognition must be FAST + UNIVERSAL ("very quickly identify
+  transactions in any chip-spec PDF"), BOUNDARY/MEMBERSHIP precise ("what's part of transaction X and
+  what's not"), thorough STEP-BY-STEP, for ALL transactions, protocol or platform — and this is a
+  **MINIMUM / critical-path prerequisite**: *"without this we can't move forward in our PDF→ISF tool."*
+  `KG-ISF-TRANSACTIONS` is now the near-term top-priority active tree. KM card `transaction-capture-census`.
+
 ### KG-ISF-COMPLETENESS.1b.iii — coordinated-subject split
 A second Class-B completeness recovery. New `split_coordinated_actor_subject` +
 `split_coordinated_actor_relations` (+ `relation_actor_id_slug`) in `ir/evidence.rs` — a post-pass in

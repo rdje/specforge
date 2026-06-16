@@ -67,25 +67,68 @@ already correct). **55 transactions across 15 of 35 docs.** But the surface is T
   signals each involves" (the directive's explicit requirement) — the handshake form carries 2 ports;
   the behavior form is a when-blob; neither enumerates the transaction's full signal set with roles.
 
-## The checkable "transaction-complete IntentIR" bar (per protocol doc)
+## Owner directive — sharpened (`2026-06-16`, multi-message reinforcement)
+
+The owner reinforced the transaction directive across several messages, sharpening it into four
+of-utmost-importance requirements (this is the authoritative requirement statement; the bar below
+operationalises it):
+
+1. **Recognition — fast and universal.** SpecForge must be able to **very quickly identify the
+   transactions** in **ANY** particular chip-spec PDF (protocol **or** platform). "Very quickly" is a
+   RUNTIME-capability requirement (cheap, deterministic, structural recognition that needs no heavy LLM
+   and is not bound to a name list — ADR 0006), NOT a licence to rush code (the standing
+   quality-over-speed-in-writing-code doctrine is unchanged). Universal: it must work on any PDF, keyed
+   off the document's own structure.
+2. **Boundary / membership precision.** Recognising *what is part of transaction X and what is NOT* is of
+   utmost importance: every signal / phase / step must be attributed to the **right** transaction, and
+   nothing from a *different* transaction may bleed in. SpecForge must be able to answer "is signal S /
+   step P part of transaction X?" correctly, grounded in the document, for every transaction.
+3. **Step-by-step description — thorough and accurate.** Each transaction must be described **step by
+   step**, faithfully to the document (ordered phases/steps + the handshakes that gate them).
+4. **Completeness — all transactions.** This holds for **all** transactions of the document, not a
+   sample — protocol or platform.
+
+**Criticality (owner, `2026-06-16`): this is a MINIMUM, not a stretch goal — "without this we can't
+really move forward in our PDF→ISF tool."** Faithful transaction capture (recognise → bound → describe
+step-by-step → for all transactions) is a load-bearing PREREQUISITE on the critical path of the whole
+SpecForge PDF→ISF pipeline, not an optional enhancement. A protocol/platform spec is in large part a
+catalogue of supported transactions; if SpecForge cannot capture them faithfully, the IntentIR cannot
+lower faithfully to `.isf`, and the tool cannot meaningfully advance. `KG-ISF-TRANSACTIONS` is therefore
+the near-term top-priority active tree, gating forward progress.
+
+## The checkable "transaction-complete IntentIR" bar (per protocol/platform doc)
 
 A document's transaction surface is ISF-complete when:
-1. **Coverage** — every supported transaction the document NAMES/defines is present as a typed
-   `TransactionIntent` (no spec's read/write/burst/etc. silently absent), recovered by universal structure,
-   not a hardcoded name list (ADR 0006).
-2. **Signal set** — each transaction enumerates the set of signals it involves, with role/direction
+1. **Coverage (ALL transactions)** — every supported transaction the document NAMES/defines is present as
+   a typed `TransactionIntent` (no spec's read/write/burst/opcode/transfer-type/etc. silently absent),
+   recovered by universal structure, not a hardcoded name list (ADR 0006).
+2. **Fast/universal recognition** — the transaction set is recovered by a cheap, deterministic, structural
+   pass that runs on ANY chip-spec PDF (protocol or platform) and does not depend on a heavy LLM or a
+   per-protocol name list. (Owner: "very quickly identify transactions in any particular chip-spec PDF.")
+3. **Boundary / membership precision** — each transaction's signal set, phases, and steps are both
+   COMPLETE (everything the document attributes to transaction X is present) **and EXCLUSIVE** (nothing
+   from a *different* transaction bleeds in); SpecForge can correctly answer "is S / step P part of X?"
+   for every transaction, grounded in the document. This is the precision counterpart to coverage.
+4. **Signal set** — each transaction enumerates the set of signals it involves, with role/direction
    (address/data/control/response), grounded in the document.
-3. **Phases/steps** — each transaction carries its ordered phases/steps (e.g. address phase → data phase →
-   response) and the handshakes that gate them, as `TransactionStep`s.
-4. **Constraints/relations** — the obligations and timing that govern the transaction (stability, ordering,
-   response rules) are linked, reusing the existing constraint/temporal/relation surfaces.
-5. **ISF round-trip** — the transaction lowers to a valid `(transaction …)` that passes FSMGen
+5. **Phases/steps (step-by-step)** — each transaction carries its ordered phases/steps (e.g. address
+   phase → data phase → response) and the handshakes that gate them, as `TransactionStep`s, described
+   step by step and faithful to the document.
+6. **Constraints/relations** — the obligations and timing that govern the transaction (stability,
+   ordering, response rules) are linked, reusing the existing constraint/temporal/relation surfaces.
+7. **ISF round-trip** — the transaction lowers to a valid `(transaction …)` that passes FSMGen
    `--strict --check --json`, and every captured transaction element appears in the `.isf` or an explicit
    residual (no silent drop).
 
+**Quick-surface candidate (from "very quickly identify"):** a first-class way to SEE a doc's recognised
+transaction set at a glance — a `validate` transaction-inventory metric + finding (mirroring the
+message-field inventory), and/or a CLI surface — so an operator can quickly inspect "what transactions
+does this PDF define?" Recorded as a candidate to design alongside the recognition slices, not yet built.
+
 **Hard gate (non-negotiable):** WIRE-BASED-100 (APB/AHB/AXI/SWD) holds through every change; universal
 grammar only, no name lists (ADR 0006); honest residual over fabrication. Scope per the owner: FULL,
-precise, accurate capture — but delivered measurement-first, in safe slices, wire-docs first.
+precise, accurate, step-by-step capture of ALL transactions — but delivered measurement-first, in safe
+slices, wire-docs first.
 
 ## Task Tree
 
@@ -94,31 +137,56 @@ precise, accurate capture — but delivered measurement-first, in safe slices, w
   directive; record the measured baseline (55 txns / 15 docs; 3 sources; 3 gaps incl. the ADR-0006 breach);
   define the checkable 5-point bar; cross-reference `KG-ISF-COMPLETENESS`. No code (own before touching).
   Memory `[[project_kg_isf_transactions]]`.
-- ID: `KG-ISF-TRANSACTIONS.1` · Status: `in_progress` (measurement-first, read-only; STARTED `2026-06-16`,
-  core measurement gathered — report `docs/research/transaction-capture-census.md`) · Goal: **the
+- ID: `KG-ISF-TRANSACTIONS.1` · Status: `done` (`2026-06-16`, measurement-first, read-only, docs-only;
+  report `docs/research/transaction-capture-census.md`; KM card `transaction-capture-census`) · Goal: **the
   transaction-capture census + gap taxonomy.**
-  **Gathered `2026-06-16` (report §1–§3):** (1) **ISF target model** — `(transaction NAME (on TRIG) …steps…
-  (complete PORT))` ALREADY supports composed/hierarchical transactions via `spawn`/`do`+`await_all` and
-  rule-activation, so G1 is a BUILD gap not an ISF-expressiveness gap; (2) **source-form census** (AXI/AHB/
-  APB/I2C/CHI) — supported transactions are defined by THREE recurring structural forms: enumeration tables
-  (opcode/transfer-type/command columns — AXI A7.3/A7.4, AHB Table 3-1 HTRANS / 3-4 HBURST, CHI Table B1.2),
-  "transaction/transfer/operation" SECTION headings + a def-sentence ("a X transaction consists of …"), and
-  prose+timing/flow diagrams (APB/I2C/CHI) giving phase sequence + per-phase signal set; (3) **current
-  capture** confirmed = per-channel handshakes + per-actor blobs + 3 hardcoded recognizers, none of which
-  capture §2's named/composed/signal-set transactions. **Remaining `.1` step (next session):** per-doc
-  G1/G3 quantification + pick the first code slice (leading order: G2 ADR-0006 structural-recognizer first
-  → G1 composed named txns via spawn/do → G3 signal-set linkage), then write KM card
-  `transaction-capture-census`. Each subsequent code slice measurement-first, WIRE-BASED-100 a hard gate,
-  ISF round-trip verified. Over the protocol corpus (wire docs first): (a) how does
-  each document DEFINE its supported transactions (a transactions table/section? prose? a state/sequence
-  diagram?) — characterise the structural form, ADR-0006-style; (b) for each, the named transaction set +
-  the signals each involves; (c) compare to the current `transactions` surface to quantify G1/G3 per doc;
-  (d) scope the G2 ADR-0006 remediation (replace the hardcoded AHB/APB/SPI recognizers with a structural
-  recognizer keyed off the document's own transaction catalogue + handshake/phase structure). Output a
-  research report + KM card + the first code slice's design. NO code in `.1`.
-- ID: `KG-ISF-TRANSACTIONS.2+` · Status: `pending` · Goal: the code slices — structural transaction
-  recovery (G1), ADR-0006 remediation (G2), signal-set linkage (G3) — each measurement-first, WIRE-BASED-100
-  a hard gate, ISF round-trip verified.
+  **`.1` COMPLETE:** §1 ISF target model + §2 source-form census (AXI/AHB/APB/I2C/CHI) + §3 current-capture
+  census + §3.5 **per-doc G1/G3 quantification** (read-only scan of all 36 persisted IntentIR
+  `transactions[]`: **63 entries / 16 docs; `composed-named = 0` in EVERY doc → G1 a 100% gap**; G2 fires on
+  AHB/APB **and spuriously on `readme`**; G3 anatomy — handshake 2 ports / behavior 0 ports / hardcoded
+  `ahb_transfer` 3-of-~12 signals with literal widths+enum-values) + §3.6 **ontology refinement** (the
+  surface is MIS-LEVELLED: 34 handshakes are really transaction *phases/steps*, 24 behavior blobs are *not
+  transactions at all*, only 5 `*_transfer` attempt the right level — so G1 is also a re-levelling) + §4
+  **first code slice designed & grounded** (`.2a` G2-first; structural cues confirmed present in EvidenceIR
+  — section anchors `3.1 Write transfers`/`B4.2.1 Successful write operation` + signal-valued enumeration
+  tables `| HTRANS[1:0] | Type | … |`). The owner's multi-message reinforcement (fast/universal recognition
+  + boundary/membership precision + step-by-step + ALL transactions; **a MINIMUM/critical-path prerequisite
+  for PDF→ISF**) is captured in the sharpened 7-point bar above. NO code in `.1`.
+  **Census foundations (report §1–§3, gathered `2026-06-16`):** (1) **ISF target model** —
+  `(transaction NAME (on TRIG) …steps… (complete PORT))` ALREADY supports composed/hierarchical
+  transactions via `spawn`/`do`+`await_all` and rule-activation, so G1 is a BUILD gap not an
+  ISF-expressiveness gap; (2) **source-form census** (AXI/AHB/APB/I2C/CHI) — supported transactions are
+  defined by THREE recurring structural forms: enumeration tables (opcode/transfer-type/command columns),
+  "transaction/transfer/operation" SECTION headings + a def-sentence, and prose+timing/flow diagrams;
+  (3) **current capture** = per-channel handshakes + per-actor blobs + 3 hardcoded recognizers, none of
+  which capture §2's named/composed/signal-set transactions.
+- ID: `KG-ISF-TRANSACTIONS.2a` · Status: `pending` (DESIGNED in `.1` §4; measurement-first; **the first
+  code slice**) · Goal: **G2 — fast/universal STRUCTURAL transaction recognition (de-hardcode).** Replace
+  the 3 hardcoded `recognize_digital_patterns` blocks (`ir/intent.rs` Patterns 3/4/5: the
+  `HTRANS`/`PSEL`/`MISO` literal-name tests → `ahb_transfer`/`apb_transfer`/`spi_transfer`) with a cheap,
+  deterministic, document-structural recognizer that mints a `TransactionIntent` per transaction NAMED by
+  the document's own vocabulary — keyed off (Cue A) transaction/transfer/operation **section anchors**
+  (`3.1 Write transfers`, `B4.2.1 Successful write operation`) and (Cue B) **signal-valued enumeration
+  tables** (`| HTRANS[1:0] | Type | … |`) — no literal protocol names (ADR 0006). Scope `.2a` to
+  **recognition + naming** (the bar's #1 coverage + #2 fast/universal recognition). **Measurement-first**
+  (read-only): quantify the structural recognizer's recall vs the 3 hardcoded names + confirm non-spec docs
+  (`readme`) yield ZERO before coding. **Gates:** ADR-0006 (no name lists); WIRE-BASED-100 (APB/AHB/AXI/SWD)
+  held 1.000 on fresh-Pattern temp-evidence-root eval; ISF round-trip (`adapt --target isf` → FSMGen
+  `--strict --check --json`); `readme` spurious `*_transfer` GONE (precision win); `kg-bench` + `run_ci.sh`
+  green.
+- ID: `KG-ISF-TRANSACTIONS.2b` · Status: `pending` · Goal: **G1 — composed named transactions
+  (step-by-step body + re-levelling).** Compose each recognised transaction's ordered phases/steps via ISF
+  `spawn`/`do`+`await_all`, re-levelling today's per-channel handshakes into the named transaction's CHILD
+  steps (bar #5 step-by-step; #3 boundary precision for steps). Measurement-first; WIRE-BASED-100 + ISF
+  round-trip gates.
+- ID: `KG-ISF-TRANSACTIONS.2c` · Status: `pending` · Goal: **G3 — signal-set membership + boundary
+  precision.** Enumerate each transaction's full signal set with roles (address/data/control/response),
+  COMPLETE and EXCLUSIVE (what is part of X and what is NOT — bar #3/#4), grounded in the document's
+  channel/phase grouping. Measurement-first; WIRE-BASED-100 + ISF round-trip gates.
+- ID: `KG-ISF-TRANSACTIONS.2d?` · Status: `candidate` · Goal: **quick-surface** — a `validate`
+  transaction-inventory metric + finding (and/or CLI surface) so an operator can "very quickly identify"
+  a doc's recognised transactions at a glance (from the owner's "very quickly identify" directive).
+  Design alongside `.2a`–`.2c`; not yet scoped.
 
 ## Changelog
 
@@ -137,3 +205,18 @@ precise, accurate capture — but delivered measurement-first, in safe slices, w
   the current-capture gap. Report `docs/research/transaction-capture-census.md`. Tree "The point" + bar
   reframed for first-class / platform breadth / actor-action. `.1` left `in_progress` (per-doc G1/G3
   quantification + first-slice pick + KM card `transaction-capture-census` remain). No code.
+- `2026-06-16`: **`.1` DONE** (read-only, docs-only) — completed the census: §3.5 per-doc G1/G3
+  quantification (read-only scan of all 36 persisted IntentIR `transactions[]`: **63 entries / 16 docs;
+  composed-named = 0 in EVERY doc → G1 a 100% gap**; G2 fires on AHB/APB + spuriously on `readme`; G3
+  anatomy precise), §3.6 ontology refinement (the surface is MIS-LEVELLED — 34 handshakes are
+  phases/steps, 24 behavior blobs are not transactions, only 5 `*_transfer` attempt the right level), and
+  §4 the designed + structurally-grounded first code slice (`.2a` G2-first; cues confirmed present in
+  EvidenceIR — section anchors + signal-valued enumeration tables). KM card `transaction-capture-census`
+  written. Split `.2+` into `.2a` (G2 recognition/de-hardcode) → `.2b` (G1 composed step-by-step body) →
+  `.2c` (G3 signal-set membership/boundary precision) + `.2d?` (quick-surface candidate). **Owner
+  multi-message reinforcement captured** (sharpened 7-point bar + Criticality): recognition must be
+  FAST + UNIVERSAL ("very quickly identify transactions in any chip-spec PDF"); BOUNDARY/MEMBERSHIP
+  precision ("what's part of transaction X and what's not") is of utmost importance; thorough STEP-BY-STEP
+  description; for ALL transactions; protocol or platform; and this is a **MINIMUM / critical-path
+  prerequisite** — "without this we can't move forward in our PDF→ISF tool." `KG-ISF-TRANSACTIONS` is now
+  the near-term top-priority active tree. Frontier → `.2a` (measurement-first code). No code in `.1`.
