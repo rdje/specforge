@@ -1,3 +1,41 @@
+### KG-ISF-COMPLETENESS.2 — ISF lowering-fidelity measurement (which bar dimension has the largest faithful-lowering gap)
+Measurement-first leaf (read-only, docs-only — no code, no extraction change). The `.2+` umbrella resolved
+into a concrete measurement leaf + two spun sub-leaves by reading the full ISF lowering
+(`IsfIr::from_intent_ir`/`render`, `ir/isf_ir.rs`; `build_isf_adapter_artifact`, `ir/adapters.rs`) and
+replicating its per-element filters over all 36 persisted `intent_ir.json` (two independent cross-check
+agents). Serves the owner's `2026-06-16` north star — complete IntentIR → faithful ISF.
+
+- **What lowers vs not:** `interfaces`→signals, `symbol_definitions`→constants/types/enums,
+  `register_records`→storage, `transactions`, `temporal_rules`/`actor_contracts`→asserts/stages/rules-or-
+  residual, `conditional_rules`/`signal_constraints`/`temporal_invariants`→`(rule)`. Temporal rules +
+  register resets already carry honest residuals. NOT read: `behaviors`, `constraints`, `assumptions`,
+  `timing_constraints`, the `actor_*` relation/port KG families, `signal_connectivity`, `signal_polarities`.
+- **`behaviors` (22 218) + `constraints` (22 682) are NOT a gap** — free-text (`{id, statement: String}`)
+  legacy surfaces whose content is already lowered via the typed twins
+  (`signal_constraints`/`temporal_rules`/`conditional_rules`); re-lowering them is the redundant rendering
+  `KG-ISF-TRANSACTIONS.2b` removed.
+- **Silent-drop of typed rules (17 425) is real but not lost grounded intent:** temporal_invariants 16 463
+  total / 257 lower / 16 179 empty-subject (a ToC heading classified as an invariant) + 27 undeclared;
+  conditional_rules 1 634 / 498 lower / 1 095 no-consequent (legal boilerplate, vague "must"/"shall") + 41
+  undeclared; signal_constraints 444 / 361 lower / 83 undeclared. **0 undeclared drops on all 4 wire docs**;
+  the 151 undeclared cases are dominated by register/struct-field paths (`process_id[19:17]`/`DC.tc.SXL`/
+  `DID`/`Reserved`) that belong to the register/message-field surface, not wire rules → mass-residualizing
+  would be dishonest noise. **Bar #6 (round-trip) is already honest for grounded wire intent.**
+- **Largest TRUE infidelity = signal direction/width:** the emitter reads only the legacy flat
+  `direction_hint`/`width_hint` (`None` for 85–98%) and defaults to `output`/`width-1` (AXI `.isf` emits
+  283 `(output)` vs 4 `(input)`, all width 1), ignoring the canonical actor-relative graph (`actor_ports`).
+  But direction is relationship-relative (every signal is both input + output across actors), the `.isf` is
+  a single flat module (`derive_isf_actor_name`), and the default is the DELIBERATE, documented
+  `R6-ISF-ADAPTER.4` policy (FSMGen schedules) — overriding it is an OWNER decision in tension with the
+  north star.
+- **Spun:** `.2a` (direction/width fidelity — `deferred`-with-trigger; needs an FSMGen-contract check +
+  reference-boundary design + owner steer) and `.2b` (ISF lowering-coverage visibility gauge — the
+  buildable candidate; additive, byte-identical `.isf` → WIRE-BASED-100 trivially held).
+- **Deliverables:** `docs/research/isf-lowering-fidelity-measurement.md` + KM card
+  `isf-lowering-fidelity-gauge` (KNOWLEDGE_MAP regenerated, 94 facts / 634 keys) + task tree `.2`→done /
+  `.2a`/`.2b` added + `docs/TASK_TREE.md` frontier. **Gates:** docs-only — memory-arch + knowledge-map
+  derive-and-diff green; WIRE-BASED-100 untouched (no code).
+
 ### ISF-REGISTER-RESET-EMIT.3 — reconcile storage-var width to the true register width (closes tree)
 Closing leaf of the tree. The ISF storage var width was the widest single *field*, which under-sized
 multi-field registers (a 32-bit register of two 16-bit fields was emitted at `(width 16)`, truncating

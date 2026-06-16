@@ -1,4 +1,40 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-COMPLETENESS.2 (`2026-06-17`) — ISF lowering-fidelity measurement (measurement-first, read-only, docs-only)
+
+**Goal.** Resolve the broad `.2+` umbrella into a concrete measurement-first leaf: gauge which ISF-fidelity
+bar dimension carries the largest *faithful-lowering* gap, before any emitter change. WIRE-BASED-100 a hard
+gate on anything built next.
+
+**Method.** Read `IsfIr::from_intent_ir` (`ir/isf_ir.rs:613`) + `render()` + `build_isf_adapter_artifact`
+(`ir/adapters.rs`) newline-aware, classified every design-intent IntentIR surface as {lowered | residual |
+not-read}, then replicated the lowering's own `signal_names` set + per-element filters
+(`ir/isf_ir.rs:1038/1058/1075`) in read-only Python over all 36 `intent_ir.json`. Two independent Explore
+agents cross-checked the field-read trace and the legacy-vs-typed-surface relationship.
+
+**Key findings (all measured, per-item demonstrated).**
+1. The 22k `behaviors` + 22k `constraints` are free-text legacy surfaces; their semantic content is already
+   lowered via the typed twins → non-lowering is not a gap (the redundant rendering `KG-ISF-TRANSACTIONS.2b`
+   removed).
+2. The typed-rule lowering `continue`-skips 17 425 elements with no residual, BUT they are not lost grounded
+   intent: 16 179 are empty-subject temporal_invariants (e.g. a table-of-contents heading classified as an
+   invariant — *"| | | A2.3.2 Dependencies between channel handshake signals | … | 31 |"*), 1 095 are
+   no-consequent conditional_rules (legal boilerplate, vague "must"/"shall"), and the 151 "undeclared-signal"
+   cases (0 on all 4 wire docs) are register/struct-field paths (`process_id[19:17]`/`DC.tc.SXL`/`DID`/
+   `Reserved`) whose typed home is the register/message-field surface, not wire rules. Mass-residualizing
+   would be dishonest noise → bar #6 is already honest for grounded wire intent.
+3. The largest true infidelity is signal direction/width: the emitter reads only the legacy flat
+   `direction_hint`/`width_hint` (`None` for 85–98%) and defaults to `output`/`width-1` (AXI `.isf` 283
+   `(output)` vs 4 `(input)`, all width 1), ignoring the canonical actor-relative graph (`actor_ports`).
+   Design-gated: direction is relationship-relative (every signal is both input + output across actors), the
+   `.isf` is a single flat module (`derive_isf_actor_name`), the default is the deliberate `R6-ISF-ADAPTER.4`
+   policy (adapters.rs:202–217), and the persisted corpus is pre-`.1a` (phantom actor `For` still present).
+
+**Outcome.** Spun `.2a` (direction/width fidelity, `deferred`-with-trigger — needs an FSMGen-contract check
+on whether `--strict --check` uses direction / accepts symbolic widths + a reference-boundary design + an
+owner decision in tension with the north star) and `.2b` (ISF lowering-coverage visibility gauge — buildable,
+additive, byte-identical `.isf`, must count only would-be-lowerable intent not the §3 honest-absence
+categories). Report `docs/research/isf-lowering-fidelity-measurement.md`; KM card `isf-lowering-fidelity-gauge`.
+
 ## ISF-REGISTER-RESET-EMIT.3 (`2026-06-16`) — reconcile storage-var width to the true register width (closes tree)
 - **Why:** `.1` found 169 composable registers whose composed reset needs more bits than the var width
   the emitter used. That width was the widest single *field* (max-field-extent), which is a latent bug

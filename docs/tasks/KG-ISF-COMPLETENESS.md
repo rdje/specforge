@@ -200,9 +200,50 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   AXI/APB/AHB 4/4·6/6·6/6; actor-relations AXI/APB/AHB/SWD 6/6·6/6·6/6·1/1; temporal 3/3·3/3·4/4).
   `kg-bench` 156/156; `run_ci.sh` GREEN (lib 1637 pass/2 ignored, +2 tests). KM card
   `[[agent-coordinated-subject-split]]`. Frontier → `.1b.ii` / `.1b.iv` (both deferred-with-trigger) / `.2+`.
-- ID: `KG-ISF-COMPLETENESS.2+` · Status: `pending` · Goal: the remaining bar dimensions per doc
-  (relation completeness, signal direction/width coverage, constraint completeness via the gauge,
-  behavior/temporal carry, and the ISF round-trip fidelity check), each measurement-first + gold-gated.
+- ID: `KG-ISF-COMPLETENESS.2` · Status: `active` (measurement DONE `2026-06-17`, read-only, docs-only;
+  code → `.2a`/`.2b`) · Goal: **gauge which remaining bar dimension carries the largest faithful-lowering
+  gap** (relation completeness / signal direction-width / constraint gauge / behavior-temporal carry / ISF
+  round-trip), measurement-first before any code. **Measurement DONE** (report
+  `docs/research/isf-lowering-fidelity-measurement.md`; KM card `[[isf-lowering-fidelity-gauge]]`): read the
+  full ISF lowering (`from_intent_ir`/`render`) + replicated its per-element filters over all 36 IntentIR
+  docs. **Findings:** (1) the 22k `behaviors` + 22k `constraints` are FREE-TEXT legacy surfaces whose
+  content is already lowered via the typed twins (`signal_constraints`/`temporal_rules`/`conditional_rules`)
+  — re-lowering them is the redundant rendering `KG-ISF-TRANSACTIONS.2b` removed, NOT a gap; (2) temporal
+  rules + register resets already carry honest residuals; (3) the typed-rule lowering `continue`-skips
+  17 425 elements with no residual, BUT they are NOT lost grounded intent — 16 179 are un-grounded
+  free-text temporal_invariants (a ToC heading classified as an invariant), 1 095 are no-consequent prose
+  (legal boilerplate, vague "must"/"shall"), and the 151 "undeclared-signal" cases (0 on all 4 wire docs)
+  are dominated by register/struct-field paths (`process_id[19:17]`/`DC.tc.SXL`/`DID`/`Reserved`) that
+  belong to the register/message-field surface, not wire rules → mass-residualizing would be dishonest
+  noise; **bar #6 is already honest for grounded wire intent**; (4) **the largest TRUE infidelity is signal
+  direction/width**: the emitter reads only the legacy flat `direction_hint`/`width_hint` (None for
+  85–98%) and defaults to `output`/`width-1` (AXI `.isf` = 283 `(output)` vs 4 `(input)`, all width 1),
+  ignoring the canonical actor-relative graph (`actor_ports`) — but direction is relationship-relative, the
+  `.isf` is a single flat module, and the default is the DELIBERATE, documented `R6-ISF-ADAPTER.4` policy
+  (FSMGen schedules) in tension with the north star (owner decision). Spun → `.2a` (direction/width
+  fidelity, deferred-with-trigger + owner steer) + `.2b` (lowering-coverage visibility gauge, buildable).
+  WIRE-BASED-100 a hard gate on anything built. No code.
+- ID: `KG-ISF-COMPLETENESS.2a` · Status: `deferred` (with-trigger; needs an FSMGen-contract check +
+  reference-boundary design + an OWNER decision) · Goal: **signal direction/width fidelity in the emitted
+  `.isf`** — carry the document-grounded direction/width instead of defaulting to `output`/`width-1`. The
+  largest measured true infidelity (`.2`), but design-gated: (i) direction is relationship-relative (every
+  signal is both an input and output across actors) and the `.isf` is a SINGLE flat module
+  (`derive_isf_actor_name`) → needs a chosen reference boundary; (ii) `R6-ISF-ADAPTER.4` deliberately
+  defaults direction/width because FSMGen owns scheduling — overriding it is an OWNER decision in tension
+  with the `2026-06-16` north star; (iii) width is mostly symbolic (`*_WIDTH`) → needs an FSMGen-contract
+  check on `(width PARAM)`; (iv) actor-port direction must be recovered on FRESH post-`.1a` canonical
+  artifacts (the persisted corpus still carries phantom actors like `For`). **Re-open trigger:** an FSMGen-
+  contract answer (does `--strict --check` use signal direction? does it accept symbolic widths?) + owner
+  steer on the north-star-vs-policy tension. Measurement-first; WIRE-BASED-100 + FSMGen `--strict` hard
+  gates (large wire-doc `.isf` blast radius).
+- ID: `KG-ISF-COMPLETENESS.2b` · Status: `pending` (the buildable candidate; confirm scope measurement-
+  first) · Goal: **ISF lowering-coverage visibility gauge** — make the lowering's per-surface coverage
+  honest and visible (how many typed-rule elements lowered to `.isf` rules vs not, by category) as adapter
+  metadata + a `validate <intent-ir>` surface, mirroring the existing `storage_reset_residual_packet`
+  count-summary pattern. Purely ADDITIVE (emitted `.isf` byte-identical → WIRE-BASED-100 trivially held);
+  must count only would-be-lowerable intent, NOT the ungroundable-noise / register-field categories `.2`
+  showed are honest absences (else it mislabels extraction noise as a lowering gap). Confirm the
+  count/categorization scope measurement-first in its own slice; ADR-0006 (universal counts, no name list).
 
 ## Changelog
 
@@ -256,6 +297,19 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   25→19; AXI real agents byte-identical, actors 21. WIRE-BASED-100 HELD 1.000 (constraints ×3 / relations
   ×4 / temporal ×3) on fresh-Pattern eval; `kg-bench` 156/156; `run_ci.sh` GREEN (+2 tests, lib 1635
   pass/2 ignored). KM card `agent-trailing-fragment-consolidation`. Frontier → `.1b.ii`/`.1b.iii`/`.1b.iv`.
+- `2026-06-17`: **`.2` MEASUREMENT DONE** (read-only, docs-only — the `.2+` umbrella resolved into a
+  concrete measurement leaf + two spun sub-leaves). Gauged which ISF-fidelity bar dimension has the largest
+  faithful-lowering gap by reading the full ISF lowering and replicating its per-element filters over all 36
+  IntentIR docs. **Verdict:** bar #6 (round-trip) is already honest for grounded wire intent — the 22k
+  `behaviors`/`constraints` are free-text twins already lowered typed; the 17 425 typed-rule "drops" are
+  un-groundable free-text (16 179 empty-subject temporal_invariants = ToC headings) / no-consequent prose /
+  non-wire register-field paths (0 undeclared drops on all 4 wire docs), so mass-residualizing would be
+  dishonest noise. The largest TRUE infidelity is **signal direction/width** (~98% defaulted output/width-1,
+  ignoring the actor-relative graph) — but it is design-gated (relationship-relative + single flat module +
+  the deliberate `R6-ISF-ADAPTER.4` default + an owner decision). Spun `.2a` (direction/width fidelity,
+  deferred-with-trigger + owner steer) + `.2b` (lowering-coverage visibility gauge, buildable, additive).
+  Report `docs/research/isf-lowering-fidelity-measurement.md`; KM card `isf-lowering-fidelity-gauge`. No
+  code; WIRE-BASED-100 untouched.
 - `2026-06-16`: **`.1b.iii` DONE** — coordinated-subject split LANDED. `split_coordinated_actor_subject` +
   `split_coordinated_actor_relations` (+ `relation_actor_id_slug`) in `ir/evidence.rs`, a post-pass in
   `actor_signal_relation_surface` before dedup: a relation whose subject is a coordinated "X and Y"
