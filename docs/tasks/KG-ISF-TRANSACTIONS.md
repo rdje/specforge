@@ -17,12 +17,20 @@
 
 ## The point (why this tree exists)
 
-A protocol spec is, in large part, a catalogue of **supported transactions** — AXI *read* / *write* (with
-their burst, ordering, exclusive, and response semantics), AHB *NONSEQ/SEQ/BUSY/IDLE* transfers, APB
-*read/write* (setup/access), I2C *write/read with (re)start/stop+ack*, etc. Each transaction is a named,
-multi-phase sequence over a **specific set of signals**. For the `.isf` lowering to be faithful, the
-IntentIR must carry every such transaction the document defines, with its signals, phases/steps, ordering,
-and constraints — `FSMGen` then schedules the `(transaction …)` body into the FSM.
+**Transactions are a FIRST-CLASS concept** (owner, `2026-06-16`, reinforced): on par with actors and
+signals, not a derived afterthought — because **a transaction is HOW an action between actors happens**.
+It is the verb/behaviour layer over the actor↔signal graph: an actor *initiates* a transaction, which
+drives/samples a **specific set of signals** through ordered *phases*, and another actor *responds*. This
+holds for BOTH protocol-based PDFs (AXI *read*/*write* with burst/ordering/exclusive/response semantics,
+AHB *NONSEQ/SEQ/BUSY/IDLE* transfers, APB *read/write* setup/access, I2C *write/read* with (re)start/stop+
+ack) AND **platform-based PDFs** (a platform/SoC interconnect describes the transactions its components
+exchange). A protocol/platform spec is, in large part, a **catalogue of supported transactions**.
+
+For the `.isf` lowering to be faithful, the IntentIR must carry every transaction the document defines —
+its initiating/responding actors, its signal set with roles, its ordered phases/steps and the handshakes
+that gate them, and its governing constraints — so `FSMGen` schedules the `(transaction …)` body into the
+FSM. This tree therefore connects the actor-surface completeness work (`KG-ISF-COMPLETENESS.1b.*` — who the
+agents are and what they drive) to the behaviour surface (what the agents *do*, as transactions).
 
 ## Measured baseline (`2026-06-16`, read-only over the persisted IntentIR corpus + the build code)
 
@@ -86,8 +94,22 @@ precise, accurate capture — but delivered measurement-first, in safe slices, w
   directive; record the measured baseline (55 txns / 15 docs; 3 sources; 3 gaps incl. the ADR-0006 breach);
   define the checkable 5-point bar; cross-reference `KG-ISF-COMPLETENESS`. No code (own before touching).
   Memory `[[project_kg_isf_transactions]]`.
-- ID: `KG-ISF-TRANSACTIONS.1` · Status: `pending` (measurement-first, read-only — NEXT) · Goal: **the
-  transaction-capture census + gap taxonomy.** Over the protocol corpus (wire docs first): (a) how does
+- ID: `KG-ISF-TRANSACTIONS.1` · Status: `in_progress` (measurement-first, read-only; STARTED `2026-06-16`,
+  core measurement gathered — report `docs/research/transaction-capture-census.md`) · Goal: **the
+  transaction-capture census + gap taxonomy.**
+  **Gathered `2026-06-16` (report §1–§3):** (1) **ISF target model** — `(transaction NAME (on TRIG) …steps…
+  (complete PORT))` ALREADY supports composed/hierarchical transactions via `spawn`/`do`+`await_all` and
+  rule-activation, so G1 is a BUILD gap not an ISF-expressiveness gap; (2) **source-form census** (AXI/AHB/
+  APB/I2C/CHI) — supported transactions are defined by THREE recurring structural forms: enumeration tables
+  (opcode/transfer-type/command columns — AXI A7.3/A7.4, AHB Table 3-1 HTRANS / 3-4 HBURST, CHI Table B1.2),
+  "transaction/transfer/operation" SECTION headings + a def-sentence ("a X transaction consists of …"), and
+  prose+timing/flow diagrams (APB/I2C/CHI) giving phase sequence + per-phase signal set; (3) **current
+  capture** confirmed = per-channel handshakes + per-actor blobs + 3 hardcoded recognizers, none of which
+  capture §2's named/composed/signal-set transactions. **Remaining `.1` step (next session):** per-doc
+  G1/G3 quantification + pick the first code slice (leading order: G2 ADR-0006 structural-recognizer first
+  → G1 composed named txns via spawn/do → G3 signal-set linkage), then write KM card
+  `transaction-capture-census`. Each subsequent code slice measurement-first, WIRE-BASED-100 a hard gate,
+  ISF round-trip verified. Over the protocol corpus (wire docs first): (a) how does
   each document DEFINE its supported transactions (a transactions table/section? prose? a state/sequence
   diagram?) — characterise the structural form, ADR-0006-style; (b) for each, the named transaction set +
   the signals each involves; (c) compare to the current `transactions` surface to quantify G1/G3 per doc;
@@ -107,3 +129,11 @@ precise, accurate capture — but delivered measurement-first, in safe slices, w
   (`HTRANS`/`PSEL`/`MISO`… literals → `ahb_transfer`/`apb_transfer`/`spi_transfer`), G3 signal-set linkage
   incomplete. Defined the checkable 5-point transaction-complete bar; WIRE-BASED-100 a hard gate. Frontier
   → `.1` (census + gap taxonomy, measurement-first, read-only). Memory `project_kg_isf_transactions`.
+- `2026-06-16`: **`.1` STARTED + core measurement gathered** (read-only, no code; owner reinforced
+  transactions as FIRST-CLASS, spanning protocol AND platform PDFs — "how actions between actors happen",
+  the verb layer over the actor↔signal graph). Captured the ISF target model (composed transactions already
+  expressible via `spawn`/`do`+`await_all`), the source-form census across AXI/AHB/APB/I2C/CHI (3 recurring
+  structural forms: enumeration tables / section headings+def-prose / prose+flow diagrams), and confirmed
+  the current-capture gap. Report `docs/research/transaction-capture-census.md`. Tree "The point" + bar
+  reframed for first-class / platform breadth / actor-action. `.1` left `in_progress` (per-doc G1/G3
+  quantification + first-slice pick + KM card `transaction-capture-census` remain). No code.
