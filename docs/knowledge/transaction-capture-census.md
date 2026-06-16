@@ -11,6 +11,8 @@ answers:
   - "what structural cues recognize transactions universally (section anchors + enumeration tables)"
   - "how many transactions does each persisted IntentIR doc have (AXI=9, AHB=3, APB=3)"
   - "what is the owner directive on transaction recognition / membership / step-by-step / fast / minimum"
+  - "what is the validate transaction inventory surface (intent_transaction_inventory metrics + finding)"
+  - "why is the ordered multi-phase transaction body the hard deferred part (no structural name bridge AXI handshake to named transaction)"
 date: 2026-06-16
 tags: [kg-isf-transactions, transactions, intent-ir, isf, adr-0006, measured, north-star, ir-intent, recognize-digital-patterns, baseline]
 evidence: docs/research/transaction-capture-census.md (full census §1–§4); docs/tasks/KG-ISF-TRANSACTIONS.md (sharpened 7-point bar + .2a/.2b/.2c slices); crates/specforge/src/ir/intent.rs (synthesize_transactions + recognize_digital_patterns, the 3 hardcoded Patterns 3/4/5); generated/intent_ir/*/intent_ir.json (the transactions[] surface scanned)
@@ -61,6 +63,25 @@ is the greppable summary so the next session does not re-excavate it.
 > `burst_operation`→{HADDR,HBURST,HSIZE}, `idle_transfer`→{HTRANS,HREADY}. No ISF/strict change (membership is
 > `ports` metadata; emitter lowers `steps`). **Deferred beyond the batch:** the ordered multi-phase BODY
 > (phase sequencing over the membership) + finer address/data/control/response role sub-typing.
+
+> **STATUS UPDATE — `.2d` LANDED (`2026-06-16`; commit `9248a24b`):** quick-surface transaction inventory on
+> `validate <intent-ir>` (`commands/validate.rs`, intent path). 5 metrics (`transactions`,
+> `transactions_with_signal_set`, `transactions_with_steps`, `transactions_recognition_only`,
+> `transaction_signal_members`) + an `intent_transaction_inventory` Info finding (non-empty-only, the
+> `evidence_message_field_inventory`/`PDF-VARIANT-DIGESTION.11` honesty rule) + 3 human-summary lines. Pure
+> read-only off built IntentIR. Live AHB: `transactions=7`, `with_signal_set=6`, `with_steps=1`,
+> `recognition_only=6`, `signal_members=15`. So an operator can "very quickly identify" a doc's transactions.
+
+> **FRONTIER (next, `.2e`, NOT coded) — ordered multi-phase BODY: measured `2026-06-16` why it's the hard
+> deferred part.** Read-only over persisted IntentIR: **AXI** (`ihi0022_l`) has 7 per-channel handshakes
+> (`ar/aw/w/b/r/ac/cr_handshake`, each `await_all`+`sample`) PLUS 14 section-named composed transactions
+> (`axi_transaction`, `atomic_transaction`, `narrow_transfer`, …) with **empty `steps` AND empty `ports`** —
+> and there is **NO structural name bridge** (no `read_transaction`/`write_transaction` named; mapping
+> `aw→w→b`/`ar→r` onto the section names needs a hardcoded list → ADR-0006 breach + fabricated boundaries).
+> **AHB** named transfers carry `.2c` membership but no phase body (only `idle_transfer` has the `.2b` drive).
+> **APB** recognises 0 named transactions. Candidate ordering signals (none chosen — needs a dedicated
+> measurement-first slice): doc phase-ordering prose; `temporal_rules` ordering across membership; handshake-
+> dependency chains. Grounding lives in `docs/tasks/KG-ISF-TRANSACTIONS.md` "Frontier (next slice)".
 
 ## What the `transactions[]` surface holds today
 

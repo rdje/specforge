@@ -130,6 +130,30 @@ grammar only, no name lists (ADR 0006); honest residual over fabrication. Scope 
 precise, accurate, step-by-step capture of ALL transactions — but delivered measurement-first, in safe
 slices, wire-docs first.
 
+## Frontier (next slice) — ordered multi-phase transaction BODY (`.2e`, NOT yet owned/coded)
+
+**Goal (bar #5, step-by-step):** give the named composed transactions an ORDERED multi-phase body
+(address → data → response phases + the handshakes that gate them), building on the `.2c` signal-set membership.
+
+**Measured grounding (read-only, `2026-06-16`, over the persisted AXI/AHB/APB IntentIR):** this is the explicitly
+DEFERRED hard part, and the measurement confirms why it must stay measurement-first and ADR-0006-careful:
+- **AXI** (`ihi0022_l`): 21 transactions = 7 per-channel handshakes (`ar/aw/w/b/r/ac/cr_handshake`, each with an
+  `await_all`+`sample` body) PLUS 14 section-named composed transactions (`axi_transaction`, `atomic_transaction`,
+  `narrow_transfer`, `other_write_transaction`, `writezero_transaction`, …) that ALL carry **empty `steps` and empty
+  `ports`**. There is **no structural name bridge**: the document names neither a `read_transaction` nor a
+  `write_transaction`, so mapping `aw→w→b` / `ar→r` onto the section-named transactions cannot be done by name
+  without a hardcoded list (ADR-0006 breach) and would fabricate boundary attributions (bar #3).
+- **AHB** (`ihi0033_c`): named transfers carry `.2c` membership (ports) but no ordered phase body; only
+  `idle_transfer` has a `(drive HTRANS IDLE)` step (`.2b`).
+- **APB** (`ihi0024_e`): 0 named transactions recognised (its transfers are section-described differently).
+
+**Candidate structural ordering signals to investigate (none chosen yet — needs a dedicated measurement-first slice):**
+(a) the document's own phase-ordering prose ("the address phase precedes the data phase"); (b) temporal-rule ordering
+across the membership signals (the `temporal_rules` already carry edges/`cycle_window`s); (c) handshake-dependency
+chains (a channel whose VALID is gated by another channel's handshake). Each must be grounded in the current document,
+universal, and name-list-free. **Recommendation: start this in a fresh, focused session** (substantial research +
+design + implementation; signoff-quality, not to be rushed). Repo is handoff-ready at commit `9248a24b`.
+
 ## Task Tree
 
 - ID: `KG-ISF-TRANSACTIONS` · Status: `active` · Children: `.0` (this ownership/scoping slice), `.1`+ TBD
