@@ -54,10 +54,33 @@ For example, the AHB specification yields `basic_transfer`, `burst_operation`,
 corroborated by the `HTRANS` enumeration. A document that defines no transactions
 (or a non-specification document) yields none.
 
-At this stage the transactions are **recognized and named**; their step-by-step
-bodies and full signal sets are filled in by later pipeline work, and a
-recognition-only transaction is held back from the `.isf` until it has a body, so
-nothing unfinished is silently lowered.
+Once a transaction is recognized and named, the next question is *what does it do,
+step by step?* SpecForge fills that in only where the document grounds it, never by
+guessing:
+
+- **A transaction named after a signal value gets a grounded body.** When the name
+  *is* an enumerated value of a declared signal — AHB's `idle_transfer` corresponds
+  to driving `HTRANS` to `IDLE` (the spec's own transfer-type encoding) — the
+  transaction's body is exactly that: `(drive HTRANS IDLE)`. That is the document's
+  own definition of the transaction, so SpecForge can write it down with confidence,
+  and the transaction now appears in the emitted `.isf`.
+- **Everything else stays recognized but body-less, on purpose.** Most transactions
+  (an AXI `atomic_transaction`, a `narrow_transfer`) describe a multi-phase sequence
+  whose step-by-step membership the tool cannot yet attribute *exactly* from the
+  document's structure. Rather than invent a plausible-but-wrong body, SpecForge
+  keeps the transaction recognized in `IntentIR` and holds it back from the `.isf`
+  as an honest gap, to be filled once the signal-set membership work grounds it.
+  Nothing unfinished is silently lowered.
+
+This stage also deliberately **does not** treat "everything an actor does over time"
+as a transaction. Earlier, SpecForge minted a catch-all `Manager_behavior` /
+`Subordinate_behavior` entry per actor — a bag of timed rules. That conflated two
+different things: a *transaction* (a named interaction the spec defines) versus an
+actor's *aggregate timing behaviour*. The timing behaviour is already captured, and
+faithfully lowered, by the typed temporal-rule surface; re-emitting it as a fake
+"transaction" only produced an invalid `.isf` clause. So those per-actor blobs are
+gone — the timing semantics are preserved where they belong, and the transaction
+list now contains only things the document actually calls transactions.
 
 ## What makes it canonical
 

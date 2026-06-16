@@ -14,7 +14,7 @@ answers:
 date: 2026-06-16
 tags: [kg-isf-transactions, transactions, intent-ir, isf, adr-0006, measured, north-star, ir-intent, recognize-digital-patterns, baseline]
 evidence: docs/research/transaction-capture-census.md (full census §1–§4); docs/tasks/KG-ISF-TRANSACTIONS.md (sharpened 7-point bar + .2a/.2b/.2c slices); crates/specforge/src/ir/intent.rs (synthesize_transactions + recognize_digital_patterns, the 3 hardcoded Patterns 3/4/5); generated/intent_ir/*/intent_ir.json (the transactions[] surface scanned)
-reverify: "Read docs/research/transaction-capture-census.md (the report is the authority — do NOT re-derive §1–§3; §4.1 records the .2a outcome). POST-.2a (2026-06-16): the 3 hardcoded recognizers are GONE — grep -nE '\\\"HTRANS\\\"|\\\"PSEL\\\"|\\\"MISO\\\"|ahb_transfer|apb_transfer|spi_transfer' crates/specforge/src/ir/intent.rs finds them ONLY in the removal comment + the cfg(test) module, never production. Named recognition now lands: after rebuilding (semantic then intent), for d in generated/intent_ir/*/intent_ir.json; do jq '[.transactions[]|select(.transaction_id|startswith(\"txn_named_\"))]|length' \"$d\"; done prints AHB=7 / APB=2 / AXI=14 / SWD=8 / readme=0; jq on the AHB doc shows idle_transfer with port HTRANS at confidence high (Cue-B corroborated). The composed multi-phase BODIES (steps) remain a .2b gap — txn_named_* carry no steps yet."
+reverify: "Read docs/research/transaction-capture-census.md (the report is the authority — do NOT re-derive §1–§3; §4.1 records the .2a outcome). POST-.2a (2026-06-16): the 3 hardcoded recognizers are GONE — grep -nE '\\\"HTRANS\\\"|\\\"PSEL\\\"|\\\"MISO\\\"|ahb_transfer|apb_transfer|spi_transfer' crates/specforge/src/ir/intent.rs finds them ONLY in the removal comment + the cfg(test) module, never production. Named recognition now lands: after rebuilding (semantic then intent), for d in generated/intent_ir/*/intent_ir.json; do jq '[.transactions[]|select(.transaction_id|startswith(\"txn_named_\"))]|length' \"$d\"; done prints AHB=7 / APB=2 / AXI=14 / SWD=8 / readme=0; jq on the AHB doc shows idle_transfer with port HTRANS at confidence high (Cue-B corroborated). POST-.2b (2026-06-16): the per-actor *_behavior synthesis is GONE — grep 'fn render_temporal_predicate\\|fn temporal_consequent_to_step\\|_behavior\\\", actor_name' crates/specforge/src/ir/intent.rs finds them ONLY in removal comments; after rebuilding a wire doc (intent then adapt), jq '[.transactions[]|select(.transaction_name|endswith(\"_behavior\"))]|length' is 0, and the Cue-B subset now carries a body — jq on the AHB doc shows idle_transfer with steps=[{drive HTRANS IDLE}]; subs/fsmgen/bin/fsmgen --strict --check --json on the APB .isf returns success:true (the *_behavior 'when body clauses must be list forms' class is cleared). The membership-grounded composed bodies for non-enum-named transactions remain a .2c gap."
 ---
 
 **Measured `2026-06-16` (`KG-ISF-TRANSACTIONS.1`, read-only, docs-only).** The baseline census of how
@@ -32,6 +32,22 @@ is the greppable summary so the next session does not re-excavate it.
 > SWD 8; `readme` 0 — spurious firing gone). So **G1's *named-recognition* gap is closed; only the
 > composed multi-phase *bodies* remain** (`.2b` — recognition-only txns carry no `steps` and are held out
 > of the `.isf` by the `!steps.is_empty()` emit filter until then). G3 signal-set membership = `.2c`.
+
+> **STATUS UPDATE — `.2b` LANDED (`2026-06-16`):** two faithful changes in `ir/intent.rs`. **(1)
+> Re-levelling:** the per-actor `{actor}_behavior` synthesis is REMOVED (with its two orphaned helpers
+> `render_temporal_predicate`/`temporal_consequent_to_step`) — census §3.6 phantoms built entirely from
+> `temporal_rules` (already lowered to valid `.isf` via the temporal path), and `.isf`-invalid (their
+> multi-word `when` condition `HREADY == HIGH @PreTick` tripped FSMGen's `when body clauses must be list
+> forms`). This clears that strict-error class corpus-wide with no semantic loss. **(2) Composed body:**
+> `mint_named_transaction` now composes a grounded `(drive signal value)` body for the Cue-B-corroborated
+> subset (a transaction named after an enumerated value of a declared signal — `idle_transfer` ⟺
+> `HTRANS = IDLE`), so it RENDERS to `.isf`. **Measured re-scoping:** the section-named transactions and the
+> per-channel handshakes have NO structural name bridge, so faithfully re-levelling handshakes into the
+> *right* named transaction needs the grounded signal-set membership `.2c` owns — deferred there, not
+> fabricated (bar #3). Live: `*_behavior` blobs now 0 corpus-wide; **APB strict-FAIL → PASS**; AHB
+> `idle_transfer` renders + is strict-valid; remaining wire-doc strict fails are PRE-EXISTING non-transaction
+> rule/enum issues `.2b` only unmasked. So **the composed *bodies* gap is now partly closed (the
+> enum-grounded subset) — the membership-grounded bodies for the rest are `.2c`.**
 
 ## What the `transactions[]` surface holds today
 

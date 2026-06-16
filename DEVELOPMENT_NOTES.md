@@ -1,4 +1,53 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-TRANSACTIONS.2b (`2026-06-16`) — composed step-by-step bodies + `*_behavior` re-levelling (G1)
+- **Why:** after `.2a` recognised + named the document's transactions, two problems remained in the IntentIR
+  transaction synthesis. (1) The per-actor `{actor}_behavior` "transactions" were mis-levelled phantoms
+  (census §3.6 — an actor's aggregate timed behaviour, not a transaction) and emitted `.isf`-INVALID
+  bodies: a `when` condition like `HREADY == HIGH @PreTick` is rendered as bare whitespace-separated tokens,
+  which FSMGen's S-expression parser splits so element[1] becomes the condition (`HREADY`) and `==`/`HIGH`/…
+  become scalar body clauses → `Transaction '<actor>_behavior': when body clauses must be list forms` under
+  `--strict --check`. (2) The `.2a` named transactions were body-less, so the `!steps.is_empty()` ISF emit
+  filter held them all out of the `.isf`.
+- **Measurement-first (read-only, before any edit):**
+  - Confirmed the strict failure is *purely* the multi-word `when` condition — AHB `manager_behavior` (only
+    single-atom `on_Rising_edge` conditions) lowers fine; `subordinate_behavior` (multi-word conditions)
+    is the sole AHB diagnostic. Scanned the corpus: multi-word `*_behavior` conditions exist in AXI/APB/AHB/
+    trace-bus/axi-stream/generic-flash/lti/hbm2.
+  - Confirmed the `*_behavior` blob is built entirely from `semantic_ir.temporal_rules`, which are *also*
+    carried into IntentIR and lowered to valid `.isf` via the dedicated temporal path (`txn_temporal_*`
+    asserts / `(rule …)` / explicit residual at `isf_ir.rs`). So the behavior transaction is a redundant
+    SECOND rendering — removing it loses no temporal semantics.
+  - Confirmed the `(priority X over Y)` cross-product iterates `all_transactions` (`isf_ir.rs:1074`), so
+    removing the behavior transactions auto-removes their priority lines (no dangling refs).
+  - Confirmed the section-anchor-named transactions (AXI `atomic_transaction`, `narrow_transfer`, …) and the
+    per-channel handshakes (`aw/ar/w/b/r_handshake`) have NO structural name bridge — so re-levelling
+    handshakes into the *right* named transaction cannot be done faithfully/universally without a name list;
+    that mapping depends on the grounded signal-set membership `.2c` owns. Only ~1 named transaction in the
+    persisted corpus (AHB `idle_transfer`→HTRANS) is Cue-B-corroborated.
+- **What changed (`ir/intent.rs`):**
+  - Removed the per-actor behavior synthesis from `synthesize_transactions` (and the two helpers it solely
+    served, `render_temporal_predicate` + `temporal_consequent_to_step` — no other callers, kept warning-deny
+    CI green). A comment records the re-levelling rationale in place.
+  - `mint_named_transaction` now composes a grounded body for the Cue-B-corroborated subset: a transaction
+    named after an enumerated value of a declared signal is DEFINED, in the document's own terms, by driving
+    that signal to that value (`idle_transfer` ⟺ `(drive HTRANS IDLE)`). The driven value is the canonical
+    uppercased member spelling, which equals the emitted enum member, so the lowered `(drive HTRANS IDLE)`
+    resolves against the enum FSMGen emits. Boundary-exact (only the keyed signal); ADR-0006-clean.
+- **Verification (regenerated wire/protocol docs with the new binary; `generated/` is gitignored):**
+  - `*_behavior` blobs = 0 in every regenerated doc.
+  - **APB (`ihi0024_d`, `ihi0024_e`) strict-FAIL → strict-PASS** (their only blocker was the behavior error;
+    `fsmgen --strict --check --json` → `success:true`, 0 diagnostics). low-power, debug/SWD, cxs also pass.
+  - AHB `idle_transfer` renders `(transaction idle_transfer (on start) (drive HTRANS IDLE) (complete done))`
+    and is strict-valid (the sole remaining AHB diagnostic is the PRE-EXISTING HAUSER rule-write conflict
+    `constraint_6` ⟨VALID⟩ vs `tinv_sc_llm_sigcon_0007` ⟨1⟩ — not transaction-related).
+  - Other wire docs still fail strict on PRE-EXISTING, non-transaction rule/enum-lowering issues (AXI/
+    axi-and-ace/lti `constraint_*` assignment-action grammar; axi-stream/generic-flash rule-write conflicts;
+    trace-bus `ATID` RHS-width-8-vs-LHS-width-1 contract; hbm2 enum-member emission). These are documented
+    out-of-scope residuals / candidate future slices; `.2b` introduced ZERO new transaction diagnostics.
+  - WIRE-BASED-100 `signal_constraint` + `temporal_rule` F1 = 1.000 across APB/AHB/AXI/SWD (orthogonal —
+    `.2b` touches only IntentIR transaction synthesis, not EvidenceIR/SemanticIR extraction); `kg-bench`
+    156/156; `run_ci.sh` green (lib 1641; one existing test updated for the composed body).
+
 ## KG-ISF-TRANSACTIONS.2a (`2026-06-16`) — structural transaction recognition (G2 de-hardcode)
 - **Why:** the only protocol-aware transaction recognition in the codebase was three hardcoded blocks in
   `recognize_digital_patterns` (`ir/intent.rs`) that literal-tested `HTRANS`/`PSEL`/`MISO` etc. to emit

@@ -1365,12 +1365,15 @@ fn recognize_digital_patterns(
 /// keyed entirely off the document's own structure, with NO chip-spec name list
 /// (ADR 0006), so it runs on ANY protocol or platform PDF.
 ///
-/// Scope (`.2a`): recognition + naming — the bar's coverage (#1) and
-/// fast/universal recognition (#2). The composed step-by-step body (`.2b`) and
-/// full signal-set membership (`.2c`) are later slices, so a recognition-only
-/// transaction carries no `steps`; the ISF emitter's `!steps.is_empty()` filter
-/// therefore holds it (recognized in the canonical IntentIR, not yet lowered)
-/// until `.2b` gives it a body — no fabrication, no silent ISF break.
+/// Scope (`.2a` recognition + `.2b` composition): `.2a` recognises + names every
+/// transaction (bar #1 coverage, #2 fast/universal recognition). `.2b` composes a
+/// grounded step-by-step BODY for the Cue-B-corroborated subset — a transaction
+/// named after an enumerated value of a declared signal is defined, in the
+/// document's own terms, by driving that signal to that value (bar #5 step-by-step),
+/// so it now RENDERS to `.isf`. A transaction with no enum-grounded selector keeps
+/// empty `steps`; the ISF emitter's `!steps.is_empty()` filter holds it (recognised
+/// in the canonical IntentIR, not yet lowered) as an honest residual until `.2c`
+/// grounds its full signal-set membership — no fabrication, no silent ISF break.
 fn recognize_named_transactions(
     transactions: &mut Vec<TransactionIntent>,
     semantic_ir: &SemanticIr,
@@ -1423,26 +1426,51 @@ fn recognize_named_transactions(
     }
 }
 
-/// Build the recognition-level [`TransactionIntent`] for one named anchor.
-/// Cue B corroboration: if a qualifier token of the transaction name matches a
-/// signal-keyed enum member (`enum_member_signal`: member → keyed signal), attach
-/// the keyed signal as a recognition port and raise confidence to `High` (two
-/// independent structural cues agree). `.2a` scope is recognition + naming, so
-/// the transaction carries no body `steps` yet (added by `.2b`).
+/// Build the [`TransactionIntent`] for one named anchor.
+///
+/// Cue B corroboration (`.2a`): if a qualifier token of the transaction name
+/// matches a signal-keyed enum member (`enum_member_signal`: member → keyed
+/// signal), attach the keyed signal as a recognition port and raise confidence to
+/// `High` (two independent structural cues agree).
+///
+/// Composed body (`.2b`): such a match also means the transaction is named after
+/// an enumerated VALUE of a declared signal — i.e. the document itself defines the
+/// transaction as "drive that signal to that value" (AHB `idle_transfer` ⟺
+/// `HTRANS = IDLE`, the Table 3-1 transfer-type encoding). So the matched
+/// `(drive signal value)` is composed as the transaction's grounded step-by-step
+/// body, and the transaction RENDERS to `.isf` (the `!steps.is_empty()` ISF emit
+/// filter now passes it). This is universal structural grammar over the document's
+/// own enumeration — NO chip-spec name list (ADR 0006) — and boundary-exact (only
+/// the keyed signal the transaction names). A transaction with no enum-grounded
+/// selector keeps empty `steps` and stays recognition-only (an honest residual)
+/// until `.2c` grounds its full signal-set membership — never a fabricated body.
 fn mint_named_transaction(
     anchor: &TransactionAnchorRecord,
     enum_member_signal: &BTreeMap<String, String>,
 ) -> TransactionIntent {
     let mut ports: Vec<TransactionPortRecord> = Vec::new();
+    let mut steps: Vec<TransactionStep> = Vec::new();
     for token in anchor.transaction_name.split('_') {
-        if let Some(signal) = enum_member_signal.get(&token.to_ascii_uppercase())
-            && !ports.iter().any(|p| &p.port_name == signal)
-        {
-            ports.push(TransactionPortRecord {
-                port_name: signal.clone(),
-                direction: TransactionPortDirection::InOut,
-                width: None,
-            });
+        // The enum member key is the uppercased member name; the matched value
+        // driven onto the keyed signal is that same canonical member spelling
+        // (it equals the emitted enum member, e.g. `IDLE`), so the lowered
+        // `(drive HTRANS IDLE)` resolves against the enum FSMGen emits.
+        let member = token.to_ascii_uppercase();
+        if let Some(signal) = enum_member_signal.get(&member) {
+            if !ports.iter().any(|p| &p.port_name == signal) {
+                ports.push(TransactionPortRecord {
+                    port_name: signal.clone(),
+                    direction: TransactionPortDirection::InOut,
+                    width: None,
+                });
+            }
+            let drive = TransactionStep::Drive {
+                drive_name: signal.clone(),
+                actuals: vec![member],
+            };
+            if !steps.contains(&drive) {
+                steps.push(drive);
+            }
         }
     }
     let automation_confidence = if ports.is_empty() {
@@ -1455,7 +1483,7 @@ fn mint_named_transaction(
         transaction_name: anchor.transaction_name.clone(),
         activation_port: None,
         ports,
-        steps: Vec::new(),
+        steps,
         source_block_ids: Vec::new(),
         source_temporal_rule_ids: Vec::new(),
         supporting_statement_ids: anchor.supporting_statement_ids.clone(),
@@ -1541,70 +1569,26 @@ fn synthesize_transactions(semantic_ir: &SemanticIr) -> Vec<TransactionIntent> {
         });
     }
 
-    // 2. Synthesize per-actor transactions from temporal_rules.
-    //    Group temporal_rules by the actor that drives the consequent signal.
-    let mut actor_txn_map: BTreeMap<String, Vec<&TemporalRuleRecord>> = BTreeMap::new();
-    for rule in &semantic_ir.temporal_rules {
-        for consequent in &rule.consequents {
-            if let TemporalPredicateRecord::ActorDrivesSignal { actor_name, .. } = consequent {
-                actor_txn_map
-                    .entry(actor_name.clone())
-                    .or_default()
-                    .push(rule);
-                break; // one actor per rule for grouping
-            }
-        }
-    }
-
-    for (actor_name, rules) in actor_txn_map.iter() {
-        if rules.is_empty() {
-            continue;
-        }
-        let mut steps = Vec::new();
-        for rule in rules {
-            // antecedents → When condition
-            let conditions: Vec<String> = rule
-                .antecedents
-                .iter()
-                .map(render_temporal_predicate)
-                .collect();
-            let condition = if conditions.is_empty() {
-                format!("on_{:?}_edge", rule.edge)
-            } else {
-                conditions.join(" and ")
-            };
-
-            let mut body = Vec::new();
-            for consequent in &rule.consequents {
-                if let Some(step) = temporal_consequent_to_step(consequent) {
-                    body.push(step);
-                }
-            }
-
-            if !body.is_empty() {
-                steps.push(TransactionStep::When { condition, body });
-            }
-        }
-
-        if !steps.is_empty() {
-            let all_rule_ids: Vec<String> = rules.iter().map(|r| r.rule_id.clone()).collect();
-            let all_stmt_ids: Vec<String> = rules
-                .iter()
-                .flat_map(|r| r.supporting_statement_ids.clone())
-                .collect();
-            transactions.push(TransactionIntent {
-                transaction_id: format!("txn_temporal_{}", sanitize_id(actor_name)),
-                transaction_name: format!("{}_behavior", actor_name),
-                activation_port: None,
-                ports: Vec::new(),
-                steps,
-                source_block_ids: Vec::new(),
-                source_temporal_rule_ids: all_rule_ids,
-                supporting_statement_ids: all_stmt_ids,
-                automation_confidence: AutomationConfidence::Medium,
-            });
-        }
-    }
+    // KG-ISF-TRANSACTIONS.2b — the per-actor `{actor}_behavior` transaction
+    // synthesis was REMOVED here (the re-levelling half of `.2b`). The census
+    // (`docs/research/transaction-capture-census.md` §3.6) established that a
+    // `*_behavior` blob is NOT a transaction at any level — it is an actor's
+    // aggregate timed behaviour (a bag of `when`-steps, no activation, no ports),
+    // built entirely from `semantic_ir.temporal_rules`. Those temporal rules are
+    // already carried forward into the IntentIR's `temporal_rules` surface and
+    // lowered to valid `.isf` through the dedicated temporal path
+    // (`txn_temporal_*` asserts / `(rule …)` / explicit residual). The
+    // `*_behavior` transaction was therefore a redundant SECOND rendering of the
+    // same rules — and an `.isf`-invalid one: its `when` condition was a multi-word
+    // antecedent phrase (`HREADY == HIGH @PreTick`) which the FSMGen S-expression
+    // parser tokenises into scalar body clauses, tripping
+    // `when body clauses must be list forms` under `--strict --check`. Dropping it
+    // clears that pervasive strict error across the wire corpus (AHB/APB/…) and
+    // removes the phantom non-transactions, while losing NO temporal semantics
+    // (they survive via `temporal_rules`). The composed step-by-step bodies for the
+    // document's genuinely-named transactions are minted by
+    // `recognize_named_transactions` (Cue A + Cue B, below); full signal-set
+    // membership is `.2c`.
 
     transactions
 }
@@ -1959,78 +1943,10 @@ fn convert_control_action_to_step(action: &ControlActionRecord) -> TransactionSt
     }
 }
 
-fn render_temporal_predicate(pred: &TemporalPredicateRecord) -> String {
-    match pred {
-        TemporalPredicateRecord::SignalValue {
-            signal_name,
-            value,
-            phase,
-        } => format!("{} == {} @{:?}", signal_name, value, phase),
-        TemporalPredicateRecord::ActorDrivesSignal {
-            actor_name,
-            signal_name,
-            phase,
-        } => format!("{} drives {} @{:?}", actor_name, signal_name, phase),
-        TemporalPredicateRecord::ActorMaintainsSignalStable {
-            actor_name,
-            signal_name,
-            from_phase,
-            to_phase,
-        } => format!(
-            "{} stable {} {:?}→{:?}",
-            actor_name, signal_name, from_phase, to_phase
-        ),
-        TemporalPredicateRecord::SignalStable {
-            signal_name,
-            from_phase,
-            to_phase,
-        } => format!("{} stable {:?}→{:?}", signal_name, from_phase, to_phase),
-        TemporalPredicateRecord::ActorSamplesSignal {
-            actor_name,
-            signal_name,
-            phase,
-        } => format!("{} samples {} @{:?}", actor_name, signal_name, phase),
-        TemporalPredicateRecord::SignalSampled { signal_name, phase } => {
-            format!("{} sampled @{:?}", signal_name, phase)
-        }
-        TemporalPredicateRecord::HandshakeComplete {
-            valid_signal,
-            ready_signal,
-            phase,
-        } => format!("{}/{} handshake @{:?}", valid_signal, ready_signal, phase),
-    }
-}
-
-fn temporal_consequent_to_step(consequent: &TemporalPredicateRecord) -> Option<TransactionStep> {
-    match consequent {
-        TemporalPredicateRecord::ActorDrivesSignal {
-            signal_name, phase, ..
-        } => Some(TransactionStep::Drive {
-            drive_name: signal_name.clone(),
-            actuals: vec![format!("@{:?}", phase)],
-        }),
-        TemporalPredicateRecord::ActorSamplesSignal { signal_name, .. } => {
-            Some(TransactionStep::Sample {
-                port: signal_name.clone(),
-                as_name: signal_name.clone(),
-            })
-        }
-        TemporalPredicateRecord::HandshakeComplete {
-            valid_signal,
-            ready_signal,
-            ..
-        } => Some(TransactionStep::AwaitAll {
-            done_port: format!("{}_{}_done", valid_signal, ready_signal),
-        }),
-        TemporalPredicateRecord::SignalValue {
-            signal_name, value, ..
-        } => Some(TransactionStep::Drive {
-            drive_name: signal_name.clone(),
-            actuals: vec![value.clone()],
-        }),
-        _ => None,
-    }
-}
+// `render_temporal_predicate` and `temporal_consequent_to_step` were removed in
+// KG-ISF-TRANSACTIONS.2b alongside the `{actor}_behavior` synthesis they served
+// (see `synthesize_transactions`): the per-actor temporal blob is not a
+// transaction, and its temporal content is already carried by `temporal_rules`.
 
 fn predicate_actor(pred: &TemporalPredicateRecord) -> Option<String> {
     match pred {
@@ -2201,7 +2117,6 @@ mod tests {
         let txn = mint_named_transaction(&idle, &enum_member_signal);
         assert_eq!(txn.transaction_id, "txn_named_idle_transfer");
         assert_eq!(txn.transaction_name, "idle_transfer");
-        assert!(txn.steps.is_empty(), ".2a recognition is body-less");
         assert_eq!(txn.ports.len(), 1);
         assert_eq!(txn.ports[0].port_name, "HTRANS");
         assert!(matches!(
@@ -2209,8 +2124,20 @@ mod tests {
             AutomationConfidence::High
         ));
         assert_eq!(txn.supporting_statement_ids, vec!["stmt_1".to_string()]);
+        // .2b: the enum-corroborated transaction now carries a grounded
+        // step-by-step body — drive the keyed signal to the named value
+        // (`idle_transfer` ⟺ `HTRANS = IDLE`) — so it renders to `.isf`.
+        assert_eq!(
+            txn.steps,
+            vec![super::TransactionStep::Drive {
+                drive_name: "HTRANS".to_string(),
+                actuals: vec!["IDLE".to_string()],
+            }],
+            ".2b composes the enum-grounded type-selector drive"
+        );
 
-        // Uncorroborated: no qualifier matches an enum member → Medium, no ports.
+        // Uncorroborated: no qualifier matches an enum member → Medium, no ports,
+        // no body (held out of `.isf` as an honest residual until `.2c`).
         let basic = TransactionAnchorRecord {
             transaction_anchor_id: "txnanchor_basic_transfer".to_string(),
             transaction_name: "basic_transfer".to_string(),
@@ -2221,6 +2148,7 @@ mod tests {
         };
         let txn2 = mint_named_transaction(&basic, &enum_member_signal);
         assert!(txn2.ports.is_empty());
+        assert!(txn2.steps.is_empty(), "uncorroborated stays body-less");
         assert!(matches!(
             txn2.automation_confidence,
             AutomationConfidence::Medium

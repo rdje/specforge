@@ -194,15 +194,54 @@ slices, wire-docs first.
   **+4** (`derive_transaction_name` keep/reject, `build_transaction_anchors` dedup/provenance,
   `mint_named_transaction` Cue-B corroboration). Book: `pipeline/intentir.md` gained a "How transactions are
   recognized" subsection (why-before-what, AHB example).
-- ID: `KG-ISF-TRANSACTIONS.2b` · Status: `pending` · Goal: **G1 — composed named transactions
-  (step-by-step body + re-levelling).** Compose each recognised transaction's ordered phases/steps via ISF
-  `spawn`/`do`+`await_all`, re-levelling today's per-channel handshakes into the named transaction's CHILD
-  steps (bar #5 step-by-step; #3 boundary precision for steps). Measurement-first; WIRE-BASED-100 + ISF
-  round-trip gates.
+- ID: `KG-ISF-TRANSACTIONS.2b` · Status: `done` (`2026-06-16`; batch slice 2/3; measurement-first) · Goal:
+  **G1 — composed step-by-step bodies + `*_behavior` re-levelling.** **DONE** with a measurement-driven
+  refinement of the original plan (recorded below). Two changes to the IntentIR transaction synthesis
+  (`ir/intent.rs`), both faithful, universal (no name list — ADR 0006), boundary-exact:
+  1. **Re-levelling (the broad fix):** removed the per-actor `{actor}_behavior` synthesis from
+     `synthesize_transactions` (and the two helpers it solely served — `render_temporal_predicate`,
+     `temporal_consequent_to_step`). These were census-§3.6 phantoms (an actor's aggregate timed behaviour,
+     not a transaction), built entirely from `temporal_rules` — which are already carried into IntentIR and
+     lowered to valid `.isf` via the dedicated temporal path (`txn_temporal_*` asserts / `(rule …)` /
+     residual). So the `*_behavior` "transaction" was a redundant SECOND rendering AND an `.isf`-invalid one:
+     its multi-word `when` condition (`HREADY == HIGH @PreTick`) is tokenised by FSMGen's S-expression parser
+     into scalar body clauses → `when body clauses must be list forms` under `--strict --check`. Removing it
+     clears that pervasive strict-error class corpus-wide, loses no temporal semantics, and (since the
+     `(priority … over …)` cross-product iterates the transaction list) leaves no dangling refs.
+  2. **Composed body (the G1 pattern, faithfully):** `mint_named_transaction` now composes a grounded
+     step-by-step body for the Cue-B-corroborated subset — a transaction named after an enumerated value of a
+     declared signal is DEFINED, in the document's own terms, by driving that signal to that value
+     (`idle_transfer` ⟺ `(drive HTRANS IDLE)`), so it RENDERS to `.isf` (passes the `!steps.is_empty()`
+     filter). The driven value is the canonical uppercased member spelling (= the emitted enum member).
+  **Measurement-driven refinement (the honest re-scoping of the original "re-level handshakes into the named
+  transaction's child steps" plan):** measurement showed the section-anchor-named transactions (AXI
+  `atomic_transaction`, `narrow_transfer`, …) and the per-channel handshakes (`aw/ar/w/b/r_handshake`) live
+  in different naming universes with NO structural bridge in the threaded data. Mapping which handshakes are
+  which named transaction's children cannot be done faithfully or universally without a name list (an
+  ADR-0006 breach) and would fabricate boundary attributions — violating bar #3 (owner-elevated to "of utmost
+  importance"). That composition depends on the grounded signal-set membership `.2c` owns, so it is correctly
+  sequenced there (NOT a reduction in ambition — the right ordering given the grounding dependency).
+  **Verification (regenerated wire/protocol docs; `generated/` is gitignored):** `*_behavior` blobs = 0 in
+  every doc; **APB (`ihi0024_d`/`ihi0024_e`) strict-FAIL → strict-PASS** (`fsmgen --strict --check --json`
+  `success:true`, 0 diagnostics — their only blocker was the behavior error); AHB `idle_transfer` renders
+  `(transaction idle_transfer (on start) (drive HTRANS IDLE) (complete done))` and is strict-valid. Remaining
+  wire-doc strict failures are PRE-EXISTING, non-transaction rule/enum-lowering issues `.2b` only unmasked
+  (AHB HAUSER rule-write conflict; AXI/axi-and-ace/lti `constraint_*` assignment-action grammar; axi-stream/
+  generic-flash rule-write conflicts; trace-bus `ATID` width contract; hbm2 enum-member emission) — candidate
+  future slices, out of scope. **Gates:** ADR-0006 ✓; **WIRE-BASED-100 constraint+temporal F1 = 1.000** ✓
+  (orthogonal — `.2b` touches only IntentIR transaction synthesis, not EvidenceIR/SemanticIR extraction);
+  ISF round-trip — `*_behavior` strict-error class eliminated + 0 new transaction diagnostics ✓; `kg-bench`
+  156/156 ✓; `run_ci.sh` green ✓ (lib 1641; one existing `mint_named_transaction` test updated for the
+  composed body). Book `pipeline/intentir.md` updated.
 - ID: `KG-ISF-TRANSACTIONS.2c` · Status: `pending` · Goal: **G3 — signal-set membership + boundary
-  precision.** Enumerate each transaction's full signal set with roles (address/data/control/response),
-  COMPLETE and EXCLUSIVE (what is part of X and what is NOT — bar #3/#4), grounded in the document's
-  channel/phase grouping. Measurement-first; WIRE-BASED-100 + ISF round-trip gates.
+  precision (also unlocks the membership-grounded composed bodies).** Enumerate each transaction's full
+  signal set with roles (address/data/control/response), COMPLETE and EXCLUSIVE (what is part of X and what
+  is NOT — bar #3/#4), grounded in the document's channel/phase grouping (e.g. the transaction-defining
+  section's own signal references, or a grounded channel→transaction link). **`.2b` measurement established
+  that this membership grounding is the PREREQUISITE for the broad composed bodies** — once a named
+  transaction's signal set is grounded, its multi-phase body (the handshakes/phases among those signals) can
+  be composed faithfully, which `.2b` deliberately deferred here rather than fabricate. Measurement-first;
+  WIRE-BASED-100 + ISF round-trip gates.
 - ID: `KG-ISF-TRANSACTIONS.2d?` · Status: `candidate` · Goal: **quick-surface** — a `validate`
   transaction-inventory metric + finding (and/or CLI surface) so an operator can "very quickly identify"
   a doc's recognised transactions at a glance (from the owner's "very quickly identify" directive).
@@ -256,3 +295,23 @@ slices, wire-docs first.
   refreshed. Frontier → `.2b` (G1 composed step-by-step body + re-levelling: the named transaction becomes
   the parent, today's per-channel handshakes its child steps; also fixes the pre-existing `*_behavior` ISF
   strict errors). `[[project_kg_isf_transactions]]`.
+- `2026-06-16`: **`.2b` DONE** — batch slice 2/3 (measurement-first). **G1 composed step-by-step bodies +
+  `*_behavior` re-levelling.** (1) Removed the per-actor `{actor}_behavior` synthesis (`synthesize_transactions`,
+  `ir/intent.rs`) + its two now-orphaned helpers (`render_temporal_predicate`, `temporal_consequent_to_step`):
+  census-§3.6 phantoms (an actor's aggregate timed behaviour, not a transaction) built entirely from
+  `temporal_rules`, which are already lowered to valid `.isf` via the dedicated temporal path — so the
+  `*_behavior` "transaction" was a redundant SECOND rendering AND an `.isf`-invalid one (its multi-word `when`
+  condition `HREADY == HIGH @PreTick` tripped FSMGen's `when body clauses must be list forms`). (2)
+  `mint_named_transaction` now composes a grounded `(drive signal value)` body for the Cue-B-corroborated subset
+  (a transaction named after an enumerated value of a declared signal — `idle_transfer` ⟺ `HTRANS = IDLE`), so it
+  RENDERS to `.isf`. **Measurement-driven refinement:** the section-named transactions and the per-channel
+  handshakes have NO structural name bridge, so faithfully re-levelling handshakes into the *right* named
+  transaction needs the grounded signal-set membership `.2c` owns — deferred there rather than fabricate
+  boundary attributions (bar #3). **Measured:** `*_behavior` blobs now 0 corpus-wide; **APB strict-FAIL →
+  strict-PASS**; AHB `idle_transfer` renders + is strict-valid; remaining wire-doc strict failures are
+  PRE-EXISTING non-transaction rule/enum-lowering issues `.2b` only unmasked (documented out-of-scope residuals).
+  Gates: ADR-0006 ✓, **WIRE-BASED-100 constraint+temporal F1 = 1.000** ✓ (orthogonal), ISF round-trip —
+  `*_behavior` strict-error class eliminated + 0 new transaction diagnostics ✓, `kg-bench` 156/156 ✓, `run_ci.sh`
+  green ✓ (lib 1641, one existing test updated). Book `pipeline/intentir.md` updated; census report §4.2 +
+  KM card refreshed. Frontier → `.2c` (G3 signal-set membership + boundary precision; also unlocks the
+  membership-grounded composed bodies). `[[project_kg_isf_transactions]]`.

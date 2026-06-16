@@ -1,3 +1,45 @@
+### KG-ISF-TRANSACTIONS.2b — composed step-by-step bodies + `*_behavior` re-levelling (G1) (DONE)
+Second slice of the owner-authorized bounded batch (`.2a→.2b→.2c`, 2/3). Measurement-first. Two changes
+to the IntentIR transaction synthesis (`ir/intent.rs`), both faithful, universal (no name list — ADR 0006),
+and boundary-exact:
+
+- **Re-levelling — the phantom `*_behavior` transactions are removed.** `synthesize_transactions` no longer
+  emits a per-actor `{actor}_behavior` transaction. The census (`docs/research/transaction-capture-census.md`
+  §3.6) established these are NOT transactions — they are an actor's aggregate timed behaviour, built
+  entirely from `temporal_rules`, which are already carried into IntentIR and lowered to valid `.isf`
+  through the dedicated temporal path (`txn_temporal_*` asserts / `(rule …)` / honest residual). The
+  `*_behavior` transaction was a redundant SECOND rendering — and an `.isf`-invalid one: its `when`
+  condition was a multi-word antecedent phrase (`HREADY == HIGH @PreTick`) that FSMGen's S-expression
+  parser splits into scalar body clauses, tripping `when body clauses must be list forms` under
+  `--strict --check`. Removing it clears that pervasive strict-error class corpus-wide and loses no
+  temporal semantics (the two helpers it solely served — `render_temporal_predicate`,
+  `temporal_consequent_to_step` — were removed with it).
+- **Composed body — Cue-B-corroborated named transactions now RENDER to `.isf`.** When a transaction is
+  named after an enumerated value of a declared signal (AHB `idle_transfer` ⟺ `HTRANS = IDLE`, the
+  Table 3-1 transfer-type encoding), `mint_named_transaction` composes the matched `(drive signal value)`
+  as its grounded step-by-step body, so it passes the `!steps.is_empty()` ISF emit filter. A transaction
+  with no enum-grounded selector keeps empty `steps` and stays recognition-only (honest residual) until
+  `.2c` grounds its full signal-set membership — never a fabricated body.
+- **Why no broad handshake→named-transaction composition (measurement finding):** the section-anchor-named
+  transactions (AXI `atomic_transaction`, `narrow_transfer`, …) and the per-channel handshakes
+  (`aw/ar/w/b/r_handshake`) live in different naming universes with NO structural bridge in the threaded
+  data — mapping which handshakes are which named transaction's children cannot be done faithfully or
+  universally without a name list (ADR-0006 breach) and would fabricate boundary attributions (the bar's
+  #3, owner-elevated to "of utmost importance"). That composition depends on the grounded signal-set
+  membership that `.2c` owns, so it is correctly sequenced there.
+- **Measured (corpus-wide, regenerated wire/protocol docs):** `*_behavior` blobs now 0 in every doc.
+  **APB strict-FAIL → strict-PASS** (its only blocker was the behavior error). AHB `idle_transfer` renders
+  `(transaction idle_transfer (on start) (drive HTRANS IDLE) (complete done))`. The remaining wire-doc strict
+  failures are PRE-EXISTING, non-transaction rule/enum-lowering issues `.2b` only unmasked (AHB HAUSER
+  rule-write conflict; AXI/axi-and-ace/lti `constraint_*` assignment-action grammar; axi-stream/generic-flash
+  rule-write conflicts; trace-bus `ATID` width contract; hbm2 enum-member emission) — candidate future
+  slices, out of scope here.
+- **Gates:** ADR-0006 ✓ (universal grammar, no names); **WIRE-BASED-100 constraint+temporal F1 = 1.000**
+  (held — transaction surface orthogonal to the extraction gold); ISF round-trip — `*_behavior` strict-error
+  class eliminated + 0 new transaction diagnostics + `idle_transfer` strict-valid ✓; `kg-bench` 156/156 ✓;
+  `run_ci.sh` green ✓ (lib 1641; one existing `mint_named_transaction` test updated for the composed body).
+  Book `pipeline/intentir.md` transaction subsection updated (composition + re-levelling).
+
 ### KG-ISF-TRANSACTIONS.2a — structural, universal transaction recognition (G2 de-hardcode) (DONE)
 First code slice in the tree (owner-chosen "both cues" + bounded batch `.2a→.2b→.2c`). Removed the three
 hardcoded `recognize_digital_patterns` blocks (`HTRANS`/`HREADY`/`HADDR` → `ahb_transfer`,

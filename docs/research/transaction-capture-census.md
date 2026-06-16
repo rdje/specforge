@@ -207,6 +207,41 @@ byte-identical before/after, ISF round-trip 0 blockers + 0 new strict diagnostic
 filter holds them out of the `.isf` until `.2b` gives them composed bodies — no fabrication, no silent
 break. See `docs/tasks/KG-ISF-TRANSACTIONS.md` (`.2a` node) for the full verification log.
 
+### 4.2 `.2b` OUTCOME (`2026-06-16`) — composed bodies + `*_behavior` re-levelling, with a measured re-scoping
+
+`KG-ISF-TRANSACTIONS.2b` was implemented measurement-first, and the measurement **refined** the original
+`.2b` plan ("re-level today's per-channel handshakes into the named transaction's child steps"). Two
+findings reshaped it:
+
+- **The `*_behavior` blobs are a redundant, `.isf`-invalid second rendering of `temporal_rules`.** Confirmed
+  by reading the AHB/APB ISF round-trip directly: the single AHB strict diagnostic was
+  `Transaction 'subordinate_behavior': when body clauses must be list forms` — its multi-word `when`
+  condition (`HREADYOUT == HIGH @PreTick`) is tokenised by FSMGen's S-expression parser into scalar body
+  clauses. The blob's content is built entirely from `temporal_rules`, which are *also* lowered (validly) as
+  `txn_temporal_*` asserts / `(rule …)`. So the fix is to **drop the blob** (census §3.6 re-levelling): it
+  clears the strict-error class corpus-wide and loses no temporal semantics. (The `(priority … over …)`
+  cross-product iterates the transaction list, so removal leaves no dangling refs.)
+- **The section-named transactions and the per-channel handshakes have NO structural name bridge.** The AXI
+  named transactions are `axi_transaction`, `narrow_transfer`, `atomic_transaction`, … (section-anchor
+  qualifiers); the handshakes are `aw/ar/w/b/r_handshake` (channel prefixes). Mapping "which handshakes are
+  which named transaction's children" needs AXI channel-semantics knowledge — a name list, an ADR-0006
+  breach — and doing it by guess would fabricate boundary attributions (bar #3, owner-elevated to "of utmost
+  importance"). That mapping depends on the grounded signal-set membership `.2c` owns, so the broad composed
+  body is **correctly sequenced into `.2c`**, not fabricated in `.2b`.
+
+**What `.2b` delivered (faithful, universal, boundary-exact):** (1) removed the per-actor `{actor}_behavior`
+synthesis (and its two now-orphaned helpers); (2) `mint_named_transaction` composes a grounded
+`(drive signal value)` body for the Cue-B-corroborated subset — a transaction named after an enumerated
+value of a declared signal is defined by driving that signal to that value (`idle_transfer` ⟺
+`(drive HTRANS IDLE)`), so it RENDERS to `.isf`. **Measured (regenerated wire/protocol docs):** `*_behavior`
+blobs now 0 in every doc; **APB strict-FAIL → strict-PASS** (`success:true`, 0 diagnostics — its only blocker
+was the behavior error); AHB `idle_transfer` renders + is strict-valid; the remaining wire-doc strict failures
+are PRE-EXISTING, non-transaction rule/enum-lowering issues `.2b` only unmasked (AHB HAUSER rule-write
+conflict; AXI/axi-and-ace/lti `constraint_*` assignment-action grammar; axi-stream/generic-flash rule-write
+conflicts; trace-bus `ATID` width contract; hbm2 enum-member emission — candidate future slices). Gates:
+ADR-0006 ✓, WIRE-BASED-100 constraint+temporal F1 = 1.000 ✓ (orthogonal), ISF round-trip — behavior strict
+class eliminated + 0 new transaction diagnostics ✓, `kg-bench` 156/156 ✓, `run_ci.sh` green ✓.
+
 ## 5. Owner directive — sharpened (`2026-06-16`, multi-message)
 
 The owner reinforced the requirement across several messages while this census was being finalised; the

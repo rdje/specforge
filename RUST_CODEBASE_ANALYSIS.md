@@ -4,6 +4,35 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-06-16 — KG-ISF-TRANSACTIONS.2b: composed step-by-step bodies + `*_behavior` re-levelling)
+- **`intent.rs` transaction synthesis re-levelled:** `synthesize_transactions` lost its per-actor
+  `{actor}_behavior` step (the second of its two synthesis sources). The census
+  (`docs/research/transaction-capture-census.md` §3.6) established that a `*_behavior` blob is NOT a
+  transaction at any level — it is an actor's aggregate timed behaviour built entirely from
+  `semantic_ir.temporal_rules`, which are already carried into IntentIR and lowered to valid `.isf`
+  through the dedicated temporal path (`txn_temporal_*` asserts / `(rule …)` / explicit residual). The
+  `*_behavior` transaction was therefore a redundant SECOND rendering of the same rules — and an
+  `.isf`-invalid one: its `when` condition was a multi-word antecedent phrase (`HREADY == HIGH @PreTick`)
+  that FSMGen's S-expression parser tokenises into scalar body clauses, tripping
+  `when body clauses must be list forms` under `--strict --check`. Dropping it clears that pervasive
+  strict-error class corpus-wide while losing no temporal semantics. The two helpers it solely served
+  (`render_temporal_predicate`, `temporal_consequent_to_step`) were removed with it (no other callers).
+- **`mint_named_transaction` now composes a grounded body:** when a Cue-B match holds (a transaction
+  named after an enumerated value of a declared signal, e.g. AHB `idle_transfer` ⟺ `HTRANS = IDLE`), the
+  matched `(drive signal value)` is emitted as the transaction's step-by-step body, so the recognised
+  transaction RENDERS to `.isf` (passes the `!steps.is_empty()` ISF emit filter) instead of staying
+  body-less. Universal structural grammar over the document's own enumeration — no name list (ADR 0006);
+  boundary-exact (only the keyed signal it names). Non-corroborated named transactions keep empty `steps`
+  (honest residual) until `.2c` grounds full signal-set membership.
+- **No subsystem boundary moved**; the change is confined to the IntentIR transaction synthesis. Measured:
+  `*_behavior` blobs now 0 across the corpus; APB went strict-FAIL→PASS (its only blocker was the behavior
+  error); AHB `idle_transfer` renders with `(drive HTRANS IDLE)`. Remaining wire-doc strict failures
+  (AHB HAUSER rule-write conflict, AXI/axi-and-ace/lti `constraint_*` assignment-action grammar, axi-stream/
+  generic-flash rule-write conflicts, trace-bus ATID width contract, hbm2 enum-member emission) are
+  PRE-EXISTING, non-transaction rule/enum-lowering issues that `.2b` only unmasked — candidate future
+  slices, out of `.2b` scope. WIRE-BASED-100 constraint+temporal F1 held at 1.000 (orthogonal); `kg-bench`
+  156/156; `run_ci.sh` green (lib 1641; one existing test updated for the composed body, no net new tests).
+
 ## Session update (2026-06-16 — KG-ISF-TRANSACTIONS.2a: structural transaction recognition; new SemanticIR surface)
 - **Public surface change:** `SemanticIr` gains a typed field `transaction_anchors: Vec<TransactionAnchorRecord>`
   (serde-default, skip-if-empty ⇒ existing artifacts deserialize unchanged; docs that name no transactions
