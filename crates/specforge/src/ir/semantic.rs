@@ -70,6 +70,18 @@ pub struct SemanticIr {
     /// while empty ⇒ zero artifact churn on docs that name no transactions.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub transaction_anchors: Vec<TransactionAnchorRecord>,
+    /// KG-ISF-TRANSACTIONS.2g: the protocol PHASES the document NAMES in its
+    /// prose (Cue — the document's own `<qualifier> phase` vocabulary:
+    /// "address phase", "data phase", "setup phase", "access phase",
+    /// "response phase", "turnaround phase", …), recovered by universal English
+    /// structural grammar (no chip-spec name list; ADR 0006). This is the
+    /// recognition substrate the later ordered multi-phase transaction body
+    /// (`.2h` ordering, `.2i` membership-by-phase + composition) sequences a
+    /// transaction's signal-set membership through; it is recognition-only and
+    /// not yet lowered to `.isf`. Serde-skipped while empty ⇒ zero artifact
+    /// churn on docs that name no phases.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub transaction_phases: Vec<TransactionPhaseRecord>,
     #[serde(default)]
     pub control_blocks: Vec<ControlBlockRecord>,
     #[serde(default)]
@@ -347,6 +359,11 @@ impl SemanticIr {
         // .2c: the declared-signal inventory grounds each transaction's signal set.
         let transaction_anchors = build_transaction_anchors(&context, &declared_signal_names);
 
+        // KG-ISF-TRANSACTIONS.2g: recover the protocol PHASES the document names
+        // in its prose (`<qualifier> phase`). Recognition only — no body
+        // composition (`.2i`); universal English grammar, no name list (ADR 0006).
+        let transaction_phases = build_transaction_phases(&context);
+
         Ok(Self {
             schema_version: 1,
             stage: IrStage::SemanticIr,
@@ -376,6 +393,7 @@ impl SemanticIr {
             state_transitions: state_transitions_with_vlm,
             symbol_definitions,
             transaction_anchors,
+            transaction_phases,
             control_blocks,
             explicit_modules,
             explicit_tops,
@@ -2442,6 +2460,161 @@ fn sanitize_transaction_name(s: &str) -> String {
         }
     }
     out.trim_end_matches('_').to_string()
+}
+
+// ---------------------------------------------------------------------------
+// Transaction phases (KG-ISF-TRANSACTIONS.2g — the document's own `<qualifier>
+// phase` vocabulary)
+// ---------------------------------------------------------------------------
+
+/// A protocol transaction PHASE the document NAMES in its prose — the
+/// single-word qualifier before a `phase`/`phases` head ("address phase",
+/// "data phase", "setup phase", "access phase", "response phase",
+/// "turnaround phase"). Recovered by universal English structural grammar, no
+/// chip-spec name list (ADR 0006), so it runs on ANY protocol/platform PDF.
+///
+/// Recognition-only (KG-ISF-TRANSACTIONS.2g): it records WHICH phases the
+/// document names and WHERE (provenance), so the later slices can order them
+/// (`.2h`) and group each transaction's signal-set membership through them into
+/// the ordered multi-phase `(transaction …)` body (`.2i`). It is NOT yet lowered
+/// to `.isf`.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct TransactionPhaseRecord {
+    pub transaction_phase_id: String,
+    /// The document-named phase, lowercased + sanitized (e.g. `address`, `data`,
+    /// `setup`, `access`, `response`, `turnaround`).
+    pub phase_name: String,
+    /// Every statement whose prose names this phase (provenance) — accumulated
+    /// across the document, sorted + deduped for determinism.
+    #[serde(default)]
+    pub supporting_statement_ids: Vec<String>,
+    pub automation_confidence: AutomationConfidence,
+}
+
+/// Qualifier stoplist for the prose `<qualifier> phase` recogniser. Prose is
+/// noisier than the section headings the transaction-anchor recogniser reads
+/// (`derive_transaction_name`), so beyond the shared function-word / cardinal
+/// grammar this also rejects determiners, demonstratives, ordinals, and the
+/// position/quantity adjectives that *modify* a phase rather than *name* one
+/// ("the/this/each/next/first/separate phase"). Universal English grammar,
+/// never chip-spec vocabulary (ADR 0006) — the same kind of curated
+/// function-word list `TXN_NAME_STOPWORDS` already is. Tuned against a
+/// corpus-wide before/after measurement (`docs/research/transaction-capture-census.md`
+/// §4.5): on the wire docs it keeps exactly the protocol phases
+/// (APB setup/access, AHB/AXI address/data, SWD address/data/response/turnaround/
+/// acknowledge) and rejects the determiner/cardinal/ordinal/head-noun/boundary
+/// noise.
+#[rustfmt::skip]
+const PHASE_NAME_STOPWORDS: &[&str] = &[
+    // determiners / demonstratives / quantifiers
+    "the", "a", "an", "this", "that", "these", "those", "each", "its", "their", "his", "her",
+    "our", "your", "my", "any", "some", "no", "none", "every", "all", "both", "either", "neither",
+    "another", "such", "same",
+    // prepositions / conjunctions
+    "after", "before", "for", "of", "to", "with", "during", "per", "on", "in", "by", "as", "and",
+    "or", "which", "when", "if", "from", "into", "between", "about", "than", "via", "without",
+    "while", "where", "then", "so", "but", "nor", "yet",
+    // cardinals
+    "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+    "eleven", "twelve",
+    // ordinals
+    "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth",
+    // position / quantity adjectives that modify (not name) a phase
+    "next", "previous", "last", "current", "final", "initial", "prior", "preceding", "single",
+    "multiple", "separate", "other", "given", "various", "several", "additional", "further",
+    "main", "only", "new", "certain", "following",
+];
+
+/// Trim a raw token's leading/trailing non-alphanumeric punctuation and
+/// lowercase it (`"phase,"` → `phase`, `"(address)"` → `address`).
+fn normalize_phase_token(raw: &str) -> String {
+    raw.trim_matches(|c: char| !c.is_ascii_alphanumeric())
+        .to_ascii_lowercase()
+}
+
+/// True when a raw token is the `phase` / `phases` head noun (after trimming
+/// edge punctuation). Exact match — never a substring, so `phaseshift` /
+/// `multiphase` do not trip it.
+fn is_phase_head_token(raw: &str) -> bool {
+    matches!(normalize_phase_token(raw).as_str(), "phase" | "phases")
+}
+
+/// Derive a document-named phase from the raw token immediately before a
+/// `phase`/`phases` head, or `None` if it is not a phase-naming qualifier.
+///
+/// Cue of KG-ISF-TRANSACTIONS.2g. Universal English structural grammar ONLY —
+/// no chip-spec name list (ADR 0006), so it recognises the phases of ANY
+/// protocol/platform PDF keyed entirely off the document's own prose.
+fn derive_phase_name(raw_prev: &str) -> Option<String> {
+    // A phase qualifier and its `phase` head are one noun phrase: if the
+    // previous token ends a sentence/clause, the `phase` token actually starts a
+    // NEW clause, so this is not a `<qualifier> phase` name (e.g. "… data on the
+    // lanes. Phase 2 …" must not yield a `lanes` phase).
+    if raw_prev.trim_end().ends_with(['.', ':', ';', '!', '?']) {
+        return None;
+    }
+    let q = normalize_phase_token(raw_prev);
+    // All-alphabetic and ≥3 chars: drops symbols (`|`, `-`), hyphenated/numeric
+    // tokens (`link-up`, `3-1`, `pre-boot`), and 1–2-letter noise (`aw`, `rx`).
+    if q.len() < 3 || !q.chars().all(|c| c.is_ascii_alphabetic()) {
+        return None;
+    }
+    // function-word / determiner / cardinal / ordinal / position-adjective noise,
+    // a transaction head noun used as a modifier ("data TRANSFER phase" → drop
+    // `transfer`), or a gerund-led verb ("processing phase") all describe rather
+    // than name a phase.
+    if PHASE_NAME_STOPWORDS.contains(&q.as_str())
+        || crate::ir::normative_vocab::transaction_head_singular(&q).is_some()
+        || (q.len() > 5 && q.ends_with("ing"))
+    {
+        return None;
+    }
+    let name = sanitize_transaction_name(&q);
+    if name.is_empty() { None } else { Some(name) }
+}
+
+/// Recover the protocol PHASES the document NAMES in its prose (the document's
+/// own `<qualifier> phase` vocabulary). Deterministic: first statement-order
+/// occurrence sets the phase order; every naming statement is recorded as
+/// provenance (sorted + deduped). KG-ISF-TRANSACTIONS.2g — recognition only,
+/// no body composition. Universal English grammar, no chip-spec name list
+/// (ADR 0006).
+fn build_transaction_phases(context: &SemanticContext) -> Vec<TransactionPhaseRecord> {
+    let mut order: Vec<String> = Vec::new();
+    let mut provenance: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    for statement in &context.statements {
+        let tokens: Vec<&str> = statement.text.split_whitespace().collect();
+        for (i, raw) in tokens.iter().enumerate() {
+            if i == 0 || !is_phase_head_token(raw) {
+                continue;
+            }
+            let Some(name) = derive_phase_name(tokens[i - 1]) else {
+                continue;
+            };
+            if !provenance.contains_key(&name) {
+                order.push(name.clone());
+            }
+            provenance
+                .entry(name)
+                .or_default()
+                .insert(statement.statement_id.clone());
+        }
+    }
+    order
+        .into_iter()
+        .map(|name| {
+            let supporting_statement_ids = provenance
+                .get(&name)
+                .map(|ids| ids.iter().cloned().collect())
+                .unwrap_or_default();
+            TransactionPhaseRecord {
+                transaction_phase_id: format!("txnphase_{name}"),
+                phase_name: name,
+                supporting_statement_ids,
+                automation_confidence: AutomationConfidence::Medium,
+            }
+        })
+        .collect()
 }
 
 fn build_symbol_definitions(context: &SemanticContext) -> Vec<SymbolDefinitionRecord> {
@@ -10742,12 +10915,12 @@ mod tests {
         SemanticArbitrationDecisionBasis, SemanticContext, SemanticGroundingStrength, SemanticIr,
         SemanticSectionContext, SignalSemanticHintSourceKind, SignalSemanticTag,
         SymbolDefinitionKind, SystemResetKind, SystemResetPolarity, SystemResetTargetKind,
-        SystemResetTimingRelation, TransactionAnchorRecord, build_transaction_anchors,
-        control_binary_operator_key, control_block_role_key, control_reference_kind_key,
-        control_reference_suffix_key, control_unary_operator_key,
-        decision_tree_comparison_operator_key, derive_transaction_name,
-        is_explicit_infrastructure_component_term, is_false, is_zero, split_control_header_keyword,
-        width_hint_key,
+        SystemResetTimingRelation, TransactionAnchorRecord, TransactionPhaseRecord,
+        build_transaction_anchors, build_transaction_phases, control_binary_operator_key,
+        control_block_role_key, control_reference_kind_key, control_reference_suffix_key,
+        control_unary_operator_key, decision_tree_comparison_operator_key, derive_phase_name,
+        derive_transaction_name, is_explicit_infrastructure_component_term, is_false, is_zero,
+        split_control_header_keyword, width_hint_key,
     };
 
     fn make_table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
@@ -21953,6 +22126,114 @@ mod tests {
             vec!["PADDR".to_string(), "PWRITE".to_string()]
         );
         assert_eq!(anchors[1].signal_set, vec!["PRDATA".to_string()]);
+    }
+
+    // --- KG-ISF-TRANSACTIONS.2g: prose `<qualifier> phase` recognition ---
+
+    #[test]
+    fn derive_phase_name_keeps_real_phase_qualifiers() {
+        // The single-word qualifier before a `phase` head, on the wire docs:
+        // APB setup/access, AHB/AXI address/data, SWD response/turnaround/acknowledge.
+        // Case is folded and edge punctuation is trimmed.
+        let cases = [
+            ("address", "address"),
+            ("Address", "address"),
+            ("data", "data"),
+            ("setup", "setup"),
+            ("access", "access"), // ends in `ss` — must NOT be mistaken for a plural
+            ("response", "response"),
+            ("turnaround", "turnaround"),
+            ("acknowledge", "acknowledge"),
+            ("(data)", "data"), // edge punctuation trimmed
+        ];
+        for (raw, expected) in cases {
+            assert_eq!(
+                derive_phase_name(raw).as_deref(),
+                Some(expected),
+                "qualifier {raw:?} should name phase {expected:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn derive_phase_name_rejects_noise() {
+        // Each rejected by a distinct universal structural rule (no name list).
+        let rejected = [
+            "the",        // determiner
+            "this",       // demonstrative
+            "each",       // quantifier
+            "any",        // quantifier
+            "for",        // preposition
+            "four",       // cardinal
+            "first",      // ordinal
+            "separate",   // position/quantity adjective
+            "transfer",   // transaction head noun used as a modifier ("data transfer phase")
+            "transfers",  // plural head noun
+            "processing", // gerund-led verb
+            "data.",      // sentence/clause boundary (previous token ends a sentence)
+            "lanes:",     // clause boundary
+            "|",          // symbol → empty after trim
+            "aw",         // too short
+            "3-1",        // non-alphabetic
+        ];
+        for raw in rejected {
+            assert_eq!(
+                derive_phase_name(raw),
+                None,
+                "qualifier {raw:?} must not name a phase"
+            );
+        }
+    }
+
+    #[test]
+    fn build_transaction_phases_dedups_and_records_provenance() {
+        let mk_stmt = |id: &str, text: &str| super::StatementContext {
+            statement_id: id.to_string(),
+            class: super::StatementClass::SourceFact,
+            text: text.to_string(),
+            related_visual_evidence_ids: vec![],
+            section_ids: vec![],
+            signals: vec![],
+            supporting_table_ids: vec![],
+        };
+        let context = make_semantic_context_with_statements(vec![
+            // First sighting sets order: address, then data.
+            mk_stmt(
+                "stmt_1",
+                "During the address phase the manager drives HADDR.",
+            ),
+            // `the phase` is determiner noise — dropped; the `data phase` mention
+            // records provenance against the existing `data` record.
+            mk_stmt(
+                "stmt_2",
+                "In the data phase HWDATA is valid; the phase then ends.",
+            ),
+            // Second `data phase` sighting accumulates provenance (deduped per id).
+            mk_stmt(
+                "stmt_3",
+                "A wait extends the data phase until HREADY is high.",
+            ),
+        ]);
+        let phases = build_transaction_phases(&context);
+        let names: Vec<&str> = phases.iter().map(|p| p.phase_name.as_str()).collect();
+        // Statement order preserved; determiner noise dropped; `data` deduped.
+        assert_eq!(names, vec!["address", "data"]);
+
+        let address: &TransactionPhaseRecord = &phases[0];
+        assert_eq!(address.transaction_phase_id, "txnphase_address");
+        assert_eq!(address.supporting_statement_ids, vec!["stmt_1".to_string()]);
+        assert_eq!(
+            address.automation_confidence,
+            super::AutomationConfidence::Medium
+        );
+
+        let data = &phases[1];
+        assert_eq!(data.transaction_phase_id, "txnphase_data");
+        // Provenance accumulated across both naming statements, sorted + deduped.
+        assert_eq!(
+            data.supporting_statement_ids,
+            vec!["stmt_2".to_string(), "stmt_3".to_string()]
+        );
     }
 }
 

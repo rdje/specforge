@@ -83,8 +83,9 @@ transaction's section never mentions stay out. One subtlety matters for honesty 
 the raw text mentions more than signals — it also names *values* like `IDLE` or `INCR4`
 and abbreviations like `MPMC`. Those are not signals, so SpecForge keeps only the names
 the document actually declares as signals; the rest are dropped rather than passed off
-as part of the transaction. (How those signals are then ordered into address/data/
-response *phases* is a further step the tool builds on top of this membership.)
+as part of the transaction. (How those signals are then ordered into the document's
+address/data/response *phases* is a further step that builds on the phase recognition
+described below and on this membership.)
 
 This stage also deliberately **does not** treat "everything an actor does over time"
 as a transaction. Earlier, SpecForge minted a catch-all `Manager_behavior` /
@@ -110,6 +111,35 @@ one. A document with no recognized transactions emits no such finding: absence i
 event, it is simply silence — the same honesty rule the message-field inventory follows.
 This is pure observation off the already-built `IntentIR`; it changes nothing in the
 extraction, so it can never inflate or distort what was recognized.
+
+### Recognizing a document's transaction phases
+
+A transaction is rarely a single instant — a protocol usually describes it as a short
+sequence of *phases*. AHB and AXI talk about an **address phase** and a **data phase**,
+APB about a **setup phase** and an **access phase**, the debug interface about
+**address**, **data**, **response**, and **turnaround** phases. Knowing a document's phase
+vocabulary is the groundwork for eventually describing each transaction *step by step*, in
+the document's own terms.
+
+SpecForge recognizes these phases the same way it recognizes transaction names: from the
+document's own words, with no built-in protocol name list. It reads the prose for the
+`<qualifier> phase` shape and keeps the single word the document places in front of
+`phase` — `address`, `data`, `setup`, `access`, `response`, `turnaround`. Because prose is
+noisier than a section heading, the recognizer is deliberately strict, and rejects:
+grammatical filler (`the phase`, `this phase`, `each phase`); counting and ordering words
+(`first phase`, `two phases`, `next phase`); a head noun used only as a modifier (`data
+transfer phase` is about the *data* phase, not a "transfer" phase); and anything that
+crosses a sentence boundary. What survives is a clean list of the phases the document
+actually names — on the AMBA buses, exactly their address/data and setup/access phases.
+
+This is *recognition only* at this stage: SpecForge records which phases exist and which
+sentences name them, but it does not yet sequence a transaction's signals through them —
+that ordered, step-by-step body is a later step built on top of this list. The recognized
+phases live on the `SemanticIR`, and `specforge validate <semantic-ir>` surfaces them at a
+glance: a `transaction_phases` count and, when the document names any, a
+`semantic_transaction_phase_inventory` Info finding listing the phase names with
+`related_ids` for review. A document that names no phases emits no finding — absence is
+silence, not an event.
 
 ## What makes it canonical
 

@@ -4,6 +4,27 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-06-16 — KG-ISF-TRANSACTIONS.2g: structural transaction-PHASE recognition)
+- **New typed surface `TransactionPhaseRecord` + `SemanticIr.transaction_phases: Vec<TransactionPhaseRecord>`**
+  (`ir/semantic.rs`, serde-default + skip-if-empty ⇒ pre-`.2g` artifacts deserialize unchanged and docs with no phases
+  serialize byte-identically). Built by `build_transaction_phases(&context)` in `SemanticIr::build` (alongside
+  `build_transaction_anchors`) — a deterministic prose recogniser over `context.statements`, distinct from the
+  section-heading input the anchor builder uses (the `.2g` STEP-1 measurement: the `<qualifier> phase` vocabulary lives in
+  `extracted_statements`, not `section_anchors`).
+- **Recogniser / gate seam:** `derive_phase_name` (precision gate on the token before a `phase`/`phases` head) + helpers
+  `normalize_phase_token` / `is_phase_head_token` + the `PHASE_NAME_STOPWORDS` constant — a stronger, prose-tuned sibling of
+  the anchor surface's `derive_transaction_name` / `TXN_NAME_STOPWORDS`. Reuses `normative_vocab::transaction_head_singular`
+  (rejects a head noun used as a modifier) and `sanitize_transaction_name`. Universal English grammar, no chip-name list
+  (ADR 0006).
+- **Boundary / layering:** `transaction_phases` is a SemanticIR-only recognition surface — it is NOT carried into
+  `IntentIr.transactions`, so the IntentIR→ISF lowering is untouched and emitted `.isf` is byte-identical (it is the
+  substrate for the future `.2h`/`.2i` ordered-body composition, not yet a lowering input). The `validate <semantic-ir>` path
+  (`commands/validate.rs`) gains a `transaction_phases` metric + a `semantic_transaction_phase_inventory` Info finding +
+  a human-summary line (read-only observation off built IR).
+- **Risk/architecture impact:** additive only — no existing extraction/lowering seam changed; the only SemanticIR struct
+  literal (`SemanticIr::build`) updated; no other `SemanticIr { … }` constructor exists. `run_ci.sh` green, `kg-bench`
+  156/156, lib tests 1642 → **1645**.
+
 ## Session update (2026-06-16 — KG-ISF-TRANSACTIONS.2c: grounded signal-set membership)
 - **`TransactionAnchorRecord` (`ir/semantic.rs`) gains `signal_set: Vec<String>`** (serde-default,
   skip-if-empty ⇒ pre-`.2c` artifacts deserialize unchanged). `build_transaction_anchors` now takes the

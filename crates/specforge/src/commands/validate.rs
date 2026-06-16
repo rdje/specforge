@@ -4022,6 +4022,8 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!("  initial_regular_states: {initial_regular_states}");
     println!("  state_transitions: {}", ir.state_transitions.len());
     println!("  register_records: {}", ir.register_records.len());
+    // KG-ISF-TRANSACTIONS.2g — at-a-glance transaction-phase inventory.
+    println!("  transaction_phases: {}", ir.transaction_phases.len());
     println!("  timing_constraints: {}", ir.timing_constraints.len());
     println!("  temporal_rules: {}", ir.temporal_rules.len());
     println!("  actor_contracts: {}", ir.actor_contracts.len());
@@ -4996,6 +4998,42 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         &negative_knowledge_prior_matches,
     );
 
+    // KG-ISF-TRANSACTIONS.2g: an at-a-glance transaction-PHASE inventory so an
+    // operator can quickly see which protocol phases the document names (mirrors
+    // the `.2d` intent transaction inventory). Emitted ONLY when the surface is
+    // non-empty — absence is not an event (the PDF-VARIANT-DIGESTION.11 rule);
+    // `related_ids` carry the phase ids (bounded) for per-item review.
+    if !ir.transaction_phases.is_empty() {
+        let named = ir
+            .transaction_phases
+            .iter()
+            .take(8)
+            .map(|p| p.phase_name.as_str())
+            .collect::<Vec<_>>()
+            .join(", ");
+        let remaining = ir.transaction_phases.len().saturating_sub(8);
+        let name_list = if remaining > 0 {
+            format!("{named}, +{remaining} more")
+        } else {
+            named
+        };
+        findings.push(finding(
+            "semantic_transaction_phase_inventory",
+            ValidationFindingSeverity::Info,
+            "transactions",
+            format!(
+                "recognised transaction-phase inventory: {} phase(s) [{}]",
+                ir.transaction_phases.len(),
+                name_list
+            ),
+            ir.transaction_phases
+                .iter()
+                .take(8)
+                .map(|p| p.transaction_phase_id.clone())
+                .collect(),
+        ));
+    }
+
     let report = ValidationReportRecord {
         report_id: format!("validation_semantic_ir_{artifact_fingerprint}"),
         validated_stage: IrStage::SemanticIr,
@@ -5186,6 +5224,11 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             metric("initial_regular_states", initial_regular_states.to_string()),
             metric("state_transitions", ir.state_transitions.len().to_string()),
             metric("register_records", ir.register_records.len().to_string()),
+            // KG-ISF-TRANSACTIONS.2g: recognised transaction-phase count.
+            metric(
+                "transaction_phases",
+                ir.transaction_phases.len().to_string(),
+            ),
             metric(
                 "timing_constraints",
                 ir.timing_constraints.len().to_string(),

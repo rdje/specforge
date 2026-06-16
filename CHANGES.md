@@ -1,3 +1,33 @@
+### KG-ISF-TRANSACTIONS.2g — structural transaction-PHASE recognition (DONE, measurement-first)
+`.2f` chose the document's own `<qualifier> phase` structure as the ordering signal for the deferred ordered multi-phase
+transaction body. `.2g` is the first CODE slice on that path: it recognises a document's transaction PHASES (recognition only
+— no body composition yet, that is `.2i`), the same way `.2a` recognised transaction NAMES.
+
+- **New typed surface (`ir/semantic.rs`):** `TransactionPhaseRecord` (`transaction_phase_id`, `phase_name`,
+  `supporting_statement_ids`, `automation_confidence`) on a new `SemanticIr.transaction_phases` field (serde-skipped while
+  empty ⇒ zero artifact churn).
+- **Recogniser:** `build_transaction_phases(context)` scans `context.statements` PROSE for the `<qualifier> phase`/`phases`
+  n-gram (STEP-1 measured the input surface: phases live in `extracted_statements`, NOT `section_anchors`), preserves
+  first-occurrence order, and accumulates deduped per-phase provenance. `derive_phase_name` is the precision gate.
+- **Gate (universal English grammar, no name list — ADR 0006):** the single token before the head; reject a sentence/clause
+  boundary (prev token ends `.`/`:`/`;`/`!`/`?`), non-alphabetic / <3-char tokens, the `PHASE_NAME_STOPWORDS`
+  (determiners/demonstratives/quantifiers/prepositions/cardinals/ordinals/position-adjectives — stronger than the `.2a`
+  anchor gate because prose is noisier), a transaction head noun used only as a modifier (`data transfer phase` → drop
+  `transfer`), and gerund-led verbs. Tuned by a corpus-wide before/after measurement (census §4.5).
+- **Validate inventory (`commands/validate.rs`, SemanticIR path):** metric `transaction_phases` + Info finding
+  `semantic_transaction_phase_inventory` (category `transactions`, emitted only when non-empty — the
+  `PDF-VARIANT-DIGESTION.11` absence-is-not-an-event rule, `related_ids` = phase ids) + a `transaction_phases:`
+  human-summary line, so an operator can quickly see which phases a document names.
+- **Measured live (rebuilt wire docs; `generated/` gitignored):** APB `{setup, access}`, AHB `{address, data}` (+`write`×1),
+  AXI `{data}`, SWD `{data, response, acknowledge, turnaround, nodata, address}` (+`write`×1) — clean recall of the protocol
+  phases, determiner/cardinal/ordinal/head-noun/punctuation/boundary noise rejected; other docs recover their real phases
+  (equalization/discovery/configuration/initialization/activation/…) with low, doc-local residual noise.
+- **Gates:** ADR-0006 ✓; WIRE-BASED-100 orthogonal (additive SemanticIR field, no constraint/relation/temporal surface
+  touched) ✓; ISF round-trip byte-identical — `transaction_phases` is SemanticIR-only, NOT carried to
+  `IntentIr.transactions` (verified: APB `adapt` `blocking_reasons: None`; `transaction_phases` absent from IntentIR) ✓;
+  `kg-bench` 156/156 ✓; `run_ci.sh` green (fmt + warning-deny clippy/tests/rustdoc + mdBook; lib **1645**, +3 tests) ✓. Book
+  `pipeline/intentir.md` "Recognizing a document's transaction phases". Frontier → `.2h` (phase ordering recovery).
+
 ### KG-ISF-TRANSACTIONS.2f — ordering-signal choice for the multi-phase transaction body (DONE, measurement-first, docs-only)
 The `.2e` checkpoint deferred *which* ordering signal grounds the deferred ordered multi-phase transaction body to "a
 dedicated measurement-first slice." `.2f` ran that measurement corpus-wide (read-only over 36 persisted IntentIR/SemanticIR

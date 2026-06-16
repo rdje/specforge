@@ -320,6 +320,56 @@ fabricate ordering or require a name list). Designed slice path, each measuremen
   the same intersection technique as `.2c`) + ordered `(transaction … <phase-1 steps> … (complete …))` composition,
   reusing the per-signal direction `.2c` grounds. ISF round-trip + WIRE-BASED-100 hard gates; bar #5 lands here.
 
+### 4.5 `.2g` OUTCOME (`2026-06-16`) — structural transaction-PHASE recognition (measurement-first)
+
+`KG-ISF-TRANSACTIONS.2g` implemented the `.2f`-chosen path's first slice: recognise (recognition only, no body
+composition — that is `.2i`) the protocol PHASES a document NAMES in its own prose, the same way `.2a` recognised
+transaction NAMES.
+
+**Gate-tuning measurement (read-only over the 78 persisted EvidenceIR; then a live SemanticIR rebuild of the wire
+docs).** A RAW `<word> phase`/`phases` scan (token before the head, edge-punctuation trimmed, lowercased) over every
+`extracted_statements[].text` exposed the noise classes that a precision gate must reject:
+
+| Class | Examples (count) |
+|---|---|
+| determiners / demonstratives / quantifiers | `the`(29), `any`(12), `this`(10), `these`(4), `all`(2), `another`(2) |
+| cardinals | `two`(9), `three`(5), `ten`(2), `eight`(2), `four`(1) |
+| ordinals | `first`(9), `second`(6), `third`(5), `fourth`(2) |
+| head noun used as a modifier | `transfer`(16) ← "data **transfer** phase", `transfers`(1) |
+| prepositions / conjunctions | `for`(6), `and`(5), `from`(1) |
+| symbols / non-alphabetic | `-`(7), `link-up`(6), `|`(6), `pre-boot`(1), `3-1`(1) |
+| position / quantity adjectives | `separate`(6), `following`(1) |
+| too short | `a`(3), `of`(2), `aw`(1), `rx`(1) |
+| sentence/clause boundary | `lanes`, `compliant`, `rate`, `called` (the head began a NEW sentence/clause) |
+
+**The landed gate** (`derive_phase_name`, `ir/semantic.rs`): single token before the head; reject a sentence/clause
+boundary (prev token ends in `.`/`:`/`;`/`!`/`?`), non-alphabetic / `<3`-char tokens, the `PHASE_NAME_STOPWORDS`
+(determiners/demonstratives/quantifiers/prepositions/cardinals/ordinals/position-adjectives — a stronger
+English-grammar stoplist than `TXN_NAME_STOPWORDS`), a transaction head noun used as a modifier
+(`transaction_head_singular`), and gerund-led verbs (`len>5 && ends_with("ing")`). Universal grammar, no name list
+(ADR 0006). **A plural-rejection heuristic was MEASURED-REJECTED:** `access` ends in `ss`, so an `ends_with('s')` rule
+would wrongly drop a genuine APB phase.
+
+**After the gate, on the rebuilt wire docs (`build_transaction_phases` live):**
+
+| Doc | Recognised phases |
+|---|---|
+| APB (`ihi0024_e`) | `setup`, `access` |
+| AHB (`ihi0033_c`) | `address`, `data` (+ `write`×1 — honest low-count) |
+| AXI (`ihi0022_l`) | `data` |
+| SWD (`ihi0074_a`) | `data`, `response`, `acknowledge`, `turnaround`, `nodata`, `address` (+ `write`×1) |
+
+Clean recall of the protocol phases with the noise classes rejected; other docs recover their own real phases
+(equalization/discovery/configuration/initialization/activation/startup/validation/…) with low, doc-local residual
+noise. **Surfaced for the operator** via `validate <semantic-ir>`: a `transaction_phases` metric, a
+`semantic_transaction_phase_inventory` Info finding (non-empty only — the `PDF-VARIANT-DIGESTION.11` rule), and a
+`transaction_phases:` human-summary line.
+
+**Gates:** ADR-0006 ✓; WIRE-BASED-100 orthogonal (additive SemanticIR field) ✓; ISF round-trip byte-identical —
+`transaction_phases` is SemanticIR-only and is NOT carried to `IntentIr.transactions` (verified: APB `adapt`
+`blocking_reasons: None`; field absent from the rebuilt IntentIR) ✓; `kg-bench` 156/156 ✓; `run_ci.sh` green (lib
+**1645**, +3 tests) ✓. Frontier → `.2h` (phase ordering recovery).
+
 ## 5. Owner directive — sharpened (`2026-06-16`, multi-message)
 
 The owner reinforced the requirement across several messages while this census was being finalised; the
