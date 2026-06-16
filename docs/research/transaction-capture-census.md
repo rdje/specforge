@@ -273,6 +273,48 @@ F1 = 1.000 ✓ (orthogonal), ISF round-trip 0 new diagnostics ✓, `kg-bench` 15
 address/data/response phases + the gating handshakes) — the membership is its prerequisite, now delivered;
 and finer address/data/control/response role sub-typing.
 
+### 4.4 `.2f` OUTCOME (`2026-06-16`) — ordering-signal choice for the multi-phase body (measurement-first)
+
+The `.2e` checkpoint deferred *which* ordering signal grounds the body to "a dedicated measurement-first slice."
+`KG-ISF-TRANSACTIONS.2f` ran that measurement corpus-wide (read-only over the 36 persisted IntentIR/SemanticIR
+artifacts + 78 EvidenceIR artifacts; no code) and made the choice. The three `.2e` candidates were tested:
+
+- **(b) `temporal_rules` ordering — REJECTED.** Direct scan of the persisted rules: they are per-signal STABILITY /
+  value obligations (`signal_stable`, `actor_drives_signal`, `signal_value`), with mostly `cycle_window=none`, and
+  they do NOT form phase-sequencing edges across a transaction's membership. AHB `burst_operation`→{HADDR,HBURST,
+  HSIZE} is referenced by exactly one rule (HSIZE-stable, no window); AHB `basic_transfer`'s rules touch only
+  HREADYOUT/HREADY (the wait/handshake signals), not an HADDR→HWDATA→HRDATA order; AXI's 45 rules are sideband
+  stability constraints (`WTAGUPDATE`, `AWIDUNQ`, `AWSNOOP`, …). Nothing encodes address→data→response ordering.
+- **The SemanticIR `phases` surface — NOT the protocol's transaction phases.** It exists (AHB: 76 records) but is
+  SECTION-derived: one "phase" per chapter heading (`phase_chapter_5_subordinate_response_signaling`,
+  `phase_chapter_7_clock_and_reset`), with fields `phase_id`/`summary`/supporting ids only — no transaction-phase
+  name, no ordering, no signal grouping. It cannot be reused as transaction phases without mislabelling chapters.
+- **(c) handshake-dependency chains — still name-bridge-blocked** (re-confirming `.2b`/`.2e`). AXI's 14 section-named
+  transactions are all `steps=0 ports=0`; the 7 `*_handshake` micro-transactions carry no grounded precedence among
+  them. Bridging "aw→w→b for a write" needs AXI channel semantics = a name list (ADR-0006 breach) + fabricated
+  boundary attributions (bar #3).
+- **(a) the document's own `<qualifier> phase` structure — CHOSEN (grounded + universal).** The cue is present at the
+  EvidenceIR statement level and clean on the wire/protocol docs. Corpus-wide `<qualifier> phase` scan (precision-gate
+  candidate qualifiers shown): AHB `address`/`data`; APB(d/e) `setup`/`access`; SWD/debug (`ihi0074`) `address`/`data`/
+  `response`/`turnaround`; AXI-and-ACE `address`; trace-bus / avalon / generic-flash / coresight `address`/`data`. This
+  is exactly parallel to the shipped `<qualifier> transfer/transaction/operation` transaction-anchor cue, so it can
+  reuse the same recogniser machinery. It needs the same precision gate — the raw `<word> phase` scan also catches
+  function-word / cardinal / ordinal noise (`the`/`this`/`four`/`first`/`second`/`and`/`for`/…) — and a NEW typed
+  surface to lift it (it lives only in raw statements today, not in any typed IR).
+
+**Decision:** the ordered multi-phase body is built on a new structural **transaction-phase surface** keyed off the
+document's own `<qualifier> phase` vocabulary — NOT a mint-side reinterpretation of existing data (which would either
+fabricate ordering or require a name list). Designed slice path, each measurement-first and ADR-0006-clean:
+- **`.2g`** — structural transaction-PHASE recognition (recognition + naming only, mirrors `.2a`): a new typed
+  `SemanticIr.transaction_phases` (`TransactionPhaseRecord`), recognised by a precision-gated `<qualifier> phase`
+  rule reusing the `build_transaction_anchors`/`derive_transaction_name` machinery (head noun `phase`); plus a
+  `validate` phase inventory (mirrors `.2d`). No body composition yet.
+- **`.2h`** — phase ORDERING recovery (section/statement order + "during X … during Y" / "then" / "followed by"
+  cues); honest residual where the order is not reliably recoverable.
+- **`.2i`** — membership-by-phase grouping (a `.2c` member signal belongs to phase P iff P's statements reference it —
+  the same intersection technique as `.2c`) + ordered `(transaction … <phase-1 steps> … (complete …))` composition,
+  reusing the per-signal direction `.2c` grounds. ISF round-trip + WIRE-BASED-100 hard gates; bar #5 lands here.
+
 ## 5. Owner directive — sharpened (`2026-06-16`, multi-message)
 
 The owner reinforced the requirement across several messages while this census was being finalised; the

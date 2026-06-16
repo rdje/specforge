@@ -13,10 +13,13 @@ answers:
   - "what is the owner directive on transaction recognition / membership / step-by-step / fast / minimum"
   - "what is the validate transaction inventory surface (intent_transaction_inventory metrics + finding)"
   - "why is the ordered multi-phase transaction body the hard deferred part (no structural name bridge AXI handshake to named transaction)"
+  - "which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)"
+  - "why are temporal_rules not usable to order a transaction body (they are per-signal stability/value constraints not phase edges)"
+  - "is the SemanticIR phases surface the protocol transaction phases (no — it is section/chapter-derived)"
 date: 2026-06-16
 tags: [kg-isf-transactions, transactions, intent-ir, isf, adr-0006, measured, north-star, ir-intent, recognize-digital-patterns, baseline]
 evidence: docs/research/transaction-capture-census.md (full census §1–§4); docs/tasks/KG-ISF-TRANSACTIONS.md (sharpened 7-point bar + .2a/.2b/.2c slices); crates/specforge/src/ir/intent.rs (synthesize_transactions + recognize_digital_patterns, the 3 hardcoded Patterns 3/4/5); generated/intent_ir/*/intent_ir.json (the transactions[] surface scanned)
-reverify: "Read docs/research/transaction-capture-census.md (the report is the authority — do NOT re-derive §1–§3; §4.1 records the .2a outcome). POST-.2a (2026-06-16): the 3 hardcoded recognizers are GONE — grep -nE '\\\"HTRANS\\\"|\\\"PSEL\\\"|\\\"MISO\\\"|ahb_transfer|apb_transfer|spi_transfer' crates/specforge/src/ir/intent.rs finds them ONLY in the removal comment + the cfg(test) module, never production. Named recognition now lands: after rebuilding (semantic then intent), for d in generated/intent_ir/*/intent_ir.json; do jq '[.transactions[]|select(.transaction_id|startswith(\"txn_named_\"))]|length' \"$d\"; done prints AHB=7 / APB=2 / AXI=14 / SWD=8 / readme=0; jq on the AHB doc shows idle_transfer with port HTRANS at confidence high (Cue-B corroborated). POST-.2b (2026-06-16): the per-actor *_behavior synthesis is GONE — grep 'fn render_temporal_predicate\\|fn temporal_consequent_to_step\\|_behavior\\\", actor_name' crates/specforge/src/ir/intent.rs finds them ONLY in removal comments; after rebuilding a wire doc (intent then adapt), jq '[.transactions[]|select(.transaction_name|endswith(\"_behavior\"))]|length' is 0, and the Cue-B subset now carries a body — jq on the AHB doc shows idle_transfer with steps=[{drive HTRANS IDLE}]; subs/fsmgen/bin/fsmgen --strict --check --json on the APB .isf returns success:true (the *_behavior 'when body clauses must be list forms' class is cleared). POST-.2c (2026-06-16, bounded batch COMPLETE): each named transaction carries a grounded signal_set — after rebuilding a wire doc (semantic then intent), jq '.transactions[]|select(.transaction_id|startswith(\"txn_named_\"))|{n:.transaction_name, ports:[.ports[]?.port_name]}' on the AHB doc shows basic_transfer→[HCLK,HRDATA,HREADY,HREADYOUT,HWDATA,HWRITE], burst_operation→[HADDR,HBURST,HSIZE], idle_transfer→[HTRANS,HREADY]; enum values (IDLE/INCR4) are filtered (TransactionAnchorRecord.signal_set ∩ declared_signal_names in build_transaction_anchors). The ordered multi-phase BODY (phase sequencing over the membership) + finer role sub-typing remain beyond the batch."
+reverify: "Read docs/research/transaction-capture-census.md (the report is the authority — do NOT re-derive §1–§3; §4.1 records the .2a outcome). POST-.2a (2026-06-16): the 3 hardcoded recognizers are GONE — grep -nE '\\\"HTRANS\\\"|\\\"PSEL\\\"|\\\"MISO\\\"|ahb_transfer|apb_transfer|spi_transfer' crates/specforge/src/ir/intent.rs finds them ONLY in the removal comment + the cfg(test) module, never production. Named recognition now lands: after rebuilding (semantic then intent), for d in generated/intent_ir/*/intent_ir.json; do jq '[.transactions[]|select(.transaction_id|startswith(\"txn_named_\"))]|length' \"$d\"; done prints AHB=7 / APB=2 / AXI=14 / SWD=8 / readme=0; jq on the AHB doc shows idle_transfer with port HTRANS at confidence high (Cue-B corroborated). POST-.2b (2026-06-16): the per-actor *_behavior synthesis is GONE — grep 'fn render_temporal_predicate\\|fn temporal_consequent_to_step\\|_behavior\\\", actor_name' crates/specforge/src/ir/intent.rs finds them ONLY in removal comments; after rebuilding a wire doc (intent then adapt), jq '[.transactions[]|select(.transaction_name|endswith(\"_behavior\"))]|length' is 0, and the Cue-B subset now carries a body — jq on the AHB doc shows idle_transfer with steps=[{drive HTRANS IDLE}]; subs/fsmgen/bin/fsmgen --strict --check --json on the APB .isf returns success:true (the *_behavior 'when body clauses must be list forms' class is cleared). POST-.2c (2026-06-16, bounded batch COMPLETE): each named transaction carries a grounded signal_set — after rebuilding a wire doc (semantic then intent), jq '.transactions[]|select(.transaction_id|startswith(\"txn_named_\"))|{n:.transaction_name, ports:[.ports[]?.port_name]}' on the AHB doc shows basic_transfer→[HCLK,HRDATA,HREADY,HREADYOUT,HWDATA,HWRITE], burst_operation→[HADDR,HBURST,HSIZE], idle_transfer→[HTRANS,HREADY]; enum values (IDLE/INCR4) are filtered (TransactionAnchorRecord.signal_set ∩ declared_signal_names in build_transaction_anchors). The ordered multi-phase BODY (phase sequencing over the membership) + finer role sub-typing remain beyond the batch. POST-.2f (2026-06-16, docs-only — ordering signal CHOSEN): the body is grounded on the document's own `<qualifier> phase` structure (NOT on `temporal_rules`, which are per-signal stability/value constraints — verify: jq '[.temporal_rules[]|.consequents[].kind]|unique' on any persisted intent_ir.json shows only signal_stable/actor_drives_signal/signal_value, never a phase-ordering kind; and jq '.phases[0]' on a persisted semantic_ir.json shows a section-derived phase_chapter_* record, not a transaction phase). The `<qualifier> phase` cue is present at the EvidenceIR statement level — verify: jq -r '[.extracted_statements[]?|.text|select(test(\"(?i)\\\\b(address|data|setup|access|response) phase\\\\b\"))]|length' on the AHB/APB/SWD evidence_ir.json is > 0. Next code slice = .2g (SemanticIr.transaction_phases recogniser), NOT yet coded."
 ---
 
 **Measured `2026-06-16` (`KG-ISF-TRANSACTIONS.1`, read-only, docs-only).** The baseline census of how
@@ -72,16 +75,26 @@ is the greppable summary so the next session does not re-excavate it.
 > read-only off built IntentIR. Live AHB: `transactions=7`, `with_signal_set=6`, `with_steps=1`,
 > `recognition_only=6`, `signal_members=15`. So an operator can "very quickly identify" a doc's transactions.
 
-> **FRONTIER (next, `.2e`, NOT coded) — ordered multi-phase BODY: measured `2026-06-16` why it's the hard
-> deferred part.** Read-only over persisted IntentIR: **AXI** (`ihi0022_l`) has 7 per-channel handshakes
-> (`ar/aw/w/b/r/ac/cr_handshake`, each `await_all`+`sample`) PLUS 14 section-named composed transactions
-> (`axi_transaction`, `atomic_transaction`, `narrow_transfer`, …) with **empty `steps` AND empty `ports`** —
-> and there is **NO structural name bridge** (no `read_transaction`/`write_transaction` named; mapping
-> `aw→w→b`/`ar→r` onto the section names needs a hardcoded list → ADR-0006 breach + fabricated boundaries).
-> **AHB** named transfers carry `.2c` membership but no phase body (only `idle_transfer` has the `.2b` drive).
-> **APB** recognises 0 named transactions. Candidate ordering signals (none chosen — needs a dedicated
-> measurement-first slice): doc phase-ordering prose; `temporal_rules` ordering across membership; handshake-
-> dependency chains. Grounding lives in `docs/tasks/KG-ISF-TRANSACTIONS.md` "Frontier (next slice)".
+> **STATUS UPDATE — `.2e` LANDED (`2026-06-16`, commit `e03cd080`, docs-only):** frontier grounding for the
+> ordered multi-phase BODY. Recorded (read-only over persisted IntentIR) why it's the hard deferred part: AXI 14
+> section-named transactions with empty `steps`+`ports` and NO name bridge to the 7 per-channel handshakes; AHB
+> membership-without-body; APB 0 named. Listed three candidate ordering signals (doc phase prose / `temporal_rules`
+> ordering / handshake-dependency chains) and flagged that choosing one needs a dedicated measurement-first slice.
+
+> **STATUS UPDATE — `.2f` LANDED (`2026-06-16`, measurement-first, docs-only) — ORDERING SIGNAL CHOSEN.** Ran the
+> `.2e`-mandated measurement corpus-wide (36 IntentIR/SemanticIR + 78 EvidenceIR). **Rejected** `temporal_rules`
+> ordering (they are per-signal STABILITY/value constraints — `signal_stable`/`actor_drives_signal`/`signal_value`,
+> mostly `cycle_window=none` — not phase-sequencing edges; AHB `burst_operation` touched by 1 windowless HSIZE rule,
+> AXI's 45 are sideband-stability) and confirmed the SemanticIR `phases` surface is SECTION/chapter-derived
+> (`phase_chapter_7_clock_and_reset`), NOT transaction phases; handshake-dependency chains stay name-bridge-blocked.
+> **Chose** the document's own **`<qualifier> phase` structure** — present at the EvidenceIR statement level and clean
+> on the wire docs (AHB `address`/`data`, APB `setup`/`access`, SWD `address`/`data`/`response`/`turnaround`, trace-bus/
+> avalon/generic-flash/coresight `address`/`data`), universal, parallel to the shipped `<qualifier> transfer/transaction/
+> operation` anchor cue, needing a precision gate (raw scan also catches `the`/`this`/`four`/`first`/… noise) + a NEW
+> typed surface. **FRONTIER (next, `.2g`, NOT coded):** structural transaction-PHASE recognition (`SemanticIr.transaction_phases`
+> via a precision-gated `<qualifier> phase` recogniser reusing `build_transaction_anchors`/`derive_transaction_name`;
+> + a `validate` phase inventory) → `.2h` ordering → `.2i` membership-by-phase + ordered body. Census §4.4 +
+> `docs/tasks/KG-ISF-TRANSACTIONS.md` Frontier carry the full design.
 
 ## What the `transactions[]` surface holds today
 

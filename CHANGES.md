@@ -1,3 +1,36 @@
+### KG-ISF-TRANSACTIONS.2f — ordering-signal choice for the multi-phase transaction body (DONE, measurement-first, docs-only)
+The `.2e` checkpoint deferred *which* ordering signal grounds the deferred ordered multi-phase transaction body to "a
+dedicated measurement-first slice." `.2f` ran that measurement corpus-wide (read-only over 36 persisted IntentIR/SemanticIR
++ 78 EvidenceIR artifacts; **no code, no extraction change**) and made the choice.
+
+- **Rejected — `temporal_rules` ordering.** The persisted rules are per-signal STABILITY / value obligations
+  (`signal_stable` / `actor_drives_signal` / `signal_value`), mostly `cycle_window=none`, NOT phase-sequencing edges across a
+  transaction's membership (AHB `burst_operation`→{HADDR,HBURST,HSIZE} is touched by one windowless HSIZE-stable rule; AXI's
+  45 rules are sideband-stability). Nothing encodes address→data→response order.
+- **Confirmed not reusable — the SemanticIR `phases` surface.** It exists (AHB: 76) but is SECTION/chapter-derived
+  (`phase_chapter_7_clock_and_reset`), with no transaction-phase name / ordering / signal grouping.
+- **Confirmed still blocked — handshake-dependency chains.** AXI's 14 section-named transactions are all `steps=0 ports=0`;
+  bridging "aw→w→b" needs a name list (ADR-0006 breach) + fabricated boundaries (bar #3).
+- **Chosen — the document's own `<qualifier> phase` structure.** Present at the EvidenceIR statement level and clean on the
+  wire docs (AHB `address`/`data`; APB `setup`/`access`; SWD `address`/`data`/`response`/`turnaround`; trace-bus / avalon /
+  generic-flash / coresight `address`/`data`), universal, parallel to the shipped `<qualifier> transfer/transaction/operation`
+  anchor cue. Needs a precision gate (the raw `<word> phase` scan also catches `the`/`this`/`four`/`first`/… noise) + a NEW
+  typed surface to lift it.
+- **Designed slice path:** `.2g` structural transaction-phase recognition (mirrors `.2a`; new `SemanticIr.transaction_phases`
+  + `validate` phase inventory; recognition only) → `.2h` phase ordering recovery → `.2i` membership-by-phase grouping +
+  ordered body composition (bar #5 lands here). Each measurement-first, ADR-0006-clean, WIRE-BASED-100 / ISF round-trip gated.
+- **Gates:** docs-only — WIRE-BASED-100 untouched; ADR-0006 ✓ (chosen cue is universal grammar, no name list);
+  `scripts/check_memory_architecture.sh` + the knowledge-map derive-and-diff green (`KNOWLEDGE_MAP.md` regenerated, 586 keys).
+  Report: census §4.4; KM card `transaction-capture-census` refreshed (`.2e`/`.2f` status + 3 answer keys). Frontier → `.2g`.
+
+### KG-ISF-TRANSACTIONS.2e — frontier grounding for the ordered multi-phase transaction body (DONE, docs-only, commit `e03cd080`)
+Recorded, read-only over the persisted IntentIR, why the ordered multi-phase body is the hard deferred part: AXI's 14
+section-named transactions carry empty `steps`+`ports` with NO structural name bridge to the per-channel handshakes; AHB named
+transfers carry `.2c` membership but no phase body; APB recognises 0 named transactions. Listed the three candidate ordering
+signals (doc phase prose / `temporal_rules` ordering / handshake-dependency chains) and flagged that choosing one needs a
+dedicated measurement-first slice (executed in `.2f` above). Task-tree Frontier + census KM card + `KNOWLEDGE_MAP.md` + MEMORY
+refreshed; no code.
+
 ### KG-ISF-TRANSACTIONS.2d — quick-surface transaction inventory on `validate <intent-ir>` (DONE)
 Implements the `.2d` measured design (owner directive: *"very quickly identify the transactions in any chip-spec
 PDF"*). The `validate <intent-ir>` path now reports the recognised transaction set directly, so an operator sees a

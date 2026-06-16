@@ -1,4 +1,39 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-TRANSACTIONS.2f (`2026-06-16`) — ordering-signal choice for the ordered multi-phase transaction body (measurement-first, docs-only)
+- **Why:** the ordered multi-phase BODY (bar #5, step-by-step) is the deferred hard part of the transaction work. The
+  `.2e` checkpoint deferred *which* structural ordering signal grounds it to "a dedicated measurement-first slice." `.2f`
+  IS that slice — it measures the three `.2e` candidates corpus-wide and commits to one, so `.2g` can implement against a
+  grounded design instead of guessing. Quality-over-speed + measurement-first + honest-residual-over-fabrication doctrine.
+- **What I measured (read-only; 36 persisted IntentIR/SemanticIR + 78 EvidenceIR artifacts; no code, no extraction change):**
+  - **`temporal_rules` (candidate b) → REJECTED.** `jq` over the persisted rules: consequent kinds are only
+    `signal_stable` / `actor_drives_signal` / `signal_value`; `cycle_window` is mostly `none`; they are per-signal
+    stability/value obligations, not phase-sequencing edges across a transaction's membership. AHB `burst_operation`
+    (`{HADDR,HBURST,HSIZE}`) is referenced by exactly one rule (HSIZE-stable, no window); AHB `basic_transfer`'s rules
+    touch only HREADYOUT/HREADY; AXI's 45 rules are sideband-stability (`WTAGUPDATE`/`AWIDUNQ`/`AWSNOOP`/…). No
+    address→data→response order exists in them.
+  - **SemanticIR `phases` surface → NOT transaction phases.** `jq '.phases[0]'` on the AHB semantic_ir: a SECTION-derived
+    record (`phase_chapter_5_subordinate_response_signaling`), fields `phase_id`/`summary`/supporting ids only — one
+    "phase" per chapter heading, no transaction-phase name / ordering / signal grouping. Reusing it would mislabel chapters.
+  - **handshake-dependency chains (candidate c) → still name-bridge-blocked.** AXI's 14 section-named transactions are all
+    `steps=0 ports=0`; the 7 `*_handshake` carry no grounded precedence. Bridging needs a name list (ADR-0006) + fabricated
+    boundaries (bar #3). (Re-confirms `.2b`/`.2e`.)
+  - **`<qualifier> phase` structure (candidate a) → CHOSEN.** Corpus-wide `<qualifier> phase` scan over EvidenceIR
+    statements is clean on the wire docs: AHB `address`/`data`; APB(d/e) `setup`/`access`; SWD/debug (`ihi0074`)
+    `address`/`data`/`response`/`turnaround`; AXI-and-ACE `address`; trace-bus / avalon / generic-flash / coresight
+    `address`/`data`. Universal, present at the statement level, parallel to the shipped `<qualifier>
+    transfer/transaction/operation` transaction-anchor cue. Needs the same precision gate (raw scan also catches
+    function-word/cardinal/ordinal noise: `the`/`this`/`four`/`first`/`second`/`and`/`for`/…) + a NEW typed surface (it
+    is not in any typed IR today, only raw statements).
+- **Decision & path:** build the ordered body on a NEW structural transaction-phase surface keyed off the document's own
+  `<qualifier> phase` vocabulary, NOT a mint-side reinterpretation of existing data. `.2g` recognition (mirrors `.2a` —
+  reuse `build_transaction_anchors`/`derive_transaction_name`, head noun `phase`; add a `validate` phase inventory like
+  `.2d`; recognition only) → `.2h` ordering (section/statement order + "during X … during Y" / "then" / "followed by"
+  cues) → `.2i` membership-by-phase grouping (signal ∈ phase iff phase statements reference it — same intersection as
+  `.2c`) + ordered `(transaction … <phase steps> … (complete))` composition (drive outputs / sample-await inputs using
+  the `.2c` per-signal direction). ISF round-trip already supports the step kinds (`drive`/`sample`/`await`/`await_all`).
+- **Gates:** docs-only (no Rust touched) — WIRE-BASED-100 untouched; ADR-0006 clean; `check_memory_architecture.sh` +
+  knowledge-map derive-and-diff green. Authority: census §4.4; task-tree `.2f` node + Frontier; KM card.
+
 ## KG-ISF-TRANSACTIONS.2d (`2026-06-16`) — quick-surface transaction inventory on `validate <intent-ir>`
 - **Why:** the owner's transaction directive includes *"very quickly identify the transactions in any particular
   chip-spec PDF"* (`[[project_kg_isf_transactions]]`, bar #2). The recognition/membership/bodies already land

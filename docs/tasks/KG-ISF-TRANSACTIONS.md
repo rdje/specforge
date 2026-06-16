@@ -130,29 +130,42 @@ grammar only, no name lists (ADR 0006); honest residual over fabrication. Scope 
 precise, accurate, step-by-step capture of ALL transactions — but delivered measurement-first, in safe
 slices, wire-docs first.
 
-## Frontier (next slice) — ordered multi-phase transaction BODY (`.2e`, NOT yet owned/coded)
+## Frontier (next slice) — structural transaction-PHASE recognition (`.2g`, NOT yet coded)
 
-**Goal (bar #5, step-by-step):** give the named composed transactions an ORDERED multi-phase body
-(address → data → response phases + the handshakes that gate them), building on the `.2c` signal-set membership.
+The `.2e` checkpoint deferred the *choice* of ordering signal to "a dedicated measurement-first slice." **`.2f`
+ran that measurement (read-only, corpus-wide) and made the choice** — see the `.2f` node + `.2f` changelog
+entry below, and census report §4.4. The chosen path is a **structural transaction-phase surface** built from the
+document's own `<qualifier> phase` vocabulary; the next code slice (`.2g`) recognises it.
 
-**Measured grounding (read-only, `2026-06-16`, over the persisted AXI/AHB/APB IntentIR):** this is the explicitly
-DEFERRED hard part, and the measurement confirms why it must stay measurement-first and ADR-0006-careful:
-- **AXI** (`ihi0022_l`): 21 transactions = 7 per-channel handshakes (`ar/aw/w/b/r/ac/cr_handshake`, each with an
-  `await_all`+`sample` body) PLUS 14 section-named composed transactions (`axi_transaction`, `atomic_transaction`,
-  `narrow_transfer`, `other_write_transaction`, `writezero_transaction`, …) that ALL carry **empty `steps` and empty
-  `ports`**. There is **no structural name bridge**: the document names neither a `read_transaction` nor a
-  `write_transaction`, so mapping `aw→w→b` / `ar→r` onto the section-named transactions cannot be done by name
-  without a hardcoded list (ADR-0006 breach) and would fabricate boundary attributions (bar #3).
-- **AHB** (`ihi0033_c`): named transfers carry `.2c` membership (ports) but no ordered phase body; only
-  `idle_transfer` has a `(drive HTRANS IDLE)` step (`.2b`).
-- **APB** (`ihi0024_e`): 0 named transactions recognised (its transfers are section-described differently).
+**The `.2f` finding, in one line:** the ordered multi-phase body is NOT groundable from the *existing* typed
+surfaces (the `temporal_rules` are per-signal stability/value constraints, not phase-sequencing edges; the
+SemanticIR `phases` surface is section-derived — one "phase" per chapter heading, e.g.
+`phase_chapter_7_clock_and_reset` — NOT the protocol's address/data/response phases; and there is no name bridge
+from AXI's section-named transactions to its per-channel handshakes). **But it IS groundable from the document's
+own `<qualifier> phase` structure**, which is universal and present at the EvidenceIR statement level (measured
+corpus-wide: AHB `address`/`data`; APB `setup`/`access`; SWD/debug `address`/`data`/`response`/`turnaround`;
+trace-bus / avalon / generic-flash / coresight `address`/`data`) — exactly parallel to the shipped
+`<qualifier> transfer/transaction/operation` transaction-anchor cue, and needing the same kind of precision gate
+(the raw `<word> phase` scan also catches function-word/cardinal/ordinal noise: `the`/`this`/`four`/`first`/…).
 
-**Candidate structural ordering signals to investigate (none chosen yet — needs a dedicated measurement-first slice):**
-(a) the document's own phase-ordering prose ("the address phase precedes the data phase"); (b) temporal-rule ordering
-across the membership signals (the `temporal_rules` already carry edges/`cycle_window`s); (c) handshake-dependency
-chains (a channel whose VALID is gated by another channel's handshake). Each must be grounded in the current document,
-universal, and name-list-free. **Recommendation: start this in a fresh, focused session** (substantial research +
-design + implementation; signoff-quality, not to be rushed). Repo is handoff-ready at commit `9248a24b`.
+**Designed slice sequence (each measurement-first, signoff-quality, no name lists — ADR 0006):**
+- **`.2g` — structural transaction-PHASE recognition (recognition + naming, mirrors `.2a`).** A new typed
+  `SemanticIr.transaction_phases` surface (`TransactionPhaseRecord`: phase name, source title/section, supporting
+  statement ids), built in the SemanticIR builder by a precision-gated `<qualifier> phase` recogniser that reuses
+  the proven `build_transaction_anchors`/`derive_transaction_name` machinery (head noun = `phase`; reject the
+  same stopword/cardinal/ordinal/determiner/gerund discriminators). Add a `validate` phase inventory (mirrors
+  the `.2d` transaction inventory). NO body composition yet — recognition only, held like `.2a`.
+- **`.2h` — phase ORDERING recovery.** Order the recognised phases as the document orders them (section/statement
+  order + same-sentence "during X … during Y" / "X phase … followed by … Y phase" / "then" cues). Measurement-first
+  on whether the order is recoverable reliably + universally; honest residual where it is not.
+- **`.2i` — membership-by-phase grouping + ordered body composition.** Group each named transaction's `.2c`
+  signal-set membership into the ordered phases (a member signal belongs to phase P iff P's statements reference it
+  — the same intersection technique as `.2c`), then compose the ordered `(transaction … <phase-1 steps> …
+  <phase-N steps> (complete …))` body (drive the phase's outputs, sample/await its inputs), reusing the per-signal
+  direction `.2c` already grounds. ISF round-trip + WIRE-BASED-100 hard gates. This is where bar #5 (step-by-step)
+  lands; anything the document does not ground stays an honest residual, never a fabricated phase ordering.
+
+Repo is handoff-ready at commit `e03cd080` (after `.2f`: `<this commit>`).
 
 ## Task Tree
 
@@ -339,6 +352,35 @@ design + implementation; signoff-quality, not to be rushed). Repo is handoff-rea
   - **Gates:** deterministic, RAM-safe, no LLM; `scripts/run_ci.sh` green + `kg-bench` 156/156; WIRE-BASED-100
     unaffected (read-only observation off built IR — no extraction change). Book close-rule: a user-visible
     `validate` surface → add a brief note to `pipeline/intentir.md` (or `quality/validation.md`).
+- ID: `KG-ISF-TRANSACTIONS.2f` · Status: `done` (`2026-06-16`; measurement-first, read-only, docs-only — the
+  "dedicated measurement-first slice" the `.2e` checkpoint called for) · Goal: **choose the ordering signal for the
+  ordered multi-phase BODY** by measuring the three `.2e` candidates corpus-wide, and design the implementation path.
+  **DONE — what was measured (read-only over the 36 persisted IntentIR/SemanticIR + 78 EvidenceIR artifacts; no code):**
+  - **Candidate (b) `temporal_rules` ordering — REJECTED as the body's ordering signal.** Direct scan of the AHB/AXI
+    `temporal_rules`: they are per-signal STABILITY / value obligations (`signal_stable`, `actor_drives_signal`,
+    `signal_value`), mostly `cycle_window=none`, NOT phase-sequencing edges between a transaction's membership signals.
+    AHB `burst_operation`→{HADDR,HBURST,HSIZE} is touched by exactly ONE rule (HSIZE-stable, no window); AXI's 45 rules
+    are stability constraints on sideband signals. Nothing encodes "address phase → data phase → response phase". So
+    temporal rules cannot order the body.
+  - **The SemanticIR `phases` surface — NOT the protocol's transaction phases.** It exists (AHB: 76 records) but is
+    SECTION-derived: one "phase" per chapter heading (`phase_chapter_5_subordinate_response_signaling`,
+    `phase_chapter_7_clock_and_reset`), fields `phase_id`/`summary`/supporting ids — no transaction-phase name, no
+    ordering, no signal grouping. Reusing it as transaction phases would mislabel chapters as phases.
+  - **Candidate (c) handshake-dependency chains — still name-bridge-blocked (confirms `.2b`/`.2e`).** AXI's section-named
+    transactions are all `steps=0 ports=0`; the 7 `*_handshake` micro-transactions carry no grounded "aw→w→b" precedence.
+    Bridging them needs AXI channel-semantics knowledge = a name list (ADR-0006 breach) + fabricated boundaries (bar #3).
+  - **Candidate (a) the document's own `<qualifier> phase` structure — CHOSEN (grounded + universal).** The cue is present
+    at the EvidenceIR statement level and clean on the wire/protocol docs (AHB `address`/`data`; APB `setup`/`access`;
+    SWD/debug `address`/`data`/`response`/`turnaround`; trace-bus / avalon / generic-flash / coresight `address`/`data`),
+    exactly parallel to the shipped `<qualifier> transfer/transaction/operation` transaction-anchor cue. It needs the same
+    precision gate (the raw `<word> phase` scan also catches `the`/`this`/`four`/`first`/… — function-word/cardinal/ordinal
+    noise), and a NEW typed surface to lift it (it is not in any typed IR today, only raw statements).
+  **Decision:** the ordered body is built on a new structural **transaction-phase surface**, NOT a mint-side tweak of
+  existing data. Sequenced into `.2g` (phase recognition, mirrors `.2a`) → `.2h` (ordering) → `.2i` (membership-by-phase
+  + ordered body composition). See the Frontier section above for the slice specs. **Gates:** read-only/docs-only — no
+  code, no extraction change; WIRE-BASED-100 untouched; ADR-0006 ✓ (the chosen cue is universal grammar, no name list);
+  `scripts/check_memory_architecture.sh` + the knowledge-map derive-and-diff green. Report: census §4.4; KM card
+  `transaction-capture-census` refreshed (`.2f` status + 2 answer keys). `[[project_kg_isf_transactions]]`.
 
 ## Changelog
 
@@ -442,3 +484,20 @@ design + implementation; signoff-quality, not to be rushed). Repo is handoff-rea
   Book `pipeline/intentir.md` "Seeing a document's transactions at a glance". Frontier → PNT continues on the
   deferred transaction work: ordered multi-phase transaction BODY (phase sequencing over the `.2c` membership) +
   finer address/data/control/response role sub-typing. `[[project_kg_isf_transactions]]`.
+- `2026-06-16`: **`.2e` DONE** (commit `e03cd080`, docs-only) — frontier grounding for the ordered multi-phase body.
+  Recorded (read-only over the persisted IntentIR) why it is the hard deferred part: AXI 14 section-named transactions
+  with empty steps+ports and NO structural name bridge to the per-channel handshakes; AHB membership-without-body;
+  APB 0 named. Listed the three candidate ordering signals (a phase-prose / b temporal-rule ordering / c handshake-
+  dependency chains) and flagged that choosing one needs a dedicated measurement-first slice. Task-tree Frontier +
+  census KM card + `KNOWLEDGE_MAP.md` + MEMORY refreshed. No code.
+- `2026-06-16`: **`.2f` DONE** (measurement-first, read-only, docs-only) — ran the `.2e`-mandated measurement to CHOOSE
+  the ordering signal, corpus-wide (36 IntentIR/SemanticIR + 78 EvidenceIR). **Rejected** candidate (b) — `temporal_rules`
+  are per-signal stability/value constraints, not phase-sequencing edges (AHB `burst_operation` touched by 1 windowless
+  rule; AXI's 45 are sideband-stability) — and confirmed the SemanticIR `phases` surface is SECTION-derived (chapters as
+  "phases"), not transaction phases; candidate (c) stays name-bridge-blocked. **Chose** candidate (a): the document's own
+  `<qualifier> phase` structure, present at the EvidenceIR statement level and clean on the wire docs (AHB address/data,
+  APB setup/access, SWD address/data/response/turnaround, …) — universal, parallel to the shipped `<qualifier>
+  transfer/transaction/operation` anchor cue, needing a precision gate + a new typed surface. Designed the slice path
+  `.2g` (structural transaction-phase recognition, mirrors `.2a`) → `.2h` (ordering) → `.2i` (membership-by-phase +
+  ordered body). Report census §4.4; KM card refreshed (`.2f` status + 2 answer keys); `KNOWLEDGE_MAP.md` regenerated.
+  No code; WIRE-BASED-100 untouched; ADR-0006 ✓. Frontier → `.2g`. `[[project_kg_isf_transactions]]`.
