@@ -168,6 +168,102 @@ records the FSMGEN-native option and a concrete shape so FSMGEN can weigh in.
 > arbitrary `min > 1` windows and a `(stable …)` predicate; SPECFORGE *does* mine both, so those
 > stay SPECFORGE residuals until FSMGEN adds the primitives (being requested separately).
 
+## Question / feature request (2026-06-16) — lowering a transaction's phase membership without fabricating drive VALUES or step ORDER
+
+**What SPECFORGE is trying to do.** SPECFORGE is building first-class transaction
+capture (its `KG-ISF-TRANSACTIONS` work). For each transaction a chip-spec PDF defines,
+it recovers, grounded in the document: (a) the **set of signals** that participate, (b)
+the document's own named **phases** (address / data / setup / access / response /
+turnaround / …), and (c) each signal's **direction** relative to the actor (driven vs
+sampled). It wants to lower that into an ISF `(transaction …)` body so FSMGEN can schedule
+the protocol behaviour — this is the "step-by-step" bar of our transaction-completeness
+goal. We hit a **representational** question and would rather raise it than fabricate.
+
+**The concern (our honest-residual doctrine).** SPECFORGE will not emit intent the source
+does not ground. Lowering the *grounded* membership into an ISF transaction body appears to
+force us to *invent* two facts the document usually does **not** state — per-signal drive
+**values** and a total **order**. We would rather ask FSMGEN how it wants this represented
+than fabricate behaviour or silently drop the grounded facts.
+
+**What we observe — corpus measurement (the motivation).** Across the four AMBA wire specs
+we use as gold, a transaction's phase structure is only partially groundable from prose:
+
+| Doc | named phases | per-transaction signal→phase grouping |
+| --- | --- | --- |
+| AHB | address, data | only non-trivial case — e.g. a basic transfer groups data:{HRDATA,HWDATA,HREADYOUT,HREADY}, address:{HREADY}; HCLK/HWRITE ungrouped; HREADY spans both phases |
+| APB | setup, access | recognised transactions' membership is thin → grouping trivial |
+| AXI | data | the phase's prose names no declared signal → empty grouping |
+| SWD | 7 phases | all phase prose names no declared signal → empty grouping |
+
+So we can often ground *which signals participate and in which phase*, but **not a total
+order across phases** — e.g. SWD prose names phases in the order opposite the packet order,
+and AHB within-sentence precedence conflicts because the data phase of one transfer
+legitimately overlaps the address phase of the next. We therefore treat cross-phase order
+as an explicit residual rather than guess it.
+
+**What we observe — ISF grammar (read + empirically probed at pin `8c39827f`,
+`subs/fsmgen/bin/fsmgen --strict --check --json`).**
+
+1. **A transaction body is a total order.** `13b-transactions.md`: "the scheduler links
+   states **in order** … what you write is what you get", one clause ≈ one cycle. So body
+   steps `(drive A)` then `(drive B)` assert A-before-B.
+2. **Same-cycle concurrency exists only inside one multi-pair drive block**
+   (`13c-drive-blocks.md`: "For concurrent execution, put actions in one drive").
+3. **Every `(drive …)` requires a concrete value.** Probed: `(drive PNSE)` →
+   `success:false`, *"drive 'PNSE' missing actual for 'val'"*; `(drive PNSE 1)` →
+   `success:true`. There is **no value-less** "this output is driven / participates this
+   cycle, value not grounded" form.
+4. **Inputs are value-free, but only via `(sample …)`.** `(sample LEVEL as cap)` →
+   `success:true`; `(drive LEVEL)` → `success:false` *"not defined"* (drives exist only
+   for outputs — direction matters).
+5. **Interaction with SPECFORGE's current emission (noted for awareness, ours to
+   reconcile):** SPECFORGE already emits a top-level named drive per output
+   (`(drive (X val)(X val))`); adding a transaction-body drive for that same output raises
+   `isf_priority_mixed_timing_conflict on X`, so we could not get a clean strict pass for
+   the same-cycle block form *within* SPECFORGE's current emission shape.
+
+**The issue, precisely.** To put a transaction's grounded membership into an ISF body,
+SPECFORGE would have to invent (i) a **value** for every participating *output* — we ground
+the participating signal + its phase + its direction, but usually **not** the value it is
+driven to (only enum-selector transactions such as AHB `idle_transfer` ⟺ `HTRANS=IDLE`
+carry a grounded value), and (ii) an **order** among phases/signals (the body is totally
+ordered; the source rarely grounds that order). Inputs are fine (`sample` is value-free);
+outputs are the blocker.
+
+**Questions / requests to FSMGEN.**
+
+1. **Value-less output participation.** Would FSMGEN consider a way to express "output `S`
+   participates / is driven in this transaction, value not grounded by the source" — a bare
+   `(drive S)` accepted as a participation marker, a don't-care actual, or a dedicated
+   `(touches S)` / `(participates S …)` clause? Today the mandatory `val` actual forces
+   SPECFORGE to either fabricate a value or omit a genuinely-participating output.
+2. **Unordered / partial-order body.** Is there (or would FSMGEN consider) a construct for a
+   set of behavioural facts whose order the author does **not** assert — beyond the
+   single-cycle multi-pair drive block — so a transaction's phase membership can lower
+   without claiming a total cross-phase order? We are explicitly **not** asking FSMGEN to
+   hardcode protocol phase orders; we are asking whether "unordered / partial order" is
+   expressible.
+3. **Phase-group metadata.** Mirroring §3 ("Interface Or Channel Grouping") below: would
+   FSMGEN want a first-class, protocol-neutral **phase-group** annotation on a transaction
+   (which member signals belong to the address/data/response/… phase, with roles), carried
+   as **checked metadata** that need not affect HDL or impose body order? That lets SPECFORGE
+   lower the part it *can* ground (membership + phase + direction) faithfully while leaving
+   order/value as honest residuals.
+4. **Ordering-as-constraint vs ordering-as-body.** Our reading is that a genuinely-grounded
+   ordering is more faithfully a *scheduling / temporal constraint* (which FSMGEN owns) than
+   an imperative step sequence. Is that the intended division — i.e. when SPECFORGE *does*
+   ground a phase order, should it express it through the verification / `(assert …)` family
+   rather than body step order?
+
+**Status — question, not a bug.** No SPECFORGE `.isf` is broken: SPECFORGE currently keeps
+these transactions recognition-only (held out of `.isf` by its `!steps.is_empty()` filter)
+or emits only the value-grounded enum-selector body, and carries phase membership as
+IntentIR metadata. Per our no-hacks doctrine (`[[feedback_isf_no_hacks]]`) we are raising
+the representational question rather than fabricating values/order or hacking around the
+grammar, and SPECFORGE will keep the membership as honest metadata/residual until FSMGEN
+weighs in. All ISF facts above were verified empirically on the pinned `8c39827f` binary,
+not inferred from the book alone.
+
 ## Purpose
 
 This file is SPECFORGE's tracked feedback for FSMGEN.

@@ -1,4 +1,45 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-TRANSACTIONS.2i (`2026-06-16`) — design measurement + FSMGEN question; body-emission PARKED pending FSMGEN
+- **Why:** `.2i` is meant to compose each named transaction's per-phase body (group its `.2c` signal-set membership
+  into its `.2g` phases, then drive outputs / sample inputs per phase). Before writing that — measurement-first +
+  honest-residual-over-fabrication + verify-FSMGen-before-FR — I measured whether the grouping is groundable and
+  whether the body is even expressible in ISF without inventing facts.
+- **Grouping measurement (read-only Rule-A over the 4 wire docs).** Rule: a member signal `S` of transaction `X`
+  belongs to phase `P` iff `S ∈ X.signal_set` (the `.2c` membership) AND `S ∈ P`'s document-global signal set (the
+  union of declared signals referenced by every statement that names phase `P`, intersected with declared — the same
+  intersection technique as `.2c`). Result: groundable **cleanly only on AHB (1 of 4)** — `basic_transfer` →
+  data:{HRDATA,HWDATA,HREADYOUT,HREADY}, address:{HREADY}; HCLK/HWRITE ungrouped; HREADY multi-phase (faithful — it
+  genuinely spans). **APB:** the recognised transactions' membership is thin ({PCLK}) → grouping trivial. **AXI &
+  SWD:** the `<qualifier> phase` prose names NO declared signal in the same statements → phase signal-sets empty →
+  nothing groups. So the per-phase grouping is a `.2h`-style BOUNDED finding even before ordering.
+- **ISF transaction-body grammar — empirically probed** (`subs/fsmgen/bin/fsmgen --strict --check --json` @ pin
+  `8c39827f`, mutating the strict-passing APB `.isf`; not inferred from the book alone):
+  - the body is **totally ordered** — `13b-transactions.md`: "the scheduler links states **in order** … what you
+    write is what you get", one clause ≈ one cycle. Two body steps assert an order.
+  - same-cycle concurrency exists **only inside one multi-pair drive block** (`13c`: "For concurrent execution, put
+    actions in one drive"). Probing that block within SpecForge's emitted `.isf` raised
+    `isf_priority_mixed_timing_conflict` because SpecForge already emits a top-level named drive per output — a real
+    integration interaction (noted to FSMGEN, ours to reconcile).
+  - **`(drive SIG)` value-less → REJECTED**: *"drive 'PNSE' missing actual for 'val'"*; **`(drive SIG VALUE)` →
+    accepted**. There is no value-less "output participates / is driven this cycle, value unspecified" form.
+  - **`(sample INPUT as name)` → accepted** value-free; **`(drive INPUT)` → rejected** ("not defined") — drives
+    exist only for outputs (direction matters).
+- **The issue (precise).** To put the grounded membership into an ISF transaction body, SpecForge would have to
+  invent (i) a **value** for every participating *output* (we ground signal + phase + direction, but usually not the
+  driven value — only enum-selector transactions like AHB `idle_transfer` ⟺ `HTRANS=IDLE` carry one), and (ii) an
+  **order** among phases (the body is totally ordered; `.2h` showed cross-phase order is not grounded on the wire
+  docs). Inputs are fine (`sample`); outputs are the blocker.
+- **Decision.** Per `[[feedback_isf_no_hacks]]` (raise the missing abstraction, don't hack) + honest-residual: raise
+  the representational question to FSMGEN rather than fabricate values/order. Wrote the `2026-06-16` question/
+  feature-request in `docs/FSMGEN_FEEDBACK.md` (value-less output participation / unordered-or-partial-order body /
+  phase-group metadata / ordering-as-constraint). **Owner steer: wait for FSMGEN.** `.2i` body-emission PARKED.
+- **FSMGEN-independent fallback (no dependency):** ship the grounded per-phase membership grouping as IntentIR
+  **metadata** (not ordered ISF steps), so `.isf` stays byte-identical (WIRE-BASED-100 + ISF round-trip trivially
+  green) and bar #5 lands "as far as the document grounds it" (membership + phase + direction, order/value residual).
+  The **table-column phase cue** (`| HWDATACHK | HWDATA | … | Write data phase |` — where AHB's data-phase richness
+  actually came from; signal↔phase co-occur far more reliably in table cells than prose) is the next recognition
+  lever that would move AXI/SWD off zero (`.2j` candidate).
+
 ## KG-ISF-TRANSACTIONS.2h (`2026-06-16`) — phase-ordering recoverability (measurement-first, docs-only)
 - **Why:** `.2i` needs to sequence each transaction's per-phase body. Before writing that, ask the `.2f`-style
   question: is a transaction's phase ORDER reliably + universally recoverable from the document? Measurement-first +

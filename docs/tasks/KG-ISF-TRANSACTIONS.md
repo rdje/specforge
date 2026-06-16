@@ -130,7 +130,7 @@ grammar only, no name lists (ADR 0006); honest residual over fabrication. Scope 
 precise, accurate, step-by-step capture of ALL transactions — but delivered measurement-first, in safe
 slices, wire-docs first.
 
-## Frontier (next slice) — membership-by-phase grouping + per-phase body (`.2i`); `.2g` recognition + `.2h` ordering-measurement DONE
+## Frontier — `.2i` measurement DONE + FSMGEN question raised → body-emission PARKED pending FSMGEN; `.2g` recognition + `.2h` ordering-measurement DONE
 
 The `.2e` checkpoint deferred the *choice* of ordering signal to "a dedicated measurement-first slice." **`.2f`
 ran that measurement (read-only, corpus-wide) and made the choice** — see the `.2f` node + `.2f` changelog
@@ -200,8 +200,19 @@ trace-bus / avalon / generic-flash / coresight `address`/`data`) — exactly par
   ISF round-trip + WIRE-BASED-100 hard gates. This is where bar #5 (step-by-step) lands as far as the document
   grounds it.
 
+  **UPDATE (`2026-06-16`) — `.2i` measurement done, body-emission PARKED pending FSMGEN.** The grouping
+  measurement (read-only Rule-A over the 4 wire docs) found it groundable cleanly only on AHB (1 of 4), noisily,
+  and empty on APB/AXI/SWD; and an empirical ISF-grammar probe (`fsmgen --strict --check --json` @ `8c39827f`)
+  showed the body is totally ordered, a value-less `(drive SIG)` is rejected (every drive needs a concrete value),
+  and `(drive INPUT)` is rejected (drives exist only for outputs — `(sample …)` is the input form). So lowering the
+  grounded membership into an ISF body would force inventing per-output VALUES + a cross-phase ORDER the document
+  does not ground. Per `[[feedback_isf_no_hacks]]` this is raised to FSMGEN (`docs/FSMGEN_FEEDBACK.md`, `2026-06-16`
+  entry); owner steer = wait for FSMGEN. The grounded per-phase membership grouping (IntentIR metadata, `.isf`
+  byte-identical) is the safe FSMGEN-independent fallback; the table-column phase cue is the next recognition lever.
+
 Repo is handoff-ready: `.2g` (phase recognition) + `.2h` (ordering measurement/decision) are committed and gated;
-the next slice is `.2i` (membership-by-phase grouping + per-phase body, ordering only where grounded).
+`.2i` (membership-by-phase grouping + per-phase body) has its measurement + FSMGEN question done and its
+body-emission PARKED pending FSMGEN's answer + owner steer (the metadata-only grouping is the safe fallback).
 
 ## Task Tree
 
@@ -462,6 +473,34 @@ the next slice is `.2i` (membership-by-phase grouping + per-phase body, ordering
   phase order, VLM-tier; or per-transaction phase-enumerating definition sentence) recorded as a future candidate.
   **Gates:** read-only/docs-only — WIRE-BASED-100 untouched ✓, ADR-0006 ✓ (no name list; the signals measured are
   universal grammar). Census §4.6; KM card refreshed. Frontier → `.2i`. `[[project_kg_isf_transactions]]`.
+- ID: `KG-ISF-TRANSACTIONS.2i` · Status: `in_progress` (`2026-06-16`; design measurement + FSMGEN question done;
+  body-emission PARKED pending FSMGEN's answer + owner steer) · Goal: **membership-by-phase grouping + per-phase
+  body composition** (group each named transaction's `.2c` signal-set membership into its recognised `.2g` phases;
+  compose a per-phase body; cross-phase sequence only where decisively grounded — `.2h`).
+  **DONE so far (measurement-first, read-only, docs-only — no code):**
+  - **Grouping measurement** (read-only Rule-A over the 4 wire docs — group each transaction's `.2c` membership by
+    each phase's document-global signal set): groundable **cleanly only on AHB (1 of 4)** and noisily there
+    (`basic_transfer` → data:{HRDATA,HWDATA,HREADYOUT,HREADY}, address:{HREADY}; HCLK/HWRITE ungrouped; HREADY
+    multi-phase); **empty on APB (membership thin), AXI & SWD (the `<qualifier> phase` prose names no declared
+    signal).** So even the *unordered* grouping is AHB-only — a `.2h`-style BOUNDED finding for the body.
+  - **ISF transaction-body grammar, empirically probed** (`subs/fsmgen/bin/fsmgen --strict --check --json` @ pin
+    `8c39827f`): the body is **totally ordered** (`13b`: "links states in order … what you write is what you get",
+    one clause ≈ one cycle); a **value-less `(drive SIG)` is REJECTED** (*"missing actual for 'val'"*) — every
+    drive needs a concrete value; **`(sample INPUT as name)` is value-free-ACCEPTED** but **`(drive INPUT)` is
+    REJECTED** ("not defined" — drives exist only for outputs); same-cycle concurrency exists only via a multi-pair
+    drive block, which collides with SpecForge's per-output top-level named drives
+    (`isf_priority_mixed_timing_conflict`). **Conclusion:** lowering the grounded membership into an ISF body would
+    force inventing per-output **VALUES** + a cross-phase **ORDER** the document does not ground.
+  - **FSMGEN question raised** (per `[[feedback_isf_no_hacks]]`, no hack/no fabrication): `docs/FSMGEN_FEEDBACK.md`
+    `2026-06-16` entry asks for value-less output participation / an unordered-or-partial-order body / phase-group
+    metadata / ordering-as-constraint. Owner to forward; **owner steer = wait for FSMGEN.**
+  **PARKED (the two open body-emission decisions, deferred to FSMGEN's answer):** (1) emit a same-cycle
+  concurrent-drive block for grounded phases now vs a follow-up `.2j`; (2) value-less participation drive vs keeping
+  a value-less signal a pure residual. **Safe fallback (no FSMGEN dependency):** ship the grounded per-phase
+  membership grouping as IntentIR **metadata** (not ordered ISF steps) → `.isf` byte-identical, WIRE-BASED-100 +
+  ISF round-trip trivially green; the table-column phase cue (AHB's data-phase richness came from
+  `| … | Write data phase |` table cells, not prose — would move AXI/SWD off zero) is the next recognition lever
+  (`.2j` candidate). Gates so far: read-only/docs-only — WIRE-BASED-100 untouched ✓, ADR-0006 ✓.
 
 ## Changelog
 
@@ -616,3 +655,23 @@ the next slice is `.2i` (membership-by-phase grouping + per-phase body, ordering
   candidate. Gates: read-only/docs-only — WIRE-BASED-100 untouched ✓, ADR-0006 ✓. Census §4.6; KM card refreshed.
   Frontier → `.2i` (membership-by-phase grouping + per-phase body, ordering only where grounded).
   `[[project_kg_isf_transactions]]`.
+- `2026-06-16`: **`.2i` design measurement + FSMGEN question raised; body-emission PARKED pending FSMGEN**
+  (measurement-first, read-only, docs-only). **Ran the `.2i`-mandated "how many members group cleanly into a
+  phase" measurement** (read-only Rule-A grouping over the 4 wire docs: group each transaction's `.2c` membership
+  by each `.2g` phase's document-global signal set). Finding: groundable **cleanly only on AHB (1 of 4)** and
+  noisily there (HCLK/HWRITE ungrouped, HREADY multi-phase); **empty on APB (thin membership), AXI & SWD (the
+  phase prose names no declared signal)**. **Empirically probed the ISF transaction-body grammar**
+  (`subs/fsmgen/bin/fsmgen --strict --check --json` @ pin `8c39827f`): a transaction body is TOTALLY ORDERED
+  (`13b`: "links states in order … what you write is what you get"); a value-less `(drive SIG)` is REJECTED
+  (*"missing actual for 'val'"*) — every drive needs a concrete value; `(sample INPUT as name)` is
+  value-free-ACCEPTED but `(drive INPUT)` is REJECTED (drives exist only for outputs); same-cycle concurrency
+  exists only via a multi-pair drive block and collides with SpecForge's per-output top-level named drives. **So
+  lowering the grounded membership into an ISF body would force inventing per-output VALUES + a cross-phase ORDER
+  the document does not ground.** Per the no-hacks doctrine (`[[feedback_isf_no_hacks]]`) this is raised to FSMGEN
+  as a question/feature request — value-less output participation / unordered-or-partial-order body / phase-group
+  metadata / ordering-as-constraint — in the `2026-06-16` entry of `docs/FSMGEN_FEEDBACK.md` (owner to forward).
+  **Owner steer (`2026-06-16`): wait for FSMGEN** before deciding the two open body-emission questions
+  (same-cycle concurrent-drive block now vs `.2j`; value-less drive vs pure residual). `.2i` body-emission is
+  PARKED; the grounded per-phase membership grouping (metadata, `.isf` byte-identical) remains the safe fallback.
+  Gates: read-only/docs-only — WIRE-BASED-100 untouched ✓, ADR-0006 ✓; `scripts/check_memory_architecture.sh` +
+  knowledge-map derive-and-diff green. KM card `transaction-capture-census` refreshed. `[[project_kg_isf_transactions]]`.

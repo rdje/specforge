@@ -1,3 +1,32 @@
+### KG-ISF-TRANSACTIONS.2i — design measurement + FSMGEN question; body-emission PARKED pending FSMGEN (measurement-first, docs-only)
+`.2i` is meant to compose each transaction's per-phase body. Before writing it, ran the mandated measurement and an
+empirical ISF-grammar probe (**no code, no extraction change**), and the result re-scoped the slice.
+
+- **Grouping measurement (read-only Rule-A over the 4 wire docs).** Group each transaction's `.2c` signal-set
+  membership by each `.2g` phase's document-global signal set. Groundable **cleanly only on AHB (1 of 4)** — and
+  noisily there (`basic_transfer` → data:{HRDATA,HWDATA,HREADYOUT,HREADY}, address:{HREADY}; HCLK/HWRITE ungrouped;
+  HREADY multi-phase). **Empty on APB** (recognised transactions' membership is thin), **AXI & SWD** (the
+  `<qualifier> phase` prose names no declared signal). So even the *unordered* grouping is AHB-only.
+- **ISF transaction-body grammar, empirically probed** (`subs/fsmgen/bin/fsmgen --strict --check --json` @ pin
+  `8c39827f`): the body is **totally ordered** (`13b`: "the scheduler links states in order … what you write is
+  what you get"); a value-less `(drive SIG)` is **rejected** — *"missing actual for 'val'"* — every drive needs a
+  concrete value; `(sample INPUT as name)` is **value-free-accepted** but `(drive INPUT)` is **rejected** ("not
+  defined" — drives exist only for outputs); same-cycle concurrency exists only via a multi-pair drive block, which
+  collides with SpecForge's per-output top-level named drives (`isf_priority_mixed_timing_conflict`).
+- **The issue.** Lowering the grounded membership into an ISF body would force inventing per-output **VALUES** (we
+  ground the signal + phase + direction but usually not the value) and a cross-phase **ORDER** the document does not
+  ground (`.2h`). Inputs are fine (`sample`); outputs are the blocker.
+- **Raised to FSMGEN** (per `[[feedback_isf_no_hacks]]`, no fabrication/no hack): the `2026-06-16` entry of
+  `docs/FSMGEN_FEEDBACK.md` asks for value-less output participation / an unordered-or-partial-order body /
+  phase-group metadata / ordering-as-constraint. Owner to forward; **owner steer = wait for FSMGEN.**
+- **PARKED + fallback.** The two open body-emission decisions (same-cycle concurrent-drive block now vs `.2j`;
+  value-less drive vs pure residual) are PARKED pending FSMGEN. The grounded per-phase membership grouping (IntentIR
+  **metadata**, not ordered ISF steps) is the safe FSMGEN-independent fallback (`.isf` byte-identical); the
+  table-column phase cue (AHB's data-phase richness came from `| … | Write data phase |` cells, would move AXI/SWD
+  off zero) is the next recognition lever.
+- **Gates:** read-only/docs-only — WIRE-BASED-100 untouched; ADR-0006 ✓ (universal grammar, no name list);
+  `scripts/check_memory_architecture.sh` + knowledge-map derive-and-diff green.
+
 ### KG-ISF-TRANSACTIONS.2h — phase-ordering recoverability (DONE, measurement-first, docs-only)
 Before `.2i` sequences each transaction's per-phase body, `.2h` asked the `.2f`-style question: is a transaction's
 phase ORDER reliably + universally recoverable from the document? Measured read-only over the persisted EvidenceIR
