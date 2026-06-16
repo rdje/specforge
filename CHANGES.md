@@ -1,3 +1,39 @@
+### FSMGEN-REFRESH-INTEGRATE-2.2 — ISF feature-adoption assessment @ 8c39827f; "do we need new ISF features?"; tree CLOSED (DONE)
+Owner asked, after the `.1` bump: *"see what you can take or use from this latest FSMGEN version"* and *"are all the
+FSMGEN ISF features all you need or do you need new ones? which? for what? why?"* Read the new upstream's authority
+docs (`ISF_PUBLIC_INTERFACE_CONTRACT.md`, `ISF_DOWNSTREAM_INTEGRATION_SPEC.md`, `SPECFORGE_FEEDBACK_RESPONSE.md`,
+book `13k` shipped-feature matrix + `13b`–`13m`) under the contract-is-authority doctrine and cross-referenced
+against what SpecForge actually emits (`ir/isf_ir.rs`) + the closed FSMGen-adoption trees. Docs-only.
+
+- **Contract delta affecting SpecForge's `.isf`: NONE.** Every emitted form (`(transaction)`/`(drive)`/`(rule)`/
+  `(assert (monitor (within s N)))`/signals/resets/`(types)`/`(enums)`/`(constants)`/`(storage)`) is still
+  `shipped` in `13k`; the 7 strict canaries + full `run_ci.sh` pass on the new binary (`.1`). The removed
+  `(contract … (eventually …))`, removed transaction-level `(assign …)`, and deprecated `(handshake …)` are forms
+  SpecForge does NOT emit (already migrated under `FSMGEN-ASSERT-MIGRATE`, or never emitted). No SpecForge-directed
+  ask is dated after `2026-06-04`.
+- **The +300 commits are FSMGen-internal:** compositional control-flow acceptance widening, ATL scheduling
+  diagnostics, IAL2 feature-completeness, backend-language portability, a semantic-introspection MCP server,
+  check-json/semantic-json source-identity — no new ISF surface SpecForge must change.
+- **Already adopted (no action):** the assert/verification family — `(assert (monitor (within s N)))`,
+  `(assert (=> A B))`, sampled-value `(stable/changed/rose/fell)`, `(within MIN MAX)` `min>1` — closed
+  `FSMGEN-ASSERT-LOWERING`/`FSMGEN-ASSERT-MIGRATE` (`2026-06-04`).
+- **Do we NEED new ISF features? → NO, not now.** The refreshed surface is sufficient for everything SpecForge
+  extracts today AND for the deferred composed multi-phase transaction body (AXI read = AR→R, write = AW→W→B):
+  already expressible via `spawn`/`do`+`await_all`/`(stage (ready)(valid))`/`(repeat)`/`(for)` — a SpecForge BUILD
+  gap, not an ISF-expressiveness gap (the `KG-ISF-TRANSACTIONS.1` census finding, now reconfirmed; the control-flow
+  widening makes the downstream MORE ready). Per `[[feedback_isf_no_hacks]]` no missing abstraction is being hacked
+  around → no FR warranted. Conditional FUTURE candidates (raise ONLY after SpecForge extracts the intent + an
+  empirical `--strict --check` probe shows ISF can't carry it, per `[[feedback_verify_fsmgen_before_fr]]`):
+  ID-based out-of-order multiple-outstanding-transaction correlation; first-class address/data/response phase-group
+  typing. Both recorded, not filed.
+- **ONE grounded NEW adopt candidate → proposed follow-up tree `ISF-REGISTER-RESET-EMIT`:** FSMGen now ships
+  register/CSR reset values `(storage (var NAME (width N) (reset V)))` / `(local … (reset V))`. SpecForge has the
+  grounding — `EvidenceIR` captures register-field `reset_value`, `IntentIR` carries `register_records`, and
+  `ir/isf_ir.rs` already emits a `(storage (var …))` surface (not yet fed from reset values). Measurement-first,
+  WIRE-BASED-100-gated, ISF-strict-validated; created when promoted (not implemented in this refresh/assessment tree).
+- Reviewed-baseline in `docs/FSMGEN_FEEDBACK.md` updated `88a7af9c → 8c39827f`; detailed assessment in
+  `DEVELOPMENT_NOTES.md`. Tree CLOSED. Next: resume `KG-ISF-TRANSACTIONS.2d`.
+
 ### FSMGEN-REFRESH-INTEGRATE-2.1 — bump subs/fsmgen d31b0b91 → 8c39827f (+300); CI green; reconcile pins (DONE)
 Owner-directed (`2026-06-16`): *"FSMGEN recently pushed. Please update FSMGEN submodule. then go through FSMGEN
 book/handoff/contract."* Second refresh cycle (predecessor `FSMGEN-REFRESH-INTEGRATE` closed `2026-05-29`).

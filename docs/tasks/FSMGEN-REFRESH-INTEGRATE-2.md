@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `FSMGEN-REFRESH-INTEGRATE-2`
-- Status: `active`
+- Status: `done` (CLOSED `2026-06-16`)
 - Roadmap lane: `R6` (`.isf` adapter — FSMGen is the downstream `.isf` consumer)
 - Created: `2026-06-16`
 - Last updated: `2026-06-16`
@@ -83,19 +83,43 @@ still cite the pin as `c0b7eaa7` — stale by several intervening re-pins
   `FSMGEN-REFRESH-INTEGRATE.1` precedent); `KNOWLEDGE_MAP.md` is auto-derived (never hand-edited).
   `docs/FSMGEN_FEEDBACK.md` reviewed-baseline update deferred to `.2` (set once the new docs are
   actually read). No strict-behavior divergence to record.
-- ID: `FSMGEN-REFRESH-INTEGRATE-2.2` · Status: `pending` · Goal: read thoroughly the handoff
+- ID: `FSMGEN-REFRESH-INTEGRATE-2.2` · Status: `done` (`2026-06-16`) · Goal: read thoroughly the handoff
   (`SPECFORGE_FEEDBACK_RESPONSE.md`), integration (`ISF_DOWNSTREAM_INTEGRATION_SPEC.md`), public
   API contract (`ISF_PUBLIC_INTERFACE_CONTRACT.md`), feature-support matrix (book `13k`), and the
   mdBook ISF chapters (`13*`); record a concrete contract-delta + feature-adoption assessment;
   update `DEVELOPMENT_NOTES.md` + `docs/FSMGEN_FEEDBACK.md`; scope any adoption as named follow-up
   trees; close the tree. Docs-only.
+  **DONE** (contract-is-authority + empirical canary from `.1`; full assessment in `DEVELOPMENT_NOTES.md`
+  "FSMGEN-REFRESH-INTEGRATE-2.2"). Findings: **(a) CONTRACT DELTA = NONE** affecting SpecForge's emitted
+  `.isf` — every emitted form still `shipped` in `13k`; 7/7 strict canaries + `run_ci.sh` green; the removed
+  `(contract … (eventually …))` / transaction `(assign …)` / deprecated `(handshake …)` are forms SpecForge
+  doesn't emit (already migrated/never emitted); no SpecForge-directed ask is dated after `2026-06-04`.
+  **(b) +300 commits are FSMGen-internal** (compositional control-flow acceptance widening, ATL diagnostics,
+  IAL2 feature-completeness, backend-language portability, a semantic-introspection MCP server) — no new ISF
+  surface SpecForge must change. **(c) ALREADY ADOPTED:** the assert/verification family (monitor/within
+  MIN MAX/stable/changed/rose/fell/=>) — closed `FSMGEN-ASSERT-LOWERING`/`FSMGEN-ASSERT-MIGRATE`. **(d) "Do we
+  need NEW ISF features?" → NO, not now** — the refreshed surface is sufficient for everything SpecForge
+  extracts AND for the deferred composed multi-phase transaction body (already expressible; a BUILD gap, not
+  an ISF gap; the control-flow widening makes the downstream MORE ready). Per `[[feedback_isf_no_hacks]]` no
+  missing abstraction is being hacked around → no FR warranted. **(e) ONE grounded NEW adopt candidate** →
+  proposed follow-up tree `ISF-REGISTER-RESET-EMIT` (register/CSR reset values `(storage (var … (reset V)))`
+  — SpecForge extracts register-field `reset_value` + has a `(storage)` emit surface not yet fed from it;
+  measurement-first, WIRE-BASED-100-gated, ISF-strict-validated). Conditional FUTURE ISF candidates recorded
+  (raise only after SpecForge extracts the intent + empirical probe): ID-based out-of-order outstanding-txn
+  correlation; first-class phase-group typing. Reviewed-baseline in `docs/FSMGEN_FEEDBACK.md` updated
+  `88a7af9c → 8c39827f`. No user-facing SpecForge behavior changed → mdBook unchanged (the BOOK-METHOD-DOC
+  close-rule is N/A for a refresh/assessment tree that ships no user-facing capability).
 
 ## Current Frontier
+
+Empty — **tree CLOSED `2026-06-16`** (`.1`+`.2` both `done`). One adoptable item recorded as the proposed
+follow-up tree `ISF-REGISTER-RESET-EMIT` (created when promoted, per the "captured + owned, execution on
+promotion" pattern). Next: resume `KG-ISF-TRANSACTIONS.2d` (owner-ordered).
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `FSMGEN-REFRESH-INTEGRATE-2.1` | `done` | bumped `d31b0b91 → 8c39827f`; CI green 1641/0; canary green; pins reconciled |
-| 2 | `FSMGEN-REFRESH-INTEGRATE-2.2` | `pending` | read docs + record assessment + close |
+| 2 | `FSMGEN-REFRESH-INTEGRATE-2.2` | `done` | contract delta = none; no new ISF FR needed; adopt candidate → proposed `ISF-REGISTER-RESET-EMIT`; tree closed |
 
 ## Decisions
 
@@ -119,15 +143,29 @@ still cite the pin as `c0b7eaa7` — stale by several intervening re-pins
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-16` | `.1` | checkout `8c39827f` clean + `perl -c` OK; 7 fsmgen-strict canary tests pass on new binary; full `scripts/run_ci.sh` (`1641/0/2`; fmt+clippy+rustdoc+mdBook); `kg-bench` 156/156; pins reconciled | `passed` |
+| `2026-06-16` | `.2` | thorough doc read (contract/integration/handoff/matrix `13k`/`13b-13m`) cross-referenced vs `ir/isf_ir.rs` + closed adoption trees; contract delta = none; no new ISF FR needed; assessment recorded (DEVELOPMENT_NOTES + FSMGEN_FEEDBACK baseline `88a7af9c → 8c39827f`); follow-up `ISF-REGISTER-RESET-EMIT` named; memory-arch gate ok | `passed` |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `FSMGEN-REFRESH-INTEGRATE-2.1` | `FSMGEN-REFRESH-INTEGRATE-2.1 — bump subs/fsmgen d31b0b91 -> 8c39827f (+300); CI green; reconcile pins` | gitlink change (tracked); SpecForge `.isf` still strict-valid; canary 7/7 + CI 1641/0 + kg-bench 156/156 |
+| `FSMGEN-REFRESH-INTEGRATE-2.2` | `FSMGEN-REFRESH-INTEGRATE-2.2 — ISF feature-adoption assessment; no new ISF FR needed; close` | docs-only; contract delta = none; adopt candidate → proposed `ISF-REGISTER-RESET-EMIT`; reviewed-baseline `88a7af9c → 8c39827f` |
 
 ## Changelog
 
+- `2026-06-16`: **`.2` DONE — tree CLOSED.** Read the new upstream's contract/integration/handoff/feature-matrix
+  (`13k`)/ISF chapters (`13b`–`13m`) and cross-referenced vs `ir/isf_ir.rs` + the closed adoption trees.
+  **Contract delta = NONE** (every emitted form still `shipped`; 7/7 strict canaries + `run_ci.sh` green; removed/
+  deprecated forms aren't emitted; no ask after `2026-06-04`). **+300 commits are FSMGen-internal** (compositional
+  control-flow widening, ATL diagnostics, IAL2, backend portability, semantic-introspection MCP). **"Need new ISF
+  features?" → NO** — the surface is sufficient for current + deferred transaction work (composed multi-phase body
+  is a BUILD gap, not an ISF gap; the control-flow widening makes the downstream MORE ready); per
+  `[[feedback_isf_no_hacks]]` no missing abstraction → no FR. **ONE grounded adopt candidate** → proposed tree
+  `ISF-REGISTER-RESET-EMIT` (register/CSR `(reset V)` storage; SpecForge extracts register-field `reset_value` +
+  has a `(storage)` surface). Conditional future candidates recorded (ID-based out-of-order outstanding-txn
+  correlation; phase-group typing) — not filed. Assessment in `DEVELOPMENT_NOTES.md`; reviewed-baseline in
+  `docs/FSMGEN_FEEDBACK.md` `88a7af9c → 8c39827f`. Docs-only; no user-facing change → mdBook unchanged.
 - `2026-06-16`: **`.1` DONE** — bumped `subs/fsmgen` `d31b0b91 → 8c39827f` (+300). All 7
   fsmgen-strict canary tests pass on the new binary (SpecForge's emitted `.isf` stays strict-valid);
   full `scripts/run_ci.sh` green (`1641/0/2`); `kg-bench` 156/156. Reconciled the current-facing pin

@@ -1,4 +1,72 @@
 # DEVELOPMENT_NOTES
+## FSMGEN-REFRESH-INTEGRATE-2.2 (`2026-06-16`) — ISF feature-adoption assessment @ pin `8c39827f`; "do we need new ISF features?"
+- **Why:** owner refreshed the `subs/fsmgen` submodule (`.1` bumped `d31b0b91 → 8c39827f`, +300) and asked
+  (a) *"see what you can take or use from this latest FSMGEN version"* and (b) *"are all the FSMGEN ISF
+  features all you need or do you need new ones? which? for what? why?"* This is the contract-is-authority
+  read of the new upstream (`[[feedback_fsmgen_contract]]`) + the empirical-before-FR rule
+  (`[[feedback_verify_fsmgen_before_fr]]`) + the no-hacks/raise-an-FR rule (`[[feedback_isf_no_hacks]]`).
+- **Method:** read the authority docs at `8c39827f` (`ISF_PUBLIC_INTERFACE_CONTRACT.md`,
+  `ISF_DOWNSTREAM_INTEGRATION_SPEC.md`, `SPECFORGE_FEEDBACK_RESPONSE.md`, book `13k` shipped-feature matrix +
+  `13b`–`13m`) and cross-referenced against what SpecForge actually emits (`ir/isf_ir.rs`) and the closed
+  FSMGen-adoption trees. Empirical canary: the 7 `*_passes_fsmgen_strict_validation` tests + full `run_ci.sh`
+  green on the new binary (`.1`).
+
+- **CONTRACT DELTA affecting SpecForge's emitted `.isf`: NONE.** Every form SpecForge emits — `(transaction …)`,
+  `(drive …)`, `(rule …)`, `(assert (monitor (within s N)))`, signals/resets/`(types)`/`(enums)`/`(constants)`,
+  `(storage …)` — is still `shipped` in the `13k` matrix; the 7 strict canaries pass. The removed
+  `(contract … (eventually …))`, removed transaction-level `(assign …)`, and deprecated `(handshake …)` are
+  forms SpecForge does NOT emit (already migrated under `FSMGEN-ASSERT-MIGRATE`, or never emitted). No
+  migration required. The +300 commits are dominated by FSMGen-INTERNAL work with no new ISF surface SpecForge
+  must change: `ISF-COMPOSITIONAL-CONTROL-FLOW-ARCHITECTURE` (scheduler now ACCEPTS more spawn/do/await_any/
+  await_all fanout — strictly permissive), `ISF-SCHEDULING-BACKLOG`/ATL diagnostics, `IAL2-FEATURE-COMPLETENESS`
+  (FSMGen's intermediate actor language), `BACKEND-LANGUAGE-PORTABILITY` (HDL gen), `SEMANTIC-INTROSPECTION-MCP`
+  (an introspection MCP server — tooling), and check-json/semantic-json source-identity. No direct ask to
+  SpecForge is dated after `2026-06-04`.
+
+- **ALREADY ADOPTED (no action):** the assert/verification family — `(assert (monitor (within s N)))`,
+  `(assert (=> A B))`, the sampled-value predicates `(stable/changed/rose/fell)`, and `(within MIN MAX)` with
+  `min>1` — was adopted in the closed `FSMGEN-ASSERT-LOWERING` (`.1`–`.3`) + `FSMGEN-ASSERT-MIGRATE` trees
+  (`2026-06-04`). (A delegated survey flagged these as "adopt-now"; that is an over-count — they are already in.)
+
+- **ADOPT candidate (grounded, NEW, → named follow-up tree `ISF-REGISTER-RESET-EMIT`):** FSMGen newly ships
+  register/CSR reset values — `(storage (var NAME (width N) (reset V)))` and `(local NAME (width N) (reset V))`
+  (matrix rows "Actor-owned scalar storage" / "Declared local variables"). SpecForge has the grounding to feed
+  it: `EvidenceIR` already captures register-field `reset_value` (`ir/evidence.rs`), `IntentIR` carries
+  `register_records`, and `ir/isf_ir.rs` already emits a `(storage (var …))` surface (currently NOT fed from
+  register reset values). So extracted CSR power-up defaults could lower faithfully instead of defaulting to
+  all-0s. Scoped as its own measurement-first, WIRE-BASED-100-gated, ISF-strict-validated tree per the
+  refresh-tree Non-Goal (no adapter change in this assessment tree) — created when promoted.
+
+- **ENABLER for deferred work (no action now):** the `ISF-COMPOSITIONAL-CONTROL-FLOW` widening means FSMGen now
+  lowers far richer composed child activation (`do`/`spawn`/`await_all`/`await_any` fanout). That is the
+  downstream for `KG-ISF-TRANSACTIONS`'s DEFERRED ordered multi-phase composed transaction body (AXI read =
+  AR→R, write = AW→W→B; AHB phase sequencing). Confirms the `KG-ISF-TRANSACTIONS.1` census finding that the
+  composed-transaction gap is a SpecForge BUILD gap, NOT an ISF-expressiveness gap — and the downstream is now
+  MORE ready, not less.
+
+- **DO WE NEED NEW ISF FEATURES? — NO, not now (honest, evidence-grounded).** The refreshed ISF surface is
+  sufficient for (1) everything SpecForge extracts today and (2) the near-term deferred transaction fidelity
+  work. Concretely: composed/hierarchical transactions are already expressible (`spawn`/`do`+`await_all`,
+  rule-activation, `(stage (ready)(valid))`, `(repeat)`/`(for)`); signal-set membership + boundary precision
+  (`.2c`) is IntentIR metadata the emitter doesn't even need ISF changes for; constraints/timing already lower
+  via the assert/`(rule)`/temporal path. The bottleneck for transaction fidelity is on SpecForge's EXTRACTION/
+  COMPOSITION side, not the ISF language. **Per `[[feedback_isf_no_hacks]]` there is currently no missing
+  abstraction we are hacking around, so no ISF feature request is warranted now.** Conditional FUTURE candidates
+  — to be raised ONLY if/when SpecForge actually extracts the intent AND an empirical `--strict --check` probe
+  shows ISF can't carry it (`[[feedback_verify_fsmgen_before_fr]]`):
+  - *Multiple outstanding transactions with ID-based out-of-order completion* (AXI ID reordering / multiple
+    in-flight) — `spawn` + `await_any` cover parallel children, but ID-keyed out-of-order response matching may
+    need richer correlation. NOT needed yet (SpecForge does not extract outstanding/reordering intent).
+  - *First-class transaction phase-group typing* (address / data / control / response groups within one
+    transaction) — today modeled as ordered steps + `(stage)`; a named phase-group could improve fidelity, but
+    steps/stages suffice and this is a nicety, not a blocker.
+  Both are recorded here as conditional, not filed — SpecForge must extract the intent first.
+
+- **TOOLING (optional future hardening, not needed):** `--capability-manifest` (machine-readable shipped-syntax
+  source of truth), `--check --json` / `--check-json`, `--emit-semantic-json` (round-trip verification).
+  SpecForge already uses `--strict --check --json` as its test canary; a manifest-driven emit-time guard or a
+  semantic-json round-trip is a possible later robustness add, not required.
+
 ## KG-ISF-TRANSACTIONS.2c (`2026-06-16`) — grounded signal-set membership (G3)
 - **Why:** bar #3/#4 — the IntentIR must carry each transaction's signal set, COMPLETE and EXCLUSIVE,
   grounded in the document. After `.2a` (recognition) + `.2b` (re-levelling + enum-grounded bodies), the
