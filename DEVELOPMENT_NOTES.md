@@ -1,4 +1,39 @@
 # DEVELOPMENT_NOTES
+## ISF-REGISTER-RESET-EMIT.1 (`2026-06-16`) — corpus measurement: GO (docs-only, read-only)
+- **Why:** `.0` scoped the gap; `.2` (the emitter change) must be measurement-first — confirm a faithful
+  register reset is groundable, decide the emit/residual policy, and size the wire-doc blast radius BEFORE
+  writing code (this tree's Acceptance Criterion #1; the project's measure-before-code doctrine).
+- **What I measured** (read-only over all 36 `generated/intent_ir/*/intent_ir.json`; deterministic): per
+  register, LSB-tile a register-level reset from per-field `reset_value` — `V = OR(parse_int(reset_i) <<
+  bits_low_i)` — strictly composable iff every field is located (`bits_high`/`bits_low`/`bit_width`) + reset
+  parseable as a non-neg int (`dec`/`0x`/`0b`/`…h`) fitting its field width + no overlap. Then compared `V`
+  to the current emit width (max single-field extent) and the true register width (`size_bits`/`max(bits_high)
+  +1`).
+- **Findings:** 19/36 docs carry registers (2561). **1508 strictly composable**; 1339 fit the current width;
+  **446 have V>0** (all 3 CoreSight SoC-600 TRMs — 199/127/120), 893 are V==0. `reset_value` shapes:
+  `bin` 3065 / `hex` 2405 / `…h` 225 / `dec` 73 compose; the rest is symbolic (`UNKNOWN`, `IMPLEMENTATION
+  DEFINED`, partial-unknown `0x--------`, `-`, `X`, `Impl Spec`, enum-annotated `0b00 (Invalid)`, `True`/
+  `False`) and stays residual.
+- **The decisive datum — wire-doc blast radius = ZERO.** APB/AHB/AXI/SWD compose no register reset, so their
+  `.isf` is byte-identical and WIRE-BASED-100 holds trivially. AXI's 71 `register_records` are encoding
+  **pseudo-tables** — fields with NO bit positions (`bits_high`/`bits_low`/`bit_width` all absent) and
+  symbolic resets (`-`, `False`, `1`, `AxPROT[1]`) — never located → never composable. AHB(3 regs)/APB(0)/
+  SWD(29 regs, 1 reset, no full coverage) likewise. So the blast radius is exactly the register-heavy
+  non-wire docs (CoreSight/VT-d/NVMe).
+- **The var-width interaction → spun to `.3`.** The emitter's storage-var width is the max single-field
+  extent (`ir/isf_ir.rs:730`), not the register width — a latent bug for multi-field registers. For 169
+  composable registers the composed reset needs more bits than that (DPIDR `0x1c013477` at width 11 →
+  over-width → FSMGen fails closed). Coupling a width-fix into the reset-emit slice would conflate two
+  independently-reviewable concerns (the splitting rule), so I split: `.2` emits only the 1339 fits-current
+  (446 V>0) registers (purely additive — register docs change ONLY by added `(reset V)`), and `.3` reconciles
+  the width (gated) so the 169 become emittable.
+- **`V==0` policy:** omit. FSMGen's omission-defaults-to-all-0s makes a documented 0 reset identical to the
+  default — no fact lost, and emitting 893 `(reset 0)` clauses would be redundant noise. The `.isf` diff is
+  the 446 V>0 resets only.
+- **How verified:** read-only deterministic corpus scan; report `docs/research/register-reset-emit-
+  measurement.md`; KM card `register-reset-isf-emit`; memory-arch + knowledge-map gates green; docs-only, so
+  WIRE-BASED-100 / `kg-bench` untouched by construction.
+
 ## ISF-REGISTER-RESET-EMIT.0 (`2026-06-16`) — own register-reset→ISF lowering (docs-only ownership/scoping)
 - **Why:** The session resumed at a handoff-ready state (`KG-ISF-TRANSACTIONS.2j` committed,
   `2da64348`). PNT needed the next eligible build frontier: the two active north-star trees are parked

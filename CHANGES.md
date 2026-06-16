@@ -1,3 +1,28 @@
+### ISF-REGISTER-RESET-EMIT.1 — corpus measurement: GO (446 V>0 resets, wire blast radius 0, 169 width-spun .3)
+Measurement-first read-only scan of all 36 persisted `generated/intent_ir/*/intent_ir.json` to decide the
+`.2` emit/residual policy and size the blast radius before any emitter change. No code.
+
+- **Reset surface is real:** 19/36 docs carry registers (2561 total); **1508 strictly composable** — every
+  field located (`bits_high`/`bits_low`/`bit_width`) + `reset_value` parseable as a non-neg int fitting its
+  field width + no overlap, LSB-tiled to a register `V` (the `recover_register_bits` discipline). 1339 fit the
+  current (max-field-extent) emit width; of those **446 have V>0** — the real `.isf` diff, **entirely the 3
+  CoreSight SoC-600 TRMs** (199/127/120); 893 are V==0 (= the FSMGen all-0s default → omit, no fact lost).
+- **Wire-doc blast radius = ZERO (decisive):** APB/AHB/AXI/SWD compose no register reset → their `.isf` is
+  byte-identical → WIRE-BASED-100 holds trivially. AXI's 71 "registers" are positionless encoding pseudo-tables
+  (`Valid and Ready signals`, `Shared credit properties`) with symbolic resets (`-`/`False`/`AxPROT[1]`);
+  AHB/APB/SWD carry ~no field resets. The blast radius is exactly the register-heavy non-wire docs.
+- **169 composable registers need a wider var width** than the current max-field-extent (e.g. CoreSight DPIDR
+  composes `0x1c013477` but the var width is 11 → over-width, FSMGen fails closed). The true register width
+  (`size_bits`/`max(bits_high)+1`) is a separate latent bug → **spun out as `.3`** (independently reviewable;
+  honest residuals for `.2`).
+- **Decision: GO.** `.2` = purely-additive emit of the 446 V>0 fits-current resets (`(var NAME (width W)
+  (reset V))`); symbolic/partial/overlap/over-width = honest adapter residuals; ADR-0006 numeric parsing only.
+  `.3` reconciles the var width for the 169.
+- **Deliverables:** `docs/research/register-reset-emit-measurement.md` (report), `docs/knowledge/
+  register-reset-isf-emit.md` (KM card), task tree `.1`→done + `.3` added + frontier refreshed.
+- **Gates:** docs-only — no code/test/CI/`.isf` change; memory-arch + knowledge-map green; WIRE-BASED-100
+  untouched; ADR-0006 ✓.
+
 ### ISF-REGISTER-RESET-EMIT.0 — own register-reset→ISF lowering candidate (docs-only ownership/scoping)
 PNT rolled onto a new tree after the two north-star trees reached a parked/deferred frontier
 (`KG-ISF-TRANSACTIONS` body-emission PARKED pending FSMGen; `KG-ISF-COMPLETENESS` `.1b.ii`/`.1b.iv`

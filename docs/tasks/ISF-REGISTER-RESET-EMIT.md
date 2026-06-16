@@ -105,32 +105,53 @@ docs — CCIX / NVMe / GIC / CoreSight / etc.). Universal grammar only, no name 
   `ir/isf_ir.rs:730/375`; FSMGen `(reset V)` already `shipped` per `13k:42`/`13m`); define the
   checkable 4-point bar; set the slice sequence. No code (own before touching). Memory
   `[[project_kg_isf_completeness]]`.
-- ID: `ISF-REGISTER-RESET-EMIT.1` · Status: `pending` · Goal: **corpus measurement (read-only,
-  docs-only) — is a faithful register reset groundable, and where?** Quantify over the persisted
-  IntentIR/SourceIR corpus: per-doc register count + how many registers carry a `reset_value`;
-  the value SHAPE distribution (parseable non-negative int vs hex/bin vs symbolic `-`/`X`/
-  `IMPLEMENTATION DEFINED`); per-register field-reset COVERAGE (all fields vs partial — a partial
-  reset cannot compose a full register value, so it is an honest residual); the var-width vs true
-  register-width interaction (does a composed multi-field reset fit the current max-field-extent
-  width, or must `.2` reconcile the width to `size_bits`/`max(bits_high)+1`?); and the wire-doc
-  blast radius (do APB/AHB/AXI/SWD carry any register_records at all?). Decide the composition rule
-  (`V = Σ parse_int(field.reset_value) << field.bits_low`, gated like `recover_register_bits`
-  LSB-tiling) and the residual rule. Acceptance: a written measurement report + a GO/NO-GO with the
-  exact `.2` emit/residual policy and its blast radius. No code.
-  Verification: `pending` · Commit: `pending`
-- ID: `ISF-REGISTER-RESET-EMIT.2` · Status: `pending` · Goal: **emit `(reset V)`** — add a `reset`
-  field to `IsfStorageVar`, compose/parse the per-register reset under the `.1` policy, render
-  `(var NAME (width W) (reset V))` only for a clean in-width non-negative integer (else omit +
-  record an adapter residual), reconcile the var width iff the `.1` measurement requires it (gated),
-  with focused unit tests. Acceptance: the 4-point bar met; all `.2` gates green. Verification:
-  `pending` · Commit: `pending`
+- ID: `ISF-REGISTER-RESET-EMIT.1` · Status: `done` (`2026-06-16`, measurement-first, read-only,
+  docs-only; report `docs/research/register-reset-emit-measurement.md`; KM card
+  `[[register-reset-isf-emit]]`) · Goal: **corpus measurement — is a faithful register reset
+  groundable, and where? → GO.** Measured over all 36 persisted `intent_ir.json`: 19/36 docs carry
+  registers (2561 total); **1508 strictly composable** (every field located via
+  `bits_high`/`bits_low`/`bit_width` + `reset_value` parseable as a non-neg int fitting its field
+  width + no overlap; LSB-tiled to a register `V`). 1339 fit the current emit width; of those **446
+  have V>0** (the real `.isf` diff — **entirely the 3 CoreSight SoC-600 TRMs**, 199/127/120), 893 are
+  V==0 (= the FSMGen all-0s default → omit). **Wire-doc blast radius = ZERO** (APB/AHB/AXI/SWD emit
+  no reset → `.isf` byte-identical → WIRE-BASED-100 trivially held; AXI's 71 "registers" are
+  positionless encoding pseudo-tables with symbolic resets). **169 composable registers need a wider
+  var width** than the current max-field-extent (e.g. CoreSight DPIDR composes `0x1c013477` but the
+  current width is 11 → over-width, FSMGen fails closed) — the latent width-derivation bug, spun out
+  as `.3`. Symbolic/partial/over-width = honest residuals (ADR-0006, numeric parsing only, no name
+  list). **Decision: GO** with the `.2` policy below + the `.3` spin-out. No code.
+  Verification: `passed` (read-only) · Commit: `718495e8`-successor (this commit)
+- ID: `ISF-REGISTER-RESET-EMIT.2` · Status: `pending` (policy LOCKED by `.1`) · Goal: **emit
+  `(reset V)` — purely additive.** Add `reset: Option<u64>` to `IsfStorageVar` (`ir/isf_ir.rs:81`);
+  render `(var NAME (width W) (reset V))` (`:375`) only when set. Set it iff the register is strictly
+  composable (per `.1`), the composed `V > 0`, AND `V` fits the current var width (max-field-extent)
+  — the **446-register / 3-doc** surface; so register-bearing docs change ONLY by added `(reset V)`
+  clauses (bar #4 exactly), wire docs byte-identical. `V == 0` → omit (the FSMGen all-0s default
+  faithfully represents a documented 0; not a residual; avoids 893 redundant `(reset 0)`). Composition
+  = LSB-tiling `V = OR(parse_int(reset_i) << bits_low_i)` mirroring `ir/register_bits.rs`; numeric
+  parsing only (`dec`/`0x`/`0b`/`…h`), ADR-0006. Everything not emitted (symbolic / partial-coverage
+  / overlap / over-width) = an explicit adapter residual (reuse the `ResidualDecisionPacket` surface),
+  never fabricated. Focused unit tests (compose/parse/tile, in-width keep, over-width omit, symbolic
+  omit, V==0 omit). Acceptance: 4-point bar met; all `.2` gates green (FSMGen `--strict --check` 0
+  new diagnostics on every doc; WIRE-BASED-100 1.000; `kg-bench` unchanged; `run_ci.sh` green;
+  non-register docs byte-identical). Verification: `pending` · Commit: `pending`
+- ID: `ISF-REGISTER-RESET-EMIT.3` · Status: `pending` (spun from `.1`; measured-justified) · Goal:
+  **reconcile the storage-var width to the true register width** (`size_bits`, else
+  `max(bits_high)+1`) so the 169 composable-but-over-width resets become emittable. The current
+  emit width (max single-field extent, `ir/isf_ir.rs:730`) is a latent bug for multi-field registers.
+  Gated: this is a width-only `.isf` delta on register-heavy docs (NOT wire docs — they have no such
+  registers), so review the delta, hold WIRE-BASED-100, and require FSMGen `--strict --check` 0 new
+  diagnostics. Acceptance: the 169 emit a correct in-width `(reset V)`; width change strict-valid +
+  reviewed. Verification: `pending` · Commit: `pending`
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `ISF-REGISTER-RESET-EMIT.1` | `pending` | measurement-first: confirm the reset surface is groundable + size the blast radius before writing the emitter (project doctrine: measure before coding) |
-| 2 | `ISF-REGISTER-RESET-EMIT.2` | `pending` | the code slice, gated by `.1`'s policy + measured blast radius |
+| 1 | `ISF-REGISTER-RESET-EMIT.2` | `pending` | `.1` GO: emit the 446 V>0 composable resets (purely additive; policy locked) — the first code slice |
+| 2 | `ISF-REGISTER-RESET-EMIT.3` | `pending` | reconcile var width → true register width so the 169 over-width composable resets become emittable (gated) |
+
+`.1` (corpus measurement) DONE — GO; report `docs/research/register-reset-emit-measurement.md`.
 
 ## Decisions
 
@@ -150,6 +171,15 @@ docs — CCIX / NVMe / GIC / CoreSight / etc.). Universal grammar only, no name 
   omission = all-0s default = byte-identical); a missing/symbolic/partial reset emits no `(reset V)`
   and is an explicit adapter residual. Never fabricate a power-up value. ADR-0006 (universal numeric
   parsing, no name list).
+- `2026-06-16` (`.1`): **GO.** The reset surface is real (1508 composable; 446 V>0) and the wire-doc
+  blast radius is ZERO (proven: APB/AHB/AXI/SWD compose no register reset). **Split reset-emit (`.2`,
+  purely additive over the 446 fits-current V>0 registers) from var-width reconciliation (`.3`, the
+  169 over-width registers)** — they are independently reviewable concerns (the width is a separate
+  latent bug; the splitting rule forbids conflating them), and `.2` stays a clean additive diff that
+  satisfies bar #4 exactly.
+- `2026-06-16` (`.1`): **`V == 0` is omitted, not emitted** — the FSMGen all-0s default faithfully
+  represents a documented 0 reset (identical lowered hardware; no fact lost), so emitting 893
+  `(reset 0)` clauses would be redundant noise. The `.isf` diff is the 446 V>0 resets only.
 
 ## Open Questions
 
@@ -172,14 +202,16 @@ docs — CCIX / NVMe / GIC / CoreSight / etc.). Universal grammar only, no name 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-16` | `ISF-REGISTER-RESET-EMIT.0` | read-only code grounding (`reset_value` extracted `ir/source.rs:432` + carried `ir/intent.rs:193` but dropped at `ir/isf_ir.rs:730/375`); FSMGen `(reset V)` confirmed `shipped` (`13k:42`, `13m:48-68`); fsmgen binary present (`subs/fsmgen/bin/fsmgen`); `scripts/check_memory_architecture.sh` green | `passed` (docs-only; no code) |
+| `2026-06-16` | `ISF-REGISTER-RESET-EMIT.1` | read-only corpus measurement over 36 `intent_ir.json` (1508 composable, 446 V>0 in 3 CoreSight TRMs, 1339 fits-current, 169 over-width, wire-doc blast radius = 0); report + KM card written; `scripts/check_memory_architecture.sh` + `knowledge-map` green | `passed` (docs-only; no code) |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `ISF-REGISTER-RESET-EMIT.0` | `ISF-REGISTER-RESET-EMIT.0 — own register-reset→ISF lowering candidate (docs-only ownership/scoping)` | this commit |
-| `ISF-REGISTER-RESET-EMIT.1` | `pending` | `pending` |
+| `ISF-REGISTER-RESET-EMIT.0` | `ISF-REGISTER-RESET-EMIT.0 — own register-reset→ISF lowering candidate (docs-only ownership/scoping)` (`718495e8`) | done |
+| `ISF-REGISTER-RESET-EMIT.1` | `ISF-REGISTER-RESET-EMIT.1 — corpus measurement: GO (446 V>0 resets, wire blast radius 0, 169 width-spun .3)` | this commit; docs-only |
 | `ISF-REGISTER-RESET-EMIT.2` | `pending` | `pending` |
+| `ISF-REGISTER-RESET-EMIT.3` | `pending` | `pending` |
 
 ## Changelog
 
@@ -187,3 +219,9 @@ docs — CCIX / NVMe / GIC / CoreSight / etc.). Universal grammar only, no name 
   `FSMGEN-REFRESH-INTEGRATE-2.2` adopt candidate; recorded the read-only-grounded baseline (the
   exact ISF-emit gap + the authoritative FSMGen `(reset V)` contract); defined the checkable 4-point
   bar + the honest-residual policy; set the `.1` (measurement) → `.2` (code) sequence. No code.
+- `2026-06-16`: `.1` corpus measurement DONE (read-only, docs-only) — **GO.** 1508 strictly-composable
+  registers corpus-wide; 446 emit a real V>0 reset (all 3 CoreSight SoC-600 TRMs); **wire-doc blast
+  radius ZERO** (APB/AHB/AXI/SWD compose none → `.isf` byte-identical); 169 over-width composable
+  registers spun to `.3` (var-width reconciliation); symbolic/partial/over-width/V==0 are honest
+  residuals/defaults. Locked the `.2` purely-additive policy + the `.3` spin-out. Report
+  `docs/research/register-reset-emit-measurement.md`; KM card `register-reset-isf-emit`. No code.
