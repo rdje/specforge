@@ -170,6 +170,35 @@ fields that should NOT be force-residualized.
   ungroundable-noise / register-field categories §3 showed are honest absences. Confirm scope
   measurement-first in its own slice.
 
+## 6. `.2a` trigger resolved — FSMGen-contract probe + the `.2a.i` width build (`2026-06-17`)
+
+The `.2` measurement flagged direction/width as the largest *true* infidelity but deferred it pending an
+FSMGen-contract check. That check is now done (empirical binary probe + book contract; KM card
+`fsmgen-ignores-signal-direction`):
+
+- **Direction is FSMGen-neutral.** Flipping a *driven* `(output SWDIO)` → `(input SWDIO)` in the SWD `.isf`
+  still passes `--strict --check` (`success:true`) — FSMGen neither validates nor uses signal direction
+  (`(set port expr)` has no direction constraint). So the `R6-ISF-ADAPTER.4` `output` default is **not** a
+  faithful-*lowering* gap; emitting a faithful direction is an owner-philosophy choice (human readability),
+  relationship-relative, and stays **deferred** (`.2a`, low-value — no technical motivation).
+- **Width must resolve to a positive integer.** Concrete `(width 32)` passes; an undefined `(width
+  DATA_WIDTH)` fails closed; a symbolic width needs a co-emitted `(constant …)`. So the clean win is
+  emitting the **concrete grounded** width where the IntentIR has one.
+
+**Width recovery measured:** of 3 308 signals the emitter defaults to width 1, **69 (2.1%)** carry a single
+**unambiguous concrete** width > 1 in the actor-port graph (`actor_ports[].width_hint`), **0 conflicts** —
+35 on the wire docs (AXI `ARSIZE→3`, `ARBURST→2`, `ARCACHE→4`, … = 32; AHB `HSIZE→3`, `HTRANS→2`; APB/SWD
+0).
+
+**`.2a.i` LANDED (`2026-06-17`, code).** `actor_port_concrete_widths` (`ir/isf_ir.rs`) maps each signal to
+its single unambiguous concrete graph width; the signal lowering prefers it over the width-1 default (never
+overrides a real >1 hint, never guesses on conflict). +1 unit test. **Live (release):** AXI `.isf` 32
+signals gain real widths / AHB 2, **non-signal lines 0** (only width changed), APB/SWD byte-identical;
+**0 NEW FSMGen `--strict` diagnostics** (AXI/AHB keep their byte-identical PRE-EXISTING rule-lowering
+diagnostics — `constraint_33 (port expr)` / `HAUSER` conflict — unrelated to widths). WIRE-BASED-100
+structurally unaffected (the change is confined to the ISF emitter, downstream of all EvidenceIR/Semantic/
+Intent extraction); `run_ci.sh` green (lib 1652, +1).
+
 ## Reproduce
 
 Read-only Python over `generated/intent_ir/*/intent_ir.json` replicating `signal_names` (clock/reset

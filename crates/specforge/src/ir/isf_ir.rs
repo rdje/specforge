@@ -8,11 +8,11 @@
 //   - Typed IsfRule / IsfPriority → cannot emit invalid S-expression syntax
 //   - Recursive tree walk        → parentheses match by construction
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 use crate::ir::intent::{IntentIr, TransactionStep};
 use crate::ir::semantic::{
-    ControlActionRecord, ControlBinaryOperator, ControlBranchRecord,
+    ActorPortRecord, ControlActionRecord, ControlBinaryOperator, ControlBranchRecord,
     ControlCompoundUpdateOperation, ControlExpressionRecord, ControlReferenceSuffix,
     ControlUnaryOperator, InterfaceSignalDirection, SymbolDefinitionKind, SystemResetKind,
     SystemResetPolarity,
@@ -21,7 +21,7 @@ use crate::ir::semantic::{
 // referenced only by the test-only parity oracle (`classify_temporal_rule`
 // + helpers) and the test module — production lowering uses ContractIR.
 #[cfg(test)]
-use crate::ir::semantic::{TemporalPredicateRecord, TemporalRuleRecord};
+use crate::ir::semantic::{ActorRelativeDirection, TemporalPredicateRecord, TemporalRuleRecord};
 use crate::ir::source::{
     AutomationConfidence, CandidateInterpretation, RegisterFieldRecord, RegisterRecord,
     ResidualDecisionPacket, WidthHint,
@@ -674,6 +674,10 @@ impl IsfIr {
         let infra_names: BTreeSet<&str> = [clock.as_str(), reset.signal.as_str()]
             .into_iter()
             .collect();
+        // KG-ISF-COMPLETENESS.2a.i: grounded concrete widths recovered from the
+        // actor-port graph, used below as a fallback when the flat signal hint
+        // defaults to width 1.
+        let port_widths = actor_port_concrete_widths(&intent_ir.actor_ports);
         let mut signals: BTreeSet<IsfSignal> = BTreeSet::new();
         let mut seen_signal_names: BTreeSet<String> = BTreeSet::new();
         for iface in &intent_ir.interfaces {
@@ -692,6 +696,19 @@ impl IsfIr {
                 let width = match &sig.width_hint {
                     Some(w) => render_isf_width_hint(w).parse::<u32>().unwrap_or(1),
                     None => 1,
+                };
+                // KG-ISF-COMPLETENESS.2a.i: the flat `signal_records[].width_hint` is
+                // `None`/symbolic for ~96% of signals (since R15-GRAPH-DIRECTION-MIGRATION
+                // the grounded width lives on the actor-port graph), so the match above
+                // defaults them to 1. When the graph grounds a single unambiguous concrete
+                // width > 1 for this signal, prefer it — a faithful, FSMGen-safe improvement
+                // (FSMGen accepts a concrete `(width N)`; it does not validate signal
+                // direction — see the `fsmgen-ignores-signal-direction` fact card). A signal
+                // with conflicting graph widths keeps the honest width-1 default — never a guess.
+                let width = if width == 1 {
+                    port_widths.get(&sig.signal_name).copied().unwrap_or(1)
+                } else {
+                    width
                 };
                 signals.insert(IsfSignal {
                     name: sig.signal_name.clone(),
@@ -1523,6 +1540,35 @@ fn render_isf_width_hint(width: &WidthHint) -> String {
         WidthHint::Numeric(n) => n.to_string(),
         WidthHint::Parametric(p) => p.clone(),
     }
+}
+
+/// KG-ISF-COMPLETENESS.2a.i: a per-signal concrete width recovered from the actor-port graph.
+///
+/// The flat `signal_records[].width_hint` is `None`/symbolic for ~96% of declared signals — since
+/// `R15-GRAPH-DIRECTION-MIGRATION` the grounded width lives on `actor_ports`. This maps each signal
+/// to its single unambiguous concrete (`Numeric`, `> 1`) graph width so the signal lowering can
+/// prefer it over the width-1 default. A signal whose graph widths disagree is omitted, so the
+/// caller keeps the honest width-1 default rather than guessing. Measured `2026-06-17`: 69 signals
+/// corpus-wide gain a width this way, 0 conflicts (`isf-lowering-fidelity-gauge`).
+fn actor_port_concrete_widths(actor_ports: &[ActorPortRecord]) -> BTreeMap<String, u32> {
+    let mut by_signal: BTreeMap<String, BTreeSet<u32>> = BTreeMap::new();
+    for port in actor_ports {
+        if let Some(WidthHint::Numeric(n)) = &port.width_hint
+            && *n > 1
+        {
+            by_signal
+                .entry(port.signal_name.clone())
+                .or_default()
+                .insert(*n);
+        }
+    }
+    by_signal
+        .into_iter()
+        .filter_map(|(signal, widths)| match widths.len() {
+            1 => widths.into_iter().next().map(|w| (signal, w)),
+            _ => None,
+        })
+        .collect()
 }
 
 fn sanitize_isf_name(raw: &str) -> String {
@@ -2484,6 +2530,43 @@ mod tests {
             supporting_statement_ids: vec![],
             automation_confidence: AutomationConfidence::Medium,
         }
+    }
+
+    fn width_port(signal: &str, width: Option<WidthHint>) -> ActorPortRecord {
+        ActorPortRecord {
+            actor_id: "a".to_string(),
+            actor_name: "A".to_string(),
+            signal_name: signal.to_string(),
+            direction: ActorRelativeDirection::Output,
+            relation_basis: vec![],
+            width_hint: width,
+            source_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        }
+    }
+
+    #[test]
+    fn actor_port_concrete_widths_recovers_single_unambiguous_width() {
+        // KG-ISF-COMPLETENESS.2a.i: a signal gains a graph width only when it is a single,
+        // unambiguous, concrete (> 1) value — otherwise the caller keeps the honest width-1 default.
+        let ports = vec![
+            width_port("ARSIZE", Some(WidthHint::Numeric(3))),
+            width_port("ARSIZE", Some(WidthHint::Numeric(3))), // a second actor agrees → unambiguous
+            width_port("HBURST", Some(WidthHint::Numeric(2))),
+            width_port("AWADDR", Some(WidthHint::Numeric(1))), // width 1 is not a > 1 recovery
+            width_port("CONFLICT", Some(WidthHint::Numeric(2))),
+            width_port("CONFLICT", Some(WidthHint::Numeric(4))), // disagree → omitted (no guess)
+            width_port("SYM", Some(WidthHint::Parametric("DATA_WIDTH".to_string()))), // symbolic → omitted
+            width_port("NOHINT", None),
+        ];
+        let widths = actor_port_concrete_widths(&ports);
+        assert_eq!(widths.get("ARSIZE"), Some(&3));
+        assert_eq!(widths.get("HBURST"), Some(&2));
+        assert_eq!(widths.get("AWADDR"), None);
+        assert_eq!(widths.get("CONFLICT"), None);
+        assert_eq!(widths.get("SYM"), None);
+        assert_eq!(widths.get("NOHINT"), None);
+        assert_eq!(widths.len(), 2);
     }
 
     #[test]

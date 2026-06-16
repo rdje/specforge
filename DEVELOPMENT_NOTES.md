@@ -1,4 +1,35 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-COMPLETENESS.2a.i (`2026-06-17`) — signal width fidelity (FSMGen-contract-grounded code slice)
+
+**Trigger (`.2a` FSMGen-contract check).** Empirical probe on the smallest wire `.isf` (SWD, 13 signals all
+`output`/`width-1`) + the FSMGen book contract, cross-checked: (1) **direction is FSMGen-neutral** — flip a
+*driven* `(output SWDIO)` → `(input SWDIO)`, keep its `(drive)`, and `--strict --check` still returns
+`success:true`; the book shows `(set port expr)` has no direction constraint (only `(pulse target)` requires
+an output). (2) **width** accepts a symbolic name only if it resolves to a declared constant/param, else
+fails closed (`(width 32)` → ok; undefined `(width DATA_WIDTH)` → fail). KM card
+`fsmgen-ignores-signal-direction`.
+
+**Why this deflates the `.2` "largest infidelity".** The `.isf` defaulting ~98% of signals to `(output …
+(width 1))` looked alarming, but direction is irrelevant to the only consumer (FSMGen schedules and ignores
+it), so it is not a faithful-*lowering* gap — at most a human-readability/owner-philosophy choice, and it is
+relationship-relative (every signal is both input and output across actors). Direction therefore stays
+deferred (low-value). The clean win is the concrete grounded *width*.
+
+**Build.** `actor_port_concrete_widths(&[ActorPortRecord]) -> BTreeMap<String,u32>` collects, per signal,
+the `Numeric` (> 1) widths from `actor_ports[].width_hint` and keeps only the signals with a single
+unambiguous value (a signal with conflicting graph widths is omitted → the caller keeps the honest width-1
+default). The signal loop in `from_intent_ir` applies it as a fallback only when the flat
+`signal_records[].width_hint` resolved to 1, so a real > 1 hint is never overridden. Measured: 69 signals
+corpus-wide gain a width, 0 conflicts. (Gotcha fixed during the slice: `ActorPortRecord` had to move from
+the file's `#[cfg(test)]` semantic-import block into the production import block — the test build masked the
+non-test E0425 until a plain `cargo build` bisected it.)
+
+**Verification.** +1 unit test. Live (release): re-adapting the persisted wire IntentIR gives AXI 32 + AHB 2
+signals with real widths, non-signal `.isf` lines unchanged, APB/SWD byte-identical; FSMGen `--strict
+--check` diagnostics byte-identical old↔new (AXI `constraint_33 (port expr)`, AHB `HAUSER` conflict —
+pre-existing, width-independent) → 0 new. WIRE-BASED-100 structurally unaffected (emitter-only change).
+`run_ci.sh` green (lib 1652).
+
 ## KG-ISF-COMPLETENESS.2 (`2026-06-17`) — ISF lowering-fidelity measurement (measurement-first, read-only, docs-only)
 
 **Goal.** Resolve the broad `.2+` umbrella into a concrete measurement-first leaf: gauge which ISF-fidelity

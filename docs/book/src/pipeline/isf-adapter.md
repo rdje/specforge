@@ -69,7 +69,7 @@ The adapter walks `IntentIr` and populates the typed tree:
 
 1. **Clock** — from the system contract
 2. **Reset** — always populated; kind/polarity from system contract with sensible defaults
-3. **Signals** — collected from all interfaces; clock/reset excluded; inserted into `BTreeSet` for automatic dedup
+3. **Signals** — collected from all interfaces; clock/reset excluded; inserted into `BTreeSet` for automatic dedup. **Width** comes from the signal's own width hint; when that is absent (the flat hint is `None`/symbolic for most signals, since the grounded width lives on the actor-relative graph), the adapter recovers a *single unambiguous concrete* width from the actor-port graph (`actor_ports[].width_hint`) — so a sideband like AXI `ARSIZE` emits `(width 3)` rather than the `(width 1)` default. A signal whose graph widths disagree, or that has no grounded width, keeps the honest `(width 1)` default — never a guess (`KG-ISF-COMPLETENESS.2a.i`). FSMGen does not validate signal *direction* (an unknown direction defaults to `output` and is FSMGen-neutral; see `fsmgen-ignores-signal-direction`), so the adapter does not over-invest in inferring it.
 4. **Constants** — from declared symbolic constants
 5. **Types/enums** — from type definitions and enum member-value maps
 6. **Storage** — one `(storage (var …))` per register map record; when the register's documented per-field reset values compose to a clean integer it also carries a `(reset V)` (see [Register reset values](#register-reset-values) below)

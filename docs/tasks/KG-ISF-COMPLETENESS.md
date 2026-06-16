@@ -236,6 +236,27 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   contract answer (does `--strict --check` use signal direction? does it accept symbolic widths?) + owner
   steer on the north-star-vs-policy tension. Measurement-first; WIRE-BASED-100 + FSMGen `--strict` hard
   gates (large wire-doc `.isf` blast radius).
+  **FSMGen-contract TRIGGER DONE `2026-06-17`** (empirical binary probe + book contract; KM card
+  `[[fsmgen-ignores-signal-direction]]`): **direction is FSMGen-NEUTRAL** — flipping a driven
+  `(output SWDIO)`→`(input SWDIO)` still passes `--strict` (`(set port expr)` has no direction constraint),
+  so the `output` default is NOT a faithful-lowering gap, only a human-readability/owner-philosophy choice
+  (relationship-relative) → **direction stays deferred, low-value** (no technical motivation; revisit only
+  on explicit owner steer). **Width** must resolve to a positive integer (concrete passes; undefined
+  symbolic fails closed) → the clean win is the concrete grounded width, which landed as `.2a.i` below.
+- ID: `KG-ISF-COMPLETENESS.2a.i` · Status: `done` (`2026-06-17`, measurement-first; LANDED +
+  verified) · Goal: **emit the grounded concrete signal width from the actor-port graph** where the
+  emitter currently defaults to width 1. Measured: of 3 308 width-1 signals, **69 (2.1%) carry a single
+  unambiguous concrete width > 1** in `actor_ports[].width_hint`, **0 conflicts** (wire docs: AXI 32 —
+  `ARSIZE→3`/`ARBURST→2`/`ARCACHE→4`/…; AHB 2 — `HSIZE→3`/`HTRANS→2`; APB/SWD 0). **LANDED:**
+  `actor_port_concrete_widths` (`ir/isf_ir.rs`) maps each signal to its single unambiguous concrete graph
+  width; the signal lowering prefers it over the width-1 default (never overrides a real > 1 hint, never
+  guesses on conflict → honest width-1 stays). ADR-0006 (universal, no name list); +1 unit test. **Live
+  (release):** AXI `.isf` 32 signals gain real widths / AHB 2, **non-signal lines 0**, APB/SWD
+  byte-identical; **0 NEW FSMGen `--strict` diagnostics** (AXI/AHB keep their byte-identical PRE-EXISTING
+  rule-lowering diagnostics `constraint_33 (port expr)` / `HAUSER` conflict, unrelated to widths).
+  WIRE-BASED-100 structurally unaffected (emitter-only change, downstream of extraction); `kg-bench` not
+  affected; `run_ci.sh` GREEN (lib 1652, +1). KM cards `[[fsmgen-ignores-signal-direction]]` +
+  `[[isf-lowering-fidelity-gauge]]`. Book `pipeline/isf-adapter.md` signal-width note.
 - ID: `KG-ISF-COMPLETENESS.2b` · Status: `pending` (the buildable candidate; confirm scope measurement-
   first) · Goal: **ISF lowering-coverage visibility gauge** — make the lowering's per-surface coverage
   honest and visible (how many typed-rule elements lowered to `.isf` rules vs not, by category) as adapter
@@ -297,6 +318,18 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   25→19; AXI real agents byte-identical, actors 21. WIRE-BASED-100 HELD 1.000 (constraints ×3 / relations
   ×4 / temporal ×3) on fresh-Pattern eval; `kg-bench` 156/156; `run_ci.sh` GREEN (+2 tests, lib 1635
   pass/2 ignored). KM card `agent-trailing-fragment-consolidation`. Frontier → `.1b.ii`/`.1b.iii`/`.1b.iv`.
+- `2026-06-17`: **`.2a.i` DONE** — signal width fidelity LANDED. The `.2a` FSMGen-contract trigger ran
+  first (empirical binary probe + book contract, KM `fsmgen-ignores-signal-direction`): **direction is
+  FSMGen-neutral** (flipping a driven output→input still passes `--strict`) → direction stays deferred
+  (owner-philosophy only); **width** must resolve to a positive integer → emit the concrete grounded width.
+  `actor_port_concrete_widths` (`ir/isf_ir.rs`) recovers each signal's single unambiguous concrete graph
+  width (`actor_ports[].width_hint`) and the signal lowering prefers it over the width-1 default; never
+  overrides a real >1 hint, never guesses on conflict (0 conflicts measured); ADR-0006, no name list; +1
+  test. Live: AXI 32 + AHB 2 signals gain real widths (`ARSIZE→3`/`HSIZE→3`/…), non-signal lines 0,
+  APB/SWD byte-identical, **0 new FSMGen `--strict` diagnostics** (AXI/AHB keep byte-identical pre-existing
+  rule diagnostics), `run_ci.sh` green (lib 1652). WIRE-BASED-100 structurally unaffected (emitter-only).
+  Report §6; KM cards `fsmgen-ignores-signal-direction` + `isf-lowering-fidelity-gauge`; book
+  `pipeline/isf-adapter.md`.
 - `2026-06-17`: **`.2` MEASUREMENT DONE** (read-only, docs-only — the `.2+` umbrella resolved into a
   concrete measurement leaf + two spun sub-leaves). Gauged which ISF-fidelity bar dimension has the largest
   faithful-lowering gap by reading the full ISF lowering and replicating its per-element filters over all 36

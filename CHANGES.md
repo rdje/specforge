@@ -1,3 +1,32 @@
+### KG-ISF-COMPLETENESS.2a.i — signal width fidelity (emit the grounded concrete width from the actor-port graph)
+Code slice grounded by the `.2a` FSMGen-contract trigger (empirical binary probe + FSMGen book contract;
+KM card `fsmgen-ignores-signal-direction`).
+
+- **FSMGen-contract trigger resolved `.2a`:** **direction is FSMGen-neutral** — flipping a *driven*
+  `(output SWDIO)` → `(input SWDIO)` in the SWD `.isf` still passes `--strict --check` (`(set port expr)`
+  has no direction constraint; only `(pulse target)` requires an output). So the `R6-ISF-ADAPTER.4` `output`
+  default is NOT a faithful-lowering gap — it is owner-philosophy only (human readability), and
+  relationship-relative → direction stays deferred (low-value, no technical motivation). **Width** must
+  resolve to a positive integer (concrete passes; undefined symbolic fails closed) → emit the concrete
+  grounded width.
+- **Measured width recovery:** of 3 308 signals the emitter defaults to width 1, **69 (2.1%) carry a single
+  unambiguous concrete width > 1** in the actor-port graph (`actor_ports[].width_hint`), **0 conflicts**
+  (AXI 32: `ARSIZE→3`/`ARBURST→2`/`ARCACHE→4`/…; AHB 2: `HSIZE→3`/`HTRANS→2`; APB/SWD 0).
+- **Implementation** (`crates/specforge/src/ir/isf_ir.rs`): `actor_port_concrete_widths(&[ActorPortRecord])`
+  maps each signal to its single unambiguous concrete (`Numeric`, > 1) graph width; the signal lowering in
+  `from_intent_ir` prefers it over the width-1 default. Never overrides a real > 1 signal hint, never
+  guesses on conflict (the honest width-1 default stays). ADR-0006 (universal, no name list); +1 unit test
+  (`actor_port_concrete_widths_recovers_single_unambiguous_width`).
+- **Live-verified (release):** AXI `.isf` 32 signals gain real widths / AHB 2, **non-signal lines 0** (only
+  the width changed), APB/SWD byte-identical; **0 NEW FSMGen `--strict --check` diagnostics** — AXI/AHB keep
+  their byte-identical PRE-EXISTING rule-lowering diagnostics (AXI `constraint_33 ... require '(port expr)'`,
+  AHB `isf_conflicting_rule_writes on HAUSER`), which are unrelated to signal widths.
+- **Gates:** `run_ci.sh` GREEN (fmt + warning-deny clippy + tests **lib 1652**, +1 + rustdoc + mdBook);
+  WIRE-BASED-100 structurally unaffected (the change is confined to the ISF emitter, downstream of all
+  EvidenceIR/Semantic/Intent extraction — no extraction code touched); memory-arch + knowledge-map green.
+  Book `pipeline/isf-adapter.md` signal-width note; KM cards `fsmgen-ignores-signal-direction` +
+  `isf-lowering-fidelity-gauge`; report §6.
+
 ### KG-ISF-COMPLETENESS.2 — ISF lowering-fidelity measurement (which bar dimension has the largest faithful-lowering gap)
 Measurement-first leaf (read-only, docs-only — no code, no extraction change). The `.2+` umbrella resolved
 into a concrete measurement leaf + two spun sub-leaves by reading the full ISF lowering
