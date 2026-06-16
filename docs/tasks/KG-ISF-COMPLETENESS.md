@@ -257,14 +257,17 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   WIRE-BASED-100 structurally unaffected (emitter-only change, downstream of extraction); `kg-bench` not
   affected; `run_ci.sh` GREEN (lib 1652, +1). KM cards `[[fsmgen-ignores-signal-direction]]` +
   `[[isf-lowering-fidelity-gauge]]`. Book `pipeline/isf-adapter.md` signal-width note.
-- ID: `KG-ISF-COMPLETENESS.2b` · Status: `pending` (the buildable candidate; confirm scope measurement-
-  first) · Goal: **ISF lowering-coverage visibility gauge** — make the lowering's per-surface coverage
-  honest and visible (how many typed-rule elements lowered to `.isf` rules vs not, by category) as adapter
-  metadata + a `validate <intent-ir>` surface, mirroring the existing `storage_reset_residual_packet`
-  count-summary pattern. Purely ADDITIVE (emitted `.isf` byte-identical → WIRE-BASED-100 trivially held);
-  must count only would-be-lowerable intent, NOT the ungroundable-noise / register-field categories `.2`
-  showed are honest absences (else it mislabels extraction noise as a lowering gap). Confirm the
-  count/categorization scope measurement-first in its own slice; ADR-0006 (universal counts, no name list).
+- ID: `KG-ISF-COMPLETENESS.2b` · Status: `deferred` (measured-MARGINAL `2026-06-17`, read-only) · Goal:
+  **ISF lowering-coverage visibility gauge** — make the lowering's per-surface coverage visible as adapter
+  metadata + a `validate <intent-ir>` surface. **Measured marginal → not building now:** `.2` established
+  the lowering is already faithful for grounded intent, so a coverage gauge is **noise-dominated** — a
+  headline "257 / 16 463 temporal_invariants lowered" is dominated by the 16 179 ungroundable empty-subject
+  invariants (ToC headings) `.2` showed are honest absences, so the number misleads rather than informs;
+  the actionable signal (a grounded typed rule on a DECLARED signal that did not lower) is ≈0 on the wire
+  docs and ~151 corpus-wide register-field paths that correctly belong to the register surface. An honest
+  gauge would need full per-category breakdown for little operator value (the project already has rich
+  `validate` inventories). Re-open only if an owner wants the categorized ISF-lowering residual surfaced.
+  ADR-0006 (universal counts, no name list).
 
 ## Changelog
 
@@ -318,6 +321,18 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   25→19; AXI real agents byte-identical, actors 21. WIRE-BASED-100 HELD 1.000 (constraints ×3 / relations
   ×4 / temporal ×3) on fresh-Pattern eval; `kg-bench` 156/156; `run_ci.sh` GREEN (+2 tests, lib 1635
   pass/2 ignored). KM card `agent-trailing-fragment-consolidation`. Frontier → `.1b.ii`/`.1b.iii`/`.1b.iv`.
+- `2026-06-17`: **`.2b` MEASURED-MARGINAL → deferred** (read-only, docs-only). Assessed the lowering-
+  coverage gauge's value before building: `.2` showed the lowering is already faithful for grounded intent,
+  so a coverage gauge is noise-dominated (a "257/16 463 temporal_invariants lowered" headline is dominated
+  by 16 179 ungroundable ToC-heading invariants — honest absences, not a lowering gap; the actionable
+  undeclared-but-grounded signal is ≈0 on wire docs / ~151 corpus register-field paths). Not worth a code
+  slice. **Frontier → `.1b.iv`** (Class-C zero-evidence actor drop), now the substantive remaining
+  buildable lever: a read-only count put zero-evidence (0 ports AND 0 relations) actors at **34% of all
+  actors corpus-wide** (331/969; AXI 12/24, AHB 7/25, SWD 8/23, APB 3/10 on the pre-`.1a` persisted corpus
+  — `agent`/`channel`/`consumer`/`producer`/`controller`/`device`/…). `.1b.iv` stays measurement-first +
+  gate-risky (needs the PURE-INFERRED-vs-PROSE-GROUNDED provenance discriminator designed on freshly-rebuilt
+  post-`.1a`/`.1b` evidence; WIRE-BASED-100 + the owner's completeness intent are hard gates) — a careful
+  slice best done with fresh-session sharpness.
 - `2026-06-17`: **`.2a.i` DONE** — signal width fidelity LANDED. The `.2a` FSMGen-contract trigger ran
   first (empirical binary probe + book contract, KM `fsmgen-ignores-signal-direction`): **direction is
   FSMGen-neutral** (flipping a driven output→input still passes `--strict`) → direction stays deferred

@@ -1,3 +1,18 @@
+### KG-ISF-COMPLETENESS.2b — lowering-coverage gauge MEASURED-MARGINAL → deferred (read-only, docs-only)
+Assessed the candidate ISF lowering-coverage visibility gauge before building. `.2` already established the
+lowering is faithful for grounded intent, so a per-doc coverage gauge is **noise-dominated**: a headline
+like "257 / 16 463 temporal_invariants lowered" is dominated by the 16 179 ungroundable empty-subject
+invariants (ToC headings) that `.2` showed are honest absences — the number misleads rather than informs,
+and the actionable signal (a grounded typed rule on a DECLARED signal that did not lower) is ≈0 on the wire
+docs and ~151 corpus-wide register-field paths that correctly belong to the register surface. Not worth a
+code slice (`feedback_scoring_rigor` + `feedback_genericity_guardrail`); re-open only on an explicit owner
+request for the categorized ISF-lowering residual. **Frontier → `.1b.iv`** (Class-C zero-evidence actor
+drop): a read-only count put zero-evidence (0 ports AND 0 relations) actors at **34% of all actors
+corpus-wide** (331/969) — a real KG-precision gap, but measurement-first + gate-risky (the
+PURE-INFERRED-vs-PROSE-GROUNDED provenance discriminator must be designed on freshly-rebuilt post-`.1a`/`.1b`
+evidence; WIRE-BASED-100 + the owner's completeness intent are hard gates). Docs-only — memory-arch + KM
+green; no Rust/CI/book change; WIRE-BASED-100 untouched.
+
 ### KG-ISF-COMPLETENESS.2a.i — signal width fidelity (emit the grounded concrete width from the actor-port graph)
 Code slice grounded by the `.2a` FSMGen-contract trigger (empirical binary probe + FSMGen book contract;
 KM card `fsmgen-ignores-signal-direction`).
