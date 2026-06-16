@@ -4,6 +4,27 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-06-16 — KG-ISF-TRANSACTIONS.2c: grounded signal-set membership)
+- **`TransactionAnchorRecord` (`ir/semantic.rs`) gains `signal_set: Vec<String>`** (serde-default,
+  skip-if-empty ⇒ pre-`.2c` artifacts deserialize unchanged). `build_transaction_anchors` now takes the
+  document's declared-signal inventory (`declared_signal_names`, already built in `SemanticIr::build` from
+  `interfaces[].signal_records`) and computes, per transaction, the union of the signal-shaped tokens its
+  defining section's statements reference (`StatementContext.signals`) **intersected with the declared
+  inventory**. The intersection is essential: the raw token extractor over-captures enum VALUES (`IDLE`,
+  `INCR4`) and prose abbreviations (`MPMC`, `AHB5`); keeping only declared signals makes the set faithful.
+- **`mint_named_transaction` (`ir/intent.rs`) attaches the membership as ports.** Each `signal_set` member
+  becomes a `TransactionPortRecord` with the document-grounded direction from a new map built in
+  `recognize_named_transactions` off `actor_signal_relations` (Drives → output, Reads → input, both/neither
+  → in/out). Confidence is now keyed on Cue-B corroboration explicitly (not "ports non-empty"), so adding
+  membership ports never inflates a non-corroborated transaction to `High`.
+- **No ISF / strict change.** Membership lives as IntentIR `TransactionIntent.ports` metadata; the ISF
+  emitter lowers `steps`, not `ports`, so the emitted `.isf` and FSMGen `--strict` results are byte-identical
+  to `.2b` (APB passes; AHB/AXI keep their pre-existing non-transaction rule errors). Measured live: AHB
+  `basic_transfer`→{HCLK,HRDATA,HREADY,HREADYOUT,HWDATA,HWRITE}, `burst_operation`→{HADDR,HBURST,HSIZE},
+  `idle_transfer`→{HTRANS,HREADY}+drive body. WIRE-BASED-100 constraint+temporal F1 = 1.000; `kg-bench`
+  156/156; `run_ci.sh` green (lib 1641; the existing anchor/mint tests extended to assert membership + the
+  enum-value filter).
+
 ## Session update (2026-06-16 — KG-ISF-TRANSACTIONS.2b: composed step-by-step bodies + `*_behavior` re-levelling)
 - **`intent.rs` transaction synthesis re-levelled:** `synthesize_transactions` lost its per-actor
   `{actor}_behavior` step (the second of its two synthesis sources). The census

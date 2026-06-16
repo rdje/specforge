@@ -1,4 +1,45 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-TRANSACTIONS.2c (`2026-06-16`) — grounded signal-set membership (G3)
+- **Why:** bar #3/#4 — the IntentIR must carry each transaction's signal set, COMPLETE and EXCLUSIVE,
+  grounded in the document. After `.2a` (recognition) + `.2b` (re-levelling + enum-grounded bodies), the
+  named transactions still had no signal set beyond the optional Cue-B type-selector.
+- **Measurement-first (read-only, before any edit):**
+  - Section anchors carry line spans, and each `TransactionAnchorRecord` already carries
+    `supporting_statement_ids` (the statements in its defining section); `StatementContext` already carries a
+    per-statement `signals` field. So membership = union of those signals over the section's statements —
+    no new extraction needed.
+  - Measured on AHB (against the declared interface inventory): `basic_transfer`→6 real signals,
+    `idle_transfer`→{HREADY,HTRANS}, `burst_operation`→{HADDR,HBURST,HSIZE}, etc. — faithful, document-scoped,
+    boundary-correct (shared signals like `HREADY` attributed to each transfer that references them).
+  - **Critical finding:** the raw `StatementContext.signals` (from `extract_signal_tokens`) OVER-CAPTURES —
+    it includes enum VALUES (`IDLE`, `INCR4`, `NONSEQ`, `WRAP8`) and prose abbreviations (`MPMC`, `SWP`,
+    `AHB5`) that are not interface signals. Using it raw would claim `IDLE` is a signal of the transaction —
+    a boundary-precision violation. The membership MUST be intersected with the document's declared-signal
+    inventory.
+- **What changed:**
+  - `ir/semantic.rs`: `TransactionAnchorRecord` gains `signal_set: Vec<String>` (serde-default,
+    skip-if-empty). `build_transaction_anchors` now takes `declared_signals: &HashSet<String>` (the
+    `declared_signal_names` already built in `SemanticIr::build` from `interfaces[].signal_records`) and
+    computes `signal_set` = union of the section statements' `signals` ∩ `declared_signals`, sorted+deduped.
+  - `ir/intent.rs`: `recognize_named_transactions` builds a grounded per-signal direction map from
+    `actor_signal_relations` (Drives → output, Reads → input, both/neither → in/out — the `RelationKind`
+    match is exhaustive, only `{Drives,Reads}` exist). `mint_named_transaction` attaches each `signal_set`
+    member as a `TransactionPortRecord` with that direction, deduped against the Cue-B type-selector port.
+    Confidence is keyed on an explicit `cue_b_corroborated` flag (not "ports non-empty"), so membership ports
+    never inflate a non-corroborated transaction to `High`.
+- **Verification (regenerated wire docs semantic→intent→adapt; `generated/` is gitignored):**
+  - AHB membership is clean and grounded: `basic_transfer`→{HCLK,HRDATA,HREADY,HREADYOUT,HWDATA,HWRITE},
+    `burst_operation`→{HADDR,HBURST,HSIZE}, `locked_transfer`→{HMASTLOCK,HREADY}, `idle_transfer`→{HTRANS,HREADY}
+    (+ `.2b` drive body), `secure_transfer`→{HNONSEC}, `waited_transfer`→{HREADYOUT}, `exclusive_transfer`→{}
+    (honest empty — its single statement references no declared signal). Enum values/abbreviations excluded.
+  - Strict round-trip byte-identical to `.2b` (membership is IntentIR `ports` metadata; the ISF emitter
+    lowers `steps`, not `ports`): APB `success:true`; AHB/AXI keep their pre-existing non-transaction rule
+    errors. WIRE-BASED-100 constraint+temporal F1 = 1.000; `kg-bench` 156/156; `run_ci.sh` green (lib 1641).
+  - Tests: `build_transaction_anchors_dedups_and_records_provenance` extended to assert membership AND that a
+    non-declared token (`IDLE`) is filtered out; `mint_named_transaction_corroborates_with_signal_keyed_enum`
+    extended to assert the membership ports + grounded directions for both corroborated and uncorroborated
+    transactions.
+
 ## KG-ISF-TRANSACTIONS.2b (`2026-06-16`) — composed step-by-step bodies + `*_behavior` re-levelling (G1)
 - **Why:** after `.2a` recognised + named the document's transactions, two problems remained in the IntentIR
   transaction synthesis. (1) The per-actor `{actor}_behavior` "transactions" were mis-levelled phantoms

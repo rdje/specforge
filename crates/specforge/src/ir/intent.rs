@@ -1365,15 +1365,19 @@ fn recognize_digital_patterns(
 /// keyed entirely off the document's own structure, with NO chip-spec name list
 /// (ADR 0006), so it runs on ANY protocol or platform PDF.
 ///
-/// Scope (`.2a` recognition + `.2b` composition): `.2a` recognises + names every
-/// transaction (bar #1 coverage, #2 fast/universal recognition). `.2b` composes a
-/// grounded step-by-step BODY for the Cue-B-corroborated subset — a transaction
-/// named after an enumerated value of a declared signal is defined, in the
-/// document's own terms, by driving that signal to that value (bar #5 step-by-step),
-/// so it now RENDERS to `.isf`. A transaction with no enum-grounded selector keeps
-/// empty `steps`; the ISF emitter's `!steps.is_empty()` filter holds it (recognised
-/// in the canonical IntentIR, not yet lowered) as an honest residual until `.2c`
-/// grounds its full signal-set membership — no fabrication, no silent ISF break.
+/// Scope (`.2a` recognition + `.2b` composition + `.2c` membership): `.2a`
+/// recognises + names every transaction (bar #1 coverage, #2 fast/universal
+/// recognition). `.2b` composes a grounded step-by-step BODY for the
+/// Cue-B-corroborated subset — a transaction named after an enumerated value of a
+/// declared signal is defined, in the document's own terms, by driving that signal
+/// to that value (bar #5), so it RENDERS to `.isf`. `.2c` attaches each
+/// transaction's grounded signal-set MEMBERSHIP (bar #3/#4): the declared signals
+/// its own defining section references (`anchor.signal_set`) become its ports, each
+/// with the document-grounded direction. A transaction with no enum-grounded
+/// selector still keeps empty `steps`; the ISF emitter's `!steps.is_empty()` filter
+/// holds it (recognised + signal-set-bearing in the canonical IntentIR, not yet
+/// lowered) until its ordered multi-phase body is grounded — no fabrication, no
+/// silent ISF break.
 fn recognize_named_transactions(
     transactions: &mut Vec<TransactionIntent>,
     semantic_ir: &SemanticIr,
@@ -1413,6 +1417,32 @@ fn recognize_named_transactions(
         }
     }
 
+    // KG-ISF-TRANSACTIONS.2c: the document-grounded direction for each declared
+    // signal, from its relation role — Drives → output (the signal is produced),
+    // Reads → input (consumed), both/neither → in/out. Used for the membership
+    // ports so each carries the document's own direction (bar #4), not a guess.
+    let mut driven: BTreeSet<String> = BTreeSet::new();
+    let mut read: BTreeSet<String> = BTreeSet::new();
+    for rel in &semantic_ir.actor_signal_relations {
+        match rel.relation {
+            RelationKind::Drives => {
+                driven.insert(rel.signal_name.clone());
+            }
+            RelationKind::Reads => {
+                read.insert(rel.signal_name.clone());
+            }
+        }
+    }
+    let mut signal_directions: BTreeMap<String, TransactionPortDirection> = BTreeMap::new();
+    for signal in driven.union(&read) {
+        let direction = match (driven.contains(signal), read.contains(signal)) {
+            (true, false) => TransactionPortDirection::Output,
+            (false, true) => TransactionPortDirection::Input,
+            _ => TransactionPortDirection::InOut,
+        };
+        signal_directions.insert(signal.clone(), direction);
+    }
+
     for anchor in &semantic_ir.transaction_anchors {
         // Dedup: a transaction of this name may already exist (e.g. a control
         // block or handshake transaction). The named anchor never duplicates it.
@@ -1422,7 +1452,11 @@ fn recognize_named_transactions(
         {
             continue;
         }
-        transactions.push(mint_named_transaction(anchor, &enum_member_signal));
+        transactions.push(mint_named_transaction(
+            anchor,
+            &enum_member_signal,
+            &signal_directions,
+        ));
     }
 }
 
@@ -1442,14 +1476,31 @@ fn recognize_named_transactions(
 /// filter now passes it). This is universal structural grammar over the document's
 /// own enumeration — NO chip-spec name list (ADR 0006) — and boundary-exact (only
 /// the keyed signal the transaction names). A transaction with no enum-grounded
-/// selector keeps empty `steps` and stays recognition-only (an honest residual)
-/// until `.2c` grounds its full signal-set membership — never a fabricated body.
+/// selector keeps empty `steps` and stays recognition-only — never a fabricated
+/// body.
+///
+/// Signal-set membership (`.2c`): every named transaction also gets its grounded
+/// signal SET (`anchor.signal_set` — the declared signals its own defining section
+/// references) attached as ports, each carrying the document-grounded direction
+/// from `signal_directions`. This is the transaction's signal set (bar #3/#4),
+/// scoped by the document itself; the ports land in the canonical IntentIR even
+/// when the transaction is not yet `.isf`-rendered.
 fn mint_named_transaction(
     anchor: &TransactionAnchorRecord,
     enum_member_signal: &BTreeMap<String, String>,
+    signal_directions: &BTreeMap<String, TransactionPortDirection>,
 ) -> TransactionIntent {
+    let direction_of = |sig: &str| {
+        signal_directions
+            .get(sig)
+            .copied()
+            .unwrap_or(TransactionPortDirection::InOut)
+    };
     let mut ports: Vec<TransactionPortRecord> = Vec::new();
     let mut steps: Vec<TransactionStep> = Vec::new();
+    // Cue B (`.2a`/`.2b`): the type-selector signal + the grounded type-selector
+    // drive that defines the transaction.
+    let mut cue_b_corroborated = false;
     for token in anchor.transaction_name.split('_') {
         // The enum member key is the uppercased member name; the matched value
         // driven onto the keyed signal is that same canonical member spelling
@@ -1457,10 +1508,11 @@ fn mint_named_transaction(
         // `(drive HTRANS IDLE)` resolves against the enum FSMGen emits.
         let member = token.to_ascii_uppercase();
         if let Some(signal) = enum_member_signal.get(&member) {
+            cue_b_corroborated = true;
             if !ports.iter().any(|p| &p.port_name == signal) {
                 ports.push(TransactionPortRecord {
                     port_name: signal.clone(),
-                    direction: TransactionPortDirection::InOut,
+                    direction: direction_of(signal),
                     width: None,
                 });
             }
@@ -1473,10 +1525,29 @@ fn mint_named_transaction(
             }
         }
     }
-    let automation_confidence = if ports.is_empty() {
-        AutomationConfidence::Medium
-    } else {
+    // `.2c`: grounded signal-set membership — the declared signals the
+    // transaction's OWN defining section references (`anchor.signal_set`) become
+    // its ports, each with the document-grounded direction (the signal's relation
+    // role: Drives → output, Reads → input, otherwise in/out). This is the
+    // transaction's signal set (bar #3/#4), scoped by the document itself — no name
+    // list (ADR 0006), boundary-exact. The ports are recorded in the canonical
+    // IntentIR; a transaction with no enum-grounded `steps` stays held out of the
+    // `.isf` (the ordered multi-phase body remains a later refinement).
+    for signal in &anchor.signal_set {
+        if !ports.iter().any(|p| &p.port_name == signal) {
+            ports.push(TransactionPortRecord {
+                port_name: signal.clone(),
+                direction: direction_of(signal),
+                width: None,
+            });
+        }
+    }
+    // Confidence keyed on Cue-B corroboration (`.2a` semantics — two structural
+    // cues agree), independent of how many membership ports were attached.
+    let automation_confidence = if cue_b_corroborated {
         AutomationConfidence::High
+    } else {
+        AutomationConfidence::Medium
     };
     TransactionIntent {
         transaction_id: format!("txn_named_{}", sanitize_id(&anchor.transaction_name)),
@@ -2104,29 +2175,39 @@ mod tests {
         let mut enum_member_signal: BTreeMap<String, String> = BTreeMap::new();
         enum_member_signal.insert("IDLE".to_string(), "HTRANS".to_string());
 
+        // .2c: grounded per-signal directions (HTRANS driven → output, HREADY read
+        // → input, HADDR driven → output).
+        let mut signal_directions: BTreeMap<String, super::TransactionPortDirection> =
+            BTreeMap::new();
+        signal_directions.insert(
+            "HTRANS".to_string(),
+            super::TransactionPortDirection::Output,
+        );
+        signal_directions.insert("HREADY".to_string(), super::TransactionPortDirection::Input);
+        signal_directions.insert("HADDR".to_string(), super::TransactionPortDirection::Output);
+
         // Corroborated: the qualifier "idle" matches enum member IDLE → the keyed
-        // signal HTRANS is attached as a recognition port and confidence is High.
+        // signal HTRANS is attached and confidence is High; `.2c` also attaches the
+        // section's signal-set membership (HREADY) as a port with its direction.
         let idle = TransactionAnchorRecord {
             transaction_anchor_id: "txnanchor_idle_transfer".to_string(),
             transaction_name: "idle_transfer".to_string(),
             source_title: "IDLE transfer".to_string(),
             section_id: "s1".to_string(),
             supporting_statement_ids: vec!["stmt_1".to_string()],
+            signal_set: vec!["HREADY".to_string(), "HTRANS".to_string()],
             automation_confidence: AutomationConfidence::Medium,
         };
-        let txn = mint_named_transaction(&idle, &enum_member_signal);
+        let txn = mint_named_transaction(&idle, &enum_member_signal, &signal_directions);
         assert_eq!(txn.transaction_id, "txn_named_idle_transfer");
         assert_eq!(txn.transaction_name, "idle_transfer");
-        assert_eq!(txn.ports.len(), 1);
-        assert_eq!(txn.ports[0].port_name, "HTRANS");
         assert!(matches!(
             txn.automation_confidence,
             AutomationConfidence::High
         ));
         assert_eq!(txn.supporting_statement_ids, vec!["stmt_1".to_string()]);
-        // .2b: the enum-corroborated transaction now carries a grounded
-        // step-by-step body — drive the keyed signal to the named value
-        // (`idle_transfer` ⟺ `HTRANS = IDLE`) — so it renders to `.isf`.
+        // .2b: the enum-corroborated transaction carries a grounded step-by-step
+        // body — drive the keyed signal to the named value (`HTRANS = IDLE`).
         assert_eq!(
             txn.steps,
             vec![super::TransactionStep::Drive {
@@ -2135,24 +2216,45 @@ mod tests {
             }],
             ".2b composes the enum-grounded type-selector drive"
         );
+        // .2c: ports = the Cue-B type-selector (HTRANS, output) PLUS the section's
+        // grounded signal-set membership (HREADY, input). No name list — both come
+        // from the document's own section statements + relation roles.
+        assert_eq!(txn.ports.len(), 2);
+        let htrans = txn.ports.iter().find(|p| p.port_name == "HTRANS").unwrap();
+        assert!(matches!(
+            htrans.direction,
+            super::TransactionPortDirection::Output
+        ));
+        let hready = txn.ports.iter().find(|p| p.port_name == "HREADY").unwrap();
+        assert!(matches!(
+            hready.direction,
+            super::TransactionPortDirection::Input
+        ));
 
-        // Uncorroborated: no qualifier matches an enum member → Medium, no ports,
-        // no body (held out of `.isf` as an honest residual until `.2c`).
+        // Uncorroborated: no qualifier matches an enum member → Medium, no body
+        // (held out of `.isf`), but `.2c` still attaches its grounded signal-set
+        // membership (HADDR) as a port.
         let basic = TransactionAnchorRecord {
             transaction_anchor_id: "txnanchor_basic_transfer".to_string(),
             transaction_name: "basic_transfer".to_string(),
             source_title: "3.1 Basic transfers".to_string(),
             section_id: "s2".to_string(),
             supporting_statement_ids: Vec::new(),
+            signal_set: vec!["HADDR".to_string()],
             automation_confidence: AutomationConfidence::Medium,
         };
-        let txn2 = mint_named_transaction(&basic, &enum_member_signal);
-        assert!(txn2.ports.is_empty());
+        let txn2 = mint_named_transaction(&basic, &enum_member_signal, &signal_directions);
         assert!(txn2.steps.is_empty(), "uncorroborated stays body-less");
         assert!(matches!(
             txn2.automation_confidence,
             AutomationConfidence::Medium
         ));
+        assert_eq!(
+            txn2.ports.len(),
+            1,
+            ".2c attaches membership even uncorroborated"
+        );
+        assert_eq!(txn2.ports[0].port_name, "HADDR");
     }
 
     #[test]

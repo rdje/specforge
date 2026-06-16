@@ -242,6 +242,37 @@ conflicts; trace-bus `ATID` width contract; hbm2 enum-member emission — candid
 ADR-0006 ✓, WIRE-BASED-100 constraint+temporal F1 = 1.000 ✓ (orthogonal), ISF round-trip — behavior strict
 class eliminated + 0 new transaction diagnostics ✓, `kg-bench` 156/156 ✓, `run_ci.sh` green ✓.
 
+### 4.3 `.2c` OUTCOME (`2026-06-16`) — grounded signal-set membership (bounded batch COMPLETE)
+
+`KG-ISF-TRANSACTIONS.2c` attaches each named transaction's grounded signal SET (bar #3/#4), completing the
+bounded `.2a→.2b→.2c` batch. The membership is the declared signals the transaction's OWN defining section
+references — computed as the union of `StatementContext.signals` over the anchor's supporting statements,
+**intersected with the document's declared-signal inventory** (`declared_signal_names`, from
+`interfaces[].signal_records`), stored on the new `TransactionAnchorRecord.signal_set` and attached by
+`mint_named_transaction` as `TransactionPortRecord`s with a relation-grounded direction (Drives → output,
+Reads → input, both/neither → in/out).
+
+**The slice's key measurement finding:** the raw per-statement signal tokens (`extract_signal_tokens`)
+OVER-CAPTURE — they include enum VALUES (`IDLE`, `INCR4`, `NONSEQ`, `WRAP8`) and prose abbreviations
+(`MPMC`, `SWP`, `AHB5`) that are not interface signals. Attaching those as transaction "signals" would
+breach boundary precision (bar #3) — `IDLE` is a *value* of `HTRANS`, not a signal. The intersection with the
+declared-signal inventory is therefore essential and is what makes the set faithful: a signal is a member
+iff the section's text references it AND the document declares it as a signal. This was caught by a direct
+before/after measurement (the unfiltered set surfaced `IDLE`/`INCR4`/`MPMC`; the filtered set is clean).
+
+**Measured (live AHB):** `basic_transfer`→{HCLK,HRDATA,HREADY,HREADYOUT,HWDATA,HWRITE},
+`burst_operation`→{HADDR,HBURST,HSIZE}, `locked_transfer`→{HMASTLOCK,HREADY}, `idle_transfer`→{HTRANS,HREADY}
+(plus its `.2b` `(drive HTRANS IDLE)` body), `secure_transfer`→{HNONSEC}, `waited_transfer`→{HREADYOUT},
+`exclusive_transfer`→{} (honest empty — its single statement references no declared signal). Boundary-precise:
+shared signals such as `HREADY` are attributed to each transfer whose section references them (they genuinely
+participate); nothing from a different transaction's section bleeds in. **No ISF/strict change** — membership
+is IntentIR `TransactionIntent.ports` metadata and the ISF emitter lowers `steps`, not `ports`, so emitted
+`.isf` + FSMGen `--strict` are byte-identical to `.2b`. Gates: ADR-0006 ✓, WIRE-BASED-100 constraint+temporal
+F1 = 1.000 ✓ (orthogonal), ISF round-trip 0 new diagnostics ✓, `kg-bench` 156/156 ✓, `run_ci.sh` green ✓.
+**Deferred beyond the batch (honest):** the ordered multi-phase BODY (sequencing the membership signals into
+address/data/response phases + the gating handshakes) — the membership is its prerequisite, now delivered;
+and finer address/data/control/response role sub-typing.
+
 ## 5. Owner directive — sharpened (`2026-06-16`, multi-message)
 
 The owner reinforced the requirement across several messages while this census was being finalised; the

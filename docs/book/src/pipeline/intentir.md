@@ -72,6 +72,20 @@ guessing:
   as an honest gap, to be filled once the signal-set membership work grounds it.
   Nothing unfinished is silently lowered.
 
+SpecForge also records **which signals belong to each transaction**. The answer comes
+from the document itself: a transaction's signal set is the declared signals that its
+own defining section talks about. AHB's "Basic transfers" section, for instance, yields
+`{HCLK, HRDATA, HREADY, HREADYOUT, HWDATA, HWRITE}`; "Burst operation" yields
+`{HADDR, HBURST, HSIZE}`. A signal belongs to a transaction *because the section that
+defines that transaction references it* — so a shared signal like `HREADY` correctly
+appears in several transfers (it genuinely participates in each), while signals a
+transaction's section never mentions stay out. One subtlety matters for honesty here:
+the raw text mentions more than signals — it also names *values* like `IDLE` or `INCR4`
+and abbreviations like `MPMC`. Those are not signals, so SpecForge keeps only the names
+the document actually declares as signals; the rest are dropped rather than passed off
+as part of the transaction. (How those signals are then ordered into address/data/
+response *phases* is a further step the tool builds on top of this membership.)
+
 This stage also deliberately **does not** treat "everything an actor does over time"
 as a transaction. Earlier, SpecForge minted a catch-all `Manager_behavior` /
 `Subordinate_behavior` entry per actor — a bag of timed rules. That conflated two

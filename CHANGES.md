@@ -1,3 +1,37 @@
+### KG-ISF-TRANSACTIONS.2c — grounded signal-set membership + boundary precision (G3) (DONE)
+Final slice of the owner-authorized bounded batch (`.2a→.2b→.2c`, 3/3) — batch COMPLETE. Measurement-first.
+Each named transaction now carries its **grounded signal-set membership** (bar #3/#4): the declared signals
+its own defining section references, attached as ports with the document-grounded direction.
+
+- **Membership source (`ir/semantic.rs`):** `TransactionAnchorRecord` gains a `signal_set` field;
+  `build_transaction_anchors` computes it as the union of the signal-shaped tokens the transaction's section
+  statements reference (`StatementContext.signals`) **intersected with the document's declared-signal
+  inventory** (`declared_signal_names`, from `interfaces[].signal_records`). The intersection is essential
+  and was the slice's key measurement finding: the raw token extractor over-captures enum VALUES (`IDLE`,
+  `INCR4`, `NONSEQ`) and prose abbreviations (`MPMC`, `AHB5`); keeping only declared signals makes the set
+  faithful — a signal is a member iff the section's text references it AND the document declares it as a
+  signal. Universal, no name list (ADR 0006) — `declared_signal_names` is the document's own inventory.
+- **Direction + ports (`ir/intent.rs`):** `recognize_named_transactions` builds a grounded per-signal
+  direction map from `actor_signal_relations` (Drives → output, Reads → input, both/neither → in/out);
+  `mint_named_transaction` attaches each `signal_set` member as a `TransactionPortRecord` with that
+  direction. Confidence is keyed on Cue-B corroboration explicitly, so membership ports never inflate a
+  non-corroborated transaction to `High`.
+- **Boundary precision (bar #3):** membership is the document's OWN scoping — a signal is attributed to
+  transaction X iff X's section references it. Shared signals (AHB `HREADY` across several transfers) are
+  correctly attributed to each, because they genuinely participate in each; nothing from a *different*
+  transaction's section bleeds in. The ordered multi-phase body (phase sequencing across the membership)
+  remains a further refinement beyond this batch — honestly deferred, not fabricated.
+- **Measured (live wire docs):** AHB `basic_transfer`→{HCLK,HRDATA,HREADY,HREADYOUT,HWDATA,HWRITE},
+  `burst_operation`→{HADDR,HBURST,HSIZE}, `locked_transfer`→{HMASTLOCK,HREADY}, `idle_transfer`→{HTRANS,HREADY}
+  (plus its `.2b` `(drive HTRANS IDLE)` body), `exclusive_transfer`→{} (its single statement references no
+  declared signal — honest empty). Enum values/abbreviations correctly excluded.
+- **No ISF / strict change:** membership lives as IntentIR `TransactionIntent.ports` metadata; the ISF
+  emitter lowers `steps`, not `ports`, so emitted `.isf` and FSMGen `--strict` are byte-identical to `.2b`
+  (APB passes; AHB/AXI keep their pre-existing non-transaction rule errors). **Gates:** ADR-0006 ✓;
+  **WIRE-BASED-100 constraint+temporal F1 = 1.000** ✓ (orthogonal); ISF round-trip 0 new diagnostics ✓;
+  `kg-bench` 156/156 ✓; `run_ci.sh` green ✓ (lib 1641; anchor/mint tests extended). Book
+  `pipeline/intentir.md` updated.
+
 ### KG-ISF-TRANSACTIONS.2b — composed step-by-step bodies + `*_behavior` re-levelling (G1) (DONE)
 Second slice of the owner-authorized bounded batch (`.2a→.2b→.2c`, 2/3). Measurement-first. Two changes
 to the IntentIR transaction synthesis (`ir/intent.rs`), both faithful, universal (no name list — ADR 0006),

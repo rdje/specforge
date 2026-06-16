@@ -233,15 +233,38 @@ slices, wire-docs first.
   ISF round-trip — `*_behavior` strict-error class eliminated + 0 new transaction diagnostics ✓; `kg-bench`
   156/156 ✓; `run_ci.sh` green ✓ (lib 1641; one existing `mint_named_transaction` test updated for the
   composed body). Book `pipeline/intentir.md` updated.
-- ID: `KG-ISF-TRANSACTIONS.2c` · Status: `pending` · Goal: **G3 — signal-set membership + boundary
-  precision (also unlocks the membership-grounded composed bodies).** Enumerate each transaction's full
-  signal set with roles (address/data/control/response), COMPLETE and EXCLUSIVE (what is part of X and what
-  is NOT — bar #3/#4), grounded in the document's channel/phase grouping (e.g. the transaction-defining
-  section's own signal references, or a grounded channel→transaction link). **`.2b` measurement established
-  that this membership grounding is the PREREQUISITE for the broad composed bodies** — once a named
-  transaction's signal set is grounded, its multi-phase body (the handshakes/phases among those signals) can
-  be composed faithfully, which `.2b` deliberately deferred here rather than fabricate. Measurement-first;
-  WIRE-BASED-100 + ISF round-trip gates.
+- ID: `KG-ISF-TRANSACTIONS.2c` · Status: `done` (`2026-06-16`; batch slice 3/3, FINAL — bounded batch
+  COMPLETE; measurement-first) · Goal: **G3 — grounded signal-set membership + boundary precision.**
+  **DONE:** each named transaction now carries its grounded signal-set membership (bar #3/#4) — the declared
+  signals its OWN defining section references, attached as ports with the document-grounded direction.
+  **Source (`ir/semantic.rs`):** `TransactionAnchorRecord` gains `signal_set`; `build_transaction_anchors`
+  (now taking the `declared_signal_names` inventory already built in `SemanticIr::build`) computes it as the
+  union of the section statements' signal-shaped tokens (`StatementContext.signals`) **∩ the declared-signal
+  inventory**. **Direction + ports (`ir/intent.rs`):** `recognize_named_transactions` builds a grounded
+  per-signal direction map from `actor_signal_relations` (Drives → output, Reads → input, both/neither →
+  in/out; exhaustive `RelationKind` match); `mint_named_transaction` attaches each member as a
+  `TransactionPortRecord` with that direction, deduped against the Cue-B type-selector port; confidence keyed
+  on an explicit Cue-B flag (membership never inflates a non-corroborated txn to `High`).
+  **Key measurement finding:** the raw `StatementContext.signals` (from `extract_signal_tokens`)
+  OVER-CAPTURES — enum VALUES (`IDLE`, `INCR4`, `NONSEQ`) and prose abbreviations (`MPMC`, `AHB5`); the
+  intersection with the declared inventory is ESSENTIAL to stay faithful (claiming `IDLE` is a signal would
+  breach bar #3). Universal, no name list (ADR 0006) — `declared_signal_names` is the document's own
+  inventory. **Boundary precision (bar #3):** a signal is attributed to X iff X's section references it AND
+  the document declares it; shared signals (AHB `HREADY` across several transfers) correctly span each
+  (they genuinely participate); nothing from a *different* transaction's section bleeds in.
+  **Verification (regenerated wire docs semantic→intent→adapt; `generated/` gitignored):** AHB
+  `basic_transfer`→{HCLK,HRDATA,HREADY,HREADYOUT,HWDATA,HWRITE}, `burst_operation`→{HADDR,HBURST,HSIZE},
+  `locked_transfer`→{HMASTLOCK,HREADY}, `idle_transfer`→{HTRANS,HREADY}(+`.2b` drive body),
+  `secure_transfer`→{HNONSEC}, `waited_transfer`→{HREADYOUT}, `exclusive_transfer`→{} (honest empty — its
+  single statement references no declared signal); enum values/abbreviations correctly excluded. **No
+  ISF/strict change** — membership is IntentIR `TransactionIntent.ports` metadata and the ISF emitter lowers
+  `steps`, not `ports`, so emitted `.isf` + FSMGen `--strict` are byte-identical to `.2b` (APB passes; AHB/AXI
+  keep their pre-existing non-transaction rule errors). **Gates:** ADR-0006 ✓; **WIRE-BASED-100
+  constraint+temporal F1 = 1.000** ✓ (orthogonal); ISF round-trip 0 new diagnostics ✓; `kg-bench` 156/156 ✓;
+  `run_ci.sh` green ✓ (lib 1641; anchor + mint tests extended to assert membership, grounded direction, and
+  the enum-value filter). **Deferred (honest, beyond this batch):** the ordered multi-phase BODY (sequencing
+  the membership signals into address/data/response phases + the handshakes that gate them) — the membership
+  is its prerequisite, now delivered; and finer address/data/control/response role sub-typing.
 - ID: `KG-ISF-TRANSACTIONS.2d?` · Status: `candidate` · Goal: **quick-surface** — a `validate`
   transaction-inventory metric + finding (and/or CLI surface) so an operator can "very quickly identify"
   a doc's recognised transactions at a glance (from the owner's "very quickly identify" directive).
@@ -315,3 +338,22 @@ slices, wire-docs first.
   green ✓ (lib 1641, one existing test updated). Book `pipeline/intentir.md` updated; census report §4.2 +
   KM card refreshed. Frontier → `.2c` (G3 signal-set membership + boundary precision; also unlocks the
   membership-grounded composed bodies). `[[project_kg_isf_transactions]]`.
+- `2026-06-16`: **`.2c` DONE — bounded batch `.2a→.2b→.2c` COMPLETE** (slice 3/3, measurement-first). **G3
+  grounded signal-set membership.** Each named transaction now carries the declared signals its own defining
+  section references, as ports with the document-grounded direction. `TransactionAnchorRecord` gains
+  `signal_set` (`ir/semantic.rs`); `build_transaction_anchors` computes it as the union of the section
+  statements' signal-shaped tokens (`StatementContext.signals`) **∩ the declared-signal inventory**
+  (`declared_signal_names`). **Key finding:** the raw token extractor over-captures enum VALUES
+  (`IDLE`/`INCR4`/`NONSEQ`) + abbreviations (`MPMC`/`AHB5`) — the declared-inventory intersection is
+  essential to stay faithful (claiming `IDLE` is a signal would breach bar #3). `recognize_named_transactions`
+  builds a grounded direction map from `actor_signal_relations` (Drives→output, Reads→input); `mint_named_transaction`
+  attaches each member as a port. **Boundary precision:** a signal is a member iff the section references it
+  AND the document declares it; shared signals (AHB `HREADY`) correctly span several transfers, nothing
+  foreign bleeds in. Measured (live AHB): `basic_transfer`→{HCLK,HRDATA,HREADY,HREADYOUT,HWDATA,HWRITE},
+  `burst_operation`→{HADDR,HBURST,HSIZE}, `idle_transfer`→{HTRANS,HREADY}+drive body, `exclusive_transfer`→{}.
+  No ISF/strict change (membership is `ports` metadata; emitter lowers `steps`). Gates: ADR-0006 ✓,
+  **WIRE-BASED-100 constraint+temporal F1 = 1.000** ✓ (orthogonal), ISF round-trip 0 new diagnostics ✓,
+  `kg-bench` 156/156 ✓, `run_ci.sh` green ✓ (lib 1641; anchor/mint tests extended). Book `pipeline/intentir.md`
+  + census §4.3 + KM card refreshed. **Deferred beyond the batch:** the ordered multi-phase BODY (phase
+  sequencing over the membership) + finer address/data/control/response role sub-typing; `.2d?` quick-surface
+  validate-inventory candidate remains. `[[project_kg_isf_transactions]]`.

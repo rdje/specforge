@@ -344,7 +344,8 @@ impl SemanticIr {
 
         // KG-ISF-TRANSACTIONS.2a: recover the document's NAMED transactions from
         // its section headings (Cue A). Structural English grammar only; ADR 0006.
-        let transaction_anchors = build_transaction_anchors(&context);
+        // .2c: the declared-signal inventory grounds each transaction's signal set.
+        let transaction_anchors = build_transaction_anchors(&context, &declared_signal_names);
 
         Ok(Self {
             schema_version: 1,
@@ -2237,6 +2238,17 @@ pub struct TransactionAnchorRecord {
     pub section_id: String,
     #[serde(default)]
     pub supporting_statement_ids: Vec<String>,
+    /// KG-ISF-TRANSACTIONS.2c: the transaction's grounded signal-set membership —
+    /// the declared signals referenced by the statements in its defining section
+    /// (the union of `StatementContext.signals` over `supporting_statement_ids`).
+    /// This is the document's OWN scoping of which signals belong to the
+    /// transaction (bar #3/#4): a signal is a member iff the transaction's section
+    /// text references it, so shared signals (e.g. AHB `HREADY` in several
+    /// transfers) are correctly attributed to each — universal, no name list
+    /// (ADR 0006). Sorted + deduped for determinism; empty when the section
+    /// references no declared signal (honest absence, not a miss).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub signal_set: Vec<String>,
     pub automation_confidence: AutomationConfidence,
 }
 
@@ -2257,7 +2269,19 @@ const HEADING_FURNITURE: &[&str] = &["chapter", "appendix", "section", "part", "
 
 /// Recover the document's NAMED transactions (Cue A) from its section headings.
 /// Deterministic (heading order, first-wins dedup by derived name).
-fn build_transaction_anchors(context: &SemanticContext) -> Vec<TransactionAnchorRecord> {
+fn build_transaction_anchors(
+    context: &SemanticContext,
+    declared_signals: &std::collections::HashSet<String>,
+) -> Vec<TransactionAnchorRecord> {
+    // KG-ISF-TRANSACTIONS.2c: the per-statement signal-shaped tokens the
+    // evidence/semantic pipeline already extracted — used to ground each
+    // transaction's signal-set membership from its own section's statements.
+    let signals_by_statement: HashMap<&str, &Vec<String>> = context
+        .statements
+        .iter()
+        .map(|s| (s.statement_id.as_str(), &s.signals))
+        .collect();
+
     let mut seen: BTreeSet<String> = BTreeSet::new();
     let mut records = Vec::new();
     for anchor in &context.section_anchors {
@@ -2267,12 +2291,30 @@ fn build_transaction_anchors(context: &SemanticContext) -> Vec<TransactionAnchor
         if !seen.insert(name.clone()) {
             continue;
         }
+        // The transaction's grounded signal set: the DECLARED signals referenced
+        // by the statements in its defining section (deduped + sorted). Intersecting
+        // with `declared_signals` is essential — the raw statement tokens
+        // over-capture enum VALUES (`IDLE`, `INCR4`) and prose abbreviations
+        // (`MPMC`, `AHB5`) that are not interface signals; keeping only declared
+        // signals makes the set faithful (a signal is a member iff the section's text
+        // references it AND the document declares it as a signal — bar #3/#4). No
+        // name list (ADR 0006) — `declared_signals` is the document's own inventory.
+        let signal_set: Vec<String> = anchor
+            .supporting_statement_ids
+            .iter()
+            .filter_map(|id| signals_by_statement.get(id.as_str()))
+            .flat_map(|sigs| sigs.iter().cloned())
+            .filter(|sig| declared_signals.contains(sig))
+            .collect::<BTreeSet<String>>()
+            .into_iter()
+            .collect();
         records.push(TransactionAnchorRecord {
             transaction_anchor_id: format!("txnanchor_{}", name),
             transaction_name: name,
             source_title: anchor.title.clone(),
             section_id: anchor.section_id.clone(),
             supporting_statement_ids: anchor.supporting_statement_ids.clone(),
+            signal_set,
             automation_confidence: AutomationConfidence::Medium,
         });
     }
@@ -21838,8 +21880,24 @@ mod tests {
 
     #[test]
     fn build_transaction_anchors_dedups_and_records_provenance() {
+        // .2c: stmt_1 (in the Write-transfers section) references PADDR/PWRITE;
+        // stmt_3 (Read transfers) references PRDATA → grounded signal-set membership.
+        let mk_stmt = |id: &str, signals: Vec<&str>| super::StatementContext {
+            statement_id: id.to_string(),
+            class: super::StatementClass::SourceFact,
+            text: String::new(),
+            related_visual_evidence_ids: vec![],
+            section_ids: vec![],
+            signals: signals.into_iter().map(str::to_string).collect(),
+            supporting_table_ids: vec![],
+        };
         let context = SemanticContext {
-            statements: Vec::new(),
+            statements: vec![
+                // `IDLE` is an enum VALUE the over-capturing token extractor catches;
+                // it is NOT a declared signal, so `.2c` must drop it from the set.
+                mk_stmt("stmt_1", vec!["PWRITE", "PADDR", "IDLE"]),
+                mk_stmt("stmt_3", vec!["PRDATA"]),
+            ],
             section_anchors: vec![
                 SemanticSectionContext {
                     section_id: "s1".to_string(),
@@ -21869,7 +21927,14 @@ mod tests {
             signal_semantic_hints: Vec::new(),
         };
 
-        let anchors = build_transaction_anchors(&context);
+        // Declared-signal inventory (the document's own signals) — `IDLE` is absent
+        // on purpose, so the `.2c` filter must exclude it from the signal set.
+        let declared: std::collections::HashSet<String> =
+            ["PWRITE", "PADDR", "PRDATA", "PSEL", "PENABLE"]
+                .into_iter()
+                .map(str::to_string)
+                .collect();
+        let anchors = build_transaction_anchors(&context, &declared);
         let names: Vec<&str> = anchors
             .iter()
             .map(|a| a.transaction_name.as_str())
@@ -21882,6 +21947,12 @@ mod tests {
         assert_eq!(write.source_title, "3.1 Write transfers"); // first-wins provenance
         assert_eq!(write.section_id, "s1");
         assert_eq!(write.supporting_statement_ids, vec!["stmt_1".to_string()]);
+        // .2c: signal-set membership = the section's own statement signals, sorted+deduped.
+        assert_eq!(
+            write.signal_set,
+            vec!["PADDR".to_string(), "PWRITE".to_string()]
+        );
+        assert_eq!(anchors[1].signal_set, vec!["PRDATA".to_string()]);
     }
 }
 
