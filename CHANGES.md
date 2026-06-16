@@ -1,3 +1,33 @@
+### ISF-REGISTER-RESET-EMIT.0 — own register-reset→ISF lowering candidate (docs-only ownership/scoping)
+PNT rolled onto a new tree after the two north-star trees reached a parked/deferred frontier
+(`KG-ISF-TRANSACTIONS` body-emission PARKED pending FSMGen; `KG-ISF-COMPLETENESS` `.1b.ii`/`.1b.iv`
+deferred-with-trigger + broad `.2+`). The new tree owns the ONE grounded adopt candidate found in the
+`2026-06-16` FSMGen refresh (`FSMGEN-REFRESH-INTEGRATE-2.2`): lower the extracted register-field
+`reset_value` into the ISF `(storage (var … (reset V)))` surface. Docs-only ownership/scoping — no code.
+
+- **The gap (read-only code grounding):** SpecForge extracts register-field `reset_value`
+  (`ir/source.rs:432`, populated from register tables at `ir/evidence.rs:11509`/`:11838`; a regression
+  test asserts a recovered `reset_value == Some("0")` at `ir/evidence.rs:14758`) and carries it to
+  IntentIR (`ir/intent.rs:193`). The ISF emitter already builds a `(storage …)` block per register
+  (`ir/isf_ir.rs:730`) but renders `(var NAME (width W))` (`:375`) and **drops `reset_value` entirely**
+  — `IsfStorageVar` has no reset field (`:81`). So a documented power-up value is silently lost at the
+  `.isf` boundary (FSMGen then defaults the register to all-0s).
+- **The target is already `shipped` (no FSMGen FR):** `(storage (var NAME (width N) [(reset V)]))` —
+  authoritative feature-support matrix `subs/fsmgen/docs/book/src/13k-isf-feature-support-matrix.md:42`
+  + `subs/fsmgen/docs/book/src/13m-local-variables.md:48-68`: `(reset V)` is OPTIONAL; `V` must be a
+  non-negative integer literal fitting the width; **omission = all-0s (byte-identical to today)**;
+  over-width/non-integer **fails closed** — exactly bounding the emit/residual policy.
+- **Directly serves the `KG-ISF-COMPLETENESS` north-star bar #6** (every IntentIR fact appears in the
+  `.isf` or as an explicit residual).
+- **`.0` deliverables:** new `docs/tasks/ISF-REGISTER-RESET-EMIT.md` (grounded baseline + checkable
+  4-point bar: lowered-when-groundable / honest-residual-otherwise / strict-valid / no-regression +
+  honest-residual policy: emit `(reset V)` only for a clean in-width non-negative integer composed from
+  per-field resets tiled at their offsets — like `recover_register_bits` LSB-tiling — else omit +
+  record an adapter residual; ADR-0006, no name list); `docs/TASK_TREE.md` new active row. Frontier →
+  `.1` (corpus measurement, read-only) → `.2` (emit).
+- **Gates:** docs-only — no code, no test/CI/`.isf` change; `scripts/check_memory_architecture.sh` green.
+  WIRE-BASED-100 untouched. ADR-0006 ✓.
+
 ### KG-ISF-TRANSACTIONS.2j — table-column phase cue MEASURED = NO-GO (measurement-first, docs-only)
 Tested the `.2i` frontier hypothesis: would mining `<qualifier> phase` from TABLE cells/headers (not just prose)
 move AXI/SWD off the empty per-phase grouping? **No — the cue is not there to mine** (read-only, no code).

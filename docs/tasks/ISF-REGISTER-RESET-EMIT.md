@@ -1,0 +1,189 @@
+# ISF-REGISTER-RESET-EMIT: lower extracted register reset values into the ISF `(storage (var … (reset V)))` surface
+
+## Metadata
+
+- Tree ID: `ISF-REGISTER-RESET-EMIT`
+- Status: `active`
+- Roadmap lane: `R6` (`.isf` adapter) × `R15`/`R16` (extraction quality, ISF-fidelity lens)
+- Created: `2026-06-16`
+- Last updated: `2026-06-16`
+- Owner: repo-local workflow
+- Parent context: promoted from the `FSMGEN-REFRESH-INTEGRATE-2.2` assessment (the ONE grounded
+  new adopt candidate found in the `2026-06-16` FSMGen refresh — *"register/CSR reset values
+  `(storage (var … (reset V)))` — SpecForge extracts register-field `reset_value` + has a
+  `(storage)` emit surface not yet fed from it; measurement-first, WIRE-BASED-100-gated,
+  ISF-strict-validated"*). Directly serves the `KG-ISF-COMPLETENESS` NORTH STAR bar #6: *every
+  IntentIR surface element appears in the `.isf` or as an explicit residual* — a register reset
+  value is an extracted IntentIR fact that is currently silently dropped at the ISF boundary.
+  No FSMGen dependency (the construct is already `shipped`). Memory: `[[project_kg_isf_completeness]]`.
+
+## The point (why this tree exists)
+
+SpecForge already extracts register maps with per-field reset values, and the ISF emitter already
+builds a `(storage …)` block from those registers — **but the reset value is thrown away at the
+emit boundary.** FSMGen's contract makes the reset a first-class, optional storage-var property
+designed for exactly this case (register maps / CSRs that power up at a default). Closing the gap
+makes the emitted `.isf` carry the register's documented power-up value instead of silently
+defaulting it to all-0s.
+
+### Grounded baseline (read-only code grounding, `2026-06-16` — confirmed, to be quantified in `.1`)
+
+- **Extraction (present):** `RegisterRecord` (`ir/source.rs:397`) carries
+  `fields: Vec<RegisterFieldRecord>`; each `RegisterFieldRecord` (`ir/source.rs:414`) carries
+  `bits_high`, `bits_low`, `bit_width`, and `reset_value: Option<String>` (the literal as written —
+  `"0"`, `"0x1"`, `"0b00"`, or a symbolic token). The extractor populates it from register-field
+  tables (`ir/evidence.rs:11509`, `:11838`; a regression test asserts a real recovered
+  `reset_value == Some("0")` at `ir/evidence.rs:14758`).
+- **Carry-through (present):** `IntentIr.register_records` is cloned straight from
+  `SemanticIr.register_records` (`ir/intent.rs:193`), so the field-level `reset_value` reaches
+  IntentIR intact.
+- **ISF emit (the gap):** `IsfIr::from_intent_ir` builds one `IsfStorageVar { name, width }` per
+  register (`ir/isf_ir.rs:730`) and renders it as `(var NAME (width W))` (`ir/isf_ir.rs:375`).
+  **`IsfStorageVar` has no reset field (`ir/isf_ir.rs:81`); `reset_value` is never read → never
+  lowered.** The var `width` is currently the **max single-field extent**, NOT the register width
+  — a detail `.2` must reconcile for a composed multi-field reset to fit (measured in `.1`).
+- **FSMGen target (authoritative, already `shipped` — no FR needed):**
+  `(storage (var NAME (width N) [(reset V)]) …)` — feature-support matrix
+  `subs/fsmgen/docs/book/src/13k-isf-feature-support-matrix.md:42` and
+  `subs/fsmgen/docs/book/src/13m-local-variables.md:48-68`: `(reset V)` is OPTIONAL; `V` must be a
+  **non-negative integer literal that fits in the width**; **omitting it = resets to all-0s
+  (byte-identical to today's output)**; an **over-width or non-integer reset fails closed**. This
+  exactly bounds what `.2` may emit: a clean in-width non-negative integer, else omit (honest
+  residual, never fabricate).
+
+## The checkable "register reset is ISF-faithful" bar (per doc)
+
+A document's emitted `.isf` is register-reset-faithful when:
+1. **Lowered when groundable** — a register whose documented reset is a clean, in-width,
+   non-negative integer (directly, or composed from per-field resets tiled at their bit offsets)
+   emits `(var NAME (width W) (reset V))` with the correct `V`.
+2. **Honest residual otherwise** — a register with a missing, symbolic, partial, or over-width
+   reset emits `(var NAME (width W))` with NO `(reset V)` (FSMGen then defaults it to all-0s),
+   and the dropped/ungrounded reset is recorded as an explicit adapter residual rather than
+   fabricated. No invented values; ADR-0006 (universal numeric parsing, no chip-name list).
+3. **Strict-valid** — every emitted `.isf` still passes `subs/fsmgen/bin/fsmgen --strict --check
+   --json` (a non-integer / over-width `(reset V)` would fail closed, so the gate enforces #1/#2).
+4. **No regression** — documents with no register reset to lower emit BYTE-IDENTICAL `.isf` to
+   today; register-bearing docs change ONLY by the added `(reset V)` clauses (and any
+   measured-justified, gated var-width reconciliation needed for the reset to fit).
+
+**Hard gate (non-negotiable):** the wire docs (APB/AHB/AXI/SWD) stay at WIRE-BASED-100 and their
+emitted `.isf` stays byte-identical UNLESS they carry register maps (measured in `.1`; expected:
+they are signal/handshake-centric and carry few/none, so the blast radius is the register-heavy
+docs — CCIX / NVMe / GIC / CoreSight / etc.). Universal grammar only, no name lists (ADR 0006).
+
+## Non-Goals
+
+- NOT inventing a register-level reset where the document grounds none (honest residual instead).
+- NOT changing register EXTRACTION (the `reset_value` field already exists and is populated); this
+  tree is purely the IntentIR→ISF lowering of an already-captured fact (plus the minimal var-width
+  reconciliation a composed reset needs).
+- NOT FSMGen-side work — `(reset V)` is already `shipped`; this tree raises no FR.
+- NOT bank/aggregate/per-element reset (FSMGen fails a per-element bank `(reset V)` closed) — scalar
+  storage vars only.
+
+## Acceptance Criteria
+
+- `.1` quantifies the corpus reset surface (how many docs/registers carry reset values; numeric vs
+  symbolic; full vs partial field coverage; var-width-vs-register-width interaction; wire-doc blast
+  radius) read-only before any code, per the project's measurement-first doctrine.
+- `.2` implements the lowering to signoff quality: composed/clean reset emitted, ungrounded reset
+  an explicit residual, ADR-0006-safe, with focused unit tests.
+- Gates for `.2`: ISF round-trip 0 new `--strict --check` diagnostics on every wire doc + the
+  register-bearing docs; WIRE-BASED-100 held 1.000; `kg-bench` unchanged; `run_ci.sh` green;
+  non-register docs byte-identical `.isf`.
+- Live docs + the mdBook (the `BOOK-METHOD-DOC` close-rule on the tree's closing leaf) updated.
+- Each completed leaf committed through `COMMIT.md`.
+
+## Task Tree
+
+- ID: `ISF-REGISTER-RESET-EMIT` · Status: `active` · Children: `.0` (this ownership/scoping slice),
+  `.1` (corpus measurement, read-only), `.2` (code: emit `(reset V)`)
+- ID: `ISF-REGISTER-RESET-EMIT.0` · Status: `done` (`2026-06-16`, docs-only ownership/scoping) ·
+  Goal: own the adopt candidate promoted from `FSMGEN-REFRESH-INTEGRATE-2.2`; record the
+  read-only-grounded baseline (the exact gap: `reset_value` extracted + carried but dropped at
+  `ir/isf_ir.rs:730/375`; FSMGen `(reset V)` already `shipped` per `13k:42`/`13m`); define the
+  checkable 4-point bar; set the slice sequence. No code (own before touching). Memory
+  `[[project_kg_isf_completeness]]`.
+- ID: `ISF-REGISTER-RESET-EMIT.1` · Status: `pending` · Goal: **corpus measurement (read-only,
+  docs-only) — is a faithful register reset groundable, and where?** Quantify over the persisted
+  IntentIR/SourceIR corpus: per-doc register count + how many registers carry a `reset_value`;
+  the value SHAPE distribution (parseable non-negative int vs hex/bin vs symbolic `-`/`X`/
+  `IMPLEMENTATION DEFINED`); per-register field-reset COVERAGE (all fields vs partial — a partial
+  reset cannot compose a full register value, so it is an honest residual); the var-width vs true
+  register-width interaction (does a composed multi-field reset fit the current max-field-extent
+  width, or must `.2` reconcile the width to `size_bits`/`max(bits_high)+1`?); and the wire-doc
+  blast radius (do APB/AHB/AXI/SWD carry any register_records at all?). Decide the composition rule
+  (`V = Σ parse_int(field.reset_value) << field.bits_low`, gated like `recover_register_bits`
+  LSB-tiling) and the residual rule. Acceptance: a written measurement report + a GO/NO-GO with the
+  exact `.2` emit/residual policy and its blast radius. No code.
+  Verification: `pending` · Commit: `pending`
+- ID: `ISF-REGISTER-RESET-EMIT.2` · Status: `pending` · Goal: **emit `(reset V)`** — add a `reset`
+  field to `IsfStorageVar`, compose/parse the per-register reset under the `.1` policy, render
+  `(var NAME (width W) (reset V))` only for a clean in-width non-negative integer (else omit +
+  record an adapter residual), reconcile the var width iff the `.1` measurement requires it (gated),
+  with focused unit tests. Acceptance: the 4-point bar met; all `.2` gates green. Verification:
+  `pending` · Commit: `pending`
+
+## Current Frontier
+
+| Order | Leaf | Status | Why next |
+| --- | --- | --- | --- |
+| 1 | `ISF-REGISTER-RESET-EMIT.1` | `pending` | measurement-first: confirm the reset surface is groundable + size the blast radius before writing the emitter (project doctrine: measure before coding) |
+| 2 | `ISF-REGISTER-RESET-EMIT.2` | `pending` | the code slice, gated by `.1`'s policy + measured blast radius |
+
+## Decisions
+
+- `2026-06-16` (`.0`): **Promote the `FSMGEN-REFRESH-INTEGRATE-2.2` adopt candidate into its own
+  tree** (the "captured + owned, execution on promotion" pattern). Picked by PNT after the two
+  active north-star trees reached a deferred/parked frontier: `KG-ISF-TRANSACTIONS` body-emission is
+  PARKED pending FSMGen + owner steer (`.2i`/`.2j` done), and `KG-ISF-COMPLETENESS` frontier is
+  `.1b.ii`/`.1b.iv` (both deferred-with-trigger) + a broad `.2+`. This tree is the clean eligible
+  build frontier: bounded, no FSMGen dependency, directly advances the ISF-fidelity north star.
+- `2026-06-16` (`.0`): **Measurement-first sequencing** — `.1` (read-only corpus measurement)
+  precedes `.2` (code). Acceptance Criterion #1 of every code-bearing slice in this repo is a
+  read-only measurement; the var-width-vs-register-width interaction and the numeric/symbolic reset
+  distribution are real unknowns that decide the emit/residual policy and the blast radius, so they
+  are measured before any emitter change.
+- `2026-06-16` (`.0`): **Honest-residual policy, FSMGen-contract-bounded** — emit `(reset V)` ONLY
+  for a clean in-width non-negative integer (`13k:42`/`13m`: over-width/non-integer fails closed,
+  omission = all-0s default = byte-identical); a missing/symbolic/partial reset emits no `(reset V)`
+  and is an explicit adapter residual. Never fabricate a power-up value. ADR-0006 (universal numeric
+  parsing, no name list).
+
+## Open Questions
+
+- (for `.1`) Does any wire doc (APB/AHB/AXI/SWD) carry `register_records`? If not, the WIRE-BASED-100
+  + wire-`.isf`-byte-identity gates hold trivially and the blast radius is exactly the register-heavy
+  docs. — does NOT block `.1` (it is the first thing `.1` measures).
+- (for `.1`/`.2`) Must the var width be reconciled from max-field-extent to the true register width
+  (`size_bits` / `max(bits_high)+1`) for a composed reset to fit, and does that width change alter
+  any existing `.isf`? If so, `.2` gates that change separately. — measured in `.1`; does not block.
+- (for `.1`) Are field reset values predominantly per-field partials (→ compose) or is there often a
+  single full-width field whose reset is the register reset (→ direct)? Decides the composition
+  complexity. — measured in `.1`; does not block.
+
+## Blockers
+
+- None.
+
+## Verification Log
+
+| Date | Leaf | Checks | Result |
+| --- | --- | --- | --- |
+| `2026-06-16` | `ISF-REGISTER-RESET-EMIT.0` | read-only code grounding (`reset_value` extracted `ir/source.rs:432` + carried `ir/intent.rs:193` but dropped at `ir/isf_ir.rs:730/375`); FSMGen `(reset V)` confirmed `shipped` (`13k:42`, `13m:48-68`); fsmgen binary present (`subs/fsmgen/bin/fsmgen`); `scripts/check_memory_architecture.sh` green | `passed` (docs-only; no code) |
+
+## Commit Log
+
+| Leaf | Commit subject or reference | Notes |
+| --- | --- | --- |
+| `ISF-REGISTER-RESET-EMIT.0` | `ISF-REGISTER-RESET-EMIT.0 — own register-reset→ISF lowering candidate (docs-only ownership/scoping)` | this commit |
+| `ISF-REGISTER-RESET-EMIT.1` | `pending` | `pending` |
+| `ISF-REGISTER-RESET-EMIT.2` | `pending` | `pending` |
+
+## Changelog
+
+- `2026-06-16`: Created task tree. `.0` ownership/scoping DONE (docs-only): promoted the
+  `FSMGEN-REFRESH-INTEGRATE-2.2` adopt candidate; recorded the read-only-grounded baseline (the
+  exact ISF-emit gap + the authoritative FSMGen `(reset V)` contract); defined the checkable 4-point
+  bar + the honest-residual policy; set the `.1` (measurement) → `.2` (code) sequence. No code.

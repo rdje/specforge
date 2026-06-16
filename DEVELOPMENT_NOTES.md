@@ -1,4 +1,39 @@
 # DEVELOPMENT_NOTES
+## ISF-REGISTER-RESET-EMIT.0 (`2026-06-16`) — own register-reset→ISF lowering (docs-only ownership/scoping)
+- **Why:** The session resumed at a handoff-ready state (`KG-ISF-TRANSACTIONS.2j` committed,
+  `2da64348`). PNT needed the next eligible build frontier: the two active north-star trees are parked
+  (`KG-ISF-TRANSACTIONS` body-emission PARKED pending FSMGen — `.2i`/`.2j` done; the metadata-only
+  per-phase grouping is the safe fallback) or deferred-with-trigger (`KG-ISF-COMPLETENESS` `.1b.ii`/
+  `.1b.iv`) plus a broad `.2+`. The clean eligible pick is the ONE grounded adopt candidate recorded in
+  the just-closed `FSMGEN-REFRESH-INTEGRATE-2.2` assessment — bounded, no FSMGen dependency, directly on
+  the ISF-fidelity north star. Doctrine: own it in a task tree before touching any code.
+- **What I grounded (read-only, no code):**
+  - Extraction is present and populated: `RegisterRecord.fields[].reset_value: Option<String>`
+    (`ir/source.rs:432`), filled from register-field tables (`ir/evidence.rs:11509` `reset_value: reset`,
+    `:11838` `reset_value: reset_col.and_then(cell)`); a regression test already asserts a recovered
+    `reset_value == Some("0")` (`ir/evidence.rs:14758`).
+  - Carry-through is present: `IntentIr.register_records = semantic_ir.register_records.clone()`
+    (`ir/intent.rs:193`), so the field-level reset reaches IntentIR intact.
+  - The gap is at the ISF emit boundary: `IsfIr::from_intent_ir` builds one
+    `IsfStorageVar { name, width }` per register (`ir/isf_ir.rs:730`) and renders `(var NAME (width W))`
+    (`:375`). `IsfStorageVar` has only `name` + `width` (`:81`) — `reset_value` is never read. The var
+    `width` is the **max single-field extent**, not the register width — a detail a composed multi-field
+    reset must reconcile (measured in `.1`).
+  - The FSMGen target is already `shipped`, so no FR: `(storage (var NAME (width N) [(reset V)]))` —
+    `subs/fsmgen/docs/book/src/13k-isf-feature-support-matrix.md:42` and `13m-local-variables.md:48-68`.
+    `(reset V)` is optional; `V` a non-negative integer literal fitting the width; omitting it = all-0s
+    (byte-identical to today); over-width/non-integer fails closed. `subs/fsmgen/bin/fsmgen` is built
+    (present, `2026-06-16`) for `.2` strict validation.
+- **How I scoped it:** defined the checkable 4-point bar (lowered-when-groundable / honest-residual-
+  otherwise / strict-valid / no-regression) and the honest-residual policy bounded by the FSMGen
+  contract — emit `(reset V)` only for a clean in-width non-negative integer composed from per-field
+  resets tiled at their bit offsets (the same LSB-tiling discipline as `recover_register_bits`), else
+  omit + record an adapter residual; ADR-0006 (universal numeric parsing, no chip-name list). Set the
+  measurement-first sequence: `.1` (corpus measurement, read-only) → `.2` (emit).
+- **How verified:** read-only code grounding (line refs above) + FSMGen contract cross-read;
+  `scripts/check_memory_architecture.sh` green; docs-only (no Rust/CLI/test/`.isf`/CI change), so
+  WIRE-BASED-100 / `kg-bench` are untouched by construction.
+
 ## KG-ISF-TRANSACTIONS.2j (`2026-06-16`) — table-column phase cue: measured NO-GO (measurement-first, docs-only)
 - **Why:** `.2i` left AXI/SWD with an empty per-phase grouping. The frontier hypothesis was that AHB's data-phase
   richness came from TABLE cells (`| HWDATACHK | HWDATA | … | Write data phase |`) and that mining `<qualifier>
