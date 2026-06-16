@@ -362,7 +362,7 @@ impl SemanticIr {
         // KG-ISF-TRANSACTIONS.2g: recover the protocol PHASES the document names
         // in its prose (`<qualifier> phase`). Recognition only — no body
         // composition (`.2i`); universal English grammar, no name list (ADR 0006).
-        let transaction_phases = build_transaction_phases(&context);
+        let transaction_phases = build_transaction_phases(&context, &declared_signal_names);
 
         Ok(Self {
             schema_version: 1,
@@ -2488,6 +2488,20 @@ pub struct TransactionPhaseRecord {
     /// across the document, sorted + deduped for determinism.
     #[serde(default)]
     pub supporting_statement_ids: Vec<String>,
+    /// KG-ISF-TRANSACTIONS.2i: the phase's grounded signal set — the declared
+    /// signals referenced by the statements that name this phase (the union of
+    /// `StatementContext.signals` over `supporting_statement_ids`, intersected with
+    /// the declared-signal inventory). This is the SAME intersection technique as the
+    /// transaction-anchor `signal_set` (`.2c`): the raw statement tokens over-capture
+    /// enum VALUES / prose abbreviations that are not signals, so keeping only declared
+    /// signals makes the set faithful. It lets the IntentIR group each transaction's
+    /// signal-set membership BY phase (a member belongs to phase P iff P's prose
+    /// references it). Universal English grammar over the document's own prose, no name
+    /// list (ADR 0006); sorted + deduped; empty when the phase's prose references no
+    /// declared signal (honest absence — e.g. AXI/SWD, where the `<qualifier> phase`
+    /// prose names no declared signal).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub signal_set: Vec<String>,
     pub automation_confidence: AutomationConfidence,
 }
 
@@ -2579,7 +2593,18 @@ fn derive_phase_name(raw_prev: &str) -> Option<String> {
 /// provenance (sorted + deduped). KG-ISF-TRANSACTIONS.2g — recognition only,
 /// no body composition. Universal English grammar, no chip-spec name list
 /// (ADR 0006).
-fn build_transaction_phases(context: &SemanticContext) -> Vec<TransactionPhaseRecord> {
+fn build_transaction_phases(
+    context: &SemanticContext,
+    declared_signals: &std::collections::HashSet<String>,
+) -> Vec<TransactionPhaseRecord> {
+    // The per-statement signal-shaped tokens the pipeline already extracted — the
+    // same source the transaction-anchor membership uses (`.2c`), reused here to
+    // ground each phase's signal set.
+    let signals_by_statement: HashMap<&str, &Vec<String>> = context
+        .statements
+        .iter()
+        .map(|s| (s.statement_id.as_str(), &s.signals))
+        .collect();
     let mut order: Vec<String> = Vec::new();
     let mut provenance: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
     for statement in &context.statements {
@@ -2603,14 +2628,29 @@ fn build_transaction_phases(context: &SemanticContext) -> Vec<TransactionPhaseRe
     order
         .into_iter()
         .map(|name| {
-            let supporting_statement_ids = provenance
+            let supporting_statement_ids: Vec<String> = provenance
                 .get(&name)
                 .map(|ids| ids.iter().cloned().collect())
                 .unwrap_or_default();
+            // KG-ISF-TRANSACTIONS.2i: the phase's grounded signal set — the DECLARED
+            // signals referenced by the statements that name this phase, deduped +
+            // sorted. Intersecting with `declared_signals` is essential for the same
+            // reason as the anchor signal_set (`.2c`): the raw statement tokens
+            // over-capture enum values / abbreviations that are not signals. No name
+            // list (ADR 0006) — `declared_signals` is the document's own inventory.
+            let signal_set: Vec<String> = supporting_statement_ids
+                .iter()
+                .filter_map(|id| signals_by_statement.get(id.as_str()))
+                .flat_map(|sigs| sigs.iter().cloned())
+                .filter(|sig| declared_signals.contains(sig))
+                .collect::<BTreeSet<String>>()
+                .into_iter()
+                .collect();
             TransactionPhaseRecord {
                 transaction_phase_id: format!("txnphase_{name}"),
                 phase_name: name,
                 supporting_statement_ids,
+                signal_set,
                 automation_confidence: AutomationConfidence::Medium,
             }
         })
@@ -22187,13 +22227,13 @@ mod tests {
 
     #[test]
     fn build_transaction_phases_dedups_and_records_provenance() {
-        let mk_stmt = |id: &str, text: &str| super::StatementContext {
+        let mk_stmt = |id: &str, text: &str, signals: &[&str]| super::StatementContext {
             statement_id: id.to_string(),
             class: super::StatementClass::SourceFact,
             text: text.to_string(),
             related_visual_evidence_ids: vec![],
             section_ids: vec![],
-            signals: vec![],
+            signals: signals.iter().map(|s| s.to_string()).collect(),
             supporting_table_ids: vec![],
         };
         let context = make_semantic_context_with_statements(vec![
@@ -22201,20 +22241,29 @@ mod tests {
             mk_stmt(
                 "stmt_1",
                 "During the address phase the manager drives HADDR.",
+                &["HADDR"],
             ),
             // `the phase` is determiner noise — dropped; the `data phase` mention
             // records provenance against the existing `data` record.
             mk_stmt(
                 "stmt_2",
                 "In the data phase HWDATA is valid; the phase then ends.",
+                &["HWDATA"],
             ),
             // Second `data phase` sighting accumulates provenance (deduped per id).
+            // `FOO` is referenced but NOT declared → filtered from the signal set.
             mk_stmt(
                 "stmt_3",
                 "A wait extends the data phase until HREADY is high.",
+                &["HREADY", "FOO"],
             ),
         ]);
-        let phases = build_transaction_phases(&context);
+        // The document's declared-signal inventory (FOO is deliberately absent).
+        let declared: std::collections::HashSet<String> = ["HADDR", "HWDATA", "HREADY"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
+        let phases = build_transaction_phases(&context, &declared);
         let names: Vec<&str> = phases.iter().map(|p| p.phase_name.as_str()).collect();
         // Statement order preserved; determiner noise dropped; `data` deduped.
         assert_eq!(names, vec!["address", "data"]);
@@ -22222,6 +22271,8 @@ mod tests {
         let address: &TransactionPhaseRecord = &phases[0];
         assert_eq!(address.transaction_phase_id, "txnphase_address");
         assert_eq!(address.supporting_statement_ids, vec!["stmt_1".to_string()]);
+        // KG-ISF-TRANSACTIONS.2i: the phase's grounded signal set (declared ∩ referenced).
+        assert_eq!(address.signal_set, vec!["HADDR".to_string()]);
         assert_eq!(
             address.automation_confidence,
             super::AutomationConfidence::Medium
@@ -22233,6 +22284,12 @@ mod tests {
         assert_eq!(
             data.supporting_statement_ids,
             vec!["stmt_2".to_string(), "stmt_3".to_string()]
+        );
+        // Signal set is the union over both `data phase` statements, sorted, with the
+        // undeclared `FOO` filtered out (the `.2c` intersection technique).
+        assert_eq!(
+            data.signal_set,
+            vec!["HREADY".to_string(), "HWDATA".to_string()]
         );
     }
 }

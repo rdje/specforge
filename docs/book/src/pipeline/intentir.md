@@ -141,6 +141,35 @@ glance: a `transaction_phases` count and, when the document names any, a
 `related_ids` for review. A document that names no phases emits no finding — absence is
 silence, not an event.
 
+### Grouping a transaction's signals by phase
+
+Once SpecForge knows a transaction's signal set *and* the document's phases, it can answer a
+sharper question: *which of this transaction's signals belong to its address phase, and
+which to its data phase?* The answer comes, again, from the document's own words — a signal
+belongs to a phase when the prose that names that phase references it ("`HNONSEC` is an
+address phase signal", "the following signals must be valid during the data phase"). So an
+AHB basic transfer groups as `address={HREADY}`, `data={HRDATA, HREADY, HREADYOUT, HWDATA}`.
+A few honest details follow directly from grounding it this way: a signal that genuinely
+spans phases (AHB's `HREADY`) appears under each — that is faithful, not a bug; and a member
+the document never ties to a named phase (a clock, a write-direction flag) simply stays in
+the transaction's overall signal set without a phase — an honest "unphased" residual rather
+than a guess. Where a document's phase prose never names a declared signal (as on AXI and
+the debug interface), the grouping is honestly empty.
+
+Two things this grouping deliberately does **not** do, and why. It does not invent an
+*order* between the phases — whether the address phase strictly precedes the data phase is
+something most documents do not state unambiguously (and some, like the debug interface,
+describe in an order opposite the wire order), so SpecForge treats cross-phase ordering as
+an explicit residual rather than fabricating one. And it does not become part of the emitted
+`.isf`: an `.isf` transaction body is an *ordered* sequence of behavioural steps, and the
+downstream consumer (FSMGen) confirmed that a value-less, unordered membership set is the
+wrong thing to write into that body — so the grouping is carried as **checked metadata** on
+the `IntentIR`, leaving the emitted `.isf` byte-for-byte unchanged. `specforge validate
+<intent-ir>` surfaces it: a `transactions_with_phase_membership` count, a
+`transaction_phase_groups` total, and — when any transaction carries a grouping — an
+`intent_transaction_phase_membership` Info finding that lists each transaction with its
+per-phase signal split (and notes plainly that it is metadata, not lowered to `.isf`).
+
 ## What makes it canonical
 
 `IntentIR` is the stage where the pipeline tries to present the best stable typed intent surface that survived:

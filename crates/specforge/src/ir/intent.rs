@@ -873,6 +873,16 @@ pub struct TransactionIntent {
     /// Ordered body steps.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub steps: Vec<TransactionStep>,
+    /// KG-ISF-TRANSACTIONS.2i: the transaction's signal-set membership grouped by the
+    /// document's recognised phases (`.2g` `transaction_phases`). This is CHECKED
+    /// METADATA, not lowered to ISF transaction-body `steps` — per FSMGen's
+    /// `2026-06-16` answer (pin `030f8c273`): an ISF transaction body is source-ordered
+    /// behaviour and the wrong container for an unordered membership set, and a
+    /// value-less drive is rejected, so a member's participation is preserved as
+    /// metadata rather than fabricated as a body step. Empty when the document
+    /// declares no phase whose prose references this transaction's members.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub phase_membership: Vec<TransactionPhaseMembership>,
     /// The control_block_ids this transaction was built from.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub source_block_ids: Vec<String>,
@@ -898,6 +908,26 @@ pub enum TransactionPortDirection {
     Input,
     Output,
     InOut,
+}
+
+/// KG-ISF-TRANSACTIONS.2i — one phase's slice of a transaction's signal-set
+/// membership: the transaction's member signals that the document's `<qualifier>
+/// phase` prose attributes to this phase, each with its grounded actor-relative
+/// direction. This is checked IntentIR metadata (carried on
+/// [`TransactionIntent::phase_membership`]), NOT lowered to ISF transaction-body
+/// steps. A member signal may appear under several phases (it genuinely spans them);
+/// members in no recognised phase stay in [`TransactionIntent::ports`] only (an
+/// honest "unphased" residual). Grounded, universal, boundary-precise — no name list
+/// (ADR 0006); the cross-phase ORDER and per-signal drive VALUE remain honest
+/// residuals (`.2h`) until ISF has a checked phase-group metadata surface.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct TransactionPhaseMembership {
+    /// The document-named phase (e.g. `address`, `data`, `setup`, `access`), from
+    /// `SemanticIr.transaction_phases`.
+    pub phase_name: String,
+    /// The transaction's member signals attributed to this phase, each with the
+    /// document-grounded direction (Drives → output, Reads → input, else in/out).
+    pub ports: Vec<TransactionPortRecord>,
 }
 
 /// One step in a transaction body. Each variant maps to an ISF construct.
@@ -1218,6 +1248,7 @@ fn recognize_digital_patterns(
                             },
                         ],
                         steps,
+                        phase_membership: Vec::new(),
                         source_block_ids: Vec::new(),
                         source_temporal_rule_ids: Vec::new(),
                         supporting_statement_ids: Vec::new(),
@@ -1443,6 +1474,18 @@ fn recognize_named_transactions(
         signal_directions.insert(signal.clone(), direction);
     }
 
+    // KG-ISF-TRANSACTIONS.2i: the document's recognised phases that have a grounded
+    // signal set (`.2g` `transaction_phases`, in first-occurrence order), used to
+    // group each transaction's `.2c` membership by phase. A phase with an empty
+    // signal set (its prose names no declared signal — e.g. AXI/SWD) cannot group
+    // anything, so it is skipped here (honest absence, not a miss).
+    let phase_groups: Vec<(String, BTreeSet<String>)> = semantic_ir
+        .transaction_phases
+        .iter()
+        .filter(|p| !p.signal_set.is_empty())
+        .map(|p| (p.phase_name.clone(), p.signal_set.iter().cloned().collect()))
+        .collect();
+
     for anchor in &semantic_ir.transaction_anchors {
         // Dedup: a transaction of this name may already exist (e.g. a control
         // block or handshake transaction). The named anchor never duplicates it.
@@ -1456,6 +1499,7 @@ fn recognize_named_transactions(
             anchor,
             &enum_member_signal,
             &signal_directions,
+            &phase_groups,
         ));
     }
 }
@@ -1489,6 +1533,7 @@ fn mint_named_transaction(
     anchor: &TransactionAnchorRecord,
     enum_member_signal: &BTreeMap<String, String>,
     signal_directions: &BTreeMap<String, TransactionPortDirection>,
+    phase_groups: &[(String, BTreeSet<String>)],
 ) -> TransactionIntent {
     let direction_of = |sig: &str| {
         signal_directions
@@ -1542,6 +1587,34 @@ fn mint_named_transaction(
             });
         }
     }
+    // `.2i`: group the transaction's signal-set membership (`anchor.signal_set`) by
+    // the document's recognised phases — a member belongs to phase P iff P's prose
+    // references it (`phase_groups` carries each phase's grounded signal set, the
+    // same intersection technique as the membership itself). A member may appear
+    // under several phases (it genuinely spans them, e.g. AHB `HREADY`); a member in
+    // no recognised phase stays in `ports` only — an honest "unphased" residual. This
+    // is metadata, never an ISF body step (FSMGen `2026-06-16`: a transaction body is
+    // source-ordered behaviour and a value-less drive is rejected, so a value-/
+    // order-less membership fact is preserved as metadata, not fabricated as a step).
+    let mut phase_membership: Vec<TransactionPhaseMembership> = Vec::new();
+    for (phase_name, phase_signals) in phase_groups {
+        let mut members: Vec<TransactionPortRecord> = Vec::new();
+        for signal in &anchor.signal_set {
+            if phase_signals.contains(signal) {
+                members.push(TransactionPortRecord {
+                    port_name: signal.clone(),
+                    direction: direction_of(signal),
+                    width: None,
+                });
+            }
+        }
+        if !members.is_empty() {
+            phase_membership.push(TransactionPhaseMembership {
+                phase_name: phase_name.clone(),
+                ports: members,
+            });
+        }
+    }
     // Confidence keyed on Cue-B corroboration (`.2a` semantics — two structural
     // cues agree), independent of how many membership ports were attached.
     let automation_confidence = if cue_b_corroborated {
@@ -1555,6 +1628,7 @@ fn mint_named_transaction(
         activation_port: None,
         ports,
         steps,
+        phase_membership,
         source_block_ids: Vec::new(),
         source_temporal_rule_ids: Vec::new(),
         supporting_statement_ids: anchor.supporting_statement_ids.clone(),
@@ -1633,6 +1707,7 @@ fn synthesize_transactions(semantic_ir: &SemanticIr) -> Vec<TransactionIntent> {
             activation_port: None,
             ports,
             steps,
+            phase_membership: Vec::new(),
             source_block_ids: vec![cb.block_id.clone()],
             source_temporal_rule_ids: Vec::new(),
             supporting_statement_ids: cb.supporting_statement_ids.clone(),
@@ -2169,11 +2244,25 @@ mod tests {
     fn mint_named_transaction_corroborates_with_signal_keyed_enum() {
         use super::mint_named_transaction;
         use crate::ir::semantic::TransactionAnchorRecord;
-        use std::collections::BTreeMap;
+        use std::collections::{BTreeMap, BTreeSet};
 
         // Cue B index: enum member IDLE is keyed by the declared signal HTRANS.
         let mut enum_member_signal: BTreeMap<String, String> = BTreeMap::new();
         enum_member_signal.insert("IDLE".to_string(), "HTRANS".to_string());
+
+        // .2i: the document's recognised phases (each with its grounded signal set) —
+        // address names HTRANS, data names HREADY. HADDR is in neither (it stays an
+        // honest "unphased" residual when a transaction's only member is HADDR).
+        let phase_groups: Vec<(String, BTreeSet<String>)> = vec![
+            (
+                "address".to_string(),
+                ["HTRANS".to_string()].into_iter().collect(),
+            ),
+            (
+                "data".to_string(),
+                ["HREADY".to_string()].into_iter().collect(),
+            ),
+        ];
 
         // .2c: grounded per-signal directions (HTRANS driven → output, HREADY read
         // → input, HADDR driven → output).
@@ -2198,7 +2287,12 @@ mod tests {
             signal_set: vec!["HREADY".to_string(), "HTRANS".to_string()],
             automation_confidence: AutomationConfidence::Medium,
         };
-        let txn = mint_named_transaction(&idle, &enum_member_signal, &signal_directions);
+        let txn = mint_named_transaction(
+            &idle,
+            &enum_member_signal,
+            &signal_directions,
+            &phase_groups,
+        );
         assert_eq!(txn.transaction_id, "txn_named_idle_transfer");
         assert_eq!(txn.transaction_name, "idle_transfer");
         assert!(matches!(
@@ -2230,6 +2324,22 @@ mod tests {
             hready.direction,
             super::TransactionPortDirection::Input
         ));
+        // .2i: the membership groups by phase — HTRANS under `address`, HREADY under
+        // `data` (each carrying its grounded direction). Metadata only, never `.isf`.
+        assert_eq!(txn.phase_membership.len(), 2);
+        assert_eq!(txn.phase_membership[0].phase_name, "address");
+        assert_eq!(txn.phase_membership[0].ports.len(), 1);
+        assert_eq!(txn.phase_membership[0].ports[0].port_name, "HTRANS");
+        assert!(matches!(
+            txn.phase_membership[0].ports[0].direction,
+            super::TransactionPortDirection::Output
+        ));
+        assert_eq!(txn.phase_membership[1].phase_name, "data");
+        assert_eq!(txn.phase_membership[1].ports[0].port_name, "HREADY");
+        assert!(matches!(
+            txn.phase_membership[1].ports[0].direction,
+            super::TransactionPortDirection::Input
+        ));
 
         // Uncorroborated: no qualifier matches an enum member → Medium, no body
         // (held out of `.isf`), but `.2c` still attaches its grounded signal-set
@@ -2243,7 +2353,12 @@ mod tests {
             signal_set: vec!["HADDR".to_string()],
             automation_confidence: AutomationConfidence::Medium,
         };
-        let txn2 = mint_named_transaction(&basic, &enum_member_signal, &signal_directions);
+        let txn2 = mint_named_transaction(
+            &basic,
+            &enum_member_signal,
+            &signal_directions,
+            &phase_groups,
+        );
         assert!(txn2.steps.is_empty(), "uncorroborated stays body-less");
         assert!(matches!(
             txn2.automation_confidence,
@@ -2255,6 +2370,12 @@ mod tests {
             ".2c attaches membership even uncorroborated"
         );
         assert_eq!(txn2.ports[0].port_name, "HADDR");
+        // .2i: HADDR is in no recognised phase → no phase grouping (honest "unphased"
+        // residual; the member still lives in `ports`).
+        assert!(
+            txn2.phase_membership.is_empty(),
+            "a member in no recognised phase stays unphased (residual), not invented into a group"
+        );
     }
 
     #[test]
@@ -4702,6 +4823,14 @@ mod tests {
                     }],
                 },
             ],
+            phase_membership: vec![super::TransactionPhaseMembership {
+                phase_name: "address".to_string(),
+                ports: vec![super::TransactionPortRecord {
+                    port_name: "HADDR".to_string(),
+                    direction: super::TransactionPortDirection::Output,
+                    width: None,
+                }],
+            }],
             source_block_ids: vec!["cb_1".to_string()],
             source_temporal_rule_ids: vec!["tr_1".to_string()],
             supporting_statement_ids: vec!["stmt_1".to_string()],
@@ -4715,6 +4844,12 @@ mod tests {
         assert_eq!(round_tripped.activation_port, Some("HREADY".to_string()));
         assert_eq!(round_tripped.ports.len(), 1);
         assert_eq!(round_tripped.steps.len(), 2);
+        assert_eq!(round_tripped.phase_membership.len(), 1);
+        assert_eq!(round_tripped.phase_membership[0].phase_name, "address");
+        assert_eq!(
+            round_tripped.phase_membership[0].ports[0].port_name,
+            "HADDR"
+        );
     }
 
     #[test]

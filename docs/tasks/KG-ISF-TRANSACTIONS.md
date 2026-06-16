@@ -130,7 +130,7 @@ grammar only, no name lists (ADR 0006); honest residual over fabrication. Scope 
 precise, accurate, step-by-step capture of ALL transactions — but delivered measurement-first, in safe
 slices, wire-docs first.
 
-## Frontier — `.2i` measurement DONE + FSMGEN question raised → body-emission PARKED pending FSMGEN; `.2g` recognition + `.2h` ordering-measurement DONE
+## Frontier — `.2i` DONE (metadata-only per-phase membership grouping, FSMGen-confirmed); next lever = `.2j` table-column phase cue (candidate)
 
 The `.2e` checkpoint deferred the *choice* of ordering signal to "a dedicated measurement-first slice." **`.2f`
 ran that measurement (read-only, corpus-wide) and made the choice** — see the `.2f` node + `.2f` changelog
@@ -473,11 +473,36 @@ body-emission PARKED pending FSMGEN's answer + owner steer (the metadata-only gr
   phase order, VLM-tier; or per-transaction phase-enumerating definition sentence) recorded as a future candidate.
   **Gates:** read-only/docs-only — WIRE-BASED-100 untouched ✓, ADR-0006 ✓ (no name list; the signals measured are
   universal grammar). Census §4.6; KM card refreshed. Frontier → `.2i`. `[[project_kg_isf_transactions]]`.
-- ID: `KG-ISF-TRANSACTIONS.2i` · Status: `in_progress` (`2026-06-16`; design measurement + FSMGEN question done;
-  body-emission PARKED pending FSMGEN's answer + owner steer) · Goal: **membership-by-phase grouping + per-phase
-  body composition** (group each named transaction's `.2c` signal-set membership into its recognised `.2g` phases;
-  compose a per-phase body; cross-phase sequence only where decisively grounded — `.2h`).
-  **DONE so far (measurement-first, read-only, docs-only — no code):**
+- ID: `KG-ISF-TRANSACTIONS.2i` · Status: `done` (`2026-06-16`; option (a), FSMGen-confirmed — grounded per-phase
+  membership grouping as IntentIR metadata; measurement-first; CODE) · Goal: **membership-by-phase grouping**
+  (group each named transaction's `.2c` signal-set membership into its recognised `.2g` phases; per FSMGen's
+  `2026-06-16` answer + `.2h`, carry it as checked metadata, NOT ordered ISF steps; no fabricated value or order).
+  **IMPLEMENTED (option a):** (1) `SemanticIr.TransactionPhaseRecord` gains `signal_set` (`ir/semantic.rs`) —
+  `build_transaction_phases` now takes `declared_signal_names` and computes each phase's grounded signal set the
+  same way the `.2c` anchor does (union of the phase-naming statements' `StatementContext.signals` ∩ declared).
+  (2) `IntentIr.TransactionIntent` gains `phase_membership: Vec<TransactionPhaseMembership>` (`ir/intent.rs`) —
+  `recognize_named_transactions` threads the phases (signal-set-bearing only) into `mint_named_transaction`, which
+  groups each transaction's `anchor.signal_set` by each phase (member ∈ phase iff the phase's prose references it),
+  reusing the `.2c` per-signal direction; a member spanning phases appears under each (faithful); a member in no
+  phase stays in `ports` only (honest "unphased" residual). NOT lowered to `.isf` (the emitter lowers `steps`, not
+  this metadata). (3) `validate <intent-ir>` surface (`commands/validate.rs`): metrics
+  `transactions_with_phase_membership` + `transaction_phase_groups`, an `intent_transaction_phase_membership` Info
+  finding (non-empty-only, the `.11` honesty rule; message carries the per-phase split + the "not lowered to .isf"
+  caveat) + a human-summary line.
+  **Measured live (rebuilt wire docs):** AHB grouping is faithful + non-trivial — `basic_transfer` →
+  address:{HREADY}, data:{HRDATA,HREADY,HREADYOUT,HWDATA} (HCLK/HWRITE honestly unphased; HREADY spans both);
+  `burst_operation` → address:{HADDR}; `idle_transfer` → address:{HREADY,HTRANS}, data:{HREADY}. APB minimal
+  (read/write_transfer → access:{PCLK}, the thin membership). AXI & SWD honest-empty (phase prose names no declared
+  signal). **`.isf` BYTE-IDENTICAL on all 4 wire docs** (verified `diff` old-vs-new — metadata, not `steps`).
+  **Gates ALL GREEN:** ADR-0006 ✓ (universal grammar, no name list); WIRE-BASED-100 orthogonal (additive IntentIR
+  metadata; no constraint/relation/temporal surface touched) ✓; ISF round-trip byte-identical ✓; `kg-bench`
+  156/156 ✓; `run_ci.sh` green (lib **1645**; 4 existing transaction tests extended to assert the grouping +
+  round-trip) ✓. Book `pipeline/intentir.md` "Grouping a transaction's signals by phase". The cross-phase ORDER and
+  the per-signal VALUE remain honest residuals (`.2h`); the future ISF checked phase-group metadata surface
+  (FSMGen-owned, `FSMGEN-REFRESH-INTEGRATE-3`) is the eventual cross-`.isf` carry path; the **table-column phase
+  cue** (`| … | Write data phase |` cells, would move AXI/SWD off zero) is the next recognition lever (`.2j`).
+  `[[project_kg_isf_transactions]]` / `[[feedback_isf_no_hacks]]`.
+  **Design measurement (read-only, pre-implementation — the basis for option (a)):**
   - **Grouping measurement** (read-only Rule-A over the 4 wire docs — group each transaction's `.2c` membership by
     each phase's document-global signal set): groundable **cleanly only on AHB (1 of 4)** and noisily there
     (`basic_transfer` → data:{HRDATA,HWDATA,HREADYOUT,HREADY}, address:{HREADY}; HCLK/HWRITE ungrouped; HREADY
@@ -494,13 +519,11 @@ body-emission PARKED pending FSMGEN's answer + owner steer (the metadata-only gr
   - **FSMGEN question raised** (per `[[feedback_isf_no_hacks]]`, no hack/no fabrication): `docs/FSMGEN_FEEDBACK.md`
     `2026-06-16` entry asks for value-less output participation / an unordered-or-partial-order body / phase-group
     metadata / ordering-as-constraint. Owner to forward; **owner steer = wait for FSMGEN.**
-  **PARKED (the two open body-emission decisions, deferred to FSMGEN's answer):** (1) emit a same-cycle
-  concurrent-drive block for grounded phases now vs a follow-up `.2j`; (2) value-less participation drive vs keeping
-  a value-less signal a pure residual. **Safe fallback (no FSMGEN dependency):** ship the grounded per-phase
-  membership grouping as IntentIR **metadata** (not ordered ISF steps) → `.isf` byte-identical, WIRE-BASED-100 +
-  ISF round-trip trivially green; the table-column phase cue (AHB's data-phase richness came from
-  `| … | Write data phase |` table cells, not prose — would move AXI/SWD off zero) is the next recognition lever
-  (`.2j` candidate). Gates so far: read-only/docs-only — WIRE-BASED-100 untouched ✓, ADR-0006 ✓.
+  **RESOLVED by FSMGen's answer (`FSMGEN-REFRESH-INTEGRATE-3`, pin `030f8c273`):** the two formerly-parked
+  body-emission decisions are settled NO by FSMGen — (1) no same-cycle concurrent-drive block (a value-less drive is
+  rejected; drives are value-bearing behaviour); (2) value-less participation stays a residual / IntentIR metadata,
+  never a body step. So option (a) (metadata-only grouping) is the implemented + FSMGen-blessed answer, exactly as
+  above. The table-column phase cue (`| … | Write data phase |` cells) is the next recognition lever (`.2j`).
 
 ## Changelog
 
@@ -675,3 +698,26 @@ body-emission PARKED pending FSMGEN's answer + owner steer (the metadata-only gr
   PARKED; the grounded per-phase membership grouping (metadata, `.isf` byte-identical) remains the safe fallback.
   Gates: read-only/docs-only — WIRE-BASED-100 untouched ✓, ADR-0006 ✓; `scripts/check_memory_architecture.sh` +
   knowledge-map derive-and-diff green. KM card `transaction-capture-census` refreshed. `[[project_kg_isf_transactions]]`.
+- `2026-06-16`: **FSMGEN ANSWERED → `FSMGEN-REFRESH-INTEGRATE-3` (pin `8c39827f → 030f8c273`, +9).** FSMGen
+  answered the phase-membership question (`ISF-SPECFORGE-PHASE-MEMBERSHIP-RESPONSE.1`/`.2`): don't fabricate value
+  or order — keep value-less participation + unordered membership as IntentIR metadata/residual (NOT body
+  drives/steps); checked transaction phase-group metadata is the right FUTURE ISF surface (its own FSMGen tree, not
+  shipped); `.isf` stays the source of truth. **Confirms `.2i` option (a).** Verified on the new binary (emitted
+  APB `.isf` strict `success:true`; 6 canaries + `run_ci.sh` `1645/0`). See `FSMGEN-REFRESH-INTEGRATE-3.md`.
+- `2026-06-16`: **`.2i` DONE — CODE (option (a), FSMGen-confirmed): grounded per-phase membership grouping as
+  IntentIR metadata.** (1) `SemanticIr.TransactionPhaseRecord` gains `signal_set` (`ir/semantic.rs`;
+  `build_transaction_phases` now takes `declared_signal_names`, computes the phase's signal set the `.2c` way).
+  (2) `IntentIr.TransactionIntent` gains `phase_membership` (`ir/intent.rs`); `recognize_named_transactions`/
+  `mint_named_transaction` group each transaction's `.2c` membership by each phase (member ∈ phase iff the phase's
+  prose references it), reusing the `.2c` direction; multi-phase members appear under each (faithful), unphased
+  members stay in `ports` (honest residual). Metadata only — NOT lowered to `.isf` (FSMGen `2026-06-16`). (3)
+  `validate <intent-ir>` reports `transactions_with_phase_membership` + `transaction_phase_groups` + an
+  `intent_transaction_phase_membership` Info finding + a human-summary line. **Measured live (rebuilt wire docs):**
+  AHB faithful + non-trivial (`basic_transfer` → address:{HREADY}, data:{HRDATA,HREADY,HREADYOUT,HWDATA}; HCLK/
+  HWRITE honestly unphased; HREADY spans both), APB minimal (access:{PCLK}), AXI & SWD honest-empty. **`.isf`
+  BYTE-IDENTICAL on all 4 wire docs** (`diff` old-vs-new; metadata, not `steps`). **Gates ALL GREEN:** ADR-0006 ✓,
+  WIRE-BASED-100 orthogonal ✓, ISF round-trip byte-identical ✓, `kg-bench` 156/156 ✓, `run_ci.sh` green (lib
+  **1645**; 4 transaction tests extended) ✓. Book `pipeline/intentir.md` "Grouping a transaction's signals by
+  phase". Cross-phase ORDER + per-signal VALUE stay honest residuals (`.2h`); future ISF phase-group metadata
+  surface (FSMGen-owned) = the cross-`.isf` carry path; table-column phase cue = `.2j` lever.
+  `[[project_kg_isf_transactions]]` / `[[feedback_isf_no_hacks]]`.

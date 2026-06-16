@@ -1,4 +1,40 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-TRANSACTIONS.2i (`2026-06-16`) — per-phase membership grouping as IntentIR metadata (option a, FSMGen-confirmed)
+- **What + why:** group each named transaction's `.2c` signal-set membership by the document's `.2g` phases, so the
+  IntentIR records *which of a transaction's signals belong to its address/data/… phase* — bar #5 "as far as the
+  document grounds it". FSMGen's `2026-06-16` answer settled the shape: NOT ordered ISF body steps (a value-less
+  drive is rejected; bodies are source-ordered), but **checked IntentIR metadata**, with cross-phase order + per-
+  signal value left as honest residuals (`.2h`).
+- **Implementation:**
+  - `SemanticIr.TransactionPhaseRecord.signal_set` (`ir/semantic.rs`): `build_transaction_phases(context,
+    declared_signals)` computes the phase's signal set as the union of its phase-naming statements'
+    `StatementContext.signals` ∩ the declared inventory — the SAME intersection technique as the `.2c` anchor
+    signal_set (the raw tokens over-capture enum values / abbreviations; intersecting with declared keeps it
+    faithful). Call site passes `&declared_signal_names`.
+  - `IntentIr.TransactionIntent.phase_membership: Vec<TransactionPhaseMembership>` (`ir/intent.rs`):
+    `recognize_named_transactions` builds the signal-set-bearing phase list (skipping empty ones) and threads it to
+    `mint_named_transaction`, which, for each phase, collects the transaction's `anchor.signal_set` members that the
+    phase references, each with the `.2c` direction. Multi-phase members appear under each phase; unphased members
+    stay in `ports` only. Other `TransactionIntent` constructors (handshake, control-block) carry an empty grouping.
+  - `validate <intent-ir>` (`commands/validate.rs`): two metrics + a non-empty-only Info finding (carrying the
+    per-phase split + the "not lowered to .isf" caveat) + a human-summary line.
+- **Boundary precision (bar #3):** the grouping is doubly-grounded — a signal is in transaction X's phase P iff it
+  is in X's `.2c` membership (X's section references it) AND in P's signal set (P's prose references it). So nothing
+  from another transaction bleeds in, and a signal's phase is the document's own attribution, not a guess.
+- **Why `.isf` stays byte-identical:** the ISF emitter (`isf_ir.rs::from_intent_ir`) lowers `steps` (filtered by
+  `!steps.is_empty()`), never `ports` or `phase_membership`. The new field is metadata the emitter ignores —
+  verified by `diff`-ing the old vs rebuilt `.isf` on all 4 wire docs (identical).
+- **Measured live (rebuilt wire docs):** AHB faithful + non-trivial (`basic_transfer` → address:{HREADY},
+  data:{HRDATA,HREADY,HREADYOUT,HWDATA}; HCLK/HWRITE honestly unphased; HREADY spans both phases — faithful, not a
+  bug); APB minimal (read/write_transfer → access:{PCLK}, the thin membership); AXI & SWD honest-empty (their
+  `<qualifier> phase` prose never names a declared signal — exactly the read-only `.2i` measurement). The
+  per-signal VALUE and cross-phase ORDER are NOT emitted (honest residuals).
+- **Gates:** ADR-0006 ✓ (universal grammar over the document's own prose, no name list); WIRE-BASED-100 orthogonal
+  (additive IntentIR metadata; touches no constraint/relation/temporal surface) ✓; ISF round-trip byte-identical ✓;
+  `kg-bench` 156/156 ✓; `run_ci.sh` green (lib 1645; the 4 transaction tests — `build_transaction_phases`,
+  `mint_named_transaction`, `transaction_intent` round-trip, `validate_intent_ir` inventory — extended to assert the
+  grouping). Next lever: `.2j` table-column phase cue (would move AXI/SWD off zero).
+
 ## FSMGEN-REFRESH-INTEGRATE-3 (`2026-06-16`) — pin bump to the phase-membership-response tip; `.2i` unparked
 - **Why:** owner asked to update the FSMGen submodule and read its response. The upstream tip `030f8c273`
   (+9 over `8c39827f`) carries FSMGen's direct answer to SpecForge's `2026-06-16` transaction-phase-membership

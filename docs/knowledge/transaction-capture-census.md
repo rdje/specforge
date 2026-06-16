@@ -34,6 +34,10 @@ answers:
   - "what did FSMGEN answer about transaction phase membership (don't fabricate value or order; keep value-less participation + unordered membership as IntentIR metadata/residual not body steps; checked phase-group metadata is the future ISF shape on its own FSMGen tree; .isf stays source of truth, no .val)"
   - "is KG-ISF-TRANSACTIONS.2i unparked / what is the .2i decision (yes — FSMGen confirmed option a: ship the grounded per-phase membership grouping as IntentIR metadata, .isf byte-identical)"
   - "what fsmgen pin carries the phase-membership answer (030f8c273, FSMGEN-REFRESH-INTEGRATE-3, ISF-SPECFORGE-PHASE-MEMBERSHIP-RESPONSE.1/.2)"
+  - "how does specforge group a transaction's signals by phase (.2i: TransactionIntent.phase_membership, built in mint_named_transaction by intersecting anchor.signal_set with each TransactionPhaseRecord.signal_set; metadata, not .isf steps)"
+  - "where does TransactionPhaseRecord.signal_set come from (build_transaction_phases, ir/semantic.rs — phase-naming statements' signals ∩ declared inventory, the .2c technique)"
+  - "what is the validate intent transaction phase-membership surface (transactions_with_phase_membership + transaction_phase_groups metrics + intent_transaction_phase_membership finding)"
+  - "does .2i per-phase grouping change the emitted .isf (no — phase_membership is IntentIR metadata, the emitter lowers steps not it; byte-identical on all 4 wire docs)"
 date: 2026-06-16
 tags: [kg-isf-transactions, transactions, intent-ir, isf, adr-0006, measured, north-star, ir-intent, recognize-digital-patterns, baseline, fsmgen-feedback]
 evidence: docs/research/transaction-capture-census.md (full census §1–§4); docs/tasks/KG-ISF-TRANSACTIONS.md (sharpened 7-point bar + .2a/.2b/.2c slices); crates/specforge/src/ir/intent.rs (synthesize_transactions + recognize_digital_patterns, the 3 hardcoded Patterns 3/4/5); generated/intent_ir/*/intent_ir.json (the transactions[] surface scanned)
@@ -149,6 +153,20 @@ is the greppable summary so the next session does not re-excavate it.
 > ⇒ **this CONFIRMS `.2i` option (a)** — ship the grounded per-phase membership grouping as IntentIR **metadata**
 > (not ordered ISF steps), `.isf` byte-identical; value/order are honest residuals; the future ISF phase-group
 > metadata surface (FSMGen-owned) is the eventual cross-`.isf` carry path. `.2i` UNPARKED → implement option (a).
+
+> **STATUS UPDATE — `.2i` IMPLEMENTED (`2026-06-16`, option (a), CODE).** Shipped the grounded per-phase
+> membership grouping as IntentIR metadata. `SemanticIr.TransactionPhaseRecord` gains `signal_set`
+> (`build_transaction_phases`, `ir/semantic.rs` — phase-naming statements' `StatementContext.signals` ∩ declared
+> inventory, the `.2c` technique). `IntentIr.TransactionIntent` gains `phase_membership` (new
+> `TransactionPhaseMembership`, `ir/intent.rs`); `recognize_named_transactions`/`mint_named_transaction` group each
+> transaction's `anchor.signal_set` by each phase (member ∈ phase iff the phase's prose references it), reusing the
+> `.2c` direction — multi-phase members appear under each (faithful), unphased members stay in `ports` (honest
+> residual). `validate <intent-ir>` reports `transactions_with_phase_membership` + `transaction_phase_groups` + an
+> `intent_transaction_phase_membership` finding. **NOT lowered to `.isf`** (the emitter lowers `steps`, not this
+> metadata) — verified `.isf` BYTE-IDENTICAL on all 4 wire docs. Measured: AHB faithful (`basic_transfer` →
+> address:{HREADY}, data:{HRDATA,HREADY,HREADYOUT,HWDATA}; HCLK/HWRITE unphased), APB minimal (access:{PCLK}), AXI &
+> SWD honest-empty. Gates: ADR-0006 ✓, WIRE-BASED-100 orthogonal ✓, `kg-bench` 156/156 ✓, `run_ci.sh` green (lib
+> 1645) ✓. Next lever: `.2j` table-column phase cue (would move AXI/SWD off zero).
 
 ## What the `transactions[]` surface holds today
 

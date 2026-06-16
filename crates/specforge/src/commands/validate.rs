@@ -5582,6 +5582,18 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             .filter(|t| !t.steps.is_empty())
             .count()
     );
+    // KG-ISF-TRANSACTIONS.2i — per-phase membership grouping (metadata, not .isf).
+    println!(
+        "    with_phase_membership: {} ({} phase group(s))",
+        ir.transactions
+            .iter()
+            .filter(|t| !t.phase_membership.is_empty())
+            .count(),
+        ir.transactions
+            .iter()
+            .map(|t| t.phase_membership.len())
+            .sum::<usize>()
+    );
     println!("  timing_constraints: {}", ir.timing_constraints.len());
     println!("  temporal_rules: {}", ir.temporal_rules.len());
     println!("  actor_contracts: {}", ir.actor_contracts.len());
@@ -6076,6 +6088,20 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         .filter(|t| t.steps.is_empty())
         .count();
     let transaction_signal_members: usize = ir.transactions.iter().map(|t| t.ports.len()).sum();
+    // KG-ISF-TRANSACTIONS.2i: the per-phase membership grouping (metadata; a member
+    // signal is grouped under phase P iff the document's `<qualifier> phase` prose
+    // references it). Counted so an operator can see how much of a transaction's
+    // signal set the document places into a named phase.
+    let transactions_with_phase_membership = ir
+        .transactions
+        .iter()
+        .filter(|t| !t.phase_membership.is_empty())
+        .count();
+    let transaction_phase_groups: usize = ir
+        .transactions
+        .iter()
+        .map(|t| t.phase_membership.len())
+        .sum();
 
     let mut findings = Vec::new();
     if !ir.actor_signal_relations.is_empty() && ir.actor_ports.is_empty() {
@@ -6776,6 +6802,47 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         ));
     }
 
+    // KG-ISF-TRANSACTIONS.2i: the per-phase membership grouping (metadata). Emitted
+    // only when at least one transaction has a phase grouping (absence is not an
+    // event — the `PDF-VARIANT-DIGESTION.11` honesty rule; e.g. AXI/SWD, where the
+    // `<qualifier> phase` prose references no declared signal, honestly yield none).
+    // The message names a bounded set of transactions with their phase→member-count
+    // split for one-glance inspection; `related_ids` carry the grouped transaction
+    // ids. Pure observation off built IR — never lowered to `.isf` (FSMGen `2026-06-16`).
+    if transaction_phase_groups > 0 {
+        let grouped: String = ir
+            .transactions
+            .iter()
+            .filter(|t| !t.phase_membership.is_empty())
+            .take(8)
+            .map(|t| {
+                let phases = t
+                    .phase_membership
+                    .iter()
+                    .map(|m| format!("{}×{}", m.phase_name, m.ports.len()))
+                    .collect::<Vec<_>>()
+                    .join("/");
+                format!("{} [{}]", t.transaction_name, phases)
+            })
+            .collect::<Vec<_>>()
+            .join(", ");
+        findings.push(finding(
+            "intent_transaction_phase_membership",
+            ValidationFindingSeverity::Info,
+            "transactions",
+            format!(
+                "transaction phase membership (metadata, not lowered to .isf): {} transaction(s) carry a per-phase signal grouping across {} phase group(s) — {}",
+                transactions_with_phase_membership, transaction_phase_groups, grouped
+            ),
+            ir.transactions
+                .iter()
+                .filter(|t| !t.phase_membership.is_empty())
+                .take(8)
+                .map(|t| t.transaction_id.clone())
+                .collect(),
+        ));
+    }
+
     let report = ValidationReportRecord {
         report_id: format!("validation_intent_ir_{artifact_fingerprint}"),
         validated_stage: IrStage::IntentIr,
@@ -6984,6 +7051,15 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             metric(
                 "transaction_signal_members",
                 transaction_signal_members.to_string(),
+            ),
+            // KG-ISF-TRANSACTIONS.2i — per-phase membership grouping (metadata).
+            metric(
+                "transactions_with_phase_membership",
+                transactions_with_phase_membership.to_string(),
+            ),
+            metric(
+                "transaction_phase_groups",
+                transaction_phase_groups.to_string(),
             ),
             metric(
                 "timing_constraints",
@@ -9756,7 +9832,8 @@ mod tests {
         // read-only observation off built IR, so transactions are attached directly
         // (the recognizer itself is covered by ir/intent.rs::mint_named_transaction tests).
         use crate::ir::intent::{
-            TransactionIntent, TransactionPortDirection, TransactionPortRecord, TransactionStep,
+            TransactionIntent, TransactionPhaseMembership, TransactionPortDirection,
+            TransactionPortRecord, TransactionStep,
         };
 
         let tempdir = tempdir()?;
@@ -9791,6 +9868,15 @@ mod tests {
             validate_intent_ir(&intent_ir, "transaction_inventory_empty".to_string());
         assert_eq!(metric_value(&empty_report, "transactions"), Some("0"));
         assert!(!has_finding(&empty_report, "intent_transaction_inventory"));
+        // `.2i`: no transactions → no phase grouping + no phase-membership finding.
+        assert_eq!(
+            metric_value(&empty_report, "transaction_phase_groups"),
+            Some("0")
+        );
+        assert!(!has_finding(
+            &empty_report,
+            "intent_transaction_phase_membership"
+        ));
 
         // Positive: one corroborated transaction (`.2c` grounded signal set + `.2b`
         // composed body) and one recognition-only transaction (no signal set, no body).
@@ -9815,6 +9901,25 @@ mod tests {
                     drive_name: "HTRANS".to_string(),
                     actuals: vec!["IDLE".to_string()],
                 }],
+                // `.2i`: this transaction's membership grouped by phase (metadata).
+                phase_membership: vec![
+                    TransactionPhaseMembership {
+                        phase_name: "address".to_string(),
+                        ports: vec![TransactionPortRecord {
+                            port_name: "HTRANS".to_string(),
+                            direction: TransactionPortDirection::Output,
+                            width: None,
+                        }],
+                    },
+                    TransactionPhaseMembership {
+                        phase_name: "data".to_string(),
+                        ports: vec![TransactionPortRecord {
+                            port_name: "HREADY".to_string(),
+                            direction: TransactionPortDirection::Input,
+                            width: None,
+                        }],
+                    },
+                ],
                 source_block_ids: Vec::new(),
                 source_temporal_rule_ids: Vec::new(),
                 supporting_statement_ids: vec!["stmt_1".to_string()],
@@ -9826,6 +9931,7 @@ mod tests {
                 activation_port: None,
                 ports: Vec::new(),
                 steps: Vec::new(),
+                phase_membership: Vec::new(),
                 source_block_ids: Vec::new(),
                 source_temporal_rule_ids: Vec::new(),
                 supporting_statement_ids: vec!["stmt_2".to_string()],
@@ -9871,6 +9977,40 @@ mod tests {
                 .contains(&"txn_named_idle_transfer".to_string()),
             "transaction ids ride as related_ids for per-item review: {:?}",
             inventory.related_ids
+        );
+
+        // `.2i`: the idle_transfer carries a 2-phase grouping (address×1, data×1);
+        // the recognition-only exclusive_transfer carries none.
+        assert_eq!(
+            metric_value(&report, "transactions_with_phase_membership"),
+            Some("1")
+        );
+        assert_eq!(metric_value(&report, "transaction_phase_groups"), Some("2"));
+        assert!(has_finding(&report, "intent_transaction_phase_membership"));
+        let phase_finding = report
+            .findings
+            .iter()
+            .find(|f| f.finding_id == "intent_transaction_phase_membership")
+            .expect("expected the transaction phase-membership finding");
+        assert_eq!(phase_finding.severity, ValidationFindingSeverity::Info);
+        assert_eq!(phase_finding.category, "transactions");
+        assert!(
+            phase_finding.summary.contains("idle_transfer")
+                && phase_finding.summary.contains("address×1")
+                && phase_finding.summary.contains("data×1")
+                && phase_finding.summary.contains("not lowered to .isf"),
+            "phase-membership summary carries the per-phase split + the metadata caveat: {}",
+            phase_finding.summary
+        );
+        assert!(
+            phase_finding
+                .related_ids
+                .contains(&"txn_named_idle_transfer".to_string())
+                && !phase_finding
+                    .related_ids
+                    .contains(&"txn_named_exclusive_transfer".to_string()),
+            "only the grouped transaction rides as a related id: {:?}",
+            phase_finding.related_ids
         );
 
         Ok(())
