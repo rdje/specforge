@@ -130,7 +130,7 @@ grammar only, no name lists (ADR 0006); honest residual over fabrication. Scope 
 precise, accurate, step-by-step capture of ALL transactions — but delivered measurement-first, in safe
 slices, wire-docs first.
 
-## Frontier — `.2i` DONE (metadata-only per-phase membership grouping, FSMGen-confirmed); next lever = `.2j` table-column phase cue (candidate)
+## Frontier — `.2i` DONE (metadata-only per-phase membership grouping); `.2j` table-column phase cue MEASURED = NO-GO (document absence on AXI/SWD); the per-phase-membership surface is as complete as the wire docs ground
 
 The `.2e` checkpoint deferred the *choice* of ordering signal to "a dedicated measurement-first slice." **`.2f`
 ran that measurement (read-only, corpus-wide) and made the choice** — see the `.2f` node + `.2f` changelog
@@ -524,6 +524,34 @@ body-emission PARKED pending FSMGEN's answer + owner steer (the metadata-only gr
   rejected; drives are value-bearing behaviour); (2) value-less participation stays a residual / IntentIR metadata,
   never a body step. So option (a) (metadata-only grouping) is the implemented + FSMGen-blessed answer, exactly as
   above. The table-column phase cue (`| … | Write data phase |` cells) is the next recognition lever (`.2j`).
+- ID: `KG-ISF-TRANSACTIONS.2j` · Status: `done` (`2026-06-16`; measurement-first, read-only, docs-only — a
+  `.2h`-style "is the cue there?" slice; **NO-GO**) · Goal: **table-column phase cue** — test the `.2i` frontier
+  hypothesis that mining `<qualifier> phase` from TABLE cells/headers (not just prose) would move AXI/SWD off the
+  empty per-phase grouping. **Measured (read-only over the persisted EvidenceIR statements + SourceIR
+  `structured_tables` of the 4 wire docs):**
+  - **Signal↔phase co-occurrence (the cue's prerequisite):** AHB 23/36 phase statements co-occur with a declared
+    signal (incl. 10/10 flattened table rows like `| HWDATACHK | HWDATA | … | Write data phase |`); APB 7/7. **AXI-l
+    0/4, AXI-h 1/7 (a `four-phase` noise hit), SWD 0/63.** So the docs where `.2i` is empty have essentially ZERO
+    signal↔phase association in prose OR flattened table rows.
+  - **The flattened-row cue is ALREADY captured.** Every AHB/APB signal↔phase table co-occurrence is a flattened
+    statement the `.2i` `build_transaction_phases` scan already mines (that is why AHB's data-phase set is rich).
+    There is no un-mined table-ROW cue.
+  - **Phase-HEADER tables (the steel-man — a `Phase` column the prose scan would miss):** across all 4 docs, header
+    cells containing `phase`/`setup`/`access` = essentially none; the only two "phase"-header tables are AXI-l
+    `table_0150` (a coherency-SEQUENCE table — its `Phase` column is a step number 1/2/3, rows `Coherent domain
+    access`/…, NO declared signals) and SWD `table_0057` (an ACK-RESPONSE table — `Operation requested | ACK
+    received | Host response Data phase | …`, rows `R/W/x` + `OK/WAIT/FAULT`, NO signal→phase mapping). Neither maps
+    declared signals to phases; mining them would fabricate.
+  **Decision (honest-residual + scoring-rigor doctrine): NO-GO — do NOT build a table-column phase cue.** It would
+  find nothing new on AHB/APB (already captured) and nothing at all on AXI/SWD (the cue is genuinely absent —
+  AXI barely mentions phases; SWD mentions them abundantly but always abstractly / by packet, never tied to a
+  declared wire). AXI/SWD per-signal phase membership is a **document absence**, not an extraction gap. **Two
+  distinct real gaps surfaced (recorded, not in scope here):** (a) APB's phase prose DOES reference signals
+  (PADDR/PWDATA/PWRITE/PENABLE/PREADY) but `.2i` groups only `access:{PCLK}` because the recognised APB transactions'
+  `.2c` MEMBERSHIP is thin — a `.2c`-membership-breadth lever, not a phase-cue one; (b) AXI/SWD phase order/columns
+  live in TIMING DIAGRAMS — a VLM-tier lever. Both future candidates. **Gates:** read-only/docs-only — no code,
+  WIRE-BASED-100 untouched ✓, ADR-0006 ✓ (the cue measured is universal grammar, no name list).
+  `[[project_kg_isf_transactions]]` / `[[feedback_scoring_rigor]]`.
 
 ## Changelog
 
@@ -721,3 +749,14 @@ body-emission PARKED pending FSMGEN's answer + owner steer (the metadata-only gr
   phase". Cross-phase ORDER + per-signal VALUE stay honest residuals (`.2h`); future ISF phase-group metadata
   surface (FSMGen-owned) = the cross-`.isf` carry path; table-column phase cue = `.2j` lever.
   `[[project_kg_isf_transactions]]` / `[[feedback_isf_no_hacks]]`.
+- `2026-06-16`: **`.2j` DONE — measurement-first, read-only, docs-only; NO-GO (table-column phase cue).** Tested the
+  `.2i` frontier hypothesis (mine `<qualifier> phase` from TABLE cells/headers to move AXI/SWD off the empty
+  grouping). Measured over the persisted EvidenceIR statements + SourceIR `structured_tables`: signal↔phase
+  co-occurrence is AHB 23/36 (incl. 10/10 flattened table rows) + APB 7/7, but **AXI-l 0/4, AXI-h 1/7 (noise), SWD
+  0/63** — and the AHB/APB table-row co-occurrences are **already captured** by the `.2i` statement scan, while the
+  only two phase-HEADER tables (AXI-l `table_0150` coherency-sequence; SWD `table_0057` ACK-response) map NO declared
+  signals to phases. **Decision: NO-GO — no table cue to build** (already mined where present; genuinely absent on
+  AXI/SWD — a document absence, not an extraction gap). Two distinct real gaps recorded as future candidates: APB
+  membership thinness (a `.2c` lever, not phase-cue) and AXI/SWD timing-diagram phase columns (VLM-tier). Gates:
+  read-only/docs-only — WIRE-BASED-100 untouched ✓, ADR-0006 ✓. The per-phase-membership surface is now as complete
+  as the wire docs ground. `[[project_kg_isf_transactions]]` / `[[feedback_scoring_rigor]]`.

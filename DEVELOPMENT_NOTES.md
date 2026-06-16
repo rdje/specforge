@@ -1,4 +1,31 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-TRANSACTIONS.2j (`2026-06-16`) — table-column phase cue: measured NO-GO (measurement-first, docs-only)
+- **Why:** `.2i` left AXI/SWD with an empty per-phase grouping. The frontier hypothesis was that AHB's data-phase
+  richness came from TABLE cells (`| HWDATACHK | HWDATA | … | Write data phase |`) and that mining `<qualifier>
+  phase` from table cells/headers would move AXI/SWD off zero. Before coding it — measurement-first — I tested
+  whether the cue actually exists in those documents.
+- **What I measured (read-only over the persisted EvidenceIR statements + SourceIR `structured_tables`):**
+  - **Signal↔phase co-occurrence** (a declared signal token in the same statement as a `<word> phase` mention,
+    statements include flattened table rows): AHB 23/36 (incl. 10/10 flattened table rows), APB 7/7, **AXI-l 0/4,
+    AXI-h 1/7 (a `four-phase` noise hit, `AC`/`DVM` abbreviations), SWD 0/63.**
+  - **Already-captured:** the AHB/APB co-occurrences are flattened statements the `.2i` `build_transaction_phases`
+    scan already mines — there is no un-mined table-ROW cue.
+  - **Phase-HEADER tables (steel-man — a `Phase` column with bare cells the literal-"phase" scan would miss):**
+    across all 4 wire docs, the only two are AXI-l `table_0150` (`Phase | Description | Coherent domain … | External
+    agent …`; the `Phase` column is a step number 1/2/3, rows are `Coherent domain access`/`Coherent domain clean`/
+    `External agent access` — multi-step coherency sequence, NO declared signals) and SWD `table_0057` (`Operation
+    requested | ACK received | Host response Data phase | Additional action`; rows `R/W/x` + `OK/Invalid ACK/WAIT/
+    FAULT` + prose — an ACK-response table, NO signal→phase mapping). Neither tabulates declared-signal → phase.
+- **Decision: NO-GO.** A table-column phase cue would find nothing new (AHB/APB already captured) and nothing at all
+  on AXI/SWD; forcing a phase membership where the document states none would fabricate (honest-residual +
+  `[[feedback_scoring_rigor]]`). AXI/SWD per-signal phase membership is a genuine **document absence**.
+- **Distinct real gaps surfaced (recorded, not in `.2j` scope):** (a) APB's `Setup`/`Access` phase prose DOES
+  reference signals (PADDR/PWDATA/PWRITE/PENABLE/PREADY), but `.2i` grouped only `access:{PCLK}` because the
+  recognised APB transactions (`read_transfer`/`write_transfer`) carry a thin `.2c` membership — a `.2c`-membership
+  breadth lever, not a phase-cue one; (b) AXI/SWD phase ordering/columns live in TIMING DIAGRAMS — a VLM-tier lever.
+- **Gates:** read-only/docs-only — no code, WIRE-BASED-100 untouched, ADR-0006 ✓. The transaction tree's measured
+  frontier is now exhausted on the wire docs; the per-phase-membership surface is as complete as they ground.
+
 ## KG-ISF-TRANSACTIONS.2i (`2026-06-16`) — per-phase membership grouping as IntentIR metadata (option a, FSMGen-confirmed)
 - **What + why:** group each named transaction's `.2c` signal-set membership by the document's `.2g` phases, so the
   IntentIR records *which of a transaction's signals belong to its address/data/… phase* — bar #5 "as far as the

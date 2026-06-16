@@ -1,3 +1,25 @@
+### KG-ISF-TRANSACTIONS.2j — table-column phase cue MEASURED = NO-GO (measurement-first, docs-only)
+Tested the `.2i` frontier hypothesis: would mining `<qualifier> phase` from TABLE cells/headers (not just prose)
+move AXI/SWD off the empty per-phase grouping? **No — the cue is not there to mine** (read-only, no code).
+
+- **Signal↔phase co-occurrence** (EvidenceIR statements, which include flattened table rows): AHB 23/36 (incl.
+  10/10 table rows like `| HWDATACHK | HWDATA | … | Write data phase |`), APB 7/7 — but **AXI-l 0/4, AXI-h 1/7 (a
+  `four-phase` noise hit), SWD 0/63.**
+- **The flattened-row cue is already captured** by the `.2i` statement scan (table rows are statements), so there is
+  no un-mined table-ROW cue on AHB/APB.
+- **Phase-HEADER tables** (the steel-man — a `Phase` column the prose scan would miss): across all 4 wire docs the
+  only two are AXI-l `table_0150` (a coherency-SEQUENCE table — `Phase` is a step number 1/2/3, rows `Coherent
+  domain access`/…, no declared signals) and SWD `table_0057` (an ACK-RESPONSE table — rows `R/W/x`+`OK/WAIT/FAULT`,
+  no signal→phase mapping). Neither maps declared signals to phases.
+- **Decision (honest-residual + scoring-rigor): NO-GO.** Nothing to mine where present (already captured); genuinely
+  absent on AXI/SWD — a document absence, not an extraction gap (AXI barely mentions phases; SWD mentions them
+  abundantly but always abstractly / by packet, never tied to a declared wire). The per-phase-membership surface is
+  now as complete as the wire docs ground.
+- **Two distinct real gaps recorded** (out of `.2j` scope): APB phase prose DOES name signals but `.2i` groups only
+  `access:{PCLK}` because the recognised APB transactions' `.2c` membership is thin (a `.2c`-breadth lever); AXI/SWD
+  phase columns live in TIMING DIAGRAMS (a VLM-tier lever). Both future candidates.
+- Gates: read-only/docs-only — WIRE-BASED-100 untouched; ADR-0006 ✓.
+
 ### KG-ISF-TRANSACTIONS.2i — per-phase membership grouping as IntentIR metadata (option a, FSMGen-confirmed)
 With FSMGen's answer confirming the honest-residual path (`FSMGEN-REFRESH-INTEGRATE-3`), `.2i` ships the grounded
 per-phase membership grouping as **checked IntentIR metadata** — not ordered ISF steps, no fabricated value or order.

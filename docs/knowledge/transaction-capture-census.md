@@ -38,6 +38,10 @@ answers:
   - "where does TransactionPhaseRecord.signal_set come from (build_transaction_phases, ir/semantic.rs — phase-naming statements' signals ∩ declared inventory, the .2c technique)"
   - "what is the validate intent transaction phase-membership surface (transactions_with_phase_membership + transaction_phase_groups metrics + intent_transaction_phase_membership finding)"
   - "does .2i per-phase grouping change the emitted .isf (no — phase_membership is IntentIR metadata, the emitter lowers steps not it; byte-identical on all 4 wire docs)"
+  - "would a table-column phase cue move AXI/SWD off empty per-phase grouping (no — .2j NO-GO; the cue is already captured where present and genuinely absent on AXI/SWD)"
+  - "why is AXI/SWD per-signal phase membership empty (document absence — AXI 0/4, SWD 0/63 signal↔phase co-occurrence; phases described abstractly/by-packet, not per declared wire — not an extraction gap)"
+  - "are the AXI/SWD phase-header tables a signal→phase cue (no — AXI table_0150 is a coherency-sequence table, SWD table_0057 is an ACK-response table; neither maps declared signals to phases)"
+  - "why does APB phase grouping stay minimal despite phase prose naming signals (.2c membership thinness — read/write_transfer carry only PCLK; a .2c-breadth lever, not a phase-cue one)"
 date: 2026-06-16
 tags: [kg-isf-transactions, transactions, intent-ir, isf, adr-0006, measured, north-star, ir-intent, recognize-digital-patterns, baseline, fsmgen-feedback]
 evidence: docs/research/transaction-capture-census.md (full census §1–§4); docs/tasks/KG-ISF-TRANSACTIONS.md (sharpened 7-point bar + .2a/.2b/.2c slices); crates/specforge/src/ir/intent.rs (synthesize_transactions + recognize_digital_patterns, the 3 hardcoded Patterns 3/4/5); generated/intent_ir/*/intent_ir.json (the transactions[] surface scanned)
@@ -167,6 +171,18 @@ is the greppable summary so the next session does not re-excavate it.
 > address:{HREADY}, data:{HRDATA,HREADY,HREADYOUT,HWDATA}; HCLK/HWRITE unphased), APB minimal (access:{PCLK}), AXI &
 > SWD honest-empty. Gates: ADR-0006 ✓, WIRE-BASED-100 orthogonal ✓, `kg-bench` 156/156 ✓, `run_ci.sh` green (lib
 > 1645) ✓. Next lever: `.2j` table-column phase cue (would move AXI/SWD off zero).
+
+> **STATUS UPDATE — `.2j` MEASURED = NO-GO (`2026-06-16`, docs-only).** The table-column phase cue is NOT there to
+> mine. Signal↔phase co-occurrence (EvidenceIR statements incl. flattened table rows): AHB 23/36 (incl. 10/10 table
+> rows), APB 7/7, but **AXI-l 0/4, AXI-h 1/7 (noise), SWD 0/63** — and the AHB/APB co-occurrences are ALREADY
+> captured by the `.2i` `build_transaction_phases` statement scan (flattened rows are statements). The only two
+> phase-HEADER tables across the 4 wire docs — AXI-l `table_0150` (coherency-SEQUENCE; `Phase` = step number, rows
+> `Coherent domain access`/…, no signals) and SWD `table_0057` (ACK-RESPONSE; rows `R/W/x`+`OK/WAIT/FAULT`, no
+> signal→phase) — map no declared signals to phases. **NO-GO** (already mined where present; genuine document
+> absence on AXI/SWD, not an extraction gap — forcing it would fabricate). Recorded future levers: APB `.2c`
+> membership breadth (APB phase prose names signals but the recognised txns carry a thin membership) + AXI/SWD
+> timing-diagram phase columns (VLM-tier). The per-phase-membership surface is now as complete as the wire docs
+> ground; the transaction tree's measured frontier is exhausted on them.
 
 ## What the `transactions[]` surface holds today
 

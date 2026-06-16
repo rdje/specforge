@@ -401,6 +401,30 @@ phases in order — is recorded as a future candidate, not built here.
 **Gates:** read-only/docs-only — WIRE-BASED-100 untouched; ADR-0006 ✓ (the signals measured are universal grammar,
 no name list). Frontier → `.2i` (membership-by-phase grouping + per-phase body, ordering only where grounded).
 
+### 4.7 `.2i` + `.2j` OUTCOME (`2026-06-16`) — per-phase membership grouping (CODE) + table-column cue (NO-GO)
+
+**`.2i` (CODE, option (a), FSMGen-confirmed):** with FSMGen's `2026-06-16` answer settling the shape (NOT ordered
+ISF body steps — a value-less drive is rejected, bodies are source-ordered — but **checked IntentIR metadata**),
+`.2i` shipped the grounded per-phase membership grouping. `SemanticIr.TransactionPhaseRecord` gains `signal_set`
+(`build_transaction_phases`, the `.2c` intersection technique); `IntentIr.TransactionIntent` gains `phase_membership`
+(grouping each transaction's `.2c` membership by phase — member ∈ phase iff the phase's prose references it — reusing
+the `.2c` direction); `validate <intent-ir>` reports it. Measured live: AHB faithful (`basic_transfer` →
+address:{HREADY}, data:{HRDATA,HREADY,HREADYOUT,HWDATA}; HCLK/HWRITE honestly unphased; HREADY spans both), APB
+minimal (access:{PCLK}), AXI & SWD honest-empty. **`.isf` byte-identical ×4 wire docs** (metadata, not `steps`);
+gates all green (`kg-bench` 156/156, `run_ci.sh` lib 1645).
+
+**`.2j` (measurement-first, docs-only, NO-GO):** tested whether mining `<qualifier> phase` from TABLE cells/headers
+would move AXI/SWD off the empty grouping. Signal↔phase co-occurrence: AHB 23/36 (incl. 10/10 flattened table rows),
+APB 7/7, but **AXI-l 0/4, AXI-h 1/7 (a `four-phase` noise hit), SWD 0/63.** The AHB/APB table-ROW co-occurrences are
+already captured by the `.2i` statement scan (flattened rows are statements), and the only two phase-HEADER tables —
+AXI-l `table_0150` (coherency-SEQUENCE: its `Phase` column is a step number 1/2/3, rows `Coherent domain access`/…,
+no declared signals) and SWD `table_0057` (ACK-RESPONSE: `Operation requested | ACK received | Host response Data
+phase | …`, rows `R/W/x`+`OK/WAIT/FAULT`, no signal→phase mapping) — map no declared signals to phases. **Decision:
+NO-GO** (nothing to mine where present; genuinely absent on AXI/SWD — a document absence, not an extraction gap). Two
+distinct real gaps recorded as future candidates: APB membership thinness (a `.2c`-breadth lever, not phase-cue) and
+AXI/SWD timing-diagram phase columns (VLM-tier). The per-phase-membership surface is now as complete as the wire
+docs ground.
+
 ## 5. Owner directive — sharpened (`2026-06-16`, multi-message)
 
 The owner reinforced the requirement across several messages while this census was being finalised; the
