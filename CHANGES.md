@@ -1,3 +1,35 @@
+### KG-ISF-TRANSACTIONS.2l — AXI/SWD per-signal phase membership: VLM-tier candidate RESOLVED measurement-first
+Measurement-first, read-only + a bounded VLM probe, docs-only (owner-chosen fresh session for this design-heavy +
+RAM-heavy slice). Closes the last `.2j`-recorded transaction candidate — "AXI/SWD timing-diagram phase columns
+(VLM-tier)" — by MEASURING before any code and weighing the cheaper deterministic cue against the VLM, per the
+scoring-rigor + structured-first/best-wins doctrines. **Q1 (AXI) → GO, but DETERMINISTIC (VLM superseded):** AXI's
+transaction phases (address/data/response) ARE its channels, and the document's OWN caption-named tables declare
+exactly the signals in each channel. Measured live over the persisted AXI EvidenceIR —
+`table_signal_declaration_provenance` (411 entries) maps each signal to the channel table that declared it:
+`B1.1 Write request channel signals`→26 `AW*` (write address phase), `B1.2 Write data`→15 `W*` (data),
+`B1.3 Write response`→14 `B*` (response), `B1.4 Read request`→26 `AR*`, `B1.5 Read data`→18 `R*`,
+`B1.6/B1.7`→snoop. So AXI per-signal phase membership is recoverable WITHOUT a VLM, via the universal caption cue
+`<role> channel signals` (role→phase: request→address, data→data, response→response) — the document's own
+vocabulary, no name list (ADR 0006). **Q2 (SWD) → honest DEGENERATE absence:** SWD is a 2-wire serial protocol
+(`SWCLK`+`SWDIO`); its packet phases (request/ACK/data/turnaround) are TIME segments of bit-fields on the single
+shared `SWDIO` wire (confirmed visually by Figure B4-1: `Start│APnDP│RnW│A│Parity│Stop│Park │Trn│ ACK │Trn│
+WDATA[0:31] │Parity`, "Wire driven by: Host│Target│Host"). The phase names label bit-fields, not declared signals;
+SWD's recognised phases all carry `signal_set=[]` and its transactions `ports=[]` → nothing to recover by any
+lever; forcing it would fabricate. **Q3 (VLM) → evidence-based NO-GO:** the AXI/SWD `timing_diagram` crops carry no
+per-declared-signal phase-column cue (generic handshake waveforms / credit-timing / dependency graphs / single-wire
+packets). A bounded `qwen2.5vl:7b` probe (2 crops, temp 0) was internally contradictory, merely re-stated the
+deterministic channel mapping while missing the figure's real content (the ordering arrows), and hallucinated
+signal semantics (called both `CRDT` and `VALID` "write data valid"). It is RAM-expensive too — the 7B VLM loaded
+as **13 GB** and pushed the host to **87% used**, across the 85% autonomous-kill threshold (`ollama stop` issued
+immediately, recovered to 73% free). The only VLM-unique signal in the diagrams is phase ORDER (`picture_0011`
+dependency arrows `AW*`/`W*`→`B*`) = the `.2h` residual, already FSMGen-blessed as "don't fabricate order".
+**Decision:** the VLM-tier candidate is RESOLVED — replaced by a deterministic AXI-family channel-membership lever
+(`.2m`, RAM-safe, structured-first); SWD per-signal membership + the VLM-membership lever are NO-GO honest-absence;
+the VLM-tier transaction frontier is exhausted. **Gates:** read-only/docs-only — WIRE-BASED-100 untouched,
+ADR-0006 ✓ (the channel-caption cue is the document's own universal vocabulary, no name list); no Rust code
+changed; book unchanged (no user-facing behavior change yet — the book lands with the `.2m` implementation). KM
+card `transaction-phase-membership-vlm-vs-channel` (KNOWLEDGE_MAP.md regenerated, derive-and-diff green).
+
 ### KG-ISF-TRANSACTIONS.2k — descendant-subsection scope for a transaction's signal-set membership
 CODE (measurement-first, GO). Owner substantive gap #3 (transactions), the first of the two `.2j`-recorded future
 candidates: the APB `.2c`-membership-breadth lever (deterministic, RAM-safe). A transaction is NAMED from a section

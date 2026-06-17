@@ -130,7 +130,7 @@ grammar only, no name lists (ADR 0006); honest residual over fabrication. Scope 
 precise, accurate, step-by-step capture of ALL transactions — but delivered measurement-first, in safe
 slices, wire-docs first.
 
-## Frontier — `.2i` DONE (metadata-only per-phase membership grouping); `.2j` table-column phase cue MEASURED = NO-GO (document absence on AXI/SWD); `.2k` DONE (descendant-subsection membership scope — APB 1→10/7, AXI atomic/prefetch/writezero/writedeferrable 0→22/8/6/10, `.isf` byte-identical, WIRE-BASED-100 orthogonal). Remaining recorded candidate: AXI/SWD timing-diagram phase columns (VLM-tier). The deterministic per-transaction membership surface is now as complete as the wire docs' prose grounds
+## Frontier — `.2i` DONE (metadata-only per-phase membership grouping); `.2j` table-column phase cue MEASURED = NO-GO; `.2k` DONE (descendant-subsection membership scope); `.2l` DONE (`2026-06-17`, measurement-first — the VLM-tier candidate is RESOLVED: AXI per-signal phase membership is recoverable DETERMINISTICALLY from the document's caption-named `B1.x … channel signals` tables — `provenance` already maps signal→channel, channel→phase clean — so the VLM lever is superseded; SWD is honest degenerate absence — 2-wire serial, bit-field time-phases on shared SWDIO; the bounded VLM probe confirmed redundant/fabrication-prone + RAM-expensive (7B→13 GB→host 87% used)). **NEXT recorded candidate → `.2m`: a DETERMINISTIC AXI-family channel-membership lever** (group a transaction's `.2c`/`.2k` membership by its document-grounded channel, recovered from the `<role> channel signals` table captions; RAM-safe, structured-first). The VLM-tier transaction frontier is exhausted
 
 The `.2e` checkpoint deferred the *choice* of ordering signal to "a dedicated measurement-first slice." **`.2f`
 ran that measurement (read-only, corpus-wide) and made the choice** — see the `.2f` node + `.2f` changelog
@@ -593,6 +593,46 @@ body-emission PARKED pending FSMGEN's answer + owner steer (the metadata-only gr
   candidate (AXI/SWD timing-diagram phase columns, VLM-tier) stays a future lever. KM card
   `transaction-membership-subsection-scope`. `[[project_kg_isf_transactions]]` / `[[feedback_scoring_rigor]]` /
   `[[feedback_no_hardcoded_chip_spec_names]]`.
+- ID: `KG-ISF-TRANSACTIONS.2l` · Status: `done` (`2026-06-17`; measurement-first, read-only + bounded VLM probe;
+  docs-only; owner-chosen FRESH SESSION) · Goal: **is AXI/SWD per-signal phase membership recoverable, and by
+  which lever?** — close out the last `.2j`-recorded candidate (AXI/SWD timing-diagram phase columns, VLM-tier)
+  the honest way: MEASURE before any code, weigh the cheaper deterministic cue against the VLM, decide GO/NO-GO
+  per the scoring-rigor doctrine (demonstrate per-item, never assume).
+  **Q1 (AXI) → GO, but DETERMINISTIC (the VLM lever is superseded).** AXI's transaction phases are its CHANNELS,
+  and the document's OWN caption-named tables declare exactly the signals in each channel — measured live over the
+  persisted AXI EvidenceIR: `table_signal_declaration_provenance` (411 entries) maps each signal to the channel
+  table that declared it: `B1.1 Write request channel signals`→26 `AW*` (write **address** phase), `B1.2 Write
+  data`→15 `W*` (**data**), `B1.3 Write response`→14 `B*` (**response**), `B1.4 Read request`→26 `AR*`, `B1.5 Read
+  data`→18 `R*`, `B1.6/B1.7`→snoop. So per-signal phase membership for AXI is recoverable WITHOUT a VLM, via the
+  caption cue `<role> channel signals` (role→phase: request→address, data→data, response→response) — the
+  document's own vocabulary, universal grammar, no name list (ADR 0006). The VLM is unnecessary + RAM-expensive.
+  **Q2 (SWD) → honest DEGENERATE absence (no lever recovers it).** SWD is a 2-wire serial protocol
+  (`SWCLK`+`SWDIO`); its packet phases (request/ACK/data/turnaround) are TIME segments of BIT-FIELDS on the single
+  shared `SWDIO` wire — confirmed VISUALLY by Figure B4-1 (`Start│APnDP│RnW│A│Parity│Stop│Park │Trn│ ACK │Trn│
+  WDATA[0:31] │Parity`, "Wire driven by: Host│Target│Host"). The phase names label bit-fields (`Start`/`ACK`/
+  `WDATA`), NOT declared signals; SWD's recognised phases all carry `signal_set=[]` and its transactions
+  `ports=[]`. Per-SIGNAL phase membership is structurally degenerate — nothing to recover by deterministic OR
+  VLM lever; forcing it = fabrication.
+  **Q3 (VLM) → evidence-based NO-GO for a VLM-membership lever.** Read the actual crops (ground truth): AXI
+  `timing_diagram`s are generic handshake waveforms (`picture_0008` VALID/READY), credit-timing examples
+  (`picture_0013` ACLK/ARESETn/CRDT/VALID), or handshake-DEPENDENCY graphs (`picture_0011` `AW*`/`W*`→`B*`) — NONE
+  carries a per-declared-signal phase-column cue beyond the deterministic channel mapping. Bounded probe
+  (`qwen2.5vl:7b`, 2 crops, temp 0): on `picture_0011` the VLM was internally CONTRADICTORY ("does not depict
+  phases" then listed address/write/response phases) and merely re-stated the deterministic channel mapping while
+  MISSING the figure's real content (the ordering arrows); on `picture_0013` it correctly said "no phases" but
+  hallucinated signal semantics (called both `CRDT` and `VALID` "write data valid"). So a VLM-membership lever is
+  redundant-at-best / fabrication-prone-at-worst. **RAM:** the 7B VLM loaded as **13 GB** (image context + KV
+  cache, 100% Metal) and pushed the host to **87% used** — across the 85% autonomous-kill threshold; `ollama stop`
+  issued immediately, recovered to 73% free (validates `[[feedback_ram_ceiling_monitor]]`; a further argument for
+  the deterministic cue). The only VLM-UNIQUE signal in the diagrams is phase ORDER (`picture_0011` arrows
+  AW/W→B) = the `.2h` residual, already FSMGen-blessed as "don't fabricate order".
+  **DECISION:** the "AXI/SWD timing-diagram phase columns (VLM-tier)" candidate is RESOLVED — **replaced by a
+  DETERMINISTIC AXI-family channel-membership lever** (`.2m` candidate, RAM-safe, structured-first/best-wins);
+  SWD per-signal membership + the VLM-membership lever are **NO-GO honest-absence**. The VLM-tier frontier on the
+  transaction tree is exhausted. **Gates:** read-only/docs-only — WIRE-BASED-100 untouched ✓, ADR-0006 ✓ (the
+  channel-caption cue is the document's own universal vocabulary, no name list). KM card
+  `transaction-phase-membership-vlm-vs-channel`. `[[project_kg_isf_transactions]]` / `[[feedback_scoring_rigor]]` /
+  `[[feedback_multi_strategy_best_wins]]` / `[[feedback_ram_ceiling_monitor]]` / `[[project_llm_provider_ollama_qwen]]`.
 
 ## Changelog
 
