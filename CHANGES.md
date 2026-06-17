@@ -1,3 +1,24 @@
+### KG-ISF-COMPLETENESS.3 — relation-completeness measurement: 0-relation docs are stale-intent (recoverable) + honest register-protocol absence, NOT an extraction gap
+Owner-directed substantive north-star push (after the owner pushed back on the "buildable frontier exhausted"
+framing). Read-only census over all 78 `evidence_ir.json` + 36 `intent_ir.json` + content sampling, to answer
+bar #2: why do whole docs (`nvme`/`tilelink`/`wbspec`/`i2c`/`ccix`/VT-d/IOMMU) carry actors+constraints but
+ZERO `actor_signal_relations`? **Answer: it is NOT a relation-extraction gap.** Two cleanly-separated causes.
+**(A) STALE IntentIR (recoverable):** the canonical `intent_ir.json` is stale relative to its
+`evidence_ir.json` — `tilelink_1_7_1` carries 39 relations in evidence but 0 in its (05-16-dated) intent;
+`tilelink_1_8_0` 40→0, `um10204` I2C 17→0, `wbspec` 1→0, plus a broader "intent older than evidence" set
+(gic_600/mmu_700/ATS/dti/opencapi×3/usb4). A deterministic `semantic`→`intent` rebuild (no LLM/Docling)
+recovers them — **PROVEN live on `tilelink_1_7_1`: relations 0→39, actor_ports 0→69, all 40 actors connected**
+(RAM steady 77%). Operational cause (evidence rebuilt under a sweep without cascading downstream; only
+`converge` rebuilds the whole chain), not a code bug. **(B) HONEST ABSENCE (not a gap):** `nvme`/`iommu`/
+VT-d/`ccix` declare ~0 wire signals (content-sampled — their drive/read "cues" are ToC entries, register
+legends `RO`/`RW`, and agent-MESSAGE prose, never agent-SIGNAL); these register/command/coherency protocols
+express intent through `register_records`/`message_field_records`/`transactions`, so 0 actor-signal relations
+is CORRECT — forcing them would FABRICATE. **Genericity insight:** the relation surface is intrinsically
+wire-protocol-shaped; relation-completeness is the wrong bar dimension for register/message protocols.
+Docs-only (no Rust change). Frontier → corpus refresh (owner gap #2) + a generic stage-staleness `validate`
+detector. Report `docs/research/relation-completeness-measurement.md`; KM
+`relation-completeness-staleness-vs-absence`; tree `KG-ISF-COMPLETENESS.3`.
+
 ### GRITS-CROSS-TOOL.4 — document the shipped `grits-consensus` command (mdBook + README); closes a book-coverage drift
 Docs-only. A fresh-session bootstrap audit (the mandated README→roadmap→codebase→mdBook re-read) caught that
 the `GRITS-CROSS-TOOL` tree closed (`.1`–`.3`) having SHIPPED the `grits-consensus` CLI command

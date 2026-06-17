@@ -1,4 +1,33 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-COMPLETENESS.3 (`2026-06-17`) — relation-completeness: staleness vs honest absence (measurement-first)
+
+**Why now.** Owner pushed back hard on my "buildable frontier exhausted" framing (SpecForge is far from
+complete) and directed me to attack three substantive north-star gaps; #1 is the relation-incompleteness the
+north star names: whole docs with actors+constraints but 0 `actor_signal_relations`. Measurement-first,
+read-only, to decide recoverable-gap vs genuine-absence before any code.
+
+**Method.** Census `actor_signal_relations` per `intent_ir.json` (flag the 0s) and per `evidence_ir.json`
+(same docs), compare counts + mtimes (staleness signal), and content-sample the genuine-0 docs for drive/read
+cues + declared wire signals. Then prove the staleness hypothesis with one live deterministic rebuild.
+
+**Finding — NOT an extraction gap; two causes.** (A) **STALE IntentIR (recoverable):** the canonical intent
+is stale relative to evidence — `tilelink_1_7_1` evidence 39 / intent 0 (intent dated 05-16, evidence 06-08);
+also `tilelink_1_8_0` 40→0, `um10204` I2C 17→0, `wbspec` 1→0, + a broader "intent older than evidence" set.
+A deterministic `semantic`→`intent` rebuild recovers them — proven live on `tilelink_1_7_1`: relations 0→39,
+actor_ports 0→69, all 40 actors connected (RAM steady 77%). Operational cause (a sweep rebuilt evidence
+without cascading downstream; per-stage commands do not auto-cascade, only `converge` does), not a code bug.
+(B) **HONEST ABSENCE (not a gap):** `nvme`/`risc_v_iommu`/VT-d/`ccix` declare ~0 wire signals — their
+drive/read "cues" are ToC entries, register legends (`RO`/`RW`/`RW1C`), and agent-MESSAGE/transaction prose,
+never agent-SIGNAL relations. These register/command/coherency protocols carry intent in
+`register_records`/`message_field_records`/`transactions`; 0 actor-signal relations is correct, and minting
+relations would fabricate (north-star caution). **Genericity:** the relation surface is intrinsically
+wire-protocol-shaped → relation-completeness is the wrong bar dimension for register/message protocols.
+
+**Outcome.** Docs-only (no Rust change). Two spun follow-ups: (i) corpus refresh so the recovered relations
+land canonically (owner gap #2, next slice); (ii) a generic stage-staleness `validate` detector so a stale
+downstream artifact silently dropping relations is surfaced, not hidden. Report
+`docs/research/relation-completeness-measurement.md`; KM `relation-completeness-staleness-vs-absence`.
+
 ## GRITS-CROSS-TOOL.4 (`2026-06-17`) — document the shipped `grits-consensus` command (mdBook + README)
 
 **Why now.** Found during the mandated fresh-session bootstrap re-read (README → roadmap → codebase → mdBook).

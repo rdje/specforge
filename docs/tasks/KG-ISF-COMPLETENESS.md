@@ -59,7 +59,7 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 
 ## Task Tree
 
-- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (this scope/ownership slice), `.1`+ TBD
+- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface, done), `.2` (ISF lowering-fidelity), `.3` (relation-completeness — bar #2)
 - ID: `KG-ISF-COMPLETENESS.0` · Status: `done` (`2026-06-16`, docs-only ownership/scoping slice) · Goal:
   own the north star, define the checkable bar, record the measured baseline, reverse the "defer ISF"
   steer in the live docs. No code (doctrine: own before touching). Memory `project_kg_isf_completeness`.
@@ -338,9 +338,44 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   gauge would need full per-category breakdown for little operator value (the project already has rich
   `validate` inventories). Re-open only if an owner wants the categorized ISF-lowering residual surfaced.
   ADR-0006 (universal counts, no name list).
+- ID: `KG-ISF-COMPLETENESS.3` · Status: `active` (measurement DONE `2026-06-17`, read-only; owner-directed
+  substantive north-star push after the owner pushed back on "buildable frontier exhausted") · Goal:
+  **bar #2 relation-completeness** — investigate why whole docs carry actors+constraints but ZERO
+  `actor_signal_relations` (`nvme`/`tilelink`/`wbspec`/`i2c`/`ccix`/VT-d/IOMMU), the exact "real-agent
+  relation-incompleteness" the north star names. **Measured (read-only census over 78 evidence + 36 intent
+  artifacts + content sampling): the 0-relation docs are NOT a relation-extraction gap.** Two distinct
+  causes, cleanly separated:
+  **(A) STALE IntentIR (recoverable).** The canonical `intent_ir.json` is stale relative to its
+  `evidence_ir.json` corpus-wide: `tilelink_1_7_1` carries **39** relations in evidence but **0** in its
+  (05-16-dated) intent; `tilelink_1_8_0` 40→0, `um10204` i2c 17→0, `wbspec` 1→0; plus a broader "intent
+  older than evidence" set (gic_600 / mmu_700 / ihi0082 ATS / dti / opencapi×3 / usb4). A **deterministic
+  `semantic`→`intent` rebuild** (no LLM, no Docling) recovers them — **PROVEN live on `tilelink_1_7_1`:
+  relations 0→39, actor_ports 0→69, all 40 actors connected** (RAM steady 77%). Operational cause (evidence
+  rebuilt under a sweep without cascading downstream; `converge` rebuilds the whole chain, stage commands do
+  not auto-cascade), not a code bug.
+  **(B) HONEST ABSENCE (not a gap).** `nvme`/`risc_v_iommu`/VT-d/`ccix` declare **~0 wire signals**
+  (content-sampled: their drive/read "cues" are ToC entries, register-access descriptions `RO`/`RW`, and
+  agent-MESSAGE/transaction prose — never agent-SIGNAL relations). These are register/command/coherency
+  protocols whose intent lives in `register_records`/`message_field_records`/`transactions`, NOT in
+  actor-signal relations. 0 relations is CORRECT; forcing them would FABRICATE (the north-star caution).
+  **Genericity insight:** the actor-signal-relation surface is intrinsically wire-protocol-shaped;
+  relation-completeness is the wrong bar dimension for register/message protocols. **Frontier → (i)** corpus
+  refresh so the recovered relations land canonically (owner gap #2); **(ii)** a generic STAGE-STALENESS
+  detector in `validate` so a stale downstream artifact silently dropping relations is surfaced, not hidden
+  (candidate code slice — serves "the KG must be COMPLETE"). ADR-0006. Report
+  `docs/research/relation-completeness-measurement.md`; KM `[[relation-completeness-staleness-vs-absence]]`.
 
 ## Changelog
 
+- `2026-06-17`: **`.3` measurement DONE** (read-only; owner-directed substantive push after the owner
+  pushed back on the "buildable frontier exhausted" framing). Bar #2 relation-completeness: the 0-relation
+  docs are NOT a relation-extraction gap — (A) STALE intent_ir recoverable by a deterministic
+  `semantic`→`intent` rebuild (PROVEN: `tilelink_1_7_1` relations 0→39, 40/40 actors connected; also
+  tilelink_1_8_0/i2c/wbspec + a broader stale set), and (B) HONEST ABSENCE on register/command/coherency
+  docs (nvme/iommu/vt-d/ccix declare ~0 wire signals; intent lives in register/message-field/transaction
+  surfaces; forcing relations = fabrication). Frontier → corpus refresh (#2) + a generic stage-staleness
+  `validate` detector. Report `docs/research/relation-completeness-measurement.md`; KM
+  `relation-completeness-staleness-vs-absence`.
 - `2026-06-17`: **`.1b.ii` DONE** — named-interface consolidation LANDED, completing the `.1b` umbrella
   (`.1b.i`/`.1b.ii`/`.1b.iii`/`.1b.iv` all done → with `.1a`, agent-surface fidelity `.1` is fully built).
   New `strip_interface_suffix` + `consolidate_interface_actor_relations` post-pass in
