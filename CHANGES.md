@@ -1,3 +1,35 @@
+### PDF-VARIANT-DIGESTION.10g — section-HEADING register-field recognizer (the register-routed twin of `.10f`)
+The same `<NAME>, bits [hi:lo]` section-heading field layout that DTI uses for MESSAGE fields is how ARM
+ARCHITECTURE specs (not TRMs) lay out REGISTER fields — GIC (`ihi0069`), SMMU (`ihi0070`), CoreSight
+(`ihi0029`), ACC (`ihi0076`), ARM-Debug-v6 (`ihi0074`) give each register a dotted-numbered container heading
+(`B2.2.1 ABORT, Abort register`, `6.3.1 SMMU_IDR0`) with a `Field descriptions` anchor and one heading per
+field. `.10f` routed those register containers away (deferred to `.10g`); `.10g` reads them into `register_records`.
+- **No-drift design:** factored `.10f`'s container-walk into ONE shared classifier
+  (`scan_section_header_field_containers` → `{name, is_register, has_anchor, fields}`) + a shared field gate
+  (`distinct_section_header_fields`), so the register-vs-message routing is decided in exactly one place. `.10f`
+  keeps non-register containers (byte-identical, proven by its 7 tests + the parity sweep), `.10g` keeps the
+  register-routed ones. New strategy `registers.section_header_field` runs LAST in `register_record_surface`
+  (`run_surface_concat`); access/reset/offset/description honestly absent (a heading states only name + bit range).
+- **Per-document name-uniqueness residual gate (decisive precision lever):** a short register mnemonic is reused
+  across access-port blocks (ARM-Debug `AUTHSTATUS`/`CSW`/`IDR`/`CLAIMSET`/`DEVARCH`; CoreSight `AUTHSTATUS`),
+  the dotted heading carries only the short name, and the occurrences are a MIX of identical cross-references,
+  subset views, and GENUINELY DIFFERENT registers (`CSW` MEM-AP vs JTAG-AP have disjoint fields). So a name reused
+  across ≥2 register containers is structurally ambiguous → held as an honest residual, never over-counted nor
+  conflated by the existing all-distinct fragment merge into a fabricated mega-register. Universal grammar, no
+  name list (ADR 0006). A unique name matching an existing 0-field record (e.g. ARM-Debug `DPIDR`) MERGES via
+  `consolidate_register_field_fragments` (no double-count; existing identity kept since `.10g` runs last).
+- **Measured:** `register_records` rise on exactly 5 architecture specs — GIC 73/468, SMMU 88/381, CoreSight 5/24,
+  ACC 2/4, ARM-Debug 12/57 = **180 registers / 934 fields**; a full ARM-Debug `evidence` rebuild goes 29 → 37
+  register records (+8 brand-new; `DPIDR` enriched to 4 fields; ZERO duplicate names). ONLY these 5 fire; DTI emits
+  0 registers and keeps its 159 `.10f` message fields.
+- **Gates ALL GREEN:** old-vs-new `evidence --dry-run` over the wire gold + register golds (NVMe 42 reg/216 msg,
+  AMD 217 msg, CCIX 131 reg/92 msg, RISC-V Debug 44 reg, APB/AHB/AXI/AXI-Stream) byte-identical except the run
+  manifest's new `registers.section_header_field` entry (produced 0) → WIRE-BASED-100 + register golds provably
+  orthogonal; `.10f` message fields byte-identical; `kg-bench` 156/156; full `scripts/run_ci.sh` GREEN (lib
+  1672 → **1677**, +5 hermetic tests + 1 `#[ignore]` corpus-sweep measurement). Book `pipeline/evidenceir.md`
+  `.10g`; KM `section-header-register-field-extraction`. The block-ambiguous reused-mnemonic registers are the
+  honest residual a future block-qualified lever can recover.
+
 ### PDF-VARIANT-DIGESTION.10f — section-HEADING prose message-field recognizer (DTI-class message protocols)
 Spun from `KG-ISF-COMPLETENESS.4`'s §spun-out gap. AMBA DTI (`ihi0088`) is a message protocol but carried
 **0 `message_field_records`**, so field obligations (`the MMUV field must be 0`) leaked into `signal_constraints`

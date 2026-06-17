@@ -1,4 +1,59 @@
 # DEVELOPMENT_NOTES
+## PDF-VARIANT-DIGESTION.10g (`2026-06-17`) — section-HEADING register-field recognizer (register-routed twin of `.10f`)
+
+**Context.** `.10f` recognised that ARM specs write a register's fields as `<NAME>, bits [hi:lo]` section
+headings under a dotted-numbered container, but it only kept the MESSAGE-routed containers (DTI), routing
+the REGISTER-routed ones (GIC `ihi0069`, SMMU `ihi0070`, CoreSight `ihi0029`, ACC `ihi0076`, ARM-Debug-v6
+`ihi0074`) away as a deferred sibling. `.10g` reads those register containers into `register_records`.
+
+**No-drift design.** Rather than mirror `.10f` with a parallel loop (drift risk), I factored `.10f`'s
+container-walk into ONE shared classifier `scan_section_header_field_containers` (returns
+`SectionHeaderFieldContainer { name, is_register, has_anchor, fields }`) and a shared field gate
+`distinct_section_header_fields` (dedup by distinct name, ≥2 required). `.10f`
+(`extract_section_header_message_fields`) now keeps the `!is_register` containers; `.10g`
+(`extract_section_header_registers`) keeps the `is_register` ones. The routing (register iff caption uses
+the whole word `register` OR an `Attributes`/`Accessing` sub-heading) is decided in exactly one place — the
+`.10a` "one matcher, cannot drift" precedent. `.10f`'s 7 hermetic tests + the byte-identity parity sweep
+prove the refactor left `.10f` unchanged.
+
+**Probe (read-only over all persisted `source_ir`, before coding).** 197 register-routed containers / ~1001
+fields (GIC 73, SMMU 88, CoreSight 8, ACC 2, ARM-Debug 26); DTI 0 register / 18 message; NVMe/CCIX/RISC-V/
+wire/AMD all 0 register-routed (the byte-identity proof). The probe surfaced the decisive precision concern:
+duplicate short mnemonics. ARM-Debug reuses `AUTHSTATUS`/`CSW`/`IDR`/`CLAIMSET`/`DEVARCH`, CoreSight reuses
+`AUTHSTATUS` — and the dotted heading carries only the short name. Inspecting the dups: a MIX of identical
+cross-references (`DEVARCH`/`IDR`), subset views (`AUTHSTATUS`), and GENUINELY DIFFERENT registers (`CSW`
+MEM-AP vs JTAG-AP have disjoint field sets). Letting the existing all-distinct
+`consolidate_register_field_fragments` merge run on `CSW` would CONFLATE two different registers into a
+fabricated mega-register; the identical/subset dups would OVER-COUNT.
+
+**Decision (honest, ADR-0006-structural): per-document name-uniqueness residual gate.** `.10g` emits a
+register only for a register-routed container whose name is UNIQUE within the document; a name reused across
+≥2 register containers is structurally ambiguous and held as an honest residual (a future block-qualified
+lever can recover it). Prevents both over-count and conflation. Affects only ARM-Debug + CoreSight; GIC/SMMU/
+ACC are fully clean.
+
+**No double-count with the existing surface.** A `.10g` register whose unique name matches an existing
+0-field record (e.g. ARM-Debug `DPIDR`, minted name-only by the map/summary strategies) merges via
+`consolidate_register_field_fragments` (0 fields trivially distinct → safe → one enriched record). `.10g` is
+the LAST register strategy, so the existing record's identity is kept and `.10g`'s fields are appended.
+
+**Build.** `extract_section_header_registers` + `SectionHeaderRegisterExtractor` (`name() =
+"registers.section_header_field"`), registered 4th in `register_record_surface` (`run_surface_concat`). Each
+`RegisterRecord`: dotted-heading name, `RegisterFieldRecord`s with `(bits_high, bits_low, bit_width)` from the
+heading, `access_type`/`reset_value`/`description`/`offset_address` `None`, empty `supporting_statement_ids`,
+`Medium` confidence (mirror of `.10c`). A `type SectionHeaderRegisterCandidate` alias keeps the nested tuple
+clippy-clean.
+
+**Verification.** Live (`extract_section_header_registers` corpus sweep): GIC 73/468, SMMU 88/381, CoreSight
+5/24, ACC 2/4, ARM-Debug 12/57 = 180 registers / 934 fields across exactly 5 docs; DTI 0 registers. Full
+ARM-Debug `evidence --dry-run`: register_records 29→37, fields 186→243, +8 brand-new (ABORT/BASE/CFG/DEVID/
+IDCODE/MEMTYPE/PRIDR0/TARGETSEL), `DPIDR` enriched to 4 fields (id `reg_table_0044_005` — the existing
+record's), ZERO duplicate names, message fields unchanged (0). `git stash` baseline diff over 8 golds:
+register + message records byte-identical, only `extraction_manifest` differs (the new strategy, eligible,
+produced 0). `.10f` message fields byte-identical (DTI 159). Gates: 5 hermetic tests + 1 `#[ignore]` corpus
+sweep; full `scripts/run_ci.sh` GREEN (fmt + clippy `-D warnings` + lib 1672→1677 + rustdoc + mdBook);
+`kg-bench` 156/156. KM `section-header-register-field-extraction`; book `pipeline/evidenceir.md` `.10g`.
+
 ## PDF-VARIANT-DIGESTION.10f (`2026-06-17`) — section-HEADING prose message-field recognizer (DTI-class message protocols)
 
 **Context.** `KG-ISF-COMPLETENESS.4` spun out a measured upstream gap: AMBA DTI (`ihi0088`) is a message

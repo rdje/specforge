@@ -517,9 +517,11 @@ VT-d 152→103/318; RISC-V Debug 59→44/179) from the REAL gaps:
   dword-relative bit-cell family (`31:28 +04`; 41 AMD tables / 184 rows — spun from the
   `.10b` quantified residuals); `.10e` the `byte location \| size` placement-table family
   (CCIX ×4); `.10f` the section-HEADING prose message-field family (DTI message protocols —
-  the field layout is in `<NAME>, bits [hi:lo]` headings, not tables); `.10g` (spun, deferred)
+  the field layout is in `<NAME>, bits [hi:lo]` headings, not tables); `.10g` (in_progress)
   the section-heading REGISTER-field form (GIC/SMMU/CoreSight/ACC/ARM-Debug → the register
-  surface).
+  surface; the register-routed twin of `.10f` via the SAME shared container-walk, plus a
+  per-document name-uniqueness residual gate so a short mnemonic reused across access-port
+  blocks is never over-counted or conflated).
   **`.10b` first probe pass (`2026-06-10`): the family is AMD IOMMU 160 + NVMe 130 + eMMC 1 —
   NVMe is a GOLD-measured doc, so any gate change hits its measured surface; AND the rows
   describe in-memory STRUCTURE entries (AMD Device Table Entry "Field Definitions"
@@ -1145,6 +1147,75 @@ section-heading field form → 0 records, byte-identical). `kg-bench` **156/156*
 README `.10f` bullet; RUST_CODEBASE_ANALYSIS fourth-strategy note. The REGISTER-routed
 section-heading field form (GIC 612 / SMMU 434 / CoreSight 42 / ACC 5 / ARM-Debug 138 → the
 register surface) is the spun-out sibling lever `.10g` (honest residual; ~1230 register fields).
+
+- ID: `PDF-VARIANT-DIGESTION.10g` · Status: `done` (`2026-06-17`, CODE) · Goal: **the REGISTER-routed twin of `.10f`** — recover the same
+  `<NAME>, bit[s] [range]` section-heading field layouts, but for containers that ARE registers
+  (caption-`register` OR an `Attributes`/`Accessing` sub-heading), emitting them to the **register
+  surface** (`RegisterRecord` / `register_records`) instead of dropping them. AGNOSTIC (ADR 0006:
+  universal section grammar, no chip-name list), and WITHOUT regressing the wire golds, the
+  register golds (NVMe / CCIX / RISC-V Debug), DTI's `.10f` message-field surface, or `kg-bench`.
+  **No-drift design:** factor `.10f`'s container-walk into ONE shared classifier
+  (`scan_section_header_field_containers` → `{name, is_register, has_anchor, fields}`), so the
+  message-vs-register routing is decided in exactly one place; `.10f` keeps the
+  `!is_register`-routed containers, `.10g` keeps the `is_register`-routed ones (mirror of the
+  `.10a` "one matcher, cannot drift" precedent).
+  **Probe (`2026-06-17`, faithful re-derivation of the `.10f` predicates over all persisted
+  `source_ir`, read-only, BEFORE coding):** register-routed containers (register + `Field
+  descriptions` anchor + ≥2 distinct field headings) = **GIC `ihi0069` 73 / SMMU `ihi0070` 88 /
+  CoreSight `ihi0029` 8 / ACC `ihi0076` 2 / ARM-Debug `ihi0074` 26 = 197 containers / ~1001
+  fields**; **DTI fires 0 register / 18 message** (its containers are messages → routed away by
+  `.10f`), and **NVMe / CCIX / RISC-V Debug / APB / AHB / AXI / AXI-Stream / AMD-IOMMU all fire 0
+  register-routed containers** (they carry no section-heading field form — the `.10f` byte-identity
+  proof, now confirmed for the register surface too).
+  **PRECISION CRUX — duplicate short mnemonics (the decisive design finding):** ARM-Debug reuses
+  `AUTHSTATUS` (×3) / `CLAIMSET` (×4) / `DEVARCH` (×2) / `IDR` (×2) / `CSW` (×2) and CoreSight
+  reuses `AUTHSTATUS` (×3) across access-port blocks — the dotted heading carries only the SHORT
+  name, not the block. The occurrences are a MIX of identical cross-references (`DEVARCH`/`IDR`),
+  subset views (`AUTHSTATUS`), and GENUINELY DIFFERENT registers (`CSW` MEM-AP vs JTAG-AP have
+  disjoint field sets). Letting the existing `consolidate_register_field_fragments` all-distinct
+  merge run on them would CONFLATE two different registers into one fabricated mega-register, and
+  the identical/subset dups would OVER-COUNT — both violate north-star bar #1 (every register real,
+  complete AND exclusive). **DECISION (honest, ADR-0006-structural):** `.10g` emits a register only
+  for a register-routed container whose name is UNIQUE within the document; a name reused across
+  ≥2 register containers is structurally ambiguous → held as an honest residual (deferred to a
+  future block-qualified lever), never over-counted or conflated. Affects only ARM-Debug (13
+  containers / 5 names) + CoreSight (3 / 1 name); GIC 73 / SMMU 88 / ACC 2 are fully clean.
+  **Collision with the existing register surface (the MEMORY precision crux):** a `.10g` register
+  whose unique name matches an existing 0-field record (e.g. ARM-Debug `DPIDR`, minted name-only by
+  the map/summary strategies) MERGES via the existing `consolidate_register_field_fragments`
+  post-pass (0 fields are trivially distinct → safe → one enriched record, existing identity kept
+  since `.10g` is the 4th strategy) — no double-count by construction.
+  **Build plan:** new `extract_section_header_registers` + `SectionHeaderRegisterExtractor`
+  (`name() = "registers.section_header_field"`), registered as the 4th register strategy in
+  `register_record_surface` via `run_surface_concat`; each emitted `RegisterRecord` carries the
+  dotted-heading name, fields with `(bits_high, bits_low, bit_width)` from the heading, and
+  `offset_address` / `access_type` / `reset_value` / `description` HONESTLY absent (`None`) +
+  `supporting_statement_ids` empty + `Medium` confidence (mirror of `.10c`). Acceptance:
+  per-doc emit measured live; **DTI register_records byte-identical**, register/wire golds
+  byte-identical, `.10f` message-fields byte-identical (one shared walk); hermetic positive +
+  duplicate-name-residual + DTI-message-exclusion + gold-zero tests; full `scripts/run_ci.sh`
+  GREEN + `kg-bench` 156/156; book `pipeline/evidenceir.md` + KM card + README/RUST/CHANGES/
+  DEVELOPMENT_NOTES/LIVE_ACHIEVEMENT_STATUS refreshed.
+  **Verification (`2026-06-17`):** built as the no-drift refactor — `.10f`'s walk factored into the shared
+  `scan_section_header_field_containers` + `distinct_section_header_fields`, then `extract_section_header_registers`
+  + `SectionHeaderRegisterExtractor` (`registers.section_header_field`) registered 4th in `register_record_surface`
+  (`run_surface_concat`); a `type SectionHeaderRegisterCandidate` alias keeps the nested tuple clippy-clean.
+  **Live (`extract_section_header_registers` corpus sweep over persisted `source_ir`): GIC `ihi0069` 73/468,
+  SMMU `ihi0070` 88/381, CoreSight `ihi0029` 5/24, ACC `ihi0076` 2/4, ARM-Debug `ihi0074` 12/57 = 180 registers /
+  934 fields across EXACTLY 5 docs**; every other doc 0; DTI 0 registers (message-routed) + 159 `.10f` message
+  fields unchanged. **Full ARM-Debug `evidence --dry-run`: register_records 29→37, fields 186→243, +8 brand-new
+  (ABORT/BASE/CFG/DEVID/IDCODE/MEMTYPE/PRIDR0/TARGETSEL), `DPIDR` enriched to 4 fields keeping its existing record
+  id (`reg_table_0044_005`) via the consolidation merge, ZERO duplicate names** — the name-uniqueness gate correctly
+  dropped the reused `AUTHSTATUS`/`CSW`/`IDR`/`CLAIMSET`/`DEVARCH`. **`git stash` baseline diff over 8 golds (NVMe
+  42 reg/216 msg, AMD 217 msg, APB, AHB 3 reg, AXI 71 reg, AXI-Stream, CCIX r1.0 131 reg/92 msg, RISC-V Debug
+  44 reg): register_records + message_field_records byte-IDENTICAL; the ONLY top-level delta is
+  `extraction_manifest` gaining `registers.section_header_field` (eligible, produced 0)** → WIRE-BASED-100 +
+  register golds provably orthogonal; `.10f` byte-identical. 5 new hermetic tests (positive register capture,
+  message-container exclusion, duplicate-name residual, anchor+≥2 gate, surface+manifest) + 1 `#[ignore]` corpus
+  sweep. `kg-bench` **156/156**; full `scripts/run_ci.sh` GREEN (fmt + clippy `-D warnings` + lib 1672 → **1677**
+  + rustdoc + mdBook). KM `section-header-register-field-extraction`; book `pipeline/evidenceir.md` `.10g`. The
+  block-ambiguous reused-mnemonic registers (ARM-Debug `AUTHSTATUS`/`CSW`/`IDR`/…, CoreSight `AUTHSTATUS`) are an
+  honest residual — a future block-qualified lever can disambiguate + recover them. Commit: pending (this slice).
 
 **`PDF-VARIANT-DIGESTION.11` — `validate` integration of the `message_field_*` surfaces.**
 · Status: **DONE `2026-06-11`** (probe → measured scope decisions → build → live CLI

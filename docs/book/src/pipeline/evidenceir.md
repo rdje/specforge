@@ -818,6 +818,40 @@ once `MMUV` is a known field, *"the MMUV field must be 0"* is typed into the mes
 surface instead of masquerading as a signal constraint.
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10f`).
 
+### `PDF-VARIANT-DIGESTION.10g` — the same heading shape, for registers this time
+
+The `.10f` reader deliberately left one thing on the table. The very same `<NAME>, bits [hi:lo]`
+heading shape that DTI uses for *message* fields is how ARM's **architecture specifications** lay out
+*register* fields — GIC, the SMMU, CoreSight, the Advanced Communications Channel, ARM Debug v6 all
+give each register a numbered heading (`B2.2.1 ABORT, Abort register`, `6.3.1 SMMU_IDR0`), a
+`Field descriptions` anchor, and one sub-heading per field (`ORUNERRCLR, bit[4]`,
+`TERM_MODEL, bit [26]`). `.10f` recognised those containers as registers and routed them away; `.10g`
+finishes the job by reading them into the **register inventory** instead of dropping them. The two
+readers share a single walk of the document's headings, so a container is classified as a register or
+a message in exactly one place and the two surfaces can never disagree.
+
+The genuinely hard part turned out to be a naming problem the documents create themselves. A short
+register mnemonic gets *reused* across a chip's access-port blocks: ARM Debug describes an
+`AUTHSTATUS`, a `CSW`, an `IDR`, a `CLAIMSET` for several different ports, and the section heading
+carries only the short name, never the block. Worse, those repeats are a mix — sometimes the very
+same register cross-referenced, sometimes a subset view, and sometimes *genuinely different
+registers* (the MEM-AP `CSW` and the JTAG-AP `CSW` have completely different fields). Emitting all of
+them would either count one register several times or, if we tried to stitch them, fuse two different
+registers into one that the document never describes. Neither is honest. So `.10g` emits a register
+only when its name is **unique within the document**; a reused mnemonic is held back as an honest
+residual, to be recovered later once we can attach the block it belongs to. Unique names that match a
+register the document already named elsewhere (but without a field layout) simply *fill in* that
+register's fields rather than creating a duplicate.
+
+Across the corpus this reader fires on exactly those five architecture specs and recovers **180
+registers with 934 fields** (GIC 73, the SMMU 88, CoreSight 5, the ACC 2, ARM Debug 12), each field
+carrying its bit range while access, reset and offset stay honestly empty — a heading states a
+field's name and position, nothing more. Everything else fires zero: DTI's message containers stay
+message fields, and the register-gold documents (NVMe, CCIX, RISC-V Debug) and the wire-protocol
+specs carry no heading-shaped fields at all, so their output is byte-for-byte identical except for the
+one line the run manifest adds to record that the new reader ran.
+*Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10g`).
+
 ### `PDF-VARIANT-DIGESTION.12b` — presence matrices: which signals exist, in which variant, under what condition
 
 Bus specifications routinely answer a question no other table answers: *does this signal exist at all in your

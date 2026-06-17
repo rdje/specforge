@@ -322,8 +322,24 @@ as its own `<NAME>, bits [hi:lo]` section HEADING under a dotted-numbered messag
 `is_register_attribute_heading`). Container-decides routing (the `.10b`/`.10c`/`.10e` register-iff-attribute
 rule: a container is a register iff its caption says `register` or it carries an `Attributes`/`Accessing`
 sub-heading, else a message/structure) keeps GIC/SMMU/CoreSight register fields out of the message surface
-(deferred to a sibling `.10g`). Live: DTI 0→159 fields / 17 containers, only DTI fires (1/79); old-vs-new
-parity byte-identical except the new manifest entry (NVMe 216 / AMD 217 unchanged). It is one of the surfaces whose extractor reads ONLY `SourceIr` document content
+(routed to the register surface by the sibling `.10g`). Live: DTI 0→159 fields / 17 containers, only DTI fires (1/79); old-vs-new
+parity byte-identical except the new manifest entry (NVMe 216 / AMD 217 unchanged). `PDF-VARIANT-DIGESTION.10g`
+(2026-06-17) added the register surface's FOURTH strategy, `registers.section_header_field`, the
+register-routed twin of `.10f`: `.10f`'s container-walk was factored into ONE shared classifier
+(`scan_section_header_field_containers` → `{name, is_register, has_anchor, fields}`) plus a shared field
+gate (`distinct_section_header_fields`), so the register-vs-message routing lives in exactly one place and
+cannot drift — `.10f` keeps the non-register containers, `extract_section_header_registers` keeps the
+register-routed ones and emits a `RegisterRecord` per container (access/reset/offset/description honestly
+absent). Its decisive precision lever is a per-document name-uniqueness residual gate: a short register
+mnemonic reused across access-port blocks (ARM-Debug `AUTHSTATUS`/`CSW`/`IDR`) is structurally ambiguous —
+the occurrences are a mix of identical cross-refs, subset views, and genuinely-different registers — so a
+name reused across ≥2 register containers is held as an honest residual, never over-counted nor conflated
+by the existing all-distinct `consolidate_register_field_fragments` merge; a unique name matching an
+existing 0-field record (e.g. `DPIDR`) instead MERGES through that post-pass (`.10g` runs last, so the
+existing identity is kept — no double-count). Live: 180 registers / 934 fields across exactly 5 architecture
+specs (GIC 73/468, SMMU 88/381, CoreSight 5/24, ACC 2/4, ARM-Debug 12/57); ARM-Debug `evidence` 29→37
+records, +8 brand-new, `DPIDR` enriched, zero duplicate names; register/wire golds byte-identical except the
+new manifest entry. The message-field surface is one of the surfaces whose extractor reads ONLY `SourceIr` document content
 and persists a new typed inventory (`EvidenceIr.message_field_records`) consumed by the entity-typing
 ground (`EntityType::Field`, `.FIELD.3`) and — via `.FIELD.4` — by the LLM-primary constraint extractor:
 `ir/constraint_extract_llm.rs` now grounds into a typed `GroundedConstraint::{Signal,Field}` dispatch

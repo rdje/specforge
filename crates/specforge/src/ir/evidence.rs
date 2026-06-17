@@ -10385,75 +10385,96 @@ fn parse_section_header_field(title: &str) -> Option<(String, u32, u32)> {
 /// sibling leaf. Bit overlaps are KEPT (DTI documents Manager-side and Subordinate-side views of
 /// the same position, `M_MSG_TYPE[3:0]`/`S_MSG_TYPE[3:0]`); same-name duplicates merge through
 /// the surface `(container, name)` dedup. ADR 0006 — universal section grammar, no name list.
-fn extract_section_header_message_fields(source_ir: &SourceIr) -> Vec<MessageFieldRecord> {
+/// PDF-VARIANT-DIGESTION.10f/.10g — one dotted-numbered container discovered by the shared
+/// section-heading field-layout walk, classified ONCE as a register or a message so the two
+/// sibling surfaces cannot drift apart on the routing decision (the `.10a` "one matcher, cannot
+/// drift" precedent). `fields` is the raw `(name, bits_high, bits_low)` heading run in document
+/// order, not yet deduped — each consumer applies [`distinct_section_header_fields`].
+struct SectionHeaderFieldContainer {
+    name: String,
+    is_register: bool,
+    has_anchor: bool,
+    fields: Vec<(String, u32, u32)>,
+}
+
+/// Walk `document_sections` in reading order and group section-heading field definitions
+/// (`<NAME>, bits [hi:lo]`) under their nearest preceding dotted-numbered container heading,
+/// classifying each container as a register (its caption names "register", OR it carries an
+/// `Attributes`/`Accessing` sub-heading) or a message (neither). This is the SINGLE source of
+/// truth for the `.10f` (message-routed) ↔ `.10g` (register-routed) split. Universal section
+/// grammar, no chip-name list (ADR 0006).
+fn scan_section_header_field_containers(source_ir: &SourceIr) -> Vec<SectionHeaderFieldContainer> {
     let mut sections: Vec<_> = source_ir.document_sections.iter().collect();
     sections.sort_by_key(|s| s.reading_order);
 
-    let mut records: Vec<MessageFieldRecord> = Vec::new();
-    let mut container: Option<String> = None;
-    let mut is_register = false;
-    let mut has_anchor = false;
-    let mut pending: Vec<(String, u32, u32)> = Vec::new();
+    let mut out: Vec<SectionHeaderFieldContainer> = Vec::new();
+    for section in sections {
+        let title = section.title.trim();
+        if let Some((name, rest)) = parse_dotted_container_heading(title) {
+            out.push(SectionHeaderFieldContainer {
+                name,
+                is_register: caption_names_register(&rest),
+                has_anchor: false,
+                fields: Vec::new(),
+            });
+            continue;
+        }
+        // A sub-heading before the first container has nothing to attach to.
+        let Some(current) = out.last_mut() else {
+            continue;
+        };
+        if is_field_descriptions_anchor(title) {
+            current.has_anchor = true;
+        } else if is_register_attribute_heading(title) {
+            current.is_register = true;
+        } else if let Some(field) = parse_section_header_field(title) {
+            current.fields.push(field);
+        }
+    }
+    out
+}
 
-    // Emit a finished container's fields, gated: a non-register container with a
-    // `Field descriptions` anchor and at least two fields (a real layout has several fields).
-    let flush = |records: &mut Vec<MessageFieldRecord>,
-                 container: &Option<String>,
-                 is_register: bool,
-                 has_anchor: bool,
-                 pending: &[(String, u32, u32)]| {
-        let Some(name) = container else { return };
-        if is_register || !has_anchor {
-            return;
+/// Dedup a container's section-heading fields by DISTINCT name (uppercase, first-wins — a field
+/// tokenized twice, e.g. a spacing variant, is one field) and return them only when at least two
+/// distinct fields remain (a real field layout has several; a lone coincidental `<X>, bit [n]`
+/// heading is not a layout). The Manager/Subordinate dual-perspective views
+/// (`M_MSG_TYPE`/`S_MSG_TYPE`) have different names, so both are kept even though their bit ranges
+/// overlap. Shared by `.10f` and `.10g` so the field gate cannot drift.
+fn distinct_section_header_fields(
+    fields: &[(String, u32, u32)],
+) -> Option<Vec<(String, u32, u32)>> {
+    let mut seen: BTreeSet<String> = BTreeSet::new();
+    let unique: Vec<(String, u32, u32)> = fields
+        .iter()
+        .filter(|(field, _, _)| seen.insert(field.to_ascii_uppercase()))
+        .cloned()
+        .collect();
+    (unique.len() >= 2).then_some(unique)
+}
+
+fn extract_section_header_message_fields(source_ir: &SourceIr) -> Vec<MessageFieldRecord> {
+    let mut records: Vec<MessageFieldRecord> = Vec::new();
+    for container in scan_section_header_field_containers(source_ir) {
+        // A message-field layout: a NON-register container with a `Field descriptions` anchor.
+        if container.is_register || !container.has_anchor {
+            continue;
         }
-        // Dedup by distinct name within the container (a field tokenized twice, e.g. a spacing
-        // variant, is one field); a real field layout has at least two DISTINCT fields. The
-        // Manager/Subordinate dual-perspective views (`M_MSG_TYPE`/`S_MSG_TYPE`) have different
-        // names, so both are kept even though their bit ranges overlap.
-        let mut seen: BTreeSet<String> = BTreeSet::new();
-        let unique: Vec<&(String, u32, u32)> = pending
-            .iter()
-            .filter(|(field, _, _)| seen.insert(field.to_ascii_uppercase()))
-            .collect();
-        if unique.len() < 2 {
-            return;
-        }
+        let Some(unique) = distinct_section_header_fields(&container.fields) else {
+            continue;
+        };
         for (field, high, low) in unique {
             records.push(MessageFieldRecord {
                 field_id: String::new(),
-                name: field.clone(),
-                container: name.clone(),
-                bit_width: bit_width_from_range(Some(*high), Some(*low)),
-                bit_range: Some((*high, *low)),
+                name: field,
+                container: container.name.clone(),
+                bit_width: bit_width_from_range(Some(high), Some(low)),
+                bit_range: Some((high, low)),
                 byte_offset: None,
                 description: None,
                 supporting_table_ids: Vec::new(),
             });
         }
-    };
-
-    for section in sections {
-        let title = section.title.trim();
-        if let Some((name, rest)) = parse_dotted_container_heading(title) {
-            flush(&mut records, &container, is_register, has_anchor, &pending);
-            container = Some(name);
-            is_register = caption_names_register(&rest);
-            has_anchor = false;
-            pending.clear();
-            continue;
-        }
-        if container.is_none() {
-            continue;
-        }
-        if is_field_descriptions_anchor(title) {
-            has_anchor = true;
-        } else if is_register_attribute_heading(title) {
-            is_register = true;
-        } else if let Some(field) = parse_section_header_field(title) {
-            pending.push(field);
-        }
     }
-    flush(&mut records, &container, is_register, has_anchor, &pending);
     records
 }
 
@@ -10469,6 +10490,89 @@ impl Extractor<MessageFieldRecord> for SectionHeaderMessageFieldExtractor<'_> {
     }
     fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<MessageFieldRecord> {
         extract_section_header_message_fields(self.source_ir)
+    }
+}
+
+/// A register-routed section-heading container reduced to its register name and its deduped
+/// `(field_name, bits_high, bits_low)` layout — a `.10g` candidate before the per-document
+/// name-uniqueness residual gate.
+type SectionHeaderRegisterCandidate = (String, Vec<(String, u32, u32)>);
+
+/// PDF-VARIANT-DIGESTION.10g — the register-routed twin of `extract_section_header_message_fields`:
+/// the same `<NAME>, bits [hi:lo]` section-heading field layouts, but for containers that ARE
+/// registers (caption names "register", or an `Attributes`/`Accessing` sub-heading), emitted to the
+/// register surface. Uses the SAME shared container-walk as `.10f`, so the message-vs-register
+/// routing is decided in exactly one place. A short register mnemonic reused across ≥2 register
+/// containers (the same `AUTHSTATUS`/`CSW`/`IDR` documented per access-port block, with the dotted
+/// heading carrying only the short name) is structurally AMBIGUOUS and held as an honest residual:
+/// emitting it would either over-count (identical/subset dups) or, via the all-distinct fragment
+/// merge, conflate two genuinely-different registers into a fabricated one. Universal grammar over
+/// per-document name multiplicity; no chip-name list (ADR 0006). Access/reset/offset/description are
+/// honestly absent (`None`) — a section heading states only a field's name and bit range.
+fn extract_section_header_registers(source_ir: &SourceIr) -> Vec<RegisterRecord> {
+    // First pass: every register-routed container with a `Field descriptions` anchor and a real
+    // (≥2 distinct) field layout, in document order.
+    let mut candidates: Vec<SectionHeaderRegisterCandidate> = Vec::new();
+    for container in scan_section_header_field_containers(source_ir) {
+        if !container.is_register || !container.has_anchor {
+            continue;
+        }
+        let Some(unique) = distinct_section_header_fields(&container.fields) else {
+            continue;
+        };
+        candidates.push((container.name, unique));
+    }
+    // Per-document name-uniqueness residual gate (PDF-VARIANT-DIGESTION.10g): drop any register
+    // name that occurs in more than one register container (block-ambiguous short mnemonic).
+    let mut name_counts: std::collections::BTreeMap<String, usize> =
+        std::collections::BTreeMap::new();
+    for (name, _) in &candidates {
+        *name_counts.entry(name.clone()).or_default() += 1;
+    }
+    let mut records: Vec<RegisterRecord> = Vec::new();
+    for (index, (name, fields)) in candidates.iter().enumerate() {
+        if name_counts.get(name).copied().unwrap_or(0) != 1 {
+            continue;
+        }
+        let field_records: Vec<RegisterFieldRecord> = fields
+            .iter()
+            .map(|(field_name, high, low)| RegisterFieldRecord {
+                field_name: field_name.clone(),
+                bits_high: Some(*high),
+                bits_low: Some(*low),
+                bit_width: bit_width_from_range(Some(*high), Some(*low)),
+                access_type: None,
+                reset_value: None,
+                description: None,
+                enumerated_values: Vec::new(),
+            })
+            .collect();
+        records.push(RegisterRecord {
+            register_id: format!("register_section_{index:04}"),
+            register_name: name.clone(),
+            offset_address: None,
+            size_bits: register_size_from_fields(&field_records),
+            fields: field_records,
+            supporting_statement_ids: Vec::new(),
+            automation_confidence: AutomationConfidence::Medium,
+        });
+    }
+    records
+}
+
+/// PDF-VARIANT-DIGESTION.10g — the section-heading register-field strategy as a registered
+/// `Extractor` (GIC/SMMU/CoreSight/ACC/ARM-Debug-class architecture specs whose per-register field
+/// layout lives in `<NAME>, bits [hi:lo]` section headings, not caption-anchored tables); see
+/// [`extract_section_header_registers`].
+struct SectionHeaderRegisterExtractor<'a> {
+    source_ir: &'a SourceIr,
+}
+impl Extractor<RegisterRecord> for SectionHeaderRegisterExtractor<'_> {
+    fn name(&self) -> &'static str {
+        "registers.section_header_field"
+    }
+    fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<RegisterRecord> {
+        extract_section_header_registers(self.source_ir)
     }
 }
 
@@ -11888,7 +11992,12 @@ fn register_record_surface(
         source_ir,
         prior_guidance,
     };
-    let extractors: [&dyn Extractor<RegisterRecord>; 3] = [&map, &field_table, &bit_assignment];
+    // PDF-VARIANT-DIGESTION.10g — section-heading register fields; runs LAST so its records merge
+    // onto a same-named existing record (e.g. a name-only 0-field register) via the
+    // `consolidate_register_field_fragments` post-pass below rather than double-counting.
+    let section_header = SectionHeaderRegisterExtractor { source_ir };
+    let extractors: [&dyn Extractor<RegisterRecord>; 4] =
+        [&map, &field_table, &bit_assignment, &section_header];
     let run = run_surface_concat("register_records", &cx, &extractors);
     manifest.record(&run);
     let mut records = run.records;
@@ -17935,6 +18044,191 @@ mod tests {
                 .iter()
                 .any(|e| e.name == "message_fields.section_header_field"),
             "the new strategy is recorded in the manifest"
+        );
+    }
+
+    /// PDF-VARIANT-DIGESTION.10g local measurement, NOT a CI test (`--ignored`): runs the
+    /// section-heading REGISTER extractor over every persisted `generated/source_ir/*` and prints
+    /// per-doc register/field counts. GIC/SMMU/CoreSight/ACC put their per-register field layout in
+    /// section headings, and their normalized markdown bundles may be cleaned, so this pure-over-
+    /// `SourceIR` path measures them where `evidence --dry-run` cannot. Run:
+    /// `cargo test -p specforge --lib section_header_register_corpus_sweep -- --ignored --nocapture`
+    #[test]
+    #[ignore = "local measurement: walks the developer-local generated/source_ir corpus"]
+    fn section_header_register_corpus_sweep_local_measurement() {
+        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../generated/source_ir");
+        let Ok(entries) = fs::read_dir(&root) else {
+            eprintln!("no local corpus at {} — nothing to measure", root.display());
+            return;
+        };
+        let mut paths: Vec<PathBuf> = entries
+            .flatten()
+            .map(|e| e.path().join("source_ir.json"))
+            .filter(|p| p.is_file())
+            .collect();
+        paths.sort();
+        for path in paths {
+            let Ok(raw) = fs::read_to_string(&path) else {
+                continue;
+            };
+            let Ok(source_ir) = serde_json::from_str::<SourceIr>(&raw) else {
+                continue;
+            };
+            let registers = super::extract_section_header_registers(&source_ir);
+            if registers.is_empty() {
+                continue;
+            }
+            let fields: usize = registers.iter().map(|r| r.fields.len()).sum();
+            println!(
+                "{}: {} registers / {} fields",
+                path.parent()
+                    .and_then(|p| p.file_name())
+                    .map(|n| n.to_string_lossy())
+                    .unwrap_or_default(),
+                registers.len(),
+                fields,
+            );
+        }
+    }
+
+    #[test]
+    fn section_header_registers_capture_register_container() {
+        // A register container — caption naming a register OR an `Attributes`/`Accessing`
+        // sub-heading — with a `Field descriptions` anchor and ≥2 fields → one RegisterRecord,
+        // access/reset/offset honestly absent (a heading states only name + bit range).
+        let caption_reg = section_only_source_ir(&[
+            "B2.3.1 AUTHSTATUS, Authentication Status Register",
+            "Field descriptions",
+            "HID, bits [9:8]",
+            "SID, bits [5:4]",
+        ]);
+        let regs = super::extract_section_header_registers(&caption_reg);
+        assert_eq!(regs.len(), 1);
+        let reg = &regs[0];
+        assert_eq!(reg.register_name, "AUTHSTATUS");
+        assert_eq!(reg.fields.len(), 2);
+        assert!(reg.offset_address.is_none() && reg.supporting_statement_ids.is_empty());
+        let hid = reg.fields.iter().find(|f| f.field_name == "HID").unwrap();
+        assert_eq!(
+            (hid.bits_high, hid.bits_low, hid.bit_width),
+            (Some(9), Some(8), Some(2))
+        );
+        assert!(
+            hid.access_type.is_none() && hid.reset_value.is_none() && hid.description.is_none()
+        );
+        assert_eq!(reg.size_bits, Some(10)); // max bit 9 + 1
+
+        // The `Attributes`-marked SMMU form (caption does NOT contain the word `register`).
+        let attr_reg = section_only_source_ir(&[
+            "6.3.1 SMMU_IDR0",
+            "Attributes",
+            "Field descriptions",
+            "TERM_MODEL, bit [26]",
+            "STALL_MODEL, bits [25:24]",
+        ]);
+        let regs = super::extract_section_header_registers(&attr_reg);
+        assert_eq!(regs.len(), 1);
+        assert_eq!(regs[0].register_name, "SMMU_IDR0");
+        assert_eq!(regs[0].fields.len(), 2);
+    }
+
+    #[test]
+    fn section_header_registers_skip_message_containers() {
+        // The inverse of the `.10f` routing: a NON-register container (DTI-class message — no
+        // `register` caption word, no `Attributes`/`Accessing`) routes to the message surface, NOT
+        // the register surface → zero register records here (DTI register_records stay untouched).
+        let message = section_only_source_ir(&[
+            "3.1.1 DTI_TBU_TEST_REQ",
+            "Field descriptions",
+            "M_MSG_TYPE, bits [3:0]",
+            "STATE, bit [4]",
+        ]);
+        assert!(
+            super::extract_section_header_registers(&message).is_empty(),
+            "a message container does not become a register"
+        );
+    }
+
+    #[test]
+    fn section_header_registers_drop_duplicate_names() {
+        // Per-document name-uniqueness residual gate: a short mnemonic reused across access-port
+        // blocks (here `CSW` with disjoint field sets — a genuinely different register per block)
+        // is structurally ambiguous and held as a residual, never over-counted or conflated; a
+        // uniquely-named register in the same document still emits.
+        let source_ir = section_only_source_ir(&[
+            "C2.6.1 CSW, MEM-AP Control/Status Word Register",
+            "Field descriptions",
+            "DbgSwEnable, bit [31]",
+            "Prot, bits [30:24]",
+            "C3.4.1 CSW, JTAG-AP Control/Status Word Register",
+            "Field descriptions",
+            "SERACTV, bit [31]",
+            "WFIFOCNT, bits [29:28]",
+            "B2.2.1 ABORT, Abort Register",
+            "Field descriptions",
+            "ORUNERRCLR, bit [4]",
+            "DAPABORT, bit [0]",
+        ]);
+        let regs = super::extract_section_header_registers(&source_ir);
+        let names: Vec<&str> = regs.iter().map(|r| r.register_name.as_str()).collect();
+        assert!(
+            !names.contains(&"CSW"),
+            "a register name reused across containers is an honest residual, not over-counted"
+        );
+        assert_eq!(
+            names,
+            vec!["ABORT"],
+            "only the uniquely-named register survives"
+        );
+    }
+
+    #[test]
+    fn section_header_registers_require_anchor_and_two_fields() {
+        // No `Field descriptions` anchor → no register (the anchor gates the field block).
+        let no_anchor = section_only_source_ir(&[
+            "B2.2.1 ABORT, Abort Register",
+            "Purpose",
+            "ORUNERRCLR, bit [4]",
+            "DAPABORT, bit [0]",
+        ]);
+        assert!(super::extract_section_header_registers(&no_anchor).is_empty());
+        // Only one field heading → no register (a real layout has several fields).
+        let singleton = section_only_source_ir(&[
+            "B2.2.1 ABORT, Abort Register",
+            "Field descriptions",
+            "DAPABORT, bit [0]",
+        ]);
+        assert!(super::extract_section_header_registers(&singleton).is_empty());
+    }
+
+    #[test]
+    fn section_header_register_surface_records_manifest() {
+        // End-to-end through the register surface driver: the section-header register appears and
+        // the new strategy is recorded in the manifest.
+        let source_ir = section_only_source_ir(&[
+            "6.3.1 SMMU_IDR0",
+            "Attributes",
+            "Field descriptions",
+            "TERM_MODEL, bit [26]",
+            "STALL_MODEL, bits [25:24]",
+        ]);
+        let mut manifest = super::ExtractionManifest::default();
+        let regs = super::register_record_surface(&source_ir, None, &mut manifest);
+        assert!(
+            regs.iter()
+                .any(|r| r.register_name == "SMMU_IDR0" && r.fields.len() == 2)
+        );
+        let surface = manifest
+            .surfaces
+            .iter()
+            .find(|s| s.surface == "register_records")
+            .expect("register_records surface recorded");
+        assert!(
+            surface
+                .entries
+                .iter()
+                .any(|e| e.name == "registers.section_header_field"),
+            "the new register strategy is recorded in the manifest"
         );
     }
 
