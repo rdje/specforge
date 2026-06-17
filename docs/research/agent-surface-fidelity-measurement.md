@@ -233,3 +233,49 @@ genuinely-declared discriminator). Implemented at `build_intent_actors` (the sin
 responsibilities are assembled); `.isf` byte-identical (the emitter lowers signals/behaviors, never
 the raw `actors[]`); WIRE-BASED-100 gold fields byte-identical → held 1.000 on the fresh eval. See
 KM card `[[agent-pure-inferred-phantom-drop]]` and `docs/tasks/KG-ISF-COMPLETENESS.md` (`.1b.iv`).
+
+## 9. `.1b.ii` decision measurement (`2026-06-17`, persisted corpus census + fresh wire IR)
+
+The `.1b` split (§7.1) deferred the `"X interface"→"X"` strip because a safe rule needs an "only when the
+leading token is already a real connected agent in this doc" sub-gate — actor-set context the pure-string
+relation-subject seam (`normalize_relation_actor_name`) does not have. `.1b.ii` resolves that.
+
+### 9.1 Census — prevalence and the safe/risk split (read-only over the persisted 36-doc corpus)
+
+`python3` over `intent_ir.json`: an actor whose name ends with `" interface"`, classified by whether the
+stripped lead `X` is itself a CONNECTED actor (≥1 port or relation) in the same document.
+
+| doc | `"X interface"` actor | lead `X` | class |
+|---|---|---|---|
+| CoreSight `100806_0701` | `AXI interface` | `AXI` (connected) | **SAFE-MERGE** |
+| AXI+ACE `ihi0022_h_c` | `Subordinate interface` | `Subordinate` (connected) | **SAFE-MERGE** |
+| AXI-Stream `ihi0051_b` | `Transmitter interface` | `Transmitter` (connected) | **SAFE-MERGE** |
+| GIC `100336_0106` | `CPU interface` / `Q-Channel interface` / `AXI4-Stream interface` | not connected | **CONFLATION-RISK** |
+| CoreSight `100806_0100` / `100806_0200` | `AXI interface` | `AXI` (not connected) | **CONFLATION-RISK** |
+
+Only **6 docs** carry an `"* interface"` actor at all. The decisive datum: `"AXI interface"` is SAFE in
+CoreSight `100806_0701` (where `AXI` is a connected agent) but a RISK in `100806_0100`/`0200` (where it is
+not) — the **same token, opposite status by document**, so the gate MUST be per-doc evidence-keyed, never a
+name list (ADR 0006) — exactly the genericity guardrail `transmitter` proved in §4. **None of the 4
+WIRE-BASED-100 gold docs (APB/AHB/AXI/SWD) carry an `"* interface"` actor**, so the gold relation surface is
+structurally untouched by any version of this rule.
+
+### 9.2 The rule + seam, and why it is now buildable
+
+Strip `"X interface"`→`X` **iff `X` is, in this document, an independent connected relation subject** (a
+relation subject that is not itself an `"* interface"` form). Implemented as a post-pass
+`consolidate_interface_actor_relations` over the assembled relation list — the same
+`actor_signal_relation_surface` slot the `.1b.iii` coordinated split uses (after the split, before dedup),
+where the full relation list, and therefore the connected-agent set, IS available (the deferral's missing
+context). The rewritten relation merges with `X`'s existing relations at dedup; an unstripped subject passes
+through byte-identical.
+
+### 9.3 Result = GO, `.1b` umbrella complete
+
+Live on a fresh post-`.1a`/`.1b` rebuild: AXI-Stream `Transmitter interface`→`Transmitter` (23 rels),
+AXI+ACE `Subordinate interface`→`Subordinate` (49 rels); the GIC `CPU interface` named block and the
+unconnected CoreSight `AXI interface` stay intact (the latter two not live-rebuildable — reclaimed/missing
+source — so the conflation guard is locked by the `CPU interface` unit test). The 4 wire docs carry no
+`"* interface"` actor → relation surface byte-identical → WIRE-BASED-100 held 1.000. With `.1b.ii` the
+`.1b` umbrella (`.1b.i`/`.1b.ii`/`.1b.iii`/`.1b.iv`) is complete, and with `.1a` the agent-surface fidelity
+goal (`KG-ISF-COMPLETENESS.1`) is fully built. See KM card `[[agent-interface-block-consolidation]]`.

@@ -1,3 +1,24 @@
+### KG-ISF-COMPLETENESS.1b.ii — named-interface consolidation (`"X interface"` → `"X"`); completes the `.1b` umbrella
+Measurement-first, then LANDED. A specification often names a real agent as its interface
+(`Subordinate interface`, `Transmitter interface`), stranding that form's relations under a phantom actor.
+The naive `"X interface"→"X"` strip is UNSAFE (the GIC `CPU interface` is the GICC, a distinct architectural
+block — NOT a generic `CPU`), so `.1b` deferred it until the safe gate had the doc's actor-set context. New
+`consolidate_interface_actor_relations` (`ir/evidence.rs`), a post-pass in `actor_signal_relation_surface`
+AFTER the `.1b.iii` coordinated split and BEFORE dedup, rewrites an `"X interface"` relation subject to the
+bare `"X"` **only when `X` is independently a connected relation subject in this doc** — so
+`Subordinate interface`→`Subordinate` / `Transmitter interface`→`Transmitter` fold onto the real agent
+(relations merge by dedup) while `CPU interface` is preserved. Per-doc connected-agent gate, never a
+chip-name list (ADR 0006); the same token `"AXI interface"` is SAFE in one CoreSight doc and a RISK in two
+others (census). **Crucially none of the 4 WIRE-BASED-100 gold docs (APB/AHB/AXI/SWD) carry an
+`"* interface"` actor → the gold relation surface is structurally untouched.** Live (fresh post-`.1a`/`.1b`
+rebuild): AXI-Stream `Transmitter interface`→`Transmitter` (23 rels), AXI+ACE `Subordinate interface`→
+`Subordinate` (49 rels); 4 wire docs unchanged. WIRE-BASED-100 HELD 1.000 (constraints + relations +
+temporal, APB/AHB/AXI); `kg-bench` 156/156; `run_ci.sh` GREEN (lib **1657**, +3 tests; conflation guard
+locked by the `CPU interface` unit test — the reclaimed CoreSight / missing GIC RISK docs are not
+live-rebuildable). **`.1b` umbrella COMPLETE** (`.1b.i`/`.1b.ii`/`.1b.iii`/`.1b.iv`); with `.1a`, the
+agent-surface fidelity goal (`KG-ISF-COMPLETENESS.1`) is fully built. Book `pipeline/intentir.md` "How the
+actor surface stays faithful"; KM card `agent-interface-block-consolidation`; report §9.
+
 ### KG-ISF-COMPLETENESS.1b.iv — Class-C PURE-INFERRED phantom-actor drop (code; the substantive remaining agent-surface lever)
 Measurement-first, then LANDED. The SemanticIR Phase-2 role-term scan (`build_actors`, semantic.rs:3177)
 mints a generic-role-term actor (`agent`/`controller`/`producer`/`consumer`/…) the instant a statement

@@ -184,6 +184,7 @@ names a real agent ("the Subordinate drives HRESP") also throws off look-alikes:
 - a sentence *fragment* mistaken for a subject — `For components…`, `is recommended…`, `Then it…`;
 - a real agent with a trailing word stuck to it — `Subordinate extends`, `decoder also`;
 - two agents joined by *and* — `the Subordinate and decoder read HADDR`;
+- a real agent named as its *interface* — `Subordinate interface`, `Transmitter interface` — written separately from the bare agent;
 - a generic role word the document only *mentions* — `controller`, `agent`, `producer` — that is never actually wired to any signal.
 
 `specforge` cleans each of these **structurally** — by the *shape* of the language, never by a
@@ -192,6 +193,7 @@ list of chip-specific names, so the rules work on any specification (see ADR 000
 - **fragments are rejected** before they can become an actor;
 - **trailing words are stripped** so the relation re-attaches to the genuine agent;
 - **"X and Y" subjects are split** so both agents get connected;
+- **"X interface" is folded onto "X"** — but *only* when `X` is already a connected agent in this same document, so `Subordinate interface` merges onto the real `Subordinate` while a distinct named block such as the GIC `CPU interface` (whose `CPU` is never an agent on its own) is left exactly as it is, never conflated with a generic `CPU`;
 - **mentioned-but-unwired generic role words are dropped** — if the only thing the document ever says about a `controller` is that the word appeared in a sentence (no signal it drives, no behaviour it owns, no phase or obligation that refers to it), it is generic vocabulary, not a protocol agent, so it does not earn an actor entry.
 
 That last step is deliberately **conservative**. An agent the document genuinely discusses —

@@ -132,10 +132,12 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   risk profiles, and (iii) is far broader than the wire-doc scope, so each becomes its own
   measurement-first + WIRE-BASED-100-gated sub-leaf:
   - **`.1b.i`** (trailing verb/adverb strip) — grammatically UNAMBIGUOUS, the clean completeness win.
-  - **`.1b.ii`** (`"X interface"→"X"` strip) — DEFERRED: a named-interface block (`CPU interface` in GIC,
-    a distinct GICC architectural entity) is NOT the generic noun `CPU`; needs an "only when the leading
-    token is already a real connected agent in this doc" sub-gate (actor-set context the relation-subject
-    seam lacks).
+  - **`.1b.ii`** (`"X interface"→"X"` strip) — **DONE `2026-06-17`** (see the dedicated node below): the
+    "only when the leading token is already a real connected agent in this doc" sub-gate was supplied by a
+    post-pass over the assembled relation list (`consolidate_interface_actor_relations`, the same
+    `actor_signal_relation_surface` slot as `.1b.iii`), where the connected-agent context the pure-string
+    relation-subject seam lacks IS available. So `Subordinate interface`/`Transmitter interface` fold onto
+    the real agent while the GIC `CPU interface` named block is preserved.
   - **`.1b.iii`** (coordinated "X and Y" split) — AHB `Subordinate and decoder` 6/4,
     `Exclusive Access Monitor and Subordinate` 4/2; needs the relations duplicated to BOTH agents.
   - **`.1b.iv`** (Class-C zero-evidence drop) — **DONE `2026-06-17`** (see the dedicated node below): of the
@@ -170,6 +172,38 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   AXI/APB/AHB/SWD 6/6·6/6·6/6·1/1; temporal AXI/APB/AHB 3/3·3/3·4/4; SWD lone constraint the documented
   promotion-only 0/1, independent). `kg-bench` 156/156; `run_ci.sh` GREEN (lib 1635 pass/2 ignored, +2
   tests). KM card `[[agent-trailing-fragment-consolidation]]`. Frontier → `.1b.ii`/`.1b.iii`/`.1b.iv`.
+- ID: `KG-ISF-COMPLETENESS.1b.ii` · Status: `done` (`2026-06-17`, measurement-first; LANDED +
+  WIRE-BASED-100-verified) · Goal: **named-interface consolidation** — fold an `"X interface"` relation
+  subject onto the bare agent `"X"` (`Subordinate interface`→`Subordinate`, `Transmitter interface`→
+  `Transmitter`) so the relations stranded under the wordy interface form re-attribute onto the genuine
+  agent, WITHOUT conflating a distinct named architectural block (GIC `CPU interface` = the GICC, NOT a
+  generic `CPU`). The `.1b` measurement (§7.1) deferred this until the safe gate had the actor-set context
+  the pure-string seam `normalize_relation_actor_name` lacks. **Measurement DONE `2026-06-17`** (report §9;
+  read-only census over the persisted corpus + the fresh wire IR): only 6 docs carry an `"* interface"`
+  actor — 3 SAFE-MERGE (`X` is an independent connected agent in this doc: AXI+ACE `Subordinate interface`,
+  AXI-Stream `Transmitter interface`, CoreSight `AXI interface`) and 5 CONFLATION-RISK (`X` not connected:
+  GIC `CPU interface`/`Q-Channel interface`/`AXI4-Stream interface`, CoreSight `AXI interface` ×2). The
+  same token `"AXI interface"` is SAFE in one CoreSight doc and a RISK in two others → the gate MUST key off
+  "X is a connected agent in *this* doc", never a name list (ADR 0006), exactly the genericity guardrail
+  proven for Class-C. **Crucially none of the 4 WIRE-BASED-100 gold docs (APB/AHB/AXI/SWD) carry an
+  `"* interface"` actor → the gold relation surface is structurally untouched.** **Seam:** a new post-pass
+  `consolidate_interface_actor_relations` in `actor_signal_relation_surface` (`ir/evidence.rs`), placed
+  AFTER `split_coordinated_actor_relations` (so a split-produced `"X interface"` conjunct is caught) and
+  BEFORE `dedup_actor_signal_relations` (so the rewritten relation merges with X's existing ones) — the same
+  post-pass slot the `.1b.iii` split uses, where the full relation list (hence the connected-agent context)
+  is available, which the relation-subject string seam is not. **LANDED `2026-06-17`** —
+  `strip_interface_suffix` + `consolidate_interface_actor_relations` (the connected set = relation subjects
+  that are NOT themselves `"* interface"` forms; a subject is rewritten only when its stripped lead is in
+  that set); +3 tests (suffix-strip recognition, safe-merge fires, conflation guard keeps `CPU interface`).
+  **Live (fresh post-`.1a`/`.1b` rebuild):** AXI-Stream `Transmitter interface` GONE → `Transmitter` 23 rels;
+  AXI+ACE `Subordinate interface` GONE → `Subordinate` 49 rels; the 4 wire docs carry no `"* interface"`
+  actor (byte-identical relation surface). **WIRE-BASED-100 HELD 1.000** (constraints APB/AHB/AXI 6/6·6/6·4/4,
+  relations 5/5·6/6·6/6, temporal 3/3·4/4·3/3 — source-tolerant filtered); `kg-bench` 156/156; `run_ci.sh`
+  GREEN (lib **1657**, +3). The reclaimed CoreSight + missing-source GIC RISK docs are not live-rebuildable,
+  so the conflation guard is locked by the `CPU interface` unit test rather than a live rebuild. KM card
+  `[[agent-interface-block-consolidation]]`. **`.1b` umbrella COMPLETE** (`.1b.i`/`.1b.ii`/`.1b.iii`/`.1b.iv`
+  all done); with `.1a`, `KG-ISF-COMPLETENESS.1` agent-surface fidelity is fully built. Frontier →
+  `.2a` direction (FSMGen-neutral, deferred) / `KG-ISF-TRANSACTIONS` body-emission (FSMGen-parked).
 - ID: `KG-ISF-COMPLETENESS.1b.iii` · Status: `done` (`2026-06-16`, measurement-first; LANDED +
   WIRE-BASED-100-verified) · Goal: **coordinated-subject split** — a relation whose subject is a coordinated "X and Y"
   ("*the Subordinate and decoder read HADDR*") is split into one relation per conjunct, so BOTH genuine
@@ -307,6 +341,22 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 
 ## Changelog
 
+- `2026-06-17`: **`.1b.ii` DONE** — named-interface consolidation LANDED, completing the `.1b` umbrella
+  (`.1b.i`/`.1b.ii`/`.1b.iii`/`.1b.iv` all done → with `.1a`, agent-surface fidelity `.1` is fully built).
+  New `strip_interface_suffix` + `consolidate_interface_actor_relations` post-pass in
+  `actor_signal_relation_surface` (`ir/evidence.rs`), after the `.1b.iii` split and before dedup, rewrites an
+  `"X interface"` relation subject to the bare `"X"` ONLY when `X` is independently a connected relation
+  subject in this doc — so `Subordinate interface`→`Subordinate` / `Transmitter interface`→`Transmitter`
+  fold onto the real agent while the GIC `CPU interface` named block (whose `CPU` is never an agent on its
+  own) is preserved. Per-doc connected-agent gate, no name list (ADR 0006) — the same token can be SAFE in
+  one doc and a RISK in another (CoreSight `AXI interface`). Census: 6 docs carry an `"* interface"` actor
+  (3 safe / 5 risk); none of the 4 WIRE-BASED-100 gold docs do, so the gold relation surface is structurally
+  untouched. Live (fresh post-`.1a`/`.1b` rebuild): AXI-Stream `Transmitter interface`→`Transmitter` (23
+  rels), AXI+ACE `Subordinate interface`→`Subordinate` (49 rels), 4 wire docs unchanged. WIRE-BASED-100 HELD
+  1.000 (constraints + relations + temporal, APB/AHB/AXI); `kg-bench` 156/156; `run_ci.sh` GREEN (lib 1657,
+  +3 tests; conflation guard locked by the `CPU interface` unit test — the reclaimed CoreSight / missing GIC
+  RISK docs are not live-rebuildable). Book `pipeline/intentir.md` "How the actor surface stays faithful";
+  KM card `[[agent-interface-block-consolidation]]`; report §9.
 - `2026-06-17`: **`.1b.iv` DONE** — Class-C PURE-INFERRED phantom drop LANDED (measurement-first; the
   substantive remaining buildable agent-surface lever after `.2b` measured-marginal). New
   `is_pure_inferred_phantom_role` + a guard in `build_intent_actors` (`ir/intent.rs`) skips an actor whose

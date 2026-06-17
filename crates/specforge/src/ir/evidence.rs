@@ -2480,6 +2480,53 @@ fn split_coordinated_actor_relations(
     out
 }
 
+/// `KG-ISF-COMPLETENESS.1b.ii` — strip a trailing " interface" from an actor name, returning the leading
+/// block ("Subordinate interface" → "Subordinate", "CPU interface" → "CPU"). Case-insensitive on the
+/// suffix; returns None when the name does not end with " interface" or the lead would be empty. Whether the
+/// strip is actually applied is the caller's decision (see `consolidate_interface_actor_relations`).
+fn strip_interface_suffix(name: &str) -> Option<String> {
+    const SUFFIX: &str = " interface";
+    let lead_len = name.to_ascii_lowercase().strip_suffix(SUFFIX)?.len();
+    let lead = name[..lead_len].trim_end();
+    if lead.is_empty() {
+        None
+    } else {
+        Some(lead.to_string())
+    }
+}
+
+/// `KG-ISF-COMPLETENESS.1b.ii` — post-pass over the assembled relation list: rewrite a relation subject of
+/// the form "X interface" to the bare agent "X" — but ONLY when "X" is ALREADY an independent connected
+/// agent in THIS document (it appears elsewhere as a relation subject that is not itself an "* interface"
+/// form). So "Subordinate interface" → "Subordinate" (a genuine consolidation — the relations stranded under
+/// the wordy interface form re-attribute onto the real agent and merge by dedup), while a distinct named
+/// architectural block like the GIC "CPU interface" (the GICC, whose "CPU" is never an agent on its own) is
+/// left intact — stripping it there would conflate the block with a generic "CPU". The connected-agent set
+/// is the document's OWN evidence, never a chip-name list (ADR 0006); the same per-doc keying lets one token
+/// be SAFE in one document and a RISK in another (CoreSight "AXI interface" where "AXI" is a connected agent
+/// vs. where it is not). Runs AFTER the `.1b.iii` coordinated split (so a split-produced "X interface"
+/// conjunct is caught too) and BEFORE `dedup_actor_signal_relations` (so the rewritten relation merges with
+/// the existing "X" relations). A subject left unstripped passes through byte-identical.
+fn consolidate_interface_actor_relations(
+    relations: Vec<ActorSignalRelation>,
+) -> Vec<ActorSignalRelation> {
+    let connected: HashSet<String> = relations
+        .iter()
+        .filter(|relation| strip_interface_suffix(&relation.actor_name).is_none())
+        .map(|relation| relation.actor_name.to_ascii_lowercase())
+        .collect();
+    let mut out = Vec::with_capacity(relations.len());
+    for mut relation in relations {
+        if let Some(lead) = strip_interface_suffix(&relation.actor_name)
+            && connected.contains(&lead.to_ascii_lowercase())
+        {
+            relation.actor_name = lead;
+        }
+        out.push(relation);
+    }
+    out
+}
+
 fn is_tie_off_actor_text(value: &str) -> bool {
     matches!(normalize_actor_term(value).as_str(), "tie off" | "tieoff")
 }
@@ -13758,7 +13805,11 @@ fn actor_signal_relation_surface(
     // BEFORE dedup, so both genuine agents are connected to the signal and the coordinated-fragment actor
     // disappears (a duplicate of an existing relation merges first-wins).
     let split = split_coordinated_actor_relations(augmented);
-    dedup_actor_signal_relations(split)
+    // KG-ISF-COMPLETENESS.1b.ii — consolidate "X interface" → "X" when "X" is already a connected agent in
+    // this doc, AFTER the coordinated split and BEFORE dedup, so the rewritten relation merges with X's
+    // (a distinct named block like the GIC "CPU interface" whose "CPU" is not a connected agent is left as-is).
+    let consolidated = consolidate_interface_actor_relations(split);
+    dedup_actor_signal_relations(consolidated)
 }
 
 #[expect(
@@ -14387,6 +14438,85 @@ mod tests {
         }
         assert_eq!(out[2].actor_name, "Manager");
         assert_eq!(out[2].relation_id, "chk_asr_0008");
+    }
+
+    // KG-ISF-COMPLETENESS.1b.ii — `strip_interface_suffix` returns the leading block only for a real
+    // trailing " interface", and never for a mid-string or bare occurrence.
+    #[test]
+    fn interface_suffix_strip_returns_lead_only_for_trailing_interface() {
+        assert_eq!(
+            super::strip_interface_suffix("Subordinate interface"),
+            Some("Subordinate".to_string())
+        );
+        assert_eq!(
+            super::strip_interface_suffix("CPU interface"),
+            Some("CPU".to_string())
+        );
+        // case-insensitive on the suffix, lead preserved verbatim
+        assert_eq!(
+            super::strip_interface_suffix("Transmitter Interface"),
+            Some("Transmitter".to_string())
+        );
+        // not a trailing " interface" → None
+        assert_eq!(super::strip_interface_suffix("interface controller"), None);
+        assert_eq!(super::strip_interface_suffix("Manager"), None);
+        assert_eq!(super::strip_interface_suffix("interface"), None);
+    }
+
+    // KG-ISF-COMPLETENESS.1b.ii — "Subordinate interface" is rewritten to "Subordinate" because
+    // "Subordinate" is an independent connected agent in this doc; the plain agent passes through.
+    #[test]
+    fn interface_consolidation_merges_when_lead_is_connected_agent() {
+        use crate::ir::source::{ActorSignalRelation, AutomationConfidence, RelationKind};
+        let interface_form = ActorSignalRelation {
+            relation_id: "asr_0001".to_string(),
+            actor_name: "Subordinate interface".to_string(),
+            signal_name: "RDATA".to_string(),
+            relation: RelationKind::Drives,
+            source_statement_ids: vec!["stmt_1".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let plain = ActorSignalRelation {
+            relation_id: "asr_0002".to_string(),
+            actor_name: "Subordinate".to_string(),
+            signal_name: "RVALID".to_string(),
+            relation: RelationKind::Drives,
+            source_statement_ids: vec!["stmt_2".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let out = super::consolidate_interface_actor_relations(vec![interface_form, plain]);
+        // The "X interface" subject re-attributes to the real agent; ids/signals/provenance preserved.
+        assert_eq!(out[0].actor_name, "Subordinate");
+        assert_eq!(out[0].relation_id, "asr_0001");
+        assert_eq!(out[0].signal_name, "RDATA");
+        assert_eq!(out[1].actor_name, "Subordinate");
+    }
+
+    // KG-ISF-COMPLETENESS.1b.ii — the conflation guard: "CPU interface" (a distinct named block, e.g. the
+    // GIC GICC) is LEFT INTACT because "CPU" is never an agent on its own in this doc.
+    #[test]
+    fn interface_consolidation_keeps_named_block_when_lead_not_connected() {
+        use crate::ir::source::{ActorSignalRelation, AutomationConfidence, RelationKind};
+        let interface_form = ActorSignalRelation {
+            relation_id: "asr_0001".to_string(),
+            actor_name: "CPU interface".to_string(),
+            signal_name: "nIRQ".to_string(),
+            relation: RelationKind::Drives,
+            source_statement_ids: vec!["stmt_1".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let other = ActorSignalRelation {
+            relation_id: "asr_0002".to_string(),
+            actor_name: "Distributor".to_string(),
+            signal_name: "SPI".to_string(),
+            relation: RelationKind::Drives,
+            source_statement_ids: vec!["stmt_2".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        let out = super::consolidate_interface_actor_relations(vec![interface_form, other]);
+        // "CPU" is not a connected agent here → the named block stays "CPU interface" (no conflation).
+        assert_eq!(out[0].actor_name, "CPU interface");
+        assert_eq!(out[1].actor_name, "Distributor");
     }
 
     #[test]

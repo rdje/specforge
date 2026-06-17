@@ -1,4 +1,36 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-COMPLETENESS.1b.ii (`2026-06-17`) — named-interface consolidation (`"X interface"` → `"X"`)
+
+**Why now.** This was the deferred half of the `.1b` (i) work (§7.1): the `"X interface"→"X"` strip needs a
+"only when X is already a connected agent in this doc" sub-gate, which the pure-string relation-subject seam
+`normalize_relation_actor_name` cannot supply. Building it completes the `.1b` umbrella — with `.1a`, the
+agent-surface fidelity goal (`.1`) is fully built.
+
+**Census (measurement-first).** Only 6 corpus docs carry an `"* interface"` actor: 3 SAFE-MERGE (lead X is a
+connected agent — AXI+ACE `Subordinate interface`, AXI-Stream `Transmitter interface`, CoreSight
+`AXI interface`) and 5 CONFLATION-RISK (lead not connected — GIC `CPU interface`/`Q-Channel interface`/
+`AXI4-Stream interface`, CoreSight `AXI interface` ×2). The same token `"AXI interface"` is SAFE in one
+CoreSight doc and a RISK in two others → the gate must be per-doc evidence-keyed, never a name list (ADR
+0006). None of the 4 WIRE-BASED-100 gold docs carry an `"* interface"` actor.
+
+**The fix.** `strip_interface_suffix(name)` (case-insensitive trailing " interface" → owned lead) +
+`consolidate_interface_actor_relations(relations)`: build the connected set (relation subjects that are NOT
+themselves "* interface" forms), then rewrite a subject `"X interface"`→`X` iff `X.to_lowercase()` is in
+that set. Wired into `actor_signal_relation_surface` AFTER `split_coordinated_actor_relations` (catches a
+split-produced "X interface" conjunct) and BEFORE `dedup_actor_signal_relations` (the rewritten relation
+merges with X's). Relation id unchanged (one-to-one rewrite; dedup handles same-(actor,signal,is_drives)).
++3 tests: suffix-strip recognition (incl. mid-string/bare negatives), safe-merge fires, conflation guard
+keeps `CPU interface`.
+
+**Verification.** New tests pass; the `actor_signal_relation_surface_matches_legacy_two_step` regression
+guard still passes (the post-pass is inert on non-interface input). Live (fresh post-`.1a`/`.1b` rebuild
+into a temp evidence-root): AXI-Stream `Transmitter interface` GONE → `Transmitter` 23 rels; AXI+ACE
+`Subordinate interface` GONE → `Subordinate` 49 rels; the 4 wire docs carry no `"* interface"` actor.
+WIRE-BASED-100 re-run on the fresh evidence: APB/AHB/AXI constraints 6/6·6/6·3/3, relations 5/5·6/6·6/6,
+temporal 3/3·4/4·3/3 — all source-tolerant filtered F1 = 1.000. `kg-bench` 156/156; `run_ci.sh` GREEN (lib
+1657, +3). The reclaimed CoreSight + missing-source GIC RISK docs are not live-rebuildable, so the
+conflation guard rests on the unit test, not a live rebuild — recorded honestly.
+
 ## KG-ISF-COMPLETENESS.1b.iv (`2026-06-17`) — Class-C PURE-INFERRED phantom-actor drop
 
 **Why this slice.** After `.2b` measured-marginal, the Class-C zero-evidence actor drop was the
