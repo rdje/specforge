@@ -4,6 +4,31 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-06-17 — KG-ISF-TRANSACTIONS.2m: deterministic channel-membership lever; new IR surface)
+- **New typed surface `SignalChannelMembershipRecord` + `EvidenceIr.signal_channel_memberships:
+  Vec<SignalChannelMembershipRecord>`** (`ir/evidence.rs`, serde-default + skip-if-empty ⇒ pre-`.2m` artifacts
+  deserialize unchanged and docs with no channel captions serialize byte-identically). Built by the pure
+  `build_signal_channel_memberships(&source_ir.structured_tables, &provenance)` in `EvidenceIr::build` — the only
+  stage with BOTH the table-signal provenance and the SourceIR captions. Helpers `derive_channel_role` /
+  `derive_continuation_table_number` / `split_leading_table_number` / `strip_leading_table_word` parse the
+  universal `<role> channel signals` caption grammar (ADR-0006, no name list), with continuation-number chaining
+  and an ambiguity gate.
+- **Public surface change:** `SemanticIr` gains `signal_channel_memberships` (carried by clone from `evidence_ir`,
+  mirroring `transaction_anchors`); `TransactionIntent` gains `channel_membership: Vec<TransactionChannelMembership>`
+  (new public type `TransactionChannelMembership {channel_role, ports}`), populated in `mint_named_transaction`
+  by grouping the transaction's ports by channel role. All three fields are serde-default + skip-if-empty.
+- **Consumer:** `commands/validate.rs` (intent path) gains `transactions_with_channel_membership` /
+  `transaction_channel_groups` metrics + an `intent_transaction_channel_membership` Info finding + a human-summary
+  line — mirroring the `.2i` `phase_membership` surface exactly.
+- **Blast radius / boundaries:** purely additive metadata. The ISF emitter (`ir/isf_ir.rs`) lowers `tx.steps` only
+  and never reads `channel_membership`, so the emitted `.isf` is byte-identical; the extraction surfaces
+  (relations/constraints/temporal/conditional/polarities) are untouched, so WIRE-BASED-100 is provably orthogonal
+  (a `git stash` baseline-vs-change AXI EvidenceIR diff shows the only changed field is the new
+  `signal_channel_memberships`, 154 records). lib tests 1662→1664 (+2). One `collapsible_if` clippy let-chain
+  collapsed. This is a metadata DIMENSION distinct from `phase_membership`: phases are prose-derived (`.2g`),
+  channels are caption/provenance-derived (`.2m`) — the channel role is kept verbatim, never mapped to abstract
+  address/data/response phases.
+
 ## Session update (2026-06-16 — ISF-REGISTER-RESET-EMIT.3: storage var width = true register width; TREE CLOSED)
 - **`ir/isf_ir.rs` storage var width corrected.** New `register_var_width(r)` = `size_bits ⊔
   max(bits_high)+1` (declared width, never below the highest located field bit; 32 fallback) replaces

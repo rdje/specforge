@@ -921,6 +921,15 @@ pub struct TransactionIntent {
     /// declares no phase whose prose references this transaction's members.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub phase_membership: Vec<TransactionPhaseMembership>,
+    /// KG-ISF-TRANSACTIONS.2m: the transaction's signal-set membership grouped by the
+    /// document-declared CHANNEL (`<role> channel signals` table captions). The
+    /// deterministic, structured-first counterpart of `phase_membership`: on AXI/ACE/CHI
+    /// docs (whose protocol phases ARE channels) it fills the per-phase grouping the
+    /// `<qualifier> phase` prose leaves empty. Checked METADATA, not lowered to ISF
+    /// transaction-body `steps` (same FSMGen rationale as `phase_membership`). Empty unless
+    /// the document declares channels and this transaction's members are channel-captioned.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub channel_membership: Vec<TransactionChannelMembership>,
     /// The control_block_ids this transaction was built from.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub source_block_ids: Vec<String>,
@@ -964,6 +973,27 @@ pub struct TransactionPhaseMembership {
     /// `SemanticIr.transaction_phases`.
     pub phase_name: String,
     /// The transaction's member signals attributed to this phase, each with the
+    /// document-grounded direction (Drives → output, Reads → input, else in/out).
+    pub ports: Vec<TransactionPortRecord>,
+}
+
+/// KG-ISF-TRANSACTIONS.2m — one channel's slice of a transaction's signal-set membership:
+/// the transaction's member signals the document's `<role> channel signals` table captions
+/// attribute to this channel, each with its grounded actor-relative direction. Checked
+/// IntentIR metadata (carried on [`TransactionIntent::channel_membership`]), NOT lowered to
+/// ISF transaction-body steps (the emitter lowers `steps`). The `channel_role` is the
+/// document's own caption vocabulary verbatim (lowercased) — no chip-spec name list
+/// (ADR 0006), deliberately not interpreted into address/data/response phases. Members with
+/// no channel mapping (their declaring table is not channel-captioned, or their channel
+/// captions conflicted — the EvidenceIR ambiguity gate) stay in
+/// [`TransactionIntent::ports`] only (an honest residual). This is the deterministic,
+/// structured-first counterpart of the prose-derived [`TransactionPhaseMembership`].
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct TransactionChannelMembership {
+    /// The document-declared channel (e.g. `write request`, `read data`, `write
+    /// response`), from `SemanticIr.signal_channel_memberships`.
+    pub channel_role: String,
+    /// The transaction's member signals attributed to this channel, each with the
     /// document-grounded direction (Drives → output, Reads → input, else in/out).
     pub ports: Vec<TransactionPortRecord>,
 }
@@ -1287,6 +1317,7 @@ fn recognize_digital_patterns(
                         ],
                         steps,
                         phase_membership: Vec::new(),
+                        channel_membership: Vec::new(),
                         source_block_ids: Vec::new(),
                         source_temporal_rule_ids: Vec::new(),
                         supporting_statement_ids: Vec::new(),
@@ -1524,6 +1555,17 @@ fn recognize_named_transactions(
         .map(|p| (p.phase_name.clone(), p.signal_set.iter().cloned().collect()))
         .collect();
 
+    // KG-ISF-TRANSACTIONS.2m: each declared signal's document-grounded CHANNEL (carried
+    // from EvidenceIR via the `<role> channel signals` caption cue), used to group each
+    // transaction's signal-set membership by channel — the deterministic counterpart of
+    // `phase_groups` on AXI-family docs (whose protocol phases are channels). Empty on docs
+    // without channel captions, so the grouping is a no-op there.
+    let signal_channels: BTreeMap<String, String> = semantic_ir
+        .signal_channel_memberships
+        .iter()
+        .map(|m| (m.signal_name.clone(), m.channel_role.clone()))
+        .collect();
+
     for anchor in &semantic_ir.transaction_anchors {
         // Dedup: a transaction of this name may already exist (e.g. a control
         // block or handshake transaction). The named anchor never duplicates it.
@@ -1538,6 +1580,7 @@ fn recognize_named_transactions(
             &enum_member_signal,
             &signal_directions,
             &phase_groups,
+            &signal_channels,
         ));
     }
 }
@@ -1572,6 +1615,7 @@ fn mint_named_transaction(
     enum_member_signal: &BTreeMap<String, String>,
     signal_directions: &BTreeMap<String, TransactionPortDirection>,
     phase_groups: &[(String, BTreeSet<String>)],
+    signal_channels: &BTreeMap<String, String>,
 ) -> TransactionIntent {
     let direction_of = |sig: &str| {
         signal_directions
@@ -1653,6 +1697,32 @@ fn mint_named_transaction(
             });
         }
     }
+    // `.2m`: group the transaction's signal-set membership (the `ports` just assembled —
+    // the `.2c`/`.2k` membership plus any Cue-B selector) by the document-declared CHANNEL
+    // (`signal_channels`: signal → `<role> channel signals` caption role). A member with no
+    // channel mapping (its declaring table is not channel-captioned, or its channel
+    // captions conflicted — the EvidenceIR ambiguity gate) stays in `ports` only (an honest
+    // residual). Metadata only, never an ISF body step (same FSMGen rationale as
+    // `phase_membership`). On AXI/ACE/CHI docs this is the deterministic grouping that fills
+    // the `<qualifier> phase` prose's empty `phase_membership`; empty everywhere else.
+    let mut channel_membership: Vec<TransactionChannelMembership> = Vec::new();
+    {
+        let mut by_channel: BTreeMap<String, Vec<TransactionPortRecord>> = BTreeMap::new();
+        for port in &ports {
+            if let Some(channel_role) = signal_channels.get(&port.port_name) {
+                by_channel
+                    .entry(channel_role.clone())
+                    .or_default()
+                    .push(port.clone());
+            }
+        }
+        for (channel_role, ports) in by_channel {
+            channel_membership.push(TransactionChannelMembership {
+                channel_role,
+                ports,
+            });
+        }
+    }
     // Confidence keyed on Cue-B corroboration (`.2a` semantics — two structural
     // cues agree), independent of how many membership ports were attached.
     let automation_confidence = if cue_b_corroborated {
@@ -1667,6 +1737,7 @@ fn mint_named_transaction(
         ports,
         steps,
         phase_membership,
+        channel_membership,
         source_block_ids: Vec::new(),
         source_temporal_rule_ids: Vec::new(),
         supporting_statement_ids: anchor.supporting_statement_ids.clone(),
@@ -1746,6 +1817,7 @@ fn synthesize_transactions(semantic_ir: &SemanticIr) -> Vec<TransactionIntent> {
             ports,
             steps,
             phase_membership: Vec::new(),
+            channel_membership: Vec::new(),
             source_block_ids: vec![cb.block_id.clone()],
             source_temporal_rule_ids: Vec::new(),
             supporting_statement_ids: cb.supporting_statement_ids.clone(),
@@ -2313,6 +2385,14 @@ mod tests {
         signal_directions.insert("HREADY".to_string(), super::TransactionPortDirection::Input);
         signal_directions.insert("HADDR".to_string(), super::TransactionPortDirection::Output);
 
+        // .2m: each declared signal's document-grounded channel (the `<role> channel
+        // signals` caption cue). HTRANS → "request", HREADY → "data"; HADDR is in NO
+        // channel-captioned table → it stays an honest "unchannelled" residual (in `ports`
+        // only, never a fabricated channel).
+        let mut signal_channels: BTreeMap<String, String> = BTreeMap::new();
+        signal_channels.insert("HTRANS".to_string(), "request".to_string());
+        signal_channels.insert("HREADY".to_string(), "data".to_string());
+
         // Corroborated: the qualifier "idle" matches enum member IDLE → the keyed
         // signal HTRANS is attached and confidence is High; `.2c` also attaches the
         // section's signal-set membership (HREADY) as a port with its direction.
@@ -2330,6 +2410,7 @@ mod tests {
             &enum_member_signal,
             &signal_directions,
             &phase_groups,
+            &signal_channels,
         );
         assert_eq!(txn.transaction_id, "txn_named_idle_transfer");
         assert_eq!(txn.transaction_name, "idle_transfer");
@@ -2378,6 +2459,18 @@ mod tests {
             txn.phase_membership[1].ports[0].direction,
             super::TransactionPortDirection::Input
         ));
+        // .2m: the same membership grouped by document-declared CHANNEL — HTRANS under
+        // `request`, HREADY under `data` (each with its grounded direction). Sorted by
+        // role; metadata only, never `.isf`.
+        assert_eq!(txn.channel_membership.len(), 2);
+        assert_eq!(txn.channel_membership[0].channel_role, "data");
+        assert_eq!(txn.channel_membership[0].ports[0].port_name, "HREADY");
+        assert!(matches!(
+            txn.channel_membership[0].ports[0].direction,
+            super::TransactionPortDirection::Input
+        ));
+        assert_eq!(txn.channel_membership[1].channel_role, "request");
+        assert_eq!(txn.channel_membership[1].ports[0].port_name, "HTRANS");
 
         // Uncorroborated: no qualifier matches an enum member → Medium, no body
         // (held out of `.isf`), but `.2c` still attaches its grounded signal-set
@@ -2396,6 +2489,7 @@ mod tests {
             &enum_member_signal,
             &signal_directions,
             &phase_groups,
+            &signal_channels,
         );
         assert!(txn2.steps.is_empty(), "uncorroborated stays body-less");
         assert!(matches!(
@@ -2413,6 +2507,12 @@ mod tests {
         assert!(
             txn2.phase_membership.is_empty(),
             "a member in no recognised phase stays unphased (residual), not invented into a group"
+        );
+        // .2m: HADDR is in no channel-captioned table → no channel grouping (honest
+        // "unchannelled" residual; the member still lives in `ports`).
+        assert!(
+            txn2.channel_membership.is_empty(),
+            "a member with no channel mapping stays in `ports` only, never a fabricated channel"
         );
     }
 
@@ -4965,6 +5065,14 @@ mod tests {
                     width: None,
                 }],
             }],
+            channel_membership: vec![super::TransactionChannelMembership {
+                channel_role: "write request".to_string(),
+                ports: vec![super::TransactionPortRecord {
+                    port_name: "HADDR".to_string(),
+                    direction: super::TransactionPortDirection::Output,
+                    width: None,
+                }],
+            }],
             source_block_ids: vec!["cb_1".to_string()],
             source_temporal_rule_ids: vec!["tr_1".to_string()],
             supporting_statement_ids: vec!["stmt_1".to_string()],
@@ -4982,6 +5090,15 @@ mod tests {
         assert_eq!(round_tripped.phase_membership[0].phase_name, "address");
         assert_eq!(
             round_tripped.phase_membership[0].ports[0].port_name,
+            "HADDR"
+        );
+        assert_eq!(round_tripped.channel_membership.len(), 1);
+        assert_eq!(
+            round_tripped.channel_membership[0].channel_role,
+            "write request"
+        );
+        assert_eq!(
+            round_tripped.channel_membership[0].ports[0].port_name,
             "HADDR"
         );
     }

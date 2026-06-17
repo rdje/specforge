@@ -5640,6 +5640,18 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             .map(|t| t.phase_membership.len())
             .sum::<usize>()
     );
+    // KG-ISF-TRANSACTIONS.2m — per-channel membership grouping (metadata, not .isf).
+    println!(
+        "    with_channel_membership: {} ({} channel group(s))",
+        ir.transactions
+            .iter()
+            .filter(|t| !t.channel_membership.is_empty())
+            .count(),
+        ir.transactions
+            .iter()
+            .map(|t| t.channel_membership.len())
+            .sum::<usize>()
+    );
     println!("  timing_constraints: {}", ir.timing_constraints.len());
     println!("  temporal_rules: {}", ir.temporal_rules.len());
     println!("  actor_contracts: {}", ir.actor_contracts.len());
@@ -6147,6 +6159,18 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         .transactions
         .iter()
         .map(|t| t.phase_membership.len())
+        .sum();
+    // KG-ISF-TRANSACTIONS.2m: the deterministic channel grouping (AXI/ACE/CHI docs whose
+    // phases ARE channels), the structured-first counterpart of the phase grouping above.
+    let transactions_with_channel_membership = ir
+        .transactions
+        .iter()
+        .filter(|t| !t.channel_membership.is_empty())
+        .count();
+    let transaction_channel_groups: usize = ir
+        .transactions
+        .iter()
+        .map(|t| t.channel_membership.len())
         .sum();
 
     let mut findings = Vec::new();
@@ -6908,6 +6932,45 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         ));
     }
 
+    // KG-ISF-TRANSACTIONS.2m: the deterministic per-CHANNEL signal grouping (the
+    // `<role> channel signals` caption cue) — an Info finding emitted only when the surface
+    // is non-empty (absence is not an event — the `.11` rule), with the per-channel split
+    // for one-glance inspection. Channel membership is the document's own channel vocabulary
+    // verbatim, metadata only, never lowered to `.isf` (the emitter lowers `steps`).
+    if transaction_channel_groups > 0 {
+        let grouped: String = ir
+            .transactions
+            .iter()
+            .filter(|t| !t.channel_membership.is_empty())
+            .take(8)
+            .map(|t| {
+                let channels = t
+                    .channel_membership
+                    .iter()
+                    .map(|m| format!("{}×{}", m.channel_role, m.ports.len()))
+                    .collect::<Vec<_>>()
+                    .join("/");
+                format!("{} [{}]", t.transaction_name, channels)
+            })
+            .collect::<Vec<_>>()
+            .join(", ");
+        findings.push(finding(
+            "intent_transaction_channel_membership",
+            ValidationFindingSeverity::Info,
+            "transactions",
+            format!(
+                "transaction channel membership (metadata, not lowered to .isf): {} transaction(s) carry a per-channel signal grouping across {} channel group(s) — {}",
+                transactions_with_channel_membership, transaction_channel_groups, grouped
+            ),
+            ir.transactions
+                .iter()
+                .filter(|t| !t.channel_membership.is_empty())
+                .take(8)
+                .map(|t| t.transaction_id.clone())
+                .collect(),
+        ));
+    }
+
     let report = ValidationReportRecord {
         report_id: format!("validation_intent_ir_{artifact_fingerprint}"),
         validated_stage: IrStage::IntentIr,
@@ -7125,6 +7188,15 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             metric(
                 "transaction_phase_groups",
                 transaction_phase_groups.to_string(),
+            ),
+            // KG-ISF-TRANSACTIONS.2m — per-channel membership grouping (metadata).
+            metric(
+                "transactions_with_channel_membership",
+                transactions_with_channel_membership.to_string(),
+            ),
+            metric(
+                "transaction_channel_groups",
+                transaction_channel_groups.to_string(),
             ),
             metric(
                 "timing_constraints",
@@ -9928,8 +10000,8 @@ mod tests {
         // read-only observation off built IR, so transactions are attached directly
         // (the recognizer itself is covered by ir/intent.rs::mint_named_transaction tests).
         use crate::ir::intent::{
-            TransactionIntent, TransactionPhaseMembership, TransactionPortDirection,
-            TransactionPortRecord, TransactionStep,
+            TransactionChannelMembership, TransactionIntent, TransactionPhaseMembership,
+            TransactionPortDirection, TransactionPortRecord, TransactionStep,
         };
 
         let tempdir = tempdir()?;
@@ -9972,6 +10044,14 @@ mod tests {
         assert!(!has_finding(
             &empty_report,
             "intent_transaction_phase_membership"
+        ));
+        assert_eq!(
+            metric_value(&empty_report, "transaction_channel_groups"),
+            Some("0")
+        );
+        assert!(!has_finding(
+            &empty_report,
+            "intent_transaction_channel_membership"
         ));
 
         // Positive: one corroborated transaction (`.2c` grounded signal set + `.2b`
@@ -10016,6 +10096,25 @@ mod tests {
                         }],
                     },
                 ],
+                // `.2m`: this transaction's membership grouped by document channel (metadata).
+                channel_membership: vec![
+                    TransactionChannelMembership {
+                        channel_role: "write request".to_string(),
+                        ports: vec![TransactionPortRecord {
+                            port_name: "HTRANS".to_string(),
+                            direction: TransactionPortDirection::Output,
+                            width: None,
+                        }],
+                    },
+                    TransactionChannelMembership {
+                        channel_role: "write response".to_string(),
+                        ports: vec![TransactionPortRecord {
+                            port_name: "HREADY".to_string(),
+                            direction: TransactionPortDirection::Input,
+                            width: None,
+                        }],
+                    },
+                ],
                 source_block_ids: Vec::new(),
                 source_temporal_rule_ids: Vec::new(),
                 supporting_statement_ids: vec!["stmt_1".to_string()],
@@ -10028,6 +10127,7 @@ mod tests {
                 ports: Vec::new(),
                 steps: Vec::new(),
                 phase_membership: Vec::new(),
+                channel_membership: Vec::new(),
                 source_block_ids: Vec::new(),
                 source_temporal_rule_ids: Vec::new(),
                 supporting_statement_ids: vec!["stmt_2".to_string()],
@@ -10107,6 +10207,36 @@ mod tests {
                     .contains(&"txn_named_exclusive_transfer".to_string()),
             "only the grouped transaction rides as a related id: {:?}",
             phase_finding.related_ids
+        );
+
+        // `.2m`: the idle_transfer carries a 2-channel grouping (write request×1, write
+        // response×1); the recognition-only exclusive_transfer carries none.
+        assert_eq!(
+            metric_value(&report, "transactions_with_channel_membership"),
+            Some("1")
+        );
+        assert_eq!(
+            metric_value(&report, "transaction_channel_groups"),
+            Some("2")
+        );
+        assert!(has_finding(
+            &report,
+            "intent_transaction_channel_membership"
+        ));
+        let channel_finding = report
+            .findings
+            .iter()
+            .find(|f| f.finding_id == "intent_transaction_channel_membership")
+            .expect("expected the transaction channel-membership finding");
+        assert_eq!(channel_finding.severity, ValidationFindingSeverity::Info);
+        assert_eq!(channel_finding.category, "transactions");
+        assert!(
+            channel_finding.summary.contains("idle_transfer")
+                && channel_finding.summary.contains("write request×1")
+                && channel_finding.summary.contains("write response×1")
+                && channel_finding.summary.contains("not lowered to .isf"),
+            "channel-membership summary carries the per-channel split + the metadata caveat: {}",
+            channel_finding.summary
         );
 
         Ok(())

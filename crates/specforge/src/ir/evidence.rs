@@ -141,6 +141,13 @@ pub struct EvidenceIr {
     /// Provenance links from table-synthesized signal declarations back to SourceIR tables.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub table_signal_declaration_provenance: Vec<TableSignalDeclarationProvenanceRecord>,
+    /// KG-ISF-TRANSACTIONS.2m: each declared signal's document-grounded CHANNEL, recovered
+    /// from the table that declared it when that table's caption is of the universal
+    /// `<role> channel signals` form (AXI/ACE/CHI-family). Carried forward so the IntentIR
+    /// transaction recognizer can group a transaction's signal-set membership by channel.
+    /// Empty (serde-skipped) on any document without `<role> channel signals` captions.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub signal_channel_memberships: Vec<SignalChannelMembershipRecord>,
     /// Resolved signal polarity facts recovered from prose/table evidence.
     /// These remain explicit so downstream layers can interpret asserted/deasserted
     /// semantics without blindly collapsing them to HIGH/LOW.
@@ -757,6 +764,15 @@ impl EvidenceIr {
             prior_guidance.as_ref(),
         );
 
+        // KG-ISF-TRANSACTIONS.2m: recover each declared signal's document-grounded CHANNEL
+        // from the `<role> channel signals` table captions (joined with the provenance just
+        // built). Document-level fact; empty on docs without channel captions. This is the
+        // only stage with both the provenance and the SourceIR table captions.
+        let signal_channel_memberships = build_signal_channel_memberships(
+            &source_ir.structured_tables,
+            &table_signal_declaration_provenance,
+        );
+
         // Extract system contract (clock + reset) from signal-description prose in tables.
         let contract_stmts = synthesize_system_contract_from_table_descriptions(
             &source_ir,
@@ -887,6 +903,7 @@ impl EvidenceIr {
             extracted_contracts: Vec::new(),
             constrained_extraction_stats: None,
             table_signal_declaration_provenance,
+            signal_channel_memberships,
             signal_polarities,
             signal_polarity_conflicts,
             signal_semantic_hints: Vec::new(),
@@ -1409,6 +1426,186 @@ pub struct TableSignalDeclarationProvenanceRecord {
     pub statement_id: String,
     pub signal_name: String,
     pub table_id: String,
+}
+
+/// KG-ISF-TRANSACTIONS.2m — one declared signal's document-grounded CHANNEL, recovered
+/// from the table that declared it when that table's caption is of the universal
+/// `<role> channel signals` form (AXI/ACE/CHI-family `B1.1: Write request channel signals`
+/// → `write request`). The channel `channel_role` is the document's own caption vocabulary
+/// verbatim (lowercased) — it is deliberately NOT interpreted into address/data/response
+/// phases (that mapping is family-specific protocol knowledge and would risk fabricating a
+/// phase the document never named for the signal); no chip-spec name list (ADR 0006). A
+/// signal is recorded ONLY when every channel-captioned table that declares it agrees on
+/// exactly ONE role (the ambiguity gate, for boundary precision — bar #3); a signal whose
+/// channel captions disagree is an honest residual (absent here). Carried `EvidenceIR →
+/// SemanticIR → IntentIR`, where `mint_named_transaction` groups a transaction's signal-set
+/// membership by channel.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct SignalChannelMembershipRecord {
+    pub signal_name: String,
+    pub channel_role: String,
+    /// The channel-captioned SourceIR table(s) that declared this signal.
+    pub table_ids: Vec<String>,
+}
+
+/// KG-ISF-TRANSACTIONS.2m: recover each declared signal's document-grounded CHANNEL by
+/// joining the table-signal provenance (signal → table_id) with the SourceIR table captions
+/// of the universal `<role> channel signals` form. Pure + deterministic (sorted output).
+///
+/// The EvidenceIR build is the only stage that has BOTH the provenance and the SourceIR
+/// table captions, so the join lives here. The result is a document-level fact (independent
+/// of any transaction); IntentIR's transaction recognizer groups a transaction's membership
+/// by it. Empty on any document without `<role> channel signals` captions ⇒ zero churn.
+///
+/// Boundary precision (bar #3): a signal is recorded only when every channel-captioned table
+/// that declares it agrees on exactly ONE role — a signal whose channel captions disagree
+/// (the older AXI+ACE doc lists the same signal under `Write address channel signals` and
+/// per-interface `Manager/Memory Subordinate interface write channel signals` tables) is
+/// dropped as an honest residual rather than attributed to a guessed channel.
+fn build_signal_channel_memberships(
+    structured_tables: &[crate::ir::source::StructuredTableRecord],
+    provenance: &[TableSignalDeclarationProvenanceRecord],
+) -> Vec<SignalChannelMembershipRecord> {
+    // table_id → channel role (direct match), and table-NUMBER → role (for chaining a
+    // role-stripped continuation fragment back to its captioned head table).
+    let mut table_role: BTreeMap<String, String> = BTreeMap::new();
+    let mut number_role: BTreeMap<String, String> = BTreeMap::new();
+    for table in structured_tables {
+        let Some(caption) = table.caption_text.as_deref() else {
+            continue;
+        };
+        if let Some((number, role)) = derive_channel_role(caption) {
+            table_role.insert(table.table_id.clone(), role.clone());
+            if let Some(number) = number {
+                number_role.entry(number).or_insert(role);
+            }
+        }
+    }
+    // Continuation fragments (`<number> Continued from previous page`) carry the channel's
+    // signals but no role in their caption — inherit the head table's role by number.
+    for table in structured_tables {
+        if table_role.contains_key(&table.table_id) {
+            continue;
+        }
+        let Some(caption) = table.caption_text.as_deref() else {
+            continue;
+        };
+        if let Some(number) = derive_continuation_table_number(caption)
+            && let Some(role) = number_role.get(&number)
+        {
+            table_role.insert(table.table_id.clone(), role.clone());
+        }
+    }
+    if table_role.is_empty() {
+        return Vec::new();
+    }
+    // signal → set of channel roles (via channel-captioned declaring tables) + the
+    // declaring table ids. The ambiguity gate keeps only signals with exactly one role.
+    let mut signal_roles: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    let mut signal_tables: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    for record in provenance {
+        if let Some(role) = table_role.get(&record.table_id) {
+            signal_roles
+                .entry(record.signal_name.clone())
+                .or_default()
+                .insert(role.clone());
+            signal_tables
+                .entry(record.signal_name.clone())
+                .or_default()
+                .insert(record.table_id.clone());
+        }
+    }
+    signal_roles
+        .into_iter()
+        .filter_map(|(signal_name, roles)| {
+            // Ambiguity gate: a signal under conflicting channel captions is dropped.
+            if roles.len() != 1 {
+                return None;
+            }
+            let channel_role = roles.into_iter().next()?;
+            let table_ids = signal_tables
+                .get(&signal_name)
+                .map(|ids| ids.iter().cloned().collect())
+                .unwrap_or_default();
+            Some(SignalChannelMembershipRecord {
+                signal_name,
+                channel_role,
+                table_ids,
+            })
+        })
+        .collect()
+}
+
+/// Parse a `<role> channel signals` table caption → (optional table number, channel role).
+/// Universal grammar, no name list (ADR 0006). Returns `None` for any caption not of the
+/// channel-signal form. The leading table-number token (`B1.1`, `A2-2`, `F2-2` — dotted or
+/// dashed) is stripped before the role so dash digits never leak into it; a role that still
+/// holds a digit, or any non-letter, is rejected (defensive — a real channel role is
+/// alphabetic words). The role is lowercased + trimmed; `channel signal[s]` is the head.
+fn derive_channel_role(caption: &str) -> Option<(Option<String>, String)> {
+    let after_table = strip_leading_table_word(caption.trim());
+    let (number, rest) = split_leading_table_number(after_table);
+    // Drop a separator (':', '.', '-') + whitespace between the number and the role.
+    let rest = rest.trim_start_matches([':', '.', '-']).trim();
+    // The universal head noun terminates the role; require a non-empty role before it.
+    let head = rest.to_ascii_lowercase().find(" channel signal")?;
+    let role = rest[..head].trim().to_ascii_lowercase();
+    if role.is_empty() || !role.chars().all(|c| c.is_ascii_alphabetic() || c == ' ') {
+        return None;
+    }
+    Some((number, role))
+}
+
+/// A role-stripped continuation caption (`<number> Continued from previous page`, or
+/// `... (continued)` with no role) → the head table number it continues, else `None`.
+fn derive_continuation_table_number(caption: &str) -> Option<String> {
+    let after_table = strip_leading_table_word(caption.trim());
+    let (number, rest) = split_leading_table_number(after_table);
+    let number = number?;
+    rest.to_ascii_lowercase()
+        .contains("continued")
+        .then_some(number)
+}
+
+/// Strip a leading literal `Table ` (case-insensitive) prefix, if present.
+fn strip_leading_table_word(s: &str) -> &str {
+    s.strip_prefix("Table ")
+        .or_else(|| s.strip_prefix("table "))
+        .unwrap_or(s)
+        .trim_start()
+}
+
+/// Split a leading table-number token (`B1.1`, `A2-2`, `12`, `F3-8`) from the rest of a
+/// caption. A table number is optional leading letters followed by digits with `.`/`-`
+/// separators (a separator only counts when a digit follows it, so a trailing `:`/space is
+/// left for the caller). Returns `(Some(number), rest)` when the caption starts with one,
+/// else `(None, s)` (e.g. a caption with no number, where the role word is left intact).
+fn split_leading_table_number(s: &str) -> (Option<String>, &str) {
+    let bytes = s.as_bytes();
+    let mut i = 0;
+    while i < bytes.len() && bytes[i].is_ascii_alphabetic() {
+        i += 1;
+    }
+    let digits_start = i;
+    let mut saw_digit = false;
+    while i < bytes.len() {
+        if bytes[i].is_ascii_digit() {
+            saw_digit = true;
+            i += 1;
+        } else if (bytes[i] == b'.' || bytes[i] == b'-')
+            && i + 1 < bytes.len()
+            && bytes[i + 1].is_ascii_digit()
+        {
+            i += 1;
+        } else {
+            break;
+        }
+    }
+    if saw_digit && i > digits_start {
+        (Some(s[..i].to_string()), &s[i..])
+    } else {
+        (None, s)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -14184,6 +14381,135 @@ mod tests {
         looks_like_structural_contents_entry_for_semantic_hint, numbered_list_prefix,
         parse_encoding_numeric_literal, signal_constraint_fact_key,
     };
+
+    // ── KG-ISF-TRANSACTIONS.2m — signal → channel membership from `<role> channel signals` captions ─
+    #[test]
+    fn derive_channel_role_parses_universal_caption_grammar() {
+        use super::{derive_channel_role, derive_continuation_table_number};
+        // Colon form (2025 AXI): `B1.1: Write request channel signals`.
+        assert_eq!(
+            derive_channel_role("Table B1.1: Write request channel signals"),
+            Some((Some("B1.1".to_string()), "write request".to_string()))
+        );
+        // Dash-numbered form (2021 AXI+ACE): `A2-3 Write data channel signals` — the dash
+        // digit must NOT leak into the role.
+        assert_eq!(
+            derive_channel_role("Table A2-3 Write data channel signals"),
+            Some((Some("A2-3".to_string()), "write data".to_string()))
+        );
+        // `(continued)` suffix keeps the role: parse it directly, head noun terminates.
+        assert_eq!(
+            derive_channel_role("Table F2-2 Write address channel signals (continued)"),
+            Some((Some("F2-2".to_string()), "write address".to_string()))
+        );
+        // Not a channel-signal caption → None (no fabrication).
+        assert_eq!(
+            derive_channel_role("Table A2.2: Valid and Ready signals"),
+            None
+        );
+        assert_eq!(
+            derive_channel_role("Table B1.9: Credit control signals"),
+            None
+        );
+        // Bare `... channel` without `signals` is deliberately NOT a channel-signal cue.
+        assert_eq!(
+            derive_channel_role("Table A15.17: Snoop request channel"),
+            None
+        );
+        // A role-stripped continuation caption carries no role itself …
+        assert_eq!(
+            derive_channel_role("Table B1.1 Continued from previous page"),
+            None
+        );
+        // … but is chained back to its head table NUMBER.
+        assert_eq!(
+            derive_continuation_table_number("Table B1.1 Continued from previous page"),
+            Some("B1.1".to_string())
+        );
+        assert_eq!(
+            derive_continuation_table_number("Table B1.1: Write request channel signals"),
+            None
+        );
+    }
+
+    #[test]
+    fn build_signal_channel_memberships_chains_continuation_and_gates_ambiguity() {
+        use super::{
+            SignalChannelMembershipRecord, TableSignalDeclarationProvenanceRecord,
+            build_signal_channel_memberships,
+        };
+        let tbl = |id: &str, caption: &str| StructuredTableRecord {
+            table_id: id.to_string(),
+            asset_id: format!("asset_{id}"),
+            page_id: None,
+            caption_text: Some(caption.to_string()),
+            source_ref: None,
+            table_kind: TableKind::Unknown,
+            header_rows: Vec::new(),
+            body_rows: Vec::new(),
+            row_count: 0,
+            col_count: 0,
+        };
+        let prov = |signal: &str, table: &str| TableSignalDeclarationProvenanceRecord {
+            statement_id: format!("stmt_{signal}"),
+            signal_name: signal.to_string(),
+            table_id: table.to_string(),
+        };
+        let tables = vec![
+            tbl("t_aw", "Table B1.1: Write request channel signals"),
+            tbl("t_aw_cont", "Table B1.1 Continued from previous page"),
+            tbl("t_w", "Table B1.2: Write data channel signals"),
+            // A non-channel caption: its signals are NOT given a channel.
+            tbl("t_vr", "Table A2.2: Valid and Ready signals"),
+            // A second, DISAGREEING channel caption for AWADDR (the older-doc shape):
+            // declares AWADDR under a per-interface variant → AWADDR becomes ambiguous.
+            tbl(
+                "t_mi",
+                "Table A9.1: Manager interface write channel signals",
+            ),
+        ];
+        let provenance = vec![
+            prov("AWVALID", "t_aw"),    // head channel table → write request
+            prov("AWACT", "t_aw_cont"), // continuation fragment → chained to write request
+            prov("WDATA", "t_w"),       // write data
+            prov("AWVALID", "t_vr"),    // also in a non-channel table — irrelevant
+            prov("AWADDR", "t_aw"),     // write request …
+            prov("AWADDR", "t_mi"),     // … AND manager interface write → AMBIGUOUS (dropped)
+        ];
+        let mut got = build_signal_channel_memberships(&tables, &provenance);
+        got.sort_by(|a, b| a.signal_name.cmp(&b.signal_name));
+        let expect = vec![
+            SignalChannelMembershipRecord {
+                signal_name: "AWACT".to_string(),
+                channel_role: "write request".to_string(),
+                table_ids: vec!["t_aw_cont".to_string()],
+            },
+            SignalChannelMembershipRecord {
+                signal_name: "AWVALID".to_string(),
+                channel_role: "write request".to_string(),
+                table_ids: vec!["t_aw".to_string()],
+            },
+            SignalChannelMembershipRecord {
+                signal_name: "WDATA".to_string(),
+                channel_role: "write data".to_string(),
+                table_ids: vec!["t_w".to_string()],
+            },
+        ];
+        assert_eq!(
+            got, expect,
+            "continuation chained, ambiguous AWADDR dropped, non-channel-only signals absent"
+        );
+
+        // A document with no `<role> channel signals` captions yields an empty surface.
+        let none = build_signal_channel_memberships(
+            &[tbl("t_vr", "Table A2.2: Valid and Ready signals")],
+            &[prov("AWVALID", "t_vr")],
+        );
+        assert!(
+            none.is_empty(),
+            "no channel captions → empty surface (no fabrication)"
+        );
+    }
 
     // ── PDF-VARIANT-DIGESTION.2 — flexible register-field-table extraction ───────────────────
     #[test]

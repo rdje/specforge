@@ -82,6 +82,12 @@ pub struct SemanticIr {
     /// churn on docs that name no phases.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub transaction_phases: Vec<TransactionPhaseRecord>,
+    /// KG-ISF-TRANSACTIONS.2m: each declared signal's document-grounded CHANNEL (from the
+    /// `<role> channel signals` table captions), carried verbatim from EvidenceIR so the
+    /// IntentIR transaction recognizer can group a transaction's signal-set membership by
+    /// channel. Serde-skipped while empty ⇒ zero artifact churn on docs without channels.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub signal_channel_memberships: Vec<crate::ir::evidence::SignalChannelMembershipRecord>,
     #[serde(default)]
     pub control_blocks: Vec<ControlBlockRecord>,
     #[serde(default)]
@@ -394,6 +400,7 @@ impl SemanticIr {
             symbol_definitions,
             transaction_anchors,
             transaction_phases,
+            signal_channel_memberships: evidence_ir.signal_channel_memberships.clone(),
             control_blocks,
             explicit_modules,
             explicit_tops,

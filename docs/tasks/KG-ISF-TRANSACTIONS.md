@@ -130,7 +130,7 @@ grammar only, no name lists (ADR 0006); honest residual over fabrication. Scope 
 precise, accurate, step-by-step capture of ALL transactions — but delivered measurement-first, in safe
 slices, wire-docs first.
 
-## Frontier — `.2i` DONE (metadata-only per-phase membership grouping); `.2j` table-column phase cue MEASURED = NO-GO; `.2k` DONE (descendant-subsection membership scope); `.2l` DONE (`2026-06-17`, measurement-first — the VLM-tier candidate is RESOLVED: AXI per-signal phase membership is recoverable DETERMINISTICALLY from the document's caption-named `B1.x … channel signals` tables — `provenance` already maps signal→channel, channel→phase clean — so the VLM lever is superseded; SWD is honest degenerate absence — 2-wire serial, bit-field time-phases on shared SWDIO; the bounded VLM probe confirmed redundant/fabrication-prone + RAM-expensive (7B→13 GB→host 87% used)). **NEXT recorded candidate → `.2m`: a DETERMINISTIC AXI-family channel-membership lever** (group a transaction's `.2c`/`.2k` membership by its document-grounded channel, recovered from the `<role> channel signals` table captions; RAM-safe, structured-first). The VLM-tier transaction frontier is exhausted
+## Frontier — `.2i` DONE (metadata-only per-phase membership grouping); `.2j` table-column phase cue MEASURED = NO-GO; `.2k` DONE (descendant-subsection membership scope); `.2l` DONE (`2026-06-17`, measurement-first — the VLM-tier candidate is RESOLVED: AXI per-signal phase membership is recoverable DETERMINISTICALLY from the document's caption-named `B1.x … channel signals` tables — `provenance` already maps signal→channel, channel→phase clean — so the VLM lever is superseded; SWD is honest degenerate absence — 2-wire serial, bit-field time-phases on shared SWDIO; the bounded VLM probe confirmed redundant/fabrication-prone + RAM-expensive (7B→13 GB→host 87% used)). **`.2m` DONE (`2026-06-17`, measurement-first, CODE — GO): a DETERMINISTIC AXI-family channel-membership lever** — groups a recognized transaction's `.2c`/`.2k` membership by its document-grounded channel, recovered from the universal `<role> channel signals` table-caption cue (RAM-safe, structured-first; the VLM lever superseded by `.2l`). Channel membership is a DISTINCT typed dimension (verbatim document role, ambiguity-gated, continuation-chained) that fills the `.2i` AXI-empty phase grouping (live: AXI `with_channel_membership: 5 / 10 groups`, `atomic_transaction` write request×12/write data×3/read data×4/write response×3); metadata only, `.isf` BYTE-IDENTICAL (proven via `git stash` baseline diff), WIRE-BASED-100 orthogonal, `kg-bench` 156/156, `run_ci.sh` GREEN (lib 1664). The VLM-tier transaction frontier is exhausted; the transaction tree's deterministic levers are now built out (recognition `.2a` → bodies `.2b` → membership `.2c`/`.2k` → quick-surface `.2d` → phases `.2g`–`.2j` → channels `.2m`)
 
 The `.2e` checkpoint deferred the *choice* of ordering signal to "a dedicated measurement-first slice." **`.2f`
 ran that measurement (read-only, corpus-wide) and made the choice** — see the `.2f` node + `.2f` changelog
@@ -633,6 +633,80 @@ body-emission PARKED pending FSMGEN's answer + owner steer (the metadata-only gr
   channel-caption cue is the document's own universal vocabulary, no name list). KM card
   `transaction-phase-membership-vlm-vs-channel`. `[[project_kg_isf_transactions]]` / `[[feedback_scoring_rigor]]` /
   `[[feedback_multi_strategy_best_wins]]` / `[[feedback_ram_ceiling_monitor]]` / `[[project_llm_provider_ollama_qwen]]`.
+- ID: `KG-ISF-TRANSACTIONS.2m` · Status: `done` (`2026-06-17`; measurement-first; CODE — GO) · Goal:
+  **DETERMINISTIC AXI-family channel-membership lever** — group a recognized transaction's `.2c`/`.2k`
+  signal-set membership by its document-grounded CHANNEL, recovered from the universal `<role> channel
+  signals` table-caption cue (the `.2l` Q1 finding, RAM-safe / structured-first, the VLM lever superseded).
+  Fills the `.2i` AXI-empty phase grouping deterministically — channel membership is a DISTINCT typed
+  dimension, complementary to the `.2g`/`.2i` prose-derived phases.
+  **Measurement (read-only, the slice's mandated Step 1 — over the persisted SourceIR captions +
+  EvidenceIR provenance + a current-binary `intent --dry-run` rebuild; `generated/` gitignored):**
+  - **The cue is real + clean on the 2025 AXI doc.** `table_signal_declaration_provenance` (signal →
+    table_id) joined with the SourceIR table `caption_text` of the form `<table-num>: <role> channel
+    signals` (`B1.1: Write request channel signals` → `write request`, …, + the `A2.3: Credited channel
+    signals` variant) yields **154 signals → 8 channel roles, ZERO ambiguous** (write/read request/data/
+    response, snoop request/response, credited). Continuation fragments (`B1.1 Continued from previous
+    page`, role-stripped) are chained by the caption's own table NUMBER to their head's role (recovers the
+    24 AW*/19 AR* signals the fragment strands — write-request rises 26→50). Current-code per-transaction
+    grouping: `atomic_transaction` 22 ports → {write request:12, write response:3, read data:4, write
+    data:3} (MULTI-channel, 0 unmapped), `prefetch`/`writedeferrable` multi-channel, the 7 per-channel
+    handshakes each map to their channel; **12 of 21 transactions gain grouping, 3 multi-channel**.
+  - **Genericity / boundary precision — the 2021 AXI+ACE doc proves the gate is needed.** Its captions are
+    dash-numbered (`A2-2`, `F2-2`) and the SAME channel role recurs across base/ACE/appendix variants AND
+    per-interface default-value mega-tables (`Manager interface write` / `Memory Subordinate interface
+    write`), so the same signal (AWADDR) carries 3 different role strings → **31 of 105 ambiguous**. The
+    **ambiguity gate** (a signal gets a channel iff every channel-captioned table that declares it agrees
+    on ONE role; conflicting → drop, honest residual) keeps 74 clean and drops the 31 (they surface as
+    `unmapped`, never a fabricated channel). Correct table-number grammar (`[A-Za-z]*\d+(?:[.\-]\d+)*`)
+    handles both the `B1.1` colon and `A2-2` dash forms.
+  - **Absent (no fabrication) on every non-AXI-family doc** — AXI-Stream / APB / AHB / SWD have no `<role>
+    channel signals` captions → 0 roles, 0 signals mapped, empty surface (byte-identical artifacts).
+  **DESIGN (locked, Option A — channel membership as its OWN dimension, verbatim document role; the
+  request→address/data→data/response→response interpretation is DELIBERATELY NOT applied — it is
+  AXI-family semantic knowledge, not universal, would duplicate/conflict with the `.2g` prose phases, and
+  risks fabricating a phase the document did not name for that signal; ADR 0006 — the cue AND the role
+  string are the document's own caption words, no SpecForge name list):**
+  1. **EvidenceIR** (`ir/evidence.rs`, the only stage with BOTH provenance and captions): new
+     `SignalChannelMembershipRecord {signal_name, channel_role, table_ids}` +
+     `EvidenceIr.signal_channel_memberships` (serde-skip-if-empty); pure `build_signal_channel_memberships`
+     (universal caption grammar `derive_channel_role` + continuation-number chaining + the ambiguity gate),
+     called in `EvidenceIr::build`.
+  2. **SemanticIR** (`ir/semantic.rs`): carry `signal_channel_memberships` forward (clone from
+     `evidence_ir`), so IntentIR can read it — mirrors the `transaction_anchors` data flow.
+  3. **IntentIR** (`ir/intent.rs`): `TransactionChannelMembership {channel_role, ports}` +
+     `TransactionIntent.channel_membership` (serde-skip-if-empty); `mint_named_transaction` groups the
+     `.2c`/`.2k` membership (`anchor.signal_set` ports) by channel role (unmapped members stay in `ports`
+     only — honest residual). Metadata only, NOT lowered to ISF (mirrors `.2i` `phase_membership`; the
+     emitter lowers `steps`).
+  4. **validate** (`commands/validate.rs`, intent path): metrics `transactions_with_channel_membership` +
+     `transaction_channel_groups`, an `intent_transaction_channel_membership` Info finding (category
+     `transactions`, non-empty-only — the `.11` rule), a human-summary line.
+  **IMPLEMENTED exactly as designed** — `SignalChannelMembershipRecord` + `build_signal_channel_memberships`
+  (`derive_channel_role` / `derive_continuation_table_number` / `split_leading_table_number`) on EvidenceIR,
+  carried on SemanticIR, grouped in `mint_named_transaction` onto `TransactionIntent.channel_membership`, +
+  the `validate` channel inventory.
+  **VERIFICATION (all GREEN):** (1) **`run_ci.sh` GREEN** — fmt + warning-deny clippy (one `collapsible_if`
+  let-chain fixed) + warning-deny tests (**lib 1664**, +2: `derive_channel_role_parses_universal_caption_grammar`
+  keep/reject for the colon/dash/continuation/non-channel/bare-`channel` forms, and
+  `build_signal_channel_memberships_chains_continuation_and_gates_ambiguity`; plus the
+  `mint_named_transaction` + `transaction_intent_round_trips_through_json` + `validate_intent_ir_reports_transaction_inventory`
+  tests extended for channels) + rustdoc + mdBook + memory-arch + knowledge-map. (2) **`kg-bench` 156/156**
+  (no fixture has channel captions → empty surface → unchanged). (3) **WIRE-BASED-100 PROVABLY ORTHOGONAL**
+  — a `git stash` HEAD-before-`.2m` vs HEAD-with-`.2m` AXI EvidenceIR rebuild diff shows the **ONLY** changed
+  field is the new `signal_channel_memberships` (154 records); `actor_signal_relations` /`signal_constraints`/
+  `conditional_rules`/`signal_polarities`/`extracted_statements` BYTE-IDENTICAL; and the **emitted `.isf` is
+  byte-identical** (the emitter `isf_ir.rs` lowers `tx.steps` only — empirically confirmed by adapting the AXI
+  intent with vs without `channel_membership`: identical `isf` source). (4) **ADR-0006** — universal `<role>
+  channel signals` caption grammar + section-number grammar, no name list. **Live demo (new-binary
+  evidence→semantic→intent→validate, `generated/` gitignored):** AXI evidence carries 154 channel memberships;
+  `validate` reports `with_channel_membership: 5 (10 channel group(s))` with the `intent_transaction_channel_membership`
+  Info finding — `atomic_transaction [read data×4/write data×3/write request×12/write response×3]`,
+  `prefetch_transaction [read data×1/write request×7]`, `writedeferrable [write request×9/write response×1]`,
+  `writezero [write request×6]`, `narrow_transfer [read data×3]`; AXI's `phase_membership` is 0 (its prose
+  names no phase signals) so the deterministic channel grouping FILLS that gap exactly as intended. Book
+  `pipeline/intentir.md` "Grouping a transaction's signals by channel". KM card
+  `transaction-channel-membership`. The tree stays `active`. `[[project_kg_isf_transactions]]` /
+  `[[feedback_scoring_rigor]]` / `[[feedback_no_hardcoded_chip_spec_names]]` / `[[feedback_multi_strategy_best_wins]]`.
 
 ## Changelog
 
@@ -857,3 +931,39 @@ body-emission PARKED pending FSMGEN's answer + owner steer (the metadata-only gr
   +2 tests) ✓. Book `pipeline/intentir.md` updated; KM card `transaction-membership-subsection-scope`. Remaining
   `.2j` candidate (AXI/SWD timing-diagram phase columns, VLM-tier) stays a future lever — tree stays `active`.
   `[[project_kg_isf_transactions]]` / `[[feedback_scoring_rigor]]`.
+- `2026-06-17`: **`.2l` DONE — measurement-first, read-only + bounded VLM probe, docs-only.** Closed the last
+  `.2j`-recorded transaction candidate ("AXI/SWD timing-diagram phase columns, VLM-tier"). **Q1 (AXI) GO but
+  DETERMINISTIC** (VLM superseded): AXI phases = channels; `table_signal_declaration_provenance` (411) maps
+  each signal to its caption-named `B1.x … channel signals` table (B1.1=26 AW* address / B1.2=15 W* data /
+  B1.3=14 B* response / B1.4 AR* / B1.5 R* / B1.6/B1.7 snoop) → per-signal phase membership recoverable with NO
+  VLM via the universal `<role> channel signals` caption cue (ADR 0006). **Q2 (SWD) honest degenerate absence:**
+  2-wire serial; packet phases are bit-field time-segments on the shared `SWDIO` wire (Fig B4-1); recognized
+  phases `signal_set=[]`, transactions `ports=[]`. **Q3 (VLM) evidence-based NO-GO:** crops carry no per-signal
+  phase-column cue; the bounded `qwen2.5vl:7b` probe was contradictory/redundant/hallucinated (`CRDT`/`VALID`)
+  and RAM-expensive (7B → 13 GB → host 87% used, across the 85% kill line; `ollama stop`, recovered). Decision:
+  replaced by a deterministic AXI-family channel-membership lever (`.2m`); SWD + VLM-membership are NO-GO
+  honest-absence; the VLM-tier transaction frontier is exhausted. Gates: read-only/docs-only — WIRE-BASED-100
+  untouched ✓, ADR-0006 ✓. KM card `transaction-phase-membership-vlm-vs-channel`. Frontier → `.2m`.
+  `[[project_kg_isf_transactions]]` / `[[feedback_scoring_rigor]]` / `[[feedback_ram_ceiling_monitor]]`.
+- `2026-06-17`: **`.2m` DONE — CODE (GO): deterministic AXI-family channel-membership lever** (measurement-first).
+  Owned the leaf before any code edit. **Measured** the `.2l` Q1 deterministic channel cue read-only (persisted
+  SourceIR captions + EvidenceIR provenance + a current-binary dry-run rebuild): the `<role> channel signals`
+  caption cue is clean on the 2025 AXI doc (154 signals → 8 roles, 0 ambiguous; continuation fragments chained by
+  caption table-number; `atomic_transaction` 22 ports → {write request:12, write response:3, read data:4, write
+  data:3} multi-channel), boundary-gated on the 2021 AXI+ACE doc (dash-numbered captions, the same role recurring
+  across base/ACE/appendix + per-interface mega-tables → 31/105 ambiguous, dropped by the **ambiguity gate** to
+  honest `unmapped`), and absent on AXI-Stream/APB/AHB/SWD (no fabrication). **Built** (Option A — channel
+  membership as its OWN typed dimension, verbatim document role; NO request→address interpretation): EvidenceIR
+  `SignalChannelMembershipRecord` + `build_signal_channel_memberships` (`derive_channel_role` universal caption
+  grammar + continuation-number chaining + ambiguity gate) → carried on SemanticIR → IntentIR
+  `TransactionIntent.channel_membership` grouped in `mint_named_transaction` + a `validate` channel inventory
+  (`transactions_with_channel_membership`/`transaction_channel_groups` metrics + `intent_transaction_channel_membership`
+  Info finding + human-summary line). Metadata only, not lowered to `.isf`. **Gates ALL GREEN:** ADR-0006 ✓;
+  **WIRE-BASED-100 PROVABLY ORTHOGONAL** — `git stash` baseline-vs-`.2m` AXI evidence diff shows ONLY
+  `signal_channel_memberships` (154) changed, all wire-gold surfaces byte-identical, and the emitted `.isf` is
+  byte-identical (emitter lowers `tx.steps` only — confirmed by adapting with vs without the metadata) ✓;
+  `kg-bench` **156/156** ✓; `run_ci.sh` GREEN (fmt + warning-deny clippy/tests/rustdoc + mdBook; lib **1664**,
+  +2; one `collapsible_if` let-chain fixed) ✓. Live: AXI `with_channel_membership: 5 (10 channel groups)`,
+  filling its empty `phase_membership` deterministically. Book `pipeline/intentir.md` "Grouping a transaction's
+  signals by channel"; KM card `transaction-channel-membership`. Tree stays `active`.
+  `[[project_kg_isf_transactions]]` / `[[feedback_scoring_rigor]]` / `[[feedback_multi_strategy_best_wins]]`.

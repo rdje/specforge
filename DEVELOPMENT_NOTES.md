@@ -1,4 +1,64 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-TRANSACTIONS.2m (`2026-06-17`) — deterministic AXI-family channel-membership lever (CODE)
+
+**Context.** `.2l` measured that AXI per-signal phase membership is recoverable DETERMINISTICALLY (the VLM lever is
+superseded): AXI's transaction phases ARE its channels, and the document declares each channel's signal set in a
+caption-named table (`Table B1.1: Write request channel signals`, …). `.2m` builds that finding into code as a new
+typed dimension, **channel membership**, filling the `.2i` AXI-empty `phase_membership` without any VLM.
+
+**Design decision — channel membership as its OWN dimension, verbatim role (Option A).** The owner's `.2m` scope
+flagged a choice: surface channel membership directly vs. force a channel→phase mapping (request→address,
+data→data, response→response). I chose Option A — keep the document's channel-role string verbatim (`write
+request`, `read data`) and do NOT map it to abstract address/data/response phases. The mapping would be AXI-family
+semantic knowledge: it is not universal (a platform interconnect's channels need not be addr/data/resp), it would
+duplicate/conflict with the `.2g` prose-derived `transaction_phases`, and it risks fabricating a phase the document
+never named for a signal. ADR-0006-clean: both the cue (`<role> channel signals`) and the role string are the
+document's own caption words — no SpecForge name list. So channel membership is complementary to phase membership,
+not a replacement.
+
+**Where it is computed (data-flow).** The signal→channel map is a pure function of (table-signal provenance,
+table captions). The provenance lives on EvidenceIR (`table_signal_declaration_provenance`); the captions live on
+SourceIR (`structured_tables[].caption_text`). EvidenceIR build is the ONLY stage with both, so
+`build_signal_channel_memberships(&source_ir.structured_tables, &provenance)` runs there (right after the
+provenance seed) → `EvidenceIr.signal_channel_memberships`. SemanticIR carries it forward by clone (mirrors
+`transaction_anchors`); IntentIR's `mint_named_transaction` reads `semantic_ir.signal_channel_memberships`, builds
+a `signal → channel_role` map, and groups each named transaction's ports → `TransactionIntent.channel_membership`.
+Metadata only — the ISF emitter (`isf_ir.rs`) lowers `tx.steps` and never reads `channel_membership` (or
+`phase_membership` / `ports`), so the emitted `.isf` is byte-identical by construction.
+
+**Three precision mechanisms (each measured before coding, read-only over the persisted SourceIR/EvidenceIR).**
+1. *Table-number grammar.* The 2025 AXI doc uses `B1.1:` colon captions; the 2021 AXI+ACE doc uses `A2-2` dash
+   captions. A naive `<role> channel signals` regex mis-parsed the dash digit into the role (`"2 write address"`).
+   `derive_channel_role` strips an optional `Table ` + a leading table-number token (`[A-Za-z]*\d+(?:[.\-]\d+)*`)
+   BEFORE the role and rejects a role that still holds a digit/non-letter; `channel signal[s]` is the head
+   terminator (bare `... channel` without `signals` — e.g. `A15.17: Snoop request channel` — is deliberately NOT a
+   cue, since the B1.x `channel signals` tables already cover those signals).
+2. *Continuation chaining.* A channel table split across pages strands its tail under a role-stripped caption
+   (`B1.1 Continued from previous page`). `derive_continuation_table_number` recovers the table number and inherits
+   the head's role by number (recovers AXI write-request 26→50). The `(continued)` suffix form keeps the role in
+   the caption, so it parses directly.
+3. *Ambiguity gate (boundary precision, bar #3).* The 2021 AXI+ACE doc describes the same write channel from
+   several viewpoints (`Write address channel signals` + per-interface `Manager / Memory Subordinate interface
+   write channel signals`), so AWADDR carries 3 role strings. A signal earns a channel ONLY when every
+   channel-captioned table that declares it agrees on exactly one role — else it is dropped (an honest `unmapped`
+   residual). This kept the noisier doc honest (31 of 105 dropped) while the clean 2025 doc loses nothing (154
+   signals → 8 roles, 0 ambiguous).
+
+**Measurement.** 2025 AXI: 154 signals → 8 roles, 0 ambiguous; live `validate` `with_channel_membership: 5 (10
+channel groups)`, `atomic_transaction` → {write request×12, write data×3, read data×4, write response×3}
+(multi-channel), `prefetch`/`writedeferrable` multi-channel. 2021 AXI+ACE: 74 clean + 31 ambiguous dropped.
+AXI-Stream/APB/AHB/SWD: empty (no channel captions). Because the named-transaction path is `mint_named_transaction`
+(not the handshake-synthesis path), the 7 per-channel handshakes are not grouped here — consistent with `.2i`
+`phase_membership`, which is also named-transaction-only.
+
+**Verification.** `run_ci.sh` GREEN (fmt + warning-deny clippy — one `collapsible_if` collapsed to a let-chain —
++ warning-deny tests/rustdoc + mdBook; lib 1664, +2 evidence tests). `kg-bench` 156/156. WIRE-BASED-100 proven
+orthogonal: a `git stash` HEAD-before-`.2m` vs HEAD-with-`.2m` AXI EvidenceIR rebuild diff shows the ONLY changed
+field is `signal_channel_memberships` (154 records); all wire-gold surfaces (relations/constraints/conditional/
+polarities/statements) byte-identical. The emitted `.isf` is byte-identical (adapting the AXI intent with vs
+without `channel_membership` gives identical `.isf` source). Book `pipeline/intentir.md` gained "Grouping a
+transaction's signals by channel"; KM card `transaction-channel-membership`.
+
 ## KG-ISF-TRANSACTIONS.2l (`2026-06-17`) — AXI/SWD per-signal phase membership: VLM-tier candidate resolved measurement-first (docs-only)
 
 **Context.** The owner chose a fresh session for this design-heavy + RAM-heavy slice — the last `.2j`-recorded

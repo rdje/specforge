@@ -1,3 +1,41 @@
+### KG-ISF-TRANSACTIONS.2m — deterministic AXI-family channel-membership lever (CODE, measurement-first)
+Builds the `.2l` Q1 finding into code: a recognized transaction's `.2c`/`.2k` signal-set membership is now grouped
+by the **channel** the document declares each signal belongs to, recovered DETERMINISTICALLY (no VLM) from the
+universal `<role> channel signals` table-caption cue. Channel membership is a DISTINCT typed dimension (the
+document's own channel role kept verbatim — `write request`, `read data`, … — deliberately NOT re-interpreted into
+abstract address/data/response phases, which would be AXI-family semantic knowledge, non-universal, and could
+fabricate a phase the document never named for a signal); it fills the `.2i` AXI-empty `phase_membership`
+deterministically.
+- **EvidenceIR** (`ir/evidence.rs`, the only stage with BOTH the provenance and the SourceIR captions): new
+  `SignalChannelMembershipRecord {signal_name, channel_role, table_ids}` + `EvidenceIr.signal_channel_memberships`
+  (serde-skip-if-empty), built by `build_signal_channel_memberships` — `derive_channel_role` parses
+  `[Table ]<number> <role> channel signal[s]` with a table-number grammar (`[A-Za-z]*\d+(?:[.\-]\d+)*`) that
+  handles both the 2025 `B1.1:` colon and the 2021 `A2-2` dash forms (so a dash digit never leaks into the role; a
+  role holding a digit/non-letter is rejected; bare `... channel` without `signals` is not a cue); continuation
+  fragments (`B1.1 Continued from previous page`) are chained to their head's role by the caption's own table
+  NUMBER; and an **ambiguity gate** (a signal earns a channel iff EVERY channel-captioned table that declares it
+  agrees on one role — else dropped as an honest residual) enforces boundary precision (bar #3).
+- **SemanticIR** (`ir/semantic.rs`): carries `signal_channel_memberships` forward (mirrors `transaction_anchors`).
+- **IntentIR** (`ir/intent.rs`): new `TransactionChannelMembership {channel_role, ports}` +
+  `TransactionIntent.channel_membership` (serde-skip-if-empty); `mint_named_transaction` groups the transaction's
+  ports by channel role. Metadata only — NOT lowered to `.isf` (the emitter lowers `steps`; mirrors `.2i`).
+- **validate** (`commands/validate.rs`, intent path): `transactions_with_channel_membership` +
+  `transaction_channel_groups` metrics, an `intent_transaction_channel_membership` Info finding (non-empty-only),
+  and a `with_channel_membership:` human-summary line.
+
+Measured: 2025 AXI clean (154 signals → 8 channel roles, 0 ambiguous); live `validate` reports
+`with_channel_membership: 5 (10 channel groups)` with `atomic_transaction [read data×4/write data×3/write
+request×12/write response×3]` (multi-channel), `prefetch`/`writedeferrable` multi-channel — AXI's `phase_membership`
+is 0 (its prose names no phase signal), so the channel grouping fills that gap. The 2021 AXI+ACE doc is
+boundary-gated (31/105 ambiguous dropped → honest `unmapped`); AXI-Stream/APB/AHB/SWD have no channel captions →
+empty surface (no fabrication). **Gates:** ADR-0006 ✓; **WIRE-BASED-100 PROVABLY ORTHOGONAL** — a `git stash`
+HEAD-before-`.2m` vs HEAD-with-`.2m` AXI EvidenceIR diff shows the ONLY changed field is `signal_channel_memberships`
+(154), all wire-gold surfaces byte-identical, and the emitted `.isf` is byte-identical (emitter `isf_ir.rs` lowers
+`tx.steps` only — confirmed by adapting with vs without the metadata) ✓; `kg-bench` 156/156 ✓; `run_ci.sh` GREEN
+(fmt + warning-deny clippy/tests/rustdoc + mdBook; lib **1664**, +2: caption-grammar keep/reject + the
+continuation-chaining/ambiguity-gate builder test; one `collapsible_if` let-chain fixed) ✓. Book
+`pipeline/intentir.md` "Grouping a transaction's signals by channel"; KM `transaction-channel-membership`.
+
 ### KG-ISF-TRANSACTIONS.2l — AXI/SWD per-signal phase membership: VLM-tier candidate RESOLVED measurement-first
 Measurement-first, read-only + a bounded VLM probe, docs-only (owner-chosen fresh session for this design-heavy +
 RAM-heavy slice). Closes the last `.2j`-recorded transaction candidate — "AXI/SWD timing-diagram phase columns

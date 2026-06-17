@@ -188,6 +188,45 @@ the `IntentIR`, leaving the emitted `.isf` byte-for-byte unchanged. `specforge v
 `intent_transaction_phase_membership` Info finding that lists each transaction with its
 per-phase signal split (and notes plainly that it is metadata, not lowered to `.isf`).
 
+### Grouping a transaction's signals by channel
+
+On the AMBA AXI/ACE family (and CHI), a transaction's "phases" are really its **channels**:
+a write moves through the *write request*, *write data*, and *write response* channels, a
+read through the *read request* and *read data* channels. These documents do not usually
+describe those phases in `<qualifier> phase` prose — so the phase grouping above is honestly
+empty for them — but they *do* declare each channel's exact signal set in a clearly captioned
+table: `Table B1.1: Write request channel signals`, `Table B1.2: Write data channel signals`,
+and so on. SpecForge reads that caption directly. The universal cue is the phrase **`<role>
+channel signals`**: it strips the leading table number (handling both the `B1.1` and the
+older `A2-2` dash form so a stray digit never leaks in) and keeps the words the document
+places before *"channel signals"* as the channel's name, verbatim — `write request`, `read
+data`, `snoop response`. A channel table that the PDF splits across pages (its tail captioned
+only `B1.1 Continued from previous page`) is stitched back to its head by the table number,
+so no signal is stranded. Because every declared signal already carries provenance back to
+the table that declared it, joining the two gives each signal its channel — and grouping a
+transaction's signal set by channel then falls out for free. An AXI `atomic_transaction`, for
+instance, groups as `write request × 12`, `write data × 3`, `read data × 4`, `write response
+× 3` — a faithful, multi-channel picture of a read-modify-write operation.
+
+This is the deterministic, structured-first counterpart of the phase grouping: it needs no
+LLM, runs on the document's own captions, and (like every surface here) carries no list of
+protocol names (ADR 0006). It is deliberately **boundary-precise**: a signal earns a channel
+only when *every* channel-captioned table that declares it agrees on one role. Where a
+document describes the same channel from several viewpoints with inconsistent wording — the
+older AXI+ACE spec lists the same write-address signals under both a `Write address channel
+signals` table and per-interface `Manager / Memory Subordinate interface write channel
+signals` tables — the disagreeing signals are left **unchannelled** (an honest residual)
+rather than forced into a guessed channel. A document with no `<role> channel signals`
+captions at all (APB, AHB, the serial debug interface) simply produces nothing here. The
+channel role is the document's own caption wording; it is deliberately *not* re-interpreted
+into the abstract `address`/`data`/`response` phase names (that mapping is family-specific and
+would risk inventing a phase the document never named for a signal). Like the phase grouping,
+it is carried as **checked metadata** on the `IntentIR`, never lowered into the emitted
+`.isf` (which stays byte-for-byte unchanged), and `specforge validate <intent-ir>` surfaces it:
+a `transactions_with_channel_membership` count, a `transaction_channel_groups` total, and —
+when any transaction carries a grouping — an `intent_transaction_channel_membership` Info
+finding listing each transaction with its per-channel signal split.
+
 ## How the actor surface stays faithful
 
 `IntentIR` lists the **actors** (agents) a specification defines — the Manager, the
