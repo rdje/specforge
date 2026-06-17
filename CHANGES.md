@@ -1,3 +1,20 @@
+### CORPUS-COVERAGE.0 — build every ingested doc through to IntentIR/.isf (coverage 36→78 intent / 36→75 isf, 0 failures)
+Owner-directed substantive north-star slice #2 (corpus coverage), following directly from `KG-ISF-COMPLETENESS.3`'s
+staleness finding. The local corpus had only **36 of 79** ingested docs carried through to IntentIR — the other 42
+sat at evidence-only (operational: a sweep rebuilt EvidenceIR without cascading downstream; the per-stage commands
+do not auto-cascade, only `converge` rebuilds the whole chain). **Key fact:** building `semantic`→`intent`→`adapt`
+needs only the already-persisted `evidence_ir.json`, NOT the heavyweight `normalized/` bundle (that is only needed
+to rebuild EVIDENCE from source) — so the 42 evidence-only docs are cheap-buildable with no re-ingest. Rebuilt the
+42 evidence-only + 3 stale docs (`tilelink_1_8_0`/`i2c`/`wbspec`) `semantic`→`intent`→`adapt --target isf`,
+excluding the 4 gated WIRE-BASED-100 docs: **42/42 OK, 0 failures, RAM steady 77%** (deterministic, no LLM/Docling).
+Coverage **36→78 intent / 36→75 isf**; **0 stale-intent remaining** (tilelink_1_8_0/i2c/wbspec recovered 40/17/1
+relations). The 3 intent-without-isf docs (`risc_v_debug`/coresight `den0068` BSA/GIC `ihi0069_g`) **block honestly**
+(`adapt`: "no behavioral content to lower" — register/architecture docs), the designed behavior, not a failure. The
+staged pipeline is now validated end-to-end on the entire corpus. The 57 docs lacking a `normalized/` bundle need a
+re-ingest (Docling + source PDF, RAM-gated) for an EVIDENCE rebuild — standing frontier. Docs-only deliverable (the
+generated tree is git-ignored local cache); durable trace = the census + tree + KM `corpus-coverage-buildout`.
+Frontier → `.1` generic stage-staleness `validate` detector. New tree `CORPUS-COVERAGE`.
+
 ### KG-ISF-COMPLETENESS.3 — relation-completeness measurement: 0-relation docs are stale-intent (recoverable) + honest register-protocol absence, NOT an extraction gap
 Owner-directed substantive north-star push (after the owner pushed back on the "buildable frontier exhausted"
 framing). Read-only census over all 78 `evidence_ir.json` + 36 `intent_ir.json` + content sampling, to answer

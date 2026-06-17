@@ -1,4 +1,31 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.0 (`2026-06-17`) — build every ingested doc through to IntentIR/.isf (36→78)
+
+**Why now.** Owner substantive gap #2 (corpus coverage), following `KG-ISF-COMPLETENESS.3`'s staleness
+finding. Census: of 79 ingested docs, evidence=78 but semantic/intent/isf=36/36/36 — 42 docs stopped at
+evidence-only, plus 3 stale-intent.
+
+**Key enabler.** `semantic`/`intent`/`adapt` build from the persisted `evidence_ir.json`; they do NOT need the
+`normalized/` page-image bundle (that is only consumed when rebuilding EVIDENCE from source). So the 42
+evidence-only docs are cheap-buildable — deterministic, no LLM, no Docling, no re-ingest — even though 57 of
+79 docs have had their `normalized/` bundle reclaimed.
+
+**Build-out.** Looped the release binary over the 42 evidence-only + 3 stale docs (excluding the 4 gated
+wire docs) `semantic`→`intent`→`adapt --target isf`. **42/42 OK, 0 failures**, RAM steady 77%. Smoke-tested
+3 first (risc_v_debug 20 actors/20 rels/44 registers; GIC 31/23/17; coresight BSA 5/0/0) to confirm the path
+before the full loop.
+
+**Result.** Coverage 36→78 intent / 36→75 isf; 0 stale-intent remaining (tilelink_1_8_0/i2c/wbspec recovered
+40/17/1 relations). The 3 intent-without-isf docs block honestly (`adapt` → "no behavioral content to lower":
+register/architecture docs with no temporal/conditional rules, signal constraints, or control blocks). Intent
+relation distribution across 78: 30 at 0 (the honest-absence register/guide class from `.3`), 18 at 1–10, 17
+at 11–50, 13 at 50+. The pipeline is validated end-to-end on the whole corpus.
+
+**Boundary.** The generated tree is git-ignored local cache → a fresh clone re-derives it (`converge` or the
+staged commands). Durable deliverables: the census + tree + KM `corpus-coverage-buildout`. The 57
+`normalized/`-missing docs need a re-ingest for an EVIDENCE rebuild (standing, RAM-gated, host-local source
+re-provisioning). Frontier → `.1` stage-staleness `validate` detector.
+
 ## KG-ISF-COMPLETENESS.3 (`2026-06-17`) — relation-completeness: staleness vs honest absence (measurement-first)
 
 **Why now.** Owner pushed back hard on my "buildable frontier exhausted" framing (SpecForge is far from
