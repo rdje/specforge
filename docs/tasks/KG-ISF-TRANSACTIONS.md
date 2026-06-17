@@ -132,6 +132,8 @@ slices, wire-docs first.
 
 ## Frontier — `.2i` DONE (metadata-only per-phase membership grouping); `.2j` table-column phase cue MEASURED = NO-GO; `.2k` DONE (descendant-subsection membership scope); `.2l` DONE (`2026-06-17`, measurement-first — the VLM-tier candidate is RESOLVED: AXI per-signal phase membership is recoverable DETERMINISTICALLY from the document's caption-named `B1.x … channel signals` tables — `provenance` already maps signal→channel, channel→phase clean — so the VLM lever is superseded; SWD is honest degenerate absence — 2-wire serial, bit-field time-phases on shared SWDIO; the bounded VLM probe confirmed redundant/fabrication-prone + RAM-expensive (7B→13 GB→host 87% used)). **`.2m` DONE (`2026-06-17`, measurement-first, CODE — GO): a DETERMINISTIC AXI-family channel-membership lever** — groups a recognized transaction's `.2c`/`.2k` membership by its document-grounded channel, recovered from the universal `<role> channel signals` table-caption cue (RAM-safe, structured-first; the VLM lever superseded by `.2l`). Channel membership is a DISTINCT typed dimension (verbatim document role, ambiguity-gated, continuation-chained) that fills the `.2i` AXI-empty phase grouping (live: AXI `with_channel_membership: 5 / 10 groups`, `atomic_transaction` write request×12/write data×3/read data×4/write response×3); metadata only, `.isf` BYTE-IDENTICAL (proven via `git stash` baseline diff), WIRE-BASED-100 orthogonal, `kg-bench` 156/156, `run_ci.sh` GREEN (lib 1664). The VLM-tier transaction frontier is exhausted; the transaction tree's deterministic levers are now built out (recognition `.2a` → bodies `.2b` → membership `.2c`/`.2k` → quick-surface `.2d` → phases `.2g`–`.2j` → channels `.2m`)
 
+**`.2n` DONE (`2026-06-17`, measurement-first, read-only, docs-only — NO-GO): the transaction ISF BODY is faithfully complete.** A FRESH probe-first cycle on the current FSMGen pin `030f8c273` (the `2026-06-17` triage's named "substantive buildable transaction lever") closed the one unbuilt candidate — a value-free `(sample …)` membership body. **Empirical (`--strict --check --json`):** a pure `(on start (sample S as s)) (complete done)` body PASSES strict (probe A; multiple samples in one entry state also pass, probe D; `(sample …)` is NOT direction-gated, probe B), while an in-body `(drive NAME 0)` with no top-level named drive FAILS `drive 'NAME' not defined` (probe C — an in-body drive is a CALL to a top-level named drive, which is exactly why `.2b`'s enum-selector drive works). **But FSMGen-accepted ≠ faithful:** `13b-transactions.md` (`(on …)` Entry/Idle State, L133–163) shows a sample inside `(on …)` fires AT THE ENTRY TRANSITION ("Cycle N: `port && can_accept` → samples captured") and needs an activation guard `port` — so a membership-derived `(on start (sample HREADY))` would assert an un-grounded entry-cycle capture + a `start` guard the document never states (`mint_named_transaction` sets `activation_port: None`), and could MISrepresent a wait-for-ready read as a one-shot entry sample. That is the fabrication the honest-residual doctrine + FSMGen's `2026-06-16` answer forbid ("emit body steps only for facts whose value AND ordering are grounded; keep membership as metadata"). **Decision:** the body lever is exhausted — the only body-lowerable grounded fact (the enum-selector drive) already ships (`.2b`); the membership a sample body would carry already lives faithfully as IntentIR metadata (`.2c` ports / `.2i` phase / `.2m` channel), the home FSMGen chose. Reconfirms the `.2i` parking with FRESH evidence on `030f8c273` (prior probe was `8c39827f`). Gates: read-only/docs-only — WIRE-BASED-100 untouched ✓, ADR-0006 ✓ (universal grammar, no name list). KM card `transaction-body-emission-faithfully-complete`. **Frontier:** the transaction tree's faithful deterministic+body levers are now ALL built/measured; the remaining cross-`.isf` membership carriage awaits FSMGen's future checked phase-group metadata surface (FSMGen-owned, not shipped). The next SUBSTANTIVE north-star fidelity lever sits OUTSIDE this tree — interface signal DIRECTION emission (`KG-ISF-COMPLETENESS.2`, the ~98%-defaulted-`output` gap), which is owner-design-gated (the single-flat-module actor-perspective decision).
+
 The `.2e` checkpoint deferred the *choice* of ordering signal to "a dedicated measurement-first slice." **`.2f`
 ran that measurement (read-only, corpus-wide) and made the choice** — see the `.2f` node + `.2f` changelog
 entry below, and census report §4.4. The chosen path is a **structural transaction-phase surface** built from the
@@ -707,6 +709,37 @@ body-emission PARKED pending FSMGEN's answer + owner steer (the metadata-only gr
   `pipeline/intentir.md` "Grouping a transaction's signals by channel". KM card
   `transaction-channel-membership`. The tree stays `active`. `[[project_kg_isf_transactions]]` /
   `[[feedback_scoring_rigor]]` / `[[feedback_no_hardcoded_chip_spec_names]]` / `[[feedback_multi_strategy_best_wins]]`.
+- ID: `KG-ISF-TRANSACTIONS.2n` · Status: `done` (`2026-06-17`; measurement-first, read-only, docs-only — NO-GO; a
+  FRESH probe-first cycle on FSMGen pin `030f8c273`) · Goal: **is there a buildable ordered multi-phase transaction
+  BODY lever beyond the `.2b` enum-selector drive?** — the `2026-06-17` resume-pointer triage named the transaction
+  body "the substantive buildable critical-path lever" and asked for a fresh probe-first cycle; this slice ran it and
+  decided GO/NO-GO honestly. **Owned the leaf before any probe; no code.**
+  **Empirical probe (`subs/fsmgen/bin/fsmgen --strict --check --json`, pin `030f8c273`; the doctrine: verify on the
+  binary, not the book):** four minimal `.isf` probes —
+  - **A** — `(transaction read_transfer (on start (sample HREADY as r)) (complete done))` over a declared `(input HREADY …)` → **`success:true`, 0 diagnostics.** A value-free `(sample …)` body IS strict-valid.
+  - **D** — three samples in one `(on start …)` state → **`success:true`, 0 diagnostics.** Multiple samples in the entry state are order-free *among themselves* (they piggyback, no extra cycle).
+  - **B** — `(sample HTRANS as t)` where `HTRANS` is an interface `(output …)` → **`success:true`.** FSMGen does NOT gate `(sample …)` on signal direction.
+  - **C** — in-body `(drive HTRANS 0)` with NO top-level named drive → **`success:false`: `drive 'HTRANS' not defined`.** An in-body `(drive NAME …)` is a CALL to a top-level named drive defined elsewhere; `.2b` works because the emitter also emits the top-level drive block.
+  **Finding (FSMGen-accepted ≠ faithful):** `13b-transactions.md` (`(on port ...)` Entry/Idle State, L133–163) is
+  explicit that a sample inside `(on …)` fires **at the entry transition** — "Cycle N: `port && can_accept` →
+  samples captured" (a D-input capture in the idle→active cycle) — and `(on …)` needs an activation guard `port`.
+  For a recognition-only transaction SpecForge has grounded only WHICH signals participate, NOT that they are
+  captured once at the entry cycle, and `mint_named_transaction` sets `activation_port: None`. So a
+  membership-derived `(on start (sample HREADY))` would assert an un-grounded entry-cycle capture + a `start` guard
+  the document never states, and could MISrepresent a wait-for-ready read as a one-shot entry sample — the
+  fabrication the honest-residual doctrine (`[[feedback_isf_no_hacks]]`) + FSMGen's `2026-06-16` answer forbid
+  ("emit body `drive`/`sample` steps ONLY for facts whose value AND ordering are grounded; keep membership as
+  metadata"). **Decision: NO-GO — the transaction body is faithfully complete.** The only body-lowerable grounded
+  fact (the enum-selector `(drive)`) already ships (`.2b`); the membership a sample body would carry already lives
+  faithfully as IntentIR metadata (`.2c` ports / `.2i` phase / `.2m` channel), the home FSMGen explicitly chose;
+  the cross-`.isf` membership carriage awaits FSMGen's future checked phase-group metadata surface (FSMGen-owned,
+  not shipped). Reconfirms the `.2i` parking with FRESH evidence on `030f8c273` (prior probe was `8c39827f`).
+  **Gates:** read-only/docs-only — WIRE-BASED-100 untouched ✓, ADR-0006 ✓ (universal grammar, no name list);
+  `scripts/check_memory_architecture.sh` + knowledge-map derive-and-diff green. KM card
+  `transaction-body-emission-faithfully-complete`. **Frontier:** the transaction tree's faithful deterministic +
+  body levers are now all built/measured; the next SUBSTANTIVE north-star fidelity lever is OUTSIDE this tree —
+  interface signal DIRECTION emission (`KG-ISF-COMPLETENESS.2`, ~98% defaulted `output`), which is owner-design-gated
+  (single-flat-module actor-perspective decision). `[[project_kg_isf_transactions]]` / `[[project_kg_isf_completeness]]`.
 
 ## Changelog
 
@@ -967,3 +1000,18 @@ body-emission PARKED pending FSMGEN's answer + owner steer (the metadata-only gr
   filling its empty `phase_membership` deterministically. Book `pipeline/intentir.md` "Grouping a transaction's
   signals by channel"; KM card `transaction-channel-membership`. Tree stays `active`.
   `[[project_kg_isf_transactions]]` / `[[feedback_scoring_rigor]]` / `[[feedback_multi_strategy_best_wins]]`.
+- `2026-06-17`: **`.2n` DONE — measurement-first, read-only, docs-only; NO-GO (the transaction ISF body is
+  faithfully complete).** Ran the `2026-06-17`-triage-named "buildable transaction body lever" as a FRESH probe-first
+  cycle on FSMGen pin `030f8c273`. Four `--strict --check --json` probes: a value-free `(on start (sample S as s))`
+  body PASSES (A), as do multiple same-state samples (D), and `(sample …)` is NOT direction-gated (B); an in-body
+  `(drive NAME 0)` with no top-level named drive FAILS `drive 'NAME' not defined` (C — an in-body drive is a CALL to
+  a top-level named drive, why `.2b` works). **FSMGen-accepted ≠ faithful:** `13b-transactions.md` (L133–163) shows
+  a sample inside `(on …)` fires at the entry transition ("Cycle N: `port && can_accept` → samples captured") and
+  needs an activation guard — so a membership-derived sample body asserts an un-grounded entry-cycle capture + guard
+  the document never states (and could misrepresent wait-for-ready as a one-shot sample), the fabrication FSMGen's
+  `2026-06-16` answer + the honest-residual doctrine forbid. **NO-GO:** the only body-lowerable grounded fact (the
+  enum-selector drive) already ships (`.2b`); the membership a sample body would carry already lives faithfully as
+  IntentIR metadata (`.2c`/`.2i`/`.2m`). Reconfirms the `.2i` parking with fresh `030f8c273` evidence (prior probe
+  `8c39827f`). Gates: read-only/docs-only — WIRE-BASED-100 untouched ✓, ADR-0006 ✓. KM card
+  `transaction-body-emission-faithfully-complete`. Next substantive north-star lever is OUTSIDE this tree —
+  interface signal DIRECTION emission (`KG-ISF-COMPLETENESS.2`), owner-design-gated. `[[project_kg_isf_transactions]]`.

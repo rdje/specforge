@@ -1,3 +1,35 @@
+### KG-ISF-TRANSACTIONS.2n — the transaction ISF BODY is faithfully complete (measurement-first, read-only, docs-only — NO-GO)
+A fresh probe-first cycle on the current FSMGen pin `030f8c273`, run because the `2026-06-17` resume-pointer triage
+named the transaction ordered multi-phase body "the substantive buildable critical-path transaction lever." The
+honest outcome is **NO-GO**: the transaction body is already faithfully complete, and the one unbuilt candidate (a
+value-free `(sample …)` membership body) is FSMGen-accepted but not faithful.
+- **Empirical (`subs/fsmgen/bin/fsmgen --strict --check --json`, pin `030f8c273` — verified on the binary, not the
+  book):** (A) a pure `(transaction read_transfer (on start (sample HREADY as r)) (complete done))` over a declared
+  `(input HREADY …)` → `success:true`, 0 diagnostics; (D) three samples in one `(on start …)` state → `success:true`
+  (order-free among themselves); (B) `(sample HTRANS as t)` over an interface `(output …)` → `success:true`
+  (`(sample …)` is NOT direction-gated); (C) an in-body `(drive HTRANS 0)` with no top-level named drive →
+  `success:false`, `drive 'HTRANS' not defined` (an in-body `(drive NAME …)` is a CALL to a top-level named drive,
+  which is exactly why `.2b`'s enum-selector drive renders — the emitter also emits the top-level drive block).
+- **Why FSMGen-accepted ≠ faithful (the NO-GO reason):** the FSMGen book (`13b-transactions.md`, `(on port ...)`
+  Entry/Idle State, L133–163) shows a sample inside `(on …)` fires AT THE ENTRY TRANSITION — "Cycle N:
+  `port && can_accept` → samples captured" — and `(on …)` needs an activation guard `port`. For a recognition-only
+  transaction SpecForge has grounded only WHICH signals participate, NOT that they are captured once at the entry
+  cycle, and `mint_named_transaction` sets `activation_port: None`. So a membership-derived
+  `(on start (sample HREADY))` would assert an un-grounded entry-cycle capture + a `start` guard the document never
+  states, and could misrepresent a wait-for-ready read as a one-shot entry sample — the fabrication the
+  honest-residual doctrine and FSMGen's `2026-06-16` phase-membership answer forbid ("emit body steps only for facts
+  whose value AND ordering are grounded; keep membership as metadata").
+- **Decision:** the body lever is exhausted. The only body-lowerable grounded fact (the enum-selector `(drive)`)
+  already ships (`.2b`); the membership a sample body would carry already lives faithfully as IntentIR metadata
+  (`.2c` ports / `.2i` phase / `.2m` channel), the home FSMGen explicitly chose. The cross-`.isf` carriage of that
+  membership awaits FSMGen's future checked transaction phase-group metadata surface (FSMGen-owned, not shipped).
+  This reconfirms the `.2i` parking with FRESH evidence on `030f8c273` (the prior probe was at `8c39827f`).
+- **Gates:** read-only/docs-only — no code; WIRE-BASED-100 untouched; ADR-0006 (universal grammar, no name list);
+  `scripts/check_memory_architecture.sh` + the knowledge-map derive-and-diff green. KM card
+  `docs/knowledge/transaction-body-emission-faithfully-complete.md`. The next SUBSTANTIVE north-star fidelity lever
+  is OUTSIDE this tree — interface signal DIRECTION emission (`KG-ISF-COMPLETENESS.2`, the ~98%-defaulted-`output`
+  gap), which is owner-design-gated (the single-flat-module actor-perspective decision).
+
 ### PDF-VARIANT-DIGESTION.10g — section-HEADING register-field recognizer (the register-routed twin of `.10f`)
 The same `<NAME>, bits [hi:lo]` section-heading field layout that DTI uses for MESSAGE fields is how ARM
 ARCHITECTURE specs (not TRMs) lay out REGISTER fields — GIC (`ihi0069`), SMMU (`ihi0070`), CoreSight

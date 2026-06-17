@@ -1,4 +1,42 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-TRANSACTIONS.2n (`2026-06-17`) — the transaction ISF BODY is faithfully complete (measurement-first, read-only, docs-only — NO-GO)
+
+**Context.** The `2026-06-17` resume-pointer triage named the transaction ordered multi-phase body "the substantive
+buildable critical-path transaction lever" and asked for a fresh probe-first cycle. The deep `.2e`–`.2m` history had
+parked body-emission (`.2i`) pending FSMGen's answer; FSMGen answered (`2026-06-16`, pin `030f8c273`): don't
+fabricate value or order, keep membership as metadata, the future surface is FSMGen-owned checked phase-group
+metadata. The one body candidate prior slices noted but never built was a **value-free `(sample …)` body** for a
+transaction's grounded members (samples are value-free, so they sidestep the value-fabrication blocker). This slice
+probed it on the CURRENT binary and decided GO/NO-GO honestly.
+
+**What I probed (empirically, on `subs/fsmgen/bin/fsmgen --strict --check --json` at pin `030f8c273` — the doctrine
+is to verify on the binary, not the book).** Four minimal `.isf` files:
+- **A** — `(transaction read_transfer (on start (sample HREADY as r)) (complete done))` over `(input HREADY (width 1))` → `success:true`, 0 diagnostics. A value-free sample body IS strict-valid.
+- **D** — three samples in one `(on start …)` state → `success:true`, 0 diagnostics. Multiple samples in the entry state are order-free among themselves (they piggyback, no extra cycle — `13b-transactions.md` "`(sample …)` — No State, Piggybacks").
+- **B** — `(sample HTRANS as t)` where `HTRANS` is `(output …)` → `success:true`. FSMGen does NOT gate `(sample …)` on the interface direction.
+- **C** — in-body `(drive HTRANS 0)` with no top-level named drive → `success:false`, `Transaction 'idle_transfer': drive 'HTRANS' not defined`. **Key model fact:** an in-body `(drive NAME …)` is a CALL to a top-level *named drive* that must be defined elsewhere; `.2b`'s `(drive HTRANS IDLE)` renders only because the emitter also emits the top-level `(drive (HTRANS …))` block.
+
+**Why it is a NO-GO (FSMGen-accepted ≠ faithful).** `13b-transactions.md` (`(on port ...)` Entry/Idle State,
+L133–163) is explicit that a sample inside `(on …)` fires at the entry transition — "Cycle N:
+`port && can_accept` → samples captured" (a D-input capture in the idle→active cycle) — and `(on …)` needs an
+activation guard `port`. For a recognition-only transaction, SpecForge grounds only WHICH signals participate, NOT
+that they are captured once at the entry cycle, and `mint_named_transaction` sets `activation_port: None`. So a
+membership-derived `(on start (sample HREADY))` asserts an un-grounded entry-cycle capture timing + a `start` guard
+the document never states, and could misrepresent a wait-for-ready read as a one-shot entry sample. That is exactly
+the fabrication the honest-residual doctrine (`[[feedback_isf_no_hacks]]`) and FSMGen's `2026-06-16` answer forbid:
+emit body `drive`/`sample` steps ONLY for facts whose value AND ordering are grounded; keep membership as metadata.
+
+**Decision + where the substantive frontier goes next.** The transaction body is faithfully complete — the only
+body-lowerable grounded fact (the enum-selector `(drive)`) already ships (`.2b`), and the membership a sample body
+would carry already lives faithfully as IntentIR metadata (`.2c` ports / `.2i` phase / `.2m` channel). The
+cross-`.isf` membership carriage awaits FSMGen's future checked phase-group metadata surface (FSMGen-owned, not
+shipped). The probe surfaced the NEXT substantive north-star fidelity lever, which sits OUTSIDE this tree:
+**interface signal DIRECTION emission** — the `.isf` currently declares ~98% of signals as `(output …)`, ignoring
+the grounded actor-port graph (`KG-ISF-COMPLETENESS.2`). That is the largest measured true infidelity, but it is
+owner-design-gated (the single-flat-module actor-perspective decision); raising it to the owner is the right next
+step rather than reopening a gated decision unilaterally. Gates: read-only/docs-only — no code, WIRE-BASED-100
+untouched, ADR-0006. KM card `transaction-body-emission-faithfully-complete`.
+
 ## PDF-VARIANT-DIGESTION.10g (`2026-06-17`) — section-HEADING register-field recognizer (register-routed twin of `.10f`)
 
 **Context.** `.10f` recognised that ARM specs write a register's fields as `<NAME>, bits [hi:lo]` section
