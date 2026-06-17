@@ -1,4 +1,49 @@
 # DEVELOPMENT_NOTES
+## PDF-VARIANT-DIGESTION.10f (`2026-06-17`) — section-HEADING prose message-field recognizer (DTI-class message protocols)
+
+**Context.** `KG-ISF-COMPLETENESS.4` spun out a measured upstream gap: AMBA DTI (`ihi0088`) is a message
+protocol (`DTI_TBU_TRANS_REQ`, …) yet carried **0 `message_field_records`**, so field obligations
+(`the MMUV field must be 0`) leaked into `signal_constraints` with dotted/undeclared subjects. The
+`.10a`–`.10e` message-field readers all read TABLES, and DTI's field layout is not in tables at all.
+
+**Scoping correction (measurement-first).** The `KG-ISF-COMPLETENESS.4` note scoped the fields to prose
+`list_item`s of the form `"<Field>, bit [N]"`. Re-measuring the persisted `source_ir.json` corrected this:
+DTI defines each message field as its OWN **section HEADING** — `STAGES, bits [27:26]`, `SPD, bit [25]`,
+`M_MSG_TYPE, bits [3:0]`, `IMPLEMENTATION DEFINED, bit [7]` — grouped under a dotted-numbered message
+container (`3.1.1 DTI_TBU_CONDIS_REQ`) that carries a `Field descriptions` anchor sub-heading. `list_item`
+matches are ~0; the `body_text` matches are descriptive prose (`Messages with bits [3:0] equal to 0xE …`)
+and cross-references — precisely the noise the section-heading restriction excludes. A heading is a far
+cleaner, more precise anchor than free prose.
+
+**Container-decides routing (the typed-home crux).** The same `<NAME>, bits [hi:lo]` heading shape appears
+across the corpus in **8 docs** (GIC `ihi0069` 612, SMMU `ihi0070` 434, DTI 163, ARM-Debug-v6 `ihi0074`
+138, CoreSight `ihi0029` 42, ACC `ihi0076` 5, + 2 singletons), but the typed home varies by container:
+DTI's container is a MESSAGE (sub-structure `Source`/`Usage constraints`/`Flow control result`), while the
+others are REGISTERS (`SMMU_IDR0`, `AUTHSTATUS, … Register`; sub-structure `Purpose`/`Attributes`/
+`Accessing`). Following the `.10b`/`.10c`/`.10e` rule (a layout is a register iff it carries
+register-attribute vocabulary), a container routes to `message_field_records` iff it is NOT a register —
+no caption-`register`, no `Attributes`/`Accessing` sub-heading. The register-routed containers (the other
+7 docs, ~1230 fields) are an honest residual deferred to a sibling lever `.10g` — so no measured register
+gold is touched by this slice. ADR-0006: universal section-structure grammar, no chip-name list.
+
+**Gate (each measured per-item).** (1) heading matches `<IDENT>, bit[s] [range]` `^…$`-anchored, name
+identifier-shaped (admits value-slice `TOK_TRANS_REQ[11:8]` and multi-word `IMPLEMENTATION DEFINED`);
+(2) container = nearest preceding dotted-numbered heading, identifier-shaped leading token, not-register;
+(3) `Field descriptions` anchor present; (4) ≥2 DISTINCT fields. Bit overlaps are KEPT — DTI documents
+Manager/Subordinate views of one position (`M_MSG_TYPE[3:0]`/`S_MSG_TYPE[3:0]`), both real. Two cleanups
+from the live per-item eyeball: a Docling spacing artifact `<ident> [slice]` normalizes to `<ident>[slice]`
+(merges a field tokenized both ways into one record); a name that is exactly the unit word `bit`/`bits`
+(`Bits, bit [5:4]`) is an unnamed reserved range and is dropped (honest residual, not a fabricated `Bits`).
+
+**Result + verification.** DTI `message_field_records` **0 → 159 / 17 containers**; only DTI fires (1/79).
+Old-vs-new `evidence --dry-run` parity over 7 intact docs (4 wire gold + NVMe 216 + AMD 217 + ARM-Debug-v6)
+is byte-identical except the run manifest gaining `message_fields.section_header_field` (produced 0) — NVMe
+216→216, AMD 217→217 unchanged, ARM-Debug-v6's 138 register-routed headings → 0 message fields. WIRE-BASED-100
+provably orthogonal (wire docs carry no section-heading field form). lib 1664→1672 (+7 hermetic, +1 ignored
+sweep); `kg-bench` 156/156; full `scripts/run_ci.sh` GREEN. FIELD.4 routing of the persisted DTI leak
+activates on the next live-NLP DTI rebuild (normalized bundle host-local-blocked); the deterministic Pattern
+`signal_constraints` surface does not consult the catalog by construction.
+
 ## KG-ISF-COMPLETENESS.4 (`2026-06-17`) — bar #5/#6 behavior/temporal lowering-completeness, broader 78-doc corpus (measurement, docs-only)
 
 **Context.** `KG-ISF-COMPLETENESS.2` measured ISF-lowering fidelity over 36 IntentIR docs and concluded bar #6 is

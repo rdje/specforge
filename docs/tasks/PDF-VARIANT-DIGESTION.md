@@ -515,7 +515,11 @@ VT-d 152→103/318; RISC-V Debug 59→44/179) from the REAL gaps:
   two-column `bits \| description` shape (AMD IOMMU + relatives, ~290); `.10c` the
   `name \| function` column synonym (GIC-600 +4 docs, ~129); `.10d` the offset-suffixed
   dword-relative bit-cell family (`31:28 +04`; 41 AMD tables / 184 rows — spun from the
-  `.10b` quantified residuals).
+  `.10b` quantified residuals); `.10e` the `byte location \| size` placement-table family
+  (CCIX ×4); `.10f` the section-HEADING prose message-field family (DTI message protocols —
+  the field layout is in `<NAME>, bits [hi:lo]` headings, not tables); `.10g` (spun, deferred)
+  the section-heading REGISTER-field form (GIC/SMMU/CoreSight/ACC/ARM-Debug → the register
+  surface).
   **`.10b` first probe pass (`2026-06-10`): the family is AMD IOMMU 160 + NVMe 130 + eMMC 1 —
   NVMe is a GOLD-measured doc, so any gate change hits its measured surface; AND the rows
   describe in-memory STRUCTURE entries (AMD Device Table Entry "Field Definitions"
@@ -1058,6 +1062,89 @@ rows skipped by design. Book: `pipeline/evidenceir.md` `.10e` subsection + the `
 closing corrected; KM card `byte-location-structure-field-extraction` + the `.10a` card
 residual line corrected; README `.10e` bullet; RUST_CODEBASE_ANALYSIS third-strategy
 note.
+
+**`PDF-VARIANT-DIGESTION.10f` — the section-heading PROSE message-field family (DTI-class
+message protocols).** · Status: **DONE `2026-06-17`** (probe → scoping correction → measured
+design → build → live per-item verification + old-vs-new parity).
+Spun from `KG-ISF-COMPLETENESS.4`'s §spun-out gap: DTI `ihi0088` is a message protocol
+(`DTI_TBU_TRANS_REQ` …) but carries **0 `message_field_records`**, so 30 field obligations
+leak into `signal_constraints` with dotted/undeclared subjects (`DTI_TBU_TRANS_REQ.MMUV`,
+`ATTR_OVR.MTCFG`). FIELD.4 was built to route exactly these, but only fires for
+*catalog-declared* fields — and the `.10a`–`.10e` table readers see nothing because DTI's
+field layout is **not in caption-anchored tables**.
+**SCOPING CORRECTION (measurement-first, read-only over all 79 persisted `source_ir`):** the
+`KG-ISF-COMPLETENESS.4` scoping said the field defs live in prose `list_item`s of the form
+`"<Field>, bit [N]"`. **Re-measured on the artifact — they do NOT: DTI defines each message
+field as its OWN section HEADING** of the form `<NAME>, bit [N]` / `<NAME>, bits [hi:lo]`
+(`STAGES, bits [27:26]`, `SPD, bit [25]`, `M_MSG_TYPE, bits [3:0]`, `IMPLEMENTATION DEFINED,
+bit [7]`), grouped under a dotted-numbered message container (`3.1.1 DTI_TBU_CONDIS_REQ`)
+that carries a `Field descriptions` anchor sub-heading. `list_item` matches are ~0; the
+`body_text` matches are descriptive prose (`Messages with bits [3:0] equal to 0xE …`) and
+cross-references — exactly the noise the section-heading restriction excludes. This is a
+CLEANER, more precise anchor than free prose.
+**GENERALITY (section-heading form, all 79 docs):** the form appears as section headings in
+**8 docs** — GIC `ihi0069` 612, SMMU `ihi0070` 434, DTI `ihi0088` 163, ARM-Debug-v6
+`ihi0074` 138, CoreSight `ihi0029` 42, ACC `ihi0076` 5, + 2 singletons (1396 total). But the
+**typed home varies by container** (the `.10c` caption-decides principle): DTI's container is
+a MESSAGE (`DTI_TBU_CONDIS_REQ`, sub-structure `Source`/`Usage constraints`/`Flow control
+result`), while GIC/SMMU/CoreSight/ACC/ARM-Debug containers are REGISTERS (`SMMU_IDR0` /
+`AUTHSTATUS, … Register`, sub-structure `Purpose`/`Attributes`/`Accessing`).
+**TYPED-HOME ROUTING (the `.10b`/`.10c`/`.10e` rule — register iff register-attribute
+vocabulary; ADR 0006, no name list):** a field-def container routes to **`message_field_records`**
+iff it is NOT a register — its caption has no `register` word AND its sub-heading run carries
+no `Attributes`/`Accessing` marker. The REGISTER-routed containers (GIC/SMMU/…) are an
+explicit honest residual deferred to a sibling leaf (`.10g`, section-heading register fields
+→ the register surface) — NOT captured here, so no measured register gold is touched.
+**Measured gate (each demonstrated per-item over the persisted corpus; ADR 0006):** (1)
+field heading matches `<IDENT>, bit[s] [range]` with an identifier-shaped name (admits the
+value-slice form `TOK_TRANS_REQ[11:8]` and multi-word ALL-CAPS `IMPLEMENTATION DEFINED`;
+the `^…$` anchor + section-heading kind rejects descriptive prose and cross-refs); (2)
+container = nearest preceding dotted-numbered heading whose leading token is identifier-shaped,
+and is NOT a register (caption-`register` / `Attributes` / `Accessing`); (3) container carries
+a `Field descriptions` anchor heading; (4) ≥2 field headings in the container (a real layout
+has multiple fields — kills singleton coincidental matches). **Bit overlaps are KEPT, not
+rejected:** DTI documents Manager-side and Subordinate-side views of the same position
+(`M_MSG_TYPE[3:0]` / `S_MSG_TYPE[3:0]`) and multiple message variants in one container — a
+no-overlap gate would wrongly drop legitimate dual-perspective fields; same-name duplicates
+merge via the surface `(container, name)` dedup.
+**Measured outcome (live, the built extractor over the persisted corpus): DTI 0 → 159 message
+fields / 17 message containers**; **all other 78 docs fire 0 message fields** (GIC/SMMU/CoreSight/
+ACC/ARM-Debug all route REG) → corpus-precise, **1/79 docs**. Recovered names match the leaked
+obligation subjects (`MMUV`, `SEC_SID[1]`, `STAGES`, `M_MSG_TYPE`, `PARTID[3:0]`). Two
+measured name-cleanliness gates were added from the live per-item eyeball (each ADR-0006
+structural, no name list): a Docling spacing artifact `<ident> [slice]` is normalized to
+`<ident>[slice]` so a field tokenized both ways merges to ONE record, and a name that is exactly
+the bit-position UNIT word (`Bits, bit [5:4]`) is an unnamed/reserved range, NOT a mnemonic →
+dropped (honest residual). The ≥2-field gate counts DISTINCT names.
+**Build:** additive `extract_section_header_message_fields` + helpers (`parse_dotted_container_heading`,
+`parse_section_header_field`, `normalize_section_field_name`, `is_section_header_field_name`,
+`is_message_container_name`, `is_field_descriptions_anchor`, `caption_names_register`,
+`is_register_attribute_heading`) in `ir/evidence.rs`, registered as the 4th strategy
+`message_fields.section_header_field` in `message_field_surface`; reads `source_ir.document_sections`
+(section headings in reading order), reuses `parse_pure_bit_position` + `bit_width_from_range`.
+**FIELD.4 routing (honest):** this slice closes the RECOGNITION gap (the DTI field catalog goes
+0 → 159). With `message_field_records` populated, the LLM-primary constraint extractor
+(`extract-constraints-llm` — the default for live-NLP `converge`, `LLM-PRIMARY-PROMOTION.5`)
+classifies a DTI field obligation as `EntityType::Field` → `message_field_constraints` instead of
+`signal_constraints`. The deterministic Pattern `signal_constraints` surface does NOT consult the
+catalog (by construction), so the currently-persisted leaked DTI constraints are corrected on the
+next live-NLP DTI rebuild (its normalized bundle is host-local-blocked, re-provided like
+`.10a`/`.10c`/`.10e`) — not retroactively in this slice.
+**Verification log (`2026-06-17`):** lib tests **1664 → 1672** (7 new: DTI-shape positive,
+register-container exclusion [caption-`register` + `Attributes`], anchor+≥2 gate, M/S overlap
+kept, spacing-normalize + unit-word drop, `parse_section_header_field` forms/rejections,
+`parse_dotted_container_heading` forms, surface field-id+manifest; + 1 `#[ignore]` corpus-sweep
+local measurement). **Old-vs-new `evidence --dry-run` parity over 7 intact docs (APB/AHB/AXI/
+AXI-Stream wire gold + NVMe 216 + AMD 217 message-field gold + ARM-Debug-v6 register-routing):
+every surface byte-IDENTICAL, the ONLY delta is the manifest gaining `message_fields.section_header_field`
+(eligible, produced 0)** — NVMe 216→216, AMD 217→217, ARM-Debug 0 (its 138 register-routed headings
+correctly mint 0 message fields). **WIRE-BASED-100 provably orthogonal** (the 4 wire docs carry no
+section-heading field form → 0 records, byte-identical). `kg-bench` **156/156**; full
+`scripts/run_ci.sh` GREEN (fmt + clippy `-D warnings` + lib 1672 + rustdoc + mdBook). Book
+`pipeline/evidenceir.md` `.10f` subsection; KM card `section-header-message-field-extraction`;
+README `.10f` bullet; RUST_CODEBASE_ANALYSIS fourth-strategy note. The REGISTER-routed
+section-heading field form (GIC 612 / SMMU 434 / CoreSight 42 / ACC 5 / ARM-Debug 138 → the
+register surface) is the spun-out sibling lever `.10g` (honest residual; ~1230 register fields).
 
 **`PDF-VARIANT-DIGESTION.11` — `validate` integration of the `message_field_*` surfaces.**
 · Status: **DONE `2026-06-11`** (probe → measured scope decisions → build → live CLI

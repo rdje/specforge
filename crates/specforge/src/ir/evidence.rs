@@ -10211,6 +10211,267 @@ impl Extractor<RegisterRecord> for BitAssignmentRegisterExtractor<'_> {
     }
 }
 
+/// PDF-VARIANT-DIGESTION.10f — is this section heading a `Field descriptions` /
+/// `Field description` anchor? DTI-class message protocols head the block of per-field
+/// subsections with this universal heading, which gates the section-heading message-field
+/// reader (a container without it yields nothing). ADR 0006 — universal section grammar.
+fn is_field_descriptions_anchor(title: &str) -> bool {
+    let t = title.trim().to_ascii_lowercase();
+    t == "field descriptions" || t == "field description"
+}
+
+/// PDF-VARIANT-DIGESTION.10f — does this container heading or one of its sub-headings name
+/// a REGISTER (so its fields belong to the register surface, NOT the message-field surface)?
+/// The `.10b`/`.10c`/`.10e` typed-home rule: a layout is a register iff it carries
+/// register-attribute vocabulary. Here a container is a register iff its caption uses the
+/// whole word `register`/`registers`, or it carries an `Attributes` / `Accessing …`
+/// sub-heading (the register's access-attributes / access-instructions block — DTI messages
+/// have neither). Register-routed containers are an honest residual deferred to `.10g`.
+fn caption_names_register(rest: &str) -> bool {
+    rest.split(|c: char| !c.is_ascii_alphanumeric())
+        .any(|w| w.eq_ignore_ascii_case("register") || w.eq_ignore_ascii_case("registers"))
+}
+fn is_register_attribute_heading(title: &str) -> bool {
+    let t = title.trim().to_ascii_lowercase();
+    t == "attributes" || t == "accessing" || t.starts_with("accessing ")
+}
+
+/// PDF-VARIANT-DIGESTION.10f — is `name` an identifier-shaped message-field name as written
+/// in a section heading (`STAGES`, `M_MSG_TYPE`, `MMUV`, multi-word `IMPLEMENTATION DEFINED`,
+/// the value-slice form `TOK_TRANS_REQ[11:8]`, the single mnemonic letter `T`)? Field
+/// mnemonics start with an uppercase letter; a real field name is at most three words and
+/// carries only identifier characters — so a descriptive prose fragment is rejected. The
+/// `^…$`-anchored heading form does most of the precision work; this keeps the name clean.
+fn is_section_header_field_name(name: &str) -> bool {
+    let name = name.trim();
+    let Some(first) = name.chars().next() else {
+        return false;
+    };
+    if !first.is_ascii_uppercase() {
+        return false;
+    }
+    if name.split_whitespace().count() > 3 {
+        return false;
+    }
+    name.chars().all(|c| {
+        c.is_ascii_alphanumeric()
+            || c.is_ascii_whitespace()
+            || matches!(c, '_' | '[' | ']' | ':' | '.')
+    })
+}
+
+/// PDF-VARIANT-DIGESTION.10f — normalize a section-heading field name written with Docling
+/// spacing artifacts: collapse internal whitespace runs and drop a space immediately before a
+/// value-slice bracket (`TRANSLATION_ID [11:8]` → `TRANSLATION_ID[11:8]`, so a field that the
+/// backend tokenized both ways merges to ONE record), while a genuine multi-word name keeps its
+/// internal space (`IMPLEMENTATION DEFINED`). A name that is exactly the bit-position UNIT word
+/// (`bit`/`bits`) is an unnamed/reserved range (`Bits, bit [5:4]`), not a mnemonic — an honest
+/// residual, never a fabricated field (the `.10a`/`.10c` unnamed-range rule). ADR 0006.
+fn normalize_section_field_name(raw: &str) -> Option<String> {
+    let name = raw
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
+        .replace(" [", "[");
+    if name.eq_ignore_ascii_case("bit") || name.eq_ignore_ascii_case("bits") {
+        return None;
+    }
+    Some(name)
+}
+
+/// PDF-VARIANT-DIGESTION.10f — is `name` a plausible message-CONTAINER identifier as written
+/// after a dotted section number (`DTI_TBU_CONDIS_REQ`, `SMMU_IDR0`, `AUTHSTATUS`,
+/// `ICC_AP0R<n>_EL1`)? A mnemonic carries an underscore or is an all-uppercase letter run —
+/// a plain Titlecase English word (`Connection`) is rejected, so an ordinary chapter heading
+/// never becomes a phantom container.
+fn is_message_container_name(name: &str) -> bool {
+    let Some(first) = name.chars().next() else {
+        return false;
+    };
+    if !first.is_ascii_alphabetic() || name.len() < 2 {
+        return false;
+    }
+    if !name
+        .chars()
+        .all(|c| c.is_ascii_alphanumeric() || matches!(c, '_' | '<' | '>' | '[' | ']' | ':' | '.'))
+    {
+        return false;
+    }
+    let letters: String = name.chars().filter(|c| c.is_ascii_alphabetic()).collect();
+    name.contains('_') || (letters.len() >= 2 && letters.chars().all(|c| c.is_ascii_uppercase()))
+}
+
+/// PDF-VARIANT-DIGESTION.10f — split a dotted-numbered container heading
+/// (`3.1.1 DTI_TBU_CONDIS_REQ`, `B2.3.1 AUTHSTATUS, Authentication Status Register`) into its
+/// leading identifier name plus the full remaining caption (used to test for the `register`
+/// word). Requires at least one dot (so a chapter heading `3 Messages` is not a container)
+/// and an identifier-shaped leading token. ADR 0006 — universal numbering grammar, no names.
+fn parse_dotted_container_heading(title: &str) -> Option<(String, String)> {
+    let t = title.trim();
+    let bytes = t.as_bytes();
+    let mut i = 0usize;
+    // optional single leading uppercase letter (annex form `B2.3.1`)
+    if bytes.first().is_some_and(|b| b.is_ascii_uppercase())
+        && bytes.get(1).is_some_and(|b| b.is_ascii_digit())
+    {
+        i = 1;
+    }
+    let num_start = i;
+    let mut dots = 0u32;
+    while i < bytes.len() {
+        match bytes[i] {
+            b'0'..=b'9' => i += 1,
+            b'.' => {
+                dots += 1;
+                i += 1;
+            }
+            _ => break,
+        }
+    }
+    if dots == 0 || i == num_start || bytes[i - 1] == b'.' {
+        return None;
+    }
+    if i >= bytes.len() || !bytes[i].is_ascii_whitespace() {
+        return None;
+    }
+    let rest = t[i..].trim();
+    if rest.is_empty() {
+        return None;
+    }
+    let name = rest.split_whitespace().next()?.trim_end_matches(',');
+    if !is_message_container_name(name) {
+        return None;
+    }
+    Some((name.to_string(), rest.to_string()))
+}
+
+/// PDF-VARIANT-DIGESTION.10f — parse a per-field section heading of the form
+/// `<NAME>, bit [N]` / `<NAME>, bits [hi:lo]` into `(name, high, low)`. The heading must end
+/// with the bracketed range, and the text before the bracket must end with a comma + the whole
+/// word `bit`/`bits` — so a descriptive heading or a cross-reference (`TOK_TRANS_REQ[7:0] is
+/// bits [19:12].`, which is body text anyway) never matches. The bracket parse reuses
+/// [`parse_pure_bit_position`].
+fn parse_section_header_field(title: &str) -> Option<(String, u32, u32)> {
+    let t = title.trim();
+    if !t.ends_with(']') {
+        return None;
+    }
+    let open = t.rfind('[')?;
+    let (high, low) = parse_pure_bit_position(&t[open + 1..t.len() - 1])?;
+    let before = t[..open].trim_end();
+    let lower = before.to_ascii_lowercase();
+    // ASCII lowercasing preserves byte length, so the stripped prefix length indexes `before`.
+    let stem_len = if let Some(s) = lower.strip_suffix(" bits") {
+        s.len()
+    } else if let Some(s) = lower.strip_suffix(" bit") {
+        s.len()
+    } else {
+        return None;
+    };
+    let raw_name = before[..stem_len].trim_end().strip_suffix(',')?.trim();
+    let name = normalize_section_field_name(raw_name)?;
+    if !is_section_header_field_name(&name) {
+        return None;
+    }
+    Some((name, high, low))
+}
+
+/// PDF-VARIANT-DIGESTION.10f — message fields declared as SECTION HEADINGS (DTI-class message
+/// protocols). DTI defines each message field as its own subsection (`STAGES, bits [27:26]`),
+/// grouped under a dotted-numbered message container (`3.1.1 DTI_TBU_CONDIS_REQ`) that carries
+/// a `Field descriptions` anchor sub-heading. The typed home is the message-field surface ONLY
+/// when the container is NOT a register (the `.10b`/`.10c`/`.10e` register-iff-attributes rule);
+/// register-captioned containers (GIC/SMMU/CoreSight/…) are an honest residual deferred to a
+/// sibling leaf. Bit overlaps are KEPT (DTI documents Manager-side and Subordinate-side views of
+/// the same position, `M_MSG_TYPE[3:0]`/`S_MSG_TYPE[3:0]`); same-name duplicates merge through
+/// the surface `(container, name)` dedup. ADR 0006 — universal section grammar, no name list.
+fn extract_section_header_message_fields(source_ir: &SourceIr) -> Vec<MessageFieldRecord> {
+    let mut sections: Vec<_> = source_ir.document_sections.iter().collect();
+    sections.sort_by_key(|s| s.reading_order);
+
+    let mut records: Vec<MessageFieldRecord> = Vec::new();
+    let mut container: Option<String> = None;
+    let mut is_register = false;
+    let mut has_anchor = false;
+    let mut pending: Vec<(String, u32, u32)> = Vec::new();
+
+    // Emit a finished container's fields, gated: a non-register container with a
+    // `Field descriptions` anchor and at least two fields (a real layout has several fields).
+    let flush = |records: &mut Vec<MessageFieldRecord>,
+                 container: &Option<String>,
+                 is_register: bool,
+                 has_anchor: bool,
+                 pending: &[(String, u32, u32)]| {
+        let Some(name) = container else { return };
+        if is_register || !has_anchor {
+            return;
+        }
+        // Dedup by distinct name within the container (a field tokenized twice, e.g. a spacing
+        // variant, is one field); a real field layout has at least two DISTINCT fields. The
+        // Manager/Subordinate dual-perspective views (`M_MSG_TYPE`/`S_MSG_TYPE`) have different
+        // names, so both are kept even though their bit ranges overlap.
+        let mut seen: BTreeSet<String> = BTreeSet::new();
+        let unique: Vec<&(String, u32, u32)> = pending
+            .iter()
+            .filter(|(field, _, _)| seen.insert(field.to_ascii_uppercase()))
+            .collect();
+        if unique.len() < 2 {
+            return;
+        }
+        for (field, high, low) in unique {
+            records.push(MessageFieldRecord {
+                field_id: String::new(),
+                name: field.clone(),
+                container: name.clone(),
+                bit_width: bit_width_from_range(Some(*high), Some(*low)),
+                bit_range: Some((*high, *low)),
+                byte_offset: None,
+                description: None,
+                supporting_table_ids: Vec::new(),
+            });
+        }
+    };
+
+    for section in sections {
+        let title = section.title.trim();
+        if let Some((name, rest)) = parse_dotted_container_heading(title) {
+            flush(&mut records, &container, is_register, has_anchor, &pending);
+            container = Some(name);
+            is_register = caption_names_register(&rest);
+            has_anchor = false;
+            pending.clear();
+            continue;
+        }
+        if container.is_none() {
+            continue;
+        }
+        if is_field_descriptions_anchor(title) {
+            has_anchor = true;
+        } else if is_register_attribute_heading(title) {
+            is_register = true;
+        } else if let Some(field) = parse_section_header_field(title) {
+            pending.push(field);
+        }
+    }
+    flush(&mut records, &container, is_register, has_anchor, &pending);
+    records
+}
+
+/// PDF-VARIANT-DIGESTION.10f — the section-heading message-field strategy as a registered
+/// `Extractor` (DTI-class message protocols whose per-field layout lives in section headings,
+/// not caption-anchored tables); see [`extract_section_header_message_fields`].
+struct SectionHeaderMessageFieldExtractor<'a> {
+    source_ir: &'a SourceIr,
+}
+impl Extractor<MessageFieldRecord> for SectionHeaderMessageFieldExtractor<'_> {
+    fn name(&self) -> &'static str {
+        "message_fields.section_header_field"
+    }
+    fn run(&self, _cx: &ExtractionContext<'_>) -> Vec<MessageFieldRecord> {
+        extract_section_header_message_fields(self.source_ir)
+    }
+}
+
 /// Run the message-field surface through the unified `run_surface` driver (key = (container,
 /// name), the surface identity) and record its manifest entry. Self-gating: zero records on
 /// documents without container-captioned field tables or bit-position layout tables.
@@ -10234,8 +10495,9 @@ fn message_field_surface(
         source_ir,
         prior_guidance,
     };
-    let extractors: [&dyn Extractor<MessageFieldRecord>; 3] =
-        [&extractor, &bit_position, &byte_location];
+    let section_header = SectionHeaderMessageFieldExtractor { source_ir };
+    let extractors: [&dyn Extractor<MessageFieldRecord>; 4] =
+        [&extractor, &bit_position, &byte_location, &section_header];
     let mut run = run_surface("message_fields", &cx, &extractors, |field| {
         (
             field.container.to_ascii_lowercase(),
@@ -17387,6 +17649,293 @@ mod tests {
                 with_width,
             );
         }
+    }
+
+    /// PDF-VARIANT-DIGESTION.10f local measurement, NOT a CI test (`--ignored`): runs the
+    /// section-heading message-field extractor over every persisted `generated/source_ir/*` and
+    /// prints per-doc counts. DTI-class message protocols put their per-field layout in section
+    /// headings, so this surface is pure over `SourceIR` and measures even docs whose normalized
+    /// bundles were cleaned. Run:
+    /// `cargo test -p specforge --lib section_header_message_field_corpus_sweep -- --ignored --nocapture`
+    #[test]
+    #[ignore = "local measurement: walks the developer-local generated/source_ir corpus"]
+    fn section_header_message_field_corpus_sweep_local_measurement() {
+        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../generated/source_ir");
+        let Ok(entries) = fs::read_dir(&root) else {
+            eprintln!("no local corpus at {} — nothing to measure", root.display());
+            return;
+        };
+        let mut paths: Vec<PathBuf> = entries
+            .flatten()
+            .map(|e| e.path().join("source_ir.json"))
+            .filter(|p| p.is_file())
+            .collect();
+        paths.sort();
+        for path in paths {
+            let Ok(raw) = fs::read_to_string(&path) else {
+                continue;
+            };
+            let Ok(source_ir) = serde_json::from_str::<SourceIr>(&raw) else {
+                continue;
+            };
+            let fields = super::extract_section_header_message_fields(&source_ir);
+            if fields.is_empty() {
+                continue;
+            }
+            let mut containers: Vec<&str> = fields.iter().map(|f| f.container.as_str()).collect();
+            containers.sort_unstable();
+            containers.dedup();
+            println!(
+                "{}: {} fields / {} containers",
+                path.parent()
+                    .and_then(|p| p.file_name())
+                    .map(|n| n.to_string_lossy())
+                    .unwrap_or_default(),
+                fields.len(),
+                containers.len(),
+            );
+        }
+    }
+
+    /// PDF-VARIANT-DIGESTION.10f — build a `SourceIR` carrying only the given section headings
+    /// (in order), so the section-heading message-field gate can be tested directly. The `.md`
+    /// exists only to satisfy `SourceIr::build`; the extractor reads `document_sections`.
+    fn section_only_source_ir(titles: &[&str]) -> SourceIr {
+        let tempdir = tempdir().expect("tempdir");
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Spec\nbody\n").expect("write md");
+        let mut source_ir = SourceIr::build(&source, &base).expect("build source_ir");
+        for (i, title) in titles.iter().enumerate() {
+            source_ir
+                .document_sections
+                .push(crate::ir::source::ContentSectionRecord {
+                    section_id: format!("section_{i:04}"),
+                    title: (*title).to_string(),
+                    heading_level: 1,
+                    page_id: Some("page_0001".to_string()),
+                    source_ref: None,
+                    reading_order: i as u32 + 1,
+                    section_kind: SectionKind::Unknown,
+                });
+        }
+        source_ir
+    }
+
+    #[test]
+    fn section_header_message_fields_capture_dti_shape() {
+        // A DTI-class message container: dotted-numbered IDENT heading + `Field descriptions`
+        // anchor + per-field section headings → message fields (literal bit ranges, no fabrication).
+        let source_ir = section_only_source_ir(&[
+            "3.1.1 DTI_TBU_TEST_REQ",
+            "Description",
+            "Source",
+            "Field descriptions",
+            "M_MSG_TYPE, bits [3:0]",
+            "STATE, bit [4]",
+            "STAGES, bits [27:26]",
+            "TOK_TRANS_REQ[11:8], bits [31:28]",
+        ]);
+        let fields = super::extract_section_header_message_fields(&source_ir);
+        assert_eq!(fields.len(), 4);
+        assert!(fields.iter().all(|f| f.container == "DTI_TBU_TEST_REQ"));
+        let by_name: std::collections::BTreeMap<&str, (u32, u32)> = fields
+            .iter()
+            .map(|f| (f.name.as_str(), f.bit_range.unwrap()))
+            .collect();
+        assert_eq!(by_name["M_MSG_TYPE"], (3, 0));
+        assert_eq!(by_name["STATE"], (4, 4));
+        assert_eq!(by_name["STAGES"], (27, 26));
+        assert_eq!(by_name["TOK_TRANS_REQ[11:8]"], (31, 28));
+        let stages = fields.iter().find(|f| f.name == "STAGES").unwrap();
+        assert_eq!(stages.bit_width, Some(2));
+        assert!(stages.byte_offset.is_none() && stages.supporting_table_ids.is_empty());
+    }
+
+    #[test]
+    fn section_header_message_fields_skip_register_containers() {
+        // The `.10b`/`.10c`/`.10e` register-iff-attributes rule: a container whose caption says
+        // `register`, OR which carries an `Attributes`/`Accessing` sub-heading, routes to the
+        // register surface (deferred to `.10g`), NOT message fields — zero records here.
+        let caption_reg = section_only_source_ir(&[
+            "B2.3.1 AUTHSTATUS, Authentication Status Register",
+            "Field descriptions",
+            "HID, bits [9:8]",
+            "SID, bits [5:4]",
+        ]);
+        assert!(
+            super::extract_section_header_message_fields(&caption_reg).is_empty(),
+            "a caption naming a register routes to the register surface, not message fields"
+        );
+        let attr_reg = section_only_source_ir(&[
+            "6.3.1 SMMU_IDR0",
+            "Attributes",
+            "Field descriptions",
+            "TERM_MODEL, bit [26]",
+            "STALL_MODEL, bits [25:24]",
+        ]);
+        assert!(
+            super::extract_section_header_message_fields(&attr_reg).is_empty(),
+            "an Attributes sub-heading marks a register container"
+        );
+    }
+
+    #[test]
+    fn section_header_message_fields_require_anchor_and_two_fields() {
+        // No `Field descriptions` anchor → no records (the anchor gates the field block).
+        let no_anchor = section_only_source_ir(&[
+            "3.1.1 DTI_TBU_TEST_REQ",
+            "Description",
+            "M_MSG_TYPE, bits [3:0]",
+            "STATE, bit [4]",
+        ]);
+        assert!(super::extract_section_header_message_fields(&no_anchor).is_empty());
+        // Only one field heading → no records (a real layout has several fields).
+        let singleton = section_only_source_ir(&[
+            "3.1.1 DTI_TBU_TEST_REQ",
+            "Field descriptions",
+            "M_MSG_TYPE, bits [3:0]",
+        ]);
+        assert!(super::extract_section_header_message_fields(&singleton).is_empty());
+    }
+
+    #[test]
+    fn section_header_message_fields_keep_manager_subordinate_overlap() {
+        // DTI documents Manager- and Subordinate-side views of the SAME position; both are real,
+        // distinct fields and BOTH are kept (no no-overlap reject).
+        let source_ir = section_only_source_ir(&[
+            "3.4.4 DTI_TBU_REG_RDATA",
+            "Field descriptions",
+            "M_MSG_TYPE, bits [3:0]",
+            "S_MSG_TYPE, bits [3:0]",
+        ]);
+        let fields = super::extract_section_header_message_fields(&source_ir);
+        assert_eq!(fields.len(), 2, "overlapping M/S views are both kept");
+        let names: std::collections::BTreeSet<&str> =
+            fields.iter().map(|f| f.name.as_str()).collect();
+        assert!(names.contains("M_MSG_TYPE") && names.contains("S_MSG_TYPE"));
+    }
+
+    #[test]
+    fn parse_section_header_field_forms_and_rejections() {
+        assert_eq!(
+            super::parse_section_header_field("STAGES, bits [27:26]"),
+            Some(("STAGES".to_string(), 27, 26))
+        );
+        assert_eq!(
+            super::parse_section_header_field("SPD, bit [25]"),
+            Some(("SPD".to_string(), 25, 25))
+        );
+        assert_eq!(
+            super::parse_section_header_field("IMPLEMENTATION DEFINED, bit [7]"),
+            Some(("IMPLEMENTATION DEFINED".to_string(), 7, 7))
+        );
+        assert_eq!(
+            super::parse_section_header_field("TOK_TRANS_REQ[11:8], bits [31:28]"),
+            Some(("TOK_TRANS_REQ[11:8]".to_string(), 31, 28))
+        );
+        // unnamed reserved (no name + comma), descriptive prose, lowercase-led → rejected
+        assert_eq!(super::parse_section_header_field("Bit [6]"), None);
+        assert_eq!(super::parse_section_header_field("Bits [27:25]"), None);
+        assert_eq!(
+            super::parse_section_header_field("Messages with bits [3:0] equal to 0xE"),
+            None
+        );
+        assert_eq!(
+            super::parse_section_header_field("the value of bits [3:0]"),
+            None
+        );
+    }
+
+    #[test]
+    fn section_header_message_fields_normalize_spacing_and_drop_unit_word() {
+        // A spacing artifact (`TOK_TRANS_REQ [11:8]`) is the SAME field as `TOK_TRANS_REQ[11:8]`
+        // and merges to one record; an unnamed reserved range written `Bits, bit [5:4]` is not a
+        // mnemonic and is dropped (honest residual, not a fabricated `Bits` field).
+        let source_ir = section_only_source_ir(&[
+            "3.2.1 DTI_TBU_TRANS_REQ",
+            "Field descriptions",
+            "TOK_TRANS_REQ [11:8], bits [31:28]",
+            "TOK_TRANS_REQ[11:8], bits [31:28]",
+            "Bits, bit [5:4]",
+            "STATE, bit [4]",
+        ]);
+        let fields = super::extract_section_header_message_fields(&source_ir);
+        let names: Vec<&str> = fields.iter().map(|f| f.name.as_str()).collect();
+        assert!(
+            names.contains(&"TOK_TRANS_REQ[11:8]"),
+            "spacing variant normalized to the no-space form"
+        );
+        assert_eq!(
+            names
+                .iter()
+                .filter(|n| **n == "TOK_TRANS_REQ[11:8]")
+                .count(),
+            1,
+            "the two spacing variants merge to ONE record"
+        );
+        assert!(
+            !names.iter().any(|n| n.eq_ignore_ascii_case("bits")),
+            "the bare unit word `Bits` is an unnamed range, not a field name"
+        );
+        assert!(names.contains(&"STATE"));
+    }
+
+    #[test]
+    fn parse_dotted_container_heading_forms() {
+        assert_eq!(
+            super::parse_dotted_container_heading("3.1.1 DTI_TBU_CONDIS_REQ"),
+            Some((
+                "DTI_TBU_CONDIS_REQ".to_string(),
+                "DTI_TBU_CONDIS_REQ".to_string()
+            ))
+        );
+        let (name, rest) = super::parse_dotted_container_heading(
+            "B2.3.1 AUTHSTATUS, Authentication Status Register",
+        )
+        .unwrap();
+        assert_eq!(name, "AUTHSTATUS");
+        assert!(super::caption_names_register(&rest));
+        // a `_REG_` token is not the whole word `register`
+        assert!(!super::caption_names_register("DTI_TBU_REG_RDATA"));
+        // no dot → not a container; a Titlecase English word → not a container name
+        assert_eq!(super::parse_dotted_container_heading("3 Messages"), None);
+        assert_eq!(
+            super::parse_dotted_container_heading("3.1 Connection messages"),
+            None
+        );
+    }
+
+    #[test]
+    fn section_header_message_field_surface_assigns_ids_and_records_manifest() {
+        // End-to-end through the surface driver: records get dense `field_id`s and the new
+        // strategy is recorded in the manifest.
+        let source_ir = section_only_source_ir(&[
+            "3.1.1 DTI_TBU_TEST_REQ",
+            "Field descriptions",
+            "M_MSG_TYPE, bits [3:0]",
+            "STATE, bit [4]",
+        ]);
+        let mut manifest = super::ExtractionManifest::default();
+        let fields = super::message_field_surface(&source_ir, None, &mut manifest);
+        assert_eq!(fields.len(), 2);
+        assert!(
+            fields
+                .iter()
+                .all(|f| f.field_id.starts_with("message_field_"))
+        );
+        let surface = manifest
+            .surfaces
+            .iter()
+            .find(|s| s.surface == "message_fields")
+            .expect("message_fields surface recorded");
+        assert!(
+            surface
+                .entries
+                .iter()
+                .any(|e| e.name == "message_fields.section_header_field"),
+            "the new strategy is recorded in the manifest"
+        );
     }
 
     #[test]

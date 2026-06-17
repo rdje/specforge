@@ -771,6 +771,53 @@ re-ingest recovers the caption), two more structures lost captions in individual
 period-bleed rows above stay name-less — absence, never invention.
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10e`).
 
+### `PDF-VARIANT-DIGESTION.10f` — a message field written as a heading, not a table row
+
+Every `.10` family above reads a *table*. Some specifications don't put their field layouts in tables at
+all. A message protocol like AMBA DTI describes each message — `DTI_TBU_TRANS_REQ`, `DTI_TBU_CONDIS_REQ` —
+as a numbered section, and inside it gives each field **its own little sub-heading**: a line that reads
+`STAGES, bits [27:26]`, then `SPD, bit [25]`, then `M_MSG_TYPE, bits [3:0]`, each followed by a paragraph
+of prose. There is no grid for the table readers to find, so before this slice DTI produced **zero**
+message fields, and obligations about those fields (*"the MMUV field must be 0"*) had nowhere to live —
+they leaked sideways into the signal-constraint surface as undeclared, dotted subjects.
+
+The scope note that opened this work guessed the fields lived in bullet-list prose. Measuring the real
+document corrected that: they are **section headings**, which is good news, because a heading is a far
+cleaner anchor than a sentence. The reader walks the document's section list in order, and a field is
+recognised only when a heading matches `<NAME>, bit [N]` / `<NAME>, bits [hi:lo]` exactly end-to-end — so
+a descriptive paragraph that merely *mentions* "bits [3:0]" (it's body text, not a heading) and a
+cross-reference like *"TOK_TRANS_REQ[7:0] is bits [19:12]."* never qualify. Enum-value sub-headings
+(`STATE = 0`) and unnamed reserved ranges (`Bits [27:25]`, with no comma and no mnemonic) fall outside the
+shape and are left alone.
+
+The interesting part is **where each field belongs**, because the *same* heading shape appears in register
+manuals too — GIC, SMMU, CoreSight all describe register fields exactly this way. The rule is the one the
+`.10b`/`.10c`/`.10e` work already established: a layout is a register only when it carries
+register-attribute vocabulary. So the container decides. A field's container is the nearest numbered
+heading above it; if that heading's caption says "register", or the section carries an `Attributes` or
+`Accessing …` sub-heading (a register's access-attributes block), the fields are register fields and this
+slice leaves them for a future register-routing leaf. DTI's message sections carry none of that (they have
+`Source`, `Usage constraints`, `Flow control result` instead), so their fields route to the **message-field
+inventory** — and across the whole corpus this reader fires on exactly one document, DTI, recovering
+**159 message fields across 17 message containers**. The register-shaped documents (GIC's 612 headings,
+SMMU's 434, and the rest) correctly yield **zero** message fields here.
+
+Two cleanups came straight out of reading the real output. The backend sometimes tokenizes the same field
+two ways — `TRANSLATION_ID [11:8]` and `TRANSLATION_ID[11:8]` — so a stray space before a value-slice
+bracket is normalised away and the two merge into one record. And a heading whose "name" is literally the
+unit word *Bits* (`Bits, bit [5:4]`) is an unnamed reserved range, not a mnemonic, so it is dropped rather
+than recorded as a field called `Bits` — absence over invention, the same instinct as everywhere else.
+Overlapping bit ranges, by contrast, are *kept*: DTI documents the Manager-side and Subordinate-side view
+of the same position under different names (`M_MSG_TYPE[3:0]` and `S_MSG_TYPE[3:0]`), and both are real.
+
+Because the reader only ever adds to the message-field surface, an old-vs-new comparison across the wire
+gold specs and the table-derived message-field documents (NVMe's 216 fields, AMD-IOMMU's 217) is
+byte-identical except for the one new line the run manifest records — nothing else moves. Closing the
+recognition gap also lets the downstream LLM constraint reader put a DTI field obligation where it belongs:
+once `MMUV` is a known field, *"the MMUV field must be 0"* is typed into the message-field constraint
+surface instead of masquerading as a signal constraint.
+*Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10f`).
+
 ### `PDF-VARIANT-DIGESTION.12b` — presence matrices: which signals exist, in which variant, under what condition
 
 Bus specifications routinely answer a question no other table answers: *does this signal exist at all in your

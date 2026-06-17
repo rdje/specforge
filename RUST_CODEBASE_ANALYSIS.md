@@ -312,7 +312,18 @@ collector (`byte_location_layout_columns` header-position gate, row-level wrappe
 trusted past bleed, period-is-bleed refusal — deliberately NOT the shared `recover_field_mnemonic`
 chain, which would truncate `FRU ID`→`FRU`); `byte_offset` doubles as the field's own byte offset when
 `bit_range` is `None` (doc contract amended; the two readings are disjoint by construction) and
-`bit_width` converts plain-count byte sizes exactly (×8). It is the first surface whose extractor reads ONLY `SourceIr.structured_tables`
+`bit_width` converts plain-count byte sizes exactly (×8). `PDF-VARIANT-DIGESTION.10f` (2026-06-17) added a
+FOURTH strategy, `message_fields.section_header_field` — the first message-field reader that reads
+`SourceIr.document_sections` rather than `structured_tables`: DTI-class message protocols write each field
+as its own `<NAME>, bits [hi:lo]` section HEADING under a dotted-numbered message container with a
+`Field descriptions` anchor (`extract_section_header_message_fields` + `parse_dotted_container_heading` /
+`parse_section_header_field` [reusing `parse_pure_bit_position`] / `normalize_section_field_name` /
+`is_section_header_field_name` / `is_message_container_name` / `caption_names_register` /
+`is_register_attribute_heading`). Container-decides routing (the `.10b`/`.10c`/`.10e` register-iff-attribute
+rule: a container is a register iff its caption says `register` or it carries an `Attributes`/`Accessing`
+sub-heading, else a message/structure) keeps GIC/SMMU/CoreSight register fields out of the message surface
+(deferred to a sibling `.10g`). Live: DTI 0→159 fields / 17 containers, only DTI fires (1/79); old-vs-new
+parity byte-identical except the new manifest entry (NVMe 216 / AMD 217 unchanged). It is one of the surfaces whose extractor reads ONLY `SourceIr` document content
 and persists a new typed inventory (`EvidenceIr.message_field_records`) consumed by the entity-typing
 ground (`EntityType::Field`, `.FIELD.3`) and — via `.FIELD.4` — by the LLM-primary constraint extractor:
 `ir/constraint_extract_llm.rs` now grounds into a typed `GroundedConstraint::{Signal,Field}` dispatch

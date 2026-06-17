@@ -1,3 +1,35 @@
+### PDF-VARIANT-DIGESTION.10f — section-HEADING prose message-field recognizer (DTI-class message protocols)
+Spun from `KG-ISF-COMPLETENESS.4`'s §spun-out gap. AMBA DTI (`ihi0088`) is a message protocol but carried
+**0 `message_field_records`**, so field obligations (`the MMUV field must be 0`) leaked into `signal_constraints`
+with dotted/undeclared subjects. The `.10a`–`.10e` readers all read TABLES; DTI's field layout is not in tables.
+- **Scoping correction (measurement-first):** the spun-out note guessed prose `list_item`s `"<Field>, bit [N]"`;
+  re-measuring the persisted `source_ir.json` showed DTI defines each field as its own **section HEADING**
+  (`STAGES, bits [27:26]` / `SPD, bit [25]` / `M_MSG_TYPE, bits [3:0]`) under a dotted-numbered message container
+  (`3.1.1 DTI_TBU_CONDIS_REQ`) with a `Field descriptions` anchor — a cleaner anchor than free prose (`list_item`
+  matches ~0; `body_text` matches are descriptive prose/cross-refs, excluded by the section-heading restriction).
+- **Build:** additive `extract_section_header_message_fields` (`ir/evidence.rs`) registered as a 4th strategy
+  `message_fields.section_header_field` in `message_field_surface`, reading `source_ir.document_sections`. The SAME
+  heading shape describes register fields in TRMs (GIC 612 / SMMU 434 / CoreSight 42 / ACC 5 / ARM-Debug-v6 138),
+  so **container-decides routing** (the `.10b`/`.10c`/`.10e` rule — register iff caption-`register` /
+  `Attributes` / `Accessing`, else message/structure) keeps register fields out of the message surface (deferred
+  to a sibling `.10g`). Two ADR-0006 name cleanups from the live eyeball: a Docling spacing artifact
+  `<ident> [slice]` normalizes to `<ident>[slice]` (one record); the bare unit word (`Bits, bit [5:4]`) is an
+  unnamed reserved range → dropped (honest residual). Overlapping Manager/Subordinate views of one position
+  (`M_MSG_TYPE[3:0]`/`S_MSG_TYPE[3:0]`) are both kept. ADR-0006: universal section grammar, no chip-name list.
+- **Measured:** DTI `message_field_records` **0 → 159 / 17 containers**; **only DTI fires (1/79)**;
+  GIC/SMMU/CoreSight/ACC/ARM-Debug-v6 section-heading fields are register-routed → 0 message fields.
+- **FIELD.4 (honest):** closing the recognition gap lets the LLM-primary constraint reader type a DTI field
+  obligation into `message_field_constraints` (`LLM-PRIMARY-PROMOTION.5`); the deterministic Pattern
+  `signal_constraints` surface does not consult the catalog, so the persisted leak is corrected on the next
+  live-NLP DTI rebuild (its normalized bundle is host-local-blocked).
+- **Verification:** lib tests 1664→1672 (7 new: DTI-shape positive, register-container exclusion, anchor+≥2 gate,
+  M/S overlap kept, spacing-normalize+unit-word drop, two parse-form unit tests, surface field-id+manifest;
+  +1 `#[ignore]` corpus-sweep). **Old-vs-new `evidence --dry-run` parity over 7 intact docs (4 wire gold + NVMe 216
+  + AMD 217 + ARM-Debug-v6): every surface byte-identical, ONLY delta = the manifest gaining
+  `message_fields.section_header_field` (produced 0)** → WIRE-BASED-100 provably orthogonal. `kg-bench` 156/156;
+  full `scripts/run_ci.sh` GREEN (fmt + clippy `-D warnings` + lib 1672 + rustdoc + mdBook). Book
+  `pipeline/evidenceir.md` `.10f`; KM `section-header-message-field-extraction`.
+
 ### KG-ISF-COMPLETENESS.4 — bar #5/#6 behavior/temporal lowering-completeness re-assessed on the broader 78-doc corpus (measurement-first, read-only, docs-only)
 `.2` measured ISF-lowering fidelity over 36 IntentIR docs; `CORPUS-COVERAGE.0` then doubled the corpus to 78
 (register/coherency/command/profile-heavy). This slice re-checks bar #5 (every behavior/temporal rule carried or
