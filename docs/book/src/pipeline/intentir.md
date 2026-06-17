@@ -87,6 +87,24 @@ as part of the transaction. (How those signals are then ordered into the documen
 address/data/response *phases* is a further step that builds on the phase recognition
 described below and on this membership.)
 
+A transaction's section usually has **subsections**, and that is where the signal-rich
+detail tends to live. APB's "Write transfers" section, for example, is mostly an
+introduction — its own paragraphs barely name a signal beyond the clock — while the
+signals that actually make up a write (`PADDR`, `PWDATA`, `PWRITE`, `PENABLE`, …) are
+described one level down, under "With no wait states" and "With wait states". A
+transaction genuinely *spans* those subsections, so SpecForge scopes its signal set to
+the whole subtree: the defining section **and** every section whose number nests under it
+(`3.1.1`, `3.1.2`, … under `3.1`). This is decided purely by the document's own section
+numbering — no chip-specific list — and it keeps each transaction's boundary exact,
+because nested numbers do not overlap: a write transaction (`3.1.x`) and a read
+transaction (`3.3.x`) sit in disjoint subtrees, so a read never picks up write-only
+signals like `PWDATA`. The effect is concrete — APB's `write_transfer` grows from a lone
+`PCLK` to its full ten-signal set (and `read_transfer` to its seven, correctly *without*
+the write-data signals), and AXI transactions whose detail lives in subsections, such as
+`atomic_transaction`, recover a real signal set instead of an empty one. None of this
+changes the emitted `.isf` — the signal set is recorded as `IntentIR` metadata, and the
+adapter lowers a transaction's *steps*, not its membership.
+
 This stage also deliberately **does not** treat "everything an actor does over time"
 as a transaction. Earlier, SpecForge minted a catch-all `Manager_behavior` /
 `Subordinate_behavior` entry per actor — a bag of timed rules. That conflated two

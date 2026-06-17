@@ -1,4 +1,40 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-TRANSACTIONS.2k (`2026-06-17`) — descendant-subsection scope for transaction membership (CODE)
+
+**Root cause.** A transaction is named from a section heading (Cue A); its `.2c` signal-set membership is the
+declared signals that section's statements reference. But `build_section_anchors` (`ir/evidence.rs`) sets a
+section's `line_end` to one line before the NEXT heading — including its own subsections — so section anchors are
+line-range and non-overlapping. A parent section's `supporting_statement_ids` (assigned by
+`section_ids_for_statement` at semantic-build time) therefore carries ONLY its own intro statements; the
+subsection prose is filed under the subsection anchors. APB `3.1 Write transfers` had 4 intro statements (one
+naming `PCLK`), so `write_transfer` membership was `{PCLK}` — while `PADDR`/`PWRITE`/`PENABLE`/`PSEL` live under
+`3.1.1 With no wait states` / `3.1.2 With wait states`. The signals were already recovered document-wide by the
+`.2g` `transaction_phases` surface; only the per-transaction SCOPE was too narrow.
+
+**Why not reuse the phase sets.** The `.2g` phase surface is document-GLOBAL (`setup`/`access` carry the union of
+all phase-naming statements' signals). Unioning those into each transaction would attribute write-only signals
+(`PWDATA`/`PWRITE`) to `read_transfer`, breaching boundary precision (bar #3). The section subtree is the right
+scope because nested section numbers are disjoint by construction.
+
+**Implementation (`build_transaction_anchors`, `ir/semantic.rs`; one function).** Two universal helpers next to
+`is_section_number_token`: `leading_section_number` (the dotted number of a heading title, trailing-dot-normalized,
+`None` for furniture/unnumbered) and `is_descendant_section_number` (a strict dotted-prefix test —
+`candidate.len() > ancestor.len() && candidate.starts_with(ancestor) && candidate[ancestor.len()] == '.'`, so
+`3.1.1` is under `3.1` but `3.10`/`3.3.1`/equality are not). For each named transaction, union into its statement
+scope every section whose number is a strict descendant of its own, then derive `signal_set` and the record's
+`supporting_statement_ids` from that expanded set (dedup-preserving order via a `BTreeSet<String>` seen-set — the
+borrow-checker forbids holding a `&str` view of the Vec being pushed to, so the seen-set owns `String`s). No name
+list (ADR 0006); byte-identical when the section has no descendant.
+
+**Verification.** Built the OLD binary (via `git stash` of `semantic.rs`) and the NEW binary, rebuilt the 4 wire
+docs deterministically (`evidence`→`semantic`→`intent`→`adapt`) into separate temp evidence-roots (WRITE-PATH
+GOTCHA: relative output root + symlinked canonical `generated/source_ir`), and diffed. `.isf` BYTE-IDENTICAL on all
+4; `actor_signal_relations`/`signal_constraints`/`temporal_rules`/`conditional_rules` byte-identical old-vs-new
+(only `transactions` changed) → WIRE-BASED-100 provably orthogonal. Membership delta: APB write 1→10 / read 1→7
+(read excludes `PWDATA`/`PSTRB`/`PWUSER`); AXI `atomic_transaction` 0→22, `prefetch` 0→8, `writezero` 0→6,
+`writedeferrable` 0→10. Corpus-wide (78 docs rebuilt semantic→intent): 101/260 transactions carry membership, 0
+over-broad. `kg-bench` 156/156; `run_ci.sh` GREEN (lib 1662, +2 tests). KM `transaction-membership-subsection-scope`.
+
 ## CORPUS-COVERAGE.1 (`2026-06-17`) — stage-staleness detector in `validate` (CODE)
 
 **Why.** Gaps #1/#2 found that a downstream IR can go stale relative to its upstream and silently drop its

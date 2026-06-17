@@ -2309,16 +2309,47 @@ fn build_transaction_anchors(
         if !seen.insert(name.clone()) {
             continue;
         }
-        // The transaction's grounded signal set: the DECLARED signals referenced
-        // by the statements in its defining section (deduped + sorted). Intersecting
-        // with `declared_signals` is essential — the raw statement tokens
-        // over-capture enum VALUES (`IDLE`, `INCR4`) and prose abbreviations
-        // (`MPMC`, `AHB5`) that are not interface signals; keeping only declared
-        // signals makes the set faithful (a signal is a member iff the section's text
-        // references it AND the document declares it as a signal — bar #3/#4). No
-        // name list (ADR 0006) — `declared_signals` is the document's own inventory.
-        let signal_set: Vec<String> = anchor
-            .supporting_statement_ids
+        // KG-ISF-TRANSACTIONS.2k: a transaction defined by a PARENT section (APB
+        // `3.1 Write transfers`) genuinely SPANS its subsections (`3.1.1 With no
+        // wait states` / `3.1.2 With wait states`), where the PDF files the
+        // signal-rich phase prose (`PADDR`/`PWRITE`/`PENABLE`/…). But section anchors
+        // are line-range and non-overlapping, so the parent carries only its own
+        // intro statements — leaving the membership thin (APB `write_transfer`
+        // would otherwise see only `PCLK`). Broaden the transaction's statement
+        // scope to also include every section whose dotted number is a strict
+        // DESCENDANT of this one. The rule is universal document-structure grammar
+        // keyed off the section number — no name list (ADR 0006) — and
+        // boundary-precise (bar #3): descendant subtrees are disjoint, so a write
+        // transaction (`3.1.x`) and a read transaction (`3.3.x`) never cross. When
+        // the section has no subsections the set is byte-identical to its own.
+        let mut supporting_statement_ids: Vec<String> = anchor.supporting_statement_ids.clone();
+        if let Some(section_number) = leading_section_number(&anchor.title) {
+            let mut seen_statement: BTreeSet<String> =
+                supporting_statement_ids.iter().cloned().collect();
+            for descendant in &context.section_anchors {
+                let Some(descendant_number) = leading_section_number(&descendant.title) else {
+                    continue;
+                };
+                if !is_descendant_section_number(&section_number, &descendant_number) {
+                    continue;
+                }
+                for id in &descendant.supporting_statement_ids {
+                    if seen_statement.insert(id.clone()) {
+                        supporting_statement_ids.push(id.clone());
+                    }
+                }
+            }
+        }
+        // The transaction's grounded signal set: the DECLARED signals referenced by
+        // the statements in its (descendant-expanded) section scope (deduped +
+        // sorted). Intersecting with `declared_signals` is essential — the raw
+        // statement tokens over-capture enum VALUES (`IDLE`, `INCR4`) and prose
+        // abbreviations (`MPMC`, `AHB5`) that are not interface signals; keeping only
+        // declared signals makes the set faithful (a signal is a member iff the
+        // transaction's section subtree references it AND the document declares it as
+        // a signal — bar #3/#4). No name list (ADR 0006) — `declared_signals` is the
+        // document's own inventory.
+        let signal_set: Vec<String> = supporting_statement_ids
             .iter()
             .filter_map(|id| signals_by_statement.get(id.as_str()))
             .flat_map(|sigs| sigs.iter().cloned())
@@ -2331,7 +2362,7 @@ fn build_transaction_anchors(
             transaction_name: name,
             source_title: anchor.title.clone(),
             section_id: anchor.section_id.clone(),
-            supporting_statement_ids: anchor.supporting_statement_ids.clone(),
+            supporting_statement_ids,
             signal_set,
             automation_confidence: AutomationConfidence::Medium,
         });
@@ -2398,6 +2429,31 @@ fn is_section_number_token(tok: &str) -> bool {
     };
     rest.starts_with(|c: char| c.is_ascii_digit())
         && rest.chars().all(|c| c.is_ascii_digit() || c == '.')
+}
+
+/// The normalized leading dotted section number of a heading title (`3.1 Write
+/// transfers` → `3.1`, `B4.2.1 Successful write operation` → `B4.2.1`), or `None`
+/// when the title carries no leading section-number token (heading furniture like
+/// `Chapter 10`, or an unnumbered heading). Trailing dots are trimmed so `5.5.3.`
+/// and `5.5.3` compare equal. Universal document-structure grammar — no chip-spec
+/// name list (ADR 0006).
+fn leading_section_number(title: &str) -> Option<String> {
+    let first = title.split_whitespace().next()?;
+    if is_section_number_token(first) {
+        Some(first.trim_end_matches('.').to_string())
+    } else {
+        None
+    }
+}
+
+/// True when `candidate`'s section number is a strict DESCENDANT of `ancestor`'s —
+/// a dotted-number prefix test (`3.1.1`/`3.1.2` under `3.1`, `B4.2.1.3` under
+/// `B4.2.1`). Equality is not descent, and `3.10` is NOT a descendant of `3.1`
+/// (the boundary must be a literal `.`). Universal grammar, no name list (ADR 0006).
+fn is_descendant_section_number(ancestor: &str, candidate: &str) -> bool {
+    candidate.len() > ancestor.len()
+        && candidate.starts_with(ancestor)
+        && candidate.as_bytes()[ancestor.len()] == b'.'
 }
 
 /// Strip leading section-number tokens and heading furniture (`3.1 `,
@@ -10959,7 +11015,8 @@ mod tests {
         build_transaction_anchors, build_transaction_phases, control_binary_operator_key,
         control_block_role_key, control_reference_kind_key, control_reference_suffix_key,
         control_unary_operator_key, decision_tree_comparison_operator_key, derive_phase_name,
-        derive_transaction_name, is_explicit_infrastructure_component_term, is_false, is_zero,
+        derive_transaction_name, is_descendant_section_number,
+        is_explicit_infrastructure_component_term, is_false, is_zero, leading_section_number,
         split_control_header_keyword, width_hint_key,
     };
 
@@ -22166,6 +22223,117 @@ mod tests {
             vec!["PADDR".to_string(), "PWRITE".to_string()]
         );
         assert_eq!(anchors[1].signal_set, vec!["PRDATA".to_string()]);
+    }
+
+    #[test]
+    fn build_transaction_anchors_includes_descendant_subsection_statements() {
+        // .2k: a transaction named from a PARENT section (`3.1 Write transfers`)
+        // absorbs the signal-rich prose its PDF files under the wait-state
+        // subsections (`3.1.1`/`3.1.2`), while a sibling read transaction
+        // (`3.3` + `3.3.1`) stays boundary-disjoint (bar #3 — no cross-leak).
+        let mk_stmt = |id: &str, signals: Vec<&str>| super::StatementContext {
+            statement_id: id.to_string(),
+            class: super::StatementClass::SourceFact,
+            text: String::new(),
+            related_visual_evidence_ids: vec![],
+            section_ids: vec![],
+            signals: signals.into_iter().map(str::to_string).collect(),
+            supporting_table_ids: vec![],
+        };
+        let mk_sec = |section_id: &str, title: &str, stmts: Vec<&str>| SemanticSectionContext {
+            section_id: section_id.to_string(),
+            title: title.to_string(),
+            supporting_statement_ids: stmts.into_iter().map(str::to_string).collect(),
+        };
+        let context = SemanticContext {
+            statements: vec![
+                mk_stmt("w_intro", vec!["PCLK"]),             // 3.1 parent intro
+                mk_stmt("w_nowait", vec!["PSEL", "PADDR"]),   // 3.1.1
+                mk_stmt("w_wait", vec!["PENABLE", "PWRITE"]), // 3.1.2
+                mk_stmt("r_intro", vec!["PCLK"]),             // 3.3 parent intro
+                mk_stmt("r_wait", vec!["PRDATA"]),            // 3.3.1
+            ],
+            section_anchors: vec![
+                mk_sec("s_w", "3.1 Write transfers", vec!["w_intro"]),
+                mk_sec("s_w1", "3.1.1 With no wait states", vec!["w_nowait"]),
+                mk_sec("s_w2", "3.1.2 With wait states", vec!["w_wait"]),
+                mk_sec("s_r", "3.3 Read transfers", vec!["r_intro"]),
+                mk_sec("s_r1", "3.3.1 With wait states", vec!["r_wait"]),
+            ],
+            visual_roles_by_id: HashMap::new(),
+            actor_signal_relations: Vec::new(),
+            signal_semantic_hints: Vec::new(),
+        };
+        let declared: std::collections::HashSet<String> =
+            ["PCLK", "PSEL", "PADDR", "PENABLE", "PWRITE", "PRDATA"]
+                .into_iter()
+                .map(str::to_string)
+                .collect();
+        let anchors = build_transaction_anchors(&context, &declared);
+
+        let write = anchors
+            .iter()
+            .find(|a| a.transaction_name == "write_transfer")
+            .expect("write_transfer anchor");
+        // Parent absorbs BOTH subsections' declared signals; the read subtree's
+        // PRDATA is correctly excluded (boundary precision).
+        assert_eq!(
+            write.signal_set,
+            vec![
+                "PADDR".to_string(),
+                "PCLK".to_string(),
+                "PENABLE".to_string(),
+                "PSEL".to_string(),
+                "PWRITE".to_string(),
+            ]
+        );
+        assert!(
+            write
+                .supporting_statement_ids
+                .contains(&"w_nowait".to_string())
+        );
+        assert!(
+            write
+                .supporting_statement_ids
+                .contains(&"w_wait".to_string())
+        );
+
+        // Boundary precision (bar #3): the read transaction never pulls the write
+        // subtree's PWDATA/PWRITE; it absorbs only its own `3.3.x` descendants.
+        let read = anchors
+            .iter()
+            .find(|a| a.transaction_name == "read_transfer")
+            .expect("read_transfer anchor");
+        assert_eq!(
+            read.signal_set,
+            vec!["PCLK".to_string(), "PRDATA".to_string()]
+        );
+        assert!(!read.signal_set.contains(&"PWRITE".to_string()));
+    }
+
+    #[test]
+    fn descendant_section_number_is_a_strict_dotted_prefix() {
+        assert!(is_descendant_section_number("3.1", "3.1.1"));
+        assert!(is_descendant_section_number("3.1", "3.1.2.4"));
+        assert!(is_descendant_section_number("B4.2.1", "B4.2.1.3"));
+        assert!(is_descendant_section_number("3", "3.1"));
+        // Equality is not descent; `3.10` and `3.3.1` are not under `3.1`.
+        assert!(!is_descendant_section_number("3.1", "3.1"));
+        assert!(!is_descendant_section_number("3.1", "3.10"));
+        assert!(!is_descendant_section_number("3.1", "3.3.1"));
+        assert_eq!(
+            leading_section_number("3.1 Write transfers").as_deref(),
+            Some("3.1")
+        );
+        assert_eq!(
+            leading_section_number("B4.2.1 Successful write operation").as_deref(),
+            Some("B4.2.1")
+        );
+        assert_eq!(
+            leading_section_number("Chapter 10 Exclusive Transfers"),
+            None
+        );
+        assert_eq!(leading_section_number("Introduction"), None);
     }
 
     // --- KG-ISF-TRANSACTIONS.2g: prose `<qualifier> phase` recognition ---

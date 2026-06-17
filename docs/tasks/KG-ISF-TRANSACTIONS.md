@@ -130,7 +130,7 @@ grammar only, no name lists (ADR 0006); honest residual over fabrication. Scope 
 precise, accurate, step-by-step capture of ALL transactions — but delivered measurement-first, in safe
 slices, wire-docs first.
 
-## Frontier — `.2i` DONE (metadata-only per-phase membership grouping); `.2j` table-column phase cue MEASURED = NO-GO (document absence on AXI/SWD); the per-phase-membership surface is as complete as the wire docs ground
+## Frontier — `.2i` DONE (metadata-only per-phase membership grouping); `.2j` table-column phase cue MEASURED = NO-GO (document absence on AXI/SWD); `.2k` DONE (descendant-subsection membership scope — APB 1→10/7, AXI atomic/prefetch/writezero/writedeferrable 0→22/8/6/10, `.isf` byte-identical, WIRE-BASED-100 orthogonal). Remaining recorded candidate: AXI/SWD timing-diagram phase columns (VLM-tier). The deterministic per-transaction membership surface is now as complete as the wire docs' prose grounds
 
 The `.2e` checkpoint deferred the *choice* of ordering signal to "a dedicated measurement-first slice." **`.2f`
 ran that measurement (read-only, corpus-wide) and made the choice** — see the `.2f` node + `.2f` changelog
@@ -552,6 +552,47 @@ body-emission PARKED pending FSMGEN's answer + owner steer (the metadata-only gr
   live in TIMING DIAGRAMS — a VLM-tier lever. Both future candidates. **Gates:** read-only/docs-only — no code,
   WIRE-BASED-100 untouched ✓, ADR-0006 ✓ (the cue measured is universal grammar, no name list).
   `[[project_kg_isf_transactions]]` / `[[feedback_scoring_rigor]]`.
+- ID: `KG-ISF-TRANSACTIONS.2k` · Status: `done` (`2026-06-17`; measurement-first; CODE — GO) · Goal: **broaden a
+  named transaction's `.2c` signal-set membership to the statements of its section's DESCENDANT SUBSECTIONS** (the
+  first of the two `.2j`-recorded future candidates: the **APB `.2c`-membership-breadth lever**,
+  deterministic/RAM-safe). A transaction defined by a parent section (APB `3.1 Write transfers`) now absorbs the
+  signal-rich prose the PDF files under its subsections (`3.1.1 With no wait states` / `3.1.2 With wait states`),
+  WITHOUT crossing a transaction boundary (read=`3.3.x` and write=`3.1.x` are disjoint section subtrees → bar #3
+  exclusivity held). **Root cause (measured, read-only):** section anchors are line-range and non-overlapping, so a
+  parent section's `supporting_statement_ids` carries ONLY its own intro statements — APB `write_transfer` saw
+  `{PCLK}` (4 intro statements; only "…sampled at the rising edge of PCLK" names a declared signal), while
+  `PSEL`/`PENABLE`/`PADDR`/`PWRITE` sit under the wait-state subsections. The signals ARE captured document-wide
+  (the `.2g` `transaction_phases` surface already recovers the rich `setup`/`access` sets) — only the
+  per-transaction `.2c` SCOPE was too narrow. (Naively unioning the document-global phase sets into both
+  transactions was REJECTED — it would attribute write-only `PWDATA`/`PWRITE` to `read_transfer`, breaching bar #3;
+  the subsection-scope broadening is boundary-safe BECAUSE the subtrees are disjoint.)
+  **IMPLEMENTED (`ir/semantic.rs`, surgical — one function):** two universal helpers `leading_section_number`
+  (the dotted number of a heading, `3.1 Write transfers`→`3.1`, furniture/unnumbered→`None`) +
+  `is_descendant_section_number` (a strict dotted-prefix test — `3.1.1` under `3.1`, NOT `3.10`/`3.3.1`/equality);
+  `build_transaction_anchors` now unions, into a transaction's statement scope, every section whose number is a
+  strict descendant of its own, then derives `signal_set` (+ the record's `supporting_statement_ids`) from the
+  expanded set. Universal document-structure grammar keyed off the section number — **no name list (ADR 0006)**;
+  byte-identical when the section has no subsections.
+  **Measured live (old-binary vs new-binary deterministic rebuilds; `generated/` gitignored):** APB
+  `write_transfer` **1→10** signals (`PADDR,PAUSER,PCLK,PENABLE,PPROT,PREADY,PSTRB,PWDATA,PWRITE,PWUSER`;
+  phase-grouped **1→11**), `read_transfer` **1→7** (correctly EXCLUDES write-data `PWDATA`/`PSTRB`/`PWUSER` —
+  boundary precision); AXI off the `.2j`-flagged "empty" state — `atomic_transaction` **0→22**, `prefetch_transaction`
+  **0→8**, `writezero_transaction` **0→6**, `writedeferrable_transaction` **0→10** (each scoped to its own
+  `A6.4`/`A8.6`/`A11.x` subtree, distinct memberships, max pairwise Jaccard 0.56 with shared write-channel control
+  genuinely shared); AHB/SWD per-signal counts unchanged (no regression; provenance widened only). **Corpus-wide
+  boundary-safety scan (78 docs rebuilt semantic→intent):** 101 of 260 transactions carry membership, **0 over-broad**
+  (none ≥80 % of the declared inventory or == full inventory; max 77.8 % = a 9-signal flash-bus doc whose
+  `normal_operation` genuinely uses 7).
+  **Gates ALL GREEN:** ADR-0006 ✓ (section-number grammar, no name list); **`.isf` BYTE-IDENTICAL on all 4 wire docs**
+  (old-vs-new deterministic `diff`) ✓; **WIRE-BASED-100 provably orthogonal** — `actor_signal_relations`/
+  `signal_constraints`/`temporal_rules`/`conditional_rules` byte-identical old-vs-new on all 4 wire docs, only
+  `transactions` changed (membership is `ports`/`phase_membership` metadata; the emitter lowers `steps`) ✓;
+  `kg-bench` **156/156** ✓; `run_ci.sh` GREEN (fmt + warning-deny clippy/tests/rustdoc + mdBook; lib **1662**, +2
+  tests: descendant-inclusion + boundary precision, and the section-number helpers) ✓. Book `pipeline/intentir.md`
+  "Grouping a transaction's signals by phase" extended with the subsection-scope rule. The remaining `.2j`-recorded
+  candidate (AXI/SWD timing-diagram phase columns, VLM-tier) stays a future lever. KM card
+  `transaction-membership-subsection-scope`. `[[project_kg_isf_transactions]]` / `[[feedback_scoring_rigor]]` /
+  `[[feedback_no_hardcoded_chip_spec_names]]`.
 
 ## Changelog
 
@@ -760,3 +801,19 @@ body-emission PARKED pending FSMGEN's answer + owner steer (the metadata-only gr
   membership thinness (a `.2c` lever, not phase-cue) and AXI/SWD timing-diagram phase columns (VLM-tier). Gates:
   read-only/docs-only — WIRE-BASED-100 untouched ✓, ADR-0006 ✓. The per-phase-membership surface is now as complete
   as the wire docs ground. `[[project_kg_isf_transactions]]` / `[[feedback_scoring_rigor]]`.
+- `2026-06-17`: **`.2k` DONE — CODE (GO): descendant-subsection membership scope** (the first `.2j`-recorded future
+  candidate, the APB `.2c`-membership-breadth lever; measurement-first). `build_transaction_anchors` (`ir/semantic.rs`)
+  now broadens a named transaction's statement scope to include every section whose dotted number is a strict
+  DESCENDANT of its own (new helpers `leading_section_number` + `is_descendant_section_number`), then derives the
+  `signal_set` + `supporting_statement_ids` from that expanded set — so a transaction defined by a parent section
+  absorbs the signal-rich prose the PDF files under its subsections, boundary-safe because read/write subtrees are
+  disjoint (bar #3). Universal section-number grammar, no name list (ADR 0006); byte-identical when no subsections.
+  **Measured (old-vs-new deterministic rebuilds):** APB `write_transfer` **1→10** / `read_transfer` **1→7** (read
+  correctly excludes write-data `PWDATA`/`PSTRB`/`PWUSER`); AXI off the `.2j` "empty" state — `atomic_transaction`
+  **0→22**, `prefetch` **0→8**, `writezero` **0→6**, `writedeferrable` **0→10** (distinct, subtree-scoped). Corpus
+  scan (78 docs): 101/260 transactions carry membership, **0 over-broad**. Gates: ADR-0006 ✓; **`.isf` BYTE-IDENTICAL**
+  on all 4 wire docs ✓; **WIRE-BASED-100 provably orthogonal** (relations/constraints/temporal/conditional
+  byte-identical old-vs-new; only `transactions` changed) ✓; `kg-bench` 156/156 ✓; `run_ci.sh` GREEN (lib **1662**,
+  +2 tests) ✓. Book `pipeline/intentir.md` updated; KM card `transaction-membership-subsection-scope`. Remaining
+  `.2j` candidate (AXI/SWD timing-diagram phase columns, VLM-tier) stays a future lever — tree stays `active`.
+  `[[project_kg_isf_transactions]]` / `[[feedback_scoring_rigor]]`.

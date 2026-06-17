@@ -1,3 +1,30 @@
+### KG-ISF-TRANSACTIONS.2k — descendant-subsection scope for a transaction's signal-set membership
+CODE (measurement-first, GO). Owner substantive gap #3 (transactions), the first of the two `.2j`-recorded future
+candidates: the APB `.2c`-membership-breadth lever (deterministic, RAM-safe). A transaction is NAMED from a section
+heading and its `.2c` signal-set membership is the declared signals that section's statements reference — but
+section anchors are line-range and non-overlapping, so a transaction named from a PARENT heading (APB
+`3.1 Write transfers`) saw only that section's own intro statements. APB `write_transfer` was a lone `{PCLK}` while
+the signal-rich prose (`PADDR`/`PWDATA`/`PWRITE`/`PENABLE`/…) sits one level down under `3.1.1`/`3.1.2`. The
+signals were already captured document-wide (the `.2g` `transaction_phases` surface recovers the rich
+`setup`/`access` sets) — only the per-transaction SCOPE was too narrow. `build_transaction_anchors`
+(`ir/semantic.rs`) now broadens a transaction's statement scope to every section whose dotted number is a strict
+DESCENDANT of its own (new helpers `leading_section_number` + `is_descendant_section_number`), then derives the
+`signal_set` + `supporting_statement_ids` from that subtree. Universal document-structure grammar keyed off the
+section number, **no name list (ADR 0006)**; byte-identical when the section has no subsections. **Boundary-precise
+(bar #3):** nested numbers do not overlap, so write (`3.1.x`) and read (`3.3.x`) subtrees are disjoint and a read
+never picks up write-only signals. (Naively unioning the document-global `.2g` phase sets into both transactions
+was REJECTED for exactly that reason.) **Measured (old-vs-new deterministic rebuilds; `generated/` gitignored):**
+APB `write_transfer` 1→10 / `read_transfer` 1→7 (read correctly excludes `PWDATA`/`PSTRB`/`PWUSER`); AXI off its
+previously-empty state — `atomic_transaction` 0→22, `prefetch_transaction` 0→8, `writezero_transaction` 0→6,
+`writedeferrable_transaction` 0→10 (distinct, each subtree-scoped, max pairwise Jaccard 0.56). Corpus-wide
+boundary scan (78 docs): 101/260 transactions carry membership, **0 over-broad** (none ≥80 % of the declared
+inventory; max 77.8 % = a 9-signal flash-bus doc). **Gates:** ADR-0006 ✓; **`.isf` BYTE-IDENTICAL** on all 4 wire
+docs (old-vs-new diff) ✓; **WIRE-BASED-100 provably orthogonal** — `actor_signal_relations`/`signal_constraints`/
+`temporal_rules`/`conditional_rules` byte-identical old-vs-new, only `transactions` changed (membership is
+`ports`/`phase_membership` metadata; the emitter lowers `steps`) ✓; `kg-bench` 156/156 ✓; `run_ci.sh` GREEN (lib
+1662, +2 tests) ✓. Book `pipeline/intentir.md`; KM `transaction-membership-subsection-scope`. Remaining `.2j`
+candidate (AXI/SWD timing-diagram phase columns, VLM-tier) stays a future lever.
+
 ### CORPUS-COVERAGE.1 — stage-staleness detector in `validate` (surface a downstream artifact that silently dropped relations)
 CODE. The durable north-star win from gaps #1/#2: a downstream IR can go STALE relative to its upstream (the
 stages don't auto-cascade — only `converge` rebuilds the whole chain), silently dropping its relations (the
