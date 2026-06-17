@@ -98,10 +98,22 @@ measurement-first ownership before any code:
 
 - **DTI message-field recognition gap** (`EXTRACTION-QUALITY-GAUGE.FIELD` / `PDF-VARIANT-DIGESTION`):
   DTI `ihi0088` is a message protocol (DTI_TBU_TRANS_REQ etc.) but carries **no `message_field_records`**
-  — its message-field tables are not recognized, so 30 field obligations leaked into `signal_constraints`
-  with dotted/undeclared subjects (`EXTRACTION-QUALITY-GAUGE.FIELD.4` was built to route exactly these,
-  but only fires for *catalog-declared* message fields). Likely a table-format the field recognizer does
-  not yet cover. **This is the most actionable next gap.**
+  — so 30 field obligations leaked into `signal_constraints` with dotted/undeclared subjects
+  (`EXTRACTION-QUALITY-GAUGE.FIELD.4` was built to route exactly these, but only fires for
+  *catalog-declared* message fields). **Root cause located (`2026-06-17` scoping over the DTI
+  `source_ir.json`):** DTI defines its per-message field bit-layout in **prose `list_item`s of the form
+  `"<FieldName>, bit [N]"` / `"<FieldName> bits [hi:lo]"`** (e.g. `MMUV, bit [69]`, `MPAM PARTID[8]`)
+  under each message's section, plus a couple of `Field bits | Field name` tables (Table 3-7 `ATTR_OVR
+  subfields`) that lack the container-anchoring caption. The `build_message_field_records` recognizer keys
+  off field-titled **tables** whose caption anchors fields to a container noun (channel/packet/message/…),
+  so it correctly sees **nothing** for DTI's prose-and-bare-table format. **The proper fix is a NEW
+  prose-message-field extractor** (parse `"<Field>, bit [N]"` list-items scoped to a message section into
+  `message_field_records`, then the existing FIELD.4 routing moves the obligations to
+  `message_field_constraints`) — a substantial, ADR-0006-design-heavy slice needing its own
+  measurement-first ownership (generality across the corpus must be measured: does the `"<Name>, bit [N]"`
+  prose pattern appear in other docs? what precision gate keeps it from minting fields out of arbitrary
+  prose?) + full `run_ci`/`kg-bench`/WIRE-BASED-100 re-verification. **This is the most actionable next
+  gap, and a fresh-session-appropriate build (design-heavy, touches the extraction machinery).**
 - **Signal-inventory prose noise on register-heavy docs** (signal-precision): DTI's declared
   `signal_records` include prose acronyms minted as signals (`AMBA`, `ARM`, `APCI`) — the same class of
   precision issue the agent-identity gate (`.1a`) addressed for actors, here on the signal inventory.
