@@ -1,3 +1,23 @@
+### GRITS-CROSS-TOOL.4 — document the shipped `grits-consensus` command (mdBook + README); closes a book-coverage drift
+Docs-only. A fresh-session bootstrap audit (the mandated README→roadmap→codebase→mdBook re-read) caught that
+the `GRITS-CROSS-TOOL` tree closed (`.1`–`.3`) having SHIPPED the `grits-consensus` CLI command
+(`commands/grits_consensus.rs`, `cli.rs::GritsConsensus`) but **without satisfying the book close-rule** — the
+command had zero coverage in BOTH the user-facing mdBook and the tracked README command surface. Following the
+`BOOK-COMMAND-COVERAGE` precedent (a delegated survey over-counted "4 missing"; re-derive the census with the
+build's own rules before trusting it), an objective per-command `grep` over `docs/book/src/` + `README.md`
+across all 28 CLI subcommands found **exactly one** undocumented shipped command: `grits-consensus`
+(`audit-extraction`/`eval-extraction`/`nli-verify` were already covered). Fix: a new `## grits-consensus`
+section in `docs/book/src/commands/quality-and-learning.md` (placed after its truthfulness-benchmark sibling
+`kg-bench`, in the book's user-friendly why-before-what style — what it measures (docling table-extraction
+faithfulness), why a CROSS-TOOL CONSENSUS gold and never self-grading, the two independent witnesses
+(pdfplumber geometric + qwen2.5vl vision), the consensus/adjudication loop, the `--min-agree`/`--adjudicate-out`
+flags, and the honest boundary: read-only w.r.t. the IR, an offline `.venv-eval` path outside `converge`), plus
+a README CLI-surface entry and a descriptive state bullet beside the `kg-bench` bullet. `overview.md` left
+untouched (its curated "Current surface" omits the whole eval-judge family by convention). No Rust/CLI change
+(lib test count unchanged) → `run_ci.sh`/`kg-bench` unaffected by construction; `mdbook build docs/book` clean
+(exit 0); `scripts/check_memory_architecture.sh` green; post-fix census `grits-consensus` book#=1 / README#=2.
+Tree `GRITS-CROSS-TOOL` fully closed (`.1`–`.4`).
+
 ### KG-ISF-COMPLETENESS.1b.ii — named-interface consolidation (`"X interface"` → `"X"`); completes the `.1b` umbrella
 Measurement-first, then LANDED. A specification often names a real agent as its interface
 (`Subordinate interface`, `Transmitter interface`), stranding that form's relations under a phantom actor.

@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `GRITS-CROSS-TOOL`
-- Status: `active` (`.1` witness done; `.2` harness + LLM-vision witness next)
+- Status: `done` (`.1`–`.3` metric + adjudication loop done `2026-06-06`; `.4` book+README command coverage done `2026-06-17`)
 - Roadmap lane: `R16`/`R15e` (eval quality — unblock the gated GriTS metric)
 - Created: `2026-06-06`
 - Parent context: `TABLE-GRITS-CONFORMAL` built `grits_content` but it was "gated on data" (no
@@ -92,10 +92,43 @@ The full closed loop, with the agent as the evidence-grounded judge:
 cross-tool loop flagged a genuine docling extraction bug, and the agent confirmed it against ground
 truth.
 
+## `.4` — book + README command coverage (DONE `2026-06-17`)
+
+**Drift found at a fresh-session bootstrap audit.** `.1`–`.3` shipped the `grits-consensus`
+command (`crates/specforge/src/commands/grits_consensus.rs`, `cli.rs` `GritsConsensus`) but the
+tree closed **without satisfying the book close-rule** (`COMMIT.md` / `[[feedback_book_method_doc]]`):
+the command was documented in **neither** the user-facing mdBook **nor** the tracked README command
+surface. An objective per-command coverage census (`grep` over `docs/book/src/` + `README.md`,
+re-deriving the count rather than trusting a delegated survey — the `BOOK-COMMAND-COVERAGE` precedent
+where a delegated "5 missing" was really 2) found **exactly one** undocumented shipped command across
+all 28: `grits-consensus` (book# 0 / README# 0; every other command had coverage).
+
+**Fix (docs-only, no Rust/CLI change):**
+- mdBook: new `## grits-consensus` section in `docs/book/src/commands/quality-and-learning.md`,
+  placed after its truthfulness-benchmark sibling `kg-bench`, in the book's user-friendly why-before-what
+  style (the `entity-type`/`extract-conditions` template `BOOK-COMMAND-COVERAGE` established): what it
+  measures (docling table-extraction faithfulness), why a cross-tool consensus gold and not self-grading,
+  the two independent witnesses (pdfplumber geometric + qwen2.5vl vision), the consensus/adjudication
+  loop, the flags (`--min-agree`, `--adjudicate-out`), and the honest boundary (read-only w.r.t. the IR,
+  offline `.venv-eval` path outside `converge`). Facts cross-checked against `grits_consensus.rs` +
+  `cli.rs::GritsConsensusArgs`.
+- README: added `grits-consensus <witnesses-json> [--min-agree <n>] [--adjudicate-out <queue>]` to the
+  CLI surface list and a descriptive state bullet beside the `kg-bench` bullet.
+- `overview.md` intentionally untouched: its "Current surface" is a curated core subset that already
+  omits the whole eval-judge family (`entity-type`/`extract-conditions`/`eval-extraction`/`nli-verify`/
+  `audit-extraction`) by convention; `grits-consensus` is documented where its siblings live.
+
+**Verify:** re-run the census → `grits-consensus` book# ≥ 1 / README# ≥ 1; `mdbook build docs/book`
+clean; `scripts/check_memory_architecture.sh` green. Docs-only — no Rust change (lib test count
+unchanged), so `run_ci.sh`/`kg-bench` are unaffected by construction.
+
 ## Task Tree
 
 - ID: `GRITS-CROSS-TOOL` · Status: `done` (metric unblocked + refined + adjudication loop wired;
-  `.1`–`.3` done) · Children: `.1` `.2` `.3`
+  `.1`–`.3` done; `.4` book+README coverage done) · Children: `.1` `.2` `.3` `.4`
+- ID: `GRITS-CROSS-TOOL.4` · Status: `done` (`2026-06-17`) · Goal: close the book-coverage drift —
+  document the shipped `grits-consensus` command in the mdBook (`commands/quality-and-learning.md`) and
+  the README command surface. Docs-only; objective coverage census before/after. Verification in `.4`.
 - ID: `GRITS-CROSS-TOOL.1` · Status: `done` · Goal: independent pdfplumber witness extractor.
   Delivered + run on APB (13 tables); finding recorded.
 - ID: `GRITS-CROSS-TOOL.2` · Status: `done` · Goal: full harness (consensus machinery + command +
@@ -107,3 +140,7 @@ truth.
 
 - `2026-06-06`: Created. `.1` pdfplumber witness done (13 tables on APB); finding: 2-tool overlap is
   sparse → the LLM-vision 3rd witness is needed (validates the multi-witness design). `.2` harness next.
+- `2026-06-17`: `.4` book + README command coverage DONE (docs-only). Fresh-session bootstrap audit
+  caught that the tree closed without documenting the shipped `grits-consensus` command; objective census
+  (1 undocumented command of 28) → new `commands/quality-and-learning.md` book section + README surface
+  entry + state bullet. Tree fully closed (`.1`–`.4`).

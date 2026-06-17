@@ -185,6 +185,55 @@ The benchmark surface exists to lock:
 
 It is the repo’s main extraction-truthfulness regression harness.
 
+## `grits-consensus`
+
+```text
+grits-consensus <witnesses-json> [--min-agree 2] [--adjudicate-out <queue.json>]
+```
+
+How good is the table extraction the rest of the pipeline is built on? Every
+signal table, register map, and timing table SpecForge reasons over comes from
+one tool — docling — reading the PDF, so it is worth measuring honestly how often
+docling gets a table *cell* right. The honesty is the whole point: **you cannot
+grade an extractor against itself.** A score docling computes about its own output
+is circular. So the gold here is not docling's opinion — it is the *agreement of
+independent witnesses* whose mistakes are uncorrelated with docling's.
+
+Two witnesses read each table a different way. **pdfplumber** reconstructs the
+table geometrically from the PDF content stream — no machine learning at all, so
+its errors have nothing to do with docling's; it is strongest on ruled tables.
+**qwen2.5vl** reads the rendered table image with vision, so it catches the
+borderless tables a geometric tool misses. A cell enough witnesses agree on
+becomes the silver gold for that cell; a cell the witnesses *split* on is not
+silently averaged — it is flagged for adjudication, because a disagreement is
+exactly where the truth is uncertain. docling — the system under test — is then
+scored against that gold and is never itself a witness.
+
+The command owns only the metric. Its input is the witness JSON produced by
+`scripts/grits_cross_tool.py`, which runs the two witnesses plus docling, aligns
+the tables by page, and matches them. For each matched table `grits-consensus`
+builds the consensus gold, scores docling against it with the GriTS content metric
+(precision / recall / F1 per table and in aggregate), and reports how many cells
+the witnesses split on — the human-flag count. `--min-agree` sets how many
+witnesses must agree for a cell to count as gold (default `2`).
+
+`--adjudicate-out <queue.json>` turns the score into a work-list: it writes every
+cell where docling disagrees with the consensus gold — each one a *candidate*
+docling error, with the gold value and docling's value side by side. Feed that
+queue to `scripts/grits_adjudicate.py` to render the disputed table regions from
+the source PDF, and an evidence-grounded agent (or a person) rules each cell
+against the rendered page — **never** by a correlated vote. That closes the loop
+honestly: the witnesses propose, the source decides. On the real APB spec it
+surfaced a genuine docling bug — a word-merge `"forAPB5"` where the page plainly
+prints `"for APB5"`.
+
+The command is read-only with respect to the IR: it consumes a witness JSON and
+optionally writes an adjudication queue, and it never mutates a pipeline artifact.
+The witness extractors run via a gitignored `.venv-eval` (the system Python is
+PEP-668-managed), so this is an offline table-quality measurement path, not a step
+in a normal `converge` run. *Authoritative tracking:*
+`docs/tasks/GRITS-CROSS-TOOL.md` (`.2`/`.3`).
+
 ## `learn-priors`
 
 ```bash

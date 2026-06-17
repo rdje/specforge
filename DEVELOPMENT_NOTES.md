@@ -1,4 +1,36 @@
 # DEVELOPMENT_NOTES
+## GRITS-CROSS-TOOL.4 (`2026-06-17`) — document the shipped `grits-consensus` command (mdBook + README)
+
+**Why now.** Found during the mandated fresh-session bootstrap re-read (README → roadmap → codebase → mdBook).
+Two delegated survey agents mapped the codebase and the book; the mdBook survey flagged "4 commands missing"
+book coverage. Per the `BOOK-COMMAND-COVERAGE` precedent — a delegated review there claimed "5 missing" but an
+objective grep cut it to the real 2 — I did **not** trust the delegated count. I re-derived the census myself:
+extracted the 28 `Commands` enum variants from `cli.rs`, then `grep`-counted each kebab command across
+`docs/book/src/` and `README.md`. Result: every command had coverage **except one** — `grits-consensus`
+(book# 0 / README# 0); the survey's other three (`audit-extraction`/`eval-extraction`/`nli-verify`) were
+already covered. So the real drift was a single shipped-but-undocumented command.
+
+**What `grits-consensus` is** (read `commands/grits_consensus.rs` + `cli.rs::GritsConsensusArgs` to ground the
+docs). It scores docling's TABLE extraction against a cross-tool consensus gold — you never grade an extractor
+against itself, so the gold is the agreement of independent witnesses whose errors are uncorrelated with
+docling's: pdfplumber (geometric content-stream, no ML) + qwen2.5vl (vision), both emitted by
+`scripts/grits_cross_tool.py`. A cell `--min-agree` witnesses agree on is silver gold; a split cell is flagged.
+`--adjudicate-out` writes the docling-vs-gold mismatches as a queue that `scripts/grits_adjudicate.py` renders
+so an evidence-grounded agent (or human) rules each against the source — never a correlated vote. Shipped under
+`GRITS-CROSS-TOOL.2`/`.3`; the tree closed without documenting it (a book close-rule miss).
+
+**Fix (docs-only).** New `## grits-consensus` section in `docs/book/src/commands/quality-and-learning.md`,
+after its truthfulness-benchmark sibling `kg-bench`, in the book's user-friendly why-before-what style (the
+`entity-type`/`extract-conditions` template). README: CLI-surface list entry + a descriptive state bullet
+beside the `kg-bench` bullet. `overview.md` deliberately untouched — its curated "Current surface" already
+omits the whole eval-judge family (`entity-type`/`extract-conditions`/`eval-extraction`/`nli-verify`/
+`audit-extraction`) by convention, so `grits-consensus` is documented where its siblings live.
+
+**Verification.** Post-fix census: `grits-consensus` book#=1 / README#=2 (drift closed). `mdbook build
+docs/book` exit 0 (strict `create-missing=false`). `scripts/check_memory_architecture.sh` green. No Rust/CLI
+change → lib test count unchanged, `run_ci.sh`/`kg-bench` unaffected by construction. RAM-safe (grep + mdbook
+only, no Docling/14B; free RAM 77% throughout).
+
 ## KG-ISF-COMPLETENESS.1b.ii (`2026-06-17`) — named-interface consolidation (`"X interface"` → `"X"`)
 
 **Why now.** This was the deferred half of the `.1b` (i) work (§7.1): the `"X interface"→"X"` strip needs a
