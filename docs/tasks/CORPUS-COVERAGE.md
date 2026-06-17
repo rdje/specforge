@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CORPUS-COVERAGE`
-- Status: `active` (`.0` build-out + measurement done `2026-06-17`; `.1` stage-staleness validator next)
+- Status: `active` (`.0` build-out + `.1` stage-staleness validator both done `2026-06-17`; standing frontier = re-ingest the 57 normalized-missing docs, RAM-gated/host-local-source)
 - Roadmap lane: `R15e`/`R16` (corpus digestion — the owner's substantive gap #2)
 - Created: `2026-06-17`
 - Owner directive: `2026-06-17` — after the owner rejected the "buildable frontier exhausted" framing
@@ -52,15 +52,34 @@ re-provisioning (`[[feedback_source_pdfs_in_repo]]`).
 - ID: `CORPUS-COVERAGE.0` · Status: `done` (`2026-06-17`) · Goal: build every evidence-only doc through to
   IntentIR/.isf and census the result. Done: 36→78 intent / 36→75 isf, 0 build failures, 0 stale remaining,
   3 isf honest-blocks. Verification above.
-- ID: `CORPUS-COVERAGE.1` · Status: `active` (next) · Goal: a generic **stage-staleness detector** in
-  `validate` so a downstream artifact silently dropping intent (the `tilelink` 39→0 relation class) is
-  SURFACED, not hidden — directly serves "the KG must be COMPLETE." Measurement-first (what provenance/signal
-  is robust), ADR-0006, WIRE-BASED-100 a hard gate, `run_ci.sh` green.
+- ID: `CORPUS-COVERAGE.1` · Status: `done` (`2026-06-17`, CODE) · Goal: a generic **stage-staleness
+  detector** in `validate` so a downstream artifact silently dropping intent (the `tilelink` 39→0 relation
+  class) is SURFACED, not hidden — directly serves "the KG must be COMPLETE." **DONE:** `validate
+  <intent-ir>` / `<semantic-ir>` now loads the upstream artifact (via the carried `semantic_ir_path` /
+  `evidence_ir_path` — `validate` already does this for graph-aware findings) and emits a `stage_staleness`
+  **Warning** (`intent_stale_relations_dropped` / `semantic_stale_relations_dropped`) when the downstream
+  carries 0 `actor_signal_relations` while the upstream carries some. **False-positive-free** because the
+  agent-identity gates (consolidation/split/phantom-drop) NEVER empty a non-empty relation set — a 0-vs-N
+  split is staleness, not gating; the I/O is paid only when the downstream is empty (a `let`-chain
+  short-circuit), and is skipped when the upstream is not on disk (detached copy). Pure decision helper
+  `stage_staleness_relation_finding` (+3 unit tests: 0-vs-39 fires, 39/17-vs-N silent, 0-vs-0 honest-absence
+  silent). **Verified live** (release binary, temp-CWD to avoid the WRITE-PATH GOTCHA): POSITIVE fires on a
+  synthetic stale tilelink (0 vs real semantic 39), NEGATIVE silent on `nvme` (0-vs-0 honest absence — the
+  critical no-false-positive case) and on healthy tilelink (39). ADR-0006 (universal/structural, no name
+  list). WIRE-BASED-100 unaffected by construction (validate-only additive finding; wire docs carry non-empty
+  relations → silent; extraction/IR content untouched); `run_ci.sh` GREEN, lib 1660 passed (+3); `kg-bench`
+  156/156. Book `quality/validation.md`; KM `[[stage-staleness-validate-detector]]`.
 - Frontier (standing): re-ingest the 57 `normalized/`-missing docs (Docling + source PDF, RAM-gated,
   host-local source re-provisioning) to enable their EVIDENCE rebuild.
 
 ## Changelog
 
+- `2026-06-17`: `.1` stage-staleness validator DONE (CODE). `validate <intent-ir>`/`<semantic-ir>` now emits a
+  `stage_staleness` Warning when the downstream carries 0 `actor_signal_relations` while its upstream (loaded
+  via the carried path) carries some — false-positive-free (gating never empties a non-empty set), I/O paid
+  only when empty (`let`-chain), skipped when the upstream is off-disk. Pure helper +3 unit tests; live-verified
+  (positive fires, nvme/healthy silent); ADR-0006; `run_ci.sh` green (lib 1660, +3); `kg-bench` 156/156;
+  WIRE-BASED-100 unaffected by construction. Book `quality/validation.md`; KM `stage-staleness-validate-detector`.
 - `2026-06-17`: Created on the owner's substantive-gap-#2 directive. `.0` build-out + census DONE — corpus
   IntentIR coverage 36→78 (42 evidence-only docs + 3 stale built, 0 failures, 0 stale remaining; 75/78 isf
   with 3 honest behavioral-content blocks); RAM steady 77%; deterministic, no LLM/Docling. Frontier → `.1`

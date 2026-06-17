@@ -1,3 +1,25 @@
+### CORPUS-COVERAGE.1 — stage-staleness detector in `validate` (surface a downstream artifact that silently dropped relations)
+CODE. The durable north-star win from gaps #1/#2: a downstream IR can go STALE relative to its upstream (the
+stages don't auto-cascade — only `converge` rebuilds the whole chain), silently dropping its relations (the
+measured `tilelink` evidence-39/intent-0 class). `validate <intent-ir>`/`<semantic-ir>` now loads the upstream
+(via the carried `semantic_ir_path`/`evidence_ir_path` — `validate` already loads upstream for graph-aware
+findings) and emits a `stage_staleness` **Warning** (`intent_stale_relations_dropped` /
+`semantic_stale_relations_dropped`) when the downstream carries **0 `actor_signal_relations` while the upstream
+carries some**. Deliberately a **zero-versus-some** test, not a count comparison → **false-positive-free**: the
+agent-identity gates (consolidation/split/interface-fold/phantom-drop) only re-attribute or merge relations,
+NEVER empty a non-empty set, so an empty-downstream/non-empty-upstream split can only be staleness; a
+register/command/coherency protocol with 0 wire-signal relations has an empty UPSTREAM too (0-vs-0) and is
+correctly left silent (honest absence ≠ stale drop); the upstream I/O is paid only when the downstream is
+empty (a `let`-chain short-circuit), skipped when the upstream is off-disk. Pure decision helper
+`stage_staleness_relation_finding` + 3 unit tests (0-vs-39 fires; 39/17-vs-N + both-empty silent). **Verified
+live** (release binary, run from a temp CWD to dodge the WRITE-PATH GOTCHA): POSITIVE fires on a synthetic
+stale tilelink (0 vs real semantic 39), NEGATIVE silent on `nvme` (0-vs-0 honest absence — the critical
+no-false-positive case) and healthy tilelink (39); canonical untouched. ADR-0006 (universal/structural, no name
+list); WIRE-BASED-100 unaffected by construction (validate-only additive finding; wire docs carry relations →
+silent; extraction/IR content untouched). `run_ci.sh` GREEN (lib 1660 passed, +3); `kg-bench` 156/156. Book
+`quality/validation.md` "Catching a stale downstream stage"; KM `stage-staleness-validate-detector`; tree
+`CORPUS-COVERAGE.1`.
+
 ### CORPUS-COVERAGE.0 — build every ingested doc through to IntentIR/.isf (coverage 36→78 intent / 36→75 isf, 0 failures)
 Owner-directed substantive north-star slice #2 (corpus coverage), following directly from `KG-ISF-COMPLETENESS.3`'s
 staleness finding. The local corpus had only **36 of 79** ingested docs carried through to IntentIR — the other 42

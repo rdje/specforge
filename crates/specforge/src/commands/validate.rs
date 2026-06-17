@@ -281,6 +281,33 @@ fn finding(
     }
 }
 
+/// Stage-staleness guard (`CORPUS-COVERAGE.1`): decide whether a downstream stage artifact is
+/// STALE with respect to its upstream on the actor-signal-relation surface. A downstream that
+/// carries ZERO relations while its upstream still carries some can only be staleness — it was
+/// rebuilt before the upstream's relations landed (a sweep rebuilt the upstream without cascading
+/// downstream; the per-stage commands do not auto-cascade, only `converge` rebuilds the whole
+/// chain). This is false-positive-free because the legitimate agent-identity gates
+/// (consolidation/split/phantom-drop) NEVER empty a non-empty relation set — they re-attribute or
+/// merge, so a 0-vs-N split is staleness, not gating. Surfacing it serves the "KG must be COMPLETE"
+/// north star (a silently-dropped relation set is exactly the incompleteness that must be visible,
+/// not hidden). Universal/structural — no chip-name list (ADR 0006); advisory `Warning`.
+fn stage_staleness_relation_finding(
+    downstream_relation_count: usize,
+    upstream_relation_count: usize,
+    finding_id: &str,
+    summary: String,
+) -> Option<ValidationFindingRecord> {
+    (downstream_relation_count == 0 && upstream_relation_count > 0).then(|| {
+        finding(
+            finding_id,
+            ValidationFindingSeverity::Warning,
+            "stage_staleness",
+            summary,
+            Vec::new(),
+        )
+    })
+}
+
 fn push_negative_knowledge_rescan_guidance(
     findings: &mut Vec<ValidationFindingRecord>,
     finding_id: &str,
@@ -4351,6 +4378,25 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         .collect::<Vec<_>>();
 
     let mut findings = Vec::new();
+    // Stage-staleness guard: only pay the upstream-load I/O when this SemanticIR is suspiciously
+    // empty of relations (the short-circuit only loads then); skipped when the upstream EvidenceIR
+    // is not on disk (e.g. validating a detached copy).
+    if ir.actor_signal_relations.is_empty()
+        && let Ok(evidence_ir) = EvidenceIr::load_from_path(&ir.evidence_ir_path)
+        && let Some(f) = stage_staleness_relation_finding(
+            0,
+            evidence_ir.actor_signal_relations.len(),
+            "semantic_stale_relations_dropped",
+            format!(
+                "this SemanticIR carries 0 actor_signal_relations but its upstream EvidenceIR \
+                 carries {} — the downstream artifact is STALE (rebuilt before the upstream's \
+                 relations landed); re-run `semantic` (or `converge`) to recover them",
+                evidence_ir.actor_signal_relations.len()
+            ),
+        )
+    {
+        findings.push(f);
+    }
     if !ir.actor_signal_relations.is_empty() && ir.actor_ports.is_empty() {
         let actor_port_gap_related_ids = actor_signal_relation_related_ids
             .iter()
@@ -6104,6 +6150,25 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         .sum();
 
     let mut findings = Vec::new();
+    // Stage-staleness guard: only pay the upstream-load I/O when this IntentIR is suspiciously
+    // empty of relations (the short-circuit only loads then); skipped when the upstream SemanticIR
+    // is not on disk (e.g. validating a detached copy).
+    if ir.actor_signal_relations.is_empty()
+        && let Ok(semantic_ir) = SemanticIr::load_from_path(&ir.semantic_ir_path)
+        && let Some(f) = stage_staleness_relation_finding(
+            0,
+            semantic_ir.actor_signal_relations.len(),
+            "intent_stale_relations_dropped",
+            format!(
+                "this IntentIR carries 0 actor_signal_relations but its upstream SemanticIR \
+                 carries {} — the downstream artifact is STALE (rebuilt before the upstream's \
+                 relations landed); re-run `intent` (or `converge`) to recover them",
+                semantic_ir.actor_signal_relations.len()
+            ),
+        )
+    {
+        findings.push(f);
+    }
     if !ir.actor_signal_relations.is_empty() && ir.actor_ports.is_empty() {
         let actor_port_gap_related_ids = actor_signal_relation_related_ids
             .iter()
@@ -7308,6 +7373,37 @@ mod tests {
         SignalConstraintRecord, SourceIr, StructuredTableCellRecord, StructuredTableRecord,
         TableKind, TimingConstraintRecord, VisualAsset, VisualAssetKind,
     };
+
+    #[test]
+    fn stage_staleness_flags_emptied_relations_against_nonempty_upstream() {
+        // Downstream emptied (0) while the upstream still carries relations (39) = STALE -> Warning.
+        let f = stage_staleness_relation_finding(
+            0,
+            39,
+            "intent_stale_relations_dropped",
+            "msg".to_string(),
+        )
+        .expect("a 0-vs-nonempty relation split must flag staleness");
+        assert_eq!(f.finding_id, "intent_stale_relations_dropped");
+        assert!(matches!(f.severity, ValidationFindingSeverity::Warning));
+        assert_eq!(f.category, "stage_staleness");
+    }
+
+    #[test]
+    fn stage_staleness_silent_when_downstream_carries_relations() {
+        // Legitimate agent gating may change the count but NEVER empties a non-empty set, so any
+        // non-zero downstream count is not staleness -> no finding (false-positive-free).
+        assert!(stage_staleness_relation_finding(39, 39, "id", "m".to_string()).is_none());
+        assert!(stage_staleness_relation_finding(17, 40, "id", "m".to_string()).is_none());
+        assert!(stage_staleness_relation_finding(5, 0, "id", "m".to_string()).is_none());
+    }
+
+    #[test]
+    fn stage_staleness_silent_when_upstream_also_empty() {
+        // Both empty = honest absence (register/command/coherency protocols with ~0 wire signals),
+        // not staleness -> no finding.
+        assert!(stage_staleness_relation_finding(0, 0, "id", "m".to_string()).is_none());
+    }
 
     #[test]
     fn quiet_validation_output_guard_restores_previous_state() {

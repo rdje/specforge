@@ -1,4 +1,33 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.1 (`2026-06-17`) — stage-staleness detector in `validate` (CODE)
+
+**Why.** Gaps #1/#2 found that a downstream IR can go stale relative to its upstream and silently drop its
+relations (tilelink evidence-39/intent-0). The durable fix is to make that incompleteness VISIBLE.
+
+**Measurement-first design.** Grepped `validate.rs`: it ALREADY loads upstream artifacts via carried paths
+(`SemanticIr::load_from_path(&ir.semantic_ir_path)`, `EvidenceIr::load_from_path(&ir.evidence_ir_path)` —
+used for graph-aware findings) and has a staleness-warning precedent (`gauge_is_stale`). So no schema change
+is needed. The robust, false-positive-free signal is **zero-versus-some on `actor_signal_relations`**: the
+agent-identity gates (`.1b.i`/`.1b.ii`/`.1b.iii`/`.1b.iv`) only re-attribute or merge relations — they never
+EMPTY a non-empty set — so an empty-downstream/non-empty-upstream split can only be staleness, while a
+register/command protocol's honest 0 relations has an empty upstream too (0-vs-0, silent). A count-regression
+signal was rejected (legitimate gating changes counts → false positives).
+
+**Implementation.** Pure decision helper `stage_staleness_relation_finding(downstream_count, upstream_count,
+id, summary) -> Option<Finding>` (fires iff `down==0 && up>0`, category `stage_staleness`, Warning), wired
+into `validate_intent_ir` (vs SemanticIR) and `validate_semantic_ir` (vs EvidenceIR) behind a `let`-chain so
+the upstream is loaded only when the downstream is empty, and skipped (`.ok()`) when off-disk. +3 unit tests.
+Clippy (deny) required collapsing the nested `if`s into `let`-chains (Rust 1.95).
+
+**Verification.** Live (release binary, run from a temp CWD so `validate`'s relative `generated/`
+back-annotation root redirects there — the WRITE-PATH GOTCHA bit twice during dev, corrupting canonical
+tilelink, which I restored by rebuild): POSITIVE fires on synthetic stale tilelink (0 vs real semantic 39);
+NEGATIVE silent on nvme (0-vs-0 honest absence) and healthy tilelink (39); canonical untouched. `run_ci.sh`
+GREEN (lib 1660, +3); `kg-bench` 156/156. WIRE-BASED-100 unaffected by construction (validate-only additive
+finding; never touches extraction/IR content; wire docs carry relations → silent). Also caught a process
+lesson: `cargo test --lib` rebuilds the test harness but NOT `target/debug/specforge` — early live demos
+silently ran the OLD binary; always `cargo build` (or `--release`) before a live CLI check.
+
 ## CORPUS-COVERAGE.0 (`2026-06-17`) — build every ingested doc through to IntentIR/.isf (36→78)
 
 **Why now.** Owner substantive gap #2 (corpus coverage), following `KG-ISF-COMPLETENESS.3`'s staleness

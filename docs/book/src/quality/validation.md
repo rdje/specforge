@@ -371,6 +371,29 @@ is provider-free and fixture-locked in the tracked KG benchmark
 estimate — treat the number as a signal for review priority, not as ground truth.
 *Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (leaf `.0`).
 
+### Catching a stale downstream stage — when an artifact silently drops what its upstream found
+
+The pipeline runs in stages: `evidence → semantic → intent`. If you rebuild one stage but
+forget to cascade the next (the per-stage commands don't auto-cascade — only `converge` rebuilds
+the whole chain), the downstream artifact goes **stale**: it still holds the *old* result while
+its upstream has moved on. The sharpest form of that is silent loss — an `intent_ir.json` that
+carries **zero** actor-signal relations while its `semantic_ir.json` upstream carries dozens.
+Nothing errors; the relations just quietly vanish from the canonical surface.
+
+`validate` now catches exactly this. When an IntentIR (or SemanticIR) carries no actor-signal
+relations, it loads its upstream (the artifact records the path it was built from) and, if the
+upstream *does* carry relations, raises a **Warning** — `intent_stale_relations_dropped` or
+`semantic_stale_relations_dropped` — telling you to re-run that stage (or `converge`) to recover
+them. It is deliberately a **zero-versus-some** test, not a count comparison, because that makes
+it free of false alarms: the agent-identity gates that clean up the actor surface
+(consolidating, splitting, dropping phantom roles) only ever *re-attribute* relations, they never
+empty a non-empty set — so an empty-downstream/non-empty-upstream split can only be staleness. A
+register or command protocol that genuinely has no wire-signal relations (its intent lives in its
+register and message-field surfaces) has an empty upstream too, so it is correctly left silent —
+honest absence is not a stale drop. The check costs nothing on healthy documents (it only reads
+the upstream when the downstream is suspiciously empty). *Authoritative tracking:*
+`docs/tasks/CORPUS-COVERAGE.md` (leaf `.1`).
+
 ## Closed task trees — how each was implemented and verified
 
 ### `PROVENANCE-HARDENING` — provenance fields always have assertions
