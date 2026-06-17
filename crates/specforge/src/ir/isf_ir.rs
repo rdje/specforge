@@ -12,16 +12,16 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use crate::ir::intent::{IntentIr, TransactionStep};
 use crate::ir::semantic::{
-    ActorPortRecord, ControlActionRecord, ControlBinaryOperator, ControlBranchRecord,
-    ControlCompoundUpdateOperation, ControlExpressionRecord, ControlReferenceSuffix,
-    ControlUnaryOperator, InterfaceSignalDirection, SymbolDefinitionKind, SystemResetKind,
-    SystemResetPolarity,
+    ActorPortRecord, ActorRelativeDirection, ControlActionRecord, ControlBinaryOperator,
+    ControlBranchRecord, ControlCompoundUpdateOperation, ControlExpressionRecord,
+    ControlReferenceSuffix, ControlUnaryOperator, InterfaceSignalDirection, SymbolDefinitionKind,
+    SystemResetKind, SystemResetPolarity,
 };
 // R16-CONTRACT-IR.3: `TemporalRuleRecord`/`TemporalPredicateRecord` are now
 // referenced only by the test-only parity oracle (`classify_temporal_rule`
 // + helpers) and the test module — production lowering uses ContractIR.
 #[cfg(test)]
-use crate::ir::semantic::{ActorRelativeDirection, TemporalPredicateRecord, TemporalRuleRecord};
+use crate::ir::semantic::{TemporalPredicateRecord, TemporalRuleRecord};
 use crate::ir::source::{
     AutomationConfidence, CandidateInterpretation, RegisterFieldRecord, RegisterRecord,
     ResidualDecisionPacket, WidthHint,
@@ -678,6 +678,13 @@ impl IsfIr {
         // actor-port graph, used below as a fallback when the flat signal hint
         // defaults to width 1.
         let port_widths = actor_port_concrete_widths(&intent_ir.actor_ports);
+        // KG-ISF-COMPLETENESS.2a.ii: the grounded actor-relative direction for the protocol's
+        // INITIATOR actor (owner-chosen perspective, `2026-06-17`). Empty when there is no net-producer
+        // initiator, so the interface stays byte-identical to the pre-`.2a.ii` default-`output` behavior.
+        let initiator_dirs = match select_initiator_actor(&intent_ir.actor_ports) {
+            Some(initiator) => initiator_perspective_directions(&intent_ir.actor_ports, &initiator),
+            None => BTreeMap::new(),
+        };
         let mut signals: BTreeSet<IsfSignal> = BTreeSet::new();
         let mut seen_signal_names: BTreeSet<String> = BTreeSet::new();
         for iface in &intent_ir.interfaces {
@@ -689,9 +696,21 @@ impl IsfIr {
                     continue;
                 }
                 seen_signal_names.insert(sig.signal_name.clone());
-                let dir = match sig.direction_hint {
-                    Some(InterfaceSignalDirection::Input) => IsfDirection::Input,
-                    _ => IsfDirection::Output,
+                // KG-ISF-COMPLETENESS.2a.ii: prefer the grounded INITIATOR-perspective direction from
+                // the actor-port graph (the owner-chosen perspective) — a signal the initiator drives is
+                // `(output)`, one it reads is `(input)`. The flat `direction_hint` is `None`/`Output` for
+                // ~98% of signals (the grounded direction lives on the actor-port graph since
+                // `R15-GRAPH-DIRECTION-MIGRATION`), so without this they default to `(output)`. A signal
+                // the initiator does not unambiguously touch falls back to the flat hint, then to the
+                // honest `(output)` default — never a guess. Direction is FSMGen-strict-neutral
+                // (`fsmgen-ignores-signal-direction`), and a signal flipped to `(input)` is automatically
+                // excluded from the per-output named-drive block below, so this stays strict-safe.
+                let dir = match initiator_dirs.get(&sig.signal_name) {
+                    Some(grounded) => grounded.clone(),
+                    None => match sig.direction_hint {
+                        Some(InterfaceSignalDirection::Input) => IsfDirection::Input,
+                        _ => IsfDirection::Output,
+                    },
                 };
                 let width = match &sig.width_hint {
                     Some(w) => render_isf_width_hint(w).parse::<u32>().unwrap_or(1),
@@ -1566,6 +1585,77 @@ fn actor_port_concrete_widths(actor_ports: &[ActorPortRecord]) -> BTreeMap<Strin
         .into_iter()
         .filter_map(|(signal, widths)| match widths.len() {
             1 => widths.into_iter().next().map(|w| (signal, w)),
+            _ => None,
+        })
+        .collect()
+}
+
+/// KG-ISF-COMPLETENESS.2a.ii: select the protocol's primary/INITIATOR actor from the actor-port
+/// graph, structurally and universally (ADR 0006 — no `Manager`/`Requester`/`Host` name list).
+///
+/// Direction in a protocol is actor-relative (a signal one actor drives, another reads), but the
+/// emitted `.isf` is a single flat module, so it must be lowered from ONE actor's perspective. The
+/// owner's choice (`2026-06-17`) is the INITIATOR's perspective. The initiator is the actor that
+/// DRIVES the request and reads back the response, so structurally it is a **net producer** — its
+/// output (`Drives`) ports strictly exceed its input (`Reads`) ports — with the largest driving
+/// footprint. We therefore restrict to net producers (`out > in`, which by construction excludes a
+/// balanced prose-fragment actor like AHB `address decoder` at out=in and an input-dominant completer
+/// like `Subordinate`/`Completer`) and pick the one maximizing `(out, in)` lexicographically: most
+/// driven signals first, then most read signals (a real initiator also reads responses, which breaks
+/// a tie against an output-only register/fragment), then the name for determinism. Returns the raw
+/// actor name (the caller sanitizes it), or `None` when no actor is a net producer (e.g. a
+/// register/command doc with no wire actors) — the honest residual that keeps the current behavior.
+///
+/// Measured `2026-06-18` on the four wire docs: AHB → `Manager` (out=6/in=2), APB → `Requester`
+/// (20/12), AXI → `Manager` (116/52), SWD/debug → `debugger` (2/1) — each the correct initiator.
+pub(crate) fn select_initiator_actor(actor_ports: &[ActorPortRecord]) -> Option<String> {
+    let mut by_actor: BTreeMap<String, (u32, u32)> = BTreeMap::new();
+    for port in actor_ports {
+        let entry = by_actor.entry(port.actor_name.clone()).or_insert((0, 0));
+        match port.direction {
+            ActorRelativeDirection::Output => entry.0 += 1,
+            ActorRelativeDirection::Input => entry.1 += 1,
+            ActorRelativeDirection::InOut | ActorRelativeDirection::Unknown => {}
+        }
+    }
+    by_actor
+        .into_iter()
+        .filter(|(_, (out, inp))| out > inp)
+        // Pick max (out, in); BTreeMap iteration is name-ascending, so a later equal-keyed actor
+        // never displaces an earlier one — the first (lexicographically smallest) name wins ties.
+        .max_by_key(|(_, (out, inp))| (*out, *inp))
+        .map(|(name, _)| name)
+}
+
+/// KG-ISF-COMPLETENESS.2a.ii: the grounded per-signal direction the INITIATOR actor has for each
+/// signal, from the actor-port graph — `Drives` → `(output)`, `Reads` → `(input)`. A signal the
+/// initiator both drives and reads (or whose graph rows disagree), or one it touches only as
+/// `InOut`/`Unknown`, is OMITTED so the caller keeps the honest default rather than guess. Empty when
+/// there is no initiator (`select_initiator_actor` → `None`), so the emitted interface is byte-identical
+/// to the pre-`.2a.ii` default-`output` behavior in that case.
+fn initiator_perspective_directions(
+    actor_ports: &[ActorPortRecord],
+    initiator: &str,
+) -> BTreeMap<String, IsfDirection> {
+    let mut by_signal: BTreeMap<String, BTreeSet<IsfDirection>> = BTreeMap::new();
+    for port in actor_ports {
+        if port.actor_name != initiator {
+            continue;
+        }
+        let dir = match port.direction {
+            ActorRelativeDirection::Output => IsfDirection::Output,
+            ActorRelativeDirection::Input => IsfDirection::Input,
+            ActorRelativeDirection::InOut | ActorRelativeDirection::Unknown => continue,
+        };
+        by_signal
+            .entry(port.signal_name.clone())
+            .or_default()
+            .insert(dir);
+    }
+    by_signal
+        .into_iter()
+        .filter_map(|(signal, dirs)| match dirs.len() {
+            1 => dirs.into_iter().next().map(|d| (signal, d)),
             _ => None,
         })
         .collect()
@@ -2567,6 +2657,75 @@ mod tests {
         assert_eq!(widths.get("SYM"), None);
         assert_eq!(widths.get("NOHINT"), None);
         assert_eq!(widths.len(), 2);
+    }
+
+    fn dir_port(actor: &str, signal: &str, direction: ActorRelativeDirection) -> ActorPortRecord {
+        ActorPortRecord {
+            actor_id: actor.to_string(),
+            actor_name: actor.to_string(),
+            signal_name: signal.to_string(),
+            direction,
+            relation_basis: vec![],
+            width_hint: None,
+            source_statement_ids: vec![],
+            automation_confidence: AutomationConfidence::Medium,
+        }
+    }
+
+    #[test]
+    fn select_initiator_actor_picks_the_net_producer() {
+        use ActorRelativeDirection::{Input, Output};
+        // KG-ISF-COMPLETENESS.2a.ii: the initiator is the net producer (out > in) maximizing
+        // (out, in). Synthetic AMBA-shaped graph (no chip-name dependence — these are test fixtures):
+        // an initiator that drives the request + reads the response, a completer that mirrors it, a
+        // balanced prose-fragment actor (excluded by out > in), and an output-only decoy that ties on
+        // output count but loses the (out, in) tiebreak because it reads nothing.
+        let ports = vec![
+            dir_port("Init", "REQA", Output),
+            dir_port("Init", "REQB", Output),
+            dir_port("Init", "REQC", Output),
+            dir_port("Init", "RESP", Input), // initiator also reads the response
+            dir_port("Comp", "REQA", Input),
+            dir_port("Comp", "REQB", Input),
+            dir_port("Comp", "REQC", Input),
+            dir_port("Comp", "RESP", Output), // completer: input-dominant, not a net producer
+            dir_port("fragment", "REQA", Output), // balanced (out=in=1) → excluded
+            dir_port("fragment", "REQA", Input),
+            dir_port("Decoy", "REQA", Output), // out=3/in=0 → net producer, ties Init on out
+            dir_port("Decoy", "REQB", Output),
+            dir_port("Decoy", "REQC", Output),
+        ];
+        // Init (3,1) beats Decoy (3,0) on the (out, in) tiebreak; Comp/fragment are not net producers.
+        assert_eq!(select_initiator_actor(&ports).as_deref(), Some("Init"));
+        // No net producer → None (honest residual: the interface keeps its default-output behavior).
+        let no_producer = vec![
+            dir_port("Reader", "RESP", Input),
+            dir_port("Balanced", "X", Output),
+            dir_port("Balanced", "X", Input),
+        ];
+        assert_eq!(select_initiator_actor(&no_producer), None);
+    }
+
+    #[test]
+    fn initiator_perspective_directions_are_grounded_and_residual_safe() {
+        use ActorRelativeDirection::{InOut, Input, Output};
+        // The initiator's grounded direction per signal: Drives → output, Reads → input. A signal it
+        // both drives and reads is OMITTED (the caller keeps the honest default, never a guess); an
+        // InOut/Unknown touch is OMITTED; another actor's ports are ignored.
+        let ports = vec![
+            dir_port("Init", "REQ", Output),
+            dir_port("Init", "RESP", Input),
+            dir_port("Init", "AMBIG", Output),
+            dir_port("Init", "AMBIG", Input), // conflicting → omitted
+            dir_port("Init", "SIDE", InOut),  // InOut → omitted
+            dir_port("Comp", "REQ", Input),   // other actor → ignored
+        ];
+        let dirs = initiator_perspective_directions(&ports, "Init");
+        assert_eq!(dirs.get("REQ"), Some(&IsfDirection::Output));
+        assert_eq!(dirs.get("RESP"), Some(&IsfDirection::Input));
+        assert_eq!(dirs.get("AMBIG"), None);
+        assert_eq!(dirs.get("SIDE"), None);
+        assert_eq!(dirs.len(), 2);
     }
 
     #[test]

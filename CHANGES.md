@@ -1,3 +1,34 @@
+### KG-ISF-COMPLETENESS.2a.ii — initiator-perspective signal DIRECTION in the emitted `.isf` (CODE, owner-authorized)
+The emitted `.isf` interface now lowers the document-grounded, actor-relative signal DIRECTION from the protocol's
+INITIATOR actor's perspective, instead of defaulting non-`Input` signals to `(output)`. A signal the initiator
+drives → `(output)`, reads → `(input)`; an ungrounded signal stays `(output)` (honest residual). This is a
+north-star faithfulness fix (a signal the perspective actor reads must be `(input)`); the owner authorized it
+(AskUserQuestion, `2026-06-17`: "Build it, initiator perspective"), satisfying the explicit re-open trigger the
+`KG-ISF-COMPLETENESS.2a` deferral recorded.
+- **Initiator identification (structural, ADR 0006 — no name list):** `select_initiator_actor` (`ir/isf_ir.rs`)
+  picks the **net-producer** actor — output (`Drives`) ports strictly exceed input (`Reads`) ports — maximizing
+  `(outputs, inputs)` lexicographically. `out > in` excludes balanced prose-fragment actors (AHB `address decoder`)
+  and input-dominant completers (`Subordinate`/`Completer`); the `(out, in)` tiebreak prefers a real initiator
+  (reads responses) over an output-only register fragment. No net producer → no initiator → the prior
+  default-`output` behavior (byte-identical, honest residual). Validated per-item: AHB `Manager` (6/2), APB
+  `Requester` (20/12), AXI `Manager` (116/52), SWD/debug `debugger` (2/1).
+- **Direction + module name:** `initiator_perspective_directions` builds the initiator's per-signal map
+  (`Drives`→`(output)`, `Reads`→`(input)`; a both-driven-and-read / `InOut` / `Unknown` signal omitted → residual);
+  the signal loop prefers it, else the flat hint, else `(output)`. `derive_isf_actor_name` (`ir/adapters.rs`) names
+  the module after the same initiator so the label and its interface are coherent (AHB `address_decoder`→`manager`,
+  APB `apb_protocol`→`requester`, AXI `agent`→`manager`, SWD `agent`→`debugger`).
+- **Strict-safe by construction:** the per-output named-drive block is already filtered to `IsfDirection::Output`,
+  so a signal flipped to `(input)` is automatically NOT driven (FSMGen rejects driving an input). Verified:
+  **0 NEW `--strict --check` diagnostics on all 4 wire docs** (baseline-vs-after via `git stash`; AHB `HAUSER` + AXI
+  `ASKSTOP` pre-existing rule-write conflicts unchanged; APB/SWD still PASS).
+- **Measured flip (`2026-06-18`):** APB input **2→12**, AXI input **4→52**, SWD input **0→1** (faithful — e.g. APB
+  Requester now reads PRDATA/PREADY/PSLVERR and drives PADDR/PWDATA/PWRITE/PSEL/PENABLE); AHB input **0→0** (honest
+  residual — the stale persisted intent grounds Manager only to sideband outputs + clock/reset inputs, so the rich
+  HADDR/HREADY/HRDATA signals carry no Manager relation and stay `(output)`; a fresh post-`.1a` rebuild flips more).
+- **Gates:** `run_ci.sh` GREEN (lib 1677→1679, +2 tests); `kg-bench` 156/156; WIRE-BASED-100 orthogonal
+  (emitter-only, downstream of all extraction); ADR-0006; honest residual over fabrication. KM card
+  `docs/knowledge/isf-initiator-perspective-direction.md`; book `pipeline/isf-adapter.md`.
+
 ### KG-ISF-TRANSACTIONS.2n — the transaction ISF BODY is faithfully complete (measurement-first, read-only, docs-only — NO-GO)
 A fresh probe-first cycle on the current FSMGen pin `030f8c273`, run because the `2026-06-17` resume-pointer triage
 named the transaction ordered multi-phase body "the substantive buildable critical-path transaction lever." The

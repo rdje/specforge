@@ -69,7 +69,7 @@ The adapter walks `IntentIr` and populates the typed tree:
 
 1. **Clock** — from the system contract
 2. **Reset** — always populated; kind/polarity from system contract with sensible defaults
-3. **Signals** — collected from all interfaces; clock/reset excluded; inserted into `BTreeSet` for automatic dedup. **Width** comes from the signal's own width hint; when that is absent (the flat hint is `None`/symbolic for most signals, since the grounded width lives on the actor-relative graph), the adapter recovers a *single unambiguous concrete* width from the actor-port graph (`actor_ports[].width_hint`) — so a sideband like AXI `ARSIZE` emits `(width 3)` rather than the `(width 1)` default. A signal whose graph widths disagree, or that has no grounded width, keeps the honest `(width 1)` default — never a guess (`KG-ISF-COMPLETENESS.2a.i`). FSMGen does not validate signal *direction* (an unknown direction defaults to `output` and is FSMGen-neutral; see `fsmgen-ignores-signal-direction`), so the adapter does not over-invest in inferring it.
+3. **Signals** — collected from all interfaces; clock/reset excluded; inserted into `BTreeSet` for automatic dedup. **Width** comes from the signal's own width hint; when that is absent (the flat hint is `None`/symbolic for most signals, since the grounded width lives on the actor-relative graph), the adapter recovers a *single unambiguous concrete* width from the actor-port graph (`actor_ports[].width_hint`) — so a sideband like AXI `ARSIZE` emits `(width 3)` rather than the `(width 1)` default. A signal whose graph widths disagree, or that has no grounded width, keeps the honest `(width 1)` default — never a guess (`KG-ISF-COMPLETENESS.2a.i`). **Direction** is lowered from the protocol's *initiator* actor's perspective — see [Which way does each signal point?](#which-way-does-each-signal-point) below (`KG-ISF-COMPLETENESS.2a.ii`).
 4. **Constants** — from declared symbolic constants
 5. **Types/enums** — from type definitions and enum member-value maps
 6. **Storage** — one `(storage (var …))` per register map record; when the register's documented per-field reset values compose to a clean integer it also carries a `(reset V)` (see [Register reset values](#register-reset-values) below)
@@ -169,6 +169,52 @@ ever fabricated.
 This affects only register-bearing documents (register maps / CSRs); the protocol wire
 specifications (APB/AHB/AXI/SWD) emit byte-identical `.isf` as before, because their signal
 tables carry no composable register reset.
+
+## Which way does each signal point?
+
+Every signal in a `.isf` interface is declared as an `(input …)` or an `(output …)`. But a
+protocol signal has no single direction on its own — it depends on *who you are*. The same
+`HREADY` wire is an **output** of the subordinate that drives it and an **input** of the manager
+that waits on it. Direction is *relative to an actor*.
+
+A `.isf` module, though, describes **one** actor. So SpecForge has to pick a viewpoint, and it
+picks the one a reader cares about most: the protocol's **initiator** — the agent that starts
+transactions by driving the request and then reads back the response (an AMBA *Manager* /
+*Requester*, a debug *Host*). From the initiator's chair, the picture is intuitive: the request
+signals it drives are `(output)`, and the response signals it waits on are `(input)`.
+
+SpecForge finds the initiator **without any hard-coded protocol names** (it must work on the
+101st protocol it has never seen). It reads the recovered actor↔signal graph and asks a purely
+structural question: *which actor drives more than it reads?* The initiator is a **net producer**
+— its driven signals outnumber its read signals — because it sources the request. A completer
+(which mostly reads the request and drives only a response) and a stray prose fragment (which
+looks balanced) are both excluded automatically. On the four AMBA wire specs this picks exactly
+the right agent every time: AHB → *Manager*, APB → *Requester*, AXI → *Manager*, SWD → the
+*debugger*. The module is then named after that same initiator, so its label and its
+`(input)`/`(output)` columns tell one coherent story.
+
+For example, the APB module is now written from the **Requester's** point of view:
+
+```text
+(actor requester
+  ...
+  (interface
+    (output PADDR  (width 1))     ;; the Requester drives the address...
+    (output PWDATA (width 1))     ;; ...the write data...
+    (output PSEL   (width 1))     ;; ...and the select/enable handshake out
+    (input  PREADY (width 1))     ;; ...then waits on the completer's ready...
+    (input  PRDATA (width 1))     ;; ...reads back the data...
+    (input  PSLVERR (width 1))))  ;; ...and the error response
+```
+
+**It never guesses.** A signal the initiator neither clearly drives nor clearly reads — or one the
+document simply does not connect to it — keeps the safe `(output)` default rather than inventing a
+direction (an *honest residual*). And when a document has no identifiable initiator at all (a
+register or command-set spec with no wire actors), nothing changes: the interface is emitted
+exactly as before. This is purely a faithfulness improvement to what the `.isf` *says* about each
+signal — FSMGen does not depend on signal direction for scheduling, so the change is safe by
+construction (a signal flipped to `(input)` is automatically no longer driven), and the four wire
+specs still pass FSMGen's strict checker with no new diagnostics.
 
 ## Module boundaries
 

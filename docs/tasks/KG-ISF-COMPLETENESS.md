@@ -59,7 +59,7 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 
 ## Task Tree
 
-- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface, done), `.2` (ISF lowering-fidelity), `.3` (relation-completeness — bar #2), `.4` (behavior/temporal lowering-completeness — bar #5/#6, broader corpus)
+- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface, done), `.2` (ISF lowering-fidelity; `.2a.i` width done, `.2a.ii` direction done — initiator-perspective, owner-authorized), `.3` (relation-completeness — bar #2), `.4` (behavior/temporal lowering-completeness — bar #5/#6, broader corpus)
 - ID: `KG-ISF-COMPLETENESS.0` · Status: `done` (`2026-06-16`, docs-only ownership/scoping slice) · Goal:
   own the north star, define the checkable bar, record the measured baseline, reverse the "defer ISF"
   steer in the live docs. No code (doctrine: own before touching). Memory `project_kg_isf_completeness`.
@@ -313,6 +313,10 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   (relationship-relative) → **direction stays deferred, low-value** (no technical motivation; revisit only
   on explicit owner steer). **Width** must resolve to a positive integer (concrete passes; undefined
   symbolic fails closed) → the clean win is the concrete grounded width, which landed as `.2a.i` below.
+  **DIRECTION RE-OPENED + RESOLVED `2026-06-18` by explicit owner steer (the recorded re-open trigger):** the owner
+  chose initiator-perspective direction emission (AskUserQuestion `2026-06-17`), reframing the `.2a` "FSMGen-neutral
+  → low-value" finding as a north-star faithfulness gap → built as `.2a.ii` below (the reference-boundary = the
+  structurally-identified initiator). `.2a` is now fully resolved (width `.2a.i` + direction `.2a.ii`).
 - ID: `KG-ISF-COMPLETENESS.2a.i` · Status: `done` (`2026-06-17`, measurement-first; LANDED +
   verified) · Goal: **emit the grounded concrete signal width from the actor-port graph** where the
   emitter currently defaults to width 1. Measured: of 3 308 width-1 signals, **69 (2.1%) carry a single
@@ -327,6 +331,50 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   WIRE-BASED-100 structurally unaffected (emitter-only change, downstream of extraction); `kg-bench` not
   affected; `run_ci.sh` GREEN (lib 1652, +1). KM cards `[[fsmgen-ignores-signal-direction]]` +
   `[[isf-lowering-fidelity-gauge]]`. Book `pipeline/isf-adapter.md` signal-width note.
+- ID: `KG-ISF-COMPLETENESS.2a.ii` · Status: `done` (`2026-06-18`, measurement-first; **OWNER-AUTHORIZED
+  `2026-06-17`** — the explicit owner steer the `.2a` deferral required: "Build it, initiator perspective"; LANDED
+  + verified) · Goal:
+  **emit the grounded actor-relative signal DIRECTION in the `.isf` interface, from the protocol's
+  primary/initiator actor's perspective**, instead of defaulting non-`Input` signals to `(output)`
+  (`isf_ir.rs:693-694`). The owner reframed the `.2a` "FSMGen-neutral → low-value" finding: it is a north-star
+  FAITHFULNESS gap (a signal the perspective actor READS must be `(input)`, not a defaulted `(output)`), even
+  though FSMGen ignores direction for strict validity. **Owner choice (AskUserQuestion `2026-06-17`):** initiator
+  perspective (Manager/Requester/Host) — a signal the initiator Drives → `(output)`, Reads → `(input)`,
+  genuinely-ungrounded → keep `(output)` as an honest residual. **Design constraints:** (1) identify the initiator
+  STRUCTURALLY (ADR-0006, no `Manager`/`Requester` name list — e.g. the actor with the dominant Drives footprint
+  / driving the request/address signals, to be chosen measurement-first); (2) the perspective must be CONSISTENT
+  with whatever the module represents (today `derive_isf_actor_name` = `actors.first()`); (3) **strict-safety blast
+  radius** — the emitter emits top-level `(drive (X val))` blocks + transaction drives for outputs, so a signal
+  flipped to `(input)` must NOT also be driven (FSMGen rejects driving an input / a `drive` of an undefined
+  output), MEASURE the interaction and emit drives only for outputs. **Gates (hard):** WIRE-BASED-100 (orthogonal
+  — emitter-only, downstream of extraction), FSMGen `--strict --check` 0 NEW diagnostics on all 4 wire docs,
+  `kg-bench` 156/156, `run_ci.sh` GREEN; ADR-0006; honest residual over fabrication.
+  **DONE — what landed:** (1) `select_initiator_actor(&actor_ports)` (`ir/isf_ir.rs`) — the initiator is the
+  **net-producer** actor (output ports strictly exceed input ports) maximizing `(out, in)` lexicographically;
+  structural, no name list (ADR 0006). `out > in` excludes balanced prose-fragment actors (AHB `address decoder`)
+  and input-dominant completers (`Subordinate`/`Completer`); the `(out, in)` tiebreak prefers a real initiator
+  (reads responses) over an output-only register fragment. No net producer → `None` → prior default-`output`
+  behavior (honest residual, byte-identical). (2) `initiator_perspective_directions` — the initiator's per-signal
+  direction map (`Drives`→`Output`, `Reads`→`Input`; a both-driven-and-read / `InOut` / `Unknown` signal OMITTED →
+  residual). (3) the signal loop prefers that map, else the flat hint, else `(output)`. (4) `derive_isf_actor_name`
+  (`ir/adapters.rs`) names the module after the SAME initiator so the label and its `(input)`/`(output)` interface
+  are coherent. **Strict-safety:** the per-output named-drive block is already `IsfDirection::Output`-filtered, so a
+  signal flipped to `(input)` is auto-suppressed from drives (FSMGen rejects driving an input) — no fabrication.
+  **Measured (per-item, `2026-06-18`):** initiators AHB `Manager` (6/2), APB `Requester` (20/12), AXI `Manager`
+  (116/52), SWD/debug `debugger` (2/1) — all correct. **Direction flip (baseline-vs-after via `git stash`, emitted
+  `.isf`):** APB input **2→12** / output 30→20 (faithful — drives PADDR/PWDATA/PWRITE/PSEL/PENABLE…, reads
+  PRDATA/PREADY/PSLVERR/PBUSER…), AXI input **4→52** / output 283→235, SWD input **0→1** / output 13→12, **AHB input
+  0→0** (HONEST RESIDUAL — the stale persisted intent grounds Manager only to 6 sideband outputs + HCLK/HRESETN
+  inputs, excluded as clock/reset; the rich HADDR/HREADY/HRDATA signals carry no Manager relation in that artifact →
+  default `(output)`; a fresh post-`.1a` rebuild flips more). Module names: AHB `address_decoder`→`manager`, APB
+  `apb_protocol`→`requester`, AXI `agent`→`manager`, SWD `agent`→`debugger`. **Gates ALL GREEN:** **FSMGen
+  `--strict --check` 0 NEW diagnostics on all 4 wire docs** (baseline byte-identical: AHB `HAUSER` + AXI `ASKSTOP`
+  pre-existing rule-write conflicts unchanged; APB/SWD PASS); `run_ci.sh` GREEN (lib **1677→1679**, +2 tests:
+  `select_initiator_actor_picks_the_net_producer`, `initiator_perspective_directions_are_grounded_and_residual_safe`);
+  `kg-bench` 156/156; WIRE-BASED-100 orthogonal (emitter-only, downstream of all extraction); ADR-0006; honest
+  residual. KM card `isf-initiator-perspective-direction`. Book `pipeline/isf-adapter.md` "Which way does each signal
+  point?". `[[project_kg_isf_completeness]]` /
+  `[[feedback_no_hardcoded_chip_spec_names]]` / `[[feedback_isf_no_hacks]]`.
 - ID: `KG-ISF-COMPLETENESS.2b` · Status: `deferred` (measured-MARGINAL `2026-06-17`, read-only) · Goal:
   **ISF lowering-coverage visibility gauge** — make the lowering's per-surface coverage visible as adapter
   metadata + a `validate <intent-ir>` surface. **Measured marginal → not building now:** `.2` established
@@ -397,6 +445,22 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 
 ## Changelog
 
+- `2026-06-18`: **`.2a.ii` DONE — CODE (OWNER-AUTHORIZED): initiator-perspective signal DIRECTION emission.** The
+  owner's `2026-06-17` steer (AskUserQuestion: "Build it, initiator perspective") satisfied the `.2a` re-open
+  trigger. The emitted `.isf` interface now lowers grounded actor-relative direction from the protocol's INITIATOR
+  actor's perspective instead of defaulting non-`Input` signals to `(output)`. `select_initiator_actor` (`ir/isf_ir.rs`)
+  picks the net-producer actor (out > in) maximizing `(out, in)` — structural, no name list (ADR 0006); validated
+  per-item: AHB `Manager` (6/2), APB `Requester` (20/12), AXI `Manager` (116/52), SWD `debugger` (2/1).
+  `initiator_perspective_directions` maps the initiator's `Drives`→`(output)`/`Reads`→`(input)` (ambiguous/InOut/
+  Unknown omitted → residual); the signal loop prefers it, else flat hint, else `(output)`; `derive_isf_actor_name`
+  (`ir/adapters.rs`) names the module after the same initiator (coherent). Strict-safe because the per-output
+  named-drive block is already Output-filtered → inputs auto-suppressed from drives. **Measured flip (baseline-vs-after
+  via `git stash`):** APB input 2→12, AXI 4→52, SWD 0→1 (faithful protocol direction); AHB 0→0 (honest residual —
+  stale Manager grounding limited to sidebands + clock/reset). **Gates:** FSMGen `--strict` 0 NEW diagnostics on all
+  4 wire docs (AHB `HAUSER` + AXI `ASKSTOP` pre-existing rule conflicts unchanged; APB/SWD PASS); `run_ci.sh` GREEN
+  (lib 1677→1679, +2 tests); `kg-bench` 156/156; WIRE-BASED-100 orthogonal (emitter-only); ADR-0006. KM card
+  `isf-initiator-perspective-direction`; book `pipeline/isf-adapter.md`. `.2a` fully resolved (width `.2a.i` +
+  direction `.2a.ii`). `[[project_kg_isf_completeness]]`.
 - `2026-06-17`: **`.4` measurement DONE** (read-only, docs-only) — bar #5/#6 re-assessment on the broader
   78-doc corpus (after `CORPUS-COVERAGE.0` doubled it 36→78). Faithfully replicated the three
   `from_intent_ir` `(rule)` filters: 160 undeclared-named-subject drops are field content + prose/VLM noise,

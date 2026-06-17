@@ -1,4 +1,42 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-COMPLETENESS.2a.ii (`2026-06-18`) — initiator-perspective signal DIRECTION emission (CODE, owner-authorized)
+
+**Context.** `KG-ISF-COMPLETENESS.2` measured that the largest true ISF infidelity is signal direction: the emitter
+declared ~98% of signals `(output)` (`isf_ir.rs` only honored the flat `direction_hint`, which is `None`/`Output`
+for almost every signal — since `R15-GRAPH-DIRECTION-MIGRATION` the grounded direction lives on the actor-port
+graph). `.2a` deferred it as owner-gated: direction is actor-relative but the `.isf` is a single flat module, so a
+reference actor must be chosen, and `R6-ISF-ADAPTER.4` deliberately defaulted to `(output)`. The owner gave the
+explicit re-open steer (AskUserQuestion, `2026-06-17`): **initiator perspective.**
+
+**Design (measurement-first).** Direction in a protocol is actor-relative, so the flat module is lowered from ONE
+actor's perspective — the INITIATOR (it drives the request, reads the response). I identify it structurally
+(`select_initiator_actor`, ADR 0006 — no `Manager`/`Requester`/`Host` name list): the initiator is the **net
+producer** (output ports strictly exceed input ports) maximizing `(out, in)` lexicographically. I validated this cue
+on all 4 wire docs' `actor_ports` BEFORE coding: AHB `Manager` (6/2), APB `Requester` (20/12), AXI `Manager`
+(116/52), SWD `debugger` (2/1) — each the correct initiator. The `out > in` filter is what makes it robust: AHB's
+balanced prose-fragment actors (`address decoder`, out=in=2) and the input-dominant completer (`Subordinate` 8/17)
+are excluded; the `(out, in)` tiebreak (a real initiator also reads responses) beats an output-only register
+fragment (SWD `IR register` 2/0 loses to `debugger` 2/1). No net producer → `None` → the prior default-`output`
+behavior, byte-identical (a register/command doc with no wire actors).
+
+**Strict-safety (the one real risk, measured).** The emitter emits a top-level `(drive (X val) (X val))` block for
+every signal, filtered to `IsfDirection::Output`. So flipping a signal to `(input)` BEFORE that filter
+auto-suppresses its drive — FSMGen rejects driving an input, so this had to be coordinated. I verified it end-to-end
+with a `git stash` baseline-vs-after on the emitted `.isf`: **0 NEW `--strict --check` diagnostics on all 4 wire
+docs** (AHB `HAUSER` + AXI `ASKSTOP` pre-existing rule-write conflicts byte-identical; APB/SWD still PASS).
+
+**Result + honest residual.** APB input 2→12, AXI 4→52, SWD 0→1 (faithful: e.g. APB Requester now reads
+PRDATA/PREADY/PSLVERR, drives PADDR/PWDATA/PWRITE/PSEL/PENABLE). AHB input 0→0 is an HONEST RESIDUAL, not a bug: the
+stale persisted intent grounds Manager only to 6 sideband outputs + HCLK/HRESETN inputs (excluded as clock/reset);
+the rich HADDR/HREADY/HRDATA signals carry no Manager relation in that artifact, so they default to `(output)`. The
+emitter faithfully reflects whatever the actor-port graph grounds — a fresh post-`.1a` rebuild would flip more. The
+module is also renamed to the initiator (`derive_isf_actor_name`) so the label and interface stay coherent.
+
+**Gates.** `run_ci.sh` GREEN (lib 1677→1679, +2 unit tests: net-producer selection + grounded/residual direction
+map); `kg-bench` 156/156; WIRE-BASED-100 orthogonal (emitter-only, downstream of all extraction); ADR-0006. KM card
+`isf-initiator-perspective-direction`; book `pipeline/isf-adapter.md`. `.2a` is now fully resolved (width `.2a.i` +
+direction `.2a.ii`).
+
 ## KG-ISF-TRANSACTIONS.2n (`2026-06-17`) — the transaction ISF BODY is faithfully complete (measurement-first, read-only, docs-only — NO-GO)
 
 **Context.** The `2026-06-17` resume-pointer triage named the transaction ordered multi-phase body "the substantive

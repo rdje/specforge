@@ -176,6 +176,19 @@ pub struct IsfAdapterArtifact {
     pub storage_count: usize,
 }
 fn derive_isf_actor_name(intent_ir: &IntentIr) -> String {
+    // KG-ISF-COMPLETENESS.2a.ii: the single flat `.isf` module is lowered from the protocol's
+    // INITIATOR actor's perspective (owner-chosen, `2026-06-17`), so the module is NAMED after that
+    // same initiator — keeping the module label and its `(input)`/`(output)` interface coherent (the
+    // emitter, `isf_ir::from_intent_ir`, derives the directions from the same initiator). The
+    // initiator is recovered structurally from the actor-port graph (`select_initiator_actor`, no
+    // chip-name list — ADR 0006); when there is no net-producer initiator (e.g. a register/command
+    // doc with no wire actors) we keep the prior `actors.first()` → `document_key` fallback, so those
+    // documents' module names are byte-identical.
+    if let Some(initiator) = crate::ir::isf_ir::select_initiator_actor(&intent_ir.actor_ports)
+        && !initiator.is_empty()
+    {
+        return initiator.replace([' ', '-', '.'], "_").to_lowercase();
+    }
     if let Some(actor) = intent_ir.actors.first()
         && let Some(name) = &actor.actor_name
         && !name.is_empty()
