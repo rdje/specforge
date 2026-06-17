@@ -170,6 +170,38 @@ the `IntentIR`, leaving the emitted `.isf` byte-for-byte unchanged. `specforge v
 `intent_transaction_phase_membership` Info finding that lists each transaction with its
 per-phase signal split (and notes plainly that it is metadata, not lowered to `.isf`).
 
+## How the actor surface stays faithful
+
+`IntentIR` lists the **actors** (agents) a specification defines — the Manager, the
+Subordinate, the interconnect, the arbiter — together with the signals each one drives and
+samples. For that list to be trustworthy it has to contain *real* agents and *only* real
+agents: a downstream `.isf` should not sprout a phantom module for a word the document
+merely happened to use in a sentence.
+
+A specification's prose makes that surprisingly easy to get wrong. The same English that
+names a real agent ("the Subordinate drives HRESP") also throws off look-alikes:
+
+- a sentence *fragment* mistaken for a subject — `For components…`, `is recommended…`, `Then it…`;
+- a real agent with a trailing word stuck to it — `Subordinate extends`, `decoder also`;
+- two agents joined by *and* — `the Subordinate and decoder read HADDR`;
+- a generic role word the document only *mentions* — `controller`, `agent`, `producer` — that is never actually wired to any signal.
+
+`specforge` cleans each of these **structurally** — by the *shape* of the language, never by a
+list of chip-specific names, so the rules work on any specification (see ADR 0006):
+
+- **fragments are rejected** before they can become an actor;
+- **trailing words are stripped** so the relation re-attaches to the genuine agent;
+- **"X and Y" subjects are split** so both agents get connected;
+- **mentioned-but-unwired generic role words are dropped** — if the only thing the document ever says about a `controller` is that the word appeared in a sentence (no signal it drives, no behaviour it owns, no phase or obligation that refers to it), it is generic vocabulary, not a protocol agent, so it does not earn an actor entry.
+
+That last step is deliberately **conservative**. An agent the document genuinely discusses —
+one that participates in a named phase, or that a stated obligation refers to — is **kept**
+even when the pipeline has not yet wired it to a specific signal, because the goal is a
+*complete* picture of the agents (with honest gaps) rather than an aggressively pruned one.
+Only the pure "the word was mentioned and nothing else" phantoms are removed. The payoff is
+an actor list — and therefore an `.isf` — that reflects the agents the specification actually
+designs, with no junk modules and none silently invented.
+
 ## What makes it canonical
 
 `IntentIR` is the stage where the pipeline tries to present the best stable typed intent surface that survived:

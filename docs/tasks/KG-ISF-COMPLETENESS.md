@@ -138,13 +138,12 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
     seam lacks).
   - **`.1b.iii`** (coordinated "X and Y" split) — AHB `Subordinate and decoder` 6/4,
     `Exclusive Access Monitor and Subordinate` 4/2; needs the relations duplicated to BOTH agents.
-  - **`.1b.iv`** (Class-C zero-evidence drop) — DEFERRED beyond the wire docs: 320 Class-C 0/0 actors
-    corpus-wide, but only **21 are PURE-INFERRED** (the unambiguous Phase-2 role-term phantom); **223 are
-    PROSE-GROUNDED** + **76 SECTION+INFERRED**, and "PROSE-GROUNDED" is NOT a clean "genuinely-declared
-    agent" discriminator. The `.1`/`.1a` measurement validated the drop only on the 4 wire docs; a blanket
-    corpus-wide 0/0 drop would delete agents the owner's completeness north star wants kept. So `.1b.iv`
-    must first design a defensible provenance re-check (likely: drop only PURE-INFERRED phantoms, or scope
-    to the wire docs) — its own measurement-first leaf, NOT forced here.
+  - **`.1b.iv`** (Class-C zero-evidence drop) — **DONE `2026-06-17`** (see the dedicated node below): of the
+    320 Class-C 0/0 actors corpus-wide only **21 are PURE-INFERRED** (the unambiguous Phase-2 role-term
+    phantom); **223 are PROSE-GROUNDED** + **76 SECTION+INFERRED**, and "PROSE-GROUNDED" is NOT a clean
+    "genuinely-declared agent" discriminator. The designed-defensible rule drops ONLY the PURE-INFERRED
+    phantoms (responsibilities == exactly the term-scan marker), keeping every grounded 0/0 agent the owner's
+    completeness north star wants — 21 dropped / 16 docs / zero connected-or-grounded actors touched.
 - ID: `KG-ISF-COMPLETENESS.1b.i` · Status: `done` (`2026-06-16`, measurement-first; gate LANDED +
   WIRE-BASED-100-verified) · Goal: **Class-B trailing-fragment consolidation** — strip a TRAILING universal
   verb (`NON_ACTOR_LEADING_VERBS`) or trailing adverb/discourse-marker (`then`/`also`/`next`/… — NOT
@@ -200,6 +199,43 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   AXI/APB/AHB 4/4·6/6·6/6; actor-relations AXI/APB/AHB/SWD 6/6·6/6·6/6·1/1; temporal 3/3·3/3·4/4).
   `kg-bench` 156/156; `run_ci.sh` GREEN (lib 1637 pass/2 ignored, +2 tests). KM card
   `[[agent-coordinated-subject-split]]`. Frontier → `.1b.ii` / `.1b.iv` (both deferred-with-trigger) / `.2+`.
+- ID: `KG-ISF-COMPLETENESS.1b.iv` · Status: `done` (`2026-06-17`, measurement-first; LANDED +
+  WIRE-BASED-100-verified) · Goal: **Class-C PURE-INFERRED phantom drop** — remove the unambiguous
+  zero-evidence role-term phantoms the SemanticIR Phase-2 scan (`build_actors`, semantic.rs:3177) mints
+  whenever a statement merely MENTIONS a generic role word, WITHOUT deleting an agent the document
+  genuinely discusses (the owner's completeness north star). **Measurement DONE `2026-06-17`** (report
+  `docs/research/agent-surface-fidelity-measurement.md` §8; KM `[[agent-pure-inferred-phantom-drop]]`):
+  rebuilt the 4 wire docs evidence→semantic→intent into a TEMP evidence-root with the CURRENT
+  post-`.1a`/`.1b` binary (WRITE-PATH GOTCHA — the canonical corpus is still the pre-`.1a` baseline) and
+  categorised every 0/0 actor by IntentIR responsibility provenance. **The defensible discriminator**
+  (research-recommended "drop only the PURE-INFERRED phantoms"): an actor is a phantom iff its
+  `responsibilities` is EXACTLY the single term-scan marker ``"semantic role inferred around `X` evidence"``
+  — distinct from the relation-evidence summary a CONNECTED actor carries
+  (``"semantic role inferred from actor-signal relation evidence around `X`"``, which fails the marker) and
+  from a grounded 0/0 actor that also carries a phase (`participate in …`) or contract responsibility (set
+  length > 1). So a SECTION+INFERRED / PROSE-GROUNDED actor (AXI `transmitter`, SWD `host`, GIC `arbiter`)
+  is KEPT. **Seam (DRY, single place):** `build_intent_actors` (`ir/intent.rs`) — where responsibilities are
+  assembled — `continue`-skips a pure-inferred phantom; everything downstream (`actor_ids` → behaviors,
+  assumptions) derives from the returned `actors`, so the drop propagates with no dangling reference (a
+  phantom is 0/0 by construction so nothing else references it). **LANDED `2026-06-17`** —
+  `is_pure_inferred_phantom_role` (marker-SHAPE match, ADR-0006, no name list) + the guard in
+  `build_intent_actors`; +2 tests (a producer-template drift guard + a drop-phantom-keep-grounded behavior
+  test). **Measured:** drops exactly the **21 corpus-wide phantoms / 16 docs** (wire docs: APB `controller`,
+  AHB `agent`; AXI/SWD 0), **ZERO connected or grounded actors touched** (invariant proven over the fresh
+  wire IR AND the persisted 36-doc corpus). **Stage-diff proof (old vs new binary, fresh temp roots):**
+  evidence + semantic byte-identical (modulo the embedded input-path field), intent differs ONLY by the
+  removed phantom actors + the phantom id leaving the global behaviors' `actor_ids` list; the gold-bearing
+  `actor_signal_relations` / `signal_constraints` / `temporal_rules` are BYTE-IDENTICAL on all 4 wire docs.
+  **`.isf` byte-identical** (the emitter lowers signals/behaviors, never the raw `actors[]`). **WIRE-BASED-100
+  HELD 1.000** on the fresh post-`.1b.iv` evidence (eval-extraction `--provider skip`: constraints
+  APB/AHB/AXI 6/6·6/6·4/4, relations APB/AHB/AXI 6/6·6/6·6/6, temporal APB/AHB/AXI 3/3·4/4·3/3 — all
+  source-tolerant filtered F1 = 1.000); `kg-bench` 156/156 (no fixture asserts a phantom actor);
+  `run_ci.sh` GREEN (lib **1654**, +2). Book `pipeline/intentir.md` "How the actor surface stays faithful"
+  (consolidates the `.1a`/`.1b.i`/`.1b.iii`/`.1b.iv` agent-surface story, previously book-undocumented).
+  Class-C taxonomy now CLOSED for the unambiguous phantom subset; the broader PROSE-GROUNDED 0/0 set stays
+  honestly KEPT (no clean genuinely-declared discriminator — research §7.3). Frontier → `.1b.ii` (deferred,
+  named-block conflation) / `.2a` direction (deferred, FSMGen-neutral) / `KG-ISF-TRANSACTIONS` body-emission
+  (FSMGen-parked).
 - ID: `KG-ISF-COMPLETENESS.2` · Status: `active` (measurement DONE `2026-06-17`, read-only, docs-only;
   code → `.2a`/`.2b`) · Goal: **gauge which remaining bar dimension carries the largest faithful-lowering
   gap** (relation completeness / signal direction-width / constraint gauge / behavior-temporal carry / ISF
@@ -271,6 +307,24 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 
 ## Changelog
 
+- `2026-06-17`: **`.1b.iv` DONE** — Class-C PURE-INFERRED phantom drop LANDED (measurement-first; the
+  substantive remaining buildable agent-surface lever after `.2b` measured-marginal). New
+  `is_pure_inferred_phantom_role` + a guard in `build_intent_actors` (`ir/intent.rs`) skips an actor whose
+  `responsibilities` is exactly the single SemanticIR Phase-2 term-scan marker
+  ``"semantic role inferred around `X` evidence"`` — pure generic-vocabulary noise (0 ports, 0 relations,
+  no phase/contract grounding), keyed on the marker SHAPE not a name list (ADR 0006). Measured on a fresh
+  post-`.1a`/`.1b` rebuild of the 4 wire docs into a temp evidence-root (WRITE-PATH GOTCHA): drops exactly
+  the 21 corpus-wide phantoms / 16 docs (wire: APB `controller`, AHB `agent`) with ZERO connected or
+  grounded actors touched; genuinely-discussed-but-unwired agents (AXI `transmitter`, SWD `host`, GIC
+  `arbiter`) deliberately KEPT (completeness over pruning). Stage-diff: evidence + semantic byte-identical,
+  intent differs only by the dropped phantoms (+ the phantom id leaving global behaviors' `actor_ids`);
+  `actor_signal_relations`/`signal_constraints`/`temporal_rules` byte-identical; `.isf` byte-identical
+  (emitter never reads `actors[]`). WIRE-BASED-100 HELD 1.000 (constraints + relations + temporal,
+  APB/AHB/AXI, fresh eval); `kg-bench` 156/156; `run_ci.sh` GREEN (lib 1654, +2 tests). Book
+  `pipeline/intentir.md` "How the actor surface stays faithful". KM card
+  `[[agent-pure-inferred-phantom-drop]]`; report §8. The Class-C taxonomy is now closed for the
+  unambiguous phantom subset; the PROSE-GROUNDED 0/0 set stays honestly kept. Frontier → `.1b.ii` /
+  `.2a` direction (both deferred-with-trigger) / `KG-ISF-TRANSACTIONS` body-emission (FSMGen-parked).
 - `2026-06-16`: **`.0` DONE** — tree created; owns the owner's `2026-06-16` north star (complete KG/
   IntentIR → faithful ISF; extraction serves ISF-fidelity; reverses "defer ISF"). Defined the checkable
   6-point ISF-complete-IntentIR bar; recorded the measured 2-defect agent baseline (precision noise +

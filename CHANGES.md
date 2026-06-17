@@ -1,3 +1,25 @@
+### KG-ISF-COMPLETENESS.1b.iv — Class-C PURE-INFERRED phantom-actor drop (code; the substantive remaining agent-surface lever)
+Measurement-first, then LANDED. The SemanticIR Phase-2 role-term scan (`build_actors`, semantic.rs:3177)
+mints a generic-role-term actor (`agent`/`controller`/`producer`/`consumer`/…) the instant a statement
+MENTIONS the word, leaving it with zero ports, zero relations, and — when the document attaches nothing
+else — only the single term-scan provenance marker (``"semantic role inferred around `X` evidence"``) as a
+responsibility. `build_intent_actors` (`ir/intent.rs`) now `continue`-skips exactly such an actor via the
+new `is_pure_inferred_phantom_role`, so generic-vocabulary noise no longer pads the canonical `actors[]`
+surface (north-star bar #1: every actor is a real protocol agent). Keyed on the marker SHAPE, never a
+chip-name list (ADR 0006); a drift-guard test pins the detector to the producer template.
+**Measured on fresh post-`.1a`/`.1b` IR** (4 wire docs rebuilt into a temp evidence-root — WRITE-PATH
+GOTCHA): drops exactly the **21 corpus-wide phantoms across 16 docs** (wire: APB `controller`, AHB `agent`;
+AXI/SWD none) with ZERO connected or grounded actors touched, while genuinely-discussed-but-unwired agents
+(AXI `transmitter`, SWD `host`, GIC-class `arbiter`) are deliberately KEPT (completeness over aggressive
+pruning — the owner's north star; no clean genuinely-declared discriminator for the broader PROSE-GROUNDED
+0/0 set, report §7.3). **Proven zero-regression:** evidence + semantic byte-identical, intent differs ONLY
+by the dropped phantoms (+ the phantom id leaving global behaviors' `actor_ids`); `actor_signal_relations`
+/`signal_constraints`/`temporal_rules` byte-identical; the emitted `.isf` byte-identical (the emitter
+lowers signals/behaviors, never the raw `actors[]`). WIRE-BASED-100 HELD 1.000 (constraints + relations +
+temporal, APB/AHB/AXI, fresh `eval-extraction --provider skip`); `kg-bench` 156/156; `run_ci.sh` GREEN
+(lib **1654**, +2 tests). Book `pipeline/intentir.md` "How the actor surface stays faithful"; KM card
+`agent-pure-inferred-phantom-drop`; report `docs/research/agent-surface-fidelity-measurement.md` §8.
+
 ### KG-ISF-COMPLETENESS.2b — lowering-coverage gauge MEASURED-MARGINAL → deferred (read-only, docs-only)
 Assessed the candidate ISF lowering-coverage visibility gauge before building. `.2` already established the
 lowering is faithful for grounded intent, so a per-doc coverage gauge is **noise-dominated**: a headline

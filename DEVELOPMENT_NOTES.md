@@ -1,4 +1,48 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-COMPLETENESS.1b.iv (`2026-06-17`) — Class-C PURE-INFERRED phantom-actor drop
+
+**Why this slice.** After `.2b` measured-marginal, the Class-C zero-evidence actor drop was the
+substantive remaining buildable agent-surface lever (the last unbuilt branch of the A/B/C taxonomy:
+`.1a` = Class A precision, `.1b.i`/`.1b.iii` = Class B consolidation). It serves north-star bar #1
+("every actor is a real protocol agent, zero noise"): the IntentIR actor list should not carry generic
+words a document merely mentioned.
+
+**The defect.** `build_actors` (semantic.rs:3177) runs a Phase-2 scan over `ACTOR_TERMS` (24 generic role
+words) and mints an actor the instant a statement contains the word, with `role_summary` =
+``"semantic role inferred around `<term>` evidence"`` (:3190). Such a term-scan-only actor has no
+relations (and therefore no ports) — it is 0/0 by construction. Many of these are pure noise (the word
+appeared, nothing else), but some are agents the document genuinely discusses (a phase participant, a
+contract subject), which the owner's completeness north star wants KEPT.
+
+**Measurement-first (the gate-risky part).** The canonical `generated/` corpus is the PRE-`.1a` baseline
+(every prior agent-surface rebuild went to a temp evidence-root — the WRITE-PATH GOTCHA), so I rebuilt the
+4 wire docs `evidence → semantic → intent` into a temp evidence-root with the current post-`.1a`/`.1b`
+release binary (canonical `source_ir` symlinked in; outputs redirected via a temp CWD because the artifact
+base root is relative), then categorised every 0/0 actor by IntentIR responsibility provenance. Result:
+the defensible discriminator is "responsibilities is **exactly** the single term-scan marker" — distinct
+from the relation-evidence summary a connected actor carries, and from a grounded 0/0 actor that also
+carries a `participate in <phase>` or contract responsibility (set length > 1). 21 PURE-INFERRED across 16
+docs corpus-wide; ZERO connected/grounded actors ever caught (invariant proven on both the fresh wire IR
+and the persisted corpus).
+
+**The fix.** `is_pure_inferred_phantom_role(role)` (marker-SHAPE match: ``starts_with("semantic role
+inferred around `") && ends_with("` evidence")``, ADR-0006, no name list) + a guard in
+`build_intent_actors` (`ir/intent.rs`) that `continue`-skips an actor when `responsibilities.len() == 1`
+and the sole element matches. Single DRY seam — the place responsibilities are assembled; `actor_ids`
+(→ behaviors) and `build_assumptions` both derive from the returned `actors`, so the drop propagates with
+no dangling reference. +2 tests: a producer-template drift guard and a drop-phantom/keep-grounded behavior
+test.
+
+**Verification.** Stage-diff old-vs-new binary (fresh temp roots): evidence + semantic byte-identical
+(modulo the embedded input-path field), intent differs only by the removed phantoms (+ the phantom id
+leaving the global behaviors' `actor_ids`); the gold-bearing `actor_signal_relations`/`signal_constraints`
+/`temporal_rules` are byte-identical on all 4 wire docs. `.isf` byte-identical (the emitter lowers
+signals/behaviors from `actor_ports`, never the raw `actors[]`). WIRE-BASED-100 re-run on the fresh
+evidence: APB/AHB/AXI constraints 6/6·6/6·4/4, relations 6/6·6/6·6/6, temporal 3/3·4/4·3/3 — all
+source-tolerant filtered F1 = 1.000. `kg-bench` 156/156 (no fixture asserts a phantom actor). `run_ci.sh`
+GREEN (lib 1654, +2). Live drop confirmed: APB `controller` and AHB `agent` removed; AXI/SWD unchanged;
+AXI `transmitter` / SWD `host` KEPT.
+
 ## KG-ISF-COMPLETENESS.2a.i (`2026-06-17`) — signal width fidelity (FSMGen-contract-grounded code slice)
 
 **Trigger (`.2a` FSMGen-contract check).** Empirical probe on the smallest wire `.isf` (SWD, 13 signals all

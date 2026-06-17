@@ -180,3 +180,56 @@ completeness north star. "PROSE-GROUNDED" is NOT a clean "genuinely-declared age
 (it can be a generic-vocabulary noun mention, exactly the wire-doc `source`="source of read data"
 case). So `.1b.iv` must first design a defensible re-check — most likely drop only the PURE-INFERRED
 phantoms, or keep the drop wire-doc-scoped — and re-measure on its own gold. Not forced into `.1b.i`.
+
+## 8. `.1b.iv` decision measurement (`2026-06-17`, fresh post-`.1a`/`.1b` wire IR + persisted corpus)
+
+Executed before the `.1b.iv` code, per the measurement-first rule. Because the canonical
+`generated/` corpus is still the PRE-`.1a` baseline (the WRITE-PATH GOTCHA — every prior
+agent-surface rebuild went to a temp evidence-root), the 4 wire docs (AXI/APB/AHB/SWD) were
+rebuilt `evidence → semantic → intent` into a temp evidence-root with the CURRENT
+post-`.1a`/`.1b` release binary (canonical `source_ir` symlinked in; `--prior-memory` pointed at
+the real store), so the measurement sees the agent surface AS IT IS TODAY. `python3` over the
+fresh `intent_ir.json` categorised every 0/0 actor by IntentIR responsibility provenance.
+
+### 8.1 The defensible discriminator (research §7.3's recommended "drop only PURE-INFERRED")
+
+An actor is a PURE-INFERRED phantom iff its `responsibilities` is **exactly the single term-scan
+marker** ``"semantic role inferred around `X` evidence"`` (the string `build_actors`,
+semantic.rs:3190, emits for a generic role term it saw mentioned). This is structurally distinct
+from:
+
+- the relation-evidence summary a CONNECTED actor carries —
+  ``"semantic role inferred from actor-signal relation evidence around `X`"`` (has `from … relation
+  evidence`, ends `around `X``, not `evidence`) — so a connected actor never matches; and
+- a grounded 0/0 actor, which `build_intent_actors` (intent.rs) gives an extra responsibility — a
+  `participate in …` phase (SECTION+INFERRED) or a normalised contract sentence (PROSE-GROUNDED) —
+  so its responsibility set has length > 1 and never matches.
+
+Keyed on the marker SHAPE, never a name list (ADR 0006).
+
+### 8.2 Measured result — wire docs (fresh) and corpus (persisted proxy)
+
+| doc | actors | 0/0 actors | PURE-INFERRED drop | kept-0/0 (grounded) |
+|---|---|---|---|---|
+| AXI `ihi0022_l` | 21 | 12 | **0** | all 12 (incl. `transmitter`, `producer`, `consumer`) |
+| APB `ihi0024_e` | 7 | 3 | **1** — `controller` | `source`, `state machine` |
+| AHB `ihi0033_c` | 17 | 6 | **1** — `agent` | `channel`, `controller`, `device`, `receiver`, `source` |
+| SWD `ihi0074_a` | 22 | 8 | **0** | all 8 (incl. `host`, `sink`, `state machine`) |
+
+Corpus-wide (precise rule over the persisted 36-doc `intent_ir`): **21 PURE-INFERRED across 16
+docs**, exactly the research §7.3 count — e.g. CHI `consumer`/`producer`, DTI `client`/`host`,
+GIC-600 `receiver`, VT-d `initiator`, CCIX `state machine`, CXS `controller`, I2S `consumer`,
+Wishbone `responder`. **Invariant proven (both fresh wire IR and the full corpus): ZERO connected
+actors (≥1 port or ≥1 relation) are ever caught** — the marker + length-1 gate is exact.
+
+### 8.3 Decision = GO (a clean precision win, not the marginal `.2b` situation)
+
+Unlike `.2b` (noise-dominated, would mislead), `.1b.iv` is unambiguous: the 21 phantoms are pure
+generic-vocabulary noise (the word appeared, nothing else), exactly bar #1's "every actor is a
+real protocol agent, zero noise". The owner's completeness north star is honoured by KEEPING every
+grounded 0/0 agent (AXI `transmitter`, SWD `host`, GIC `arbiter`) — pruning only the unambiguous
+phantoms, never the broader PROSE-GROUNDED set (which §7.3 showed has no clean
+genuinely-declared discriminator). Implemented at `build_intent_actors` (the single place
+responsibilities are assembled); `.isf` byte-identical (the emitter lowers signals/behaviors, never
+the raw `actors[]`); WIRE-BASED-100 gold fields byte-identical → held 1.000 on the fresh eval. See
+KM card `[[agent-pure-inferred-phantom-drop]]` and `docs/tasks/KG-ISF-COMPLETENESS.md` (`.1b.iv`).

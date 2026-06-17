@@ -554,6 +554,30 @@ fn build_intent_actors(context: &IntentContext) -> Vec<IntentActor> {
             );
         }
 
+        // KG-ISF-COMPLETENESS.1b.iv — drop a Class-C PURE-INFERRED phantom actor. The
+        // SemanticIR Phase-2 role-term scan (`build_actors`, semantic.rs) mints a generic
+        // role-term actor (`agent`/`controller`/`producer`/…) whenever a statement merely
+        // MENTIONS the word, leaving it with zero ports, zero relations, and — when the
+        // document attaches nothing else — only the single term-scan provenance marker as a
+        // responsibility. Such an actor is generic-vocabulary noise, not a real protocol agent
+        // (north-star bar #1: every actor is a real agent, zero noise), and it never reaches
+        // the `.isf` (zero ports → no signal/behavior lowered). The drop is keyed purely on
+        // STRUCTURE, never a chip-name list (ADR 0006), and is provably safe: a grounded
+        // zero-evidence actor keeps a phase ("participate in …") or contract responsibility
+        // (len > 1), and a connected actor carries the relation-evidence summary — so neither
+        // matches the pure-inferred marker. Measured (1b.iv, fresh post-`.1a`/`.1b` IR): drops
+        // exactly the 21 corpus-wide phantoms across 16 docs (wire docs: APB `controller`,
+        // AHB `agent`) with zero connected or grounded actors touched, `.isf` byte-identical,
+        // WIRE-BASED-100 held.
+        if responsibilities.len() == 1
+            && responsibilities
+                .iter()
+                .next()
+                .is_some_and(|role| is_pure_inferred_phantom_role(role))
+        {
+            continue;
+        }
+
         actors.push(IntentActor {
             actor_id: actor.actor_id.clone(),
             actor_name: actor.actor_name.clone(),
@@ -563,6 +587,20 @@ fn build_intent_actors(context: &IntentContext) -> Vec<IntentActor> {
     }
 
     actors
+}
+
+/// KG-ISF-COMPLETENESS.1b.iv: recognise the SemanticIR Phase-2 role-term scan's PURE-INFERRED
+/// provenance marker. `build_actors` (semantic.rs) sets `role_summary` to
+/// ``"semantic role inferred around `<term>` evidence"`` for an actor minted solely because a
+/// statement mentioned a generic role term. That exact template is distinct from the
+/// relation-evidence summary
+/// (``"semantic role inferred from actor-signal relation evidence around `<name>`"``, which a
+/// connected actor carries) and the `"semantic channel inferred …"` channel summary, so
+/// matching its SHAPE — never a name list (ADR 0006) — uniquely identifies a term-scan-only,
+/// zero-port, zero-relation phantom. The `pure_inferred_phantom_marker_matches_producer_template`
+/// drift-guard test pins this detector to the producer template in semantic.rs.
+fn is_pure_inferred_phantom_role(role: &str) -> bool {
+    role.starts_with("semantic role inferred around `") && role.ends_with("` evidence")
 }
 
 fn build_behaviors(context: &IntentContext, actor_ids: BTreeSet<String>) -> Vec<BehaviorIntent> {
@@ -4792,6 +4830,102 @@ mod tests {
                 .iter()
                 .any(|r| r.contains("Address phase")),
             "actor must participate in phase when supporting statements overlap (even with empty sections)"
+        );
+    }
+
+    // KG-ISF-COMPLETENESS.1b.iv — drift guard: the pure-inferred phantom detector must match
+    // exactly the marker `build_actors` (semantic.rs) produces, and must NOT match the
+    // relation-evidence or channel summaries. If the producer template ever changes, this test
+    // fails so the detector is updated in lockstep.
+    #[test]
+    fn pure_inferred_phantom_marker_matches_producer_template() {
+        // The exact string the SemanticIR Phase-2 role-term scan emits (semantic.rs:3190).
+        let produced = format!("semantic role inferred around `{}` evidence", "controller");
+        assert!(
+            super::is_pure_inferred_phantom_role(&produced),
+            "detector must recognise the producer's term-scan marker template"
+        );
+        // The relation-evidence summary a CONNECTED actor carries must NOT match.
+        let relation = format!(
+            "semantic role inferred from actor-signal relation evidence around `{}`",
+            "Manager"
+        );
+        assert!(
+            !super::is_pure_inferred_phantom_role(&relation),
+            "detector must NOT match the relation-evidence role summary"
+        );
+        // The grouped-interface channel summary must NOT match.
+        assert!(
+            !super::is_pure_inferred_phantom_role(
+                "semantic channel inferred from grouped interface signals: HCLK, HRESETN"
+            ),
+            "detector must NOT match the channel role summary"
+        );
+    }
+
+    // KG-ISF-COMPLETENESS.1b.iv — a Class-C phantom (only the term-scan marker as its sole
+    // responsibility) is dropped, while a grounded zero-evidence actor (phase participation)
+    // and any actor with a real prose/contract responsibility are kept.
+    #[test]
+    fn build_intent_actors_drops_pure_inferred_phantom_but_keeps_grounded() {
+        let phantom_role = "semantic role inferred around `controller` evidence".to_string();
+        let context = super::IntentContext {
+            semantic_actors: vec![
+                // (1) PURE-INFERRED phantom: only the term-scan marker, no phase, no contract.
+                super::SemanticActorContext {
+                    actor_id: "actor_controller".to_string(),
+                    actor_name: Some("controller".to_string()),
+                    role_summary: phantom_role.clone(),
+                    supporting_statement_ids: vec!["stmt_phantom".to_string()],
+                    supporting_section_ids: vec![],
+                },
+                // (2) SECTION+INFERRED: same marker shape but a phase overlaps → kept.
+                super::SemanticActorContext {
+                    actor_id: "actor_agent".to_string(),
+                    actor_name: Some("agent".to_string()),
+                    role_summary: "semantic role inferred around `agent` evidence".to_string(),
+                    supporting_statement_ids: vec!["stmt_phase".to_string()],
+                    supporting_section_ids: vec![],
+                },
+                // (3) PROSE-GROUNDED: a contract attaches a real sentence → kept.
+                super::SemanticActorContext {
+                    actor_id: "actor_arbiter".to_string(),
+                    actor_name: Some("arbiter".to_string()),
+                    role_summary: "semantic role inferred around `arbiter` evidence".to_string(),
+                    supporting_statement_ids: vec!["stmt_contract".to_string()],
+                    supporting_section_ids: vec![],
+                },
+            ],
+            phases: vec![super::PhaseContext {
+                phase_id: "phase_arb".to_string(),
+                summary: "arbitration phase".to_string(),
+                supporting_statement_ids: vec!["stmt_phase".to_string()],
+                supporting_section_ids: vec![],
+            }],
+            invariants: Vec::new(),
+            assertions: Vec::new(),
+            contracts: vec![super::ContractContext {
+                contract_id: "contract_arb".to_string(),
+                statement: "The arbiter grants access to one Manager at a time.".to_string(),
+                actor_ids: vec!["actor_arbiter".to_string()],
+            }],
+            gates: Vec::new(),
+            abstractions: Vec::new(),
+            residual_decisions: Vec::new(),
+        };
+        let actors = super::build_intent_actors(&context);
+        let ids: Vec<&str> = actors.iter().map(|a| a.actor_id.as_str()).collect();
+        assert!(
+            !ids.contains(&"actor_controller"),
+            "pure-inferred phantom `controller` must be dropped, got {ids:?}"
+        );
+        assert!(
+            ids.contains(&"actor_agent"),
+            "phase-grounded `agent` must be kept, got {ids:?}"
+        );
+        assert!(
+            ids.contains(&"actor_arbiter"),
+            "contract-grounded `arbiter` must be kept, got {ids:?}"
         );
     }
 
