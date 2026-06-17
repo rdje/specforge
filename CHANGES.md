@@ -1,3 +1,35 @@
+### KG-ISF-COMPLETENESS.4 — bar #5/#6 behavior/temporal lowering-completeness re-assessed on the broader 78-doc corpus (measurement-first, read-only, docs-only)
+`.2` measured ISF-lowering fidelity over 36 IntentIR docs; `CORPUS-COVERAGE.0` then doubled the corpus to 78
+(register/coherency/command/profile-heavy). This slice re-checks bar #5 (every behavior/temporal rule carried or
+recorded as an explicit residual — no silent drop) + bar #6 (round-trip) at the new scale, the resume-pointer
+standing candidate (b). No code change.
+- **Method:** read-only Python faithfully replicating the three `IsfIr::from_intent_ir` `(rule)` filters
+  (`crates/specforge/src/ir/isf_ir.rs`) over all 78 `intent_ir.json` — `signal_names` = `interfaces[].signal_records`
+  names minus clock/reset; `conditional_rules`/`signal_constraints`/`temporal_invariants` each `continue`-skip with
+  NO residual when the subject is empty/undeclared; `temporal_rules`/`actor_contracts` residualize.
+- **78-doc breakdown:** `conditional_rules` 2237 total / 516 lower / 1670 no-consequent / **51 undeclared-named**;
+  `signal_constraints` 369 / 287 / 0 / **82**; `temporal_invariants` 29343 / 286 / 29030 empty-subject / **27**;
+  residualizing path `temporal_rules` 320 + `actor_contracts` 211. The 30 700 empty-subject/no-consequent drops are
+  correctly silent ("absence is not an event").
+- **The 160 undeclared-NAMED-subject drops** (the only genuine bar-#5 silent-loss candidate) were characterised
+  item-by-item: 5 already on the register surface; the other 155 are **field content + noise, NOT wire intent** —
+  register/message FIELD mnemonics (NVMe `MTFA`/`HMDLAL`, CCIX `SAMH`/`ESMD`, RISC-V `DC.tc.SXL`; homed on the field
+  surfaces by design — the `.isf` does not lower fields), DTI message-field obligations leaked into
+  `signal_constraints` (DTI carries **no `message_field_records`**), prose/hex noise (`DMA`/`TLB`/`PCI`/`IBM`/`FFFF`/
+  `Reserved`/`this bit`), and the ATP `ihi0082` cluster of real AXI names from **garbled** VLM fragments
+  (`"RREADY is RBR"`). **0 undeclared/silent drops on all four wire docs** (re-confirmed at 2× scale).
+- **Conclusion: bar #5/#6 HOLDS on the broader corpus — no buildable lowering-residual lever.** The adapter's silent
+  skip of an undeclared-subject rule is CORRECT (field obligations route upstream to the field surface; prose/VLM
+  noise filters upstream — never residualize at the adapter, which would reintroduce exactly the noise `.2`/`.2b`
+  rejected). CONFIRMS + extends `.2` to the doubled corpus.
+- **Spun-out grounded observations** (each needs its own measurement-first ownership): (1) **DTI `ihi0088`
+  message-field recognition gap** → `EXTRACTION-QUALITY-GAUGE.FIELD`/`PDF-VARIANT-DIGESTION` (most actionable next);
+  (2) signal-inventory prose noise (`AMBA`/`ARM`/`APCI` minted as DTI signals); (3) ATP VLM-fragment quality.
+- **Deliverables:** `docs/research/behavior-temporal-lowering-completeness-78doc.md`; KM card
+  `behavior-temporal-lowering-broader-corpus` (KNOWLEDGE_MAP 104 facts / 719 keys). ADR-0006 (universal counts,
+  structural classification, no name list). **Gates:** docs-only — WIRE-BASED-100 untouched (no code);
+  `scripts/check_memory_architecture.sh` + knowledge-map derive-and-diff green.
+
 ### KG-ISF-TRANSACTIONS.2m — deterministic AXI-family channel-membership lever (CODE, measurement-first)
 Builds the `.2l` Q1 finding into code: a recognized transaction's `.2c`/`.2k` signal-set membership is now grouped
 by the **channel** the document declares each signal belongs to, recovered DETERMINISTICALLY (no VLM) from the

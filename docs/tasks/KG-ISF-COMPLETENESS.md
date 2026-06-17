@@ -59,7 +59,7 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 
 ## Task Tree
 
-- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface, done), `.2` (ISF lowering-fidelity), `.3` (relation-completeness — bar #2)
+- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface, done), `.2` (ISF lowering-fidelity), `.3` (relation-completeness — bar #2), `.4` (behavior/temporal lowering-completeness — bar #5/#6, broader corpus)
 - ID: `KG-ISF-COMPLETENESS.0` · Status: `done` (`2026-06-16`, docs-only ownership/scoping slice) · Goal:
   own the north star, define the checkable bar, record the measured baseline, reverse the "defer ISF"
   steer in the live docs. No code (doctrine: own before touching). Memory `project_kg_isf_completeness`.
@@ -364,8 +364,47 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   detector in `validate` so a stale downstream artifact silently dropping relations is surfaced, not hidden
   (candidate code slice — serves "the KG must be COMPLETE"). ADR-0006. Report
   `docs/research/relation-completeness-measurement.md`; KM `[[relation-completeness-staleness-vs-absence]]`.
+- ID: `KG-ISF-COMPLETENESS.4` · Status: `done` (`2026-06-17`, read-only measurement, docs-only) · Goal:
+  **bar #5/#6 re-assessment on the broader 78-doc corpus** — `.2` measured ISF-lowering fidelity over 36
+  docs; `CORPUS-COVERAGE.0` then doubled the corpus to 78 (register/coherency/profile-heavy), so the
+  resume-pointer standing candidate (b) was to re-check whether behavior/temporal rules are still
+  carried-or-residual (no silent drop) at the new scale. **Measured (faithful Python replication of the
+  three `IsfIr::from_intent_ir` `(rule)` filters over all 78 `intent_ir.json`):** `conditional_rules` 2237
+  total / 516 lower / 1670 no-consequent / **51 undeclared-named**; `signal_constraints` 369 / 287 / 0 /
+  **82**; `temporal_invariants` 29343 / 286 / 29030 empty-subject / **27**; the residualizing path
+  (`temporal_rules` 320 + `actor_contracts` 211) is bar-#5-safe by construction
+  (`[[isf-temporal-lowering-no-silent-drop]]`). The 30 700 empty-subject/no-consequent drops are correctly
+  silent ("absence is not an event"). The **160 undeclared-NAMED-subject drops** (the only genuine bar-#5
+  silent-loss candidate) were characterised item-by-item: 5 already on the register surface; the other 155
+  are **field content + noise, NOT wire intent** — register/message FIELD mnemonics (NVMe `MTFA`/`HMDLAL`,
+  CCIX `SAMH`/`ESMD`, RISC-V `DC.tc.SXL`; homed on the field surfaces by design — the `.isf` does not lower
+  fields), DTI message-field obligations leaked into `signal_constraints` (DTI carries **no
+  `message_field_records`** — a field-recognition gap, spun out), prose/hex noise (`DMA`/`TLB`/`PCI`/`IBM`/
+  `FFFF`/`FFFFFFFF_FFFFFFFF`/`Reserved`/`this bit`), and the ATP `ihi0082` cluster of real AXI names from
+  **garbled** VLM fragments (`"RREADY is RBR"`). **0 undeclared/silent drops on all four wire docs**
+  (re-confirmed at 2× scale). **Conclusion: bar #5/#6 HOLDS on the broader corpus — no buildable
+  lowering-residual lever; the adapter's silent skip of an undeclared-subject rule is CORRECT** (the genuine
+  gaps are upstream: route field obligations to the field surface / filter prose noise — never residualize
+  at the adapter, which would reintroduce exactly the noise `.2`/`.2b` rejected). CONFIRMS + extends `.2`
+  to the doubled corpus. ADR-0006 (universal counts, structural classification, no name list).
+  **Spun-out grounded observations** (each needs own measurement-first ownership): **(1)** DTI `ihi0088`
+  message-field recognition gap → `EXTRACTION-QUALITY-GAUGE.FIELD`/`PDF-VARIANT-DIGESTION` (most
+  actionable); **(2)** signal-inventory prose noise (`AMBA`/`ARM`/`APCI` minted as DTI signals) →
+  signal-precision; **(3)** ATP VLM-fragment quality. Report
+  `docs/research/behavior-temporal-lowering-completeness-78doc.md`; KM
+  `[[behavior-temporal-lowering-broader-corpus]]`. `[[project_kg_isf_completeness]]` /
+  `[[feedback_not_complete_attack_substantive_gaps]]`.
 
 ## Changelog
+
+- `2026-06-17`: **`.4` measurement DONE** (read-only, docs-only) — bar #5/#6 re-assessment on the broader
+  78-doc corpus (after `CORPUS-COVERAGE.0` doubled it 36→78). Faithfully replicated the three
+  `from_intent_ir` `(rule)` filters: 160 undeclared-named-subject drops are field content + prose/VLM noise,
+  not wire intent (0 on all 4 wire docs); the adapter's silent skip is correct; bar #5/#6 HOLDS (confirms +
+  extends `.2`/`.2b`). Spun out the DTI message-field-recognition gap (most actionable next), signal-
+  inventory prose noise, and ATP VLM-fragment quality. Report
+  `docs/research/behavior-temporal-lowering-completeness-78doc.md`; KM
+  `behavior-temporal-lowering-broader-corpus`.
 
 - `2026-06-17`: **`.3` measurement DONE** (read-only; owner-directed substantive push after the owner
   pushed back on the "buildable frontier exhausted" framing). Bar #2 relation-completeness: the 0-relation

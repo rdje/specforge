@@ -1,4 +1,39 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-COMPLETENESS.4 (`2026-06-17`) — bar #5/#6 behavior/temporal lowering-completeness, broader 78-doc corpus (measurement, docs-only)
+
+**Context.** `KG-ISF-COMPLETENESS.2` measured ISF-lowering fidelity over 36 IntentIR docs and concluded bar #6 is
+already honest for grounded wire intent (`[[isf-lowering-fidelity-gauge]]`). `CORPUS-COVERAGE.0` then built the
+corpus out **36 → 78** docs — adding the register/coherency/command/profile docs (NVMe, AMD-IOMMU, VT-d, CCIX×4,
+RISC-V-IOMMU, CHI-C2C, DTI, SMMU, ATP) most likely to stress the lowering. The resume-pointer standing candidate (b)
+was to re-assess bar #5 (no silent behavior/temporal drop) + bar #6 at the new scale. This is that re-assessment.
+
+**Method.** Read-only Python over `generated/intent_ir/*/intent_ir.json` (78 docs), faithfully replicating the three
+`IsfIr::from_intent_ir` `(rule)` filters (`isf_ir.rs:1055/1075/1092` — each `continue`-skips with no residual when the
+subject is empty/undeclared) and the `signal_names` construction (`:673-719`, all `signal_records` names minus
+clock/reset). The `temporal_rules`/`actor_contracts` path residualizes by construction
+(`[[isf-temporal-lowering-no-silent-drop]]`).
+
+**Finding — the named-subject decomposition is the key insight `.2`/`.2b` only saw at 36-doc scale.** The drops split
+three ways: (a) 30 700 empty-subject/no-consequent — *not rules*, correctly silent ("absence is not an event"); (b) 160
+undeclared-NAMED-subject — the only genuine bar-#5 candidate; (c) the residualized temporal-contract path (bar-#5 safe).
+Item-inspecting the 160: 5 already on the register surface, 155 elsewhere-uncovered but all **field mnemonics / DTI
+message-field paths / prose-hex noise / garbled-VLM fragments** — *not* wire intent. **0 on all 4 wire docs.**
+
+**Design conclusion — NO-BUILD for an adapter lowering residual.** The adapter's silent skip of an undeclared-subject
+rule is the *correct* behavior: a register/message-field obligation must be routed upstream to the field surface (the
+`.isf` does not lower fields by design — residualizing at the adapter would mask the upstream issue and reintroduce the
+noise `.2`/`.2b` rejected), and a prose/hex/VLM-fragment subject must be filtered upstream (subject precision). So bar
+#5/#6 HOLDS at 2× corpus scale; the genuine gaps are upstream and spun out (DTI message-field recognition is the most
+actionable). This is a confirmation-and-extension of `.2`, not a new gap — but a *grounded* one: it converts the
+36-doc `.2`/`.2b` "noise-dominated, don't residualize" intuition into a measured, item-level decomposition over the
+full corpus, and it surfaces the DTI field-recognition gap as the next substantive lever.
+
+**Why not just trust `.2`.** `.2`/`.2b` lumped the named-subject drops into the 17k and rejected the whole set as
+noise. Doubling the corpus with register/message docs is exactly the stress that could have turned the named-subject
+subset into a real silent-loss gap (e.g. if those docs' field obligations were genuine wire rules). Measuring proved
+they are not — and located the actual upstream gap (DTI). Report:
+`docs/research/behavior-temporal-lowering-completeness-78doc.md`.
+
 ## KG-ISF-TRANSACTIONS.2m (`2026-06-17`) — deterministic AXI-family channel-membership lever (CODE)
 
 **Context.** `.2l` measured that AXI per-signal phase membership is recoverable DETERMINISTICALLY (the VLM lever is
