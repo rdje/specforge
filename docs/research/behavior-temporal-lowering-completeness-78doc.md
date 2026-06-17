@@ -114,6 +114,17 @@ measurement-first ownership before any code:
   prose pattern appear in other docs? what precision gate keeps it from minting fields out of arbitrary
   prose?) + full `run_ci`/`kg-bench`/WIRE-BASED-100 re-verification. **This is the most actionable next
   gap, and a fresh-session-appropriate build (design-heavy, touches the extraction machinery).**
+  **Generality MEASURED (`2026-06-17`, read-only over all 79 `source_ir.json`) → GENERAL, GO:** the
+  `"<Name>, bit [N]"` / `"<Name> bits [hi:lo]"` prose field-definition form appears in **13 / 79 docs**
+  (1499 matches), concentrated in the register/coherency architecture specs — SMMU `ihi0070` 421, ARM Debug
+  v6 `ihi0074` 365, GIC `ihi0069` 328, **DTI `ihi0088` 173**, CoreSight `ihi0029` 170, ACC `ihi0076` 30,
+  then a long noise tail (1–5 matches). So the prose-field extractor is a **corpus-wide lever (~6
+  high-value docs)**, not DTI-only. **Precision is the crux:** the same scan also matches descriptive prose
+  (`IMPLEMENTATION DEFINED, bits [31:0]`; `When reporting a virtual SEI, bits[24:0] …`), so the build MUST
+  gate structurally — field name scoped to a register/message section, bit ranges that tile, never firing
+  on free descriptive prose (the `.1a` agent-identity-gate philosophy, applied to field defs; ADR-0006, no
+  name list). Recommended home: a new `PDF-VARIANT-DIGESTION` leaf (sibling of the `.10a`–`.10e`
+  table-format field recognizers), measurement-first on the precision gate.
 - **Signal-inventory prose noise on register-heavy docs** (signal-precision): DTI's declared
   `signal_records` include prose acronyms minted as signals (`AMBA`, `ARM`, `APCI`) — the same class of
   precision issue the agent-identity gate (`.1a`) addressed for actors, here on the signal inventory.
