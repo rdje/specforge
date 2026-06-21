@@ -1,3 +1,18 @@
+### CORPUS-COVERAGE.2 — re-ingest #20: GIC-400 TRM (`ddi0471`, 57pp) — healthy register/TRM-phase refresh
+Fresh-session PNT slice (20 of 57 normalized-missing docs done); first of the register/TRM phase pivot after the two
+thin non-AMBA protocol findings.
+- **Re-ingest:** Docling CPU, 57 pages / 38 visual / 0 residuals; RAM steady 74–77% free. Cascade: `evidence` (873
+  statements) → `semantic` → `intent` → `adapt`.
+- **Result (healthy, NOT thin):** 5 of 25 Docling tables classify as `signal_description` → a 16-signal
+  AXI-slave-interface `.isf` (`a_4_axi_slave_interface.isf`) with **5 transactions + 4 storage (reset) + 6 relations**;
+  real `fsmgen --strict --check` success / 0 diagnostics; `validate` no stage-staleness, score 56/100.
+- **Registers modest:** register_records 3→4 only — GIC-400's registers largely sit in 14 `unknown`-classified tables
+  (an older/different table style than GIC-600's `.10c`-shaped 15→33), a minor Lever-D recall opportunity rather than the
+  marquee `.10c` gain. Confirms the register/TRM phase yields healthy multi-signal `.isf` even when the big `.10c` jump
+  doesn't apply to a given doc.
+- **Gates:** no extraction code change → WIRE-BASED-100 + register/wire golds + `kg-bench` orthogonal; memory-arch +
+  knowledge-map gates green.
+
 ### CORPUS-COVERAGE.2 — re-ingest #19: OpenCAPI 4.0 TL Arch (240pp) — honest table-recognition-gap finding
 Fresh-session PNT slice (19 of 57 normalized-missing docs done). OpenCAPI 4.0 Transaction-Layer Architecture re-ingested
 with the current binary; like Wishbone, the result is an honest extraction-gap measurement, not a surface gain.
