@@ -59,7 +59,7 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 
 ## Task Tree
 
-- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface, done), `.2` (ISF lowering-fidelity; `.2a.i` width done, `.2a.ii` direction done — initiator-perspective, owner-authorized), `.3` (relation-completeness — bar #2), `.4` (behavior/temporal lowering-completeness — bar #5/#6, broader corpus)
+- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface, done), `.2` (ISF lowering-fidelity; `.2a.i` width done, `.2a.ii` direction done — initiator-perspective, owner-authorized, `.2a.iii` module-name HDL-sanitization done — owner-chosen), `.3` (relation-completeness — bar #2), `.4` (behavior/temporal lowering-completeness — bar #5/#6, broader corpus)
 - ID: `KG-ISF-COMPLETENESS.0` · Status: `done` (`2026-06-16`, docs-only ownership/scoping slice) · Goal:
   own the north star, define the checkable bar, record the measured baseline, reverse the "defer ISF"
   steer in the live docs. No code (doctrine: own before touching). Memory `project_kg_isf_completeness`.
@@ -375,6 +375,44 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   residual. KM card `isf-initiator-perspective-direction`. Book `pipeline/isf-adapter.md` "Which way does each signal
   point?". `[[project_kg_isf_completeness]]` /
   `[[feedback_no_hardcoded_chip_spec_names]]` / `[[feedback_isf_no_hacks]]`.
+- ID: `KG-ISF-COMPLETENESS.2a.iii` · Status: `done` (`2026-06-21`, owner-chosen via AskUserQuestion — "Fix
+  ISF emitter bug B"; LANDED + verified) · Goal: **HDL-sanitize the emitted `.isf` MODULE NAME so a prose-fragment initiator
+  actor name no longer breaks the WHOLE `.isf`.** Surfaced by `CORPUS-COVERAGE.2` (re-ingest #14, GIC-600):
+  FSMGen `--strict --check` rejects the whole file with `Malformed top-level FSM source
+  '?fsm:redistributor→_distributor…'. expects '?fsm:name' with an HDL-identifier-compatible module name
+  ([A-Za-z_]\w*)`. Root cause: `derive_isf_actor_name` (`ir/adapters.rs`, the `.2a.ii` initiator-named module)
+  does its OWN minimal `.replace([' ', '-', '.'], "_")`, which leaves the arrow `→` (and any other
+  non-`[A-Za-z0-9_]` char) in the name, so the `(actor <name>)` header — and FSMGen's derived `?fsm:<name>` —
+  is a malformed identifier. **Design (correctness-checked before coding):** (1) `from_intent_ir` re-derives the
+  initiator INTERNALLY and raw for direction matching (`isf_ir.rs:684`), so the passed `actor_name` is used ONLY
+  for the module LABEL — sanitizing it CANNOT break initiator port-matching (verified). (2) flip the existing
+  `sanitize_isf_name` (`ir/isf_ir.rs`) from a char DENYLIST (which enumerates ASCII punctuation but misses `→`
+  / unicode — and is itself an anti-pattern per `[[feedback_avoid_denylists_prefer_structural]]`) to a char
+  ALLOWLIST: keep `[A-Za-z0-9_]`, map every other char to `_` — exactly FSMGen's `[A-Za-z_]\w*` contract,
+  universal, no name list (ADR 0006). The allowlist is byte-identical to the denylist on every ASCII-punctuation
+  input already covered (the existing unit cases + the wire-gold signal names are pure alphanumeric), so it ONLY
+  changes previously-broken names (`→`/unicode) → a fix, never a regression. (3) route `derive_isf_actor_name`'s
+  module-name through the shared `sanitize_isf_name` (make it `pub(crate)`) so the module label and the internal
+  signal/rule/register identifiers obey ONE rule (no drift), and clean names (`Manager`→`manager`,
+  `Requester`→`requester`, `debugger`) stay byte-identical. **Acceptance / gates (hard):** GIC-600's `.isf` module
+  header becomes a valid HDL identifier and its FSMGen module-name error clears; the 4 wire-gold `.isf` +
+  register golds are BYTE-IDENTICAL (clean names → no-op); WIRE-BASED-100 orthogonal (emitter-only); `kg-bench`
+  156/156; `run_ci.sh` GREEN; ADR-0006; honest residual. Discovery cross-ref: `CORPUS-COVERAGE.2` Lever B.
+  **DONE — what landed:** (1) `sanitize_isf_name` (`ir/isf_ir.rs`) flipped from a char DENYLIST to a char
+  ALLOWLIST — lowercase, keep `[A-Za-z0-9_]`, map every other char (incl. `→`/unicode the denylist missed) to
+  `_`, then the existing collapse-`__`/trim/empty→`unnamed`/leading-digit→`reg_` guards; made `pub(crate)`.
+  (2) `derive_isf_actor_name` (`ir/adapters.rs`) routes all three module-name candidates (initiator /
+  `actors.first()` / `document_key`) through `sanitize_isf_name` instead of its own minimal replace. (3) the
+  existing `sanitize_isf_name` unit test gains the arrow/unicode cases + a validity loop (every output is a valid
+  HDL identifier). **Verified (release binary, `2026-06-21`):** GIC-600's re-ingested `.isf` header →
+  `(actor redistributor_distributor_distributor_redistributor` (valid id) and FSMGen `--strict --check`
+  `success=true`, **0 diagnostics** — the module-name error cleared, the whole `.isf` now lowers strict-valid.
+  **Wire golds BYTE-IDENTICAL:** APB `(actor requester` (0 diag), SWD `(actor debugger` (0 diag), AHB/AXI
+  `(actor manager` showing ONLY the pre-existing `HAUSER`/`ASKSTOP` rule-write conflicts → **0 NEW diagnostics**
+  (allowlist is a no-op on their pure-alphanumeric names). **Gates ALL GREEN:** `run_ci.sh` GREEN (lib **1679**,
+  the existing sanitize test extended — no count change); `kg-bench` 156/156; WIRE-BASED-100 orthogonal
+  (emitter-only); ADR-0006; allowlist-not-denylist (`[[feedback_avoid_denylists_prefer_structural]]`). KM card
+  `isf-module-name-hdl-sanitization`; book `pipeline/isf-adapter.md`. `[[project_kg_isf_completeness]]`.
 - ID: `KG-ISF-COMPLETENESS.2b` · Status: `deferred` (measured-MARGINAL `2026-06-17`, read-only) · Goal:
   **ISF lowering-coverage visibility gauge** — make the lowering's per-surface coverage visible as adapter
   metadata + a `validate <intent-ir>` surface. **Measured marginal → not building now:** `.2` established

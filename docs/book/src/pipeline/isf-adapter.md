@@ -193,6 +193,16 @@ the right agent every time: AHB → *Manager*, APB → *Requester*, AXI → *Man
 *debugger*. The module is then named after that same initiator, so its label and its
 `(input)`/`(output)` columns tell one coherent story.
 
+The chosen name is always made a **valid hardware identifier** before it is written out. A module
+name (like every identifier in the `.isf`) must match `[A-Za-z_]\w*`, so SpecForge passes it through
+one universal rule — keep letters, digits, and underscores; turn anything else into an underscore —
+rather than a hand-written list of "bad" characters (a list can never be complete; it once missed a
+stray arrow `→` that a messy actor label carried, which made the *entire* file unreadable to the
+downstream tool). Clean names are untouched (`Manager` → `manager`), so the wire specs render exactly
+as before; only an otherwise-malformed name is repaired. This is why a sprawling spec whose initiator
+happens to be an awkward phrase still produces a `.isf` the downstream consumer accepts
+(`KG-ISF-COMPLETENESS.2a.iii`).
+
 For example, the APB module is now written from the **Requester's** point of view:
 
 ```text

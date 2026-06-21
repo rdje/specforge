@@ -1661,17 +1661,27 @@ fn initiator_perspective_directions(
         .collect()
 }
 
-fn sanitize_isf_name(raw: &str) -> String {
-    let mut name = raw
-        .replace(
-            [
-                ' ', '-', '.', ':', '/', '#', '+', '*', '(', ')', '\'', ',', '=', '<', '>', '?',
-                '!', '@', '$', '%', '^', '&', ';', '"', '\\', '[', ']', '{', '}', '|', '~', '`',
-                '…',
-            ],
-            "_",
-        )
-        .to_lowercase();
+/// Map an arbitrary label to a valid HDL identifier (`[A-Za-z_]\w*`) — the contract FSMGen's strict
+/// frontend enforces for the top-level module name and for target identifiers. Uses an ALLOWLIST (keep
+/// `[A-Za-z0-9_]`, map every other char to `_`) rather than a denylist of "bad" punctuation: a denylist
+/// can never enumerate every offender, and in fact missed the unicode arrow `→` that a prose-fragment
+/// initiator actor name carries — which malformed the whole emitted `.isf` (KG-ISF-COMPLETENESS.2a.iii,
+/// surfaced by CORPUS-COVERAGE.2 on GIC-600). The allowlist is byte-identical to the prior denylist on
+/// every ASCII-punctuation input the denylist already covered (so the wire golds — whose names are pure
+/// alphanumeric — are unaffected); it only ever changes a name that was already broken. Universal, no
+/// name list (ADR 0006; [[feedback_avoid_denylists_prefer_structural]]).
+pub(crate) fn sanitize_isf_name(raw: &str) -> String {
+    let mut name: String = raw
+        .to_lowercase()
+        .chars()
+        .map(|c| {
+            if c.is_ascii_alphanumeric() || c == '_' {
+                c
+            } else {
+                '_'
+            }
+        })
+        .collect();
     // Collapse consecutive underscores and strip leading/trailing.
     while name.contains("__") {
         name = name.replace("__", "_");
@@ -2386,6 +2396,23 @@ mod tests {
         assert_eq!(sanitize_isf_name("***"), "unnamed");
         assert_eq!(sanitize_isf_name("3state"), "reg_3state");
         assert_eq!(sanitize_isf_name("Mixed/Case#1"), "mixed_case_1");
+        // KG-ISF-COMPLETENESS.2a.iii: the allowlist maps ANY non-[A-Za-z0-9_] char to `_`, including
+        // unicode the prior denylist missed — the arrow `→` from a prose-fragment initiator actor name
+        // (GIC-600's `redistributor → distributor`) that previously malformed the whole `.isf`.
+        assert_eq!(
+            sanitize_isf_name("redistributor→_distributor_distributor→_redistributor"),
+            "redistributor_distributor_distributor_redistributor"
+        );
+        assert_eq!(sanitize_isf_name("café—naïve"), "caf_na_ve");
+        // The result is always a valid HDL identifier ([A-Za-z_]\w*).
+        for s in ["→", "1→2", "  ", "Σλ"] {
+            let out = sanitize_isf_name(s);
+            assert!(
+                out.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
+                    && out.starts_with(|c: char| c.is_ascii_alphabetic() || c == '_'),
+                "sanitized {s:?} -> {out:?} is not a valid HDL identifier"
+            );
+        }
     }
 
     #[test]

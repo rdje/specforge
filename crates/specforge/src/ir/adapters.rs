@@ -184,22 +184,25 @@ fn derive_isf_actor_name(intent_ir: &IntentIr) -> String {
     // chip-name list — ADR 0006); when there is no net-producer initiator (e.g. a register/command
     // doc with no wire actors) we keep the prior `actors.first()` → `document_key` fallback, so those
     // documents' module names are byte-identical.
+    // KG-ISF-COMPLETENESS.2a.iii: route every candidate through the shared HDL-identifier sanitizer
+    // (`sanitize_isf_name`, an allowlist) so the emitted `(actor <name>)` module label is always a valid
+    // FSMGen module name (`[A-Za-z_]\w*`) — a prose-fragment initiator carrying punctuation (e.g. the
+    // arrow `→` in GIC-600's `redistributor → distributor`) no longer malforms the whole `.isf`. This is
+    // ONLY the module LABEL; `from_intent_ir` re-derives the initiator raw for direction matching, so the
+    // sanitized label cannot affect initiator port selection. Byte-identical for clean names
+    // (`Manager`→`manager`, `Requester`→`requester`, `debugger`), so the wire golds are unchanged.
     if let Some(initiator) = crate::ir::isf_ir::select_initiator_actor(&intent_ir.actor_ports)
         && !initiator.is_empty()
     {
-        return initiator.replace([' ', '-', '.'], "_").to_lowercase();
+        return crate::ir::isf_ir::sanitize_isf_name(&initiator);
     }
     if let Some(actor) = intent_ir.actors.first()
         && let Some(name) = &actor.actor_name
         && !name.is_empty()
     {
-        return name.replace([' ', '-', '.'], "_").to_lowercase();
+        return crate::ir::isf_ir::sanitize_isf_name(name);
     }
-    intent_ir
-        .document_identity
-        .document_key
-        .replace([' ', '-', '.'], "_")
-        .to_lowercase()
+    crate::ir::isf_ir::sanitize_isf_name(&intent_ir.document_identity.document_key)
 }
 
 fn count_isf_signals(intent_ir: &IntentIr) -> usize {

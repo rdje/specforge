@@ -1,3 +1,25 @@
+### KG-ISF-COMPLETENESS.2a.iii — ISF module-name HDL-sanitization (CODE, owner-chosen) — a fragment-actor name no longer breaks the whole `.isf`
+The emitted `.isf` module name (and every internal `.isf` identifier) is now HDL-sanitized so a prose-fragment
+initiator actor name carrying punctuation no longer malforms the entire file. Surfaced by `CORPUS-COVERAGE.2`
+re-ingest #14: GIC-600's net-producer initiator was the phrase `redistributor → distributor distributor →
+redistributor`, and the emitted `(actor …)` header kept the unicode arrow `→`, so FSMGen `--strict --check`
+rejected the whole `.isf` with `Malformed top-level FSM source … expects '?fsm:name' with an HDL-identifier-
+compatible module name ([A-Za-z_]\w*)`.
+- **Allowlist, not denylist:** `sanitize_isf_name` (`ir/isf_ir.rs`) was a char denylist of ASCII punctuation —
+  which can never enumerate every offender and in fact missed `→`. It is now an allowlist: lowercase, keep
+  `[A-Za-z0-9_]`, map every other char to `_` (then the existing collapse/trim/empty/leading-digit guards) —
+  exactly FSMGen's `[A-Za-z_]\w*` contract, universal, no name list (ADR 0006; aligns with the owner's
+  prefer-structural-over-denylists steer). `derive_isf_actor_name` (`ir/adapters.rs`) now routes the module
+  label through the same shared sanitizer (one rule, no drift).
+- **Safe by construction:** the allowlist is byte-identical to the old denylist on every ASCII-punctuation input
+  it already covered, so the 4 wire-gold `.isf` are byte-identical (`Manager`→`manager`, `Requester`→`requester`,
+  `debugger`); and sanitizing the module LABEL cannot affect initiator port matching (`from_intent_ir` re-derives
+  the initiator raw internally; `actor_name` is only the label).
+- **Verified:** GIC-600 `.isf` header → `(actor redistributor_distributor_distributor_redistributor`, FSMGen
+  `success=true` / **0 diagnostics** (whole file now lowers strict-valid); wire golds show **0 NEW diagnostics**
+  (APB/SWD pass; AHB/AXI only their pre-existing `HAUSER`/`ASKSTOP` rule-conflicts). `run_ci.sh` GREEN (lib 1679);
+  `kg-bench` 156/156; WIRE-BASED-100 orthogonal. KM `isf-module-name-hdl-sanitization`; book `pipeline/isf-adapter.md`.
+
 ### CORPUS-COVERAGE.2 — re-ingest frontier unblocked: host-local library via git-ignored symlink (ownership/provisioning)
 Owner re-provisioned the host-local spec library (`chipdoc`, 88 PDFs, permanent) to attack substantive gap #2
 (corpus coverage). Chosen provisioning mechanism: a **git-ignored symlink** `.cache/local-references/chipdoc`
