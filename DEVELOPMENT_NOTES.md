@@ -1,4 +1,23 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2 (`2026-06-22`) — re-ingest #17: Avalon Interface Spec (current-binary refresh)
+
+**Context.** Continuation of the corpus re-ingest batch (now 17 of 57 normalized-missing docs). Avalon reached IntentIR
+in `.0` but on stale EvidenceIR (Jun 7), predating the `.10`/`.12`/`.2` extractor families and the `.1a`/`.1b`
+agent-identity gates. This slice re-runs the existing deterministic pipeline with the current binary — no code change.
+
+**Engineering notes.**
+- **Binary freshness check matters.** Before any cascade I compared `find crates -name '*.rs' -newer target/release/specforge`:
+  `isf_ir.rs` was newer than the prior build, so the cached release binary did NOT contain HEAD's `adapt` code. Rebuilt
+  release (`CARGO_BUILD_JOBS=2`, RAM-safe) so the `.isf` lowering ran HEAD. A re-ingest that skipped this would have
+  cascaded through a stale emitter — a silent signoff hazard. Worth doing every re-ingest slice when HEAD has code commits.
+- **Re-ingest value is doc-shaped, not uniform.** For register/message-heavy docs (DTI 0→159 message fields, SMMU 1→89
+  registers) the win is marquee table-family surfaces. For Avalon — a prose/diagram interface spec with no register-field,
+  message-field, or presence tables — the families correctly produce nothing; the win is instead (a) current-binary
+  freshness and (b) KG cleanup via the consolidation gates (relations 126→111, actors 64→50, folding fragment/phantom
+  actors). Reporting "honest absence" rather than forcing a surface is the ADR-0006 / no-fabrication discipline.
+- **Verification.** `.isf` renders (`source.isf`, 26 signals); real `fsmgen --strict --check --json` → success / 0
+  diagnostics; `validate` → no stage-staleness warning. RAM steady 77–78% free, `.4a` guard armed, Ollama idle.
+
 ## ISF-VALUE-WIDTH-EMIT.2 (`2026-06-21`) — emit value-width-aligned ISF literals + complete width recovery (CODE; TREE CLOSED)
 
 **Context.** The `.0/.1` measurement designed the fix and returned GO; `.2` was compile-gated, held until the

@@ -1,3 +1,25 @@
+### CORPUS-COVERAGE.2 — re-ingest #17: Avalon Interface Spec (`683091`, 63pp) — current-binary refresh
+Fresh-session PNT slice continuing the corpus re-ingest batch (17 of 57 normalized-missing docs done). The Intel
+Avalon Interface Specification reached IntentIR back in `.0` but its EvidenceIR was stale (built Jun 7, before the
+`.10`/`.12`/`.2` extractor families and the `.1a`/`.1b` agent-identity gates landed). Re-ingested with the current
+binary and cascaded deterministically.
+- **Setup:** rebuilt the release binary first (it was stale — `isf_ir.rs` newer than the prior build; `CARGO_BUILD_JOBS=2`,
+  1m30s) so the cascade ran HEAD code. Docling CPU re-ingest: 63 pages / 192 visual assets / automation_confidence
+  high / 0 residuals; RAM steady 77–78% free throughout (built-in `.4a` guard armed at 85% used, Ollama idle).
+- **Cascade:** `evidence` (712 spans / 823 statements) → `semantic` → `intent` → `adapt --target isf`.
+- **Refresh result (after vs stale before):** relations **126→111**, actors **64→50** — the current `.1a`/`.1b`/`.1b.iv`
+  agent-identity consolidation gates fold the fragment/phantom actors the stale evidence still carried (a cleaner KG,
+  not a loss); register_records 8 held; transactions 5 held. **Honest absence of message-field/presence surfaces** —
+  Avalon is a prose/diagram interface spec with no register-field/message-field/presence tables, so the `.10b`/`.10f`/`.12`
+  families correctly produce nothing (no fabrication).
+- **`.isf`:** renderable (`source.isf`, 26 signals / 8 storage / 7 enums / 1 transaction body); real
+  `subs/fsmgen/bin/fsmgen --strict --check --json` → **success / 0 diagnostics**. `validate` reports **no stage-staleness
+  warning** (fresh cascade; intent carries 111 relations).
+- **Gates:** no extraction code change (re-run of existing deterministic extractors; `generated/` is git-ignored, so the
+  durable trace is the `.2` log table row) → WIRE-BASED-100 + register/wire golds + `kg-bench` orthogonal by construction
+  (the 4 gold docs are not re-ingested). 15 of 17 re-ingested docs are strict-clean; the 2 strict-FAIL (DTI width-align
+  Lever A, LPI rule-conflict Lever C) are pre-existing spun-out emitter levers, unrelated to Avalon.
+
 ### ISF-VALUE-WIDTH-EMIT.2 — emit value-width-aligned ISF literals + complete width recovery (CODE; TREE CLOSED)
 The emit slice landed once the host had RAM headroom (81% free by `memory_pressure`), closing the
 `ISF-VALUE-WIDTH-EMIT` tree. Two faithful, ADR-0006 numeric-only fixes in `ir/isf_ir.rs`, no name list:

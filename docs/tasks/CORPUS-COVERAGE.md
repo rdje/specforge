@@ -116,8 +116,9 @@ Columns: pages · key new typed surfaces the refresh added (vs the STALE pre-`.1
 | 14 | `100336` GIC-600 TRM | 216 | **register_records 15→33 (+18, `.10c`)**; transactions →10; relations 108→101 | renderable, but strict-FAILS | **1 ERROR** — **module-name not HDL-sanitized**: emitted `?fsm:redistributor→_distributor…` (arrow from a prose-fragment initiator actor); FSMGen requires `[A-Za-z_]\w*` → malformed name breaks the WHOLE `.isf`. 2nd emitter bug → spun-out lever (B). **RESOLVED `2026-06-21` by `KG-ISF-COMPLETENESS.2a.iii`** — module name now HDL-sanitized → GIC-600 re-checks FSMGen `success=true`, **0 diagnostics** |
 | 15 | `ihi0069` GIC arch | **930** | **register_records 17→90 (+73, `.10g`)** — biggest `.10g` gain, matches census; msg 0→2; rel 23 held. **930-page doc ingested with RAM steady ~77% free** (validates `MEMORY-BOUNDED-INGEST` adaptive batch + `.4a` guard) | renderable (`following_pseudocode.isf`, 6 ports) | **0 diagnostics** ✓ (fragment-actor name but HDL-valid → no break) |
 | 16 | `ihi0070` SMMU arch | 717 | **register_records 1→89 (+88, `.10g`)** — matches census; transactions →5; rel 6→2 | renderable (`agent.isf`, 1 port) | **0 diagnostics** ✓ |
+| 17 | `683091` Avalon Interface Spec | 63 | relations 126→111 / actors 64→50 — the current `.1a`/`.1b`/`.1b.iv` agent-identity consolidation gates (which POSTDATE Avalon's stale Jun-7 evidence) fold fragment/phantom actors → cleaner KG; register_records 8 held; transactions 5 held; **no message-field/presence surfaces (Avalon is a prose/diagram interface spec — honest absence; the `.10b`/`.10f`/`.12` table families don't fire)** | renderable (`source.isf`, 26 signals / 8 storage / 7 enums / 1 txn body) | **0 diagnostics** ✓ |
 
-**Cumulative (16 docs, protocol + register/arch phases): hundreds of registers + ~370 message fields surfaced that were ABSENT in stale evidence** — registers e.g. SMMU-arch 1→89, GIC-arch 17→90, MMU-700 13→63, GIC-600 15→33, TMC 2→30; message fields DTI 0→159, CHI-C2C 0→210. 14/16 strict-clean `.isf` (after `.2a.iii` fixed GIC-600); 2 strict-FAIL remain (DTI width-align = Lever A, LPI rule-conflict = Lever C). Remaining queue = the long tail (Avalon/OpenCAPI×14/JEDEC/Wishbone/USB/RISC-V system-IP/VT-d/Cortex-A76/GIC-400/overview/guides).
+**Cumulative (17 docs, protocol + register/arch phases): hundreds of registers + ~370 message fields surfaced that were ABSENT in stale evidence** — registers e.g. SMMU-arch 1→89, GIC-arch 17→90, MMU-700 13→63, GIC-600 15→33, TMC 2→30; message fields DTI 0→159, CHI-C2C 0→210. **15/17 strict-clean `.isf`** (after `.2a.iii` fixed GIC-600; #17 Avalon clean); 2 strict-FAIL remain (DTI width-align = Lever A, LPI rule-conflict = Lever C). #17 Avalon is the first interconnect spec where the refresh's value is consolidation + current-binary freshness (NOT marquee table-family gains) — Avalon carries no register-field/message-field/presence tables, an honest per-doc outcome. Remaining queue = the long tail (OpenCAPI×14/JEDEC/Wishbone/USB/RISC-V system-IP/VT-d/Cortex-A76/GIC-400/overview/guides).
 
 **Spun-out CODE levers (`.2` re-ingest is SURFACING + scoping these — measurement-first; each needs its OWN owned leaf under the `ISF-*-EMIT` family, with WIRE-BASED-100 + register/wire golds + `kg-bench` gating; do NOT fix inside a re-ingest slice):**
 
@@ -125,10 +126,20 @@ Columns: pages · key new typed surfaces the refresh added (vs the STALE pre-`.1
 - **Lever A — ISF value width-alignment.** DTI's 294-port `.isf` fails strict: a rule/drive lowers a width-2 literal (`2'b1`) onto the 1-bit signal `ATST` (FSMGen OperandContract blocks implicit truncation). The emitter doesn't width-align an emitted value to its declared signal width. Value-specific (CHI-C2C with 210 fields is strict-CLEAN → not universal).
 - **Lever C (smaller) — rule-write conflicts.** LPI: `isf_conflicting_rule_writes` on `PREQ` (the `ISF-RULE-CONFLICT-RESIDUAL` family; same as pre-existing AHB `HAUSER`/AXI `ASKSTOP`).
 
-**Running strict tally (16 renderable docs, post-`.2a.iii`):** **14 clean** (incl. GIC-600, now fixed, + GIC-arch + SMMU-arch). **2 FAIL** = DTI (Lever A, value width-align), LPI (Lever C, rule-conflict). Lever B (module-name) ✅ resolved. Watch the long-tail for width-align (A) / rule-conflict (C) recurrence to scope those.
+**Running strict tally (17 renderable docs, post-`.2a.iii`):** **15 clean** (incl. GIC-600, now fixed, + GIC-arch + SMMU-arch + Avalon #17). **2 FAIL** = DTI (Lever A, value width-align), LPI (Lever C, rule-conflict). Lever B (module-name) ✅ resolved. Watch the long-tail for width-align (A) / rule-conflict (C) recurrence to scope those.
 
 ## Changelog
 
+- `2026-06-22`: `.2` re-ingest **#17 — Avalon Interface Spec** (`683091`, 63pp) — fresh-session PNT slice. Docling
+  CPU re-ingest (63 pages / 192 visual assets / automation_confidence high / 0 residuals, RAM steady 77–78% free,
+  built-in `.4a` guard armed, Ollama idle) → deterministic cascade `evidence`→`semantic`→`intent`→`adapt --target isf`.
+  Refresh result: relations 126→111 / actors 64→50 (current `.1a`/`.1b`/`.1b.iv` agent-identity consolidation gates
+  fold fragment/phantom actors that the stale Jun-7 evidence still carried), registers 8 held, transactions 5 held;
+  **honest absence of message-field/presence surfaces** (Avalon carries no such table families). `.isf` renderable
+  (`source.isf`, 26 signals / 8 storage / 7 enums / 1 txn body), **FSMGen `--strict --check` success / 0 diagnostics**;
+  `validate` shows **no stage-staleness warning** (fresh cascade). Release binary rebuilt first (was stale — `isf_ir.rs`
+  newer; `CARGO_BUILD_JOBS=2`, 1m30s) so the cascade ran HEAD. No extraction code change → WIRE-BASED-100 + register/wire
+  golds + `kg-bench` orthogonal by construction. Coverage: 17 of 57 normalized-missing docs re-ingested.
 - `2026-06-21`: `.2` re-ingest batch OWNED + provisioning set up. Owner re-provisioned the host-local spec
   library (`chipdoc`, 88 PDFs); chosen mechanism = a git-ignored symlink `.cache/local-references/chipdoc`
   (no `corpus/` copy → no git bloat; absolute library path never tracked). `/.cache/` added to `.gitignore`.
