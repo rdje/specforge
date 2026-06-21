@@ -1,4 +1,27 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2 (`2026-06-22`) — re-ingest #19: OpenCAPI 4.0 TL Arch (table-recognition-gap finding + regression-ruled-out method)
+
+**Context.** Second consecutive thin protocol result (after Wishbone). A 0-typed-surface result on TWO protocol specs in a
+row demands a regression check before it can be honestly called "doc-style absence" (`feedback_scoring_rigor`).
+
+**Engineering notes — how I ruled out a regression.**
+- **Measure the right field.** My first probe counted `interfaces` (= 0), but I then saw `interfaces=0` even for the AHB
+  WIRE GOLD (which has 66 relations) — so `interfaces` at the evidence top level isn't the signal-inventory home. The
+  load-bearing metric is `actor_signal_relations` (and the source-stage `structured_tables` kinds).
+- **Cross-check known-rich docs on the SAME binary.** DTI (159 message-fields), MMU-700 (63 registers), AHB (66 relations)
+  all still hold → the binary extracts richly when the doc fits a recognized shape. The thin OpenCAPI/Wishbone results are
+  therefore doc-specific, not a code regression.
+- **Pin the gap at the table-classification layer.** `structured_tables` kinds: AHB = 13 `signal_description`/40;
+  OpenCAPI = **0**/246 (219 `unknown`); Wishbone = 1/25 (22 `unknown`). So Docling DID capture the tables; the extractor
+  just can't classify the non-AMBA packet/command/signal-list shapes as signal/field surfaces. That is a precise,
+  well-scoped upstream lever (D) — table-recognition for non-AMBA styles — for its own future leaf, not a re-ingest fix.
+- **Process lesson.** Re-running `evidence` overwrites the stale `evidence_ir.json`, so capture stale COUNTS before the
+  cascade (I did) — but the stale CONTENT is then gone. For a suspected regression, the structured_tables-kind histogram
+  on the FRESH source_ir is the durable, content-grounded discriminator (it survives the cascade).
+
+**Decision.** Honest thin refresh recorded; phase pivots to register/TRM/ISA docs (where `.10` families fire) for the next
+substantive gains, circling back to the OpenCAPI/USB tail (expected thin) later.
+
 ## CORPUS-COVERAGE.2 (`2026-06-22`) — re-ingest #18: Wishbone B4 (honest signal-recall-gap finding)
 
 **Context.** Wishbone B4 is a clean classic bus protocol, so a naive expectation is "re-ingest → rich signals/relations."

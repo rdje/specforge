@@ -1,3 +1,22 @@
+### CORPUS-COVERAGE.2 — re-ingest #19: OpenCAPI 4.0 TL Arch (240pp) — honest table-recognition-gap finding
+Fresh-session PNT slice (19 of 57 normalized-missing docs done). OpenCAPI 4.0 Transaction-Layer Architecture re-ingested
+with the current binary; like Wishbone, the result is an honest extraction-gap measurement, not a surface gain.
+- **Re-ingest:** Docling CPU, 240 pages / 376 visual / automation_confidence high / 0 residuals; RAM steady 73% free.
+  Cascade: `evidence` (3170 spans / 3528 statements) → `semantic` → `intent` (797 free-text constraints) → `adapt`.
+- **Finding:** of **246** fresh Docling tables, **0 classify as `signal_description`** (219 `unknown` / 20 encoding /
+  7 feature_matrix) → relations 17→0, signal_constraints 8→0, 0 message_field_records; `.isf` THIN (`channel.isf`, 1
+  signal), real `fsmgen --strict --check` success / 0 diagnostics; `validate` no stage-staleness (0-vs-0), score 38/100.
+  IntentIR still captures 797 free-text constraints + 1 transaction + 12 actors.
+- **Regression ruled out (rigor):** verified the current binary still produces DTI 159 message-fields / MMU-700 63
+  registers / AHB 66 relations — so the thin OpenCAPI/Wishbone results are doc-style specific, not a code regression.
+  OpenCAPI TL is a packet/command-layer spec whose tables don't match the AMBA `Signal|Direction|Width|Description`
+  shape; the 219 `unknown` tables are the recall opportunity → Lever D family (non-AMBA table recognition), spun-out,
+  not fixed in-slice.
+- **Phase pivot:** the high-value AMBA-style protocol specs are now exhausted (#17–#19 are thin non-AMBA); the next
+  re-ingest phase targets the register/TRM/ISA docs where the `.10` register families demonstrably fire.
+- **Gates:** no extraction code change → WIRE-BASED-100 + register/wire golds + `kg-bench` orthogonal; memory-arch +
+  knowledge-map gates green.
+
 ### CORPUS-COVERAGE.2 — re-ingest #18: Wishbone B4 (`wbspec_b4`, 128pp) — honest signal-recall-gap finding
 Fresh-session PNT slice (18 of 57 normalized-missing docs done). Wishbone B4 re-ingested with the current binary and
 cascaded deterministically; the result is a valuable honest extraction-gap measurement rather than a surface gain.
