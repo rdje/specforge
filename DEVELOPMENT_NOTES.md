@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2 (`2026-06-22`) — re-ingest #18: Wishbone B4 (honest signal-recall-gap finding)
+
+**Context.** Wishbone B4 is a clean classic bus protocol, so a naive expectation is "re-ingest → rich signals/relations."
+The fresh current-binary extraction instead yields **0 interfaces / 0 signal_records → 0 relations** and a 1-signal
+`.isf` — a genuine recall gap, not a re-ingest bug (the stale build was already ~0-1 relations).
+
+**Engineering notes.**
+- **Diagnose before logging a surprising number.** A 0-relation bus protocol could be (a) a broken cascade, (b) a
+  stage-staleness drop, or (c) a true extraction gap. I ruled out (a)/(b) by reading the fresh evidence directly:
+  `interfaces=0`, `signal_records=0`, yet `extracted_statement_count=2041` and IntentIR `constraints=215` / transactions=2
+  / actors=8 — so the pipeline ran fine and captured the obligations; only the typed *wire* surface is empty. That makes
+  it (c): a signal-INVENTORY recall gap, upstream of relations (no signals → no relations possible).
+- **Why Wishbone specifically.** Its signals use the `SIGNAL_O()`/`SIGNAL_I()` suffix notation and are introduced in
+  prose signal-list sections, not in the `Signal | Direction | Width | Description` table shape the current extractors
+  key on. This is exactly the doc-style variance the `PDF-VARIANT-DIGESTION` program exists to chase; it's kin to the
+  parked `.9.10` prose-bus-line lever (which is blocked behind the shallow-parser, no denylists).
+- **Discipline: surface, don't fix in-slice.** The re-ingest tree explicitly forbids fixing a surfaced lever inside a
+  re-ingest slice (it would be a code change without its own owned leaf + gate). Logged as Lever D for a future leaf;
+  committed the honest refresh. The `.isf` is thin but valid (FSMGen strict-clean) — honest residual over fabrication.
+
 ## CORPUS-COVERAGE.2 (`2026-06-22`) — re-ingest #17: Avalon Interface Spec (current-binary refresh)
 
 **Context.** Continuation of the corpus re-ingest batch (now 17 of 57 normalized-missing docs). Avalon reached IntentIR

@@ -1,3 +1,22 @@
+### CORPUS-COVERAGE.2 — re-ingest #18: Wishbone B4 (`wbspec_b4`, 128pp) — honest signal-recall-gap finding
+Fresh-session PNT slice (18 of 57 normalized-missing docs done). Wishbone B4 re-ingested with the current binary and
+cascaded deterministically; the result is a valuable honest extraction-gap measurement rather than a surface gain.
+- **Re-ingest:** Docling CPU, 128 pages / 356 visual assets / automation_confidence high / 0 residuals; RAM steady
+  72–78% free (`.4a` guard armed, Ollama idle). Binary already current (no rebuild). Cascade: `evidence` (2005 spans /
+  2041 statements) → `semantic` → `intent` → `adapt --target isf`.
+- **Finding:** the fresh evidence carries **0 interfaces / 0 signal_records → 0 actor_signal_relations** (the lone
+  stale relation was a fragment the `.1a` gate drops — not a regression; the stale build also had ~1). IntentIR still
+  captures **215 free-text constraints + 2 transactions + 8 actors**, so the intent is present as obligations/behaviors,
+  just not as the typed wire surface. `.isf` renders but THIN (`arbiter.isf`, 1 signal); real `fsmgen --strict --check`
+  → **success / 0 diagnostics**; `validate` → no stage-staleness (0-vs-0 honest absence), score 42/100.
+- **Root cause (read-only probe):** Wishbone documents its signals in the `SIGNAL_O()`/`SIGNAL_I()` suffix-notation +
+  prose signal-list style, which the current signal-table/prose extractors don't recognize. This SURFACES an upstream
+  signal-recall lever (Lever D) for the `PDF-VARIANT-DIGESTION` family (kin to the parked `.9.10` prose-bus-line lever) —
+  NOT an emitter lever, and per the tree rule NOT fixed inside a re-ingest slice (it needs its own owned leaf with the
+  wire-based-100 gate). The re-ingest sweep is doing exactly its job: surfacing which doc styles extract well vs poorly.
+- **Gates:** no extraction code change → WIRE-BASED-100 + register/wire golds + `kg-bench` orthogonal by construction;
+  memory-arch + knowledge-map gates green.
+
 ### CORPUS-COVERAGE.2 — re-ingest #17: Avalon Interface Spec (`683091`, 63pp) — current-binary refresh
 Fresh-session PNT slice continuing the corpus re-ingest batch (17 of 57 normalized-missing docs done). The Intel
 Avalon Interface Specification reached IntentIR back in `.0` but its EvidenceIR was stale (built Jun 7, before the
