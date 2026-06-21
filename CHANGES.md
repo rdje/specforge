@@ -1,3 +1,35 @@
+### ISF-VALUE-WIDTH-EMIT.0/.1 — own + measure ISF value-literal width-alignment (measurement-first, docs-only, GO)
+A new `ISF-*-EMIT` emitter-fidelity tree, spun out of the `CORPUS-COVERAGE.2` re-ingest sweep as "Lever A",
+and picked as the RAM-light PNT slice because the host is a 6.3 GB machine at ~16% free RAM where a Docling
+re-ingest (the other open thread) is unsafe. The ISF emitter copies a `(rule … (SIGNAL value))` value literal
+verbatim (`render_isf_control_expression`, `ir/isf_ir.rs:1493-1495`) and never reconciles its width against the
+signal's declared `(width N)`; FSMGen strict `--check` (`OperandContractValidationSupport.pm`) rejects a literal
+whose **notation width** (digit count — `0x7D`=8, `0b00`=2, **not** value) ≠ the LHS width, requiring an
+"explicit width-aligned source expression" (no implicit truncation).
+- **Measurement (read-only over the 86 persisted `.isf` + intent_ir + real `subs/fsmgen/bin/fsmgen --strict
+  --check` probes, Perl — RAM-safe, no cargo build):** 4 docs / 13 clauses — DTI ATST ×3, AXI+ACE
+  ARTAGOP/BTAGMATCH ×6, AXI-gold AWCMO ×1, trace-bus ATID ×3. **DTI + TRACE confirmed FAIL** on OperandContract
+  (DTI: *"assignment to 'ATST' uses RHS '2'b1' with incompatible width 2 for LHS width 1"*). The AXI docs fail
+  FIRST on the orthogonal `(port expr)` grammar error, masking their width cases.
+- **Key finding — the naive "truncate the value" fix is DISHONEST.** All four signals are emitted at `(width 1)`
+  **even when the IntentIR grounds a wider width** (ATID 7 / ARTAGOP 2): the first-seen signal dedup
+  (`isf_ir.rs:696-700`) takes the first `signal_records` entry (`w=None`→1) and **skips** the later
+  concrete-width record, and `.2a.i` recovery only checks `actor_ports` (ATID has none). The over-width literal
+  is a symptom; ATID `0x7D`=125 is a genuine 7-bit trace-ID value.
+- **GO — probe-validated fix design (`.2`):** (1) recover the grounded width across **all** interface
+  `signal_records` + `actor_ports`; (2) re-render the value literal width-aligned as `W'<radix><digits>` when
+  `value < 2^W`, else **residualize** (the `ISF-RULE-CONFLICT-RESIDUAL` pattern) — never truncate. Bare decimals
+  are unsized and untouched. ADR-0006 numeric-only, no name list. After the fix: ATID → `(width 7)` +
+  `(ATID 7'd125)` (PASS), ARTAGOP → `(width 2)` + `(ARTAGOP 2'b00)` (PASS).
+- **Spun out:** DTI ATST **upstream mis-attribution** (source text's `0b01` belongs to `ATTR_OVR.SHCFG`; ATST is
+  a value of FLOW, not the constrained signal) + the AXI `(port expr)` grammar lever.
+- **Wire-gold blast radius:** only AXI `ihi0022_l` carries one (AWCMO, already failing on `(port expr)`);
+  WIRE-BASED-100 measures extraction F1, not `.isf` bytes → orthogonal by construction.
+- **Gates:** docs-only — `scripts/check_memory_architecture.sh` + knowledge-map derive-and-diff GREEN
+  (110 facts / 772 keys); no Rust/CI/`.isf` change; WIRE-BASED-100 + `kg-bench` untouched by construction. `.2`
+  is compile-gated → HELD until the host has RAM headroom. Report
+  `docs/research/isf-value-width-alignment-measurement.md`; KM card `isf-value-width-operand-contract`.
+
 ### KG-ISF-COMPLETENESS.2a.iii — ISF module-name HDL-sanitization (CODE, owner-chosen) — a fragment-actor name no longer breaks the whole `.isf`
 The emitted `.isf` module name (and every internal `.isf` identifier) is now HDL-sanitized so a prose-fragment
 initiator actor name carrying punctuation no longer malforms the entire file. Surfaced by `CORPUS-COVERAGE.2`

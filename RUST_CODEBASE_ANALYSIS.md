@@ -4,6 +4,29 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-06-21 — ISF-VALUE-WIDTH-EMIT.0/.1: a latent ISF-emitter width bug, measured; no code change yet)
+
+- **No code changed** — this is a measurement-first slice that pins a latent defect in the ISF emitter
+  (`ir/isf_ir.rs`) and designs the fix for the compile-gated `.2`. Two coupled root causes:
+  1. **First-seen signal dedup drops a grounded width.** The signal-collection loop (`isf_ir.rs:696-700`)
+     keeps the *first* `interfaces[].signal_records` entry per name (`if
+     seen_signal_names.contains(name) { continue; }`) and skips later records. When the first entry has
+     `width_hint=None` (→ default 1) and a later entry carries the concrete width (e.g. trace-bus ATID's
+     3rd record = `width 7`), the grounded width is lost. The `.2a.i` recovery (`isf_ir.rs:715-736`) only
+     falls back to `actor_ports[].width_hint`, so a signal with no actor-port (ATID) keeps width 1.
+  2. **Value literals are never width-reconciled.** `render_isf_control_expression`
+     (`isf_ir.rs:1493-1495`) clones the constraint/temporal value literal verbatim; the rule-body emit
+     (`isf_ir.rs:418-432`) writes `(SIGNAL value)` with no width check. FSMGen strict
+     (`OperandContractValidationSupport.pm`) reads a literal's width by notation digit count and requires
+     an exact width-cast match → an over-width literal (`0x7D`→8 bits on width 1) fails HDL pre-generation.
+- **Risk/steering.** The fix is emitter-only and downstream of extraction, so WIRE-BASED-100 is orthogonal
+  (it measures extraction F1, not `.isf` bytes). The `.2` design: recover the grounded width across **all**
+  `signal_records` + `actor_ports`, then re-render value literals width-aligned `W'<radix><digits>` when
+  `value < 2^W`, else **residualize** (the `ISF-RULE-CONFLICT-RESIDUAL` pattern) — never truncate (ADR-0006).
+  Scope is bounded (4 docs / 13 clauses corpus-wide). The DTI ATST case is an *upstream mis-attribution*
+  (SHCFG's value bound to ATST), spun out of this emitter tree. Report
+  `docs/research/isf-value-width-alignment-measurement.md`; KM `isf-value-width-operand-contract`.
+
 ## Session update (2026-06-17 — KG-ISF-TRANSACTIONS.2m: deterministic channel-membership lever; new IR surface)
 - **New typed surface `SignalChannelMembershipRecord` + `EvidenceIr.signal_channel_memberships:
   Vec<SignalChannelMembershipRecord>`** (`ir/evidence.rs`, serde-default + skip-if-empty ⇒ pre-`.2m` artifacts

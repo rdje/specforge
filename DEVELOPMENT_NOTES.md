@@ -1,4 +1,44 @@
 # DEVELOPMENT_NOTES
+## ISF-VALUE-WIDTH-EMIT.0/.1 (`2026-06-21`) — measure ISF value-literal width-alignment (measurement-first, docs-only, GO)
+
+**Context.** Resuming the PNT loop on a 6.3 GB host at ~16% free RAM, where the other open frontier thread (the
+`CORPUS-COVERAGE.2` long-tail Docling re-ingest) is unsafe per the owner's non-negotiable RAM ceiling. So the
+RAM-light spun-out ISF-emitter lever ("Lever A" — value width-alignment) is the right slice, and a
+measurement-first (read-only) phase needs no compile at all.
+
+**The defect.** The ISF emitter lowers a `(rule … (SIGNAL value))` clause by copying the constraint/temporal
+value literal verbatim from the IntentIR (`render_isf_control_expression` →
+`ControlExpressionRecord::Literal { literal } => literal.clone()`, `ir/isf_ir.rs:1493-1495`) and never reconciles
+the literal's width against the target signal's emitted `(width N)`. FSMGen's strict `--check`
+(`OperandContractValidationSupport.pm`, `validate_pre_generation_operand_contract`) rejects a literal whose
+**notation width** (digit count — `0x7D` = 8 bits, `0b00` = 2 bits, `0B01` = 2 bits; *not* the value) differs
+from the LHS signal width, demanding *"an explicit width-aligned source expression"* (it blocks implicit
+truncation/extension). DTI's `(ATST 0B01)` on `(output ATST (width 1))` renders `2'b1` (width 2) onto width 1 →
+fail.
+
+**Measurement (read-only + real FSMGen probes; Perl binary, RAM-safe).** Over the 86 persisted `.isf`: 4 docs /
+13 clauses — DTI ATST ×3, AXI+ACE ARTAGOP/BTAGMATCH ×6, AXI-gold AWCMO ×1, trace-bus ATID ×3. DTI + TRACE
+confirmed FAIL on OperandContract; the AXI docs fail FIRST on the orthogonal `(port expr)` rule-assignment
+grammar (masked). Probe table established FSMGen's semantics: a width-cast `W'<radix><digits>` matching the LHS
+width PASSes (`7'd125`, `2'b00`, `1'b1`); a bare decimal is unsized and PASSes any width; a based literal whose
+notation width ≠ LHS width FAILs.
+
+**The decisive nuance — truncation would be dishonest.** All four signals are emitted at `(width 1)` *even when
+the IntentIR grounds a wider width* (ATID 7 / ARTAGOP 2). Root cause: the emitter's first-seen signal dedup
+(`isf_ir.rs:696-700`) keeps the first `signal_records` entry (often `width=None`→1) and skips a later record that
+carries the concrete width; the `.2a.i` recovery only falls back to `actor_ports` (ATID has none, so its width-7
+third record is lost). So the over-width literal is a *symptom* of an under-emitted width, and ATID `0x7D` = 125
+is a genuine 7-bit value — truncating it would fabricate.
+
+**GO — fix design for `.2` (compile-gated, HELD on RAM):** (1) recover the grounded width across **all** interface
+`signal_records` + `actor_ports`; (2) re-render the value literal width-aligned as `W'<radix><digits>` when
+`value < 2^W`, else **residualize** the clause (the `ISF-RULE-CONFLICT-RESIDUAL` honest-residual pattern), never
+truncate. ADR-0006 numeric-only. Spun out: DTI ATST is an upstream **mis-attribution** (the source text's `0b01`
+belongs to `ATTR_OVR.SHCFG`; ATST is a value of FLOW), and the AXI `(port expr)` grammar is a separate lever.
+Wire-gold orthogonal: only AXI `ihi0022_l` carries one (AWCMO) and it already fails on `(port expr)`;
+WIRE-BASED-100 measures extraction F1, not `.isf` bytes. Report
+`docs/research/isf-value-width-alignment-measurement.md`; KM `isf-value-width-operand-contract`.
+
 ## KG-ISF-COMPLETENESS.2a.ii (`2026-06-18`) — initiator-perspective signal DIRECTION emission (CODE, owner-authorized)
 
 **Context.** `KG-ISF-COMPLETENESS.2` measured that the largest true ISF infidelity is signal direction: the emitter
