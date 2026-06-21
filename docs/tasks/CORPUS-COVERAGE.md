@@ -92,6 +92,14 @@ re-provisioning (`[[feedback_source_pdfs_in_repo]]`).
 - Frontier (active): `CORPUS-COVERAGE.2` — re-ingest the 57 normalized-missing docs from the
   `.cache/local-references/chipdoc` symlink, prioritized protocol-specs-first, one doc per slice.
 
+## `.2` re-ingest log (per doc — current-binary refresh; generated/ is git-ignored, so this table is the durable trace)
+
+Columns: pages · key new typed surfaces the refresh added (vs the STALE pre-`.10`/`.12`/`.2` evidence) · `.isf` render + FSMGen `--strict --check` diagnostics.
+
+| # | doc (key) | pages | refreshed surfaces (after) | `.isf` | fsmgen `--strict` |
+|---|---|---|---|---|---|
+| 1 | `ihi0079` AMBA CXS | 54 | message_field_records 0→1; transactions →2 (recognition now fires); 11 signal ports emitted (CXSDATA/CXSVALID/CXSCRDGNT/…); stale evidence had message/temporal/presence fields ABSENT | renderable (`transmitter.isf`, 11 ports) | **0 diagnostics** ✓ |
+
 ## Changelog
 
 - `2026-06-21`: `.2` re-ingest batch OWNED + provisioning set up. Owner re-provisioned the host-local spec
