@@ -1,6 +1,6 @@
 ---
 id: isf-value-width-operand-contract
-title: FSMGen strict rejects an ISF value literal whose notation width ≠ the target signal width (OperandContract, no implicit truncation); the faithful fix is emit the grounded width + width-align the literal (W'…) or residualize — never truncate (ISF-VALUE-WIDTH-EMIT.1 measured GO 2026-06-21)
+title: FSMGen strict rejects an ISF value literal whose notation width ≠ the target signal width (OperandContract, no implicit truncation); the faithful fix is emit the grounded width + width-align the literal (W'…) or residualize — never truncate (ISF-VALUE-WIDTH-EMIT.1 measured GO 2026-06-21; .2 FIXED + verified 2026-06-21, tree CLOSED)
 answers:
   - "why does the DTI / trace-bus .isf fail FSMGen --strict --check (OperandContract: a value literal wider than the declared signal width)"
   - "how does FSMGen decide a value literal's width (by notation digit count — 0x7D=8 bits, 0b00=2 bits — NOT by value; it requires an exact width-cast W'… match, no implicit truncation/extension; a bare decimal is unsized and fits any width)"
@@ -51,3 +51,17 @@ parsing + width arithmetic only, no name list.
 Governing north star: `[[project_kg_isf_completeness]]` (bar #6). Sibling emitter-fidelity tree:
 `[[register-reset-isf-emit]]`. Orthogonal silent-drop gauge: `[[isf-lowering-fidelity-gauge]]`. FSMGen
 direction/width neutrality: `[[fsmgen-ignores-signal-direction]]`.
+
+**Resolved `2026-06-21` (`ISF-VALUE-WIDTH-EMIT.2`, CODE — tree CLOSED).** Both root causes are now fixed in
+`ir/isf_ir.rs` exactly as the `.1` design specified, ADR-0006 numeric-only: (1) an `interface_widths` aggregate
+(single unambiguous `WidthHint::Numeric > 1` across **all** `interfaces[].signal_records`, conflict→width-1)
+chained ahead of the `.2a.i` `port_widths` in the width fallback, so a width in a non-first record is recovered;
+(2) an `align_rule_drive_widths` post-pass (`parse_sized_literal` / `align_value_to_width` / `ValueAlign` /
+`value_width_residual_packet`, before `dedup_conflicting_rules`) that re-renders an over-wide-but-fitting based
+literal as `W'd<v>` or DROPS the rule with an `isf_value_width_*` residual. Verified on the real
+`subs/fsmgen/bin/fsmgen --strict --check --json`: DTI `(ATST 1'd1)` and trace-bus `(output ATID (width 7))` +
+`(ATID 7'd125)` now report `has_diagnostics: false` (the OperandContract value-width error is CLEARED); the 4
+wire golds carry 0 NEW diagnostics (AHB/AXI keep their pre-existing orthogonal
+`isf_conflicting_rule_writes`/`(port expr)` issues); `scripts/run_ci.sh` GREEN (suite 1682 passed / 0 failed);
+`kg-bench` 156/156. To re-confirm the FIX (not the original failure), run the same `reverify` command above — it
+now returns `[None]` (no diagnostics) on a freshly regenerated `.isf`.

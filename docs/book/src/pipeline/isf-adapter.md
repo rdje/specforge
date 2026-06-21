@@ -573,3 +573,50 @@ to surface as honest residual decisions until FSMGen adds them. And because the
 spec→checkable-property loop now closes *inside* the existing `IntentIR → .isf → FSMGen`
 handoff, a separate SpecForge-side SVA exporter became unnecessary and was retired.
 *Authoritative tracking:* `docs/tasks/FSMGEN-ASSERT-MIGRATE.md`.
+
+### `ISF-VALUE-WIDTH-EMIT` — value literals that match the signal's width
+
+> **Guarantee:** when SpecForge writes a numeric value into a rule — `(ATID 0x7D)` —
+> the number it emits is *exactly as wide as the signal it drives*, and if a value
+> genuinely cannot fit the signal, the rule is set aside as an honest residual rather
+> than quietly chopped down to size.
+
+Here is the small but real problem this tree fixed. A specification might say "drive
+`ATID` to `0x7D`" (that is the decimal number 125, a real 7-bit trace-ID). FSMGen — the
+downstream tool that turns the `.isf` into hardware — is strict about bit widths: it reads
+`0x7D` as an **8-bit** literal (two hex digits, four bits each) and refuses to assign an
+8-bit value onto a signal it believes is 1 bit wide, because silently truncating a number
+is exactly the kind of bug a strict checker exists to catch. SpecForge used to hand the
+value over verbatim, so the `.isf` was rejected before any hardware could be generated.
+
+There were *two* root causes, and fixing only one would not have been honest:
+
+1. **The signal was emitted too narrow.** A signal can be declared in several places in a
+   document, and SpecForge kept the *first* description it saw. When that first description
+   didn't state a width (so it defaulted to 1 bit) but a *later* one said "width 7", the
+   real width was being thrown away. The fix gathers the width from **all** of a signal's
+   descriptions (and from the actor-port graph), and uses the one concrete width they agree
+   on — so `ATID` is now correctly emitted at `(width 7)`. If the descriptions *disagree*,
+   SpecForge stays at the safe 1-bit default rather than guessing.
+
+2. **The value was never width-matched.** Even with the right width, `0x7D` still needs to
+   be written in a form FSMGen accepts. So a final pass re-renders the literal as an explicit
+   width-cast — `7'd125` — *only when the value actually fits the signal* (here 125 fits in
+   7 bits). When a value genuinely does **not** fit, SpecForge does the honest thing: it
+   **drops that one rule and records a residual decision** explaining the mismatch, instead
+   of truncating a real number into a wrong one. Plain decimals (which FSMGen treats as
+   unsized) and enum symbols are left untouched.
+
+The result, checked against the real FSMGen `--strict --check`: the two affected documents
+(the AMBA DTI and the AMBA Trace Bus specs) now pass cleanly, where before they failed with
+an "incompatible width" error. The four wire-protocol gold documents pick up **no new**
+diagnostics, and because this is a pure *emitter* change — it never touches what was
+extracted, only how an already-extracted fact is spelled — the extraction-quality gold
+(WIRE-BASED-100) is unaffected by construction. The whole change is arithmetic over the
+number and the width: there is no list of signal names anywhere (ADR-0006), so it works on
+any chip-specification PDF, not just the ones it was measured on.
+
+Two related issues are deliberately *out* of this tree and tracked separately: an AXI
+rule-assignment grammar gap (`(port expr)`) and a DTI case where the value was attached to
+the wrong signal upstream of the emitter — fixing those here would have meant guessing.
+*Authoritative tracking:* `docs/tasks/ISF-VALUE-WIDTH-EMIT.md`.

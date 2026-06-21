@@ -4,6 +4,30 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-06-21 — ISF-VALUE-WIDTH-EMIT.2: the measured width bug FIXED in the emitter; TREE CLOSED)
+
+- **Code landed (emitter-only, `crates/specforge/src/ir/isf_ir.rs`).** The `.0/.1` design is now implemented and
+  verified end-to-end against the real FSMGen `--strict --check`. Both measured root causes are closed:
+  1. **Grounded width now recovered across all signal records.** `from_intent_ir` adds an `interface_widths`
+     aggregate (single unambiguous `WidthHint::Numeric > 1` across **all** `interfaces[].signal_records`; conflict
+     keeps width-1) and the signal-width fallback chains `interface_widths → port_widths (.2a.i) → 1`. A width in
+     a NON-FIRST interface record (trace-bus `ATID` width 7, no actor-port) is no longer lost to the first-seen
+     dedup → `(output ATID (width 7))`.
+  2. **Value literals now width-reconciled.** A new `align_rule_drive_widths` post-pass (before
+     `dedup_conflicting_rules`) with `parse_sized_literal` / `align_value_to_width` / `ValueAlign` /
+     `value_width_residual_packet` re-renders an over-wide-but-fitting based literal as `W'd<v>` (DTI
+     `0B01`→`1'd1`, trace `0x7D`→`7'd125`) and DROPS a rule whose value overflows the signal width with an
+     `isf_value_width_*` residual — never truncating. Bare decimals / symbols / matching literals untouched.
+- **Surface area.** All new symbols are module-private helpers + one private enum (`ValueAlign`) inside the
+  existing `isf_ir` emitter; no public API, IR-schema, or subsystem-boundary change. The IR types it reads
+  (`WidthHint`, `InterfaceSignalRecord`, `IsfRule`, `ResidualDecisionPacket`) are unchanged. So the architecture
+  map is unchanged; this is depth, not breadth.
+- **Risk/steering.** Emitter-only and downstream of extraction → WIRE-BASED-100 orthogonal by construction
+  (measures extraction F1, not `.isf` bytes), verified by 0-new-diagnostic regeneration of the 4 wire golds.
+  Verified: 47/47 `isf_ir` tests, full suite 1682 passed / 0 failed, `scripts/run_ci.sh` GREEN, `kg-bench`
+  156/156. The remaining ISF-emitter levers (AXI `(port expr)` rule-assignment grammar; DTI ATST upstream
+  mis-attribution) stay spun out as separate ownership boundaries.
+
 ## Session update (2026-06-21 — ISF-VALUE-WIDTH-EMIT.0/.1: a latent ISF-emitter width bug, measured; no code change yet)
 
 - **No code changed** — this is a measurement-first slice that pins a latent defect in the ISF emitter

@@ -678,6 +678,34 @@ impl IsfIr {
         // actor-port graph, used below as a fallback when the flat signal hint
         // defaults to width 1.
         let port_widths = actor_port_concrete_widths(&intent_ir.actor_ports);
+        // ISF-VALUE-WIDTH-EMIT.2: a signal's grounded width can live in a NON-FIRST interface
+        // `signal_record` — the first-seen dedup below keeps only the first record's hint, so a
+        // concrete width declared in a later record (e.g. trace-bus `ATID` width 7 in its 3rd record,
+        // which has NO actor-port so `.2a.i` cannot recover it) is otherwise dropped to the width-1
+        // default. Aggregate a single unambiguous concrete (`Numeric` > 1) width across ALL of a
+        // signal's records; a conflict keeps width-1 (never a guess), mirroring `actor_port_concrete_widths`.
+        let interface_widths: BTreeMap<String, u32> = {
+            let mut by_signal: BTreeMap<String, BTreeSet<u32>> = BTreeMap::new();
+            for iface in &intent_ir.interfaces {
+                for sig in &iface.signal_records {
+                    if let Some(WidthHint::Numeric(n)) = &sig.width_hint
+                        && *n > 1
+                    {
+                        by_signal
+                            .entry(sig.signal_name.clone())
+                            .or_default()
+                            .insert(*n);
+                    }
+                }
+            }
+            by_signal
+                .into_iter()
+                .filter_map(|(signal, widths)| match widths.len() {
+                    1 => widths.into_iter().next().map(|w| (signal, w)),
+                    _ => None,
+                })
+                .collect()
+        };
         // KG-ISF-COMPLETENESS.2a.ii: the grounded actor-relative direction for the protocol's
         // INITIATOR actor (owner-chosen perspective, `2026-06-17`). Empty when there is no net-producer
         // initiator, so the interface stays byte-identical to the pre-`.2a.ii` default-`output` behavior.
@@ -725,7 +753,14 @@ impl IsfIr {
                 // direction — see the `fsmgen-ignores-signal-direction` fact card). A signal
                 // with conflicting graph widths keeps the honest width-1 default — never a guess.
                 let width = if width == 1 {
-                    port_widths.get(&sig.signal_name).copied().unwrap_or(1)
+                    // ISF-VALUE-WIDTH-EMIT.2: prefer a concrete width grounded in ANY of this
+                    // signal's interface records (covers a width in a non-first record), then the
+                    // actor-port graph (`.2a.i`), then the honest width-1 default.
+                    interface_widths
+                        .get(&sig.signal_name)
+                        .copied()
+                        .or_else(|| port_widths.get(&sig.signal_name).copied())
+                        .unwrap_or(1)
                 } else {
                     width
                 };
@@ -1129,6 +1164,21 @@ impl IsfIr {
         // rule on the same signal+guard is dropped (FSMGen strict rejects
         // conflicting drives) rather than producing invalid `.isf`.
         rules.extend(temporal_isf_rules);
+
+        // --- Value width-alignment (ISF-VALUE-WIDTH-EMIT.2) ---
+        // A rule drive whose value literal's notation width differs from the target signal's emitted
+        // width is FSMGen-strict-invalid: the OperandContract blocks implicit truncation and requires
+        // an "explicit width-aligned source expression" (measured DTI `ATST`, trace-bus `ATID`). Re-render
+        // such a literal as a width-aligned `W'd<v>` cast WHEN the value fits the signal width, else DROP
+        // the rule with an honest residual — never truncate or fabricate a value. Runs before dedup so a
+        // re-rendered value participates in conflict detection on its final form.
+        {
+            let signal_widths: BTreeMap<String, u32> =
+                signals.iter().map(|s| (s.name.clone(), s.width)).collect();
+            let (aligned, width_residuals) = align_rule_drive_widths(rules, &signal_widths);
+            rules = aligned;
+            temporal_residuals.extend(width_residuals);
+        }
 
         // --- Dedup: remove rules that conflict on the same signal+guard ---
         // When two rules share the same guard but drive the same signal to
@@ -2252,6 +2302,141 @@ fn rule_conflict_residual_packet(
     }
 }
 
+/// ISF-VALUE-WIDTH-EMIT.2: outcome of reconciling a rule drive's value literal against the target
+/// signal's emitted width.
+enum ValueAlign {
+    /// Leave the literal byte-identical — a bare/unsized decimal, an enum symbol/reference, or a
+    /// based literal whose notation width already equals the signal width.
+    Keep,
+    /// Re-render as an explicit width-aligned cast (`W'd<v>`): the value fits the signal width but
+    /// its current notation width does not.
+    Replace(String),
+    /// The value does not fit the signal width; FSMGen blocks implicit truncation, so the clause is
+    /// dropped with an honest residual rather than fabricating a truncated value.
+    Residualize,
+}
+
+/// Parse an ISF value literal into `(value, notation_width_bits)` IFF it is a width-bearing numeric
+/// based literal — `0b…` (notation width = binary-digit count) or `0x…` (notation width = hex-digit
+/// count × 4, the count FSMGen uses for its operand-width contract). Returns `None` for a bare/unsized
+/// decimal, an enum symbol, a reference, an expression, or an already-cast `W'…` literal — all left
+/// untouched (a bare decimal is unsized in FSMGen and fits any width; a symbol is not a literal).
+fn parse_sized_literal(s: &str) -> Option<(u128, u32)> {
+    let t = s.trim();
+    if let Some(rest) = t.strip_prefix("0b").or_else(|| t.strip_prefix("0B")) {
+        if !rest.is_empty() && rest.bytes().all(|b| b == b'0' || b == b'1') {
+            return u128::from_str_radix(rest, 2)
+                .ok()
+                .map(|v| (v, rest.len() as u32));
+        }
+        return None;
+    }
+    if let Some(rest) = t.strip_prefix("0x").or_else(|| t.strip_prefix("0X")) {
+        if !rest.is_empty() && rest.bytes().all(|b| b.is_ascii_hexdigit()) {
+            return u128::from_str_radix(rest, 16)
+                .ok()
+                .map(|v| (v, rest.len() as u32 * 4));
+        }
+        return None;
+    }
+    None
+}
+
+/// ISF-VALUE-WIDTH-EMIT.2: decide how a single drive value literal reconciles with `width`. A based
+/// literal whose notation width already matches stays byte-identical; one that overshoots but whose
+/// VALUE fits is re-rendered as a width-aligned decimal cast; one whose value cannot fit is
+/// residualized (never truncated). Bare decimals / symbols are kept (FSMGen sizes them in context).
+fn align_value_to_width(val: &str, width: u32) -> ValueAlign {
+    match parse_sized_literal(val) {
+        None => ValueAlign::Keep,
+        Some((v, notation_width)) => {
+            if notation_width == width {
+                ValueAlign::Keep
+            } else if width >= 128 || v < (1u128 << width) {
+                ValueAlign::Replace(format!("{width}'d{v}"))
+            } else {
+                ValueAlign::Residualize
+            }
+        }
+    }
+}
+
+/// ISF-VALUE-WIDTH-EMIT.2: width-align every rule's drive value literals to their target signal's
+/// emitted width. A drive value that cannot be aligned (its value exceeds the signal width) drops the
+/// whole rule and yields an honest residual; an over-wide-but-fitting literal is re-rendered in place;
+/// everything else (bare decimals, symbols, already-matching literals, signals of unknown width) is
+/// left byte-identical. Order is preserved (the downstream dedup keeps the first rule).
+fn align_rule_drive_widths(
+    rules: Vec<IsfRule>,
+    signal_widths: &BTreeMap<String, u32>,
+) -> (Vec<IsfRule>, Vec<ResidualDecisionPacket>) {
+    let mut out: Vec<IsfRule> = Vec::new();
+    let mut residuals: Vec<ResidualDecisionPacket> = Vec::new();
+    'rule: for mut rule in rules {
+        for (sig, val) in &rule.drives {
+            if let Some(&w) = signal_widths.get(sig)
+                && matches!(align_value_to_width(val, w), ValueAlign::Residualize)
+            {
+                residuals.push(value_width_residual_packet(&rule.name, sig, val, w));
+                continue 'rule;
+            }
+        }
+        for (sig, val) in rule.drives.iter_mut() {
+            if let Some(&w) = signal_widths.get(sig)
+                && let ValueAlign::Replace(new_val) = align_value_to_width(val, w)
+            {
+                *val = new_val;
+            }
+        }
+        out.push(rule);
+    }
+    (out, residuals)
+}
+
+/// Residual for a rule dropped because a drive value cannot fit its target signal width
+/// (ISF-VALUE-WIDTH-EMIT.2). Mirrors `rule_conflict_residual_packet` — the dropped obligation is
+/// surfaced, never silently lost or fabricated by truncation.
+fn value_width_residual_packet(
+    rule_name: &str,
+    signal: &str,
+    value: &str,
+    width: u32,
+) -> ResidualDecisionPacket {
+    ResidualDecisionPacket {
+        packet_id: format!("isf_value_width_{}", sanitize_isf_name(rule_name)),
+        question: format!(
+            "Value `{value}` does not fit signal `{signal}` (width {width}): how should it lower?"
+        ),
+        why_unresolved: format!(
+            "Rule `{rule_name}` drives `{signal}` (width {width}) to `{value}`, whose value exceeds \
+             2^{width}. FSMGen's operand contract blocks implicit truncation, so this rule was DROPPED \
+             from the emitted `.isf` rather than truncating the value or fabricating a width-aligned \
+             one. Recorded here so the dropped obligation is explicit, not silently lost."
+        ),
+        automation_confidence: AutomationConfidence::Low,
+        candidate_interpretations: vec![
+            CandidateInterpretation {
+                interpretation_id: "widen_signal".to_string(),
+                description: format!(
+                    "Declare `{signal}` wide enough to hold `{value}` (only if the document grounds a wider width)."
+                ),
+                downstream_impact:
+                    "The value would then lower as a width-aligned literal — needs current-document width evidence."
+                        .to_string(),
+            },
+            CandidateInterpretation {
+                interpretation_id: "correct_value".to_string(),
+                description: format!(
+                    "Treat `{value}` as mis-attributed / over-wide for `{signal}` and resolve it upstream."
+                ),
+                downstream_impact:
+                    "The clause stays out of the `.isf` until the value or its target signal is corrected."
+                        .to_string(),
+            },
+        ],
+    }
+}
+
 fn temporal_residual_packet(
     rule_id: &str,
     reason: &str,
@@ -2684,6 +2869,95 @@ mod tests {
         assert_eq!(widths.get("SYM"), None);
         assert_eq!(widths.get("NOHINT"), None);
         assert_eq!(widths.len(), 2);
+    }
+
+    #[test]
+    fn parse_sized_literal_reads_based_literals_and_ignores_bare_and_symbols() {
+        // ISF-VALUE-WIDTH-EMIT.2: 0b… notation width = binary-digit count; 0x… = hex-digit count × 4
+        // (exactly the width FSMGen's operand contract uses).
+        assert_eq!(parse_sized_literal("0b00"), Some((0, 2)));
+        assert_eq!(parse_sized_literal("0B01"), Some((1, 2)));
+        assert_eq!(parse_sized_literal("0b000"), Some((0, 3)));
+        assert_eq!(parse_sized_literal("0x7D"), Some((125, 8)));
+        assert_eq!(parse_sized_literal("0XFF"), Some((255, 8)));
+        // Bare decimals are unsized; symbols / references / already-cast literals are not based
+        // literals → all left untouched (None).
+        assert_eq!(parse_sized_literal("0"), None);
+        assert_eq!(parse_sized_literal("1"), None);
+        assert_eq!(parse_sized_literal("IDLE"), None);
+        assert_eq!(parse_sized_literal("mode.BUSY"), None);
+        assert_eq!(parse_sized_literal("7'd125"), None);
+        assert_eq!(parse_sized_literal("0xZZ"), None);
+    }
+
+    #[test]
+    fn align_value_to_width_keeps_aligns_and_residualizes() {
+        // Notation width already matches → byte-identical Keep (the ARTAGOP 0b00-on-width-2 case).
+        assert!(matches!(align_value_to_width("0b00", 2), ValueAlign::Keep));
+        // Bare decimal / enum symbol → Keep (unsized / not a literal).
+        assert!(matches!(align_value_to_width("0", 1), ValueAlign::Keep));
+        assert!(matches!(align_value_to_width("IDLE", 4), ValueAlign::Keep));
+        // Overshoots notation but the VALUE fits → width-aligned decimal cast (trace-bus ATID).
+        match align_value_to_width("0x7D", 7) {
+            ValueAlign::Replace(s) => assert_eq!(s, "7'd125"),
+            _ => panic!("expected Replace for 0x7D on width 7"),
+        }
+        // 0B01 = value 1 on width 1 → fits → 1'd1 (DTI ATST; value preserved, lossless).
+        match align_value_to_width("0B01", 1) {
+            ValueAlign::Replace(s) => assert_eq!(s, "1'd1"),
+            _ => panic!("expected Replace for 0B01 on width 1"),
+        }
+        // Value does not fit the signal width → Residualize (never truncate): 0b11=3 on width 1.
+        assert!(matches!(
+            align_value_to_width("0b11", 1),
+            ValueAlign::Residualize
+        ));
+        assert!(matches!(
+            align_value_to_width("0xFF", 4),
+            ValueAlign::Residualize
+        ));
+    }
+
+    #[test]
+    fn align_rule_drive_widths_aligns_fitting_and_drops_overflow_with_residual() {
+        let widths: BTreeMap<String, u32> = [
+            ("ATID".to_string(), 7u32),
+            ("ATST".to_string(), 1u32),
+            ("OVR".to_string(), 1u32),
+        ]
+        .into_iter()
+        .collect();
+        let rules = vec![
+            IsfRule {
+                name: "r_atid".into(),
+                condition: String::new(),
+                drives: vec![("ATID".into(), "0x7D".into())],
+            },
+            IsfRule {
+                name: "r_atst".into(),
+                condition: String::new(),
+                drives: vec![("ATST".into(), "0B01".into())],
+            },
+            IsfRule {
+                name: "r_over".into(),
+                condition: String::new(),
+                drives: vec![("OVR".into(), "0b11".into())],
+            },
+            // A signal of unknown width is left byte-identical.
+            IsfRule {
+                name: "r_unk".into(),
+                condition: String::new(),
+                drives: vec![("UNK".into(), "0xAB".into())],
+            },
+        ];
+        let (aligned, residuals) = align_rule_drive_widths(rules, &widths);
+        let names: Vec<&str> = aligned.iter().map(|r| r.name.as_str()).collect();
+        assert_eq!(names, vec!["r_atid", "r_atst", "r_unk"]); // r_over dropped (3 > width 1)
+        assert_eq!(aligned[0].drives[0].1, "7'd125"); // ATID width-aligned
+        assert_eq!(aligned[1].drives[0].1, "1'd1"); // ATST width-aligned, value preserved
+        assert_eq!(aligned[2].drives[0].1, "0xAB"); // unknown width → untouched
+        assert_eq!(residuals.len(), 1);
+        assert_eq!(residuals[0].packet_id, "isf_value_width_r_over");
     }
 
     fn dir_port(actor: &str, signal: &str, direction: ActorRelativeDirection) -> ActorPortRecord {

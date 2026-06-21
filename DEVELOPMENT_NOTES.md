@@ -1,4 +1,60 @@
 # DEVELOPMENT_NOTES
+## ISF-VALUE-WIDTH-EMIT.2 (`2026-06-21`) — emit value-width-aligned ISF literals + complete width recovery (CODE; TREE CLOSED)
+
+**Context.** The `.0/.1` measurement designed the fix and returned GO; `.2` was compile-gated, held until the
+host had RAM headroom. It cleared (`memory_pressure` 81% free, well inside the project's own RAM ceiling), so
+the emit slice was compiled (debug, single-job, RAM-monitored), verified end-to-end, and committed.
+
+**The two fixes (both in `crates/specforge/src/ir/isf_ir.rs`, ADR-0006 numeric/width arithmetic only).**
+
+1. **Width recovery completeness — `interface_widths`.** `from_intent_ir` builds, alongside the existing
+   `.2a.i` `port_widths`, a `BTreeMap<String, u32>` that maps each signal to the *single unambiguous* concrete
+   width across **all** of its `intent_ir.interfaces[].signal_records` (collect every `WidthHint::Numeric(n)`
+   with `n > 1` into a `BTreeSet`; keep the signal only when the set has exactly one element — a conflict keeps
+   the honest width-1 default, mirroring `actor_port_concrete_widths`). The signal-width fallback that used to
+   read `port_widths.get(name).unwrap_or(1)` now chains `interface_widths → port_widths → 1`. Root cause this
+   closes: the first-seen signal dedup keeps only the first `signal_records` entry, so a width declared in a
+   *later* record (trace-bus `ATID`, width 7 in its 3rd record, and no actor-port for `.2a.i` to fall back to)
+   was lost to the width-1 default. Live: `ATID` now emits `(output ATID (width 7))`.
+
+2. **Value-literal width-alignment — `align_rule_drive_widths`.** A post-pass inserted right after
+   `rules.extend(temporal_isf_rules)` and **before** `dedup_conflicting_rules` (so an aligned value participates
+   in conflict detection on its final form). For each rule it builds `signal_widths` from the emitted signal set
+   and, per drive `(sig, val)`:
+   - `parse_sized_literal(val)` recognises a based literal — `0b…` (notation width = binary-digit count) or
+     `0x…` (notation width = hex-digit count × 4, exactly FSMGen's operand-width reading) — and returns `None`
+     for a bare decimal (FSMGen-unsized, fits any width), an enum symbol, a reference, or an already-cast
+     `W'…` literal, all left untouched. A literal wider than 128 bits overflows `u128::from_str_radix` → `None`
+     → safely untouched.
+   - `align_value_to_width(val, w)` returns `Keep` (no based literal, or its notation width already equals `w`),
+     `Replace("{w}'d{v}")` when the value fits (`w >= 128 || v < 1u128 << w` — the `>= 128` guard avoids the
+     `1u128 << 128` shift overflow), or `Residualize` when it does not.
+   - A rule with **any** residualizing drive is dropped whole and yields a `value_width_residual_packet`
+     (`packet_id = isf_value_width_<sanitized rule name>`, mirroring `rule_conflict_residual_packet`); otherwise
+     fitting-but-over-wide literals are rewritten in place and the rule is kept. Order is preserved so the
+     downstream dedup still keeps the first rule. The residuals join `temporal_residuals`.
+
+**Why truncation was rejected.** `ATID 0x7D` is the genuine 7-bit value 125. Chopping it to width 1 would
+fabricate a wrong value; FSMGen's OperandContract exists precisely to block that. So the honest options are
+exactly two: width-align when the value fits, or surface a residual when it does not.
+
+**Verification.** Debug build clean (22.6 s, single-job); 47/47 `isf_ir` tests (3 new: `parse_sized_literal_*`,
+`align_value_to_width_*`, `align_rule_drive_widths_*`). Regenerated the affected `.isf` and ran the real
+`subs/fsmgen/bin/fsmgen --strict --check --json`:
+- DTI `ihi0088_g`: `(ATST 1'd1)` → `has_diagnostics: false` (was: *"assignment to 'ATST' uses RHS '2'b1' with
+  incompatible width 2 for LHS width 1"*).
+- Trace-bus `ihi0032_c`: `(output ATID (width 7))` + `(ATID 7'd125)` → `has_diagnostics: false` (was width 1 +
+  `8'h7D`).
+- 4 wire golds regenerated and re-checked: **0 NEW** diagnostics. APB `apb_protocol/requester` 0/0 and SWD
+  `agent/debugger` 0/0 unchanged; AHB `address_decoder/manager` 1/1 (`isf_conflicting_rule_writes` on `HAUSER`)
+  and AXI `agent`/`manager` 1/1 (`constraint_33` `(port expr)` / `isf_conflicting_rule_writes` on `ASKSTOP`) are
+  the documented orthogonal issues, count unchanged.
+
+Full `scripts/run_ci.sh` GREEN: memory-arch + knowledge-map + `cargo fmt` + clippy `-D warnings` + test suite
+**1682 passed / 0 failed** + rustdoc `-D warnings` + mdBook. `kg-bench` 156/156. RAM held 81–82% free throughout
+(`CARGO_BUILD_JOBS=2`). One `cargo fmt` autoformat (a long `assert!(matches!(…))` wrapped) was the only post-write
+change. AXI `(port expr)` and DTI ATST mis-attribution remain spun out (tree Non-Goals).
+
 ## ISF-VALUE-WIDTH-EMIT.0/.1 (`2026-06-21`) — measure ISF value-literal width-alignment (measurement-first, docs-only, GO)
 
 **Context.** Resuming the PNT loop on a 6.3 GB host at ~16% free RAM, where the other open frontier thread (the

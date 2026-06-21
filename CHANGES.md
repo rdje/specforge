@@ -1,3 +1,30 @@
+### ISF-VALUE-WIDTH-EMIT.2 — emit value-width-aligned ISF literals + complete width recovery (CODE; TREE CLOSED)
+The emit slice landed once the host had RAM headroom (81% free by `memory_pressure`), closing the
+`ISF-VALUE-WIDTH-EMIT` tree. Two faithful, ADR-0006 numeric-only fixes in `ir/isf_ir.rs`, no name list:
+- **Width recovery completeness.** A new `interface_widths` aggregate collects the single unambiguous concrete
+  (`WidthHint::Numeric > 1`) width across **all** of a signal's `interfaces[].signal_records` (a conflict keeps
+  the honest width-1 default, never a guess) and is chained ahead of the `.2a.i` `port_widths` in the
+  signal-width fallback (`interface_widths → port_widths → 1`). This recovers a concrete width that lives in a
+  NON-FIRST interface record, which the first-seen dedup otherwise dropped — e.g. trace-bus `ATID` (width 7 in
+  its 3rd record, no actor-port). Live: `ATID` now emits `(output ATID (width 7))` (was width 1).
+- **Value-literal width-alignment or honest residual.** A new `align_rule_drive_widths` post-pass (before
+  `dedup_conflicting_rules`) with helpers `parse_sized_literal` / `align_value_to_width` / `ValueAlign` /
+  `value_width_residual_packet`: a based value literal (`0b…`/`0x…`) whose notation width ≠ the signal's emitted
+  width is re-rendered as a width-cast `W'd<v>` when `value < 2^W`, else the whole rule is DROPPED with an
+  explicit `isf_value_width_*` residual (the `ISF-RULE-CONFLICT-RESIDUAL` pattern) — never truncated. Bare
+  decimals (FSMGen-unsized), enum symbols, references, and already-matching literals are left byte-identical.
+- **Verification (real `subs/fsmgen/bin/fsmgen --strict --check --json`):** DTI `(ATST 1'd1)` (was `2'b1`) and
+  trace-bus `(ATID 7'd125)` (was `8'h7D` on width 1) both now report `has_diagnostics: false` — the
+  OperandContract value-width error is CLEARED on both target documents. The 4 wire golds carry **0 NEW**
+  diagnostics: APB 0/0 and SWD 0/0 unchanged; AHB 1/1 and AXI 1/1 are the pre-existing **orthogonal**
+  `isf_conflicting_rule_writes` (HAUSER/ASKSTOP) and `(port expr)` (constraint_33) issues, count unchanged.
+- **Gates:** 47/47 `isf_ir` unit tests (incl. 3 new + 5 `*_passes_fsmgen_strict_validation` canaries); full
+  suite **1682 passed / 0 failed**; `scripts/run_ci.sh` GREEN (memory-arch + knowledge-map + fmt + clippy
+  `-D warnings` + rustdoc + mdBook); `kg-bench` **156/156**. WIRE-BASED-100 orthogonal by construction
+  (emitter-only — it measures extraction F1, not `.isf` bytes). The AXI `(port expr)` grammar lever and the DTI
+  ATST upstream mis-attribution stay spun out (tree Non-Goals). Book close-rule subsection added to
+  `docs/book/src/pipeline/isf-adapter.md`.
+
 ### ISF-VALUE-WIDTH-EMIT.0/.1 — own + measure ISF value-literal width-alignment (measurement-first, docs-only, GO)
 A new `ISF-*-EMIT` emitter-fidelity tree, spun out of the `CORPUS-COVERAGE.2` re-ingest sweep as "Lever A",
 and picked as the RAM-light PNT slice because the host is a 6.3 GB machine at ~16% free RAM where a Docling
