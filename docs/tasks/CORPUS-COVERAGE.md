@@ -115,6 +115,9 @@ Columns: pages · key new typed surfaces the refresh added (vs the STALE pre-`.1
 | 13 | `101542` MMU-700 TRM | 256 | **register_records 13→63 (+50, `.10c`)**; transactions →10; constr 11→7; 334-port `.isf` | renderable (`agent.isf`, 334 ports) | **0 diagnostics** ✓ |
 | 14 | `100336` GIC-600 TRM | 216 | **register_records 15→33 (+18, `.10c`)**; transactions →10; relations 108→101 | renderable, but strict-FAILS | **1 ERROR** — **module-name not HDL-sanitized**: emitted `?fsm:redistributor→_distributor…` (arrow from a prose-fragment initiator actor); FSMGen requires `[A-Za-z_]\w*` → malformed name breaks the WHOLE `.isf`. 2nd emitter bug → spun-out lever (B) |
 | 15 | `ihi0069` GIC arch | **930** | **register_records 17→90 (+73, `.10g`)** — biggest `.10g` gain, matches census; msg 0→2; rel 23 held. **930-page doc ingested with RAM steady ~77% free** (validates `MEMORY-BOUNDED-INGEST` adaptive batch + `.4a` guard) | renderable (`following_pseudocode.isf`, 6 ports) | **0 diagnostics** ✓ (fragment-actor name but HDL-valid → no break) |
+| 16 | `ihi0070` SMMU arch | 717 | **register_records 1→89 (+88, `.10g`)** — matches census; transactions →5; rel 6→2 | renderable (`agent.isf`, 1 port) | **0 diagnostics** ✓ |
+
+**Cumulative (16 docs, protocol + register/arch phases): hundreds of registers + ~370 message fields surfaced that were ABSENT in stale evidence** — registers e.g. SMMU-arch 1→89, GIC-arch 17→90, MMU-700 13→63, GIC-600 15→33, TMC 2→30; message fields DTI 0→159, CHI-C2C 0→210. 13/16 strict-clean `.isf`; 3 strict-FAIL spun out as emitter levers A/B/C below. Remaining queue = the long tail (Avalon/OpenCAPI×14/JEDEC/Wishbone/USB/RISC-V system-IP/VT-d/Cortex-A76/GIC-400/overview/guides).
 
 **Spun-out CODE levers (`.2` re-ingest is SURFACING + scoping these — measurement-first; each needs its OWN owned leaf under the `ISF-*-EMIT` family, with WIRE-BASED-100 + register/wire golds + `kg-bench` gating; do NOT fix inside a re-ingest slice):**
 
