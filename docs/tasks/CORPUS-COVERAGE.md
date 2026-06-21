@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CORPUS-COVERAGE`
-- Status: `active` (`.0` build-out + `.1` stage-staleness validator both done `2026-06-17`; standing frontier = re-ingest the 57 normalized-missing docs, RAM-gated/host-local-source)
+- Status: `active` (`.0` build-out + `.1` stage-staleness validator both done `2026-06-17`; `.2` re-ingest batch ACTIVE `2026-06-21` — owner re-provisioned the host-local library, so the 57 normalized-missing docs are now re-ingestable to refresh their STALE EvidenceIR with the current binary)
 - Roadmap lane: `R15e`/`R16` (corpus digestion — the owner's substantive gap #2)
 - Created: `2026-06-17`
 - Owner directive: `2026-06-17` — after the owner rejected the "buildable frontier exhausted" framing
@@ -48,7 +48,7 @@ re-provisioning (`[[feedback_source_pdfs_in_repo]]`).
 ## Task Tree
 
 - ID: `CORPUS-COVERAGE` · Status: `active` · Children: `.0` (build-out + census, done), `.1` (stage-staleness
-  validator, next)
+  validator, done), `.2` (host-local re-ingest batch, active)
 - ID: `CORPUS-COVERAGE.0` · Status: `done` (`2026-06-17`) · Goal: build every evidence-only doc through to
   IntentIR/.isf and census the result. Done: 36→78 intent / 36→75 isf, 0 build failures, 0 stale remaining,
   3 isf honest-blocks. Verification above.
@@ -69,11 +69,37 @@ re-provisioning (`[[feedback_source_pdfs_in_repo]]`).
   list). WIRE-BASED-100 unaffected by construction (validate-only additive finding; wire docs carry non-empty
   relations → silent; extraction/IR content untouched); `run_ci.sh` GREEN, lib 1660 passed (+3); `kg-bench`
   156/156. Book `quality/validation.md`; KM `[[stage-staleness-validate-detector]]`.
-- Frontier (standing): re-ingest the 57 `normalized/`-missing docs (Docling + source PDF, RAM-gated,
-  host-local source re-provisioning) to enable their EVIDENCE rebuild.
+- ID: `CORPUS-COVERAGE.2` · Status: `active` (`2026-06-21`) · Goal: **RAM-guarded re-ingest of the 57
+  normalized-missing docs with the CURRENT binary**, now that the owner has re-provisioned the host-local
+  spec library. **Provisioning (owner-chosen `2026-06-21`):** instead of copying ~150 MB of PDFs into tracked
+  `corpus/` (permanent git bloat), the library is reached through a **git-ignored symlink**
+  `.cache/local-references/chipdoc → <owner host-local chipdoc git repo>` (`.cache/` added to `.gitignore`;
+  the owner's absolute library path is therefore never recorded in any tracked file — `[[feedback_source_pdfs_in_repo]]`
+  — and tracked docs cite only the repo-relative `.cache/local-references/chipdoc/...` path). The owner confirms
+  chipdoc is permanent. The 22 gold/measured docs stay copied in `corpus/` for the reproducible
+  WIRE-BASED-100/eval path; this symlink serves the bulk coverage re-ingest only.
+  **The substantive win (not mere "reach .isf"):** all 57 already reached IntentIR via `.0`, but their
+  EvidenceIR is STALE — built before the `.10a`–`.10g` register/message-field families, the `.12a`/`.12b`
+  presence records, and the `.2a`–`.2m` transaction recognition landed. Re-ingest → `evidence` → `semantic` →
+  `intent` → `adapt --target isf` with the current binary surfaces all that new typed intent → more complete
+  KG/IntentIR → more faithful `.isf`. **Method:** PNT, one doc per slice (smallest/highest-value AMBA &
+  interconnect PROTOCOL specs first — CXS/GFB/ACC/ATP/TileLink/LPI/DTI/CHI-C2C — then the register/TRM/ISA
+  docs), `DOCLING_DEVICE=cpu` (`[[project_docling_mps_cpu]]`), the built-in `.4a` RAM guard active (clean
+  abort at ≥85% used), Ollama kept idle, RAM+swap monitored between docs (`[[feedback_ram_ceiling_monitor]]`),
+  commit per `COMMIT.md` after each doc. No fabrication / ADR-0006 unchanged (this is a re-run of existing
+  deterministic extractors, not new code); WIRE-BASED-100 + register/wire golds + `kg-bench` stay green
+  (orthogonal — the 4 gold docs are not re-ingested). Record per-doc before/after typed-surface deltas here.
+- Frontier (active): `CORPUS-COVERAGE.2` — re-ingest the 57 normalized-missing docs from the
+  `.cache/local-references/chipdoc` symlink, prioritized protocol-specs-first, one doc per slice.
 
 ## Changelog
 
+- `2026-06-21`: `.2` re-ingest batch OWNED + provisioning set up. Owner re-provisioned the host-local spec
+  library (`chipdoc`, 88 PDFs); chosen mechanism = a git-ignored symlink `.cache/local-references/chipdoc`
+  (no `corpus/` copy → no git bloat; absolute library path never tracked). `/.cache/` added to `.gitignore`.
+  Frontier now ACTIVE (was standing/blocked): RAM-guarded per-doc re-ingest with the current binary to refresh
+  the 57 docs' STALE EvidenceIR (unlock `.10`/`.12`/`.2` extractor families) and cascade to `.isf`,
+  protocol-specs-first. Ownership slice — no extraction code change.
 - `2026-06-17`: `.1` stage-staleness validator DONE (CODE). `validate <intent-ir>`/`<semantic-ir>` now emits a
   `stage_staleness` Warning when the downstream carries 0 `actor_signal_relations` while its upstream (loaded
   via the carried path) carries some — false-positive-free (gating never empties a non-empty set), I/O paid

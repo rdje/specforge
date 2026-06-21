@@ -425,6 +425,11 @@ Use it first for the project objective, document navigation, and the current imp
 - `target/`
   - Rust build output
   - must remain untracked
+- `.cache/local-references/`
+  - git-ignored symlinks to host-local reference libraries (e.g. `chipdoc`, the owner's source-PDF
+    library) used for opportunistic corpus re-ingest without copying large PDFs into tracked `corpus/`
+  - must remain untracked (`/.cache/` is git-ignored); the host-local absolute path is deliberately not
+    recorded in any tracked file — tracked docs cite only the repo-relative `.cache/local-references/...` path
 
 ### Reference adapter/tooling paths
 - `subs/fsmgen/`

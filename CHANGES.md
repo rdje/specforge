@@ -1,3 +1,20 @@
+### CORPUS-COVERAGE.2 — re-ingest frontier unblocked: host-local library via git-ignored symlink (ownership/provisioning)
+Owner re-provisioned the host-local spec library (`chipdoc`, 88 PDFs, permanent) to attack substantive gap #2
+(corpus coverage). Chosen provisioning mechanism: a **git-ignored symlink** `.cache/local-references/chipdoc`
+rather than copying ~150 MB of PDFs into tracked `corpus/` (which would permanently bloat git history). `/.cache/`
+was added to `.gitignore`, so the owner's absolute library path is never recorded in any tracked file
+(`feedback_source_pdfs_in_repo`); tracked docs cite only the repo-relative `.cache/local-references/chipdoc/...`
+path. The 22 gold/measured docs stay copied in `corpus/` for the reproducible WIRE-BASED-100/eval path.
+- **The substantive win:** all 57 normalized-missing docs already reach IntentIR (via `CORPUS-COVERAGE.0`), but
+  their EvidenceIR is STALE — built before the `.10a`–`.10g` register/message-field families, the `.12a`/`.12b`
+  presence records, and the `.2a`–`.2m` transaction recognition landed. RAM-guarded per-doc re-ingest with the
+  current binary surfaces all that new typed intent → more complete KG/IntentIR → more faithful `.isf`.
+- **Method:** PNT, one doc per slice (protocol specs first — CXS/GFB/ACC/ATP/TileLink/LPI/DTI/CHI-C2C — then
+  register/TRM/ISA docs), `DOCLING_DEVICE=cpu`, the built-in `.4a` RAM guard active (clean abort at ≥85% used),
+  Ollama idle, RAM+swap monitored, commit per `COMMIT.md`. No extraction code change (re-runs existing
+  deterministic extractors); WIRE-BASED-100 + register/wire golds + `kg-bench` 156/156 orthogonal (the 4 gold
+  docs are not re-ingested). Ownership/provisioning slice — frontier now active under `CORPUS-COVERAGE.2`.
+
 ### KG-ISF-COMPLETENESS.2a.ii — initiator-perspective signal DIRECTION in the emitted `.isf` (CODE, owner-authorized)
 The emitted `.isf` interface now lowers the document-grounded, actor-relative signal DIRECTION from the protocol's
 INITIATOR actor's perspective, instead of defaulting non-`Input` signals to `(output)`. A signal the initiator
