@@ -111,6 +111,7 @@ Columns: pages · key new typed surfaces the refresh added (vs the STALE pre-`.1
 
 | 10 | `ddi0461` CoreSight TMC | 116 | **register_records 2→30** (the `.10c` `bits\|name\|description` family fires — exactly the documented gain); relations 53→50 (`.1a`/`.1b` consolidation); 30-port `.isf` | renderable (`master.isf`, 30 ports) | **0 diagnostics** ✓ |
 | 11 | `101130` CoreSight SDC-600 | 75 | **register_records 0→5** (`.10c`); transactions →6; rel 0 (honest register TRM) | renderable (`agent.isf`, 112 ports) | **0 diagnostics** ✓ |
+| 12 | `ihi0029` CoreSight arch | 280 | register_records 21→26 (+5 via `.10g`, matches the census); rel 7→6 | renderable (`special_type.isf`, 9 ports) | **0 diagnostics** ✓ |
 
 **Spun-out finding (`.2` → future CODE lever) — ISF emitter width-alignment:** DTI's rich 294-port `.isf` (from the 159 `.10f` message fields) fails FSMGen `--strict --check` because a rule/drive lowers a width-2 literal (`2'b1`) onto the 1-bit signal `ATST` — the emitter does not width-align the emitted value to the declared signal width (FSMGen's OperandContract blocks implicit truncation). This is a genuine ISF lowering-fidelity bug (north-star bar #6), surfaced by re-ingest. It needs its OWN owned leaf (likely under the `ISF-*-EMIT` family), measurement-first, with WIRE-BASED-100 + register/wire golds + `kg-bench` gating — NOT done inside a re-ingest slice. Watch whether other enum/message-heavy docs (CHI-C2C, CCIX, NVMe-class) hit the same width-mismatch as the batch proceeds (strengthens the case + scopes the fix).
 
