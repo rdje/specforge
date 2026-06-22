@@ -1,3 +1,23 @@
+### CORPUS-COVERAGE.2 — re-ingest #21: RISC-V IOMMU Architecture Spec (108pp) — register/arch refresh + honest "already-current" finding
+Fresh-session PNT slice (21 of 57 normalized-missing docs done), register/TRM/ISA phase.
+- **Re-ingest:** Docling CPU, 108 pages / 196 visual / 0 residuals / confidence high; RAM steady 76–78% free, `.4a`
+  guard armed, Ollama idle. Cascade `evidence`→`semantic`→`intent`→`adapt --target isf` on the current binary.
+- **Honest finding — evidence was ALREADY current-binary-equivalent (NOT pre-`.10` stale):** register_records 33 held /
+  147 fields, signal_constraints 6→8, conditional_rules 47; source_ir near-identical to the retained Jun-8 capture
+  (13-byte diff), IntentIR unchanged (12 actors / 628 constraints / 608 behaviors). The Jun-15 stale evidence had been
+  rebuilt from the retained `source_ir.json` before the `normalized/` page-image bundle was disk-reclaimed, so it already
+  carried the `.10` register families → re-ingest's value here is **normalized-bundle restoration + current-binary
+  confirmation**, not a marquee `.10c`/`.10g` jump (distinct from the genuinely pre-`.10` SMMU/GIC/MMU docs).
+- **`.isf`:** renderable (`agent.isf`, 175 signals / 33 storage(reset) / 5 enums / 45 rules); real `fsmgen --strict
+  --check --json` **success / 0 diagnostics** (strict-clean). `validate`: no stage-staleness (0-vs-0 honest absence);
+  IntentIR quality 3/100 INCOMPLETE — honest for a memory-mapped register/structure spec with no wire-signal grounding.
+- **Honest absences:** 0 relations / 0 interfaces (intent lives in registers); 0 `message_field_records` — of 83
+  structured tables the IOMMU's device-context / command-queue **STRUCTURE** tables don't match the
+  `.10b`/`.10d`/`.10e` two-column families → a surfaced **RISC-V structure-table recall opportunity** (Lever D), not a
+  regression; 0 transactions (command vocabulary not in the section-heading recognizer — honest, like TileLink).
+- **Gates:** no extraction code change → WIRE-BASED-100 + register/wire golds + `kg-bench` 156/156 orthogonal; memory-arch
+  + knowledge-map gates green.
+
 ### CORPUS-COVERAGE.2 — re-ingest #20: GIC-400 TRM (`ddi0471`, 57pp) — healthy register/TRM-phase refresh
 Fresh-session PNT slice (20 of 57 normalized-missing docs done); first of the register/TRM phase pivot after the two
 thin non-AMBA protocol findings.
