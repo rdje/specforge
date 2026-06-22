@@ -1,3 +1,21 @@
+### DOC-INTENT-TAXONOMY.1 — corpus census by category (read-only): 36/7/15/2/4/14, and what surface counts can't classify
+Read-only measurement (profiled all 78 persisted `evidence_ir`/`intent_ir` docs by typed surface; no `validate` →
+zero artifact mutation). Establishes the per-category denominator before the `.2` ISF-completeness gauge.
+- **Distribution (78 docs):** 36 wire-protocol (cat 1) · 7 register-IP (cat 2) · 15 platform/system-IP (cat 3) ·
+  2 CPU-ISA (cat 4) · 4 PHY/electrical (cat 5) · 14 methodology/guide (cat 6). Wire-protocol-dominant (46%) — why
+  cat 1 is the mature one; cat 2+3 (28%) are the largest buildable expansion; cat 5+6 (23%) are honest non-targets.
+- **Three measured structural blind spots** (why the 4-way `document_class` is too coarse for purpose): (a) cat 2↔3
+  NOT separable by surface counts (both register/structure-dominant — the IP-vs-platform difference is semantic);
+  (b) cat 4 (ISA) has NO distinct signature — the 2 ISA docs split across the `prose-only` and `reg/struct` buckets
+  (confirms `document_class` has no ISA slot); (c) cat 5↔6 indistinguishable (both near-empty).
+- **The register-heavy-protocol trap (deepest finding):** 8 cat-1 *protocols* are register/message-dominant — all
+  4 CCIX (reg 131–143), AXI (reg 71 but rel 348), CHI (msg 106), DTI (msg 159), CHI-C2C (reg 81/msg 210). So "has
+  registers ⇒ register-IP" is wrong; the dominant surface is not the purpose. The `.3` recognizer must weigh
+  wire-relation shape + front-matter/self-declared type + topology cue, not counts (ADR-0006, no name lists).
+- Report `docs/research/document-intent-category-census.md`; KM card `document-intent-category-census`.
+- **Gates:** read-only, no code, no canonical mutation → WIRE-BASED-100 + register/wire golds + `kg-bench` orthogonal;
+  memory-arch + knowledge-map gates green. Frontier → `.2` per-category ISF-completeness gauge.
+
 ### DOC-INTENT-TAXONOMY.0 — define the 6-category chip-spec intent taxonomy + capture it (mdBook + task-tree)
 New owner-directed tree (`2026-06-22`, multi-message): every chip-spec PDF is *about* something — a small set of intent
 categories — and SpecForge must understand all variations, build IntentIR, and lower EVERYTHING to ISF (ISF is the way to

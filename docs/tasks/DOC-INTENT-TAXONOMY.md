@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `DOC-INTENT-TAXONOMY`
-- Status: `active` (`.0` taxonomy definition + capture DONE `2026-06-22`, docs-only)
+- Status: `active` (`.0` taxonomy definition + capture DONE `2026-06-22`; `.1` corpus census by category DONE `2026-06-22`, read-only)
 - Roadmap lane: `R15`/`R16` (north star: COMPLETE IntentIR → FAITHFUL ISF, now made explicit **per document category**)
 - Created: `2026-06-22`
 - Last updated: `2026-06-22`
@@ -81,10 +81,19 @@ must be COMPLETE and lower FULLY to ISF. The maturity column above is the **hone
   scorecard and the owner's FSMGen dual-path + new-abstraction context. **DONE:** taxonomy table above; mdBook page
   `docs/book/src/document-categories.md` (added to `SUMMARY.md` after Architecture Rationale); tree registered in
   `docs/TASK_TREE.md`. No code → all golds + `kg-bench` orthogonal; memory-arch + knowledge-map gates green.
-- ID: `DOC-INTENT-TAXONOMY.1` · Status: `pending` · Goal: **corpus census by category** — deterministically (read-only)
-  classify all ingested docs into the 6 categories, measure the distribution, and quantify where the 4-way
-  `document_class` proxy is too coarse (especially the absent ISA category). Acceptance: a census report under
-  `docs/research/` + KM card; no canonical mutation.
+- ID: `DOC-INTENT-TAXONOMY.1` · Status: `done` (`2026-06-22`, read-only measurement) · Goal: **corpus census by
+  category** — classify all ingested docs into the 6 categories, measure the distribution, quantify where the
+  4-way `document_class` proxy is too coarse. **DONE:** read-only profile of all **78** persisted docs (surface
+  counts; no `validate` → zero artifact mutation). **Distribution: 36 wire-protocol / 7 register-IP / 15
+  platform-system-IP / 2 CPU-ISA / 4 PHY / 14 methodology-guide.** Three measured structural blind spots: (a)
+  cat 2↔3 NOT separable by surface counts (both register/structure-dominant); (b) cat 4 (ISA) has NO distinct
+  signature (the 2 ISA docs split across `prose-only` and `reg/struct` buckets — confirms `document_class` has
+  no ISA slot); (c) cat 5↔6 indistinguishable (both near-empty). **Deepest finding — the register-heavy-protocol
+  trap:** 8 cat-1 protocols (4× CCIX, AXI, CHI, DTI, CHI-C2C) are register/message-dominant → "has registers ⇒
+  register-IP" is wrong; the dominant surface is NOT the purpose. Implication: `.3` recognizer needs
+  wire-relation shape + front-matter/self-declared type + topology cue beyond counts (ADR-0006, no name lists).
+  Report `docs/research/document-intent-category-census.md`; KM `[[document-intent-category-census]]`. No code,
+  no canonical mutation → all golds + `kg-bench` orthogonal.
 - ID: `DOC-INTENT-TAXONOMY.2` · Status: `pending` · Goal: **per-category ISF-lowering completeness gauge** — for each
   category, measure honestly what fraction of the document's intent reaches `.isf` (and what is honest-absence vs a true
   gap), producing the prioritized scorecard. Acceptance: gauge + report; objectively measured, per-item demonstrated
@@ -103,9 +112,9 @@ must be COMPLETE and lower FULLY to ISF. The maturity column above is the **hone
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `DOC-INTENT-TAXONOMY.1` | `pending` | Census the corpus by category (read-only) — establishes the denominator before the per-category ISF-completeness gauge. |
-| 2 | `DOC-INTENT-TAXONOMY.2` | `pending` | Per-category ISF-completeness scorecard — turns the maturity column from honest-estimate into objectively-measured. |
-| 3 | `DOC-INTENT-TAXONOMY.3` | `pending` | Fast category recognizer in the CLI (the owner's "quickly determine which category"). |
+| — | `DOC-INTENT-TAXONOMY.1` | `done` (`2026-06-22`) | Census DONE — distribution 36/7/15/2/4/14; denominator established. |
+| 1 | `DOC-INTENT-TAXONOMY.2` | `pending` | Per-category ISF-completeness scorecard — turns the maturity column from honest-estimate into objectively-measured (denominator now known per category). |
+| 2 | `DOC-INTENT-TAXONOMY.3` | `pending` | Fast category recognizer in the CLI (the owner's "quickly determine which category") — the `.1` census shows it needs wire-relation shape + front-matter/self-declared type + topology cue, not surface counts alone. |
 
 ## Decisions
 
@@ -133,16 +142,24 @@ must be COMPLETE and lower FULLY to ISF. The maturity column above is the **hone
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
-| `2026-06-22` | `DOC-INTENT-TAXONOMY.0` | mdBook build (`run_docs_ci.sh`); memory-arch self-check; knowledge-map derive-and-diff; no code → golds/`kg-bench` orthogonal | pending-in-this-commit |
+| `2026-06-22` | `DOC-INTENT-TAXONOMY.0` | mdBook build; memory-arch self-check; knowledge-map derive-and-diff; no code → golds/`kg-bench` orthogonal | PASS (committed `8815a8c5`) |
+| `2026-06-22` | `DOC-INTENT-TAXONOMY.1` | read-only profile of 78 persisted docs (no `validate` → zero mutation); distribution 36/7/15/2/4/14; memory-arch + knowledge-map gates; no code → golds/`kg-bench` orthogonal | PASS |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `DOC-INTENT-TAXONOMY.0` | `DOC-INTENT-TAXONOMY.0 — define the 6-category chip-spec intent taxonomy + capture in mdBook` | docs-only |
+| `DOC-INTENT-TAXONOMY.0` | `8815a8c5` `DOC-INTENT-TAXONOMY.0 — define the 6-category chip-spec intent taxonomy + capture in mdBook` | docs-only |
+| `DOC-INTENT-TAXONOMY.1` | `DOC-INTENT-TAXONOMY.1 — corpus census by category (36/7/15/2/4/14)` | read-only measurement |
 
 ## Changelog
 
+- `2026-06-22`: `.1` corpus census by category DONE (read-only). Profiled all 78 persisted docs by typed surface
+  (no `validate` → zero mutation). Distribution: 36 wire-protocol / 7 register-IP / 15 platform-system-IP / 2
+  CPU-ISA / 4 PHY / 14 methodology-guide. Measured 3 structural blind spots (cat 2↔3 inseparable; ISA has no
+  signature; cat 5↔6 indistinguishable) + the register-heavy-protocol trap (8 cat-1 protocols are
+  register/message-dominant). Report `docs/research/document-intent-category-census.md`; KM
+  `[[document-intent-category-census]]`. Frontier → `.2` per-category ISF-completeness gauge.
 - `2026-06-22`: Created on the owner's multi-message directive (intent-category taxonomy + ISF-as-synthesis-for-all-categories).
   `.0` DONE (docs-only): defined the precise 6-category purpose taxonomy as the guiding lens, captured it identically in
   the mdBook (`document-categories.md`) and this tree, recorded the honest per-category ISF-synthesis maturity scorecard,
