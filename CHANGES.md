@@ -1,3 +1,25 @@
+### DOC-INTENT-TAXONOMY.0 — define the 6-category chip-spec intent taxonomy + capture it (mdBook + task-tree)
+New owner-directed tree (`2026-06-22`, multi-message): every chip-spec PDF is *about* something — a small set of intent
+categories — and SpecForge must understand all variations, build IntentIR, and lower EVERYTHING to ISF (ISF is the way to
+synthesize the PDF intent); in fine all categories must be FULLY handled. `.0` is docs-only (no code).
+- **The 6-category purpose taxonomy** (the guiding lens — what a PDF is *about*, with the honest per-category ISF-synthesis
+  maturity): (1) wire-level bus/interconnect protocol — MATURE (WIRE-BASED-100 1.000); (2) programmable register/memory-mapped
+  IP — PARTIAL (registers→ISF storage/reset; structure/message-field table recall is the frontier, e.g. the IOMMU #21 Lever-D);
+  (3) platform/system-IP topology & integration — PARTIAL; (4) CPU ISA/privileged-arch — THIN (least-developed ISF story);
+  (5) physical/electrical/link layer — honest-thin non-target; (6) methodology/language/EDA-standard/guide — non-target.
+- **Captured identically** in the mdBook (new page `docs/book/src/document-categories.md`, added to `SUMMARY.md` after
+  Architecture Rationale) and the task-tree `docs/tasks/DOC-INTENT-TAXONOMY.md`; tree registered in `docs/TASK_TREE.md`.
+- **Relationship to `document_class`:** the existing structural 4-way class (`protocol`/`register`/`interface`/`guide`) is a
+  coarse proxy this tree builds on — it folds 1+5→protocol, 2+3→register/interface, has no ISA slot, sends 6→guide.
+- **FSMGen feedback (owner context):** FSMGen is now adding a verification-oriented SV/UVM + VHDL lowering path alongside the
+  default synthesizable HDL; new ISF abstractions (memory banks, single/dual-port memory modules, …) are anticipated for both →
+  where the current ISF can't capture a category naturally/elegantly, the gap is fed back to FSMGen as a verified feature
+  request, never hacked into the emitter.
+- **Frontier:** `.1` corpus census by category (read-only) → `.2` per-category ISF-completeness gauge → `.3` fast category
+  recognizer (CODE) → `.4+` per-category levers + FSMGen feedback.
+- **Gates:** docs-only — no extraction/emitter code → WIRE-BASED-100 + register/wire golds + `kg-bench` orthogonal; mdBook
+  builds; memory-arch + knowledge-map gates green.
+
 ### CORPUS-COVERAGE.2 — re-ingest #21: RISC-V IOMMU Architecture Spec (108pp) — register/arch refresh + honest "already-current" finding
 Fresh-session PNT slice (21 of 57 normalized-missing docs done), register/TRM/ISA phase.
 - **Re-ingest:** Docling CPU, 108 pages / 196 visual / 0 residuals / confidence high; RAM steady 76–78% free, `.4a`
