@@ -2877,6 +2877,12 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         })
         .unwrap_or_default();
     let declared_doc_type = crate::ir::completeness::front_matter_doc_type_hint(&front_matter_text);
+    // Sharper front-matter self-declaration cues for the purpose recognizer (DOC-INTENT-TAXONOMY.3):
+    // generic ISA / PHY doc-type vocabulary only, no chip/vendor/instance names (ADR 0006). `.1`
+    // proved cat 4 (ISA) has no structural signature and cat 5 (PHY) vs cat 6 (guide) is invisible to
+    // structure, so these self-declarations are the only positive cat-4 / cat-5 cues.
+    let front_matter_isa = crate::ir::completeness::front_matter_declares_isa(&front_matter_text);
+    let front_matter_phy = crate::ir::completeness::front_matter_declares_phy(&front_matter_text);
 
     // Document class (PDF-VARIANT-DIGESTION.5a): route by the dominant typed
     // intent surface (registers / behavioral obligations / signal-inventory +
@@ -2885,20 +2891,30 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
     // `.5c` adds the front-matter corroboration: a structurally low-yield doc that
     // self-declares a specification is an under-extracted spec, not a true guide.
     // Pure + agnostic (small generic structural floors, no chip names — ADR 0006).
-    let document_classification =
-        crate::ir::completeness::classify_document(crate::ir::completeness::DocumentClassCensus {
-            registers: ir.register_records.len(),
-            register_fields: ir.register_records.iter().map(|r| r.fields.len()).sum(),
-            declared_signals: declared_signal_names.len(),
-            actor_signal_relations: ir.actor_signal_relations.len(),
-            signal_constraints: ir.signal_constraints.len(),
-            conditional_rules: ir.conditional_rules.len(),
-            protocol_actors: ir.protocol_actors.len(),
-            fsm_states: ir.protocol_states.len(),
-            serial_frame_fields: ir.serial_frame_fields.len(),
-            visual_evidence: ir.visual_evidence.len(),
-            declared_type: declared_doc_type,
-        });
+    let document_class_census = crate::ir::completeness::DocumentClassCensus {
+        registers: ir.register_records.len(),
+        register_fields: ir.register_records.iter().map(|r| r.fields.len()).sum(),
+        declared_signals: declared_signal_names.len(),
+        actor_signal_relations: ir.actor_signal_relations.len(),
+        signal_constraints: ir.signal_constraints.len(),
+        conditional_rules: ir.conditional_rules.len(),
+        protocol_actors: ir.protocol_actors.len(),
+        fsm_states: ir.protocol_states.len(),
+        serial_frame_fields: ir.serial_frame_fields.len(),
+        visual_evidence: ir.visual_evidence.len(),
+        declared_type: declared_doc_type,
+        message_field_records: ir.message_field_records.len(),
+        signal_presence_records: ir.signal_presence_records.len(),
+        front_matter_isa,
+        front_matter_phy,
+    };
+    let document_classification = crate::ir::completeness::classify_document(document_class_census);
+    // Document intent CATEGORY (DOC-INTENT-TAXONOMY.3): the richer 6-category PURPOSE taxonomy —
+    // what the document is *about* — built ON the same census as the 4-way structural class (one
+    // input), reported additively beside it. Honest confidence + residual, never a forced guess;
+    // every cue is structural or generic front-matter vocabulary, no name lists (ADR 0006).
+    let document_intent =
+        crate::ir::completeness::classify_document_intent_category(document_class_census);
     println!();
     println!("=== Document Class (structural routing; honest guide reporting) ===");
     println!(
@@ -2915,6 +2931,23 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
         );
     }
     println!("  rationale: {}", document_classification.rationale);
+
+    // Document intent category (DOC-INTENT-TAXONOMY.3): the 6-category PURPOSE taxonomy,
+    // reported beside the structural class so an operator immediately sees what the document is
+    // *about*. Honest confidence + explicit residual where structure + front-matter cannot decide.
+    println!();
+    println!(
+        "=== Document Intent Category (6-category purpose taxonomy; DOC-INTENT-TAXONOMY.3) ==="
+    );
+    println!(
+        "  document_intent_category: {} ({} confidence)",
+        document_intent.category.as_str(),
+        document_intent.confidence.as_str()
+    );
+    println!("  rationale: {}", document_intent.rationale);
+    if let Some(residual) = document_intent.residual.as_deref() {
+        println!("  residual: {residual}");
+    }
 
     // Per-document completeness gauge (PDF-VARIANT-DIGESTION.5b): how complete is the
     // typed intent the extraction DID produce, judged appropriately for the document
@@ -3061,6 +3094,27 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             "document classified as {} — {}",
             document_classification.class.as_str(),
             document_classification.rationale
+        ),
+        Vec::new(),
+    ));
+    // DOC-INTENT-TAXONOMY.3 — the 6-category PURPOSE taxonomy reported additively beside the
+    // structural class. Always recorded (every doc has a purpose); the message carries the
+    // confidence, the rationale, and the explicit honest residual when structure + front-matter
+    // could not decide (no forced guess).
+    findings.push(finding(
+        "evidence_document_intent_category",
+        ValidationFindingSeverity::Info,
+        "document_intent_category",
+        format!(
+            "document purpose category: {} ({} confidence) — {}{}",
+            document_intent.category.as_str(),
+            document_intent.confidence.as_str(),
+            document_intent.rationale,
+            document_intent
+                .residual
+                .as_deref()
+                .map(|r| format!("; residual: {r}"))
+                .unwrap_or_default()
         ),
         Vec::new(),
     ));
@@ -3527,6 +3581,14 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             metric(
                 "document_type_declared",
                 document_classification.declared_type.as_str(),
+            ),
+            metric(
+                "document_intent_category",
+                document_intent.category.as_str(),
+            ),
+            metric(
+                "document_intent_category_confidence",
+                document_intent.confidence.as_str(),
             ),
             metric(
                 "document_completeness_applicable",

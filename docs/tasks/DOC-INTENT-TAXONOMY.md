@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `DOC-INTENT-TAXONOMY`
-- Status: `active` (`.0` taxonomy definition + capture DONE `2026-06-22`; `.1` corpus census by category DONE `2026-06-22`, read-only; `.2` per-category ISF-completeness gauge DONE `2026-06-22`, read-only)
+- Status: `active` (`.0` taxonomy definition + capture DONE `2026-06-22`; `.1` corpus census by category DONE `2026-06-22`, read-only; `.2` per-category ISF-completeness gauge DONE `2026-06-22`, read-only; `.3a` recognizer design DONE `2026-06-22`; `.3b` recognizer IMPLEMENTED + validate-reported DONE `2026-06-22`, code; frontier → `.3c` fixtures + book + KM)
 - Roadmap lane: `R15`/`R16` (north star: COMPLETE IntentIR → FAITHFUL ISF, now made explicit **per document category**)
 - Created: `2026-06-22`
 - Last updated: `2026-06-22`
@@ -108,19 +108,31 @@ must be COMPLETE and lower FULLY to ISF. The maturity column above is the **hone
   `docs/research/document-intent-isf-completeness.md`; KM `[[document-intent-isf-completeness]]`. Objectively measured,
   per-item demonstrated (`[[feedback_scoring_rigor]]`); no fabrication; no code/canonical mutation → golds/`kg-bench`
   orthogonal.
-- ID: `DOC-INTENT-TAXONOMY.3` · Status: `in-progress` (gated on `.1`/`.2`; decomposed into `.3a` design / `.3b` implement
-  / `.3c` fixtures+CI) · Goal: **fast deterministic category recognizer** so `inspect`/`validate` immediately report a
+- ID: `DOC-INTENT-TAXONOMY.3` · Status: `in-progress` (`.3a` design DONE, `.3b` implement DONE; `.3c` fixtures+CI+book
+  remaining) · Goal: **fast deterministic category recognizer** so `inspect`/`validate` immediately report a
   PDF's purpose category (the owner's "quickly determine which category"). A richer `document_intent_category` surface
   built on the typed-surface census + structural cues (ADR 0006, no name lists). Acceptance: CLI reports it; fixtures
   lock gold/negative classification; `run_ci.sh` green.
   - `.3a` · Status: `done` (`2026-06-22`, design slice, no code) · **Grounded recognizer design** (below), pinned BEFORE
     coding because `.1` proved counts alone cannot separate cat 2↔3 / recover cat 4 / split cat 5↔6 and must rescue 8
     register-heavy protocols → the recognizer must add cues AND emit honest confidence/residual, never a forced guess.
-  - `.3b` · Status: `pending` · **Implement** `DocumentIntentCategory` + pure `classify_document_intent_category(...)`
-    in `crates/specforge/src/ir/completeness.rs` (sibling to `classify_document`, same pure-function + in-file-test
-    pattern), wired into `crates/specforge/src/commands/validate.rs` (alongside the `document_class` block at ~2888,
-    where every needed cue is already in scope on the EvidenceIR `ir`). Build is RAM-constrained (`CARGO_BUILD_JOBS≤2`,
-    monitor RAM, kill ≥85% — `[[feedback_ram_ceiling_monitor]]`); ideal point for a fresh session (signoff quality).
+  - `.3b` · Status: `done` (`2026-06-22`, code slice) · **Implemented** `DocumentIntentCategory` (6 purpose variants +
+    `Unresolved`) + `IntentCategoryConfidence` + `DocumentIntentClassification` + the pure
+    `classify_document_intent_category(...)` in `crates/specforge/src/ir/completeness.rs` (sibling to `classify_document`,
+    same pure-fn + in-file-test pattern), wired into `crates/specforge/src/commands/validate.rs` at the shared census site
+    (now bound once and fed to BOTH classifiers): a printed block, an `evidence_document_intent_category` Info finding, and
+    `document_intent_category` / `document_intent_category_confidence` metrics. Added front-matter ISA/PHY self-declaration
+    helpers (`front_matter_declares_isa` / `front_matter_declares_phy`, generic doc-type vocabulary only — ADR 0006) and a
+    shared `front_matter_has_word` helper (the existing `front_matter_doc_type_hint` refactored onto it, behavior identical).
+    **Measured refinement of the `.3a` flit clause:** per-document measurement (read off the persisted corpus) PROVED the
+    literal `.3a` "flit surface co-present with behavioral/relation shape" cue would MISCLASSIFY register/structure docs as
+    wire — NVMe (216 msg + 20 incidental constraints, 0 relations), AMD-IOMMU (98 relations), GIC-600 (101 relations) — so
+    the implementation uses the discriminators the data actually supports: (a) flit fields count as a cat-1 cue ONLY when no
+    register map is present (CHI/DTI reg=0 vs NVMe/AMD/CCIX reg>0), and (b) a wire-weight vs register/structure-weight
+    dominance test that rescues clean wire docs (AXI: wire 401 ≥ struct 229 — register count does NOT veto) while routing
+    register-heavy docs to the honest combined category with a residual that names the outweighed wire cue. Only CLEAN wire
+    and a self-declared guide are HIGH confidence; everything else is LOW + explicit residual. Build RAM-constrained
+    (`CARGO_BUILD_JOBS=2`, RAM monitored). See the Acceptance Checklist below.
   - `.3c` · Status: `pending` · **Fixtures + CI** — gold/negative fixtures locking each category and the honest-residual
     cases (the register-heavy-protocol rescue, the cat-6-over-extraction front-matter override, the cat 2↔3 / cat 4 /
     cat 5↔6 honest-low-confidence residuals); `scripts/run_ci.sh` green; book + live-doc sync.
@@ -166,6 +178,45 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   verification-oriented SV/UVM + VHDL paths). Each is its own owned leaf; any FSMGen FR is filed only after empirically
   verifying the current submodule (`[[feedback_verify_fsmgen_before_fr]]`, `docs/FSMGEN_FEEDBACK.md`).
 
+## Acceptance Checklist (enforced) — `DOC-INTENT-TAXONOMY.3b`
+
+- [x] **REPRODUCE / MEASURE** — baseline: `validate <evidence-ir>` had NO purpose-category surface (only the 4-way
+  `document_class`). Measured the per-document census off the persisted corpus (read-only): NVMe `register_records=42`/
+  `signal_constraints=20`/`actor_signal_relations=0`/`message_field_records=216`; AMD-IOMMU `rel=98`/`msg=217`/`reg=8`;
+  AXI `rel=348`/`reg=71`; CHI `msg=106`/`reg=0`/`fsm=7`; GIC-600 `reg=33`/`rfld=293`/`rel=101`. Reproducer: per-doc count
+  over `generated/evidence_ir/*/evidence_ir.json` (the `.1`/`.2` census denominator, 78 docs).
+- [x] **ROOT CAUSE (WHY + WHERE)** — the literal `.3a` "flit surface co-present with behavioral/relation shape" cat-1 cue
+  is falsified by its own corpus data: it would classify register/structure docs as wire, because their incidental
+  `signal_constraints` (NVMe 20) and relation surface (AMD-IOMMU 98, GIC-600 101) satisfy the co-presence gate. WHERE:
+  the recognizer lives in `crates/specforge/src/ir/completeness.rs` (`classify_document_intent_category`), fed from the
+  `document_class` census site `crates/specforge/src/commands/validate.rs:~2888`. Evidence: live `validate` on those docs
+  would print `document_intent_category: wire-protocol` under the naive cue, contradicting the `.1` census (NVMe/AMD are
+  register/structure, not wire).
+- [x] **ADDRESSED (verified)** — implemented the recognizer with the discriminators the measurement supports: flit fields
+  are a cat-1 cue ONLY when `registers == 0`, plus a wire-weight vs register/structure-weight dominance test. Live
+  `validate` over all 78 persisted docs (before → after): NVMe `(none)` → `register-or-platform (low)` (structure 459 vs
+  wire 20); AMD-IOMMU → `register-or-platform (low)` with the "register-heavy WIRE protocol" residual (struct 225 vs wire
+  98); GIC-600 → `register-or-platform (low)` (struct 326 vs wire 110); AXI → `wire-protocol (high)` (wire 401 ≥ struct
+  229 — register count does not veto); CHI → `wire-protocol (high)` (flit, no register map); the 2 OpenCAPI PHY signaling
+  specs → `physical-link (low)`; the GIC overview guide → `methodology-guide (high)`. Corpus distribution: 21 wire-protocol
+  (high) / 8 methodology-guide (high) / 28 register-or-platform (low) / 16 unresolved (low) / 5 physical-link (low) — and
+  **0 high-confidence false positives** (every wire/guide high-confidence call verified genuinely correct).
+- [x] **NO REGRESSION** — `kg-bench 156/156`; completeness lib tests `66/66` (incl. 13 new recognizer tests); full
+  `cargo test` `1695 passed; 0 failed` (warning-deny); `cargo fmt --all --check` clean; `cargo clippy --all-targets -D
+  warnings` clean. WIRE-BASED-100 is provably **orthogonal**: this slice adds a pure new function + additive `validate`
+  reporting only — it touches NO extraction/semantic/intent/emitter path, so `signal_constraints`/`actor_signal_relations`/
+  `temporal_rules` and the emitted `.isf` are byte-identical by construction (the wire golds are unaffected). `run_ci.sh`
+  green (see Verification Log).
+- [x] **GENERICITY (ADR 0006)** — every cue is a structural typed-surface count/shape or generic front-matter doc-type
+  vocabulary (guide / specification / instruction-set / privileged-architecture / physical-layer); NO chip/vendor/
+  protocol-instance name list. Precision-verified on the corpus: the ISA vocabulary matched 0 docs (the corpus ISA docs
+  honestly fall through to a residual), and the PHY phrase `"physical signaling"` matched ONLY the 2 PHY signaling specs.
+- [x] **LOCKSTEP** — `.3b` updates the tracked continuity docs (README validate-surface bullet, `CHANGES.md`,
+  `DEVELOPMENT_NOTES.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `MEMORY.md`). The user-facing mdBook
+  chapter (`quality/validation.md` beside `document_class`; `document-categories.md` "now CLI-reported"), the KM fact card,
+  and the gold/negative + honest-residual fixtures are the explicit `.3c` deliverable (pinned decomposition), landing in
+  the immediately-following slice.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
@@ -173,9 +224,9 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | — | `DOC-INTENT-TAXONOMY.1` | `done` (`2026-06-22`) | Census DONE — distribution 36/7/15/2/4/14; denominator established. |
 | — | `DOC-INTENT-TAXONOMY.2` | `done` (`2026-06-22`) | ISF-completeness scorecard MEASURED — maturity column now objective; two dominant true gaps (register bit-fields 12,638→0; message-field structures 1,220→0, no Intent carrier). |
 | — | `DOC-INTENT-TAXONOMY.3a` | `done` (`2026-06-22`) | Recognizer DESIGN pinned (grounded in `completeness.rs` + measured `.1`/`.2` evidence): cues, decision order, honest-residual policy, ADR-0006 genericity — de-risks the hard name-list-free classifier before coding. |
-| 1 | `DOC-INTENT-TAXONOMY.3b` | `pending` | **IMPLEMENT** the recognizer per the `.3a` design (`classify_document_intent_category` in `completeness.rs`, wired into `validate.rs`). Build-heavy (RAM-constrained) → ideal fresh-session start. |
-| 2 | `DOC-INTENT-TAXONOMY.3c` | `pending` | Fixtures lock gold/negative + honest-residual cases; `run_ci.sh` green; book/live-doc sync. |
-| 3 | `DOC-INTENT-TAXONOMY.4+` | `pending` | Per-category levers; `.2` makes **register bit-field lowering (Gap A)** the highest-leverage first lever (32 docs, 12,638 fields), then **message-field structure carry + lowering (Gap B)** — both pending the same FSMGen ISF-abstraction (field-structured storage / packet layouts), filed as verified FRs after empirical submodule check. |
+| — | `DOC-INTENT-TAXONOMY.3b` | `done` (`2026-06-22`) | Recognizer IMPLEMENTED + reported by `validate` (`classify_document_intent_category` in `completeness.rs`, wired into `validate.rs`); corpus: 21 wire / 8 guide (both high) / 28 register-or-platform / 16 unresolved / 5 PHY (low) with 0 high-confidence false positives. Refined the `.3a` flit clause its own data falsified. kg-bench 156/156, cargo test 1695/0, clippy/fmt clean. |
+| 1 | `DOC-INTENT-TAXONOMY.3c` | `pending` | Fixtures lock gold/negative + honest-residual cases (register-heavy-protocol rescue, guide front-matter override, 2↔3 / 4 / 5↔6 residuals); user-facing mdBook chapter (`quality/validation.md` + `document-categories.md` "now live"); KM card; calibrate ISA/PHY front-matter vocab against real strings; `run_ci.sh` green. |
+| 2 | `DOC-INTENT-TAXONOMY.4+` | `pending` | Per-category levers; `.2` makes **register bit-field lowering (Gap A)** the highest-leverage first lever (32 docs, 12,638 fields), then **message-field structure carry + lowering (Gap B)** — both pending the same FSMGen ISF-abstraction (field-structured storage / packet layouts), filed as verified FRs after empirical submodule check. |
 
 ## Decisions
 
@@ -217,6 +268,7 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.1` | read-only profile of 78 persisted docs (no `validate` → zero mutation); distribution 36/7/15/2/4/14; memory-arch + knowledge-map gates; no code → golds/`kg-bench` orthogonal | PASS |
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.2` | read-only per-surface lowering gauge over 78 docs (76 `adapter.json` + 2 `adapt --dry-run`, verified no write); measured 12,638 register-fields→0 + 1,220 msg-fields→0 (no Intent carrier); reproducer `scripts/measure_isf_completeness.py`; mdBook builds; memory-arch + knowledge-map (112 facts) gates green; no code/canonical mutation → golds/`kg-bench` orthogonal | PASS |
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.3a` | design slice (no code): recognizer algorithm grounded in `completeness.rs` (`classify_document`) + measured `.1`/`.2` evidence; verified the cues are in scope at `validate.rs` ~2888; memory-arch + knowledge-map gates green; no code → golds/`kg-bench` orthogonal | PASS |
+| `2026-06-22` | `DOC-INTENT-TAXONOMY.3b` | `cargo fmt --all --check` clean; `cargo clippy --all-targets -- -D warnings` clean; completeness lib `66/66` (13 new recognizer tests); full `cargo test` `1695 passed; 0 failed` (warning-deny); `kg-bench 156/156`; live `validate` over all 78 docs → 21 wire / 8 guide (high) / 28 register-or-platform / 16 unresolved / 5 PHY (low), 0 high-confidence false positives; WIRE-BASED-100 orthogonal (pure new fn + additive reporting, no extraction/emitter touch) | PASS |
 
 ## Commit Log
 
@@ -226,9 +278,22 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | `DOC-INTENT-TAXONOMY.1` | `DOC-INTENT-TAXONOMY.1 — corpus census by category (36/7/15/2/4/14)` | read-only measurement |
 | `DOC-INTENT-TAXONOMY.2` | `DOC-INTENT-TAXONOMY.2 — per-category ISF-completeness gauge (register fields 12,638→0; structures 1,220→0)` | read-only measurement |
 | `DOC-INTENT-TAXONOMY.3a` | `DOC-INTENT-TAXONOMY.3a — recognizer design (grounded; honest-residual, ADR-0006)` | design slice, no code |
+| `DOC-INTENT-TAXONOMY.3b` | `DOC-INTENT-TAXONOMY.3b — implement the 6-category purpose recognizer (validate-reported; measured refinement of .3a)` | code slice |
 
 ## Changelog
 
+- `2026-06-22`: `.3b` recognizer IMPLEMENTED + reported by `validate` (code slice). Added `DocumentIntentCategory`
+  (6 purpose variants + `Unresolved`), `IntentCategoryConfidence`, `DocumentIntentClassification`, and the pure
+  `classify_document_intent_category` to `completeness.rs` (sibling to `classify_document`), plus the front-matter
+  ISA/PHY self-declaration helpers; wired into `validate.rs` at the shared census site (bound once, fed to both
+  classifiers) as a printed block, an `evidence_document_intent_category` Info finding, and `document_intent_category` /
+  `document_intent_category_confidence` metrics. **Refined the `.3a` flit clause** after per-document measurement proved
+  it would misclassify register/structure docs (NVMe/AMD-IOMMU/GIC-600) as wire: flit fields count as cat-1 only when no
+  register map is present, plus a wire-vs-structure weight dominance test (register count never vetoes a clean wire shape:
+  AXI wire 401 ≥ struct 229). Only clean wire + self-declared guide are HIGH confidence; everything else is LOW + explicit
+  residual. Live over 78 docs: 21 wire / 8 guide (high) / 28 register-or-platform / 16 unresolved / 5 PHY (low), 0
+  high-confidence false positives. kg-bench 156/156; cargo test 1695/0; fmt/clippy clean; WIRE-BASED-100 orthogonal.
+  Frontier → `.3c` (fixtures + mdBook chapter + KM card + ISA/PHY vocab calibration).
 - `2026-06-22`: `.3a` recognizer DESIGN pinned (design slice, no code). Grounded the fast category recognizer in
   the real `completeness.rs` classifier (`classify_document`) + the measured `.1`/`.2` evidence: extend the census
   with `message_field_records` (the 1,220-field cat-1-msg/cat-2-structure cue), a 6-category + `Unresolved` output

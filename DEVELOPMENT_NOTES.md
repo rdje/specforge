@@ -1,4 +1,41 @@
 # DEVELOPMENT_NOTES
+## DOC-INTENT-TAXONOMY.3b (`2026-06-22`) — implement the 6-category document PURPOSE recognizer
+
+**Context.** `.3a` pinned the recognizer design; `.3b` implements it. This is the FIRST Rust slice gated by the new
+`TASK-ACCEPTANCE` doctrine, so the owning leaf carries the evidence-backed acceptance checklist.
+
+**Why the `.3a` flit clause had to be refined (measure-before-code).** The `.3a` design proposed a cat-1 cue of "a
+substantial `message_field_records` flit surface co-present with behavioral/relation shape". Before coding, I measured the
+real per-document census off the persisted corpus and found that cue is falsified by its own data: NVMe (216 message
+fields + 20 incidental constraints, 0 relations), AMD-IOMMU (98 relations + 217 fields), and GIC-600 (101 relations + 293
+register fields) are register/memory-mapped or platform IP (cat 2/3) yet would satisfy a naive co-presence gate and be
+mislabelled wire (cat 1). The honest-residual doctrine + `feedback_scoring_rigor` (measure per item) require the cue the
+data actually supports.
+
+**The discriminators that work (all measured).**
+- **Flit ⇒ cat-1 only without a register map.** `message_field_records` are ambiguous: cat-1 flit/packet fields for
+  CHI (106) and DTI (159), but cat-2 in-memory structures for NVMe (216) / AMD-IOMMU (217) / CCIX (92). The clean split
+  in the corpus is `registers == 0`: CHI/DTI carry zero registers, every structure-IP doc carries some. So flit fields
+  count as a wire cue, and as wire weight, only when there is no register map.
+- **Wire-weight vs register/structure-weight dominance.** A register/field count must NOT veto a clean wire shape (AXI:
+  71 registers but 348 relations + 50 constraints). The dominance test (`wire_weight = relations + constraints +
+  flit_fields + fsm + frame + presence` vs `struct_weight = registers + register_fields + struct_fields`) rescues AXI
+  (401 ≥ 229 → wire) while routing GIC-600 (110 < 326 → register-or-platform) and AMD-IOMMU (98 < 225) to the honest
+  combined category, whose residual names the outweighed wire cue ("may be a register-heavy WIRE protocol").
+- **Confidence is the signoff lever.** Only a clean wire shape and a front-matter guide self-declaration are HIGH
+  confidence; cat 2↔3 (combined, `.1` proved counts can't split them), cat 4 (ISA, no structural signature), cat 5 (PHY),
+  and the near-empty fall-through are all LOW + an explicit residual. Verified: across all 78 docs, every one of the 21
+  wire + 8 guide HIGH-confidence calls is genuinely correct — zero high-confidence mislabels.
+
+**Genericity (ADR 0006).** Every cue is a structural typed-surface count or generic front-matter doc-type vocabulary
+(guide / spec / instruction-set / privileged-architecture / physical-layer / "physical signaling"). Precision-verified on
+the corpus: the ISA vocabulary matches 0 docs (the 2 corpus ISA docs honestly fall through to a residual — `.1` predicted
+this), and `"physical signaling"` matches ONLY the 2 PHY signaling specs. No chip/vendor/protocol-instance name list.
+
+**Deferred to `.3c` (pinned).** The user-facing mdBook chapter (in `quality/validation.md` beside `document_class`, and
+`document-categories.md` flipped from "target" to "now CLI-reported"), the KM fact card, gold/negative + honest-residual
+fixtures, and empirical calibration/widening of the ISA/PHY front-matter vocabulary against the real front-matter strings.
+
 ## DOCTRINE-ENFORCEMENT-ADOPT.2 (`2026-06-22`) — closing the tree: docs + KM, book-method-doc
 
 **Context.** Closing leaf of the doctrine-enforcement adoption. The book is the user-facing surface

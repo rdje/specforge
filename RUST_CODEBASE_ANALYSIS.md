@@ -489,8 +489,14 @@ LLM/VLM provider is still production-default.
   `classify_document` (doc-class from a structural census), `front_matter_doc_type_hint`, and
   `document_completeness_gauge` (a class-aware per-document completeness gauge — `DocumentCompletenessGauge`
   / `CompletenessGap`, where a `Guide` is "not applicable" and the other classes gauge each dimension only
-  when its denominator > 0). Its production seam is `commands/validate.rs` (`document_class` /
-  `document_completeness_gaps` metrics + `evidence_document_*` findings).
+  when its denominator > 0). `completeness` also owns the `DOC-INTENT-TAXONOMY.3` PURPOSE recognizer: pure
+  `classify_document_intent_category` (the 6-category semantic taxonomy — `DocumentIntentCategory` /
+  `IntentCategoryConfidence` / `DocumentIntentClassification`) built ON the same `DocumentClassCensus` (now
+  carrying `message_field_records` / `signal_presence_records` / `front_matter_isa` / `front_matter_phy`) plus
+  the generic front-matter `front_matter_declares_isa` / `front_matter_declares_phy` helpers (ADR 0006), with
+  only clean-wire and self-declared-guide at HIGH confidence and an explicit residual otherwise. Its
+  production seam is `commands/validate.rs` (`document_class` / `document_intent_category` /
+  `document_completeness_gaps` metrics + `evidence_document_*` / `evidence_document_intent_category` findings).
 - **Whole `crates/specforge/src` ≈ 103,200 lines** (single workspace crate, edition 2024), up from
   the ~88.7K cited on 2026-05-29.
 - **`cargo test -p specforge --lib` = 1435 passing, 0 failed, 0 ignored** (the canonical validation

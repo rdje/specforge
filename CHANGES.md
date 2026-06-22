@@ -1,3 +1,28 @@
+### DOC-INTENT-TAXONOMY.3b — implement the 6-category document PURPOSE recognizer (validate-reported)
+Code slice (the FIRST Rust change gated by the new `TASK-ACCEPTANCE` doctrine). Operationalizes the `.3a` design: a
+deterministic, name-list-free recognizer that reports what a chip-spec PDF is *about* (its purpose category), beside the
+existing structural `document_class`.
+- **`crates/specforge/src/ir/completeness.rs`** — new `DocumentIntentCategory` (6 purpose variants + `Unresolved`),
+  `IntentCategoryConfidence`, `DocumentIntentClassification`, and the pure `classify_document_intent_category(census)`
+  (sibling to `classify_document`, in-file tests). `DocumentClassCensus` extended with `message_field_records` /
+  `signal_presence_records` / `front_matter_isa` / `front_matter_phy` (recognizer-only; `classify_document` unchanged).
+  New generic front-matter helpers `front_matter_declares_isa` / `front_matter_declares_phy` (ADR 0006) + a shared
+  `front_matter_has_word` (existing `front_matter_doc_type_hint` refactored onto it, behavior identical).
+- **`crates/specforge/src/commands/validate.rs`** — census now bound once and fed to BOTH classifiers; new printed
+  "Document Intent Category" block, `evidence_document_intent_category` Info finding (carries confidence + the honest
+  residual), and `document_intent_category` / `document_intent_category_confidence` metrics.
+- **Measured refinement of `.3a`:** per-document measurement falsified the literal `.3a` flit cue (it would misclassify
+  NVMe / AMD-IOMMU / GIC-600 as wire). The shipped discriminators: flit fields are a cat-1 cue ONLY without a register
+  map (CHI/DTI reg=0 vs NVMe/AMD/CCIX reg>0), plus a wire-weight vs register/structure-weight dominance test (register
+  count never vetoes a clean wire shape — AXI: wire 401 ≥ struct 229). Only clean wire + self-declared guide are HIGH
+  confidence; everything else is LOW + explicit residual.
+- **Verified:** live `validate` over all 78 persisted docs → 21 wire-protocol / 8 methodology-guide (both high) /
+  28 register-or-platform / 16 unresolved / 5 physical-link (low), **0 high-confidence false positives**.
+- **Gates:** `kg-bench 156/156`; completeness lib `66/66` (13 new recognizer tests); full `cargo test` `1695 passed; 0
+  failed` (warning-deny); `cargo fmt`/`clippy -D warnings` clean. WIRE-BASED-100 provably orthogonal (pure new fn +
+  additive reporting; no extraction/emitter path touched → wire golds byte-identical by construction). User-facing
+  mdBook chapter + KM card + gold/negative fixtures + ISA/PHY vocab calibration land in `.3c`.
+
 ### DOCTRINE-ENFORCEMENT-ADOPT.2 — user-facing mdBook chapter + KM card (book-method-doc close); tree CLOSED
 Closing leaf (docs-only). Documents the adopted doctrine-enforcement system on the user-facing surface and writes the
 durable fact card, completing the `DOCTRINE-ENFORCEMENT-ADOPT` tree.
