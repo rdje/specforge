@@ -236,6 +236,48 @@ extraction rather than silent zeros. The hint (`front_matter_doc_type_hint`) is 
 unit-tested function over the front-matter text, and `validate` surfaces it as a
 `document_type_declared` metric.
 
+### What is the document *about*? — the purpose category
+
+The structural class answers "what *shape* of intent did we extract?" — but two documents with the
+same shape can have very different **purposes**. A wire bus protocol and a CPU register manual are both
+"contracts", yet what it means to capture them *completely* — and how they lower to `.isf` — is entirely
+different. So alongside the class, `validate` now reports a richer **document intent category**: the
+six-category purpose taxonomy from the [Chip-Spec Document Categories](../document-categories.md) chapter,
+naming what the document is *about*.
+
+The six categories are `wire-protocol`, `register-or-platform`, `cpu-isa`, `physical-link`,
+`methodology-guide`, and an honest `unresolved`. It is reported as a `document_intent_category` metric (plus
+`document_intent_category_confidence`) and an `evidence_document_intent_category` Info finding, beside the
+structural class — it does not replace `document_class`, it **consumes it as one input**.
+
+Two design choices make it trustworthy rather than a confident-sounding guess:
+
+- **It only claims high confidence where the evidence is unambiguous.** A clean wire-behavioural shape →
+  `wire-protocol`, and a front-matter guide self-declaration → `methodology-guide`, are reported at **high**
+  confidence. Everything else is **low** confidence with an explicit **residual** — the honest sentence
+  saying *why* it could not decide. The corpus census proved this is necessary: typed-surface counts simply
+  cannot separate a register-IP (category 2) from a platform/system-IP (category 3) — both are
+  register/structure-dominant — so the recognizer reports the combined `register-or-platform` with a
+  residual rather than inventing a split. Likewise a CPU ISA has no distinct structural signature, and a
+  physical-layer spec is indistinguishable from a guide by structure alone, so both rest on a generic
+  front-matter self-declaration and otherwise fall through to an honest `unresolved`.
+- **A register count never vetoes a real wire protocol.** Many bus protocols also carry a register map
+  (AXI has 71 registers — and 348 actor-signal relations). Classifying on the *dominant* surface, the
+  recognizer weighs the wire surface against the register/structure surface, so AXI is correctly
+  `wire-protocol` while a register manual that merely mentions a few signals is not. The subtle case is
+  message/packet **fields**: they are wire (flit) intent for a packet protocol like CHI or DTI, but
+  in-memory *structure* intent for a register IP like NVMe or AMD-IOMMU. The measured, name-list-free
+  discriminator is the presence of a register map — flit fields count toward wire intent only when the
+  document declares no registers. A register-heavy protocol whose wire shape is outweighed is reported as
+  `register-or-platform`, but its residual says so explicitly (*"may be a register-heavy wire protocol"*),
+  so nothing is silently misfiled.
+
+Across the corpus this lands as 21 `wire-protocol` and 8 `methodology-guide` at high confidence — every one
+verified genuinely correct, **zero** high-confidence mislabels — with the register/platform, ISA, PHY, and
+genuinely-ambiguous documents reported honestly at low confidence with their residuals. Like every other
+classifier here, `classify_document_intent_category` is a pure, unit-tested function over the structural
+census plus generic document-type vocabulary — never a chip, vendor, or protocol name.
+
 ### How complete is what we extracted? — the class-aware completeness gauge
 
 Knowing a document's *class* answers "what kind of thing is this?". The next honest question

@@ -95,16 +95,26 @@ ISF can express it.
 
 ## How SpecForge determines a document's category
 
-Today, SpecForge infers a coarse structural **document class** (`protocol` / `register` / `interface` /
+SpecForge infers a coarse structural **document class** (`protocol` / `register` / `interface` /
 `guide`) purely from *which typed surfaces the extraction produced* — no vendor or chip names are ever
 used (see [the genericity guardrail](architecture-rationale.md)). That class is a useful proxy, but it is
 deliberately coarse: it folds the six purpose categories above into four buckets and has no distinct slot
 for a CPU ISA.
 
-The richer six-category taxonomy on this page is the **target**: SpecForge is growing toward reporting a
-document's *purpose* category quickly and deterministically, so that — the moment you point it at a PDF —
-you (and the pipeline) know which yardstick applies. That recognizer is built on the same structural,
-name-list-free signals, never on a list of known specifications.
+The richer six-category taxonomy on this page is **now reported directly by the CLI**: `validate` emits a
+`document_intent_category` — `wire-protocol`, `register-or-platform`, `cpu-isa`, `physical-link`,
+`methodology-guide`, or an honest `unresolved` — beside the structural `document_class`, so the moment you
+point it at a PDF you (and the pipeline) know which yardstick applies. It is deterministic and built on the
+same structural, name-list-free signals (plus the document's own front-matter doc-type words), never on a
+list of known specifications, and it is honest about uncertainty: only a clean wire-behavioural shape and a
+self-declared guide are reported at **high** confidence, while the categories the structure genuinely cannot
+separate — register-IP versus platform-IP (folded into `register-or-platform`), CPU-ISA, and
+physical-versus-guide — are reported at **low** confidence with an explicit residual rather than a forced
+guess. A register map never vetoes a real wire protocol, and message/packet fields count as wire intent
+only when no register map is present, so a register-heavy bus protocol is not misfiled as a register IP. See
+the [Validation](quality/validation.md) chapter for how to read the metric, the confidence, and the
+residual. (The honest distribution over today's corpus: 21 `wire-protocol` and 8 `methodology-guide` at high
+confidence with zero high-confidence mislabels, the rest reported at low confidence with their residuals.)
 
 ## What "fully handled" requires — and the FSMGen feedback loop
 

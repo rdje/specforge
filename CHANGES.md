@@ -1,3 +1,25 @@
+### DOC-INTENT-TAXONOMY.3c — recognizer fixtures + user-facing mdBook chapter + KM card (.3 recognizer complete)
+Test + docs slice closing the `.3` recognizer sub-tree (the recognizer was implemented in `.3b`).
+- **`crates/specforge/src/commands/validate.rs`** — new end-to-end integration test
+  `validate_evidence_ir_reports_document_intent_category`: builds an EvidenceIR through the real pipeline and asserts the
+  `document_intent_category` / `document_intent_category_confidence` metrics + the `evidence_document_intent_category`
+  finding reach the persisted report (near-empty doc → honest `unresolved` residual). The per-category gold/negative cases
+  stay locked by the 13 in-file unit tests added in `.3b`.
+- **`docs/book/src/quality/validation.md`** — new "What is the document *about*? — the purpose category" section beside
+  the Document Class section: the 6 categories, the high-confidence-only-where-unambiguous policy, the register-never-vetoes
+  -wire and flit-only-without-a-register-map discriminators, and the honest residual.
+- **`docs/book/src/document-categories.md`** — the "how SpecForge determines a category" section flipped from "target" to
+  "now reported directly by the CLI" (the recognizer is live), with the confidence/residual semantics.
+- **`docs/knowledge/document-intent-category-recognizer.md`** — KM fact card (map regenerated 113 → 114 facts / 815 keys),
+  with a `reverify` that re-runs the recognizer + the 78-doc tally; in sync.
+- **ISA/PHY vocab calibration:** precision-verified against real corpus front-matter — the ISA vocabulary matches 0 docs
+  (the 2 corpus ISA docs honestly fall through, as `.1` predicted), PHY recovers all 4 OpenCAPI PHY docs; no further
+  widening without risking false positives.
+- **Gates:** `kg-bench 156/156`; full `cargo test` green (warning-deny, +1 integration test); `cargo fmt`/`clippy -D
+  warnings` clean; `mdbook build` green; knowledge-map derive-and-diff in sync; `run_ci.sh` green. WIRE-BASED-100
+  orthogonal (test + docs only). **`DOC-INTENT-TAXONOMY.3` (fast category recognizer) COMPLETE**; frontier → `.4+`
+  per-category levers (Gap-A register bit-field lowering) + FSMGen ISF-abstraction FRs.
+
 ### DOC-INTENT-TAXONOMY.3b — implement the 6-category document PURPOSE recognizer (validate-reported)
 Code slice (the FIRST Rust change gated by the new `TASK-ACCEPTANCE` doctrine). Operationalizes the `.3a` design: a
 deterministic, name-list-free recognizer that reports what a chip-spec PDF is *about* (its purpose category), beside the

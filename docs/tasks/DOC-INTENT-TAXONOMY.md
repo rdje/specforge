@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `DOC-INTENT-TAXONOMY`
-- Status: `active` (`.0` taxonomy definition + capture DONE `2026-06-22`; `.1` corpus census by category DONE `2026-06-22`, read-only; `.2` per-category ISF-completeness gauge DONE `2026-06-22`, read-only; `.3a` recognizer design DONE `2026-06-22`; `.3b` recognizer IMPLEMENTED + validate-reported DONE `2026-06-22`, code; frontier → `.3c` fixtures + book + KM)
+- Status: `active` (`.0` taxonomy DONE `2026-06-22`; `.1` corpus census DONE `2026-06-22`, read-only; `.2` per-category ISF-completeness gauge DONE `2026-06-22`, read-only; `.3` fast category recognizer COMPLETE `2026-06-22` — `.3a` design / `.3b` implement+validate-reported `d6239217` / `.3c` fixtures+book+KM; frontier → `.4+` per-category levers + FSMGen ISF-abstraction FRs)
 - Roadmap lane: `R15`/`R16` (north star: COMPLETE IntentIR → FAITHFUL ISF, now made explicit **per document category**)
 - Created: `2026-06-22`
 - Last updated: `2026-06-22`
@@ -108,8 +108,8 @@ must be COMPLETE and lower FULLY to ISF. The maturity column above is the **hone
   `docs/research/document-intent-isf-completeness.md`; KM `[[document-intent-isf-completeness]]`. Objectively measured,
   per-item demonstrated (`[[feedback_scoring_rigor]]`); no fabrication; no code/canonical mutation → golds/`kg-bench`
   orthogonal.
-- ID: `DOC-INTENT-TAXONOMY.3` · Status: `in-progress` (`.3a` design DONE, `.3b` implement DONE; `.3c` fixtures+CI+book
-  remaining) · Goal: **fast deterministic category recognizer** so `inspect`/`validate` immediately report a
+- ID: `DOC-INTENT-TAXONOMY.3` · Status: `done` (`2026-06-22`; `.3a` design + `.3b` implement+validate-reported `d6239217`
+  + `.3c` fixtures+book+KM all DONE) · Goal: **fast deterministic category recognizer** so `inspect`/`validate` immediately report a
   PDF's purpose category (the owner's "quickly determine which category"). A richer `document_intent_category` surface
   built on the typed-surface census + structural cues (ADR 0006, no name lists). Acceptance: CLI reports it; fixtures
   lock gold/negative classification; `run_ci.sh` green.
@@ -133,9 +133,18 @@ must be COMPLETE and lower FULLY to ISF. The maturity column above is the **hone
     register-heavy docs to the honest combined category with a residual that names the outweighed wire cue. Only CLEAN wire
     and a self-declared guide are HIGH confidence; everything else is LOW + explicit residual. Build RAM-constrained
     (`CARGO_BUILD_JOBS=2`, RAM monitored). See the Acceptance Checklist below.
-  - `.3c` · Status: `pending` · **Fixtures + CI** — gold/negative fixtures locking each category and the honest-residual
-    cases (the register-heavy-protocol rescue, the cat-6-over-extraction front-matter override, the cat 2↔3 / cat 4 /
-    cat 5↔6 honest-low-confidence residuals); `scripts/run_ci.sh` green; book + live-doc sync.
+  - `.3c` · Status: `done` (`2026-06-22`) · **Fixtures + book + KM.** The per-category gold/negative + honest-residual
+    cases are locked by the 13 in-file unit tests added in `.3b` (`crate::ir::completeness`: register-heavy-protocol
+    rescue, guide front-matter override, cat 2↔3 / cat 4 / cat 5↔6 residuals, the "only wire+guide are HIGH confidence"
+    precision guarantee); `.3c` ADDS an end-to-end integration lock `validate_evidence_ir_reports_document_intent_category`
+    in `commands/validate.rs` (the metric + confidence + `evidence_document_intent_category` finding reach the report
+    through the real pipeline; the near-empty fall-through → honest `unresolved` residual). **User-facing mdBook chapter:**
+    a new "What is the document *about*? — the purpose category" section in `docs/book/src/quality/validation.md` (beside
+    `document_class`) + `docs/book/src/document-categories.md` flipped from "target" to "now CLI-reported". **KM fact card**
+    `docs/knowledge/document-intent-category-recognizer.md` (map 113→114). **ISA/PHY vocab calibration:** precision-verified
+    against real corpus front-matter — ISA vocabulary matches 0 docs (the 2 corpus ISA docs honestly fall through, `.1`
+    predicted this), PHY recovers all 4 OpenCAPI PHY docs (added `"physical signaling"` in `.3b`); no further widening
+    without risking false positives. `scripts/run_ci.sh` green. See the `.3c` Acceptance Checklist below.
 
 ### Recognizer design (`.3a`, grounded in `completeness.rs` + the `.1`/`.2` measured evidence)
 
@@ -217,6 +226,33 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   and the gold/negative + honest-residual fixtures are the explicit `.3c` deliverable (pinned decomposition), landing in
   the immediately-following slice.
 
+## Acceptance Checklist (enforced) — `DOC-INTENT-TAXONOMY.3c`
+
+- [x] **REPRODUCE / MEASURE** — baseline: after `.3b` the recognizer logic was locked by 13 in-file unit tests, but the
+  validate-surface WIRING (census → `classify_document_intent_category` → metric + finding) had NO end-to-end regression
+  lock, and the user-facing mdBook + KM card were the pinned `.3b`→`.3c` lockstep gap. Measured live: `validate` emits
+  `document_intent_category` / `document_intent_category_confidence` + `evidence_document_intent_category` across all 78
+  docs.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the surface emission lived only in `crates/specforge/src/commands/validate.rs`
+  (`document_intent_category` metric + `evidence_document_intent_category` finding) with no integration test asserting it
+  reaches the persisted report; a future refactor of the census site could silently drop it. WHERE: the new test
+  `validate_evidence_ir_reports_document_intent_category` in `commands/validate.rs` builds an EvidenceIR through the real
+  pipeline and asserts the metric/confidence/finding (the near-empty doc → honest `unresolved` residual path).
+- [x] **ADDRESSED (verified)** — added the end-to-end integration test (passes: metric `unresolved`, confidence `low`,
+  finding present with its residual); the per-category gold/negative cases remain locked by the 13 `.3b` unit tests.
+  Documented the surface for users: a new purpose-category section in `docs/book/src/quality/validation.md` beside
+  `document_class`, and `docs/book/src/document-categories.md` flipped from "target" to "now CLI-reported"; wrote the KM
+  fact card `docs/knowledge/document-intent-category-recognizer.md` (map regenerated 113 → 114 facts, in sync).
+- [x] **NO REGRESSION** — `kg-bench 156/156`; full `cargo test` green (warning-deny, now incl. the new integration test);
+  `cargo fmt`/`clippy -D warnings` clean; `mdbook build` green; knowledge-map derive-and-diff in sync; `run_ci.sh` green.
+  WIRE-BASED-100 **orthogonal** (a test + docs only — no extraction/semantic/intent/emitter path touched).
+- [x] **GENERICITY (ADR 0006)** — no production-logic change; the documented recognizer is name-list-free (structural
+  census + generic front-matter doc-type vocabulary). ISA/PHY vocab precision-verified on the corpus (ISA matches 0 docs;
+  `"physical signaling"` matches only the 2 PHY signaling specs).
+- [x] **LOCKSTEP** — mdBook (`quality/validation.md` + `document-categories.md`), KM card + regenerated `KNOWLEDGE_MAP.md`,
+  and the task tree / `TASK_TREE.md` / `CHANGES.md` / `DEVELOPMENT_NOTES.md` / `LIVE_ACHIEVEMENT_STATUS.md` / `MEMORY.md`
+  all updated in this slice.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
@@ -225,8 +261,8 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | — | `DOC-INTENT-TAXONOMY.2` | `done` (`2026-06-22`) | ISF-completeness scorecard MEASURED — maturity column now objective; two dominant true gaps (register bit-fields 12,638→0; message-field structures 1,220→0, no Intent carrier). |
 | — | `DOC-INTENT-TAXONOMY.3a` | `done` (`2026-06-22`) | Recognizer DESIGN pinned (grounded in `completeness.rs` + measured `.1`/`.2` evidence): cues, decision order, honest-residual policy, ADR-0006 genericity — de-risks the hard name-list-free classifier before coding. |
 | — | `DOC-INTENT-TAXONOMY.3b` | `done` (`2026-06-22`) | Recognizer IMPLEMENTED + reported by `validate` (`classify_document_intent_category` in `completeness.rs`, wired into `validate.rs`); corpus: 21 wire / 8 guide (both high) / 28 register-or-platform / 16 unresolved / 5 PHY (low) with 0 high-confidence false positives. Refined the `.3a` flit clause its own data falsified. kg-bench 156/156, cargo test 1695/0, clippy/fmt clean. |
-| 1 | `DOC-INTENT-TAXONOMY.3c` | `pending` | Fixtures lock gold/negative + honest-residual cases (register-heavy-protocol rescue, guide front-matter override, 2↔3 / 4 / 5↔6 residuals); user-facing mdBook chapter (`quality/validation.md` + `document-categories.md` "now live"); KM card; calibrate ISA/PHY front-matter vocab against real strings; `run_ci.sh` green. |
-| 2 | `DOC-INTENT-TAXONOMY.4+` | `pending` | Per-category levers; `.2` makes **register bit-field lowering (Gap A)** the highest-leverage first lever (32 docs, 12,638 fields), then **message-field structure carry + lowering (Gap B)** — both pending the same FSMGen ISF-abstraction (field-structured storage / packet layouts), filed as verified FRs after empirical submodule check. |
+| — | `DOC-INTENT-TAXONOMY.3c` | `done` (`2026-06-22`) | Recognizer FIXTURES + book + KM landed: 13 in-file unit golds (`.3b`) + an end-to-end `validate` integration test; user-facing mdBook chapter (`quality/validation.md` + `document-categories.md` "now CLI-reported"); KM card (map 113→114); ISA/PHY vocab precision-verified. `run_ci.sh` green. **`.3` recognizer COMPLETE.** |
+| 1 | `DOC-INTENT-TAXONOMY.4+` | `pending` | Per-category levers; `.2` makes **register bit-field lowering (Gap A)** the highest-leverage first lever (32 docs, 12,638 fields), then **message-field structure carry + lowering (Gap B)** — both pending the same FSMGen ISF-abstraction (field-structured storage / packet layouts), filed as verified FRs after empirical submodule check. |
 
 ## Decisions
 
@@ -268,7 +304,8 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.1` | read-only profile of 78 persisted docs (no `validate` → zero mutation); distribution 36/7/15/2/4/14; memory-arch + knowledge-map gates; no code → golds/`kg-bench` orthogonal | PASS |
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.2` | read-only per-surface lowering gauge over 78 docs (76 `adapter.json` + 2 `adapt --dry-run`, verified no write); measured 12,638 register-fields→0 + 1,220 msg-fields→0 (no Intent carrier); reproducer `scripts/measure_isf_completeness.py`; mdBook builds; memory-arch + knowledge-map (112 facts) gates green; no code/canonical mutation → golds/`kg-bench` orthogonal | PASS |
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.3a` | design slice (no code): recognizer algorithm grounded in `completeness.rs` (`classify_document`) + measured `.1`/`.2` evidence; verified the cues are in scope at `validate.rs` ~2888; memory-arch + knowledge-map gates green; no code → golds/`kg-bench` orthogonal | PASS |
-| `2026-06-22` | `DOC-INTENT-TAXONOMY.3b` | `cargo fmt --all --check` clean; `cargo clippy --all-targets -- -D warnings` clean; completeness lib `66/66` (13 new recognizer tests); full `cargo test` `1695 passed; 0 failed` (warning-deny); `kg-bench 156/156`; live `validate` over all 78 docs → 21 wire / 8 guide (high) / 28 register-or-platform / 16 unresolved / 5 PHY (low), 0 high-confidence false positives; WIRE-BASED-100 orthogonal (pure new fn + additive reporting, no extraction/emitter touch) | PASS |
+| `2026-06-22` | `DOC-INTENT-TAXONOMY.3b` | `cargo fmt --all --check` clean; `cargo clippy --all-targets -- -D warnings` clean; completeness lib `66/66` (13 new recognizer tests); full `cargo test` `1695 passed; 0 failed` (warning-deny); `kg-bench 156/156`; live `validate` over all 78 docs → 21 wire / 8 guide (high) / 28 register-or-platform / 16 unresolved / 5 PHY (low), 0 high-confidence false positives; WIRE-BASED-100 orthogonal (pure new fn + additive reporting, no extraction/emitter touch) | PASS (committed `d6239217`) |
+| `2026-06-22` | `DOC-INTENT-TAXONOMY.3c` | end-to-end integration test `validate_evidence_ir_reports_document_intent_category` PASS; `kg-bench 156/156`; full `cargo test` green (warning-deny, +1 test); `cargo fmt`/`clippy -D warnings` clean; `mdbook build` green; knowledge-map derive-and-diff in sync (113→114 facts); `run_ci.sh` green; WIRE-BASED-100 orthogonal (test + docs only) | PASS |
 
 ## Commit Log
 
@@ -278,11 +315,21 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | `DOC-INTENT-TAXONOMY.1` | `DOC-INTENT-TAXONOMY.1 — corpus census by category (36/7/15/2/4/14)` | read-only measurement |
 | `DOC-INTENT-TAXONOMY.2` | `DOC-INTENT-TAXONOMY.2 — per-category ISF-completeness gauge (register fields 12,638→0; structures 1,220→0)` | read-only measurement |
 | `DOC-INTENT-TAXONOMY.3a` | `DOC-INTENT-TAXONOMY.3a — recognizer design (grounded; honest-residual, ADR-0006)` | design slice, no code |
-| `DOC-INTENT-TAXONOMY.3b` | `DOC-INTENT-TAXONOMY.3b — implement the 6-category purpose recognizer (validate-reported; measured refinement of .3a)` | code slice |
+| `DOC-INTENT-TAXONOMY.3b` | `d6239217` `DOC-INTENT-TAXONOMY.3b — implement the 6-category purpose recognizer (validate-reported; measured refinement of .3a)` | code slice |
+| `DOC-INTENT-TAXONOMY.3c` | `DOC-INTENT-TAXONOMY.3c — recognizer fixtures + user-facing mdBook chapter + KM card (.3 recognizer complete)` | test + docs slice |
 
 ## Changelog
 
-- `2026-06-22`: `.3b` recognizer IMPLEMENTED + reported by `validate` (code slice). Added `DocumentIntentCategory`
+- `2026-06-22`: `.3c` recognizer FIXTURES + book + KM landed (test + docs slice) → **`.3` recognizer COMPLETE**. Added the
+  end-to-end integration test `validate_evidence_ir_reports_document_intent_category` (the metric + confidence + finding
+  reach the persisted report through the real pipeline; near-empty → honest `unresolved` residual); the per-category
+  gold/negative cases stay locked by the 13 `.3b` in-file unit tests. User-facing mdBook: new purpose-category section in
+  `docs/book/src/quality/validation.md` beside `document_class` + `document-categories.md` flipped from "target" to "now
+  CLI-reported". KM fact card `document-intent-category-recognizer` (map 113→114 facts / 815 keys). ISA/PHY vocab
+  precision-verified (ISA 0 corpus docs — honest fall-through; PHY recovers all 4 OpenCAPI PHY docs). kg-bench 156/156;
+  cargo test green; run_ci.sh green; WIRE-BASED-100 orthogonal. Frontier → `.4+` per-category levers (Gap-A register
+  bit-field lowering) + FSMGen ISF-abstraction FRs.
+- `2026-06-22`: `.3b` recognizer IMPLEMENTED + reported by `validate` (code slice), committed `d6239217`. Added `DocumentIntentCategory`
   (6 purpose variants + `Unresolved`), `IntentCategoryConfidence`, `DocumentIntentClassification`, and the pure
   `classify_document_intent_category` to `completeness.rs` (sibling to `classify_document`), plus the front-matter
   ISA/PHY self-declaration helpers; wired into `validate.rs` at the shared census site (bound once, fed to both

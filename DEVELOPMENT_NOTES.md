@@ -1,4 +1,31 @@
 # DEVELOPMENT_NOTES
+## DOC-INTENT-TAXONOMY.3c (`2026-06-22`) — recognizer fixtures + book + KM (the `.3` recognizer is complete)
+
+**Context.** `.3b` implemented + wired the recognizer and locked its per-category logic with 13 in-file unit tests.
+`.3c` adds the two things the pinned decomposition deferred: an end-to-end regression lock for the *validate surface*,
+and the user-facing documentation (the book is the user's only window into the tool).
+
+**The integration test, and what it taught me.** I first wrote the test expecting a markdown titled "# Widget User
+Guide" to classify as `methodology-guide` (high) — but it came out `unresolved`. That was the recognizer being *correct*,
+not a bug: the validate front-matter signal is `document_profile.title` + the early `document_sections` titles, and a
+minimal one-heading markdown does not populate them the way a real PDF's front-matter does, so there was no decisive cue
+and the recognizer honestly fell through to `unresolved` rather than guessing. I retargeted the test to lock that
+honest-residual fall-through path end to end (metric + confidence + finding + the residual text). The per-category gold
+cases are already locked at the unit level (where the census is controlled directly), so the integration test's job is to
+lock the *wiring*, which it now does. Lesson reaffirmed: assert what the pipeline actually does, not what I assumed.
+
+**ISA/PHY vocab calibration (precision-first).** Before shipping any front-matter vocabulary I probed all 78 docs'
+front-matter: the ISA vocabulary (`instruction set` / `privileged architecture` / `isa` / …) matches **0** corpus docs —
+so the 2 corpus ISA docs (RISC-V Debug, RISC-V AIA) honestly fall through to a register-or-platform / unresolved residual,
+exactly as `.1` predicted (ISA has no structural signature). The PHY vocabulary recovers all 4 OpenCAPI PHY docs once
+`"physical signaling"` was added (precision-checked: that phrase appears only in the 2 PHY signaling specs). I deliberately
+did NOT widen further — the honest residual is better than a false positive.
+
+**Book framing.** The new validation.md section leads with *why* (two same-shape documents can have different purposes, so
+"complete" means different things) before the *what*, and is explicit about the two trust properties: high confidence only
+where the evidence is unambiguous, and a register map never vetoes a real wire protocol. `document-categories.md` flips
+from describing the recognizer as a "target" to "now reported by the CLI", keeping the conceptual taxonomy as the map.
+
 ## DOC-INTENT-TAXONOMY.3b (`2026-06-22`) — implement the 6-category document PURPOSE recognizer
 
 **Context.** `.3a` pinned the recognizer design; `.3b` implements it. This is the FIRST Rust slice gated by the new

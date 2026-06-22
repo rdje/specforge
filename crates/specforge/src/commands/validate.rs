@@ -8626,6 +8626,57 @@ mod tests {
     }
 
     #[test]
+    fn validate_evidence_ir_reports_document_intent_category() -> Result<()> {
+        // DOC-INTENT-TAXONOMY.3b — the purpose category reaches the user-facing report end to
+        // end, beside `document_class`: a `document_intent_category` metric, its confidence, and
+        // the `evidence_document_intent_category` Info finding. Built through the REAL pipeline
+        // from a near-empty document: no typed intent surface and no decisive front-matter cue,
+        // so the recognizer HONESTLY falls through to `unresolved` (low) with a residual rather
+        // than forcing a guess — locking the wiring and the honest-residual fall-through path.
+        // (The per-category gold/negative cases are locked by the in-file unit tests in
+        // `crate::ir::completeness`.)
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("intent_category.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(&source, "# Spec\nNarrative overview, no contract.\n")?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        let report = validate_evidence_ir(&evidence_ir, "intent_category".to_string());
+        assert_eq!(
+            metric_value(&report, "document_intent_category"),
+            Some("unresolved"),
+            "a near-empty doc with no decisive cue is an honest residual, not a forced guess"
+        );
+        assert_eq!(
+            metric_value(&report, "document_intent_category_confidence"),
+            Some("low"),
+            "an unresolved call is always LOW confidence"
+        );
+        assert!(has_finding(&report, "evidence_document_intent_category"));
+        let summary = report
+            .findings
+            .iter()
+            .find(|f| f.finding_id == "evidence_document_intent_category")
+            .map(|f| f.summary.as_str())
+            .unwrap_or_default();
+        assert!(
+            summary.contains("unresolved")
+                && summary.contains("low confidence")
+                && summary.contains("residual:"),
+            "the finding carries the category, confidence, and the honest residual: {summary}"
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn validate_evidence_ir_counts_alias_grounded_signal_semantic_hints() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("alias_semantic_hints.md");
