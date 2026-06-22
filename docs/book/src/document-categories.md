@@ -39,7 +39,7 @@ gravity.) The honest "ISF maturity" column reflects where SpecForge stands as of
 | **1** | **Wire-level bus / interconnect protocol** | signals (direction/width), transactions, handshake & temporal rules, actor↔signal relations, polarity | APB, AHB, AXI, AXI-Stream, ACE, CHI, TileLink, Avalon, Wishbone, OCP, CXS/GFB/LTI/DTI/ATP/LPI, OpenCAPI, CCIX, USB, I²C, I²S, CAN, SMBus, SWD | **Mature** — IntentIR maps directly; ISF lowers richly (the wire-protocol gold suite scores 1.000) |
 | **2** | **Programmable register / memory-mapped IP** | register maps, bit-fields, access/reset semantics, in-memory **structures** (descriptors, queues, page tables, contexts) | RISC-V IOMMU, AMD-IOMMU, Intel VT-d, GIC architecture, SMMU/MMU-700, CoreSight TRMs, NVMe, JEDEC eMMC EXT_CSD | **Mostly there** — register maps + reset lower, and their **named bit-fields now lower** to field-structured storage; the remaining frontier is **in-memory structure recall** (descriptors/queues) for non-AMBA layouts |
 | **3** | **Platform / system-IP topology & integration** | components, connectivity, clock/reset infrastructure, programming model, integration contract | CoreSight SoC-600, GIC distributor/redistributor, interconnect fabrics | **Partial** — infrastructure signals and actor ports lower; topology stays at the hint level |
-| **4** | **CPU ISA / privileged architecture** | instructions, CSRs/registers, privilege modes, exceptions, memory-ordering model | RISC-V Debug, RISC-V Advanced Interrupt Architecture, ISA volumes | **Thin** — only partly wire-shaped; the least-developed ISF story (a candidate for new ISF abstractions) |
+| **4** | **CPU ISA / privileged architecture** | instructions, CSRs/registers, privilege modes, exceptions, memory-ordering model | RISC-V Debug, RISC-V Advanced Interrupt Architecture, ISA volumes | **Thin, now diagnosed** — its CSRs *are* registers and reuse the register/storage abstraction (their bit-fields lower once *located*); the remaining gap is **extraction recall** of RISC-V CSR layouts, **not** a missing ISF construct. Instructions, privilege modes, and exceptions are honest non-targets |
 | **5** | **Physical / electrical / link layer** | signaling levels, encoding, link training, mechanicals | OpenCAPI 25G/32G PHY, USB4 PHY, mechanical specs | **Honest-thin** — this is not behavioral wire intent, so a near-empty `.isf` is *correct*, not a miss |
 | **6** | **Methodology / language / EDA standard / guide** | *(not a chip contract)* — verification/modeling methodology, HDL/RDL languages, overview guides | UVM, SystemC/TLM, IP-XACT, SystemRDL, OVL, PSS, Liberty, LEF/DEF, overview/user guides | **Non-target** — recognized as such; SpecForge never forces chip intent out of these |
 
@@ -88,13 +88,15 @@ The rest of the scorecard, in plain terms:
 | **1 — wire protocol** | **Mature.** Signals, actor relations, constraints, timing rules, and enums all lower; the wire-protocol gold suite holds at a perfect 1.000. | Message/flit fields for the handful of register-heavy protocols (above); transaction *bodies* lower only where the document spells out the steps. |
 | **2 — register IP** | **Mostly there.** Register maps, their **bit-fields** (bits / access / reset / enum), and enums lower. | In-memory structures (descriptors/queues) — still captured one stage short of `IntentIR` — plus the honest field residuals (unlocated, ambiguous, or overlapping bits). |
 | **3 — platform / system-IP** | **Partial.** Registers and their bit-fields lower in volume (thousands; CoreSight SoC-600 alone ~3,250 fields); infrastructure signals lower. | The *topology* (what connects to what, clock/reset trees) stays at the hint level — there is no topology→ISF construct yet. |
-| **4 — CPU ISA** | **Thin.** Only the register-shaped part lowers. | Instructions, CSR-field semantics, privilege modes, and exceptions have no ISF construct yet — the least-developed road, and a candidate for a dedicated lowering decision. |
+| **4 — CPU ISA** | **Thin, now diagnosed.** A CSR *is* a register: it reuses the register/storage abstraction, and its bit-fields lower the moment they are *located* — the same road as categories 2 and 3, no new construct needed. | The cat-4 register gap is **extraction recall**, not a missing abstraction: RISC-V CSR field bit positions are not yet parsed (RISC-V Debug captures 44 registers but **0 located fields**; RISC-V AIA captures **0 registers** — its register intent sits in prose). Instructions, privilege modes, exceptions, and memory-ordering are **honest non-targets** — software-visible ISA semantics, not synthesizable hardware intent. |
 | **5 — PHY** | **Correctly near-empty.** A thin `.isf` is the right answer here. | — (not behavioral wire intent). |
 | **6 — guide** | **Correctly near-empty for most.** | A few guides currently *over*-produce `.isf` content they shouldn't — a precision matter for the category recognizer, not a synthesis gap. |
 
-The takeaway: **the wire-protocol road is built; the register, platform, and ISA roads are paved partway**,
-and the next stretch on all three is the same — synthesizing captured *structure* (fields and layouts) once
-ISF can express it.
+The takeaway: **the wire-protocol road is built; the register, platform, and ISA roads are paved partway** —
+but the next stretch differs by category. For register and platform IP it is *synthesizing* captured
+structure (fields and layouts) once ISF can express it. For CPU ISA the lowering road already exists — a CSR
+is a register — so the next stretch is *recall*: parsing the CSR field bit positions so they can travel that
+road, while the non-register ISA semantics (instructions, privilege, exceptions) stay an honest non-target.
 
 ## How SpecForge determines a document's category
 

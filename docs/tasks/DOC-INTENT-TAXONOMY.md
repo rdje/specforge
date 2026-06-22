@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `DOC-INTENT-TAXONOMY`
-- Status: `active` (`.0` taxonomy DONE `2026-06-22`; `.1` corpus census DONE `2026-06-22`, read-only; `.2` per-category ISF-completeness gauge DONE `2026-06-22`, read-only; `.3` fast category recognizer COMPLETE `2026-06-22` — `.3a` design / `.3b` implement+validate-reported `d6239217` / `.3c` fixtures+book+KM; `.4a` Gap A — register bit-field lowering: empirical FSMGen-storage verification + verified FSMGen FR DONE `2026-06-22`, docs-only; **`.4a.ii` DONE `2026-06-22` (CODE) — emitted the register bit-field map into the shipped ISF field-structured-storage construct (pin `d327129b7`): 6,570 fields / 2,531 registers / 24 docs now reach `.isf` (was 0), 0 new FSMGen `--strict` diagnostics, 4 wire golds byte-identical**; frontier → `.4b` Gap B (gated, FSMGen-deferred packet/flit) / `.4c` cat-3 topology / `.4d` cat-4 ISA / `.4e` conditional triage; `.4a.i` superseded by `.4a.ii`)
+- Status: `active` (`.0` taxonomy DONE `2026-06-22`; `.1` corpus census DONE `2026-06-22`, read-only; `.2` per-category ISF-completeness gauge DONE `2026-06-22`, read-only; `.3` fast category recognizer COMPLETE `2026-06-22` — `.3a` design / `.3b` implement+validate-reported `d6239217` / `.3c` fixtures+book+KM; `.4a` Gap A — register bit-field lowering: empirical FSMGen-storage verification + verified FSMGen FR DONE `2026-06-22`, docs-only; **`.4a.ii` DONE `2026-06-22` (CODE) — emitted the register bit-field map into the shipped ISF field-structured-storage construct (pin `d327129b7`): 6,570 fields / 2,531 registers / 24 docs now reach `.isf` (was 0), 0 new FSMGen `--strict` diagnostics, 4 wire golds byte-identical**; **`.4d` DONE `2026-06-23` (decision packet, docs-only) — cat-4 CSRs REUSE the existing register/storage abstraction (no new ISF construct, FSMGen titles `(storage …)` the register-map/CSR construct); the cat-4 register gap is EXTRACTION RECALL (RISC-V Debug 179 fields all UNLOCATED, AIA 0 registers captured) → spun out `.4d.i`; instruction/privilege/exception/memory-ordering are honest non-targets**; frontier → `.4d.i` cat-4 RISC-V CSR bit-position recovery (code) / `.4b` Gap B (gated, FSMGen-deferred packet/flit) / `.4c` cat-3 topology / `.4e` conditional triage; `.4a.i` superseded by `.4a.ii`)
 - Roadmap lane: `R15`/`R16` (north star: COMPLETE IntentIR → FAITHFUL ISF, now made explicit **per document category**)
 - Created: `2026-06-22`
 - Last updated: `2026-06-22`
@@ -240,9 +240,31 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   message-heavy-protocol gap together. CODE.
 - ID: `DOC-INTENT-TAXONOMY.4c` · Status: `pending` · Goal: cat-3 topology lowering — promote clock/reset infrastructure
   + component connectivity from hint-level to a synthesizable ISF surface (likely another FSMGen abstraction).
-- ID: `DOC-INTENT-TAXONOMY.4d` · Status: `pending` · Goal: cat-4 ISA/CSR lowering decision — does CSR-field /
-  instruction / privilege intent map onto existing register/storage abstractions or need a new ISF construct? Resolve
-  with a measured decision packet (shares Gap A's register-field lowering).
+- ID: `DOC-INTENT-TAXONOMY.4d` · Status: `done` (`2026-06-23`, measurement + decision packet, read-only, docs-only — no
+  Rust code) · Goal: cat-4 ISA/CSR lowering decision — does CSR-field / instruction / privilege intent map onto existing
+  register/storage abstractions or need a new ISF construct? **DONE — resolved from measured evidence over the corpus's 2
+  cat-4 docs + the current FSMGen pin `d327129b7`. Cat-4 intent splits into three:** (1) **CSR / register intent → REUSE
+  the existing register/storage abstraction (no new ISF construct, no FSMGen FR)** — CSRs are structurally registers
+  (RISC-V Debug captures its 44 Debug-Module CSRs as `register_records`) and FSMGen explicitly titles `(storage (var …
+  (fields …)))` the "register map / CSR" construct (`subs/fsmgen/docs/book/src/13a-actor-interface.md:419`/`:468`), the
+  same construct `.4a.ii` lowers cat-2/cat-3 fields into; (2) **the cat-4 register gap is EXTRACTION RECALL, not
+  abstraction** — RISC-V Debug captures 44 regs / 179 fields with name/access/reset/description but **0/179 are located**
+  (no field carries `bits_high`/`bits_low`/`bit_width`; the bit-layout column was unparsed), and RISC-V AIA captures **0
+  registers** (its IMSIC/APLIC CSR intent is in prose `conditional_rules`/`behaviors`; 211 empty prose "interfaces"); so
+  fields reach `.isf` 0 times not because ISF lacks the construct but because they aren't located → spun out **`.4d.i`**;
+  (3) **instruction / privilege-mode / exception / memory-ordering → honest NON-TARGET** (software-visible ISA semantics,
+  not synthesizable hardware intent; ISF has no construct + FSMGen lists none → no FR per
+  `[[feedback_verify_fsmgen_before_fr]]`/`[[feedback_isf_no_hacks]]`; a conditional-future only if FSMGen's SV/UVM path
+  scopes ISA-model verification). Resolves the cat-4 Open Question. Report `docs/research/cat4-isa-csr-lowering-decision.md`;
+  KM `[[cat4-isa-csr-lowering-decision]]`; book `document-categories.md` cat-4 maturity refined. No code/canonical mutation
+  → golds + `kg-bench` orthogonal. See the `.4d` Acceptance Checklist below.
+- ID: `DOC-INTENT-TAXONOMY.4d.i` · Status: `pending` (CODE) · Goal: **cat-4 RISC-V CSR bit-position recovery** — the
+  buildable cat-4 lever spun out of `.4d`. Recover the field bit positions for the RISC-V register/CSR layout so RISC-V
+  Debug's 179 fields become *located* (parse the bit-layout column/diagram into `bits_high`/`bits_low`), and add a
+  RISC-V-shaped register recogniser so RISC-V AIA's IMSIC/APLIC CSR blocks are captured at all. Once a field is located it
+  auto-lowers through `.4a.ii` (no emitter change). Must key off structural register-table / bit-layout grammar (a RISC-V
+  CSR layout *shape*), never a RISC-V register-name list (ADR 0006). CODE — requires the full task-acceptance checklist +
+  `run_ci.sh` + FSMGen `--strict --check` 0-new-diagnostics.
 - ID: `DOC-INTENT-TAXONOMY.4e` · Status: `pending` · Goal: conditional-rule lowering triage (`.2` Result 3) — per-item,
   separate honest residual from a real lever before any fraction is called a gap.
 
@@ -401,6 +423,41 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   `README.md` / `CHANGES.md` / `DEVELOPMENT_NOTES.md` / `RUST_CODEBASE_ANALYSIS.md` / `LIVE_ACHIEVEMENT_STATUS.md` /
   `MEMORY.md` all updated in this slice.
 
+## Acceptance Checklist (enforced) — `DOC-INTENT-TAXONOMY.4d`
+
+- [x] **REPRODUCE / MEASURE** — baseline from `.2`: cat-4 scored **THIN** (only the register-shaped surface lowers).
+  Profiled the corpus's 2 cat-4 docs read-only off the persisted IR (reproducible from
+  `generated/intent_ir/<key>/intent_ir.json`): RISC-V Debug = **44 `register_records` / 179 fields / 0 located** (every
+  field carries `field_name`+`access_type`+`reset_value`+`description` but none carries `bits_high`/`bits_low`/
+  `bit_width`); RISC-V AIA = **0 `register_records`** (39 prose `conditional_rules` naming IMSIC/APLIC, 493 behaviors, 211
+  `interfaces` whose signal records are all `None` with 0 constraints / 0 relations). Re-verified FSMGen pin `d327129b7`:
+  `(storage (var … (fields …)))` is titled the register-map/CSR construct (`13a-actor-interface.md:419`/`:468`); no
+  instruction/privilege/exception construct exists (`13a`–`13i`, matrix, integration spec).
+- [x] **ROOT CAUSE (WHY + WHERE)** — cat-4's THIN score is two distinct causes, neither an ISF-abstraction gap for CSRs.
+  (a) RISC-V Debug fields are *unlocated*: the `field_table` register strategy (`crates/specforge/src/ir/evidence.rs`)
+  captured field identity but not the bit-layout column, so the `.4a.ii` located-fields gate (`isf_ir.rs
+  register_storage_fields`) admits 0 of them. (b) RISC-V AIA registers are *uncaptured*: no current register strategy
+  matches RISC-V's CSR layout — the `.10g` `<NAME>, bits [hi:lo]` section-heading family fires only on ARM `ihiXXXX`
+  architecture specs. Both are extraction-recall causes; the ISF register/storage construct itself is sufficient.
+- [x] **ADDRESSED (verified)** — produced the decision packet (`docs/research/cat4-isa-csr-lowering-decision.md`): CSR
+  intent **reuses the existing register/storage abstraction** (no new ISF construct, no FSMGen FR); the register gap is an
+  **extraction-recall leaf `.4d.i`** (locate RISC-V CSR fields + capture AIA CSR blocks → auto-lower via `.4a.ii`);
+  instruction/privilege/exception/memory-ordering are an **honest non-target** (conditional-future FR only if FSMGen's
+  SV/UVM path scopes ISA-model verification). The construct-vs-reuse Open Question is resolved with measured evidence,
+  not a guess.
+- [x] **NO REGRESSION** — measurement/decision leaf, **no Rust code**, no canonical-artifact mutation → the wire golds /
+  `kg-bench` / emitted `.isf` are byte-identical by construction (WIRE-BASED-100 orthogonal). `scripts/check_doctrines.sh`
+  green (memory-arch + knowledge-map + task-acceptance); `mdbook build` green; knowledge-map derive-and-diff in sync
+  (115 → 116 facts).
+- [x] **GENERICITY (ADR 0006)** — the decision rests on structural evidence (register vs non-register intent shape;
+  located vs unlocated fields) and FSMGen's published grammar — no chip/vendor/protocol-instance name list. The spun-out
+  `.4d.i` lever is mandated to key off structural RISC-V CSR-layout *shape*, never a RISC-V register-name list. N/A for
+  runtime code (none in this leaf).
+- [x] **LOCKSTEP** — `docs/research/cat4-isa-csr-lowering-decision.md` (the packet), KM card
+  `docs/knowledge/cat4-isa-csr-lowering-decision.md` + regenerated `KNOWLEDGE_MAP.md`, book `docs/book/src/document-categories.md`
+  (cat-4 maturity refined), and the task tree / `TASK_TREE.md` / `CHANGES.md` / `DEVELOPMENT_NOTES.md` /
+  `LIVE_ACHIEVEMENT_STATUS.md` / `MEMORY.md` all updated in this slice.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
@@ -412,8 +469,10 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | — | `DOC-INTENT-TAXONOMY.3c` | `done` (`2026-06-22`) | Recognizer FIXTURES + book + KM landed: 13 in-file unit golds (`.3b`) + an end-to-end `validate` integration test; user-facing mdBook chapter (`quality/validation.md` + `document-categories.md` "now CLI-reported"); KM card (map 113→114); ISA/PHY vocab precision-verified. `run_ci.sh` green. **`.3` recognizer COMPLETE.** |
 | — | `DOC-INTENT-TAXONOMY.4a` | `done` (`2026-06-22`) | Gap A localized + decided: bit-field intent reaches IntentIR fully, dropped only at `isf_ir.rs:852`; the current ISF `(storage …)` has no field-structured construct (verified pin `030f8c273`) → a **verified FSMGen FR** (not an emitter hack). Design report + KM card + book note. Docs-only → golds/`kg-bench` orthogonal. |
 | — | `DOC-INTENT-TAXONOMY.4a.ii` | `done` (`2026-06-22`) | **Register bit-field emit DONE.** Emitted `(var … (fields (field …)))` from the IntentIR register field map — **6,570 fields / 2,531 registers / 24 docs now reach `.isf`** (was 0). Metadata-only/schedule-safe; reused the `register_field_extent` tiling gate; verified via `inferred_storage[].fields[]` round-trip + `*_passes_fsmgen_strict_validation` ×7 + register docs 0-new-diagnostics + 4 wire golds byte-identical; `kg-bench 156/156`; `run_ci.sh` green. The `.4a.i` honest residual is folded in (`isf_register_fields_not_lowered` for the unlowered remainder). |
-| 1 | `DOC-INTENT-TAXONOMY.4b` | `pending` (gated) | Gap B — `Evidence→Intent` `message_field_records` carrier (1,220 fields / 11 docs), then lower; **stays gated** — FSMGen explicitly deferred packet/flit layouts. CODE. |
-| 2 | `DOC-INTENT-TAXONOMY.4a.i` | `superseded` | Adapter honest residual `isf_register_fields_not_lowered` — **superseded by `.4a.ii`**, which both EMITS the fields AND records the unlowered remainder as that very residual. No separate slice needed. |
+| — | `DOC-INTENT-TAXONOMY.4d` | `done` (`2026-06-23`) | **Cat-4 ISA/CSR decision packet DONE.** Resolved the Open Question from measured evidence: cat-4 CSRs **reuse the existing register/storage abstraction** (no new ISF construct — FSMGen titles `(storage …)` the register-map/CSR construct); the cat-4 register gap is **extraction recall** (RISC-V Debug 179 fields all unlocated, AIA 0 registers captured) → spun out `.4d.i`; instruction/privilege/exception/memory-ordering are **honest non-targets**. Docs-only → golds/`kg-bench` orthogonal. |
+| 1 | `DOC-INTENT-TAXONOMY.4d.i` | `pending` (code) | Cat-4 RISC-V CSR bit-position recovery — locate RISC-V Debug's fields + capture AIA's IMSIC/APLIC CSR blocks so they auto-lower via `.4a.ii`. Structural RISC-V CSR-layout grammar, no name list. The genuine buildable cat-4 lever. |
+| 2 | `DOC-INTENT-TAXONOMY.4b` | `pending` (gated) | Gap B — `Evidence→Intent` `message_field_records` carrier (1,220 fields / 11 docs), then lower; **stays gated** — FSMGen explicitly deferred packet/flit layouts. CODE. |
+| 3 | `DOC-INTENT-TAXONOMY.4a.i` | `superseded` | Adapter honest residual `isf_register_fields_not_lowered` — **superseded by `.4a.ii`**, which both EMITS the fields AND records the unlowered remainder as that very residual. No separate slice needed. |
 
 ## Decisions
 
@@ -433,15 +492,28 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   present/lowered ratio (the `.isf` signal set has a different basis than IntentIR `interfaces`). Cat 5/6 confirmed honest
   non-targets; the cat-6 over-extraction (5/14 guides emit spurious `.isf`) is a `.3`-recognizer precision motive, not an
   ISF-completeness gap.
+- `2026-06-23` (`.4d`): category-4 (CPU ISA) intent **splits into three**, and only one is a buildable SpecForge lever.
+  (1) **CSR / register intent reuses the existing ISF register/storage abstraction** — there is **no new ISF construct**
+  for CSRs and **no FSMGen FR**: CSRs are structurally registers (RISC-V Debug captures its 44 CSRs as `register_records`)
+  and FSMGen explicitly names `(storage (var … (fields …)))` the "register map / CSR" construct. (2) **The cat-4 register
+  gap is EXTRACTION RECALL, not a missing abstraction** — fields don't lower because they are *unlocated* (RISC-V Debug
+  0/179 fields carry bit positions) or the registers are *uncaptured* (RISC-V AIA 0 registers; CSR intent in prose), not
+  because ISF can't express them; the fix is an **extraction leaf** (`.4d.i`), not an FR. (3) **Instruction / privilege /
+  exception / memory-ordering intent is an honest NON-TARGET** for ISF synthesis (software-visible ISA semantics, not
+  synthesizable hardware intent; ISF has no construct + FSMGen lists none — a verified FR is a conditional-future only if
+  FSMGen's SV/UVM verification path explicitly scopes ISA-model verification). No fabrication, no speculative FR, no
+  emitter hack (`[[feedback_isf_no_hacks]]` / `[[feedback_verify_fsmgen_before_fr]]`).
 
 ## Open Questions
 
 - Exact boundary cues between category 2 (register IP) and 3 (platform/system-IP) when a TRM carries both a register map
   and a topology — resolved empirically in `.1`/`.3` (does not block `.0`).
-- Whether category 4 (ISA) lowering needs a new ISF construct or maps onto existing register/storage abstractions —
-  `.2` measured cat 4 as THIN (only the register-shaped surface lowers; bit-fields 0, no instruction/CSR/privilege/
-  exception construct); the construct-vs-reuse decision is now an owned `.4+` decision packet, informed by Gap A
-  (register bit-field lowering) which cat 4 shares.
+- ~~Whether category 4 (ISA) lowering needs a new ISF construct or maps onto existing register/storage abstractions~~ —
+  **RESOLVED `2026-06-23` by `.4d`**: CSR / register intent **maps onto the existing register/storage abstraction** (no
+  new ISF construct — FSMGen titles `(storage (var … (fields …)))` the register-map/CSR construct; CSRs are structurally
+  registers); the cat-4 register *gap* is **extraction recall** (unlocated fields / uncaptured AIA registers), spun out as
+  `.4d.i`; instruction/privilege/exception/memory-ordering are **honest non-targets** (no ISF construct, no FR). See
+  `docs/research/cat4-isa-csr-lowering-decision.md` / `[[cat4-isa-csr-lowering-decision]]`.
 
 ## Blockers
 
@@ -459,6 +531,7 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.3c` | end-to-end integration test `validate_evidence_ir_reports_document_intent_category` PASS; `kg-bench 156/156`; full `cargo test` green (warning-deny, +1 test); `cargo fmt`/`clippy -D warnings` clean; `mdbook build` green; knowledge-map derive-and-diff in sync (113→114 facts); `run_ci.sh` green; WIRE-BASED-100 orthogonal (test + docs only) | PASS |
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.4a` | measurement/design + verified FSMGen FR (docs-only, no Rust code); code-path map (`source.rs:414`→`intent.rs:193`→`isf_ir.rs:852`) + empirical FSMGen-storage probe on pin `030f8c273` (opaque `(var)` only, no field structure); `scripts/check_doctrines.sh` green; `mdbook build` green; knowledge-map derive-and-diff in sync (114→115 facts / 824 keys); no code/canonical mutation → golds + `kg-bench` orthogonal by construction | PASS |
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.4a.ii` | CODE — emit register bit-fields to ISF `(fields …)`. `cargo fmt --all --check` clean; `cargo clippy --all-targets -D warnings` clean; full `cargo test` `1702 passed / 0 failed` (warning-deny, +6 new tests incl. `register_fields_pass_fsmgen_strict_and_round_trip`); `kg-bench 156/156`; real-emitter corpus scan **6,570 fields / 2,531 registers / 24 docs** (was 0); RISC-V IOMMU (122) / GIC `ihi0069` (424) / CoreSight SoC-600 (974) `fsmgen --strict` `success / 0 diags` before AND after (0 new); 4 wire golds (AXI/APB/AHB/AXI-Stream) emitted `.isf` **byte-identical** (`adapt` old-vs-new diff empty); `inferred_storage[].fields[]` round-trip asserted; `run_ci.sh` green | PASS |
+| `2026-06-23` | `DOC-INTENT-TAXONOMY.4d` | measurement + decision packet (read-only, docs-only — no Rust code); profiled the 2 cat-4 docs off persisted IR (RISC-V Debug 44 regs / 179 fields / **0 located**; RISC-V AIA **0 registers**, CSR intent in 39 prose `conditional_rules` + 211 empty `interfaces`); re-verified FSMGen pin `d327129b7` ISF (storage = register-map/CSR construct; no instruction/privilege/exception construct); decision = reuse register/storage for CSRs + spin out `.4d.i` extraction-recall lever + honest non-target for non-register ISA semantics; `scripts/check_doctrines.sh` green (memory-arch + knowledge-map + task-acceptance); `mdbook build` green; knowledge-map derive-and-diff in sync (115→116 facts); no code/canonical mutation → golds + `kg-bench` orthogonal by construction | PASS |
 
 ## Commit Log
 
@@ -472,9 +545,29 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | `DOC-INTENT-TAXONOMY.3c` | `DOC-INTENT-TAXONOMY.3c — recognizer fixtures + user-facing mdBook chapter + KM card (.3 recognizer complete)` | test + docs slice |
 | `DOC-INTENT-TAXONOMY.4a` | `DOC-INTENT-TAXONOMY.4a — Gap A register bit-field ISF lowering: verified FSMGen field-structured-storage FR (measurement/design)` | measurement/design + FR, docs-only |
 | `DOC-INTENT-TAXONOMY.4a.ii` | `DOC-INTENT-TAXONOMY.4a.ii — emit register bit-field map into ISF field-structured storage (6,570 fields / 24 docs)` | code slice (isf_ir.rs emitter) |
+| `DOC-INTENT-TAXONOMY.4d` | `DOC-INTENT-TAXONOMY.4d — cat-4 ISA/CSR lowering decision: CSRs reuse register/storage; gap is extraction recall (spun out .4d.i)` | measurement + decision packet, docs-only |
 
 ## Changelog
 
+- `2026-06-23`: **`.4d` DONE (measurement + decision packet, read-only, docs-only — no Rust code)** — resolved the cat-4
+  (CPU ISA / privileged architecture) ISF-lowering Open Question from measured evidence over the corpus's 2 cat-4 docs
+  (RISC-V Debug, RISC-V AIA) and the current FSMGen pin `d327129b7`. **Cat-4 intent splits into three:** (1) **CSR /
+  register intent REUSES the existing register/storage abstraction** — no new ISF construct, no FSMGen FR (CSRs are
+  structurally registers — RISC-V Debug captures its 44 Debug-Module CSRs as `register_records`; FSMGen titles
+  `(storage (var … (fields …)))` the "register map / CSR" construct, `13a-actor-interface.md:419`/`:468` — the same
+  construct `.4a.ii` lowers cat-2/cat-3 fields into); (2) **the cat-4 register gap is EXTRACTION RECALL, not abstraction**
+  — RISC-V Debug captures 44 regs / 179 fields with name/access/reset/description but **0/179 located** (no bit positions;
+  bit-layout column unparsed by the `field_table` strategy) and RISC-V AIA captures **0 registers** (its IMSIC/APLIC CSR
+  intent is in prose `conditional_rules`/`behaviors`; 211 empty prose "interfaces"), so fields reach `.isf` 0 times
+  because they aren't *located*, not because ISF can't express them → spun out **`.4d.i`** (recover RISC-V CSR field bit
+  positions + a RISC-V-shaped register recogniser; once located, fields auto-lower via `.4a.ii`); (3) **instruction /
+  privilege-mode / exception / memory-ordering → honest NON-TARGET** (software-visible ISA semantics, not synthesizable
+  hardware intent; ISF has no construct + FSMGen lists none → no FR per `[[feedback_verify_fsmgen_before_fr]]` /
+  `[[feedback_isf_no_hacks]]`; conditional-future only if FSMGen's SV/UVM path scopes ISA-model verification). Report
+  `docs/research/cat4-isa-csr-lowering-decision.md`; KM `[[cat4-isa-csr-lowering-decision]]` (map 115→116); book
+  `document-categories.md` cat-4 maturity refined. `check_doctrines.sh` + `mdbook build` green; no code/canonical mutation
+  → golds/`kg-bench` orthogonal. Frontier → `.4d.i` (cat-4 build lever) / `.4b` Gap B (gated) / `.4c` cat-3 topology /
+  `.4e` conditional triage.
 - `2026-06-22`: **`.4a.ii` DONE (CODE)** — emitted the IntentIR register bit-field map into FSMGen's shipped declarative
   field-structured-storage construct (pin `d327129b7`). New `IsfStorageField` + `IsfStorageVar.fields` + the render of
   the nested `(fields (field NAME (bits HI LO) [(access …)] [(reset V)] [(enum (M V)…)]) …)` block, fed by the pure
