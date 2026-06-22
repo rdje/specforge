@@ -11,7 +11,9 @@ answers:
   - "why was an emitter-only fix for register bit-fields rejected (per-field vars fabricate/lose grouping; set-field/extract fabricate runtime behavior; comments are not intent — feedback_isf_no_hacks)"
   - "what is the FSMGen feature request for field-structured storage (declarative (var NAME (width N) (fields (field NAME (bits hi lo) (access ..) (reset ..) (enum ..)))); docs/FSMGEN_FEEDBACK.md 2026-06-22)"
   - "how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)"
-  - "did FSMGen accept the field-structured-storage FR (YES 2026-06-22 — accepted as a real ISF gap + valid future direction, accepted the proposed shape, but NOT shipped; gated on FSMGen's ISF-FIELD-STRUCTURED-STORAGE-FRONTIER.1; pin 5ce0335c5)"
+  - "did FSMGen accept the field-structured-storage FR (YES 2026-06-22 — accepted then SHIPPED it via ISF-FIELD-STRUCTURED-STORAGE-FRONTIER.1/.2, pin d327129b7; FSMGEN-REFRESH-INTEGRATE-4 accepted, -5 shipped)"
+  - "what is the shipped ISF field-structured storage grammar ((storage (var NAME (width N) [(reset V)] (fields (field NAME (bits HI LO) [(access ...)] [(reset V)] [(enum ...)]))))) — metadata-only/schedule-safe, report key inferred_storage[].fields[])"
+  - "is DOC-INTENT-TAXONOMY.4a.ii buildable now (YES — un-gated 2026-06-22 once FSMGen shipped the construct; highest-leverage lever, supersedes .4a.i; Gap B packet/flit still deferred)"
   - "what can SpecForge do now about register bit-fields per FSMGen (keep field maps as IntentIR metadata/residuals, keep emitting opaque storage, fabricate nothing — .4a.i adapter honest residual is the FSMGen-endorsed near-term move; .4a.ii field-structured emit stays gated)"
 date: 2026-06-22
 tags: [doc-intent-taxonomy, isf-adapter, register, bit-field, storage, fsmgen-fr, isf-no-hacks, honest-residual, verify-fsmgen-before-fr, adr-0006, measured, gap-a]
@@ -59,4 +61,15 @@ emitting **opaque** storage, fabricate nothing. ⇒ `[[document-intent-isf-compl
 residual) is the FSMGen-endorsed near-term move; `.4a.ii` (field-structured emit) stays GATED on FSMGen shipping the
 construct. The bump was verified strict-clean on `5ce0335c5` (`*_passes_fsmgen_strict_validation` ×6 + `run_ci.sh` +
 `kg-bench 156/156`).
+
+**FSMGen SHIPPED it (`2026-06-22`, `FSMGEN-REFRESH-INTEGRATE-5`, pin `5ce0335c5`→`d327129b7`,
+`ISF-FIELD-STRUCTURED-STORAGE-FRONTIER.1`/`.2`).** The shipped form is
+`(storage (var NAME (width N) [(reset V)] (fields (field NAME (bits HI LO) [(access ro|rw|wo|w1c|w0c|rc|rs|warl|wpri|reserved)] [(reset V)] [(enum (M VAL)…)]) …)))`
+— **metadata-only / schedule-safe** (the scheduled `.fsm` is byte-identical with vs without `(fields …)`), published in
+the report as `inferred_storage[].fields[]: name, msb, lsb, width, access, reset, enum`. Fail-closed:
+overlapping/out-of-width fields, unsupported access tokens, a field `(reset)` not matching the parent reset slice,
+out-of-width enum values. Refs (`d327129b7`): `subs/fsmgen/docs/ISF_DOWNSTREAM_INTEGRATION_SPEC.md:637`/`:3450`,
+`docs/book/src/13a-actor-interface.md:468`, matrix `13k-…:42`. ⇒ **`DOC-INTENT-TAXONOMY.4a.ii` is UN-GATED + buildable**
+(map `RegisterFieldRecord` → these fields, reuse the `classify_register_reset` tiling gate, verify via
+`inferred_storage[].fields[]`); it supersedes `.4a.i`. Packet/flit layouts (Gap B `.4b`) stay FSMGen-deferred.
 </content>

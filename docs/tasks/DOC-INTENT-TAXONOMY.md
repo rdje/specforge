@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `DOC-INTENT-TAXONOMY`
-- Status: `active` (`.0` taxonomy DONE `2026-06-22`; `.1` corpus census DONE `2026-06-22`, read-only; `.2` per-category ISF-completeness gauge DONE `2026-06-22`, read-only; `.3` fast category recognizer COMPLETE `2026-06-22` — `.3a` design / `.3b` implement+validate-reported `d6239217` / `.3c` fixtures+book+KM; `.4a` Gap A — register bit-field lowering: empirical FSMGen-storage verification + verified FSMGen FR DONE `2026-06-22`, docs-only; frontier → `.4a.i` adapter honest-residual (code) / `.4b` Gap B Evidence→Intent message-field carrier)
+- Status: `active` (`.0` taxonomy DONE `2026-06-22`; `.1` corpus census DONE `2026-06-22`, read-only; `.2` per-category ISF-completeness gauge DONE `2026-06-22`, read-only; `.3` fast category recognizer COMPLETE `2026-06-22` — `.3a` design / `.3b` implement+validate-reported `d6239217` / `.3c` fixtures+book+KM; `.4a` Gap A — register bit-field lowering: empirical FSMGen-storage verification + verified FSMGen FR DONE `2026-06-22`, docs-only; **`.4a.ii` UN-GATED `2026-06-22` — FSMGen SHIPPED the field-structured-storage construct (pin `d327129b7`, `FSMGEN-REFRESH-INTEGRATE-5`)**; frontier → `.4a.ii` field-structured-storage emit (highest-leverage, buildable) / `.4a.i` adapter honest-residual (fallback) / `.4b` Gap B (gated — packet/flit deferred))
 - Roadmap lane: `R15`/`R16` (north star: COMPLETE IntentIR → FAITHFUL ISF, now made explicit **per document category**)
 - Created: `2026-06-22`
 - Last updated: `2026-06-22`
@@ -209,17 +209,29 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   `isf_register_fields_not_lowered` (today the field drop at `isf_ir.rs:852` is silent; only the *reset* drop is
   recorded as `isf_storage_reset_not_lowered`) so the largest measurable intent-loss is surfaced in `residual_decisions`.
   CODE — requires the full task-acceptance checklist + `run_ci.sh` + FSMGen `--strict --check` 0-new-diagnostics.
-- ID: `DOC-INTENT-TAXONOMY.4a.ii` · Status: `pending` (**gated on FSMGen — FR ACCEPTED `2026-06-22`, not yet shipped**) ·
-  Goal: lower the IntentIR register field map into the field-structured-storage construct once ISF gains it (re-verify
-  the new pin first). CODE. **FSMGen ANSWER (`2026-06-22`, ingested via `FSMGEN-REFRESH-INTEGRATE-4`, pin `5ce0335c5`,
-  `subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md` § "Declarative Field-Structured Storage"):** FSMGen ACCEPTED the FR as
-  a real ISF gap + valid future direction and accepted the exact proposed shape (a storage var with an optional
-  declarative field partition: per-field name / bit range / optional access / reset / enum / provenance, first version =
-  checked metadata, fail-closed validation), but it is **NOT shipped** — gated on FSMGen's own
-  `ISF-FIELD-STRUCTURED-STORAGE-FRONTIER.1` readiness/contract audit. So `.4a.ii` STAYS gated; re-verify the pin when
-  FSMGen ships the construct. FSMGen also confirmed the no-hack stance (no `set-field`/`extract`/fake-drive/comment
-  substitute) → `.4a.i` (adapter honest residual + keep field maps as IntentIR metadata) is the FSMGen-endorsed
-  near-term move.
+- ID: `DOC-INTENT-TAXONOMY.4a.ii` · Status: `pending` — **UN-GATED + BUILDABLE `2026-06-22`** (FSMGen SHIPPED the
+  construct; pin `d327129b7` via `FSMGEN-REFRESH-INTEGRATE-5`). · Goal: lower the IntentIR register field map into the
+  shipped ISF field-structured-storage construct. **This is now the highest-leverage buildable lever** (faithfully
+  synthesizes the 12,638 register bit-fields / 32 docs that reach `.isf` zero times today) and **supersedes `.4a.i`** —
+  with a real lowering target the faithful move is to EMIT the fields, not merely record they were dropped (`.4a.i`
+  remains a cheap fallback if `.4a.ii` proves larger than one slice). CODE. **Exact shipped grammar + mapping** (refs on
+  `d327129b7`: `subs/fsmgen/docs/ISF_DOWNSTREAM_INTEGRATION_SPEC.md:637`/`:3450`, `docs/book/src/13a-actor-interface.md:468`,
+  matrix `13k-…:42`):
+  - Emit, behind the existing `(storage (var NAME (width N) [(reset V)]))`, an optional
+    `(fields (field FNAME (bits HI LO) [(access …)] [(reset V)] [(enum (M VAL)…)]) …)`. It is **metadata-only /
+    schedule-safe** — the scheduled `.fsm` is byte-identical with vs without `(fields …)`, so adding it cannot regress
+    the wire golds.
+  - Map `RegisterFieldRecord`: `field_name`→`FNAME` (sanitize to a unique HDL identifier), `bits_high`/`bits_low`→
+    `(bits HI LO)` (literal inclusive), `access_type`→`(access ro|rw|wo|w1c|w0c|rc|rs|warl|wpri|reserved)` normalized
+    (OMIT when it does not map — unsupported tokens fail closed), `reset_value`→`(reset V)` ONLY when the parent reset is
+    composed (it matches the parent bit slice by construction; omit when the parent reset is omitted), `enumerated_values`
+    →`(enum …)` dropping members that exceed the field width.
+  - **Reuse the existing `classify_register_reset` / `register_field_extent` tiling gate (`isf_ir.rs`)** to admit only
+    in-width, non-overlapping fields (overlaps / out-of-width fail closed); gaps are allowed.
+  - **NO-REGRESSION oracle:** the FSMGen report publishes `inferred_storage[].fields[]: name, msb, lsb, width, access,
+    reset, enum` — assert the emitted fields round-trip there; plus `*_passes_fsmgen_strict_validation` 0-new-diagnostics
+    on register-bearing docs + the 4 wire golds byte-identical (they carry composable resets but field metadata is
+    additive). Full task-acceptance checklist + `run_ci.sh`. Packet/flit layouts (Gap B `.4b`) stay FSMGen-deferred.
 - ID: `DOC-INTENT-TAXONOMY.4b` · Status: `pending` · Goal: **Gap B** — add the `Evidence→Intent` `message_field_records`
   carrier (1,220 fields / 11 docs, no IntentIR carrier today), then lower via the same FSMGen structure/packet
   abstraction. Closes the cat-2 structure frontier (the `CORPUS-COVERAGE.2` #21 IOMMU Lever-D) and the cat-1
@@ -343,9 +355,9 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | — | `DOC-INTENT-TAXONOMY.3b` | `done` (`2026-06-22`) | Recognizer IMPLEMENTED + reported by `validate` (`classify_document_intent_category` in `completeness.rs`, wired into `validate.rs`); corpus: 21 wire / 8 guide (both high) / 28 register-or-platform / 16 unresolved / 5 PHY (low) with 0 high-confidence false positives. Refined the `.3a` flit clause its own data falsified. kg-bench 156/156, cargo test 1695/0, clippy/fmt clean. |
 | — | `DOC-INTENT-TAXONOMY.3c` | `done` (`2026-06-22`) | Recognizer FIXTURES + book + KM landed: 13 in-file unit golds (`.3b`) + an end-to-end `validate` integration test; user-facing mdBook chapter (`quality/validation.md` + `document-categories.md` "now CLI-reported"); KM card (map 113→114); ISA/PHY vocab precision-verified. `run_ci.sh` green. **`.3` recognizer COMPLETE.** |
 | — | `DOC-INTENT-TAXONOMY.4a` | `done` (`2026-06-22`) | Gap A localized + decided: bit-field intent reaches IntentIR fully, dropped only at `isf_ir.rs:852`; the current ISF `(storage …)` has no field-structured construct (verified pin `030f8c273`) → a **verified FSMGen FR** (not an emitter hack). Design report + KM card + book note. Docs-only → golds/`kg-bench` orthogonal. |
-| 1 | `DOC-INTENT-TAXONOMY.4a.i` | `pending` | Emit the adapter honest residual `isf_register_fields_not_lowered` (today the field drop is silent) — CODE, full task-acceptance checklist + `run_ci.sh` + FSMGen `--strict --check`. The highest-leverage RAM-light next build slice (no FSMGen dependency, surfaces the corpus's largest intent-loss honestly). |
-| 2 | `DOC-INTENT-TAXONOMY.4b` | `pending` | Gap B — `Evidence→Intent` `message_field_records` carrier (1,220 fields / 11 docs, no carrier today), then lower via the same FSMGen structure/packet abstraction. CODE. |
-| — | `DOC-INTENT-TAXONOMY.4a.ii` | `pending` (gated) | Gap A field-structured-storage emit once ISF gains the construct the FR requests (re-verify the new pin first). CODE. |
+| 1 | `DOC-INTENT-TAXONOMY.4a.ii` | `pending` — **UN-GATED `2026-06-22`** | **Highest-leverage buildable lever.** FSMGen SHIPPED the field-structured-storage construct (pin `d327129b7`, `FSMGEN-REFRESH-INTEGRATE-5`) → emit `(var … (fields (field …)))` from the IntentIR register field map (12,638 fields / 32 docs that reach `.isf` zero today). Metadata-only/schedule-safe; reuse the `classify_register_reset` tiling gate; verify via `inferred_storage[].fields[]` + `*_passes_fsmgen_strict_validation` + wire golds byte-identical. CODE — full task-acceptance checklist + `run_ci.sh`. |
+| 2 | `DOC-INTENT-TAXONOMY.4a.i` | `pending` (fallback) | Adapter honest residual `isf_register_fields_not_lowered` — now a cheap FALLBACK if `.4a.ii` proves larger than one slice (with a real lowering target, emitting the fields supersedes merely recording the drop). CODE. |
+| 3 | `DOC-INTENT-TAXONOMY.4b` | `pending` (gated) | Gap B — `Evidence→Intent` `message_field_records` carrier (1,220 fields / 11 docs), then lower; **stays gated** — FSMGen explicitly deferred packet/flit layouts. CODE. |
 
 ## Decisions
 
@@ -405,6 +417,14 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 
 ## Changelog
 
+- `2026-06-22`: **`.4a.ii` UN-GATED** — FSMGen SHIPPED the declarative field-structured-storage construct
+  (`ISF-FIELD-STRUCTURED-STORAGE-FRONTIER.1`/`.2`, pin `d327129b7`, ingested via `FSMGEN-REFRESH-INTEGRATE-5`). The Gap-A
+  field-structured emit is now buildable and is the highest-leverage lever; it supersedes `.4a.i` (the honest residual,
+  now a fallback). Captured the exact shipped grammar `(var … (fields (field NAME (bits HI LO) [(access …)] [(reset V)]
+  [(enum …)])))`, the `RegisterFieldRecord`→ISF mapping, the fail-closed rules (overlap/out-of-width/unsupported-access/
+  field-reset-must-match-parent-slice/enum-fits), and the `inferred_storage[].fields[]` verification surface in the
+  `.4a.ii` node. Gap B (`.4b`, packet/flit structures) stays FSMGen-deferred. No SpecForge code yet (refresh + un-gate
+  only) → golds/`kg-bench` orthogonal.
 - `2026-06-22`: `.4a` Gap A — register bit-field ISF lowering DONE (measurement/design + verified FSMGen FR, docs-only,
   no Rust code). Two read-only probes localized the loss and decided the fix: (1) the bit-field metadata is fully
   captured (`RegisterFieldRecord`, `source.rs:414`) and carried UNCHANGED into IntentIR

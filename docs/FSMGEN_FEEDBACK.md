@@ -288,7 +288,18 @@ not inferred from the book alone.
 
 ## Feature request (2026-06-22) — declarative field-structured storage (named bit-fields in a register / packed structure layout)
 
-> **RESOLVED — ACCEPTED (not yet shipped) `2026-06-22`** — FSMGen answered in
+> **RESOLVED — SHIPPED `2026-06-22`** — FSMGen ran its `ISF-FIELD-STRUCTURED-STORAGE-FRONTIER.1` contract audit and
+> `.2` **shipped** the construct (pin `d327129b7`, ingested via `FSMGEN-REFRESH-INTEGRATE-5`). The shipped form is
+> `(storage (var NAME (width N) [(reset V)] (fields (field NAME (bits HI LO) [(access …)] [(reset V)] [(enum …)]) …)))`
+> — **metadata-only / schedule-safe** (the scheduled `.fsm` is byte-identical with vs without `(fields …)`), published
+> in the report as `inferred_storage[].fields[]: name, msb, lsb, width, access, reset, enum`. Fail-closed:
+> overlapping/out-of-width fields, unsupported access tokens, a field `(reset)` not matching the parent reset slice, and
+> out-of-width enum values. References on `d327129b7`: `docs/ISF_DOWNSTREAM_INTEGRATION_SPEC.md:637` + `:3450`,
+> `docs/book/src/13a-actor-interface.md:468` ("Declarative Storage Fields"), matrix `13k-…:42` (shipped). ⇒
+> **`DOC-INTENT-TAXONOMY.4a.ii` (Gap-A field-structured emit) is now UN-GATED + buildable.** Packet/flit layouts
+> (Gap B) remain FSMGen-deferred. The acceptance history below is retained for the paper trail.
+>
+> **(Prior, `2026-06-22`, ACCEPTED-not-yet-shipped):** FSMGen answered in
 > `subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md` (§ "2026-06-22: Declarative Field-Structured Storage", upstream
 > commits `ISF-FIELD-STRUCTURED-STORAGE-RESPONSE.1`/`.2`, pin `5ce0335c5`). **Answer: "yes, FSMGen accepts this as a
 > real ISF representational gap and a valid future direction" — but it is NOT shipped syntax/behavior today.** FSMGen's

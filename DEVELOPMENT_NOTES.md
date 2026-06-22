@@ -1,4 +1,34 @@
 # DEVELOPMENT_NOTES
+## FSMGEN-REFRESH-INTEGRATE-5.1 (`2026-06-22`) — FSMGen SHIPPED declarative storage fields; un-gate DOC-INTENT-TAXONOMY.4a.ii
+
+**Context.** One refresh cycle after FSMGen *accepted* the field-structured-storage FR (cycle 4), the owner reported
+FSMGen had pushed again and pointed me at the new declarative-storage-fields spec/book sections. FSMGen ran its promised
+`ISF-FIELD-STRUCTURED-STORAGE-FRONTIER.1` contract audit and `.2` **shipped** the construct — exactly the abstraction my
+`.4a` FR requested.
+
+**What shipped, and why it's clean to adopt.** `(storage (var NAME (width N) [(reset V)] (fields (field FNAME
+(bits HI LO) [(access …)] [(reset V)] [(enum …)]) …)))`. The decisive property: it is **metadata-only and
+schedule-safe** — FSMGen states (and the book example shows) the scheduled `.fsm` is *byte-identical* with vs without
+`(fields …)`, and the HDL reset still comes only from the parent `(reset V)`. So SpecForge can emit the field map
+*behind* the existing `(var …)` with zero risk to the wire golds. The field map maps 1:1 onto `RegisterFieldRecord`
+(name/bits/access/reset/enum), the report exposes it as `inferred_storage[].fields[]` (our verification oracle), and
+FSMGen's fail-closed rules (overlap/out-of-width/unsupported-access/field-reset-must-match-parent-slice/enum-fits)
+line up exactly with the gating `classify_register_reset` already does — so `.4a.ii` can reuse that tiling gate.
+
+**Verification (didn't trust the commit subjects).** Checked out `d327129b7`, ran the 6
+`*_passes_fsmgen_strict_validation` canaries (PASS — emitted `.isf` still strict-valid), then full `run_ci.sh` + `kg-bench
+156/156`. No SpecForge Rust code changed, so the emitted `.isf` is byte-identical and WIRE-BASED-100 is orthogonal; the
++2 commits are purely the additive field-storage feature. Ownership: `FSMGEN-REFRESH-INTEGRATE-5` created before the
+gitlink bump.
+
+**Consequence for the Gap-A program.** `.4a.ii` (the register bit-field emit) is **un-gated and is now the
+highest-leverage buildable lever** — it turns the largest measured ISF intent-loss (12,638 fields / 32 docs at zero)
+into faithful synthesis. It **supersedes** `.4a.i` (the honest residual): with a real lowering target the faithful move
+is to emit the fields, not just record they were dropped (`.4a.i` stays a cheap fallback). I captured the exact grammar,
+the `RegisterFieldRecord`→ISF mapping, the tiling-gate reuse, and the `inferred_storage[].fields[]` verification oracle
+in the `.4a.ii` node so the next (fresh) session can implement it directly. Gap B (`.4b`, packet/flit) stays gated —
+FSMGen explicitly deferred packet/flit layouts.
+
 ## FSMGEN-REFRESH-INTEGRATE-4.1 (`2026-06-22`) — refresh the FSMGen pin + integrate the accepted field-structured-storage FR answer
 
 **Context.** Right after `DOC-INTENT-TAXONOMY.4a` filed the field-structured-storage FR, the owner reported FSMGen had
