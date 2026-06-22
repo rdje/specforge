@@ -72,7 +72,7 @@ The adapter walks `IntentIr` and populates the typed tree:
 3. **Signals** — collected from all interfaces; clock/reset excluded; inserted into `BTreeSet` for automatic dedup. **Width** comes from the signal's own width hint; when that is absent (the flat hint is `None`/symbolic for most signals, since the grounded width lives on the actor-relative graph), the adapter recovers a *single unambiguous concrete* width from the actor-port graph (`actor_ports[].width_hint`) — so a sideband like AXI `ARSIZE` emits `(width 3)` rather than the `(width 1)` default. A signal whose graph widths disagree, or that has no grounded width, keeps the honest `(width 1)` default — never a guess (`KG-ISF-COMPLETENESS.2a.i`). **Direction** is lowered from the protocol's *initiator* actor's perspective — see [Which way does each signal point?](#which-way-does-each-signal-point) below (`KG-ISF-COMPLETENESS.2a.ii`).
 4. **Constants** — from declared symbolic constants
 5. **Types/enums** — from type definitions and enum member-value maps
-6. **Storage** — one `(storage (var …))` per register map record; when the register's documented per-field reset values compose to a clean integer it also carries a `(reset V)` (see [Register reset values](#register-reset-values) below)
+6. **Storage** — one `(storage (var …))` per register map record; when the register's documented per-field reset values compose to a clean integer it also carries a `(reset V)` (see [Register reset values](#register-reset-values) below), and its named bit-fields are emitted as a nested `(fields (field …))` block (see [Register bit-fields](#register-bit-fields) below)
 7. **Drives** — one `(drive (sig val) (sig val))` entry per output signal
 8. **Transactions** — from `IntentIr` transaction intents plus control-block fallbacks; `TransactionStep` converted to typed `IsfTxnStep`
 9. **Temporal rules** — every `IntentIr.temporal_rules` entry is classified by `classify_temporal_rule` into exactly one disposition (see below)
@@ -170,25 +170,65 @@ This affects only register-bearing documents (register maps / CSRs); the protoco
 specifications (APB/AHB/AXI/SWD) emit byte-identical `.isf` as before, because their signal
 tables carry no composable register reset.
 
-## Register bit-fields — an honest residual (pending an ISF abstraction)
+## Register bit-fields
 
 A register is more than a width and a reset: it is a word partitioned into named **bit-fields**,
 each with a bit range, an access type (read-only, write-1-to-clear, …), its own reset, sometimes
-an enumeration. SpecForge captures all of that — the IntentIR register map carries every field —
-and you can see it in the IntentIR artifact.
+an enumeration of named values. SpecForge captures all of that — and now **synthesizes it into
+the `.isf`**. Beside each register's `(var …)`, the adapter emits FSMGen's declarative
+field-structured-storage block, so the downstream consumer sees not just "this register is N bits
+wide" but *which bits mean what*:
 
-What it does **not** yet do is *synthesize* that field map into the `.isf`. The emitted storage
-is the opaque `(var <register> (width N) [(reset V)])` you saw above — the register's bits are
-there, but which bits mean what is not. The reason is deliberate and honest: today's ISF
-`(storage …)` grammar can only declare opaque, width-only variables — it has no construct for
-declaring named bit-fields inside a register. Rather than fake one (emitting a separate variable
-per field would invent storage the chip does not have, and the runtime field *operators* ISF does
-offer describe behaviour the spec never states), SpecForge keeps the field map as faithful
-IntentIR metadata and raises the missing capability with the downstream consumer as a feature
-request (`docs/FSMGEN_FEEDBACK.md`, 2026-06-22). Nothing is lost — the fields stay in the IntentIR —
-and nothing is fabricated. When ISF gains a field-structured-storage construct, the adapter will
-lower the field map into it; until then this is a known, documented residual (the corpus-wide
-measurement of how much this affects is in `DOC-INTENT-TAXONOMY.2`).
+```
+(storage
+  (var control (width 8) (reset 161)
+    (fields
+      (field mode   (bits 7 5) (access rw) (reset 5) (enum (idle 0) (run 5)))
+      (field prio   (bits 4 2) (access rw))
+      (field enable (bits 0 0) (access rw) (reset 1) (enum (off 0) (on 1))))))
+```
+
+**How the field map is built.** Each `RegisterFieldRecord` (name, bit range, access, reset, enum)
+becomes one `(field …)`. The bit range comes straight from the document (`(bits HI LO)`, inclusive,
+MSB first). The access notation is normalized to FSMGen's vocabulary
+(`ro|rw|wo|w1c|w0c|rc|rs|warl|wpri|reserved`, plus unambiguous synonyms like `R/W → rw`). A field's
+`(reset)` is the corresponding slice of the register's composed reset, so it always matches the
+parent value. Enumerated values keep the encodings that fit the field width, with the meaning as the
+member name.
+
+**Honest by default — never a fabricated bit.** A field is lowered **only** when it carries a
+concrete bit range, its name is unique within the register, and the register's fields do not
+overlap. The rules are structural, not a vendor list:
+
+- a field with no bit range is an *honest gap* — the `(fields …)` block is allowed to be partial,
+  so undeclared bits simply stay undeclared;
+- a field name that appears more than once (repeated `Reserved` gaps, or a table flattened by a
+  mis-read) is *ambiguous* — every member of the colliding group is dropped rather than guessed at
+  or silently renamed;
+- if two located fields overlap, that register's whole field block is withheld (an overlap means
+  the extraction is ambiguous, and picking one field over another would be a guess);
+- an access notation that does not map to FSMGen's set is simply omitted (access is optional) —
+  the field still declares its bits.
+
+Whatever is not lowered this way is recorded as a single honest summary in the adapter's
+`residual_decisions` (`isf_register_fields_not_lowered`), and the **full** field map always remains
+in the IntentIR register map. No bit position, access, reset, or enumeration is ever invented.
+
+**Schedule-safe and orthogonal to the wire protocols.** The field block is *metadata* — FSMGen's
+scheduled `.fsm` is byte-identical with or without it — so adding it cannot change a register's
+hardware behaviour. The wire protocol specifications (APB/AHB/AXI/AXI-Stream) carry no located,
+composable register fields, so their emitted `.isf` is byte-identical to before and the wire golds
+are unaffected. Across the corpus this synthesizes **6,570 register bit-fields across 2,531
+registers in 24 documents** that previously reached the `.isf` zero times — register IP, platform
+TRMs (CoreSight SoC-600, GIC, SMMU), and the register-heavy protocols (CCIX, CHI-C2C). (Tracking:
+`DOC-INTENT-TAXONOMY.4a.ii`.)
+
+**How it is verified.** A unit test renders a field-bearing storage var and confirms FSMGen's
+real `--strict --check` accepts it *and* that the field map round-trips through FSMGen's
+`--emit-schedule-json` `inferred_storage[].fields[]` report (name, bit positions, access, reset,
+enum). On real documents, the register-bearing `.isf` (RISC-V IOMMU, GIC, CoreSight SoC-600) keeps
+`fsmgen --strict` passing with zero new diagnostics, and the four wire golds emit byte-identical
+`.isf`.
 
 ## Which way does each signal point?
 
@@ -342,6 +382,53 @@ corpus (release binary): the AMBA wire specs emit **byte-identical** `.isf`; Cor
 183 `(reset V)` clauses; every emitted `.isf` passes FSMGen `--strict --check --json` with zero new
 diagnostics; the wire-protocol extraction gold (WIRE-BASED-100) and `kg-bench` are unchanged
 (register reset is orthogonal to the constraint/relation/temporal surfaces).
+
+### `DOC-INTENT-TAXONOMY.4a.ii` — register bit-fields reach the `.isf`
+
+#### Why it mattered
+
+A register's bit-fields *are* its programming model — which bits mean what, their access policy,
+reset, and named encodings. SpecForge captured all of that in the IntentIR register map, but the
+adapter discarded it at the emit boundary and emitted only the opaque `(var <register> (width N))`.
+A corpus measurement put a number on the loss: **12,638 captured bit-fields reached the `.isf` zero
+times** — for register IP and platform TRMs, the bulk of the synthesizable intent. The blocker was
+upstream: the ISF `(storage …)` grammar had no construct for named bit-fields, so the doctrine-correct
+move (`DOC-INTENT-TAXONOMY.4a`) was to file a verified FSMGen feature request rather than hack the
+emitter. FSMGen then *shipped* a declarative field-structured-storage construct, which un-gated this.
+
+#### What this tree changed
+
+- **Measure first.** A read-only corpus sweep established the surface and the gates before any code:
+  8,708 of the 12,638 fields carry a concrete bit range; ~88% of access notations map cleanly to
+  FSMGen's vocabulary; name collisions are dominated by repeated `Reserved`/`res0` gaps; the four wire
+  golds carry no located composable register fields (so the change cannot touch them).
+- **Verify the contract on the real binary.** Before emitting, the shipped grammar was confirmed
+  against the pinned FSMGen: a hand-authored `(fields …)` block passes `fsmgen --strict --check`,
+  round-trips through `--emit-schedule-json` `inferred_storage[].fields[]`, and an out-of-width field
+  fails closed — so the emitter is built to exactly what FSMGen accepts.
+- **Emit.** The storage var gained a `(fields (field NAME (bits HI LO) [(access …)] [(reset V)]
+  [(enum …)]) …)` block, fed by a structural, fail-closed admission gate (located + unique-named +
+  non-overlapping fields; normalized access; parent-slice field resets; width-fitting enums). The
+  unlowered remainder is recorded as the `isf_register_fields_not_lowered` adapter residual.
+
+#### What you see now
+
+A register-map document's `.isf` now declares each register's bit-fields beside its `(var …)` — see
+[Register bit-fields](#register-bit-fields) above for the worked example and the exact honesty rules.
+Across the corpus this synthesizes **6,570 bit-fields across 2,531 registers in 24 documents** that
+previously reached the `.isf` zero times. Whatever is not lowered (unlocated bits, ambiguous names,
+overlapping extractions) stays in the IntentIR and is summarized in `residual_decisions`; nothing is
+fabricated.
+
+#### How it is verified
+
+The pure derivation, the access normalizer, the render, and an end-to-end FSMGen `--strict` +
+`inferred_storage[].fields[]` round-trip are covered by focused unit tests. On the live corpus
+(release binary): the four wire golds emit **byte-identical** `.isf`; RISC-V IOMMU, GIC and CoreSight
+SoC-600 keep `fsmgen --strict` passing with **zero new diagnostics** while gaining 122 / 424 / 974
+field declarations; the field block is metadata-only (FSMGen's scheduled `.fsm` is byte-identical with
+or without it), so WIRE-BASED-100 and `kg-bench 156/156` are orthogonal by construction.
+*Authoritative tracking:* `docs/tasks/DOC-INTENT-TAXONOMY.md`.
 
 ### `R6-ISF-ADAPTER` — bring the `.isf` adapter under task-tree ownership
 

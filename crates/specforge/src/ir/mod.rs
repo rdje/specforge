@@ -58,6 +58,26 @@ pub(crate) fn run_fsmgen_strict_check(isf_path: &std::path::Path) -> std::proces
         .expect("run fsmgen")
 }
 
+/// Run `subs/fsmgen/bin/fsmgen --emit-schedule-json <isf_path>` for tests, serialized via
+/// [`FSMGEN_TEST_LOCK`] and pinned to the fsmgen repo root as CWD (same protocol as
+/// [`run_fsmgen_strict_check`]). The scheduler report JSON carries `inferred_storage[].fields[]`
+/// (`name, msb, lsb, width, access, reset, enum`), the introspection surface used to assert that
+/// emitted register field maps round-trip through FSMGen (DOC-INTENT-TAXONOMY.4a.ii). `isf_path`
+/// must be absolute.
+#[cfg(test)]
+pub(crate) fn run_fsmgen_schedule_json(isf_path: &std::path::Path) -> std::process::Output {
+    let _guard = FSMGEN_TEST_LOCK
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
+    let fsmgen_root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../subs/fsmgen");
+    std::process::Command::new(fsmgen_root.join("bin/fsmgen"))
+        .args(["--emit-schedule-json"])
+        .arg(isf_path)
+        .current_dir(&fsmgen_root)
+        .output()
+        .expect("run fsmgen")
+}
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum IrStage {

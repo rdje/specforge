@@ -13,12 +13,14 @@ answers:
   - "how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)"
   - "did FSMGen accept the field-structured-storage FR (YES 2026-06-22 — accepted then SHIPPED it via ISF-FIELD-STRUCTURED-STORAGE-FRONTIER.1/.2, pin d327129b7; FSMGEN-REFRESH-INTEGRATE-4 accepted, -5 shipped)"
   - "what is the shipped ISF field-structured storage grammar ((storage (var NAME (width N) [(reset V)] (fields (field NAME (bits HI LO) [(access ...)] [(reset V)] [(enum ...)]))))) — metadata-only/schedule-safe, report key inferred_storage[].fields[])"
-  - "is DOC-INTENT-TAXONOMY.4a.ii buildable now (YES — un-gated 2026-06-22 once FSMGen shipped the construct; highest-leverage lever, supersedes .4a.i; Gap B packet/flit still deferred)"
-  - "what can SpecForge do now about register bit-fields per FSMGen (keep field maps as IntentIR metadata/residuals, keep emitting opaque storage, fabricate nothing — .4a.i adapter honest residual is the FSMGen-endorsed near-term move; .4a.ii field-structured emit stays gated)"
+  - "is DOC-INTENT-TAXONOMY.4a.ii buildable now (DONE 2026-06-22 — implemented once FSMGen shipped the construct; superseded .4a.i; Gap B packet/flit still deferred)"
+  - "does SpecForge emit register bit-fields to ISF now (YES — DOC-INTENT-TAXONOMY.4a.ii: the storage var carries a (fields (field …)) block; 6,570 fields / 2,531 registers / 24 docs, was 0; 4 wire golds byte-identical; 0 new fsmgen --strict diagnostics)"
+  - "where is register bit-field ISF emission implemented (register_storage_fields + normalize_field_access + IsfStorageField + the storage render in crates/specforge/src/ir/isf_ir.rs; residual isf_register_fields_not_lowered)"
+  - "how are register bit-fields admitted to the ISF (fields …) block (structural fail-closed: located fields only; drop a sanitized-name collision group; non-overlapping survivors else whole-register fail-closed; access normalized to FSMGen's 10-token set else omit; field reset = parent reset slice; enum members that fit the width — ADR-0006, no name list)"
 date: 2026-06-22
 tags: [doc-intent-taxonomy, isf-adapter, register, bit-field, storage, fsmgen-fr, isf-no-hacks, honest-residual, verify-fsmgen-before-fr, adr-0006, measured, gap-a]
 evidence: crates/specforge/src/ir/source.rs:414 (RegisterFieldRecord full metadata); crates/specforge/src/ir/intent.rs:75/:193 (IntentIr.register_records full clone); crates/specforge/src/ir/isf_ir.rs:82/:834-852/:391 (IsfStorageVar build+render — fields discarded); subs/fsmgen/docs/ISF_DOWNSTREAM_INTEGRATION_SPEC.md §8 (opaque (var) grammar); subs/fsmgen/docs/book/src/13k-isf-feature-support-matrix.md (set-field/extract are runtime ops); subs/fsmgen/docs/book/src/14-feature-backlog.md (field-structured storage absent); docs/FSMGEN_FEEDBACK.md (2026-06-22 FR); docs/research/register-bit-field-isf-lowering-design.md; docs/research/document-intent-isf-completeness.md (Gap A: 12,638/32 docs)
-reverify: "Code path: grep -n 'IsfStorageVar' crates/specforge/src/ir/isf_ir.rs -> struct { name, width, reset } at ~:82, built ~:852 from r.fields used only for classify_register_reset; render ~:391 emits (var NAME (width N) [(reset V)]). grep -n message_field crates/specforge/src/ir/intent.rs -> zero matches (Gap B no carrier). FSMGen: grep -niE 'storage|var |field|struct|record' subs/fsmgen/docs/ISF_DOWNSTREAM_INTEGRATION_SPEC.md subs/fsmgen/docs/book/src/14-feature-backlog.md -> (storage) is opaque width-only; no named-bit-field declaration; field-structured storage not in backlog (verified pin 030f8c273). Decision: FSMGen FR (docs/FSMGEN_FEEDBACK.md 2026-06-22), not an emitter hack (feedback_isf_no_hacks); empirical submodule verification done (feedback_verify_fsmgen_before_fr). Docs-only leaf -> golds/kg-bench orthogonal. Related: [[document-intent-isf-completeness]], [[register-reset-isf-emit]], [[isf-lowering-fidelity-gauge]]."
+reverify: "Code path: grep -n 'IsfStorageVar\\|register_storage_fields' crates/specforge/src/ir/isf_ir.rs -> struct now { name, width, reset, fields } (DOC-INTENT-TAXONOMY.4a.ii DONE); register_storage_fields lowers r.fields to IsfStorageField (located+unique+non-overlapping gate); render emits (var NAME (width N) [(reset V)] (fields (field NAME (bits HI LO) [(access …)] [(reset V)] [(enum …)]) …)). Live: ./target/release/specforge adapt <register intent_ir> --target isf --dry-run | grep '(field '. grep -n message_field crates/specforge/src/ir/intent.rs -> zero matches (Gap B no carrier). FSMGen: grep -niE 'storage|var |field|struct|record' subs/fsmgen/docs/ISF_DOWNSTREAM_INTEGRATION_SPEC.md subs/fsmgen/docs/book/src/14-feature-backlog.md -> (storage) is opaque width-only; no named-bit-field declaration; field-structured storage not in backlog (verified pin 030f8c273). Decision: FSMGen FR (docs/FSMGEN_FEEDBACK.md 2026-06-22), not an emitter hack (feedback_isf_no_hacks); empirical submodule verification done (feedback_verify_fsmgen_before_fr). Docs-only leaf -> golds/kg-bench orthogonal. Related: [[document-intent-isf-completeness]], [[register-reset-isf-emit]], [[isf-lowering-fidelity-gauge]]."
 ---
 
 `DOC-INTENT-TAXONOMY.2` measured **Gap A**: register **bit-fields** reach the emitted `.isf` zero times
@@ -72,4 +74,19 @@ out-of-width enum values. Refs (`d327129b7`): `subs/fsmgen/docs/ISF_DOWNSTREAM_I
 `docs/book/src/13a-actor-interface.md:468`, matrix `13k-…:42`. ⇒ **`DOC-INTENT-TAXONOMY.4a.ii` is UN-GATED + buildable**
 (map `RegisterFieldRecord` → these fields, reuse the `classify_register_reset` tiling gate, verify via
 `inferred_storage[].fields[]`); it supersedes `.4a.i`. Packet/flit layouts (Gap B `.4b`) stay FSMGen-deferred.
+
+**`DOC-INTENT-TAXONOMY.4a.ii` DONE (`2026-06-22`, CODE).** The ISF emitter now lowers the register field map:
+`IsfStorageVar` gained a `fields: Vec<IsfStorageField>`, fed by the pure `register_storage_fields` +
+`normalize_field_access` (`isf_ir.rs`) and rendered as the nested `(fields (field NAME (bits HI LO) [(access …)]
+[(reset V)] [(enum (M V)…)]) …)` block. Admission is structural / fail-closed (ADR-0006, no name list): located
+fields only (unlocated → honest gap); a sanitized-name collision (count ≥ 2) drops the whole colliding group
+(reserved `res0` repeats + flattened mis-extraction → FSMGen duplicate-name fail-closed); residual overlap fails
+the register's field block closed; access normalized to FSMGen's 10-token set (omit when unmapped); field `(reset)`
+only when the parent reset is composed, as that value's own bit slice (matches parent slice by construction); enum
+members that fit the field width. The unlowered remainder is the `isf_register_fields_not_lowered` adapter residual
+(folds in `.4a.i`). **Measured live: 6,570 register bit-fields now reach `.isf` across 2,531 registers in 24 docs
+(was 0)**; the 4 WIRE-BASED-100 golds emit 0 fields → emitted `.isf` byte-identical (orthogonal; metadata-only /
+schedule-safe); RISC-V IOMMU / GIC / CoreSight SoC-600 keep `fsmgen --strict` `success / 0 diagnostics` (0 new);
+`inferred_storage[].fields[]` round-trip asserted on the live binary; `kg-bench 156/156`; `cargo test 1702/0`. Gap B
+(`.4b`, message-field structures) stays FSMGen-deferred + needs the Evidence→Intent carrier.
 </content>

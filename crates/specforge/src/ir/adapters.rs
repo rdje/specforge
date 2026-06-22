@@ -341,6 +341,11 @@ fn build_isf_adapter_artifact(
     // (ISF-REGISTER-RESET-EMIT.2) are surfaced the same way, so an un-lowered reset is
     // visible in the artifact rather than silently dropped; no value is fabricated.
     residual_decisions.extend(isf_model.storage_reset_residuals().iter().cloned());
+    // Register bit-fields that could not be lowered to the storage `(fields …)` block
+    // (DOC-INTENT-TAXONOMY.4a.ii) are surfaced the same way, so the largest measurable
+    // intent-loss is visible in the artifact rather than silently dropped — the full field map
+    // always remains in IntentIR register_records; no bit position is fabricated.
+    residual_decisions.extend(isf_model.storage_field_residuals().iter().cloned());
 
     Ok(AdapterArtifact {
         stage: IrStage::IsfAdapter,

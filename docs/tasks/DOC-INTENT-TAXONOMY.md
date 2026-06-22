@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `DOC-INTENT-TAXONOMY`
-- Status: `active` (`.0` taxonomy DONE `2026-06-22`; `.1` corpus census DONE `2026-06-22`, read-only; `.2` per-category ISF-completeness gauge DONE `2026-06-22`, read-only; `.3` fast category recognizer COMPLETE `2026-06-22` — `.3a` design / `.3b` implement+validate-reported `d6239217` / `.3c` fixtures+book+KM; `.4a` Gap A — register bit-field lowering: empirical FSMGen-storage verification + verified FSMGen FR DONE `2026-06-22`, docs-only; **`.4a.ii` UN-GATED `2026-06-22` — FSMGen SHIPPED the field-structured-storage construct (pin `d327129b7`, `FSMGEN-REFRESH-INTEGRATE-5`)**; frontier → `.4a.ii` field-structured-storage emit (highest-leverage, buildable) / `.4a.i` adapter honest-residual (fallback) / `.4b` Gap B (gated — packet/flit deferred))
+- Status: `active` (`.0` taxonomy DONE `2026-06-22`; `.1` corpus census DONE `2026-06-22`, read-only; `.2` per-category ISF-completeness gauge DONE `2026-06-22`, read-only; `.3` fast category recognizer COMPLETE `2026-06-22` — `.3a` design / `.3b` implement+validate-reported `d6239217` / `.3c` fixtures+book+KM; `.4a` Gap A — register bit-field lowering: empirical FSMGen-storage verification + verified FSMGen FR DONE `2026-06-22`, docs-only; **`.4a.ii` DONE `2026-06-22` (CODE) — emitted the register bit-field map into the shipped ISF field-structured-storage construct (pin `d327129b7`): 6,570 fields / 2,531 registers / 24 docs now reach `.isf` (was 0), 0 new FSMGen `--strict` diagnostics, 4 wire golds byte-identical**; frontier → `.4b` Gap B (gated, FSMGen-deferred packet/flit) / `.4c` cat-3 topology / `.4d` cat-4 ISA / `.4e` conditional triage; `.4a.i` superseded by `.4a.ii`)
 - Roadmap lane: `R15`/`R16` (north star: COMPLETE IntentIR → FAITHFUL ISF, now made explicit **per document category**)
 - Created: `2026-06-22`
 - Last updated: `2026-06-22`
@@ -209,9 +209,11 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   `isf_register_fields_not_lowered` (today the field drop at `isf_ir.rs:852` is silent; only the *reset* drop is
   recorded as `isf_storage_reset_not_lowered`) so the largest measurable intent-loss is surfaced in `residual_decisions`.
   CODE — requires the full task-acceptance checklist + `run_ci.sh` + FSMGen `--strict --check` 0-new-diagnostics.
-- ID: `DOC-INTENT-TAXONOMY.4a.ii` · Status: `pending` — **UN-GATED + BUILDABLE `2026-06-22`** (FSMGen SHIPPED the
-  construct; pin `d327129b7` via `FSMGEN-REFRESH-INTEGRATE-5`). · Goal: lower the IntentIR register field map into the
-  shipped ISF field-structured-storage construct. **This is now the highest-leverage buildable lever** (faithfully
+- ID: `DOC-INTENT-TAXONOMY.4a.ii` · Status: `done` (`2026-06-22`, CODE) — emitted the IntentIR register field map into
+  the shipped ISF field-structured-storage construct; FSMGen pin `d327129b7`. **6,570 register bit-fields now reach
+  `.isf` across 2,531 registers in 24 docs** (was 0), 0 new FSMGen `--strict` diagnostics on register docs, 4 wire
+  golds byte-identical; see the `.4a.ii` Acceptance Checklist + Verification Log. · Goal: lower the IntentIR register
+  field map into the shipped ISF field-structured-storage construct. **This was the highest-leverage buildable lever** (faithfully
   synthesizes the 12,638 register bit-fields / 32 docs that reach `.isf` zero times today) and **supersedes `.4a.i`** —
   with a real lowering target the faithful move is to EMIT the fields, not merely record they were dropped (`.4a.i`
   remains a cheap fallback if `.4a.ii` proves larger than one slice). CODE. **Exact shipped grammar + mapping** (refs on
@@ -345,6 +347,60 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   note in `docs/book/src/pipeline/isf-adapter.md`, and the task tree / `TASK_TREE.md` / `CHANGES.md` /
   `DEVELOPMENT_NOTES.md` / `LIVE_ACHIEVEMENT_STATUS.md` / `MEMORY.md` all updated in this slice.
 
+## Acceptance Checklist (enforced) — `DOC-INTENT-TAXONOMY.4a.ii`
+
+- [x] **REPRODUCE / MEASURE** — baseline from `.2`/`.4a`: register **bit-fields** reach `.isf` **0 times**
+  (`12,638` fields captured in `IntentIr.register_records` across `35` register-bearing docs) — the emitter
+  built `IsfStorageVar { name, width, reset }` at `isf_ir.rs:852` and rendered opaque `(var NAME (width N)
+  [(reset V)])` at `:391`, discarding every field. Grounding measurement over the persisted `generated/intent_ir/*`
+  corpus (read-only, reproducible): `8,708 / 12,638` fields are **located** (carry `bits_high`/`bits_low` or
+  `bits_low`+`bit_width`); `130` registers carry a sanitized-name collision (dominated by reserved gaps `res0`×115 /
+  `reserved`×53, plus mis-extraction dups e.g. `size`×9); `36` carry a located-field bit overlap; access is
+  dominated by mappable tokens (`RO` 4376 / `RW` 2189 / `WO` 236 / `WARL` 139 / `R` 110 / `WPRI` 35 / `RW1C` 18 ≈
+  88 % of the 8,177 access cells); enums are rare (6 members / 4 fields).
+- [x] **ROOT CAUSE (WHY + WHERE)** — the loss is a single emit-time discard, NOT a carry gap: `RegisterFieldRecord`
+  (`source.rs:414`: name/bits_high/bits_low/bit_width/access_type/reset_value/enumerated_values) is carried UNCHANGED
+  into `IntentIr.register_records` (`intent.rs:193`) and then dropped at `isf_ir.rs:852` (the `IsfStorageVar` build
+  read `r.fields` only to compose a register-wide `(reset V)` via `classify_register_reset`). FSMGen had no field
+  construct on the old pin (`.4a` verified `030f8c273`); pin `d327129b7` (`FSMGEN-REFRESH-INTEGRATE-5`) SHIPPED
+  declarative `(fields (field NAME (bits HI LO) [(access …)] [(reset V)] [(enum …)]))` — empirically re-verified on the
+  live binary: a hand-authored fields block returns `fsmgen --strict --check --json` `diagnostic_summary.success=true`,
+  round-trips in `fsmgen --emit-schedule-json` `inferred_storage[].fields[]` (`name/msb/lsb/width/access/reset/enum`),
+  and an out-of-width field fails closed (`field 'big' bits [9:0] exceed parent width 8`).
+- [x] **ADDRESSED (verified)** — added `register_storage_fields` (`isf_ir.rs`) + `normalize_field_access` and rendered
+  the `(fields …)` block behind each `(var …)`. Admission gate (ADR-0006 structural, no name list): located fields
+  only (unlocated → honest gap); DROP every field whose sanitized name collides (uniformly handles reserved gaps +
+  mis-extraction dups → FSMGen's duplicate-name fail-closed); the survivors must be non-overlapping (any residual
+  overlap fails closed the whole register); `(access)` normalized to the 10-token FSMGen set, omitted when unmapped;
+  field `(reset)` emitted only when the parent reset is composed (`Emit`), as the parent-V bit slice (matches by
+  construction — FSMGen's "field reset must match parent slice"); `(enum)` members keep numeric values fitting the
+  field width, `meaning`→member (deduped). Measured live with the REAL emitter across the corpus (`adapt --target
+  isf` over `generated/intent_ir/*`): **6,570 register bit-fields now reach `.isf` across 2,531 registers in 24 docs**
+  (top emitters CoreSight SoC-600 1,166 / 1,118 / 974; GIC arch `ihi0069` 424; CCIX 380; SMMU `ihi0070` 332; CHI-C2C
+  276; the remaining captured fields are honest residuals — unlocated bits / ambiguous (shared) names /
+  overlap-failclosed registers / duplicate-named registers). Per-document strict proof on real data: RISC-V IOMMU
+  (122 fields), GIC arch (424), CoreSight SoC-600 (974) each go from persisted `fsmgen --strict` `success / 0 diags`
+  → new `success / 0 diags` (0 NEW diagnostics). New unit tests on the pure derivation (`register_storage_fields`) +
+  the access normalizer + render; a new `register_fields_pass_fsmgen_strict_and_round_trip` end-to-end test renders a
+  fields-bearing `IsfIr`, asserts `fsmgen --strict` success AND the `inferred_storage[].fields[]` round-trip.
+- [x] **NO REGRESSION** — the 4 WIRE-BASED-100 golds emit **0** fields (AXI `ihi0022_l` / APB `ihi0024_e` / AHB
+  `ihi0033_c` / AXI-Stream `ihi0051_b` carry no located composable register fields) → their emitted `.isf` is
+  **byte-identical** (verified by the corpus emit scan + `adapt --dry-run`); the field block is metadata-only /
+  schedule-safe (FSMGen `.fsm` byte-identical with vs without `(fields …)`), so WIRE-BASED-100 is orthogonal by
+  construction. `kg-bench 156/156`; `*_passes_fsmgen_strict_validation` ×7 PASS (the new round-trip test + the 6
+  existing canaries, 0 new diagnostics); full `cargo test` green (warning-deny); `cargo fmt`/`clippy -D warnings`
+  clean; `run_ci.sh` green.
+- [x] **GENERICITY (ADR 0006)** — every gate is structural/universal register grammar: bit-extent arithmetic, a
+  collision-keyed (count≥2) ambiguity drop, an overlap mask, and a universal RTL access-token normalizer
+  (`ro|rw|wo|w1c|w0c|rc|rs|warl|wpri|reserved` + unambiguous synonyms `r→ro`/`w→wo`/`r/w→rw`/`rw1c→w1c`); NO
+  chip/vendor/protocol-name list; unmapped access / unlocated / ambiguous / overlapping fields are honest residuals,
+  never fabricated.
+- [x] **LOCKSTEP** — mdBook (`pipeline/isf-adapter.md` "Register bit-fields" section flipped from residual to lowered +
+  closed-task subsection; `document-categories.md` cat-2 maturity updated), KM card
+  `register-bit-field-isf-lowering-gap.md` + regenerated `KNOWLEDGE_MAP.md`, and the task tree / `TASK_TREE.md` /
+  `README.md` / `CHANGES.md` / `DEVELOPMENT_NOTES.md` / `RUST_CODEBASE_ANALYSIS.md` / `LIVE_ACHIEVEMENT_STATUS.md` /
+  `MEMORY.md` all updated in this slice.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
@@ -355,9 +411,9 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | — | `DOC-INTENT-TAXONOMY.3b` | `done` (`2026-06-22`) | Recognizer IMPLEMENTED + reported by `validate` (`classify_document_intent_category` in `completeness.rs`, wired into `validate.rs`); corpus: 21 wire / 8 guide (both high) / 28 register-or-platform / 16 unresolved / 5 PHY (low) with 0 high-confidence false positives. Refined the `.3a` flit clause its own data falsified. kg-bench 156/156, cargo test 1695/0, clippy/fmt clean. |
 | — | `DOC-INTENT-TAXONOMY.3c` | `done` (`2026-06-22`) | Recognizer FIXTURES + book + KM landed: 13 in-file unit golds (`.3b`) + an end-to-end `validate` integration test; user-facing mdBook chapter (`quality/validation.md` + `document-categories.md` "now CLI-reported"); KM card (map 113→114); ISA/PHY vocab precision-verified. `run_ci.sh` green. **`.3` recognizer COMPLETE.** |
 | — | `DOC-INTENT-TAXONOMY.4a` | `done` (`2026-06-22`) | Gap A localized + decided: bit-field intent reaches IntentIR fully, dropped only at `isf_ir.rs:852`; the current ISF `(storage …)` has no field-structured construct (verified pin `030f8c273`) → a **verified FSMGen FR** (not an emitter hack). Design report + KM card + book note. Docs-only → golds/`kg-bench` orthogonal. |
-| 1 | `DOC-INTENT-TAXONOMY.4a.ii` | `pending` — **UN-GATED `2026-06-22`** | **Highest-leverage buildable lever.** FSMGen SHIPPED the field-structured-storage construct (pin `d327129b7`, `FSMGEN-REFRESH-INTEGRATE-5`) → emit `(var … (fields (field …)))` from the IntentIR register field map (12,638 fields / 32 docs that reach `.isf` zero today). Metadata-only/schedule-safe; reuse the `classify_register_reset` tiling gate; verify via `inferred_storage[].fields[]` + `*_passes_fsmgen_strict_validation` + wire golds byte-identical. CODE — full task-acceptance checklist + `run_ci.sh`. |
-| 2 | `DOC-INTENT-TAXONOMY.4a.i` | `pending` (fallback) | Adapter honest residual `isf_register_fields_not_lowered` — now a cheap FALLBACK if `.4a.ii` proves larger than one slice (with a real lowering target, emitting the fields supersedes merely recording the drop). CODE. |
-| 3 | `DOC-INTENT-TAXONOMY.4b` | `pending` (gated) | Gap B — `Evidence→Intent` `message_field_records` carrier (1,220 fields / 11 docs), then lower; **stays gated** — FSMGen explicitly deferred packet/flit layouts. CODE. |
+| — | `DOC-INTENT-TAXONOMY.4a.ii` | `done` (`2026-06-22`) | **Register bit-field emit DONE.** Emitted `(var … (fields (field …)))` from the IntentIR register field map — **6,570 fields / 2,531 registers / 24 docs now reach `.isf`** (was 0). Metadata-only/schedule-safe; reused the `register_field_extent` tiling gate; verified via `inferred_storage[].fields[]` round-trip + `*_passes_fsmgen_strict_validation` ×7 + register docs 0-new-diagnostics + 4 wire golds byte-identical; `kg-bench 156/156`; `run_ci.sh` green. The `.4a.i` honest residual is folded in (`isf_register_fields_not_lowered` for the unlowered remainder). |
+| 1 | `DOC-INTENT-TAXONOMY.4b` | `pending` (gated) | Gap B — `Evidence→Intent` `message_field_records` carrier (1,220 fields / 11 docs), then lower; **stays gated** — FSMGen explicitly deferred packet/flit layouts. CODE. |
+| 2 | `DOC-INTENT-TAXONOMY.4a.i` | `superseded` | Adapter honest residual `isf_register_fields_not_lowered` — **superseded by `.4a.ii`**, which both EMITS the fields AND records the unlowered remainder as that very residual. No separate slice needed. |
 
 ## Decisions
 
@@ -402,6 +458,7 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.3b` | `cargo fmt --all --check` clean; `cargo clippy --all-targets -- -D warnings` clean; completeness lib `66/66` (13 new recognizer tests); full `cargo test` `1695 passed; 0 failed` (warning-deny); `kg-bench 156/156`; live `validate` over all 78 docs → 21 wire / 8 guide (high) / 28 register-or-platform / 16 unresolved / 5 PHY (low), 0 high-confidence false positives; WIRE-BASED-100 orthogonal (pure new fn + additive reporting, no extraction/emitter touch) | PASS (committed `d6239217`) |
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.3c` | end-to-end integration test `validate_evidence_ir_reports_document_intent_category` PASS; `kg-bench 156/156`; full `cargo test` green (warning-deny, +1 test); `cargo fmt`/`clippy -D warnings` clean; `mdbook build` green; knowledge-map derive-and-diff in sync (113→114 facts); `run_ci.sh` green; WIRE-BASED-100 orthogonal (test + docs only) | PASS |
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.4a` | measurement/design + verified FSMGen FR (docs-only, no Rust code); code-path map (`source.rs:414`→`intent.rs:193`→`isf_ir.rs:852`) + empirical FSMGen-storage probe on pin `030f8c273` (opaque `(var)` only, no field structure); `scripts/check_doctrines.sh` green; `mdbook build` green; knowledge-map derive-and-diff in sync (114→115 facts / 824 keys); no code/canonical mutation → golds + `kg-bench` orthogonal by construction | PASS |
+| `2026-06-22` | `DOC-INTENT-TAXONOMY.4a.ii` | CODE — emit register bit-fields to ISF `(fields …)`. `cargo fmt --all --check` clean; `cargo clippy --all-targets -D warnings` clean; full `cargo test` `1702 passed / 0 failed` (warning-deny, +6 new tests incl. `register_fields_pass_fsmgen_strict_and_round_trip`); `kg-bench 156/156`; real-emitter corpus scan **6,570 fields / 2,531 registers / 24 docs** (was 0); RISC-V IOMMU (122) / GIC `ihi0069` (424) / CoreSight SoC-600 (974) `fsmgen --strict` `success / 0 diags` before AND after (0 new); 4 wire golds (AXI/APB/AHB/AXI-Stream) emitted `.isf` **byte-identical** (`adapt` old-vs-new diff empty); `inferred_storage[].fields[]` round-trip asserted; `run_ci.sh` green | PASS |
 
 ## Commit Log
 
@@ -414,9 +471,27 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | `DOC-INTENT-TAXONOMY.3b` | `d6239217` `DOC-INTENT-TAXONOMY.3b — implement the 6-category purpose recognizer (validate-reported; measured refinement of .3a)` | code slice |
 | `DOC-INTENT-TAXONOMY.3c` | `DOC-INTENT-TAXONOMY.3c — recognizer fixtures + user-facing mdBook chapter + KM card (.3 recognizer complete)` | test + docs slice |
 | `DOC-INTENT-TAXONOMY.4a` | `DOC-INTENT-TAXONOMY.4a — Gap A register bit-field ISF lowering: verified FSMGen field-structured-storage FR (measurement/design)` | measurement/design + FR, docs-only |
+| `DOC-INTENT-TAXONOMY.4a.ii` | `DOC-INTENT-TAXONOMY.4a.ii — emit register bit-field map into ISF field-structured storage (6,570 fields / 24 docs)` | code slice (isf_ir.rs emitter) |
 
 ## Changelog
 
+- `2026-06-22`: **`.4a.ii` DONE (CODE)** — emitted the IntentIR register bit-field map into FSMGen's shipped declarative
+  field-structured-storage construct (pin `d327129b7`). New `IsfStorageField` + `IsfStorageVar.fields` + the render of
+  the nested `(fields (field NAME (bits HI LO) [(access …)] [(reset V)] [(enum (M V)…)]) …)` block, fed by the pure
+  `register_storage_fields` (`isf_ir.rs`) and `normalize_field_access`. Admission is structural/fail-closed (ADR-0006):
+  located fields only (unlocated → honest gap); a sanitized-name collision (count ≥ 2) drops the whole colliding group
+  (uniformly handles `res0`-style reserved gaps + flattened mis-extraction dups → FSMGen's duplicate-name fail-closed);
+  any residual overlap fails the register's field block closed; `(access)` normalized to FSMGen's 10-token set (omitted
+  when unmapped); a field `(reset)` only when the parent reset is composed, as that value's own bit slice (matches the
+  parent slice by construction); `(enum)` keeps width-fitting numeric members. The unlowered remainder is recorded as
+  the `isf_register_fields_not_lowered` adapter residual (folds in `.4a.i`). **Measured live with the real emitter:
+  6,570 register bit-fields now reach `.isf` across 2,531 registers in 24 docs (was 0)** — CoreSight SoC-600
+  1,166/1,118/974, GIC arch `ihi0069` 424, CCIX 380, SMMU `ihi0070` 332, CHI-C2C 276, … Metadata-only / schedule-safe:
+  the 4 WIRE-BASED-100 golds emit 0 fields → emitted `.isf` byte-identical (WIRE-BASED-100 orthogonal); RISC-V IOMMU /
+  GIC / CoreSight SoC-600 keep `fsmgen --strict` `success / 0 diagnostics` (0 NEW); `inferred_storage[].fields[]`
+  round-trip asserted on the live binary; `kg-bench 156/156`; `cargo test 1702/0` (warning-deny, +6 tests);
+  `run_ci.sh` green. `.4a.i` is superseded (it both emits the fields and records the unlowered residual). Frontier →
+  `.4b` Gap B (FSMGen-deferred packet/flit) / `.4c` cat-3 topology / `.4d` cat-4 ISA / `.4e` conditional triage.
 - `2026-06-22`: **`.4a.ii` UN-GATED** — FSMGen SHIPPED the declarative field-structured-storage construct
   (`ISF-FIELD-STRUCTURED-STORAGE-FRONTIER.1`/`.2`, pin `d327129b7`, ingested via `FSMGEN-REFRESH-INTEGRATE-5`). The Gap-A
   field-structured emit is now buildable and is the highest-leverage lever; it supersedes `.4a.i` (the honest residual,

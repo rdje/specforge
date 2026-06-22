@@ -37,7 +37,7 @@ gravity.) The honest "ISF maturity" column reflects where SpecForge stands as of
 | # | Category — what it is *about* | The intent SpecForge must capture | Examples | ISF-synthesis maturity (honest) |
 |---|---|---|---|---|
 | **1** | **Wire-level bus / interconnect protocol** | signals (direction/width), transactions, handshake & temporal rules, actor↔signal relations, polarity | APB, AHB, AXI, AXI-Stream, ACE, CHI, TileLink, Avalon, Wishbone, OCP, CXS/GFB/LTI/DTI/ATP/LPI, OpenCAPI, CCIX, USB, I²C, I²S, CAN, SMBus, SWD | **Mature** — IntentIR maps directly; ISF lowers richly (the wire-protocol gold suite scores 1.000) |
-| **2** | **Programmable register / memory-mapped IP** | register maps, bit-fields, access/reset semantics, in-memory **structures** (descriptors, queues, page tables, contexts) | RISC-V IOMMU, AMD-IOMMU, Intel VT-d, GIC architecture, SMMU/MMU-700, CoreSight TRMs, NVMe, JEDEC eMMC EXT_CSD | **Partial** — registers lower to ISF storage/reset + field-signals; the frontier is **structure-table recall** for non-AMBA layouts |
+| **2** | **Programmable register / memory-mapped IP** | register maps, bit-fields, access/reset semantics, in-memory **structures** (descriptors, queues, page tables, contexts) | RISC-V IOMMU, AMD-IOMMU, Intel VT-d, GIC architecture, SMMU/MMU-700, CoreSight TRMs, NVMe, JEDEC eMMC EXT_CSD | **Mostly there** — register maps + reset lower, and their **named bit-fields now lower** to field-structured storage; the remaining frontier is **in-memory structure recall** (descriptors/queues) for non-AMBA layouts |
 | **3** | **Platform / system-IP topology & integration** | components, connectivity, clock/reset infrastructure, programming model, integration contract | CoreSight SoC-600, GIC distributor/redistributor, interconnect fabrics | **Partial** — infrastructure signals and actor ports lower; topology stays at the hint level |
 | **4** | **CPU ISA / privileged architecture** | instructions, CSRs/registers, privilege modes, exceptions, memory-ordering model | RISC-V Debug, RISC-V Advanced Interrupt Architecture, ISA volumes | **Thin** — only partly wire-shaped; the least-developed ISF story (a candidate for new ISF abstractions) |
 | **5** | **Physical / electrical / link layer** | signaling levels, encoding, link training, mechanicals | OpenCAPI 25G/32G PHY, USB4 PHY, mechanical specs | **Honest-thin** — this is not behavioral wire intent, so a near-empty `.isf` is *correct*, not a miss |
@@ -57,34 +57,37 @@ nothing there) or a **real gap** (the intent was captured but no `.isf` construc
 per surface, rather than as one blended percentage, keeps the score honest: a single number is easy to game,
 eight separate ones are not.
 
-Two findings dominate, and they are the same story in two places — **structure is captured but not yet
-synthesized**:
+One finding used to dominate — register **bit-fields** were captured but not synthesized. That gap is now
+**closed**: when this was first measured, **12,638 individual bit-fields** reached the `.isf` zero times even
+though the register *maps* did lower. FSMGen then shipped a declarative field-structured-storage construct, and
+SpecForge now lowers into it (`DOC-INTENT-TAXONOMY.4a.ii`):
 
-- **Register *maps* lower; register *fields* do not (yet).** Across the corpus, **3,449 registers** reach
-  `.isf` as storage — but they lower as a single opaque "this register is N bits wide" variable. The
-  **12,638 individual bit-fields** inside them — the part that says *which* bits mean *what*, with their
-  access and reset behavior — do **not** reach `.isf` at all yet. For a register IP or a platform TRM, those
-  fields *are* the programming model, so this is the biggest single thing left to synthesize. (The CoreSight
-  SoC-600 TRM alone carries 833 registers and 2,978 fields.)
-- **In-memory structures are captured but not carried forward.** Packet, flit, descriptor, queue, and
-  page-table layouts — **1,220 fields** across 11 documents (NVMe's command structures, AMD-IOMMU's tables,
+- **Register maps *and* their bit-fields lower.** Each register lowers as a storage variable, and its named
+  bit-fields are now emitted as a nested `(fields (field NAME (bits HI LO) [(access …)] [(reset V)] [(enum …)])
+  …)` block — the part that says *which* bits mean *what*, with access and reset behavior. Across the corpus
+  this is **6,570 bit-fields across 2,531 registers in 24 documents** (CoreSight SoC-600 alone contributes
+  ~3,250). The fields that do *not* lower are honest residuals — bits with no documented range, ambiguous
+  (repeated) field names, and overlapping or duplicate-named registers — and they stay in the IntentIR map and
+  are summarized in the adapter's `residual_decisions`; nothing is fabricated.
+- **In-memory structures are captured but not carried forward (still open).** Packet, flit, descriptor, queue,
+  and page-table layouts — **1,220 fields** across 11 documents (NVMe's command structures, AMD-IOMMU's tables,
   CHI/DTI/CHI-C2C/CCIX message fields) — are recovered during extraction, but they currently stop one stage
   short of the canonical `IntentIR`, so they are not yet lowered. For the message-based coherent protocols,
   those flit fields are the real intent of the document.
 
-Both gaps point at the *same* missing ingredient downstream: ISF needs first-class abstractions for
-**field-structured storage** (a register with named bit-fields) and for **packet/structure layouts**. That is
-exactly the family of abstractions (memory banks, single- and dual-port memories, structured records) that
-FSMGen is growing — so SpecForge's plan is to lower these cleanly once that ISF vocabulary lands, rather than
-to hack the emitter (see the FSMGen feedback loop below).
+The remaining structure gap needs both an `Evidence→IntentIR` carrier *and* a packet/structure-layout ISF
+construct — the same family of abstractions (memory banks, single- and dual-port memories, structured records)
+that FSMGen is growing. SpecForge's plan is to lower it the same way the bit-field gap was closed: file a
+verified FSMGen feature request and lower into the shipped construct, rather than hack the emitter (see the
+FSMGen feedback loop below).
 
 The rest of the scorecard, in plain terms:
 
 | Category | How complete to `.isf`, measured | The honest residual |
 |---|---|---|
 | **1 — wire protocol** | **Mature.** Signals, actor relations, constraints, timing rules, and enums all lower; the wire-protocol gold suite holds at a perfect 1.000. | Message/flit fields for the handful of register-heavy protocols (above); transaction *bodies* lower only where the document spells out the steps. |
-| **2 — register IP** | **Partial.** The register map lowers; enums lower. | The bit-fields and in-memory structures (the two gaps above) — i.e. most of the programming model. |
-| **3 — platform / system-IP** | **Partial.** Registers lower in volume (thousands); infrastructure signals lower. | The largest field loss of any category; the *topology* (what connects to what, clock/reset trees) stays at the hint level — there is no topology→ISF construct yet. |
+| **2 — register IP** | **Mostly there.** Register maps, their **bit-fields** (bits / access / reset / enum), and enums lower. | In-memory structures (descriptors/queues) — still captured one stage short of `IntentIR` — plus the honest field residuals (unlocated, ambiguous, or overlapping bits). |
+| **3 — platform / system-IP** | **Partial.** Registers and their bit-fields lower in volume (thousands; CoreSight SoC-600 alone ~3,250 fields); infrastructure signals lower. | The *topology* (what connects to what, clock/reset trees) stays at the hint level — there is no topology→ISF construct yet. |
 | **4 — CPU ISA** | **Thin.** Only the register-shaped part lowers. | Instructions, CSR-field semantics, privilege modes, and exceptions have no ISF construct yet — the least-developed road, and a candidate for a dedicated lowering decision. |
 | **5 — PHY** | **Correctly near-empty.** A thin `.isf` is the right answer here. | — (not behavioral wire intent). |
 | **6 — guide** | **Correctly near-empty for most.** | A few guides currently *over*-produce `.isf` content they shouldn't — a precision matter for the category recognizer, not a synthesis gap. |

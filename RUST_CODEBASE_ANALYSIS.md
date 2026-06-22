@@ -4,6 +4,25 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-06-22 — DOC-INTENT-TAXONOMY.4a.ii: register bit-fields now lower to ISF field-structured storage)
+
+- **`crates/specforge/src/ir/isf_ir.rs` — the storage emitter gained a field substructure.** `IsfStorageVar` now
+  carries `fields: Vec<IsfStorageField>` (new struct: name, msb, lsb, optional access/reset, enum members). The storage
+  render emits the nested `(fields (field …))` block when present and the byte-identical opaque `(var …)` line when not.
+  The field map is derived by the pure `register_storage_fields(r, var_width, parent_reset)` + `normalize_field_access`,
+  sitting alongside the existing `classify_register_reset` / `register_var_width` / `register_field_extent`
+  register-lowering helpers and reusing the same u64 tiling bound. This is the Gap-A lowering for
+  `DOC-INTENT-TAXONOMY.4a.ii`: 6,570 register bit-fields across 2,531 registers in 24 docs now reach `.isf` (was 0).
+- **Admission is structural and fail-closed (ADR 0006).** Located fields only; sanitized-name-collision groups dropped
+  (FSMGen fails closed on duplicate field names); residual overlap fails the register's field block closed; access
+  normalized to FSMGen's 10-token set (omit when unmapped); field `(reset)` only when the parent reset is composed, as
+  the parent value's bit slice; width-fitting enum members. The unlowered remainder is surfaced as the
+  `isf_register_fields_not_lowered` residual (`ir/adapters.rs`); nothing is fabricated.
+- **Risk picture unchanged.** The change is emitter-only and additive (metadata-only / schedule-safe per FSMGen), so the
+  extraction/semantic/intent surfaces and the wire golds are orthogonal by construction (4 wire golds emit 0 fields →
+  byte-identical `.isf`). A test-only `run_fsmgen_schedule_json` helper (`ir/mod.rs`) was added beside
+  `run_fsmgen_strict_check` to assert the `inferred_storage[].fields[]` round-trip against the real pinned binary.
+
 ## Session update (2026-06-21 — ISF-VALUE-WIDTH-EMIT.2: the measured width bug FIXED in the emitter; TREE CLOSED)
 
 - **Code landed (emitter-only, `crates/specforge/src/ir/isf_ir.rs`).** The `.0/.1` design is now implemented and

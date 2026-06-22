@@ -1,4 +1,54 @@
 # DEVELOPMENT_NOTES
+## DOC-INTENT-TAXONOMY.4a.ii (`2026-06-22`) — emit register bit-fields into ISF field-structured storage
+
+**Context.** Gap A of the per-category ISF-completeness scorecard: register **bit-fields** reached the emitted `.isf`
+zero times (12,638 captured fields across 35 register-bearing docs) — the emitter built `IsfStorageVar { name, width,
+reset }` and rendered an opaque `(var NAME (width N) [(reset V)])`, discarding every field's bit range, access, reset,
+and enum. `.4a` proved this was not a SpecForge carry gap (the field map reaches `IntentIr.register_records` intact) but
+a missing ISF abstraction, filed it as a verified FSMGen FR, and FSMGen shipped the declarative field-structured-storage
+construct (pin `d327129b7`). This slice does the lowering.
+
+**Measure first (TOOLBOX discipline).** Before coding, a read-only sweep of `generated/intent_ir/*` established the
+surface: 8,708 of 12,638 fields carry a concrete bit range (68%); 130 registers have a sanitized-name collision
+(dominated by reserved gaps `res0`×115 / `reserved`×53, plus mis-extraction dups like `size`×9); 36 have a located-field
+overlap; access is dominated by mappable tokens (RO/RW/WO/WARL/R/WPRI/RW1C ≈ 88%); enums are rare (6 members). The
+collision composition was the decisive measurement: it justified per-field admission with a structural collision-drop
+(not all-or-nothing), since "gaps are allowed" by FSMGen and the collisions are overwhelmingly reserved gaps.
+
+**Verify the contract empirically.** A hand-authored `(fields …)` block was run through the real pinned `fsmgen
+--strict --check --json` (`success=true`), `--emit-schedule-json` (`inferred_storage[].fields[]` round-trips
+name/msb/lsb/width/access/reset/enum), and a deliberately-bad out-of-width field (`fsmgen` fails closed:
+`field 'big' bits [9:0] exceed parent width 8`). So the emitter is built to exactly what FSMGen accepts.
+
+**Implementation (`crates/specforge/src/ir/isf_ir.rs`).** New `IsfStorageField` struct + `IsfStorageVar.fields`; the
+storage render emits the nested `(fields (field FNAME (bits HI LO) [(access …)] [(reset V)] [(enum (M V)…)]) …)` block
+when present and the opaque single-line form (byte-identical to before) when not. Field derivation is the pure
+`register_storage_fields(r, var_width, parent_reset)`: located fields only (mirrors `classify_register_reset`'s u64
+tiling bound: `hi`/width < 64, in parent width); drop the whole group of any sanitized-name collision; require the
+survivors non-overlapping else fail the register's block closed; `normalize_field_access` maps to FSMGen's 10-token set
+plus unambiguous synonyms (`r→ro`, `w→wo`, `r/w→rw`, `rw1c→w1c`), omitting the unmapped; a field `(reset)` only when
+`parent_reset` is `Some` (FSMGen requires an explicit parent reset for a field reset), emitted as that value's own bit
+slice so it matches by construction; `(enum)` keeps width-fitting numeric members (`meaning`→sanitized member, deduped).
+The unlowered count becomes the `isf_register_fields_not_lowered` adapter residual (wired in `ir/adapters.rs`; folds in
+`.4a.i`). A test-only `run_fsmgen_schedule_json` helper (`ir/mod.rs`) exposes the round-trip oracle.
+
+**Key correctness subtlety — field reset matches the parent slice by construction.** `classify_register_reset` returns
+`Emit(V)` only when every field is located, has a parseable reset, and the fields don't overlap, tiling
+`V = OR(value_i << lo_i)`. Computing each field's `(reset)` as `(V >> lo) & ((1<<width)-1)` therefore equals that
+field's own value (disjoint bits) and satisfies FSMGen's "field reset must match the parent slice" rule even when some
+fields (reserved gaps) are dropped from the emitted block — their bits in `V` are disjoint and unreferenced.
+
+**Measured live (real emitter).** 6,570 register bit-fields now reach `.isf` across 2,531 registers in 24 docs (was 0):
+CoreSight SoC-600 1,166/1,118/974, GIC arch `ihi0069` 424, CCIX 380, SMMU `ihi0070` 332, CHI-C2C 276, … The real count
+is lower than the read-only replica's 7,905 because the emitter dedups duplicate-named *registers* (`seen_storage_names`,
+required so FSMGen never sees duplicate storage vars) — caught precisely because I verified against the tool, not the
+replica.
+
+**No regression.** The 4 WIRE-BASED-100 golds emit 0 fields → emitted `.isf` byte-identical (old-vs-new `adapt` diff
+empty); metadata-only / schedule-safe; RISC-V IOMMU (122) / GIC (424) / CoreSight SoC-600 (974) keep `fsmgen --strict`
+`success / 0 diagnostics` before AND after (0 new); `kg-bench 156/156`; `cargo test 1702/0` (warning-deny, +6 tests);
+`cargo fmt`/`clippy -D warnings` clean; `run_ci.sh` green.
+
 ## FSMGEN-REFRESH-INTEGRATE-5.1 (`2026-06-22`) — FSMGen SHIPPED declarative storage fields; un-gate DOC-INTENT-TAXONOMY.4a.ii
 
 **Context.** One refresh cycle after FSMGen *accepted* the field-structured-storage FR (cycle 4), the owner reported

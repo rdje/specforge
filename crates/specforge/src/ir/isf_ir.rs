@@ -87,6 +87,37 @@ struct IsfStorageVar {
     /// register's per-field `reset_value`s (ISF-REGISTER-RESET-EMIT.2). `None` leaves the var
     /// reset-less — FSMGen then defaults it to all-0s, byte-identical to the pre-`.2` output.
     reset: Option<u64>,
+    /// The register's named bit-fields, lowered to FSMGen's declarative
+    /// `(fields (field …))` storage construct (DOC-INTENT-TAXONOMY.4a.ii; FSMGen pin
+    /// `d327129b7`). EMPTY leaves the var an opaque `(var NAME (width N) [(reset V)])`,
+    /// byte-identical to the pre-`.4a.ii` output. The field block is metadata-only /
+    /// schedule-safe: FSMGen's scheduled `.fsm` is byte-identical with vs without it.
+    fields: Vec<IsfStorageField>,
+}
+
+/// One named bit-field within an [`IsfStorageVar`], lowered to FSMGen's
+/// `(field NAME (bits HI LO) [(access …)] [(reset V)] [(enum (M V)…)])`
+/// (DOC-INTENT-TAXONOMY.4a.ii). Only fields admitted by `register_storage_fields`
+/// (located, unique-named, non-overlapping, in-width) are represented here.
+#[derive(Debug, Clone, PartialEq, Eq)]
+struct IsfStorageField {
+    /// Sanitized HDL identifier, unique within the parent var.
+    name: String,
+    /// Most-significant bit position (inclusive), `< parent width`.
+    msb: u32,
+    /// Least-significant bit position (inclusive), `<= msb`.
+    lsb: u32,
+    /// Access policy normalized to FSMGen's token set
+    /// (`ro|rw|wo|w1c|w0c|rc|rs|warl|wpri|reserved`); `None` (omit) when the
+    /// document's access notation does not map — honest, never guessed.
+    access: Option<String>,
+    /// Field reset, emitted ONLY when the parent var carries a composed `(reset V)`
+    /// (FSMGen requires a field `(reset)` to match the parent reset bit slice); the
+    /// value IS that slice, so the match holds by construction.
+    reset: Option<u64>,
+    /// Enumerated `(MEMBER VALUE)` encodings whose value fits the field width;
+    /// member names are sanitized + deduped. Empty → no `(enum …)` clause.
+    enum_members: Vec<(String, u64)>,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -252,6 +283,13 @@ pub(crate) struct IsfIr {
     /// / over-wide-for-its-var-width, so the adapter artifact records the honest gap
     /// instead of fabricating a power-up value.
     storage_reset_residuals: Vec<ResidualDecisionPacket>,
+    /// Register bit-fields that were NOT lowered to the storage `(fields …)` block
+    /// (DOC-INTENT-TAXONOMY.4a.ii): a single proportionate summary packet when ≥1
+    /// captured field is an honest residual — unlocated (no bit range), ambiguous
+    /// (a sanitized name shared by ≥2 fields), or in an overlap-failed-closed
+    /// register — so the adapter artifact records the gap instead of fabricating a
+    /// bit position the document never states.
+    storage_field_residuals: Vec<ResidualDecisionPacket>,
 }
 
 // ---------------------------------------------------------------------------
@@ -273,6 +311,13 @@ impl IsfIr {
     /// residual-decision set so a dropped reset is visible rather than silently lost.
     pub(crate) fn storage_reset_residuals(&self) -> &[ResidualDecisionPacket] {
         &self.storage_reset_residuals
+    }
+
+    /// Register bit-fields that could not be lowered to the storage `(fields …)` block
+    /// (DOC-INTENT-TAXONOMY.4a.ii). The adapter artifact appends these to its
+    /// residual-decision set so a dropped field map is visible rather than silently lost.
+    pub(crate) fn storage_field_residuals(&self) -> &[ResidualDecisionPacket] {
+        &self.storage_field_residuals
     }
 
     /// Number of transactions the emitter actually renders (includes the
@@ -391,13 +436,42 @@ impl IsfIr {
         if !self.storage.is_empty() {
             lines.push("  (storage".to_string());
             for v in &self.storage {
-                match v.reset {
-                    Some(reset) => lines.push(format!(
-                        "    (var {} (width {}) (reset {}))",
-                        v.name, v.width, reset
-                    )),
-                    None => lines.push(format!("    (var {} (width {}))", v.name, v.width)),
+                // Opaque-var head (no fields): byte-identical to the pre-`.4a.ii` output.
+                let head = match v.reset {
+                    Some(reset) => {
+                        format!("    (var {} (width {}) (reset {})", v.name, v.width, reset)
+                    }
+                    None => format!("    (var {} (width {})", v.name, v.width),
+                };
+                if v.fields.is_empty() {
+                    lines.push(format!("{head})"));
+                    continue;
                 }
+                // DOC-INTENT-TAXONOMY.4a.ii: declarative field-structured storage. The
+                // var stays open so the nested `(fields …)` block is its child.
+                lines.push(head);
+                lines.push("      (fields".to_string());
+                for f in &v.fields {
+                    let mut field = format!("        (field {} (bits {} {})", f.name, f.msb, f.lsb);
+                    if let Some(access) = &f.access {
+                        field.push_str(&format!(" (access {})", access));
+                    }
+                    if let Some(reset) = f.reset {
+                        field.push_str(&format!(" (reset {})", reset));
+                    }
+                    if !f.enum_members.is_empty() {
+                        let members: Vec<String> = f
+                            .enum_members
+                            .iter()
+                            .map(|(m, val)| format!("({} {})", m, val))
+                            .collect();
+                        field.push_str(&format!(" (enum {})", members.join(" ")));
+                    }
+                    field.push(')');
+                    lines.push(field);
+                }
+                lines.push("      )".to_string());
+                lines.push("    )".to_string());
             }
             lines.push("  )".to_string());
         }
@@ -831,6 +905,7 @@ impl IsfIr {
         let mut storage: Vec<IsfStorageVar> = Vec::new();
         let mut reset_not_lowerable: usize = 0;
         let mut reset_deferred_width: usize = 0;
+        let mut fields_not_lowered: usize = 0;
         for r in &intent_ir.register_records {
             let name = sanitize_isf_name(&r.register_name.to_lowercase());
             if !seen_storage_names.insert(name.clone()) {
@@ -849,7 +924,17 @@ impl IsfIr {
                 }
                 RegisterResetOutcome::DefaultZero | RegisterResetOutcome::NoReset => None,
             };
-            storage.push(IsfStorageVar { name, width, reset });
+            // DOC-INTENT-TAXONOMY.4a.ii: lower the register's bit-field map into FSMGen's
+            // declarative `(fields …)` storage block. The field `(reset)`s are gated on the
+            // parent reset `reset` so they always have an explicit parent slice to match.
+            let (fields, field_residual) = register_storage_fields(r, width, reset);
+            fields_not_lowered += field_residual;
+            storage.push(IsfStorageVar {
+                name,
+                width,
+                reset,
+                fields,
+            });
         }
         let mut storage_reset_residuals: Vec<ResidualDecisionPacket> = Vec::new();
         if reset_not_lowerable + reset_deferred_width > 0 {
@@ -857,6 +942,10 @@ impl IsfIr {
                 reset_not_lowerable,
                 reset_deferred_width,
             ));
+        }
+        let mut storage_field_residuals: Vec<ResidualDecisionPacket> = Vec::new();
+        if fields_not_lowered > 0 {
+            storage_field_residuals.push(storage_field_residual_packet(fields_not_lowered));
         }
 
         // --- Named drives (one per output signal) ---
@@ -1222,6 +1311,7 @@ impl IsfIr {
             priorities,
             temporal_residuals,
             storage_reset_residuals,
+            storage_field_residuals,
         }
     }
 }
@@ -1382,6 +1472,152 @@ fn storage_reset_residual_packet(
              (deferred to ISF-REGISTER-RESET-EMIT.3 var-width reconciliation). FSMGen defaults an \
              omitted `(reset V)` to all-0s; no value is fabricated."
         ),
+        automation_confidence: AutomationConfidence::Medium,
+        candidate_interpretations: Vec::new(),
+    }
+}
+
+/// Normalize a register-field access notation to FSMGen's storage-field `(access …)` token set
+/// (`ro|rw|wo|w1c|w0c|rc|rs|warl|wpri|reserved`, DOC-INTENT-TAXONOMY.4a.ii). Accepts an exact
+/// (case-insensitive) token or an UNAMBIGUOUS universal synonym; returns `None` for anything
+/// else so the field emits without an `(access …)` clause — honest, never a guess (ADR-0006:
+/// universal RTL access vocabulary, no chip-name list). An unsupported token would fail closed
+/// in FSMGen, so omission is the safe faithful choice (access is optional metadata).
+fn normalize_field_access(access: Option<&str>) -> Option<String> {
+    let raw = access?.trim().to_lowercase();
+    let token = match raw.as_str() {
+        "ro" | "rw" | "wo" | "w1c" | "w0c" | "rc" | "rs" | "warl" | "wpri" | "reserved" => {
+            raw.as_str()
+        }
+        "r" | "read-only" | "readonly" | "read only" => "ro",
+        "w" | "write-only" | "writeonly" | "write only" => "wo",
+        "r/w" | "read-write" | "readwrite" | "read/write" | "read write" => "rw",
+        "rw1c" => "w1c",
+        "rw0c" => "w0c",
+        _ => return None,
+    };
+    Some(token.to_string())
+}
+
+/// Lower a register's bit-fields into FSMGen's declarative storage `(fields …)` block
+/// (DOC-INTENT-TAXONOMY.4a.ii). Returns the admissible [`IsfStorageField`]s plus the count of
+/// captured `RegisterFieldRecord`s NOT lowered (an honest residual). Admission is structural
+/// (ADR-0006, no name list) and fail-closed, matching FSMGen's own field validation:
+///   - only LOCATED fields (`register_field_extent` = `Some`) can carry `(bits HI LO)`; an
+///     unlocated field is an honest gap (the `(fields …)` block allows gaps) → counted residual.
+///   - a sanitized field name shared by ≥ 2 located fields is AMBIGUOUS (reserved-gap repeats
+///     like `res0`, or a flattened mis-extraction) — every member of the colliding group is
+///     dropped, since FSMGen fails closed on duplicate field names and renaming would fabricate.
+///   - the survivors must be mutually NON-OVERLAPPING; any residual overlap fails the WHOLE
+///     register's field block closed (overlap is an ambiguous extraction — picking one would
+///     guess). In-width is guaranteed by `register_var_width` (≥ max `bits_high` + 1).
+///   - `(access)` is normalized (`normalize_field_access`), omitted when unmapped.
+///   - a field `(reset)` is emitted ONLY when the parent var carries a composed reset
+///     (`parent_reset = Some(v)`), as that value's own bit slice — so it always matches the
+///     parent reset slice (FSMGen's field-reset-must-match-parent rule) by construction.
+///   - `(enum)` keeps `(MEMBER VALUE)` members whose numeric value fits the field width
+///     (`meaning` → sanitized member name, deduped); non-numeric / over-wide members are dropped.
+fn register_storage_fields(
+    r: &RegisterRecord,
+    var_width: u32,
+    parent_reset: Option<u64>,
+) -> (Vec<IsfStorageField>, usize) {
+    let total = r.fields.len();
+    // Located fields only (carry a concrete bit range), each with its sanitized name. The bound
+    // mirrors `classify_register_reset`: u64-safe tiling (`hi`/width < 64) and inside the parent
+    // var width; anything else is an honest residual (the field map stays in IntentIR).
+    let located: Vec<(&RegisterFieldRecord, (u32, u32), String)> = r
+        .fields
+        .iter()
+        .filter_map(|f| {
+            let (hi, lo) = register_field_extent(f)?;
+            if hi >= 64 || (hi - lo + 1) >= 64 || hi >= var_width {
+                return None;
+            }
+            Some((f, (hi, lo), sanitize_isf_name(&f.field_name)))
+        })
+        .collect();
+    // Drop every field whose sanitized name collides (count ≥ 2) — structurally ambiguous.
+    let mut name_counts: BTreeMap<String, usize> = BTreeMap::new();
+    for (_, _, name) in &located {
+        *name_counts.entry(name.clone()).or_default() += 1;
+    }
+    let kept: Vec<(&RegisterFieldRecord, (u32, u32), String)> = located
+        .into_iter()
+        .filter(|(_, _, name)| name_counts[name.as_str()] == 1)
+        .collect();
+    if kept.is_empty() {
+        return (Vec::new(), total);
+    }
+    // Reject the whole register's field block on any residual bit overlap (fail-closed). Every
+    // kept field has `hi < 64` and `width < 64`, so the mask shifts are always u64-safe.
+    let mut used_mask: u64 = 0;
+    for (_, (hi, lo), _) in &kept {
+        let mask = ((1u64 << (hi - lo + 1)) - 1) << lo;
+        if used_mask & mask != 0 {
+            return (Vec::new(), total);
+        }
+        used_mask |= mask;
+    }
+    let mut fields: Vec<IsfStorageField> = Vec::with_capacity(kept.len());
+    for (f, (hi, lo), name) in &kept {
+        let (hi, lo) = (*hi, *lo);
+        let field_width = hi - lo + 1;
+        // Field reset = the parent reset's own slice for [hi:lo] (matches the parent slice by
+        // construction); only when the field documents a reset AND the parent reset is composed.
+        let reset = match parent_reset {
+            Some(v) if f.reset_value.is_some() => Some(if field_width >= 64 {
+                v >> lo
+            } else {
+                (v >> lo) & ((1u64 << field_width) - 1)
+            }),
+            _ => None,
+        };
+        // Enum members that fit the field width; meaning → unique sanitized member name.
+        let mut enum_members: Vec<(String, u64)> = Vec::new();
+        let mut seen_members: BTreeSet<String> = BTreeSet::new();
+        for e in &f.enumerated_values {
+            let Some(value) = parse_reset_literal(&e.value) else {
+                continue;
+            };
+            if field_width < 64 && value >= (1u64 << field_width) {
+                continue;
+            }
+            let member = sanitize_isf_name(&e.meaning);
+            if !seen_members.insert(member.clone()) {
+                continue;
+            }
+            enum_members.push((member, value));
+        }
+        fields.push(IsfStorageField {
+            name: name.clone(),
+            msb: hi,
+            lsb: lo,
+            access: normalize_field_access(f.access_type.as_deref()),
+            reset,
+            enum_members,
+        });
+    }
+    let not_lowered = total - fields.len();
+    (fields, not_lowered)
+}
+
+/// A single proportionate honesty packet recording that some register bit-fields were not
+/// lowered to the storage `(fields …)` block (DOC-INTENT-TAXONOMY.4a.ii). One summary per
+/// adapter — not one per register.
+fn storage_field_residual_packet(not_lowered: usize) -> ResidualDecisionPacket {
+    ResidualDecisionPacket {
+        packet_id: "isf_register_fields_not_lowered".to_string(),
+        question: format!(
+            "{not_lowered} register bit-field(s) were not lowered to the ISF storage `(fields …)` block"
+        ),
+        why_unresolved: "A field is lowered only when it carries a concrete bit range, its \
+             sanitized name is unique within the register, and the register's located fields do \
+             not overlap. Unlocated fields (no bit range) are honest gaps, an ambiguous (shared) \
+             field name is dropped rather than guessed, and an overlapping extraction fails the \
+             register's field block closed — the full field map always remains in IntentIR \
+             register_records; no bit position is fabricated."
+            .to_string(),
         automation_confidence: AutomationConfidence::Medium,
         candidate_interpretations: Vec::new(),
     }
@@ -2534,6 +2770,7 @@ mod tests {
             priorities: vec![],
             temporal_residuals: vec![],
             storage_reset_residuals: vec![],
+            storage_field_residuals: vec![],
         }
     }
 
@@ -2679,6 +2916,7 @@ mod tests {
             name: "acc".to_string(),
             width: 8,
             reset: None,
+            fields: vec![],
         });
         isf.drives.push(IsfNamedDrive {
             name: "out".to_string(),
@@ -3078,11 +3316,13 @@ mod tests {
             name: "dpidr".to_string(),
             width: 32,
             reset: Some(0x1c01_3477),
+            fields: vec![],
         });
         isf.storage.push(IsfStorageVar {
             name: "plain".to_string(),
             width: 8,
             reset: None,
+            fields: vec![],
         });
         let out = isf.render();
         assert!(out.contains(&format!(
@@ -3100,6 +3340,320 @@ mod tests {
         assert_eq!(p.packet_id, "isf_storage_reset_not_lowered");
         assert!(p.question.contains('5'));
         assert!(p.why_unresolved.contains("ISF-REGISTER-RESET-EMIT.3"));
+    }
+
+    // --- DOC-INTENT-TAXONOMY.4a.ii: register bit-field storage lowering ----
+
+    fn field_rec(
+        name: &str,
+        hi: u32,
+        lo: u32,
+        access: Option<&str>,
+        reset: Option<&str>,
+        enums: &[(&str, &str)],
+    ) -> RegisterFieldRecord {
+        RegisterFieldRecord {
+            field_name: name.to_string(),
+            bits_high: Some(hi),
+            bits_low: Some(lo),
+            bit_width: None,
+            access_type: access.map(str::to_string),
+            reset_value: reset.map(str::to_string),
+            description: None,
+            enumerated_values: enums
+                .iter()
+                .map(|(v, m)| crate::ir::source::RegisterFieldEnumRecord {
+                    value: v.to_string(),
+                    meaning: m.to_string(),
+                })
+                .collect(),
+        }
+    }
+
+    #[test]
+    fn normalize_field_access_maps_known_tokens_and_omits_unknown() {
+        for (raw, want) in [
+            ("RO", "ro"),
+            ("rw", "rw"),
+            ("WO", "wo"),
+            ("WARL", "warl"),
+            ("WPRI", "wpri"),
+            ("W1C", "w1c"),
+            ("RW1C", "w1c"),
+            ("R", "ro"),
+            ("R/W", "rw"),
+            ("W", "wo"),
+            ("Reserved", "reserved"),
+        ] {
+            assert_eq!(
+                normalize_field_access(Some(raw)).as_deref(),
+                Some(want),
+                "raw={raw}"
+            );
+        }
+        // Unmappable notations are omitted (None), never guessed (ADR-0006 honest residual).
+        for raw in ["RsvdP", "RsvdZ", "-", "…", "HwInit", "RWS/RW", "I", "X", ""] {
+            assert_eq!(normalize_field_access(Some(raw)), None, "raw={raw:?}");
+        }
+        assert_eq!(normalize_field_access(None), None);
+    }
+
+    #[test]
+    fn register_storage_fields_admits_located_unique_nonoverlapping() {
+        // Three located, unique, non-overlapping fields whose numeric resets compose to V=0xA5
+        // (mode=0b101@5 | prio=0b001@2 | enable=1@0 == 1010_0101). The field (reset)s are the
+        // parent V's own bit slices, so they match by construction.
+        let r = register_with(
+            Some(8),
+            vec![
+                field_rec(
+                    "mode",
+                    7,
+                    5,
+                    Some("RW"),
+                    Some("0x5"),
+                    &[("0", "Idle"), ("5", "Run")],
+                ),
+                field_rec("prio", 4, 2, Some("RW"), Some("1"), &[]),
+                field_rec(
+                    "enable",
+                    0,
+                    0,
+                    Some("RW"),
+                    Some("1"),
+                    &[("0", "Off"), ("1", "On")],
+                ),
+            ],
+        );
+        let parent = match classify_register_reset(&r.fields, 8) {
+            RegisterResetOutcome::Emit(v) => Some(v),
+            _ => panic!("expected RegisterResetOutcome::Emit"),
+        };
+        assert_eq!(parent, Some(0xA5));
+        let (fields, not_lowered) = register_storage_fields(&r, 8, parent);
+        assert_eq!(not_lowered, 0);
+        assert_eq!(fields.len(), 3);
+        let mode = &fields[0];
+        assert_eq!((mode.msb, mode.lsb), (7, 5));
+        assert_eq!(mode.access.as_deref(), Some("rw"));
+        assert_eq!(mode.reset, Some(5)); // slice [7:5] of 0xA5 == 0b101 == 5
+        assert_eq!(
+            mode.enum_members,
+            vec![("idle".to_string(), 0), ("run".to_string(), 5)]
+        );
+    }
+
+    #[test]
+    fn register_storage_fields_drops_unlocated_collision_and_failscloses_overlap() {
+        // Unlocated field → honest gap (residual); the located unique field is kept, and with no
+        // parent reset no field (reset) is emitted (FSMGen requires an explicit parent reset).
+        let mut unlocated = field_rec("rsvd", 0, 0, None, None, &[]);
+        unlocated.bits_high = None;
+        unlocated.bits_low = None;
+        let r = register_with(
+            Some(8),
+            vec![field_rec("data", 7, 1, Some("RO"), None, &[]), unlocated],
+        );
+        let (fields, not_lowered) = register_storage_fields(&r, 8, None);
+        assert_eq!(fields.len(), 1);
+        assert_eq!(fields[0].name, "data");
+        assert_eq!(fields[0].reset, None);
+        assert_eq!(not_lowered, 1);
+
+        // Sanitized-name collision (two `res0`, non-overlapping) → BOTH dropped; `ctrl` survives.
+        let r = register_with(
+            Some(8),
+            vec![
+                field_rec("RES0", 7, 7, None, None, &[]),
+                field_rec("ctrl", 5, 0, Some("RW"), None, &[]),
+                field_rec("res0", 6, 6, None, None, &[]),
+            ],
+        );
+        let (fields, not_lowered) = register_storage_fields(&r, 8, None);
+        assert_eq!(fields.len(), 1);
+        assert_eq!(fields[0].name, "ctrl");
+        assert_eq!(not_lowered, 2);
+
+        // Overlapping located fields → the whole register's field block fails closed.
+        let r = register_with(
+            Some(8),
+            vec![
+                field_rec("a", 5, 2, Some("RW"), None, &[]),
+                field_rec("b", 4, 0, Some("RW"), None, &[]),
+            ],
+        );
+        let (fields, not_lowered) = register_storage_fields(&r, 8, None);
+        assert!(fields.is_empty());
+        assert_eq!(not_lowered, 2);
+    }
+
+    #[test]
+    fn register_storage_fields_drops_overwide_and_nonnumeric_enum_members() {
+        // A 1-bit field: enum value 2 does not fit, "X" is non-numeric → both dropped; 1 kept.
+        let r = register_with(
+            Some(4),
+            vec![field_rec(
+                "en",
+                0,
+                0,
+                Some("RW"),
+                None,
+                &[("1", "On"), ("2", "Bad"), ("X", "Sym")],
+            )],
+        );
+        let (fields, _n) = register_storage_fields(&r, 4, None);
+        assert_eq!(fields.len(), 1);
+        assert_eq!(fields[0].enum_members, vec![("on".to_string(), 1)]);
+    }
+
+    #[test]
+    fn render_storage_var_emits_fields_block() {
+        let mut isf = minimal_isf();
+        isf.storage.push(IsfStorageVar {
+            name: "control".to_string(),
+            width: 8,
+            reset: Some(0xA1),
+            fields: vec![
+                IsfStorageField {
+                    name: "mode".to_string(),
+                    msb: 7,
+                    lsb: 5,
+                    access: Some("rw".to_string()),
+                    reset: Some(5),
+                    enum_members: vec![("idle".to_string(), 0), ("run".to_string(), 5)],
+                },
+                IsfStorageField {
+                    name: "prio".to_string(),
+                    msb: 4,
+                    lsb: 2,
+                    access: Some("rw".to_string()),
+                    reset: None,
+                    enum_members: vec![],
+                },
+            ],
+        });
+        // An opaque var (no fields) stays single-line — byte-identical to pre-`.4a.ii`.
+        isf.storage.push(IsfStorageVar {
+            name: "plain".to_string(),
+            width: 8,
+            reset: None,
+            fields: vec![],
+        });
+        let out = isf.render();
+        assert!(
+            out.contains("    (var control (width 8) (reset 161)"),
+            "{out}"
+        );
+        assert!(out.contains("      (fields"), "{out}");
+        assert!(
+            out.contains(
+                "        (field mode (bits 7 5) (access rw) (reset 5) (enum (idle 0) (run 5)))"
+            ),
+            "{out}"
+        );
+        assert!(
+            out.contains("        (field prio (bits 4 2) (access rw))"),
+            "{out}"
+        );
+        assert!(out.contains("    (var plain (width 8))"), "{out}");
+        assert!(!out.contains("(var plain (width 8) (reset"), "{out}");
+        assert_eq!(paren_balance(&out), 0);
+    }
+
+    #[test]
+    fn register_fields_pass_fsmgen_strict_and_round_trip() {
+        // DOC-INTENT-TAXONOMY.4a.ii: a fields-bearing storage var must (a) pass the real
+        // fsmgen --strict --check and (b) round-trip through --emit-schedule-json
+        // inferred_storage[].fields[] (name/msb/lsb/width/access/reset/enum). Built on a
+        // known-fsmgen-valid base actor.
+        let mut isf = isf_with_temporal_contract_transaction();
+        isf.storage.push(IsfStorageVar {
+            name: "control".to_string(),
+            width: 8,
+            reset: Some(161),
+            fields: vec![
+                IsfStorageField {
+                    name: "mode".to_string(),
+                    msb: 7,
+                    lsb: 5,
+                    access: Some("rw".to_string()),
+                    reset: Some(5),
+                    enum_members: vec![("idle".to_string(), 0), ("run".to_string(), 5)],
+                },
+                IsfStorageField {
+                    name: "prio".to_string(),
+                    msb: 4,
+                    lsb: 2,
+                    access: Some("rw".to_string()),
+                    reset: None,
+                    enum_members: vec![],
+                },
+                IsfStorageField {
+                    name: "enable".to_string(),
+                    msb: 0,
+                    lsb: 0,
+                    access: Some("rw".to_string()),
+                    reset: Some(1),
+                    enum_members: vec![("off".to_string(), 0), ("on".to_string(), 1)],
+                },
+            ],
+        });
+        let tempdir = tempfile::tempdir().expect("tempdir");
+        let src = isf.render();
+        let isf_path = tempdir.path().join("register_fields.isf");
+        std::fs::write(&isf_path, &src).expect("write isf");
+        eprintln!("=== ISF ===\n{src}\n=== END ===");
+
+        // (a) strict check passes (the field block is accepted).
+        let output = crate::ir::run_fsmgen_strict_check(&isf_path);
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        let check: serde_json::Value = serde_json::from_str(&stdout).unwrap_or_else(|e| {
+            panic!("fsmgen non-JSON.\nstdout:{stdout}\nstderr:{stderr}\nerr:{e}")
+        });
+        if !check["diagnostic_summary"]["success"]
+            .as_bool()
+            .unwrap_or(false)
+            && let Some(diags) = check["diagnostics"].as_array()
+        {
+            for d in diags {
+                eprintln!(
+                    "FSMGen diagnostic: {}",
+                    d.get("message")
+                        .and_then(|m| m.as_str())
+                        .unwrap_or("(none)")
+                );
+            }
+        }
+        assert!(
+            check["diagnostic_summary"]["success"]
+                .as_bool()
+                .unwrap_or(false),
+            "FSMGen strict rejected the (fields …) block:\n{src}"
+        );
+
+        // (b) inferred_storage[].fields[] round-trips the emitted field map.
+        let sched = crate::ir::run_fsmgen_schedule_json(&isf_path);
+        let sjson: serde_json::Value =
+            serde_json::from_str(&String::from_utf8_lossy(&sched.stdout)).expect("schedule json");
+        let control = sjson["inferred_storage"]
+            .as_array()
+            .expect("inferred_storage")
+            .iter()
+            .find(|s| s["name"] == "control")
+            .expect("control storage entry");
+        let fields = control["fields"].as_array().expect("fields");
+        assert_eq!(fields.len(), 3, "{control}");
+        let mode = fields
+            .iter()
+            .find(|f| f["name"] == "mode")
+            .expect("mode field");
+        assert_eq!(mode["msb"], 7);
+        assert_eq!(mode["lsb"], 5);
+        assert_eq!(mode["width"], 3);
+        assert_eq!(mode["access"], "rw");
+        assert_eq!(mode["reset"], 5);
+        assert_eq!(mode["enum"].as_array().expect("enum").len(), 2);
     }
 
     #[test]
