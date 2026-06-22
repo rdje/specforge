@@ -30,4 +30,5 @@
   - [Generated Artifacts](reference/generated-artifacts.md)
   - [Documentation Scope And Continuity](reference/documentation-scope.md)
   - [Live Docs And Continuity](reference/live-docs.md)
+  - [Doctrine Enforcement](reference/doctrine-enforcement.md)
   - [Troubleshooting](reference/troubleshooting.md)

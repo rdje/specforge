@@ -1,4 +1,25 @@
 # DEVELOPMENT_NOTES
+## DOCTRINE-ENFORCEMENT-ADOPT.2 (`2026-06-22`) — closing the tree: docs + KM, book-method-doc
+
+**Context.** Closing leaf of the doctrine-enforcement adoption. The book is the user-facing surface
+(zero-drift doctrine), so the enforcement system — which is *how the project keeps its own promises* —
+must be explained there, not only in the root standard.
+
+**Engineering notes.**
+- **Framed for a user, not a contributor.** The chapter answers the question a careful reader actually
+  asks ("how do I know these promises are kept?"), then connects it to a concrete user payoff: when the
+  project reports `kg-bench 156/156` or a wire gold at `1.000`, those are oracles CI re-runs, not numbers
+  typed into a doc. Why-before-what per the book-doc style.
+- **No dead links in the book.** The standard, driver, and `TOOLBOX.md` live at the repo root, not in the
+  book tree — so they are referenced as plain code-spans, never as markdown links to a non-book path
+  (which would render as dead links / trip a link check). `mdbook build` is green.
+- **The KM card carries a real `reverify`.** The fact card's `reverify` re-runs `scripts/check_doctrines.sh`
+  (expects "ALL 3 … PASS") and describes the TASK-ACCEPTANCE block, so a future agent confirms the fact
+  by execution rather than trust — consistent with the architecture the card documents.
+- **Tree closed cleanly.** All three leaves are scripts/docs only; no extraction or emitter Rust was
+  touched across the whole tree, so WIRE-BASED-100 + `kg-bench` (156/156) are orthogonal by construction
+  and were never at risk.
+
 ## DOCTRINE-ENFORCEMENT-ADOPT.1 (`2026-06-22`) — making the task-tree-ownership doctrine un-self-tickable, without false-blocking
 
 **Context.** Decision 0003's "no code change without an owning task-tree leaf first" was prose the agent

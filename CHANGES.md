@@ -1,3 +1,18 @@
+### DOCTRINE-ENFORCEMENT-ADOPT.2 — user-facing mdBook chapter + KM card (book-method-doc close); tree CLOSED
+Closing leaf (docs-only). Documents the adopted doctrine-enforcement system on the user-facing surface and writes the
+durable fact card, completing the `DOCTRINE-ENFORCEMENT-ADOPT` tree.
+- **`docs/book/src/reference/doctrine-enforcement.md`** (in `SUMMARY.md` under Reference): user-friendly,
+  why-before-what — why "trust me" compliance + silent drift both fail; doctrine = rule + a deterministic check that
+  exits nonzero on breach; the 3 check kinds (structural / oracle / evidence); the 3 registered doctrines; the
+  acceptance checklist for code changes + "earned, not ticked"; the E1→E4 layering with stated honest limits (local
+  hooks bypassable, hosted CI manual-only); how to run + extend `check_doctrines.sh`; how the adoption was verified.
+  `mdbook build` green.
+- **`docs/knowledge/doctrine-enforcement-adoption.md`** — KM fact card (map 112→113 facts / 802 question keys), with a
+  `reverify` that re-runs the driver and demonstrates the TASK-ACCEPTANCE block; in sync (driver KM check PASS).
+- **Gates:** docs-only, no Rust → WIRE-BASED-100 + register/wire golds + `kg-bench` orthogonal; `mdbook build` green;
+  memory-arch + knowledge-map + task-acceptance (exempt) 3/3 PASS. **Whole tree complete** (`.0` `810b510b` + `.1`
+  `a9c8d415` + `.2`). Next active work → `DOC-INTENT-TAXONOMY.3b`.
+
 ### DOCTRINE-ENFORCEMENT-ADOPT.1 — SpecForge-native task-acceptance evidence check + SpecForge TOOLBOX.md
 Mechanizes SpecForge's flagship doctrine (decision 0003, owner-restated repeatedly): no code change without an owning
 task-tree leaf first, and the change must be PROVABLY taken through diagnose→address→no-regression, not "trust me".

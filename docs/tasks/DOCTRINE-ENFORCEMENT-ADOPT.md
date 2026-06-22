@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `DOCTRINE-ENFORCEMENT-ADOPT`
-- Status: `active` (`.0` framework DONE + `.1` native task-acceptance check + SpecForge `TOOLBOX.md` DONE `2026-06-22`; frontier `.2` mdBook chapter)
+- Status: `done` (`2026-06-22` — all leaves complete: `.0` framework + `.1` native task-acceptance check + SpecForge `TOOLBOX.md` + `.2` user-facing mdBook chapter + KM card)
 - Roadmap lane: `process / continuity` (sibling of `MEMORY_ARCHITECTURE.md` enforcement; cross-cutting)
 - Created: `2026-06-22`
 - Last updated: `2026-06-22`
@@ -65,9 +65,9 @@ enforced by one registered driver** (`scripts/check_doctrines.sh`), gated locall
 
 ## Task Tree
 
-- ID: `DOCTRINE-ENFORCEMENT-ADOPT` · Status: `active` · Goal: adopt the 4th portable architecture ·
-  Children: `.0` (framework + register existing + wire), `.1` (native task-acceptance check + TOOLBOX),
-  `.2` (mdBook chapter + live-doc sync + KM card).
+- ID: `DOCTRINE-ENFORCEMENT-ADOPT` · Status: `done` (`2026-06-22`) · Goal: adopt the 4th portable architecture ·
+  Children: `.0` (framework + register existing + wire) DONE, `.1` (native task-acceptance check + TOOLBOX) DONE,
+  `.2` (mdBook chapter + live-doc sync + KM card) DONE.
 - ID: `DOCTRINE-ENFORCEMENT-ADOPT.0` · Status: `done` (`2026-06-22`, framework, no Rust) · Goal: land `DOCTRINE_ENFORCEMENT.md`
   (standard) + `scripts/check_doctrines.sh` (registry+driver) registering the EXISTING
   `check_memory_architecture.sh` + `check_knowledge_map.sh`; route `.githooks/pre-commit` and
@@ -83,7 +83,7 @@ enforced by one registered driver** (`scripts/check_doctrines.sh`), gated locall
   acceptance-checklist template); register `TASK-ACCEPTANCE` in the driver; add `TOOLBOX.md` to the
   discovery pointers. Acceptance: a synthetic staged Rust change with no checklist is blocked; a
   docs/scripts-only change is exempt; driver green on this adoption commit (scripts+docs only).
-- ID: `DOCTRINE-ENFORCEMENT-ADOPT.2` · Status: `pending` · Goal: add the user-facing mdBook chapter
+- ID: `DOCTRINE-ENFORCEMENT-ADOPT.2` · Status: `done` (`2026-06-22`, closing leaf) · Goal: add the user-facing mdBook chapter
   documenting the doctrine-enforcement system (what it is, the registry/driver, the E1→E4 gates, the
   acceptance checklist, how to run `check_doctrines.sh`), wired into `SUMMARY.md`; write the
   knowledge-map fact card; sync `LIVE_ACHIEVEMENT_STATUS.md` / `CHANGES.md` / `DEVELOPMENT_NOTES.md` /
@@ -96,7 +96,11 @@ enforced by one registered driver** (`scripts/check_doctrines.sh`), gated locall
 | --- | --- | --- | --- |
 | — | `DOCTRINE-ENFORCEMENT-ADOPT.0` | `done` (`2026-06-22`) | Standard + driver landed; `MEMORY-ARCH` + `KNOWLEDGE-MAP` registered; pre-commit + `run_ci.sh` route through the driver (2/2 PASS). |
 | — | `DOCTRINE-ENFORCEMENT-ADOPT.1` | `done` (`2026-06-22`) | `scripts/check_task_acceptance.sh` (bash-3.2-safe) + SpecForge `TOOLBOX.md`; `TASK-ACCEPTANCE` registered → driver 3/3 PASS; all 5 gate paths tested (exempt / block-no-leaf / pass / block-unticked / block-unbacked). |
-| 1 | `DOCTRINE-ENFORCEMENT-ADOPT.2` | `pending` | mdBook chapter (book-method-doc close) + live-doc sync + KM card. |
+| — | `DOCTRINE-ENFORCEMENT-ADOPT.2` | `done` (`2026-06-22`) | mdBook chapter `reference/doctrine-enforcement.md` (in `SUMMARY.md`; `mdbook build` green) + KM card `doctrine-enforcement-adoption` (map 112→113) + live-doc sync. Tree CLOSED. |
+
+**Tree complete (`2026-06-22`).** All leaves `done`; the doctrine-enforcement architecture is adopted, the driver
+gates pre-commit + CI, and the system is documented in the mdBook + KM. Next active work resumes at
+`DOC-INTENT-TAXONOMY.3b` (the first Rust slice that will be gated by the new `TASK-ACCEPTANCE` check).
 
 ## Decisions
 
@@ -128,17 +132,26 @@ enforced by one registered driver** (`scripts/check_doctrines.sh`), gated locall
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-22` | `DOCTRINE-ENFORCEMENT-ADOPT.0` | `bash scripts/check_doctrines.sh` (driver) → 2/2 doctrines PASS (`MEMORY-ARCH`, `KNOWLEDGE-MAP`) + meta-check; knowledge-map regen+diff in sync; no Rust → WIRE-BASED-100 + register/wire golds + `kg-bench` orthogonal by construction | PASS (committed `810b510b`; pre-commit hook ran the new driver) |
-| `2026-06-22` | `DOCTRINE-ENFORCEMENT-ADOPT.1` | `scripts/check_task_acceptance.sh` 5-path behavior test (exempt / block-no-leaf / pass / block-unticked / block-unbacked, all as expected, throwaway staged files fully reverted); `bash -n` syntax-clean + bash-3.2-safe (no `mapfile`); `bash scripts/check_doctrines.sh` → 3/3 PASS; no Rust → golds/`kg-bench` orthogonal | PASS |
+| `2026-06-22` | `DOCTRINE-ENFORCEMENT-ADOPT.1` | `scripts/check_task_acceptance.sh` 5-path behavior test (exempt / block-no-leaf / pass / block-unticked / block-unbacked, all as expected, throwaway staged files fully reverted); `bash -n` syntax-clean + bash-3.2-safe (no `mapfile`); `bash scripts/check_doctrines.sh` → 3/3 PASS; no Rust → golds/`kg-bench` orthogonal | PASS (committed `a9c8d415`) |
+| `2026-06-22` | `DOCTRINE-ENFORCEMENT-ADOPT.2` | `bash scripts/run_docs_ci.sh` (mdbook build) green with the new `reference/doctrine-enforcement.md` chapter; KM regen 112→113 facts + `bash scripts/check_doctrines.sh` → 3/3 PASS (KM in sync); no Rust → golds/`kg-bench` orthogonal | PASS |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `DOCTRINE-ENFORCEMENT-ADOPT.0` | `DOCTRINE-ENFORCEMENT-ADOPT.0 — adopt the portable Doctrine-Enforcement architecture (driver + register existing checks + wire gates)` | committed `810b510b`; framework, no Rust |
-| `DOCTRINE-ENFORCEMENT-ADOPT.1` | `DOCTRINE-ENFORCEMENT-ADOPT.1 — SpecForge-native task-acceptance evidence check + SpecForge TOOLBOX.md` | scripts+docs, no Rust; hash filled at next checkpoint |
+| `DOCTRINE-ENFORCEMENT-ADOPT.1` | `DOCTRINE-ENFORCEMENT-ADOPT.1 — SpecForge-native task-acceptance evidence check + SpecForge TOOLBOX.md` | committed `a9c8d415`; scripts+docs, no Rust |
+| `DOCTRINE-ENFORCEMENT-ADOPT.2` | `DOCTRINE-ENFORCEMENT-ADOPT.2 — user-facing mdBook chapter + KM card (book-method-doc close)` | closing leaf; docs-only; hash filled at next checkpoint |
 
 ## Changelog
 
+- `2026-06-22`: `.2` user-facing mdBook chapter + KM card DONE (closing leaf, docs-only) — **tree CLOSED**.
+  Added `docs/book/src/reference/doctrine-enforcement.md` (why-before-what: why "trust me" + silent drift
+  fail, the doctrine=rule+check idea, the 3 check kinds, the 3 registered doctrines, the acceptance
+  checklist + "earned not ticked", the E1→E4 layering with honest limits, how to run/extend, how it was
+  verified) wired into `docs/book/src/SUMMARY.md` under Reference; `mdbook build` green. Wrote KM fact
+  card `docs/knowledge/doctrine-enforcement-adoption.md` (map 112→113 facts, 802 question keys; driver KM
+  check in sync). Synced live docs. Book-method-doc close satisfied. No Rust → golds/`kg-bench` orthogonal.
 - `2026-06-22`: `.1` native task-acceptance check + SpecForge `TOOLBOX.md` DONE (scripts+docs, no Rust).
   Added `scripts/check_task_acceptance.sh` — a staged Rust code change (`crates/**/*.rs`,
   `crates/**/test_data/**`) must have a staged owning `docs/tasks/*.md` leaf whose acceptance checklist

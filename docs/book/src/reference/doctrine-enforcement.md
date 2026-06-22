@@ -1,0 +1,131 @@
+# Doctrine Enforcement
+
+SpecForge makes some strong promises about itself: *no code change lands without an owning task-tree
+leaf first*, *every score is objectively measured*, *extraction stays PDF-agnostic with no hardcoded
+chip names*, *the docs never drift from the code*. The natural question a careful reader asks is: **how
+do you know those promises are actually kept, and not just written down somewhere and quietly broken?**
+
+This page answers that. The short version: in SpecForge a written rule (a "doctrine") is paired with a
+small program that **re-checks the rule from the repository itself** and fails loudly if it is broken —
+and that program runs automatically every time someone commits. A rule nobody checks is, in practice, a
+suggestion. A rule with a check that blocks the commit is enforced. This is the **fourth portable
+architecture** the project carries, alongside the task-trees, the memory architecture, and the
+knowledge map. The full standard lives in `DOCTRINE_ENFORCEMENT.md` at the repo root; this chapter is
+the friendly tour.
+
+## Why this exists
+
+Two failure modes quietly erode any project's stated discipline:
+
+- **"Trust me" compliance** — a change claims it followed the rule, but nothing proves it.
+- **Silent drift** — a rule decays one small exception at a time because nothing re-checks it.
+
+Neither is malicious; both are human. The cure is not to write the rule more emphatically — it is to
+make the **compliant path the same path the gate lets through**. So each doctrine gets a check that
+re-derives the truth from the files, and the project's git hooks and CI run that check. If the check
+passes, the rule held; if it fails, the commit is blocked with a message that says exactly what broke
+and how to fix it.
+
+For you as a user, the payoff is concrete: when SpecForge tells you a wire-protocol gold is at `1.000`
+or that `kg-bench` is `156/156`, those are not numbers someone typed into a doc — they are oracles the
+gate can re-run, so a regression cannot be quietly waved through.
+
+## The core idea, in one line
+
+> **doctrine = a rule + a deterministic check that exits nonzero on any breach.**
+
+Once a rule has such a check, enforcing it is mechanical: one **driver** runs every registered check and
+reports a per-doctrine PASS/FAIL; the **git hook** runs the driver locally; **CI** runs the *same*
+driver server-side. The prose explains *why* the rule exists; the check decides *whether* it holds.
+
+## The three kinds of checks
+
+Every enforceable doctrine fits one of three shapes, chosen by what makes the proof real:
+
+| Kind | The check… | Why you can trust it | SpecForge examples |
+|---|---|---|---|
+| **Structural** | re-derives an invariant from the files | it is a fact about the tree — it cannot be faked | the resume pointer (`MEMORY.md`) stays bounded; the derived Knowledge Map is regenerated and in sync |
+| **Oracle (re-run)** | re-executes a deterministic tool at fixed inputs and asserts the result | a fabricated claim does not reproduce | `kg-bench` is `156/156`; the WIRE-BASED-100 golds are `1.000`; `cargo fmt`/`clippy`/`test` are clean |
+| **Evidence (artifact)** | requires a re-checkable artifact for something that cannot be re-derived | strong when the cited command is re-run | a code change's task leaf carries tool-backed *why+where* + a measured *before→after* |
+
+Structural checks are the strongest because they cannot be gamed; oracle checks are next because a re-run
+beats trust; evidence checks are used only where the thing being enforced is a *process* that leaves no
+other re-derivable trace.
+
+## What is enforced today
+
+| Doctrine | Kind | Proves |
+|---|---|---|
+| `MEMORY-ARCH` | structural | the durable 4-layer memory architecture invariants — the standard is present, `MEMORY.md` is a bounded resume pointer, the bootstrap files route to it, the task-tree and decision layers exist |
+| `KNOWLEDGE-MAP` | structural | the question-keyed Knowledge Map is regenerated and in sync with its fact cards (so it cannot drift) |
+| `TASK-ACCEPTANCE` | evidence | a Rust code change is owned by a task-tree leaf whose acceptance checklist is ticked **and** backed by real SpecForge tool output |
+
+The heavy deterministic oracles — `kg-bench`, the WIRE-BASED-100 golds, the byte-identical
+evidence/`.isf` checks, the full `cargo` suite — are the strongest leg of all. They are too slow to run
+on every local commit, so they run in the full CI gate (`scripts/run_ci.sh`)
+rather than in the fast pre-commit hook. That is a deliberate split, stated openly: the local hook
+catches the cheap structural and evidence breaches instantly; the un-fakeable re-run happens in CI.
+
+## The acceptance checklist (for code changes)
+
+SpecForge's most-emphasized rule is *no code change without an owning task-tree leaf first*. That is now
+mechanized. When a change touches the Rust extraction/lowering code, the gate requires the owning task
+leaf to carry a short checklist, each required box ticked and backed by the cited tool output:
+
+- **ROOT CAUSE (why + where)** — a SpecForge tool located and explained the cause: a `validate` finding
+  or metric, an `adapt --target isf` blocking reason, a `kg-bench` fixture diagnostic, a failing
+  `cargo test`, a `--dry-run` measurement, a `file:line`.
+- **ADDRESSED (verified)** — the change does what it should, measured per item (a before→after count, a
+  recovered surface).
+- **NO REGRESSION** — backed by a named, re-runnable oracle: `kg-bench 156/156`, WIRE-BASED-100 `1.000`,
+  byte-identical golds, `run_ci.sh` green.
+
+A box you tick is a *claim*; the proof is the **oracle re-run** in CI. A self-ticked-but-false
+"NO REGRESSION" passes the local presence check and then dies when the oracle is re-run — which is what
+makes the box un-self-tickable. The full template, and the catalog of SpecForge's diagnostic tools that
+produce the cited evidence, live in `TOOLBOX.md` at the repo root.
+
+Changes that do **not** touch Rust code — documentation, scripts, the book itself — are exempt from this
+particular gate (they carry their own), so ordinary continuity work is never false-blocked.
+
+## How the gates are layered
+
+Defense in depth, the same four-layer model the memory architecture uses. Each layer catches what the
+last misses:
+
+1. **Discovery** — the doctrine is named in the entrypoint docs (`README.md`, `TOOLBOX.md`,
+   `docs/decisions/`, this book) and every harness bootstrap file, so it is unmissable.
+2. **Self-check** — each `check_*.sh` is the single source of truth for one rule.
+3. **Git hook** — `.githooks/pre-commit` runs the driver; a non-compliant tree cannot commit locally.
+4. **CI** — the same driver runs server-side, where it cannot be bypassed from a clone.
+
+Honest limits, stated rather than hidden: a local hook can be skipped (`--no-verify`), so CI is the real
+backstop — and SpecForge's hosted CI is currently manual-only to conserve build minutes, which means the
+un-fakeable oracle re-run happens at the next CI/`run_ci.sh` run, not the instant you commit. The
+strongest guarantee is restored by re-enabling an automatic CI gate.
+
+## Running and extending it yourself
+
+```bash
+# run every registered doctrine check (the fast gate the pre-commit hook uses):
+bash scripts/check_doctrines.sh
+
+# the full gate, including the heavy oracles (run before committing Rust code):
+bash scripts/run_ci.sh
+```
+
+The driver prints a per-doctrine report and exits nonzero if any check fails. Adding a new enforced
+doctrine is intentionally a two-step move: write a `scripts/check_<id>.sh` that obeys the check-script
+contract (exit nonzero on breach, deterministic, reads the repo and mutates nothing, scope-aware), then
+add one line to the driver's registry. The driver meta-checks that every registered check actually
+exists and is executable, so a registry entry can never become a dangling promise.
+
+## How this was verified
+
+The adoption was landed as the task-tree `DOCTRINE-ENFORCEMENT-ADOPT` (`.0` framework, `.1` the native
+task-acceptance check + this toolbox, `.2` this chapter). The driver was run standalone before it was
+wired into the hook, so the live commit gate was never pointed at an unverified driver; the
+task-acceptance check was exercised across all five of its paths (exempt, block-when-no-leaf,
+pass-with-evidence, block-when-unticked, block-when-unbacked) with throwaway staged files that were fully
+reverted, before it was allowed to gate a real commit. No extraction or emitter Rust was touched, so the
+WIRE-BASED-100 golds and `kg-bench` (156/156) are orthogonal by construction.
