@@ -1,4 +1,46 @@
 # DEVELOPMENT_NOTES
+## DOC-INTENT-TAXONOMY.4c.i (`2026-06-23`) — cat-3 topology-capture recall measurement (read-only, docs-only)
+
+**Context.** `.4c` decided cat-3's distinctive intent (component topology / connectivity / clock-reset distribution) is
+*captured* as a typed surface (`signal_connectivity`, `infrastructure_signals`) but ISF has no declarative static-topology
+construct, and filed no FSMGen FR yet — deferring the construct decision (verified FR vs honest non-target) to a
+capture-recall measurement, because the capture looked sparse/noisy and ISF is a per-actor format.
+
+**Method.** Read-only structural gauge over the persisted IntentIR corpus (tracked reproducer
+`scripts/measure_cat3_topology_recall.py`). For the full 15-doc cat-3 set — and the 4 cat-1 wire gold docs as a reference
+baseline that proves the same surface is *capable* of dense, clean topology — computed: `signal_connectivity` edges per
+actor (density), the fraction of edges with both a producer AND a consumer (a half edge is an unusable stub), the
+fraction of clean (non-`None`/non-`\`-escaped) endpoint names, and `infrastructure_signals` fan-out / source-resolution.
+The cat-3 set is the `.1`-census reconstruction enumerated in the reproducer (closing the gap that `.1` never persisted
+the per-doc labels). ADR-0006: every metric is a structural count; the only per-document input is the one-off cat-3/cat-1
+measurement labeling (a label like `.1`, not runtime code).
+
+**Measured.** Cat-3 (15 docs): 380 actors / 135 `signal_connectivity` edges = **0.355 edges/actor**; **33 (24%)**
+both-endpoint; **457/480 (95%)** clean endpoints; 10 `infrastructure_signals`, 6 with a fan-out list, **0** with a
+resolved source. Cat-1 wire baseline (4 docs): 65 actors / 267 edges = **4.108 edges/actor**; **227 (85%)** both-endpoint;
+100% clean; 8/8 infra with distribution, 1 with source. Robust to dropping the 4 borderline docs (cat-3 core: 0.395
+edges/actor, 20% both-endpoint, 0 resolved source).
+
+**Root cause.** The topology surface is *capable* of dense, fully-connected, rooted topology — it achieves exactly that on
+wire docs, where the protocol's small signal graph IS the topology and is fully declared. On cat-3 platform TRMs the same
+surface is ~12× too sparse, three-quarters half-connected, and the clock/reset tree has no captured root, because the
+extractor recovers only a sliver of the multi-component interconnect from TRM integration prose. The bottleneck is
+upstream **capture-recall** (EvidenceIR/SemanticIR connectivity + infrastructure extraction), NOT the missing ISF
+static-topology construct `.4c` confirmed.
+
+**Verdict.** Capture-recall-gated, not abstraction-gated → **no FSMGen FR** (premature on an unfaithful capture —
+`feedback_verify_fsmgen_before_fr`); cat-3 topology stays an **honest residual**; the buildable lever (if pursued) is
+upstream extraction-recall owned OUTSIDE the `.4` ISF-lowering program (mirrors `.4d.i` + the cat-2 structure-recall
+frontier), recorded as a cross-reference, not a `.4` gap. Even with faithful capture, lowering would also need a
+multi-actor ISF emit + a construct FSMGen's behavioral ATL frontier does not subsume — resolved WITH FSMGen only after
+capture clears this bar. Refined `.4c`'s "sparse + noisy" to **sparse + half-connected + rootless-infra with minor name
+noise**.
+
+**Gates.** No Rust code / no canonical mutation → wire golds / `kg-bench` / emitted `.isf` byte-identical by construction
+(WIRE-BASED-100 orthogonal). `scripts/check_doctrines.sh` green; `mdbook build` green; knowledge-map derive-and-diff in
+sync (118 → 119 facts). Report `docs/research/cat3-topology-capture-recall-measurement.md`; KM
+`docs/knowledge/cat3-topology-capture-recall.md`.
+
 ## DOC-INTENT-TAXONOMY.4e (`2026-06-23`) — conditional-rule lowering triage (`.2` Result 3, read-only, docs-only)
 
 **Context.** `.2` Result 3 flagged that the `constraints + temporal + conditional → (rule)` lowering ratio is low (cat 1
