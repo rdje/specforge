@@ -1,13 +1,18 @@
 #!/usr/bin/env bash
-# Local pre-commit gates. Activate once per clone: git config core.hooksPath .githooks
+# .githooks/pre-commit — local doctrine gate (E3). Activate once per clone:
+#   git config core.hooksPath .githooks
+#
+# This routes through the GENERAL DOCTRINE ENFORCER (scripts/check_doctrines.sh), which runs every
+# registered doctrine check (memory-architecture, knowledge-map, task-acceptance, …) and blocks the
+# commit on any breach. See DOCTRINE_ENFORCEMENT.md (the portable standard) for the model.
 set -euo pipefail
 ROOT="$(git rev-parse --show-toplevel)"
 
-# Memory-architecture gate (layer E3 of MEMORY_ARCHITECTURE.md).
-"$ROOT/scripts/check_memory_architecture.sh"
-
-# Knowledge Map gate (KNOWLEDGE_MAP_ARCHITECTURE.md §6): regenerate the derived map, stage it
-# (so it is always in sync at zero agent cost), then validate facts + sync.
+# KNOWLEDGE-MAP is DERIVED — regenerate + stage it so map drift is structurally impossible, BEFORE
+# the driver's check_knowledge_map.sh validates that it is in sync.
 "$ROOT/knowledge-map/scripts/gen_knowledge_map.sh" >/dev/null
 git add "$("$ROOT/knowledge-map/scripts/gen_knowledge_map.sh" --print-map-path)" 2>/dev/null || true
-"$ROOT/knowledge-map/scripts/check_knowledge_map.sh"
+
+# The single general doctrine enforcer (registry + driver) — runs ALL registered check_*.sh and
+# reports per-doctrine PASS/FAIL.
+"$ROOT/scripts/check_doctrines.sh"

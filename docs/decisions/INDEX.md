@@ -16,6 +16,7 @@ changed* lives in git (layer D), not here.
 | [0003](0003-task-tree-and-commit-doctrine.md) | Task-tree ownership before any code change; strict commit workflow | 2026-06-01 | accepted | process, doctrine |
 | [0004](0004-severity-never-gated-by-verbosity.md) | Severity ≥ Warning is never gated by a verbosity/trace level | 2026-06-01 | accepted | observability, invariant |
 | [0005](0005-temporal-logic-ltl-mtl-not-ctl-tla.md) | Temporal behavior captured in LTL/MTL, not CTL or TLA+ (mine, don't model-check) | 2026-06-04 | accepted | temporal, ltl, formalism |
+| [0006](0006-doctrine-enforcement-architecture.md) | Doctrine-enforcement architecture: every doctrine becomes a mechanically-gated check (registry/driver, E1→E4) | 2026-06-22 | accepted | process, doctrine, enforcement |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /

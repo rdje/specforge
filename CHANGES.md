@@ -1,3 +1,22 @@
+### DOCTRINE-ENFORCEMENT-ADOPT.0 — adopt the portable Doctrine-Enforcement architecture (framework + register existing checks + wire gates)
+Owner directive (`2026-06-22`): "adopt this doctrine enforcement system" → `DOCTRINE_ENFORCEMENT.md`, the portable,
+project-agnostic standard (the 4th architecture, sibling of `MEMORY_ARCHITECTURE.md`) that turns every written
+doctrine into `rule + a deterministic check that exits nonzero on any breach`, run from one registry/driver and
+gated by the same E1→E4 defense-in-depth. SpecForge already had E1–E4 for two doctrines (memory-architecture,
+knowledge-map) as a hand-rolled pre-commit/CI stack; this slice unifies them under one driver and lands the
+standard. No extraction/emitter Rust touched.
+- **`scripts/check_doctrines.sh`** — the registry+driver: runs every registered `check_*.sh`, prints a per-doctrine
+  PASS/FAIL report, exits nonzero on any breach, and **meta-checks** that each registered enforcer exists + is
+  executable (a registry entry can never be a dangling promise). Registers `MEMORY-ARCH`
+  (`scripts/check_memory_architecture.sh`) + `KNOWLEDGE-MAP` (`knowledge-map/scripts/check_knowledge_map.sh`).
+- **`.githooks/pre-commit`** (E3) and **`scripts/run_ci.sh`** (E4) now route through the driver, preserving the
+  knowledge-map regen+stage step that must run before the driver validates the derived map.
+- **`DOCTRINE_ENFORCEMENT.md`** (standard; §0–§9/§11 portable, §10 = SpecForge's live registry), decision record
+  **`0006`**, and discovery pointers (`README.md` doc map + `AGENTS.md` + `CLAUDE.md`).
+- **Gates:** driver green (2/2 doctrines PASS); knowledge-map derive-and-diff in sync; no Rust → WIRE-BASED-100 +
+  register/wire golds + `kg-bench` orthogonal by construction. Owning tree `docs/tasks/DOCTRINE-ENFORCEMENT-ADOPT.md`;
+  frontier → `.1` native task-acceptance check + SpecForge `TOOLBOX.md`.
+
 ### DOC-INTENT-TAXONOMY.2 — per-category ISF-lowering completeness gauge (read-only): the maturity column, measured
 Read-only measurement: a per-surface lowering ledger over all 78 docs (76 persisted `adapter.json` + 2 read-only
 `adapt --dry-run` for the unmaterialized adapters; no `validate`/`adapt` write → zero canonical mutation),

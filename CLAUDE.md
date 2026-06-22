@@ -10,5 +10,8 @@ card under `docs/knowledge/` when you establish a durable fact or catch archaeol
 
 Non-negotiable: no code change without an owning task-tree leaf first (`docs/tasks/`,
 doctrine in `docs/decisions/0003-task-tree-and-commit-doctrine.md`); route every durable
-thing to a memory layer and commit per `COMMIT.md`; run
-`scripts/check_memory_architecture.sh` before committing (hooks + CI enforce it).
+thing to a memory layer and commit per `COMMIT.md`. Doctrines are **mechanically enforced**
+(`DOCTRINE_ENFORCEMENT.md`, the 4th portable architecture): run `scripts/check_doctrines.sh`
+before committing — the registry/driver that runs every doctrine check (memory-arch,
+knowledge-map, task-acceptance); hooks + CI run it too. A Rust code change must carry an
+evidence-backed acceptance checklist in its task leaf (template in `TOOLBOX.md`).

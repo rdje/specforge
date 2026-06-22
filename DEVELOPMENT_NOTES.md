@@ -1,4 +1,29 @@
 # DEVELOPMENT_NOTES
+## DOCTRINE-ENFORCEMENT-ADOPT.0 (`2026-06-22`) — adopting the 4th portable architecture without breaking the existing gates
+
+**Context.** The owner directed adopting `DOCTRINE_ENFORCEMENT.md` (the portable doctrine-enforcement standard).
+SpecForge already enforced two doctrines (memory-architecture, knowledge-map) through a hand-rolled
+`.githooks/pre-commit` + `scripts/run_ci.sh` stack. The adoption had to (a) land the unifying registry+driver, (b)
+register the existing checks without weakening them, and (c) not break the live commit gate at any point.
+
+**Engineering notes.**
+- **Driver-first, test-before-wire.** `scripts/check_doctrines.sh` was written and run standalone (`bash
+  scripts/check_doctrines.sh` → 2/2 PASS) BEFORE editing `.githooks/pre-commit`, so the on-disk commit gate was
+  never pointed at an unverified or missing driver. The git hook runs from the working tree, so the driver had to
+  exist + pass on disk at commit time — verified first.
+- **No duplication — the checks stay the single source of truth.** The driver does not re-implement the
+  memory-arch / knowledge-map invariants; it invokes the existing `check_*.sh` scripts and aggregates exit codes.
+  Each script remains the one place its rule is defined (`DOCTRINE_ENFORCEMENT.md` §5).
+- **Derived-artifact ordering preserved.** The knowledge map is derived; the pre-commit must regenerate + stage it
+  BEFORE the driver's `check_knowledge_map.sh` validates sync. The new pre-commit keeps that exact ordering, then
+  calls the driver (which validates, never regenerates) — so map drift stays structurally impossible.
+- **Meta-check guards the registry.** A registered enforcer that is missing or non-executable fails the driver
+  (not silently skipped), so a future one-line registry add that points at a not-yet-written script fails loudly —
+  the reason `.1`'s `TASK-ACCEPTANCE` line is added only once `check_task_acceptance.sh` exists.
+- **Pre-commit stays cheap; oracles stay in CI.** The driver runs only the structural + (soon) evidence checks
+  locally; the heavy deterministic oracles (`kg-bench` 156/156, WIRE-BASED-100 golds, `cargo fmt/clippy/test/doc`)
+  remain on the `run_ci.sh` / CI path — the strongest leg (`DOCTRINE_ENFORCEMENT.md` §4.7 / §6.1).
+
 ## DOC-INTENT-TAXONOMY.2 (`2026-06-22`) — per-category ISF-completeness gauge: how the measurement was made honest
 
 **Context.** `.1` established the per-category denominator (36/7/15/2/4/14). `.2` had to turn the `.0` maturity

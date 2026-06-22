@@ -11,6 +11,10 @@ Other harnesses' bootstrap files (`CLAUDE.md`, `.cursorrules`,
 1. Read **`README.md`** — project objective, layout, standard commands.
 2. Read **`MEMORY_ARCHITECTURE.md`** — how memory + continuity work in this repo
    (MANDATORY; it is enforced — see below).
+   - and **`DOCTRINE_ENFORCEMENT.md`** — the 4th portable architecture: every doctrine is a
+     mechanically-gated check run from one registry/driver (`scripts/check_doctrines.sh`). The
+     diagnostic toolbox + the acceptance-checklist template a code change must satisfy live in
+     **`TOOLBOX.md`**.
 3. Resume from **`MEMORY.md`** — the bounded resume pointer: latest commit, the active
    task-tree frontier, the single next action, any in-flight uncommitted work.
 4. Open the active **task-tree** under `docs/tasks/` (index: `docs/TASK_TREE.md`); its
@@ -30,8 +34,10 @@ Other harnesses' bootstrap files (`CLAUDE.md`, `.cursorrules`,
   records (`docs/decisions/`) / git history. Nothing important may live only in this
   conversation.
 - **Commit per `COMMIT.md`** after every slice, with the **work-unit id in the subject**.
-- **Before committing, run `scripts/check_memory_architecture.sh`** — git hooks and CI
-  run it too, and a non-compliant change fails the build and cannot merge.
+- **Before committing, run `scripts/check_doctrines.sh`** (the general doctrine enforcer — it runs
+  `check_memory_architecture.sh`, the knowledge-map check, the task-acceptance check, …) — git hooks
+  and CI run it too, and a non-compliant change fails the build and cannot merge
+  (`DOCTRINE_ENFORCEMENT.md`).
 - **Write a Knowledge Map fact card** (`docs/knowledge/<id>.md`, front-matter with an
   `answers:` list of the questions an agent would grep) whenever you establish a durable
   structural/causal fact, or catch yourself re-deriving one — so the next session finds it
