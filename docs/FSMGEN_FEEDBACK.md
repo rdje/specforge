@@ -288,6 +288,25 @@ not inferred from the book alone.
 
 ## Feature request (2026-06-22) — declarative field-structured storage (named bit-fields in a register / packed structure layout)
 
+> **RESOLVED — ACCEPTED (not yet shipped) `2026-06-22`** — FSMGen answered in
+> `subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md` (§ "2026-06-22: Declarative Field-Structured Storage", upstream
+> commits `ISF-FIELD-STRUCTURED-STORAGE-RESPONSE.1`/`.2`, pin `5ce0335c5`). **Answer: "yes, FSMGen accepts this as a
+> real ISF representational gap and a valid future direction" — but it is NOT shipped syntax/behavior today.** FSMGen's
+> next step is its own `ISF-FIELD-STRUCTURED-STORAGE-FRONTIER.1` readiness/contract audit before any parser/lowering
+> code. FSMGen **confirms the no-hack stance**: do NOT use `set-field`/`when-field`/`extract`/`assemble`, fake drives, or
+> comments as a substitute for a static field-map declaration ("would fabricate behavior"). It **accepts the exact
+> semantic shape proposed** (a storage var with an optional declarative field partition — per field: name, bit range,
+> optional access `ro`/`rw`/`w1c`/`warl`, optional reset, optional enum, optional provenance), first version = **checked
+> metadata** with real fail-closed validation (ranges inside width, overlaps fail, deterministic names, discoverable via
+> the public report). Open audit questions FSMGen will settle first: full-tiling vs reserved/gap metadata; field-reset
+> metadata-only vs cross-validated vs storage-reset-deriving; enum inline vs `(enums …)` reference; access-policy
+> metadata-only vs generated assertions; packet/structure generalization ships-with vs sibling.
+> **SPECFORGE's sanctioned near-term posture (FSMGen's own words):** keep recovered register/CSR + packet/flit field maps
+> in IntentIR **metadata/residuals**, keep emitting **opaque** storage when width/reset are honestly supported, and
+> fabricate nothing. ⇒ Ingested by pinning `subs/fsmgen` to `5ce0335c5` (`FSMGEN-REFRESH-INTEGRATE-4.1`); the SpecForge
+> side stays `DOC-INTENT-TAXONOMY.4a.i` (adapter honest residual — FSMGen-endorsed near-term) with `.4a.ii`
+> (field-structured emit) GATED on FSMGen shipping the construct.
+
 **Context.** A chip-spec PDF's register / CSR programming model is, in large part, its **bit-field map**:
 each register is a fixed-width word partitioned into named fields, each field carrying a bit range, an
 access type (RO/RW/W1C/WARL/…), an optional reset value, an optional enumeration, and a description.

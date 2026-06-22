@@ -209,8 +209,17 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   `isf_register_fields_not_lowered` (today the field drop at `isf_ir.rs:852` is silent; only the *reset* drop is
   recorded as `isf_storage_reset_not_lowered`) so the largest measurable intent-loss is surfaced in `residual_decisions`.
   CODE — requires the full task-acceptance checklist + `run_ci.sh` + FSMGen `--strict --check` 0-new-diagnostics.
-- ID: `DOC-INTENT-TAXONOMY.4a.ii` · Status: `pending` (gated on FSMGen) · Goal: lower the IntentIR register field map
-  into the field-structured-storage construct once ISF gains it (re-verify the new pin first). CODE.
+- ID: `DOC-INTENT-TAXONOMY.4a.ii` · Status: `pending` (**gated on FSMGen — FR ACCEPTED `2026-06-22`, not yet shipped**) ·
+  Goal: lower the IntentIR register field map into the field-structured-storage construct once ISF gains it (re-verify
+  the new pin first). CODE. **FSMGen ANSWER (`2026-06-22`, ingested via `FSMGEN-REFRESH-INTEGRATE-4`, pin `5ce0335c5`,
+  `subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md` § "Declarative Field-Structured Storage"):** FSMGen ACCEPTED the FR as
+  a real ISF gap + valid future direction and accepted the exact proposed shape (a storage var with an optional
+  declarative field partition: per-field name / bit range / optional access / reset / enum / provenance, first version =
+  checked metadata, fail-closed validation), but it is **NOT shipped** — gated on FSMGen's own
+  `ISF-FIELD-STRUCTURED-STORAGE-FRONTIER.1` readiness/contract audit. So `.4a.ii` STAYS gated; re-verify the pin when
+  FSMGen ships the construct. FSMGen also confirmed the no-hack stance (no `set-field`/`extract`/fake-drive/comment
+  substitute) → `.4a.i` (adapter honest residual + keep field maps as IntentIR metadata) is the FSMGen-endorsed
+  near-term move.
 - ID: `DOC-INTENT-TAXONOMY.4b` · Status: `pending` · Goal: **Gap B** — add the `Evidence→Intent` `message_field_records`
   carrier (1,220 fields / 11 docs, no IntentIR carrier today), then lower via the same FSMGen structure/packet
   abstraction. Closes the cat-2 structure frontier (the `CORPUS-COVERAGE.2` #21 IOMMU Lever-D) and the cat-1

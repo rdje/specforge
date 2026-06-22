@@ -1,4 +1,32 @@
 # DEVELOPMENT_NOTES
+## FSMGEN-REFRESH-INTEGRATE-4.1 (`2026-06-22`) — refresh the FSMGen pin + integrate the accepted field-structured-storage FR answer
+
+**Context.** Right after `DOC-INTENT-TAXONOMY.4a` filed the field-structured-storage FR, the owner reported FSMGen had
+answered and asked me to update the submodule and read `subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`. This is the
+fourth FSMGen refresh cycle.
+
+**What FSMGen answered.** FSMGen **ACCEPTED** the FR — "yes, FSMGen accepts this as a real ISF representational gap and a
+valid future direction" — and accepted the *exact* shape I proposed (a storage var with an optional declarative field
+partition: per-field name, bit range, optional access/reset/enum/provenance; first version = checked metadata with real
+fail-closed validation). Two things matter most: (1) it is **not shipped** — FSMGen's own next step is a readiness/contract
+audit `ISF-FIELD-STRUCTURED-STORAGE-FRONTIER.1` before any parser/lowering code; and (2) FSMGen **independently
+confirmed the no-hack stance** I reasoned to in `.4a` — do not use `set-field`/`when-field`/`extract`/`assemble`, fake
+drives, or comments as a substitute, because "would fabricate behavior." It even spelled out the sanctioned near-term
+SpecForge posture: keep recovered register/CSR + packet/flit field maps as IntentIR metadata/residuals, keep emitting
+opaque storage, fabricate nothing. That is a direct endorsement of `.4a.i` (the adapter honest residual) and keeps
+`.4a.ii` (the actual field-structured emit) gated on FSMGen shipping the construct.
+
+**How I verified the bump (didn't trust the commit subjects).** I checked out `5ce0335c5` in the submodule working tree
+and ran the contract canary — the 6 `*_passes_fsmgen_strict_validation` tests, which emit `.isf` and run the real
+`subs/fsmgen/bin/fsmgen --strict --check` — they PASS, so every form SpecForge emits is still strict-valid on the new
+binary. Then full `run_ci.sh` (1696 tests / 0 failed, warning-deny clippy/rustdoc, mdBook) + `kg-bench 156/156`. No
+SpecForge Rust code changed, so the emitted `.isf` is byte-identical and WIRE-BASED-100 is orthogonal; the contract delta
+across the 106 commits is none for SpecForge (the rest are FSMGen-internal IAL2 frontier work + a doctrine adoption).
+Ownership: created `FSMGEN-REFRESH-INTEGRATE-4` before committing the gitlink bump (no change without a task tree).
+
+**Lockstep.** FR marked RESOLVED in `docs/FSMGEN_FEEDBACK.md`; README pin updated; `DOC-INTENT-TAXONOMY.4a.ii`/`.4a.i`
+notes carry FSMGen's acceptance; KM card `register-bit-field-isf-lowering-gap` updated with the answer.
+
 ## DOC-INTENT-TAXONOMY.4a (`2026-06-22`) — Gap A register bit-field ISF lowering: verified FSMGen FR (measurement/design)
 
 **Context.** `.2` measured the two dominant ISF-completeness gaps; Gap A (register bit-fields: 12,638 fields / 32 docs

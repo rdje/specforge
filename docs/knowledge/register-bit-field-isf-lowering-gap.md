@@ -11,6 +11,8 @@ answers:
   - "why was an emitter-only fix for register bit-fields rejected (per-field vars fabricate/lose grouping; set-field/extract fabricate runtime behavior; comments are not intent — feedback_isf_no_hacks)"
   - "what is the FSMGen feature request for field-structured storage (declarative (var NAME (width N) (fields (field NAME (bits hi lo) (access ..) (reset ..) (enum ..)))); docs/FSMGEN_FEEDBACK.md 2026-06-22)"
   - "how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)"
+  - "did FSMGen accept the field-structured-storage FR (YES 2026-06-22 — accepted as a real ISF gap + valid future direction, accepted the proposed shape, but NOT shipped; gated on FSMGen's ISF-FIELD-STRUCTURED-STORAGE-FRONTIER.1; pin 5ce0335c5)"
+  - "what can SpecForge do now about register bit-fields per FSMGen (keep field maps as IntentIR metadata/residuals, keep emitting opaque storage, fabricate nothing — .4a.i adapter honest residual is the FSMGen-endorsed near-term move; .4a.ii field-structured emit stays gated)"
 date: 2026-06-22
 tags: [doc-intent-taxonomy, isf-adapter, register, bit-field, storage, fsmgen-fr, isf-no-hacks, honest-residual, verify-fsmgen-before-fr, adr-0006, measured, gap-a]
 evidence: crates/specforge/src/ir/source.rs:414 (RegisterFieldRecord full metadata); crates/specforge/src/ir/intent.rs:75/:193 (IntentIr.register_records full clone); crates/specforge/src/ir/isf_ir.rs:82/:834-852/:391 (IsfStorageVar build+render — fields discarded); subs/fsmgen/docs/ISF_DOWNSTREAM_INTEGRATION_SPEC.md §8 (opaque (var) grammar); subs/fsmgen/docs/book/src/13k-isf-feature-support-matrix.md (set-field/extract are runtime ops); subs/fsmgen/docs/book/src/14-feature-backlog.md (field-structured storage absent); docs/FSMGEN_FEEDBACK.md (2026-06-22 FR); docs/research/register-bit-field-isf-lowering-design.md; docs/research/document-intent-isf-completeness.md (Gap A: 12,638/32 docs)
@@ -44,4 +46,17 @@ carrier (no `message_field` in `intent.rs`). Until ISF carries it, the field map
 metadata; SpecForge never fabricates a structure. See [[document-intent-isf-completeness]] (the scorecard),
 [[register-reset-isf-emit]] (the reset value SpecForge already lowers onto the opaque var), and
 [[isf-lowering-fidelity-gauge]].
+
+**FSMGen ANSWER (`2026-06-22`, ingested via `FSMGEN-REFRESH-INTEGRATE-4`, pin `030f8c273`→`5ce0335c5`;
+`subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md` § "Declarative Field-Structured Storage").** FSMGen **ACCEPTED** the
+FR as a real ISF representational gap + valid future direction, and accepted the exact proposed shape (a storage var
+with an optional declarative field partition — per field: name, bit range, optional access/reset/enum/provenance; first
+version = checked metadata with fail-closed validation). It is **NOT shipped** — gated on FSMGen's own
+`ISF-FIELD-STRUCTURED-STORAGE-FRONTIER.1` readiness/contract audit. FSMGen **confirmed the no-hack stance** (no
+`set-field`/`extract`/fake-drive/comment substitute — "would fabricate behavior"). SpecForge's sanctioned near-term
+posture (FSMGen's words): keep recovered register/CSR + packet/flit field maps as IntentIR **metadata/residuals**, keep
+emitting **opaque** storage, fabricate nothing. ⇒ `[[document-intent-isf-completeness]]` Gap A `.4a.i` (adapter honest
+residual) is the FSMGen-endorsed near-term move; `.4a.ii` (field-structured emit) stays GATED on FSMGen shipping the
+construct. The bump was verified strict-clean on `5ce0335c5` (`*_passes_fsmgen_strict_validation` ×6 + `run_ci.sh` +
+`kg-bench 156/156`).
 </content>
