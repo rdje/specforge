@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `DOCTRINE-ENFORCEMENT-ADOPT`
-- Status: `active` (`.0` framework + register existing checks + wire gates DONE `2026-06-22`; frontier `.1`)
+- Status: `active` (`.0` framework DONE + `.1` native task-acceptance check + SpecForge `TOOLBOX.md` DONE `2026-06-22`; frontier `.2` mdBook chapter)
 - Roadmap lane: `process / continuity` (sibling of `MEMORY_ARCHITECTURE.md` enforcement; cross-cutting)
 - Created: `2026-06-22`
 - Last updated: `2026-06-22`
@@ -75,7 +75,7 @@ enforced by one registered driver** (`scripts/check_doctrines.sh`), gated locall
   record `0006`; add discovery pointers. Acceptance: `bash scripts/check_doctrines.sh` green with both
   registered checks PASS + the meta-check; pre-commit + CI invoke it; no Rust touched → golds/`kg-bench`
   orthogonal.
-- ID: `DOCTRINE-ENFORCEMENT-ADOPT.1` · Status: `pending` · Goal: mechanize SpecForge's flagship doctrine
+- ID: `DOCTRINE-ENFORCEMENT-ADOPT.1` · Status: `done` (`2026-06-22`, scripts+docs, no Rust) · Goal: mechanize SpecForge's flagship doctrine
   — add `scripts/check_task_acceptance.sh` (a staged Rust code change must have a staged owning
   `docs/tasks/*.md` leaf whose acceptance checklist has ROOT CAUSE / ADDRESSED / NO REGRESSION ticked +
   backed by SpecForge tool signatures: `kg-bench 156/156`, `WIRE-BASED-100 1.000`, `run_ci`/`cargo test`,
@@ -95,8 +95,8 @@ enforced by one registered driver** (`scripts/check_doctrines.sh`), gated locall
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | — | `DOCTRINE-ENFORCEMENT-ADOPT.0` | `done` (`2026-06-22`) | Standard + driver landed; `MEMORY-ARCH` + `KNOWLEDGE-MAP` registered; pre-commit + `run_ci.sh` route through the driver (2/2 PASS). |
-| 1 | `DOCTRINE-ENFORCEMENT-ADOPT.1` | `pending` | Native task-acceptance evidence check + SpecForge `TOOLBOX.md` — mechanizes the owner's most-emphasized doctrine (no code change without an owning task-tree leaf). |
-| 2 | `DOCTRINE-ENFORCEMENT-ADOPT.2` | `pending` | mdBook chapter (book-method-doc close) + live-doc sync + KM card. |
+| — | `DOCTRINE-ENFORCEMENT-ADOPT.1` | `done` (`2026-06-22`) | `scripts/check_task_acceptance.sh` (bash-3.2-safe) + SpecForge `TOOLBOX.md`; `TASK-ACCEPTANCE` registered → driver 3/3 PASS; all 5 gate paths tested (exempt / block-no-leaf / pass / block-unticked / block-unbacked). |
+| 1 | `DOCTRINE-ENFORCEMENT-ADOPT.2` | `pending` | mdBook chapter (book-method-doc close) + live-doc sync + KM card. |
 
 ## Decisions
 
@@ -127,16 +127,30 @@ enforced by one registered driver** (`scripts/check_doctrines.sh`), gated locall
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
-| `2026-06-22` | `DOCTRINE-ENFORCEMENT-ADOPT.0` | `bash scripts/check_doctrines.sh` (driver) → 2/2 doctrines PASS (`MEMORY-ARCH`, `KNOWLEDGE-MAP`) + meta-check; knowledge-map regen+diff in sync; no Rust → WIRE-BASED-100 + register/wire golds + `kg-bench` orthogonal by construction | PASS |
+| `2026-06-22` | `DOCTRINE-ENFORCEMENT-ADOPT.0` | `bash scripts/check_doctrines.sh` (driver) → 2/2 doctrines PASS (`MEMORY-ARCH`, `KNOWLEDGE-MAP`) + meta-check; knowledge-map regen+diff in sync; no Rust → WIRE-BASED-100 + register/wire golds + `kg-bench` orthogonal by construction | PASS (committed `810b510b`; pre-commit hook ran the new driver) |
+| `2026-06-22` | `DOCTRINE-ENFORCEMENT-ADOPT.1` | `scripts/check_task_acceptance.sh` 5-path behavior test (exempt / block-no-leaf / pass / block-unticked / block-unbacked, all as expected, throwaway staged files fully reverted); `bash -n` syntax-clean + bash-3.2-safe (no `mapfile`); `bash scripts/check_doctrines.sh` → 3/3 PASS; no Rust → golds/`kg-bench` orthogonal | PASS |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `DOCTRINE-ENFORCEMENT-ADOPT.0` | `DOCTRINE-ENFORCEMENT-ADOPT.0 — adopt the portable Doctrine-Enforcement architecture (driver + register existing checks + wire gates)` | framework, no Rust; hash filled at next checkpoint |
+| `DOCTRINE-ENFORCEMENT-ADOPT.0` | `DOCTRINE-ENFORCEMENT-ADOPT.0 — adopt the portable Doctrine-Enforcement architecture (driver + register existing checks + wire gates)` | committed `810b510b`; framework, no Rust |
+| `DOCTRINE-ENFORCEMENT-ADOPT.1` | `DOCTRINE-ENFORCEMENT-ADOPT.1 — SpecForge-native task-acceptance evidence check + SpecForge TOOLBOX.md` | scripts+docs, no Rust; hash filled at next checkpoint |
 
 ## Changelog
 
+- `2026-06-22`: `.1` native task-acceptance check + SpecForge `TOOLBOX.md` DONE (scripts+docs, no Rust).
+  Added `scripts/check_task_acceptance.sh` — a staged Rust code change (`crates/**/*.rs`,
+  `crates/**/test_data/**`) must have a staged owning `docs/tasks/*.md` leaf whose acceptance checklist
+  carries ROOT CAUSE / ADDRESSED / NO REGRESSION, ticked + backed by SpecForge tool signatures
+  (`validate`/`adapt` findings, `kg-bench 156/156`, `WIRE-BASED-100 1.000`, byte-identical, `run_ci`);
+  docs/scripts/mdBook changes are EXEMPT (own gates). Bash-3.2-safe (no `mapfile`), `SPECFORGE_TASK_
+  ACCEPTANCE_RANGE`/`_WAIVER` knobs. Wrote SpecForge's own `TOOLBOX.md` (the owner's clarification:
+  catalog SpecForge's OWN debug tools — `doctor`/`inspect`/`validate`/`adapt --target isf`/`kg-bench`/
+  WIRE-BASED-100 golds/`--dry-run` byte-identical/FSMGen `--strict --check`/`nli-verify`/`grits-consensus`/
+  `measure_isf_completeness.py`/`run_ci.sh`, plus the acceptance-checklist template + 3 diagnostic
+  protocols). Registered `TASK-ACCEPTANCE` in the driver (3/3 PASS). All 5 gate paths tested + reverted;
+  `bash -n` clean. Frontier → `.2` mdBook chapter.
 - `2026-06-22`: `.0` framework DONE (no Rust). Landed `DOCTRINE_ENFORCEMENT.md` (portable standard;
   §10 = SpecForge's live registry) + `scripts/check_doctrines.sh` (registry+driver with a meta-check),
   registered the two EXISTING structural checks (`MEMORY-ARCH`, `KNOWLEDGE-MAP`), and routed

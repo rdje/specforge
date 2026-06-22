@@ -1,4 +1,32 @@
 # DEVELOPMENT_NOTES
+## DOCTRINE-ENFORCEMENT-ADOPT.1 (`2026-06-22`) — making the task-tree-ownership doctrine un-self-tickable, without false-blocking
+
+**Context.** Decision 0003's "no code change without an owning task-tree leaf first" was prose the agent
+was trusted to follow. `.1` turns it into a gate (`scripts/check_task_acceptance.sh`) of the EVIDENCE
+archetype (`DOCTRINE_ENFORCEMENT.md` §3/§6). The owner also clarified that `TOOLBOX.md` must be
+SpecForge's OWN tool catalog, not a copy of the reference project's.
+
+**Engineering notes.**
+- **Scope chosen to enforce the real doctrine, not annoy.** "Code change" = `crates/**/*.rs` +
+  `crates/**/test_data/**` (behavioral Rust + gold fixtures). Shell/hook/docs/mdBook commits are EXEMPT —
+  they carry their own gates, and gating them would false-block continuity work (including this very
+  adoption commit, which is scripts+docs). This is why `.0` and `.1` commit cleanly through the new gate.
+- **Signatures are SpecForge's real verification vocabulary.** The DIAGNOSIS signature matches the strings
+  SpecForge's own tools emit (`validate` `evidence_*`/`semantic_*`/`intent_*` findings, `document_class`,
+  `rationale:`, `adapt` `blocking_reason`, `kg-bench`, `*.rs:<line>`, a measured `N->M`); the NO-REGRESSION
+  signature matches the project's oracle vocabulary (`kg-bench 156/156`, `WIRE-BASED-100`, `1.000`,
+  `byte-identical`, `run_ci`, `cargo test|clippy|fmt`, `orthogonal`). So a genuine signoff-quality leaf
+  passes and an empty/`trust me` checklist fails — verified with a `trust me` probe (TEST 5 blocked).
+- **Earned, not ticked.** Presence (the hook) is leg 1; the cited oracles re-run in `run_ci.sh` / CI
+  (leg 3) — a self-ticked-but-false NO-REGRESSION box dies when `kg-bench`/the golds are re-run. The hook
+  honestly only proves the boxes are ticked + a matching signature is present.
+- **Portability (bash 3.2).** The reference check used `mapfile` (bash 4+). macOS ships bash 3.2 as
+  `/bin/bash`, and `#!/usr/bin/env bash` can resolve to it on a fresh clone / CI runner — so the check was
+  written `mapfile`-free (`while IFS= read` over `git diff --cached`), `bash -n`-clean, version-independent.
+- **Tested before wiring.** All 5 gate paths (exempt / block-no-leaf / pass / block-unticked /
+  block-unbacked) were exercised with throwaway staged files and fully reverted before `TASK-ACCEPTANCE`
+  was registered — so the gate's behavior was proven before it could block a real commit.
+
 ## DOCTRINE-ENFORCEMENT-ADOPT.0 (`2026-06-22`) — adopting the 4th portable architecture without breaking the existing gates
 
 **Context.** The owner directed adopting `DOCTRINE_ENFORCEMENT.md` (the portable doctrine-enforcement standard).

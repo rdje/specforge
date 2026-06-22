@@ -1,3 +1,26 @@
+### DOCTRINE-ENFORCEMENT-ADOPT.1 — SpecForge-native task-acceptance evidence check + SpecForge TOOLBOX.md
+Mechanizes SpecForge's flagship doctrine (decision 0003, owner-restated repeatedly): no code change without an owning
+task-tree leaf first, and the change must be PROVABLY taken through diagnose→address→no-regression, not "trust me".
+Owner clarification (`2026-06-22`): `TOOLBOX.md` must catalog SpecForge's OWN debug/diagnostic tools. Scripts+docs only,
+no Rust.
+- **`scripts/check_task_acceptance.sh`** (evidence archetype, bash-3.2-safe — no `mapfile`): a staged Rust code change
+  (`crates/**/*.rs`, `crates/**/test_data/**`) must have a staged owning `docs/tasks/*.md` leaf whose acceptance
+  checklist carries ROOT CAUSE / ADDRESSED / NO REGRESSION, ticked AND backed by SpecForge tool signatures (`validate`/
+  `adapt` findings + `blocking_reason`, `kg-bench 156/156`, `WIRE-BASED-100 1.000`, byte-identical, `run_ci`/`cargo`).
+  Docs/scripts/mdBook/.githooks changes are EXEMPT (own gates) → no false-blocking of continuity work. Knobs
+  `SPECFORGE_TASK_ACCEPTANCE_RANGE` / `_WAIVER` (loud, never silent). Registered `TASK-ACCEPTANCE` in
+  `scripts/check_doctrines.sh` → driver 3/3 PASS.
+- **`TOOLBOX.md`** — SpecForge's diagnostic-tool catalog (WHAT/WHEN/HOW/OUTPUT per tool): `doctor`, `inspect`,
+  `validate` (metrics/findings/`document_class`), `adapt --target isf` (`blocking_reasons`), FSMGen `--strict --check`
+  (the `.isf` contract canary), `kg-bench` (156/156), the WIRE-BASED-100 golds, `--dry-run` byte-identical orthogonality
+  proof, `nli-verify`, `eval-extraction`, `audit-extraction`, `grits-consensus`, `measure_isf_completeness.py`,
+  `corpus-cluster`, `run_ci.sh` / `check_doctrines.sh`, `project-validation`/`rescan-plan`, `clean`, RAM-bounded build
+  — plus the acceptance-checklist template and 3 diagnostic protocols (extraction miss / `.isf` lowering block /
+  kg-bench-or-gold regression).
+- **Gates:** all 5 gate behaviors tested (exempt / block-no-leaf / pass / block-unticked / block-unbacked) with throwaway
+  staged files fully reverted; `bash -n` clean; driver 3/3 PASS; no Rust → WIRE-BASED-100 + register/wire golds +
+  `kg-bench` orthogonal. Frontier → `.2` mdBook chapter.
+
 ### DOCTRINE-ENFORCEMENT-ADOPT.0 — adopt the portable Doctrine-Enforcement architecture (framework + register existing checks + wire gates)
 Owner directive (`2026-06-22`): "adopt this doctrine enforcement system" → `DOCTRINE_ENFORCEMENT.md`, the portable,
 project-agnostic standard (the 4th architecture, sibling of `MEMORY_ARCHITECTURE.md`) that turns every written
