@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `DOC-INTENT-TAXONOMY`
-- Status: `active` (`.0` taxonomy DONE `2026-06-22`; `.1` corpus census DONE `2026-06-22`, read-only; `.2` per-category ISF-completeness gauge DONE `2026-06-22`, read-only; `.3` fast category recognizer COMPLETE `2026-06-22` — `.3a` design / `.3b` implement+validate-reported `d6239217` / `.3c` fixtures+book+KM; `.4a` Gap A — register bit-field lowering: empirical FSMGen-storage verification + verified FSMGen FR DONE `2026-06-22`, docs-only; **`.4a.ii` DONE `2026-06-22` (CODE) — emitted the register bit-field map into the shipped ISF field-structured-storage construct (pin `d327129b7`): 6,570 fields / 2,531 registers / 24 docs now reach `.isf` (was 0), 0 new FSMGen `--strict` diagnostics, 4 wire golds byte-identical**; **`.4d` DONE `2026-06-23` (decision packet, docs-only) — cat-4 CSRs REUSE the existing register/storage abstraction (no new ISF construct, FSMGen titles `(storage …)` the register-map/CSR construct); the cat-4 register gap is EXTRACTION RECALL (RISC-V Debug 179 fields all UNLOCATED, AIA 0 registers captured) → spun out `.4d.i`; instruction/privilege/exception/memory-ordering are honest non-targets**; frontier → `.4d.i` cat-4 RISC-V CSR bit-position recovery (code) / `.4b` Gap B (gated, FSMGen-deferred packet/flit) / `.4c` cat-3 topology / `.4e` conditional triage; `.4a.i` superseded by `.4a.ii`)
+- Status: `active` (`.0` taxonomy DONE `2026-06-22`; `.1` corpus census DONE `2026-06-22`, read-only; `.2` per-category ISF-completeness gauge DONE `2026-06-22`, read-only; `.3` fast category recognizer COMPLETE `2026-06-22` — `.3a` design / `.3b` implement+validate-reported `d6239217` / `.3c` fixtures+book+KM; `.4a` Gap A — register bit-field lowering: empirical FSMGen-storage verification + verified FSMGen FR DONE `2026-06-22`, docs-only; **`.4a.ii` DONE `2026-06-22` (CODE) — emitted the register bit-field map into the shipped ISF field-structured-storage construct (pin `d327129b7`): 6,570 fields / 2,531 registers / 24 docs now reach `.isf` (was 0), 0 new FSMGen `--strict` diagnostics, 4 wire golds byte-identical**; **`.4d` DONE `2026-06-23` (decision packet, docs-only) — cat-4 CSRs REUSE the existing register/storage abstraction (no new ISF construct, FSMGen titles `(storage …)` the register-map/CSR construct); the cat-4 register gap is EXTRACTION RECALL (RISC-V Debug 179 fields all UNLOCATED, AIA 0 registers captured) → spun out `.4d.i`; instruction/privilege/exception/memory-ordering are honest non-targets**; **`.4c` DONE `2026-06-23` (decision packet, docs-only) — cat-3 topology IS captured (`signal_connectivity` producer→consumer graph + `infrastructure_signals` clock/reset distribution; correcting `.2` "hint-level" to "captured-but-sparse-and-unlowered") but ISF has NO declarative static-topology construct (composition is transaction-level only; the emit is single-initiator-actor) and FSMGen's ATL frontier is behavioral, not a declarative netlist; capture is sparse/noisy → NO FR yet, next = `.4c.i` capture-recall measurement**; frontier → `.4c.i` cat-3 topology-capture recall (measurement) / `.4d.i` cat-4 RISC-V CSR bit-position recovery (code) / `.4b` Gap B (gated, FSMGen-deferred packet/flit) / `.4e` conditional triage; `.4a.i` superseded by `.4a.ii`)
 - Roadmap lane: `R15`/`R16` (north star: COMPLETE IntentIR → FAITHFUL ISF, now made explicit **per document category**)
 - Created: `2026-06-22`
 - Last updated: `2026-06-22`
@@ -238,8 +238,32 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   carrier (1,220 fields / 11 docs, no IntentIR carrier today), then lower via the same FSMGen structure/packet
   abstraction. Closes the cat-2 structure frontier (the `CORPUS-COVERAGE.2` #21 IOMMU Lever-D) and the cat-1
   message-heavy-protocol gap together. CODE.
-- ID: `DOC-INTENT-TAXONOMY.4c` · Status: `pending` · Goal: cat-3 topology lowering — promote clock/reset infrastructure
-  + component connectivity from hint-level to a synthesizable ISF surface (likely another FSMGen abstraction).
+- ID: `DOC-INTENT-TAXONOMY.4c` · Status: `done` (`2026-06-23`, measurement + decision packet, read-only, docs-only — no
+  Rust code) · Goal: cat-3 topology lowering — promote clock/reset infrastructure + component connectivity from hint-level
+  to a synthesizable ISF surface (likely another FSMGen abstraction). **DONE — resolved from measured evidence over 3
+  representative cat-3 docs (of 15) + the current FSMGen pin `d327129b7`:** (1) **cat-3's register half already lowers**
+  (register maps + bit-fields via `.4a.ii` — CoreSight SoC-600 ~3,250 fields, GIC-600 33 regs — same road as cat-2; not
+  the gap); (2) **cat-3 DOES carry a structured topology surface** (`signal_connectivity` producer→consumer graph —
+  GIC-600 66 edges / SoC-600 6 — and `infrastructure_signals` with `infrastructure_topology`/`distributed_to_actor_ids`
+  clock-reset distribution), refining `.2`'s "hint-level" to **captured-but-sparse-and-unlowered**; (3) **ISF has NO
+  declarative static-topology construct** — composition is transaction-level only (`(do child)`, `13f-composition.md`),
+  FSMGen's ATL multi-actor frontier is BEHAVIORAL generated-child transaction wiring (not a declarative IP-interconnect
+  netlist, verified `14-feature-backlog.md`), and the SpecForge emit is single-initiator-actor
+  (`KG-ISF-COMPLETENESS.2a.ii`) so cross-component topology is structurally absent by design; (4) **NO FSMGen FR filed
+  yet** — premature because the topology *capture* is sparse/noisy (6 edges across SoC-600's 60 actors; `None`/escaped
+  actor names) AND ISF is a per-actor format so static topology may deliberately be the integrator's concern above
+  per-module synthesis (resolve WITH FSMGen, not assume — `[[feedback_verify_fsmgen_before_fr]]`). Topology stays an honest
+  residual; next lever is a **measurement** (`.4c.i`), not code or a speculative FR. Report
+  `docs/research/cat3-topology-isf-lowering-decision.md`; KM `[[cat3-topology-isf-lowering-decision]]`; book
+  `document-categories.md` cat-3 maturity refined. No code/canonical mutation → golds + `kg-bench` orthogonal. See the
+  `.4c` Acceptance Checklist below.
+- ID: `DOC-INTENT-TAXONOMY.4c.i` · Status: `pending` (measurement, read-only) · Goal: **cat-3 topology-capture recall
+  measurement** — quantify the density and name-quality of the `signal_connectivity` + `infrastructure_signals` topology
+  surfaces across all 15 cat-3 docs (edges-per-actor, fraction with non-`None`/non-escaped endpoints, clock/reset
+  distribution coverage). Decides whether the capture is faithful enough to be worth a new ISF construct. Only after this
+  does the construct decision become real: a **verified FSMGen FR** for a declarative static-topology construct + a
+  multi-actor emit (if the ATL frontier still doesn't subsume it), OR honest-non-target confirmation (topology is the
+  integrator's concern above ISF's per-actor scope). Structural density/quality gauge, no name list (ADR 0006).
 - ID: `DOC-INTENT-TAXONOMY.4d` · Status: `done` (`2026-06-23`, measurement + decision packet, read-only, docs-only — no
   Rust code) · Goal: cat-4 ISA/CSR lowering decision — does CSR-field / instruction / privilege intent map onto existing
   register/storage abstractions or need a new ISF construct? **DONE — resolved from measured evidence over the corpus's 2
@@ -458,6 +482,42 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   (cat-4 maturity refined), and the task tree / `TASK_TREE.md` / `CHANGES.md` / `DEVELOPMENT_NOTES.md` /
   `LIVE_ACHIEVEMENT_STATUS.md` / `MEMORY.md` all updated in this slice.
 
+## Acceptance Checklist (enforced) — `DOC-INTENT-TAXONOMY.4c`
+
+- [x] **REPRODUCE / MEASURE** — baseline from `.2`: cat-3 scored **PARTIAL** ("infrastructure signals + actor ports lower;
+  topology stays at the hint level"). Profiled 3 representative cat-3 docs (of 15) read-only off the persisted IR
+  (reproducible from `generated/intent_ir/<key>/intent_ir.json`): CoreSight SoC-600 = 60 actors / 57 actor_ports / **6**
+  `signal_connectivity` / 0 `infrastructure_signals` / 833 registers; GIC-600 = 55 / 147 / **66** / **2** / 33; CoreSight
+  Base System Arch = 5 / 0 / 0 / 0 / 0 (88 prose `interfaces`). `signal_connectivity` is a typed producer→consumer graph;
+  `infrastructure_signals` carries `infrastructure_topology` / `distributed_to_actor_ids` (clock/reset distribution).
+- [x] **ROOT CAUSE (WHY + WHERE)** — topology does not reach `.isf` for two structural reasons, neither an extraction-only
+  bug. (a) ISF has **no declarative static-topology construct**: composition is transaction-level only
+  (`subs/fsmgen/docs/book/src/13f-composition.md`, `(do child)`), and FSMGen's multi-actor "ATL" backlog
+  (`14-feature-backlog.md`) wires children *generated from transaction composition* — behavioral orchestration, not a
+  declarative IP-interconnect netlist. (b) The SpecForge emit is **single-initiator-actor**
+  (`crates/specforge/src/ir/isf_ir.rs` `select_initiator_actor`, `KG-ISF-COMPLETENESS.2a.ii`), so a 60-component doc emits
+  one actor — cross-component topology is structurally absent by design. The capture itself is also **sparse/noisy** (6
+  edges across SoC-600's 60 actors; `None`/escaped actor names).
+- [x] **ADDRESSED (verified)** — produced the decision packet
+  (`docs/research/cat3-topology-isf-lowering-decision.md`): cat-3's register half already lowers (`.4a.ii`); topology is
+  **captured-but-sparse-and-unlowered** (refining `.2`'s "hint-level"); ISF has no static-topology construct and FSMGen's
+  ATL frontier is not a home; **no FR is filed yet** (premature — capture too sparse/noisy + ISF is a per-actor format
+  where static topology may be the integrator's concern above per-module synthesis); the buildable next step is the
+  measurement `.4c.i` (topology-capture recall across all 15 cat-3 docs), after which the construct decision (verified FR
+  vs honest-non-target) becomes real. No fabrication, no speculative FR.
+- [x] **NO REGRESSION** — measurement/decision leaf, **no Rust code**, no canonical-artifact mutation → the wire golds /
+  `kg-bench` / emitted `.isf` are byte-identical by construction (WIRE-BASED-100 orthogonal). `scripts/check_doctrines.sh`
+  green (memory-arch + knowledge-map + task-acceptance); `mdbook build` green; knowledge-map derive-and-diff in sync
+  (116 → 117 facts).
+- [x] **GENERICITY (ADR 0006)** — the decision rests on structural evidence (typed topology surfaces; their density;
+  FSMGen's published composition grammar) — no chip/vendor/protocol-instance name list. The spun-out `.4c.i` recall
+  measurement is mandated to be a structural density/quality gauge, not a per-document name list. N/A for runtime code
+  (none in this leaf).
+- [x] **LOCKSTEP** — `docs/research/cat3-topology-isf-lowering-decision.md` (the packet), KM card
+  `docs/knowledge/cat3-topology-isf-lowering-decision.md` + regenerated `KNOWLEDGE_MAP.md`, book
+  `docs/book/src/document-categories.md` (cat-3 maturity refined), and the task tree / `TASK_TREE.md` / `CHANGES.md` /
+  `DEVELOPMENT_NOTES.md` / `LIVE_ACHIEVEMENT_STATUS.md` / `MEMORY.md` all updated in this slice.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
@@ -470,9 +530,12 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | — | `DOC-INTENT-TAXONOMY.4a` | `done` (`2026-06-22`) | Gap A localized + decided: bit-field intent reaches IntentIR fully, dropped only at `isf_ir.rs:852`; the current ISF `(storage …)` has no field-structured construct (verified pin `030f8c273`) → a **verified FSMGen FR** (not an emitter hack). Design report + KM card + book note. Docs-only → golds/`kg-bench` orthogonal. |
 | — | `DOC-INTENT-TAXONOMY.4a.ii` | `done` (`2026-06-22`) | **Register bit-field emit DONE.** Emitted `(var … (fields (field …)))` from the IntentIR register field map — **6,570 fields / 2,531 registers / 24 docs now reach `.isf`** (was 0). Metadata-only/schedule-safe; reused the `register_field_extent` tiling gate; verified via `inferred_storage[].fields[]` round-trip + `*_passes_fsmgen_strict_validation` ×7 + register docs 0-new-diagnostics + 4 wire golds byte-identical; `kg-bench 156/156`; `run_ci.sh` green. The `.4a.i` honest residual is folded in (`isf_register_fields_not_lowered` for the unlowered remainder). |
 | — | `DOC-INTENT-TAXONOMY.4d` | `done` (`2026-06-23`) | **Cat-4 ISA/CSR decision packet DONE.** Resolved the Open Question from measured evidence: cat-4 CSRs **reuse the existing register/storage abstraction** (no new ISF construct — FSMGen titles `(storage …)` the register-map/CSR construct); the cat-4 register gap is **extraction recall** (RISC-V Debug 179 fields all unlocated, AIA 0 registers captured) → spun out `.4d.i`; instruction/privilege/exception/memory-ordering are **honest non-targets**. Docs-only → golds/`kg-bench` orthogonal. |
-| 1 | `DOC-INTENT-TAXONOMY.4d.i` | `pending` (code) | Cat-4 RISC-V CSR bit-position recovery — locate RISC-V Debug's fields + capture AIA's IMSIC/APLIC CSR blocks so they auto-lower via `.4a.ii`. Structural RISC-V CSR-layout grammar, no name list. The genuine buildable cat-4 lever. |
-| 2 | `DOC-INTENT-TAXONOMY.4b` | `pending` (gated) | Gap B — `Evidence→Intent` `message_field_records` carrier (1,220 fields / 11 docs), then lower; **stays gated** — FSMGen explicitly deferred packet/flit layouts. CODE. |
-| 3 | `DOC-INTENT-TAXONOMY.4a.i` | `superseded` | Adapter honest residual `isf_register_fields_not_lowered` — **superseded by `.4a.ii`**, which both EMITS the fields AND records the unlowered remainder as that very residual. No separate slice needed. |
+| — | `DOC-INTENT-TAXONOMY.4c` | `done` (`2026-06-23`) | **Cat-3 topology decision packet DONE.** Cat-3's register half already lowers (`.4a.ii`); cat-3 **does** carry a typed topology surface (`signal_connectivity` + `infrastructure_signals`) — but it is **sparse/noisy** and ISF has **no declarative static-topology construct** (composition is transaction-level only; emit is single-initiator-actor; FSMGen's ATL frontier is behavioral, not a netlist). **No FR yet** (premature) → spun out `.4c.i` capture-recall measurement. Docs-only → golds/`kg-bench` orthogonal. |
+| 1 | `DOC-INTENT-TAXONOMY.4c.i` | `pending` (measurement) | Cat-3 topology-capture recall measurement across all 15 cat-3 docs (edges-per-actor, endpoint name quality, clock/reset coverage) → decides FSMGen-FR vs honest-non-target. Read-only, RAM-light. |
+| 2 | `DOC-INTENT-TAXONOMY.4d.i` | `pending` (code) | Cat-4 RISC-V CSR bit-position recovery — locate RISC-V Debug's fields + capture AIA's IMSIC/APLIC CSR blocks so they auto-lower via `.4a.ii`. Structural RISC-V CSR-layout grammar, no name list. The genuine buildable cat-4 lever. |
+| 3 | `DOC-INTENT-TAXONOMY.4e` | `pending` (measurement) | Conditional-rule lowering triage (`.2` Result 3) — per-item, separate honest residual from a real lever before any fraction is called a gap. Read-only, RAM-light. |
+| 4 | `DOC-INTENT-TAXONOMY.4b` | `pending` (gated) | Gap B — `Evidence→Intent` `message_field_records` carrier (1,220 fields / 11 docs), then lower; **stays gated** — FSMGen explicitly deferred packet/flit layouts. CODE. |
+| 5 | `DOC-INTENT-TAXONOMY.4a.i` | `superseded` | Adapter honest residual `isf_register_fields_not_lowered` — **superseded by `.4a.ii`**, which both EMITS the fields AND records the unlowered remainder as that very residual. No separate slice needed. |
 
 ## Decisions
 
@@ -503,6 +566,18 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   synthesizable hardware intent; ISF has no construct + FSMGen lists none — a verified FR is a conditional-future only if
   FSMGen's SV/UVM verification path explicitly scopes ISA-model verification). No fabrication, no speculative FR, no
   emitter hack (`[[feedback_isf_no_hacks]]` / `[[feedback_verify_fsmgen_before_fr]]`).
+- `2026-06-23` (`.4c`): category-3 (platform / system-IP topology) has **two halves**. (1) **The register half already
+  lowers** (register maps + bit-fields via `.4a.ii`; infrastructure signals; actor ports — same constructs as cat-2). (2)
+  **The distinctive topology half is captured but unlowerable today.** Cat-3 docs carry a typed topology surface
+  (`signal_connectivity` producer→consumer graph; `infrastructure_signals` clock/reset distribution) — so `.2`'s
+  "hint-level" is refined to **captured-but-sparse-and-unlowered** — but ISF has **no declarative static-topology
+  construct** (composition is transaction-level only; FSMGen's ATL multi-actor frontier is behavioral generated-child
+  wiring, not a declarative netlist; the SpecForge emit is single-initiator-actor so topology is structurally absent by
+  design). **No FSMGen FR is filed yet** — premature because the topology capture is sparse/noisy AND ISF is a per-actor
+  format where static topology may deliberately be the integrator's concern above per-module synthesis (a scoping question
+  for FSMGen). The buildable next step is a **measurement** (`.4c.i` topology-capture recall), after which the construct
+  decision (FR vs honest-non-target) becomes real. No fabrication, no speculative FR (`[[feedback_verify_fsmgen_before_fr]]`
+  / `[[feedback_isf_no_hacks]]`).
 
 ## Open Questions
 
@@ -532,6 +607,7 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.4a` | measurement/design + verified FSMGen FR (docs-only, no Rust code); code-path map (`source.rs:414`→`intent.rs:193`→`isf_ir.rs:852`) + empirical FSMGen-storage probe on pin `030f8c273` (opaque `(var)` only, no field structure); `scripts/check_doctrines.sh` green; `mdbook build` green; knowledge-map derive-and-diff in sync (114→115 facts / 824 keys); no code/canonical mutation → golds + `kg-bench` orthogonal by construction | PASS |
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.4a.ii` | CODE — emit register bit-fields to ISF `(fields …)`. `cargo fmt --all --check` clean; `cargo clippy --all-targets -D warnings` clean; full `cargo test` `1702 passed / 0 failed` (warning-deny, +6 new tests incl. `register_fields_pass_fsmgen_strict_and_round_trip`); `kg-bench 156/156`; real-emitter corpus scan **6,570 fields / 2,531 registers / 24 docs** (was 0); RISC-V IOMMU (122) / GIC `ihi0069` (424) / CoreSight SoC-600 (974) `fsmgen --strict` `success / 0 diags` before AND after (0 new); 4 wire golds (AXI/APB/AHB/AXI-Stream) emitted `.isf` **byte-identical** (`adapt` old-vs-new diff empty); `inferred_storage[].fields[]` round-trip asserted; `run_ci.sh` green | PASS |
 | `2026-06-23` | `DOC-INTENT-TAXONOMY.4d` | measurement + decision packet (read-only, docs-only — no Rust code); profiled the 2 cat-4 docs off persisted IR (RISC-V Debug 44 regs / 179 fields / **0 located**; RISC-V AIA **0 registers**, CSR intent in 39 prose `conditional_rules` + 211 empty `interfaces`); re-verified FSMGen pin `d327129b7` ISF (storage = register-map/CSR construct; no instruction/privilege/exception construct); decision = reuse register/storage for CSRs + spin out `.4d.i` extraction-recall lever + honest non-target for non-register ISA semantics; `scripts/check_doctrines.sh` green (memory-arch + knowledge-map + task-acceptance); `mdbook build` green; knowledge-map derive-and-diff in sync (115→116 facts); no code/canonical mutation → golds + `kg-bench` orthogonal by construction | PASS |
+| `2026-06-23` | `DOC-INTENT-TAXONOMY.4c` | measurement + decision packet (read-only, docs-only — no Rust code); profiled 3 representative cat-3 docs off persisted IR (CoreSight SoC-600 60 actors / **6** `signal_connectivity` / 833 regs; GIC-600 55 actors / **66** `signal_connectivity` / **2** `infrastructure_signals`; CoreSight BSA 5 actors / 0 connectivity / 88 prose interfaces); re-verified FSMGen pin `d327129b7` (composition transaction-level only; ATL frontier = behavioral generated-child wiring, not a declarative netlist); decision = register half already lowers + topology captured-but-sparse-and-unlowered + no static-topology ISF construct + NO FR yet → spun out `.4c.i` capture-recall measurement; `scripts/check_doctrines.sh` green (memory-arch + knowledge-map + task-acceptance); `mdbook build` green; knowledge-map derive-and-diff in sync (116→117 facts); no code/canonical mutation → golds + `kg-bench` orthogonal by construction | PASS |
 
 ## Commit Log
 
@@ -546,9 +622,30 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | `DOC-INTENT-TAXONOMY.4a` | `DOC-INTENT-TAXONOMY.4a — Gap A register bit-field ISF lowering: verified FSMGen field-structured-storage FR (measurement/design)` | measurement/design + FR, docs-only |
 | `DOC-INTENT-TAXONOMY.4a.ii` | `DOC-INTENT-TAXONOMY.4a.ii — emit register bit-field map into ISF field-structured storage (6,570 fields / 24 docs)` | code slice (isf_ir.rs emitter) |
 | `DOC-INTENT-TAXONOMY.4d` | `DOC-INTENT-TAXONOMY.4d — cat-4 ISA/CSR lowering decision: CSRs reuse register/storage; gap is extraction recall (spun out .4d.i)` | measurement + decision packet, docs-only |
+| `DOC-INTENT-TAXONOMY.4c` | `DOC-INTENT-TAXONOMY.4c — cat-3 topology lowering decision: topology captured-but-sparse, no static-topology ISF construct, no FR yet (spun out .4c.i)` | measurement + decision packet, docs-only |
 
 ## Changelog
 
+- `2026-06-23`: **`.4c` DONE (measurement + decision packet, read-only, docs-only — no Rust code)** — resolved the cat-3
+  (platform / system-IP topology) ISF-lowering question from measured evidence over 3 representative cat-3 docs (of 15) +
+  the current FSMGen pin `d327129b7`. **Two halves:** (1) **the register half already lowers** (register maps + bit-fields
+  via `.4a.ii`; CoreSight SoC-600 ~3,250 fields, GIC-600 33 regs; infrastructure signals; actor ports — same road as
+  cat-2, not the gap); (2) **the distinctive topology half is captured but unlowerable** — cat-3 docs carry a typed
+  topology surface (`signal_connectivity` producer→consumer graph — GIC-600 66 edges / SoC-600 6 — and
+  `infrastructure_signals` with `infrastructure_topology`/`distributed_to_actor_ids` clock-reset distribution), refining
+  `.2`'s "hint-level" to **captured-but-sparse-and-unlowered**, but ISF has **no declarative static-topology construct**
+  (composition is transaction-level only, `13f-composition.md`; FSMGen's ATL multi-actor frontier is BEHAVIORAL
+  generated-child transaction wiring, not a declarative IP-interconnect netlist, `14-feature-backlog.md`; the SpecForge
+  emit is single-initiator-actor — `KG-ISF-COMPLETENESS.2a.ii` — so cross-component topology is structurally absent by
+  design). **NO FSMGen FR filed yet** — premature because the topology capture is sparse/noisy (6 edges across SoC-600's
+  60 actors; `None`/escaped actor names) AND ISF is a per-actor format where static topology may deliberately be the
+  integrator's concern above per-module synthesis (resolve WITH FSMGen — `[[feedback_verify_fsmgen_before_fr]]`). Topology
+  stays an honest residual; next lever is a **measurement** (`.4c.i` topology-capture recall across all 15 cat-3 docs),
+  after which the construct decision (FR vs honest-non-target) becomes real. Report
+  `docs/research/cat3-topology-isf-lowering-decision.md`; KM `[[cat3-topology-isf-lowering-decision]]` (map 116→117); book
+  `document-categories.md` cat-3 maturity refined. `check_doctrines.sh` + `mdbook build` green; no code/canonical mutation
+  → golds/`kg-bench` orthogonal. Frontier → `.4c.i` (cat-3 measurement) / `.4d.i` (cat-4 code) / `.4e` (conditional
+  triage) / `.4b` Gap B (gated).
 - `2026-06-23`: **`.4d` DONE (measurement + decision packet, read-only, docs-only — no Rust code)** — resolved the cat-4
   (CPU ISA / privileged architecture) ISF-lowering Open Question from measured evidence over the corpus's 2 cat-4 docs
   (RISC-V Debug, RISC-V AIA) and the current FSMGen pin `d327129b7`. **Cat-4 intent splits into three:** (1) **CSR /

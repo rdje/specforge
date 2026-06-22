@@ -1,4 +1,41 @@
 # DEVELOPMENT_NOTES
+## DOC-INTENT-TAXONOMY.4c (`2026-06-23`) — cat-3 platform/system-IP topology lowering decision packet (read-only, docs-only)
+
+**Context.** `.2` scored category-3 (platform / system-IP topology & integration) as **PARTIAL** ("infrastructure signals
++ actor ports lower; topology stays at the hint level"). `.4a.ii` then shipped register bit-field lowering, and cat-3
+carries the corpus's largest register-field volume. This leaf decides whether cat-3's *distinctive* intent — topology /
+connectivity / clock-reset distribution — maps onto an existing ISF construct or needs a new one, before any cat-3 code
+or FR.
+
+**Method (reproducible, read-only).** Cat-3 = 15 docs (`.1` census). Profiled 3 representative docs off persisted IR:
+CoreSight SoC-600 (`100806_0701_17…`), GIC-600 (`100336_0106_00…`), CoreSight Base System Arch (`den0068…`). Re-verified
+the FSMGen ISF on pin `d327129b7` for cross-component composition / topology / connectivity.
+
+**Measured.**
+- Cat-3 docs **do** carry a typed topology surface — refining `.2`'s "hint-level" to **captured-but-sparse-and-unlowered**:
+  `signal_connectivity` (producer→consumer graph; GIC-600 66 edges e.g. `DATA` from `MISC ignores` → `cache several`/
+  `pmu_int`; SoC-600 6) and `infrastructure_signals` (clock/reset distribution: `infrastructure_topology` /
+  `distributed_to_actor_ids`; GIC-600 2).
+- But the capture is **sparse and noisy**: SoC-600 has 6 connectivity edges across 60 actors; canonical actor names come
+  back `None`; connectivity endpoints carry extraction noise (escaped `pmu\_int`, generic `MISC ignores`).
+- FSMGen ISF (`d327129b7`) has **no declarative static-topology construct**: composition is transaction-level only
+  (`(do child)`, `13f-composition.md`); the backlog's multi-actor "ATL" frontier wires children *generated from
+  transaction composition* (behavioral orchestration), not a declarative IP-interconnect netlist. The SpecForge emit is
+  single-initiator-actor (`KG-ISF-COMPLETENESS.2a.ii`), so a 60-component doc emits one actor — cross-component topology is
+  structurally absent by design.
+
+**Decision.** (1) Cat-3's register half already lowers (same road as cat-2). (2) Topology is captured but unlowerable
+today; ISF has no static-topology construct and FSMGen's ATL frontier is not a home. (3) **No FSMGen FR is filed yet** —
+premature because the capture is too sparse/noisy to lower faithfully AND ISF is a per-actor format where static topology
+may deliberately be the integrator's concern above per-module synthesis (resolve WITH FSMGen —
+`feedback_verify_fsmgen_before_fr`). Topology stays an honest residual; the buildable next step is the measurement `.4c.i`
+(topology-capture recall across all 15 cat-3 docs), after which the construct decision (verified FR vs honest-non-target)
+becomes real.
+
+**Gates.** No Rust code / no canonical mutation → wire golds / `kg-bench` / emitted `.isf` byte-identical by construction.
+`scripts/check_doctrines.sh` green; `mdbook build` green; knowledge-map derive-and-diff in sync (116→117 facts). Report
+`docs/research/cat3-topology-isf-lowering-decision.md`; KM `docs/knowledge/cat3-topology-isf-lowering-decision.md`.
+
 ## DOC-INTENT-TAXONOMY.4d (`2026-06-23`) — cat-4 ISA/CSR lowering decision packet (read-only, docs-only)
 
 **Context.** `.2` scored category-4 (CPU ISA / privileged architecture) as **THIN**. `.4a.ii` then shipped register
