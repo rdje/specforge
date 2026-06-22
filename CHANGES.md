@@ -1,3 +1,33 @@
+### DOC-INTENT-TAXONOMY.2 — per-category ISF-lowering completeness gauge (read-only): the maturity column, measured
+Read-only measurement: a per-surface lowering ledger over all 78 docs (76 persisted `adapter.json` + 2 read-only
+`adapt --dry-run` for the unmaterialized adapters; no `validate`/`adapt` write → zero canonical mutation),
+reproducible via tracked `scripts/measure_isf_completeness.py`. Turns the `DOC-INTENT-TAXONOMY.0` maturity column
+from honest-estimate into objective measurement, surface by surface (a single blended % would be gameable —
+`feedback_scoring_rigor`).
+- **Two dominant TRUE GAPS** (intent captured in volume, lowered to `.isf` zero times, across every buildable
+  category): **(A) register bit-fields** — 3,449 registers lower 1:1 to opaque width-only `(storage (var (width N)))`,
+  but their **12,638 constituent bit-fields reach `.isf` ZERO times** across 32 docs (cat 3 largest at 9,308; the
+  register *programming model* does not synthesize). **(B) message-field structures** — 1,220 flit/packet/descriptor
+  fields are recovered into EvidenceIR but **IntentIR has no `message_field_records` carrier** (`has_msgfld_key=false`),
+  so 0 are carried and 0 lowered across 11 docs (NVMe 216, AMD-IOMMU 217, CHI 106, DTI 159, CHI-C2C 210, CCIX ×4 ≈ 309).
+- **Both gaps converge on the SAME missing FSMGen ISF abstraction** — field-structured storage (register-with-fields)
+  and packet/structure layouts (the memory-bank / single-dual-port-memory family the owner anticipated) → the headline
+  `.4+` FSMGen FR candidates, filed only after empirical submodule verification (`feedback_verify_fsmgen_before_fr`,
+  `feedback_isf_no_hacks`).
+- **Scorecard, measured:** cat 1 wire-protocol MATURE (signals/relations/constraints/temporal/enums lower;
+  WIRE-BASED-100 = 1.000) · cat 2 register-IP + cat 3 platform-IP PARTIAL (registers→storage 1:1, but fields +
+  structures unlowered; cat 3 topology stays hint-level, rules ~11%) · cat 4 CPU-ISA THIN (only the register-shaped
+  surface lowers; no instruction/CSR/privilege/exception construct) · cat 5 PHY + cat 6 guide honest non-targets
+  (thin `.isf` is correct). **Precision note:** 5/14 cat-6 guides over-extract spurious `.isf` (cortex-a76 sw-opt 537
+  signals, readme 152, smmu software guide 144, gic overview 89, aarch64 debug guide 73) — a `.3`-recognizer precision
+  motive, not an ISF-completeness gap. Signals deliberately NOT scored as a present/lowered ratio (the `.isf` signal set
+  has a different basis than IntentIR `interfaces`); the rule-lowering shortfall is mixed (honest residual + lever),
+  flagged for per-item triage.
+- Report `docs/research/document-intent-isf-completeness.md`; KM card `document-intent-isf-completeness` (map → 112 facts).
+- **Gates:** read-only, no code, no canonical mutation → WIRE-BASED-100 + register/wire golds + `kg-bench` orthogonal;
+  memory-arch + knowledge-map gates green; mdBook builds. Frontier → `.3` fast category recognizer; `.4+` Gap-A
+  register-field lowering as the highest-leverage first lever.
+
 ### DOC-INTENT-TAXONOMY.1 — corpus census by category (read-only): 36/7/15/2/4/14, and what surface counts can't classify
 Read-only measurement (profiled all 78 persisted `evidence_ir`/`intent_ir` docs by typed surface; no `validate` →
 zero artifact mutation). Establishes the per-category denominator before the `.2` ISF-completeness gauge.

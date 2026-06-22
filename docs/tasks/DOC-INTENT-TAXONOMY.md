@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `DOC-INTENT-TAXONOMY`
-- Status: `active` (`.0` taxonomy definition + capture DONE `2026-06-22`; `.1` corpus census by category DONE `2026-06-22`, read-only)
+- Status: `active` (`.0` taxonomy definition + capture DONE `2026-06-22`; `.1` corpus census by category DONE `2026-06-22`, read-only; `.2` per-category ISF-completeness gauge DONE `2026-06-22`, read-only)
 - Roadmap lane: `R15`/`R16` (north star: COMPLETE IntentIR → FAITHFUL ISF, now made explicit **per document category**)
 - Created: `2026-06-22`
 - Last updated: `2026-06-22`
@@ -94,10 +94,20 @@ must be COMPLETE and lower FULLY to ISF. The maturity column above is the **hone
   wire-relation shape + front-matter/self-declared type + topology cue beyond counts (ADR-0006, no name lists).
   Report `docs/research/document-intent-category-census.md`; KM `[[document-intent-category-census]]`. No code,
   no canonical mutation → all golds + `kg-bench` orthogonal.
-- ID: `DOC-INTENT-TAXONOMY.2` · Status: `pending` · Goal: **per-category ISF-lowering completeness gauge** — for each
-  category, measure honestly what fraction of the document's intent reaches `.isf` (and what is honest-absence vs a true
-  gap), producing the prioritized scorecard. Acceptance: gauge + report; objectively measured, per-item demonstrated
-  (`[[feedback_scoring_rigor]]`); no fabrication.
+- ID: `DOC-INTENT-TAXONOMY.2` · Status: `done` (`2026-06-22`, read-only measurement) · Goal: **per-category ISF-lowering
+  completeness gauge** — for each category, measure honestly what fraction of the document's intent reaches `.isf` (and
+  what is honest-absence vs a true gap), producing the prioritized scorecard. **DONE:** per-surface lowering ledger over
+  all 78 docs (76 persisted `adapter.json` + 2 read-only `adapt --dry-run`; no `validate`/`adapt` write → zero mutation),
+  reproducible via tracked `scripts/measure_isf_completeness.py`. **Two dominant TRUE GAPS measured:** (A) **register
+  bit-fields** — 3,449 registers lower 1:1 to opaque width-only `(storage (var (width N)))` but their **12,638 bit-fields
+  reach `.isf` ZERO times** across 32 docs (cat 3 largest: 9,308); (B) **message-field structures** — 1,220 fields
+  recovered at EvidenceIR across 11 docs but **IntentIR has no carrier** (`has_msgfld_key=false`) → 0 carried / 0 lowered
+  (cat-2 NVMe 216/AMD-IOMMU 217 + cat-1 msg-heavy CHI/DTI/CHI-C2C/CCIX). Scorecard MEASURED: cat 1 MATURE, cat 2/3
+  PARTIAL, cat 4 THIN, cat 5/6 honest non-targets (5 cat-6 guides over-extract — precision, not completeness). Both gaps
+  → the SAME FSMGen ISF-abstraction need (field-structured storage + packet/structure layouts). Report
+  `docs/research/document-intent-isf-completeness.md`; KM `[[document-intent-isf-completeness]]`. Objectively measured,
+  per-item demonstrated (`[[feedback_scoring_rigor]]`); no fabrication; no code/canonical mutation → golds/`kg-bench`
+  orthogonal.
 - ID: `DOC-INTENT-TAXONOMY.3` · Status: `pending` (gated on `.1`/`.2`) · Goal: **fast deterministic category recognizer**
   so `inspect`/`validate` immediately report a PDF's purpose category (the owner's "quickly determine which category").
   Likely a richer `document_intent_category` surface built on the typed-surface census + structural cues (ADR 0006, no
@@ -113,8 +123,9 @@ must be COMPLETE and lower FULLY to ISF. The maturity column above is the **hone
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | — | `DOC-INTENT-TAXONOMY.1` | `done` (`2026-06-22`) | Census DONE — distribution 36/7/15/2/4/14; denominator established. |
-| 1 | `DOC-INTENT-TAXONOMY.2` | `pending` | Per-category ISF-completeness scorecard — turns the maturity column from honest-estimate into objectively-measured (denominator now known per category). |
-| 2 | `DOC-INTENT-TAXONOMY.3` | `pending` | Fast category recognizer in the CLI (the owner's "quickly determine which category") — the `.1` census shows it needs wire-relation shape + front-matter/self-declared type + topology cue, not surface counts alone. |
+| — | `DOC-INTENT-TAXONOMY.2` | `done` (`2026-06-22`) | ISF-completeness scorecard MEASURED — maturity column now objective; two dominant true gaps (register bit-fields 12,638→0; message-field structures 1,220→0, no Intent carrier). |
+| 1 | `DOC-INTENT-TAXONOMY.3` | `pending` | Fast category recognizer in the CLI (the owner's "quickly determine which category") — the `.1` census shows it needs wire-relation shape + front-matter/self-declared type + topology cue, not surface counts alone; `.2` adds the cat-6 over-extraction precision motive. |
+| 2 | `DOC-INTENT-TAXONOMY.4+` | `pending` | Per-category levers; `.2` makes **register bit-field lowering (Gap A)** the highest-leverage first lever (32 docs, 12,638 fields), then **message-field structure carry + lowering (Gap B)** — both pending the same FSMGen ISF-abstraction (field-structured storage / packet layouts), filed as verified FRs after empirical submodule check. |
 
 ## Decisions
 
@@ -126,13 +137,23 @@ must be COMPLETE and lower FULLY to ISF. The maturity column above is the **hone
   (`[[feedback_isf_no_hacks]]`). Owner context: FSMGen is adding a verification-oriented SV/UVM + VHDL lowering path
   alongside its default synthesizable HDL, and new ISF abstractions (memory banks, single/dual-port memory modules, …)
   are anticipated for both paths.
+- `2026-06-22` (`.2`): the per-category maturity column is now **objectively measured** (per-surface lowering ledger,
+  read-only). The two dominant true gaps — register **bit-fields** (12,638 captured, 0 lowered; registers emit opaque
+  width-only storage vars) and message-field **structures** (1,220 captured at EvidenceIR, 0 carried to IntentIR) —
+  converge on the SAME missing FSMGen ISF abstraction (field-structured storage + packet/structure layouts), confirming
+  the `.0` "new ISF abstractions anticipated" decision with hard numbers. Signals are deliberately NOT scored as a
+  present/lowered ratio (the `.isf` signal set has a different basis than IntentIR `interfaces`). Cat 5/6 confirmed honest
+  non-targets; the cat-6 over-extraction (5/14 guides emit spurious `.isf`) is a `.3`-recognizer precision motive, not an
+  ISF-completeness gap.
 
 ## Open Questions
 
 - Exact boundary cues between category 2 (register IP) and 3 (platform/system-IP) when a TRM carries both a register map
   and a topology — resolved empirically in `.1`/`.3` (does not block `.0`).
 - Whether category 4 (ISA) lowering needs a new ISF construct or maps onto existing register/storage abstractions —
-  resolved in `.2`/`.4` after measurement (does not block `.0`).
+  `.2` measured cat 4 as THIN (only the register-shaped surface lowers; bit-fields 0, no instruction/CSR/privilege/
+  exception construct); the construct-vs-reuse decision is now an owned `.4+` decision packet, informed by Gap A
+  (register bit-field lowering) which cat 4 shares.
 
 ## Blockers
 
@@ -144,6 +165,7 @@ must be COMPLETE and lower FULLY to ISF. The maturity column above is the **hone
 | --- | --- | --- | --- |
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.0` | mdBook build; memory-arch self-check; knowledge-map derive-and-diff; no code → golds/`kg-bench` orthogonal | PASS (committed `8815a8c5`) |
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.1` | read-only profile of 78 persisted docs (no `validate` → zero mutation); distribution 36/7/15/2/4/14; memory-arch + knowledge-map gates; no code → golds/`kg-bench` orthogonal | PASS |
+| `2026-06-22` | `DOC-INTENT-TAXONOMY.2` | read-only per-surface lowering gauge over 78 docs (76 `adapter.json` + 2 `adapt --dry-run`, verified no write); measured 12,638 register-fields→0 + 1,220 msg-fields→0 (no Intent carrier); reproducer `scripts/measure_isf_completeness.py`; mdBook builds; memory-arch + knowledge-map (112 facts) gates green; no code/canonical mutation → golds/`kg-bench` orthogonal | PASS |
 
 ## Commit Log
 
@@ -151,9 +173,21 @@ must be COMPLETE and lower FULLY to ISF. The maturity column above is the **hone
 | --- | --- | --- |
 | `DOC-INTENT-TAXONOMY.0` | `8815a8c5` `DOC-INTENT-TAXONOMY.0 — define the 6-category chip-spec intent taxonomy + capture in mdBook` | docs-only |
 | `DOC-INTENT-TAXONOMY.1` | `DOC-INTENT-TAXONOMY.1 — corpus census by category (36/7/15/2/4/14)` | read-only measurement |
+| `DOC-INTENT-TAXONOMY.2` | `DOC-INTENT-TAXONOMY.2 — per-category ISF-completeness gauge (register fields 12,638→0; structures 1,220→0)` | read-only measurement |
 
 ## Changelog
 
+- `2026-06-22`: `.2` per-category ISF-lowering completeness gauge DONE (read-only). Per-surface lowering ledger
+  over all 78 docs (76 persisted `adapter.json` + 2 read-only `adapt --dry-run`; no `validate`/`adapt` write →
+  zero mutation), reproducible via tracked `scripts/measure_isf_completeness.py`. Measured the `.0` maturity
+  column: cat 1 MATURE / cat 2 + 3 PARTIAL / cat 4 THIN / cat 5 + 6 honest non-targets. Two dominant TRUE GAPS:
+  (A) register **bit-fields** 12,638 captured → 0 lowered across 32 docs (registers emit opaque width-only
+  storage; cat 3 largest at 9,308); (B) message-field **structures** 1,220 captured at EvidenceIR → 0 carried to
+  IntentIR (`has_msgfld_key=false`) across 11 docs. Both converge on the same FSMGen ISF-abstraction need
+  (field-structured storage + packet/structure layouts). 5/14 cat-6 guides over-extract (precision motive for
+  `.3`, not a completeness gap). Report `docs/research/document-intent-isf-completeness.md`; KM
+  `[[document-intent-isf-completeness]]` (map now 112 facts). Frontier → `.3` fast category recognizer; `.4+`
+  Gap-A register-field lowering as the highest-leverage first lever.
 - `2026-06-22`: `.1` corpus census by category DONE (read-only). Profiled all 78 persisted docs by typed surface
   (no `validate` → zero mutation). Distribution: 36 wire-protocol / 7 register-IP / 15 platform-system-IP / 2
   CPU-ISA / 4 PHY / 14 methodology-guide. Measured 3 structural blind spots (cat 2↔3 inseparable; ISA has no

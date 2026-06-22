@@ -1,4 +1,41 @@
 # DEVELOPMENT_NOTES
+## DOC-INTENT-TAXONOMY.2 (`2026-06-22`) — per-category ISF-completeness gauge: how the measurement was made honest
+
+**Context.** `.1` established the per-category denominator (36/7/15/2/4/14). `.2` had to turn the `.0` maturity
+column (MATURE/PARTIAL/THIN/non-target) from estimate into measurement — "what fraction of each document's intent
+reaches `.isf`" — without fabricating a score (`feedback_scoring_rigor`).
+
+**Engineering notes — how the gauge avoids a gamed number.**
+- **Per-surface ledger, not one blended %.** The intent surfaces are heterogeneous (signals, registers, fields,
+  enums, rules, transactions, structures). A single weighted percentage is trivially gameable; eight separate
+  present→lowered ratios are not. The gauge reports each surface's verdict (lowered / partial / true-gap /
+  honest-residual / absent) and only then rolls up per category.
+- **Numerator from the real artifacts.** "Lowered" is read straight off `adapter.json.isf` (`signal_count`,
+  `storage_count`, `enum_count`, `rule_count`, `transaction_count`) — the emitter's own counts, not a re-derivation.
+- **Two unmaterialized adapters handled read-only.** `1_0_risc_v_debug_specification` (cat 4) and
+  `den0068_…coresight_base_system_architecture` (cat 3) had no `adapter.json`; `adapt … --dry-run` prints the
+  computed adapter JSON without writing (verified the adapter dirs stayed absent), so the gauge stays read-only.
+- **Signals are deliberately NOT scored as a ratio.** First-cut accounting flagged "signals present < lowered"
+  for cat 3/5/6, which looked impossible. Root cause: the `.isf` signal set is built from a *different basis* than
+  the IntentIR `interfaces` array (union of interface + actor-port graph + relation/constraint refs), so it can be
+  larger (Cortex-A76 TRM 7→189) or smaller (AXI `ihi0022_h_c` 1026→242). Forcing a present/lowered ratio on signals
+  would be a meaningless number, so the gauge reports the signal *path* as mature and quarantines the real
+  signal-side concern (cat-6 over-extraction) as a separate precision finding.
+- **The two true gaps are root-caused, not just counted.** Register fields: the `.isf` storage block is
+  `(var register_table_XXXX (width N))` with no field substructure — registers lower as opaque width-only vars.
+  Structures: `intent_ir.json` has no `message_field_records` key at all (`has_msgfld_key=false`) — the surface
+  exists at EvidenceIR and is simply not carried into IntentIR. Both are concrete, reproducible, and point at the
+  same FSMGen ISF-abstraction need rather than a SpecForge bug to silently patch.
+- **Label robustness.** Category labels are one-off measurement labels reconstructing the un-persisted `.1` ground
+  truth (and now persisted in `scripts/measure_isf_completeness.py`, fixing a `.1` continuity gap); the distribution
+  checksums to 36/7/15/2/4/14. The conclusions (Gap A, Gap B) are objective per-document facts, robust to the five
+  borderline labels flagged in `.1`.
+
+**Outcome.** Scorecard measured: cat 1 MATURE, cat 2/3 PARTIAL, cat 4 THIN, cat 5/6 honest non-targets. Highest-
+leverage lever is Gap A (register bit-field lowering — 32 docs, 12,638 fields), then Gap B (structure carry +
+lowering). No code, no canonical mutation → golds/`kg-bench` orthogonal; memory-arch + knowledge-map (112 facts)
+gates green; mdBook builds.
+
 ## CORPUS-COVERAGE.2 (`2026-06-22`) — re-ingest #19: OpenCAPI 4.0 TL Arch (table-recognition-gap finding + regression-ruled-out method)
 
 **Context.** Second consecutive thin protocol result (after Wishbone). A 0-typed-surface result on TWO protocol specs in a

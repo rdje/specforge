@@ -48,6 +48,51 @@ to produce little or no `.isf`. SpecForge reporting "nothing to synthesize here"
 user guide is the **right** answer — not a failure to be papered over. The buildable program is
 categories **1–4**.
 
+## How completely does each category reach `.isf` today? (measured)
+
+The "maturity" column above is not a vibe — it is **measured**. SpecForge profiled all 78 ingested documents
+and asked, surface by surface, *how much of each document's captured intent actually appears in the emitted
+`.isf`*, and — for whatever does not — whether that absence is **honest** (the document genuinely carries
+nothing there) or a **real gap** (the intent was captured but no `.isf` construct yet expresses it). Measuring
+per surface, rather than as one blended percentage, keeps the score honest: a single number is easy to game,
+eight separate ones are not.
+
+Two findings dominate, and they are the same story in two places — **structure is captured but not yet
+synthesized**:
+
+- **Register *maps* lower; register *fields* do not (yet).** Across the corpus, **3,449 registers** reach
+  `.isf` as storage — but they lower as a single opaque "this register is N bits wide" variable. The
+  **12,638 individual bit-fields** inside them — the part that says *which* bits mean *what*, with their
+  access and reset behavior — do **not** reach `.isf` at all yet. For a register IP or a platform TRM, those
+  fields *are* the programming model, so this is the biggest single thing left to synthesize. (The CoreSight
+  SoC-600 TRM alone carries 833 registers and 2,978 fields.)
+- **In-memory structures are captured but not carried forward.** Packet, flit, descriptor, queue, and
+  page-table layouts — **1,220 fields** across 11 documents (NVMe's command structures, AMD-IOMMU's tables,
+  CHI/DTI/CHI-C2C/CCIX message fields) — are recovered during extraction, but they currently stop one stage
+  short of the canonical `IntentIR`, so they are not yet lowered. For the message-based coherent protocols,
+  those flit fields are the real intent of the document.
+
+Both gaps point at the *same* missing ingredient downstream: ISF needs first-class abstractions for
+**field-structured storage** (a register with named bit-fields) and for **packet/structure layouts**. That is
+exactly the family of abstractions (memory banks, single- and dual-port memories, structured records) that
+FSMGen is growing — so SpecForge's plan is to lower these cleanly once that ISF vocabulary lands, rather than
+to hack the emitter (see the FSMGen feedback loop below).
+
+The rest of the scorecard, in plain terms:
+
+| Category | How complete to `.isf`, measured | The honest residual |
+|---|---|---|
+| **1 — wire protocol** | **Mature.** Signals, actor relations, constraints, timing rules, and enums all lower; the wire-protocol gold suite holds at a perfect 1.000. | Message/flit fields for the handful of register-heavy protocols (above); transaction *bodies* lower only where the document spells out the steps. |
+| **2 — register IP** | **Partial.** The register map lowers; enums lower. | The bit-fields and in-memory structures (the two gaps above) — i.e. most of the programming model. |
+| **3 — platform / system-IP** | **Partial.** Registers lower in volume (thousands); infrastructure signals lower. | The largest field loss of any category; the *topology* (what connects to what, clock/reset trees) stays at the hint level — there is no topology→ISF construct yet. |
+| **4 — CPU ISA** | **Thin.** Only the register-shaped part lowers. | Instructions, CSR-field semantics, privilege modes, and exceptions have no ISF construct yet — the least-developed road, and a candidate for a dedicated lowering decision. |
+| **5 — PHY** | **Correctly near-empty.** A thin `.isf` is the right answer here. | — (not behavioral wire intent). |
+| **6 — guide** | **Correctly near-empty for most.** | A few guides currently *over*-produce `.isf` content they shouldn't — a precision matter for the category recognizer, not a synthesis gap. |
+
+The takeaway: **the wire-protocol road is built; the register, platform, and ISA roads are paved partway**,
+and the next stretch on all three is the same — synthesizing captured *structure* (fields and layouts) once
+ISF can express it.
+
 ## How SpecForge determines a document's category
 
 Today, SpecForge infers a coarse structural **document class** (`protocol` / `register` / `interface` /
