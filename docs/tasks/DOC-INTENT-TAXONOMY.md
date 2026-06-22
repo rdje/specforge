@@ -305,6 +305,23 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   auto-lowers through `.4a.ii` (no emitter change). Must key off structural register-table / bit-layout grammar (a RISC-V
   CSR layout *shape*), never a RISC-V register-name list (ADR 0006). CODE — requires the full task-acceptance checklist +
   `run_ci.sh` + FSMGen `--strict --check` 0-new-diagnostics.
+  - **Pre-investigation (`2026-06-23`, read-only — feasibility probe, no code, no decision; `.4d.i` stays `pending`).**
+    Confirmed the bundle is present (`generated/source_ir/1_0_risc_v_debug_specification/normalized/` — re-ingest NOT
+    needed) and re-measured: 44 `register_records` / 179 fields, **0/179 located** (fields carry
+    `field_name`+`access_type`+`reset_value` but no `bits_high`/`bits_low`/`bit_width`). **Located WHERE the bit
+    positions live:** in the normalized markdown each register is rendered as a **Docling-flattened register-DIAGRAM
+    table** sitting *adjacent to but separate from* the `Field | Description | Access | Reset` table the current
+    `field_table` strategy reads (example `dmstatus`, normalized `.md` ~L1042-1047). The diagram table is **intricate and
+    noisy**: a field-name row with wide fields DOUBLED across cells (`ndmresetpending` ×2), separate numeric rows whose
+    roles must be inferred (field-width row + high-bit-position row), the 32-bit register drawn as **two stacked
+    half-rows**, and interspersed reserved `0` fields; the original diagram is ALSO an `![Image](assets/picture-00NN.png)`
+    (so a VLM path exists but is not required — the table carries the positions). **Feasibility verdict:** `.4d.i` is
+    **deterministically tractable (no VLM strictly needed)** but a **substantial, regression-sensitive** build — it must
+    add a robust register-diagram-table grammar (decode name/width/high-bit rows, doubled cells, stacked halves, reserved
+    fields → `bits_high`/`bits_low`; join to the field-description table by name) keyed off the diagram *shape* (ADR 0006,
+    no RISC-V name list), and it modifies the shared register path that `.4a.ii` (24 docs / 6,570 emitted fields) depends
+    on, so the no-regression bar is high. Warrants a fresh, full-focus session for signoff sharpness; the design starts
+    from this probe rather than re-deriving it. (AIA's 0-register capture is a separate recogniser, larger still.)
 - ID: `DOC-INTENT-TAXONOMY.4e` · Status: `done` (`2026-06-23`, measurement triage, read-only, docs-only — no Rust code) ·
   Goal: conditional-rule lowering triage (`.2` Result 3) — per-item, separate honest residual from a real lever before any
   fraction is called a gap. **DONE — measured 603 `conditional_rules` across 9 representative docs (all 4 buildable
