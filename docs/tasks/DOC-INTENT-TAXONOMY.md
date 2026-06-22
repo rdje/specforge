@@ -108,10 +108,58 @@ must be COMPLETE and lower FULLY to ISF. The maturity column above is the **hone
   `docs/research/document-intent-isf-completeness.md`; KM `[[document-intent-isf-completeness]]`. Objectively measured,
   per-item demonstrated (`[[feedback_scoring_rigor]]`); no fabrication; no code/canonical mutation → golds/`kg-bench`
   orthogonal.
-- ID: `DOC-INTENT-TAXONOMY.3` · Status: `pending` (gated on `.1`/`.2`) · Goal: **fast deterministic category recognizer**
-  so `inspect`/`validate` immediately report a PDF's purpose category (the owner's "quickly determine which category").
-  Likely a richer `document_intent_category` surface built on the typed-surface census + structural cues (ADR 0006, no
-  name lists). Acceptance: CLI reports it; fixtures lock gold/negative classification; `run_ci.sh` green.
+- ID: `DOC-INTENT-TAXONOMY.3` · Status: `in-progress` (gated on `.1`/`.2`; decomposed into `.3a` design / `.3b` implement
+  / `.3c` fixtures+CI) · Goal: **fast deterministic category recognizer** so `inspect`/`validate` immediately report a
+  PDF's purpose category (the owner's "quickly determine which category"). A richer `document_intent_category` surface
+  built on the typed-surface census + structural cues (ADR 0006, no name lists). Acceptance: CLI reports it; fixtures
+  lock gold/negative classification; `run_ci.sh` green.
+  - `.3a` · Status: `done` (`2026-06-22`, design slice, no code) · **Grounded recognizer design** (below), pinned BEFORE
+    coding because `.1` proved counts alone cannot separate cat 2↔3 / recover cat 4 / split cat 5↔6 and must rescue 8
+    register-heavy protocols → the recognizer must add cues AND emit honest confidence/residual, never a forced guess.
+  - `.3b` · Status: `pending` · **Implement** `DocumentIntentCategory` + pure `classify_document_intent_category(...)`
+    in `crates/specforge/src/ir/completeness.rs` (sibling to `classify_document`, same pure-function + in-file-test
+    pattern), wired into `crates/specforge/src/commands/validate.rs` (alongside the `document_class` block at ~2888,
+    where every needed cue is already in scope on the EvidenceIR `ir`). Build is RAM-constrained (`CARGO_BUILD_JOBS≤2`,
+    monitor RAM, kill ≥85% — `[[feedback_ram_ceiling_monitor]]`); ideal point for a fresh session (signoff quality).
+  - `.3c` · Status: `pending` · **Fixtures + CI** — gold/negative fixtures locking each category and the honest-residual
+    cases (the register-heavy-protocol rescue, the cat-6-over-extraction front-matter override, the cat 2↔3 / cat 4 /
+    cat 5↔6 honest-low-confidence residuals); `scripts/run_ci.sh` green; book + live-doc sync.
+
+### Recognizer design (`.3a`, grounded in `completeness.rs` + the `.1`/`.2` measured evidence)
+
+**Inputs (extend the existing `DocumentClassCensus`; ALL already in scope at the evidence-validate census site,
+`validate.rs` ~2888):** the current fields PLUS `message_field_records` (`ir.message_field_records.len()` — the cat-1
+msg-heavy + cat-2 structure cue, the surface `.2` measured at 1,220) and `signal_presence_records.len()`. (Transactions /
+temporal live downstream in IntentIR; v1 deliberately does NOT depend on them — relations + constraints + FSM/frame +
+message-fields + front-matter are sufficient and keep the recognizer on the same stage as `document_class`.)
+
+**Output:** `DocumentIntentCategory` (6 variants + `Unresolved`) WITH a `confidence` (high/low) and an explicit
+`residual` string when structure+front-matter cannot decide — honest residual over fabrication
+(`[[feedback_scoring_rigor]]`, project honest-residual doctrine). Never a forced guess.
+
+**Decision order (first STRONG match wins; emit low-confidence + residual otherwise):**
+1. **cat 6 methodology/guide** — if front-matter `declared_type == Guide` → cat 6 **regardless of spurious surface
+   counts** (directly encodes the `.2` finding: 5/14 guides over-extract — cortex-a76 sw-opt 537 signals — so structure
+   must NOT override a self-declared guide). High confidence.
+2. **cat 1 wire-protocol** — substantive WIRE-BEHAVIORAL shape: `actor_signal_relations ≥ Rmin` OR
+   `signal_constraints ≥ behavioral-floor` OR FSM/serial-frame present OR a substantial `message_field_records` flit
+   surface co-present with behavioral/relation shape. **Register count does NOT veto cat 1** — this is the rescue for
+   AXI (rel 348), CHI (msg 106 + behavioral), DTI (msg 159 / sigc 16), CHI-C2C, register-heavy CCIX. High confidence
+   when the wire shape is clear.
+3. **cat 2 / cat 3 register-or-structure-dominant** — registers/fields/message-fields dominate AND no strong wire
+   shape. `.1` proved 2↔3 is **semantic, invisible to counts** → emit `RegisterOrPlatform` with a residual unless a
+   reliable topology cue separates them (candidate cue: many register blocks across distinct component actors → cat 3;
+   single programming model → cat 2 — to be validated empirically in `.3c`, NOT guessed). Low/medium confidence.
+4. **cat 4 CPU-ISA** — `.1` proved NO structural signature → only via front-matter ISA vocabulary
+   (instruction-set / privileged-architecture), else falls through to (3)/(6) with a residual. Low confidence.
+5. **cat 5 PHY vs cat 6 guide** — both near-empty; structure cannot split (`.1`). Emit `Unresolved(PHY|guide)` with a
+   residual unless front-matter PHY/electrical/signaling vocabulary is present. Low confidence.
+
+**Genericity guarantee (ADR 0006):** every cue is structural (typed-surface counts/shapes) or generic doc-type
+vocabulary already in `front_matter_doc_type_hint`; **no chip/vendor/protocol-instance name list** anywhere. The
+recognizer is a pure function of the census, deterministic, additive (does not replace `document_class`, consumes it as
+one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the guide front-matter override, and the
+2↔3 / 4 / 5↔6 honest residuals.
 - ID: `DOC-INTENT-TAXONOMY.4+` · Status: `pending` · Goal: **per-category completeness levers** — cat-2 structure /
   message-field table recall (the IOMMU Lever-D), cat-3 topology, cat-4 ISA/CSR lowering, and the **FSMGen-ISF
   abstraction feedback** (memory banks, single/dual-port memory modules, … across FSMGen's synthesizable-HDL and new
@@ -124,8 +172,10 @@ must be COMPLETE and lower FULLY to ISF. The maturity column above is the **hone
 | --- | --- | --- | --- |
 | — | `DOC-INTENT-TAXONOMY.1` | `done` (`2026-06-22`) | Census DONE — distribution 36/7/15/2/4/14; denominator established. |
 | — | `DOC-INTENT-TAXONOMY.2` | `done` (`2026-06-22`) | ISF-completeness scorecard MEASURED — maturity column now objective; two dominant true gaps (register bit-fields 12,638→0; message-field structures 1,220→0, no Intent carrier). |
-| 1 | `DOC-INTENT-TAXONOMY.3` | `pending` | Fast category recognizer in the CLI (the owner's "quickly determine which category") — the `.1` census shows it needs wire-relation shape + front-matter/self-declared type + topology cue, not surface counts alone; `.2` adds the cat-6 over-extraction precision motive. |
-| 2 | `DOC-INTENT-TAXONOMY.4+` | `pending` | Per-category levers; `.2` makes **register bit-field lowering (Gap A)** the highest-leverage first lever (32 docs, 12,638 fields), then **message-field structure carry + lowering (Gap B)** — both pending the same FSMGen ISF-abstraction (field-structured storage / packet layouts), filed as verified FRs after empirical submodule check. |
+| — | `DOC-INTENT-TAXONOMY.3a` | `done` (`2026-06-22`) | Recognizer DESIGN pinned (grounded in `completeness.rs` + measured `.1`/`.2` evidence): cues, decision order, honest-residual policy, ADR-0006 genericity — de-risks the hard name-list-free classifier before coding. |
+| 1 | `DOC-INTENT-TAXONOMY.3b` | `pending` | **IMPLEMENT** the recognizer per the `.3a` design (`classify_document_intent_category` in `completeness.rs`, wired into `validate.rs`). Build-heavy (RAM-constrained) → ideal fresh-session start. |
+| 2 | `DOC-INTENT-TAXONOMY.3c` | `pending` | Fixtures lock gold/negative + honest-residual cases; `run_ci.sh` green; book/live-doc sync. |
+| 3 | `DOC-INTENT-TAXONOMY.4+` | `pending` | Per-category levers; `.2` makes **register bit-field lowering (Gap A)** the highest-leverage first lever (32 docs, 12,638 fields), then **message-field structure carry + lowering (Gap B)** — both pending the same FSMGen ISF-abstraction (field-structured storage / packet layouts), filed as verified FRs after empirical submodule check. |
 
 ## Decisions
 
@@ -166,6 +216,7 @@ must be COMPLETE and lower FULLY to ISF. The maturity column above is the **hone
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.0` | mdBook build; memory-arch self-check; knowledge-map derive-and-diff; no code → golds/`kg-bench` orthogonal | PASS (committed `8815a8c5`) |
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.1` | read-only profile of 78 persisted docs (no `validate` → zero mutation); distribution 36/7/15/2/4/14; memory-arch + knowledge-map gates; no code → golds/`kg-bench` orthogonal | PASS |
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.2` | read-only per-surface lowering gauge over 78 docs (76 `adapter.json` + 2 `adapt --dry-run`, verified no write); measured 12,638 register-fields→0 + 1,220 msg-fields→0 (no Intent carrier); reproducer `scripts/measure_isf_completeness.py`; mdBook builds; memory-arch + knowledge-map (112 facts) gates green; no code/canonical mutation → golds/`kg-bench` orthogonal | PASS |
+| `2026-06-22` | `DOC-INTENT-TAXONOMY.3a` | design slice (no code): recognizer algorithm grounded in `completeness.rs` (`classify_document`) + measured `.1`/`.2` evidence; verified the cues are in scope at `validate.rs` ~2888; memory-arch + knowledge-map gates green; no code → golds/`kg-bench` orthogonal | PASS |
 
 ## Commit Log
 
@@ -174,9 +225,19 @@ must be COMPLETE and lower FULLY to ISF. The maturity column above is the **hone
 | `DOC-INTENT-TAXONOMY.0` | `8815a8c5` `DOC-INTENT-TAXONOMY.0 — define the 6-category chip-spec intent taxonomy + capture in mdBook` | docs-only |
 | `DOC-INTENT-TAXONOMY.1` | `DOC-INTENT-TAXONOMY.1 — corpus census by category (36/7/15/2/4/14)` | read-only measurement |
 | `DOC-INTENT-TAXONOMY.2` | `DOC-INTENT-TAXONOMY.2 — per-category ISF-completeness gauge (register fields 12,638→0; structures 1,220→0)` | read-only measurement |
+| `DOC-INTENT-TAXONOMY.3a` | `DOC-INTENT-TAXONOMY.3a — recognizer design (grounded; honest-residual, ADR-0006)` | design slice, no code |
 
 ## Changelog
 
+- `2026-06-22`: `.3a` recognizer DESIGN pinned (design slice, no code). Grounded the fast category recognizer in
+  the real `completeness.rs` classifier (`classify_document`) + the measured `.1`/`.2` evidence: extend the census
+  with `message_field_records` (the 1,220-field cat-1-msg/cat-2-structure cue), a 6-category + `Unresolved` output
+  carrying confidence + an explicit residual, and a decision order that (1) honors a self-declared guide over
+  spurious surface counts (the `.2` over-extraction finding), (2) rescues register-heavy protocols via wire shape
+  (register count never vetoes cat 1), and (3) emits honest low-confidence residuals where `.1` proved structure
+  cannot decide (cat 2↔3, cat 4 ISA, cat 5↔6) — never a forced guess. Verified the cues are in scope at the
+  evidence-validate census site (`validate.rs` ~2888). Decomposed `.3` → `.3a` (design, done) / `.3b` (implement) /
+  `.3c` (fixtures+CI). Frontier → `.3b` (build-heavy → fresh session). No code → golds/`kg-bench` orthogonal.
 - `2026-06-22`: `.2` per-category ISF-lowering completeness gauge DONE (read-only). Per-surface lowering ledger
   over all 78 docs (76 persisted `adapter.json` + 2 read-only `adapt --dry-run`; no `validate`/`adapt` write →
   zero mutation), reproducible via tracked `scripts/measure_isf_completeness.py`. Measured the `.0` maturity
