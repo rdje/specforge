@@ -1,4 +1,35 @@
 # DEVELOPMENT_NOTES
+## DOC-INTENT-TAXONOMY.4e (`2026-06-23`) — conditional-rule lowering triage (`.2` Result 3, read-only, docs-only)
+
+**Context.** `.2` Result 3 flagged that the `constraints + temporal + conditional → (rule)` lowering ratio is low (cat 1
+~41% / cat 2 ~45% / cat 3 ~11% / cat 4 ~22%), dominated by `conditional_rules`, and deferred the honest-vs-lever verdict
+to a dedicated `.4+` triage. This leaf does that triage so the shortfall is classified per item, never assumed.
+
+**Method (reproducible, read-only).** Over 9 representative docs (cat-1 AHB/APB/AXI, cat-2 NVMe/RISC-V IOMMU, cat-3
+GIC-600/CoreSight SoC-600, cat-4 RISC-V Debug/AIA), classified every `conditional_rules` entry against the document's
+declared-signal inventory (union of `interfaces[].signals`, `interfaces[].signal_records[].signal_name`,
+`actor_ports[].signal_name`) and the consequent's quality (no signal / undeclared / placeholder / bare-modal /
+concrete-value cue).
+
+**Measured (603 conditional_rules, 9 docs).** A no-consequent prose 392 (65%) / B undeclared signal 14 (2%) / C
+declared+placeholder 33 (6%) / D declared+non-placeholder action 164 (27%). The D bucket's `consequent_action`
+distribution: `shall` 45, `must` 35, `shall not` 14, `shall be cleared` 10, `must not` 7, `must be 4` 2, `shall be 1` 2,
+… — **161/164 bare deontic modals, only 3/603 with a concrete value/level cue**.
+
+**Decision.** A conditional lowers to an ISF `(rule)` only when it names a declared signal AND a concrete obligation. A/B/C
+(73%) fail that by construction; the D bucket fails because the captured `consequent_action` is a deontic modal, not the
+concrete value the document states only in prose — rendering it would fabricate the obligation. So the conditional-rule
+shortfall is **honest residual, not an ISF-completeness gap**: no ISF lever, no FSMGen FR (the adapter already lowers the
+516 cleanly-grounded conditional obligations corpus-wide). The only improvement path is **upstream extraction quality**
+(recover the concrete obligation from the modal conditionals' `source_text`), owned by the extraction-quality program,
+distinct from `.4` and lower-leverage than register/structure/topology — a cross-reference, NOT a `.4` gap
+(`feedback_scoring_rigor`). Closes `.2` Result 3; the `.2` per-category measurement phase is complete (remaining `.4` work
+is CODE: `.4d.i`, `.4c.i`, `.4b`).
+
+**Gates.** No Rust code / no canonical mutation → wire golds / `kg-bench` / emitted `.isf` byte-identical by construction.
+`scripts/check_doctrines.sh` green; `mdbook build` green; knowledge-map derive-and-diff in sync (117→118 facts). Report
+`docs/research/conditional-rule-lowering-triage.md`; KM `docs/knowledge/conditional-rule-lowering-triage.md`.
+
 ## DOC-INTENT-TAXONOMY.4c (`2026-06-23`) — cat-3 platform/system-IP topology lowering decision packet (read-only, docs-only)
 
 **Context.** `.2` scored category-3 (platform / system-IP topology & integration) as **PARTIAL** ("infrastructure signals

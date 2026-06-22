@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `DOC-INTENT-TAXONOMY`
-- Status: `active` (`.0` taxonomy DONE `2026-06-22`; `.1` corpus census DONE `2026-06-22`, read-only; `.2` per-category ISF-completeness gauge DONE `2026-06-22`, read-only; `.3` fast category recognizer COMPLETE `2026-06-22` — `.3a` design / `.3b` implement+validate-reported `d6239217` / `.3c` fixtures+book+KM; `.4a` Gap A — register bit-field lowering: empirical FSMGen-storage verification + verified FSMGen FR DONE `2026-06-22`, docs-only; **`.4a.ii` DONE `2026-06-22` (CODE) — emitted the register bit-field map into the shipped ISF field-structured-storage construct (pin `d327129b7`): 6,570 fields / 2,531 registers / 24 docs now reach `.isf` (was 0), 0 new FSMGen `--strict` diagnostics, 4 wire golds byte-identical**; **`.4d` DONE `2026-06-23` (decision packet, docs-only) — cat-4 CSRs REUSE the existing register/storage abstraction (no new ISF construct, FSMGen titles `(storage …)` the register-map/CSR construct); the cat-4 register gap is EXTRACTION RECALL (RISC-V Debug 179 fields all UNLOCATED, AIA 0 registers captured) → spun out `.4d.i`; instruction/privilege/exception/memory-ordering are honest non-targets**; **`.4c` DONE `2026-06-23` (decision packet, docs-only) — cat-3 topology IS captured (`signal_connectivity` producer→consumer graph + `infrastructure_signals` clock/reset distribution; correcting `.2` "hint-level" to "captured-but-sparse-and-unlowered") but ISF has NO declarative static-topology construct (composition is transaction-level only; the emit is single-initiator-actor) and FSMGen's ATL frontier is behavioral, not a declarative netlist; capture is sparse/noisy → NO FR yet, next = `.4c.i` capture-recall measurement**; frontier → `.4c.i` cat-3 topology-capture recall (measurement) / `.4d.i` cat-4 RISC-V CSR bit-position recovery (code) / `.4b` Gap B (gated, FSMGen-deferred packet/flit) / `.4e` conditional triage; `.4a.i` superseded by `.4a.ii`)
+- Status: `active` (`.0` taxonomy DONE `2026-06-22`; `.1` corpus census DONE `2026-06-22`, read-only; `.2` per-category ISF-completeness gauge DONE `2026-06-22`, read-only; `.3` fast category recognizer COMPLETE `2026-06-22` — `.3a` design / `.3b` implement+validate-reported `d6239217` / `.3c` fixtures+book+KM; `.4a` Gap A — register bit-field lowering: empirical FSMGen-storage verification + verified FSMGen FR DONE `2026-06-22`, docs-only; **`.4a.ii` DONE `2026-06-22` (CODE) — emitted the register bit-field map into the shipped ISF field-structured-storage construct (pin `d327129b7`): 6,570 fields / 2,531 registers / 24 docs now reach `.isf` (was 0), 0 new FSMGen `--strict` diagnostics, 4 wire golds byte-identical**; **`.4d` DONE `2026-06-23` (decision packet, docs-only) — cat-4 CSRs REUSE the existing register/storage abstraction (no new ISF construct, FSMGen titles `(storage …)` the register-map/CSR construct); the cat-4 register gap is EXTRACTION RECALL (RISC-V Debug 179 fields all UNLOCATED, AIA 0 registers captured) → spun out `.4d.i`; instruction/privilege/exception/memory-ordering are honest non-targets**; **`.4c` DONE `2026-06-23` (decision packet, docs-only) — cat-3 topology IS captured (`signal_connectivity` producer→consumer graph + `infrastructure_signals` clock/reset distribution; correcting `.2` "hint-level" to "captured-but-sparse-and-unlowered") but ISF has NO declarative static-topology construct (composition is transaction-level only; the emit is single-initiator-actor) and FSMGen's ATL frontier is behavioral, not a declarative netlist; capture is sparse/noisy → NO FR yet, next = `.4c.i` capture-recall measurement**; **`.4e` DONE `2026-06-23` (triage, docs-only) — the `conditional_rules` ISF-lowering shortfall (`.2` Result 3) is HONEST RESIDUAL, not a gap: 603 rules across 9 docs = 73% prose/undeclared/placeholder + a 27% bucket that is 161/164 bare deontic modals (only 3/603 carry a concrete obligation); no ISF lever, no FR — the only upside is upstream extraction quality. The `.2` measurement phase is now COMPLETE; remaining `.4` work is CODE**; frontier → `.4c.i` cat-3 topology-capture recall (measurement) / `.4d.i` cat-4 RISC-V CSR bit-position recovery (code) / `.4b` Gap B (gated, FSMGen-deferred packet/flit); `.4a.i` superseded by `.4a.ii`)
 - Roadmap lane: `R15`/`R16` (north star: COMPLETE IntentIR → FAITHFUL ISF, now made explicit **per document category**)
 - Created: `2026-06-22`
 - Last updated: `2026-06-22`
@@ -289,8 +289,21 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   auto-lowers through `.4a.ii` (no emitter change). Must key off structural register-table / bit-layout grammar (a RISC-V
   CSR layout *shape*), never a RISC-V register-name list (ADR 0006). CODE — requires the full task-acceptance checklist +
   `run_ci.sh` + FSMGen `--strict --check` 0-new-diagnostics.
-- ID: `DOC-INTENT-TAXONOMY.4e` · Status: `pending` · Goal: conditional-rule lowering triage (`.2` Result 3) — per-item,
-  separate honest residual from a real lever before any fraction is called a gap.
+- ID: `DOC-INTENT-TAXONOMY.4e` · Status: `done` (`2026-06-23`, measurement triage, read-only, docs-only — no Rust code) ·
+  Goal: conditional-rule lowering triage (`.2` Result 3) — per-item, separate honest residual from a real lever before any
+  fraction is called a gap. **DONE — measured 603 `conditional_rules` across 9 representative docs (all 4 buildable
+  categories), classified against each doc's declared-signal inventory + consequent quality: A no-consequent prose 392
+  (65%) / B undeclared signal 14 (2%) / C declared+placeholder 33 (6%) / D declared+non-placeholder action 164 (27%). The
+  D "candidate-lever" bucket is NOT a clean lever — 161/164 are bare deontic modals (`shall`/`must`/`shall not`) with no
+  concrete obligation, only 3/603 carry a concrete value/level cue. Lowering a bare modal would fabricate the obligation
+  (forbidden — `[[feedback_isf_no_hacks]]`). VERDICT: the conditional-rule shortfall is HONEST RESIDUAL, NOT an
+  ISF-completeness gap — no buildable ISF lever, no FSMGen FR; the adapter already lowers the 516 cleanly-grounded
+  conditional obligations corpus-wide. The only upside is upstream EXTRACTION quality (the grounded constraint extractor
+  recovering the concrete obligation from the modal conditionals' `source_text`), owned by the extraction-quality program,
+  distinct from `.4` and lower-leverage than register/structure/topology — recorded as a cross-reference, NOT minted as a
+  `.4` gap (`[[feedback_scoring_rigor]]`: a 0.5%-concrete residual is not a gap).** Closes `.2` Result 3. Report
+  `docs/research/conditional-rule-lowering-triage.md`; KM `[[conditional-rule-lowering-triage]]`. No code/canonical
+  mutation → golds + `kg-bench` orthogonal. See the `.4e` Acceptance Checklist below.
 
 ## Acceptance Checklist (enforced) — `DOC-INTENT-TAXONOMY.3b`
 
@@ -518,6 +531,40 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   `docs/book/src/document-categories.md` (cat-3 maturity refined), and the task tree / `TASK_TREE.md` / `CHANGES.md` /
   `DEVELOPMENT_NOTES.md` / `LIVE_ACHIEVEMENT_STATUS.md` / `MEMORY.md` all updated in this slice.
 
+## Acceptance Checklist (enforced) — `DOC-INTENT-TAXONOMY.4e`
+
+- [x] **REPRODUCE / MEASURE** — baseline from `.2` Result 3: the `constraints + temporal + conditional → (rule)` lowering
+  ratio is low (cat 1 ~41% / cat 2 ~45% / cat 3 ~11% / cat 4 ~22%), dominated by `conditional_rules`, with the
+  honest-vs-lever verdict explicitly deferred to a `.4+` triage. Measured per item over 9 representative docs (all 4
+  buildable categories, reproducible from `generated/intent_ir/<key>/intent_ir.json`): **603 `conditional_rules`** → A
+  no-consequent prose 392 / B undeclared signal 14 / C declared+placeholder 33 / D declared+non-placeholder action 164;
+  the D action distribution is `shall` 45 / `must` 35 / `shall not` 14 / `shall be cleared` 10 / `must not` 7 / … =
+  **161/164 bare deontic modals, only 3/603 carry a concrete value/level cue.**
+- [x] **ROOT CAUSE (WHY + WHERE)** — a conditional lowers to an ISF `(rule)` only when it names a declared signal AND a
+  concrete obligation. A/B/C (439, 73%) fail that by construction (prose condition / undeclared signal / no obligation);
+  the D bucket fails because the captured `consequent_action` is a deontic modal fragment, not the concrete value the
+  document states only in prose — rendering it would fabricate the obligation. WHERE: the gap is upstream (the constraint
+  extractor capturing `consequent_action` as a modal, `extract-constraints-llm` / `EXTRACTION-QUALITY-GAUGE`), NOT the ISF
+  adapter (which already lowers the 516 cleanly-grounded conditional obligations corpus-wide).
+- [x] **ADDRESSED (verified)** — produced the triage (`docs/research/conditional-rule-lowering-triage.md`): the
+  conditional-rule shortfall is **honest residual, not an ISF-completeness gap** — no buildable ISF lever, no FSMGen FR.
+  The only improvement path is upstream extraction quality (recover the concrete obligation from the modal conditionals'
+  `source_text`), owned by the extraction-quality program and lower-leverage than register/structure/topology — recorded
+  as a cross-reference, deliberately NOT minted as a `.4` gap (a 0.5%-concrete residual is not a gap). Closes `.2` Result
+  3 and completes the `.2` measurement phase.
+- [x] **NO REGRESSION** — measurement/triage leaf, **no Rust code**, no canonical-artifact mutation → the wire golds /
+  `kg-bench` / emitted `.isf` are byte-identical by construction (WIRE-BASED-100 orthogonal). `scripts/check_doctrines.sh`
+  green (memory-arch + knowledge-map + task-acceptance); `mdbook build` green; knowledge-map derive-and-diff in sync
+  (117 → 118 facts).
+- [x] **GENERICITY (ADR 0006)** — the triage keys off structural signal-declaration membership and consequent-action
+  shape (concrete value/level/edge cue vs bare modal) — no chip/vendor/protocol-instance name list. N/A for runtime code
+  (none in this leaf).
+- [x] **LOCKSTEP** — `docs/research/conditional-rule-lowering-triage.md` (the triage), KM card
+  `docs/knowledge/conditional-rule-lowering-triage.md` + regenerated `KNOWLEDGE_MAP.md`, and the task tree /
+  `TASK_TREE.md` / `CHANGES.md` / `DEVELOPMENT_NOTES.md` / `LIVE_ACHIEVEMENT_STATUS.md` / `MEMORY.md` all updated in this
+  slice. (No mdBook change: this leaf confirms existing honest-residual framing — no user-facing capability drift; the
+  book's category scorecard does not claim conditional rules lower.)
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
@@ -531,11 +578,11 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | — | `DOC-INTENT-TAXONOMY.4a.ii` | `done` (`2026-06-22`) | **Register bit-field emit DONE.** Emitted `(var … (fields (field …)))` from the IntentIR register field map — **6,570 fields / 2,531 registers / 24 docs now reach `.isf`** (was 0). Metadata-only/schedule-safe; reused the `register_field_extent` tiling gate; verified via `inferred_storage[].fields[]` round-trip + `*_passes_fsmgen_strict_validation` ×7 + register docs 0-new-diagnostics + 4 wire golds byte-identical; `kg-bench 156/156`; `run_ci.sh` green. The `.4a.i` honest residual is folded in (`isf_register_fields_not_lowered` for the unlowered remainder). |
 | — | `DOC-INTENT-TAXONOMY.4d` | `done` (`2026-06-23`) | **Cat-4 ISA/CSR decision packet DONE.** Resolved the Open Question from measured evidence: cat-4 CSRs **reuse the existing register/storage abstraction** (no new ISF construct — FSMGen titles `(storage …)` the register-map/CSR construct); the cat-4 register gap is **extraction recall** (RISC-V Debug 179 fields all unlocated, AIA 0 registers captured) → spun out `.4d.i`; instruction/privilege/exception/memory-ordering are **honest non-targets**. Docs-only → golds/`kg-bench` orthogonal. |
 | — | `DOC-INTENT-TAXONOMY.4c` | `done` (`2026-06-23`) | **Cat-3 topology decision packet DONE.** Cat-3's register half already lowers (`.4a.ii`); cat-3 **does** carry a typed topology surface (`signal_connectivity` + `infrastructure_signals`) — but it is **sparse/noisy** and ISF has **no declarative static-topology construct** (composition is transaction-level only; emit is single-initiator-actor; FSMGen's ATL frontier is behavioral, not a netlist). **No FR yet** (premature) → spun out `.4c.i` capture-recall measurement. Docs-only → golds/`kg-bench` orthogonal. |
+| — | `DOC-INTENT-TAXONOMY.4e` | `done` (`2026-06-23`) | **Conditional-rule lowering triage DONE (`.2` Result 3 closed).** 603 `conditional_rules` / 9 docs → 73% honest residual (prose/undeclared/placeholder) + a 27% bucket that is 161/164 bare deontic modals (only 3/603 concrete). Verdict: **honest residual, NOT an ISF gap** — no lever, no FR; the adapter already lowers the 516 clean conditional obligations; the only upside is upstream extraction quality. `.2` measurement phase complete. Docs-only → golds/`kg-bench` orthogonal. |
 | 1 | `DOC-INTENT-TAXONOMY.4c.i` | `pending` (measurement) | Cat-3 topology-capture recall measurement across all 15 cat-3 docs (edges-per-actor, endpoint name quality, clock/reset coverage) → decides FSMGen-FR vs honest-non-target. Read-only, RAM-light. |
 | 2 | `DOC-INTENT-TAXONOMY.4d.i` | `pending` (code) | Cat-4 RISC-V CSR bit-position recovery — locate RISC-V Debug's fields + capture AIA's IMSIC/APLIC CSR blocks so they auto-lower via `.4a.ii`. Structural RISC-V CSR-layout grammar, no name list. The genuine buildable cat-4 lever. |
-| 3 | `DOC-INTENT-TAXONOMY.4e` | `pending` (measurement) | Conditional-rule lowering triage (`.2` Result 3) — per-item, separate honest residual from a real lever before any fraction is called a gap. Read-only, RAM-light. |
-| 4 | `DOC-INTENT-TAXONOMY.4b` | `pending` (gated) | Gap B — `Evidence→Intent` `message_field_records` carrier (1,220 fields / 11 docs), then lower; **stays gated** — FSMGen explicitly deferred packet/flit layouts. CODE. |
-| 5 | `DOC-INTENT-TAXONOMY.4a.i` | `superseded` | Adapter honest residual `isf_register_fields_not_lowered` — **superseded by `.4a.ii`**, which both EMITS the fields AND records the unlowered remainder as that very residual. No separate slice needed. |
+| 3 | `DOC-INTENT-TAXONOMY.4b` | `pending` (gated) | Gap B — `Evidence→Intent` `message_field_records` carrier (1,220 fields / 11 docs), then lower; **stays gated** — FSMGen explicitly deferred packet/flit layouts. CODE. |
+| 4 | `DOC-INTENT-TAXONOMY.4a.i` | `superseded` | Adapter honest residual `isf_register_fields_not_lowered` — **superseded by `.4a.ii`**, which both EMITS the fields AND records the unlowered remainder as that very residual. No separate slice needed. |
 
 ## Decisions
 
@@ -578,6 +625,17 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   for FSMGen). The buildable next step is a **measurement** (`.4c.i` topology-capture recall), after which the construct
   decision (FR vs honest-non-target) becomes real. No fabrication, no speculative FR (`[[feedback_verify_fsmgen_before_fr]]`
   / `[[feedback_isf_no_hacks]]`).
+- `2026-06-23` (`.4e`): the `conditional_rules` ISF-lowering shortfall (`.2` Result 3) is **honest residual, not a gap**.
+  Per-item triage of 603 rules / 9 docs: 73% are prose conditions / undeclared-signal / placeholder consequents (cannot
+  become an ISF `(rule)` without fabrication), and the 27% declared-consequent bucket is 161/164 **bare deontic modals**
+  (`shall`/`must`) with no concrete obligation — only 3/603 carry a concrete value/level cue. There is **no buildable ISF
+  lever and no FSMGen FR**: the adapter already lowers the cleanly-grounded conditional obligations (516 corpus-wide), and
+  rendering a bare modal would fabricate the obligation (`[[feedback_isf_no_hacks]]`). The only improvement path is
+  **upstream extraction quality** (recover the concrete obligation from the modal conditionals' `source_text`), owned by
+  the extraction-quality program (`extract-constraints-llm` / `EXTRACTION-QUALITY-GAUGE`), not the `.4` ISF-lowering
+  program — recorded as a cross-reference, NOT minted as a `.4` gap (`[[feedback_scoring_rigor]]`). With `.4e` closed, the
+  `.2` per-category scorecard's **measurement phase is complete**; the remaining `.4` work is CODE (`.4d.i`, `.4c.i`,
+  `.4b`).
 
 ## Open Questions
 
@@ -608,6 +666,7 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.4a.ii` | CODE — emit register bit-fields to ISF `(fields …)`. `cargo fmt --all --check` clean; `cargo clippy --all-targets -D warnings` clean; full `cargo test` `1702 passed / 0 failed` (warning-deny, +6 new tests incl. `register_fields_pass_fsmgen_strict_and_round_trip`); `kg-bench 156/156`; real-emitter corpus scan **6,570 fields / 2,531 registers / 24 docs** (was 0); RISC-V IOMMU (122) / GIC `ihi0069` (424) / CoreSight SoC-600 (974) `fsmgen --strict` `success / 0 diags` before AND after (0 new); 4 wire golds (AXI/APB/AHB/AXI-Stream) emitted `.isf` **byte-identical** (`adapt` old-vs-new diff empty); `inferred_storage[].fields[]` round-trip asserted; `run_ci.sh` green | PASS |
 | `2026-06-23` | `DOC-INTENT-TAXONOMY.4d` | measurement + decision packet (read-only, docs-only — no Rust code); profiled the 2 cat-4 docs off persisted IR (RISC-V Debug 44 regs / 179 fields / **0 located**; RISC-V AIA **0 registers**, CSR intent in 39 prose `conditional_rules` + 211 empty `interfaces`); re-verified FSMGen pin `d327129b7` ISF (storage = register-map/CSR construct; no instruction/privilege/exception construct); decision = reuse register/storage for CSRs + spin out `.4d.i` extraction-recall lever + honest non-target for non-register ISA semantics; `scripts/check_doctrines.sh` green (memory-arch + knowledge-map + task-acceptance); `mdbook build` green; knowledge-map derive-and-diff in sync (115→116 facts); no code/canonical mutation → golds + `kg-bench` orthogonal by construction | PASS |
 | `2026-06-23` | `DOC-INTENT-TAXONOMY.4c` | measurement + decision packet (read-only, docs-only — no Rust code); profiled 3 representative cat-3 docs off persisted IR (CoreSight SoC-600 60 actors / **6** `signal_connectivity` / 833 regs; GIC-600 55 actors / **66** `signal_connectivity` / **2** `infrastructure_signals`; CoreSight BSA 5 actors / 0 connectivity / 88 prose interfaces); re-verified FSMGen pin `d327129b7` (composition transaction-level only; ATL frontier = behavioral generated-child wiring, not a declarative netlist); decision = register half already lowers + topology captured-but-sparse-and-unlowered + no static-topology ISF construct + NO FR yet → spun out `.4c.i` capture-recall measurement; `scripts/check_doctrines.sh` green (memory-arch + knowledge-map + task-acceptance); `mdbook build` green; knowledge-map derive-and-diff in sync (116→117 facts); no code/canonical mutation → golds + `kg-bench` orthogonal by construction | PASS |
+| `2026-06-23` | `DOC-INTENT-TAXONOMY.4e` | measurement triage (read-only, docs-only — no Rust code); classified 603 `conditional_rules` across 9 representative docs (all 4 buildable categories) vs each doc's declared-signal inventory (`interfaces[].signals` + `signal_records[].signal_name` + `actor_ports[].signal_name`) + consequent quality → A no-consequent 392 / B undeclared 14 / C placeholder 33 / D declared+action 164 (of which 161 bare modal `shall`/`must`, only 3/603 concrete); verdict = honest residual, no ISF lever, no FR (only upstream extraction-quality upside); `.2` Result 3 closed; `scripts/check_doctrines.sh` green (memory-arch + knowledge-map + task-acceptance); `mdbook build` green; knowledge-map derive-and-diff in sync (117→118 facts); no code/canonical mutation → golds + `kg-bench` orthogonal by construction | PASS |
 
 ## Commit Log
 
@@ -623,9 +682,24 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | `DOC-INTENT-TAXONOMY.4a.ii` | `DOC-INTENT-TAXONOMY.4a.ii — emit register bit-field map into ISF field-structured storage (6,570 fields / 24 docs)` | code slice (isf_ir.rs emitter) |
 | `DOC-INTENT-TAXONOMY.4d` | `DOC-INTENT-TAXONOMY.4d — cat-4 ISA/CSR lowering decision: CSRs reuse register/storage; gap is extraction recall (spun out .4d.i)` | measurement + decision packet, docs-only |
 | `DOC-INTENT-TAXONOMY.4c` | `DOC-INTENT-TAXONOMY.4c — cat-3 topology lowering decision: topology captured-but-sparse, no static-topology ISF construct, no FR yet (spun out .4c.i)` | measurement + decision packet, docs-only |
+| `DOC-INTENT-TAXONOMY.4e` | `DOC-INTENT-TAXONOMY.4e — conditional-rule lowering triage (.2 Result 3): honest residual, no ISF lever, no FR (.2 measurement phase complete)` | measurement triage, docs-only |
 
 ## Changelog
 
+- `2026-06-23`: **`.4e` DONE (measurement triage, read-only, docs-only — no Rust code)** — the `conditional_rules`
+  ISF-lowering shortfall (`.2` Result 3) is **honest residual, not a gap**. Per-item triage of 603 rules across 9
+  representative docs (all 4 buildable categories) against each doc's declared-signal inventory + consequent quality: A
+  no-consequent prose 392 (65%) / B undeclared signal 14 (2%) / C declared+placeholder 33 (6%) / D declared+non-placeholder
+  action 164 (27%). The D "candidate-lever" bucket is NOT a clean lever — **161/164 are bare deontic modals**
+  (`shall`/`must`/`shall not`) with no concrete obligation, only **3/603** carry a concrete value/level cue. Lowering a
+  bare modal would fabricate the obligation (`[[feedback_isf_no_hacks]]`). **VERDICT: no buildable ISF lever, no FSMGen
+  FR** — the adapter already lowers the 516 cleanly-grounded conditional obligations corpus-wide; the only upside is
+  upstream EXTRACTION quality (recover the concrete obligation from the modal conditionals' `source_text`), owned by the
+  extraction-quality program, distinct from `.4` and lower-leverage than register/structure/topology — recorded as a
+  cross-reference, NOT minted as a `.4` gap (`[[feedback_scoring_rigor]]`). Closes `.2` Result 3 → the `.2` per-category
+  scorecard's **measurement phase is COMPLETE**; remaining `.4` work is CODE (`.4d.i`, `.4c.i`, `.4b`). Report
+  `docs/research/conditional-rule-lowering-triage.md`; KM `[[conditional-rule-lowering-triage]]` (map 117→118).
+  `check_doctrines.sh` + `mdbook build` green; no code/canonical mutation → golds/`kg-bench` orthogonal.
 - `2026-06-23`: **`.4c` DONE (measurement + decision packet, read-only, docs-only — no Rust code)** — resolved the cat-3
   (platform / system-IP topology) ISF-lowering question from measured evidence over 3 representative cat-3 docs (of 15) +
   the current FSMGen pin `d327129b7`. **Two halves:** (1) **the register half already lowers** (register maps + bit-fields
