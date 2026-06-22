@@ -286,6 +286,64 @@ grammar, and SPECFORGE will keep the membership as honest metadata/residual unti
 weighs in. All ISF facts above were verified empirically on the pinned `8c39827f` binary,
 not inferred from the book alone.
 
+## Feature request (2026-06-22) — declarative field-structured storage (named bit-fields in a register / packed structure layout)
+
+**Context.** A chip-spec PDF's register / CSR programming model is, in large part, its **bit-field map**:
+each register is a fixed-width word partitioned into named fields, each field carrying a bit range, an
+access type (RO/RW/W1C/WARL/…), an optional reset value, an optional enumeration, and a description.
+SPECFORGE recovers this in full — `RegisterFieldRecord { field_name, bits_high, bits_low, bit_width,
+access_type, reset_value, description, enumerated_values }` (`crates/specforge/src/ir/source.rs:414`) — and
+carries it unchanged into the canonical IntentIR (`IntentIr.register_records`, `ir/intent.rs:75`).
+
+But the current ISF `(storage …)` grammar declares **opaque, width-only** scalar state only —
+`(var NAME (width N) [(reset V)])` / `(variable …)` / `(bank …)`
+(`ISF_DOWNSTREAM_INTEGRATION_SPEC.md` §8). There is no construct to declare a register's named bit-fields,
+so SPECFORGE's emitter lowers each register to a single opaque `(var <reg> (width N))` and **drops the entire
+field substructure**. Measured corpus-wide (`DOC-INTENT-TAXONOMY.2`,
+`docs/research/document-intent-isf-completeness.md`): **12,638 register bit-fields across 32 documents reach
+`.isf` zero times** — the single largest measurable intent-loss in our corpus (heaviest on platform/system-IP
+TRMs, e.g. CoreSight SoC-600: 833 registers / 2,978 fields → storage 833, fields 0). The same missing
+abstraction blocks the message/packet **structure** layouts (NVMe 216, AMD-IOMMU 217, CHI/DTI/CCIX flit
+fields — another 1,220 fields).
+
+We verified empirically on the pinned `030f8c273` binary that this is a representational gap, not a misuse:
+the shipped field **operations** (`(set-field NAME (bits HI LO) V)`, `(when-field …)`, `(extract WORD as
+FIELD…)`, `(assemble …)`, `13k` matrix) are runtime read-modify-write on an opaque register, **not** a static
+field-map declaration — and emitting them to represent a documented static layout would fabricate runtime
+behaviour the spec never states (forbidden by our honest-residual doctrine). The feature backlog (`14-…`)
+defers aggregate records/arrays and does not list named scalar bit-fields. So there is no faithful
+emitter-only path; per `[[feedback_isf_no_hacks]]` we raise the abstraction rather than hack the emitter.
+
+**Ask.** Would FSMGEN consider a **declarative field-structured storage** construct in ISF — a storage
+variable that may carry an optional named-field partition, each field with a bit range and optional
+access/reset/enum? A concrete strawman shape (FSMGEN to decide the real syntax):
+
+```lisp
+(storage
+  (var control (width 8)
+    (fields
+      (field mode   (bits 7 5) (access rw) (reset 0))
+      (field prio   (bits 4 2) (access rw))
+      (field enable (bits 0 0) (access rw) (reset 1) (enum (OFF 0) (ON 1))))))
+```
+
+Properties that would make it lowerable for us (and fail-closed, matching ISF's existing discipline): fields
+must tile within `(width N)` without overlap; a field's `(reset …)` composes into the register reset we
+already emit (`ISF-REGISTER-RESET-EMIT`); `access`/`enum`/`description` may be metadata-only if not
+schedule-relevant; omitting `(fields …)` is byte-identical to today's opaque `(var …)`. The construct would
+ideally generalize to the packet/structure layout family (our message-field structures, Gap B) so a single
+abstraction serves both the register field-map and the flit/descriptor layout. This is adjacent to the
+"memory banks / single/dual-port memory" abstractions FSMGEN noted (`2026-06-22`) for its new
+verification-oriented SV/UVM + VHDL path, and would let that path emit field-accurate register/structure
+models.
+
+**Why it matters to SPECFORGE.** It is the highest-leverage single lever on our ISF-completeness scorecard
+(touches categories 1–4): it turns the largest silent intent-loss in the corpus into faithful synthesis.
+Until ISF carries it, SPECFORGE keeps the field map as honest IntentIR metadata + an adapter residual (it is
+never lost from the IntentIR), and does not fabricate a structure. Empirically grounded on pin `030f8c273`;
+re-verified before any emitter build once FSMGEN weighs in. Full design:
+`docs/research/register-bit-field-isf-lowering-design.md` (`DOC-INTENT-TAXONOMY.4a`).
+
 ## Purpose
 
 This file is SPECFORGE's tracked feedback for FSMGEN.

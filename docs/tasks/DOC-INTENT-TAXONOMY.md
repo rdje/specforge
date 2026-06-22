@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `DOC-INTENT-TAXONOMY`
-- Status: `active` (`.0` taxonomy DONE `2026-06-22`; `.1` corpus census DONE `2026-06-22`, read-only; `.2` per-category ISF-completeness gauge DONE `2026-06-22`, read-only; `.3` fast category recognizer COMPLETE `2026-06-22` — `.3a` design / `.3b` implement+validate-reported `d6239217` / `.3c` fixtures+book+KM; frontier → `.4+` per-category levers + FSMGen ISF-abstraction FRs)
+- Status: `active` (`.0` taxonomy DONE `2026-06-22`; `.1` corpus census DONE `2026-06-22`, read-only; `.2` per-category ISF-completeness gauge DONE `2026-06-22`, read-only; `.3` fast category recognizer COMPLETE `2026-06-22` — `.3a` design / `.3b` implement+validate-reported `d6239217` / `.3c` fixtures+book+KM; `.4a` Gap A — register bit-field lowering: empirical FSMGen-storage verification + verified FSMGen FR DONE `2026-06-22`, docs-only; frontier → `.4a.i` adapter honest-residual (code) / `.4b` Gap B Evidence→Intent message-field carrier)
 - Roadmap lane: `R15`/`R16` (north star: COMPLETE IntentIR → FAITHFUL ISF, now made explicit **per document category**)
 - Created: `2026-06-22`
 - Last updated: `2026-06-22`
@@ -181,11 +181,47 @@ vocabulary already in `front_matter_doc_type_hint`; **no chip/vendor/protocol-in
 recognizer is a pure function of the census, deterministic, additive (does not replace `document_class`, consumes it as
 one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the guide front-matter override, and the
 2↔3 / 4 / 5↔6 honest residuals.
-- ID: `DOC-INTENT-TAXONOMY.4+` · Status: `pending` · Goal: **per-category completeness levers** — cat-2 structure /
-  message-field table recall (the IOMMU Lever-D), cat-3 topology, cat-4 ISA/CSR lowering, and the **FSMGen-ISF
-  abstraction feedback** (memory banks, single/dual-port memory modules, … across FSMGen's synthesizable-HDL and new
-  verification-oriented SV/UVM + VHDL paths). Each is its own owned leaf; any FSMGen FR is filed only after empirically
-  verifying the current submodule (`[[feedback_verify_fsmgen_before_fr]]`, `docs/FSMGEN_FEEDBACK.md`).
+- ID: `DOC-INTENT-TAXONOMY.4` · Status: `active` · Goal: **per-category completeness levers** — drive each buildable
+  category's measured ISF-lowering gap (`.2` scorecard) to faithful synthesis, filing an FSMGen ISF-abstraction FR
+  wherever the current ISF cannot carry the intent (only after empirically verifying the submodule —
+  `[[feedback_verify_fsmgen_before_fr]]`, `docs/FSMGEN_FEEDBACK.md`; never an emitter hack — `[[feedback_isf_no_hacks]]`).
+  Children: `.4a` Gap A register bit-field lowering (design + FR, done), `.4a.i` adapter honest-residual (code),
+  `.4a.ii` Gap A field-structured-storage emit (code, gated on the FSMGen abstraction), `.4b` Gap B message-field
+  carrier+lowering, `.4c` cat-3 topology lowering, `.4d` cat-4 ISA/CSR lowering decision, `.4e` conditional-rule
+  lowering triage.
+- ID: `DOC-INTENT-TAXONOMY.4a` · Status: `done` (`2026-06-22`, measurement/design, docs-only — no Rust code) · Goal:
+  **Gap A — register bit-field ISF lowering**: localize WHERE the `.2`-measured 12,638 fields / 32 docs are lost, and
+  decide the doctrine-correct fix (emitter path vs FSMGen FR) from empirical evidence. **DONE:** two read-only probes —
+  (1) the code-path map proved the bit-field intent is **fully captured and carried** (`RegisterFieldRecord`
+  `source.rs:414` → `IntentIr.register_records` clone `intent.rs:193`) and dropped **only** at the ISF-emit boundary
+  (`IsfStorageVar { name, width, reset }` at `isf_ir.rs:852`, rendered opaque `(var NAME (width N) [(reset V)])` at
+  `isf_ir.rs:391`), so there is **no SpecForge carry gap**; (2) an **empirical** read of the pinned `subs/fsmgen`
+  (`030f8c273`) proved the ISF `(storage …)` grammar declares only opaque width-only scalars — **no named-bit-field /
+  packed-record construct** (the shipped `set-field`/`extract` are runtime ops, not a static field-map declaration; the
+  feature backlog does not list it). **Decision:** Gap A is a genuine missing ISF abstraction → filed a **verified
+  FSMGen FR** (`docs/FSMGEN_FEEDBACK.md`, `## Feature request (2026-06-22) — declarative field-structured storage`),
+  not an emitter hack (the three emitter-only alternatives were rejected as fabrication/loss). Gap B shares the same
+  missing abstraction and additionally lacks an `Evidence→Intent` carrier (zero `message_field` in `intent.rs`). Report
+  `docs/research/register-bit-field-isf-lowering-design.md`; KM `[[register-bit-field-isf-lowering-gap]]`; book
+  honest-residual note in `docs/book/src/pipeline/isf-adapter.md`. No code/canonical mutation → golds + `kg-bench`
+  orthogonal; memory-arch + knowledge-map gates green. See the `.4a` Acceptance Checklist below.
+- ID: `DOC-INTENT-TAXONOMY.4a.i` · Status: `pending` · Goal: emit an explicit adapter honest residual
+  `isf_register_fields_not_lowered` (today the field drop at `isf_ir.rs:852` is silent; only the *reset* drop is
+  recorded as `isf_storage_reset_not_lowered`) so the largest measurable intent-loss is surfaced in `residual_decisions`.
+  CODE — requires the full task-acceptance checklist + `run_ci.sh` + FSMGen `--strict --check` 0-new-diagnostics.
+- ID: `DOC-INTENT-TAXONOMY.4a.ii` · Status: `pending` (gated on FSMGen) · Goal: lower the IntentIR register field map
+  into the field-structured-storage construct once ISF gains it (re-verify the new pin first). CODE.
+- ID: `DOC-INTENT-TAXONOMY.4b` · Status: `pending` · Goal: **Gap B** — add the `Evidence→Intent` `message_field_records`
+  carrier (1,220 fields / 11 docs, no IntentIR carrier today), then lower via the same FSMGen structure/packet
+  abstraction. Closes the cat-2 structure frontier (the `CORPUS-COVERAGE.2` #21 IOMMU Lever-D) and the cat-1
+  message-heavy-protocol gap together. CODE.
+- ID: `DOC-INTENT-TAXONOMY.4c` · Status: `pending` · Goal: cat-3 topology lowering — promote clock/reset infrastructure
+  + component connectivity from hint-level to a synthesizable ISF surface (likely another FSMGen abstraction).
+- ID: `DOC-INTENT-TAXONOMY.4d` · Status: `pending` · Goal: cat-4 ISA/CSR lowering decision — does CSR-field /
+  instruction / privilege intent map onto existing register/storage abstractions or need a new ISF construct? Resolve
+  with a measured decision packet (shares Gap A's register-field lowering).
+- ID: `DOC-INTENT-TAXONOMY.4e` · Status: `pending` · Goal: conditional-rule lowering triage (`.2` Result 3) — per-item,
+  separate honest residual from a real lever before any fraction is called a gap.
 
 ## Acceptance Checklist (enforced) — `DOC-INTENT-TAXONOMY.3b`
 
@@ -253,6 +289,41 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   and the task tree / `TASK_TREE.md` / `CHANGES.md` / `DEVELOPMENT_NOTES.md` / `LIVE_ACHIEVEMENT_STATUS.md` / `MEMORY.md`
   all updated in this slice.
 
+## Acceptance Checklist (enforced) — `DOC-INTENT-TAXONOMY.4a`
+
+- [x] **REPRODUCE / MEASURE** — baseline from `.2` (`docs/research/document-intent-isf-completeness.md`,
+  `scripts/measure_isf_completeness.py`): register **bit-fields** reach `.isf` **0 times** — `12,638` fields across
+  `32` docs — while registers lower 1:1 to opaque `(storage (var … (width N)))`. Live datum: RISC-V IOMMU `.isf`
+  storage is `(var register_table_0033 (width 26))` with no field substructure though IntentIR carried 147 fields / 33
+  registers.
+- [x] **ROOT CAUSE (WHY + WHERE)** — two read-only probes. (1) Code-path map: the bit-field metadata is FULL at
+  extraction (`RegisterFieldRecord` — name/bits_high/bits_low/width/access/reset/description/enums,
+  `crates/specforge/src/ir/source.rs:414`) and carried UNCHANGED into IntentIR
+  (`IntentIr.register_records = semantic_ir.register_records.clone()`, `crates/specforge/src/ir/intent.rs:193`;
+  field `:75`); it is discarded ONLY at the ISF-emit boundary — `IsfStorageVar { name, width, reset }` built at
+  `crates/specforge/src/ir/isf_ir.rs:852` (reading `r.fields` only to compose a register-wide reset), rendered opaque at
+  `:391`. So there is NO SpecForge carry gap. (2) Empirical FSMGen probe on the pinned `subs/fsmgen` (`030f8c273`): the
+  ISF `(storage …)` grammar declares opaque width-only scalars only (`ISF_DOWNSTREAM_INTEGRATION_SPEC.md` §8) — NO
+  named-bit-field / packed-record declaration; the shipped `set-field`/`extract` are runtime ops (`13k` matrix), and the
+  feature backlog (`14-…`) does not list field-structured storage. Gap A is a missing ISF abstraction, not an emitter
+  bug.
+- [x] **ADDRESSED (verified)** — filed a **verified FSMGen feature request** for declarative field-structured storage
+  (`docs/FSMGEN_FEEDBACK.md`, `## Feature request (2026-06-22) — declarative field-structured storage`), grounded in the
+  empirical submodule verification (`[[feedback_verify_fsmgen_before_fr]]`) and NOT an emitter hack
+  (`[[feedback_isf_no_hacks]]`): the three emitter-only alternatives (per-field vars / runtime `extract` / comments) are
+  documented and rejected as fabrication or intent-loss. Design report `docs/research/register-bit-field-isf-lowering-design.md`;
+  follow-on code leaves `.4a.i` (adapter honest residual) and `.4a.ii` (field-structured emit, gated on FSMGen) recorded.
+- [x] **NO REGRESSION** — measurement/design leaf, **no Rust code**, no canonical-artifact mutation → the wire golds /
+  `kg-bench` / emitted `.isf` are byte-identical by construction (WIRE-BASED-100 orthogonal). `scripts/check_doctrines.sh`
+  green (memory-arch + knowledge-map + task-acceptance); `mdbook build` green; knowledge-map derive-and-diff in sync
+  (114 → 115 facts / 824 keys).
+- [x] **GENERICITY (ADR 0006)** — docs/FR only; the FR's proposed construct is structural (bit ranges + access + reset +
+  enum), with no chip/vendor/protocol-instance name list. N/A for runtime code (none).
+- [x] **LOCKSTEP** — `docs/FSMGEN_FEEDBACK.md` (the FR), `docs/research/register-bit-field-isf-lowering-design.md`, KM
+  card `docs/knowledge/register-bit-field-isf-lowering-gap.md` + regenerated `KNOWLEDGE_MAP.md`, book honest-residual
+  note in `docs/book/src/pipeline/isf-adapter.md`, and the task tree / `TASK_TREE.md` / `CHANGES.md` /
+  `DEVELOPMENT_NOTES.md` / `LIVE_ACHIEVEMENT_STATUS.md` / `MEMORY.md` all updated in this slice.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
@@ -262,7 +333,10 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | — | `DOC-INTENT-TAXONOMY.3a` | `done` (`2026-06-22`) | Recognizer DESIGN pinned (grounded in `completeness.rs` + measured `.1`/`.2` evidence): cues, decision order, honest-residual policy, ADR-0006 genericity — de-risks the hard name-list-free classifier before coding. |
 | — | `DOC-INTENT-TAXONOMY.3b` | `done` (`2026-06-22`) | Recognizer IMPLEMENTED + reported by `validate` (`classify_document_intent_category` in `completeness.rs`, wired into `validate.rs`); corpus: 21 wire / 8 guide (both high) / 28 register-or-platform / 16 unresolved / 5 PHY (low) with 0 high-confidence false positives. Refined the `.3a` flit clause its own data falsified. kg-bench 156/156, cargo test 1695/0, clippy/fmt clean. |
 | — | `DOC-INTENT-TAXONOMY.3c` | `done` (`2026-06-22`) | Recognizer FIXTURES + book + KM landed: 13 in-file unit golds (`.3b`) + an end-to-end `validate` integration test; user-facing mdBook chapter (`quality/validation.md` + `document-categories.md` "now CLI-reported"); KM card (map 113→114); ISA/PHY vocab precision-verified. `run_ci.sh` green. **`.3` recognizer COMPLETE.** |
-| 1 | `DOC-INTENT-TAXONOMY.4+` | `pending` | Per-category levers; `.2` makes **register bit-field lowering (Gap A)** the highest-leverage first lever (32 docs, 12,638 fields), then **message-field structure carry + lowering (Gap B)** — both pending the same FSMGen ISF-abstraction (field-structured storage / packet layouts), filed as verified FRs after empirical submodule check. |
+| — | `DOC-INTENT-TAXONOMY.4a` | `done` (`2026-06-22`) | Gap A localized + decided: bit-field intent reaches IntentIR fully, dropped only at `isf_ir.rs:852`; the current ISF `(storage …)` has no field-structured construct (verified pin `030f8c273`) → a **verified FSMGen FR** (not an emitter hack). Design report + KM card + book note. Docs-only → golds/`kg-bench` orthogonal. |
+| 1 | `DOC-INTENT-TAXONOMY.4a.i` | `pending` | Emit the adapter honest residual `isf_register_fields_not_lowered` (today the field drop is silent) — CODE, full task-acceptance checklist + `run_ci.sh` + FSMGen `--strict --check`. The highest-leverage RAM-light next build slice (no FSMGen dependency, surfaces the corpus's largest intent-loss honestly). |
+| 2 | `DOC-INTENT-TAXONOMY.4b` | `pending` | Gap B — `Evidence→Intent` `message_field_records` carrier (1,220 fields / 11 docs, no carrier today), then lower via the same FSMGen structure/packet abstraction. CODE. |
+| — | `DOC-INTENT-TAXONOMY.4a.ii` | `pending` (gated) | Gap A field-structured-storage emit once ISF gains the construct the FR requests (re-verify the new pin first). CODE. |
 
 ## Decisions
 
@@ -306,6 +380,7 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.3a` | design slice (no code): recognizer algorithm grounded in `completeness.rs` (`classify_document`) + measured `.1`/`.2` evidence; verified the cues are in scope at `validate.rs` ~2888; memory-arch + knowledge-map gates green; no code → golds/`kg-bench` orthogonal | PASS |
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.3b` | `cargo fmt --all --check` clean; `cargo clippy --all-targets -- -D warnings` clean; completeness lib `66/66` (13 new recognizer tests); full `cargo test` `1695 passed; 0 failed` (warning-deny); `kg-bench 156/156`; live `validate` over all 78 docs → 21 wire / 8 guide (high) / 28 register-or-platform / 16 unresolved / 5 PHY (low), 0 high-confidence false positives; WIRE-BASED-100 orthogonal (pure new fn + additive reporting, no extraction/emitter touch) | PASS (committed `d6239217`) |
 | `2026-06-22` | `DOC-INTENT-TAXONOMY.3c` | end-to-end integration test `validate_evidence_ir_reports_document_intent_category` PASS; `kg-bench 156/156`; full `cargo test` green (warning-deny, +1 test); `cargo fmt`/`clippy -D warnings` clean; `mdbook build` green; knowledge-map derive-and-diff in sync (113→114 facts); `run_ci.sh` green; WIRE-BASED-100 orthogonal (test + docs only) | PASS |
+| `2026-06-22` | `DOC-INTENT-TAXONOMY.4a` | measurement/design + verified FSMGen FR (docs-only, no Rust code); code-path map (`source.rs:414`→`intent.rs:193`→`isf_ir.rs:852`) + empirical FSMGen-storage probe on pin `030f8c273` (opaque `(var)` only, no field structure); `scripts/check_doctrines.sh` green; `mdbook build` green; knowledge-map derive-and-diff in sync (114→115 facts / 824 keys); no code/canonical mutation → golds + `kg-bench` orthogonal by construction | PASS |
 
 ## Commit Log
 
@@ -317,9 +392,28 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | `DOC-INTENT-TAXONOMY.3a` | `DOC-INTENT-TAXONOMY.3a — recognizer design (grounded; honest-residual, ADR-0006)` | design slice, no code |
 | `DOC-INTENT-TAXONOMY.3b` | `d6239217` `DOC-INTENT-TAXONOMY.3b — implement the 6-category purpose recognizer (validate-reported; measured refinement of .3a)` | code slice |
 | `DOC-INTENT-TAXONOMY.3c` | `DOC-INTENT-TAXONOMY.3c — recognizer fixtures + user-facing mdBook chapter + KM card (.3 recognizer complete)` | test + docs slice |
+| `DOC-INTENT-TAXONOMY.4a` | `DOC-INTENT-TAXONOMY.4a — Gap A register bit-field ISF lowering: verified FSMGen field-structured-storage FR (measurement/design)` | measurement/design + FR, docs-only |
 
 ## Changelog
 
+- `2026-06-22`: `.4a` Gap A — register bit-field ISF lowering DONE (measurement/design + verified FSMGen FR, docs-only,
+  no Rust code). Two read-only probes localized the loss and decided the fix: (1) the bit-field metadata is fully
+  captured (`RegisterFieldRecord`, `source.rs:414`) and carried UNCHANGED into IntentIR
+  (`IntentIr.register_records` clone, `intent.rs:193`), dropped ONLY at the ISF-emit boundary
+  (`IsfStorageVar { name, width, reset }`, `isf_ir.rs:852`; rendered opaque `(var NAME (width N) [(reset V)])` at
+  `:391`) → no SpecForge carry gap; (2) an empirical read of the pinned `subs/fsmgen` (`030f8c273`) proved the ISF
+  `(storage …)` grammar declares opaque width-only scalars only — no named-bit-field / packed-record construct (the
+  shipped `set-field`/`extract` are runtime ops, not a static field-map declaration; not on the FSMGen backlog). Gap A
+  is a missing ISF abstraction → filed a **verified FSMGen FR** (`docs/FSMGEN_FEEDBACK.md`,
+  `## Feature request (2026-06-22) — declarative field-structured storage`), NOT an emitter hack (the three
+  emitter-only alternatives rejected as fabrication/loss). Gap B (1,220 message-fields) shares the same missing
+  abstraction and additionally lacks an `Evidence→Intent` carrier (zero `message_field` in `intent.rs`). Decomposed
+  `.4` → `.4a` (done) / `.4a.i` adapter honest-residual (code) / `.4a.ii` field-structured emit (gated on FSMGen) /
+  `.4b` Gap B carrier / `.4c` cat-3 topology / `.4d` cat-4 ISA / `.4e` conditional-rule triage. Report
+  `docs/research/register-bit-field-isf-lowering-design.md`; KM `[[register-bit-field-isf-lowering-gap]]` (map
+  114→115); book honest-residual note in `docs/book/src/pipeline/isf-adapter.md`. `check_doctrines.sh` + `mdbook build`
+  green; no code/canonical mutation → golds/`kg-bench` orthogonal. Frontier → `.4a.i` (RAM-light, no FSMGen dependency)
+  then `.4b`.
 - `2026-06-22`: `.3c` recognizer FIXTURES + book + KM landed (test + docs slice) → **`.3` recognizer COMPLETE**. Added the
   end-to-end integration test `validate_evidence_ir_reports_document_intent_category` (the metric + confidence + finding
   reach the persisted report through the real pipeline; near-empty → honest `unresolved` residual); the per-category

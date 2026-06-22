@@ -170,6 +170,26 @@ This affects only register-bearing documents (register maps / CSRs); the protoco
 specifications (APB/AHB/AXI/SWD) emit byte-identical `.isf` as before, because their signal
 tables carry no composable register reset.
 
+## Register bit-fields — an honest residual (pending an ISF abstraction)
+
+A register is more than a width and a reset: it is a word partitioned into named **bit-fields**,
+each with a bit range, an access type (read-only, write-1-to-clear, …), its own reset, sometimes
+an enumeration. SpecForge captures all of that — the IntentIR register map carries every field —
+and you can see it in the IntentIR artifact.
+
+What it does **not** yet do is *synthesize* that field map into the `.isf`. The emitted storage
+is the opaque `(var <register> (width N) [(reset V)])` you saw above — the register's bits are
+there, but which bits mean what is not. The reason is deliberate and honest: today's ISF
+`(storage …)` grammar can only declare opaque, width-only variables — it has no construct for
+declaring named bit-fields inside a register. Rather than fake one (emitting a separate variable
+per field would invent storage the chip does not have, and the runtime field *operators* ISF does
+offer describe behaviour the spec never states), SpecForge keeps the field map as faithful
+IntentIR metadata and raises the missing capability with the downstream consumer as a feature
+request (`docs/FSMGEN_FEEDBACK.md`, 2026-06-22). Nothing is lost — the fields stay in the IntentIR —
+and nothing is fabricated. When ISF gains a field-structured-storage construct, the adapter will
+lower the field map into it; until then this is a known, documented residual (the corpus-wide
+measurement of how much this affects is in `DOC-INTENT-TAXONOMY.2`).
+
 ## Which way does each signal point?
 
 Every signal in a `.isf` interface is declared as an `(input …)` or an `(output …)`. But a

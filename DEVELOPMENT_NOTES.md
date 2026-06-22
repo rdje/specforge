@@ -1,4 +1,39 @@
 # DEVELOPMENT_NOTES
+## DOC-INTENT-TAXONOMY.4a (`2026-06-22`) — Gap A register bit-field ISF lowering: verified FSMGen FR (measurement/design)
+
+**Context.** `.2` measured the two dominant ISF-completeness gaps; Gap A (register bit-fields: 12,638 fields / 32 docs
+reaching `.isf` zero times) is the highest-leverage lever. The owner's standing doctrine forbids guessing the fix:
+measure WHERE the loss is, and verify the downstream submodule empirically before claiming an ISF gap or filing an FR
+(`[[feedback_verify_fsmgen_before_fr]]`), never hack the emitter (`[[feedback_isf_no_hacks]]`). So `.4a` is a
+measurement/design leaf, docs-only.
+
+**What the two probes found.** (1) The bit-field intent is *not* lost in SpecForge — `RegisterFieldRecord`
+(`source.rs:414`) carries the full field map and IntentIR carries it unchanged (a direct
+`semantic_ir.register_records.clone()` at `intent.rs:193`). The loss is a single emit-time discard: the per-register loop
+at `isf_ir.rs:852` builds `IsfStorageVar { name, width, reset }`, reading `r.fields` only to compose a register-wide
+reset, then renders the opaque `(var NAME (width N) [(reset V)])` (`:391`). So there is **no carry gap** to build — the
+fields are already in IntentIR. (2) The reason they can't be emitted is upstream: on the pinned `subs/fsmgen`
+(`030f8c273`) the ISF `(storage …)` grammar is opaque width-only (`(var)`/`(variable)`/`(bank)`), with **no construct to
+declare named bit-fields**. The shipped `set-field`/`extract` operators are runtime read-modify-write on an opaque
+register, not a static field-map declaration — emitting them to "represent" a documented layout would fabricate runtime
+behaviour the spec never states. Field-structured storage isn't on the FSMGen backlog either.
+
+**The decision, and why it's not a hack.** I considered three emitter-only paths and rejected all as fabrication or
+loss: per-field `(var REG_FIELD …)` invents N separate storage units and loses the register grouping + absolute bit
+positions; runtime `(extract REG as FIELD…)` fabricates behaviour; field-name comments aren't intent (FSMGen ignores
+them). There is genuinely no faithful emitter-only path — Gap A is a real missing ISF abstraction. So I filed a verified
+FSMGen FR (`docs/FSMGEN_FEEDBACK.md`, `2026-06-22`) for a declarative field-structured-storage construct
+(`(var NAME (width N) (fields (field … (bits hi lo) (access ..) (reset ..) (enum ..))))`), framed to also serve the
+Gap-B packet/structure layout family. The timing is right: the owner noted FSMGen is adding a verification-oriented
+SV/UVM + VHDL path and anticipates new ISF abstractions (memory banks, single/dual-port memory) — a declarative
+field-structured register is the same family.
+
+**Follow-on (recorded, not built).** `.4a.i` = an explicit adapter honest residual `isf_register_fields_not_lowered`
+(today the field drop is silent; only the *reset* drop is recorded) — a RAM-light CODE slice with no FSMGen dependency,
+the natural next build. `.4a.ii` = the actual field-structured emit, gated on FSMGen shipping the construct. `.4b` = the
+Gap-B `Evidence→Intent` carrier. Report `docs/research/register-bit-field-isf-lowering-design.md`; KM
+`[[register-bit-field-isf-lowering-gap]]`. No code → golds/`kg-bench` orthogonal.
+
 ## DOC-INTENT-TAXONOMY.3c (`2026-06-22`) — recognizer fixtures + book + KM (the `.3` recognizer is complete)
 
 **Context.** `.3b` implemented + wired the recognizer and locked its per-category logic with 13 in-file unit tests.
