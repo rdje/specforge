@@ -154,10 +154,13 @@ leave a noun *phrase* sitting where a clean agent name should be. The honest cur
 can still surface extra phrase-shaped "agents" in its model. Two things keep this bounded and visible rather
 than hidden: it never reaches the emitted `.isf` (the adapter lowers signals and behaviours, not the raw actor
 list), and it is being closed the same principled way as everything above — by *grammar*, not a list of
-forbidden words. The first, measured-safe step extends the trailing-scrap rule to a closed class of trailing
-prepositions and auxiliaries ("host *has*" → "host", "cache *in*" → "cache"), which a corpus-wide check
-confirms never touches a single real, heavily-connected agent. The deeper, rarer phrase-fragment case is held
-as an explicit, scoped open item rather than papered over — because the alternative, dropping anything that
+forbidden words. The first, measured-safe step has **already landed**: the trailing-scrap rule now also folds a
+trailing preposition or auxiliary onto the leading agent ("host *has*" / "host *to*" → "host", "cache *in*" →
+"cache"), which a corpus-wide check confirms never touches a single real, heavily-connected agent — on a JEDEC
+eMMC datasheet it folds the four "host …" variants back onto one "host" and removes 29 phrase-shaped names, and
+the four wire-based reference specs stay byte-for-fact identical. The deeper, rarer phrase-fragment case (a
+single explanatory sentence leaving a bare noun like "basic bus") is held as an explicit, scoped open item
+rather than papered over — because the alternative, dropping anything that
 merely *looks* like a phrase, would also throw away genuine one-word agents like an AMBA *decoder* or
 *controller*, and the tool would rather stay complete than look tidy.
 

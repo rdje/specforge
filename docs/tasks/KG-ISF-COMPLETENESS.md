@@ -91,8 +91,32 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   - **Gates (probe = no code change):** WIRE-BASED-100 + register/wire golds + `kg-bench` orthogonal by
     construction; `scripts/check_doctrines.sh` GREEN; book honesty caveat added to
     `pipeline/evidenceir.md` (the "widen without minting noise" overclaim, corrected for the dense-prose
-    class). **Frontier → `.1c.i`** (trailing aux/prep strip — measurement-clean, landable; best on a fresh
-    session for full sharpness per the high-stakes gate-code rule), then `.1c.ii` measurement.
+    class). **Frontier → `.1c.i` DONE `2026-06-23`** (see the node below), then `.1c.ii` measurement.
+- ID: `KG-ISF-COMPLETENESS.1c.i` · Status: `done` (`2026-06-23`, measurement-first; gate LANDED +
+  WIRE-BASED-100-verified) · Goal: **dense-prose trailing preposition/auxiliary strip** — extend the
+  proven `.1b.i` trailing-fragment consolidation (which strips a trailing universal verb/discourse-adverb)
+  to a closed class of trailing **prepositions + auxiliaries/modals** (`host has`/`host is`/`host to`/
+  `host with` → `host`, `cache in`/`cache is` → `cache`, `device to` → `device`), so the relation
+  re-attributes onto the leading agent and its stranded edges merge by dedup instead of surviving as
+  separate phantoms. The `.1b` measurement and `.1b.i` deliberately excluded prepositions, but the stated
+  reason was the conjunction/coordination case (`.1b.iii`); the `.1c` probe re-measured the
+  preposition/auxiliary class on the dense-prose corpus and found it safe. **LANDED** — new const
+  `NON_ACTOR_TRAILING_FUNCTION_WORDS` (prepositions + auxiliaries/modals, a deliberate SUBSET of
+  `NON_ACTOR_LEADING_FUNCTION_WORDS`, EXCLUDING conjunctions — drift-guarded by
+  `trailing_function_words_are_known_leading_non_conjunctions`) added to the `consolidate_trailing_fragment`
+  strip condition in `ir/evidence.rs` (same seam/ordering — BEFORE the `.1a` reject; returns byte-identical
+  when nothing strips). `before`/`after`/`until` are already discourse markers, not duplicated. Universal
+  grammar, no name list (ADR 0006). KM `[[agent-trailing-function-word-consolidation]]`. **Frontier →
+  `.1c.ii`** (single-relation noun-phrase phantom precision — the bulk; deferred-with-trigger pending its
+  own measurement).
+
+## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.1c.i`
+- [x] **REPRODUCE / MEASURE** — `.1c` probe (read-only over the 78 persisted IntentIR docs): eMMC `intent_ir.json` carries **153 actors / 349 relations**, of which 29 actor names end in a closed-class preposition/auxiliary (`host has`/`host to`/`host is`/`host with`, `cache in`/`cache is`, `device to`, `CMD to`, `advantage of`, …) — fragments the `.1a`/`.1b.i`/`.1b.iv` gates do not consolidate. Report `docs/research/agent-identity-prose-class-measurement.md`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `consolidate_trailing_fragment` (`crates/specforge/src/ir/evidence.rs`) strips a trailing token only when it is in `NON_ACTOR_LEADING_VERBS` ∪ `NON_ACTOR_TRAILING_DISCOURSE_MARKERS`; trailing prepositions/auxiliaries were deliberately excluded by `.1b.i` (for the conjunction/`.1b.iii` case), so on dense prose `host has`/`host to` survive as separate relation-subject actors at the `normalize_relation_actor_name` seam (leading token is a noun → `.1a` passes; carries a relation → `.1b.iv` can't touch). Confirmed live: `evidence --dry-run` chain on eMMC yields the 11 `host *` variants.
+- [x] **ADDRESSED (verified)** — added `NON_ACTOR_TRAILING_FUNCTION_WORDS` to the strip condition. Live new-binary `evidence→semantic→intent` cascade on eMMC: **actors 153 → 138** (−15), relations 349 → 341; the 4 aux/prep `host` variants (`host has`/`host is`/`host to`/`host with`) **merge onto `host`** (host variants 11 → 7 — the remaining 4 are trailing-*verb* `host selects`/`host tries`/etc., honestly outside this closed-class strip → `.1c.ii`); 29 phantom names removed. eMMC `host.isf` still renders (62 signals) and passes FSMGen `--strict --check --json` **success / 0 diagnostics** (emitter-safe).
+- [x] **NO REGRESSION** — **WIRE-BASED-100 = 1.000** on fresh-Pattern new-binary evidence (rebuilt all 4 gold docs into a temp evidence-root; `eval-extraction --provider skip --evidence-root <temp>`): constraints APB 6/6 · AHB 6/6 · AXI 3/3; actor-relations APB 5/5 · AHB 6/6 · AXI 6/6 · SWD 1/1; temporal APB 3/3 · AHB 4/4 · AXI 3/3 (SWD lone constraint 0/1 = the documented promotion-only, unchanged). **`kg-bench` 156/156.** **`scripts/run_ci.sh` GREEN** (lib **1704** passed, +2 new tests; clippy/fmt/rustdoc warning-deny + mdBook). Wire golds unaffected — their only trailing strips are the pre-existing `.1b.i` verb/adverb cases; the new aux/prep vocabulary touches 0 wire-gold cases.
+- [x] **GENERICITY (ADR 0006)** — universal English grammar (a closed class of prepositions + auxiliaries/modals), a SUBSET of the leading function-word lexicon, NOT a chip/vendor/protocol name list; conjunctions deliberately excluded (still `.1b.iii`). Corpus-wide safety MEASURED: across all 78 persisted IntentIR docs ZERO actors with ≥8 ports are `X <aux/prep>` shaped → the strip never renames a real high-participation agent.
+- [x] **LOCKSTEP** — README current-state bullet (`.1c.i`); book `pipeline/evidenceir.md` caveat updated (the strip has LANDED); KM card `agent-trailing-function-word-consolidation`; CHANGES.md / DEVELOPMENT_NOTES.md / LIVE_ACHIEVEMENT_STATUS.md / MEMORY.md.
 - ID: `KG-ISF-COMPLETENESS.0` · Status: `done` (`2026-06-16`, docs-only ownership/scoping slice) · Goal:
   own the north star, define the checkable bar, record the measured baseline, reverse the "defer ISF"
   steer in the live docs. No code (doctrine: own before touching). Memory `project_kg_isf_completeness`.
@@ -516,6 +540,18 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 
 ## Changelog
 
+- `2026-06-23`: **`.1c.i` DONE — CODE: dense-prose trailing preposition/auxiliary strip.** Same-session
+  continuation of the `.1c` probe (fresh session, measurement in context). Extended
+  `consolidate_trailing_fragment` (`ir/evidence.rs`) with a new `NON_ACTOR_TRAILING_FUNCTION_WORDS` const
+  (prepositions + auxiliaries/modals, subset of the leading function-word lexicon, conjunctions excluded —
+  drift-guarded), so a relation subject like `host has`/`host to`/`cache in` consolidates onto its leading
+  agent (`host`/`cache`) the same way `.1b.i` folds `Subordinate extends`→`Subordinate`. **Verified:** eMMC
+  live cascade actors 153→138 (the 4 aux/prep `host` variants merge onto `host`; 29 phantom names removed),
+  `host.isf` strict-clean; **WIRE-BASED-100 = 1.000** (fresh-Pattern new-binary eval — constraints
+  APB/AHB/AXI 6/6·6/6·3/3, relations APB/AHB/AXI/SWD 5/5·6/6·6/6·1/1, temporal 3/3·4/4·3/3); `kg-bench`
+  156/156; `run_ci.sh` GREEN (lib 1704, +2 tests). ADR-0006 (closed-class grammar, corpus-safe: 0 ≥8-port
+  actors are `X<aux/prep>` across all 78 docs). KM `[[agent-trailing-function-word-consolidation]]`;
+  README/book/live-docs synced. Frontier → `.1c.ii` (single-relation noun-phrase precision, deferred).
 - `2026-06-23`: **`.1c` OWNED + PROBE DONE — agent-identity precision for the DENSE-PROSE doc class (Lever E).**
   Fresh-session PNT pivot off `CORPUS-COVERAGE.2` (owner "attack substantive gaps, not easy incremental"): two
   consecutive re-ingests (#27 eMMC, #28 HBM2) each surfaced a NEW substantive lever, so the high-value move is

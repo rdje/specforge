@@ -2509,15 +2509,43 @@ const NON_ACTOR_TRAILING_DISCOURSE_MARKERS: &[&str] = &[
     "even",
 ];
 
-/// `KG-ISF-COMPLETENESS.1b.i` — Class-B trailing-fragment consolidation. The prose subject extractor
-/// sometimes captures a real agent noun with a dangling trailing verb or discourse-adverb
-/// ("Subordinate extends", "decoder also") — the agent is the LEADING noun; the trailing function-class
-/// token is residue. Strip those trailing tokens (a `NON_ACTOR_LEADING_VERB` or a
-/// `NON_ACTOR_TRAILING_DISCOURSE_MARKER`), keeping at least the leading content token, so the relation
-/// re-attributes onto the canonical agent and its stranded relations merge by dedup. Conjunction-led
-/// coordination ("X and Y") is deliberately left for `.1b.iii`. Returns the input unchanged (so the
-/// byte-identical guarantee holds for fragment-free documents) when nothing is stripped. Compares the
-/// last token by its lowercased alphabetic core, mirroring the case-agnostic `.1a` first-token rule.
+/// `KG-ISF-COMPLETENESS.1c.i` — the dense-prose extension of the `.1b.i` trailing strip. On dense
+/// DESCRIPTIVE prose (a JEDEC eMMC/DRAM datasheet, the long combined AMBA AXI+ACE manual) the prose
+/// subject extractor captures a real agent noun with a dangling trailing PREPOSITION or AUXILIARY/modal
+/// — "host has", "host to", "host is", "cache in" — exactly the residue shape `.1b.i` already strips for
+/// verbs/adverbs, just a different closed grammatical class. Stripping it lets the relation re-attribute
+/// onto the leading agent ("host has"/"host to"/"host is" → "host") instead of surviving as separate
+/// phantoms. Like `NON_ACTOR_TRAILING_DISCOURSE_MARKERS` this is a deliberate SUBSET of
+/// `NON_ACTOR_LEADING_FUNCTION_WORDS` (the `trailing_function_words_are_known_leading_non_conjunctions`
+/// drift-guard pins that), and it deliberately EXCLUDES conjunctions: a trailing `and`/`or` is a
+/// coordinated-subject remnant `KG-ISF-COMPLETENESS.1b.iii` splits, never strips (the same exclusion
+/// `.1b.i` documents). The `before`/`after`/`until` prepositions already live in the discourse-marker set,
+/// so they are not duplicated here. Measured corpus-wide safety (`docs/research/agent-identity-prose-class-measurement.md`):
+/// across all 78 persisted IntentIR docs ZERO actors with ≥8 ports are `X <aux/prep>` shaped, so this strip
+/// never renames a real high-participation agent, and the 4 WIRE-BASED-100 gold docs carry no such actor
+/// (their only trailing strips are the pre-existing `.1b.i` verb/adverb cases — byte-identical here).
+/// ADR 0006-safe (parts of speech, not names).
+const NON_ACTOR_TRAILING_FUNCTION_WORDS: &[&str] = &[
+    // prepositions (NOT before/after/until — those are already discourse markers)
+    "of", "to", "for", "with", "by", "from", "as", "at", "on", "in", "into", "onto", "upon",
+    "within", "without", "over", "under", "above", "below", "between", "among", "through",
+    "during", "per", "via", "about", "against", "toward", "towards", //
+    // auxiliaries / copulas / modals
+    "is", "are", "was", "were", "be", "been", "being", "am", "has", "have", "had", "do", "does",
+    "did", "will", "would", "shall", "should", "can", "could", "may", "might", "must",
+];
+
+/// `KG-ISF-COMPLETENESS.1b.i` (+ `.1c.i`) — Class-B trailing-fragment consolidation. The prose subject
+/// extractor sometimes captures a real agent noun with a dangling trailing verb, discourse-adverb
+/// ("Subordinate extends", "decoder also"), or — on dense descriptive prose — a trailing
+/// preposition/auxiliary ("host has", "host to") — the agent is the LEADING noun; the trailing
+/// function-class token is residue. Strip those trailing tokens (a `NON_ACTOR_LEADING_VERB`, a
+/// `NON_ACTOR_TRAILING_DISCOURSE_MARKER`, or a `NON_ACTOR_TRAILING_FUNCTION_WORD`), keeping at least the
+/// leading content token, so the relation re-attributes onto the canonical agent and its stranded
+/// relations merge by dedup. Conjunction-led coordination ("X and Y") is deliberately left for `.1b.iii`.
+/// Returns the input unchanged (so the byte-identical guarantee holds for fragment-free documents) when
+/// nothing is stripped. Compares the last token by its lowercased alphabetic core, mirroring the
+/// case-agnostic `.1a` first-token rule.
 fn consolidate_trailing_fragment(value: &str) -> String {
     let mut tokens: Vec<&str> = value.split_whitespace().collect();
     let original_len = tokens.len();
@@ -2529,7 +2557,8 @@ fn consolidate_trailing_fragment(value: &str) -> String {
             .to_ascii_lowercase();
         if core.is_empty()
             || !(NON_ACTOR_LEADING_VERBS.contains(&core.as_str())
-                || NON_ACTOR_TRAILING_DISCOURSE_MARKERS.contains(&core.as_str()))
+                || NON_ACTOR_TRAILING_DISCOURSE_MARKERS.contains(&core.as_str())
+                || NON_ACTOR_TRAILING_FUNCTION_WORDS.contains(&core.as_str()))
         {
             break;
         }
@@ -15072,6 +15101,79 @@ mod tests {
                 super::NON_ACTOR_LEADING_FUNCTION_WORDS.contains(marker),
                 "{marker:?} must also be a known leading function word"
             );
+        }
+    }
+
+    // ── KG-ISF-COMPLETENESS.1c.i — dense-prose trailing preposition/auxiliary strip ───────────
+    #[test]
+    fn trailing_function_words_are_known_leading_non_conjunctions() {
+        // Drift-guard (mirrors the discourse-marker guard): every trailing-strip function word is a
+        // known LEADING function word (same universal grammar, different structural role), AND none is a
+        // coordinating/subordinating conjunction — a trailing `and`/`or` is a coordinated-subject remnant
+        // that `.1b.iii` splits, never strips. Editing one lexicon without the other fails here.
+        const CONJUNCTIONS: &[&str] = &[
+            "and", "or", "nor", "but", "so", "because", "if", "unless", "although", "though",
+            "whether", "since", "while", "whereas", "yet",
+        ];
+        for word in super::NON_ACTOR_TRAILING_FUNCTION_WORDS {
+            assert!(
+                super::NON_ACTOR_LEADING_FUNCTION_WORDS.contains(word),
+                "{word:?} must also be a known leading function word"
+            );
+            assert!(
+                !CONJUNCTIONS.contains(word),
+                "{word:?} is a conjunction — trailing conjunctions belong to .1b.iii, not the strip"
+            );
+        }
+    }
+
+    #[test]
+    fn trailing_function_word_consolidation_strips_aux_and_prep_to_leading_agent() {
+        // Dense-prose residue: a trailing preposition or auxiliary/modal off a leading agent noun is
+        // stripped so the relation re-attributes onto the real agent. Mirrors the measured eMMC
+        // fragments (`docs/research/agent-identity-prose-class-measurement.md`): the `host *` variants
+        // collapse onto `host`.
+        for (fragment, canonical) in [
+            ("host has", "host"),
+            ("host to", "host"),
+            ("host is", "host"),
+            ("host with", "host"),
+            ("cache in", "cache"),
+            ("device to", "device"),
+            ("Manager must", "Manager"),
+        ] {
+            assert_eq!(
+                super::consolidate_trailing_fragment(fragment),
+                canonical,
+                "{fragment:?} should consolidate to {canonical:?}"
+            );
+            assert_eq!(
+                super::normalize_relation_actor_name(fragment).as_deref(),
+                Some(canonical),
+                "{fragment:?} must re-attribute onto {canonical:?} through the relation-actor seam"
+            );
+        }
+        // A junk-head fragment is normalized (its trailing prep stripped) but NOT recovered to a real
+        // agent — that bare-noun-precision case is the deferred `.1c.ii`, not this strip. Still a strict
+        // improvement (no worse than the pre-strip fragment) and never fabricated.
+        assert_eq!(
+            super::consolidate_trailing_fragment("advantage of"),
+            "advantage"
+        );
+        // A trailing conjunction is STILL not a strip target (coordinated-subject remnant for `.1b.iii`).
+        assert_eq!(
+            super::consolidate_trailing_fragment("Subordinate and"),
+            "Subordinate and"
+        );
+        // Real agents with no trailing residue stay byte-identical — protects WIRE-BASED-100 byte-stability.
+        for keep in [
+            "Manager",
+            "Subordinate",
+            "host",
+            "interconnect",
+            "Exclusive Access Monitor",
+        ] {
+            assert_eq!(super::consolidate_trailing_fragment(keep), keep);
         }
     }
 
