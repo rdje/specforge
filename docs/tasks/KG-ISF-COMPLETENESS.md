@@ -59,7 +59,40 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 
 ## Task Tree
 
-- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface, done), `.2` (ISF lowering-fidelity; `.2a.i` width done, `.2a.ii` direction done — initiator-perspective, owner-authorized, `.2a.iii` module-name HDL-sanitization done — owner-chosen), `.3` (relation-completeness — bar #2), `.4` (behavior/temporal lowering-completeness — bar #5/#6, broader corpus)
+- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface on the AMBA/structured class, done; `.1c` reopens it for the dense-prose class), `.2` (ISF lowering-fidelity; `.2a.i` width done, `.2a.ii` direction done — initiator-perspective, owner-authorized, `.2a.iii` module-name HDL-sanitization done — owner-chosen), `.3` (relation-completeness — bar #2), `.4` (behavior/temporal lowering-completeness — bar #5/#6, broader corpus)
+- ID: `KG-ISF-COMPLETENESS.1c` · Status: `active` (umbrella; measurement-first PROBE DONE `2026-06-23`,
+  read-only, docs-only — splits into sub-leaves) · Goal: **agent-identity precision for the DENSE-PROSE doc
+  class** (Lever E, spun out of `CORPUS-COVERAGE.2` re-ingest #27 JEDEC eMMC: actors exploded to 153/349 vs
+  the structured DRAM #28 HBM2 which CONSOLIDATED 52→38). The `.1a`/`.1b.*` gates are measured clean on the
+  AMBA/structured class but were never measured on dense descriptive prose. **PROBE DONE `2026-06-23`**
+  (read-only over the 78 persisted IntentIR docs; report `docs/research/agent-identity-prose-class-measurement.md`;
+  KM `[[agent-identity-prose-class-measurement]]`):
+  - **It is a relation-subject extraction-precision problem, NOT an actors[] prose-mint problem** — of
+    eMMC's 153 actors, **148 are CONNECTED** (minted from a single `REL-INFERRED` relation subject at the
+    `.1a`/`.1b` seam; the leading token is a noun so `.1a` passes it, and it carries a relation so `.1b.iv`
+    can't touch it); only **5 are pure-unconnected**, and those are the grounded-keep generic role terms
+    `.1b.iv` correctly preserves (0 droppable — `.1b.iv` already does the right thing here).
+  - **A name-SHAPE-only drop is DISPROVEN unsafe** — AMBA's REAL agents (`agent`/`controller`/`decoder`/
+    `device`, `address decoder`, `Exclusive Access Monitor`) occupy the SAME shape classes as eMMC's
+    phantoms (`adapter`, `basic bus`, `actual sector`), so dropping on shape would destroy real AMBA agents
+    and fail WIRE-BASED-100. The fix must be grammatical NORMALIZATION (rewrite, not drop) or
+    participation/grounding, never shape alone ([[feedback_avoid_denylists_prefer_structural]]).
+  - **The doc class is DENSE-PROSE specs, not "non-AMBA"** — the dense AXI+ACE `ihi0022_h_c` (189 actors)
+    and CHI `ihi0050_g` (87) explode too; the terse WIRE-BASED-100 AXI gold `ihi0022_l` (21) is clean.
+  - **Scoped sub-leaves:** **`.1c.i`** — extend the proven `.1b.i` trailing-strip to a closed class of
+    trailing **prepositions + auxiliaries** (`advantage of`→`advantage`, `host has`→`host`, `cache in`→
+    `cache`), the clean landable first gate; **corpus-wide safety already measured CLEAN** — across all 78
+    docs ZERO ≥8-port actors are `X <aux/prep>` shaped, so the strip never renames a real high-participation
+    agent (the `.1a`/`.1b.i` safety bar) and the 4 wire golds carry no such actor (structurally untouched);
+    reach 138 names / ~17 docs. **`.1c.ii`** (deferred-with-trigger) — single-relation noun-phrase phantom
+    precision (the bulk ≈120 of eMMC's 153), needs a participation+grounding discriminator and its OWN
+    measurement before any gate (a rare-but-real agent can also appear in one relation; completeness north
+    star forbids dropping it).
+  - **Gates (probe = no code change):** WIRE-BASED-100 + register/wire golds + `kg-bench` orthogonal by
+    construction; `scripts/check_doctrines.sh` GREEN; book honesty caveat added to
+    `pipeline/evidenceir.md` (the "widen without minting noise" overclaim, corrected for the dense-prose
+    class). **Frontier → `.1c.i`** (trailing aux/prep strip — measurement-clean, landable; best on a fresh
+    session for full sharpness per the high-stakes gate-code rule), then `.1c.ii` measurement.
 - ID: `KG-ISF-COMPLETENESS.0` · Status: `done` (`2026-06-16`, docs-only ownership/scoping slice) · Goal:
   own the north star, define the checkable bar, record the measured baseline, reverse the "defer ISF"
   steer in the live docs. No code (doctrine: own before touching). Memory `project_kg_isf_completeness`.
@@ -483,6 +516,24 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 
 ## Changelog
 
+- `2026-06-23`: **`.1c` OWNED + PROBE DONE — agent-identity precision for the DENSE-PROSE doc class (Lever E).**
+  Fresh-session PNT pivot off `CORPUS-COVERAGE.2` (owner "attack substantive gaps, not easy incremental"): two
+  consecutive re-ingests (#27 eMMC, #28 HBM2) each surfaced a NEW substantive lever, so the high-value move is
+  ACTING on a surfaced lever, not grinding more re-ingests. Read-only measurement over the 78 persisted IntentIR
+  docs (no code change). **Findings:** (1) the eMMC explosion (153 actors/349 rel vs stale 20/23) is a
+  **relation-subject extraction-precision** problem — 148/153 actors are CONNECTED phantoms minted from a single
+  `REL-INFERRED` relation whose leading token is a noun (so `.1a` passes, `.1b.iv` can't touch); only 5 are
+  pure-unconnected (the grounded-keep role terms `.1b.iv` correctly preserves; 0 droppable). (2) A name-SHAPE-only
+  drop is DISPROVEN unsafe — AMBA's real agents share the same shape classes as eMMC's phantoms → a shape drop
+  would fail WIRE-BASED-100; the fix must be grammatical normalization or participation/grounding, never shape.
+  (3) The doc class is DENSE-PROSE (AXI+ACE `ihi0022_h_c` 189 + CHI `ihi0050_g` 87 explode too; terse AXI gold
+  `ihi0022_l` 21 clean). **Scoped:** `.1c.i` (extend `.1b.i` trailing-strip to prepositions+auxiliaries —
+  corpus-wide safety MEASURED CLEAN, 0 ≥8-port actors are `X<aux/prep>` shaped across all 78 docs, wire golds
+  untouched, reach 138 names/~17 docs) = the landable first gate; `.1c.ii` (single-relation noun-phrase phantom
+  precision, the bulk ≈120) deferred-with-trigger pending its own measurement. Report
+  `docs/research/agent-identity-prose-class-measurement.md`; KM `[[agent-identity-prose-class-measurement]]`; book
+  honesty caveat added to `pipeline/evidenceir.md`. `check_doctrines.sh` GREEN; `kg-bench`/WIRE-BASED-100
+  orthogonal (no extraction change). Frontier → `.1c.i`.
 - `2026-06-18`: **`.2a.ii` DONE — CODE (OWNER-AUTHORIZED): initiator-perspective signal DIRECTION emission.** The
   owner's `2026-06-17` steer (AskUserQuestion: "Build it, initiator perspective") satisfied the `.2a` re-open
   trigger. The emitted `.isf` interface now lowers grounded actor-relative direction from the protocol's INITIATOR

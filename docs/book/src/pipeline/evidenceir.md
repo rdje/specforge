@@ -143,6 +143,24 @@ The net effect is an agent surface that names every real agent once and connects
 prose noise removed — and the four wire-based reference specs stay byte-for-fact identical, so the clean-up never
 costs a real fact.
 
+#### Where this is still being sharpened: dense descriptive prose
+
+These clean-ups were designed and measured on protocol specs that *define* their behaviour tersely — "the
+Subordinate drives HRESP". A measurement across the whole local corpus (`docs/research/agent-identity-prose-class-measurement.md`)
+found one doc class where the same subject-reading is noisier than the clean-ups yet catch: **dense,
+descriptive prose** — a JEDEC eMMC or DRAM datasheet, or the long combined AMBA AXI+ACE manual, where a
+single explanatory sentence ("take *advantage of* the BACKGROUND operation", "the *basic bus* protocol") can
+leave a noun *phrase* sitting where a clean agent name should be. The honest current state is that such a spec
+can still surface extra phrase-shaped "agents" in its model. Two things keep this bounded and visible rather
+than hidden: it never reaches the emitted `.isf` (the adapter lowers signals and behaviours, not the raw actor
+list), and it is being closed the same principled way as everything above — by *grammar*, not a list of
+forbidden words. The first, measured-safe step extends the trailing-scrap rule to a closed class of trailing
+prepositions and auxiliaries ("host *has*" → "host", "cache *in*" → "cache"), which a corpus-wide check
+confirms never touches a single real, heavily-connected agent. The deeper, rarer phrase-fragment case is held
+as an explicit, scoped open item rather than papered over — because the alternative, dropping anything that
+merely *looks* like a phrase, would also throw away genuine one-word agents like an AMBA *decoder* or
+*controller*, and the tool would rather stay complete than look tidy.
+
 ## Typical evidence-level failure modes
 
 - field tables leaking fake signals
