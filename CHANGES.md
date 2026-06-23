@@ -1,3 +1,9 @@
+### CORPUS-COVERAGE.2 — re-ingest #31: AMBA CHI C2C 2026 variant (`ihi0098_a_b`) — marquee message-field refresh (0→143)
+PNT slice (binary current). `DOCLING_DEVICE=cpu ingest` (122pp / 96 visual / 0 residuals; normalized bundle RESTORED) → deterministic cascade.
+- **Result:** **`message_field_records` 0 → 143 across 12 containers** — sibling of #29's 0→149, confirming the CHI-C2C family is a genuine marquee (the `.10` families fire on CHI packet/flit field tables absent in the stale pre-`.10` evidence). transactions 2→3 (recognition-only); the lone stale `actor_signal_relations` 1→0 (a fragment relation dropped by the current agent-identity gates — CHI is a coherency/message protocol, honest 0 per `KG-ISF-COMPLETENESS.3`); conditional_rules 25 held; 0 registers.
+- **`.isf`:** `agent.isf` renderable (69 ports / 3 enums / 0 rules); **FSMGen `--strict --check --json` success / 0 diagnostics**. Same surfaced residuals as #29 (generic-`TABLE` mega-enum + signal-acronym noise — not fixed in-slice).
+- After #31: 31 re-ingested, **25 real chip-spec docs still normalized-missing**. No code change → oracles orthogonal; `generated/` git-ignored; `check_doctrines.sh` GREEN.
+
 ### CORPUS-COVERAGE.2 — re-ingest #30: RISC-V AIA (`1_0_2025_03_12`) — bundle-restoration + confirmation
 PNT slice (continuing the `.2` sweep; binary already current from #29, no rebuild). `DOCLING_DEVICE=cpu ingest` (89pp / 105 visual / 0 residuals; normalized bundle RESTORED) → deterministic cascade.
 - **Result:** all deterministic surfaces byte-near-identical to the retained-`source_ir` evidence (statements 1193, `register_records` 0, `message_field_records` 0, `actor_signal_relations` 0, `conditional_rules` 39 — all held; intent 8 actors / 0 rel / 0 txns) — the #21/#22 "already current-binary-equivalent" class. Re-ingest value = **normalized-bundle restoration + current-binary confirmation**.
