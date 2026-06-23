@@ -90,8 +90,13 @@ $staged_tasks
 EOF
 
 # A checked / unchecked checklist box mentioning a category keyword.
-checked()   { printf '%s\n' "$leaf_text" | grep -Eiq "^[[:space:]]*[-*][[:space:]]*\[[xX]\][[:space:]].*($1)"; }
-unchecked() { printf '%s\n' "$leaf_text" | grep -Eiq "^[[:space:]]*[-*][[:space:]]*\[[[:space:]]\][[:space:]].*($1)"; }
+# Use a here-string, NOT `printf … | grep -q`: under `set -o pipefail` a `grep -q` that matches early
+# closes the pipe, `printf` then dies with SIGPIPE (141), and pipefail propagates that as a FALSE
+# "no match" on a large `leaf_text` (DOCTRINE-ENFORCEMENT-ADOPT.2 — this deterministically false-blocked
+# code commits once the staged task files grew past the ~64 KB pipe buffer). A here-string has no pipe,
+# so no SIGPIPE; bash-3.2-safe.
+checked()   { grep -Eiq "^[[:space:]]*[-*][[:space:]]*\[[xX]\][[:space:]].*($1)" <<<"$leaf_text"; }
+unchecked() { grep -Eiq "^[[:space:]]*[-*][[:space:]]*\[[[:space:]]\][[:space:]].*($1)" <<<"$leaf_text"; }
 
 # SpecForge tool-output signatures that must BACK the ticked boxes.
 DIAGNOSIS_SIG='validate|--dry-run|adapt --target isf|blocking_reason|--strict --check|kg-bench|kg_quality|\binspect\b|\.rs:[0-9]+|rationale:|document_class|evidence_[a-z_]+|semantic_[a-z_]+|intent_[a-z_]+|measure_isf_completeness|[0-9]+ *(->|→) *[0-9]+'
@@ -104,7 +109,7 @@ add_fail() { fails="$fails
 # Required box 1 — ROOT CAUSE (WHY + WHERE) ticked + a SpecForge diagnosis signature present.
 if   unchecked 'root cause|why ?\+ ?where|\bwhy\b|diagnos'; then add_fail "ROOT CAUSE box is present but UNTICKED ([ ]) — the cause is not yet established."
 elif ! checked 'root cause|why ?\+ ?where|\bwhy\b|diagnos'; then add_fail "ROOT CAUSE (WHY+WHERE) box is MISSING/unticked from the acceptance checklist."
-elif ! printf '%s\n' "$leaf_text" | grep -Eq "$DIAGNOSIS_SIG"; then
+elif ! grep -Eq "$DIAGNOSIS_SIG" <<<"$leaf_text"; then
   add_fail "ROOT CAUSE box is ticked but NOT backed by a SpecForge tool signature (validate finding/metric, adapt blocking_reason, kg-bench diagnostic, cargo test, --dry-run measurement, file:line, N->M)."
 fi
 
@@ -116,7 +121,7 @@ fi
 # Required box 3 — NO REGRESSION ticked + a SpecForge oracle signature present.
 if   unchecked 'no.?regress|regression|orthogonal'; then add_fail "NO REGRESSION box is present but UNTICKED — regressions / gold orthogonality are not yet cleared."
 elif ! checked 'no.?regress|regression|orthogonal'; then add_fail "NO REGRESSION box is MISSING/unticked from the acceptance checklist."
-elif ! printf '%s\n' "$leaf_text" | grep -Eiq "$NOREGRESS_SIG"; then
+elif ! grep -Eiq "$NOREGRESS_SIG" <<<"$leaf_text"; then
   add_fail "NO REGRESSION box is ticked but NOT backed by a SpecForge oracle signature (kg-bench 156/156, WIRE-BASED-100 1.000, byte-identical golds, run_ci / cargo green)."
 fi
 
