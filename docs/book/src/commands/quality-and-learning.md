@@ -626,6 +626,68 @@ the three remaining false positives, each a condition read as an obligation,
 are gone, and recall stayed intact. *Authoritative tracking:*
 `docs/tasks/EXTRACTION-QUALITY-GAUGE.md`.
 
+## `nli-verify`
+
+```text
+nli-verify <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--model <name>]
+```
+
+This is the **semantic** grounding gate — the natural sibling of
+`extract-constraints-llm` above. Rule-based grounding asks a *string* question
+(does the constraint's signal name appear near its source text?), which catches a
+model inventing a signal out of thin air but misses a subtler and more common
+error: reading a *condition* as an *obligation*. "*`PBUSER` must be valid **when**
+`PSEL`, `PENABLE`, and `PREADY` are asserted*" does not oblige `PSEL` — `PSEL`
+being asserted is the *situation*, and the obligation is on `PBUSER`. A string
+match sees "`PSEL`" and "asserted" and waves it through.
+
+`nli-verify` closes that gap with **Natural Language Inference**: it treats each
+constraint's source sentence as the *premise* and the constraint-as-a-claim as the
+*hypothesis*, and asks a **text** model one well-posed question — *does the source
+actually support this claim?* A claim that adds, changes, contradicts, or turns a
+condition into an obligation is **not entailed**, and is reported as a likely
+hallucination / residual candidate. It carries any stated condition into the claim
+("`PSTRB` must be LOW **for read transfers**"), so a conditional constraint is
+judged fairly rather than failed for naming its trigger.
+
+Each run reads an `EvidenceIR` and prints: the constraint count; the list of
+**not-entailed** claims (each with its constraint id, subject signal, claim text,
+and source sentence — the items worth a second look); a calibrated NLI-oracle
+**split-conformal** line (a tier-agreement accept threshold with its coverage and
+empirical error); and a one-line **extraction-quality gauge** summary. Run on the
+real AMBA APB spec it flags genuinely mis-extracted constraints — protocol *states*
+(`ACCESS`), *width parameters*, the *clock*, and *condition* signals that were
+never the obligation's subject.
+
+**It only ever strengthens, and it is CI-safe.** A confident "not entailed" flags a
+claim; a clear "entailed" keeps it; and if the model is unavailable or its answer
+is unclear, the gate **abstains** — it leaves the existing rule-based grounding in
+charge, so a model outage can never silently delete what SpecForge extracted. It
+uses a *text* model (entailment is pure language reasoning — negation, scope,
+condition-vs-obligation — not vision), rides the same provider plumbing as the
+other LLM steps, and honors a test hook that mocks the model, so the build and the
+test suite never depend on a running model. `--vlm-provider skip` (the default-safe
+no-op) abstains on every claim and leaves the artifact untouched; `--model <name>`
+overrides the default text model.
+
+**The measurement survives the terminal.** Unless the pass labeled *nothing*,
+`nli-verify` also **persists** what it measured into the `EvidenceIR` as the
+document's `extraction_quality_gauge`: which model judged, how many constraints
+were checked, how many the source entailed, how many it did *not*, how many were
+abstained, and the exact ids of the not-entailed constraints. A *vacuous* pass
+(every verdict abstained — e.g. the provider was down) is deliberately **not**
+persisted, so it can never overwrite a real prior gauge with empty data. `converge`
+reuses the same measurement as its standing post-stability gauge, and `validate` /
+`project-validation` then report it provider-free (the
+`extraction_quality_not_entailed_pct` surface). To make the gate *active* rather
+than a report — demoting any non-entailed contract into the residual decisions
+during IntentIR construction — run `specforge intent semantic_ir.json --nli-verify`
+instead; demoted, not deleted, so even a wrong verdict costs a review rather than a
+lost fact, and `validate` then surfaces the count as `nli_demoted_contracts`.
+*Authoritative tracking:* `docs/tasks/NLI-ENTAILMENT-VERIFIER.md`,
+`docs/tasks/NLI-INTENT-GATE.md`, `docs/tasks/NLI-GATE-METRIC.md`,
+`docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.0`).
+
 ## `entity-type`
 
 ```text

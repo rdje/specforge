@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `BOOK-COMMAND-COVERAGE`
-- Status: `done` (CLOSED `2026-06-14` — acceptance criteria met: every canonical command now has book coverage)
+- Status: `done` (re-closed `2026-06-24` after `.2`; first closed `2026-06-14`. `.2` raised the bar from "≥1 substantive treatment anywhere" to "every command has a dedicated section in the Commands chapter", and added the lone missing one — `nli-verify`)
 - Roadmap lane: `R0` (continuity / doc-alignment doctrine; cross-cuts `R15e`)
 - Created: `2026-06-14`
-- Last updated: `2026-06-14`
+- Last updated: `2026-06-24`
 - Owner: repo-local workflow
 
 ## Goal
@@ -25,8 +25,12 @@ invocation, behavior, and an honest boundary.
   `FULL-PAGE-INTENT-CAPTURE` not reflected in the R-lane structure; R15e status
   understated) — that is recorded as an Open Question and a candidate sibling
   tree, not this tree's scope.
-- Does not re-document commands already covered (`nli-verify`,
-  `eval-extraction`, `audit-extraction` were verified present).
+- Does not re-document commands already covered (`eval-extraction`,
+  `audit-extraction` were verified present). *(Revised by `.2`: `nli-verify` was
+  judged "covered" by `.1`'s ≥1-mention bar — its substantive treatment is in
+  `architecture-rationale.md` — but it lacked a section in the Commands chapter
+  itself, so `.2` added one. The richer narrative in `architecture-rationale.md`
+  stays; the new section is the Commands-reference entry that points to it.)*
 
 ## Acceptance Criteria
 
@@ -45,7 +49,31 @@ invocation, behavior, and an honest boundary.
 - ID: `BOOK-COMMAND-COVERAGE`
   Status: `done`
   Goal: mdBook command surface is locked to the CLI with zero drift.
-  Children: `BOOK-COMMAND-COVERAGE.1`
+  Children: `BOOK-COMMAND-COVERAGE.1`, `BOOK-COMMAND-COVERAGE.2`
+
+- ID: `BOOK-COMMAND-COVERAGE.2`
+  Status: `done` (`2026-06-24`, fresh-session PNT slice)
+  Goal: Add a **dedicated Commands-chapter section** for `nli-verify` in
+        `docs/book/src/commands/quality-and-learning.md`, beside its sibling
+        `extract-constraints-llm`. Rationale: `.1`'s bar was "≥1 substantive
+        treatment anywhere" — under which `nli-verify` counted as covered because
+        of its rich narrative in `architecture-rationale.md` (the honesty-layer
+        section). But it was the **lone quality command without a section in the
+        Commands reference itself** (14 of 15 quality commands had one), so a user
+        browsing Commands → "Quality, Validation, And Learning" to look up how to
+        run it found nothing. `.2` raises the bar to "every command has a
+        dedicated Commands-chapter section" and closes that navigability gap.
+  Acceptance: `## nli-verify` section present in `commands/quality-and-learning.md`
+        with invocation syntax, behavior, flags, the CI-safe/abstain honesty
+        boundary, and the persisted-gauge + active-gate (`intent --nli-verify`)
+        cross-links; facts cross-checked against `commands/nli_verify.rs` +
+        `cli.rs`; `mdbook build docs/book` succeeds; the chapter's quality-command
+        section count rises 14 → 15.
+  Verification: `mdbook build docs/book` exit 0; `grep '^## ' …quality-and-learning.md`
+        shows `## nli-verify` (15 sections total); command facts (flags, persisted
+        `extraction_quality_gauge`, skip=no-op, text-model, demoted-contracts)
+        cross-checked vs `crates/specforge/src/commands/nli_verify.rs`.
+  Commit: `BOOK-COMMAND-COVERAGE.2 — dedicated nli-verify section in the Commands chapter`
 
 - ID: `BOOK-COMMAND-COVERAGE.1`
   Status: `done`
@@ -66,7 +94,7 @@ invocation, behavior, and an honest boundary.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| — | (none) | — | Tree CLOSED — every canonical command now has book coverage. |
+| — | (none) | — | Tree RE-CLOSED `2026-06-24` — every canonical command now has a dedicated Commands-chapter section (`.2` added `nli-verify`, the last one whose section lived only in the Architecture chapter). |
 
 Book method-doc close-rule (`BOOK-METHOD-DOC`): satisfied by construction — this
 tree's deliverable *is* user-facing book content (the two command sections in
@@ -103,12 +131,14 @@ capability; the task-tree file remains the machine-tracked authority.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-06-14` | `BOOK-COMMAND-COVERAGE.1` | `mdbook build docs/book`; book grep (`entity-type`/`extract-conditions` ≥1 file); `check_memory_architecture.sh`; command facts cross-checked vs source | green (build ok; both commands now covered; gate ok; docs-only, lib unchanged 1611) |
+| `2026-06-24` | `BOOK-COMMAND-COVERAGE.2` | `mdbook build docs/book` (exit 0); `grep '^## ' commands/quality-and-learning.md` → `## nli-verify` present (14→15 sections); facts cross-checked vs `commands/nli_verify.rs` + `cli.rs`; `check_doctrines.sh` | green (build ok; dedicated section added; doctrines PASS; docs-only, lib unchanged) |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `BOOK-COMMAND-COVERAGE.1` | `BOOK-COMMAND-COVERAGE.1 — document entity-type + extract-conditions in the mdBook` | docs-only; closes the verified 2-command book gap |
+| `BOOK-COMMAND-COVERAGE.2` | `BOOK-COMMAND-COVERAGE.2 — dedicated nli-verify section in the Commands chapter` | docs-only; the lone quality command lacking a Commands-chapter section now has one |
 
 ## Changelog
 
@@ -119,3 +149,15 @@ capability; the task-tree file remains the machine-tracked authority.
   `commands/quality-and-learning.md`; book builds; gap closed. Tree CLOSED
   (acceptance criteria met). ROADMAP lane-hierarchy drift recorded as a
   spun-out follow-up (separate tree), explicitly out of scope here.
+- `2026-06-24`: Tree RE-OPENED + `.2` done (fresh-session PNT slice, surfaced by
+  the session-start mdBook survey). A book grep confirmed `nli-verify` — though
+  substantively covered in `architecture-rationale.md` (so `.1` correctly counted
+  it as covered under the ≥1-mention bar) — was the **only** quality command
+  without a dedicated section in the Commands chapter (14 of 15 had one). `.2`
+  raised the bar to "every command has a dedicated Commands-chapter section" and
+  added `## nli-verify` to `commands/quality-and-learning.md` (purpose, invocation,
+  flags, the CI-safe/abstain + persisted-gauge + active-gate honesty boundary),
+  facts cross-checked against `commands/nli_verify.rs` + `cli.rs`; `mdbook build`
+  green; section count 14 → 15. Tree RE-CLOSED. The richer narrative in
+  `architecture-rationale.md` is unchanged — the new entry is the Commands-reference
+  pointer to it.
