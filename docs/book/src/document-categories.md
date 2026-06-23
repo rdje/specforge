@@ -70,8 +70,8 @@ SpecForge now lowers into it (`DOC-INTENT-TAXONOMY.4a.ii`):
   (repeated) field names, and overlapping or duplicate-named registers — and they stay in the IntentIR map and
   are summarized in the adapter's `residual_decisions`; nothing is fabricated.
 - **In-memory structures are captured but not carried forward (still open).** Packet, flit, descriptor, queue,
-  and page-table layouts — **1,220 fields** across 11 documents (NVMe's command structures, AMD-IOMMU's tables,
-  CHI/DTI/CHI-C2C/CCIX message fields) — are recovered during extraction, but they currently stop one stage
+  and page-table layouts — **1,235 fields** across 12 documents (NVMe's command structures, AMD-IOMMU's and
+  Intel VT-d's tables, CHI/DTI/CHI-C2C/CCIX message fields) — are recovered during extraction, but they currently stop one stage
   short of the canonical `IntentIR`, so they are not yet lowered. For the message-based coherent protocols,
   those flit fields are the real intent of the document.
 
