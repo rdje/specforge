@@ -138,6 +138,19 @@ The emitter performs a recursive tree walk:
 9. Emit `(priority <higher> over <lower>)` — one per priority pair
 10. Close with `)`
 
+The actor-local symbol surface — `(types …)`, `(enums …)`, `(constants …)` — is emitted near the top
+(before the clock). An **enum is only emitted when every member value is something FSMGen can accept as
+written.** Concretely, FSMGen's package-symbol parser rejects a *bare token of only binary digits (`0`/`1`)
+with four or more characters* — it reads it as an un-qualified binary literal and refuses it (a `1000` token
+must be written `4'b1000` or `16'd1000` to be accepted). That shape shows up when a document's table lists
+*binary codes* (e.g. `0000, 0001, …, 1111`) and the extractor captured them as plain numbers — so a member
+value like `1000` is really binary 8, mis-read as the decimal one-thousand. SpecForge cannot recover the lost
+radix without guessing, so rather than emit a literal FSMGen rejects (which would break the *entire* `.isf`),
+the whole enum is **held out and recorded as an `isf_enum_value_literal_<name>` residual** on the adapter
+artifact — an honest "this enum could not be lowered faithfully", never a fabricated value. A legitimate
+enum — any value containing a `2`–`9` digit (`999`, `1020`, `69152`), a short binary value (`0`, `1`, `111`),
+or an already-qualified literal (`4'b1000`) — is always emitted unchanged.
+
 ## Register reset values
 
 When a chip-spec PDF documents a register map, SpecForge captures each register's

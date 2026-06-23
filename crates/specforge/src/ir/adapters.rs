@@ -346,6 +346,11 @@ fn build_isf_adapter_artifact(
     // intent-loss is visible in the artifact rather than silently dropped — the full field map
     // always remains in IntentIR register_records; no bit position is fabricated.
     residual_decisions.extend(isf_model.storage_field_residuals().iter().cloned());
+    // Enums held out of the `.isf` by the member-value-width gate (KG-ISF-COMPLETENESS.2a.iv)
+    // — a mega-conflated / over-width enum whose member literal FSMGen would reject — are surfaced
+    // the same way, so the dropped enum surface is explicit rather than silently lost; no radix is
+    // fabricated and no value is truncated.
+    residual_decisions.extend(isf_model.enum_residuals().iter().cloned());
 
     Ok(AdapterArtifact {
         stage: IrStage::IsfAdapter,

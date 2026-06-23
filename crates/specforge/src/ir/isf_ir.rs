@@ -347,14 +347,11 @@ impl IsfIr {
             .collect()
     }
 
-    /// The `(enums …)` families `render()` actually emits: those whose
-    /// every member value is a whitespace-free scalar.
+    /// The `(enums …)` families `render()` actually emits (see [`isf_enum_is_emittable`]).
     fn emitted_enums(&self) -> Vec<&IsfEnum> {
         self.enums
             .iter()
-            .filter(|e| {
-                !e.members.is_empty() && e.members.iter().all(|(_, v)| is_safe_isf_scalar_value(v))
-            })
+            .filter(|e| isf_enum_is_emittable(e))
             .collect()
     }
 
@@ -367,6 +364,25 @@ impl IsfIr {
     /// Number of `(enums …)` families the emitter actually renders.
     pub(crate) fn emitted_enum_count(&self) -> usize {
         self.emitted_enums().len()
+    }
+
+    /// Residual packets for enums DROPPED by the value-width gate (KG-ISF-COMPLETENESS.2a.iv):
+    /// an enum every member of which is a safe scalar (so the pre-`.2a.iv` emitter WOULD have
+    /// emitted it) but at least one bare-decimal member overflows the enum's declared width —
+    /// i.e. FSMGen would reject the literal. The whole enum is held out of the `.isf` and
+    /// recorded here so the dropped surface is explicit, not silently lost. Enums dropped for the
+    /// pre-existing reason (an operator-expression member value) keep their prior silent-exclusion
+    /// behaviour, so those docs' adapter residual surface is byte-identical.
+    pub(crate) fn enum_residuals(&self) -> Vec<ResidualDecisionPacket> {
+        self.enums
+            .iter()
+            .filter(|e| {
+                !e.members.is_empty()
+                    && e.members.iter().all(|(_, v)| is_safe_isf_scalar_value(v))
+                    && !isf_enum_is_emittable(e)
+            })
+            .map(enum_value_literal_residual_packet)
+            .collect()
     }
 
     pub(crate) fn render(&self) -> String {
@@ -1776,6 +1792,35 @@ fn is_safe_isf_scalar_value(value: &str) -> bool {
     !value.is_empty() && !value.chars().any(char::is_whitespace)
 }
 
+/// True when an enum-member value is emittable to FSMGen exactly as the emitter renders it
+/// (KG-ISF-COMPLETENESS.2a.iv). FSMGen's package-symbol parser (the pinned `subs/fsmgen`) treats a
+/// BARE token of only binary digits (`0`/`1`) with length >= 4 as a binary-style literal and REJECTS
+/// it un-qualified — it must be width/radix-qualified (`4'b1000`). Verified by a value sweep against
+/// the real FSMGen: `1000`/`1010`/`1111`/`10000` fail, while `0`/`1`/`10`/`111` (<=3 binary digits)
+/// and `999`/`1020`/`69152` (any value containing a 2-9 digit) all pass at ANY magnitude. Such a
+/// value is a BINARY CODE the extractor mis-read as a bare decimal (HBM2's `TABLE.REPAIR_LANE`
+/// `1000`/`1111`); the emitter renders values verbatim and cannot recover the true radix without
+/// fabricating, so an enum carrying one is dropped to a residual rather than emitted invalid. This
+/// predicate is FALSE ONLY for that un-emittable binary-token shape — every legitimate decimal value
+/// passes, so a currently-clean enum stays byte-identical. Universal token grammar, no name list (ADR 0006).
+fn isf_enum_value_is_emittable_literal(value: &str) -> bool {
+    !(value.len() >= 4 && value.bytes().all(|b| b == b'0' || b == b'1'))
+}
+
+/// An enum is EMITTABLE iff it is non-empty AND every member value is a whitespace-free scalar that
+/// FSMGen accepts as the emitter renders it (see [`isf_enum_value_is_emittable_literal`]). The gate
+/// (KG-ISF-COMPLETENESS.2a.iv) holds out a mega-conflated enum that carries a bare binary-looking
+/// token — the HBM2 `TABLE` (binary codes the extractor mis-read as decimals) — rather than emitting
+/// a literal FSMGen's package-symbol contract rejects. A well-formed enum (every value already
+/// FSMGen-emittable, as every currently-clean doc's enums are) is byte-identical to the pre-`.2a.iv`
+/// output.
+fn isf_enum_is_emittable(e: &IsfEnum) -> bool {
+    !e.members.is_empty()
+        && e.members
+            .iter()
+            .all(|(_, v)| is_safe_isf_scalar_value(v) && isf_enum_value_is_emittable_literal(v))
+}
+
 fn render_isf_control_expression(expr: &ControlExpressionRecord) -> String {
     match expr {
         ControlExpressionRecord::Literal { literal } => literal.clone(),
@@ -2667,6 +2712,53 @@ fn value_width_residual_packet(
                 ),
                 downstream_impact:
                     "The clause stays out of the `.isf` until the value or its target signal is corrected."
+                        .to_string(),
+            },
+        ],
+    }
+}
+
+/// Residual for an enum HELD OUT of the `.isf` by the value-literal gate (KG-ISF-COMPLETENESS.2a.iv):
+/// every member is a safe scalar but ≥1 value is a bare binary-looking token (only `0`/`1` digits,
+/// length >= 4), which FSMGen's package-symbol parser rejects un-qualified (it must be
+/// width/radix-qualified). The emitter cannot qualify it without fabricating a radix (the value is a
+/// binary code mis-read as a decimal in a mega-conflated enum), so the whole enum is dropped (honest
+/// residual over fabrication) and surfaced here.
+fn enum_value_literal_residual_packet(e: &IsfEnum) -> ResidualDecisionPacket {
+    ResidualDecisionPacket {
+        packet_id: format!("isf_enum_value_literal_{}", sanitize_isf_name(&e.type_name)),
+        question: format!(
+            "Enum `{}` has a member value FSMGen cannot accept un-qualified: how should it lower?",
+            e.type_name
+        ),
+        why_unresolved: format!(
+            "Enum `{}` carries {} member(s) but at least one value is a bare binary-looking token \
+             (only 0/1 digits, length >= 4 — e.g. `1000`/`1111`), which FSMGen's package-symbol parser \
+             rejects un-qualified (it must be width/radix-qualified such as `4'b1000`). Such a value is \
+             a binary code mis-read as a decimal in a mega-conflated enum, so the emitter cannot \
+             qualify it without fabricating a radix; the whole enum was DROPPED from the emitted `.isf` \
+             rather than emitting an invalid literal. Recorded here so the dropped surface is explicit, not silently lost.",
+            e.type_name,
+            e.members.len()
+        ),
+        automation_confidence: AutomationConfidence::Low,
+        candidate_interpretations: vec![
+            CandidateInterpretation {
+                interpretation_id: "split_conflated_enum".to_string(),
+                description:
+                    "Split the conflated enum upstream so each source table is its own enum with values fitting its true width."
+                        .to_string(),
+                downstream_impact:
+                    "Each well-formed enum would then lower — needs extraction-side enum/table separation."
+                        .to_string(),
+            },
+            CandidateInterpretation {
+                interpretation_id: "preserve_radix".to_string(),
+                description:
+                    "Preserve the document's value radix (e.g. binary codes) at extraction so members lower as width-qualified literals."
+                        .to_string(),
+                downstream_impact:
+                    "The members would lower as `W'bXXXX` literals — needs the radix captured upstream, never guessed in the emitter."
                         .to_string(),
             },
         ],
@@ -4491,6 +4583,82 @@ mod tests {
         assert!(out.contains("(mode (IDLE 0) (BUSY 1))"), "{out}");
         assert!(!out.contains("SKIP"), "{out}");
         assert!(!out.contains("(bad"), "{out}");
+    }
+
+    #[test]
+    fn binary_looking_enum_value_is_excluded_and_recorded_as_residual() {
+        // KG-ISF-COMPLETENESS.2a.iv: FSMGen rejects a BARE token of only 0/1 digits with
+        // length >= 4 (a binary literal un-qualified). An enum carrying such a value — HBM2's
+        // mega-conflated `TABLE` whose binary codes (1000/1111) were mis-read as decimals — is
+        // held out of the `.isf` and recorded as a residual; a well-formed enum (999 has a 9,
+        // 0 is short) is emitted byte-identically.
+        let mut isf = minimal_isf();
+        isf.types = vec![
+            IsfTypeDef {
+                name: "mode".into(),
+                bits: 2,
+            },
+            IsfTypeDef {
+                name: "table".into(),
+                bits: 6,
+            },
+        ];
+        isf.enums = vec![
+            // Well-formed: small bare decimals FSMGen accepts -> emitted, byte-identical.
+            IsfEnum {
+                type_name: "mode".into(),
+                members: vec![("IDLE".into(), "0".into()), ("BUSY".into(), "999".into())],
+            },
+            // Un-emittable: a bare decimal >= 1000 (binary code mis-read as decimal) -> dropped.
+            IsfEnum {
+                type_name: "table".into(),
+                members: vec![
+                    ("A".into(), "0".into()),
+                    ("B".into(), "1000".into()),
+                    ("C".into(), "1111".into()),
+                ],
+            },
+        ];
+        assert_eq!(isf.emitted_enum_count(), 1);
+        let out = isf.render();
+        assert!(out.contains("(mode (IDLE 0) (BUSY 999))"), "{out}");
+        assert!(!out.contains("(table"), "{out}");
+        let residuals = isf.enum_residuals();
+        assert_eq!(residuals.len(), 1);
+        assert!(
+            residuals[0].packet_id.contains("enum_value_literal"),
+            "{}",
+            residuals[0].packet_id
+        );
+        assert!(
+            residuals[0].why_unresolved.contains("DROPPED"),
+            "{}",
+            residuals[0].why_unresolved
+        );
+        assert_eq!(residuals[0].candidate_interpretations.len(), 2);
+    }
+
+    #[test]
+    fn well_formed_enum_boundary_and_radix_tokens_still_emit() {
+        // Guard the byte-identical invariant: a bare decimal AT the boundary (999) stays
+        // emitted; a width/radix-qualified token is accepted at ANY magnitude (16'd1000) and
+        // is never dropped; no residual recorded.
+        let mut isf = minimal_isf();
+        isf.types = vec![IsfTypeDef {
+            name: "k".into(),
+            bits: 16,
+        }];
+        isf.enums = vec![IsfEnum {
+            type_name: "k".into(),
+            members: vec![
+                ("LIM".into(), "999".into()),
+                ("BIG".into(), "16'd1000".into()),
+            ],
+        }];
+        assert_eq!(isf.emitted_enum_count(), 1);
+        assert!(isf.enum_residuals().is_empty());
+        let out = isf.render();
+        assert!(out.contains("(k (LIM 999) (BIG 16'd1000))"), "{out}");
     }
 
     #[test]

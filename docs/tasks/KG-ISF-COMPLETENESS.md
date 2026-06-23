@@ -59,7 +59,7 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 
 ## Task Tree
 
-- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface on the AMBA/structured class, done; `.1c` reopens it for the dense-prose class), `.2` (ISF lowering-fidelity; `.2a.i` width done, `.2a.ii` direction done — initiator-perspective, owner-authorized, `.2a.iii` module-name HDL-sanitization done — owner-chosen), `.3` (relation-completeness — bar #2), `.4` (behavior/temporal lowering-completeness — bar #5/#6, broader corpus)
+- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface on the AMBA/structured class, done; `.1c` reopens it for the dense-prose class), `.2` (ISF lowering-fidelity; `.2a.i` width done, `.2a.ii` direction done — initiator-perspective, owner-authorized, `.2a.iii` module-name HDL-sanitization done — owner-chosen, `.2a.iv` enum value-literal emit-gate done — Lever F, HBM2 strict-clean), `.3` (relation-completeness — bar #2), `.4` (behavior/temporal lowering-completeness — bar #5/#6, broader corpus)
 - ID: `KG-ISF-COMPLETENESS.1c` · Status: `active` (umbrella; PROBE DONE `2026-06-23`; `.1c.i` LANDED,
   `.1c.ii` deferred-as-bounded-residual — the clean structural win is shipped, the remainder is
   upstream-NLP-gated) · Goal: **agent-identity precision for the DENSE-PROSE doc
@@ -501,6 +501,59 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   the existing sanitize test extended — no count change); `kg-bench` 156/156; WIRE-BASED-100 orthogonal
   (emitter-only); ADR-0006; allowlist-not-denylist (`[[feedback_avoid_denylists_prefer_structural]]`). KM card
   `isf-module-name-hdl-sanitization`; book `pipeline/isf-adapter.md`. `[[project_kg_isf_completeness]]`.
+- ID: `KG-ISF-COMPLETENESS.2a.iv` · Status: `done` (`2026-06-23`, measurement-first; LANDED + verified) ·
+  Goal: **gate ISF enum emission on member-value FSMGen-emittability so a mega-conflated binary-as-decimal
+  enum no longer breaks the WHOLE `.isf`.** Surfaced by `CORPUS-COVERAGE.2` (re-ingest #28, JEDEC HBM2 DRAM —
+  "Lever F"): FSMGen `--strict --check` rejects the whole file with `Package … contains '+enums' entry for
+  enum member 'TABLE.REPAIR_LANE_8' with value token '1000', but package symbol values currently must resolve
+  to literal scalar values such as '0', '8'3', '8'hA5'`. **MEASUREMENT-FIRST CORRECTION (the discipline
+  catching a wrong hypothesis):** the initial root-cause hypothesis was "count-derived enum width overflow"
+  (`IsfIr::from_intent_ir` `ir/isf_ir.rs:878` sets the backing `(type … (bits B))` width from member COUNT,
+  `ceil(log2(count))`, so a value bigger than `2^B` overflows). A width-fits gate was coded — and a
+  **before/after `.isf` diff DISPROVED it**: it wrongly dropped legitimate AXI `AWATOP`(49)/`AWSNOOP`/`ARSNOOP`
+  and AHB `TABLE`(64) enums, and a **value sweep against the real FSMGen** showed FSMGen ACCEPTS bare decimals
+  of ANY magnitude (`999`/`1020`/`69152` pass — GIC-600's `TABLE` has `69152` and is strict-clean) — so width
+  is NOT the rule. The TRUE rule: FSMGen's package-symbol parser rejects a **BARE token of only binary digits
+  (`0`/`1`) with length >= 4** (it treats it as an un-qualified binary literal: `1000`/`1010`/`1111`/`10000`
+  fail; `0`/`1`/`10`/`111` (<=3 binary digits) and any value with a 2-9 digit pass; `4'b1000`/`16'd1000`
+  qualified pass at any magnitude). HBM2's `TABLE.REPAIR_LANE` values (`1000,1001,1110,1111`) are exactly that
+  — BINARY codes the extractor mis-read as bare decimals. **Root cause (WHY+WHERE):** `emitted_enums()`
+  (`isf_ir.rs:352`) gated ONLY on `is_safe_isf_scalar_value` (non-empty + no whitespace), so a bare `1000`
+  reached FSMGen. The `TABLE` enum is itself a mis-extraction — a generic `TABLE` mega-enum conflating ~10
+  distinct doc tables (REPAIR_LANE codes + microbump pitches + test-op lists + IDD currents) with
+  restarting/duplicate values and sentence-fragment member names — so emitting it is fabrication. **DONE —
+  what landed:** (1) new `isf_enum_value_is_emittable_literal(value)` helper (`ir/isf_ir.rs`, beside
+  `is_safe_isf_scalar_value`) — FALSE only for a bare `[01]`-only token of length >= 4 (the FSMGen-rejected
+  binary-literal shape), TRUE for every legit decimal / qualified literal; verified against the real FSMGen by
+  a value sweep, no name list (ADR 0006). (2) new free fn `isf_enum_is_emittable(e)` — non-empty + every
+  member a safe scalar AND emittable-literal; `emitted_enums()` filters on it. (3) new `enum_residuals(&self)`
+  accessor records an `isf_enum_value_literal_<name>` packet for each enum dropped *specifically* by this gate
+  (all members safe-scalar but ≥1 binary-token) — pre-existing operator-expression drops keep their prior
+  silent exclusion (no new residual → those docs' adapter surface byte-identical). (4) `adapters.rs` extends
+  `residual_decisions` with `isf_model.enum_residuals()`. (5) two unit tests (binary-looking value excluded +
+  residual; 999-boundary + `16'd1000` radix token still emit). **Verified (release binary, `2026-06-23`):**
+  HBM2's re-emitted `hbm.isf` drops ONLY the malformed `TABLE` (residual `isf_enum_value_literal_table`) and
+  FSMGen `--strict --check --json` is now **success / 0 diagnostics**; the doc's other enums incl. `EXTEST_RX`
+  (212) and `DWORD_MISR` (19) are correctly KEPT (their values aren't binary-token shaped); HBM2 carries **0**
+  `TABLE.<member>` references so dropping it strands nothing. **Corpus-wide byte-identical EXCEPT HBM2:** a
+  fresh re-emit + `diff` of all `.isf` (wire golds APB/AHB/AXI/SWD + Avalon + CoreSight SoC-600 `69152`-class +
+  GIC-600 `69152` + ARM-Debug `3360`) shows **the only changed file is `jesd235a_2015_11_hbm2_dram/hbm.isf`** —
+  the binary-token criterion never flags a legit decimal, so every currently-clean enum is untouched. **Gates
+  ALL GREEN:** `run_ci.sh` GREEN (lib **1706**, +2); `kg-bench` 156/156; WIRE-BASED-100 orthogonal (emitter
+  only — wire-gold `.isf` byte-identical). Discovery cross-ref: `CORPUS-COVERAGE.2` Lever F. KM card
+  `[[isf-enum-value-literal-emit-gate]]`; book `pipeline/isf-adapter.md`. `[[project_kg_isf_completeness]]` /
+  `[[feedback_isf_no_hacks]]` / `[[feedback_verify_fsmgen_before_fr]]`. **The upstream mega-enum conflation +
+  binary-as-decimal mis-read (generic `TABLE` sweeping many tables) stays an honest residual → a future
+  extraction-precision lever.**
+
+## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.2a.iv`
+- [x] **REPRODUCE / MEASURE** — `adapt --target isf` on the persisted HBM2 `intent_ir.json` emits `hbm.isf`; the real `subs/fsmgen/bin/fsmgen --strict --check --json hbm.isf` returns `success:false` with `enum member 'TABLE.REPAIR_LANE_8' value token '1000'` rejected. A value sweep against the same FSMGen pins the rule: `1000`/`1010`/`1111`/`10000` fail, `999`/`1020`/`69152` and short `0/1/111` and qualified `4'b1000`/`16'd1000` pass.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `emitted_enums()` (`crates/specforge/src/ir/isf_ir.rs:352`) gated only on `is_safe_isf_scalar_value` (whitespace-free), so a bare binary-looking token (`1000`) reached FSMGen, which rejects an un-qualified `[01]`-only token of length >= 4. The HBM2 `TABLE` is a mis-extracted mega-enum (REPAIR_LANE binary codes mis-read as decimals + ~10 conflated tables). Initial "count-derived width overflow" hypothesis (`isf_ir.rs:878`) was DISPROVEN by a before/after `.isf` diff (it wrongly dropped AXI `AWATOP`/AHB `TABLE`) and the FSMGen value sweep (`69152` accepted).
+- [x] **ADDRESSED (verified)** — new `isf_enum_value_is_emittable_literal` + `isf_enum_is_emittable` + `enum_residuals` (`isf_ir.rs`) + `adapters.rs` residual wiring. HBM2 `hbm.isf` now FSMGen `--strict --check --json` **success / 0 diagnostics**; only `TABLE` dropped → residual `isf_enum_value_literal_table`; `EXTEST_RX`(212)/`DWORD_MISR`(19) KEPT. 2 new unit tests pass.
+- [x] **NO REGRESSION** — fresh re-emit + `diff` of all emitted `.isf`: the ONLY changed file is HBM2 `hbm.isf` — wire golds (APB/AHB/AXI/SWD) + Avalon + CoreSight SoC-600 + GIC-600 + ARM-Debug `.isf` BYTE-IDENTICAL. `kg-bench` 156/156; `run_ci.sh` GREEN (lib 1706 passed, +2; clippy/fmt/rustdoc warning-deny + mdBook); WIRE-BASED-100 orthogonal (emitter-only, wire `.isf` byte-identical).
+- [x] **GENERICITY (ADR 0006)** — universal token grammar (a bare `[01]`-only token of length >= 4 = an un-qualified binary literal FSMGen rejects), NOT a chip/vendor/protocol name list; verified against the real FSMGen, not guessed (`[[feedback_verify_fsmgen_before_fr]]`); every legitimate decimal / qualified literal passes, so currently-clean enums are byte-identical.
+- [x] **LOCKSTEP** — README current-state bullet; book `pipeline/isf-adapter.md`; KM card `isf-enum-value-literal-emit-gate`; CHANGES.md / DEVELOPMENT_NOTES.md / LIVE_ACHIEVEMENT_STATUS.md / MEMORY.md; `CORPUS-COVERAGE.2` Lever-F + strict-tally corrected (DTI Lever A already resolved; HBM2 Lever F now resolved).
+
 - ID: `KG-ISF-COMPLETENESS.2b` · Status: `deferred` (measured-MARGINAL `2026-06-17`, read-only) · Goal:
   **ISF lowering-coverage visibility gauge** — make the lowering's per-surface coverage visible as adapter
   metadata + a `validate <intent-ir>` surface. **Measured marginal → not building now:** `.2` established
