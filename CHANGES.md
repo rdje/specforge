@@ -1,3 +1,10 @@
+### CORPUS-COVERAGE.2 — re-ingest #30: RISC-V AIA (`1_0_2025_03_12`) — bundle-restoration + confirmation
+PNT slice (continuing the `.2` sweep; binary already current from #29, no rebuild). `DOCLING_DEVICE=cpu ingest` (89pp / 105 visual / 0 residuals; normalized bundle RESTORED) → deterministic cascade.
+- **Result:** all deterministic surfaces byte-near-identical to the retained-`source_ir` evidence (statements 1193, `register_records` 0, `message_field_records` 0, `actor_signal_relations` 0, `conditional_rules` 39 — all held; intent 8 actors / 0 rel / 0 txns) — the #21/#22 "already current-binary-equivalent" class. Re-ingest value = **normalized-bundle restoration + current-binary confirmation**.
+- **Honest absence + Lever-D:** 0 registers/relations (memory-mapped interrupt ISA — its APLIC/IMSIC register layouts sit in 12 `unknown`-classified structured tables that don't match the `.10b`/`.10c`/`.10g` families → re-confirms the #21 RISC-V-IOMMU structure-table recall opportunity, not a regression).
+- **`.isf`:** `agent.isf` renderable (91 ports / 5 enums / 22 rules); **FSMGen `--strict --check --json` success / 0 diagnostics**.
+- After #30: 30 re-ingested, **26 real chip-spec docs still normalized-missing**. No code change → WIRE-BASED-100 / `kg-bench` orthogonal; `generated/` git-ignored (durable trace = the `.2` log); `check_doctrines.sh` GREEN.
+
 ### CORPUS-COVERAGE.2 — re-ingest #29: AMBA CHI C2C (`ihi0098_a`) — marquee message-field refresh (0→149)
 PNT slice (first eligible leaf of the next active tree after `KG-ISF-COMPLETENESS` ran out of buildable leaves). RAM-guarded current-binary re-ingest of a normalized-missing doc.
 - **Pre-flight:** rebuilt the release binary to current (the persisted one predated `.2a.v`/`.2a.vi`), confirmed via the `isf_rule_value` symbol; RAM ample (~22% used).
