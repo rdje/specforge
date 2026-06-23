@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `DOC-INTENT-TAXONOMY`
-- Status: `active` (`.0` taxonomy DONE `2026-06-22`; `.1` corpus census DONE `2026-06-22`, read-only; `.2` per-category ISF-completeness gauge DONE `2026-06-22`, read-only; `.3` fast category recognizer COMPLETE `2026-06-22` — `.3a` design / `.3b` implement+validate-reported `d6239217` / `.3c` fixtures+book+KM; `.4a` Gap A — register bit-field lowering: empirical FSMGen-storage verification + verified FSMGen FR DONE `2026-06-22`, docs-only; **`.4a.ii` DONE `2026-06-22` (CODE) — emitted the register bit-field map into the shipped ISF field-structured-storage construct (pin `d327129b7`): 6,570 fields / 2,531 registers / 24 docs now reach `.isf` (was 0), 0 new FSMGen `--strict` diagnostics, 4 wire golds byte-identical**; **`.4d` DONE `2026-06-23` (decision packet, docs-only) — cat-4 CSRs REUSE the existing register/storage abstraction (no new ISF construct, FSMGen titles `(storage …)` the register-map/CSR construct); the cat-4 register gap is EXTRACTION RECALL (RISC-V Debug 179 fields all UNLOCATED, AIA 0 registers captured) → spun out `.4d.i`; instruction/privilege/exception/memory-ordering are honest non-targets**; **`.4c` DONE `2026-06-23` (decision packet, docs-only) — cat-3 topology IS captured (`signal_connectivity` producer→consumer graph + `infrastructure_signals` clock/reset distribution; correcting `.2` "hint-level" to "captured-but-sparse-and-unlowered") but ISF has NO declarative static-topology construct (composition is transaction-level only; the emit is single-initiator-actor) and FSMGen's ATL frontier is behavioral, not a declarative netlist; capture is sparse/noisy → NO FR yet, next = `.4c.i` capture-recall measurement**; **`.4e` DONE `2026-06-23` (triage, docs-only) — the `conditional_rules` ISF-lowering shortfall (`.2` Result 3) is HONEST RESIDUAL, not a gap: 603 rules across 9 docs = 73% prose/undeclared/placeholder + a 27% bucket that is 161/164 bare deontic modals (only 3/603 carry a concrete obligation); no ISF lever, no FR — the only upside is upstream extraction quality. The `.2` measurement phase is now COMPLETE; remaining `.4` work is CODE**; **`.4c.i` DONE `2026-06-23` (measurement, docs-only) — cat-3 topology capture is capture-recall-gated NOT abstraction-gated (0.355 `signal_connectivity` edges/actor vs wire's 4.108; 24% both-endpoint vs 85%; 0/10 infra signals rooted) → no FSMGen FR, honest residual, extraction-recall lever owned outside `.4`**; frontier → `.4d.i` cat-4 RISC-V CSR bit-position recovery (code) / `.4b` Gap B (gated, FSMGen-deferred packet/flit); `.4c.i` + `.4a.i` superseded/closed)
+- Status: `active` (`.0` taxonomy DONE `2026-06-22`; `.1` corpus census DONE `2026-06-22`, read-only; `.2` per-category ISF-completeness gauge DONE `2026-06-22`, read-only; `.3` fast category recognizer COMPLETE `2026-06-22` — `.3a` design / `.3b` implement+validate-reported `d6239217` / `.3c` fixtures+book+KM; `.4a` Gap A — register bit-field lowering: empirical FSMGen-storage verification + verified FSMGen FR DONE `2026-06-22`, docs-only; **`.4a.ii` DONE `2026-06-22` (CODE) — emitted the register bit-field map into the shipped ISF field-structured-storage construct (pin `d327129b7`): 6,570 fields / 2,531 registers / 24 docs now reach `.isf` (was 0), 0 new FSMGen `--strict` diagnostics, 4 wire golds byte-identical**; **`.4d` DONE `2026-06-23` (decision packet, docs-only) — cat-4 CSRs REUSE the existing register/storage abstraction (no new ISF construct, FSMGen titles `(storage …)` the register-map/CSR construct); the cat-4 register gap is EXTRACTION RECALL (RISC-V Debug 179 fields all UNLOCATED, AIA 0 registers captured) → spun out `.4d.i`; instruction/privilege/exception/memory-ordering are honest non-targets**; **`.4c` DONE `2026-06-23` (decision packet, docs-only) — cat-3 topology IS captured (`signal_connectivity` producer→consumer graph + `infrastructure_signals` clock/reset distribution; correcting `.2` "hint-level" to "captured-but-sparse-and-unlowered") but ISF has NO declarative static-topology construct (composition is transaction-level only; the emit is single-initiator-actor) and FSMGen's ATL frontier is behavioral, not a declarative netlist; capture is sparse/noisy → NO FR yet, next = `.4c.i` capture-recall measurement**; **`.4e` DONE `2026-06-23` (triage, docs-only) — the `conditional_rules` ISF-lowering shortfall (`.2` Result 3) is HONEST RESIDUAL, not a gap: 603 rules across 9 docs = 73% prose/undeclared/placeholder + a 27% bucket that is 161/164 bare deontic modals (only 3/603 carry a concrete obligation); no ISF lever, no FR — the only upside is upstream extraction quality. The `.2` measurement phase is now COMPLETE; remaining `.4` work is CODE**; **`.4c.i` DONE `2026-06-23` (measurement, docs-only) — cat-3 topology capture is capture-recall-gated NOT abstraction-gated (0.355 `signal_connectivity` edges/actor vs wire's 4.108; 24% both-endpoint vs 85%; 0/10 infra signals rooted) → no FSMGen FR, honest residual, extraction-recall lever owned outside `.4`**; **`.4d.i` DONE `2026-06-23` (measurement + decision packet, docs-only — the planned CODE was MEASURED non-viable before writing it: RISC-V Debug bit positions live in the layout IMAGE for 53/56 registers; the 7 flattened tables are garbled (`dmstatus` off-by-8 + dropped band) / XLEN-symbolic (`tdata1`); the tiling gates are order-blind → a deterministic-table parse would fabricate/recover ~0; the genuine lever is the existing VLM+tiling `register_bits.rs` path, VLM-accuracy-bound, owned outside `.4`; AIA blocked on re-ingest + prose-bound; honest residual, no code, no FR)**; frontier → the `.4` actionable frontier is now EXHAUSTED except the FSMGen-gated `.4b` Gap B (packet/flit structures); `.4d.i` + `.4c.i` resolved, `.4a.i` superseded)
 - Roadmap lane: `R15`/`R16` (north star: COMPLETE IntentIR → FAITHFUL ISF, now made explicit **per document category**)
 - Created: `2026-06-22`
 - Last updated: `2026-06-22`
@@ -298,13 +298,34 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   scopes ISA-model verification). Resolves the cat-4 Open Question. Report `docs/research/cat4-isa-csr-lowering-decision.md`;
   KM `[[cat4-isa-csr-lowering-decision]]`; book `document-categories.md` cat-4 maturity refined. No code/canonical mutation
   → golds + `kg-bench` orthogonal. See the `.4d` Acceptance Checklist below.
-- ID: `DOC-INTENT-TAXONOMY.4d.i` · Status: `pending` (CODE) · Goal: **cat-4 RISC-V CSR bit-position recovery** — the
-  buildable cat-4 lever spun out of `.4d`. Recover the field bit positions for the RISC-V register/CSR layout so RISC-V
-  Debug's 179 fields become *located* (parse the bit-layout column/diagram into `bits_high`/`bits_low`), and add a
-  RISC-V-shaped register recogniser so RISC-V AIA's IMSIC/APLIC CSR blocks are captured at all. Once a field is located it
-  auto-lowers through `.4a.ii` (no emitter change). Must key off structural register-table / bit-layout grammar (a RISC-V
-  CSR layout *shape*), never a RISC-V register-name list (ADR 0006). CODE — requires the full task-acceptance checklist +
-  `run_ci.sh` + FSMGen `--strict --check` 0-new-diagnostics.
+- ID: `DOC-INTENT-TAXONOMY.4d.i` · Status: `done` (`2026-06-23`, measurement + decision packet, read-only, docs-only —
+  **no Rust code**; the planned CODE build was tested against the source data + bit gold FIRST and found non-viable) ·
+  Goal: **cat-4 RISC-V CSR bit-position recovery** — the buildable cat-4 lever spun out of `.4d`. Recover the field bit
+  positions for the RISC-V register/CSR layout so RISC-V Debug's 179 fields become *located* (parse the bit-layout
+  column/diagram into `bits_high`/`bits_low`), and add a RISC-V-shaped register recogniser so RISC-V AIA's IMSIC/APLIC CSR
+  blocks are captured at all. Once a field is located it auto-lowers through `.4a.ii` (no emitter change). Must key off
+  structural register-table / bit-layout grammar (a RISC-V CSR layout *shape*), never a RISC-V register-name list (ADR
+  0006). **DONE — the deterministic-table lever was MEASURED non-viable, overturning the pre-investigation's optimistic
+  "deterministically tractable" verdict with per-item gold-checked evidence (`[[feedback_scoring_rigor]]`):** (1) the bit
+  positions live in the bit-layout **IMAGE** for **53 of 56** register-with-address headings (incl. the cleanest gold
+  register `dmcontrol`, captured as `![Image]` only — no table to parse); only **7** diagrams were flattened to a text
+  table; (2) those 7 are **garbled or symbolic** — `dmstatus`'s explicit high-bit row is **off by ~8** (places
+  `ndmresetpending` at bit 16, gold 24), drops the 7-field middle band (`allresumeack`(17)…`allrunning`(11)), and mixes
+  doubled cells + two stacked half-rows; `tdata1`'s positions are **symbolic XLEN-relative** (`XLEN-1`, `XLEN-5`) — so a
+  deterministic parse would recover ~0 correct fields and/or **fabricate** wrong bits; (3) the proven tiling gates
+  (`register_bits.rs`) are **order-blind** (width-sum + name-multiset only), so a row-jumbled flattened table could pass
+  both gates with WRONG bits — strictly more dangerous than the VLM front-end, while modifying the shared register path
+  `.4a.ii` (24 docs / 6,570 fields) relies on. The **genuine lever already exists** — the VLM+tiling reader
+  (`recover-register-bits` / `ir/register_bits.rs`, `EXTRACTION-GAP-FIX.4`) covers all 44 de-fragmented registers,
+  recovers 0 / residual 44 / **zero fabrication**, bound **purely by VLM read accuracy** — owned OUTSIDE the `.4`
+  ISF-lowering program (a sharper/cloud VLM read; not an ISF-abstraction nor a deterministic-extraction gap). The AIA
+  sub-lever is **blocked on RAM/Docling-gated re-ingest** (`CORPUS-COVERAGE`) and **prose-bound** (CSR intent in 39
+  `conditional_rules`). **No Rust code, no FSMGen FR** (ISF already expresses register fields via `.4a.ii`; a speculative
+  parser would fabricate — `[[feedback_verify_fsmgen_before_fr]]` / `[[feedback_isf_no_hacks]]`). Honest residual,
+  recorded as a cross-reference NOT a `.4` gap — mirrors `.4c.i` (cat-3 topology). Report
+  `docs/research/cat4-csr-bit-position-recovery-measurement.md`; KM `[[cat4-csr-bit-position-recovery-not-deterministic]]`;
+  reproducer `scripts/measure_cat4_csr_bit_recovery.py`. Docs-only → golds + `kg-bench` orthogonal. See the `.4d.i`
+  Acceptance Checklist below.
   - **Pre-investigation (`2026-06-23`, read-only — feasibility probe, no code, no decision; `.4d.i` stays `pending`).**
     Confirmed the bundle is present (`generated/source_ir/1_0_risc_v_debug_specification/normalized/` — re-ingest NOT
     needed) and re-measured: 44 `register_records` / 179 fields, **0/179 located** (fields carry
@@ -639,6 +660,49 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   tree / `TASK_TREE.md` / `CHANGES.md` / `DEVELOPMENT_NOTES.md` / `LIVE_ACHIEVEMENT_STATUS.md` / `MEMORY.md` all updated in
   this slice.
 
+## Acceptance Checklist (enforced) — `DOC-INTENT-TAXONOMY.4d.i`
+
+- [x] **REPRODUCE / MEASURE** — baseline from `.4d`: cat-4 register fields don't lower because they are *unlocated*
+  (RISC-V Debug 0/179 fields carry bit positions), spun out as the "genuine buildable cat-4 lever" to parse the
+  bit-layout column/diagram deterministically. Tested that premise against the persisted source + the human-reviewed bit
+  gold BEFORE writing any code (reproducer `scripts/measure_cat4_csr_bit_recovery.py`, read-only/deterministic): **56**
+  register-with-address headings, **53** carry the bit layout as an `![Image]` diagram, **34** carry a `Field|Description`
+  table, only **7** were flattened to a text table (`dmcs2`, `dmstatus`, `dscratch1`, `tdata1`, `textra32`, `tinfo`,
+  `tmexttrigger`). Per-item gold check: `dmcontrol` (cleanest, 14 fields, no reserved gaps) is `![Image]` **only** — no
+  table; `dmstatus`'s flattened table explicit high-bit row is **off by ~8** (`ndmresetpending` shown at bit 16, gold 24),
+  the 7-field middle band (`allresumeack`(17)…`allrunning`(11)) is **dropped**, and 13 diagram fields vs 20 field-table
+  fields → name-multiset residual; `tdata1`'s positions are **symbolic XLEN-relative** (`XLEN-1`, `XLEN-5`). AIA: bundle
+  **ABSENT** (re-ingest RAM/Docling-gated), 0 `register_records`, 39 prose `conditional_rules`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the bit positions live in a **non-text modality** (the bit-layout image) for the vast
+  majority, which is exactly why `EXTRACTION-GAP-FIX.4` built a **VLM** reader for them (`ir/register_bits.rs` +
+  `commands/recover_register_bits.rs`). The few Docling-flattened diagram tables are garbled (row-jumbled, wrong explicit
+  positions, dropped bands) or symbolic (XLEN-parameterized), so they do not faithfully carry the positions. The tiling
+  gates reconstruct from order+widths and are **order-blind** (width-sum + name-multiset only), so a deterministic
+  flattened-table reader is *strictly more dangerous* than the VLM front-end (a wrong order can pass both gates) — on the
+  shared register path `.4a.ii` (24 docs / 6,570 fields) depends on.
+- [x] **ADDRESSED (verified)** — produced the measurement/decision packet
+  (`docs/research/cat4-csr-bit-position-recovery-measurement.md`): the deterministic-table lever is **not viable** (~0
+  correct recovery + fabrication risk) → **honest residual, no Rust code, no FSMGen FR** (ISF already expresses register
+  fields via `.4a.ii`; a speculative parser would fabricate — `[[feedback_verify_fsmgen_before_fr]]` /
+  `[[feedback_isf_no_hacks]]`). The genuine lever is a **sharper VLM read** for the existing gated path
+  (`recover-register-bits`), bound purely by VLM accuracy, owned OUTSIDE the `.4` ISF-lowering program; the AIA sub-lever
+  waits on `CORPUS-COVERAGE` re-ingest + upstream prose extraction. Overturns the pre-investigation's optimistic
+  "deterministically tractable" verdict with per-item, gold-checked evidence (`[[feedback_scoring_rigor]]`).
+- [x] **NO REGRESSION** — measurement/decision leaf, **no Rust code**, no canonical-artifact mutation → the wire golds /
+  `kg-bench` / emitted `.isf` are byte-identical by construction (WIRE-BASED-100 orthogonal). `scripts/check_doctrines.sh`
+  green (memory-arch + knowledge-map + task-acceptance); `mdbook build` green; knowledge-map derive-and-diff in sync
+  (119 → 120 facts). Crucially, the value of this leaf IS the avoided regression: it prevents a fabrication-prone parser
+  from landing on the shared register path.
+- [x] **GENERICITY (ADR 0006)** — the measurement keys off structural document shape (register-with-address headings,
+  image-vs-table modality, the universal anti-fabrication tiling gates) and the human-reviewed bit gold — no RISC-V
+  register-name list. The decision is to NOT build a parser, so there is no runtime code to overfit.
+- [x] **LOCKSTEP** — `docs/research/cat4-csr-bit-position-recovery-measurement.md` (the packet),
+  `scripts/measure_cat4_csr_bit_recovery.py` (the tracked reproducer), KM card
+  `docs/knowledge/cat4-csr-bit-position-recovery-not-deterministic.md` + regenerated `KNOWLEDGE_MAP.md`, book
+  `docs/book/src/document-categories.md` (cat-4 maturity refined — deterministic-table path measured non-viable, the
+  recall lever is VLM-read accuracy), and the task tree / `TASK_TREE.md` / `CHANGES.md` / `DEVELOPMENT_NOTES.md` /
+  `LIVE_ACHIEVEMENT_STATUS.md` / `MEMORY.md` all updated in this slice.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
@@ -654,8 +718,8 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | — | `DOC-INTENT-TAXONOMY.4c` | `done` (`2026-06-23`) | **Cat-3 topology decision packet DONE.** Cat-3's register half already lowers (`.4a.ii`); cat-3 **does** carry a typed topology surface (`signal_connectivity` + `infrastructure_signals`) — but it is **sparse/noisy** and ISF has **no declarative static-topology construct** (composition is transaction-level only; emit is single-initiator-actor; FSMGen's ATL frontier is behavioral, not a netlist). **No FR yet** (premature) → spun out `.4c.i` capture-recall measurement. Docs-only → golds/`kg-bench` orthogonal. |
 | — | `DOC-INTENT-TAXONOMY.4e` | `done` (`2026-06-23`) | **Conditional-rule lowering triage DONE (`.2` Result 3 closed).** 603 `conditional_rules` / 9 docs → 73% honest residual (prose/undeclared/placeholder) + a 27% bucket that is 161/164 bare deontic modals (only 3/603 concrete). Verdict: **honest residual, NOT an ISF gap** — no lever, no FR; the adapter already lowers the 516 clean conditional obligations; the only upside is upstream extraction quality. `.2` measurement phase complete. Docs-only → golds/`kg-bench` orthogonal. |
 | — | `DOC-INTENT-TAXONOMY.4c.i` | `done` (`2026-06-23`) | **Cat-3 topology-capture recall measurement DONE.** Capture is **capture-recall-gated, not abstraction-gated**: 0.355 `signal_connectivity` edges/actor (vs wire's 4.108), 24% both-endpoint (vs wire's 85%), 0/10 infra signals with a resolved clock/reset source — robust to dropping the 4 borderline docs. **Verdict: no FSMGen FR** (an FR on a 12×-too-sparse / three-quarters-broken capture would be unfalsifiable); honest residual; the lever (if pursued) is **upstream extraction-recall owned outside `.4`** (mirrors `.4d.i`/cat-2). Reproducer `scripts/measure_cat3_topology_recall.py`. Docs-only → golds/`kg-bench` orthogonal. |
-| 1 | `DOC-INTENT-TAXONOMY.4d.i` | `pending` (code) | Cat-4 RISC-V CSR bit-position recovery — locate RISC-V Debug's fields + capture AIA's IMSIC/APLIC CSR blocks so they auto-lower via `.4a.ii`. Structural RISC-V CSR-layout grammar, no name list. The genuine buildable cat-4 lever. |
-| 2 | `DOC-INTENT-TAXONOMY.4b` | `pending` (gated) | Gap B — `Evidence→Intent` `message_field_records` carrier (1,220 fields / 11 docs), then lower; **stays gated** — FSMGen explicitly deferred packet/flit layouts. CODE. |
+| — | `DOC-INTENT-TAXONOMY.4d.i` | `done` (`2026-06-23`) | **Cat-4 RISC-V CSR bit-position recovery MEASURED non-viable (no code).** Tested the planned deterministic-table CODE against the source + bit gold first: the bits live in the layout **IMAGE** for 53/56 registers (cleanest gold reg `dmcontrol` image-only, no table); the 7 flattened tables are **garbled** (`dmstatus` off-by-8 + dropped 7-field band) / **XLEN-symbolic** (`tdata1`); the tiling gates are **order-blind** so a row-jumbled table could pass with WRONG bits → a deterministic parse fabricates/recovers ~0. Genuine lever = sharper VLM read for the existing `register_bits.rs` path (VLM-accuracy-bound), owned outside `.4`; AIA blocked on re-ingest + prose-bound. **Honest residual, no FR** (mirrors `.4c.i`). Reproducer `scripts/measure_cat4_csr_bit_recovery.py`. Docs-only → golds/`kg-bench` orthogonal. |
+| 1 | `DOC-INTENT-TAXONOMY.4b` | `pending` (gated) | Gap B — `Evidence→Intent` `message_field_records` carrier (1,220 fields / 11 docs), then lower; **stays gated** — FSMGen explicitly deferred packet/flit layouts. CODE. **The only remaining `.4` leaf; the actionable `.4` frontier is otherwise exhausted.** |
 | 4 | `DOC-INTENT-TAXONOMY.4a.i` | `superseded` | Adapter honest residual `isf_register_fields_not_lowered` — **superseded by `.4a.ii`**, which both EMITS the fields AND records the unlowered remainder as that very residual. No separate slice needed. |
 
 ## Decisions
@@ -725,6 +789,27 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   initiator, `KG-ISF-COMPLETENESS.2a.ii`) + a construct FSMGen's behavioral ATL frontier does not subsume — an
   architectural question resolved WITH FSMGen only after capture clears the measured bar. This resolves `.4c`'s deferred
   construct question (`[[cat3-topology-isf-lowering-decision]]`).
+- `2026-06-23` (`.4d.i`): the cat-4 **deterministic CSR bit-position-recovery lever is NOT viable** — the planned CODE
+  build was tested against the actual source data + the human-reviewed bit gold BEFORE writing it
+  (`[[feedback_scoring_rigor]]`), overturning the pre-investigation's optimistic *"deterministically tractable — the
+  table carries the positions"* verdict. Per-item (reproducer `scripts/measure_cat4_csr_bit_recovery.py`): (1) the bit
+  positions live in the bit-layout **IMAGE** for **53/56** register-with-address headings — incl. the cleanest gold
+  register `dmcontrol`, captured as `![Image]` only with **no flattened table to parse**; (2) only **7** diagrams were
+  flattened to a table and they are **garbled or symbolic** — `dmstatus`'s explicit high-bit row is **off by ~8** (places
+  `ndmresetpending` at bit 16, gold 24), drops the 7-field middle band, mixes doubled cells + two stacked halves;
+  `tdata1`'s positions are **symbolic XLEN-relative** — so a deterministic parse recovers ~0 correct fields and/or
+  **fabricates** wrong bits; (3) the proven tiling gates (`ir/register_bits.rs`) are **order-blind** (width-sum +
+  name-multiset only), so a row-jumbled flattened table could pass both gates with WRONG bits — strictly more dangerous
+  than the VLM front-end, on the shared register path `.4a.ii` (24 docs / 6,570 fields) relies on. **The genuine lever
+  already exists** — the VLM+tiling reader (`recover-register-bits`) covers all 44 de-fragmented registers, recovers
+  0 / residual 44 / zero fabrication, bound purely by VLM accuracy — **owned OUTSIDE the `.4` ISF-lowering program** (a
+  sharper/cloud VLM read). The AIA sub-lever is **blocked on RAM/Docling-gated re-ingest** (`CORPUS-COVERAGE`) and
+  **prose-bound**. **No Rust code, no FSMGen FR** (ISF already expresses register fields via `.4a.ii`; a speculative
+  parser would fabricate — `[[feedback_verify_fsmgen_before_fr]]` / `[[feedback_isf_no_hacks]]`). Honest residual,
+  recorded as a cross-reference NOT a `.4` gap — mirrors `.4c.i` (cat-3 topology, also capture-recall-/modality-gated).
+  With `.4d.i` resolved, the `DOC-INTENT-TAXONOMY.4` actionable frontier is **exhausted except the FSMGen-gated `.4b`**
+  (packet/flit structures). Report `docs/research/cat4-csr-bit-position-recovery-measurement.md`; KM
+  `[[cat4-csr-bit-position-recovery-not-deterministic]]`.
 
 ## Open Questions
 
@@ -757,6 +842,7 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | `2026-06-23` | `DOC-INTENT-TAXONOMY.4c` | measurement + decision packet (read-only, docs-only — no Rust code); profiled 3 representative cat-3 docs off persisted IR (CoreSight SoC-600 60 actors / **6** `signal_connectivity` / 833 regs; GIC-600 55 actors / **66** `signal_connectivity` / **2** `infrastructure_signals`; CoreSight BSA 5 actors / 0 connectivity / 88 prose interfaces); re-verified FSMGen pin `d327129b7` (composition transaction-level only; ATL frontier = behavioral generated-child wiring, not a declarative netlist); decision = register half already lowers + topology captured-but-sparse-and-unlowered + no static-topology ISF construct + NO FR yet → spun out `.4c.i` capture-recall measurement; `scripts/check_doctrines.sh` green (memory-arch + knowledge-map + task-acceptance); `mdbook build` green; knowledge-map derive-and-diff in sync (116→117 facts); no code/canonical mutation → golds + `kg-bench` orthogonal by construction | PASS |
 | `2026-06-23` | `DOC-INTENT-TAXONOMY.4e` | measurement triage (read-only, docs-only — no Rust code); classified 603 `conditional_rules` across 9 representative docs (all 4 buildable categories) vs each doc's declared-signal inventory (`interfaces[].signals` + `signal_records[].signal_name` + `actor_ports[].signal_name`) + consequent quality → A no-consequent 392 / B undeclared 14 / C placeholder 33 / D declared+action 164 (of which 161 bare modal `shall`/`must`, only 3/603 concrete); verdict = honest residual, no ISF lever, no FR (only upstream extraction-quality upside); `.2` Result 3 closed; `scripts/check_doctrines.sh` green (memory-arch + knowledge-map + task-acceptance); `mdbook build` green; knowledge-map derive-and-diff in sync (117→118 facts); no code/canonical mutation → golds + `kg-bench` orthogonal by construction | PASS |
 | `2026-06-23` | `DOC-INTENT-TAXONOMY.4c.i` | measurement (read-only, docs-only — no Rust code; tracked reproducer `scripts/measure_cat3_topology_recall.py`); profiled the full 15-doc cat-3 set vs the 4 cat-1 wire gold docs off persisted IR → cat-3 **0.355** `signal_connectivity` edges/actor (135 edges / 380 actors), **24%** both-endpoint (33/135), **95%** clean endpoints (457/480), **0/10** infra signals with a resolved source; cat-1 wire baseline **4.108** edges/actor, **85%** both-endpoint, 100% clean — robust to dropping the 4 borderline docs (cat-3 core 0.395 / 20% / 0); verdict = capture-recall-gated not abstraction-gated → no FSMGen FR, honest residual, extraction-recall lever owned outside `.4`; `scripts/check_doctrines.sh` green (memory-arch + knowledge-map + task-acceptance); `mdbook build` green; knowledge-map derive-and-diff in sync (118→119 facts); no code/canonical mutation → golds + `kg-bench` orthogonal by construction | PASS |
+| `2026-06-23` | `DOC-INTENT-TAXONOMY.4d.i` | measurement + decision packet (read-only, docs-only — **no Rust code**; tracked reproducer `scripts/measure_cat4_csr_bit_recovery.py`); tested the planned deterministic bit-recovery CODE against the persisted RISC-V Debug markdown + the human-reviewed bit gold (`seed_riscv_debug_registers.json`) BEFORE writing it → **56** register-with-address headings, **53** carry the bit layout as an `![Image]` (incl. cleanest gold reg `dmcontrol`, image-only — no table), only **7** flattened to a text table; per-item gold check: `dmstatus` flattened table off-by-8 (`ndmresetpending` shown 16, gold 24) + 7-field middle band dropped + 13 vs 20 fields, `tdata1` symbolic XLEN-relative positions; tiling gates (`ir/register_bits.rs`) order-blind → a deterministic-table parse fabricates/recovers ~0; AIA bundle ABSENT (re-ingest gated) + 0 register_records / 39 prose `conditional_rules`; verdict = deterministic-table lever non-viable → honest residual, no code, no FSMGen FR (genuine lever = sharper VLM read for the existing gated path, owned outside `.4`); `scripts/check_doctrines.sh` green (memory-arch + knowledge-map + task-acceptance); `mdbook build` green; knowledge-map derive-and-diff in sync (119→120 facts); no code/canonical mutation → golds + `kg-bench` orthogonal by construction | PASS |
 
 ## Commit Log
 
@@ -774,9 +860,35 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | `DOC-INTENT-TAXONOMY.4c` | `DOC-INTENT-TAXONOMY.4c — cat-3 topology lowering decision: topology captured-but-sparse, no static-topology ISF construct, no FR yet (spun out .4c.i)` | measurement + decision packet, docs-only |
 | `DOC-INTENT-TAXONOMY.4e` | `DOC-INTENT-TAXONOMY.4e — conditional-rule lowering triage (.2 Result 3): honest residual, no ISF lever, no FR (.2 measurement phase complete)` | measurement triage, docs-only |
 | `DOC-INTENT-TAXONOMY.4c.i` | `DOC-INTENT-TAXONOMY.4c.i — cat-3 topology-capture recall: 0.355 edges/actor + 24% both-endpoint + 0 rooted infra → capture-recall-gated, no FR (honest residual)` | measurement, docs-only |
+| `DOC-INTENT-TAXONOMY.4d.i` | `DOC-INTENT-TAXONOMY.4d.i — cat-4 RISC-V CSR bit-recovery MEASURED non-viable (bits in image 53/56; flattened tables garbled/XLEN-symbolic; gates order-blind) → honest residual, no code, no FR` | measurement + decision packet, docs-only |
 
 ## Changelog
 
+- `2026-06-23`: **`.4d.i` DONE (measurement + decision packet, read-only, docs-only — no Rust code; tracked reproducer
+  `scripts/measure_cat4_csr_bit_recovery.py`)** — the planned cat-4 deterministic CSR bit-position-recovery CODE was
+  tested against the actual RISC-V Debug source data + the human-reviewed bit gold BEFORE writing it, and found
+  **non-viable** — overturning the pre-investigation's optimistic *"deterministically tractable — the table carries the
+  positions"* verdict with per-item gold-checked evidence (`[[feedback_scoring_rigor]]`). **The bit positions live in the
+  bit-layout IMAGE for 53 of 56 register-with-address headings** (incl. the cleanest gold register `dmcontrol`, captured
+  as `![Image]` only — no table to parse); **only 7 diagrams were flattened to a text table, and those are garbled or
+  symbolic** — `dmstatus`'s explicit high-bit row is off by ~8 (places `ndmresetpending` at bit 16, gold 24), drops the
+  7-field middle band, and mixes doubled cells + two stacked half-rows; `tdata1`'s positions are symbolic XLEN-relative
+  (`XLEN-1`, `XLEN-5`) — so a deterministic parse would recover ~0 correct fields and/or **fabricate** wrong bits. The
+  proven tiling gates (`ir/register_bits.rs`) are **order-blind** (width-sum + name-multiset only), so a row-jumbled
+  flattened table could pass both gates with WRONG bits — strictly more dangerous than the VLM front-end, on the shared
+  register path `.4a.ii` (24 docs / 6,570 fields) relies on. **VERDICT: deterministic-table lever non-viable → honest
+  residual, no Rust code, no FSMGen FR** (ISF already expresses register fields via `.4a.ii`; a speculative parser would
+  fabricate — `[[feedback_verify_fsmgen_before_fr]]` / `[[feedback_isf_no_hacks]]`). The **genuine lever already exists** —
+  the VLM+tiling reader (`recover-register-bits` / `ir/register_bits.rs`, `EXTRACTION-GAP-FIX.4`) covers all 44
+  de-fragmented registers, recovers 0 / residual 44 / zero fabrication, **bound purely by VLM read accuracy** (local
+  `qwen2.5vl:7b` too imprecise on these dense diagrams), owned OUTSIDE the `.4` ISF-lowering program; the AIA sub-lever is
+  blocked on RAM/Docling-gated re-ingest (`CORPUS-COVERAGE`) + prose-bound. Recorded as a cross-reference NOT a `.4` gap —
+  mirrors `.4c.i`/`.4d` (cat-3/cat-4 register recall) and the cat-2 structure-recall frontier. Report
+  `docs/research/cat4-csr-bit-position-recovery-measurement.md`; KM `[[cat4-csr-bit-position-recovery-not-deterministic]]`
+  (map 119→120); book `document-categories.md` cat-4 maturity refined (deterministic-table path measured non-viable; lever
+  is VLM-read accuracy). `check_doctrines.sh` + `mdbook build` green; no code/canonical mutation → golds/`kg-bench`
+  orthogonal. **With `.4d.i` resolved, the `DOC-INTENT-TAXONOMY.4` actionable frontier is exhausted except the
+  FSMGen-gated `.4b`** (packet/flit structures).
 - `2026-06-23`: **`.4c.i` DONE (measurement, read-only, docs-only — no Rust code; tracked reproducer
   `scripts/measure_cat3_topology_recall.py`)** — cat-3 topology-capture recall measured over the full 15-doc cat-3 set vs
   the 4 cat-1 wire gold docs. **The capture is unfaithful: sparse (0.355 `signal_connectivity` edges/actor over 380

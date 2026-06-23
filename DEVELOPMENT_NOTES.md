@@ -1,4 +1,33 @@
 # DEVELOPMENT_NOTES
+## DOC-INTENT-TAXONOMY.4d.i (`2026-06-23`) — cat-4 RISC-V CSR bit-position recovery measured non-viable (read-only, docs-only)
+
+The `.4d.i` leaf was queued as "the genuine buildable cat-4 lever": a deterministic parser for RISC-V CSR
+bit-layout tables → `bits_high`/`bits_low`, auto-lowering via `.4a.ii`. Before writing a line of that
+regression-sensitive code (it would touch the shared register path 24 docs / 6,570 emitted fields depend on),
+the premise was tested against the real source and the human-reviewed bit gold. It does not hold:
+
+- **Modality.** 53 of 56 RISC-V Debug register-with-address headings carry the bit layout as an `![Image]`
+  diagram, not a text table — including the cleanest gold register `dmcontrol` (`![Image]` only). The bit
+  positions genuinely live in a non-text modality. `EXTRACTION-GAP-FIX.4` already built the right tool for
+  that: the VLM reader `ir/register_bits.rs` + `recover-register-bits` (reads name/order/width off the diagram
+  image, reconstructs positions by MSB→LSB tiling, gated to never fabricate).
+- **The few flattened tables lie.** Only 7/56 diagrams were flattened to text. `dmstatus`'s explicit high-bit
+  row is off by ~8 vs gold (`ndmresetpending` at 16, gold 24), it drops a 7-field middle band, and it mixes
+  doubled cells + two stacked half-rows requiring contradictory decode rules. `tdata1`'s positions are symbolic
+  XLEN-relative (`XLEN-1`, `XLEN-5`) — RISC-V CSRs are XLEN-parameterized, so the bits are not concrete.
+- **Gate hole.** The tiling gates validate width-sum + name-multiset but **not field order**. The VLM reads in
+  visual order so that is safe; a row-jumbled Docling table could present a wrong order whose widths still sum
+  to 32 and whose names still match — passing both gates while emitting wrong bits. A deterministic-table reader
+  is therefore *strictly more dangerous* than the VLM front-end.
+
+Conclusion: do not build the deterministic parser (it would fabricate or recover ~0). Honest residual; the
+genuine lever is a sharper VLM read for the existing gated path (stronger/cloud model, upscaling, voting, tighter
+prompt), owned outside the `.4` ISF-lowering program. RISC-V AIA (the second sub-lever) is blocked on
+RAM/Docling-gated re-ingest (`CORPUS-COVERAGE`) and its CSR intent is prose, not register tables. No FSMGen FR
+(ISF already expresses register fields via `.4a.ii`). Reproducer: `scripts/measure_cat4_csr_bit_recovery.py`.
+Packet: `docs/research/cat4-csr-bit-position-recovery-measurement.md`. The lasting value of this leaf is the
+*avoided* regression — a measured "do not build this" on the shared register path.
+
 ## DOC-INTENT-TAXONOMY.4c.i (`2026-06-23`) — cat-3 topology-capture recall measurement (read-only, docs-only)
 
 **Context.** `.4c` decided cat-3's distinctive intent (component topology / connectivity / clock-reset distribution) is
