@@ -1,4 +1,13 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2 (`2026-06-23`) — re-ingest #25 CoreSight SoC-600 0100 TRM (completes SoC-600 cluster)
+- **Slice:** fresh-session PNT, register/TRM phase. Doc: CoreSight SoC-600 0100 TRM (`100806_0100_00_2017_08_01_coresight_soc_600_technical_reference_manual`, 702pp / 1157 visual), via the git-ignored `.cache/local-references/chipdoc` symlink. **Last of the SoC-600 family** (0701=#23, 0200=#24, 0100=#25) → cluster complete.
+- **Method:** `DOCLING_DEVICE=cpu specforge ingest` → cascade on the current release binary (no rebuild). ~5 min, RAM 67–77% free, `.4a` guard armed, Ollama idle.
+- **BEFORE → AFTER (GENUINE refresh, same #23/#24/#17 class):** register_records 597 held (exact); **actor_signal_relations 41→31 / actors 44→34 / interfaces 12→5** (consolidation gates fold fragment/phantom actors); **transactions 0→1** (recognizer fires); conditional_rules 46 held; intent constraints 759→745; 0 message-fields (honest).
+- **Verification:** `dp.isf` (597 storage(reset) / 12 enums / 3 rules / 4 signals) → `subs/fsmgen/bin/fsmgen --strict --check --json` = **success / 0 diagnostics** (strict-clean). `validate` no stage-staleness (relations 31-vs-31), quality 52/100 ADEQUATE.
+- **Honest residuals:** register bit-fields + field-resets not lowered (UNLOCATED); 1 `isf_temporal_unrepresentable` (residualized, not emitted); 0 message-fields.
+- **Cluster conclusion:** all 3 CoreSight SoC-600 versions (0701/0200/0100) are UNIFORMLY the consolidation+transaction refresh class — stale evidence had `.10c` registers but predated the `.1a`/`.1b` consolidation gates + the section-heading transaction recognizer, so re-ingest delivers a real KG cleanup (actor/relation/interface consolidation) + a recognized transaction, not a marquee table jump.
+- **Gates:** no code change → WIRE-BASED-100 + register/wire golds + `kg-bench` 156/156 orthogonal by construction. Durable trace: `docs/tasks/CORPUS-COVERAGE.md` `.2` log (#25 row + changelog). Coverage: 25 of 57.
+
 ## CORPUS-COVERAGE.2 (`2026-06-23`) — re-ingest #24 CoreSight SoC-600 0200 TRM (genuine consolidation+transaction refresh)
 - **Slice:** fresh-session PNT, register/TRM phase. Doc: CoreSight SoC-600 0200 TRM (`100806_0200_00_2017_12_08_coresight_soc_600_technical_reference_manual`, 761pp), via the git-ignored `.cache/local-references/chipdoc` symlink. Second of the SoC-600 family (after #23 = 0701; 0100 pending).
 - **Method:** `DOCLING_DEVICE=cpu specforge ingest` → `evidence`→`semantic`→`intent`→`adapt --target isf` on the current release binary (no rebuild). Ingest ~5 min (761 page artifacts / 1302 visual / 0 residuals / high). RAM 74–79% free, `.4a` guard armed, Ollama idle ([[feedback_ram_ceiling_monitor]]).
