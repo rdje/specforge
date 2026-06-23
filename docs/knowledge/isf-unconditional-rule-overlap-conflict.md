@@ -14,7 +14,7 @@ answers:
 date: 2026-06-23
 tags: [kg-isf-completeness, isf, emitter, rule-conflict, fsmgen-strict, isf_conflicting_rule_writes, adr-0006, residual, lever-c, fix, wire-gold]
 evidence: crates/specforge/src/ir/isf_ir.rs (drop_unconditional_overlap_conflicts — per-signal unconditional value, drop different-value rules; unconditional_overlap_residual_packet → isf_unconditional_overlap_<name>; wired in from_intent_ir after dedup_conflicting_rules, before priority emit); subs/fsmgen/perl/FSM/Scheduler/ISF/LoweringIR.pm (_build_conflict_issues:10888, _condition_terms_prove_disjoint:10458, _priority_resolved_record_pair:10953); docs/tasks/KG-ISF-COMPLETENESS.md (.2a.v node + acceptance checklist)
-reverify: "RAM-safe, no VLM/Docling. cargo build -p specforge. LPI: specforge adapt generated/intent_ir/ihi0068_d_2021_10_amba_low_power_interface_specification/intent_ir.json --target isf; perl subs/fsmgen/bin/fsmgen --strict --check --json generated/adapters/isf/ihi0068_d_*/controller.isf -> success=true 0 diagnostics; adapter.json residual_decisions carry isf_unconditional_overlap_temporal_temporal_signal_constraint_dyn_sigcon_0011 + _0012. No-regression: re-emit all generated/adapters/isf/*/*.isf with the change vs without (git stash the isf_ir.rs change, rebuild, re-emit) and diff -> exactly 7 .isf differ, 100 byte-identical; fsmgen on the 7 -> 6 FAIL->PASS (AXI ihi0022_l, AHB ihi0033_c, AXI-Stream ihi0051_b, LPI, LTI ihi0089_d, NVMe), AXI+ACE ihi0022_h_c stays FAIL on the orthogonal '(port expr)' grammar (pre-existing Non-Goal), 0 PASS->FAIL. run_ci.sh GREEN (lib 1708); kg-bench 156/156."
+reverify: "RAM-safe, no VLM/Docling. cargo build -p specforge. LPI: specforge adapt generated/intent_ir/ihi0068_d_2021_10_amba_low_power_interface_specification/intent_ir.json --target isf; perl subs/fsmgen/bin/fsmgen --strict --check --json generated/adapters/isf/ihi0068_d_*/controller.isf -> success=true 0 diagnostics; adapter.json residual_decisions carry isf_unconditional_overlap_temporal_temporal_signal_constraint_dyn_sigcon_0011 + _0012. No-regression: re-emit all generated/adapters/isf/*/*.isf with the change vs without (git stash the isf_ir.rs change, rebuild, re-emit) and diff -> exactly 7 .isf differ (all current primary emits), rest byte-identical; fsmgen on the 7 -> 6 FAIL->PASS (AXI ihi0022_l, AHB ihi0033_c, AXI-Stream ihi0051_b, LPI, LTI ihi0089_d, NVMe), AXI+ACE ihi0022_h_c stays FAIL on the orthogonal '(port expr)' grammar (pre-existing Non-Goal), 0 PASS->FAIL. NOTE: adapt emits ONE primary-actor .isf per doc; clean the stale secondary cruft (rm generated/adapters/isf/**/*.isf; re-emit all) then sweep the 70 current emits -> 69/70 PASS (lone FAIL ihi0022_h_c). run_ci.sh GREEN (lib 1708); kg-bench 156/156."
 ---
 
 **Built `2026-06-23` (`KG-ISF-COMPLETENESS.2a.v`, CODE — "Lever C").** The last open ISF strict-FAIL lever:
@@ -50,9 +50,11 @@ A full fresh current-binary re-emit + FSMGen sweep showed the conflict was **not
 AXI/AHB/AXI-Stream **wire golds**, LTI, and NVMe were all FSMGen-strict-FAILING on the same
 unconditional-overlap `isf_conflicting_rule_writes`. The fix takes **6 docs FAIL→PASS** (AXI `ihi0022_l`, AHB
 `ihi0033_c`, AXI-Stream `ihi0051_b`, LPI `ihi0068_d`, LTI `ihi0089_d`, NVMe), with **0 PASS→FAIL
-regressions** and **100/107 emitted `.isf` byte-identical**. The combined AXI+ACE `ihi0022_h_c` stays FAIL on
-the **orthogonal** `rule … assignment actions require '(port expr)'` grammar (a pre-existing spun-out Non-Goal
-of `ISF-VALUE-WIDTH-EMIT`), unchanged by this lever. WIRE-BASED-100 is orthogonal **by construction** — the
+regressions**. Over the **70 current-emit `.isf`** (one primary actor per doc, after cleaning 37 stale
+cache-cruft files older binaries left behind) the honest post-fix tally is **69/70 PASS** — the lone FAIL is
+the combined AXI+ACE `ihi0022_h_c` on the **orthogonal** `rule … assignment actions require '(port expr)'`
+grammar (a pre-existing spun-out Non-Goal of `ISF-VALUE-WIDTH-EMIT`), unchanged by this lever. So after this
+lever the ISF-emit strict-FAIL frontier is effectively closed (Levers A/B/C/F all resolved). WIRE-BASED-100 is orthogonal **by construction** — the
 change is confined to the `.isf` emitter (`isf_ir.rs`); `eval-extraction` reads the IR, never the `.isf`.
 
 ADR-0006: structural ISF semantics (an empty-guard rule is unconditional ⇒ overlaps every guard on its
