@@ -59,7 +59,7 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 
 ## Task Tree
 
-- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface on the AMBA/structured class, done; `.1c` reopens it for the dense-prose class), `.2` (ISF lowering-fidelity; `.2a.i` width done, `.2a.ii` direction done — initiator-perspective, owner-authorized, `.2a.iii` module-name HDL-sanitization done — owner-chosen, `.2a.iv` enum value-literal emit-gate done — Lever F, HBM2 strict-clean, `.2a.v` unconditional-rule-overlap conflict residual — Lever C, 6 docs FAIL→PASS incl. all 3 wire golds + LPI/LTI/NVMe), `.3` (relation-completeness — bar #2), `.4` (behavior/temporal lowering-completeness — bar #5/#6, broader corpus)
+- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface on the AMBA/structured class, done; `.1c` reopens it for the dense-prose class), `.2` (ISF lowering-fidelity; `.2a.i` width done, `.2a.ii` direction done — initiator-perspective, owner-authorized, `.2a.iii` module-name HDL-sanitization done — owner-chosen, `.2a.iv` enum value-literal emit-gate done — Lever F, HBM2 strict-clean, `.2a.v` unconditional-rule-overlap conflict residual — Lever C, 6 docs FAIL→PASS incl. all 3 wire golds + LPI/LTI/NVMe, `.2a.vi` rule-drive-value validity gate — closes the last AXI+ACE `(port expr)` FAIL → **70/70 renderable strict-clean**), `.3` (relation-completeness — bar #2), `.4` (behavior/temporal lowering-completeness — bar #5/#6, broader corpus)
 - ID: `KG-ISF-COMPLETENESS.1c` · Status: `active` (umbrella; PROBE DONE `2026-06-23`; `.1c.i` LANDED,
   `.1c.ii` deferred-as-bounded-residual — the clean structural win is shipped, the remainder is
   upstream-NLP-gated) · Goal: **agent-identity precision for the DENSE-PROSE doc
@@ -607,6 +607,37 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 - [x] **NO REGRESSION** — full re-emit diff (current binary WITH vs WITHOUT the change, via `git stash` of `isf_ir.rs`): exactly **7 `.isf` differ** (all 7 are current primary emits), every other emit byte-identical; FSMGen on the 7 → **6 FAIL→PASS, 0 PASS→FAIL**, the 1 still-FAIL (AXI+ACE `ihi0022_h_c` manager) fails on the **orthogonal** pre-existing `(port expr)` grammar (a spun-out `ISF-VALUE-WIDTH-EMIT` Non-Goal), unchanged. **Honest current-emit tally** (after cleaning 37 stale cache-cruft `.isf` from older binaries — `adapt` emits one primary actor per doc): **69 of 70 PASS**, the lone FAIL = `ihi0022_h_c` `(port expr)`. `kg-bench` **156/156**; `run_ci.sh` **GREEN** (lib **1708**, +2; clippy/fmt/rustdoc warning-deny + mdBook). **WIRE-BASED-100 orthogonal by construction** — the only Rust file changed is the `.isf` emitter `isf_ir.rs`; `eval-extraction` reads the IR, never the `.isf`.
 - [x] **GENERICITY (ADR 0006)** — universal ISF-semantics rule (an empty-guard rule is unconditional ⇒ overlaps every guard on its target, mirroring FSMGen's own disjointness model), NOT a chip/vendor/protocol-name list; the `(priority …)` escape-hatch was empirically TESTED and rejected as ungrounded precedence (it cleared one pair then `rule_6` conflicted next — keeping the minority would require asserting a winner over every unconditional rule = fabrication, `[[feedback_isf_no_hacks]]`).
 - [x] **LOCKSTEP** — README current-state bullet; book `pipeline/isf-adapter.md`; KM card `isf-unconditional-rule-overlap-conflict`; CHANGES.md / DEVELOPMENT_NOTES.md / LIVE_ACHIEVEMENT_STATUS.md / MEMORY.md; `CORPUS-COVERAGE.2` strict tally corrected (Lever C).
+
+- ID: `KG-ISF-COMPLETENESS.2a.vi` · Status: `done` (`2026-06-23`, measurement-first; LANDED + verified) ·
+  Goal: **close the LAST ISF-emit strict-FAIL — the AMBA AXI+ACE (`ihi0022_h_c`) `(port expr)` grammar
+  failure** so the renderable corpus reaches **70/70 FSMGen-`--strict`-clean** (the spun-out
+  `ISF-VALUE-WIDTH-EMIT` Non-Goal, now the frontier after Lever C). **REPRODUCE (real FSMGen):** `fsmgen
+  --strict --check --json` on the AXI+ACE `manager.isf` returns `success:false` / `Error: rule
+  'constraint_48' assignment actions require '(port expr)'`. **ROOT CAUSE (WHY + WHERE):** the rule's drive
+  VALUE is free PROSE — `(RLOOP the value that was presented on the ARLOOP signal)` / `(BLOOP … AWLOOP …)`
+  (a loopback-tag obligation the extractor captured as a sentence, not a literal). FSMGen requires a rule
+  assignment action's RHS to be a renderable value expression `(port expr)`, so a multi-word prose value
+  breaks the file. The emitter renders rule drive values VERBATIM (`render_isf_control_expression`,
+  `ir/isf_ir.rs`) with NO validity gate on the value (the existing gates cover enum members `.2a.iv` and
+  value width `ISF-VALUE-WIDTH-EMIT`, not the rule's own scalar). **MEASURED scope (read-only over all 70
+  current-emit `.isf`):** EXACTLY 4 prose-valued drive lines, ALL in `ihi0022_h_c` (`constraint_48`/`_49` +
+  the two `tinv_sc_llm_sigcon_0061`/`_0062` duplicates); ZERO other docs carry a whitespace-bearing rule
+  drive value, so a value-validity gate is corpus-safe by construction. **FIX (drop + honest residual):**
+  new pass `drop_unrenderable_rule_values` (`isf_ir.rs`, before the width/dedup passes) drops a rule whose
+  ANY drive value is not `is_safe_isf_scalar_value` (the existing non-empty/whitespace-free scalar test) and
+  records an `isf_rule_value_<name>` residual. The prose value is unrecoverable — "the value PRESENTED on
+  ARLOOP" is a temporal loopback, not the current `(port ARLOOP)`, so recovering a `(port expr)` would
+  fabricate the timing — honest residual over fabrication (`[[feedback_isf_no_hacks]]`). ADR-0006: a
+  structural value-shape test, no chip/vendor/protocol name list. Empirically validated: dropping the 4 →
+  AXI+ACE FSMGen `success:true` / 0 diagnostics → **70/70**. KM `[[isf-unrenderable-rule-value-residual]]`.
+
+## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.2a.vi`
+- [x] **REPRODUCE / MEASURE** — `subs/fsmgen/bin/fsmgen --strict --check --json generated/adapters/isf/ihi0022_h_c_2021_01_amba_axi_and_ace_protocol_specification/manager.isf` → `success:false`, `Error: rule 'constraint_48' assignment actions require '(port expr)'`. Read-only scan of all 70 current-emit `.isf`: exactly 4 whitespace-bearing rule drive values, all in `ihi0022_h_c` (`constraint_48`/`_49`/`tinv_sc_llm_sigcon_0061`/`_0062` = `RLOOP`/`BLOOP` ← "the value that was presented on the ARLOOP/AWLOOP signal"); 0 elsewhere.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the `.isf` emitter renders a rule's drive value verbatim (`ir/isf_ir.rs`) with no value-validity gate; a constraint whose extracted value is PROSE (`the value that was presented on the ARLOOP signal`) emits `(RLOOP <prose>)`, which FSMGen rejects because a rule assignment action RHS must be a `(port expr)` (renderable value expression), not free text. Confirmed by the FSMGen `--strict --check` diagnostic naming `constraint_48`.
+- [x] **ADDRESSED (verified)** — new pass `drop_unrenderable_rule_values` (`isf_ir.rs`, before the width/dedup passes) drops a rule whose any drive value fails `is_safe_isf_scalar_value` and records an `isf_rule_value_<name>` residual. AXI+ACE `manager.isf` now FSMGen `--strict --check` **success / 0 diagnostics**; exactly the 4 prose-valued rules (`constraint_48`/`_49`/`tinv_sc_llm_sigcon_0061`/`_0062`) dropped + residualized (`isf_rule_value_*`). +1 unit test (`drop_unrenderable_rule_values_drops_prose_keeps_scalars`).
+- [x] **NO REGRESSION** — only `ihi0022_h_c` (the only doc with a prose-valued rule, measured) changes; every other current emit byte-identical. **Full FSMGen sweep over all 70 current-emit `.isf` → 70/70 strict-clean** (was 69/70; 0 PASS→FAIL). `kg-bench` 156/156; `run_ci.sh` GREEN (lib **1709**, +1; clippy/fmt/rustdoc warning-deny + mdBook); WIRE-BASED-100 orthogonal by construction (emitter-only — `eval-extraction` reads the IR, never the `.isf`).
+- [x] **GENERICITY (ADR 0006)** — a structural value-shape test (a rule drive value must be a non-empty whitespace-free scalar token to be renderable), NOT a chip/vendor/protocol-name list; the prose loopback value is unrecoverable as an exact `(port expr)` (the temporal "was presented" semantics), so honest residual over a fabricated `(port ARLOOP)` approximation.
+- [x] **LOCKSTEP** — README current-state bullet; book `pipeline/isf-adapter.md`; KM card `isf-unrenderable-rule-value-residual`; CHANGES.md / DEVELOPMENT_NOTES.md / LIVE_ACHIEVEMENT_STATUS.md / MEMORY.md; `CORPUS-COVERAGE.2` strict tally → 70/70.
 
 - ID: `KG-ISF-COMPLETENESS.2b` · Status: `deferred` (measured-MARGINAL `2026-06-17`, read-only) · Goal:
   **ISF lowering-coverage visibility gauge** — make the lowering's per-surface coverage visible as adapter

@@ -1270,6 +1270,20 @@ impl IsfIr {
         // conflicting drives) rather than producing invalid `.isf`.
         rules.extend(temporal_isf_rules);
 
+        // --- Rule drive-value validity gate (KG-ISF-COMPLETENESS.2a.vi) ---
+        // FSMGen requires a rule assignment action's RHS to be a renderable value expression
+        // (`(port expr)`); a constraint whose extracted value is free PROSE (the AMBA AXI+ACE loopback
+        // `(RLOOP the value that was presented on the ARLOOP signal)`) would emit a multi-word value
+        // FSMGen rejects, breaking the whole `.isf`. Drop a rule whose any drive value is not a renderable
+        // scalar (non-empty, whitespace-free) and record an honest residual — the prose value is
+        // unrecoverable (a temporal loopback, not the current `(port ARLOOP)`), so never fabricate one.
+        // Runs before the width/dedup passes so a prose rule never reaches value processing.
+        {
+            let (kept, value_residuals) = drop_unrenderable_rule_values(rules);
+            rules = kept;
+            temporal_residuals.extend(value_residuals);
+        }
+
         // --- Value width-alignment (ISF-VALUE-WIDTH-EMIT.2) ---
         // A rule drive whose value literal's notation width differs from the target signal's emitted
         // width is FSMGen-strict-invalid: the OperandContract blocks implicit truncation and requires
@@ -2702,6 +2716,74 @@ fn unconditional_overlap_residual_packet(
     }
 }
 
+/// KG-ISF-COMPLETENESS.2a.vi: drop a rule whose any drive VALUE is not a renderable ISF value. FSMGen
+/// requires a rule assignment action's RHS to be a value expression (`(port expr)`); a constraint whose
+/// extracted value is free PROSE (the AMBA AXI+ACE loopback `(RLOOP the value that was presented on the
+/// ARLOOP signal)`) would emit a multi-word value FSMGen rejects, breaking the whole `.isf`. The gate
+/// reuses `is_safe_isf_scalar_value` (non-empty, whitespace-free) — every legitimate rule drive (a scalar
+/// literal `0`/`1`/`0b01`, a width-cast `7'd125`, an enum symbol `VALID`) passes, so this is byte-identical
+/// on every doc without a prose-valued rule (measured: only `ihi0022_h_c` carries any). The dropped
+/// obligation is recorded as an `isf_rule_value_<name>` residual — the prose value is unrecoverable (a
+/// temporal loopback, not the current `(port ARLOOP)`), so it is never fabricated into a `(port expr)`.
+fn drop_unrenderable_rule_values(
+    rules: Vec<IsfRule>,
+) -> (Vec<IsfRule>, Vec<ResidualDecisionPacket>) {
+    let mut kept: Vec<IsfRule> = Vec::new();
+    let mut residuals: Vec<ResidualDecisionPacket> = Vec::new();
+    for rule in rules {
+        if let Some((sig, val)) = rule
+            .drives
+            .iter()
+            .find(|(_, v)| !is_safe_isf_scalar_value(v))
+        {
+            residuals.push(unrenderable_rule_value_residual_packet(
+                &rule.name, sig, val,
+            ));
+            continue;
+        }
+        kept.push(rule);
+    }
+    (kept, residuals)
+}
+
+/// Residual for a rule dropped because a drive value is not a renderable ISF value expression
+/// (KG-ISF-COMPLETENESS.2a.vi). FSMGen rejects the non-`(port expr)` RHS; the dropped obligation is
+/// recorded, not lost, and the prose value is preserved verbatim for a human to interpret.
+fn unrenderable_rule_value_residual_packet(
+    rule_name: &str,
+    signal: &str,
+    value: &str,
+) -> ResidualDecisionPacket {
+    ResidualDecisionPacket {
+        packet_id: format!("isf_rule_value_{}", sanitize_isf_name(rule_name)),
+        question: format!(
+            "Rule `{rule_name}` drives `{signal}` to a non-renderable value `{value}`: what value \
+             expression does the document mean?"
+        ),
+        why_unresolved: format!(
+            "Rule `{rule_name}` drives `{signal}` to `{value}`, which is not a renderable ISF value \
+             expression (FSMGen requires a rule assignment action RHS to be a `(port expr)` — a literal, \
+             port reference, or expression, not free prose). The value was captured as descriptive text \
+             (e.g. a temporal loopback such as \"the value that was presented on another signal\") whose \
+             exact expression the emitter cannot recover without fabricating, so the rule was DROPPED from \
+             the emitted `.isf` rather than emitting a value FSMGen rejects. Recorded here so the \
+             obligation is explicit, not silently lost."
+        ),
+        automation_confidence: AutomationConfidence::Low,
+        candidate_interpretations: vec![CandidateInterpretation {
+            interpretation_id: "interpret_value_expression".to_string(),
+            description: format!(
+                "Translate the prose value `{value}` for `{signal}` into a concrete ISF value expression \
+                 (a literal or `(port …)` reference) — a human must decide the intended expression."
+            ),
+            downstream_impact:
+                "Would let the rule emit; until then `{signal}` carries no rule-driven value from this \
+                 obligation."
+                    .to_string(),
+        }],
+    }
+}
+
 /// ISF-VALUE-WIDTH-EMIT.2: outcome of reconciling a rule drive's value literal against the target
 /// signal's emitted width.
 enum ValueAlign {
@@ -3481,6 +3563,37 @@ mod tests {
         let names: Vec<&str> = kept.iter().map(|r| r.name.as_str()).collect();
         assert_eq!(names, vec!["g0", "g1"]);
         assert!(residuals.is_empty());
+    }
+
+    #[test]
+    fn drop_unrenderable_rule_values_drops_prose_keeps_scalars() {
+        // The AMBA AXI+ACE shape: a loopback constraint whose value is free prose FSMGen rejects, beside
+        // legitimate scalar / based-literal / enum-symbol drives that must survive byte-identical.
+        let rules = vec![
+            IsfRule {
+                name: "constraint_48".into(),
+                condition: String::new(),
+                drives: vec![(
+                    "RLOOP".into(),
+                    "the value that was presented on the ARLOOP signal".into(),
+                )],
+            },
+            IsfRule {
+                name: "ok_scalar".into(),
+                condition: String::new(),
+                drives: vec![("BTAGMATCH".into(), "0b01".into())],
+            },
+            IsfRule {
+                name: "ok_enum".into(),
+                condition: "(== X 1)".into(),
+                drives: vec![("STATE".into(), "VALID".into())],
+            },
+        ];
+        let (kept, residuals) = drop_unrenderable_rule_values(rules);
+        let names: Vec<&str> = kept.iter().map(|r| r.name.as_str()).collect();
+        assert_eq!(names, vec!["ok_scalar", "ok_enum"]); // prose rule dropped, scalars kept
+        assert_eq!(residuals.len(), 1);
+        assert_eq!(residuals[0].packet_id, "isf_rule_value_constraint_48");
     }
 
     fn dir_port(actor: &str, signal: &str, direction: ActorRelativeDirection) -> ActorPortRecord {

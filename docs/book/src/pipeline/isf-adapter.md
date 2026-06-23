@@ -139,6 +139,20 @@ minority rule conflicts with *every* same-value unconditional rule, so it
 could never win cleanly). The dropped obligation is visible as a residual,
 never silently lost and never resolved by a fabricated precedence.
 
+One more rule shape is rejected before emission: a rule whose drive **value**
+is not a renderable value expression. FSMGen requires the right-hand side of a
+rule's assignment to be a value expression (a literal, a port reference, an
+expression), not free text. Occasionally a constraint is captured with its
+value as a sentence — e.g. an AMBA AXI+ACE loopback obligation extracted as
+`(RLOOP the value that was presented on the ARLOOP signal)`. That prose cannot
+be emitted as a value FSMGen will accept, and the emitter cannot recover the
+exact expression the sentence means without guessing (the "value that was
+*presented*" is a timing-dependent loopback, not simply the current value of
+another port). So a rule whose value is not a clean scalar token is dropped and
+recorded as an `isf_rule_value_<name>` residual — the obligation stays visible
+for a human to translate, and the emitted `.isf` stays strict-valid rather than
+carrying a value the downstream tool rejects.
+
 ### Rendering: `IsfIr::render() -> String`
 
 The emitter performs a recursive tree walk:
