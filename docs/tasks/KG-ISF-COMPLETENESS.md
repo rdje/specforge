@@ -59,7 +59,7 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 
 ## Task Tree
 
-- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface on the AMBA/structured class, done; `.1c` reopens it for the dense-prose class), `.2` (ISF lowering-fidelity; `.2a.i` width done, `.2a.ii` direction done — initiator-perspective, owner-authorized, `.2a.iii` module-name HDL-sanitization done — owner-chosen, `.2a.iv` enum value-literal emit-gate done — Lever F, HBM2 strict-clean), `.3` (relation-completeness — bar #2), `.4` (behavior/temporal lowering-completeness — bar #5/#6, broader corpus)
+- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface on the AMBA/structured class, done; `.1c` reopens it for the dense-prose class), `.2` (ISF lowering-fidelity; `.2a.i` width done, `.2a.ii` direction done — initiator-perspective, owner-authorized, `.2a.iii` module-name HDL-sanitization done — owner-chosen, `.2a.iv` enum value-literal emit-gate done — Lever F, HBM2 strict-clean, `.2a.v` unconditional-rule-overlap conflict residual — Lever C, 6 docs FAIL→PASS incl. all 3 wire golds + LPI/LTI/NVMe), `.3` (relation-completeness — bar #2), `.4` (behavior/temporal lowering-completeness — bar #5/#6, broader corpus)
 - ID: `KG-ISF-COMPLETENESS.1c` · Status: `active` (umbrella; PROBE DONE `2026-06-23`; `.1c.i` LANDED,
   `.1c.ii` deferred-as-bounded-residual — the clean structural win is shipped, the remainder is
   upstream-NLP-gated) · Goal: **agent-identity precision for the DENSE-PROSE doc
@@ -553,6 +553,57 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 - [x] **NO REGRESSION** — fresh re-emit + `diff` of all emitted `.isf`: the ONLY changed file is HBM2 `hbm.isf` — wire golds (APB/AHB/AXI/SWD) + Avalon + CoreSight SoC-600 + GIC-600 + ARM-Debug `.isf` BYTE-IDENTICAL. `kg-bench` 156/156; `run_ci.sh` GREEN (lib 1706 passed, +2; clippy/fmt/rustdoc warning-deny + mdBook); WIRE-BASED-100 orthogonal (emitter-only, wire `.isf` byte-identical).
 - [x] **GENERICITY (ADR 0006)** — universal token grammar (a bare `[01]`-only token of length >= 4 = an un-qualified binary literal FSMGen rejects), NOT a chip/vendor/protocol name list; verified against the real FSMGen, not guessed (`[[feedback_verify_fsmgen_before_fr]]`); every legitimate decimal / qualified literal passes, so currently-clean enums are byte-identical.
 - [x] **LOCKSTEP** — README current-state bullet; book `pipeline/isf-adapter.md`; KM card `isf-enum-value-literal-emit-gate`; CHANGES.md / DEVELOPMENT_NOTES.md / LIVE_ACHIEVEMENT_STATUS.md / MEMORY.md; `CORPUS-COVERAGE.2` Lever-F + strict-tally corrected (DTI Lever A already resolved; HBM2 Lever F now resolved).
+
+- ID: `KG-ISF-COMPLETENESS.2a.v` · Status: `done` (`2026-06-23`, measurement-first; LANDED + verified
+  against the real FSMGen + full corpus sweep) · Goal: **close the open ISF strict-FAIL class — the
+  `isf_conflicting_rule_writes` cross-guard conflict ("Lever C"), surfaced on the AMBA Low Power Interface
+  (`ihi0068_d`) but MEASURED to also hit the AXI/AHB/AXI-Stream wire golds, LTI, and NVMe** (north-star
+  bar #6: every renderable `.isf` is strict-valid; a dropped obligation becomes an honest residual, never a
+  silent loss or a fabricated resolution). **MEASUREMENT-FIRST CORRECTION:** the resume-pointer tally
+  "27/28 renderable clean, 1 FAIL (LPI)" was STALE — a full fresh current-binary re-emit + FSMGen sweep
+  showed the conflict was NOT LPI-only (the cached wire-gold `.isf` were byte-identical to fresh AND already
+  FSMGen-FAIL on this conflict). After the fix: **6 docs FAIL→PASS** (AXI `ihi0022_l`, AHB `ihi0033_c`,
+  AXI-Stream `ihi0051_b`, LPI `ihi0068_d`, LTI `ihi0089_d`, NVMe), **0 PASS→FAIL regressions**, **100/107
+  emitted `.isf` byte-identical**, corpus per-`.isf` tally **97/107 PASS** (the 10 remaining FAILs are
+  pre-existing, byte-identical, on ORTHOGONAL diagnostics — junk secondary-actor names, the `(port expr)`
+  grammar; NOT this conflict class).
+  **REPRODUCE (read-only, real FSMGen):** `subs/fsmgen/bin/fsmgen --strict --check --json` on the persisted
+  LPI `controller.isf` returns `success:false` / 1 diagnostic: `ISF conflict 'isf_conflicting_rule_writes' on
+  target 'PREQ': … rule 'rule_5' (rule_action, <- 1) conflicts with rule
+  'temporal_temporal_signal_constraint_dyn_sigcon_0012' (rule_action, <- 0)`. A second, identical-shape
+  conflict on `PACCEPT` (`constraint_3` ←1 vs `temporal_…_dyn_sigcon_0011` ←0) is masked behind it (FSMGen
+  confesses one conflict at a time). **ROOT CAUSE (WHY + WHERE):** `rule_5`/`constraint_3` are **unconditional**
+  (`IsfRule.condition == ""` → rendered with no guard, always active) and drive `PREQ`/`PACCEPT` ←1;
+  `..._dyn_sigcon_0012`/`..._0011` are **guarded** (`(== PACCEPT 0)`) and drive ←0. SpecForge's existing
+  conflict dedup `dedup_conflicting_rules` (`crates/specforge/src/ir/isf_ir.rs:2512`) keys on
+  `(signal, condition)` — the **same-guard** overlap model — so an unconditional rule (guard `""`) and a guarded
+  rule (guard `(== PACCEPT 0)`) hash to different keys and the conflict is never detected, yet FSMGen flags it:
+  its `_condition_terms_prove_disjoint` (`subs/fsmgen/perl/FSM/Scheduler/ISF/LoweringIR.pm:10458`) can NEVER
+  prove an absent/empty condition disjoint, so an unconditional rule's firing set ⊇ every guard → it overlaps
+  any different-value rule on the same target. **DESIGN (validated empirically, GO):** after the same-guard
+  dedup (which leaves ≤1 unconditional value per signal — two unconditional rules on one signal share key
+  `(S,"")`), add a second pass `drop_unconditional_overlap_conflicts`: for each signal `S` with a kept
+  unconditional driver value `V`, DROP (+ honest `ResidualDecisionPacket`) every other rule driving `S` to a
+  value `≠ V`. This is **precise** — it drops exactly FSMGen's flagged case (unconditional-overlap) and nothing
+  else, so a currently-strict-clean doc (which by construction CANNOT contain such a config, or FSMGen would
+  already reject it) re-emits byte-identical. The **`(priority …)` escape-hatch alternative was tested and
+  REJECTED**: it cleared one pair but `..._0012` then conflicted with the next unconditional `PREQ←1` rule
+  (`rule_6`), so keeping the guarded minority rule would require asserting an ungrounded precedence over EVERY
+  same-value unconditional rule — fabrication, against `[[feedback_isf_no_hacks]]`. The general
+  different-guard-overlap case (two non-empty guards that overlap) is NOT in LPI (measured) and stays an honest
+  out-of-scope residual. Empirical validation on the real FSMGen: dropping `..._0011` + `..._0012` →
+  `success:true` / 0 diagnostics. ADR-0006: structural (empty-guard ⇒ overlaps-all), no chip/vendor/protocol
+  name list. KM card `[[isf-unconditional-rule-overlap-conflict]]` (to write). `[[project_kg_isf_completeness]]`
+  / `[[feedback_verify_fsmgen_before_fr]]`. **Frontier → after this lands, the renderable strict tally is
+  28/28; remaining `.2`/`.3` north-star work is corpus-refresh + relation-completeness (Docling/RAM-gated).**
+
+## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.2a.v`
+- [x] **REPRODUCE / MEASURE** — `subs/fsmgen/bin/fsmgen --strict --check --json generated/adapters/isf/ihi0068_d_2021_10_amba_low_power_interface_specification/controller.isf` → `success:false`, 1 diagnostic `isf_conflicting_rule_writes` on `PREQ` (`rule_5` ←1 vs `temporal_temporal_signal_constraint_dyn_sigcon_0012` ←0); a second identical-shape `PACCEPT` conflict (`constraint_3` ←1 vs `..._0011` ←0) is masked behind it. A full fresh re-emit + FSMGen sweep further showed the AXI `ihi0022_l` / AHB `ihi0033_c` / AXI-Stream `ihi0051_b` wire golds + LTI `ihi0089_d` + NVMe were ALL FSMGen-FAIL on this same conflict class (the stale "27/28 clean" tally was wrong; cached wire-gold `.isf` byte-identical to fresh AND FAIL).
+- [x] **ROOT CAUSE (WHY + WHERE)** — `dedup_conflicting_rules` (`crates/specforge/src/ir/isf_ir.rs`) keys conflict detection on `(signal, condition)` (same-guard only); an unconditional rule (`IsfRule.condition == ""`) and a guarded rule (`(== PACCEPT 0)`) hash to different keys so the overlap is missed, but FSMGen's `_condition_terms_prove_disjoint` (`subs/fsmgen/perl/FSM/Scheduler/ISF/LoweringIR.pm:10458`) never proves an absent condition disjoint, so the unconditional rule overlaps every guard on its target → `isf_conflicting_rule_writes` (`_build_conflict_issues:10888`). Confirmed by the FSMGen `--strict --check` diagnostic naming `rule_5` (guard-less) vs the guarded `..._0012`.
+- [x] **ADDRESSED (verified)** — new pass `drop_unconditional_overlap_conflicts` (`isf_ir.rs`, after the same-guard dedup, before priority emit): per signal with an unconditional driver value `V`, drop every other rule driving it to `≠ V` + record `isf_unconditional_overlap_<name>` residual. LPI `controller.isf` (and `channel.isf`) now FSMGen `--strict --check --json` **success / 0 diagnostics**; exactly `..._0011` (`PACCEPT←0`) and `..._0012` (`PREQ←0`) dropped, both surfaced as `isf_unconditional_overlap_*` residuals (adapter `residual_decision_count` 4→6). Corpus: **6 docs FAIL→PASS** (AXI `ihi0022_l` manager, AHB `ihi0033_c` manager, AXI-Stream `ihi0051_b` transmitter, LPI controller, LTI `ihi0089_d` coherent_host, NVMe channel). +2 unit tests (`drop_unconditional_overlap_conflicts_drops_guarded_minority_keeps_unconditional`, `..._noop_without_unconditional_driver`).
+- [x] **NO REGRESSION** — full re-emit diff (current binary WITH vs WITHOUT the change, via `git stash` of `isf_ir.rs`): exactly **7 of 107 `.isf` differ, 100 byte-identical**; FSMGen on the 7 → **6 FAIL→PASS, 0 PASS→FAIL**, the 1 still-FAIL (AXI+ACE `ihi0022_h_c` manager) fails on the **orthogonal** pre-existing `(port expr)` grammar (a spun-out `ISF-VALUE-WIDTH-EMIT` Non-Goal), unchanged. The 9 other corpus FAILs are byte-identical with/without the change (pre-existing, not this class). Post-fix per-`.isf` tally **97/107 PASS**. `kg-bench` **156/156**; `run_ci.sh` **GREEN** (lib **1708**, +2; clippy/fmt/rustdoc warning-deny + mdBook). **WIRE-BASED-100 orthogonal by construction** — the only Rust file changed is the `.isf` emitter `isf_ir.rs`; `eval-extraction` reads the IR, never the `.isf`.
+- [x] **GENERICITY (ADR 0006)** — universal ISF-semantics rule (an empty-guard rule is unconditional ⇒ overlaps every guard on its target, mirroring FSMGen's own disjointness model), NOT a chip/vendor/protocol-name list; the `(priority …)` escape-hatch was empirically TESTED and rejected as ungrounded precedence (it cleared one pair then `rule_6` conflicted next — keeping the minority would require asserting a winner over every unconditional rule = fabrication, `[[feedback_isf_no_hacks]]`).
+- [x] **LOCKSTEP** — README current-state bullet; book `pipeline/isf-adapter.md`; KM card `isf-unconditional-rule-overlap-conflict`; CHANGES.md / DEVELOPMENT_NOTES.md / LIVE_ACHIEVEMENT_STATUS.md / MEMORY.md; `CORPUS-COVERAGE.2` strict tally corrected (Lever C).
 
 - ID: `KG-ISF-COMPLETENESS.2b` · Status: `deferred` (measured-MARGINAL `2026-06-17`, read-only) · Goal:
   **ISF lowering-coverage visibility gauge** — make the lowering's per-surface coverage visible as adapter

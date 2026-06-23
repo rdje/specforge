@@ -123,6 +123,22 @@ Temporal value/guard→drive rules join the rule set before dedup, so a
 temporal rule that conflicts with an existing rule on the same
 signal+guard is dropped rather than emitted as invalid `.isf`.
 
+There is a second, subtler conflict shape: an **unconditional** rule (one
+with no guard — it fires every cycle) and a **guarded** rule can drive the
+same signal to *different* values. They share no guard string, so the
+same-guard dedup above does not see them — but FSMGen does, because an
+unconditional rule overlaps *every* guard (its firing condition is "always",
+which can never be proven disjoint from any other condition). FSMGen would
+reject the whole `.isf` with `isf_conflicting_rule_writes`. So a second pass
+keeps the unconditional value (the one that always holds) and drops each
+other rule that drives the signal to a different value, recording an
+`isf_unconditional_overlap_<name>` residual on the adapter artifact. The
+emitter deliberately does **not** invent a `(priority …)` to keep both rules:
+that would assert a precedence the document never states (and the guarded
+minority rule conflicts with *every* same-value unconditional rule, so it
+could never win cleanly). The dropped obligation is visible as a residual,
+never silently lost and never resolved by a fabricated precedence.
+
 ### Rendering: `IsfIr::render() -> String`
 
 The emitter performs a recursive tree walk:

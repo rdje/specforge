@@ -1296,6 +1296,19 @@ impl IsfIr {
             temporal_residuals.extend(conflict_residuals);
         }
 
+        // --- Cross-guard overlap dedup (KG-ISF-COMPLETENESS.2a.v, "Lever C") ---
+        // The same-guard dedup above keys on (signal, guard), so it misses a conflict between an
+        // UNCONDITIONAL rule (empty guard, always active) and a GUARDED rule on the same signal with a
+        // different value — yet FSMGen rejects it (`isf_conflicting_rule_writes`): an unconditional rule's
+        // firing set ⊇ every guard, and FSMGen's `_condition_terms_prove_disjoint` can never prove an
+        // absent condition disjoint (the AMBA LPI `PREQ`/`PACCEPT` case). Drop each such conflicting rule
+        // with an honest residual (the unconditional value wins), never a fabricated precedence.
+        {
+            let (deduped, overlap_residuals) = drop_unconditional_overlap_conflicts(rules);
+            rules = deduped;
+            temporal_residuals.extend(overlap_residuals);
+        }
+
         // --- Priorities ---
         let mut priorities: Vec<IsfPriority> = Vec::new();
         let has_rules = !rules.is_empty();
@@ -2583,6 +2596,112 @@ fn rule_conflict_residual_packet(
     }
 }
 
+/// KG-ISF-COMPLETENESS.2a.v ("Lever C"): drop rules that conflict with an UNCONDITIONAL driver on the
+/// same signal. An unconditional rule (`condition == ""`) drives its target on every cycle, so its firing
+/// set ⊇ every guard; FSMGen's `_condition_terms_prove_disjoint` can never prove an absent condition
+/// disjoint, so its `isf_conflicting_rule_writes` check rejects any other rule driving the same target to a
+/// different value (the AMBA LPI `PREQ`/`PACCEPT` case). The same-guard `dedup_conflicting_rules` keys on
+/// `(signal, guard)` and so MISSES this cross-guard overlap. This runs AFTER it, so there is at most one
+/// unconditional value per signal (two unconditional rules on one signal share key `(S, "")` and the second
+/// is already gone). For each signal `S` with a kept unconditional driver value `V`, drop every other rule
+/// driving `S` to a value `≠ V`, recording an honest residual (never a fabricated precedence — the
+/// `(priority …)` hatch would require asserting an ungrounded winner over EVERY same-value unconditional
+/// rule). It is precise: it drops exactly FSMGen's flagged overlap, so a strict-clean doc — which by
+/// construction cannot contain such a config — re-emits byte-identical. Order is preserved.
+fn drop_unconditional_overlap_conflicts(
+    rules: Vec<IsfRule>,
+) -> (Vec<IsfRule>, Vec<ResidualDecisionPacket>) {
+    // The (unique, post-same-guard-dedup) unconditional driver value per signal.
+    let mut unconditional_value: std::collections::BTreeMap<String, String> =
+        std::collections::BTreeMap::new();
+    for rule in &rules {
+        if rule.condition.is_empty() {
+            for (sig, val) in &rule.drives {
+                unconditional_value
+                    .entry(sig.clone())
+                    .or_insert_with(|| val.clone());
+            }
+        }
+    }
+    let mut kept: Vec<IsfRule> = Vec::new();
+    let mut residuals: Vec<ResidualDecisionPacket> = Vec::new();
+    'outer: for rule in rules {
+        for (sig, val) in &rule.drives {
+            if let Some(uncond) = unconditional_value.get(sig)
+                && uncond != val
+            {
+                residuals.push(unconditional_overlap_residual_packet(
+                    &rule.name,
+                    sig,
+                    &rule.condition,
+                    val,
+                    uncond,
+                ));
+                continue 'outer;
+            }
+        }
+        kept.push(rule);
+    }
+    (kept, residuals)
+}
+
+/// Residual for a rule dropped because it conflicts with an UNCONDITIONAL driver on the same signal
+/// (KG-ISF-COMPLETENESS.2a.v). FSMGen rejects the overlap; the dropped obligation is recorded, not lost.
+fn unconditional_overlap_residual_packet(
+    rule_name: &str,
+    signal: &str,
+    condition: &str,
+    dropped_value: &str,
+    unconditional_value: &str,
+) -> ResidualDecisionPacket {
+    let guard = if condition.is_empty() {
+        "(always)"
+    } else {
+        condition
+    };
+    ResidualDecisionPacket {
+        packet_id: format!(
+            "isf_unconditional_overlap_{}",
+            sanitize_isf_name(rule_name)
+        ),
+        question: format!(
+            "Conflicting drive for `{signal}`: an unconditional rule already drives it to \
+             `{unconditional_value}`; what governs `{dropped_value}`?"
+        ),
+        why_unresolved: format!(
+            "Rule `{rule_name}` drives `{signal}` to `{dropped_value}` under guard `{guard}`, but an \
+             unconditional rule already drives `{signal}` to `{unconditional_value}` on every cycle. An \
+             unconditional rule overlaps every guard, so FSMGen strict rejects the differing-value overlap \
+             (`isf_conflicting_rule_writes`); this rule was DROPPED from the emitted `.isf` (the \
+             unconditional `{unconditional_value}` is kept) rather than fabricating a precedence the \
+             document does not ground. Recorded here so the conflict is explicit, not silently lost."
+        ),
+        automation_confidence: AutomationConfidence::Low,
+        candidate_interpretations: vec![
+            CandidateInterpretation {
+                interpretation_id: "keep_unconditional_rule".to_string(),
+                description: format!(
+                    "Keep `{signal}` = `{unconditional_value}` (the unconditional rule, currently emitted)."
+                ),
+                downstream_impact:
+                    "Emitted `.isf` drives the unconditional value; the guarded rule is omitted."
+                        .to_string(),
+            },
+            CandidateInterpretation {
+                interpretation_id: "narrow_unconditional_rule".to_string(),
+                description: format!(
+                    "Treat rule `{rule_name}` (`{signal}` = `{dropped_value}` under `{guard}`) as an \
+                     exception to the unconditional default — would require narrowing the unconditional \
+                     rule's guard; a human must decide."
+                ),
+                downstream_impact:
+                    "Would keep both obligations with an explicit precedence the document does not state."
+                        .to_string(),
+            },
+        ],
+    }
+}
+
 /// ISF-VALUE-WIDTH-EMIT.2: outcome of reconciling a rule drive's value literal against the target
 /// signal's emitted width.
 enum ValueAlign {
@@ -3288,6 +3407,80 @@ mod tests {
         assert_eq!(aligned[2].drives[0].1, "0xAB"); // unknown width → untouched
         assert_eq!(residuals.len(), 1);
         assert_eq!(residuals[0].packet_id, "isf_value_width_r_over");
+    }
+
+    #[test]
+    fn drop_unconditional_overlap_conflicts_drops_guarded_minority_keeps_unconditional() {
+        // The AMBA LPI shape: many unconditional `PREQ <- 1` rules and one guarded `PREQ <- 0`. The
+        // guarded minority rule overlaps every unconditional rule (an empty guard is never disjoint), so
+        // FSMGen rejects it; it must be dropped + residualized while every same-value rule survives.
+        let rules = vec![
+            IsfRule {
+                name: "rule_5".into(),
+                condition: String::new(),
+                drives: vec![("PREQ".into(), "1".into())],
+            },
+            IsfRule {
+                name: "rule_6".into(),
+                condition: String::new(),
+                drives: vec![("PREQ".into(), "1".into())],
+            },
+            IsfRule {
+                name: "temporal_dyn_sigcon_0012".into(),
+                condition: "(== PACCEPT 0)".into(),
+                drives: vec![("PREQ".into(), "0".into())],
+            },
+            // A guarded rule that AGREES with the unconditional value is kept (same value = compatible).
+            IsfRule {
+                name: "guarded_agree".into(),
+                condition: "(== PACCEPT 1)".into(),
+                drives: vec![("PREQ".into(), "1".into())],
+            },
+            // An unrelated signal with no unconditional driver is untouched even with differing guards.
+            IsfRule {
+                name: "qdeny_a".into(),
+                condition: "(== A 1)".into(),
+                drives: vec![("QDENY".into(), "0".into())],
+            },
+            IsfRule {
+                name: "qdeny_b".into(),
+                condition: "(== B 1)".into(),
+                drives: vec![("QDENY".into(), "1".into())],
+            },
+        ];
+        let (kept, residuals) = drop_unconditional_overlap_conflicts(rules);
+        let names: Vec<&str> = kept.iter().map(|r| r.name.as_str()).collect();
+        assert_eq!(
+            names,
+            vec!["rule_5", "rule_6", "guarded_agree", "qdeny_a", "qdeny_b"],
+        );
+        assert_eq!(residuals.len(), 1);
+        assert_eq!(
+            residuals[0].packet_id,
+            "isf_unconditional_overlap_temporal_dyn_sigcon_0012"
+        );
+    }
+
+    #[test]
+    fn drop_unconditional_overlap_conflicts_noop_without_unconditional_driver() {
+        // No unconditional driver on the signal → cross-guard pairs are FSMGen's general-overlap case,
+        // out of scope for this precise pass; it must return byte-identical (no drop, no residual).
+        let rules = vec![
+            IsfRule {
+                name: "g0".into(),
+                condition: "(== X 0)".into(),
+                drives: vec![("S".into(), "0".into())],
+            },
+            IsfRule {
+                name: "g1".into(),
+                condition: "(== X 1)".into(),
+                drives: vec![("S".into(), "1".into())],
+            },
+        ];
+        let (kept, residuals) = drop_unconditional_overlap_conflicts(rules);
+        let names: Vec<&str> = kept.iter().map(|r| r.name.as_str()).collect();
+        assert_eq!(names, vec!["g0", "g1"]);
+        assert!(residuals.is_empty());
     }
 
     fn dir_port(actor: &str, signal: &str, direction: ActorRelativeDirection) -> ActorPortRecord {
