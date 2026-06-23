@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `AUDIT-DOC-RECONCILE`
-- Status: `done`
+- Status: `done` (re-closed `2026-06-24` after `.3`; first closed `2026-05-18`)
 - Roadmap lane: `R0` (live-doc continuity / accuracy)
 - Created: `2026-05-18`
-- Last updated: `2026-05-18`
+- Last updated: `2026-06-24`
 - Owner: repo-local workflow
 
 ## Goal
@@ -47,7 +47,34 @@ Reconcile the two doc-drift findings from the audit:
 - ID: `AUDIT-DOC-RECONCILE`
   Status: `done`
   Goal: `R15 text + book converge flags reconciled to code reality.`
-  Children: `.1`, `.2`
+  Children: `.1`, `.2`, `.3`
+
+- ID: `AUDIT-DOC-RECONCILE.3`
+  Status: `done` (`2026-06-24`, fresh-session PNT slice)
+  Goal: >
+    Reconcile `RUST_CODEBASE_ANALYSIS.md` to the current codebase. The
+    `2026-06-08` "ramp-up currency correction" stated ≈103,200 LoC / 25
+    subcommands / 25 IR modules / 1435 lib tests; all four drifted as the
+    EXTRACTION-QUALITY-GAUGE / PDF-VARIANT-DIGESTION / KG-ISF-* /
+    MEMORY-BOUNDED-INGEST work landed. Add a new dated currency-correction
+    section (the doc's established self-maintenance pattern — older dated
+    sections stay as historical record) carrying freshly-verified counts.
+  Acceptance: >
+    New `## Session update (2026-06-24 …)` section at the top with the four
+    counts each backed by a reproducible command; no historical section
+    rewritten; no architecture claim reversed; numbers must be the live
+    deterministic values, not estimates.
+  Verification: `passed` — verified at HEAD: `128,742` LoC / `65` `.rs`
+    files (`find … -name '*.rs' -exec cat {} + | wc -l`); `28` subcommands
+    (`grep -oE 'Commands::[A-Za-z]+' lib.rs | sort -u | wc -l`); `28`
+    `ir/*.rs` modules (`ls ir/*.rs | wc -l`); `cargo test -p specforge
+    --lib` = `1709 passed, 0 failed, 4 ignored` (ran `2026-06-24`, 6.86s).
+    A potential sub-claim about *which* 3 commands were added was withdrawn
+    after finding the `2026-06-08` entry's own enumeration undercounted
+    (`recover-register-bits` described in prose but omitted from its list) —
+    only the verified live total is stated. Docs-only; `check_doctrines.sh`
+    GREEN.
+  Commit: `AUDIT-DOC-RECONCILE.3 — refresh RUST_CODEBASE_ANALYSIS.md size/command/module/test counts`
 
 - ID: `AUDIT-DOC-RECONCILE.1`
   Status: `done`
@@ -94,9 +121,12 @@ Reconcile the two doc-drift findings from the audit:
 | --- | --- | --- | --- |
 | 1 | `AUDIT-DOC-RECONCILE.1` | `done` | R15 forward text reconciled to ISF-only reality |
 | 2 | `AUDIT-DOC-RECONCILE.2` | `done` | Book converge flags/defaults now match `cli.rs` |
+| 3 | `AUDIT-DOC-RECONCILE.3` | `done` | `RUST_CODEBASE_ANALYSIS.md` size/command/module/test counts refreshed to live values |
 
-Tree CLOSED. This was the **last leaf of the last audit-driven tree** —
-the post-ISF-ONLY audit remediation program is complete.
+Tree RE-CLOSED `2026-06-24`. The post-ISF-ONLY audit program closed at `.2`;
+`.3` re-opened the tree for a single live-doc currency refresh
+(`RUST_CODEBASE_ANALYSIS.md` had drifted 4 counts) and re-closed it. The tree
+stays the standing home for one-off live-doc↔code currency reconciliations.
 
 ## Decisions
 
@@ -117,6 +147,7 @@ the post-ISF-ONLY audit remediation program is complete.
 | --- | --- | --- | --- |
 | `2026-05-18` | `AUDIT-DOC-RECONCILE.1` | R15 forward-text reconcile (status/goals/remaining/criteria) vs ISF-only code reality; historical bullets preserved | `passed` (docs-only; ROADMAP not in mdBook) |
 | `2026-05-18` | `AUDIT-DOC-RECONCILE.2` | `converge` flag/default table vs `cli.rs ConvergeArgs`; full `scripts/run_ci.sh` incl. mdBook | `passed` (12/12 flags+defaults documented; 1054 passed; mdBook green) |
+| `2026-06-24` | `AUDIT-DOC-RECONCILE.3` | `RUST_CODEBASE_ANALYSIS.md` 4 counts vs live tree: LoC (`find … wc -l`=128,742/65 files), subcommands (`grep Commands:: lib.rs`=28), IR modules (`ls ir/*.rs`=28), lib tests (`cargo test --lib`=1709/0/4); `check_doctrines.sh` | `passed` (new dated section added; historical sections preserved; one over-specific sub-claim withdrawn after self-check; docs-only, lib unchanged 1709) |
 
 ## Commit Log
 
@@ -124,6 +155,7 @@ the post-ISF-ONLY audit remediation program is complete.
 | --- | --- | --- |
 | `AUDIT-DOC-RECONCILE.1` | `AUDIT-DOC-RECONCILE.1 — reconcile ROADMAP R15 forward text to ISF-only reality` | docs-only; historical `done:` bullets preserved |
 | `AUDIT-DOC-RECONCILE.2` | `AUDIT-DOC-RECONCILE.2 — document full converge flag surface + defaults` | book `pipeline.md`/`overview.md` vs `cli.rs`; tree CLOSED |
+| `AUDIT-DOC-RECONCILE.3` | `AUDIT-DOC-RECONCILE.3 — refresh RUST_CODEBASE_ANALYSIS.md size/command/module/test counts` | docs-only; 4 drifted counts refreshed to live deterministic values; tree re-closed |
 
 ## Changelog
 
@@ -141,3 +173,14 @@ the post-ISF-ONLY audit remediation program is complete.
   `overview.md` one-liner completed + linked. Full CI green incl.
   mdBook. **This was the last leaf of the last audit-driven tree — the
   post-ISF-ONLY audit remediation program is complete.**
+- `2026-06-24`: Tree RE-OPENED + `.3` done (fresh-session PNT slice,
+  surfaced by the session-start codebase survey). `RUST_CODEBASE_ANALYSIS.md`'s
+  `2026-06-08` currency section had drifted four counts (≈103.2K→**128,742**
+  LoC / 65 files; 25→**28** subcommands; 25→**28** IR modules;
+  1435→**1709** lib tests). Added a new `## Session update (2026-06-24 …)`
+  currency-correction section with each count backed by a reproducible
+  command; historical sections left verbatim; no architecture claim
+  reversed. Self-check caught + withdrew one over-specific sub-claim
+  (which 3 commands were added — the old entry's enumeration undercounted),
+  keeping only the verified live total. Docs-only; `mdbook`/`run_ci`
+  orthogonal (no Rust change); `check_doctrines.sh` GREEN. Tree RE-CLOSED.

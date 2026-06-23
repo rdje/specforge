@@ -4,6 +4,45 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-06-24 ramp-up currency correction — size + command + IR-module + test inventory; `AUDIT-DOC-RECONCILE.3`)
+
+State verified directly from the working tree at HEAD `c212a6d0` (`origin/main..HEAD` = 63; push
+held at the ~200 threshold). This entry refreshes four counts that drifted since the `2026-06-08`
+currency correction below, as the `EXTRACTION-QUALITY-GAUGE` / `PDF-VARIANT-DIGESTION` /
+`KG-ISF-TRANSACTIONS` / `KG-ISF-COMPLETENESS` / `MEMORY-BOUNDED-INGEST` work landed. Older dated
+sections are preserved as historical record and are superseded by this entry where they cite
+smaller counts. **No architecture claim is reversed** — `IrStage` is still the same four IR stages
+(`SourceIR → EvidenceIR → SemanticIR → IntentIR`), `.isf` via `IsfIr` is still the sole adapter
+target (`.fsm`/HDL out of scope, owned by FSMGen downstream), the R16 ContractIR layer is still a
+typed layer over the four stages (no fifth stage), and the Ollama + Qwen2.5VL LLM/VLM provider is
+still production-default.
+
+- **Whole `crates/specforge/src` = 128,742 lines across 65 `.rs` files** (single workspace crate,
+  edition 2024), up from the ≈103,200 cited on `2026-06-08`. Verified:
+  `find crates/specforge/src -name '*.rs' -exec cat {} + | wc -l`.
+- **Command surface = 28 subcommands** (`crates/specforge/src/cli.rs` `enum Commands`, dispatched in
+  `lib.rs`), up from the 25 cited on `2026-06-08` (that entry's own enumeration was itself an
+  undercount — it described `recover-register-bits` in prose yet omitted it from the list, so the
+  exact per-command delta is not reconstructed here; only the verified live total is stated).
+  Verified: `grep -oE 'Commands::[A-Za-z]+' crates/specforge/src/lib.rs | sort -u | wc -l` = 28. The full set:
+  inspect · doctor · converge · ingest · evidence · semantic · intent · adapt · enrich · nlp-enrich ·
+  extract-contracts · signal-resolve · nli-verify · entity-type · extract-conditions ·
+  extract-constraints-llm · eval-extraction · audit-extraction · grits-consensus ·
+  recover-register-bits · validate · project-validation · rescan-plan · kg-bench · learn-priors ·
+  corpus-cluster · corpus-kb · clean. (`commands/mod.rs` also carries `pub(crate) mod llm_text`, a
+  shared text/VLM transport helper — not a subcommand.)
+- **IR namespace = 28 `ir/*.rs` modules** (plus `ir/source/docling_backend.rs`), up from 25. Still a
+  typed layer over the four IR stages — no sixth stage. Verified: `ls crates/specforge/src/ir/*.rs | wc -l` = 28.
+- **`cargo test -p specforge --lib` = 1709 passing, 0 failed, 4 ignored** (the canonical validation
+  command; `2026-06-24`, finished in ~6.9s), up from 1435. Any earlier
+  `1435`/`1433`/`1427`/`1421`/`1360`/`1014`/`666` counts below are historical.
+- **Largest modules (top, by lines):** `ir/evidence.rs` 26,195 · `ir/semantic.rs` 22,604 ·
+  `commands/validate.rs` 16,105 · `commands/project_validation.rs` 7,476 · `ir/intent.rs` 5,506 ·
+  `ir/isf_ir.rs` 5,022 · `commands/kg_bench.rs` 3,486 · `commands/rescan_plan.rs` 3,108 ·
+  `commands/learn_priors.rs` 3,022 · `eval.rs` 2,855 · `ir/source/docling_backend.rs` 2,666 ·
+  `ir/prior_memory.rs` 2,578. The two IR builders `evidence.rs` + `semantic.rs` (≈48.8K combined)
+  remain the centre of gravity — the table-driven extraction and the actor/contract synthesis.
+
 ## Session update (2026-06-22 — DOC-INTENT-TAXONOMY.4a.ii: register bit-fields now lower to ISF field-structured storage)
 
 - **`crates/specforge/src/ir/isf_ir.rs` — the storage emitter gained a field substructure.** `IsfStorageVar` now
