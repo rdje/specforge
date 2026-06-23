@@ -131,3 +131,50 @@ documents without minting noise." The eMMC measurement contradicts that for the 
 is corrected in this same slice with a measured, scoped caveat (the wire/structured reference specs ARE
 clean; dense descriptive-prose specs can still mint relation-subject phantoms — Lever E), so the book stays
 honest about current shipped behavior even before the gate lands.
+
+## 7. `.1c.i` LANDED (`2026-06-23`) — outcome
+
+The trailing aux/prep strip landed as a new `NON_ACTOR_TRAILING_FUNCTION_WORDS` const in
+`consolidate_trailing_fragment`. Verified live: new-binary `evidence→semantic→intent` cascade on eMMC took
+**actors 153 → 138** (the four aux/prep `host` variants `host has`/`host is`/`host to`/`host with` fold onto
+`host`; 29 phantom names removed); `host.isf` strict-clean. WIRE-BASED-100 = 1.000 on fresh-Pattern
+new-binary evidence; `kg-bench` 156/156; `run_ci.sh` GREEN (lib 1704, +2). The eight `host *` variants
+collapse to four real residuals (`host selects`/`host stops`/`host tries`/`host wants`) that are trailing
+*common verbs* not in the closed `NON_ACTOR_LEADING_VERBS` list — a possible future closed-verb extension,
+but risky (a verb that doubles as a device noun must not be admitted), so it is left as a measured residual.
+
+## 8. `.1c.ii` MEASURED (`2026-06-23`) — no clean within-document structural gate; bounded residual
+
+The bulk of the explosion (eMMC: 109 multi-word actors) cannot be gated by a within-document structural rule.
+Measured the most promising candidate — a **connectivity fold** extending the `.1b.ii` idea ("fold onto an
+agent independently connected in this doc"): rewrite a multi-word relation subject `A … Z` onto its last
+content token when that token is an independently-connected single-word agent. The candidate **mishandles the
+real cases**, proven on the dense AXI+ACE spec `ihi0022_h_c`:
+
+- **Correct folds (the token IS the head):** `caching Manager`/`initiating Manager`/`snooped Manager`/
+  `originating Manager` → `Manager` — these are descriptive references to the real Manager.
+- **WRONG folds (the agent is the MODIFIER, not the head):** `Manager component` → `component`,
+  `intermediate component` → `component`, `participating component` → `component` — the agent is `Manager`,
+  not the noun-phrase head `component`. A fold-on-last-token rule loses the real agent; a fold-on-first-token
+  rule would instead break `caching Manager` → `caching`. The agent token's POSITION varies (modifier vs.
+  head), so no fixed structural position is safe.
+- **Junk either way:** `full AXI` → `AXI`, `AxDOMAIN signal` → `signal`, `read barrier` → `barrier` — folds
+  onto a non-agent tail.
+
+The deeper reason: within one document the real descriptive reference (`caching Manager`) and the phantom
+fragment (`basic bus`) are **structurally indistinguishable** — same single-`REL-INFERRED` participation,
+same `SECTION-PHASE`/`PROSE-PARA` provenance markers (a relation's statement always sits in some section, so
+the phantom inherits section-phase grounding too), same noun-phrase shape. eMMC carries no first-class
+`ProtocolActorRecord` agent-definition surface to lean on (its EvidenceIR actor surface is *only*
+`actor_signal_relations`), so there is no grounding signal that separates them.
+
+**Conclusion — `.1c.ii` is a bounded residual, not a downstream gate.** A name-shape or connectivity drop is
+disproven unsafe (it would lose real agents like `Manager component`'s `Manager`); the completeness north
+star forbids dropping a rare-but-real agent. The genuine fix is **upstream relation-subject extraction
+precision on descriptive prose** — reading the actual grammatical subject of a who-acts-on-what sentence
+rather than a noun phrase near the signal — which is the owner-directed in-Rust shallow-parse direction
+(`[[project_nlp_shallow_parse_direction]]`), not a downstream actor-surface rule. Until that lands, the
+multi-word prose phantoms stay an honest residual; they never reach the emitted `.isf` (the adapter lowers
+the renderable initiator's signals/behaviours, not the raw `actors[]`), so the cost is IntentIR `actors[]`
+precision (bar #1) on dense-prose specs, explicitly bounded here. **Lever E is thereby fully scoped: the
+clean structural win (`.1c.i`) is landed; the remainder is upstream-NLP-gated and recorded as a residual.**

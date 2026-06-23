@@ -47,6 +47,14 @@ noun. Safety is measured CLEAN: across all 78 persisted IntentIR docs, **zero** 
 `X <aux/prep>` shaped, so the strip renames no real high-participation agent (the `.1a`/`.1b.i` bar); the 4
 wire golds carry no such actor (structurally untouched). Reach: 138 names / ~17 docs — and the doc class is
 **dense-prose specs** (AXI+ACE `ihi0022_h_c` 189 actors and CHI `ihi0050_g` 87 explode too), not "non-AMBA".
-It is necessary-not-sufficient: the bulk (≈120) are single-relation noun-phrase phantoms whose precision
-(`.1c.ii`) needs a participation+grounding discriminator and its own measurement (a rare-but-real agent can
-also appear in one relation — completeness forbids dropping it).
+It is necessary-not-sufficient: the bulk (≈120) are single-relation noun-phrase phantoms with a leading noun.
+`.1c.ii` MEASURED this class (`2026-06-23`) and found **no clean within-document structural gate**: a
+`.1b.ii`-style connectivity fold mishandles the real cases on AXI+ACE `ihi0022_h_c` (`caching Manager`→
+`Manager` correct, but `Manager component`→`component` WRONG — the agent is the modifier, not the noun-phrase
+head; the agent token's position varies), and within one document a real descriptive reference
+(`caching Manager`) and a phantom (`basic bus`) are structurally indistinguishable (same single relation, same
+`SECTION-PHASE`/`PROSE-PARA` provenance, same shape; eMMC has no `ProtocolActorRecord` grounding surface). A
+drop is forbidden by the genericity guardrail; a participation threshold by completeness. So `.1c.ii` is a
+**bounded honest residual** — the genuine fix is upstream relation-subject extraction precision on descriptive
+prose (`[[project_nlp_shallow_parse_direction]]`), not a downstream actor-surface rule; the phantoms never
+reach the emitted `.isf`.

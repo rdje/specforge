@@ -60,8 +60,9 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 ## Task Tree
 
 - ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface on the AMBA/structured class, done; `.1c` reopens it for the dense-prose class), `.2` (ISF lowering-fidelity; `.2a.i` width done, `.2a.ii` direction done — initiator-perspective, owner-authorized, `.2a.iii` module-name HDL-sanitization done — owner-chosen), `.3` (relation-completeness — bar #2), `.4` (behavior/temporal lowering-completeness — bar #5/#6, broader corpus)
-- ID: `KG-ISF-COMPLETENESS.1c` · Status: `active` (umbrella; measurement-first PROBE DONE `2026-06-23`,
-  read-only, docs-only — splits into sub-leaves) · Goal: **agent-identity precision for the DENSE-PROSE doc
+- ID: `KG-ISF-COMPLETENESS.1c` · Status: `active` (umbrella; PROBE DONE `2026-06-23`; `.1c.i` LANDED,
+  `.1c.ii` deferred-as-bounded-residual — the clean structural win is shipped, the remainder is
+  upstream-NLP-gated) · Goal: **agent-identity precision for the DENSE-PROSE doc
   class** (Lever E, spun out of `CORPUS-COVERAGE.2` re-ingest #27 JEDEC eMMC: actors exploded to 153/349 vs
   the structured DRAM #28 HBM2 which CONSOLIDATED 52→38). The `.1a`/`.1b.*` gates are measured clean on the
   AMBA/structured class but were never measured on dense descriptive prose. **PROBE DONE `2026-06-23`**
@@ -117,6 +118,36 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 - [x] **NO REGRESSION** — **WIRE-BASED-100 = 1.000** on fresh-Pattern new-binary evidence (rebuilt all 4 gold docs into a temp evidence-root; `eval-extraction --provider skip --evidence-root <temp>`): constraints APB 6/6 · AHB 6/6 · AXI 3/3; actor-relations APB 5/5 · AHB 6/6 · AXI 6/6 · SWD 1/1; temporal APB 3/3 · AHB 4/4 · AXI 3/3 (SWD lone constraint 0/1 = the documented promotion-only, unchanged). **`kg-bench` 156/156.** **`scripts/run_ci.sh` GREEN** (lib **1704** passed, +2 new tests; clippy/fmt/rustdoc warning-deny + mdBook). Wire golds unaffected — their only trailing strips are the pre-existing `.1b.i` verb/adverb cases; the new aux/prep vocabulary touches 0 wire-gold cases.
 - [x] **GENERICITY (ADR 0006)** — universal English grammar (a closed class of prepositions + auxiliaries/modals), a SUBSET of the leading function-word lexicon, NOT a chip/vendor/protocol name list; conjunctions deliberately excluded (still `.1b.iii`). Corpus-wide safety MEASURED: across all 78 persisted IntentIR docs ZERO actors with ≥8 ports are `X <aux/prep>` shaped → the strip never renames a real high-participation agent.
 - [x] **LOCKSTEP** — README current-state bullet (`.1c.i`); book `pipeline/evidenceir.md` caveat updated (the strip has LANDED); KM card `agent-trailing-function-word-consolidation`; CHANGES.md / DEVELOPMENT_NOTES.md / LIVE_ACHIEVEMENT_STATUS.md / MEMORY.md.
+
+- ID: `KG-ISF-COMPLETENESS.1c.ii` · Status: `deferred` (measured `2026-06-23`, read-only; **bounded
+  residual — no clean within-document structural gate; the real fix is upstream**) · Goal: precision for the
+  bulk dense-prose phantom class — multi-word, single-`REL-INFERRED`, leading-noun relation subjects
+  (`basic bus`, `actual sector`, `B write`; eMMC carries 109 multi-word actors). **MEASURED `2026-06-23`**
+  (read-only; report `docs/research/agent-identity-prose-class-measurement.md` §8): a within-document
+  structural gate is **disproven unsafe**. The most promising candidate — a `.1b.ii`-style **connectivity
+  fold** (rewrite a multi-word subject onto its last content token when that token is an independently
+  connected single-word agent) — mishandles the real cases on the dense AXI+ACE `ihi0022_h_c`: it correctly
+  folds `caching Manager`/`initiating Manager`→`Manager` (descriptive references) but WRONGLY folds
+  `Manager component`→`component` (the agent is the modifier `Manager`, not the noun-phrase head), because the
+  agent token's POSITION varies (modifier vs. head) so no fixed structural position is safe; a fold-on-first
+  rule would instead break `caching Manager`→`caching`. The deeper reason: within one document a real
+  descriptive reference (`caching Manager`) and a phantom fragment (`basic bus`) are STRUCTURALLY
+  INDISTINGUISHABLE — same single-relation participation, same `SECTION-PHASE`/`PROSE-PARA` provenance markers
+  (a relation's statement always sits in some section), same noun-phrase shape; and eMMC carries no
+  first-class `ProtocolActorRecord` agent-definition surface (its EvidenceIR actor surface is *only*
+  `actor_signal_relations`), so there is no grounding signal to separate them. A name-shape/connectivity
+  DROP is forbidden by the genericity guardrail (it loses real agents) and a participation threshold is
+  forbidden by the completeness north star (a rare-but-real agent can appear in exactly one relation). **The
+  genuine fix is upstream relation-subject extraction precision on descriptive prose** — reading the actual
+  grammatical subject of a who-acts-on-what sentence rather than a noun phrase near the signal — i.e. the
+  owner-directed in-Rust shallow-parse direction (`[[project_nlp_shallow_parse_direction]]`,
+  `docs/tasks/NLP-SHALLOW-PARSE.md`), NOT a downstream actor-surface rule. Until that lands the multi-word
+  prose phantoms stay an honest residual; they never reach the emitted `.isf` (the adapter lowers the
+  renderable initiator's signals/behaviours, never the raw `actors[]`), so the bounded cost is IntentIR
+  `actors[]` precision (bar #1) on dense-prose specs. **`.1c` umbrella outcome:** the clean structural win
+  (`.1c.i`) is landed; the remainder is upstream-NLP-gated, recorded as a residual. **Re-open trigger:** a
+  later NLP-shallow-parse slice that improves relation-subject extraction on prose, OR a measured
+  agent-definition surface that grounds dense-prose actors.
 - ID: `KG-ISF-COMPLETENESS.0` · Status: `done` (`2026-06-16`, docs-only ownership/scoping slice) · Goal:
   own the north star, define the checkable bar, record the measured baseline, reverse the "defer ISF"
   steer in the live docs. No code (doctrine: own before touching). Memory `project_kg_isf_completeness`.
@@ -540,6 +571,18 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 
 ## Changelog
 
+- `2026-06-23`: **`.1c.ii` MEASURED → deferred as a bounded residual (read-only, docs-only).** Measured the
+  bulk dense-prose phantom class (multi-word, single-`REL-INFERRED`, leading-noun subjects). A within-document
+  structural gate is **disproven unsafe**: the `.1b.ii`-style connectivity fold mishandles the real cases on
+  AXI+ACE `ihi0022_h_c` (`caching Manager`→`Manager` correct, but `Manager component`→`component` WRONG — the
+  agent is the modifier, not the head; the agent token's position varies). Within one doc a real descriptive
+  reference (`caching Manager`) and a phantom (`basic bus`) are structurally indistinguishable (same single
+  relation, same provenance markers, same shape), and eMMC carries no `ProtocolActorRecord` grounding surface.
+  A drop is forbidden by the genericity guardrail; a participation threshold by completeness. **The genuine
+  fix is upstream relation-subject extraction precision on descriptive prose** (`[[project_nlp_shallow_parse_direction]]`),
+  not a downstream rule → recorded as an honest residual (the phantoms never reach `.isf`). `.1c` umbrella
+  outcome: `.1c.i` shipped, `.1c.ii` upstream-NLP-gated. Report §8; no code change → all oracles orthogonal;
+  `check_doctrines.sh` GREEN.
 - `2026-06-23`: **`.1c.i` DONE — CODE: dense-prose trailing preposition/auxiliary strip.** Same-session
   continuation of the `.1c` probe (fresh session, measurement in context). Extended
   `consolidate_trailing_fragment` (`ir/evidence.rs`) with a new `NON_ACTOR_TRAILING_FUNCTION_WORDS` const
