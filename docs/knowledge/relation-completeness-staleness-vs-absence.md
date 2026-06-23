@@ -10,6 +10,7 @@ answers:
   - "should specforge mint actor-signal relations for nvme / iommu / ccix / register protocols"
   - "is relation-completeness the right bar dimension for register / command / coherency protocols"
   - "what is the north-star bar #2 relation-completeness finding (KG-ISF-COMPLETENESS.3)"
+  - "is the kg-isf-completeness.3 relation-completeness frontier closed / are any docs still stale"
 date: 2026-06-17
 tags: [kg-isf-completeness, actor-signal-relations, relation-completeness, staleness, register-protocols, message-fields, honest-absence, north-star, adr-0006, measured]
 evidence: docs/research/relation-completeness-measurement.md (full census + content sampling + live rebuild proof); generated/evidence_ir/* vs generated/intent_ir/* (relation-count divergence); crates/specforge/src/ir/semantic.rs + ir/intent.rs (deterministic actor_signal_relations carry); docs/tasks/KG-ISF-COMPLETENESS.md (.3)
@@ -43,3 +44,16 @@ message-field-completeness is). A doc can score 0 on the relation bar and be com
 own dominant surface — honest, not a miss. Follow-ups: corpus refresh (land the recovered
 relations canonically) + a generic stage-staleness `validate` detector. See
 [[agent-surface-defect-taxonomy]] (the disconnected-agent fabrication caution).
+
+**Closure (`2026-06-24`, `KG-ISF-COMPLETENESS.3` done).** Both follow-ups are satisfied:
+**(i) corpus refresh** — a full re-census over all 78 persisted `intent_ir.json` vs their
+`evidence_ir.json` finds **0 stale docs** (zero with `evidence>0 & intent==0`). The
+`CORPUS-COVERAGE.2` re-ingest sweep rebuilt via `converge` (which cascades the whole chain),
+so the recovered relations have landed canonically: `tilelink_1_7_1` 33/33, `tilelink_1_8_0`
+34/34, `um10204` I2C **17/17**, `gic_600` 101/101, `mmu_700` 25/25, ATS `ihi0082` 9/9, DTI 1/1,
+opencapi transaction-layer 15/15, USB4 13/13 (each `intent` == `evidence`); `wbspec` is now 0/0
+(re-ingest reclassified it to honest-absence). The 33 register/PHY/command docs at 0/0 are the
+correct (B) honest-absence class. **(ii) detector** is shipped + unit-tested
+([[stage-staleness-validate-detector]]). Bar #2 relation-completeness is therefore resolved for
+the recoverable class; for register/message protocols it is correctly N/A; wire protocols are
+held at WIRE-BASED-100 = 1.000.

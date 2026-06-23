@@ -1453,6 +1453,16 @@
   relations/constraints). Owned + scoped by `docs/tasks/KG-ISF-COMPLETENESS.md`
   (checkable 6-point bar; WIRE-BASED-100 a hard gate; frontier `.1` agent-surface
   fidelity).
+  - **Progress (`2026-06-24`):** the ISF-emit strict-FAIL frontier is CLOSED (`.2a.*` —
+    70/70 renderable docs FSMGen-`--strict`-clean), and **bar #2 relation-completeness is
+    resolved** (`.3` done): a corpus-wide re-census finds **0 stale docs**
+    (`evidence>0 & intent==0`) — the `CORPUS-COVERAGE.2` re-ingest sweep landed the recovered
+    `actor_signal_relations` canonically — and the generic stage-staleness `validate` detector
+    is shipped (`CORPUS-COVERAGE.1`) so silent drops are surfaced. Register/message/coherency
+    protocols correctly carry 0 relations (their intent lives on register/message-field/
+    transaction surfaces — relation-completeness is N/A there, not a miss). The remaining
+    KG-ISF-COMPLETENESS leaves are upstream-NLP-gated dense-prose agent precision (`.1c.ii`)
+    and a measured-marginal lowering gauge (`.2b`), both deferred.
 - `R16`: **PROGRAM COMPLETE** — the six sub-trees are delivered and the
   `R16-INTENT-CAPTURE` umbrella is closed (`2026-05-29`). The program
   built the mechanical-to-lower typed target, the objective

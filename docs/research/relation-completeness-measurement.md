@@ -85,9 +85,63 @@ honest, not a miss.
   relations than its evidence is exactly the kind of incompleteness the north star says must be
   surfaced, not hidden). Generic, ADR-0006, no name list.
 
+## Closure (`2026-06-24`, `KG-ISF-COMPLETENESS.3` done)
+
+Both follow-ups are now satisfied; the `.3` leaf is closed.
+
+**(i) Corpus refresh — DONE.** A full re-census over all **78** persisted `intent_ir.json` vs
+their `evidence_ir.json` (`actor_signal_relations` array length, both stages) finds **0 stale
+docs** — zero documents with `evidence>0 & intent==0`. The `CORPUS-COVERAGE.2` re-ingest sweep
+rebuilt the affected documents through `converge` (which cascades the whole `SourceIR → … →
+IntentIR` chain), so the recovered relations have landed in the canonical local corpus. The
+previously-stale docs now carry their relations at every stage:
+
+| doc | evidence_rel | intent_rel |
+|---|---|---|
+| `tilelink_1_7_1` | 33 | 33 |
+| `tilelink_1_8_0` | 34 | 34 |
+| `um10204` (I2C) | 17 | 17 |
+| `gic_600` | 101 | 101 |
+| `mmu_700` | 25 | 25 |
+| `ihi0082` (ATS) | 9 | 9 |
+| `dti` | 1 | 1 |
+| `opencapi` transaction-layer | 15 | 15 |
+| `usb4` connection-manager | 13 | 13 |
+| `wbspec` | 0 | 0 (re-ingest reclassified to honest-absence) |
+
+The census also confirms **33 docs at 0/0** (nvme / risc_v_iommu / AIA / opencapi PHY specs /
+vt-d / ccix / smmu-guide …) — the (B) honest-absence class, correct by construction.
+
+**(ii) Stage-staleness detector — DONE (shipped as `CORPUS-COVERAGE.1`).**
+`crates/specforge/src/commands/validate.rs` carries `stage_staleness_relation_finding(...)`
+emitting `semantic_stale_relations_dropped` / `intent_stale_relations_dropped` (category
+`stage_staleness`) when a downstream artifact carries 0 relations while its upstream carries
+some, with 3 unit tests: fires on emptied-vs-nonempty-upstream; silent when the downstream
+carries relations; silent when the upstream is also empty (honest absence ≠ stale drop).
+See [[stage-staleness-validate-detector]].
+
+**Conclusion.** Bar #2 relation-completeness is resolved for the recoverable class (the stale
+set is empty corpus-wide, with a detector preventing silent recurrence). For register/message/
+coherency protocols relation-completeness is correctly N/A (their intent lives on the register /
+message-field / transaction surfaces); wire protocols are held at WIRE-BASED-100 = 1.000. No
+fabrication: the honest-absence docs are left at 0 relations. No code change in this closure
+(measurement + verification of an already-shipped detector + an already-cascaded refresh).
+
 ## Reverify
 
 ```
+# .3 closure re-census (0 stale docs corpus-wide; evidence vs intent relation counts):
+python3 - <<'PY'
+import json, os
+ev,it="generated/evidence_ir","generated/intent_ir"
+def n(p):
+    try: v=json.load(open(p)).get("actor_signal_relations"); return len(v) if isinstance(v,list) else 0
+    except: return -1
+stale=[k for k in sorted(os.listdir(it))
+       if os.path.isfile(f"{it}/{k}/intent_ir.json") and os.path.isfile(f"{ev}/{k}/evidence_ir.json")
+       and n(f"{ev}/{k}/evidence_ir.json")>0 and n(f"{it}/{k}/intent_ir.json")==0]
+print("stale docs (evidence>0 & intent==0):", len(stale), stale)
+PY
 # Staleness (evidence has relations, intent shows 0):
 python3 -c "import json; e=len(json.load(open('generated/evidence_ir/tilelink_1_7_1_specification/evidence_ir.json'))['actor_signal_relations']); i=len(json.load(open('generated/intent_ir/tilelink_1_7_1_specification/intent_ir.json'))['actor_signal_relations']); print('evidence',e,'intent',i)"
 # Recovery (deterministic rebuild):

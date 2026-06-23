@@ -59,7 +59,7 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 
 ## Task Tree
 
-- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface on the AMBA/structured class, done; `.1c` reopens it for the dense-prose class), `.2` (ISF lowering-fidelity; `.2a.i` width done, `.2a.ii` direction done — initiator-perspective, owner-authorized, `.2a.iii` module-name HDL-sanitization done — owner-chosen, `.2a.iv` enum value-literal emit-gate done — Lever F, HBM2 strict-clean, `.2a.v` unconditional-rule-overlap conflict residual — Lever C, 6 docs FAIL→PASS incl. all 3 wire golds + LPI/LTI/NVMe, `.2a.vi` rule-drive-value validity gate — closes the last AXI+ACE `(port expr)` FAIL → **70/70 renderable strict-clean**), `.3` (relation-completeness — bar #2), `.4` (behavior/temporal lowering-completeness — bar #5/#6, broader corpus)
+- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface on the AMBA/structured class, done; `.1c` reopens it for the dense-prose class), `.2` (ISF lowering-fidelity; `.2a.i` width done, `.2a.ii` direction done — initiator-perspective, owner-authorized, `.2a.iii` module-name HDL-sanitization done — owner-chosen, `.2a.iv` enum value-literal emit-gate done — Lever F, HBM2 strict-clean, `.2a.v` unconditional-rule-overlap conflict residual — Lever C, 6 docs FAIL→PASS incl. all 3 wire golds + LPI/LTI/NVMe, `.2a.vi` rule-drive-value validity gate — closes the last AXI+ACE `(port expr)` FAIL → **70/70 renderable strict-clean**), `.3` (relation-completeness — bar #2; DONE `2026-06-24`: 0 stale docs corpus-wide + stage-staleness detector shipped as CORPUS-COVERAGE.1), `.4` (behavior/temporal lowering-completeness — bar #5/#6, broader corpus)
 - ID: `KG-ISF-COMPLETENESS.1c` · Status: `active` (umbrella; PROBE DONE `2026-06-23`; `.1c.i` LANDED,
   `.1c.ii` deferred-as-bounded-residual — the clean structural win is shipped, the remainder is
   upstream-NLP-gated) · Goal: **agent-identity precision for the DENSE-PROSE doc
@@ -650,8 +650,9 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   gauge would need full per-category breakdown for little operator value (the project already has rich
   `validate` inventories). Re-open only if an owner wants the categorized ISF-lowering residual surfaced.
   ADR-0006 (universal counts, no name list).
-- ID: `KG-ISF-COMPLETENESS.3` · Status: `active` (measurement DONE `2026-06-17`, read-only; owner-directed
-  substantive north-star push after the owner pushed back on "buildable frontier exhausted") · Goal:
+- ID: `KG-ISF-COMPLETENESS.3` · Status: `done` (`2026-06-24` — measurement DONE `2026-06-17`, CLOSED
+  `2026-06-24`; read-only; owner-directed substantive north-star push after the owner pushed back on
+  "buildable frontier exhausted") · Goal:
   **bar #2 relation-completeness** — investigate why whole docs carry actors+constraints but ZERO
   `actor_signal_relations` (`nvme`/`tilelink`/`wbspec`/`i2c`/`ccix`/VT-d/IOMMU), the exact "real-agent
   relation-incompleteness" the north star names. **Measured (read-only census over 78 evidence + 36 intent
@@ -676,6 +677,20 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   detector in `validate` so a stale downstream artifact silently dropping relations is surfaced, not hidden
   (candidate code slice — serves "the KG must be COMPLETE"). ADR-0006. Report
   `docs/research/relation-completeness-measurement.md`; KM `[[relation-completeness-staleness-vs-absence]]`.
+  **CLOSED `2026-06-24` (verification-only, no code change).** Both frontier sub-steps satisfied:
+  **(i) corpus refresh** — a full re-census over all 78 persisted `intent_ir.json` vs their
+  `evidence_ir.json` finds **0 stale docs** (zero with `evidence>0 & intent==0`); the
+  `CORPUS-COVERAGE.2` re-ingest sweep rebuilt the affected docs via `converge` (whole-chain cascade),
+  so the recovered relations landed canonically — `tilelink_1_7_1` 33/33, `tilelink_1_8_0` 34/34,
+  `um10204` I2C **17/17**, `gic_600` 101/101, `mmu_700` 25/25, ATS `ihi0082` 9/9, DTI 1/1, opencapi
+  transaction-layer 15/15, USB4 13/13 (each `intent`==`evidence`); `wbspec` 0/0 (reclassified to
+  honest-absence); 33 register/PHY/command docs at 0/0 = the correct (B) honest-absence class.
+  **(ii) stage-staleness detector** — shipped + unit-tested as `CORPUS-COVERAGE.1`
+  (`stage_staleness_relation_finding` → `semantic_stale_relations_dropped` /
+  `intent_stale_relations_dropped`, category `stage_staleness`; KM `[[stage-staleness-validate-detector]]`).
+  Bar #2 relation-completeness is therefore resolved for the recoverable class, correctly N/A for
+  register/message protocols, and held at WIRE-BASED-100 = 1.000 on the wire class — no fabrication.
+  Closure appended to the report; gates orthogonal (no code change); `check_doctrines.sh` GREEN.
 - ID: `KG-ISF-COMPLETENESS.4` · Status: `done` (`2026-06-17`, read-only measurement, docs-only) · Goal:
   **bar #5/#6 re-assessment on the broader 78-doc corpus** — `.2` measured ISF-lowering fidelity over 36
   docs; `CORPUS-COVERAGE.0` then doubled the corpus to 78 (register/coherency/profile-heavy), so the
@@ -709,6 +724,20 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 
 ## Changelog
 
+- `2026-06-24`: **`.3` CLOSED — bar #2 relation-completeness resolved (verification-only, no code change).**
+  Fresh-session PNT pick (first eligible leaf of the first active tree). Re-census over all 78 persisted
+  `intent_ir.json` vs `evidence_ir.json` → **0 stale docs** corpus-wide (the `CORPUS-COVERAGE.2` re-ingest
+  sweep rebuilt the once-stale docs through `converge`, cascading the whole chain; recovered relations now
+  land canonically: tilelink 33/34, I2C 17, gic_600 101, mmu_700 25, ATS 9, DTI 1, opencapi-TL 15, USB4 13 —
+  each `intent`==`evidence`). Sub-step (ii), the generic stage-staleness `validate` detector, was already
+  shipped + unit-tested as `CORPUS-COVERAGE.1` (`stage_staleness_relation_finding`). The 33 register/PHY/
+  command docs at 0/0 are the correct (B) honest-absence class — relation-completeness is N/A there (their
+  intent lives on register/message-field/transaction surfaces); wire protocols held at WIRE-BASED-100 = 1.000.
+  No fabrication. Report closure appended (`docs/research/relation-completeness-measurement.md`); KM cards
+  `[[relation-completeness-staleness-vs-absence]]` (closure addendum) + `[[stage-staleness-validate-detector]]`.
+  All oracles orthogonal (no code change); `check_doctrines.sh` GREEN. Frontier → the tree's remaining open
+  leaves are both deferred (`.1c.ii` upstream-NLP-gated, `.2b` measured-marginal), so KG-ISF-COMPLETENESS has
+  no further immediately-buildable leaf; PNT advances to the next active tree.
 - `2026-06-23`: **`.1c.ii` MEASURED → deferred as a bounded residual (read-only, docs-only).** Measured the
   bulk dense-prose phantom class (multi-word, single-`REL-INFERRED`, leading-noun subjects). A within-document
   structural gate is **disproven unsafe**: the `.1b.ii`-style connectivity fold mishandles the real cases on
