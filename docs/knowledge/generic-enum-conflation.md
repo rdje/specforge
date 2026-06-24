@@ -1,7 +1,10 @@
 ---
 id: generic-enum-conflation
-title: The `.isf` generic-`TABLE` (and `FIGURE`/`DATA`/…) mega-enum is an EXTRACTION-born conflation — `derive_encoding_enum_name`'s fallback (evidence.rs) names an unmatched encoding table after its caption keyword (`Table N -` → `TABLE`), and `build_symbol_definitions` (semantic.rs) merges every same-named table into one junk enum; measured 56/78 docs / 96 generic + 271 real-named-but-junk enums (KG-ISF-COMPLETENESS.5, measurement-only)
+title: The `.isf` generic-`TABLE` (and `FIGURE`/`DATA`/…) mega-enum is an EXTRACTION-born conflation — `derive_encoding_enum_name`'s fallback (evidence.rs) names an unmatched encoding table after its caption keyword (`Table N -` → `TABLE`), and `build_symbol_definitions` (semantic.rs) merges every same-named table into one junk enum; measured 56/78 docs / 96 generic + 271 real-named-but-junk enums (KG-ISF-COMPLETENESS.5). FIXED by `.5.i` (`2026-06-24`): the fallback now keeps a candidate ONLY when independently evidenced (a declared signal OR a column-header reference token), else returns None; + the emitter gates the (types) block by emitted_enums() — corpus generic enums 82→8, total enum records 422→105, WIRE-BASED-100 held 1.000
 answers:
+  - "is the generic-TABLE enum conflation fixed / what did KG-ISF-COMPLETENESS.5.i do (LANDED 2026-06-24: derive_encoding_enum_name fallback keeps the candidate only when independently evidenced — a declared signal OR a column-header reference token of the table — else None; emitter isf_ir.rs gates the (types) block by emitted_enums() so a member-dropped enum leaves no orphan (type ...). Corpus generic enums 82->8 / total enum records 422->105 across 33 rebuildable docs; real signal-match enums byte-identical; WIRE-BASED-100 1.000 before==after; fsmgen --strict 0 diagnostics)"
+  - "why do 8 generic-named enums survive .5.i (they are document-evidenced — the token IS a declared signal or a column header in that doc, e.g. CCIX 'Table of Contents' header cells keep a 'TABLE' enum; the structural gate correctly cannot drop them without a forbidden name-list — honest .5.ii member-quality residuals)"
+  - "does .5.i change anything besides enums (yes, beneficially — dropped Enum statements leave discovered_values, so off-gold junk value-constraints derived from junk-enum members also disappear, e.g. AXI ACTIVATEACK A -> grounded ACTIVATEACK 1; distinct constraint facts identical, WIRE-BASED-100 unaffected)"
   - "why does the .isf emit a generic (type TABLE (bits N)) enum / what is the TABLE mega-enum"
   - "where does the generic enum name TABLE/FIGURE/DATA come from (derive_encoding_enum_name fallback, evidence.rs:4457-4461 — first caption token passing is_hardware_signal_token at evidence.rs:7106, which accepts 'Table'->'TABLE')"
   - "why are many distinct value-tables merged into one enum (build_symbol_definitions accumulates members by enum_name key, semantic.rs:2782-2789 — every 'TABLE'-named table fuses into one SymbolDefinitionRecord)"
@@ -55,6 +58,27 @@ enums (calibration-gated). Universal structural rule, ADR-0006 (no chip-name lis
 **WIRE-BASED-100:** scores orthogonal/safe (enums unscored); but the `.isf` bytes change on
 all 4 wire golds (each emits a junk `TABLE`; AHB's fuses HTRANS+HSIZE) — a strict improvement
 needing a deliberate snapshot refresh, deferred to a focused slice for signoff quality.
+
+## `.5.i` LANDED (`2026-06-24`)
+
+Two edits. **(1)** `derive_encoding_enum_name`'s fallback (`evidence.rs`) keeps the first
+`is_hardware_signal_token` caption token **only when it is independently evidenced** — a declared
+signal (`known_signals`) **or** a column-header reference token of the table — else returns `None`
+(the existing `continue` contract → no enum minted → honest residual). **(2)** the emitter
+(`isf_ir.rs`) gates the `(types …)` block by `emitted_enums()`, so a member-dropped enum leaves no
+orphan `(type …)`. Two measurement corrections (both cleaner): the genuinely-named enums come from
+the **signal-match loop above the fallback** (byte-identical), so the structural gate is *strictly
+better* than a name-only gate — it also drops fallback-origin "real-named-but-junk" (`COMMAND`/`AMBA`/
+`READ`/`CACHE`/`RELEASE`); and the gate also removes off-gold junk **constraints** whose value was a
+junk-enum member (`discovered_values` coupling) — score-orthogonal, distinct facts identical.
+
+**Measured:** corpus census (33 rebuildable docs) generic-named enums **82→8** / total enum records
+**422→105**; the 8 survivors are document-evidenced column-header/declared-signal tokens (CCIX "Table
+of Contents", gic_600 `DATA`) → `.5.ii` residuals. WIRE-BASED-100 **1.000 before==after** (proven via
+before/after `eval-extraction` on rebuilt gold evidence); nvme-registers + i2c golds identical;
+`kg-bench` 156/156; `run_ci.sh` GREEN (lib 1712); all affected `.isf` FSMGen-`--strict` 0 diagnostics.
+ADR-0006 proven structural: `DATA` KEPT where a real gic_600 signal, DROPPED where a bare HBM2 caption
+word. Report `docs/research/generic-enum-conflation-measurement.md` §`.5.i LANDED`.
 
 Links: [[isf-enum-value-literal-emit-gate]] (Lever F — the value-literal gate that deferred
 this), [[behavior-temporal-lowering-broader-corpus]] (`.4`, which spun out enum/signal

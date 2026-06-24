@@ -147,3 +147,75 @@ code lever is owned as `.5.i` (safe name-gate + emitter orphan-type fix) and `.5
 (a strict improvement; scores orthogonal), it is recorded here as a deliberate
 snapshot-refreshing change and **deferred to a focused/fresh slice** for signoff quality —
 not rushed at the tail of a long measurement session.
+
+---
+
+## `.5.i` LANDED (`2026-06-24`, fresh focused session) — results
+
+**The gate (two edits).** (1) `derive_encoding_enum_name`'s fallback (`evidence.rs`) now keeps
+the first `is_hardware_signal_token` caption token **only when it is independently evidenced** —
+a declared signal (`known_signals`) **or** a column-header reference token of the table — else
+returns `None` (no enum minted; the existing `continue` contract → honest residual). (2) The
+emitter (`isf_ir.rs`) gates the `(types …)` block by `emitted_enums()`, so a `(type)` is emitted
+only when its enum is, removing the orphan `(type TABLE …)` a member-dropped enum left behind.
+
+**Two corrections to the measurement's expectations (both make the result cleaner):**
+- The genuinely-named enums (HBM2 `EXTEST_RX`/`DWORD_MISR`/`UPDATEWR`; wire-gold `PPROT`/`HTRANS`/
+  `HSIZE`/`HPROT`/`HRESP`/`WLAST`/`RLAST`/`BRESP`/`RRESP`/`TKEEP`) come from the **signal-match loop
+  ABOVE the fallback**, so the gate never touches them — they are **byte-identical**. The fallback
+  only ever produced document-structure/caption words, so the structural gate is *strictly better*
+  than a name-only gate: it ALSO drops the fallback-origin "real-named-but-junk" enums
+  (`COMMAND`/`AMBA`/`READ`/`CACHE`/`RELEASE`/`BYTE`), which the `.5` measurement had assigned to
+  `.5.ii`. The `.5.ii` residual is now precisely the **signal-match-origin** junk-member enums.
+- The change is **NOT** confined to the enum surface. The dropped `Enum X = V` statements also
+  leave `discovered_values`, which feeds value-constraint extraction — so a handful of off-gold junk
+  constraints whose value WAS a junk-enum member also disappear (AXI: `ACTIVATEACK A` → the grounded
+  reset value `ACTIVATEACK 1`; spurious `ARDOMAIN SHAREABLE`/`ARMMU* 0B0` removed). This is a
+  **beneficial, score-orthogonal** side effect — the AXI *distinct* `signal_constraints` fact set is
+  identical (0 added / 0 removed; the count drop 64→51 is duplicate records), and WIRE-BASED-100 is
+  unchanged (proven below). The `.5` claim "orthogonal because enums are unscored" is *corrected*: it
+  is orthogonal because the affected constraints are off-gold junk (the `.6/.7` filter already drops
+  them) — proven empirically by the before/after eval, not assumed.
+
+**Per-doc before→after (rebuilt with baseline vs gated binary; fsmgen `--strict --check --json`):**
+
+| doc | `.isf` (type) before → after | fsmgen before/after | non-enum body |
+|---|---|---|---|
+| HBM2 `hbm.isf` | 15 → 6 (drop `TABLE`/`COLUMN`/`COMMAND` + 6 orphan types; keep `UPDATEWR`/`EXTEST_RX`/`DATA`/`HBM_RESET`/`DWORD_MISR`/`CHANNEL_ID`) | 0 / 0 | identical |
+| APB `ihi0024_e` | `PPROT`+`TABLE` → `PPROT` | 0 / 0 | identical |
+| AHB `ihi0033_c` | drop `TABLE`/`AMBA`; keep `HTRANS`/`HSIZE`/`HPROT`/`HRESP` | 0 / 0 | identical |
+| AXI `ihi0022_l` | drop `TABLE`/`BYTE`/`READ`/`CACHE`/`RELEASE`/`AMBA`; keep 22 real signal enums | 0 / 0 | junk-constraint cleanup (distinct facts identical) |
+| SWD `ihi0074_a` | drop `TABLE`/`REGISTER`/`ACCESSING`/`OF`/`USAGE`/`DRIVES`/`ARM`/`ATTRIBUTES`/`OK`; keep `TDI` | 0 / 0 | identical |
+| AXI-Stream `ihi0051_b` | `TKEEP` (unchanged) | 0 / 0 | identical |
+| SWP `etsi…` | drop `TABLE`/`CLT`/`ANNEX` → none | 0 / 0 | identical |
+| amd_iommu | 34 → 5 types | 0 / 0 | identical |
+| gic_600 | 23 → 6 | 0 / 0 | identical |
+| coresight_soc_600 | 19 → 5 | 0 / 0 | identical |
+| cortex_a76 | 16 → 7 | 0 / 0 | identical |
+| CHI `ihi0050_g` | 14 → 4 | 0 / 0 | identical |
+| CHI-C2C `ihi0098_b` | 7 → 1 | 0 / 0 | identical |
+| nvme | 2 → 0 | 0 / 0 | junk-constraint cleanup |
+
+**Corpus-wide census (33 rebuildable docs, persisted-before vs gated-after):** generic-named enums
+**82 → 8**; total enum records **422 → 105** (317 junk records removed — generic + fallback-origin
+real-named-but-junk + 0-member orphan types). The **8 survivors** (`DATA` in gic_600/coresight-TMC,
+`TABLE` in CCIX×2/VT-d, `CACHE`+`ENCODING` in AXI+ACE, `ATTRIBUTES` in SMMU) survive precisely
+because the token IS a declared signal or a column header in *that* document — e.g. CCIX has 48
+header cells reading "Table of Contents", so `TABLE` is structurally indistinguishable from a signal
+name without a forbidden name-list. They keep junk members and are the explicit `.5.ii`
+(member-quality) target; this is the **structural gate behaving correctly** (ADR 0006: `DATA` is
+KEPT where it is a real gic_600 signal and DROPPED where it is a bare HBM2 caption word).
+
+**No regression (oracles):** WIRE-BASED-100 = **1.000, before == after** (proven by rebuilding each
+gold doc's evidence with both binaries and running `eval-extraction --provider skip`): APB
+signal_constraint 6/6 · relation 5/5; AHB 6/6 · 6/6; AXI 3/3 · 6/6; APB/AHB/AXI temporal 3/3·4/4·3/3;
+SWD relation 1/1, lone constraint the documented promotion-only 0/1 — all identical old-vs-new.
+nvme-registers and i2c-signals golds identical old-vs-new. `kg-bench` **156/156**. `run_ci.sh`
+**GREEN** (lib **1712** passed, +new tests; warning-deny clippy/fmt/rustdoc + mdBook). Every affected
+`.isf` stays FSMGen-`--strict` **0 diagnostics** (the renderable corpus stays strict-clean). Unit
+tests: `encoding_enum_name_fallback_drops_document_structure_keyword`,
+`encoding_enum_name_fallback_keeps_column_header_candidate`,
+`encoding_enum_name_keeps_declared_signal_but_drops_unevidenced_caption_word`, and the strengthened
+`binary_looking_enum_value_is_excluded_and_recorded_as_residual` (asserts the orphan `(type table)`
+is now dropped). **Frontier → `.5.ii`** (member-quality gate for the 8 document-evidenced survivors +
+the signal-match-origin junk-member enums; calibration-gated).

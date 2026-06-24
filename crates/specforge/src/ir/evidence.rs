@@ -4455,10 +4455,42 @@ fn derive_encoding_enum_name(
     }
 
     let enum_name_source = table.caption_text.as_deref().unwrap_or(section_title);
-    enum_name_source
+    let candidate = enum_name_source
         .split_whitespace()
         .find(|token| is_hardware_signal_token(&token.to_ascii_uppercase()))
-        .map(|token| token.to_ascii_uppercase())
+        .map(|token| token.to_ascii_uppercase())?;
+
+    // KG-ISF-COMPLETENESS.5.i — the fallback must NOT name an encoding table after a mere
+    // document-structure caption keyword (`Table`/`Figure`/`Column`/`Data`/`Annex`/…) or a stray
+    // caption word (`AMBA`/`Byte`/`Read`/…): such a name is neither a declared signal nor a column of
+    // the table, and naming a table by it produced the generic-`TABLE` mega-enum AND — via the
+    // merge-by-name in `build_symbol_definitions` — the cross-table conflation (KG-ISF-COMPLETENESS.5).
+    // The genuinely-named enums come from the signal-match loop ABOVE (returned BEFORE this fallback
+    // runs), so gating the fallback cannot touch them. Gate the candidate POSITIVELY: keep it only when
+    // it is independently evidenced as a real entity — a declared signal, or a column-header reference
+    // token of THIS table — else return `None` (the existing contract: both call sites `continue` on
+    // `None` → no enum minted → honest residual). Universal structural rule, NOT a structure-word or
+    // chip-name list (ADR 0006): a token like `DATA` that genuinely IS a declared signal in some
+    // document is still accepted there, and a token a table actually columns on is accepted anywhere.
+    let candidate_lower = candidate.to_ascii_lowercase();
+    let is_declared_signal = known_signals
+        .map(|set| set.iter().any(|name| name.eq_ignore_ascii_case(&candidate)))
+        .unwrap_or(false);
+    let header_lower = table
+        .header_rows
+        .iter()
+        .flatten()
+        .map(|cell| cell.text.as_str())
+        .collect::<Vec<_>>()
+        .join(" ")
+        .to_ascii_lowercase();
+    let is_column_header = contains_reference_token(&header_lower, &candidate_lower)
+        || header_lower.contains(&format!("{candidate_lower}["));
+    if is_declared_signal || is_column_header {
+        Some(candidate)
+    } else {
+        None
+    }
 }
 
 fn infer_encoding_column_indices(
@@ -18823,6 +18855,75 @@ mod tests {
             col_span: 1,
             is_header,
         }
+    }
+
+    // --- derive_encoding_enum_name fallback gate (KG-ISF-COMPLETENESS.5.i) ---
+
+    fn encoding_table(caption: &str, headers: &[&str]) -> StructuredTableRecord {
+        StructuredTableRecord {
+            table_id: "t".to_string(),
+            asset_id: "a".to_string(),
+            page_id: None,
+            caption_text: Some(caption.to_string()),
+            source_ref: None,
+            table_kind: TableKind::Encoding,
+            header_rows: vec![headers.iter().map(|h| make_table_cell(h, true)).collect()],
+            body_rows: vec![vec![
+                make_table_cell("IDLE", false),
+                make_table_cell("0", false),
+            ]],
+            row_count: 2,
+            col_count: headers.len() as u32,
+        }
+    }
+
+    #[test]
+    fn encoding_enum_name_fallback_drops_document_structure_keyword() {
+        // The defect: a caption leading with a structure keyword (`Table N - …`) makes the fallback
+        // pick `TABLE` (it passes is_hardware_signal_token), which — merged by name across tables —
+        // produced the generic-`TABLE` mega-enum conflation. With no declared signal and no matching
+        // column header, the gate returns None (no enum minted → honest residual).
+        let table = encoding_table("Table 12 - Mode Definition", &["Function", "Notes"]);
+        assert_eq!(
+            super::derive_encoding_enum_name(&table, "Chapter 3 Behavior", None),
+            None
+        );
+        // The structure-word also-class stray caption words (`AMBA`/`Byte`/`Read`) are dropped too.
+        let table2 = encoding_table("AMBA cache attribute summary", &["Attribute", "Meaning"]);
+        assert_eq!(super::derive_encoding_enum_name(&table2, "", None), None);
+    }
+
+    #[test]
+    fn encoding_enum_name_fallback_keeps_column_header_candidate() {
+        // A genuinely-named encoding table whose FIRST caption token is a column header of the table
+        // (the enum's subject) is independently evidenced → kept. `TKEEP encoding` with a `TKEEP`
+        // column header survives even without a declared-signal set (the `None` call site).
+        let table = encoding_table("TKEEP encoding", &["TKEEP", "Description"]);
+        assert_eq!(
+            super::derive_encoding_enum_name(&table, "", None),
+            Some("TKEEP".to_string())
+        );
+        // Bracketed header form (`HTRANS[1:0]`) is matched too.
+        let table2 = encoding_table("HTRANS transfer type encoding", &["HTRANS[1:0]", "Type"]);
+        assert_eq!(
+            super::derive_encoding_enum_name(&table2, "", None),
+            Some("HTRANS".to_string())
+        );
+    }
+
+    #[test]
+    fn encoding_enum_name_keeps_declared_signal_but_drops_unevidenced_caption_word() {
+        // Contract over the whole function: a declared signal named in the caption is kept (here via
+        // the signal-match loop, which pre-empts the fallback); the SAME caption with no declared-signal
+        // set and no matching column header is a bare caption word → the gated fallback returns None.
+        let table = encoding_table("PPROT protection encoding", &["Value", "Meaning"]);
+        let mut declared = std::collections::HashSet::new();
+        declared.insert("PPROT".to_string());
+        assert_eq!(
+            super::derive_encoding_enum_name(&table, "", Some(&declared)),
+            Some("PPROT".to_string())
+        );
+        assert_eq!(super::derive_encoding_enum_name(&table, "", None), None);
     }
 
     fn write_actor_taxonomy_prior_memory(root: &Path) -> Result<PathBuf> {

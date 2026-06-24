@@ -400,9 +400,24 @@ impl IsfIr {
         // actor-body shape. Values that are not whitespace-free scalars
         // (operator expressions) are excluded rather than emitted as
         // strict-invalid (residual-honesty).
-        if !self.types.is_empty() {
+        // KG-ISF-COMPLETENESS.5.i — a backing `(type NAME (bits k))` is co-declared 1:1 with each enum
+        // (both pushed together in `from_intent_ir`). Emit a type ONLY when its enum is actually
+        // emitted: an enum dropped by `isf_enum_is_emittable` (the `.2a.iv` value-width gate, or empty
+        // members) must NOT leave an orphan `(type …)` line referencing no `(enums …)` family. The
+        // type/enum pair share `name`/`type_name`, so a type is kept iff some emitted enum carries it.
+        let emitted_enum_names: BTreeSet<&str> = self
+            .emitted_enums()
+            .iter()
+            .map(|e| e.type_name.as_str())
+            .collect();
+        let emitted_types: Vec<&IsfTypeDef> = self
+            .types
+            .iter()
+            .filter(|t| emitted_enum_names.contains(t.name.as_str()))
+            .collect();
+        if !emitted_types.is_empty() {
             lines.push("  (types".to_string());
-            for t in &self.types {
+            for t in &emitted_types {
                 lines.push(format!("    (type {} (bits {}))", t.name, t.bits));
             }
             lines.push("  )".to_string());
@@ -4929,6 +4944,11 @@ mod tests {
         let out = isf.render();
         assert!(out.contains("(mode (IDLE 0) (BUSY 999))"), "{out}");
         assert!(!out.contains("(table"), "{out}");
+        // KG-ISF-COMPLETENESS.5.i — the emittable enum keeps its backing type, but the dropped
+        // `table` enum must NOT leave an orphan `(type table (bits 6))` line (the emitter now gates
+        // the types block by the emitted-enum set).
+        assert!(out.contains("(type mode (bits 2))"), "{out}");
+        assert!(!out.contains("(type table"), "{out}");
         let residuals = isf.enum_residuals();
         assert_eq!(residuals.len(), 1);
         assert!(

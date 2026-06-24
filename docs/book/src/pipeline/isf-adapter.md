@@ -181,6 +181,29 @@ artifact — an honest "this enum could not be lowered faithfully", never a fabr
 enum — any value containing a `2`–`9` digit (`999`, `1020`, `69152`), a short binary value (`0`, `1`, `111`),
 or an already-qualified literal (`4'b1000`) — is always emitted unchanged.
 
+### Only *named* enums reach the `.isf` — no "Table N" junk
+
+An enum is the encoding of a *specific* thing — a signal, a field, an instruction — so it needs a real
+name. SpecForge derives that name from the document's own words: it first matches the table's
+caption/section/headers against the declared signals, and only if none matches does it fall back to the
+first signal-shaped word in the caption. That fallback used to be too eager: a table captioned
+*"Table 7 — HBM Mode Register Overview"* would be named **`TABLE`** (the literal caption keyword), and
+because every such table shared that name, dozens of unrelated value-tables **fused into one giant junk
+`(type TABLE …)` enum** — a 6-bit "enum" claiming to encode lane-remap codes, microbump geometry, and a
+footnote all at once. A reader of the `.isf` could not tell it was noise.
+
+SpecForge now **gates that fallback**: a fallback name is kept only when the candidate word is
+*independently evidenced* in the document — it is a **declared signal**, or it appears as a **column
+header** of that very table — otherwise no enum is minted (an honest absence, never a fabricated one).
+This is a structural rule, not a list of banned words (a token like `DATA` is kept where the document
+declares it as a real signal, and dropped where it is just a caption word). The genuinely-named enums
+(`HTRANS`, `PPROT`, `TKEEP`, …) are untouched; the junk vanishes. Measured across the corpus this removed
+the generic-named enums from 82 down to 8 (the 8 remaining are tokens the document itself uses as a column
+header — e.g. a "Table of Contents" header — and are a known follow-up), while every wire-protocol gold's
+real enums stayed byte-for-byte identical and every emitted `.isf` stayed FSMGen-strict-clean. As a final
+tidy-up, the backing `(type NAME …)` line is now emitted only when its `(enums …)` family is — so a dropped
+enum never leaves a dangling type declaration behind.
+
 ## Register reset values
 
 When a chip-spec PDF documents a register map, SpecForge captures each register's
