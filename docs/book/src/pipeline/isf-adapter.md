@@ -237,6 +237,30 @@ left as honest residuals: glossary "see also…" cross-references, document fron
 fragments, and conflations whose members all *happen* to be clean identifiers (these are kept in full
 rather than risk dropping a real code).
 
+### When a width *parameter* sneaks in as a code — the `_WIDTH` gate
+
+There is one more way a correctly-named enum gets polluted from the inside, and it is sneaky because the
+intruder *looks* like a clean identifier. A spec often lists, near a signal's encoding table, a
+configuration **parameter** that sets that signal's bit-width — written `BRESP_WIDTH`, `AWSNOOP_WIDTH`, and
+so on. When that parameter row is read into the value table, the result is a perfectly well-formed member
+name like `BRESP_WIDTH = 0`. The sentence-spine gate above waves it through (it carries no prose), so it
+reaches the `.isf` — and there it does real harm. `BRESP_WIDTH = 0` lands inside the `BRESP` enum *next to*
+`OKAY = 0`, so two different "codes" now claim value `0`. Worse, where the only thing captured for a signal
+was its width parameter, the enum becomes pure noise: `(RRESP (RRESP_WIDTH 0))` — a response enum whose
+sole "value" is its own width, with the genuine `OKAY`/`SLVERR`/`DECERR` codes nowhere in sight.
+
+The tell is structural and reliable: a member named `<X>_WIDTH`, where `X` is the enum's own name or a
+signal the document actually declares, is **that signal's width — a parameter, never one of its encoding
+values.** So SpecForge drops it. Crucially, the test is grounded in the document's own list of declared
+signals, not a banned-words list, which is what keeps it safe: a genuine width-*value* in a link-width
+enum — `FULL_WIDTH`, `HALF_WIDTH`, `QUARTER_WIDTH` — is **kept**, because `FULL`/`HALF`/`QUARTER` are not
+signals the spec declares. Measured across the whole corpus the gate fires on exactly the seven real leaks
+(all in the AMBA AXI specification) and nothing else. After it, the AXI `manager.isf` reads
+`(BRESP (OKAY 0) (EXOKAY 1) (SLVERR 2) (DECERR 3) (DEFER 4) (TRANSFAULT 5) (RESERVED 6) (UNSUPPORTED 7))`
+and `(AWCMO (CLEAN_AND_INVALIDATE 0) (CLEAN_ONLY 1))` — no duplicate-value collisions — while the enums
+that were *only* a width parameter simply disappear (an honest absence). The wire-protocol golds' scored
+facts stayed identical and the emitted `.isf` stayed FSMGen-strict-clean.
+
 ## Register reset values
 
 When a chip-spec PDF documents a register map, SpecForge captures each register's

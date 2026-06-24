@@ -59,7 +59,7 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 
 ## Task Tree
 
-- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface on the AMBA/structured class, done; `.1c` reopens it for the dense-prose class), `.2` (ISF lowering-fidelity; `.2a.i` width done, `.2a.ii` direction done — initiator-perspective, owner-authorized, `.2a.iii` module-name HDL-sanitization done — owner-chosen, `.2a.iv` enum value-literal emit-gate done — Lever F, HBM2 strict-clean, `.2a.v` unconditional-rule-overlap conflict residual — Lever C, 6 docs FAIL→PASS incl. all 3 wire golds + LPI/LTI/NVMe, `.2a.vi` rule-drive-value validity gate — closes the last AXI+ACE `(port expr)` FAIL → **70/70 renderable strict-clean**), `.3` (relation-completeness — bar #2; DONE `2026-06-24`: 0 stale docs corpus-wide + stage-staleness detector shipped as CORPUS-COVERAGE.1), `.4` (behavior/temporal lowering-completeness — bar #5/#6, broader corpus), `.5` (enum-surface fidelity — the generic-`TABLE` mega-enum conflation; measurement DONE `2026-06-24`, `.5.i` name-gate + emitter orphan-type fix LANDED `2026-06-24` — corpus generic enums 82→8 / total enum records 422→105, WIRE-BASED-100 held 1.000; `.5.ii` sentence-spine member-gate LANDED `2026-06-24`; `.5.iii` `_WIDTH` parameter-leak member-gate measured GO `2026-06-24` — code pending)
+- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface on the AMBA/structured class, done; `.1c` reopens it for the dense-prose class), `.2` (ISF lowering-fidelity; `.2a.i` width done, `.2a.ii` direction done — initiator-perspective, owner-authorized, `.2a.iii` module-name HDL-sanitization done — owner-chosen, `.2a.iv` enum value-literal emit-gate done — Lever F, HBM2 strict-clean, `.2a.v` unconditional-rule-overlap conflict residual — Lever C, 6 docs FAIL→PASS incl. all 3 wire golds + LPI/LTI/NVMe, `.2a.vi` rule-drive-value validity gate — closes the last AXI+ACE `(port expr)` FAIL → **70/70 renderable strict-clean**), `.3` (relation-completeness — bar #2; DONE `2026-06-24`: 0 stale docs corpus-wide + stage-staleness detector shipped as CORPUS-COVERAGE.1), `.4` (behavior/temporal lowering-completeness — bar #5/#6, broader corpus), `.5` (enum-surface fidelity — the generic-`TABLE` mega-enum conflation; measurement DONE `2026-06-24`, `.5.i` name-gate + emitter orphan-type fix LANDED `2026-06-24` — corpus generic enums 82→8 / total enum records 422→105, WIRE-BASED-100 held 1.000; `.5.ii` sentence-spine member-gate + `.5.iii` `_WIDTH` parameter-leak member-gate LANDED `2026-06-24` — AXI gold `.isf` enum surface now faithful)
 - ID: `KG-ISF-COMPLETENESS.1c` · Status: `active` (umbrella; PROBE DONE `2026-06-23`; `.1c.i` LANDED,
   `.1c.ii` deferred-as-bounded-residual — the clean structural win is shipped, the remainder is
   upstream-NLP-gated) · Goal: **agent-identity precision for the DENSE-PROSE doc
@@ -723,7 +723,7 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   `[[feedback_not_complete_attack_substantive_gaps]]`.
 
 - ID: `KG-ISF-COMPLETENESS.5` · Status: `active` (umbrella; **measurement DONE `2026-06-24`**, read-only,
-  docs-only; code → `.5.i`/`.5.ii` done, `.5.iii` `_WIDTH`-leak gate measured GO — code pending) · Goal: **enum-surface fidelity (bar #6) — the generic-`TABLE`
+  docs-only; code → `.5.i`/`.5.ii`/`.5.iii` all LANDED `2026-06-24`) · Goal: **enum-surface fidelity (bar #6) — the generic-`TABLE`
   mega-enum conflation.** Surfaced by the `CORPUS-COVERAGE.2` re-ingests of JEDEC HBM2 (#28) and AMBA CHI C2C
   (#29), explicitly deferred by `.2a.iv` (Lever F) as "a future extraction-precision lever". **Measured
   (read-only, current binary + 78-doc persisted corpus; reproducer in the report):** the `.isf` emits a
@@ -820,8 +820,8 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
     (DEFER 4)(TRANSFAULT 5)(RESERVED 6)(UNSUPPORTED 7))` (codes recovered) + APB pass FSMGen `--strict`
     `success`; `kg-bench` 156/156; `run_ci.sh` GREEN (lib **1716**, +4). Acceptance checklist below.
 
-- ID: `KG-ISF-COMPLETENESS.5.iii` · Status: `active` (**measurement DONE `2026-06-24`, GO** — read-only,
-  docs-only; code slice pending) · Goal: **the deeper enum member-quality residual classes** `.5.ii` left
+- ID: `KG-ISF-COMPLETENESS.5.iii` · Status: `done` (**measurement DONE + gate LANDED `2026-06-24`**,
+  before/after-WIRE-BASED-100-verified) · Goal: **the deeper enum member-quality residual classes** `.5.ii` left
   open (glossary `SEE…`, front-matter/ToC, section-caption `B2_3_1_…`, `_WIDTH` parameter leaks,
   value-restart-of-all-clean) — measure them per-item, build only the one that is both material and cleanly
   gateable. **MEASUREMENT DONE `2026-06-24`** (read-only over the 78 persisted IntentIR docs; reproducer
@@ -850,6 +850,22 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
     plumbing. Byte-changing on the AXI wire gold → before/after WIRE-BASED-100 eval REQUIRED (a strict
     improvement: scored surface byte-identical, `manager.isf` recovers BRESP/AWCMO + drops RRESP/AXSNOOP).
     `kg-bench` + FSMGen `--strict` + `run_ci.sh` hard gates. Acceptance checklist below.
+  - **CODE LANDED `2026-06-24`** — `is_width_parameter_leak_member(member, enum, known_signals)` +
+    a `continue`-skip in `synthesize_encoding_declarations_for_enum`'s member loop right after the
+    `.5.ii` spine gate (`ir/evidence.rs`): a member named `<X>_WIDTH` where `X` is the enum's own name
+    OR a declared signal (the `known_signals` set, now threaded from the signal-match caller; the `None`
+    caller covers the enum-self case) is a width PARAMETER → skipped; a pure-parameter enum empties (no
+    statements → no `SymbolDefinition` → honest residual). +2 tests (predicate FP-guard incl. `FULL_WIDTH`
+    kept; synthesis seam keeps BRESP codes / empties AXSNOOP). **Verified:** AXI evidence rebuild drops
+    EXACTLY the 7 leaks (`BRESP/RRESP/RCHUNKNUM/RCHUNKSTRB/AWSNOOP/ARSNOOP/AWCMO _WIDTH`; statements
+    6414→6407; non-Enum statement set byte-identical); AXI `manager.isf` now emits `(BRESP (OKAY 0)…)`
+    (8 clean codes, no dup) + `(AWCMO (CLEAN_AND_INVALIDATE 0)(CLEAN_ONLY 1))` and the false
+    `(RRESP (RRESP_WIDTH 0))`/`AXSNOOP`/`RCHUNK*` enums are gone; FSMGen `--strict --check` **success / 0
+    diagnostics**. **WIRE-BASED-100 = 1.000 before==after** (AXI before/after eval identical; APB/AHB/SWD/i2c
+    evidence byte-identical old-vs-new → gate inert). `kg-bench` 156/156; `run_ci.sh` GREEN (lib **1718**,
+    +2). Acceptance checklist below. The `SECSID_WIDTH`/`SID_WIDTH`/`SSID_WIDTH` self-named pseudo-enums
+    (enum NAME ends `_WIDTH`, prefix not a declared signal) stay an honest residual (out of scope — a
+    name-level case overlapping `.5.i`).
 
 ## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.5.ii` — DONE `2026-06-24`
 - [x] **REPRODUCE / MEASURE** — read-only census over all 78 persisted IntentIR docs (561 enums / 12 509 members). The `.5.i` name-gate cannot reach enums whose NAME is a real signal but whose MEMBERS are junk: AXI-gold `BRESP` is 16 members = 7 prose fragments + `BRESP_WIDTH` FUSED with the 8 genuine codes; AHB-gold `HPROT` has value-restart but 15 clean members. Report `docs/research/generic-enum-conflation-measurement.md` §`.5.ii measurement`.
@@ -867,7 +883,35 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 - [x] **NO CODE → ORACLES ORTHOGONAL** — measurement/docs-only slice; no Rust touched → WIRE-BASED-100 / register+wire golds / `kg-bench` orthogonal by construction; `scripts/check_doctrines.sh` GREEN (memory-arch + knowledge-map + task-acceptance).
 - [x] **LOCKSTEP** — report §`.5.iii measurement` + tracked reproducer; `.5.iii` node added; KM card `[[generic-enum-conflation]]` extended (`.5.iii`) + `KNOWLEDGE_MAP.md` regen; CHANGES.md / DEVELOPMENT_NOTES.md / LIVE_ACHIEVEMENT_STATUS.md / MEMORY.md / `docs/TASK_TREE.md` index frontier. **Frontier → the `.5.iii` CODE slice** (the `_WIDTH` gate; before/after WIRE-BASED-100 eval required).
 
+## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.5.iii` (CODE) — DONE `2026-06-24`
+- [x] **ROOT CAUSE (WHY + WHERE)** — `synthesize_encoding_declarations_for_enum` (`crates/specforge/src/ir/evidence.rs`) admitted a width-PARAMETER row as an encoding member: the AXI gold `evidence_ir.json` carries `Enum BRESP BRESP_WIDTH = 0.` (+ 6 more), and the `.isf` emitted `(BRESP (BRESP_WIDTH 0)(OKAY 0)…)` (dup value `0`) / `(RRESP (RRESP_WIDTH 0))` (real codes replaced) / `(AXSNOOP (AWSNOOP_WIDTH 0)(ARSNOOP_WIDTH 1))` — a false bar-#6 `.isf` fact. Localized by the `.5.iii` measurement (reproducer `scripts/measure_enum_width_leak.py`): 7 leaks in real-named enums, all in `ihi0022_l`, all prefixes declared signals.
+- [x] **ADDRESSED (verified, measured per-item)** — added `is_width_parameter_leak_member(member, enum, known_signals)` + a `continue`-skip in the member loop after the `.5.ii` spine gate; threaded `known_signals` (in scope at the signal-match caller, `evidence.rs:4708 Some(known_signals)`) for the declared-signal arm, enum-self-name for the `None` caller. Measured per-item: AXI evidence rebuild drops EXACTLY the 7 `_WIDTH` leaks (`BRESP/RRESP/RCHUNKNUM/RCHUNKSTRB/AWSNOOP/ARSNOOP/AWCMO`; statements 6414→6407; the non-Enum statement TEXT set byte-identical old-vs-new); AXI `manager.isf` now emits `(BRESP (OKAY 0)(EXOKAY 1)(SLVERR 2)(DECERR 3)(DEFER 4)(TRANSFAULT 5)(RESERVED 6)(UNSUPPORTED 7))` (8 clean codes) + `(AWCMO (CLEAN_AND_INVALIDATE 0)(CLEAN_ONLY 1))`; the false `RRESP`/`RCHUNKNUM`/`RCHUNKSTRB`/`AXSNOOP` `_WIDTH`-only enums are gone (emptied → honest residual); FSMGen `--strict --check --json` **success / 0 diagnostics**.
+- [x] **NO REGRESSION** — **WIRE-BASED-100 = 1.000 before==after (PROVEN)**: AXI before/after `eval-extraction --provider skip` on baseline-vs-gated evidence is byte-identical (seed_axi constraint 4/4 + relation 6/6, seed_axi_temporal 3/3); APB/AHB/SWD/i2c evidence rebuilt with both binaries is **byte-identical** (the gate is inert — the 7 leaks are AXI-only). Full wire eval on canonical (new) evidence: APB 6/6·6/6·3/3, AHB 6/6·6/6·4/4, AXI 4/4·6/6·3/3, SWD relation 1/1 (+ documented promotion-only constraint 0/1), SWD-derivation 11/11·4/4·13/13, i2c 6/6. `kg-bench` **156/156**. `run_ci.sh` GREEN (lib **1718**, +2 tests; warning-deny clippy/fmt/rustdoc + mdBook). FSMGen `--strict` success on the rebuilt AXI `.isf`.
+- [x] **GENERICITY (ADR 0006)** — document-grounded gate (the enum's own name + the document's declared-signal set), NOT a structure-word name list; corpus false-positive set EMPTY — no legit `FULL_WIDTH`/`HALF_WIDTH` value exists, and the declared-signal arm never catches one because `FULL`/`HALF` are not declared signals (the predicate unit test pins `FULL_WIDTH` KEPT). Same "independently evidenced" discipline as `.5.i`.
+- [x] **LOCKSTEP** — report §`.5.iii LANDED`; KM card `[[generic-enum-conflation]]` → `.5.iii` LANDED + `KNOWLEDGE_MAP.md` regen; README current-state bullet (`.5.iii`); book `pipeline/isf-adapter.md` enum-fidelity note extended; CHANGES.md / DEVELOPMENT_NOTES.md / LIVE_ACHIEVEMENT_STATUS.md / MEMORY.md / `docs/TASK_TREE.md` index. **`.5` enum-surface fidelity: `.5.i` name-gate + `.5.ii` spine member-gate + `.5.iii` `_WIDTH` member-gate** — the AXI gold `.isf` enum surface is now faithful; the `*_WIDTH`-named self-pseudo-enums are an honest residual.
+
 ## Changelog
+
+- `2026-06-24`: **`.5.iii` DONE — CODE: per-member `_WIDTH` parameter-leak enum gate.** Same fresh-session
+  PNT continuation (the two slices of `.5.iii`: measurement, then code). Added
+  `is_width_parameter_leak_member` (`ir/evidence.rs`) + a `continue`-skip in
+  `synthesize_encoding_declarations_for_enum`'s member loop after the `.5.ii` spine gate: a member named
+  `<X>_WIDTH` where `X` is the enum's own name OR a declared signal (the `known_signals` set, now threaded
+  from the signal-match caller) is a width PARAMETER → dropped, so a polluted enum keeps its codes (AXI
+  `BRESP` keeps OKAY/EXOKAY/SLVERR/DECERR/…) and a pure-parameter enum empties (no statements → no
+  `SymbolDefinition` → honest residual). +2 tests. **Verified per-item:** AXI evidence rebuild drops
+  EXACTLY the 7 leaks (statements 6414→6407; non-Enum statement set byte-identical); the AXI `manager.isf`
+  now emits `(BRESP (OKAY 0)(EXOKAY 1)(SLVERR 2)(DECERR 3)(DEFER 4)(TRANSFAULT 5)(RESERVED 6)(UNSUPPORTED
+  7))` (8 clean codes, no dup) + `(AWCMO (CLEAN_AND_INVALIDATE 0)(CLEAN_ONLY 1))`, and the false
+  `(RRESP (RRESP_WIDTH 0))`/`AXSNOOP`/`RCHUNK*` enums are gone; FSMGen `--strict --check` **success / 0
+  diagnostics**. **NO REGRESSION:** WIRE-BASED-100 = **1.000 before==after** (AXI before/after eval
+  identical; APB/AHB/SWD/i2c evidence byte-identical old-vs-new → gate inert); `kg-bench` 156/156;
+  `run_ci.sh` GREEN (lib **1718**, +2). ADR-0006 (document-grounded, FP set EMPTY — `FULL_WIDTH` kept).
+  **`.5` enum-surface fidelity now has all three member gates** (`.5.i` name + `.5.ii` spine + `.5.iii`
+  `_WIDTH`); the `*_WIDTH`-named self-pseudo-enums (SECSID_WIDTH/SID_WIDTH/SSID_WIDTH) stay an honest
+  residual. Report §`.5.iii LANDED`; KM `[[generic-enum-conflation]]` → `.5.iii` LANDED. Frontier →
+  KG-ISF-COMPLETENESS has no further immediately-buildable leaf (`.1c.ii` upstream-NLP-gated, `.2b`
+  measured-marginal); PNT advances to the next active tree.
 
 - `2026-06-24`: **`.5.iii` MEASUREMENT DONE → GO on the `_WIDTH` parameter-leak gate (read-only, docs-only).**
   Fresh-session PNT continuation off `.5.ii` (the first active tree, north star; the resume pointer flagged

@@ -458,3 +458,36 @@ python3 scripts/measure_enum_width_leak.py
 grep -nE '_WIDTH|BRESP|RRESP|AWCMO|AXSNOOP' \
   generated/adapters/isf/ihi0022_l_2025_08_amba_axi_protocol_specification/manager.isf
 ```
+
+---
+
+## `.5.iii` LANDED (`2026-06-24`, same fresh focused session) — results
+
+**The gate.** `is_width_parameter_leak_member(member_name, enum_name, known_signals)` (`ir/evidence.rs`)
+returns true when a synthesized member is named `<X>_WIDTH` and `X` is the enum's own name OR a declared
+signal (`known_signals`, matched case-insensitively). The member loop in
+`synthesize_encoding_declarations_for_enum` `continue`-skips such a member right after the `.5.ii`
+sentence-spine gate (one seam). `known_signals` is now threaded from the signal-match caller
+(`evidence.rs:4708` `Some(known_signals)`); the `synthesize_encoding_declarations` `None` caller covers
+the enum-self-name case. A pure-parameter enum empties → no statements → `build_symbol_definitions` mints
+no `SymbolDefinition` (honest residual), exactly the `.5.ii` contract.
+
+**Effect (live, new binary).** Rebuilding the AXI gold `ihi0022_l` evidence drops EXACTLY the 7 measured
+leaks (`Enum BRESP BRESP_WIDTH = 0.`, `RRESP_WIDTH`, `RCHUNKNUM_WIDTH`, `RCHUNKSTRB_WIDTH`, `AWSNOOP_WIDTH`,
+`ARSNOOP_WIDTH`, `AWCMO_WIDTH`): `extracted_statements` 6414→6407, and the **non-Enum statement TEXT set is
+byte-identical** old-vs-new. The rebuilt `manager.isf` now emits
+`(BRESP (OKAY 0) (EXOKAY 1) (SLVERR 2) (DECERR 3) (DEFER 4) (TRANSFAULT 5) (RESERVED 6) (UNSUPPORTED 7))`
+(8 clean codes, no value-`0` dup) and `(AWCMO (CLEAN_AND_INVALIDATE 0) (CLEAN_ONLY 1))`; the false
+`(RRESP (RRESP_WIDTH 0))`, `(RCHUNKNUM …)`, `(RCHUNKSTRB …)`, and `(AXSNOOP …)` `_WIDTH`-only enums are
+**gone** (emptied → honest residual). FSMGen `--strict --check --json` → **success / 0 diagnostics**. The
+`SECSID_WIDTH`/`SID_WIDTH`/`SSID_WIDTH` self-named pseudo-enums (the enum NAME ends `_WIDTH`, prefix not a
+declared signal) stay an honest residual — a name-level case overlapping `.5.i`, out of this gate's scope.
+
+**No regression.** WIRE-BASED-100 = **1.000 before==after** (PROVEN): AXI before/after
+`eval-extraction --provider skip` on baseline-vs-gated evidence is identical (seed_axi 4/4 constraint +
+6/6 relation; seed_axi_temporal 3/3); APB/AHB/SWD/i2c evidence rebuilt with both binaries is
+**byte-identical** (the gate is inert — the leaks are AXI-only). Full wire eval on the canonical new
+evidence holds the documented state (APB/AHB/AXI all 1.000; SWD relation 1/1 + the documented
+promotion-only constraint 0/1; SWD-derivation 11/11·4/4·13/13; i2c 6/6). `kg-bench` 156/156. `run_ci.sh`
+GREEN (lib 1718, +2 tests: `width_parameter_leak_member_predicate` pins `FULL_WIDTH` KEPT;
+`encoding_member_synthesis_drops_width_parameter_leak_keeps_codes`).

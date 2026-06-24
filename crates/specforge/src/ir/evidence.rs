@@ -4708,6 +4708,7 @@ fn scan_encoding_tables_by_signal_anchor(
         statements.extend(synthesize_encoding_declarations_for_enum(
             table,
             &anchor_signal,
+            Some(known_signals),
             statement_counter,
         ));
     }
@@ -12003,6 +12004,37 @@ fn is_prose_fragment_member_name(member_name: &str) -> bool {
         .any(|token| PROSE_SENTENCE_SPINE_WORDS.contains(&token.to_ascii_lowercase().as_str()))
 }
 
+/// `KG-ISF-COMPLETENESS.5.iii` — true when a synthesized encoding-table member is a WIDTH-PARAMETER
+/// leak, not an encoding value: the member is named `<X>_WIDTH` where `X` is the enum's own name OR a
+/// declared signal in the document. A signal's width is a configuration parameter (`BRESP_WIDTH = 0`, a
+/// row mis-read out of a parameter table into the value enum), never one of that signal's encoding
+/// values, so it pollutes the `.isf` enum — `(BRESP (BRESP_WIDTH 0) (OKAY 0) …)` duplicates value `0`,
+/// and `(RRESP (RRESP_WIDTH 0))` REPLACES the real codes (measured live on the AXI wire gold `ihi0022_l`).
+/// The gate is document-GROUNDED (ADR 0006), NOT a structure-word name list: a genuine width-VALUE such
+/// as `FULL_WIDTH`/`HALF_WIDTH` is KEPT, because `FULL`/`HALF` is neither the enum name nor a declared
+/// signal — so a real link-width enum survives. `known_signals` is matched case-insensitively (the
+/// declared set keeps the document's casing; the synthesized member is already uppercased). Measured
+/// false-positive-free corpus-wide (`.5.iii`; report §`.5.iii measurement`; reproducer
+/// `scripts/measure_enum_width_leak.py`).
+fn is_width_parameter_leak_member(
+    member_name: &str,
+    enum_name: &str,
+    known_signals: Option<&HashSet<String>>,
+) -> bool {
+    let Some(prefix) = member_name.strip_suffix("_WIDTH") else {
+        return false;
+    };
+    if prefix.is_empty() {
+        return false;
+    }
+    if prefix.eq_ignore_ascii_case(enum_name) {
+        return true;
+    }
+    known_signals
+        .map(|signals| signals.iter().any(|s| s.eq_ignore_ascii_case(prefix)))
+        .unwrap_or(false)
+}
+
 fn synthesize_encoding_declarations(
     table: &crate::ir::source::StructuredTableRecord,
     section_title: &str,
@@ -12015,12 +12047,13 @@ fn synthesize_encoding_declarations(
     let Some(enum_name) = derive_encoding_enum_name(table, section_title, None) else {
         return Vec::new();
     };
-    synthesize_encoding_declarations_for_enum(table, &enum_name, statement_counter)
+    synthesize_encoding_declarations_for_enum(table, &enum_name, None, statement_counter)
 }
 
 fn synthesize_encoding_declarations_for_enum(
     table: &crate::ir::source::StructuredTableRecord,
     enum_name: &str,
+    known_signals: Option<&HashSet<String>>,
     statement_counter: &mut usize,
 ) -> Vec<ExtractedStatement> {
     let mut statements = Vec::new();
@@ -12059,6 +12092,16 @@ fn synthesize_encoding_declarations_for_enum(
         // so both call paths (`None`/`Some(known_signals)`) are covered. Universal grammar (ADR 0006);
         // calibrated false-positive-free in `.5.ii` (report §`.5.ii measurement`).
         if is_prose_fragment_member_name(&member_name) {
+            continue;
+        }
+        // KG-ISF-COMPLETENESS.5.iii — per-member WIDTH-PARAMETER leak gate. A configuration/parameter
+        // row (`Enum BRESP BRESP_WIDTH = 0.`) mis-read into the value enum names a member `<X>_WIDTH`
+        // where `X` is the enum / a declared signal — the signal's bit-WIDTH parameter, not an encoding
+        // value. Skip it so a polluted enum keeps its real codes (`BRESP` keeps OKAY/EXOKAY/…) and a
+        // pure-parameter enum empties (no statements → no `SymbolDefinition` → honest residual). Same
+        // member-synthesis seam as the `.5.ii` spine gate. Document-grounded, FP-free (ADR 0006): a genuine
+        // width-VALUE `FULL_WIDTH` is kept (its prefix is neither the enum nor a signal).
+        if is_width_parameter_leak_member(&member_name, enum_name, known_signals) {
             continue;
         }
         // Numeric value: use value_col if available and parseable, otherwise use row index.
@@ -19115,7 +19158,7 @@ mod tests {
         );
         let mut counter = 0usize;
         let statements =
-            super::synthesize_encoding_declarations_for_enum(&table, "BRESP", &mut counter);
+            super::synthesize_encoding_declarations_for_enum(&table, "BRESP", None, &mut counter);
         assert_eq!(statements.len(), 3, "only the three real codes survive");
         let joined = statements
             .iter()
@@ -19149,11 +19192,114 @@ mod tests {
         );
         let mut counter = 0usize;
         let statements =
-            super::synthesize_encoding_declarations_for_enum(&table, "PPROT", &mut counter);
+            super::synthesize_encoding_declarations_for_enum(&table, "PPROT", None, &mut counter);
         assert!(statements.is_empty(), "all-prose table yields no members");
         assert_eq!(
             counter, 0,
             "no statement counter advance for dropped members"
+        );
+    }
+
+    #[test]
+    fn width_parameter_leak_member_predicate() {
+        use std::collections::HashSet;
+        let signals: HashSet<String> = ["AWSNOOP", "ARSNOOP", "BRESP"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
+        // enum-self-name leak (needs no signal set)
+        assert!(super::is_width_parameter_leak_member(
+            "BRESP_WIDTH",
+            "BRESP",
+            None
+        ));
+        // declared-signal leak in a differently-named enum (AXSNOOP fuses AWSNOOP/ARSNOOP widths)
+        assert!(super::is_width_parameter_leak_member(
+            "AWSNOOP_WIDTH",
+            "AXSNOOP",
+            Some(&signals)
+        ));
+        // FALSE-POSITIVE guard: a genuine width-VALUE is kept (FULL is neither enum nor signal)
+        assert!(!super::is_width_parameter_leak_member(
+            "FULL_WIDTH",
+            "LINKWIDTH",
+            Some(&signals)
+        ));
+        // a bare `WIDTH` member (no `<prefix>_WIDTH` shape) is not a leak
+        assert!(!super::is_width_parameter_leak_member(
+            "WIDTH",
+            "BIT",
+            Some(&signals)
+        ));
+        // a real code is never caught
+        assert!(!super::is_width_parameter_leak_member(
+            "OKAY",
+            "BRESP",
+            Some(&signals)
+        ));
+        // declared-signal arm is case-insensitive against the document's casing
+        assert!(super::is_width_parameter_leak_member(
+            "ARSNOOP_WIDTH",
+            "AXSNOOP",
+            Some(&signals)
+        ));
+    }
+
+    #[test]
+    fn encoding_member_synthesis_drops_width_parameter_leak_keeps_codes() {
+        use std::collections::HashSet;
+        // A conflated `BRESP` table where a width-parameter row (`BRESP_WIDTH = 0`) leaked into the
+        // value enum (the `.5.iii` AXI-gold defect). The enum-self leak drops; the real codes survive.
+        let table = encoding_table_with_rows(
+            "BRESP encoding",
+            &["Response", "Value"],
+            &[
+                ("BRESP_WIDTH", "0"),
+                ("OKAY", "0"),
+                ("EXOKAY", "1"),
+                ("SLVERR", "2"),
+            ],
+        );
+        let mut counter = 0usize;
+        let statements =
+            super::synthesize_encoding_declarations_for_enum(&table, "BRESP", None, &mut counter);
+        let joined = statements
+            .iter()
+            .map(|s| s.text.as_str())
+            .collect::<Vec<_>>()
+            .join(" | ");
+        assert_eq!(
+            statements.len(),
+            3,
+            "the BRESP_WIDTH parameter row is dropped: {joined}"
+        );
+        assert!(
+            !joined.contains("BRESP_WIDTH"),
+            "no width-parameter leak survives: {joined}"
+        );
+        assert!(joined.contains("OKAY") && joined.contains("EXOKAY") && joined.contains("SLVERR"));
+
+        // A declared-signal leak in a differently-named enum (`AXSNOOP` fusing `AWSNOOP_WIDTH`/
+        // `ARSNOOP_WIDTH`) empties to no statements when `known_signals` grounds the prefixes.
+        let signals: HashSet<String> = ["AWSNOOP", "ARSNOOP"]
+            .iter()
+            .map(|s| s.to_string())
+            .collect();
+        let axsnoop = encoding_table_with_rows(
+            "AXSNOOP encoding",
+            &["Name", "Value"],
+            &[("AWSNOOP_WIDTH", "0"), ("ARSNOOP_WIDTH", "1")],
+        );
+        let mut counter2 = 0usize;
+        let statements2 = super::synthesize_encoding_declarations_for_enum(
+            &axsnoop,
+            "AXSNOOP",
+            Some(&signals),
+            &mut counter2,
+        );
+        assert!(
+            statements2.is_empty(),
+            "a pure declared-signal width-parameter enum empties to an honest residual"
         );
     }
 

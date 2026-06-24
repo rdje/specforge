@@ -1,4 +1,37 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-COMPLETENESS.5.iii (`2026-06-24`) — CODE: per-member `_WIDTH` parameter-leak enum gate
+
+**What / why.** The `.5.iii` measurement found a width-PARAMETER leak polluting the AXI gold `.isf` enum
+surface: a configuration row (`Enum BRESP BRESP_WIDTH = 0.`) admitted into a value enum, so `(BRESP
+(BRESP_WIDTH 0)(OKAY 0)…)` duplicated value `0` and `(RRESP (RRESP_WIDTH 0))` replaced the real codes. This
+slice lands the gate.
+
+**Change (`ir/evidence.rs`).** `is_width_parameter_leak_member(member_name, enum_name, known_signals)`
+returns true when the member is `<X>_WIDTH` and `X` is the enum's own name OR a declared signal
+(`known_signals`, case-insensitive). The member loop in `synthesize_encoding_declarations_for_enum`
+`continue`-skips such a member right after the `.5.ii` spine gate (one seam). `known_signals` is threaded
+from the signal-match caller (`evidence.rs:4708 Some(known_signals)`); the `synthesize_encoding_declarations`
+`None` caller covers the enum-self case. A pure-parameter enum empties → no statements → no
+`SymbolDefinition` (honest residual), the same contract `.5.ii` uses.
+
+**Why document-grounded, not a denylist.** The discriminator is the document's own evidence (the enum's
+name + the declared-signal set), so a genuine width-VALUE — a link-width enum's `FULL_WIDTH`/`HALF_WIDTH`/
+`QUARTER_WIDTH` — is KEPT (its prefix is neither the enum name nor a declared signal). The corpus
+false-positive set is EMPTY (`scripts/measure_enum_width_leak.py`), and a unit test pins `FULL_WIDTH` kept.
+
+**Verification (per-item).** AXI evidence rebuild (baseline-vs-new binary) drops EXACTLY the 7 leaks
+(`BRESP/RRESP/RCHUNKNUM/RCHUNKSTRB/AWSNOOP/ARSNOOP/AWCMO _WIDTH`; statements 6414→6407; the non-Enum
+statement TEXT set byte-identical). The rebuilt `manager.isf` emits `(BRESP (OKAY 0)(EXOKAY 1)(SLVERR 2)
+(DECERR 3)(DEFER 4)(TRANSFAULT 5)(RESERVED 6)(UNSUPPORTED 7))` + `(AWCMO (CLEAN_AND_INVALIDATE 0)
+(CLEAN_ONLY 1))`; the false `RRESP`/`RCHUNKNUM`/`RCHUNKSTRB`/`AXSNOOP` `_WIDTH`-only enums are gone; FSMGen
+`--strict --check --json` success / 0 diagnostics. WIRE-BASED-100 = 1.000 before==after (AXI before/after
+eval identical; APB/AHB/SWD/i2c evidence byte-identical → gate inert). `kg-bench` 156/156; `run_ci.sh` GREEN
+(lib 1718, +2 tests).
+
+**Residual.** The `SECSID_WIDTH`/`SID_WIDTH`/`SSID_WIDTH` self-named pseudo-enums (the enum NAME itself ends
+`_WIDTH`, prefix not a declared signal) are out of this gate's per-member scope — a name-level case
+overlapping `.5.i`; left as an honest residual.
+
 ## KG-ISF-COMPLETENESS.5.iii (`2026-06-24`) — MEASUREMENT: the `_WIDTH` parameter-leak deeper-enum residual (GO)
 
 **What / why.** `.5.ii` cleaned the prose-SENTENCE-fragment enum members and deferred five deeper

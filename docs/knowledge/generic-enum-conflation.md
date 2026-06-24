@@ -21,7 +21,7 @@ answers:
   - "is the orphan (type TABLE) line a separate emitter bug (yes — isf_ir.rs:403-409 emits all self.types unconditionally, so a Lever-F-residualized enum still leaves an orphan (type ...) line; gate by emitted_enums())"
   - "what are the deeper enum member-quality residual classes after .5.ii / what did the .5.iii measurement find (measured 2026-06-24 read-only, reproducer scripts/measure_enum_width_leak.py: of the 5 deferred classes — glossary SEE…, front-matter/ToC, section-caption B2_3_1_…, _WIDTH parameter leaks, value-restart-of-clean — most are SUBSUMED by .5.i (47/54 _WIDTH members and the bulk of 319 section-caption survivors sit in generic-named enums .5.i drops whole), EXCEPT the _WIDTH leak which reaches the AXI wire-gold .isf and is materially damaging)"
   - "why is the _WIDTH enum-member leak a real fidelity defect (.5.iii: 7 _WIDTH members in real-signal-named enums in AXI gold ihi0022_l reach manager.isf — (BRESP (BRESP_WIDTH 0)(OKAY 0)…) duplicates value 0, (RRESP (RRESP_WIDTH 0)) REPLACES the real RRESP codes, (AXSNOOP (AWSNOOP_WIDTH 0)(ARSNOOP_WIDTH 1)) pure junk; a width PARAMETER 'Enum BRESP BRESP_WIDTH = 0.' mis-read as an encoding VALUE — a false bar-#6 fact, unscored by WIRE-BASED-100 since enums are emitter-orthogonal)"
-  - "what is the .5.iii _WIDTH parameter-leak gate / is it ADR-0006 safe (drop a synthesized encoding member named <X>_WIDTH iff X is a declared signal OR the enum's own name — document-grounded like .5.i, NOT a name list; corpus FP set EMPTY: no legit FULL_WIDTH/HALF_WIDTH value exists and the declared-signal arm never catches one since FULL/HALF are not signals; per-member not per-enum so BRESP keeps its codes and RRESP/AXSNOOP empty to honest residuals. GO; code slice pending, byte-changing on AXI gold -> before/after WIRE-BASED-100 eval required)"
+  - "what is the .5.iii _WIDTH parameter-leak gate / is it landed / is it ADR-0006 safe (LANDED 2026-06-24: is_width_parameter_leak_member + a continue-skip in synthesize_encoding_declarations_for_enum after the .5.ii spine gate, known_signals threaded from the signal-match caller. Drops a synthesized encoding member named <X>_WIDTH iff X is a declared signal OR the enum's own name — document-grounded like .5.i, NOT a name list; corpus FP set EMPTY: no legit FULL_WIDTH/HALF_WIDTH value exists and the declared-signal arm never catches one since FULL/HALF are not signals; per-member not per-enum so BRESP keeps its codes and RRESP/AXSNOOP empty to honest residuals. AXI manager.isf now (BRESP (OKAY 0)(EXOKAY 1)...) + (AWCMO (CLEAN_AND_INVALIDATE 0)(CLEAN_ONLY 1)); false RRESP/AXSNOOP/RCHUNK* _WIDTH enums gone; FSMGen --strict success/0; WIRE-BASED-100 1.000 before==after; kg-bench 156/156; run_ci GREEN lib 1718 +2)"
   - "why are section-caption / value-restart enum residuals NO-GO (.5.iii: section-caption/table-ref has no FP-free gate — leading [A-Z]?digit token collides with real codes D1/D2/L2 e.g. DEBUG:D1_1; restart-of-clean has no fidelity defect — .5.ii proved restart is not junk, all members real, mostly .5.i-dropped; glossary SEE…/front-matter are tiny + name-ish -> honest residuals)"
 date: 2026-06-24
 tags: [kg-isf-completeness, isf, enum, extraction, evidence-ir, semantic-ir, emitter, adr-0006, corpus-coverage, measurement, fidelity, bar-6]
@@ -135,6 +135,17 @@ not per-enum (keeps BRESP's codes; empties RRESP/AXSNOOP → honest residual). *
 (leading `[A-Z]?digit` collides with real codes `D1`/`L2`), restart-of-clean (no defect), glossary/
 front-matter (tiny). Byte-changing on the AXI gold → the code slice needs a before/after WIRE-BASED-100
 eval. Report §`.5.iii measurement`.
+
+**`.5.iii` LANDED (`2026-06-24`).** `is_width_parameter_leak_member` (`ir/evidence.rs`) + a `continue`-skip
+in `synthesize_encoding_declarations_for_enum`'s member loop after the `.5.ii` spine gate; `known_signals`
+threaded from the signal-match caller for the declared-signal arm. AXI evidence rebuild drops EXACTLY the 7
+leaks (statements 6414→6407; non-Enum statement set byte-identical); `manager.isf` now emits
+`(BRESP (OKAY 0)(EXOKAY 1)(SLVERR 2)(DECERR 3)(DEFER 4)(TRANSFAULT 5)(RESERVED 6)(UNSUPPORTED 7))` +
+`(AWCMO (CLEAN_AND_INVALIDATE 0)(CLEAN_ONLY 1))`, and the false `RRESP`/`RCHUNKNUM`/`RCHUNKSTRB`/`AXSNOOP`
+`_WIDTH`-only enums are gone; FSMGen `--strict` success/0. WIRE-BASED-100 **1.000 before==after** (AXI eval
+identical; APB/AHB/SWD/i2c evidence byte-identical → gate inert); `kg-bench` 156/156; `run_ci.sh` GREEN
+(lib 1718, +2). The `SECSID_WIDTH`/`SID_WIDTH`/`SSID_WIDTH` self-named pseudo-enums stay an honest residual.
+Report §`.5.iii LANDED`.
 
 Links: [[isf-enum-value-literal-emit-gate]] (Lever F — the value-literal gate that deferred
 this), [[behavior-temporal-lowering-broader-corpus]] (`.4`, which spun out enum/signal
