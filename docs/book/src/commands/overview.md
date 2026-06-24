@@ -16,6 +16,13 @@ Current surface:
 - `nlp-enrich <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--dry-run]`
 - `extract-contracts <evidence-ir> [--provider ollama|open-ai|lm-studio|skip] [--model <name>] [--dry-run] [--max-statements 0]`
 - `signal-resolve <evidence-ir> [--provider ollama|open-ai|lm-studio|skip] [--model <name>] [--dry-run] [--max-statements 0] [--grounding-signals <csv>]`
+- `nli-verify <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--model <name>]`
+- `entity-type <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--model <name>] [--max-subjects 0]`
+- `extract-conditions <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--model <name>] [--max-constraints 0]`
+- `extract-constraints-llm <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--model <name>] [--max-sentences 0]`
+- `eval-extraction <dataset> [--provider ollama|open-ai|lm-studio|skip] [--model <name>] [--evidence-root <root>]`
+- `audit-extraction <source-ir> [--provider ollama|open-ai|lm-studio|skip] [--model <name>] [--sample 12] [--seed 0]`
+- `grits-consensus <witnesses-json> [--min-agree 2] [--adjudicate-out <queue>]`
 - `recover-register-bits <evidence-ir> [--vlm-provider ollama|open-ai|lm-studio|skip] [--vlm-model <name>] [--dry-run]`
 - `validate <artifact>`
 - `kg-bench`
@@ -34,6 +41,19 @@ The commands fall into three groups:
 1. pipeline execution
 2. quality and validation
 3. cross-document learning
+
+The LLM-backed extraction and judge commands (`extract-contracts`,
+`signal-resolve`, `nli-verify`, `entity-type`, `extract-conditions`,
+`extract-constraints-llm`) and the extraction-quality measurement commands
+(`grits-consensus`, `eval-extraction`, `audit-extraction`) are each detailed in
+[Quality, Validation, And Learning](quality-and-learning.md) and
+[Extraction Eval](../quality/extraction-eval.md). Each one can run as a CI-safe
+no-op: the extraction/judge commands default to a live local provider
+(`--vlm-provider`/`--provider ollama`) and no-op when passed `skip`, while
+`eval-extraction` and `audit-extraction` default to `skip` (the deterministic
+baseline / plan-only mode) and `grits-consensus` is a fully offline measurement
+over pre-collected witnesses — so the deterministic pipeline never depends on a
+live model.
 
 ## The everyday command paths
 
