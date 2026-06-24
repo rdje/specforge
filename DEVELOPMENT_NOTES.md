@@ -1,4 +1,58 @@
 # DEVELOPMENT_NOTES
+## PDF-VARIANT-DIGESTION.10i (`2026-06-24`) — CODE: block-qualified recovery of the genuinely-different register class
+
+**What / why.** `.10h` recovered the *collapsible* half of the `.10g` reused-mnemonic residual —
+identical/nested views of one register collapse to a single record by field-set containment — but
+left the GENUINELY-DIFFERENT half a full residual: when a mnemonic's occurrences have disjoint field
+sets (ARM-Debug MEM-AP `CSW` 11 fields vs JTAG-AP `CSW` 7 fields), there is no common superset to
+collapse to, so both were dropped. That is lossy: each access port really does have its own `CSW`.
+The `.10h` write-up worried the flattened heading hierarchy gave no block name to tell the two apart.
+
+**Measurement (probe-first).** The `.10h` `#[ignore]` block probe
+(`section_header_register_block_probe`) already prints, for every reused register-routed mnemonic,
+its dotted number, its resolved parent-section title, and its field set. Reading that output proved
+the `.10h` worry too pessimistic: the headings lose their *nesting*, but each register's parent
+section still exists as its own line, and its dotted number is the parent of the register's
+(`C2.6` is the parent of `C2.6.7`). Every reused register sits under a parent titled
+`<dotted-num> <BLOCK> register descriptions` — `C2.6 MEM-AP register descriptions`,
+`C3.5 JTAG-AP register descriptions`, `C1.4 AP Register Descriptions` — except `CLAIMSET`'s fourth
+occurrence under a block-less `D4.5 Register descriptions`. The probe also confirmed the
+genuinely-different class is in EXACTLY 1 doc (ARM-Debug `ihi0074`); CoreSight `ihi0029`'s only reused
+name (`AUTHSTATUS`, all field sets ⊆ the 5-field `B2.3.1`) is `.10h`-collapsible and never reaches
+`.10i`.
+
+**Implementation.** `extract_section_header_registers` (`ir/evidence.rs`) now builds a `by_number` map
+(dotted section number → heading title) over `document_sections`, and threads each container's own
+dotted number onto a new additive `SectionHeaderFieldContainer.dotted` field (computed via the new
+`section_dotted_number` helper at the point `parse_dotted_container_heading` already succeeds; `.10f`
+ignores it). Each candidate is tagged with its parent block via `dotted_parent` +
+`derive_register_block_name`, the latter requiring the parent title's remainder (after its number) to
+be exactly `<single-token BLOCK> register description(s)` (case-insensitive) — a multi-word lead-in or
+a missing tail yields `None`. When the `.10h` `collapse_section_header_register_identity` returns
+`None` (the genuinely-different class), `block_qualify_register_occurrences` groups the occurrences by
+block and emits each block-named one as `<NAME>@<BLOCK>` through the shared
+`push_section_header_register` helper; a no-block occurrence stays residual, and ≥2 still-disjoint
+occurrences sharing one block re-run `.10h` containment within the block (else residual — never a
+conflated record). The candidate type became a small struct (`name`/`block`/`fields`) for clarity;
+the unique-name and `.10h`-collapse paths are byte-identical to before. Grouping is fully
+deterministic (first-appearance order via `or_insert_with`).
+
+**`.isf` safety.** A qualified name flows EvidenceIR → SemanticIR → IntentIR → the `.isf` storage
+lowering, which applies `sanitize_isf_name(register_name.to_lowercase())` → a valid identifier:
+`CSW@MEM-AP` → `csw_mem_ap`, distinct from `csw_jtag_ap`. The `@` and `-` never reach FSMGen unescaped.
+
+**Verification.** `section_header_register_corpus_sweep`: ARM-Debug 15→20 registers / 69→93 fields;
+CoreSight 6/29, GIC 73/468, SMMU 88/381, ACC 2/4 byte-identical. Full `evidence` register_records
+ARM-Debug 40→45 — the 5 additions are exactly `CSW@MEM-AP`{11}, `CSW@JTAG-AP`{7},
+`CLAIMSET@AP`/`@MEM-AP`/`@JTAG-AP`{2}, with all 40 baseline records byte-identical (a `git stash`
+baseline-vs-change full-`evidence` diff over the 8 `.10h` golds + CoreSight `ihi0029` is byte-identical;
+only `ihi0074` changes, ADD-only, zero removals). The ARM-Debug `debugger.isf` re-emit carries 45
+storage vars (5 new, sanitized + distinct), 0 blocking_reasons, and passes FSMGen `--strict --check
+--json` with 0 diagnostics / 0 errors. +3 hermetic tests (block-qualify disjoint / skip no-block
+occurrence / `derive_register_block_name` grammar). `kg-bench` 156/156; full `run_ci.sh` GREEN.
+ADR-0006 (universal `<NUM> <BLOCK> register descriptions` grammar, no chip-name list). KM
+`section-header-register-block-qualification`; book `pipeline/evidenceir.md` `.10i`.
+
 ## PDF-VARIANT-DIGESTION.10h (`2026-06-24`) — CODE: block-ambiguous register-mnemonic recovery by field-set containment
 
 **What / why.** `.10g` reads register fields laid out as section headings (`<NAME>, bits [hi:lo]`)

@@ -1266,7 +1266,61 @@ register surface) is the spun-out sibling lever `.10g` (honest residual; ~1230 r
   4-field) stays an honest residual — block-qualification needs a clean per-occurrence block name the flattened
   heading hierarchy does not provide (the dotted-parent number is available but cryptic; a future sub-lever may
   qualify it). Book `pipeline/evidenceir.md` `.10h`; KM `section-header-register-identity-collapse`. Commit:
-  pending (this slice).
+  `70ac8faa`. **(Residual RECOVERED by `.10i` `2026-06-24`: the parent SECTION TITLE — not the cryptic number —
+  is the clean block name via the universal `<NUM> <BLOCK> register descriptions` grammar; `CSW`/`CLAIMSET`
+  block-qualified.)**
+
+- ID: `PDF-VARIANT-DIGESTION.10i` · Status: `done` (`2026-06-24`, measurement-first, CODE — GO) · Goal:
+  **BLOCK-QUALIFIED recovery of the genuinely-different register class — the `.10h` residual.** `.10h`
+  collapses a reused section-heading register mnemonic to ONE record only when every occurrence's field
+  set is a subset of one maximal occurrence (identical/nested views); the genuinely-different class —
+  disjoint or partially-overlapping field sets under one mnemonic — stayed a fully-dropped honest residual
+  because an all-distinct merge would conflate two different registers. The `.10h` leaf deferred the clean
+  qualifier ("the dotted-parent number is available but cryptic"). **The decisive `.10i` measurement (the
+  `.10h` `#[ignore]` block probe, read-only over persisted `source_ir`) is that the cryptic number RESOLVES
+  to a clean human block name through the parent SECTION TITLE**: every reused register lives under a parent
+  heading of the universal form `<dotted-num> <BLOCK> register descriptions` — `C2.6 MEM-AP register
+  descriptions` → `MEM-AP`, `C3.5 JTAG-AP register descriptions` → `JTAG-AP`, `C1.4 AP Register Descriptions`
+  → `AP` — while a parent with no block token (`D4.5 Register descriptions`) honestly yields none.
+  **SHIPPED:** `extract_section_header_registers` (`ir/evidence.rs`) now threads each container's dotted
+  number (`SectionHeaderFieldContainer.dotted`, additive — `.10f` ignores it) and, when `.10h` containment
+  returns `None`, BLOCK-QUALIFIES each occurrence: the new pure helper `derive_register_block_name`
+  (parent title must be exactly `<single-token BLOCK> register description(s)` after its dotted number)
+  resolves the occurrence's `dotted_parent` to its block via a `by_number` (dotted-number → title) map
+  over `document_sections`; each occurrence carrying a block is emitted as `<NAME>@<BLOCK>` (a no-block
+  occurrence stays residual, and a block shared by ≥2 still-disjoint occurrences re-runs containment within
+  the block, else residual). The rule is universal section grammar over the document's own block headings,
+  NOT a chip-name list (ADR 0006); `@`/`-` are sanitized to a valid identifier downstream by the `.isf`
+  emitter (`csw@mem-ap` → `csw_mem_ap`, kept distinct from `csw_jtag_ap`).
+  **Measurement (probe-first, read-only over persisted `source_ir`):** the genuinely-different class lives
+  in EXACTLY 1 doc — ARM-Debug `ihi0074`: `CSW` MEM-AP `{AddrInc,DbgSwEnable,DeviceEn,ERRNPASS,ERRSTOP,Mode,
+  Prot,SDeviceEn,Size,TrInProg,Type}` (11, parent `C2.6 MEM-AP register descriptions`) vs JTAG-AP
+  `{PORTCONNECTED,RFIFOCNT,SERACTV,SRSTCONNECTED,SRST_OUT,TRST_OUT,WFIFOCNT}` (7, parent `C3.5 JTAG-AP
+  register descriptions`) — disjoint; `CLAIMSET` three identical `{Claim tag 0,Claim tag 1}` under AP
+  (`C1.4`), MEM-AP (`C2.6`), JTAG-AP (`C3.5`) + one disjoint 4-field occurrence under `D4.5 Register
+  descriptions` (no block token). CoreSight `ihi0029`'s only reused name (`AUTHSTATUS` ×3, all ⊆ the
+  5-field `B2.3.1`) is containment-collapsible → handled by `.10h`, never reaches `.10i` → ihi0029 byte-identical.
+  **Acceptance checklist (TOOLBOX.md):**
+  - [x] ROOT CAUSE (WHY + WHERE): `extract_section_header_registers` drops the genuinely-different reused
+        mnemonics because the `.10h` containment resolver returns `None` and there was no fallback; the block
+        qualifier the document carries (the parent section title) was never threaded into the container scan.
+  - [x] ADDRESSED (verified, measured per-item): `section_header_register_corpus_sweep` ARM-Debug
+        15 → **20** regs / 69 → **93** fields (+`CSW@MEM-AP`{11}, `CSW@JTAG-AP`{7}, `CLAIMSET@AP`{2},
+        `CLAIMSET@MEM-AP`{2}, `CLAIMSET@JTAG-AP`{2}); the no-block `D4.5` CLAIMSET stays residual; CoreSight
+        unchanged at 6/29. Full `evidence` register_records ARM-Debug 40 → **45**.
+  - [x] NO REGRESSION (orthogonal): a `git stash` baseline-vs-change full-`evidence` diff over the 8 docs the
+        `.10h` checked (CCIX r1.0, NVMe, AXI, AHB, GIC, SMMU, ACC, DTI) + CoreSight `ihi0029` is byte-identical;
+        ihi0074 ADDs 5 records with ZERO removals (all 40 baseline records preserved). ARM-Debug `.isf`
+        re-emit passes FSMGen `--strict --check` with 0 new diagnostics (the block-qualified registers
+        sanitize to distinct identifiers; FSMGen `--strict --check --json` → 0 diagnostics / 0 errors).
+        `kg-bench` **156/156**; full `scripts/run_ci.sh` GREEN (lib 1721 → **1724**, +3 hermetic tests —
+        block-qualify disjoint / skip no-block occurrence / `derive_register_block_name` grammar; fmt +
+        clippy `-D warnings` + rustdoc + mdBook). ADR-0006 (universal `<NUM> <BLOCK> register descriptions`
+        grammar, no chip-name list).
+  **Narrowed residual:** a genuinely-different reused mnemonic whose parent heading carries NO block token
+  (the `D4.5 Register descriptions` CLAIMSET) stays an honest residual — there is no clean qualifier to
+  separate it from a same-named register, so emitting it would risk conflation. Book `pipeline/evidenceir.md`
+  `.10i`; KM `section-header-register-block-qualification`. Commit: pending (this slice).
 
 **`PDF-VARIANT-DIGESTION.11` — `validate` integration of the `message_field_*` surfaces.**
 · Status: **DONE `2026-06-11`** (probe → measured scope decisions → build → live CLI

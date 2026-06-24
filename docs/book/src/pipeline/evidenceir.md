@@ -903,6 +903,40 @@ wire and message-field gold document is byte-for-byte identical, and the only tw
 move gain records without losing or altering a single existing one.
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10h`).
 
+### `PDF-VARIANT-DIGESTION.10i` — naming the genuinely-different registers by the block they live in
+
+`.10h` recovered the registers that were really *one* register written twice, but it deliberately
+gave up on the opposite case: the MEM-AP `CSW` and the JTAG-AP `CSW`, which are genuinely different
+registers that happen to share a three-letter name. Dropping both is safe but lossy — a faithful
+model should know that *each* access port has its own `CSW`. The `.10h` write-up worried that the PDF
+backend flattens every heading to one level, so there was no obvious place to find a block name to
+tell the two `CSW`s apart.
+
+`.10i` is the measurement that proved that worry too pessimistic. The headings lose their *nesting*,
+but the document still prints the block name in plain sight: each register description sits under a
+parent section whose title is literally *"C2.6 MEM-AP register descriptions"* or *"C3.5 JTAG-AP
+register descriptions"*. Even though that parent no longer sits *above* the register as a heading
+level, it is still there as its own line, and its **dotted number** (`C2.6` is the parent of
+`C2.6.7`) leads straight back to it. So the reader builds a small map from every dotted number to its
+heading text, walks from a register up to its parent number, and reads the block name out of that
+parent's title — keeping only the single clean word in front of *"register descriptions"* (`MEM-AP`,
+`JTAG-AP`, `AP`). A parent that names no block — a bare *"D4.5 Register descriptions"* — honestly
+yields nothing, and its register stays a residual rather than being guessed at.
+
+With a block name in hand, the genuinely-different copies are no longer ambiguous: each is emitted
+under a qualified name, `CSW@MEM-AP` and `CSW@JTAG-AP`, so both real registers survive without ever
+being fused. (The same move recovers the three per-port copies of `CLAIMSET`; the fourth, under the
+block-less `D4.5`, stays an honest residual.) Downstream, when these registers are lowered to `.isf`,
+the `@` and `-` are sanitised into ordinary identifier characters (`csw_mem_ap`, `csw_jtag_ap`) that
+stay distinct, and FSMGen accepts the result with zero strict-mode complaints.
+
+The win is, once again, pure recall with no collateral change. Exactly one document in the corpus has
+genuinely-different reused registers — ARM Debug — and it gains five records (its heading-shaped
+register count rises 15 → 20, its fields 69 → 93). Every other document, including the CoreSight spec
+whose only reused name was the *collapsible* `AUTHSTATUS`, rebuilds byte-for-byte identically, and
+ARM Debug itself gains those five records without altering a single one it already had.
+*Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10i`).
+
 ### `PDF-VARIANT-DIGESTION.12b` — presence matrices: which signals exist, in which variant, under what condition
 
 Bus specifications routinely answer a question no other table answers: *does this signal exist at all in your

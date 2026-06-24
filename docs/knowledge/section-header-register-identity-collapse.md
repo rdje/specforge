@@ -52,3 +52,10 @@ no-dup; DTI `.10f` message-field) is BYTE-IDENTICAL; the only 2 changed docs ADD
 removals and every baseline record byte-identically preserved → pure recall gain, no conflation.
 `kg-bench` 156/156; `run_ci.sh` green (lib 1718 → 1721). ADR-0006 (universal field-set containment,
 no name list).
+
+**Update (`.10i`, 2026-06-24):** the "no clean per-occurrence block qualifier" remark above was too
+pessimistic — see [[section-header-register-block-qualification]]. The block name IS recoverable, not
+from a *nested* ancestor heading (those are flattened), but from the parent SECTION TITLE reached via
+the dotted-parent number (`C2.6.7` → `C2.6 MEM-AP register descriptions` → `MEM-AP`). `.10i` uses it
+to block-qualify the genuinely-different class this card left residual (`CSW@MEM-AP`/`CSW@JTAG-AP`,
+`CLAIMSET@AP`/`@MEM-AP`/`@JTAG-AP`), so ARM-Debug rises 15 → 20 registers / 69 → 93 fields.
