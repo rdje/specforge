@@ -204,6 +204,39 @@ real enums stayed byte-for-byte identical and every emitted `.isf` stayed FSMGen
 tidy-up, the backing `(type NAME …)` line is now emitted only when its `(enums …)` family is — so a dropped
 enum never leaves a dangling type declaration behind.
 
+### Keeping the real codes when a table fuses with its prose — the member-quality gate
+
+Naming the enum correctly is only half the job. Even a correctly-named enum can be polluted from the
+*inside*. Specs often place a clean code table (`OKAY = 0`, `EXOKAY = 1`, `SLVERR = 2`, `DECERR = 3`)
+right next to a paragraph that describes those same codes in full sentences, both labelled with the same
+signal name. When SpecForge reads the table cells it sanitizes each name to an identifier, so a whole
+sentence in a description cell becomes one giant "member" like
+`THE_REQUEST_HAS_REACHED_AN_END_POINT_BUT_HAS_NOT_COMPLETED`. The two tables share a name and merge, and
+the AXI `BRESP` enum ends up as 16 members — the four real codes drowned among a dozen captured sentences.
+
+You cannot fix this by throwing the whole enum away: that would delete `OKAY`/`EXOKAY`/`SLVERR`/`DECERR`
+along with the junk. The fix has to work **one member at a time**, and it does so with a simple, universal
+observation: *a real hardware code-name is an identifier, and an identifier never contains the spine of an
+English sentence.* So SpecForge drops any member whose words include a copula, auxiliary or modal verb
+(`is`, `are`, `be`, `has`, `must`, `shall`), an article or demonstrative (`the`, `this`, `that`), or a
+relativizer/subordinator (`which`, `when`, `if`, `because`) — the connective tissue of prose that an
+encoding value has no reason to carry. The genuine codes survive; the sentences are dropped; and if *every*
+member of a table turns out to be a sentence (a pure description block that was never an enum at all), the
+enum simply isn't emitted — an honest absence rather than junk.
+
+This is grammar, not a banned-words list, so it travels to any spec. It deliberately leaves out six words
+that double as real hardware names — `a` (a single-letter port suffix like `MASKLANE_A`), `i`, `its` (the
+Arm GIC's **ITS** block), `can` (the CAN bus), `may` (the month), `am` — the same care taken elsewhere when
+a common English word collides with a chip term. Measured across the whole corpus the rule is exact: it
+flagged **none** of a 115-member clean-code reference set (zero false positives) and **all** of a
+269-member prose-fragment set (full recall). In practice the AXI `manager.isf` now reads
+`(BRESP (OKAY 0) (EXOKAY 1) (SLVERR 2) (DECERR 3) (DEFER 4) (TRANSFAULT 5) (RESERVED 6) (UNSUPPORTED 7))` —
+a faithful response enum recovered from what used to be a 16-member tangle — while the wire-protocol golds'
+scored facts stayed identical and every emitted `.isf` stayed FSMGen-strict-clean. A few harder cases are
+left as honest residuals: glossary "see also…" cross-references, document front-matter, table-caption
+fragments, and conflations whose members all *happen* to be clean identifiers (these are kept in full
+rather than risk dropping a real code).
+
 ## Register reset values
 
 When a chip-spec PDF documents a register map, SpecForge captures each register's

@@ -11927,6 +11927,82 @@ fn extract_swd_operations(statements: &[ExtractedStatement]) -> Vec<SwdOperation
     out
 }
 
+/// `KG-ISF-COMPLETENESS.5.ii` — the English sentence-SPINE lexicon used to detect a prose-fragment enum
+/// member. The encoding-table synthesis below sanitizes a name-cell to `[A-Z0-9_]` (spaces/punctuation →
+/// `_`), so a whole prose sentence in a name-cell becomes ONE `_`-joined member name
+/// (`THE_TRANSACTION_WAS_SUCCESSFUL…`). A real hardware enum symbol is an identifier and never contains
+/// the *spine* of an English sentence — a copula/auxiliary/modal, an article/demonstrative, or a
+/// relativizer/subordinator — so a member whose token set carries a spine word is a captured sentence,
+/// not an encoding value. This is the load-bearing member-quality signal measured by the `.5.ii`
+/// calibration (precision 1.000 / recall 1.000 per-item over the persisted corpus; report
+/// `docs/research/generic-enum-conflation-measurement.md` §`.5.ii measurement`).
+///
+/// Universal English grammar, ADR 0006 — NOT a chip/structure-word name list. The lexicon DELIBERATELY
+/// EXCLUDES six spine-shaped tokens that collide with real hardware identifiers (the same structural
+/// collision discipline `.1a` applies to the agent gate): `a` (article vs. a single-letter port/version
+/// suffix — `MASKLANE_A`), `i` (pronoun vs. the letter), `its` (pronoun vs. the GIC **ITS** component —
+/// `ITS_COMMAND_QUEUE`), `can` (modal vs. the **CAN** bus), `may` (modal vs. the month), `am` (vs.
+/// AM/amplitude). They cost essentially zero recall and remove the only genericity risk on other corpora.
+const PROSE_SENTENCE_SPINE_WORDS: &[&str] = &[
+    // articles / demonstratives (NOT `a` — single-letter collision)
+    "the",
+    "an",
+    "this",
+    "that",
+    "these",
+    "those",
+    // copulas / auxiliaries (NOT `am` — AM/amplitude collision)
+    "is",
+    "are",
+    "was",
+    "were",
+    "be",
+    "been",
+    "being",
+    "has",
+    "have",
+    "had",
+    // modals (NOT `can`/`may` — CAN-bus / month collisions)
+    "will",
+    "would",
+    "shall",
+    "should",
+    "could",
+    "might",
+    "must",
+    // relativizers / subordinators
+    "which",
+    "whose",
+    "when",
+    "while",
+    "because",
+    "unless",
+    "until",
+    "whether",
+    "if",
+    "then",
+    // sentential adverbs / connectives
+    "hence",
+    "thus",
+    "therefore",
+    "however",
+    "where",
+];
+
+/// `KG-ISF-COMPLETENESS.5.ii` — true when a synthesized encoding-table member name is a captured prose
+/// sentence rather than an enum value: any `_`-separated token (exact, lowercased) is an English
+/// sentence-spine word (`PROSE_SENTENCE_SPINE_WORDS`). Each `_`-split token is already `[A-Z0-9]`-only
+/// (the name-cell sanitizer made every non-alphanumeric a separator), so an exact lowercased compare is
+/// precise — a numeric/alphanumeric token (`CA6`, `0`) never matches, and the spine words appear only as
+/// clean whole-word tokens. Returns false for a fragment-free identifier (`OKAY`, `REPAIR_LANE_0`,
+/// `WRITE_BACK__SHAREABLE`, the collision-excluded `MASKLANE_A`/`ITS_COMMAND_QUEUE`/`BRESP_WIDTH`).
+fn is_prose_fragment_member_name(member_name: &str) -> bool {
+    member_name
+        .split('_')
+        .filter(|token| !token.is_empty())
+        .any(|token| PROSE_SENTENCE_SPINE_WORDS.contains(&token.to_ascii_lowercase().as_str()))
+}
+
 fn synthesize_encoding_declarations(
     table: &crate::ir::source::StructuredTableRecord,
     section_title: &str,
@@ -11972,6 +12048,17 @@ fn synthesize_encoding_declarations_for_enum(
             .trim_matches('_')
             .to_string();
         if member_name.is_empty() {
+            continue;
+        }
+        // KG-ISF-COMPLETENESS.5.ii — per-member sentence-SPINE fragment gate. A conflated enum often
+        // fuses a clean code table with a prose-description table sharing the same signal name (AXI
+        // `BRESP` = `OKAY`/`EXOKAY`/… fused with whole sentences like
+        // `THE_REQUEST_HAS_REACHED_AN_END_POINT…`). Skip a member whose name is a captured sentence, so
+        // the genuine codes survive and a pure-prose table empties (no statements → `build_symbol_definitions`
+        // mints no `SymbolDefinition` → honest residual). Operates at the single member-synthesis seam,
+        // so both call paths (`None`/`Some(known_signals)`) are covered. Universal grammar (ADR 0006);
+        // calibrated false-positive-free in `.5.ii` (report §`.5.ii measurement`).
+        if is_prose_fragment_member_name(&member_name) {
             continue;
         }
         // Numeric value: use value_col if available and parseable, otherwise use row index.
@@ -18924,6 +19011,150 @@ mod tests {
             Some("PPROT".to_string())
         );
         assert_eq!(super::derive_encoding_enum_name(&table, "", None), None);
+    }
+
+    // --- per-member sentence-spine fragment gate (KG-ISF-COMPLETENESS.5.ii) ---
+
+    #[test]
+    fn prose_sentence_spine_words_excludes_identifier_collisions() {
+        // Drift guard for the `.1a`-style collision exclusions: the six spine-shaped tokens that double
+        // as real hardware identifiers must NOT be in the lexicon, or the gate would drop real members
+        // (`MASKLANE_A`, the GIC `ITS_*`, a CAN-bus value, the month `May`).
+        for collision in ["a", "i", "its", "can", "may", "am"] {
+            assert!(
+                !super::PROSE_SENTENCE_SPINE_WORDS.contains(&collision),
+                "spine lexicon must exclude the identifier-collision token `{collision}`"
+            );
+        }
+        // The lexicon is lowercase (the predicate lowercases each token before comparing).
+        assert!(
+            super::PROSE_SENTENCE_SPINE_WORDS
+                .iter()
+                .all(|w| w.chars().all(|c| c.is_ascii_lowercase()))
+        );
+    }
+
+    #[test]
+    fn prose_fragment_member_predicate() {
+        // Captured sentences (any spine token) are fragments …
+        for frag in [
+            "THE_TRANSACTION_WAS_SUCCESSFUL",
+            "ATS_IS_SUPPORTED",
+            "ESM16GTSUPPORT__MUST_BE_SET",
+            "IGNORED_WHEN_PR_0",
+            "WRITE_WAS_UNSUCCESSFUL_BECAUSE_IT_CANNOT_BE_SERVICED",
+        ] {
+            assert!(
+                super::is_prose_fragment_member_name(frag),
+                "`{frag}` should be a prose fragment"
+            );
+        }
+        // … while real identifiers — including legitimate multi-word names and the collision-excluded
+        // forms (`_A` suffix, GIC `ITS`, a `_WIDTH` leak) — are kept.
+        for keep in [
+            "OKAY",
+            "EXOKAY",
+            "REPAIR_LANE_0",
+            "WRITE_BACK__SHAREABLE",
+            "NORMAL_NON_CACHEABLE__NON_SHAREABLE",
+            "MASKLANE_A",
+            "ITS_COMMAND_QUEUE",
+            "BRESP_WIDTH",
+        ] {
+            assert!(
+                !super::is_prose_fragment_member_name(keep),
+                "`{keep}` should be kept (not a prose fragment)"
+            );
+        }
+    }
+
+    fn encoding_table_with_rows(
+        caption: &str,
+        headers: &[&str],
+        rows: &[(&str, &str)],
+    ) -> StructuredTableRecord {
+        StructuredTableRecord {
+            table_id: "t".to_string(),
+            asset_id: "a".to_string(),
+            page_id: None,
+            caption_text: Some(caption.to_string()),
+            source_ref: None,
+            table_kind: TableKind::Encoding,
+            header_rows: vec![headers.iter().map(|h| make_table_cell(h, true)).collect()],
+            body_rows: rows
+                .iter()
+                .map(|(name, value)| {
+                    vec![make_table_cell(name, false), make_table_cell(value, false)]
+                })
+                .collect(),
+            row_count: rows.len() as u32 + 1,
+            col_count: headers.len() as u32,
+        }
+    }
+
+    #[test]
+    fn encoding_member_synthesis_drops_prose_fragments_keeps_codes() {
+        // A conflated `BRESP` table fuses the genuine codes with prose-description rows. The per-member
+        // gate keeps the codes and drops the captured sentences (the `.5.ii` BRESP 16→codes recovery).
+        let table = encoding_table_with_rows(
+            "BRESP encoding",
+            &["Response", "Value"],
+            &[
+                ("OKAY", "0"),
+                (
+                    "THE REQUEST HAS REACHED AN END POINT BUT HAS NOT COMPLETED",
+                    "1",
+                ),
+                ("EXOKAY", "1"),
+                ("SLVERR", "2"),
+                (
+                    "EXCLUSIVE WRITE SUCCEEDED THIS RESPONSE IS ONLY PERMITTED",
+                    "3",
+                ),
+            ],
+        );
+        let mut counter = 0usize;
+        let statements =
+            super::synthesize_encoding_declarations_for_enum(&table, "BRESP", &mut counter);
+        assert_eq!(statements.len(), 3, "only the three real codes survive");
+        let joined = statements
+            .iter()
+            .map(|s| s.text.as_str())
+            .collect::<Vec<_>>()
+            .join(" | ");
+        assert!(joined.contains("OKAY") && joined.contains("EXOKAY") && joined.contains("SLVERR"));
+        assert!(
+            !joined.contains("REQUEST") && !joined.contains("PERMITTED"),
+            "no prose-fragment member survives: {joined}"
+        );
+    }
+
+    #[test]
+    fn encoding_member_synthesis_all_prose_yields_no_statements() {
+        // A pure prose-description table (every name-cell a sentence) emits no member statements, so
+        // `build_symbol_definitions` mints no enum — an honest residual, not a junk enum.
+        let table = encoding_table_with_rows(
+            "PPROT protection encoding",
+            &["Meaning", "Value"],
+            &[
+                (
+                    "PPROT[0] is used by requesters to indicate processing mode",
+                    "0",
+                ),
+                (
+                    "PPROT[1] is used in systems where greater differentiation is required",
+                    "1",
+                ),
+            ],
+        );
+        let mut counter = 0usize;
+        let statements =
+            super::synthesize_encoding_declarations_for_enum(&table, "PPROT", &mut counter);
+        assert!(statements.is_empty(), "all-prose table yields no members");
+        assert_eq!(
+            counter, 0,
+            "no statement counter advance for dropped members"
+        );
     }
 
     fn write_actor_taxonomy_prior_memory(root: &Path) -> Result<PathBuf> {

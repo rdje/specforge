@@ -324,3 +324,41 @@ required (byte-changing).
 # demonstrative/relativizer/subordinator), EXCLUDING the collisions A/I/ITS/CAN/MAY/AM.
 # -> 3781/12509 members flagged; clean-anchor 0/115 flagged; junk-anchor 269/269 flagged.
 ```
+
+---
+
+## `.5.ii` LANDED (`2026-06-24`, same fresh focused session) — results
+
+**The gate.** `is_prose_fragment_member_name(member_name)` returns true when any `_`-separated token
+(exact, lowercased) is in `PROSE_SENTENCE_SPINE_WORDS` (the 38-word copula/auxiliary/modal/article/
+demonstrative/relativizer/subordinator lexicon, collisions `a`/`i`/`its`/`can`/`may`/`am` excluded). The
+member loop in `synthesize_encoding_declarations_for_enum` (`ir/evidence.rs`) `continue`-skips a fragment
+member, so a conflated enum keeps its genuine codes and a pure-prose table emits no statements → no
+`SymbolDefinition` → honest residual. One seam covers both call paths (`None` / `Some(known_signals)`).
+
+**Landed wire-gold census** (gold evidence rebuilt with the preserved baseline = post-`.5.i` vs the gated =
+post-`.5.ii` binary; counting the `Enum X = V` statements):
+
+| doc | enum-member statements before → after | highlight |
+|---|---|---|
+| AXI `ihi0022_l` | 148 → 91 | `BRESP` 16→9 recovers `OKAY/EXOKAY/SLVERR/DECERR/DEFER/TRANSFAULT/RESERVED/UNSUPPORTED`; `ARTAGOP`/`AWTAGOP`/`RLAST`/`WLAST` → 0 (pure prose) |
+| APB `ihi0024_e` | 7 → 4 | prose `PPROT[n] is used…` rows dropped |
+| AHB `ihi0033_c` / SWD / nvme / i2c | unchanged | no surviving enum carries a prose member |
+
+The emitted AXI `manager.isf` now declares `(BRESP (BRESP_WIDTH 0) (OKAY 0) (EXOKAY 1) (SLVERR 2)
+(DECERR 3) (DEFER 4) (TRANSFAULT 5) (RESERVED 6) (UNSUPPORTED 7))` — a faithful response enum where a junk
+`(type TABLE …)` (pre-`.5.i`) and a 16-member prose-fused `BRESP` (pre-`.5.ii`) used to be. CCIX `TABLE`
+stays 27 clean-identifier members (the cross-table-merge-of-clean residual — correctly untouched: every
+member is a real symbol; dropping them would lose intent).
+
+**No regression (oracles).** WIRE-BASED-100 = **1.000, before == after** (PROVEN by rebuilding each gold
+doc's evidence with both binaries and running `eval-extraction --provider skip` over all 10 seeds — the
+scored surface is byte-identical old-vs-new, only the `evidence_root`/temp-path lines differ): APB
+constraint 6/6·relation 5/5; AHB 6/6·6/6; AXI 3/3·6/6; temporal APB/AHB/AXI 3/3·4/4·3/3; SWD relation 1/1
++ documented promotion-only 0/1; SWD-derivation serial-frame 11/11·swd-op 4/4·protocol-state 13/13; i2c
+declared_signal 6/6. Rebuilt AXI + APB `.isf` pass FSMGen `--strict --check --json` (`success: true`).
+`kg-bench` **156/156**. `run_ci.sh` GREEN (lib **1716**, +4 tests; warning-deny clippy/fmt/rustdoc + mdBook).
+Unit tests: `prose_sentence_spine_words_excludes_identifier_collisions`, `prose_fragment_member_predicate`,
+`encoding_member_synthesis_drops_prose_fragments_keeps_codes`,
+`encoding_member_synthesis_all_prose_yields_no_statements`. **`.5` enum-surface fidelity is now built**
+(`.5.i` name-gate + `.5.ii` member-gate); the deeper member-quality residual classes stay honest residuals.

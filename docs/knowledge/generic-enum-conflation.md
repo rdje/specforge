@@ -14,6 +14,7 @@ answers:
   - "is a name-only gate enough to fix the generic enum (no — 271 real-named enums like COMMAND/DWORD_MISR/AMBA are themselves fragment-heavy/dup-heavy; the load-bearing signal is member quality)"
   - "what is the recommended fix (.5.i extraction-side fallback name-gate: derive_encoding_enum_name must return None unless the candidate token is a declared signal -> no enum minted; + emitter orphan-type fix isf_ir.rs:403-409 gate types block by emitted_enums(); .5.ii member-quality gate for the 271 real-named junk enums, calibration-gated)"
   - "how is the .5.ii member-quality gate designed / what did the .5.ii calibration find (measured 2026-06-24 read-only over 78 docs/561 enums/12509 members: the gate is PER-MEMBER not per-enum — a whole-enum drop destroys AXI BRESP's real codes OKAY/EXOKAY/SLVERR/DECERR which are FUSED with prose fragments in one conflated enum; value-restart is NOT a junk signal — AHB HPROT restarts but every member is a clean identifier. The load-bearing signal is per-member NAME shape: an English sentence-SPINE token marks a prose fragment. Land a per-member sentence-spine fragment drop at synthesize_encoding_declarations_for_enum)"
+  - "is the .5.ii enum member-quality gate landed (yes, LANDED 2026-06-24: is_prose_fragment_member_name + PROSE_SENTENCE_SPINE_WORDS in ir/evidence.rs gate the member loop in synthesize_encoding_declarations_for_enum, one seam for both call paths; AXI manager.isf now emits (BRESP (OKAY 0)(EXOKAY 1)(SLVERR 2)(DECERR 3)(DEFER 4)(TRANSFAULT 5)(RESERVED 6)(UNSUPPORTED 7)) recovering codes from the 16-member prose-fused enum; WIRE-BASED-100 1.000 before==after across all 10 seeds, FSMGen --strict success on AXI+APB, kg-bench 156/156, run_ci GREEN lib 1716 +4 tests. .5 enum-surface fidelity now built)"
   - "what is the .5.ii sentence-spine member-fragment predicate (a synthesized enum member_name is a prose fragment if any _-token is an English sentence-spine word — copula/aux/modal IS/ARE/BE/HAS/MUST/SHALL, article/demonstrative THE/THIS/THAT, relativizer/subordinator WHICH/WHEN/IF/BECAUSE — EXCLUDING the .1a collisions A/I/ITS/CAN/MAY/AM. Precision 1.000 (0/115 clean-anchor flagged), recall 1.000 (269/269 junk-anchor caught), 30.2% of members drop; universal grammar ADR-0006, no name list)"
   - "why not gate the whole enum on value-restart for .5.ii (DISPROVEN false-positive: AHB HPROT has value restarts=2 from 3 fused sub-encodings but all 15 members are clean identifiers DATA_INST/PRIVILEGED/BUFFERABLE/...; dropping it loses real intent. Restart correlates with conflation but conflation-of-clean-tables is all-real-members, so restart cannot gate a drop — keep it, sub-enum splitting deferred)"
   - "is removing the generic enums WIRE-BASED-100-safe (scores ORTHOGONAL/SAFE — generic enums are in no scored gold; but the .isf BYTES change on all 4 wire golds — APB/AHB/AXI/SWP each emit a junk TABLE; AHB's TABLE fuses HTRANS+HSIZE which already have correct enums — a strict improvement needing a deliberate snapshot refresh, NOT byte-identical)"
@@ -101,6 +102,16 @@ per the `.1a` discipline: `A`/`I`/`ITS`/`CAN`/`MAY`/`AM`. **Precision 1.000** (0
 glossary `SEE…`, front-matter/ToC, section-caption `B2_3_1_…`, `_WIDTH` leaks, restart-of-clean. **GO**
 — land at `synthesize_encoding_declarations_for_enum` (`evidence.rs`); byte-changing on wire golds →
 before/after WIRE-BASED-100 eval required. Report §`.5.ii measurement`.
+
+**`.5.ii` LANDED (`2026-06-24`).** `is_prose_fragment_member_name` + `PROSE_SENTENCE_SPINE_WORDS`
+(`ir/evidence.rs`) gate the member loop in `synthesize_encoding_declarations_for_enum` (one seam → both
+call paths): a member whose `_`-token set carries a spine word is skipped. AXI `manager.isf` now emits
+`(BRESP (OKAY 0)(EXOKAY 1)(SLVERR 2)(DECERR 3)(DEFER 4)(TRANSFAULT 5)(RESERVED 6)(UNSUPPORTED 7))` (codes
+recovered from the 16-member prose-fused enum). WIRE-BASED-100 **1.000 before==after** (all 10 seeds, gold
+evidence rebuilt with baseline vs gated binary; scored surface byte-identical); FSMGen `--strict` `success`
+on AXI+APB; `kg-bench` 156/156; `run_ci.sh` GREEN (lib 1716, +4 tests). `.5` enum-surface fidelity now
+built; deeper member-quality classes (glossary/front-matter/section-caption/`_WIDTH`/restart-of-clean) are
+honest residuals. Report §`.5.ii LANDED`.
 
 Links: [[isf-enum-value-literal-emit-gate]] (Lever F — the value-literal gate that deferred
 this), [[behavior-temporal-lowering-broader-corpus]] (`.4`, which spun out enum/signal

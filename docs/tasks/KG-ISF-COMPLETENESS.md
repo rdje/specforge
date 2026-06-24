@@ -773,8 +773,8 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 - [x] **GENERICITY (ADR 0006)** — universal structural rule: a fallback enum name must be independently evidenced (a declared signal OR a column-header reference token of the table), NOT a chip/vendor/structure-word name list. Proven structural, not a denylist: `DATA` is KEPT where it is a genuine gic_600 signal but DROPPED where it is a bare HBM2 caption word; the generic-name SET in the report is a measurement aid, never the gate.
 - [x] **LOCKSTEP** — README current-state bullet; book `pipeline/isf-adapter.md` enum-fidelity note; KM card `[[generic-enum-conflation]]` updated to LANDED; CHANGES.md / DEVELOPMENT_NOTES.md / LIVE_ACHIEVEMENT_STATUS.md / MEMORY.md.
 
-- ID: `KG-ISF-COMPLETENESS.5.ii` · Status: `active` (**measurement/calibration DONE `2026-06-24`**,
-  read-only; design CORRECTED + GO; code → the next slice) · Goal: **the member-quality gate** for the
+- ID: `KG-ISF-COMPLETENESS.5.ii` · Status: `done` (**measurement DONE + gate LANDED `2026-06-24`**,
+  before/after-WIRE-BASED-100-verified) · Goal: **the member-quality gate** for the
   residual junk enums a NAME gate cannot reach. After `.5.i` the residual is (a) the **8 document-evidenced
   generic-named survivors** (`DATA`/`TABLE`/`CACHE`/`ENCODING`/`ATTRIBUTES` the `.5.i` gate KEEPS because the
   token IS a declared signal or column header — e.g. CCIX "Table of Contents" cells, still cross-table-
@@ -808,9 +808,44 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
     (`evidence.rs`): skip a member whose sanitized name carries a spine token; an emptied enum is not minted
     (existing no-statements → no-`SymbolDefinition` contract → honest residual). Byte-changing on wire golds
     (strict improvement) → the code slice needs a before/after WIRE-BASED-100 eval, NOT a byte-identical
-    argument; `kg-bench` + FSMGen `--strict` + `run_ci.sh` hard gates. **Frontier → the `.5.ii` code slice.**
+    argument; `kg-bench` + FSMGen `--strict` + `run_ci.sh` hard gates.
+  - **LANDED `2026-06-24`** — `is_prose_fragment_member_name` + the `PROSE_SENTENCE_SPINE_WORDS` const
+    (`ir/evidence.rs`) gate the member loop in `synthesize_encoding_declarations_for_enum` (the single
+    member-synthesis seam, so both `None`/`Some(known_signals)` paths are covered): a member whose
+    `_`-token set carries a spine word is skipped, so a conflated enum keeps its codes and a pure-prose
+    table emits no statements → no enum. +4 tests (collision-exclusion drift guard, predicate unit, two
+    integration tests on the synthesis seam). **Verified:** WIRE-BASED-100 = **1.000 before==after** (all 10
+    seeds — before/after eval on gold evidence rebuilt with the preserved baseline vs gated binary; scored
+    surface byte-identical); AXI `manager.isf` now emits `(BRESP (OKAY 0)(EXOKAY 1)(SLVERR 2)(DECERR 3)
+    (DEFER 4)(TRANSFAULT 5)(RESERVED 6)(UNSUPPORTED 7))` (codes recovered) + APB pass FSMGen `--strict`
+    `success`; `kg-bench` 156/156; `run_ci.sh` GREEN (lib **1716**, +4). Acceptance checklist below.
+
+## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.5.ii` — DONE `2026-06-24`
+- [x] **REPRODUCE / MEASURE** — read-only census over all 78 persisted IntentIR docs (561 enums / 12 509 members). The `.5.i` name-gate cannot reach enums whose NAME is a real signal but whose MEMBERS are junk: AXI-gold `BRESP` is 16 members = 7 prose fragments + `BRESP_WIDTH` FUSED with the 8 genuine codes; AHB-gold `HPROT` has value-restart but 15 clean members. Report `docs/research/generic-enum-conflation-measurement.md` §`.5.ii measurement`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `synthesize_encoding_declarations_for_enum` (`crates/specforge/src/ir/evidence.rs`) sanitizes a name-cell to `[A-Z0-9_]`, so a prose sentence in a name-cell becomes one `_`-joined member name; `build_symbol_definitions` (`semantic.rs`) then accumulates those members by enum name. The per-enum drop the `.5` packet proposed is wrong (loses BRESP's codes; false-positives HPROT) — the gate must be per-MEMBER on NAME shape.
+- [x] **ADDRESSED (verified, measured per-item)** — added `PROSE_SENTENCE_SPINE_WORDS` (38 copula/aux/modal/article/demonstrative/relativizer/subordinator words; collisions `a`/`i`/`its`/`can`/`may`/`am` EXCLUDED) + `is_prose_fragment_member_name`; the member loop `continue`-skips a fragment member. Per-item: clean anchor 0/115 flagged (precision 1.000), junk anchor 269/269 caught (recall 1.000). Landed wire-gold census (baseline vs gated evidence): AXI enum-member statements 148→91, `BRESP` recovers `OKAY/EXOKAY/SLVERR/DECERR/DEFER/TRANSFAULT/RESERVED/UNSUPPORTED` (`.isf` emits them), `ARTAGOP`/`AWTAGOP`/`RLAST`/`WLAST`→0 (pure prose), APB 7→4. CCIX `TABLE` stays 27 clean-identifier members (the cross-table-merge-of-clean residual — correctly untouched).
+- [x] **NO REGRESSION** — **WIRE-BASED-100 = 1.000, before == after (PROVEN)** by rebuilding each gold doc's evidence with BOTH binaries (preserved baseline = post-`.5.i`; gated = post-`.5.ii`) and running `eval-extraction --provider skip`: APB constraint 6/6·relation 5/5; AHB 6/6·6/6; AXI 3/3·6/6; temporal APB/AHB/AXI 3/3·4/4·3/3; SWD relation 1/1 + documented promotion-only 0/1; SWD-derivation 11/11·4/4·13/13; i2c declared_signal 6/6 — all identical old-vs-new (only the `evidence_root`/temp-path lines differ). `kg-bench` 156/156. `run_ci.sh` GREEN (lib **1716**, +4 tests; warning-deny clippy/fmt/rustdoc + mdBook). Rebuilt AXI + APB `.isf` pass FSMGen `--strict --check --json` (`success: true`).
+- [x] **GENERICITY (ADR 0006)** — universal English grammar (a closed-class sentence-spine lexicon), NOT a chip/structure-word name list; the collision exclusions are the SAME structural discipline `.1a` applies. Proven structural: a member like `WRITE_BACK__SHAREABLE` or `REPAIR_LANE_0` is kept anywhere; only sentence-shaped members drop. Drift-guard test pins the collision exclusions.
+- [x] **LOCKSTEP** — README current-state bullet (`.5.ii`); book `pipeline/isf-adapter.md` enum-fidelity note extended; KM card `[[generic-enum-conflation]]` → `.5.ii` LANDED + `KNOWLEDGE_MAP.md` regen; CHANGES.md / DEVELOPMENT_NOTES.md / LIVE_ACHIEVEMENT_STATUS.md / MEMORY.md. **`.5` enum-surface fidelity is now built** (`.5.i` name-gate + `.5.ii` member-gate); residual deeper member-quality classes are honest residuals.
 
 ## Changelog
+
+- `2026-06-24`: **`.5.ii` DONE — CODE: per-member sentence-spine enum-fragment gate.** Same fresh focused
+  session as the `.5.ii` measurement (the two slices of `.5.ii`: calibration, then code). Added
+  `PROSE_SENTENCE_SPINE_WORDS` + `is_prose_fragment_member_name` (`ir/evidence.rs`) and a `continue`-skip in
+  `synthesize_encoding_declarations_for_enum`'s member loop: a synthesized member whose `_`-token set holds
+  an English sentence-spine word (copula/aux/modal/article/demonstrative/relativizer/subordinator;
+  collisions `a`/`i`/`its`/`can`/`may`/`am` EXCLUDED per `.1a`) is a captured prose sentence → dropped, so a
+  conflated enum keeps its genuine codes (AXI `BRESP` recovers `OKAY/EXOKAY/SLVERR/DECERR/…`) and a
+  pure-prose table empties (no statements → no `SymbolDefinition` → honest residual). +4 tests. **NO
+  REGRESSION:** WIRE-BASED-100 = **1.000 before==after** (PROVEN — before/after `eval-extraction` over all
+  10 seeds on gold evidence rebuilt with the preserved baseline vs gated binary, scored surface
+  byte-identical); rebuilt AXI + APB `.isf` pass FSMGen `--strict` `success`; `kg-bench` 156/156; `run_ci.sh`
+  GREEN (lib **1716**, +4). ADR-0006 (universal grammar, no name list). **`.5` enum-surface fidelity built**
+  (`.5.i` name-gate + `.5.ii` member-gate); deeper member-quality classes (glossary/front-matter/
+  section-caption/`_WIDTH`/restart-of-clean) are honest residuals. Report §`.5.ii LANDED`; KM
+  `[[generic-enum-conflation]]` → LANDED. Frontier → KG-ISF-COMPLETENESS has no further immediately-buildable
+  leaf (`.1c.ii` upstream-NLP-gated, `.2b` measured-marginal); PNT advances.
 
 - `2026-06-24`: **`.5.ii` MEASUREMENT/CALIBRATION DONE → design CORRECTED + GO (read-only, docs-only).**
   Fresh-session PNT continuation. Read-only member-quality census over all 78 persisted IntentIR docs (561
