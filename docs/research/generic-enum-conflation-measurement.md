@@ -219,3 +219,108 @@ tests: `encoding_enum_name_fallback_drops_document_structure_keyword`,
 `binary_looking_enum_value_is_excluded_and_recorded_as_residual` (asserts the orphan `(type table)`
 is now dropped). **Frontier → `.5.ii`** (member-quality gate for the 8 document-evidenced survivors +
 the signal-match-origin junk-member enums; calibration-gated).
+
+---
+
+## `.5.ii` measurement (`2026-06-24`, read-only) — the member-quality gate is PER-MEMBER, not per-enum
+
+Read-only measurement over all 78 persisted `intent_ir.json` (561 enums with ≥1 member, 12 509
+members). Reproducer: `member_final.py` over `generated/intent_ir/*/intent_ir.json` — count, per enum
+member, the `_`-separated tokens of the synthesis-sanitized `member_name` and test for an
+English **sentence-spine** token. No code, no rebuild.
+
+### Finding 1 — the recorded `.5.ii` plan (whole-enum drop on name-fragments OR value-restart) is DISPROVEN
+
+The `.5` decision packet proposed *"refuse to **emit an enum** whose name column holds sentence
+fragments OR whose value sequence restarts."* Inspecting the actual members of the post-`.5.i`
+survivors overturns both halves of that whole-enum rule:
+
+- **A whole-enum drop destroys real codes — the surviving junk enums are CONFLATIONS of a junk table
+  and a clean table.** AXI-gold `BRESP` (`ihi0022_l`) has **16 members**: 7 sentence-fragment prose
+  members (`NON_EXCLUSIVE_WRITE__THE_TRANSACTION_WAS_SUCCESSFUL…`) + a leaked `BRESP_WIDTH`, **fused
+  with** the 8 genuine codes `OKAY/EXOKAY/SLVERR/DECERR/DEFER/TRANSFAULT/RESERVED/UNSUPPORTED`. A
+  whole-enum drop would throw away the real codes. The correct granularity is **per-member**: drop the
+  prose members, keep the codes.
+- **Value-restart is NOT a junk signal.** AHB-gold `HPROT` (`ihi0033_c`) has `restarts=2` (3 fused
+  HPROT sub-encodings: protection bits + memory-type + cacheability) yet **every one of its 15 members
+  is a clean identifier** (`DATA_INST`/`PRIVILEGED`/`BUFFERABLE`/`WRITE_BACK__SHAREABLE`/…). Dropping it
+  on the restart signature is a **false positive** that loses real protocol intent. Restart correlates
+  with conflation but conflation of *clean* tables is still all-real-members — so restart cannot gate a
+  drop. (Splitting a clean conflation into sub-enums is a deeper refinement, deferred — see residuals.)
+
+### Finding 2 — the load-bearing signal is per-member NAME shape (sentence-spine fragment)
+
+The synthesis (`synthesize_encoding_declarations_for_enum`) sanitizes each name-cell to `[A-Z0-9_]`
+uppercased, so a whole prose sentence in a name-cell becomes one giant `_`-joined member name
+(`THE_TRANSACTION_MUST_BE_LOOKED_UP_IN_A_CACHE_BECAUSE…`). A **real** hardware enum symbol is an
+identifier and never contains the **spine of an English sentence** — a copula/auxiliary/modal
+(`IS`/`ARE`/`WAS`/`BE`/`HAS`/`MUST`/`SHALL`/…), article/demonstrative (`THE`/`AN`/`THIS`/`THAT`/…), or
+relativizer/subordinator (`WHICH`/`WHEN`/`IF`/`BECAUSE`/`WHILE`/…). That gives a precise, universal,
+ADR-0006-safe per-member predicate: **a member whose token set contains a sentence-spine word is a
+prose fragment → drop it.**
+
+**Collision exclusions (the `.1a` discipline).** Five spine-shaped tokens collide with real hardware
+identifiers and are EXCLUDED from the lexicon — the same structural-collision reasoning `.1a` used for
+the agent gate: `A` (article vs. a single-letter port/version suffix — `MASKLANE_A`, `DAT0CREDIT_A`),
+`I` (pronoun vs. the letter), `ITS` (pronoun vs. the GIC **ITS** component — `ITS_COMMAND_QUEUE`), `CAN`
+(modal vs. the **CAN** bus), `MAY` (modal vs. the month). They cost essentially zero recall here
+(`GROUP_CAN_SEND_MSI`, `MAY_3__2019`-a-date) and remove the only genericity risk on other corpora.
+
+### Finding 3 — precision/recall (per-item, `[[feedback_scoring_rigor]]`)
+
+| anchor | members | result |
+|---|---|---|
+| **CLEAN anchor** (wire-gold `HTRANS`/`HSIZE`/`HRESP`/`HPROT`/`TKEEP` members + the canonical short codes `OKAY/EXOKAY/SLVERR/DECERR/IDLE/BUSY/NONSEQ/SEQ/BYTE/HALFWORD/WORD/DOUBLEWORD`) | 115 | **0 flagged → precision 1.000 (zero false positives)** |
+| **JUNK anchor** (hand-picked genuine prose fragments: `…TRANSACTION_WAS_SUCCESS…`, `IS_NOT_SUPPORTED`, `MUST_BE_SET`, `WHENASSERTED…`, `THE_REQUEST_HAS…`, `WRITE_WAS_UNSUCCESSFUL…`) | 269 | **269 caught → recall 1.000 (0 missed)** |
+
+Corpus-wide, the predicate drops **3 781 / 12 509 (30.2 %)** members — the dominant junk class.
+(The 8 "clean-anchor FP" my first pass reported were a mislabeled anchor: they were `ARCACHE`/`AWCACHE`
+in the *dense-prose* AXI+ACE manual `ihi0022_h_c` whose flagged members are genuine giant sentence
+fragments — true positives, not false positives.)
+
+### Finding 4 — per-enum effect on the wire-gold + AXI+ACE class (the high-stakes blast radius)
+
+| doc | enum | members before → after | outcome |
+|---|---|---|---|
+| AXI `ihi0022_l` | `BRESP` | 16 → 9 | **recovers** `OKAY/EXOKAY/SLVERR/DECERR/DEFER/…` from the conflation |
+| AXI `ihi0022_l` | `RRESP` | 8 → 1 | drops all 7 prose; leaves the `_WIDTH` leak (residual) |
+| APB `ihi0024_e` | `PPROT` | 3 → 0 | **dropped** (all 3 are prose bit-descriptions, not enum-shaped) |
+| AXI+ACE `ihi0022_h_c` | `ARCACHE`/`AWCACHE`/`AWTAGOP`/`READ`/`RLAST`/`WLAST` | 4/4/4/7/2/2 → 0 | **dropped** (pure prose) |
+| AHB `ihi0033_c` | `HSIZE`/`HTRANS`/`HRESP` | unchanged | untouched (no prose member) |
+
+This changes wire-gold `.isf` bytes (a strict improvement, like `.5.i`) → the code slice (`.5.ii`
+proper) must land as a deliberate snapshot-refreshing change with a before/after WIRE-BASED-100 eval,
+NOT under a byte-identical argument. Scores stay orthogonal (enums unscored; the dropped members'
+`discovered_values` only feed off-gold junk value-constraints, the `.5.i`-proven coupling).
+
+### Honest residuals (deeper member-quality classes, NOT gated by the spine filter — deferred)
+
+The spine filter is the clean, FP-free FIRST member-quality gate; it deliberately leaves harder
+classes as honest residuals (completeness/precision both protected — no overfitting):
+- **Glossary cross-references** (`SEE_CACHE_MISS`, `SEE_ALSO_COHERENCY_GRANULE`) — a `SEE`/`SEE_ALSO`
+  lead, not a sentence spine.
+- **Front-matter / ToC members** (`NON_CONFIDENTIAL_PROPRIETARY_NOTICE`, `RELEASE_INFORMATION`).
+- **Section-caption members** (`B2_3_1_READ_TRANSACTIONS`) — a leading section-number token shape.
+- **`_WIDTH` parameter leaks** (`BRESP_WIDTH`, `RRESP_WIDTH`, `AWCMO_WIDTH`).
+- **Value-restart conflations with all-clean members** (`HPROT`) — kept intact (every member real);
+  splitting into sub-enums is a separate, riskier refinement.
+
+### Decision — GO, per-member sentence-spine fragment drop at synthesis
+
+A clean, universal, ADR-0006-safe, false-positive-free per-member gate exists. Land it in
+`synthesize_encoding_declarations_for_enum` (`evidence.rs`): skip a member whose sanitized name
+contains a sentence-spine token (lexicon above, collisions excluded); if every member is dropped the
+enum empties and is not minted (the existing no-statements → no-`SymbolDefinition` contract → honest
+residual). The harder residual classes above stay honest residuals for a later refinement. WIRE-BASED-100
++ `kg-bench` + FSMGen `--strict` + `run_ci.sh` are hard gates on the code slice; before/after eval proof
+required (byte-changing).
+
+### Reproduce
+
+```bash
+# member-quality census over the persisted corpus (RAM-safe; no VLM/Docling/rebuild):
+# for each generated/intent_ir/*/intent_ir.json SymbolDefinition enum, split each member_name on '_'
+# and flag the member if any token is an English sentence-spine word (copula/aux/modal/article/
+# demonstrative/relativizer/subordinator), EXCLUDING the collisions A/I/ITS/CAN/MAY/AM.
+# -> 3781/12509 members flagged; clean-anchor 0/115 flagged; junk-anchor 269/269 flagged.
+```

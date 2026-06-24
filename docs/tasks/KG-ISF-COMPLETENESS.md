@@ -773,21 +773,60 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 - [x] **GENERICITY (ADR 0006)** — universal structural rule: a fallback enum name must be independently evidenced (a declared signal OR a column-header reference token of the table), NOT a chip/vendor/structure-word name list. Proven structural, not a denylist: `DATA` is KEPT where it is a genuine gic_600 signal but DROPPED where it is a bare HBM2 caption word; the generic-name SET in the report is a measurement aid, never the gate.
 - [x] **LOCKSTEP** — README current-state bullet; book `pipeline/isf-adapter.md` enum-fidelity note; KM card `[[generic-enum-conflation]]` updated to LANDED; CHANGES.md / DEVELOPMENT_NOTES.md / LIVE_ACHIEVEMENT_STATUS.md / MEMORY.md.
 
-- ID: `KG-ISF-COMPLETENESS.5.ii` · Status: `deferred` (calibration-gated; needs its own precision/recall
-  measurement before code) · Goal: **the per-table member-quality gate** for the residual junk enums a NAME
-  gate cannot reach. After `.5.i` the residual is now PRECISE (measured `2026-06-24`): (a) the **8
-  document-evidenced generic-named survivors** — `DATA`/`TABLE`/`CACHE`/`ENCODING`/`ATTRIBUTES` that the
-  `.5.i` structural gate correctly KEEPS because the token IS a declared signal or a column header in that
-  doc (e.g. CCIX's "Table of Contents" header cells), some still cross-table-conflated (CCIX `TABLE` = 27
-  junk members); plus (b) the **signal-match-origin junk-member enums** (declared signals like HBM2
-  `COMMAND` would have been here, but `.5.i` already caught the fallback-origin ones — the remainder are
-  enums whose NAME is a real signal but whose MEMBERS are sentence fragments / restarting values). At
-  synthesis time (`synthesize_encoding_declarations_for_enum`, `evidence.rs`), refuse to emit an enum whose
-  name column holds sentence fragments (identifier-shape / word-count / length criterion) or whose value
-  sequence restarts (a cross-table-merge signature). Trigger: a measurement establishing a threshold that
-  drops the junk WITHOUT dropping the clean enums (per-item precision/recall, `[[feedback_scoring_rigor]]`).
+- ID: `KG-ISF-COMPLETENESS.5.ii` · Status: `active` (**measurement/calibration DONE `2026-06-24`**,
+  read-only; design CORRECTED + GO; code → the next slice) · Goal: **the member-quality gate** for the
+  residual junk enums a NAME gate cannot reach. After `.5.i` the residual is (a) the **8 document-evidenced
+  generic-named survivors** (`DATA`/`TABLE`/`CACHE`/`ENCODING`/`ATTRIBUTES` the `.5.i` gate KEEPS because the
+  token IS a declared signal or column header — e.g. CCIX "Table of Contents" cells, still cross-table-
+  conflated) + (b) the **signal-match-origin junk-member enums** (NAME is a real signal, MEMBERS are
+  sentence fragments — HBM2 `DWORD_MISR`, AXI `BRESP`/`RRESP`/`ARCACHE`).
+  **MEASUREMENT DONE `2026-06-24`** (read-only over all 78 persisted IntentIR docs / 561 enums / 12 509
+  members; report `docs/research/generic-enum-conflation-measurement.md` §`.5.ii measurement`; KM
+  `[[generic-enum-conflation]]`) — it **OVERTURNS the recorded `.5` plan**:
+  - **The gate is PER-MEMBER, not per-enum.** A whole-enum drop destroys real codes — the surviving junk
+    enums are CONFLATIONS of a junk table and a clean table: AXI-gold `BRESP` fuses 7 prose fragments +
+    `BRESP_WIDTH` WITH the 8 genuine codes `OKAY/EXOKAY/SLVERR/DECERR/DEFER/TRANSFAULT/RESERVED/UNSUPPORTED`.
+    The fix drops the prose MEMBERS and keeps the codes (BRESP 16→9).
+  - **Value-restart is NOT a junk signal.** AHB-gold `HPROT` restarts (3 fused sub-encodings) yet every one
+    of its 15 members is a clean identifier — a restart-gate would be a false positive losing real intent.
+    Restart is dropped from the rule; conflation-of-clean-tables stays kept (honest residual: sub-enum
+    splitting deferred).
+  - **The load-bearing signal is per-member NAME shape — an English sentence-SPINE token.** The synthesis
+    sanitizes a name-cell to `[A-Z0-9_]`, so a whole prose sentence becomes one `_`-joined member name; a
+    real hardware symbol never contains a copula/auxiliary/modal (`IS`/`ARE`/`BE`/`HAS`/`MUST`/…),
+    article/demonstrative (`THE`/`THIS`/…), or relativizer/subordinator (`WHICH`/`WHEN`/`IF`/`BECAUSE`/…).
+    A member with a spine token is a prose fragment → drop. **Collisions EXCLUDED** (the `.1a` discipline):
+    `A`/`I`/`ITS`/`CAN`/`MAY`/`AM` (article-vs-suffix, GIC `ITS`, CAN-bus, month). Universal grammar, ADR
+    0006 — NOT a chip/structure-word name list.
+  - **Precision/recall (per-item, `[[feedback_scoring_rigor]]`):** clean anchor **0/115 flagged → precision
+    1.000**; junk anchor **269/269 caught → recall 1.000**; corpus-wide 3 781/12 509 (30.2 %) members drop.
+    Wire-gold blast radius: `BRESP` 16→9 (recovers codes), `PPROT`/`ARCACHE`/`AWCACHE`/`RLAST`/`WLAST`→0
+    (pure prose dropped), `HSIZE`/`HTRANS`/`HRESP` untouched. **Honest residuals deferred:** glossary
+    `SEE…` refs, front-matter/ToC members, section-caption (`B2_3_1_…`) members, `_WIDTH` leaks,
+    value-restart-with-clean-members.
+  - **GO** — land a per-member sentence-spine fragment drop in `synthesize_encoding_declarations_for_enum`
+    (`evidence.rs`): skip a member whose sanitized name carries a spine token; an emptied enum is not minted
+    (existing no-statements → no-`SymbolDefinition` contract → honest residual). Byte-changing on wire golds
+    (strict improvement) → the code slice needs a before/after WIRE-BASED-100 eval, NOT a byte-identical
+    argument; `kg-bench` + FSMGen `--strict` + `run_ci.sh` hard gates. **Frontier → the `.5.ii` code slice.**
 
 ## Changelog
+
+- `2026-06-24`: **`.5.ii` MEASUREMENT/CALIBRATION DONE → design CORRECTED + GO (read-only, docs-only).**
+  Fresh-session PNT continuation. Read-only member-quality census over all 78 persisted IntentIR docs (561
+  enums / 12 509 members). **Overturns the recorded `.5` plan:** the gate is **per-member**, not per-enum (a
+  whole-enum drop destroys AXI `BRESP`'s real codes `OKAY/EXOKAY/SLVERR/DECERR/…` fused with prose), and
+  **value-restart is NOT a junk signal** (AHB `HPROT` restarts but every member is a clean identifier). The
+  load-bearing signal is per-member NAME shape: an English **sentence-spine** token (copula/aux/modal/
+  article/demonstrative/relativizer/subordinator) marks a prose-fragment member. Collisions EXCLUDED per the
+  `.1a` discipline (`A`/`I`/`ITS`/`CAN`/`MAY`/`AM`). **Precision/recall:** clean anchor 0/115 flagged
+  (precision 1.000), junk anchor 269/269 caught (recall 1.000); 30.2 % of members drop. Honest residuals
+  deferred (glossary `SEE…`, front-matter, section-caption `B2_3_1_…`, `_WIDTH` leaks, restart-of-clean).
+  **GO** — land a per-member sentence-spine fragment drop at `synthesize_encoding_declarations_for_enum`
+  (`evidence.rs`); byte-changing on wire golds (strict improvement) → before/after WIRE-BASED-100 eval
+  required on the code slice. No code → all oracles orthogonal; `check_doctrines.sh` GREEN. Report §`.5.ii
+  measurement`; KM `[[generic-enum-conflation]]`. `[[feedback_scoring_rigor]]` /
+  `[[feedback_avoid_denylists_prefer_structural]]`. Frontier → the `.5.ii` code slice.
 
 - `2026-06-24`: **`.5.i` DONE — CODE: extraction-side fallback name-gate + emitter orphan-`(type)` fix.**
   Fresh focused session per the high-stakes gate-code rule (it changes wire-gold `.isf` bytes). Two edits:
