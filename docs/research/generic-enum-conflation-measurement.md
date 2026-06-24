@@ -362,3 +362,99 @@ Unit tests: `prose_sentence_spine_words_excludes_identifier_collisions`, `prose_
 `encoding_member_synthesis_drops_prose_fragments_keeps_codes`,
 `encoding_member_synthesis_all_prose_yields_no_statements`. **`.5` enum-surface fidelity is now built**
 (`.5.i` name-gate + `.5.ii` member-gate); the deeper member-quality residual classes stay honest residuals.
+
+---
+
+## `.5.iii` measurement (`2026-06-24`, read-only) — the `_WIDTH` parameter-leak class is the one buildable deeper residual
+
+`.5.ii` left five deeper member-quality classes as honest residuals (glossary `SEE…`,
+front-matter/ToC, section-caption `B2_3_1_…`, `_WIDTH` parameter leaks, value-restart-of-all-clean).
+This slice MEASURES them per-item over the persisted corpus to decide which (if any) is worth a code
+gate. Reproducer `scripts/measure_enum_width_leak.py` (read-only, deterministic, RAM-safe — no
+VLM/Docling/rebuild). The persisted corpus is a MIX (AXI/APB/CCIX were re-emitted post-`.5.ii` during
+that slice's verification; the rest is pre-`.5.i`), so the spine-flag tally reads 3375/11721 here vs the
+`.5.ii` 3781/12509 — immaterial to the residual-class question, which scans whatever members survive.
+
+### Finding 1 — most deeper-residual members live in `.5.i`-DROPPED generic enums (no `.isf` reach)
+
+Of 54 corpus members ending in `_WIDTH`, **47 sit in generic-named enums** (`TABLE`/`TRANSLATION`/
+`DESCRIPTION`/`BIT`: `TABLE:TBUCFG_SID_WIDTH`, `TRANSLATION:LTI_ID_WIDTH`, `BIT:WIDTH`) — exactly the
+enums `.5.i`'s name-gate already drops whole, so they never reach any `.isf`. Likewise the section-caption
+class: the 319 leading-`[A-Z]?digit` survivors are dominated by generic enums (`DEBUG:D1_1`,
+`DEBUG:D2_3`), and `DEBUG` is a caption word `.5.i` kills. **So the deeper classes are largely SUBSUMED
+by `.5.i`'s whole-enum drop** — there is nothing left to fix for them in a post-`.5.i` world.
+
+### Finding 2 — the `_WIDTH` leak DOES reach a wire-gold `.isf`, and it is materially damaging
+
+The remaining **7 `_WIDTH` members live in real-signal-named enums** that survive `.5.i` and emit — all
+in the AXI **gold** `ihi0022_l` (`BRESP_WIDTH`, `RRESP_WIDTH`, `RCHUNKNUM_WIDTH`, `RCHUNKSTRB_WIDTH`,
+`AWSNOOP_WIDTH`/`ARSNOOP_WIDTH` in `AXSNOOP`, `AWCMO_WIDTH`). Inspecting the emitted `manager.isf` shows
+real damage (a width PARAMETER mis-read as an encoding VALUE, literal `0`):
+- `(BRESP (BRESP_WIDTH 0) (OKAY 0) (EXOKAY 1) …)` — `BRESP_WIDTH 0` is a junk member that **duplicates
+  the value `0`** already used by the real code `OKAY`.
+- `(RRESP (RRESP_WIDTH 0))` — the real RRESP codes are **entirely replaced** by the lone width junk; the
+  `.isf` falsely states RRESP's only encoding value is "RRESP_WIDTH = 0".
+- `(AXSNOOP (AWSNOOP_WIDTH 0) (ARSNOOP_WIDTH 1))` — a whole enum of pure `_WIDTH` junk.
+- `(AWCMO (AWCMO_WIDTH 0) (CLEAN_AND_INVALIDATE 0) (CLEAN_ONLY 1))` — `AWCMO_WIDTH 0` duplicates
+  `CLEAN_AND_INVALIDATE 0`.
+
+This is a genuine north-star bar-#6 fidelity defect (the `.isf` carries a false protocol fact). It did not
+trip WIRE-BASED-100 because the scored surface is constraints/relations/temporal — the enum surface is
+emitter-only/orthogonal (the same reason `.5.i`/`.5.ii` byte-changed the golds without moving the score).
+
+**Root cause** (`generated/evidence_ir/ihi0022_l*`): the member's synthesized statement is literally
+`"Enum BRESP BRESP_WIDTH = 0."` — a configuration/parameter row (`BRESP_WIDTH = 0`, the bit-width of the
+BRESP signal) leaked into the BRESP value enum via `synthesize_encoding_declarations_for_enum`, the same
+seam `.5.ii` gates.
+
+### Finding 3 — the discriminator is FP-free and document-grounded (ADR 0006)
+
+The clean rule: **drop a synthesized encoding member named `<X>_WIDTH` iff `X` is a declared signal in
+the document OR the enum's own name** (the width of signal `X` is a parameter, never an encoding value).
+Per-item over the corpus:
+- All 6 distinct caught prefixes (`BRESP`/`RRESP`/`RCHUNKNUM`/`RCHUNKSTRB`/`AWSNOOP`/`ARSNOOP`/`AWCMO`)
+  are **TRUE declared signals** in the AXI doc — the gate is grounded in the document's own evidence,
+  exactly like `.5.i`'s "independently evidenced" rule, NOT a name list.
+- **False-positive set is EMPTY**: no legit width-VALUE such as `FULL_WIDTH`/`HALF_WIDTH`/`QUARTER_WIDTH`
+  exists anywhere in the corpus, and — decisively for future docs — the declared-signal discriminator
+  would never catch one, because `FULL`/`HALF`/`QUARTER` are size words, not declared signals. Precision
+  1.000 by construction (genericity guardrail satisfied: a real link-width enum is preserved).
+- Per-member, not per-enum (parallel to `.5.ii`): dropping `BRESP_WIDTH` keeps BRESP's 8 codes; dropping
+  the lone `RRESP_WIDTH`/`AXSNOOP` members empties those enums → not minted (honest residual, strictly
+  better than emitting a false single-value enum).
+
+### Finding 4 — the other deeper classes are NO-GO / honest residual
+
+- **Section-caption / table-reference** (`D6_4`, `B2_3_1_…`): no false-positive-free structural gate.
+  The leading `[A-Z]?digit` token collides with real codes (`D1`/`D2`/`D3` debug states, `L1`/`L2` cache
+  levels) — the census matched `DEBUG:D1_1` etc., which are legitimate-shaped. And the genuine table-refs
+  (`CACHE:D6_4` in the dense AXI+ACE `ihi0022_h_c`) sit in enums of dubious standing. No clean win.
+- **Value-restart-of-all-clean** (`HPROT`): `.5.ii` already established restart is not a junk signal (all
+  members clean); the 101 restart enums are dominated by `.5.i`-dropped generics. Splitting a clean merged
+  enum into sub-enums is a refinement with no fidelity defect to fix — deferred, riskier.
+- **Glossary `SEE_…`** (≤6) and **front-matter** (`NON_CONFIDENTIAL_…`): tiny prevalence, name-ish (a
+  single lead/section word), mostly in dropped enums — low value, no clean structural gate.
+
+### Decision — GO on the `_WIDTH` parameter-leak member gate; NO-GO on the rest
+
+Land a per-member `_WIDTH` parameter-leak drop in `synthesize_encoding_declarations_for_enum`
+(`evidence.rs`), parallel to the `.5.ii` spine gate: skip a member named `<X>_WIDTH` when `X` is the enum
+name or a declared signal. Implementation threads the existing `known_signals` set (already in scope at
+the signal-match caller, `evidence.rs:4700` `Some(known_signals)`) into the synthesis; the enum-self-name
+check needs no plumbing and covers the `None` caller. Byte-changing on the AXI wire gold → before/after
+WIRE-BASED-100 eval REQUIRED on the code slice (a strict improvement: the scored surface stays
+byte-identical because enums are unscored, but `manager.isf` recovers clean BRESP/AWCMO and drops the
+false RRESP/AXSNOOP enums). Universal structural rule, ADR-0006 (no chip-name list). The section-caption /
+restart-of-clean / glossary / front-matter classes stay honest residuals.
+
+### Reproduce
+
+```bash
+# read-only, deterministic, RAM-safe (no VLM/Docling/rebuild):
+python3 scripts/measure_enum_width_leak.py
+# -> 54 _WIDTH members; 7 CAUGHT (all AXI-gold, all declared-signal-grounded);
+#    47 UNCAUGHT (generic .5.i-dropped enums); 0 legit-width-value FALSE POSITIVES; VERDICT GO.
+# inspect the damage in the emitted .isf (RAM-safe):
+grep -nE '_WIDTH|BRESP|RRESP|AWCMO|AXSNOOP' \
+  generated/adapters/isf/ihi0022_l_2025_08_amba_axi_protocol_specification/manager.isf
+```

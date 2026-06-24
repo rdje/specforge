@@ -19,6 +19,10 @@ answers:
   - "why not gate the whole enum on value-restart for .5.ii (DISPROVEN false-positive: AHB HPROT has value restarts=2 from 3 fused sub-encodings but all 15 members are clean identifiers DATA_INST/PRIVILEGED/BUFFERABLE/...; dropping it loses real intent. Restart correlates with conflation but conflation-of-clean-tables is all-real-members, so restart cannot gate a drop — keep it, sub-enum splitting deferred)"
   - "is removing the generic enums WIRE-BASED-100-safe (scores ORTHOGONAL/SAFE — generic enums are in no scored gold; but the .isf BYTES change on all 4 wire golds — APB/AHB/AXI/SWP each emit a junk TABLE; AHB's TABLE fuses HTRANS+HSIZE which already have correct enums — a strict improvement needing a deliberate snapshot refresh, NOT byte-identical)"
   - "is the orphan (type TABLE) line a separate emitter bug (yes — isf_ir.rs:403-409 emits all self.types unconditionally, so a Lever-F-residualized enum still leaves an orphan (type ...) line; gate by emitted_enums())"
+  - "what are the deeper enum member-quality residual classes after .5.ii / what did the .5.iii measurement find (measured 2026-06-24 read-only, reproducer scripts/measure_enum_width_leak.py: of the 5 deferred classes — glossary SEE…, front-matter/ToC, section-caption B2_3_1_…, _WIDTH parameter leaks, value-restart-of-clean — most are SUBSUMED by .5.i (47/54 _WIDTH members and the bulk of 319 section-caption survivors sit in generic-named enums .5.i drops whole), EXCEPT the _WIDTH leak which reaches the AXI wire-gold .isf and is materially damaging)"
+  - "why is the _WIDTH enum-member leak a real fidelity defect (.5.iii: 7 _WIDTH members in real-signal-named enums in AXI gold ihi0022_l reach manager.isf — (BRESP (BRESP_WIDTH 0)(OKAY 0)…) duplicates value 0, (RRESP (RRESP_WIDTH 0)) REPLACES the real RRESP codes, (AXSNOOP (AWSNOOP_WIDTH 0)(ARSNOOP_WIDTH 1)) pure junk; a width PARAMETER 'Enum BRESP BRESP_WIDTH = 0.' mis-read as an encoding VALUE — a false bar-#6 fact, unscored by WIRE-BASED-100 since enums are emitter-orthogonal)"
+  - "what is the .5.iii _WIDTH parameter-leak gate / is it ADR-0006 safe (drop a synthesized encoding member named <X>_WIDTH iff X is a declared signal OR the enum's own name — document-grounded like .5.i, NOT a name list; corpus FP set EMPTY: no legit FULL_WIDTH/HALF_WIDTH value exists and the declared-signal arm never catches one since FULL/HALF are not signals; per-member not per-enum so BRESP keeps its codes and RRESP/AXSNOOP empty to honest residuals. GO; code slice pending, byte-changing on AXI gold -> before/after WIRE-BASED-100 eval required)"
+  - "why are section-caption / value-restart enum residuals NO-GO (.5.iii: section-caption/table-ref has no FP-free gate — leading [A-Z]?digit token collides with real codes D1/D2/L2 e.g. DEBUG:D1_1; restart-of-clean has no fidelity defect — .5.ii proved restart is not junk, all members real, mostly .5.i-dropped; glossary SEE…/front-matter are tiny + name-ish -> honest residuals)"
 date: 2026-06-24
 tags: [kg-isf-completeness, isf, enum, extraction, evidence-ir, semantic-ir, emitter, adr-0006, corpus-coverage, measurement, fidelity, bar-6]
 evidence: crates/specforge/src/ir/evidence.rs (derive_encoding_enum_name :4457-4461 caption-keyword fallback; is_hardware_signal_token :7106 accepts 'TABLE'; synthesize_encoding_declarations_for_enum :11898/:11952 member synthesis); crates/specforge/src/ir/semantic.rs (build_symbol_definitions :2782-2789 merge-by-name, record :2865-2877); crates/specforge/src/ir/intent.rs (:189 verbatim copy to IntentIR); crates/specforge/src/ir/isf_ir.rs (:889-912 faithful enum lowering; :403-409 unconditional types block = orphan-type bug; :376 Lever-F value gate); docs/research/generic-enum-conflation-measurement.md; docs/tasks/KG-ISF-COMPLETENESS.md (.5 node)
@@ -112,6 +116,25 @@ evidence rebuilt with baseline vs gated binary; scored surface byte-identical); 
 on AXI+APB; `kg-bench` 156/156; `run_ci.sh` GREEN (lib 1716, +4 tests). `.5` enum-surface fidelity now
 built; deeper member-quality classes (glossary/front-matter/section-caption/`_WIDTH`/restart-of-clean) are
 honest residuals. Report §`.5.ii LANDED`.
+
+## `.5.iii` measurement (`2026-06-24`) — the `_WIDTH` parameter-leak is the one buildable deeper residual
+
+Read-only census over the 78 persisted IntentIR docs of the five classes `.5.ii` deferred (reproducer
+`scripts/measure_enum_width_leak.py`). **Most are SUBSUMED by `.5.i`:** 47 of 54 `_WIDTH` members and the
+bulk of the 319 section-caption survivors live in generic-named enums (`TABLE`/`TRANSLATION`/`DEBUG`) that
+`.5.i` already drops whole → no `.isf` reach. **But the `_WIDTH` leak reaches the AXI WIRE-GOLD `.isf` and
+is materially damaging:** 7 members in real-signal-named enums in `ihi0022_l` emit
+`(BRESP (BRESP_WIDTH 0)(OKAY 0)…)` (dup value 0), `(RRESP (RRESP_WIDTH 0))` (real codes replaced),
+`(AXSNOOP (AWSNOOP_WIDTH 0)(ARSNOOP_WIDTH 1))` (pure junk), `(AWCMO (AWCMO_WIDTH 0)…)` (dup). Root cause:
+a config/parameter row (`Enum BRESP BRESP_WIDTH = 0.`) leaked into the value enum — a width PARAMETER, not
+an encoding VALUE. Unscored by WIRE-BASED-100 (enums emitter-orthogonal — why it held 1.000 while the
+`.isf` carried junk). **GO** on a per-member gate: drop `<X>_WIDTH` iff `X` is a declared signal OR the
+enum's own name — document-grounded (ADR 0006, like `.5.i`), corpus FP set EMPTY (no `FULL_WIDTH`-style
+value exists; `FULL`/`HALF` are never declared signals so a real link-width enum is preserved). Per-member,
+not per-enum (keeps BRESP's codes; empties RRESP/AXSNOOP → honest residual). **NO-GO** on section-caption
+(leading `[A-Z]?digit` collides with real codes `D1`/`L2`), restart-of-clean (no defect), glossary/
+front-matter (tiny). Byte-changing on the AXI gold → the code slice needs a before/after WIRE-BASED-100
+eval. Report §`.5.iii measurement`.
 
 Links: [[isf-enum-value-literal-emit-gate]] (Lever F — the value-literal gate that deferred
 this), [[behavior-temporal-lowering-broader-corpus]] (`.4`, which spun out enum/signal

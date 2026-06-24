@@ -1,4 +1,42 @@
 # DEVELOPMENT_NOTES
+## KG-ISF-COMPLETENESS.5.iii (`2026-06-24`) — MEASUREMENT: the `_WIDTH` parameter-leak deeper-enum residual (GO)
+
+**What / why.** `.5.ii` cleaned the prose-SENTENCE-fragment enum members and deferred five deeper
+member-quality classes as honest residuals. The resume pointer flagged them as the re-open candidate
+"needing their own measurement before code". This slice measures them per-item (read-only, docs-only) and
+isolates the one buildable, material lever. It stays in the FIRST active tree (the north star) and is a
+surfaced extraction-precision lever — the preferred PNT category per `[[feedback_not_complete_attack_substantive_gaps]]`.
+
+**Method.** Tracked deterministic reproducer `scripts/measure_enum_width_leak.py` over the 78 persisted
+IntentIR docs: replicate the `.5.ii` sentence-spine filter, classify the survivors, check each candidate
+structural gate for false positives against real enum members, and confirm whether each class reaches a
+real-signal-named (`.5.i`-surviving) enum that actually emits to `.isf`.
+
+**Findings.**
+- The corpus is a MIX (AXI/APB/CCIX re-emitted post-`.5.ii`, the rest pre-`.5.i`) so the spine-flag tally
+  reads 3375/11721 here vs the `.5.ii` 3781/12509 — immaterial to the residual-class question.
+- **Subsumption:** 47 of 54 `_WIDTH` members and the bulk of the 319 leading-section-number survivors sit
+  in generic-named enums (`TABLE`/`TRANSLATION`/`DEBUG`) that `.5.i` already drops whole → no `.isf` reach.
+- **Material leak:** the 7 remaining `_WIDTH` members are in real-signal-named enums in the AXI **gold**
+  `ihi0022_l` and reach `manager.isf`: `(BRESP (BRESP_WIDTH 0)(OKAY 0)…)` dup-value, `(RRESP (RRESP_WIDTH 0))`
+  replaces real codes, `(AXSNOOP (AWSNOOP_WIDTH 0)(ARSNOOP_WIDTH 1))` pure junk, `(AWCMO (AWCMO_WIDTH 0)…)`
+  dup. Root cause confirmed in `generated/evidence_ir/ihi0022_l*`: synthesized statement
+  `Enum BRESP BRESP_WIDTH = 0.` — a width PARAMETER row admitted as an encoding value.
+- **Discriminator (FP-free, document-grounded, ADR 0006):** drop `<X>_WIDTH` iff `X` is a declared signal
+  OR the enum's own name. All 6 distinct caught prefixes are TRUE declared signals; corpus FP set EMPTY
+  (no `FULL_WIDTH`/`HALF_WIDTH` value exists, and the declared-signal arm would never catch one — `FULL`/
+  `HALF` are not signals, so a real link-width enum is preserved). Per-member, not per-enum.
+
+**Decision.** GO on the `_WIDTH` parameter-leak gate (the code slice; thread the existing `known_signals`
+set in scope at the signal-match caller `evidence.rs:4700`, enum-self-name needs no plumbing; before/after
+WIRE-BASED-100 eval required as it byte-changes the AXI gold). NO-GO on section-caption (leading
+`[A-Z]?digit` collides with real codes `D1`/`L2`), restart-of-clean (no defect — `.5.ii` proved restart is
+not junk), glossary/front-matter (tiny + name-ish) → honest residuals.
+
+**Verification.** No code → all oracles orthogonal by construction; `scripts/check_doctrines.sh` GREEN;
+`KNOWLEDGE_MAP.md` regenerated (126 facts / 932 keys, in sync). Report
+`docs/research/generic-enum-conflation-measurement.md` §`.5.iii measurement`; KM `[[generic-enum-conflation]]`.
+
 ## KG-ISF-COMPLETENESS.5.ii (`2026-06-24`) — CODE: per-member sentence-spine enum-fragment gate
 - **Slice:** the `.5.ii` code, landed in the same fresh focused session as its measurement (high-stakes — it changes wire-gold `.isf` bytes). Before/after-proven (`[[feedback_scoring_rigor]]`).
 - **The edit (`ir/evidence.rs`).** New `PROSE_SENTENCE_SPINE_WORDS` const (38 lowercase copula/aux/modal/article/demonstrative/relativizer/subordinator words; collisions `a`/`i`/`its`/`can`/`may`/`am` excluded) + `is_prose_fragment_member_name(name)` (splits on `_`, exact-lowercased token compare). The member loop in `synthesize_encoding_declarations_for_enum` `continue`-skips a fragment member BEFORE pushing its `Enum X = V` statement. One seam → both call paths (`synthesize_encoding_declarations` `None` + the signal-anchor `Some(known_signals)` path). An all-fragment table yields zero statements, so `build_symbol_definitions` (`semantic.rs`) mints no `SymbolDefinition` — the existing no-statements → no-enum contract, an honest residual.
