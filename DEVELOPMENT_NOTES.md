@@ -1,4 +1,41 @@
 # DEVELOPMENT_NOTES
+## PDF-VARIANT-DIGESTION.10h (`2026-06-24`) — CODE: block-ambiguous register-mnemonic recovery by field-set containment
+
+**What / why.** `.10g` reads register fields laid out as section headings (`<NAME>, bits [hi:lo]`)
+into `register_records`, but its per-document name-uniqueness gate DROPPED every register mnemonic
+reused across ≥2 register-routed containers — ARM-Debug reuses `AUTHSTATUS`/`CSW`/`IDR`/`CLAIMSET`/
+`DEVARCH` once per access-port block, the dotted heading carrying only the short name. A blind merge
+would conflate genuinely-different registers (MEM-AP `CSW` vs JTAG-AP `CSW`, disjoint fields) or
+over-count identical cross-references, so `.10g` held the whole reused-name class as a residual.
+
+**Measurement (probe-first).** A local `#[ignore]` probe (`section_header_register_block_probe`)
+replayed the `.10g` container walk over the persisted `source_ir` with the real predicates. Two
+facts decided the design: (1) the reused mnemonics live in EXACTLY 2 docs (ARM-Debug `ihi0074`,
+CoreSight `ihi0029`); (2) the PDF backend flattens every heading to `heading_level` 1, so there is
+NO ancestor-block heading to qualify a register with — only the dotted-number hierarchy and the
+field lists are intact. The per-occurrence field-set audit cleanly separated three sub-classes:
+identical cross-reference (`IDR` C1.4 ≡ C2.6), nested views (`AUTHSTATUS` {2}⊂{3}⊂{4}⊂{5} across
+chapters), and genuinely-different (`CSW` 11-field MEM-AP vs 7-field JTAG-AP, disjoint).
+
+**Implementation.** `extract_section_header_registers` (`ir/evidence.rs`) now groups the candidate
+register-routed containers by name and resolves each reused name through the new pure helper
+`collapse_section_header_register_identity`: it returns the SINGLE maximal occurrence (largest field
+set, earliest in document order among ties) iff every occurrence's field set — compared by
+uppercased field name — is a subset of it, else `None`. A returned occurrence collapses to one
+record carrying that fullest occurrence's REAL layout (never a fabricated union of fields the
+document never co-listed); `None` keeps the name as an honest residual. Grouping is fully
+deterministic (first-appearance order via `or_insert_with`, no hash iteration reaches output —
+EVIDENCE-DETERMINISM). The unique-name path is byte-identical to `.10g`.
+
+**Verification.** `section_header_register_corpus_sweep`: ARM-Debug 12→15 registers / 57→69 fields,
+CoreSight 5→6 / 24→29; GIC 73 / SMMU 88 / ACC 2 byte-identical. Full `evidence` register_records:
+ARM-Debug 37→40, CoreSight 26→27. A `git stash` baseline-vs-change `evidence` diff over 8 golds
+(CCIX r1.0, NVMe, AXI, AHB, GIC, SMMU, ACC, DTI) is byte-identical; the only 2 changed docs ADD
+records with ZERO removals and every baseline record byte-identically preserved. +3 hermetic tests +
+the existing duplicate-name test re-scoped to the disjoint residual; `kg-bench` 156/156; full
+`run_ci.sh` GREEN (lib 1718→1721). Residual narrowed to the genuinely-different (`CSW`/`CLAIMSET`)
+class, deferred to a future block-qualified sub-lever.
+
 ## KG-ISF-COMPLETENESS.5.iii (`2026-06-24`) — CODE: per-member `_WIDTH` parameter-leak enum gate
 
 **What / why.** The `.5.iii` measurement found a width-PARAMETER leak polluting the AXI gold `.isf` enum

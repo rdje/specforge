@@ -873,6 +873,36 @@ specs carry no heading-shaped fields at all, so their output is byte-for-byte id
 one line the run manifest adds to record that the new reader ran.
 *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10g`).
 
+### `PDF-VARIANT-DIGESTION.10h` — recovering the reused mnemonics by reading their field lists
+
+The residual `.10g` left behind — a register name reused across several access-port blocks — is not
+hopeless; it just needs a way to tell *"the same register written twice"* apart from *"two different
+registers that happen to share a short name."* The honest signal turns out to be the **field list
+itself**. If you look at how a chip's documentation actually repeats a register, three patterns
+appear. Sometimes the two copies are identical — a plain cross-reference (`IDR` shown under two
+ports with the same fields). Sometimes one copy lists a few more fields than the other — the same
+register, drawn more completely in one chapter and more sparsely in another (`AUTHSTATUS`, whose
+field list grows from two entries to five as you move between chapters). And sometimes the two
+copies share *no* fields at all — the MEM-AP `CSW` and the JTAG-AP `CSW`, which are genuinely
+different registers that merely reused a three-letter name.
+
+`.10h` reads that signal directly. When every copy of a reused name is contained inside one fullest
+copy — identical, or a neat subset of it — they are clearly views of a single register, so the
+reader keeps the **fullest copy** (a real layout the document actually printed, never an invented
+blend) and emits it once. When the copies don't nest — disjoint or partially-overlapping field
+lists — that is the tell-tale of two different registers, and the reader leaves them as an honest
+residual rather than risk fusing them. (We measured why a fancier scheme wasn't possible: the PDF
+backend flattens every heading to the same level, so there is no "MEM-AP" block heading sitting
+above the register to qualify it with — only the field lists are reliable.)
+
+The payoff is pure recall with no risk: ARM Debug gains three registers (`AUTHSTATUS`, `DEVARCH`,
+`IDR`, taking it from 12 to 15 heading-shaped registers / 57 to 69 fields) and CoreSight gains one
+(`AUTHSTATUS`, 5 to 6 / 24 to 29), while the genuinely-different `CSW` and the mixed `CLAIMSET` stay
+residual. Crucially, *nothing already extracted changes*: a side-by-side rebuild of every register,
+wire and message-field gold document is byte-for-byte identical, and the only two documents that
+move gain records without losing or altering a single existing one.
+*Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.10h`).
+
 ### `PDF-VARIANT-DIGESTION.12b` — presence matrices: which signals exist, in which variant, under what condition
 
 Bus specifications routinely answer a question no other table answers: *does this signal exist at all in your

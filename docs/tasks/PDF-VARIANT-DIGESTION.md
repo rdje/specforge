@@ -1216,6 +1216,57 @@ register surface) is the spun-out sibling lever `.10g` (honest residual; ~1230 r
   + rustdoc + mdBook). KM `section-header-register-field-extraction`; book `pipeline/evidenceir.md` `.10g`. The
   block-ambiguous reused-mnemonic registers (ARM-Debug `AUTHSTATUS`/`CSW`/`IDR`/…, CoreSight `AUTHSTATUS`) are an
   honest residual — a future block-qualified lever can disambiguate + recover them. Commit: pending (this slice).
+  **(`.10h` `2026-06-24` recovered the identical/nested sub-class — `AUTHSTATUS`/`DEVARCH`/`IDR` — by field-set
+  containment; only the genuinely-different `CSW`/`CLAIMSET` remain residual.)**
+- ID: `PDF-VARIANT-DIGESTION.10h` · Status: `done` (`2026-06-24`, measurement-first, CODE — GO) · Goal:
+  **BLOCK-QUALIFIED register-mnemonic recovery — the `.10g` honest residual.** `.10g` emits a
+  register-routed section-heading container only when its short mnemonic is UNIQUE in the document;
+  a mnemonic reused across ≥2 register containers (the same `AUTHSTATUS`/`CSW`/`IDR`/`CLAIMSET`/
+  `DEVARCH` documented once per access-port block, the dotted heading carrying only the short name) was
+  dropped as an honest residual, because an all-distinct merge would either CONFLATE two
+  genuinely-different registers (`CSW` MEM-AP vs JTAG-AP have disjoint field sets) or OVER-COUNT
+  identical/subset cross-references (`DEVARCH`/`IDR`).
+  **SHIPPED:** `extract_section_header_registers` (`ir/evidence.rs`) replaces the `.10g` drop-all-duplicates
+  gate with a per-document FIELD-SET-CONTAINMENT resolver. For a mnemonic reused across ≥2 register-routed
+  containers, the new pure helper `collapse_section_header_register_identity` returns the SINGLE maximal
+  occurrence iff every occurrence's field set (by uppercased field name) is a subset of it — identical
+  cross-references + nested views of one register, shown with more or fewer implemented fields — collapsing
+  to ONE record carrying that fullest occurrence's REAL layout (never a fabricated union); disjoint /
+  partially-overlapping sets (≥2 genuinely-different registers under one mnemonic — MEM-AP `CSW` vs JTAG-AP
+  `CSW`) have no common superset → `None` → honest residual. +3 hermetic tests (nested-view collapse /
+  identical-cross-ref collapse / disjoint residual) + the existing duplicate-name test re-scoped to the
+  disjoint residual + 1 `#[ignore]` corpus probe (`section_header_register_block_probe`); lib 1718 → **1721**.
+  **Measurement (probe-first, read-only over persisted `source_ir`):** the reused mnemonics live in EXACTLY
+  2 docs — ARM-Debug `ihi0074` (`AUTHSTATUS`/`CLAIMSET`/`CSW`/`DEVARCH`/`IDR`, 13 containers) + CoreSight
+  `ihi0029` (`AUTHSTATUS`, 3); every other corpus doc has zero reused register-routed containers. Heading
+  levels are FLATTENED to L1 (so there is no ancestor-block heading), but the dotted-number hierarchy + the
+  parent section title (`C2.6 MEM-AP register descriptions` / `C3.5 JTAG-AP register descriptions`) are
+  intact. The per-occurrence field-set audit cleanly separates the three sub-classes: identical (`IDR`
+  C1.4≡C2.6, `DEVARCH` C1.4≡C3.5), nested (`AUTHSTATUS` {2}⊂{3}⊂{4}⊂{5} across chapters), disjoint (`CSW`
+  MEM-AP 11-field vs JTAG-AP 7-field).
+  **Acceptance checklist (TOOLBOX.md):**
+  - [x] ROOT CAUSE (WHY + WHERE): the `.10g` per-document name-uniqueness gate in
+        `extract_section_header_registers` (`ir/evidence.rs`) DROPS every reused mnemonic — the
+        `section_header_register_corpus_sweep` probe shows ARM-Debug 12/57, CoreSight 5/24 with the
+        duplicates absent. WHY a single drop is wrong: it conflates the genuinely-different (`CSW`) and
+        over-counts the identical (`IDR`); the `.10g` design deferred disambiguation to this lever.
+  - [x] ADDRESSED (verified, measured per-item): the containment resolver recovers the safe sub-classes.
+        `section_header_register_corpus_sweep` ARM-Debug 12 → **15** regs / 57 → **69** fields
+        (+`AUTHSTATUS`/`DEVARCH`/`IDR`), CoreSight 5 → **6** / 24 → **29** (+`AUTHSTATUS`); GIC 73 / SMMU 88 /
+        ACC 2 byte-identical. Full `evidence --dry-run` register_records: ARM-Debug 37 → **40**, CoreSight
+        26 → **27**; each collapsed record carries the maximal field set (`AUTHSTATUS` = HID,NSID,NSNID,SID,SNID)
+        and `CSW`/`CLAIMSET` stay residual.
+  - [x] NO REGRESSION (orthogonal): a `git stash` baseline-vs-change full-`evidence` diff over 8 docs — CCIX
+        r1.0, NVMe (register golds), AXI, AHB (wire golds), GIC, SMMU, ACC (section-header no-dup), DTI (`.10f`
+        message-field) — is **byte-identical**; the only 2 changed docs ADD records with ZERO removals and all
+        37 / 26 baseline records byte-identically preserved. `kg-bench` **156/156**; full `scripts/run_ci.sh`
+        GREEN (lib **1721**, fmt + clippy `-D warnings` + rustdoc + mdBook). ADR-0006 (universal field-set
+        containment, no chip-name list).
+  **Narrowed residual:** the ≥2-distinct-identity class (`CSW` MEM-AP/JTAG-AP disjoint + `CLAIMSET` mixed pair/
+  4-field) stays an honest residual — block-qualification needs a clean per-occurrence block name the flattened
+  heading hierarchy does not provide (the dotted-parent number is available but cryptic; a future sub-lever may
+  qualify it). Book `pipeline/evidenceir.md` `.10h`; KM `section-header-register-identity-collapse`. Commit:
+  pending (this slice).
 
 **`PDF-VARIANT-DIGESTION.11` — `validate` integration of the `message_field_*` surfaces.**
 · Status: **DONE `2026-06-11`** (probe → measured scope decisions → build → live CLI
@@ -2155,6 +2206,22 @@ set, not the whole doc/corpus.
 
 ## Changelog
 
+- `2026-06-24`: `.10h` (block-qualified register-mnemonic recovery — the `.10g` residual) DONE,
+  measurement-first/CODE/GO. `extract_section_header_registers` (`ir/evidence.rs`) replaces the
+  `.10g` drop-all-duplicates gate with a field-set-containment resolver (new pure helper
+  `collapse_section_header_register_identity`): a mnemonic reused across ≥2 register-routed
+  section-heading containers collapses to ONE record IFF every occurrence's field set is a subset
+  of one maximal occurrence (identical cross-references + nested views of one register), keeping
+  that fullest occurrence's real layout; disjoint/partial-overlap sets (≥2 genuinely-different
+  registers — MEM-AP `CSW` vs JTAG-AP `CSW`) stay an honest residual. Probe-measured the residual
+  lives in EXACTLY 2 docs; recovered ARM-Debug 12→15 regs / 57→69 fields (`AUTHSTATUS`/`DEVARCH`/
+  `IDR`) + CoreSight 5→6 / 24→29 (`AUTHSTATUS`); full `evidence` register_records ARM-Debug 37→40,
+  CoreSight 26→27. `git stash` baseline diff: 8 register/wire/section-header/message golds
+  byte-identical, the 2 changed docs ADD records with ZERO removals (all baseline records
+  byte-identically preserved). +3 hermetic tests + 1 `#[ignore]` probe; lib 1718→1721; kg-bench
+  156/156; full `run_ci.sh` GREEN. ADR-0006 (universal field-set containment, no name list). Book
+  `pipeline/evidenceir.md`; KM `section-header-register-identity-collapse`. Commit subject:
+  `PDF-VARIANT-DIGESTION.10h`.
 - `2026-06-14`: `.13b` (4 AMBA matrix docs) DONE — ACE measurement completed the leaf. ACE
   evidence rebuilt (52.3 MB, no OOM): 201 signal_presence_records on 0271–0274/0276–0279 (0275
   refused, 59 conditioned); +9 gap-fill wires minted with verified widths; unexplained tables

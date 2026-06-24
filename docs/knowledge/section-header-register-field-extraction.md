@@ -42,8 +42,10 @@ different registers (`CSW` MEM-AP vs JTAG-AP have disjoint fields). Emitting the
 over-count (identical/subset dups) or, via the existing all-distinct
 `consolidate_register_field_fragments` merge, CONFLATE two different registers into a fabricated
 mega-register. So `.10g` emits a register only when its name is UNIQUE within the document; a reused
-name is held as an honest residual (a future block-qualified lever can recover it). Universal
-grammar over per-document name multiplicity; no chip-name list (ADR 0006).
+name is held as an honest residual. Universal grammar over per-document name multiplicity; no
+chip-name list (ADR 0006). **`.10h` (2026-06-24) then recovered the SAFE half of that residual —
+identical cross-references + nested views collapse to one record by field-set containment, only the
+genuinely-different (disjoint) registers stay residual; see [[section-header-register-identity-collapse]].**
 
 **No double-count with the existing surface.** A `.10g` register whose unique name matches an
 existing 0-field record (e.g. ARM-Debug `DPIDR`, minted name-only by the map/summary strategies)

@@ -10566,10 +10566,13 @@ type SectionHeaderRegisterCandidate = (String, Vec<(String, u32, u32)>);
 /// register surface. Uses the SAME shared container-walk as `.10f`, so the message-vs-register
 /// routing is decided in exactly one place. A short register mnemonic reused across ≥2 register
 /// containers (the same `AUTHSTATUS`/`CSW`/`IDR` documented per access-port block, with the dotted
-/// heading carrying only the short name) is structurally AMBIGUOUS and held as an honest residual:
-/// emitting it would either over-count (identical/subset dups) or, via the all-distinct fragment
-/// merge, conflate two genuinely-different registers into a fabricated one. Universal grammar over
-/// per-document name multiplicity; no chip-name list (ADR 0006). Access/reset/offset/description are
+/// heading carrying only the short name) is resolved by per-document field-set containment
+/// (PDF-VARIANT-DIGESTION.10h): identical cross-references and nested views — every occurrence a
+/// subset of one maximal occurrence — collapse to ONE record carrying that fullest occurrence's
+/// real layout (`AUTHSTATUS`/`DEVARCH`/`IDR`); genuinely-different registers sharing a mnemonic
+/// (disjoint/partially-overlapping field sets — MEM-AP `CSW` vs JTAG-AP `CSW`) stay an honest
+/// residual, never conflated into a fabricated mega-register. Universal grammar over per-document
+/// field-set containment; no chip-name list (ADR 0006). Access/reset/offset/description are
 /// honestly absent (`None`) — a section heading states only a field's name and bit range.
 fn extract_section_header_registers(source_ir: &SourceIr) -> Vec<RegisterRecord> {
     // First pass: every register-routed container with a `Field descriptions` anchor and a real
@@ -10584,19 +10587,42 @@ fn extract_section_header_registers(source_ir: &SourceIr) -> Vec<RegisterRecord>
         };
         candidates.push((container.name, unique));
     }
-    // Per-document name-uniqueness residual gate (PDF-VARIANT-DIGESTION.10g): drop any register
-    // name that occurs in more than one register container (block-ambiguous short mnemonic).
-    let mut name_counts: std::collections::BTreeMap<String, usize> =
+    // Per-document register-identity gate (PDF-VARIANT-DIGESTION.10g/.10h). A name in exactly one
+    // register container is unique → emitted directly. A name reused across ≥2 register containers
+    // is the block-ambiguous residual: `.10h` collapses it to ONE record IFF every occurrence's
+    // field set is a subset of one maximal occurrence (identical cross-references or nested views
+    // of a single register, shown with more or fewer implemented fields) — the emitted fields are
+    // that fullest occurrence's real layout, never a fabricated union. Occurrences with disjoint or
+    // partially-overlapping field sets (≥2 genuinely-different registers sharing a mnemonic —
+    // ARM-Debug MEM-AP `CSW` vs JTAG-AP `CSW`) stay an honest residual: collapsing would conflate,
+    // and the flattened heading hierarchy provides no clean block qualifier. Universal grammar over
+    // per-document field-set containment; no chip-name list (ADR 0006).
+    let mut order: Vec<String> = Vec::new();
+    let mut groups: std::collections::BTreeMap<String, Vec<usize>> =
         std::collections::BTreeMap::new();
-    for (name, _) in &candidates {
-        *name_counts.entry(name.clone()).or_default() += 1;
+    for (index, (name, _)) in candidates.iter().enumerate() {
+        groups
+            .entry(name.clone())
+            .or_insert_with(|| {
+                order.push(name.clone());
+                Vec::new()
+            })
+            .push(index);
     }
+
     let mut records: Vec<RegisterRecord> = Vec::new();
-    for (index, (name, fields)) in candidates.iter().enumerate() {
-        if name_counts.get(name).copied().unwrap_or(0) != 1 {
+    for name in &order {
+        let occurrences = &groups[name];
+        let canonical = if occurrences.len() == 1 {
+            Some(occurrences[0])
+        } else {
+            collapse_section_header_register_identity(occurrences, &candidates)
+        };
+        let Some(index) = canonical else {
             continue;
-        }
-        let field_records: Vec<RegisterFieldRecord> = fields
+        };
+        let field_records: Vec<RegisterFieldRecord> = candidates[index]
+            .1
             .iter()
             .map(|(field_name, high, low)| RegisterFieldRecord {
                 field_name: field_name.clone(),
@@ -10620,6 +10646,40 @@ fn extract_section_header_registers(source_ir: &SourceIr) -> Vec<RegisterRecord>
         });
     }
     records
+}
+
+/// PDF-VARIANT-DIGESTION.10h — resolve a register mnemonic reused across ≥2 section-heading
+/// containers to a SINGLE canonical occurrence, or `None` when the occurrences are ≥2 genuinely
+/// different registers. The occurrences collapse to one register IFF every occurrence's field set
+/// (compared by uppercased field name) is a subset of one maximal occurrence — identical
+/// cross-references or nested views of the same register, shown with more or fewer implemented
+/// fields. That maximal occurrence (the document's fullest enumeration, earliest in document order
+/// among equal-size sets) is returned, so the emitted layout is a real occurrence, never a
+/// fabricated union. Disjoint or partially-overlapping sets have no common superset → `None` (an
+/// honest residual; collapsing would conflate two different registers into a fabricated one).
+fn collapse_section_header_register_identity(
+    occurrences: &[usize],
+    candidates: &[SectionHeaderRegisterCandidate],
+) -> Option<usize> {
+    let field_name_set = |index: usize| -> BTreeSet<String> {
+        candidates[index]
+            .1
+            .iter()
+            .map(|(field, _, _)| field.to_ascii_uppercase())
+            .collect()
+    };
+    // The maximal occurrence: the largest field set, earliest in document order among ties.
+    let mut maximal = *occurrences.first()?;
+    for &index in &occurrences[1..] {
+        if candidates[index].1.len() > candidates[maximal].1.len() {
+            maximal = index;
+        }
+    }
+    let maximal_fields = field_name_set(maximal);
+    occurrences
+        .iter()
+        .all(|&index| field_name_set(index).is_subset(&maximal_fields))
+        .then_some(maximal)
 }
 
 /// PDF-VARIANT-DIGESTION.10g — the section-heading register-field strategy as a registered
@@ -18070,6 +18130,164 @@ mod tests {
         }
     }
 
+    /// PDF-VARIANT-DIGESTION.10h local measurement, NOT a CI test (`--ignored`): for the
+    /// `.10g` block-ambiguous reused-mnemonic residual, replays the `.10g` container walk over
+    /// every persisted `generated/source_ir/*` with the REAL predicates and dumps every register
+    /// name reused across ≥2 register-routed containers — each occurrence's dotted number, dotted
+    /// parent, that parent's section title (the human block name; the heading levels are flattened
+    /// so the dotted number is the only intact hierarchy), and deduped field-set — so the sub-class
+    /// (identical cross-ref / nested view / genuinely-different) can be characterized.
+    /// Run: `cargo test -p specforge --lib section_header_register_block_probe -- --ignored --nocapture`
+    #[test]
+    #[ignore = "local measurement: walks the developer-local generated/source_ir corpus"]
+    fn section_header_register_block_probe_local_measurement() {
+        fn dotted_number(title: &str) -> Option<String> {
+            let t = title.trim();
+            let b = t.as_bytes();
+            let mut i = 0usize;
+            if b.first().is_some_and(|c| c.is_ascii_uppercase())
+                && b.get(1).is_some_and(|c| c.is_ascii_digit())
+            {
+                i = 1;
+            }
+            let start = i;
+            while i < b.len() && (b[i].is_ascii_digit() || b[i] == b'.') {
+                i += 1;
+            }
+            let num = t[start..i].trim_end_matches('.');
+            (!num.is_empty() && num.contains('.')).then(|| t[..i].trim_end_matches('.').to_string())
+        }
+        fn dotted_parent(full: &str) -> String {
+            match full.rfind('.') {
+                Some(p) => full[..p].to_string(),
+                None => full.to_string(),
+            }
+        }
+
+        struct Probe {
+            name: String,
+            dotted: String,
+            parent: String,
+            is_register: bool,
+            has_anchor: bool,
+            fields: Vec<(String, u32, u32)>,
+        }
+
+        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../generated/source_ir");
+        let Ok(entries) = fs::read_dir(&root) else {
+            eprintln!("no local corpus at {} — nothing to measure", root.display());
+            return;
+        };
+        let mut paths: Vec<PathBuf> = entries
+            .flatten()
+            .map(|e| e.path().join("source_ir.json"))
+            .filter(|p| p.is_file())
+            .collect();
+        paths.sort();
+        for path in paths {
+            let Ok(raw) = fs::read_to_string(&path) else {
+                continue;
+            };
+            let Ok(source_ir) = serde_json::from_str::<SourceIr>(&raw) else {
+                continue;
+            };
+            let mut sections: Vec<_> = source_ir.document_sections.iter().collect();
+            sections.sort_by_key(|s| s.reading_order);
+
+            // Map a dotted section number → its heading title, so a container's dotted PARENT can
+            // be resolved to a human block name (the heading levels are flattened to L1, so the
+            // ancestor-block stack is empty — the dotted number is the only intact hierarchy).
+            let mut by_number: std::collections::BTreeMap<String, String> =
+                std::collections::BTreeMap::new();
+            for s in &sections {
+                if let Some(num) = dotted_number(s.title.trim()) {
+                    by_number
+                        .entry(num)
+                        .or_insert_with(|| s.title.trim().to_string());
+                }
+            }
+
+            let mut containers: Vec<Probe> = Vec::new();
+            for s in sections {
+                let title = s.title.trim();
+                if let Some((name, rest)) = super::parse_dotted_container_heading(title) {
+                    let dotted = dotted_number(title).unwrap_or_default();
+                    let parent = dotted_parent(&dotted);
+                    containers.push(Probe {
+                        name,
+                        dotted,
+                        parent,
+                        is_register: super::caption_names_register(&rest),
+                        has_anchor: false,
+                        fields: Vec::new(),
+                    });
+                } else if let Some(c) = containers.last_mut() {
+                    if super::is_field_descriptions_anchor(title) {
+                        c.has_anchor = true;
+                    } else if super::is_register_attribute_heading(title) {
+                        c.is_register = true;
+                    } else if let Some(field) = super::parse_section_header_field(title) {
+                        c.fields.push(field);
+                    }
+                }
+            }
+
+            // Keep only register-routed containers with anchor + ≥2 distinct fields (the `.10g`
+            // candidate set), by container index; the deduped field-set is re-derived on demand.
+            let reg_indices: Vec<usize> = containers
+                .iter()
+                .enumerate()
+                .filter(|(_, c)| {
+                    c.is_register
+                        && c.has_anchor
+                        && super::distinct_section_header_fields(&c.fields).is_some()
+                })
+                .map(|(i, _)| i)
+                .collect();
+            let mut counts: std::collections::BTreeMap<String, usize> =
+                std::collections::BTreeMap::new();
+            for &i in &reg_indices {
+                *counts.entry(containers[i].name.clone()).or_default() += 1;
+            }
+            let dup_names: Vec<String> = counts
+                .iter()
+                .filter(|(_, n)| **n >= 2)
+                .map(|(k, _)| k.clone())
+                .collect();
+            if dup_names.is_empty() {
+                continue;
+            }
+            let key = path
+                .parent()
+                .and_then(|p| p.file_name())
+                .map(|n| n.to_string_lossy().into_owned())
+                .unwrap_or_default();
+            println!(
+                "===== {key} — {} reused register names =====",
+                dup_names.len()
+            );
+            for name in &dup_names {
+                println!("  [{name}] x{}", counts[name]);
+                for &i in reg_indices.iter().filter(|&&i| &containers[i].name == name) {
+                    let c = &containers[i];
+                    let fields =
+                        super::distinct_section_header_fields(&c.fields).unwrap_or_default();
+                    let mut fnames: Vec<String> =
+                        fields.iter().map(|(f, _, _)| f.clone()).collect();
+                    fnames.sort();
+                    let parent_title = by_number.get(&c.parent).cloned().unwrap_or_default();
+                    println!(
+                        "     dotted={} parentTitle=<{}> fields[{}]={}",
+                        c.dotted,
+                        parent_title,
+                        fnames.len(),
+                        fnames.join(",")
+                    );
+                }
+            }
+        }
+    }
+
     /// PDF-VARIANT-DIGESTION.10f — build a `SourceIR` carrying only the given section headings
     /// (in order), so the section-heading message-field gate can be tested directly. The `.md`
     /// exists only to satisfy `SourceIr::build`; the extractor reads `document_sections`.
@@ -18415,10 +18633,10 @@ mod tests {
 
     #[test]
     fn section_header_registers_drop_duplicate_names() {
-        // Per-document name-uniqueness residual gate: a short mnemonic reused across access-port
-        // blocks (here `CSW` with disjoint field sets — a genuinely different register per block)
-        // is structurally ambiguous and held as a residual, never over-counted or conflated; a
-        // uniquely-named register in the same document still emits.
+        // PDF-VARIANT-DIGESTION.10h residual: a short mnemonic reused across access-port blocks
+        // with DISJOINT field sets (here `CSW` — a genuinely different register per block) has no
+        // common superset, so it is held as an honest residual, never over-counted or conflated;
+        // a uniquely-named register in the same document still emits.
         let source_ir = section_only_source_ir(&[
             "C2.6.1 CSW, MEM-AP Control/Status Word Register",
             "Field descriptions",
@@ -18437,12 +18655,90 @@ mod tests {
         let names: Vec<&str> = regs.iter().map(|r| r.register_name.as_str()).collect();
         assert!(
             !names.contains(&"CSW"),
-            "a register name reused across containers is an honest residual, not over-counted"
+            "a register name with disjoint field sets per block is an honest residual"
         );
         assert_eq!(
             names,
             vec!["ABORT"],
             "only the uniquely-named register survives"
+        );
+    }
+
+    #[test]
+    fn section_header_registers_collapse_nested_views() {
+        // PDF-VARIANT-DIGESTION.10h: the same register documented per block with NESTED field sets
+        // (a fuller enumeration in one chapter, a subset of it in another — the document's views
+        // of ONE register) collapses to a SINGLE record carrying the fullest occurrence's real
+        // layout, never a fabricated union.
+        let source_ir = section_only_source_ir(&[
+            "C1.4.1 AUTHSTATUS, Authentication Status Register",
+            "Field descriptions",
+            "HID, bits [9:8]",
+            "NSID, bits [3:2]",
+            "SID, bits [1:0]",
+            "C2.6.1 AUTHSTATUS, Authentication Status Register",
+            "Field descriptions",
+            "NSID, bits [3:2]",
+            "SID, bits [1:0]",
+        ]);
+        let regs = super::extract_section_header_registers(&source_ir);
+        assert_eq!(regs.len(), 1, "nested views collapse to one register");
+        assert_eq!(regs[0].register_name, "AUTHSTATUS");
+        let mut names: Vec<&str> = regs[0]
+            .fields
+            .iter()
+            .map(|f| f.field_name.as_str())
+            .collect();
+        names.sort_unstable();
+        assert_eq!(
+            names,
+            vec!["HID", "NSID", "SID"],
+            "the maximal (fullest) occurrence's field set is kept"
+        );
+    }
+
+    #[test]
+    fn section_header_registers_collapse_identical_crossref() {
+        // PDF-VARIANT-DIGESTION.10h: an identical register cross-referenced in two blocks (same
+        // field set) is one register, not two → collapses to a single record (no over-count).
+        let source_ir = section_only_source_ir(&[
+            "C1.4.9 IDR, Identification Register",
+            "Field descriptions",
+            "DESIGNER, bits [11:1]",
+            "CLASS, bits [16:13]",
+            "C2.6.15 IDR, Identification Register",
+            "Field descriptions",
+            "DESIGNER, bits [11:1]",
+            "CLASS, bits [16:13]",
+        ]);
+        let regs = super::extract_section_header_registers(&source_ir);
+        assert_eq!(
+            regs.len(),
+            1,
+            "identical cross-references collapse to one register"
+        );
+        assert_eq!(regs[0].register_name, "IDR");
+        assert_eq!(regs[0].fields.len(), 2);
+    }
+
+    #[test]
+    fn section_header_registers_residual_partial_overlap_identity() {
+        // PDF-VARIANT-DIGESTION.10h: a reused mnemonic carrying DISJOINT clusters (≥2 distinct
+        // registers under one mnemonic — the AP claim-tag `CLAIMSET` vs a different component's
+        // 4-field `CLAIMSET`) has no common superset → honest residual, never a fabricated merge.
+        let source_ir = section_only_source_ir(&[
+            "C1.4.3 CLAIMSET, Claim Tag Set Register",
+            "Field descriptions",
+            "CLAIMTAG0, bit [0]",
+            "CLAIMTAG1, bit [1]",
+            "D4.5.3 CLAIMSET, Claim Set Register",
+            "Field descriptions",
+            "CLAIMCLR, bit [3]",
+            "PRESENT, bit [1]",
+        ]);
+        assert!(
+            super::extract_section_header_registers(&source_ir).is_empty(),
+            "disjoint field sets under one mnemonic stay an honest residual"
         );
     }
 
