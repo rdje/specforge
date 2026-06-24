@@ -59,7 +59,7 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 
 ## Task Tree
 
-- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface on the AMBA/structured class, done; `.1c` reopens it for the dense-prose class), `.2` (ISF lowering-fidelity; `.2a.i` width done, `.2a.ii` direction done — initiator-perspective, owner-authorized, `.2a.iii` module-name HDL-sanitization done — owner-chosen, `.2a.iv` enum value-literal emit-gate done — Lever F, HBM2 strict-clean, `.2a.v` unconditional-rule-overlap conflict residual — Lever C, 6 docs FAIL→PASS incl. all 3 wire golds + LPI/LTI/NVMe, `.2a.vi` rule-drive-value validity gate — closes the last AXI+ACE `(port expr)` FAIL → **70/70 renderable strict-clean**), `.3` (relation-completeness — bar #2; DONE `2026-06-24`: 0 stale docs corpus-wide + stage-staleness detector shipped as CORPUS-COVERAGE.1), `.4` (behavior/temporal lowering-completeness — bar #5/#6, broader corpus)
+- ID: `KG-ISF-COMPLETENESS` · Status: `active` · Children: `.0` (scope/ownership), `.1` (agent-surface on the AMBA/structured class, done; `.1c` reopens it for the dense-prose class), `.2` (ISF lowering-fidelity; `.2a.i` width done, `.2a.ii` direction done — initiator-perspective, owner-authorized, `.2a.iii` module-name HDL-sanitization done — owner-chosen, `.2a.iv` enum value-literal emit-gate done — Lever F, HBM2 strict-clean, `.2a.v` unconditional-rule-overlap conflict residual — Lever C, 6 docs FAIL→PASS incl. all 3 wire golds + LPI/LTI/NVMe, `.2a.vi` rule-drive-value validity gate — closes the last AXI+ACE `(port expr)` FAIL → **70/70 renderable strict-clean**), `.3` (relation-completeness — bar #2; DONE `2026-06-24`: 0 stale docs corpus-wide + stage-staleness detector shipped as CORPUS-COVERAGE.1), `.4` (behavior/temporal lowering-completeness — bar #5/#6, broader corpus), `.5` (enum-surface fidelity — the generic-`TABLE` mega-enum conflation; measurement DONE `2026-06-24`, code → `.5.i`/`.5.ii`)
 - ID: `KG-ISF-COMPLETENESS.1c` · Status: `active` (umbrella; PROBE DONE `2026-06-23`; `.1c.i` LANDED,
   `.1c.ii` deferred-as-bounded-residual — the clean structural win is shipped, the remainder is
   upstream-NLP-gated) · Goal: **agent-identity precision for the DENSE-PROSE doc
@@ -722,7 +722,66 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
   `[[behavior-temporal-lowering-broader-corpus]]`. `[[project_kg_isf_completeness]]` /
   `[[feedback_not_complete_attack_substantive_gaps]]`.
 
+- ID: `KG-ISF-COMPLETENESS.5` · Status: `active` (umbrella; **measurement DONE `2026-06-24`**, read-only,
+  docs-only; code → `.5.i`/`.5.ii`) · Goal: **enum-surface fidelity (bar #6) — the generic-`TABLE`
+  mega-enum conflation.** Surfaced by the `CORPUS-COVERAGE.2` re-ingests of JEDEC HBM2 (#28) and AMBA CHI C2C
+  (#29), explicitly deferred by `.2a.iv` (Lever F) as "a future extraction-precision lever". **Measured
+  (read-only, current binary + 78-doc persisted corpus; reproducer in the report):** the `.isf` emits a
+  generic junk-named enum (HBM2 `(type TABLE (bits 6))`) fusing ~7 unrelated value-tables (29 dup values, 30
+  sentence-fragment member names). **Origin = EXTRACTION, not the emitter:** `derive_encoding_enum_name`'s
+  fallback (`evidence.rs:4457-4461`) names an unmatched encoding table after the first caption token passing
+  `is_hardware_signal_token` (`evidence.rs:7106`, which accepts `Table`→`TABLE`), and `build_symbol_definitions`
+  (`semantic.rs:2782-2789`) merges every same-named table into ONE enum by name (copied verbatim to IntentIR
+  `intent.rs:189`; lowered faithfully `isf_ir.rs:889-912`). **Corpus:** 56/78 docs carry a generic-named enum
+  (96 generic `TABLE`/`FIGURE`/`DATA`/… vs 493 real); ~95 reach `.isf`. **Key insight:** a name-only gate
+  catches 96 generic but MISSES **271 real-named-but-junk** enums (`COMMAND`/`DWORD_MISR`/`AMBA` — fragment
+  names + restarting values; only 222 of 493 real enums are clean) → the load-bearing signal is **member
+  quality**, the name is the symptom. **Decision: GO, extraction-side, decomposed** (`.5.i` safe name-gate +
+  emitter orphan-type fix; `.5.ii` member-quality gate). Universal structural rule, ADR-0006 (no chip-name
+  list). **WIRE-BASED-100:** scores ORTHOGONAL (enums unscored — `eval-extraction` golds carry no enum), but
+  the `.isf` BYTES change on all 4 wire golds (each emits a junk `TABLE`; AHB's fuses HTRANS+HSIZE which
+  already have correct enums) — a strict IMPROVEMENT, not byte-identical, needing a deliberate snapshot
+  refresh. No code → all oracles orthogonal by construction; `check_doctrines.sh` GREEN; KM 125→126. Report
+  `docs/research/generic-enum-conflation-measurement.md`; KM `[[generic-enum-conflation]]`.
+  `[[feedback_scoring_rigor]]` / `[[feedback_avoid_denylists_prefer_structural]]`.
+
+- ID: `KG-ISF-COMPLETENESS.5.i` · Status: `pending` (the next buildable code slice; best on a FRESH session
+  per the high-stakes gate-code rule — it changes wire-gold `.isf` bytes) · Goal: **the safe extraction-side
+  fallback name-gate + the emitter orphan-`(type)` fix.** (1) `derive_encoding_enum_name` (`evidence.rs:4457-4461`)
+  must NOT return a name that is merely a document-structure token — gate it positively (the candidate token
+  must independently be a declared signal / column header) and return `None` otherwise (a `None` fallback is
+  the EXISTING contract: both call sites `continue` → no enum minted → honest residual). Kills all 96 generic
+  enums AND the conflation (the merge is keyed on the shared name). (2) `isf_ir.rs:403-409` emits ALL
+  `self.types` unconditionally → a Lever-F-residualized enum still leaves an orphan `(type TABLE (bits 6))`
+  line; gate the types block by `emitted_enums()`. Acceptance (to earn): per-doc before/after `.isf` evidence
+  showing the junk `TABLE`/`FIGURE`/… enums removed and the real-named enums byte-identical; the 4 wire golds'
+  `.isf` lose only their junk `TABLE` (deliberate snapshot refresh, documented); `fsmgen --strict --check`
+  still 0 diagnostics on the affected docs (the renderable corpus stays 70/70 strict-clean); WIRE-BASED-100
+  `eval-extraction` scores byte-identical (orthogonal); `kg-bench 156/156`; `run_ci.sh` GREEN; the leaf carries
+  the enforced `TASK-ACCEPTANCE` checklist. ADR-0006 (structural rule, no name list).
+
+- ID: `KG-ISF-COMPLETENESS.5.ii` · Status: `deferred` (calibration-gated; needs its own precision/recall
+  measurement before code) · Goal: **the per-table member-quality gate** for the 271 real-named-but-junk enums
+  a name gate misses. At synthesis time (`synthesize_encoding_declarations_for_enum`, `evidence.rs:11898`),
+  refuse to emit an enum whose name column holds sentence fragments (identifier-shape / word-count / length
+  criterion) or whose value sequence restarts (a cross-table-merge signature). Trigger: a measurement
+  establishing a threshold that drops the 271 junk enums WITHOUT dropping the 222 clean ones (per-item
+  precision/recall, `[[feedback_scoring_rigor]]`). Deferred behind `.5.i` (the safe, higher-leverage step).
+
 ## Changelog
+
+- `2026-06-24`: **`.5` OPENED — generic-`TABLE` mega-enum conflation MEASURED (read-only, docs-only).**
+  Fresh-session PNT pivot off `CORPUS-COVERAGE.2` (the re-ingest tail is now empirically low-value — #32 was a
+  legal-exhibit excerpt — so per `[[feedback_not_complete_attack_substantive_gaps]]` the high-value move is
+  acting on a surfaced upstream extraction-precision lever). A delegated read-only agent + my own verification
+  localized the defect to EXTRACTION (`evidence.rs` enum-name fallback + `semantic.rs` merge-by-name, NOT the
+  emitter), measured it corpus-wide (56/78 docs / 96 generic + 271 real-named-but-junk enums; HBM2 `TABLE` = 7
+  fused tables), and established the decisive insight that a name-only gate is insufficient (the load-bearing
+  signal is member quality). Decision: GO, extraction-side, decomposed into `.5.i` (safe name-gate + emitter
+  orphan-`(type)` fix — the next code slice; deferred to a focused/fresh session because it changes wire-gold
+  `.isf` bytes) and `.5.ii` (member-quality gate, calibration-gated). WIRE-BASED-100 scores orthogonal; `.isf`
+  bytes change (strict improvement). No code → all oracles orthogonal; `check_doctrines.sh` GREEN; knowledge
+  map 125→126. Report `docs/research/generic-enum-conflation-measurement.md`; KM `[[generic-enum-conflation]]`.
 
 - `2026-06-24`: **`.3` CLOSED — bar #2 relation-completeness resolved (verification-only, no code change).**
   Fresh-session PNT pick (first eligible leaf of the first active tree). Re-census over all 78 persisted
