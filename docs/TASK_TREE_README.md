@@ -40,8 +40,9 @@ correctly without re-reading chat history.
 
 - **One file per top-level tree** under [`docs/tasks/`](tasks/), copied from
   [`docs/tasks/TEMPLATE.md`](tasks/TEMPLATE.md).
-- **`docs/TASK_TREE.md`** is the workflow spec + the `Active Task Trees` index
-  + the **PNT** (Pick-the-Next-Task) selection rules.
+- **`docs/TASK_TREE.md`** is the workflow spec + the derived complete task-tree catalog
+  + the **PNT** (Pick-the-Next-Task) selection rules. The catalog is navigation only;
+  `MEMORY.md` and each owning tree carry current execution state.
 - **Nodes** are containers (have children) or **leaves** (the only unit PNT may
   implement). The **current frontier** is the ordered set of pickable leaves.
 - **A commit that completes a leaf names the leaf ID** in its subject or first
@@ -60,7 +61,7 @@ correctly without re-reading chat history.
 
 ## Where to start
 
-1. [`docs/TASK_TREE.md`](TASK_TREE.md) — workflow + active index + PNT rules.
+1. [`docs/TASK_TREE.md`](TASK_TREE.md) — workflow + complete catalog + PNT rules.
 2. [`docs/tasks/ROADMAP-TASKTREE-COVERAGE.md`](tasks/ROADMAP-TASKTREE-COVERAGE.md)
    — the umbrella ensuring every roadmap milestone is owned + audited + locked
    to the code and the mdBook.

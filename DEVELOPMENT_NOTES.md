@@ -1,4 +1,17 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.i (`2026-08-08`) — task catalog as projection, not memory
+
+The canonical unit remains each `docs/tasks/*.md` file. The root catalog now projects only the fields
+needed to select one: stable tree id, closed metadata status, short H1 purpose, and direct route. It
+does not repeat the frontier, decisions, evidence, or commit history, so updates no longer create
+18-kilobyte rows or a second continuity ledger. `MEMORY.md` remains the single resume pointer.
+
+The generator owns only the marked catalog section and derives it deterministically from immediate
+task files; the surrounding workflow contract stays hand-authored. Its bounds align with the existing
+160-file task-evidence capacity. A separately authorized 462→512 whole-file line ceiling covers that
+one-row-per-tree model, while byte and line-width ceilings ratchet down sharply; the authority cannot
+be reused after this commit.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5b (`2026-08-08`) — collection dependency and scratch-locality rationale
 
 Collection containment is ordered by authority dependencies. The task catalog must become concise and

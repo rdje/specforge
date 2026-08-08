@@ -201,12 +201,12 @@ verification before correction.
   canonical content; settle only the completed four-ledger index's provisional health target.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c`
-  Status: `pending`
+  Status: `active`
   Children: `.5c.i`–`.5c.iii`
   Goal: replace incomplete or opaque collection retrieval with bounded direct navigation.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.i`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Goal: rebuild `docs/TASK_TREE.md` as a bounded complete catalog whose concise rows link every real
   task tree exactly once, exclude the author template from active work, and never mirror leaf history.
 
@@ -325,8 +325,9 @@ verification before correction.
 | — | `.4d` | `done` (`2026-08-08`) | Exact 1,920-record capsule, bounded 51-record snapshot, unchanged writer-managed trailer, and real writer-seam proof landed. |
 | — | `.4e` | `done` (`2026-08-08`) | Exact 1,350-record capsule, Purpose prologue plus 60-record current view, common archive completion, and all consumer proofs landed. |
 | — | `.5b` | `done` (`2026-08-08`) | Exact post-ledger collection/currency census, dependency graph, explicit child leaves, and scratch-locality finding landed without moving canonical content. |
-| 1 | `.5c.i` | `pending` | Replace the incomplete 18,932-byte-row task index with a concise complete catalog. |
-| 2 | `.5c.ii`–`.5i` | `pending` | Direct collection routes, Knowledge Map, roadmap/feedback migrations, currentness, maintained references, and closure. |
+| — | `.5c.i` | `done` (`2026-08-08`) | Derived 121-tree catalog, separate author-template route, seven fail-closed metadata/bound tests, unconditional checker, and transition-debt ratchet landed. |
+| 1 | `.5c.ii` | `pending` | Close direct decision/fact-card navigation and compose it with question-key retrieval. |
+| 2 | `.5c.iii`–`.5i` | `pending` | Remaining collection routes, generated map, roadmap/feedback, currentness, maintained references, and closure. |
 | 3 | `.6` | `pending` | Enforce repository-volume project-data locality and audit old project-owned residue. |
 | 5 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
@@ -528,12 +529,50 @@ verification before correction.
   (`.5b`).** Its final 58 lines / 3,283 bytes legitimately consumed the provisional 64-line / 4,096-
   byte target while remaining far below the 128-line / 8,192-byte enforcement ceiling. Health moves
   to 96 lines / 6,144 bytes; the enforcement ceiling is unchanged and no authority is banked.
+- `2026-08-08`: **The task catalog is derived navigation, not a status mirror (`.5c.i`).** One concise
+  row comes from each real task file's filename/H1, first metadata status, and title. `TEMPLATE.md` is
+  excluded from rows and linked separately for authors. Resume state remains in `MEMORY.md`; frontier,
+  decisions, evidence, and commit history remain in the owning tree.
+- `2026-08-08`: **Task catalog completeness and bounds are executable (`.5c.i`).** The checker rejects
+  unsafe filenames, filename/H1 mismatch, missing or unknown status, more than 160 tasks, a title over
+  240 bytes, a row over 512 bytes, a section over 49,152 bytes, missing/duplicate markers, or derive-
+  and-diff drift. Seven parser/bound cases and the 121-tree real catalog run unconditionally.
+- `2026-08-08`: **Line capacity is separately authorized while byte and width ceilings collapse
+  (`.5c.i`).** The resulting file is 375 lines / 27,228 bytes / max line 207, versus 362 / 167,583 /
+  18,932. The exact authority changes the transition-era line ceiling 462→512 to cover the registered
+  160-file task capacity plus fixed workflow, while bytes ratchet 200,295→65,536 and width
+  18,932→512; it is not reusable headroom.
 
 ## Blockers
 
 - None for `.0`–`.3`.
 - Later migrations may stop for an authority conflict, unique unclassified content, or an unprovable
   retrieval promise, exactly as required by the adopted doctrine.
+
+## `.5c.i` Bounded Complete Task Catalog
+
+The migration replaces historical-status prose in the index with data derived from each canonical
+task file:
+
+| Dimension | Before | After | Contract |
+| --- | ---: | ---: | --- |
+| real task routes | 117 of 121 | 121 of 121 | every `docs/tasks/*.md` except `TEMPLATE.md`, exactly once |
+| index lines | 362 | 375 | fixed workflow plus one concise row per real tree |
+| index bytes | 167,583 | 27,228 | 83.8% reduction |
+| maximum content line | 18,932 | 207 | 98.9% reduction; row ceiling 512 |
+
+`scripts/check_task_tree_catalog.pl` reads only safe immediate task filenames, requires filename/H1
+identity, extracts the first closed-vocabulary metadata status, escapes Markdown title separators,
+sorts by tree id, and derives the managed section. `--write` uses a same-directory atomic replacement;
+`--check` is derive-and-diff. `TEMPLATE.md` has a separate authoring link and is never counted as work.
+
+The checker is composed into `LIVE-DOC-SIZE` for the real repository and runs seven in-memory parser/
+bound cases before the 121-tree check. It owns a maximum of 160 rows, a 49,152-byte managed section,
+240-byte source titles, and 512-byte rendered rows. The generic surface checker independently owns
+the whole file's 512-line / 65,536-byte / 512-max-line limits.
+
+This changes navigation only. No task file, status, frontier, decision, verification record, or commit
+record is synthesized or moved; users open the canonical tree after selecting its concise route.
 
 ## `.5b` Collection/Projection Census And Dependency Plan
 
@@ -815,6 +854,8 @@ transition debt, not a fabricated freshness claim.
 | `2026-08-08` | `.4e` | capsule vs `git show 8310c3a1:RUST_CODEBASE_ANALYSIS.md`; staged resulting-tree `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | byte-identical capsule; green: 562 Markdown files / 29 surfaces; all four ledgers migrated; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; staged diff clean |
 | `2026-08-08` | `.5b` | resulting-tree live-size `--report`; `wc`/max-line collection census; process-substitution task/decision membership comparison; producer/managed-marker code census; exact off-volume scratch deletion + absence proof | dependency graph locked from measured state; tasks 122 files vs 117 links with four real omissions + template; decisions 9/9 linked; map 134 cards / 1,032,740 bytes; roadmap/feedback exact debt pinned; two accidental `/private/tmp/specforge-task-*.txt` files absent after exact deletion; no canonical collection content moved |
 | `2026-08-08` | `.5b` | Knowledge Map regeneration; staged resulting-tree `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check`; archive-index health/cap report | green: map 135 facts / 969 question keys; 563 Markdown files / 29 surfaces; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build pass; staged diff clean; archive index 58 lines / 3,283 bytes under 96/6,144 health and unchanged 128/8,192 ceiling |
+| `2026-08-08` | `.5c.i` | filename/H1 and metadata-status census; pre-migration process-substitution membership diff; `perl -c`; seven-case `--self-test`; guarded `--write`; derive-and-diff `--check`; post-migration membership/pressure census | 121/121 real tasks linked exactly once; four missing routes recovered; template separate; old 362 lines / 167,583 bytes / max 18,932 → 375 / 27,228 / 207; syntax, 7/7 cases, safe atomic writer, ordering, escaping, and independent generator bounds pass |
+| `2026-08-08` | `.5c.i` | Knowledge Map regeneration; staged resulting-tree catalog/checker; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | green: map 136 facts / 972 question keys; 564 Markdown files / 29 surfaces; task index normal; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build pass; staged diff clean |
 
 ## Commit Log
 
@@ -833,6 +874,7 @@ transition debt, not a fabricated freshness claim.
 | `.4d` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4d — migrate live status losslessly` | exact capsule + bounded bullet snapshot + unchanged generated trailer + writer proof |
 | `.4e` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4e — migrate Rust analysis losslessly` | exact capsule + Purpose prologue/current suffix + completed common archive + debt ratchet |
 | `.5b` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5b — decompose collection containment` | exact collection/currency census + dependency leaves + scratch-locality fact + archive-index health settlement |
+| `.5c.i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.i — derive the complete task catalog` | 121-tree bounded projection + fail-closed generator/checker + transition ratchet |
 
 ## Changelog
 
@@ -877,3 +919,6 @@ transition debt, not a fabricated freshness claim.
   transition and currentness obligation into dependency-ordered leaves, recorded the incomplete task
   catalog, preserved already-honest decision/book controls, and captured the exact-remediated
   off-volume diagnostic-scratch incident for `.6` enforcement.
+- `2026-08-08`: `.5c.i` replaced mirrored task-history rows with a deterministic 121-tree catalog,
+  recovered four missing routes, separated the author template, wired seven fail-closed cases plus
+  derive-and-diff into doctrine enforcement, and ratcheted the task index out of transition debt.

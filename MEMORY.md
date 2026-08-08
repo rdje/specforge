@@ -19,14 +19,14 @@
   run it too. Retrieval: `KNOWLEDGE_MAP.md`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.i` — rebuild the task-tree catalog as a
-  bounded complete one-hop index without mirrored execution history.
-- Current state: `.0`–`.4e`, `.5a`, and `.5b` are complete. The fifth doctrine governs 563 Markdown
-  files across 29 surfaces. `.5b` decomposed every collection/projection and currentness dependency;
-  the task catalog currently has 122 files, 117 unique links, four missing real trees, one author
-  template, and an 18,932-byte widest row. The archive-index enforcement cap remains unchanged.
-- Next action: define the concise task-row schema and derive a complete 121-real-tree catalog from
-  task metadata, then add a fail-closed membership/width verifier before replacing the current index.
-- In-flight uncommitted: `.5b` design/census, scratch-locality fact, and synchronized docs until commit;
-  none afterward.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.ii` — close direct decision/fact-card
+  navigation and compose it with question-key retrieval.
+- Current state: `.0`–`.5b` and `.5c.i` are complete. The fifth doctrine governs 564 Markdown files
+  across 29 surfaces. `docs/TASK_TREE.md` is a derived 121-real-tree catalog at 375 lines / 27,228
+  bytes / 207 max-line bytes; the template is separate, every task is linked once, and seven
+  fail-closed cases plus derive-and-diff run unconditionally. Task-index transition debt is closed.
+- Next action: reprove decision-index membership, design the bounded human fact-card index against
+  136 cards and generated question-key routes, then implement only the direct-navigation layer.
+- In-flight uncommitted: `.5c.i` generator, catalog migration, transition ratchet, and synchronized
+  docs until commit; none afterward.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

@@ -172,6 +172,19 @@ the fifth difference is the author template and must not appear as active work. 
 18,932 bytes because it mirrors execution history instead of acting as an index. No collection content
 moves in the planning slice; each migration has its own source/retrieval proof.
 
+#### Task catalog migration landed
+
+`docs/TASK_TREE.md` now derives one concise row for all 121 real task trees, with `TEMPLATE.md` linked
+separately for authors. The workflow contract remains outside the generated section. The index moved
+from 167,583 bytes and an 18,932-byte widest row to 27,228 bytes and a 207-byte widest row while adding
+the four missing real routes.
+
+The catalog intentionally omits execution narrative. Open the selected tree for its frontier,
+decisions, evidence, and commits; use `MEMORY.md` for the single resume pointer. The generator/checker
+validates filename/H1 identity, status vocabulary, ordering, escaping, membership, and independent
+title/row/section/count bounds. Its derive-and-diff and seven self-tests run on every live-document
+doctrine gate.
+
 Lines, bytes, file count, collection totals, and maximum content-line width are independent axes.
 Existing oversized ledgers are explicit transition debt: their measured baseline cannot move, and a
 separate bounded allowance exists only for the containment program's continuity updates until the

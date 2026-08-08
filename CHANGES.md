@@ -1,3 +1,14 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.i — bounded complete task catalog
+
+- Replaced the verbose 117-route active-tree table with a derived catalog covering all 121 real task
+  files exactly once; `TEMPLATE.md` remains a separate authoring route.
+- Added a deterministic Perl generator/checker with safe filename and H1 identity, closed status,
+  sorted order, Markdown escaping, title/row/section/count bounds, same-directory atomic writes, and
+  seven fail-closed parser/bound tests.
+- Wired derive-and-diff plus self-tests into the unconditional live-document doctrine path and
+  ratcheted the task index from transition debt to normal: 167,583→27,228 bytes and
+  18,932→207 maximum line bytes.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5b — collection/projection dependency plan
 
 - Measured every `.5` transition-debt, navigation, maintained-reference, and producer-currentness
