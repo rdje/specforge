@@ -1,3 +1,20 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.iii — enforce managed corpus-KB currentness
+
+- Reconciled the tracked validation projection with the last-reviewed `VALIDATION_SNAPSHOT.md`
+  boundary and refreshed the KG plane from all 156 tracked fixtures; 156 pass, zero fail, and the six
+  post-May fixtures now appear in the aggregate and affected family pages.
+- Added explicit `corpus-kb --validation-snapshot` production, mixed-authority rejection, a data-only
+  dependency/output contract, and a read-only verifier covering eleven managed Markdown regions,
+  paired JSON, 312 fixture files, seven producer regions, and separately hashed human synthesis.
+- Wired 15 fail-closed cases into `LIVE-DOC-SIZE`, ratcheted corpus-KB currency from debt to enforced,
+  and aligned ADR 0014, Knowledge Map, diagnostics, user guide, status, and mdBook. Canonical IR and
+  typed prior memory are unchanged. The aggregate page now warns at 81.4%; `.5i` owns disposition
+  before rollover without widening the ceiling.
+- Root-caused a same-volume signoff failure where repository-local `TMPDIR` made a PATH-probe fixture
+  discover the real `.venv-docling`, then poison the shared environment lock. Test-only dependency
+  injection and poison recovery restore 38/38 parallel source tests; production discovery is unchanged,
+  while `.6a` owns making repository-local temp/cache defaults unconditional in CI.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.ii — enforce tracked source-PDF registry currentness
 
 - Established the Git-indexed `.pdf` set below `corpus/` as the durable membership denominator; all

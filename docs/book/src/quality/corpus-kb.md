@@ -50,16 +50,17 @@ The first refreshable page families are:
 - `corpus_kb/prior_candidates/kg-fixture-candidates.md`
 - `corpus_kb/prior_candidates/kg-fixture-candidates.json`
 
-The validation page is refreshed from validation report sidecars:
+The tracked validation page is refreshed from the last-reviewed validation snapshot:
 
 ```bash
 cargo run --manifest-path Cargo.toml -- corpus-kb \
   --repo-root . \
-  generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/validation_report.json \
-  generated/intent_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/validation_report.json \
-  generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/validation_report.json \
-  generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/validation_report.json
+  --validation-snapshot VALIDATION_SNAPSHOT.md
 ```
+
+This mode reads only `VALIDATION_SNAPSHOT.md`'s projected-artifact section. It is mutually exclusive
+with positional validation-report inputs. Positional reports remain useful for local, unreviewed
+exploration, but they are not tracked currentness authority.
 
 The benchmark and fixture-family pages are refreshed by running the tracked KG fixture suite:
 
@@ -71,6 +72,9 @@ cargo run --manifest-path Cargo.toml -- corpus-kb \
 The command updates only managed blocks.
 Human-authored synthesis outside those blocks is preserved.
 
+The tracked KG denominator currently contains 156 fixtures. A complete refresh records 156 passed and
+zero failed fixtures; the separate `kg-bench` command is still the executable behavioral gate.
+
 The KG fixture projection records fixture paths, pass/fail status, and a review-facing fixture-family summary table.
 The same refresh also updates dedicated semantic/truthfulness pattern, typed-prior-memory, table, visual, state-machine, timing, infrastructure/polarity, and AMBA-family pages.
 It also updates a review-only prior-candidate page that names target `CorpusMemory` schema surfaces, required gates, and a family-level promotion gate review matrix without writing corpus memory.
@@ -80,6 +84,19 @@ It is a review surface, not a replacement for the executable `specforge kg-bench
 Fixture-local validation runs quietly during this projection, so the command output remains a concise corpus-KB refresh summary.
 Fixture-family labels summarize coverage only; they do not mutate canonical IR or typed prior memory.
 The typed prior-memory page is likewise only a fixture-family projection; it is not `generated/prior_memory/corpus_memory.json` and cannot write machine-usable priors.
+
+## Currentness gate
+
+Use the read-only report when auditing the tracked projection:
+
+```bash
+perl scripts/check_corpus_kb_currentness.pl --report
+```
+
+The checker binds the reviewed validation authority, every Git-indexed KG fixture file, all eleven
+managed Markdown regions, the paired JSON manifest, and the Rust producer regions. It hashes the human
+prefix and suffix around every managed block separately, so a refresh cannot make itself current by
+overwriting curated synthesis. The check runs unconditionally through the live-document doctrine gate.
 
 ## Promotion rule
 

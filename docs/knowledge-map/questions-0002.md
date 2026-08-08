@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > how are two-column bits | description tables extracted
+- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
+  > how are unknown tables reclassified by the VLM
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > how big does source_ir.json get / how does it scale with page count
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > how can I browse every SpecForge knowledge fact card by id or title
 - [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
@@ -252,6 +258,8 @@
   > how is an unless/except exception clause handled in a temporal condition
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
   > how is corpus SOURCE_PDF_REGISTRY currentness checked
+- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
+  > how is corpus_kb currentness checked
 - [task-tree-catalog](../knowledge/task-tree-catalog.md)
   > how is docs TASK_TREE kept complete without mirroring task history
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
@@ -289,11 +297,3 @@
   > how is the prose definitional signal grammar kept garbage-free without a denylist (ADR 0006)
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > how is the protocol initiator actor identified structurally without a name list
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > how is the purpose category different from document_class (richer 6-way semantic taxonomy vs coarse 4-way structural proxy; consumes document_class as one input, never replaces it)
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > how is the quoted-mode FSM extractor kept agnostic and false-positive-free (ADR 0006)
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > how is the required free disk for an ingest estimated
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > how is the single-word `<NAME> state` grammar kept false-positive-free without a keyword doc-gate (ADR 0006)

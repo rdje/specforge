@@ -466,6 +466,9 @@ pub struct LearnPriorsArgs {
 pub struct CorpusKbArgs {
     /// Validation report JSON files to project into the tracked corpus knowledge base
     pub validation_reports: Vec<PathBuf>,
+    /// Reviewed validation snapshot to project instead of ambient validation reports
+    #[arg(long)]
+    pub validation_snapshot: Option<PathBuf>,
     /// Repository root containing corpus_kb/
     #[arg(long, default_value = ".")]
     pub repo_root: PathBuf,
@@ -658,6 +661,7 @@ mod tests {
         };
 
         assert_eq!(args.repo_root, PathBuf::from("."));
+        assert_eq!(args.validation_snapshot, None);
         assert_eq!(args.kg_fixtures_root, None);
         assert!(args.kg_fixture.is_empty());
         assert_eq!(
@@ -683,6 +687,7 @@ mod tests {
         };
 
         assert!(args.validation_reports.is_empty());
+        assert_eq!(args.validation_snapshot, None);
         assert_eq!(
             args.kg_fixtures_root,
             Some(PathBuf::from("crates/specforge/test_data/kg_quality"))

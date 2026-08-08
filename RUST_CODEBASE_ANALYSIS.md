@@ -4,6 +4,26 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-08 — managed corpus-KB review authority and currentness)
+
+- **`corpus-kb` now distinguishes reviewed and ambient validation inputs.** `CorpusKbArgs` adds
+  `--validation-snapshot`; the command rejects simultaneous positional reports and snapshot input.
+  The reviewed parser consumes only `VALIDATION_SNAPSHOT.md`'s projected-artifact section, validates
+  unique complete records/findings, and renders the tracked validation managed block.
+- **Currentness remains read-only.** `scripts/check_corpus_kb_currentness.pl` does not invoke the Rust
+  writer. It binds the reviewed snapshot contract, 312 Git-indexed KG input files / 156 fixtures, all
+  eleven managed Markdown regions, paired JSON, and seven producer regions. The executable `kg-bench`
+  run remains the behavior leg; identity is not treated as a replacement for fixture execution.
+- **Boundary and risk:** the writer still mutates only corpus-KB managed outputs and does not write
+  canonical IR or typed prior memory. Human prefix/suffix identity is independently enforced. The
+  refreshed aggregate is 977 lines (81.4% of its governed ceiling), now an explicit `.5i` partition-
+  before-rollover obligation rather than a widened limit.
+- **Same-volume test compatibility:** the Docling PATH-ordering test now calls an internal diagnosis
+  seam with repo-local discovery disabled, preventing repository-local `TMPDIR` from exposing the real
+  ancestor venv. Production `inspect_docling_runtime()` still enables discovery. The shared environment
+  mutex recovers its guard after poison, avoiding dependent-failure cascades; 38 source tests pass at
+  16 threads on the repository volume.
+
 ## Session update (2026-06-24 ramp-up currency correction — size + command + IR-module + test inventory; `AUDIT-DOC-RECONCILE.3`)
 
 State verified directly from the working tree at HEAD `c212a6d0` (`origin/main..HEAD` = 63; push

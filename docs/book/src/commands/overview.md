@@ -30,7 +30,7 @@ Current surface:
 - `rescan-plan [--plan <plan>] [--execute] [--limit <n>] [--document-key <key>]`
 - `learn-priors <intent-ir>... [--dry-run]`
 - `corpus-cluster [--evidence-root <root>] [--threshold <0.0-1.0>]`
-- `corpus-kb [validation-report]... [--kg-fixtures-root <fixture-root>] [--kg-fixture <fixture>]`
+- `corpus-kb [validation-report]... [--validation-snapshot <reviewed-snapshot>] [--kg-fixtures-root <fixture-root>] [--kg-fixture <fixture>]`
 - `clean [--generated-root <root>] [--scope source-normalized|document|all-generated] [--document-key <key>] [--execute]`
 
 Only `--target isf` materializes an adapter artifact.
@@ -123,7 +123,7 @@ cargo run --manifest-path Cargo.toml -- corpus-cluster
 If you want to refresh the tracked corpus knowledge-base synthesis pages:
 
 ```bash
-cargo run --manifest-path Cargo.toml -- corpus-kb generated/intent_ir/.../validation_report.json
+cargo run --manifest-path Cargo.toml -- corpus-kb --validation-snapshot VALIDATION_SNAPSHOT.md
 cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality
 ```
 

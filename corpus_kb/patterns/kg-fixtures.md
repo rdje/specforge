@@ -15,8 +15,8 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 
 - source: `kg-bench fixtures`
 - selected_family_labels: `actor connectivity`, `semantic role arbitration`, `negative knowledge`, `truthfulness negatives and cautions`, `residuals and caveats`
-- fixtures_total: `86`
-- fixtures_passed: `86`
+- fixtures_total: `88`
+- fixtures_passed: `88`
 - fixtures_failed: `0`
 
 | fixture | status | matched families | path |
@@ -51,6 +51,7 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `graph_direction_coverage_incomplete_negative` | `pass` | `actor connectivity`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/graph_direction_coverage_incomplete_negative/fixture.json` |
 | `graph_direction_same_actor_conflict_negative` | `pass` | `actor connectivity`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/graph_direction_same_actor_conflict_negative/fixture.json` |
 | `interface_signal_conflict_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/interface_signal_conflict_negative/fixture.json` |
+| `message_field_register_table_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/message_field_register_table_negative/fixture.json` |
 | `multi_producer_conflict_negative` | `pass` | `actor connectivity`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/multi_producer_conflict_negative/fixture.json` |
 | `name_only_semantic_noise_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/name_only_semantic_noise_negative/fixture.json` |
 | `negative_knowledge_prior_guided_connectivity_conflict_caution_gold` | `pass` | `actor connectivity`, `negative knowledge`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_connectivity_conflict_caution_gold/fixture.json` |
@@ -78,6 +79,7 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `semantic_ready_sink_prior_guided_phrase_without_prior_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/semantic_ready_sink_prior_guided_phrase_without_prior_negative/fixture.json` |
 | `semantic_valid_prior_guided_phrase_gold` | `pass` | `semantic role arbitration` | `crates/specforge/test_data/kg_quality/semantic_valid_prior_guided_phrase_gold/fixture.json` |
 | `semantic_valid_prior_guided_phrase_without_prior_negative` | `pass` | `semantic role arbitration`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/semantic_valid_prior_guided_phrase_without_prior_negative/fixture.json` |
+| `signal_presence_malformed_refusal_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/signal_presence_malformed_refusal_negative/fixture.json` |
 | `signal_table_inventory_authority_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/signal_table_inventory_authority_negative/fixture.json` |
 | `source_column_bogus_actor_attribution_negative` | `pass` | `actor connectivity`, `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/source_column_bogus_actor_attribution_negative/fixture.json` |
 | `source_vlm_enrichment_surface_negative` | `pass` | `truthfulness negatives and cautions` | `crates/specforge/test_data/kg_quality/source_vlm_enrichment_surface_negative/fixture.json` |

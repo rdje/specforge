@@ -177,6 +177,17 @@ struct ValidationFindingProjection {
     report: ValidationReportRecord,
 }
 
+#[derive(Debug, PartialEq, Eq)]
+struct ReviewedValidationProjection {
+    document_key: String,
+    artifact_path: String,
+    stage: String,
+    artifact_fingerprint: String,
+    score: String,
+    summary: String,
+    findings: Vec<String>,
+}
+
 #[derive(Debug)]
 struct KgFixtureProjection {
     outcome: KgBenchFixtureOutcome,
@@ -268,9 +279,18 @@ struct PriorCandidateGateManifest {
 }
 
 pub fn run(args: CorpusKbArgs) -> Result<()> {
-    if args.validation_reports.is_empty() && args.kg_fixtures_root.is_none() {
+    if args.validation_reports.is_empty()
+        && args.validation_snapshot.is_none()
+        && args.kg_fixtures_root.is_none()
+    {
         return Err(AppError::InvalidStageArtifact(
-            "corpus-kb requires at least one validation report or --kg-fixtures-root".to_string(),
+            "corpus-kb requires at least one validation report, --validation-snapshot, or --kg-fixtures-root"
+                .to_string(),
+        ));
+    }
+    if !args.validation_reports.is_empty() && args.validation_snapshot.is_some() {
+        return Err(AppError::InvalidStageArtifact(
+            "validation reports and --validation-snapshot are mutually exclusive".to_string(),
         ));
     }
     if !args.kg_fixture.is_empty() && args.kg_fixtures_root.is_none() {
@@ -286,6 +306,12 @@ pub fn run(args: CorpusKbArgs) -> Result<()> {
             refresh_validation_findings_page(&args.repo_root, &args.validation_reports)?;
         println!("refreshed_page: {}", page_path.display());
         println!("validation_reports: {}", args.validation_reports.len());
+    }
+
+    if let Some(snapshot_path) = args.validation_snapshot.as_deref() {
+        let page_path = refresh_reviewed_validation_findings_page(&args.repo_root, snapshot_path)?;
+        println!("refreshed_page: {}", page_path.display());
+        println!("validation_snapshot: {}", snapshot_path.display());
     }
 
     if let Some(fixtures_root) = args.kg_fixtures_root.as_deref() {
@@ -321,6 +347,34 @@ fn refresh_validation_findings_page(
 
     let existing = fs::read_to_string(&page_path).unwrap_or_else(|_| default_validation_page());
     let managed_block = render_validation_findings_block(&entries);
+    let updated = replace_managed_block(
+        &existing,
+        &managed_block,
+        VALIDATION_MANAGED_START,
+        VALIDATION_MANAGED_END,
+        "## Managed Validation Projection",
+    )?;
+    fs::write(&page_path, updated)?;
+
+    Ok(page_path)
+}
+
+fn refresh_reviewed_validation_findings_page(
+    repo_root: &Path,
+    snapshot_path: &Path,
+) -> Result<PathBuf> {
+    let snapshot = fs::read_to_string(snapshot_path)?;
+    let entries = parse_reviewed_validation_snapshot(&snapshot)?;
+    let page_path = repo_root
+        .join("corpus_kb")
+        .join("failures")
+        .join("validation-findings.md");
+    if let Some(parent) = page_path.parent() {
+        fs::create_dir_all(parent)?;
+    }
+
+    let existing = fs::read_to_string(&page_path).unwrap_or_else(|_| default_validation_page());
+    let managed_block = render_reviewed_validation_findings_block(&entries);
     let updated = replace_managed_block(
         &existing,
         &managed_block,
@@ -521,6 +575,156 @@ fn render_validation_findings_block(entries: &[ValidationFindingProjection]) -> 
                 output.push_str(&escape_markdown_line(&finding.summary));
                 output.push('\n');
             }
+        }
+        output.push('\n');
+    }
+
+    output.push_str(VALIDATION_MANAGED_END);
+    output.push('\n');
+    output
+}
+
+fn parse_reviewed_validation_snapshot(snapshot: &str) -> Result<Vec<ReviewedValidationProjection>> {
+    let (_, projected) = snapshot
+        .split_once("## Projected Artifacts\n")
+        .ok_or_else(|| {
+            AppError::InvalidStageArtifact(
+                "reviewed validation snapshot has no `## Projected Artifacts` section".to_string(),
+            )
+        })?;
+    let projected = projected.strip_prefix("### ").ok_or_else(|| {
+        AppError::InvalidStageArtifact(
+            "reviewed validation snapshot has no projected artifact records".to_string(),
+        )
+    })?;
+
+    let mut entries = Vec::new();
+    let mut document_keys = BTreeSet::new();
+    for raw_chunk in projected.split("\n### ") {
+        let chunk = format!("### {raw_chunk}");
+        let heading = chunk.lines().next().unwrap_or_default();
+        let stage = heading
+            .strip_suffix(')')
+            .and_then(|value| value.rsplit_once(" (").map(|(_, stage)| stage))
+            .filter(|value| !value.is_empty())
+            .ok_or_else(|| {
+                AppError::InvalidStageArtifact(format!(
+                    "reviewed validation snapshot has malformed artifact heading `{heading}`"
+                ))
+            })?
+            .to_string();
+        let document_key = reviewed_snapshot_backtick_field(&chunk, "document_key")?;
+        if !document_keys.insert(document_key.clone()) {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "reviewed validation snapshot repeats document_key `{document_key}`"
+            )));
+        }
+        let artifact_path = reviewed_snapshot_backtick_field(&chunk, "artifact_path")?;
+        let artifact_fingerprint =
+            reviewed_snapshot_backtick_field(&chunk, "artifact_fingerprint")?;
+        let score = reviewed_snapshot_backtick_field(&chunk, "score")?;
+        let summary = reviewed_snapshot_plain_field(&chunk, "summary")?;
+        let (_, findings_text) = chunk.split_once("- findings:\n").ok_or_else(|| {
+            AppError::InvalidStageArtifact(format!(
+                "reviewed validation snapshot artifact `{document_key}` has no findings list"
+            ))
+        })?;
+        let findings = findings_text
+            .lines()
+            .take_while(|line| line.starts_with("  - "))
+            .map(|line| line[4..].to_string())
+            .collect::<Vec<_>>();
+        if findings.is_empty() {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "reviewed validation snapshot artifact `{document_key}` has an empty findings list"
+            )));
+        }
+
+        entries.push(ReviewedValidationProjection {
+            document_key,
+            artifact_path,
+            stage,
+            artifact_fingerprint,
+            score,
+            summary,
+            findings,
+        });
+    }
+    if entries.is_empty() {
+        return Err(AppError::InvalidStageArtifact(
+            "reviewed validation snapshot projected no artifacts".to_string(),
+        ));
+    }
+    Ok(entries)
+}
+
+fn reviewed_snapshot_backtick_field(chunk: &str, field: &str) -> Result<String> {
+    let prefix = format!("- {field}: `");
+    let line = chunk
+        .lines()
+        .find(|line| line.starts_with(&prefix))
+        .ok_or_else(|| {
+            AppError::InvalidStageArtifact(format!(
+                "reviewed validation snapshot artifact has no `{field}` field"
+            ))
+        })?;
+    let value = line
+        .strip_prefix(&prefix)
+        .and_then(|value| value.strip_suffix('`'))
+        .filter(|value| !value.is_empty())
+        .ok_or_else(|| {
+            AppError::InvalidStageArtifact(format!(
+                "reviewed validation snapshot artifact has malformed `{field}` field"
+            ))
+        })?;
+    Ok(value.to_string())
+}
+
+fn reviewed_snapshot_plain_field(chunk: &str, field: &str) -> Result<String> {
+    let prefix = format!("- {field}: ");
+    let value = chunk
+        .lines()
+        .find_map(|line| line.strip_prefix(&prefix))
+        .filter(|value| !value.is_empty())
+        .ok_or_else(|| {
+            AppError::InvalidStageArtifact(format!(
+                "reviewed validation snapshot artifact has no `{field}` field"
+            ))
+        })?;
+    Ok(value.to_string())
+}
+
+fn render_reviewed_validation_findings_block(entries: &[ReviewedValidationProjection]) -> String {
+    let mut output = String::new();
+    output.push_str(VALIDATION_MANAGED_START);
+    output.push('\n');
+    output.push_str(
+        "<!-- This reviewed block is refreshed from `VALIDATION_SNAPSHOT.md` by `specforge corpus-kb --validation-snapshot`. -->\n\n",
+    );
+
+    for entry in entries {
+        output.push_str("### ");
+        output.push_str(&entry.document_key);
+        output.push('\n');
+        output.push_str("- artifact_path: `");
+        output.push_str(&entry.artifact_path);
+        output.push_str("`\n");
+        output.push_str("- stage: `");
+        output.push_str(&entry.stage);
+        output.push_str("`\n");
+        output.push_str("- artifact_fingerprint: `");
+        output.push_str(&entry.artifact_fingerprint);
+        output.push_str("`\n");
+        output.push_str("- score: `");
+        output.push_str(&entry.score);
+        output.push_str("`\n");
+        output.push_str("- summary: ");
+        output.push_str(&escape_markdown_line(&entry.summary));
+        output.push_str("\n- findings:\n");
+        for finding in &entry.findings {
+            output.push_str("  - ");
+            output.push_str(&escape_markdown_line(finding));
+            output.push('\n');
         }
         output.push('\n');
     }
@@ -1486,6 +1690,7 @@ Keep this benchmark note.\n\n\
         let report_path = tempdir.path().join("nonexistent_report.json");
         let error = run(CorpusKbArgs {
             validation_reports: vec![report_path],
+            validation_snapshot: None,
             repo_root: tempdir.path().to_path_buf(),
             kg_fixtures_root: None,
             kg_fixture: vec![PathBuf::from("toy_fixture")],
@@ -1499,6 +1704,7 @@ Keep this benchmark note.\n\n\
         let tempdir = tempdir().expect("tempdir");
         let error = run(CorpusKbArgs {
             validation_reports: Vec::new(),
+            validation_snapshot: None,
             repo_root: tempdir.path().to_path_buf(),
             kg_fixtures_root: None,
             kg_fixture: Vec::new(),
@@ -1513,12 +1719,56 @@ Keep this benchmark note.\n\n\
         let tempdir = tempdir().expect("tempdir");
         let error = run(CorpusKbArgs {
             validation_reports: vec![tempdir.path().join("validation_report.json")],
+            validation_snapshot: None,
             repo_root: tempdir.path().to_path_buf(),
             kg_fixtures_root: None,
             kg_fixture: vec![PathBuf::from("toy_fixture")],
         })
         .expect_err("kg fixture selectors require a fixture root");
 
+        assert!(matches!(error, AppError::InvalidStageArtifact(_)));
+    }
+
+    #[test]
+    fn reviewed_validation_snapshot_parser_and_renderer_preserve_reviewed_findings() -> Result<()> {
+        let snapshot = "# Snapshot\n\n## Projected Artifacts\n### Protocol.pdf (intent_ir)\n- document_key: `protocol`\n- artifact_path: `generated/intent_ir/protocol/intent_ir.json`\n- artifact_fingerprint: `0123456789abcdef`\n- score: `71/100 GOOD`\n- summary: IntentIR review with 2 finding(s)\n- findings:\n  - [warning:quality_score] score finding\n  - [info:knowledge_graph] graph finding\n";
+
+        let entries = parse_reviewed_validation_snapshot(snapshot)?;
+        assert_eq!(entries.len(), 1);
+        assert_eq!(entries[0].document_key, "protocol");
+        assert_eq!(entries[0].stage, "intent_ir");
+        assert_eq!(entries[0].score, "71/100 GOOD");
+        assert_eq!(entries[0].findings.len(), 2);
+
+        let rendered = render_reviewed_validation_findings_block(&entries);
+        assert!(rendered.contains("refreshed from `VALIDATION_SNAPSHOT.md`"));
+        assert!(
+            rendered.contains("- artifact_path: `generated/intent_ir/protocol/intent_ir.json`")
+        );
+        assert!(rendered.contains("  - [info:knowledge_graph] graph finding"));
+        assert!(!rendered.contains("report_path"));
+        Ok(())
+    }
+
+    #[test]
+    fn reviewed_validation_snapshot_parser_rejects_missing_findings() {
+        let snapshot = "## Projected Artifacts\n### Protocol.pdf (intent_ir)\n- document_key: `protocol`\n- artifact_path: `generated/intent_ir/protocol/intent_ir.json`\n- artifact_fingerprint: `0123456789abcdef`\n- score: `71/100 GOOD`\n- summary: review\n";
+        let error = parse_reviewed_validation_snapshot(snapshot)
+            .expect_err("missing findings must fail closed");
+        assert!(matches!(error, AppError::InvalidStageArtifact(_)));
+    }
+
+    #[test]
+    fn corpus_kb_rejects_mixed_validation_authorities() {
+        let tempdir = tempdir().expect("tempdir");
+        let error = run(CorpusKbArgs {
+            validation_reports: vec![tempdir.path().join("validation_report.json")],
+            validation_snapshot: Some(tempdir.path().join("VALIDATION_SNAPSHOT.md")),
+            repo_root: tempdir.path().to_path_buf(),
+            kg_fixtures_root: None,
+            kg_fixture: Vec::new(),
+        })
+        .expect_err("reviewed snapshot and ambient reports must not be mixed");
         assert!(matches!(error, AppError::InvalidStageArtifact(_)));
     }
 

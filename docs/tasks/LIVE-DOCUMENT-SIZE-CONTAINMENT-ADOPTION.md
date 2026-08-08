@@ -266,7 +266,7 @@ verification before correction.
   visible while complete historical conversation remains retrievable.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g`
-  Status: `active`
+  Status: `done` (`2026-08-08`)
   Children: `.5g.i`–`.5g.iii`
   Goal: replace labelled currency debt with non-mutating producer-aware oracles.
 
@@ -281,7 +281,7 @@ verification before correction.
   against the tracked corpus without reading host-local source libraries.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.iii`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Goal: make every `corpus_kb/` managed block reproducible/current against declared tracked inputs while
   preserving human synthesis and forbidding canonical-IR or typed-prior mutation.
 
@@ -294,14 +294,23 @@ verification before correction.
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5i`
   Status: `pending`
   Goal: close `.5` with a complete membership/navigation/currentness census, zero collection/projection
-  transition debt, bounded indexes, mdBook/code/roadmap alignment, and full doctrine/CI retrieval drills.
+  transition debt, bounded indexes, mdBook/code/roadmap alignment, full doctrine/CI retrieval drills,
+  and explicit disposition of the corpus-KB aggregate warning before its 90% rollover threshold.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.6`
   Status: `pending`
+  Children: `.6a`
   Goal: implement the project-data-locality contract: repository-derived artifact/cache/temp roots;
   production and test temporary workspaces on the repository volume; explicit read-only shared-toolchain
   exception for `~/.rustup` and `~/.cargo`; submodule-boundary environment control; residue census and
   copy/verify/use/delete for exact project-owned off-volume data only.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.6a`
+  Status: `pending`
+  Goal: make canonical CI establish repository-derived temp/cache roots by default, audit every Rust
+  and non-Rust test workspace for same-volume containment, and remove reliance on callers remembering
+  environment overrides. The `.5g.iii` signoff fix already makes Docling source tests parallel-safe
+  under repository-local `TMPDIR`.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7`
   Status: `pending`
@@ -336,10 +345,10 @@ verification before correction.
 | — | `.5f.ii` | `done` (`2026-08-08`) | Exact capsule, 81-line zero-open current channel, six evidence-linked closed routes, migrated enforcement, and three-surface debt ratchet landed atomically. |
 | — | `.5g.i` | `done` (`2026-08-08`) | The exact reviewed boundary, producer regions, live projection, ten fail-closed cases, and unconditional read-only currency oracle are enforced. |
 | — | `.5g.ii` | `done` (`2026-08-08`) | Exact 22-PDF Git membership, registry paths/keys/directories/signatures, Rust derivation seams, and 13 fail-closed cases are enforced. |
-| 1 | `.5g.iii` | `pending` | Make every managed corpus-KB block reproducible against declared tracked inputs without changing human synthesis. |
-| 2 | `.5h`–`.5i` | `pending` | Maintained-reference audit and final collection/projection closure. |
-| 3 | `.6` | `pending` | Enforce repository-volume project-data locality and audit old project-owned residue. |
-| 4 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
+| — | `.5g.iii` | `done` (`2026-08-08`) | Reviewed-snapshot validation, 156/156 fixture projections, all managed/human regions, paired JSON, producer seams, and 15 fail-closed cases are enforced. |
+| 1 | `.5h`–`.5i` | `pending` | Maintained-reference audit and final collection/projection closure, including corpus-KB warning disposition. |
+| 2 | `.6` / `.6a` | `pending` | Enforce repository-volume project-data locality, fix repo-local-temp test discovery/mutex cascades, and audit old project-owned residue. |
+| 3 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
 ## Decisions
 
@@ -1355,6 +1364,89 @@ current snapshots with missing-verifier transition debt rather than fabricated f
 `.5g.i` later bound validation to its reviewed producer boundary; `.5g.ii` bound the manually maintained
 registry to Git-indexed corpus membership and the code-owned key derivation.
 
+## `.5g.iii` Managed Corpus-KB Currentness
+
+### Foundational drift at entry
+
+The collection contains 24 Markdown pages, of which eleven carry real managed blocks: one validation
+projection, one complete KG benchmark projection, eight fixture-family projections, and one prior-
+candidate projection paired with a generated JSON manifest. The remaining Markdown is human synthesis,
+schema, and bounded navigation and must not be overwritten by a currency check.
+
+Two independent contradictions make exact identity alone insufficient:
+
+1. `corpus_kb/benchmarks/kg-fixtures.md` and all dependent family/prior pages were last refreshed from
+   150 passing fixtures. The tracked `crates/specforge/test_data/kg_quality/` denominator now contains
+   156 passing fixtures. The exact missing set is `axi_write_address_timing_gold`,
+   `extraction_quality_gauge_persisted_gold`, `message_field_register_table_negative`,
+   `message_field_table_gold`, `signal_presence_malformed_refusal_negative`, and
+   `signal_presence_matrix_gold`; their commits landed from 2026-05-15 through 2026-06-11 after the
+   benchmark page's 2026-05-07 refresh.
+2. `corpus_kb/failures/validation-findings.md` publishes scores `85/90/94/90`, while the now-enforced
+   owner-reviewed validation boundary publishes `71/74/65/67`. The corpus page was produced from a
+   different, later local-report boundary but declares no independent review/input contract. Presenting
+   both as undifferentiated current tracked validation is a time-layer collision.
+
+The existing `corpus-kb` command is mutating: validation mode rewrites one managed page; KG-fixture
+mode executes all fixtures, rewrites the aggregate, eight family pages, the prior-candidate page, and
+its JSON manifest. It preserves prose outside markers but has no check/dry-run mode. Doctrine currentness
+must therefore replay only in a guarded repository-local copy or use a read-only exact dependency/output
+oracle; it must never invoke the writer against the tracked roots.
+
+### Required resolution
+
+The KG plane must be refreshed from the complete tracked fixture set, with all human synthesis outside
+markers byte-identical. Its currency contract must bind exact tracked fixture membership/content,
+managed Markdown and JSON outputs, producer regions, family/prior classification, and the separately
+executed `kg-bench` pass. The validation page must either align with ADR 0012's reviewed boundary or
+declare a distinct reviewed authority that makes its differing scores honest; ambient local reports
+cannot silently decide. A non-mutating checker must reject missing/extra fixtures, output or marker
+drift, producer/input drift, unsafe paths, schema/control failures, mutation of human regions, and
+fixture residue before `corpus_knowledge_base.currency` can leave transition debt.
+
+### Implemented boundary
+
+ADR 0014 makes the reviewed `VALIDATION_SNAPSHOT.md` projection and the Git-indexed KG fixture tree
+the two tracked inputs. `corpus-kb --validation-snapshot VALIDATION_SNAPSHOT.md` parses the reviewed
+artifact section directly and rejects mixed ambient-report authority. The complete KG refresh now
+records 156/156 passing fixtures across the aggregate, eight family pages, and review-only prior-
+candidate Markdown/JSON; only the five stale KG blocks changed. Exact pre/post hashes prove all eleven
+human prefixes and suffixes remained byte-identical.
+
+`doctrine/live_document_size/corpus_kb.json` binds 312 tracked fixture files / 991,702 bytes / 156
+fixtures, all eleven managed Markdown regions, paired JSON, reviewed-validation semantics, and seven
+Rust producer regions. `scripts/check_corpus_kb_currentness.pl` is read-only and runs 15 guarded
+repository-volume cases covering valid state plus schema, unsafe path, missing/duplicate marker,
+managed/human/JSON drift, missing/extra/content-drifted fixture, validation-authority drift, producer
+drift, denominator drift, and forbidden canonical mutation. The surface currency record is enforced.
+
+The truthful refresh raises `corpus_kb/benchmarks/kg-fixtures.md` to 977/1,200 governed lines (81.4%),
+crossing the warning but not the 90% rollover milestone. No ceiling was widened. `.5i` must disposition
+this pressure—partitioning before rollover if `.5h` does not reduce it—during final collection closure.
+
+Signoff also exposed a pre-existing locality-sensitive test defect. With `TMPDIR` below `generated/`,
+the Docling PATH-probe fixture's temporary working directory is a descendant of the real repository;
+ancestor discovery therefore finds the real `.venv-docling` and returns `RepoLocalVenv` instead of the
+expected `PathProbe`. That first assertion poisons `test_support::env_var_lock`, producing ten dependent
+failures. The focused 16-thread source test reproduced 27 pass / 11 fail. A bounded signoff fix injects
+the repo-search choice into the PATH-ordering test and makes the shared test lock recover after a
+poisoned holder; the same 16-thread source set is now 38/38 green under repository-local `TMPDIR`.
+Production runtime discovery is unchanged. `.6a` owns making same-volume roots canonical in CI and
+auditing the remaining test/tool workspaces rather than relying on caller environment.
+
+### Acceptance Checklist (enforced) — `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.iii`
+
+- [x] **ROOT CAUSE (WHY + WHERE)** — tracked KG pages lagged six post-refresh fixtures (150 vs 156),
+  while the validation page exposed unreviewed `85/90/94/90` local state beside ADR 0012's reviewed
+  `71/74/65/67`; `corpus_kb.rs` had only mutating report/fixture writers and no currentness mode.
+- [x] **ADDRESSED (verified)** — the explicit reviewed-snapshot producer, complete 156-fixture refresh,
+  exact input/output/human/producer contract, 15/15 read-only mutation cases, unconditional doctrine
+  wiring, ADR/fact/readers, and currency ratchet agree with zero fixture residue.
+- [x] **NO REGRESSION** — focused 34-test corpus-KB suite, explicit 156/156 producer replay, human-region
+  hashes, 38/38 parallel Docling/source locality tests, formatting, warning-deny Clippy/tests, rustdoc,
+  repository-local mdBook, doctrine/catalog/map derivations, and diff hygiene pass; production Docling
+  discovery, canonical IR, and typed prior memory are unchanged.
+
 ### Registry and checker contract for `.3b`
 
 - Project-owned data lives at `doctrine/live_document_size/surfaces.jsonl`. Record zero is a registry
@@ -1434,6 +1526,8 @@ registry to Git-indexed corpus membership and the code-owned key derivation.
 | `2026-08-08` | `.5g.i` | staged resulting-tree contract/checker/ADR/fact/producer/readers/surface ratchet; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check`; exact book aggregate | green: doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, book 33 files / 12,215 lines / 732,677 bytes, and staged diff pass; validation data and canonical artifacts are unchanged, currency debt is closed, and no ceiling-increase authority is requested |
 | `2026-08-08` | `.5g.ii` | exact registry/Git/path/key/directory/signature probe; Rust derivation-region identities; Perl/Bash syntax; 13-case `--self-test`; real `--check`/`--report`; residue census; composed live-size gate | green: 22 registry rows == 22 Git-indexed corpus PDFs with zero missing/extra/bad items; root 63 lines / 7,374 bytes / max 278 / `0ea6…12e6` stays below warning; two regions/three seams pass; 13/13 cases clean without residue; currency executes under all 34 surfaces |
 | `2026-08-08` | `.5g.ii` | staged resulting-tree contract/checker/ADR/fact/readers/surface ratchet; no-PDF/no-Rust-source scope proof; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check`; exact book aggregate | green: doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, 141-card catalog, 142 facts / 998 unique questions, book 33 files / 12,250 lines / 734,934 bytes, and staged diff pass; source-registry currency debt is closed without changing rows, PDFs, Rust, extraction behavior, or roadmap direction |
+| `2026-08-08` | `.5g.iii` | exact managed/human-region and tracked-fixture census; guarded producer replay; Perl/Rust focused tests; real `kg-bench`; currentness `--check`/`--report`/15-case self-test; residue cleanup | green: 312 tracked input files / 156 fixtures / 156 passed; validation aligns with reviewed `71/74/65/67`; eleven managed Markdown regions plus paired JSON and seven producer regions agree; all human prefixes/suffixes are byte-identical; only five stale KG blocks plus validation changed; replay/temp roots removed; current Cargo incremental `.bin` caches retained |
+| `2026-08-08` | `.5g.iii` | repository-local-TMPDIR failure reproduction/root cause; 16-thread source rerun after bounded test-isolation fix; five-doctrine gate; parallel same-volume `bash scripts/run_ci.sh`; exact book aggregate; diff hygiene | first run exposed PATH-probe selection of the ancestor `.venv-docling` and mutex-poison cascade (27 pass / 11 fail focused); after explicit repo-search injection and poison recovery, source tests 38/38 and full suite 1,727 passed / 5 ignored; formatting, warning-deny Clippy, rustdoc, mdBook 33 files / 12,273 lines / 736,130 bytes, 143-card catalog, 144 facts / 1,007 questions, and doctrines pass; no production discovery/canonical-IR/prior-memory change |
 
 ## Commit Log
 
@@ -1463,6 +1557,7 @@ registry to Git-indexed corpus membership and the code-owned key derivation.
 | `.5f.ii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.ii — migrate the bounded FSMGen feedback channel` | exact capsule + 81-line current root + zero-open/six-closed routes + manifest/index + reader/surface ratchet |
 | `.5g.i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.i — enforce reviewed validation currentness` | tracked reviewed-boundary contract + non-mutating ten-case oracle + producer/live projection proof + debt ratchet |
 | `.5g.ii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.ii — enforce tracked source-PDF registry currentness` | Git-indexed 22-PDF denominator + key/path/signature oracle + derivation seams + debt ratchet |
+| `.5g.iii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.iii — enforce managed corpus-KB currentness` | reviewed validation projection + 156-fixture refresh + exact managed/human/output/producer oracle + debt ratchet |
 
 ## Changelog
 
@@ -1552,3 +1647,8 @@ registry to Git-indexed corpus membership and the code-owned key derivation.
   proved exact 22-row membership and key/path/directory/signature agreement, pinned the Rust derivation
   seams, added a 13-case read-only oracle, aligned durable readers, and ratcheted registry currency from
   debt to enforced without changing a registry row, PDF, Rust source, extraction behavior, or roadmap.
+- `2026-08-08`: `.5g.iii` reconciled tracked corpus validation to the reviewed snapshot, refreshed all
+  KG projections from 156/156 fixtures, proved every human region unchanged, added explicit reviewed-
+  snapshot production plus a 15-case dependency/output/producer oracle, and ratcheted corpus-KB
+  currency from debt to enforced. The resulting 81.4% aggregate warning is retained for `.5i` rather
+  than hidden by a ceiling increase.

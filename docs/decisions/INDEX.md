@@ -25,6 +25,7 @@ changed* lives in git (layer D), not here.
 | [0011](0011-bounded-fsmgen-feedback-channel.md) | FSMGen feedback keeps a bounded current channel over exact correspondence history | 2026-08-08 | accepted | documentation, feedback, archive, current-truth |
 | [0012](0012-reviewed-validation-snapshot-boundary.md) | Tracked validation is the last reviewed projection, not ambient local artifact state | 2026-08-08 | accepted | validation, projection, review, current-truth |
 | [0013](0013-git-indexed-source-pdf-registry-authority.md) | Git-indexed corpus PDFs define source-registry membership | 2026-08-08 | accepted | corpus, PDF, registry, currentness |
+| [0014](0014-corpus-kb-managed-currentness-authority.md) | Tracked inputs and reviewed validation define corpus-KB currentness | 2026-08-08 | accepted | corpus-kb, validation, kg-bench, currentness |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /

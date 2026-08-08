@@ -19,13 +19,16 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.ii` — complete and verified, pending its
-  required per-leaf commit.
-- Current state: `.0`–`.5g.ii` are complete. All 22 Git-indexed corpus PDFs map exactly once to the
-  63-line registry with code-derived keys, paths, parent directories, and PDF signatures; the pinned
-  Rust seams and 13-case read-only oracle run unconditionally. Full doctrines, Clippy, 1,724 Rust tests,
-  rustdoc, and mdBook are green; no registry row, PDF, Rust source, or extraction behavior changed.
-- Next action: commit `.5g.ii`, clear/verify `git_message_brief.txt`, then activate `.5g.iii` from the
-  clean tree and lock managed corpus-KB producer/input/currentness boundaries before changing outputs.
-- In-flight uncommitted: completed `.5g.ii` files until the required commit; no background job.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.iii` — complete; commit this verified slice
+  before activating `.5h`.
+- Current state: `.0`–`.5g.iii` are complete. Reviewed validation now projects through explicit
+  snapshot mode; all 156 KG fixtures pass and feed current managed pages. The read-only 15-case oracle
+  binds 312 tracked inputs, eleven Markdown blocks plus human regions, paired JSON, and seven producer
+  regions; corpus-KB currency is enforced without canonical-IR or typed-prior mutation. A same-volume
+  signoff defect is root-caused and test-isolated; 38/38 parallel source tests now pass, while `.6a`
+  owns making repository-local temp/cache roots the canonical CI default.
+- Next action: complete the `.5g.iii` commit workflow, then activate `.5h` for the root/mdBook maintained-
+  reference truth-plane audit; retain the `.5i` corpus aggregate warning disposition obligation.
+- In-flight uncommitted: completed and fully verified `.5g.iii` slice awaiting commit; no background
+  job.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

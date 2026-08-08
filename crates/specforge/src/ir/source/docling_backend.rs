@@ -1803,6 +1803,12 @@ fn build_backend_command(tempdir: &Path) -> Result<BackendCommand> {
 }
 
 pub fn inspect_docling_runtime() -> Result<DoclingRuntimeDiagnosis> {
+    inspect_docling_runtime_with_repo_search(true)
+}
+
+fn inspect_docling_runtime_with_repo_search(
+    search_repo_local: bool,
+) -> Result<DoclingRuntimeDiagnosis> {
     let mut candidates = Vec::new();
 
     if let Some(runtime_override) = env::var_os(DOCLING_PYTHON_ENV) {
@@ -1816,7 +1822,11 @@ pub fn inspect_docling_runtime() -> Result<DoclingRuntimeDiagnosis> {
         return Ok(finalize_docling_runtime_diagnosis(candidates));
     }
 
-    let repo_local_candidates = discover_repo_local_docling_candidates()?;
+    let repo_local_candidates = if search_repo_local {
+        discover_repo_local_docling_candidates()?
+    } else {
+        Vec::new()
+    };
     for candidate in repo_local_candidates {
         let label = format!("repo_local:{}", candidate.display());
         push_runtime_candidate(
@@ -2019,7 +2029,8 @@ mod tests {
         DoclingRuntimeCandidateStatus, DoclingRuntimeSource, INGEST_ADAPTIVE_BATCH_ENV,
         INGEST_BATCH_PAGES_ENV, INGEST_MIN_FREE_DISK_MB_ENV, INGEST_RAM_ABORT_PERCENT_ENV,
         INGEST_RAM_SAMPLE_SECS_ENV, RamGuardConfig, adaptive_batch_pages, check_disk_preflight,
-        estimate_required_disk_mb, inspect_docling_runtime, nearest_existing_ancestor,
+        estimate_required_disk_mb, inspect_docling_runtime,
+        inspect_docling_runtime_with_repo_search, nearest_existing_ancestor,
         parse_adaptive_batch_enabled, parse_batch_pages_ceiling, parse_df_available_kb,
         parse_disk_preflight_requirement, parse_leading_number, parse_linux_meminfo_total_mb,
         parse_linux_meminfo_used_percent, parse_macos_memory_pressure_used_percent,
@@ -2171,7 +2182,9 @@ printf '{"ready": false, "python_version": "3.14.0", "error": "ModuleNotFoundErr
         let _path_env = EnvVarGuard::set_path("PATH", tempdir.path());
         let _cwd_guard = CurrentDirGuard::set(tempdir.path())?;
 
-        let diagnosis = inspect_docling_runtime()?;
+        // This test owns PATH ordering, not repository-venv discovery. Explicitly disable the latter
+        // so repository-local TMPDIR remains a valid test topology.
+        let diagnosis = inspect_docling_runtime_with_repo_search(false)?;
 
         assert!(diagnosis.is_ready());
         assert_eq!(

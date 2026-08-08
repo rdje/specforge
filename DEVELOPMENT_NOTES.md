@@ -1,4 +1,30 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.iii (`2026-08-08`) — generated currentness needs two authorities
+
+The corpus KB contains generated regions, but it does not have one universal input plane. KG fixture
+pages are executable projections whose denominator is the Git-indexed fixture tree. The validation
+page is a review projection whose denominator is the independently approved validation snapshot.
+Treating ignored reports as equivalent input created a time-layer collision: locally newer scores
+looked current beside a different tracked reviewed boundary.
+
+The producer now makes that choice explicit. Reviewed mode parses only the projected-artifact section
+of `VALIDATION_SNAPSHOT.md`; ambient report mode remains available but cannot be combined with it.
+Currentness then composes three exact identities—input, relevant producer regions, and output—plus the
+separate executable 156/156 KG behavior gate. This avoids running a mutating producer from doctrine
+while still detecting every tracked dependency change.
+
+Human synthesis is an independent invariant, not an incidental property of marker replacement. The
+contract hashes both sides of every one of the eleven managed regions, so rewriting curated notes
+cannot masquerade as a current refresh. The truthful six-fixture catch-up also pushed the aggregate to
+81.4% of its line ceiling. That warning is retained as `.5i` work rather than hidden by ceiling growth.
+
+The same-volume full gate exposed a separate test assumption: a temp directory under `generated/` is
+still below the real repository, so ancestor-based runtime discovery can see the real Docling venv.
+The PATH-ordering test now injects that repo discovery is out of scope, and the process-global test
+lock recovers rather than cascading after an assertion panic. This changes no production discovery;
+it makes the test topology honest under the locality policy. `.6a` still must make those local roots
+the canonical CI default and census every remaining tool workspace.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.ii (`2026-08-08`) — membership needs an external denominator
 
 A registry table cannot prove its own completeness. If a source PDF and its row disappear together,

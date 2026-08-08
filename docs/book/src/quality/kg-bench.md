@@ -564,7 +564,8 @@ The current fixture run can also be projected into the corpus knowledge base:
 cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality
 ```
 
-That projection writes `corpus_kb/benchmarks/kg-fixtures.md`.
+That projection currently runs all 156 tracked fixtures and writes the aggregate plus eight family
+pages, the prior-candidate page, and its paired JSON manifest.
 It is a reviewable synthesis page, not a replacement for the executable `kg-bench` gate.
 It also includes a fixture-family summary table so coverage by truthfulness family is visible beside the per-fixture pass/fail list.
 The same refresh now populates dedicated semantic/truthfulness pattern, typed-prior-memory, table, visual, state-machine, timing, infrastructure/polarity, and AMBA-family corpus-KB pages from the same fixture outcomes.

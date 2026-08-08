@@ -60,6 +60,8 @@
   > can SpecForge use FSMGen's (stable …) sampled-value predicate
 - [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
   > can WIRE-BASED-100 reach 100% on SWD the same way as the parallel buses
+- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
+  > can ambient validation reports define the tracked corpus KB validation page
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
   > can specforge emit a symbolic signal width like (width ADDR_WIDTH) to the .isf
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
@@ -170,6 +172,8 @@
   > does constrained contract extraction ship code
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > does converge re-ingest the PDF every run
+- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
+  > does corpus KB refresh mutate canonical IR or CorpusMemory
 - [contested-priors](../knowledge/contested-priors.md)
   > does corpus prior memory only accrete
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
@@ -258,6 +262,8 @@
   > how are duplicate signal constraints deduplicated in the LLM-primary extractor
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > how are extraction-profile priors looked up (extraction_profile_priors_for signature-subset match)
+- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
+  > how are human corpus KB notes preserved during refresh
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
   > how are live-document ceiling increases and immutable debt baselines tested
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
@@ -292,9 +298,3 @@
   > how are the three FSM grammars (SWD hyphen, quoted-mode, single-word) distinguished
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > how are two genuinely-different registers sharing a mnemonic (MEM-AP CSW vs JTAG-AP CSW) recovered instead of dropped
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > how are two-column bits | description tables extracted
-- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
-  > how are unknown tables reclassified by the VLM
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > how big does source_ir.json get / how does it scale with page count

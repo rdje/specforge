@@ -253,6 +253,16 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
 - **HOW:** `perl scripts/check_source_pdf_registry_currentness.pl --report` (13 fail-closed cases run
   unconditionally through `LIVE-DOC-SIZE`; host-local libraries and `generated/` are not inputs).
 
+### 6.5 `scripts/check_corpus_kb_currentness.pl`
+
+- **WHAT:** read-only dependency/output oracle for the corpus KB's eleven managed Markdown regions and
+  paired prior-candidate JSON. It binds the reviewed validation snapshot, all Git-indexed KG fixture
+  inputs, exact managed and human-side regions, and the Rust producer seams.
+- **WHEN:** changing a KG fixture, validation review boundary, corpus-KB producer, managed page, or
+  prior-candidate projection; auditing that human synthesis survived a refresh.
+- **HOW:** `perl scripts/check_corpus_kb_currentness.pl --report` (15 fail-closed cases run
+  unconditionally through `LIVE-DOC-SIZE`; canonical IR and typed prior memory are forbidden outputs).
+
 ---
 
 ## 7. Stage replay, build, and host

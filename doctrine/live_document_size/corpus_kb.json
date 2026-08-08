@@ -1,0 +1,246 @@
+{
+  "schema_version": 1,
+  "owner": "LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.iii",
+  "inputs": {
+    "validation": {
+      "snapshot_path": "VALIDATION_SNAPSHOT.md",
+      "authority_contract_path": "doctrine/live_document_size/validation_snapshot.json",
+      "authority_contract_sha256": "cc18607ad67b22d3574fe4b238a0a75a9da1342577781e55c6703f0490db730b",
+      "reviewed_snapshot_is_authoritative": true,
+      "ambient_reports_are_authoritative": false
+    },
+    "kg_fixtures": {
+      "root": "crates/specforge/test_data/kg_quality",
+      "git_index_is_authoritative": true,
+      "file_count": 312,
+      "fixture_count": 156,
+      "bytes": 991702,
+      "aggregate_sha256": "52b75e50d29fa909864724b51b93595d19146f00183d8444293e22374f3c3cb6"
+    }
+  },
+  "outputs": {
+    "markdown": [
+      {
+        "id": "validation",
+        "path": "corpus_kb/failures/validation-findings.md",
+        "kind": "reviewed_validation",
+        "start_marker": "<!-- corpus_kb_validation_findings:start -->",
+        "end_marker": "<!-- corpus_kb_validation_findings:end -->",
+        "managed_sha256": "475816d3c8afbf6965a45306f3467f5ed15d8e23a1a0e38bb88e2b98920a7e8d",
+        "managed_lines": 106,
+        "managed_bytes": 13959,
+        "human_prefix_sha256": "6b78a2860aa7d44a5e6731aec99fd3ecf5c96399ee368236681d25e2a95f09ec",
+        "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      },
+      {
+        "id": "aggregate",
+        "path": "corpus_kb/benchmarks/kg-fixtures.md",
+        "kind": "kg_aggregate",
+        "start_marker": "<!-- corpus_kb_kg_fixtures:start -->",
+        "end_marker": "<!-- corpus_kb_kg_fixtures:end -->",
+        "managed_sha256": "b1c71b193812cec3dfd6cbb6023fe95e43012ef655da74bc2adf5c29723b6f09",
+        "managed_lines": 965,
+        "managed_bytes": 31431,
+        "human_prefix_sha256": "dbf4e64cf7075d60bce535752aaf4acb24ed6def46f937036738328e5768a460",
+        "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      },
+      {
+        "id": "patterns",
+        "path": "corpus_kb/patterns/kg-fixtures.md",
+        "kind": "kg_family",
+        "start_marker": "<!-- corpus_kb_kg_fixture_family:start -->",
+        "end_marker": "<!-- corpus_kb_kg_fixture_family:end -->",
+        "managed_sha256": "60ab45a982a6b653f981ddef32a372b2d54cc8c323abc582ce331ba5503eeb62",
+        "managed_lines": 101,
+        "managed_bytes": 19351,
+        "human_prefix_sha256": "69b51fef3a022499db34f09a23794959414e7cd9aee4652c51a2eb8c330f973f",
+        "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      },
+      {
+        "id": "prior_memory",
+        "path": "corpus_kb/prior_memory/kg-fixtures.md",
+        "kind": "kg_family",
+        "start_marker": "<!-- corpus_kb_kg_fixture_family:start -->",
+        "end_marker": "<!-- corpus_kb_kg_fixture_family:end -->",
+        "managed_sha256": "60018d8e9186b53d171f408c27b8b5d525d8df0ebf990580b04c34fe352fe21d",
+        "managed_lines": 44,
+        "managed_bytes": 6732,
+        "human_prefix_sha256": "b3b32eeaa3917526e464dca8649a9bdf94c5202edbc255318bd18fafc0f10b9e",
+        "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      },
+      {
+        "id": "tables",
+        "path": "corpus_kb/tables/kg-fixtures.md",
+        "kind": "kg_family",
+        "start_marker": "<!-- corpus_kb_kg_fixture_family:start -->",
+        "end_marker": "<!-- corpus_kb_kg_fixture_family:end -->",
+        "managed_sha256": "94fb858b2533cead73125ac89e2b16acce1e1114331768d7daba87f5c97ba97a",
+        "managed_lines": 25,
+        "managed_bytes": 2663,
+        "human_prefix_sha256": "90af26b091603de37ccc7cff961f77bfed600ca7619f179cf813e0fa1136d189",
+        "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      },
+      {
+        "id": "visuals",
+        "path": "corpus_kb/visuals/kg-fixtures.md",
+        "kind": "kg_family",
+        "start_marker": "<!-- corpus_kb_kg_fixture_family:start -->",
+        "end_marker": "<!-- corpus_kb_kg_fixture_family:end -->",
+        "managed_sha256": "3161027e4a557a84069ca56c87b432b556fbf10a98623ea24f3f58bb9b115ebb",
+        "managed_lines": 37,
+        "managed_bytes": 5416,
+        "human_prefix_sha256": "fba3243ee7f84099cbbbaf7757813ccfb8217d739d64a96ab09d97a40c3a549e",
+        "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      },
+      {
+        "id": "state_machines",
+        "path": "corpus_kb/state_machines/kg-fixtures.md",
+        "kind": "kg_family",
+        "start_marker": "<!-- corpus_kb_kg_fixture_family:start -->",
+        "end_marker": "<!-- corpus_kb_kg_fixture_family:end -->",
+        "managed_sha256": "2905e6ac3846998f922bd80b892a74c15792101d1e34f991350d46fec28078e4",
+        "managed_lines": 18,
+        "managed_bytes": 1260,
+        "human_prefix_sha256": "5682cd79d2e284db274e6c2b5653e9d6e8d332d629295d3f44e354576799611f",
+        "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      },
+      {
+        "id": "timing",
+        "path": "corpus_kb/timing/kg-fixtures.md",
+        "kind": "kg_family",
+        "start_marker": "<!-- corpus_kb_kg_fixture_family:start -->",
+        "end_marker": "<!-- corpus_kb_kg_fixture_family:end -->",
+        "managed_sha256": "ccaef1e61c2e15c8efa7150b0ad2546bdbde3773b267409ec14f97a9a931a403",
+        "managed_lines": 86,
+        "managed_bytes": 12742,
+        "human_prefix_sha256": "78381e8cbadfa1450e2a4645493913d33d84f8d6c4ebf10c9e676db3fbf71970",
+        "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      },
+      {
+        "id": "infra",
+        "path": "corpus_kb/infra/kg-fixtures.md",
+        "kind": "kg_family",
+        "start_marker": "<!-- corpus_kb_kg_fixture_family:start -->",
+        "end_marker": "<!-- corpus_kb_kg_fixture_family:end -->",
+        "managed_sha256": "bafca33810693fa3b19f03e7d550e3d3a74bfaf3060995ef46a900c01c987f9b",
+        "managed_lines": 33,
+        "managed_bytes": 3879,
+        "human_prefix_sha256": "752c8a4ff951a3b6017875dd9520d26260772a7941a55f36eee6debd98b2592c",
+        "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      },
+      {
+        "id": "amba",
+        "path": "corpus_kb/protocols/amba-kg-fixtures.md",
+        "kind": "kg_family",
+        "start_marker": "<!-- corpus_kb_kg_fixture_family:start -->",
+        "end_marker": "<!-- corpus_kb_kg_fixture_family:end -->",
+        "managed_sha256": "a966e27f6e8f980b393a300f4dd9ca4343f1fdbab2990060303b809baab426e2",
+        "managed_lines": 50,
+        "managed_bytes": 6936,
+        "human_prefix_sha256": "4751709cfd26b334888e819f404099862ce38c24870d65eebb14976c6e46078c",
+        "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      },
+      {
+        "id": "prior_candidates",
+        "path": "corpus_kb/prior_candidates/kg-fixture-candidates.md",
+        "kind": "prior_candidates",
+        "start_marker": "<!-- corpus_kb_prior_candidates:start -->",
+        "end_marker": "<!-- corpus_kb_prior_candidates:end -->",
+        "managed_sha256": "442215552bf53ea7ebf64606f5913f1203191c00cc884803042d83848f3cb0e4",
+        "managed_lines": 46,
+        "managed_bytes": 7726,
+        "human_prefix_sha256": "e5a0bd2a938c2b8d765376e20fc1a165641a644c6da9481915d4aaf53b028218",
+        "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+      }
+    ],
+    "json": {
+      "path": "corpus_kb/prior_candidates/kg-fixture-candidates.json",
+      "sha256": "4dba7a81337268b03c2e5b8f2bd284332f9e6fdfa3e62d5b0cc72ba9f3a03c56",
+      "lines": 234,
+      "bytes": 11472,
+      "candidate_count": 7,
+      "promotion_status": "candidate_not_promoted_review_required"
+    }
+  },
+  "producer": {
+    "regions": [
+      {
+        "id": "cli_args",
+        "path": "crates/specforge/src/cli.rs",
+        "start_literal": "pub struct CorpusKbArgs {",
+        "end_before_literal": "#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]",
+        "lines": 17,
+        "bytes": 709,
+        "sha256": "eec8fcc52c460fe12fdd1e3cb9aa72ed4af182341d2eaf7bb13bd19567fc0e7e"
+      },
+      {
+        "id": "command_control",
+        "path": "crates/specforge/src/commands/corpus_kb.rs",
+        "start_literal": "pub fn run(args: CorpusKbArgs) -> Result<()> {",
+        "end_before_literal": "fn refresh_validation_findings_page(",
+        "lines": 54,
+        "bytes": 2183,
+        "sha256": "01f17200597cd8cbff402c2de1e939d198da960dd1421534b07079081ba59872"
+      },
+      {
+        "id": "reviewed_refresh",
+        "path": "crates/specforge/src/commands/corpus_kb.rs",
+        "start_literal": "fn refresh_reviewed_validation_findings_page(",
+        "end_before_literal": "fn refresh_kg_fixtures_page(",
+        "lines": 28,
+        "bytes": 888,
+        "sha256": "1b2e7ddedfa66eb3c317ce10c331f5f62394c3e86c313fe61b54a1f79ed48e91"
+      },
+      {
+        "id": "kg_refresh",
+        "path": "crates/specforge/src/commands/corpus_kb.rs",
+        "start_literal": "fn refresh_kg_fixtures_page(",
+        "end_before_literal": "fn load_validation_report_projections(",
+        "lines": 112,
+        "bytes": 3870,
+        "sha256": "f8653e47cc8ac51776c668041958e9d04f7db9ea6c86b6ef768562376803f57b"
+      },
+      {
+        "id": "reviewed_parser_renderer",
+        "path": "crates/specforge/src/commands/corpus_kb.rs",
+        "start_literal": "fn parse_reviewed_validation_snapshot(",
+        "end_before_literal": "fn render_kg_fixtures_block(",
+        "lines": 150,
+        "bytes": 5696,
+        "sha256": "f3fe1fb758cd6e42d9b515d24be1599bd527f3c3b7284f4471e842463ed19913"
+      },
+      {
+        "id": "kg_renderers_and_classification",
+        "path": "crates/specforge/src/commands/corpus_kb.rs",
+        "start_literal": "fn render_kg_fixtures_block(",
+        "end_before_literal": "fn replace_managed_block(",
+        "lines": 494,
+        "bytes": 19549,
+        "sha256": "4ebbf68bac074ad2fa49f496cf00c6fec4cd4bbd218720811e4d536b49375e88"
+      },
+      {
+        "id": "managed_block_writer",
+        "path": "crates/specforge/src/commands/corpus_kb.rs",
+        "start_literal": "fn replace_managed_block(",
+        "end_before_literal": "fn default_validation_page(",
+        "lines": 31,
+        "bytes": 1073,
+        "sha256": "5bd24f93a053e2d28110f47600a2c5a0cddb99ae721c5a13c82f9698b3dc8737"
+      }
+    ],
+    "verification_command": "cargo run --manifest-path Cargo.toml -- kg-bench",
+    "expected_fixture_count": 156,
+    "expected_passed_count": 156,
+    "canonical_ir_mutation_allowed": false,
+    "prior_memory_mutation_allowed": false
+  },
+  "controls": {
+    "max_contract_bytes": 32768,
+    "max_markdown_outputs": 16,
+    "max_producer_regions": 12,
+    "max_path_bytes": 256,
+    "max_marker_bytes": 128,
+    "max_fixture_files": 512,
+    "max_fixture_bytes": 2097152
+  }
+}

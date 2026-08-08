@@ -299,7 +299,7 @@ That caution does not suppress evidence, remove residuals, or decide semantic tr
 ## `corpus-kb`
 
 ```bash
-cargo run --manifest-path Cargo.toml -- corpus-kb generated/intent_ir/.../validation_report.json
+cargo run --manifest-path Cargo.toml -- corpus-kb --validation-snapshot VALIDATION_SNAPSHOT.md
 cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality
 ```
 
@@ -310,8 +310,13 @@ The first page families are:
 - `corpus_kb/failures/validation-findings.md`
 - `corpus_kb/benchmarks/kg-fixtures.md`
 
-They project validation reports and KG fixture outcomes into managed blocks while preserving human-authored synthesis around those blocks.
+They project the reviewed validation snapshot and KG fixture outcomes into managed blocks while preserving human-authored synthesis around those blocks.
 This is the first concrete `R15g` surface: persistent corpus-level synthesis beside the KG and prior memory.
+
+The tracked validation projection must use `--validation-snapshot`; positional validation reports are
+an unreviewed local mode and cannot be mixed with it. The complete KG projection currently covers
+156/156 passing fixtures. Verify the tracked dependency/output contract without rewriting pages with
+`perl scripts/check_corpus_kb_currentness.pl --report`.
 
 The boundary is strict:
 
