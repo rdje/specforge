@@ -90,6 +90,8 @@
   > is SpecForge specification mining
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
   > is SpecForge's constraint extraction over-generating
+- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
+  > is VALIDATION_SNAPSHOT the latest local artifact validation or the last reviewed projection
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > is a better VLM needed to read register bit-layout diagrams
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)

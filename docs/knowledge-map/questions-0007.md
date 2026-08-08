@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
+  > why does ingest still generate page images if it does not save them
+- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
+  > why does one register appear as several RegisterRecords / how are split register-field tables merged
 - [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
   > why does rebuilding the same SourceIR give a different evidence_ir.json (non-determinism)
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
@@ -46,6 +50,8 @@
   > why does the same token AXI interface merge in one doc but not another
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
   > why does the same-guard dedup_conflicting_rules miss a conflict between an unconditional rule and a guarded rule
+- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
+  > why does the tracked validation snapshot differ from current generated IntentIR reports
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > why does tilelink have 39 relations in evidence_ir but 0 in intent_ir
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)

@@ -85,6 +85,10 @@ If you want to refresh the tracked validation snapshot:
 cargo run --manifest-path Cargo.toml -- project-validation generated/intent_ir/.../intent_ir.json
 ```
 
+This refresh mutates the selected artifacts, local rescan plan, snapshot, and live-status projection.
+Review the result before committing it: the tracked files represent the last reviewed validation
+boundary, not automatically the newest git-ignored artifact state.
+
 If you want to reclaim rebuildable generated artifacts before they eat your disk:
 
 ```bash

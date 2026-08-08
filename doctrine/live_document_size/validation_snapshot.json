@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "owner": "LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.i",
+  "snapshot": {
+    "path": "VALIDATION_SNAPSHOT.md",
+    "sha256": "69467b06c4ff0a802419adbc6c6a8b100de82c42e4f627948bbae1bc9115b45a",
+    "lines": 544,
+    "bytes": 63628,
+    "line_bytes": 381,
+    "required_h2_order": [
+      "Snapshot Summary",
+      "Targeted Rescan Recommendations",
+      "Projected Artifacts"
+    ],
+    "required_literals": [
+      "last reviewed persisted reports",
+      "doctrine/live_document_size/validation_snapshot.json",
+      "newer git-ignored artifacts are not validated-state authority"
+    ]
+  },
+  "review_boundary": {
+    "source_commit": "a44323d57f5f5f8ae3adad54ef48dad498434038",
+    "source_snapshot_sha256": "0b50aa8c3c07046f58b2f0aa4b5190d1d02b8340ec17535321583b2a6d89f42f",
+    "status": "reviewed",
+    "evidence_path": "docs/tasks/CANONICAL-PROMOTION-SWEEP.md",
+    "evidence_literal": "`VALIDATION_SNAPSHOT.md` deliberately NOT refreshed with the promoted scores (review-gate).",
+    "local_artifacts_authoritative": false
+  },
+  "producer": {
+    "path": "crates/specforge/src/commands/project_validation.rs",
+    "regions": [
+      {
+        "id": "run_mutating_writer",
+        "start_literal": "pub fn run(args: ProjectValidationArgs) -> Result<()> {",
+        "end_before_literal": "fn project_artifact(artifact: &Path, repo_root: &Path) -> Result<ProjectedArtifactSnapshot> {",
+        "lines": 50,
+        "bytes": 1925,
+        "sha256": "5dc3351b1a3210e2113ef9f8c938344db2e8120311b95fe0486d15b3dd209d0e"
+      },
+      {
+        "id": "snapshot_renderer",
+        "start_literal": "fn render_validation_snapshot_doc(",
+        "end_before_literal": "fn render_live_status_projection(",
+        "lines": 163,
+        "bytes": 6818,
+        "sha256": "96e652ee908300052749f7e2e746597b72209663e349ca56f05ff03c16ac3b7a"
+      },
+      {
+        "id": "live_projection_renderer",
+        "start_literal": "fn render_live_status_projection(",
+        "end_before_literal": "fn upsert_live_status_projection(",
+        "lines": 56,
+        "bytes": 2300,
+        "sha256": "fd90b9909bbb88f0e27cb6d0e4c1819188cfbff609e5488a5fac9afa1876f1f7"
+      },
+      {
+        "id": "live_projection_writer",
+        "start_literal": "fn upsert_live_status_projection(",
+        "end_before_literal": "fn read_existing_validation_rescan_plan(",
+        "lines": 21,
+        "bytes": 695,
+        "sha256": "17e701f802e7f7074fa47de61cf8bc2ad82dfcd4750203464d58dcf031a0504a"
+      }
+    ]
+  },
+  "artifacts": [
+    {
+      "document_key": "ihi0022_l_2025_08_amba_axi_protocol_specification",
+      "display_name": "IHI0022_L_2025-08_AMBA_AXI_Protocol_Specification.pdf",
+      "stage": "intent_ir",
+      "artifact_path": "generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/intent_ir.json",
+      "artifact_fingerprint": "2a4daf2cba8a708c",
+      "score": 71,
+      "grade": "GOOD",
+      "finding_count": 21
+    },
+    {
+      "document_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+      "display_name": "IHI0024_E_2023-02_AMBA_5_APB_Protocol_Specification.pdf",
+      "stage": "intent_ir",
+      "artifact_path": "generated/intent_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/intent_ir.json",
+      "artifact_fingerprint": "14af5b5627fc08fd",
+      "score": 74,
+      "grade": "GOOD",
+      "finding_count": 15
+    },
+    {
+      "document_key": "ihi0033_c_2021_09_amba_5_ahb_protocol_specification",
+      "display_name": "IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf",
+      "stage": "intent_ir",
+      "artifact_path": "generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/intent_ir.json",
+      "artifact_fingerprint": "f2b3e0591b4a5fbc",
+      "score": 65,
+      "grade": "ADEQUATE",
+      "finding_count": 20
+    },
+    {
+      "document_key": "ihi0051_b_2021_04_amba_axi_stream_protocol_specification",
+      "display_name": "IHI0051_B_2021-04_AMBA_AXI_Stream_Protocol_Specification.pdf",
+      "stage": "intent_ir",
+      "artifact_path": "generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/intent_ir.json",
+      "artifact_fingerprint": "7cce2a1cef094239",
+      "score": 67,
+      "grade": "ADEQUATE",
+      "finding_count": 14
+    }
+  ],
+  "rescan_projection": {
+    "recommendations": 29,
+    "execution_summaries": 0,
+    "live_queue_rows": 8,
+    "live_queue_remainder": 21
+  },
+  "live_projection": {
+    "path": "LIVE_ACHIEVEMENT_STATUS.md",
+    "start_marker": "<!-- validation_projection:start -->",
+    "end_marker": "<!-- validation_projection:end -->",
+    "sha256": "49b4eebe23d90ae3a5357cc6e5b117d4d5e3d63903a03be39358d73334fccfc8",
+    "lines": 20,
+    "bytes": 5362,
+    "required_literal": "Last reviewed projected validation snapshot"
+  }
+}

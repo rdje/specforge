@@ -23,6 +23,7 @@ changed* lives in git (layer D), not here.
 | [0009](0009-bounded-knowledge-map-projection-set.md) | Knowledge Map uses a bounded landing page and generated question shards | 2026-08-08 | accepted | documentation, knowledge-map, projection, retrieval |
 | [0010](0010-bounded-current-roadmap-and-exact-history.md) | Roadmap keeps current direction; an exact capsule keeps accumulated history | 2026-08-08 | accepted | documentation, roadmap, archive, current-truth |
 | [0011](0011-bounded-fsmgen-feedback-channel.md) | FSMGen feedback keeps a bounded current channel over exact correspondence history | 2026-08-08 | accepted | documentation, feedback, archive, current-truth |
+| [0012](0012-reviewed-validation-snapshot-boundary.md) | Tracked validation is the last reviewed projection, not ambient local artifact state | 2026-08-08 | accepted | validation, projection, review, current-truth |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /

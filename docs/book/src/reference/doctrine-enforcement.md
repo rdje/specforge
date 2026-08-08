@@ -85,6 +85,13 @@ cases reject source/evidence/heading/path drift and malformed migrated markers/r
 The migrated gate authenticates the exact capsule and enforces the 81-line current channel, zero-open
 boundary, six-row closed register, and direct archive retrieval.
 
+The validation-snapshot currency check is read-only and review-aware. It authenticates the tracked
+last-reviewed snapshot and live-status managed block against four declared report identities and 29
+recommendations, pins the exact producer regions that refresh/render/write those surfaces, and verifies
+the task evidence that withheld later unreviewed local scores. Ten focused cases reject identity,
+report, count, live-block, producer, evidence, path, duplicate, or schema drift without touching
+git-ignored artifacts.
+
 The live-document checker is also unconditional. Its JSONL registry is the data-only authority for
 the complete tracked Markdown set, while `LIVE_DOCUMENT_SIZE_CONTAINMENT.md` explains the neutral
 lifecycle model. It does not confuse a large legacy ceiling with a healthy target: existing debt keeps

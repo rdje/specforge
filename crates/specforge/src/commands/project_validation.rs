@@ -500,8 +500,8 @@ fn render_validation_snapshot_doc(
     let rescan_execution_counts = rescan_execution_counts(rescan_recommendations);
     let mut lines = vec![
         "# VALIDATION_SNAPSHOT".to_string(),
-        "This file is auto-refreshed by `specforge project-validation <artifact>...`.".to_string(),
-        "It summarizes the latest persisted validation reports projected from IR artifacts into the tracked live-doc surface.".to_string(),
+        "This tracked file is refreshed by `specforge project-validation <artifact>...` only after its results pass the review gate.".to_string(),
+        "It summarizes the last reviewed persisted reports declared by `doctrine/live_document_size/validation_snapshot.json`; newer git-ignored artifacts are not validated-state authority.".to_string(),
         String::new(),
         "## Snapshot Summary".to_string(),
         format!("- Artifacts projected: {}", snapshots.len()),
@@ -661,7 +661,7 @@ fn render_live_status_projection(
     rescan_recommendations: &[ProjectRescanRecommendation],
 ) -> String {
     let rescan_execution_counts = rescan_execution_counts(rescan_recommendations);
-    let mut lines = vec!["- Latest projected validation snapshot:".to_string()];
+    let mut lines = vec!["- Last reviewed projected validation snapshot:".to_string()];
     for snapshot in snapshots {
         lines.push(format!(
             "  - `{}` (`{}`): `{}` from `{}`",
@@ -2765,6 +2765,9 @@ mod tests {
         })?;
 
         let snapshot_doc = fs::read_to_string(repo_root.join(VALIDATION_SNAPSHOT_DOC))?;
+        assert!(snapshot_doc.contains("last reviewed persisted reports"));
+        assert!(snapshot_doc.contains("doctrine/live_document_size/validation_snapshot.json"));
+        assert!(!snapshot_doc.contains("latest persisted validation reports"));
         assert!(snapshot_doc.contains("spec.md"));
         assert!(snapshot_doc.contains("intent_ir"));
         assert!(snapshot_doc.contains("37/100 NEEDS IMPROVEMENT"));
@@ -2773,6 +2776,8 @@ mod tests {
         let live_status = fs::read_to_string(repo_root.join(LIVE_STATUS_DOC))?;
         assert!(live_status.contains("## Validation Projection"));
         assert!(live_status.contains(VALIDATION_PROJECTION_START));
+        assert!(live_status.contains("Last reviewed projected validation snapshot"));
+        assert!(!live_status.contains("Latest projected validation snapshot"));
         assert!(live_status.contains("37/100 NEEDS IMPROVEMENT"));
         assert!(live_status.contains("- Targeted rescan queue:\n  - none"));
 

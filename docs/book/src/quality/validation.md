@@ -71,6 +71,12 @@ It validates selected artifacts and refreshes the tracked live projection docs, 
 
 That command belongs to the continuity plane, but users still benefit from understanding that it is how the project keeps its published local baseline honest.
 
+The tracked baseline is specifically the **last reviewed projection**. Running `project-validation`
+mutates the selected artifacts and local rescan plan as well as the two tracked docs, so doctrine does
+not invoke it as a freshness check. Instead, a read-only contract verifies the reviewed commit, report
+fingerprints and scores, recommendation counts, snapshot/live-block identities, and exact producer
+regions. New local results remain review candidates until that tracked boundary is updated atomically.
+
 ## Residuals and conflicts are first-class
 
 One of the central design choices in `specforge` is that unresolved ambiguity must stay visible.

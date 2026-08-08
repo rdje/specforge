@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > where is the shared 0.6 fingerprint clustering threshold defined (DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD)
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > where is the shared section-heading container-walk that .10f and .10g both use
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > where is the spawn+poll+kill memory guard in materialize_pdf
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
@@ -293,7 +297,3 @@
   > why does decoder go from 0/0 to connected (decoder also consolidated)
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > why does dropping phantom actors leave the .isf and WIRE-BASED-100 unchanged
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > why does ingest still generate page images if it does not save them
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > why does one register appear as several RegisterRecords / how are split register-field tables merged

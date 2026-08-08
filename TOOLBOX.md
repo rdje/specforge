@@ -264,6 +264,9 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
   schema-v2 rescan plan with typed replay hints; `rescan-plan` inspects/executes the whitelisted local
   replay hints (dry-run by default, `--execute` only for repository-local `cargo run … --` hints).
 - **WHEN:** projecting validation state into a crash-safe snapshot; running a bounded, gated rescan loop.
+  The tracked snapshot is the **last reviewed** projection, not ambient git-ignored artifact state:
+  review producer output before committing it, and verify the declared boundary read-only with
+  `perl scripts/check_validation_snapshot_currentness.pl --check`.
 
 ### 7.4 Build & host (RAM-bounded)
 - **WHAT:** builds are RAM-constrained on this host. Monitor with `memory_pressure` (macOS); cap parallel

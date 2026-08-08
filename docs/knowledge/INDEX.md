@@ -149,5 +149,6 @@ Collection guidance: [authoring and lifecycle README](README.md).
 | [transaction-membership-subsection-scope](transaction-membership-subsection-scope.md) | 2026-06-17 | `current` | a named transaction's .2c signal-set membership includes its section's DESCENDANT-SUBSECTION statements (dott… |
 | [transaction-phase-membership-vlm-vs-channel](transaction-phase-membership-vlm-vs-channel.md) | 2026-06-17 | `current` | AXI/SWD per-signal phase membership — the recorded "VLM timing-diagram phase columns" candidate is RESOLVED… |
 | [transition-bound-state-fsm](transition-bound-state-fsm.md) | 2026-06-09 | `current` | A third agnostic FSM grammar — single ALL-CAPS `<NAME> state` bound by a transition/locative verb (SWP ACTI… |
+| [validation-snapshot-reviewed-boundary](validation-snapshot-reviewed-boundary.md) | 2026-08-08 | `current` | VALIDATION_SNAPSHOT is the last reviewed projection, not ambient local artifact state |
 | [value-binder-alphabetic-whole-word](value-binder-alphabetic-whole-word.md) | 2026-06-15 | `current` | The deterministic value binder matches an alphabetic enum value as a whole word (no substring fabrication) |
 | [vlm-table-strategy](vlm-table-strategy.md) | 2026-06-07 | `current` | VLM (Qwen2.5VL) reads table images to reclassify "unknown" tables — the second, best-wins table strategy |

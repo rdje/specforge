@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.i (`2026-08-08`) — currentness follows the review boundary
+
+The validation snapshot cannot honestly mean “whatever report exists locally now.” Its producer first
+runs validation and writes three outputs, so invoking it from doctrine enforcement would mutate the
+very state being checked. The four IntentIR files contain no embedded validation reports, and a newer
+git-ignored AHB sidecar already differs from the last owner-reviewed score. Fresh clones also cannot be
+required to reproduce host-local generated state.
+
+The stable tracked meaning is therefore the last reviewed projection. A data-only contract pins that
+boundary's source commit, review evidence, four report identities, summary counts, live-status block,
+and the exact producer regions that define the write path. The verifier reads only tracked inputs and
+Git history; ambient generated reports are explicitly non-authoritative until a reviewed refresh
+updates the contract and both projections together.
+
+This keeps currency strict without turning a checker into a writer. Ten mutation cases reject root,
+report, recommendation, live block, producer, evidence, path, duplicate-identity, and schema drift.
+Their repository-local fixtures clean through an exception-safe, error-checked path, so a failed
+mutation cannot strand hidden project data. Neutral “last reviewed” wording is regression-tested at
+the producer seam while validation scores and canonical artifacts remain byte-untouched.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.ii (`2026-08-08`) — status-driven feedback survives bounded migration
 
 The atomic migration validates the `.5f.i` decision that semantic status, not file position, is the

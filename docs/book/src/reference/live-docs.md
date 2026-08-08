@@ -331,6 +331,23 @@ topology. Its ten focused cases cover both lifecycle forms; the live-document do
 authenticates the capsule and independently checks the root, open-record schema, closed register,
 manifest, index, direct routes, and pressure ceilings. Feedback transition debt is gone.
 
+#### Validation snapshot means last reviewed
+
+`VALIDATION_SNAPSHOT.md` is not a mirror of whichever git-ignored artifact happens to be newest on one
+workstation. It is the tracked **last reviewed** projection. The current boundary remains four IntentIR
+reports and 29 rescan recommendations from reviewed commit `a44323d5`; later local promotion results
+were deliberately withheld because the approval gate had not promoted them into validated state.
+
+This distinction is executable. `doctrine/live_document_size/validation_snapshot.json` declares the
+ordered artifact paths, report fingerprints/scores/grades/finding counts, review evidence, snapshot and
+live-block identities, and four exact Rust producer regions. The read-only currentness checker validates
+all of that plus summary, recommendation, marker, and queue structure. It never runs the mutating
+producer or reads ambient local artifacts, so the same reviewed-state proof works in a fresh clone.
+
+To refresh the tracked projection, run `project-validation` on the intended artifacts, review the
+result, then update the declaration, snapshot, and managed live-status block atomically. A local report
+delta is evidence to review, not permission to silently rewrite validated state.
+
 Lines, bytes, file count, collection totals, and maximum content-line width are independent axes.
 Existing oversized ledgers are explicit transition debt: their measured baseline cannot move, and a
 separate bounded allowance exists only for the containment program's continuity updates until the

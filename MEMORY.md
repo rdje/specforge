@@ -19,13 +19,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.ii` — complete and verified, pending its
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.i` — complete and verified, pending its
   required per-leaf commit.
-- Current state: `.0`–`.5f.ii` are complete. The exact 936-line / 57,980-byte feedback source is sealed;
-  the stable root is an 81-line / 5,243-byte current channel with zero open and six evidence-linked
-  closed exchanges; migrated enforcement and three independently governed surfaces pass. Full
-  doctrines, Clippy, 1,724 Rust tests, rustdoc, and mdBook are green.
-- Next action: commit `.5f.ii`, clear/verify `git_message_brief.txt`, then activate `.5g.i` from the
-  clean tree and implement non-mutating `VALIDATION_SNAPSHOT.md` currentness.
-- In-flight uncommitted: completed `.5f.ii` files until the required commit; no background job.
+- Current state: `.0`–`.5g.i` are complete. The 544-line tracked validation snapshot is explicitly the
+  last reviewed four-report projection; its exact root/live/producer/review contract and ten-case
+  read-only oracle run unconditionally, and currency debt is closed. Full doctrines, Clippy, 1,724
+  Rust tests, rustdoc, and mdBook are green; validation data and canonical artifacts are unchanged.
+- Next action: commit `.5g.i`, clear/verify `git_message_brief.txt`, then activate `.5g.ii` from the clean
+  tree and bind the tracked source-PDF registry to exact corpus membership and derived keys/paths.
+- In-flight uncommitted: completed `.5g.i` files until the required commit; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

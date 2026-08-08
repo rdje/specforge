@@ -88,6 +88,9 @@ It only tells downstream loops which current conflict or residual ids deserve ta
 
 Use it when the live baseline should be updated, not just an individual artifact.
 If the existing local rescan plan already contains executed recommendation summaries, the refresh preserves matching entries and projects their verdict/delta summary into the validation snapshot and live-status projection.
+The tracked projection remains the last reviewed boundary. Host-local generated artifacts may advance
+independently; they do not become validated-state authority until the refreshed snapshot, live block,
+and declared report identities pass review and land together.
 
 ## `rescan-plan`
 

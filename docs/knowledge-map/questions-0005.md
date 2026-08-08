@@ -48,6 +48,8 @@
   > what is the exact pre-containment FSMGEN_FEEDBACK source identity
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > what is the exact pre-containment ROADMAP source identity
+- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
+  > what is the executable currentness authority for VALIDATION_SNAPSHOT
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
   > what is the faithful fix for an over-width ISF value literal (1: recover the signal's grounded width across ALL interface signal_records + actor_ports; 2: re-render the literal as a width-cast W'<radix><digits> when value<2^W, else residualize — never truncate; ADR-0006 numeric only)
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
@@ -120,6 +122,8 @@
   > what is the validate transaction-phase inventory (semantic_transaction_phase_inventory metric + finding)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
   > what is the vendor/layout fingerprint, the ExtractionProfile, and the offline corpus pattern miner
+- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
+  > what keeps VALIDATION_SNAPSHOT current without mutating generated artifacts
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
   > what kind of extractor actually needs the cross-document cluster mechanism
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
@@ -294,7 +298,3 @@
   > where is the per-author adopt-vs-defer provenance
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > where is the register-field gold seed
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > where is the shared 0.6 fingerprint clustering threshold defined (DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD)
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > where is the shared section-heading container-walk that .10f and .10g both use

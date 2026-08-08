@@ -266,12 +266,12 @@ verification before correction.
   visible while complete historical conversation remains retrievable.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g`
-  Status: `pending`
+  Status: `active`
   Children: `.5g.i`–`.5g.iii`
   Goal: replace labelled currency debt with non-mutating producer-aware oracles.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.i`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Goal: make `VALIDATION_SNAPSHOT.md` currentness executable against its declared artifact/report inputs
   without mutating validation artifacts during the check.
 
@@ -334,9 +334,11 @@ verification before correction.
 | — | `.5e.ii` | `done` (`2026-08-08`) | Exact capsule, bounded current root/index, corrected 23-row status, migrated verifier, reader alignment, and three-surface debt ratchet landed atomically. |
 | — | `.5f.i` | `done` (`2026-08-08`) | Exact five-region source, six closed directed exchanges, zero-open status, two drift findings, 26 consumers, ADR 0011, archive/root design, and ten-case unconditional gate are locked; no feedback record moved. |
 | — | `.5f.ii` | `done` (`2026-08-08`) | Exact capsule, 81-line zero-open current channel, six evidence-linked closed routes, migrated enforcement, and three-surface debt ratchet landed atomically. |
-| 1 | `.5g.i`–`.5i` | `pending` | Currentness, maintained references, and collection/projection closure. |
-| 2 | `.6` | `pending` | Enforce repository-volume project-data locality and audit old project-owned residue. |
-| 3 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
+| — | `.5g.i` | `done` (`2026-08-08`) | The exact reviewed boundary, producer regions, live projection, ten fail-closed cases, and unconditional read-only currency oracle are enforced. |
+| 1 | `.5g.ii` | `pending` | Bind the tracked source-PDF registry to exact corpus membership and document-key/path derivation. |
+| 2 | `.5g.iii`–`.5i` | `pending` | Remaining managed projection currentness, maintained references, and collection closure. |
+| 3 | `.6` | `pending` | Enforce repository-volume project-data locality and audit old project-owned residue. |
+| 4 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
 ## Decisions
 
@@ -805,6 +807,76 @@ zero-growth transition record with a normal bounded current channel, a normal bo
 and an exact archive terminal. ADR 0011, the feedback fact, continuity ledgers, and both mdBook doctrine
 explanations now describe the landed lifecycle; Rust, product behavior, roadmap direction, and FSMGen
 submodule content are unchanged.
+
+## `.5g.i` Executable Reviewed-Validation Boundary
+
+### Root cause and authority
+
+`VALIDATION_SNAPSHOT.md` is 544 lines / 63,517 bytes and has remained byte-identical since commit
+`a44323d57f5f5f8ae3adad54ef48dad498434038` (`2026-06-10`). That boundary projects four IntentIR
+reports and 29 rescan recommendations. It is intentionally a **last reviewed** validation surface, not
+an automatic view of whichever git-ignored artifact happens to exist locally: `CANONICAL-PROMOTION-
+SWEEP` explicitly withheld later promoted scores because they were not owner-approved.
+
+The producer does not currently make that distinction executable. `project-validation` calls mutating
+`validate::run` for every artifact, writes the local rescan plan, replaces the tracked snapshot, and
+rewrites the live-status managed block. A doctrine check therefore cannot safely invoke it. The four
+current IntentIR files also contain zero embedded validation reports. Three local sidecars still match
+their reviewed snapshot fingerprint/score, but AHB has moved from reviewed `f2b3e0591b4a5fbc` /
+`65/100` to unreviewed local sidecar `8b5311edb20f7998` / `63/100`. Treating host-local latest data as
+the tracked authority would silently bypass the review gate; treating the old Markdown as unexplained
+“latest” state is equally misleading.
+
+### Decision and acceptance
+
+`.5g.i` therefore defines snapshot currentness as exact agreement with a tracked, task-owned **reviewed
+projection boundary**. A data-only contract must declare the source/review commit, four artifact paths,
+stages, report fingerprints, scores/grades/finding counts, recommendation/execution counts, live-status
+markers, review-gate evidence, relevant producer regions, snapshot identity, and independent limits.
+The tracked root must say “last reviewed”, while unreviewed git-ignored artifacts remain explicitly
+outside its truth authority.
+
+The currency verifier must be read-only and must fail closed on unsafe/duplicate/missing inputs, root
+identity or metrics drift, summary/report/recommendation mismatch, live-projection mismatch, producer-
+region drift, review-evidence drift, schema/control overflow, and missing paths. Its focused fixtures
+must stay under repository-local `generated/`, include positive plus each material negative path, and
+leave zero residue. `LIVE-DOC-SIZE` must execute it unconditionally before the registry may move
+`validation_snapshot.currency` from transition debt to enforced.
+
+### Acceptance Checklist (enforced) — `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.i`
+
+- [x] **ROOT CAUSE (WHY + WHERE)** — `project_validation.rs:327-364` calls mutating `validate::run`
+  and writes three outputs, so it cannot be a doctrine checker; the tracked snapshot is byte-identical
+  to reviewed commit `a44323d5`, while current artifacts carry 0 embedded reports and the AHB local
+  sidecar moved `f2b3…` / `65` → `8b53…` / `63`. The explicit review-gate decision is in
+  `CANONICAL-PROMOTION-SWEEP`.
+- [x] **ADDRESSED (verified)** — the tracked contract and read-only checker prove the exact four-report,
+  29-recommendation, zero-execution, snapshot, live-block, producer, and review-evidence boundary; ten
+  fail-closed cases plus residue rejection pass, neutral producer wording is tested, and the registry
+  ratchet executes under `LIVE-DOC-SIZE`.
+- [x] **NO REGRESSION** — `cargo fmt --all --check`, the real `project_validation` writer integration
+  test, Clippy across all workspace targets with warnings denied, the ten-case oracle, and the composed
+  34-surface live-document gate pass. Full resulting-tree `run_ci.sh` also passes 1,724 Rust tests with
+  five ignored, rustdoc, and the repository-local mdBook build; extraction, canonical artifacts, and
+  validation scores remain byte-untouched.
+
+### Implemented boundary
+
+`doctrine/live_document_size/validation_snapshot.json` is the sole tracked authority for this
+projection. It pins the 544-line / 63,628-byte snapshot at SHA-256 `69467b06…b45a`, four ordered
+artifact/report identities, 29 recommendation headings, zero execution summaries, the exact managed
+live-status block, reviewed source commit and task evidence, four Rust producer regions, and independent
+control limits. The snapshot's report content is unchanged; only its introduction now explains the
+review gate. `project_validation.rs` emits the same neutral wording on a future reviewed refresh.
+
+`scripts/check_validation_snapshot_currentness.pl` validates that tracked boundary without invoking
+validation or reading ambient generated reports. Its ten cases cover valid state plus snapshot,
+fingerprint, recommendation, live projection, producer, review evidence, unsafe path, duplicate
+identity, and schema drift. Fixtures live under guarded repository-local `generated/` paths; cleanup
+is exception-safe, error-checked, and residue-rejecting. The checker is unconditional in
+`scripts/check_live_document_size.sh`, so `validation_snapshot.currency` is now `enforced` rather than
+transition debt. ADR 0012 and the Knowledge Map card preserve the authority distinction for future
+refreshes and fresh-clone CI.
 
 ## `.5d.ii` Atomic Knowledge Map Projection Migration
 
@@ -1314,6 +1386,8 @@ transition debt, not a fabricated freshness claim.
 | `2026-08-08` | `.5f.i` | staged resulting-tree contract/checker/ADR/fact/readers; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; repository-local mdBook build; `git diff --cached --check` | green: doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, mdBook, and staged diff pass; the feedback source remains byte-untouched transition debt and no ceiling-increase authority is requested |
 | `2026-08-08` | `.5f.ii` | capsule vs commit `abbc7663`; `cmp -s`, dual SHA-256 and exact `wc`; ten-case `--self-test`; migrated real `--check`/`--report`; fact catalog and Knowledge Map derive-and-diff; composed live-size gate; residue census | green: capsule byte-identical at 936 lines / 57,980 bytes / `5bf9…9f03`; current root 81 lines / 5,243 bytes / max 394; index 26 / 1,331 and manifest resolve; five source regions, six closed rows, zero open, all evidence/consumers, current literals, markers/schema/register, 139-card catalog, 140 facts / 990 unique questions, and 590 Markdown files / 34 surfaces pass; no feedback fixture residue |
 | `2026-08-08` | `.5f.ii` | staged resulting-tree capsule/current channel/index/manifest/readers/surface ratchet; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; repository-local mdBook build; `git diff --cached --check`; exact book aggregate | green: doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, book 33 files / 12,173 lines / 729,486 bytes, and staged diff pass; feedback debt is closed across three governed surfaces and no ceiling-increase authority is requested |
+| `2026-08-08` | `.5g.i` | Git-history/review-boundary and ambient-sidecar audit; Perl syntax; ten-case `--self-test`; real `--check`/`--report`; fixture residue census; focused Rust writer test; composed live-size gate | green: reviewed commit and four report identities resolve; snapshot 544 lines / 63,628 bytes / `6946…b45a`; 29 recommendations / zero executions / four producer regions and the exact live block pass; 10/10 drift cases clean without residue; writer wording test 1/1; 592 Markdown files / 34 surfaces pass |
+| `2026-08-08` | `.5g.i` | staged resulting-tree contract/checker/ADR/fact/producer/readers/surface ratchet; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check`; exact book aggregate | green: doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, book 33 files / 12,215 lines / 732,677 bytes, and staged diff pass; validation data and canonical artifacts are unchanged, currency debt is closed, and no ceiling-increase authority is requested |
 
 ## Commit Log
 
@@ -1341,6 +1415,7 @@ transition debt, not a fabricated freshness claim.
 | `.5e.ii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.ii — migrate the bounded current roadmap` | exact history capsule + 153-line current root + corrected status + manifest/index + reader/surface ratchet |
 | `.5f.i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.i — lock the bounded FSMGen feedback contract` | exact source/regions + ADR 0011 + six status/direction/evidence records + consumer/archive/root contract; no migration |
 | `.5f.ii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.ii — migrate the bounded FSMGen feedback channel` | exact capsule + 81-line current root + zero-open/six-closed routes + manifest/index + reader/surface ratchet |
+| `.5g.i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.i — enforce reviewed validation currentness` | tracked reviewed-boundary contract + non-mutating ten-case oracle + producer/live projection proof + debt ratchet |
 
 ## Changelog
 
@@ -1421,3 +1496,8 @@ transition debt, not a fabricated freshness claim.
   closed exchanges, switched the protocol to migrated enforcement, aligned all semantic readers, and
   ratcheted one transition record into separately governed current, index, and immutable-history
   surfaces.
+- `2026-08-08`: `.5g.i` defined validation-snapshot truth at its explicit owner-reviewed boundary,
+  pinned four report identities plus the live projection and mutating producer regions in a tracked
+  contract, added a ten-case read-only oracle with exception-safe residue rejection, aligned producer
+  and book wording, and ratcheted snapshot currency from labelled debt to enforced currentness without
+  changing validation data or canonical artifacts.

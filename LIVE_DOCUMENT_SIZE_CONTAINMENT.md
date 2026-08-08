@@ -25,7 +25,8 @@
   authority and is not rewritten by this adoption.
 - Adoption state: `.3b` activated doctrine, ADR, complete registry, and checker atomically. `.3c`
   closed the common contract with 48 same-volume positive/fail-closed fixture checks before any
-  `.4`/`.5` migration.
+  `.4`/`.5` migration. Later leaves add surface-specific lossless migration and currentness oracles;
+  the registry remains the executable source of their present status.
 <!-- LIVE-DOCUMENT-SIZE-CONTAINMENT-LOCAL-ADOPTION:END -->
 
 ---

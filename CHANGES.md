@@ -1,3 +1,16 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.i — enforce reviewed validation-snapshot currentness
+
+- Defined `VALIDATION_SNAPSHOT.md` as the tracked last-reviewed projection rather than an implicit
+  view of newer git-ignored reports; the four reviewed artifacts, fingerprints, scores, grades,
+  finding counts, 29 recommendations, zero executions, live projection, and review evidence now have
+  one data-only contract.
+- Added a read-only producer-aware verifier with ten fail-closed repository-local cases, exact root,
+  live-block, review-boundary, and Rust producer-region checks, unconditional doctrine execution, and
+  cleanup that fails if any fixture residue survives.
+- Ratcheted `validation_snapshot.currency` from labelled debt to enforced currentness, aligned the
+  producer and mdBook wording to “last reviewed”, and added ADR 0012 plus a Knowledge Map fact. The
+  snapshot's validation data and all canonical artifacts remain unchanged.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.ii — migrate the bounded FSMGen feedback channel
 
 - Sealed the byte-exact 936-line / 57,980-byte `docs/FSMGEN_FEEDBACK.md` source at

@@ -1,6 +1,6 @@
 # VALIDATION_SNAPSHOT
-This file is auto-refreshed by `specforge project-validation <artifact>...`.
-It summarizes the latest persisted validation reports projected from IR artifacts into the tracked live-doc surface.
+This tracked file is refreshed by `specforge project-validation <artifact>...` only after its results pass the review gate.
+It summarizes the last reviewed persisted reports declared by `doctrine/live_document_size/validation_snapshot.json`; newer git-ignored artifacts are not validated-state authority.
 
 ## Snapshot Summary
 - Artifacts projected: 4

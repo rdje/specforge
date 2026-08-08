@@ -204,6 +204,11 @@ The most important user-visible ones are:
 - `VALIDATION_SNAPSHOT.md`
 - `LIVE_ACHIEVEMENT_STATUS.md`
 
+`VALIDATION_SNAPSHOT.md` is the last **reviewed** projection, not an automatic claim about the newest
+git-ignored artifact on the current host. Its tracked currentness contract records the reviewed report
+identities and is checked without reading or mutating `generated/`. A refresh becomes validated state
+only after its projection is reviewed and committed with that declaration.
+
 The more development-centric ones are described in the next chapter.
 
 ## How to inspect an artifact
