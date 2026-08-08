@@ -23,7 +23,12 @@ fi
 if [ "$ROOT" = "$ADAPTER_ROOT" ]; then
   "$ROOT/scripts/check_readme_policy.sh" --self-test || fail=1
   perl "$ROOT/scripts/test_live_document_size.pl" --quiet || fail=1
+  perl "$ROOT/scripts/check_rolling_ledger_protocol.pl" --self-test || fail=1
 fi
+
+perl "$ROOT/scripts/check_rolling_ledger_protocol.pl" \
+  --root "$ROOT" \
+  --registry doctrine/live_document_size/rolling_ledgers.jsonl || fail=1
 
 perl "$ROOT/scripts/check_live_document_size.pl" \
   --root "$ROOT" \

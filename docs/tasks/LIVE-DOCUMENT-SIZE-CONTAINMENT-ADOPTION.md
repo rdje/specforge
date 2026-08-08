@@ -158,7 +158,7 @@ verification before correction.
   coverage, retrieval, indexes, and no residue before any live duplicate is removed.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4a`
-  Status: `in_progress`
+  Status: `done` (`2026-08-08`)
   Goal: measure the four rolling-ledger record grammars and consumers, then lock one shared lossless
   live-window/sealed-segment/archive-descriptor protocol before moving any historical record.
 
@@ -216,8 +216,9 @@ verification before correction.
 | — | `.3b` | `done` (`2026-08-08`) | Doctrine, ADR, 24-surface registry, resulting-tree checker, and fifth driver entry are active atomically. |
 | — | `.3c` | `done` (`2026-08-08`) | Forty-eight repository-volume fixtures prove every lifecycle and control-plane failure path; the common `.3` contract is closed. |
 | — | `.5a` | `done` (`2026-08-08`) | Both contradictions are repaired against code and protected by the executed mdBook currency verifier. |
-| 1 | `.4a` | `in_progress` | Lock a shared lossless rolling-ledger protocol before moving any historical record. |
-| 2 | `.4b`–`.4e` / `.5` / `.6` | `pending` / `active` | Independently committable migrations and locality enforcement after the shared ledger contract exists. |
+| — | `.4a` | `done` (`2026-08-08`) | Four real grammars, exact source identities, bounded survivor plans, consumers, and the repository-local source-capsule protocol are executable; no record moved. |
+| 1 | `.4b` | `pending` | Atomically migrate `CHANGES.md`, including the two measured detached compatibility records, under the locked protocol. |
+| 2 | `.4c`–`.4e` / `.5` / `.6` | `pending` / `active` | Independently committable migrations and locality enforcement after the first archive path is proved. |
 | 5 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
 ## Decisions
@@ -328,12 +329,87 @@ verification before correction.
   formulations, and requires pointers from the repaired current prose to the canonical detailed
   ISF-direction and command chapters. The maintained-reference surface executes it through
   `LIVE-DOC-SIZE`; historical narrative is explicitly time-labelled rather than treated as current.
+- `2026-08-08`: **Ledger boundaries are grammar-specific and lossless (`.4a`).** A closed, bounded
+  registry declares mixed H3/H2, H2-with-prologue, and snapshot-bullet grammars. The checker parses
+  6,667 records across 6,425,335 source bytes and reconstructs every source byte-for-byte before
+  deriving a planned whole-record survivor. A generic Markdown heading split is prohibited.
+- `2026-08-08`: **Initial migrations use an exact source capsule plus a bounded current view
+  (`.4a`).** The immutable repository-local capsule preserves complete-source SHA-256 identity; the
+  stable root retains the reviewed newest-first window. Their intentional overlap is declared and
+  measured. Later rollover seals only new aged-out records, not another full source copy.
+- `2026-08-08`: **The `CHANGES.md` tail anomaly is compatibility evidence, not permission to rewrite
+  history (`.4a`).** `git blame` ties the two detached `.0`/`.1` records to commits `46390523` and
+  `ad07eb3f`: those initial slices appended after the 2026-03-31 legacy tail, while `.2` and later
+  slices prepended. The live migration will promote those exact records after its newest prefix, but
+  the source capsule retains their original ordinals and bytes. No silent reorder occurs.
+- `2026-08-08`: **The status writer owns a stable trailer seam (`.4a`).**
+  `project_validation.rs` writes `LIVE_ACHIEVEMENT_STATUS.md` between the
+  `validation_projection:start` / `validation_projection:end` markers. Both markers and the root
+  path are required consumer literals; the bullet record parser leaves the entire trailer outside
+  the rollover region.
 
 ## Blockers
 
 - None for `.0`–`.3`.
 - Later migrations may stop for an authority conflict, unique unclassified content, or an unprovable
   retrieval promise, exactly as required by the adopted doctrine.
+
+## `.4a` Rolling-Ledger Census And Protocol
+
+### Exact source and reviewed survivor
+
+All figures below are re-derived by `perl scripts/check_rolling_ledger_protocol.pl --report`. Source
+SHA-256 values are pinned in the bounded registry; the table keeps the independently meaningful
+working-set dimensions readable. “Archived records” is the count outside the future live view, not a
+claim that `.4a` already moved them.
+
+| Ledger | Source records / lines / bytes / max line | Planned live records / lines / bytes / max line | Records outside live view | Live limits: records / lines / bytes / max line |
+| --- | --- | --- | ---: | --- |
+| `CHANGES.md` | 1,798 / 32,682 / 2,629,033 / 1,629 | 87 / 1,357 / 199,055 / 1,629 | 1,711 | 128 / 2,000 / 262,144 / 2,200 |
+| `DEVELOPMENT_NOTES.md` | 1,601 / 20,921 / 2,170,230 / 1,401 | 60 / 1,473 / 193,810 / 1,401 | 1,541 | 96 / 2,000 / 262,144 / 1,800 |
+| `LIVE_ACHIEVEMENT_STATUS.md` | 1,918 / 1,958 / 579,393 / 5,467 | 50 / 89 / 92,375 / 5,107 | 1,868 | 80 / 640 / 131,072 / 6,800 |
+| `RUST_CODEBASE_ANALYSIS.md` | 1,350 / 9,039 / 1,046,679 / 3,041 | 60 / 1,057 / 89,728 / 369 | 1,290 | 96 / 1,400 / 196,608 / 600 |
+
+Every selected survivor begins below 80% of each local limit, independently. The values are derived
+from the reviewed retained records and their largest normal transaction; they are not donor values or
+the old bloated measurements relabelled as health. A migrated live root reaching 90% must roll over.
+
+The `CHANGES.md` survivor is the newest 85 records followed by the exact `.1` and `.0` detached
+records. The status survivor includes its two-line prologue, 50 current bullets, one separating blank
+line, and the unchanged 37-line trailer; pressure arithmetic therefore covers the writer-managed
+block rather than counting only bullets. The architecture survivor keeps its six-line Purpose
+prologue, which is why its live line count is greater than the sum of its 60 record bodies alone.
+
+### Grammar and consumer closure
+
+| Ledger | Parser boundary | Load-bearing writers/readers preserved |
+| --- | --- | --- |
+| `CHANGES.md` | leading modern `###` records; legacy `##` records after the first H2; two exact detached H3 records | `COMMIT.md`; README and mdBook routes |
+| `DEVELOPMENT_NOTES.md` | every H2 after the H1 prologue | `COMMIT.md`; README and mdBook routes |
+| `LIVE_ACHIEVEMENT_STATUS.md` | each `- ` line between exact Current-snapshot and gap markers | `COMMIT.md`; `project_validation.rs` stable root and managed markers; README and mdBook routes |
+| `RUST_CODEBASE_ANALYSIS.md` | every H2 after the H1 + `## Purpose` prologue | `COMMIT.md`; `SESSION_BOOTSTRAP.md`; README and mdBook routes |
+
+The registry stores only repository-relative paths and fails closed on unknown fields, schema
+version, record/file bytes, arrays, and scalars. Each plan names the common bounded archive manifest
+and index plus a ledger-specific capsule path under `docs/archive/rolling-ledgers/`; planned paths are
+not treated as existing archives.
+
+### Atomic migration and retrieval contract
+
+For `.4b`–`.4e`, one commit must copy the exact pinned source to its capsule, create or update the
+self-bounded manifest/index, derive the root survivor solely from parsed whole records, switch the
+ledger record from `planned` to `migrated`, add archive/current surface classifications, execute
+retrieval, and only then remove the historical bytes from the root. The migrated checker requires:
+
+- capsule SHA/record/line/byte/max-line identity equal to the pinned source;
+- manifest source/path/date/reason/verifier and first/last record identity;
+- index references to the ledger id, stable root, and capsule;
+- root pressure below the rollover threshold and all grammar/trailer invariants;
+- the originally retained record bytes as an exact suffix behind any later prepended records.
+
+Tool-neutral retrieval is `perl scripts/check_rolling_ledger_protocol.pl --report`. A capsule is an
+archive terminal and cannot receive ordinary appends. Subsequent corrections supersede sealed
+evidence; they never mutate it.
 
 ## `.3a` Complete Markdown Census and `.3b` Contract
 
@@ -429,6 +505,8 @@ transition debt, not a fabricated freshness claim.
 | `2026-08-08` | `.3c` | staged resulting-tree `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | green: 554 Markdown files across 24 surfaces; 48/48 fixtures; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; staged diff clean |
 | `2026-08-08` | `.5a` | code/book cross-read: `select_initiator_actor`, `initiator_perspective_directions`, CLI `ExtractContracts`, dispatch to `commands::extract_contracts::run`; full-chapter stale-phrase census; `bash -n scripts/check_book_current_truth.sh`; direct checker execution | verified root causes: initiator-relative direction lowering and live constrained extraction both ship; both stale formulations removed; canonical detail pointers resolve; focused currency verifier green |
 | `2026-08-08` | `.5a` | staged resulting-tree checker; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | green: 555 Markdown files / 24 surfaces; book currency executes; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; staged diff clean |
+| `2026-08-08` | `.4a` | Git-blame/order root cause; grammar/consumer census; `perl -c scripts/check_rolling_ledger_protocol.pl`; `perl scripts/check_rolling_ledger_protocol.pl --self-test`; real four-ledger `--report` | 6,667 records / 64,600 lines / 6,425,335 bytes reconstruct exactly; ten parser/control cases pass; all four planned survivors start below every 80% warning; status writer path/markers present; no record moved |
+| `2026-08-08` | `.4a` | staged resulting-tree `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | green: 557 Markdown files / 24 surfaces; rolling-ledger checker runs unconditionally; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; staged diff clean |
 
 ## Commit Log
 
@@ -441,6 +519,7 @@ transition debt, not a fabricated freshness claim.
 | `.3b` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3b — activate complete live-document enforcement` | neutral doctrine + ADR + 24-surface registry + checker + fifth driver entry |
 | `.3c` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3c — prove every lifecycle and control path` | same-volume 48-case fixture gate + closed registry/route control planes |
 | `.5a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5a — lock current mdBook truth to code` | two drift repairs + executed maintained-reference currency verifier |
+| `.4a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4a — lock the lossless rolling-ledger protocol` | exact grammars + source identities + bounded survivor/archive/consumer contract; no migration |
 
 ## Changelog
 
@@ -466,3 +545,6 @@ transition debt, not a fabricated freshness claim.
 - `2026-08-08`: `.5a` repaired two pre-existing mdBook time-layer contradictions, routed each
   current statement to its detailed canonical chapter, and made the load-bearing code/book facts an
   executed maintained-reference currency check.
+- `2026-08-08`: `.4a` pinned four grammar-specific source identities and reviewed survivors, recorded
+  the `CHANGES.md` detached-record root cause, adopted ADR 0008, and added the bounded JSONL plan plus
+  unconditional reconstruction/consumer/archive-protocol checker. No historical record moved.

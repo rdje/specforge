@@ -19,13 +19,14 @@
   run it too. Retrieval: `KNOWLEDGE_MAP.md`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4a` — measure the four rolling-ledger
-  grammars and consumers, then lock one shared lossless rollover/archive protocol.
-- Current state: `.0`–`.3c` and `.5a` are complete. The fifth doctrine governs all 555 Markdown files
-  across 24 surfaces; 48 same-volume fixtures prove every local lifecycle/control path, and the
-  mdBook currency verifier binds two repaired current claims to code. README is 128 lines/4,908 bytes.
-  No historical live document has yet been deleted or migrated. Query revision from Git.
-- Next action: census whole-record boundaries, readers/writers, and cross-links for `CHANGES.md`,
-  `DEVELOPMENT_NOTES.md`, `LIVE_ACHIEVEMENT_STATUS.md`, and `RUST_CODEBASE_ANALYSIS.md`.
-- In-flight uncommitted: `.5a` mdBook truth repair and currency lock until commit; none afterward.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4b` — atomically migrate `CHANGES.md` under
+  the shared lossless rolling-ledger protocol.
+- Current state: `.0`–`.4a` and `.5a` are complete. The fifth doctrine governs all 557 Markdown files
+  across 24 surfaces; its composed ledger checker reconstructs 6,667 records / 6,425,335 source bytes
+  exactly and pins four reviewed live windows plus consumers and archive routes. README remains
+  bounded. No historical record moved in `.4a`; query revision from Git.
+- Next action: freeze the pinned `CHANGES.md` as its immutable source capsule, derive the 87-record
+  stable-root survivor, create the bounded manifest/index, switch its registry state, and prove exact
+  retrieval before removing historical bytes from the root in the same `.4b` commit.
+- In-flight uncommitted: `.4a` protocol/checker/docs until commit; none afterward.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

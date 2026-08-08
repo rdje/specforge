@@ -19,6 +19,7 @@ changed* lives in git (layer D), not here.
 | [0006](0006-doctrine-enforcement-architecture.md) | Doctrine-enforcement architecture: every doctrine becomes a mechanically-gated check (registry/driver, E1→E4) | 2026-06-22 | accepted | process, doctrine, enforcement |
 | [0006-genericity](0006-no-hardcoded-chip-spec-vocabulary.md) | No hardcoded chip-spec vocabulary (PDF-independence invariant) | 2026-06-05 | accepted | extraction, genericity, doctrine |
 | [0007](0007-live-document-containment-and-data-locality.md) | Live-document containment and repository-volume data locality | 2026-08-08 | accepted | documentation, containment, locality, portability |
+| [0008](0008-lossless-rolling-ledger-protocol.md) | Lossless rolling-ledger source-capsule and live-window protocol | 2026-08-08 | accepted | documentation, continuity, archive, retrieval |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /

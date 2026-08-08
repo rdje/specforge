@@ -293,6 +293,11 @@ created below repository-local `generated/`; schema fields, arrays, scalars, rou
 axes, baselines, and ceiling-history authority are therefore re-proved on every gate.
 The mdBook maintained-reference record additionally executes `scripts/check_book_current_truth.sh`,
 which binds two load-bearing current claims to their code seams and rejects their superseded wording.
+The same adapter executes `scripts/check_rolling_ledger_protocol.pl`: ten parser/control self-tests
+plus the real four-ledger plan prove whole-record boundaries, exact source identity,
+bounded warning-safe survivors, repository-relative archive routes, and required reader/writer seams.
+After a ledger migrates, that verifier switches identity authority to its immutable source capsule and
+checks the manifest, bounded index, live limits, and exact retained-record suffix.
 
 Deterministic-oracle doctrines that run via `scripts/run_ci.sh` / CI (`kg-bench` 156/156,
 WIRE-BASED-100 constraint+temporal/relation golds = 1.000, the byte-identical evidence/`.isf` checks,

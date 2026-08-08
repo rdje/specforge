@@ -39,6 +39,39 @@ its identity, replacement route, consumers, and retrieval procedure are proved.
 The top-level README will remain a first-class landing page; changing detail and
 chronology will route to controlled canonical destinations.
 
+### Lossless rolling-ledger protocol
+
+The four large root ledgers now have an executable migration contract even though `.4a` deliberately
+moves no record. Their record boundaries are not interchangeable:
+
+| Live root | Whole-record boundary | Stable content outside records |
+| --- | --- | --- |
+| `CHANGES.md` | modern H3 records, then legacy H2 records, plus two named detached compatibility records | none |
+| `DEVELOPMENT_NOTES.md` | every H2 after the H1 title | H1 prologue |
+| `LIVE_ACHIEVEMENT_STATUS.md` | each top-level bullet in `Current snapshot` | H1/current heading plus the gap and generated validation trailer |
+| `RUST_CODEBASE_ANALYSIS.md` | every H2 after `Purpose` | H1 and `Purpose` prologue |
+
+`doctrine/live_document_size/rolling_ledgers.jsonl` pins the measured source identity, reviewed live
+window, local record/line/byte/width limits, consumers, and future archive route for each root.
+`scripts/check_rolling_ledger_protocol.pl` parses and reconstructs every byte, then derives the
+planned live view from whole records and checks each pressure axis independently. Its grammar tests
+also reject non-bullet content inside the status record region.
+
+Each `.4b`–`.4e` migration will copy the exact pre-migration file into an immutable, repository-local
+source capsule before shortening the stable root. The capsule manifest records its digest and
+dimensions; a bounded index links both the current root and historical capsule; the checker retrieves
+and revalidates both. The capsule deliberately overlaps the retained current window so complete-source
+identity remains independently reproducible. Future rotation seals only newly aged-out whole records,
+not another full copy.
+
+This matters especially for `LIVE_ACHIEVEMENT_STATUS.md`: project validation replaces a managed block
+at its existing root path. The protocol therefore requires both validation projection markers and
+keeps the entire generated trailer outside the rolled bullet region.
+
+The two containment records initially written after the old 2026-03-31 `CHANGES.md` tail are not
+silently reordered in historical evidence. The bounded live view will promote those exact records
+after its newest prefix, while the source capsule retains their measured original ordinals and bytes.
+
 ### Lifecycle controls
 
 Every surface declares one of seven lifecycles:

@@ -1,3 +1,15 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4a — lossless rolling-ledger protocol locked
+
+- Measured the four oversized root ledgers by their actual whole-record grammars and pinned their
+  exact source identities, live-window boundaries, archive routes, and load-bearing consumers in a
+  bounded data-only registry.
+- Added an unconditional checker that reconstructs every source byte-for-byte, validates the
+  planned survivor independently on record/line/byte/width axes, and protects the status writer's
+  managed validation markers. It also defines the migrated source-capsule manifest/retrieval path.
+- Root-caused two containment-program records appended below the 2026-03-31 legacy tail. The protocol
+  promotes those exact records into the future current window while retaining their original bytes
+  and source order in the immutable capsule; this slice performs no move or silent reorder.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5a — current mdBook truth locked to code
 
 - Reverified the two ramp-up drifts against `isf_ir.rs`, the CLI, and command dispatch. The `.isf`
