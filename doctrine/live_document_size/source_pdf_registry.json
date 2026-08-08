@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "owner": "LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.ii",
+  "registry": {
+    "path": "corpus/SOURCE_PDF_REGISTRY.md",
+    "lines": 63,
+    "bytes": 7374,
+    "line_bytes": 278,
+    "sha256": "0ea6956cf4f5073d912dc9f89333af18e0a977f0642324cc69810389cde712e6",
+    "h1": "# Source PDF registry",
+    "table_header": "| document_key | class | repo path | corpus directory |",
+    "table_separator": "|---|---|---|---|",
+    "row_count": 22,
+    "required_literals": [
+      "Durable, git-tracked source PDFs",
+      "are **inputs**, not generated artifacts",
+      "provides its path on",
+      "Currentness is executable through `scripts/check_source_pdf_registry_currentness.pl`",
+      "every Git-tracked PDF below `corpus/`",
+      "git-ignored generated artifacts are outside this tracked membership authority",
+      "To add another spec: copy its PDF under `corpus/`",
+      "git-track it, and run the currentness checker"
+    ]
+  },
+  "tracked_corpus": {
+    "root": "corpus",
+    "extension": ".pdf",
+    "file_count": 22,
+    "file_signature": "%PDF-",
+    "git_index_is_authoritative": true,
+    "host_local_or_generated_is_authoritative": false
+  },
+  "derivation": {
+    "source_path": "crates/specforge/src/ir/source.rs",
+    "regions": [
+      {
+        "name": "stable_stem",
+        "signature": "pub fn stable_stem(path: &Path) -> String {",
+        "lines": 13,
+        "bytes": 334,
+        "line_bytes": 43,
+        "sha256": "5c207c164f978c7df490dda3853c6081d6a8f95052a2cafa8721cd83dc2fb5bd"
+      },
+      {
+        "name": "document_key",
+        "signature": "pub fn document_key(input: &str) -> String {",
+        "lines": 21,
+        "bytes": 553,
+        "line_bytes": 58,
+        "sha256": "8fcd2b9e06f2734b44ad9fb07d4ecf0e4f83f338bacacbf4fa2065bf2c701a2e"
+      }
+    ],
+    "seams": [
+      {
+        "literal": "let stable_artifact_stem = stable_stem(source);",
+        "occurrences": 1
+      },
+      {
+        "literal": "let document_key = document_key(&stable_artifact_stem);",
+        "occurrences": 1
+      },
+      {
+        "literal": "let artifact_root = artifact_base_root.join(&document_key);",
+        "occurrences": 1
+      }
+    ]
+  },
+  "controls": {
+    "max_contract_bytes": 16384,
+    "max_registry_rows": 64,
+    "max_required_literals": 16,
+    "max_path_bytes": 512,
+    "max_class_bytes": 160,
+    "max_producer_regions": 4,
+    "max_producer_seams": 8
+  }
+}

@@ -276,7 +276,7 @@ verification before correction.
   without mutating validation artifacts during the check.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.ii`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Goal: make `corpus/SOURCE_PDF_REGISTRY.md` membership and document-key/path currentness executable
   against the tracked corpus without reading host-local source libraries.
 
@@ -335,8 +335,9 @@ verification before correction.
 | — | `.5f.i` | `done` (`2026-08-08`) | Exact five-region source, six closed directed exchanges, zero-open status, two drift findings, 26 consumers, ADR 0011, archive/root design, and ten-case unconditional gate are locked; no feedback record moved. |
 | — | `.5f.ii` | `done` (`2026-08-08`) | Exact capsule, 81-line zero-open current channel, six evidence-linked closed routes, migrated enforcement, and three-surface debt ratchet landed atomically. |
 | — | `.5g.i` | `done` (`2026-08-08`) | The exact reviewed boundary, producer regions, live projection, ten fail-closed cases, and unconditional read-only currency oracle are enforced. |
-| 1 | `.5g.ii` | `pending` | Bind the tracked source-PDF registry to exact corpus membership and document-key/path derivation. |
-| 2 | `.5g.iii`–`.5i` | `pending` | Remaining managed projection currentness, maintained references, and collection closure. |
+| — | `.5g.ii` | `done` (`2026-08-08`) | Exact 22-PDF Git membership, registry paths/keys/directories/signatures, Rust derivation seams, and 13 fail-closed cases are enforced. |
+| 1 | `.5g.iii` | `pending` | Make every managed corpus-KB block reproducible against declared tracked inputs without changing human synthesis. |
+| 2 | `.5h`–`.5i` | `pending` | Maintained-reference audit and final collection/projection closure. |
 | 3 | `.6` | `pending` | Enforce repository-volume project-data locality and audit old project-owned residue. |
 | 4 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
@@ -878,6 +879,48 @@ is exception-safe, error-checked, and residue-rejecting. The checker is uncondit
 transition debt. ADR 0012 and the Knowledge Map card preserve the authority distinction for future
 refreshes and fresh-clone CI.
 
+## `.5g.ii` Executable Source-PDF Registry Membership
+
+### Root cause and authority
+
+The bounded registry entered this slice at 60 lines / 7,066 bytes with 22 table rows. Git also tracks
+exactly 22 `.pdf` files below `corpus/`; all 22 rows currently resolve, begin with `%PDF-`, name their
+actual parent directory, and match the real `stable_stem` → `document_key` derivation. The defect is
+missing execution, not stale membership: no checker prevented a PDF-only or row-only change, key/path
+drift, duplicate identity, or a filename-normalization code change.
+
+The table cannot define its own denominator because a PDF and row could disappear together. The
+owner's larger host-local library and git-ignored generated artifact roots cannot define it because a
+fresh clone does not contain them. ADR 0013 therefore makes the Git-indexed PDF set below `corpus/`
+the exact durable membership authority. Class labels remain human description; membership, path,
+parent directory, key, and file signature are mechanical.
+
+### Implemented contract
+
+`doctrine/live_document_size/source_pdf_registry.json` pins the resulting 63-line / 7,374-byte registry,
+22-row/file denominator, required scope/addition wording, two exact Rust key-derivation regions, three
+`SourceIR::build` seams, and independent control bounds. The registry rows are unchanged; the prose now
+states the complete consecutive-separator algorithm, currentness route, and non-authority of local or
+generated state while remaining below its line-health warning.
+
+`scripts/check_source_pdf_registry_currentness.pl` compares `git ls-files` membership with the parsed
+table, validates uniqueness/safe containment/regular files/parent columns/derived keys/PDF signatures,
+and authenticates the Rust seams. Its 13 guarded repository-volume cases cover valid state plus root
+identity, missing row, extra tracked PDF, untracked row, key drift, duplicate key/path, directory drift,
+unsafe path, bad signature, producer drift, and unknown schema. Cleanup is exception-safe and residue-
+rejecting. `LIVE-DOC-SIZE` runs the suite and real oracle unconditionally; the surface currency record
+is now `enforced` under `.5g.ii`.
+
+### Acceptance Checklist — `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.ii`
+
+- [x] **ROOT CAUSE (WHY + WHERE)** — exact probe: registry 22 rows == 22 tracked corpus PDFs, with zero
+  missing/extra/bad key/directory/signature rows; `source.rs` owns two unguarded derivation functions.
+- [x] **ADDRESSED (verified)** — syntax, 13/13 focused cases, real 22/22 report, zero fixture residue,
+  below-warning 63-line root, and composed 34-surface execution pass.
+- [x] **NO REGRESSION** — staged scope proves zero PDF/Rust-source changes; five doctrines, full
+  `run_ci.sh` (formatting, warning-deny Clippy, 1,724 Rust tests with five ignored, rustdoc, mdBook),
+  Knowledge Map/fact/catalog derive-and-diff, exact book aggregate, and diff hygiene pass.
+
 ## `.5d.ii` Atomic Knowledge Map Projection Migration
 
 The stable landing now fronts seven generated question shards. With the identity-oracle regression fact
@@ -1307,9 +1350,10 @@ collections. Coverage succeeds only when every tracked Markdown path matches exa
 
 `USER_GUIDE.md` and the architecture/spec roots are maintained references until `.5` proves whether
 their content is uniquely current or duplicated by the mdBook; they are not deleted by classification.
-`VALIDATION_SNAPSHOT.md` and `corpus/SOURCE_PDF_REGISTRY.md` are bounded generated/current snapshots
-whose existing producers become declared currency verifiers when available; missing verifier wiring is
-transition debt, not a fabricated freshness claim.
+At `.3a`, `VALIDATION_SNAPSHOT.md` and `corpus/SOURCE_PDF_REGISTRY.md` were classified as bounded
+current snapshots with missing-verifier transition debt rather than fabricated freshness claims.
+`.5g.i` later bound validation to its reviewed producer boundary; `.5g.ii` bound the manually maintained
+registry to Git-indexed corpus membership and the code-owned key derivation.
 
 ### Registry and checker contract for `.3b`
 
@@ -1388,6 +1432,8 @@ transition debt, not a fabricated freshness claim.
 | `2026-08-08` | `.5f.ii` | staged resulting-tree capsule/current channel/index/manifest/readers/surface ratchet; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; repository-local mdBook build; `git diff --cached --check`; exact book aggregate | green: doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, book 33 files / 12,173 lines / 729,486 bytes, and staged diff pass; feedback debt is closed across three governed surfaces and no ceiling-increase authority is requested |
 | `2026-08-08` | `.5g.i` | Git-history/review-boundary and ambient-sidecar audit; Perl syntax; ten-case `--self-test`; real `--check`/`--report`; fixture residue census; focused Rust writer test; composed live-size gate | green: reviewed commit and four report identities resolve; snapshot 544 lines / 63,628 bytes / `6946…b45a`; 29 recommendations / zero executions / four producer regions and the exact live block pass; 10/10 drift cases clean without residue; writer wording test 1/1; 592 Markdown files / 34 surfaces pass |
 | `2026-08-08` | `.5g.i` | staged resulting-tree contract/checker/ADR/fact/producer/readers/surface ratchet; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check`; exact book aggregate | green: doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, book 33 files / 12,215 lines / 732,677 bytes, and staged diff pass; validation data and canonical artifacts are unchanged, currency debt is closed, and no ceiling-increase authority is requested |
+| `2026-08-08` | `.5g.ii` | exact registry/Git/path/key/directory/signature probe; Rust derivation-region identities; Perl/Bash syntax; 13-case `--self-test`; real `--check`/`--report`; residue census; composed live-size gate | green: 22 registry rows == 22 Git-indexed corpus PDFs with zero missing/extra/bad items; root 63 lines / 7,374 bytes / max 278 / `0ea6…12e6` stays below warning; two regions/three seams pass; 13/13 cases clean without residue; currency executes under all 34 surfaces |
+| `2026-08-08` | `.5g.ii` | staged resulting-tree contract/checker/ADR/fact/readers/surface ratchet; no-PDF/no-Rust-source scope proof; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check`; exact book aggregate | green: doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, 141-card catalog, 142 facts / 998 unique questions, book 33 files / 12,250 lines / 734,934 bytes, and staged diff pass; source-registry currency debt is closed without changing rows, PDFs, Rust, extraction behavior, or roadmap direction |
 
 ## Commit Log
 
@@ -1416,6 +1462,7 @@ transition debt, not a fabricated freshness claim.
 | `.5f.i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.i — lock the bounded FSMGen feedback contract` | exact source/regions + ADR 0011 + six status/direction/evidence records + consumer/archive/root contract; no migration |
 | `.5f.ii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.ii — migrate the bounded FSMGen feedback channel` | exact capsule + 81-line current root + zero-open/six-closed routes + manifest/index + reader/surface ratchet |
 | `.5g.i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.i — enforce reviewed validation currentness` | tracked reviewed-boundary contract + non-mutating ten-case oracle + producer/live projection proof + debt ratchet |
+| `.5g.ii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.ii — enforce tracked source-PDF registry currentness` | Git-indexed 22-PDF denominator + key/path/signature oracle + derivation seams + debt ratchet |
 
 ## Changelog
 
@@ -1501,3 +1548,7 @@ transition debt, not a fabricated freshness claim.
   contract, added a ten-case read-only oracle with exception-safe residue rejection, aligned producer
   and book wording, and ratcheted snapshot currency from labelled debt to enforced currentness without
   changing validation data or canonical artifacts.
+- `2026-08-08`: `.5g.ii` made the Git-indexed PDF set below `corpus/` the source-registry denominator,
+  proved exact 22-row membership and key/path/directory/signature agreement, pinned the Rust derivation
+  seams, added a 13-case read-only oracle, aligned durable readers, and ratcheted registry currency from
+  debt to enforced without changing a registry row, PDF, Rust source, extraction behavior, or roadmap.

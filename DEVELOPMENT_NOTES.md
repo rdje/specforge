@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.ii (`2026-08-08`) — membership needs an external denominator
+
+A registry table cannot prove its own completeness. If a source PDF and its row disappear together,
+the table remains internally consistent while reproducible re-ingest is lost. The owner's larger local
+library and generated stage roots are also unsuitable denominators because neither survives every
+clone. The Git index already carries the intended durability decision, so tracked PDFs below `corpus/`
+are the exact membership authority.
+
+The registry still owns useful human metadata—especially the document class—but key and path fields
+are derived facts. The checker recomputes each key with the real `SourceIR` filename algorithm, checks
+the redundant directory column against the parent path, requires `%PDF-`, and rejects any set mismatch
+or duplicate. Pinning `stable_stem`, `document_key`, and their build seams ensures a later code change
+cannot quietly redefine the table.
+
+The oracle intentionally does not maintain a redundant hash catalog for full PDFs. Git already
+versions those bytes; the currentness question is whether every durable input is registered and
+ingestable under the declared identity. Thirteen small synthetic PDFs exercise failure paths under
+repository-local `generated/`, and exception-safe cleanup turns residue into a hard test failure. The
+resulting registry stays at 63 lines, below its line-health warning.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.i (`2026-08-08`) — currentness follows the review boundary
 
 The validation snapshot cannot honestly mean “whatever report exists locally now.” Its producer first

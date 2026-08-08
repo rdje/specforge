@@ -130,6 +130,7 @@ Collection guidance: [authoring and lifecycle README](README.md).
 | [section-header-register-identity-collapse](section-header-register-identity-collapse.md) | 2026-06-24 | `current` | A register mnemonic reused across blocks (ARM-Debug/CoreSight AUTHSTATUS/IDR/CSW) is resolved by FIELD-SET CO… |
 | [signal-presence-matrix-capture](signal-presence-matrix-capture.md) | 2026-06-11 | `current` | Signal-presence matrices — the literal presence-CONDITION typed surface (.12b) |
 | [source-ir-size-scaling](source-ir-size-scaling.md) | 2026-06-15 | `current` | source_ir.json is O(pages) at ~9.3 KB/page; downstream stages load it with a full serde deserialize |
+| [source-pdf-registry-authority](source-pdf-registry-authority.md) | 2026-08-08 | `current` | Git-indexed corpus PDFs are the source-registry membership authority |
 | [spec-mining-framing](spec-mining-framing.md) | 2026-06-04 | `current` | SpecForge is forward specification mining (spec -> intent, not implementation -> spec) |
 | [stable-obligation-phase-scoped-residual](stable-obligation-phase-scoped-residual.md) | 2026-06-04 | `current` | SpecForge stability obligations stay .isf residuals — phase-scoped, not FSMGen's unconditional (stable s) |
 | [stage-staleness-validate-detector](stage-staleness-validate-detector.md) | 2026-06-17 | `current` | validate emits a stage_staleness Warning when a downstream IR carries 0 actor_signal_relations while its upst… |

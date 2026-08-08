@@ -244,6 +244,15 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
   tracked corpus knowledge-base pages from reviewable evidence. Both are advisory, never mutate canonical IR.
 - **WHEN:** inspecting / refreshing the cross-document learning plane.
 
+### 6.4 `scripts/check_source_pdf_registry_currentness.pl`
+- **WHAT:** read-only exact-membership oracle for the durable source corpus: Git-indexed PDFs below
+  `corpus/` ↔ registry rows, code-derived document keys, parent directories, PDF signatures, and pinned
+  `SourceIR` derivation seams.
+- **WHEN:** adding, removing, or renaming a tracked source PDF; changing filename-to-key code; auditing
+  whether a fresh clone has every reproducible source named exactly once.
+- **HOW:** `perl scripts/check_source_pdf_registry_currentness.pl --report` (13 fail-closed cases run
+  unconditionally through `LIVE-DOC-SIZE`; host-local libraries and `generated/` are not inputs).
+
 ---
 
 ## 7. Stage replay, build, and host

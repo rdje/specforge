@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > what is the LLM-primary extractor's measured recall on APB / AHB / AXI gold
+- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
+  > what is the LTL form of a temporal_rule
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > what is the NLI entailment verifier
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > what is the NVMe register-field recall / precision
 - [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
@@ -20,6 +26,8 @@
   > what is the `<role> channel signals` caption cue and how is it parsed
 - [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
   > what is the ambiguous_statements metric in validate
+- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
+  > what is the authoritative membership set for corpus SOURCE_PDF_REGISTRY
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > what is the bit-exact adjacency chain rule
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
@@ -290,11 +298,3 @@
   > where is the default-flip decision packet / should promote-constraints-llm become the default
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > where is the dropped enum surfaced (an isf_enum_value_literal_<name> ResidualDecisionPacket via enum_residuals(), wired into adapters.rs residual_decisions)
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > where is the exact historical SpecForge roadmap after containment
-- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
-  > where is the mdBook current-truth verifier
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > where is the per-author adopt-vs-defer provenance
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > where is the register-field gold seed

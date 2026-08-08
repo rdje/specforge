@@ -20,7 +20,7 @@ DOCLING_DEVICE=cpu cargo run -p specforge -- ingest <repo PDF path>
 # then: specforge evidence … ; specforge semantic … ; specforge eval-extraction …
 ```
 
-| document_key | class | repo path | source (relative) |
+| document_key | class | repo path | corpus directory |
 |---|---|---|---|
 | `ihi0024_e_2023_02_amba_5_apb_protocol_specification` | wire-bus (APB) | `corpus/arm/amba/core/apb/current/IHI0024_E_2023-02_AMBA_5_APB_Protocol_Specification.pdf` | `arm/amba/core/apb/current/` |
 | `ihi0033_c_2021_09_amba_5_ahb_protocol_specification` | wire-bus (AHB) | `corpus/arm/amba/core/ahb/current/IHI0033_C_2021-09_AMBA_5_AHB_Protocol_Specification.pdf` | `arm/amba/core/ahb/current/` |
@@ -53,8 +53,11 @@ the corresponding SpecForge extraction features. The ten `PDF-VARIANT-DIGESTION.
 `2026-06-11`) were copied in so the recorded pending wins (the `.12a` ACE wires, the `.12b` presence
 records, the `EXTRACTION-QUALITY-GAUGE.3c` CHI gauge, the `.10`-family message-field canonical rebuilds)
 become reproducible re-ingests; their filenames are kept verbatim so each derived `document_key` matches
-its persisted `generated/` artifacts (verified per-item before import). The `document_key` is each spec's normalized filename
-(lowercased, `-`/`.`/spaces → `_`); it is confirmed against `generated/source_ir/<key>/` on first ingest.
+its persisted artifacts. `SourceIR` derives the key from the final stem: retain lowercase ASCII alphanumerics,
+collapse each other-character run to one `_`, then trim leading/trailing `_` characters.
+
+Currentness is executable through `scripts/check_source_pdf_registry_currentness.pl`: every Git-tracked PDF below `corpus/`
+appears exactly once with its code-derived key, parent directory, and PDF signature; host-local libraries and git-ignored generated artifacts are outside this tracked membership authority.
 
 To add another spec: copy its PDF under `corpus/` mirroring the source library's relative structure, add
-a row here, and git-track it (owner directive `2026-06-07`).
+a row here, git-track it, and run the currentness checker (owner directive `2026-06-07`).

@@ -96,6 +96,8 @@
   > do evidence/semantic/intent stream source_ir.json or load it all into memory
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > do field constraints pass the same grounding gates as signal constraints
+- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
+  > do host-local source libraries define tracked corpus membership
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > do signal presence records mint signals or declarations
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
@@ -250,6 +252,8 @@
   > how are continuation table fragments (B1.1 Continued from previous page) chained to a channel role
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > how are doctrines enforced in specforge
+- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
+  > how are document keys in the source PDF registry derived from filenames
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
   > how are duplicate signal constraints deduplicated in the LLM-primary extractor
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
@@ -294,7 +298,3 @@
   > how are unknown tables reclassified by the VLM
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > how big does source_ir.json get / how does it scale with page count
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > how can I browse every SpecForge knowledge fact card by id or title
-- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
-  > how can a collection use a membership index outside its own surface

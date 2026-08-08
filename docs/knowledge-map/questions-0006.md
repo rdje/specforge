@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > where is the exact historical SpecForge roadmap after containment
+- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
+  > where is the mdBook current-truth verifier
+- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
+  > where is the per-author adopt-vs-defer provenance
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > where is the register-field gold seed
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > where is the shared 0.6 fingerprint clustering threshold defined (DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD)
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
@@ -289,11 +297,3 @@
   > why does an in-body (drive NAME) need a top-level named-drive definition (drive 'X' not defined)
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
   > why does an incidental 'can' in a source block not drop its other constraints
-- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
-  > why does condition_text matter for the NLI claim
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > why does constraint promotion run outside the convergence loop
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > why does decoder go from 0/0 to connected (decoder also consolidated)
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > why does dropping phantom actors leave the .isf and WIRE-BASED-100 unchanged

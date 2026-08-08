@@ -92,6 +92,13 @@ the task evidence that withheld later unreviewed local scores. Ten focused cases
 report, count, live-block, producer, evidence, path, duplicate, or schema drift without touching
 git-ignored artifacts.
 
+The source-PDF registry has a separate read-only membership oracle. The Git index supplies the exact
+PDF denominator below `corpus/`; every registry row must map one member to its real `SourceIR`-derived
+key and parent directory, and every file must carry the PDF signature. Two pinned key-derivation
+functions plus three build seams make code/registry drift fail closed. Thirteen focused cases exercise
+identity, membership, duplicate, key, directory, signature, producer, path, and schema failures without
+consulting the owner's host-local library or generated artifacts.
+
 The live-document checker is also unconditional. Its JSONL registry is the data-only authority for
 the complete tracked Markdown set, while `LIVE_DOCUMENT_SIZE_CONTAINMENT.md` explains the neutral
 lifecycle model. It does not confuse a large legacy ceiling with a healthy target: existing debt keeps

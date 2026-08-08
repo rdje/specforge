@@ -1,3 +1,15 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.ii — enforce tracked source-PDF registry currentness
+
+- Established the Git-indexed `.pdf` set below `corpus/` as the durable membership denominator; all
+  22 tracked PDFs and registry rows agree exactly on safe path, unique derived key, parent directory,
+  and `%PDF-` signature. Host-local libraries and generated artifacts remain non-authoritative.
+- Added a data-only contract and read-only checker that pin the two Rust filename/key functions plus
+  three `SourceIR::build` seams. Thirteen repository-local cases reject identity, membership, duplicate,
+  key, directory, signature, producer, unsafe-path, and schema drift with residue-checked cleanup.
+- Wired the oracle unconditionally through `LIVE-DOC-SIZE`, ratcheted `source_pdf_registry.currency`
+  from transition debt to enforced, and aligned ADR 0013, the Knowledge Map, diagnostics, and mdBook.
+  Registry rows, PDFs, Rust source, extraction behavior, and roadmap direction are unchanged.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.i — enforce reviewed validation-snapshot currentness
 
 - Defined `VALIDATION_SNAPSHOT.md` as the tracked last-reviewed projection rather than an implicit

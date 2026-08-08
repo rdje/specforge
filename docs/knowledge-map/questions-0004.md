@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > what are the AXI B1.x channel-signal tables and how do channels map to phases
+- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
+  > what are the SWD packet phases and per-phase SWDIO direction
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > what are the agent-surface precision and completeness defects (KG-ISF-COMPLETENESS.1)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > what are the deeper enum member-quality residual classes after .5.ii / what did the .5.iii measurement find (measured 2026-06-24 read-only, reproducer scripts/measure_enum_width_leak.py: of the 5 deferred classes — glossary SEE…, front-matter/ToC, section-caption B2_3_1_…, _WIDTH parameter leaks, value-restart-of-clean — most are SUBSUMED by .5.i (47/54 _WIDTH members
   > and the bulk of 319 section-caption survivors sit in generic-named enums .5.i drops whole), EXCEPT the _WIDTH leak which reaches the AXI wire-gold .isf and is materially damaging)
@@ -292,9 +298,3 @@
   > what is the KG-ISF-TRANSACTIONS census / transaction-capture baseline
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
   > what is the LLM-primary extractor's measured precision on APB / AHB / AXI gold
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > what is the LLM-primary extractor's measured recall on APB / AHB / AXI gold
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > what is the LTL form of a temporal_rule
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > what is the NLI entailment verifier

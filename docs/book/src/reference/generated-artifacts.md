@@ -8,6 +8,21 @@ The most important rule is simple:
 
 That rule is intentional. Real chip PDFs can produce large intermediate artifacts, and those artifacts can change whenever extraction, enrichment, validation, or learning logic improves.
 
+## Tracked source PDFs
+
+Source PDFs intentionally kept for reproducible re-ingest live below `corpus/`; they are inputs, not
+generated artifacts. `corpus/SOURCE_PDF_REGISTRY.md` names every such PDF, its descriptive class, and
+the `document_key` that `SourceIR` derives from the filename.
+
+The Git-indexed PDF set below `corpus/` is the membership authority. The unconditional read-only
+currentness check requires one registry row per tracked PDF, verifies the code-derived key and parent
+directory, checks the PDF signature, and pins the Rust derivation seams. A larger host-local source
+library and git-ignored stage artifacts are not part of this durable set. Run:
+
+```bash
+perl scripts/check_source_pdf_registry_currentness.pl --report
+```
+
 ## Generated artifact roots
 
 - `generated/source_ir/<document_key>/source_ir.json`

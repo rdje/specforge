@@ -348,6 +348,19 @@ To refresh the tracked projection, run `project-validation` on the intended arti
 result, then update the declaration, snapshot, and managed live-status block atomically. A local report
 delta is evidence to review, not permission to silently rewrite validated state.
 
+#### Source-PDF registry follows Git membership
+
+`corpus/SOURCE_PDF_REGISTRY.md` is a durable source inventory, not a generated-artifact catalog and not
+a mirror of the owner's larger local library. Its current membership denominator is the Git-indexed
+set of PDFs below `corpus/`. The registry currently maps all 22 tracked PDFs exactly once.
+
+The read-only currentness contract checks safe paths, exact membership, unique keys and paths, derived
+parent directories, `%PDF-` signatures, and the real filename-stem-to-`document_key` implementation.
+It pins both derivation functions and the three `SourceIR::build` seams that consume them. Thirteen
+repository-local mutation cases fail closed and remove their fixtures even when a mutation itself
+throws. Adding, removing, or renaming a source PDF therefore requires its registry row in the same
+change; host-local and generated-only documents do not silently enter the durable corpus.
+
 Lines, bytes, file count, collection totals, and maximum content-line width are independent axes.
 Existing oversized ledgers are explicit transition debt: their measured baseline cannot move, and a
 separate bounded allowance exists only for the containment program's continuity updates until the

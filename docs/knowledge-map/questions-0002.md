@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > how can I browse every SpecForge knowledge fact card by id or title
+- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
+  > how can a collection use a membership index outside its own surface
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how complete is a document's extracted intent / what is the per-doc completeness gauge
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
@@ -246,6 +250,8 @@
   > how is an under-extracted spec distinguished from a true guide (evidence_document_underextracted_spec)
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > how is an unless/except exception clause handled in a temporal condition
+- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
+  > how is corpus SOURCE_PDF_REGISTRY currentness checked
 - [task-tree-catalog](../knowledge/task-tree-catalog.md)
   > how is docs TASK_TREE kept complete without mirroring task history
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
@@ -291,9 +297,3 @@
   > how is the required free disk for an ingest estimated
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > how is the single-word `<NAME> state` grammar kept false-positive-free without a keyword doc-gate (ADR 0006)
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > how is transaction membership kept boundary-precise across read vs write (bar #3)
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > how many RISC-V Debug register bit diagrams are images vs flattened tables (53/56 images, 34 field tables, only 7 flattened diagram tables; bits live in the image modality)
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > how many conditional_rules are concretely lowerable (only ~3 of 603 across 9 representative docs carry a concrete value/level cue; 161/164 declared-consequent candidates are bare modals shall/must/shall not)

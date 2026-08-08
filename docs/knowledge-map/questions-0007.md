@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
+  > why does condition_text matter for the NLI claim
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > why does constraint promotion run outside the convergence loop
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > why does decoder go from 0/0 to connected (decoder also consolidated)
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > why does dropping phantom actors leave the .isf and WIRE-BASED-100 unchanged
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
   > why does ingest still generate page images if it does not save them
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
