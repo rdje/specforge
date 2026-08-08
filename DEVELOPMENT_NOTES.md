@@ -1,4 +1,23 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5i (`2026-08-08`) — size signals must identify their dimension
+
+The corpus-KB warning was initially described as aggregate pressure, but the resulting-tree report
+proved the opposite: aggregate lines and bytes had more than half their capacity free. The actual
+signals were one file's line count and one generated content line. Treating all four dimensions as
+"document size" would have suggested an unnecessary collection split or a dishonest ceiling increase.
+
+Both causes were presentation multiplicity. A passing fixture carried a six-line record whose empty
+failure block added no information, and candidate evidence sets were flattened into single table
+cells. The bounded forms preserve the same facts: one aggregate row per fixture, expanded detail only
+for failures, counts in the candidate table, and one separately reviewable evidence fixture per line.
+The paired JSON remains the automation surface. This is a useful general rule for generated docs:
+compress repeated empty structure, never compress independent evidence into an unbounded physical line.
+
+The closure audit also caught a stale searchable fact after `.5h` retired the root-architecture
+catalog. Membership generators proved the indexes themselves, but could not infer that prose saying
+"six / 241" was obsolete. Currentness therefore needs both mechanical topology checks and searchable
+semantic facts whose reverify command reaches the canonical registry.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5h (`2026-08-08`) — compatibility paths are not truth mirrors
 
 Exact paragraph identity was the wrong duplicate test for the root-reference audit. The four roots

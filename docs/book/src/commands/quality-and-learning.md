@@ -315,7 +315,9 @@ This is the first concrete `R15g` surface: persistent corpus-level synthesis bes
 
 The tracked validation projection must use `--validation-snapshot`; positional validation reports are
 an unreviewed local mode and cannot be mixed with it. The complete KG projection currently covers
-156/156 passing fixtures. Verify the tracked dependency/output contract without rewriting pages with
+156/156 passing fixtures. Its aggregate uses one pass/fail/path row per fixture with expanded details
+only for failures; prior-candidate fixture evidence is one item per line beside the paired JSON
+manifest. Verify the tracked dependency/output contract without rewriting pages with
 `perl scripts/check_corpus_kb_currentness.pl --report`.
 
 The boundary is strict:

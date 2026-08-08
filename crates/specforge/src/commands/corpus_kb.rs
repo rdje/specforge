@@ -785,9 +785,12 @@ fn render_kg_fixtures_block(entries: &[KgFixtureProjection]) -> String {
             for summary in failed_summaries {
                 output.push_str("- ");
                 output.push_str(&escape_markdown_line(&summary.label));
-                output.push_str(": `");
-                output.push_str(&summary.failed_fixture_names.join("`, `"));
-                output.push_str("`\n");
+                output.push_str(":\n");
+                for fixture in &summary.failed_fixture_names {
+                    output.push_str("  - `");
+                    output.push_str(&escape_markdown_line(fixture));
+                    output.push_str("`\n");
+                }
             }
             output.push('\n');
         }
@@ -795,33 +798,43 @@ fn render_kg_fixtures_block(entries: &[KgFixtureProjection]) -> String {
 
     if entries.is_empty() {
         output.push_str("- No KG fixtures were projected.\n\n");
-    }
-
-    for entry in entries {
-        output.push_str("### ");
-        output.push_str(&entry.outcome.name);
-        output.push('\n');
-        output.push_str("- fixture_path: `");
-        output.push_str(&entry.display_path);
-        output.push_str("`\n");
-        output.push_str("- status: `");
-        output.push_str(if entry.outcome.failures.is_empty() {
-            "pass"
-        } else {
-            "fail"
-        });
-        output.push_str("`\n");
-        output.push_str("- failures:\n");
-        if entry.outcome.failures.is_empty() {
-            output.push_str("  - none\n");
-        } else {
-            for failure in &entry.outcome.failures {
-                output.push_str("  - ");
-                output.push_str(&escape_markdown_line(failure));
-                output.push('\n');
-            }
+    } else {
+        output.push_str("### Fixture Results\n");
+        output.push_str("| fixture | status | path |\n");
+        output.push_str("| --- | --- | --- |\n");
+        for entry in entries {
+            output.push_str("| `");
+            output.push_str(&escape_markdown_line(&entry.outcome.name));
+            output.push_str("` | `");
+            output.push_str(if entry.outcome.failures.is_empty() {
+                "pass"
+            } else {
+                "fail"
+            });
+            output.push_str("` | `");
+            output.push_str(&escape_markdown_line(&entry.display_path));
+            output.push_str("` |\n");
         }
         output.push('\n');
+
+        let failing_entries = entries
+            .iter()
+            .filter(|entry| !entry.outcome.failures.is_empty())
+            .collect::<Vec<_>>();
+        if !failing_entries.is_empty() {
+            output.push_str("Failed fixture details:\n");
+            for entry in failing_entries {
+                output.push_str("- `");
+                output.push_str(&escape_markdown_line(&entry.outcome.name));
+                output.push_str("`:\n");
+                for failure in &entry.outcome.failures {
+                    output.push_str("  - ");
+                    output.push_str(&escape_markdown_line(failure));
+                    output.push('\n');
+                }
+            }
+            output.push('\n');
+        }
     }
 
     output.push_str(KG_FIXTURES_MANAGED_END);
@@ -922,8 +935,10 @@ fn render_prior_candidate_block(candidates: &[PriorCandidateProjection]) -> Stri
         output
             .push_str("- No prior candidates were projected from the current KG fixture run.\n\n");
     } else {
-        output.push_str("| candidate_kind | target_schema | supporting | positive_gates | guard_gates | required_gates |\n");
-        output.push_str("| --- | --- | ---: | --- | --- | --- |\n");
+        output.push_str(
+            "| candidate_kind | target_schema | supporting | positive | guard | required_gates |\n",
+        );
+        output.push_str("| --- | --- | ---: | ---: | ---: | --- |\n");
         for candidate in candidates {
             output.push_str("| `");
             output.push_str(candidate.candidate_kind);
@@ -931,15 +946,25 @@ fn render_prior_candidate_block(candidates: &[PriorCandidateProjection]) -> Stri
             output.push_str(candidate.target_schema);
             output.push_str("` | `");
             output.push_str(&candidate.supporting_fixtures.len().to_string());
+            output.push_str("` | `");
+            output.push_str(&candidate.positive_fixtures.len().to_string());
+            output.push_str("` | `");
+            output.push_str(&candidate.guard_fixtures.len().to_string());
             output.push_str("` | ");
-            output.push_str(&render_fixture_set(&candidate.positive_fixtures));
-            output.push_str(" | ");
-            output.push_str(&render_fixture_set(&candidate.guard_fixtures));
-            output.push_str(" | ");
             output.push_str(&escape_markdown_line(candidate.required_gates));
             output.push_str(" |\n");
         }
         output.push('\n');
+        output.push_str("### Fixture Evidence\n");
+        output.push_str("Each evidence fixture is listed on its own line so growth remains reviewable and bounded.\n\n");
+        for candidate in candidates {
+            output.push_str("#### `");
+            output.push_str(candidate.candidate_kind);
+            output.push_str("`\n");
+            push_fixture_evidence(&mut output, "positive_gates", &candidate.positive_fixtures);
+            push_fixture_evidence(&mut output, "guard_gates", &candidate.guard_fixtures);
+            output.push('\n');
+        }
         output.push_str("### Readiness Summary\n");
         output.push_str("Readiness is fixture-surface readiness only. It is not promotion approval and does not allow `CorpusMemory` or canonical IR mutation.\n\n");
         output.push_str(
@@ -1077,18 +1102,18 @@ fn prior_candidate_projections(entries: &[KgFixtureProjection]) -> Vec<PriorCand
     candidates.into_values().collect()
 }
 
-fn render_fixture_set(fixtures: &BTreeSet<String>) -> String {
+fn push_fixture_evidence(output: &mut String, label: &str, fixtures: &BTreeSet<String>) {
+    output.push_str("- ");
+    output.push_str(label);
+    output.push_str(":\n");
     if fixtures.is_empty() {
-        "`none`".to_string()
+        output.push_str("  - none\n");
     } else {
-        format!(
-            "`{}`",
-            fixtures
-                .iter()
-                .map(String::as_str)
-                .collect::<Vec<_>>()
-                .join("`, `")
-        )
+        for fixture in fixtures {
+            output.push_str("  - `");
+            output.push_str(&escape_markdown_line(fixture));
+            output.push_str("`\n");
+        }
     }
 }
 
@@ -1498,13 +1523,14 @@ Keep this benchmark note.\n\n\
         assert!(refreshed.contains("| typed prior memory | `2` | `2` | `0` |"));
         assert!(refreshed.contains("| semantic role arbitration | `1` | `1` | `0` |"));
         assert!(refreshed.contains("| truthfulness negatives and cautions | `2` | `2` | `0` |"));
-        assert!(refreshed.contains("### table_shape_prior_guided_signal_table_gold"));
-        assert!(
-            refreshed.contains("### table_shape_prior_guided_signal_table_without_prior_negative")
-        );
-        assert!(refreshed.contains("### name_only_semantic_noise_negative"));
-        assert!(refreshed.contains("### vlm_state_machine_duplicate_initial_gold"));
-        assert!(refreshed.contains("- status: `pass`"));
+        assert!(refreshed.contains("### Fixture Results"));
+        assert!(refreshed.contains("| fixture | status | path |"));
+        assert!(refreshed.contains("| `table_shape_prior_guided_signal_table_gold` | `pass` | `"));
+        assert!(refreshed.contains(
+            "| `table_shape_prior_guided_signal_table_without_prior_negative` | `pass` | `"
+        ));
+        assert!(refreshed.contains("| `name_only_semantic_noise_negative` | `pass` | `"));
+        assert!(refreshed.contains("| `vlm_state_machine_duplicate_initial_gold` | `pass` | `"));
 
         let pattern_family_page = repo_root
             .join("corpus_kb")
@@ -1570,6 +1596,11 @@ Keep this benchmark note.\n\n\
         assert!(prior_candidate_refreshed.contains("`CorpusMemory.table_shape_priors`"));
         assert!(prior_candidate_refreshed.contains("candidate_not_promoted_review_required"));
         assert!(prior_candidate_refreshed.contains("`table_shape_prior_guided_signal_table_gold`"));
+        assert!(prior_candidate_refreshed.contains("### Fixture Evidence"));
+        assert!(
+            prior_candidate_refreshed
+                .contains("- positive_gates:\n  - `table_shape_prior_guided_signal_table_gold`")
+        );
         assert!(prior_candidate_refreshed.contains("### Promotion Gate Review Matrix"));
         assert!(prior_candidate_refreshed.contains("### Readiness Summary"));
         assert!(prior_candidate_refreshed.contains("`fixture_paired_review_ready`"));
@@ -1833,26 +1864,65 @@ Keep this benchmark note.\n\n\
         assert_eq!(prior_candidate_readiness(&c), "needs_guard_fixture");
     }
 
-    // --- render_fixture_set ---
+    // --- push_fixture_evidence ---
 
     #[test]
-    fn render_fixture_set_empty() {
-        assert_eq!(render_fixture_set(&BTreeSet::new()), "`none`");
+    fn push_fixture_evidence_empty() {
+        let mut rendered = String::new();
+        push_fixture_evidence(&mut rendered, "positive_gates", &BTreeSet::new());
+        assert_eq!(rendered, "- positive_gates:\n  - none\n");
     }
 
     #[test]
-    fn render_fixture_set_one_fixture() {
-        let mut fixtures = BTreeSet::new();
-        fixtures.insert("test_fixture".to_string());
-        assert_eq!(render_fixture_set(&fixtures), "`test_fixture`");
+    fn render_prior_candidates_keeps_large_fixture_sets_line_bounded() {
+        let fixtures = (0..64)
+            .map(|index| format!("fixture_{index:02}_with_a_deliberately_reviewable_name"))
+            .collect::<BTreeSet<_>>();
+        let candidate = PriorCandidateProjection {
+            candidate_kind: "test_prior",
+            target_schema: "CorpusMemory.test_priors",
+            required_gates: "typed schema; paired coverage; local consumer",
+            schema_gate: "schema_gate",
+            fixture_gate: "fixture_gate",
+            harvest_gate: "harvest_gate",
+            consumer_gate: "consumer_gate",
+            supporting_fixtures: fixtures.clone(),
+            positive_fixtures: fixtures.clone(),
+            guard_fixtures: fixtures,
+        };
+
+        let rendered = render_prior_candidate_block(&[candidate]);
+        assert!(
+            rendered.contains("| `test_prior` | `CorpusMemory.test_priors` | `64` | `64` | `64` |")
+        );
+        assert!(rendered.contains("  - `fixture_00_with_a_deliberately_reviewable_name`"));
+        assert!(rendered.contains("  - `fixture_63_with_a_deliberately_reviewable_name`"));
+        assert!(rendered.lines().all(|line| line.len() < 512));
     }
 
     #[test]
-    fn render_fixture_set_multiple_fixtures() {
-        let mut fixtures = BTreeSet::new();
-        fixtures.insert("alpha".to_string());
-        fixtures.insert("beta".to_string());
-        assert_eq!(render_fixture_set(&fixtures), "`alpha`, `beta`");
+    fn render_kg_fixtures_compacts_rows_but_preserves_failure_details() {
+        let entry = KgFixtureProjection {
+            outcome: KgBenchFixtureOutcome {
+                name: "broken_fixture".to_string(),
+                fixture_path: PathBuf::from("fixtures/broken_fixture/fixture.json"),
+                failures: vec!["expected pass | observed fail".to_string()],
+            },
+            display_path: "fixtures/broken_fixture/fixture.json".to_string(),
+        };
+
+        let rendered = render_kg_fixtures_block(&[entry]);
+        assert!(
+            rendered
+                .contains("| `broken_fixture` | `fail` | `fixtures/broken_fixture/fixture.json` |")
+        );
+        assert!(rendered.contains("Failed fixture details:\n- `broken_fixture`:"));
+        assert!(
+            rendered
+                .contains("Failed fixture family members:\n- uncategorized:\n  - `broken_fixture`")
+        );
+        assert!(rendered.contains("  - expected pass \\| observed fail"));
+        assert!(!rendered.contains("- failures:\n"));
     }
 
     // --- escape_markdown_line ---

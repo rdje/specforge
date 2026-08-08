@@ -189,13 +189,13 @@ doctrine gate.
 
 The decision collection keeps its bounded index: every current ADR file is linked exactly once, and
 the generic membership gate continues to enforce that route. Fact cards have a different,
-complementary route at `docs/knowledge/INDEX.md`. Its current 153-line / 28,899-byte generated catalog
-lists all 139 immediate cards by id, establishment date, status, and a bounded title preview.
+complementary route at `docs/knowledge/INDEX.md`. At `.5c.ii`, its 153-line / 28,899-byte generated
+catalog listed all 139 immediate cards by id, establishment date, status, and a bounded title preview.
 Long historical titles are shortened only in the index; the linked card remains canonical and
 unchanged.
 
 The catalog count deliberately excludes `docs/knowledge/README.md` and the generated index itself.
-The root question map currently reports 140 facts because it additionally scans ADR 0007, which has
+The root question map then reported 140 facts because it additionally scans ADR 0007, which has
 Knowledge Map front matter. Thus directory files, fact cards, and cross-layer generated facts are
 three explicit counts rather than one overloaded metric.
 
@@ -253,7 +253,7 @@ bytes, wrap under a fixed physical-line limit, and omit repeated date/reverify f
 remain in the linked card. The repeated generated fact section also disappears because the bounded
 fact catalog already owns id/title browsing.
 
-The current 139 facts / 981 unique questions occupy seven shards.
+The migration's 139 facts / 981 unique questions occupied seven shards.
 The landing is 19 lines / 898 bytes; the largest shard is 300 lines / 30,427 bytes, and the complete
 question set is 2,000 lines / 183,756 bytes. Independent limits govern input ids, paths, question
 bytes, line width, files, lines, and bytes; explicit 4,096-line / 393,216-byte aggregate caps prevent
@@ -265,6 +265,11 @@ collision rejection, ordering, wrapping, rollover, stale cleanup/staging, bounds
 temporary residue. A ninth contract case guards raw-byte identity after the initial simulator was
 found hashing scalars consumed by checked UTF-8 decoding. Every bootstrap, CI, bundle, doctrine, and mdBook reader moved in the same slice;
 the generated surface is now normal rather than transition debt.
+
+At `.5i` closure, the bounded catalog contains 145 fact cards and the generated map contains 146 facts
+with 1,017 unique question keys across seven shards. Both counts and every route are derive-and-diff
+checked, so later cards can grow the bounded projections without reviving the historical counts above
+as current truth.
 
 #### Bounded roadmap with exact historical recovery
 
@@ -388,6 +393,22 @@ validation already have richer topical chapters. The four root filenames now con
 routes to those homes. `scripts/check_book_current_truth.sh` binds the product claims to the live
 `IntentIr` and sole-`Isf` adapter seams, requires every compatibility route, and rejects the stale
 root status headings. Independent pointer budgets prevent a second manual from regrowing.
+
+#### Resulting collection and projection closure
+
+The final resulting-tree census covers exactly 600 Git-indexed Markdown files across 37 governed
+surfaces. Every file is classified once; all collection indexes and generated projections are direct
+and current; all eight currency contracts are enforced; and no surface remains in a transition or
+currency-debt state. Five generated member catalogs route 237 canonical files, while the task tree,
+decision index, fact catalog, Knowledge Map, mdBook summary, and portable bundle keep their dedicated
+one-hop routes.
+
+The corpus-KB warning found during closure was caused by output shape rather than collection growth.
+Its aggregate page repeated a six-line record for every passing fixture, and its prior-candidate table
+joined whole fixture sets into single cells. The producer now emits one fixture row plus failure-only
+detail and one evidence fixture per candidate bullet. At 156/156 passing fixtures, the 24 Markdown
+files total 1,172 lines / 124,679 bytes; the largest file is 201 lines / 25,470 bytes and the longest
+content line is 305 bytes. The existing limits were not widened.
 
 Lines, bytes, file count, collection totals, and maximum content-line width are independent axes.
 Existing oversized ledgers are explicit transition debt: their measured baseline cannot move, and a

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "owner": "LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.iii",
+  "owner": "LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5i",
   "inputs": {
     "validation": {
       "snapshot_path": "VALIDATION_SNAPSHOT.md",
@@ -38,9 +38,9 @@
         "kind": "kg_aggregate",
         "start_marker": "<!-- corpus_kb_kg_fixtures:start -->",
         "end_marker": "<!-- corpus_kb_kg_fixtures:end -->",
-        "managed_sha256": "b1c71b193812cec3dfd6cbb6023fe95e43012ef655da74bc2adf5c29723b6f09",
-        "managed_lines": 965,
-        "managed_bytes": 31431,
+        "managed_sha256": "26dc4fed3f8f54084f05b7e3890aa630bb6e406cef5d4237c60eadaba337dd21",
+        "managed_lines": 189,
+        "managed_bytes": 24948,
         "human_prefix_sha256": "dbf4e64cf7075d60bce535752aaf4acb24ed6def46f937036738328e5768a460",
         "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
       },
@@ -146,9 +146,9 @@
         "kind": "prior_candidates",
         "start_marker": "<!-- corpus_kb_prior_candidates:start -->",
         "end_marker": "<!-- corpus_kb_prior_candidates:end -->",
-        "managed_sha256": "442215552bf53ea7ebf64606f5913f1203191c00cc884803042d83848f3cb0e4",
-        "managed_lines": 46,
-        "managed_bytes": 7726,
+        "managed_sha256": "3cdd0aa504f020f75b39e01e73ba58374dd38d17ef878298759719f18a3c3a11",
+        "managed_lines": 115,
+        "managed_bytes": 8462,
         "human_prefix_sha256": "e5a0bd2a938c2b8d765376e20fc1a165641a644c6da9481915d4aaf53b028218",
         "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
       }
@@ -214,9 +214,9 @@
         "path": "crates/specforge/src/commands/corpus_kb.rs",
         "start_literal": "fn render_kg_fixtures_block(",
         "end_before_literal": "fn replace_managed_block(",
-        "lines": 494,
-        "bytes": 19549,
-        "sha256": "4ebbf68bac074ad2fa49f496cf00c6fec4cd4bbd218720811e4d536b49375e88"
+        "lines": 519,
+        "bytes": 20919,
+        "sha256": "f5bc303cbcc0b24a882b60a0a20ad0186cf33b325339216d6ff13c52fc883bb4"
       },
       {
         "id": "managed_block_writer",

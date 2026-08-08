@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > what is the KG-ISF-COMPLETENESS.1b.i trailing-fragment consolidation
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > what is the KG-ISF-COMPLETENESS.1b.ii named-interface consolidation
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > what is the KG-ISF-COMPLETENESS.1b.iii coordinated-subject split
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
@@ -294,7 +298,3 @@
   > where is register-field reset_value extracted and carried (ir/source.rs:432 RegisterFieldRecord.reset_value; ir/evidence.rs:11509/11838 populate it; ir/intent.rs:193 clones register_records to IntentIR)
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > where is split_coordinated_actor_relations and split_coordinated_actor_subject wired
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > where is the I2C signal gold seed
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > where is the LTL renderer for temporal rules

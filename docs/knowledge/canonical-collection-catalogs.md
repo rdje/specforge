@@ -12,10 +12,12 @@ evidence: docs/catalogs/INDEX.md; doctrine/live_document_size/canonical_catalogs
 reverify: perl scripts/check_canonical_collection_catalogs.pl --check
 ---
 
-No `partitioned_canonical` Markdown collection relies only on `git:query`. Six generated catalogs
-under `docs/catalogs/` directly link 241 workflow, architecture, FSMGen-issue, research, corpus-KB,
-and KG-fixture members. `docs/TASK_TREE.md` remains the exact external index for 122 task files, and
-`knowledge-map/README.md` directly links all four files in its portable bundle.
+No `partitioned_canonical` Markdown collection relies only on `git:query`. Five generated member
+catalogs under `docs/catalogs/` directly link 237 workflow, FSMGen-issue, research, corpus-KB, and
+KG-fixture members; their bounded landing links all five indexes. The four former root-architecture
+members are now independently bounded compatibility pointers into the mdBook, so their obsolete
+collection catalog was retired. `docs/TASK_TREE.md` remains the exact external index for 122 task
+files, and `knowledge-map/README.md` directly links all four files in its portable bundle.
 
 The live-document doctrine's `external_membership` contract permits a collection index to live in a
 separately classified bounded Markdown surface. It requires one safe repository-relative `.md` path

@@ -84,7 +84,7 @@ sub validate_contract {
     problem(\@errors, 'schema_version must be 1')
         if ($contract->{schema_version} // 0) != 1;
     problem(\@errors, 'owner differs from the task-owned authority')
-        if ($contract->{owner} // '') ne 'LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.iii';
+        if ($contract->{owner} // '') ne 'LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5i';
     for my $field (qw(inputs outputs producer controls)) {
         problem(\@errors, "$field must be an object") if ref($contract->{$field}) ne 'HASH';
     }

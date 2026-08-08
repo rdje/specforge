@@ -19,14 +19,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5h` — complete and ready to commit.
-- Current state: unique extraction/IntentIR contracts now live in two directly indexed book parts;
-  four stable root references are bounded compatibility pointers, their obsolete generated catalog is
-  retired, and composed currentness binds root routes plus product claims to code. The resulting book
-  is exactly 35 files / 12,490 lines / 748,629 bytes; full CI passes 1,727 tests with 5 ignored and
-  product behavior is unchanged.
-- Next action: commit `.5h`, clear `git_message_brief.txt`, verify the clean handoff, then activate
-  `.5i` and close the collection/projection program including the corpus-KB warning disposition.
-- In-flight uncommitted: completed, verified `.5h` resulting tree awaiting its atomic commit; no
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5i` — complete and ready to commit; activity
+  `.5` collection/projection containment is closed.
+- Current state: 601 Markdown files are classified once across 37 surfaces with zero debt; all direct
+  indexes and eight currency contracts pass. Bounded corpus-KB producers remove both warnings under
+  unchanged ceilings, replay 156/156 fixtures, and preserve human synthesis, canonical IR, and typed
+  prior memory. Full CI passes 1,727 tests with 5 ignored; the 35-part book is current.
+- Next action: commit `.5i`, clear `git_message_brief.txt`, verify the clean handoff, then activate
+  `.6` / `.6a` to make repository-derived temp/cache roots canonical and census off-volume residue.
+- In-flight uncommitted: completed, verified `.5i` resulting tree awaiting its atomic commit; no
   background job and no generated/temp residue.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

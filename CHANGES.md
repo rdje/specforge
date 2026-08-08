@@ -1,3 +1,20 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5i — close collection and projection containment
+
+- Recomputed the resulting tree at 600 tracked Markdown files / 37 governed surfaces: all files are
+  classified exactly once, all 12 indexed surfaces and eight currency contracts are enforced, and no
+  transition/currency debt remains. Corrected the stale Knowledge Map fact from the retired six-index /
+  241-member topology to the current five canonical member indexes / 237 members.
+- Root-caused both corpus-KB warnings as producer-shape defects. The 977-line aggregate repeated six
+  lines for every passing fixture, while a 1,062-byte prior-candidate row joined whole evidence sets
+  into one cell; collection aggregate use was only 47.0% of lines and 49.8% of bytes.
+- Changed the aggregate to one pass/fail/path row per fixture with failure-only detail, and changed
+  prior-candidate Markdown to count columns plus one evidence fixture per bullet. Replayed all 156
+  tracked fixtures with 156 pass / zero fail and preserved every human region plus the paired JSON.
+- Ratcheted exact producer/output currentness to `.5i`, added focused bounded-growth coverage and the
+  searchable output-shape fact, and aligned the mdBook. The 24 corpus-KB Markdown files now total
+  1,172 lines / 124,679 bytes; their largest file is 201 lines / 25,470 bytes and longest content line
+  is 305 bytes. Both warnings are gone and no ceiling was increased.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5h — unify root references with the mdBook truth plane
 
 - Audited all four root user/architecture references against all 33 entry mdBook parts. A normalized

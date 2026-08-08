@@ -184,6 +184,8 @@
   > how does the VLM understand tables / can a VLM read PDF tables
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > how does the ambiguity gate keep channel membership boundary-precise (bar #3)
+- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
+  > how does the corpus KB aggregate fixture page stay bounded as fixtures grow
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > how does the emitter decide a rule drive value is renderable (is_safe_isf_scalar_value — non-empty, whitespace-free; a prose value like 'the value that was presented on the ARLOOP signal' fails)
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
@@ -295,5 +297,3 @@
   > how is the precision of the broadened (non-gold) extraction measured / estimated
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
   > how is the prose definitional signal grammar kept garbage-free without a denylist (ADR 0006)
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > how is the protocol initiator actor identified structurally without a name list

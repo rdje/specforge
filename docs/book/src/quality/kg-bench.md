@@ -567,6 +567,11 @@ cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/spec
 That projection currently runs all 156 tracked fixtures and writes the aggregate plus eight family
 pages, the prior-candidate page, and its paired JSON manifest.
 It is a reviewable synthesis page, not a replacement for the executable `kg-bench` gate.
-It also includes a fixture-family summary table so coverage by truthfulness family is visible beside the per-fixture pass/fail list.
+It includes a fixture-family summary table plus one compact pass/fail/path row per fixture; only failed
+fixtures receive expanded failure detail. This preserves exact membership while keeping projection
+growth proportional and line-bounded.
 The same refresh now populates dedicated semantic/truthfulness pattern, typed-prior-memory, table, visual, state-machine, timing, infrastructure/polarity, and AMBA-family corpus-KB pages from the same fixture outcomes.
-It also populates a review-only prior-candidate page plus a JSON readiness manifest with family-level schema, fixture, harvest, and consumer gate rows; those artifacts can guide future typed-prior work but cannot mutate `CorpusMemory`.
+It also populates a review-only prior-candidate page plus a JSON readiness manifest with family-level
+schema, fixture, harvest, and consumer gate rows. The Markdown table shows evidence counts and lists
+each positive/guard fixture separately below it; those artifacts can guide future typed-prior work but
+cannot mutate `CorpusMemory`.

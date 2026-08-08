@@ -181,7 +181,7 @@ verification before correction.
   protocol.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5`
-  Status: `active`
+  Status: `done` (`2026-08-08`)
   Children: `.5a`–`.5i`
   Goal: classify and contain collections/projections: task trees + bounded index, decision/fact stores,
   generated `KNOWLEDGE_MAP.md`, roadmap, research ledgers, and the mdBook maintained reference. Semantic
@@ -292,10 +292,10 @@ verification before correction.
   authority to the resulting maintained-reference baseline.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5i`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Goal: close `.5` with a complete membership/navigation/currentness census, zero collection/projection
   transition debt, bounded indexes, mdBook/code/roadmap alignment, full doctrine/CI retrieval drills,
-  and explicit disposition of the corpus-KB aggregate warning before its 90% rollover threshold.
+  and explicit disposition of the reported corpus-KB warnings before their 90% rollover thresholds.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.6`
   Status: `pending`
@@ -347,9 +347,9 @@ verification before correction.
 | — | `.5g.ii` | `done` (`2026-08-08`) | Exact 22-PDF Git membership, registry paths/keys/directories/signatures, Rust derivation seams, and 13 fail-closed cases are enforced. |
 | — | `.5g.iii` | `done` (`2026-08-08`) | Reviewed-snapshot validation, 156/156 fixture projections, all managed/human regions, paired JSON, producer seams, and 15 fail-closed cases are enforced. |
 | — | `.5h` | `done` (`2026-08-08`) | Four compatibility roots now route into one current, code-bound 35-part public mdBook truth plane. |
-| 1 | `.5i` | `pending` | Final collection/projection closure, including corpus-KB warning disposition. |
-| 2 | `.6` / `.6a` | `pending` | Enforce repository-volume project-data locality, canonicalize same-volume CI roots, and audit old project-owned residue. |
-| 3 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
+| — | `.5i` | `done` (`2026-08-08`) | All collection/projection debt is closed; bounded corpus-KB producers remove both warnings without wider ceilings. |
+| 1 | `.6` / `.6a` | `pending` | Enforce repository-volume project-data locality, canonicalize same-volume CI roots, and audit old project-owned residue. |
+| 2 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
 ## Decisions
 
@@ -1548,6 +1548,84 @@ tracked Markdown path classified exactly once without mislabelling route stubs a
   derivation, root route closure, code-bound book facts, mdBook build, full Rust CI, diff hygiene, and
   absence of generated/temp residue while leaving the user-owned `.claude/settings.json` untouched.
 
+## `.5i` Final Collection / Projection Closure
+
+This leaf closes activity `.5` against the resulting tree. It owns only collection, navigation,
+projection, and maintained-reference closure: it must not absorb the repository-wide temporary/cache
+default work reserved for `.6` / `.6a`.
+
+### Planned proof sequence
+
+1. Recompute the exact tracked-Markdown and registered-surface census, including lifecycle, state,
+   collection membership, bounded indexes, currentness oracles, warning/rollover position, and any
+   remaining transition or labelled-currency debt.
+2. Exercise one-hop retrieval from every controlled collection/catalog and derive-and-diff projection,
+   then verify that canonical members are neither unreachable nor multiply classified.
+3. Recheck roadmap, code, root compatibility routes, and the 35-part mdBook as one current truth
+   plane; record any drift before changing a limit or document.
+4. Root-cause the corpus-KB aggregate warning against actual member distribution and producer growth.
+   Choose and enforce a bounded disposition from evidence; do not hide it with a ceiling increase.
+5. Run the complete doctrine, documentation, Rust CI, retrieval, diff, and repository-local residue
+   gates; record exact resulting metrics and close `.5` only when transition/currency debt is zero.
+
+### Entry census and root causes
+
+The resulting tree has exactly 600 Git-indexed Markdown files classified once across 37 governed
+surfaces: 14 bounded snapshots, ten partitioned canonical surfaces, six terminal archives, four
+rolling ledgers, one frozen legacy file, one generated projection, and one maintained reference.
+Thirty surfaces are normal, six terminal, and one frozen; no surface has a debt state. Eight surfaces
+are collections, 12 surfaces have direct indexes, and all eight declared currency contracts are
+enforced. The five generated canonical member indexes route 237 members plus their bounded landing
+index. One stale Knowledge Map fact still reports the pre-`.5h` six-index / 241-member topology and
+incorrectly includes the retired root-architecture collection; `.5i` owns that retrieval repair.
+
+The corpus-KB warning is not aggregate pressure. Its 24 files use 1,879 / 4,000 aggregate lines
+(`47.0%`) and 130,426 / 262,144 aggregate bytes (`49.8%`). The two warnings are local:
+
+- `corpus_kb/benchmarks/kg-fixtures.md` is 977 / 1,200 lines (`81.4%`) because the producer emits six
+  presentation lines for every one of 156 fixtures even when it passed with no failure detail;
+- line 25 of `corpus_kb/prior_candidates/kg-fixture-candidates.md` is 1,062 / 1,280 content bytes
+  (`83.0%`) because every positive and guard fixture name for a candidate family is joined into two
+  unbounded Markdown table cells.
+
+Both are producer-shape defects, not evidence that the canonical collection should be split or its
+ceiling widened. The bounded disposition is to render the aggregate fixture page as one compact row
+per fixture with a separate failure-details section only when needed, and to render prior-candidate
+table counts plus one-fixture-per-line evidence lists. The paired JSON retains the same complete
+machine-readable evidence. Producer tests, currentness identities, the public book, a searchable fact,
+and all generated projections must change atomically; canonical IR, typed prior memory, fixture
+outcomes, and human synthesis remain byte-untouched.
+
+### Implemented closure
+
+- The final resulting tree has 601 Markdown files across the same 37 governed surfaces. All files are
+  classified exactly once; the lifecycle/state distribution is unchanged; all eight currency
+  contracts are enforced; and there are zero debt states.
+- Five canonical catalogs route 237 members plus their root, 121 real task trees and 145 fact cards
+  are linked exactly once, and 146 generated facts / 1,017 unique questions fit in seven bounded
+  shards. The stale six-catalog / 241-member fact is corrected and regenerated into the map.
+- The compact aggregate and line-separated evidence renderers replay all 156 fixtures with 156 pass /
+  zero fail. The aggregate retains every fixture path/status and failure-only detail; prior-candidate
+  Markdown retains complete evidence beside its unchanged paired JSON. A focused failure case and a
+  64-fixture-set case prove detail preservation and physical-line bounds.
+- Corpus-KB moves from 1,879 lines / 130,426 bytes / 977 maximum lines / 1,062 maximum content-line
+  bytes to 1,172 / 124,679 / 201 / 305 across the same 24 Markdown files. Both warnings disappear
+  without a ceiling increase; every human region, fixture outcome, canonical IR, and typed prior
+  memory remains unchanged.
+- Root/book/code/roadmap truth is current. The 35-part book is exactly 12,535 lines / 751,345 bytes,
+  an explicit `.5i` delta of 45 lines / 2,716 bytes documenting the public output shape and closure.
+
+### Acceptance Checklist (enforced) — `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5i`
+
+- [x] **ROOT CAUSE (WHY + WHERE)** — establish the complete resulting-tree collection/projection
+  topology and explain every remaining warning or debt from measured membership and producer behavior.
+- [x] **ADDRESSED (verified)** — prove complete one-hop navigation and executed currentness, eliminate
+  all collection/projection transition debt, and give the corpus-KB warnings a bounded,
+  mechanically enforced disposition without widening its ceiling.
+- [x] **NO REGRESSION** — prove exact Markdown coverage, catalog/map/book/roadmap/code alignment, full
+  doctrine and CI success, clean diff, and absence of disposable generated/temp residue while leaving
+  the user-owned `.claude/settings.json` untouched.
+
 ### Registry and checker contract for `.3b`
 
 - Project-owned data lives at `doctrine/live_document_size/surfaces.jsonl`. Record zero is a registry
@@ -1631,6 +1709,9 @@ tracked Markdown path classified exactly once without mislabelling route stubs a
 | `2026-08-08` | `.5g.iii` | repository-local-TMPDIR failure reproduction/root cause; 16-thread source rerun after bounded test-isolation fix; five-doctrine gate; parallel same-volume `bash scripts/run_ci.sh`; exact book aggregate; diff hygiene | first run exposed PATH-probe selection of the ancestor `.venv-docling` and mutex-poison cascade (27 pass / 11 fail focused); after explicit repo-search injection and poison recovery, source tests 38/38 and full suite 1,727 passed / 5 ignored; formatting, warning-deny Clippy, rustdoc, mdBook 33 files / 12,273 lines / 736,130 bytes, 143-card catalog, 144 facts / 1,007 questions, and doctrines pass; no production discovery/canonical-IR/prior-memory change |
 | `2026-08-08` | `.5h` | Git-history and semantic claim audit; normalized long-paragraph comparison; exact root/book/catalog metrics; current-truth, canonical-catalog, fact-card, Knowledge Map, roadmap-projection, and docs gates | green: zero exact long-paragraph matches (`0/11`, `0/59`, `0/71`, `0/35`) establish time-layer mixing rather than copied-text deletion authority; roots shrink from 1,341 lines / 68,472 bytes to 50 / 2,325; unique contracts survive in two indexed chapters; five catalog indexes cover 237 members plus root; 144 fact cards produce 145 facts / 1,013 unique questions; book is exactly 35 files / 12,490 lines / 748,629 bytes |
 | `2026-08-08` | `.5h` | staged resulting-tree `bash scripts/check_doctrines.sh`; repository-local `TMPDIR` full `bash scripts/run_ci.sh`; mdBook build; diff hygiene; residue census | green: doctrines 5/5, live-document common suite 55/55 over 600 Markdown files / 37 surfaces, formatting, warning-deny Clippy, 1,727 Rust tests passed / 5 ignored, rustdoc, and mdBook pass; the first CI attempt exposed the already-owned `.6a` gap when a caller names a missing temp root, then passed after creating `generated/tmp`; that exact 68 KiB test workspace was removed, zero Cargo `.log` files remain, and 48 active incremental `.bin` caches are retained |
+| `2026-08-08` | `.5i` | resulting-tree lifecycle/state/index/currency report; corpus member distribution and producer-shape audit; focused 32-test renderer suite; complete corpus refresh; real `kg-bench`; 15-case currentness self-test/report | green: entry 600 files / 37 surfaces / zero debt; warnings root-caused to a 977-line six-lines-per-pass aggregate and one 1,062-byte joined-evidence row, not 47.0%-line / 49.8%-byte aggregate use; replay is 156/156 with human regions preserved; bounded failure detail and a 64-fixture evidence set pass; final corpus surface is 24 files / 1,172 lines / 124,679 bytes / 201 max lines / 305 max-line bytes with no warning and unchanged ceilings |
+| `2026-08-08` | `.5i` | canonical/task/fact/map shard retrieval matrix; rolling/roadmap/feedback/validation/source/corpus/book currentness reports; mdBook build; resulting live-size report | green: 5 catalogs / 237 members plus root, 121 task trees, 145 fact cards, 146 facts / 1,017 unique questions / 7 shards, eight enforced currency contracts, exact one-hop membership, 601 Markdown files / 37 surfaces / zero debt, and book 35 files / 12,535 lines / 751,345 bytes all pass |
+| `2026-08-08` | `.5i` | repository-local `TMPDIR` full `bash scripts/run_ci.sh`; diff hygiene; fixture/temp/log residue census | green: doctrines 5/5; formatting, warning-deny Clippy, 1,727 Rust tests passed / 5 ignored, rustdoc, and mdBook pass; `generated/tmp` and checker fixtures are absent, zero Cargo `.log` files remain, and 48 active incremental `.bin` caches are retained |
 
 ## Commit Log
 
@@ -1662,6 +1743,7 @@ tracked Markdown path classified exactly once without mislabelling route stubs a
 | `.5g.ii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.ii — enforce tracked source-PDF registry currentness` | Git-indexed 22-PDF denominator + key/path/signature oracle + derivation seams + debt ratchet |
 | `.5g.iii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.iii — enforce managed corpus-KB currentness` | reviewed validation projection + 156-fixture refresh + exact managed/human/output/producer oracle + debt ratchet |
 | `.5h` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5h — unify root references with the mdBook` | two indexed normative chapters + four bounded compatibility pointers + obsolete catalog retirement + code-bound currentness |
+| `.5i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5i — close collection and projection containment` | exact topology/retrieval closure + bounded corpus-KB renderers + zero warning/debt + final `.5` census |
 
 ## Changelog
 
@@ -1761,3 +1843,7 @@ tracked Markdown path classified exactly once without mislabelling route stubs a
   to bounded compatibility pointers, retired their obsolete generated collection catalog, and bound
   every route and load-bearing contract to current code. Historical April state remains in Git and
   closed task trees, not in current architecture.
+- `2026-08-08`: `.5i` closed collection/projection containment with complete 601-file / 37-surface
+  classification, direct retrieval, executed currency, and zero debt. It corrected a stale catalog
+  fact, root-caused two corpus-KB warnings to repeated empty structure and joined evidence, replaced
+  them with bounded rows/bullets, and proved 156/156 behavior plus full CI without widening a ceiling.

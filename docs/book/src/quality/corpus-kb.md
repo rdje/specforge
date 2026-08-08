@@ -75,9 +75,24 @@ Human-authored synthesis outside those blocks is preserved.
 The tracked KG denominator currently contains 156 fixtures. A complete refresh records 156 passed and
 zero failed fixtures; the separate `kg-bench` command is still the executable behavioral gate.
 
-The KG fixture projection records fixture paths, pass/fail status, and a review-facing fixture-family summary table.
+The aggregate KG fixture projection records every fixture as one compact table row containing its
+name, pass/fail status, and tracked path. Failed fixtures receive a separate detail list; passing
+fixtures do not repeat an empty failure block. This keeps complete reviewable membership without
+making the page grow by a multi-line record for every passing fixture.
+
+For example:
+
+```text
+| fixture | status | path |
+| `actor_ports_gold` | `pass` | `crates/specforge/test_data/kg_quality/actor_ports_gold/fixture.json` |
+```
+
+The projection also includes a review-facing fixture-family summary table.
 The same refresh also updates dedicated semantic/truthfulness pattern, typed-prior-memory, table, visual, state-machine, timing, infrastructure/polarity, and AMBA-family pages.
-It also updates a review-only prior-candidate page that names target `CorpusMemory` schema surfaces, required gates, and a family-level promotion gate review matrix without writing corpus memory.
+It also updates a review-only prior-candidate page that names target `CorpusMemory` schema surfaces,
+required gates, and a family-level promotion gate review matrix without writing corpus memory. Its
+summary table carries positive/guard counts; a separate `Fixture Evidence` section lists each fixture
+on its own line, while the paired JSON retains the complete machine-readable sets.
 That matrix is still only a review checklist; it is not an approval record and cannot promote a concrete prior.
 The sibling JSON readiness manifest exposes the same non-promoting candidate surface for review automation, including readiness labels such as `fixture_paired_review_ready` and `caution_surface_review_ready`.
 It is a review surface, not a replacement for the executable `specforge kg-bench` gate.
@@ -97,6 +112,8 @@ The checker binds the reviewed validation authority, every Git-indexed KG fixtur
 managed Markdown regions, the paired JSON manifest, and the Rust producer regions. It hashes the human
 prefix and suffix around every managed block separately, so a refresh cannot make itself current by
 overwriting curated synthesis. The check runs unconditionally through the live-document doctrine gate.
+The live-document gate separately bounds every file, aggregate, and content-line dimension; the
+fixture table and one-evidence-per-line shape keep growth below those unchanged limits.
 
 ## Promotion rule
 
