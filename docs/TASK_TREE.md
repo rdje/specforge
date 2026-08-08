@@ -30,6 +30,7 @@ The author template is linked separately and is never classified as active work.
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
 | `AMBIGUITY-PHRASE-DETECTOR` | `done` | flag vague / under-specified spec prose for review | [open](tasks/AMBIGUITY-PHRASE-DETECTOR.md) |
+| `ARTIFACT-PATH-PORTABILITY` | `active` | repository-relative IR provenance and move-safe generated artifacts | [open](tasks/ARTIFACT-PATH-PORTABILITY.md) |
 | `AUDIT-DOC-RECONCILE` | `done` | fix doc drift found by the post-ISF-ONLY audit | [open](tasks/AUDIT-DOC-RECONCILE.md) |
 | `AUDIT-PROVIDER-FRAMING-RECONCILE` | `done` | reconcile live-doc framing that the LLM/VLM provider "doesn't exist" / R16 CVE crux is "upstream-blocked" | [open](tasks/AUDIT-PROVIDER-FRAMING-RECONCILE.md) |
 | `BOOK-COMMAND-COVERAGE` | `done` | mdBook command-surface drift reconciliation | [open](tasks/BOOK-COMMAND-COVERAGE.md) |

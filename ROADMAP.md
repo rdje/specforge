@@ -92,9 +92,11 @@ Five active program groups support that north star:
   [`CORPUS-PATTERN-REUSE`](docs/tasks/CORPUS-PATTERN-REUSE.md);
 - learning, arbitration, and corpus synthesis: the open R15c–R15g lanes remain owned by
   [`R15C-R15G-LEARNING-PLANE-BACKFILL`](docs/tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md);
-- repository durability and portability: the active
+- repository durability and portability: the completed
   [`LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`](docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md)
-  program keeps current documentation and project data bounded on the repository volume.
+  program keeps current documentation and project data bounded on the repository volume; active
+  [`ARTIFACT-PATH-PORTABILITY`](docs/tasks/ARTIFACT-PATH-PORTABILITY.md) closes the discovered
+  repository-relative serialization and post-move generated-lineage gap.
 
 The complete, always-current execution/status catalog is [`docs/TASK_TREE.md`](docs/TASK_TREE.md).
 This roadmap owns only high-level direction and milestone status; it does not mirror leaf frontiers or

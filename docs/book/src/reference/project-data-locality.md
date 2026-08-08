@@ -43,6 +43,21 @@ read-only operating-system/toolchain inputs. Rust build outputs remain in the re
 The post-compaction hook can also read an optional `../fsmgen` sibling checkout, but only on the same
 filesystem; the pinned submodule remains the reproducible authority.
 
+### Known generated-IR move-portability gap
+
+The runtime/cache controls above are enforced, but a post-move audit found a separate persistence gap.
+SourceIR stores its canonical input path, and the EvidenceIR, SemanticIR, IntentIR, and adapter builders
+canonicalize their input before persisting the upstream-stage pointer. The present generated tree therefore
+contains 335 JSON/Markdown artifacts with the deleted pre-SSD repository root; EvidenceIR alone repeats it in
+262,592 span/anchor `source_path` values.
+
+This is not current boot-volume I/O—the old repository is absent—but it makes lineage consumers move-fragile.
+Some validation and learning paths treat a missing upstream artifact as optional and silently lose cross-stage
+checks; recovery paths can fail outright. `ARTIFACT-PATH-PORTABILITY` owns a common repository-relative storage
+and safe runtime-resolution contract, backward-compatible legacy loading, verified generated-data migration,
+and a fail-closed residue gate. Until that tree closes, do not bulk-rewrite ignored artifacts or treat a passing
+temp/cache locality check as proof that persisted IR paths are portable.
+
 ## Check the contract
 
 ```bash

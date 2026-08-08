@@ -1,3 +1,17 @@
+### ARTIFACT-PATH-PORTABILITY.0 — own and measure move-portable IR lineage
+
+- Opened a dedicated portability tree before implementation and placed its path-model design, Source/Evidence
+  migration, Semantic/Intent/adapter/consumer migration, generated-data migration/gate, and closure into five
+  independently verifiable leaves.
+- Proved the old repository is absent but still embedded in 335 of 506 generated JSON/Markdown artifacts:
+  SourceIR 22, EvidenceIR/SemanticIR/IntentIR/adapters 78 each, and prior memory 1. The 262,996 matching values
+  include 262,592 EvidenceIR `source_path` repetitions; no generated artifact names the current SSD root.
+- Localized the producer cause to SourceIR canonical input storage plus four cross-stage builders that
+  canonicalize before assignment. Confirmed real consumers reopen those fields: validation/learning can
+  silently drop missing lineage through `.ok()`, while recovery can fail. No generated artifact changed.
+- Corrected roadmap and mdBook truth: runtime/cache locality is enforced, but persisted IR paths remain an
+  active portability gap. The reviewed path contract in `.1` is required before code or data migration.
+
 ### SWD-SERIAL-EXTRACTION.4e — capture and score complete interface-edge timing
 
 - Added the typed `InterfaceEdgeTimingRecord` EvidenceIR surface for a coupled actor/data/clock/edge

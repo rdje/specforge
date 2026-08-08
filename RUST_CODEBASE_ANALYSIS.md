@@ -19,8 +19,8 @@
   them, so extraction scoring does not prove downstream product availability; `.7` owns that projection.
 - **New portability risk:** stage builders canonicalize input paths before serializing upstream pointers.
   A local census found 335 generated artifacts retaining the deleted boot-volume root. This violates the
-  root-relative persistence contract and needs a dedicated compatibility/migration task before another
-  canonical artifact promotion.
+  root-relative persistence contract; `ARTIFACT-PATH-PORTABILITY` now owns the common resolver, all stage
+  consumers, migration, and enforcement before another canonical artifact promotion.
 
 ## Session update (2026-08-08 — repository-volume runtime boundary; `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.6a`)
 

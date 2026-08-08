@@ -19,15 +19,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SWD-SERIAL-EXTRACTION.4e` — completed by this commit; Chapter B4 interface-edge timing is
-  typed, source-grounded, and scored.
-- Current state: fresh repository-local CPU re-ingest/evidence proves one complete target/SWDIO/SWCLK
-  rising-edge record from `statement_1948`; all four SWD protocol tasks score source-tolerant 1.000 over
-  29 facts, neighboring WIRE gates hold, and `kg-bench` is 156/156. `.7` owns the EvidenceIR→IntentIR/ISF
-  projection gap. The live build also exposed project-wide persisted absolute stage pointers (335 local
-  generated artifacts still name the deleted root), recorded in the task and Knowledge Map.
-- Next action: from clean `.4e`, open a dedicated artifact-path-portability task-tree and fix the
-  cross-stage serialization/migration contract before resuming `SWD-SERIAL-EXTRACTION.7`.
-- In-flight uncommitted: none after this commit; no background job is running. Disposable re-ingest
-  workspaces must be removed after the final producer and residue census.
+- Active unit: `ARTIFACT-PATH-PORTABILITY.0` — completed by this commit; the move-portability repair is
+  measured, decomposed, and task-tree owned.
+- Current state: the deleted old root remains in 335/506 generated JSON/Markdown files across all four IR
+  stages, adapters, SourceIR, and prior memory (262,996 scalar values; 262,592 evidence `source_path`).
+  Builders persist canonical absolute inputs, while validation/learning/recovery consumers reopen those
+  fields; some silently skip missing lineage. No generated artifact has been rewritten yet.
+- Next action: execute `ARTIFACT-PATH-PORTABILITY.1`: decide and test one safe relative serialization,
+  current-root resolution, legacy-rebase, external-input, and escape/ambiguity refusal contract.
+- In-flight uncommitted: none after this commit; no background job or disposable residue.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.
