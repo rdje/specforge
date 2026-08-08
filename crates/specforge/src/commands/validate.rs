@@ -5143,6 +5143,16 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         ));
     }
 
+    println!();
+    println!("=== Serial / Protocol Surface Projection ===");
+    println!("  serial_frame_fields: {}", ir.serial_frame_fields.len());
+    println!("  swd_operations: {}", ir.swd_operations.len());
+    println!("  protocol_states: {}", ir.protocol_states.len());
+    println!(
+        "  interface_edge_timings: {}",
+        ir.interface_edge_timings.len()
+    );
+
     let report = ValidationReportRecord {
         report_id: format!("validation_semantic_ir_{artifact_fingerprint}"),
         validated_stage: IrStage::SemanticIr,
@@ -5337,6 +5347,16 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
             metric(
                 "transaction_phases",
                 ir.transaction_phases.len().to_string(),
+            ),
+            metric(
+                "serial_frame_fields",
+                ir.serial_frame_fields.len().to_string(),
+            ),
+            metric("swd_operations", ir.swd_operations.len().to_string()),
+            metric("protocol_states", ir.protocol_states.len().to_string()),
+            metric(
+                "interface_edge_timings",
+                ir.interface_edge_timings.len().to_string(),
             ),
             metric(
                 "timing_constraints",
@@ -7493,7 +7513,11 @@ mod tests {
     use super::*;
     use crate::error::Result;
     use crate::ir::adapters::{AdapterArtifact, AdapterTarget};
-    use crate::ir::evidence::{EvidenceIr, SignalSemanticHintSourceKind};
+    use crate::ir::evidence::{
+        EvidenceIr, InterfaceClockEdge, InterfaceEdgeTimingRecord, ProtocolStateRecord,
+        SerialFrameField, SerialFramePhase, SignalSemanticHintSourceKind, SwdOperation,
+        SwdioDirection,
+    };
     use crate::ir::intent::IntentIr;
     use crate::ir::prior_memory::{
         CorpusMemoryUpdatePolicyRecord, NegativeKnowledgePriorRecord, PriorSourceArtifactRecord,
@@ -10066,6 +10090,86 @@ mod tests {
         run(ValidateArgs {
             artifact: semantic_ir.artifact_layout.semantic_ir_path,
         })
+    }
+
+    #[test]
+    fn validate_semantic_ir_reports_protocol_projection_counts() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("protocol_projection_counts.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        fs::write(&source, "# Protocol projection counts\n")?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let mut semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.serial_frame_fields = vec![
+            SerialFrameField {
+                field_id: "serial_field_0001".to_string(),
+                name: "REQUEST".to_string(),
+                bit_width: Some(1),
+                bit_range: None,
+                phase: Some(SerialFramePhase::Request),
+                swdio_direction: Some(SwdioDirection::HostDrives),
+                order: Some(0),
+                response_values: Vec::new(),
+                supporting_statement_ids: vec!["statement_request".to_string()],
+            },
+            SerialFrameField {
+                field_id: "serial_field_0002".to_string(),
+                name: "ACK".to_string(),
+                bit_width: Some(3),
+                bit_range: Some((2, 0)),
+                phase: Some(SerialFramePhase::Acknowledge),
+                swdio_direction: Some(SwdioDirection::TargetDrives),
+                order: Some(1),
+                response_values: vec!["OK".to_string()],
+                supporting_statement_ids: vec!["statement_ack".to_string()],
+            },
+        ];
+        semantic_ir.swd_operations = vec![SwdOperation {
+            operation_id: "swd_operation_0001".to_string(),
+            response: "OK".to_string(),
+            access: Some("read".to_string()),
+            phase_count: 3,
+            has_data_phase: true,
+            turnaround_before_data: Some(false),
+            supporting_statement_ids: vec!["statement_operation".to_string()],
+        }];
+        semantic_ir.protocol_states = vec![ProtocolStateRecord {
+            state_id: "protocol_state_0001".to_string(),
+            machine_name: Some("serial machine".to_string()),
+            state_name: "Operating".to_string(),
+            action: None,
+            supporting_statement_ids: vec!["statement_state".to_string()],
+        }];
+        semantic_ir.interface_edge_timings = vec![InterfaceEdgeTimingRecord {
+            timing_id: "interface_edge_timing_0001".to_string(),
+            actor_name: "target".to_string(),
+            signal_name: "DATA".to_string(),
+            clock_signal: "CLK".to_string(),
+            edge: InterfaceClockEdge::Rising,
+            samples_on_edge: true,
+            drive_changes_on_edge: false,
+            supporting_statement_ids: vec!["statement_edge".to_string()],
+        }];
+
+        let report = validate_semantic_ir(&semantic_ir, "protocol_projection_counts".to_string());
+        assert_eq!(metric_value(&report, "serial_frame_fields"), Some("2"));
+        assert_eq!(metric_value(&report, "swd_operations"), Some("1"));
+        assert_eq!(metric_value(&report, "protocol_states"), Some("1"));
+        assert_eq!(metric_value(&report, "interface_edge_timings"), Some("1"));
+
+        Ok(())
     }
 
     #[test]

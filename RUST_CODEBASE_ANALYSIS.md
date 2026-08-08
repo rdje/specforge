@@ -4,6 +4,24 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-09 — lossless SemanticIR protocol projection; `SWD-SERIAL-EXTRACTION.7b`)
+
+- **SemanticIR now carries the four EvidenceIR protocol collections.** The schema reuses
+  `SerialFrameField`, `SwdOperation`, `ProtocolStateRecord`, and `InterfaceEdgeTimingRecord` directly, with
+  serde-default/skip-empty compatibility. `SemanticIr::build` performs an unfiltered clone, so exact record
+  order, optional values, ids, and supporting statement provenance survive.
+- **Projection is observable but non-interpretive.** SemanticIR validation adds four printed/persisted count
+  metrics. No transaction, state transition, temporal rule, or generic semantic record is synthesized from the
+  collections; ADR 0016's missing-binding boundary remains intact.
+- **Verification covers schema and real data.** The focused schema test uses ordered frame records plus all
+  other types to prove exact equality, non-empty serialized keys, omitted-empty shape, and legacy default load.
+  The validation test proves 2/1/1/1 metrics. The complete 394-test semantic module and 18 SemanticIR validation
+  tests pass, as does warning-deny Clippy; current ADI dry-run produces the expected 11/4/13/0 projection. Full
+  CI passes 1,768 tests / five ignored plus doctrines, rustdoc, mdBook, KG fixtures, and final locality.
+- **Deferred convergence risk:** the three `converge.rs` stage snapshots do not yet carry any of the four
+  protocol counts, so protocol-only change can be absent from aggregate fact deltas. `.7e.i` now owns all-stage
+  snapshot/fact-count coverage before the fresh canonical promotion leaf may close.
+
 ## Session update (2026-08-09 — SWD protocol projection boundary; `SWD-SERIAL-EXTRACTION.7a`)
 
 - **Four extraction surfaces terminate before the product boundary.** `EvidenceIr` owns

@@ -1,3 +1,17 @@
+### SWD-SERIAL-EXTRACTION.7b — carry protocol observations into SemanticIR exactly
+
+- Added additive serde-default/skip-empty SemanticIR collections for serial-frame fields, SWD operation
+  branches, protocol states, and interface-edge timings, reusing the exact EvidenceIR record types.
+- `SemanticIr::build` clones all four collections without filtering, sorting, reinterpretation, or provenance
+  changes. A schema test proves full record/order equality, non-empty serialization, omitted-empty legacy shape,
+  and default-empty loading.
+- SemanticIR validation now prints and records all four counts. Focused validation and the 394-test SemanticIR
+  module pass; a live canonical ADI dry-run projects 11/4/13/0 with original supporting statement ids. IntentIR
+  and adapter projection remain explicitly owned by `.7c` and `.7d`. Full CI passes 1,768 tests / five ignored,
+  all six doctrines, warning-deny Clippy, rustdoc, mdBook, KG fixtures, and final locality.
+- The post-gate cold read found that all three convergence snapshots omit the protocol counts. Dedicated
+  `.7e.i` now owns protocol-only fact-delta coverage before `.7e.ii` may promote and close the fresh ADI chain.
+
 ### SWD-SERIAL-EXTRACTION.7a — freeze the lossless protocol-projection boundary
 
 - Audited the four scored SWD EvidenceIR schemas against SemanticIR, IntentIR, validation, and the typed ISF

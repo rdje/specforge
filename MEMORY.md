@@ -19,14 +19,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SWD-SERIAL-EXTRACTION.7b` — lossless EvidenceIR→SemanticIR protocol projection.
-- Current state: `.7a` accepted ADR 0016 after auditing all four scored surfaces. They must carry exactly through
-  SemanticIR/IntentIR and residualize at ISF unless their own records supply every behavioral binding; the
-  currently safe direct-lowering subset is empty. Canonical SWD remains the deliberate pre-`.4e` 11/4/13/0
-  cache; `.7e` owns a fresh tracked-PDF ingest and promotion because its old normalized Markdown was reclaimed.
-- Next action: activate `.7b`; add serde-default/skip-empty SemanticIR fields for the exact four EvidenceIR
-  record types, clone them without filtering, report validation counts, and prove backward compatibility plus
-  exact record/provenance parity.
-- In-flight uncommitted: none after the `.7a` commit. Generated migration state remains repository-local and
+- Active unit: `SWD-SERIAL-EXTRACTION.7c` — lossless SemanticIR→IntentIR protocol projection.
+- Current state: `.7b` carries the four exact EvidenceIR protocol record collections into SemanticIR through
+  additive default-empty/skip-empty fields and unfiltered clones; validation reports each count. Focused schema,
+  394 SemanticIR, 18 semantic-validation, warning-deny Clippy, and live ADI 11/4/13/0 projection checks pass.
+  IntentIR and the adapter still contain no consumer, exactly as owned by `.7c`/`.7d`; `.7e.i` now owns the
+  separately found absence of all four counts from convergence snapshots before fresh `.7e.ii` promotion.
+- Next action: activate `.7c`; add the same exact four collections to IntentIR, clone from SemanticIR, expose
+  validation counts, and prove EvidenceIR→SemanticIR→IntentIR record/provenance parity plus legacy loading.
+- In-flight uncommitted: none after the `.7b` commit. Generated migration state remains repository-local and
   intentionally ignored; the exact rollback and disposable loader workspace are absent.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

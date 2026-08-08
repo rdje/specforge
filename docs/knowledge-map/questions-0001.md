@@ -96,10 +96,14 @@
   > did the path migration remove the SWD edge timing record
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > did the qwen2.5vl VLM recover a groundable AXI signal-to-phase mapping (no — contradictory, redundant, hallucinated signal semantics)
+- [swd-protocol-convergence-snapshots-are-blind](../knowledge/swd-protocol-convergence-snapshots-are-blind.md)
+  > do EvidenceSnapshot SemanticSnapshot and IntentSnapshot count protocol states
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
   > do RISC-V CSRs map onto the ISF register/storage abstraction (YES — RISC-V Debug captures its 44 CSRs as register_records; FSMGen titles (storage (var … (fields …))) the register-map/CSR construct, 13a-actor-interface.md:419/:468)
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
   > do SMBus / I2S / I2C cluster into a derived serial-bus family
+- [swd-protocol-surfaces-stop-at-evidenceir](../knowledge/swd-protocol-surfaces-stop-at-evidenceir.md)
+  > do SWD protocol records reach SemanticIR
 - [swd-protocol-surfaces-stop-at-evidenceir](../knowledge/swd-protocol-surfaces-stop-at-evidenceir.md)
   > do SWD serial frame fields reach IntentIR
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
@@ -108,6 +112,8 @@
   > do all corpus docs build through the pipeline without failure
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
   > do any chip-spec PDFs need a real password (no)
+- [swd-protocol-convergence-snapshots-are-blind](../knowledge/swd-protocol-convergence-snapshots-are-blind.md)
+  > do convergence fact counts include serial frame fields
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > do evidence/semantic/intent stream source_ir.json or load it all into memory
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
@@ -154,6 +160,8 @@
   > does FSMGen support a register reset value in storage (yes — (storage (var NAME (width N) [(reset V)])) is shipped per 13k:42 + 13m:48-68; optional, in-width non-negative int, omission = all-0s byte-identical, over-width/non-integer fails closed)
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
   > does FSMGen's multi-actor ATL frontier provide a home for a connectivity netlist (NO — the ATL backlog wires children GENERATED from transaction composition spawn/do; it is behavioral orchestration, not a declarative static IP-interconnect netlist; verified 14-feature-backlog.md)
+- [swd-protocol-surfaces-stop-at-evidenceir](../knowledge/swd-protocol-surfaces-stop-at-evidenceir.md)
+  > does SemanticIR preserve SWD protocol provenance and order
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
   > does SpecForge capture component topology / connectivity for platform docs (YES — a typed signal_connectivity producer->consumer graph + infrastructure_signals clock/reset distribution; correcting the .2 'hint-level' to 'captured-but-sparse-and-unlowered')
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -188,6 +196,8 @@
   > does cargo test need TMPDIR set manually
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > does constrained contract extraction ship code
+- [swd-protocol-convergence-snapshots-are-blind](../knowledge/swd-protocol-convergence-snapshots-are-blind.md)
+  > does converge detect a protocol only SWD change
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > does converge re-ingest the PDF every run
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
@@ -288,13 +298,3 @@
   > how are document keys in the source PDF registry derived from filenames
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
   > how are duplicate signal constraints deduplicated in the LLM-primary extractor
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > how are extraction-profile priors looked up (extraction_profile_priors_for signature-subset match)
-- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
-  > how are human corpus KB notes preserved during refresh
-- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
-  > how are live-document ceiling increases and immutable debt baselines tested
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > how are message fields written as section headings extracted
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > how are message-field tables distinguished from register-field tables

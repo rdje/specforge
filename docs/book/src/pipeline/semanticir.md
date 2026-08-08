@@ -13,6 +13,7 @@
 - gates
 - timing constraints
 - temporal rules
+- losslessly projected serial-frame, protocol-operation, protocol-state, and interface-edge observations
 - semantic candidates
 - semantic arbitration
 - residual decisions
@@ -175,6 +176,40 @@ That is why so many truthfulness-hardening slices land here:
 - graph-first direction recovery
 
 This is the main semantic safety boundary before canonical intent.
+
+## Lossless serial and protocol observations
+
+Four evidence-grounded protocol collections now cross into `SemanticIR` unchanged:
+
+- `serial_frame_fields`
+- `swd_operations`
+- `protocol_states`
+- `interface_edge_timings`
+
+This projection is intentionally lossless rather than interpretive. Record order, ids, optional values, and
+every `supporting_statement_ids` entry are cloned exactly from EvidenceIR. The fields are serde-defaulted and
+omitted while empty, so SemanticIR artifacts written before this addition still load and documents without
+these facts keep their existing JSON shape.
+
+The records do not claim more semantics merely because they crossed a stage. In particular, a protocol-state
+observation is not a transition graph, and a serial-frame field is not automatically an executable transaction.
+SemanticIR preserves the source-backed structure so later stages can make an explicit lowering decision without
+re-reading EvidenceIR or weakening provenance. ADR 0016 forbids inventing missing transitions, guards, initial
+state, encodings, values, ports, activation conditions, or storage targets.
+
+`specforge validate <semantic_ir.json>` exposes the boundary directly:
+
+```text
+=== Serial / Protocol Surface Projection ===
+  serial_frame_fields: N
+  swd_operations: N
+  protocol_states: N
+  interface_edge_timings: N
+```
+
+At this delivery point, these collections stop at SemanticIR; IntentIR carry-through and adapter residual
+accounting are the next independently committed slices. That distinction keeps a successful SemanticIR
+projection from being mistaken for complete `.isf` lowering.
 
 ## Closed task trees — how each was implemented and verified
 

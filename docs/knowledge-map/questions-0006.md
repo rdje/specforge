@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > where do I log feedback or a suggestion to FSMGen
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > where do in-memory structure layouts (queue entries, table entries, dwords) live in EvidenceIR
+- [swd-protocol-surfaces-stop-at-evidenceir](../knowledge/swd-protocol-surfaces-stop-at-evidenceir.md)
+  > where do interface_edge_timings stop in the pipeline
+- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
+  > where do live-document checker test fixtures create temporary files
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > where do message-field / structure / flit / descriptor layouts go in the pipeline (EvidenceIR only — no IntentIR carrier, never lowered)
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > where do obligations on message fields (TagOp must be 0) live in EvidenceIR
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > where do packet/flit message fields (TxnID / DBID / Opcode) live in EvidenceIR
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
@@ -62,6 +74,8 @@
   > where is coordinated-object actor-signal relation extraction implemented
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > where is is_pure_inferred_phantom_role and the build_intent_actors phantom guard
+- [swd-protocol-convergence-snapshots-are-blind](../knowledge/swd-protocol-convergence-snapshots-are-blind.md)
+  > where is protocol aware convergence accounting tracked
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > where is register bit-field ISF emission implemented (register_storage_fields + normalize_field_access + IsfStorageField + the storage render in crates/specforge/src/ir/isf_ir.rs; residual isf_register_fields_not_lowered)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
@@ -283,17 +297,3 @@
   > why did LTI unexplained tables go UP from 5 to 6
 - [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
   > why did an EXTRACTOR-ARCHITECTURE byte-identical proof fail on SWD/ADI but pass on other docs
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > why did generated artifact scanning miss FigureRegion raw_image_path
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > why did ingest stop with 'ingest aborted before launching'
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > why did ingest stop with 'ingest aborted to protect the host'
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > why did normalize_prior_phrase grow a string exponentially
-- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
-  > why did running nli-verify on a .prepromote.bak overwrite the real evidence_ir.json
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > why did seed_axi_temporal fail after constraint promotion and how was it fixed
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > why did the .2a direction deferral get reopened (explicit owner steer 2026-06-17 — Build it, initiator perspective)

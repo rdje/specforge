@@ -1,4 +1,17 @@
 # DEVELOPMENT_NOTES
+## SWD-SERIAL-EXTRACTION.7b (`2026-08-09`) — a semantic stage may preserve without interpreting
+
+SemanticIR usually derives meaning, but forcing every incoming fact through a new semantic translation would
+weaken these protocol observations. Their existing types already encode the source-backed meaning that was
+scored: field sequence/direction, response branch, state observation, and coupled interface edge. Reusing those
+exact types avoids parallel schemas and makes equality—including record order and statement provenance—the
+projection contract.
+
+This does not collapse the Evidence/Semantic distinction. EvidenceIR still owns extraction and scoring;
+SemanticIR makes the observations available to downstream semantic composition. Missing transitions, values,
+or bindings remain missing. Serde-default plus omitted-empty storage keeps the addition compatible with older
+artifacts and byte-stable for unrelated documents, while explicit validation counts make presence inspectable.
+
 ## SWD-SERIAL-EXTRACTION.7a (`2026-08-09`) — typed preservation precedes executable interpretation
 
 A typed extraction record is not automatically an executable behavior. The SWD surfaces know frame field

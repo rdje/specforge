@@ -147,8 +147,9 @@ Collection guidance: [authoring and lifecycle README](README.md).
 | [swd-canonical-edge-artifact-is-stale](swd-canonical-edge-artifact-is-stale.md) | 2026-08-09 | `current` | The canonical SWD edge-timing artifact predates the fresh disposable 29/29 proof |
 | [swd-derivation-scored-100](swd-derivation-scored-100.md) | 2026-06-07 | `current` | SWD protocol derivation is scored 100% across frame, operation, state, and interface-edge timing tasks |
 | [swd-intent-is-the-fsm-driving-swdio](swd-intent-is-the-fsm-driving-swdio.md) | 2026-06-07 | `current` | SWD's intent = its packet protocol + line state machine on SWDIO (read from spec Chapter B4) |
+| [swd-protocol-convergence-snapshots-are-blind](swd-protocol-convergence-snapshots-are-blind.md) | 2026-08-09 | `current` | Convergence snapshots do not yet count the four SWD protocol collections |
 | [swd-protocol-fsm-surface](swd-protocol-fsm-surface.md) | 2026-06-07 | `current` | The SWD/JTAG protocol FSM is a typed surface (ProtocolStateRecord) — states extracted from "<State> state"… |
-| [swd-protocol-surfaces-stop-at-evidenceir](swd-protocol-surfaces-stop-at-evidenceir.md) | 2026-08-08 | `current` | SWD protocol surfaces require lossless IntentIR projection and explicit ISF residual accounting |
+| [swd-protocol-surfaces-stop-at-evidenceir](swd-protocol-surfaces-stop-at-evidenceir.md) | 2026-08-08 | `current` | SWD protocol surfaces reach SemanticIR exactly but do not yet reach IntentIR or ISF |
 | [swd-serial-frame-surface](swd-serial-frame-surface.md) | 2026-06-07 | `current` | SWD serial-frame fields are a distinct typed surface (SerialFrameField), double-gated to serial docs + frame… |
 | [task-tree-catalog](task-tree-catalog.md) | 2026-08-08 | `current` | The task-tree catalog is a bounded derived navigation layer |
 | [temporal-eval-residual-fps-are-stale](temporal-eval-residual-fps-are-stale.md) | 2026-06-02 | `current` | The temporal-rule eval's residual false positives are a stale artifact, not a live bug |

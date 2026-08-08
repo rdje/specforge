@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > how are extraction-profile priors looked up (extraction_profile_priors_for signature-subset match)
+- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
+  > how are human corpus KB notes preserved during refresh
+- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
+  > how are live-document ceiling increases and immutable debt baselines tested
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > how are message fields written as section headings extracted
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > how are message-field tables distinguished from register-field tables
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > how are multi-word field names like Validation Bits or FRU ID recovered
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
@@ -288,13 +298,3 @@
   > how is a promoted constraint surface visible in the extraction manifest
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > how is a register mnemonic reused across access-port blocks (AUTHSTATUS/CSW/IDR/DEVARCH/CLAIMSET) recovered instead of dropped
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > how is a register name recovered from a section heading (RISC-V dmstatus/dmcontrol)
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > how is a register-field mnemonic recovered when the name column is a bit-range (NVMe)
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how is an under-extracted spec distinguished from a true guide (evidence_document_underextracted_spec)
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > how is an unless/except exception clause handled in a temporal condition
-- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
-  > how is corpus SOURCE_PDF_REGISTRY currentness checked

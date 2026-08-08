@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > per-wire-doc direction flip results (APB input 2->12, AXI 4->52, SWD 0->1, AHB residual)
+- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
+  > qwen2.5vl vs qwen3-vl which model
+- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
+  > should I build an isf lowering-completeness verifier for temporal rules
+- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
+  > should I fix the PSEL valid when PSEL asserted temporal rule
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > should NLP-SHALLOW-PARSE.2f build coordination distribution
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
   > should NLP-SHALLOW-PARSE.2h add new passive/verb-sense direction code
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
@@ -79,6 +89,8 @@
   > what are the undeclared-named-subject rule drops at ISF lowering (conditional_rules / signal_constraints / temporal_invariants)
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > what blocks a Rust code change from committing in specforge
+- [swd-protocol-convergence-snapshots-are-blind](../knowledge/swd-protocol-convergence-snapshots-are-blind.md)
+  > what blocks the final fresh SWD canonical promotion
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > what carries register bit-fields in SpecForge (RegisterFieldRecord in source.rs:414; IntentIr.register_records clone at intent.rs:193 — full metadata survives to IntentIR)
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
@@ -285,15 +297,3 @@
   > what is extract_composition_frame_fields / is_frame_field_name / stated_frame_field_bit_width / parse_count_word
 - [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
   > what is extract_quoted_mode_states / quoted_mode_states_in / mode_state_ ids
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > what is extract_transition_bound_states / transition_bound_state_names_in / is_bare_state_name / named_state_ ids
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > what is in seed_swd_derivation.json
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > what is index-family signal canonicalization
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > what is is_condition_only_subject / conditional_clause_spans
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > what is is_permissive_only_subject_frame and why is it sentence-scoped not block-scoped
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > what is promotion_status not_promoted_review_required and where does the canonical mutation live

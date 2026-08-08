@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > how is a register name recovered from a section heading (RISC-V dmstatus/dmcontrol)
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > how is a register-field mnemonic recovered when the name column is a bit-range (NVMe)
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how is an under-extracted spec distinguished from a true guide (evidence_document_underextracted_spec)
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > how is an unless/except exception clause handled in a temporal condition
+- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
+  > how is corpus SOURCE_PDF_REGISTRY currentness checked
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > how is corpus_kb currentness checked
 - [task-tree-catalog](../knowledge/task-tree-catalog.md)
@@ -287,13 +297,3 @@
   > is tier-agreement a good confidence axis for conformal calibration
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > must a post-build signal_constraints replace re-apply build-path invariants
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > per-wire-doc direction flip results (APB input 2->12, AXI 4->52, SWD 0->1, AHB residual)
-- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
-  > qwen2.5vl vs qwen3-vl which model
-- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
-  > should I build an isf lowering-completeness verifier for temporal rules
-- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
-  > should I fix the PSEL valid when PSEL asserted temporal rule
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > should NLP-SHALLOW-PARSE.2f build coordination distribution

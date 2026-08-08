@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > what is extract_transition_bound_states / transition_bound_state_names_in / is_bare_state_name / named_state_ ids
+- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
+  > what is in seed_swd_derivation.json
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > what is index-family signal canonicalization
+- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
+  > what is is_condition_only_subject / conditional_clause_spans
+- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
+  > what is is_permissive_only_subject_frame and why is it sentence-scoped not block-scoped
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > what is promotion_status not_promoted_review_required and where does the canonical mutation live
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > what is recover-register-bits / how does the recover-register-bits command work
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
@@ -285,15 +297,3 @@
   > where do DBID / TxnID / ReturnNID style names come from in CHI
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > where do DTI message field obligations leak (signal_constraints) and how is it fixed
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > where do I log feedback or a suggestion to FSMGen
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > where do in-memory structure layouts (queue entries, table entries, dwords) live in EvidenceIR
-- [swd-protocol-surfaces-stop-at-evidenceir](../knowledge/swd-protocol-surfaces-stop-at-evidenceir.md)
-  > where do interface_edge_timings stop in the pipeline
-- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
-  > where do live-document checker test fixtures create temporary files
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > where do message-field / structure / flit / descriptor layouts go in the pipeline (EvidenceIR only — no IntentIR carrier, never lowered)
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > where do obligations on message fields (TagOp must be 0) live in EvidenceIR

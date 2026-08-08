@@ -140,7 +140,7 @@ extraction approach distinct from the parallel-bus signal-table path.
   downstream typed models, validation, and current canonical artifact state; record the lossless-projection
   and honest-lowering decision; root-cause the missing canonical `.4e` timing record; and decompose `.7`
   before any product-schema change.
-- ID: `SWD-SERIAL-EXTRACTION.7b` · Status: `pending` · Goal: project all four typed protocol surfaces
+- ID: `SWD-SERIAL-EXTRACTION.7b` · Status: `done` (`2026-08-09`) · Goal: project all four typed protocol surfaces
   losslessly from EvidenceIR into SemanticIR with additive, backward-compatible serialization, exact
   cross-stage parity tests, and validation counts.
 - ID: `SWD-SERIAL-EXTRACTION.7c` · Status: `pending` · Goal: project the same surfaces losslessly from
@@ -148,9 +148,14 @@ extraction approach distinct from the parallel-bus signal-table path.
 - ID: `SWD-SERIAL-EXTRACTION.7d` · Status: `pending` · Goal: make the `.isf` adapter account explicitly
   for every protocol record: lower only a fully licensed representable subset and preserve every
   under-specified record as a typed residual, with FSMGen-strict and generic-adapter regressions.
-- ID: `SWD-SERIAL-EXTRACTION.7e` · Status: `pending` · Goal: rebuild the tracked ADI pipeline from a
-  fresh repository-local CPU ingest, promote the complete current chain, prove canonical 29/29 scoring and
-  downstream parity/residual accounting, run the full wire/KG/CI gates, and close `.7` plus the parent tree.
+- ID: `SWD-SERIAL-EXTRACTION.7e` · Status: `pending` (container) · Goal: restore protocol-aware convergence
+  accounting, then rebuild/promote the tracked ADI pipeline and close the program from current artifacts.
+- ID: `SWD-SERIAL-EXTRACTION.7e.i` · Status: `pending` · Goal: extend Evidence/Semantic/Intent convergence
+  snapshots and fact counts across all four protocol collections, with protocol-only change detection tests,
+  before a fresh canonical run relies on convergence deltas.
+- ID: `SWD-SERIAL-EXTRACTION.7e.ii` · Status: `pending` · Goal: rebuild the tracked ADI pipeline from a fresh
+  repository-local CPU ingest, promote the complete current chain, prove canonical 29/29 scoring plus
+  downstream parity/residual/convergence accounting, run full wire/KG/CI gates, and close `.7` and the parent.
 
 ### Acceptance Checklist (enforced) — `SWD-SERIAL-EXTRACTION.7a`
 
@@ -166,6 +171,21 @@ extraction approach distinct from the parallel-bus signal-table path.
   artifact, or user-owned workspace file changes in this design leaf.
 - [x] **LOCKSTEP** — update the task frontier, decision index, topically correct mdBook section, bounded
   resume pointer, and derived Knowledge Map only where the audited public truth changed.
+
+### Acceptance Checklist (enforced) — `SWD-SERIAL-EXTRACTION.7b`
+
+- [x] **REPRODUCE / MEASURE** — prove SemanticIR has no fields for the four non-empty EvidenceIR protocol
+  collections and validation cannot report them, while unrelated legacy artifacts load without those keys.
+- [x] **ROOT CAUSE (WHY + WHERE)** — localize the loss to `SemanticIr` schema/build assembly and validation
+  metrics; confirm no semantic filter or reinterpretation is licensed by ADR 0016.
+- [x] **ADDRESSED (verified)** — add serde-default/skip-empty SemanticIR collections using the exact EvidenceIR
+  record types, clone each collection unchanged, and report deterministic counts.
+- [x] **NO REGRESSION** — focused schema/build/load/validation tests, warning-deny formatting/Clippy, relevant
+  wire/KG checks, doctrines, and the broader gate warranted by the central IR schema all pass.
+- [x] **GENERICITY / HONESTY** — no protocol/signal name list, inferred field, record filtering, reordering,
+  or provenance rewrite enters the projection.
+- [x] **LOCKSTEP** — update this leaf, live technical truth, and the SemanticIR/mdBook product contract; leave
+  the still-unimplemented IntentIR/adapter boundary explicit under `.7c`/`.7d`.
 
 ### Surfaced portability finding (handoff after `.4e`)
 
@@ -226,7 +246,10 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 - `SWD-SERIAL-EXTRACTION.7a` — **DONE.** ADR 0016 freezes exact Evidence→Semantic→Intent carry-through and
   explicit adapter residual accounting; direct behavioral lowering remains empty until records supply complete
   bindings. The canonical 11/4/13/0 surface split is the deliberately unpromoted pre-`.4e` cache, and `.7e`
-  owns its fresh tracked-PDF replacement. Next pickable leaf: `.7b` SemanticIR projection.
+  owns its fresh tracked-PDF replacement.
+- `SWD-SERIAL-EXTRACTION.7b` — **DONE.** SemanticIR carries the exact four EvidenceIR record collections through
+  additive empty-compatible fields and unfiltered clones; validation reports all four counts. Full CI passes.
+  Next pickable leaf: `.7c` canonical IntentIR projection.
 
 - `SWD-SERIAL-EXTRACTION.4c` — **DONE.** Added `SwdioDirection {HostDrives, TargetDrives}` + `swdio_direction`
   on `SerialFrameField`; `extract_serial_frame_fields` derives it from the spec's own "from the `<A>` to the
@@ -311,6 +334,20 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
   present. ADR 0016, the updated projection fact, and the canonical-staleness fact preserve the root cause.
   Knowledge Map generation writes 153 facts / 1,066 unique question keys across eight bounded shards; the
   fact-card catalog writes 152 routes. mdBook doctests/build and all six composed doctrines pass.
+- `.7b`: the exact projection test passes with two ordered frame records plus operation/state/edge records,
+  preserving every optional member and supporting statement id; clearing all four collections omits the keys,
+  and that legacy JSON shape decodes to empty defaults. SemanticIR validation reports 2/1/1/1 in its focused
+  test. The complete SemanticIR module passes 394/394 and the matching validation subset 18/18; warning-deny
+  Clippy passes. A live current-ADI SemanticIR dry-run projects 11 frame / 4 operation / 13 state / 0 edge
+  records and preserves the first field/state ids and statement provenance. Full `scripts/run_ci.sh` is green:
+  all six doctrines, formatting, Clippy, 1,768 passed / 5 ignored, rustdoc, mdBook doctests/build, 156/156 KG
+  fixtures through the suite, and final project-data locality. After the convergence finding is recorded,
+  Knowledge Map generation writes 154 facts / 1,073 unique question keys across eight shards; the fact catalog
+  writes 153 routes, and all six doctrines pass again.
+- `.7b` cold-read follow-up: `EvidenceSnapshot`, `SemanticSnapshot`, and `IntentSnapshot` in `converge.rs`
+  omit all four protocol collections from their typed fields and `fact_count`; therefore a protocol-only
+  change can be invisible to the aggregate convergence delta. This does not invalidate exact `.7b` projection,
+  but it blocks final fresh-pipeline closure until dedicated `.7e.i` makes all three snapshots protocol-aware.
 
 ## Commit log
 
@@ -321,6 +358,7 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 - `.4`: see the `SWD-SERIAL-EXTRACTION.4` commit (typed protocol-FSM state surface).
 - `.4e`: see the `SWD-SERIAL-EXTRACTION.4e` commit (typed/scored interface-edge timing).
 - `.7a`: see the `SWD-SERIAL-EXTRACTION.7a` commit (projection/lowering architecture and freshness root cause).
+- `.7b`: see the `SWD-SERIAL-EXTRACTION.7b` commit (lossless EvidenceIR→SemanticIR projection and counts).
 
 ## Changelog
 
@@ -334,3 +372,6 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 - `2026-08-09`: `.7a` audited the four downstream gaps, accepted exact typed carry-through plus explicit
   residual accounting, root-caused canonical edge staleness as deliberate `.4e` nonpromotion, and decomposed
   implementation/fresh-ingest closure into `.7b`–`.7e`.
+- `2026-08-09`: `.7b` added exact additive SemanticIR carry-through for all four protocol collections,
+  validation counts, legacy-empty compatibility, and full record/order/provenance parity tests; full CI green.
+  Its cold read also split protocol-aware convergence accounting into `.7e.i` ahead of fresh `.7e.ii` closure.
