@@ -1,3 +1,13 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4d — status rolling-ledger migration
+
+- Froze the exact 1,920-record / 581,239-byte current-status source as the third immutable source
+  capsule, then extended the common bounded archive manifest and direct index.
+- Derived the stable root from its H1/current heading, newest 50 whole snapshot bullets, and the
+  unchanged gap/validation trailer; `.4d` is the first post-capsule prepend.
+- Preserved both Rust-managed projection markers and verified the real project-validation writer
+  seam. The normal live surface, exact archive terminal, retained suffix, and retrieval route are
+  now enforced without relying on Git history alone.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4c — DEVELOPMENT_NOTES rolling-ledger migration
 
 - Froze the exact 1,601-record / 2,170,230-byte engineering-rationale source as the second immutable

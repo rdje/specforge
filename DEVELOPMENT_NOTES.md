@@ -1,4 +1,13 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4d (`2026-08-08`) — status snapshot and writer-boundary migration
+
+The status ledger's record region and writer-owned trailer are deliberately different data. The
+bounded root keeps its H1/current heading and newest 50 whole snapshot bullets, while the complete
+gap section and validation projection remain outside rotation. The immutable 1,920-record capsule
+preserves the entire pre-migration source; the first `.4d` prepend changes only the live record
+region. This separation lets `project_validation.rs` continue replacing exactly the marked trailer
+without reopening archived history or changing the stable root path.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4c (`2026-08-08`) — engineering-rationale ledger migration
 
 The exact 1,601-record / 2,170,230-byte source is now an immutable repository-local capsule, while

@@ -171,7 +171,7 @@ verification before correction.
   Goal: migrate `DEVELOPMENT_NOTES.md` at a verified whole-record boundary under the `.4a` protocol.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4d`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Goal: migrate `LIVE_ACHIEVEMENT_STATUS.md` at a verified whole-record boundary under the `.4a`
   protocol while preserving its bounded current snapshot.
 
@@ -219,8 +219,9 @@ verification before correction.
 | — | `.4a` | `done` (`2026-08-08`) | Four real grammars, exact source identities, bounded survivor plans, consumers, and the repository-local source-capsule protocol are executable; no record moved. |
 | — | `.4b` | `done` (`2026-08-08`) | Exact capsule, manifest/index, 87-record survivor plus first post-capsule entry, surface ratchet, and retrieval proof landed atomically. |
 | — | `.4c` | `done` (`2026-08-08`) | Exact 1,601-record capsule, 60-record live suffix plus first prepend, common index/manifest extension, surface ratchet, and byte-sensitive retrieval proof landed. |
-| 1 | `.4d` | `pending` | Migrate `LIVE_ACHIEVEMENT_STATUS.md` while preserving its Rust-managed trailer markers and stable root. |
-| 2 | `.4e` / `.5` / `.6` | `pending` / `active` | Remaining architecture-ledger, collection, and locality slices. |
+| — | `.4d` | `done` (`2026-08-08`) | Exact 1,920-record capsule, bounded 51-record snapshot, unchanged writer-managed trailer, and real writer-seam proof landed. |
+| 1 | `.4e` | `pending` | Migrate `RUST_CODEBASE_ANALYSIS.md` with its Purpose prologue intact. |
+| 2 | `.5` / `.6` | `active` / `pending` | Remaining collection and repository-volume-locality slices. |
 | 5 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
 ## Decisions
@@ -379,12 +380,47 @@ verification before correction.
 - `2026-08-08`: **Engineering-note width headroom is separately authorized (`.4c`).** Aggregate live
   ceilings ratchet by more than 90%; the 1,401-byte legacy exact quarantine becomes the reviewed
   1,800-byte whole-record transaction ceiling through one exact `.4c` old/new authority.
+- `2026-08-08`: **The status ledger is the third migrated ledger (`.4d`).** Its exact capsule retains
+  1,920 records / 1,960 lines / 581,239 bytes at SHA-256
+  `b00ff5f5c4a29554a20eea9d901a95848d54a644749eba74ad9618798dd9bd6a`. The stable root retains the
+  H1/current heading, newest 50 snapshot bullets, complete gap/validation trailer, and `.4d` as the
+  first post-capsule prepend.
+- `2026-08-08`: **Status rotation never owns the generated validation projection (`.4d`).** The exact
+  marker pair and all trailer bytes remain outside the parsed record region. The focused
+  `project_validation_writes_snapshot_doc_and_updates_live_status` test executed with repository-local
+  temporary storage and proved the real Rust writer still replaces its managed block at the stable root.
+- `2026-08-08`: **Status width headroom is separately authorized (`.4d`).** Count/line/byte ceilings
+  ratchet down by more than 78%; the 5,467-byte legacy exact quarantine becomes the reviewed
+  6,800-byte whole-record transaction ceiling through one exact `.4d` old/new authority.
 
 ## Blockers
 
 - None for `.0`–`.3`.
 - Later migrations may stop for an authority conflict, unique unclassified content, or an unprovable
   retrieval promise, exactly as required by the adopted doctrine.
+
+## `.4d` `LIVE_ACHIEVEMENT_STATUS.md` Atomic Migration
+
+The third migration preserves a live writer seam as well as a whole-record boundary:
+
+| Product | Records | Lines | Bytes | Max content line | Identity / role |
+| --- | ---: | ---: | ---: | ---: | --- |
+| pre-migration source capsule | 1,920 | 1,960 | 581,239 | 5,467 | immutable SHA-256 `b00f…bd6a`; complete status source |
+| retained capsule view in root | 50 | 89 | 87,505 | 4,824 | H1/current heading + newest bullets + unchanged trailer |
+| final root including `.4d` | 51 | 90 | 88,414 | 4,824 | bounded current snapshot; first post-capsule prepend |
+| records outside current view | 1,870 | — | — | — | retrieved from the capsule/index |
+
+The exact copy passed `cmp`, digest, line, and byte checks before the guarded emitter touched the
+root. The emitter shortened only the bullet region between the exact snapshot/gap headings; the gap,
+validation heading, projection markers, and generated content stayed outside rotation. The common
+manifest/index now routes the exact capsule, `achievement_status` is normal, and
+`achievement_status_archive` is an exact archive terminal.
+
+The real Rust writer seam was exercised through
+`project_validation_writes_snapshot_doc_and_updates_live_status` with `TMPDIR` under repository-local
+`generated/tmp`. It produced and replaced the managed projection in a same-volume repository fixture,
+confirming that the stable root and markers still satisfy production code rather than only a text
+probe.
 
 ## `.4c` `DEVELOPMENT_NOTES.md` Atomic Migration
 
@@ -447,7 +483,7 @@ claim that `.4a` already moved them.
 | --- | --- | --- | ---: | --- |
 | `CHANGES.md` | 1,798 / 32,682 / 2,629,033 / 1,629 | 87 / 1,357 / 199,055 / 1,629 | 1,711 | 128 / 2,000 / 262,144 / 2,200 |
 | `DEVELOPMENT_NOTES.md` | 1,601 / 20,921 / 2,170,230 / 1,401 | 60 / 1,472 / 193,809 / 1,401 | 1,541 | 96 / 2,000 / 262,144 / 1,800 |
-| `LIVE_ACHIEVEMENT_STATUS.md` | 1,918 / 1,958 / 579,393 / 5,467 | 50 / 89 / 92,375 / 5,107 | 1,868 | 80 / 640 / 131,072 / 6,800 |
+| `LIVE_ACHIEVEMENT_STATUS.md` | 1,920 / 1,960 / 581,239 / 5,467 | 50 / 89 / 87,505 / 4,824 | 1,870 | 80 / 640 / 131,072 / 6,800 |
 | `RUST_CODEBASE_ANALYSIS.md` | 1,350 / 9,039 / 1,046,679 / 3,041 | 60 / 1,056 / 89,727 / 369 | 1,290 | 96 / 1,400 / 196,608 / 600 |
 
 Every selected survivor begins below 80% of each local limit, independently. The values are derived
@@ -591,6 +627,8 @@ transition debt, not a fabricated freshness claim.
 | `2026-08-08` | `.4b` | capsule vs `git show 73424daf:CHANGES.md`; staged resulting-tree `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | byte-identical capsule; green: 559 Markdown files / 26 surfaces; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; staged diff clean |
 | `2026-08-08` | `.4c` | exact pre-copy `--report`; same-volume `cp -p`; `cmp -s`; dual SHA-256 and `wc`; guarded `--emit-planned development-notes`; retained-suffix failure + byte/root-cause diff; terminal-boundary renderer/verifier correction; migrated `--report` | capsule/source identical at 1,601 records / 20,921 lines / 2,170,230 bytes / `76b5…fedc`; root 60 records before `.4c`, then 61; capsule exact, successor separator omitted only at live EOF, all record content/manifest/index/retrieval pass |
 | `2026-08-08` | `.4c` | capsule vs `git show 2d7eaff1:DEVELOPMENT_NOTES.md`; staged resulting-tree `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | byte-identical capsule; green: 560 Markdown files / 27 surfaces; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; staged diff clean |
+| `2026-08-08` | `.4d` | exact pre-copy `--report`; same-volume `cp -p`; `cmp -s`; dual SHA-256 and `wc`; guarded `--emit-planned live-achievement-status`; migrated `--report`; repository-local-TMPDIR focused writer test | capsule/source identical at 1,920 records / 1,960 lines / 581,239 bytes / `b00f…bd6a`; root 50 records before `.4d`, then 51; capsule, exact suffix, stable trailer, both markers, manifest/index, and 1/1 real writer test pass |
+| `2026-08-08` | `.4d` | capsule vs `git show e4239e3f:LIVE_ACHIEVEMENT_STATUS.md`; staged resulting-tree `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | byte-identical capsule; green: 561 Markdown files / 28 surfaces; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; staged diff clean |
 
 ## Commit Log
 
@@ -606,6 +644,7 @@ transition debt, not a fabricated freshness claim.
 | `.4a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4a — lock the lossless rolling-ledger protocol` | exact grammars + source identities + bounded survivor/archive/consumer contract; no migration |
 | `.4b` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4b — migrate CHANGES losslessly` | exact capsule + bounded root + manifest/index + surface debt ratchet |
 | `.4c` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4c — migrate DEVELOPMENT_NOTES losslessly` | exact capsule + bounded H2 rationale window + successor-boundary proof + debt ratchet |
+| `.4d` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4d — migrate live status losslessly` | exact capsule + bounded bullet snapshot + unchanged generated trailer + writer proof |
 
 ## Changelog
 
@@ -640,3 +679,6 @@ transition debt, not a fabricated freshness claim.
 - `2026-08-08`: `.4c` repeated the lossless transition for `DEVELOPMENT_NOTES.md`, extended the common
   archive route, and root-caused the inter-record separator as successor-owned boundary structure
   before ratcheting the rationale surface out of debt.
+- `2026-08-08`: `.4d` froze the exact status source, shortened only the whole-bullet current region,
+  extended the common archive route, preserved the entire generated trailer, and proved the real Rust
+  projection writer in a repository-volume fixture before ratcheting the status surface out of debt.

@@ -31,3 +31,16 @@ perl scripts/check_rolling_ledger_protocol.pl --report
 - Current-window rule: H1 prologue followed by the newest 60 whole H2 records.
 - Overlap: the immutable capsule includes the retained live window; later rollover archives only newly
   aged-out engineering-rationale records.
+
+## `live-achievement-status`
+
+- Current view: [`LIVE_ACHIEVEMENT_STATUS.md`](../../../LIVE_ACHIEVEMENT_STATUS.md)
+- Immutable source capsule: [`source-through-2026-08-08.md`](live-achievement-status/source-through-2026-08-08.md)
+- Repository-relative capsule locator:
+  `docs/archive/rolling-ledgers/live-achievement-status/source-through-2026-08-08.md`
+- Frozen boundary: 1,920 records; 1,960 lines; 581,239 bytes; SHA-256
+  `b00ff5f5c4a29554a20eea9d901a95848d54a644749eba74ad9618798dd9bd6a`
+- Current-window rule: H1/current heading, newest 50 whole snapshot bullets, then the complete gap and
+  writer-managed validation trailer.
+- Overlap: the immutable capsule includes the retained live window; later rollover archives only newly
+  aged-out status records and never edits the validation projection in place.

@@ -19,15 +19,15 @@
   run it too. Retrieval: `KNOWLEDGE_MAP.md`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4d` — migrate
-  `LIVE_ACHIEVEMENT_STATUS.md` while preserving its stable Rust-managed trailer.
-- Current state: `.0`–`.4c` and `.5a` are complete. The fifth doctrine governs 560 Markdown files
-  across 27 surfaces. `CHANGES.md` and `DEVELOPMENT_NOTES.md` are bounded 89/61-record current views
-  over exact 1,798/1,601-record capsules; manifest, index, retrieval, and suffix identity are enforced.
-  Status and Rust analysis remain measured planned transitions. Query revision from Git.
-- Next action: freeze the remeasured 1,920-bullet status source, derive its 50-bullet root while
-  preserving the entire gap/validation trailer and both managed markers, extend manifest/index and
-  classifications, then run the real project-validation writer seam before committing `.4d`.
-- In-flight uncommitted: `.4c` capsule/current-view migration and synchronized docs until commit;
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4e` — migrate
+  `RUST_CODEBASE_ANALYSIS.md` while preserving its H1/Purpose prologue.
+- Current state: `.0`–`.4d` and `.5a` are complete. The fifth doctrine governs 561 Markdown files
+  across 28 surfaces. Change, rationale, and status roots are bounded 90/62/51-record current views
+  over exact 1,798/1,601/1,920-record capsules; manifest, index, retrieval, suffix identity, and the
+  live status writer seam are enforced. Rust analysis is the final measured planned ledger.
+- Next action: freeze the pinned 1,350-record architecture source, derive its Purpose prologue plus
+  newest 60 H2 records, extend the common manifest/index and classifications, then verify all reader
+  and writer seams before committing `.4e`.
+- In-flight uncommitted: `.4d` capsule/current-view migration and synchronized docs until commit;
   none afterward.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

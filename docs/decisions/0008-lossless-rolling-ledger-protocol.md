@@ -55,12 +55,19 @@ artifact. Retained-suffix verification permits only that precise last-record bou
 all record-content bytes and every earlier record remain byte-identical. This is not permission for
 general whitespace normalization.
 
+For the status ledger, rotation owns only top-level bullets between the exact current-snapshot and gap
+headings. The gap section and validation projection are stable trailer data, not records. The initial
+migration therefore preserves every trailer byte and both managed markers in the root, and acceptance
+requires the real `project_validation.rs` writer test with temporary data on the repository volume.
+
 ## Consequences
 
 - No `.4b`–`.4e` leaf may move a record until its source matches the pinned `.4a` measurement or the
   task explicitly remeasures a legitimate new leading record before freezing the capsule.
 - `LIVE_ACHIEVEMENT_STATUS.md` remains at its root path, and the validation projection markers remain
   present for `project_validation.rs`.
+- Its `.4d` source capsule preserves 1,920 pre-migration records and every original byte; the root
+  retains the newest 50 snapshot bullets plus the complete writer-managed trailer and later prepends.
 - A migration is blocked by ambiguous record boundaries, non-reconstructing bytes, missing consumers,
   an off-root path, a manifest/index mismatch, or a survivor over any independent local limit.
 - Exact source identity and bounded current utility are separate products. Their declared overlap is

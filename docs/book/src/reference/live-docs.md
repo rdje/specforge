@@ -60,7 +60,7 @@ window, local record/line/byte/width limits, consumers, and future archive route
 planned live view from whole records and checks each pressure axis independently. Its grammar tests
 also reject non-bullet content inside the status record region.
 
-Each remaining `.4d`–`.4e` migration will copy the exact pre-migration file into an immutable,
+The remaining `.4e` migration will copy the exact pre-migration file into an immutable,
 repository-local source capsule before shortening the stable root. The capsule manifest records its digest and
 dimensions; a bounded index links both the current root and historical capsule; the checker retrieves
 and revalidates both. The capsule deliberately overlaps the retained current window so complete-source
@@ -106,6 +106,22 @@ not turn the removed successor's separator into a blank-at-EOF artifact. ADR 000
 define one such terminal separator as boundary structure: it is omitted only at live EOF, while every
 record-content byte must match. “Looks the same” remains insufficient; the exception is exact and
 mechanical rather than a whitespace normalization.
+
+#### `LIVE_ACHIEVEMENT_STATUS.md` migration landed
+
+The current-status root is now 90 lines / 88,414 bytes instead of 1,960 lines / 581,239 bytes. Its
+initial capsule at
+`docs/archive/rolling-ledgers/live-achievement-status/source-through-2026-08-08.md` retains all 1,920
+pre-migration records under SHA-256
+`b00ff5f5c4a29554a20eea9d901a95848d54a644749eba74ad9618798dd9bd6a`. The live root keeps its
+H1/current heading and newest 50 capsule bullets; `.4d` is the first post-capsule prepend.
+
+Status rotation does not own the material below `## Highest-priority remaining gap`. The complete gap
+section, `## Validation Projection`, and both managed markers remain in the root outside the bullet
+record region. The repository's focused project-validation test runs the real Rust writer with
+temporary storage forced under `generated/tmp`, proving the managed block can still be replaced at the
+stable path after migration. Capsule identity, suffix identity, marker literals, pressure, manifest,
+and index routing are all rechecked by the unconditional doctrine gate.
 
 ### Lifecycle controls
 
