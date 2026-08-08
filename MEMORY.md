@@ -19,12 +19,12 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `MDBOOK-DOCTEST-HYGIENE.1` — completed by this commit; all affected live-book examples carry
-  truthful language/execution metadata without changing their bodies.
-- Current state: the four affected chapters now classify all 34 fence openings. The 26 failing openings became
-  `text` or `rust,ignore`; three self-contained Rust examples remain executable. `mdbook test docs/book` moves
-  from 26 failures to success and `mdbook build docs/book` remains green.
-- Next action: execute `MDBOOK-DOCTEST-HYGIENE.2`: add the green doctest to the canonical docs/CI workflow,
-  update maintainer guidance, run full CI, and close the tree.
-- In-flight uncommitted: none after this commit; no background job or disposable residue.
+- Active unit: `ARTIFACT-PATH-PORTABILITY.3` — next queued leaf; no implementation starts until the completed
+  mdBook-doctest close commit lands.
+- Current state: `MDBOOK-DOCTEST-HYGIENE` is closed. All affected fences are truthfully classified, and the
+  canonical docs entrypoint now runs native mdBook doctests before the 36-page HTML build; focused and full CI
+  pass from the completed tree.
+- Next action: open `ARTIFACT-PATH-PORTABILITY.3` at its recorded frontier and migrate SemanticIR, IntentIR,
+  adapter reports, and their consumers to the move-safe persisted-path contract.
+- In-flight uncommitted: none after the `.2` close commit; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

@@ -595,6 +595,19 @@ surface, while task state and rationale remain available through their dedicated
 
 ## Closed task trees — how each was implemented and verified
 
+### `MDBOOK-DOCTEST-HYGIENE` — executable examples stay executable
+
+The rendered book had remained healthy while the optional native doctest command reported 26 failures across
+four chapters. The bounded repair first measured every opening, then classified non-Rust material as `text` and
+ten deliberately incomplete Rust illustrations as `rust,ignore`; three self-contained Rust examples remained
+ordinary executable `rust`. No example body changed.
+
+The close leaf made that corrected behavior durable in `scripts/run_docs_ci.sh`: it runs
+`mdbook test docs/book` immediately before `mdbook build docs/book`. Full `scripts/run_ci.sh` already consumes
+that entrypoint exactly once. The focused docs gate and final full CI both pass, so a future fence-classification
+regression fails before the rendered book is accepted. Authoritative evidence lives in
+`docs/tasks/MDBOOK-DOCTEST-HYGIENE.md`.
+
 ### `SIGNOFF-REMEDIATION` — the doctrine that keeps `main` always-shippable
 
 If you `git pull main` and run `scripts/run_ci.sh`, it should

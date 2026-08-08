@@ -117,8 +117,8 @@ The adapter also runs 55 repository-volume positive and fail-closed fixtures, in
 lifecycle, registry schema/size controls, independent pressure axis, and Git-history authority path.
 
 The heavy deterministic oracles — `kg-bench`, the WIRE-BASED-100 golds, the byte-identical
-evidence/`.isf` checks, the full `cargo` suite — are the strongest leg of all. They are too slow to run
-on every local commit, so they run in the full CI gate (`scripts/run_ci.sh`)
+evidence/`.isf` checks, the full `cargo` suite, and the mdBook doctest/build pair — are the strongest leg of
+all. They are too slow to run on every local commit, so they run in the full CI gate (`scripts/run_ci.sh`)
 rather than in the fast pre-commit hook. That is a deliberate split, stated openly: the local hook
 catches the cheap structural and evidence breaches instantly; the un-fakeable re-run happens in CI.
 
@@ -165,6 +165,9 @@ strongest guarantee is restored by re-enabling an automatic CI gate.
 ```bash
 # run every registered doctrine check (the fast gate the pre-commit hook uses):
 bash scripts/check_doctrines.sh
+
+# run the book's Rust examples and then build the complete HTML book:
+bash scripts/run_docs_ci.sh
 
 # the full gate, including the heavy oracles (run before committing Rust code):
 bash scripts/run_ci.sh

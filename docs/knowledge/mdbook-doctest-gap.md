@@ -10,8 +10,8 @@ answers:
 date: 2026-08-08
 status: current
 tags: [mdbook, doctest, documentation, ci, fence-classification]
-evidence: docs/tasks/MDBOOK-DOCTEST-HYGIENE.md (.0); scripts/run_ci.sh; scripts/build_docs.sh; docs/book/src
-reverify: "mdbook test docs/book"
+evidence: docs/tasks/MDBOOK-DOCTEST-HYGIENE.md; scripts/run_docs_ci.sh; scripts/run_ci.sh; docs/book/src
+reverify: "bash scripts/run_docs_ci.sh"
 ---
 
 The `.0` baseline showed that `mdbook build docs/book` and canonical full CI passed while the separately invoked
@@ -23,5 +23,7 @@ correctly but were sent to rustdoc because their fence classification was absent
 `MDBOOK-DOCTEST-HYGIENE.1` now classifies all 34 openings in those chapters explicitly. Non-Rust material is
 `text`; ten deliberately incomplete Rust fragments are `rust,ignore`; three self-contained Rust examples remain
 executable `rust`; existing Bash/text blocks remain unchanged. Example bodies are byte-identical, and both
-mdBook test and build pass. `.2` owns adding the now-green doctest command to the canonical documentation/CI
-workflow so classification cannot drift again.
+mdBook test and build pass. `MDBOOK-DOCTEST-HYGIENE.2` then placed the native doctest command immediately before
+the HTML build in `scripts/run_docs_ci.sh`; the full `scripts/run_ci.sh` gate already invokes that docs entrypoint
+exactly once. Fence classification therefore cannot drift while canonical docs CI remains green, and the bounded
+task tree is closed.

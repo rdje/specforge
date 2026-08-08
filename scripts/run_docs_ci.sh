@@ -13,5 +13,8 @@ if ! command -v mdbook >/dev/null 2>&1; then
   exit 1
 fi
 
+echo "[specforge-docs] testing mdBook examples"
+mdbook test docs/book
+
 echo "[specforge-docs] building mdBook"
 mdbook build docs/book

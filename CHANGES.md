@@ -1,3 +1,10 @@
+### MDBOOK-DOCTEST-HYGIENE.2 — enforce book doctests in docs CI
+
+- Made `scripts/run_docs_ci.sh` run native mdBook doctests before building the HTML book. The full CI workflow
+  already consumes this entrypoint exactly once, so executable Rust fence drift now fails the canonical gate.
+- Documented the command and close-leaf method, passed the focused docs entrypoint and complete CI suite, and
+  closed the three-leaf hygiene tree with no example-body or product behavior change.
+
 ### MDBOOK-DOCTEST-HYGIENE.1 — classify live-book examples truthfully
 
 - Classified every fence in the four affected chapters by actual language and standalone executability.
