@@ -14,6 +14,8 @@
   > are SWCLK and SWDIO extracted / declared
 - [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
   > are SignalStable obligations representable in .isf
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > are any SpecForge requests to FSMGen currently open
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
   > are behavior or temporal rules silently dropped to the .isf on the broader 78-doc corpus
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
@@ -296,5 +298,3 @@
   > how can I browse every SpecForge knowledge fact card by id or title
 - [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
   > how can a collection use a membership index outside its own surface
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how complete is a document's extracted intent / what is the per-doc completeness gauge

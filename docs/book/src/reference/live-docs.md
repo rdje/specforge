@@ -291,6 +291,40 @@ missing source workstreams; missing or duplicate current rows; forbidden chronol
 paths. The live-document doctrine verifies capsule identity plus bounded-root/index/manifest
 retrieval on every run.
 
+#### FSMGen feedback is a directed channel, not a generic ledger
+
+`docs/FSMGEN_FEEDBACK.md` mixes several roles. At the pinned boundary it is 936 lines / 57,980 bytes:
+five directed questions, answers, suggestions, or feature requests occupy 359 lines; one resolved two-
+bug episode occupies 104; a scope override occupies 15; and a 456-line legacy primer occupies the
+remainder. All six exchanges are closed through FSMGen response headings or local issue-bundle
+resolution records, so there is no open request to keep live merely for status.
+
+The primer also demonstrates a time-layer collision. April prose calls `.fsm` one of SpecForge's
+adapter targets, while the May scope override says the only adapter is `.isf`. Its “latest response”
+pin remains `030f8c273`, while the tracked FSMGen gitlink advanced to `d327129b7`. The old prose is
+useful history, but the word “latest” is not current truth.
+
+[ADR 0011](../../../decisions/0011-bounded-fsmgen-feedback-channel.md) therefore defines two products
+before any record moves:
+
+- the stable root remains the bounded current handoff channel;
+- an exact immutable capsule retains every old request, response excerpt, bug narrative, and stale
+  claim;
+- a concise register routes all six closed exchanges to detailed history/evidence;
+- an explicitly marked open region contains only active correspondence;
+- the upstream response file and reproducible issue-bundle catalog remain the authoritative detailed
+  response and bug surfaces.
+
+Future open records declare direction, kind, status, owning task, and evidence. The live set allows at
+most eight records, each no larger than 96 lines / 12,288 bytes / 512 bytes per line; detailed designs
+and reproductions stay in task/research records or issue bundles. The entire root has independent
+256-line / 32,768-byte / 512-byte health targets and 384-line / 49,152-byte / 1,024-byte hard limits.
+
+The planned executable gate pins the source SHA-256, five exhaustive regions, all six record spans,
+status/direction/evidence, both stale-current findings, 26 consumers, current-root schema, and archive
+topology. Its ten focused cases cover both planned and migrated forms. The next atomic leaf must copy
+and verify the capsule before rewriting the root and removing transition debt.
+
 Lines, bytes, file count, collection totals, and maximum content-line width are independent axes.
 Existing oversized ledgers are explicit transition debt: their measured baseline cannot move, and a
 separate bounded allowance exists only for the containment program's continuity updates until the

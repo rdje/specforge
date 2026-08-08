@@ -1,4 +1,22 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.i (`2026-08-08`) — correspondence needs semantic status, not positional rotation
+
+The common rolling-ledger protocol is deliberately not reused for FSMGen feedback. The file has five
+ordinary directed records near the top, but the older bug report spans three linked H2 sections below a
+456-line primer; responses later amend earlier request bodies. A newest-prefix or newest-suffix window
+would therefore select by layout accident rather than by whether correspondence is open.
+
+The lifecycle key is explicit status plus independent closure evidence. At the pinned boundary every
+exchange is closed and the live open set is empty. The future root can safely keep a concise six-row
+register because the exact capsule owns full wording and each row routes either to FSMGen's response
+heading or to both issue-bundle resolutions. Future open records are bounded individually and must link
+their task/evidence, preventing a detailed design or reproduction from turning the channel into another
+payload store.
+
+This also avoids laundering stale prose into a smaller file. Git blame proves the `.fsm` adapter primer
+and `030f8c273` “latest” line predate the `.isf`-only/current-pin truth. The migrated root will state the
+current boundary, while the exact capsule remains the honest home for those historically accurate words.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.ii (`2026-08-08`) — current truth and historical identity are separate products
 
 The semantic rewrite is deliberately not a summary artifact that replaces history. The exact capsule

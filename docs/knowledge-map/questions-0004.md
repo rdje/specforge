@@ -2,6 +2,11 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > what are the deeper enum member-quality residual classes after .5.ii / what did the .5.iii measurement find (measured 2026-06-24 read-only, reproducer scripts/measure_enum_width_leak.py: of the 5 deferred classes — glossary SEE…, front-matter/ToC, section-caption B2_3_1_…, _WIDTH parameter leaks, value-restart-of-clean — most are SUBSUMED by .5.i (47/54 _WIDTH members
+  > and the bulk of 319 section-caption survivors sit in generic-named enums .5.i drops whole), EXCEPT the _WIDTH leak which reaches the AXI wire-gold .isf and is materially damaging)
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > what are the extraction_quality_* validate metrics and when do they read n/a
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > what are the two dominant ISF-lowering completeness gaps (register bit-fields, message-field structures)
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
@@ -293,7 +298,3 @@
   > what is the LTL form of a temporal_rule
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > what is the NLI entailment verifier
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > what is the NVMe register-field recall / precision
-- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
-  > what is the PDF-VARIANT-DIGESTION whole-corpus coverage / re-triage

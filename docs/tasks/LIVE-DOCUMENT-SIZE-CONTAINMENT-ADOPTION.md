@@ -251,12 +251,12 @@ verification before correction.
   debt, and align the task catalog plus mdBook without duplicating live execution state.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f`
-  Status: `pending`
+  Status: `active`
   Children: `.5f.i`–`.5f.ii`
   Goal: migrate the FSMGen feedback ledger without losing requests, answers, resolutions, or issue links.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.i`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Goal: lock feedback record grammar, direction/status semantics, consumers, source identity, reviewed
   live window, and archive/index protocol before moving any request or response.
 
@@ -332,7 +332,8 @@ verification before correction.
 | — | `.5d.ii` | `done` (`2026-08-08`) | Seven-shard output, exact staging/derive-and-diff, raw-byte identity correction, reader migration, and normal-surface ratchet landed. |
 | — | `.5e.i` | `done` (`2026-08-08`) | Exact source/regions, 23-workstream ownership, drift evidence, ADR 0010, readers, archive/root design, and nine-case unconditional gate are locked; no roadmap record moved. |
 | — | `.5e.ii` | `done` (`2026-08-08`) | Exact capsule, bounded current root/index, corrected 23-row status, migrated verifier, reader alignment, and three-surface debt ratchet landed atomically. |
-| 1 | `.5f.i`–`.5i` | `pending` | Feedback, currentness, maintained references, and closure. |
+| — | `.5f.i` | `done` (`2026-08-08`) | Exact five-region source, six closed directed exchanges, zero-open status, two drift findings, 26 consumers, ADR 0011, archive/root design, and ten-case unconditional gate are locked; no feedback record moved. |
+| 1 | `.5f.ii`–`.5i` | `pending` | Feedback migration, currentness, maintained references, and closure. |
 | 2 | `.6` | `pending` | Enforce repository-volume project-data locality and audit old project-owned residue. |
 | 3 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
@@ -609,6 +610,18 @@ verification before correction.
   The general surface registry independently governs root, archive index, and capsule; the roadmap
   contract then proves exact source identity, current row semantics, reader routes, and the relationship
   among all three on every doctrine run. A smaller root alone would not have closed the leaf.
+- `2026-08-08`: **FSMGen feedback is a directed channel over heterogeneous history (`.5f.i`).** The
+  source has five ordinary directed H2 exchanges, one three-H2 two-bug episode, a current scope override,
+  and a legacy primer. All six exchanges are closed; future open records need explicit direction, kind,
+  status, owner, and evidence rather than an inferred newest-first ledger grammar.
+- `2026-08-08`: **The feedback primer has two time-layer collisions (`.5f.i`, surfaced finding).**
+  April prose still calls `.fsm` a SpecForge adapter, and a June line calls `030f8c273` the latest
+  response pin. Git blame proves both predate the `.isf`-only consolidation/current `d327129b7` gitlink.
+  The exact capsule will retain them as history; the bounded channel must state current truth directly.
+- `2026-08-08`: **Detailed feedback and reproductions already have canonical homes (`.5f.i`).**
+  FSMGen's response stays authoritative in the pinned submodule and bugs stay in the bounded issue-
+  bundle catalog. The current channel owns active correspondence plus concise closed routing, not copied
+  response chapters or embedded reproduction archives.
 
 ## Blockers
 
@@ -706,6 +719,62 @@ chronology, and verifies manifest/index retrieval. The common registry classifie
 bounded snapshot, the index as an independent bounded snapshot, and the capsule as an exact terminal.
 The old 1,487-line transition ceiling is gone; root health is 256 lines / 32,768 bytes / 384 maximum
 line bytes and hard enforcement remains 384 / 49,152 / 512.
+
+## `.5f.i` FSMGen Feedback Current/History Contract
+
+The pinned `docs/FSMGEN_FEEDBACK.md` is 936 lines / 57,980 bytes / 1,705 maximum content-line
+bytes with SHA-256 `5bf938d54559d1f80c5aed4d3a72a1ad3ec5792c6991b846beffb35d42739f03`.
+Its complete source partitions into five exact regions:
+
+| Region | Lines | Bytes | Role |
+| --- | ---: | ---: | --- |
+| H1 prologue | 2 | 34 | stable path identity |
+| `.isf`-only scope policy | 15 | 800 | current downstream boundary and historical override |
+| five directed exchanges | 359 | 26,862 | detailed questions/answer/suggestion/request plus embedded outcomes |
+| legacy primer | 456 | 23,709 | April integration orientation plus later baseline notes |
+| two-bug issue episode | 104 | 6,575 | tracked findings, bundle routes, and upstream resolution |
+
+The five ordinary exchange spans and one composite bug episode reconstruct their source regions
+exactly. Their controlled status ledger is complete:
+
+| Record | Direction | Kind | Status | Independent closure evidence |
+| --- | --- | --- | --- | --- |
+| `enum-type-clarity` | SpecForge → FSMGen | clarity request | resolved | upstream response heading |
+| `min-window-answer` | SpecForge → FSMGen | answer | answered | upstream follow-up/shipped-window heading |
+| `ltl-mtl-suggestion` | SpecForge → FSMGen | suggestion | answered and integrated | upstream verification-family response |
+| `phase-membership` | SpecForge → FSMGen | question | answered | upstream phase-membership response |
+| `field-structured-storage` | SpecForge → FSMGen | feature request | shipped | upstream storage-field response |
+| `stage-contract-bugs` | SpecForge → FSMGen | bug report | resolved | both repository-local bundle resolutions |
+
+There are zero open records. The source is not an ordinary newest-first ledger: the bug episode is
+three linked H2 sections below a general primer, and later responses modify earlier request bodies.
+The safe initial migration is therefore an exact source capsule plus a semantic current channel, not
+whole-record suffix retention.
+
+The legacy primer also cannot remain current verbatim. Lines 412–413, blamed to `4f0cf815` on
+2026-04-17, present `.fsm` alongside future HDL adapters; lines 424/434, last updated by `e15c6b1e` on
+2026-06-16, call `030f8c273` latest. The 2026-05-18 scope override and
+`FSMGEN-REFRESH-INTEGRATE-5` prove current truth is strictly `IntentIR → .isf → FSMGen` at pinned
+gitlink `d327129b7`. The capsule preserves the chronology; the future root forbids both stale literals.
+
+ADR 0011 keeps `docs/FSMGEN_FEEDBACK.md` as the bounded current channel and freezes the exact source at
+`docs/archive/fsmgen-feedback/source-through-2026-08-08.md` before replacement. The future root carries
+the current boundary, explicitly marked open correspondence, six-row closed register, authoring schema,
+and direct response/issue/archive routes. A bounded index plus JSON manifest makes the capsule directly
+retrievable and independently verifiable.
+
+Future open records declare `Direction`, `Kind`, `Status`, `Owner`, and `Evidence`. The controlled live
+set admits at most eight records, each at most 96 lines / 12,288 bytes / 512 bytes per line; detailed
+designs and reproductions route to task/research records or issue bundles. Root health targets are 256
+lines / 32,768 bytes / 512 maximum line bytes; hard ceilings are 384 / 49,152 / 1,024. The archive index
+hard-fails above 96 / 8,192 / 256.
+
+`doctrine/live_document_size/fsmgen_feedback.json` pins all five regions, six exchanges and their
+direction/status/evidence, two drift findings, 26 stable-path consumers, open-record schema, current-
+root bounds, and archive topology. `scripts/check_fsmgen_feedback_protocol.pl` runs unconditionally via
+`LIVE-DOC-SIZE`; ten planned/migrated cases fail closed on identity, evidence, record heading, unsafe
+path, marker, register, forbidden-history, or manifest drift. This design leaf moves no feedback record,
+creates no archive, and leaves the transition baseline unchanged; `.5f.ii` owns the atomic migration.
 
 ## `.5d.ii` Atomic Knowledge Map Projection Migration
 
@@ -1211,6 +1280,8 @@ transition debt, not a fabricated freshness claim.
 | `2026-08-08` | `.5e.i` | staged resulting-tree contract/ADR/fact/readers; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; repository-local mdBook build; `git diff --cached --check`; exact book aggregate | green: 585 Markdown files / 30 surfaces; 11/11 ADR routes; 139 fact cards / 140 generated facts / 985 unique questions; roadmap source remains byte-untouched; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, book 33 files / 12,124 lines / 726,004 bytes, and staged diff pass; prior `.5d.ii` ceiling authority removed and no ceiling authority remains banked |
 | `2026-08-08` | `.5e.ii` | capsule vs commit `cd677aec`; dual SHA-256 and exact `wc`; nine-case `--self-test`; migrated real `--check`/`--report`; fact catalog and Knowledge Map derive-and-diff; book current-truth check; live-size composed gate | green: capsule byte-identical at 1,487 lines / 183,445 bytes / `20a7…7d88`; root 153 lines / 12,033 bytes / max 205; index 20 / 595 / 100; 23/23 rows, five capsule regions, four corrections, manifest/index retrieval, 139-card catalog, 140 facts / 987 unique questions, and 587 files / 32 surfaces pass |
 | `2026-08-08` | `.5e.ii` | staged resulting-tree migration/readers/surface ratchet; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; repository-local mdBook build; `git diff --cached --check`; exact book aggregate | green: doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, book 33 files / 12,126 lines / 726,111 bytes, and staged diff pass; roadmap debt is closed across three governed surfaces and no ceiling-increase authority is requested |
+| `2026-08-08` | `.5f.i` | exact source/region/record SHA-256 and metric census; heading/status/direction parse; response + issue-resolution evidence; consumer grep; Git-blame current-truth audit; Perl syntax; ten-case `--self-test`; real `--check`/`--report`; resulting-tree live-size + mdBook build | green: source 936 lines / 57,980 bytes / `5bf9…9f03`; five regions reconstruct exactly; six closed exchanges and zero open; all response/resolution evidence and 26 consumers resolve; two stale primer claims evidenced; syntax, 10/10 planned/migrated cases, 588 Markdown files / 32 surfaces, 12/12 ADR routes, 139-card catalog, 140 facts / 990 unique questions, and book 33 files / 12,167 lines / 728,963 bytes pass; no feedback record moved |
+| `2026-08-08` | `.5f.i` | staged resulting-tree contract/checker/ADR/fact/readers; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; repository-local mdBook build; `git diff --cached --check` | green: doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, mdBook, and staged diff pass; the feedback source remains byte-untouched transition debt and no ceiling-increase authority is requested |
 
 ## Commit Log
 
@@ -1236,6 +1307,7 @@ transition debt, not a fabricated freshness claim.
 | `.5d.ii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d.ii — migrate the bounded Knowledge Map projection` | portable landing/shard transaction + exact hook/checker + identity correction + reader/surface ratchet |
 | `.5e.i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.i — lock the roadmap current/history boundary` | exact source/semantic regions + ADR 0010 + 23-owner/drift/reader/archive/root contract; no roadmap migration |
 | `.5e.ii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.ii — migrate the bounded current roadmap` | exact history capsule + 153-line current root + corrected status + manifest/index + reader/surface ratchet |
+| `.5f.i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.i — lock the bounded FSMGen feedback contract` | exact source/regions + ADR 0011 + six status/direction/evidence records + consumer/archive/root contract; no migration |
 
 ## Changelog
 
@@ -1307,3 +1379,7 @@ transition debt, not a fabricated freshness claim.
   replaced the stable root with 153 lines of current priorities plus 23 exact owned status rows,
   corrected four stale claims, switched the contract to migrated identity, updated all changed
   readers, and ratcheted roadmap transition debt into three independently governed surfaces.
+- `2026-08-08`: `.5f.i` pinned the exact heterogeneous feedback source, proved all six directed
+  exchanges closed with independent evidence and no open record, root-caused stale `.fsm`/pin claims
+  in the legacy primer, accepted ADR 0011, and activated a ten-case source/status/consumer/archive/root
+  contract without moving correspondence. `.5f.ii` owns the atomic capsule/current-channel migration.

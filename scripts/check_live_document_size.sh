@@ -25,6 +25,7 @@ if [ "$ROOT" = "$ADAPTER_ROOT" ]; then
   perl "$ROOT/scripts/test_live_document_size.pl" --quiet || fail=1
   perl "$ROOT/scripts/check_rolling_ledger_protocol.pl" --self-test || fail=1
   perl "$ROOT/scripts/check_roadmap_projection_contract.pl" --self-test || fail=1
+  perl "$ROOT/scripts/check_fsmgen_feedback_protocol.pl" --self-test || fail=1
   perl "$ROOT/scripts/check_task_tree_catalog.pl" --self-test || fail=1
   perl "$ROOT/scripts/check_task_tree_catalog.pl" --check || fail=1
   perl "$ROOT/scripts/check_fact_card_catalog.pl" --self-test || fail=1
@@ -43,6 +44,11 @@ perl "$ROOT/scripts/check_rolling_ledger_protocol.pl" \
 perl "$ROOT/scripts/check_roadmap_projection_contract.pl" \
   --root "$ROOT" \
   --contract doctrine/live_document_size/roadmap_projection.json \
+  --check || fail=1
+
+perl "$ROOT/scripts/check_fsmgen_feedback_protocol.pl" \
+  --root "$ROOT" \
+  --contract doctrine/live_document_size/fsmgen_feedback.json \
   --check || fail=1
 
 perl "$ROOT/scripts/check_live_document_size.pl" \

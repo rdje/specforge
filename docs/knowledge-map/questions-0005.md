@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > what is the NVMe register-field recall / precision
+- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
+  > what is the PDF-VARIANT-DIGESTION whole-corpus coverage / re-triage
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what is the PHASE_NAME_STOPWORDS gate and why is it stronger than the anchor gate (prose is noisier)
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
@@ -40,6 +44,8 @@
   > what is the corpus distribution of purpose categories (21 wire / 8 guide high; 28 register-or-platform / 16 unresolved / 5 physical-link low; 0 high-confidence false positives)
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > what is the declared-signal eval surface / EvalTask::DeclaredSignal
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > what is the exact pre-containment FSMGEN_FEEDBACK source identity
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > what is the exact pre-containment ROADMAP source identity
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
@@ -292,9 +298,3 @@
   > where is the shared 0.6 fingerprint clustering threshold defined (DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD)
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > where is the shared section-heading container-walk that .10f and .10g both use
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > where is the spawn+poll+kill memory guard in materialize_pdf
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > where is the structural gate that drops function-word-led and verb-led actor candidates
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > where is the tiling-gated register bit recovery implemented

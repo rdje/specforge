@@ -1,3 +1,16 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.i — lock the FSMGen feedback lifecycle contract
+
+- Pinned `docs/FSMGEN_FEEDBACK.md` at 936 lines / 57,980 bytes / SHA-256
+  `5bf938d54559d1f80c5aed4d3a72a1ad3ec5792c6991b846beffb35d42739f03`, five exhaustive regions,
+  five directed H2 exchanges, and one composite two-bug episode. All six records are closed through
+  upstream response headings or local bundle-resolution evidence; open count is zero.
+- Root-caused two current-truth collisions in the 456-line legacy primer: `.fsm` is still described as
+  a SpecForge adapter and `030f8c273` as the latest response pin, although current truth is `.isf`-only
+  at gitlink `d327129b7`. Accepted ADR 0011's exact-capsule plus bounded-current-channel lifecycle.
+- Added a data-only source/record/evidence/consumer/root/archive contract and a ten-case executable
+  verifier, wired unconditionally through `LIVE-DOC-SIZE`. This design slice moves no feedback record
+  and leaves the immutable transition baseline unchanged for `.5f.ii`.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.ii — migrate the roadmap to bounded current direction
 
 - Preserved the exact pre-containment roadmap at

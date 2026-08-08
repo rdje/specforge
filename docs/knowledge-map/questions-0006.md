@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > where is the spawn+poll+kill memory guard in materialize_pdf
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > where is the structural gate that drops function-word-led and verb-led actor candidates
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > where is the tiling-gated register bit recovery implemented
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
   > where is the trailing function-word strip in consolidate_trailing_fragment
 - [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
@@ -291,9 +297,3 @@
   > why does ingest still generate page images if it does not save them
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
   > why does one register appear as several RegisterRecords / how are split register-field tables merged
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > why does rebuilding the same SourceIR give a different evidence_ir.json (non-determinism)
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > why does recover-register-bits still recover 0 bits after the plumbing is complete
-- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
-  > why does root KNOWLEDGE_MAP_ARCHITECTURE.md not exist

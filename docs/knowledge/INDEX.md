@@ -66,7 +66,7 @@ Collection guidance: [authoring and lifecycle README](README.md).
 | [extraction-quality-gauge-standing](extraction-quality-gauge-standing.md) | 2026-06-10 | `current` | The NLI extraction-quality gauge is persisted on EvidenceIR and re-measured by converge |
 | [extractor-path-architecture](extractor-path-architecture.md) | 2026-06-09 | `current` | The EvidenceIR extractor path is a flat bank of ~60 free functions wired in one build() — coherent IR targe… |
 | [fact-card-catalog](fact-card-catalog.md) | 2026-08-08 | `current` | Fact cards have a bounded derived human catalog distinct from question retrieval |
-| [fsmgen-feedback-channel](fsmgen-feedback-channel.md) | 2026-06-04 | `current` | SpecForge -> FSMGen feedback channel is docs/FSMGEN_FEEDBACK.md (+ issue bundles for bugs) |
+| [fsmgen-feedback-channel](fsmgen-feedback-channel.md) | 2026-06-04 | `current` | FSMGen feedback uses a bounded current channel and exact correspondence history |
 | [fsmgen-ignores-signal-direction](fsmgen-ignores-signal-direction.md) | 2026-06-17 | `current` | FSMGen --strict --check does NOT validate or use a signal's declared direction (input/output) — driving a d… |
 | [fsmgen-temporal-isf-form](fsmgen-temporal-isf-form.md) | 2026-06-04 | `current` | SpecForge emits bounded-eventually as (assert (monitor (within s N))) into .isf (fsmgen pin 43b29f5c) |
 | [full-page-capture-gap](full-page-capture-gap.md) | 2026-06-14 | `current` | SpecForge captures a page's intent-bearing content; the residual outside Docling regions is decoration/furnit… |

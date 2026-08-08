@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "owner": "LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f",
+  "migration_state": "planned",
+  "source": {
+    "path": "docs/FSMGEN_FEEDBACK.md",
+    "sha256": "5bf938d54559d1f80c5aed4d3a72a1ad3ec5792c6991b846beffb35d42739f03",
+    "lines": 936,
+    "bytes": 57980,
+    "line_bytes": 1705,
+    "regions": [
+      {"id": "prologue", "start_line": 1, "end_line": 2, "lines": 2, "bytes": 34, "line_bytes": 32, "sha256": "ae9d54b3fd81bd872b3ddafd2ae535214bac0c5e872d0682d4b8725ba854ac24"},
+      {"id": "scope_policy", "start_line": 3, "end_line": 17, "lines": 15, "bytes": 800, "line_bytes": 76, "sha256": "3e48e2a8c0bc1787e0337ec93ff42f02e5c7bc24d01c962a1ce6e798415a5ced"},
+      {"id": "directed_correspondence", "start_line": 18, "end_line": 376, "lines": 359, "bytes": 26862, "line_bytes": 185, "sha256": "5f1bfe307c001a03d1a8ab0736d056ef238bfc7bb18bb375cec6fb5ebdf5762f"},
+      {"id": "legacy_primer", "start_line": 377, "end_line": 832, "lines": 456, "bytes": 23709, "line_bytes": 1705, "sha256": "a5173584fe09cf1538081417a4e6c1ecfae71fdbd941cdc2d869a350d2313d4c"},
+      {"id": "issue_history", "start_line": 833, "end_line": 936, "lines": 104, "bytes": 6575, "line_bytes": 287, "sha256": "e042a8e27b87424d3b405b65e8060ee8e8a8d4a7a51a4fd527654eeb2d7f1202"}
+    ]
+  },
+  "records": [
+    {
+      "id": "enum-type-clarity",
+      "start_line": 18,
+      "end_line": 72,
+      "lines": 55,
+      "bytes": 3434,
+      "line_bytes": 94,
+      "sha256": "e56ce420261cfb319fff55277e4bf4a3ba07065c4a7dda989feede8e0f970095",
+      "heading": "## Clarity request (2026-05-29) — actor-local `(types)` ↔ `(enums)` same-name relationship",
+      "kind": "clarity_request",
+      "direction": "specforge_to_fsmgen",
+      "status": "resolved",
+      "source_status_literal": "> **RESOLVED `2026-05-29`**",
+      "evidence": [
+        {"path": "subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md", "literal": "## 2026-05-29: Actor-Local `(types)`↔`(enums)` Relationship Clarity"}
+      ]
+    },
+    {
+      "id": "min-window-answer",
+      "start_line": 73,
+      "end_line": 102,
+      "lines": 30,
+      "bytes": 2118,
+      "line_bytes": 113,
+      "sha256": "32d4a1c2f81f0d05656870f989ca4e7ee1c5ae86ae5feb3802e6262c556ade65",
+      "heading": "## Answer (2026-06-04) — `min > 1` window confirmation: integer-literal bounds; SPECFORGE guarantees `MIN >= 1`",
+      "kind": "answer",
+      "direction": "specforge_to_fsmgen",
+      "status": "answered",
+      "source_status_literal": "**So: lock `(within B MIN MAX)` to `1 <= MIN <= MAX`.**",
+      "evidence": [
+        {"path": "subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md", "literal": "## 2026-06-04 (follow-up): the two flagged deltas — `(stable …)` shipped, `min > 1` windows proposed"}
+      ]
+    },
+    {
+      "id": "ltl-mtl-suggestion",
+      "start_line": 103,
+      "end_line": 170,
+      "lines": 68,
+      "bytes": 4789,
+      "line_bytes": 100,
+      "sha256": "d987644892b1533648bec0e3b24cfd753b7b38ad2a722287a07981fb31974ee8",
+      "heading": "## Suggestion (2026-06-04) — first-class LTL/MTL temporal properties in ISF",
+      "kind": "suggestion",
+      "direction": "specforge_to_fsmgen",
+      "status": "answered_and_integrated",
+      "source_status_literal": "> **ANSWERED + ACTED ON `2026-06-04`.**",
+      "evidence": [
+        {"path": "subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md", "literal": "## 2026-06-04: First-Class LTL/MTL Temporal Properties — Already Generalized In The Verification Family"}
+      ]
+    },
+    {
+      "id": "phase-membership",
+      "start_line": 171,
+      "end_line": 288,
+      "lines": 118,
+      "bytes": 8974,
+      "line_bytes": 185,
+      "sha256": "da27b42ca97edafd8aa78dd49a76ba33fc1f5cbf86c573cad1c4136b1dd5c056",
+      "heading": "## Question / feature request (2026-06-16) — lowering a transaction's phase membership without fabricating drive VALUES or step ORDER",
+      "kind": "question",
+      "direction": "specforge_to_fsmgen",
+      "status": "answered",
+      "source_status_literal": "> **ANSWERED `2026-06-16`**",
+      "evidence": [
+        {"path": "subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md", "literal": "## 2026-06-16: Transaction Phase Membership Without Fabricated Values Or Order"}
+      ]
+    },
+    {
+      "id": "field-structured-storage",
+      "start_line": 289,
+      "end_line": 376,
+      "lines": 88,
+      "bytes": 7547,
+      "line_bytes": 131,
+      "sha256": "d8a53386faff35f1361c46b55fb11f0430a91402d7d60bbd04e7025ec7cef834",
+      "heading": "## Feature request (2026-06-22) — declarative field-structured storage (named bit-fields in a register / packed structure layout)",
+      "kind": "feature_request",
+      "direction": "specforge_to_fsmgen",
+      "status": "shipped",
+      "source_status_literal": "> **RESOLVED — SHIPPED `2026-06-22`**",
+      "evidence": [
+        {"path": "subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md", "literal": "## 2026-06-22: Declarative Field-Structured Storage"}
+      ]
+    },
+    {
+      "id": "stage-contract-bugs",
+      "start_line": 833,
+      "end_line": 936,
+      "lines": 104,
+      "bytes": 6575,
+      "line_bytes": 287,
+      "sha256": "e042a8e27b87424d3b405b65e8060ee8e8a8d4a7a51a4fd527654eeb2d7f1202",
+      "heading": "## Tracked finding (2026-05-18) — `ISF_DOWNSTREAM_INTEGRATION_SPEC.md` §11.8 doc-vs-strict mismatches",
+      "kind": "bug_report",
+      "direction": "specforge_to_fsmgen",
+      "status": "resolved",
+      "source_status_literal": "## RESOLVED upstream (2026-05-18) — pin `effe591d → 9bfb9a20`",
+      "evidence": [
+        {"path": "docs/fsmgen-issues/sf-isf-contract-eventually-flat/RESOLUTION.md", "literal": "Status: **RESOLVED upstream** (2026-05-18)."},
+        {"path": "docs/fsmgen-issues/sf-isf-stage-ready-valid/RESOLUTION.md", "literal": "Status: **RESOLVED upstream** (2026-05-18)"}
+      ]
+    }
+  ],
+  "current_truth_findings": [
+    {
+      "id": "legacy-fsm-adapter-primer",
+      "source_literal": "Instead, `.fsm` is one downstream adapter target, alongside future SystemVerilog, Verilog, and VHDL targets.",
+      "evidence_path": "docs/FSMGEN_FEEDBACK.md",
+      "evidence_literal": "SPECFORGE's single adapter target is now `.isf`."
+    },
+    {
+      "id": "stale-response-pin",
+      "source_literal": "latest response baseline reviewed by SPECFORGE: **`030f8c273`**",
+      "evidence_path": "docs/tasks/FSMGEN-REFRESH-INTEGRATE-5.md",
+      "evidence_literal": "- Gitlink bumped to `d327129b7`; working tree clean."
+    }
+  ],
+  "current_root": {
+    "h1": "# FSMGEN Feedback From SPECFORGE",
+    "required_h2_order": [
+      "Current channel",
+      "Current downstream boundary",
+      "Open correspondence",
+      "Closed correspondence register",
+      "Feedback record format",
+      "History and retrieval"
+    ],
+    "open_start_marker": "<!-- fsmgen_feedback_open:start -->",
+    "open_end_marker": "<!-- fsmgen_feedback_open:end -->",
+    "register_start_marker": "<!-- fsmgen_feedback_register:start -->",
+    "register_end_marker": "<!-- fsmgen_feedback_register:end -->",
+    "open_record_ids": [],
+    "open_record_limits": {"records": 8, "lines_each": 96, "bytes_each": 12288, "line_bytes_each": 512},
+    "open_required_fields": ["Direction", "Kind", "Status", "Owner", "Evidence"],
+    "open_direction_values": ["SpecForge → FSMGen", "FSMGen → SpecForge"],
+    "open_kind_values": ["answer", "bug_report", "clarity_request", "feature_request", "question", "suggestion"],
+    "open_status_values": ["accepted", "answered", "answered_and_integrated", "awaiting_response", "open", "resolved", "shipped", "superseded", "withdrawn"],
+    "required_links": [
+      "docs/archive/fsmgen-feedback/INDEX.md",
+      "subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md",
+      "docs/catalogs/fsmgen-issue-packets.md",
+      "TOOLBOX.md"
+    ],
+    "required_literals": [
+      "SPECFORGE IntentIR → .isf → FSMGEN",
+      "d327129b718ab29fc889db026c19257b0f7fcc49"
+    ],
+    "forbidden_literals": [
+      "Instead, `.fsm` is one downstream adapter target, alongside future SystemVerilog, Verilog, and VHDL targets.",
+      "latest response baseline reviewed by SPECFORGE: **`030f8c273`**",
+      "## IntentIR-Aligned `.fsm` Feature Suggestions",
+      "## Tracked finding (2026-05-18)"
+    ],
+    "health_targets": {"lines": 256, "bytes": 32768, "line_bytes": 512},
+    "enforcement_ceilings": {"lines": 384, "bytes": 49152, "line_bytes": 1024}
+  },
+  "archive": {
+    "index": "docs/archive/fsmgen-feedback/INDEX.md",
+    "manifest": "docs/archive/fsmgen-feedback/manifest.json",
+    "source_capsule": "docs/archive/fsmgen-feedback/source-through-2026-08-08.md",
+    "sealed_date": "2026-08-08",
+    "reason": "initial bounded FSMGen-feedback migration",
+    "verifier": "perl scripts/check_fsmgen_feedback_protocol.pl --check",
+    "index_limits": {"lines": 96, "bytes": 8192, "line_bytes": 256}
+  },
+  "consumers": {
+    "known_paths": [
+      "CHANGES.md",
+      "DEVELOPMENT_NOTES.md",
+      "LIVE_ACHIEVEMENT_STATUS.md",
+      "TOOLBOX.md",
+      "crates/specforge/src/ir/isf_ir.rs",
+      "docs/fsmgen-issues/sf-isf-stage-ready-valid/RESOLUTION.md",
+      "docs/knowledge/fsmgen-feedback-channel.md",
+      "docs/knowledge/register-bit-field-isf-lowering-gap.md",
+      "docs/knowledge/transaction-capture-census.md",
+      "docs/research/register-bit-field-isf-lowering-design.md",
+      "docs/tasks/DOC-INTENT-TAXONOMY.md",
+      "docs/tasks/FSMGEN-ISSUE-REPORTING.md",
+      "docs/tasks/FSMGEN-LTL-MTL-SUGGESTION.md",
+      "docs/tasks/FSMGEN-MIN-WINDOW-CONFIRM.md",
+      "docs/tasks/FSMGEN-REFRESH-INTEGRATE-2.md",
+      "docs/tasks/FSMGEN-REFRESH-INTEGRATE-3.md",
+      "docs/tasks/FSMGEN-REFRESH-INTEGRATE-4.md",
+      "docs/tasks/FSMGEN-REFRESH-INTEGRATE-5.md",
+      "docs/tasks/FSMGEN-REFRESH-INTEGRATE.md",
+      "docs/tasks/FSMGEN-SUBMODULE-BUMP.md",
+      "docs/tasks/ISF-ONLY-CONSOLIDATION.md",
+      "docs/tasks/ISF-SYMBOL-SURFACE-EMIT.md",
+      "docs/tasks/ISF-TEMPORAL-LOWERING.md",
+      "docs/tasks/KG-ISF-TRANSACTIONS.md",
+      "docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md",
+      "doctrine/live_document_size/surfaces.jsonl"
+    ],
+    "required_literals": [
+      {"path": "TOOLBOX.md", "literal": "`docs/FSMGEN_FEEDBACK.md` + the submodule's own docs"},
+      {"path": "docs/knowledge/fsmgen-feedback-channel.md", "literal": "`docs/FSMGEN_FEEDBACK.md` is SpecForge's **stable, tracked feedback channel to FSMGen**"},
+      {"path": "crates/specforge/src/ir/isf_ir.rs", "literal": "docs/FSMGEN_FEEDBACK.md"}
+    ]
+  }
+}

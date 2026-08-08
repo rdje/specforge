@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
+  > why does rebuilding the same SourceIR give a different evidence_ir.json (non-determinism)
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > why does recover-register-bits still recover 0 bits after the plumbing is complete
+- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
+  > why does root KNOWLEDGE_MAP_ARCHITECTURE.md not exist
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
   > why does shall be 0h still bind the value 0 but shall be non-zero does not bind NO
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)

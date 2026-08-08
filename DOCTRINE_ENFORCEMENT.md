@@ -303,6 +303,11 @@ contract pin the exact pre-migration roadmap identity, five exhaustive semantic 
 23-workstream/task ownership, drift evidence, consumers, bounded-current structure, and archive
 topology. The migrated contract authenticates the immutable capsule at the pinned identity and
 verifies the bounded current root plus manifest/index retrieval on every run.
+The adapter also executes `scripts/check_fsmgen_feedback_protocol.pl`. Its focused cases and real
+contract pin the exact feedback source, five exhaustive regions, six closed exchanges with explicit
+direction/status/evidence, two stale-current findings, 26 consumers, bounded open-record schema, and
+archive topology. Planned state rejects source drift; migrated state will switch identity to the exact
+capsule and verify the bounded current channel, closed register, open records, manifest, and index.
 
 Deterministic-oracle doctrines that run via `scripts/run_ci.sh` / CI (`kg-bench` 156/156,
 WIRE-BASED-100 constraint+temporal/relation golds = 1.000, the byte-identical evidence/`.isf` checks,

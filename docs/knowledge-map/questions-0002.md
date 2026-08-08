@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how complete is a document's extracted intent / what is the per-doc completeness gauge
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > how complete is register-IP / platform-IP / CPU-ISA ISF lowering
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
@@ -257,6 +259,8 @@
   > restarts but every member is a clean identifier. The load-bearing signal is per-member NAME shape: an English sentence-SPINE token marks a prose fragment. Land a per-member sentence-spine fragment drop at synthesize_encoding_declarations_for_enum)
 - [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
   > how is the EvidenceIR extractor path / extraction layer structured and wired
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > how is the FSMGen feedback channel kept bounded without losing old requests and responses
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
   > how is the NLI gate tested without Ollama
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
@@ -293,7 +297,3 @@
   > how many RISC-V Debug register bit diagrams are images vs flattened tables (53/56 images, 34 field tables, only 7 flattened diagram tables; bits live in the image modality)
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
   > how many conditional_rules are concretely lowerable (only ~3 of 603 across 9 representative docs carry a concrete value/level cue; 161/164 declared-consequent candidates are bare modals shall/must/shall not)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > how many docs / enums are affected (56/78 docs carry a generic-named enum; 96 generic vs 493 real; but a name-only gate misses 271 real-named-but-junk fragment/dup enums — the real defect is member quality)
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > how many docs are wire-protocol vs register-IP vs platform vs ISA vs PHY vs guide
