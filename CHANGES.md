@@ -1,3 +1,14 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4c — DEVELOPMENT_NOTES rolling-ledger migration
+
+- Froze the exact 1,601-record / 2,170,230-byte engineering-rationale source as the second immutable
+  source capsule and extended the common bounded archive manifest/index.
+- Derived the root as its H1 prologue plus newest 60 whole H2 records, then prepended `.4c` as the
+  first post-capsule record. A suffix failure exposed that the blank before record 61 is a successor
+  separator, not record-60 content; the renderer now omits exactly that boundary LF at live EOF while
+  the capsule preserves it, and all retained record content matches exactly.
+- Ratcheted the live surface out of transition debt and added exact archive classification/retrieval.
+  No historical record was summarized, reflowed, reordered, or left as an uncontrolled duplicate.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4b — CHANGES rolling-ledger migration
 
 - Froze the exact 1,798-record / 2,629,033-byte pre-migration source as an immutable repository-local

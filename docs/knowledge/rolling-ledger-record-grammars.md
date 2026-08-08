@@ -31,4 +31,15 @@ prepended records. The validation writer's root path and managed markers are req
 `docs/archive/rolling-ledgers/changes/source-through-2026-08-08.md` with SHA-256
 `d89809322857aab3c506dde1cc6caaf57e22d0349655b37ddaab1f7bf22ba994`; the root is the bounded current
 view and `docs/archive/rolling-ledgers/INDEX.md` is the retrieval route. The other three ledgers remain
-in measured `planned` state until `.4c`–`.4e` migrate them independently.
+in measured `planned` state until their independent migration leaves.
+
+`DEVELOPMENT_NOTES.md` completed the second migration in `.4c`. Its immutable 1,601-record capsule is
+`docs/archive/rolling-ledgers/development-notes/source-through-2026-08-08.md` with SHA-256
+`76b51a3f450cdb1e764922dc366cf6ff55529cb95f7a6f410bfba1f1f378fedc`; its root keeps the H1 prologue,
+60 retained H2 records, and later prepends. `LIVE_ACHIEVEMENT_STATUS.md` and
+`RUST_CODEBASE_ANALYSIS.md` remain measured `planned` ledgers for `.4d` and `.4e`.
+
+For an H2 live cut, one blank line immediately before the removed successor is boundary structure,
+not retained record content. The capsule preserves it exactly; the root renderer omits exactly that
+one separator at EOF, and the suffix verifier permits no other difference. This prevents a
+blank-at-EOF artifact without weakening content identity or normalizing archive bytes.

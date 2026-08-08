@@ -48,6 +48,13 @@ those exact records into the live window after the newest prefix so current cont
 visible. The immutable source capsule preserves their original ordinals and bytes, so promotion is
 not represented as a correction to historical ordering.
 
+For H2 ledgers, one blank line immediately before the next H2 is an inter-record separator. The exact
+source capsule preserves that byte. When a bounded live view ends before that next record, the renderer
+omits exactly one such separator at EOF so the removed successor does not create a blank-at-EOF
+artifact. Retained-suffix verification permits only that precise last-record boundary difference;
+all record-content bytes and every earlier record remain byte-identical. This is not permission for
+general whitespace normalization.
+
 ## Consequences
 
 - No `.4b`–`.4e` leaf may move a record until its source matches the pinned `.4a` measurement or the

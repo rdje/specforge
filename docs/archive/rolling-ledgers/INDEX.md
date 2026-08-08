@@ -19,3 +19,15 @@ perl scripts/check_rolling_ledger_protocol.pl --report
 - Current-window rule: newest 85 records, then the exact detached `.1` and `.0` compatibility records.
 - Overlap: the immutable capsule includes the retained live window so complete-source identity remains
   independently reproducible; later rollover archives only newly aged-out records.
+
+## `development-notes`
+
+- Current view: [`DEVELOPMENT_NOTES.md`](../../../DEVELOPMENT_NOTES.md)
+- Immutable source capsule: [`source-through-2026-08-08.md`](development-notes/source-through-2026-08-08.md)
+- Repository-relative capsule locator:
+  `docs/archive/rolling-ledgers/development-notes/source-through-2026-08-08.md`
+- Frozen boundary: 1,601 records; 20,921 lines; 2,170,230 bytes; SHA-256
+  `76b51a3f450cdb1e764922dc366cf6ff55529cb95f7a6f410bfba1f1f378fedc`
+- Current-window rule: H1 prologue followed by the newest 60 whole H2 records.
+- Overlap: the immutable capsule includes the retained live window; later rollover archives only newly
+  aged-out engineering-rationale records.

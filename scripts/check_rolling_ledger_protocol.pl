@@ -236,7 +236,7 @@ sub validate_ledger {
 
     my ($selected, $selection_errors) = select_live_records($parsed->{records}, $ledger->{planned_live}, $id);
     problem($_) for @$selection_errors;
-    my $planned_bytes = $parsed->{prologue} . join('', map { $_->{bytes} } @$selected) . $parsed->{trailer};
+    my $planned_bytes = render_live_view($parsed, $selected, $grammar);
     my $planned_metrics = metrics($planned_bytes);
     $planned_metrics->{records} = scalar @$selected;
     validate_planned($ledger->{planned_live}, $planned_metrics, $parsed->{records}, $selected, $id);
@@ -447,6 +447,15 @@ sub build_parts {
 sub reconstruct {
     my ($parsed) = @_;
     return $parsed->{prologue} . join('', map { $_->{bytes} } @{ $parsed->{records} }) . $parsed->{trailer};
+}
+
+sub render_live_view {
+    my ($parsed, $selected, $grammar) = @_;
+    my $bytes = $parsed->{prologue} . join('', map { $_->{bytes} } @$selected) . $parsed->{trailer};
+    if (($grammar->{kind} // '') eq 'h2_records_v1' && $parsed->{trailer} eq '') {
+        $bytes =~ s/\r?\n\r?\n\z/\n/;
+    }
+    return $bytes;
 }
 
 sub select_live_records {
@@ -841,8 +850,16 @@ sub validate_retained_suffix {
     }
     my $offset = @$live - @$selected;
     for my $index (0 .. $#$selected) {
+        my $live_bytes = $live->[$offset + $index]{bytes};
+        my $selected_bytes = $selected->[$index]{bytes};
+        my $matches = $live_bytes eq $selected_bytes;
+        if (!$matches && $index == $#$selected) {
+            my $without_successor_separator = $selected_bytes;
+            $without_successor_separator =~ s/\r?\n\r?\n\z/\n/;
+            $matches = $live_bytes eq $without_successor_separator;
+        }
         problem("ledger '$id' retained record identity/order changed at survivor index " . ($index + 1))
-            if sha256_hex($live->[$offset + $index]{bytes}) ne sha256_hex($selected->[$index]{bytes});
+            if !$matches;
     }
 }
 

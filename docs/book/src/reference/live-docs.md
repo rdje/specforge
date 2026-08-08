@@ -33,9 +33,10 @@ Because the mdBook is a maintained reference, its current-state contract is exec
 their live code seams and canonical detail chapters; `LIVE-DOC-SIZE` runs that currency check on every
 commit and CI build.
 
-Until each remaining migration leaf lands, the existing engineering, status, and architecture root
-documents remain the authoritative surfaces described below. `CHANGES.md` has completed that
-transition: its root is the current view and its exact source capsule is the historical authority.
+Until each remaining migration leaf lands, the existing status and architecture root documents
+remain the authoritative surfaces described below. `CHANGES.md` and `DEVELOPMENT_NOTES.md` have
+completed that transition: each root is the current view and its exact source capsule is the
+historical authority.
 No historical content is removed before its identity, replacement route, consumers, and retrieval
 procedure are proved.
 The top-level README will remain a first-class landing page; changing detail and
@@ -59,7 +60,7 @@ window, local record/line/byte/width limits, consumers, and future archive route
 planned live view from whole records and checks each pressure axis independently. Its grammar tests
 also reject non-bullet content inside the status record region.
 
-Each remaining `.4c`–`.4e` migration will copy the exact pre-migration file into an immutable,
+Each remaining `.4d`–`.4e` migration will copy the exact pre-migration file into an immutable,
 repository-local source capsule before shortening the stable root. The capsule manifest records its digest and
 dimensions; a bounded index links both the current root and historical capsule; the checker retrieves
 and revalidates both. The capsule deliberately overlaps the retained current window so complete-source
@@ -88,6 +89,23 @@ archive terminal. The generic checker skips archive pressure warnings—the caps
 outside mandatory reads—but still enforces its exact ceiling; the rolling-ledger checker independently
 reopens the file, verifies every metric and digest, checks the manifest/index, and proves the retained
 root suffix. This is the retrieval contract, not a reliance on Git history alone.
+
+#### `DEVELOPMENT_NOTES.md` migration landed
+
+The engineering-rationale root is now 1,480 lines / 194,412 bytes instead of 20,921 lines /
+2,170,230 bytes. Its initial capsule at
+`docs/archive/rolling-ledgers/development-notes/source-through-2026-08-08.md` retains all 1,601
+pre-migration records under SHA-256
+`76b51a3f450cdb1e764922dc366cf6ff55529cb95f7a6f410bfba1f1f378fedc`. The live root keeps its H1
+prologue and newest 60 capsule records; `.4c` is the first post-capsule prepend.
+
+The retained-record check is byte-sensitive beyond visible prose. During `.4c`, an ordinary edit at
+the top of the derived root exposed an ownership ambiguity for the blank line between records 60 and
+61. The complete-source capsule keeps that byte exactly, but a bounded view ending at record 60 must
+not turn the removed successor's separator into a blank-at-EOF artifact. ADR 0008 and the renderer now
+define one such terminal separator as boundary structure: it is omitted only at live EOF, while every
+record-content byte must match. “Looks the same” remains insufficient; the exception is exact and
+mechanical rather than a whitespace normalization.
 
 ### Lifecycle controls
 

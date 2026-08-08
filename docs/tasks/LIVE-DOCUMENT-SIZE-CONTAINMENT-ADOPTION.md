@@ -167,7 +167,7 @@ verification before correction.
   Goal: migrate `CHANGES.md` at a verified whole-record boundary under the `.4a` protocol.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4c`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Goal: migrate `DEVELOPMENT_NOTES.md` at a verified whole-record boundary under the `.4a` protocol.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4d`
@@ -218,8 +218,9 @@ verification before correction.
 | — | `.5a` | `done` (`2026-08-08`) | Both contradictions are repaired against code and protected by the executed mdBook currency verifier. |
 | — | `.4a` | `done` (`2026-08-08`) | Four real grammars, exact source identities, bounded survivor plans, consumers, and the repository-local source-capsule protocol are executable; no record moved. |
 | — | `.4b` | `done` (`2026-08-08`) | Exact capsule, manifest/index, 87-record survivor plus first post-capsule entry, surface ratchet, and retrieval proof landed atomically. |
-| 1 | `.4c` | `pending` | Migrate `DEVELOPMENT_NOTES.md` under the now-proved archive path and protocol. |
-| 2 | `.4d`–`.4e` / `.5` / `.6` | `pending` / `active` | Remaining independent ledger/collection/locality slices. |
+| — | `.4c` | `done` (`2026-08-08`) | Exact 1,601-record capsule, 60-record live suffix plus first prepend, common index/manifest extension, surface ratchet, and byte-sensitive retrieval proof landed. |
+| 1 | `.4d` | `pending` | Migrate `LIVE_ACHIEVEMENT_STATUS.md` while preserving its Rust-managed trailer markers and stable root. |
+| 2 | `.4e` / `.5` / `.6` | `pending` / `active` | Remaining architecture-ledger, collection, and locality slices. |
 | 5 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
 ## Decisions
@@ -365,12 +366,47 @@ verification before correction.
   new current-status bullet changed the future `.4d` source, so its exact measurement and 50-record
   survivor were re-derived in the same commit: 1,919 source records / 580,272 bytes and an 88,146-byte
   planned view. This is the `.4a` exception for a legitimate pre-freeze prepend, not baseline drift.
+- `2026-08-08`: **`DEVELOPMENT_NOTES.md` is the second migrated ledger (`.4c`).** Its exact capsule
+  retains 1,601 records / 20,921 lines / 2,170,230 bytes at SHA-256
+  `76b51a3f450cdb1e764922dc366cf6ff55529cb95f7a6f410bfba1f1f378fedc`. The root retains the H1
+  prologue and newest 60 H2 records; `.4c` is the first post-capsule prepend.
+- `2026-08-08`: **A successor separator is boundary structure, not retained record content (`.4c`).**
+  The H2 chunker initially assigned the blank immediately before record 61 to record 60. Keeping that
+  LF after record 61 is removed creates a blank-at-EOF artifact; dropping it failed raw suffix identity.
+  The protocol now omits exactly one terminal blank separator only when an H2 live view cuts before a
+  successor. The exact capsule still preserves every source byte and every record-content byte must
+  match. This is a closed boundary rule, not general whitespace normalization.
+- `2026-08-08`: **Engineering-note width headroom is separately authorized (`.4c`).** Aggregate live
+  ceilings ratchet by more than 90%; the 1,401-byte legacy exact quarantine becomes the reviewed
+  1,800-byte whole-record transaction ceiling through one exact `.4c` old/new authority.
 
 ## Blockers
 
 - None for `.0`–`.3`.
 - Later migrations may stop for an authority conflict, unique unclassified content, or an unprovable
   retrieval promise, exactly as required by the adopted doctrine.
+
+## `.4c` `DEVELOPMENT_NOTES.md` Atomic Migration
+
+The second migration reused the proved control path and independently froze its own semantic boundary:
+
+| Product | Records | Lines | Bytes | Max content line | Identity / role |
+| --- | ---: | ---: | ---: | ---: | --- |
+| pre-migration source capsule | 1,601 | 20,921 | 2,170,230 | 1,401 | immutable SHA-256 `76b5…fedc`; complete rationale source |
+| retained capsule suffix in root | 60 | 1,472 | 193,809 | 1,401 | H1 prologue + newest 60 H2 records; successor separator omitted at EOF |
+| final root including `.4c` | 61 | 1,480 | 194,412 | 1,401 | bounded rationale view; first post-capsule prepend |
+| records outside current view | 1,541 | — | — | — | retrieved from the capsule/index |
+
+The exact copy passed `cmp`, digest, line, and byte checks before the guarded emitter touched the root.
+The common archive manifest gained one bounded source-capsule record, and the index gained a direct
+root/capsule route. `engineering_notes` is now normal; `engineering_notes_archive` is an exact archive
+terminal. Retrieval also proves the still-current `COMMIT.md` writer route.
+
+The only failed intermediate check was useful: after adding the first new H2 record, suffix identity
+reported survivor 60 changed. A byte diff showed that the blank before removed record 61 had become a
+terminal ambiguity. The root cause was fixed in the shared renderer/verifier: an H2 cut omits exactly
+one successor-owned separator at EOF and accepts no other retained-content drift. The capsule was not
+changed to make the check fit, and `git diff --check` now passes without weakening whitespace policy.
 
 ## `.4b` `CHANGES.md` Atomic Migration
 
@@ -410,9 +446,9 @@ claim that `.4a` already moved them.
 | Ledger | Source records / lines / bytes / max line | Planned live records / lines / bytes / max line | Records outside live view | Live limits: records / lines / bytes / max line |
 | --- | --- | --- | ---: | --- |
 | `CHANGES.md` | 1,798 / 32,682 / 2,629,033 / 1,629 | 87 / 1,357 / 199,055 / 1,629 | 1,711 | 128 / 2,000 / 262,144 / 2,200 |
-| `DEVELOPMENT_NOTES.md` | 1,601 / 20,921 / 2,170,230 / 1,401 | 60 / 1,473 / 193,810 / 1,401 | 1,541 | 96 / 2,000 / 262,144 / 1,800 |
+| `DEVELOPMENT_NOTES.md` | 1,601 / 20,921 / 2,170,230 / 1,401 | 60 / 1,472 / 193,809 / 1,401 | 1,541 | 96 / 2,000 / 262,144 / 1,800 |
 | `LIVE_ACHIEVEMENT_STATUS.md` | 1,918 / 1,958 / 579,393 / 5,467 | 50 / 89 / 92,375 / 5,107 | 1,868 | 80 / 640 / 131,072 / 6,800 |
-| `RUST_CODEBASE_ANALYSIS.md` | 1,350 / 9,039 / 1,046,679 / 3,041 | 60 / 1,057 / 89,728 / 369 | 1,290 | 96 / 1,400 / 196,608 / 600 |
+| `RUST_CODEBASE_ANALYSIS.md` | 1,350 / 9,039 / 1,046,679 / 3,041 | 60 / 1,056 / 89,727 / 369 | 1,290 | 96 / 1,400 / 196,608 / 600 |
 
 Every selected survivor begins below 80% of each local limit, independently. The values are derived
 from the reviewed retained records and their largest normal transaction; they are not donor values or
@@ -553,6 +589,8 @@ transition debt, not a fabricated freshness claim.
 | `2026-08-08` | `.4a` | staged resulting-tree `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | green: 557 Markdown files / 24 surfaces; rolling-ledger checker runs unconditionally; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; staged diff clean |
 | `2026-08-08` | `.4b` | exact pre-copy `--report`; `cp -p` to declared same-volume capsule; `cmp -s`; dual SHA-256 and `wc`; guarded `--emit-planned changes`; migrated `--report` | capsule and source identical at 1,798 records / 32,682 lines / 2,629,033 bytes / `d898…a994`; root mechanically 87 records before `.4b`, then 88; manifest/index/capsule identity and exact retained suffix pass |
 | `2026-08-08` | `.4b` | capsule vs `git show 73424daf:CHANGES.md`; staged resulting-tree `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | byte-identical capsule; green: 559 Markdown files / 26 surfaces; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; staged diff clean |
+| `2026-08-08` | `.4c` | exact pre-copy `--report`; same-volume `cp -p`; `cmp -s`; dual SHA-256 and `wc`; guarded `--emit-planned development-notes`; retained-suffix failure + byte/root-cause diff; terminal-boundary renderer/verifier correction; migrated `--report` | capsule/source identical at 1,601 records / 20,921 lines / 2,170,230 bytes / `76b5…fedc`; root 60 records before `.4c`, then 61; capsule exact, successor separator omitted only at live EOF, all record content/manifest/index/retrieval pass |
+| `2026-08-08` | `.4c` | capsule vs `git show 2d7eaff1:DEVELOPMENT_NOTES.md`; staged resulting-tree `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | byte-identical capsule; green: 560 Markdown files / 27 surfaces; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; staged diff clean |
 
 ## Commit Log
 
@@ -567,6 +605,7 @@ transition debt, not a fabricated freshness claim.
 | `.5a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5a — lock current mdBook truth to code` | two drift repairs + executed maintained-reference currency verifier |
 | `.4a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4a — lock the lossless rolling-ledger protocol` | exact grammars + source identities + bounded survivor/archive/consumer contract; no migration |
 | `.4b` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4b — migrate CHANGES losslessly` | exact capsule + bounded root + manifest/index + surface debt ratchet |
+| `.4c` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4c — migrate DEVELOPMENT_NOTES losslessly` | exact capsule + bounded H2 rationale window + successor-boundary proof + debt ratchet |
 
 ## Changelog
 
@@ -598,3 +637,6 @@ transition debt, not a fabricated freshness claim.
 - `2026-08-08`: `.4b` copied and verified the exact `CHANGES.md` source capsule before mechanically
   deriving the bounded root, landed its manifest/index and archive classification, ratcheted the live
   surface out of transition debt, and proved retrieval plus exact retained-record identity.
+- `2026-08-08`: `.4c` repeated the lossless transition for `DEVELOPMENT_NOTES.md`, extended the common
+  archive route, and root-caused the inter-record separator as successor-owned boundary structure
+  before ratcheting the rationale surface out of debt.

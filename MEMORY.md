@@ -19,15 +19,15 @@
   run it too. Retrieval: `KNOWLEDGE_MAP.md`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4c` — migrate `DEVELOPMENT_NOTES.md` under
-  the proved lossless rolling-ledger protocol.
-- Current state: `.0`–`.4b` and `.5a` are complete. The fifth doctrine governs 559 Markdown files
-  across 26 surfaces. `CHANGES.md` is a bounded 88-record / 1,368-line current view; its exact
-  1,798-record / 2,629,033-byte source capsule, manifest, index, retrieval, and retained suffix are
-  enforced. The other three ledgers remain measured planned transitions. Query revision from Git.
-- Next action: verify the pinned `DEVELOPMENT_NOTES.md` source, freeze its exact repository-local
-  capsule, derive the 60-record root, extend the bounded manifest/index, switch its two surface
-  classifications, and prove retrieval before committing `.4c`.
-- In-flight uncommitted: `.4b` capsule/current-view migration and synchronized docs until commit;
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4d` — migrate
+  `LIVE_ACHIEVEMENT_STATUS.md` while preserving its stable Rust-managed trailer.
+- Current state: `.0`–`.4c` and `.5a` are complete. The fifth doctrine governs 560 Markdown files
+  across 27 surfaces. `CHANGES.md` and `DEVELOPMENT_NOTES.md` are bounded 89/61-record current views
+  over exact 1,798/1,601-record capsules; manifest, index, retrieval, and suffix identity are enforced.
+  Status and Rust analysis remain measured planned transitions. Query revision from Git.
+- Next action: freeze the remeasured 1,920-bullet status source, derive its 50-bullet root while
+  preserving the entire gap/validation trailer and both managed markers, extend manifest/index and
+  classifications, then run the real project-validation writer seam before committing `.4d`.
+- In-flight uncommitted: `.4c` capsule/current-view migration and synchronized docs until commit;
   none afterward.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.
