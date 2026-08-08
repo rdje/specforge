@@ -185,6 +185,27 @@ validates filename/H1 identity, status vocabulary, ordering, escaping, membershi
 title/row/section/count bounds. Its derive-and-diff and seven self-tests run on every live-document
 doctrine gate.
 
+#### Decision and fact-card navigation landed
+
+The decision collection keeps its existing 30-line index: all nine ADR files are linked exactly
+once, and the generic membership gate continues to enforce that route. Fact cards now have a
+different, complementary route at `docs/knowledge/INDEX.md`. Its 150-line / 28,392-byte generated
+catalog lists all 136 immediate cards by id, establishment date, status, and a bounded title preview.
+Long historical titles are shortened only in the index; the linked card remains canonical and
+unchanged.
+
+The catalog count deliberately excludes `docs/knowledge/README.md` and the generated index itself.
+The root question map reports 137 facts because it additionally scans ADR 0007, which has Knowledge
+Map front matter. Thus directory files, fact cards, and cross-layer generated facts are three explicit
+counts rather than one overloaded metric.
+
+The focused generator/checker requires filename/id identity, constrained front matter, questions,
+date, valid status (with the architecture-defined `current` default), evidence or reverify, stable
+ordering, and independent field/row/count/index bounds. It runs its nine fail-closed cases and the
+real derive-and-diff check through the live-document doctrine. The root README now offers both routes:
+use the bounded catalog to browse known ids/titles, and the generated Knowledge Map to search by a
+question. Sharding that still-large question map remains a separate migration.
+
 Lines, bytes, file count, collection totals, and maximum content-line width are independent axes.
 Existing oversized ledgers are explicit transition debt: their measured baseline cannot move, and a
 separate bounded allowance exists only for the containment program's continuity updates until the

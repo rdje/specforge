@@ -19,14 +19,14 @@
   run it too. Retrieval: `KNOWLEDGE_MAP.md`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.ii` — close direct decision/fact-card
-  navigation and compose it with question-key retrieval.
-- Current state: `.0`–`.5b` and `.5c.i` are complete. The fifth doctrine governs 564 Markdown files
-  across 29 surfaces. `docs/TASK_TREE.md` is a derived 121-real-tree catalog at 375 lines / 27,228
-  bytes / 207 max-line bytes; the template is separate, every task is linked once, and seven
-  fail-closed cases plus derive-and-diff run unconditionally. Task-index transition debt is closed.
-- Next action: reprove decision-index membership, design the bounded human fact-card index against
-  136 cards and generated question-key routes, then implement only the direct-navigation layer.
-- In-flight uncommitted: `.5c.i` generator, catalog migration, transition ratchet, and synchronized
-  docs until commit; none afterward.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.iii` — next clean-tree leaf; activate it
+  only after the `.5c.ii` commit is durable.
+- Current state: `.0`–`.5b` and `.5c.i`–`.5c.ii` are complete. The fifth doctrine governs 566 tracked
+  Markdown files across 29 surfaces. Decisions retain a 9/9 bounded index. The new 150-line / 28,392-
+  byte fact-card catalog links all 136 cards exactly once plus the collection README; nine focused
+  cases and derive-and-diff run unconditionally. The generated question map has 137 cross-layer facts
+  because ADR 0007 participates separately and remains transition debt for `.5d` sharding.
+- Next action: activate `.5c.iii`, census research and the remaining `git:query` canonical
+  collections, then add only complete bounded one-hop indexes without copying canonical prose.
+- In-flight uncommitted: `.5c.ii` catalog, controls, and synchronized docs until commit; none afterward.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

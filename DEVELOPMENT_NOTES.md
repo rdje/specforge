@@ -1,4 +1,18 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.ii (`2026-08-08`) — browse routes are not query routes
+
+Decision records and fact cards remain separate canonical collections. The existing decision index
+already gives a complete bounded ADR browse path, so this slice preserves and reproves it. The new
+`docs/knowledge/INDEX.md` derives only the compact fields needed to select a fact card; questions,
+evidence, reverify commands, and explanatory bodies remain in the cards and generated question map.
+
+The entry census exposed an important denominator distinction: 136 files in `docs/knowledge/` meant
+135 cards plus its README, while the generated map's 136 facts meant those 135 cards plus front-
+mattered ADR 0007. The slice's own fact and derived index make the resulting collection 138 files /
+136 cards, and the map 137 cross-layer facts. The generator validates canonical source metadata but
+uses a bounded title preview in its 320-byte rows, so long historical titles do not force canonical
+rewrites or widen the browse surface. The large question projection remains owned by `.5d`.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.i (`2026-08-08`) — task catalog as projection, not memory
 
 The canonical unit remains each `docs/tasks/*.md` file. The root catalog now projects only the fields

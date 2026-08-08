@@ -211,7 +211,7 @@ verification before correction.
   task tree exactly once, exclude the author template from active work, and never mirror leaf history.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.ii`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Goal: close direct decision/fact retrieval: preserve the already-complete decision index, define a
   bounded human fact-card route that composes with the generated question index, and prove membership.
 
@@ -326,8 +326,8 @@ verification before correction.
 | — | `.4e` | `done` (`2026-08-08`) | Exact 1,350-record capsule, Purpose prologue plus 60-record current view, common archive completion, and all consumer proofs landed. |
 | — | `.5b` | `done` (`2026-08-08`) | Exact post-ledger collection/currency census, dependency graph, explicit child leaves, and scratch-locality finding landed without moving canonical content. |
 | — | `.5c.i` | `done` (`2026-08-08`) | Derived 121-tree catalog, separate author-template route, seven fail-closed metadata/bound tests, unconditional checker, and transition-debt ratchet landed. |
-| 1 | `.5c.ii` | `pending` | Close direct decision/fact-card navigation and compose it with question-key retrieval. |
-| 2 | `.5c.iii`–`.5i` | `pending` | Remaining collection routes, generated map, roadmap/feedback, currentness, maintained references, and closure. |
+| — | `.5c.ii` | `done` (`2026-08-08`) | Preserved 9/9 ADR routes and added a bounded derived catalog for all 136 fact cards plus the collection guide. |
+| 1 | `.5c.iii`–`.5i` | `pending` | Remaining collection routes, generated map, roadmap/feedback, currentness, maintained references, and closure. |
 | 3 | `.6` | `pending` | Enforce repository-volume project-data locality and audit old project-owned residue. |
 | 5 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
@@ -542,12 +542,58 @@ verification before correction.
   18,932. The exact authority changes the transition-era line ceiling 462→512 to cover the registered
   160-file task capacity plus fixed workflow, while bytes ratchet 200,295→65,536 and width
   18,932→512; it is not reusable headroom.
+- `2026-08-08`: **Decision and fact-card navigation remain separate views (`.5c.ii`).** The existing
+  decision index stays canonical for nine ADRs. A derived `docs/knowledge/INDEX.md` will provide one
+  bounded human row per immediate fact card, while `KNOWLEDGE_MAP.md` remains the question-keyed
+  generated route until `.5d` shards it. Neither index copies card or decision prose.
+- `2026-08-08`: **Fact-card membership must fail closed (`.5c.ii`).** The catalog generator will
+  require safe filename/id identity, valid front matter, a non-empty question list, date, a valid
+  explicit status or the architecture-defined `current` default, evidence or reverify, deterministic
+  ordering, exact member coverage, and independent source-field, row, count, and section bounds. The
+  existing Knowledge Map validator remains independently active.
+- `2026-08-08`: **Route state must follow landed controls (`.5c.ii`, surfaced finding).** The README
+  route registry still called the task catalog and already-complete decision collection transition
+  debt after their executable membership controls existed. Their reader/author routes move to those
+  composed live-document gate, and the new fact-card catalog receives its own bounded reader route;
+  no healthy route keeps a ceremonial debt label.
 
 ## Blockers
 
 - None for `.0`–`.3`.
 - Later migrations may stop for an authority conflict, unique unclassified content, or an unprovable
   retrieval promise, exactly as required by the adopted doctrine.
+
+## `.5c.ii` Decision And Fact-Card Navigation
+
+Entry evidence shows two deliberately different durable stores. `docs/decisions/INDEX.md` is already
+a concise human catalog and its registered membership gate covers every ADR. `docs/knowledge/` has
+136 Markdown files but only 135 atomic fact cards plus the collection README. Their only routes are
+`git:query` and the 2,207-line generated question map; a human cannot open one bounded collection
+route and select a card by id/title. The map's 136-fact total includes ADR 0007 from the separately
+indexed decision collection, so it is not a directory-card count.
+
+This slice preserves the decision index and reproves its membership. It adds a derived index inside
+`docs/knowledge/`, excluding that index itself from fact inputs. The fact index is navigation only:
+one id/title/date/status row links each canonical card, while questions, evidence, reverify commands,
+and bodies stay in the cards and generated map. The generic collection membership gate and a focused
+derive-and-diff checker must both cover the resulting route. This slice's own durable fact raises the
+result to 136 cards plus the README and generated index, while the generated map reaches 137 facts
+because ADR 0007 remains its additional cross-layer input.
+
+The resulting `docs/knowledge/INDEX.md` is 150 lines / 28,392 bytes / 251 maximum line bytes. Its
+focused ceiling is 160 cards, 32,768 index bytes, 320 row bytes, 64 id bytes, 1,024 source-title bytes,
+112 rendered-title bytes, 64 questions per card, and 2,048 bytes per question. Historical titles over
+the rendered allowance are UTF-8-safe previews ending in an ellipsis; the canonical title is never
+rewritten. Nine parser/bound cases cover default and explicit status, inline/block questions,
+Markdown escaping, missing questions, id mismatch, invalid date, missing evidence, oversized title,
+and compaction.
+
+The complete decision index remains unchanged at 30 lines / 2,617 bytes / 222 maximum line bytes;
+an exact direct comparison proves all nine ADR members appear once and no extra Markdown member route
+exists. The root README exposes the fact catalog beside the generated question map. Its route registry
+now points the healthy task, decision, and fact browse paths to the composed live-document checker
+instead of retaining stale transition labels. The `.5c.i` ceiling authority was consumed by its
+commit and removed; no ceiling increase is requested or banked by this slice.
 
 ## `.5c.i` Bounded Complete Task Catalog
 
@@ -856,6 +902,8 @@ transition debt, not a fabricated freshness claim.
 | `2026-08-08` | `.5b` | Knowledge Map regeneration; staged resulting-tree `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check`; archive-index health/cap report | green: map 135 facts / 969 question keys; 563 Markdown files / 29 surfaces; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build pass; staged diff clean; archive index 58 lines / 3,283 bytes under 96/6,144 health and unchanged 128/8,192 ceiling |
 | `2026-08-08` | `.5c.i` | filename/H1 and metadata-status census; pre-migration process-substitution membership diff; `perl -c`; seven-case `--self-test`; guarded `--write`; derive-and-diff `--check`; post-migration membership/pressure census | 121/121 real tasks linked exactly once; four missing routes recovered; template separate; old 362 lines / 167,583 bytes / max 18,932 → 375 / 27,228 / 207; syntax, 7/7 cases, safe atomic writer, ordering, escaping, and independent generator bounds pass |
 | `2026-08-08` | `.5c.i` | Knowledge Map regeneration; staged resulting-tree catalog/checker; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | green: map 136 facts / 972 question keys; 564 Markdown files / 29 surfaces; task index normal; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build pass; staged diff clean |
+| `2026-08-08` | `.5c.ii` | exact directory/front-matter denominator census; direct decision membership comparison; `perl -c`; nine-case `--self-test`; guarded `--write`; derive-and-diff `--check`; Knowledge Map regeneration | root-caused 136 entry files as 135 cards + README and 136 map facts as those cards + ADR 0007; resulting own fact gives 136 cards / 137 map facts; decision index 9/9 exactly once; catalog 150 lines / 28,392 bytes / max 251; syntax, 9/9 cases, atomic writer, ordering, title compaction, exact membership, and independent bounds pass |
+| `2026-08-08` | `.5c.ii` | staged resulting-tree catalog/routes/authority cleanup; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; live-size `--report`; `git diff --cached --check` | green: 566 Markdown files / 29 surfaces; map 137 facts / 975 question keys; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, repository-local mdBook build, exact book aggregate 33 files / 12,030 lines / 719,303 bytes, and staged diff pass; knowledge-card membership is enforced and no ceiling authority remains banked |
 
 ## Commit Log
 
@@ -875,6 +923,7 @@ transition debt, not a fabricated freshness claim.
 | `.4e` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4e — migrate Rust analysis losslessly` | exact capsule + Purpose prologue/current suffix + completed common archive + debt ratchet |
 | `.5b` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5b — decompose collection containment` | exact collection/currency census + dependency leaves + scratch-locality fact + archive-index health settlement |
 | `.5c.i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.i — derive the complete task catalog` | 121-tree bounded projection + fail-closed generator/checker + transition ratchet |
+| `.5c.ii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.ii — derive bounded fact-card navigation` | preserve 9/9 ADR route + 136-card projection + exact count semantics + composed gate |
 
 ## Changelog
 
@@ -922,3 +971,7 @@ transition debt, not a fabricated freshness claim.
 - `2026-08-08`: `.5c.i` replaced mirrored task-history rows with a deterministic 121-tree catalog,
   recovered four missing routes, separated the author template, wired seven fail-closed cases plus
   derive-and-diff into doctrine enforcement, and ratcheted the task index out of transition debt.
+- `2026-08-08`: `.5c.ii` preserved and reverified the complete decision index, added a bounded
+  generated catalog for 136 actual fact cards, separated directory-card and cross-layer-map counts,
+  wired nine focused cases plus exact membership into doctrine enforcement, corrected stale route
+  debt labels, and removed `.5c.i`'s consumed one-commit ceiling authority.

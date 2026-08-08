@@ -1,3 +1,13 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.ii — bounded decision and fact-card navigation
+
+- Preserved the complete nine-ADR decision index and added a derived human catalog for all 136
+  immediate knowledge fact cards, with the collection README routed separately.
+- Added a deterministic parser/generator with filename/id, front-matter, date/status, question,
+  evidence, ordering, field/row/count/index bounds, same-directory atomic writes, and nine focused
+  fail-closed cases; exact catalog membership now runs unconditionally under `LIVE-DOC-SIZE`.
+- Distinguished collection files from cross-layer generated facts, added the bounded route to the
+  README, and replaced stale task/decision transition labels with their landed executable controls.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.i — bounded complete task catalog
 
 - Replaced the verbose 117-route active-tree table with a derived catalog covering all 121 real task

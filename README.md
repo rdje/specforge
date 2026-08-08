@@ -103,11 +103,11 @@ For users:
 For contributors and project continuity:
 
 - [Agent bootstrap](AGENTS.md)
-- [Task-tree workflow](docs/TASK_TREE_README.md) and [active index](docs/TASK_TREE.md)
+- [Task-tree workflow](docs/TASK_TREE_README.md) and [complete catalog](docs/TASK_TREE.md)
 - [Commit workflow](COMMIT.md)
 - [Memory architecture](MEMORY_ARCHITECTURE.md) and bounded [resume pointer](MEMORY.md)
-- [Knowledge-map architecture](knowledge-map/KNOWLEDGE_MAP_ARCHITECTURE.md) and generated
-  [knowledge map](KNOWLEDGE_MAP.md)
+- [Knowledge-map architecture](knowledge-map/KNOWLEDGE_MAP_ARCHITECTURE.md), bounded
+  [fact-card catalog](docs/knowledge/INDEX.md), and generated [question map](KNOWLEDGE_MAP.md)
 - [Doctrine enforcement](DOCTRINE_ENFORCEMENT.md) and [diagnostic toolbox](TOOLBOX.md)
 - [README stability policy](README_POLICY.md)
 - [Live-document containment doctrine](LIVE_DOCUMENT_SIZE_CONTAINMENT.md)
