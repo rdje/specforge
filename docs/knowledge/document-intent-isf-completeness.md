@@ -3,7 +3,6 @@ id: document-intent-isf-completeness
 title: Per-category ISF-lowering completeness (DOC-INTENT-TAXONOMY.2) — registers lower 1:1 to opaque width-only storage but their 12,638 bit-fields reach .isf ZERO times (Gap A), and 1,220 message-field structures never cross EvidenceIR→IntentIR (Gap B); cat1 MATURE, cat2/3 PARTIAL, cat4 THIN, cat5/6 honest non-targets (5 cat-6 guides over-extract)
 answers:
   - "what fraction of a chip-spec PDF's intent reaches the emitted .isf, per purpose category"
-  - "why do register bit-fields not appear in the emitted .isf (registers lower as opaque width-only storage vars)"
   - "where do message-field / structure / flit / descriptor layouts go in the pipeline (EvidenceIR only — no IntentIR carrier, never lowered)"
   - "what are the two dominant ISF-lowering completeness gaps (register bit-fields, message-field structures)"
   - "which document categories are mature vs partial vs thin for ISF synthesis (cat1 mature, cat2/3 partial, cat4 thin, cat5/6 non-target)"

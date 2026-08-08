@@ -221,12 +221,12 @@ verification before correction.
   relying only on `git:query`, with complete one-hop membership and no duplicated canonical prose.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d`
-  Status: `pending`
+  Status: `active`
   Children: `.5d.i`–`.5d.ii`
   Goal: contain the generated Knowledge Map without weakening question-key retrieval or freshness.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d.i`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Goal: lock a deterministic bounded landing-index plus generated-shard contract, collision/order/
   derive-and-diff tests, canonical-input identity, and reader migration before changing the generator.
 
@@ -328,8 +328,9 @@ verification before correction.
 | — | `.5c.i` | `done` (`2026-08-08`) | Derived 121-tree catalog, separate author-template route, seven fail-closed metadata/bound tests, unconditional checker, and transition-debt ratchet landed. |
 | — | `.5c.ii` | `done` (`2026-08-08`) | Preserved 9/9 ADR routes and added a bounded derived catalog for all 136 fact cards plus the collection guide. |
 | — | `.5c.iii` | `done` (`2026-08-08`) | Closed all eight query-only collections with direct membership over 367 canonical Markdown files. |
-| 1 | `.5d.i` | `pending` | Lock the bounded Knowledge Map landing/shard contract before changing its generator. |
-| 2 | `.5d.ii`–`.5i` | `pending` | Generated-map migration, roadmap/feedback, currentness, maintained references, and closure. |
+| — | `.5d.i` | `done` (`2026-08-08`) | ADR 0009, executable six-shard feasibility contract, collision correction, reader census, and 55 common fixtures landed without changing output topology. |
+| 1 | `.5d.ii` | `pending` | Atomically migrate the generated map and every writer/reader, then ratchet transition debt. |
+| 2 | `.5e`–`.5i` | `pending` | Roadmap/feedback, currentness, maintained references, and closure. |
 | 3 | `.6` | `pending` | Enforce repository-volume project-data locality and audit old project-owned residue. |
 | 5 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
@@ -569,12 +570,75 @@ verification before correction.
   indexes that plane. The four-file Knowledge Map bundle keeps its own README, converted to complete
   direct links. Every row derives only repository-relative path plus first H1 (filename fallback for
   the titleless legacy `SESSION_BOOTSTRAP.md`); canonical prose stays put.
+- `2026-08-08`: **A question key must have one canonical destination (`.5d.i`, surfaced finding).**
+  The 978 generated rows contained 977 unique questions: one exact register-bit-field question mapped
+  to both the broad per-category scorecard and the focused lowering-gap card. The focused card owns
+  that answer; the duplicate key is removed from the broad card. The shard contract rejects all future
+  question collisions instead of silently emitting multiple destinations.
+- `2026-08-08`: **The Knowledge Map becomes one bounded generated projection set (`.5d.i`).**
+  `KNOWLEDGE_MAP.md` remains the stable landing path, directly indexes deterministic whole-entry
+  question shards, and routes id/title browsing to the existing fact catalog. Question text is the
+  retrieval key; repeated fact metadata and the duplicate generated fact catalog are not.
 
 ## Blockers
 
 - None for `.0`–`.3`.
 - Later migrations may stop for an authority conflict, unique unclassified content, or an unprovable
   retrieval promise, exactly as required by the adopted doctrine.
+
+## `.5d.i` Bounded Knowledge Map Projection Contract
+
+The committed `.5c.iii` baseline is one generated file at 2,231 lines / 1,038,010 bytes / 7,778
+maximum content-line bytes. It contains 138 facts and 978 generated question rows, but only 977
+unique question strings. The exact duplicate asks why register bit-fields do not appear in emitted
+ISF and points both to a broad completeness scorecard and the focused lowering-gap fact. The focused
+card is the canonical destination; removing the duplicate answer from the broad card changes no
+durable fact and lets the new gate reject every future collision.
+
+The pressure is projection repetition, not canonical knowledge. Before the duplicate correction,
+question text accounts for 102,661 bytes and links for 85,050, while repeated date/reverify metadata
+accounts for 595,555. The question section is 981 lines / 795,972 bytes; the generated fact section is
+1,243 lines / 241,692 bytes even though `docs/knowledge/INDEX.md` already provides the bounded fact
+browse route. The migration therefore preserves every unique question and direct canonical link but
+does not preserve redundant presentation.
+
+ADR 0009 and `doctrine/knowledge_map/shard_contract.json` lock this topology before output changes:
+
+| Element | Deterministic contract |
+| --- | --- |
+| stable landing | `KNOWLEDGE_MAP.md`; at most 96 lines / 8,192 bytes / 256 bytes per line |
+| question shards | sequential `docs/knowledge-map/questions-NNNN.md`; whole entries sorted by UTF-8 bytes |
+| shard bounds | at most 384 lines / 49,152 bytes / 512 bytes per line; at most 32 shards |
+| input bounds | at most 200 facts / 2,048 unique questions; 96-byte ids, 192-byte paths, 2,048-byte questions |
+| retrieval | one direct canonical fact link per globally unique question; question text wraps at 480 bytes |
+| fact browse | direct landing link to the separately gated `docs/knowledge/INDEX.md`; no generated fact-copy section |
+| identity | SHA-256 over every participating repository-relative canonical path and source-content hash |
+
+The executable simulation parses the same `docs/knowledge/*.md` and `docs/decisions/*.md` fact
+contract without writing output. With this slice's fact card, it proves 139 facts / 980 unique
+questions fit in six shards. The landing simulation is 18 lines / 832 bytes / 93 maximum line bytes;
+the largest shard is 384 lines / 35,724 bytes / 480 maximum line bytes; all shards total 1,991 lines /
+183,441 bytes. Canonical-input identity is
+`97242603370b856aa3e4afef1bbb9d086a6da0488466319e007c40e4679bb642`. Eight focused cases cover
+block and inline answers, collision rejection, UTF-8 byte order, wrapping, question-byte overflow,
+shard rollover, and landing overflow. The common lifecycle suite adds a valid indexed generated set
+and a stale-shard-index failure, reaching 55 cases.
+
+The `.5d.ii` reader/writer migration is closed, not open-ended. Bootstrap and contribution readers
+are `AGENTS.md`, `CLAUDE.md`, `README.md`, `MEMORY.md`, `MEMORY_ARCHITECTURE.md`, and `COMMIT.md`.
+Portable-bundle readers are its README, architecture, FAQ, installer, hook snippet, CI snippet, and
+configuration. Executable writers/checkers are the bundle generator and checker, the repository
+pre-commit hook, the doctrine driver/adapter, the fact-card catalog pointer, the live-document surface
+registry, and the mdBook live-doc/doctrine chapters. `.5d.ii` must update every topology-sensitive
+literal atomically, keep the portable bundle POSIX shell + awk, write all outputs through
+repository-local same-directory temporary paths, expose the complete output-path set for staging,
+remove only obsolete generated shards, and prove derive-and-diff plus exact root membership. No reader
+may be left assuming that all questions or the repeated fact catalog remain inline in the landing.
+
+This design slice does not change generated output topology or reclassify the live surface: the
+monolith remains current transition debt until `.5d.ii`. It adds only the executable feasibility
+contract, fail-closed collection lifecycle support, the accepted ADR/fact, the collision correction,
+and synchronized design guidance. No ceiling increase or migration authority is requested.
 
 ## `.5c.iii` Remaining Canonical Collection Navigation
 
@@ -972,6 +1036,8 @@ transition debt, not a fabricated freshness claim.
 | `2026-08-08` | `.5c.ii` | staged resulting-tree catalog/routes/authority cleanup; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; live-size `--report`; `git diff --cached --check` | green: 566 Markdown files / 29 surfaces; map 137 facts / 975 question keys; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, repository-local mdBook build, exact book aggregate 33 files / 12,030 lines / 719,303 bytes, and staged diff pass; knowledge-card membership is enforced and no ceiling authority remains banked |
 | `2026-08-08` | `.5c.iii` | eight-surface query/H1/path census; `perl -c`; eight-case catalog `--self-test`; guarded `--write`; derive-and-diff `--check`; 53-case lifecycle/control suite; zero-query registry probe | 367 canonical members classified; six generated catalogs cover 241, task catalog 122, bundle README 4; catalog plane 7 files / 314 lines / 49,305 bytes / max 317; syntax, 8/8 catalog cases, 53/53 common fixtures, exact ordering/target expansion, external membership, all independent bounds, and zero query-only surfaces pass |
 | `2026-08-08` | `.5c.iii` | staged resulting-tree catalogs/schema/routes; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; live-size `--report`; `git diff --cached --check` | green: 574 Markdown files / 30 surfaces; map 138 facts / 978 question keys; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, repository-local mdBook build, exact book aggregate 33 files / 12,051 lines / 720,903 bytes, and staged diff pass; catalog surface exactly 7 files / 314 lines / 49,305 bytes and no ceiling authority is required |
+| `2026-08-08` | `.5d.i` | committed-baseline pressure/decomposition census; duplicate-question audit; ADR/contract review; Perl syntax; eight-case shard `--self-test`; real feasibility `--check`/`--report`; 55-case lifecycle suite; current Knowledge Map and fact-catalog derive-and-diff | baseline 138 facts / 978 rows / 977 unique questions at 2,231 lines / 1,038,010 bytes; focused card now exclusively owns the collision; current 139 facts / 980 unique questions fit six shards with bounded landing/parts and identity `9724…b642`; syntax, 8/8 shard cases, 55/55 common cases, current monolith freshness, and 138-card catalog membership pass |
+| `2026-08-08` | `.5d.i` | staged resulting-tree contract/ADR/fact/docs; exact 10-ADR membership; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; live-size `--report`; `git diff --cached --check` | green: 576 Markdown files / 30 surfaces; decisions 10/10 exactly once; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, repository-local mdBook build, exact book aggregate 33 files / 12,080 lines / 722,754 bytes, and staged diff pass; current monolith remains within its unchanged transition envelope and no ceiling authority is requested |
 
 ## Commit Log
 
@@ -993,6 +1059,7 @@ transition debt, not a fabricated freshness claim.
 | `.5c.i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.i — derive the complete task catalog` | 121-tree bounded projection + fail-closed generator/checker + transition ratchet |
 | `.5c.ii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.ii — derive bounded fact-card navigation` | preserve 9/9 ADR route + 136-card projection + exact count semantics + composed gate |
 | `.5c.iii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.iii — close canonical collection navigation` | external-membership contract + 367-member route closure + bounded catalog plane |
+| `.5d.i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d.i — lock the bounded Knowledge Map shard contract` | accepted topology + executable feasibility/collision contract + complete reader migration census; no output migration |
 
 ## Changelog
 
@@ -1048,3 +1115,7 @@ transition debt, not a fabricated freshness claim.
   with direct membership over 367 files, introduced a separately bounded seven-file catalog plane,
   made external membership explicit and fail-closed, expanded the common fixture gate to 53 cases,
   and closed `.5c` without moving or copying canonical member prose.
+- `2026-08-08`: `.5d.i` root-caused the monolithic Knowledge Map's repetition pressure and one
+  duplicate question destination, accepted ADR 0009, locked deterministic bounded landing/shard and
+  canonical-input identity contracts, proved the current corpus fits in six shards, expanded the
+  common fixture gate to 55 cases, and enumerated the atomic `.5d.ii` writer/reader migration.

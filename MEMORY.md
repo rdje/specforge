@@ -19,15 +19,14 @@
   run it too. Retrieval: `KNOWLEDGE_MAP.md`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d.i` — next clean-tree leaf; activate it only
-  after the `.5c.iii` commit is durable.
-- Current state: `.0`–`.5c` are complete. The fifth doctrine governs 574 tracked Markdown files across
-  30 surfaces. No partitioned canonical collection is query-only: six generated catalogs cover 241
-  members, the task catalog covers 122, and the Knowledge Map bundle README covers four. The bounded
-  catalog plane is 7 files / 314 lines / 49,305 bytes; external membership and all 53 common lifecycle
-  fixtures run unconditionally. The question map remains `.5d` transition debt at 138 facts / 978 keys.
-- Next action: activate `.5d.i`, lock the bounded landing-index and generated-shard contract, then
-  prove collision, ordering, source identity, reader migration, and derive-and-diff before generation changes.
-- In-flight uncommitted: `.5c.iii` catalog plane, external-membership control, and synchronized docs
-  until commit; none afterward.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d.ii` — next clean-tree leaf; activate it only
+  after the `.5d.i` commit is durable.
+- Current state: `.0`–`.5c` and `.5d.i` are complete. ADR 0009 plus the executable shard contract lock
+  one bounded Knowledge Map landing and deterministic direct-link question shards. The current 139
+  facts / 980 unique keys fit in six simulated shards; eight focused and 55 common lifecycle cases run
+  unconditionally. The live generator/topology remains current `.5d` transition debt until `.5d.ii`.
+- Next action: activate `.5d.ii`; atomically migrate the portable generator/checker, hook staging,
+  complete root/shard membership, obsolete-shard cleanup, doctrine surface, and every reader literal.
+- In-flight uncommitted: `.5d.i` contract, collision correction, and synchronized docs until commit;
+  none afterward.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

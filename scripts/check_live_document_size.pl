@@ -530,7 +530,12 @@ sub validate_lifecycle {
     } elsif ($lifecycle eq 'partitioned_canonical') {
         validate_index($surface, $paths, $id);
     } elsif ($lifecycle eq 'generated_projection') {
-        problem("surface '$id' generated_projection must contain exactly one file") if @$paths != 1;
+        if (($surface->{locator} // '') eq 'file') {
+            problem("surface '$id' generated_projection file must contain exactly one file")
+                if @$paths != 1;
+        } else {
+            validate_index($surface, $paths, $id);
+        }
         my $inputs = $surface->{canonical_inputs};
         if (ref($inputs) ne 'ARRAY' || !@$inputs) {
             problem("surface '$id' generated_projection must name canonical_inputs");

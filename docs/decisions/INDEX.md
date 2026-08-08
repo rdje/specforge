@@ -20,6 +20,7 @@ changed* lives in git (layer D), not here.
 | [0006-genericity](0006-no-hardcoded-chip-spec-vocabulary.md) | No hardcoded chip-spec vocabulary (PDF-independence invariant) | 2026-06-05 | accepted | extraction, genericity, doctrine |
 | [0007](0007-live-document-containment-and-data-locality.md) | Live-document containment and repository-volume data locality | 2026-08-08 | accepted | documentation, containment, locality, portability |
 | [0008](0008-lossless-rolling-ledger-protocol.md) | Lossless rolling-ledger source-capsule and live-window protocol | 2026-08-08 | accepted | documentation, continuity, archive, retrieval |
+| [0009](0009-bounded-knowledge-map-projection-set.md) | Knowledge Map uses a bounded landing page and generated question shards | 2026-08-08 | accepted | documentation, knowledge-map, projection, retrieval |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /

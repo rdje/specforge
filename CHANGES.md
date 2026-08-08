@@ -1,3 +1,16 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d.i — bounded Knowledge Map projection contract
+
+- Locked ADR 0009 and an executable, repository-local shard contract before changing the portable
+  generator: stable bounded landing page, deterministic UTF-8-byte-sorted whole-entry question shards,
+  direct canonical links, independent input/output limits, and canonical-input SHA-256 identity.
+- Root-caused 978 generated question rows as only 977 unique keys. The duplicated register-bit-field
+  question now belongs only to its focused lowering-gap card; the contract rejects every future
+  multi-destination question instead of silently sorting both rows into the map.
+- Proved the current 139 facts / 980 unique questions fit in six shards totaling 1,991 lines / 183,441
+  bytes, with an 18-line / 832-byte landing and a 384-line / 35,724-byte largest shard. Added eight
+  focused contract cases and expanded generated-projection collection fixtures to 55; output topology
+  remains unchanged until the reader-complete atomic `.5d.ii` migration.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.iii — complete canonical collection catalogs
 
 - Replaced all eight remaining `git:query` collection contracts with complete direct membership:

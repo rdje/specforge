@@ -1,4 +1,23 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d.i (`2026-08-08`) — questions are keys, metadata stays canonical
+
+The monolithic Knowledge Map's pressure is mostly repeated presentation. Its entry question section
+uses 102,661 bytes for question text and 85,050 for links but 595,555 for repeated date/reverify
+metadata; its second half also reconstructs a fact catalog that now has a separately bounded route.
+Sharding the old row shape would distribute the excess without containing it.
+
+ADR 0009 therefore defines a projection set around the actual retrieval invariant: each globally
+unique question resolves directly to one canonical fact. The stable root becomes a small landing;
+whole question entries sort by UTF-8 bytes and pack into sequential bounded shards; metadata remains
+in the linked cards; id/title browsing uses `docs/knowledge/INDEX.md`. A canonical path/content digest
+makes the exact source set visible without copying facts into generated output.
+
+The contract is intentionally executable before migration. It rejects unsafe or oversized inputs,
+duplicate ids/questions, unstable ordering pressure, too many shards, and independent landing/shard
+line, byte, and width overflow. The current simulation is six shards, well inside every limit. The
+portable generator remains unchanged in this slice so `.5d.ii` can atomically migrate generation,
+derive-and-diff, complete-output staging, obsolete-shard cleanup, and every reader literal together.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.iii (`2026-08-08`) — external membership is first-class
 
 A direct collection index need not be a canonical member of the collection it indexes. Treating that

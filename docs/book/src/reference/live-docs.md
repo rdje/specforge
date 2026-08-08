@@ -227,6 +227,35 @@ Fifty-three lifecycle/control-plane fixtures cover the positive path plus missin
 and improperly internal external-index failures. The common catalog generator adds independent
 path/title/row/member/index bounds and derive-and-diff; no generated catalog contains canonical facts.
 
+#### Knowledge Map shard contract locked
+
+The generated question map is still one current file during the design slice, but its atomic
+migration contract is now executable. The committed entry baseline is 2,231 lines / 1,038,010 bytes
+with 138 facts and 978 question rows. An audit found only 977 unique questions: the same register-bit-
+field question appeared in both a broad completeness scorecard and its focused lowering-gap card. The
+focused card now owns that key, and the contract rejects any future question with two destinations.
+
+The planned read path keeps `KNOWLEDGE_MAP.md` stable as a small landing page. It will link every
+deterministically packed `docs/knowledge-map/questions-NNNN.md` shard and the separate fact-card
+catalog. Search all questions with:
+
+```bash
+rg -i --glob 'questions-*.md' 'your terms' docs/knowledge-map
+```
+
+Each preserved question links directly to one canonical fact card. Question entries sort by UTF-8
+bytes, wrap under a fixed physical-line limit, and omit repeated date/reverify fields; those fields
+remain in the linked card. The repeated generated fact section also disappears because the bounded
+fact catalog already owns id/title browsing.
+
+The pre-migration simulation proves the current 139 facts / 980 unique questions fit in six shards.
+The landing is 18 lines / 832 bytes; the largest shard is 384 lines / 35,724 bytes, and the complete
+question set is 1,991 lines / 183,441 bytes. Independent limits govern input ids, paths, question
+bytes, line width, files, lines, and bytes. A SHA-256 identity covers participating canonical paths
+and content, and eight focused cases prove parsing, collision rejection, ordering, wrapping, rollover,
+and bounds. The output topology itself changes only in the next atomic migration slice, together with
+all bootstrap, hook, CI, bundle, and doctrine readers.
+
 Lines, bytes, file count, collection totals, and maximum content-line width are independent axes.
 Existing oversized ledgers are explicit transition debt: their measured baseline cannot move, and a
 separate bounded allowance exists only for the containment program's continuity updates until the

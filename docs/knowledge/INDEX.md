@@ -86,6 +86,7 @@ Collection guidance: [authoring and lifecycle README](README.md).
 | [isf-unrenderable-rule-value-residual](isf-unrenderable-rule-value-residual.md) | 2026-06-23 | `current` | The `.isf` emitter drops a rule whose drive VALUE is not a renderable ISF value expression (free prose, not a… |
 | [isf-value-width-operand-contract](isf-value-width-operand-contract.md) | 2026-06-21 | `current` | FSMGen strict rejects an ISF value literal whose notation width ≠ the target signal width (OperandContract,… |
 | [knowledge-map-architecture-location](knowledge-map-architecture-location.md) | 2026-08-08 | `current` | Knowledge-map architecture lives inside the knowledge-map bundle |
+| [knowledge-map-shard-contract](knowledge-map-shard-contract.md) | 2026-08-08 | `current` | The Knowledge Map shard migration is locked by a bounded executable contract |
 | [live-document-containment-fixture-gate](live-document-containment-fixture-gate.md) | 2026-08-08 | `current` | Live-document lifecycle and control-plane proofs run on the repository volume |
 | [live-document-coverage-authority](live-document-coverage-authority.md) | 2026-08-08 | `current` | Parent Git index defines SpecForge live-Markdown coverage |
 | [llm-primary-condition-subject-gate](llm-primary-condition-subject-gate.md) | 2026-06-10 | `current` | Condition-only-subject gate — APB/AHB/AXI constraint task all P=R=F1=1.000 (FPs 3→0) |

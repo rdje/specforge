@@ -468,6 +468,27 @@ expect_case('generated projection rejects a missing freshness proof', 0, qr/fres
     my ($fixture) = @_;
     chmod 0644, path_in($fixture->{root}, 'scripts/freshness-ok.sh');
 });
+expect_case('generated projection collection accepts bounded indexed shards', 1, qr/9 governed surfaces/, sub {
+    my ($fixture) = @_;
+    write_text($fixture->{root}, 'generated.md', "# Generated index\n[Shard](generated-shard.md)\n");
+    write_text($fixture->{root}, 'generated-shard.md', "# Generated shard\n");
+    my $surface = surface($fixture, 'projection');
+    $surface->{targets} = ['generated*.md'];
+    $surface->{locator} = 'collection';
+    $surface->{index} = 'generated.md';
+    $surface->{index_contract} = { kind => 'membership', verifier => 'builtin:markdown_links' };
+    save_registry($fixture);
+});
+expect_case('generated projection collection rejects a stale shard index', 0, qr/does not link member 'generated-shard\.md'/, sub {
+    my ($fixture) = @_;
+    write_text($fixture->{root}, 'generated-shard.md', "# Generated shard\n");
+    my $surface = surface($fixture, 'projection');
+    $surface->{targets} = ['generated*.md'];
+    $surface->{locator} = 'collection';
+    $surface->{index} = 'generated.md';
+    $surface->{index_contract} = { kind => 'membership', verifier => 'builtin:markdown_links' };
+    save_registry($fixture);
+});
 expect_case('archive terminal rejects a nonterminal state', 0, qr/archive terminal must have state=terminal/, sub {
     my ($fixture) = @_;
     surface($fixture, 'archive')->{state} = 'normal';
