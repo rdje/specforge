@@ -49,8 +49,9 @@ splits the two costs and keeps only the cheap one:
 - **Generation cost** — a script scanning files and emitting the map. Milliseconds. The
   **machine** pays it (in the pre-commit hook), never the workflow, never the agent.
 
-The map is a **build artifact**, never hand-edited, **deterministic** (sorted, no
-timestamps) so "regenerate-and-diff" is a valid sync gate. Because the facts are atomic and
+The landing page and question shards are a **generated projection set**, never hand-edited, and
+**deterministic** (UTF-8-byte sorted, no timestamps), so "regenerate-and-diff" is a valid sync gate.
+Because the facts are atomic and
 front-mattered, an agent can also **skip the map entirely** and grep the fact files
 directly — the map is a convenience cache, not a load-bearing dependency. (Contrast a
 hand-index, where staleness breaks everything.)
@@ -142,18 +143,20 @@ permanently retires one future archaeology.
 
 ## 5. The scripts
 
-Two portable scripts (POSIX shell + awk; work on BSD/macOS and GNU/Linux):
+Two portable scripts (Bash 3.2+ and POSIX awk/core tools; work on BSD/macOS and GNU/Linux):
 
-- **`scripts/gen_knowledge_map.sh`** — scans `KM_SCAN_DIRS`, parses each fact's
-  front-matter, emits the deterministic `KM_OUTPUT` map (a `Questions → fact` lookup plus a
-  `Facts (by id)` catalog). `--print-map-path` prints the resolved output path.
+- **`scripts/gen_knowledge_map.sh`** — scans `KM_SCAN_DIRS`, parses each fact's front matter,
+  rejects duplicate question destinations, and emits a bounded `KM_OUTPUT` landing plus sequential
+  `KM_SHARD_DIR/KM_SHARD_PREFIXNNNN.md` question shards. Whole entries are byte-sorted, wrapped, and
+  packed under independent part/aggregate bounds. `--print-output-paths` prints the complete current-
+  plus-tracked output set so hooks also stage stale-shard deletions.
 - **`scripts/check_knowledge_map.sh`** — fails nonzero if any fact is missing a required
-  field, if two facts share an `id`, or if the committed map differs from a fresh
-  regeneration (derive-and-diff). This is what the hook and CI run.
+  field, ids/questions collide, shard membership is stale, or any committed landing/shard differs
+  from a repository-local fresh regeneration. This is what the hook and CI run.
 
 Config precedence (`scripts/knowledge_map.conf`, all `:=` assignments): **environment >
-repo-root `.knowledge_map.conf` > bundle default**. Knobs: `KM_SCAN_DIRS`, `KM_OUTPUT`,
-`KM_TITLE`.
+repo-root `.knowledge_map.conf` > bundle default**. The bundle config lists topology and bounds;
+`KM_FACT_CATALOG` is optional and should name a separately maintained browse catalog.
 
 ---
 
@@ -162,23 +165,22 @@ repo-root `.knowledge_map.conf` > bundle default**. Knobs: `KM_SCAN_DIRS`, `KM_O
 Mirror the four-layer defense from `MEMORY_ARCHITECTURE.md` §9 (a rule nothing checks is a
 rule nothing follows):
 
-- **Pre-commit hook** regenerates the map, `git add`s it, then runs the check — so the
+- **Pre-commit hook** regenerates the projection, stages every output and deletion, then checks it—so the
   agent spends **zero** time indexing and the map is always in sync. See
   `hooks/pre-commit.snippet`.
 - **CI** runs `check_knowledge_map.sh` (same script) — catches a bypassed hook; a stale map
   or invalid fact **fails the build**. See `ci/knowledge-map-gate.yml`.
 
-Because generation is deterministic, the hook's "regenerate + stage" makes drift
-structurally impossible: the committed map always equals what the facts produce.
+Because generation is deterministic, the hook's "regenerate + stage" makes drift structurally
+impossible: the committed landing and exact shard set always equal what the facts produce.
 
 ---
 
 ## 7. Read path — how a future agent uses it (no archaeology)
 
-1. From the bootstrap entrypoint → open `KNOWLEDGE_MAP.md` (your window + the agent's
-   index).
-2. Scan `Questions → fact` for the question at hand → follow the one pointer to the
-   canonical home.
+1. From the bootstrap entrypoint → open bounded `KNOWLEDGE_MAP.md` (the stable landing).
+2. Search every linked question shard with the landing's repository-relative `rg` command, then
+   follow the one direct pointer to the canonical home.
 3. Trust the fact (it is dated + evidenced), or run its one `reverify` command.
 4. Only if the fact is genuinely **not** in the map is new investigation warranted — and
    its conclusion becomes a new card before the turn ends.

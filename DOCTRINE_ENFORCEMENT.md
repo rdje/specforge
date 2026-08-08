@@ -282,13 +282,13 @@ The reference deployment. Enforced by `scripts/check_doctrines.sh` via `.githook
 | Doctrine | Archetype | Check | Proves |
 |---|---|---|---|
 | `MEMORY-ARCH` | structural | `scripts/check_memory_architecture.sh` | the durable 4-layer memory-architecture invariants (`MEMORY_ARCHITECTURE.md` §9): the standard present, `MEMORY.md` bounded, bootstrap pointers route to it, layers B/C present |
-| `KNOWLEDGE-MAP` | structural | `knowledge-map/scripts/check_knowledge_map.sh` | the derived Knowledge Map is regenerated + in sync with its fact sources (derive-and-diff, so the map cannot drift) |
+| `KNOWLEDGE-MAP` | structural | `knowledge-map/scripts/check_knowledge_map.sh` | the bounded landing and exact generated question-shard membership/content are regenerated + in sync with fact sources |
 | `TASK-ACCEPTANCE` | evidence | `scripts/check_task_acceptance.sh` | a staged Rust code change is owned by a staged `docs/tasks/*.md` leaf whose acceptance checklist carries ROOT CAUSE + ADDRESSED + NO REGRESSION, ticked and backed by SpecForge tool signatures (see `TOOLBOX.md`) |
 | `README-POLICY` | structural | `scripts/check_readme_policy.sh` | root `README.md` stays within its independently derived line/byte ceilings; every reader link and author-overflow destination is a repository-owned, controlled terminal in the route registry |
 | `LIVE-DOC-SIZE` | structural | `scripts/check_live_document_size.sh` | every parent-tracked Markdown path is classified exactly once and satisfies its lifecycle-specific locality, line/byte/count/aggregate/width, index, currency, frozen-content, transition-debt, maintained-reference, and ceiling-authority contracts |
 
-`LIVE-DOC-SIZE` also runs `scripts/test_live_document_size.pl`: 48 positive and fail-closed cases for
-all seven local lifecycle classes and their control plane. Test workspaces are disposable and always
+`LIVE-DOC-SIZE` also runs `scripts/test_live_document_size.pl`: 55 positive and fail-closed cases for
+all seven local lifecycle classes, internal/external/generated-set membership, and their control plane. Test workspaces are disposable and always
 created below repository-local `generated/`; schema fields, arrays, scalars, routes, independent size
 axes, baselines, and ceiling-history authority are therefore re-proved on every gate.
 The mdBook maintained-reference record additionally executes `scripts/check_book_current_truth.sh`,

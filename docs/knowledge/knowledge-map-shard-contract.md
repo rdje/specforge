@@ -5,6 +5,7 @@ answers:
   - "how will the million-byte Knowledge Map be sharded without losing question retrieval"
   - "what prevents one Knowledge Map question from pointing to multiple fact cards"
   - "what identifies the canonical inputs to generated Knowledge Map shards"
+  - "why did the Knowledge Map shard simulator and generator report different canonical input hashes"
 date: 2026-08-08
 status: current
 tags: [knowledge-map, generated-projection, sharding, retrieval]
@@ -18,7 +19,12 @@ entry links exactly one canonical fact, omits repeated fact metadata, and wraps 
 line limits. The landing page links every shard and the separate fact-card catalog.
 
 The executable contract rejects duplicate question destinations, unsafe or oversized inputs, unstable
-ordering, too many facts/questions/shards, and independent landing/shard line, byte, and line-width
-overflow. It also computes a SHA-256 identity over every participating canonical fact path and content.
-The contract and simulation gate land in `.5d.i`; `.5d.ii` alone may change the generator and output
-topology after reader and atomic-replacement requirements are satisfied.
+ordering, too many facts/questions/shards, and independent landing/shard/aggregate line, byte, and
+line-width overflow. It also computes a SHA-256 identity over every participating canonical fact path
+and content. The contract and simulation gate landed in `.5d.i`; `.5d.ii` implements the generator
+and exact output topology with reader-complete staging, derive-and-diff, and obsolete-shard cleanup.
+
+The `.5d.ii` integration found and closed an identity-oracle defect: Perl `decode_utf8` with a check
+flag may consume its input scalar, so hashing that scalar afterward produced the empty-content hash
+for every source. The simulator now hashes raw bytes before decoding a copy, a ninth regression case
+locks content sensitivity, and its identity exactly matches the portable generator's landing value.

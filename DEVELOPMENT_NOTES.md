@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d.ii (`2026-08-08`) — projection replacement is a set transaction
+
+A sharded generated index has two freshness dimensions: content and membership. Comparing only the
+landing cannot detect a stale extra shard; staging only currently emitted paths cannot record a shard
+deletion. The portable checker therefore regenerates the full logical tree under repository-local
+`generated/`, compares exact filenames and every byte, and removes the guarded workspace. The hook's
+output enumeration unions current files with tracked shard paths, then stages each via `git add -A`.
+
+Generation renders every bounded part before installing anything, moves the landing after current
+parts, and deletes only obsolete names matching the closed sequential shard grammar. Hidden temporary
+siblings end in `.tmp`, not `.md`, and traps remove them. Explicit aggregate limits are stricter than
+the product of per-part capacity, preventing a legitimate-looking set of bounded files from becoming
+an overlarge collection.
+
+The first independent identity comparison did its job by disagreeing. `decode_utf8($raw, 1)` may
+consume `$raw`; the preflight then hashed an empty scalar for every source even though its path set and
+counts looked plausible. Hash-before-decode plus decode-from-copy fixes the oracle, and a content-
+sensitivity regression now precedes collision/order/bound tests. Independent implementations report
+the same raw-path/content identity before the live surface leaves transition debt.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d.i (`2026-08-08`) — questions are keys, metadata stays canonical
 
 The monolithic Knowledge Map's pressure is mostly repeated presentation. Its entry question section

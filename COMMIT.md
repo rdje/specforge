@@ -55,8 +55,8 @@ must never be edited merely to prove that it was reviewed.
 - The mdBook changes whenever user-visible behavior or the public understanding of SpecForge changes.
   The `BOOK-METHOD-DOC` closing-leaf rule remains mandatory.
 - `ROADMAP.md` changes only when program direction, milestones, or roadmap-level status changes.
-- A durable structural/causal fact gets a Knowledge Map fact card; `KNOWLEDGE_MAP.md` itself remains
-  generated and must never be hand-edited.
+- A durable structural/causal fact gets a Knowledge Map fact card; generated `KNOWLEDGE_MAP.md` and
+  `docs/knowledge-map/questions-*.md` must never be hand-edited.
 
 All repository-internal Markdown paths are repository-root-relative. Host-local inputs use portable
 placeholders. `git_message_brief.txt` and `questions_keep_untracked.txt` remain untracked; the former

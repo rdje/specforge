@@ -40,13 +40,14 @@ while (@ARGV) {
 
 if ($mode eq 'self-test') {
     run_self_test();
-    print "knowledge-map-shards: 8/8 collision, ordering, wrapping, and bound tests pass.\n";
+    print "knowledge-map-shards: 9/9 identity, collision, ordering, wrapping, and bound tests pass.\n";
     exit 0;
 }
 
 my $ok = eval {
     die "contract path is unsafe\n" if !safe_relative_path($contract_rel);
     my $contract = read_contract(absolute($contract_rel));
+    validate_generator_contract($contract);
     my @facts = collect_facts($contract);
     my $plan = plan_projection($contract, \@facts);
     if ($mode eq 'report') {
@@ -96,8 +97,10 @@ sub read_contract {
 
     my @limit_fields = qw(
       max_facts max_question_keys max_question_bytes max_id_bytes max_path_bytes
-      max_link_line_bytes wrap_line_bytes max_shard_lines max_shard_bytes max_shards
-      max_landing_lines max_landing_bytes max_landing_line_bytes
+      max_link_line_bytes wrap_line_bytes target_shard_lines target_shard_bytes
+      max_shard_lines max_shard_bytes max_shards
+      max_projection_lines max_projection_bytes max_landing_lines max_landing_bytes
+      max_landing_line_bytes
     );
     require_exact_keys($contract->{limits}, 'shard limits', @limit_fields);
     my %hard_cap = (
@@ -108,9 +111,13 @@ sub read_contract {
         max_path_bytes => 256,
         max_link_line_bytes => 512,
         wrap_line_bytes => 512,
+        target_shard_lines => 512,
+        target_shard_bytes => 65_536,
         max_shard_lines => 512,
         max_shard_bytes => 65_536,
         max_shards => 64,
+        max_projection_lines => 32_768,
+        max_projection_bytes => 2_097_152,
         max_landing_lines => 128,
         max_landing_bytes => 16_384,
         max_landing_line_bytes => 512,
@@ -124,7 +131,34 @@ sub read_contract {
     }
     die "wrap_line_bytes must not exceed max_link_line_bytes\n"
       if $contract->{limits}{wrap_line_bytes} > $contract->{limits}{max_link_line_bytes};
+    die "target shard bounds must not exceed hard shard bounds\n"
+      if $contract->{limits}{target_shard_lines} > $contract->{limits}{max_shard_lines}
+      || $contract->{limits}{target_shard_bytes} > $contract->{limits}{max_shard_bytes};
     return $contract;
+}
+
+sub validate_generator_contract {
+    my ($contract) = @_;
+    my $generator = absolute('knowledge-map/scripts/gen_knowledge_map.sh');
+    return if !-f $generator;
+    open(my $fh, '-|', 'bash', $generator, '--print-contract')
+      or die "cannot execute Knowledge Map generator contract query: $!\n";
+    local $/;
+    my $raw = <$fh> // '';
+    close($fh) or die "Knowledge Map generator contract query failed\n";
+    my $actual = eval { JSON::PP->new->decode($raw) };
+    die "Knowledge Map generator returned invalid contract JSON\n"
+      if !$actual || ref($actual) ne 'HASH';
+    my $expected = {
+        landing_path => $contract->{landing_path},
+        shard_directory => $contract->{shard_directory},
+        shard_prefix => $contract->{shard_prefix},
+        fact_catalog => $contract->{fact_catalog},
+        limits => $contract->{limits},
+    };
+    my $json = JSON::PP->new->canonical(1);
+    die "Knowledge Map generator settings drift from doctrine/knowledge_map/shard_contract.json\n"
+      if $json->encode($actual) ne $json->encode($expected);
 }
 
 sub collect_facts {
@@ -145,12 +179,21 @@ sub collect_facts {
     my @facts;
     for my $path (sort { byte_cmp($a, $b) } @paths) {
         my $raw = slurp_raw(absolute($path));
-        my $fact = parse_fact($path, decode_utf8($raw, 1));
+        my ($text, $raw_sha256) = decode_fact_bytes($raw);
+        my $fact = parse_fact($path, $text);
         next if !defined $fact;
-        $fact->{raw_sha256} = sha256_hex($raw);
+        $fact->{raw_sha256} = $raw_sha256;
         push @facts, $fact;
     }
     return @facts;
+}
+
+sub decode_fact_bytes {
+    my ($raw) = @_;
+    my $raw_sha256 = sha256_hex($raw);
+    my $decode_input = $raw;
+    my $text = decode_utf8($decode_input, 1);
+    return ($text, $raw_sha256);
 }
 
 sub parse_fact {
@@ -246,6 +289,10 @@ sub plan_projection {
         $total_lines += $shard->{lines};
         $total_bytes += $shard->{bytes};
     }
+    die "projection set exceeds aggregate line bound\n"
+      if $total_lines + $landing_lines > $limits->{max_projection_lines};
+    die "projection set exceeds aggregate byte bound\n"
+      if $total_bytes + $landing_bytes > $limits->{max_projection_bytes};
     return {
         facts => scalar(@$facts),
         question_keys => scalar(@entries),
@@ -279,7 +326,7 @@ sub pack_shards {
         my $number = @shards + 1;
         my $text = render_shard($contract, $number, \@candidate);
         my ($lines, $bytes) = text_metrics($text);
-        if (@current && ($lines > $limits->{max_shard_lines} || $bytes > $limits->{max_shard_bytes})) {
+        if (@current && ($lines > $limits->{target_shard_lines} || $bytes > $limits->{target_shard_bytes})) {
             push @shards, finish_shard($contract, $number, \@current);
             @current = ($entry);
         } else {
@@ -457,9 +504,13 @@ sub self_test_contract {
             max_path_bytes => 64,
             max_link_line_bytes => 96,
             wrap_line_bytes => 32,
+            target_shard_lines => 10,
+            target_shard_bytes => 384,
             max_shard_lines => 12,
             max_shard_bytes => 512,
             max_shards => 10,
+            max_projection_lines => 128,
+            max_projection_bytes => 4_096,
             max_landing_lines => 32,
             max_landing_bytes => 2_048,
             max_landing_line_bytes => 256,
@@ -468,6 +519,11 @@ sub self_test_contract {
 }
 
 sub run_self_test {
+    my $utf8_bytes = encode_utf8("identity éclair\n");
+    my ($decoded, $identity) = decode_fact_bytes($utf8_bytes);
+    die "raw-content identity case failed\n"
+      if $decoded ne "identity éclair\n" || $identity ne sha256_hex($utf8_bytes);
+
     my $block = <<'FACT';
 ---
 id: alpha

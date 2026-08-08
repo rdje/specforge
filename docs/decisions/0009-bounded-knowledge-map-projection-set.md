@@ -43,6 +43,10 @@ and update every bootstrap/bundle reader in the same slice.
 - `.5d.i` changes no generator output topology; `.5d.ii` performs the atomic migration and removes the
   current transition debt only after exact reconstruction, membership, reader, and gate proofs pass.
 
+Implementation note (`2026-08-08`): `.5d.ii` landed this topology. The portable generator also
+enforces an explicit 4,096-line / 393,216-byte aggregate projection bound, tightening the original
+mathematical product of per-shard limits so unused part capacity cannot become banked growth.
+
 ## Links
 
 - `doctrine/knowledge_map/shard_contract.json`

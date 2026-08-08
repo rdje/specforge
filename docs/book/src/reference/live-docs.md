@@ -227,15 +227,14 @@ Fifty-three lifecycle/control-plane fixtures cover the positive path plus missin
 and improperly internal external-index failures. The common catalog generator adds independent
 path/title/row/member/index bounds and derive-and-diff; no generated catalog contains canonical facts.
 
-#### Knowledge Map shard contract locked
+#### Knowledge Map projection migration landed
 
-The generated question map is still one current file during the design slice, but its atomic
-migration contract is now executable. The committed entry baseline is 2,231 lines / 1,038,010 bytes
+The committed entry baseline was one 2,231-line / 1,038,010-byte generated file
 with 138 facts and 978 question rows. An audit found only 977 unique questions: the same register-bit-
 field question appeared in both a broad completeness scorecard and its focused lowering-gap card. The
 focused card now owns that key, and the contract rejects any future question with two destinations.
 
-The planned read path keeps `KNOWLEDGE_MAP.md` stable as a small landing page. It will link every
+The migrated read path keeps `KNOWLEDGE_MAP.md` stable as a small landing page. It links every
 deterministically packed `docs/knowledge-map/questions-NNNN.md` shard and the separate fact-card
 catalog. Search all questions with:
 
@@ -248,13 +247,18 @@ bytes, wrap under a fixed physical-line limit, and omit repeated date/reverify f
 remain in the linked card. The repeated generated fact section also disappears because the bounded
 fact catalog already owns id/title browsing.
 
-The pre-migration simulation proves the current 139 facts / 980 unique questions fit in six shards.
-The landing is 18 lines / 832 bytes; the largest shard is 384 lines / 35,724 bytes, and the complete
-question set is 1,991 lines / 183,441 bytes. Independent limits govern input ids, paths, question
-bytes, line width, files, lines, and bytes. A SHA-256 identity covers participating canonical paths
-and content, and eight focused cases prove parsing, collision rejection, ordering, wrapping, rollover,
-and bounds. The output topology itself changes only in the next atomic migration slice, together with
-all bootstrap, hook, CI, bundle, and doctrine readers.
+The current 139 facts / 981 unique questions occupy seven shards.
+The landing is 19 lines / 898 bytes; the largest shard is 300 lines / 30,427 bytes, and the complete
+question set is 2,000 lines / 183,756 bytes. Independent limits govern input ids, paths, question
+bytes, line width, files, lines, and bytes; explicit 4,096-line / 393,216-byte aggregate caps prevent
+unused per-shard capacity from becoming banked growth. A SHA-256 identity covers participating paths
+and content. The hook stages every current output and tracked deletion, while the checker regenerates
+under repository-local `generated/` and compares exact root/shard membership plus content. Eight
+contract cases, eight portable-bundle integration cases, and the common lifecycle suite prove parsing,
+collision rejection, ordering, wrapping, rollover, stale cleanup/staging, bounds, drift, and no
+temporary residue. A ninth contract case guards raw-byte identity after the initial simulator was
+found hashing scalars consumed by checked UTF-8 decoding. Every bootstrap, CI, bundle, doctrine, and mdBook reader moved in the same slice;
+the generated surface is now normal rather than transition debt.
 
 Lines, bytes, file count, collection totals, and maximum content-line width are independent axes.
 Existing oversized ledgers are explicit transition debt: their measured baseline cannot move, and a

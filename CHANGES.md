@@ -1,3 +1,17 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d.ii — migrate the bounded Knowledge Map projection
+
+- Replaced the 1,038,010-byte monolith with its stable 19-line / 898-byte landing and seven generated
+  question shards: 139 facts / 981 unique questions, 2,000 shard lines / 183,756 shard bytes, one
+  direct canonical fact link per key, and no repeated metadata or duplicate generated fact catalog.
+- Rebuilt the portable generator/checker around deterministic whole-entry packing, independent input/
+  part/landing/aggregate bounds, repository-local sibling/check workspaces, exact membership/content
+  derive-and-diff, deletion-aware hook staging, and exact obsolete-shard cleanup. Nine contract cases,
+  eight bundle integration cases, and the 55-case common lifecycle suite run unconditionally.
+- Root-caused and fixed a simulator identity defect before signoff: checked Perl UTF-8 decoding consumed
+  the raw scalar before hashing, so the old digest did not cover content. Raw bytes are now hashed first;
+  independent simulator/generator identities match. The generated surface is normal under complete
+  landing membership and sharply lower byte/width ceilings.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d.i — bounded Knowledge Map projection contract
 
 - Locked ADR 0009 and an executable, repository-local shard contract before changing the portable

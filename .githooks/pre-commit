@@ -8,10 +8,12 @@
 set -euo pipefail
 ROOT="$(git rev-parse --show-toplevel)"
 
-# KNOWLEDGE-MAP is DERIVED — regenerate + stage it so map drift is structurally impossible, BEFORE
-# the driver's check_knowledge_map.sh validates that it is in sync.
+# KNOWLEDGE-MAP is DERIVED — regenerate + stage its complete landing/shard set (including stale-shard
+# deletions) BEFORE the driver's check_knowledge_map.sh validates exact membership and content.
 "$ROOT/knowledge-map/scripts/gen_knowledge_map.sh" >/dev/null
-git add "$("$ROOT/knowledge-map/scripts/gen_knowledge_map.sh" --print-map-path)" 2>/dev/null || true
+while IFS= read -r output; do
+  [ -n "$output" ] && git add -A -- "$output"
+done < <("$ROOT/knowledge-map/scripts/gen_knowledge_map.sh" --print-output-paths)
 
 # The single general doctrine enforcer (registry + driver) — runs ALL registered check_*.sh and
 # reports per-doctrine PASS/FAIL.

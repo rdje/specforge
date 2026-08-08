@@ -123,12 +123,12 @@ A resume reads A + one unit of B + a few C records — never a monolith.
 **Composed retrieval layer — the Knowledge Map.** The layers above are organised by
 *lifecycle* (now / work / decisions / history); retrieval, though, is organised by
 *question*. The **Knowledge Map** (`knowledge-map/KNOWLEDGE_MAP_ARCHITECTURE.md`, the `knowledge-map/`
-bundle) adds exactly that cross-cut: a machine-derived, question-keyed index
-(`KNOWLEDGE_MAP.md`) over small front-mattered fact cards (`docs/knowledge/`, plus any
+bundle) adds exactly that cross-cut: a bounded machine-derived landing (`KNOWLEDGE_MAP.md`) over
+deterministic question shards and small front-mattered fact cards (`docs/knowledge/`, plus any
 `docs/decisions/` record given an `answers:` block). Before re-deriving any fact from code
 or runtime, grep it — re-deriving an already-logged fact is *archaeology*. It is **additive**
 (replaces nothing, converts nothing), **derived** (never hand-edited), and gated by the same
-pre-commit hook + `run_ci.sh` step as this architecture (so it cannot drift). Write a card
+pre-commit hook + `run_ci.sh` step as this architecture (exact shard membership/content cannot drift). Write a card
 lazily — when a durable fact is established or archaeology is caught.
 
 ---

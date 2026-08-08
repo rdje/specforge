@@ -57,7 +57,7 @@ other re-derivable trace.
 | Doctrine | Kind | Proves |
 |---|---|---|
 | `MEMORY-ARCH` | structural | the durable 4-layer memory architecture invariants — the standard is present, `MEMORY.md` is a bounded resume pointer, the bootstrap files route to it, the task-tree and decision layers exist |
-| `KNOWLEDGE-MAP` | structural | the question-keyed Knowledge Map is regenerated and in sync with its fact cards (so it cannot drift) |
+| `KNOWLEDGE-MAP` | structural | the bounded landing and exact question-shard membership/content regenerate from fact cards without drift |
 | `TASK-ACCEPTANCE` | evidence | a Rust code change is owned by a task-tree leaf whose acceptance checklist is ticked **and** backed by real SpecForge tool output |
 | `README-POLICY` | structural | the project landing page stays within its locally derived line and byte ceilings, and every reader or author-overflow route closes at a registered, controlled terminal |
 | `LIVE-DOC-SIZE` | structural | every tracked Markdown path is classified exactly once and satisfies lifecycle-specific locality, size, index, currency, frozen-content, transition-debt, maintained-reference, and ceiling-authority rules |
@@ -66,6 +66,11 @@ The README guard is unconditional: it evaluates the resulting tree even when a c
 `README.md`. Its data-only route registry distinguishes links readers follow from destinations authors
 may use for changing detail, and rejects missing, off-repository, duplicated, or uncontrolled routes.
 The project-owned normative contract is `README_POLICY.md`.
+
+The live-document gate runs 55 common lifecycle/control cases plus the projection-specific Knowledge
+Map contract and portable-bundle integration suite. Generated collections must have complete landing
+membership, exact derive-and-diff content, bounded repository-local check workspaces, and no stale
+parts or temporary residue.
 
 The live-document checker is also unconditional. Its JSONL registry is the data-only authority for
 the complete tracked Markdown set, while `LIVE_DOCUMENT_SIZE_CONTAINMENT.md` explains the neutral

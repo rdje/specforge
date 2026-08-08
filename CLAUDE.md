@@ -3,8 +3,8 @@
 Follow **`AGENTS.md`** (the tool-neutral agent bootstrap). Start by reading
 **`README.md`** and **`MEMORY_ARCHITECTURE.md`**, then resume from **`MEMORY.md`**.
 
-Before re-deriving any fact from code or runtime, check **`KNOWLEDGE_MAP.md`** (grep your
-question → follow the one pointer → trust the dated fact or run its `reverify`); write a fact
+Before re-deriving any fact from code or runtime, open **`KNOWLEDGE_MAP.md`** and use its command to
+grep all question shards (question → one pointer → dated fact or `reverify`); write a fact
 card under `docs/knowledge/` when you establish a durable fact or catch archaeology
 (`knowledge-map/KNOWLEDGE_MAP_ARCHITECTURE.md`).
 

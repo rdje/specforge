@@ -14,6 +14,7 @@ reverify: test -f knowledge-map/KNOWLEDGE_MAP_ARCHITECTURE.md && test ! -e KNOWL
 
 The canonical architecture document is
 `knowledge-map/KNOWLEDGE_MAP_ARCHITECTURE.md`, inside the portable bundle. Root
-`KNOWLEDGE_MAP.md` is the derived projection; there is no root architecture file. Bootstrap and
+`KNOWLEDGE_MAP.md` is the bounded landing for the derived question-shard projection set; there is no
+root architecture file. Bootstrap and
 navigation references must use the bundle-relative path. The README route guard exposed and now
 prevents this stale-root-path failure for the public landing page.

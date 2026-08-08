@@ -16,17 +16,16 @@
   ROADMAP↔code↔mdBook drift; push ~every 200 commits; artifact cleanup ≥ every 24h).
 - Before committing run `scripts/check_doctrines.sh` (the registry/driver for memory,
   knowledge-map, task-acceptance, README policy, and live-document containment); hooks + CI
-  run it too. Retrieval: `KNOWLEDGE_MAP.md`.
+  run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d.ii` — next clean-tree leaf; activate it only
-  after the `.5d.i` commit is durable.
-- Current state: `.0`–`.5c` and `.5d.i` are complete. ADR 0009 plus the executable shard contract lock
-  one bounded Knowledge Map landing and deterministic direct-link question shards. The current 139
-  facts / 980 unique keys fit in six simulated shards; eight focused and 55 common lifecycle cases run
-  unconditionally. The live generator/topology remains current `.5d` transition debt until `.5d.ii`.
-- Next action: activate `.5d.ii`; atomically migrate the portable generator/checker, hook staging,
-  complete root/shard membership, obsolete-shard cleanup, doctrine surface, and every reader literal.
-- In-flight uncommitted: `.5d.i` contract, collision correction, and synchronized docs until commit;
-  none afterward.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.i` — next clean-tree leaf; activate it only
+  after the `.5d.ii` commit is durable.
+- Current state: `.0`–`.5d` are complete. The Knowledge Map is a normal eight-file generated
+  projection: 19-line landing plus seven bounded shards, 139 facts / 981 unique question keys, exact
+  membership/content freshness, raw path/content identity, and deletion-aware hook staging.
+- Next action: activate `.5e.i`; measure ROADMAP semantic/current-history boundaries, readers, exact
+  source identity, and a lossless bounded current/history design before moving any roadmap record.
+- In-flight uncommitted: `.5d.ii` generator/checker/hook, seven shards, identity correction, surface
+  ratchet, tests, and synchronized readers until commit; none afterward.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

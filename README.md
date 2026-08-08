@@ -108,7 +108,7 @@ For contributors and project continuity:
 - [Commit workflow](COMMIT.md)
 - [Memory architecture](MEMORY_ARCHITECTURE.md) and bounded [resume pointer](MEMORY.md)
 - [Knowledge-map architecture](knowledge-map/KNOWLEDGE_MAP_ARCHITECTURE.md), bounded
-  [fact-card catalog](docs/knowledge/INDEX.md), and generated [question map](KNOWLEDGE_MAP.md)
+  [fact-card catalog](docs/knowledge/INDEX.md), and generated [question-search landing](KNOWLEDGE_MAP.md)
 - [Doctrine enforcement](DOCTRINE_ENFORCEMENT.md) and [diagnostic toolbox](TOOLBOX.md)
 - [README stability policy](README_POLICY.md)
 - [Live-document containment doctrine](LIVE_DOCUMENT_SIZE_CONTAINMENT.md)

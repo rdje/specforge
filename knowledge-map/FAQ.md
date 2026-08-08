@@ -103,14 +103,14 @@ Only if you hand-maintain it — which you must not. Separate the two costs:
 - **Generation cost** (a script scanning files) — milliseconds, paid by the **machine** in
   the pre-commit hook, never by the workflow or the agent.
 
-The map is a derived build artifact: the hook regenerates and `git add`s it every commit, so
-it is always in sync and you spend zero time on it.
+The bounded landing and question shards are derived build artifacts: the hook regenerates and stages
+the exact set (including shard deletions) every commit, so they stay in sync at zero manual cost.
 
 ---
 
 ## "Won't the map get huge and slow to read?"
 
-It is a flat, sorted, greppable list — an agent jumps to the matching question line, it does
-not read top-to-bottom. And because facts are atomic and front-mattered, an agent can skip
-the map entirely and grep the fact files directly. The map is a convenience cache, not a
-load-bearing dependency.
+The landing stays small and links deterministic bounded shards. Search them in one command:
+`rg -i --glob 'questions-*.md' 'terms' docs/knowledge-map`. Each question points directly to one
+canonical card. Because facts remain atomic and front-mattered, an agent can also grep them directly;
+the generated projection is a convenience cache, not a load-bearing dependency.

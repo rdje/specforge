@@ -4,7 +4,7 @@
 # Idempotent. Run from any repo that has copied the knowledge-map/ bundle into its root:
 #   bash knowledge-map/install.sh
 #
-# It: creates the fact dir, generates the first map, and PRINTS the hook + CI wiring for you
+# It: creates the fact dir, generates the first bounded projection, and PRINTS the hook + CI wiring
 # to apply (it does NOT silently rewrite your .githooks/pre-commit or CI — those are yours).
 set -euo pipefail
 
@@ -27,7 +27,7 @@ if [ ! -d "$first_dir" ]; then
   printf 'install: created %s/\n' "$first_dir"
 fi
 
-# 2) generate the first map
+# 2) generate the first landing/shard set
 bash "$SCRIPT_DIR/scripts/gen_knowledge_map.sh"
 
 # 3) validate

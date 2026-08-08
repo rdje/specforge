@@ -23,9 +23,9 @@ Other harnesses' bootstrap files (`CLAUDE.md`, `.cursorrules`,
 4. Open the active **task-tree** under `docs/tasks/` (index: `docs/TASK_TREE.md`); its
    frontier row is your precise next step.
 5. Pull only the relevant **decision records** under `docs/decisions/`.
-6. **Before re-deriving any fact from code or runtime, check `KNOWLEDGE_MAP.md`** — grep your
-   question, follow the one pointer to the canonical home, and trust the dated fact or run its
-   `reverify` command. Re-deriving a fact that was already logged once is *archaeology*
+6. **Before re-deriving any fact from code or runtime, open `KNOWLEDGE_MAP.md`** — use its bounded
+   landing command to grep all question shards, follow the one pointer to the canonical home, and
+   trust the dated fact or run its `reverify` command. Re-deriving a fact that was already logged is *archaeology*
    (`knowledge-map/KNOWLEDGE_MAP_ARCHITECTURE.md`).
 
 ## Non-negotiable working rules
@@ -46,8 +46,8 @@ Other harnesses' bootstrap files (`CLAUDE.md`, `.cursorrules`,
 - **Write a Knowledge Map fact card** (`docs/knowledge/<id>.md`, front-matter with an
   `answers:` list of the questions an agent would grep) whenever you establish a durable
   structural/causal fact, or catch yourself re-deriving one — so the next session finds it
-  instead of excavating it. The map (`KNOWLEDGE_MAP.md`) is **derived + gated**; never
-  hand-edit it. See `knowledge-map/KNOWLEDGE_MAP_ARCHITECTURE.md`.
+  instead of excavating it. The landing and question shards are **derived + gated**; never hand-edit
+  `KNOWLEDGE_MAP.md` or `docs/knowledge-map/questions-*.md`. See the bundle architecture.
 
 ## Enforcement (why this is hard to ignore)
 
@@ -56,5 +56,5 @@ Other harnesses' bootstrap files (`CLAUDE.md`, `.cursorrules`,
 activate once with `git config core.hooksPath .githooks`), and the CI step (the
 un-bypassable backstop). The same driver enforces the bounded README/route policy, complete
 live-document registry, and composed **Knowledge Map** gate;
-`knowledge-map/scripts/check_knowledge_map.sh` regenerates + validates the derived map
-(derive-and-diff), so it cannot drift.
+`knowledge-map/scripts/check_knowledge_map.sh` regenerates + validates exact landing/shard membership
+and content (derive-and-diff), so the projection cannot drift.
