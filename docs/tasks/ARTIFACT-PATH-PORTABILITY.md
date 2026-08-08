@@ -55,7 +55,10 @@ validation, learning, or recovery workflows.
 - ID: `ARTIFACT-PATH-PORTABILITY.3` · Status: `done` (`2026-08-08`; depends on `.2`) · Goal: migrate SemanticIR,
   IntentIR, adapter, validation, project-validation, learning, recovery, and convergence consumers to the
   common path contract without losing cross-stage checks.
-- ID: `ARTIFACT-PATH-PORTABILITY.4` · Status: `pending` (depends on `.3`) · Goal: add the fail-closed
+- ID: `ARTIFACT-PATH-PORTABILITY.3a` · Status: `done` (`2026-08-08`; depends on `.3`) · Goal: repair the stale
+  root locality-standard assertion found by the post-commit cold read and audit current-facing portability
+  claims before present-data work begins; no Rust or generated-data change.
+- ID: `ARTIFACT-PATH-PORTABILITY.4` · Status: `pending` (depends on `.3a`) · Goal: add the fail-closed
   producer/present-artifact locality gate and migrate or rebuild the current 700 MiB generated tree with exact
   copy/verify/use/delete evidence; leave zero deleted-root references.
 - ID: `ARTIFACT-PATH-PORTABILITY.5` · Status: `pending` (depends on `.4`) · Goal: cold-read every path
@@ -127,11 +130,28 @@ validation, learning, or recovery workflows.
   generated-artifact book chapters, pipeline chapters, and resume pointer agree that code activation is complete
   and `.4` exclusively owns present-data migration plus residue enforcement.
 
+## Acceptance Checklist (enforced) — `ARTIFACT-PATH-PORTABILITY.3a`
+
+- [x] **REPRODUCE / MEASURE** — the post-commit cold read found one current root assertion claiming downstream
+  activation remained open; a repository-wide current-facing phrase audit found no equivalent stale claim
+  outside the explicitly time-layered `.2` architecture/status records.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `.3` aligned the roadmap, book, Knowledge Map, live status, and Rust
+  analysis but omitted `PROJECT_DATA_LOCALITY.md` from the final changed-file set even though its current
+  required-roots paragraph still described the `.2` frontier.
+- [x] **ADDRESSED (verified)** — the root standard now names every activated canonical stage, typed prior
+  memory, and consumer I/O seam while reserving only the unchanged present generated corpus for `.4`.
+- [x] **NO REGRESSION** — no Rust, generated artifact, extraction fact, or book content changed; the complete
+  mdBook doctest/build entrypoint and all six doctrines pass.
+- [x] **GENERICITY** — the corrected standard describes typed stage/consumer roles and the active leaf, without
+  a workstation root, document key, protocol, vendor, fixture, or special-case path.
+- [x] **LOCKSTEP** — root locality standard, roadmap, book, Knowledge Map, Rust analysis, live ledgers,
+  task tree, and resume pointer agree that code activation is complete and `.4` alone owns present-data work.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `ARTIFACT-PATH-PORTABILITY.4` | `pending` | Migrate data now that every canonical stage can safely read old and new forms. |
+| 1 | `ARTIFACT-PATH-PORTABILITY.4` | `pending` | Migrate data now that code and every current authority agree on readiness. |
 | 2 | `ARTIFACT-PATH-PORTABILITY.5` | `pending` | Independent closure proves no path or documentation surface escaped. |
 
 ## Decisions
@@ -167,6 +187,9 @@ validation, learning, or recovery workflows.
 - `2026-08-08`: Keep ambiguity fail-closed. A focused recovery probe initially matched both `.project-data`
   and `generated` suffixes because both exact targets existed; the resolver correctly refused to guess, and the
   isolated one-target command seam proves legacy argument rebasing separately.
+- `2026-08-08`: A post-`.3` commit cold read found `PROJECT_DATA_LOCALITY.md` still describing downstream
+  activation as pending. Treat that as a lockstep defect, open `.3a` before `.4`, audit equivalent live claims,
+  and correct only current authority; the committed `.3` behavior and generated corpus remain unchanged.
 
 ## Open Questions
 
@@ -185,6 +208,7 @@ validation, learning, or recovery workflows.
 | `2026-08-08` | `.1` | 13 focused codec/resolver cases; full Rust suite; `cargo fmt --check`; all-target `clippy -D warnings`; doctrines; mdBook | 1,748 pass / 5 ignored; contract and all gates pass; no IR/generated mutation |
 | `2026-08-08` | `.2` | Source/Evidence legacy + persisted/runtime cases; PDF/visual/convergence/KG checks; full CI | 6/6 doctrines; 1,753 pass / 5 ignored; rustdoc/book/locality pass; no generated mutation |
 | `2026-08-08` | `.3` | downstream persisted/runtime/legacy fixture; prior-learning and recovery command cases; project-validation/validation; 156 KG fixtures; fmt/Clippy; 1,763-test suite; full CI | 1,758 pass / 5 ignored; all focused/full gates pass; generated corpus unchanged |
+| `2026-08-08` | `.3a` | current-facing portability phrase audit; canonical docs entrypoint; all doctrines | one stale root authority corrected; mdBook doctest/build and 6/6 doctrines pass; no code/data change |
 
 ## Commit Log
 
@@ -194,6 +218,7 @@ validation, learning, or recovery workflows.
 | `.1` | `ARTIFACT-PATH-PORTABILITY.1 — land the move-safe path contract` | Common seam only; `.2` activates it in SourceIR/EvidenceIR. |
 | `.2` | `ARTIFACT-PATH-PORTABILITY.2 — make Source and Evidence paths portable` | First two stages serialize relative and load runtime paths; `.3` owns downstream activation. |
 | `.3` | `ARTIFACT-PATH-PORTABILITY.3 — make downstream artifact paths portable` | Canonical stages/consumers activated; `.4` owns data migration and enforcement. |
+| `.3a` | `ARTIFACT-PATH-PORTABILITY.3a — reconcile the root locality authority` | Corrective lockstep leaf; `.4` remains the first generated-data mutation. |
 
 ## Changelog
 
@@ -208,3 +233,6 @@ validation, learning, or recovery workflows.
 - `2026-08-08`: Activated the same contract across SemanticIR, IntentIR, adapters, typed prior-memory sources,
   and validation/learning/recovery/project-validation/convergence consumers. All canonical stage producers now
   emit move-safe paths; current generated data remains unchanged for the verified `.4` migration.
+- `2026-08-08`: Corrected the root locality standard's stale `.2` frontier after the `.3` cold read and audited
+  equivalent current-facing claims. Product behavior, generated data, and already-current book content did not
+  change.

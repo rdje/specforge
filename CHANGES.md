@@ -1,3 +1,11 @@
+### ARTIFACT-PATH-PORTABILITY.3a — reconcile the root locality authority
+
+- Corrected the root project-data locality standard after the post-`.3` cold read found it still describing
+  downstream path activation as pending. The standard now matches the committed canonical-stage, prior-memory,
+  and consumer boundaries while keeping the unchanged 335-file generated corpus explicitly owned by `.4`.
+- Audited current-facing portability claims outside sealed history; no equivalent stale assertion remained.
+  This corrective leaf changes no Rust behavior, generated artifact, extraction fact, or public book content.
+
 ### ARTIFACT-PATH-PORTABILITY.3 — make downstream artifact paths move-safe
 
 - Extended the common storage/runtime path boundary through SemanticIR, IntentIR, adapter reports, and typed
