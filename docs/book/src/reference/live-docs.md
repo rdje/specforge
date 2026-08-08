@@ -10,19 +10,45 @@ These are separate documentation planes.
 
 Both matter, but they are not interchangeable.
 
-## Containment adoption in progress
+## Containment doctrine active; migrations in progress
 
-SpecForge is adopting a bounded-live-document architecture under
+SpecForge enforces a bounded-live-document architecture under
 `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`. The purpose is not to reduce durable
 information or user documentation. It is to separate bounded current views,
 maintained reference prose, generated projections, rolling chronology, and
 retrievable history so no mandatory read grows forever.
+
+The project-owned authority is `LIVE_DOCUMENT_SIZE_CONTAINMENT.md`. A complete JSONL registry
+classifies every parent-tracked Markdown path exactly once, and the `LIVE-DOC-SIZE` doctrine check
+re-derives the resulting-tree metrics on every commit and CI run. The pinned FSMGen submodule is a
+separate Git authority and is not swept into SpecForge's registry.
 
 Until each migration leaf lands, the existing root documents remain the
 authoritative surfaces described below. No historical content is removed before
 its identity, replacement route, consumers, and retrieval procedure are proved.
 The top-level README will remain a first-class landing page; changing detail and
 chronology will route to controlled canonical destinations.
+
+### Lifecycle controls
+
+Every surface declares one of seven lifecycles:
+
+- a `bounded_snapshot` is overwritten or reviewed in place under independent line, byte, and
+  line-width ceilings;
+- a `rolling_ledger` must roll whole records into indexed durable history before its live window
+  becomes unbounded;
+- a `partitioned_canonical` collection keeps bounded parts, count/aggregate controls, and an index or
+  deterministic query contract;
+- a `generated_projection` has both size ceilings and a freshness verifier against canonical inputs;
+- a `frozen_legacy` record is hash-locked, while an `archive_terminal` is governed by an immutable
+  manifest and is never an author-overflow destination;
+- a `maintained_reference`, such as this mdBook, keeps bounded directly indexed semantic parts while
+  exact task-owned aggregate-change authority permits legitimate product-scope evolution.
+
+Lines, bytes, file count, collection totals, and maximum content-line width are independent axes.
+Existing oversized ledgers are explicit transition debt: their measured baseline cannot move, and a
+separate bounded allowance exists only for the containment program's continuity updates until the
+owning migration lands. A legacy ceiling is not advertised as health.
 
 Documentation synchronization is now impact-based. Every completed slice updates
 its owning task-tree leaf. Other surfaces change only when their own truth changes:
@@ -65,7 +91,7 @@ It should explain:
 - how to run and inspect the tool
 - how validation and learning are supposed to behave
 
-The root live docs are allowed to be more operational.
+The root live docs are more operational, but they are still governed.
 They track:
 
 - current baseline scores
@@ -75,14 +101,18 @@ They track:
 - recent decisions
 - crash recovery breadcrumbs
 
-That means root docs may mention temporary states, current artifacts, local blockers, or implementation details that would be too noisy for the public book.
+That means root docs may mention temporary states, current artifacts, local blockers, or implementation
+details that would be too specific for the public book. It does not mean one mandatory file may grow
+forever; chronology and large evidence move to indexed, query-first storage at lifecycle boundaries.
 
 ## Why the split exists
 
 The book is what the world should see.
 It should explain the product clearly and transparently.
 
-The root docs need to stay live, operational, and sometimes noisy, because they are part of the project’s continuity system for active development and session recovery.
+The root docs stay live and operational because they are part of the project's continuity system for
+active development and session recovery. Their working sets remain bounded; durable detail stays
+recoverable through the registered task, decision, fact, shard, projection, or Git-history route.
 
 ## What belongs in the book
 
@@ -115,7 +145,9 @@ The root live docs are the right place for:
 - local runtime findings
 - warnings about artifact freshness
 
-Those docs can be more detailed, more current, and less polished because their main job is continuity.
+Those docs can be more current and operational because their main job is continuity. Detail still has
+to obey the registered lifecycle: update a bounded snapshot, append only within a rolling window,
+partition canonical evidence, or route exact history to its controlled terminal.
 
 ## When to update both
 

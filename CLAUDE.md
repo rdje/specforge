@@ -13,5 +13,5 @@ doctrine in `docs/decisions/0003-task-tree-and-commit-doctrine.md`); route every
 thing to a memory layer and commit per `COMMIT.md`. Doctrines are **mechanically enforced**
 (`DOCTRINE_ENFORCEMENT.md`, the 4th portable architecture): run `scripts/check_doctrines.sh`
 before committing — the registry/driver that runs every doctrine check (memory-arch,
-knowledge-map, task-acceptance, README-policy); hooks + CI run it too. A Rust code change must carry an
+knowledge-map, task-acceptance, README-policy, live-document-size); hooks + CI run it too. A Rust code change must carry an
 evidence-backed acceptance checklist in its task leaf (template in `TOOLBOX.md`).

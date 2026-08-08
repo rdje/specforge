@@ -139,13 +139,13 @@ verification before correction.
   contract. This leaf changes no active doctrine or enforcement registry.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3b`
-  Status: `in_progress`
+  Status: `done` (`2026-08-08`)
   Goal: atomically adopt the SpecForge-owned neutral containment doctrine and ADR, populate the
   complete data-only surface registry, implement the deterministic resulting-tree checker, and wire
   it into the doctrine driver so the prose rule is never active without its gate.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3c`
-  Status: `pending`
+  Status: `in_progress`
   Goal: exercise positive and fail-closed checker paths for every lifecycle/control class, close the
   README route registry against the complete surface registry, update contributor/book guidance,
   and verify the full `.3` acceptance contract before migration begins.
@@ -190,8 +190,8 @@ verification before correction.
 | — | `.1` | `done` (`2026-08-08`) | Pointer semantics and impact-based documentation routing are now explicit and mechanically checked. |
 | — | `.2` | `done` (`2026-08-08`) | The retained landing page, local policy, route registry, and unconditional doctrine guard are live. |
 | — | `.3a` | `done` (`2026-08-08`) | Complete 550-file inventory, lifecycle mapping, schema, ceiling, and checker contracts are locked. |
-| 1 | `.3b` | `in_progress` | Adopt the doctrine, complete registry, checker, ADR, and driver registration as one atomic gated unit. |
-| 3 | `.3c` | `pending` | Prove every lifecycle path fails closed and close route/surface integration. |
+| — | `.3b` | `done` (`2026-08-08`) | Doctrine, ADR, 24-surface registry, resulting-tree checker, and fifth driver entry are active atomically. |
+| 1 | `.3c` | `in_progress` | Prove every lifecycle path fails closed and close route/surface integration. |
 | 4 | `.4` / `.5` / `.6` | `pending` | Independently committable migrations and locality enforcement after the common contract exists. |
 | 5 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
@@ -256,6 +256,29 @@ verification before correction.
   matched by two surface records is a hard failure. Every nullable limit must be justified by a
   lifecycle-specific authority contract, and every generated/current claim names a runnable verifier
   or explicit transition debt.
+- `2026-08-08`: **Continuity allowance is separate from the immutable debt baseline (`.3b`
+  correction).** `.3a`'s shorthand “zero growth” was too strong for the containment program's own
+  mandatory task/status/book updates before each `.4`/`.5` migration. The baseline remains exact and
+  never moves; only a separately bounded `transition.max_growth`, owned by this umbrella and enforced
+  per dimension, may carry those continuity records. This is not health and does not authorize
+  unrelated growth.
+- `2026-08-08`: **The complete registry has 24 non-overlapping surfaces (`.3b`).** It classifies the
+  final 553-file resulting set, including the new doctrine and ADR. Heterogeneous root files are
+  exact-target records; homogeneous collections use closed patterns. Book aggregate authority is
+  measured against `bc7546b3` and records the exact `.3b` line/byte delta.
+- `2026-08-08`: **The checker is a local implementation, not a donor dependency (`.3b`).** Core Perl
+  JSON::PP/Digest::SHA plus a path-resolving shell adapter validate registry self-bounds, safe paths,
+  exactly-once coverage, all independent dimensions, lifecycle fields, index membership/query
+  contracts, executed generated freshness, currency debt, frozen hashes, immutable baselines,
+  maintained-reference authority, README routes, and ceiling-increase authority. It mutates nothing.
+- `2026-08-08`: **Resulting-tree enforcement found two pre-existing classification drifts (`.3b`).**
+  Thirteen nested `docs/research/grounding/*.md` files required recursive collection coverage, and
+  `docs/decisions/INDEX.md` omitted the existing genericity ADR because two historical records share
+  the `0006` prefix. The registry pattern and index now include both; no file was deleted or renamed.
+- `2026-08-08`: **Currentness is claimed only where proved (`.3b`).** The Knowledge Map's existing
+  derive-and-diff check is executed. Validation snapshot, source registry, and corpus-KB currency are
+  labelled owned transition debt until `.5` supplies non-mutating currentness oracles; presence alone
+  is not called freshness.
 
 ## Blockers
 
@@ -351,6 +374,8 @@ transition debt, not a fabricated freshness claim.
 | `2026-08-08` | `.2` | neutral-body `diff -u` against the reviewed FSMGen policy; `bash knowledge-map/scripts/gen_knowledge_map.sh`; `bash scripts/run_docs_ci.sh`; `git diff --check`; pointer/README/policy census | green: neutral body byte-equivalent after the fenced local note; derived map 129 facts/947 question keys; mdBook writes under repository-local `generated/mdbook/specforge`; diff clean; pointer and README remain within enforced bounds |
 | `2026-08-08` | `.3a` | parent `git ls-files '*.md'` exactly-once family census; per-family/per-file `wc` and byte-width scan; submodule authority check | 550 files / 132,211 lines / 12,253,499 bytes at entry; 13 mutually exclusive families; largest file `CHANGES.md` 32,626 lines / 2,624,882 bytes; widest line `docs/TASK_TREE.md` 18,932 bytes; submodule excluded by parent index |
 | `2026-08-08` | `.3a` | lifecycle/route/storage topology review against the fully read neutral doctrine and adoption guide; `perl -MJSON::PP` availability probe; Knowledge Map regeneration; `bash scripts/check_doctrines.sh`; `bash scripts/run_docs_ci.sh`; `git diff --check` | local JSONL schema/checker contract locked; core parser available; map 130 facts/950 question keys; active doctrine unchanged pending atomic `.3b`; doctrines 4/4, docs, and diff green |
+| `2026-08-08` | `.3b` | neutral-body `diff -u` against reviewed doctrine; `perl -c scripts/check_live_document_size.pl`; `bash -n scripts/check_live_document_size.sh`; complete checker `--report`; final `bash scripts/check_live_document_size.sh` | neutral body byte-equivalent after local note; 553 Markdown files classified exactly once across 24 surfaces; no off-root target, overlap, missing path, size-ceiling, lifecycle, index, route, freshness, frozen-hash, debt, reference-authority, or increase-authority violation |
+| `2026-08-08` | `.3b` | Knowledge Map regeneration; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --check`; registry/authority raw-size census | green: map 131 facts/954 question keys; doctrines 5/5 including `LIVE-DOC-SIZE`; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; diff clean; both JSONL registries remain within their own record/file ceilings |
 
 ## Commit Log
 
@@ -360,6 +385,7 @@ transition debt, not a fabricated freshness claim.
 | `.1` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.1 — stabilize pointer and commit semantics` | impact-based doc routing + stronger bounded-pointer check |
 | `.2` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.2 — bound the README and close its routes` | project-owned policy + retained landing page + unconditional doctrine guard |
 | `.3a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3a — lock the complete surface contract` | full tracked-Markdown census + local lifecycle/schema/checker design; no active doctrine change |
+| `.3b` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3b — activate complete live-document enforcement` | neutral doctrine + ADR + 24-surface registry + checker + fifth driver entry |
 
 ## Changelog
 
@@ -376,3 +402,6 @@ transition debt, not a fabricated freshness claim.
 - `2026-08-08`: `.3a` decomposed the full enforcement slice, classified all 550 tracked Markdown
   files, and locked the SpecForge-local lifecycle, registry, ceiling/debt, route, and fail-closed
   checker contract without prematurely activating the doctrine.
+- `2026-08-08`: `.3b` atomically activated the project-owned neutral doctrine, ADR 0007, complete
+  24-surface JSONL data plane, deterministic checker, route composition, and `LIVE-DOC-SIZE` driver
+  entry; it also repaired nested research coverage and the missing genericity-ADR index entry.

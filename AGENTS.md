@@ -16,6 +16,8 @@ Other harnesses' bootstrap files (`CLAUDE.md`, `.cursorrules`,
      mechanically-gated check run from one registry/driver (`scripts/check_doctrines.sh`). The
      diagnostic toolbox + the acceptance-checklist template a code change must satisfy live in
      **`TOOLBOX.md`**.
+   - and **`LIVE_DOCUMENT_SIZE_CONTAINMENT.md`** — lifecycle and size controls for every tracked
+     live-document surface.
 3. Resume from **`MEMORY.md`** — the bounded resume pointer: active unit/current state, the
    single next action, any in-flight uncommitted work, and blockers. Query revision truth from Git.
 4. Open the active **task-tree** under `docs/tasks/` (index: `docs/TASK_TREE.md`); its
@@ -52,6 +54,7 @@ Other harnesses' bootstrap files (`CLAUDE.md`, `.cursorrules`,
 `MEMORY_ARCHITECTURE.md` §9 wires four gates: these bootstrap pointers (discovery),
 `scripts/check_memory_architecture.sh` (the invariants), `.githooks/` (local gate —
 activate once with `git config core.hooksPath .githooks`), and the CI step (the
-un-bypassable backstop). The same driver enforces the bounded README/route policy and the composed
-**Knowledge Map** gate; `knowledge-map/scripts/check_knowledge_map.sh` regenerates + validates the
-derived map (derive-and-diff), so it cannot drift.
+un-bypassable backstop). The same driver enforces the bounded README/route policy, complete
+live-document registry, and composed **Knowledge Map** gate;
+`knowledge-map/scripts/check_knowledge_map.sh` regenerates + validates the derived map
+(derive-and-diff), so it cannot drift.

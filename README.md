@@ -110,6 +110,7 @@ For contributors and project continuity:
   [knowledge map](KNOWLEDGE_MAP.md)
 - [Doctrine enforcement](DOCTRINE_ENFORCEMENT.md) and [diagnostic toolbox](TOOLBOX.md)
 - [README stability policy](README_POLICY.md)
+- [Live-document containment doctrine](LIVE_DOCUMENT_SIZE_CONTAINMENT.md)
 
 ## Contributing and support
 

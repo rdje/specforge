@@ -12,4 +12,4 @@ Non-negotiable: no code change without an owning task-tree leaf first (`docs/tas
 doctrine in `docs/decisions/0003-task-tree-and-commit-doctrine.md`); route every durable
 thing to a memory layer and commit per `COMMIT.md` with the work-unit id in the subject;
 run `scripts/check_doctrines.sh` before committing (memory, knowledge-map, task-acceptance,
-and README-policy checks; git hooks + CI enforce it).
+README-policy, and live-document-size checks; git hooks + CI enforce it).

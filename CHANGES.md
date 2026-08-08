@@ -1,3 +1,15 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3b — complete enforcement activated
+
+- Adopted the SpecForge-owned neutral live-document containment doctrine and ADR 0007 without an
+  external runtime dependency or copied donor thresholds.
+- Added a self-bounded JSONL registry covering all 553 resulting-tree Markdown files exactly once
+  across 24 lifecycle-owned surfaces, plus a bounded ceiling-increase authority registry.
+- Added the non-mutating resulting-tree checker and shell adapter, composed the README route guard,
+  and registered `LIVE-DOC-SIZE` as doctrine five. Generated freshness is executed; unproved
+  currentness remains named debt; maintained mdBook scope carries an exact task-owned delta.
+- The first complete pass found and repaired nested research coverage and the missing genericity ADR
+  entry in the decision index. No historical document was deleted or renamed.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3a — complete surface contract
 
 - Decomposed `.3` before implementation so the normative doctrine, registry, checker, ADR, and

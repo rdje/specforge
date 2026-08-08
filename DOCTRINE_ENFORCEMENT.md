@@ -285,6 +285,7 @@ The reference deployment. Enforced by `scripts/check_doctrines.sh` via `.githook
 | `KNOWLEDGE-MAP` | structural | `knowledge-map/scripts/check_knowledge_map.sh` | the derived Knowledge Map is regenerated + in sync with its fact sources (derive-and-diff, so the map cannot drift) |
 | `TASK-ACCEPTANCE` | evidence | `scripts/check_task_acceptance.sh` | a staged Rust code change is owned by a staged `docs/tasks/*.md` leaf whose acceptance checklist carries ROOT CAUSE + ADDRESSED + NO REGRESSION, ticked and backed by SpecForge tool signatures (see `TOOLBOX.md`) |
 | `README-POLICY` | structural | `scripts/check_readme_policy.sh` | root `README.md` stays within its independently derived line/byte ceilings; every reader link and author-overflow destination is a repository-owned, controlled terminal in the route registry |
+| `LIVE-DOC-SIZE` | structural | `scripts/check_live_document_size.sh` | every parent-tracked Markdown path is classified exactly once and satisfies its lifecycle-specific locality, line/byte/count/aggregate/width, index, currency, frozen-content, transition-debt, maintained-reference, and ceiling-authority contracts |
 
 Deterministic-oracle doctrines that run via `scripts/run_ci.sh` / CI (`kg-bench` 156/156,
 WIRE-BASED-100 constraint+temporal/relation golds = 1.000, the byte-identical evidence/`.isf` checks,

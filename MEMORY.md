@@ -15,16 +15,16 @@
   (no code change without an owning task-tree first; signoff quality; zero
   ROADMAP↔code↔mdBook drift; push ~every 200 commits; artifact cleanup ≥ every 24h).
 - Before committing run `scripts/check_doctrines.sh` (the registry/driver for memory,
-  knowledge-map, task-acceptance, and README policy); hooks + CI run it too. Retrieval:
-  `KNOWLEDGE_MAP.md`.
+  knowledge-map, task-acceptance, README policy, and live-document containment); hooks + CI
+  run it too. Retrieval: `KNOWLEDGE_MAP.md`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3b` — atomically activate the
-  neutral doctrine, ADR, complete JSONL surface registry, checker, and driver entry.
-- Current state: `.0`–`.2` and `.3a` are complete. `.3a` classified all 550 parent-tracked
-  Markdown files and locked local schema/ceiling/debt semantics. No historical live
-  document has been deleted or migrated. Query revision from Git.
-- Next action: implement `.3b` exactly from the task-owned contract, pin final resulting-tree
-  debt values, and land no normative doctrine without its passing gate.
-- In-flight uncommitted: `.3a` design/census until its verified commit; none afterward.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3c` — prove every lifecycle and
+  registry/control path fails closed, then close `.3` route/surface integration.
+- Current state: `.0`–`.2` and `.3a`/`.3b` are complete. The fifth doctrine governs all
+  553 Markdown files across 24 surfaces; README is 128 lines/4,908 bytes. No historical
+  live document has yet been deleted or migrated. Query revision from Git.
+- Next action: implement repository-volume fixture tests for every lifecycle and independent
+  failure axis, then verify the full `.3` acceptance contract before migration.
+- In-flight uncommitted: `.3b` atomic doctrine/registry/checker slice until commit; none afterward.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

@@ -6,7 +6,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 cd "${ROOT_DIR}"
 
-echo "[specforge-ci] enforcing doctrines (DOCTRINE_ENFORCEMENT.md: memory-arch + knowledge-map + task-acceptance via the registry/driver)"
+echo "[specforge-ci] enforcing every registered doctrine via the registry/driver"
 ./scripts/check_doctrines.sh
 
 echo "[specforge-ci] checking formatting"

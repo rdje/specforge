@@ -60,11 +60,19 @@ other re-derivable trace.
 | `KNOWLEDGE-MAP` | structural | the question-keyed Knowledge Map is regenerated and in sync with its fact cards (so it cannot drift) |
 | `TASK-ACCEPTANCE` | evidence | a Rust code change is owned by a task-tree leaf whose acceptance checklist is ticked **and** backed by real SpecForge tool output |
 | `README-POLICY` | structural | the project landing page stays within its locally derived line and byte ceilings, and every reader or author-overflow route closes at a registered, controlled terminal |
+| `LIVE-DOC-SIZE` | structural | every tracked Markdown path is classified exactly once and satisfies lifecycle-specific locality, size, index, currency, frozen-content, transition-debt, maintained-reference, and ceiling-authority rules |
 
 The README guard is unconditional: it evaluates the resulting tree even when a change does not touch
 `README.md`. Its data-only route registry distinguishes links readers follow from destinations authors
 may use for changing detail, and rejects missing, off-repository, duplicated, or uncontrolled routes.
 The project-owned normative contract is `README_POLICY.md`.
+
+The live-document checker is also unconditional. Its JSONL registry is the data-only authority for
+the complete tracked Markdown set, while `LIVE_DOCUMENT_SIZE_CONTAINMENT.md` explains the neutral
+lifecycle model. It does not confuse a large legacy ceiling with a healthy target: existing debt keeps
+an immutable measured baseline and a separately bounded transition allowance. Unique product prose in
+the mdBook uses a maintained-reference contract—bounded directly indexed parts plus exact task-owned
+aggregate change—instead of a fixed cap that would silently limit legitimate product documentation.
 
 The heavy deterministic oracles — `kg-bench`, the WIRE-BASED-100 golds, the byte-identical
 evidence/`.isf` checks, the full `cargo` suite — are the strongest leg of all. They are too slow to run
