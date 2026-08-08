@@ -11,7 +11,9 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${ROOT_DIR}"
 
 # ── Knobs (everything else is project-neutral) ──────────────────────────────
-MEMORY_POINTER_LINE_CAP="${MEMORY_POINTER_LINE_CAP:-60}"   # layer-A resume-pointer cap
+MEMORY_POINTER_LINE_CAP="${MEMORY_POINTER_LINE_CAP:-50}"    # reviewed survivor: 28 lines
+MEMORY_POINTER_BYTE_CAP="${MEMORY_POINTER_BYTE_CAP:-4096}"  # reviewed survivor: 2,011 bytes
+MEMORY_POINTER_LINE_BYTE_CAP="${MEMORY_POINTER_LINE_BYTE_CAP:-160}" # survivor max: 93
 TASKS_DIR="docs/tasks"                                      # task-trees (layer B)
 DECISIONS_DIR="docs/decisions"                              # decision records (layer C)
 BOOTSTRAP_FILES=("AGENTS.md" "CLAUDE.md")                   # tool-neutral entrypoints (E1)
@@ -27,10 +29,32 @@ else note "MEMORY_ARCHITECTURE.md is missing (the memory standard)"; fi
 # 2) MEMORY.md must exist and stay a bounded resume pointer (layer A).
 if [[ -f MEMORY.md ]]; then
   lines="$(wc -l < MEMORY.md | tr -d ' ')"
+  bytes="$(wc -c < MEMORY.md | tr -d ' ')"
+  max_line_bytes="$(LC_ALL=C awk '{ sub(/\r$/, ""); if (length > max) max = length } END { print max + 0 }' MEMORY.md)"
   if [[ "${lines}" -le "${MEMORY_POINTER_LINE_CAP}" ]]; then
     ok "MEMORY.md is ${lines} lines (<= cap ${MEMORY_POINTER_LINE_CAP})"
   else
     note "MEMORY.md is ${lines} lines (> cap ${MEMORY_POINTER_LINE_CAP}) — it is the resume pointer; move content to ${TASKS_DIR}/ or ${DECISIONS_DIR}/"
+  fi
+  if [[ "${bytes}" -le "${MEMORY_POINTER_BYTE_CAP}" ]]; then
+    ok "MEMORY.md is ${bytes} bytes (<= cap ${MEMORY_POINTER_BYTE_CAP})"
+  else
+    note "MEMORY.md is ${bytes} bytes (> cap ${MEMORY_POINTER_BYTE_CAP}) — move detail to its canonical layer"
+  fi
+  if [[ "${max_line_bytes}" -le "${MEMORY_POINTER_LINE_BYTE_CAP}" ]]; then
+    ok "MEMORY.md max content line is ${max_line_bytes} bytes (<= cap ${MEMORY_POINTER_LINE_BYTE_CAP})"
+  else
+    note "MEMORY.md max content line is ${max_line_bytes} bytes (> cap ${MEMORY_POINTER_LINE_BYTE_CAP}) — wrap or route dense content"
+  fi
+
+  for required in "Active unit:" "Next action:" "In-flight uncommitted:" "Blockers:"; do
+    if grep -Fq -- "- ${required}" MEMORY.md; then ok "MEMORY.md declares ${required}"
+    else note "MEMORY.md is missing required resume field '${required}'"; fi
+  done
+  if grep -Eiq 'latest_commit|latest commit' MEMORY.md; then
+    note "MEMORY.md mirrors HEAD as a latest-commit field — query 'git rev-parse HEAD' on resume instead"
+  else
+    ok "MEMORY.md does not mirror HEAD in a latest-commit shadow field"
   fi
 else
   note "MEMORY.md (the resume pointer) is missing"

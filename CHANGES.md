@@ -32603,3 +32603,11 @@ tree `docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md` owns independent le
 stabilization, README policy, common registry/checker, lossless migrations, mdBook truth/partitioning,
 same-volume storage, and final closure. No content was deleted, migrated, or reclassified in this
 ownership slice; donor thresholds and FSMGEN-local decisions were not copied.
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.1 — stabilize pointer and commit semantics
+
+`COMMIT.md` now routes documentation by changed truth instead of mandatory co-staging: the owning task
+leaf changes per slice, while README, MEMORY, status, roadmap, architecture, ledgers, and mdBook change
+only when their own contract changes. `MEMORY.md` no longer shadows HEAD/ahead state; resume queries Git.
+The memory gate now enforces the locally reviewed survivor on three axes (50 lines, 4,096 bytes, 160
+bytes per content line), requires active-unit/next-action/in-flight/blocker fields, and rejects a
+`latest_commit` shadow. Current pointer passes; a forced byte-cap probe fails closed.

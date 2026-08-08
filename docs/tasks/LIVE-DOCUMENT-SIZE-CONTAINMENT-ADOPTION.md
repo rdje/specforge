@@ -113,7 +113,7 @@ verification before correction.
   policy, gates, or content topology.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.1`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Goal: stabilize `MEMORY.md` and `COMMIT.md`: remove ceremonial commit coupling, define exactly when
   resumable state changes, and keep the existing memory cap. Prove the resume pointer still answers
   active unit / state / next action / in-flight work / blocker without chronology or a shadow HEAD.
@@ -168,11 +168,11 @@ verification before correction.
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | — | `.0` | `done` (`2026-08-08`) | Ownership, measured baseline, full donor review, and the migration/locality graph are recorded; no deletion or migration. |
-| 1 | `.1` | `pending` | Stabilize the bounded pointer and stop ceremonial pressure before routing other surfaces. |
-| 3 | `.2` | `pending` | The README is both the requested policy adoption and the most acute landing-page breach. |
-| 4 | `.3` | `pending` | The complete registry/checker must govern every later migration. |
-| 5 | `.4` / `.5` / `.6` | `pending` | Independently committable migrations and locality enforcement after the common contract exists. |
-| 6 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
+| — | `.1` | `done` (`2026-08-08`) | Pointer semantics and impact-based documentation routing are now explicit and mechanically checked. |
+| 1 | `.2` | `pending` | The README is both the requested policy adoption and the most acute landing-page breach. |
+| 2 | `.3` | `pending` | The complete registry/checker must govern every later migration. |
+| 3 | `.4` / `.5` / `.6` | `pending` | Independently committable migrations and locality enforcement after the common contract exists. |
+| 4 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
 ## Decisions
 
@@ -187,6 +187,13 @@ verification before correction.
   evidence, consumer updates, and an atomic commit.
 - `2026-08-08`: **Submodule boundary is an authority boundary.** `subs/fsmgen` is a pinned Git submodule.
   SpecForge may constrain its invocation environment but does not rewrite FSMGEN-owned files inline.
+- `2026-08-08`: **Documentation synchronization is impact-based, never ceremonial (`.1`).** The
+  owning task leaf changes on every completed slice. `MEMORY.md`, README, status, architecture,
+  roadmap, ledgers, and book change only when the truth owned by that surface changes. An unchanged
+  canonical file is the evidence that review found no impact; a no-op append proves nothing.
+- `2026-08-08`: **Git owns revision truth (`.1`).** The pointer no longer mirrors `HEAD` or
+  ahead/behind state. Resume uses `git rev-parse HEAD` and `git status --short --branch`; a named
+  revision is allowed only for a distinct, precisely labelled semantic.
 
 ## Blockers
 
@@ -200,15 +207,20 @@ verification before correction.
 | --- | --- | --- | --- |
 | `2026-08-08` | `.0` | full README/roadmap/code/mdBook ramp-up; all 14 active task-tree frontiers; FSMGEN README policy, adoption guide, and neutral doctrine read; `wc` + max-line + route/locality census; Git/submodule state | measured; adoption is justified; no policy/content migration performed |
 | `2026-08-08` | `.0` | `bash scripts/check_doctrines.sh`; `mdbook build docs/book`; `git diff --check` | green: 3/3 doctrines; book built under repository-local `generated/mdbook/specforge`; clean diff |
+| `2026-08-08` | `.1` | `bash -n scripts/check_memory_architecture.sh`; `bash scripts/check_doctrines.sh`; forced line/byte/max-line cap probes; `mdbook build docs/book`; `git diff --check` | green: current pointer passes 50 lines / 4,096 bytes / 160 max-line bytes + required fields + no HEAD shadow; all three forced caps fail closed; doctrines 3/3; book and diff clean |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `.0` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.0 — own and measure the containment/locality program` | ownership + measurement only; commit hash recorded by Git history |
+| `.1` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.1 — stabilize pointer and commit semantics` | impact-based doc routing + stronger bounded-pointer check |
 
 ## Changelog
 
 - `2026-08-08`: Created from the owner's external-SSD move, README-policy directive, and FSMGEN
   live-document-containment adoption guide. Recorded local measurements, task-owned the two ramp-up
   mdBook drifts, and separated common enforcement from lossless migrations and same-volume remediation.
+- `2026-08-08`: `.1` removed ceremonial documentation coupling from `COMMIT.md`, removed the
+  hand-maintained HEAD shadow from `MEMORY.md` and its architecture template, and strengthened the
+  pointer gate with locally derived line/byte/max-line ceilings plus required resume fields.

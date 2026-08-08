@@ -144,6 +144,11 @@ lazily — when a durable fact is established or archaeology is caught.
 - **No history** — that's git (D) and the task-tree logs (B).
 - **Prefer derived over hand-written** — a small script can regenerate the
   current-state block from `git log` + each tree's frontier row, so it cannot drift.
+- **Do not mirror `HEAD`** — obtain the current revision from `git rev-parse HEAD` on
+  resume. If the pointer names a revision, label the distinct semantic precisely (for
+  example, "last commit that changed resumable state"), never `latest_commit`.
+- **Update on state change, not ceremony** — a commit that leaves the active unit,
+  next action, in-flight work, and blockers unchanged does not require a pointer edit.
 
 Existing bloat is **not deleted** — it is already preserved in git history. You simply
 stop carrying it forward.
@@ -159,11 +164,18 @@ stop carrying it forward.
 - Durable facts/decisions live in `docs/decisions/`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- latest_commit: `<hash>` — "<subject>"   (ahead of origin: <N>; push at ~<threshold>)
 - active_work_unit: `<TASK-TREE-ID>`  →  frontier leaf: `<LEAF-ID>` (<status>)
+- current_state: <concise state needed to resume; no chronology>
 - next_action: <one concrete sentence>
 - in_flight_uncommitted: <none | what is staged/unsaved and how to finish it>
 - blockers: <none | what and who-owns>
+```
+
+At resume, query revision and divergence directly:
+
+```bash
+git rev-parse HEAD
+git status --short --branch
 ```
 
 ---

@@ -24,6 +24,17 @@ its identity, replacement route, consumers, and retrieval procedure are proved.
 The top-level README will remain a first-class landing page; changing detail and
 chronology will route to controlled canonical destinations.
 
+Documentation synchronization is now impact-based. Every completed slice updates
+its owning task-tree leaf. Other surfaces change only when their own truth changes:
+the resume pointer when the next action or in-flight state changes, the status page
+when product status changes, and the book when user understanding changes. Editing
+an unrelated document merely to show that it was reviewed is prohibited.
+
+The resume pointer also does not copy Git's current revision. Run
+`git rev-parse HEAD` and `git status --short --branch` when resuming; `MEMORY.md`
+owns only the active unit, concise current state, next action, in-flight work, and
+blockers.
+
 ## Root docs and what they are for
 
 - `README.md`
