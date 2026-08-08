@@ -247,6 +247,12 @@ pub struct EvidenceIr {
     /// Empty (serde-skipped) for non-serial documents.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub swd_operations: Vec<SwdOperation>,
+    /// SWD-SERIAL-EXTRACTION.4e: protocol/interface clocking recovered from prose that explicitly
+    /// binds an actor's sampling and/or drive-state changes on one declared signal to an edge of a
+    /// declared clock signal. The grammar and names are document-derived, so the surface is useful
+    /// beyond SWD and remains empty for documents without this exact timing evidence.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub interface_edge_timings: Vec<InterfaceEdgeTimingRecord>,
     /// EXTRACTOR-ARCHITECTURE.8: the per-surface extraction run manifest — which extractors were eligible /
     /// fired / produced / kept, for each surface that runs through the unified `run_surface(_concat)` driver
     /// (FSM, semantic-hints, registers, actors). A per-document **behavioral fingerprint** (the substrate
@@ -281,6 +287,40 @@ pub struct SwdOperation {
     /// Statements that evidenced this operation.
     #[serde(default)]
     pub supporting_statement_ids: Vec<String>,
+}
+
+/// An explicitly stated clock-edge contract for an interface signal. One record joins the actor,
+/// data signal, clock signal, edge, and the operations the source binds to that edge. Keeping the
+/// two operation flags together preserves SWD B4.3.1's single coupled fact: the target samples
+/// SWDIO and changes whether it drives SWDIO on SWCLK's rising edge.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct InterfaceEdgeTimingRecord {
+    /// Stable id, e.g. `interface_edge_timing_0001`.
+    pub timing_id: String,
+    /// Actor named by the source clause (`target`, `controller`, ...).
+    pub actor_name: String,
+    /// Interface data/signal whose sampling or drive state is clocked.
+    pub signal_name: String,
+    /// Clock signal whose edge defines the operation timing.
+    pub clock_signal: String,
+    /// Explicit edge stated by the source.
+    pub edge: InterfaceClockEdge,
+    /// The actor samples `signal_name` on this edge.
+    pub samples_on_edge: bool,
+    /// The actor changes whether it drives `signal_name` on this edge (start or stop driving).
+    pub drive_changes_on_edge: bool,
+    /// Statements that evidenced this timing contract.
+    #[serde(default)]
+    pub supporting_statement_ids: Vec<String>,
+}
+
+/// A document-stated interface clock edge. Unknown is deliberately absent: no record is emitted
+/// unless the prose says rising/posedge or falling/negedge explicitly.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
+#[serde(rename_all = "snake_case")]
+pub enum InterfaceClockEdge {
+    Rising,
+    Falling,
 }
 
 /// SWD-SERIAL-EXTRACTION.3: one field of a serial protocol frame (e.g. SWD `ACK[2:0]`, `WDATA[0:31]`,
@@ -864,6 +904,13 @@ impl EvidenceIr {
         // through the concat driver for a uniform manifest entry. No-op for non-serial docs.
         let swd_operations = swd_operation_surface(&extracted_statements, &mut extraction_manifest);
 
+        // SWD-SERIAL-EXTRACTION.4e: recover explicit interface edge timing from timing-class prose.
+        // Names come from the document's declared-signal inventory and actor clause; no protocol or
+        // signal vocabulary is embedded. The registered surface is empty when the complete grammar
+        // (operation + declared data signal + explicit edge + declared clock) is not present.
+        let interface_edge_timings =
+            interface_edge_timing_surface(&extracted_statements, &mut extraction_manifest);
+
         // PER-EXTRACTOR-FACT-TAGGING: tag every fact produced by the structural
         // pattern tier (the convergent build loop above) as `Pattern`, computed
         // before the move into the struct literal. The LLM tiers tag their finds
@@ -923,6 +970,7 @@ impl EvidenceIr {
             protocol_states,
             protocol_actors,
             swd_operations,
+            interface_edge_timings,
             extraction_manifest,
         };
         evidence_ir.carry_forward_existing_knowledge()?;
@@ -12021,6 +12069,223 @@ fn parse_bit_range_fields(text: &str) -> Vec<(String, u32, u32)> {
         }
     }
     out
+}
+
+/// SWD-SERIAL-EXTRACTION.4e — registered prose reader for explicit interface edge timing.
+struct InterfaceEdgeTimingExtractor;
+impl Extractor<InterfaceEdgeTimingRecord> for InterfaceEdgeTimingExtractor {
+    fn name(&self) -> &'static str {
+        "timing.interface_edge_prose"
+    }
+
+    fn run(&self, cx: &ExtractionContext<'_>) -> Vec<InterfaceEdgeTimingRecord> {
+        extract_interface_edge_timings(cx.statements)
+    }
+}
+
+/// Run the interface-edge timing reader through the common extraction framework so its eligibility,
+/// production, and kept counts join the per-document behavioral fingerprint.
+fn interface_edge_timing_surface(
+    statements: &[ExtractedStatement],
+    manifest: &mut ExtractionManifest,
+) -> Vec<InterfaceEdgeTimingRecord> {
+    let run = run_surface(
+        "interface_edge_timings",
+        &ExtractionContext { statements },
+        &[&InterfaceEdgeTimingExtractor],
+        |timing| {
+            format!(
+                "{}|{}|{}|{:?}",
+                timing.actor_name.to_ascii_lowercase(),
+                timing.signal_name,
+                timing.clock_signal,
+                timing.edge
+            )
+        },
+    );
+    manifest.record(&run);
+    run.records
+}
+
+#[derive(Debug)]
+struct ParsedInterfaceEdgeClause {
+    actor_name: String,
+    signal_name: String,
+    clock_signal: String,
+    edge: InterfaceClockEdge,
+    samples_on_edge: bool,
+    drive_changes_on_edge: bool,
+}
+
+/// Recover coupled interface clocking from prose of the form:
+///
+/// - `When the <actor> samples <signal>, sampling is performed on the rising edge of <clock>`;
+/// - `When the <actor> drives <signal>, ... signal changes are performed on the rising edge of <clock>`.
+///
+/// Every signal must already be in the document's declared-signal inventory, and the edge must be
+/// explicit. The actor is taken from the source clause. This is universal timing grammar (ADR 0006),
+/// not a stored protocol vocabulary.
+fn extract_interface_edge_timings(
+    statements: &[ExtractedStatement],
+) -> Vec<InterfaceEdgeTimingRecord> {
+    let known_signals = collect_known_signal_names(statements);
+    if known_signals.len() < 2 {
+        return Vec::new();
+    }
+
+    let mut merged: BTreeMap<
+        (String, String, String, InterfaceClockEdge),
+        InterfaceEdgeTimingRecord,
+    > = BTreeMap::new();
+    for statement in statements {
+        if statement.class != StatementClass::TimingConstraint {
+            continue;
+        }
+        for clause in statement.text.split('.') {
+            let Some(parsed) = parse_interface_edge_clause(clause, &known_signals) else {
+                continue;
+            };
+            let key = (
+                parsed.actor_name.to_ascii_lowercase(),
+                parsed.signal_name.clone(),
+                parsed.clock_signal.clone(),
+                parsed.edge,
+            );
+            let entry = merged
+                .entry(key)
+                .or_insert_with(|| InterfaceEdgeTimingRecord {
+                    timing_id: String::new(),
+                    actor_name: parsed.actor_name.clone(),
+                    signal_name: parsed.signal_name.clone(),
+                    clock_signal: parsed.clock_signal.clone(),
+                    edge: parsed.edge,
+                    samples_on_edge: false,
+                    drive_changes_on_edge: false,
+                    supporting_statement_ids: Vec::new(),
+                });
+            entry.samples_on_edge |= parsed.samples_on_edge;
+            entry.drive_changes_on_edge |= parsed.drive_changes_on_edge;
+            if !entry
+                .supporting_statement_ids
+                .contains(&statement.statement_id)
+            {
+                entry
+                    .supporting_statement_ids
+                    .push(statement.statement_id.clone());
+            }
+        }
+    }
+
+    merged
+        .into_values()
+        .enumerate()
+        .map(|(index, mut timing)| {
+            timing.timing_id = format!("interface_edge_timing_{:04}", index + 1);
+            timing
+        })
+        .collect()
+}
+
+fn parse_interface_edge_clause(
+    clause: &str,
+    known_signals: &std::collections::HashSet<String>,
+) -> Option<ParsedInterfaceEdgeClause> {
+    let words = clause
+        .split_whitespace()
+        .map(|word| {
+            word.trim_matches(|c: char| !c.is_ascii_alphanumeric() && c != '_')
+                .to_string()
+        })
+        .filter(|word| !word.is_empty())
+        .collect::<Vec<_>>();
+    let lowered = words
+        .iter()
+        .map(|word| word.to_ascii_lowercase())
+        .collect::<Vec<_>>();
+    let normalized = lowered.join(" ");
+
+    let (action_index, samples_on_edge, drive_changes_on_edge) =
+        if let Some(index) = lowered.iter().position(|word| word == "samples") {
+            if !normalized.contains("sampling is performed") {
+                return None;
+            }
+            (index, true, false)
+        } else if let Some(index) = lowered.iter().position(|word| word == "drives") {
+            if !normalized.contains("signal changes are performed") {
+                return None;
+            }
+            (index, false, true)
+        } else {
+            return None;
+        };
+
+    let when_index = lowered[..action_index]
+        .iter()
+        .rposition(|word| word == "when")?;
+    let mut actor_words = words[when_index + 1..action_index].to_vec();
+    if actor_words.first().is_some_and(|word| {
+        ["the", "a", "an"]
+            .iter()
+            .any(|article| word.eq_ignore_ascii_case(article))
+    }) {
+        actor_words.remove(0);
+    }
+    if actor_words.is_empty()
+        || actor_words.len() > 4
+        || actor_words.iter().any(|word| {
+            !word
+                .chars()
+                .all(|c| c.is_ascii_alphabetic() || c == '-' || c == '_')
+        })
+    {
+        return None;
+    }
+    let actor_name = actor_words.join(" ");
+
+    let signal_name = canonical_declared_signal(words.get(action_index + 1)?, known_signals)?;
+    let (edge_index, edge, edge_word_count) = lowered
+        .iter()
+        .enumerate()
+        .skip(action_index + 2)
+        .find_map(|(index, word)| match word.as_str() {
+            "rising" if lowered.get(index + 1).is_some_and(|next| next == "edge") => {
+                Some((index, InterfaceClockEdge::Rising, 2usize))
+            }
+            "falling" if lowered.get(index + 1).is_some_and(|next| next == "edge") => {
+                Some((index, InterfaceClockEdge::Falling, 2usize))
+            }
+            "posedge" => Some((index, InterfaceClockEdge::Rising, 1usize)),
+            "negedge" => Some((index, InterfaceClockEdge::Falling, 1usize)),
+            _ => None,
+        })?;
+    let mut clock_index = edge_index + edge_word_count;
+    if lowered.get(clock_index).is_some_and(|word| word == "of") {
+        clock_index += 1;
+    }
+    if lowered.get(clock_index).is_some_and(|word| word == "the") {
+        clock_index += 1;
+    }
+    let clock_signal = canonical_declared_signal(words.get(clock_index)?, known_signals)?;
+    if clock_signal == signal_name {
+        return None;
+    }
+
+    Some(ParsedInterfaceEdgeClause {
+        actor_name,
+        signal_name,
+        clock_signal,
+        edge,
+        samples_on_edge,
+        drive_changes_on_edge,
+    })
+}
+
+fn canonical_declared_signal(
+    token: &str,
+    known_signals: &std::collections::HashSet<String>,
+) -> Option<String> {
+    let candidate = token.to_ascii_uppercase();
+    known_signals.contains(&candidate).then_some(candidate)
 }
 
 /// SWD-SERIAL-EXTRACTION.4b — recover the SWD packet-protocol operations (response branching): each
@@ -27213,5 +27478,108 @@ mod swd_serial_extraction_4d_tidy {
             !names.iter().any(|n| n == "High" || n == "Maintain the"),
             "garbage rejected: {names:?}"
         );
+    }
+}
+
+#[cfg(test)]
+mod swd_serial_extraction_4e {
+    //! SWD-SERIAL-EXTRACTION.4e — explicit actor/data/clock interface-edge timing.
+    use super::*;
+
+    fn stmt(id: &str, class: StatementClass, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: id.to_string(),
+            class,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    fn declarations() -> Vec<ExtractedStatement> {
+        vec![
+            stmt(
+                "data",
+                StatementClass::SourceFact,
+                "Signal DATA_IO is inout width 1.",
+            ),
+            stmt(
+                "clock",
+                StatementClass::SourceFact,
+                "Signal SERIAL_CLK is input width 1.",
+            ),
+        ]
+    }
+
+    #[test]
+    fn coupled_sample_and_drive_change_timing_is_one_complete_record() {
+        let mut statements = declarations();
+        statements.push(stmt(
+            "timing",
+            StatementClass::TimingConstraint,
+            "When the endpoint samples DATA_IO, sampling is performed on the rising edge of SERIAL_CLK. When the endpoint drives DATA_IO, or stops driving it, signal changes are performed on the rising edge of SERIAL_CLK.",
+        ));
+
+        let records = extract_interface_edge_timings(&statements);
+        assert_eq!(records.len(), 1, "coupled clauses merge: {records:?}");
+        let timing = &records[0];
+        assert_eq!(timing.timing_id, "interface_edge_timing_0001");
+        assert_eq!(timing.actor_name, "endpoint");
+        assert_eq!(timing.signal_name, "DATA_IO");
+        assert_eq!(timing.clock_signal, "SERIAL_CLK");
+        assert_eq!(timing.edge, InterfaceClockEdge::Rising);
+        assert!(timing.samples_on_edge);
+        assert!(timing.drive_changes_on_edge);
+        assert_eq!(timing.supporting_statement_ids, ["timing"]);
+    }
+
+    #[test]
+    fn incomplete_or_unclassified_prose_fails_closed() {
+        let exact = "When the endpoint samples DATA_IO, sampling is performed on the rising edge of SERIAL_CLK.";
+        let mut wrong_class = declarations();
+        wrong_class.push(stmt("source", StatementClass::SourceFact, exact));
+        assert!(extract_interface_edge_timings(&wrong_class).is_empty());
+
+        let mut undeclared_clock = vec![stmt(
+            "data",
+            StatementClass::SourceFact,
+            "Signal DATA_IO is inout width 1.",
+        )];
+        undeclared_clock.push(stmt("timing", StatementClass::TimingConstraint, exact));
+        assert!(extract_interface_edge_timings(&undeclared_clock).is_empty());
+
+        let mut no_edge = declarations();
+        no_edge.push(stmt(
+            "timing",
+            StatementClass::TimingConstraint,
+            "When the endpoint samples DATA_IO, sampling is performed using SERIAL_CLK.",
+        ));
+        assert!(extract_interface_edge_timings(&no_edge).is_empty());
+    }
+
+    #[test]
+    fn falling_edge_and_manifest_are_derived_without_named_protocol_vocabulary() {
+        let mut statements = declarations();
+        statements.push(stmt(
+            "timing",
+            StatementClass::TimingConstraint,
+            "When a receiver samples DATA_IO, sampling is performed on the falling edge of SERIAL_CLK.",
+        ));
+        let mut manifest = ExtractionManifest::default();
+        let records = interface_edge_timing_surface(&statements, &mut manifest);
+        assert_eq!(records[0].actor_name, "receiver");
+        assert_eq!(records[0].edge, InterfaceClockEdge::Falling);
+        assert!(records[0].samples_on_edge);
+        assert!(!records[0].drive_changes_on_edge);
+        let surface = manifest
+            .surfaces
+            .iter()
+            .find(|surface| surface.surface == "interface_edge_timings")
+            .expect("registered timing surface");
+        assert_eq!(surface.eligible, 1);
+        assert_eq!(surface.entries[0].name, "timing.interface_edge_prose");
+        assert_eq!(surface.entries[0].produced, 1);
+        assert_eq!(surface.entries[0].kept, 1);
     }
 }

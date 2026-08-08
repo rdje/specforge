@@ -132,6 +132,33 @@ agent-drafted pending human review.
 *Authoritative tracking:* `docs/tasks/TEMPORAL-RULE-EVAL.md` (the `.3` node records the
 producer-representation calibration against the 153 real APB temporal rules).
 
+## SWD protocol facts — frame, operation, state, and interface edge
+
+The ordinary constraint/relation/temporal score is a poor completeness measure for a serial-debug protocol.
+SWD's implementation intent is its packet frame, response-branched operation sequence, line/TAP states, and
+the clock edge on which the target samples and changes its drive state. `eval-extraction` therefore has four
+deterministic tasks that read the corresponding EvidenceIR records directly:
+
+- `serial_frame_field`: field name, width, phase, SWDIO direction, order, and response values;
+- `swd_operation`: response/access branch, phase count, data-phase presence, and turnaround placement;
+- `protocol_state`: machine plus state identity;
+- `interface_edge_timing`: actor, data signal, clock signal, edge, sampling flag, and drive-change flag.
+
+The last key is deliberately all-or-nothing. A record naming the right data signal but the wrong clock, a
+falling rather than rising edge, or only sampling without the drive-state change does not match the gold.
+
+The real `seed_swd_derivation.json` contains 29 independently verified facts: 11 frame fields, four operations,
+13 states, and the B4.3.1 `target / SWDIO / SWCLK / rising / samples / drive-changes` fact. Against a fresh
+repository-local CPU re-ingest, the source-tolerant WIRE score is `P=R=F1=1.000` for all four tasks. The strict
+statement-local frame/state view is lower because one source statement can support several correct document
+facts; the source-tolerant view re-resolves source drift and filters predictions to the complete gold universe.
+
+One boundary matters: this score proves the EvidenceIR extractors. It does not imply that the four protocol
+surfaces already reach the canonical IntentIR product or `.isf`; that projection/lowering work is tracked
+separately and remains visible as a gap.
+
+*Authoritative tracking:* `docs/tasks/SWD-SERIAL-EXTRACTION.md` (`.4e` and `.7`).
+
 ## Register fields — measuring the breadth, and surfacing the gaps honestly
 
 As SpecForge learned to digest more kinds of chip-spec PDFs, it began recovering **register

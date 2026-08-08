@@ -1,3 +1,22 @@
+### SWD-SERIAL-EXTRACTION.4e — capture and score complete interface-edge timing
+
+- Added the typed `InterfaceEdgeTimingRecord` EvidenceIR surface for a coupled actor/data/clock/edge
+  contract, with explicit sample and drive-state-change semantics plus source provenance. Its registered
+  extractor accepts only timing-class prose, universal sample/drive/edge grammar, and document-declared
+  data/clock signals; incomplete or ungrounded clauses fail closed.
+- Added the deterministic `interface_edge_timing` eval task and a full-tuple canonical identity. Extended
+  the independently verified SWD derivation gold from 28 to 29 facts with the Chapter B4.3.1 target/SWDIO/
+  SWCLK rising-edge obligation.
+- Re-ingested the tracked ADI PDF on CPU in a repository-volume workspace and rebuilt fresh EvidenceIR:
+  exactly one record is supported by `statement_1948`, and the extraction manifest reports 1/1/1
+  eligible/produced/kept. All four SWD protocol tasks score source-tolerant precision/recall/F1 1.000;
+  seven neighboring WIRE suites retain their expected gates, and `kg-bench` passes 156/156. Full CI is
+  green with all six doctrines, warning-deny formatting/Clippy, 1,735 tests passed / 5 ignored, rustdoc,
+  the 36-file mdBook, locality, and clean producer residue.
+- Recorded two explicit downstream boundaries: all four SWD protocol surfaces still stop at EvidenceIR
+  (`.7` owns their canonical projection/lowering), and a separate clean-tree handoff must repair the
+  project-wide absolute cross-stage artifact pointers exposed by the live build.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7 — close the containment and locality program
 
 - Reopened every archive/current, catalog, Knowledge Map, currency, route, book, locality, Git, and

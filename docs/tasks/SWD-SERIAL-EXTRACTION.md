@@ -123,6 +123,46 @@ extraction approach distinct from the parallel-bus signal-table path.
   a switch branch unsupported. → **Feature request WITHDRAWN** (`docs/fsmgen-issues/sf-isf-explicit-fsm-declaration/`
   marked WITHDRAWN); serial frame also NOT a gap (ISF has shift registers / serial fixtures). KM
   `[[isf-fsm-via-switch-select]]`; lessons `[[feedback_verify_fsmgen_before_fr]]`, `[[feedback_isf_no_hacks]]`.
+- ID: `SWD-SERIAL-EXTRACTION.4e` · Status: `done` (`2026-08-08`) · Goal: capture the one
+  still-missing Chapter B4 clocking fact as a typed, scored interface-edge timing record: the target
+  samples SWDIO and changes whether it drives SWDIO on the rising edge of SWCLK. Derive actor, data
+  signal, clock signal, edge, and both operations from the document's own timing-class prose; no
+  protocol-name or signal-name constants in production. Extend the real SWD derivation gold from 28 to
+  29 spec-verified facts and keep every existing wire/corpus gate green.
+- ID: `SWD-SERIAL-EXTRACTION.7` · Status: `pending` (depends on `.4e`; opened `2026-08-08`) · Goal:
+  audit and close the protocol-surface projection boundary. `serial_frame_fields`, `swd_operations`, and
+  `protocol_states` currently live only on `EvidenceIR`; `eval-extraction` scores them by reading that
+  layer directly, while `SemanticIR::build`, `IntentIR::build`, and the `.isf` adapter consume none of
+  them. After `.4e`, design and implement the honest typed Evidence→Semantic→Intent projection and only
+  the ISF lowering that the proven FSM/serial idioms can represent without fabrication.
+
+### Surfaced portability finding (handoff after `.4e`)
+
+The fresh live build exposed a project-wide locality defect outside this slice: 335 generated JSON/Markdown
+artifacts still embed `/Users/richarddje/Documents/github/specforge`, and the Evidence→Semantic→Intent stage
+builders call `canonicalize_existing_path` before persisting their upstream-path fields. The old tree is gone,
+so these are stale references rather than live cross-volume reads, but absolute stage pointers violate the
+repository-root-relative persistence contract and will break after the next move. Per the dirty-tree pivot
+rule, `.4e` records but does not absorb this broader repair. Immediately after the clean `.4e` commit, open a
+dedicated task-tree that owns portable cross-stage paths, backward-compatible loading, a generated-artifact
+census/migration, and fail-closed locality coverage before resuming `.7`.
+
+## Acceptance Checklist (enforced) — `SWD-SERIAL-EXTRACTION.4e`
+
+- [x] **REPRODUCE / MEASURE** — `statement_1948` is a `timing_constraint` that explicitly binds target
+  sampling and drive-state changes on SWDIO to the rising edge of SWCLK; current EvidenceIR, SemanticIR,
+  and IntentIR contain no typed timing record or temporal rule supported by that statement.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the existing timing synthesis reads parameter tables only, while
+  SWD protocol surfaces cover frame fields, response branches, and states but not prose-defined interface
+  edge timing. The current SWD derivation gold therefore scores 28 facts without this known B4 fact.
+- [x] **ADDRESSED (verified)** — add one document-derived `InterfaceEdgeTimingRecord`, a registered
+  extraction surface, one agent-verified gold item, and deterministic scoring of the full semantic tuple.
+- [x] **NO REGRESSION** — prove positive and fail-closed grammar tests, fresh SWD evidence/gold 29/29,
+  existing APB/AHB/AXI and SWD scores, `kg-bench`, doctrines, full CI, and repository-local residue.
+- [x] **GENERICITY (ADR 0006)** — production logic keys only on timing statement class, universal
+  sample/drive/edge grammar, and names already present in the document; fixtures may use SWD names.
+- [x] **LOCKSTEP** — update this tree, the topically correct mdBook chapter, the SWD timing/projection
+  Knowledge Map facts, live ledgers, and the bounded resume pointer; regenerate derived indexes only.
 
 ## Reframe (owner `2026-06-07`, GROUNDED IN SPEC CHAPTER B4 read directly)
 
@@ -146,6 +186,16 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 (`.4`, not the SWD FSM). **SpecForge does NOT yet fully derive SWD's intent.**
 
 ## Current frontier (spec-grounded gaps)
+
+- `SWD-SERIAL-EXTRACTION.4e` — **DONE.** The explicit target/SWDIO/SWCLK rising-edge statement is one
+  typed, registered, provenance-carrying interface-edge record and the 29th independently verified SWD
+  gold fact. Fresh extraction and complete-tuple scoring are 1.000; projection remains outside this leaf.
+- **Immediate clean-tree handoff:** open the dedicated artifact-path-portability tree recorded above;
+  its root-relative persistence violation outranks resuming the protocol projection leaf.
+- `SWD-SERIAL-EXTRACTION.7` — **PENDING AFTER `.4e`.** The three already-scored protocol surfaces are
+  EvidenceIR-only and therefore cannot yet satisfy the canonical IntentIR/ISF product boundary. A
+  dedicated architecture slice must close that whole path rather than letting EvidenceIR scores stand in
+  for downstream availability.
 
 - `SWD-SERIAL-EXTRACTION.4c` — **DONE.** Added `SwdioDirection {HostDrives, TargetDrives}` + `swdio_direction`
   on `SerialFrameField`; `extract_serial_frame_fields` derives it from the spec's own "from the `<A>` to the
@@ -190,12 +240,16 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 
 ## Open questions
 
-- Should the serial-frame protocol be a new typed fact surface, or fit into the existing temporal-rule model?
+- Resolved by `.3`: serial-frame structure is its own typed surface; `.4e` likewise uses a typed
+  interface-edge record because the exact clock signal and both sample/drive-state operations are part of
+  identity, while the current generic temporal-score key does not include `clock_signal`.
 - How much of the DP/AP register interface is implementation-relevant for the `IntentIR` consumer?
 
 ## Blockers
 
-- None (the ADI PDF is in `corpus/`, ingested; normalized present after `.5j`).
+- None. The tracked ADI PDF and repository-local Docling environment produced a fresh CPU re-ingest for
+  `.4e`; the canonical generated cache was deliberately not promoted while its absolute-path portability
+  defect remains open.
 
 ## Verification log
 
@@ -204,6 +258,14 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 - `.3`: fresh ADI evidence yields 5 clean frame fields (A/ACK/DATAIN/WDATA/RDATA with correct widths); parallel buses produce 0 serial_frame_fields and stay 100% on constraints+relations+temporal; +4 hermetic tests; full `scripts/run_ci.sh` green (1327 lib tests).
 - `.3b`: fresh ADI evidence yields 7 ordered frame fields (adds APnDP/RnW request bits + ACK resp=[FAULT,OK,WAIT] + order); parallel buses still 0 + 100%; +3 hermetic tests; full `scripts/run_ci.sh` green (1330 lib tests).
 - `.4`: fresh ADI evidence yields the DBGTAPSM with 9 named TAP states + per-state actions; parallel buses emit 0 protocol_states and stay 100%; +4 hermetic tests; full `scripts/run_ci.sh` green (1334 lib tests).
+- `.4e`: four focused extraction/key tests pass; fresh repository-local CPU re-ingest (400 pages, 386
+  visual assets, high confidence, zero residual decisions) produces exactly one complete timing record
+  from `statement_1948`, with manifest eligible/produced/kept = 1/1/1. Fresh 29-item SWD scoring is
+  source-tolerant P/R/F1 1.000 for frame 11, operation 4, state 13, and edge timing 1. Seven neighboring
+  WIRE suites retain their expected gates (the known SWD promotion-only constraint miss unchanged),
+  `kg-bench` is 156/156, all six doctrines pass, and full CI is green: formatting, warning-deny Clippy,
+  1,735 passed / 5 ignored, rustdoc, 36-file mdBook, locality, and residue. Only `.gitkeep` remains in
+  `.project-data/tmp`; the two exact `.4e` workspaces plus empty compiler/Docling scratch were removed.
 
 ## Commit log
 
@@ -212,6 +274,7 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 - `.3`: see the `SWD-SERIAL-EXTRACTION.3` commit (typed serial-frame field surface).
 - `.3b`: see the `SWD-SERIAL-EXTRACTION.3b` commit (named request bits + ACK values + ordering).
 - `.4`: see the `SWD-SERIAL-EXTRACTION.4` commit (typed protocol-FSM state surface).
+- `.4e`: see the `SWD-SERIAL-EXTRACTION.4e` commit (typed/scored interface-edge timing).
 
 ## Changelog
 
@@ -219,3 +282,6 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
   `.2` done — SWCLK/SWDIO/NSRST captured from the prose "`<role>` pin, `<SIGNAL>`" appositive.
   `.3` done (owner decision (ii)) — new typed `SerialFrameField` surface (bit-widths from `NAME[hi:lo]`,
   double-gated to serial docs + frame phases); 5 clean SWD frame fields; frontier = `.3b`.
+- `2026-08-08`: `.4e` done — added and freshly verified the complete interface-edge timing record,
+  expanded SWD gold 28→29 at 1.000 on all four protocol tasks, kept every WIRE/KG gate green, and
+  recorded the EvidenceIR projection plus cross-stage absolute-path boundaries without widening scope.

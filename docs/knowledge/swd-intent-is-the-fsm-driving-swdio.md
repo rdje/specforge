@@ -34,13 +34,15 @@ of SWCLK** (an earlier extraction said "falling" — the spec says rising).
 line reset or DPIDR read) → `lockout` (further errors; exits only on line reset); plus `dormant`(v2 powerup)
 and multi-drop `deselected`.
 
-**What SpecForge derives today:** SWCLK/SWDIO signals (`.2`); SOME packet bit-fields (`.3`: A, ACK, APnDP,
-RnW, WDATA, RDATA) — but MISSING Start/Parity/Stop/Park and with no direction/sequence/turnaround/branch;
-the JTAG TAP `DBGTAPSM` (`.4`, not the SWD FSM). **So SpecForge does NOT yet fully derive SWD's intent.**
+**What SpecForge derives today:** SWCLK/SWDIO signals; the complete request/ack/data frame fields with order,
+width, response values, and SWDIO direction; the four response-branched packet operations and turnaround
+placement; the JTAG TAP states plus the SWD line states; and one exact typed B4.3.1 interface-edge record —
+the target samples SWDIO and changes its drive state on SWCLK's rising edge. The verified derivation gold is
+29/29 (`[[swd-derivation-scored-100]]`).
 
-**Gaps (all derivable from the B4 prose docling extracted):** the SWD packet **phase sequence** + per-phase
-**SWDIO direction** (host vs target) + turnarounds + **response branching** (OK/WAIT/FAULT) + missing fields
-(Start/Parity/Stop/Park) + the **line state machine** (reset/operating/protocol-error/lockout/dormant) +
-edge timing + line-reset/parity rules. This is a new protocol-FSM derivation capability, beyond the current
-signal-table / constraint / relation / bit-field extractors. ISF can express it (`[[isf-fsm-via-switch-select]]`);
-SpecForge emits intent, FSMGen lowers. See `[[swd-serial-frame-surface]]`, `[[swd-protocol-fsm-surface]]`.
+**Remaining product gap:** these protocol-specific records are still EvidenceIR facts. SemanticIR, IntentIR,
+and the `.isf` adapter do not consume them, so a perfect extraction score does not yet mean the canonical
+product or FSMGen receives the protocol. The next architecture slice must project the typed records through
+the canonical stages and lower only what the proven ISF FSM/serial idioms can represent. See
+`[[swd-serial-frame-surface]]`, `[[swd-protocol-fsm-surface]]`,
+`[[swd-protocol-surfaces-stop-at-evidenceir]]`, and `[[isf-fsm-via-switch-select]]`.

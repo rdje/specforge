@@ -42,6 +42,8 @@ enum TaskRecords {
     SerialFrameFields(Vec<crate::ir::evidence::SerialFrameField>),
     SwdOperations(Vec<crate::ir::evidence::SwdOperation>),
     ProtocolStates(Vec<crate::ir::evidence::ProtocolStateRecord>),
+    /// SWD-SERIAL-EXTRACTION.4e — deterministic interface edge timing from EvidenceIR.
+    InterfaceEdgeTimings(Vec<crate::ir::evidence::InterfaceEdgeTimingRecord>),
     /// PDF-VARIANT-DIGESTION.4a.1 — deterministic register-field records read straight from EvidenceIR.
     RegisterFields(Vec<RegisterRecord>),
     /// PDF-VARIANT-DIGESTION.4a.4 — declared interface signals from the deterministic SemanticIR inventory.
@@ -129,6 +131,9 @@ where
             TaskRecords::ProtocolStates(records) => {
                 eval::index_protocol_state_predictions(&records, &mut predicted)
             }
+            TaskRecords::InterfaceEdgeTimings(records) => {
+                eval::index_interface_edge_timing_predictions(&records, &mut predicted)
+            }
             TaskRecords::RegisterFields(records) => {
                 eval::index_register_field_predictions(&records, &mut predicted)
             }
@@ -210,6 +215,10 @@ fn extract_on_copy(
         EvalTask::ProtocolState => {
             Ok((TaskRecords::ProtocolStates(ir.protocol_states), Vec::new()))
         }
+        EvalTask::InterfaceEdgeTiming => Ok((
+            TaskRecords::InterfaceEdgeTimings(ir.interface_edge_timings),
+            Vec::new(),
+        )),
         // PDF-VARIANT-DIGESTION.4a.1 — register fields are deterministic table-synthesized EvidenceIR
         // records (no LLM / provider); read them straight from the (already-loaded) EvidenceIR.
         EvalTask::RegisterField => {
@@ -283,6 +292,7 @@ fn records_with_tier_counts(
         TaskRecords::SerialFrameFields(_)
         | TaskRecords::SwdOperations(_)
         | TaskRecords::ProtocolStates(_)
+        | TaskRecords::InterfaceEdgeTimings(_)
         | TaskRecords::RegisterFields(_)
         | TaskRecords::DeclaredSignals(_) => Vec::new(),
     }
@@ -707,6 +717,7 @@ mod tests {
             | EvalTask::SerialFrameField
             | EvalTask::SwdOperation
             | EvalTask::ProtocolState
+            | EvalTask::InterfaceEdgeTiming
             | EvalTask::RegisterField
             | EvalTask::DeclaredSignal => {
                 unreachable!("no temporal/SWD/register-field/declared-signal items in this test")

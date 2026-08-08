@@ -19,14 +19,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7` — completed by this commit; the adoption tree
-  and every `.0`–`.7` activity are closed.
-- Current state: all 604 Markdown paths classify once across 37 debt-free surfaces; exact history,
-  bounded live views, collection/Knowledge Map routes, eight currency contracts, the compact README,
-  current 36-part book, and repository-volume project data are enforced by six doctrines. Final
-  cold-read defects in book status, route debt labels, and the active Claude hook are corrected and
-  fail closed; two early content-pressure warnings remain named and below rollover.
-- Next action: from the clean `.7` commit, run PNT selection against the bounded task catalog and
-  current roadmap; do not reopen this closed tree unless a verified regression belongs here.
-- In-flight uncommitted: none after this commit; no background job or disposable temp/log residue.
+- Active unit: `SWD-SERIAL-EXTRACTION.4e` — completed by this commit; Chapter B4 interface-edge timing is
+  typed, source-grounded, and scored.
+- Current state: fresh repository-local CPU re-ingest/evidence proves one complete target/SWDIO/SWCLK
+  rising-edge record from `statement_1948`; all four SWD protocol tasks score source-tolerant 1.000 over
+  29 facts, neighboring WIRE gates hold, and `kg-bench` is 156/156. `.7` owns the EvidenceIR→IntentIR/ISF
+  projection gap. The live build also exposed project-wide persisted absolute stage pointers (335 local
+  generated artifacts still name the deleted root), recorded in the task and Knowledge Map.
+- Next action: from clean `.4e`, open a dedicated artifact-path-portability task-tree and fix the
+  cross-stage serialization/migration contract before resuming `SWD-SERIAL-EXTRACTION.7`.
+- In-flight uncommitted: none after this commit; no background job is running. Disposable re-ingest
+  workspaces must be removed after the final producer and residue census.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

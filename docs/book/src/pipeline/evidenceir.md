@@ -164,6 +164,41 @@ rather than papered over — because the alternative, dropping anything that
 merely *looks* like a phrase, would also throw away genuine one-word agents like an AMBA *decoder* or
 *controller*, and the tool would rather stay complete than look tidy.
 
+## Capturing an interface's sampling and drive-change edge
+
+Some serial interfaces define their electrical handoff in prose rather than a timing table. The ADI
+specification says, in one timing-class statement, that the target samples `SWDIO` on the rising edge of
+`SWCLK` and that changes to whether the target drives `SWDIO` happen on that same edge. Treating those as two
+unrelated text snippets would lose the coupled clocking contract, while a generic temporal key would not prove
+which clock signal the statement named.
+
+`EvidenceIR.interface_edge_timings` therefore carries one complete typed tuple:
+
+```json
+{
+  "actor_name": "target",
+  "signal_name": "SWDIO",
+  "clock_signal": "SWCLK",
+  "edge": "rising",
+  "samples_on_edge": true,
+  "drive_changes_on_edge": true,
+  "supporting_statement_ids": ["statement_1948"]
+}
+```
+
+The deterministic reader is intentionally generic. It only examines statements already classified as timing
+constraints; recognizes universal `When [the|a|an] <actor> samples|drives <signal>` plus explicit
+`rising`/`falling` (`posedge`/`negedge`) grammar; and accepts the data and clock only when both are in the
+document's declared-signal inventory. A missing edge, undeclared clock, wrong statement class, or incomplete
+operation wording yields no record. Sample and drive-change clauses merge only when actor, data signal, clock,
+and edge agree. Production code contains no SWD, vendor, actor, or signal-name list.
+
+The extraction manifest exposes this as `interface_edge_timings[timing.interface_edge_prose]`. On a fresh ADI
+re-ingest it reports one eligible, one produced, and one kept record. The record is currently an EvidenceIR
+surface: its scored extraction fidelity is described in [Extraction eval](../quality/extraction-eval.md), while
+projection into SemanticIR, IntentIR, and `.isf` remains an explicit architecture frontier rather than being
+implied by the EvidenceIR result.
+
 ## Typical evidence-level failure modes
 
 - field tables leaking fake signals

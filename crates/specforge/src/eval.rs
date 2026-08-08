@@ -25,7 +25,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, Result};
 use crate::ir::evidence::{
-    ProtocolStateRecord, SerialFrameField, SerialFramePhase, SwdOperation, SwdioDirection,
+    InterfaceClockEdge, InterfaceEdgeTimingRecord, ProtocolStateRecord, SerialFrameField,
+    SerialFramePhase, SwdOperation, SwdioDirection,
 };
 use crate::ir::semantic::{
     ClockEdge, CycleWindowRecord, InterfaceSignalDirection, InterfaceSignalRecord,
@@ -52,6 +53,8 @@ pub enum EvalTask {
     SwdOperation,
     /// SWD-SERIAL-EXTRACTION.5 — a protocol FSM state (`ProtocolStateRecord`).
     ProtocolState,
+    /// SWD-SERIAL-EXTRACTION.4e — explicit actor/data/clock edge timing.
+    InterfaceEdgeTiming,
     /// PDF-VARIANT-DIGESTION.4a.1 — a register bit-field (a `RegisterFieldRecord` within a
     /// `RegisterRecord`); identity is owning register + field name + bit offset/width.
     RegisterField,
@@ -70,6 +73,7 @@ impl EvalTask {
             EvalTask::SerialFrameField => "serial_frame_field",
             EvalTask::SwdOperation => "swd_operation",
             EvalTask::ProtocolState => "protocol_state",
+            EvalTask::InterfaceEdgeTiming => "interface_edge_timing",
             EvalTask::RegisterField => "register_field",
             EvalTask::DeclaredSignal => "declared_signal",
         }
@@ -143,6 +147,16 @@ pub enum GoldFact {
         machine_name: Option<String>,
         state_name: String,
     },
+    /// A prose-defined interface clocking fact (SWD-SERIAL-EXTRACTION.4e). Identity includes the
+    /// complete semantic tuple so omitting or changing the clock, edge, or either operation fails.
+    InterfaceEdgeTimingFact {
+        actor_name: String,
+        signal_name: String,
+        clock_signal: String,
+        edge: InterfaceClockEdge,
+        samples_on_edge: bool,
+        drive_changes_on_edge: bool,
+    },
     /// A register bit-field (PDF-VARIANT-DIGESTION.4a.1): the owning register, the field name, and
     /// the bit extent. Authored as a `[high:low]` range OR an `offset (= bits_low) + width`; both
     /// normalize to the same `(offset, width)` identity, so a wrong bit extent scores as a miss.
@@ -179,6 +193,7 @@ impl GoldFact {
             GoldFact::FrameField { .. } => EvalTask::SerialFrameField,
             GoldFact::SwdOperationFact { .. } => EvalTask::SwdOperation,
             GoldFact::ProtocolStateFact { .. } => EvalTask::ProtocolState,
+            GoldFact::InterfaceEdgeTimingFact { .. } => EvalTask::InterfaceEdgeTiming,
             GoldFact::RegisterField { .. } => EvalTask::RegisterField,
             GoldFact::DeclaredSignal { .. } => EvalTask::DeclaredSignal,
         }
@@ -238,6 +253,21 @@ impl GoldFact {
                 machine_name,
                 state_name,
             } => protocol_state_key(machine_name.as_deref(), state_name),
+            GoldFact::InterfaceEdgeTimingFact {
+                actor_name,
+                signal_name,
+                clock_signal,
+                edge,
+                samples_on_edge,
+                drive_changes_on_edge,
+            } => interface_edge_timing_key(
+                actor_name,
+                signal_name,
+                clock_signal,
+                *edge,
+                *samples_on_edge,
+                *drive_changes_on_edge,
+            ),
             GoldFact::RegisterField {
                 register,
                 field,
@@ -683,6 +713,44 @@ pub fn protocol_state_record_key(record: &ProtocolStateRecord) -> String {
     protocol_state_key(record.machine_name.as_deref(), &record.state_name)
 }
 
+fn interface_clock_edge_str(edge: InterfaceClockEdge) -> &'static str {
+    match edge {
+        InterfaceClockEdge::Rising => "rising",
+        InterfaceClockEdge::Falling => "falling",
+    }
+}
+
+/// Canonical identity for one complete interface edge-timing fact. Unlike the general temporal-rule
+/// key, this intentionally includes the clock signal and both operation flags.
+pub fn interface_edge_timing_key(
+    actor_name: &str,
+    signal_name: &str,
+    clock_signal: &str,
+    edge: InterfaceClockEdge,
+    samples_on_edge: bool,
+    drive_changes_on_edge: bool,
+) -> String {
+    format!(
+        "interface_edge_timing|{}|{}|{}|{}|samples={samples_on_edge}|drive_changes={drive_changes_on_edge}",
+        actor_name.to_ascii_uppercase(),
+        signal_name.to_ascii_uppercase(),
+        clock_signal.to_ascii_uppercase(),
+        interface_clock_edge_str(edge),
+    )
+}
+
+/// Canonical key for a produced [`InterfaceEdgeTimingRecord`].
+pub fn interface_edge_timing_record_key(record: &InterfaceEdgeTimingRecord) -> String {
+    interface_edge_timing_key(
+        &record.actor_name,
+        &record.signal_name,
+        &record.clock_signal,
+        record.edge,
+        record.samples_on_edge,
+        record.drive_changes_on_edge,
+    )
+}
+
 /// Index produced serial-frame fields by their supporting statements (SWD-SERIAL-EXTRACTION.5).
 pub fn index_serial_frame_field_predictions(
     records: &[SerialFrameField],
@@ -716,6 +784,21 @@ pub fn index_protocol_state_predictions(records: &[ProtocolStateRecord], into: &
         let key = protocol_state_record_key(record);
         for statement_id in &record.supporting_statement_ids {
             into.entry((EvalTask::ProtocolState, statement_id.clone()))
+                .or_default()
+                .insert(key.clone());
+        }
+    }
+}
+
+/// Index produced interface edge-timing records by their supporting statements.
+pub fn index_interface_edge_timing_predictions(
+    records: &[InterfaceEdgeTimingRecord],
+    into: &mut PredictedKeys,
+) {
+    for record in records {
+        let key = interface_edge_timing_record_key(record);
+        for statement_id in &record.supporting_statement_ids {
+            into.entry((EvalTask::InterfaceEdgeTiming, statement_id.clone()))
                 .or_default()
                 .insert(key.clone());
         }
@@ -2580,6 +2663,105 @@ mod tests {
         // deterministic order: SignalConstraint sorts before ActorSignalRelation.
         assert_eq!(items[0].task, EvalTask::SignalConstraint);
         assert_eq!(items[1].task, EvalTask::ActorSignalRelation);
+    }
+
+    #[test]
+    fn interface_edge_timing_gold_and_record_keys_match_complete_tuple() {
+        let record = InterfaceEdgeTimingRecord {
+            timing_id: "edge_1".to_string(),
+            actor_name: "target".to_string(),
+            signal_name: "SWDIO".to_string(),
+            clock_signal: "SWCLK".to_string(),
+            edge: InterfaceClockEdge::Rising,
+            samples_on_edge: true,
+            drive_changes_on_edge: true,
+            supporting_statement_ids: vec!["statement_1948".to_string()],
+        };
+        let gold = GoldFact::InterfaceEdgeTimingFact {
+            actor_name: "TARGET".to_string(),
+            signal_name: "swdio".to_string(),
+            clock_signal: "swclk".to_string(),
+            edge: InterfaceClockEdge::Rising,
+            samples_on_edge: true,
+            drive_changes_on_edge: true,
+        };
+
+        assert_eq!(gold.task(), EvalTask::InterfaceEdgeTiming);
+        assert_eq!(
+            gold.canonical_key(),
+            interface_edge_timing_record_key(&record)
+        );
+
+        let mut predicted = PredictedKeys::new();
+        index_interface_edge_timing_predictions(&[record], &mut predicted);
+        assert!(
+            predicted[&(EvalTask::InterfaceEdgeTiming, "statement_1948".to_string())]
+                .contains(&gold.canonical_key())
+        );
+    }
+
+    #[test]
+    fn interface_edge_timing_key_rejects_each_incomplete_or_changed_semantic() {
+        let complete = interface_edge_timing_key(
+            "target",
+            "SWDIO",
+            "SWCLK",
+            InterfaceClockEdge::Rising,
+            true,
+            true,
+        );
+        for changed in [
+            interface_edge_timing_key(
+                "host",
+                "SWDIO",
+                "SWCLK",
+                InterfaceClockEdge::Rising,
+                true,
+                true,
+            ),
+            interface_edge_timing_key(
+                "target",
+                "OTHER_DATA",
+                "SWCLK",
+                InterfaceClockEdge::Rising,
+                true,
+                true,
+            ),
+            interface_edge_timing_key(
+                "target",
+                "SWDIO",
+                "OTHER_CLOCK",
+                InterfaceClockEdge::Rising,
+                true,
+                true,
+            ),
+            interface_edge_timing_key(
+                "target",
+                "SWDIO",
+                "SWCLK",
+                InterfaceClockEdge::Falling,
+                true,
+                true,
+            ),
+            interface_edge_timing_key(
+                "target",
+                "SWDIO",
+                "SWCLK",
+                InterfaceClockEdge::Rising,
+                false,
+                true,
+            ),
+            interface_edge_timing_key(
+                "target",
+                "SWDIO",
+                "SWCLK",
+                InterfaceClockEdge::Rising,
+                true,
+                false,
+            ),
+        ] {
+            assert_ne!(complete, changed);
+        }
     }
 
     #[test]

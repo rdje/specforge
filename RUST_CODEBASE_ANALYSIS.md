@@ -4,6 +4,24 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-08 — SWD interface-edge timing and protocol projection boundary)
+
+- **New EvidenceIR surface:** `InterfaceEdgeTimingRecord` carries actor, data signal, clock signal,
+  explicit rising/falling edge, sample/drive-state-change flags, and statement provenance.
+  `timing.interface_edge_prose` runs through the common extraction manifest and admits only timing-class
+  universal grammar whose data and clock are already declared by the document.
+- **New deterministic eval surface:** `EvalTask::InterfaceEdgeTiming` and
+  `GoldFact::InterfaceEdgeTimingFact` use the complete semantic tuple as identity. `eval-extraction`
+  indexes the EvidenceIR records directly; fresh ADI evidence scores its one B4.3.1 fact at P/R/F1
+  1.000 and expands the SWD protocol gold to 29 facts.
+- **Architecture boundary:** `serial_frame_fields`, `swd_operations`, `protocol_states`, and
+  `interface_edge_timings` are EvidenceIR-only. Neither `SemanticIr`, `IntentIr`, nor `IsfIr` consumes
+  them, so extraction scoring does not prove downstream product availability; `.7` owns that projection.
+- **New portability risk:** stage builders canonicalize input paths before serializing upstream pointers.
+  A local census found 335 generated artifacts retaining the deleted boot-volume root. This violates the
+  root-relative persistence contract and needs a dedicated compatibility/migration task before another
+  canonical artifact promotion.
+
 ## Session update (2026-08-08 — repository-volume runtime boundary; `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.6a`)
 
 - **One runtime root now owns project data.** `crates/specforge/src/project_data.rs` discovers the

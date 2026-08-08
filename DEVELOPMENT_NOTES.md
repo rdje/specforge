@@ -1,4 +1,29 @@
 # DEVELOPMENT_NOTES
+## SWD-SERIAL-EXTRACTION.4e (`2026-08-08`) — score the complete clocking identity, not a nearby temporal shape
+
+The SWD statement couples two operations: the target samples the bidirectional data pin and changes whether
+it drives that pin on one named clock edge. Reusing the generic temporal-rule score would be misleading because
+that canonical key does not include the clock signal. A dedicated interface-edge record keeps actor, data,
+clock, edge, sampling, and drive-state change in one identity; changing any member is a different fact.
+
+The safe grammar is narrower than the natural-language idea. Only timing-class statements are eligible, both
+signals must already be declared by the document, the edge must be explicit, and the operation's corresponding
+"sampling is performed" or "signal changes are performed" phrase must be present. The reader normalizes only
+universal articles and edge spellings. This captures the real ADI wording and a protocol-neutral falling-edge
+fixture without importing SWD vocabulary into production.
+
+Live verification must rebuild the executable as well as the library. The first isolated EvidenceIR run used a
+pre-change `target/debug/specforge` and correctly produced no new surface even though focused library tests were
+green. Rebuilding the CLI made the same fresh SourceIR produce exactly one complete record. This is why a live
+artifact check belongs beside unit tests: Cargo's library test build does not guarantee a standalone binary is
+current.
+
+The live path also exposed a broader portability defect: stage builders canonicalize their input before
+serializing upstream pointers, and 335 generated files still name the deleted boot-volume root. The strings are
+not current cross-volume reads, but they violate the root-relative persistence contract. That repair needs its
+own task, resolver compatibility, migration proof, and gate; bulk rewriting it inside an SWD extractor slice
+would hide the architecture decision and risk corrupting ignored canonical artifacts.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7 (`2026-08-08`) — closure must compare semantics, not only schemas
 
 All executable gates were green while two route records still carried a completed activity's

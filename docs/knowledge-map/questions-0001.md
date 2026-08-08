@@ -14,6 +14,8 @@
   > are SWCLK and SWDIO extracted / declared
 - [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
   > are SignalStable obligations representable in .isf
+- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
+  > are SourceIR EvidenceIR SemanticIR and IntentIR pointers repository relative
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > are any SpecForge requests to FSMGen currently open
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
@@ -90,6 +92,8 @@
   > do RISC-V CSRs map onto the ISF register/storage abstraction (YES — RISC-V Debug captures its 44 CSRs as register_records; FSMGen titles (storage (var … (fields …))) the register-map/CSR construct, 13a-actor-interface.md:419/:468)
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
   > do SMBus / I2S / I2C cluster into a derived serial-bus family
+- [swd-protocol-surfaces-stop-at-evidenceir](../knowledge/swd-protocol-surfaces-stop-at-evidenceir.md)
+  > do SWD serial frame fields reach IntentIR
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > do all corpus docs build through the pipeline without failure
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
@@ -202,6 +206,8 @@
   > does specforge handle passive voice for actor-signal relations (X is driven by Y)
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
   > does specforge write to the input path I pass or to a canonical generated path
+- [swd-protocol-surfaces-stop-at-evidenceir](../knowledge/swd-protocol-surfaces-stop-at-evidenceir.md)
+  > does the ISF adapter consume swd_operations or protocol_states
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > does the ISF adapter lower actor-relative direction
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
@@ -292,9 +298,3 @@
   > how are signal presence matrices captured into typed records
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > how are signal presence matrices with signals trapped in header rows handled
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > how are spacing-artifact field names and the unit word Bits handled
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > how are temporal rules expressed as LTL or MTL
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > how are the three FSM grammars (SWD hyphen, quoted-mode, single-word) distinguished

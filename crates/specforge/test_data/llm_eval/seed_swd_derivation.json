@@ -497,5 +497,28 @@
     ],
     "label_status": "agent_verified",
     "label_note": "protocol FSM state Operating (SWD line state machine) verified vs spec."
+  },
+  {
+    "task": "interface_edge_timing",
+    "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "statement_id": "statement_1948",
+    "input_text": "When the target samples SWDIO , sampling is performed on the rising edge of SWCLK . When the target drives SWDIO , or stops driving it, signal changes are performed on the rising edge of SWCLK .",
+    "grounding": [
+      "SWDIO",
+      "SWCLK"
+    ],
+    "gold": [
+      {
+        "fact": "interface_edge_timing_fact",
+        "actor_name": "target",
+        "signal_name": "SWDIO",
+        "clock_signal": "SWCLK",
+        "edge": "rising",
+        "samples_on_edge": true,
+        "drive_changes_on_edge": true
+      }
+    ],
+    "label_status": "agent_verified",
+    "label_note": "SWD target sample/drive-state timing verified against IHI0074 Chapter B4.3.1."
   }
 ]
