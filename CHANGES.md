@@ -1,3 +1,15 @@
+### SWD-SERIAL-EXTRACTION.7c — carry protocol observations into canonical IntentIR exactly
+
+- Added additive serde-default/skip-empty IntentIR collections for serial-frame fields, SWD operation
+  branches, protocol states, and interface-edge timings, reusing the exact upstream record types.
+- `IntentIr::build` clones all four collections from SemanticIR without filtering, sorting, reinterpretation,
+  id changes, or provenance changes. A full three-stage schema test proves exact record/order equality,
+  non-empty serialization, omitted-empty legacy shape, and default-empty loading.
+- IntentIR validation now prints and records all four counts. Focused IntentIR, validation, prior-learning,
+  formatting, and warning-deny Clippy checks pass. Full CI passes 1,770 tests / five ignored, all six doctrines,
+  rustdoc, mdBook doctests/build, and final locality. Adapter disposition remains explicitly owned by `.7d`,
+  and protocol-aware convergence accounting remains `.7e.i`.
+
 ### SWD-SERIAL-EXTRACTION.7b — carry protocol observations into SemanticIR exactly
 
 - Added additive serde-default/skip-empty SemanticIR collections for serial-frame fields, SWD operation

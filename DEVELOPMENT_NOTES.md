@@ -1,4 +1,18 @@
 # DEVELOPMENT_NOTES
+## SWD-SERIAL-EXTRACTION.7c (`2026-08-09`) — canonical does not mean executable
+
+IntentIR is the canonical product boundary, so dropping a grounded protocol observation there would force an
+adapter or reviewer to reconstruct source meaning. Carrying the exact upstream record types avoids that loss:
+order, identifiers, optional members, and supporting-statement provenance remain equality-checkable across all
+three stages. The projection remains deliberately mechanical; canonical status does not fill missing protocol
+semantics.
+
+This distinction keeps adapter policy downstream. A protocol state with no transitions or initial state and a
+frame field with no complete wire/value bindings can be valuable canonical intent while still being unsafe to
+render as executable ISF. IntentIR validation therefore exposes presence through four counts, while `.7d` owns
+an explicit disposition for every record. Empty-key omission and default-empty loading preserve compatibility
+for older artifacts and unrelated documents.
+
 ## SWD-SERIAL-EXTRACTION.7b (`2026-08-09`) — a semantic stage may preserve without interpreting
 
 SemanticIR usually derives meaning, but forcing every incoming fact through a new semantic translation would

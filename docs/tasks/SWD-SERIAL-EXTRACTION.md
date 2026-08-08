@@ -143,8 +143,8 @@ extraction approach distinct from the parallel-bus signal-table path.
 - ID: `SWD-SERIAL-EXTRACTION.7b` · Status: `done` (`2026-08-09`) · Goal: project all four typed protocol surfaces
   losslessly from EvidenceIR into SemanticIR with additive, backward-compatible serialization, exact
   cross-stage parity tests, and validation counts.
-- ID: `SWD-SERIAL-EXTRACTION.7c` · Status: `pending` · Goal: project the same surfaces losslessly from
-  SemanticIR into canonical IntentIR, with exact parity/round-trip tests and validation counts.
+- ID: `SWD-SERIAL-EXTRACTION.7c` · Status: `done` (`2026-08-09`) · Goal: project the same surfaces losslessly
+  from SemanticIR into canonical IntentIR, with exact parity/round-trip tests and validation counts.
 - ID: `SWD-SERIAL-EXTRACTION.7d` · Status: `pending` · Goal: make the `.isf` adapter account explicitly
   for every protocol record: lower only a fully licensed representable subset and preserve every
   under-specified record as a typed residual, with FSMGen-strict and generic-adapter regressions.
@@ -186,6 +186,21 @@ extraction approach distinct from the parallel-bus signal-table path.
   or provenance rewrite enters the projection.
 - [x] **LOCKSTEP** — update this leaf, live technical truth, and the SemanticIR/mdBook product contract; leave
   the still-unimplemented IntentIR/adapter boundary explicit under `.7c`/`.7d`.
+
+### Acceptance Checklist (enforced) — `SWD-SERIAL-EXTRACTION.7c`
+
+- [x] **REPRODUCE / MEASURE** — prove canonical IntentIR lacks the four non-empty SemanticIR protocol
+  collections and its validation report cannot account for them.
+- [x] **ROOT CAUSE (WHY + WHERE)** — localize the remaining product-boundary loss to `IntentIr` schema/build
+  assembly and IntentIR validation metrics; keep adapter behavior outside this leaf.
+- [x] **ADDRESSED (verified)** — add additive default-empty/skip-empty IntentIR collections using the exact
+  record types, clone all four unchanged from SemanticIR, and report deterministic counts.
+- [x] **NO REGRESSION** — prove full EvidenceIR→SemanticIR→IntentIR record/order/provenance parity, legacy-empty
+  loading, validation metrics, warning-deny formatting/Clippy, relevant suites, doctrines, and full CI.
+- [x] **GENERICITY / HONESTY** — no protocol/signal names, inferred bindings, filters, sorting, id rewrite,
+  provenance rewrite, or implicit adapter lowering enter the canonical projection.
+- [x] **LOCKSTEP** — update the IntentIR product documentation and live truth while keeping adapter residual
+  accounting and convergence snapshots explicitly open under `.7d`/`.7e.i`.
 
 ### Surfaced portability finding (handoff after `.4e`)
 
@@ -249,7 +264,10 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
   owns its fresh tracked-PDF replacement.
 - `SWD-SERIAL-EXTRACTION.7b` — **DONE.** SemanticIR carries the exact four EvidenceIR record collections through
   additive empty-compatible fields and unfiltered clones; validation reports all four counts. Full CI passes.
-  Next pickable leaf: `.7c` canonical IntentIR projection.
+
+- `SWD-SERIAL-EXTRACTION.7c` — **DONE.** IntentIR carries all four collections through additive
+  empty-compatible fields and exact clones; validation exposes each count, three-stage parity is exact, and
+  full CI passes. Next pickable leaf: `.7d` explicit adapter disposition for every protocol record.
 
 - `SWD-SERIAL-EXTRACTION.4c` — **DONE.** Added `SwdioDirection {HostDrives, TargetDrives}` + `swdio_direction`
   on `SerialFrameField`; `extract_serial_frame_fields` derives it from the spec's own "from the `<A>` to the
@@ -348,6 +366,14 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
   omit all four protocol collections from their typed fields and `fact_count`; therefore a protocol-only
   change can be invisible to the aggregate convergence delta. This does not invalidate exact `.7b` projection,
   but it blocks final fresh-pipeline closure until dedicated `.7e.i` makes all three snapshots protocol-aware.
+- `.7c`: the three-stage projection test preserves two ordered frame records plus one operation, state, and
+  edge record exactly from EvidenceIR through SemanticIR and IntentIR, including optional members, ids, and
+  supporting-statement provenance. Non-empty JSON carries all four keys; clearing them omits every key, and
+  the legacy shape loads with four empty collections. IntentIR validation reports 1/1/1/1. IntentIR tests pass
+  56/56, the matching validation subset 53/53, prior-learning tests 16/16, and warning-deny Clippy passes. Full
+  `scripts/run_ci.sh` is green: all six doctrines, formatting, Clippy, 1,770 passed / 5 ignored, rustdoc,
+  mdBook doctests/build, and final project-data locality. The Knowledge Map writes 154 facts / 1,074 unique
+  question keys across eight shards and the fact catalog writes 153 routes.
 
 ## Commit log
 
@@ -359,6 +385,7 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 - `.4e`: see the `SWD-SERIAL-EXTRACTION.4e` commit (typed/scored interface-edge timing).
 - `.7a`: see the `SWD-SERIAL-EXTRACTION.7a` commit (projection/lowering architecture and freshness root cause).
 - `.7b`: see the `SWD-SERIAL-EXTRACTION.7b` commit (lossless EvidenceIR→SemanticIR projection and counts).
+- `.7c`: see the `SWD-SERIAL-EXTRACTION.7c` commit (lossless SemanticIR→IntentIR projection and counts).
 
 ## Changelog
 
@@ -375,3 +402,6 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 - `2026-08-09`: `.7b` added exact additive SemanticIR carry-through for all four protocol collections,
   validation counts, legacy-empty compatibility, and full record/order/provenance parity tests; full CI green.
   Its cold read also split protocol-aware convergence accounting into `.7e.i` ahead of fresh `.7e.ii` closure.
+- `2026-08-09`: `.7c` added exact additive IntentIR carry-through for all four protocol collections,
+  validation counts, legacy-empty compatibility, and complete EvidenceIR→SemanticIR→IntentIR parity; full CI
+  is green and the frontier advances to `.7d` adapter accounting.

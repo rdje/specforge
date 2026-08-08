@@ -12,11 +12,28 @@
 - assumptions
 - system contract
 - infrastructure signal source/distribution status
+- exact protocol observations: serial-frame fields, operation branches, protocol states, and interface-edge
+  timings
 - carried conflicts
 - carried residual decisions
 
 This is the stage the rest of the project is trying to reach.
 Everything earlier exists to make this artifact strong, inspectable, and reusable.
+
+## How protocol observations cross the product boundary
+
+`IntentIR` carries the four typed protocol-observation collections from `SemanticIR` unchanged:
+`serial_frame_fields`, `swd_operations`, `protocol_states`, and `interface_edge_timings`. The projection preserves
+record order, identifiers, optional values, and supporting-statement provenance. It does not sort, filter,
+reinterpret, or complete the observations. Empty collections are omitted when serialized and default to empty
+when older artifacts are loaded.
+
+These records are canonical product data, but they are not automatically executable behavior. A named protocol
+state without transitions, guards, initial-state identity, or encoding is still incomplete; frame, operation,
+and edge records likewise do not necessarily provide every wire, value, activation, or storage binding an ISF
+step requires. The adapter must account for that incompleteness explicitly rather than inventing the missing
+meaning. `specforge validate <intent-ir>` reports one count for each collection so a reviewer can verify the
+three-stage projection before inspecting adapter disposition.
 
 ## How transactions are recognized
 

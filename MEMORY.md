@@ -19,14 +19,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SWD-SERIAL-EXTRACTION.7c` — lossless SemanticIR→IntentIR protocol projection.
-- Current state: `.7b` carries the four exact EvidenceIR protocol record collections into SemanticIR through
-  additive default-empty/skip-empty fields and unfiltered clones; validation reports each count. Focused schema,
-  394 SemanticIR, 18 semantic-validation, warning-deny Clippy, and live ADI 11/4/13/0 projection checks pass.
-  IntentIR and the adapter still contain no consumer, exactly as owned by `.7c`/`.7d`; `.7e.i` now owns the
-  separately found absence of all four counts from convergence snapshots before fresh `.7e.ii` promotion.
-- Next action: activate `.7c`; add the same exact four collections to IntentIR, clone from SemanticIR, expose
-  validation counts, and prove EvidenceIR→SemanticIR→IntentIR record/provenance parity plus legacy loading.
-- In-flight uncommitted: none after the `.7b` commit. Generated migration state remains repository-local and
+- Active unit: `SWD-SERIAL-EXTRACTION.7d` — explicit ISF adapter disposition for every protocol record.
+- Current state: `.7b` and `.7c` carry the four exact EvidenceIR protocol collections through SemanticIR and
+  canonical IntentIR via additive default-empty/skip-empty fields and unfiltered clones. Three-stage record,
+  order, optional-value, id, and provenance parity plus four IntentIR validation counts pass. Full `.7c` CI is
+  green at 1,770 passed / five ignored. The adapter still consumes none of the collections, and `.7e.i` owns
+  their separately tracked absence from convergence snapshots before fresh `.7e.ii` promotion.
+- Next action: activate `.7d`; audit current adapter residual idioms, assign a stable explicit disposition to
+  every protocol record, keep the directly lowerable subset empty unless the record itself licenses a typed ISF
+  construct, and prove independently licensed ISF remains renderable and FSMGen-strict.
+- In-flight uncommitted: none after the `.7c` commit. Generated migration state remains repository-local and
   intentionally ignored; the exact rollback and disposable loader workspace are absent.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

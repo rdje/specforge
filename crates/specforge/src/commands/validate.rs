@@ -5695,6 +5695,13 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!("  initial_regular_states: {initial_regular_states}");
     println!("  state_transitions: {}", ir.state_transitions.len());
     println!("  register_records: {}", ir.register_records.len());
+    println!("  serial_frame_fields: {}", ir.serial_frame_fields.len());
+    println!("  swd_operations: {}", ir.swd_operations.len());
+    println!("  protocol_states: {}", ir.protocol_states.len());
+    println!(
+        "  interface_edge_timings: {}",
+        ir.interface_edge_timings.len()
+    );
     // KG-ISF-TRANSACTIONS.2d — at-a-glance transaction inventory in the human summary.
     println!("  transactions: {}", ir.transactions.len());
     println!(
@@ -7245,6 +7252,16 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
             metric("initial_regular_states", initial_regular_states.to_string()),
             metric("state_transitions", ir.state_transitions.len().to_string()),
             metric("register_records", ir.register_records.len().to_string()),
+            metric(
+                "serial_frame_fields",
+                ir.serial_frame_fields.len().to_string(),
+            ),
+            metric("swd_operations", ir.swd_operations.len().to_string()),
+            metric("protocol_states", ir.protocol_states.len().to_string()),
+            metric(
+                "interface_edge_timings",
+                ir.interface_edge_timings.len().to_string(),
+            ),
             // KG-ISF-TRANSACTIONS.2d — quick-surface transaction inventory metrics.
             metric("transactions", ir.transactions.len().to_string()),
             metric(
@@ -10206,6 +10223,79 @@ mod tests {
         run(ValidateArgs {
             artifact: intent_ir.artifact_layout.intent_ir_path,
         })
+    }
+
+    #[test]
+    fn validate_intent_ir_reports_protocol_projection_counts() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("intent_protocol_projection_counts.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(&source, "# Intent protocol projection counts\n")?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        semantic_ir.write_to_disk()?;
+        let mut intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        intent_ir.serial_frame_fields = vec![SerialFrameField {
+            field_id: "serial_field_0001".to_string(),
+            name: "REQUEST".to_string(),
+            bit_width: Some(1),
+            bit_range: Some((0, 0)),
+            phase: Some(SerialFramePhase::Request),
+            swdio_direction: Some(SwdioDirection::HostDrives),
+            order: Some(0),
+            response_values: Vec::new(),
+            supporting_statement_ids: vec!["statement_request".to_string()],
+        }];
+        intent_ir.swd_operations = vec![SwdOperation {
+            operation_id: "swd_operation_0001".to_string(),
+            response: "WAIT".to_string(),
+            access: None,
+            phase_count: 2,
+            has_data_phase: false,
+            turnaround_before_data: None,
+            supporting_statement_ids: vec!["statement_operation".to_string()],
+        }];
+        intent_ir.protocol_states = vec![ProtocolStateRecord {
+            state_id: "protocol_state_0001".to_string(),
+            machine_name: Some("serial machine".to_string()),
+            state_name: "Reset".to_string(),
+            action: None,
+            supporting_statement_ids: vec!["statement_state".to_string()],
+        }];
+        intent_ir.interface_edge_timings = vec![InterfaceEdgeTimingRecord {
+            timing_id: "interface_edge_timing_0001".to_string(),
+            actor_name: "target".to_string(),
+            signal_name: "DATA".to_string(),
+            clock_signal: "CLK".to_string(),
+            edge: InterfaceClockEdge::Rising,
+            samples_on_edge: true,
+            drive_changes_on_edge: true,
+            supporting_statement_ids: vec!["statement_edge".to_string()],
+        }];
+
+        let report = validate_intent_ir(&intent_ir, "protocol_projection_counts".to_string());
+        assert_eq!(metric_value(&report, "serial_frame_fields"), Some("1"));
+        assert_eq!(metric_value(&report, "swd_operations"), Some("1"));
+        assert_eq!(metric_value(&report, "protocol_states"), Some("1"));
+        assert_eq!(metric_value(&report, "interface_edge_timings"), Some("1"));
+
+        Ok(())
     }
 
     #[test]

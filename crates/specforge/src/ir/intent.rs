@@ -7,7 +7,8 @@ use serde::{Deserialize, Serialize};
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::evidence::{
-    SignalPolarityConflictRecord, SignalPolarityRecord, SignalSemanticConflictRecord,
+    InterfaceEdgeTimingRecord, ProtocolStateRecord, SerialFrameField, SignalPolarityConflictRecord,
+    SignalPolarityRecord, SignalSemanticConflictRecord, SwdOperation,
 };
 use crate::ir::semantic::{
     ActorPortRecord, ConditionalRuleRecord, ControlActionRecord, ControlBinaryOperator,
@@ -56,6 +57,21 @@ pub struct IntentIr {
     pub signal_semantic_conflicts: Vec<SignalSemanticConflictRecord>,
     #[serde(default)]
     pub interfaces: Vec<InterfaceRecord>,
+    /// SWD-SERIAL-EXTRACTION.7c: exact serial-frame observations carried from SemanticIR into
+    /// the canonical product. IntentIR preserves ids/order/provenance without fabricating the
+    /// signal/value bindings required for executable transactions (ADR 0016).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub serial_frame_fields: Vec<SerialFrameField>,
+    /// Protocol operation branches carried losslessly from SemanticIR (ADR 0016).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub swd_operations: Vec<SwdOperation>,
+    /// Protocol state observations carried losslessly from SemanticIR. Absence of transitions,
+    /// guards, initial state, or encoding remains explicit rather than inferred.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub protocol_states: Vec<ProtocolStateRecord>,
+    /// Interface-edge timing observations carried losslessly from SemanticIR (ADR 0016).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub interface_edge_timings: Vec<InterfaceEdgeTimingRecord>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub system_contract: Option<SystemContractRecord>,
     pub behaviors: Vec<BehaviorIntent>,
@@ -263,6 +279,10 @@ impl IntentIr {
             signal_polarity_conflicts,
             signal_semantic_conflicts,
             interfaces,
+            serial_frame_fields: semantic_ir.serial_frame_fields.clone(),
+            swd_operations: semantic_ir.swd_operations.clone(),
+            protocol_states: semantic_ir.protocol_states.clone(),
+            interface_edge_timings: semantic_ir.interface_edge_timings.clone(),
             system_contract,
             behaviors,
             constraints,
@@ -2369,7 +2389,10 @@ mod tests {
     use tempfile::tempdir;
 
     use crate::error::Result;
-    use crate::ir::evidence::EvidenceIr;
+    use crate::ir::evidence::{
+        EvidenceIr, InterfaceClockEdge, InterfaceEdgeTimingRecord, ProtocolStateRecord,
+        SerialFrameField, SerialFramePhase, SwdOperation, SwdioDirection,
+    };
     use crate::ir::semantic::{
         ControlBlockRole, SemanticIr, SymbolDefinitionKind, SystemResetKind, SystemResetPolarity,
         SystemResetTargetKind, SystemResetTimingRelation,
@@ -2618,6 +2641,141 @@ mod tests {
                 && !assumption.supporting_semantic_ids.is_empty()
         }));
         assert!(intent_ir.residual_decisions.is_empty());
+
+        Ok(())
+    }
+
+    #[test]
+    fn projects_protocol_surfaces_exactly_across_all_three_stages() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("intent_protocol_projection.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+        fs::write(&source, "# Intent protocol projection fixture\n")?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.serial_frame_fields = vec![
+            SerialFrameField {
+                field_id: "serial_field_0001".to_string(),
+                name: "REQUEST".to_string(),
+                bit_width: Some(1),
+                bit_range: Some((0, 0)),
+                phase: Some(SerialFramePhase::Request),
+                swdio_direction: Some(SwdioDirection::HostDrives),
+                order: Some(0),
+                response_values: Vec::new(),
+                supporting_statement_ids: vec!["statement_request".to_string()],
+            },
+            SerialFrameField {
+                field_id: "serial_field_0002".to_string(),
+                name: "ACK".to_string(),
+                bit_width: Some(3),
+                bit_range: Some((2, 0)),
+                phase: Some(SerialFramePhase::Acknowledge),
+                swdio_direction: Some(SwdioDirection::TargetDrives),
+                order: Some(1),
+                response_values: vec!["OK".to_string(), "FAULT".to_string()],
+                supporting_statement_ids: vec!["statement_ack".to_string()],
+            },
+        ];
+        evidence_ir.swd_operations = vec![SwdOperation {
+            operation_id: "swd_operation_0001".to_string(),
+            response: "FAULT".to_string(),
+            access: None,
+            phase_count: 2,
+            has_data_phase: false,
+            turnaround_before_data: None,
+            supporting_statement_ids: vec!["statement_operation".to_string()],
+        }];
+        evidence_ir.protocol_states = vec![ProtocolStateRecord {
+            state_id: "protocol_state_0001".to_string(),
+            machine_name: Some("serial machine".to_string()),
+            state_name: "Dormant".to_string(),
+            action: Some("waits for activation".to_string()),
+            supporting_statement_ids: vec!["statement_state".to_string()],
+        }];
+        evidence_ir.interface_edge_timings = vec![InterfaceEdgeTimingRecord {
+            timing_id: "interface_edge_timing_0001".to_string(),
+            actor_name: "target".to_string(),
+            signal_name: "DATA".to_string(),
+            clock_signal: "CLK".to_string(),
+            edge: InterfaceClockEdge::Falling,
+            samples_on_edge: true,
+            drive_changes_on_edge: false,
+            supporting_statement_ids: vec!["statement_edge".to_string()],
+        }];
+        let expected_frame_fields = evidence_ir.serial_frame_fields.clone();
+        let expected_operations = evidence_ir.swd_operations.clone();
+        let expected_states = evidence_ir.protocol_states.clone();
+        let expected_edge_timings = evidence_ir.interface_edge_timings.clone();
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        assert_eq!(semantic_ir.serial_frame_fields, expected_frame_fields);
+        assert_eq!(semantic_ir.swd_operations, expected_operations);
+        assert_eq!(semantic_ir.protocol_states, expected_states);
+        assert_eq!(semantic_ir.interface_edge_timings, expected_edge_timings);
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        assert_eq!(intent_ir.serial_frame_fields, expected_frame_fields);
+        assert_eq!(intent_ir.swd_operations, expected_operations);
+        assert_eq!(intent_ir.protocol_states, expected_states);
+        assert_eq!(intent_ir.interface_edge_timings, expected_edge_timings);
+
+        let encoded = serde_json::to_value(&intent_ir)?;
+        assert_eq!(
+            encoded.get("serial_frame_fields"),
+            Some(&serde_json::to_value(&expected_frame_fields)?)
+        );
+        assert_eq!(
+            encoded.get("swd_operations"),
+            Some(&serde_json::to_value(&expected_operations)?)
+        );
+        assert_eq!(
+            encoded.get("protocol_states"),
+            Some(&serde_json::to_value(&expected_states)?)
+        );
+        assert_eq!(
+            encoded.get("interface_edge_timings"),
+            Some(&serde_json::to_value(&expected_edge_timings)?)
+        );
+
+        let mut empty = intent_ir;
+        empty.serial_frame_fields.clear();
+        empty.swd_operations.clear();
+        empty.protocol_states.clear();
+        empty.interface_edge_timings.clear();
+        let legacy_shape = serde_json::to_value(&empty)?;
+        for field in [
+            "serial_frame_fields",
+            "swd_operations",
+            "protocol_states",
+            "interface_edge_timings",
+        ] {
+            assert!(
+                legacy_shape.get(field).is_none(),
+                "{field} must omit while empty"
+            );
+        }
+        let decoded: IntentIr = serde_json::from_value(legacy_shape)?;
+        assert!(decoded.serial_frame_fields.is_empty());
+        assert!(decoded.swd_operations.is_empty());
+        assert!(decoded.protocol_states.is_empty());
+        assert!(decoded.interface_edge_timings.is_empty());
 
         Ok(())
     }

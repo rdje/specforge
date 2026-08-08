@@ -4,6 +4,22 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-09 — lossless IntentIR protocol projection; `SWD-SERIAL-EXTRACTION.7c`)
+
+- **The canonical product now carries all four protocol collections.** `IntentIr` reuses
+  `SerialFrameField`, `SwdOperation`, `ProtocolStateRecord`, and `InterfaceEdgeTimingRecord` with additive
+  default-empty/skip-empty storage. `IntentIr::build` clones each collection from SemanticIR unchanged.
+- **The projection preserves evidence without manufacturing behavior.** Exact order, ids, optional values, and
+  supporting-statement provenance survive EvidenceIR→SemanticIR→IntentIR. No transaction, transition, signal
+  binding, value, or adapter step is inferred; `.7d` remains the sole adapter-accounting boundary.
+- **Validation and compatibility are explicit.** IntentIR validation prints and persists four counts. The
+  three-stage test covers ordered/non-empty equality, serialized keys, omitted-empty shape, and legacy defaults;
+  focused validation and prior-learning suites plus warning-deny Clippy pass. Full CI passes 1,770 tests / five
+  ignored, all six doctrines, rustdoc, mdBook doctests/build, and final locality.
+- **Remaining architectural gaps are isolated.** The ISF adapter still consumes none of the four collections,
+  and convergence snapshots remain blind to them. `.7d` owns per-record lowering/residual disposition and
+  `.7e.i` owns protocol-aware convergence before fresh canonical promotion.
+
 ## Session update (2026-08-09 — lossless SemanticIR protocol projection; `SWD-SERIAL-EXTRACTION.7b`)
 
 - **SemanticIR now carries the four EvidenceIR protocol collections.** The schema reuses

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > why is the Docling table capture of a register diagram unreliable
 - [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
   > why is the FSM important for SWD/JTAG
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
