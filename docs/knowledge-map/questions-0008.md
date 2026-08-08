@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > why is the absolute bit position never derived from offset*8+bit
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > why is the block name not used to qualify the duplicate registers (heading levels flattened)
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > why is the channel role kept verbatim instead of mapped to address/data/response phases
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > why is the coordination split safe for WIRE-BASED-100 (AHB relation gold)
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > why is the extraction-profile prior family not scoped by ProtocolFamily
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > why is the interface consolidation safe for WIRE-BASED-100 (gold docs have no interface actor)
+- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
+  > why is the nested cross-tab timing table (TRANSMITTER/RECEIVER) left an honest residual
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > why is the ordered multi-phase transaction body the hard deferred part (no structural name bridge AXI handshake to named transaction)
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)

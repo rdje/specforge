@@ -92,6 +92,8 @@
   > did a second annotator validate seed_apb.json
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
   > did doubling the corpus (36->78) introduce a new ISF lowering silent-drop gap
+- [swd-canonical-edge-artifact-is-stale](../knowledge/swd-canonical-edge-artifact-is-stale.md)
+  > did the path migration remove the SWD edge timing record
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > did the qwen2.5vl VLM recover a groundable AXI signal-to-phase mapping (no — contradictory, redundant, hallucinated signal semantics)
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
@@ -296,5 +298,3 @@
   > how are message fields written as section headings extracted
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > how are message-field tables distinguished from register-field tables
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > how are multi-word field names like Validation Bits or FRU ID recovered

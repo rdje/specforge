@@ -35,7 +35,7 @@ extraction approach distinct from the parallel-bus signal-table path.
 
 ## Task tree
 
-- ID: `SWD-SERIAL-EXTRACTION` · Status: `active` · Children: `.1`–`.5`
+- ID: `SWD-SERIAL-EXTRACTION` · Status: `active` · Children: `.1`–`.7`
 - ID: `SWD-SERIAL-EXTRACTION.1` · Status: `done` · Goal: research/characterize SWD's extractable serial
   intent. **Findings (`2026-06-07`, from the ingested ADI evidence):** (1) SWCLK/SWDIO ARE describable from
   prose — "The SWD interface uses a single bidirectional data pin, **SWDIO**"; "The SWD interface … requires
@@ -129,12 +129,43 @@ extraction approach distinct from the parallel-bus signal-table path.
   signal, clock signal, edge, and both operations from the document's own timing-class prose; no
   protocol-name or signal-name constants in production. Extend the real SWD derivation gold from 28 to
   29 spec-verified facts and keep every existing wire/corpus gate green.
-- ID: `SWD-SERIAL-EXTRACTION.7` · Status: `pending` (depends on `.4e`; opened `2026-08-08`) · Goal:
+- ID: `SWD-SERIAL-EXTRACTION.7` · Status: `active` (container; depends on `.4e`; opened `2026-08-08`;
+  activated `2026-08-09`) · Goal:
   audit and close the protocol-surface projection boundary. `serial_frame_fields`, `swd_operations`, and
   `protocol_states` currently live only on `EvidenceIR`; `eval-extraction` scores them by reading that
   layer directly, while `SemanticIR::build`, `IntentIR::build`, and the `.isf` adapter consume none of
   them. After `.4e`, design and implement the honest typed Evidence→Semantic→Intent projection and only
   the ISF lowering that the proven FSM/serial idioms can represent without fabrication.
+- ID: `SWD-SERIAL-EXTRACTION.7a` · Status: `done` (`2026-08-09`) · Goal: audit the exact four-surface schemas,
+  downstream typed models, validation, and current canonical artifact state; record the lossless-projection
+  and honest-lowering decision; root-cause the missing canonical `.4e` timing record; and decompose `.7`
+  before any product-schema change.
+- ID: `SWD-SERIAL-EXTRACTION.7b` · Status: `pending` · Goal: project all four typed protocol surfaces
+  losslessly from EvidenceIR into SemanticIR with additive, backward-compatible serialization, exact
+  cross-stage parity tests, and validation counts.
+- ID: `SWD-SERIAL-EXTRACTION.7c` · Status: `pending` · Goal: project the same surfaces losslessly from
+  SemanticIR into canonical IntentIR, with exact parity/round-trip tests and validation counts.
+- ID: `SWD-SERIAL-EXTRACTION.7d` · Status: `pending` · Goal: make the `.isf` adapter account explicitly
+  for every protocol record: lower only a fully licensed representable subset and preserve every
+  under-specified record as a typed residual, with FSMGen-strict and generic-adapter regressions.
+- ID: `SWD-SERIAL-EXTRACTION.7e` · Status: `pending` · Goal: rebuild the tracked ADI pipeline from a
+  fresh repository-local CPU ingest, promote the complete current chain, prove canonical 29/29 scoring and
+  downstream parity/residual accounting, run the full wire/KG/CI gates, and close `.7` plus the parent tree.
+
+### Acceptance Checklist (enforced) — `SWD-SERIAL-EXTRACTION.7a`
+
+- [x] **REPRODUCE / MEASURE** — inventory each EvidenceIR record's exact semantics and prove the four
+  surfaces are absent from SemanticIR, IntentIR, and the typed ISF adapter; measure the canonical SWD
+  artifact separately from the fresh `.4e` proof.
+- [x] **ROOT CAUSE (WHY + WHERE)** — identify the exact missing bindings that make direct behavioral ISF
+  lowering unsafe, and establish why canonical `interface_edge_timings` is empty despite the green fresh
+  `.4e` extraction proof.
+- [x] **ADDRESSED (verified)** — accept one durable architecture decision, one bounded implementation
+  decomposition, and Knowledge Map facts whose `reverify` commands reproduce both boundaries.
+- [x] **NO REGRESSION** — documentation/doctrine/index checks pass; no code, product schema, generated
+  artifact, or user-owned workspace file changes in this design leaf.
+- [x] **LOCKSTEP** — update the task frontier, decision index, topically correct mdBook section, bounded
+  resume pointer, and derived Knowledge Map only where the audited public truth changed.
 
 ### Surfaced portability finding (handoff after `.4e`)
 
@@ -190,12 +221,12 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 - `SWD-SERIAL-EXTRACTION.4e` — **DONE.** The explicit target/SWDIO/SWCLK rising-edge statement is one
   typed, registered, provenance-carrying interface-edge record and the 29th independently verified SWD
   gold fact. Fresh extraction and complete-tuple scoring are 1.000; projection remains outside this leaf.
-- **Immediate clean-tree handoff:** open the dedicated artifact-path-portability tree recorded above;
-  its root-relative persistence violation outranks resuming the protocol projection leaf.
-- `SWD-SERIAL-EXTRACTION.7` — **PENDING AFTER `.4e`.** The three already-scored protocol surfaces are
-  EvidenceIR-only and therefore cannot yet satisfy the canonical IntentIR/ISF product boundary. A
-  dedicated architecture slice must close that whole path rather than letting EvidenceIR scores stand in
-  for downstream availability.
+- **Completed clean-tree handoff:** `ARTIFACT-PATH-PORTABILITY` is closed at `97916b95`; all canonical
+  paths, dormant serialized schemas, present artifacts, and moved-root workflows now pass the locality contract.
+- `SWD-SERIAL-EXTRACTION.7a` — **DONE.** ADR 0016 freezes exact Evidence→Semantic→Intent carry-through and
+  explicit adapter residual accounting; direct behavioral lowering remains empty until records supply complete
+  bindings. The canonical 11/4/13/0 surface split is the deliberately unpromoted pre-`.4e` cache, and `.7e`
+  owns its fresh tracked-PDF replacement. Next pickable leaf: `.7b` SemanticIR projection.
 
 - `SWD-SERIAL-EXTRACTION.4c` — **DONE.** Added `SwdioDirection {HostDrives, TargetDrives}` + `swdio_direction`
   on `SerialFrameField`; `extract_serial_frame_fields` derives it from the spec's own "from the `<A>` to the
@@ -237,6 +268,10 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 - Opened per owner decision (a) on `2026-06-07`; the parallel-bus playbook does not fit SWD (KM
   `swd-adi-not-signal-table-spec`) — this is a distinct serial/architecture path.
 - No-faking: SWD 100% must be earned on a faithful gold, never a cherry-picked one.
+- ADR 0016 (`SWD-SERIAL-EXTRACTION.7a`): project all four protocol collections and provenance exactly through
+  SemanticIR and IntentIR; the adapter lowers only records carrying every required behavioral binding and
+  residualizes the rest. The current directly lowerable protocol subset is empty; independently licensed ISF
+  may still render alongside explicit protocol residuals.
 
 ## Open questions
 
@@ -247,9 +282,9 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 
 ## Blockers
 
-- None. The tracked ADI PDF and repository-local Docling environment produced a fresh CPU re-ingest for
-  `.4e`; the canonical generated cache was deliberately not promoted while its absolute-path portability
-  defect remains open.
+- None. The path-portability defect is closed. The tracked ADI PDF and repository-local Docling environment
+  remain available for `.7e`; the older canonical SourceIR's reclaimed normalized Markdown means freshness
+  requires that planned full ingest rather than an unsafe stage-only rebuild.
 
 ## Verification log
 
@@ -266,6 +301,16 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
   `kg-bench` is 156/156, all six doctrines pass, and full CI is green: formatting, warning-deny Clippy,
   1,735 passed / 5 ignored, rustdoc, 36-file mdBook, locality, and residue. Only `.gitkeep` remains in
   `.project-data/tmp`; the two exact `.4e` workspaces plus empty compiler/Docling scratch were removed.
+- `.7a` architecture reproduction (`2026-08-09`): source inspection finds all four fields only on EvidenceIR
+  and the evaluator, not SemanticIR/IntentIR/IsfIR. The exact schemas expose no state transitions/guards/initial
+  state/encoding and no complete serial wire/value/activation/storage bindings; `IsfTxnStep` has `Switch`,
+  `Set`, shift, and sample forms but no `select` expression. Canonical artifact measurement is frame 11 /
+  operation 4 / state 13 / edge 0, no edge-manifest row; adapter is renderable with 0 transactions, 1 rule,
+  and 3 unrelated residuals. `statement_1948` retains the exact rising-edge clause. A correct EvidenceIR
+  dry-run fails closed on the absent normalized Markdown leaf, while the 2,925,300-byte tracked source PDF is
+  present. ADR 0016, the updated projection fact, and the canonical-staleness fact preserve the root cause.
+  Knowledge Map generation writes 153 facts / 1,066 unique question keys across eight bounded shards; the
+  fact-card catalog writes 152 routes. mdBook doctests/build and all six composed doctrines pass.
 
 ## Commit log
 
@@ -275,6 +320,7 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 - `.3b`: see the `SWD-SERIAL-EXTRACTION.3b` commit (named request bits + ACK values + ordering).
 - `.4`: see the `SWD-SERIAL-EXTRACTION.4` commit (typed protocol-FSM state surface).
 - `.4e`: see the `SWD-SERIAL-EXTRACTION.4e` commit (typed/scored interface-edge timing).
+- `.7a`: see the `SWD-SERIAL-EXTRACTION.7a` commit (projection/lowering architecture and freshness root cause).
 
 ## Changelog
 
@@ -285,3 +331,6 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 - `2026-08-08`: `.4e` done — added and freshly verified the complete interface-edge timing record,
   expanded SWD gold 28→29 at 1.000 on all four protocol tasks, kept every WIRE/KG gate green, and
   recorded the EvidenceIR projection plus cross-stage absolute-path boundaries without widening scope.
+- `2026-08-09`: `.7a` audited the four downstream gaps, accepted exact typed carry-through plus explicit
+  residual accounting, root-caused canonical edge staleness as deliberate `.4e` nonpromotion, and decomposed
+  implementation/fresh-ingest closure into `.7b`–`.7e`.

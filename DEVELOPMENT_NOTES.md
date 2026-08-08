@@ -1,4 +1,26 @@
 # DEVELOPMENT_NOTES
+## SWD-SERIAL-EXTRACTION.7a (`2026-08-09`) — typed preservation precedes executable interpretation
+
+A typed extraction record is not automatically an executable behavior. The SWD surfaces know frame field
+order/direction, response phase shape, state names/actions, and one coupled interface edge, but the current
+records do not jointly name transitions, guards, initial state, encodings, every control-field value, the
+serial wire binding, storage destinations, or activation conditions. The empirically valid FSMGen idiom also
+uses a `select` expression that SpecForge's typed ISF step model does not currently carry. Translating these
+records directly into generic transactions would therefore smuggle architectural guesses across the product
+boundary.
+
+The stable split is exact typed projection followed by explicit lowering disposition. SemanticIR and IntentIR
+should retain the source records byte-for-semantics, validators should expose parity counts, and the adapter
+should residualize each record until that record supplies every operand a supported ISF construct requires.
+Residual protocol content does not invalidate unrelated ISF, but it prevents a renderable artifact from being
+mistaken for complete protocol lowering.
+
+Fresh extraction truth and canonical artifact currency are also distinct. `.4e` correctly proved the edge
+record on a disposable CPU re-ingest, then withheld promotion because absolute stage pointers were still an
+open defect. The later portability migration preserved semantic membership, so canonical EvidenceIR remains
+older and correctly has zero edge records. Its normalized Markdown was intentionally reclaimed, making a
+stage-only rebuild impossible; the honest repair is a fresh tracked-PDF ingest after downstream code is ready.
+
 ## ARTIFACT-PATH-PORTABILITY.5 (`2026-08-09`) — persistence starts at the schema, not the producer
 
 A present-artifact census cannot prove a dormant serializable schema safe. `FigureRegion.raw_image_path` had no

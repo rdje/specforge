@@ -155,9 +155,24 @@ facts; the source-tolerant view re-resolves source drift and filters predictions
 
 One boundary matters: this score proves the EvidenceIR extractors. It does not imply that the four protocol
 surfaces already reach the canonical IntentIR product or `.isf`; that projection/lowering work is tracked
-separately and remains visible as a gap.
+separately and remains visible as a gap. The audited closure design carries the exact records and provenance
+unchanged through SemanticIR and IntentIR, then makes the adapter account for every record. It does not
+translate them prematurely into generic transactions or temporal rules.
 
-*Authoritative tracking:* `docs/tasks/SWD-SERIAL-EXTRACTION.md` (`.4e` and `.7`).
+There is deliberately no direct behavioral lowering yet. The state records do not contain transitions,
+guards, an initial state, or encodings; the frame, operation, and edge records do not contain every wire,
+value, activation, and storage binding needed to generate executable ISF. Guessing those bindings would turn
+faithful extraction into fabricated intent. Until a record is complete enough for a supported construct, the
+adapter will preserve it as an explicit residual while continuing to render unrelated, independently licensed
+content.
+
+The current tracked SWD EvidenceIR also predates the fresh interface-edge proof: it has 11 frame fields, four
+operations, 13 states, and zero edge records. The 29/29 result above came from the repository-local disposable
+re-ingest used by `.4e`; promotion was intentionally deferred until the now-closed path-portability repair.
+Because cleanup reclaimed the old canonical SourceIR's normalized Markdown, closure requires a fresh CPU
+ingest from the tracked ADI PDF, followed by promotion of the complete downstream chain.
+
+*Authoritative tracking:* `docs/tasks/SWD-SERIAL-EXTRACTION.md` (`.4e` and `.7a`–`.7e`) and ADR 0016.
 
 ## Register fields — measuring the breadth, and surfacing the gaps honestly
 

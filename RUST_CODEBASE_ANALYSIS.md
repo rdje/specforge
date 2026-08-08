@@ -4,6 +4,25 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-09 — SWD protocol projection boundary; `SWD-SERIAL-EXTRACTION.7a`)
+
+- **Four extraction surfaces terminate before the product boundary.** `EvidenceIr` owns
+  `serial_frame_fields`, `swd_operations`, `protocol_states`, and `interface_edge_timings`; the evaluator reads
+  them directly, while `SemanticIr`, `IntentIr`, and `IsfIr` have no fields or consumers for them. The current
+  adapter can therefore render unrelated content while silently omitting protocol records unless explicit
+  accounting is added.
+- **Existing record shapes are evidence-complete but behavior-incomplete.** States lack transitions, guards,
+  initial state, and encoding. Frame/operation/edge records lack complete signal, value, activation, port, and
+  sampled-storage bindings. The typed ISF step enum has `Switch`, `Set`, shifts, and samples but no expression
+  form for the empirically proven FSM idiom's `select`. Direct executable lowering would fabricate semantics.
+- **Chosen boundary:** add exact serde-default/skip-empty record collections to SemanticIR then IntentIR, test
+  full record/provenance equality, report stage counts, and extend adapter residual accounting. Do not block
+  independently licensed ISF merely because protocol records residualize; make the incompleteness visible.
+- **Canonical freshness is a separate execution concern.** Current SWD EvidenceIR measures 11/4/13/0 across
+  frame/operation/state/edge; `.4e`'s 29/29 proof came from an intentionally unpromoted disposable ingest. The
+  retained SourceIR cannot rebuild because its normalized Markdown was reclaimed, while the tracked PDF remains
+  present for the final fresh-ingest/promotion leaf.
+
 ## Session update (2026-08-09 — independent portability closure; `ARTIFACT-PATH-PORTABILITY.5`)
 
 - **Dormant serializable schemas are now inside the storage boundary.** The all-`PathBuf` cold read found

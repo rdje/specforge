@@ -27,6 +27,7 @@ changed* lives in git (layer D), not here.
 | [0013](0013-git-indexed-source-pdf-registry-authority.md) | Git-indexed corpus PDFs define source-registry membership | 2026-08-08 | accepted | corpus, PDF, registry, currentness |
 | [0014](0014-corpus-kb-managed-currentness-authority.md) | Tracked inputs and reviewed validation define corpus-KB currentness | 2026-08-08 | accepted | corpus-kb, validation, kg-bench, currentness |
 | [0015](0015-mdbook-owns-public-product-contracts.md) | mdBook owns public product contracts; stable root documents are compatibility pointers | 2026-08-08 | accepted | documentation, mdbook, architecture, current-truth, containment |
+| [0016](0016-swd-protocol-projection-and-honest-isf-boundary.md) | SWD protocol projection is lossless; ISF lowering requires complete behavioral bindings | 2026-08-09 | accepted | swd, projection, intentir, isf, residual-honesty |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /

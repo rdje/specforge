@@ -1,3 +1,16 @@
+### SWD-SERIAL-EXTRACTION.7a — freeze the lossless protocol-projection boundary
+
+- Audited the four scored SWD EvidenceIR schemas against SemanticIR, IntentIR, validation, and the typed ISF
+  model. The records preserve extraction truth but lack the transitions/guards/initial state/encoding and
+  wire/value/activation/storage bindings required for executable protocol lowering.
+- Accepted ADR 0016: carry all four collections and provenance losslessly through the canonical product,
+  report exact cross-stage counts, and residualize every record whose own data does not license a supported
+  ISF construct. No inferred transition, value, port, or schedule is permitted.
+- Root-caused the canonical zero-edge artifact: `.4e` proved 29/29 from a disposable fresh ingest that was
+  intentionally not promoted while portability was open; migration preserved the older cache, and its
+  normalized Markdown has since been reclaimed. A fresh tracked-PDF ingest and full-chain promotion now own
+  the final `.7e` closure rather than an unsafe cache edit.
+
 ### ARTIFACT-PATH-PORTABILITY.5 — close the path portability program
 
 - Cold-read every persisted path schema, producer, consumer, and present artifact after migration. The audit
