@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
+  > how is the prose definitional signal grammar kept garbage-free without a denylist (ADR 0006)
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > how is the protocol initiator actor identified structurally without a name list
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
@@ -296,5 +298,3 @@
   > what already lowers for category-3 platform docs (the register half — register maps + bit-fields via .4a.ii e.g. CoreSight SoC-600 ~3,250 fields, infrastructure signals, actor ports; cat-3's register intent is the same road as cat-2 and is not the gap)
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > what are AGENT_CLASS_NOUNS / the parenthetical-strip / sentence-boundary / no-preposition guards
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what are APB's remaining completeness candidate misses

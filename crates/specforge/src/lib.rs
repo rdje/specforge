@@ -3,6 +3,7 @@ mod commands;
 pub mod error;
 pub mod eval;
 pub mod ir;
+mod project_data;
 #[cfg(test)]
 pub(crate) mod test_support;
 
@@ -10,6 +11,7 @@ use cli::{Cli, Commands};
 use error::Result;
 
 pub fn run(cli: Cli) -> Result<()> {
+    project_data::prepare()?;
     match cli.command {
         Commands::Inspect(args) => commands::inspect::run(args),
         Commands::Doctor(args) => commands::doctor::run(args),

@@ -3,6 +3,8 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$ROOT_DIR/scripts/project_data_env.sh"
+specforge_activate_project_data "$ROOT_DIR"
 
 cd "${ROOT_DIR}"
 
@@ -13,4 +15,3 @@ fi
 
 echo "[specforge-docs] building mdBook"
 mdbook build docs/book
-

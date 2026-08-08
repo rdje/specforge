@@ -234,7 +234,9 @@ The command is read-only with respect to the IR: it consumes a witness JSON and
 optionally writes an adjudication queue, and it never mutates a pipeline artifact.
 The witness extractors run via a gitignored `.venv-eval` (the system Python is
 PEP-668-managed), so this is an offline table-quality measurement path, not a step
-in a normal `converge` run. *Authoritative tracking:*
+in a normal `converge` run. Rebuild it after a repository move with
+`bash scripts/bootstrap_eval.sh`; the script verifies
+`requirements/eval-macos-arm64.lock.txt`. *Authoritative tracking:*
 `docs/tasks/GRITS-CROSS-TOOL.md` (`.2`/`.3`).
 
 ## `learn-priors`

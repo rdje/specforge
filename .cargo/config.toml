@@ -1,0 +1,11 @@
+[env]
+SPECFORGE_REPO_ROOT = { value = ".", relative = true, force = true }
+TMPDIR = { value = ".project-data/tmp", relative = true, force = true }
+TMP = { value = ".project-data/tmp", relative = true, force = true }
+TEMP = { value = ".project-data/tmp", relative = true, force = true }
+XDG_CACHE_HOME = { value = ".cache/xdg", relative = true, force = true }
+HF_HOME = { value = ".cache/huggingface", relative = true, force = true }
+HUGGINGFACE_HUB_CACHE = { value = ".cache/huggingface/hub", relative = true, force = true }
+PIP_CACHE_DIR = { value = ".cache/pip", relative = true, force = true }
+TORCH_HOME = { value = ".cache/torch", relative = true, force = true }
+MPLCONFIGDIR = { value = ".cache/matplotlib", relative = true, force = true }

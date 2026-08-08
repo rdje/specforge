@@ -298,7 +298,9 @@ fn call_vlm_for_asset(
 ) -> Result<String> {
     // Allow test override via SPECFORGE_VLM_HELPER env var.
     if let Some(helper_path) = std::env::var_os(VLM_HELPER_ENV) {
-        let output = Command::new(&helper_path)
+        let mut command = Command::new(&helper_path);
+        crate::project_data::configure_command(&mut command)?;
+        let output = command
             .arg("--asset-id")
             .arg(&asset.asset_id)
             .arg("--diagram-type")
@@ -603,6 +605,7 @@ pub(crate) fn vlm_image_query(
     let request_body = build_chat_request(model, prompt, &image_b64);
 
     let mut cmd = Command::new("curl");
+    crate::project_data::configure_command(&mut cmd)?;
     cmd.arg("-s")
         .arg("-X")
         .arg("POST")
@@ -619,7 +622,7 @@ pub(crate) fn vlm_image_query(
         cmd.arg("-H")
             .arg(format!("Authorization: Bearer {api_key}"));
     }
-    let tempdir = tempfile::tempdir()?;
+    let tempdir = crate::project_data::tempdir()?;
     let request_path = tempdir.path().join("vlm_request.json");
     fs::write(&request_path, &request_body)?;
     cmd.arg("-d").arg(format!("@{}", request_path.display()));

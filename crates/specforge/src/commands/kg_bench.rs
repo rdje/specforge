@@ -3,7 +3,6 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use serde::Deserialize;
-use tempfile::tempdir;
 
 use crate::cli::{KgBenchArgs, ValidateArgs};
 use crate::commands::validate;
@@ -620,7 +619,7 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
         return Err(AppError::MissingPath(source_path));
     }
 
-    let tempdir = tempdir()?;
+    let tempdir = crate::project_data::tempdir()?;
     let generated_root = tempdir.path().join("generated");
     let source_ir_root = generated_root.join("source_ir");
     let evidence_ir_root = generated_root.join("evidence_ir");

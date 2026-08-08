@@ -19,14 +19,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5i` — complete and ready to commit; activity
-  `.5` collection/projection containment is closed.
-- Current state: 601 Markdown files are classified once across 37 surfaces with zero debt; all direct
-  indexes and eight currency contracts pass. Bounded corpus-KB producers remove both warnings under
-  unchanged ceilings, replay 156/156 fixtures, and preserve human synthesis, canonical IR, and typed
-  prior memory. Full CI passes 1,727 tests with 5 ignored; the 35-part book is current.
-- Next action: commit `.5i`, clear `git_message_brief.txt`, verify the clean handoff, then activate
-  `.6` / `.6a` to make repository-derived temp/cache roots canonical and census off-volume residue.
-- In-flight uncommitted: completed, verified `.5i` resulting tree awaiting its atomic commit; no
-  background job and no generated/temp residue.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.6a` — completed by this commit; parent `.6` is
+  closed and `.7` is the sole remaining adoption frontier.
+- Current state: Cargo, canonical scripts, production tempdirs, and Docling/VLM/FSMGen child processes
+  use repository-derived same-filesystem roots under the SSD. Exact rollback-safe Python locks/rebuilds
+  removed 53 stale old-tree references; the two required Docling models are checksum-proved locally;
+  the exact ancestor-only 2.9 GiB boot-volume repository is deleted and absent. Six doctrines, final
+  producer residue checks, full CI, and the 36-part book pass. Shared `~/.cargo`, `~/.rustup`, and the
+  ambiguous home Hugging Face cache remain protected external inputs.
+- Next action: from the clean `.6a` commit, activate `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7` and
+  run the final whole-program closure/retrieval/locality/handoff audit.
+- In-flight uncommitted: none after this commit; no background job or disposable temp/log residue.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

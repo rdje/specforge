@@ -7,6 +7,8 @@
 # commit on any breach. See DOCTRINE_ENFORCEMENT.md (the portable standard) for the model.
 set -euo pipefail
 ROOT="$(git rev-parse --show-toplevel)"
+source "$ROOT/scripts/project_data_env.sh"
+specforge_activate_project_data "$ROOT"
 
 # KNOWLEDGE-MAP is DERIVED — regenerate + stage its complete landing/shard set (including stale-shard
 # deletions) BEFORE the driver's check_knowledge_map.sh validates exact membership and content.

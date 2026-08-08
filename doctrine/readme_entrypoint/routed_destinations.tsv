@@ -22,6 +22,7 @@ DOCTRINE_ENFORCEMENT.md	reader_navigation	doctrine-maintainers	maintained_standa
 TOOLBOX.md	reader_navigation	doctrine-maintainers	maintained_reference	review_on_tooling_change	yes
 README_POLICY.md	reader_navigation	entrypoint-maintainers	maintained_standard	scripts/check_readme_policy.sh	yes
 LIVE_DOCUMENT_SIZE_CONTAINMENT.md	reader_navigation	documentation-maintainers	maintained_standard	scripts/check_live_document_size.sh	yes
+PROJECT_DATA_LOCALITY.md	reader_navigation	runtime-maintainers	maintained_standard	scripts/check_project_data_locality.sh	yes
 https://github.com/rdje/specforge/issues	reader_navigation	specforge-owner	external_service	github_issue_retention_and_query	yes
 docs/book/src/SUMMARY.md	author_overflow	book-maintainers	bounded_collection_index	transition_debt:LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5	yes
 ROADMAP.md	author_overflow	roadmap-maintainers	hot_live	scripts/check_live_document_size.sh	yes

@@ -2,7 +2,6 @@ use std::fs;
 use std::process::Command;
 
 use serde::Deserialize;
-use tempfile::tempdir;
 
 use crate::cli::{DoctorArgs, VlmProviderArg};
 use crate::error::{AppError, Result};
@@ -367,7 +366,9 @@ fn run_ollama_tags_probe() -> Result<std::result::Result<String, String>> {
 }
 
 fn run_get_probe(url: &str) -> Result<std::result::Result<String, String>> {
-    let output = Command::new("curl")
+    let mut command = Command::new("curl");
+    crate::project_data::configure_command(&mut command)?;
+    let output = command
         .arg("-s")
         .arg("--max-time")
         .arg(LOCAL_GET_PROBE_TIMEOUT_SECONDS.to_string())
@@ -398,12 +399,14 @@ fn run_openai_chat_probe(
     let request_body = format!(
         r#"{{"model":"{model}","messages":[{{"role":"user","content":"Reply with the single token ok."}}],"max_tokens":8}}"#
     );
-    let tempdir = tempdir()?;
+    let tempdir = crate::project_data::tempdir()?;
     let request_path = tempdir.path().join(format!("{request_stem}.json"));
     let response_path = tempdir.path().join(format!("{request_stem}.out"));
     fs::write(&request_path, request_body)?;
 
-    let output = Command::new("curl")
+    let mut command = Command::new("curl");
+    crate::project_data::configure_command(&mut command)?;
+    let output = command
         .arg("-s")
         .arg("--max-time")
         .arg(LOCAL_CHAT_PROBE_TIMEOUT_SECONDS.to_string())

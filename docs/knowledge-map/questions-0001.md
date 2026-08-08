@@ -168,6 +168,8 @@
   > does adaptive batch sizing change the ingest output / break byte-identity
 - [dempster-fusion](../knowledge/dempster-fusion.md)
   > does agreement between sources boost confidence
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > does cargo test need TMPDIR set manually
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > does constrained contract extraction ship code
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
@@ -296,5 +298,3 @@
   > how are temporal rules expressed as LTL or MTL
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > how are the three FSM grammars (SWD hyphen, quoted-mode, single-word) distinguished
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > how are two genuinely-different registers sharing a mnemonic (MEM-AP CSW vs JTAG-AP CSW) recovered instead of dropped

@@ -6,7 +6,6 @@ use std::process::{Command, ExitStatus, Output};
 use std::time::{Duration, Instant};
 
 use serde::Deserialize;
-use tempfile::tempdir;
 
 use crate::error::{AppError, Result};
 
@@ -1651,7 +1650,7 @@ pub fn materialize_pdf(
     fs::create_dir_all(&staged_page_image_root)?;
     fs::create_dir_all(&staged_visual_asset_root)?;
 
-    let tempdir = tempdir()?;
+    let tempdir = crate::project_data::tempdir()?;
     let summary_output_path = tempdir.path().join("docling_summary.json");
     let backend_stdout_path = tempdir.path().join("docling_stdout.log");
     let backend_stderr_path = tempdir.path().join("docling_stderr.log");
@@ -1783,9 +1782,11 @@ fn relocate_path(path: &mut PathBuf, from_root: &Path, to_root: &Path) {
 fn build_backend_command(tempdir: &Path) -> Result<BackendCommand> {
     if let Some(helper_override) = env::var_os(DOCLING_HELPER_ENV) {
         let helper_path = PathBuf::from(helper_override);
+        let mut command = Command::new(&helper_path);
+        crate::project_data::configure_command(&mut command)?;
         return Ok(BackendCommand {
             display_name: helper_path.display().to_string(),
-            command: Command::new(helper_path),
+            command,
         });
     }
 
@@ -1794,6 +1795,7 @@ fn build_backend_command(tempdir: &Path) -> Result<BackendCommand> {
     fs::write(&helper_script_path, DOCLING_HELPER_SCRIPT)?;
 
     let mut command = Command::new(&python);
+    crate::project_data::configure_command(&mut command)?;
     command.arg(&helper_script_path);
 
     Ok(BackendCommand {
@@ -1942,7 +1944,10 @@ fn discover_repo_local_docling_candidates() -> Result<Vec<PathBuf>> {
 }
 
 fn probe_docling_python(candidate: &Path) -> Result<PythonProbe> {
-    match Command::new(candidate)
+    let mut command = Command::new(candidate);
+    crate::project_data::configure_command(&mut command)?;
+    command.env("PYTHONDONTWRITEBYTECODE", "1");
+    match command
         .args([
             "-c",
             r#"import json

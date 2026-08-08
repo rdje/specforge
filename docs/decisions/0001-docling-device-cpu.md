@@ -33,8 +33,10 @@ env var: `DOCLING_DEVICE=cpu specforge ingest <pdf>`.
 - Process note: never `rm -rf generated/source_ir/<key>` to force a clean re-classify
   until **after** a re-ingest succeeds (or back it up first) — a failed re-ingest after
   deleting the artifact loses it (regenerable, but it was needed for diagnosis).
-- The Docling models survive venv deletion (they live in `~/.cache/huggingface/hub`,
-  ~506M); a venv rebuild does not re-download them. The venv is ~1.3G, local + untracked.
+- The Docling models survive venv deletion. Since the repository-volume locality decision in ADR
+  0007, SpecForge resolves them from repository-local `.cache/huggingface/hub`; the former ~506 MiB
+  shared home cache is not a project default and is not deleted because its ownership is ambiguous.
+  The ~1.3 GiB venv remains local, untracked, and rebuildable from its tracked exact lock.
 
 ## Links
 

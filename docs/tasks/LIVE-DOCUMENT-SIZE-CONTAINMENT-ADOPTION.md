@@ -298,7 +298,7 @@ verification before correction.
   and explicit disposition of the reported corpus-KB warnings before their 90% rollover thresholds.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.6`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Children: `.6a`
   Goal: implement the project-data-locality contract: repository-derived artifact/cache/temp roots;
   production and test temporary workspaces on the repository volume; explicit read-only shared-toolchain
@@ -306,7 +306,7 @@ verification before correction.
   copy/verify/use/delete for exact project-owned off-volume data only.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.6a`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Goal: make canonical CI establish repository-derived temp/cache roots by default, audit every Rust
   and non-Rust test workspace for same-volume containment, and remove reliance on callers remembering
   environment overrides. The `.5g.iii` signoff fix already makes Docling source tests parallel-safe
@@ -348,8 +348,8 @@ verification before correction.
 | — | `.5g.iii` | `done` (`2026-08-08`) | Reviewed-snapshot validation, 156/156 fixture projections, all managed/human regions, paired JSON, producer seams, and 15 fail-closed cases are enforced. |
 | — | `.5h` | `done` (`2026-08-08`) | Four compatibility roots now route into one current, code-bound 35-part public mdBook truth plane. |
 | — | `.5i` | `done` (`2026-08-08`) | All collection/projection debt is closed; bounded corpus-KB producers remove both warnings without wider ceilings. |
-| 1 | `.6` / `.6a` | `pending` | Enforce repository-volume project-data locality, canonicalize same-volume CI roots, and audit old project-owned residue. |
-| 2 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
+| — | `.6a` | `done` (`2026-08-08`) | Repository-derived Cargo/shell/Rust roots, exact local Python rebuilds and model copies, child-process control, residue gates, and the old-tree copy/verify/use/delete sequence are complete. |
+| 1 | `.7` | `pending` | Run the final whole-program closure audit from the clean `.6a` commit. |
 
 ## Decisions
 
@@ -1626,6 +1626,100 @@ outcomes, and human synthesis remain byte-untouched.
   doctrine and CI success, clean diff, and absence of disposable generated/temp residue while leaving
   the user-owned `.claude/settings.json` untouched.
 
+## `.6` / `.6a` Project-Data Locality Enforcement
+
+This activity makes same-volume locality a default rather than a caller convention. It owns SpecForge
+production, tests, canonical scripts, and the environment passed across the pinned FSMGen submodule
+boundary. It must not edit submodule-owned source or delete ambiguous shared toolchain/cache data.
+
+### Planned proof sequence
+
+1. Inventory every production/test/script path that creates temporary files, workspaces, build output,
+   package/dependency caches, logs, or generated artifacts. Classify literal `/tmp` strings as runtime
+   writes, test-only serialized data, historical documentation, or external read-only dependencies.
+2. Define one repository-root-derived locality contract and executable checker covering canonical CI,
+   standalone CLI production paths, Rust and non-Rust test workspaces, generated/checker scratch, and
+   the environment passed to `subs/fsmgen`. Preserve `~/.cargo` and `~/.rustup` only as explicit shared
+   read/toolchain exceptions.
+3. Implement the smallest common runtime/script seam that makes project temp/cache/build paths
+   repository-relative by default, rejects unsafe/off-volume overrides where required, creates bounded
+   roots before use, and cleans disposable workspaces without deleting shared caches.
+4. Run focused same-volume probes for every producer family plus the full doctrine/CI suite without
+   caller-supplied `TMPDIR`; prove all observed write roots share the repository device/volume.
+5. Census known off-volume locations and project-specific names. For exact project-owned residue,
+   follow copy/verify/use/delete when data must survive or exact deletion plus absence proof when it is
+   disposable; never touch ambiguous global stores. Record required external reads and remaining risk.
+
+### Root-cause inventory and disposition
+
+- The repository and its ignored `.venv-docling`, `.venv-eval`, `target/`, and `generated/` stores are
+  physically on `/Volumes/SSD`. The boot-volume `/private/tmp` and user home are different APFS
+  volumes, so inherited OS defaults are not locality-safe.
+- Six production Rust call sites and the test corpus use `tempfile::tempdir()`. The production sites
+  are the doctor/enrich/eval/kg-bench/LLM request paths and the Docling backend; approximately four
+  hundred test-only sites inherit Cargo's process environment. Canonical `run_ci.sh`, docs CI, the
+  doctrine driver, and the hook currently do not establish a repository-derived temp/cache root.
+- The Docling and FSMGen subprocess boundaries currently inherit their caller environment. FSMGen is
+  a pinned external source boundary and must be controlled only through the parent process environment;
+  its submodule content is outside this activity's mutation authority.
+- The two repository-local Python environments were copied to the SSD, but their generated console
+  scripts retained absolute shebangs into the former boot-volume repository. That path was a real
+  2.9 GiB repository residue at stale commit `70534fe0`, not a symlink. Consequently,
+  invoking the SSD paths `.venv-docling/bin/docling` or `.venv-eval/bin/pip` actually starts the old
+  boot-volume interpreter even though invoking each SSD `bin/python` directly resolves SSD packages.
+  The old tree was Git-clean except for the same untracked `.claude/settings.json`; deletion remained
+  prohibited until commit ancestry, untracked identity, dependency inventories, and generated data
+  were compared and the SSD copies were exercised independently of every old path.
+- The shared boot-volume Hugging Face cache is approximately 506 MiB and includes the Docling model
+  repositories. It is ambiguous shared global data: populate and verify a repository-local model
+  cache, stop project access to the shared copy, and leave the shared copy intact. The director's
+  explicit `~/.cargo` and `~/.rustup` exceptions remain shared toolchain inputs, not project-owned
+  caches to migrate or delete.
+
+### Implemented contract and migration proof
+
+- `.cargo/config.toml` forces the repository-relative `.project-data/tmp` plus `.cache` roots into
+  every Cargo-launched compiler, test, build script, and binary. The tracked `.gitkeep` makes TMPDIR
+  exist in a fresh checkout. `scripts/project_data_env.sh` gives every canonical shell entrypoint the
+  same variables and rejects missing roots, same-volume off-root symlinks, and different filesystem
+  devices. No caller-supplied `TMPDIR` is required.
+- The Rust `project_data` module discovers the current root from a runtime override, current directory,
+  or executable ancestors without embedding the build path. All six production temporary workspaces
+  now use `tempdir_in(.project-data/tmp)`. Docling, curl/VLM helper, and pinned FSMGen child processes
+  receive explicit local temp/cache roots; the submodule remains byte-untouched. Three Rust unit tests
+  and five shell fail-closed/device/destructive-target tests pass.
+- The final producer census found that FSMGen's pinned Perl lowerer leaves closed `File::Temp` `.fsm`
+  paths in a long-lived shared temp root. SpecForge now scopes each invocation to a disposable child
+  tempdir and removes it after the child exits; seven focused strict/schedule tests leave no `.fsm`
+  residue. Full CI rechecks locality after all producers and rejects direct `.fsm` or `.log` residue.
+- The existing Python inventories became exact tracked macOS arm64 locks: 109 Docling environment
+  packages and nine eval packages including bootstrap tooling. Rollback-safe rebuilds at the final
+  SSD paths now match `pip freeze --all`, import required modules, and produce current-root launchers.
+  Stale old-repository records fell from 53 to zero; direct `docling` and `pip` probes resolve through
+  `/Volumes/SSD` after the old tree's deletion.
+- The two required Docling model repositories were copied from the ambiguous shared cache with 9/8
+  file/symlink and 7/6 file/symlink identities plus exact 349,860 KiB and 167,752 KiB allocation and
+  checksum-clean rsync comparisons. Revision-aware resolution passed with `HF_HUB_OFFLINE=1`; a real
+  network-disabled one-page ingest produced ready SourceIR, one page, and one visual asset. Its exact
+  source/output/temp residue was then deleted. The shared cache remains present and untouched.
+- The 2.9 GiB boot-volume repository was proven to be an ancestor-only duplicate: old HEAD
+  `70534fe0` is an ancestor of the SSD history; Git tracked state and the FSMGen pin were clean; all
+  three ignored/untracked Claude files were byte-identical; both old venv inventories matched the
+  captured locks; generated data had zero old-only non-mdBook files, while its two old-only mdBook
+  hash assets were disposable. The exact old tree was deleted, its path is absent, and SSD Docling,
+  eval, offline-model, and locality probes all pass afterward.
+
+### Acceptance Checklist (enforced) — `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.6a`
+
+- [x] **ROOT CAUSE (WHY + WHERE)** — enumerate every project-owned temp/cache/artifact producer and
+  explain which current defaults or environment seams can escape the repository volume.
+- [x] **ADDRESSED (verified)** — enforce repository-derived defaults in production, canonical scripts,
+  all Rust/non-Rust test workspaces, and the FSMGen invocation boundary; make the contract executable
+  and document only proven shared read/toolchain exceptions.
+- [x] **NO REGRESSION** — prove focused same-device writes, full doctrine/CI success without a manual
+  `TMPDIR`, exact residue disposition, diff hygiene, and preservation of shared caches, submodule
+  contents, canonical artifacts, and the user-owned `.claude/settings.json`.
+
 ### Registry and checker contract for `.3b`
 
 - Project-owned data lives at `doctrine/live_document_size/surfaces.jsonl`. Record zero is a registry
@@ -1712,6 +1806,9 @@ outcomes, and human synthesis remain byte-untouched.
 | `2026-08-08` | `.5i` | resulting-tree lifecycle/state/index/currency report; corpus member distribution and producer-shape audit; focused 32-test renderer suite; complete corpus refresh; real `kg-bench`; 15-case currentness self-test/report | green: entry 600 files / 37 surfaces / zero debt; warnings root-caused to a 977-line six-lines-per-pass aggregate and one 1,062-byte joined-evidence row, not 47.0%-line / 49.8%-byte aggregate use; replay is 156/156 with human regions preserved; bounded failure detail and a 64-fixture evidence set pass; final corpus surface is 24 files / 1,172 lines / 124,679 bytes / 201 max lines / 305 max-line bytes with no warning and unchanged ceilings |
 | `2026-08-08` | `.5i` | canonical/task/fact/map shard retrieval matrix; rolling/roadmap/feedback/validation/source/corpus/book currentness reports; mdBook build; resulting live-size report | green: 5 catalogs / 237 members plus root, 121 task trees, 145 fact cards, 146 facts / 1,017 unique questions / 7 shards, eight enforced currency contracts, exact one-hop membership, 601 Markdown files / 37 surfaces / zero debt, and book 35 files / 12,535 lines / 751,345 bytes all pass |
 | `2026-08-08` | `.5i` | repository-local `TMPDIR` full `bash scripts/run_ci.sh`; diff hygiene; fixture/temp/log residue census | green: doctrines 5/5; formatting, warning-deny Clippy, 1,727 Rust tests passed / 5 ignored, rustdoc, and mdBook pass; `generated/tmp` and checker fixtures are absent, zero Cargo `.log` files remain, and 48 active incremental `.bin` caches are retained |
+| `2026-08-08` | `.6a` | complete temp/cache/process census; filesystem-device probes; venv launcher/inventory comparison; model file/symlink/allocated-byte/rsync checks; revision-aware offline lookup and network-disabled one-page ingest; old-tree ancestry/untracked/ignored/submodule/generated comparison and absence proof | green: six production and all Cargo test temp families are owned; stale venv references 53 → 0; local models verify at 9/8 and 7/6 file/symlink identities plus 349,860/167,752 KiB; one-page SourceIR is ready with one page/visual; shared cache remains; exact 2.9 GiB ancestor-only old tree is absent after SSD-only probes |
+| `2026-08-08` | `.6a` | Bash syntax; project-locality shell suite; Rust `project_data` tests; rollback failure/restoration probe; focused FSMGen strict/schedule tests; post-run temp census | green: shell 5/5 and Rust 3/3 pass; both bootstraps reject the repository root as a destructive target; failed offline rebuild restores its predecessor and exits nonzero; seven FSMGen tests pass and leave no `.fsm`/log residue; active Cargo incremental `.bin` caches are retained as same-volume build artifacts |
+| `2026-08-08` | `.6a` | staged `scripts/check_doctrines.sh`; full `scripts/run_ci.sh` with all locality variables initially unset; post-producer locality recheck; exact book/KM/Markdown metrics; diff/submodule/residue hygiene | green: doctrines 6/6; formatting, warning-deny Clippy, 1,730 Rust tests passed / 5 ignored, rustdoc, 604 Markdown files / 37 surfaces, 146 cards / 147 facts / 1,023 questions / seven shards, and book 36 files / 12,604 lines / 754,968 bytes pass; submodule and shared caches are untouched; only user-owned `.claude/settings.json` remains untracked |
 
 ## Commit Log
 
@@ -1744,6 +1841,7 @@ outcomes, and human synthesis remain byte-untouched.
 | `.5g.iii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.iii — enforce managed corpus-KB currentness` | reviewed validation projection + 156-fixture refresh + exact managed/human/output/producer oracle + debt ratchet |
 | `.5h` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5h — unify root references with the mdBook` | two indexed normative chapters + four bounded compatibility pointers + obsolete catalog retirement + code-bound currentness |
 | `.5i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5i — close collection and projection containment` | exact topology/retrieval closure + bounded corpus-KB renderers + zero warning/debt + final `.5` census |
+| `.6a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.6a — enforce repository-volume project data` | repository-derived temp/cache/runtime roots + local Python/model rebuilds + copy/verify/use/delete + sixth doctrine + residue closure |
 
 ## Changelog
 
@@ -1847,3 +1945,8 @@ outcomes, and human synthesis remain byte-untouched.
   classification, direct retrieval, executed currency, and zero debt. It corrected a stale catalog
   fact, root-caused two corpus-KB warnings to repeated empty structure and joined evidence, replaced
   them with bounded rows/bullets, and proved 156/156 behavior plus full CI without widening a ceiling.
+- `2026-08-08`: `.6a` made repository-volume project data the default across Cargo, canonical scripts,
+  production Rust, Docling/VLM and pinned FSMGen boundaries; rebuilt both copied Python environments,
+  populated and proved the exact local model cache, preserved shared caches/toolchains, and completed
+  copy/verify/use/delete for the exact stale boot-volume repository. The sixth doctrine plus final
+  producer residue recheck closes `.6`; `.7` is the sole remaining program frontier.

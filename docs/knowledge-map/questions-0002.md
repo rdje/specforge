@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > how are two genuinely-different registers sharing a mnemonic (MEM-AP CSW vs JTAG-AP CSW) recovered instead of dropped
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > how are two-column bits | description tables extracted
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
@@ -295,5 +297,3 @@
   > how is the page-range batch size chosen / adapted
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > how is the precision of the broadened (non-gold) extraction measured / estimated
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > how is the prose definitional signal grammar kept garbage-free without a denylist (ADR 0006)

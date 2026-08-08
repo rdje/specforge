@@ -265,7 +265,9 @@ fn propose_register_diagram_fields(
     provider: VlmProviderArg,
 ) -> Result<Vec<RegisterDiagramFieldProposal>> {
     let reply = if let Some(helper_path) = std::env::var_os(VLM_HELPER_ENV) {
-        let output = Command::new(&helper_path)
+        let mut command = Command::new(&helper_path);
+        crate::project_data::configure_command(&mut command)?;
+        let output = command
             .arg("--asset-id")
             .arg(asset_id)
             .arg("--diagram-type")

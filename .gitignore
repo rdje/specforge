@@ -5,6 +5,8 @@
 /questions_keep_untracked.txt
 /generated/
 /.cache/
+/.project-data/tmp/*
+!/.project-data/tmp/.gitkeep
 /.venv-docling/
 *.swp
 mutants.out*/

@@ -3,6 +3,8 @@
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$ROOT/scripts/project_data_env.sh"
+specforge_activate_project_data "$ROOT"
 ACTOR_BOOK="$ROOT/docs/book/src/domain/actor-connectivity.md"
 SCOPE_BOOK="$ROOT/docs/book/src/reference/documentation-scope.md"
 TEMPORAL_BOOK="$ROOT/docs/book/src/direction/temporal-intent-capture.md"

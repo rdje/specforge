@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > what is the KG-ISF-COMPLETENESS.1a agent-identity / actor precision gate
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
   > what is the KG-ISF-COMPLETENESS.1b.i trailing-fragment consolidation
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
@@ -158,6 +160,8 @@
   > what model does the NLI verifier use
 - [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
   > what must SpecForge derive to fully capture SWD; what are the gaps
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > what must be rebuilt after moving the SpecForge repository
 - [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
   > what owns live-document size limits and transition debt
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
@@ -210,6 +214,8 @@
   > when should message fields join the document class census
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
   > when should the activate-only ExtractionProfile consume contract be built
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > where are Docling models stored for SpecForge
 - [contested-priors](../knowledge/contested-priors.md)
   > where are cross-document prior contradictions surfaced
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
@@ -250,6 +256,8 @@
   > where do zero-port actors come from in the IntentIR actor surface
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
   > where does .isf record dropped temporal obligations
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > where does SpecForge store temporary files and caches
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > where does TransactionPhaseRecord.signal_set come from (build_transaction_phases, ir/semantic.rs — phase-naming statements' signals ∩ declared inventory, the .2c technique)
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -290,11 +298,3 @@
   > where is consolidate_trailing_fragment and how is it ordered against the .1a reject
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > where is coordinated-object actor-signal relation extraction implemented
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > where is is_pure_inferred_phantom_role and the build_intent_actors phantom guard
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > where is register bit-field ISF emission implemented (register_storage_fields + normalize_field_access + IsfStorageField + the storage render in crates/specforge/src/ir/isf_ir.rs; residual isf_register_fields_not_lowered)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > where is register-field reset_value extracted and carried (ir/source.rs:432 RegisterFieldRecord.reset_value; ir/evidence.rs:11509/11838 populate it; ir/intent.rs:193 clones register_records to IntentIR)
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > where is split_coordinated_actor_relations and split_coordinated_actor_subject wired

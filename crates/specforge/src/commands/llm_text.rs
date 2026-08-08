@@ -117,7 +117,9 @@ pub(crate) fn call_text_provider(
     max_tokens: usize,
 ) -> Result<String> {
     if let Some(helper_path) = std::env::var_os(VLM_HELPER_ENV) {
-        let output = Command::new(&helper_path)
+        let mut command = Command::new(&helper_path);
+        crate::project_data::configure_command(&mut command)?;
+        let output = command
             .arg("--statement-id")
             .arg(statement_id)
             .arg("--sentence")
@@ -134,6 +136,7 @@ pub(crate) fn call_text_provider(
     }
     let request_body = build_text_chat_request(model, prompt, max_tokens);
     let mut cmd = Command::new("curl");
+    crate::project_data::configure_command(&mut cmd)?;
     cmd.arg("-s")
         .arg("-X")
         .arg("POST")
@@ -149,7 +152,7 @@ pub(crate) fn call_text_provider(
         cmd.arg("-H")
             .arg(format!("Authorization: Bearer {api_key}"));
     }
-    let tempdir = tempfile::tempdir()?;
+    let tempdir = crate::project_data::tempdir()?;
     let request_path = tempdir.path().join("text_request.json");
     fs::write(&request_path, &request_body)?;
     cmd.arg("-d").arg(format!("@{}", request_path.display()));

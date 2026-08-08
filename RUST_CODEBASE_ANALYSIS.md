@@ -4,6 +4,28 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-08 — repository-volume runtime boundary; `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.6a`)
+
+- **One runtime root now owns project data.** `crates/specforge/src/project_data.rs` discovers the
+  current repository from an explicit process value, current-directory ancestors, or executable
+  ancestors; it never persists the build-time `CARGO_MANIFEST_DIR`. Startup prepares repository-local
+  temp/cache roots, rejects canonical paths that escape the repository, and on Unix compares device
+  ids before command dispatch.
+- **Production tempdirs no longer trust ambient `TMPDIR`.** The six runtime sites in doctor, enrich,
+  extraction evaluation, KG bench, LLM text transport, and Docling use
+  `tempdir_in(.project-data/tmp)`. Child curl/VLM, Docling, and FSMGen boundaries receive explicit
+  repository-derived cache/temp values. Cargo's forced relative environment covers the test corpus
+  and compiler/build-script processes before application startup.
+- **The pinned FSMGen boundary has invocation-scoped cleanup.** Its Perl lowering uses
+  `File::Temp::tempfile` without removing the closed `.fsm` path. A long-lived shared `TMPDIR` left
+  eight intermediates after the complete Rust suite. The parent now supplies one disposable
+  repository-local child tempdir per invocation and drops it after the child exits; focused strict and
+  schedule tests leave zero `.fsm` residue, and full CI rechecks residue after every producer.
+- **Move-sensitive Python state is explicitly rebuildable.** Exact Docling and evaluation locks plus
+  rollback-safe bootstraps replace copied virtual environments whose console shebangs still named the
+  old tree. Runtime probes now resolve the SSD environments and local Hugging Face model cache; shared
+  Cargo/Rustup and ambiguous shared model caches remain protected external inputs.
+
 ## Session update (2026-08-08 — managed corpus-KB review authority and currentness)
 
 - **`corpus-kb` now distinguishes reviewed and ambient validation inputs.** `CorpusKbArgs` adds
@@ -1018,59 +1040,4 @@ State verified directly from the working tree at commit `490e6aed` (HEAD), not i
 ## Session update (2026-05-12 `.fsm` remaining standalone DT enrichment diagnostics)
 - Added `fsm.renderability.required_canonical_enrichments` companion assertions to four remaining standalone DT blocked tests in `crates/specforge/src/ir/adapters.rs`.
 - Tests now cover four distinct enrichment categories: output alignment, interface inventory promotion, graph direction resolution, and width resolution.
-- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
-
-## Session update (2026-05-12 `.fsm` renderability status companion checks)
-- Added `fsm.renderability.is_renderable`, `fsm.renderable_module.is_none()`, and `fsm.renderable_document.is_none()` companion assertions to four standalone DT blocked tests in `crates/specforge/src/ir/adapters.rs`.
-- Tests that were checking `blocking_reasons` in isolation now prove the full renderability contract.
-- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
-
-## Session update (2026-05-12 `.fsm` sequential DT + structured FSM enrichment diagnostics)
-- Added `fsm.renderability.required_canonical_enrichments` companion assertions to three sequential DT system-contract blocked tests and two structured FSM tests in `crates/specforge/src/ir/adapters.rs`.
-- System-contract variant enrichments use distinct strings (`system-signal`/`system contracts`) from standalone-module flavors.
-- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
-
-## Session update (2026-05-12 `.fsm` standalone DT enrichment diagnostics)
-- Added `fsm.renderability.required_canonical_enrichments` companion assertions to five standalone DT blocked tests in `crates/specforge/src/ir/adapters.rs`.
-- Tests prove the enrichment diagnostic strings that tell users how to resolve blocking conditions: width, direction, flat/graph, and parametric conflicts.
-- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
-
-## Session update (2026-05-12 `.fsm` child candidate resolved root kind coverage)
-- Added `resolved_root_kind` assertions to child candidates in nine blocked/keeps tests in `crates/specforge/src/ir/adapters.rs`.
-- Every top composition test extracting a named child candidate now proves both `source_module_name` and `resolved_root_kind`.
-- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
-
-## Session update (2026-05-12 `.fsm` child candidate diagnostics in actor-port recovery)
-- Added `source_module_name` and `resolved_root_kind` assertions to child candidates in two actor-port recovery tests in `crates/specforge/src/ir/adapters.rs`.
-- All top composition tests that extract a named child candidate now prove `source_module_name` and `resolved_root_kind`.
-- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
-
-## Session update (2026-05-12 `.fsm` blocked-test top-candidate renderability)
-- Added `top_candidate.renderability` diagnostics to four blocked conflict tests in `crates/specforge/src/ir/adapters.rs`.
-- These were the last tests that accessed `top_candidate` without any top-candidate-level renderability diagnostic assertion.
-- All blocked top composition tests now prove `!is_renderable` + `!blocking_reasons.is_empty()` + `renderable_top.is_none()` on their top candidate.
-- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
-
-## Session update (2026-05-12 `.fsm` direct_roots root_kind assertions)
-- Added `root_kind` assertions to `direct_roots` entries in two renderable_top_document tests in `crates/specforge/src/ir/adapters.rs`.
-- `renderable_top_document_emits_top_before_child_direct_roots`: both direct roots (producer_core, consumer_core) are `FsmRootKind::Dt`.
-- `renderable_top_document_preserves_fsm_child_root_kind`: the single direct root (controller_core) is `FsmRootKind::Fsm`.
-- All renderable_top_document tests that access `direct_roots` now prove root-level `root_kind`.
-- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
-
-## Session update (2026-05-12 `.fsm` last fsm.renderability gap closed)
-- Added `fsm.renderability` diagnostics to the last adapter test that was missing them: `top_composition_recovers_top_system_port_widths_from_child_system_contract`.
-- Every adapter test (143 total) that accesses `adapter.fsm` now proves the top-level renderability status.
-- Complete fsm.renderability coverage is a foundational regression safety net for the `.fsm` adapter.
-- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
-
-## Session update (2026-05-12 `.fsm` top-candidate renderability in top-port recovery)
-- Added `top_candidate.renderability` diagnostics to four top-port direction/width recovery tests in `crates/specforge/src/ir/adapters.rs`.
-- These renderable tests had fsm-level and renderable_top identity but were missing the intermediate top-candidate renderability layer.
-- The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.
-
-## Session update (2026-05-12 `.fsm` missing renderability assertions)
-- Added renderability diagnostics to the last two adapter tests that lacked any renderability assertion.
-- `top_composition_recovers_top_port_direction_from_link_topology` (renderable) and `top_root_kind_confidence_follows_recovered_top_port_evidence` (blocked) now both carry appropriate renderability checks.
-- Every one of the 143 adapter tests now has at least one renderability diagnostic assertion.
 - The Rust test listing remains `666` tests, and the adapter-filtered suite reports `143/143` passing tests.

@@ -286,6 +286,7 @@ The reference deployment. Enforced by `scripts/check_doctrines.sh` via `.githook
 | `TASK-ACCEPTANCE` | evidence | `scripts/check_task_acceptance.sh` | a staged Rust code change is owned by a staged `docs/tasks/*.md` leaf whose acceptance checklist carries ROOT CAUSE + ADDRESSED + NO REGRESSION, ticked and backed by SpecForge tool signatures (see `TOOLBOX.md`) |
 | `README-POLICY` | structural | `scripts/check_readme_policy.sh` | root `README.md` stays within its independently derived line/byte ceilings; every reader link and author-overflow destination is a repository-owned, controlled terminal in the route registry |
 | `LIVE-DOC-SIZE` | structural | `scripts/check_live_document_size.sh` | every parent-tracked Markdown path is classified exactly once and satisfies its lifecycle-specific locality, line/byte/count/aggregate/width, index, currency, frozen-content, transition-debt, maintained-reference, and ceiling-authority contracts |
+| `PROJECT-DATA-LOCALITY` | structural | `scripts/check_project_data_locality.sh` | Cargo, shell, Rust temp/subprocess, Python dependency, and optional runtime-store paths resolve from the current repository and reject off-root or stale-repository ownership |
 
 `LIVE-DOC-SIZE` also runs `scripts/test_live_document_size.pl`: 55 positive and fail-closed cases for
 all seven local lifecycle classes, internal/external/generated-set membership, and their control plane. Test workspaces are disposable and always
@@ -308,6 +309,12 @@ contract pin the exact feedback source, five exhaustive regions, six closed exch
 direction/status/evidence, two stale-current findings, 26 consumers, bounded open-record schema, and
 archive topology. Planned state rejects source drift; migrated state will switch identity to the exact
 capsule and verify the bounded current channel, closed register, open records, manifest, and index.
+
+`PROJECT-DATA-LOCALITY` composes three focused shell cases with resulting-tree checks. It proves the
+tracked temp root exists before Cargo starts, all canonical scripts establish the common environment,
+production temp/subprocess seams use the Rust locality helper, Python environments have tracked lock
+authority, and any present venv resolves and launches through this repository. Missing roots and
+off-root cache symlinks fail; `~/.rustup` and `~/.cargo` remain explicit shared inputs.
 
 Deterministic-oracle doctrines that run via `scripts/run_ci.sh` / CI (`kg-bench` 156/156,
 WIRE-BASED-100 constraint+temporal/relation golds = 1.000, the byte-identical evidence/`.isf` checks,

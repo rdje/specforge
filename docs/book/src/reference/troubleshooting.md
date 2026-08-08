@@ -21,7 +21,12 @@ Check:
 
 - Docling Python resolution
 - repo-local `.venv-docling`
+- repository-local `.cache/huggingface/` model availability
 - provider readiness
+
+After moving the repository, rebuild the venv with `bash scripts/bootstrap_docling.sh`; Python venv
+launchers embed their creation path. Run `bash scripts/check_project_data_locality.sh` to detect a
+stale launcher or escaping cache root before retrying ingest.
 
 ## Score dropped after a refresh
 

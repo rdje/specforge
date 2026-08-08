@@ -112,6 +112,7 @@ For contributors and project continuity:
 - [Doctrine enforcement](DOCTRINE_ENFORCEMENT.md) and [diagnostic toolbox](TOOLBOX.md)
 - [README stability policy](README_POLICY.md)
 - [Live-document containment doctrine](LIVE_DOCUMENT_SIZE_CONTAINMENT.md)
+- [Project-data locality standard](PROJECT_DATA_LOCALITY.md)
 
 ## Contributing and support
 

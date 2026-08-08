@@ -3,6 +3,8 @@
 set -uo pipefail
 
 ADAPTER_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$ADAPTER_ROOT/scripts/project_data_env.sh"
+specforge_activate_project_data "$ADAPTER_ROOT"
 ROOT="$ADAPTER_ROOT"
 if [ "$#" -gt 0 ]; then
   if [ "$#" -ne 2 ] || [ "$1" != '--root' ] || [ ! -d "$2" ]; then

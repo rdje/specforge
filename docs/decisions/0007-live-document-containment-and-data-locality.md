@@ -64,6 +64,10 @@ enforced doctrine, with these local decisions:
    `~/.rustup` and `~/.cargo` are explicit machine-toolchain/dependency exceptions authorized by the
    owner; SpecForge must not treat them as project artifact stores. Leaf `.6` implements and proves
    this locality half, including submodule invocation boundaries and residue checks.
+9. `.project-data/tmp/` is the always-present temporary root; `.cache/` owns Python, Hugging Face,
+   torch, and application caches. Cargo, canonical shell entrypoints, Rust production temp creation,
+   and subprocess boundaries share this contract. Python environments are rebuilt from tracked exact
+   locks after a move because their generated launchers necessarily embed the current absolute path.
 
 ## Consequences
 
@@ -80,6 +84,8 @@ enforced doctrine, with these local decisions:
 - The external-SSD move does not require vendoring the shared Rust toolchain. It does require project
   temp/build/cache defaults and downstream-tool invocations to stop leaking owned data back to the
   boot volume.
+- An ambiguous global model/package cache is never deleted. The project receives a verified local
+  copy, proves offline use, and stops accessing the shared copy.
 
 ## Links
 
@@ -87,4 +93,6 @@ enforced doctrine, with these local decisions:
 - README policy: `README_POLICY.md`
 - Registry: `doctrine/live_document_size/surfaces.jsonl`
 - Checker: `scripts/check_live_document_size.sh`
+- Locality standard: `PROJECT_DATA_LOCALITY.md`
+- Locality checker: `scripts/check_project_data_locality.sh`
 - Owning task-tree: `docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md`

@@ -150,7 +150,7 @@ fn extract_on_copy(
     model: Option<String>,
 ) -> Result<(TaskRecords, Vec<FactProvenanceRecord>)> {
     let source = evidence_root.join(doc_key).join("evidence_ir.json");
-    let temp = tempfile::tempdir()?;
+    let temp = crate::project_data::tempdir()?;
     let mut ir = EvidenceIr::load_from_path(&source)?;
     // Redirect all writes to the temp dir; the command writes there, not over the corpus.
     ir.artifact_layout.artifact_root = temp.path().to_path_buf();

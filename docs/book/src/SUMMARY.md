@@ -33,4 +33,5 @@
   - [Documentation Scope And Continuity](reference/documentation-scope.md)
   - [Live Docs And Continuity](reference/live-docs.md)
   - [Doctrine Enforcement](reference/doctrine-enforcement.md)
+  - [Project Data Locality](reference/project-data-locality.md)
   - [Troubleshooting](reference/troubleshooting.md)

@@ -35,6 +35,8 @@
 #        re-checks). Bash-3.2-safe (no mapfile) so a fresh clone on stock macOS works.
 set -uo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"; cd "$ROOT"
+source "$ROOT/scripts/project_data_env.sh"
+specforge_activate_project_data "$ROOT"
 
 # Staged (or ranged) change set.
 if [ -n "${SPECFORGE_TASK_ACCEPTANCE_RANGE:-}" ]; then

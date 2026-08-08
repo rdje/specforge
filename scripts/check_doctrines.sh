@@ -35,6 +35,8 @@
 # scripts/check_<id>.sh obeying the §4 contract, add one line here, and add a §10 row.
 set -uo pipefail   # deliberately NOT `-e`: run ALL checks, collect every result, then report.
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"; cd "$ROOT"
+source "$ROOT/scripts/project_data_env.sh"
+specforge_activate_project_data "$ROOT"
 
 # Each entry: "ID|what it proves|relative/path/to/check.sh"
 # A meta-check below asserts every registered enforcer exists + is executable, so a registry entry
@@ -45,6 +47,7 @@ DOCTRINES=(
   "TASK-ACCEPTANCE|a staged Rust code change is owned by a staged task-tree leaf passing the evidence-backed acceptance checklist (decision 0003 / TOOLBOX.md)|scripts/check_task_acceptance.sh"
   "README-POLICY|the landing README and its reader/author routes satisfy the repository-owned bounded-entrypoint contract|scripts/check_readme_policy.sh"
   "LIVE-DOC-SIZE|every tracked Markdown surface satisfies its registered lifecycle, coverage, locality, size, currency, and route contracts|scripts/check_live_document_size.sh"
+  "PROJECT-DATA-LOCALITY|project-owned temp, cache, dependency, artifact, and subprocess seams resolve from the repository root|scripts/check_project_data_locality.sh"
 )
 
 fail=0

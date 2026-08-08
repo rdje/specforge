@@ -45,7 +45,10 @@ The supported repo-local bootstrap path is:
 bash scripts/bootstrap_docling.sh
 ```
 
-That gives the project a stable local runtime instead of depending on whichever `python3` happens to be first on `PATH`.
+That rebuilds the runtime from `requirements/docling-macos-arm64.lock.txt`, verifies the complete
+installed inventory, and gives the project a stable local runtime instead of depending on whichever
+`python3` happens to be first on `PATH`. Docling's model cache resolves below repository-local
+`.cache/huggingface/`; see [Project Data Locality](reference/project-data-locality.md).
 
 ## Provider strategy
 

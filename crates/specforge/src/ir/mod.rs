@@ -49,8 +49,16 @@ pub(crate) fn run_fsmgen_strict_check(isf_path: &std::path::Path) -> std::proces
     let _guard = FSMGEN_TEST_LOCK
         .lock()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
-    let fsmgen_root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../subs/fsmgen");
-    std::process::Command::new(fsmgen_root.join("bin/fsmgen"))
+    let fsmgen_root = crate::project_data::repository_root()
+        .expect("current SpecForge repository root")
+        .join("subs/fsmgen");
+    let temporary = crate::project_data::tempdir().expect("project-local fsmgen workspace");
+    let mut command = std::process::Command::new(fsmgen_root.join("bin/fsmgen"));
+    crate::project_data::configure_command(&mut command).expect("project-local fsmgen environment");
+    command
+        .env("TMPDIR", temporary.path())
+        .env("TMP", temporary.path())
+        .env("TEMP", temporary.path())
         .args(["--strict", "--check", "--json"])
         .arg(isf_path)
         .current_dir(&fsmgen_root)
@@ -69,8 +77,16 @@ pub(crate) fn run_fsmgen_schedule_json(isf_path: &std::path::Path) -> std::proce
     let _guard = FSMGEN_TEST_LOCK
         .lock()
         .unwrap_or_else(std::sync::PoisonError::into_inner);
-    let fsmgen_root = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../subs/fsmgen");
-    std::process::Command::new(fsmgen_root.join("bin/fsmgen"))
+    let fsmgen_root = crate::project_data::repository_root()
+        .expect("current SpecForge repository root")
+        .join("subs/fsmgen");
+    let temporary = crate::project_data::tempdir().expect("project-local fsmgen workspace");
+    let mut command = std::process::Command::new(fsmgen_root.join("bin/fsmgen"));
+    crate::project_data::configure_command(&mut command).expect("project-local fsmgen environment");
+    command
+        .env("TMPDIR", temporary.path())
+        .env("TMP", temporary.path())
+        .env("TEMP", temporary.path())
         .args(["--emit-schedule-json"])
         .arg(isf_path)
         .current_dir(&fsmgen_root)

@@ -3,6 +3,8 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$ROOT/scripts/project_data_env.sh"
+specforge_activate_project_data "$ROOT"
 fixture="$ROOT/generated/knowledge-map-projection-tests.$$"
 case "$fixture" in "$ROOT"/generated/knowledge-map-projection-tests.[0-9]*) ;; *) exit 1 ;; esac
 cleanup() { rm -rf "$fixture"; }
