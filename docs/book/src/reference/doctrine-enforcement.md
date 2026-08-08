@@ -72,13 +72,20 @@ Map contract and portable-bundle integration suite. Generated collections must h
 membership, exact derive-and-diff content, bounded repository-local check workspaces, and no stale
 parts or temporary residue.
 
+It also runs the roadmap current/history contract. Before migration, that structural check pins the
+exact 1,487-line source, five exhaustive regions, all 23 workstream ids and owning task routes, known
+drift evidence, readers, bounded-current shape, and archive topology. After migration it switches
+identity authority to the immutable source capsule and verifies current-root bounds plus manifest/
+index retrieval. Nine focused cases reject record/row loss, duplication, reordering, chronology
+leakage, and unsafe paths.
+
 The live-document checker is also unconditional. Its JSONL registry is the data-only authority for
 the complete tracked Markdown set, while `LIVE_DOCUMENT_SIZE_CONTAINMENT.md` explains the neutral
 lifecycle model. It does not confuse a large legacy ceiling with a healthy target: existing debt keeps
 an immutable measured baseline and a separately bounded transition allowance. Unique product prose in
 the mdBook uses a maintained-reference contract—bounded directly indexed parts plus exact task-owned
 aggregate change—instead of a fixed cap that would silently limit legitimate product documentation.
-The adapter also runs 48 repository-volume positive and fail-closed fixtures, including every local
+The adapter also runs 55 repository-volume positive and fail-closed fixtures, including every local
 lifecycle, registry schema/size controls, independent pressure axis, and Git-history authority path.
 
 The heavy deterministic oracles — `kg-bench`, the WIRE-BASED-100 golds, the byte-identical

@@ -19,13 +19,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.i` — next clean-tree leaf; activate it only
-  after the `.5d.ii` commit is durable.
-- Current state: `.0`–`.5d` are complete. The Knowledge Map is a normal eight-file generated
-  projection: 19-line landing plus seven bounded shards, 139 facts / 981 unique question keys, exact
-  membership/content freshness, raw path/content identity, and deletion-aware hook staging.
-- Next action: activate `.5e.i`; measure ROADMAP semantic/current-history boundaries, readers, exact
-  source identity, and a lossless bounded current/history design before moving any roadmap record.
-- In-flight uncommitted: `.5d.ii` generator/checker/hook, seven shards, identity correction, surface
-  ratchet, tests, and synchronized readers until commit; none afterward.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.ii` — next clean-tree leaf after `.5e.i`
+  is durable.
+- Current state: `.0`–`.5e.i` are complete. The untouched roadmap source is pinned at 1,487 lines /
+  183,445 bytes with five exact regions, 23 owned workstreams, four stale-current findings, and an
+  unconditional planned-state current/history contract.
+- Next action: commit `.5e.i`, then activate `.5e.ii`; copy/verify the exact roadmap capsule before
+  replacing the root with its bounded current view and landing index/manifest/reader/surface changes.
+- In-flight uncommitted: `.5e.i` contract/checker, ADR/fact, task/live/book synchronization, and
+  generated knowledge indexes until commit; none afterward.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

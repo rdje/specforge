@@ -236,12 +236,12 @@ verification before correction.
   debt, and prove every question key resolves directly to one canonical fact card.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e`
-  Status: `pending`
+  Status: `active`
   Children: `.5e.i`–`.5e.ii`
   Goal: separate current roadmap direction from accumulated delivery chronology without losing either.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.i`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Goal: measure ROADMAP semantic boundaries, task-tree overlap, readers, and a lossless current/history
   design; no roadmap record moves before source identity and current milestone coverage are proved.
 
@@ -330,8 +330,9 @@ verification before correction.
 | — | `.5c.iii` | `done` (`2026-08-08`) | Closed all eight query-only collections with direct membership over 367 canonical Markdown files. |
 | — | `.5d.i` | `done` (`2026-08-08`) | ADR 0009, executable six-shard feasibility contract, collision correction, reader census, and 55 common fixtures landed without changing output topology. |
 | — | `.5d.ii` | `done` (`2026-08-08`) | Seven-shard output, exact staging/derive-and-diff, raw-byte identity correction, reader migration, and normal-surface ratchet landed. |
-| 1 | `.5e.i` | `pending` | Lock the roadmap's current/history boundaries and lossless migration contract before moving records. |
-| 2 | `.5e.ii`–`.5i` | `pending` | Roadmap execution, feedback, currentness, maintained references, and closure. |
+| — | `.5e.i` | `done` (`2026-08-08`) | Exact source/regions, 23-workstream ownership, drift evidence, ADR 0010, readers, archive/root design, and nine-case unconditional gate are locked; no roadmap record moved. |
+| 1 | `.5e.ii` | `pending` | Copy/verify the exact capsule, replace the root with current direction, land retrieval, migrate readers/surfaces, and ratchet debt atomically. |
+| 2 | `.5f.i`–`.5i` | `pending` | Feedback, currentness, maintained references, and closure. |
 | 3 | `.6` | `pending` | Enforce repository-volume project-data locality and audit old project-owned residue. |
 | 5 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
@@ -588,12 +589,90 @@ verification before correction.
 - `2026-08-08`: **Aggregate projection limits are explicit (`.5d.ii`).** Per-shard and shard-count
   limits mathematically bounded the set, but would bank their full product. The generator and doctrine
   additionally enforce 4,096 aggregate lines / 393,216 aggregate bytes across landing plus shards.
+- `2026-08-08`: **Roadmap history requires an exact capsule plus semantic rewrite (`.5e.i`).** The 23
+  workstream records mix active goals and remaining scope with 722 lines / 129,242 bytes of `done:`
+  chronology. Whole-heading partitioning cannot preserve one role without the other. ADR 0010 keeps
+  the stable root as bounded current direction and preserves every old byte in a verified terminal.
+- `2026-08-08`: **Canonical lane summaries drifted behind appended chronology (`.5e.i`, surfaced
+  finding).** R6/R7 still say in progress, R14 says not started, and recommended order still names
+  completed R15 work. Git blame and owning task trees prove these lines predate closure; `.5e.ii` must
+  correct the current root while the exact capsule preserves the stale prose as history.
+- `2026-08-08`: **Current roadmap coverage is 23 high-level rows, not a mirrored task ledger
+  (`.5e.i`).** Each R0–R16/R15b–g row links one owning task tree, while `docs/TASK_TREE.md` remains the
+  complete execution/status catalog. Delivery bullets and applied-tree chronology are forbidden in
+  the bounded root and remain directly retrievable through task, change, and archive routes.
 
 ## Blockers
 
 - None for `.0`–`.3`.
 - Later migrations may stop for an authority conflict, unique unclassified content, or an unprovable
   retrieval promise, exactly as required by the adopted doctrine.
+
+## `.5e.i` Roadmap Current/History Boundary Contract
+
+The pinned pre-migration `ROADMAP.md` is 1,487 lines / 183,445 bytes / 717 maximum content-line
+bytes with SHA-256 `20a71e88c15133398879fb11620dbb4c3ed20a6b689f2bcea733ef82b2a47d88`.
+Five exhaustive regions reconstruct that source exactly:
+
+| Region | Lines | Bytes | Role |
+| --- | ---: | ---: | --- |
+| objective, pipeline, and cross-cutting doctrine | 70 | 4,759 | stable current direction |
+| major-workstream heading plus 23 H3 records | 1,291 | 168,815 | current goals/status mixed with delivery history |
+| post-lock applied-tree section | 45 | 3,316 | delivery/alignment chronology plus catalog route |
+| recommended order | 24 | 1,888 | current sequence mixed with completed work |
+| immediate milestone | 57 | 4,667 | current priorities mixed with dated progress |
+
+The H3 workstream grammar is structurally complete: exactly R0–R16 plus R15b–R15g, in order, each
+with one top-level status. It is not semantically separable at whole-heading boundaries. Top-level
+`done:` blocks alone occupy 722 lines / 129,242 bytes, while active goals, remaining scope, obsolete
+status labels, superseded `.fsm` history, and completion chronology share the same workstream records.
+The three largest records—R15e, R15, and R15f—consume 110,829 bytes. A section split would preserve
+the wrong role; arbitrary line deletion would not be a lossless migration.
+
+The reader/writer census found ten direct readers and one human workflow writer. README, architecture,
+user guide, task doctrine, three mdBook chapters, route data, and the README guard all retain the
+stable root path. `COMMIT.md` remains the only writer contract: the roadmap changes only for program
+direction, milestones, or roadmap-level status. No script or Rust producer mutates it.
+
+Four current-truth defects are pinned rather than normalized away:
+
+1. R6 says `In Progress` after the ISF-only consolidation and named adapter trees closed or were
+   superseded.
+2. R7 says `In Progress` and links its tree as `active`, while `R7-VALIDATION` closed on 2026-05-20.
+3. R14 says `Not Started`, although `R14-SIGNAL-RESOLVE` shipped and closed on 2026-05-31.
+4. recommended item 3 still asks to finish R15 graph direction, while its owning migration is done and
+   the R15 record itself says no forward adapter-direction work remains.
+
+Git blame establishes the cause: these canonical status/order lines predate their owning task-tree
+closures. Later completion material was appended to other roadmap regions without correcting the
+lane summaries. The exact capsule must preserve those stale statements as historical evidence; the
+bounded current root must resolve them against task-tree/code truth.
+
+ADR 0010 adopts a snapshot-plus-terminal design. Before any root replacement, `.5e.ii` must copy the
+exact source to `docs/archive/roadmap/source-through-2026-08-08.md`, verify byte count and SHA-256,
+and land a bounded index plus JSON manifest. The rewritten root keeps the objective, pipeline, and
+cross-cutting doctrine; adds current strategic priorities; lists all 23 workstreams exactly once with
+direct owning-tree routes; contains forward order only; and links the task catalog, current change
+history, and roadmap archive. It cannot contain `done:` blocks, dated progress bullets, or the applied-
+tree chronology section.
+
+The current root targets 256 lines / 32,768 bytes / 384 maximum line bytes and hard-fails above 384 /
+49,152 / 512. The archive index is independently capped at 96 lines / 8,192 bytes / 256 maximum line
+bytes. These values are derived from the 70-line retained doctrine, 23 bounded rows, priorities/order,
+and direct routes; they do not inherit the 1,487-line transition ceiling or bank capacity for another
+chronology.
+
+`doctrine/live_document_size/roadmap_projection.json` locks source/region identities, ordered
+workstreams and owners, drift evidence, current-root structure and limits, archive topology, and all
+known consumers. `scripts/check_roadmap_projection_contract.pl` has nine in-memory fail-closed cases
+for valid structure, duplicate/reordered/missing source records, valid bounded current structure,
+missing/duplicate current rows, forbidden chronology, and unsafe paths. It runs unconditionally via
+`LIVE-DOC-SIZE`. In `planned` state it verifies the untouched root identity; `.5e.ii` switches it to
+`migrated`, where it verifies capsule/manifest/index identity and bounded current-root coverage.
+
+This design leaf does not alter `ROADMAP.md`, create the archive, change program direction, or remove
+transition debt. Those changes are one atomic `.5e.ii` slice after the source and reader contracts are
+durable.
 
 ## `.5d.ii` Atomic Knowledge Map Projection Migration
 
@@ -1095,6 +1174,8 @@ transition debt, not a fabricated freshness claim.
 | `2026-08-08` | `.5d.i` | staged resulting-tree contract/ADR/fact/docs; exact 10-ADR membership; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; live-size `--report`; `git diff --cached --check` | green: 576 Markdown files / 30 surfaces; decisions 10/10 exactly once; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, repository-local mdBook build, exact book aggregate 33 files / 12,080 lines / 722,754 bytes, and staged diff pass; current monolith remains within its unchanged transition envelope and no ceiling authority is requested |
 | `2026-08-08` | `.5d.ii` | portable generator/checker syntax; nine-case contract self-test/check/report; eight-case repository-local bundle integration; exact output-path staging drill; 981-link existence/retrieval drill; 55-case common lifecycle suite; live-size `--report`; residue census | green: 139 facts / 981 unique questions, seven shards; landing 19 lines / 898 bytes, shards 2,000 lines / 183,756 bytes, set 2,019 lines / 184,654 bytes / max 384 UTF-8 bytes; identity `13ee…06d7` agrees independently; 981/981 canonical targets exist; deletion staging, drift/collision/aggregate fail-before-replace, exact membership/content, health pressure, and zero check/generator fixture residue pass |
 | `2026-08-08` | `.5d.ii` | staged resulting-tree topology/reader/surface ratchet; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; repository-local mdBook build; `git diff --cached --check` | green: 583 Markdown files / 30 surfaces; fact projection 8 files, normal and below health warning; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, exact book aggregate 33 files / 12,089 lines / 723,488 bytes, and staged diff pass; one exact topology authority is consumed by this commit |
+| `2026-08-08` | `.5e.i` | exact source/region SHA-256 and metric census; 23-workstream/status/owner parse; reader/writer grep; task-tree and Git-blame root-cause review; Perl syntax; nine-case `--self-test`; real `--check`/`--report` | green: source 1,487 lines / 183,445 bytes / `20a7…7d88`; five regions reconstruct exactly; 23/23 ordered workstreams and indexed owners; `done:` blocks 722 lines / 129,242 bytes; ten readers + one writer; four stale-current findings evidenced; syntax, 9/9 focused cases, planned identity, limits, paths, and consumers pass; no roadmap record moved |
+| `2026-08-08` | `.5e.i` | staged resulting-tree contract/ADR/fact/readers; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; repository-local mdBook build; `git diff --cached --check`; exact book aggregate | green: 585 Markdown files / 30 surfaces; 11/11 ADR routes; 139 fact cards / 140 generated facts / 985 unique questions; roadmap source remains byte-untouched; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, book 33 files / 12,124 lines / 726,004 bytes, and staged diff pass; prior `.5d.ii` ceiling authority removed and no ceiling authority remains banked |
 
 ## Commit Log
 
@@ -1118,6 +1199,7 @@ transition debt, not a fabricated freshness claim.
 | `.5c.iii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.iii — close canonical collection navigation` | external-membership contract + 367-member route closure + bounded catalog plane |
 | `.5d.i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d.i — lock the bounded Knowledge Map shard contract` | accepted topology + executable feasibility/collision contract + complete reader migration census; no output migration |
 | `.5d.ii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d.ii — migrate the bounded Knowledge Map projection` | portable landing/shard transaction + exact hook/checker + identity correction + reader/surface ratchet |
+| `.5e.i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.i — lock the roadmap current/history boundary` | exact source/semantic regions + ADR 0010 + 23-owner/drift/reader/archive/root contract; no roadmap migration |
 
 ## Changelog
 
@@ -1181,3 +1263,7 @@ transition debt, not a fabricated freshness claim.
   question shards, made hook staging deletion-aware and checking membership-sensitive, fixed the
   preflight's post-decode empty-content identity bug, added packing targets plus aggregate caps and
   eight integration cases, migrated all readers, and removed the generated surface's transition debt.
+- `2026-08-08`: `.5e.i` pinned the exact roadmap and five semantic regions, proved that 722 lines of
+  delivery chronology are interleaved with current scope, root-caused four stale canonical claims,
+  accepted ADR 0010, and activated a nine-case source/workstream/owner/reader/archive/root contract
+  without moving a roadmap record. `.5e.ii` owns the atomic capsule and bounded-current migration.

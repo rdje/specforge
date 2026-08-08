@@ -1,0 +1,202 @@
+{
+  "schema_version": 1,
+  "owner": "LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e",
+  "migration_state": "planned",
+  "source": {
+    "path": "ROADMAP.md",
+    "sha256": "20a71e88c15133398879fb11620dbb4c3ed20a6b689f2bcea733ef82b2a47d88",
+    "lines": 1487,
+    "bytes": 183445,
+    "line_bytes": 717,
+    "regions": [
+      {
+        "id": "direction_prologue",
+        "start_line": 1,
+        "end_line": 70,
+        "lines": 70,
+        "bytes": 4759,
+        "line_bytes": 205,
+        "sha256": "552744ecd2658986cb5def109165cd253cb0225c48e0ca7da261f6d0594e7f40"
+      },
+      {
+        "id": "workstream_records",
+        "start_line": 71,
+        "end_line": 1361,
+        "lines": 1291,
+        "bytes": 168815,
+        "line_bytes": 717,
+        "sha256": "c8d6044567b957ab8a341fd5d3e654a72c623adfcc8bae2fa268ec43ccfa1d12"
+      },
+      {
+        "id": "applied_tree_chronology",
+        "start_line": 1362,
+        "end_line": 1406,
+        "lines": 45,
+        "bytes": 3316,
+        "line_bytes": 87,
+        "sha256": "736edbc6c4f4d8dd9241c8103d4564c4077a1e3412d4a675addc427bebeac90f"
+      },
+      {
+        "id": "recommended_order",
+        "start_line": 1407,
+        "end_line": 1430,
+        "lines": 24,
+        "bytes": 1888,
+        "line_bytes": 147,
+        "sha256": "754bb5bc58ba7a41b7fb6546757dc74221595b72e7461f4c14d28f094d71fd45"
+      },
+      {
+        "id": "immediate_milestone",
+        "start_line": 1431,
+        "end_line": 1487,
+        "lines": 57,
+        "bytes": 4667,
+        "line_bytes": 198,
+        "sha256": "f15df74dde7b7cd201f022cf4cdcf76a386b7ffaff3f8555c07540039e35618e"
+      }
+    ]
+  },
+  "layout": {
+    "h1": "# ROADMAP",
+    "h2_order": [
+      "Objective",
+      "Canonical pipeline",
+      "Cross-cutting implementation doctrine",
+      "Major workstreams",
+      "Recommended implementation order",
+      "Immediate next milestone"
+    ],
+    "workstream_ids": [
+      "R0",
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5",
+      "R6",
+      "R7",
+      "R8",
+      "R9",
+      "R10",
+      "R11",
+      "R12",
+      "R13",
+      "R14",
+      "R15",
+      "R15b",
+      "R15c",
+      "R15d",
+      "R15e",
+      "R15f",
+      "R15g",
+      "R16"
+    ],
+    "workstream_owners": [
+      {"id": "R0", "initial_status": "Done", "path": "docs/tasks/ROADMAP-TASKTREE-COVERAGE.md"},
+      {"id": "R1", "initial_status": "Done", "path": "docs/tasks/R1-R5-FOUNDATION-BACKFILL.md"},
+      {"id": "R2", "initial_status": "Done", "path": "docs/tasks/R1-R5-FOUNDATION-BACKFILL.md"},
+      {"id": "R3", "initial_status": "Done", "path": "docs/tasks/R1-R5-FOUNDATION-BACKFILL.md"},
+      {"id": "R4", "initial_status": "Done", "path": "docs/tasks/R1-R5-FOUNDATION-BACKFILL.md"},
+      {"id": "R5", "initial_status": "Done", "path": "docs/tasks/R1-R5-FOUNDATION-BACKFILL.md"},
+      {"id": "R6", "initial_status": "Done", "path": "docs/tasks/ISF-ONLY-CONSOLIDATION.md"},
+      {"id": "R7", "initial_status": "Done", "path": "docs/tasks/R7-VALIDATION.md"},
+      {"id": "R8", "initial_status": "Done", "path": "docs/tasks/R8-R13-EXTRACTION-BACKFILL.md"},
+      {"id": "R9", "initial_status": "Mostly done", "path": "docs/tasks/R8-R13-EXTRACTION-BACKFILL.md"},
+      {"id": "R10", "initial_status": "Done", "path": "docs/tasks/R8-R13-EXTRACTION-BACKFILL.md"},
+      {"id": "R11", "initial_status": "Done", "path": "docs/tasks/R8-R13-EXTRACTION-BACKFILL.md"},
+      {"id": "R12", "initial_status": "Done", "path": "docs/tasks/R8-R13-EXTRACTION-BACKFILL.md"},
+      {"id": "R13", "initial_status": "Done", "path": "docs/tasks/R8-R13-EXTRACTION-BACKFILL.md"},
+      {"id": "R14", "initial_status": "Done", "path": "docs/tasks/R14-SIGNAL-RESOLVE.md"},
+      {"id": "R15", "initial_status": "Done", "path": "docs/tasks/R15-GRAPH-DIRECTION-MIGRATION.md"},
+      {"id": "R15b", "initial_status": "In progress", "path": "docs/tasks/ISF-TEMPORAL-LOWERING.md"},
+      {"id": "R15c", "initial_status": "In progress", "path": "docs/tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md"},
+      {"id": "R15d", "initial_status": "In progress", "path": "docs/tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md"},
+      {"id": "R15e", "initial_status": "In progress", "path": "docs/tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md"},
+      {"id": "R15f", "initial_status": "In progress", "path": "docs/tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md"},
+      {"id": "R15g", "initial_status": "In progress", "path": "docs/tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md"},
+      {"id": "R16", "initial_status": "Program complete", "path": "docs/tasks/R16-INTENT-CAPTURE.md"}
+    ]
+  },
+  "drift_findings": [
+    {
+      "id": "r6-stale-status",
+      "source_literal": "### R6 Adapter layer\n- status: In Progress",
+      "evidence_path": "docs/tasks/ISF-ONLY-CONSOLIDATION.md",
+      "evidence_literal": "- Status: `done`"
+    },
+    {
+      "id": "r7-stale-status",
+      "source_literal": "### R7 Validation and back-annotation\n- status: In Progress",
+      "evidence_path": "docs/tasks/R7-VALIDATION.md",
+      "evidence_literal": "- Status: `done`"
+    },
+    {
+      "id": "r14-stale-status",
+      "source_literal": "### R14 Actor-signal relation extraction: Tier 3 LLM\n- status: Not Started",
+      "evidence_path": "docs/tasks/R14-SIGNAL-RESOLVE.md",
+      "evidence_literal": "- Status: `done`"
+    },
+    {
+      "id": "r15-stale-order",
+      "source_literal": "3. Finish the graph-first downstream signal model so `direction_hint` is no longer the primary semantic surface (`R15`)",
+      "evidence_path": "docs/tasks/R15-GRAPH-DIRECTION-MIGRATION.md",
+      "evidence_literal": "- Status: `done`"
+    }
+  ],
+  "current_root": {
+    "required_h2_order": [
+      "Objective",
+      "Canonical pipeline",
+      "Cross-cutting implementation doctrine",
+      "Current strategic priorities",
+      "Workstream status",
+      "Recommended implementation order",
+      "History and execution"
+    ],
+    "workstream_start_marker": "<!-- roadmap_workstreams:start -->",
+    "workstream_end_marker": "<!-- roadmap_workstreams:end -->",
+    "required_links": [
+      "docs/TASK_TREE.md",
+      "docs/archive/roadmap/INDEX.md",
+      "CHANGES.md"
+    ],
+    "forbidden_literals": [
+      "### Applied task trees since",
+      "- done:",
+      "- **Progress ("
+    ],
+    "health_targets": {"lines": 256, "bytes": 32768, "line_bytes": 384},
+    "enforcement_ceilings": {"lines": 384, "bytes": 49152, "line_bytes": 512}
+  },
+  "archive": {
+    "index": "docs/archive/roadmap/INDEX.md",
+    "manifest": "docs/archive/roadmap/manifest.json",
+    "source_capsule": "docs/archive/roadmap/source-through-2026-08-08.md",
+    "sealed_date": "2026-08-08",
+    "reason": "initial bounded current-roadmap migration",
+    "verifier": "perl scripts/check_roadmap_projection_contract.pl --check",
+    "index_limits": {"lines": 96, "bytes": 8192, "line_bytes": 256}
+  },
+  "consumers": {
+    "readers": [
+      "README.md",
+      "EXTRACTION_ARCHITECTURE.md",
+      "USER_GUIDE.md",
+      "docs/TASK_TREE.md",
+      "docs/TASK_TREE_README.md",
+      "docs/book/src/introduction.md",
+      "docs/book/src/reference/documentation-scope.md",
+      "docs/book/src/reference/live-docs.md",
+      "doctrine/readme_entrypoint/routed_destinations.tsv",
+      "scripts/check_readme_policy.sh"
+    ],
+    "writers": ["COMMIT.md"],
+    "required_literals": [
+      {"path": "README.md", "literal": "[roadmap](ROADMAP.md)"},
+      {"path": "COMMIT.md", "literal": "`ROADMAP.md` changes only when program direction, milestones, or roadmap-level status changes."},
+      {"path": "docs/TASK_TREE.md", "literal": "`ROADMAP.md` remains the canonical high-level workstream status."},
+      {"path": "docs/TASK_TREE_README.md", "literal": "[`ROADMAP.md`](../ROADMAP.md)"},
+      {"path": "EXTRACTION_ARCHITECTURE.md", "literal": "`ROADMAP.md` — implementation sequence and workstream status (R8/R9/R10)"}
+    ]
+  }
+}

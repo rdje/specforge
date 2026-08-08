@@ -187,24 +187,24 @@ doctrine gate.
 
 #### Decision and fact-card navigation landed
 
-The decision collection keeps its existing 30-line index: all nine ADR files are linked exactly
-once, and the generic membership gate continues to enforce that route. Fact cards now have a
-different, complementary route at `docs/knowledge/INDEX.md`. Its 150-line / 28,392-byte generated
-catalog lists all 136 immediate cards by id, establishment date, status, and a bounded title preview.
+The decision collection keeps its bounded index: every current ADR file is linked exactly once, and
+the generic membership gate continues to enforce that route. Fact cards have a different,
+complementary route at `docs/knowledge/INDEX.md`. Its current 153-line / 28,899-byte generated catalog
+lists all 139 immediate cards by id, establishment date, status, and a bounded title preview.
 Long historical titles are shortened only in the index; the linked card remains canonical and
 unchanged.
 
 The catalog count deliberately excludes `docs/knowledge/README.md` and the generated index itself.
-The root question map reports 137 facts because it additionally scans ADR 0007, which has Knowledge
-Map front matter. Thus directory files, fact cards, and cross-layer generated facts are three explicit
-counts rather than one overloaded metric.
+The root question map currently reports 140 facts because it additionally scans ADR 0007, which has
+Knowledge Map front matter. Thus directory files, fact cards, and cross-layer generated facts are
+three explicit counts rather than one overloaded metric.
 
 The focused generator/checker requires filename/id identity, constrained front matter, questions,
 date, valid status (with the architecture-defined `current` default), evidence or reverify, stable
 ordering, and independent field/row/count/index bounds. It runs its nine fail-closed cases and the
 real derive-and-diff check through the live-document doctrine. The root README now offers both routes:
 use the bounded catalog to browse known ids/titles, and the generated Knowledge Map to search by a
-question. Sharding that still-large question map remains a separate migration.
+question. The bounded question-shard migration is described below.
 
 #### Remaining canonical collection catalogs landed
 
@@ -259,6 +259,34 @@ collision rejection, ordering, wrapping, rollover, stale cleanup/staging, bounds
 temporary residue. A ninth contract case guards raw-byte identity after the initial simulator was
 found hashing scalars consumed by checked UTF-8 decoding. Every bootstrap, CI, bundle, doctrine, and mdBook reader moved in the same slice;
 the generated surface is now normal rather than transition debt.
+
+#### Roadmap boundary locked before migration
+
+The roadmap is a different lifecycle problem from a newest-first change ledger. Its 23 H3 workstream
+records mix current goals and remaining scope with delivery chronology inside the same headings. At
+the pinned boundary, `ROADMAP.md` is 1,487 lines / 183,445 bytes; `done:` blocks alone account for 722
+lines / 129,242 bytes. Splitting on headings would therefore keep both roles mixed, while deleting
+the completion blocks in place would make the source impossible to reproduce.
+
+ADR 0010 locks a two-product migration before any roadmap record moves:
+
+- the stable root remains a bounded, human-authored current-direction snapshot;
+- an immutable repository-relative capsule preserves every pre-migration byte;
+- a bounded archive index and manifest make that capsule directly retrievable and hash-verifiable;
+- the task catalog remains the exact execution/status ledger instead of being copied into the root.
+
+The future root keeps the objective, canonical pipeline, implementation doctrine, current strategic
+priorities, one concise row for each R0–R16/R15b–g workstream, forward order, and direct history/
+execution routes. It rejects `done:` blocks and dated progress chronology. For example, closing one
+task-tree leaf updates that tree and `CHANGES.md`; it changes `ROADMAP.md` only when the high-level
+workstream status, priority, or program direction changes.
+
+The pre-migration gate pins the exact source SHA-256, five exhaustive source regions, all 23
+workstream ids and owning task routes, known readers/writer, four stale-current findings, archive
+topology, and independent root limits. Its nine focused cases fail on duplicate, reordered, or
+missing source workstreams; missing or duplicate current rows; forbidden chronology; and unsafe
+paths. The live-document doctrine currently verifies the untouched source. The migration leaf will
+switch the same contract to capsule identity plus bounded-root/index/manifest verification.
 
 Lines, bytes, file count, collection totals, and maximum content-line width are independent axes.
 Existing oversized ledgers are explicit transition debt: their measured baseline cannot move, and a

@@ -1,4 +1,25 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.i (`2026-08-08`) — roadmap history is not a heading split
+
+The roadmap looks sectioned, but its semantic boundary is finer than its Markdown hierarchy. Each
+workstream combines status/goals/remaining scope with delivery detail, and top-level `done:` blocks
+account for 129,242 of the workstream region's 168,815 bytes. R15 also embeds explicitly superseded
+`.fsm` history inside a currently completed workstream. Keeping whole sections would leave the growth
+problem intact; deleting historical list blocks would make the old source irreproducible.
+
+The design therefore produces two independently useful artifacts. The exact source capsule answers
+“what did the roadmap say before containment?” byte-for-byte. The stable root answers “what is the
+current direction?” through objective/doctrine, strategic priorities, 23 concise owned workstream
+rows, forward order, and direct execution/history routes. Task trees retain exact leaf/frontier state;
+the roadmap does not become their second catalog.
+
+The audit also demonstrated why semantic re-authoring is required. R6/R7 status, R14 status, and the
+R15 order item remained stale because later completion prose was appended elsewhere. The historical
+capsule must preserve that contradiction honestly, while the new current root resolves it from the
+owning task trees. The executable planned-state gate freezes the source until the atomic migration;
+its migrated state will transfer identity authority to the capsule and enforce root/index/manifest
+structure thereafter.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d.ii (`2026-08-08`) — projection replacement is a set transaction
 
 A sharded generated index has two freshness dimensions: content and membership. Comparing only the

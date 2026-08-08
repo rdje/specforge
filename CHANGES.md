@@ -1,3 +1,16 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.i — lock the roadmap current/history boundary
+
+- Pinned the untouched 1,487-line / 183,445-byte roadmap and five exhaustive semantic regions by
+  SHA-256 before moving any record. Its 23 workstreams are complete in order, but their 722-line /
+  129,242-byte `done:` blocks are interleaved with current goals and remaining scope.
+- Accepted ADR 0010: preserve the full source as an immutable repository-local capsule, then retain
+  `ROADMAP.md` as a bounded current-direction snapshot with exactly one owned row per high-level
+  workstream and direct task/change/archive routes.
+- Added a data-only contract and nine-case executable checker covering exact source identity,
+  workstream ownership/order, four stale-current findings, readers/writer, future bounded-root
+  structure, archive topology, chronology rejection, and unsafe paths. It now runs unconditionally
+  through `LIVE-DOC-SIZE`; no roadmap record or program direction changed in this design slice.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d.ii — migrate the bounded Knowledge Map projection
 
 - Replaced the 1,038,010-byte monolith with its stable 19-line / 898-byte landing and seven generated
