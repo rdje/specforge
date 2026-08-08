@@ -42,6 +42,9 @@ done < <(cd "$ROOT" && find scripts -maxdepth 1 -type f -name '*.sh' -print | so
 
 require_text ".githooks/pre-commit" 'source "$ROOT/scripts/project_data_env.sh"'
 require_text ".githooks/pre-commit" 'specforge_activate_project_data "$ROOT"'
+require_text ".claude/hooks/post-compact.sh" 'source "$PROJECT_DIR/scripts/project_data_env.sh"'
+require_text ".claude/hooks/post-compact.sh" 'specforge_activate_project_data "$PROJECT_DIR"'
+require_text ".claude/hooks/post-compact.sh" 'SPECFORGE_FSMGEN_MAIN_DIR'
 require_text "crates/specforge/src/lib.rs" "project_data::prepare()?;"
 require_text "crates/specforge/src/project_data.rs" ".tempdir_in(roots.temporary)?"
 require_text "crates/specforge/src/project_data.rs" "ensure_same_filesystem"
@@ -92,6 +95,10 @@ temporary_residue="$(find "$ROOT/.project-data/tmp" -mindepth 1 -maxdepth 1 -typ
   \( -name '*.fsm' -o -name '*.log' \) -print | sort)"
 if [[ -n "$temporary_residue" ]]; then
   note "disposable FSM/log residue remains in .project-data/tmp: $temporary_residue"
+fi
+
+if grep -Fq '/Users/' "$ROOT/.claude/hooks/post-compact.sh"; then
+  note ".claude/hooks/post-compact.sh retains an absolute user-home path"
 fi
 
 if ! "$ROOT/scripts/test_project_data_locality.sh" >/dev/null; then

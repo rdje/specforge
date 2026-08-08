@@ -1,3 +1,20 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7 — close the containment and locality program
+
+- Reopened every archive/current, catalog, Knowledge Map, currency, route, book, locality, Git, and
+  residue authority from clean `.6a` commit `36232874`; all 604 Markdown paths classify once across
+  37 surfaces, every archive/projection retrieves, all eight currency contracts execute, and no debt
+  state remains.
+- Corrected three cold-read defects: the book's stale migration/debt wording, two retired `.5` debt
+  controls in README routes, and an active Claude hook defaulting to the deleted boot-volume tree.
+  Added current-truth, retired-control, and hook-locality gates so each correction fails closed.
+- Preserved all governed README destinations while compacting the landing page from 130 lines / 5,096
+  bytes / 105 maximum characters to 113 / 4,257 / 94. Recorded exact non-blocking rollover headroom for
+  the fact-card catalog/card and reviewed validation snapshot without rewriting evidence or widening a
+  ceiling.
+- Closed the `BOOK-METHOD-DOC` rule in the topically correct live-docs chapter. The final staged gate
+  passes six doctrines, warning-deny formatting/Clippy, 1,730 Rust tests with five ignored, rustdoc,
+  the exact 36-file / 12,632-line / 757,269-byte book, submodule integrity, and clean local residue.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.6a — enforce repository-volume project data
 
 - Added an always-present `.project-data/tmp` root, forced repository-relative Cargo environment,

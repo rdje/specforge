@@ -40,6 +40,8 @@ shared cache intact because other projects may own it too.
 
 The only owner-approved boot-volume exceptions are shared `~/.rustup` and `~/.cargo`, plus required
 read-only operating-system/toolchain inputs. Rust build outputs remain in the repository `target/`.
+The post-compaction hook can also read an optional `../fsmgen` sibling checkout, but only on the same
+filesystem; the pinned submodule remains the reproducible authority.
 
 ## Check the contract
 

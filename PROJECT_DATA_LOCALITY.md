@@ -61,6 +61,11 @@ Operating-system executables and Homebrew interpreters are external tool depende
 read-only inputs where possible, not SpecForge data stores. No other user-home or OS-temporary cache
 is an implicit exception.
 
+The tracked post-compaction hook may optionally read an ahead-of-submodule FSMGen checkout. It derives
+that checkout as the repository's `../fsmgen` sibling (or a caller-authorized override), reads it only
+when it is on the repository filesystem, and otherwise skips it. The pinned `subs/fsmgen` gitlink
+remains the reproducible downstream authority.
+
 ## Python environments and model caches
 
 Python virtual environments embed absolute launcher and activation paths. They are therefore

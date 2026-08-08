@@ -11,6 +11,7 @@ TEMPORAL_BOOK="$ROOT/docs/book/src/direction/temporal-intent-capture.md"
 SUMMARY="$ROOT/docs/book/src/SUMMARY.md"
 EXTRACTION_BOOK="$ROOT/docs/book/src/reference/extraction-architecture.md"
 INTENT_CONTRACT_BOOK="$ROOT/docs/book/src/reference/intentir-contract.md"
+LIVE_DOCS_BOOK="$ROOT/docs/book/src/reference/live-docs.md"
 USER_POINTER="$ROOT/USER_GUIDE.md"
 EXTRACTION_POINTER="$ROOT/EXTRACTION_ARCHITECTURE.md"
 GRAPH_POINTER="$ROOT/KNOWLEDGE_GRAPH_ARCHITECTURE.md"
@@ -45,7 +46,7 @@ reject_literal() {
 
 for path in \
   "$ACTOR_BOOK" "$SCOPE_BOOK" "$TEMPORAL_BOOK" "$SUMMARY" "$EXTRACTION_BOOK" \
-  "$INTENT_CONTRACT_BOOK" "$USER_POINTER" "$EXTRACTION_POINTER" "$GRAPH_POINTER" \
+  "$INTENT_CONTRACT_BOOK" "$LIVE_DOCS_BOOK" "$USER_POINTER" "$EXTRACTION_POINTER" "$GRAPH_POINTER" \
   "$INTENT_POINTER" "$ISF_CODE" "$ADAPTER_CODE" "$INTENT_CODE" "$CLI_CODE" "$DISPATCH_CODE"
 do
   [ -f "$path" ] || problem "required current-truth source '${path#"$ROOT"/}' is missing."
@@ -92,6 +93,14 @@ if [ "$fail" -eq 0 ]; then
     'SUMMARY.md lost the direct extraction-contract route.'
   require_literal "$SUMMARY" '(reference/intentir-contract.md)' \
     'SUMMARY.md lost the direct IntentIR-contract route.'
+  require_literal "$LIVE_DOCS_BOOK" '## Containment and project-data locality are fully enforced' \
+    'live-docs.md no longer states the completed containment/locality status.'
+  require_literal "$LIVE_DOCS_BOOK" '#### Adoption program closed and verified' \
+    'live-docs.md lost the closing implementation and verification subsection.'
+  reject_literal "$LIVE_DOCS_BOOK" '## Containment doctrine active; migrations in progress' \
+    'live-docs.md restored the stale migration-in-progress status.'
+  reject_literal "$LIVE_DOCS_BOOK" 'Existing oversized ledgers are explicit transition debt' \
+    'live-docs.md restored pre-migration ledger debt as current truth.'
 
   require_literal "$USER_POINTER" '(docs/book/src/SUMMARY.md)' \
     'USER_GUIDE.md is no longer a direct compatibility route to the maintained book.'
@@ -121,4 +130,4 @@ if [ "$fail" -ne 0 ]; then
   exit 1
 fi
 
-printf 'book-current-truth: root pointers, product contracts, actor direction, and constrained extraction match code and canonical book routes.\n'
+printf 'book-current-truth: root pointers, product contracts, containment status, actor direction, and constrained extraction match code and canonical book routes.\n'

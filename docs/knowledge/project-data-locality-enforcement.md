@@ -41,3 +41,9 @@ FSMGen's `File::Temp::tempfile` lowering seam leaves generated `.fsm` files behi
 long-lived shared `TMPDIR`. SpecForge therefore gives each pinned FSMGen test invocation its own
 repository-local temporary directory and drops that directory only after the child exits. The final
 CI locality recheck rejects any direct `.fsm` or `.log` residue left by the complete producer run.
+
+The final closure census found one remaining active old-root default in the tracked Claude
+post-compaction hook. It now derives SpecForge from the hook/current harness root, activates the common
+locality environment, and reads an optional ahead-of-submodule FSMGen sibling only when that checkout
+shares the repository filesystem. Absolute paths retained inside sealed FSMGen issue-bundle command
+evidence remain historical observations, not executable defaults, and were not rewritten.

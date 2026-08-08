@@ -3,9 +3,24 @@
 # Outputs key project docs so Claude retains project awareness after compaction.
 set -euo pipefail
 
-PROJECT_DIR="${CLAUDE_PROJECT_DIR:-/Users/richarddje/Documents/github/specforge}"
+HOOK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$(cd "$HOOK_DIR/../.." && pwd -P)}"
+source "$PROJECT_DIR/scripts/project_data_env.sh"
+specforge_activate_project_data "$PROJECT_DIR"
+
 FSMGEN_SUB_DIR="$PROJECT_DIR/subs/fsmgen"
-FSMGEN_MAIN_DIR="/Users/richarddje/Documents/github/fsmgen"
+FSMGEN_MAIN_DIR="${SPECFORGE_FSMGEN_MAIN_DIR:-$PROJECT_DIR/../fsmgen}"
+FSMGEN_MAIN_AVAILABLE=0
+if [[ -d "$FSMGEN_MAIN_DIR" ]]; then
+    FSMGEN_MAIN_DIR="$(cd "$FSMGEN_MAIN_DIR" && pwd -P)"
+    if [[ "$(df -P "$FSMGEN_MAIN_DIR" | awk 'END { print $1 }')" == \
+          "$(df -P "$PROJECT_DIR" | awk 'END { print $1 }')" ]]; then
+        FSMGEN_MAIN_AVAILABLE=1
+    else
+        printf 'PostCompact: skipping off-volume optional FSMGen checkout: %s\n' \
+            "$FSMGEN_MAIN_DIR" >&2
+    fi
+fi
 
 echo "=== PostCompact: live-doc re-read ==="
 echo ""
@@ -46,20 +61,21 @@ done
 
 dump_file "subs/fsmgen/docs/book/src/SUMMARY.md" "$FSMGEN_SUB_DIR/docs/book/src/SUMMARY.md" 999
 
-# === Main fsmgen repo ISF docs (the authoritative downstream integration spec) ===
-dump_file "fsmgen/README.md" "$FSMGEN_MAIN_DIR/README.md"
-dump_file "fsmgen/COMMIT.md" "$FSMGEN_MAIN_DIR/COMMIT.md"
+if [[ "$FSMGEN_MAIN_AVAILABLE" -eq 1 ]]; then
+    # Optional sibling checkout: read-only, same-volume, and possibly ahead of the pinned submodule.
+    dump_file "fsmgen/README.md" "$FSMGEN_MAIN_DIR/README.md"
+    dump_file "fsmgen/COMMIT.md" "$FSMGEN_MAIN_DIR/COMMIT.md"
 
-# Core ISF integration spec and its key references
-for f in \
-    docs/ISF_DOWNSTREAM_INTEGRATION_SPEC.md \
-    docs/ISF_SPEC.md \
-    docs/ISF_PUBLIC_INTERFACE_CONTRACT.md \
-    docs/INTENT_SCHEDULING_BRAINSTORM.md \
-    docs/ISF_LIBRARY_CATALOG.md \
-    docs/DOWNSTREAM_ISSUE_REPORTING.md; do
-    dump_file "fsmgen/$f" "$FSMGEN_MAIN_DIR/$f"
-done
+    for f in \
+        docs/ISF_DOWNSTREAM_INTEGRATION_SPEC.md \
+        docs/ISF_SPEC.md \
+        docs/ISF_PUBLIC_INTERFACE_CONTRACT.md \
+        docs/INTENT_SCHEDULING_BRAINSTORM.md \
+        docs/ISF_LIBRARY_CATALOG.md \
+        docs/DOWNSTREAM_ISSUE_REPORTING.md; do
+        dump_file "fsmgen/$f" "$FSMGEN_MAIN_DIR/$f"
+    done
+fi
 
 # mdBook chapters — subs/fsmgen (preferred)
 for f in \
@@ -78,13 +94,14 @@ done
 
 dump_file "subs/fsmgen/docs/book/src/SUMMARY.md" "$FSMGEN_SUB_DIR/docs/book/src/SUMMARY.md" 999
 
-# mdBook chapters — main fsmgen repo (may carry ahead-of-submodule chapters)
-for f in \
-    docs/book/src/13-intent-scheduling.md \
-    docs/book/src/13h-lowering-reference.md; do
-    dump_file "fsmgen/$f" "$FSMGEN_MAIN_DIR/$f"
-done
+if [[ "$FSMGEN_MAIN_AVAILABLE" -eq 1 ]]; then
+    for f in \
+        docs/book/src/13-intent-scheduling.md \
+        docs/book/src/13h-lowering-reference.md; do
+        dump_file "fsmgen/$f" "$FSMGEN_MAIN_DIR/$f"
+    done
 
-dump_file "fsmgen/docs/book/src/SUMMARY.md" "$FSMGEN_MAIN_DIR/docs/book/src/SUMMARY.md" 999
+    dump_file "fsmgen/docs/book/src/SUMMARY.md" "$FSMGEN_MAIN_DIR/docs/book/src/SUMMARY.md" 999
+fi
 
 echo "=== PostCompact: live-doc re-read complete ==="

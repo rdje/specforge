@@ -10,9 +10,9 @@ These are separate documentation planes.
 
 Both matter, but they are not interchangeable.
 
-## Containment doctrine active; migrations in progress
+## Containment and project-data locality are fully enforced
 
-SpecForge enforces a bounded-live-document architecture under
+SpecForge completed the bounded-live-document and repository-volume-data program under
 `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`. The purpose is not to reduce durable
 information or user documentation. It is to separate bounded current views,
 maintained reference prose, generated projections, rolling chronology, and
@@ -24,21 +24,21 @@ re-derives the resulting-tree metrics on every commit and CI run. The pinned FSM
 separate Git authority and is not swept into SpecForge's registry.
 
 The control plane is bounded too: schema version, allowed fields, record count, registry and record
-bytes, array cardinality, and scalar bytes all fail closed. A 48-case fixture suite exercises every
+bytes, array cardinality, and scalar bytes all fail closed. A 55-case fixture suite exercises every
 local lifecycle plus index, freshness, currency, routing, transition-baseline, and ceiling-history
 paths. Its disposable workspaces live only under repository-local `generated/`.
 
 Because the mdBook is a maintained reference, its current-state contract is executable as well.
-`scripts/check_book_current_truth.sh` binds the actor-direction and constrained-extraction claims to
-their live code seams and canonical detail chapters; `LIVE-DOC-SIZE` runs that currency check on every
-commit and CI build.
+`scripts/check_book_current_truth.sh` binds actor-direction and constrained-extraction claims to code,
+requires this program's completed status and closing verification section, and rejects their stale
+forms; `LIVE-DOC-SIZE` runs that currency check on every commit and CI build.
 
 All four root-ledger migrations have landed. `CHANGES.md`, `DEVELOPMENT_NOTES.md`,
 `LIVE_ACHIEVEMENT_STATUS.md`, and `RUST_CODEBASE_ANALYSIS.md` are bounded current views, while their
 exact source capsules are the historical authority.
 No historical content is removed before its identity, replacement route, consumers, and retrieval
 procedure are proved.
-The top-level README will remain a first-class landing page; changing detail and
+The top-level README remains a first-class landing page; changing detail and
 chronology will route to controlled canonical destinations.
 
 ### Lossless rolling-ledger protocol
@@ -71,7 +71,7 @@ at its existing root path. The protocol therefore requires both validation proje
 keeps the entire generated trailer outside the rolled bullet region.
 
 The two containment records initially written after the old 2026-03-31 `CHANGES.md` tail are not
-silently reordered in historical evidence. The bounded live view will promote those exact records
+silently reordered in historical evidence. The bounded live view promotes those exact records
 after its newest prefix, while the source capsule retains their measured original ordinals and bytes.
 
 #### `CHANGES.md` migration landed
@@ -396,12 +396,12 @@ root status headings. Independent pointer budgets prevent a second manual from r
 
 #### Resulting collection and projection closure
 
-The final resulting-tree census covers exactly 600 Git-indexed Markdown files across 37 governed
+The final resulting-tree census covers exactly 604 Git-indexed Markdown files across 37 governed
 surfaces. Every file is classified once; all collection indexes and generated projections are direct
 and current; all eight currency contracts are enforced; and no surface remains in a transition or
-currency-debt state. Five generated member catalogs route 237 canonical files, while the task tree,
-decision index, fact catalog, Knowledge Map, mdBook summary, and portable bundle keep their dedicated
-one-hop routes.
+currency-debt state. Five generated member catalogs route 238 canonical files, while the 121-tree task
+catalog, decision index, 146-card fact catalog, 147-fact / 1,023-question Knowledge Map, mdBook summary,
+and portable bundle keep their dedicated one-hop routes.
 
 The corpus-KB warning found during closure was caused by output shape rather than collection growth.
 Its aggregate page repeated a six-line record for every passing fixture, and its prior-candidate table
@@ -410,10 +410,34 @@ detail and one evidence fixture per candidate bullet. At 156/156 passing fixture
 files total 1,172 lines / 124,679 bytes; the largest file is 201 lines / 25,470 bytes and the longest
 content line is 305 bytes. The existing limits were not widened.
 
+Two early pressure warnings remain explicit: the complete fact-card/index plane is at 81.0% of its
+per-file line target and 81.9% of its per-file byte target, while the exact owner-reviewed validation
+snapshot is at 85.0% of its line target. Neither is debt or at the 90% rollover point. Their named
+maintainers must partition before a future addition reaches rollover; evidence is not rewritten merely
+to silence a warning, and no ceiling was widened.
+
 Lines, bytes, file count, collection totals, and maximum content-line width are independent axes.
-Existing oversized ledgers are explicit transition debt: their measured baseline cannot move, and a
-separate bounded allowance exists only for the containment program's continuity updates until the
-owning migration lands. A legacy ceiling is not advertised as health.
+At adoption entry, oversized ledgers were explicit transition debt whose measured baselines could not
+move. Every owning migration has now landed: exact capsules retain the original bytes, bounded live
+windows carry current records, and the resulting registry contains no transition or currency debt.
+A legacy ceiling is never advertised as health.
+
+#### Adoption program closed and verified
+
+The delivered implementation composes four controls: a bounded README and impact-routed continuity
+contract; exact archive-backed live windows plus bounded collection/projection indexes; executable
+currentness for maintained/generated views; and repository-root-derived temp, cache, Python, model,
+and child-process data. The last control is described in
+[Project Data Locality](project-data-locality.md). Shared `~/.cargo`, `~/.rustup`, and the ambiguous
+home Hugging Face cache remain explicit protected inputs rather than being relabelled project data.
+
+The closing audit reopens every route and identity rather than trusting earlier commits. All six
+doctrines pass; the common lifecycle suite passes 55/55; all four rolling capsules, roadmap and FSMGen
+feedback archives, task/fact/catalog/Knowledge Map projections, and eight currency contracts retrieve
+and validate. Formatting, warning-deny Clippy, 1,730 Rust tests with five intentionally ignored,
+rustdoc, and the complete mdBook build pass with caller temp/cache variables absent. The pinned FSMGen
+gitlink is unchanged, the old boot-volume repository is absent, the shared caches remain present, and
+the repository-local temporary root finishes with only its tracked placeholder.
 
 Documentation synchronization is now impact-based. Every completed slice updates
 its owning task-tree leaf. Other surfaces change only when their own truth changes:

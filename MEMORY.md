@@ -19,15 +19,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.6a` — completed by this commit; parent `.6` is
-  closed and `.7` is the sole remaining adoption frontier.
-- Current state: Cargo, canonical scripts, production tempdirs, and Docling/VLM/FSMGen child processes
-  use repository-derived same-filesystem roots under the SSD. Exact rollback-safe Python locks/rebuilds
-  removed 53 stale old-tree references; the two required Docling models are checksum-proved locally;
-  the exact ancestor-only 2.9 GiB boot-volume repository is deleted and absent. Six doctrines, final
-  producer residue checks, full CI, and the 36-part book pass. Shared `~/.cargo`, `~/.rustup`, and the
-  ambiguous home Hugging Face cache remain protected external inputs.
-- Next action: from the clean `.6a` commit, activate `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7` and
-  run the final whole-program closure/retrieval/locality/handoff audit.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7` — completed by this commit; the adoption tree
+  and every `.0`–`.7` activity are closed.
+- Current state: all 604 Markdown paths classify once across 37 debt-free surfaces; exact history,
+  bounded live views, collection/Knowledge Map routes, eight currency contracts, the compact README,
+  current 36-part book, and repository-volume project data are enforced by six doctrines. Final
+  cold-read defects in book status, route debt labels, and the active Claude hook are corrected and
+  fail closed; two early content-pressure warnings remain named and below rollover.
+- Next action: from the clean `.7` commit, run PNT selection against the bounded task catalog and
+  current roadmap; do not reopen this closed tree unless a verified regression belongs here.
 - In-flight uncommitted: none after this commit; no background job or disposable temp/log residue.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

@@ -8,7 +8,7 @@ docs/book/src/commands/overview.md	reader_navigation	book-maintainers	maintained
 docs/book/src/reference/generated-artifacts.md	reader_navigation	book-maintainers	maintained_reference	review_on_behavior_change	yes
 docs/book/src/architecture-rationale.md	reader_navigation	book-maintainers	maintained_reference	review_on_behavior_change	yes
 docs/book/src/introduction.md	reader_navigation	book-maintainers	maintained_reference	review_on_behavior_change	yes
-docs/book/src/SUMMARY.md	reader_navigation	book-maintainers	bounded_collection_index	transition_debt:LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5	yes
+docs/book/src/SUMMARY.md	reader_navigation	book-maintainers	bounded_collection_index	scripts/check_live_document_size.sh	yes
 docs/book/src/reference/troubleshooting.md	reader_navigation	book-maintainers	maintained_reference	review_on_behavior_change	yes
 AGENTS.md	reader_navigation	bootstrap-maintainers	maintained_entrypoint	review_on_workflow_change	yes
 docs/TASK_TREE_README.md	reader_navigation	task-tree-maintainers	maintained_reference	review_on_workflow_change	yes
@@ -24,7 +24,7 @@ README_POLICY.md	reader_navigation	entrypoint-maintainers	maintained_standard	sc
 LIVE_DOCUMENT_SIZE_CONTAINMENT.md	reader_navigation	documentation-maintainers	maintained_standard	scripts/check_live_document_size.sh	yes
 PROJECT_DATA_LOCALITY.md	reader_navigation	runtime-maintainers	maintained_standard	scripts/check_project_data_locality.sh	yes
 https://github.com/rdje/specforge/issues	reader_navigation	specforge-owner	external_service	github_issue_retention_and_query	yes
-docs/book/src/SUMMARY.md	author_overflow	book-maintainers	bounded_collection_index	transition_debt:LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5	yes
+docs/book/src/SUMMARY.md	author_overflow	book-maintainers	bounded_collection_index	scripts/check_live_document_size.sh	yes
 ROADMAP.md	author_overflow	roadmap-maintainers	hot_live	scripts/check_live_document_size.sh	yes
 docs/tasks/	author_overflow	task-tree-maintainers	partitioned_collection	scripts/check_live_document_size.sh	yes
 docs/decisions/	author_overflow	decision-maintainers	partitioned_collection	scripts/check_live_document_size.sh	yes

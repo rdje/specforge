@@ -40,7 +40,6 @@ target_shape_is_allowed() {
 control_is_known() {
   case "$1" in
     scripts/*.sh|knowledge-map/scripts/*.sh) return 0 ;;
-    transition_debt:LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5) return 0 ;;
     review_on_behavior_change|review_on_workflow_change|review_on_tooling_change) return 0 ;;
     github_issue_retention_and_query|query_with_git_log) return 0 ;;
     *) return 1 ;;
@@ -95,6 +94,10 @@ if [ "${1:-}" = "--self-test" ]; then
   fi
   if control_is_known 'unreviewed_control'; then
     printf 'readme-policy self-test: unknown pressure control did not fail closed\n' >&2
+    exit 1
+  fi
+  if control_is_known 'transition_debt:LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5'; then
+    printf 'readme-policy self-test: retired transition debt did not fail closed\n' >&2
     exit 1
   fi
   if lifecycle_is_known 'unclassified_lifecycle'; then
@@ -179,9 +182,6 @@ else
     case "$control" in
       scripts/*.sh|knowledge-map/scripts/*.sh)
         [ -x "$ROOT/$control" ] || problem "route '${target}' names missing or non-executable control '${control}'."
-        ;;
-      transition_debt:LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5)
-        grep -Fq 'LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5' "$ROOT/docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md" || problem "route '${target}' has transition debt without its owning task-tree leaf."
         ;;
       review_on_behavior_change|review_on_workflow_change|review_on_tooling_change|github_issue_retention_and_query|query_with_git_log) ;;
     esac

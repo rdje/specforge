@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: process / continuity / repository portability
 - Created: `2026-08-08`
 - Last updated: `2026-08-08`
@@ -103,7 +103,7 @@ verification before correction.
 ## Task Tree
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`
-  Status: `active`
+  Status: `done` (`2026-08-08`)
   Children: `.0`–`.7`
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.0`
@@ -313,7 +313,7 @@ verification before correction.
   under repository-local `TMPDIR`.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Goal: final closure audit: resulting-tree doctrine check, documentation build, retrieval drills,
   route/locality census, roadmap/code/mdBook lockstep, transition-debt disposition, and clean handoff.
 
@@ -349,7 +349,7 @@ verification before correction.
 | — | `.5h` | `done` (`2026-08-08`) | Four compatibility roots now route into one current, code-bound 35-part public mdBook truth plane. |
 | — | `.5i` | `done` (`2026-08-08`) | All collection/projection debt is closed; bounded corpus-KB producers remove both warnings without wider ceilings. |
 | — | `.6a` | `done` (`2026-08-08`) | Repository-derived Cargo/shell/Rust roots, exact local Python rebuilds and model copies, child-process control, residue gates, and the old-tree copy/verify/use/delete sequence are complete. |
-| 1 | `.7` | `pending` | Run the final whole-program closure audit from the clean `.6a` commit. |
+| — | `.7` | `done` (`2026-08-08`) | Every adoption promise was independently reopened; cold-read defects are gated, remaining warnings are explicitly owned below rollover, the closing book section is current, and no program frontier remains. |
 
 ## Decisions
 
@@ -1720,6 +1720,50 @@ boundary. It must not edit submodule-owned source or delete ambiguous shared too
   `TMPDIR`, exact residue disposition, diff hygiene, and preservation of shared caches, submodule
   contents, canonical artifacts, and the user-owned `.claude/settings.json`.
 
+## `.7` Final Whole-Program Closure Audit
+
+This closing leaf changes no product behavior. It independently reopens every adoption promise from
+the clean `.6a` commit: complete lifecycle/topology classification, lossless archive retrieval,
+bounded current projections, direct collection navigation, executed currentness, repository-volume
+project data, protected external exceptions, artifact residue, code/book/roadmap alignment, and Git
+handoff state. A failed or surprising result is a blocker, not a value to classify and move past.
+
+The `BOOK-METHOD-DOC` close rule is owned by `docs/book/src/reference/live-docs.md`. Its implementation
+and verification section must describe the final `.0`–`.7` result rather than the earlier migration-in-
+progress state. No other book part changes unless the final audit finds a separate current-truth defect.
+
+### Acceptance Checklist (enforced) — `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7`
+
+- [x] **ROOT CAUSE (WHY + WHERE)** — cold-read every final program authority and root-cause any stale,
+  surprising, warning, debt, route, retrieval, locality, or residue result before closure.
+- [x] **ADDRESSED (verified)** — close every program child and refresh the topically correct mdBook
+  implementation/verification subsection with the resulting exact topology and gate evidence.
+- [x] **NO REGRESSION** — prove all six doctrines, full CI, archive/current retrieval, collection and
+  Knowledge Map navigation, all currency checks, exact Markdown/book authority, Git/submodule/diff
+  integrity, artifact locality/cleanup, protected shared inputs, and a clean resumable handoff.
+
+### Final-audit findings and bounded disposition
+
+- The book still said migrations were in progress and presented oversized ledgers as current
+  transition debt. The closing method-doc now states the delivered `.0`–`.7` architecture and exact
+  verification plane; `check_book_current_truth.sh` requires the closure heading/subsection and rejects
+  both stale formulations.
+- The README route registry retained two `.5` transition-debt controls for the mdBook summary. Both
+  routes now name the live-size verifier, and the README checker no longer recognizes the retired debt
+  token. The compacted README preserves every governed destination at 113 lines / 4,257 bytes / 94
+  maximum characters, below all three 80% warnings (from 130 / 5,096 / 105).
+- The tracked Claude post-compaction hook retained the deleted boot-volume SpecForge default and an
+  absolute old FSMGen checkout. It now derives SpecForge from the hook/harness, activates the common
+  locality environment, and reads an optional sibling FSMGen checkout only on the repository
+  filesystem. The locality doctrine locks those seams. Absolute paths in sealed FSMGen issue-bundle
+  command evidence remain historical observations and were deliberately preserved.
+- Two honest pressure warnings remain without debt or ceiling growth. `knowledge_cards` is driven by
+  `transaction-capture-census.md` at 243/300 lines and the complete generated `INDEX.md` at
+  30,202/36,864 bytes; rollover begins at 270 lines or 33,178 bytes. `validation_snapshot` is the exact
+  owner-reviewed 544/640-line projection; rollover begins at 576. Knowledge and validation maintainers
+  must partition before a future change reaches those rollover thresholds; current evidence is not
+  compacted merely to suppress an early warning.
+
 ### Registry and checker contract for `.3b`
 
 - Project-owned data lives at `doctrine/live_document_size/surfaces.jsonl`. Record zero is a registry
@@ -1809,6 +1853,9 @@ boundary. It must not edit submodule-owned source or delete ambiguous shared too
 | `2026-08-08` | `.6a` | complete temp/cache/process census; filesystem-device probes; venv launcher/inventory comparison; model file/symlink/allocated-byte/rsync checks; revision-aware offline lookup and network-disabled one-page ingest; old-tree ancestry/untracked/ignored/submodule/generated comparison and absence proof | green: six production and all Cargo test temp families are owned; stale venv references 53 → 0; local models verify at 9/8 and 7/6 file/symlink identities plus 349,860/167,752 KiB; one-page SourceIR is ready with one page/visual; shared cache remains; exact 2.9 GiB ancestor-only old tree is absent after SSD-only probes |
 | `2026-08-08` | `.6a` | Bash syntax; project-locality shell suite; Rust `project_data` tests; rollback failure/restoration probe; focused FSMGen strict/schedule tests; post-run temp census | green: shell 5/5 and Rust 3/3 pass; both bootstraps reject the repository root as a destructive target; failed offline rebuild restores its predecessor and exits nonzero; seven FSMGen tests pass and leave no `.fsm`/log residue; active Cargo incremental `.bin` caches are retained as same-volume build artifacts |
 | `2026-08-08` | `.6a` | staged `scripts/check_doctrines.sh`; full `scripts/run_ci.sh` with all locality variables initially unset; post-producer locality recheck; exact book/KM/Markdown metrics; diff/submodule/residue hygiene | green: doctrines 6/6; formatting, warning-deny Clippy, 1,730 Rust tests passed / 5 ignored, rustdoc, 604 Markdown files / 37 surfaces, 146 cards / 147 facts / 1,023 questions / seven shards, and book 36 files / 12,604 lines / 754,968 bytes pass; submodule and shared caches are untouched; only user-owned `.claude/settings.json` remains untracked |
+| `2026-08-08` | `.7` | independent lifecycle/retrieval/currentness reports; README route/policy self-test; book-current-truth; hook normal/off-volume probes; exact aggregate census | green: 604 Markdown files classify once across 37 surfaces with zero debt; four rolling ledgers, roadmap, feedback, reviewed validation, 22-source registry, 156-fixture corpus, five canonical catalogs / 238 members, 121 task trees, 146 cards, 147 facts / 1,023 questions / seven shards, and all eight currency contracts retrieve and execute; README is 113 lines / 4,257 bytes / 94 maximum characters; only the three dispositioned early warnings remain below rollover |
+| `2026-08-08` | `.7` | staged `scripts/check_doctrines.sh`; full `scripts/run_ci.sh` with all locality variables initially unset; exact book aggregate; staged diff | green: doctrines 6/6; formatting, warning-deny Clippy, 1,730 Rust tests passed / 5 ignored, rustdoc, and repository-local mdBook 36 files / 12,632 lines / 757,269 bytes pass; final post-producer locality check and staged diff pass |
+| `2026-08-08` | `.7` | exact residue, old-tree, shared-model, submodule, Git-message, and handoff census | green: disposable 491-byte `xcrun_db` removed and `.project-data/tmp` contains only `.gitkeep`; zero Cargo `.log` files, 48 active same-volume incremental `.bin` caches retained, old boot-volume tree absent, both protected local/shared model authorities preserved, submodule clean at `d327129b`, and user-owned `.claude/settings.json` excluded |
 
 ## Commit Log
 
@@ -1842,6 +1889,7 @@ boundary. It must not edit submodule-owned source or delete ambiguous shared too
 | `.5h` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5h — unify root references with the mdBook` | two indexed normative chapters + four bounded compatibility pointers + obsolete catalog retirement + code-bound currentness |
 | `.5i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5i — close collection and projection containment` | exact topology/retrieval closure + bounded corpus-KB renderers + zero warning/debt + final `.5` census |
 | `.6a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.6a — enforce repository-volume project data` | repository-derived temp/cache/runtime roots + local Python/model rebuilds + copy/verify/use/delete + sixth doctrine + residue closure |
+| `.7` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7 — close the containment and locality program` | independent whole-program retrieval audit + cold-read defect gates + final book method-doc + clean closure |
 
 ## Changelog
 
@@ -1950,3 +1998,7 @@ boundary. It must not edit submodule-owned source or delete ambiguous shared too
   populated and proved the exact local model cache, preserved shared caches/toolchains, and completed
   copy/verify/use/delete for the exact stale boot-volume repository. The sixth doctrine plus final
   producer residue recheck closes `.6`; `.7` is the sole remaining program frontier.
+- `2026-08-08`: `.7` independently reopened every lifecycle, history/current, navigation, currency,
+  book, locality, residue, and Git-handoff authority; corrected and gated three cold-read defects;
+  recorded honest warning headroom; closed the book method-doc and all `.0`–`.7` children; and passed
+  the final six-doctrine, full-CI, exact-retrieval, and clean-residue proof without widening a ceiling.

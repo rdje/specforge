@@ -293,7 +293,8 @@ all seven local lifecycle classes, internal/external/generated-set membership, a
 created below repository-local `generated/`; schema fields, arrays, scalars, routes, independent size
 axes, baselines, and ceiling-history authority are therefore re-proved on every gate.
 The mdBook maintained-reference record additionally executes `scripts/check_book_current_truth.sh`,
-which binds two load-bearing current claims to their code seams and rejects their superseded wording.
+which binds load-bearing product claims to code, requires the completed containment/locality status
+and closing method-doc subsection, and rejects superseded product or migration wording.
 The same adapter executes `scripts/check_rolling_ledger_protocol.pl`: ten parser/control self-tests
 plus the real four-ledger plan prove whole-record boundaries, exact source identity,
 bounded warning-safe survivors, repository-relative archive routes, and required reader/writer seams.

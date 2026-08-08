@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7 (`2026-08-08`) — closure must compare semantics, not only schemas
+
+All executable gates were green while two route records still carried a completed activity's
+`transition_debt` token. The README checker knew that token as an allowed control and proved its owner
+text existed, but it did not understand that the owner was done. Final closure therefore has to compare
+declared lifecycle semantics with current task state, then retire the token from both data and the set
+of accepted values. Schema-valid stale state is still stale state.
+
+Absolute-path review needs the same distinction. Paths inside sealed issue-bundle command logs are
+historical observations whose exact wording is evidence; rewriting them would falsify reproduction
+history. The identical path in an active post-compaction hook was an executable default and had to be
+replaced by current-root discovery. A locality census should classify every match as active,
+historical, or external before changing it—not bulk-rewrite all strings that resemble old paths.
+
+Early size warnings are contracts for decisions, not instructions to optimize away evidence. README
+route prose could be compacted losslessly below warning while preserving every destination. The large
+fact card/index and reviewed validation snapshot carry distinct canonical facts, remain below rollover,
+and have named maintainers; recording exact headroom is more honest than widening limits or joining
+records merely to silence the checker.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.6a (`2026-08-08`) — a copied path can still execute the old tree
 
 Physical placement was not enough to prove locality. Both virtual-environment directories were on the
