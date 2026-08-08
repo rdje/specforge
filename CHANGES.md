@@ -1,3 +1,14 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3a — complete surface contract
+
+- Decomposed `.3` before implementation so the normative doctrine, registry, checker, ADR, and
+  driver entry activate atomically rather than landing prose without enforcement.
+- Classified all 550 parent-tracked Markdown files at entry into 13 exclusive path families and
+  recorded the 132,211-line/12,253,499-byte census, largest files, and widest-line pressure. The
+  required coverage-authority fact card makes the committed set 551 without adding a new family.
+- Locked the local JSONL schema, seven lifecycle classes, independent size dimensions, exact debt
+  baseline rule, maintained-reference change authority, exactly-once coverage rule, and `.3c`
+  fail-closed matrix. The FSMGen submodule remains outside SpecForge's parent Git authority.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.2 — bounded README and route closure
 
 - Replaced the 602-line/170,891-byte duplicate-heavy README with a verified

@@ -19,12 +19,12 @@
   `KNOWLEDGE_MAP.md`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3` — adopt the complete
-  live-document containment doctrine and resulting-tree surface registry/checker.
-- Current state: `.0`–`.2` are complete. README is a 127-line/4,834-byte landing page,
-  guarded at 150 lines/5,800 bytes with reader/author route closure. No historical live
-  document has yet been deleted or migrated. Query revision from Git.
-- Next action: split `.3` into registry, checker, and fail-closed proof leaves; adopt the
-  neutral doctrine and record complete measured transition debt without widening it.
-- In-flight uncommitted: `.2` until its verified commit; none afterward.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3b` — atomically activate the
+  neutral doctrine, ADR, complete JSONL surface registry, checker, and driver entry.
+- Current state: `.0`–`.2` and `.3a` are complete. `.3a` classified all 550 parent-tracked
+  Markdown files and locked local schema/ceiling/debt semantics. No historical live
+  document has been deleted or migrated. Query revision from Git.
+- Next action: implement `.3b` exactly from the task-owned contract, pin final resulting-tree
+  debt values, and land no normative doctrine without its passing gate.
+- In-flight uncommitted: `.3a` design/census until its verified commit; none afterward.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

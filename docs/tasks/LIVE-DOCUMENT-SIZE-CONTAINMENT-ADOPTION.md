@@ -126,10 +126,29 @@ verification before correction.
   license, and support/contribution routes.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3`
-  Status: `pending`
+  Status: `active`
+  Children: `.3a`–`.3c`
   Goal: adopt `LIVE_DOCUMENT_SIZE_CONTAINMENT.md`; add the local registry and deterministic checker;
   classify the complete Markdown and route graph; register the check with doctrine enforcement; record
   exact transition debt without widening any baseline; add positive and fail-closed checker tests.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3a`
+  Status: `done` (`2026-08-08`)
+  Goal: measure and classify the complete tracked Markdown surface, lock the local authority/schema/
+  lifecycle/ceiling decisions in a task-owned design, and produce the exact `.3b` implementation
+  contract. This leaf changes no active doctrine or enforcement registry.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3b`
+  Status: `in_progress`
+  Goal: atomically adopt the SpecForge-owned neutral containment doctrine and ADR, populate the
+  complete data-only surface registry, implement the deterministic resulting-tree checker, and wire
+  it into the doctrine driver so the prose rule is never active without its gate.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3c`
+  Status: `pending`
+  Goal: exercise positive and fail-closed checker paths for every lifecycle/control class, close the
+  README route registry against the complete surface registry, update contributor/book guidance,
+  and verify the full `.3` acceptance contract before migration begins.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4`
   Status: `pending`
@@ -170,9 +189,11 @@ verification before correction.
 | — | `.0` | `done` (`2026-08-08`) | Ownership, measured baseline, full donor review, and the migration/locality graph are recorded; no deletion or migration. |
 | — | `.1` | `done` (`2026-08-08`) | Pointer semantics and impact-based documentation routing are now explicit and mechanically checked. |
 | — | `.2` | `done` (`2026-08-08`) | The retained landing page, local policy, route registry, and unconditional doctrine guard are live. |
-| 1 | `.3` | `pending` | The complete registry/checker must govern every later migration. |
-| 2 | `.4` / `.5` / `.6` | `pending` | Independently committable migrations and locality enforcement after the common contract exists. |
-| 3 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
+| — | `.3a` | `done` (`2026-08-08`) | Complete 550-file inventory, lifecycle mapping, schema, ceiling, and checker contracts are locked. |
+| 1 | `.3b` | `in_progress` | Adopt the doctrine, complete registry, checker, ADR, and driver registration as one atomic gated unit. |
+| 3 | `.3c` | `pending` | Prove every lifecycle path fails closed and close route/surface integration. |
+| 4 | `.4` / `.5` / `.6` | `pending` | Independently committable migrations and locality enforcement after the common contract exists. |
+| 5 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
 ## Decisions
 
@@ -215,12 +236,108 @@ verification before correction.
   automatically. The route guard also exposed a stale root `KNOWLEDGE_MAP_ARCHITECTURE.md` pointer;
   bootstrap/navigation references now use the real `knowledge-map/` bundle path, recorded as a fact
   card so it is not re-derived again.
+- `2026-08-08`: **`.3` is decomposed before implementation.** `.3a` owns the full tracked-Markdown
+  census and schema decisions only; `.3b` activates the neutral doctrine, complete data registry,
+  checker, ADR, and driver entry atomically; `.3c` owns lifecycle-specific negative tests and route
+  integration. This avoids landing an active prose doctrine without a mechanical gate.
+- `2026-08-08`: **The parent Git index is the coverage authority (`.3a`).** Exactly 550 tracked
+  SpecForge Markdown files are in scope. The `subs/fsmgen` gitlink contributes no parent-tracked
+  Markdown and stays outside local ownership; generated untracked mdBook output is artifact data,
+  not a live-document surface.
+- `2026-08-08`: **The local registry is JSONL and the checker uses core Perl (`.3a`).** JSON::PP is
+  available without a project dependency download and gives deterministic typed validation. A shell
+  adapter resolves the repository root and feeds parent-tracked Markdown paths to the checker. The
+  README route registry remains data-only TSV and is composed through its existing guard.
+- `2026-08-08`: **Debt never masquerades as health (`.3a`).** Rolling ledgers and any already-
+  overgrown single file are pinned to their final `.3b` resulting-tree measurements with zero growth.
+  Healthy snapshots/collections get locally derived explicit headroom. Maintained-reference aggregate
+  evolution requires exact task-owned delta authority; no donor threshold is copied.
+- `2026-08-08`: **Completeness is exactly-once coverage (`.3a`).** A path absent from the registry or
+  matched by two surface records is a hard failure. Every nullable limit must be justified by a
+  lifecycle-specific authority contract, and every generated/current claim names a runnable verifier
+  or explicit transition debt.
 
 ## Blockers
 
 - None for `.0`–`.3`.
 - Later migrations may stop for an authority conflict, unique unclassified content, or an unprovable
   retrieval promise, exactly as required by the adopted doctrine.
+
+## `.3a` Complete Markdown Census and `.3b` Contract
+
+### Resulting-tree census at `.3a` entry
+
+The inventory source is `git ls-files '*.md'` from the parent SpecForge repository. That makes the
+pinned `subs/fsmgen` Git authority out of scope automatically while still covering every tracked
+SpecForge Markdown path. The entry snapshot contains **550 files / 132,211 lines / 12,253,499 bytes**.
+Its largest file is `CHANGES.md` at 32,626 lines / 2,624,882 bytes; its widest content line is
+`docs/TASK_TREE.md` at 18,932 bytes. Recording this design changes task/index bytes but not membership;
+the required coverage-authority fact card adds one classified path, so the committed `.3a` set is
+551 files. `.3b` must remeasure its final resulting tree when it pins enforcement values.
+
+| Exclusive path family | Files | Lines | Bytes | Largest file (lines) | Largest file (bytes) | Widest line (bytes) |
+| --- | ---: | ---: | ---: | --- | --- | --- |
+| `.github/` | 1 | 15 | 918 | 15 | 918 | 91 |
+| `corpus/` | 1 | 60 | 7,066 | 60 | 7,066 | 278 |
+| `corpus_kb/` | 24 | 1,784 | 119,240 | 940 | 30,837 | 1,062 |
+| `crates/specforge/test_data/` | 157 | 1,588 | 29,650 | 61 | 3,592 | 169 |
+| `docs/book/` | 33 | 11,826 | 704,974 | 1,986 | 98,504 | 2,030 |
+| `docs/decisions/` | 8 | 419 | 24,648 | 71 | 4,675 | 224 |
+| `docs/fsmgen-issues/` | 7 | 285 | 15,756 | 53 | 3,554 | 291 |
+| `docs/knowledge/` | 130 | 6,656 | 607,825 | 243 | 29,329 | 5,031 |
+| `docs/research/` | 38 | 5,893 | 399,504 | 493 | 36,790 | 434 |
+| `docs/tasks/` | 122 | 30,199 | 2,237,705 | 2,393 | 222,616 | 4,946 |
+| top-level `docs/*.md` | 4 | 1,447 | 236,187 | 936 | 167,588 | 18,932 |
+| `knowledge-map/` | 4 | 417 | 22,031 | 218 | 11,299 | 164 |
+| repository-root Markdown | 21 | 71,622 | 7,847,995 | 32,626 | 2,624,882 | 7,836 |
+
+The 13 families above are exhaustive and mutually exclusive. `.3b` will refine the heterogeneous
+root and top-level-`docs` families into exact records but may use family patterns for homogeneous
+collections. Coverage succeeds only when every tracked Markdown path matches exactly one record.
+
+### Local lifecycle classification
+
+| Surface | Lifecycle | Control contract |
+| --- | --- | --- |
+| `README.md`, `MEMORY.md`, roadmap/status snapshots, bootstrap/workflow standards | `bounded_snapshot` | independent per-file line/byte/max-line ceilings; existing dedicated check remains authoritative where stronger |
+| `CHANGES.md`, `DEVELOPMENT_NOTES.md`, `LIVE_ACHIEVEMENT_STATUS.md`, `RUST_CODEBASE_ANALYSIS.md`, `docs/FSMGEN_FEEDBACK.md` | `rolling_ledger` | exact `.3b` transition baseline and zero growth until the `.4` whole-record migration supplies shards/index/archive manifest |
+| task trees, decisions, fact cards, research, issue packets, fixtures, corpus KB | `partitioned_canonical` | complete index/query contract plus per-file, file-count, aggregate-line, aggregate-byte, and max-line ceilings |
+| mdBook | `maintained_reference` | bounded `SUMMARY.md`, one-hop membership, per-part review ceilings, and exact task-owned aggregate-change authority rather than a decorative aggregate cap |
+| `KNOWLEDGE_MAP.md` | `generated_projection` | size ceilings plus the existing derive-and-diff freshness verifier over fact cards/decisions |
+| dated closed snapshots or later archive artifacts | `frozen_legacy` / `archive_terminal` | content hash or immutable manifest; never an author-overflow destination |
+
+`USER_GUIDE.md` and the architecture/spec roots are maintained references until `.5` proves whether
+their content is uniquely current or duplicated by the mdBook; they are not deleted by classification.
+`VALIDATION_SNAPSHOT.md` and `corpus/SOURCE_PDF_REGISTRY.md` are bounded generated/current snapshots
+whose existing producers become declared currency verifiers when available; missing verifier wiring is
+transition debt, not a fabricated freshness claim.
+
+### Registry and checker contract for `.3b`
+
+- Project-owned data lives at `doctrine/live_document_size/surfaces.jsonl`. Record zero is a registry
+  control record with schema version plus registry file/record byte and record-count ceilings.
+- Every surface record carries: stable id, repository-relative targets, file/collection locator,
+  closed lifecycle, state, owner, index/query contract where applicable, verifier, health targets,
+  enforcement ceilings, warning/rollover milestones, and optional baseline/transition/currency/
+  maintained-reference/frozen/archive data required by its lifecycle.
+- Limit dimensions are independent: file count, lines/bytes per file, aggregate lines/bytes, and
+  max content-line bytes. `null` means inapplicable only where the lifecycle supplies a distinct
+  authority contract; it never silently means unlimited.
+- Healthy surfaces receive modest, explicitly documented headroom derived from the local survivor.
+  Existing breaches receive their final `.3b` resulting-tree measurement as an immutable debt
+  baseline with zero growth. No donor value is a SpecForge default.
+- The checker resolves its root from its own path, accepts an explicit `--root` for same-volume test
+  fixtures, reads the resulting tree unconditionally, rejects absolute/parent/off-root targets,
+  proves exactly-once tracked-Markdown coverage, applies lifecycle-required fields and all dimensions,
+  verifies controlled indexes/freshness/hashes, and invokes the existing README route guard.
+- `scripts/check_live_document_size.sh` is registered as `LIVE-DOC-SIZE` in the one doctrine driver in
+  the same commit that adds the normative root doctrine and decision record. `.3c` then exercises one
+  positive and at least one negative path for every lifecycle plus registry overflow, uncovered/double-
+  covered files, off-root targets, missing/stale index, missing freshness proof, modified frozen hash,
+  route mismatch, and independent dimension overflow.
+- Ceiling increases require a data-only authority record naming the work-unit, old/new values, owner,
+  and rationale; the checker compares against the committed registry when Git history is available.
+  A first adoption baseline is not an increase. Decreases need no exception and become the new ceiling.
 
 ## Verification Log
 
@@ -232,6 +349,8 @@ verification before correction.
 | `2026-08-08` | `.2` | `git show ad07eb3f:README.md` heading/size probes; canonical mdBook heading probes; retained `wc`/max-line census; route extraction | old 602 lines/170,891 bytes → survivor 127 lines/4,834 bytes (max line 103 chars); duplicate section classes proven against richer homes; 21 unique reader routes registered |
 | `2026-08-08` | `.2` | `bash -n scripts/check_readme_policy.sh scripts/check_doctrines.sh`; `bash scripts/check_readme_policy.sh --self-test`; `bash scripts/check_doctrines.sh`; `cargo run --manifest-path Cargo.toml -- --help`; `cargo run --manifest-path Cargo.toml -- doctor --strict`; `cargo run --manifest-path Cargo.toml -- inspect README.md` | green: line/byte, off-repository path, unknown-lifecycle/control, and missing-route probes fail closed; doctrines 4/4; current CLI resolves; repo-local Docling selected; inspect recognizes the retained README as a 4,834-byte Markdown file. Doctor correctly reports the currently stopped local model servers with recovery guidance. |
 | `2026-08-08` | `.2` | neutral-body `diff -u` against the reviewed FSMGen policy; `bash knowledge-map/scripts/gen_knowledge_map.sh`; `bash scripts/run_docs_ci.sh`; `git diff --check`; pointer/README/policy census | green: neutral body byte-equivalent after the fenced local note; derived map 129 facts/947 question keys; mdBook writes under repository-local `generated/mdbook/specforge`; diff clean; pointer and README remain within enforced bounds |
+| `2026-08-08` | `.3a` | parent `git ls-files '*.md'` exactly-once family census; per-family/per-file `wc` and byte-width scan; submodule authority check | 550 files / 132,211 lines / 12,253,499 bytes at entry; 13 mutually exclusive families; largest file `CHANGES.md` 32,626 lines / 2,624,882 bytes; widest line `docs/TASK_TREE.md` 18,932 bytes; submodule excluded by parent index |
+| `2026-08-08` | `.3a` | lifecycle/route/storage topology review against the fully read neutral doctrine and adoption guide; `perl -MJSON::PP` availability probe; Knowledge Map regeneration; `bash scripts/check_doctrines.sh`; `bash scripts/run_docs_ci.sh`; `git diff --check` | local JSONL schema/checker contract locked; core parser available; map 130 facts/950 question keys; active doctrine unchanged pending atomic `.3b`; doctrines 4/4, docs, and diff green |
 
 ## Commit Log
 
@@ -240,6 +359,7 @@ verification before correction.
 | `.0` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.0 — own and measure the containment/locality program` | ownership + measurement only; commit hash recorded by Git history |
 | `.1` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.1 — stabilize pointer and commit semantics` | impact-based doc routing + stronger bounded-pointer check |
 | `.2` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.2 — bound the README and close its routes` | project-owned policy + retained landing page + unconditional doctrine guard |
+| `.3a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3a — lock the complete surface contract` | full tracked-Markdown census + local lifecycle/schema/checker design; no active doctrine change |
 
 ## Changelog
 
@@ -253,3 +373,6 @@ verification before correction.
   local stability policy, classified reader versus author-overflow routes in a data-only registry,
   wired an unconditional structural guard as doctrine four, and corrected stale knowledge-map
   architecture pointers across the bootstraps.
+- `2026-08-08`: `.3a` decomposed the full enforcement slice, classified all 550 tracked Markdown
+  files, and locked the SpecForge-local lifecycle, registry, ceiling/debt, route, and fail-closed
+  checker contract without prematurely activating the doctrine.
