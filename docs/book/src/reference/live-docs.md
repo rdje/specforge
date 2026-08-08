@@ -28,6 +28,11 @@ bytes, array cardinality, and scalar bytes all fail closed. A 48-case fixture su
 local lifecycle plus index, freshness, currency, routing, transition-baseline, and ceiling-history
 paths. Its disposable workspaces live only under repository-local `generated/`.
 
+Because the mdBook is a maintained reference, its current-state contract is executable as well.
+`scripts/check_book_current_truth.sh` binds the actor-direction and constrained-extraction claims to
+their live code seams and canonical detail chapters; `LIVE-DOC-SIZE` runs that currency check on every
+commit and CI build.
+
 Until each migration leaf lands, the existing root documents remain the
 authoritative surfaces described below. No historical content is removed before
 its identity, replacement route, consumers, and retrieval procedure are proved.

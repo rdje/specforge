@@ -94,13 +94,15 @@ that's actually shipping.
 Two specific drifts were identified by a doc-audit pass and
 reconciled in this tree:
 
-1. **`ROADMAP` R15** still described adapter-side
-   actor-relative direction computation and the deleted
-   `.fsm` paths even though `.isf` (the only adapter
-   target) defaults direction and width by design, and the
-   actor-relative graph remained canonical in `SemanticIR` /
-   `IntentIR`. The text contradicted the code; the text was
-   rewritten to match.
+1. **`ROADMAP` R15** still described deleted `.fsm` paths and
+   adapter behavior that did not match that revision. The text
+   was rewritten then. A later delivered slice superseded its
+   direction detail: today's `.isf` adapter selects an initiator
+   from `IntentIR.actor_ports`, lowers unambiguous graph
+   directions, and falls back safely only for unresolved signals.
+   The current contract lives in [Actor Connectivity And Graph
+   Direction](../domain/actor-connectivity.md#adapter-use), not in
+   this historical audit narrative.
 2. **Stale references to multi-target HDL adapters**
    (SystemVerilog / Verilog / VHDL) lingered in the book and
    ROADMAP after `ISF-ONLY-CONSOLIDATION` made `.isf` the

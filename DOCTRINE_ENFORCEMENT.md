@@ -291,6 +291,8 @@ The reference deployment. Enforced by `scripts/check_doctrines.sh` via `.githook
 all seven local lifecycle classes and their control plane. Test workspaces are disposable and always
 created below repository-local `generated/`; schema fields, arrays, scalars, routes, independent size
 axes, baselines, and ceiling-history authority are therefore re-proved on every gate.
+The mdBook maintained-reference record additionally executes `scripts/check_book_current_truth.sh`,
+which binds two load-bearing current claims to their code seams and rejects their superseded wording.
 
 Deterministic-oracle doctrines that run via `scripts/run_ci.sh` / CI (`kg-bench` 156/156,
 WIRE-BASED-100 constraint+temporal/relation golds = 1.000, the byte-identical evidence/`.isf` checks,

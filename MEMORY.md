@@ -19,13 +19,13 @@
   run it too. Retrieval: `KNOWLEDGE_MAP.md`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5a` — repair the two measured mdBook
-  current-state contradictions and add focused drift locks or canonical pointers.
-- Current state: `.0`–`.3c` are complete. The fifth doctrine governs all 554 Markdown files across
-  24 surfaces, and 48 same-volume fixtures prove every local lifecycle/control path. README is
-  128 lines/4,908 bytes. No historical live document has yet been deleted or migrated. Query revision
-  from Git.
-- Next action: reverify each recorded contradiction against current code and canonical facts, then
-  correct the smallest authoritative book surface and add a focused non-regression check.
-- In-flight uncommitted: `.3c` proof/schema closure until commit; none afterward.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4a` — measure the four rolling-ledger
+  grammars and consumers, then lock one shared lossless rollover/archive protocol.
+- Current state: `.0`–`.3c` and `.5a` are complete. The fifth doctrine governs all 555 Markdown files
+  across 24 surfaces; 48 same-volume fixtures prove every local lifecycle/control path, and the
+  mdBook currency verifier binds two repaired current claims to code. README is 128 lines/4,908 bytes.
+  No historical live document has yet been deleted or migrated. Query revision from Git.
+- Next action: census whole-record boundaries, readers/writers, and cross-links for `CHANGES.md`,
+  `DEVELOPMENT_NOTES.md`, `LIVE_ACHIEVEMENT_STATUS.md`, and `RUST_CODEBASE_ANALYSIS.md`.
+- In-flight uncommitted: `.5a` mdBook truth repair and currency lock until commit; none afterward.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

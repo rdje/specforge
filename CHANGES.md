@@ -1,3 +1,13 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5a — current mdBook truth locked to code
+
+- Reverified the two ramp-up drifts against `isf_ir.rs`, the CLI, and command dispatch. The `.isf`
+  adapter does lower initiator-perspective graph directions, and `extract-contracts` is a delivered
+  prose-to-contract producer.
+- Repaired the current actor-connectivity and constrained-extraction prose, time-labelled the older
+  audit narrative, and linked each statement to its detailed canonical book chapter.
+- Added `scripts/check_book_current_truth.sh` as an executed maintained-reference currency verifier;
+  it rejects both stale formulations and requires the load-bearing code seams and canonical pointers.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3c — lifecycle and control-plane proofs closed
 
 - Added a 48-case fixture suite for all seven governed Markdown lifecycles, membership/query,

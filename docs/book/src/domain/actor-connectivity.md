@@ -201,13 +201,16 @@ diagnostic rather than truth-model loss.
 
 SpecForge's single adapter target is `.isf`. The `.isf` adapter consumes
 the canonical interface and behavior surface of `IntentIR` and lowers it
-through the typed `IsfIr` model. It deliberately does **not** re-derive
-target-actor-relative port directions or block on missing per-signal
-direction/width: the ISF IR defaults an unknown direction to `output` and
-an unknown width to `1`, and FSMGen performs the cycle scheduling
-downstream of `.isf`. The actor-relative graph still matters because it
-makes `IntentIR` direction/connectivity honest before lowering; it is just
-no longer consumed by adapter-side renderability gymnastics.
+through the typed `IsfIr` model. The adapter selects one structurally
+grounded initiator from `IntentIR.actor_ports` and lowers that actor's
+unambiguous `Drives` edges as outputs and `Reads` edges as inputs. A signal
+with conflicting graph evidence, no grounded initiator relation, or no
+concrete width keeps the honest compatibility fallback (`direction_hint`,
+then `output`; width `1`) rather than being guessed. Missing direction or
+width is not a renderability blocker because FSMGen performs scheduling
+downstream of `.isf`. See [Which way does each signal
+point?](../pipeline/isf-adapter.md#which-way-does-each-signal-point) for the
+selection rule and examples.
 
 `.fsm` and HDL are out of scope — FSMGen consumes `.isf` and owns
 scheduling, `.fsm`, and HDL downstream. The fail-closed sticky-conflict
@@ -249,17 +252,14 @@ tree paid for it.
 #### The user-facing guarantee
 
 > **The actor-relative graph is THE source of truth for
-> signal direction. Every pipeline stage that needs to know
-> "which way does this signal go for this actor?" consults
-> the graph; no stage falls back to a flat
-> `direction_hint` lookup that might be stale, missing, or
-> set from a different perspective.**
+> actor-specific signal direction. Consumers consult it first;
+> the single-actor `.isf` lowering uses a flat hint or safe
+> default only when the selected initiator has no unambiguous
+> graph answer.**
 
-The flat `direction_hint` field is still on the IR — kept as
-a compatibility surface for code that hasn't been migrated to
-the actor-relative graph — but it's no longer the *deciding*
-consumer anywhere in the adapter, validation, or semantic
-stages.
+The flat `direction_hint` field is still on the IR as an
+explicit compatibility fallback. It never overrides a grounded,
+unambiguous initiator-perspective graph direction.
 
 #### Why this isn't trivial
 

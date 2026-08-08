@@ -1510,15 +1510,14 @@ program's four-doctrine guarantee.
 > burst+last, …) only when their promised signals are present in
 > the boundary. An uncertainty-driven converge selector decides
 > which low-confidence / failing contracts deserve the next
-> extraction pass's budget. None of it ships any code today —
-> this is the design that makes the future implementation
-> bounded.**
+> extraction pass's budget. This bounded design now ships through
+> `specforge extract-contracts`; every response still crosses the
+> schema and entailment gates before it can enter the typed IR.**
 
-Everything below is the typed surface: the four pieces
-(adapter, verifier, templates, selector), how they compose,
-the four-doctrine framing that closes the program, and the
-honest scope rule that distinguishes "design today" from
-"implementation when the upstream LLM/VLM integration lands."
+Everything below starts with the typed design of the four pieces
+(adapter, verifier, templates, selector), then records their
+delivery and the live producer. For current command behavior, see
+[`extract-contracts` and `signal-resolve`](../commands/quality-and-learning.md#extract-contracts-and-signal-resolve).
 
 ### Where `cve` lives
 

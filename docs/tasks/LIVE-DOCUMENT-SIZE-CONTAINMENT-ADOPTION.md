@@ -151,11 +151,34 @@ verification before correction.
   and verify the full `.3` acceptance contract before migration begins.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4`
-  Status: `pending`
+  Status: `active`
   Goal: migrate chronological live surfaces losslessly at whole-record boundaries. Children will own
   `CHANGES.md`, `DEVELOPMENT_NOTES.md`, `LIVE_ACHIEVEMENT_STATUS.md`, and
   `RUST_CODEBASE_ANALYSIS.md` independently; each migration must prove source identity, semantic/current
   coverage, retrieval, indexes, and no residue before any live duplicate is removed.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4a`
+  Status: `in_progress`
+  Goal: measure the four rolling-ledger record grammars and consumers, then lock one shared lossless
+  live-window/sealed-segment/archive-descriptor protocol before moving any historical record.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4b`
+  Status: `pending`
+  Goal: migrate `CHANGES.md` at a verified whole-record boundary under the `.4a` protocol.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4c`
+  Status: `pending`
+  Goal: migrate `DEVELOPMENT_NOTES.md` at a verified whole-record boundary under the `.4a` protocol.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4d`
+  Status: `pending`
+  Goal: migrate `LIVE_ACHIEVEMENT_STATUS.md` at a verified whole-record boundary under the `.4a`
+  protocol while preserving its bounded current snapshot.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4e`
+  Status: `pending`
+  Goal: migrate `RUST_CODEBASE_ANALYSIS.md` at a verified whole-record boundary under the `.4a`
+  protocol.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5`
   Status: `active`
@@ -165,7 +188,7 @@ verification before correction.
   exact fresh authority rather than a decorative cap.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5a`
-  Status: `in_progress`
+  Status: `done` (`2026-08-08`)
   Goal: root-cause and correct the two verified mdBook current-state contradictions found during ramp-up,
   then add focused drift locks or canonical pointers so historical program narrative cannot override
   current implementation behavior.
@@ -192,8 +215,9 @@ verification before correction.
 | — | `.3a` | `done` (`2026-08-08`) | Complete 550-file inventory, lifecycle mapping, schema, ceiling, and checker contracts are locked. |
 | — | `.3b` | `done` (`2026-08-08`) | Doctrine, ADR, 24-surface registry, resulting-tree checker, and fifth driver entry are active atomically. |
 | — | `.3c` | `done` (`2026-08-08`) | Forty-eight repository-volume fixtures prove every lifecycle and control-plane failure path; the common `.3` contract is closed. |
-| 1 | `.5a` | `in_progress` | Repair the two measured mdBook current-state contradictions before restructuring its neighboring live collections. |
-| 2 | `.4` / `.5` / `.6` | `pending` / `active` | Independently committable migrations and locality enforcement after the common contract exists. |
+| — | `.5a` | `done` (`2026-08-08`) | Both contradictions are repaired against code and protected by the executed mdBook currency verifier. |
+| 1 | `.4a` | `in_progress` | Lock a shared lossless rolling-ledger protocol before moving any historical record. |
+| 2 | `.4b`–`.4e` / `.5` / `.6` | `pending` / `active` | Independently committable migrations and locality enforcement after the shared ledger contract exists. |
 | 5 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
 ## Decisions
@@ -293,6 +317,17 @@ verification before correction.
   31-record/3,837-byte survivor has a 146-byte widest raw record. Local ceilings are 40 records,
   5,000 total bytes, and 192 raw bytes per record; the README guard's self-test proves each boundary
   rejects independently.
+- `2026-08-08`: **Both mdBook drifts were time-layer collisions, not code ambiguity (`.5a`).** The
+  ISF adapter did default unresolved direction, but later `KG-ISF-COMPLETENESS.2a.ii` added
+  initiator selection and initiator-perspective graph lowering; an older audit narrative and the
+  actor-connectivity current section still described the pre-change state. Likewise, the constrained
+  extraction chapter kept its pre-delivery “no code today” design introduction after the later
+  `extract-contracts` delivery section landed in the same file.
+- `2026-08-08`: **Current mdBook truth is now executable currency (`.5a`).**
+  `scripts/check_book_current_truth.sh` rechecks the load-bearing code seams, rejects both stale
+  formulations, and requires pointers from the repaired current prose to the canonical detailed
+  ISF-direction and command chapters. The maintained-reference surface executes it through
+  `LIVE-DOC-SIZE`; historical narrative is explicitly time-labelled rather than treated as current.
 
 ## Blockers
 
@@ -392,6 +427,8 @@ transition debt, not a fabricated freshness claim.
 | `2026-08-08` | `.3b` | Knowledge Map regeneration; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --check`; registry/authority raw-size census | green: map 131 facts/954 question keys; doctrines 5/5 including `LIVE-DOC-SIZE`; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; diff clean; both JSONL registries remain within their own record/file ceilings |
 | `2026-08-08` | `.3c` | `perl -c scripts/check_live_document_size.pl scripts/test_live_document_size.pl`; direct 48-case fixture suite; `bash -n scripts/check_readme_policy.sh scripts/check_live_document_size.sh`; composed `bash scripts/check_live_document_size.sh` | green: positive and fail-closed paths cover all seven lifecycles, both index contracts, canonical inputs, generated/currency execution, archive manifests, frozen/reference/debt controls, registry schema/count/file/record/array/scalar bounds, exact coverage, locality, all six size dimensions, routes, and Git-history ceiling/baseline/maintained-reference authority; every workspace is under repository-local `generated/` and cleans itself |
 | `2026-08-08` | `.3c` | staged resulting-tree `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | green: 554 Markdown files across 24 surfaces; 48/48 fixtures; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; staged diff clean |
+| `2026-08-08` | `.5a` | code/book cross-read: `select_initiator_actor`, `initiator_perspective_directions`, CLI `ExtractContracts`, dispatch to `commands::extract_contracts::run`; full-chapter stale-phrase census; `bash -n scripts/check_book_current_truth.sh`; direct checker execution | verified root causes: initiator-relative direction lowering and live constrained extraction both ship; both stale formulations removed; canonical detail pointers resolve; focused currency verifier green |
+| `2026-08-08` | `.5a` | staged resulting-tree checker; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | green: 555 Markdown files / 24 surfaces; book currency executes; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; staged diff clean |
 
 ## Commit Log
 
@@ -403,6 +440,7 @@ transition debt, not a fabricated freshness claim.
 | `.3a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3a — lock the complete surface contract` | full tracked-Markdown census + local lifecycle/schema/checker design; no active doctrine change |
 | `.3b` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3b — activate complete live-document enforcement` | neutral doctrine + ADR + 24-surface registry + checker + fifth driver entry |
 | `.3c` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3c — prove every lifecycle and control path` | same-volume 48-case fixture gate + closed registry/route control planes |
+| `.5a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5a — lock current mdBook truth to code` | two drift repairs + executed maintained-reference currency verifier |
 
 ## Changelog
 
@@ -425,3 +463,6 @@ transition debt, not a fabricated freshness claim.
 - `2026-08-08`: `.3c` closed the common enforcement program with a 48-case, repository-volume
   lifecycle/control-plane fixture gate, explicit array/scalar/schema closure, self-bounded README
   route data, and unconditional execution from the fifth doctrine adapter.
+- `2026-08-08`: `.5a` repaired two pre-existing mdBook time-layer contradictions, routed each
+  current statement to its detailed canonical chapter, and made the load-bearing code/book facts an
+  executed maintained-reference currency check.
