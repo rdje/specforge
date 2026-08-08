@@ -19,14 +19,14 @@
   run it too. Retrieval: `KNOWLEDGE_MAP.md`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5` — contain canonical collections and
-  projections under bounded direct-retrieval/currentness contracts.
-- Current state: `.0`–`.4e` and `.5a` are complete. The fifth doctrine governs 562 Markdown files
-  across 29 surfaces. Change, rationale, status, and Rust-analysis roots are bounded 91/63/52/60-
-  record current views over exact 1,798/1,601/1,920/1,350-record capsules; all four source identities,
-  suffixes, consumer seams, and common archive routes are enforced.
-- Next action: decompose `.5` into independently committable collection/projection leaves from the
-  measured `.3a` inventory, then select the first dependency-ordered leaf before changing a collection.
-- In-flight uncommitted: `.4e` capsule/current-view migration and synchronized docs until commit;
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.i` — rebuild the task-tree catalog as a
+  bounded complete one-hop index without mirrored execution history.
+- Current state: `.0`–`.4e`, `.5a`, and `.5b` are complete. The fifth doctrine governs 563 Markdown
+  files across 29 surfaces. `.5b` decomposed every collection/projection and currentness dependency;
+  the task catalog currently has 122 files, 117 unique links, four missing real trees, one author
+  template, and an 18,932-byte widest row. The archive-index enforcement cap remains unchanged.
+- Next action: define the concise task-row schema and derive a complete 121-real-tree catalog from
+  task metadata, then add a fail-closed membership/width verifier before replacing the current index.
+- In-flight uncommitted: `.5b` design/census, scratch-locality fact, and synchronized docs until commit;
   none afterward.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

@@ -154,6 +154,24 @@ Every surface declares one of seven lifecycles:
 - a `maintained_reference`, such as this mdBook, keeps bounded directly indexed semantic parts while
   exact task-owned aggregate-change authority permits legitimate product-scope evolution.
 
+### Collection and projection closure order
+
+The post-ledger census found that collection pressure is not one problem. The decision index and
+mdBook membership/current-truth controls are already complete and remain in place. Other surfaces
+need independent work in dependency order:
+
+1. rebuild the task catalog as a concise index of every real task tree;
+2. close direct fact, decision, research, and remaining canonical-collection navigation;
+3. shard the generated Knowledge Map without losing question-key retrieval or derive-and-diff;
+4. separate current roadmap direction and FSMGen requests from their historical chronology;
+5. replace validation, source-registry, and corpus-KB currency labels with non-mutating producer oracles;
+6. audit root maintained references against this book, then close aggregate membership/currentness.
+
+At entry, `docs/TASK_TREE.md` links only 117 of 122 tracked task files. Four real trees are missing;
+the fifth difference is the author template and must not appear as active work. Its widest row is
+18,932 bytes because it mirrors execution history instead of acting as an index. No collection content
+moves in the planning slice; each migration has its own source/retrieval proof.
+
 Lines, bytes, file count, collection totals, and maximum content-line width are independent axes.
 Existing oversized ledgers are explicit transition debt: their measured baseline cannot move, and a
 separate bounded allowance exists only for the containment program's continuity updates until the

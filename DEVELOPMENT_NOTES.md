@@ -1,4 +1,19 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5b (`2026-08-08`) — collection dependency and scratch-locality rationale
+
+Collection containment is ordered by authority dependencies. The task catalog must become concise and
+complete before later leaves use it as their execution route; human fact navigation must exist before
+the generated question map changes topology; roadmap and feedback require independent semantic/source
+designs before migration; producer currentness must be non-mutating; maintained-reference closure must
+measure the resulting route plane. This is why `.5` is now a set of bounded leaves rather than one
+bulk documentation rewrite.
+
+The census also proved that “read-only analysis” can still write project data: shell redirection placed
+two derived comparison lists in `/private/tmp`. Both exact files were deleted immediately and absence
+was verified. Future analysis uses process substitution when persistence is unnecessary or
+repository-derived `generated/` scratch when it is; `.6` owns mechanical enforcement and residue
+proof. This is a locality failure mode, not a reason to weaken or reclassify the source collections.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4e (`2026-08-08`) — architecture-ledger semantic boundary
 
 The Rust analysis root now retains its complete H1/Purpose prologue plus the newest 60 whole H2

@@ -1,3 +1,16 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5b — collection/projection dependency plan
+
+- Measured every `.5` transition-debt, navigation, maintained-reference, and producer-currentness
+  surface after all four ledger migrations; no canonical collection record moved.
+- Decomposed `.5` into explicit leaves for the incomplete/pathological task catalog, fact/decision/
+  research routes, generated Knowledge Map topology, roadmap, FSMGen feedback, three currency oracles,
+  maintained-reference audit, and closure.
+- Recorded that 122 task files have only 117 task-index links and four real trees are absent. Settled
+  the completed archive index's health target inside its unchanged enforcement cap.
+- Captured and remediated a same-volume process breach: two exact derived census lists accidentally
+  written under `/private/tmp` were deleted and absence-proved; diagnostic scratch is now a retrievable
+  `.6` enforcement requirement.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4e — Rust architecture rolling-ledger migration
 
 - Froze the exact 1,350-record / 1,046,679-byte Rust architecture source as the fourth immutable

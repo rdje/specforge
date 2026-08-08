@@ -182,6 +182,7 @@ verification before correction.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5`
   Status: `active`
+  Children: `.5a`–`.5i`
   Goal: classify and contain collections/projections: task trees + bounded index, decision/fact stores,
   generated `KNOWLEDGE_MAP.md`, roadmap, research ledgers, and the mdBook maintained reference. Semantic
   partitioning and complete direct navigation are required; aggregate product-scope change must carry
@@ -192,6 +193,108 @@ verification before correction.
   Goal: root-cause and correct the two verified mdBook current-state contradictions found during ramp-up,
   then add focused drift locks or canonical pointers so historical program narrative cannot override
   current implementation behavior.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5b`
+  Status: `done` (`2026-08-08`)
+  Goal: measure the exact collection/projection pressure, membership, navigation, producer, and
+  currentness seams after `.4` closes; decompose `.5` into dependency-ordered leaves without moving
+  canonical content; settle only the completed four-ledger index's provisional health target.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c`
+  Status: `pending`
+  Children: `.5c.i`–`.5c.iii`
+  Goal: replace incomplete or opaque collection retrieval with bounded direct navigation.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.i`
+  Status: `pending`
+  Goal: rebuild `docs/TASK_TREE.md` as a bounded complete catalog whose concise rows link every real
+  task tree exactly once, exclude the author template from active work, and never mirror leaf history.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.ii`
+  Status: `pending`
+  Goal: close direct decision/fact retrieval: preserve the already-complete decision index, define a
+  bounded human fact-card route that composes with the generated question index, and prove membership.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.iii`
+  Status: `pending`
+  Goal: add bounded direct indexes for research and the remaining canonical collections currently
+  relying only on `git:query`, with complete one-hop membership and no duplicated canonical prose.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d`
+  Status: `pending`
+  Children: `.5d.i`–`.5d.ii`
+  Goal: contain the generated Knowledge Map without weakening question-key retrieval or freshness.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d.i`
+  Status: `pending`
+  Goal: lock a deterministic bounded landing-index plus generated-shard contract, collision/order/
+  derive-and-diff tests, canonical-input identity, and reader migration before changing the generator.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d.ii`
+  Status: `pending`
+  Goal: implement and migrate the Knowledge Map bundle atomically, ratchet the root out of transition
+  debt, and prove every question key resolves directly to one canonical fact card.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e`
+  Status: `pending`
+  Children: `.5e.i`–`.5e.ii`
+  Goal: separate current roadmap direction from accumulated delivery chronology without losing either.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.i`
+  Status: `pending`
+  Goal: measure ROADMAP semantic boundaries, task-tree overlap, readers, and a lossless current/history
+  design; no roadmap record moves before source identity and current milestone coverage are proved.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.ii`
+  Status: `pending`
+  Goal: execute the approved roadmap migration, add bounded direct history retrieval, ratchet transition
+  debt, and align the task catalog plus mdBook without duplicating live execution state.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f`
+  Status: `pending`
+  Children: `.5f.i`–`.5f.ii`
+  Goal: migrate the FSMGen feedback ledger without losing requests, answers, resolutions, or issue links.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.i`
+  Status: `pending`
+  Goal: lock feedback record grammar, direction/status semantics, consumers, source identity, reviewed
+  live window, and archive/index protocol before moving any request or response.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.ii`
+  Status: `pending`
+  Goal: execute the feedback migration atomically and prove unresolved/current requests stay directly
+  visible while complete historical conversation remains retrievable.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g`
+  Status: `pending`
+  Children: `.5g.i`–`.5g.iii`
+  Goal: replace labelled currency debt with non-mutating producer-aware oracles.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.i`
+  Status: `pending`
+  Goal: make `VALIDATION_SNAPSHOT.md` currentness executable against its declared artifact/report inputs
+  without mutating validation artifacts during the check.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.ii`
+  Status: `pending`
+  Goal: make `corpus/SOURCE_PDF_REGISTRY.md` membership and document-key/path currentness executable
+  against the tracked corpus without reading host-local source libraries.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.iii`
+  Status: `pending`
+  Goal: make every `corpus_kb/` managed block reproducible/current against declared tracked inputs while
+  preserving human synthesis and forbidding canonical-IR or typed-prior mutation.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5h`
+  Status: `pending`
+  Goal: audit root maintained references and the mdBook as one user-facing truth plane; remove only
+  proven duplication, preserve unique canonical content, close direct routes, and reset exact aggregate
+  authority to the resulting maintained-reference baseline.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5i`
+  Status: `pending`
+  Goal: close `.5` with a complete membership/navigation/currentness census, zero collection/projection
+  transition debt, bounded indexes, mdBook/code/roadmap alignment, and full doctrine/CI retrieval drills.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.6`
   Status: `pending`
@@ -221,8 +324,10 @@ verification before correction.
 | — | `.4c` | `done` (`2026-08-08`) | Exact 1,601-record capsule, 60-record live suffix plus first prepend, common index/manifest extension, surface ratchet, and byte-sensitive retrieval proof landed. |
 | — | `.4d` | `done` (`2026-08-08`) | Exact 1,920-record capsule, bounded 51-record snapshot, unchanged writer-managed trailer, and real writer-seam proof landed. |
 | — | `.4e` | `done` (`2026-08-08`) | Exact 1,350-record capsule, Purpose prologue plus 60-record current view, common archive completion, and all consumer proofs landed. |
-| 1 | `.5` | `active` | Contain canonical collections/projections and close their direct retrieval/currentness contracts. |
-| 2 | `.6` | `pending` | Enforce repository-volume project-data locality and audit old project-owned residue. |
+| — | `.5b` | `done` (`2026-08-08`) | Exact post-ledger collection/currency census, dependency graph, explicit child leaves, and scratch-locality finding landed without moving canonical content. |
+| 1 | `.5c.i` | `pending` | Replace the incomplete 18,932-byte-row task index with a concise complete catalog. |
+| 2 | `.5c.ii`–`.5i` | `pending` | Direct collection routes, Knowledge Map, roadmap/feedback migrations, currentness, maintained references, and closure. |
+| 3 | `.6` | `pending` | Enforce repository-volume project-data locality and audit old project-owned residue. |
 | 5 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
 ## Decisions
@@ -402,12 +507,58 @@ verification before correction.
   no ceremonial `.4e` H2 record because no subsystem boundary, public integration, implementation,
   or current risk changed. The owning task, change/status/rationale ledgers, ADR, fact card, and book
   document the migration; the architecture root remains a byte-derived current suffix.
+- `2026-08-08`: **Collection containment is a dependency graph, not one bulk rewrite (`.5b`).** Direct
+  task navigation comes first; decision/fact/research collection routes follow; the Knowledge Map can
+  then shard against stable fact routes; roadmap and feedback migrations retain independent source
+  proofs; producer-backed currency oracles follow; maintained-reference and aggregate closure is last.
+- `2026-08-08`: **The task catalog is incomplete and pathologically wide (`.5b`).** The entry census
+  found 122 tracked task files but only 117 unique task links. Four real task trees are absent
+  (`CONSTRAINT-DRIVE-LEVEL-RECALL`, `EVIDENCE-MATERIALIZE-IDEMPOTENCY`,
+  `FSMGEN-REFRESH-INTEGRATE-3`, `NLI-CLAIM-CONNECTOR`) and `TEMPLATE.md` is correctly not active work;
+  the widest row is 18,932 bytes. `.5c.i` must rebuild, not append to, the catalog.
+- `2026-08-08`: **Already-honest collection controls are preserved (`.5b`).** The nine ADRs have
+  complete one-hop membership in `docs/decisions/INDEX.md`; the 33-part mdBook has `SUMMARY.md` plus
+  executed current-truth and exact aggregate-change controls. `.5` will not replace these with another
+  index merely for uniformity.
+- `2026-08-08`: **Diagnostic scratch is project data (`.5b`, surfaced finding).** A read-only task-link
+  comparison accidentally materialized two exact lists under `/private/tmp`. They were immediately
+  deleted and absence-proved. The root cause is shell scratch locality, not collection content;
+  `docs/knowledge/repository-local-scratch.md` records the rule and `.6` owns enforcement/census.
+- `2026-08-08`: **The completed four-ledger index needed a health-target settlement, not a higher cap
+  (`.5b`).** Its final 58 lines / 3,283 bytes legitimately consumed the provisional 64-line / 4,096-
+  byte target while remaining far below the 128-line / 8,192-byte enforcement ceiling. Health moves
+  to 96 lines / 6,144 bytes; the enforcement ceiling is unchanged and no authority is banked.
 
 ## Blockers
 
 - None for `.0`–`.3`.
 - Later migrations may stop for an authority conflict, unique unclassified content, or an unprovable
   retrieval promise, exactly as required by the adopted doctrine.
+
+## `.5b` Collection/Projection Census And Dependency Plan
+
+The post-`.4` resulting tree was measured before any collection content moved:
+
+| Surface | Entry measurement | Retrieval/currentness finding | Owning leaf |
+| --- | --- | --- | --- |
+| task catalog / task evidence | index 362 lines / 167,583 bytes / max line 18,932; 122 files / 30,640 lines / 2,280,859 bytes | 117 unique links; four real trees missing; verbose rows mirror history | `.5c.i` |
+| decisions | 10 files / 591 lines / 35,949 bytes | nine ADRs all linked exactly once from bounded index | preserve; reprove in `.5c.ii` |
+| fact cards / generated map | 134 cards / 6,782 lines / 615,483 bytes; map 2,183 lines / 1,032,740 bytes / max line 7,836 | cards have query-only route; generated root is fresh but unbounded transition debt | `.5c.ii`, then `.5d.i`–`.5d.ii` |
+| research | 38 files / 5,893 lines / 399,504 bytes | bounded parts but only `git:query`, no human one-hop catalog | `.5c.iii` |
+| roadmap | 1,487 lines / 183,445 bytes / max line 717 | exact zero-growth debt; current direction mixed with delivery chronology | `.5e.i`–`.5e.ii` |
+| FSMGen feedback | 936 lines / 57,980 bytes / max line 1,705 | exact zero-growth debt; request/answer/resolution grammar not yet locked | `.5f.i`–`.5f.ii` |
+| validation snapshot | 544 lines / 63,517 bytes | real producer exists; currentness is labelled debt and live size is at warning | `.5g.i` |
+| source PDF registry | 60 lines / 7,066 bytes | bounded; tracked-corpus membership/document-key oracle missing | `.5g.ii` |
+| corpus KB | 24 files / 1,784 lines / 119,240 bytes | managed writers/tests exist; currency is labelled debt; max-line width warns | `.5g.iii` |
+| root references / mdBook | 4 roots / 1,340 lines / 68,206 bytes; book 33 files / 11,978 lines / 715,829 bytes | roots need uniqueness/route audit; book already has direct membership and executed currency | `.5h`, then `.5i` |
+
+The order prevents circular authority: a bounded task catalog exists before other leaves rely on it;
+fact navigation exists before the generated question map changes topology; source identities and
+semantic boundaries precede roadmap/feedback movement; producer oracles are non-mutating; the final
+maintained-reference audit sees the resulting routes rather than designing against temporary ones.
+
+The census itself moved no canonical collection record. The only data-plane adjustment settles the
+now-complete four-ledger archive index's health target inside its unchanged enforcement ceiling.
 
 ## `.4e` `RUST_CODEBASE_ANALYSIS.md` Atomic Migration
 
@@ -662,6 +813,8 @@ transition debt, not a fabricated freshness claim.
 | `2026-08-08` | `.4d` | capsule vs `git show e4239e3f:LIVE_ACHIEVEMENT_STATUS.md`; staged resulting-tree `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | byte-identical capsule; green: 561 Markdown files / 28 surfaces; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; staged diff clean |
 | `2026-08-08` | `.4e` | exact pre-copy `--report`; same-volume `cp -p`; `cmp -s`; dual SHA-256 and `wc`; guarded `--emit-planned rust-codebase-analysis`; migrated `--report` | capsule/source identical at 1,350 records / 9,039 lines / 1,046,679 bytes / `95e1…cc7c`; root exactly 60 records / 1,056 lines / 89,727 bytes; prologue, capsule, exact suffix, manifest/index, retrieval, and consumers pass |
 | `2026-08-08` | `.4e` | capsule vs `git show 8310c3a1:RUST_CODEBASE_ANALYSIS.md`; staged resulting-tree `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | byte-identical capsule; green: 562 Markdown files / 29 surfaces; all four ledgers migrated; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; staged diff clean |
+| `2026-08-08` | `.5b` | resulting-tree live-size `--report`; `wc`/max-line collection census; process-substitution task/decision membership comparison; producer/managed-marker code census; exact off-volume scratch deletion + absence proof | dependency graph locked from measured state; tasks 122 files vs 117 links with four real omissions + template; decisions 9/9 linked; map 134 cards / 1,032,740 bytes; roadmap/feedback exact debt pinned; two accidental `/private/tmp/specforge-task-*.txt` files absent after exact deletion; no canonical collection content moved |
+| `2026-08-08` | `.5b` | Knowledge Map regeneration; staged resulting-tree `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check`; archive-index health/cap report | green: map 135 facts / 969 question keys; 563 Markdown files / 29 surfaces; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build pass; staged diff clean; archive index 58 lines / 3,283 bytes under 96/6,144 health and unchanged 128/8,192 ceiling |
 
 ## Commit Log
 
@@ -679,6 +832,7 @@ transition debt, not a fabricated freshness claim.
 | `.4c` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4c — migrate DEVELOPMENT_NOTES losslessly` | exact capsule + bounded H2 rationale window + successor-boundary proof + debt ratchet |
 | `.4d` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4d — migrate live status losslessly` | exact capsule + bounded bullet snapshot + unchanged generated trailer + writer proof |
 | `.4e` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4e — migrate Rust analysis losslessly` | exact capsule + Purpose prologue/current suffix + completed common archive + debt ratchet |
+| `.5b` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5b — decompose collection containment` | exact collection/currency census + dependency leaves + scratch-locality fact + archive-index health settlement |
 
 ## Changelog
 
@@ -719,3 +873,7 @@ transition debt, not a fabricated freshness claim.
 - `2026-08-08`: `.4e` froze the exact Rust architecture source, derived its Purpose prologue plus
   newest 60 whole records, completed the four-capsule route, and removed the final rolling-ledger
   transition debt without adding a migration-only architecture record.
+- `2026-08-08`: `.5b` measured the post-ledger collection/projection plane, decomposed every remaining
+  transition and currentness obligation into dependency-ordered leaves, recorded the incomplete task
+  catalog, preserved already-honest decision/book controls, and captured the exact-remediated
+  off-volume diagnostic-scratch incident for `.6` enforcement.
