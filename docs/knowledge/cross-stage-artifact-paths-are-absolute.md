@@ -10,7 +10,7 @@ answers:
 date: 2026-08-08
 status: current
 tags: [artifact-paths, portability, locality, generated, source-ir, evidence-ir, semantic-ir, intent-ir]
-evidence: docs/tasks/ARTIFACT-PATH-PORTABILITY.md (.0); crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/semantic.rs; crates/specforge/src/ir/intent.rs; crates/specforge/src/ir/adapters.rs
+evidence: docs/tasks/ARTIFACT-PATH-PORTABILITY.md (.0-.1); crates/specforge/src/persisted_path.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/semantic.rs; crates/specforge/src/ir/intent.rs; crates/specforge/src/ir/adapters.rs
 reverify: "rg -n 'canonicalize_existing_path' crates/specforge/src/ir/evidence.rs crates/specforge/src/ir/semantic.rs crates/specforge/src/ir/intent.rs crates/specforge/src/ir/adapters.rs"
 ---
 
@@ -23,6 +23,7 @@ stage's upstream pointer, SourceIR canonical paths, adapter inputs, and prior-me
 
 Those strings are stale references, not proof of current boot-volume access, but the serialization behavior
 violates the repository-root-relative persistence contract and makes generated stages fragile across moves.
-The finding arose during `SWD-SERIAL-EXTRACTION.4e`; `ARTIFACT-PATH-PORTABILITY` now owns
-backward-compatible path resolution, every producer/consumer seam, verified local-artifact migration, and a
-fail-closed path census. Do not bulk-rewrite ignored artifacts before its resolver and migration contract exist.
+The finding arose during `SWD-SERIAL-EXTRACTION.4e`; `ARTIFACT-PATH-PORTABILITY` owns the repair. Its `.1`
+common codec/resolver is now implemented and tested, but no stage producer or generated artifact has adopted it
+yet. `.2` and `.3` own those typed seams; `.4` owns verified local-artifact migration and a fail-closed census.
+Do not bulk-rewrite ignored artifacts before those consumers can read both legacy and relative forms.

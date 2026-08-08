@@ -19,13 +19,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `ARTIFACT-PATH-PORTABILITY.0` — completed by this commit; the move-portability repair is
-  measured, decomposed, and task-tree owned.
-- Current state: the deleted old root remains in 335/506 generated JSON/Markdown files across all four IR
-  stages, adapters, SourceIR, and prior memory (262,996 scalar values; 262,592 evidence `source_path`).
-  Builders persist canonical absolute inputs, while validation/learning/recovery consumers reopen those
-  fields; some silently skip missing lineage. No generated artifact has been rewritten yet.
-- Next action: execute `ARTIFACT-PATH-PORTABILITY.1`: decide and test one safe relative serialization,
-  current-root resolution, legacy-rebase, external-input, and escape/ambiguity refusal contract.
+- Active unit: `ARTIFACT-PATH-PORTABILITY.1` — completed by this commit; one common persisted-path contract is
+  implemented and verified before any producer or ignored-artifact mutation.
+- Current state: `persisted_path` keeps existing path-string schema shape while separating repository-owned
+  values from authorized external inputs. Repository values encode relative and resolve at the current root;
+  legacy absolute values rebase only through recognized project-data roots to one existing contained target.
+  Thirteen focused cases, 1,748 full-suite passes / five ignored, format, and Clippy pass. The 335 affected
+  generated artifacts remain unchanged.
+- Next action: execute `ARTIFACT-PATH-PORTABILITY.2`: activate the common contract across SourceIR and
+  EvidenceIR producers/consumers, including explicit SourceIR origin metadata and legacy inference.
 - In-flight uncommitted: none after this commit; no background job or disposable residue.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

@@ -1,3 +1,15 @@
+### ARTIFACT-PATH-PORTABILITY.1 — land the move-safe persisted-path contract
+
+- Added one typed codec/resolver boundary that stores repository-owned paths relative to the discovered root
+  while retaining exact absolute paths only for explicitly declared external inputs. Stable
+  `repository_owned` / `external_input` labels are ready for the mixed-origin SourceIR surface in `.2`.
+- Kept the existing `PathBuf` string schema shape and made runtime I/O explicit: relative and current-absolute
+  repository paths resolve below the current root; recognized legacy roots may rebase only to one existing
+  contained target. Zero/multiple matches, parent traversal, and symlink escape fail closed.
+- Added 13 focused positive, move, compatibility, external, output-precreation, missing, ambiguity, traversal,
+  and symlink tests. The full suite passes 1,748 / five ignored; formatting and warning-deny all-target Clippy
+  pass. No current IR producer, consumer, generated artifact, extraction fact, or gold changed in this slice.
+
 ### ARTIFACT-PATH-PORTABILITY.0 — own and measure move-portable IR lineage
 
 - Opened a dedicated portability tree before implementation and placed its path-model design, Source/Evidence

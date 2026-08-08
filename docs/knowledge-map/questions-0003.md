@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
+  > how is the SWD FSM/frame derivation scored (not constraints/relations/temporal)
+- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
+  > how is the SWDIO sampling and drive-change edge scored
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > how is the agent-definition grammar kept garbage-free without a fragile noun denylist
+- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
+  > how is the composition-frame grammar kept free of corpus false positives
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > how is the corpus distributed across the document intent categories
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
   > how is the ingest DISK footprint bounded for very large PDFs
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
@@ -288,13 +298,3 @@
   > should specforge record an adapter residual for rules whose subject is not a declared signal
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
   > should specforge recover consumer edges from 'X is sent/returned to Y' recipient frames
-- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
-  > temporal rule eval false positives root cause
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > temporal rule predicate atom vocabulary
-- [docling-device-cpu](../knowledge/docling-device-cpu.md)
-  > torch MPS float64 error during ingest
-- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
-  > was the (contract ... eventually ...) ISF clause removed
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what FSMGen question/feature-request did KG-ISF-TRANSACTIONS.2i raise (value-less output participation / unordered-or-partial-order body / phase-group metadata / ordering-as-constraint)

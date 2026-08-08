@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > where does the <qualifier> phase vocabulary live (extracted_statements prose, not section_anchors)
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > where does the ISF emitter lower a rule value literal (ir/isf_ir.rs:1493-1495 render_isf_control_expression → ControlExpressionRecord::Literal{literal}=>literal.clone(); copied verbatim, no width reconciliation at the emit site isf_ir.rs:418-432)
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > where does the ISF emitter lower register reset_value (ir/isf_ir.rs: IsfStorageVar.reset + classify_register_reset + register_var_width; render emits (var NAME (width W) (reset V)); before .2/.3 IsfStorageVar had only name+width and dropped it)
+- [nli-intent-gate](../knowledge/nli-intent-gate.md)
+  > where does the NLI gate route a not-entailed contract
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > where does the block name come from when the PDF backend flattens heading levels (parent section title via dotted-parent)
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > where does the generic enum name TABLE/FIGURE/DATA come from (derive_encoding_enum_name fallback, evidence.rs:4457-4461 — first caption token passing is_hardware_signal_token at evidence.rs:7106, which accepts 'Table'->'TABLE')
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > where does the nli-verify measurement go / is the extraction-quality gauge persisted
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
@@ -285,15 +297,3 @@
   > why do generated IR files contain the old SpecForge repository path
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > why do i / its stay out of the non-actor function-word list (GIC ITS, the letter I)
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > why do many conditional_rules not lower to an ISF (rule) (they name no signal obligation, an undeclared signal, a placeholder action, or only a bare modal shall/must with no concrete value/level — lowering would fabricate the obligation)
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > why do message/flit fields count as wire intent only when there is no register map (CHI/DTI reg=0 vs NVMe/AMD/CCIX reg>0)
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > why do nested register views (AUTHSTATUS) collapse but disjoint ones (MEM-AP CSW vs JTAG-AP CSW) stay a residual
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > why do nvme / tilelink / wbspec / i2c / ccix / vt-d / iommu have zero actor_signal_relations
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > why do only 36 of 79 ingested docs reach IntentIR / .isf
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > why do plain English words like Address or Vector become field names under the bracket frame

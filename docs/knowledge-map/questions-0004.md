@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
+  > temporal rule eval false positives root cause
+- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
+  > temporal rule predicate atom vocabulary
+- [docling-device-cpu](../knowledge/docling-device-cpu.md)
+  > torch MPS float64 error during ingest
+- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
+  > was the (contract ... eventually ...) ISF clause removed
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what FSMGen question/feature-request did KG-ISF-TRANSACTIONS.2i raise (value-less output participation / unordered-or-partial-order body / phase-group metadata / ordering-as-constraint)
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > what ISF abstractions does FSMGen need next (field-structured storage / register-with-fields, packet/structure layouts, topology)
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
@@ -288,13 +298,3 @@
   > what is the .5.iii _WIDTH parameter-leak gate / is it landed / is it ADR-0006 safe (LANDED 2026-06-24: is_width_parameter_leak_member + a continue-skip in synthesize_encoding_declarations_for_enum after the .5.ii spine gate, known_signals threaded from the signal-match caller. Drops a synthesized encoding member named <X>_WIDTH iff X is a declared signal OR the enum's own name
   > — document-grounded like .5.i, NOT a name list; corpus FP set EMPTY: no legit FULL_WIDTH/HALF_WIDTH value exists and the declared-signal arm never catches one since FULL/HALF are not signals; per-member not per-enum so BRESP keeps its codes and RRESP/AXSNOOP empty to honest residuals. AXI manager.isf now (BRESP (OKAY 0)(EXOKAY 1)...) + (AWCMO (CLEAN_AND_INVALIDATE
   > 0)(CLEAN_ONLY 1)); false RRESP/AXSNOOP/RCHUNK* _WIDTH enums gone; FSMGen --strict success/0; WIRE-BASED-100 1.000 before==after; kg-bench 156/156; run_ci GREEN lib 1718 +2)
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what is the 4th portable architecture (doctrine enforcement)
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > what is the AXI signal naming convention (channel prefix)
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > what is the DOC-INTENT-TAXONOMY.1 corpus census
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > what is the DOC-INTENT-TAXONOMY.2 per-category ISF-completeness gauge
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > what is the Dempster combiner in fusion

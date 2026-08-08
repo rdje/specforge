@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what is the 4th portable architecture (doctrine enforcement)
+- [axi-channel-structure](../knowledge/axi-channel-structure.md)
+  > what is the AXI signal naming convention (channel prefix)
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > what is the DOC-INTENT-TAXONOMY.1 corpus census
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > what is the DOC-INTENT-TAXONOMY.2 per-category ISF-completeness gauge
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > what is the Dempster combiner in fusion
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
   > what is the EXTRACTION-QUALITY-GAUGE.FIELD design
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
@@ -162,6 +172,8 @@
   > what kind of extractor actually needs the cross-document cluster mechanism
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
   > what makes a valid activate-only opt-in extractor candidate
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > what makes legacy absolute path rebasing safe and unambiguous
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > what message field metrics does validate emit
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
@@ -286,15 +298,3 @@
   > where does signal_channel_memberships live (EvidenceIR) and how is it carried (SemanticIR -> IntentIR)
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > where does the .isf signal direction/width come from (direction_hint/width_hint, not the actor graph)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > where does the <qualifier> phase vocabulary live (extracted_statements prose, not section_anchors)
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > where does the ISF emitter lower a rule value literal (ir/isf_ir.rs:1493-1495 render_isf_control_expression → ControlExpressionRecord::Literal{literal}=>literal.clone(); copied verbatim, no width reconciliation at the emit site isf_ir.rs:418-432)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > where does the ISF emitter lower register reset_value (ir/isf_ir.rs: IsfStorageVar.reset + classify_register_reset + register_var_width; render emits (var NAME (width W) (reset V)); before .2/.3 IsfStorageVar had only name+width and dropped it)
-- [nli-intent-gate](../knowledge/nli-intent-gate.md)
-  > where does the NLI gate route a not-entailed contract
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > where does the block name come from when the PDF backend flattens heading levels (parent section title via dotted-parent)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > where does the generic enum name TABLE/FIGURE/DATA come from (derive_encoding_enum_name fallback, evidence.rs:4457-4461 — first caption token passing is_hardware_signal_token at evidence.rs:7106, which accepts 'Table'->'TABLE')

@@ -9,6 +9,14 @@ generated outputs back to a previous path or to an operating-system temporary di
 Every persisted project path is repository-relative. At runtime, tools discover the current
 repository root and derive absolute process paths only for the duration of that process.
 
+The Rust `persisted_path` boundary makes that distinction explicit without changing existing JSON path
+strings. A repository-owned path encodes relative and resolves below the discovered current root. An
+explicitly authorized external input can remain absolute and is never eligible for old-root rebasing. Legacy
+repository paths may rebase only from a recognized project-data root to exactly one existing target below the
+current root; missing, ambiguous, traversing, or symlink-escaping values fail closed. SourceIR and downstream
+stage adoption is tracked by `ARTIFACT-PATH-PORTABILITY`; until those leaves land, generated IR remains subject
+to the separately documented persistence gap.
+
 | Data | Repository-relative root | Authority |
 | --- | --- | --- |
 | temporary workspaces | `.project-data/tmp/` | `.cargo/config.toml`, `scripts/project_data_env.sh`, Rust `project_data` module |

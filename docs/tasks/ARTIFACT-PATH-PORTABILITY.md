@@ -46,7 +46,7 @@ validation, learning, or recovery workflows.
 - ID: `ARTIFACT-PATH-PORTABILITY` · Status: `active` · Children: `.0`–`.5`
 - ID: `ARTIFACT-PATH-PORTABILITY.0` · Status: `done` (`2026-08-08`) · Goal: reproduce, census, and
   root-cause the post-move absolute-path boundary; open a detailed tree before implementation.
-- ID: `ARTIFACT-PATH-PORTABILITY.1` · Status: `pending` · Goal: design and test one common persisted-path
+- ID: `ARTIFACT-PATH-PORTABILITY.1` · Status: `done` (`2026-08-08`) · Goal: design and test one common persisted-path
   codec/resolver: repository-relative serialization, current-root runtime resolution, narrowly recognized
   legacy-root rebasing, explicit external-input handling, and traversal/symlink/ambiguity refusal.
 - ID: `ARTIFACT-PATH-PORTABILITY.2` · Status: `pending` (depends on `.1`) · Goal: migrate SourceIR and
@@ -62,32 +62,35 @@ validation, learning, or recovery workflows.
   surface, run real moved-root workflows plus full CI/residue gates, reconcile all public/continuity docs, and
   close the tree before returning to `SWD-SERIAL-EXTRACTION.7`.
 
-## Acceptance Checklist (enforced) — `ARTIFACT-PATH-PORTABILITY.0`
+## Acceptance Checklist (enforced) — `ARTIFACT-PATH-PORTABILITY.1`
 
-- [x] **REPRODUCE / MEASURE** — the old root is absent; 335 of 506 generated JSON/Markdown files across
-  SourceIR 22, EvidenceIR 78, SemanticIR 78, IntentIR 78, adapters 78, and prior memory 1 contain the old
-  root. Their 262,996 matching scalar values are dominated by 262,592 evidence `source_path` entries.
-- [x] **ROOT CAUSE (WHY + WHERE)** — SourceIR stores `fs::canonicalize(source)`; the EvidenceIR,
-  SemanticIR, IntentIR, and adapter builders canonicalize their input before assigning the persisted upstream
-  path. Downstream validation/learning/recovery consumers later open those stored paths directly.
-- [x] **ADDRESSED (verified)** — a dedicated tree now owns common path semantics, all producer/consumer
-  migrations, generated-data migration, enforcement, and closure; no artifact was rewritten in `.0`.
-- [x] **NO REGRESSION** — `.0` is read-only measurement plus documentation; all six doctrines and the
-  mdBook gate pass, and the prior `.4e` full CI remains the clean code baseline.
-- [x] **GENERICITY** — ownership is keyed to repository containment and typed path roles, never current/old
-  usernames, mount points, document keys, vendors, protocols, or stage fixture names.
-- [x] **LOCKSTEP** — tree/catalog, roadmap durability priority, locality book truth, Knowledge Map fact,
-  architecture/status/change ledgers, and resume pointer agree on the measured current gap and `.1` frontier.
+- [x] **REPRODUCE / MEASURE** — 13 focused cases exercise relative encoding/current-root resolution,
+  pre-creation outputs, current absolute compatibility, moved-root rebasing, stable origin labels, explicit
+  external inputs, outside-root ownership refusal, traversal, ambiguity, missing targets, and symlink escape.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `SourceIr::build` canonicalizes the source at
+  `crates/specforge/src/ir/source.rs:581`, and `EvidenceIr::build` repeats that pattern for its upstream input at
+  `crates/specforge/src/ir/evidence.rs:725`. Persisted `PathBuf` values therefore mixed storage identity with
+  runtime I/O identity and provided no common repository-owned versus authorized-external distinction.
+- [x] **ADDRESSED (verified)** — repository-owned values encode relative; runtime resolution anchors to the
+  discovered current root; legacy absolute paths rebase only below recognized project-data roots to exactly
+  one existing local target; external inputs never enter that compatibility branch.
+- [x] **NO REGRESSION** — the focused suite passes 13/13, the full suite passes 1,748 with five ignored, and
+  formatting plus all-target warning-deny Clippy pass; no IR producer, consumer, schema instance, generated
+  artifact, extraction fact, or canonical gold changes in this design leaf.
+- [x] **GENERICITY** — resolution uses typed origin, current repository discovery, declared project-data root
+  classes, containment, existence, and uniqueness. It contains no username, mount point, old root, document
+  key, protocol, vendor, or fixture allowlist.
+- [x] **LOCKSTEP** — task tree, roadmap, locality standard/book, Knowledge Map, Rust architecture analysis,
+  live ledgers, and resume pointer agree that the common contract is landed and `.2` owns first-stage use.
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `ARTIFACT-PATH-PORTABILITY.1` | `pending` | One reviewed path contract must exist before any producer or ignored artifact changes. |
-| 2 | `ARTIFACT-PATH-PORTABILITY.2` | `pending` | Source/Evidence own the largest path surface and feed every downstream stage. |
-| 3 | `ARTIFACT-PATH-PORTABILITY.3` | `pending` | Canonical downstream consumers must retain validation and learning behavior after moves. |
-| 4 | `ARTIFACT-PATH-PORTABILITY.4` | `pending` | Migrate data only after code can safely read both old and new forms. |
-| 5 | `ARTIFACT-PATH-PORTABILITY.5` | `pending` | Independent closure proves no path or documentation surface escaped. |
+| 1 | `ARTIFACT-PATH-PORTABILITY.2` | `pending` | Source/Evidence own the largest path surface and feed every downstream stage. |
+| 2 | `ARTIFACT-PATH-PORTABILITY.3` | `pending` | Canonical downstream consumers must retain validation and learning behavior after moves. |
+| 3 | `ARTIFACT-PATH-PORTABILITY.4` | `pending` | Migrate data only after code can safely read both old and new forms. |
+| 4 | `ARTIFACT-PATH-PORTABILITY.5` | `pending` | Independent closure proves no path or documentation surface escaped. |
 
 ## Decisions
 
@@ -97,13 +100,18 @@ validation, learning, or recovery workflows.
   variable for I/O, but repository-owned serialization must not retain that absolute value.
 - `2026-08-08`: Legacy support must be semantic and bounded, not a replacement of one known username/mount
   prefix with another. Exact rules are the `.1` design deliverable.
+- `2026-08-08`: Keep existing path fields as schema-compatible strings. Their typed field role declares
+  repository ownership; the sole mixed-origin source registration gains a stable adjacent origin label in
+  `.2`. A wrapper object around every path would create needless whole-schema churn.
+- `2026-08-08`: Legacy rebasing is available only to repository-owned fields, begins at one of the declared
+  project-data roots, requires a present target below the current canonical repository, and refuses zero or
+  multiple matches plus traversal or symlink escape. External inputs resolve only at their exact path.
 
 ## Open Questions
 
-- Which source inputs qualify as explicitly authorized external paths, and how must an artifact label that
-  exception so an absolute value cannot masquerade as repository-owned data? Owner: `.1`; blocking design.
-- Should persisted paths remain `PathBuf` strings under schema v1 with loader normalization, or gain an
-  explicit typed path-origin wrapper/schema revision? Owner: `.1`; decide by compatibility tests.
+- `.2` must derive legacy SourceIR origin safely: relative `requested_path` is repository-owned; an absolute
+  request is external unless it is below the current root or a recognized old-root suffix resolves uniquely.
+  New SourceIR persists the stable `repository_owned` / `external_input` label beside `canonical_path`.
 - Can the 262,592 repeated evidence `source_path` values be safely normalized during loading/writing without
   changing fact identity or deterministic hashes? Owner: `.2`; verify before migration.
 
@@ -116,15 +124,19 @@ validation, learning, or recovery workflows.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-08-08` | `.0` | old-root absence; generated path/file/stage/key census; producer assignment and consumer-use cross-read; doctrine + mdBook checks | 335 affected files / 262,996 values; root cause localized; ownership complete; no generated mutation |
+| `2026-08-08` | `.1` | 13 focused codec/resolver cases; full Rust suite; `cargo fmt --check`; all-target `clippy -D warnings`; doctrines; mdBook | 1,748 pass / 5 ignored; contract and all gates pass; no IR/generated mutation |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `.0` | `ARTIFACT-PATH-PORTABILITY.0 — own the move-portability repair` | Measurement/ownership only; `.1` is the first implementation gate. |
+| `.1` | `ARTIFACT-PATH-PORTABILITY.1 — land the move-safe path contract` | Common seam only; `.2` activates it in SourceIR/EvidenceIR. |
 
 ## Changelog
 
 - `2026-08-08`: Created after the SWD `.4e` fresh-build path exposed stale absolute lineage. Measured the
   complete present generated surface, localized producer and consumer seams, and split design, stage migration,
   data migration/enforcement, and closure into independently committable leaves.
+- `2026-08-08`: Landed the schema-compatible persisted-path codec/resolver with stable origin labels and
+  fail-closed current-root, legacy-rebase, external-input, traversal, ambiguity, missing, and symlink behavior.

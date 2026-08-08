@@ -43,7 +43,7 @@ read-only operating-system/toolchain inputs. Rust build outputs remain in the re
 The post-compaction hook can also read an optional `../fsmgen` sibling checkout, but only on the same
 filesystem; the pinned submodule remains the reproducible authority.
 
-### Known generated-IR move-portability gap
+### Persisted-path contract and remaining migration gap
 
 The runtime/cache controls above are enforced, but a post-move audit found a separate persistence gap.
 SourceIR stores its canonical input path, and the EvidenceIR, SemanticIR, IntentIR, and adapter builders
@@ -53,10 +53,18 @@ contains 335 JSON/Markdown artifacts with the deleted pre-SSD repository root; E
 
 This is not current boot-volume I/O—the old repository is absent—but it makes lineage consumers move-fragile.
 Some validation and learning paths treat a missing upstream artifact as optional and silently lose cross-stage
-checks; recovery paths can fail outright. `ARTIFACT-PATH-PORTABILITY` owns a common repository-relative storage
-and safe runtime-resolution contract, backward-compatible legacy loading, verified generated-data migration,
-and a fail-closed residue gate. Until that tree closes, do not bulk-rewrite ignored artifacts or treat a passing
-temp/cache locality check as proof that persisted IR paths are portable.
+checks; recovery paths can fail outright.
+
+The common Rust contract is now landed. It preserves the existing JSON path-string shape while requiring a
+typed origin at each call: repository-owned paths encode relative and resolve at the discovered current root;
+explicit external inputs may remain absolute but never enter legacy rebasing. An old absolute repository path
+may rebase only below a recognized project-data root, to exactly one existing canonical target contained by
+the current repository. Parent traversal, zero/multiple targets, and symlink escape are errors.
+
+The contract is not yet active in the stage artifacts. `ARTIFACT-PATH-PORTABILITY.2` and `.3` own producer and
+consumer migration, then `.4` owns verified generated-data migration plus a fail-closed residue gate. Until
+those leaves land, do not bulk-rewrite ignored artifacts or treat a passing temp/cache locality check as proof
+that persisted IR paths are portable.
 
 ## Check the contract
 

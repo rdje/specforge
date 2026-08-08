@@ -95,8 +95,8 @@ Five active program groups support that north star:
 - repository durability and portability: the completed
   [`LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`](docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md)
   program keeps current documentation and project data bounded on the repository volume; active
-  [`ARTIFACT-PATH-PORTABILITY`](docs/tasks/ARTIFACT-PATH-PORTABILITY.md) closes the discovered
-  repository-relative serialization and post-move generated-lineage gap.
+  [`ARTIFACT-PATH-PORTABILITY`](docs/tasks/ARTIFACT-PATH-PORTABILITY.md) has landed the common move-safe
+  path contract and is activating it across the pipeline before verified generated-data migration.
 
 The complete, always-current execution/status catalog is [`docs/TASK_TREE.md`](docs/TASK_TREE.md).
 This roadmap owns only high-level direction and milestone status; it does not mirror leaf frontiers or

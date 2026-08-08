@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > why do many conditional_rules not lower to an ISF (rule) (they name no signal obligation, an undeclared signal, a placeholder action, or only a bare modal shall/must with no concrete value/level — lowering would fabricate the obligation)
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > why do message/flit fields count as wire intent only when there is no register map (CHI/DTI reg=0 vs NVMe/AMD/CCIX reg>0)
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > why do nested register views (AUTHSTATUS) collapse but disjoint ones (MEM-AP CSW vs JTAG-AP CSW) stay a residual
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > why do nvme / tilelink / wbspec / i2c / ccix / vt-d / iommu have zero actor_signal_relations
+- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
+  > why do only 36 of 79 ingested docs reach IntentIR / .isf
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > why do plain English words like Address or Vector become field names under the bracket frame
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > why do producer/consumer/receiver/transmitter actors carry 0 ports and 0 relations
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
@@ -286,15 +298,3 @@
   > why was a signal not extracted from a signal table (e.g. AHB HREADY)
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > why was an emitter-only fix for register bit-fields rejected (per-field vars fabricate/lose grouping; set-field/extract fabricate runtime behavior; comments are not intent — feedback_isf_no_hacks)
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > why was nearest-heading anchoring rejected for capless table adoption
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > why was the .4d.i pre-investigation 'deterministically tractable' verdict overturned (gold check: dmstatus flattened table off-by-8 + dropped 7-field band; dmcontrol image-only no table; tdata1 symbolic XLEN-relative positions)
-- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
-  > why was the ISF explicit-FSM feature request withdrawn
-- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
-  > why was the spike's 'manager Reads ARID' direction error not in production
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > why were ACK / NACK / DDC / SDR extracted as I2C signals (and how was it fixed)
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > why were CHI fields mis-typed as signals (the .gauge spurious-subject class)

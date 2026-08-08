@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
+  > how are serial/architecture spec interface signals added to the catalog
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > how are signal presence matrices captured into typed records
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > how are signal presence matrices with signals trapped in header rows handled
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > how are spacing-artifact field names and the unit word Bits handled
 - [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
@@ -100,6 +106,10 @@
   > how does SpecForge recover a subject the model misspelled
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
   > how does SpecForge relate to GoldMine Texada Pnueli Ammons
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > how does SpecForge resolve a persisted path after the repository moves
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > how does SpecForge serialize repository owned paths
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how does SpecForge tell a guide from a real spec / report low-yield docs honestly
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
@@ -287,13 +297,3 @@
   > how is the FSMGen feedback channel kept bounded without losing old requests and responses
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
   > how is the NLI gate tested without Ollama
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > how is the SWD FSM/frame derivation scored (not constraints/relations/temporal)
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > how is the SWDIO sampling and drive-change edge scored
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > how is the agent-definition grammar kept garbage-free without a fragile noun denylist
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > how is the composition-frame grammar kept free of corpus false positives
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > how is the corpus distributed across the document intent categories

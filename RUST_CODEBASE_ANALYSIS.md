@@ -4,7 +4,16 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
-## Session update (2026-08-08 — SWD interface-edge timing and protocol projection boundary)
+## Session update (2026-08-08 — move-safe persisted paths and SWD interface-edge timing)
+
+- **Storage identity and runtime identity are now separate.** `persisted_path` keeps repository-owned
+  serialization relative while resolving current runtime paths through `project_data::repository_root()`.
+  Existing `PathBuf` JSON string shape remains compatible; `PersistedPathOrigin` supplies stable
+  `repository_owned` / `external_input` labels for fields that may cross the repository boundary.
+- **Legacy compatibility is bounded.** A repository-owned old absolute value may rebase only at a declared
+  project-data root, to exactly one existing target whose canonical path stays below the current root.
+  Explicit external inputs resolve only at their exact path. Traversal, missing/ambiguous targets, and
+  symlink escape fail closed; 13 focused tests cover the contract. `.2` owns SourceIR/EvidenceIR activation.
 
 - **New EvidenceIR surface:** `InterfaceEdgeTimingRecord` carries actor, data signal, clock signal,
   explicit rising/falling edge, sample/drive-state-change flags, and statement provenance.
@@ -17,10 +26,10 @@
 - **Architecture boundary:** `serial_frame_fields`, `swd_operations`, `protocol_states`, and
   `interface_edge_timings` are EvidenceIR-only. Neither `SemanticIr`, `IntentIr`, nor `IsfIr` consumes
   them, so extraction scoring does not prove downstream product availability; `.7` owns that projection.
-- **New portability risk:** stage builders canonicalize input paths before serializing upstream pointers.
+- **Active portability migration:** stage builders canonicalize input paths before serializing upstream pointers.
   A local census found 335 generated artifacts retaining the deleted boot-volume root. This violates the
-  root-relative persistence contract; `ARTIFACT-PATH-PORTABILITY` now owns the common resolver, all stage
-  consumers, migration, and enforcement before another canonical artifact promotion.
+  root-relative persistence contract; the common resolver is now landed, while `ARTIFACT-PATH-PORTABILITY`
+  still owns all producer/consumer activation, migration, and enforcement before canonical promotion.
 
 ## Session update (2026-08-08 — repository-volume runtime boundary; `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.6a`)
 
