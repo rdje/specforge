@@ -47,12 +47,11 @@ correctly without re-reading chat history.
 - **A commit that completes a leaf names the leaf ID** in its subject or first
   body line. The exact commit workflow + commit-time reporting is in
   [`COMMIT.md`](../COMMIT.md).
-- **Completion Rules** (in `docs/TASK_TREE.md`) require a closing leaf to update
-  the live docs (`MEMORY.md`, `CHANGES.md`, `LIVE_ACHIEVEMENT_STATUS.md`,
-  `ROADMAP.md`, `DEVELOPMENT_NOTES.md`) and — via the **`BOOK-METHOD-DOC`
-  close-rule** — to add/refresh that tree's implementation+verification
-  subsection in the topically-correct mdBook chapter. A close leaf whose book
-  section is missing or stale is **incomplete**.
+- **Completion Rules** (in `docs/TASK_TREE.md`) require every leaf to review the canonical
+  documentation surfaces and update only those whose owned truth changed; ceremonial co-staging is
+  forbidden. A tree's closing leaf must also satisfy the **`BOOK-METHOD-DOC` close-rule** by
+  adding or refreshing the implementation+verification subsection in the topically-correct mdBook
+  chapter. A close leaf whose book section is missing or stale is **incomplete**.
 
 ## Status vocabulary
 

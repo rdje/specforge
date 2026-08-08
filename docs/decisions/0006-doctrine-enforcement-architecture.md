@@ -66,4 +66,4 @@ Adopt the **Doctrine-Enforcement architecture** as the **4th portable architectu
   `scripts/check_task_acceptance.sh`; checklist template + toolbox: `TOOLBOX.md`.
 - Owning task-tree: `docs/tasks/DOCTRINE-ENFORCEMENT-ADOPT.md`.
 - Sibling standards: `MEMORY_ARCHITECTURE.md` §9 (same E1→E4 model), decision `0003` (the doctrine
-  this mechanizes), `KNOWLEDGE_MAP_ARCHITECTURE.md`.
+  this mechanizes), `knowledge-map/KNOWLEDGE_MAP_ARCHITECTURE.md`.

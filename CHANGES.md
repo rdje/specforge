@@ -1,3 +1,16 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.2 — bounded README and route closure
+
+- Replaced the 602-line/170,891-byte duplicate-heavy README with a verified
+  127-line/4,834-byte landing page while retaining purpose, scope, prerequisites, quick start,
+  architecture, navigation, support/contribution, and license notice.
+- Adopted the SpecForge-owned `README_POLICY.md`; derived independent ceilings of 150 lines and
+  5,800 bytes from the retained survivor rather than copying FSMGen's values.
+- Added the reader/author route registry and unconditional `README-POLICY` doctrine check. The
+  route proof found and corrected stale root references to the knowledge-map architecture; the
+  canonical location is now recorded in a Knowledge Map fact card.
+- Verified independent fail-closed limit probes, all 21 unique README routes, 4/4 doctrines,
+  mdBook, CLI help, strict runtime preflight, the `inspect README.md` first-use path, and diff hygiene.
+
 ### PDF-VARIANT-DIGESTION.10i — CODE: block-qualified recovery of the genuinely-different register class (the `.10h` residual)
 `.10h` recovered the *collapsible* half of the `.10g` reused-mnemonic residual (identical/nested views of ONE register → one record) but left the GENUINELY-DIFFERENT half — disjoint field sets under one mnemonic (MEM-AP `CSW` 11 fields vs JTAG-AP `CSW` 7 fields) — fully dropped, because the flattened heading hierarchy carries no ancestor-block heading to qualify with. `.10i` recovers it. The decisive measurement (the `.10h` `#[ignore]` block probe, read-only over persisted `source_ir`) refined the `.10h` pessimism: the block name is still printed — as the parent SECTION TITLE, reached via the dotted-parent number — in the universal form `<dotted-num> <BLOCK> register descriptions` (`C2.6 MEM-AP register descriptions` → `MEM-AP`, `C3.5 JTAG-AP register descriptions` → `JTAG-AP`, `C1.4 AP Register Descriptions` → `AP`), while a parent with no block token (`D4.5 Register descriptions`) honestly yields none. `extract_section_header_registers` (`ir/evidence.rs`) now threads each container's dotted number (`SectionHeaderFieldContainer.dotted`, additive — `.10f` ignores it) and, when `.10h` containment returns `None`, BLOCK-QUALIFIES each occurrence via the new pure helpers `section_dotted_number` + `dotted_parent` + `derive_register_block_name` + a `by_number` (dotted-number → title) map: each block-named occurrence emits as `<NAME>@<BLOCK>`, a no-block occurrence stays residual, and ≥2 still-disjoint occurrences sharing one block re-run `.10h` containment (else residual — never conflated). Universal section grammar over the document's own block headings, no chip-name list (ADR 0006).
 - **Recall (measured per-item):** the genuinely-different class lives in EXACTLY 1 doc — ARM-Debug `ihi0074` gains `CSW@MEM-AP`{11}, `CSW@JTAG-AP`{7}, `CLAIMSET@AP`/`@MEM-AP`/`@JTAG-AP`{2}; `section_header_register_corpus_sweep` ARM-Debug 15→**20** registers / 69→**93** fields; full `evidence` register_records ARM-Debug 40→**45**. The no-block `D4.5` CLAIMSET stays residual; CoreSight `ihi0029` 6/29, GIC 73, SMMU 88, ACC 2 byte-identical (CoreSight's lone reused `AUTHSTATUS` is `.10h`-collapsible → never reaches `.10i`).

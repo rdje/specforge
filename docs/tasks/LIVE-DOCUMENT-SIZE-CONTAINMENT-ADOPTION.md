@@ -119,7 +119,7 @@ verification before correction.
   active unit / state / next action / in-flight work / blocker without chronology or a shadow HEAD.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.2`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Goal: adopt `README_POLICY.md`, prove duplication against canonical homes, trim `README.md` to its
   landing-page contract, derive SpecForge-local line+byte ceilings with explicit headroom, and add an
   unconditional README/routing guard. Preserve the minimal quick start, architecture, navigation,
@@ -169,10 +169,10 @@ verification before correction.
 | --- | --- | --- | --- |
 | — | `.0` | `done` (`2026-08-08`) | Ownership, measured baseline, full donor review, and the migration/locality graph are recorded; no deletion or migration. |
 | — | `.1` | `done` (`2026-08-08`) | Pointer semantics and impact-based documentation routing are now explicit and mechanically checked. |
-| 1 | `.2` | `pending` | The README is both the requested policy adoption and the most acute landing-page breach. |
-| 2 | `.3` | `pending` | The complete registry/checker must govern every later migration. |
-| 3 | `.4` / `.5` / `.6` | `pending` | Independently committable migrations and locality enforcement after the common contract exists. |
-| 4 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
+| — | `.2` | `done` (`2026-08-08`) | The retained landing page, local policy, route registry, and unconditional doctrine guard are live. |
+| 1 | `.3` | `pending` | The complete registry/checker must govern every later migration. |
+| 2 | `.4` / `.5` / `.6` | `pending` | Independently committable migrations and locality enforcement after the common contract exists. |
+| 3 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
 ## Decisions
 
@@ -194,6 +194,27 @@ verification before correction.
 - `2026-08-08`: **Git owns revision truth (`.1`).** The pointer no longer mirrors `HEAD` or
   ahead/behind state. Resume uses `git rev-parse HEAD` and `git status --short --branch`; a named
   revision is allowed only for a distinct, precisely labelled semantic.
+- `2026-08-08`: **README containment deletes duplication; it does not hide unique truth (`.2`).**
+  The pre-trim 602-line/170,891-byte file devoted 293 lines to current repository state, 45 to a
+  documentation index, 142 to the file map before Quick Start, and 42 to command detail. Those
+  classes already have richer canonical homes in `docs/tasks/`/`CHANGES.md`, mdBook `SUMMARY.md`,
+  the tracked tree, and the book's Getting Started/Commands chapters. The 127-line/4,834-byte
+  survivor keeps every landing-page duty and links to those homes; no unique feature semantics were
+  discarded.
+- `2026-08-08`: **Local ceilings come from the survivor (`.2`).** README is capped independently at
+  150 lines and 5,800 bytes: explicit headroom of 23 lines (18.1%) and 966 bytes (20.0%). A ceiling
+  increase requires reviewed expansion of the landing-page contract, never ordinary feature growth.
+- `2026-08-08`: **Reader and author routes are different controlled sets (`.2`).** The TSV registry
+  contains every one of the README's 21 unique reader links plus the seven author-overflow
+  destinations. Every record is repository-relative or an explicitly owned external/Git terminal,
+  has a lifecycle and pressure control, and closes without another route. Existing oversized
+  neighbors are declared transition debt owned by `.5`, not reusable health targets; `.3` must pin
+  their measured ceilings before migration begins.
+- `2026-08-08`: **The donor is precedent, not upstream (`.2`).** Root `README_POLICY.md` is now
+  SpecForge-owned; its neutral body is locally authoritative and later donor changes do not sync
+  automatically. The route guard also exposed a stale root `KNOWLEDGE_MAP_ARCHITECTURE.md` pointer;
+  bootstrap/navigation references now use the real `knowledge-map/` bundle path, recorded as a fact
+  card so it is not re-derived again.
 
 ## Blockers
 
@@ -208,6 +229,9 @@ verification before correction.
 | `2026-08-08` | `.0` | full README/roadmap/code/mdBook ramp-up; all 14 active task-tree frontiers; FSMGEN README policy, adoption guide, and neutral doctrine read; `wc` + max-line + route/locality census; Git/submodule state | measured; adoption is justified; no policy/content migration performed |
 | `2026-08-08` | `.0` | `bash scripts/check_doctrines.sh`; `mdbook build docs/book`; `git diff --check` | green: 3/3 doctrines; book built under repository-local `generated/mdbook/specforge`; clean diff |
 | `2026-08-08` | `.1` | `bash -n scripts/check_memory_architecture.sh`; `bash scripts/check_doctrines.sh`; forced line/byte/max-line cap probes; `mdbook build docs/book`; `git diff --check` | green: current pointer passes 50 lines / 4,096 bytes / 160 max-line bytes + required fields + no HEAD shadow; all three forced caps fail closed; doctrines 3/3; book and diff clean |
+| `2026-08-08` | `.2` | `git show ad07eb3f:README.md` heading/size probes; canonical mdBook heading probes; retained `wc`/max-line census; route extraction | old 602 lines/170,891 bytes → survivor 127 lines/4,834 bytes (max line 103 chars); duplicate section classes proven against richer homes; 21 unique reader routes registered |
+| `2026-08-08` | `.2` | `bash -n scripts/check_readme_policy.sh scripts/check_doctrines.sh`; `bash scripts/check_readme_policy.sh --self-test`; `bash scripts/check_doctrines.sh`; `cargo run --manifest-path Cargo.toml -- --help`; `cargo run --manifest-path Cargo.toml -- doctor --strict`; `cargo run --manifest-path Cargo.toml -- inspect README.md` | green: line/byte, off-repository path, unknown-lifecycle/control, and missing-route probes fail closed; doctrines 4/4; current CLI resolves; repo-local Docling selected; inspect recognizes the retained README as a 4,834-byte Markdown file. Doctor correctly reports the currently stopped local model servers with recovery guidance. |
+| `2026-08-08` | `.2` | neutral-body `diff -u` against the reviewed FSMGen policy; `bash knowledge-map/scripts/gen_knowledge_map.sh`; `bash scripts/run_docs_ci.sh`; `git diff --check`; pointer/README/policy census | green: neutral body byte-equivalent after the fenced local note; derived map 129 facts/947 question keys; mdBook writes under repository-local `generated/mdbook/specforge`; diff clean; pointer and README remain within enforced bounds |
 
 ## Commit Log
 
@@ -215,6 +239,7 @@ verification before correction.
 | --- | --- | --- |
 | `.0` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.0 — own and measure the containment/locality program` | ownership + measurement only; commit hash recorded by Git history |
 | `.1` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.1 — stabilize pointer and commit semantics` | impact-based doc routing + stronger bounded-pointer check |
+| `.2` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.2 — bound the README and close its routes` | project-owned policy + retained landing page + unconditional doctrine guard |
 
 ## Changelog
 
@@ -224,3 +249,7 @@ verification before correction.
 - `2026-08-08`: `.1` removed ceremonial documentation coupling from `COMMIT.md`, removed the
   hand-maintained HEAD shadow from `MEMORY.md` and its architecture template, and strengthened the
   pointer gate with locally derived line/byte/max-line ceilings plus required resume fields.
+- `2026-08-08`: `.2` replaced the duplicate-heavy README with a verified landing page, adopted the
+  local stability policy, classified reader versus author-overflow routes in a data-only registry,
+  wired an unconditional structural guard as doctrine four, and corrected stale knowledge-map
+  architecture pointers across the bootstraps.

@@ -14,15 +14,17 @@
 - Non-negotiable doctrine: see `docs/decisions/0003-task-tree-and-commit-doctrine.md`
   (no code change without an owning task-tree first; signoff quality; zero
   ROADMAP↔code↔mdBook drift; push ~every 200 commits; artifact cleanup ≥ every 24h).
-- Before committing run `scripts/check_doctrines.sh` (the registry/driver: memory-arch +
-  knowledge-map + task-acceptance); hooks + CI run it too. Retrieval: `KNOWLEDGE_MAP.md`.
+- Before committing run `scripts/check_doctrines.sh` (the registry/driver for memory,
+  knowledge-map, task-acceptance, and README policy); hooks + CI run it too. Retrieval:
+  `KNOWLEDGE_MAP.md`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.2` — adopt the SpecForge-owned
-  README policy, retain the reviewed landing-page contract, and enforce local caps.
-- Current state: `.0` ownership/measurement and `.1` pointer/commit stabilization are
-  complete. No historical content has been deleted or migrated. Query revision from Git.
-- Next action: prove README duplication against canonical destinations, trim the
-  landing page, derive local line/byte caps, and add an unconditional route-aware guard.
-- In-flight uncommitted: this verified `.1` slice until its commit; none afterward.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3` — adopt the complete
+  live-document containment doctrine and resulting-tree surface registry/checker.
+- Current state: `.0`–`.2` are complete. README is a 127-line/4,834-byte landing page,
+  guarded at 150 lines/5,800 bytes with reader/author route closure. No historical live
+  document has yet been deleted or migrated. Query revision from Git.
+- Next action: split `.3` into registry, checker, and fail-closed proof leaves; adopt the
+  neutral doctrine and record complete measured transition debt without widening it.
+- In-flight uncommitted: `.2` until its verified commit; none afterward.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

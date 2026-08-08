@@ -5,7 +5,7 @@
 # system" → DOCTRINE_ENFORCEMENT.md, the portable standard that makes doctrine compliance provable
 # and re-checkable instead of "trust me". This is the single driver that runs EVERY mechanizable
 # doctrine check, reports per-doctrine PASS/FAIL, and exits NONZERO on any breach. It unifies the
-# previously separate pre-commit / run_ci check stack (memory-arch + knowledge-map) into one
+# previously separate pre-commit / run_ci check stack into one
 # registered, self-reporting framework, and it is the seam new doctrine checks are added to.
 #
 # Enforcement layering (MEMORY_ARCHITECTURE.md §9 / DOCTRINE_ENFORCEMENT.md §7 — defense in depth):
@@ -43,6 +43,7 @@ DOCTRINES=(
   "MEMORY-ARCH|durable 4-layer memory architecture invariants (MEMORY_ARCHITECTURE.md §9)|scripts/check_memory_architecture.sh"
   "KNOWLEDGE-MAP|the derived Knowledge Map is in sync with its fact sources|knowledge-map/scripts/check_knowledge_map.sh"
   "TASK-ACCEPTANCE|a staged Rust code change is owned by a staged task-tree leaf passing the evidence-backed acceptance checklist (decision 0003 / TOOLBOX.md)|scripts/check_task_acceptance.sh"
+  "README-POLICY|the landing README and its reader/author routes satisfy the repository-owned bounded-entrypoint contract|scripts/check_readme_policy.sh"
 )
 
 fail=0

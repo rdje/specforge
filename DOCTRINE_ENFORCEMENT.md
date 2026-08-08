@@ -21,7 +21,7 @@ This file is the **4th portable architecture** SpecForge adopts, alongside the t
 |---|---|---|---|
 | 1 | **Task-trees** | per-unit work memory (goal/frontier/acceptance/verification) | `docs/TASK_TREE.md` |
 | 2 | **Memory-architecture** | durable harness-agnostic agent memory (4 layers) | `MEMORY_ARCHITECTURE.md` |
-| 3 | **Knowledge-map** | a retrieval layer over fact cards | `KNOWLEDGE_MAP_ARCHITECTURE.md` (`knowledge-map/`) |
+| 3 | **Knowledge-map** | a retrieval layer over fact cards | `knowledge-map/KNOWLEDGE_MAP_ARCHITECTURE.md` |
 | 4 | **Doctrine-enforcement** | turning every rule into a mechanically-gated check | **this file** |
 
 All four are **project- and harness-agnostic**: a project backed by Codex, Claude Code, Gemini, or a
@@ -284,6 +284,7 @@ The reference deployment. Enforced by `scripts/check_doctrines.sh` via `.githook
 | `MEMORY-ARCH` | structural | `scripts/check_memory_architecture.sh` | the durable 4-layer memory-architecture invariants (`MEMORY_ARCHITECTURE.md` §9): the standard present, `MEMORY.md` bounded, bootstrap pointers route to it, layers B/C present |
 | `KNOWLEDGE-MAP` | structural | `knowledge-map/scripts/check_knowledge_map.sh` | the derived Knowledge Map is regenerated + in sync with its fact sources (derive-and-diff, so the map cannot drift) |
 | `TASK-ACCEPTANCE` | evidence | `scripts/check_task_acceptance.sh` | a staged Rust code change is owned by a staged `docs/tasks/*.md` leaf whose acceptance checklist carries ROOT CAUSE + ADDRESSED + NO REGRESSION, ticked and backed by SpecForge tool signatures (see `TOOLBOX.md`) |
+| `README-POLICY` | structural | `scripts/check_readme_policy.sh` | root `README.md` stays within its independently derived line/byte ceilings; every reader link and author-overflow destination is a repository-owned, controlled terminal in the route registry |
 
 Deterministic-oracle doctrines that run via `scripts/run_ci.sh` / CI (`kg-bench` 156/156,
 WIRE-BASED-100 constraint+temporal/relation golds = 1.000, the byte-identical evidence/`.isf` checks,

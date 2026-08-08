@@ -154,6 +154,24 @@ They let a future session answer:
 
 The book, meanwhile, keeps the project understandable to someone who did not live through those sessions.
 
+## The README is a bounded landing page
+
+Root `README.md` is intentionally smaller than either documentation plane. It keeps only the project
+purpose and audience, top-level scope, prerequisites, one verified first-use path, stable architecture,
+and navigation. Current delivery state belongs in the roadmap and task trees; command and feature
+detail belongs in this book; chronology belongs in Git or a governed historical surface.
+
+The repository-owned `README_POLICY.md` makes that boundary explicit. Its unconditional doctrine
+check independently enforces 150 lines and 5,800 bytes, values derived from the reviewed 127-line,
+4,834-byte survivor rather than copied from another project. A data-only route inventory distinguishes
+reader navigation from places authors may put changing detail. Missing, off-repository, duplicated, or
+uncontrolled routes fail the same pre-commit and CI doctrine driver even when `README.md` itself was not
+changed.
+
+This is containment, not documentation reduction: material removed from the old landing page was
+already duplicated by richer canonical homes. The user manual remains the complete maintained product
+surface, while task state and rationale remain available through their dedicated continuity layers.
+
 ## Closed task trees — how each was implemented and verified
 
 ### `SIGNOFF-REMEDIATION` — the doctrine that keeps `main` always-shippable

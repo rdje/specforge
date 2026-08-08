@@ -122,7 +122,7 @@ A resume reads A + one unit of B + a few C records — never a monolith.
 
 **Composed retrieval layer — the Knowledge Map.** The layers above are organised by
 *lifecycle* (now / work / decisions / history); retrieval, though, is organised by
-*question*. The **Knowledge Map** (`KNOWLEDGE_MAP_ARCHITECTURE.md`, the `knowledge-map/`
+*question*. The **Knowledge Map** (`knowledge-map/KNOWLEDGE_MAP_ARCHITECTURE.md`, the `knowledge-map/`
 bundle) adds exactly that cross-cut: a machine-derived, question-keyed index
 (`KNOWLEDGE_MAP.md`) over small front-mattered fact cards (`docs/knowledge/`, plus any
 `docs/decisions/` record given an `answers:` block). Before re-deriving any fact from code

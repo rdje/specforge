@@ -59,6 +59,12 @@ other re-derivable trace.
 | `MEMORY-ARCH` | structural | the durable 4-layer memory architecture invariants — the standard is present, `MEMORY.md` is a bounded resume pointer, the bootstrap files route to it, the task-tree and decision layers exist |
 | `KNOWLEDGE-MAP` | structural | the question-keyed Knowledge Map is regenerated and in sync with its fact cards (so it cannot drift) |
 | `TASK-ACCEPTANCE` | evidence | a Rust code change is owned by a task-tree leaf whose acceptance checklist is ticked **and** backed by real SpecForge tool output |
+| `README-POLICY` | structural | the project landing page stays within its locally derived line and byte ceilings, and every reader or author-overflow route closes at a registered, controlled terminal |
+
+The README guard is unconditional: it evaluates the resulting tree even when a change does not touch
+`README.md`. Its data-only route registry distinguishes links readers follow from destinations authors
+may use for changing detail, and rejects missing, off-repository, duplicated, or uncontrolled routes.
+The project-owned normative contract is `README_POLICY.md`.
 
 The heavy deterministic oracles — `kg-bench`, the WIRE-BASED-100 golds, the byte-identical
 evidence/`.isf` checks, the full `cargo` suite — are the strongest leg of all. They are too slow to run
