@@ -95,6 +95,7 @@ The author template is linked separately and is never classified as active work.
 | `LLM-PRIMARY-PROMOTION` | `done` | promote the LLM-primary constraint surface into the canonical pipeline | [open](tasks/LLM-PRIMARY-PROMOTION.md) |
 | `LLM-TEXT-TRANSPORT-DEDUP` | `done` | consolidate the duplicated text chat transport (extract-contracts + signal-resolve) | [open](tasks/LLM-TEXT-TRANSPORT-DEDUP.md) |
 | `LOGIC-LEVEL-BOUNDARY` | `done` | resolve HIGH/LOW as universal "how"; centralize the vocabulary | [open](tasks/LOGIC-LEVEL-BOUNDARY.md) |
+| `MDBOOK-DOCTEST-HYGIENE` | `active` | classify examples and make the live book doctest-safe | [open](tasks/MDBOOK-DOCTEST-HYGIENE.md) |
 | `MEMORY-ARCHITECTURE-DOC` | `done` | author a portable, harness-agnostic durable-memory standard | [open](tasks/MEMORY-ARCHITECTURE-DOC.md) |
 | `MEMORY-BOUNDED-INGEST` | `active` | bounded-memory ingestion of very large PDFs | [open](tasks/MEMORY-BOUNDED-INGEST.md) |
 | `NLI-CLAIM-CONDITION` | `done` | carry a constraint's condition into its NLI claim (precision fix) | [open](tasks/NLI-CLAIM-CONDITION.md) |

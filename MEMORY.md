@@ -19,15 +19,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `ARTIFACT-PATH-PORTABILITY.2` — completed by this commit; SourceIR and EvidenceIR now use the
-  common persisted-path contract without mutating the present generated corpus.
-- Current state: SourceIR/EvidenceIR retain runtime-absolute paths in memory but serialize repository-owned
-  source, layout, upstream, prior-memory, section/span, and visual paths relative to the current root. Source
-  text origin is labeled; external inputs remain exact; unlabeled legacy repository values rebase safely.
-  Focused legacy/PDF/visual/convergence/KG checks and full CI pass: all six doctrines, format/Clippy, 1,753
-  tests / five ignored, rustdoc, mdBook, and locality. The 335 affected generated artifacts remain unchanged
-  for the verified `.4` migration.
-- Next action: execute `ARTIFACT-PATH-PORTABILITY.3`: activate the same contract in SemanticIR, IntentIR,
-  adapters, and every validation/learning/recovery consumer while preserving cross-stage checks.
+- Active unit: `MDBOOK-DOCTEST-HYGIENE.0` — completed by this commit; the latent optional mdBook doctest gap is
+  measured and durably owned before any fence or CI change.
+- Current state: canonical full CI and `mdbook build docs/book` are green, but `mdbook test docs/book` exposes
+  26 pre-existing misclassified illustrative blocks across four chapters. The new tree splits semantic fence
+  classification from later enforcement; `ARTIFACT-PATH-PORTABILITY.2` remains clean at commit `77818b84` and
+  its 335-file generated-data baseline remains untouched.
+- Next action: execute `MDBOOK-DOCTEST-HYGIENE.1`: classify the 26 failing examples by language/executability
+  and make mdBook test/build green without changing their rendered teaching content.
 - In-flight uncommitted: none after this commit; no background job or disposable residue.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.
