@@ -4,7 +4,7 @@ This page documents the lowering flow from `IntentIR` to `.isf` source text. The
 
 ## Flow overview
 
-```
+```text
 IntentIR
     │
     ▼
@@ -45,7 +45,7 @@ Each of these was a runtime error that only surfaced when FSMGen rejected the ou
 
 The ISF IR is a typed tree in `ir/isf_ir.rs`. The root struct:
 
-```rust
+```rust,ignore
 pub(crate) struct IsfIr {
     actor_name: String,
     clock: String,
@@ -268,7 +268,7 @@ per-field **reset value** (the value the field powers up at). The `.isf` adapter
 that to FSMGen's optional storage reset clause, so the emitted register carries its
 documented power-up value instead of silently defaulting to zero:
 
-```
+```text
 (storage
   (var dpidr_bit_assignments (width 32) (reset 469841015))   ;; powers up at 0x1c013477
   (var claimset_bit_assignments (width 2) (reset 3)))
@@ -302,7 +302,7 @@ the `.isf`**. Beside each register's `(var …)`, the adapter emits FSMGen's dec
 field-structured-storage block, so the downstream consumer sees not just "this register is N bits
 wide" but *which bits mean what*:
 
-```
+```text
 (storage
   (var control (width 8) (reset 161)
     (fields
@@ -411,7 +411,7 @@ specs still pass FSMGen's strict checker with no new diagnostics.
 
 ## Module boundaries
 
-```
+```text
 ir/isf_ir.rs          ISF IR types, adapter (from_intent_ir), emitter (render), helpers
 ir/adapters.rs        AdapterArtifact + shared scaffolding, ISF adapter (build_isf_adapter_artifact, renderability policy), tests
 ```

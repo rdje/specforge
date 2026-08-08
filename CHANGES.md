@@ -1,3 +1,11 @@
+### MDBOOK-DOCTEST-HYGIENE.1 — classify live-book examples truthfully
+
+- Classified every fence in the four affected chapters by actual language and standalone executability.
+  Diagrams, ISF, console output, and formulas are explicit text; ten incomplete Rust API/type illustrations are
+  explicit ignored doctests; three self-contained Rust examples remain compiled. Example bodies are unchanged.
+- Moved `mdbook test docs/book` from 26 failures across four chapters to success while retaining a green
+  36-page HTML build. Enforcement remains the bounded `.2` follow-up before the task tree closes.
+
 ### ARTIFACT-PATH-PORTABILITY.2 — make SourceIR and EvidenceIR paths move-safe
 
 - Activated the common path contract across SourceIR source registration, normalized/artifact layouts, page

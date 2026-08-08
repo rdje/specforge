@@ -19,13 +19,12 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `MDBOOK-DOCTEST-HYGIENE.0` — completed by this commit; the latent optional mdBook doctest gap is
-  measured and durably owned before any fence or CI change.
-- Current state: canonical full CI and `mdbook build docs/book` are green, but `mdbook test docs/book` exposes
-  26 pre-existing misclassified illustrative blocks across four chapters. The new tree splits semantic fence
-  classification from later enforcement; `ARTIFACT-PATH-PORTABILITY.2` remains clean at commit `77818b84` and
-  its 335-file generated-data baseline remains untouched.
-- Next action: execute `MDBOOK-DOCTEST-HYGIENE.1`: classify the 26 failing examples by language/executability
-  and make mdBook test/build green without changing their rendered teaching content.
+- Active unit: `MDBOOK-DOCTEST-HYGIENE.1` — completed by this commit; all affected live-book examples carry
+  truthful language/execution metadata without changing their bodies.
+- Current state: the four affected chapters now classify all 34 fence openings. The 26 failing openings became
+  `text` or `rust,ignore`; three self-contained Rust examples remain executable. `mdbook test docs/book` moves
+  from 26 failures to success and `mdbook build docs/book` remains green.
+- Next action: execute `MDBOOK-DOCTEST-HYGIENE.2`: add the green doctest to the canonical docs/CI workflow,
+  update maintainer guidance, run full CI, and close the tree.
 - In-flight uncommitted: none after this commit; no background job or disposable residue.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

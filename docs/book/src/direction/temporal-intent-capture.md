@@ -160,7 +160,7 @@ learn a new pipeline; you learn one more field shape.
 
 ### What an `ActorContract` carries
 
-```rust
+```rust,ignore
 pub struct ActorContract {
     pub contract_id: String,
     pub source_rule_id: Option<String>,    // back-reference to the originating TemporalRuleRecord
@@ -244,7 +244,7 @@ Run `specforge validate <intent.json>` against the current
 corpus and you'll see, in both the SemanticIR and IntentIR
 count blocks:
 
-```
+```text
   temporal_rules: N
   actor_contracts: N
 ```
@@ -425,7 +425,7 @@ populated tomorrow's gain a structured vocabulary.
 
 ### What `ProtocolGraph` carries
 
-```rust
+```rust,ignore
 pub struct ProtocolGraph {
     pub channels: Vec<Channel>,
     pub phases: Vec<ProtocolPhase>,
@@ -516,7 +516,7 @@ The accessors round out the surface:
 Run `specforge validate <intent.json>` and the SemanticIR and
 IntentIR count blocks include:
 
-```
+```text
   protocol_graph: channels=0 phases=0 transactions=0 handshakes=0
 ```
 
@@ -714,7 +714,7 @@ every contract; the per-contract findings get appended to
 The load-bearing routing rule: **if a `Lowerable` contract
 gets any `Fail` finding, the producer reroutes it to**
 
-```rust
+```rust,ignore
 LoweringDisposition::Residual {
     reason: format!("fidelity:<Gate>: <message>"),
 }
@@ -771,7 +771,7 @@ have a known residual.
 Run `specforge validate <intent.json>` and the SemanticIR and
 IntentIR count blocks include:
 
-```
+```text
   fidelity: pass=N fail=0 not_evaluated=K  score=1.000
 ```
 
@@ -786,7 +786,7 @@ extraction lands.
 
 If `fail` ever goes non-zero, the report also includes:
 
-```
+```text
   fidelity_failures (first 5):
     [Gate] contract_id: message
     …
@@ -1046,7 +1046,7 @@ Implementation notes:
 Run `specforge validate <intent.json>` and the SemanticIR
 and IntentIR count blocks include:
 
-```
+```text
   fusion: groups_merged=0 disagreements=0
 ```
 
@@ -1184,7 +1184,7 @@ upstream figure-extractor produces `PartialTrace`s.
 
 ### `PartialTrace` — what a figure-extractor produces
 
-```rust
+```rust,ignore
 pub struct PartialTrace {
     pub figure_id: String,
     pub signals: Vec<String>,             // signals the trace covers
@@ -1297,7 +1297,7 @@ the typed **extension** the upstream pipeline produces when
 it classifies a `VisualAsset` as a timing diagram and
 recovers structure:
 
-```rust
+```rust,ignore
 pub struct FigureRegion {
     pub visual_asset_id: String,             // references existing VisualAsset
     pub bbox: Option<BoundingBox>,
@@ -1351,7 +1351,7 @@ The adapter maps `FigureRegion` ⇒ `PartialTrace` cleanly:
 Run `specforge validate <intent.json>` and the SemanticIR /
 IntentIR count blocks include:
 
-```
+```text
   waveform: figure_contracts=0 verifier_fail_residuals=0
 ```
 
@@ -1532,7 +1532,7 @@ protocol-pattern templates (`.4`) live in `prior_memory`
 
 ### `parse_constrained_contract` — fails-closed JSON-Schema decoding
 
-```rust
+```rust,ignore
 pub fn parse_constrained_contract(json: &str) -> Result<ActorContract>;
 ```
 
@@ -1557,7 +1557,7 @@ Two safety properties:
 
 ### `entailment_check` — and the **fourth structural honesty doctrine**
 
-```rust
+```rust,ignore
 pub fn entailment_check(source_span: &str, contract: &ActorContract)
     -> FindingStatus;
 ```
@@ -1580,7 +1580,7 @@ The companion `apply_entailment_to_contract(&mut contract,
 source_span)` enforces the doctrine: a `Lowerable` contract
 that fails entailment is demoted to:
 
-```rust
+```rust,ignore
 LoweringDisposition::Residual {
     reason: "entailment fail: <details>",
 }
@@ -1606,7 +1606,7 @@ end-to-end.**
 
 ### Protocol-pattern template library — known shapes, grounded matches
 
-```rust
+```rust,ignore
 pub enum ProtocolTemplate {
     ReadyValidHandshake,
     CreditFlowControl,
@@ -1651,7 +1651,7 @@ catches wrong free-form contracts.
 
 ### Uncertainty-driven converge — `voi_score` + `select_top_n_by_voi`
 
-```rust
+```rust,ignore
 pub fn voi_score(
     contract: &ActorContract,
     findings: &[FidelityFinding],
@@ -1667,7 +1667,7 @@ When an LLM/VLM extraction loop runs multiple passes, each
 pass has a bounded budget. `voi_score` is a deterministic
 value-of-information ranking:
 
-```
+```text
 voi(c) = w_conf * (1 - rank(c.automation_confidence) / 2)
        + w_fail * count_fail_findings(c)
 ```
@@ -1688,7 +1688,7 @@ delivers.
 Run `specforge validate <intent.json>` and the SemanticIR /
 IntentIR count blocks include:
 
-```
+```text
   constrained: schema_rejects=0 entailment_fails=0 template_hits=0
 ```
 

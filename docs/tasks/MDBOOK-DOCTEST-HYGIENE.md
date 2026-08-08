@@ -39,7 +39,7 @@ misclassified fences.
 - ID: `MDBOOK-DOCTEST-HYGIENE` · Status: `active` · Children: `.0`–`.2`
 - ID: `MDBOOK-DOCTEST-HYGIENE.0` · Status: `done` (`2026-08-08`) · Goal: reproduce and classify the latent doctest
   failure, prove its relationship to the canonical book/CI gate, and open a bounded repair tree.
-- ID: `MDBOOK-DOCTEST-HYGIENE.1` · Status: `pending` (depends on `.0`) · Goal: classify and correct all affected
+- ID: `MDBOOK-DOCTEST-HYGIENE.1` · Status: `done` (`2026-08-08`; depends on `.0`) · Goal: classify and correct all affected
   fences without changing their rendered meaning; make both mdBook test and build pass.
 - ID: `MDBOOK-DOCTEST-HYGIENE.2` · Status: `pending` (depends on `.1`) · Goal: add drift prevention to the
   canonical docs/CI workflow, update public/maintainer guidance, and close the tree with full verification.
@@ -60,12 +60,28 @@ misclassified fences.
   text matching or deletion of examples that happen to fail.
 - [x] **LOCKSTEP** — this task tree and its Knowledge Map fact own the new finding before any fence or CI change.
 
+## Acceptance Checklist (enforced) — `MDBOOK-DOCTEST-HYGIENE.1`
+
+- [x] **REPRODUCE / MEASURE** — the `.0` 26-failure command was rerun against the unchanged baseline before
+  editing; all 34 fence openings across the four affected chapters were enumerated and classified.
+- [x] **ROOT CAUSE (WHY + WHERE)** — 26 openings lacked truthful attributes: non-Rust diagrams, ISF, console,
+  and formula blocks used bare fences, while ten intentionally incomplete Rust API/type fragments used ordinary
+  `rust` fences. mdBook therefore asked rustdoc to compile material that was never presented as standalone code.
+- [x] **ADDRESSED (verified)** — non-Rust material is explicitly `text`; incomplete illustrative Rust is
+  `rust,ignore`; the three self-contained Rust examples remain executable `rust`; existing explicit Bash/text
+  fences remain unchanged. No example prose or body changed.
+- [x] **NO REGRESSION** — `mdbook test docs/book` moves from 26 failures to success, and
+  `mdbook build docs/book` remains green with the same 36-page membership and rendered example bodies.
+- [x] **GENERICITY** — classification follows language and standalone executability, not chapter name, failure
+  text, or a blanket ignore rule. Future intended Rust can still be compiled by the doctest runner.
+- [x] **LOCKSTEP** — task tree, Knowledge Map fact, live change/status ledgers, resume pointer, and maintained
+  book aggregate authority agree that content classification is complete and `.2` owns enforcement.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `MDBOOK-DOCTEST-HYGIENE.1` | `pending` | Correct classification before making the optional command mandatory. |
-| 2 | `MDBOOK-DOCTEST-HYGIENE.2` | `pending` | Gate only a fully green, semantically reviewed book. |
+| 1 | `MDBOOK-DOCTEST-HYGIENE.2` | `pending` | Gate the now-green doctest command and close the tree. |
 
 ## Decisions
 
@@ -91,14 +107,18 @@ misclassified fences.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-08-08` | `.0` | filtered and full `mdbook test docs/book`; canonical full CI/book-build evidence cross-check | 26 failures / 4 chapters reproduced; canonical build and CI unaffected |
+| `2026-08-08` | `.1` | exact 34-fence opening census; `mdbook test docs/book`; `mdbook build docs/book` | 26 failures → 0; test/build pass; example bodies unchanged |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `.0` | `MDBOOK-DOCTEST-HYGIENE.0 — own the latent book doctest gap` | Measurement and ownership only; `.1` changes fences. |
+| `.1` | `MDBOOK-DOCTEST-HYGIENE.1 — classify live-book examples truthfully` | 26 openings corrected; `.2` owns enforcement. |
 
 ## Changelog
 
 - `2026-08-08`: Opened after the post-`.2` optional mdBook test exposed 26 pre-existing examples that render
   successfully but are misclassified as standalone Rust doctests.
+- `2026-08-08`: Classified every affected fence by actual language and standalone executability; mdBook
+  doctesting now passes without changing example bodies or suppressing the three executable Rust examples.

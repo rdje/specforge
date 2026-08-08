@@ -1,6 +1,6 @@
 ---
 id: mdbook-doctest-gap
-title: The live book builds cleanly but illustrative fences currently fail mdBook doctests
+title: The live book classifies illustrative fences explicitly and passes mdBook doctests
 answers:
   - "does mdbook test pass for the SpecForge book"
   - "why does mdbook test interpret ISF and console examples as Rust"
@@ -14,13 +14,14 @@ evidence: docs/tasks/MDBOOK-DOCTEST-HYGIENE.md (.0); scripts/run_ci.sh; scripts/
 reverify: "mdbook test docs/book"
 ---
 
-`mdbook build docs/book` and the canonical full CI pass, but the separately invoked `mdbook test docs/book`
-currently fails 26 blocks across four chapters: five in the ISF adapter chapter, 18 in the historical R16
-temporal-intent chapter, one in the validation chapter, and two in troubleshooting. The failing blocks include
-ISF S-expressions, console output, diagrams, and incomplete illustrative Rust APIs/types. They render correctly
-as documentation but lack a truthful fence classification, so mdBook sends them to rustdoc as Rust.
+The `.0` baseline showed that `mdbook build docs/book` and canonical full CI passed while the separately invoked
+`mdbook test docs/book` failed 26 blocks across four chapters: five in the ISF adapter chapter, 18 in the
+historical R16 temporal-intent chapter, one in validation, and two in troubleshooting. The failures were ISF
+S-expressions, console output, diagrams/formulas, and incomplete illustrative Rust APIs/types that rendered
+correctly but were sent to rustdoc because their fence classification was absent or too strong.
 
-This is a latent documentation-test coverage gap, not an `ARTIFACT-PATH-PORTABILITY.2` regression. The canonical
-`scripts/run_ci.sh` path invokes the book build, current-truth, membership, and size gates but not mdBook's
-doctest command. `MDBOOK-DOCTEST-HYGIENE` owns semantic fence classification first, then adoption of a green
-doctest gate. Its repair must not bulk-ignore blocks or delete examples merely because rustdoc rejects them.
+`MDBOOK-DOCTEST-HYGIENE.1` now classifies all 34 openings in those chapters explicitly. Non-Rust material is
+`text`; ten deliberately incomplete Rust fragments are `rust,ignore`; three self-contained Rust examples remain
+executable `rust`; existing Bash/text blocks remain unchanged. Example bodies are byte-identical, and both
+mdBook test and build pass. `.2` owns adding the now-green doctest command to the canonical documentation/CI
+workflow so classification cannot drift again.

@@ -929,7 +929,7 @@ engine records a **run manifest**: for every surface, which extractors were *eli
 how many records each produced and kept. `validate <evidence>` surfaces it as an Info finding plus two
 metrics (`extraction_manifest_surfaces`, `extraction_extractors_fired`), for example:
 
-```
+```text
 - [info:extraction_manifest] extraction run manifest (8 framework surface(s), 5 extractor(s) fired):
   register_records[registers.field_table] signal_polarities[] actor_signal_relations[relations.prose]
   protocol_states[] protocol_actors[actors.prose]

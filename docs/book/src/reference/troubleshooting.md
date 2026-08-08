@@ -65,7 +65,7 @@ This is **intentional and safe** — the opposite of the silent OOM kill above. 
 PDF, SpecForge watches the host's memory and stops itself before the machine reaches a danger
 level, so a heavy document can never crash the host. When it acts, you will see a typed error like:
 
-```
+```text
 ingest aborted to protect the host: system memory was 86% used, at or above the 85% safety
 ceiling, while running <docling helper>. The host was preserved and the previous normalized
 bundle is intact. ...
@@ -95,7 +95,7 @@ filling the disk partway through. Because the check runs before any staging dire
 **nothing was written** — your previous normalized bundle is untouched. The message names the free
 space and the estimated need:
 
-```
+```text
 ingest aborted before launching: only 90 MB free on the filesystem at <path>, below the 328 MB
 this ingest is estimated to need. No work was started and any previous normalized bundle is
 intact. ...
