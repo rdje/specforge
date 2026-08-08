@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > how are register fields written as section headings extracted
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > how are repository owned and external input path origins labeled
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
@@ -295,5 +297,3 @@
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > how is the .5.ii member-quality gate designed / what did the .5.ii calibration find (measured 2026-06-24 read-only over 78 docs/561 enums/12509 members: the gate is PER-MEMBER not per-enum — a whole-enum drop destroys AXI BRESP's real codes OKAY/EXOKAY/SLVERR/DECERR which are FUSED with prose fragments in one conflated enum; value-restart is NOT a junk signal — AHB HPROT
   > restarts but every member is a clean identifier. The load-bearing signal is per-member NAME shape: an English sentence-SPINE token marks a prose fragment. Land a per-member sentence-spine fragment drop at synthesize_encoding_declarations_for_enum)
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > how is the EvidenceIR extractor path / extraction layer structured and wired

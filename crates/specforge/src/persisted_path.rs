@@ -41,6 +41,19 @@ pub(crate) fn resolve_existing(path: &Path, origin: PersistedPathOrigin) -> Resu
     resolve_existing_at(path, origin, &crate::project_data::repository_root()?)
 }
 
+/// Resolves a persisted provenance/reference path without requiring its leaf
+/// to remain materialized.
+///
+/// Repository-owned references are anchored below the current repository and
+/// must have a contained existing ancestor. Legacy absolute references may
+/// rebase only through exactly one recognized project-data root. Explicitly
+/// labeled external references preserve their exact absolute spelling when
+/// the referenced input has since been removed. Use [`resolve_existing`] for
+/// upstream artifacts and every input that must be opened now.
+pub(crate) fn resolve_reference(path: &Path, origin: PersistedPathOrigin) -> Result<PathBuf> {
+    resolve_reference_at(path, origin, &crate::project_data::repository_root()?)
+}
+
 /// Rewrites a current or legacy runtime/persisted path into its storage form.
 ///
 /// Repository-owned paths are returned relative to the current repository.
@@ -85,6 +98,20 @@ fn resolve_existing_at(
     match origin {
         PersistedPathOrigin::RepositoryOwned => resolve_repository_path(path, &repository, true),
         PersistedPathOrigin::ExternalInput => resolve_external_path(path, &repository),
+    }
+}
+
+fn resolve_reference_at(
+    path: &Path,
+    origin: PersistedPathOrigin,
+    repository: &Path,
+) -> Result<PathBuf> {
+    let repository = canonical_repository(repository)?;
+    match origin {
+        PersistedPathOrigin::RepositoryOwned => {
+            resolve_repository_reference(path, &repository, true)
+        }
+        PersistedPathOrigin::ExternalInput => resolve_external_reference(path, &repository),
     }
 }
 
@@ -169,6 +196,14 @@ fn encode_external_path(path: &Path, repository: &Path) -> Result<PathBuf> {
     }
 
     reject_lexical_escape(path)?;
+    if let Ok(relative) = path.strip_prefix(repository) {
+        let relative = clean_relative(relative)?;
+        ensure_existing_ancestor_is_local(&repository.join(&relative), repository)?;
+        return Ok(relative);
+    }
+    if !path.exists() {
+        return Ok(path.to_path_buf());
+    }
     let canonical = canonicalize_required(path)?;
     if canonical.starts_with(repository) {
         relative_below_repository(&canonical, repository)
@@ -208,6 +243,45 @@ fn resolve_external_path(path: &Path, repository: &Path) -> Result<PathBuf> {
 
     reject_lexical_escape(path)?;
     canonicalize_required(path)
+}
+
+fn resolve_repository_reference(
+    path: &Path,
+    repository: &Path,
+    allow_legacy_rebase: bool,
+) -> Result<PathBuf> {
+    if path.is_relative() {
+        let candidate = repository.join(clean_relative(path)?);
+        ensure_existing_ancestor_is_local(&candidate, repository)?;
+        return Ok(candidate);
+    }
+
+    reject_lexical_escape(path)?;
+    if let Ok(relative) = path.strip_prefix(repository) {
+        let candidate = repository.join(clean_relative(relative)?);
+        ensure_existing_ancestor_is_local(&candidate, repository)?;
+        return Ok(candidate);
+    }
+
+    if !allow_legacy_rebase {
+        return Err(invalid_path(format!(
+            "absolute repository reference is outside the current repository: {}",
+            path.display()
+        )));
+    }
+    resolve_legacy_repository_reference(path, repository)
+}
+
+fn resolve_external_reference(path: &Path, repository: &Path) -> Result<PathBuf> {
+    if path.is_relative() {
+        return resolve_repository_reference(path, repository, false);
+    }
+    reject_lexical_escape(path)?;
+    if path.exists() {
+        canonicalize_required(path)
+    } else {
+        Ok(path.to_path_buf())
+    }
 }
 
 fn resolve_current_relative(path: &Path, repository: &Path) -> Result<PathBuf> {
@@ -256,6 +330,38 @@ fn resolve_legacy_repository_path(path: &Path, repository: &Path) -> Result<Path
         1 => Ok(targets.pop_first().expect("one legacy path target")),
         count => Err(invalid_path(format!(
             "legacy repository path has {count} valid rebasing targets: {}",
+            path.display()
+        ))),
+    }
+}
+
+fn resolve_legacy_repository_reference(path: &Path, repository: &Path) -> Result<PathBuf> {
+    let normal_components = path
+        .components()
+        .filter_map(|component| match component {
+            Component::Normal(value) => Some(value),
+            _ => None,
+        })
+        .collect::<Vec<_>>();
+    let mut targets = BTreeSet::new();
+
+    for (index, component) in normal_components.iter().enumerate() {
+        if !is_legacy_repository_root(component) {
+            continue;
+        }
+        let relative = normal_components[index..].iter().collect::<PathBuf>();
+        let candidate = repository.join(clean_relative(&relative)?);
+        ensure_existing_ancestor_is_local(&candidate, repository)?;
+        targets.insert(candidate);
+    }
+
+    match targets.len() {
+        0 => Err(AppError::MissingPath(path.to_path_buf())),
+        1 => Ok(targets
+            .pop_first()
+            .expect("one legacy repository reference target")),
+        count => Err(invalid_path(format!(
+            "legacy repository reference has {count} valid rebasing targets: {}",
             path.display()
         ))),
     }
@@ -463,6 +569,86 @@ mod tests {
     }
 
     #[test]
+    fn repository_reference_resolves_missing_leaf_but_existing_input_stays_strict() {
+        let (_workspace, repository, _external) = test_roots();
+        fs::create_dir_all(repository.join("generated/source_ir/spec/normalized"))
+            .expect("reference ancestor");
+        let reference = Path::new("generated/source_ir/spec/normalized/reclaimed.md");
+
+        assert_eq!(
+            resolve_reference_at(reference, PersistedPathOrigin::RepositoryOwned, &repository)
+                .expect("resolve missing repository reference"),
+            repository.join(reference)
+        );
+        assert!(matches!(
+            resolve_existing_at(
+                reference,
+                PersistedPathOrigin::RepositoryOwned,
+                &repository
+            ),
+            Err(AppError::MissingPath(path)) if path == repository.join(reference)
+        ));
+    }
+
+    #[test]
+    fn legacy_repository_reference_rebases_one_missing_leaf() {
+        let (_workspace, repository, _external) = test_roots();
+        fs::create_dir_all(repository.join("generated/source_ir/spec"))
+            .expect("reference ancestor");
+        let retired =
+            PathBuf::from("/retired/specforge/generated/source_ir/spec/normalized/reclaimed.md");
+
+        assert_eq!(
+            resolve_reference_at(&retired, PersistedPathOrigin::RepositoryOwned, &repository)
+                .expect("rebase missing legacy reference"),
+            repository.join("generated/source_ir/spec/normalized/reclaimed.md")
+        );
+    }
+
+    #[test]
+    fn ambiguous_legacy_repository_reference_is_refused() {
+        let (_workspace, repository, _external) = test_roots();
+        fs::create_dir_all(repository.join("generated/corpus")).expect("first reference ancestor");
+        fs::create_dir_all(repository.join("corpus")).expect("second reference ancestor");
+        let retired = PathBuf::from("/retired/generated/corpus/missing.pdf");
+
+        assert!(matches!(
+            resolve_reference_at(
+                &retired,
+                PersistedPathOrigin::RepositoryOwned,
+                &repository
+            ),
+            Err(AppError::InvalidStageArtifact(message))
+                if message.contains("2 valid rebasing targets")
+        ));
+    }
+
+    #[test]
+    fn explicitly_labeled_missing_external_reference_keeps_exact_identity() {
+        let (_workspace, repository, external) = test_roots();
+        let reference = external.join("retired/spec.pdf");
+
+        assert_eq!(
+            resolve_reference_at(&reference, PersistedPathOrigin::ExternalInput, &repository)
+                .expect("preserve missing external reference"),
+            reference
+        );
+        assert!(matches!(
+            resolve_existing_at(
+                &reference,
+                PersistedPathOrigin::ExternalInput,
+                &repository
+            ),
+            Err(AppError::MissingPath(path)) if path == reference
+        ));
+        assert_eq!(
+            normalize_for_storage_at(&reference, PersistedPathOrigin::ExternalInput, &repository)
+                .expect("serialize missing external reference"),
+            reference
+        );
+    }
+
+    #[test]
     fn existing_origin_inference_does_not_rebase_external_inputs() {
         let (_workspace, repository, external) = test_roots();
         let source = external.join("corpus/vendor/spec.pdf");
@@ -518,6 +704,19 @@ mod tests {
             encode_at(&source, PersistedPathOrigin::ExternalInput, &repository)
                 .expect("encode repository-local input"),
             Path::new("corpus/vendor/spec.pdf")
+        );
+    }
+
+    #[test]
+    fn missing_input_inside_the_repository_encodes_relative_even_when_declared_external() {
+        let (_workspace, repository, _external) = test_roots();
+        fs::create_dir_all(repository.join("corpus/vendor")).expect("input ancestor");
+        let source = repository.join("corpus/vendor/reclaimed.pdf");
+
+        assert_eq!(
+            encode_at(&source, PersistedPathOrigin::ExternalInput, &repository)
+                .expect("encode missing repository-local input"),
+            Path::new("corpus/vendor/reclaimed.pdf")
         );
     }
 
@@ -614,6 +813,14 @@ mod tests {
         assert!(matches!(
             resolve_existing_at(
                 Path::new("generated/escape/secret.json"),
+                PersistedPathOrigin::RepositoryOwned,
+                &repository
+            ),
+            Err(AppError::InvalidStageArtifact(_))
+        ));
+        assert!(matches!(
+            resolve_reference_at(
+                Path::new("generated/escape/reclaimed.json"),
                 PersistedPathOrigin::RepositoryOwned,
                 &repository
             ),

@@ -25,7 +25,8 @@ use crate::ir::source::{
     VisualAsset, VisualAssetKind, document_key,
 };
 use crate::persisted_path::{
-    PersistedPathOrigin, normalize_for_storage, resolve_existing, resolve_repository_output,
+    PersistedPathOrigin, normalize_for_storage, resolve_existing, resolve_reference,
+    resolve_repository_output,
 };
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
@@ -1210,14 +1211,14 @@ impl EvidenceIr {
         };
         runtime.source_path_origin = Some(source_path_origin);
         for anchor in &mut runtime.section_anchors {
-            anchor.source_path = resolve_existing(&anchor.source_path, source_path_origin)?;
+            anchor.source_path = resolve_reference(&anchor.source_path, source_path_origin)?;
         }
         for span in &mut runtime.evidence_spans {
-            span.source_path = resolve_existing(&span.source_path, source_path_origin)?;
+            span.source_path = resolve_reference(&span.source_path, source_path_origin)?;
         }
         for visual in &mut runtime.visual_evidence {
             if let Some(path) = &mut visual.source_path {
-                *path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
+                *path = resolve_reference(path, PersistedPathOrigin::RepositoryOwned)?;
             }
         }
         Ok(runtime)
@@ -20478,6 +20479,48 @@ mod tests {
                 .all(|span| span.source_path.is_absolute())
         );
         assert!(!reloaded.to_pretty_json()?.contains("/retired/specforge"));
+        Ok(())
+    }
+
+    #[test]
+    fn evidence_ir_load_keeps_intentionally_reclaimed_repository_provenance() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("reclaimed.md");
+        let source_artifact_base = tempdir.path().join("generated/source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated/evidence_ir");
+        fs::write(&source, "# Rules\nREQ must remain asserted.\n")?;
+        let source_path = source.canonicalize()?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        fs::remove_file(&source)?;
+
+        let reloaded = EvidenceIr::load_from_path(&evidence_ir.artifact_layout.evidence_ir_path)?;
+        assert!(
+            reloaded
+                .section_anchors
+                .iter()
+                .all(|anchor| anchor.source_path == source_path)
+        );
+        assert!(
+            reloaded
+                .evidence_spans
+                .iter()
+                .all(|span| span.source_path == source_path)
+        );
+        assert!(!source_path.exists());
+        assert!(
+            !reloaded.to_pretty_json()?.contains(
+                crate::project_data::repository_root()?
+                    .to_string_lossy()
+                    .as_ref()
+            )
+        );
         Ok(())
     }
 

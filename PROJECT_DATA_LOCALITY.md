@@ -13,12 +13,14 @@ The Rust `persisted_path` boundary makes that distinction explicit without chang
 strings. A repository-owned path encodes relative and resolves below the discovered current root. An
 explicitly authorized external input can remain absolute and is never eligible for old-root rebasing. Legacy
 repository paths may rebase only from a recognized project-data root to exactly one existing target below the
-current root; missing, ambiguous, traversing, or symlink-escaping values fail closed. SourceIR, EvidenceIR,
+current root; ambiguous, traversing, or symlink-escaping values fail closed. Inputs required for current I/O
+must exist. Historical source/provenance references may outlive a deliberately reclaimed leaf, but their nearest
+existing ancestor must remain contained and legacy rebasing must still be unique. SourceIR, EvidenceIR,
 SemanticIR, IntentIR, adapter artifacts, and typed prior memory now serialize their repository-owned
 registration, layout, lineage, provenance, emitted-target, and learned-source paths through that boundary while
 restoring absolute current-root values in memory. Validation, project-validation, learning, recovery, KG, and
-convergence consumers resolve repository paths at their I/O boundaries. Only the present generated corpus
-remains owned by the open `ARTIFACT-PATH-PORTABILITY.4` migration and residue-enforcement leaf.
+convergence consumers resolve repository paths at their I/O boundaries. The present generated corpus has been
+migrated through the same contract, with explicitly labeled external source-library references preserved.
 
 | Data | Repository-relative root | Authority |
 | --- | --- | --- |
@@ -116,8 +118,10 @@ cease access to the shared copy instead.
 
 `PROJECT-DATA-LOCALITY` is registered in `scripts/check_doctrines.sh`. Its checker validates Cargo and
 shell defaults, required production temp/subprocess seams, Python lock authority, and any present
-venv's direct prefix and launcher paths. Its focused shell cases reject missing roots and off-root
-cache symlinks and prove all configured roots use the repository filesystem.
+venv's direct prefix and launcher paths. It also self-tests the persisted-path oracle, pins the producer seams,
+and scans every JSON artifact currently below `generated/`; an unlabeled absolute path-valued field fails the
+doctrine. Its focused shell cases reject missing roots and off-root cache symlinks and prove all configured roots
+use the repository filesystem.
 
 Run:
 

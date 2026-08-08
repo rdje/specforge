@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > how is the EvidenceIR extractor path / extraction layer structured and wired
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > how is the FSMGen feedback channel kept bounded without losing old requests and responses
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
@@ -296,5 +298,3 @@
   > should SpecForge file an FSMGen FR for cat-3 topology (NOT YET — premature: capture is sparse/noisy AND ISF may deliberately be a per-actor format with topology owned by the integrator above per-module synthesis; resolve with FSMGen after .4c.i, never a speculative FR — feedback_verify_fsmgen_before_fr)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > should a documented reset of 0 be emitted as (reset 0) in ISF (no — omit; the FSMGen all-0s default faithfully represents it; 893 of the fits-current registers are V==0)
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > should specforge connect producer/consumer/etc. to their signals

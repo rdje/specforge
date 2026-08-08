@@ -52,7 +52,7 @@ Collection guidance: [authoring and lifecycle README](README.md).
 | [corpus-register-table-shape-gap](corpus-register-table-shape-gap.md) | 2026-06-10 | `current` | The corpus's biggest structural digestion gap is register-shaped unknown tables (CCIX/AMD-IOMMU class) |
 | [corpus-reuse-activate-only-no-current-consumer](corpus-reuse-activate-only-no-current-consumer.md) | 2026-06-15 | `current` | The CORPUS-PATTERN-REUSE activate-only consume mechanism has no valid first opt-in extractor in the current c… |
 | [corpus-reuse-serial-prose-lever-not-cluster-scopable](corpus-reuse-serial-prose-lever-not-cluster-scopable.md) | 2026-06-15 | `current` | The .9.10 serial-prose bus-line lever cannot be a CORPUS-PATTERN-REUSE first opt-in extractor — its safe/no… |
-| [cross-stage-artifact-paths-are-absolute](cross-stage-artifact-paths-are-absolute.md) | 2026-08-08 | `current` | Every canonical stage now writes move-safe paths while the legacy generated corpus awaits migration |
+| [cross-stage-artifact-paths-are-absolute](cross-stage-artifact-paths-are-absolute.md) | 2026-08-09 | `current` | Canonical stages and the migrated generated corpus contain move-safe repository paths |
 | [definitional-signal-capture](definitional-signal-capture.md) | 2026-06-09 | `current` | Signals named only in prose (no signal table) are captured via a DEFINITIONAL grammar — copula "NAME is a/a… |
 | [dempster-fusion](dempster-fusion.md) | 2026-06-04 | `current` | SpecForge fuses agreeing-source confidence via Dempster corroboration (not min) |
 | [docling-device-cpu](docling-device-cpu.md) | 2026-06-01 | `current` | Docling ingest must run on CPU on this stack (torch MPS lacks float64) |
@@ -113,7 +113,7 @@ Collection guidance: [authoring and lifecycle README](README.md).
 | [packet-field-table-declaration](packet-field-table-declaration.md) | 2026-06-10 | `current` | Packet/flit protocols declare message FIELDS in field-titled tables — the header vocabulary types the rows |
 | [page-image-disk-bounding](page-image-disk-bounding.md) | 2026-06-14 | `current` | Per-page full-res PNGs are not read downstream — ingest skips persisting them for large PDFs |
 | [pdf-encryption-and-read-access](pdf-encryption-and-read-access.md) | 2026-06-07 | `current` | 12/82 corpus PDFs are permission-encrypted (open w/ empty password); docling+pypdf read all 82; the Read tool… |
-| [persisted-path-origin-and-rebase-contract](persisted-path-origin-and-rebase-contract.md) | 2026-08-08 | `current` | Persisted paths separate repository ownership from authorized external inputs |
+| [persisted-path-origin-and-rebase-contract](persisted-path-origin-and-rebase-contract.md) | 2026-08-09 | `current` | Persisted paths separate repository ownership from authorized external inputs |
 | [prior-phrase-utf8-byte-as-char](prior-phrase-utf8-byte-as-char.md) | 2026-06-14 | `current` | prior-phrase normalization UTF-8 byte-as-char mangling — exponential OOM found & FIXED (PDF-VARIANT-DIGESTI… |
 | [project-data-locality-enforcement](project-data-locality-enforcement.md) | 2026-08-08 | `current` | Project-owned temp, cache, dependency, and subprocess data resolves from the current repository |
 | [prose-pin-appositive-signal-capture](prose-pin-appositive-signal-capture.md) | 2026-06-07 | `current` | Interface signals declared in prose ("a clock pin, SWCLK") are captured via the pin-appositive pattern |

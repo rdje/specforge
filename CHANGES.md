@@ -1,3 +1,16 @@
+### ARTIFACT-PATH-PORTABILITY.4 — migrate and gate generated artifact paths
+
+- Added a self-tested persisted-artifact oracle and wired it into the project-data locality doctrine. It pins
+  the common producer/consumer seams and scans every JSON artifact present below `generated/`, rejecting any
+  absolute path/root field outside narrow origin-labeled external SourceIR/EvidenceIR provenance.
+- Migrated the verified 978-file corpus in place: 392 files changed, 262,996 retired-root values became relative,
+  and 157 origin labels were added. The pure 721,679,372-byte migration snapshot preserves exact membership,
+  contains zero retired-root values, and retains 82 authorized external source-library values; final CI then
+  refreshed only the expected ignored mdBook products.
+- Separated historical provenance references from existence-required inputs. SourceIR/EvidenceIR can load after
+  cleanup reclaims a referenced normalized leaf while upstream stage artifacts remain strict; missing/ambiguous
+  legacy targets, traversal, and symlink escape still fail closed.
+
 ### ARTIFACT-PATH-PORTABILITY.3a — reconcile the root locality authority
 
 - Corrected the root project-data locality standard after the post-`.3` cold read found it still describing

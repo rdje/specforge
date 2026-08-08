@@ -101,6 +101,13 @@ if grep -Fq '/Users/' "$ROOT/.claude/hooks/post-compact.sh"; then
   note ".claude/hooks/post-compact.sh retains an absolute user-home path"
 fi
 
+if ! "$ROOT/scripts/check_persisted_artifact_paths.pl" --self-test >/dev/null; then
+  note "persisted-artifact path gate self-test failed"
+fi
+if ! "$ROOT/scripts/check_persisted_artifact_paths.pl" --check >/dev/null; then
+  note "canonical artifacts or their producer seams violate the persisted-path contract"
+fi
+
 if ! "$ROOT/scripts/test_project_data_locality.sh" >/dev/null; then
   note "focused project-data locality cases failed"
 fi

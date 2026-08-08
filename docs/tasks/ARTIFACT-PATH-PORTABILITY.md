@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: cross-cutting repository durability and canonical pipeline integrity
 - Created: `2026-08-08`
-- Last updated: `2026-08-08`
+- Last updated: `2026-08-09`
 - Owner: repo-local workflow
 
 ## Goal
@@ -58,7 +58,7 @@ validation, learning, or recovery workflows.
 - ID: `ARTIFACT-PATH-PORTABILITY.3a` · Status: `done` (`2026-08-08`; depends on `.3`) · Goal: repair the stale
   root locality-standard assertion found by the post-commit cold read and audit current-facing portability
   claims before present-data work begins; no Rust or generated-data change.
-- ID: `ARTIFACT-PATH-PORTABILITY.4` · Status: `pending` (depends on `.3a`) · Goal: add the fail-closed
+- ID: `ARTIFACT-PATH-PORTABILITY.4` · Status: `done` (`2026-08-09`; depends on `.3a`) · Goal: add the fail-closed
   producer/present-artifact locality gate and migrate or rebuild the current 700 MiB generated tree with exact
   copy/verify/use/delete evidence; leave zero deleted-root references.
 - ID: `ARTIFACT-PATH-PORTABILITY.5` · Status: `pending` (depends on `.4`) · Goal: cold-read every path
@@ -147,12 +147,40 @@ validation, learning, or recovery workflows.
 - [x] **LOCKSTEP** — root locality standard, roadmap, book, Knowledge Map, Rust analysis, live ledgers,
   task tree, and resume pointer agree that code activation is complete and `.4` alone owns present-data work.
 
+## Acceptance Checklist (enforced) — `ARTIFACT-PATH-PORTABILITY.4`
+
+- [x] **REPRODUCE / MEASURE** — the same-volume rollback copy independently matched all 978 files, 591
+  directories, zero symlinks, 733,507,793 logical bytes, and content fingerprint `2aafe1f16960…9d3479`.
+  Migration changed exactly 392 files / 262,996 path values / 157 origin labels and removed 11,828,421 bytes;
+  the pure migrated snapshot retained membership exactly at 721,679,372 bytes and fingerprint
+  `f07b773373f3…9bb4f1c`. Final CI then refreshed the ignored mdBook HTML as intended: the 978-file workspace is
+  721,693,042 bytes at `50609030aa0b…e3690c19`, with zero retired-root values.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the typed producers had been repaired, but ignored artifacts still stored
+  their pre-move runtime identity. The first migrated EvidenceIR workflow also proved that SourceIR/EvidenceIR
+  historical provenance was incorrectly routed through existence-required input resolution after cleanup had
+  intentionally reclaimed every normalized Markdown leaf.
+- [x] **ADDRESSED (verified)** — the guarded atomic migrator removed every retired-root value and added stable
+  origin labels; `resolve_reference` preserves contained/unique historical provenance while `resolve_existing`
+  remains strict for stage inputs. The doctrine self-tests its oracle, pins ten code seams, and scans all 667
+  present JSON artifacts; only 82 explicitly labeled external source-library values are absolute.
+- [x] **NO REGRESSION** — migrated SourceIR, EvidenceIR, SemanticIR, IntentIR, and adapter validation passed;
+  learning and recovery dry runs consumed migrated lineage safely. Focused 21-case path and two reclaimed-leaf
+  tests, 156/156 KG fixtures, formatting, warning-deny Clippy, the 1,770-test suite, rustdoc, mdBook, locality,
+  residue, and complete CI pass; no canonical artifact membership, extraction fact, gold, or adapter semantics
+  changed. The only post-migration generated deltas are the expected current mdBook build products.
+- [x] **GENERICITY** — neither the Rust resolver nor permanent gate contains a username, mount, retired root,
+  source-library root, document key, protocol, vendor, or fixture allowlist. Migration requires caller-supplied
+  absolute roots, rewrites only exact JSON path-value prefixes, refuses ambiguous/unlabeled external sources,
+  and replaces files atomically beside their originals.
+- [x] **LOCKSTEP** — task tree, roadmap, locality standard/book, generated-artifact and pipeline chapters,
+  Knowledge Map, Rust analysis, live ledgers, book aggregate authority, and resume pointer agree that present
+  data and enforcement are complete and `.5` owns the independent closure audit.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `ARTIFACT-PATH-PORTABILITY.4` | `pending` | Migrate data now that code and every current authority agree on readiness. |
-| 2 | `ARTIFACT-PATH-PORTABILITY.5` | `pending` | Independent closure proves no path or documentation surface escaped. |
+| 1 | `ARTIFACT-PATH-PORTABILITY.5` | `pending` | Independently prove no path, workflow, data, or documentation surface escaped. |
 
 ## Decisions
 
@@ -190,11 +218,26 @@ validation, learning, or recovery workflows.
 - `2026-08-08`: A post-`.3` commit cold read found `PROJECT_DATA_LOCALITY.md` still describing downstream
   activation as pending. Treat that as a lockstep defect, open `.3a` before `.4`, audit equivalent live claims,
   and correct only current authority; the committed `.3` behavior and generated corpus remain unchanged.
+- `2026-08-09`: The first migrated-corpus workflow validated SourceIR, then EvidenceIR correctly exposed a
+  pre-existing loader/lifecycle conflict: `resolve_existing` required a promoted Markdown leaf that `clean`
+  intentionally reclaimed. `.4` owns a distinct fail-closed reference resolver for source/provenance fields;
+  real upstream artifact inputs remain existence-required. This is required before migration can be signed off.
+- `2026-08-09`: Preserve all 82 absolute values below the caller-authorized external source-library root. Eighty-
+  one requested/canonical references exist and one retained CXS source reference is missing; explicit origin
+  labels keep all of them inspectable without treating that shared read-only library as SpecForge project data.
+- `2026-08-09`: Scan every present generated JSON artifact, not only the six canonical filenames. This keeps
+  validation reports, rescan plans, and regenerated SourceIR sidecars inside the permanent fail-closed boundary.
+- `2026-08-09`: Representative validation writes deterministic backannotation and sidecars. Restore only its
+  nine pre-existing files from the verified rollback, remove its eight newly created sidecars and two empty
+  directories, then rerun migration; the whole tree returned exactly to the pure post-migration fingerprint.
+- `2026-08-09`: Full CI refreshes the ignored mdBook HTML, so retain two explicit fingerprints instead of
+  pretending verification is non-producing: `f07b7733…9bb4f1c` is the pure migration comparison point;
+  `50609030…e3690c19` is the post-CI workspace. Both contain zero retired-root values and 82 labeled external
+  values; canonical artifact membership remains unchanged.
 
 ## Open Questions
 
-- `.4` must compare migrated current artifacts by file/byte/hash and real workflow behavior; producer support in
-  `.2` does not authorize rewriting the 262,592 repeated legacy EvidenceIR provenance values early.
+- None for `.4`; `.5` owns the independent cold read and final closure decision.
 
 ## Blockers
 
@@ -209,6 +252,7 @@ validation, learning, or recovery workflows.
 | `2026-08-08` | `.2` | Source/Evidence legacy + persisted/runtime cases; PDF/visual/convergence/KG checks; full CI | 6/6 doctrines; 1,753 pass / 5 ignored; rustdoc/book/locality pass; no generated mutation |
 | `2026-08-08` | `.3` | downstream persisted/runtime/legacy fixture; prior-learning and recovery command cases; project-validation/validation; 156 KG fixtures; fmt/Clippy; 1,763-test suite; full CI | 1,758 pass / 5 ignored; all focused/full gates pass; generated corpus unchanged |
 | `2026-08-08` | `.3a` | current-facing portability phrase audit; canonical docs entrypoint; all doctrines | one stale root authority corrected; mdBook doctest/build and 6/6 doctrines pass; no code/data change |
+| `2026-08-09` | `.4` | rollback/file-byte-hash comparisons; guarded migration; retired-root/external census; migrated stage validation + learning/recovery; 21 path + 2 lifecycle tests; 156 KG fixtures; full CI | pure migration 392/978 files at `f07b7733…`; post-CI workspace `50609030…`; zero retired-root / 82 labeled external values; 1,765 pass / 5 ignored; all doctrines/docs/locality gates pass |
 
 ## Commit Log
 
@@ -219,6 +263,7 @@ validation, learning, or recovery workflows.
 | `.2` | `ARTIFACT-PATH-PORTABILITY.2 — make Source and Evidence paths portable` | First two stages serialize relative and load runtime paths; `.3` owns downstream activation. |
 | `.3` | `ARTIFACT-PATH-PORTABILITY.3 — make downstream artifact paths portable` | Canonical stages/consumers activated; `.4` owns data migration and enforcement. |
 | `.3a` | `ARTIFACT-PATH-PORTABILITY.3a — reconcile the root locality authority` | Corrective lockstep leaf; `.4` remains the first generated-data mutation. |
+| `.4` | `ARTIFACT-PATH-PORTABILITY.4 — migrate and gate generated artifact paths` | Present data migrated; `.5` owns independent closure. |
 
 ## Changelog
 
@@ -236,3 +281,6 @@ validation, learning, or recovery workflows.
 - `2026-08-08`: Corrected the root locality standard's stale `.2` frontier after the `.3` cold read and audited
   equivalent current-facing claims. Product behavior, generated data, and already-current book content did not
   change.
+- `2026-08-09`: Migrated the complete current corpus with exact rollback/file-byte-hash/workflow evidence,
+  distinguished historical references from live inputs, and installed a self-tested doctrine oracle over every
+  present generated JSON artifact. Zero retired-root values remain; `.5` owns independent closure.

@@ -58,10 +58,16 @@ layouts and cross-stage pointers in SourceIR, EvidenceIR, SemanticIR, IntentIR, 
 the adapter's optional emitted `.isf` target.
 
 An explicitly authorized source outside the repository remains absolute and is labeled as an external input.
-Legacy absolute repository paths are accepted only when the bounded compatibility resolver finds exactly one
-present target below the current repository; missing, ambiguous, traversing, or escaping paths fail closed.
-The current pre-migration generated corpus still contains 335 artifacts with the retired repository root. Do
-not manually rewrite it: the next portability leaf owns a measured file/byte/hash migration and residue gate.
+Legacy absolute repository paths are accepted only when the bounded compatibility resolver finds one
+unambiguous contained target below the current repository. Inputs required for current work must exist;
+historical provenance may name a deliberately reclaimed leaf, but it still requires a contained existing
+ancestor. Traversal, ambiguity, and symlink escape fail closed.
+
+The present corpus has completed its guarded migration: 392 of 978 files changed, 262,996 retired-root values
+became relative, and 157 origin labels were added without adding or deleting a file. The migrated tree contains
+zero retired-root values. Its 82 remaining absolute path values are explicit external source-library provenance,
+not SpecForge-owned project data. The locality doctrine scans every present JSON artifact—including stage files,
+validation output, rescan plans, and source sidecars—and rejects any other absolute path-valued field.
 
 ## Source-side sidecars
 

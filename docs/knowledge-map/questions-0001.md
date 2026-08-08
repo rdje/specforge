@@ -66,6 +66,8 @@
   > can ambient validation reports define the tracked corpus KB validation page
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > can an external absolute input be rebased into the repository
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > can provenance load after source normalized cleanup removes its leaf
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
   > can specforge emit a symbolic signal width like (width ADDR_WIDTH) to the .isf
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
@@ -296,5 +298,3 @@
   > how are per-state actions captured
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > how are register bit-fields admitted to the ISF (fields …) block (structural fail-closed: located fields only; drop a sanitized-name collision group; non-overlapping survivors else whole-register fail-closed; access normalized to FSMGen's 10-token set else omit; field reset = parent reset slice; enum members that fit the width — ADR-0006, no name list)
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > how are register fields written as section headings extracted

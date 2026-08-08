@@ -1,4 +1,15 @@
 # DEVELOPMENT_NOTES
+## ARTIFACT-PATH-PORTABILITY.4 (`2026-08-09`) — provenance identity can outlive materialization
+
+The migrated-corpus proof caught a lifecycle distinction that synthetic round trips had missed. Cleanup may
+intentionally reclaim `generated/source_ir/<document>/normalized/` after SourceIR and EvidenceIR have captured
+its lineage. Requiring every provenance leaf to exist made a valid retained EvidenceIR unloadable; allowing all
+missing paths would instead hide missing upstream stage inputs. The durable split is role-based:
+`resolve_existing` for anything opened now, and `resolve_reference` only for historical source/provenance.
+Missing repository references still require a contained existing ancestor and one unambiguous legacy suffix;
+missing labeled external provenance preserves exact identity. The migration therefore strengthens portability
+without weakening current-input validation.
+
 ## ARTIFACT-PATH-PORTABILITY.2 (`2026-08-08`) — portable storage does not require relative runtime state
 
 The first attempt to keep `PathBuf` fields relative inside SourceIR and EvidenceIR was architecturally pure but

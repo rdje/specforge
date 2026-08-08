@@ -50,6 +50,12 @@ repository-owned and serialize relative even when the text source is external. T
 `source_path_origin` label lets old unlabeled artifacts be loaded compatibly without guessing that an unrelated
 external path belongs to a moved repository.
 
+Provenance and live inputs deliberately have different existence rules. Section/span/visual references remain
+inspectable after cleanup reclaims a normalized source leaf, as long as the repository reference is contained
+and any legacy rebase is unique. The upstream `source_ir_path` is a live pipeline input and remains strict: its
+artifact must exist before EvidenceIR can be loaded or rebuilt. This preserves historical lineage without making
+missing current-stage inputs look valid.
+
 ## Typical evidence-level wins
 
 - source/destination table recovery

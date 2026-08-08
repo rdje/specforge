@@ -4,6 +4,24 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-09 — persisted corpus migration and reference lifecycle; `ARTIFACT-PATH-PORTABILITY.4`)
+
+- **The generated corpus now exercises the storage form, not only compatibility loading.** A guarded
+  same-volume migration changed 392/978 files, replacing 262,996 retired-root values and adding 157 stable
+  origin labels. The pure 721,679,372-byte migration snapshot has zero repository-owned absolute path values
+  and keeps only 82 explicitly labeled external source-library values; the subsequent complete gate refreshed
+  only ignored mdBook output outside the canonical artifact set.
+- **Provenance identity is no longer confused with current input availability.** `resolve_existing` remains the
+  strict boundary for upstream artifacts and other paths opened now. The new `resolve_reference` admits a
+  missing SourceIR/EvidenceIR provenance leaf only beneath a contained existing ancestor (or as an exact labeled
+  external reference); unique legacy rebasing, traversal refusal, and symlink containment remain fail closed.
+  This matches `clean` intentionally reclaiming normalized bundles while retained IR preserves lineage.
+- **Present state is mechanically gated.** The project-data doctrine self-tests the persisted-artifact oracle,
+  pins ten producer/consumer seams, and scans all JSON below `generated/`, including sidecars and validation
+  outputs. Absolute path/root fields fail unless they are narrow origin-labeled SourceIR/EvidenceIR external
+  provenance. The migration tool requires the retired root and each authorized external root at runtime and
+  uses same-directory atomic replacement; it contains no workstation path or source-library allowlist.
+
 ## Session update (2026-08-08 — downstream persisted-path activation; `ARTIFACT-PATH-PORTABILITY.3`)
 
 - **Every canonical pipeline stage now has one storage/runtime boundary.** `SemanticIr`, `IntentIr`, and

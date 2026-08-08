@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > should specforge connect producer/consumer/etc. to their signals
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > should specforge mint actor-signal relations for nvme / iommu / ccix / register protocols
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
@@ -295,5 +297,3 @@
   > what is snap_subject_to_sentence_token and when does it fire
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > what is synthesize_register_field_tables
-- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
-  > what is synthesize_signal_declarations_from_prose / the pin-appositive pattern

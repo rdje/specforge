@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > where does TransactionPhaseRecord.signal_set come from (build_transaction_phases, ir/semantic.rs — phase-naming statements' signals ∩ declared inventory, the .2c technique)
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > where does a register's byte offset come from when only the caption states it
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
@@ -152,6 +154,8 @@
   > which local models are pulled and what are they for
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > which persisted evidence docs carry message_field_records
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > which persisted paths must exist and which may be historical references
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > which protocols look like register IPs structurally (CCIX, AXI, CHI, DTI, CHI-C2C — the register-heavy-protocol trap)
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -293,7 +297,3 @@
   > why do 8 generic-named enums survive .5.i (they are document-evidenced — the token IS a declared signal or a column header in that doc, e.g. CCIX 'Table of Contents' header cells keep a 'TABLE' enum; the structural gate correctly cannot drop them without a forbidden name-list — honest .5.ii member-quality residuals)
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > why do AMD DTE / NVMe command dword tables go to message fields and not registers
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > why do APB tables 0016 0017 0018 produce no signal records
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > why do CCIX-class docs extract hundreds of register fields now

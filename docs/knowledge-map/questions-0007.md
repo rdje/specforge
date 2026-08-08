@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > why do APB tables 0016 0017 0018 produce no signal records
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > why do CCIX-class docs extract hundreds of register fields now
 - [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
   > why do Docling source tests fail when TMPDIR is inside the repository
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
@@ -293,8 +297,3 @@
   > why must read-only census commands avoid /tmp and /private/tmp
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
   > why not CTL for temporal behavior
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why not emit a (priority A over B) to resolve a rule/rule conflict instead of dropping (the unconditional minority would conflict with EVERY same-value unconditional rule → an ungrounded precedence over each = fabrication; tested: priority rule_5 over _0012 cleared one pair then rule_6 conflicted next)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why not gate the whole enum on value-restart for .5.ii (DISPROVEN false-positive: AHB HPROT has value restarts=2 from 3 fused sub-encodings but all 15 members are clean identifiers DATA_INST/PRIVILEGED/BUFFERABLE/...; dropping it loses real intent. Restart correlates with conflation but conflation-of-clean-tables is all-real-members, so restart cannot gate a drop — keep it,
-  > sub-enum splitting deferred)

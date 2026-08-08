@@ -8,7 +8,7 @@ use crate::ir::IrStage;
 use crate::ir::adapters::AdapterTarget;
 use crate::persisted_path::{
     PersistedPathOrigin, infer_existing_origin, normalize_for_storage, resolve_existing,
-    resolve_repository_output,
+    resolve_reference, resolve_repository_output,
 };
 
 pub use docling_backend::{
@@ -896,19 +896,19 @@ impl SourceIr {
         let source_origin = runtime.source.resolved_origin()?;
         runtime.source.path_origin = Some(source_origin);
         runtime.source.canonical_path =
-            resolve_existing(&runtime.source.canonical_path, source_origin)?;
+            resolve_reference(&runtime.source.canonical_path, source_origin)?;
         runtime.source.requested_path = if source_origin == PersistedPathOrigin::ExternalInput
             && runtime.source.requested_path.is_relative()
         {
             runtime.source.canonical_path.clone()
         } else {
-            resolve_existing(&runtime.source.requested_path, source_origin)?
+            resolve_reference(&runtime.source.requested_path, source_origin)?
         };
         runtime.artifact_layout = runtime.artifact_layout.runtime_layout()?;
 
         if let Some(path) = &mut runtime.normalization_plan.promoted_markdown_path {
             *path = if matches!(runtime.source.source_kind, SourceKind::Markdown) {
-                resolve_existing(path, source_origin)?
+                resolve_reference(path, source_origin)?
             } else {
                 resolve_repository_output(path)?
             };
@@ -1542,6 +1542,31 @@ mod tests {
         assert_eq!(
             reloaded.source.path_origin,
             Some(crate::persisted_path::PersistedPathOrigin::RepositoryOwned)
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn source_ir_load_keeps_intentionally_reclaimed_repository_provenance() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("reclaimed.md");
+        let artifact_base = tempdir.path().join("generated/source_ir");
+        fs::write(&source, "# Reclaimed provenance\n")?;
+        let source_path = source.canonicalize()?;
+
+        let source_ir = SourceIr::build(&source, &artifact_base)?;
+        source_ir.write_to_disk()?;
+        fs::remove_file(&source)?;
+
+        let reloaded = SourceIr::load_from_path(&source_ir.artifact_layout.source_ir_path)?;
+        assert_eq!(reloaded.source.canonical_path, source_path);
+        assert!(!reloaded.source.canonical_path.exists());
+        assert!(
+            !reloaded.to_pretty_json()?.contains(
+                crate::project_data::repository_root()?
+                    .to_string_lossy()
+                    .as_ref()
+            )
         );
         Ok(())
     }

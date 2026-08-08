@@ -11,10 +11,12 @@ answers:
   - "do SourceIR and EvidenceIR keep absolute paths in memory"
   - "which SourceIR and EvidenceIR paths serialize repository relative"
   - "which SemanticIR IntentIR adapter and prior memory paths serialize repository relative"
-date: 2026-08-08
+  - "can provenance load after source normalized cleanup removes its leaf"
+  - "which persisted paths must exist and which may be historical references"
+date: 2026-08-09
 status: current
 tags: [artifact-paths, portability, locality, compatibility, external-inputs]
-evidence: crates/specforge/src/persisted_path.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/semantic.rs; crates/specforge/src/ir/intent.rs; crates/specforge/src/ir/adapters.rs; crates/specforge/src/ir/prior_memory.rs; docs/tasks/ARTIFACT-PATH-PORTABILITY.md (.1-.3); PROJECT_DATA_LOCALITY.md
+evidence: crates/specforge/src/persisted_path.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/semantic.rs; crates/specforge/src/ir/intent.rs; crates/specforge/src/ir/adapters.rs; crates/specforge/src/ir/prior_memory.rs; docs/tasks/ARTIFACT-PATH-PORTABILITY.md (.1-.4); PROJECT_DATA_LOCALITY.md
 reverify: "cargo test -p specforge persisted_path::tests"
 ---
 
@@ -23,6 +25,13 @@ reverify: "cargo test -p specforge persisted_path::tests"
 Relative and current-absolute values resolve at that current root; an old absolute value can rebase only from a
 recognized project-data root to exactly one existing canonical target below the repository. Missing or multiple
 targets, parent traversal, and symlink escape fail closed.
+
+Existence is role-specific. `resolve_existing` remains mandatory for stage inputs and any path that a workflow
+must open now. `resolve_reference` is limited to SourceIR/EvidenceIR source and provenance fields whose leaf may
+have been intentionally reclaimed after downstream capture. Repository references still require a contained
+existing ancestor and unique legacy suffix; an explicitly labeled missing external reference preserves its exact
+identity. Storage normalization keeps a missing in-repository reference relative, even if its caller-facing
+origin label was external.
 
 An authorized external input resolves only at its exact absolute path and never enters legacy rebasing. SourceIR
 registration now persists the stable origin label beside its canonical source path; upstream-stage pointers are
@@ -40,5 +49,6 @@ additional mixed-origin schema label.
 
 Evidence text provenance inherits the promoted Markdown origin because authorized external Markdown remains a
 real external input. Evidence visual provenance is repository-owned because those images and caption sources
-come from SourceIR's normalized artifact bundle. Canonical code activation is complete through
-`ARTIFACT-PATH-PORTABILITY.3`; current ignored-artifact migration and residue enforcement remain `.4`.
+come from SourceIR's normalized artifact bundle. `ARTIFACT-PATH-PORTABILITY.4` migrated the current ignored
+corpus and added a doctrine oracle over all present generated JSON. Current artifacts contain zero
+repository-owned absolute values; labeled external source provenance is the only absolute allowance.

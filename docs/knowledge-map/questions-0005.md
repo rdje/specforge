@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
+  > what is synthesize_signal_declarations_from_prose / the pin-appositive pattern
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > what is the .2m candidate (deterministic AXI-family channel-membership lever)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -295,5 +297,3 @@
   > where does SpecForge canonicalize upstream artifact paths before serialization
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > where does SpecForge store temporary files and caches
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > where does TransactionPhaseRecord.signal_set come from (build_transaction_phases, ir/semantic.rs — phase-naming statements' signals ∩ declared inventory, the .2c technique)

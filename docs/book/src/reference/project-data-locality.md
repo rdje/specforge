@@ -43,12 +43,12 @@ read-only operating-system/toolchain inputs. Rust build outputs remain in the re
 The post-compaction hook can also read an optional `../fsmgen` sibling checkout, but only on the same
 filesystem; the pinned submodule remains the reproducible authority.
 
-### Persisted-path contract and present-data migration gap
+### Persisted-path contract and migrated local state
 
-The runtime/cache controls above are enforced, but a post-move audit found a separate historical persistence
-gap. Older SourceIR, EvidenceIR, SemanticIR, IntentIR, adapter, and prior-memory producers persisted canonical
-absolute paths. The present generated tree therefore contains 335 JSON/Markdown artifacts with the deleted
-pre-SSD repository root; EvidenceIR alone repeats it in 262,592 span/anchor `source_path` values.
+The runtime/cache controls above are enforced. A post-move audit also found and repaired a separate historical
+persistence gap: older SourceIR, EvidenceIR, SemanticIR, IntentIR, adapter, and prior-memory producers had
+persisted canonical absolute paths. The measured legacy tree contained 335 JSON/Markdown artifacts and 262,996
+values naming the retired repository; EvidenceIR accounted for 262,592 span/anchor values.
 
 This is not current boot-volume I/O—the old repository is absent—but it makes lineage consumers move-fragile.
 Some validation and learning paths treat a missing upstream artifact as optional and silently lose cross-stage
@@ -57,8 +57,10 @@ checks; recovery paths can fail outright.
 The common Rust contract preserves the existing JSON path-string shape while requiring a typed origin at each
 call: repository-owned paths encode relative and resolve at the discovered current root; explicit external
 inputs may remain absolute but never enter legacy rebasing. An old absolute repository path may rebase only
-below a recognized project-data root, to exactly one existing canonical target contained by the current
-repository. Parent traversal, zero/multiple targets, and symlink escape are errors.
+below a recognized project-data root, to one unambiguous target contained by the current repository. Inputs
+that must be opened now require a present leaf. Historical source or provenance references may survive
+deliberate cleanup of their materialized leaf, but their nearest existing ancestor must remain contained.
+Parent traversal, zero/multiple legacy roots, and symlink escape are errors.
 
 All canonical stages now use that contract. Their Rust values are resolved absolute paths while the process is
 running, so normal callers can open them directly. Their JSON and SourceIR sidecar manifests store
@@ -68,11 +70,16 @@ repository-owned. SemanticIR, IntentIR, and adapter layouts/upstream/emitted-tar
 and typed prior memory stores learned source-artifact paths relative. Validation, project-validation, learning,
 recovery, KG fixtures, and convergence resolve repository artifacts through the common boundary.
 
-Loading an old unlabeled artifact infers present external identity exactly or uses the bounded legacy rebase for
-repository data. Code activation is complete; only the current ignored corpus is still old. Its next leaf adds a
-fail-closed present-artifact gate, migrates it with file/byte/hash and real-workflow verification, and proves no
-retired-root residue remains. Until that verified migration lands, do not bulk-rewrite the ignored artifacts or
-mistake producer readiness for completed present-data migration.
+The guarded migration changed exactly 392 of 978 files: 262,996 retired-root values became repository-relative
+and 157 missing origin labels were added. The result has the same file set, 721,679,372 logical bytes, and zero
+retired-root values; 82 explicitly labeled absolute source-library values remain by design. Source, Evidence,
+Semantic, Intent, adapter, learning, and recovery workflows were exercised against the migrated corpus before
+the exact same-volume rollback copy was removed.
+
+The locality doctrine now self-tests the scanner, pins the producer seams, and scans every JSON artifact under
+`generated/`. Any absolute path-valued field is rejected unless it is one of the narrow, origin-labeled external
+SourceIR/EvidenceIR provenance fields. This covers canonical stages, validation output, rescan plans, and source
+sidecars whenever they are present.
 
 ## Check the contract
 

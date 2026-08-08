@@ -96,8 +96,9 @@ Five active program groups support that north star:
   [`LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`](docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md)
   program keeps current documentation and project data bounded on the repository volume; active
   [`ARTIFACT-PATH-PORTABILITY`](docs/tasks/ARTIFACT-PATH-PORTABILITY.md) has activated the common move-safe
-  path contract across every canonical IR/adapter stage and downstream consumer; verified generated-data
-  migration plus fail-closed residue enforcement is next.
+  path contract across every canonical IR/adapter stage and downstream consumer, migrated the present generated
+  corpus, and installed fail-closed producer/persisted-artifact enforcement; its independent closure audit is
+  next.
 
 The complete, always-current execution/status catalog is [`docs/TASK_TREE.md`](docs/TASK_TREE.md).
 This roadmap owns only high-level direction and milestone status; it does not mirror leaf frontiers or

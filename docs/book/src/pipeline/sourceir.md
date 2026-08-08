@@ -37,6 +37,12 @@ new path API, and new artifacts do not remember the old workstation or mount poi
 repository paths can load only when their recognized project-data suffix identifies exactly one existing target
 under the current root. An unrelated external absolute path is never silently rebased.
 
+Source identity is provenance, so it can outlive a materialized local leaf. For example,
+`specforge clean --scope source-normalized --execute` may reclaim promoted Markdown after later stages have
+captured it. Loading the retained SourceIR still resolves that reference beneath the current repository (or keeps
+an explicitly labeled external path exact), provided its existing ancestor is contained. This does not relax
+real inputs: a SourceIR file passed to the next stage must still exist before SpecForge opens it.
+
 ## Why this stage matters
 
 If `SourceIR` is lossy, the downstream KG cannot recover what was lost reliably.
