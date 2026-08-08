@@ -43,7 +43,12 @@ capsule is
 `b00ff5f5c4a29554a20eea9d901a95848d54a644749eba74ad9618798dd9bd6a`; its root keeps the H1/current
 heading, 50 retained snapshot bullets, the complete gap/validation trailer, and later prepends. The
 real project-validation writer test proves that both managed markers still work at the stable root.
-`RUST_CODEBASE_ANALYSIS.md` remains the sole measured `planned` ledger for `.4e`.
+`RUST_CODEBASE_ANALYSIS.md` completed the fourth migration in `.4e`. Its immutable 1,350-record
+capsule is
+`docs/archive/rolling-ledgers/rust-codebase-analysis/source-through-2026-08-08.md` with SHA-256
+`95e1665628b615498e94f67d6dc6e0083d4d104a6ca8a815b4c23cf2f97cc7ce`; its root is exactly the
+H1/Purpose prologue plus newest 60 H2 records. The lifecycle-only slice adds no architecture record.
+All four registry entries are now `migrated` and share the bounded manifest/index route.
 
 For an H2 live cut, one blank line immediately before the removed successor is boundary structure,
 not retained record content. The capsule preserves it exactly; the root renderer omits exactly that

@@ -68,6 +68,11 @@ requires the real `project_validation.rs` writer test with temporary data on the
   present for `project_validation.rs`.
 - Its `.4d` source capsule preserves 1,920 pre-migration records and every original byte; the root
   retains the newest 50 snapshot bullets plus the complete writer-managed trailer and later prepends.
+- Its `.4e` architecture capsule preserves 1,350 pre-migration records and every original byte; the
+  root is the Purpose prologue plus newest 60 H2 records. No migration-only architecture record is
+  added because lifecycle state is not a Rust subsystem fact.
+- All four initial migrations are complete; the common bounded manifest/index and unconditional
+  checker are now the retrieval authority for every root/capsule pair.
 - A migration is blocked by ambiguous record boundaries, non-reconstructing bytes, missing consumers,
   an off-root path, a manifest/index mismatch, or a survivor over any independent local limit.
 - Exact source identity and bounded current utility are separate products. Their declared overlap is

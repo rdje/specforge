@@ -33,10 +33,9 @@ Because the mdBook is a maintained reference, its current-state contract is exec
 their live code seams and canonical detail chapters; `LIVE-DOC-SIZE` runs that currency check on every
 commit and CI build.
 
-Until each remaining migration leaf lands, the existing status and architecture root documents
-remain the authoritative surfaces described below. `CHANGES.md` and `DEVELOPMENT_NOTES.md` have
-completed that transition: each root is the current view and its exact source capsule is the
-historical authority.
+All four root-ledger migrations have landed. `CHANGES.md`, `DEVELOPMENT_NOTES.md`,
+`LIVE_ACHIEVEMENT_STATUS.md`, and `RUST_CODEBASE_ANALYSIS.md` are bounded current views, while their
+exact source capsules are the historical authority.
 No historical content is removed before its identity, replacement route, consumers, and retrieval
 procedure are proved.
 The top-level README will remain a first-class landing page; changing detail and
@@ -60,12 +59,12 @@ window, local record/line/byte/width limits, consumers, and future archive route
 planned live view from whole records and checks each pressure axis independently. Its grammar tests
 also reject non-bullet content inside the status record region.
 
-The remaining `.4e` migration will copy the exact pre-migration file into an immutable,
-repository-local source capsule before shortening the stable root. The capsule manifest records its digest and
-dimensions; a bounded index links both the current root and historical capsule; the checker retrieves
-and revalidates both. The capsule deliberately overlaps the retained current window so complete-source
-identity remains independently reproducible. Future rotation seals only newly aged-out whole records,
-not another full copy.
+Each initial migration copied the exact pre-migration file into an immutable, repository-local source
+capsule before shortening the stable root. The capsule manifest records its digest and dimensions; a
+bounded index links both the current root and historical capsule; the checker retrieves and revalidates
+both. Each capsule deliberately overlaps the retained current window so complete-source identity
+remains independently reproducible. Future rotation seals only newly aged-out whole records, not
+another full copy.
 
 This matters especially for `LIVE_ACHIEVEMENT_STATUS.md`: project validation replaces a managed block
 at its existing root path. The protocol therefore requires both validation projection markers and
@@ -77,7 +76,8 @@ after its newest prefix, while the source capsule retains their measured origina
 
 #### `CHANGES.md` migration landed
 
-The root change ledger is now 1,368 lines / 199,851 bytes instead of 32,682 lines / 2,629,033 bytes.
+At the `.4b` migration boundary, the root change ledger became 1,368 lines / 199,851 bytes instead of
+32,682 lines / 2,629,033 bytes.
 Its initial capsule at `docs/archive/rolling-ledgers/changes/source-through-2026-08-08.md` retains all
 1,798 pre-migration records byte-for-byte under SHA-256
 `d89809322857aab3c506dde1cc6caaf57e22d0349655b37ddaab1f7bf22ba994`. The live root holds the newest
@@ -92,8 +92,8 @@ root suffix. This is the retrieval contract, not a reliance on Git history alone
 
 #### `DEVELOPMENT_NOTES.md` migration landed
 
-The engineering-rationale root is now 1,480 lines / 194,412 bytes instead of 20,921 lines /
-2,170,230 bytes. Its initial capsule at
+At the `.4c` migration boundary, the engineering-rationale root became 1,480 lines / 194,412 bytes
+instead of 20,921 lines / 2,170,230 bytes. Its initial capsule at
 `docs/archive/rolling-ledgers/development-notes/source-through-2026-08-08.md` retains all 1,601
 pre-migration records under SHA-256
 `76b51a3f450cdb1e764922dc366cf6ff55529cb95f7a6f410bfba1f1f378fedc`. The live root keeps its H1
@@ -109,8 +109,8 @@ mechanical rather than a whitespace normalization.
 
 #### `LIVE_ACHIEVEMENT_STATUS.md` migration landed
 
-The current-status root is now 90 lines / 88,414 bytes instead of 1,960 lines / 581,239 bytes. Its
-initial capsule at
+At the `.4d` migration boundary, the current-status root became 90 lines / 88,414 bytes instead of
+1,960 lines / 581,239 bytes. Its initial capsule at
 `docs/archive/rolling-ledgers/live-achievement-status/source-through-2026-08-08.md` retains all 1,920
 pre-migration records under SHA-256
 `b00ff5f5c4a29554a20eea9d901a95848d54a644749eba74ad9618798dd9bd6a`. The live root keeps its
@@ -122,6 +122,21 @@ record region. The repository's focused project-validation test runs the real Ru
 temporary storage forced under `generated/tmp`, proving the managed block can still be replaced at the
 stable path after migration. Capsule identity, suffix identity, marker literals, pressure, manifest,
 and index routing are all rechecked by the unconditional doctrine gate.
+
+#### `RUST_CODEBASE_ANALYSIS.md` migration landed
+
+The Rust architecture root is now 1,056 lines / 89,727 bytes instead of 9,039 lines / 1,046,679
+bytes. Its initial capsule at
+`docs/archive/rolling-ledgers/rust-codebase-analysis/source-through-2026-08-08.md` retains all 1,350
+pre-migration records under SHA-256
+`95e1665628b615498e94f67d6dc6e0083d4d104a6ca8a815b4c23cf2f97cc7ce`. The live root keeps the H1,
+complete Purpose prologue, and newest 60 whole H2 records.
+
+No `.4e` record was added to that root. The migration changes documentation lifecycle, not the Rust
+architecture, and the repository's impact-based routing contract reserves this surface for material
+subsystem, integration, implementation, or current-risk changes. The task tree, change/status/rationale
+ledgers, ADR, Knowledge Map fact, and this chapter record the migration without manufacturing an
+architecture fact.
 
 ### Lifecycle controls
 

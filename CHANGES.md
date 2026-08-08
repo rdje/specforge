@@ -1,3 +1,14 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4e — Rust architecture rolling-ledger migration
+
+- Froze the exact 1,350-record / 1,046,679-byte Rust architecture source as the fourth immutable
+  source capsule and completed the common bounded archive manifest/index.
+- Derived the root as its H1/Purpose prologue plus newest 60 whole H2 records. No migration-only
+  architecture record was fabricated because this slice changes documentation lifecycle, not Rust
+  subsystem structure or behavior.
+- Ratcheted the live surface out of transition debt and added exact archive classification/retrieval.
+  All four root rolling ledgers now enforce source identity, retained suffix, pressure, and consumer
+  seams unconditionally.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4d — status rolling-ledger migration
 
 - Froze the exact 1,920-record / 581,239-byte current-status source as the third immutable source

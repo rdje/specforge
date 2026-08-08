@@ -44,3 +44,15 @@ perl scripts/check_rolling_ledger_protocol.pl --report
   writer-managed validation trailer.
 - Overlap: the immutable capsule includes the retained live window; later rollover archives only newly
   aged-out status records and never edits the validation projection in place.
+
+## `rust-codebase-analysis`
+
+- Current view: [`RUST_CODEBASE_ANALYSIS.md`](../../../RUST_CODEBASE_ANALYSIS.md)
+- Immutable source capsule: [`source-through-2026-08-08.md`](rust-codebase-analysis/source-through-2026-08-08.md)
+- Repository-relative capsule locator:
+  `docs/archive/rolling-ledgers/rust-codebase-analysis/source-through-2026-08-08.md`
+- Frozen boundary: 1,350 records; 9,039 lines; 1,046,679 bytes; SHA-256
+  `95e1665628b615498e94f67d6dc6e0083d4d104a6ca8a815b4c23cf2f97cc7ce`
+- Current-window rule: H1 plus complete Purpose prologue, followed by the newest 60 whole H2 records.
+- Overlap: the immutable capsule includes the retained live window; later rollover archives only newly
+  aged-out architecture records.

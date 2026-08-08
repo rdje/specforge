@@ -19,15 +19,14 @@
   run it too. Retrieval: `KNOWLEDGE_MAP.md`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4e` — migrate
-  `RUST_CODEBASE_ANALYSIS.md` while preserving its H1/Purpose prologue.
-- Current state: `.0`–`.4d` and `.5a` are complete. The fifth doctrine governs 561 Markdown files
-  across 28 surfaces. Change, rationale, and status roots are bounded 90/62/51-record current views
-  over exact 1,798/1,601/1,920-record capsules; manifest, index, retrieval, suffix identity, and the
-  live status writer seam are enforced. Rust analysis is the final measured planned ledger.
-- Next action: freeze the pinned 1,350-record architecture source, derive its Purpose prologue plus
-  newest 60 H2 records, extend the common manifest/index and classifications, then verify all reader
-  and writer seams before committing `.4e`.
-- In-flight uncommitted: `.4d` capsule/current-view migration and synchronized docs until commit;
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5` — contain canonical collections and
+  projections under bounded direct-retrieval/currentness contracts.
+- Current state: `.0`–`.4e` and `.5a` are complete. The fifth doctrine governs 562 Markdown files
+  across 29 surfaces. Change, rationale, status, and Rust-analysis roots are bounded 91/63/52/60-
+  record current views over exact 1,798/1,601/1,920/1,350-record capsules; all four source identities,
+  suffixes, consumer seams, and common archive routes are enforced.
+- Next action: decompose `.5` into independently committable collection/projection leaves from the
+  measured `.3a` inventory, then select the first dependency-ordered leaf before changing a collection.
+- In-flight uncommitted: `.4e` capsule/current-view migration and synchronized docs until commit;
   none afterward.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

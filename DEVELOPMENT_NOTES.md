@@ -1,4 +1,13 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4e (`2026-08-08`) — architecture-ledger semantic boundary
+
+The Rust analysis root now retains its complete H1/Purpose prologue plus the newest 60 whole H2
+records, while an exact 1,350-record capsule preserves every pre-migration byte. Unlike change,
+rationale, and status ledgers, the architecture root receives no `.4e` prepend: changing its storage
+lifecycle does not establish a new Rust architecture fact, and `COMMIT.md` permits that surface to
+change only for a material architecture, subsystem-boundary, public-integration, or current-risk
+change. The task, change, status, decision, fact, and mdBook layers own the migration itself.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4d (`2026-08-08`) — status snapshot and writer-boundary migration
 
 The status ledger's record region and writer-owned trailer are deliberately different data. The

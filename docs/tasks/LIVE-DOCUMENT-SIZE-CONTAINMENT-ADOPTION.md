@@ -151,7 +151,7 @@ verification before correction.
   and verify the full `.3` acceptance contract before migration begins.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4`
-  Status: `active`
+  Status: `done` (`2026-08-08`)
   Goal: migrate chronological live surfaces losslessly at whole-record boundaries. Children will own
   `CHANGES.md`, `DEVELOPMENT_NOTES.md`, `LIVE_ACHIEVEMENT_STATUS.md`, and
   `RUST_CODEBASE_ANALYSIS.md` independently; each migration must prove source identity, semantic/current
@@ -176,7 +176,7 @@ verification before correction.
   protocol while preserving its bounded current snapshot.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4e`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Goal: migrate `RUST_CODEBASE_ANALYSIS.md` at a verified whole-record boundary under the `.4a`
   protocol.
 
@@ -220,8 +220,9 @@ verification before correction.
 | — | `.4b` | `done` (`2026-08-08`) | Exact capsule, manifest/index, 87-record survivor plus first post-capsule entry, surface ratchet, and retrieval proof landed atomically. |
 | — | `.4c` | `done` (`2026-08-08`) | Exact 1,601-record capsule, 60-record live suffix plus first prepend, common index/manifest extension, surface ratchet, and byte-sensitive retrieval proof landed. |
 | — | `.4d` | `done` (`2026-08-08`) | Exact 1,920-record capsule, bounded 51-record snapshot, unchanged writer-managed trailer, and real writer-seam proof landed. |
-| 1 | `.4e` | `pending` | Migrate `RUST_CODEBASE_ANALYSIS.md` with its Purpose prologue intact. |
-| 2 | `.5` / `.6` | `active` / `pending` | Remaining collection and repository-volume-locality slices. |
+| — | `.4e` | `done` (`2026-08-08`) | Exact 1,350-record capsule, Purpose prologue plus 60-record current view, common archive completion, and all consumer proofs landed. |
+| 1 | `.5` | `active` | Contain canonical collections/projections and close their direct retrieval/currentness contracts. |
+| 2 | `.6` | `pending` | Enforce repository-volume project-data locality and audit old project-owned residue. |
 | 5 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
 ## Decisions
@@ -392,12 +393,42 @@ verification before correction.
 - `2026-08-08`: **Status width headroom is separately authorized (`.4d`).** Count/line/byte ceilings
   ratchet down by more than 78%; the 5,467-byte legacy exact quarantine becomes the reviewed
   6,800-byte whole-record transaction ceiling through one exact `.4d` old/new authority.
+- `2026-08-08`: **The Rust architecture ledger completes the four-ledger migration (`.4e`).** Its
+  exact capsule retains 1,350 records / 9,039 lines / 1,046,679 bytes at SHA-256
+  `95e1665628b615498e94f67d6dc6e0083d4d104a6ca8a815b4c23cf2f97cc7ce`. The stable root is exactly
+  the H1/Purpose prologue plus newest 60 H2 records; all pressure dimensions ratchet down, so no
+  ceiling-increase authority is needed.
+- `2026-08-08`: **A lifecycle migration is not a Rust architecture fact (`.4e`).** The root receives
+  no ceremonial `.4e` H2 record because no subsystem boundary, public integration, implementation,
+  or current risk changed. The owning task, change/status/rationale ledgers, ADR, fact card, and book
+  document the migration; the architecture root remains a byte-derived current suffix.
 
 ## Blockers
 
 - None for `.0`–`.3`.
 - Later migrations may stop for an authority conflict, unique unclassified content, or an unprovable
   retrieval promise, exactly as required by the adopted doctrine.
+
+## `.4e` `RUST_CODEBASE_ANALYSIS.md` Atomic Migration
+
+The final migration closes the protocol across all four roots without manufacturing architecture
+content:
+
+| Product | Records | Lines | Bytes | Max content line | Identity / role |
+| --- | ---: | ---: | ---: | ---: | --- |
+| pre-migration source capsule | 1,350 | 9,039 | 1,046,679 | 3,041 | immutable SHA-256 `95e1…cc7c`; complete architecture source |
+| final root | 60 | 1,056 | 89,727 | 369 | exact H1/Purpose prologue + newest H2 records |
+| records outside current view | 1,290 | — | — | — | retrieved from the capsule/index |
+
+The exact copy passed `cmp`, digest, line, and byte checks before the guarded emitter touched the
+root. The H2 boundary renderer reused `.4c`'s successor-owned terminal-separator rule; retained
+content and prologue remain exact. The common manifest/index now routes all four source capsules,
+`rust_analysis` is normal, and `rust_analysis_archive` is an exact archive terminal.
+
+`COMMIT.md` and `SESSION_BOOTSTRAP.md` remain verified consumers. Because the migration changed no
+Rust architecture, `.4e` deliberately did not prepend a migration record to this semantic surface.
+That preserves impact-based documentation routing while the other durable layers record the complete
+lifecycle transition.
 
 ## `.4d` `LIVE_ACHIEVEMENT_STATUS.md` Atomic Migration
 
@@ -629,6 +660,8 @@ transition debt, not a fabricated freshness claim.
 | `2026-08-08` | `.4c` | capsule vs `git show 2d7eaff1:DEVELOPMENT_NOTES.md`; staged resulting-tree `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | byte-identical capsule; green: 560 Markdown files / 27 surfaces; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; staged diff clean |
 | `2026-08-08` | `.4d` | exact pre-copy `--report`; same-volume `cp -p`; `cmp -s`; dual SHA-256 and `wc`; guarded `--emit-planned live-achievement-status`; migrated `--report`; repository-local-TMPDIR focused writer test | capsule/source identical at 1,920 records / 1,960 lines / 581,239 bytes / `b00f…bd6a`; root 50 records before `.4d`, then 51; capsule, exact suffix, stable trailer, both markers, manifest/index, and 1/1 real writer test pass |
 | `2026-08-08` | `.4d` | capsule vs `git show e4239e3f:LIVE_ACHIEVEMENT_STATUS.md`; staged resulting-tree `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | byte-identical capsule; green: 561 Markdown files / 28 surfaces; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; staged diff clean |
+| `2026-08-08` | `.4e` | exact pre-copy `--report`; same-volume `cp -p`; `cmp -s`; dual SHA-256 and `wc`; guarded `--emit-planned rust-codebase-analysis`; migrated `--report` | capsule/source identical at 1,350 records / 9,039 lines / 1,046,679 bytes / `95e1…cc7c`; root exactly 60 records / 1,056 lines / 89,727 bytes; prologue, capsule, exact suffix, manifest/index, retrieval, and consumers pass |
+| `2026-08-08` | `.4e` | capsule vs `git show 8310c3a1:RUST_CODEBASE_ANALYSIS.md`; staged resulting-tree `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | byte-identical capsule; green: 562 Markdown files / 29 surfaces; all four ledgers migrated; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; staged diff clean |
 
 ## Commit Log
 
@@ -645,6 +678,7 @@ transition debt, not a fabricated freshness claim.
 | `.4b` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4b — migrate CHANGES losslessly` | exact capsule + bounded root + manifest/index + surface debt ratchet |
 | `.4c` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4c — migrate DEVELOPMENT_NOTES losslessly` | exact capsule + bounded H2 rationale window + successor-boundary proof + debt ratchet |
 | `.4d` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4d — migrate live status losslessly` | exact capsule + bounded bullet snapshot + unchanged generated trailer + writer proof |
+| `.4e` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4e — migrate Rust analysis losslessly` | exact capsule + Purpose prologue/current suffix + completed common archive + debt ratchet |
 
 ## Changelog
 
@@ -682,3 +716,6 @@ transition debt, not a fabricated freshness claim.
 - `2026-08-08`: `.4d` froze the exact status source, shortened only the whole-bullet current region,
   extended the common archive route, preserved the entire generated trailer, and proved the real Rust
   projection writer in a repository-volume fixture before ratcheting the status surface out of debt.
+- `2026-08-08`: `.4e` froze the exact Rust architecture source, derived its Purpose prologue plus
+  newest 60 whole records, completed the four-capsule route, and removed the final rolling-ledger
+  transition debt without adding a migration-only architecture record.
