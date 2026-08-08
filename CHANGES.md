@@ -32591,3 +32591,15 @@ All tested; full `scripts/run_ci.sh` GREEN (1259 → **1265**). NOT pushed.
 - created the initial Rust workspace and bootstrap CLI
 - established the initial continuity workflow and live-doc surface
 - created the first repository baseline commit
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.0 — own and measure the containment/locality program
+
+Opened the project-owned adoption program after reading FSMGEN's README policy, adoption guide, and
+neutral live-document doctrine in full. The read-only SpecForge census proves routed pressure:
+`README.md` is 602 lines/170,891 bytes, `CHANGES.md` 2.62 MB, `DEVELOPMENT_NOTES.md` 2.17 MB,
+`LIVE_ACHIEVEMENT_STATUS.md` 572 KB, and the generated `KNOWLEDGE_MAP.md` 1.02 MB. The current commit
+contract also creates ceremonial live-doc/MEMORY co-staging. A separate locality census found
+production and test `tempfile::tempdir()` calls defaulting to the boot-volume temp directory. New task
+tree `docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md` owns independent leaves for pointer
+stabilization, README policy, common registry/checker, lossless migrations, mdBook truth/partitioning,
+same-volume storage, and final closure. No content was deleted, migrated, or reclassified in this
+ownership slice; donor thresholds and FSMGEN-local decisions were not copied.

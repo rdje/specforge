@@ -1,4 +1,25 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.0 (`2026-08-08`) — measured adoption decision
+
+The repository's bounded `MEMORY.md` succeeded locally but displaced growth into adjacent mandatory
+surfaces. Independent line/byte/max-line measurements show that several root docs now combine current
+state with chronology, while the commit workflow requires broad review or refresh on essentially every
+slice. That is the exact failure mode the FSMGEN adoption guide describes: containment at one entrypoint
+without transitive control of its destinations.
+
+Decision: adopt the neutral contracts as SpecForge-owned policies, derive all local values from this
+repository, and migrate by information role rather than arbitrary line shards. The work is split into
+separately committable leaves so no historical removal precedes identity, retrieval, consumer, and route
+proof. The same umbrella owns the external-SSD locality rule because doctrine registries, generated
+projections, archives, caches, and temporary workspaces must share one portable repository-root path
+contract. `~/.rustup` and `~/.cargo` remain explicit shared toolchain dependencies; they are not
+project-owned artifact destinations. The pinned FSMGEN submodule remains under FSMGEN authority, so
+SpecForge constrains invocation environment at the boundary instead of editing submodule files inline.
+
+The ramp-up also found two current-state contradictions in the mdBook (actor-relative ISF direction and
+the delivered constrained-extraction provider). They are tracked under `.5a`; this slice does not edit
+them before focused source/record verification.
+
 ## PDF-VARIANT-DIGESTION.10i (`2026-06-24`) — CODE: block-qualified recovery of the genuinely-different register class
 
 **What / why.** `.10h` recovered the *collapsible* half of the `.10g` reused-mnemonic residual —

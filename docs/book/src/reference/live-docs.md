@@ -10,6 +10,20 @@ These are separate documentation planes.
 
 Both matter, but they are not interchangeable.
 
+## Containment adoption in progress
+
+SpecForge is adopting a bounded-live-document architecture under
+`LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`. The purpose is not to reduce durable
+information or user documentation. It is to separate bounded current views,
+maintained reference prose, generated projections, rolling chronology, and
+retrievable history so no mandatory read grows forever.
+
+Until each migration leaf lands, the existing root documents remain the
+authoritative surfaces described below. No historical content is removed before
+its identity, replacement route, consumers, and retrieval procedure are proved.
+The top-level README will remain a first-class landing page; changing detail and
+chronology will route to controlled canonical destinations.
+
 ## Root docs and what they are for
 
 - `README.md`
