@@ -38,7 +38,7 @@ Two important project principles shape everything in this book:
 - `specforge` is provenance-first: the current document must justify the facts that enter canonical IR
 - AI is bounded: models can propose hypotheses, but validation and arbitration decide what survives
 
-What is already real today:
+Representative behavior that is already real today includes:
 
 - staged CLI commands for `ingest`, `evidence`, `semantic`, `intent`, `adapt`, `converge`, `validate`, `kg-bench`, `project-validation`, `rescan-plan`, `learn-priors`, and `corpus-kb`
 - tracked IR artifacts under `generated/`
@@ -48,7 +48,7 @@ What is already real today:
 What this book does not replace:
 
 - live continuity docs such as `ROADMAP.md`, `CHANGES.md`, and `MEMORY.md`
-- internal architecture deep dives intended for active development sessions
+- internal engineering records intended for active development sessions
 
-Those remain in the repo root because they serve a different purpose: continuity, live validation projection, steering, and recovery after session loss or crash.
+Those remain outside the book because they serve a different purpose: continuity, live validation projection, steering, and recovery after session loss or crash. Stable root user/architecture filenames are compatibility pointers back into this book, not a second public manual.
 That split is described later in [Documentation Scope And Continuity](reference/documentation-scope.md).

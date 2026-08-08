@@ -156,9 +156,9 @@ Every surface declares one of seven lifecycles:
 
 ### Collection and projection closure order
 
-The post-ledger census found that collection pressure is not one problem. The decision index and
-mdBook membership/current-truth controls are already complete and remain in place. Other surfaces
-need independent work in dependency order:
+The post-ledger census found that collection pressure was not one problem. The decision index and
+mdBook membership/current-truth controls were already complete and remained in place. The remaining
+surfaces were closed in this dependency order:
 
 1. rebuild the task catalog as a concise index of every real task tree;
 2. close direct fact, decision, research, and remaining canonical-collection navigation;
@@ -208,11 +208,17 @@ question. The bounded question-shard migration is described below.
 
 #### Remaining canonical collection catalogs landed
 
-No partitioned canonical Markdown collection now relies only on a Git query. The bounded
-`docs/catalogs/` plane contains six generated direct indexes for 241 workflow-standard, root-
+At `.5c.iii`, no partitioned canonical Markdown collection relied only on a Git query. The bounded
+`docs/catalogs/` plane then contained six generated direct indexes for 241 workflow-standard, root-
 architecture, FSMGen-issue, research, corpus-KB, and KG-fixture members. Its 13-line landing index
-links every generated catalog; the whole seven-file plane is 314 lines / 49,305 bytes, and its largest
-part is the 167-line / 34,615-byte KG-fixture catalog.
+linked every generated catalog; the whole seven-file plane was 314 lines / 49,305 bytes, and its
+largest part was the 167-line / 34,615-byte KG-fixture catalog.
+
+The later root-reference audit proved that the four root architecture/user files are compatibility
+pointers, not a partitioned canonical collection. Their generated catalog was therefore retired;
+the remaining five catalogs directly cover the five still-applicable external collections. The root
+pointers themselves now link their maintained book homes and have independent bounded-snapshot
+controls.
 
 Two collections keep more natural existing routes. `docs/TASK_TREE.md` directly covers all 122 task
 files—121 real trees plus the separately linked author template—and the portable Knowledge Map bundle
@@ -360,6 +366,28 @@ It pins both derivation functions and the three `SourceIR::build` seams that con
 repository-local mutation cases fail closed and remove their fixtures even when a mutation itself
 throws. Adding, removing, or renaming a source PDF therefore requires its registry row in the same
 change; host-local and generated-only documents do not silently enter the durable corpus.
+
+#### Root compatibility pointers and one public truth plane
+
+The four former root reference documents no longer carry current behavior beside the mdBook.
+`USER_GUIDE.md` had already been declared a compatibility pointer when the book was created, but
+feature work appended a command list and current-limitations mirror again. The extraction and
+knowledge-graph roots combined durable architecture with April implementation plans, bugs, and
+validation state. `INTENTIR_SPEC.md` combined unique product rules with stage/schema examples now
+maintained more completely in the book.
+
+The audit preserved the unique pieces in two direct book parts:
+
+- [Extraction Architecture Contract](extraction-architecture.md) owns the six evidence modalities,
+  stage obligations, extraction rules, and target-quality boundary;
+- [IntentIR Product Contract](intentir-contract.md) owns the canonical product boundary, residual,
+  serialization, adapter, and guardrail contract.
+
+The actor graph, temporal semantics, current stage behavior, artifact layout, commands, quality, and
+validation already have richer topical chapters. The four root filenames now contain only direct
+routes to those homes. `scripts/check_book_current_truth.sh` binds the product claims to the live
+`IntentIr` and sole-`Isf` adapter seams, requires every compatibility route, and rejects the stale
+root status headings. Independent pointer budgets prevent a second manual from regrowing.
 
 Lines, bytes, file count, collection totals, and maximum content-line width are independent axes.
 Existing oversized ledgers are explicit transition debt: their measured baseline cannot move, and a

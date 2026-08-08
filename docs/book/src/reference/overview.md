@@ -7,6 +7,7 @@ The reference chapters should help a reader understand stable project surfaces w
 
 Start here when you want to understand:
 
+- the durable extraction and canonical-product contracts
 - which files `specforge` writes
 - which docs are public-facing versus continuity-focused
 - how generated artifacts, validation reports, and prior memory fit together
@@ -14,6 +15,8 @@ Start here when you want to understand:
 
 ## Reference chapters
 
+- [Extraction Architecture Contract](extraction-architecture.md) defines the evidence modalities, stage obligations, and target-quality boundary.
+- [IntentIR Product Contract](intentir-contract.md) defines the canonical output, residual, serialization, adapter, and guardrail boundary.
 - [Generated Artifacts](generated-artifacts.md) explains the local artifact tree and why `generated/` is not tracked.
 - [Documentation Scope And Continuity](documentation-scope.md) explains the book's role as the public documentation surface.
 - [Live Docs And Continuity](live-docs.md) explains the repo-root continuity docs and how they differ from the book.

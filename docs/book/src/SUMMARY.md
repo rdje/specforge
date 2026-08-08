@@ -27,6 +27,8 @@
   - [Corpus Memory And Priors](quality/corpus-memory.md)
   - [Corpus Knowledge Base](quality/corpus-kb.md)
 - [Reference](reference/overview.md)
+  - [Extraction Architecture Contract](reference/extraction-architecture.md)
+  - [IntentIR Product Contract](reference/intentir-contract.md)
   - [Generated Artifacts](reference/generated-artifacts.md)
   - [Documentation Scope And Continuity](reference/documentation-scope.md)
   - [Live Docs And Continuity](reference/live-docs.md)

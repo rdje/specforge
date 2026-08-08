@@ -162,6 +162,8 @@
   > what phases does each wire doc recognise (APB setup/access, AHB/AXI address/data, SWD address/data/response/turnaround)
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
   > what prevents one Knowledge Map question from pointing to multiple fact cards
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > what prevents root documentation from regrowing into a second manual
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > what prevents the actor direction and extract-contracts book claims from drifting
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
@@ -212,6 +214,8 @@
   > where did SpecForge suggest LTL/MTL support in ISF
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
   > where did the AXI AWIDUNQ / WTAGUPDATE duplicate records go
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > where did the root architecture catalog go
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > where do CCIX PER error structure fields land in the IR
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
@@ -294,7 +298,3 @@
   > where is the I2C signal gold seed
 - [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
   > where is the LTL renderer for temporal rules
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > where is the SpecForge FSMGen feedback or handoff channel
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > where is the acceptance checklist a code change must satisfy

@@ -9,5 +9,4 @@ Each route below is a bounded complete membership view over one canonical collec
 - [FSMGen issue packets](fsmgen-issue-packets.md)
 - [KG fixture documents](kg-fixture-documents.md)
 - [Research records](research-records.md)
-- [Root architecture references](root-architecture.md)
 - [Workflow standards](workflow-standards.md)

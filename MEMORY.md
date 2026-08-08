@@ -19,16 +19,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.iii` — complete; commit this verified slice
-  before activating `.5h`.
-- Current state: `.0`–`.5g.iii` are complete. Reviewed validation now projects through explicit
-  snapshot mode; all 156 KG fixtures pass and feed current managed pages. The read-only 15-case oracle
-  binds 312 tracked inputs, eleven Markdown blocks plus human regions, paired JSON, and seven producer
-  regions; corpus-KB currency is enforced without canonical-IR or typed-prior mutation. A same-volume
-  signoff defect is root-caused and test-isolated; 38/38 parallel source tests now pass, while `.6a`
-  owns making repository-local temp/cache roots the canonical CI default.
-- Next action: complete the `.5g.iii` commit workflow, then activate `.5h` for the root/mdBook maintained-
-  reference truth-plane audit; retain the `.5i` corpus aggregate warning disposition obligation.
-- In-flight uncommitted: completed and fully verified `.5g.iii` slice awaiting commit; no background
-  job.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5h` — complete and ready to commit.
+- Current state: unique extraction/IntentIR contracts now live in two directly indexed book parts;
+  four stable root references are bounded compatibility pointers, their obsolete generated catalog is
+  retired, and composed currentness binds root routes plus product claims to code. The resulting book
+  is exactly 35 files / 12,490 lines / 748,629 bytes; full CI passes 1,727 tests with 5 ignored and
+  product behavior is unchanged.
+- Next action: commit `.5h`, clear `git_message_brief.txt`, verify the clean handoff, then activate
+  `.5i` and close the collection/projection program including the corpus-KB warning disposition.
+- In-flight uncommitted: completed, verified `.5h` resulting tree awaiting its atomic commit; no
+  background job and no generated/temp residue.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

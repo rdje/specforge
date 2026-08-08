@@ -1,12 +1,21 @@
 #!/usr/bin/env bash
-# Lock the two current-state mdBook facts repaired by LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5a.
+# Lock code-bound mdBook facts plus the bounded root compatibility routes.
 set -uo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 ACTOR_BOOK="$ROOT/docs/book/src/domain/actor-connectivity.md"
 SCOPE_BOOK="$ROOT/docs/book/src/reference/documentation-scope.md"
 TEMPORAL_BOOK="$ROOT/docs/book/src/direction/temporal-intent-capture.md"
+SUMMARY="$ROOT/docs/book/src/SUMMARY.md"
+EXTRACTION_BOOK="$ROOT/docs/book/src/reference/extraction-architecture.md"
+INTENT_CONTRACT_BOOK="$ROOT/docs/book/src/reference/intentir-contract.md"
+USER_POINTER="$ROOT/USER_GUIDE.md"
+EXTRACTION_POINTER="$ROOT/EXTRACTION_ARCHITECTURE.md"
+GRAPH_POINTER="$ROOT/KNOWLEDGE_GRAPH_ARCHITECTURE.md"
+INTENT_POINTER="$ROOT/INTENTIR_SPEC.md"
 ISF_CODE="$ROOT/crates/specforge/src/ir/isf_ir.rs"
+ADAPTER_CODE="$ROOT/crates/specforge/src/ir/adapters.rs"
+INTENT_CODE="$ROOT/crates/specforge/src/ir/intent.rs"
 CLI_CODE="$ROOT/crates/specforge/src/cli.rs"
 DISPATCH_CODE="$ROOT/crates/specforge/src/lib.rs"
 
@@ -32,7 +41,11 @@ reject_literal() {
   fi
 }
 
-for path in "$ACTOR_BOOK" "$SCOPE_BOOK" "$TEMPORAL_BOOK" "$ISF_CODE" "$CLI_CODE" "$DISPATCH_CODE"; do
+for path in \
+  "$ACTOR_BOOK" "$SCOPE_BOOK" "$TEMPORAL_BOOK" "$SUMMARY" "$EXTRACTION_BOOK" \
+  "$INTENT_CONTRACT_BOOK" "$USER_POINTER" "$EXTRACTION_POINTER" "$GRAPH_POINTER" \
+  "$INTENT_POINTER" "$ISF_CODE" "$ADAPTER_CODE" "$INTENT_CODE" "$CLI_CODE" "$DISPATCH_CODE"
+do
   [ -f "$path" ] || problem "required current-truth source '${path#"$ROOT"/}' is missing."
 done
 
@@ -58,6 +71,47 @@ if [ "$fail" -eq 0 ]; then
     'temporal-intent-capture.md lost its canonical live-command pointer.'
   reject_literal "$TEMPORAL_BOOK" 'None of it ships any code today' \
     'temporal-intent-capture.md restored the stale pre-delivery design claim.'
+
+  require_literal "$INTENT_CODE" 'pub struct IntentIr {' \
+    'the canonical IntentIR type seam is absent; reverify the product-boundary contract.'
+  require_literal "$ADAPTER_CODE" 'pub enum AdapterTarget {' \
+    'the adapter target enum is absent; reverify the adapter-boundary contract.'
+  require_literal "$ADAPTER_CODE" '    Isf,' \
+    'ISF is no longer the sole declared adapter target; reconcile the product contract and book.'
+  require_literal "$INTENT_CONTRACT_BOOK" '`IntentIR` is the canonical product boundary of SpecForge.' \
+    'the normative IntentIR book contract lost the canonical product boundary.'
+  require_literal "$INTENT_CONTRACT_BOOK" 'SpecForge has one adapter target: `.isf`.' \
+    'the normative IntentIR book contract lost the sole-adapter boundary.'
+  require_literal "$EXTRACTION_BOOK" 'A specification distributes meaning across six evidence modalities.' \
+    'the extraction book contract lost the complete evidence-modality boundary.'
+  require_literal "$EXTRACTION_BOOK" 'Adapters lower canonical intent; they do not author missing source semantics.' \
+    'the extraction book contract lost the adapter/non-invention boundary.'
+  require_literal "$SUMMARY" '(reference/extraction-architecture.md)' \
+    'SUMMARY.md lost the direct extraction-contract route.'
+  require_literal "$SUMMARY" '(reference/intentir-contract.md)' \
+    'SUMMARY.md lost the direct IntentIR-contract route.'
+
+  require_literal "$USER_POINTER" '(docs/book/src/SUMMARY.md)' \
+    'USER_GUIDE.md is no longer a direct compatibility route to the maintained book.'
+  require_literal "$EXTRACTION_POINTER" '(docs/book/src/reference/extraction-architecture.md)' \
+    'EXTRACTION_ARCHITECTURE.md lost its canonical book-contract route.'
+  require_literal "$GRAPH_POINTER" '(docs/book/src/domain/actor-connectivity.md)' \
+    'KNOWLEDGE_GRAPH_ARCHITECTURE.md lost its structural graph route.'
+  require_literal "$GRAPH_POINTER" '(docs/book/src/domain/temporal-semantics.md)' \
+    'KNOWLEDGE_GRAPH_ARCHITECTURE.md lost its temporal-semantics route.'
+  require_literal "$INTENT_POINTER" '(docs/book/src/reference/intentir-contract.md)' \
+    'INTENTIR_SPEC.md lost its normative book-contract route.'
+
+  for path in "$USER_POINTER" "$EXTRACTION_POINTER" "$GRAPH_POINTER" "$INTENT_POINTER"; do
+    reject_literal "$path" '## Current limitation' \
+      "${path#"$ROOT"/} restored a current-state mirror instead of remaining a bounded pointer."
+    reject_literal "$path" '## Implementation sequence' \
+      "${path#"$ROOT"/} restored an implementation-plan mirror instead of remaining a bounded pointer."
+    reject_literal "$path" '## Pipeline validation results' \
+      "${path#"$ROOT"/} restored a validation snapshot instead of linking the reviewed authority."
+    reject_literal "$path" 'Current implementation note:' \
+      "${path#"$ROOT"/} restored implementation detail instead of linking the maintained book."
+  done
 fi
 
 if [ "$fail" -ne 0 ]; then
@@ -65,4 +119,4 @@ if [ "$fail" -ne 0 ]; then
   exit 1
 fi
 
-printf 'book-current-truth: actor-direction and constrained-extraction facts match code and canonical book routes.\n'
+printf 'book-current-truth: root pointers, product contracts, actor direction, and constrained extraction match code and canonical book routes.\n'

@@ -2,8 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > where is the SpecForge FSMGen feedback or handoff channel
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > where is the acceptance checklist a code change must satisfy
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > where is the biggest register extraction gap across the corpus
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > where is the canonical SpecForge user guide
 - [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
   > where is the complete index for SpecForge research workflow architecture corpus KB or KG fixtures
 - [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
@@ -14,8 +20,12 @@
   > where is the dropped enum surfaced (an isf_enum_value_literal_<name> ResidualDecisionPacket via enum_residuals(), wired into adapters.rs residual_decisions)
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > where is the exact historical SpecForge roadmap after containment
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > where is the extraction architecture contract
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > where is the mdBook current-truth verifier
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > where is the normative IntentIR product contract
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
   > where is the per-author adopt-vs-defer provenance
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
@@ -108,6 +118,8 @@
   > why are GIC/SMMU/CoreSight section-heading fields NOT message fields
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > why are SWD recognized phases signal_set empty and transactions ports empty
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > why are USER_GUIDE.md and the root architecture documents only pointers
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > why are behaviors and constraints (22k each) not lowered to .isf — is that a gap
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -285,15 +297,3 @@
   > why does a rebuild drop the extraction-quality gauge
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > why does a register count NOT veto a wire protocol (wire-vs-structure weight dominance; AXI wire 401 >= struct 229)
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > why does a register doc captioned 'message fields' yield zero message fields
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > why does a sentence-period caption label yield nothing
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > why does a symbolic bit cell reject the whole table
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > why does a temporal antecedent use PSELX not PSEL
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > why does a timing_parameter table produce 0 timing_constraints when it clearly has rows (I2S table_0004, SMBus table_0012)
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > why does adding a new extractor feel fragile / erratic (god-orchestrator + inline dedup loops)

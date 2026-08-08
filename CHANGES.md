@@ -1,3 +1,21 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5h — unify root references with the mdBook truth plane
+
+- Audited all four root user/architecture references against all 33 entry mdBook parts. A normalized
+  comparison found zero exact long-paragraph copies, while Git history and claim-level cross-reading
+  proved a time-layer collision: compatibility pointers and durable goals had regrown current status,
+  April validation, delivered plans, and fixed bugs beside richer book/code authorities.
+- Preserved the unique six-modality extraction goal and normative `IntentIR` product/residual/
+  serialization/guardrail boundary in two directly indexed book contracts. Reduced the four stable
+  root paths from 1,341 lines / 68,472 bytes to 50 lines / 2,325 bytes of direct compatibility routes;
+  no product code or behavior changed.
+- Retired the no-longer-applicable root canonical-collection catalog, replaced its surface with four
+  independently bounded pointer snapshots, and extended executable book currency to require every
+  root route, bind canonical-product claims to `IntentIr` plus the sole `Isf` adapter seam, and reject
+  the stale root status headings.
+- Accepted ADR 0015, added the searchable authority fact, aligned public/continuity documentation,
+  and set exact fresh mdBook authority from 33 / 12,273 / 736,130 to 35 files / 12,490 lines /
+  748,629 bytes.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.iii — enforce managed corpus-KB currentness
 
 - Reconciled the tracked validation projection with the last-reviewed `VALIDATION_SNAPSHOT.md`

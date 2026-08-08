@@ -286,7 +286,7 @@ verification before correction.
   preserving human synthesis and forbidding canonical-IR or typed-prior mutation.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5h`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Goal: audit root maintained references and the mdBook as one user-facing truth plane; remove only
   proven duplication, preserve unique canonical content, close direct routes, and reset exact aggregate
   authority to the resulting maintained-reference baseline.
@@ -346,8 +346,9 @@ verification before correction.
 | — | `.5g.i` | `done` (`2026-08-08`) | The exact reviewed boundary, producer regions, live projection, ten fail-closed cases, and unconditional read-only currency oracle are enforced. |
 | — | `.5g.ii` | `done` (`2026-08-08`) | Exact 22-PDF Git membership, registry paths/keys/directories/signatures, Rust derivation seams, and 13 fail-closed cases are enforced. |
 | — | `.5g.iii` | `done` (`2026-08-08`) | Reviewed-snapshot validation, 156/156 fixture projections, all managed/human regions, paired JSON, producer seams, and 15 fail-closed cases are enforced. |
-| 1 | `.5h`–`.5i` | `pending` | Maintained-reference audit and final collection/projection closure, including corpus-KB warning disposition. |
-| 2 | `.6` / `.6a` | `pending` | Enforce repository-volume project-data locality, fix repo-local-temp test discovery/mutex cascades, and audit old project-owned residue. |
+| — | `.5h` | `done` (`2026-08-08`) | Four compatibility roots now route into one current, code-bound 35-part public mdBook truth plane. |
+| 1 | `.5i` | `pending` | Final collection/projection closure, including corpus-KB warning disposition. |
+| 2 | `.6` / `.6a` | `pending` | Enforce repository-volume project-data locality, canonicalize same-volume CI roots, and audit old project-owned residue. |
 | 3 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
 ## Decisions
@@ -635,6 +636,12 @@ verification before correction.
   FSMGen's response stays authoritative in the pinned submodule and bugs stay in the bounded issue-
   bundle catalog. The current channel owns active correspondence plus concise closed routing, not copied
   response chapters or embedded reproduction archives.
+- `2026-08-08`: **The mdBook is the sole public product-contract plane (`.5h`).** Commit `5d215c25`
+  already moved the user manual into the book, but root pointers later regrew current-state mirrors and
+  two April architecture snapshots retained delivered plans, bugs, and validation. ADR 0015 preserves
+  the unique extraction and `IntentIR` contracts as directly indexed book parts, keeps all four stable
+  root filenames as bounded direct pointers, and retires their now-inapplicable canonical collection
+  catalog. Git/task history retains obsolete status; current code/book/root claims execute together.
 
 ## Blockers
 
@@ -1447,6 +1454,100 @@ auditing the remaining test/tool workspaces rather than relying on caller enviro
   repository-local mdBook, doctrine/catalog/map derivations, and diff hygiene pass; production Docling
   discovery, canonical IR, and typed prior memory are unchanged.
 
+## `.5h` Root Reference / mdBook Truth-Plane Audit
+
+### Entry evidence and root cause
+
+The maintained public documentation is the 33-part mdBook (`12,273` lines / `736,130` bytes at
+entry). Four repository-root documents sit beside it (`1,341` lines / `68,472` bytes):
+`USER_GUIDE.md`, `EXTRACTION_ARCHITECTURE.md`, `KNOWLEDGE_GRAPH_ARCHITECTURE.md`, and
+`INTENTIR_SPEC.md`. The generated root-architecture catalog links those four exactly once, while
+`docs/book/src/SUMMARY.md` links every book part directly. A normalized paragraph comparison found
+zero byte-equivalent long paragraphs across the two planes (`0/11`, `0/59`, `0/71`, and `0/35`
+respectively), so lexical similarity cannot authorize deletion.
+
+Git history and semantic cross-reading identify the actual authority failure:
+
+- commit `5d215c25` explicitly moved the user guide into mdBook and reduced `USER_GUIDE.md` to a
+  compatibility pointer; later feature commits appended command/status prose to that pointer again,
+  recreating the drift-prone mirror;
+- `EXTRACTION_ARCHITECTURE.md` preserves the unique six-modality capture goal and a useful
+  top-quality outcome definition, but interleaves them with April implementation state: it calls
+  Level-2 NLP "next" before later marking it done, says timing/state diagrams are opaque before
+  describing their shipped VLM path, and calls completed Tier 2 the next priority;
+- `KNOWLEDGE_GRAPH_ARCHITECTURE.md` is an April design snapshot. Its structural model is superseded
+  by the current actor-relative graph chapter, its clock model by the typed temporal-semantics
+  chapter, and its `86/35/85` validation, two known bugs, and four-phase implementation plan by the
+  reviewed snapshot, code, and closed task trees;
+- `INTENTIR_SPEC.md` retains unique normative product-boundary, residual, serialization, and
+  guardrail rules. Its repeated stage descriptions, implementation notes, conceptual JSON, and
+  long-term book wish list are now weaker mirrors of the maintained pipeline/artifact chapters.
+
+The root cause is therefore time-layer mixing, not simple copied text: compatibility paths,
+long-lived architecture constraints, current behavior, validation snapshots, and delivery plans
+were allowed to coexist in four independently edited roots after mdBook became the public authority.
+
+### Claim-by-claim disposition
+
+| Root source | Unique material that must survive | Richer/current authority | Resulting root role |
+| --- | --- | --- | --- |
+| `USER_GUIDE.md` | compatibility-path identity only | `docs/book/src/SUMMARY.md`, command, pipeline, quality, and troubleshooting chapters | bounded pointer to the book |
+| `EXTRACTION_ARCHITECTURE.md` | six evidence modalities; lossless/grounded extraction principles; target-quality checklist | new direct mdBook architecture contract plus existing rationale, stage, multimodal, domain, and roadmap homes | bounded pointer to the book contract and current roadmap |
+| `KNOWLEDGE_GRAPH_ARCHITECTURE.md` | no unmatched current claim after structural and temporal cross-read | actor-connectivity, temporal-semantics, quality, commands, and reviewed validation homes | bounded pointer to those current chapters |
+| `INTENTIR_SPEC.md` | canonical product boundary; backend independence; residual-decision, serialization, and guardrail contract | new direct mdBook IntentIR contract plus existing stage/artifact/adapter chapters | bounded pointer to the book contract |
+
+The unique material moves semantically into two directly indexed book parts, not into history or a
+second root mirror. Obsolete implementation snapshots remain recoverable from Git and their closed
+task trees; they are not current architecture. The four stable root filenames remain for external
+compatibility but carry routes only. Their former `partitioned_canonical` collection/catalog is
+retired: each pointer becomes its own bounded snapshot with the composed book-currentness verifier,
+and the now-redundant generated root-architecture catalog/config row is removed. This keeps every
+tracked Markdown path classified exactly once without mislabelling route stubs as canonical prose.
+
+### Exact implementation contract
+
+1. Add directly indexed mdBook parts for the extraction architecture contract and normative
+   `IntentIR` contract; preserve only durable requirements and link all current behavior to the
+   existing topical chapters.
+2. Replace all four root documents with concise compatibility pointers containing direct canonical
+   routes and no current-state, validation, bug, or implementation-plan mirror.
+3. Replace the root collection registry row with four independently bounded pointer rows, all using
+   the executed book-currentness verifier; remove the canonical-catalog row and generated catalog,
+   then regenerate the catalog root.
+4. Extend the current-truth verifier to bind the root routes and normative book statements to the
+   live `IntentIr` / sole-`Isf` code seams and to reject the proven stale root headings.
+5. Record the authority decision and searchable fact, align every live reader, reset mdBook exact
+   aggregate authority to the final measured baseline, and run doctrine, catalog/map, mdBook, and
+   full CI gates before commit.
+
+### Implemented boundary
+
+- `USER_GUIDE.md`, `EXTRACTION_ARCHITECTURE.md`, `KNOWLEDGE_GRAPH_ARCHITECTURE.md`, and
+  `INTENTIR_SPEC.md` are now four independently bounded compatibility pointers totaling 50 lines /
+  2,325 bytes, down from 1,341 lines / 68,472 bytes.
+- `docs/book/src/reference/extraction-architecture.md` and
+  `docs/book/src/reference/intentir-contract.md` preserve the unique durable contracts as directly
+  indexed public chapters. The resulting exact book authority is 35 files / 12,490 lines / 748,629
+  bytes, an intentional two-part / 217-line / 12,499-byte increase over the post-`.5g.iii` book.
+- The obsolete four-member `root_architecture` collection and generated
+  `docs/catalogs/root-architecture.md` are retired. The canonical catalog plane now has five indexes
+  covering 237 members plus its root, while all four pointer paths remain classified exactly once.
+- `scripts/check_book_current_truth.sh` now verifies every root route, the two normative book
+  contracts, live `IntentIr` and sole-`Isf` adapter seams, and absence of the stale root headings.
+  ADR 0015 and the root-reference authority fact make the ownership and retrieval rule durable.
+
+### Acceptance Checklist (enforced) — `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5h`
+
+- [x] **ROOT CAUSE (WHY + WHERE)** — prove the post-`5d215c25` compatibility-pointer regrowth and
+  classify every root claim as unique, richer elsewhere, stale, or route-only without relying on
+  paragraph equality.
+- [x] **ADDRESSED (verified)** — preserve unique extraction/IntentIR contracts in directly indexed
+  mdBook homes; reduce four roots to bounded direct pointers; retire the obsolete collection catalog;
+  execute root/book/code currentness; and install exact fresh maintained-reference authority.
+- [x] **NO REGRESSION** — prove exact Markdown coverage, canonical-catalog and Knowledge Map
+  derivation, root route closure, code-bound book facts, mdBook build, full Rust CI, diff hygiene, and
+  absence of generated/temp residue while leaving the user-owned `.claude/settings.json` untouched.
+
 ### Registry and checker contract for `.3b`
 
 - Project-owned data lives at `doctrine/live_document_size/surfaces.jsonl`. Record zero is a registry
@@ -1528,6 +1629,8 @@ auditing the remaining test/tool workspaces rather than relying on caller enviro
 | `2026-08-08` | `.5g.ii` | staged resulting-tree contract/checker/ADR/fact/readers/surface ratchet; no-PDF/no-Rust-source scope proof; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check`; exact book aggregate | green: doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, 141-card catalog, 142 facts / 998 unique questions, book 33 files / 12,250 lines / 734,934 bytes, and staged diff pass; source-registry currency debt is closed without changing rows, PDFs, Rust, extraction behavior, or roadmap direction |
 | `2026-08-08` | `.5g.iii` | exact managed/human-region and tracked-fixture census; guarded producer replay; Perl/Rust focused tests; real `kg-bench`; currentness `--check`/`--report`/15-case self-test; residue cleanup | green: 312 tracked input files / 156 fixtures / 156 passed; validation aligns with reviewed `71/74/65/67`; eleven managed Markdown regions plus paired JSON and seven producer regions agree; all human prefixes/suffixes are byte-identical; only five stale KG blocks plus validation changed; replay/temp roots removed; current Cargo incremental `.bin` caches retained |
 | `2026-08-08` | `.5g.iii` | repository-local-TMPDIR failure reproduction/root cause; 16-thread source rerun after bounded test-isolation fix; five-doctrine gate; parallel same-volume `bash scripts/run_ci.sh`; exact book aggregate; diff hygiene | first run exposed PATH-probe selection of the ancestor `.venv-docling` and mutex-poison cascade (27 pass / 11 fail focused); after explicit repo-search injection and poison recovery, source tests 38/38 and full suite 1,727 passed / 5 ignored; formatting, warning-deny Clippy, rustdoc, mdBook 33 files / 12,273 lines / 736,130 bytes, 143-card catalog, 144 facts / 1,007 questions, and doctrines pass; no production discovery/canonical-IR/prior-memory change |
+| `2026-08-08` | `.5h` | Git-history and semantic claim audit; normalized long-paragraph comparison; exact root/book/catalog metrics; current-truth, canonical-catalog, fact-card, Knowledge Map, roadmap-projection, and docs gates | green: zero exact long-paragraph matches (`0/11`, `0/59`, `0/71`, `0/35`) establish time-layer mixing rather than copied-text deletion authority; roots shrink from 1,341 lines / 68,472 bytes to 50 / 2,325; unique contracts survive in two indexed chapters; five catalog indexes cover 237 members plus root; 144 fact cards produce 145 facts / 1,013 unique questions; book is exactly 35 files / 12,490 lines / 748,629 bytes |
+| `2026-08-08` | `.5h` | staged resulting-tree `bash scripts/check_doctrines.sh`; repository-local `TMPDIR` full `bash scripts/run_ci.sh`; mdBook build; diff hygiene; residue census | green: doctrines 5/5, live-document common suite 55/55 over 600 Markdown files / 37 surfaces, formatting, warning-deny Clippy, 1,727 Rust tests passed / 5 ignored, rustdoc, and mdBook pass; the first CI attempt exposed the already-owned `.6a` gap when a caller names a missing temp root, then passed after creating `generated/tmp`; that exact 68 KiB test workspace was removed, zero Cargo `.log` files remain, and 48 active incremental `.bin` caches are retained |
 
 ## Commit Log
 
@@ -1558,6 +1661,7 @@ auditing the remaining test/tool workspaces rather than relying on caller enviro
 | `.5g.i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.i — enforce reviewed validation currentness` | tracked reviewed-boundary contract + non-mutating ten-case oracle + producer/live projection proof + debt ratchet |
 | `.5g.ii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.ii — enforce tracked source-PDF registry currentness` | Git-indexed 22-PDF denominator + key/path/signature oracle + derivation seams + debt ratchet |
 | `.5g.iii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.iii — enforce managed corpus-KB currentness` | reviewed validation projection + 156-fixture refresh + exact managed/human/output/producer oracle + debt ratchet |
+| `.5h` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5h — unify root references with the mdBook` | two indexed normative chapters + four bounded compatibility pointers + obsolete catalog retirement + code-bound currentness |
 
 ## Changelog
 
@@ -1652,3 +1756,8 @@ auditing the remaining test/tool workspaces rather than relying on caller enviro
   snapshot production plus a 15-case dependency/output/producer oracle, and ratcheted corpus-KB
   currency from debt to enforced. The resulting 81.4% aggregate warning is retained for `.5i` rather
   than hidden by a ceiling increase.
+- `2026-08-08`: `.5h` made the mdBook the sole public product-contract plane, preserved unique
+  extraction and IntentIR requirements in two directly indexed chapters, reduced four root mirrors
+  to bounded compatibility pointers, retired their obsolete generated collection catalog, and bound
+  every route and load-bearing contract to current code. Historical April state remains in Git and
+  closed task trees, not in current architecture.

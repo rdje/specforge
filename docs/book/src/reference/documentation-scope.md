@@ -36,11 +36,22 @@ They are live engineering and continuity infrastructure for:
 
 They are not the primary public product docs, even when they contain valuable detail.
 
+Four long-standing root filenames are narrower still: `USER_GUIDE.md`,
+`EXTRACTION_ARCHITECTURE.md`, `KNOWLEDGE_GRAPH_ARCHITECTURE.md`, and `INTENTIR_SPEC.md` are bounded
+compatibility pointers into this book. They retain stable external routes, but they do not mirror
+commands, current implementation state, validation, bugs, or plans. The unique durable extraction
+and `IntentIR` rules they once carried now live in the directly indexed
+[Extraction Architecture Contract](extraction-architecture.md) and
+[IntentIR Product Contract](intentir-contract.md).
+
 ## Practical rule
 
 When a change affects what users should understand about `specforge`, it belongs in the book.
 
 When a change mainly preserves live state, sequencing, recovery context, or session continuity, it belongs in the root continuity docs.
+
+When an old root user/architecture filename must remain resolvable, update its direct route only;
+put the actual public contract in the book.
 
 ## Closed task trees — how each was implemented and verified
 

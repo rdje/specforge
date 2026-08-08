@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5h (`2026-08-08`) — compatibility paths are not truth mirrors
+
+Exact paragraph identity was the wrong duplicate test for the root-reference audit. The four roots
+shared concepts with the mdBook but not copied wording; their defect was that durable architecture,
+current behavior, validation snapshots, and delivery plans had no single time-layer owner. Git history
+made the regression especially clear: `USER_GUIDE.md` was intentionally reduced to a pointer when the
+book landed, then feature commits appended a second command/status surface to it.
+
+The safe boundary is semantic. Unique timeless requirements move to directly indexed book contracts;
+richer topical chapters keep current actor, temporal, pipeline, artifact, command, and validation
+behavior; the roadmap/task trees keep plans and delivered chronology; Git retains obsolete snapshots.
+The old filenames remain useful only as external compatibility routes. Treating each as a small
+bounded snapshot prevents another manual from regrowing and makes their shared book-currentness check
+enforce both route integrity and the live `IntentIr`/sole-`Isf` product boundary.
+
+This also explains why the generated root-architecture catalog had to disappear. Once its members are
+route stubs rather than partitioned canonical prose, continuing to advertise a canonical collection
+would preserve the wrong lifecycle merely for navigational symmetry. Direct pointers plus exact book
+membership are the truthful route topology.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5g.iii (`2026-08-08`) — generated currentness needs two authorities
 
 The corpus KB contains generated regions, but it does not have one universal input plane. KG fixture
