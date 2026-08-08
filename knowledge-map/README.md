@@ -27,12 +27,12 @@ The only per-project knobs (env, or a repo-root `.knowledge_map.conf`):
 
 | Path | What it is |
 |---|---|
-| `KNOWLEDGE_MAP_ARCHITECTURE.md` | the standard: the model, the fact format, what to index / what NEVER to convert, enforcement, the read path |
-| `FAQ.md` | plain-language explainer (no conversion, the ceiling, costs, sizing) |
+| [`KNOWLEDGE_MAP_ARCHITECTURE.md`](KNOWLEDGE_MAP_ARCHITECTURE.md) | the standard: the model, the fact format, what to index / what NEVER to convert, enforcement, the read path |
+| [`FAQ.md`](FAQ.md) | plain-language explainer (no conversion, the ceiling, costs, sizing) |
 | `scripts/gen_knowledge_map.sh` | derives the deterministic map from fact front-matter |
 | `scripts/check_knowledge_map.sh` | validates facts + asserts the map is in sync (hook + CI) |
 | `scripts/knowledge_map.conf` | bundle-default config (`:=`, so env / repo override win) |
-| `templates/FACT_TEMPLATE.md` | copy this to author a fact |
+| [`templates/FACT_TEMPLATE.md`](templates/FACT_TEMPLATE.md) | copy this to author a fact |
 | `hooks/pre-commit.snippet` | lines to add to `.githooks/pre-commit` |
 | `ci/knowledge-map-gate.yml` | the CI backstop |
 | `install.sh` | idempotent adoption helper |

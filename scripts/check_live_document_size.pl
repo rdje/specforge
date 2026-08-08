@@ -677,15 +677,25 @@ sub validate_index {
             if defined($verifier) && $verifier ne 'builtin:registry_targets';
         return;
     }
-    if ($kind ne 'membership') {
+    if ($kind ne 'membership' && $kind ne 'external_membership') {
         problem("surface '$id' has unknown index kind '$kind'");
         return;
     }
-    problem("surface '$id' membership index verifier must be builtin:markdown_links")
+    problem("surface '$id' $kind index verifier must be builtin:markdown_links")
         if defined($verifier) && $verifier ne 'builtin:markdown_links';
     return if !defined $index;
-    problem("surface '$id' membership index '$index' is outside the surface")
-        if !grep { $_ eq $index } @$paths;
+    if (!safe_relative_pattern($index) || $index =~ /[*?]/ || $index !~ /\.md\z/) {
+        problem("surface '$id' $kind index '$index' must be one safe repository-relative Markdown path");
+        return;
+    }
+    my $inside = grep { $_ eq $index } @$paths;
+    if ($kind eq 'membership') {
+        problem("surface '$id' membership index '$index' is outside the surface") if !$inside;
+    } else {
+        problem("surface '$id' external_membership index '$index' must be outside the surface") if $inside;
+        problem("surface '$id' external_membership index '$index' is not a classified Markdown surface")
+            if !$path_seen{$index};
+    }
     my $absolute_index = absolute($index);
     if (!-f $absolute_index) {
         problem("surface '$id' membership index '$index' is missing");

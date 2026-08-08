@@ -104,6 +104,7 @@ For contributors and project continuity:
 
 - [Agent bootstrap](AGENTS.md)
 - [Task-tree workflow](docs/TASK_TREE_README.md) and [complete catalog](docs/TASK_TREE.md)
+- [Canonical collection catalogs](docs/catalogs/INDEX.md)
 - [Commit workflow](COMMIT.md)
 - [Memory architecture](MEMORY_ARCHITECTURE.md) and bounded [resume pointer](MEMORY.md)
 - [Knowledge-map architecture](knowledge-map/KNOWLEDGE_MAP_ARCHITECTURE.md), bounded

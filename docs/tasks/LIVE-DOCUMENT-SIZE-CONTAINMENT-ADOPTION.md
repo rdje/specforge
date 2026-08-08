@@ -201,7 +201,7 @@ verification before correction.
   canonical content; settle only the completed four-ledger index's provisional health target.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c`
-  Status: `active`
+  Status: `done` (`2026-08-08`)
   Children: `.5c.i`–`.5c.iii`
   Goal: replace incomplete or opaque collection retrieval with bounded direct navigation.
 
@@ -216,7 +216,7 @@ verification before correction.
   bounded human fact-card route that composes with the generated question index, and prove membership.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.iii`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Goal: add bounded direct indexes for research and the remaining canonical collections currently
   relying only on `git:query`, with complete one-hop membership and no duplicated canonical prose.
 
@@ -327,7 +327,9 @@ verification before correction.
 | — | `.5b` | `done` (`2026-08-08`) | Exact post-ledger collection/currency census, dependency graph, explicit child leaves, and scratch-locality finding landed without moving canonical content. |
 | — | `.5c.i` | `done` (`2026-08-08`) | Derived 121-tree catalog, separate author-template route, seven fail-closed metadata/bound tests, unconditional checker, and transition-debt ratchet landed. |
 | — | `.5c.ii` | `done` (`2026-08-08`) | Preserved 9/9 ADR routes and added a bounded derived catalog for all 136 fact cards plus the collection guide. |
-| 1 | `.5c.iii`–`.5i` | `pending` | Remaining collection routes, generated map, roadmap/feedback, currentness, maintained references, and closure. |
+| — | `.5c.iii` | `done` (`2026-08-08`) | Closed all eight query-only collections with direct membership over 367 canonical Markdown files. |
+| 1 | `.5d.i` | `pending` | Lock the bounded Knowledge Map landing/shard contract before changing its generator. |
+| 2 | `.5d.ii`–`.5i` | `pending` | Generated-map migration, roadmap/feedback, currentness, maintained references, and closure. |
 | 3 | `.6` | `pending` | Enforce repository-volume project-data locality and audit old project-owned residue. |
 | 5 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
@@ -556,12 +558,76 @@ verification before correction.
   debt after their executable membership controls existed. Their reader/author routes move to those
   composed live-document gate, and the new fact-card catalog receives its own bounded reader route;
   no healthy route keeps a ceremonial debt label.
+- `2026-08-08`: **External catalogs are a real membership topology (`.5c.iii`, surfaced finding).**
+  Eight canonical collections still declare `git:query`. Task evidence already has an exact derived
+  catalog at `docs/TASK_TREE.md`, but the generic doctrine rejects any membership index outside its
+  member surface. The schema will add an explicit fail-closed `external_membership` kind rather than
+  mislabel the route, duplicate the task catalog inside `docs/tasks/`, or weaken locality.
+- `2026-08-08`: **One bounded catalog plane closes the remaining query-only routes (`.5c.iii`).** Six
+  generated indexes under `docs/catalogs/` will cover workflow standards, root architecture, FSMGen
+  issue packets, research, corpus-KB pages, and KG fixture Markdown. A seventh catalog-of-catalogs
+  indexes that plane. The four-file Knowledge Map bundle keeps its own README, converted to complete
+  direct links. Every row derives only repository-relative path plus first H1 (filename fallback for
+  the titleless legacy `SESSION_BOOTSTRAP.md`); canonical prose stays put.
 
 ## Blockers
 
 - None for `.0`–`.3`.
 - Later migrations may stop for an authority conflict, unique unclassified content, or an unprovable
   retrieval promise, exactly as required by the adopted doctrine.
+
+## `.5c.iii` Remaining Canonical Collection Navigation
+
+The clean-tree entry census found exactly eight `partitioned_canonical` surfaces still using
+`git:query`:
+
+| Surface | Markdown members | Direct-route disposition |
+| --- | ---: | --- |
+| workflow standards | 11 | generated external catalog; one titleless legacy file uses its filename |
+| root architecture | 4 | generated external catalog |
+| FSMGen issue packets | 7 | generated external catalog |
+| research records | 38 | generated external catalog, including the grounding subtree |
+| task evidence | 122 | preserve the existing 121-real-tree catalog plus separate template link |
+| corpus knowledge base | 24 | generated external catalog; `.5g.iii` separately owns producer currency |
+| KG fixture documents | 157 | generated external catalog; no fixture content changes |
+| Knowledge Map bundle | 4 | make its existing README the complete direct membership index |
+
+All 367 member files exist inside the repository and only `SESSION_BOOTSTRAP.md` lacks an H1. The
+largest member H1 is 139 UTF-8 bytes (task evidence); the longest member path is 143 bytes (KG
+fixtures). Catalog rendering can therefore use conservative 240-byte title, 192-byte path, and
+512-byte row bounds without truncating current metadata. The catalog plane is a separate bounded
+surface so a 157-row KG-fixture index does not inherit the fixtures' intentionally small per-file
+limit or become benchmark input.
+
+Implementation remains navigation-only: a data-only registry names six surface/index/label mappings;
+one deterministic generator/checker reads the canonical surface targets, expands repository-relative
+Markdown membership, emits six indexes plus their root index, and proves derive-and-diff. The generic
+checker will accept `external_membership` only for a safe existing Markdown index and will apply the
+same complete direct-link proof as internal membership. Focused fixtures must prove the positive path,
+missing external index, missing member link, and off-root index rejection before registry migration.
+
+The resulting catalog plane contains seven bounded files:
+
+| Product | Files / members | Lines | Bytes | Max content line |
+| --- | ---: | ---: | ---: | ---: |
+| catalog root | 6 catalog routes | 13 | 535 | 85 |
+| six member catalogs | 241 canonical routes | 301 | 48,770 | 317 |
+| whole plane | 7 files | 314 | 49,305 | 317 |
+
+The largest part is the 157-route KG-fixture index at 167 lines / 34,615 bytes. The generator owns at
+most eight configured catalogs, 256 members per catalog, 65,536 bytes per member index, 8,192 root-
+index bytes, 512 row bytes, 192 path bytes, 240 H1-title bytes, and 80 label bytes. The seven-line /
+835-byte JSONL registry is independently self-bounded. Eight in-memory cases cover H1 extraction,
+filename fallback, table escaping, unsafe/oversized paths, oversized titles, member overflow, and
+label overflow; all output replacement is same-directory atomic.
+
+The generic checker now accepts `external_membership` only when the index is a safe `.md` path outside
+the member surface, is classified by another surface, exists, and directly links every member. Four
+new fixtures cover stale, missing/unclassified, off-root, and incorrectly internal indexes, bringing
+the common lifecycle/control suite to 53. The existing task generator supplies stronger exactness for
+its 122-file external route; the portable bundle README supplies direct internal membership for its
+four files. A registry query finds zero remaining `git:query` collection contracts. No canonical
+member or collection currency claim changed, and no ceiling-increase authority is required.
 
 ## `.5c.ii` Decision And Fact-Card Navigation
 
@@ -904,6 +970,8 @@ transition debt, not a fabricated freshness claim.
 | `2026-08-08` | `.5c.i` | Knowledge Map regeneration; staged resulting-tree catalog/checker; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | green: map 136 facts / 972 question keys; 564 Markdown files / 29 surfaces; task index normal; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build pass; staged diff clean |
 | `2026-08-08` | `.5c.ii` | exact directory/front-matter denominator census; direct decision membership comparison; `perl -c`; nine-case `--self-test`; guarded `--write`; derive-and-diff `--check`; Knowledge Map regeneration | root-caused 136 entry files as 135 cards + README and 136 map facts as those cards + ADR 0007; resulting own fact gives 136 cards / 137 map facts; decision index 9/9 exactly once; catalog 150 lines / 28,392 bytes / max 251; syntax, 9/9 cases, atomic writer, ordering, title compaction, exact membership, and independent bounds pass |
 | `2026-08-08` | `.5c.ii` | staged resulting-tree catalog/routes/authority cleanup; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; live-size `--report`; `git diff --cached --check` | green: 566 Markdown files / 29 surfaces; map 137 facts / 975 question keys; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, repository-local mdBook build, exact book aggregate 33 files / 12,030 lines / 719,303 bytes, and staged diff pass; knowledge-card membership is enforced and no ceiling authority remains banked |
+| `2026-08-08` | `.5c.iii` | eight-surface query/H1/path census; `perl -c`; eight-case catalog `--self-test`; guarded `--write`; derive-and-diff `--check`; 53-case lifecycle/control suite; zero-query registry probe | 367 canonical members classified; six generated catalogs cover 241, task catalog 122, bundle README 4; catalog plane 7 files / 314 lines / 49,305 bytes / max 317; syntax, 8/8 catalog cases, 53/53 common fixtures, exact ordering/target expansion, external membership, all independent bounds, and zero query-only surfaces pass |
+| `2026-08-08` | `.5c.iii` | staged resulting-tree catalogs/schema/routes; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; live-size `--report`; `git diff --cached --check` | green: 574 Markdown files / 30 surfaces; map 138 facts / 978 question keys; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, repository-local mdBook build, exact book aggregate 33 files / 12,051 lines / 720,903 bytes, and staged diff pass; catalog surface exactly 7 files / 314 lines / 49,305 bytes and no ceiling authority is required |
 
 ## Commit Log
 
@@ -924,6 +992,7 @@ transition debt, not a fabricated freshness claim.
 | `.5b` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5b — decompose collection containment` | exact collection/currency census + dependency leaves + scratch-locality fact + archive-index health settlement |
 | `.5c.i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.i — derive the complete task catalog` | 121-tree bounded projection + fail-closed generator/checker + transition ratchet |
 | `.5c.ii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.ii — derive bounded fact-card navigation` | preserve 9/9 ADR route + 136-card projection + exact count semantics + composed gate |
+| `.5c.iii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.iii — close canonical collection navigation` | external-membership contract + 367-member route closure + bounded catalog plane |
 
 ## Changelog
 
@@ -975,3 +1044,7 @@ transition debt, not a fabricated freshness claim.
   generated catalog for 136 actual fact cards, separated directory-card and cross-layer-map counts,
   wired nine focused cases plus exact membership into doctrine enforcement, corrected stale route
   debt labels, and removed `.5c.i`'s consumed one-commit ceiling authority.
+- `2026-08-08`: `.5c.iii` replaced all eight remaining query-only canonical collection contracts
+  with direct membership over 367 files, introduced a separately bounded seven-file catalog plane,
+  made external membership explicit and fail-closed, expanded the common fixture gate to 53 cases,
+  and closed `.5c` without moving or copying canonical member prose.

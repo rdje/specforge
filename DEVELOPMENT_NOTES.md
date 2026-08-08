@@ -1,4 +1,19 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.iii (`2026-08-08`) — external membership is first-class
+
+A direct collection index need not be a canonical member of the collection it indexes. Treating that
+topology as invalid left `task_evidence` labeled query-only even after its exact catalog landed, and
+putting the catalog inside `docs/tasks/` would create a second task index. The doctrine now models the
+relationship explicitly: an external index must be safe, classified as bounded Markdown elsewhere,
+outside the member surface, and complete under the same link proof as an internal index.
+
+The shared `docs/catalogs/` plane applies that model where it preserves cleaner boundaries. Six
+derived indexes cover 241 workflow, architecture, FSMGen-issue, research, corpus-KB, and KG-fixture
+files; the task and Knowledge Map collections retain their natural existing indexes. This prevents
+the 34,615-byte fixture catalog from becoming a fixture input or inheriting the fixtures' 8,192-byte
+per-file cap. Only path and first-H1 metadata are projected, so no rationale, research evidence,
+fixture content, corpus synthesis, or workflow rule is duplicated.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.ii (`2026-08-08`) — browse routes are not query routes
 
 Decision records and fact cards remain separate canonical collections. The existing decision index

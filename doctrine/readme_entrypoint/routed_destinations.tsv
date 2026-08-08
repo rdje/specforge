@@ -1,6 +1,7 @@
 target	route_kind	owner	lifecycle	pressure_control	terminal
 ROADMAP.md	reader_navigation	roadmap-maintainers	hot_live	transition_debt:LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5	yes
 docs/TASK_TREE.md	reader_navigation	task-tree-maintainers	bounded_collection_index	scripts/check_live_document_size.sh	yes
+docs/catalogs/INDEX.md	reader_navigation	documentation-maintainers	bounded_collection_index	scripts/check_live_document_size.sh	yes
 scripts/bootstrap_docling.sh	reader_navigation	runtime-maintainers	executable_reference	review_on_behavior_change	yes
 docs/book/src/getting-started.md	reader_navigation	book-maintainers	maintained_reference	review_on_behavior_change	yes
 docs/book/src/commands/overview.md	reader_navigation	book-maintainers	maintained_reference	review_on_behavior_change	yes

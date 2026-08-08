@@ -19,14 +19,15 @@
   run it too. Retrieval: `KNOWLEDGE_MAP.md`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.iii` — next clean-tree leaf; activate it
-  only after the `.5c.ii` commit is durable.
-- Current state: `.0`–`.5b` and `.5c.i`–`.5c.ii` are complete. The fifth doctrine governs 566 tracked
-  Markdown files across 29 surfaces. Decisions retain a 9/9 bounded index. The new 150-line / 28,392-
-  byte fact-card catalog links all 136 cards exactly once plus the collection README; nine focused
-  cases and derive-and-diff run unconditionally. The generated question map has 137 cross-layer facts
-  because ADR 0007 participates separately and remains transition debt for `.5d` sharding.
-- Next action: activate `.5c.iii`, census research and the remaining `git:query` canonical
-  collections, then add only complete bounded one-hop indexes without copying canonical prose.
-- In-flight uncommitted: `.5c.ii` catalog, controls, and synchronized docs until commit; none afterward.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d.i` — next clean-tree leaf; activate it only
+  after the `.5c.iii` commit is durable.
+- Current state: `.0`–`.5c` are complete. The fifth doctrine governs 574 tracked Markdown files across
+  30 surfaces. No partitioned canonical collection is query-only: six generated catalogs cover 241
+  members, the task catalog covers 122, and the Knowledge Map bundle README covers four. The bounded
+  catalog plane is 7 files / 314 lines / 49,305 bytes; external membership and all 53 common lifecycle
+  fixtures run unconditionally. The question map remains `.5d` transition debt at 138 facts / 978 keys.
+- Next action: activate `.5d.i`, lock the bounded landing-index and generated-shard contract, then
+  prove collision, ordering, source identity, reader migration, and derive-and-diff before generation changes.
+- In-flight uncommitted: `.5c.iii` catalog plane, external-membership control, and synchronized docs
+  until commit; none afterward.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

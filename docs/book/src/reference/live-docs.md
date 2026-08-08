@@ -206,6 +206,27 @@ real derive-and-diff check through the live-document doctrine. The root README n
 use the bounded catalog to browse known ids/titles, and the generated Knowledge Map to search by a
 question. Sharding that still-large question map remains a separate migration.
 
+#### Remaining canonical collection catalogs landed
+
+No partitioned canonical Markdown collection now relies only on a Git query. The bounded
+`docs/catalogs/` plane contains six generated direct indexes for 241 workflow-standard, root-
+architecture, FSMGen-issue, research, corpus-KB, and KG-fixture members. Its 13-line landing index
+links every generated catalog; the whole seven-file plane is 314 lines / 49,305 bytes, and its largest
+part is the 167-line / 34,615-byte KG-fixture catalog.
+
+Two collections keep more natural existing routes. `docs/TASK_TREE.md` directly covers all 122 task
+files—121 real trees plus the separately linked author template—and the portable Knowledge Map bundle
+uses its own README to link all four bundle documents. In total, the eight former query-only surfaces
+now have direct membership proof over 367 canonical files without moving or copying their prose.
+
+The doctrine now distinguishes internal membership from `external_membership`. An external index must
+be one safe repository-relative Markdown file outside the member surface, must itself belong to a
+separately classified bounded surface, and must link every member directly. This lets a large fixture
+catalog remain outside fixture inputs and lets the task collection preserve one canonical catalog.
+Fifty-three lifecycle/control-plane fixtures cover the positive path plus missing, stale, off-root,
+and improperly internal external-index failures. The common catalog generator adds independent
+path/title/row/member/index bounds and derive-and-diff; no generated catalog contains canonical facts.
+
 Lines, bytes, file count, collection totals, and maximum content-line width are independent axes.
 Existing oversized ledgers are explicit transition debt: their measured baseline cannot move, and a
 separate bounded allowance exists only for the containment program's continuity updates until the

@@ -90,7 +90,11 @@ edge and must fail closed.
 A collection front door must state what completeness means. A literal table of
 contents proves every member, a generated index names its reproducible source,
 or an explicit query contract defines the complete target expansion. Presence
-of an index file alone proves none of these. Likewise, a human evidence map is
+of an index file alone proves none of these. A membership index may live inside
+the collection or in a separately classified bounded catalog surface; the
+external form must be a safe repository-relative Markdown path outside the
+member surface and must pass the same direct-link completeness proof. Likewise,
+a human evidence map is
 only trustworthy when every fenced repository-relative path resolves
 mechanically in the resulting tree.
 

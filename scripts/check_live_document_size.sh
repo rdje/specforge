@@ -28,6 +28,8 @@ if [ "$ROOT" = "$ADAPTER_ROOT" ]; then
   perl "$ROOT/scripts/check_task_tree_catalog.pl" --check || fail=1
   perl "$ROOT/scripts/check_fact_card_catalog.pl" --self-test || fail=1
   perl "$ROOT/scripts/check_fact_card_catalog.pl" --check || fail=1
+  perl "$ROOT/scripts/check_canonical_collection_catalogs.pl" --self-test || fail=1
+  perl "$ROOT/scripts/check_canonical_collection_catalogs.pl" --check || fail=1
 fi
 
 perl "$ROOT/scripts/check_rolling_ledger_protocol.pl" \

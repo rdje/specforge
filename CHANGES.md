@@ -1,3 +1,15 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.iii — complete canonical collection catalogs
+
+- Replaced all eight remaining `git:query` collection contracts with complete direct membership:
+  six generated catalogs covering 241 files, the existing 122-file task catalog, and the four-file
+  Knowledge Map bundle README.
+- Added a bounded data-driven catalog plane and deterministic generator/checker with exact target
+  expansion, H1/path metadata, safe external links, independent bounds, atomic writes, and eight
+  focused cases; canonical member prose is unchanged.
+- Extended the doctrine with a classified `external_membership` topology and four fail-closed
+  lifecycle fixtures. All 53 common cases now distinguish valid external indexes from missing,
+  stale, off-root, unclassified, or incorrectly internal routes.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5c.ii — bounded decision and fact-card navigation
 
 - Preserved the complete nine-ADR decision index and added a derived human catalog for all 136

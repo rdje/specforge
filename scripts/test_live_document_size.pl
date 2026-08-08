@@ -141,11 +141,12 @@ sub new_fixture {
         CLEANUP => 1,
     );
 
-    write_text($directory, 'snapshot.md', "# Snapshot\n");
+    write_text($directory, 'snapshot.md', "# Snapshot\n[External part](external/part.md)\n");
     write_text($directory, 'ledger.md', "entry\n");
     write_text($directory, 'canonical/INDEX.md', "[Part](part.md)\n");
     write_text($directory, 'canonical/part.md', "# Canonical part\n");
     write_text($directory, 'query/part.md', "# Query part\n");
+    write_text($directory, 'external/part.md', "# External-index part\n");
     write_text($directory, 'canonical/source.txt', "canonical input\n");
     write_text($directory, 'generated.md', "# Generated\n");
     write_text($directory, 'archive.md', "# Archive descriptor\n");
@@ -200,6 +201,18 @@ sub new_fixture {
     );
     $query->{index} = 'git:query';
     $query->{index_contract} = { kind => 'query', verifier => 'builtin:registry_targets' };
+
+    my $external = base_surface(
+        id => 'external',
+        targets => ['external/*.md'],
+        locator => 'collection',
+        lifecycle => 'partitioned_canonical',
+    );
+    $external->{index} = 'snapshot.md';
+    $external->{index_contract} = {
+        kind => 'external_membership',
+        verifier => 'builtin:markdown_links',
+    };
 
     my $generated_projection = base_surface(
         id => 'projection',
@@ -276,6 +289,7 @@ sub new_fixture {
             $ledger,
             $canonical,
             $query,
+            $external,
             $generated_projection,
             $archive,
             $frozen,
@@ -385,12 +399,13 @@ for my $lifecycle (
     'bounded_snapshot',
     'rolling_ledger',
     'partitioned_canonical membership and query',
+    'partitioned_canonical external membership',
     'generated_projection',
     'archive_terminal',
     'frozen_legacy',
     'maintained_reference',
 ) {
-    expect_case("positive $lifecycle", 1, qr/8 governed surfaces/, undef);
+    expect_case("positive $lifecycle", 1, qr/9 governed surfaces/, undef);
 }
 
 expect_case('bounded snapshot rejects multiple files', 0, qr/bounded_snapshot must contain exactly one file/, sub {
@@ -419,6 +434,25 @@ expect_case('partition query index rejects the wrong query authority', 0, qr/que
 expect_case('partition query index rejects an uncontrolled verifier', 0, qr/query index verifier must be builtin:registry_targets/, sub {
     my ($fixture) = @_;
     surface($fixture, 'query')->{index_contract}{verifier} = 'builtin:uncontrolled';
+    save_registry($fixture);
+});
+expect_case('external membership index rejects a stale member list', 0, qr/does not link member 'external\/part\.md'/, sub {
+    my ($fixture) = @_;
+    write_text($fixture->{root}, 'snapshot.md', "# Empty external index\n");
+});
+expect_case('external membership rejects a missing index', 0, qr/external_membership index .* is not a classified Markdown surface|membership index .* is missing/, sub {
+    my ($fixture) = @_;
+    surface($fixture, 'external')->{index} = 'missing.md';
+    save_registry($fixture);
+});
+expect_case('external membership rejects an off-root index', 0, qr/must be one safe repository-relative Markdown path/, sub {
+    my ($fixture) = @_;
+    surface($fixture, 'external')->{index} = '../escape.md';
+    save_registry($fixture);
+});
+expect_case('external membership rejects an index inside the member surface', 0, qr/must be outside the surface/, sub {
+    my ($fixture) = @_;
+    surface($fixture, 'external')->{index} = 'external/part.md';
     save_registry($fixture);
 });
 expect_case('generated projection rejects a failing freshness verifier', 0, qr/freshness verifier .* failed/, sub {
@@ -556,7 +590,7 @@ expect_history_case('ceiling increase rejects missing exact authority', 0, qr/in
     surface($fixture, 'snapshot')->{enforcement_ceilings}{bytes_each}++;
     save_registry($fixture);
 });
-expect_history_case('ceiling increase accepts one exact fresh authority', 1, qr/8 governed surfaces/, sub {
+expect_history_case('ceiling increase accepts one exact fresh authority', 1, qr/9 governed surfaces/, sub {
     my ($fixture) = @_;
     my $surface = surface($fixture, 'snapshot');
     my $old = { %{ $surface->{enforcement_ceilings} } };
@@ -597,7 +631,7 @@ expect_history_case('maintained reference rejects reused aggregate authority', 0
     $change->{delta}{bytes_total} = $metrics->{bytes_total} - $change->{baseline}{bytes_total};
     save_registry($fixture);
 });
-expect_history_case('maintained reference accepts fresh exact aggregate authority', 1, qr/8 governed surfaces/, sub {
+expect_history_case('maintained reference accepts fresh exact aggregate authority', 1, qr/9 governed surfaces/, sub {
     my ($fixture) = @_;
     write_text($fixture->{root}, 'book/part.md', "# Maintained part\nextra\n");
     my $metrics = dimensions_for($fixture->{root}, 'book/SUMMARY.md', 'book/part.md');
