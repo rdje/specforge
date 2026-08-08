@@ -19,13 +19,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.ii` — next clean-tree leaf after `.5f.i`
-  is durable.
-- Current state: `.0`–`.5f.i` are complete. The exact 936-line FSMGen-feedback source, five regions,
-  six closed directed exchanges, zero open records, two stale-current findings, 26 consumers, bounded
-  current-channel shape, and archive topology are locked by ADR 0011 and the unconditional verifier.
-- Next action: commit `.5f.i`, then activate `.5f.ii`; copy/verify the exact feedback capsule before
-  replacing the root with its bounded current channel and landing index/manifest/surface changes.
-- In-flight uncommitted: `.5f.i` contract/checker, ADR/fact, and live/book/task synchronization until
-  commit; none afterward.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.ii` — complete and verified, pending its
+  required per-leaf commit.
+- Current state: `.0`–`.5f.ii` are complete. The exact 936-line / 57,980-byte feedback source is sealed;
+  the stable root is an 81-line / 5,243-byte current channel with zero open and six evidence-linked
+  closed exchanges; migrated enforcement and three independently governed surfaces pass. Full
+  doctrines, Clippy, 1,724 Rust tests, rustdoc, and mdBook are green.
+- Next action: commit `.5f.ii`, clear/verify `git_message_brief.txt`, then activate `.5g.i` from the
+  clean tree and implement non-mutating `VALIDATION_SNAPSHOT.md` currentness.
+- In-flight uncommitted: completed `.5f.ii` files until the required commit; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

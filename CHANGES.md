@@ -1,3 +1,19 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.ii — migrate the bounded FSMGen feedback channel
+
+- Sealed the byte-exact 936-line / 57,980-byte `docs/FSMGEN_FEEDBACK.md` source at
+  `docs/archive/fsmgen-feedback/source-through-2026-08-08.md`; its manifest pins SHA-256
+  `5bf938d54559d1f80c5aed4d3a72a1ad3ec5792c6991b846beffb35d42739f03`, exact dimensions, date,
+  reason, stable current path, and verifier.
+- Replaced the stable root with an 81-line / 5,243-byte bounded current channel: current `.isf`-only
+  boundary and full FSMGen gitlink, explicit zero-open marker region, six-row closed register with
+  complete-history and independent-evidence links, structured authoring schema, and direct recovery
+  routes. Obsolete `.fsm`/“latest pin” prose remains only in the immutable capsule.
+- Added the bounded archive index, switched the ten-case protocol to migrated enforcement, and
+  replaced one transition-debt surface with independently governed current-root, archive-index, and
+  archive-terminal records. Updated the task tree, ADR/fact, diagnostic workflow, continuity ledgers,
+  and mdBook to the landed lifecycle; no Rust, product behavior, roadmap direction, or submodule
+  content changed.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.i — lock the FSMGen feedback lifecycle contract
 
 - Pinned `docs/FSMGEN_FEEDBACK.md` at 936 lines / 57,980 bytes / SHA-256

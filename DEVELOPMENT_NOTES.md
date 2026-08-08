@@ -1,4 +1,20 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.ii (`2026-08-08`) — status-driven feedback survives bounded migration
+
+The atomic migration validates the `.5f.i` decision that semantic status, not file position, is the
+right live/history boundary. The exact source capsule preserves all 936 lines and every stale or later-
+amended statement, while the stable 81-line channel keeps only present integration truth, the empty
+open set, and a six-row closed register. Each row links both complete chronology and closure evidence,
+so compact status does not become information loss.
+
+The current channel is a routing surface, not a place to embed another primer or reproduction corpus.
+Future open records require an owning task and explicit direction, kind, status, owner, and evidence;
+large design material routes to task/research records and bugs route to indexed issue bundles. The
+migrated verifier authenticates the capsule and independently checks the current root, open records,
+register, index, manifest, reader literals, and pressure on every doctrine run. The registry can
+therefore remove zero-growth transition debt and govern current, index, and immutable history as three
+separate lifecycle surfaces.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.i (`2026-08-08`) — correspondence needs semantic status, not positional rotation
 
 The common rolling-ledger protocol is deliberately not reused for FSMGen feedback. The file has five

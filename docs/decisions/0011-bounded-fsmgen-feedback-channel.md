@@ -24,8 +24,8 @@ discarding resolved detail would break those contracts.
 
 ## Decision
 
-Keep `docs/FSMGEN_FEEDBACK.md` as a bounded, human-authored current channel. Its migrated form will
-contain:
+Keep `docs/FSMGEN_FEEDBACK.md` as a bounded, human-authored current channel. Its migrated form
+contains:
 
 1. the current `.isf`-only downstream boundary and exact pinned FSMGen gitlink;
 2. an explicitly marked open-correspondence region;
@@ -48,10 +48,9 @@ full request, embedded response, and issue narrative byte-for-byte.
 
 `doctrine/live_document_size/fsmgen_feedback.json` pins five exhaustive source regions, all six closed
 exchange spans and status/direction/evidence records, both current-truth findings, all 26 consumers,
-the future root schema, and archive topology. `scripts/check_fsmgen_feedback_protocol.pl` runs
-unconditionally under `LIVE-DOC-SIZE`: planned state freezes the current source; migrated state will
-authenticate the capsule and validate the bounded root, open-record schema, closed register, manifest,
-and index.
+the current-root schema, and archive topology. `scripts/check_fsmgen_feedback_protocol.pl` runs
+unconditionally under `LIVE-DOC-SIZE`: migrated state authenticates the capsule and validates the
+bounded root, open-record schema, closed register, manifest, and index.
 
 The root targets 256 lines / 32,768 bytes / 512 bytes per line and hard-fails above 384 lines / 49,152
 bytes / 1,024 bytes per line. The archive index hard-fails above 96 lines / 8,192 bytes / 256 bytes per
@@ -62,9 +61,9 @@ embedded reproduction corpus.
 
 - `.5f.i` changes no feedback record and creates no archive; it freezes identity and activates the
   planned-state design/evidence/consumer contract.
-- `.5f.ii` must copy and verify the exact capsule before rewriting the stable root, preserve direct
-  retrieval for all six closed exchanges, migrate readers and surface records atomically, and remove
-  transition debt.
+- `.5f.ii` copied and verified the exact capsule before rewriting the stable root, preserved direct
+  retrieval for all six closed exchanges, migrated readers and surface records atomically, and removed
+  transition debt. The resulting current root is 81 lines / 5,243 bytes / 394 maximum line bytes.
 - Incoming authoritative detail remains in
   `subs/fsmgen/docs/SPECFORGE_FEEDBACK_RESPONSE.md`; the local channel records its status and direct
   evidence route rather than copying the upstream response wholesale.

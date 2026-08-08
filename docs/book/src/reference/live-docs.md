@@ -291,21 +291,26 @@ missing source workstreams; missing or duplicate current rows; forbidden chronol
 paths. The live-document doctrine verifies capsule identity plus bounded-root/index/manifest
 retrieval on every run.
 
-#### FSMGen feedback is a directed channel, not a generic ledger
+#### Bounded FSMGen feedback channel landed
 
-`docs/FSMGEN_FEEDBACK.md` mixes several roles. At the pinned boundary it is 936 lines / 57,980 bytes:
-five directed questions, answers, suggestions, or feature requests occupy 359 lines; one resolved two-
-bug episode occupies 104; a scope override occupies 15; and a 456-line legacy primer occupies the
-remainder. All six exchanges are closed through FSMGen response headings or local issue-bundle
-resolution records, so there is no open request to keep live merely for status.
+The stable [`docs/FSMGEN_FEEDBACK.md`](../../../FSMGEN_FEEDBACK.md) path is now an 81-line / 5,243-byte
+directed current channel. Its explicitly marked open region is empty at the sealed boundary; a concise
+six-row register links every closed question, answer, suggestion, feature request, and composite bug
+episode to both complete history and independent FSMGen response or local issue-resolution evidence.
+
+Before replacement, the migration froze the exact 936-line / 57,980-byte source at
+[`docs/archive/fsmgen-feedback/source-through-2026-08-08.md`](../../../archive/fsmgen-feedback/source-through-2026-08-08.md).
+That source contains 359 lines of ordinary directed exchanges, a 104-line resolved two-bug episode, a
+15-line scope override, and a 456-line legacy primer. The bounded
+[archive index](../../../archive/fsmgen-feedback/INDEX.md) and JSON manifest make its identity and
+recovery direct rather than relying on Git history.
 
 The primer also demonstrates a time-layer collision. April prose calls `.fsm` one of SpecForge's
 adapter targets, while the May scope override says the only adapter is `.isf`. Its “latest response”
 pin remains `030f8c273`, while the tracked FSMGen gitlink advanced to `d327129b7`. The old prose is
 useful history, but the word “latest” is not current truth.
 
-[ADR 0011](../../../decisions/0011-bounded-fsmgen-feedback-channel.md) therefore defines two products
-before any record moves:
+[ADR 0011](../../../decisions/0011-bounded-fsmgen-feedback-channel.md) defines two products now in use:
 
 - the stable root remains the bounded current handoff channel;
 - an exact immutable capsule retains every old request, response excerpt, bug narrative, and stale
@@ -320,10 +325,11 @@ most eight records, each no larger than 96 lines / 12,288 bytes / 512 bytes per 
 and reproductions stay in task/research records or issue bundles. The entire root has independent
 256-line / 32,768-byte / 512-byte health targets and 384-line / 49,152-byte / 1,024-byte hard limits.
 
-The planned executable gate pins the source SHA-256, five exhaustive regions, all six record spans,
+The migrated executable gate pins the source SHA-256, five exhaustive regions, all six record spans,
 status/direction/evidence, both stale-current findings, 26 consumers, current-root schema, and archive
-topology. Its ten focused cases cover both planned and migrated forms. The next atomic leaf must copy
-and verify the capsule before rewriting the root and removing transition debt.
+topology. Its ten focused cases cover both lifecycle forms; the live-document doctrine now
+authenticates the capsule and independently checks the root, open-record schema, closed register,
+manifest, index, direct routes, and pressure ceilings. Feedback transition debt is gone.
 
 Lines, bytes, file count, collection totals, and maximum content-line width are independent axes.
 Existing oversized ledgers are explicit transition debt: their measured baseline cannot move, and a

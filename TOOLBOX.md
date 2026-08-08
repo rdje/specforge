@@ -153,7 +153,8 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
   emitter change is safe (`feedback_verify_fsmgen_before_fr`: update the submodule + read current docs +
   empirically test before claiming an FSMGen/ISF gap or filing a feature request).
 - **HOW:** run the emitted `.isf` through the pinned FSMGen `--strict --check --json` (see
-  `docs/FSMGEN_FEEDBACK.md` + the submodule's own docs for the exact invocation on the current pin).
+  `docs/FSMGEN_FEEDBACK.md` + the submodule's own docs: the stable channel owns the current pin/status
+  and routes to FSMGen's authoritative invocation).
 - **OUTPUT:** strict diagnostics JSON; "0 new diagnostics vs baseline" is the NO-REGRESSION oracle for an
   emitter change.
 
@@ -291,8 +292,10 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
 2. Trace the blocking surface back through `validate <intent-ir>` (which canonical surface is missing /
    conflicted) → `validate <semantic-ir>` (stage-staleness? a `semantic_*` conflict?).
 3. If the block is an FSMGen ISF-abstraction gap, verify empirically against the current submodule pin
-   first (`feedback_verify_fsmgen_before_fr`), then file a verified FR in `docs/FSMGEN_FEEDBACK.md` —
-   never hack the emitter (`feedback_isf_no_hacks`).
+   first (`feedback_verify_fsmgen_before_fr`), then create an owning task-tree leaf and add a bounded
+   open record in `docs/FSMGEN_FEEDBACK.md` with `Direction`, `Kind`, `Status`, `Owner`, and `Evidence`.
+   Put detailed design evidence in the task/research record and reproducible bugs in an indexed issue
+   bundle; never hack the emitter (`feedback_isf_no_hacks`).
 
 ## Protocol C — localize a `kg-bench` / gold regression
 1. `cargo run -- kg-bench` → the failing fixture name + its expected-vs-actual diagnostic.

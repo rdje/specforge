@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "current_path": "docs/FSMGEN_FEEDBACK.md",
+  "source_capsule": "docs/archive/fsmgen-feedback/source-through-2026-08-08.md",
+  "source_sha256": "5bf938d54559d1f80c5aed4d3a72a1ad3ec5792c6991b846beffb35d42739f03",
+  "source_metrics": {
+    "lines": 936,
+    "bytes": 57980,
+    "line_bytes": 1705
+  },
+  "sealed_date": "2026-08-08",
+  "reason": "initial bounded FSMGen-feedback migration",
+  "verifier": "perl scripts/check_fsmgen_feedback_protocol.pl --check"
+}

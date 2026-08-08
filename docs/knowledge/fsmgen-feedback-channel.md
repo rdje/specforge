@@ -29,16 +29,16 @@ patches the `subs/fsmgen` submodule** — it files forward reports. Related task
 `FSMGEN-LTL-MTL-SUGGESTION`, `FSMGEN-ISSUE-REPORTING`. The deferred SpecForge-side alternative
 to the LTL/MTL-in-ISF ask is `[[spec-mining-framing]]`'s sibling tree `TEMPORAL-RULE-SVA-RENDER`.
 
-At the containment boundary the source is exactly 936 lines / 57,980 bytes / 1,705 maximum line
-bytes with SHA-256 `5bf938d54559d1f80c5aed4d3a72a1ad3ec5792c6991b846beffb35d42739f03`.
-It contains five directed exchanges and one two-bug episode; all six are closed with direct response
-or resolution evidence, so the open-record count is zero. A 456-line legacy primer still says `.fsm`
-is a SpecForge adapter and calls `030f8c273` the latest response pin, while current truth is `.isf`-
-only at pinned FSMGen `d327129b7`.
+The sealed source capsule is exactly 936 lines / 57,980 bytes / 1,705 maximum line bytes with SHA-256
+`5bf938d54559d1f80c5aed4d3a72a1ad3ec5792c6991b846beffb35d42739f03`. It contains five directed
+exchanges and one two-bug episode; all six are closed with direct response or resolution evidence, so
+the open-record count is zero. The capsule preserves a 456-line legacy primer whose `.fsm` adapter and
+`030f8c273` “latest” claims are historical; current truth is `.isf`-only at pinned FSMGen `d327129b7`.
 
-ADR 0011 therefore keeps the stable root as a bounded current channel and requires an exact immutable
-source capsule plus bounded archive index/manifest before migration. The executable contract pins five
-exhaustive regions, six record identities/statuses/directions/evidence routes, 26 consumers, both stale-
-current findings, open-record fields and limits, current-root bounds, and archive topology. In planned
-state it freezes the source; migrated state will authenticate the capsule and validate the live open
-region, concise closed register, and direct retrieval.
+ADR 0011 keeps the stable root as an 81-line / 5,243-byte bounded current channel over the exact
+immutable capsule plus bounded archive index/manifest. Its open region is empty at the sealed boundary;
+its six-row closed register routes every exchange directly to complete history and independent closure
+evidence. The executable migrated contract pins five exhaustive source regions, six record identities/
+statuses/directions/evidence routes, 26 consumers, both stale-current findings, open-record fields and
+limits, current-root bounds, and archive topology. It authenticates the capsule and validates the live
+open region, concise closed register, manifest, index, and direct retrieval on every doctrine run.

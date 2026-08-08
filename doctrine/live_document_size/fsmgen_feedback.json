@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "owner": "LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f",
-  "migration_state": "planned",
+  "migration_state": "migrated",
   "source": {
     "path": "docs/FSMGEN_FEEDBACK.md",
     "sha256": "5bf938d54559d1f80c5aed4d3a72a1ad3ec5792c6991b846beffb35d42739f03",

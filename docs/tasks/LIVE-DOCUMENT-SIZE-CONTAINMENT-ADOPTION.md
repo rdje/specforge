@@ -251,7 +251,7 @@ verification before correction.
   debt, and align the task catalog plus mdBook without duplicating live execution state.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f`
-  Status: `active`
+  Status: `done` (`2026-08-08`)
   Children: `.5f.i`–`.5f.ii`
   Goal: migrate the FSMGen feedback ledger without losing requests, answers, resolutions, or issue links.
 
@@ -261,7 +261,7 @@ verification before correction.
   live window, and archive/index protocol before moving any request or response.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.ii`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Goal: execute the feedback migration atomically and prove unresolved/current requests stay directly
   visible while complete historical conversation remains retrievable.
 
@@ -333,7 +333,8 @@ verification before correction.
 | — | `.5e.i` | `done` (`2026-08-08`) | Exact source/regions, 23-workstream ownership, drift evidence, ADR 0010, readers, archive/root design, and nine-case unconditional gate are locked; no roadmap record moved. |
 | — | `.5e.ii` | `done` (`2026-08-08`) | Exact capsule, bounded current root/index, corrected 23-row status, migrated verifier, reader alignment, and three-surface debt ratchet landed atomically. |
 | — | `.5f.i` | `done` (`2026-08-08`) | Exact five-region source, six closed directed exchanges, zero-open status, two drift findings, 26 consumers, ADR 0011, archive/root design, and ten-case unconditional gate are locked; no feedback record moved. |
-| 1 | `.5f.ii`–`.5i` | `pending` | Feedback migration, currentness, maintained references, and closure. |
+| — | `.5f.ii` | `done` (`2026-08-08`) | Exact capsule, 81-line zero-open current channel, six evidence-linked closed routes, migrated enforcement, and three-surface debt ratchet landed atomically. |
+| 1 | `.5g.i`–`.5i` | `pending` | Currentness, maintained references, and collection/projection closure. |
 | 2 | `.6` | `pending` | Enforce repository-volume project-data locality and audit old project-owned residue. |
 | 3 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
@@ -775,6 +776,35 @@ root bounds, and archive topology. `scripts/check_fsmgen_feedback_protocol.pl` r
 `LIVE-DOC-SIZE`; ten planned/migrated cases fail closed on identity, evidence, record heading, unsafe
 path, marker, register, forbidden-history, or manifest drift. This design leaf moves no feedback record,
 creates no archive, and leaves the transition baseline unchanged; `.5f.ii` owns the atomic migration.
+
+## `.5f.ii` Atomic FSMGen Feedback Migration
+
+The stable channel is now 81 lines / 5,243 bytes / 394 maximum content-line bytes. It carries the
+current `SPECFORGE IntentIR → .isf → FSMGEN` boundary, full pinned gitlink
+`d327129b718ab29fc889db026c19257b0f7fcc49`, one explicitly marked zero-open region, the six closed
+records in contract order, the bounded authoring schema, and direct archive/response/issue/tooling
+routes. The two stale primer claims are absent from current prose.
+
+Before replacing that root, `.5f.ii` mechanically copied and byte-compared the complete pinned source
+to `docs/archive/fsmgen-feedback/source-through-2026-08-08.md`. The 936 lines / 57,980 bytes /
+1,705-byte maximum line retain SHA-256
+`5bf938d54559d1f80c5aed4d3a72a1ad3ec5792c6991b846beffb35d42739f03`. A 26-line bounded index links
+the stable root, exact capsule, manifest, upstream response, and issue catalog. The JSON manifest pins
+source path, capsule path, digest, all dimensions, sealed date/reason, and verifier.
+
+The closed register is deliberately semantic rather than positional. Each row preserves controlled
+id, status, and direction and links to both its complete historical span and independent closure
+evidence. Future open records must have an owning task-tree leaf and declare `Direction`, `Kind`,
+`Status`, `Owner`, and `Evidence`; detailed designs remain in task/research records and reproducible
+bugs remain in indexed issue bundles. `TOOLBOX.md` now teaches that exact workflow.
+
+The data contract is now `migrated`. Its real check authenticates the capsule regions and record spans,
+all closure evidence and 26 consumers, current-truth evidence, root H1/H2 order/literals/markers/open
+schema/register/bounds, and archive index/manifest. The live-document registry replaces the single
+zero-growth transition record with a normal bounded current channel, a normal bounded archive index,
+and an exact archive terminal. ADR 0011, the feedback fact, continuity ledgers, and both mdBook doctrine
+explanations now describe the landed lifecycle; Rust, product behavior, roadmap direction, and FSMGen
+submodule content are unchanged.
 
 ## `.5d.ii` Atomic Knowledge Map Projection Migration
 
@@ -1282,6 +1312,8 @@ transition debt, not a fabricated freshness claim.
 | `2026-08-08` | `.5e.ii` | staged resulting-tree migration/readers/surface ratchet; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; repository-local mdBook build; `git diff --cached --check`; exact book aggregate | green: doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, book 33 files / 12,126 lines / 726,111 bytes, and staged diff pass; roadmap debt is closed across three governed surfaces and no ceiling-increase authority is requested |
 | `2026-08-08` | `.5f.i` | exact source/region/record SHA-256 and metric census; heading/status/direction parse; response + issue-resolution evidence; consumer grep; Git-blame current-truth audit; Perl syntax; ten-case `--self-test`; real `--check`/`--report`; resulting-tree live-size + mdBook build | green: source 936 lines / 57,980 bytes / `5bf9…9f03`; five regions reconstruct exactly; six closed exchanges and zero open; all response/resolution evidence and 26 consumers resolve; two stale primer claims evidenced; syntax, 10/10 planned/migrated cases, 588 Markdown files / 32 surfaces, 12/12 ADR routes, 139-card catalog, 140 facts / 990 unique questions, and book 33 files / 12,167 lines / 728,963 bytes pass; no feedback record moved |
 | `2026-08-08` | `.5f.i` | staged resulting-tree contract/checker/ADR/fact/readers; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; repository-local mdBook build; `git diff --cached --check` | green: doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, mdBook, and staged diff pass; the feedback source remains byte-untouched transition debt and no ceiling-increase authority is requested |
+| `2026-08-08` | `.5f.ii` | capsule vs commit `abbc7663`; `cmp -s`, dual SHA-256 and exact `wc`; ten-case `--self-test`; migrated real `--check`/`--report`; fact catalog and Knowledge Map derive-and-diff; composed live-size gate; residue census | green: capsule byte-identical at 936 lines / 57,980 bytes / `5bf9…9f03`; current root 81 lines / 5,243 bytes / max 394; index 26 / 1,331 and manifest resolve; five source regions, six closed rows, zero open, all evidence/consumers, current literals, markers/schema/register, 139-card catalog, 140 facts / 990 unique questions, and 590 Markdown files / 34 surfaces pass; no feedback fixture residue |
+| `2026-08-08` | `.5f.ii` | staged resulting-tree capsule/current channel/index/manifest/readers/surface ratchet; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; repository-local mdBook build; `git diff --cached --check`; exact book aggregate | green: doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, book 33 files / 12,173 lines / 729,486 bytes, and staged diff pass; feedback debt is closed across three governed surfaces and no ceiling-increase authority is requested |
 
 ## Commit Log
 
@@ -1308,6 +1340,7 @@ transition debt, not a fabricated freshness claim.
 | `.5e.i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.i — lock the roadmap current/history boundary` | exact source/semantic regions + ADR 0010 + 23-owner/drift/reader/archive/root contract; no roadmap migration |
 | `.5e.ii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.ii — migrate the bounded current roadmap` | exact history capsule + 153-line current root + corrected status + manifest/index + reader/surface ratchet |
 | `.5f.i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.i — lock the bounded FSMGen feedback contract` | exact source/regions + ADR 0011 + six status/direction/evidence records + consumer/archive/root contract; no migration |
+| `.5f.ii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.ii — migrate the bounded FSMGen feedback channel` | exact capsule + 81-line current root + zero-open/six-closed routes + manifest/index + reader/surface ratchet |
 
 ## Changelog
 
@@ -1383,3 +1416,8 @@ transition debt, not a fabricated freshness claim.
   exchanges closed with independent evidence and no open record, root-caused stale `.fsm`/pin claims
   in the legacy primer, accepted ADR 0011, and activated a ten-case source/status/consumer/archive/root
   contract without moving correspondence. `.5f.ii` owns the atomic capsule/current-channel migration.
+- `2026-08-08`: `.5f.ii` sealed the byte-identical feedback source behind a bounded index/manifest,
+  replaced the stable root with an 81-line current channel carrying zero open and six evidence-linked
+  closed exchanges, switched the protocol to migrated enforcement, aligned all semantic readers, and
+  ratcheted one transition record into separately governed current, index, and immutable-history
+  surfaces.

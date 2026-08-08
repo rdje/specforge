@@ -78,12 +78,12 @@ routes, known drift evidence, readers, bounded-current shape, and archive topolo
 153-line current root plus manifest/index retrieval. Nine focused cases reject record/row loss,
 duplication, reordering, chronology leakage, and unsafe paths.
 
-The FSMGen-feedback contract is independently executable. It pins the exact 936-line source, five
-exhaustive regions, six closed directed exchanges and their response/resolution evidence, two stale-
-current findings, 26 consumers, bounded open-record fields, and archive topology. Ten focused cases
-reject source/evidence/heading/path drift and malformed migrated markers/register/manifest state. The
-planned gate freezes the source; the migration will transfer identity to an exact capsule and enforce
-the bounded current channel plus direct archive retrieval.
+The FSMGen-feedback contract is independently executable. It pins the exact 936-line source capsule,
+five exhaustive regions, six closed directed exchanges and their response/resolution evidence, two
+stale-current findings, 26 consumers, bounded open-record fields, and archive topology. Ten focused
+cases reject source/evidence/heading/path drift and malformed migrated markers/register/manifest state.
+The migrated gate authenticates the exact capsule and enforces the 81-line current channel, zero-open
+boundary, six-row closed register, and direct archive retrieval.
 
 The live-document checker is also unconditional. Its JSONL registry is the data-only authority for
 the complete tracked Markdown set, while `LIVE_DOCUMENT_SIZE_CONTAINMENT.md` explains the neutral
