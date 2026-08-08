@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "current_path": "ROADMAP.md",
+  "source_capsule": "docs/archive/roadmap/source-through-2026-08-08.md",
+  "source_sha256": "20a71e88c15133398879fb11620dbb4c3ed20a6b689f2bcea733ef82b2a47d88",
+  "source_metrics": {
+    "lines": 1487,
+    "bytes": 183445,
+    "line_bytes": 717
+  },
+  "sealed_date": "2026-08-08",
+  "reason": "initial bounded current-roadmap migration",
+  "verifier": "perl scripts/check_roadmap_projection_contract.pl --check"
+}

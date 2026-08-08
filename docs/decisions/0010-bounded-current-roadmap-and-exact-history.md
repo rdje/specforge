@@ -48,10 +48,12 @@ another delivery ledger.
 
 ## Consequences
 
-- `.5e.i` changes no roadmap record; it only pins the source and activates the pre-migration contract.
-- `.5e.ii` must copy and verify the exact capsule before replacing `ROADMAP.md`, resolve the four
-  measured stale claims against task-tree/code truth, migrate all readers and surface records in the
-  same commit, and prove direct current/history retrieval.
+- `.5e.i` changed no roadmap record; it pinned the source and activated the pre-migration contract.
+- `.5e.ii` copied and verified the exact capsule before replacing `ROADMAP.md`, resolved the four
+  measured stale claims against task-tree/code truth, migrated readers and surface records in the
+  same slice, and made direct current/history retrieval executable.
+- The landed current root is 153 lines / 12,033 bytes / 205 maximum line bytes, below each derived
+  health target; the capsule remains exactly 1,487 lines / 183,445 bytes / 717 maximum line bytes.
 - `docs/TASK_TREE.md` remains the complete live execution catalog. The roadmap summarizes high-level
   direction and never mirrors leaf/frontier/commit chronology.
 - Future delivery detail belongs in task trees and `CHANGES.md`; material high-level direction or

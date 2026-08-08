@@ -301,8 +301,8 @@ checks the manifest, bounded index, live limits, and exact retained-record suffi
 The adapter also executes `scripts/check_roadmap_projection_contract.pl`: its focused cases and real
 contract pin the exact pre-migration roadmap identity, five exhaustive semantic regions, ordered
 23-workstream/task ownership, drift evidence, consumers, bounded-current structure, and archive
-topology. In planned state it rejects any source change; after migration it switches identity to the
-immutable capsule and verifies the bounded current root plus manifest/index retrieval.
+topology. The migrated contract authenticates the immutable capsule at the pinned identity and
+verifies the bounded current root plus manifest/index retrieval on every run.
 
 Deterministic-oracle doctrines that run via `scripts/run_ci.sh` / CI (`kg-bench` 156/156,
 WIRE-BASED-100 constraint+temporal/relation golds = 1.000, the byte-identical evidence/`.isf` checks,

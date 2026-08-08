@@ -1,4 +1,22 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.ii (`2026-08-08`) — current truth and historical identity are separate products
+
+The semantic rewrite is deliberately not a summary artifact that replaces history. The exact capsule
+still answers every historical question byte-for-byte, including the four stale claims. The root now
+answers only current high-level questions and routes detailed execution to the bounded task catalog.
+That separation lets each product have an honest invariant: immutable source identity for history,
+concise owner-linked status and priorities for current direction.
+
+The current root is 153 lines / 12,033 bytes / 205 maximum line bytes, comfortably below its derived
+256 / 32,768 / 384 health targets. Its 23 rows are structural contract records, not hand-waved coverage:
+the migrated checker requires exact id/order/status/owner paths and rejects duplicates, missing rows,
+historical `done:` blocks, and unsafe archive paths. The archive index is separately bounded; the
+capsule remains an exact terminal at 1,487 lines / 183,445 bytes.
+
+Transition debt is therefore closed rather than re-labelled. The general surface registry governs the
+current root, archive index, and capsule independently, while the roadmap-specific contract verifies
+their semantic and cryptographic relationship on every live-document doctrine run.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.i (`2026-08-08`) — roadmap history is not a heading split
 
 The roadmap looks sectioned, but its semantic boundary is finer than its Markdown hierarchy. Each

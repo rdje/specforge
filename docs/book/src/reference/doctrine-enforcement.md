@@ -72,12 +72,11 @@ Map contract and portable-bundle integration suite. Generated collections must h
 membership, exact derive-and-diff content, bounded repository-local check workspaces, and no stale
 parts or temporary residue.
 
-It also runs the roadmap current/history contract. Before migration, that structural check pins the
-exact 1,487-line source, five exhaustive regions, all 23 workstream ids and owning task routes, known
-drift evidence, readers, bounded-current shape, and archive topology. After migration it switches
-identity authority to the immutable source capsule and verifies current-root bounds plus manifest/
-index retrieval. Nine focused cases reject record/row loss, duplication, reordering, chronology
-leakage, and unsafe paths.
+It also runs the roadmap current/history contract. The structural check authenticates the exact
+1,487-line source capsule, five exhaustive source regions, all 23 workstream ids and owning task
+routes, known drift evidence, readers, bounded-current shape, and archive topology. It verifies the
+153-line current root plus manifest/index retrieval. Nine focused cases reject record/row loss,
+duplication, reordering, chronology leakage, and unsafe paths.
 
 The live-document checker is also unconditional. Its JSONL registry is the data-only authority for
 the complete tracked Markdown set, while `LIVE_DOCUMENT_SIZE_CONTAINMENT.md` explains the neutral

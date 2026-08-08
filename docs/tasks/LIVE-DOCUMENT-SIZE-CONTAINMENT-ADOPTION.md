@@ -236,7 +236,7 @@ verification before correction.
   debt, and prove every question key resolves directly to one canonical fact card.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e`
-  Status: `active`
+  Status: `done` (`2026-08-08`)
   Children: `.5e.i`–`.5e.ii`
   Goal: separate current roadmap direction from accumulated delivery chronology without losing either.
 
@@ -246,7 +246,7 @@ verification before correction.
   design; no roadmap record moves before source identity and current milestone coverage are proved.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.ii`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Goal: execute the approved roadmap migration, add bounded direct history retrieval, ratchet transition
   debt, and align the task catalog plus mdBook without duplicating live execution state.
 
@@ -331,10 +331,10 @@ verification before correction.
 | — | `.5d.i` | `done` (`2026-08-08`) | ADR 0009, executable six-shard feasibility contract, collision correction, reader census, and 55 common fixtures landed without changing output topology. |
 | — | `.5d.ii` | `done` (`2026-08-08`) | Seven-shard output, exact staging/derive-and-diff, raw-byte identity correction, reader migration, and normal-surface ratchet landed. |
 | — | `.5e.i` | `done` (`2026-08-08`) | Exact source/regions, 23-workstream ownership, drift evidence, ADR 0010, readers, archive/root design, and nine-case unconditional gate are locked; no roadmap record moved. |
-| 1 | `.5e.ii` | `pending` | Copy/verify the exact capsule, replace the root with current direction, land retrieval, migrate readers/surfaces, and ratchet debt atomically. |
-| 2 | `.5f.i`–`.5i` | `pending` | Feedback, currentness, maintained references, and closure. |
-| 3 | `.6` | `pending` | Enforce repository-volume project-data locality and audit old project-owned residue. |
-| 5 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
+| — | `.5e.ii` | `done` (`2026-08-08`) | Exact capsule, bounded current root/index, corrected 23-row status, migrated verifier, reader alignment, and three-surface debt ratchet landed atomically. |
+| 1 | `.5f.i`–`.5i` | `pending` | Feedback, currentness, maintained references, and closure. |
+| 2 | `.6` | `pending` | Enforce repository-volume project-data locality and audit old project-owned residue. |
+| 3 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
 ## Decisions
 
@@ -601,6 +601,14 @@ verification before correction.
   (`.5e.i`).** Each R0–R16/R15b–g row links one owning task tree, while `docs/TASK_TREE.md` remains the
   complete execution/status catalog. Delivery bullets and applied-tree chronology are forbidden in
   the bounded root and remain directly retrievable through task, change, and archive routes.
+- `2026-08-08`: **Roadmap containment landed as two independently governed products (`.5e.ii`).**
+  The stable root is 153 lines / 12,033 bytes of current direction and exact owner-linked status. The
+  1,487-line / 183,445-byte pre-containment source remains byte-identical at its pinned SHA-256 in an
+  immutable terminal behind a bounded index/manifest. Neither product substitutes for the other.
+- `2026-08-08`: **Transition debt closes only when semantic and identity proofs compose (`.5e.ii`).**
+  The general surface registry independently governs root, archive index, and capsule; the roadmap
+  contract then proves exact source identity, current row semantics, reader routes, and the relationship
+  among all three on every doctrine run. A smaller root alone would not have closed the leaf.
 
 ## Blockers
 
@@ -673,6 +681,31 @@ missing/duplicate current rows, forbidden chronology, and unsafe paths. It runs 
 This design leaf does not alter `ROADMAP.md`, create the archive, change program direction, or remove
 transition debt. Those changes are one atomic `.5e.ii` slice after the source and reader contracts are
 durable.
+
+## `.5e.ii` Atomic Roadmap Migration
+
+The exact pre-containment source is now sealed at
+`docs/archive/roadmap/source-through-2026-08-08.md`. Direct comparison with commit `cd677aec` proves
+the capsule retains 1,487 lines / 183,445 bytes / 717 maximum line bytes and SHA-256
+`20a71e88c15133398879fb11620dbb4c3ed20a6b689f2bcea733ef82b2a47d88`. The independently bounded
+`docs/archive/roadmap/INDEX.md` links the current root, capsule, and machine-readable identity
+manifest; the manifest names only repository-root-relative paths.
+
+The stable root is 153 lines / 12,033 bytes / 205 maximum line bytes. It retains the original
+objective, canonical pipeline, and cross-cutting doctrine; adds the present strategic priorities;
+contains exactly one status/owner row for R0–R16 and R15b–R15g; gives only forward implementation
+order; and links the task catalog, change/status/pointer surfaces, archive, and Git retrieval. It
+corrects the four `.5e.i` drifts from owning task-tree truth: R6/R7/R14 are done and completed R15 is
+not recommended as future work. No `done:` chronology, applied-tree mirror, or dated progress block
+remains live.
+
+The roadmap projection state is `migrated`. Its nine focused cases still prove malformed-source and
+malformed-current failures, while the real check now authenticates the capsule, reconstructs all five
+source regions, validates all 23 ordered current rows and exact owner routes, rejects forbidden
+chronology, and verifies manifest/index retrieval. The common registry classifies the root as a normal
+bounded snapshot, the index as an independent bounded snapshot, and the capsule as an exact terminal.
+The old 1,487-line transition ceiling is gone; root health is 256 lines / 32,768 bytes / 384 maximum
+line bytes and hard enforcement remains 384 / 49,152 / 512.
 
 ## `.5d.ii` Atomic Knowledge Map Projection Migration
 
@@ -1176,6 +1209,8 @@ transition debt, not a fabricated freshness claim.
 | `2026-08-08` | `.5d.ii` | staged resulting-tree topology/reader/surface ratchet; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; repository-local mdBook build; `git diff --cached --check` | green: 583 Markdown files / 30 surfaces; fact projection 8 files, normal and below health warning; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, exact book aggregate 33 files / 12,089 lines / 723,488 bytes, and staged diff pass; one exact topology authority is consumed by this commit |
 | `2026-08-08` | `.5e.i` | exact source/region SHA-256 and metric census; 23-workstream/status/owner parse; reader/writer grep; task-tree and Git-blame root-cause review; Perl syntax; nine-case `--self-test`; real `--check`/`--report` | green: source 1,487 lines / 183,445 bytes / `20a7…7d88`; five regions reconstruct exactly; 23/23 ordered workstreams and indexed owners; `done:` blocks 722 lines / 129,242 bytes; ten readers + one writer; four stale-current findings evidenced; syntax, 9/9 focused cases, planned identity, limits, paths, and consumers pass; no roadmap record moved |
 | `2026-08-08` | `.5e.i` | staged resulting-tree contract/ADR/fact/readers; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; repository-local mdBook build; `git diff --cached --check`; exact book aggregate | green: 585 Markdown files / 30 surfaces; 11/11 ADR routes; 139 fact cards / 140 generated facts / 985 unique questions; roadmap source remains byte-untouched; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, book 33 files / 12,124 lines / 726,004 bytes, and staged diff pass; prior `.5d.ii` ceiling authority removed and no ceiling authority remains banked |
+| `2026-08-08` | `.5e.ii` | capsule vs commit `cd677aec`; dual SHA-256 and exact `wc`; nine-case `--self-test`; migrated real `--check`/`--report`; fact catalog and Knowledge Map derive-and-diff; book current-truth check; live-size composed gate | green: capsule byte-identical at 1,487 lines / 183,445 bytes / `20a7…7d88`; root 153 lines / 12,033 bytes / max 205; index 20 / 595 / 100; 23/23 rows, five capsule regions, four corrections, manifest/index retrieval, 139-card catalog, 140 facts / 987 unique questions, and 587 files / 32 surfaces pass |
+| `2026-08-08` | `.5e.ii` | staged resulting-tree migration/readers/surface ratchet; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; repository-local mdBook build; `git diff --cached --check`; exact book aggregate | green: doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, book 33 files / 12,126 lines / 726,111 bytes, and staged diff pass; roadmap debt is closed across three governed surfaces and no ceiling-increase authority is requested |
 
 ## Commit Log
 
@@ -1200,6 +1235,7 @@ transition debt, not a fabricated freshness claim.
 | `.5d.i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d.i — lock the bounded Knowledge Map shard contract` | accepted topology + executable feasibility/collision contract + complete reader migration census; no output migration |
 | `.5d.ii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5d.ii — migrate the bounded Knowledge Map projection` | portable landing/shard transaction + exact hook/checker + identity correction + reader/surface ratchet |
 | `.5e.i` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.i — lock the roadmap current/history boundary` | exact source/semantic regions + ADR 0010 + 23-owner/drift/reader/archive/root contract; no roadmap migration |
+| `.5e.ii` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.ii — migrate the bounded current roadmap` | exact history capsule + 153-line current root + corrected status + manifest/index + reader/surface ratchet |
 
 ## Changelog
 
@@ -1267,3 +1303,7 @@ transition debt, not a fabricated freshness claim.
   delivery chronology are interleaved with current scope, root-caused four stale canonical claims,
   accepted ADR 0010, and activated a nine-case source/workstream/owner/reader/archive/root contract
   without moving a roadmap record. `.5e.ii` owns the atomic capsule and bounded-current migration.
+- `2026-08-08`: `.5e.ii` sealed the byte-identical source capsule behind a bounded index/manifest,
+  replaced the stable root with 153 lines of current priorities plus 23 exact owned status rows,
+  corrected four stale claims, switched the contract to migrated identity, updated all changed
+  readers, and ratcheted roadmap transition debt into three independently governed surfaces.

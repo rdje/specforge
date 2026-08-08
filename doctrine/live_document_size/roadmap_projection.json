@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "owner": "LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e",
-  "migration_state": "planned",
+  "migration_state": "migrated",
   "source": {
     "path": "ROADMAP.md",
     "sha256": "20a71e88c15133398879fb11620dbb4c3ed20a6b689f2bcea733ef82b2a47d88",

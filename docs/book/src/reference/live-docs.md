@@ -260,7 +260,7 @@ temporary residue. A ninth contract case guards raw-byte identity after the init
 found hashing scalars consumed by checked UTF-8 decoding. Every bootstrap, CI, bundle, doctrine, and mdBook reader moved in the same slice;
 the generated surface is now normal rather than transition debt.
 
-#### Roadmap boundary locked before migration
+#### Bounded roadmap with exact historical recovery
 
 The roadmap is a different lifecycle problem from a newest-first change ledger. Its 23 H3 workstream
 records mix current goals and remaining scope with delivery chronology inside the same headings. At
@@ -268,25 +268,28 @@ the pinned boundary, `ROADMAP.md` is 1,487 lines / 183,445 bytes; `done:` blocks
 lines / 129,242 bytes. Splitting on headings would therefore keep both roles mixed, while deleting
 the completion blocks in place would make the source impossible to reproduce.
 
-ADR 0010 locks a two-product migration before any roadmap record moves:
+ADR 0010 implements a two-product lifecycle:
 
 - the stable root remains a bounded, human-authored current-direction snapshot;
 - an immutable repository-relative capsule preserves every pre-migration byte;
 - a bounded archive index and manifest make that capsule directly retrievable and hash-verifiable;
 - the task catalog remains the exact execution/status ledger instead of being copied into the root.
 
-The future root keeps the objective, canonical pipeline, implementation doctrine, current strategic
+The 153-line / 12,033-byte root keeps the objective, canonical pipeline, implementation doctrine, current strategic
 priorities, one concise row for each R0–R16/R15b–g workstream, forward order, and direct history/
 execution routes. It rejects `done:` blocks and dated progress chronology. For example, closing one
 task-tree leaf updates that tree and `CHANGES.md`; it changes `ROADMAP.md` only when the high-level
 workstream status, priority, or program direction changes.
 
-The pre-migration gate pins the exact source SHA-256, five exhaustive source regions, all 23
+The exact capsule retains all 1,487 lines / 183,445 bytes at SHA-256
+`20a71e88c15133398879fb11620dbb4c3ed20a6b689f2bcea733ef82b2a47d88`; its bounded
+[archive index](../../../archive/roadmap/INDEX.md) and manifest provide direct retrieval and verification.
+The migrated gate pins that identity, five exhaustive source regions, all 23
 workstream ids and owning task routes, known readers/writer, four stale-current findings, archive
 topology, and independent root limits. Its nine focused cases fail on duplicate, reordered, or
 missing source workstreams; missing or duplicate current rows; forbidden chronology; and unsafe
-paths. The live-document doctrine currently verifies the untouched source. The migration leaf will
-switch the same contract to capsule identity plus bounded-root/index/manifest verification.
+paths. The live-document doctrine verifies capsule identity plus bounded-root/index/manifest
+retrieval on every run.
 
 Lines, bytes, file count, collection totals, and maximum content-line width are independent axes.
 Existing oversized ledgers are explicit transition debt: their measured baseline cannot move, and a
@@ -309,7 +312,7 @@ blockers.
 - `README.md`
   - entry point and high-level navigation
 - `ROADMAP.md`
-  - live sequencing and remaining work
+  - bounded high-level direction and workstream status
 - `LIVE_ACHIEVEMENT_STATUS.md`
   - current status snapshot
 - `VALIDATION_SNAPSHOT.md`

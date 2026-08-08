@@ -1,3 +1,16 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.ii — migrate the roadmap to bounded current direction
+
+- Preserved the exact pre-containment roadmap at
+  `docs/archive/roadmap/source-through-2026-08-08.md`: 1,487 lines / 183,445 bytes / SHA-256
+  `20a71e88c15133398879fb11620dbb4c3ed20a6b689f2bcea733ef82b2a47d88`, with a bounded index and
+  machine-readable identity manifest.
+- Replaced the stable `ROADMAP.md` path with a 153-line / 12,033-byte current view: objective,
+  pipeline, doctrine, strategic priorities, all 23 owner-linked workstream rows, forward-only order,
+  and direct execution/history routes. Corrected stale R6/R7/R14 statuses and the completed R15 order.
+- Switched the roadmap projection contract to migrated identity, ratcheted the root out of transition
+  debt, registered the bounded archive index and immutable capsule, and updated route/doctrine/book/
+  fact readers. The nine-case focused contract and common lifecycle gate verify both products.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.i — lock the roadmap current/history boundary
 
 - Pinned the untouched 1,487-line / 183,445-byte roadmap and five exhaustive semantic regions by

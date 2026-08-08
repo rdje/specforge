@@ -19,13 +19,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5e.ii` — next clean-tree leaf after `.5e.i`
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5f.i` — next clean-tree leaf after `.5e`
   is durable.
-- Current state: `.0`–`.5e.i` are complete. The untouched roadmap source is pinned at 1,487 lines /
-  183,445 bytes with five exact regions, 23 owned workstreams, four stale-current findings, and an
-  unconditional planned-state current/history contract.
-- Next action: commit `.5e.i`, then activate `.5e.ii`; copy/verify the exact roadmap capsule before
-  replacing the root with its bounded current view and landing index/manifest/reader/surface changes.
-- In-flight uncommitted: `.5e.i` contract/checker, ADR/fact, task/live/book synchronization, and
-  generated knowledge indexes until commit; none afterward.
+- Current state: `.0`–`.5e` are complete. `ROADMAP.md` is a 153-line bounded current view; the exact
+  1,487-line source is a verified immutable capsule behind a bounded index/manifest. All 23 current
+  rows and three roadmap lifecycle surfaces are mechanically enforced with no transition debt.
+- Next action: commit `.5e.ii`, then activate `.5f.i`; measure and lock the FSMGen-feedback record
+  grammar, direction/status semantics, consumers, source identity, live window, and archive protocol.
+- In-flight uncommitted: `.5e.ii` roadmap/capsule/manifest, migrated contract, surface/readers, and
+  live/book/task/fact synchronization until commit; none afterward.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

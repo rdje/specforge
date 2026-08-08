@@ -1,5 +1,5 @@
 target	route_kind	owner	lifecycle	pressure_control	terminal
-ROADMAP.md	reader_navigation	roadmap-maintainers	hot_live	transition_debt:LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5	yes
+ROADMAP.md	reader_navigation	roadmap-maintainers	hot_live	scripts/check_live_document_size.sh	yes
 docs/TASK_TREE.md	reader_navigation	task-tree-maintainers	bounded_collection_index	scripts/check_live_document_size.sh	yes
 docs/catalogs/INDEX.md	reader_navigation	documentation-maintainers	bounded_collection_index	scripts/check_live_document_size.sh	yes
 scripts/bootstrap_docling.sh	reader_navigation	runtime-maintainers	executable_reference	review_on_behavior_change	yes
@@ -24,7 +24,7 @@ README_POLICY.md	reader_navigation	entrypoint-maintainers	maintained_standard	sc
 LIVE_DOCUMENT_SIZE_CONTAINMENT.md	reader_navigation	documentation-maintainers	maintained_standard	scripts/check_live_document_size.sh	yes
 https://github.com/rdje/specforge/issues	reader_navigation	specforge-owner	external_service	github_issue_retention_and_query	yes
 docs/book/src/SUMMARY.md	author_overflow	book-maintainers	bounded_collection_index	transition_debt:LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5	yes
-ROADMAP.md	author_overflow	roadmap-maintainers	hot_live	transition_debt:LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5	yes
+ROADMAP.md	author_overflow	roadmap-maintainers	hot_live	scripts/check_live_document_size.sh	yes
 docs/tasks/	author_overflow	task-tree-maintainers	partitioned_collection	scripts/check_live_document_size.sh	yes
 docs/decisions/	author_overflow	decision-maintainers	partitioned_collection	scripts/check_live_document_size.sh	yes
 git:history	author_overflow	specforge-owner	append_only_history	query_with_git_log	yes
