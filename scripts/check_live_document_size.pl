@@ -489,7 +489,8 @@ sub validate_limits {
                 next if $dimension eq 'files' && $metrics->{$dimension} == $targets->{$dimension};
                 next if ($surface->{locator} // '') eq 'file'
                     && ($dimension eq 'lines_total' || $dimension eq 'bytes_total');
-                next if ($surface->{lifecycle} // '') eq 'frozen_legacy';
+                next if ($surface->{lifecycle} // '') eq 'frozen_legacy'
+                    || ($surface->{lifecycle} // '') eq 'archive_terminal';
                 next if ($surface->{state} // '') eq 'transition_debt';
                 if ($percent >= $rollover) {
                     push @warnings, sprintf("surface '%s' %s is at or above rollover (%.1f%%)", $id, $dimension, $percent);

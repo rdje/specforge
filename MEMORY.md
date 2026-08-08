@@ -19,14 +19,15 @@
   run it too. Retrieval: `KNOWLEDGE_MAP.md`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4b` — atomically migrate `CHANGES.md` under
-  the shared lossless rolling-ledger protocol.
-- Current state: `.0`–`.4a` and `.5a` are complete. The fifth doctrine governs all 557 Markdown files
-  across 24 surfaces; its composed ledger checker reconstructs 6,667 records / 6,425,335 source bytes
-  exactly and pins four reviewed live windows plus consumers and archive routes. README remains
-  bounded. No historical record moved in `.4a`; query revision from Git.
-- Next action: freeze the pinned `CHANGES.md` as its immutable source capsule, derive the 87-record
-  stable-root survivor, create the bounded manifest/index, switch its registry state, and prove exact
-  retrieval before removing historical bytes from the root in the same `.4b` commit.
-- In-flight uncommitted: `.4a` protocol/checker/docs until commit; none afterward.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4c` — migrate `DEVELOPMENT_NOTES.md` under
+  the proved lossless rolling-ledger protocol.
+- Current state: `.0`–`.4b` and `.5a` are complete. The fifth doctrine governs 559 Markdown files
+  across 26 surfaces. `CHANGES.md` is a bounded 88-record / 1,368-line current view; its exact
+  1,798-record / 2,629,033-byte source capsule, manifest, index, retrieval, and retained suffix are
+  enforced. The other three ledgers remain measured planned transitions. Query revision from Git.
+- Next action: verify the pinned `DEVELOPMENT_NOTES.md` source, freeze its exact repository-local
+  capsule, derive the 60-record root, extend the bounded manifest/index, switch its two surface
+  classifications, and prove retrieval before committing `.4c`.
+- In-flight uncommitted: `.4b` capsule/current-view migration and synchronized docs until commit;
+  none afterward.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

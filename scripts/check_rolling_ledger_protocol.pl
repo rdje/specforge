@@ -7,6 +7,7 @@ use Digest::SHA qw(sha256_hex);
 use Encode qw(decode_utf8);
 use File::Basename qw(dirname);
 use File::Spec;
+use Fcntl qw(O_CREAT O_EXCL O_WRONLY);
 use JSON::PP;
 
 binmode STDOUT, ':encoding(UTF-8)';
@@ -16,6 +17,8 @@ my $root;
 my $registry_rel = 'doctrine/live_document_size/rolling_ledgers.jsonl';
 my $report = 0;
 my $self_test = 0;
+my $emit_id;
+my $output_rel;
 
 while (@ARGV) {
     my $arg = shift @ARGV;
@@ -27,6 +30,10 @@ while (@ARGV) {
         $report = 1;
     } elsif ($arg eq '--self-test') {
         $self_test = 1;
+    } elsif ($arg eq '--emit-planned') {
+        $emit_id = shift @ARGV // usage();
+    } elsif ($arg eq '--output') {
+        $output_rel = shift @ARGV // usage();
     } else {
         usage();
     }
@@ -42,6 +49,7 @@ exit 0 if $self_test;
 my $json = JSON::PP->new->canonical(1);
 my %valid_grammar = map { $_ => 1 } qw(changes_mixed_v1 h2_records_v1 current_snapshot_bullets_v1);
 my %valid_state = map { $_ => 1 } qw(planned migrated);
+my %emissions;
 
 my ($meta, $ledgers) = read_registry(absolute($registry_rel));
 my %seen;
@@ -55,6 +63,8 @@ for my $ledger (@$ledgers) {
     validate_ledger($ledger, $id);
 }
 
+emit_planned_view() if defined $emit_id && !@errors;
+
 if (@errors) {
     print STDERR "rolling-ledger: $_\n" for @errors;
     print STDERR "rolling-ledger: FAILED with ", scalar(@errors), " violation(s).\n";
@@ -66,7 +76,8 @@ print "rolling-ledger: ", scalar(@$ledgers),
 exit 0;
 
 sub usage {
-    die "Usage: $0 [--root DIR] [--registry PATH] [--report] [--self-test]\n";
+    die "Usage: $0 [--root DIR] [--registry PATH] [--report] [--self-test] "
+        . "[--emit-planned LEDGER_ID --output SOURCE_PATH]\n";
 }
 
 sub absolute {
@@ -232,6 +243,13 @@ sub validate_ledger {
     validate_limits($ledger->{live_limits}, $planned_metrics, $id, 'planned survivor');
     validate_archive_contract($ledger->{archive}, $id, $state, $source, $metrics, $parsed, $grammar);
     validate_consumers($ledger->{consumers}, $id);
+    $emissions{$id} = {
+        bytes => $planned_bytes,
+        source => $source,
+        state => $state,
+        capsule => $capsule,
+        source_sha256 => $ledger->{measurement}{sha256} // '',
+    };
 
     if ($state eq 'migrated') {
         my $live_bytes = slurp(absolute($source), "ledger '$id' live source");
@@ -255,11 +273,46 @@ sub validate_ledger {
             ledger_id => $id,
             migration_state => $state,
             source => { %$metrics, sha256 => sha256_hex($frozen_bytes) },
+            source_first_record_sha256 => sha256_hex($parsed->{records}[0]{bytes}),
+            source_last_record_sha256 => sha256_hex($parsed->{records}[-1]{bytes}),
             planned_live => $planned_metrics,
             archived_records => $metrics->{records} - $planned_metrics->{records},
             first_archived_sha256 => sha256_hex($first_archived->{bytes}),
         }), "\n";
     }
+}
+
+sub emit_planned_view {
+    problem('--emit-planned cannot be combined with --report or --self-test') if $report || $self_test;
+    problem('--emit-planned requires --output') if !defined $output_rel;
+    problem("emit ledger_id '$emit_id' is unknown") if !$emissions{$emit_id};
+    return if @errors;
+    my $emission = $emissions{$emit_id};
+    problem("ledger '$emit_id' cannot emit after migration") if $emission->{state} ne 'planned';
+    problem("ledger '$emit_id' output must be its declared source '$emission->{source}'")
+        if $output_rel ne $emission->{source};
+    problem("ledger '$emit_id' output '$output_rel' is unsafe") if !safe_relative($output_rel);
+    my $capsule = $emission->{capsule};
+    if (!safe_relative($capsule) || !-f absolute($capsule)) {
+        problem("ledger '$emit_id' exact source capsule must exist before live emission");
+    } else {
+        my $capsule_bytes = slurp(absolute($capsule), "ledger '$emit_id' source capsule");
+        problem("ledger '$emit_id' source capsule does not match the pinned source identity")
+            if defined($capsule_bytes) && sha256_hex($capsule_bytes) ne $emission->{source_sha256};
+    }
+    return if @errors;
+
+    my $output = absolute($output_rel);
+    my $temporary = "$output.rolling-ledger-tmp.$$";
+    sysopen my $fh, $temporary, O_WRONLY | O_CREAT | O_EXCL, 0644
+        or die "rolling-ledger: cannot create same-directory temporary '$temporary': $!\n";
+    binmode $fh, ':raw';
+    print {$fh} $emission->{bytes}
+        or die "rolling-ledger: cannot write same-directory temporary '$temporary': $!\n";
+    close $fh or die "rolling-ledger: cannot close same-directory temporary '$temporary': $!\n";
+    rename $temporary, $output
+        or die "rolling-ledger: cannot atomically replace '$output_rel': $!\n";
+    print "rolling-ledger: wrote planned whole-record view for '$emit_id' to '$output_rel'.\n";
 }
 
 sub validate_grammar_contract {

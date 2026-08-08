@@ -26,3 +26,9 @@ every source byte-for-byte and verifies the planned live view. After migration i
 authority to an immutable exact source capsule, verifies its manifest/index, enforces the bounded
 root, and requires the retained migration records to remain an exact suffix behind any newly
 prepended records. The validation writer's root path and managed markers are required literals.
+
+`CHANGES.md` completed the first migration in `.4b`. Its immutable 1,798-record capsule is
+`docs/archive/rolling-ledgers/changes/source-through-2026-08-08.md` with SHA-256
+`d89809322857aab3c506dde1cc6caaf57e22d0349655b37ddaab1f7bf22ba994`; the root is the bounded current
+view and `docs/archive/rolling-ledgers/INDEX.md` is the retrieval route. The other three ledgers remain
+in measured `planned` state until `.4c`–`.4e` migrate them independently.

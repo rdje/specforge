@@ -163,7 +163,7 @@ verification before correction.
   live-window/sealed-segment/archive-descriptor protocol before moving any historical record.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4b`
-  Status: `pending`
+  Status: `done` (`2026-08-08`)
   Goal: migrate `CHANGES.md` at a verified whole-record boundary under the `.4a` protocol.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4c`
@@ -217,8 +217,9 @@ verification before correction.
 | — | `.3c` | `done` (`2026-08-08`) | Forty-eight repository-volume fixtures prove every lifecycle and control-plane failure path; the common `.3` contract is closed. |
 | — | `.5a` | `done` (`2026-08-08`) | Both contradictions are repaired against code and protected by the executed mdBook currency verifier. |
 | — | `.4a` | `done` (`2026-08-08`) | Four real grammars, exact source identities, bounded survivor plans, consumers, and the repository-local source-capsule protocol are executable; no record moved. |
-| 1 | `.4b` | `pending` | Atomically migrate `CHANGES.md`, including the two measured detached compatibility records, under the locked protocol. |
-| 2 | `.4c`–`.4e` / `.5` / `.6` | `pending` / `active` | Independently committable migrations and locality enforcement after the first archive path is proved. |
+| — | `.4b` | `done` (`2026-08-08`) | Exact capsule, manifest/index, 87-record survivor plus first post-capsule entry, surface ratchet, and retrieval proof landed atomically. |
+| 1 | `.4c` | `pending` | Migrate `DEVELOPMENT_NOTES.md` under the now-proved archive path and protocol. |
+| 2 | `.4d`–`.4e` / `.5` / `.6` | `pending` / `active` | Remaining independent ledger/collection/locality slices. |
 | 5 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
 ## Decisions
@@ -347,12 +348,55 @@ verification before correction.
   `validation_projection:start` / `validation_projection:end` markers. Both markers and the root
   path are required consumer literals; the bullet record parser leaves the entire trailer outside
   the rollover region.
+- `2026-08-08`: **`CHANGES.md` is the first migrated ledger (`.4b`).** The exact `.4a` boundary is
+  preserved at `docs/archive/rolling-ledgers/changes/source-through-2026-08-08.md`: 1,798 records,
+  32,682 lines, 2,629,033 bytes, SHA-256
+  `d89809322857aab3c506dde1cc6caaf57e22d0349655b37ddaab1f7bf22ba994`. The root is mechanically
+  derived from 87 capsule records; `.4b` is its first new prepend. No capsule byte was reformatted.
+- `2026-08-08`: **Archive identity and live pressure are independently governed (`.4b`).** The
+  capsule is an `archive_terminal` with exact ceilings and no ordinary pressure warning; the root is
+  a normal `rolling_ledger` at 1,368 lines / 199,851 bytes with a 2,000-line / 262,144-byte / 2,200-
+  max-line ceiling. The rolling checker still reopens and hashes the capsule on every doctrine run.
+- `2026-08-08`: **The width ceiling increase is exact and separately authorized (`.4b`).** Total
+  live line/byte ceilings ratchet down by more than 92%; the legacy 1,629-byte exact quarantine width
+  becomes the `.4a`-reviewed 2,200-byte transaction ceiling. The data-only ceiling-authority record
+  names `.4b`, the complete old/new vectors, rationale, and owner; it cannot be reused or banked.
+- `2026-08-08`: **Planned status identity advances only by a measured leading record (`.4b`).** The
+  new current-status bullet changed the future `.4d` source, so its exact measurement and 50-record
+  survivor were re-derived in the same commit: 1,919 source records / 580,272 bytes and an 88,146-byte
+  planned view. This is the `.4a` exception for a legitimate pre-freeze prepend, not baseline drift.
 
 ## Blockers
 
 - None for `.0`–`.3`.
 - Later migrations may stop for an authority conflict, unique unclassified content, or an unprovable
   retrieval promise, exactly as required by the adopted doctrine.
+
+## `.4b` `CHANGES.md` Atomic Migration
+
+The migration followed copy/verify/use without relying on the disappearing root as its backup:
+
+1. `CHANGES.md` still matched `.4a`'s pinned SHA-256 and dimensions.
+2. A same-volume exact copy was created at the declared capsule path; `cmp`, SHA-256, lines, and bytes
+   matched before any root rewrite.
+3. The guarded emitter refused to operate without that capsule, then atomically replaced the root
+   from the parsed 85-record prefix plus the exact `.1`/`.0` promoted records.
+4. The root prepended `.4b` as the first post-capsule record and remained within every live limit.
+5. The bounded manifest and index recorded complete-source identity and current/history retrieval.
+6. The rolling registry switched only `changes` to `migrated`; the general surface registry removed
+   its transition debt and added exact index/archive classifications.
+
+| Product | Records | Lines | Bytes | Max content line | Identity / role |
+| --- | ---: | ---: | ---: | ---: | --- |
+| pre-migration source capsule | 1,798 | 32,682 | 2,629,033 | 1,629 | immutable SHA-256 `d898…a994`; complete source |
+| retained capsule suffix in root | 87 | 1,357 | 199,055 | 1,629 | newest 85 + exact `.1`/`.0` compatibility records |
+| final root including `.4b` | 88 | 1,368 | 199,851 | 1,629 | bounded current view; first post-capsule prepend |
+| records outside current view | 1,711 | — | — | — | retrieved from capsule/index; not copied into root |
+
+The 87 capsule records intentionally overlap the exact source capsule. The manifest describes that
+overlap; semantic closure and complete-source identity are therefore not misreported as disjoint
+storage arithmetic. The archive index is 21 lines / 1,048 bytes and directly links the root and
+capsule. `perl scripts/check_rolling_ledger_protocol.pl --report` verifies the full retrieval path.
 
 ## `.4a` Rolling-Ledger Census And Protocol
 
@@ -507,6 +551,8 @@ transition debt, not a fabricated freshness claim.
 | `2026-08-08` | `.5a` | staged resulting-tree checker; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | green: 555 Markdown files / 24 surfaces; book currency executes; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; staged diff clean |
 | `2026-08-08` | `.4a` | Git-blame/order root cause; grammar/consumer census; `perl -c scripts/check_rolling_ledger_protocol.pl`; `perl scripts/check_rolling_ledger_protocol.pl --self-test`; real four-ledger `--report` | 6,667 records / 64,600 lines / 6,425,335 bytes reconstruct exactly; ten parser/control cases pass; all four planned survivors start below every 80% warning; status writer path/markers present; no record moved |
 | `2026-08-08` | `.4a` | staged resulting-tree `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | green: 557 Markdown files / 24 surfaces; rolling-ledger checker runs unconditionally; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; staged diff clean |
+| `2026-08-08` | `.4b` | exact pre-copy `--report`; `cp -p` to declared same-volume capsule; `cmp -s`; dual SHA-256 and `wc`; guarded `--emit-planned changes`; migrated `--report` | capsule and source identical at 1,798 records / 32,682 lines / 2,629,033 bytes / `d898…a994`; root mechanically 87 records before `.4b`, then 88; manifest/index/capsule identity and exact retained suffix pass |
+| `2026-08-08` | `.4b` | capsule vs `git show 73424daf:CHANGES.md`; staged resulting-tree `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | byte-identical capsule; green: 559 Markdown files / 26 surfaces; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; staged diff clean |
 
 ## Commit Log
 
@@ -520,6 +566,7 @@ transition debt, not a fabricated freshness claim.
 | `.3c` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3c — prove every lifecycle and control path` | same-volume 48-case fixture gate + closed registry/route control planes |
 | `.5a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5a — lock current mdBook truth to code` | two drift repairs + executed maintained-reference currency verifier |
 | `.4a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4a — lock the lossless rolling-ledger protocol` | exact grammars + source identities + bounded survivor/archive/consumer contract; no migration |
+| `.4b` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4b — migrate CHANGES losslessly` | exact capsule + bounded root + manifest/index + surface debt ratchet |
 
 ## Changelog
 
@@ -548,3 +595,6 @@ transition debt, not a fabricated freshness claim.
 - `2026-08-08`: `.4a` pinned four grammar-specific source identities and reviewed survivors, recorded
   the `CHANGES.md` detached-record root cause, adopted ADR 0008, and added the bounded JSONL plan plus
   unconditional reconstruction/consumer/archive-protocol checker. No historical record moved.
+- `2026-08-08`: `.4b` copied and verified the exact `CHANGES.md` source capsule before mechanically
+  deriving the bounded root, landed its manifest/index and archive classification, ratcheted the live
+  surface out of transition debt, and proved retrieval plus exact retained-record identity.
