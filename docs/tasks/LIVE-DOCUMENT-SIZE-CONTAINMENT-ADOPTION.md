@@ -126,7 +126,7 @@ verification before correction.
   license, and support/contribution routes.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3`
-  Status: `active`
+  Status: `done` (`2026-08-08`)
   Children: `.3a`–`.3c`
   Goal: adopt `LIVE_DOCUMENT_SIZE_CONTAINMENT.md`; add the local registry and deterministic checker;
   classify the complete Markdown and route graph; register the check with doctrine enforcement; record
@@ -145,7 +145,7 @@ verification before correction.
   it into the doctrine driver so the prose rule is never active without its gate.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3c`
-  Status: `in_progress`
+  Status: `done` (`2026-08-08`)
   Goal: exercise positive and fail-closed checker paths for every lifecycle/control class, close the
   README route registry against the complete surface registry, update contributor/book guidance,
   and verify the full `.3` acceptance contract before migration begins.
@@ -158,14 +158,14 @@ verification before correction.
   coverage, retrieval, indexes, and no residue before any live duplicate is removed.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5`
-  Status: `pending`
+  Status: `active`
   Goal: classify and contain collections/projections: task trees + bounded index, decision/fact stores,
   generated `KNOWLEDGE_MAP.md`, roadmap, research ledgers, and the mdBook maintained reference. Semantic
   partitioning and complete direct navigation are required; aggregate product-scope change must carry
   exact fresh authority rather than a decorative cap.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5a`
-  Status: `pending`
+  Status: `in_progress`
   Goal: root-cause and correct the two verified mdBook current-state contradictions found during ramp-up,
   then add focused drift locks or canonical pointers so historical program narrative cannot override
   current implementation behavior.
@@ -191,8 +191,9 @@ verification before correction.
 | — | `.2` | `done` (`2026-08-08`) | The retained landing page, local policy, route registry, and unconditional doctrine guard are live. |
 | — | `.3a` | `done` (`2026-08-08`) | Complete 550-file inventory, lifecycle mapping, schema, ceiling, and checker contracts are locked. |
 | — | `.3b` | `done` (`2026-08-08`) | Doctrine, ADR, 24-surface registry, resulting-tree checker, and fifth driver entry are active atomically. |
-| 1 | `.3c` | `in_progress` | Prove every lifecycle path fails closed and close route/surface integration. |
-| 4 | `.4` / `.5` / `.6` | `pending` | Independently committable migrations and locality enforcement after the common contract exists. |
+| — | `.3c` | `done` (`2026-08-08`) | Forty-eight repository-volume fixtures prove every lifecycle and control-plane failure path; the common `.3` contract is closed. |
+| 1 | `.5a` | `in_progress` | Repair the two measured mdBook current-state contradictions before restructuring its neighboring live collections. |
+| 2 | `.4` / `.5` / `.6` | `pending` / `active` | Independently committable migrations and locality enforcement after the common contract exists. |
 | 5 | `.7` | `pending` | Close only after every transition and retrieval/locality proof passes. |
 
 ## Decisions
@@ -279,6 +280,19 @@ verification before correction.
   derive-and-diff check is executed. Validation snapshot, source registry, and corpus-KB currency are
   labelled owned transition debt until `.5` supplies non-mutating currentness oracles; presence alone
   is not called freshness.
+- `2026-08-08`: **The registry schema is closed and bounded below the raw-record layer (`.3c`).**
+  Fixture design exposed that `.3b` bounded record count, total bytes, and record bytes but did not
+  yet reject unknown keys or independently cap array cardinality and scalar bytes. Both JSONL
+  metadata records now declare those local limits; schema version, field sets, identifiers, locators,
+  arrays, scalars, and ceiling-authority records all fail closed.
+- `2026-08-08`: **Proof fixtures are same-volume and unconditional (`.3c`).** The 48-case suite creates
+  disposable workspaces only under `generated/`, exercises all seven locally governed lifecycle
+  classes plus membership/query, currency, route, every size dimension, immutable baseline, and
+  ceiling-history paths, and is invoked in quiet mode by `LIVE-DOC-SIZE` on every doctrine run.
+- `2026-08-08`: **The README route registry is independently self-bounded (`.3c`).** Its reviewed
+  31-record/3,837-byte survivor has a 146-byte widest raw record. Local ceilings are 40 records,
+  5,000 total bytes, and 192 raw bytes per record; the README guard's self-test proves each boundary
+  rejects independently.
 
 ## Blockers
 
@@ -376,6 +390,8 @@ transition debt, not a fabricated freshness claim.
 | `2026-08-08` | `.3a` | lifecycle/route/storage topology review against the fully read neutral doctrine and adoption guide; `perl -MJSON::PP` availability probe; Knowledge Map regeneration; `bash scripts/check_doctrines.sh`; `bash scripts/run_docs_ci.sh`; `git diff --check` | local JSONL schema/checker contract locked; core parser available; map 130 facts/950 question keys; active doctrine unchanged pending atomic `.3b`; doctrines 4/4, docs, and diff green |
 | `2026-08-08` | `.3b` | neutral-body `diff -u` against reviewed doctrine; `perl -c scripts/check_live_document_size.pl`; `bash -n scripts/check_live_document_size.sh`; complete checker `--report`; final `bash scripts/check_live_document_size.sh` | neutral body byte-equivalent after local note; 553 Markdown files classified exactly once across 24 surfaces; no off-root target, overlap, missing path, size-ceiling, lifecycle, index, route, freshness, frozen-hash, debt, reference-authority, or increase-authority violation |
 | `2026-08-08` | `.3b` | Knowledge Map regeneration; `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --check`; registry/authority raw-size census | green: map 131 facts/954 question keys; doctrines 5/5 including `LIVE-DOC-SIZE`; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; diff clean; both JSONL registries remain within their own record/file ceilings |
+| `2026-08-08` | `.3c` | `perl -c scripts/check_live_document_size.pl scripts/test_live_document_size.pl`; direct 48-case fixture suite; `bash -n scripts/check_readme_policy.sh scripts/check_live_document_size.sh`; composed `bash scripts/check_live_document_size.sh` | green: positive and fail-closed paths cover all seven lifecycles, both index contracts, canonical inputs, generated/currency execution, archive manifests, frozen/reference/debt controls, registry schema/count/file/record/array/scalar bounds, exact coverage, locality, all six size dimensions, routes, and Git-history ceiling/baseline/maintained-reference authority; every workspace is under repository-local `generated/` and cleans itself |
+| `2026-08-08` | `.3c` | staged resulting-tree `bash scripts/check_doctrines.sh`; `bash scripts/run_ci.sh`; `git diff --cached --check` | green: 554 Markdown files across 24 surfaces; 48/48 fixtures; doctrines 5/5; formatting, Clippy with warnings denied, 1,724 Rust tests (5 ignored), rustdoc, and repository-local mdBook build all pass; staged diff clean |
 
 ## Commit Log
 
@@ -386,6 +402,7 @@ transition debt, not a fabricated freshness claim.
 | `.2` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.2 — bound the README and close its routes` | project-owned policy + retained landing page + unconditional doctrine guard |
 | `.3a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3a — lock the complete surface contract` | full tracked-Markdown census + local lifecycle/schema/checker design; no active doctrine change |
 | `.3b` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3b — activate complete live-document enforcement` | neutral doctrine + ADR + 24-surface registry + checker + fifth driver entry |
+| `.3c` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3c — prove every lifecycle and control path` | same-volume 48-case fixture gate + closed registry/route control planes |
 
 ## Changelog
 
@@ -405,3 +422,6 @@ transition debt, not a fabricated freshness claim.
 - `2026-08-08`: `.3b` atomically activated the project-owned neutral doctrine, ADR 0007, complete
   24-surface JSONL data plane, deterministic checker, route composition, and `LIVE-DOC-SIZE` driver
   entry; it also repaired nested research coverage and the missing genericity-ADR index entry.
+- `2026-08-08`: `.3c` closed the common enforcement program with a 48-case, repository-volume
+  lifecycle/control-plane fixture gate, explicit array/scalar/schema closure, self-bounded README
+  route data, and unconditional execution from the fifth doctrine adapter.

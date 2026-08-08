@@ -23,6 +23,11 @@ classifies every parent-tracked Markdown path exactly once, and the `LIVE-DOC-SI
 re-derives the resulting-tree metrics on every commit and CI run. The pinned FSMGen submodule is a
 separate Git authority and is not swept into SpecForge's registry.
 
+The control plane is bounded too: schema version, allowed fields, record count, registry and record
+bytes, array cardinality, and scalar bytes all fail closed. A 48-case fixture suite exercises every
+local lifecycle plus index, freshness, currency, routing, transition-baseline, and ceiling-history
+paths. Its disposable workspaces live only under repository-local `generated/`.
+
 Until each migration leaf lands, the existing root documents remain the
 authoritative surfaces described below. No historical content is removed before
 its identity, replacement route, consumers, and retrieval procedure are proved.

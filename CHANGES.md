@@ -1,3 +1,14 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3c — lifecycle and control-plane proofs closed
+
+- Added a 48-case fixture suite for all seven governed Markdown lifecycles, membership/query,
+  freshness/currency execution, routes, exact coverage, locality, every independent size dimension,
+  frozen/archive/reference/debt controls, and Git-history ceiling/baseline authority.
+- Closed the JSONL schema below the raw-record layer: schema versions, allowed fields, identifier and
+  locator domains, array cardinality, and scalar byte limits now fail closed. README route data also
+  has independent record-count, total-byte, and record-byte bounds.
+- Fixtures live only under repository-local `generated/`, remove themselves, and run unconditionally
+  in quiet mode through `LIVE-DOC-SIZE`. The direct suite passes 48/48.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3b — complete enforcement activated
 
 - Adopted the SpecForge-owned neutral live-document containment doctrine and ADR 0007 without an

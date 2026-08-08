@@ -8,11 +8,23 @@ POLICY="$ROOT/README_POLICY.md"
 ROUTES="$ROOT/doctrine/readme_entrypoint/routed_destinations.tsv"
 LINE_CAP=150
 BYTE_CAP=5800
+ROUTE_RECORD_CAP=40
+ROUTE_BYTE_CAP=5000
+ROUTE_RECORD_BYTE_CAP=192
 
 within_limits() {
   local lines="$1"
   local bytes="$2"
   [ "$lines" -le "$LINE_CAP" ] && [ "$bytes" -le "$BYTE_CAP" ]
+}
+
+route_registry_within_limits() {
+  local records="$1"
+  local bytes="$2"
+  local record_bytes="$3"
+  [ "$records" -le "$ROUTE_RECORD_CAP" ] &&
+    [ "$bytes" -le "$ROUTE_BYTE_CAP" ] &&
+    [ "$record_bytes" -le "$ROUTE_RECORD_BYTE_CAP" ]
 }
 
 target_shape_is_allowed() {
@@ -53,6 +65,22 @@ if [ "${1:-}" = "--self-test" ]; then
   fi
   if within_limits "$LINE_CAP" "$((BYTE_CAP + 1))"; then
     printf 'readme-policy self-test: byte ceiling did not fail closed\n' >&2
+    exit 1
+  fi
+  route_registry_within_limits "$ROUTE_RECORD_CAP" "$ROUTE_BYTE_CAP" "$ROUTE_RECORD_BYTE_CAP" || {
+    printf 'readme-policy self-test: exact route-registry ceilings must pass\n' >&2
+    exit 1
+  }
+  if route_registry_within_limits "$((ROUTE_RECORD_CAP + 1))" "$ROUTE_BYTE_CAP" "$ROUTE_RECORD_BYTE_CAP"; then
+    printf 'readme-policy self-test: route-record ceiling did not fail closed\n' >&2
+    exit 1
+  fi
+  if route_registry_within_limits "$ROUTE_RECORD_CAP" "$((ROUTE_BYTE_CAP + 1))" "$ROUTE_RECORD_BYTE_CAP"; then
+    printf 'readme-policy self-test: route-registry byte ceiling did not fail closed\n' >&2
+    exit 1
+  fi
+  if route_registry_within_limits "$ROUTE_RECORD_CAP" "$ROUTE_BYTE_CAP" "$((ROUTE_RECORD_BYTE_CAP + 1))"; then
+    printf 'readme-policy self-test: route-record byte ceiling did not fail closed\n' >&2
     exit 1
   fi
   target_shape_is_allowed 'README.md' || {
@@ -107,6 +135,12 @@ if [ ! -f "$ROUTES" ]; then
 else
   header="$(sed -n '1p' "$ROUTES")"
   [ "$header" = "$expected_header" ] || problem 'the README route registry header does not match its six-column schema.'
+  route_records="$(awk 'END { print (NR > 0 ? NR - 1 : 0) }' "$ROUTES")"
+  route_bytes="$(wc -c < "$ROUTES" | tr -d ' ')"
+  route_record_bytes="$(LC_ALL=C awk '{ sub(/\r$/, ""); if (length($0) > maximum) maximum=length($0) } END { print maximum + 0 }' "$ROUTES")"
+  [ "$route_records" -le "$ROUTE_RECORD_CAP" ] || problem "the README route registry has ${route_records} records; the reviewed ceiling is ${ROUTE_RECORD_CAP}."
+  [ "$route_bytes" -le "$ROUTE_BYTE_CAP" ] || problem "the README route registry has ${route_bytes} bytes; the reviewed ceiling is ${ROUTE_BYTE_CAP}."
+  [ "$route_record_bytes" -le "$ROUTE_RECORD_BYTE_CAP" ] || problem "the README route registry has a ${route_record_bytes}-byte raw record; the reviewed ceiling is ${ROUTE_RECORD_BYTE_CAP}."
 
   seen_keys=''
   route_count=0

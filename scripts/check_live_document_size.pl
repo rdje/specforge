@@ -4,6 +4,7 @@ use warnings;
 
 use Cwd qw(abs_path);
 use Digest::SHA qw(sha256_hex);
+use Encode qw(encode_utf8);
 use File::Basename qw(dirname);
 use File::Find qw(find);
 use File::Spec;
@@ -47,6 +48,7 @@ my %valid_lifecycle = map { $_ => 1 } qw(
   archive_terminal frozen_legacy maintained_reference
 );
 my %valid_state = map { $_ => 1 } qw(normal warning_debt rollover_debt transition_debt frozen terminal);
+my %valid_locator = map { $_ => 1 } qw(file collection);
 
 my ($registry_meta, $surfaces) = read_jsonl_registry(
     absolute($registry_rel),
@@ -63,6 +65,14 @@ my ($authority_meta, $authorities) = read_jsonl_registry(
     8_192,
 );
 
+validate_surface_schema($_) for @$surfaces;
+validate_authority_schema($_) for @$authorities;
+my %authority_surface_seen;
+for my $authority (@$authorities) {
+    my $id = $authority->{surface_id} // next;
+    problem("duplicate ceiling authority for surface '$id'") if $authority_surface_seen{$id}++;
+}
+
 my @paths = markdown_paths();
 my %path_seen = map { $_ => 1 } @paths;
 my %surface_by_id;
@@ -71,6 +81,8 @@ my %matches_by_surface;
 for my $surface (@$surfaces) {
     my $id = required_scalar($surface, 'surface_id', 'surface record');
     next if !defined $id;
+    problem("surface_id '$id' has an invalid identifier shape")
+        if $id !~ /\A[a-z0-9][a-z0-9._-]*\z/;
     if ($surface_by_id{$id}) {
         problem("duplicate surface_id '$id'");
         next;
@@ -83,7 +95,9 @@ for my $surface (@$surfaces) {
     problem("surface '$id' has unknown state '$state'")
         if defined($state) && !$valid_state{$state};
     required_scalar($surface, 'owner', "surface '$id'");
-    required_scalar($surface, 'locator', "surface '$id'");
+    my $locator = required_scalar($surface, 'locator', "surface '$id'");
+    problem("surface '$id' has unknown locator '$locator'")
+        if defined($locator) && !$valid_locator{$locator};
 
     my $targets = $surface->{targets};
     if (ref($targets) ne 'ARRAY' || !@$targets) {
@@ -202,9 +216,20 @@ sub read_jsonl_registry {
     my $meta = shift @records;
     problem("$label first record must have record_type=registry")
         if ($meta->{record_type} // '') ne 'registry';
-    for my $field (qw(schema_version max_records max_bytes max_record_bytes)) {
+    reject_unknown_fields(
+        $meta,
+        "$label registry record",
+        qw(record_type schema_version max_records max_bytes max_record_bytes max_array_items max_scalar_bytes),
+    );
+    for my $field (qw(schema_version max_records max_bytes max_record_bytes max_array_items max_scalar_bytes)) {
         problem("$label registry record lacks numeric '$field'")
             if !defined($meta->{$field}) || ref($meta->{$field}) || $meta->{$field} !~ /^\d+$/;
+    }
+    problem("$label schema_version must be 1")
+        if defined($meta->{schema_version}) && $meta->{schema_version} != 1;
+    for my $field (qw(max_records max_bytes max_record_bytes max_array_items max_scalar_bytes)) {
+        problem("$label registry '$field' must be positive")
+            if defined($meta->{$field}) && $meta->{$field} == 0;
     }
     if (defined $meta->{max_records}) {
         problem("$label declares max_records above portable hard cap") if $meta->{max_records} > $hard_records;
@@ -222,7 +247,101 @@ sub read_jsonl_registry {
                 if $length > $meta->{max_record_bytes};
         }
     }
+    if (defined $meta->{max_array_items}) {
+        problem("$label declares max_array_items above portable hard cap")
+            if $meta->{max_array_items} > 64;
+    }
+    if (defined $meta->{max_scalar_bytes}) {
+        problem("$label declares max_scalar_bytes above portable hard cap")
+            if $meta->{max_scalar_bytes} > 1_024;
+    }
+    if (defined($meta->{max_array_items}) && defined($meta->{max_scalar_bytes})) {
+        validate_value_bounds(
+            $_,
+            "$label data record",
+            $meta->{max_array_items},
+            $meta->{max_scalar_bytes},
+        ) for @records;
+    }
     return ($meta, \@records);
+}
+
+sub validate_value_bounds {
+    my ($value, $label, $max_array_items, $max_scalar_bytes) = @_;
+    if (ref($value) eq 'HASH') {
+        validate_value_bounds($value->{$_}, "$label.$_", $max_array_items, $max_scalar_bytes)
+            for sort keys %$value;
+    } elsif (ref($value) eq 'ARRAY') {
+        problem("$label has more than $max_array_items array items") if @$value > $max_array_items;
+        for my $index (0 .. $#$value) {
+            validate_value_bounds($value->[$index], "$label\[$index\]", $max_array_items, $max_scalar_bytes);
+        }
+    } elsif (ref($value)) {
+        problem("$label has an unsupported value type");
+    } elsif (defined($value) && length(encode_utf8("$value")) > $max_scalar_bytes) {
+        problem("$label exceeds the declared scalar byte limit $max_scalar_bytes");
+    }
+}
+
+sub reject_unknown_fields {
+    my ($object, $label, @allowed) = @_;
+    return if ref($object) ne 'HASH';
+    my %allowed = map { $_ => 1 } @allowed;
+    problem("$label has unknown field '$_'") for grep { !$allowed{$_} } sort keys %$object;
+}
+
+sub validate_surface_schema {
+    my ($surface) = @_;
+    my $id = defined($surface->{surface_id}) && !ref($surface->{surface_id})
+        ? $surface->{surface_id}
+        : '<unknown>';
+    reject_unknown_fields(
+        $surface,
+        "surface '$id'",
+        qw(surface_id targets locator lifecycle state owner health_targets enforcement_ceilings milestones verifier baseline transition currency index index_contract freshness_verifier canonical_inputs sha256 reference_contract archive_manifest),
+    );
+    reject_unknown_fields($surface->{health_targets}, "surface '$id' health_targets", @dimensions);
+    reject_unknown_fields($surface->{enforcement_ceilings}, "surface '$id' enforcement_ceilings", @dimensions);
+    reject_unknown_fields($surface->{baseline}, "surface '$id' baseline", @dimensions)
+        if exists $surface->{baseline};
+    reject_unknown_fields($surface->{milestones}, "surface '$id' milestones", qw(warning_pct rollover_pct));
+    if (exists $surface->{transition}) {
+        reject_unknown_fields($surface->{transition}, "surface '$id' transition", qw(owner max_growth));
+        reject_unknown_fields($surface->{transition}{max_growth}, "surface '$id' transition.max_growth", @dimensions)
+            if ref($surface->{transition}) eq 'HASH';
+    }
+    reject_unknown_fields($surface->{currency}, "surface '$id' currency", qw(status owner verifier))
+        if exists $surface->{currency};
+    reject_unknown_fields($surface->{index_contract}, "surface '$id' index_contract", qw(kind verifier))
+        if exists $surface->{index_contract};
+    if (exists $surface->{reference_contract}) {
+        my $contract = $surface->{reference_contract};
+        reject_unknown_fields($contract, "surface '$id' reference_contract", qw(mandatory_read max_navigation_depth aggregate_change));
+        if (ref($contract) eq 'HASH') {
+            reject_unknown_fields($contract->{mandatory_read}, "surface '$id' mandatory_read", qw(path lines_ceiling bytes_ceiling));
+            my $aggregate = $contract->{aggregate_change};
+            reject_unknown_fields($aggregate, "surface '$id' aggregate_change", qw(authority_id owner baseline delta rationale));
+            if (ref($aggregate) eq 'HASH') {
+                reject_unknown_fields($aggregate->{baseline}, "surface '$id' aggregate baseline", qw(files lines_total bytes_total));
+                reject_unknown_fields($aggregate->{delta}, "surface '$id' aggregate delta", qw(files lines_total bytes_total));
+            }
+        }
+    }
+}
+
+sub validate_authority_schema {
+    my ($authority) = @_;
+    my $id = defined($authority->{surface_id}) && !ref($authority->{surface_id})
+        ? $authority->{surface_id}
+        : '<unknown>';
+    reject_unknown_fields($authority, "ceiling authority '$id'", qw(record_type surface_id work_unit owner rationale old new));
+    problem("ceiling authority '$id' must have record_type=increase")
+        if ($authority->{record_type} // '') ne 'increase';
+    required_scalar($authority, $_, "ceiling authority '$id'") for qw(surface_id work_unit owner rationale);
+    reject_unknown_fields($authority->{old}, "ceiling authority '$id' old", @dimensions);
+    reject_unknown_fields($authority->{new}, "ceiling authority '$id' new", @dimensions);
+    numeric_dimensions($authority->{old}, "ceiling authority '$id' old", 0);
+    numeric_dimensions($authority->{new}, "ceiling authority '$id' new", 0);
 }
 
 sub markdown_paths {
@@ -411,6 +530,15 @@ sub validate_lifecycle {
         validate_index($surface, $paths, $id);
     } elsif ($lifecycle eq 'generated_projection') {
         problem("surface '$id' generated_projection must contain exactly one file") if @$paths != 1;
+        my $inputs = $surface->{canonical_inputs};
+        if (ref($inputs) ne 'ARRAY' || !@$inputs) {
+            problem("surface '$id' generated_projection must name canonical_inputs");
+        } else {
+            for my $input (@$inputs) {
+                problem("surface '$id' has an invalid canonical input")
+                    if !defined($input) || ref($input) || $input eq '' || !safe_relative_pattern($input);
+            }
+        }
         my $verifier = required_scalar($surface, 'freshness_verifier', "surface '$id'");
         if (defined $verifier) {
             if (!safe_relative_pattern($verifier) || $verifier =~ /[*?]/) {
@@ -494,7 +622,13 @@ sub validate_lifecycle {
     } elsif ($lifecycle eq 'archive_terminal') {
         problem("surface '$id' archive terminal must have state=terminal")
             if ($surface->{state} // '') ne 'terminal';
-        required_scalar($surface, 'archive_manifest', "surface '$id'");
+        my $manifest = required_scalar($surface, 'archive_manifest', "surface '$id'");
+        if (defined($manifest)) {
+            problem("surface '$id' archive manifest must be one repository-relative file")
+                if !safe_relative_pattern($manifest) || $manifest =~ /[*?]/;
+            problem("surface '$id' archive manifest '$manifest' is missing")
+                if safe_relative_pattern($manifest) && $manifest !~ /[*?]/ && !-f absolute($manifest);
+        }
     }
     validate_currency($surface, $id, $executed) if exists $surface->{currency};
 }
@@ -535,14 +669,19 @@ sub validate_index {
         return;
     }
     my $kind = $contract->{kind} // '';
+    my $verifier = required_scalar($contract, 'verifier', "surface '$id' index_contract");
     if ($kind eq 'query') {
         problem("surface '$id' query index must be git:query") if ($index // '') ne 'git:query';
+        problem("surface '$id' query index verifier must be builtin:registry_targets")
+            if defined($verifier) && $verifier ne 'builtin:registry_targets';
         return;
     }
     if ($kind ne 'membership') {
         problem("surface '$id' has unknown index kind '$kind'");
         return;
     }
+    problem("surface '$id' membership index verifier must be builtin:markdown_links")
+        if defined($verifier) && $verifier ne 'builtin:markdown_links';
     return if !defined $index;
     problem("surface '$id' membership index '$index' is outside the surface")
         if !grep { $_ eq $index } @$paths;
@@ -624,6 +763,7 @@ sub validate_ceiling_history {
     }
     my %previous = map { ($_->{surface_id} // '') => $_ } @previous_records;
     my %authority_for = map { ($_->{surface_id} // '') => $_ } grep { ($_->{record_type} // '') eq 'increase' } @$authorities;
+    my %used_authority;
     for my $current (@$current_surfaces) {
         my $id = $current->{surface_id} // next;
         my $old = $previous{$id} // next;
@@ -631,6 +771,21 @@ sub validate_ceiling_history {
             my $old_baseline = $json->encode($old->{baseline} // {});
             my $new_baseline = $json->encode($current->{baseline} // {});
             problem("surface '$id' moved its immutable transition baseline") if $old_baseline ne $new_baseline;
+        }
+        if (($old->{lifecycle} // '') eq 'maintained_reference'
+            && ($current->{lifecycle} // '') eq 'maintained_reference') {
+            my $old_change = $old->{reference_contract}{aggregate_change} // {};
+            my $new_change = $current->{reference_contract}{aggregate_change} // {};
+            my $aggregate_changed = 0;
+            for my $dimension (qw(files lines_total bytes_total)) {
+                my $old_expected = ($old_change->{baseline}{$dimension} // 0) + ($old_change->{delta}{$dimension} // 0);
+                my $new_expected = ($new_change->{baseline}{$dimension} // 0) + ($new_change->{delta}{$dimension} // 0);
+                $aggregate_changed = 1 if $old_expected != $new_expected;
+            }
+            if ($aggregate_changed
+                && ($old_change->{authority_id} // '') eq ($new_change->{authority_id} // '')) {
+                problem("surface '$id' reused maintained-reference authority across aggregate change");
+            }
         }
         my @increased;
         for my $dimension (@dimensions) {
@@ -641,6 +796,7 @@ sub validate_ceiling_history {
         }
         next if !@increased;
         my $authority = $authority_for{$id};
+        $used_authority{$id} = 1 if $authority;
         if (!$authority
             || $json->encode($authority->{old} // {}) ne $json->encode($old->{enforcement_ceilings} // {})
             || $json->encode($authority->{new} // {}) ne $json->encode($current->{enforcement_ceilings} // {})
@@ -650,9 +806,15 @@ sub validate_ceiling_history {
             problem("surface '$id' increased ceiling dimensions without exact authority: " . join(', ', @increased));
         }
     }
+    for my $authority (@$authorities) {
+        my $id = $authority->{surface_id} // next;
+        problem("surface '$id' has unused or banked ceiling-increase authority")
+            if !$used_authority{$id};
+    }
 }
 
 sub git_top {
+    return '' if !-e File::Spec->catfile($root, '.git');
     open my $fh, '-|', 'git', '-C', $root, 'rev-parse', '--show-toplevel' or return '';
     my $top = <$fh> // '';
     close $fh;

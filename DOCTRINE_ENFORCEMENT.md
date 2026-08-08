@@ -287,6 +287,11 @@ The reference deployment. Enforced by `scripts/check_doctrines.sh` via `.githook
 | `README-POLICY` | structural | `scripts/check_readme_policy.sh` | root `README.md` stays within its independently derived line/byte ceilings; every reader link and author-overflow destination is a repository-owned, controlled terminal in the route registry |
 | `LIVE-DOC-SIZE` | structural | `scripts/check_live_document_size.sh` | every parent-tracked Markdown path is classified exactly once and satisfies its lifecycle-specific locality, line/byte/count/aggregate/width, index, currency, frozen-content, transition-debt, maintained-reference, and ceiling-authority contracts |
 
+`LIVE-DOC-SIZE` also runs `scripts/test_live_document_size.pl`: 48 positive and fail-closed cases for
+all seven local lifecycle classes and their control plane. Test workspaces are disposable and always
+created below repository-local `generated/`; schema fields, arrays, scalars, routes, independent size
+axes, baselines, and ceiling-history authority are therefore re-proved on every gate.
+
 Deterministic-oracle doctrines that run via `scripts/run_ci.sh` / CI (`kg-bench` 156/156,
 WIRE-BASED-100 constraint+temporal/relation golds = 1.000, the byte-identical evidence/`.isf` checks,
 `cargo fmt`/`clippy`/`test`/`doc`) are the strongest leg — they re-execute the real tools, so cited

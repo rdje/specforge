@@ -19,12 +19,13 @@
   run it too. Retrieval: `KNOWLEDGE_MAP.md`.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3c` — prove every lifecycle and
-  registry/control path fails closed, then close `.3` route/surface integration.
-- Current state: `.0`–`.2` and `.3a`/`.3b` are complete. The fifth doctrine governs all
-  553 Markdown files across 24 surfaces; README is 128 lines/4,908 bytes. No historical
-  live document has yet been deleted or migrated. Query revision from Git.
-- Next action: implement repository-volume fixture tests for every lifecycle and independent
-  failure axis, then verify the full `.3` acceptance contract before migration.
-- In-flight uncommitted: `.3b` atomic doctrine/registry/checker slice until commit; none afterward.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.5a` — repair the two measured mdBook
+  current-state contradictions and add focused drift locks or canonical pointers.
+- Current state: `.0`–`.3c` are complete. The fifth doctrine governs all 554 Markdown files across
+  24 surfaces, and 48 same-volume fixtures prove every local lifecycle/control path. README is
+  128 lines/4,908 bytes. No historical live document has yet been deleted or migrated. Query revision
+  from Git.
+- Next action: reverify each recorded contradiction against current code and canonical facts, then
+  correct the smallest authoritative book surface and add a focused non-regression check.
+- In-flight uncommitted: `.3c` proof/schema closure until commit; none afterward.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

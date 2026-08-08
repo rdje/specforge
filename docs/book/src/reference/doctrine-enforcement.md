@@ -73,6 +73,8 @@ lifecycle model. It does not confuse a large legacy ceiling with a healthy targe
 an immutable measured baseline and a separately bounded transition allowance. Unique product prose in
 the mdBook uses a maintained-reference contract—bounded directly indexed parts plus exact task-owned
 aggregate change—instead of a fixed cap that would silently limit legitimate product documentation.
+The adapter also runs 48 repository-volume positive and fail-closed fixtures, including every local
+lifecycle, registry schema/size controls, independent pressure axis, and Git-history authority path.
 
 The heavy deterministic oracles — `kg-bench`, the WIRE-BASED-100 golds, the byte-identical
 evidence/`.isf` checks, the full `cargo` suite — are the strongest leg of all. They are too slow to run

@@ -13,6 +13,8 @@
 - Enforcement: `scripts/check_readme_policy.sh`, registered unconditionally in
   `scripts/check_doctrines.sh`, checks both ceilings and the project-owned route inventory at
   `doctrine/readme_entrypoint/routed_destinations.tsv`.
+- Route control plane: the 31-record/3,837-byte survivor (146-byte widest raw record) is capped
+  independently at 40 records, 5,000 bytes, and 192 raw bytes per record.
 - Landing-page identity: root `README.md` remains the rendered project landing page. Containment
   keeps its purpose, first-use path, architecture summary, and canonical navigation directly visible.
 <!-- README-POLICY-LOCAL-ADOPTION:END -->

@@ -23,8 +23,9 @@
 - Locality: registries, checks, fixtures, future shards, manifests, and archives use repository-root-
   relative paths on the repository volume. The pinned FSMGen submodule is an independent Git
   authority and is not rewritten by this adoption.
-- Adoption state: `.3b` activates doctrine, ADR, complete registry, and checker atomically. `.3c`
-  owns lifecycle-specific fail-closed proofs before any `.4`/ `.5` migration.
+- Adoption state: `.3b` activated doctrine, ADR, complete registry, and checker atomically. `.3c`
+  closed the common contract with 48 same-volume positive/fail-closed fixture checks before any
+  `.4`/`.5` migration.
 <!-- LIVE-DOCUMENT-SIZE-CONTAINMENT-LOCAL-ADOPTION:END -->
 
 ---
