@@ -2994,6 +2994,9 @@ mod tests {
         assert!(plan.contains("\"rebuild_evidence_ir\""));
         assert!(plan.contains("\"rebuild_semantic_ir\""));
         assert!(plan.contains("\"rebuild_intent_ir\""));
+        assert!(plan.contains("\"artifact_path\": \"generated/intent_ir/spec/intent_ir.json\""));
+        assert!(plan.contains("\"working_directory\": \".\""));
+        assert!(!plan.contains(repo_root.to_string_lossy().as_ref()));
 
         Ok(())
     }

@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
+  > should SpecForge add a whole-page VLM read / full-page capture path
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > should SpecForge build a conditional-rule lowering lever or file an FSMGen FR (NO — the adapter already lowers the 516 cleanly-grounded conditional obligations corpus-wide; the shortfall is honest residual; the only upside is upstream extraction quality, not an ISF construct)
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > should SpecForge file an FSMGen FR for CPU-ISA instructions/privilege/exceptions (NO — software-visible ISA semantics are not synthesizable hardware intent; ISF has no construct + FSMGen lists none; honest non-target; conditional-future only if FSMGen's SV/UVM path scopes ISA-model verification)
+- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
+  > should SpecForge file an FSMGen FR for a declarative static-topology ISF construct (NO / not yet — DOC-INTENT-TAXONOMY.4c.i: the bottleneck is upstream extraction-recall, not the missing ISF abstraction; an FR on a 12x-too-sparse / three-quarters-half-connected capture would be unfalsifiable — feedback_verify_fsmgen_before_fr)
+- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
+  > should SpecForge file an FSMGen FR for cat-3 topology (NOT YET — premature: capture is sparse/noisy AND ISF may deliberately be a per-actor format with topology owned by the integrator above per-module synthesis; resolve with FSMGen after .4c.i, never a speculative FR — feedback_verify_fsmgen_before_fr)
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > should a documented reset of 0 be emitted as (reset 0) in ISF (no — omit; the FSMGen all-0s default faithfully represents it; 893 of the fits-current registers are V==0)
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > should specforge connect producer/consumer/etc. to their signals
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
@@ -285,15 +297,3 @@
   > what is recover-register-bits / how does the recover-register-bits command work
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > what is recovered_trapped_data_rows and who shares it
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > what is register_field_name_recall / register_field_completeness / register_bit_structure_recall
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what is scripts/check_doctrines.sh / the doctrine driver
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > what is select_initiator_actor / initiator_perspective_directions
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is signal_presence_records and what does a SignalPresenceRecord hold
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > what is snap_subject_to_sentence_token and when does it fire
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > what is synthesize_register_field_tables

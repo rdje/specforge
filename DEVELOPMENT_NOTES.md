@@ -1,4 +1,14 @@
 # DEVELOPMENT_NOTES
+## ARTIFACT-PATH-PORTABILITY.5 (`2026-08-09`) — persistence starts at the schema, not the producer
+
+A present-artifact census cannot prove a dormant serializable schema safe. `FigureRegion.raw_image_path` had no
+upstream producer, so the generated corpus contained no instance to scan, but direct Serde still made an
+absolute workstation path part of its future storage contract. Field-level normalization/resolution and a
+producer-source pin close that gap before activation. The same audit found that filesystem identity can hide in
+`String` fields: project-rescan artifact/replay paths and `working_directory` need role-based enforcement even
+though only two names end in `_path`. Portability review therefore has two complementary oracles—schema/producer
+seam inspection and present-data scanning—and neither can replace the other.
+
 ## ARTIFACT-PATH-PORTABILITY.4 (`2026-08-09`) — provenance identity can outlive materialization
 
 The migrated-corpus proof caught a lifecycle distinction that synthetic round trips had missed. Cleanup may

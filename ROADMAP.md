@@ -94,11 +94,11 @@ Five active program groups support that north star:
   [`R15C-R15G-LEARNING-PLANE-BACKFILL`](docs/tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md);
 - repository durability and portability: the completed
   [`LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`](docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md)
-  program keeps current documentation and project data bounded on the repository volume; active
-  [`ARTIFACT-PATH-PORTABILITY`](docs/tasks/ARTIFACT-PATH-PORTABILITY.md) has activated the common move-safe
-  path contract across every canonical IR/adapter stage and downstream consumer, migrated the present generated
-  corpus, and installed fail-closed producer/persisted-artifact enforcement; its independent closure audit is
-  next.
+  program keeps current documentation and project data bounded on the repository volume; completed
+  [`ARTIFACT-PATH-PORTABILITY`](docs/tasks/ARTIFACT-PATH-PORTABILITY.md) extends move-safe storage through every
+  canonical IR/adapter stage, consumer, dormant serializable path schema, and rescan-plan field, with the present
+  generated corpus migrated and fail-closed producer/data enforcement installed. The interrupted protocol
+  product work resumes at `SWD-SERIAL-EXTRACTION.7`.
 
 The complete, always-current execution/status catalog is [`docs/TASK_TREE.md`](docs/TASK_TREE.md).
 This roadmap owns only high-level direction and milestone status; it does not mirror leaf frontiers or

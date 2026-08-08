@@ -52,6 +52,8 @@
   > are the wire-gold .isf affected by the module-name sanitization (no — byte-identical; their names are pure alphanumeric, so the allowlist is a no-op)
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > are the wire-gold / other .isf affected by the enum emit gate (no — byte-identical; only HBM2 hbm.isf changes corpus-wide; the criterion never flags a legit decimal)
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > can FigureRegion raw_image_path store an absolute path
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > can I build semantic/intent without the normalized/ bundle (yes — only evidence_ir.json is needed)
 - [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
@@ -170,6 +172,8 @@
   > does SpecForge use LTL CTL or TLA+
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
   > does SpecForge use the full scope of a page's visual information
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > does a PathBuf need portability handling before it has a producer
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > does a deterministic semantic->intent rebuild recover lost actor_signal_relations
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -230,6 +234,10 @@
   > does the live-document registry reject unknown fields oversized arrays or oversized scalars
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > does the move portability repair change PathBuf JSON fields
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > does the path portability contract cover FigureRegion raw images
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > does the persisted path gate cover dormant schemas
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > does the stage-staleness detector false-fire on register/command docs with 0 relations (no — both empty)
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
@@ -290,11 +298,3 @@
   > how are message-field tables distinguished from register-field tables
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > how are multi-word field names like Validation Bits or FRU ID recovered
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > how are offset-suffixed bit cells like 31:28 +04 extracted
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > how are per-instance indexed signals (PSELx HSELx) referenced in prose handled
-- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
-  > how are per-state actions captured
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > how are register bit-fields admitted to the ISF (fields …) block (structural fail-closed: located fields only; drop a sanitized-name collision group; non-overlapping survivors else whole-register fail-closed; access normalized to FSMGen's 10-token set else omit; field reset = parent reset slice; enum members that fit the width — ADR-0006, no name list)

@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > how are offset-suffixed bit cells like 31:28 +04 extracted
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > how are per-instance indexed signals (PSELx HSELx) referenced in prose handled
+- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
+  > how are per-state actions captured
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > how are project rescan working directories kept portable
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > how are register bit-fields admitted to the ISF (fields …) block (structural fail-closed: located fields only; drop a sanitized-name collision group; non-overlapping survivors else whole-register fail-closed; access normalized to FSMGen's 10-token set else omit; field reset = parent reset slice; enum members that fit the width — ADR-0006, no name list)
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > how are register fields written as section headings extracted
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
@@ -248,6 +258,8 @@
   > how is AXI per-signal channel membership recovered without a VLM
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > how is AXI per-signal phase membership recoverable without a VLM
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > how is FigureRegion raw_image_path serialized
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
@@ -286,14 +298,3 @@
   > how is corpus SOURCE_PDF_REGISTRY currentness checked
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > how is corpus_kb currentness checked
-- [task-tree-catalog](../knowledge/task-tree-catalog.md)
-  > how is docs TASK_TREE kept complete without mirroring task history
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > how is docs knowledge INDEX kept complete
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > how is prose signal over-capture prevented (no garbage)
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > how is register-field extraction quality measured / scored
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > how is the .5.ii member-quality gate designed / what did the .5.ii calibration find (measured 2026-06-24 read-only over 78 docs/561 enums/12509 members: the gate is PER-MEMBER not per-enum — a whole-enum drop destroys AXI BRESP's real codes OKAY/EXOKAY/SLVERR/DECERR which are FUSED with prose fragments in one conflated enum; value-restart is NOT a junk signal — AHB HPROT
-  > restarts but every member is a clean identifier. The load-bearing signal is per-member NAME shape: an English sentence-SPINE token marks a prose fragment. Land a per-member sentence-spine fragment drop at synthesize_encoding_declarations_for_enum)

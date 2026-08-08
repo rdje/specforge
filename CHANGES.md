@@ -1,3 +1,15 @@
+### ARTIFACT-PATH-PORTABILITY.5 — close the path portability program
+
+- Cold-read every persisted path schema, producer, consumer, and present artifact after migration. The audit
+  found one dormant serializable escape: optional `FigureRegion.raw_image_path` had direct Serde despite having
+  no upstream producer, so current artifact scans could not expose it.
+- Routed that field through repository-owned normalization/reference resolution, expanded the permanent gate
+  to project-rescan artifact/replay/working-directory strings, and added direct relative-output/refusal tests.
+  The oracle now passes 12/12 self-tests and scans 343,237 path values with only 82 labeled external absolutes.
+- Loaded all 393 current canonical stage/adapter artifacts, repeated exact all-IntentIR learning deterministically,
+  exercised recovery, and reran moved-root, KG, doctrine, Rust, docs, locality, residue, and full-CI gates. The
+  program closes with zero repository-owned absolute values or retired-root generated residue.
+
 ### ARTIFACT-PATH-PORTABILITY.4 — migrate and gate generated artifact paths
 
 - Added a self-tested persisted-artifact oracle and wired it into the project-data locality doctrine. It pins

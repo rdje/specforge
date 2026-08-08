@@ -4,6 +4,23 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-09 — independent portability closure; `ARTIFACT-PATH-PORTABILITY.5`)
+
+- **Dormant serializable schemas are now inside the storage boundary.** The all-`PathBuf` cold read found
+  optional `FigureRegion.raw_image_path` deriving Serde directly while its upstream producer remains absent.
+  Field-level Serde now normalizes it as repository-owned on write, resolves it as a historical reference on
+  read, and rejects an unlabeled external absolute value. This prevents future figure extraction from silently
+  activating a workstation-root schema.
+- **String-typed filesystem identities are pinned by role.** Project-rescan recommendation `artifact_path`,
+  replay `path`, and command `working_directory` fields persist relative displays / `.`, and the producer oracle
+  locks those expressions. The scanner recognizes `working_directory` in addition to `_path`/`_root`, so its
+  12-case self-test covers both typed and naming-boundary failures.
+- **Independent moved-root use closes the program.** Every current canonical loader consumed 80 SourceIR,
+  79 EvidenceIR, and 78 each SemanticIR/IntentIR/adapter artifacts; exact all-IntentIR prior learning matched
+  twice, and recovery accepted migrated provenance. All 667 JSON files parse and contain 343,237 path values:
+  82 labeled external absolutes and zero repository-owned absolutes. Full CI passes 1,766 tests / five ignored,
+  156/156 KG fixtures, doctrines, rustdoc, mdBook, locality, and residue checks.
+
 ## Session update (2026-08-09 — persisted corpus migration and reference lifecycle; `ARTIFACT-PATH-PORTABILITY.4`)
 
 - **The generated corpus now exercises the storage form, not only compatibility loading.** A guarded

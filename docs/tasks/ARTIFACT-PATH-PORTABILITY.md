@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `ARTIFACT-PATH-PORTABILITY`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: cross-cutting repository durability and canonical pipeline integrity
 - Created: `2026-08-08`
 - Last updated: `2026-08-09`
@@ -43,7 +43,7 @@ validation, learning, or recovery workflows.
 
 ## Task Tree
 
-- ID: `ARTIFACT-PATH-PORTABILITY` · Status: `active` · Children: `.0`–`.5`
+- ID: `ARTIFACT-PATH-PORTABILITY` · Status: `done` · Children: `.0`–`.5`
 - ID: `ARTIFACT-PATH-PORTABILITY.0` · Status: `done` (`2026-08-08`) · Goal: reproduce, census, and
   root-cause the post-move absolute-path boundary; open a detailed tree before implementation.
 - ID: `ARTIFACT-PATH-PORTABILITY.1` · Status: `done` (`2026-08-08`) · Goal: design and test one common persisted-path
@@ -61,7 +61,7 @@ validation, learning, or recovery workflows.
 - ID: `ARTIFACT-PATH-PORTABILITY.4` · Status: `done` (`2026-08-09`; depends on `.3a`) · Goal: add the fail-closed
   producer/present-artifact locality gate and migrate or rebuild the current 700 MiB generated tree with exact
   copy/verify/use/delete evidence; leave zero deleted-root references.
-- ID: `ARTIFACT-PATH-PORTABILITY.5` · Status: `pending` (depends on `.4`) · Goal: cold-read every path
+- ID: `ARTIFACT-PATH-PORTABILITY.5` · Status: `done` (`2026-08-09`; depends on `.4`) · Goal: cold-read every path
   surface, run real moved-root workflows plus full CI/residue gates, reconcile all public/continuity docs, and
   close the tree before returning to `SWD-SERIAL-EXTRACTION.7`.
 
@@ -176,11 +176,34 @@ validation, learning, or recovery workflows.
   Knowledge Map, Rust analysis, live ledgers, book aggregate authority, and resume pointer agree that present
   data and enforcement are complete and `.5` owns the independent closure audit.
 
+## Acceptance Checklist (enforced) — `ARTIFACT-PATH-PORTABILITY.5`
+
+- [x] **REPRODUCE / MEASURE** — enumerated every serializable `PathBuf`, path-like JSON field, canonical
+  producer/consumer seam, and all 667 present JSON artifacts. Live loaders consumed 80 SourceIR, 79 EvidenceIR,
+  and 78 each SemanticIR/IntentIR/adapter artifacts from the moved repository; two exact all-IntentIR learning
+  dry runs matched at `c2233255d1f5…24476`, and recovery dry-run consumed migrated EvidenceIR safely.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the independent schema cold read found one dormant escape that present-data
+  scanning could not reveal: `FigureRegion.raw_image_path` derived `Serialize`/`Deserialize` directly even
+  though no upstream producer exists today. Project rescan records also stored path-shaped strings and a
+  `working_directory` field outside the original suffix-only scanner key set.
+- [x] **ADDRESSED (verified)** — `FigureRegion.raw_image_path` now uses field-level repository-owned
+  normalization/reference resolution and rejects unlabeled external absolutes. The oracle pins that seam plus
+  project-rescan artifact/replay/working-directory production, classifies `working_directory` as path-valued,
+  and passes 12/12 fail-closed self-tests.
+- [x] **NO REGRESSION** — all 667 JSON files parse, the artifact oracle counts 343,237 path values / 82 labeled
+  external absolutes / zero repository-owned absolutes, moved-root compatibility suites and live loaders pass,
+  all 156 KG fixtures pass, and complete CI passes 1,766 tests with five ignored plus formatting, warning-deny
+  Clippy, rustdoc, mdBook doctest/build, doctrines, locality, and residue checks.
+- [x] **GENERICITY** — closure keys on typed ownership, JSON field role, containment, existence lifecycle, and
+  repository discovery. It adds no username, mount, retired root, document key, protocol, source-library,
+  fixture, or current-artifact allowlist; dormant serializable schemas are gated before their first producer.
+- [x] **LOCKSTEP** — task tree, roadmap, root/book locality contracts, FigureRegion book contract, Knowledge
+  Map, Rust analysis, live ledgers, book aggregate authority, and resume pointer agree that the portability
+  program is closed and `SWD-SERIAL-EXTRACTION.7` resumes next.
+
 ## Current Frontier
 
-| Order | Leaf | Status | Why next |
-| --- | --- | --- | --- |
-| 1 | `ARTIFACT-PATH-PORTABILITY.5` | `pending` | Independently prove no path, workflow, data, or documentation surface escaped. |
+None. This tree is closed; the roadmap frontier returns to `SWD-SERIAL-EXTRACTION.7`.
 
 ## Decisions
 
@@ -234,10 +257,24 @@ validation, learning, or recovery workflows.
   pretending verification is non-producing: `f07b7733…9bb4f1c` is the pure migration comparison point;
   `50609030…e3690c19` is the post-CI workspace. Both contain zero retired-root values and 82 labeled external
   values; canonical artifact membership remains unchanged.
+- `2026-08-09`: A serializable path surface is part of the persistence contract before its first producer.
+  The `.5` cold read found dormant `FigureRegion.raw_image_path`; route it through field-level serde now and pin
+  the seam permanently rather than waiting for an upstream PDF extractor to activate unsafe persistence.
+- `2026-08-09`: Treat project-rescan `artifact_path`, replay `path`, and `working_directory` as persisted
+  filesystem identity even though their Rust schema uses `String`. Pin their repository-relative producer
+  expressions and scan `working_directory` explicitly so a future absolute command root fails the doctrine.
+- `2026-08-09`: The all-IntentIR learning fingerprint from the exact command recorded in `.5` is deterministic
+  across two consecutive runs. Do not compare it with the unqualified digest mentioned during `.4` execution;
+  that earlier argument set was not recorded and an AXI-only probe proves input scope changes the digest.
 
 ## Open Questions
 
-- None for `.4`; `.5` owns the independent cold read and final closure decision.
+- None. The portability program is closed.
+
+## Commit Log
+
+- `ARTIFACT-PATH-PORTABILITY.5 — close the path portability program` — cold-read closure, dormant schema
+  repair, expanded fail-closed gate, moved-root/live-workflow proof, and synchronized durable authorities.
 
 ## Blockers
 

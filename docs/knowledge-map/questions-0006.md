@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > where do the signal / FSM / register / constraint / actor extractors live and how are they merged
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > where do transaction phases live (SemanticIr.transaction_phases) and do they reach the .isf (no — SemanticIR-only, recognition only)
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > where do zero-port actors come from in the IntentIR actor surface
+- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
+  > where does .isf record dropped temporal obligations
+- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
+  > where does SpecForge canonicalize upstream artifact paths before serialization
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > where does SpecForge store temporary files and caches
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > where does TransactionPhaseRecord.signal_set come from (build_transaction_phases, ir/semantic.rs — phase-naming statements' signals ∩ declared inventory, the .2c technique)
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -156,6 +168,8 @@
   > which persisted evidence docs carry message_field_records
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > which persisted paths must exist and which may be historical references
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > which project rescan string fields are treated as filesystem paths
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > which protocols look like register IPs structurally (CCIX, AXI, CHI, DTI, CHI-C2C — the register-heavy-protocol trap)
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -257,6 +271,8 @@
   > why did LTI unexplained tables go UP from 5 to 6
 - [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
   > why did an EXTRACTOR-ARCHITECTURE byte-identical proof fail on SWD/ADI but pass on other docs
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > why did generated artifact scanning miss FigureRegion raw_image_path
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > why did ingest stop with 'ingest aborted before launching'
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
@@ -281,19 +297,3 @@
   > why did the Knowledge Map shard simulator and generator report different canonical input hashes
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > why did the LLM-primary extractor lose SYSCOREQ from a coordinated-subject sentence
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > why did the LLM-primary extractor miss PBUSER / PNSE / HAUSER must_be_value VALID
-- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
-  > why did the corpus KB size warning appear and how was it removed
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > why did the moved Python virtual environments still access the old repository
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > why did the promoted surface lose the AXI reset temporal rules (DEASSERTED vs LOW)
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > why did the register-at-offset placement-map hypothesis get overturned
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > why do .1a and .1b.iv not catch the eMMC phantom actors like advantage of / basic bus / actual sector
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why do 8 generic-named enums survive .5.i (they are document-evidenced — the token IS a declared signal or a column header in that doc, e.g. CCIX 'Table of Contents' header cells keep a 'TABLE' enum; the structural gate correctly cannot drop them without a forbidden name-list — honest .5.ii member-quality residuals)
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > why do AMD DTE / NVMe command dword tables go to message fields and not registers

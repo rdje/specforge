@@ -20,9 +20,10 @@
 
 use std::path::PathBuf;
 
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
 use crate::ir::source::AutomationConfidence;
+use crate::persisted_path::{PersistedPathOrigin, normalize_for_storage, resolve_reference};
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
 pub struct BoundingBox {
@@ -116,9 +117,41 @@ pub struct FigureRegion {
     /// known; otherwise inferred from the maximum `at_tick`).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tick_count: Option<u32>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(
+        default,
+        skip_serializing_if = "Option::is_none",
+        serialize_with = "serialize_repository_image_path",
+        deserialize_with = "deserialize_repository_image_path"
+    )]
     pub raw_image_path: Option<PathBuf>,
     pub confidence: AutomationConfidence,
+}
+
+fn serialize_repository_image_path<S>(
+    path: &Option<PathBuf>,
+    serializer: S,
+) -> std::result::Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    let persisted = path
+        .as_deref()
+        .map(|path| normalize_for_storage(path, PersistedPathOrigin::RepositoryOwned))
+        .transpose()
+        .map_err(serde::ser::Error::custom)?;
+    persisted.serialize(serializer)
+}
+
+fn deserialize_repository_image_path<'de, D>(
+    deserializer: D,
+) -> std::result::Result<Option<PathBuf>, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    Option::<PathBuf>::deserialize(deserializer)?
+        .map(|path| resolve_reference(&path, PersistedPathOrigin::RepositoryOwned))
+        .transpose()
+        .map_err(serde::de::Error::custom)
 }
 
 impl FigureRegion {
@@ -309,6 +342,8 @@ mod tests {
         // A fully-populated region (every annotation variant, every
         // LaneLevel variant) must survive serialize -> deserialize intact,
         // locking the contract the upstream PDF pipeline must produce.
+        let workspace = crate::project_data::tempdir().unwrap();
+        let raw_image_path = workspace.path().join("fig.png");
         let original = FigureRegion {
             visual_asset_id: "fig:full".into(),
             bbox: Some(BoundingBox {
@@ -370,11 +405,35 @@ mod tests {
                 ],
             }],
             tick_count: Some(4),
-            raw_image_path: Some(PathBuf::from("/tmp/fig.png")),
+            raw_image_path: Some(raw_image_path.clone()),
             confidence: AutomationConfidence::Low,
         };
         let json = serde_json::to_string(&original).unwrap();
+        assert!(
+            !json.contains(
+                crate::project_data::repository_root()
+                    .unwrap()
+                    .to_string_lossy()
+                    .as_ref()
+            )
+        );
+        assert!(json.contains(".project-data/tmp/"));
         let restored: FigureRegion = serde_json::from_str(&json).unwrap();
         assert_eq!(restored, original);
+        assert_eq!(restored.raw_image_path, Some(raw_image_path));
+    }
+
+    #[test]
+    fn figure_region_rejects_unlabeled_external_image_path() {
+        let json = serde_json::json!({
+            "visual_asset_id": "fig:external",
+            "annotations": [],
+            "waveform_lanes": [],
+            "raw_image_path": "/tmp/fig.png",
+            "confidence": "low"
+        });
+
+        let error = serde_json::from_value::<FigureRegion>(json).unwrap_err();
+        assert!(error.to_string().contains("/tmp/fig.png"));
     }
 }

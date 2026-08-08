@@ -68,6 +68,8 @@ became relative, and 157 origin labels were added without adding or deleting a f
 zero retired-root values. Its 82 remaining absolute path values are explicit external source-library provenance,
 not SpecForge-owned project data. The locality doctrine scans every present JSON artifact—including stage files,
 validation output, rescan plans, and source sidecars—and rejects any other absolute path-valued field.
+Rescan-plan artifact/replay paths and command working directories are included even though those schema fields
+are strings rather than `PathBuf`s; command working directories persist as `.`.
 
 ## Source-side sidecars
 

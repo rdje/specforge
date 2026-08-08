@@ -70,14 +70,21 @@ repository-owned. SemanticIR, IntentIR, and adapter layouts/upstream/emitted-tar
 and typed prior memory stores learned source-artifact paths relative. Validation, project-validation, learning,
 recovery, KG fixtures, and convergence resolve repository artifacts through the common boundary.
 
+The closure audit also covered path-bearing schemas that have no current artifact. Optional
+`FigureRegion.raw_image_path` uses repository-owned field-level serialization even though the upstream figure
+extractor is not wired yet. Project-rescan `artifact_path`, replay `path`, and command `working_directory`
+strings are likewise pinned to relative forms (`working_directory` is `.`), rather than escaping review because
+their Rust type is `String`.
+
 The guarded migration changed exactly 392 of 978 files: 262,996 retired-root values became repository-relative
 and 157 missing origin labels were added. The result has the same file set, 721,679,372 logical bytes, and zero
 retired-root values; 82 explicitly labeled absolute source-library values remain by design. Source, Evidence,
 Semantic, Intent, adapter, learning, and recovery workflows were exercised against the migrated corpus before
 the exact same-volume rollback copy was removed.
 
-The locality doctrine now self-tests the scanner, pins the producer seams, and scans every JSON artifact under
-`generated/`. Any absolute path-valued field is rejected unless it is one of the narrow, origin-labeled external
+The locality doctrine now runs 12 scanner self-tests, pins eleven producer/consumer files (including the
+dormant FigureRegion field), and scans every JSON artifact under `generated/`. Any absolute path-valued field,
+including a command working directory, is rejected unless it is one of the narrow, origin-labeled external
 SourceIR/EvidenceIR provenance fields. This covers canonical stages, validation output, rescan plans, and source
 sidecars whenever they are present.
 

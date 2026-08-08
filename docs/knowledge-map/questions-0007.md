@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > why did the LLM-primary extractor miss PBUSER / PNSE / HAUSER must_be_value VALID
+- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
+  > why did the corpus KB size warning appear and how was it removed
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > why did the moved Python virtual environments still access the old repository
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > why did the promoted surface lose the AXI reset temporal rules (DEASSERTED vs LOW)
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > why did the register-at-offset placement-map hypothesis get overturned
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > why do .1a and .1b.iv not catch the eMMC phantom actors like advantage of / basic bus / actual sector
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why do 8 generic-named enums survive .5.i (they are document-evidenced — the token IS a declared signal or a column header in that doc, e.g. CCIX 'Table of Contents' header cells keep a 'TABLE' enum; the structural gate correctly cannot drop them without a forbidden name-list — honest .5.ii member-quality residuals)
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > why do AMD DTE / NVMe command dword tables go to message fields and not registers
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > why do APB tables 0016 0017 0018 produce no signal records
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -281,19 +297,3 @@
   > why is the interface consolidation safe for WIRE-BASED-100 (gold docs have no interface actor)
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
   > why is the nested cross-tab timing table (TRANSMITTER/RECEIVER) left an honest residual
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why is the ordered multi-phase transaction body the hard deferred part (no structural name bridge AXI handshake to named transaction)
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > why is the snap trigger absence-from-sentence and not typing failure
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > why is the stage-staleness check zero-versus-some and not a count comparison
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > why is the strict register-field per-fact score 0 on RISC-V Debug / NVMe
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > why is the structural document_class (protocol/register/interface/guide) too coarse for the purpose taxonomy
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > why is there no fields-without-positions completeness gap
-- [repository-local-scratch](../knowledge/repository-local-scratch.md)
-  > why must read-only census commands avoid /tmp and /private/tmp
-- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
-  > why not CTL for temporal behavior

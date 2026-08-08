@@ -19,13 +19,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `ARTIFACT-PATH-PORTABILITY.5` — independent cold-read closure after `.4` migration/enforcement.
-- Current state: `.4` migrated 392/978 generated files (262,996 retired-root values plus 157 origin labels),
-  preserves 82 labeled external values, and leaves zero retired-root residue. The project-data doctrine now scans
-  all present generated JSON. Source/Evidence historical references tolerate reclaimed leaves without weakening
-  existence-required stage inputs. Full CI passes 1,765 / 5 ignored; KG fixtures pass 156/156.
-- Next action: cold-read every persisted path producer, consumer, schema, artifact class, and current authority;
-  rerun moved-root/residue proofs and close the tree only if no escaped surface remains.
-- In-flight uncommitted: none after the `.4` commit. Its exact same-volume rollback was verified, used, and
-  deleted; absence was rechecked. Generated migration state remains repository-local and intentionally ignored.
+- Active unit: `SWD-SERIAL-EXTRACTION.7` — honest Evidence→Semantic→Intent protocol-surface projection.
+- Current state: `ARTIFACT-PATH-PORTABILITY` is closed. Every canonical stage/consumer, dormant
+  `FigureRegion.raw_image_path`, and project-rescan path/working-directory field uses the move-safe contract;
+  667 present JSON artifacts contain 343,237 path values, 82 labeled external absolutes, and zero repository-owned
+  absolutes. Full CI passes 1,766 / five ignored; KG fixtures pass 156/156.
+- Next action: activate `SWD-SERIAL-EXTRACTION.7`, inventory the four EvidenceIR-only scored protocol surfaces,
+  and design the smallest typed SemanticIR/IntentIR projection before changing product schemas.
+- In-flight uncommitted: none after the `.5` commit. Generated migration state remains repository-local and
+  intentionally ignored; the exact rollback and disposable loader workspace are absent.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

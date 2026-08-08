@@ -22,6 +22,11 @@ restoring absolute current-root values in memory. Validation, project-validation
 convergence consumers resolve repository paths at their I/O boundaries. The present generated corpus has been
 migrated through the same contract, with explicitly labeled external source-library references preserved.
 
+Serializable path ownership applies before a producer exists. Optional `FigureRegion.raw_image_path` uses
+repository-owned field-level serialization/resolution even though no upstream figure extractor emits it today.
+Project-rescan `artifact_path`, replay `path`, and `working_directory` strings are likewise pinned to relative
+forms; filesystem semantics do not depend on whether the Rust field type is `PathBuf` or `String`.
+
 | Data | Repository-relative root | Authority |
 | --- | --- | --- |
 | temporary workspaces | `.project-data/tmp/` | `.cargo/config.toml`, `scripts/project_data_env.sh`, Rust `project_data` module |
@@ -118,10 +123,11 @@ cease access to the shared copy instead.
 
 `PROJECT-DATA-LOCALITY` is registered in `scripts/check_doctrines.sh`. Its checker validates Cargo and
 shell defaults, required production temp/subprocess seams, Python lock authority, and any present
-venv's direct prefix and launcher paths. It also self-tests the persisted-path oracle, pins the producer seams,
-and scans every JSON artifact currently below `generated/`; an unlabeled absolute path-valued field fails the
-doctrine. Its focused shell cases reject missing roots and off-root cache symlinks and prove all configured roots
-use the repository filesystem.
+venv's direct prefix and launcher paths. It also runs 12 persisted-path oracle self-tests, pins eleven producer/
+consumer files (including dormant FigureRegion and project-rescan seams), and scans every JSON artifact
+currently below `generated/`; an unlabeled absolute path-valued field or absolute command working directory
+fails the doctrine. Its focused shell cases reject missing roots and off-root cache symlinks and prove all
+configured roots use the repository filesystem.
 
 Run:
 

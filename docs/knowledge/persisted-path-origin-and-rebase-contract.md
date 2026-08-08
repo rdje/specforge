@@ -13,10 +13,11 @@ answers:
   - "which SemanticIR IntentIR adapter and prior memory paths serialize repository relative"
   - "can provenance load after source normalized cleanup removes its leaf"
   - "which persisted paths must exist and which may be historical references"
+  - "does the path portability contract cover FigureRegion raw images"
 date: 2026-08-09
 status: current
 tags: [artifact-paths, portability, locality, compatibility, external-inputs]
-evidence: crates/specforge/src/persisted_path.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/semantic.rs; crates/specforge/src/ir/intent.rs; crates/specforge/src/ir/adapters.rs; crates/specforge/src/ir/prior_memory.rs; docs/tasks/ARTIFACT-PATH-PORTABILITY.md (.1-.4); PROJECT_DATA_LOCALITY.md
+evidence: crates/specforge/src/persisted_path.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/figure_region.rs; crates/specforge/src/ir/semantic.rs; crates/specforge/src/ir/intent.rs; crates/specforge/src/ir/adapters.rs; crates/specforge/src/ir/prior_memory.rs; docs/tasks/ARTIFACT-PATH-PORTABILITY.md (.1-.5); PROJECT_DATA_LOCALITY.md
 reverify: "cargo test -p specforge persisted_path::tests"
 ---
 
@@ -52,3 +53,9 @@ real external input. Evidence visual provenance is repository-owned because thos
 come from SourceIR's normalized artifact bundle. `ARTIFACT-PATH-PORTABILITY.4` migrated the current ignored
 corpus and added a doctrine oracle over all present generated JSON. Current artifacts contain zero
 repository-owned absolute values; labeled external source provenance is the only absolute allowance.
+
+The closure cold read extended the contract to serializable surfaces that have no present artifact. Optional
+`FigureRegion.raw_image_path` uses field-level repository-owned normalization/reference resolution before its
+upstream producer exists. Project-rescan artifact/replay strings are pinned to repository-relative display and
+its `working_directory` is an explicitly scanned path-valued field. The permanent oracle now pins eleven
+producer/consumer files and its 12 self-tests cover this dormant/non-suffix boundary.

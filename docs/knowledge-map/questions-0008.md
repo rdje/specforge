@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why is the ordered multi-phase transaction body the hard deferred part (no structural name bridge AXI handshake to named transaction)
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > why is the snap trigger absence-from-sentence and not typing failure
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > why is the stage-staleness check zero-versus-some and not a count comparison
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > why is the strict register-field per-fact score 0 on RISC-V Debug / NVMe
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > why is the structural document_class (protocol/register/interface/guide) too coarse for the purpose taxonomy
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > why is there no fields-without-positions completeness gap
+- [repository-local-scratch](../knowledge/repository-local-scratch.md)
+  > why must read-only census commands avoid /tmp and /private/tmp
+- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
+  > why not CTL for temporal behavior
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
   > why not emit a (priority A over B) to resolve a rule/rule conflict instead of dropping (the unconditional minority would conflict with EVERY same-value unconditional rule → an ungrounded precedence over each = fabrication; tested: priority rule_5 over _0012 cleared one pair then rule_6 conflicted next)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)

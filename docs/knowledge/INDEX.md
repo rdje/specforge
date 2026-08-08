@@ -61,6 +61,7 @@ Collection guidance: [authoring and lifecycle README](README.md).
 | [document-intent-category-census](document-intent-category-census.md) | 2026-06-22 | `current` | The 78-doc corpus splits 36/7/15/2/4/14 across the 6 purpose categories (wire-protocol/register-IP/platform-I… |
 | [document-intent-category-recognizer](document-intent-category-recognizer.md) | 2026-06-22 | `current` | Document intent-category recognizer (DOC-INTENT-TAXONOMY.3b) — validate reports a chip-spec PDF's 6-categor… |
 | [document-intent-isf-completeness](document-intent-isf-completeness.md) | 2026-06-22 | `current` | Per-category ISF-lowering completeness (DOC-INTENT-TAXONOMY.2) — registers lower 1:1 to opaque width-only s… |
+| [dormant-serialized-paths-require-portability](dormant-serialized-paths-require-portability.md) | 2026-08-09 | `current` | Dormant serializable path fields require the portability contract before activation |
 | [dotted-cross-reference-subject-gate](dotted-cross-reference-subject-gate.md) | 2026-06-15 | `current` | A constraint subject that is only ever a Reg.Field dotted cross-reference is dropped (not the cell's subject) |
 | [eval-gold-interannotator-kappa](eval-gold-interannotator-kappa.md) | 2026-06-05 | `current` | Eval gold is reliable — Cohen's kappa 0.90 (almost-perfect) on the constraint task |
 | [eval-scores-persisted-evidence](eval-scores-persisted-evidence.md) | 2026-06-07 | `current` | eval-extraction scores the PERSISTED evidence_ir.json — rebuild before trusting a baseline (it can be stale) |

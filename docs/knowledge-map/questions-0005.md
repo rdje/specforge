@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > what is register_field_name_recall / register_field_completeness / register_bit_structure_recall
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what is scripts/check_doctrines.sh / the doctrine driver
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > what is select_initiator_actor / initiator_perspective_directions
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > what is signal_presence_records and what does a SignalPresenceRecord hold
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > what is snap_subject_to_sentence_token and when does it fire
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > what is synthesize_register_field_tables
 - [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
   > what is synthesize_signal_declarations_from_prose / the pin-appositive pattern
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -285,15 +297,3 @@
   > where do the 9 new ACE wires AWBAR AWDOMAIN AWSNOOP come from and when do they land
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > where do the APB signal declarations come from (which table)
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > where do the signal / FSM / register / constraint / actor extractors live and how are they merged
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > where do transaction phases live (SemanticIr.transaction_phases) and do they reach the .isf (no — SemanticIR-only, recognition only)
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > where do zero-port actors come from in the IntentIR actor surface
-- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
-  > where does .isf record dropped temporal obligations
-- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
-  > where does SpecForge canonicalize upstream artifact paths before serialization
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > where does SpecForge store temporary files and caches

@@ -2,6 +2,17 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [task-tree-catalog](../knowledge/task-tree-catalog.md)
+  > how is docs TASK_TREE kept complete without mirroring task history
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > how is docs knowledge INDEX kept complete
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > how is prose signal over-capture prevented (no garbage)
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > how is register-field extraction quality measured / scored
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > how is the .5.ii member-quality gate designed / what did the .5.ii calibration find (measured 2026-06-24 read-only over 78 docs/561 enums/12509 members: the gate is PER-MEMBER not per-enum — a whole-enum drop destroys AXI BRESP's real codes OKAY/EXOKAY/SLVERR/DECERR which are FUSED with prose fragments in one conflated enum; value-restart is NOT a junk signal — AHB HPROT
+  > restarts but every member is a clean identifier. The load-bearing signal is per-member NAME shape: an English sentence-SPINE token marks a prose fragment. Land a per-member sentence-spine fragment drop at synthesize_encoding_declarations_for_enum)
 - [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
   > how is the EvidenceIR extractor path / extraction layer structured and wired
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
@@ -286,15 +297,3 @@
   > should NLP-SHALLOW-PARSE.2f build coordination distribution
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
   > should NLP-SHALLOW-PARSE.2h add new passive/verb-sense direction code
-- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
-  > should SpecForge add a whole-page VLM read / full-page capture path
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > should SpecForge build a conditional-rule lowering lever or file an FSMGen FR (NO — the adapter already lowers the 516 cleanly-grounded conditional obligations corpus-wide; the shortfall is honest residual; the only upside is upstream extraction quality, not an ISF construct)
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > should SpecForge file an FSMGen FR for CPU-ISA instructions/privilege/exceptions (NO — software-visible ISA semantics are not synthesizable hardware intent; ISF has no construct + FSMGen lists none; honest non-target; conditional-future only if FSMGen's SV/UVM path scopes ISA-model verification)
-- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
-  > should SpecForge file an FSMGen FR for a declarative static-topology ISF construct (NO / not yet — DOC-INTENT-TAXONOMY.4c.i: the bottleneck is upstream extraction-recall, not the missing ISF abstraction; an FR on a 12x-too-sparse / three-quarters-half-connected capture would be unfalsifiable — feedback_verify_fsmgen_before_fr)
-- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
-  > should SpecForge file an FSMGen FR for cat-3 topology (NOT YET — premature: capture is sparse/noisy AND ISF may deliberately be a per-actor format with topology owned by the integrator above per-module synthesis; resolve with FSMGen after .4c.i, never a speculative FR — feedback_verify_fsmgen_before_fr)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > should a documented reset of 0 be emitted as (reset 0) in ISF (no — omit; the FSMGen all-0s default faithfully represents it; 893 of the fits-current registers are V==0)

@@ -1323,6 +1323,11 @@ upstream produces zero `FigureRegion`s (today's corpus),
 the adapter is a no-op and the rest of the pipeline runs
 exactly as it did before this tree.
 
+`raw_image_path` is optional but already follows the repository-owned persisted-path contract. A serialized
+record stores a repository-relative value; deserialization resolves it at the current repository root, and an
+unlabeled external absolute value is rejected. This is enforced before an upstream figure extractor exists, so
+activating the dormant record cannot reintroduce workstation-specific paths.
+
 ### `.3.2` — `figure_region_to_partial_trace`
 
 The adapter maps `FigureRegion` ⇒ `PartialTrace` cleanly:

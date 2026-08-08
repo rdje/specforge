@@ -51,7 +51,7 @@ die "persisted-artifact-paths: --execute requires --migrate-legacy-root\n"
 
 if ($mode eq 'self-test') {
     run_self_test();
-    print "persisted-artifact-paths: self-test 11/11 passed.\n";
+    print "persisted-artifact-paths: self-test 12/12 passed.\n";
     exit 0;
 }
 
@@ -140,6 +140,11 @@ sub validate_producer_contract {
             'persisted.artifact_layout.normalize_for_storage()?;',
             'anchor.source_path = resolve_reference(&anchor.source_path, source_path_origin)?;',
         ],
+        'crates/specforge/src/ir/figure_region.rs' => [
+            'serialize_with = "serialize_repository_image_path"',
+            'normalize_for_storage(path, PersistedPathOrigin::RepositoryOwned)',
+            'resolve_reference(&path, PersistedPathOrigin::RepositoryOwned)',
+        ],
         'crates/specforge/src/ir/semantic.rs' => [
             'to_string_pretty(&self.persisted_clone()?)',
             'semantic_ir.runtime_clone()',
@@ -164,6 +169,9 @@ sub validate_producer_contract {
         ],
         'crates/specforge/src/commands/project_validation.rs' => [
             'resolve_existing(artifact, PersistedPathOrigin::RepositoryOwned)?',
+            'artifact_path: repo_relative_display(&snapshot.artifact_path, repo_root)',
+            'path: repo_relative_display(&input.path, repo_root)',
+            'working_directory: ".".to_string()',
         ],
         'crates/specforge/src/commands/recover_register_bits.rs' => [
             'resolve_existing(&args.evidence_ir, PersistedPathOrigin::RepositoryOwned)?',
@@ -259,7 +267,7 @@ sub scan_artifacts {
         path_values => 0,
         authorized_external_paths => 0,
         absolute_repository_paths => 0,
-        producer_files => 10,
+        producer_files => 11,
     };
 
     for my $artifact (@$artifacts) {
@@ -320,7 +328,7 @@ sub artifact_metadata {
 
 sub is_path_key {
     my ($key) = @_;
-    return $key =~ /(?:\A|_)(?:path|root)\z/;
+    return $key eq 'working_directory' || $key =~ /(?:\A|_)(?:path|root)\z/;
 }
 
 sub is_absolute_path {
@@ -608,6 +616,9 @@ JSON
 JSON
         ['Windows absolute path rejected', 'prior_memory', <<'JSON', 0],
 {"artifact_path":"C:\\work\\specforge\\generated\\intent_ir\\doc\\intent_ir.json"}
+JSON
+        ['absolute working directory rejected', 'other', <<'JSON', 0],
+{"working_directory":"/retired/specforge"}
 JSON
     );
 
