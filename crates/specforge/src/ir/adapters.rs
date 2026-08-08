@@ -8,6 +8,9 @@ use crate::ir::IrStage;
 use crate::ir::intent::{IntentDocumentIdentity, IntentIr};
 use crate::ir::isf_ir::IsfIr;
 use crate::ir::source::ResidualDecisionPacket;
+use crate::persisted_path::{
+    PersistedPathOrigin, normalize_for_storage, resolve_existing, resolve_repository_output,
+};
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum AdapterTarget {
@@ -88,11 +91,14 @@ pub struct AdapterArtifact {
 
 impl AdapterArtifact {
     pub fn load_from_path(path: &Path) -> Result<Self> {
-        if !path.exists() {
-            return Err(AppError::MissingPath(path.to_path_buf()));
+        let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
+        let artifact = serde_json::from_str::<Self>(&fs::read_to_string(path)?)?;
+        if !matches!(artifact.stage, IrStage::IsfAdapter) {
+            return Err(AppError::InvalidStageArtifact(
+                "artifact must be an ISF adapter document before loading an adapter".to_string(),
+            ));
         }
-
-        Ok(serde_json::from_str(&fs::read_to_string(path)?)?)
+        artifact.runtime_clone()
     }
 
     pub fn build(
@@ -100,18 +106,16 @@ impl AdapterArtifact {
         target: AdapterTarget,
         artifact_base_root: &Path,
     ) -> Result<Self> {
-        let intent_ir_path = canonicalize_existing_path(intent_ir_path)?;
-        let raw_artifact = fs::read_to_string(&intent_ir_path)?;
-        let stage_probe: StageProbe = serde_json::from_str(&raw_artifact)?;
+        let intent_ir_path =
+            resolve_existing(intent_ir_path, PersistedPathOrigin::RepositoryOwned)?;
+        let intent_ir = IntentIr::load_from_path(&intent_ir_path)?;
 
-        if !matches!(stage_probe.stage, IrStage::IntentIr) {
+        if !matches!(intent_ir.stage, IrStage::IntentIr) {
             return Err(AppError::InvalidStageArtifact(format!(
                 "artifact at {} must be an IntentIR document before building an adapter artifact",
                 intent_ir_path.display()
             )));
         }
-
-        let intent_ir: IntentIr = serde_json::from_str(&raw_artifact)?;
 
         match target {
             AdapterTarget::Isf => {
@@ -121,24 +125,46 @@ impl AdapterArtifact {
     }
 
     pub fn to_pretty_json(&self) -> Result<String> {
-        Ok(serde_json::to_string_pretty(self)?)
+        Ok(serde_json::to_string_pretty(&self.persisted_clone()?)?)
     }
 
     pub fn write_to_disk(&self) -> Result<()> {
-        fs::create_dir_all(&self.artifact_layout.artifact_root)?;
+        let persisted = self.persisted_clone()?;
+        let runtime_layout = persisted.artifact_layout.runtime_layout()?;
+        fs::create_dir_all(&runtime_layout.artifact_root)?;
         fs::write(
-            &self.artifact_layout.adapter_artifact_path,
-            self.to_pretty_json()?,
+            &runtime_layout.adapter_artifact_path,
+            serde_json::to_string_pretty(&persisted)?,
         )?;
 
         if let (Some(path), Some(text)) = (
-            self.artifact_layout.emitted_target_path.as_ref(),
-            self.rendered_target_text(),
+            runtime_layout.emitted_target_path.as_ref(),
+            persisted.rendered_target_text(),
         ) {
             fs::write(path, text)?;
         }
 
         Ok(())
+    }
+
+    fn persisted_clone(&self) -> Result<Self> {
+        let mut persisted = self.clone();
+        persisted.intent_ir_path = normalize_for_storage(
+            &persisted.intent_ir_path,
+            PersistedPathOrigin::RepositoryOwned,
+        )?;
+        persisted.artifact_layout.normalize_for_storage()?;
+        Ok(persisted)
+    }
+
+    fn runtime_clone(&self) -> Result<Self> {
+        let mut runtime = self.clone();
+        runtime.intent_ir_path = resolve_existing(
+            &runtime.intent_ir_path,
+            PersistedPathOrigin::RepositoryOwned,
+        )?;
+        runtime.artifact_layout = runtime.artifact_layout.runtime_layout()?;
+        Ok(runtime)
     }
 
     fn rendered_target_text(&self) -> Option<String> {
@@ -154,6 +180,33 @@ pub struct AdapterArtifactLayout {
     pub artifact_root: PathBuf,
     pub adapter_artifact_path: PathBuf,
     pub emitted_target_path: Option<PathBuf>,
+}
+
+impl AdapterArtifactLayout {
+    fn normalize_for_storage(&mut self) -> Result<()> {
+        self.artifact_root =
+            normalize_for_storage(&self.artifact_root, PersistedPathOrigin::RepositoryOwned)?;
+        self.adapter_artifact_path = normalize_for_storage(
+            &self.adapter_artifact_path,
+            PersistedPathOrigin::RepositoryOwned,
+        )?;
+        if let Some(path) = &mut self.emitted_target_path {
+            *path = normalize_for_storage(path, PersistedPathOrigin::RepositoryOwned)?;
+        }
+        Ok(())
+    }
+
+    fn runtime_layout(&self) -> Result<Self> {
+        Ok(Self {
+            artifact_root: resolve_repository_output(&self.artifact_root)?,
+            adapter_artifact_path: resolve_repository_output(&self.adapter_artifact_path)?,
+            emitted_target_path: self
+                .emitted_target_path
+                .as_deref()
+                .map(resolve_repository_output)
+                .transpose()?,
+        })
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -352,17 +405,20 @@ fn build_isf_adapter_artifact(
     // fabricated and no value is truncated.
     residual_decisions.extend(isf_model.enum_residuals().iter().cloned());
 
+    let artifact_layout = AdapterArtifactLayout {
+        artifact_root,
+        adapter_artifact_path,
+        emitted_target_path,
+    }
+    .runtime_layout()?;
+
     Ok(AdapterArtifact {
         stage: IrStage::IsfAdapter,
         schema_version: 1,
         target: AdapterTarget::Isf,
         required_input_stage: IrStage::IntentIr,
         intent_ir_path: intent_ir_path.to_path_buf(),
-        artifact_layout: AdapterArtifactLayout {
-            artifact_root,
-            adapter_artifact_path,
-            emitted_target_path,
-        },
+        artifact_layout,
         adapter_identity,
         document_identity: intent_ir.document_identity.clone(),
         lowering_status,
@@ -370,18 +426,6 @@ fn build_isf_adapter_artifact(
         validation_reports: vec![],
         isf: Some(isf),
     })
-}
-
-fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {
-    if !path.exists() {
-        return Err(AppError::MissingPath(path.to_path_buf()));
-    }
-
-    Ok(fs::canonicalize(path)?)
-}
-#[derive(Debug, Deserialize)]
-struct StageProbe {
-    stage: IrStage,
 }
 
 #[cfg(test)]
@@ -430,6 +474,126 @@ mod tests {
         )?;
         intent_ir.write_to_disk()?;
         Ok(intent_ir)
+    }
+
+    #[test]
+    fn downstream_artifacts_store_relative_paths_and_rebase_legacy_lineage() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "portable_downstream_paths.md",
+            ISF_ADAPTER_TEST_SPEC,
+        )?;
+        let semantic_ir_path = intent_ir.semantic_ir_path.clone();
+        let semantic_ir = SemanticIr::load_from_path(&semantic_ir_path)?;
+        let evidence_ir_path = semantic_ir.evidence_ir_path.clone();
+        let intent_ir_path = intent_ir.artifact_layout.intent_ir_path.clone();
+        let adapter = AdapterArtifact::build(
+            &intent_ir_path,
+            AdapterTarget::Isf,
+            &tempdir.path().join("generated/adapters"),
+        )?;
+        adapter.write_to_disk()?;
+        let adapter_path = adapter.artifact_layout.adapter_artifact_path.clone();
+
+        let repository = crate::project_data::repository_root()?;
+        for path in [&semantic_ir_path, &intent_ir_path, &adapter_path] {
+            let stored = fs::read_to_string(path)?;
+            assert!(
+                !stored.contains(repository.to_string_lossy().as_ref()),
+                "repository-owned downstream paths must serialize without the runtime root: {}",
+                path.display()
+            );
+        }
+
+        fn retire(value: &mut serde_json::Value) {
+            let relative = value.as_str().expect("stored path string");
+            assert!(Path::new(relative).is_relative());
+            *value = serde_json::Value::String(
+                Path::new("/retired/specforge")
+                    .join(relative)
+                    .to_string_lossy()
+                    .into_owned(),
+            );
+        }
+
+        let mut semantic_json =
+            serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&semantic_ir_path)?)?;
+        for pointer in [
+            "/evidence_ir_path",
+            "/artifact_layout/artifact_root",
+            "/artifact_layout/semantic_ir_path",
+        ] {
+            retire(semantic_json.pointer_mut(pointer).expect("semantic path"));
+        }
+        fs::write(
+            &semantic_ir_path,
+            serde_json::to_string_pretty(&semantic_json)?,
+        )?;
+
+        let mut intent_json =
+            serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&intent_ir_path)?)?;
+        for pointer in [
+            "/semantic_ir_path",
+            "/artifact_layout/artifact_root",
+            "/artifact_layout/intent_ir_path",
+        ] {
+            retire(intent_json.pointer_mut(pointer).expect("intent path"));
+        }
+        fs::write(&intent_ir_path, serde_json::to_string_pretty(&intent_json)?)?;
+
+        let mut adapter_json =
+            serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&adapter_path)?)?;
+        for pointer in [
+            "/intent_ir_path",
+            "/artifact_layout/artifact_root",
+            "/artifact_layout/adapter_artifact_path",
+            "/artifact_layout/emitted_target_path",
+        ] {
+            retire(adapter_json.pointer_mut(pointer).expect("adapter path"));
+        }
+        fs::write(&adapter_path, serde_json::to_string_pretty(&adapter_json)?)?;
+
+        let reloaded_semantic = SemanticIr::load_from_path(&semantic_ir_path)?;
+        assert_eq!(reloaded_semantic.evidence_ir_path, evidence_ir_path);
+        assert!(
+            reloaded_semantic
+                .artifact_layout
+                .artifact_root
+                .is_absolute()
+        );
+        assert!(
+            !reloaded_semantic
+                .to_pretty_json()?
+                .contains("/retired/specforge")
+        );
+
+        let reloaded_intent = IntentIr::load_from_path(&intent_ir_path)?;
+        assert_eq!(reloaded_intent.semantic_ir_path, semantic_ir_path);
+        assert!(reloaded_intent.artifact_layout.artifact_root.is_absolute());
+        assert!(
+            !reloaded_intent
+                .to_pretty_json()?
+                .contains("/retired/specforge")
+        );
+
+        let reloaded_adapter = AdapterArtifact::load_from_path(&adapter_path)?;
+        assert_eq!(reloaded_adapter.intent_ir_path, intent_ir_path);
+        assert!(reloaded_adapter.artifact_layout.artifact_root.is_absolute());
+        assert!(
+            reloaded_adapter
+                .artifact_layout
+                .emitted_target_path
+                .as_ref()
+                .is_some_and(|path| path.is_absolute())
+        );
+        assert!(
+            !reloaded_adapter
+                .to_pretty_json()?
+                .contains("/retired/specforge")
+        );
+
+        Ok(())
     }
 
     // --- ISF adapter ---

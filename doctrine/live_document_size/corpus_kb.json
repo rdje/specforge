@@ -5,7 +5,7 @@
     "validation": {
       "snapshot_path": "VALIDATION_SNAPSHOT.md",
       "authority_contract_path": "doctrine/live_document_size/validation_snapshot.json",
-      "authority_contract_sha256": "cc18607ad67b22d3574fe4b238a0a75a9da1342577781e55c6703f0490db730b",
+      "authority_contract_sha256": "5bcde7f45486b6b9c3fef2146bb8cb096d09c0b8903c9313ac53204f47e3e33c",
       "reviewed_snapshot_is_authoritative": true,
       "ambient_reports_are_authoritative": false
     },

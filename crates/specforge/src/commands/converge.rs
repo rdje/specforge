@@ -10,6 +10,7 @@ use crate::ir::evidence::{EvidenceIr, StatementClass, VisualObservationKind};
 use crate::ir::intent::IntentIr;
 use crate::ir::semantic::SemanticIr;
 use crate::ir::source::{DiagramKind, SourceIr};
+use crate::persisted_path::resolve_repository_output;
 
 #[derive(Debug, Clone)]
 struct PipelineArtifactRoots {
@@ -488,11 +489,7 @@ impl PipelineArtifactPaths {
 }
 
 fn absolute_artifact_path(path: &std::path::Path) -> Result<PathBuf> {
-    if path.is_absolute() {
-        Ok(path.to_path_buf())
-    } else {
-        Ok(std::env::current_dir()?.join(path))
-    }
+    resolve_repository_output(path)
 }
 
 #[derive(Debug, Clone)]
@@ -1448,17 +1445,24 @@ mod tests {
     // --- absolute_artifact_path ---
 
     #[test]
-    fn absolute_artifact_path_returns_absolute_path_unchanged() {
-        let abs = std::path::Path::new("/absolute/path/file.json");
-        let result = absolute_artifact_path(abs).unwrap();
-        assert_eq!(result, abs);
+    fn absolute_artifact_path_returns_local_absolute_path_unchanged() {
+        let repository = crate::project_data::repository_root().unwrap();
+        let local = repository.join("generated/test-output/file.json");
+        let result = absolute_artifact_path(&local).unwrap();
+        assert_eq!(result, local);
     }
 
     #[test]
-    fn absolute_artifact_path_resolves_relative_path() {
-        let cwd = std::env::current_dir().unwrap();
+    fn absolute_artifact_path_resolves_relative_path_at_repository() {
+        let repository = crate::project_data::repository_root().unwrap();
         let rel = std::path::Path::new("relative/file.json");
         let result = absolute_artifact_path(rel).unwrap();
-        assert_eq!(result, cwd.join("relative/file.json"));
+        assert_eq!(result, repository.join("relative/file.json"));
+    }
+
+    #[test]
+    fn absolute_artifact_path_rejects_external_output() {
+        let external = std::path::Path::new("/absolute/path/file.json");
+        assert!(absolute_artifact_path(external).is_err());
     }
 }

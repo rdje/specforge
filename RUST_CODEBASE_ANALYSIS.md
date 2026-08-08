@@ -4,6 +4,30 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-08 — downstream persisted-path activation; `ARTIFACT-PATH-PORTABILITY.3`)
+
+- **Every canonical pipeline stage now has one storage/runtime boundary.** `SemanticIr`, `IntentIr`, and
+  `AdapterArtifact` join SourceIR/EvidenceIR in exposing current-root absolute paths after build/load while
+  `to_pretty_json` and `write_to_disk` serialize normalized clones. Their repository-owned upstream pointers,
+  artifact layouts, and optional emitted `.isf` targets are therefore move-safe without changing the JSON
+  `PathBuf` shape used by existing artifacts and consumers.
+- **Stage identity is checked before internal paths are trusted.** Each downstream loader deserializes the
+  outer artifact through `persisted_path`, rejects a wrong `IrStage`, and only then resolves that stage's typed
+  path fields. A complete pipeline test rewrites every downstream lineage value to a retired root, proves
+  current-root runtime resolution, and proves reserialization removes the retired root.
+- **Typed prior memory and command seams use the same contract.** `CorpusMemory::to_pretty_json` normalizes
+  learned `source_artifacts[].artifact_path`; `learn-priors` delays output resolution until the real write
+  boundary so dry-run/missing-input diagnostics stay unchanged. Project validation, recovery, KG fixtures,
+  and convergence now resolve repository artifacts/outputs through the common seam rather than local
+  canonicalizers or process-CWD assumptions.
+- **Ambiguity remains an error, not a guessed migration.** A recovery probe whose retired path admitted both
+  `.project-data` and `generated` suffixes found two existing exact targets; the resolver correctly refused it.
+  The command compatibility test uses one unique present target, while common-contract tests retain the
+  multiple-target refusal.
+- **Present-data boundary:** all producer/consumer code is ready, but the measured 335-file / 262,996-value
+  generated corpus remains unchanged. `ARTIFACT-PATH-PORTABILITY.4` owns its file/byte/hash-verified migration
+  and the fail-closed present-artifact/residue gate; no generated rewrite is implied by code activation alone.
+
 ## Session update (2026-08-08 — SourceIR/EvidenceIR path activation and SWD interface-edge timing)
 
 - **Storage identity and runtime identity are now separate.** `persisted_path` keeps repository-owned

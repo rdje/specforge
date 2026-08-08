@@ -2638,10 +2638,7 @@ fn write_fixture_prior_memory(generated_root: &Path, patch: &PriorMemoryPatch) -
         negative_knowledge_priors: patch.negative_knowledge_priors.clone(),
         extraction_profile_priors: patch.extraction_profile_priors.clone(),
     };
-    fs::write(
-        &prior_memory_path,
-        serde_json::to_string_pretty(&corpus_memory)?,
-    )?;
+    fs::write(&prior_memory_path, corpus_memory.to_pretty_json()?)?;
     Ok(prior_memory_path)
 }
 

@@ -349,6 +349,20 @@ It is the artifact that:
 
 That is why `IntentIR` is the main public product surface today.
 
+## Portable lineage paths
+
+The public product does not persist the workstation that created it. `IntentIR.input_artifact` and its artifact
+layout serialize as repository-relative paths, while a loaded or newly built Rust value exposes current-root
+absolute paths for direct use. For example, the persisted lineage pointer is:
+
+```text
+generated/semantic_ir/<document_key>/semantic_ir.json
+```
+
+Stage identity is rejected before these typed paths are resolved. A legacy absolute pointer is accepted only
+through the common unique-target, in-repository rebase; missing, ambiguous, traversing, or escaping paths fail
+closed. Writing or reserializing the loaded artifact returns to the relative form.
+
 ## Closed task trees — how each was implemented and verified
 
 ### `R6-INTENT-HARDENING` — close mutation-testing gaps in `intent.rs` builders

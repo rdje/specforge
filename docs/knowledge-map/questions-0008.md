@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > why not recover (port ARLOOP) from the loopback prose (the temporal 'was presented' loopback is not the current (port ARLOOP); recovering one would fabricate the timing — honest residual over fabrication)
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > why was APB write_transfer / read_transfer membership only PCLK
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)

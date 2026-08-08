@@ -16,6 +16,7 @@ use crate::ir::semantic::SemanticIr;
 use crate::ir::source::{
     SourceIr, ValidationFindingRecord, ValidationFindingSeverity, ValidationReportRecord,
 };
+use crate::persisted_path::{PersistedPathOrigin, resolve_existing};
 
 const VALIDATION_SNAPSHOT_DOC: &str = "VALIDATION_SNAPSHOT.md";
 const LIVE_STATUS_DOC: &str = "LIVE_ACHIEVEMENT_STATUS.md";
@@ -333,7 +334,7 @@ pub fn run(args: ProjectValidationArgs) -> Result<()> {
 
     let mut snapshots = Vec::new();
     for artifact in &args.artifacts {
-        snapshots.push(project_artifact(artifact, &repo_root)?);
+        snapshots.push(project_artifact(artifact)?);
     }
     snapshots.sort_by(|left, right| {
         left.document_key
@@ -374,8 +375,8 @@ pub fn run(args: ProjectValidationArgs) -> Result<()> {
     Ok(())
 }
 
-fn project_artifact(artifact: &Path, repo_root: &Path) -> Result<ProjectedArtifactSnapshot> {
-    let artifact_path = normalize_input_path(artifact, repo_root);
+fn project_artifact(artifact: &Path) -> Result<ProjectedArtifactSnapshot> {
+    let artifact_path = resolve_existing(artifact, PersistedPathOrigin::RepositoryOwned)?;
     validate::run(ValidateArgs {
         artifact: artifact_path.clone(),
     })?;

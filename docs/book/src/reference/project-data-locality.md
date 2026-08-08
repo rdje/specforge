@@ -43,13 +43,12 @@ read-only operating-system/toolchain inputs. Rust build outputs remain in the re
 The post-compaction hook can also read an optional `../fsmgen` sibling checkout, but only on the same
 filesystem; the pinned submodule remains the reproducible authority.
 
-### Persisted-path contract and remaining migration gap
+### Persisted-path contract and present-data migration gap
 
-The runtime/cache controls above are enforced, but a post-move audit found a separate persistence gap.
-SourceIR stores its canonical input path, and the EvidenceIR, SemanticIR, IntentIR, and adapter builders
-canonicalize their input before persisting the upstream-stage pointer. The present generated tree therefore
-contains 335 JSON/Markdown artifacts with the deleted pre-SSD repository root; EvidenceIR alone repeats it in
-262,592 span/anchor `source_path` values.
+The runtime/cache controls above are enforced, but a post-move audit found a separate historical persistence
+gap. Older SourceIR, EvidenceIR, SemanticIR, IntentIR, adapter, and prior-memory producers persisted canonical
+absolute paths. The present generated tree therefore contains 335 JSON/Markdown artifacts with the deleted
+pre-SSD repository root; EvidenceIR alone repeats it in 262,592 span/anchor `source_path` values.
 
 This is not current boot-volume I/O—the old repository is absent—but it makes lineage consumers move-fragile.
 Some validation and learning paths treat a missing upstream artifact as optional and silently lose cross-stage
@@ -61,17 +60,19 @@ inputs may remain absolute but never enter legacy rebasing. An old absolute repo
 below a recognized project-data root, to exactly one existing canonical target contained by the current
 repository. Parent traversal, zero/multiple targets, and symlink escape are errors.
 
-SourceIR and EvidenceIR now use that contract. Their Rust values are resolved absolute paths while the process
-is running, so normal callers can open them directly. Their JSON and SourceIR sidecar manifests store
+All canonical stages now use that contract. Their Rust values are resolved absolute paths while the process is
+running, so normal callers can open them directly. Their JSON and SourceIR sidecar manifests store
 repository-owned source/layout/upstream/prior/provenance paths relative to the repository. Source text carries
-an origin label; an authorized external Markdown or PDF path remains absolute, while normalized page and visual
-assets remain repository-owned. Loading an old unlabeled artifact infers present external identity exactly or
-uses the bounded legacy rebase for repository data.
+an origin label; an authorized external Markdown or PDF path remains absolute, while generated assets remain
+repository-owned. SemanticIR, IntentIR, and adapter layouts/upstream/emitted-target fields use the same split,
+and typed prior memory stores learned source-artifact paths relative. Validation, project-validation, learning,
+recovery, KG fixtures, and convergence resolve repository artifacts through the common boundary.
 
-SemanticIR, IntentIR, adapters, and remaining learning/recovery consumers are the next migration boundary.
-After that, the current generated corpus can be migrated with verification and covered by a fail-closed residue
-gate. Until those leaves land, do not bulk-rewrite ignored artifacts or treat SourceIR/EvidenceIR producer
-support alone as proof that the whole persisted pipeline is portable.
+Loading an old unlabeled artifact infers present external identity exactly or uses the bounded legacy rebase for
+repository data. Code activation is complete; only the current ignored corpus is still old. Its next leaf adds a
+fail-closed present-artifact gate, migrates it with file/byte/hash and real-workflow verification, and proves no
+retired-root residue remains. Until that verified migration lands, do not bulk-rewrite the ignored artifacts or
+mistake producer readiness for completed present-data migration.
 
 ## Check the contract
 

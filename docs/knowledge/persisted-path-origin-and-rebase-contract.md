@@ -10,10 +10,11 @@ answers:
   - "how are repository owned and external input path origins labeled"
   - "do SourceIR and EvidenceIR keep absolute paths in memory"
   - "which SourceIR and EvidenceIR paths serialize repository relative"
+  - "which SemanticIR IntentIR adapter and prior memory paths serialize repository relative"
 date: 2026-08-08
 status: current
 tags: [artifact-paths, portability, locality, compatibility, external-inputs]
-evidence: crates/specforge/src/persisted_path.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; docs/tasks/ARTIFACT-PATH-PORTABILITY.md (.1-.2); PROJECT_DATA_LOCALITY.md
+evidence: crates/specforge/src/persisted_path.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/semantic.rs; crates/specforge/src/ir/intent.rs; crates/specforge/src/ir/adapters.rs; crates/specforge/src/ir/prior_memory.rs; docs/tasks/ARTIFACT-PATH-PORTABILITY.md (.1-.3); PROJECT_DATA_LOCALITY.md
 reverify: "cargo test -p specforge persisted_path::tests"
 ---
 
@@ -30,7 +31,14 @@ for existing consumers, while `to_pretty_json` and `write_to_disk` serialize nor
 artifact layouts, normalized page/visual assets, upstream/prior pointers, and section/span/visual provenance are
 therefore move-safe without wrapping every existing path in a new schema object.
 
+SemanticIR, IntentIR, and adapter loaders/builders apply the same two-form model to their upstream pointers and
+artifact layouts; the adapter also normalizes its optional emitted `.isf` target. `CorpusMemory::to_pretty_json`
+normalizes learned `source_artifacts[].artifact_path`, and the learning writer resolves its output only at the
+I/O boundary. Validation, project-validation, recovery, KG fixtures, and convergence use the same resolver for
+repository artifacts and outputs. These downstream fields are intrinsically repository-owned, so they need no
+additional mixed-origin schema label.
+
 Evidence text provenance inherits the promoted Markdown origin because authorized external Markdown remains a
 real external input. Evidence visual provenance is repository-owned because those images and caption sources
-come from SourceIR's normalized artifact bundle. The remaining SemanticIR/IntentIR/adapter and consumer
-activation is owned by `ARTIFACT-PATH-PORTABILITY.3`; current ignored-artifact migration remains `.4`.
+come from SourceIR's normalized artifact bundle. Canonical code activation is complete through
+`ARTIFACT-PATH-PORTABILITY.3`; current ignored-artifact migration and residue enforcement remain `.4`.

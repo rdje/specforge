@@ -51,13 +51,17 @@ These artifacts are useful for different kinds of inspection:
 - inspect `SemanticIR` when actors, ports, connectivity, temporal rules, arbitration, conflicts, or residuals look wrong
 - inspect `IntentIR` when you want the canonical product surface that validators, adapters, and prior learning consume
 
-SourceIR and EvidenceIR use a two-form path contract. In memory, their paths are resolved against the current
-repository root and can be opened directly. In their persisted JSON, repository-owned paths are relative—for
-example `generated/source_ir/<document_key>/source_ir.json` rather than an absolute workstation path. An
-explicitly authorized source outside the repository remains absolute and is labeled as an external input.
-Legacy absolute repository paths are accepted only through the bounded, unique-target compatibility resolver.
-SemanticIR, IntentIR, and adapter adoption is still in progress, so do not manually rewrite the current
-generated corpus ahead of the verified migration.
+Every canonical stage uses a two-form path contract. In memory, repository-owned paths are resolved against the
+current repository root and can be opened directly. In persisted JSON, the same paths are relative—for example
+`generated/source_ir/<document_key>/source_ir.json` rather than an absolute workstation path. This covers stage
+layouts and cross-stage pointers in SourceIR, EvidenceIR, SemanticIR, IntentIR, and adapter artifacts, including
+the adapter's optional emitted `.isf` target.
+
+An explicitly authorized source outside the repository remains absolute and is labeled as an external input.
+Legacy absolute repository paths are accepted only when the bounded compatibility resolver finds exactly one
+present target below the current repository; missing, ambiguous, traversing, or escaping paths fail closed.
+The current pre-migration generated corpus still contains 335 artifacts with the retired repository root. Do
+not manually rewrite it: the next portability leaf owns a measured file/byte/hash migration and residue gate.
 
 ## Source-side sidecars
 
@@ -162,6 +166,10 @@ The adapter artifact (`AdapterArtifact` with an `isf` payload) records:
 When the artifact is renderable, the emitted `.isf` text is also written to
 `generated/adapters/isf/<document_key>/<actor_name>.isf`.
 
+Its `input_artifact`, artifact layout, and optional `emitted_target` follow the same two-form contract as the
+four main IR stages: relative in `adapter.json`, current-root absolute after loading. This lets validation and
+other consumers open the artifact normally after the repository moves without persisting a workstation root.
+
 Adapter artifacts should not define what the canonical document meaning is.
 If an adapter needs meaning that is not present in `IntentIR`, the fix
 belongs upstream in the IR pipeline, not inside the adapter.
@@ -202,6 +210,8 @@ It can contain actor-taxonomy, semantic-phrase, semantic-modality-reliability, t
 
 It is still local generated state.
 The code defines how learning works; `corpus_memory.json` stores what the local workspace has learned so far.
+Each `source_artifacts[].artifact_path` is repository-relative on disk and current-root absolute when resolved
+for use, so learned lineage does not pin the memory file to the workstation on which learning ran.
 
 ## Why generated artifacts are not tracked
 

@@ -32,10 +32,10 @@
       {
         "id": "run_mutating_writer",
         "start_literal": "pub fn run(args: ProjectValidationArgs) -> Result<()> {",
-        "end_before_literal": "fn project_artifact(artifact: &Path, repo_root: &Path) -> Result<ProjectedArtifactSnapshot> {",
+        "end_before_literal": "fn project_artifact(artifact: &Path) -> Result<ProjectedArtifactSnapshot> {",
         "lines": 50,
-        "bytes": 1925,
-        "sha256": "5dc3351b1a3210e2113ef9f8c938344db2e8120311b95fe0486d15b3dd209d0e"
+        "bytes": 1913,
+        "sha256": "a72f3afdd3d31b583315125fcce71a02d792f643db6d0e71f5bd7a7fdd64eb3d"
       },
       {
         "id": "snapshot_renderer",

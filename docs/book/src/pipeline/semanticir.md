@@ -146,6 +146,22 @@ A good semantic artifact should have:
 
 When those observations come from captions or VLM-enriched diagrams, the dedicated [Multimodal Evidence And Visual Grounding](multimodal-evidence.md) chapter explains how that visual provenance is preserved.
 
+## Portable lineage paths
+
+`SemanticIR` keeps two representations of repository-owned paths. A loaded or newly built Rust value exposes
+absolute `input_artifact` and artifact-layout paths rooted at the repository's current location, so validators
+and downstream builders can open them directly. Its JSON stores those same values relative to the repository:
+
+```text
+generated/evidence_ir/<document_key>/evidence_ir.json
+generated/semantic_ir/<document_key>/semantic_ir.json
+```
+
+The loader first verifies that the outer artifact really is `semantic_ir`, then resolves its internal paths.
+Legacy absolute paths from a retired repository root rebase only when exactly one present in-repository target
+matches; ambiguous or escaping values are rejected. Reserializing a successfully loaded legacy artifact emits
+the relative form, so no retired workstation root propagates downstream.
+
 ## Why this stage matters so much
 
 If `SourceIR` is where structure is preserved and `EvidenceIR` is where grounded hints are harvested, `SemanticIR` is where the project either becomes trustworthy or starts to hallucinate.

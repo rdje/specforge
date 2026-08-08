@@ -1,3 +1,16 @@
+### ARTIFACT-PATH-PORTABILITY.3 — make downstream artifact paths move-safe
+
+- Extended the common storage/runtime path boundary through SemanticIR, IntentIR, adapter reports, and typed
+  prior-memory source records. Repository-owned upstream/layout/emitted-target/learned-source paths serialize
+  relative while stage builders and loaders expose current-root absolute paths to existing consumers.
+- Routed project-validation, learning, recovery, KG fixtures, and convergence artifact boundaries through the
+  common resolver. Wrong-stage artifacts are rejected before their internal paths are resolved, and ambiguous
+  retired roots remain a hard error rather than a guessed rebase.
+- Added complete downstream persisted/runtime/legacy lineage coverage plus focused learning and recovery cases.
+  Formatting, warning-deny Clippy, 156/156 KG fixtures, and the 1,763-test suite pass; full CI covers doctrines,
+  rustdoc, mdBook, and locality. The current 335 affected generated artifacts remain unchanged for the verified
+  `.4` migration and residue gate.
+
 ### MDBOOK-DOCTEST-HYGIENE.2 — enforce book doctests in docs CI
 
 - Made `scripts/run_docs_ci.sh` run native mdBook doctests before building the HTML book. The full CI workflow

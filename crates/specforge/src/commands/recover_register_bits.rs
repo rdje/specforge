@@ -30,20 +30,20 @@ use crate::ir::register_bits::{
     RegisterBitRecoveryOutcome, RegisterDiagramFieldProposal, recover_bits_for_register,
 };
 use crate::ir::source::{DiagramKind, RegisterRecord, SourceIr};
+use crate::persisted_path::{PersistedPathOrigin, resolve_existing};
 
 /// The synthetic prefix `synthesize_register_field_tables` puts on a field-table register's id,
 /// from which the source `StructuredTableRecord.table_id` (and thus its page) is recoverable.
 const FIELD_TABLE_REGISTER_PREFIX: &str = "regfld_";
 
 pub fn run(args: RecoverRegisterBitsArgs) -> Result<()> {
-    if !args.evidence_ir.exists() {
-        return Err(AppError::MissingPath(args.evidence_ir));
-    }
-    let mut evidence_ir = EvidenceIr::load_from_path(&args.evidence_ir)?;
+    let evidence_ir_path =
+        resolve_existing(&args.evidence_ir, PersistedPathOrigin::RepositoryOwned)?;
+    let mut evidence_ir = EvidenceIr::load_from_path(&evidence_ir_path)?;
 
     println!("command: recover-register-bits");
     println!("mode: {}", if args.dry_run { "dry-run" } else { "execute" });
-    println!("evidence_ir_path: {}", args.evidence_ir.display());
+    println!("evidence_ir_path: {}", evidence_ir_path.display());
     println!(
         "document_key: {}",
         evidence_ir.document_identity.document_key
@@ -697,5 +697,27 @@ mod tests {
                 .iter()
                 .all(|f| f.bits_high.is_none())
         );
+    }
+
+    #[test]
+    fn skip_provider_accepts_a_legacy_repository_artifact_path() {
+        let _lock = env_var_lock();
+        let (tempdir, evidence_ir_path) = build_fixture(&dmcontrol_field_names(), "dmcontrol");
+        let argument_path = tempdir.path().join("legacy_argument/evidence_ir.json");
+        fs::create_dir_all(argument_path.parent().expect("legacy argument parent")).unwrap();
+        fs::copy(evidence_ir_path, &argument_path).unwrap();
+        let repository = crate::project_data::repository_root().unwrap();
+        let relative = argument_path
+            .strip_prefix(repository)
+            .expect("fixture is repository-local");
+        let legacy = Path::new("/retired/specforge").join(relative);
+
+        run(RecoverRegisterBitsArgs {
+            evidence_ir: legacy,
+            vlm_provider: VlmProviderArg::Skip,
+            vlm_model: None,
+            dry_run: false,
+        })
+        .unwrap();
     }
 }

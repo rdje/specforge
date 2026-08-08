@@ -19,12 +19,12 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `ARTIFACT-PATH-PORTABILITY.3` — next queued leaf; no implementation starts until the completed
-  mdBook-doctest close commit lands.
-- Current state: `MDBOOK-DOCTEST-HYGIENE` is closed. All affected fences are truthfully classified, and the
-  canonical docs entrypoint now runs native mdBook doctests before the 36-page HTML build; focused and full CI
-  pass from the completed tree.
-- Next action: open `ARTIFACT-PATH-PORTABILITY.3` at its recorded frontier and migrate SemanticIR, IntentIR,
-  adapter reports, and their consumers to the move-safe persisted-path contract.
-- In-flight uncommitted: none after the `.2` close commit; no background job.
+- Active unit: `ARTIFACT-PATH-PORTABILITY.4` — next queued leaf; do not mutate current generated data until the
+  completed `.3` code-activation commit lands.
+- Current state: all canonical IR/adapter producers now serialize repository-owned paths relative and expose
+  resolved absolute runtime paths. Learning, validation, project-validation, recovery, KG fixtures, and
+  convergence use the common boundary; 1,758 tests / five ignored and focused 156/156 KG checks pass.
+- Next action: add the fail-closed present-artifact/producer gate, then migrate the measured 700 MiB generated
+  tree with file/byte/hash and real-workflow copy/verify/use/delete evidence.
+- In-flight uncommitted: none after the `.3` commit; current generated artifacts remain unchanged.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

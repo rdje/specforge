@@ -23,6 +23,9 @@ use crate::ir::source::{
     ActorSignalRelation, AutomationConfidence, CandidateInterpretation, RelationKind,
     ResidualDecisionPacket, SignalConstraintKind, ValidationReportRecord, document_key,
 };
+use crate::persisted_path::{
+    PersistedPathOrigin, normalize_for_storage, resolve_existing, resolve_repository_output,
+};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct IntentIr {
@@ -138,15 +141,19 @@ pub struct IntentIr {
 
 impl IntentIr {
     pub fn load_from_path(path: &Path) -> Result<Self> {
-        if !path.exists() {
-            return Err(AppError::MissingPath(path.to_path_buf()));
+        let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
+        let intent_ir = serde_json::from_str::<Self>(&fs::read_to_string(path)?)?;
+        if !matches!(intent_ir.stage, IrStage::IntentIr) {
+            return Err(AppError::InvalidStageArtifact(
+                "artifact must be an IntentIR document before loading IntentIR".to_string(),
+            ));
         }
-
-        Ok(serde_json::from_str(&fs::read_to_string(path)?)?)
+        intent_ir.runtime_clone()
     }
 
     pub fn build(semantic_ir_path: &Path, artifact_base_root: &Path) -> Result<Self> {
-        let semantic_ir_path = canonicalize_existing_path(semantic_ir_path)?;
+        let semantic_ir_path =
+            resolve_existing(semantic_ir_path, PersistedPathOrigin::RepositoryOwned)?;
         let semantic_ir = SemanticIr::load_from_path(&semantic_ir_path)?;
 
         if !matches!(semantic_ir.stage, IrStage::SemanticIr) {
@@ -161,7 +168,8 @@ impl IntentIr {
         let artifact_layout = IntentArtifactLayout {
             artifact_root,
             intent_ir_path,
-        };
+        }
+        .runtime_layout()?;
         let document_identity = IntentDocumentIdentity {
             document_key: semantic_ir.document_identity.document_key.clone(),
             display_name: semantic_ir.document_identity.display_name.clone(),
@@ -287,13 +295,38 @@ impl IntentIr {
     }
 
     pub fn to_pretty_json(&self) -> Result<String> {
-        Ok(serde_json::to_string_pretty(self)?)
+        Ok(serde_json::to_string_pretty(&self.persisted_clone()?)?)
     }
 
     pub fn write_to_disk(&self) -> Result<()> {
-        fs::create_dir_all(&self.artifact_layout.artifact_root)?;
-        fs::write(&self.artifact_layout.intent_ir_path, self.to_pretty_json()?)?;
+        let persisted = self.persisted_clone()?;
+        let runtime_layout = persisted.artifact_layout.runtime_layout()?;
+        fs::create_dir_all(&runtime_layout.artifact_root)?;
+        fs::write(
+            &runtime_layout.intent_ir_path,
+            serde_json::to_string_pretty(&persisted)?,
+        )?;
         Ok(())
+    }
+
+    fn persisted_clone(&self) -> Result<Self> {
+        let mut persisted = self.clone();
+        persisted.semantic_ir_path = normalize_for_storage(
+            &persisted.semantic_ir_path,
+            PersistedPathOrigin::RepositoryOwned,
+        )?;
+        persisted.artifact_layout.normalize_for_storage()?;
+        Ok(persisted)
+    }
+
+    fn runtime_clone(&self) -> Result<Self> {
+        let mut runtime = self.clone();
+        runtime.semantic_ir_path = resolve_existing(
+            &runtime.semantic_ir_path,
+            PersistedPathOrigin::RepositoryOwned,
+        )?;
+        runtime.artifact_layout = runtime.artifact_layout.runtime_layout()?;
+        Ok(runtime)
     }
 }
 
@@ -301,6 +334,23 @@ impl IntentIr {
 pub struct IntentArtifactLayout {
     pub artifact_root: PathBuf,
     pub intent_ir_path: PathBuf,
+}
+
+impl IntentArtifactLayout {
+    fn normalize_for_storage(&mut self) -> Result<()> {
+        self.artifact_root =
+            normalize_for_storage(&self.artifact_root, PersistedPathOrigin::RepositoryOwned)?;
+        self.intent_ir_path =
+            normalize_for_storage(&self.intent_ir_path, PersistedPathOrigin::RepositoryOwned)?;
+        Ok(())
+    }
+
+    fn runtime_layout(&self) -> Result<Self> {
+        Ok(Self {
+            artifact_root: resolve_repository_output(&self.artifact_root)?,
+            intent_ir_path: resolve_repository_output(&self.intent_ir_path)?,
+        })
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -1226,14 +1276,6 @@ pub fn count_nested_steps(steps: &[TransactionStep]) -> usize {
         }
     }
     count
-}
-
-fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {
-    if !path.exists() {
-        return Err(AppError::MissingPath(path.to_path_buf()));
-    }
-
-    Ok(fs::canonicalize(path)?)
 }
 
 // ---------------------------------------------------------------------------

@@ -437,6 +437,21 @@ ISF adapter output lives under:
 
 The adapter artifact carries the rendered `.isf` source text, renderability status, blocking reasons, and signal inventory metadata. It is tagged with the `isf_adapter` `IrStage`, which stage-keyed tooling (e.g. `specforge validate`, `project-validation`) dispatches on.
 
+### Portable artifact paths
+
+The adapter report persists its IntentIR `input_artifact`, report layout, and optional emitted `.isf` target as
+repository-relative paths. Loading the report verifies the `isf_adapter` stage first and then exposes those
+paths as current-root absolute values, so validators can open them after the checkout moves. For example:
+
+```text
+generated/intent_ir/<document_key>/intent_ir.json
+generated/adapters/isf/<document_key>/adapter.json
+generated/adapters/isf/<document_key>/<actor_name>.isf
+```
+
+Legacy absolute forms use the same bounded unique-target rebase as the four IR stages. A successful legacy load
+reserializes to relative paths; an ambiguous, missing, traversing, or repository-escaping target is rejected.
+
 Every behavioral count in the artifact reflects **what the emitter
 actually rendered**, never a blind `IntentIr`-derived guess:
 `transaction_count` and `rule_count` are taken from the single emitted

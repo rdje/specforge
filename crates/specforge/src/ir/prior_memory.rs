@@ -3,6 +3,7 @@ use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
 
+use crate::error::Result;
 use crate::ir::evidence::{
     SignalPolarityConflictRecord, SignalSemanticConflictRecord, SignalSemanticHintSourceKind,
 };
@@ -14,6 +15,7 @@ use crate::ir::source::{
     AutomationConfidence, DiagramKind, ResidualDecisionPacket, StructuredTableRecord, TableKind,
     VisualAssetKind,
 };
+use crate::persisted_path::{PersistedPathOrigin, normalize_for_storage};
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
 #[serde(rename_all = "snake_case")]
@@ -81,6 +83,19 @@ pub struct CorpusMemory {
 }
 
 impl CorpusMemory {
+    pub fn to_pretty_json(&self) -> Result<String> {
+        Ok(serde_json::to_string_pretty(&self.persisted_clone()?)?)
+    }
+
+    fn persisted_clone(&self) -> Result<Self> {
+        let mut persisted = self.clone();
+        for source in &mut persisted.source_artifacts {
+            source.artifact_path =
+                normalize_for_storage(&source.artifact_path, PersistedPathOrigin::RepositoryOwned)?;
+        }
+        Ok(persisted)
+    }
+
     pub fn semantic_phrase_priors_for(
         &self,
         protocol_family: Option<ProtocolFamily>,
@@ -1264,7 +1279,39 @@ pub struct ExtractionProfilePriorRecord {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::fs;
+
     use crate::ir::source::StructuredTableCellRecord;
+
+    #[test]
+    fn corpus_memory_serializes_source_artifacts_relative_to_the_repository() -> Result<()> {
+        let tempdir = crate::project_data::tempdir()?;
+        let artifact_path = tempdir
+            .path()
+            .join("generated/intent_ir/spec/intent_ir.json");
+        fs::create_dir_all(artifact_path.parent().expect("artifact parent"))?;
+        fs::write(&artifact_path, b"{}")?;
+
+        let mut corpus = make_test_corpus();
+        corpus.source_artifacts.push(PriorSourceArtifactRecord {
+            artifact_path,
+            document_key: "spec".to_string(),
+            display_name: "Spec".to_string(),
+            protocol_family: ProtocolFamily::Unknown,
+            overall_score: Some(100),
+            grade: Some("EXCELLENT".to_string()),
+            accepted_for_learning: true,
+            skip_reason: None,
+        });
+
+        let stored = serde_json::from_str::<serde_json::Value>(&corpus.to_pretty_json()?)?;
+        let stored_path = stored["source_artifacts"][0]["artifact_path"]
+            .as_str()
+            .expect("stored source artifact path");
+        assert!(std::path::Path::new(stored_path).is_relative());
+        assert!(stored_path.ends_with("generated/intent_ir/spec/intent_ir.json"));
+        Ok(())
+    }
 
     // is_word_boundary unit tests
 

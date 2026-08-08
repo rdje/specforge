@@ -19,6 +19,9 @@ use crate::ir::source::{
     ActorSignalRelation, AutomationConfidence, CandidateInterpretation, RelationKind,
     ResidualDecisionPacket, ValidationReportRecord, WidthHint, document_key,
 };
+use crate::persisted_path::{
+    PersistedPathOrigin, normalize_for_storage, resolve_existing, resolve_repository_output,
+};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct SemanticIr {
@@ -146,15 +149,19 @@ pub struct SemanticIr {
 
 impl SemanticIr {
     pub fn load_from_path(path: &Path) -> Result<Self> {
-        if !path.exists() {
-            return Err(AppError::MissingPath(path.to_path_buf()));
+        let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
+        let semantic_ir = serde_json::from_str::<Self>(&fs::read_to_string(path)?)?;
+        if !matches!(semantic_ir.stage, IrStage::SemanticIr) {
+            return Err(AppError::InvalidStageArtifact(
+                "artifact must be a SemanticIR document before loading SemanticIR".to_string(),
+            ));
         }
-
-        Ok(serde_json::from_str(&fs::read_to_string(path)?)?)
+        semantic_ir.runtime_clone()
     }
 
     pub fn build(evidence_ir_path: &Path, artifact_base_root: &Path) -> Result<Self> {
-        let evidence_ir_path = canonicalize_existing_path(evidence_ir_path)?;
+        let evidence_ir_path =
+            resolve_existing(evidence_ir_path, PersistedPathOrigin::RepositoryOwned)?;
         let evidence_ir = EvidenceIr::load_from_path(&evidence_ir_path)?;
 
         if !matches!(evidence_ir.stage, IrStage::EvidenceIr) {
@@ -169,7 +176,8 @@ impl SemanticIr {
         let artifact_layout = SemanticArtifactLayout {
             artifact_root,
             semantic_ir_path,
-        };
+        }
+        .runtime_layout()?;
         let document_identity = SemanticDocumentIdentity {
             document_key: evidence_ir.document_identity.document_key.clone(),
             display_name: evidence_ir.document_identity.display_name.clone(),
@@ -423,16 +431,38 @@ impl SemanticIr {
     }
 
     pub fn to_pretty_json(&self) -> Result<String> {
-        Ok(serde_json::to_string_pretty(self)?)
+        Ok(serde_json::to_string_pretty(&self.persisted_clone()?)?)
     }
 
     pub fn write_to_disk(&self) -> Result<()> {
-        fs::create_dir_all(&self.artifact_layout.artifact_root)?;
+        let persisted = self.persisted_clone()?;
+        let runtime_layout = persisted.artifact_layout.runtime_layout()?;
+        fs::create_dir_all(&runtime_layout.artifact_root)?;
         fs::write(
-            &self.artifact_layout.semantic_ir_path,
-            self.to_pretty_json()?,
+            &runtime_layout.semantic_ir_path,
+            serde_json::to_string_pretty(&persisted)?,
         )?;
         Ok(())
+    }
+
+    fn persisted_clone(&self) -> Result<Self> {
+        let mut persisted = self.clone();
+        persisted.evidence_ir_path = normalize_for_storage(
+            &persisted.evidence_ir_path,
+            PersistedPathOrigin::RepositoryOwned,
+        )?;
+        persisted.artifact_layout.normalize_for_storage()?;
+        Ok(persisted)
+    }
+
+    fn runtime_clone(&self) -> Result<Self> {
+        let mut runtime = self.clone();
+        runtime.evidence_ir_path = resolve_existing(
+            &runtime.evidence_ir_path,
+            PersistedPathOrigin::RepositoryOwned,
+        )?;
+        runtime.artifact_layout = runtime.artifact_layout.runtime_layout()?;
+        Ok(runtime)
     }
 }
 
@@ -459,6 +489,23 @@ fn is_zero(value: &u32) -> bool {
 pub struct SemanticArtifactLayout {
     pub artifact_root: PathBuf,
     pub semantic_ir_path: PathBuf,
+}
+
+impl SemanticArtifactLayout {
+    fn normalize_for_storage(&mut self) -> Result<()> {
+        self.artifact_root =
+            normalize_for_storage(&self.artifact_root, PersistedPathOrigin::RepositoryOwned)?;
+        self.semantic_ir_path =
+            normalize_for_storage(&self.semantic_ir_path, PersistedPathOrigin::RepositoryOwned)?;
+        Ok(())
+    }
+
+    fn runtime_layout(&self) -> Result<Self> {
+        Ok(Self {
+            artifact_root: resolve_repository_output(&self.artifact_root)?,
+            semantic_ir_path: resolve_repository_output(&self.semantic_ir_path)?,
+        })
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -9777,12 +9824,14 @@ fn load_semantic_prior_guidance(
     let Some(prior_memory_path) = prior_memory_path else {
         return Ok(None);
     };
-    if !prior_memory_path.exists() {
-        return Ok(None);
-    }
-    let prior_memory_path = canonicalize_existing_path(prior_memory_path)?;
+    let prior_memory_path =
+        match resolve_existing(prior_memory_path, PersistedPathOrigin::RepositoryOwned) {
+            Ok(path) => path,
+            Err(AppError::MissingPath(_)) => return Ok(None),
+            Err(error) => return Err(error),
+        };
     let corpus_memory =
-        serde_json::from_str::<CorpusMemory>(&fs::read_to_string(prior_memory_path)?)?;
+        serde_json::from_str::<CorpusMemory>(&fs::read_to_string(&prior_memory_path)?)?;
     Ok(Some(SemanticPriorGuidance {
         corpus_memory,
         protocol_family: ProtocolFamily::infer(document_key, display_name),
@@ -10976,14 +11025,6 @@ fn is_boilerplate_section_title(title: &str) -> bool {
             "disclaimer",
         ],
     )
-}
-
-fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {
-    if !path.exists() {
-        return Err(AppError::MissingPath(path.to_path_buf()));
-    }
-
-    Ok(fs::canonicalize(path)?)
 }
 
 #[cfg(test)]

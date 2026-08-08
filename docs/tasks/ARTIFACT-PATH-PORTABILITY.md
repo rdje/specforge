@@ -52,7 +52,7 @@ validation, learning, or recovery workflows.
 - ID: `ARTIFACT-PATH-PORTABILITY.2` · Status: `done` (`2026-08-08`; depends on `.1`) · Goal: migrate SourceIR and
   EvidenceIR producers/consumers, including source registration, normalization/artifact layouts, section/span/
   visual provenance, upstream pointers, and prior-memory references.
-- ID: `ARTIFACT-PATH-PORTABILITY.3` · Status: `pending` (depends on `.2`) · Goal: migrate SemanticIR,
+- ID: `ARTIFACT-PATH-PORTABILITY.3` · Status: `done` (`2026-08-08`; depends on `.2`) · Goal: migrate SemanticIR,
   IntentIR, adapter, validation, project-validation, learning, recovery, and convergence consumers to the
   common path contract without losing cross-stage checks.
 - ID: `ARTIFACT-PATH-PORTABILITY.4` · Status: `pending` (depends on `.3`) · Goal: add the fail-closed
@@ -106,13 +106,33 @@ validation, learning, or recovery workflows.
   Rust architecture analysis, live ledgers, and resume pointer agree that `.2` is landed and `.3` owns the
   remaining canonical stages and consumers.
 
+## Acceptance Checklist (enforced) — `ARTIFACT-PATH-PORTABILITY.3`
+
+- [x] **REPRODUCE / MEASURE** — a complete downstream pipeline fixture proves SemanticIR, IntentIR, and adapter
+  artifacts serialize repository-owned upstream/layout/emitted-target paths relative, then loads deliberately
+  retired-root forms as current absolute runtime paths. Learning and recovery have separate focused proofs.
+- [x] **ROOT CAUSE (WHY + WHERE)** — all three downstream builders used local
+  `canonicalize_existing_path` helpers and serialized their structs directly; `learn-priors` persisted its
+  canonical input paths, while recovery, project-validation, and convergence bypassed the common boundary.
+- [x] **ADDRESSED (verified)** — downstream build/load/write paths now use normalized persisted clones and
+  resolved runtime layouts; typed prior-memory sources serialize through the same contract; validation,
+  project-validation, learning, recovery, KG fixtures, and convergence dereference repository paths through it.
+- [x] **NO REGRESSION** — formatting and all-target warning-deny Clippy pass; the complete Rust suite passes
+  1,758 tests with five ignored; `kg-bench` passes 156/156; adapter strict checks and final full CI pass. No
+  current generated artifact or extraction/gold content changed.
+- [x] **GENERICITY** — every migrated field is classified from its typed role as a repository-owned pipeline
+  artifact/output. No workstation root, document key, protocol, fixture, or filename allowlist was added;
+  ambiguous retired paths remain a hard error through the common resolver.
+- [x] **LOCKSTEP** — task tree, roadmap, Knowledge Map, Rust architecture analysis, live ledgers, locality and
+  generated-artifact book chapters, pipeline chapters, and resume pointer agree that code activation is complete
+  and `.4` exclusively owns present-data migration plus residue enforcement.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `ARTIFACT-PATH-PORTABILITY.3` | `pending` | Canonical downstream consumers must retain validation and learning behavior after moves. |
-| 2 | `ARTIFACT-PATH-PORTABILITY.4` | `pending` | Migrate data only after code can safely read both old and new forms. |
-| 3 | `ARTIFACT-PATH-PORTABILITY.5` | `pending` | Independent closure proves no path or documentation surface escaped. |
+| 1 | `ARTIFACT-PATH-PORTABILITY.4` | `pending` | Migrate data now that every canonical stage can safely read old and new forms. |
+| 2 | `ARTIFACT-PATH-PORTABILITY.5` | `pending` | Independent closure proves no path or documentation surface escaped. |
 
 ## Decisions
 
@@ -138,11 +158,18 @@ validation, learning, or recovery workflows.
 - `2026-08-08`: Convergence derives production stage roots from repository discovery and injects a complete
   root bundle in tests. This removes process-CWD mutation and prevents concurrent tests from observing a false
   repository location.
+- `2026-08-08`: SemanticIR, IntentIR, adapter upstream pointers, artifact layouts, emitted targets, and learned
+  source-artifact records are intrinsically repository-owned. Unlike SourceIR registration, none is a mixed
+  external-input field, so no additional schema origin label is needed.
+- `2026-08-08`: Preserve the stage API contract used by validators and adapters: builders/loaders expose
+  absolute runtime paths, while `to_pretty_json` and `write_to_disk` serialize normalized clones. Stage loading
+  rejects the wrong stage before resolving that stage's typed internal paths.
+- `2026-08-08`: Keep ambiguity fail-closed. A focused recovery probe initially matched both `.project-data`
+  and `generated` suffixes because both exact targets existed; the resolver correctly refused to guess, and the
+  isolated one-target command seam proves legacy argument rebasing separately.
 
 ## Open Questions
 
-- `.3` must decide each downstream and learning-plane path field's ownership from its typed role, then prove
-  validation, project-validation, learning, recovery, and convergence retain cross-stage behavior after a move.
 - `.4` must compare migrated current artifacts by file/byte/hash and real workflow behavior; producer support in
   `.2` does not authorize rewriting the 262,592 repeated legacy EvidenceIR provenance values early.
 
@@ -157,6 +184,7 @@ validation, learning, or recovery workflows.
 | `2026-08-08` | `.0` | old-root absence; generated path/file/stage/key census; producer assignment and consumer-use cross-read; doctrine + mdBook checks | 335 affected files / 262,996 values; root cause localized; ownership complete; no generated mutation |
 | `2026-08-08` | `.1` | 13 focused codec/resolver cases; full Rust suite; `cargo fmt --check`; all-target `clippy -D warnings`; doctrines; mdBook | 1,748 pass / 5 ignored; contract and all gates pass; no IR/generated mutation |
 | `2026-08-08` | `.2` | Source/Evidence legacy + persisted/runtime cases; PDF/visual/convergence/KG checks; full CI | 6/6 doctrines; 1,753 pass / 5 ignored; rustdoc/book/locality pass; no generated mutation |
+| `2026-08-08` | `.3` | downstream persisted/runtime/legacy fixture; prior-learning and recovery command cases; project-validation/validation; 156 KG fixtures; fmt/Clippy; 1,763-test suite; full CI | 1,758 pass / 5 ignored; all focused/full gates pass; generated corpus unchanged |
 
 ## Commit Log
 
@@ -165,6 +193,7 @@ validation, learning, or recovery workflows.
 | `.0` | `ARTIFACT-PATH-PORTABILITY.0 — own the move-portability repair` | Measurement/ownership only; `.1` is the first implementation gate. |
 | `.1` | `ARTIFACT-PATH-PORTABILITY.1 — land the move-safe path contract` | Common seam only; `.2` activates it in SourceIR/EvidenceIR. |
 | `.2` | `ARTIFACT-PATH-PORTABILITY.2 — make Source and Evidence paths portable` | First two stages serialize relative and load runtime paths; `.3` owns downstream activation. |
+| `.3` | `ARTIFACT-PATH-PORTABILITY.3 — make downstream artifact paths portable` | Canonical stages/consumers activated; `.4` owns data migration and enforcement. |
 
 ## Changelog
 
@@ -176,3 +205,6 @@ validation, learning, or recovery workflows.
 - `2026-08-08`: Activated the contract across SourceIR/EvidenceIR registration, layouts, normalized sidecars,
   text and visual provenance, upstream/prior lineage, validation entry, and convergence roots while preserving
   runtime-absolute in-memory compatibility and leaving present generated artifacts unchanged.
+- `2026-08-08`: Activated the same contract across SemanticIR, IntentIR, adapters, typed prior-memory sources,
+  and validation/learning/recovery/project-validation/convergence consumers. All canonical stage producers now
+  emit move-safe paths; current generated data remains unchanged for the verified `.4` migration.

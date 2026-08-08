@@ -1,6 +1,5 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
-use std::path::{Path, PathBuf};
 
 use crate::cli::LearnPriorsArgs;
 use crate::error::{AppError, Result};
@@ -33,6 +32,7 @@ use crate::ir::semantic::{
 };
 use crate::ir::source::{AutomationConfidence, ValidationFindingSeverity, ValidationReportRecord};
 use crate::ir::source::{DiagramKind, SourceIr, StructuredTableRecord, TableKind, VisualAssetKind};
+use crate::persisted_path::{PersistedPathOrigin, resolve_existing, resolve_repository_output};
 
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 struct ActorTaxonomyPriorKey {
@@ -152,7 +152,7 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
     let mut fingerprint_documents: Vec<(String, DocumentFingerprint)> = Vec::new();
 
     for artifact in &args.artifacts {
-        let artifact_path = canonicalize_existing_path(artifact)?;
+        let artifact_path = resolve_existing(artifact, PersistedPathOrigin::RepositoryOwned)?;
         let intent_ir = IntentIr::load_from_path(&artifact_path)?;
         if !matches!(intent_ir.stage, IrStage::IntentIr) {
             return Err(AppError::InvalidStageArtifact(format!(
@@ -231,7 +231,7 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
         extraction_profile_priors: materialize_extraction_profile_priors(&fingerprint_documents),
     };
 
-    let pretty_json = serde_json::to_string_pretty(&corpus_memory)?;
+    let pretty_json = corpus_memory.to_pretty_json()?;
     println!("command: learn-priors");
     println!("artifacts_requested: {}", args.artifacts.len());
     println!(
@@ -314,6 +314,7 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
         return Ok(());
     }
 
+    let output_path = resolve_repository_output(&output_path)?;
     if let Some(parent) = output_path.parent() {
         fs::create_dir_all(parent)?;
     }
@@ -1810,18 +1811,11 @@ fn semantic_grounding_strength_rank(strength: SemanticGroundingStrength) -> u8 {
     }
 }
 
-fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {
-    if !path.exists() {
-        return Err(AppError::MissingPath(path.to_path_buf()));
-    }
-
-    Ok(fs::canonicalize(path)?)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
     use std::fs;
+    use std::path::PathBuf;
 
     use tempfile::tempdir;
 
@@ -2779,6 +2773,43 @@ mod tests {
         let result = run(args);
         assert!(result.is_err());
         assert!(result.unwrap_err().to_string().contains("IntentIR"));
+        Ok(())
+    }
+
+    #[test]
+    fn learn_priors_writes_repository_relative_source_artifact_paths() -> Result<()> {
+        let tempdir = crate::project_data::tempdir()?;
+        let semantic_ir_path = tempdir
+            .path()
+            .join("generated/semantic_ir/spec/semantic_ir.json");
+        fs::create_dir_all(semantic_ir_path.parent().expect("semantic parent"))?;
+        fs::write(&semantic_ir_path, b"{}")?;
+
+        let mut intent_ir = base_intent_ir("spec", "Spec");
+        intent_ir.semantic_ir_path = semantic_ir_path;
+        intent_ir.artifact_layout = IntentArtifactLayout {
+            artifact_root: tempdir.path().join("generated/intent_ir/spec"),
+            intent_ir_path: tempdir
+                .path()
+                .join("generated/intent_ir/spec/intent_ir.json"),
+        };
+        intent_ir.write_to_disk()?;
+
+        let output = tempdir
+            .path()
+            .join("generated/prior_memory/corpus_memory.json");
+        run(crate::cli::LearnPriorsArgs {
+            artifacts: vec![intent_ir.artifact_layout.intent_ir_path.clone()],
+            output: output.clone(),
+            dry_run: false,
+        })?;
+
+        let stored = serde_json::from_str::<serde_json::Value>(&fs::read_to_string(output)?)?;
+        let stored_path = stored["source_artifacts"][0]["artifact_path"]
+            .as_str()
+            .expect("learned source artifact path");
+        assert!(std::path::Path::new(stored_path).is_relative());
+        assert!(stored_path.ends_with("generated/intent_ir/spec/intent_ir.json"));
         Ok(())
     }
 
