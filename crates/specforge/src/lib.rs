@@ -3,11 +3,7 @@ mod commands;
 pub mod error;
 pub mod eval;
 pub mod ir;
-#[expect(
-    dead_code,
-    reason = "ARTIFACT-PATH-PORTABILITY.1 defines the common seam consumed by the next migration leaf"
-)]
-mod persisted_path;
+pub mod persisted_path;
 mod project_data;
 #[cfg(test)]
 pub(crate) mod test_support;

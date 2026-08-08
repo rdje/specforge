@@ -1,3 +1,19 @@
+### ARTIFACT-PATH-PORTABILITY.2 — make SourceIR and EvidenceIR paths move-safe
+
+- Activated the common path contract across SourceIR source registration, normalized/artifact layouts, page
+  and visual sidecars, and across EvidenceIR upstream/prior pointers plus section, span, and visual provenance.
+  Runtime structs remain absolute for existing consumers; JSON and manifests serialize repository-owned paths
+  relative, while explicitly authorized external text sources remain exact and carry a stable origin label.
+- Added schema-compatible loading for unlabeled legacy absolute artifacts. Repository paths rebase only through
+  the bounded resolver; external input identity is inferred from the present canonical target. Visual assets
+  remain repository-owned even when promoted Markdown is external, preventing generated images from inheriting
+  the text source's origin.
+- Made validation resolve artifact/prior paths at I/O boundaries and made convergence derive production roots
+  from repository discovery while tests inject isolated same-volume roots instead of changing process CWD.
+  Focused legacy, PDF-manifest, visual, convergence, and 156-fixture KG checks pass. Full CI passes all six
+  doctrines, formatting/Clippy, 1,753 tests with five ignored, rustdoc, mdBook, and locality/residue checks.
+  Existing generated artifacts are unchanged.
+
 ### ARTIFACT-PATH-PORTABILITY.1 — land the move-safe persisted-path contract
 
 - Added one typed codec/resolver boundary that stores repository-owned paths relative to the discovered root

@@ -36,6 +36,20 @@ That last point matters a lot.
 `EvidenceIR` is not supposed to be clever in the sense of inventing final meaning.
 It is supposed to be disciplined in the sense of preserving recoverable evidence without silently flattening ambiguity.
 
+## Portable lineage and provenance
+
+Evidence lineage follows the same storage/runtime split as SourceIR. The persisted `source_ir_path`, optional
+prior-memory path, artifact layout, and repository-owned provenance use repository-relative strings. Loading the
+artifact resolves them against the current root, so validators and later stages receive immediately usable
+absolute runtime paths.
+
+Text provenance has the promoted Markdown's origin: section anchors and evidence spans may legitimately retain
+an absolute path when the caller explicitly supplied external Markdown. Visual provenance is different—its
+images and caption sources come from SourceIR's normalized artifact bundle—so those paths remain
+repository-owned and serialize relative even when the text source is external. The adjacent
+`source_path_origin` label lets old unlabeled artifacts be loaded compatibly without guessing that an unrelated
+external path belongs to a moved repository.
+
 ## Typical evidence-level wins
 
 - source/destination table recovery

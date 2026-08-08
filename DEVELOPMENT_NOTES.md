@@ -1,4 +1,28 @@
 # DEVELOPMENT_NOTES
+## ARTIFACT-PATH-PORTABILITY.2 (`2026-08-08`) — portable storage does not require relative runtime state
+
+The first attempt to keep `PathBuf` fields relative inside SourceIR and EvidenceIR was architecturally pure but
+incompatible with the codebase: hundreds of established consumers treat loaded stage paths as immediately
+usable runtime paths. The full suite exposed that assumption with 253 failures. The stable boundary is instead
+bidirectional: builders and loaders project to current-root absolute paths in memory, while `to_pretty_json`
+and `write_to_disk` serialize a normalized clone. This keeps I/O identity ephemeral without forcing unrelated
+extraction code to rediscover the repository root.
+
+Text and visual provenance also need distinct ownership. Section anchors and evidence spans point at promoted
+Markdown, which may be an explicitly authorized external input. Visual evidence points at image/caption assets
+materialized into SourceIR's normalized repository bundle. Reusing the text origin for both would let an
+external Markdown source misclassify generated images as external; visual paths therefore always use the
+repository-owned branch.
+
+Two global-state tests initially obscured the real result. One SourceIR test temporarily overrode the repository
+root and raced the tracked KG benchmark; the convergence test changed process CWD while production paths had
+correctly become repository-derived. The fix was to test the common external-input seam without a global root
+override and inject a complete artifact-root bundle into convergence tests. A final review also found that the
+legacy SourceIR test joined an absolute path onto `/retired/specforge`, which silently discarded the retired
+prefix; the corrected fixture now proves a genuine old-root value rebases. These are reminders that a passing
+compatibility test must verify its precondition, and process-wide environment/CWD mutation is unsafe in a
+parallel suite.
+
 ## SWD-SERIAL-EXTRACTION.4e (`2026-08-08`) — score the complete clocking identity, not a nearby temporal shape
 
 The SWD statement couples two operations: the target samples the bidirectional data pin and changes whether

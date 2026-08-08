@@ -24,6 +24,9 @@ use crate::ir::source::{
     AutomationConfidence, DiagramKind, NormalizationStatus, SectionKind, SourceIr, TableKind,
     VisualAsset, VisualAssetKind, document_key,
 };
+use crate::persisted_path::{
+    PersistedPathOrigin, normalize_for_storage, resolve_existing, resolve_repository_output,
+};
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -103,6 +106,8 @@ pub struct EvidenceIr {
     pub schema_version: u32,
     pub stage: IrStage,
     pub source_ir_path: PathBuf,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub source_path_origin: Option<PersistedPathOrigin>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub prior_memory_path: Option<PathBuf>,
     pub artifact_layout: EvidenceArtifactLayout,
@@ -706,11 +711,9 @@ struct EvidencePriorGuidance {
 
 impl EvidenceIr {
     pub fn load_from_path(path: &Path) -> Result<Self> {
-        if !path.exists() {
-            return Err(AppError::MissingPath(path.to_path_buf()));
-        }
-
-        Ok(serde_json::from_str(&fs::read_to_string(path)?)?)
+        let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
+        let evidence_ir = serde_json::from_str::<Self>(&fs::read_to_string(path)?)?;
+        evidence_ir.runtime_clone()
     }
 
     pub fn build(source_ir_path: &Path, artifact_base_root: &Path) -> Result<Self> {
@@ -722,8 +725,10 @@ impl EvidenceIr {
         artifact_base_root: &Path,
         prior_memory_path: Option<&Path>,
     ) -> Result<Self> {
-        let source_ir_path = canonicalize_existing_path(source_ir_path)?;
-        let source_ir = SourceIr::load_from_path(&source_ir_path)?;
+        let source_ir_runtime_path =
+            resolve_existing(source_ir_path, PersistedPathOrigin::RepositoryOwned)?;
+        let source_ir_path = source_ir_runtime_path.clone();
+        let source_ir = SourceIr::load_from_path(&source_ir_runtime_path)?;
         let prior_guidance = load_evidence_prior_guidance(prior_memory_path, &source_ir)?;
 
         if !matches!(
@@ -746,15 +751,19 @@ impl EvidenceIr {
                     source_ir_path.display()
                 ))
             })?;
-        let promoted_markdown_path = canonicalize_existing_path(promoted_markdown_path)?;
-        let parsed_markdown = parse_markdown(&promoted_markdown_path)?;
+        let source_path_origin = source_ir.promoted_markdown_origin()?;
+        let promoted_markdown_runtime_path =
+            resolve_existing(promoted_markdown_path, source_path_origin)?;
+        let promoted_markdown_path = promoted_markdown_runtime_path.clone();
+        let parsed_markdown = parse_markdown(&promoted_markdown_runtime_path)?;
 
         let artifact_root = artifact_base_root.join(&source_ir.document_identity.document_key);
         let evidence_ir_path = artifact_root.join("evidence_ir.json");
         let artifact_layout = EvidenceArtifactLayout {
             artifact_root,
             evidence_ir_path,
-        };
+        }
+        .runtime_layout()?;
         let document_identity = EvidenceDocumentIdentity {
             document_key: source_ir.document_identity.document_key.clone(),
             display_name: source_ir.document_identity.display_name.clone(),
@@ -933,6 +942,7 @@ impl EvidenceIr {
             schema_version: 1,
             stage: IrStage::EvidenceIr,
             source_ir_path,
+            source_path_origin: Some(source_path_origin),
             prior_memory_path: prior_guidance
                 .as_ref()
                 .map(|guidance| guidance.prior_memory_path.clone()),
@@ -1067,7 +1077,7 @@ impl EvidenceIr {
     }
 
     pub fn to_pretty_json(&self) -> Result<String> {
-        Ok(serde_json::to_string_pretty(self)?)
+        Ok(serde_json::to_string_pretty(&self.persisted_clone()?)?)
     }
 
     pub fn refresh_signal_semantic_hints(&mut self) -> Result<()> {
@@ -1093,10 +1103,12 @@ impl EvidenceIr {
     }
 
     pub fn write_to_disk(&self) -> Result<()> {
-        fs::create_dir_all(&self.artifact_layout.artifact_root)?;
+        let persisted = self.persisted_clone()?;
+        let runtime_layout = persisted.artifact_layout.runtime_layout()?;
+        fs::create_dir_all(&runtime_layout.artifact_root)?;
         fs::write(
-            &self.artifact_layout.evidence_ir_path,
-            self.to_pretty_json()?,
+            &runtime_layout.evidence_ir_path,
+            serde_json::to_string_pretty(&persisted)?,
         )?;
         Ok(())
     }
@@ -1109,11 +1121,12 @@ impl EvidenceIr {
     }
 
     fn carry_forward_existing_knowledge(&mut self) -> Result<()> {
-        if !self.artifact_layout.evidence_ir_path.exists() {
+        let evidence_ir_path = resolve_repository_output(&self.artifact_layout.evidence_ir_path)?;
+        if !evidence_ir_path.exists() {
             return Ok(());
         }
 
-        let existing = Self::load_from_path(&self.artifact_layout.evidence_ir_path)?;
+        let existing = Self::load_from_path(&evidence_ir_path)?;
         if existing.source_ir_path != self.source_ir_path
             || existing.document_identity != self.document_identity
             || existing.section_anchors.len() != self.section_anchors.len()
@@ -1147,12 +1160,98 @@ impl EvidenceIr {
 
         Ok(())
     }
+
+    fn persisted_clone(&self) -> Result<Self> {
+        let mut persisted = self.clone();
+        persisted.source_ir_path = normalize_for_storage(
+            &persisted.source_ir_path,
+            PersistedPathOrigin::RepositoryOwned,
+        )?;
+        normalize_optional_repository_path(&mut persisted.prior_memory_path)?;
+        persisted.artifact_layout.normalize_for_storage()?;
+
+        let source_path_origin = match persisted.source_path_origin {
+            Some(origin) => origin,
+            None => {
+                SourceIr::load_from_path(&persisted.source_ir_path)?.promoted_markdown_origin()?
+            }
+        };
+        persisted.source_path_origin = Some(source_path_origin);
+        for anchor in &mut persisted.section_anchors {
+            anchor.source_path = normalize_for_storage(&anchor.source_path, source_path_origin)?;
+        }
+        for span in &mut persisted.evidence_spans {
+            span.source_path = normalize_for_storage(&span.source_path, source_path_origin)?;
+        }
+        for visual in &mut persisted.visual_evidence {
+            if let Some(path) = &mut visual.source_path {
+                *path = normalize_for_storage(path, PersistedPathOrigin::RepositoryOwned)?;
+            }
+        }
+        Ok(persisted)
+    }
+
+    fn runtime_clone(&self) -> Result<Self> {
+        let mut runtime = self.clone();
+        runtime.source_ir_path = resolve_existing(
+            &runtime.source_ir_path,
+            PersistedPathOrigin::RepositoryOwned,
+        )?;
+        if let Some(path) = &mut runtime.prior_memory_path {
+            *path = resolve_repository_output(path)?;
+        }
+        runtime.artifact_layout = runtime.artifact_layout.runtime_layout()?;
+
+        let source_path_origin = match runtime.source_path_origin {
+            Some(origin) => origin,
+            None => {
+                SourceIr::load_from_path(&runtime.source_ir_path)?.promoted_markdown_origin()?
+            }
+        };
+        runtime.source_path_origin = Some(source_path_origin);
+        for anchor in &mut runtime.section_anchors {
+            anchor.source_path = resolve_existing(&anchor.source_path, source_path_origin)?;
+        }
+        for span in &mut runtime.evidence_spans {
+            span.source_path = resolve_existing(&span.source_path, source_path_origin)?;
+        }
+        for visual in &mut runtime.visual_evidence {
+            if let Some(path) = &mut visual.source_path {
+                *path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
+            }
+        }
+        Ok(runtime)
+    }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct EvidenceArtifactLayout {
     pub artifact_root: PathBuf,
     pub evidence_ir_path: PathBuf,
+}
+
+impl EvidenceArtifactLayout {
+    fn normalize_for_storage(&mut self) -> Result<()> {
+        self.artifact_root =
+            normalize_for_storage(&self.artifact_root, PersistedPathOrigin::RepositoryOwned)?;
+        self.evidence_ir_path =
+            normalize_for_storage(&self.evidence_ir_path, PersistedPathOrigin::RepositoryOwned)?;
+        Ok(())
+    }
+
+    fn runtime_layout(&self) -> Result<Self> {
+        Ok(Self {
+            artifact_root: resolve_repository_output(&self.artifact_root)?,
+            evidence_ir_path: resolve_repository_output(&self.evidence_ir_path)?,
+        })
+    }
+}
+
+fn normalize_optional_repository_path(path: &mut Option<PathBuf>) -> Result<()> {
+    if let Some(value) = path {
+        *value = normalize_for_storage(value, PersistedPathOrigin::RepositoryOwned)?;
+    }
+    Ok(())
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -2237,10 +2336,12 @@ fn load_evidence_prior_guidance(
     let Some(prior_memory_path) = prior_memory_path else {
         return Ok(None);
     };
-    if !prior_memory_path.exists() {
-        return Ok(None);
-    }
-    let prior_memory_path = canonicalize_existing_path(prior_memory_path)?;
+    let prior_memory_path =
+        match resolve_existing(prior_memory_path, PersistedPathOrigin::RepositoryOwned) {
+            Ok(path) => path,
+            Err(AppError::MissingPath(_)) => return Ok(None),
+            Err(error) => return Err(error),
+        };
 
     let corpus_memory =
         serde_json::from_str::<CorpusMemory>(&fs::read_to_string(&prior_memory_path)?)?;
@@ -15312,14 +15413,6 @@ fn extract_first_json_object(text: &str) -> Option<&str> {
     None
 }
 
-fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {
-    if !path.exists() {
-        return Err(AppError::MissingPath(path.to_path_buf()));
-    }
-
-    Ok(fs::canonicalize(path)?)
-}
-
 fn page_number_from_page_id(page_id: &str) -> Option<u32> {
     page_id.rsplit('_').next()?.parse().ok()
 }
@@ -15405,13 +15498,12 @@ mod tests {
     use super::{
         EvidenceIr, EvidenceLinkKind, EvidenceModality, ExtractorTier, FactKind,
         SignalSemanticHintSourceKind, SignalSemanticTag, StatementClass, VisualObservationKind,
-        actor_signal_relation_fact_key, canonicalize_existing_path, contains_any,
-        contains_reference_token, diagram_kind_key, is_abstract_transport_actor_term,
-        is_abstract_transport_signal_token, is_hardware_signal_token, is_image_line,
-        is_signal_name_char, is_signal_synthesis_non_signal, is_standalone_markdown_block,
-        is_tie_off_actor_text, looks_like_encoding_literal,
-        looks_like_structural_contents_entry_for_semantic_hint, numbered_list_prefix,
-        parse_encoding_numeric_literal, signal_constraint_fact_key,
+        actor_signal_relation_fact_key, contains_any, contains_reference_token, diagram_kind_key,
+        is_abstract_transport_actor_term, is_abstract_transport_signal_token,
+        is_hardware_signal_token, is_image_line, is_signal_name_char,
+        is_signal_synthesis_non_signal, is_standalone_markdown_block, is_tie_off_actor_text,
+        looks_like_encoding_literal, looks_like_structural_contents_entry_for_semantic_hint,
+        numbered_list_prefix, parse_encoding_numeric_literal, signal_constraint_fact_key,
     };
 
     // ── KG-ISF-TRANSACTIONS.2m — signal → channel membership from `<role> channel signals` captions ─
@@ -20269,7 +20361,123 @@ mod tests {
                 .related_visual_evidence_ids
                 .is_empty()
         );
+        assert!(evidence_ir.source_ir_path.is_absolute());
+        assert_eq!(
+            evidence_ir.source_path_origin,
+            Some(crate::persisted_path::PersistedPathOrigin::RepositoryOwned)
+        );
+        assert!(
+            evidence_ir
+                .section_anchors
+                .iter()
+                .all(|anchor| anchor.source_path.is_absolute())
+        );
+        assert!(
+            evidence_ir
+                .evidence_spans
+                .iter()
+                .all(|span| span.source_path.is_absolute())
+        );
 
+        evidence_ir.write_to_disk()?;
+        let serialized =
+            fs::read_to_string(evidence_artifact_base.join("spec").join("evidence_ir.json"))?;
+        assert!(serialized.contains("\"source_path_origin\": \"repository_owned\""));
+        assert!(
+            !serialized.contains(
+                crate::project_data::repository_root()?
+                    .to_string_lossy()
+                    .as_ref()
+            ),
+            "repository-owned EvidenceIR paths must serialize without the runtime root"
+        );
+        let stored = serde_json::from_str::<serde_json::Value>(&serialized)?;
+        assert!(
+            Path::new(stored["source_ir_path"].as_str().expect("source_ir_path")).is_relative()
+        );
+        assert!(
+            stored["section_anchors"]
+                .as_array()
+                .expect("section anchors")
+                .iter()
+                .all(|anchor| Path::new(
+                    anchor["source_path"].as_str().expect("anchor source path")
+                )
+                .is_relative())
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn evidence_ir_load_rebases_unlabeled_legacy_lineage_and_provenance() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("legacy.md");
+        let source_artifact_base = tempdir.path().join("generated/source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated/evidence_ir");
+        fs::write(&source, "# Rules\nREQ must remain asserted.\n")?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+
+        let evidence_ir_path = evidence_artifact_base.join("legacy/evidence_ir.json");
+        let mut json =
+            serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&evidence_ir_path)?)?;
+        let retired = |relative: &str| {
+            Path::new("/retired/specforge")
+                .join(relative)
+                .to_string_lossy()
+                .into_owned()
+        };
+        let source_ir_relative = json["source_ir_path"]
+            .as_str()
+            .expect("source_ir_path")
+            .to_string();
+        json["source_ir_path"] = serde_json::Value::String(retired(&source_ir_relative));
+        json.as_object_mut()
+            .expect("evidence object")
+            .remove("source_path_origin");
+        for collection in ["section_anchors", "evidence_spans"] {
+            for record in json[collection]
+                .as_array_mut()
+                .expect("provenance collection")
+            {
+                let relative = record["source_path"]
+                    .as_str()
+                    .expect("source path")
+                    .to_string();
+                record["source_path"] = serde_json::Value::String(retired(&relative));
+            }
+        }
+        fs::write(&evidence_ir_path, serde_json::to_string_pretty(&json)?)?;
+
+        let reloaded = EvidenceIr::load_from_path(&evidence_ir.artifact_layout.evidence_ir_path)?;
+        assert_eq!(
+            reloaded.source_ir_path,
+            source_ir.artifact_layout.source_ir_path
+        );
+        assert_eq!(
+            reloaded.source_path_origin,
+            Some(crate::persisted_path::PersistedPathOrigin::RepositoryOwned)
+        );
+        assert!(
+            reloaded
+                .section_anchors
+                .iter()
+                .all(|anchor| anchor.source_path.is_absolute())
+        );
+        assert!(
+            reloaded
+                .evidence_spans
+                .iter()
+                .all(|span| span.source_path.is_absolute())
+        );
+        assert!(!reloaded.to_pretty_json()?.contains("/retired/specforge"));
         Ok(())
     }
 
@@ -22444,7 +22652,7 @@ mod tests {
         );
         assert_eq!(
             evidence_ir.prior_memory_path,
-            Some(canonicalize_existing_path(&prior_memory_path)?)
+            Some(prior_memory_path.canonicalize()?)
         );
 
         evidence_ir.write_to_disk()?;
@@ -24576,6 +24784,38 @@ mod tests {
                 .artifact_layout
                 .evidence_ir_path
                 .ends_with("generated/evidence_ir/timing/evidence_ir.json")
+        );
+        assert!(
+            evidence_ir.visual_evidence[0]
+                .source_path
+                .as_ref()
+                .is_some_and(|path| path.is_absolute())
+        );
+        let evidence_ir_path = evidence_artifact_base.join("timing/evidence_ir.json");
+        let serialized = fs::read_to_string(&evidence_ir_path)?;
+        assert!(
+            !serialized.contains(
+                crate::project_data::repository_root()?
+                    .to_string_lossy()
+                    .as_ref()
+            ),
+            "repository-owned visual evidence paths must serialize without the runtime root"
+        );
+        let persisted = serde_json::from_str::<serde_json::Value>(&serialized)?;
+        assert!(
+            Path::new(
+                persisted["visual_evidence"][0]["source_path"]
+                    .as_str()
+                    .expect("visual source path")
+            )
+            .is_relative()
+        );
+        let reloaded = EvidenceIr::load_from_path(&evidence_ir_path)?;
+        assert!(
+            reloaded.visual_evidence[0]
+                .source_path
+                .as_ref()
+                .is_some_and(|path| path.is_absolute())
         );
 
         Ok(())

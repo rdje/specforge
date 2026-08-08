@@ -26,20 +26,9 @@ const LEGACY_REPOSITORY_ROOTS: &[&str] = &[
 /// an unrelated external path from masquerading as a moved repository path.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
-pub(crate) enum PersistedPathOrigin {
+pub enum PersistedPathOrigin {
     RepositoryOwned,
     ExternalInput,
-}
-
-/// Converts a runtime path to its persisted representation.
-///
-/// Repository-owned paths are always returned relative to the current
-/// repository root. Explicit external inputs remain absolute unless their
-/// canonical target is inside the repository. Repository outputs do not need
-/// to exist yet, but their nearest existing ancestor must remain inside the
-/// repository.
-pub(crate) fn encode(path: &Path, origin: PersistedPathOrigin) -> Result<PathBuf> {
-    encode_at(path, origin, &crate::project_data::repository_root()?)
 }
 
 /// Resolves an existing persisted path for runtime I/O.
@@ -50,6 +39,33 @@ pub(crate) fn encode(path: &Path, origin: PersistedPathOrigin) -> Result<PathBuf
 /// never use that compatibility path.
 pub(crate) fn resolve_existing(path: &Path, origin: PersistedPathOrigin) -> Result<PathBuf> {
     resolve_existing_at(path, origin, &crate::project_data::repository_root()?)
+}
+
+/// Rewrites a current or legacy runtime/persisted path into its storage form.
+///
+/// Repository-owned paths are returned relative to the current repository.
+/// A legacy absolute path first performs the bounded existing-target rebase.
+/// Explicit external inputs remain absolute unless their canonical target is
+/// inside the repository. Repository outputs do not need to exist yet, but
+/// their nearest existing ancestor must remain inside the repository.
+pub(crate) fn normalize_for_storage(path: &Path, origin: PersistedPathOrigin) -> Result<PathBuf> {
+    normalize_for_storage_at(path, origin, &crate::project_data::repository_root()?)
+}
+
+/// Resolves a repository-owned output path for runtime I/O without requiring
+/// the output leaf to exist yet.
+pub(crate) fn resolve_repository_output(path: &Path) -> Result<PathBuf> {
+    resolve_repository_output_at(path, &crate::project_data::repository_root()?)
+}
+
+/// Classifies an unlabeled, existing legacy path without guessing.
+///
+/// Relative values are repository-owned. Absolute values are classified by
+/// their exact canonical target; a missing absolute value remains an error
+/// because it cannot safely distinguish a deleted external input from a moved
+/// repository path without field-specific evidence.
+pub(crate) fn infer_existing_origin(path: &Path) -> Result<PersistedPathOrigin> {
+    infer_existing_origin_at(path, &crate::project_data::repository_root()?)
 }
 
 fn encode_at(path: &Path, origin: PersistedPathOrigin, repository: &Path) -> Result<PathBuf> {
@@ -69,6 +85,45 @@ fn resolve_existing_at(
     match origin {
         PersistedPathOrigin::RepositoryOwned => resolve_repository_path(path, &repository, true),
         PersistedPathOrigin::ExternalInput => resolve_external_path(path, &repository),
+    }
+}
+
+fn normalize_for_storage_at(
+    path: &Path,
+    origin: PersistedPathOrigin,
+    repository: &Path,
+) -> Result<PathBuf> {
+    let repository = canonical_repository(repository)?;
+    if origin == PersistedPathOrigin::RepositoryOwned
+        && path.is_absolute()
+        && !path.starts_with(&repository)
+    {
+        let resolved = resolve_repository_path(path, &repository, true)?;
+        return encode_repository_path(&resolved, &repository);
+    }
+    encode_at(path, origin, &repository)
+}
+
+fn resolve_repository_output_at(path: &Path, repository: &Path) -> Result<PathBuf> {
+    let repository = canonical_repository(repository)?;
+    let persisted =
+        normalize_for_storage_at(path, PersistedPathOrigin::RepositoryOwned, &repository)?;
+    Ok(repository.join(persisted))
+}
+
+fn infer_existing_origin_at(path: &Path, repository: &Path) -> Result<PersistedPathOrigin> {
+    let repository = canonical_repository(repository)?;
+    if path.is_relative() {
+        clean_relative(path)?;
+        return Ok(PersistedPathOrigin::RepositoryOwned);
+    }
+
+    reject_lexical_escape(path)?;
+    let canonical = canonicalize_required(path)?;
+    if canonical.starts_with(repository) {
+        Ok(PersistedPathOrigin::RepositoryOwned)
+    } else {
+        Ok(PersistedPathOrigin::ExternalInput)
     }
 }
 
@@ -374,6 +429,49 @@ mod tests {
             resolve_existing_at(&retired, PersistedPathOrigin::RepositoryOwned, &repository)
                 .expect("rebase legacy path"),
             current.canonicalize().expect("canonical current artifact")
+        );
+    }
+
+    #[test]
+    fn legacy_repository_path_normalizes_to_current_relative_storage() {
+        let (workspace, repository, _external) = test_roots();
+        let current = repository.join("generated/evidence_ir/spec/evidence_ir.json");
+        write_file(&current);
+        let retired = workspace
+            .path()
+            .join("retired/specforge/generated/evidence_ir/spec/evidence_ir.json");
+
+        assert_eq!(
+            normalize_for_storage_at(&retired, PersistedPathOrigin::RepositoryOwned, &repository)
+                .expect("normalize legacy path"),
+            Path::new("generated/evidence_ir/spec/evidence_ir.json")
+        );
+    }
+
+    #[test]
+    fn repository_output_resolves_below_current_root_before_creation() {
+        let (_workspace, repository, _external) = test_roots();
+
+        assert_eq!(
+            resolve_repository_output_at(
+                Path::new("generated/adapters/spec/adapter.json"),
+                &repository
+            )
+            .expect("resolve future repository output"),
+            repository.join("generated/adapters/spec/adapter.json")
+        );
+    }
+
+    #[test]
+    fn existing_origin_inference_does_not_rebase_external_inputs() {
+        let (_workspace, repository, external) = test_roots();
+        let source = external.join("corpus/vendor/spec.pdf");
+        write_file(&source);
+        write_file(&repository.join("corpus/vendor/spec.pdf"));
+
+        assert_eq!(
+            infer_existing_origin_at(&source, &repository).expect("infer exact external origin"),
+            PersistedPathOrigin::ExternalInput
         );
     }
 

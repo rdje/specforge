@@ -96,6 +96,8 @@
   > do SMBus / I2S / I2C cluster into a derived serial-bus family
 - [swd-protocol-surfaces-stop-at-evidenceir](../knowledge/swd-protocol-surfaces-stop-at-evidenceir.md)
   > do SWD serial frame fields reach IntentIR
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > do SourceIR and EvidenceIR keep absolute paths in memory
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > do all corpus docs build through the pipeline without failure
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
@@ -296,5 +298,3 @@
   > how are register fields written as section headings extracted
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > how are repository owned and external input path origins labeled
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > how are rotated version matrices remapped for presence capture

@@ -19,14 +19,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `ARTIFACT-PATH-PORTABILITY.1` — completed by this commit; one common persisted-path contract is
-  implemented and verified before any producer or ignored-artifact mutation.
-- Current state: `persisted_path` keeps existing path-string schema shape while separating repository-owned
-  values from authorized external inputs. Repository values encode relative and resolve at the current root;
-  legacy absolute values rebase only through recognized project-data roots to one existing contained target.
-  Thirteen focused cases, 1,748 full-suite passes / five ignored, format, and Clippy pass. The 335 affected
-  generated artifacts remain unchanged.
-- Next action: execute `ARTIFACT-PATH-PORTABILITY.2`: activate the common contract across SourceIR and
-  EvidenceIR producers/consumers, including explicit SourceIR origin metadata and legacy inference.
+- Active unit: `ARTIFACT-PATH-PORTABILITY.2` — completed by this commit; SourceIR and EvidenceIR now use the
+  common persisted-path contract without mutating the present generated corpus.
+- Current state: SourceIR/EvidenceIR retain runtime-absolute paths in memory but serialize repository-owned
+  source, layout, upstream, prior-memory, section/span, and visual paths relative to the current root. Source
+  text origin is labeled; external inputs remain exact; unlabeled legacy repository values rebase safely.
+  Focused legacy/PDF/visual/convergence/KG checks and full CI pass: all six doctrines, format/Clippy, 1,753
+  tests / five ignored, rustdoc, mdBook, and locality. The 335 affected generated artifacts remain unchanged
+  for the verified `.4` migration.
+- Next action: execute `ARTIFACT-PATH-PORTABILITY.3`: activate the same contract in SemanticIR, IntentIR,
+  adapters, and every validation/learning/recovery consumer while preserving cross-stage checks.
 - In-flight uncommitted: none after this commit; no background job or disposable residue.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

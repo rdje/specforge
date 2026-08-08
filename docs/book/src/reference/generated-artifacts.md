@@ -51,6 +51,14 @@ These artifacts are useful for different kinds of inspection:
 - inspect `SemanticIR` when actors, ports, connectivity, temporal rules, arbitration, conflicts, or residuals look wrong
 - inspect `IntentIR` when you want the canonical product surface that validators, adapters, and prior learning consume
 
+SourceIR and EvidenceIR use a two-form path contract. In memory, their paths are resolved against the current
+repository root and can be opened directly. In their persisted JSON, repository-owned paths are relative—for
+example `generated/source_ir/<document_key>/source_ir.json` rather than an absolute workstation path. An
+explicitly authorized source outside the repository remains absolute and is labeled as an external input.
+Legacy absolute repository paths are accepted only through the bounded, unique-target compatibility resolver.
+SemanticIR, IntentIR, and adapter adoption is still in progress, so do not manually rewrite the current
+generated corpus ahead of the verified migration.
+
 ## Source-side sidecars
 
 PDF ingest may also materialize source-side sidecars under the same document root.
@@ -66,6 +74,8 @@ Depending on the input and backend path, these can include:
 
 Those files are part of the local evidence trail.
 They are useful for debugging and visual grounding, but they should not be treated as hand-authored project assets.
+Paths recorded in the SourceIR JSON and page/visual manifests are repository-relative even though the loaded
+SourceIR exposes their current absolute runtime locations.
 
 ## Artifact lifecycle and cleanup
 

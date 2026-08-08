@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > why do conditional_rules lower to .isf only partially
+- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
+  > why do environment-lock tests cascade with PoisonError
+- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
+  > why do generated IR files contain the old SpecForge repository path
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > why do i / its stay out of the non-actor function-word list (GIC ITS, the letter I)
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
   > why do many conditional_rules not lower to an ISF (rule) (they name no signal obligation, an undeclared signal, a placeholder action, or only a bare modal shall/must with no concrete value/level — lowering would fabricate the obligation)
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
@@ -290,11 +298,3 @@
   > why was NVMe MPS must_be_value 0 removed / where did the bogus MPS subject come from
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
   > why was NVMe SANICAP must_be_value NO removed / where did the bogus NO come from
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > why was PSELx / HRESP ERROR / ACTIVATEACK LOW extracted as a constraint (and how was it fixed)
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > why was a property like RME_Support or MPAM_WIDTH extracted as a signal constraint
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > why was a signal not extracted from a signal table (e.g. AHB HREADY)
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > why was an emitter-only fix for register bit-fields rejected (per-field vars fabricate/lose grouping; set-field/extract fabricate runtime behavior; comments are not intent — feedback_isf_no_hacks)

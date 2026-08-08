@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > where does signal_channel_memberships live (EvidenceIR) and how is it carried (SemanticIR -> IntentIR)
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > where does the .isf signal direction/width come from (direction_hint/width_hint, not the actor graph)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > where does the <qualifier> phase vocabulary live (extracted_statements prose, not section_anchors)
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
@@ -94,12 +98,16 @@
   > which AXI signals belong to which channel (B1.1 write request / B1.2 write data / B1.3 write response / B1.4 read request / B1.5 read data / B1.6 B1.7 snoop)
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > which AXI transactions gain channel grouping (atomic/prefetch/writezero/writedeferrable/narrow_transfer)
+- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
+  > which IR stages have adopted move safe persisted paths
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > which IntentIR surfaces are lowered to the .isf vs silently dropped
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
   > which LLM or VLM does SpecForge use
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > which Markdown files must the live-document containment registry cover
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > which SourceIR and EvidenceIR paths serialize repository relative
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > which boot-volume Rust directories are allowed
 - [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
@@ -289,11 +297,3 @@
   > why do I2C/CCIX/USB4 have 0 table signals and how are they recovered
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
   > why do NVMe/CCIX/DTI register-field obligations not lower to the .isf
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > why do conditional_rules lower to .isf only partially
-- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
-  > why do environment-lock tests cascade with PoisonError
-- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
-  > why do generated IR files contain the old SpecForge repository path
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > why do i / its stay out of the non-actor function-word list (GIC ITS, the letter I)

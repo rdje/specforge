@@ -23,6 +23,20 @@ In practical terms, `SourceIR` is where the pipeline decides:
 
 It is the closest thing the system has to a structured "compiled source document".
 
+## Path identity and repository moves
+
+`SourceIR` distinguishes the source's ownership from its runtime location. Repository-owned source paths,
+artifact layouts, normalized Markdown, page metadata/images, visual assets, and caption sources are written as
+repository-relative JSON strings. An explicitly authorized PDF or Markdown input outside the repository keeps
+its exact absolute path and carries `path_origin: "external_input"`; a source inside the repository carries
+`"repository_owned"`.
+
+When `SourceIR` is built or loaded, those stored values are resolved to absolute paths under the current
+repository for normal I/O. That means moving the repository does not require every downstream caller to learn a
+new path API, and new artifacts do not remember the old workstation or mount point. Older unlabeled absolute
+repository paths can load only when their recognized project-data suffix identifies exactly one existing target
+under the current root. An unrelated external absolute path is never silently rebased.
+
 ## Why this stage matters
 
 If `SourceIR` is lossy, the downstream KG cannot recover what was lost reliably.

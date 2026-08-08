@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nli-intent-gate](../knowledge/nli-intent-gate.md)
+  > how is the NLI gate tested without Ollama
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
   > how is the SWD FSM/frame derivation scored (not constraints/relations/temporal)
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
@@ -296,5 +298,3 @@
   > should specforge record a residual for every typed rule that does not lower to .isf
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
   > should specforge record an adapter residual for rules whose subject is not a declared signal
-- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
-  > should specforge recover consumer edges from 'X is sent/returned to Y' recipient frames

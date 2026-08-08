@@ -13,9 +13,10 @@ The Rust `persisted_path` boundary makes that distinction explicit without chang
 strings. A repository-owned path encodes relative and resolves below the discovered current root. An
 explicitly authorized external input can remain absolute and is never eligible for old-root rebasing. Legacy
 repository paths may rebase only from a recognized project-data root to exactly one existing target below the
-current root; missing, ambiguous, traversing, or symlink-escaping values fail closed. SourceIR and downstream
-stage adoption is tracked by `ARTIFACT-PATH-PORTABILITY`; until those leaves land, generated IR remains subject
-to the separately documented persistence gap.
+current root; missing, ambiguous, traversing, or symlink-escaping values fail closed. SourceIR and EvidenceIR
+now serialize their repository-owned registration, layout, lineage, and provenance paths through that boundary
+while restoring absolute current-root values in memory. Downstream stages and the present generated corpus
+remain owned by the open `ARTIFACT-PATH-PORTABILITY` leaves.
 
 | Data | Repository-relative root | Authority |
 | --- | --- | --- |

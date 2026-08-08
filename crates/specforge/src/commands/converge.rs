@@ -11,24 +11,31 @@ use crate::ir::intent::IntentIr;
 use crate::ir::semantic::SemanticIr;
 use crate::ir::source::{DiagramKind, SourceIr};
 
-fn source_artifact_base_root() -> PathBuf {
-    PathBuf::from("generated").join("source_ir")
+#[derive(Debug, Clone)]
+struct PipelineArtifactRoots {
+    source: PathBuf,
+    evidence: PathBuf,
+    semantic: PathBuf,
+    intent: PathBuf,
+    adapters: PathBuf,
 }
 
-fn evidence_artifact_base_root() -> PathBuf {
-    PathBuf::from("generated").join("evidence_ir")
-}
+impl PipelineArtifactRoots {
+    fn repository_defaults() -> Result<Self> {
+        Ok(Self::below(
+            &crate::project_data::repository_root()?.join("generated"),
+        ))
+    }
 
-fn semantic_artifact_base_root() -> PathBuf {
-    PathBuf::from("generated").join("semantic_ir")
-}
-
-fn intent_artifact_base_root() -> PathBuf {
-    PathBuf::from("generated").join("intent_ir")
-}
-
-fn adapter_artifact_base_root() -> PathBuf {
-    PathBuf::from("generated").join("adapters")
+    fn below(generated_root: &std::path::Path) -> Self {
+        Self {
+            source: generated_root.join("source_ir"),
+            evidence: generated_root.join("evidence_ir"),
+            semantic: generated_root.join("semantic_ir"),
+            intent: generated_root.join("intent_ir"),
+            adapters: generated_root.join("adapters"),
+        }
+    }
 }
 
 pub fn run(args: ConvergeArgs) -> Result<()> {
@@ -124,6 +131,14 @@ pub fn run(args: ConvergeArgs) -> Result<()> {
 }
 
 fn run_convergence(args: ConvergeArgs) -> Result<ConvergenceReport> {
+    let roots = PipelineArtifactRoots::repository_defaults()?;
+    run_convergence_with_roots(args, &roots)
+}
+
+fn run_convergence_with_roots(
+    args: ConvergeArgs,
+    roots: &PipelineArtifactRoots,
+) -> Result<ConvergenceReport> {
     if args.execute_rescan_plan && args.rescan_plan.is_none() {
         return Err(AppError::InvalidStageArtifact(
             "--execute-rescan-plan requires --rescan-plan <path>".to_string(),
@@ -145,10 +160,10 @@ fn run_convergence(args: ConvergeArgs) -> Result<ConvergenceReport> {
     }
 
     let target: AdapterTarget = args.target.into();
-    let mut source_ir = SourceIr::build(&args.source, &source_artifact_base_root())?;
+    let mut source_ir = SourceIr::build(&args.source, &roots.source)?;
     source_ir.materialize()?;
     source_ir.write_to_disk()?;
-    let paths = PipelineArtifactPaths::from_source_ir(&source_ir, target)?;
+    let paths = PipelineArtifactPaths::from_source_ir(&source_ir, target, roots)?;
 
     println!("command: converge");
     println!("mode: execute");
@@ -186,7 +201,7 @@ fn run_convergence(args: ConvergeArgs) -> Result<ConvergenceReport> {
 
         let evidence_ir = EvidenceIr::build_with_prior_memory(
             &paths.source_ir_path,
-            &evidence_artifact_base_root(),
+            &roots.evidence,
             Some(args.prior_memory.as_path()),
         )?;
         evidence_ir.write_to_disk()?;
@@ -209,15 +224,14 @@ fn run_convergence(args: ConvergeArgs) -> Result<ConvergenceReport> {
             })?;
         }
 
-        let semantic_ir =
-            SemanticIr::build(&paths.evidence_ir_path, &semantic_artifact_base_root())?;
+        let semantic_ir = SemanticIr::build(&paths.evidence_ir_path, &roots.semantic)?;
         semantic_ir.write_to_disk()?;
 
-        let intent_ir = IntentIr::build(&paths.semantic_ir_path, &intent_artifact_base_root())?;
+        let intent_ir = IntentIr::build(&paths.semantic_ir_path, &roots.intent)?;
         intent_ir.write_to_disk()?;
 
         let adapter_artifact =
-            AdapterArtifact::build(&paths.intent_ir_path, target, &adapter_artifact_base_root())?;
+            AdapterArtifact::build(&paths.intent_ir_path, target, &roots.adapters)?;
         adapter_artifact.write_to_disk()?;
 
         let snapshot = KnowledgeSnapshot::collect(&paths)?;
@@ -240,7 +254,7 @@ fn run_convergence(args: ConvergeArgs) -> Result<ConvergenceReport> {
                 let rescan_plan = maybe_run_rescan_plan(&args, &paths, &snapshot)?;
                 // Promotion (when opted in) runs BEFORE the gauge, so the standing quality
                 // measurement describes the surface the artifacts actually carry.
-                let promotion = maybe_promote_constraints(&args, &paths)?;
+                let promotion = maybe_promote_constraints(&args, &paths, roots)?;
                 let extraction_quality = measure_extraction_quality(&args, &paths)?;
                 return Ok(ConvergenceReport {
                     converged: true,
@@ -334,6 +348,7 @@ fn should_promote_constraints(args: &ConvergeArgs) -> bool {
 fn maybe_promote_constraints(
     args: &ConvergeArgs,
     paths: &PipelineArtifactPaths,
+    roots: &PipelineArtifactRoots,
 ) -> Result<Option<crate::commands::extract_constraints_llm::ConstraintPromotionReport>> {
     if !should_promote_constraints(args) {
         return Ok(None);
@@ -364,15 +379,12 @@ fn maybe_promote_constraints(
         report.field_kept
     );
     // One downstream rebuild so the canonical stages carry the promoted surface.
-    let semantic_ir = SemanticIr::build(&paths.evidence_ir_path, &semantic_artifact_base_root())?;
+    let semantic_ir = SemanticIr::build(&paths.evidence_ir_path, &roots.semantic)?;
     semantic_ir.write_to_disk()?;
-    let intent_ir = IntentIr::build(&paths.semantic_ir_path, &intent_artifact_base_root())?;
+    let intent_ir = IntentIr::build(&paths.semantic_ir_path, &roots.intent)?;
     intent_ir.write_to_disk()?;
-    let adapter_artifact = AdapterArtifact::build(
-        &paths.intent_ir_path,
-        args.target.into(),
-        &adapter_artifact_base_root(),
-    )?;
+    let adapter_artifact =
+        AdapterArtifact::build(&paths.intent_ir_path, args.target.into(), &roots.adapters)?;
     adapter_artifact.write_to_disk()?;
     println!("promotion: downstream stages rebuilt (semantic → intent → adapter)");
     Ok(Some(report))
@@ -440,20 +452,19 @@ struct PipelineArtifactPaths {
 }
 
 impl PipelineArtifactPaths {
-    fn from_source_ir(source_ir: &SourceIr, target: AdapterTarget) -> Result<Self> {
+    fn from_source_ir(
+        source_ir: &SourceIr,
+        target: AdapterTarget,
+        roots: &PipelineArtifactRoots,
+    ) -> Result<Self> {
         let document_key = source_ir.document_identity.document_key.clone();
         Self {
             source_ir_path: absolute_artifact_path(&source_ir.artifact_layout.source_ir_path)?,
-            evidence_ir_path: evidence_artifact_base_root()
-                .join(&document_key)
-                .join("evidence_ir.json"),
-            semantic_ir_path: semantic_artifact_base_root()
-                .join(&document_key)
-                .join("semantic_ir.json"),
-            intent_ir_path: intent_artifact_base_root()
-                .join(&document_key)
-                .join("intent_ir.json"),
-            adapter_artifact_path: adapter_artifact_base_root()
+            evidence_ir_path: roots.evidence.join(&document_key).join("evidence_ir.json"),
+            semantic_ir_path: roots.semantic.join(&document_key).join("semantic_ir.json"),
+            intent_ir_path: roots.intent.join(&document_key).join("intent_ir.json"),
+            adapter_artifact_path: roots
+                .adapters
                 .join(target.as_str())
                 .join(&document_key)
                 .join("adapter.json"),
@@ -1004,33 +1015,33 @@ mod tests {
             })?,
         )?;
 
-        let cwd_before = std::env::current_dir()?;
-        std::env::set_current_dir(tempdir.path())?;
+        let roots = PipelineArtifactRoots::below(&tempdir.path().join("generated"));
+        let result = run_convergence_with_roots(
+            ConvergeArgs {
+                source: source.clone(),
+                target: AdapterTargetArg::Isf,
+                max_iterations: 4,
+                vlm_provider: VlmProviderArg::Skip,
+                vlm_model: None,
+                nlp_provider: VlmProviderArg::Ollama,
+                nlp_model: Some("mock".to_string()),
+                nlp_max_sentences: 0,
+                promote_constraints_llm: false,
+                // This test exercises the rescan-plan path and asserts the Pattern constraint
+                // surface; opt out of the now-default LLM-primary promotion so it stays focused.
+                no_promote_constraints_llm: true,
+                prior_memory: tempdir
+                    .path()
+                    .join("generated")
+                    .join("prior_memory")
+                    .join("corpus_memory.json"),
+                rescan_plan: Some(rescan_plan_path.clone()),
+                execute_rescan_plan: false,
+                rescan_plan_limit: 0,
+            },
+            &roots,
+        );
 
-        let result = run_convergence(ConvergeArgs {
-            source: source.clone(),
-            target: AdapterTargetArg::Isf,
-            max_iterations: 4,
-            vlm_provider: VlmProviderArg::Skip,
-            vlm_model: None,
-            nlp_provider: VlmProviderArg::Ollama,
-            nlp_model: Some("mock".to_string()),
-            nlp_max_sentences: 0,
-            promote_constraints_llm: false,
-            // This test exercises the rescan-plan path and asserts the Pattern constraint
-            // surface; opt out of the now-default LLM-primary promotion so it stays focused.
-            no_promote_constraints_llm: true,
-            prior_memory: tempdir
-                .path()
-                .join("generated")
-                .join("prior_memory")
-                .join("corpus_memory.json"),
-            rescan_plan: Some(rescan_plan_path.clone()),
-            execute_rescan_plan: false,
-            rescan_plan_limit: 0,
-        });
-
-        std::env::set_current_dir(cwd_before)?;
         unsafe { std::env::remove_var("SPECFORGE_VLM_HELPER") };
 
         let report = result?;
@@ -1185,12 +1196,19 @@ mod tests {
     }
 
     #[test]
-    fn artifact_base_roots_are_non_default() {
-        assert!(!source_artifact_base_root().to_string_lossy().is_empty());
-        assert!(!evidence_artifact_base_root().to_string_lossy().is_empty());
-        assert!(!semantic_artifact_base_root().to_string_lossy().is_empty());
-        assert!(!intent_artifact_base_root().to_string_lossy().is_empty());
-        assert!(!adapter_artifact_base_root().to_string_lossy().is_empty());
+    fn artifact_base_roots_are_repository_derived() -> Result<()> {
+        let roots = PipelineArtifactRoots::repository_defaults()?;
+        let repository = crate::project_data::repository_root()?;
+        for root in [
+            roots.source,
+            roots.evidence,
+            roots.semantic,
+            roots.intent,
+            roots.adapters,
+        ] {
+            assert!(root.starts_with(&repository));
+        }
+        Ok(())
     }
 
     #[test]

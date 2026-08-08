@@ -52,7 +52,7 @@ Collection guidance: [authoring and lifecycle README](README.md).
 | [corpus-register-table-shape-gap](corpus-register-table-shape-gap.md) | 2026-06-10 | `current` | The corpus's biggest structural digestion gap is register-shaped unknown tables (CCIX/AMD-IOMMU class) |
 | [corpus-reuse-activate-only-no-current-consumer](corpus-reuse-activate-only-no-current-consumer.md) | 2026-06-15 | `current` | The CORPUS-PATTERN-REUSE activate-only consume mechanism has no valid first opt-in extractor in the current c… |
 | [corpus-reuse-serial-prose-lever-not-cluster-scopable](corpus-reuse-serial-prose-lever-not-cluster-scopable.md) | 2026-06-15 | `current` | The .9.10 serial-prose bus-line lever cannot be a CORPUS-PATTERN-REUSE first opt-in extractor — its safe/no… |
-| [cross-stage-artifact-paths-are-absolute](cross-stage-artifact-paths-are-absolute.md) | 2026-08-08 | `current` | Cross-stage builders persist canonical absolute input paths, so generated IR is not move-portable |
+| [cross-stage-artifact-paths-are-absolute](cross-stage-artifact-paths-are-absolute.md) | 2026-08-08 | `current` | Downstream legacy artifacts still carry absolute paths while SourceIR and EvidenceIR now serialize relative |
 | [definitional-signal-capture](definitional-signal-capture.md) | 2026-06-09 | `current` | Signals named only in prose (no signal table) are captured via a DEFINITIONAL grammar — copula "NAME is a/a… |
 | [dempster-fusion](dempster-fusion.md) | 2026-06-04 | `current` | SpecForge fuses agreeing-source confidence via Dempster corroboration (not min) |
 | [docling-device-cpu](docling-device-cpu.md) | 2026-06-01 | `current` | Docling ingest must run on CPU on this stack (torch MPS lacks float64) |

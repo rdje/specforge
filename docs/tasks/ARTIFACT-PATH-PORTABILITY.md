@@ -49,7 +49,7 @@ validation, learning, or recovery workflows.
 - ID: `ARTIFACT-PATH-PORTABILITY.1` · Status: `done` (`2026-08-08`) · Goal: design and test one common persisted-path
   codec/resolver: repository-relative serialization, current-root runtime resolution, narrowly recognized
   legacy-root rebasing, explicit external-input handling, and traversal/symlink/ambiguity refusal.
-- ID: `ARTIFACT-PATH-PORTABILITY.2` · Status: `pending` (depends on `.1`) · Goal: migrate SourceIR and
+- ID: `ARTIFACT-PATH-PORTABILITY.2` · Status: `done` (`2026-08-08`; depends on `.1`) · Goal: migrate SourceIR and
   EvidenceIR producers/consumers, including source registration, normalization/artifact layouts, section/span/
   visual provenance, upstream pointers, and prior-memory references.
 - ID: `ARTIFACT-PATH-PORTABILITY.3` · Status: `pending` (depends on `.2`) · Goal: migrate SemanticIR,
@@ -83,14 +83,36 @@ validation, learning, or recovery workflows.
 - [x] **LOCKSTEP** — task tree, roadmap, locality standard/book, Knowledge Map, Rust architecture analysis,
   live ledgers, and resume pointer agree that the common contract is landed and `.2` owns first-stage use.
 
+## Acceptance Checklist (enforced) — `ARTIFACT-PATH-PORTABILITY.2`
+
+- [x] **REPRODUCE / MEASURE** — focused Markdown, PDF, legacy-root, visual-provenance, convergence, and tracked
+  KG-fixture tests exercise SourceIR/EvidenceIR runtime loading plus repository-relative JSON and sidecar
+  manifests. A corrected retired-root fixture proves it actually stores `/retired/specforge/...` before load.
+- [x] **ROOT CAUSE (WHY + WHERE)** — SourceIR mixed canonical runtime identity into source registration,
+  normalization, and artifact-layout fields; EvidenceIR then canonicalized its upstream pointer and promoted
+  source before copying that absolute identity into section/span/visual provenance and prior-memory lineage.
+- [x] **ADDRESSED (verified)** — SourceIR and EvidenceIR now operate on root-derived absolute paths in memory,
+  serialize repository-owned fields relative, label text source origin, preserve exact authorized external
+  sources, rebase unlabeled legacy repository values, and keep visual assets intrinsically repository-owned.
+  Validation and convergence resolve repository-derived paths at I/O boundaries instead of trusting process CWD.
+- [x] **NO REGRESSION** — full CI passes all six doctrines, formatting, all-target warning-deny Clippy, 1,753
+  Rust tests with five ignored, rustdoc, mdBook build, and final locality/residue checks. Focused legacy, PDF
+  sidecar, visual, convergence, and 156-fixture KG checks pass. The existing 335 affected generated artifacts
+  and all extraction facts/golds remain unchanged for `.4` migration.
+- [x] **GENERICITY** — behavior depends only on typed field ownership, canonical containment, existing-target
+  identity, and repository discovery. No username, mount point, document key, protocol, vendor, or fixture is
+  encoded in production paths; legacy compatibility remains the bounded `.1` resolver.
+- [x] **LOCKSTEP** — task tree, roadmap, locality standard/book, SourceIR/EvidenceIR chapters, Knowledge Map,
+  Rust architecture analysis, live ledgers, and resume pointer agree that `.2` is landed and `.3` owns the
+  remaining canonical stages and consumers.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `ARTIFACT-PATH-PORTABILITY.2` | `pending` | Source/Evidence own the largest path surface and feed every downstream stage. |
-| 2 | `ARTIFACT-PATH-PORTABILITY.3` | `pending` | Canonical downstream consumers must retain validation and learning behavior after moves. |
-| 3 | `ARTIFACT-PATH-PORTABILITY.4` | `pending` | Migrate data only after code can safely read both old and new forms. |
-| 4 | `ARTIFACT-PATH-PORTABILITY.5` | `pending` | Independent closure proves no path or documentation surface escaped. |
+| 1 | `ARTIFACT-PATH-PORTABILITY.3` | `pending` | Canonical downstream consumers must retain validation and learning behavior after moves. |
+| 2 | `ARTIFACT-PATH-PORTABILITY.4` | `pending` | Migrate data only after code can safely read both old and new forms. |
+| 3 | `ARTIFACT-PATH-PORTABILITY.5` | `pending` | Independent closure proves no path or documentation surface escaped. |
 
 ## Decisions
 
@@ -106,14 +128,23 @@ validation, learning, or recovery workflows.
 - `2026-08-08`: Legacy rebasing is available only to repository-owned fields, begins at one of the declared
   project-data roots, requires a present target below the current canonical repository, and refuses zero or
   multiple matches plus traversal or symlink escape. External inputs resolve only at their exact path.
+- `2026-08-08`: Stage structs keep runtime-absolute `PathBuf` values in memory for compatibility with their
+  existing consumers, but `to_pretty_json` and `write_to_disk` serialize normalized clones. `load_from_path`
+  performs the inverse runtime projection, so storage portability does not force absolute-path assumptions
+  through hundreds of extraction call sites.
+- `2026-08-08`: Evidence section anchors and spans inherit the promoted text source origin. Visual evidence
+  paths remain repository-owned because they originate from SourceIR's normalized asset bundle, even when the
+  text source itself is an explicitly authorized external Markdown file.
+- `2026-08-08`: Convergence derives production stage roots from repository discovery and injects a complete
+  root bundle in tests. This removes process-CWD mutation and prevents concurrent tests from observing a false
+  repository location.
 
 ## Open Questions
 
-- `.2` must derive legacy SourceIR origin safely: relative `requested_path` is repository-owned; an absolute
-  request is external unless it is below the current root or a recognized old-root suffix resolves uniquely.
-  New SourceIR persists the stable `repository_owned` / `external_input` label beside `canonical_path`.
-- Can the 262,592 repeated evidence `source_path` values be safely normalized during loading/writing without
-  changing fact identity or deterministic hashes? Owner: `.2`; verify before migration.
+- `.3` must decide each downstream and learning-plane path field's ownership from its typed role, then prove
+  validation, project-validation, learning, recovery, and convergence retain cross-stage behavior after a move.
+- `.4` must compare migrated current artifacts by file/byte/hash and real workflow behavior; producer support in
+  `.2` does not authorize rewriting the 262,592 repeated legacy EvidenceIR provenance values early.
 
 ## Blockers
 
@@ -125,6 +156,7 @@ validation, learning, or recovery workflows.
 | --- | --- | --- | --- |
 | `2026-08-08` | `.0` | old-root absence; generated path/file/stage/key census; producer assignment and consumer-use cross-read; doctrine + mdBook checks | 335 affected files / 262,996 values; root cause localized; ownership complete; no generated mutation |
 | `2026-08-08` | `.1` | 13 focused codec/resolver cases; full Rust suite; `cargo fmt --check`; all-target `clippy -D warnings`; doctrines; mdBook | 1,748 pass / 5 ignored; contract and all gates pass; no IR/generated mutation |
+| `2026-08-08` | `.2` | Source/Evidence legacy + persisted/runtime cases; PDF/visual/convergence/KG checks; full CI | 6/6 doctrines; 1,753 pass / 5 ignored; rustdoc/book/locality pass; no generated mutation |
 
 ## Commit Log
 
@@ -132,6 +164,7 @@ validation, learning, or recovery workflows.
 | --- | --- | --- |
 | `.0` | `ARTIFACT-PATH-PORTABILITY.0 — own the move-portability repair` | Measurement/ownership only; `.1` is the first implementation gate. |
 | `.1` | `ARTIFACT-PATH-PORTABILITY.1 — land the move-safe path contract` | Common seam only; `.2` activates it in SourceIR/EvidenceIR. |
+| `.2` | `ARTIFACT-PATH-PORTABILITY.2 — make Source and Evidence paths portable` | First two stages serialize relative and load runtime paths; `.3` owns downstream activation. |
 
 ## Changelog
 
@@ -140,3 +173,6 @@ validation, learning, or recovery workflows.
   data migration/enforcement, and closure into independently committable leaves.
 - `2026-08-08`: Landed the schema-compatible persisted-path codec/resolver with stable origin labels and
   fail-closed current-root, legacy-rebase, external-input, traversal, ambiguity, missing, and symlink behavior.
+- `2026-08-08`: Activated the contract across SourceIR/EvidenceIR registration, layouts, normalized sidecars,
+  text and visual provenance, upstream/prior lineage, validation entry, and convergence roots while preserving
+  runtime-absolute in-memory compatibility and leaving present generated artifacts unchanged.

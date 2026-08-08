@@ -55,16 +55,23 @@ This is not current boot-volume I/O—the old repository is absent—but it make
 Some validation and learning paths treat a missing upstream artifact as optional and silently lose cross-stage
 checks; recovery paths can fail outright.
 
-The common Rust contract is now landed. It preserves the existing JSON path-string shape while requiring a
-typed origin at each call: repository-owned paths encode relative and resolve at the discovered current root;
-explicit external inputs may remain absolute but never enter legacy rebasing. An old absolute repository path
-may rebase only below a recognized project-data root, to exactly one existing canonical target contained by
-the current repository. Parent traversal, zero/multiple targets, and symlink escape are errors.
+The common Rust contract preserves the existing JSON path-string shape while requiring a typed origin at each
+call: repository-owned paths encode relative and resolve at the discovered current root; explicit external
+inputs may remain absolute but never enter legacy rebasing. An old absolute repository path may rebase only
+below a recognized project-data root, to exactly one existing canonical target contained by the current
+repository. Parent traversal, zero/multiple targets, and symlink escape are errors.
 
-The contract is not yet active in the stage artifacts. `ARTIFACT-PATH-PORTABILITY.2` and `.3` own producer and
-consumer migration, then `.4` owns verified generated-data migration plus a fail-closed residue gate. Until
-those leaves land, do not bulk-rewrite ignored artifacts or treat a passing temp/cache locality check as proof
-that persisted IR paths are portable.
+SourceIR and EvidenceIR now use that contract. Their Rust values are resolved absolute paths while the process
+is running, so normal callers can open them directly. Their JSON and SourceIR sidecar manifests store
+repository-owned source/layout/upstream/prior/provenance paths relative to the repository. Source text carries
+an origin label; an authorized external Markdown or PDF path remains absolute, while normalized page and visual
+assets remain repository-owned. Loading an old unlabeled artifact infers present external identity exactly or
+uses the bounded legacy rebase for repository data.
+
+SemanticIR, IntentIR, adapters, and remaining learning/recovery consumers are the next migration boundary.
+After that, the current generated corpus can be migrated with verification and covered by a fail-closed residue
+gate. Until those leaves land, do not bulk-rewrite ignored artifacts or treat SourceIR/EvidenceIR producer
+support alone as proof that the whole persisted pipeline is portable.
 
 ## Check the contract
 

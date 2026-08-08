@@ -32,6 +32,7 @@ use crate::ir::source::{
     ValidationFindingRecord, ValidationFindingSeverity, ValidationMetricRecord,
     ValidationReportRecord, WidthHint,
 };
+use crate::persisted_path::{PersistedPathOrigin, resolve_existing, resolve_repository_output};
 
 thread_local! {
     static VALIDATION_OUTPUT_SUPPRESSED: Cell<bool> = const { Cell::new(false) };
@@ -140,9 +141,9 @@ macro_rules! println {
 }
 
 pub fn run(args: ValidateArgs) -> Result<()> {
+    let artifact = resolve_existing(&args.artifact, PersistedPathOrigin::RepositoryOwned)?;
     // Auto-detect stage from artifact JSON `stage` field.
-    let raw = fs::read_to_string(&args.artifact)
-        .map_err(|_| AppError::MissingPath(args.artifact.clone()))?;
+    let raw = fs::read_to_string(&artifact).map_err(|_| AppError::MissingPath(artifact.clone()))?;
 
     #[derive(serde::Deserialize)]
     struct StageProbe {
@@ -151,40 +152,40 @@ pub fn run(args: ValidateArgs) -> Result<()> {
     let probe: StageProbe = serde_json::from_str(&raw).map_err(|e| {
         AppError::InvalidStageArtifact(format!(
             "cannot determine stage from {}: {e}",
-            args.artifact.display()
+            artifact.display()
         ))
     })?;
 
     match probe.stage {
         IrStage::SourceIr => {
-            let mut ir = SourceIr::load_from_path(&args.artifact)?;
+            let mut ir = SourceIr::load_from_path(&artifact)?;
             let report = validate_source_ir(&ir, source_ir_fingerprint(&ir)?);
-            persist_source_validation(&mut ir, &args.artifact, &report)?;
-            print_validation_backannotation(&args.artifact, &report)?;
+            persist_source_validation(&mut ir, &artifact, &report)?;
+            print_validation_backannotation(&artifact, &report)?;
         }
         IrStage::EvidenceIr => {
-            let mut ir = EvidenceIr::load_from_path(&args.artifact)?;
+            let mut ir = EvidenceIr::load_from_path(&artifact)?;
             let report = validate_evidence_ir(&ir, evidence_ir_fingerprint(&ir)?);
-            persist_evidence_validation(&mut ir, &args.artifact, &report)?;
-            print_validation_backannotation(&args.artifact, &report)?;
+            persist_evidence_validation(&mut ir, &artifact, &report)?;
+            print_validation_backannotation(&artifact, &report)?;
         }
         IrStage::SemanticIr => {
-            let mut ir = SemanticIr::load_from_path(&args.artifact)?;
+            let mut ir = SemanticIr::load_from_path(&artifact)?;
             let report = validate_semantic_ir(&ir, semantic_ir_fingerprint(&ir)?);
-            persist_semantic_validation(&mut ir, &args.artifact, &report)?;
-            print_validation_backannotation(&args.artifact, &report)?;
+            persist_semantic_validation(&mut ir, &artifact, &report)?;
+            print_validation_backannotation(&artifact, &report)?;
         }
         IrStage::IntentIr => {
-            let mut ir = IntentIr::load_from_path(&args.artifact)?;
+            let mut ir = IntentIr::load_from_path(&artifact)?;
             let report = validate_intent_ir(&ir, intent_ir_fingerprint(&ir)?);
-            persist_intent_validation(&mut ir, &args.artifact, &report)?;
-            print_validation_backannotation(&args.artifact, &report)?;
+            persist_intent_validation(&mut ir, &artifact, &report)?;
+            print_validation_backannotation(&artifact, &report)?;
         }
         IrStage::IsfAdapter => {
-            let mut artifact = AdapterArtifact::load_from_path(&args.artifact)?;
-            let report = validate_isf_adapter(&artifact, isf_adapter_fingerprint(&artifact)?);
-            persist_isf_adapter_validation(&mut artifact, &args.artifact, &report)?;
-            print_validation_backannotation(&args.artifact, &report)?;
+            let mut adapter = AdapterArtifact::load_from_path(&artifact)?;
+            let report = validate_isf_adapter(&adapter, isf_adapter_fingerprint(&adapter)?);
+            persist_isf_adapter_validation(&mut adapter, &artifact, &report)?;
+            print_validation_backannotation(&artifact, &report)?;
         }
     }
 
@@ -249,6 +250,7 @@ fn intent_ir_fingerprint(ir: &IntentIr) -> Result<String> {
 }
 
 fn validation_report_path_for(artifact_path: &Path) -> Result<PathBuf> {
+    let artifact_path = resolve_repository_output(artifact_path)?;
     let artifact_dir = artifact_path.parent().ok_or_else(|| {
         AppError::InvalidStageArtifact(format!(
             "cannot derive validation report path for {}",
@@ -918,9 +920,8 @@ fn intent_quality_gap_related_ids(inputs: IntentQualityScoreInputs) -> Vec<Strin
 
 fn load_prior_memory_for_validation(prior_memory_path: Option<&Path>) -> Option<CorpusMemory> {
     let prior_memory_path = prior_memory_path?;
-    if !prior_memory_path.exists() {
-        return None;
-    }
+    let prior_memory_path =
+        resolve_existing(prior_memory_path, PersistedPathOrigin::RepositoryOwned).ok()?;
 
     serde_json::from_str::<CorpusMemory>(&fs::read_to_string(prior_memory_path).ok()?).ok()
 }

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > how are rotated version matrices remapped for presence capture
 - [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
   > how are serial/architecture spec interface signals added to the catalog
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
@@ -295,5 +297,3 @@
   > how is the EvidenceIR extractor path / extraction layer structured and wired
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > how is the FSMGen feedback channel kept bounded without losing old requests and responses
-- [nli-intent-gate](../knowledge/nli-intent-gate.md)
-  > how is the NLI gate tested without Ollama

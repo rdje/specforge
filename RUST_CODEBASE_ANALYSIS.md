@@ -4,7 +4,7 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
-## Session update (2026-08-08 — move-safe persisted paths and SWD interface-edge timing)
+## Session update (2026-08-08 — SourceIR/EvidenceIR path activation and SWD interface-edge timing)
 
 - **Storage identity and runtime identity are now separate.** `persisted_path` keeps repository-owned
   serialization relative while resolving current runtime paths through `project_data::repository_root()`.
@@ -13,7 +13,16 @@
 - **Legacy compatibility is bounded.** A repository-owned old absolute value may rebase only at a declared
   project-data root, to exactly one existing target whose canonical path stays below the current root.
   Explicit external inputs resolve only at their exact path. Traversal, missing/ambiguous targets, and
-  symlink escape fail closed; 13 focused tests cover the contract. `.2` owns SourceIR/EvidenceIR activation.
+  symlink escape fail closed; 16 focused tests cover the common contract.
+- **SourceIR and EvidenceIR now use the boundary.** Builders/loaders expose current-root absolute paths in
+  memory so existing extraction consumers remain compatible; serialization and sidecar manifests use normalized
+  clones whose repository-owned registration, layouts, upstream/prior pointers, and provenance are relative.
+  Source text carries an additive origin label. Evidence text paths inherit it, while normalized visual assets
+  remain repository-owned. Unlabeled old artifacts are inferred/rebased through present targets only.
+- **Entry-point path resolution no longer depends on CWD.** Validation resolves its stage artifact and prior
+  memory at the I/O edge. Convergence derives production roots from repository discovery and accepts injected
+  roots in tests, removing process-CWD mutation and its parallel-test race. `.3` owns SemanticIR, IntentIR,
+  adapters, and the remaining validation/learning/recovery consumers.
 
 - **New EvidenceIR surface:** `InterfaceEdgeTimingRecord` carries actor, data signal, clock signal,
   explicit rising/falling edge, sample/drive-state-change flags, and statement provenance.
@@ -26,10 +35,10 @@
 - **Architecture boundary:** `serial_frame_fields`, `swd_operations`, `protocol_states`, and
   `interface_edge_timings` are EvidenceIR-only. Neither `SemanticIr`, `IntentIr`, nor `IsfIr` consumes
   them, so extraction scoring does not prove downstream product availability; `.7` owns that projection.
-- **Active portability migration:** stage builders canonicalize input paths before serializing upstream pointers.
-  A local census found 335 generated artifacts retaining the deleted boot-volume root. This violates the
-  root-relative persistence contract; the common resolver is now landed, while `ARTIFACT-PATH-PORTABILITY`
-  still owns all producer/consumer activation, migration, and enforcement before canonical promotion.
+- **Active portability migration:** the pre-change local census remains 335 generated artifacts retaining the
+  deleted boot-volume root. SourceIR/EvidenceIR producers can now emit portable replacements without losing
+  runtime behavior, but SemanticIR/IntentIR/adapters and several consumers still need `.3`; verified migration
+  and residue enforcement remain `.4`. Current ignored artifacts were deliberately not rewritten in `.2`.
 
 ## Session update (2026-08-08 — repository-volume runtime boundary; `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.6a`)
 

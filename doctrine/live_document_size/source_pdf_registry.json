@@ -52,7 +52,7 @@
     ],
     "seams": [
       {
-        "literal": "let stable_artifact_stem = stable_stem(source);",
+        "literal": "let stable_artifact_stem = stable_stem(&canonical);",
         "occurrences": 1
       },
       {

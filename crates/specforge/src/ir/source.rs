@@ -6,6 +6,10 @@ use std::path::{Path, PathBuf};
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::adapters::AdapterTarget;
+use crate::persisted_path::{
+    PersistedPathOrigin, infer_existing_origin, normalize_for_storage, resolve_existing,
+    resolve_repository_output,
+};
 
 pub use docling_backend::{
     DEFAULT_DOCLING_BOOTSTRAP_SCRIPT, DEFAULT_DOCLING_VENV_DIR, DOCLING_PYTHON_ENV,
@@ -566,22 +570,21 @@ pub struct SourceIr {
 
 impl SourceIr {
     pub fn load_from_path(path: &Path) -> Result<Self> {
-        if !path.exists() {
-            return Err(AppError::MissingPath(path.to_path_buf()));
-        }
-
-        Ok(serde_json::from_str(&fs::read_to_string(path)?)?)
+        let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
+        let source_ir = serde_json::from_str::<Self>(&fs::read_to_string(path)?)?;
+        source_ir.runtime_clone()
     }
     pub fn build(source: &Path, artifact_base_root: &Path) -> Result<Self> {
-        if !source.exists() {
-            return Err(AppError::MissingPath(source.to_path_buf()));
-        }
-
-        let metadata = fs::metadata(source)?;
-        let canonical = fs::canonicalize(source)?;
+        let source_path_origin = if source.is_relative() {
+            PersistedPathOrigin::RepositoryOwned
+        } else {
+            infer_existing_origin(source)?
+        };
+        let canonical = resolve_existing(source, source_path_origin)?;
+        let metadata = fs::metadata(&canonical)?;
         let path_kind = SourcePathKind::detect(&metadata);
-        let source_kind = SourceKind::detect(source);
-        let stable_artifact_stem = stable_stem(source);
+        let source_kind = SourceKind::detect(&canonical);
+        let stable_artifact_stem = stable_stem(&canonical);
         let document_key = document_key(&stable_artifact_stem);
         let artifact_root = artifact_base_root.join(&document_key);
         let normalized_root = artifact_root.join("normalized");
@@ -595,6 +598,7 @@ impl SourceIr {
         let source_registration = SourceRegistration {
             requested_path: source.to_path_buf(),
             canonical_path: canonical.clone(),
+            path_origin: Some(source_path_origin),
             path_kind,
             source_kind,
             stable_artifact_stem,
@@ -603,7 +607,7 @@ impl SourceIr {
 
         let document_identity = DocumentIdentity {
             document_key: document_key.clone(),
-            display_name: display_name(source),
+            display_name: display_name(&canonical),
             origin_kind: source_kind,
         };
 
@@ -689,7 +693,7 @@ impl SourceIr {
         let automation_confidence = automation_confidence(source_kind, &residual_decisions);
         let planned_actions = planned_actions(source_kind, &residual_decisions);
 
-        Ok(Self {
+        Self {
             schema_version: 1,
             stage: IrStage::SourceIr,
             source: source_registration,
@@ -709,12 +713,26 @@ impl SourceIr {
             adapter_targets: vec![AdapterTarget::Isf],
             planned_actions,
             automation_confidence,
-        })
+        }
+        .runtime_clone()
     }
 
     pub fn to_pretty_json(&self) -> Result<String> {
-        Ok(serde_json::to_string_pretty(self)?)
+        Ok(serde_json::to_string_pretty(&self.persisted_clone()?)?)
     }
+
+    pub(crate) fn source_path_origin(&self) -> Result<PersistedPathOrigin> {
+        self.source.resolved_origin()
+    }
+
+    pub(crate) fn promoted_markdown_origin(&self) -> Result<PersistedPathOrigin> {
+        if matches!(self.source.source_kind, SourceKind::Markdown) {
+            self.source_path_origin()
+        } else {
+            Ok(PersistedPathOrigin::RepositoryOwned)
+        }
+    }
+
     pub fn materialize(&mut self) -> Result<()> {
         if !matches!(self.source.source_kind, SourceKind::Pdf) {
             return Ok(());
@@ -743,11 +761,17 @@ impl SourceIr {
                 )
             })?;
 
+        let source_path =
+            resolve_existing(&self.source.canonical_path, self.source_path_origin()?)?;
+        let promoted_markdown_path = resolve_repository_output(&promoted_markdown_path)?;
+        let metadata_output_path = resolve_repository_output(&metadata_output_path)?;
+        let runtime_artifact_layout = self.artifact_layout.runtime_layout()?;
+
         let backend_summary = docling_backend::materialize_pdf(
-            &self.source.canonical_path,
+            &source_path,
             &promoted_markdown_path,
             &metadata_output_path,
-            &self.artifact_layout,
+            &runtime_artifact_layout,
             &self.document_identity.document_key,
         )?;
 
@@ -773,26 +797,137 @@ impl SourceIr {
                 .push(format!("docling backend version: {version}"));
         }
 
+        *self = self.runtime_clone()?;
+
         Ok(())
     }
 
     pub fn write_to_disk(&self) -> Result<()> {
-        fs::create_dir_all(&self.artifact_layout.artifact_root)?;
-        if matches!(self.source.source_kind, SourceKind::Pdf)
-            && matches!(self.normalization_plan.status, NormalizationStatus::Ready)
+        let persisted = self.persisted_clone()?;
+        let runtime_layout = persisted.artifact_layout.runtime_layout()?;
+        fs::create_dir_all(&runtime_layout.artifact_root)?;
+        if matches!(persisted.source.source_kind, SourceKind::Pdf)
+            && matches!(
+                persisted.normalization_plan.status,
+                NormalizationStatus::Ready
+            )
         {
-            fs::create_dir_all(&self.artifact_layout.normalized_root)?;
+            fs::create_dir_all(&runtime_layout.normalized_root)?;
             fs::write(
-                &self.artifact_layout.page_artifact_manifest_path,
-                serde_json::to_string_pretty(&self.page_artifacts)?,
+                &runtime_layout.page_artifact_manifest_path,
+                serde_json::to_string_pretty(&persisted.page_artifacts)?,
             )?;
             fs::write(
-                &self.artifact_layout.visual_asset_manifest_path,
-                serde_json::to_string_pretty(&self.visual_assets)?,
+                &runtime_layout.visual_asset_manifest_path,
+                serde_json::to_string_pretty(&persisted.visual_assets)?,
             )?;
         }
-        fs::write(&self.artifact_layout.source_ir_path, self.to_pretty_json()?)?;
+        fs::write(
+            &runtime_layout.source_ir_path,
+            serde_json::to_string_pretty(&persisted)?,
+        )?;
         Ok(())
+    }
+
+    fn persisted_clone(&self) -> Result<Self> {
+        let mut persisted = self.clone();
+        let source_origin = persisted.source.resolved_origin()?;
+        persisted.source.path_origin = Some(source_origin);
+        persisted.source.canonical_path =
+            normalize_for_storage(&persisted.source.canonical_path, source_origin)?;
+        persisted.source.requested_path = if source_origin == PersistedPathOrigin::ExternalInput
+            && persisted.source.requested_path.is_relative()
+        {
+            // Pre-contract artifacts could retain a caller-relative spelling for an external
+            // input even though only the canonical absolute path remains meaningful after a
+            // process or repository move.
+            persisted.source.canonical_path.clone()
+        } else {
+            normalize_for_storage(&persisted.source.requested_path, source_origin)?
+        };
+        persisted.artifact_layout.normalize_for_storage()?;
+
+        let promoted_origin = if matches!(persisted.source.source_kind, SourceKind::Markdown) {
+            source_origin
+        } else {
+            PersistedPathOrigin::RepositoryOwned
+        };
+        normalize_optional_path(
+            &mut persisted.normalization_plan.promoted_markdown_path,
+            promoted_origin,
+        )?;
+        normalize_optional_path(
+            &mut persisted.normalization_plan.auxiliary_asset_dir,
+            PersistedPathOrigin::RepositoryOwned,
+        )?;
+        normalize_optional_path(
+            &mut persisted.normalization_plan.metadata_output_path,
+            PersistedPathOrigin::RepositoryOwned,
+        )?;
+
+        for page in &mut persisted.page_artifacts {
+            normalize_optional_path(
+                &mut page.page_image_path,
+                PersistedPathOrigin::RepositoryOwned,
+            )?;
+            normalize_optional_path(
+                &mut page.layout_metadata_path,
+                PersistedPathOrigin::RepositoryOwned,
+            )?;
+        }
+        for asset in &mut persisted.visual_assets {
+            normalize_optional_path(&mut asset.image_path, PersistedPathOrigin::RepositoryOwned)?;
+            normalize_optional_path(
+                &mut asset.caption_source_path,
+                PersistedPathOrigin::RepositoryOwned,
+            )?;
+        }
+        for binding in &mut persisted.placeholder_bindings {
+            binding.normalized_source_path = normalize_for_storage(
+                &binding.normalized_source_path,
+                PersistedPathOrigin::RepositoryOwned,
+            )?;
+        }
+        Ok(persisted)
+    }
+
+    fn runtime_clone(&self) -> Result<Self> {
+        let mut runtime = self.clone();
+        let source_origin = runtime.source.resolved_origin()?;
+        runtime.source.path_origin = Some(source_origin);
+        runtime.source.canonical_path =
+            resolve_existing(&runtime.source.canonical_path, source_origin)?;
+        runtime.source.requested_path = if source_origin == PersistedPathOrigin::ExternalInput
+            && runtime.source.requested_path.is_relative()
+        {
+            runtime.source.canonical_path.clone()
+        } else {
+            resolve_existing(&runtime.source.requested_path, source_origin)?
+        };
+        runtime.artifact_layout = runtime.artifact_layout.runtime_layout()?;
+
+        if let Some(path) = &mut runtime.normalization_plan.promoted_markdown_path {
+            *path = if matches!(runtime.source.source_kind, SourceKind::Markdown) {
+                resolve_existing(path, source_origin)?
+            } else {
+                resolve_repository_output(path)?
+            };
+        }
+        resolve_optional_repository_output(&mut runtime.normalization_plan.auxiliary_asset_dir)?;
+        resolve_optional_repository_output(&mut runtime.normalization_plan.metadata_output_path)?;
+        for page in &mut runtime.page_artifacts {
+            resolve_optional_repository_output(&mut page.page_image_path)?;
+            resolve_optional_repository_output(&mut page.layout_metadata_path)?;
+        }
+        for asset in &mut runtime.visual_assets {
+            resolve_optional_repository_output(&mut asset.image_path)?;
+            resolve_optional_repository_output(&mut asset.caption_source_path)?;
+        }
+        for binding in &mut runtime.placeholder_bindings {
+            binding.normalized_source_path =
+                resolve_repository_output(&binding.normalized_source_path)?;
+        }
+        Ok(runtime)
     }
 }
 
@@ -800,6 +935,8 @@ impl SourceIr {
 pub struct SourceRegistration {
     pub requested_path: PathBuf,
     pub canonical_path: PathBuf,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub path_origin: Option<PersistedPathOrigin>,
     pub path_kind: SourcePathKind,
     pub source_kind: SourceKind,
     pub stable_artifact_stem: String,
@@ -816,6 +953,83 @@ pub struct SourceArtifactLayout {
     pub visual_asset_root: PathBuf,
     pub visual_asset_manifest_path: PathBuf,
     pub backend_raw_output_path: PathBuf,
+}
+
+impl SourceRegistration {
+    fn resolved_origin(&self) -> Result<PersistedPathOrigin> {
+        if let Some(origin) = self.path_origin {
+            return Ok(origin);
+        }
+        if self.canonical_path.is_relative() {
+            return Ok(PersistedPathOrigin::RepositoryOwned);
+        }
+        if self.canonical_path.exists() {
+            return infer_existing_origin(&self.canonical_path);
+        }
+        resolve_existing(&self.canonical_path, PersistedPathOrigin::RepositoryOwned)?;
+        Ok(PersistedPathOrigin::RepositoryOwned)
+    }
+}
+
+impl SourceArtifactLayout {
+    fn normalize_for_storage(&mut self) -> Result<()> {
+        self.artifact_root =
+            normalize_for_storage(&self.artifact_root, PersistedPathOrigin::RepositoryOwned)?;
+        self.source_ir_path =
+            normalize_for_storage(&self.source_ir_path, PersistedPathOrigin::RepositoryOwned)?;
+        self.normalized_root =
+            normalize_for_storage(&self.normalized_root, PersistedPathOrigin::RepositoryOwned)?;
+        self.page_image_root =
+            normalize_for_storage(&self.page_image_root, PersistedPathOrigin::RepositoryOwned)?;
+        self.page_artifact_manifest_path = normalize_for_storage(
+            &self.page_artifact_manifest_path,
+            PersistedPathOrigin::RepositoryOwned,
+        )?;
+        self.visual_asset_root = normalize_for_storage(
+            &self.visual_asset_root,
+            PersistedPathOrigin::RepositoryOwned,
+        )?;
+        self.visual_asset_manifest_path = normalize_for_storage(
+            &self.visual_asset_manifest_path,
+            PersistedPathOrigin::RepositoryOwned,
+        )?;
+        self.backend_raw_output_path = normalize_for_storage(
+            &self.backend_raw_output_path,
+            PersistedPathOrigin::RepositoryOwned,
+        )?;
+        Ok(())
+    }
+
+    fn runtime_layout(&self) -> Result<Self> {
+        Ok(Self {
+            artifact_root: resolve_repository_output(&self.artifact_root)?,
+            source_ir_path: resolve_repository_output(&self.source_ir_path)?,
+            normalized_root: resolve_repository_output(&self.normalized_root)?,
+            page_image_root: resolve_repository_output(&self.page_image_root)?,
+            page_artifact_manifest_path: resolve_repository_output(
+                &self.page_artifact_manifest_path,
+            )?,
+            visual_asset_root: resolve_repository_output(&self.visual_asset_root)?,
+            visual_asset_manifest_path: resolve_repository_output(
+                &self.visual_asset_manifest_path,
+            )?,
+            backend_raw_output_path: resolve_repository_output(&self.backend_raw_output_path)?,
+        })
+    }
+}
+
+fn normalize_optional_path(path: &mut Option<PathBuf>, origin: PersistedPathOrigin) -> Result<()> {
+    if let Some(value) = path {
+        *value = normalize_for_storage(value, origin)?;
+    }
+    Ok(())
+}
+
+fn resolve_optional_repository_output(path: &mut Option<PathBuf>) -> Result<()> {
+    if let Some(value) = path {
+        *value = resolve_repository_output(value)?;
+    }
+    Ok(())
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -1279,7 +1493,56 @@ mod tests {
         assert!(source_ir_json.contains("\"stage\": \"source_ir\""));
         assert!(source_ir_json.contains("\"backend\": \"direct_markdown\""));
         assert!(source_ir_json.contains("\"automation_confidence\": \"high\""));
+        assert!(source_ir_json.contains("\"path_origin\": \"repository_owned\""));
+        assert!(
+            !source_ir_json.contains(
+                crate::project_data::repository_root()?
+                    .to_string_lossy()
+                    .as_ref()
+            ),
+            "repository-owned SourceIR paths must serialize without the runtime root"
+        );
 
+        Ok(())
+    }
+
+    #[test]
+    fn source_ir_load_rebases_unlabeled_legacy_repository_source() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("legacy.md");
+        let artifact_base = tempdir.path().join("generated/source_ir");
+        fs::write(&source, "# legacy\n")?;
+
+        let source_ir = SourceIr::build(&source, &artifact_base)?;
+        source_ir.write_to_disk()?;
+        let source_ir_path = artifact_base.join("legacy/source_ir.json");
+        let mut json =
+            serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&source_ir_path)?)?;
+        let repository = crate::project_data::repository_root()?;
+        let relative_source = source_ir
+            .source
+            .canonical_path
+            .strip_prefix(&repository)
+            .expect("test source resides below the repository")
+            .to_path_buf();
+        let retired_source = Path::new("/retired/specforge").join(&relative_source);
+        assert!(retired_source.starts_with("/retired/specforge"));
+        json["source"]["requested_path"] =
+            serde_json::Value::String(retired_source.to_string_lossy().into_owned());
+        json["source"]["canonical_path"] =
+            serde_json::Value::String(retired_source.to_string_lossy().into_owned());
+        json["source"]
+            .as_object_mut()
+            .expect("source object")
+            .remove("path_origin");
+        fs::write(&source_ir_path, serde_json::to_string_pretty(&json)?)?;
+
+        let reloaded = SourceIr::load_from_path(&source_ir.artifact_layout.source_ir_path)?;
+        assert_eq!(reloaded.source.canonical_path, source.canonicalize()?);
+        assert_eq!(
+            reloaded.source.path_origin,
+            Some(crate::persisted_path::PersistedPathOrigin::RepositoryOwned)
+        );
         Ok(())
     }
 
@@ -1445,6 +1708,26 @@ EOF
         assert!(page_manifest.contains("\"page_id\": \"page_0001\""));
         assert!(visual_manifest.contains("\"source_ref\": \"#/pictures/0\""));
         assert!(promoted_markdown.contains("![Image](assets/picture-0001.png)"));
+        let repository = crate::project_data::repository_root()?;
+        for persisted_artifact in [&source_ir_json, &page_manifest, &visual_manifest] {
+            assert!(
+                !persisted_artifact.contains(repository.to_string_lossy().as_ref()),
+                "repository-owned normalization and visual paths must serialize without the runtime root"
+            );
+        }
+        let reloaded = SourceIr::load_from_path(&source_ir.artifact_layout.source_ir_path)?;
+        assert!(
+            reloaded.page_artifacts[0]
+                .page_image_path
+                .as_ref()
+                .is_some_and(|path| path.is_absolute())
+        );
+        assert!(
+            reloaded.visual_assets[0]
+                .image_path
+                .as_ref()
+                .is_some_and(|path| path.is_absolute())
+        );
 
         Ok(())
     }
