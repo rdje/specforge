@@ -3,7 +3,8 @@
 ## Metadata
 
 - Tree ID: `CORPUS-COVERAGE`
-- Status: `active` (`.0` build-out + `.1` stage-staleness validator both done `2026-06-17`; `.2` re-ingest batch ACTIVE `2026-06-21` — owner re-provisioned the host-local library, so the 57 normalized-missing docs are now re-ingestable to refresh their STALE EvidenceIR with the current binary)
+- Status: `active` (`.0` build-out + `.1` stage-staleness validator done; `.2` current-binary refresh batch
+  remains active with 32 completed documents; `.3` lifecycle/currentness reconciliation done `2026-08-09`)
 - Roadmap lane: `R15e`/`R16` (corpus digestion — the owner's substantive gap #2)
 - Created: `2026-06-17`
 - Owner directive: `2026-06-17` — after the owner rejected the "buildable frontier exhausted" framing
@@ -45,10 +46,20 @@ the two follow-ups below. The 57 docs lacking a `normalized/` bundle cannot have
 without re-ingest (Docling + source PDF, RAM-gated) — a standing frontier gated on host-local source
 re-provisioning (`[[feedback_source_pdfs_in_repo]]`).
 
+**Lifecycle correction (`2026-08-09`, `.3`):** "57 normalized-missing" described the cohort when `.2`
+started; it is not a permanent retention denominator. Re-ingest completion means the document's EvidenceIR and
+downstream stages were refreshed with the then-current binary. A later, documented `2026-07-05` artifact sweep
+intentionally reclaimed every normalized cache. The live tree now has 80 SourceIR / 1 normalized bundle / 79
+EvidenceIR / 78 SemanticIR / 78 IntentIR / 78 adapters, while all five stage artifacts for every one of the 32
+completed `.2` documents remain present (160/160). Therefore `.2` progress stays **32 completed refreshes**, and
+the remaining queue is **24 real chip-spec documents not yet refreshed by `.2`**; neither number is inferred from
+today's ephemeral normalized-directory count.
+
 ## Task Tree
 
 - ID: `CORPUS-COVERAGE` · Status: `active` · Children: `.0` (build-out + census, done), `.1` (stage-staleness
-  validator, done), `.2` (host-local re-ingest batch, active)
+  validator, done), `.2` (host-local re-ingest batch, active), `.3` (frontier/lifecycle currentness audit,
+  done)
 - ID: `CORPUS-COVERAGE.0` · Status: `done` (`2026-06-17`) · Goal: build every evidence-only doc through to
   IntentIR/.isf and census the result. Done: 36→78 intent / 36→75 isf, 0 build failures, 0 stale remaining,
   3 isf honest-blocks. Verification above.
@@ -69,8 +80,8 @@ re-provisioning (`[[feedback_source_pdfs_in_repo]]`).
   list). WIRE-BASED-100 unaffected by construction (validate-only additive finding; wire docs carry non-empty
   relations → silent; extraction/IR content untouched); `run_ci.sh` GREEN, lib 1660 passed (+3); `kg-bench`
   156/156. Book `quality/validation.md`; KM `[[stage-staleness-validate-detector]]`.
-- ID: `CORPUS-COVERAGE.2` · Status: `active` (`2026-06-21`) · Goal: **RAM-guarded re-ingest of the 57
-  normalized-missing docs with the CURRENT binary**, now that the owner has re-provisioned the host-local
+- ID: `CORPUS-COVERAGE.2` · Status: `active` (`2026-06-21`) · Goal: **RAM-guarded re-ingest of the
+  57-document cohort identified by missing normalized bundles, using the CURRENT binary**, now that the owner has re-provisioned the host-local
   spec library. **Provisioning (owner-chosen `2026-06-21`):** instead of copying ~150 MB of PDFs into tracked
   `corpus/` (permanent git bloat), the library is reached through a **git-ignored symlink**
   `.cache/local-references/chipdoc → <owner host-local chipdoc git repo>` (`.cache/` added to `.gitignore`;
@@ -89,9 +100,34 @@ re-provisioning (`[[feedback_source_pdfs_in_repo]]`).
   commit per `COMMIT.md` after each doc. No fabrication / ADR-0006 unchanged (this is a re-run of existing
   deterministic extractors, not new code); WIRE-BASED-100 + register/wire golds + `kg-bench` stay green
   (orthogonal — the 4 gold docs are not re-ingested). Record per-doc before/after typed-surface deltas here.
-- Frontier (active): `CORPUS-COVERAGE.2` — re-ingest the 57 normalized-missing docs from the
-  `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**32 of 57 done after #32; 24 real
-  chip-spec docs remain** — see the `.2` log table below for #29–#32: #29/#31 CHI-C2C marquee message-field refreshes,
+- ID: `CORPUS-COVERAGE.3` · Status: `done` (`2026-08-09`, DOC/AUDIT) · Goal: reconcile the `.2`
+  frontier with the later artifact-cleanup lifecycle after a live census found only the freshly promoted SWD
+  normalized bundle, while `.2` still claimed 32 restored bundles and only 24 normalized-missing documents.
+  Root-cause the discrepancy from durable evidence, distinguish completed current-binary EvidenceIR refreshes
+  from currently retained normalized/rebuildable bundles, correct every live surface that uses the stale count,
+  add a durable Knowledge Map fact, and add a mechanical currentness check if the count is meant to stay live.
+  Do not re-ingest or delete any artifact in this audit leaf.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.3`
+
+- [x] **REPRODUCE / MEASURE** — live census is 80 SourceIR / 1 normalized / 79 EvidenceIR / 78
+  SemanticIR/IntentIR/adapters; the 32 logged refresh keys retain all five stages (160/160 files).
+- [x] **ROOT CAUSE (WHY + WHERE)** — commit `70534fe0` records that the `2026-07-05` sweep intentionally
+  reclaimed every normalized bundle; retained stage membership proves cleanup did not erase refreshed facts.
+- [x] **ADDRESSED (verified)** — task frontier and live status distinguish completed current-binary refreshes
+  from current cache retention; `corpus-refresh-completion-vs-normalized-retention` owns the causal fact.
+- [x] **NO REGRESSION** — no generated artifact changed; Knowledge Map/fact catalog, mdBook doctests/build, and
+  project-data locality pass. The complete doctrine driver is the pre-commit gate.
+- [x] **GENERICITY** — accounting is stage/retention based, with no document/vendor allowlist or workstation
+  path in the rule. No new currentness gate forces intentional caches to remain.
+- [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
+  Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
+- Frontier (active): `CORPUS-COVERAGE.2` — `.3` has separated historical refresh completion from live cache
+  retention. After the `.3` commit, own `.2.33` and re-ingest USB 3.2: it is the only present SourceIR currently
+  lacking EvidenceIR, its host-local PDF is available, and the RAM-guarded CPU Docling workflow applies.
+  Historical `.2` phase context follows: re-ingest the 57-document cohort from the
+  `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**32 refreshes done after #32;
+  24 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#32: #29/#31 CHI-C2C marquee message-field refreshes,
   #30 RISC-V AIA restoration, #32 JEDEC HBM-gen1 `jesd235` which the re-ingest revealed is a **6-page legal-exhibit cover, not
   the real standard** → honest source-driven thin yield. The remaining tail is overwhelmingly thin/degraded — OpenCAPI×13
   PHY/mech/TL + USB3.2/USB4 guides + CoreSight/debug guides — so the high-value substantive work is now shifting to the
@@ -120,6 +156,10 @@ re-provisioning (`[[feedback_source_pdfs_in_repo]]`).
 ## `.2` re-ingest log (per doc — current-binary refresh; generated/ is git-ignored, so this table is the durable trace)
 
 Columns: pages · key new typed surfaces the refresh added (vs the STALE pre-`.10`/`.12`/`.2` evidence) · `.isf` render + FSMGen `--strict --check` diagnostics.
+
+`RESTORED` in a row records the postcondition at that slice's completion. It is historical, not a claim that the
+rebuildable cache is retained forever: the `2026-07-05` cleanup later reclaimed all normalized bundles while
+leaving the refreshed SourceIR→adapter stage chains intact.
 
 | # | doc (key) | pages | refreshed surfaces (after) | `.isf` | fsmgen `--strict` |
 |---|---|---|---|---|---|
@@ -173,6 +213,14 @@ Columns: pages · key new typed surfaces the refresh added (vs the STALE pre-`.1
 
 ## Changelog
 
+- `2026-08-09`: `.3` lifecycle/currentness audit DONE. A live census found 80 SourceIR / 1 normalized / 79
+  EvidenceIR / 78 downstream chains, apparently contradicting `.2`'s 32 restored bundles. Durable history
+  root-caused this to the intentional `2026-07-05` normalized-cache cleanup; all five retained stages for the 32
+  completed refresh keys remain present (160/160). Progress is therefore 32 current-binary refreshes complete /
+  24 real chip-spec documents unrefreshed, independent from ephemeral normalized retention. Added KM fact,
+  corrected the AIA book drift, and passed Knowledge Map/catalog, mdBook doctests/build, and locality checks.
+  Commit: see `CORPUS-COVERAGE.3 — reconcile refresh progress with normalized-cache cleanup`. Frontier returns
+  to `.2`; next owned leaf will be `.2.33` USB 3.2.
 - `2026-06-24`: `.2` re-ingest **#31 — AMBA CHI C2C 2026 variant `ihi0098_a_b`** (`ihi0098_a_b_2026_02_03_amba_chi_chip_to_chip_c2c_architecture_specification`, 122pp / 96 visual) — fresh-session PNT slice (binary current). Docling CPU (0 residuals; RAM ~75% free) → deterministic cascade. **Marquee `message_field_records` 0→143 / 12 containers** (sibling of #29's 0→149 — confirms the CHI-C2C family is a genuine marquee, not a one-off); transactions 2→3 (recognition-only); lone stale `actor_signal_relations` 1→0 (fragment drop by the current agent-identity gates — coherency/message protocol, honest 0); conditional_rules 25 held; 0 registers; normalized bundle RESTORED. `agent.isf` renderable (69 ports / 3 enums / 0 rules), **FSMGen `--strict --check --json` 0 diagnostics**. Same surfaced residuals as #29 (generic-`TABLE` mega-enum + signal-acronym noise — not fixed in-slice). After #31: 31 re-ingested, 25 real chip-spec docs still normalized-missing.
 - `2026-06-24`: `.2` re-ingest **#30 — RISC-V AIA `1_0_2025_03_12`** (`1_0_2025_03_12_risc_v_advanced_interrupt_architecture`, 89pp / 105 visual) — fresh-session PNT slice (continuing the `.2` sweep, binary already current from #29 so no rebuild). Docling CPU (0 residuals; RAM ~75% free) → deterministic cascade. **Bundle-restoration + current-binary confirmation (the #21/#22 class):** all deterministic surfaces byte-near-identical to the retained-`source_ir` evidence (statements 1193, register_records 0, message_field_records 0, actor_signal_relations 0, conditional_rules 39 — all held); intent 8 actors / 0 rel / 0 txns. **normalized bundle RESTORED** (was missing). Honest absence: 0 registers/relations (memory-mapped interrupt ISA whose APLIC/IMSIC register layouts sit in 12 `unknown`-classified structured tables that don't match the `.10` families — re-confirms the #21 RISC-V-IOMMU Lever-D structure-table recall opportunity, not a regression). `agent.isf` renderable (91 ports / 5 enums / 22 rules), **FSMGen `--strict --check --json` success / 0 diagnostics**. After #30: 30 re-ingested, 26 real chip-spec docs still normalized-missing.
 - `2026-06-24`: `.2` re-ingest **#29 — AMBA CHI C2C `ihi0098_a`** (`ihi0098_a_2024_02_07_amba_chi_chip_to_chip_c2c_architecture_specification`, 108pp / 88 visual) — fresh-session PNT slice (first eligible leaf of the first active tree after `KG-ISF-COMPLETENESS` ran out of immediately-buildable leaves). Release binary first rebuilt to current (the persisted one predated `.2a.v`/`.2a.vi`). Docling CPU (0 residuals; RAM steady ~70% free) → deterministic `evidence→semantic→intent→adapt` cascade. **Marquee message-field refresh: `message_field_records` 0→149 / 13 containers** (the stale evidence was truly pre-`.10`; the current `.10` families fire on CHI's packet/flit field tables — a real KG-completeness gain, not bundle-restoration). 0 registers / 0 relations (coherency/message protocol — honest absence, `KG-ISF-COMPLETENESS.3`); conditional_rules 17 + transactions 2 held; normalized bundle RESTORED. `agent.isf` renderable (69 ports / 3 enums / 1 rule) and **FSMGen `--strict --check --json` success / 0 diagnostics**. Surfaced (extraction-precision, not emitter; not fixed in-slice): generic-`TABLE` mega-enum conflation (#28 class) + signal-inventory prose-acronym noise (`AES`/`AMBA`/`ARM` — `KG-ISF-COMPLETENESS.4` class). After #29: 29 re-ingested, 27 real chip-spec docs still normalized-missing. WIRE-BASED-100 orthogonal (gold docs not re-ingested); `generated/` git-ignored → the `.2` log table is the durable trace.

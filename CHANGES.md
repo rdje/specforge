@@ -1,3 +1,15 @@
+### CORPUS-COVERAGE.3 — reconcile refresh progress with normalized-cache cleanup
+
+- Root-caused the apparent `32 restored` versus `1 retained` contradiction: a documented `2026-07-05`
+  artifact sweep intentionally reclaimed every normalized cache after refresh #32. The refreshed downstream
+  work survived—each of the 32 logged document keys still has SourceIR, EvidenceIR, SemanticIR, IntentIR, and
+  adapter artifacts (160/160 files present).
+- Corrected the active frontier to count current-binary refresh completion independently from ephemeral
+  normalized retention: 32 refreshes are complete and 24 real chip-spec documents remain unrefreshed by `.2`;
+  the live cache census is separately 80 SourceIR / 1 normalized / 79 EvidenceIR / 78 downstream chains.
+- Added the durable lifecycle fact and corrected the mdBook's stale claim that RISC-V AIA had not been
+  re-ingested. No generated artifact or product code changed.
+
 ### SWD-SERIAL-EXTRACTION.7e.ii.b — promote and close the canonical SWD pipeline
 
 - Reverified the repaired canonical tracked-PDF chain at SourceIR 400 pages / 386 visual assets / 210 tables /

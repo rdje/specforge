@@ -198,6 +198,8 @@
   > does canonical SWD EvidenceIR contain interface edge timing
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > does cargo test need TMPDIR set manually
+- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
+  > does cleaning normalized bundles undo a completed corpus re-ingest
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > does constrained contract extraction ship code
 - [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
@@ -296,5 +298,3 @@
   > how are TAP states (Shift-DR, Run-Test/Idle, Test-Logic-Reset) extracted
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > how are TRM register bit assignments tables without access/reset columns handled
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > how are bit location | register description | attributes tables extracted

@@ -1,4 +1,17 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.3 (`2026-08-09`) — refresh currency and cache retention are different clocks
+
+The `.2` table records an extraction event: a PDF was re-ingested with the then-current binary and its complete
+downstream chain was verified. A normalized bundle is only the rebuildable Docling cache for that event. Treating
+the presence of that cache as the completion counter made a legitimate later cleanup appear to erase 32 finished
+slices, even though all 160 retained stage files remained present.
+
+The stable accounting rule is therefore two-dimensional. Current-binary refresh progress comes from the durable
+per-document log; normalized retention is a separate, ephemeral operational census. No permanent gate should
+force those rebuildable caches to remain—the existing cleanup contract deliberately permits reclamation—but live
+status must never label the unrefreshed queue as today's normalized-missing count. This distinction also exposed
+and corrected the book's obsolete AIA pre-re-ingest statement.
+
 ## SWD-SERIAL-EXTRACTION.7e.ii.b (`2026-08-09`) — promotion closes only when retrieval truth changes too
 
 A fresh generated artifact can be semantically correct while the repository still teaches the opposite. Here,

@@ -50,6 +50,11 @@ captured it. Loading the retained SourceIR still resolves that reference beneath
 an explicitly labeled external path exact), provided its existing ancestor is contained. This does not relax
 real inputs: a SourceIR file passed to the next stage must still exist before SpecForge opens it.
 
+For the same reason, corpus refresh progress is not a count of live `normalized/` directories. A completed
+re-ingest means the refreshed EvidenceIR and downstream stages were built and verified; later cache cleanup does
+not undo that work. Report normalized retention separately when discussing whether evidence can be rebuilt again
+without another Docling ingest.
+
 ## Why this stage matters
 
 If `SourceIR` is lossy, the downstream KG cannot recover what was lost reliably.
