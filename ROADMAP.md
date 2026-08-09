@@ -202,7 +202,10 @@ Five active program groups support that north star:
   cleanup pass. Corpus is 41 done / 15 remaining with stage census 80 SourceIR / 10 normalized / 80 EvidenceIR /
   79 SemanticIR→IntentIR→adapter chains. `.2.42` now owns the 15-page OpenCAPI 3.0 Certified Definition—the
   smallest remaining candidate by retained elements and source bytes after a page-count tie with Ready
-  Definition—and begins with exact stale-chain authentication before guarded ingest. Separately,
+  Definition. Its first guarded cascade removes the sibling glossary-derived `DL` interface but exposes a distinct
+  administrative-workflow authority gap: certification requests, email review, conflict resolution, test-lab
+  administration, and listing processes still become phases/gates/Intent behaviors despite no typed hardware
+  surface. Child `.2.42a` now owns measurement and a generic shared-boundary repair before parent replay. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

@@ -21,18 +21,19 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.42`; guarded current-binary refresh of the 15-page OpenCAPI 3.0 Certified
-  Definition from the caller-authorized same-SSD chipdoc source.
+- Active unit: `CORPUS-COVERAGE.2.42a`; administrative-workflow semantic-authority repair exposed by the first
+  guarded OpenCAPI 3.0 Certified Definition cascade.
 - Current state: 41 refreshes are complete / 15 remain, with 80 SourceIR / ten normalized / 80 EvidenceIR / 79
   SemanticIR / 79 IntentIR / 79 adapters and all 66 current emitted ISFs strict-clean. OpenCAPI AFU Address Space
   Usage reproduces 14 pages / nine visuals / two tables / 23 sections / 118 elements at 20% and 19% peak memory.
   Evidence stays at 106 statements with no typed hardware surfaces. Current authority removes five stale acronym-
   group interfaces/five actors/eight outputs; `.2.41a` removes false legal semantics. The final adapter blocks with
   no signals or behavior. Twelve hashes, WIRE/I2C/SWD, KG 156/156, full CI, 66/66 strict, book/doctrines/locality,
-  exact task-evidence cleanup, and zero residue pass.
-- Next action: authenticate the source, release binary, and exact six-file / 364142-byte stale chain; create the
-  same-volume rollback under `.cache/task-work/CORPUS-COVERAGE.2.42`, then run the guarded CPU ingest.
-- In-flight uncommitted: `.2.42` ownership only. Candidate selection found a 15-page tie; Certified Definition
-  wins on 155 elements / 234448 source bytes versus Ready Definition's 171 / 249595. No generated artifact has
-  changed yet.
+  exact task-evidence cleanup, and zero residue pass. #42's fresh EvidenceIR has 167 statements and correctly
+  loses the stale glossary `DL` interface, but administrative certification workflows still become five phases,
+  six gates, and 15 Intent behaviors despite an empty typed hardware surface.
+- Next action: measure the retained-corpus administrative-workflow family and legitimate protocol/compliance
+  controls, then implement the smallest generic shared semantic authority boundary under `.2.42a`.
+- In-flight uncommitted: parent `.2.42` holds its exact six-file / 364142-byte rollback and first fresh cascade in
+  repository-derived task storage. No code has changed; `.2.42a` owns the surfaced defect before implementation.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

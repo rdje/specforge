@@ -4,7 +4,8 @@
 
 - Tree ID: `CORPUS-COVERAGE`
 - Status: `active` (`.0` build-out + `.1` stage-staleness validator done; `.2` current-binary refresh batch
-  remains active with 41 completed documents and `.2.42` OpenCAPI Certified Definition refresh owned next; `.3`
+  remains active with 41 completed documents and `.2.42a` administrative-workflow semantic-authority repair
+  owned under the OpenCAPI Certified Definition refresh; `.3`
   lifecycle/currentness reconciliation done `2026-08-09`)
 - Roadmap lane: `R15e`/`R16` (corpus digestion — the owner's substantive gap #2)
 - Created: `2026-06-17`
@@ -656,7 +657,8 @@ today's ephemeral normalized-directory count.
 - [x] **LOCKSTEP** — source comment, #41 real cascade, task parent/child, roadmap, live docs, mdBook, durable fact,
   and `MEMORY.md` agree before commit; parent `.2.41` closes only after its refreshed artifacts are reverified.
 
-- ID: `CORPUS-COVERAGE.2.42` · Status: `in_progress` (`2026-08-09`, DATA/DOC) · Goal: run a guarded
+- ID: `CORPUS-COVERAGE.2.42` · Status: `in_progress` (`2026-08-09`, DATA/DOC) · Children: `.2.42a`
+  administrative-workflow semantic-authority repair (in progress). Goal: run a guarded
   current-binary refresh of `opencapi_3_0_certified_definition_v1_1` from the caller-authorized same-SSD source
   and complete the deterministic EvidenceIR→SemanticIR→IntentIR→adapter cascade. The 15-page OpenCAPI Certified
   Definition is tied for the fewest pages among the 15 remaining real chip-spec candidates and is smaller than
@@ -696,6 +698,44 @@ today's ephemeral normalized-directory count.
   validator, fabricated interface/behavior, or LLM/VLM inference enters the slice.
 - [ ] **LOCKSTEP** — generated artifacts, #42 row/count/frontier, live docs, durable fact when warranted, mdBook,
   and `MEMORY.md` agree; delete only authenticated rollback/task evidence after every final gate is green.
+
+- ID: `CORPUS-COVERAGE.2.42a` · Status: `in_progress` (`2026-08-09`, PROBE/CODE/DATA/DOC) · Goal: repair the
+  universal administrative-workflow semantic-authority gap exposed by #42's first fresh cascade before accepting
+  its SemanticIR or IntentIR. Current `.2.41a` correctly excludes compound legal rights/licensing/liability prose,
+  but its classifier does not recognize certification, submission, review, contact, listing, or organizational
+  escalation workflows. Fresh #42 EvidenceIR faithfully retains 167 statements; nevertheless sections about
+  requesting a certified listing and independent test labs become semantic phases, while email review, conflict
+  resolution, and derivative-product listing prose become gates and Intent behaviors. The first cascade therefore
+  has five phases / six gates / 15 behaviors despite zero interfaces, ports, relations, connectivity, signal
+  constraints, registers, timing records, or typed temporal rules.
+
+  Measure this failure family across retained artifacts before selecting a boundary. Separate organizational
+  administration from legitimate hardware request/response, protocol approval, certification criteria, and
+  product requirements. Extend the earliest shared semantic statement authority boundary only if a compound,
+  content-structural rule can reject the administrative workflow without vendor, consortium, document, section,
+  organization, exact-sentence, or single-token policy. EvidenceIR must remain lossless; technical compliance
+  constraints and protocol behavior must survive. Rebuild #42 from unchanged fresh EvidenceIR and hold the
+  complete corpus gates before parent `.2.42` resumes its second ingest and final signoff.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.42a`
+
+- [ ] **REPRODUCE / MEASURE** — pin #42's 167-statement EvidenceIR→five phases/six gates/15 behaviors path;
+  inventory the retained-corpus administrative-workflow family and measure plausible broad alternatives against
+  legitimate hardware/protocol/compliance controls.
+- [ ] **ROOT CAUSE (WHY + WHERE)** — prove why the current compound legal predicate misses organizational process
+  prose and identify the earliest shared semantic authority boundary rather than patching phases, gates, or
+  IntentIR independently.
+- [ ] **ADDRESSED (verified)** — implement the smallest generic content-structural authority rule; preserve all
+  source evidence and legitimate technical/compliance semantics while removing only administrative workflow from
+  every semantic consumer; rebuild #42 from unchanged EvidenceIR.
+- [ ] **NO REGRESSION** — add paired unit and Source→Evidence→Semantic→Intent regressions; pass focused semantic
+  suites, provider-free WIRE/I2C/SWD and relevant certification controls, KG 156/156, every emitted ISF through
+  FSMGen strict, full CI, mdBook, doctrines, path, and locality gates.
+- [ ] **GENERICITY** — no OpenCAPI/vendor/consortium/document/section/organization/exact-sentence exception or
+  broad single-token removal; the boundary must use independently meaningful compound administrative concepts.
+- [ ] **LOCKSTEP** — code comments, measurement, parent real cascade, task parent/child, roadmap, live docs,
+  mdBook, durable fact, and `MEMORY.md` agree before commit; parent `.2.42` remains open until final replay and
+  authenticated cleanup.
 
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34b.ii.a`
 
@@ -955,8 +995,8 @@ today's ephemeral normalized-directory count.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: `CORPUS-COVERAGE.2.42` — authenticate the OpenCAPI 3.0 Certified Definition source, release binary,
-  and six-file stale chain; create exact same-volume rollback before the guarded CPU ingest.
+- Frontier: `CORPUS-COVERAGE.2.42a` — measure the administrative-workflow family and safe controls across retained
+  artifacts; repair the earliest generic semantic authority boundary before parent #42 replay.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**39 refreshes done after #39;
   17 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#39: #29/#31 CHI-C2C marquee message-field refreshes,
@@ -1062,6 +1102,12 @@ strict syntax is not a semantic-fidelity oracle. **Levers A, B, C, F + the rule-
 
 ## Changelog
 
+- `2026-08-09`: `.2.42a` PROBE/CODE/DATA/DOC OWNED. #42's first guarded cascade correctly removes the glossary-
+  derived `DL` interface but exposes a distinct administrative-workflow authority gap: fresh 167-statement
+  EvidenceIR with zero typed hardware surface still yields five phases / six gates / 15 Intent behaviors from
+  certification requests, email review, conflict resolution, test-lab administration, and listing processes.
+  Current `.2.41a` legal signatures do not cover this family. Frontier → retained-corpus measurement and paired
+  controls before any implementation; parent `.2.42` holds its fresh chain and exact rollback.
 - `2026-08-09`: `.2.42` DATA/DOC OWNED from clean commit `20fd31a6`. The 15-page OpenCAPI 3.0 Certified
   Definition wins the remaining-candidate tie on 155 elements / 234448 source bytes. Same-SSD source
   `3e768520…9516`, release `361dd97f…a8c`, and stale six-file / 364142-byte chain are identified read-only.
