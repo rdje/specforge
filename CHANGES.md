@@ -1,3 +1,22 @@
+### FACT-CARD-CATALOG-CONTAINMENT.2.2 — migrate and close bounded fact browsing
+
+- Switched the source-locked contract to `migrated`, registered `fact_card_titles` as the exact bounded
+  generated-projection surface, and invoked the sole writer. `docs/knowledge/INDEX.md` is now the stable 161-line
+  / 11,984-byte landing with direct routes to all 158 cards and three detailed title parts.
+- Added `titles-0001.md` (63 lines / 12,721 bytes), `titles-0002.md` (63 / 12,025), and `titles-0003.md` (53 /
+  10,160). Their ordered semantic rows resolve every canonical card exactly once; the four files total 340 lines
+  / 46,890 bytes and remain below every current warning without changing a limit.
+- The first real migrated check exposed an ASCII-fixture blind spot: semantic-row digesting passed decoded
+  Unicode directly to the byte hasher. Encoding the joined row union through `raw_scalar` fixes the boundary, and
+  the focused migrated fixture now includes an em dash so non-ASCII titles cannot regress.
+- A final full-capacity audit found the verbose landing would reach 218/224 health lines at 198 cards and cross
+  mandatory rollover. ADR 0023 keeps one direct card link per line but compresses the scaffold to three lines:
+  the exact-capacity root is 201/224 lines (89.73%). A new max-width pressure case proves 198 stays below
+  rollover while 199 still fails the card ceiling.
+- The 41/41 focused suite, real derive-and-diff check/report, complete link/residue census, Knowledge Map,
+  catalogs, six doctrines, mdBook, full CI, and final locality gate pass. Canonical facts, evidence, question
+  semantics, stable routes, shared inputs, thresholds, and ceilings are unchanged; the containment tree is closed.
+
 ### FACT-CARD-CATALOG-CONTAINMENT.2.1.2 — enforce the legacy-locked fact catalog
 
 - Replaced the premature monolithic catalog checker with a schema-closed two-state verifier and data contract.

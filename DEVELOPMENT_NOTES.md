@@ -1,4 +1,31 @@
 # DEVELOPMENT_NOTES
+## FACT-CARD-CATALOG-CONTAINMENT.2.2 (`2026-08-09`) — migration is a verified state transition
+
+The migration commit does not discover its topology while writing. The prior clean commit already pins all four
+expected hashes, both lifecycle shapes, routes, capacities, and pressure. This slice atomically adds the exact
+generated-surface declaration, changes `migration_state`, and runs the sole writer. Parts are materialized before
+the landing; Git is the durable boundary, and the migrated checker rejects any partial output, stale prefix file,
+foreign residue, broken destination, or registry mismatch.
+
+Real Unicode data found one boundary the ASCII fixtures could not. Canonical cards are decoded for semantic
+comparison, so rebuilding a legacy-style row union yields character strings; `Digest::SHA` accepts bytes. The
+legacy blob path happened to remain raw and the synthetic titles happened to be ASCII, hiding the mismatch until
+the first migrated check reached an em dash. `row_digest` now passes the joined union through `raw_scalar`, and
+the migrated fixture contains the same non-ASCII class. This preserves the digest definition—SHA-256 over UTF-8
+row bytes—rather than depending on Perl's internal scalar flag.
+
+Capacity must be tested at the declared maximum, not inferred from a currently warning-free result. The first
+landing used 20 scaffold lines, so its one-line-per-card design would grow to 218/224 health lines at 198 cards
+and hit mandatory rollover at card 182. ADR 0023 retains the directly scannable card lines but compresses all
+fixed content into H1, generated/navigation, and title-route lines. The 198-card root is then 201/224 lines
+(89.73%), and its four-part route line is 199/256 bytes. The focused suite now renders that exact boundary with
+maximum-width IDs/title cells and the longest status, requires no mandatory-pressure error, and separately proves
+card 199 is rejected.
+
+No archive copy is added. The old monolith is generated, reproduced from unchanged canonical cards, and already
+authenticated by boundary commit/blob/SHA/metrics/row digest. Keeping it as another live file would create a
+second browse plane; Git provenance plus the schema-closed contract provide the exact recovery route.
+
 ## FACT-CARD-CATALOG-CONTAINMENT.2.1.2 (`2026-08-09`) — executable pressure must shape packing
 
 The pre-migration checker deliberately implements both sides of the state switch before any generated row moves.

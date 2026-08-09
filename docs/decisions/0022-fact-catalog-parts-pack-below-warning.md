@@ -7,6 +7,9 @@ scope: documentation, knowledge-map, generated-projection, containment, pressure
 
 # ADR 0022: Fact-card title parts pack below the existing warning milestone
 
+> **Correction:** ADR 0023 later supersedes only the landing scaffold and landing/combined metrics below. The
+> 56-card title-part packing and all three current part hashes/metrics remain unchanged.
+
 ## Context
 
 The executable `legacy_locked` checker implemented ADRs 0020 and 0021 before writing any migrated output. Its
@@ -31,7 +34,7 @@ health targets, rollover milestones, ceilings, writer transaction, and migration
 checker treats 90% health pressure as an error requiring rollover and 80% pressure as a warning; neither is a
 data-controlled threshold.
 
-For the current 158 cards, the deterministic plan is:
+At this decision's boundary, the deterministic 158-card plan was:
 
 | Output | Lines | Bytes | Widest line |
 | --- | ---: | ---: | ---: |

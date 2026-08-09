@@ -10,8 +10,9 @@ scope: documentation, knowledge-map, generated-projection, retrieval, containmen
 > **Corrections:** ADR 0021 supersedes only this record's byte-identical detailed-row claim. Cross-directory
 > parts preserve every semantic field and exact card destination while rewriting `(card.md)` to
 > `(../knowledge/card.md)`. ADR 0022 supersedes the original 64-card packing count with 56 cards per part so a
-> full part remains below the existing 80% warning. All other topology, capacity, limit, and staging decisions
-> below remain accepted.
+> full part remains below the existing 80% warning. ADR 0023 supersedes the verbose landing scaffold with a
+> three-line scaffold so the root remains below mandatory rollover at the full 198-card capacity. All other
+> topology, capacity, limit, and staging decisions below remain accepted.
 
 ## Context
 
@@ -55,9 +56,10 @@ browse reaches the matching detailed part and then the card in two bounded hops.
 existing reader remains valid.
 
 The root renderer uses one line `- [<id>](<id>.md)` per card. With the existing 64-byte ID limit, a direct route
-is at most 137 bytes. At 198 cards those routes occupy at most 27,324 bytes including newlines; four bounded part
-routes plus a fixed scaffold capped at 2,048 bytes keep the complete root under 32,768 bytes. The root contract is
-224 lines / 32,768 bytes / 256 maximum content-line bytes, with inclusive ceilings of 256 / 32,768 / 320.
+is at most 137 bytes. ADR 0023 keeps the H1, generated/write/navigation line, and title-part route line as the
+only three scaffold lines. At 198 cards the root is therefore 201 lines (89.73% of the 224-line health target),
+and the four-part route line is 199 bytes (77.73% of the 256-byte line target). The root contract remains 224
+lines / 32,768 bytes / 256 maximum content-line bytes, with inclusive ceilings of 256 / 32,768 / 320.
 
 ### Detailed title parts
 

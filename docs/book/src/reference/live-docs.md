@@ -355,7 +355,7 @@ three explicit counts rather than one overloaded metric.
 
 The focused generator/checker requires filename/id identity, constrained front matter, questions,
 date, valid status (with the architecture-defined `current` default), evidence or reverify, stable
-ordering, and independent field/row/count/index bounds. Its current two-state checker runs 40 positive/fail-
+ordering, and independent field/row/count/index bounds. Its current two-state checker runs 41 positive/fail-
 closed cases plus the real derive-and-diff check through the live-document doctrine. The root README now offers both routes:
 use the bounded catalog to browse known ids/titles, and the generated Knowledge Map to search by a
 question. The bounded question-shard migration is described below.
@@ -371,7 +371,7 @@ ADR 0020 keeps the stable browse path as a compact direct-ID landing and moves t
 deterministic count-packed title parts under `docs/knowledge-catalog/`. The 198-card maximum derives from the unchanged
 200-file collection minus its README and index. At most four title parts may exist; combined landing and parts
 are capped at five files / 512 lines / 122,880 bytes. ID retrieval remains one hop; title browsing remains two
-bounded hops. `.2.1` now locks the current monolith and rejects destinations before `.2.2` migrates output.
+bounded hops. `.2.1` first locked the monolith and rejected every destination; `.2.2` then migrated the output.
 Canonical facts and question semantics stay separate; neither deleting evidence nor widening a surface limit is
 an accepted repair.
 
@@ -382,14 +382,25 @@ rewrites only the relative target to `../knowledge/card-id.md`.
 
 ADR 0022 records the executable pressure correction: the first 64-card template was 73/80 health lines, already
 past mandatory rollover, and even its minimal form was inside warning. Packing 56 cards with a seven-line
-scaffold produces 63-line full parts while still fitting 198 cards in the accepted four-part maximum. The exact
-current plan is a 178-line / 12,390-byte landing plus three parts totaling 179 lines / 34,906 bytes; the complete
-357-line / 47,296-byte projection has no warning. The schema-closed `legacy_locked` contract authenticates the
-committed Git blob, SHA-256, raw metrics, stage-zero index, 158 source cards, and ordered rows while requiring the
-part directory absent. The same checker already validates migrated membership/content/routes/residue and fails a
-90% pressure crossing. It also forbids the `fact_card_titles` surface in legacy state and requires its exact
-generated-projection lifecycle, inputs, limits, landing, and freshness route after migration; migration changes
-state only after writing the verified projection.
+scaffold produces 63-line full parts while still fitting 198 cards in the accepted four-part maximum. ADR 0023
+then applies pressure to the root at that maximum: the verbose scaffold would produce 218/224 health lines, so
+the landing now keeps only H1, generated/navigation, and title-route scaffold lines. It is 201/224 lines at 198
+cards, below mandatory rollover without a limit change. Current migrated output is a 161-line / 11,984-byte
+landing plus three parts totaling 179 lines / 34,906 bytes; the complete 340-line / 46,890-byte projection has no
+warning. The schema-closed contract retains the committed legacy Git blob,
+SHA-256, raw metrics, 158 source cards, and ordered-row provenance while its current `migrated` state enforces
+exact output membership, content, routes, residue, and pressure. It required the part directory and
+`fact_card_titles` surface absent in legacy state; it now requires that surface's exact generated-projection
+lifecycle, inputs, limits, landing, and freshness route.
+
+The closing migration followed the pre-enforced write transaction: register the exact surface and switch state,
+render and verify in a repository-local workspace, write all parts, remove only stale generated-prefix files, and
+write the stable landing last. The first real check also exposed an ASCII-only fixture gap—decoded non-ASCII row
+text was being passed directly to a byte digest. Row unions are now explicitly encoded as UTF-8, and an em-dash
+fixture locks the boundary. A separate exact-capacity fixture keeps 198 below rollover and rejects card 199.
+Forty-one focused cases, direct link resolution, both generic surface memberships, full
+doctrine enforcement, and the mdBook build verify the delivered method. Canonical facts remain the only fact
+authority; the generated projection contains no unique evidence and therefore needs no archive copy.
 
 #### Remaining canonical collection catalogs landed
 

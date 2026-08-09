@@ -56,8 +56,11 @@
   through 40 focused cases before any generated row moves. ADR 0021 corrects cross-directory row identity: exact
   legacy bytes remain provenance, while migrated rows preserve semantic fields and resolved card targets through
   the required `../knowledge/` relative rewrite. ADR 0022 packs 56 cards rather than the initially modeled 64 so
-  a full seven-line-scaffold part is 63/80 health lines, below warning. No existing threshold or ceiling is
-  widened; `.2.2` owns the already-enforced migration.
+  a full seven-line-scaffold part is 63/80 health lines, below warning. ADR 0023 further proves the landing at the
+  full 198-card boundary: a three-line scaffold yields 201/224 health lines, below mandatory rollover. `.2.2` now
+  lands the exact four-file projection and activates `fact_card_titles` as a generated-projection surface; all
+  hashes, direct membership, resolved destinations, derive-and-diff freshness, 41 focused cases, and residue
+  checks pass. The tree is closed without widening an existing threshold or ceiling.
 <!-- LIVE-DOCUMENT-SIZE-CONTAINMENT-LOCAL-ADOPTION:END -->
 
 ---

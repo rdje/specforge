@@ -21,14 +21,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `FACT-CARD-CATALOG-CONTAINMENT.2.1.2` — enforce the legacy-locked fact catalog; implementation and
+- Active unit: `FACT-CARD-CATALOG-CONTAINMENT.2.2` — migrate and close bounded fact browsing; implementation and
   focused verification complete, commit pending.
-- Current state: the schema-closed contract/checker authenticates the 158-card committed legacy boundary and
-  already validates the future migrated projection. ADR 0022 tightens count packing to 56 cards: the exact
-  four-file plan is 357 lines / 47,296 bytes with no pressure warning; legacy output is unchanged and the title-
-  part directory remains absent.
-- Next action: finish composed/full gates and commit `.2.1.2`, then run `.2.2` to switch the contract to
-  `migrated`, write the bounded landing/three title parts, register the generated surface, and close the tree.
-- In-flight uncommitted: checker/contract/ADR 0022 and impact-routed live documentation; generated catalog output,
-  product code/artifacts, PDF task source/destinations, shared inputs, thresholds, and ceilings unchanged.
+- Current state: the stable catalog is a 161-line / 11,984-byte direct-ID landing over three deterministic 56-card
+  title parts; the four outputs total 340 lines / 46,890 bytes with no current warning. ADR 0023's three-line
+  scaffold proves the root remains below mandatory rollover at all 198 cards. The exact generated surface is
+  active, migrated enforcement passes, and the task tree is closed.
+- Next action: finish composed/full gates and commit `.2.2`, then resume
+  `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2` at its clean final-source-boundary leaf.
+- In-flight uncommitted: migrated catalog output, state/surface switch, UTF-8 digest regression repair, and
+  impact-routed closure documentation; canonical facts/evidence, product artifacts, PDF task source/destinations,
+  shared inputs, thresholds, and ceilings unchanged.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

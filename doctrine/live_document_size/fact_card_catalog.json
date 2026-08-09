@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "migration_state": "legacy_locked",
+  "migration_state": "migrated",
   "surface_id": "knowledge_cards",
   "part_surface_id": "fact_card_titles",
   "paths": {
@@ -76,11 +76,11 @@
     {
       "path": "docs/knowledge/INDEX.md",
       "role": "landing",
-      "sha256": "6e2c8f0d3c95089e5c27a32db11202a3b0fca1d883e49e8f81175f56f3fddff4",
+      "sha256": "f67ee214e3622b700c818ad9b8d72e4ae19af15a02836c2b127545db9d10b5f5",
       "metrics": {
-        "lines": 178,
-        "bytes": 12390,
-        "line_bytes": 113
+        "lines": 161,
+        "bytes": 11984,
+        "line_bytes": 190
       }
     },
     {

@@ -34,6 +34,7 @@ changed* lives in git (layer D), not here.
 | [0020](0020-bounded-fact-card-browse-projection.md) | Fact-card browsing uses a bounded ID landing over deterministic title parts | 2026-08-09 | accepted | documentation, knowledge-map, generated-projection, retrieval, containment |
 | [0021](0021-cross-directory-fact-catalog-links-preserve-destinations.md) | Cross-directory fact rows preserve semantics and destinations, not relative link bytes | 2026-08-09 | accepted | documentation, knowledge-map, generated-projection, links, retrieval |
 | [0022](0022-fact-catalog-parts-pack-below-warning.md) | Fact-card title parts pack below the existing warning milestone | 2026-08-09 | accepted | documentation, knowledge-map, generated-projection, containment, pressure |
+| [0023](0023-fact-catalog-landing-fits-full-capacity.md) | The fact-card landing scaffold fits the full declared capacity | 2026-08-09 | accepted | documentation, knowledge-map, generated-projection, containment, pressure |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /

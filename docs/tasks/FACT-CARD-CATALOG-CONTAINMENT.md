@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `FACT-CARD-CATALOG-CONTAINMENT`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: process / continuity / durable knowledge retrieval
 - Created: `2026-08-09`
-- Last updated: `2026-08-09`
+- Closed: `2026-08-09`
 - Owner: knowledge maintainers through the repo-local workflow
 
 ## Goal
@@ -36,7 +36,7 @@ retrieval, direct id/title browsing, derive-and-diff freshness, and repository-v
 ## Task Tree
 
 - ID: `FACT-CARD-CATALOG-CONTAINMENT`
-  Status: active
+  Status: done
   Goal: keep durable fact-card navigation bounded and able to admit governed additions
   Children: `FACT-CARD-CATALOG-CONTAINMENT.0`, `FACT-CARD-CATALOG-CONTAINMENT.1`,
   `FACT-CARD-CATALOG-CONTAINMENT.2`
@@ -64,7 +64,7 @@ retrieval, direct id/title browsing, derive-and-diff freshness, and repository-v
   Commit: `FACT-CARD-CATALOG-CONTAINMENT.1 — decide the bounded fact catalog topology`
 
 - ID: `FACT-CARD-CATALOG-CONTAINMENT.2`
-  Status: active
+  Status: done
   Goal: implement, migrate, verify, and close fact-card catalog containment
   Children: `FACT-CARD-CATALOG-CONTAINMENT.2.1`, `FACT-CARD-CATALOG-CONTAINMENT.2.2`
 
@@ -92,25 +92,33 @@ retrieval, direct id/title browsing, derive-and-diff freshness, and repository-v
   Verification: schema-closed `legacy_locked` contract pins boundary commit `9ad08ac`, blob `dcac9e58…5081`,
   SHA-256, 172-line / 32,634-byte / 255-byte-line metrics, 158 ordered rows, and all current cards; deterministic
   56-card packing yields a 178-line / 12,390-byte landing plus three parts totaling 179 lines / 34,906 bytes,
-  all below warning; 40/40 focused cases cover both states, routes, residue, authorities, exact 198-card capacity,
-  and mandatory rollover; legacy `--write` leaves the source index unchanged and the destination absent; full
-  verification is recorded below
+  all below warning; 40/40 focused cases cover both states, routes, residue, authorities, the derived 198-card
+  limit, and synthetic mandatory rollover; legacy `--write` leaves the source index unchanged and the destination
+  absent; full verification is recorded below; ADR 0023 later superseded only this planned landing scaffold after checking
+  pressure at the full card boundary
   Commit: `FACT-CARD-CATALOG-CONTAINMENT.2.1.2 — enforce the legacy-locked fact catalog`
 
 - ID: `FACT-CARD-CATALOG-CONTAINMENT.2.2`
-  Status: pending
+  Status: done
   Goal: migrate to the bounded landing/title-part projection and close containment
   Acceptance: every canonical card stays at its stable path with identity/evidence intact and is directly
   ID-routed through the landing; detailed rows occupy bounded generated parts; all readers/enforcement agree;
   stale output is absent; the owned containment fact may record the outcome; the tree closes
-  Verification: pending
-  Commit: pending
+  Verification: migrated output matches the ADR 0023-corrected landing plus three pre-pinned part hashes and exact
+  340-line / 46,890-byte aggregate; stable
+  landing links 158 cards plus three title parts, whose ordered rows resolve all canonical destinations exactly;
+  `fact_card_titles` is registered as the exact bounded generated-projection lifecycle; the Unicode semantic-row
+  digest is raw-UTF-8 safe and covered by the non-ASCII focused fixture; the 198-card pressure boundary stays
+  below mandatory rollover and 199 cards fail; 41/41 focused cases, derive-and-diff,
+  catalogs/map, six doctrines, mdBook, full CI, and residue/locality gates pass
+  Commit: `FACT-CARD-CATALOG-CONTAINMENT.2.2 — migrate and close bounded fact browsing`
 
 ## Current Frontier
 
-| Order | Leaf | Status | Why next |
-| --- | --- | --- | --- |
-| 1 | `FACT-CARD-CATALOG-CONTAINMENT.2.2` | `pending` | write the already-enforced bounded projection, switch the contract, and close containment |
+No active frontier. The bounded catalog is migrated and this tree must not be reopened.
+
+The next continuity action is `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2`: pin the final active PDF-task source and
+migration inputs before its already-designed bounded evidence migration.
 
 ## Pre-Containment Boundary
 
@@ -166,6 +174,16 @@ The immutable measurement boundary is commit `47e915409bbe6065544f86e49739b9e93c
   against the generic surface and question contract, preserve exact committed provenance and resolved routes,
   reject stale/premature residue, write from a repository-local workspace with the landing last, and fail at the
   fixed 90% rollover milestone.
+- `2026-08-09`: Migrate only after the source-locked commit is clean. Switch the state and register the exact
+  `fact_card_titles` generated surface in the same slice, invoke the sole writer, and require all four pinned
+  output hashes before closure; no archive is needed because the retired monolith is reproducible and already
+  authenticated in Git.
+- `2026-08-09`: Hash semantic row unions as explicit raw UTF-8. The first real migrated verification exposed that
+  ASCII-only fixtures had not exercised decoded non-ASCII titles; `raw_scalar` now closes that boundary and the
+  synthetic migrated fixture includes an em dash.
+- `2026-08-09`: Accept ADR 0023 before closure. The verbose root would reach 218/224 health lines at 198 cards,
+  past mandatory rollover; retain one direct link per card but reduce the scaffold to three lines so the full
+  capacity is 201/224 lines. Add an exact-capacity pressure case; do not widen any limit or milestone.
 
 ## Open Questions
 
@@ -184,6 +202,7 @@ The immutable measurement boundary is commit `47e915409bbe6065544f86e49739b9e93c
 | `2026-08-09` | `FACT-CARD-CATALOG-CONTAINMENT.1` | worst-case root/part arithmetic; current in-memory render simulation; ADR/index links; source-index diff; catalogs/KM/live-size/doctrines/mdBook | bounded stable landing + deterministic title parts accepted; implementation policy closed; existing output unchanged |
 | `2026-08-09` | `FACT-CARD-CATALOG-CONTAINMENT.2.1.1` | cross-directory link resolution; corrected render metrics/worst-case bounds; ADR/index links; source blob/destination absence; catalogs/KM/live-size/doctrines/mdBook | broken relative-link assumption corrected before code; semantic fields/destinations lossless; other ADR 0020 decisions unchanged |
 | `2026-08-09` | `FACT-CARD-CATALOG-CONTAINMENT.2.1.2` | Perl syntax; 40/40 focused cases; real check/report; legacy write/diff/absence; catalog/KM/live-size/doctrine/mdBook/full-CI gates | schema-closed two-state checker; exact Git/card/row/output authorities; 56-card plan below warning; no migrated output written |
+| `2026-08-09` | `FACT-CARD-CATALOG-CONTAINMENT.2.2` | corrected output hashes/metrics; 198-card pressure; resolved link membership; non-ASCII row digest; 41/41 cases; catalog/KM/live-size/doctrine/mdBook/full-CI/locality gates | exact bounded projection migrated; advertised capacity executable; generated surface active; tree closed without fact, route, evidence, threshold, or ceiling loss |
 
 ## Commit Log
 
@@ -193,6 +212,7 @@ The immutable measurement boundary is commit `47e915409bbe6065544f86e49739b9e93c
 | `FACT-CARD-CATALOG-CONTAINMENT.1` | `FACT-CARD-CATALOG-CONTAINMENT.1 — decide the bounded fact catalog topology` | ADR 0020; output unchanged |
 | `FACT-CARD-CATALOG-CONTAINMENT.2.1.1` | `FACT-CARD-CATALOG-CONTAINMENT.2.1.1 — correct cross-directory fact routes` | ADR 0021; no code/output change |
 | `FACT-CARD-CATALOG-CONTAINMENT.2.1.2` | `FACT-CARD-CATALOG-CONTAINMENT.2.1.2 — enforce the legacy-locked fact catalog` | checker/contract/ADR 0022; output remains legacy |
+| `FACT-CARD-CATALOG-CONTAINMENT.2.2` | `FACT-CARD-CATALOG-CONTAINMENT.2.2 — migrate and close bounded fact browsing` | four-file projection + generated surface + closure |
 
 ## Changelog
 
@@ -206,3 +226,6 @@ The immutable measurement boundary is commit `47e915409bbe6065544f86e49739b9e93c
 - `2026-08-09`: `.2.1.2` landed the schema-closed two-state contract and checker, corrected raw-byte diagnostics,
   tightened packing to 56 cards under ADR 0022, and proved the exact future projection without writing it;
   frontier advances to migration/closure `.2.2`.
+- `2026-08-09`: `.2.2` wrote the exact 161-line landing and three bounded title parts, activated their generated-
+  projection surface, made semantic digesting explicitly UTF-8-safe, proved full 198-card pressure under rollover,
+  passed all gates, and closed containment.

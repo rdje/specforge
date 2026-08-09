@@ -291,7 +291,7 @@ The reference deployment. Enforced by `scripts/check_doctrines.sh` via `.githook
 Among its focused suites, `LIVE-DOC-SIZE` runs 55 positive and fail-closed lifecycle/control-plane
 cases, 47 neutral derived-state classification cases, 25 SpecForge Rust/gitlink authority-adapter cases,
 15 neutral terminal-task source/route/identity/boundary cases, and 29 neutral active-task
-source/topology/route/payload/bound cases, plus 40 fact-catalog source/plan/route/residue/bound cases. Test
+source/topology/route/payload/bound cases, plus 41 fact-catalog source/plan/route/residue/bound cases. Test
 workspaces are disposable and always created below
 repository-local `generated/`.
 Schema fields, arrays, scalars, routes, independent size axes, baselines, exact field markers, stored
@@ -323,12 +323,13 @@ destination absence. Its complete/migrated states add exact legacy route members
 identity, bounded active root/index/parts, manifest/frontier integrity, and Git-backed sealing.
 
 The fact-card catalog checker binds its legacy landing to boundary commit/blob/index, raw digest/metrics, all
-canonical cards, and an ordered row digest while requiring the future part directory absent. Its migrated state
-enforces a stable direct-ID landing over deterministic 56-card title parts, exact semantic tuples and resolved
+canonical cards, and an ordered row digest; legacy state also required the future part directory absent. Its
+current migrated state enforces a stable direct-ID landing over deterministic 56-card title parts, exact semantic
+tuples and resolved
 card destinations, complete output hashes/membership, fixed capacity/pressure/aggregate bounds, and residue-free
 repository-local writes. It cross-checks the derived 198-card maximum against the unchanged 200-file canonical
 surface, keeps the independent 200-fact question authority explicit, and requires the title-part generated-
-projection registry record to be absent in legacy state and exact after migration.
+projection registry record to be absent in legacy state and exact in migrated state.
 
 `PROJECT-DATA-LOCALITY` composes three focused shell cases with resulting-tree checks. It proves the
 tracked temp root exists before Cargo starts, all canonical scripts establish the common environment,

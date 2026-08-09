@@ -627,32 +627,22 @@ sub render_projection {
     push @$errors, "projection requires $part_count parts; limit is $limits->{max_parts}"
         if $part_count > $limits->{max_parts};
 
-    my @root = (
-        '# Knowledge fact-card catalog',
-        '',
-        '> **AUTO-GENERATED — DO NOT EDIT.** Regenerate the complete projection with',
-        '> `perl scripts/check_fact_card_catalog.pl --write`.',
-        '',
-        'This bounded landing keeps one direct ID route for every canonical fact card. Browse',
-        'establishment date, status, and title in the bounded parts below; search by question in the',
-        '[generated Knowledge Map](../../KNOWLEDGE_MAP.md), and browse durable rationale in the',
-        '[decision index](../decisions/INDEX.md).',
-        '',
-        'Collection guidance: [authoring and lifecycle README](README.md).',
-        '',
-        '## Detailed title parts',
-        '',
-    );
+    my @part_links;
     for my $index (0 .. $part_count - 1) {
         my $start = $index * $limits->{cards_per_part};
         my $end = $start + $limits->{cards_per_part} - 1;
         $end = $#$cards if $end > $#$cards;
-        my $count = $end - $start + 1;
         my $path = part_path($paths, $index + 1);
         my $relative = relative_link($paths->{landing}, $path);
-        push @root, sprintf('- [Part %04d](%s) — %d cards', $index + 1, $relative, $count);
+        push @part_links, sprintf('[%04d](%s)', $index + 1, $relative);
     }
-    push @root, '', '## Direct fact ID routes', '';
+    my @root = (
+        '# Knowledge fact-card catalog',
+        '> **AUTO-GENERATED — DO NOT EDIT.** Run `perl scripts/check_fact_card_catalog.pl --write`. '
+            . '[README](README.md) · [questions](../../KNOWLEDGE_MAP.md) · '
+            . '[decisions](../decisions/INDEX.md).',
+        '> Title parts: ' . join(' · ', @part_links),
+    );
     push @root, map { '- [' . $_->{id} . '](' . $_->{name} . ')' } @$cards;
 
     my @outputs = ({path => $paths->{landing}, role => 'landing', raw => raw_scalar(join("\n", @root) . "\n")});
@@ -846,7 +836,7 @@ sub legacy_rows {
 
 sub row_digest {
     my ($rows) = @_;
-    return sha256_hex(join('', map { $_ . "\n" } @$rows));
+    return sha256_hex(raw_scalar(join('', map { $_ . "\n" } @$rows)));
 }
 
 sub command_capture {
@@ -1274,7 +1264,7 @@ sub init_fixture {
     write_raw($base, 'docs/knowledge/README.md', "# Cards\n");
     write_raw($base, 'docs/knowledge/alpha.md', fixture_card('alpha', 'Alpha title'));
     write_raw($base, 'docs/knowledge/beta.md', fixture_card('beta', 'Beta | title'));
-    write_raw($base, 'docs/knowledge/gamma.md', fixture_card('gamma', 'Gamma title'));
+    write_raw($base, 'docs/knowledge/gamma.md', fixture_card('gamma', 'Gamma — title'));
     my @errors;
     my $cards = collect_cards($base, $contract->{paths}, fixed_limits(), \@errors);
     die "fixture card parse failed: @errors\n" if @errors;
@@ -1382,6 +1372,33 @@ sub run_self_test {
     );
     die "fact-card-catalog parser self-test: 199-card ceiling did not fail closed\n"
         if join("\n", @overflow_errors) !~ /card count exceeds migrated maximum 198/;
+    my @capacity_cards = map {
+        my $prefix = sprintf('fact-%03d-', $_);
+        my $id = $prefix . ('x' x ($limits->{max_id_bytes} - length($prefix)));
+        {id => $id, name => "$id.md", path => "docs/knowledge/$id.md",
+         title => 'T' x $limits->{max_title_cell_bytes}, date => '2026-08-09',
+         status => 'superseded'};
+    } 1 .. $limits->{max_cards};
+    my @capacity_errors;
+    my $capacity_projection = render_projection(
+        \@capacity_cards,
+        {card_directory => 'docs/knowledge', collection_readme => 'docs/knowledge/README.md',
+         landing => 'docs/knowledge/INDEX.md', part_directory => 'docs/knowledge-catalog',
+         part_prefix => 'titles-'},
+        $limits, \@capacity_errors,
+    );
+    my ($capacity_landing_errors) = pressure_findings(
+        metrics($capacity_projection->[0]{raw}), $limits->{landing}{health_targets},
+        'capacity landing',
+    );
+    my @capacity_parts = @$capacity_projection[1 .. $#$capacity_projection];
+    my ($capacity_part_errors) = collection_pressure_findings(
+        aggregate_metrics(\@capacity_parts), $limits->{title_parts}{health_targets},
+        'capacity title parts',
+    );
+    die "fact-card-catalog parser self-test: exact 198-card capacity crosses mandatory pressure: "
+        . join('; ', @capacity_errors, @$capacity_landing_errors, @$capacity_part_errors) . "\n"
+        if @capacity_errors || @$capacity_landing_errors || @$capacity_part_errors;
     my ($rollover_errors, $rollover_warnings) = pressure_findings(
         {lines => 90, bytes => 80, line_bytes => 1},
         {lines => 100, bytes => 100, line_bytes => 100},
@@ -1422,7 +1439,7 @@ sub run_self_test {
         ['migrated card addition without regeneration', 'migrated', sub { write_raw($_[0], 'docs/knowledge/delta.md', fixture_card('delta', 'Delta title')) }, qr/migrated output differs/],
     );
 
-    my $passed = 11;
+    my $passed = 12;
     for my $index (0 .. $#cases) {
         my ($name, $state, $mutator, $expected) = @{$cases[$index]};
         my $fixture = File::Spec->catdir($generated, ".fact-card-catalog-self-test.$$.$index");

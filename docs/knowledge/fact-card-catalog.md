@@ -11,7 +11,7 @@ answers:
 date: 2026-08-08
 status: current
 tags: [knowledge-map, navigation, generated-index, continuity]
-evidence: docs/knowledge/INDEX.md; scripts/check_fact_card_catalog.pl; docs/decisions/0020-bounded-fact-card-browse-projection.md; docs/decisions/0021-cross-directory-fact-catalog-links-preserve-destinations.md; docs/decisions/0022-fact-catalog-parts-pack-below-warning.md
+evidence: docs/knowledge/INDEX.md; scripts/check_fact_card_catalog.pl; docs/decisions/0020-bounded-fact-card-browse-projection.md; docs/decisions/0021-cross-directory-fact-catalog-links-preserve-destinations.md; docs/decisions/0022-fact-catalog-parts-pack-below-warning.md; docs/decisions/0023-fact-catalog-landing-fits-full-capacity.md
 reverify: perl scripts/check_fact_card_catalog.pl --check
 ---
 
@@ -40,11 +40,11 @@ Its 90% rollover and 393,216-byte enforcement ceiling remain independent; the co
 for this adjacent pressure without changing question-shard semantics by convenience.
 
 ADR 0020 resolves the browse architecture without changing the stable path or the generic 200-file ceiling.
-`docs/knowledge/INDEX.md` becomes a bounded landing with one direct ID link per card and direct links to
+`docs/knowledge/INDEX.md` is now a bounded landing with one direct ID link per card and direct links to
 deterministic count-packed title parts under `docs/knowledge-catalog/`. The detailed parts retain the existing
 ID/date/status/title rows. The maximum 198 cards derives from 200 collection files minus the fixed README and
-index. The `legacy_locked` contract now enforces exact old-row provenance and destination absence before a later
-commit migrates generated output.
+index. The committed `legacy_locked` state enforced exact old-row provenance and destination absence before the
+separate migration commit changed generated output.
 
 ADR 0021 corrects one pre-implementation detail: copying `(card-id.md)` rows byte-for-byte into the sibling
 `docs/knowledge-catalog/` directory would break every card link. The migrated parts must preserve each row's
@@ -55,8 +55,16 @@ provenance.
 
 The executable renderer then exposed line pressure that the earlier byte-focused arithmetic missed. ADR 0022
 supersedes only the original 64-card packing count: 56 cards plus seven scaffold lines make a full part 63/80
-health lines, below warning, while 198 cards still fit in four parts. The exact 158-card plan is a 178-line /
-12,390-byte landing and three parts totaling 179 lines / 34,906 bytes; the complete four-file projection is 357
-lines / 47,296 bytes with no warning. Forty focused cases prove both states, fixed capacity and rollover,
-Git/file/card/row/output identity, external authorities, routes, residue, and safe write cleanup. Until `.2.2`,
-the monolithic landing remains unchanged and `docs/knowledge-catalog/` remains absent.
+health lines, below warning, while 198 cards still fit in four parts. ADR 0023 applies the same proof to the root:
+three scaffold lines plus 198 direct routes yield 201/224 health lines, below mandatory rollover. Current output
+is a 161-line / 11,984-byte landing and three parts totaling 179 lines / 34,906 bytes; the complete four-file
+projection is 340 lines / 46,890 bytes with no warning. Forty-one focused cases prove both states, fixed capacity
+and rollover,
+Git/file/card/row/output identity, external authorities, routes, residue, and safe write cleanup. Before `.2.2`,
+the monolithic landing remained unchanged and `docs/knowledge-catalog/` remained absent.
+
+`.2.2` has now activated the exact `fact_card_titles` generated surface and written those four pinned outputs.
+The first real migrated check also found that decoded non-ASCII semantic rows must be explicitly encoded before
+SHA-256; the row-digest helper now hashes raw UTF-8 and an em-dash fixture prevents an ASCII-only regression.
+Every direct ID and title-part route resolves, no stale or foreign residue exists, and canonical facts remain the
+only evidence authority. The containment tree is closed.
