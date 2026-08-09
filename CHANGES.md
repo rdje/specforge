@@ -1,3 +1,21 @@
+### ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2 — decide the bounded active task topology
+
+- Accepted ADR 0019: the stable PDF task path remains a bounded active current root over seven semantic legacy
+  parts and an exact committed-source capsule. Fifteen contiguous regions cover every source byte; the live
+  manifest owns complete part and leaf routing.
+- Fixed current-state precedence: verified completion outranks stale open headers, unmet dependencies are blocked,
+  and ambiguous candidates require explicit revalidation. The migrated root initially reports no eligible leaf;
+  `.6`, `.7`, and `.9.10` are not silently resumed.
+- Defined the future writer transaction: update the root and exactly one owning activity part atomically; update
+  index/manifest only when routes or metrics move; split at a child/container boundary before rollover; seal
+  completed parts and continue through a new leaf/part.
+- Set independent root/index/part/capsule and 24-part / 32-region / 128-leaf manifest bounds without widening any
+  existing ceiling. The PDF target remains byte-identical; `.1` closes and `.2.1` owns source-locked enforcement.
+- The status entry reached the existing 90% record rollover threshold, so the 12 oldest post-capsule bullets were
+  sealed byte-for-byte in authenticated segment 0003 (12 lines / 9,181 bytes / SHA-256 `9bb1607d…65edb`). The
+  live root now contains 20 newer records plus the reviewed 40-record suffix; exact reconstruction and complete
+  root→0003→0002→0001→capsule routing pass.
+
 ### ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1 — census active task roles and consumers
 
 - Accounted for every untouched PDF-task byte across 13 non-overlapping semantic regions. The nominal

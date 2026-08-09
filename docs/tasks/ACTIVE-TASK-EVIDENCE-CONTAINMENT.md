@@ -56,7 +56,7 @@ open.
   Commit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.0 — own and pin the active task boundary`
 
 - ID: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1`
-  Status: active
+  Status: done
   Goal: measure and decide the active-tree information architecture
   Children: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1`, `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2`
 
@@ -70,12 +70,14 @@ open.
   Commit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1 — census active task roles and consumers`
 
 - ID: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2`
-  Status: pending
+  Status: done
   Goal: select and specify the bounded active-tree topology
   Acceptance: an accepted decision fixes stable routes, partition and aggregate bounds, update/rotation rules,
   source provenance, migration stages, and rejection cases; no policy question remains hidden in implementation
-  Verification: pending
-  Commit: pending
+  Verification: ADR 0019 fixes three authorities, seven semantic parts, 15 exact source regions, current-state
+  precedence, atomic writer transaction, independent limits, and four migration stages; target diff empty;
+  mandatory status rollover seals 12 exact records in authenticated segment 0003 and reconstructs the prior root
+  Commit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2 — decide the bounded active task topology`
 
 - ID: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2`
   Status: active
@@ -123,7 +125,7 @@ open.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2` | `pending` | convert the closed census into one executable active-tree contract |
+| 1 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1` | `pending` | enforce the accepted contract before any destination exists |
 
 ## First-target baseline
 
@@ -163,6 +165,20 @@ formal blocker section says none. The report therefore preserves the literal sou
 measured choices. It favors, but does not yet accept, a hybrid bounded active root + semantic live parts + exact
 pre-migration capsule with an explicit future writer/rotation contract. The target remains byte-identical.
 
+## Accepted active topology
+
+[ADR 0019](../decisions/0019-bounded-active-task-root-and-semantic-evidence-parts.md) accepts the hybrid. The
+stable PDF task path becomes a bounded active current root; `docs/tasks/pdf-variant-digestion/` carries a bounded
+index/manifest and seven sealed semantic legacy parts; and
+`docs/archive/tasks/pdf-variant-digestion/source-through-2026-08-09.md` retains exact provenance. Fifteen
+contiguous source regions cover every byte and map exactly once into marked semantic payloads.
+
+The normalized root initially reports `No eligible frontier.` Completion commits plus inline evidence outrank
+stale open headers; explicit unmet dependencies are blocked; ambiguous candidates require revalidation. Future
+work creates a new semantic activity part and updates root + part atomically. Parts split only at a child/container
+boundary before rollover. Dedicated root/index/part/capsule limits and a schema-closed 24-part / 32-region /
+128-leaf manifest prevent the architecture from becoming another unbounded route.
+
 ## Decisions
 
 - `2026-08-09`: Use a new top-level tree because the completed containment program is closed and ADR 0018
@@ -179,15 +195,16 @@ pre-migration capsule with an explicit future writer/rotation contract. The targ
   root and leaf ids, but let `.1.2` move detail behind a complete bounded route.
 - `2026-08-09`: Do not nominate a PDF product leaf from contradictory legacy text. `.1.2` must define explicit
   current-state precedence and represent parked/blocked work honestly before migration.
+- `2026-08-09`: ADR 0019 accepts the hybrid active root, seven semantic legacy parts, and exact capsule. It differs
+  from terminal containment because the root stays active and all future writes use an atomic root+activity-part
+  transaction under fixed collection limits.
+- `2026-08-09`: Normalize the initial frontier to no eligible leaf. `.6`, `.7`, and `.9.10` remain non-eligible
+  until a newly scoped continuation leaf revalidates their current evidence/dependency.
 
 ## Open Questions
 
-- Which of the measured semantic boundaries become live parts, and which remain only inside the exact source
-  capsule? Owned by `.1.2`; `.1.1` supplies complete region metrics and route consumers.
-- Should active completion evidence rotate into immutable segments, maintained semantic partitions, or a hybrid?
-  Owned by `.1.2`; measurement must decide rather than analogy with the terminal tree.
-- Which target statements constitute the authoritative next eligible PDF work when the legacy frontier and node
-  status text disagree? Owned by `.1.1`; the answer must be evidence-backed and separately recorded.
+- None for implementation. ADR 0019 closes the topology, authority, state-precedence, update, limit, and migration
+  policy; `.2.1` may split only on a concrete implementation dependency, not reopen the decision by convenience.
 
 ## Blockers
 
@@ -199,6 +216,7 @@ pre-migration capsule with an explicit future writer/rotation contract. The targ
 | --- | --- | --- | --- |
 | `2026-08-09` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.0` | SHA-256/blob/metrics/history; HEAD diff; task catalog; six doctrines; mdBook; live-size | exact untouched source boundary; all gates green |
 | `2026-08-09` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1` | 13-region byte closure; path/id/reader/writer census; target SHA/blob/diff; catalogs; doctrines; mdBook | complete read-only report; target unchanged; `.1.2` decision inputs closed |
+| `2026-08-09` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2` | ADR/index/KM/live-doc cross-links; limit arithmetic; target SHA/blob/diff; lossless status reconstruction/chain; catalogs; doctrines; mdBook | hybrid accepted; status segment 0003 authenticated; `.1` closed; implementation inputs complete |
 
 ## Commit Log
 
@@ -206,6 +224,7 @@ pre-migration capsule with an explicit future writer/rotation contract. The targ
 | --- | --- | --- |
 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.0` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.0 — own and pin the active task boundary` | ownership and untouched baseline |
 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1 — census active task roles and consumers` | exhaustive read-only architecture input |
+| `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2 — decide the bounded active task topology` | ADR 0019; implementation policy closed |
 
 ## Changelog
 
@@ -213,3 +232,6 @@ pre-migration capsule with an explicit future writer/rotation contract. The targ
   target consumers, surfaced the stale current-frontier/status contradiction, and handed off to `.1.1`.
 - `2026-08-09`: `.1.1` closed the semantic-region, current-authority, consumer, writer, and reconstruction census;
   no target byte moved, and `.1.2` now owns the active topology decision.
+- `2026-08-09`: `.1.2` accepted ADR 0019's bounded active root, semantic live parts, exact provenance, normalized
+  no-eligible-frontier state, and atomic writer/rotation contract. Its status entry triggered a lossless 12-record
+  rollover into authenticated segment 0003; `.1` closed and `.2.1` is next.

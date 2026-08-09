@@ -21,13 +21,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1` — census active task roles and consumers; complete and
+- Active unit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2` — decide the bounded active task topology; complete and
   verified, commit pending.
-- Current state: the 13-region census closes all 2,393 lines / 222,616 target bytes and classifies 32 direct-path
-  plus 89 identifier-reference inputs, every generic reader, and the manual writer. The legacy text has no
-  internally consistent eligible frontier; the PDF target remains byte-identical.
-- Next action: commit `.1.1`, then run `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2` to accept the bounded active-root,
-  semantic-part, provenance, current-state precedence, update/rotation, limit, and migration contract.
-- In-flight uncommitted: read-only census report, task evidence, current authority fact, and impact-routed live-doc
-  updates only; product code, target source, generated artifacts, shared inputs, thresholds, and ceilings unchanged.
+- Current state: ADR 0019 accepts a bounded active root, seven semantic legacy parts, an exact source capsule,
+  15-region coverage, explicit current-state precedence, and atomic future root+part writes. The initial normalized
+  PDF frontier has no eligible leaf; the target remains byte-identical.
+- Next action: commit `.1.2`, then run `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1` to implement the neutral data contract
+  and checker in source-locked state before any destination exists.
+- In-flight uncommitted: ADR/index/task/census/fact and impact-routed live-doc updates plus the required lossless
+  12-record status rollover; product code, target source, generated artifacts, shared inputs, existing thresholds,
+  and existing ceilings unchanged.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

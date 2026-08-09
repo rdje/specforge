@@ -151,8 +151,11 @@ SHA-256 `9284dce4…a19d4`. The opening read also finds that the legacy frontier
 headers disagree with completion evidence. `.1.1` accounts for all source bytes in 13 semantic regions and finds
 that the nominal frontier is a 1,392-line / 124,201-byte `.9`–`.13` activity store. It classifies every stable-path,
 identifier, generic-tool, and writer dependency; no consumer uses a fragment and no executable writes the target.
-Because verified completion and pending/blocked claims conflict, the design must establish explicit current-state
-precedence rather than silently turn stale text into current truth. `.1.2` now owns that live-partition contract.
+Because verified completion and pending/blocked claims conflict, [ADR 0019](../../../decisions/0019-bounded-active-task-root-and-semantic-evidence-parts.md)
+establishes explicit current-state precedence rather than silently turning stale text into current truth. It keeps
+the stable path as a bounded active root over seven semantic legacy parts and exact provenance. The initial root
+has no eligible leaf; future work creates a new activity part and atomically updates root + part, with semantic
+split-before-rollover and fixed route/aggregate bounds. `.2.1` now owns source-locked enforcement.
 
 All four root-ledger migrations have landed. `CHANGES.md`, `DEVELOPMENT_NOTES.md`,
 `LIVE_ACHIEVEMENT_STATUS.md`, and `RUST_CODEBASE_ANALYSIS.md` are bounded current views, while their
@@ -256,6 +259,12 @@ The second rollover seals the next 12 aged-out records at
 links order it between the live root and segment 0001. Direct comparison with the pre-removal Git content proves
 the segment's exact 10,894-byte identity, while the root again contains 20 newer records plus the exact retained
 40-record suffix.
+
+The third rollover seals the next 12 aged-out records at
+`docs/archive/rolling-ledgers/live-achievement-status/segment-0003-2026-08-09.md` (12 records / 9,181 bytes /
+SHA-256 `9bb1607d89fcc67ea2c1824a9c84e21bd95d56f7f0f49a1af43fee9d3b865edb`). The root had reached 72 records;
+exact pre-removal reconstruction proves the segment, then the bounded root returns to 20 newer records plus the
+reviewed 40-record suffix. The manifest chain is root → segment 0003 → segment 0002 → segment 0001 → capsule.
 
 #### `RUST_CODEBASE_ANALYSIS.md` migration landed
 

@@ -17,6 +17,8 @@ answers:
   - "is the PDF-VARIANT-DIGESTION current frontier internally consistent"
   - "who reads or writes the active PDF task tree"
   - "what did the active PDF task containment census find"
+  - "what architecture contains an oversized active task tree"
+  - "what is ADR 0019"
 date: 2026-08-08
 status: current
 tags: [documentation, containment, git, submodule]
@@ -61,6 +63,13 @@ The census therefore favors a hybrid for ADR selection: a bounded active root an
 future writes, plus an exact pre-migration capsule for literal legacy evidence. The active root cannot be a
 terminal summary, the capsule cannot accept future writes, and the design must declare current-state precedence,
 complete leaf routing, bounds, rotation, and atomic root/part updates.
+
+ADR 0019 accepts that hybrid. The stable task path remains active current authority; seven semantic legacy parts
+under `docs/tasks/pdf-variant-digestion/` provide bounded detail; and an exact capsule under
+`docs/archive/tasks/pdf-variant-digestion/` proves provenance. Fifteen source regions cover every byte. Completion
+commits plus inline evidence outrank stale open headers, unmet dependencies block, and ambiguity never enters the
+frontier, so the normalized root initially reports no eligible leaf. Future work creates a new bounded activity
+part and updates root + part atomically; semantic split happens before rollover and completed parts seal.
 
 `scripts/check_task_tree_archive.pl` now enforces `migrated`: the capsule retains the exact locked identity, and
 the checker validates the closed root, exact index/manifest routes, provenance, milestones, and ceilings. Its

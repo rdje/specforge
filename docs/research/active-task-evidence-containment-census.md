@@ -212,6 +212,16 @@ The census recommends that `.1.2` evaluate A as the primary candidate, use chron
 future append-heavy evidence if needed, and reject any design that treats the exact capsule as the active writer
 destination.
 
+## Decision disposition
+
+`.1.2` accepted candidate A in
+[ADR 0019](../decisions/0019-bounded-active-task-root-and-semantic-evidence-parts.md). The stable root remains
+active current authority; seven bounded semantic parts provide routine historical/detail reads; and the exact
+committed source becomes immutable provenance. Migrated legacy payloads are sealed. Future work creates a new
+bounded activity part and atomically updates root + owning part, splitting only at a child/container boundary
+before rollover. The normalized root initially has no eligible PDF frontier; `.6`, `.7`, and `.9.10` require
+explicit revalidation rather than silent resumption.
+
 ## Reverification
 
 Run from the repository root:

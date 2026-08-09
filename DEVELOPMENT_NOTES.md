@@ -1,4 +1,28 @@
 # DEVELOPMENT_NOTES
+## ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2 (`2026-08-09`) — provenance and active authority must overlap
+
+The accepted design deliberately stores the legacy bytes twice in different roles. The exact capsule proves what
+the committed monolith said, including contradictions and awkward ordering. Marker-delimited payloads in seven
+semantic parts make routine leaf/history reads bounded and give future work an activity-owned write surface. This
+is not accidental duplication: either copy alone fails one requirement, and both aggregates are independently
+governed.
+
+An active root cannot infer a leaf by taking the newest-looking sentence. ADR 0019 instead uses completion commits
+plus inline verification to close stale headers, treats explicit unmet dependencies as blocked, and refuses to
+promote an ambiguous candidate. That leaves an honest empty eligible frontier while the broad PDF goal remains
+active. A later continuation must be newly scoped from current evidence rather than reviving a June status token.
+
+The writer contract is the operational difference from terminal containment. Every product leaf updates the
+bounded root and exactly one semantic activity part in one commit. A part splits at an existing task boundary
+before rollover, completed parts seal, and new work gets a new part. Fixed file/aggregate/manifest limits make the
+route finite; another architecture decision is required before those limits exhaust.
+
+Recording this decision also exercised the independent status-ledger protocol. Its 72-record live window had
+reached the mandatory record threshold, so the 12 oldest post-capsule bullets were copied without byte changes
+into segment 0003 before their live duplicates were removed. The stable root now holds 20 newer records plus the
+exact reviewed 40-record suffix; the manifest and index authenticate the complete
+root→0003→0002→0001→capsule chronology.
+
 ## ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1 (`2026-08-09`) — the frontier heading is an activity store
 
 The target's dominant 124,201-byte section is named `Current frontier`, but it contains the complete `.9`–`.13`
