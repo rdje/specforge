@@ -132,8 +132,11 @@ updates averaged 49.7 lines / 5,370 bytes. This is a finite program approaching 
 mechanical heading shards would split one task authority, while trimming would lose revision-bound evidence.
 
 [ADR 0018](../../../decisions/0018-terminal-task-tree-current-history-boundary.md) therefore uses a two-commit
-terminal boundary. `.10b.i` commits the complete still-live source plus its neutral identity checker. `.10b.ii`
-copies that durable source byte-for-byte into an immutable capsule, then leaves a bounded closed summary at the
+terminal boundary. `.10b.i` has now committed the complete still-live source contract plus its neutral identity
+checker. In `source_locked`, the current task must match its exact SHA-256/metrics/markers and every declared
+archive path must be absent. Fifteen same-volume cases exercise both source-locked and future migrated failures;
+the checker runs unconditionally through `LIVE-DOC-SIZE`. `.10b.ii` next copies that durable source byte-for-byte
+into an immutable capsule, then leaves a bounded closed summary at the
 stable task path and routes exact history through a bounded index/manifest. The task catalog continues reading
 only the stable H1 and metadata status; ordinary startup never reads the capsule. The compact root retains the
 final verification marker/table required by the derived-state contract, while all historical rows remain exact

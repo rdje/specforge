@@ -1,3 +1,16 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10b.i — lock the terminal task source boundary
+
+- Added a schema-closed, project-neutral checker with `source_locked` and `migrated` states. The first pins the
+  complete live task source and rejects premature index/manifest/capsule files; the second is ready to validate
+  exact capsule identity, bounded closed root/index, manifest provenance, routes, milestones, and ceilings.
+- Added 15 same-volume fail-closed cases for source hash/metrics/markers, unsafe or premature paths, capsule
+  mutation, active status, missing root/index routes, manifest drift/provenance, and independent root/index
+  overflow. The checker now runs unconditionally through `LIVE-DOC-SIZE`.
+- The final source boundary is 2,538 lines / 242,172 bytes / 746 maximum line bytes at SHA-256
+  `f8e10e…96b68`, leaving 8,503 bytes of pre-rollover headroom. All declared archive paths remain absent.
+- No task content moved and no product, canonical artifact, existing surface, threshold, or ceiling changed.
+  Frontier → `.10b.ii` exact copy, bounded-root migration, and closure.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10a — design the terminal task-evidence boundary
 
 - Measured the active source at 2,451 lines / 232,649 bytes with 18,026 bytes of pre-rollover headroom. It grew through

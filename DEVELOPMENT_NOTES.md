@@ -1,4 +1,22 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10b.i (`2026-08-09`) — source lock is a real lifecycle state
+
+The two-commit seam is useful only if the first commit is mechanically meaningful. The new checker therefore
+treats `source_locked` as its own state: the stable task root must match the contract's exact byte identity and
+semantic markers, while the declared index, manifest, and capsule must not exist. A premature archive is a
+failure, not harmless preparation, because it would blur which source boundary the next slice promises to copy.
+
+The same checker already knows the migrated state so the next commit cannot swap in a weaker verifier. It will
+move the source identity to the capsule, parse the compact root's metadata/frontier/verification sections, resolve
+the root and index links lexically, compare manifest identity/provenance, apply independent milestones and hard
+ceilings, and reject unrelated index destinations. The data contract supplies every production path, metric,
+marker, and limit; executable source contains no production tree id or current source value.
+
+The digest intentionally lives only in the JSON contract. Putting it inside the task file being hashed would be
+self-referential and impossible to satisfy. The task carries human-readable evidence and the commit subject; the
+co-committed contract carries exact machine identity. `.10b.ii` can now copy a durable Git boundary rather than a
+transient working-tree state.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10a (`2026-08-09`) — commit the source before replacing it
 
 This task file is a finite dependency graph nearing completion, not an append-forever ledger. Its current-looking

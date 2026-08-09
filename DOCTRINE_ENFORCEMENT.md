@@ -288,9 +288,10 @@ The reference deployment. Enforced by `scripts/check_doctrines.sh` via `.githook
 | `LIVE-DOC-SIZE` | structural | `scripts/check_live_document_size.sh` | every parent-tracked Markdown path is classified exactly once; each declared current-state field has an explicit derive-on-read, verified-copy, authored-intent, or immutable-evidence contract; and all lifecycle-specific locality, pressure, route, currency, authority, capture, and history rules pass |
 | `PROJECT-DATA-LOCALITY` | structural | `scripts/check_project_data_locality.sh` | Cargo, shell, Rust temp/subprocess, Python dependency, and optional runtime-store paths resolve from the current repository and reject off-root or stale-repository ownership |
 
-`LIVE-DOC-SIZE` also runs three focused suites: 55 positive and fail-closed lifecycle/control-plane
-cases, 47 neutral derived-state classification/authority cases, and 25 SpecForge Rust/gitlink adapter
-cases. Test workspaces are disposable and always created below repository-local `generated/`.
+Among its focused suites, `LIVE-DOC-SIZE` runs 55 positive and fail-closed lifecycle/control-plane
+cases, 47 neutral derived-state classification cases, 25 SpecForge Rust/gitlink authority-adapter cases,
+and 15 neutral terminal-task source/route/identity/boundary cases. Test workspaces are disposable and always
+created below repository-local `generated/`.
 Schema fields, arrays, scalars, routes, independent size axes, baselines, exact field markers, stored
 derive-on-read shadows, verifier execution, capture boundaries, Cargo semver normalization, Git-index
 mode/object authority, declared secondary roles/paths/ownership, no-fallback alternate paths, and ceiling history

@@ -42,7 +42,9 @@
   row byte-for-byte, removes the exact retired shared manifest, and enforces complete acyclic chronology, exact
   index order, landing completeness, and residue absence. `.10a` then measures the program's own finite task
   record and accepts ADR 0018: `.10b.i` commits the exact source/verifier boundary before `.10b.ii` copies it to
-  a terminal and leaves a bounded closed root/index. Active task trees are explicitly excluded from that
+  a terminal and leaves a bounded closed root/index. `.10b.i` now enforces that source-locked boundary and
+  archive absence with a neutral two-state checker plus 15 fail-closed cases; `.10b.ii` alone may switch it to
+  migrated state. Active task trees are explicitly excluded from that
   terminal topology. No existing threshold or ceiling is widened.
 <!-- LIVE-DOCUMENT-SIZE-CONTAINMENT-LOCAL-ADOPTION:END -->
 

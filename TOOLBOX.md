@@ -94,6 +94,7 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
 | "What fraction of each document's intent reaches `.isf`?" | [6.1 `measure_isf_completeness.py`](#61-scriptsmeasure_isf_completenesspy) |
 | "Which documents form an extraction family / share a shape?" | [6.2 `corpus-cluster`](#62-corpus-cluster) |
 | "Run the full gate before committing code." | [7.1 `run_ci.sh`](#71-scriptsrun_cish--the-full-gate) |
+| "Is the terminal task source/archive boundary intact?" | [7.3 `check_task_tree_archive.pl`](#73-scriptscheck_task_tree_archivepl) |
 
 ---
 
@@ -293,7 +294,15 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
 - **WHEN:** before any commit; what the pre-commit hook runs.
 - **HOW:** `bash scripts/check_doctrines.sh`
 
-### 7.3 `project-validation <artifact>...` / `rescan-plan [--plan <p>] [--execute]`
+### 7.3 `scripts/check_task_tree_archive.pl`
+- **WHAT:** validates the contract-driven terminal task lifecycle. `source_locked` pins the still-live source and
+  rejects premature archive paths; `migrated` verifies the exact capsule, bounded closed root/index, manifest,
+  provenance, routes, milestones, and ceilings.
+- **WHEN:** before or during a terminal task-tree migration; use `--report` to inspect the selected source and
+  metrics, and `--self-test` to exercise all 15 fail-closed cases.
+- **HOW:** `perl scripts/check_task_tree_archive.pl --check`
+
+### 7.4 `project-validation <artifact>...` / `rescan-plan [--plan <p>] [--execute]`
 - **WHAT:** `project-validation` validates + refreshes the tracked validation snapshot + writes the local
   schema-v2 rescan plan with typed replay hints; `rescan-plan` inspects/executes the whitelisted local
   replay hints (dry-run by default, `--execute` only for repository-local `cargo run … --` hints).
@@ -302,13 +311,13 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
   review producer output before committing it, and verify the declared boundary read-only with
   `perl scripts/check_validation_snapshot_currentness.pl --check`.
 
-### 7.4 Build & host (RAM-bounded)
+### 7.5 Build & host (RAM-bounded)
 - **WHAT:** builds are RAM-constrained on this host. Monitor with `memory_pressure` (macOS); cap parallel
   jobs and kill at the danger line.
 - **HOW:** `CARGO_BUILD_JOBS=2 cargo test --manifest-path Cargo.toml`; watch RAM, kill background work at
   ≥85% used (`feedback_ram_ceiling_monitor`); serialize a heavy Docling ingest vs a loaded VLM model.
 
-### 7.5 `clean [--scope …] [--execute]`
+### 7.6 `clean [--scope …] [--execute]`
 - **WHAT:** first-class local artifact reclamation (dry-run by default): `--scope source-normalized` keeps
   `source_ir.json` but drops the heavy `normalized/` bundle; `--scope document`/`all-generated` for deeper
   sweeps. **Never** delete a `source_ir` before a re-ingest succeeds (`project_docling_mps_cpu`).

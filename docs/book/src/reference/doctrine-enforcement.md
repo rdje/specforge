@@ -68,9 +68,10 @@ The README guard is unconditional: it evaluates the resulting tree even when a c
 may use for changing detail, and rejects missing, off-repository, duplicated, or uncontrolled routes.
 The project-owned normative contract is `README_POLICY.md`.
 
-The live-document gate runs 55 common lifecycle/control cases, 28 neutral derived-state cases, and 16
-SpecForge authority-adapter cases, plus the projection-specific Knowledge Map contract and portable-bundle
-integration suite. Generated collections must have complete landing membership, exact derive-and-diff content,
+Among its focused suites, the live-document gate runs 55 common lifecycle/control cases, 47 neutral derived-state
+classification cases, 25 SpecForge authority-adapter cases, and 15 terminal-task source/route/identity/boundary
+cases, plus the projection-specific Knowledge Map contract and portable-bundle integration suite. Generated
+collections must have complete landing membership, exact derive-and-diff content,
 bounded repository-local check workspaces, and no stale parts or temporary residue. Exact current fields are
 declared rather than guessed: derive-on-read values cannot retain a shadow, verified copies execute their named
 authority check, authored intent remains human-owned, and immutable evidence keeps an exact capture boundary.

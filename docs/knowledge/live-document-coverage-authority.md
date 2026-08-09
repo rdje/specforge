@@ -12,6 +12,7 @@ answers:
   - "why must terminal task tree containment use two commits"
   - "can an active task tree use the terminal task archive topology"
   - "which active task tree is next at the live document warning"
+  - "how is the terminal task source archive boundary verified"
 date: 2026-08-08
 status: current
 tags: [documentation, containment, git, submodule]
@@ -36,3 +37,8 @@ bounded index/manifest; the existing ceiling may not be widened and evidence may
 This rule applies only to a completed tree. Active `PDF-VARIANT-DIGESTION` is 2,393 lines / 222,616 bytes,
 only 207 bytes below warning. Its next append requires separately task-owned active-tree containment; it may not
 borrow the terminal topology or a wider ceiling.
+
+`scripts/check_task_tree_archive.pl` implements the boundary as two explicit states. `source_locked` requires
+the live source's exact contract identity and absence of all declared archive paths. `migrated` moves that same
+identity to the capsule and checks the closed root, exact index/manifest routes, provenance, milestones, and
+ceilings. Its 15-case self-test runs unconditionally through `LIVE-DOC-SIZE`.

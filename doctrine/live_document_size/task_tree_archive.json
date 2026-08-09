@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "migration_state": "source_locked",
+  "current_path": "docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md",
+  "archive": {
+    "index": "docs/archive/tasks/live-document-size-containment-adoption/INDEX.md",
+    "manifest": "docs/archive/tasks/live-document-size-containment-adoption/manifest.json",
+    "source_capsule": "docs/archive/tasks/live-document-size-containment-adoption/source-through-2026-08-09.md"
+  },
+  "source": {
+    "sha256": "f8e10e33f697740fc86c91af1511e5a092e734ce7e30386bacb3b93477696b68",
+    "metrics": {
+      "lines": 2538,
+      "bytes": 242172,
+      "line_bytes": 746
+    }
+  },
+  "source_requirements": [
+    "# LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION: bounded live docs, stable README, and same-volume project data",
+    "- Tree ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`",
+    "- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10b.i`",
+    "- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10b.ii`",
+    "### Acceptance Checklist (enforced) — `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10b.i`",
+    "## Verification Log",
+    "| Date | Leaf | Checks | Result |",
+    "## Commit Log",
+    "LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10b.i — lock the terminal task source boundary"
+  ],
+  "current_root": {
+    "health_targets": {
+      "lines": 256,
+      "bytes": 32768,
+      "line_bytes": 512
+    },
+    "enforcement_ceilings": {
+      "lines": 384,
+      "bytes": 49152,
+      "line_bytes": 1024
+    },
+    "milestones": {
+      "warning_pct": 80,
+      "rollover_pct": 90
+    },
+    "required_literals": [
+      "# LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION: bounded live docs, stable README, and same-volume project data",
+      "- Tree ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`",
+      "- Status: `done`",
+      "## Current Frontier",
+      "No active frontier.",
+      "## Archive and retrieval",
+      "## Verification Log",
+      "| Date | Leaf | Checks | Result |",
+      "## Commit Log"
+    ],
+    "forbidden_literals": [
+      "Status: `in_progress`",
+      "Status: `pending`"
+    ]
+  },
+  "archive_index": {
+    "health_targets": {
+      "lines": 64,
+      "bytes": 6144,
+      "line_bytes": 256
+    },
+    "enforcement_ceilings": {
+      "lines": 96,
+      "bytes": 8192,
+      "line_bytes": 512
+    },
+    "milestones": {
+      "warning_pct": 80,
+      "rollover_pct": 90
+    },
+    "required_literals": [
+      "# LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION archive",
+      "## Sealed source",
+      "## Verification"
+    ],
+    "forbidden_literals": [
+      "Status: `in_progress`"
+    ]
+  },
+  "manifest_limits": {
+    "bytes": 8192,
+    "line_bytes": 512,
+    "scalar_bytes": 512
+  },
+  "verifier": "perl scripts/check_task_tree_archive.pl --check"
+}
