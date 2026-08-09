@@ -19,15 +19,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SWD-SERIAL-EXTRACTION.7d` — explicit ISF adapter disposition for every protocol record.
-- Current state: `.7b` and `.7c` carry the four exact EvidenceIR protocol collections through SemanticIR and
-  canonical IntentIR via additive default-empty/skip-empty fields and unfiltered clones. Three-stage record,
-  order, optional-value, id, and provenance parity plus four IntentIR validation counts pass. Full `.7c` CI is
-  green at 1,770 passed / five ignored. The adapter still consumes none of the collections, and `.7e.i` owns
-  their separately tracked absence from convergence snapshots before fresh `.7e.ii` promotion.
-- Next action: activate `.7d`; audit current adapter residual idioms, assign a stable explicit disposition to
-  every protocol record, keep the directly lowerable subset empty unless the record itself licenses a typed ISF
-  construct, and prove independently licensed ISF remains renderable and FSMGen-strict.
-- In-flight uncommitted: none after the `.7c` commit. Generated migration state remains repository-local and
+- Active unit: `SWD-SERIAL-EXTRACTION.7e.i` — protocol-aware convergence snapshots and fact counts.
+- Current state: `.7b`/`.7c` carry all four protocol collections exactly through canonical IntentIR; `.7d`
+  assigns every record one stable ordered adapter residual with provenance and explicit missing bindings. The
+  directly lowerable subset is empty, while unrelated ISF remains byte-identical, renderable, and FSMGen-strict.
+  Full `.7d` CI is green at 1,771 passed / five ignored. The status ledger's first post-migration segment also
+  preserves 12 aged-out records exactly and leaves 60 live records. Convergence snapshots still omit all four
+  protocol collections and can miss a protocol-only change.
+- Next action: activate `.7e.i`; add all four collections to Evidence/Semantic/Intent convergence snapshots and
+  fact counts, then prove protocol-only changes are visible without perturbing unrelated convergence behavior.
+- In-flight uncommitted: none after the `.7d` commit. Generated migration state remains repository-local and
   intentionally ignored; the exact rollback and disposable loader workspace are absent.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

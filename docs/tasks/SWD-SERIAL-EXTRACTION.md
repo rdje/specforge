@@ -145,8 +145,8 @@ extraction approach distinct from the parallel-bus signal-table path.
   cross-stage parity tests, and validation counts.
 - ID: `SWD-SERIAL-EXTRACTION.7c` · Status: `done` (`2026-08-09`) · Goal: project the same surfaces losslessly
   from SemanticIR into canonical IntentIR, with exact parity/round-trip tests and validation counts.
-- ID: `SWD-SERIAL-EXTRACTION.7d` · Status: `pending` · Goal: make the `.isf` adapter account explicitly
-  for every protocol record: lower only a fully licensed representable subset and preserve every
+- ID: `SWD-SERIAL-EXTRACTION.7d` · Status: `done` (`2026-08-09`) · Goal: make the `.isf` adapter account
+  explicitly for every protocol record: lower only a fully licensed representable subset and preserve every
   under-specified record as a typed residual, with FSMGen-strict and generic-adapter regressions.
 - ID: `SWD-SERIAL-EXTRACTION.7e` · Status: `pending` (container) · Goal: restore protocol-aware convergence
   accounting, then rebuild/promote the tracked ADI pipeline and close the program from current artifacts.
@@ -201,6 +201,22 @@ extraction approach distinct from the parallel-bus signal-table path.
   provenance rewrite, or implicit adapter lowering enter the canonical projection.
 - [x] **LOCKSTEP** — update the IntentIR product documentation and live truth while keeping adapter residual
   accounting and convergence snapshots explicitly open under `.7d`/`.7e.i`.
+
+### Acceptance Checklist (enforced) — `SWD-SERIAL-EXTRACTION.7d`
+
+- [x] **REPRODUCE / MEASURE** — prove all four non-empty IntentIR protocol collections are absent from the
+  adapter artifact, residual decisions, and rendered ISF, while unrelated content can still render.
+- [x] **ROOT CAUSE (WHY + WHERE)** — map each protocol record's missing executable bindings against the typed
+  ISF model and localize the silent loss to adapter assembly; do not reinterpret upstream extraction truth.
+- [x] **ADDRESSED (verified)** — give every protocol record a stable, explicit adapter disposition; lower only
+  records whose own fields fully license a supported typed ISF construct and residualize every other record.
+- [x] **NO REGRESSION** — prove complete record accounting, deterministic residual identity/order, empty-input
+  compatibility, renderability/FSMGen strictness for independently licensed ISF, focused suites, doctrines,
+  and full CI.
+- [x] **GENERICITY / HONESTY** — no protocol/signal names, guessed transitions, inferred values, fabricated
+  ports/storage, or schedule assumptions enter lowering or residual generation.
+- [x] **LOCKSTEP** — update adapter/product documentation, live truth, and durable retrieval while keeping
+  convergence snapshots and fresh canonical promotion explicitly open under `.7e.i`/`.7e.ii`.
 
 ### Surfaced portability finding (handoff after `.4e`)
 
@@ -267,7 +283,10 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 
 - `SWD-SERIAL-EXTRACTION.7c` — **DONE.** IntentIR carries all four collections through additive
   empty-compatible fields and exact clones; validation exposes each count, three-stage parity is exact, and
-  full CI passes. Next pickable leaf: `.7d` explicit adapter disposition for every protocol record.
+  full CI passes.
+- `SWD-SERIAL-EXTRACTION.7d` — **DONE.** Every protocol record receives one stable ordered adapter residual
+  naming provenance and missing bindings. The directly lowerable subset remains empty; independent ISF stays
+  byte-identical, renderable, and FSMGen-strict. Next pickable leaf: `.7e.i` protocol-aware convergence.
 
 - `SWD-SERIAL-EXTRACTION.4c` — **DONE.** Added `SwdioDirection {HostDrives, TargetDrives}` + `swdio_direction`
   on `SerialFrameField`; `extract_serial_frame_fields` derives it from the spec's own "from the `<A>` to the
@@ -374,6 +393,17 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
   `scripts/run_ci.sh` is green: all six doctrines, formatting, Clippy, 1,770 passed / 5 ignored, rustdoc,
   mdBook doctests/build, and final project-data locality. The Knowledge Map writes 154 facts / 1,074 unique
   question keys across eight shards and the fact catalog writes 153 routes.
+- `.7d`: baseline inspection proves adapter assembly copied upstream residuals and `IsfIr` residuals but never
+  read the four IntentIR protocol collections. The new regression feeds two ordered frame records plus one
+  operation, state, and edge timing through a renderable generic IntentIR: five input records produce exactly
+  five stable `isf_protocol_*` packets in schema/input order, with upstream ids, supporting statements, and
+  surface-specific missing bindings. Repeat builds and persisted adapter round-trip are equal; emitted source
+  and behavioral counts are byte-identical to the protocol-empty baseline; real FSMGen strict succeeds with
+  zero diagnostics. All 7 adapter tests and warning-deny Clippy pass. Full `scripts/run_ci.sh` is green: all six
+  doctrines, formatting, Clippy, 1,771 passed / 5 ignored, rustdoc, mdBook doctests/build, and final locality.
+  The status prepend also triggered its mandatory record rollover: 12 oldest post-migration records were copied
+  byte-for-byte into authenticated segment `live-achievement-status-0001`, then their live duplicates were
+  removed, reducing the window 72→60 while preserving the exact 40-record suffix and validation trailer.
 
 ## Commit log
 
@@ -386,6 +416,7 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 - `.7a`: see the `SWD-SERIAL-EXTRACTION.7a` commit (projection/lowering architecture and freshness root cause).
 - `.7b`: see the `SWD-SERIAL-EXTRACTION.7b` commit (lossless EvidenceIR→SemanticIR projection and counts).
 - `.7c`: see the `SWD-SERIAL-EXTRACTION.7c` commit (lossless SemanticIR→IntentIR projection and counts).
+- `.7d`: see the `SWD-SERIAL-EXTRACTION.7d` commit (per-record protocol residual accounting at ISF boundary).
 
 ## Changelog
 
@@ -405,3 +436,6 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 - `2026-08-09`: `.7c` added exact additive IntentIR carry-through for all four protocol collections,
   validation counts, legacy-empty compatibility, and complete EvidenceIR→SemanticIR→IntentIR parity; full CI
   is green and the frontier advances to `.7d` adapter accounting.
+- `2026-08-09`: `.7d` added one stable, ordered adapter residual per protocol record, preserved unrelated ISF
+  byte-for-byte and FSMGen-strict, completed the first lossless post-migration status rollover, and advanced the
+  frontier to `.7e.i` convergence accounting.

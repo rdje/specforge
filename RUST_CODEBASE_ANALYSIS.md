@@ -4,6 +4,21 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-09 — explicit protocol adapter disposition; `SWD-SERIAL-EXTRACTION.7d`)
+
+- **Adapter assembly now accounts for every canonical protocol record.** `protocol_residual_decisions` traverses
+  the four IntentIR collections in schema/input order and emits one `ResidualDecisionPacket` per record. Stable
+  ids combine the surface and upstream record id; the packet records source statement ids and missing bindings.
+- **The typed ISF model remains executable-only.** The currently lowerable protocol subset is empty under ADR
+  0016, so protocol packets stay on `AdapterArtifact.residual_decisions`; they do not enter `IsfIr`, rendered
+  counts/source, or renderability assessment.
+- **The boundary is regression-locked.** Two ordered frame records plus operation/state/edge records produce five
+  exact packets across repeated builds and artifact round-trip. Independently licensed ISF remains byte-identical,
+  renderable, and FSMGen-strict with zero diagnostics; all seven adapter tests and warning-deny Clippy pass. Full
+  CI passes 1,771 tests / five ignored, all six doctrines, rustdoc, mdBook doctests/build, and final locality.
+- **Remaining work is operational, not representational.** `.7e.i` must add protocol collections to convergence
+  snapshots/fact counts, then `.7e.ii` can freshly ingest and promote the tracked ADI chain at 29 records.
+
 ## Session update (2026-08-09 — lossless IntentIR protocol projection; `SWD-SERIAL-EXTRACTION.7c`)
 
 - **The canonical product now carries all four protocol collections.** `IntentIr` reuses

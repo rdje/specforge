@@ -81,6 +81,27 @@ The adapter walks `IntentIr` and populates the typed tree:
 
 Temporal invariants with empty `subject_signal` (e.g. transition invariants like "idle → busy when GO") are skipped for rule generation — they represent state-transition assertions that cannot be lowered to ISF signal assignments.
 
+### Protocol-observation disposition
+
+The canonical protocol collections—serial-frame fields, operation branches, protocol states, and interface-edge
+timings—are accounted for separately from the typed ISF tree. None of their current record types carries every
+operand needed by a supported executable ISF construct: frame fields lack a complete transaction/wire/value
+binding; operations lack typed activation, ordered steps, ports, and state effects; states lack transitions,
+guards, initial-state identity, encoding, and bound actions; and edge timings lack an activation condition,
+sample destination, drive value, and transaction/state association.
+
+The directly lowerable subset is therefore empty. The adapter emits one typed `ResidualDecisionPacket` per
+protocol record, preserving collection and record order. Stable packet ids begin with
+`isf_protocol_serial_frame_field_`, `isf_protocol_operation_`, `isf_protocol_state_`, or
+`isf_protocol_interface_edge_timing_` and include the upstream record id. Each packet names the missing bindings
+and carries the supporting statement ids. No protocol name, transition, value, port, storage destination, or
+schedule is inferred.
+
+These residuals live in `adapter.json`; they do not enter `IsfIr` or change the rendered `.isf`. Consequently,
+unrelated content that independently satisfies the renderability policy remains renderable and FSMGen-strict,
+while the adapter artifact cannot imply that incomplete protocol behavior was lowered. A protocol-only document
+still blocks under the ordinary no-signals/no-behavior rules; residuals do not manufacture renderability.
+
 #### Temporal-rule lowering (`classify_temporal_rule`)
 
 `IntentIr.temporal_rules` is the R15b clock-tick deliverable; the ISF
@@ -435,7 +456,10 @@ ISF adapter output lives under:
 
 - `generated/adapters/isf/<document_key>/adapter.json`
 
-The adapter artifact carries the rendered `.isf` source text, renderability status, blocking reasons, and signal inventory metadata. It is tagged with the `isf_adapter` `IrStage`, which stage-keyed tooling (e.g. `specforge validate`, `project-validation`) dispatches on.
+The adapter artifact carries the rendered `.isf` source text, renderability status, blocking reasons, signal
+inventory metadata, and explicit residual decisions, including one per canonical protocol observation that
+lacks complete executable bindings. It is tagged with the `isf_adapter` `IrStage`, which stage-keyed tooling
+(e.g. `specforge validate`, `project-validation`) dispatches on.
 
 ### Portable artifact paths
 

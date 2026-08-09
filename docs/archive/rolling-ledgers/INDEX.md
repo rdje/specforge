@@ -40,8 +40,12 @@ perl scripts/check_rolling_ledger_protocol.pl --report
   `docs/archive/rolling-ledgers/live-achievement-status/source-through-2026-08-08.md`
 - Frozen boundary: 1,920 records; 1,960 lines; 581,239 bytes; SHA-256
   `b00ff5f5c4a29554a20eea9d901a95848d54a644749eba74ad9618798dd9bd6a`
-- Current-window rule: H1/current heading, newest 50 whole snapshot bullets, then the complete gap and
-  writer-managed validation trailer.
+- First post-migration sealed segment: [`segment-0001-2026-08-08.md`](live-achievement-status/segment-0001-2026-08-08.md)
+  preserves 12 whole records / 12 lines / 12,671 bytes at SHA-256
+  `ee4c7aed44efd79ebc9cbf7b80c4f4f7f599bbcaa8db2acfcc8a00f845ff8067`; it sits between the newer live
+  root and the older source capsule.
+- Current-window rule: H1/current heading, the newest post-capsule bullets plus the exact 40-record migration
+  suffix, then the complete gap and writer-managed validation trailer. The first rollover leaves 60 live records.
 - Overlap: the immutable capsule includes the retained live window; later rollover archives only newly
   aged-out status records and never edits the validation projection in place.
 

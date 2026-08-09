@@ -7,7 +7,7 @@ use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::intent::{IntentDocumentIdentity, IntentIr};
 use crate::ir::isf_ir::IsfIr;
-use crate::ir::source::ResidualDecisionPacket;
+use crate::ir::source::{AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket};
 use crate::persisted_path::{
     PersistedPathOrigin, normalize_for_storage, resolve_existing, resolve_repository_output,
 };
@@ -310,6 +310,101 @@ fn assess_isf_renderability(intent_ir: &IntentIr) -> (bool, Vec<String>) {
     (reasons.is_empty(), reasons)
 }
 
+fn protocol_residual_packet(
+    surface_id: &str,
+    surface_label: &str,
+    record_id: &str,
+    supporting_statement_ids: &[String],
+    missing_bindings: &str,
+) -> ResidualDecisionPacket {
+    let provenance = if supporting_statement_ids.is_empty() {
+        "no supporting statement ids".to_string()
+    } else {
+        format!(
+            "supporting statements: {}",
+            supporting_statement_ids.join(", ")
+        )
+    };
+    ResidualDecisionPacket {
+        packet_id: format!(
+            "isf_protocol_{surface_id}_{}",
+            crate::ir::isf_ir::sanitize_isf_name(record_id)
+        ),
+        question: format!(
+            "How should {surface_label} record `{record_id}` be represented downstream of `.isf`?"
+        ),
+        why_unresolved: format!(
+            "The record does not carry {missing_bindings}. It remains exact in IntentIR and is not rendered; no missing binding is inferred. Source provenance: {provenance}."
+        ),
+        automation_confidence: AutomationConfidence::Low,
+        candidate_interpretations: vec![
+            CandidateInterpretation {
+                interpretation_id: "preserve_intent_observation".to_string(),
+                description: "Keep the grounded protocol observation in IntentIR and expose this adapter residual without emitting executable syntax.".to_string(),
+                downstream_impact: "Independently licensed ISF remains usable, while the protocol behavior stays visibly incomplete.".to_string(),
+            },
+            CandidateInterpretation {
+                interpretation_id: "lower_after_bindings".to_string(),
+                description: "Lower the record only after upstream typed data supplies every operand required by a supported ISF construct.".to_string(),
+                downstream_impact: "A future adapter may emit the behavior after the missing bindings are source-grounded and FSMGen-strict verified.".to_string(),
+            },
+        ],
+    }
+}
+
+/// Account for every canonical protocol observation at the adapter boundary (ADR 0016).
+///
+/// None of the current record types supplies every operand required by a supported executable ISF
+/// construct. Keep one stable residual packet per input record, in schema and record order, instead
+/// of silently dropping observations or fabricating transitions, values, ports, storage, or timing.
+fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPacket> {
+    let mut residuals = Vec::with_capacity(
+        intent_ir.serial_frame_fields.len()
+            + intent_ir.swd_operations.len()
+            + intent_ir.protocol_states.len()
+            + intent_ir.interface_edge_timings.len(),
+    );
+
+    for record in &intent_ir.serial_frame_fields {
+        residuals.push(protocol_residual_packet(
+            "serial_frame_field",
+            "serial-frame field",
+            &record.field_id,
+            &record.supporting_statement_ids,
+            "an enclosing transaction/operation binding, the declared serial data wire, and complete literal, activation, and storage semantics",
+        ));
+    }
+    for record in &intent_ir.swd_operations {
+        residuals.push(protocol_residual_packet(
+            "operation",
+            "protocol operation",
+            &record.operation_id,
+            &record.supporting_statement_ids,
+            "a typed activation condition, ordered field/step membership, bound ports, and state-transition effects",
+        ));
+    }
+    for record in &intent_ir.protocol_states {
+        residuals.push(protocol_residual_packet(
+            "state",
+            "protocol state",
+            &record.state_id,
+            &record.supporting_statement_ids,
+            "typed transitions, guards, initial-state identity, encoding, and bound action operands",
+        ));
+    }
+    for record in &intent_ir.interface_edge_timings {
+        residuals.push(protocol_residual_packet(
+            "interface_edge_timing",
+            "interface-edge timing",
+            &record.timing_id,
+            &record.supporting_statement_ids,
+            "an activation/guard, sample destination, drive value, and transaction or state association",
+        ));
+    }
+
+    residuals
+}
+
 fn build_isf_adapter_artifact(
     intent_ir: &IntentIr,
     intent_ir_path: &Path,
@@ -389,6 +484,11 @@ fn build_isf_adapter_artifact(
     // mapping #4) so a dropped temporal obligation is visible in the
     // artifact rather than silently lost; syntax is never fabricated.
     let mut residual_decisions = intent_ir.residual_decisions.clone();
+    // SWD-SERIAL-EXTRACTION.7d / ADR 0016: every projected protocol record receives an
+    // explicit adapter disposition. The current directly lowerable subset is empty because the
+    // record types do not carry every executable binding; per-record residuals keep that omission
+    // visible without blocking independently licensed ISF.
+    residual_decisions.extend(protocol_residual_decisions(intent_ir));
     residual_decisions.extend(isf_model.temporal_residuals().iter().cloned());
     // Register resets that could not be lowered to a storage `(reset V)`
     // (ISF-REGISTER-RESET-EMIT.2) are surfaced the same way, so an un-lowered reset is
@@ -436,8 +536,11 @@ mod tests {
     use tempfile::tempdir;
 
     use crate::error::Result;
-    use crate::ir::adapters::{AdapterArtifact, AdapterTarget};
-    use crate::ir::evidence::EvidenceIr;
+    use crate::ir::adapters::{AdapterArtifact, AdapterLoweringStatus, AdapterTarget};
+    use crate::ir::evidence::{
+        EvidenceIr, InterfaceClockEdge, InterfaceEdgeTimingRecord, ProtocolStateRecord,
+        SerialFrameField, SerialFramePhase, SwdOperation, SwdioDirection,
+    };
     use crate::ir::intent::IntentIr;
     use crate::ir::semantic::SemanticIr;
     use crate::ir::source::SourceIr;
@@ -693,6 +796,176 @@ mod tests {
             isf.rule_count, emitted_rules,
             "rule_count must equal emitted (rule …) forms\n{src}"
         );
+        Ok(())
+    }
+
+    #[test]
+    fn isf_adapter_residualizes_every_protocol_record_without_changing_rendered_isf() -> Result<()>
+    {
+        let tempdir = tempdir()?;
+        let mut intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "isf_protocol_residuals.md",
+            ISF_ADAPTER_TEST_SPEC,
+        )?;
+        let baseline = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &tempdir.path().join("baseline_adapter"),
+        )?;
+        assert!(
+            baseline
+                .residual_decisions
+                .iter()
+                .all(|packet| !packet.packet_id.starts_with("isf_protocol_"))
+        );
+        let baseline_isf = baseline.isf.expect("baseline ISF artifact");
+
+        intent_ir.serial_frame_fields = vec![
+            SerialFrameField {
+                field_id: "serial_field_0002".to_string(),
+                name: "ACK".to_string(),
+                bit_width: Some(3),
+                bit_range: Some((2, 0)),
+                phase: Some(SerialFramePhase::Acknowledge),
+                swdio_direction: Some(SwdioDirection::TargetDrives),
+                order: Some(1),
+                response_values: vec!["OK".to_string(), "FAULT".to_string()],
+                supporting_statement_ids: vec!["statement_ack".to_string()],
+            },
+            SerialFrameField {
+                field_id: "serial_field_0001".to_string(),
+                name: "REQUEST".to_string(),
+                bit_width: Some(1),
+                bit_range: Some((0, 0)),
+                phase: Some(SerialFramePhase::Request),
+                swdio_direction: Some(SwdioDirection::HostDrives),
+                order: Some(0),
+                response_values: Vec::new(),
+                supporting_statement_ids: vec!["statement_request".to_string()],
+            },
+        ];
+        intent_ir.swd_operations = vec![SwdOperation {
+            operation_id: "swd_operation_0001".to_string(),
+            response: "WAIT".to_string(),
+            access: None,
+            phase_count: 2,
+            has_data_phase: false,
+            turnaround_before_data: None,
+            supporting_statement_ids: vec!["statement_operation".to_string()],
+        }];
+        intent_ir.protocol_states = vec![ProtocolStateRecord {
+            state_id: "protocol_state_0001".to_string(),
+            machine_name: Some("serial machine".to_string()),
+            state_name: "Reset".to_string(),
+            action: None,
+            supporting_statement_ids: vec!["statement_state".to_string()],
+        }];
+        intent_ir.interface_edge_timings = vec![InterfaceEdgeTimingRecord {
+            timing_id: "interface_edge_timing_0001".to_string(),
+            actor_name: "target".to_string(),
+            signal_name: "DATA".to_string(),
+            clock_signal: "CLK".to_string(),
+            edge: InterfaceClockEdge::Rising,
+            samples_on_edge: true,
+            drive_changes_on_edge: true,
+            supporting_statement_ids: vec!["statement_edge".to_string()],
+        }];
+        intent_ir.write_to_disk()?;
+
+        let artifact = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &tempdir.path().join("protocol_adapter"),
+        )?;
+        assert_eq!(artifact.lowering_status, AdapterLoweringStatus::Renderable);
+        let isf = artifact.isf.clone().expect("protocol ISF artifact");
+        assert!(isf.is_renderable);
+        assert_eq!(isf.source_text, baseline_isf.source_text);
+        assert_eq!(isf.signal_count, baseline_isf.signal_count);
+        assert_eq!(isf.transaction_count, baseline_isf.transaction_count);
+        assert_eq!(isf.rule_count, baseline_isf.rule_count);
+
+        let protocol_residuals = artifact
+            .residual_decisions
+            .iter()
+            .filter(|packet| packet.packet_id.starts_with("isf_protocol_"))
+            .collect::<Vec<_>>();
+        assert_eq!(
+            protocol_residuals
+                .iter()
+                .map(|packet| packet.packet_id.as_str())
+                .collect::<Vec<_>>(),
+            vec![
+                "isf_protocol_serial_frame_field_serial_field_0002",
+                "isf_protocol_serial_frame_field_serial_field_0001",
+                "isf_protocol_operation_swd_operation_0001",
+                "isf_protocol_state_protocol_state_0001",
+                "isf_protocol_interface_edge_timing_interface_edge_timing_0001",
+            ]
+        );
+        for packet in &protocol_residuals {
+            assert_eq!(packet.automation_confidence.as_str(), "low");
+            assert_eq!(packet.candidate_interpretations.len(), 2);
+            assert!(packet.why_unresolved.contains("remains exact in IntentIR"));
+            assert!(packet.why_unresolved.contains("supporting statements:"));
+        }
+        assert!(
+            protocol_residuals[0]
+                .question
+                .contains("serial-frame field")
+        );
+        assert!(
+            protocol_residuals[0]
+                .why_unresolved
+                .contains("declared serial data wire")
+        );
+        assert!(
+            protocol_residuals[2]
+                .why_unresolved
+                .contains("ordered field/step membership")
+        );
+        assert!(
+            protocol_residuals[3]
+                .why_unresolved
+                .contains("typed transitions")
+        );
+        assert!(
+            protocol_residuals[4]
+                .why_unresolved
+                .contains("sample destination")
+        );
+
+        let repeated = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &tempdir.path().join("repeated_protocol_adapter"),
+        )?;
+        assert_eq!(artifact.residual_decisions, repeated.residual_decisions);
+
+        artifact.write_to_disk()?;
+        let reloaded =
+            AdapterArtifact::load_from_path(&artifact.artifact_layout.adapter_artifact_path)?;
+        assert_eq!(reloaded.residual_decisions, artifact.residual_decisions);
+
+        let isf_path = tempdir.path().join("protocol_residuals.isf");
+        fs::write(&isf_path, &isf.source_text)?;
+        let output = crate::ir::run_fsmgen_strict_check(&isf_path);
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        let check: serde_json::Value = serde_json::from_str(&stdout).unwrap_or_else(|error| {
+            panic!("fsmgen non-JSON: {error}\nstdout:{stdout}\nstderr:{stderr}")
+        });
+        assert_eq!(
+            check["diagnostic_summary"]["success"].as_bool(),
+            Some(true),
+            "protocol residuals must not invalidate independently licensed ISF: {stdout}\n{stderr}"
+        );
+        assert_eq!(
+            check["diagnostic_summary"]["diagnostic_count"].as_i64(),
+            Some(0)
+        );
+
         Ok(())
     }
 

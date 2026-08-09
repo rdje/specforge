@@ -6,10 +6,11 @@ answers:
   - "what is the rolling ledger archive protocol"
   - "why are two containment records at the bottom of CHANGES"
   - "what protects the validation projection when LIVE_ACHIEVEMENT_STATUS rolls over"
+  - "where is the first post-migration LIVE_ACHIEVEMENT_STATUS rollover segment"
 date: 2026-08-08
 status: current
 tags: [documentation, rolling-ledger, archive, continuity, validation]
-evidence: doctrine/live_document_size/rolling_ledgers.jsonl
+evidence: doctrine/live_document_size/rolling_ledgers.jsonl; docs/archive/rolling-ledgers/manifest.jsonl; docs/archive/rolling-ledgers/INDEX.md
 reverify: perl scripts/check_rolling_ledger_protocol.pl --report
 ---
 
@@ -43,6 +44,10 @@ capsule is
 `b00ff5f5c4a29554a20eea9d901a95848d54a644749eba74ad9618798dd9bd6a`; its root keeps the H1/current
 heading, 50 retained snapshot bullets, the complete gap/validation trailer, and later prepends. The
 real project-validation writer test proves that both managed markers still work at the stable root.
+The first post-migration rollover sealed the 12 oldest new prepends byte-for-byte in
+`docs/archive/rolling-ledgers/live-achievement-status/segment-0001-2026-08-08.md`, linked the newer live root
+to the older source capsule through the manifest/index, and reduced the live window from 72 to 60 records
+without touching the complete trailer or the exact 40-record migration suffix.
 `RUST_CODEBASE_ANALYSIS.md` completed the fourth migration in `.4e`. Its immutable 1,350-record
 capsule is
 `docs/archive/rolling-ledgers/rust-codebase-analysis/source-through-2026-08-08.md` with SHA-256

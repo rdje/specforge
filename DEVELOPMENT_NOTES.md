@@ -1,4 +1,17 @@
 # DEVELOPMENT_NOTES
+## SWD-SERIAL-EXTRACTION.7d (`2026-08-09`) — residual identity is the adapter's disposition ledger
+
+When a canonical record lacks enough operands for executable lowering, a collection-level warning is too weak:
+it cannot prove which records were considered, preserve their order, or support future incremental promotion.
+One residual packet per protocol record makes the disposition auditable. The stable upstream record id supplies
+identity, schema/input order supplies deterministic traversal, and the packet text names both provenance and the
+surface-specific missing bindings.
+
+Those packets belong on the adapter artifact, not inside `IsfIr`. `IsfIr` models constructs that can actually
+render; inserting placeholder protocol nodes there would blur the executable/non-executable boundary. Keeping
+residual accounting alongside the typed tree leaves independently licensed output byte-identical and strict-valid,
+while preventing renderability from being mistaken for protocol completeness.
+
 ## SWD-SERIAL-EXTRACTION.7c (`2026-08-09`) — canonical does not mean executable
 
 IntentIR is the canonical product boundary, so dropping a grounded protocol observation there would force an

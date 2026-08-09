@@ -1,3 +1,20 @@
+### SWD-SERIAL-EXTRACTION.7d — account for every protocol record at the ISF boundary
+
+- Added deterministic adapter residual generation for every serial-frame field, protocol operation, protocol
+  state, and interface-edge timing in canonical IntentIR. Each packet id includes the surface and upstream
+  record id; packets retain schema/input order, supporting statement ids, and the exact missing bindings.
+- Kept the directly lowerable subset empty under ADR 0016: no transition, guard, initial state, encoding,
+  signal/value, port/storage, activation, or schedule is inferred. Protocol residuals do not enter `IsfIr`,
+  alter rendered counts/source, or manufacture renderability.
+- A full adapter regression proves five records produce five stable, round-trippable packets, repeat builds are
+  equal, unrelated `.isf` is byte-identical and renderable, and the real FSMGen strict checker reports success
+  with zero diagnostics. All seven adapter tests and warning-deny Clippy pass. Full CI passes 1,771 tests / five
+  ignored, all six doctrines, rustdoc, mdBook doctests/build, and final locality.
+- The status update reached its mandatory 90% record threshold, so the same commit performs the declared
+  rollover: 12 oldest post-migration records are byte-identical in authenticated sealed segment 0001, their live
+  duplicates are removed, and the current window falls 72→60 without changing the 40-record retained suffix or
+  writer-managed validation trailer.
+
 ### SWD-SERIAL-EXTRACTION.7c — carry protocol observations into canonical IntentIR exactly
 
 - Added additive serde-default/skip-empty IntentIR collections for serial-frame fields, SWD operation
