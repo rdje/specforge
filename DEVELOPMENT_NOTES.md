@@ -1,4 +1,17 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.33b (`2026-08-09`) — validate boundaries forward from known-safe offsets
+
+`match_indices` already guarantees that its offset is a character boundary. The safe implementation preserves
+that guarantee by asking for `text.get(..match_index)` and then applying `ends_with(". ")`; it never invents a
+new offset by subtracting bytes. Because the searched token is ASCII and `to_ascii_lowercase` preserves string
+length, the same match index remains valid for name extraction from the original text.
+
+Both catalogs call the one helper. The regression deliberately couples a non-declaration containing a multi-byte
+prefix with a real declaration after non-ASCII prose, so it proves both safety and retained ASCII behavior rather
+than merely asserting “no panic.” The live USB retry then exercises the same path across 8,412 statements. No
+public CLI/schema contract changed, so the mdBook's existing EvidenceIR contract remains current without a new
+behavior section.
+
 ## CORPUS-COVERAGE.2.33a (`2026-08-09`) — string offsets are bytes, not characters
 
 `match_indices` did exactly what Rust promises: it returned a byte offset on a valid character boundary. The

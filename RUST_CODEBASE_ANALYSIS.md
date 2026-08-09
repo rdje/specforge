@@ -4,6 +4,17 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-09 — UTF-8-safe declaration boundary; `CORPUS-COVERAGE.2.33b`)
+
+- `is_signal_declaration_start` now owns the shared boundary invariant for both signal catalogs. It accepts byte
+  zero or a valid prefix ending in `. `; `str::get(..match_index)` preserves the boundary guarantee supplied by
+  `match_indices` and removes all backward offset arithmetic.
+- A direct regression calls both catalogs with a multi-byte-marker non-declaration and a real declaration after
+  non-ASCII prose. It proves no panic, no false `INTEGRITY` declaration, and retained `PREADY` discovery.
+- The repaired release builds and validates the real 548-page USB EvidenceIR from the promoted SourceIR without
+  re-ingest: 918 anchors / 8,267 spans / 507 visuals / 22,029 links / 8,412 statements. Focused EvidenceIR and
+  complete CI are green; `.2.33c` owns downstream projection and the quality findings, not this boundary repair.
+
 ## Session update (2026-08-09 — USB declaration-catalog UTF-8 blocker; `CORPUS-COVERAGE.2.33a`)
 
 - `collect_known_signal_names` and `collect_signals_with_explicit_direction_declarations` duplicate a

@@ -19,14 +19,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.33a` — USB 3.2 cascade-blocker probe completed, awaiting commit.
-- Current state: current release `9cd700…` CPU-ingested the authorized external USB 3.2 PDF at 81–82% free RAM,
-  producing 548 pages / 507 visual assets / 283 tables / 5,830 elements / zero residuals. Evidence then panicked
-  before writing output: both signal-declaration collectors slice `lowered[idx - 2..idx]`, and the match byte
-  offset places `idx - 2` inside a three-byte `U+F0B7` bullet. The failed symlink-relative launch was separately
-  an expected portability refusal and made no change.
-- Next action: commit `.2.33a`, then implement `.2.33b`'s shared UTF-8-safe sentence-boundary helper and tests;
-  `.2.33c` will rebuild and resume evidence from the promoted SourceIR without another Docling ingest.
-- In-flight uncommitted: fresh ignored USB normalized/SourceIR plus the 4.9 MiB byte-verified rollback under
-  `.cache/task-workspaces/CORPUS-COVERAGE.2.33`; no EvidenceIR exists. User settings remain untouched.
+- Active unit: `CORPUS-COVERAGE.2.33b` — shared UTF-8 repair and real USB EvidenceIR retry complete, awaiting commit.
+- Current state: both declaration catalogs use one valid-prefix boundary helper; the focused 252-test EvidenceIR
+  suite and full CI (1,776 pass / five ignored) are green. Rebuilt release `1710e5…` constructs and validates USB
+  EvidenceIR from the promoted SourceIR: 918 anchors / 8,267 spans / 507 visuals / 22,029 links / 8,412 statements.
+- Next action: commit `.2.33b`, then execute `.2.33c`: build/validate SemanticIR and IntentIR, adapt/render/FSMGen
+  strict if possible, classify the 46 unexplained tables and false-looking semantic signal names honestly, update
+  corpus counts/book truth, remove the exact rollback and residue, and close `.2.33` without another Docling run.
+- In-flight uncommitted: one Rust helper/test, aligned live docs, fresh ignored USB normalized/SourceIR/EvidenceIR,
+  and the 4.9 MiB byte-verified rollback under `.cache/task-workspaces/CORPUS-COVERAGE.2.33`.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

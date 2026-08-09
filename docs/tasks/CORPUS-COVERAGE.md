@@ -102,7 +102,7 @@ today's ephemeral normalized-directory count.
   deterministic extractors, not new code); WIRE-BASED-100 + register/wire golds + `kg-bench` stay green
   (orthogonal — the 4 gold docs are not re-ingested). Record per-doc before/after typed-surface deltas here.
 - ID: `CORPUS-COVERAGE.2.33` · Status: `in_progress` (`2026-08-09`, DATA/CODE/DOC) · Children: `.2.33a`
-  probe (done), `.2.33b` UTF-8 boundary fix (pending), `.2.33c` cascade/signoff (pending). Goal: re-ingest USB 3.2
+  probe (done), `.2.33b` UTF-8 boundary fix (done), `.2.33c` cascade/signoff (pending). Goal: re-ingest USB 3.2
   (`usb_3_2_revision_1_0_2017_09`) from the owner-authorized external PDF resolved through the repository host-library route with the current release
   binary and CPU-only Docling, then build/validate EvidenceIR→SemanticIR→IntentIR→ISF. It is the only current
   SourceIR document with no EvidenceIR; its prior SourceIR records 548 pages / 224 pictures / 283 structured
@@ -118,10 +118,13 @@ today's ephemeral normalized-directory count.
   collectors use the byte offset returned by `match_indices("signal ")` but inspect the preceding characters with
   `lowered[idx - 2..idx]`; `idx - 2` lands inside the three-byte private-use bullet. No EvidenceIR was written,
   the promoted SourceIR is intact, and the 4.9 MiB same-volume pre-ingest rollback remains byte-verified.
-- ID: `CORPUS-COVERAGE.2.33b` · Status: `pending` (`CODE`) · Goal: replace the duplicated unsafe preceding-byte
-  slice with one UTF-8-safe sentence-boundary helper shared by both declaration collectors. Add direct regressions
-  for the USB private-use bullet and a legitimate declaration after a non-ASCII sentence; preserve ASCII behavior
-  and run focused/full gates before committing.
+- ID: `CORPUS-COVERAGE.2.33b` · Status: `done` (`2026-08-09`, CODE/DOC) · Goal/result: replaced the duplicated
+  unsafe preceding-byte slice with one valid-prefix sentence-boundary helper shared by both declaration catalogs.
+  A direct two-catalog regression proves multi-byte-marker prose neither panics nor declares `INTEGRITY`, while a
+  real `PREADY` input declaration after non-ASCII prose remains visible. Rebuilt release `1710e5…` constructs and
+  validates USB EvidenceIR from the promoted SourceIR without re-ingest: 918 anchors / 8,267 spans / 507 visuals /
+  22,029 links / 8,412 statements. Focused EvidenceIR passes 252 tests / five ignored; full CI passes 1,776 tests /
+  five ignored plus all doctrines, Clippy, rustdoc, and mdBook.
 - ID: `CORPUS-COVERAGE.2.33c` · Status: `pending` (`DATA/DOC`) · Goal: rebuild the release binary, resume from
   the already-promoted USB SourceIR without a second Docling ingest, complete and validate every downstream stage,
   classify/render/FSMGen-check the adapter, record deltas, remove exact rollback/residue, and close `.2.33`.
@@ -144,28 +147,17 @@ today's ephemeral normalized-directory count.
 
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.33b`
 
-- [ ] **REPRODUCE / MEASURE** — direct pre-fix regression panics on the private-use bullet at the catalog seam.
-- [ ] **ROOT CAUSE (WHY + WHERE)** — both collectors share one duplicated `idx - 2..idx` byte-slice defect.
-- [ ] **ADDRESSED (verified)** — one helper checks the prefix at a valid match boundary and both collectors use it.
-- [ ] **NO REGRESSION** — bullet and non-ASCII sentence-boundary tests, focused EvidenceIR tests, formatting,
+- [x] **REPRODUCE / MEASURE** — real pre-fix USB EvidenceIR deterministically panicked at the catalog seam; the
+  direct regression preserves that exact multi-byte-prefix shape and passes on the fix.
+- [x] **ROOT CAUSE (WHY + WHERE)** — both collectors shared one duplicated `idx - 2..idx` byte-slice defect.
+- [x] **ADDRESSED (verified)** — one helper checks the prefix at a valid match boundary and both collectors use it.
+- [x] **NO REGRESSION** — bullet and non-ASCII sentence-boundary tests, focused EvidenceIR tests, formatting,
   warning-deny Clippy, complete CI, and USB evidence retry pass.
-- [ ] **GENERICITY** — no document key, vendor, bullet codepoint, or signal name appears in production logic.
-- [ ] **LOCKSTEP** — code analysis, live docs, task, book if behavior needs explanation, fact, and memory agree.
+- [x] **GENERICITY** — no document key, vendor, bullet codepoint, or signal name appears in production logic.
+- [x] **LOCKSTEP** — code analysis, live docs, task, fact, and memory agree; no public CLI/schema contract changed,
+  so the existing mdBook EvidenceIR contract remains current without a new behavior section. The triggered
+  changelog rollover seals 29 whole aged-out records with exact content/order and leaves the declared 85+2 view.
 
-### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.33`
-
-- [ ] **REPRODUCE / MEASURE** — record the pre-ingest stage census, source identity/hash/size, SourceIR
-  structural counts, current binary identity, memory headroom, and a repository-volume rollback copy.
-- [ ] **ROOT CAUSE (WHY + WHERE)** — establish why USB 3.2 alone has SourceIR without EvidenceIR and distinguish
-  missing downstream construction from an extraction failure.
-- [ ] **ADDRESSED (verified)** — one CPU Docling ingest plus deterministic cascade leaves current, valid
-  SourceIR/EvidenceIR/SemanticIR/IntentIR and either a strict-valid adapter output or an explicit honest block.
-- [ ] **NO REGRESSION** — validate the rebuilt stages, run real FSMGen strict when `.isf` renders, preserve all
-  unrelated generated artifacts, and pass focused corpus/KG/doctrine/book/locality checks warranted by findings.
-- [ ] **GENERICITY** — execute existing universal extractors without document-specific code, hard-coded facts,
-  LLM/VLM inference, or relaxed validation.
-- [ ] **LOCKSTEP** — update the `.2` row/count/frontier, live ledgers, mdBook if user-visible corpus truth changes,
-  Knowledge Map for any durable causal fact, and `MEMORY.md`; commit before selecting refresh #34.
 - ID: `CORPUS-COVERAGE.3` · Status: `done` (`2026-08-09`, DOC/AUDIT) · Goal: reconcile the `.2`
   frontier with the later artifact-cleanup lifecycle after a live census found only the freshly promoted SWD
   normalized bundle, while `.2` still claimed 32 restored bundles and only 24 normalized-missing documents.
@@ -188,8 +180,8 @@ today's ephemeral normalized-directory count.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier (active): `CORPUS-COVERAGE.2.33b` — land the shared UTF-8-safe declaration-boundary fix proved by
-  `.2.33a`, then `.2.33c` resumes USB EvidenceIR from the already-promoted SourceIR without re-ingesting.
+- Frontier (active): `CORPUS-COVERAGE.2.33b` — commit the verified UTF-8-safe declaration repair and mandatory
+  changelog rollover; only the clean post-commit pivot may advance to `.2.33c` and resume the downstream cascade.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**32 refreshes done after #32;
   24 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#32: #29/#31 CHI-C2C marquee message-field refreshes,
@@ -278,6 +270,14 @@ leaving the refreshed SourceIR→adapter stage chains intact.
 
 ## Changelog
 
+- `2026-08-09`: `.2.33b` CODE/DOC DONE. Both declaration catalogs now call one valid-prefix boundary helper;
+  a multi-byte-marker non-declaration and a real declaration after non-ASCII prose directly prove safety and
+  retained behavior. Rebuilt release `1710e5…` constructs/validates USB EvidenceIR from the promoted SourceIR
+  without re-ingest (918 anchors / 8,267 spans / 507 visuals / 22,029 links / 8,412 statements). Focused
+  EvidenceIR 252/252 plus five ignored and full CI 1,776/1,776 plus five ignored pass with all doctrines,
+  warning-deny Clippy, rustdoc, and mdBook. The mandatory changelog rollover seals 29 aged-out records in
+  authenticated segment 0001 and restores the 85 ordinary + two detached live view. After commit, frontier →
+  `.2.33c` downstream cascade and quality disposition.
 - `2026-08-09`: `.2.33a` PROBE DONE. Preserved a 4.9 MiB byte-identical same-volume SourceIR baseline;
   rebuilt release `9cd700…`; authorized-external CPU ingest produced USB 3.2 SourceIR at 548 pages / 507 visual /
   283 tables / 5,830 elements / zero residuals with 81–82% RAM free. The repo-relative symlink launch first

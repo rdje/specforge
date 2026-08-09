@@ -2217,6 +2217,13 @@ fn infer_visual_role(
 /// synthesized `Signal X is input/output` statements.  These come from signal
 /// description tables (High confidence) and are the known universe of signals
 /// we should look for in prose.
+fn is_signal_declaration_start(text: &str, match_index: usize) -> bool {
+    match_index == 0
+        || text
+            .get(..match_index)
+            .is_some_and(|prefix| prefix.ends_with(". "))
+}
+
 pub(crate) fn collect_known_signal_names(
     statements: &[ExtractedStatement],
 ) -> std::collections::HashSet<String> {
@@ -2229,8 +2236,7 @@ pub(crate) fn collect_known_signal_names(
         // (consecutive non-empty lines are concatenated into one statement during markdown parsing).
         // A valid declaration starts either at position 0 or after ". " (sentence boundary).
         for (idx, _) in lowered.match_indices("signal ") {
-            let is_declaration_start = idx == 0 || (idx >= 2 && &lowered[idx - 2..idx] == ". ");
-            if !is_declaration_start {
+            if !is_signal_declaration_start(&lowered, idx) {
                 continue;
             }
             let name_start = idx + 7; // past "signal "
@@ -2264,8 +2270,7 @@ pub(crate) fn collect_signals_with_explicit_direction_declarations(
         let text = &stmt.text;
         let lowered = text.to_ascii_lowercase();
         for (idx, _) in lowered.match_indices("signal ") {
-            let is_declaration_start = idx == 0 || (idx >= 2 && &lowered[idx - 2..idx] == ". ");
-            if !is_declaration_start {
+            if !is_signal_declaration_start(&lowered, idx) {
                 continue;
             }
             let tail = &lowered[idx..];
@@ -15506,6 +15511,49 @@ mod tests {
         looks_like_encoding_literal, looks_like_structural_contents_entry_for_semantic_hint,
         numbered_list_prefix, parse_encoding_numeric_literal, signal_constraint_fact_key,
     };
+
+    #[test]
+    fn signal_declaration_catalog_utf8_boundary() {
+        use super::{
+            EvidenceModality, ExtractedStatement, StatementClass, collect_known_signal_names,
+            collect_signals_with_explicit_direction_declarations,
+        };
+
+        let statement = |id: &str, text: &str| ExtractedStatement {
+            statement_id: id.to_string(),
+            class: StatementClass::SourceFact,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: Vec::new(),
+            related_visual_evidence_ids: Vec::new(),
+        };
+        let statements = [
+            statement(
+                "multibyte-list-item",
+                "- \u{f0b7} Signal integrity using differential drivers, receivers, and shielding",
+            ),
+            statement(
+                "non-ascii-prefix",
+                "Résumé. Signal PREADY is input width 1.",
+            ),
+        ];
+
+        let all_declared = collect_known_signal_names(&statements);
+        assert_eq!(
+            all_declared.len(),
+            1,
+            "unexpected declarations: {all_declared:?}"
+        );
+        assert!(all_declared.contains("PREADY"));
+
+        let direction_declared = collect_signals_with_explicit_direction_declarations(&statements);
+        assert_eq!(
+            direction_declared.len(),
+            1,
+            "unexpected direction declarations: {direction_declared:?}"
+        );
+        assert!(direction_declared.contains("PREADY"));
+    }
 
     // ── KG-ISF-TRANSACTIONS.2m — signal → channel membership from `<role> channel signals` captions ─
     #[test]

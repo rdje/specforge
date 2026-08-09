@@ -14,7 +14,7 @@ evidence: crates/specforge/src/ir/evidence.rs (collect_known_signal_names and co
 reverify: "target/release/specforge evidence generated/source_ir/usb_3_2_revision_1_0_2017_09/source_ir.json; cargo test -p specforge signal_declaration_catalog_utf8_boundary"
 ---
 
-**Open at `.2.33a`; repair owned by `.2.33b`.** USB 3.2's normalized Markdown contains the list item
+**Fixed at `.2.33b`.** USB 3.2's normalized Markdown contains the list item
 `- U+F0B7 Signal integrity ...`. Evidence statement normalization lowercases the ASCII word but preserves the
 three-byte private-use bullet. `str::match_indices("signal ")` returns a valid **byte** offset at the match, then
 both declaration catalogs test for a preceding `. ` sentence boundary with `lowered[idx - 2..idx]`. Subtracting
@@ -26,3 +26,9 @@ latent in the direction-aware path. The correct universal boundary is to take th
 `idx` and ask whether that prefix ends with `. `—never subtract a character count from a byte offset. Production
 logic must not name USB, the bullet codepoint, or the surrounding prose. A regression must cover both the private-
 use bullet non-declaration and a legitimate `Signal X ...` declaration after a sentence containing non-ASCII text.
+
+`is_signal_declaration_start` now takes the already-valid prefix with `text.get(..match_index)` and checks for
+start-of-text or `. `. Both catalogs call it. The focused regression proves the multi-byte-marker prose neither
+panics nor enters the declaration catalog and that a direction declaration after non-ASCII prose remains visible.
+Rebuilt release `1710e5…` then constructs and validates the real USB EvidenceIR successfully: 918 anchors, 8,267
+spans, 507 visual records, 22,029 links, and 8,412 statements. Full CI passes 1,776 tests with five ignored.
