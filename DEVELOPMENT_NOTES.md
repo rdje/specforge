@@ -1,4 +1,22 @@
 # DEVELOPMENT_NOTES
+## ACTIVE-TASK-EVIDENCE-CONTAINMENT.0 (`2026-08-09`) — an active root needs two kinds of truth
+
+An active task root must answer “what can I do next?” while historical evidence answers “what happened and why?”
+The 222,616-byte PDF task currently mixes both roles. Applying the completed-tree capsule pattern would make the
+current view a terminal summary even though the program still needs leaf creation, status transitions,
+verification, and commits. The new tree therefore starts from a read-only boundary and defers topology until its
+active update semantics are measured.
+
+That boundary also proves size is not the only problem. The legacy frontier paragraph names `.9.3` active while
+the same paragraph closes its children, some node headers remain `in_progress` beside later `done` evidence, and
+the newest `.10i` completion never reached the frontier paragraph. A mechanical split would preserve a
+contradiction or accidentally promote one stale sentence as current authority. The design census must identify
+the evidentiary precedence rule, then record any current-state repair openly while retaining literal history.
+
+The opening commit changes no target byte. It records both the content digest and Git blob, the last path-changing
+commit, the 70-commit history, and the existing warning geometry. This gives the later source-lock phase a durable
+provenance point without pretending the initial task-tree creation is itself the final migration boundary.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10b.ii (`2026-08-09`) — terminal closure is a two-product truth
 
 The migrated result deliberately has two authorities. The stable task path answers current operational questions:

@@ -29,6 +29,7 @@ The author template is linked separately and is never classified as active work.
 
 | Tree | Status | Purpose | File |
 | --- | --- | --- | --- |
+| `ACTIVE-TASK-EVIDENCE-CONTAINMENT` | `active` | keep active task history bounded and resumable | [open](tasks/ACTIVE-TASK-EVIDENCE-CONTAINMENT.md) |
 | `AMBIGUITY-PHRASE-DETECTOR` | `done` | flag vague / under-specified spec prose for review | [open](tasks/AMBIGUITY-PHRASE-DETECTOR.md) |
 | `ARTIFACT-PATH-PORTABILITY` | `done` | repository-relative IR provenance and move-safe generated artifacts | [open](tasks/ARTIFACT-PATH-PORTABILITY.md) |
 | `AUDIT-DOC-RECONCILE` | `done` | fix doc drift found by the post-ISF-ONLY audit | [open](tasks/AUDIT-DOC-RECONCILE.md) |

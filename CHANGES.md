@@ -1,3 +1,15 @@
+### ACTIVE-TASK-EVIDENCE-CONTAINMENT.0 — own and pin the active task boundary
+
+- Opened a separate active-tree containment program before touching `PDF-VARIANT-DIGESTION`; the completed
+  terminal-containment tree remains closed and ADR 0018's terminal topology remains unavailable to active work.
+- Pinned the untouched target at repository boundary `684079b1`: 2,393 lines / 222,616 bytes / max 191,
+  SHA-256 `9284dce4…a19d4`, Git blob `7d89ea4f…b555`, 70 path commits, and only 207 bytes before warning.
+- Surfaced a correctness risk: the legacy `Current frontier` still names `.9.3` active while its children and
+  later work record completion, and several node headers disagree with inline status. `.1.1` owns an exhaustive
+  current/history and reader/writer census before topology or target edits.
+- Added the durable boundary fact and synchronized the roadmap, current status, continuity pointer, task catalog,
+  and live-docs book section. No product, target source, generated artifact, threshold, or ceiling changed.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10b.ii — migrate and close terminal task evidence
 
 - Copied the exact `.10b.i` task source from commit `05d80d29` to an immutable 2,538-line / 242,172-byte

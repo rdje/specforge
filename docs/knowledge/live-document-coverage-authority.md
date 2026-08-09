@@ -13,6 +13,8 @@ answers:
   - "can an active task tree use the terminal task archive topology"
   - "which active task tree is next at the live document warning"
   - "how is the terminal task source archive boundary verified"
+  - "what is the exact active PDF task evidence baseline"
+  - "is the PDF-VARIANT-DIGESTION current frontier internally consistent"
 date: 2026-08-08
 status: current
 tags: [documentation, containment, git, submodule]
@@ -34,8 +36,17 @@ SHA-256 `f8e10e…96b68`, then left a 119-line / 7,978-byte closed summary at th
 directly retrievable through the bounded archive index/manifest; no ceiling widened and no evidence was trimmed.
 
 This rule applies only to a completed tree. Active `PDF-VARIANT-DIGESTION` is 2,393 lines / 222,616 bytes,
-only 207 bytes below warning. Its next append requires separately task-owned active-tree containment; it may not
-borrow the terminal topology or a wider ceiling.
+191 maximum content-line bytes, SHA-256 `9284dce40ad896c3de3811e95c3fdd347132b1849083499e9c543fc9026a19d4`,
+and Git blob `7d89ea4fe59e53e55614b5730bded40d99b4b555`. Its 222,616 bytes sit only 207 below warning. The
+`ACTIVE-TASK-EVIDENCE-CONTAINMENT` tree now owns its active boundary; `.0` pins the unchanged source and `.1.1`
+owns the current/history and reader/writer census. The target may not accept another ordinary append, borrow the
+terminal topology, or receive a wider ceiling before that migration.
+
+The legacy current-state text is internally inconsistent: `## Current frontier` names `.9.3` active while the
+same section records `.9.3a` and `.9.3b` done, several node headers still say `in_progress` despite inline
+completion evidence, and the later `.10i` completion is absent from that frontier paragraph. The containment
+census must explicitly distinguish historical evidence from current authority; it may neither preserve stale
+text as current truth nor rewrite literal history silently.
 
 `scripts/check_task_tree_archive.pl` now enforces `migrated`: the capsule retains the exact locked identity, and
 the checker validates the closed root, exact index/manifest routes, provenance, milestones, and ceilings. Its

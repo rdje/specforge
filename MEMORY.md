@@ -21,14 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10b.ii` — terminal task migration and program closure;
-  complete and verified, commit pending.
-- Current state: the exact `05d80d29` source is an immutable 2,538-line / 242,172-byte capsule at
-  `f8e10e…96b68`; the stable task path is a 119-line / 7,978-byte closed summary over a bounded three-link index
-  and manifest. Migrated enforcement passes; the adoption program has no frontier.
-- Next action: commit `.10b.ii`, then create a new top-level task tree that owns active containment before any
-  append to `PDF-VARIANT-DIGESTION` (222,616 bytes, 207 before warning).
-- In-flight uncommitted: verified `.10b.ii` capsule/root/index/manifest/surface/reader/docs migration; no product,
-  canonical artifact, shared input, or existing ceiling changed. `.project-data/tmp` contains only `.gitkeep`
-  plus `xcrun_db`.
+- Active unit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.0` — own and pin the active task boundary; complete and verified,
+  commit pending.
+- Current state: the new active-containment tree owns the unchanged `PDF-VARIANT-DIGESTION` source at 2,393 lines /
+  222,616 bytes / max 191 / `9284dce4…a19d4`, only 207 bytes before warning. The legacy current-frontier and node
+  statuses disagree; `.1.1` owns the evidence-backed current/history census before any target edit.
+- Next action: commit `.0`, then run `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1` to enumerate semantic roles, every
+  reader/writer, reconstruction requirements, and the authoritative active frontier.
+- In-flight uncommitted: new owner tree, exact boundary fact, and impact-routed continuity/live-book updates only;
+  the PDF task, product code, generated artifacts, shared inputs, thresholds, and ceilings are unchanged.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

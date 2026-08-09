@@ -146,6 +146,10 @@ in the capsule.
 This topology applies only when every leaf is complete and reopening is forbidden. The same census finds the
 active `PDF-VARIANT-DIGESTION` task tree at 222,616 bytes, 207 bytes below warning. Its next append requires a
 separately owned active-tree partition design; it cannot borrow the terminal rule or a wider ceiling.
+`ACTIVE-TASK-EVIDENCE-CONTAINMENT.0` now supplies that ownership and pins the untouched 2,393-line source at
+SHA-256 `9284dce4…a19d4`. The opening read also finds that the legacy frontier paragraph and several node-status
+headers disagree with completion evidence, so the next leaf inventories current versus historical authority
+before choosing a live partition. No migration may silently turn that stale text into current truth.
 
 All four root-ledger migrations have landed. `CHANGES.md`, `DEVELOPMENT_NOTES.md`,
 `LIVE_ACHIEVEMENT_STATUS.md`, and `RUST_CODEBASE_ANALYSIS.md` are bounded current views, while their

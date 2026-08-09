@@ -113,9 +113,12 @@ Five active program groups support that north star:
   the neutral two-state checker, 15 fail-closed cases, and an exact 2,538-line / 242,172-byte source lock while
   proving every archive path absent. `.10b.ii` has now copied that committed source byte-for-byte to an immutable
   terminal, replaced the stable task path with a 119-line closed summary behind a bounded index/manifest, and
-  closed `.10` plus the entire adoption program. Its census blocks
-  another append to active `PDF-VARIANT-DIGESTION`—222,616 bytes, 207 before warning—until a new task tree owns
-  active-tree containment; that new top-level task tree is the next continuity action. The completed `.0`–`.10`
+  closed `.10` plus the entire adoption program. Its census blocks another append to active
+  `PDF-VARIANT-DIGESTION`—222,616 bytes, 207 before warning. The new
+  [`ACTIVE-TASK-EVIDENCE-CONTAINMENT`](docs/tasks/ACTIVE-TASK-EVIDENCE-CONTAINMENT.md) tree now owns that boundary;
+  `.0` pins the unchanged source at 2,393 lines / 222,616 bytes / SHA-256 `9284dce4…a19d4` and exposes a legacy
+  frontier/status contradiction that `.1.1` must census before topology is selected or the target changes. The
+  completed `.0`–`.10`
   [`LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`](docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md)
   implementation keeps current documentation and project data bounded on the repository volume; completed
   [`ARTIFACT-PATH-PORTABILITY`](docs/tasks/ARTIFACT-PATH-PORTABILITY.md) extends move-safe storage through every
