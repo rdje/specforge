@@ -28,6 +28,7 @@
 | [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md) | 2026-06-14 | `current` | ingest sizes each page-range batch to the host's total physical RAM so a small machine completes |
 | [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md) | 2026-06-14 | `current` | ingest disk pre-flight refuses before launching when free disk is below a source-size-scaled requirement |
 | [ingest-ram-guard](../knowledge/ingest-ram-guard.md) | 2026-06-14 | `current` | ingest has a built-in autonomous RAM guard that aborts cleanly before the host crosses a danger ceiling |
+| [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md) | 2026-08-09 | `current` | Introducing CoreSight refresh is portable and its apparent relation topology is unauthoritative |
 | [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md) | 2026-06-23 | `current` | The `.isf` emitter drops an enum whose member value is a bare binary-looking token (only `0`/`1` digits, leng… |
 | [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md) | 2026-06-07 | `current` | ISF CAN describe a state machine — proven idiom is storage-var + switch + select + rule-trigger (FSMGen low… |
 | [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md) | 2026-06-18 | `current` | The emitted `.isf` interface now lowers grounded actor-relative signal DIRECTION from the protocol's INITIATO… |
@@ -60,4 +61,3 @@
 | [nli-intent-gate](../knowledge/nli-intent-gate.md) | 2026-06-05 | `current` | NLI intent gate — active demote-to-residual of un-entailed contracts (intent --nli-verify) |
 | [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md) | 2026-06-15 | `current` | Coordinated drive/read objects + relative-clause distribution are already implemented in the production hand… |
 | [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md) | 2026-06-11 | `current` | Offset-suffixed bit cells (31:28 +04) are dword-relative — capture the literal bit_range + byte_offset, nev… |
-| [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md) | 2026-06-10 | `current` | Packet/flit protocols declare message FIELDS in field-titled tables — the header vocabulary types the rows |

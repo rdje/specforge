@@ -80,6 +80,7 @@
 - [ingest-adaptive-batch-sizing](ingest-adaptive-batch-sizing.md)
 - [ingest-disk-preflight](ingest-disk-preflight.md)
 - [ingest-ram-guard](ingest-ram-guard.md)
+- [introducing-coresight-guide-refresh-is-authority-empty](introducing-coresight-guide-refresh-is-authority-empty.md)
 - [isf-enum-value-literal-emit-gate](isf-enum-value-literal-emit-gate.md)
 - [isf-fsm-via-switch-select](isf-fsm-via-switch-select.md)
 - [isf-initiator-perspective-direction](isf-initiator-perspective-direction.md)

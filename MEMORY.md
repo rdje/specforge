@@ -21,12 +21,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.38`; guarded Introducing CoreSight current-binary refresh.
-- Current state: child `.2.38a` is durably committed and `validate <artifact>` now backannotates only the explicit
-  repository-owned artifact plus its adjacent report. Original pre-side-effect #38 hashes/counts and the complete
-  validator-side-effect state remain in ignored task evidence; the source is authenticated at `08a37c35…162`.
-- Next action: run the guarded CPU ingest from the authenticated same-SSD source, regenerate the complete #38
-  canonical chain, and measure every relation/topology delta against current generic authority.
-- In-flight uncommitted: none; ignored #38 task evidence must remain until fresh regeneration and the parent
-  refresh gates are complete.
+- Active unit: `CORPUS-COVERAGE.2.38`; complete the verified Introducing CoreSight signoff and commit workflow.
+- Current state: two guarded ingests produce 32 pages / 25 visuals / four tables / 250 elements at 44% peak used.
+  Current authority removes nine false prose relations, six interfaces, eight ports, four connectivity edges,
+  and the four-signal/two-enum surface. The methodology guide retains 228 statements and blocks honestly with one
+  temporal residual. Two cascades reproduce all 12 hashes; WIRE/I2C/SWD, KG 156/156, 66/66 FSMGen strict,
+  persisted-path, and locality gates pass.
+- Next action: stage the completed live-doc/mdBook/fact alignment, run final doctrines, commit `.2.38`, then
+  select and own refresh #39 from the 18-document tail.
+- In-flight uncommitted: generated #38 artifacts and tracked signoff alignment are complete; the exact ignored
+  rollback/incident evidence is deleted with zero task-id residue, and only the final commit workflow remains.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

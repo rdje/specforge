@@ -1,4 +1,25 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.38 (`2026-08-09`) — a relation record is not topology authority by itself
+
+Introducing CoreSight was selected specifically because its retained EvidenceIR appeared stronger than the
+preceding authority-empty guides: nine actor-signal relations flowed into six interfaces, eight ports, four
+connectivity edges, and a four-signal/two-enum adapter. Inspection after fresh current-binary extraction shows
+that appearance was false. Relations such as `RAM is reads APB`, `means drives ATB`, `debugger does reads DRW`,
+and `ETM only drives ATB` are sentence-grammar fragments. They neither declare a signal nor identify a stable
+hardware endpoint, so current generic actor and interface authority correctly rejects the complete topology.
+
+The SourceIR delta independently supports that conclusion. Of 88 old records absent by exact text, 83 are short
+diagram labels and five are prose/header records with an appended diagram label; each of those five has a clean
+replacement. The net 333→250 delta therefore removes 83 flattened labels without losing the guide narrative.
+Evidence keeps 228 statements, six normative facts, and one signal constraint. Semantic/Intent keep four actors,
+13 phases, 21 invariants, 49 behaviors, and 22 constraints, while the high-confidence methodology classification
+prevents a non-target guide from being mistaken for an under-extracted hardware contract.
+
+The remaining temporal statement names `CTI` but has no declared interface boundary or supported ISF stability
+form. The adapter preserves it as one residual and blocks instead of manufacturing a port. This is the intended
+division of authority: prose remains useful intent evidence, while relation-shaped text cannot bootstrap a
+hardware boundary.
+
 ## CORPUS-COVERAGE.2.38a (`2026-08-09`) — command identity must outrank embedded output identity
 
 Stage producers correctly persist through their embedded `artifact_layout`: that is the canonical destination

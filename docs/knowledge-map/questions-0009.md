@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
+  > why is category 3 (platform/system-IP) topology not lowered to .isf (ISF has no static-topology construct + the emit is single-initiator-actor; cross-component topology is structurally absent from the emit by design — KG-ISF-COMPLETENESS.2a.ii)
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > why is category 4 (CPU ISA) ISF-thin (the only lowerable cat-4 intent is CSRs, which are registers; their bit-fields are UNLOCATED so they don't reach .isf — an extraction-recall gap, not a missing ISF construct)
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > why is channel membership metadata-only and not lowered to .isf
+- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
+  > why is conformal calibration still blocked at CHI scale
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > why is corpus coverage refresh 34 blocked before ingest
+- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
+  > why is descriptor apposition (signal NAME / NAME signal) NOT used to capture signal names
+- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
+  > why is page_image_path null / None for a large document
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why is plural-rejection unsafe for phase names (access ends in ss)
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > why is signal direction hard to lower faithfully to a single .isf module
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > why is statement_0223 still a normative statement
+- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
+  > why is the .isf direction default (output) FSMGen-neutral / not a faithful-lowering gap
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > why is the .isf module named after the initiator (manager / requester / debugger) instead of actors.first()
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)

@@ -76,10 +76,10 @@
     {
       "path": "docs/knowledge/INDEX.md",
       "role": "landing",
-      "sha256": "74dc1f26a51aff0d87d252b6d34752b613f949b1c31d1ed1000a4c12beeec388",
+      "sha256": "433dbf2e24709aaa4599badeb153abd3f4be938b8143d38fa0df9e90cd058905",
       "metrics": {
-        "lines": 172,
-        "bytes": 13117,
+        "lines": 173,
+        "bytes": 13235,
         "line_bytes": 199
       }
     },
@@ -96,31 +96,31 @@
     {
       "path": "docs/knowledge-catalog/titles-0002.md",
       "role": "title_part",
-      "sha256": "ae3dd0f079562d3e5715d4e4461134ed4a6769a74f66eb7d97f356ee21d9f2d7",
+      "sha256": "22e08ef80e1aa8257a314bca884991420a90943886ddff7da8473d074c137ac5",
       "metrics": {
         "lines": 63,
-        "bytes": 12066,
-        "line_bytes": 244
+        "bytes": 12101,
+        "line_bytes": 255
       }
     },
     {
       "path": "docs/knowledge-catalog/titles-0003.md",
       "role": "title_part",
-      "sha256": "972e5cc090466f8e7bc739b3dae0860dfade0f65b9b98ebeef0c6cfacc20bfcf",
+      "sha256": "b78e09cd30f0220f24d5a7de6201b39a7bfa9e33e337eeb8e8891df24a384ee0",
       "metrics": {
         "lines": 63,
-        "bytes": 12394,
+        "bytes": 12388,
         "line_bytes": 254
       }
     },
     {
       "path": "docs/knowledge-catalog/titles-0004.md",
       "role": "title_part",
-      "sha256": "dceb7452ee18ca6686298f6076db4036c887487efd9b410d2408b1e65e852432",
+      "sha256": "9b0468f518d528ca2f3197f0858cf0259d34cb9014233def6f452e4147e6460e",
       "metrics": {
-        "lines": 8,
-        "bytes": 457,
-        "line_bytes": 194
+        "lines": 9,
+        "bytes": 684,
+        "line_bytes": 226
       }
     }
   ],

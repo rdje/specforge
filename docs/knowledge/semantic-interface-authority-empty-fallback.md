@@ -81,3 +81,10 @@ retains 243 statements, five conditionals, and 78 behaviors, but removes the uns
 diagram-label-derived `host` actor. The high-confidence methodology guide blocks on no declared interface
 signals, removes `agent.isf`, and leaves exactly `adapter.json`; the live emitted set is 66/66 strict-clean.
 Unlike the intervening CoreSight Base System architecture transfer, no under-extracted-spec warning applies.
+
+**Fifth guide transfer (`CORPUS-COVERAGE.2.38`).** Introducing CoreSight appeared stronger because retained
+EvidenceIR carried nine relations, but those records are sentence fragments such as `RAM is reads APB`,
+`means drives ATB`, and `debugger does reads DRW`, not declarations or stable endpoints. Fresh extraction removes
+all nine relations plus six interfaces, eight ports, four connectivity edges, and the four-signal/two-enum
+surface. The guide retains 228 statements and one signal constraint, blocks with one honest unsupported-temporal
+residual, and leaves exactly `adapter.json`; the live emitted set remains 66/66 strict-clean.

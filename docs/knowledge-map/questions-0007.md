@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > where does the block name come from when the PDF backend flattens heading levels (parent section title via dotted-parent)
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > where does the generic enum name TABLE/FIGURE/DATA come from (derive_encoding_enum_name fallback, evidence.rs:4457-4461 — first caption token passing is_hardware_signal_token at evidence.rs:7106, which accepts 'Table'->'TABLE')
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > where does the nli-verify measurement go / is the extraction-quality gauge persisted
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > where does the specforge chipdoc host library symlink currently resolve
+- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
+  > where is KNOWLEDGE_MAP_ARCHITECTURE.md
+- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
+  > where is actor-signal relation drive/read direction decided in evidence.rs
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > where is adaptive_batch_pages / BatchSizePolicy in the code
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > where is classify_document_intent_category implemented (crates/specforge/src/ir/completeness.rs)
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > where is consolidate_interface_actor_relations and strip_interface_suffix wired
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
@@ -269,6 +285,8 @@
   > why did an EXTRACTOR-ARCHITECTURE byte-identical proof fail on SWD/ADI but pass on other docs
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
   > why did channel.isf and setportfeature_port_over_current.isf coexist after rebuilding USB 3.2
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > why did eight Introducing CoreSight ports and four connectivity edges disappear
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > why did generated artifact scanning miss FigureRegion raw_image_path
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
@@ -279,21 +297,3 @@
   > why did normalize_prior_phrase grow a string exponentially
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > why did rendered_image.path contain normalized.staging
-- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
-  > why did running nli-verify on a .prepromote.bak overwrite the real evidence_ir.json
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > why did seed_axi_temporal fail after constraint promotion and how was it fixed
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > why did the .2a direction deferral get reopened (explicit owner steer 2026-06-17 — Build it, initiator perspective)
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > why did the ACE evidence build run out of memory / get SIGKILLed (exit 137)
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > why did the AMBA AXI+ACE ihi0022_h_c manager.isf fail fsmgen strict with 'rule constraint_48 assignment actions require (port expr)'
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why did the AMBA LPI controller.isf fail fsmgen strict with isf_conflicting_rule_writes on PREQ/PACCEPT
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why did the AXI/AHB/AXI-Stream wire-gold .isf fail fsmgen --strict on a fresh re-emit (isf_conflicting_rule_writes), and what fixed them
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > why did the Knowledge Map shard simulator and generator report different canonical input hashes
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > why did the LLM-primary extractor lose SYSCOREQ from a coordinated-subject sentence

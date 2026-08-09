@@ -112,9 +112,18 @@ high-confidence methodology-guide classification. Unlike the CoreSight architect
 an under-extraction warning: the removed SourceIR records are exactly 81 flattened diagram labels on
 visual-bearing pages, while structural classes hold. Lowering blocks and leaves exactly `adapter.json`.
 
+The 32-page Introducing CoreSight guide is a stronger-looking but still false fifth transfer. Its retained
+EvidenceIR carried nine actor-signal relations, and stale downstream stages turned them into six interfaces,
+eight ports, four connectivity edges, and a four-signal/two-enum adapter. Fresh evidence exposes the relation
+quality directly: examples include `RAM is reads APB`, `means drives ATB`, and `debugger does reads DRW`. These
+sentence fragments do not declare signals or establish component endpoints. Current generic authority therefore
+produces zero relations, interfaces, ports, or connectivity while preserving 228 guide statements, one signal
+constraint, four actors, 13 phases, 21 invariants, and 49 behaviors. The unsupported CTI stability statement is
+kept as one adapter residual; lowering blocks and leaves exactly `adapter.json`.
+
 The corpus cache now has 66 current emitted `.isf` files, all covered by a fresh 66/66 FSMGen-strict sweep; USB
-3.2, USB4 Inter-Domain, USB4 Connection Manager, CoreSight Base System, and AArch64 External Debug are not among
-them because honest blocking is the correct lowering result.
+3.2, USB4 Inter-Domain, USB4 Connection Manager, CoreSight Base System, AArch64 External Debug, and Introducing
+CoreSight are not among them because honest blocking is the correct lowering result.
 
 The measurement behind that repair found three upstream authority errors, not a reason to distrust every
 relation-derived direction. Across the retained corpus, 97 sentence-start phrases use `signal <word>` without

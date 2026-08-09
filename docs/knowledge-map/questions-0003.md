@@ -165,6 +165,8 @@
   > how many CORPUS-COVERAGE re-ingests remain after normalized cleanup
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > how many CoreSight Base System page sidecars are repository relative
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > how many Introducing CoreSight page paths are repository relative
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > how many RISC-V Debug register bit diagrams are images vs flattened tables (53/56 images, 34 field tables, only 7 flattened diagram tables; bits live in the image modality)
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
@@ -179,6 +181,8 @@
   > how many corpus refreshes remain after AArch64 External Debug
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > how many corpus refreshes remain after CoreSight Base System
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > how many corpus refreshes remain after Introducing CoreSight
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
   > how many corpus refreshes remain after USB4 Connection Manager
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
@@ -215,6 +219,8 @@
   > how much memory did the guarded AArch64 External Debug ingest use
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > how much memory did the guarded CoreSight Base System ingest use
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > how much memory did the guarded Introducing CoreSight ingest use
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
   > how much memory did the guarded USB4 Connection Manager ingest use
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
@@ -291,9 +297,3 @@
   > is SPECFORGE_INGEST_BATCH_PAGES a fixed size or a ceiling
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
   > is SWD at 100% and on what metric
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > is SpecForge specification mining
-- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
-  > is SpecForge's constraint extraction over-generating
-- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
-  > is VALIDATION_SNAPSHOT the latest local artifact validation or the last reviewed projection

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [spec-mining-framing](../knowledge/spec-mining-framing.md)
+  > is SpecForge specification mining
+- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
+  > is SpecForge's constraint extraction over-generating
+- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
+  > is VALIDATION_SNAPSHOT the latest local artifact validation or the last reviewed projection
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > is a better VLM needed to read register bit-layout diagrams
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -69,6 +75,8 @@
   > is the EvidenceIR build reproducible / deterministic
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > is the ISF storage-var width the register width (no — ir/isf_ir.rs uses max single-field extent, a latent bug; the true width is size_bits or max(bits_high)+1)
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > is the Introducing CoreSight Debug and Trace refresh complete
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > is the LLM-primary promotion a recall improvement
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
@@ -210,6 +218,8 @@
   > were the 100 stale CoreSight Base System signals authoritative
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > were the 73 stale AArch64 External Debug signals authoritative
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > were the nine Introducing CoreSight actor signal relations grounded topology
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > what CoreSight Base System evidence still needs VLM or targeted extraction
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -230,6 +240,8 @@
   > what are APB's remaining completeness candidate misses
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > what are NON_ACTOR_LEADING_FUNCTION_WORDS and NON_ACTOR_LEADING_VERBS for
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > what are examples of false prose relations in Introducing CoreSight
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
   > what are scripts/pdf_text.py and scripts/decrypt_pdf.py
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -250,6 +262,8 @@
   > what are the current AArch64 External Debug artifact hashes
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > what are the current CoreSight Base System artifact hashes
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > what are the current Introducing CoreSight artifact hashes
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
   > what are the current USB4 Connection Manager artifact hashes
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
@@ -283,17 +297,3 @@
   > what did FSMGEN answer about transaction phase membership (don't fabricate value or order; keep value-less participation + unordered membership as IntentIR metadata/residual not body steps; checked phase-group metadata is the future ISF shape on its own FSMGen tree; .isf stays source of truth, no .val)
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > what did KG-ISF-TRANSACTIONS.2l measure / decide
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > what did KG-ISF-TRANSACTIONS.2n measure / decide
-- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
-  > what did running nli-verify on a real spec find
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what did the .2i Rule-A per-phase grouping measurement find (clean only on AHB, empty on APB/AXI/SWD)
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what did the active PDF task containment census find
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > what did the corpus promotion sweep measure (gauge deltas per doc)
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > what distinguishes a PURE-INFERRED phantom from a PROSE-GROUNDED or SECTION+INFERRED 0/0 actor
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > what do leading_section_number and is_descendant_section_number do

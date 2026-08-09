@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > what is the KG-ISF-COMPLETENESS.1b.iv pure-inferred phantom drop
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > what is the KG-ISF-COMPLETENESS.1c.i trailing preposition/auxiliary strip
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the KG-ISF-TRANSACTIONS census / transaction-capture baseline
+- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
+  > what is the LLM-primary extractor's measured precision on APB / AHB / AXI gold
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > what is the LLM-primary extractor's measured recall on APB / AHB / AXI gold
+- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
+  > what is the LTL form of a temporal_rule
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > what is the NLI entailment verifier
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > what is the NVMe register-field recall / precision
 - [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
   > what is the PDF-VARIANT-DIGESTION whole-corpus coverage / re-triage
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -282,19 +298,3 @@
   > where does the NLI gate route a not-entailed contract
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > where does the SpecForge chipdoc source route currently resolve
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > where does the block name come from when the PDF backend flattens heading levels (parent section title via dotted-parent)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > where does the generic enum name TABLE/FIGURE/DATA come from (derive_encoding_enum_name fallback, evidence.rs:4457-4461 — first caption token passing is_hardware_signal_token at evidence.rs:7106, which accepts 'Table'->'TABLE')
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > where does the nli-verify measurement go / is the extraction-quality gauge persisted
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > where does the specforge chipdoc host library symlink currently resolve
-- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
-  > where is KNOWLEDGE_MAP_ARCHITECTURE.md
-- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
-  > where is actor-signal relation drive/read direction decided in evidence.rs
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > where is adaptive_batch_pages / BatchSizePolicy in the code
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > where is classify_document_intent_category implemented (crates/specforge/src/ir/completeness.rs)

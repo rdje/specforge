@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > what did KG-ISF-TRANSACTIONS.2n measure / decide
+- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
+  > what did running nli-verify on a real spec find
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what did the .2i Rule-A per-phase grouping measurement find (clean only on AHB, empty on APB/AXI/SWD)
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what did the active PDF task containment census find
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > what did the corpus promotion sweep measure (gauge deltas per doc)
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > what distinguishes a PURE-INFERRED phantom from a PROSE-GROUNDED or SECTION+INFERRED 0/0 actor
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > what do leading_section_number and is_descendant_section_number do
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > what document class is a chip-spec PDF (protocol / register / interface / guide)
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
@@ -114,6 +128,8 @@
   > what happened to the USB4 Connection Manager device_also.isf
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > what happened to the USB4 Inter-Domain channel.isf
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > what happened to the four signal two enum Introducing CoreSight adapter
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > what happened to the original Introducing CoreSight rollback
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
@@ -281,19 +297,3 @@
   > what is the KG-ISF-COMPLETENESS.1b.ii named-interface consolidation
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > what is the KG-ISF-COMPLETENESS.1b.iii coordinated-subject split
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > what is the KG-ISF-COMPLETENESS.1b.iv pure-inferred phantom drop
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > what is the KG-ISF-COMPLETENESS.1c.i trailing preposition/auxiliary strip
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the KG-ISF-TRANSACTIONS census / transaction-capture baseline
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > what is the LLM-primary extractor's measured precision on APB / AHB / AXI gold
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > what is the LLM-primary extractor's measured recall on APB / AHB / AXI gold
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > what is the LTL form of a temporal_rule
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > what is the NLI entailment verifier
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > what is the NVMe register-field recall / precision

@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
+  > why did running nli-verify on a .prepromote.bak overwrite the real evidence_ir.json
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > why did seed_axi_temporal fail after constraint promotion and how was it fixed
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > why did six Introducing CoreSight interfaces disappear
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > why did the .2a direction deferral get reopened (explicit owner steer 2026-06-17 — Build it, initiator perspective)
+- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
+  > why did the ACE evidence build run out of memory / get SIGKILLed (exit 137)
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > why did the AMBA AXI+ACE ihi0022_h_c manager.isf fail fsmgen strict with 'rule constraint_48 assignment actions require (port expr)'
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > why did the AMBA LPI controller.isf fail fsmgen strict with isf_conflicting_rule_writes on PREQ/PACCEPT
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > why did the AXI/AHB/AXI-Stream wire-gold .isf fail fsmgen --strict on a fresh re-emit (isf_conflicting_rule_writes), and what fixed them
+- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
+  > why did the Knowledge Map shard simulator and generator report different canonical input hashes
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > why did the LLM-primary extractor lose SYSCOREQ from a coordinated-subject sentence
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
   > why did the LLM-primary extractor miss PBUSER / PNSE / HAUSER must_be_value VALID
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
@@ -180,6 +200,8 @@
   > why does the D4.5 CLAIMSET (no block token) stay a residual under .10i
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
   > why does the DTI / trace-bus .isf fail FSMGen --strict --check (OperandContract: a value literal wider than the declared signal width)
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > why does the Introducing CoreSight guide emit no ISF
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > why does the MPAM 'must be included' sentence extract nothing
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
@@ -276,25 +298,3 @@
   > why is a pure-hex-literal subject filter unsafe (CBA, BADD)
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > why is bus not a valid parenthetical single-wire head
-- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
-  > why is category 3 (platform/system-IP) topology not lowered to .isf (ISF has no static-topology construct + the emit is single-initiator-actor; cross-component topology is structurally absent from the emit by design — KG-ISF-COMPLETENESS.2a.ii)
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > why is category 4 (CPU ISA) ISF-thin (the only lowerable cat-4 intent is CSRs, which are registers; their bit-fields are UNLOCATED so they don't reach .isf — an extraction-recall gap, not a missing ISF construct)
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > why is channel membership metadata-only and not lowered to .isf
-- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
-  > why is conformal calibration still blocked at CHI scale
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > why is corpus coverage refresh 34 blocked before ingest
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > why is descriptor apposition (signal NAME / NAME signal) NOT used to capture signal names
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > why is page_image_path null / None for a large document
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why is plural-rejection unsafe for phase names (access ends in ss)
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > why is signal direction hard to lower faithfully to a single .isf module
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > why is statement_0223 still a normative statement
-- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
-  > why is the .isf direction default (output) FSMGen-neutral / not a faithful-lowering gap

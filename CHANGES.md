@@ -1,3 +1,18 @@
+### CORPUS-COVERAGE.2.38 — sign off Introducing CoreSight refresh
+
+- Two guarded CPU ingests produce 32 pages, 25 visuals, four tables, 42 sections, and 250 elements at 44% peak
+  sampled system memory used; all 32 page image/layout paths are final and repository-relative.
+- SourceIR 333→250 removes a net 83 flattened diagram-label records while replacing five label-contaminated
+  prose/header records with clean text. Evidence becomes 228 statements / six normative facts / one signal
+  constraint / zero actor-signal relations or declarations.
+- The nine stale relations were prose artifacts (`RAM is reads APB`, `means drives ATB`, and peers), not grounded
+  topology. Current generic authority removes six interfaces, eight ports, four connectivity edges, and the old
+  four-signal/two-enum adapter surface.
+- The high-confidence methodology guide blocks on no declared interface signals, retains one unsupported temporal
+  residual, and leaves exactly `adapter.json`. Two cascades reproduce all 12 hashes; WIRE/I2C/SWD, KG 156/156,
+  66/66 FSMGen strict, persisted-path, locality, mdBook, doctrine, and exact cleanup gates pass. Corpus is 38 done
+  / 18 remaining.
+
 ### CORPUS-COVERAGE.2.38a — contain validation backannotation paths
 
 - `validate <artifact>` now writes the backannotated IR JSON to the explicit repository-owned CLI path and the
