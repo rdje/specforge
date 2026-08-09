@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
+  > what must SpecForge derive to fully capture SWD; what are the gaps
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > what must be rebuilt after moving the SpecForge repository
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what owns containment of the live document adoption task history
 - [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
   > what owns live-document size limits and transition debt
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
@@ -292,9 +298,3 @@
   > which stale roadmap statuses were found before migration
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > which strategy is message_fields.byte_location_table
-- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
-  > which task owns deterministic Rust tests under repository-local TMPDIR
-- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
-  > which task owns mdBook fence classification and doctest enforcement
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > which task tree crossed its live-document byte warning

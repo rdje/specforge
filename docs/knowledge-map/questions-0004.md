@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
+  > is the canonical SWD normalized bundle path portable
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > is the canonical intent_ir stale relative to its evidence_ir
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
   > is the cat-3 platform/system-IP topology capture faithful enough to lower to ISF (NO — measured 0.355 signal_connectivity edges/actor over 380 actors / 15 docs, only 24% of edges have both a producer AND a consumer, 0/10 infrastructure_signals have a resolved source; lowering it would synthesize an unfaithful sliver)
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
@@ -250,6 +254,8 @@
   > what does synthesize_signal_declarations do when the body is rotated
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > what does the TASK-ACCEPTANCE check verify / why was my commit blocked
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what does the active task evidence checker verify
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > what does the bounded current ROADMAP contain
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
@@ -292,9 +298,3 @@
   > what is AppError::IngestAbortedForMemory
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > what is CORPUS-COVERAGE.2.33d dense-prose adapter trust repair
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > what is DOC-INTENT-TAXONOMY .2 Result 3 verdict (closed by .4e: the rule-lowering shortfall is dominated by conditional_rules that are honest residual; signal_constraints + temporal_rules lower well; not an ISF-completeness gap)
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > what is EvidenceIr.extraction_quality_gauge and who writes it
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > what is KG-ISF-COMPLETENESS.2a.iii (ISF module-name HDL-sanitization)

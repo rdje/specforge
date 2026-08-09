@@ -21,14 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2` — decide the bounded active task topology; complete and
+- Active unit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1` — enforce the source-locked active task contract; complete and
   verified, commit pending.
-- Current state: ADR 0019 accepts a bounded active root, seven semantic legacy parts, an exact source capsule,
-  15-region coverage, explicit current-state precedence, and atomic future root+part writes. The initial normalized
-  PDF frontier has no eligible leaf; the target remains byte-identical.
-- Next action: commit `.1.2`, then run `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1` to implement the neutral data contract
-  and checker in source-locked state before any destination exists.
-- In-flight uncommitted: ADR/index/task/census/fact and impact-routed live-doc updates plus the required lossless
-  12-record status rollover; product code, target source, generated artifacts, shared inputs, existing thresholds,
-  and existing ceilings unchanged.
+- Current state: the neutral contract/checker binds commit/blob/SHA/metrics/index identity, validates 15 contiguous
+  source regions and seven warning-safe planned parts under fixed portable caps, and rejects either destination
+  directory or any declared output. Twenty-nine focused cases and the real source-locked report pass.
+- Next action: commit `.2.1`, then run `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2` to pin the `.2.1` commit boundary and
+  add exact region digests plus all boundary-history primary leaf routes while destinations remain absent.
+- In-flight uncommitted: checker/contract/doctrine wiring and impact-routed live docs only; product code, PDF task
+  source, migration destinations, generated artifacts, shared inputs, thresholds, and ceilings unchanged.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

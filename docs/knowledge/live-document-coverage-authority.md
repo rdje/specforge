@@ -19,6 +19,9 @@ answers:
   - "what did the active PDF task containment census find"
   - "what architecture contains an oversized active task tree"
   - "what is ADR 0019"
+  - "how is an active task source locked before migration"
+  - "what does the active task evidence checker verify"
+  - "have the PDF task migration destinations been created"
 date: 2026-08-08
 status: current
 tags: [documentation, containment, git, submodule]
@@ -70,6 +73,13 @@ under `docs/tasks/pdf-variant-digestion/` provide bounded detail; and an exact c
 commits plus inline evidence outrank stale open headers, unmet dependencies block, and ambiguity never enters the
 frontier, so the normalized root initially reports no eligible leaf. Future work creates a new bounded activity
 part and updates root + part atomically; semantic split happens before rollover and completed parts seal.
+
+`.2.1` makes the pre-migration boundary executable through `scripts/check_active_task_evidence.pl`. The contract
+binds boundary commit `6205f9d5`, Git blob `7d89ea4f…b555`, stage-zero index and working-file bytes, SHA-256,
+metrics, 15 contiguous regions, seven planned payloads, and fixed root/index/part/manifest caps. Both declared
+destination directories and all files remain absent. Twenty-nine focused cases exercise malformed source,
+Git, schema, region, route, marker payload, manifest, frontier, pressure, seal, and residue states. `.2.2` alone
+may complete the exact region digests and boundary-history routes before migration.
 
 `scripts/check_task_tree_archive.pl` now enforces `migrated`: the capsule retains the exact locked identity, and
 the checker validates the closed root, exact index/manifest routes, provenance, milestones, and ceilings. Its

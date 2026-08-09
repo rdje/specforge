@@ -36,6 +36,7 @@ if [ "$ROOT" = "$ADAPTER_ROOT" ]; then
   perl "$ROOT/scripts/check_task_tree_catalog.pl" --self-test || fail=1
   perl "$ROOT/scripts/check_task_tree_catalog.pl" --check || fail=1
   perl "$ROOT/scripts/check_task_tree_archive.pl" --self-test || fail=1
+  perl "$ROOT/scripts/check_active_task_evidence.pl" --self-test || fail=1
   perl "$ROOT/scripts/check_fact_card_catalog.pl" --self-test || fail=1
   perl "$ROOT/scripts/check_fact_card_catalog.pl" --check || fail=1
   perl "$ROOT/scripts/check_canonical_collection_catalogs.pl" --self-test || fail=1
@@ -72,6 +73,11 @@ perl "$ROOT/scripts/check_derived_state_contracts.pl" \
 perl "$ROOT/scripts/check_task_tree_archive.pl" \
   --root "$ROOT" \
   --contract doctrine/live_document_size/task_tree_archive.json \
+  --check || fail=1
+
+perl "$ROOT/scripts/check_active_task_evidence.pl" \
+  --root "$ROOT" \
+  --contract doctrine/live_document_size/active_task_evidence.json \
   --check || fail=1
 
 perl "$ROOT/scripts/check_live_document_size.pl" \

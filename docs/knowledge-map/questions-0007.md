@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
+  > which task owns deterministic Rust tests under repository-local TMPDIR
+- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
+  > which task owns mdBook fence classification and doctest enforcement
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > which task tree crossed its live-document byte warning
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > which validate metrics/finding surface channel membership
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -291,9 +297,3 @@
   > why does the VLM misread register-diagram bit positions and how is it fixed
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > why does the batch size depend on total RAM instead of free memory
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > why does the eMMC (JEDEC) IntentIR explode to 153 actors while HBM2 consolidates to 38
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > why does the eMMC actor count drop 153 to 138 after .1c.i
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > why does the emitted .isf default ~98% of signals to output and width 1

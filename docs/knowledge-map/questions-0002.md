@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > how are CHANGES DEVELOPMENT_NOTES LIVE_ACHIEVEMENT_STATUS and RUST_CODEBASE_ANALYSIS split into records
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
   > how are Docling-fragmented register field tables de-fragmented without fabricating a field set
 - [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
@@ -296,5 +298,3 @@
   > how erroneous are the canonical Pattern constraint surfaces on the persisted corpus
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > how flexible is the register model / what register-table shapes are handled
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > how good is prose signal capture / .3a quality

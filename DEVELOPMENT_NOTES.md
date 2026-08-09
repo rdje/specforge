@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1 (`2026-08-09`) — source locking includes Git, topology, and absence
+
+A working-tree digest alone does not prove a migration source was durable. The active-task checker therefore
+binds four views of the same source: the declared boundary commit's path object and bytes, the stage-zero Git
+index blob, the current regular file, and the contract's SHA-256/metrics. The boundary must be an ancestor of
+`HEAD`. Migration later switches the live-byte comparison to the exact capsule but retains the same Git proof.
+
+The first state intentionally stops at `topology_declared`. It validates exhaustive line spans, unique safe part
+paths, destination membership, planned payload pressure, and immutable portable caps, but forbids region digests,
+result-part hashes, and leaf routes that `.2.2` has not independently derived. Both destination directories are
+absent, so even an empty premature migration tree fails rather than becoming ambiguous residue.
+
+The same neutral implementation already defines the later fail-closed semantics: `complete` inputs must match
+the boundary path's ID-bearing commit subjects and exact region bytes; `migrated` must authenticate capsule,
+marker-delimited payloads, active frontier, route table, manifest, per-part/aggregate pressure, and any sealed
+part's Git object. This removes implementation-policy choices from `.3.1` without claiming its outputs exist.
+Because a commit cannot name its own object id, a completed active part becomes Git-sealed only after its final
+content commit is durable; the immediately following state-only transaction pins that ancestor commit and blob
+before any later part accepts work. Legacy migration parts instead remain immutable through exact source markers.
+
 ## ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2 (`2026-08-09`) — provenance and active authority must overlap
 
 The accepted design deliberately stores the legacy bytes twice in different roles. The exact capsule proves what

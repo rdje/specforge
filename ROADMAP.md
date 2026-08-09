@@ -121,8 +121,10 @@ Five active program groups support that north star:
   identifier-reference inputs, generic readers, and the manual writer. It proves the nominal frontier is a
   124,201-byte activity store and cannot nominate an eligible leaf from contradictory status text. `.1.2` accepts
   ADR 0019's bounded active root, seven semantic legacy parts, exact capsule, 15-region coverage, conservative
-  no-eligible-frontier reconciliation, atomic root+part writer, and fixed route/aggregate limits. `.2.1` now owns
-  source-locked neutral enforcement before any destination exists. The
+  no-eligible-frontier reconciliation, atomic root+part writer, and fixed route/aggregate limits. `.2.1` now lands
+  the neutral 29-case checker and source-locked topology contract: exact commit/blob/file/index identity, exhaustive
+  regions, planned-part pressure, portable caps, and complete destination absence pass. `.2.2` owns final committed
+  boundary plus exact region/route migration inputs before any destination exists. The
   completed `.0`–`.10`
   [`LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`](docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md)
   implementation keeps current documentation and project data bounded on the repository volume; completed

@@ -85,12 +85,14 @@ open.
   Children: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1`, `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2`
 
 - ID: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1`
-  Status: pending
+  Status: done
   Goal: implement the data contract and neutral verifier in source-locked state
   Acceptance: the checker pins the committed target, rejects premature destinations and malformed contracts,
   runs unconditionally through doctrine enforcement, and passes focused fail-closed tests
-  Verification: pending
-  Commit: pending
+  Verification: exact commit/blob/SHA/metrics/index identity and 15-region/7-part topology pass; every destination
+  absent; 29/29 focused source/topology/route/payload/bound cases plus composed live-size/doctrine gates and full
+  CI green (1,779 passed / five ignored, rustdoc, mdBook, final locality)
+  Commit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1 — enforce the source-locked active task contract`
 
 - ID: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2`
   Status: pending
@@ -125,7 +127,22 @@ open.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1` | `pending` | enforce the accepted contract before any destination exists |
+| 1 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2` | `pending` | pin the committed checker boundary and complete every migration input |
+
+### Acceptance Checklist (enforced) — `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1`
+
+- [x] **REPRODUCE / MEASURE** — the real report reopens 2,393 lines / 222,616 bytes / max 191 at SHA-256
+  `9284dce4…a19d4`, proves Git blob `7d89ea4f…b555`, and derives seven payloads of 257–488 lines.
+- [x] **ROOT CAUSE (WHY + WHERE)** — a file hash alone cannot prove a durable pre-migration source, while an empty
+  premature destination directory can strand ambiguous state; the gap is at the Git/source/topology transition.
+- [x] **ADDRESSED (verified)** — the contract binds boundary commit, Git object/index/file identity, exhaustive
+  regions, unique destinations, portable caps, and later-state route/payload/manifest/frontier/seal semantics.
+- [x] **NO REGRESSION** — Perl syntax, 29/29 focused mutations, real report, `scripts/check_live_document_size.sh`,
+  six doctrines, mdBook, target blob/diff, and destination-residue checks pass; no Rust/product artifact changed.
+- [x] **GENERICITY** — all production ids, paths, headings, spans, routes, markers, and limits live in JSON; the
+  checker contains only schema/state semantics and portable architecture caps.
+- [x] **LOCKSTEP** — checker/adapter/contract, doctrine mirrors, task/roadmap/status/resume, fact, ledgers, and
+  mdBook agree that `.2.2` alone may complete the locked migration inputs.
 
 ## First-target baseline
 
@@ -200,6 +217,12 @@ boundary before rollover. Dedicated root/index/part/capsule limits and a schema-
   transaction under fixed collection limits.
 - `2026-08-09`: Normalize the initial frontier to no eligible leaf. `.6`, `.7`, and `.9.10` remain non-eligible
   until a newly scoped continuation leaf revalidates their current evidence/dependency.
+- `2026-08-09`: `.2.1` keeps `input_state: topology_declared`: exact region digests, result-part identities, and
+  primary leaf routes are forbidden until `.2.2` derives them against the committed checker boundary.
+- `2026-08-09`: Source locking means four matching authorities—boundary commit bytes/object, stage-zero index,
+  current regular file, and SHA-256/metrics—and rejects the existence of either destination directory.
+- `2026-08-09`: Git-backed sealing is necessarily a following transaction: finish and commit the part, then pin
+  that ancestor commit/blob before later work proceeds. Legacy parts are independently fixed by exact markers.
 
 ## Open Questions
 
@@ -217,6 +240,7 @@ boundary before rollover. Dedicated root/index/part/capsule limits and a schema-
 | `2026-08-09` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.0` | SHA-256/blob/metrics/history; HEAD diff; task catalog; six doctrines; mdBook; live-size | exact untouched source boundary; all gates green |
 | `2026-08-09` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1` | 13-region byte closure; path/id/reader/writer census; target SHA/blob/diff; catalogs; doctrines; mdBook | complete read-only report; target unchanged; `.1.2` decision inputs closed |
 | `2026-08-09` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2` | ADR/index/KM/live-doc cross-links; limit arithmetic; target SHA/blob/diff; lossless status reconstruction/chain; catalogs; doctrines; mdBook | hybrid accepted; status segment 0003 authenticated; `.1` closed; implementation inputs complete |
+| `2026-08-09` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1` | Perl syntax; 29 focused cases; real report; six doctrines; full CI; target blob/diff; destination residue | 1,779 pass / five ignored; source/topology enforced; target untouched; destinations absent; `.2.2` ready |
 
 ## Commit Log
 
@@ -225,6 +249,7 @@ boundary before rollover. Dedicated root/index/part/capsule limits and a schema-
 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.0` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.0 — own and pin the active task boundary` | ownership and untouched baseline |
 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1 — census active task roles and consumers` | exhaustive read-only architecture input |
 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2 — decide the bounded active task topology` | ADR 0019; implementation policy closed |
+| `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1 — enforce the source-locked active task contract` | neutral checker; topology-declared source lock |
 
 ## Changelog
 
@@ -235,3 +260,6 @@ boundary before rollover. Dedicated root/index/part/capsule limits and a schema-
 - `2026-08-09`: `.1.2` accepted ADR 0019's bounded active root, semantic live parts, exact provenance, normalized
   no-eligible-frontier state, and atomic writer/rotation contract. Its status entry triggered a lossless 12-record
   rollover into authenticated segment 0003; `.1` closed and `.2.1` is next.
+- `2026-08-09`: `.2.1` implemented the neutral source-locked/complete/migrated contract, 29 fail-closed cases, and
+  unconditional doctrine wiring. The PDF source remains byte-identical, every destination is absent, and `.2.2`
+  now owns the committed boundary plus exact region/route inputs.

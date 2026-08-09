@@ -155,7 +155,18 @@ Because verified completion and pending/blocked claims conflict, [ADR 0019](../.
 establishes explicit current-state precedence rather than silently turning stale text into current truth. It keeps
 the stable path as a bounded active root over seven semantic legacy parts and exact provenance. The initial root
 has no eligible leaf; future work creates a new activity part and atomically updates root + part, with semantic
-split-before-rollover and fixed route/aggregate bounds. `.2.1` now owns source-locked enforcement.
+split-before-rollover and fixed route/aggregate bounds.
+
+The `.2.1` source lock is now executable. `scripts/check_active_task_evidence.pl` binds the unchanged target to
+boundary commit `6205f9d5`, Git blob `7d89ea4f…b555`, its stage-zero index entry, SHA-256, and exact metrics. It
+proves the 15 source ranges are contiguous and complete, derives all seven planned payload metrics below warning,
+enforces immutable portable caps, and rejects either destination directory or any declared output. Twenty-nine
+focused cases also exercise the future complete/migrated route, payload-marker, manifest, frontier, pressure, and
+sealed-Git semantics. `.2.2` must replace topology-only inputs with exact committed region/route identities while
+the destination set remains empty; `.3.1` alone may switch the contract to migrated.
+Post-migration sealing is Git-backed: a part's final content commit lands first, then a following state-only
+transaction records that ancestor commit/blob before any later part accepts work. The migrated legacy payloads
+need no such self-reference because exact source-region markers already make their bytes independently immutable.
 
 All four root-ledger migrations have landed. `CHANGES.md`, `DEVELOPMENT_NOTES.md`,
 `LIVE_ACHIEVEMENT_STATUS.md`, and `RUST_CODEBASE_ANALYSIS.md` are bounded current views, while their

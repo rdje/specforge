@@ -290,8 +290,9 @@ The reference deployment. Enforced by `scripts/check_doctrines.sh` via `.githook
 
 Among its focused suites, `LIVE-DOC-SIZE` runs 55 positive and fail-closed lifecycle/control-plane
 cases, 47 neutral derived-state classification cases, 25 SpecForge Rust/gitlink authority-adapter cases,
-and 15 neutral terminal-task source/route/identity/boundary cases. Test workspaces are disposable and always
-created below repository-local `generated/`.
+15 neutral terminal-task source/route/identity/boundary cases, and 29 neutral active-task
+source/topology/route/payload/bound cases. Test workspaces are disposable and always created below
+repository-local `generated/`.
 Schema fields, arrays, scalars, routes, independent size axes, baselines, exact field markers, stored
 derive-on-read shadows, verifier execution, capture boundaries, Cargo semver normalization, Git-index
 mode/object authority, declared secondary roles/paths/ownership, no-fallback alternate paths, and ceiling history
@@ -315,6 +316,10 @@ contract pin the exact feedback source, five exhaustive regions, six closed exch
 direction/status/evidence, two stale-current findings, 26 consumers, bounded open-record schema, and
 archive topology. Planned state rejects source drift; migrated state will switch identity to the exact
 capsule and verify the bounded current channel, closed register, open records, manifest, and index.
+The active-task evidence checker separately binds a source-locked task to its boundary commit, Git object/index,
+file digest/metrics, exhaustive semantic regions, planned-part pressure, fixed portable caps, and complete
+destination absence. Its complete/migrated states add exact legacy route membership, capsule and marker payload
+identity, bounded active root/index/parts, manifest/frontier integrity, and Git-backed sealing.
 
 `PROJECT-DATA-LOCALITY` composes three focused shell cases with resulting-tree checks. It proves the
 tracked temp root exists before Cargo starts, all canonical scripts establish the common environment,

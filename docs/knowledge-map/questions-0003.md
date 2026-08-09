@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > how good is prose signal capture / .3a quality
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how is AXI organized / what are the AXI channels
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -42,6 +44,8 @@
   > how is a register name recovered from a section heading (RISC-V dmstatus/dmcontrol)
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > how is a register-field mnemonic recovered when the name column is a bit-range (NVMe)
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > how is an active task source locked before migration
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
   > how is an external PDF labeled in Docling metadata
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -294,7 +298,3 @@
   > is the VLM-tier transaction frontier exhausted (yes — superseded by the deterministic channel cue / honest absence)
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
   > is the WIRE-BASED-100.5a AHB 0.364 baseline real
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > is the canonical SWD normalized bundle path portable
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > is the canonical intent_ir stale relative to its evidence_ir

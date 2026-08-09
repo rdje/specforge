@@ -292,9 +292,9 @@
   > does validate report message_field_records
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > fresh empirical reconfirmation of the .2i body-emission parking on the current 030f8c273 binary
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > have the PDF task migration destinations been created
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > how are <NAME>, bit [N] / <NAME>, bits [hi:lo] section-heading field defs parsed
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
   > how are ACK WDATA RDATA DATAIN bit-widths extracted
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > how are CHANGES DEVELOPMENT_NOTES LIVE_ACHIEVEMENT_STATUS and RUST_CODEBASE_ANALYSIS split into records

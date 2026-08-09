@@ -46,8 +46,10 @@
   archive absence with a neutral two-state checker plus 15 fail-closed cases; `.10b.ii` alone may switch it to
   migrated state. `.10b.ii` now preserves the exact source in a terminal and leaves a 119-line bounded closed
   root plus a three-link archive index and exact manifest, closing the adoption program. Active task trees are
-  explicitly excluded from that
-  terminal topology. No existing threshold or ceiling is widened.
+  explicitly excluded from that terminal topology. ADR 0019 now governs the first active target; `.2.1` adds a
+  neutral 29-case source-locked/complete/migrated checker that authenticates Git/file identity, exhaustive semantic
+  regions, planned-part pressure, destination absence, future routes/payloads/frontier/manifest, and fixed portable
+  caps before any source byte moves. No existing threshold or ceiling is widened.
 <!-- LIVE-DOCUMENT-SIZE-CONTAINMENT-LOCAL-ADOPTION:END -->
 
 ---

@@ -1,3 +1,18 @@
+### ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1 — enforce the source-locked active task contract
+
+- Added a schema-closed, project-neutral active-task contract and checker. The source lock binds the current path
+  to commit `6205f9d5`, Git blob `7d89ea4f…b555`, SHA-256 `9284dce4…a19d4`, and exact 2,393-line / 222,616-byte
+  metrics while requiring the working file and stage-zero Git-index entry to match.
+- Made ADR 0019's topology executable before migration: 15 ordered regions cover every source line exactly once,
+  all seven declared semantic payloads remain below warning, fixed portable root/index/part/manifest ceilings
+  cannot be widened in data, and both destination directories plus every declared file must remain absent.
+- Implemented future `complete` and `migrated` validation for exact region identities, 52 boundary-history route
+  inputs, marker payloads, root/frontier/index routing, part and aggregate pressure, manifests, and sealed-part Git
+  identity. Twenty-nine positive/fail-closed cases run unconditionally through `LIVE-DOC-SIZE`.
+- The PDF task source and all migration destinations remain unchanged/absent. `.2.2` now owns the final committed
+  boundary plus exact region digests and primary route assignments before `.3.1` may migrate. Full CI is green
+  with all six doctrines, 1,779 tests passed / five ignored, rustdoc, mdBook, and final project-data locality.
+
 ### ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2 — decide the bounded active task topology
 
 - Accepted ADR 0019: the stable PDF task path remains a bounded active current root over seven semantic legacy

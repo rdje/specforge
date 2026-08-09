@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "contract_id": "pdf-variant-digestion-active-task-evidence",
+  "migration_state": "source_locked",
+  "input_state": "topology_declared",
+  "current_path": "docs/tasks/PDF-VARIANT-DIGESTION.md",
+  "identity": {
+    "tree_id": "PDF-VARIANT-DIGESTION",
+    "heading": "# PDF-VARIANT-DIGESTION: make SpecForge digest as many chip-spec PDF variants as possible",
+    "active_status_literal": "- Status: `active`"
+  },
+  "current_frontier": {"mode": "none", "literal": "No eligible frontier."},
+  "source": {
+    "boundary_commit": "6205f9d5f896a2a6b264d029c0aebf7b27fd28aa",
+    "git_blob": "7d89ea4fe59e53e55614b5730bded40d99b4b555",
+    "sha256": "9284dce40ad896c3de3811e95c3fdd347132b1849083499e9c543fc9026a19d4",
+    "metrics": {
+      "lines": 2393,
+      "bytes": 222616,
+      "line_bytes": 191
+    }
+  },
+  "source_requirements": [
+    "# PDF-VARIANT-DIGESTION: make SpecForge digest as many chip-spec PDF variants as possible",
+    "- Tree ID: `PDF-VARIANT-DIGESTION`",
+    "- Status: `active` (high-priority program)",
+    "## Goal (the aim — this is the ORIGINAL roadmap goal, not a pivot)",
+    "## Acceptance criteria",
+    "## Task tree",
+    "- ID: `PDF-VARIANT-DIGESTION.9.3`",
+    "- ID: `PDF-VARIANT-DIGESTION.10i`",
+    "## Current frontier",
+    "## Planned next — from the corpus-sweep learnings (`2026-06-08`)",
+    "## Decisions",
+    "## Verification log",
+    "## Changelog",
+    "## Tooling + multi-strategy (`2026-06-07`)"
+  ],
+  "destinations": {
+    "collection_directory": "docs/tasks/pdf-variant-digestion",
+    "index": "docs/tasks/pdf-variant-digestion/INDEX.md",
+    "manifest": "docs/tasks/pdf-variant-digestion/manifest.json",
+    "parts": [
+      {
+        "part_id": "program-foundation",
+        "path": "docs/tasks/pdf-variant-digestion/program-foundation.md",
+        "heading": "# PDF-VARIANT-DIGESTION — program foundation and legacy planning",
+        "state": "legacy"
+      },
+      {
+        "part_id": "activity-09-serial",
+        "path": "docs/tasks/pdf-variant-digestion/activity-09-serial.md",
+        "heading": "# PDF-VARIANT-DIGESTION — activity 09 serial protocols",
+        "state": "legacy"
+      },
+      {
+        "part_id": "activity-10a-10c-table-shapes",
+        "path": "docs/tasks/pdf-variant-digestion/activity-10a-10c-table-shapes.md",
+        "heading": "# PDF-VARIANT-DIGESTION — activities 10a–10c table shapes",
+        "state": "legacy"
+      },
+      {
+        "part_id": "activity-10d-10e-layouts",
+        "path": "docs/tasks/pdf-variant-digestion/activity-10d-10e-layouts.md",
+        "heading": "# PDF-VARIANT-DIGESTION — activities 10d–10e layouts",
+        "state": "legacy"
+      },
+      {
+        "part_id": "activity-10f-10i-section-headings",
+        "path": "docs/tasks/pdf-variant-digestion/activity-10f-10i-section-headings.md",
+        "heading": "# PDF-VARIANT-DIGESTION — activities 10f–10i section headings",
+        "state": "legacy"
+      },
+      {
+        "part_id": "activities-11-13",
+        "path": "docs/tasks/pdf-variant-digestion/activities-11-13.md",
+        "heading": "# PDF-VARIANT-DIGESTION — activities 11–13",
+        "state": "legacy"
+      },
+      {
+        "part_id": "verification-and-chronology",
+        "path": "docs/tasks/pdf-variant-digestion/verification-and-chronology.md",
+        "heading": "# PDF-VARIANT-DIGESTION — verification and chronology",
+        "state": "legacy"
+      }
+    ],
+    "archive_directory": "docs/archive/tasks/pdf-variant-digestion",
+    "source_capsule": "docs/archive/tasks/pdf-variant-digestion/source-through-2026-08-09.md"
+  },
+  "regions": [
+    {"region_id": "program-identity", "start_line": 1, "end_line": 42, "part_id": "program-foundation"},
+    {"region_id": "serial-nodes", "start_line": 43, "end_line": 367, "part_id": "activity-09-serial"},
+    {"region_id": "triage-node-results", "start_line": 368, "end_line": 421, "part_id": "program-foundation"},
+    {"region_id": "serial-frontier-history", "start_line": 422, "end_line": 494, "part_id": "activity-09-serial"},
+    {"region_id": "activity-10a-10c", "start_line": 495, "end_line": 792, "part_id": "activity-10a-10c-table-shapes"},
+    {"region_id": "activity-10d-10e", "start_line": 793, "end_line": 1068, "part_id": "activity-10d-10e-layouts"},
+    {"region_id": "activity-10f-10i", "start_line": 1069, "end_line": 1325, "part_id": "activity-10f-10i-section-headings"},
+    {"region_id": "activity-11", "start_line": 1326, "end_line": 1383, "part_id": "activities-11-13"},
+    {"region_id": "activity-12", "start_line": 1384, "end_line": 1585, "part_id": "activities-11-13"},
+    {"region_id": "activity-13", "start_line": 1586, "end_line": 1813, "part_id": "activities-11-13"},
+    {"region_id": "activities-02-08", "start_line": 1814, "end_line": 2047, "part_id": "program-foundation"},
+    {"region_id": "decisions-questions-blockers", "start_line": 2048, "end_line": 2064, "part_id": "program-foundation"},
+    {"region_id": "verification", "start_line": 2065, "end_line": 2260, "part_id": "verification-and-chronology"},
+    {"region_id": "changelog", "start_line": 2261, "end_line": 2383, "part_id": "verification-and-chronology"},
+    {"region_id": "tooling-note", "start_line": 2384, "end_line": 2393, "part_id": "program-foundation"}
+  ],
+  "leaf_routes": [],
+  "route_basis": "boundary_path_commit_subject_ids",
+  "marker_prefix": "active-task-source-region",
+  "limits": {
+    "root": {
+      "health_targets": {"lines": 256, "bytes": 24576, "line_bytes": 512},
+      "enforcement_ceilings": {"lines": 384, "bytes": 36864, "line_bytes": 1024},
+      "milestones": {"warning_pct": 80, "rollover_pct": 90}
+    },
+    "index": {
+      "health_targets": {"lines": 160, "bytes": 16384, "line_bytes": 384},
+      "enforcement_ceilings": {"lines": 224, "bytes": 24576, "line_bytes": 768},
+      "milestones": {"warning_pct": 80, "rollover_pct": 90}
+    },
+    "parts": {
+      "health_targets": {"files": 16, "lines_each": 640, "bytes_each": 65536, "line_bytes_each": 512, "lines_total": 6400, "bytes_total": 786432},
+      "enforcement_ceilings": {"files": 24, "lines_each": 896, "bytes_each": 98304, "line_bytes_each": 1024, "lines_total": 9600, "bytes_total": 1179648},
+      "milestones": {"warning_pct": 80, "rollover_pct": 90}
+    },
+    "capsule_exact": {"lines": 2393, "bytes": 222616, "line_bytes": 191},
+    "manifest": {"bytes": 65536, "line_bytes": 1024, "scalar_bytes": 1024, "max_parts": 24, "max_regions": 32, "max_leaf_routes": 128}
+  },
+  "migrated_requirements": {
+    "root_required_literals": [
+      "# PDF-VARIANT-DIGESTION: make SpecForge digest as many chip-spec PDF variants as possible",
+      "- Tree ID: `PDF-VARIANT-DIGESTION`",
+      "- Status: `active`",
+      "## Current Frontier",
+      "No eligible frontier.",
+      "## Detailed task evidence",
+      "## Verification Log",
+      "## Commit Log"
+    ],
+    "root_forbidden_literals": [
+      "- Status: `done`",
+      "- Status: `pending`"
+    ],
+    "index_required_literals": [
+      "# PDF-VARIANT-DIGESTION task-evidence index",
+      "## Semantic parts",
+      "## Primary leaf routes",
+      "## Exact provenance",
+      "## Verification"
+    ]
+  },
+  "verifier": "perl scripts/check_active_task_evidence.pl --check"
+}
