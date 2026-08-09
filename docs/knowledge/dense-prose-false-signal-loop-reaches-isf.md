@@ -15,6 +15,7 @@ answers:
   - "does select_initiator_actor choose the first or last equal maximum"
   - "which formal signal declaration predicates does the dense prose authority gate accept"
   - "how does CORPUS-COVERAGE 2 33d ii prevent weak signal names from reentering through relations"
+  - "why was CORPUS-COVERAGE 2 33d iii closed without another convergence or adapter filter"
 date: 2026-08-09
 tags: [corpus-coverage, dense-prose, signal-inventory, actor-signal-relations, isf, semantic-fidelity, false-positive, table-classification, fixed-point]
 evidence: docs/research/dense-prose-signal-authority-measurement.md; generated/source_ir/usb_3_2_revision_1_0_2017_09/source_ir.json; generated/evidence_ir/usb_3_2_revision_1_0_2017_09/evidence_ir.json; generated/intent_ir/usb_3_2_revision_1_0_2017_09/intent_ir.json; generated/adapters/isf/usb_3_2_revision_1_0_2017_09/adapter.json; crates/specforge/src/ir/source/docling_backend.rs (classify_table_kind); crates/specforge/src/ir/evidence.rs (collect_known_signal_names, synthesize_signal_declarations_from_prose, actor_signal_relation_surface, synthesize_directions_from_relations); crates/specforge/src/ir/isf_ir.rs (select_initiator_actor); docs/tasks/CORPUS-COVERAGE.md (.2.33c/.2.33d)
@@ -116,3 +117,13 @@ actor-relation shapes. `AT`, `USB`, `ENHANCED`, and `NO` are absent from the res
 surface, table provenance, and direction declarations. This proves the fixed point is closed at its three name
 authorities; no adapter deny-filter is added. Initiator selection remains behavior-identical and now explicitly
 tests the lexicographically last equal maximum.
+
+## Conditional convergence backstop closed (`CORPUS-COVERAGE.2.33d.iii`)
+
+No separate downstream filter is warranted. The affected Rust paths remain byte-identical to implementation
+commit `5c95a041`; the combined regression proves all four weak names absent across the complete EvidenceIR fixed
+point, and four supporting authority/tie tests also pass. Relations consume only names admitted by the formal or
+table catalogs, while direction synthesis copies an existing relation name. A rejected name therefore has no
+remaining re-entry seam. Filtering again in convergence or the adapter would duplicate policy and could delete a
+legitimate relation-grounded direction. The real USB cascade in `.d.iv` remains the independent falsification
+gate for this conclusion.

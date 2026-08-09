@@ -21,12 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.33d.iii`; root-ledger pressure is closed through its independently audited `.2`.
-- Current state: the four ledgers have exact 29/24/12/8-record segments and warning-safe current roots at changes
-  88 records / 1,259 lines / 189,197 bytes, development 63 / 1,306 / 176,145, status 60 / 102 / 83,464, and Rust
-  55 / 1,064 / 89,706. A clean same-SSD clone of `10d182ff` reproduces every chain and a valid next append.
-- Next action: close `.2.33d.iii` as measured-unnecessary if the already-landed direct convergence proof still
-  covers every weak candidate path, then `.2.33d.iv` rebuilds and signs off the real USB cascade.
-- In-flight uncommitted: none after the root-ledger `.2` closure commit; product behavior, shared inputs,
+- Active unit: `CORPUS-COVERAGE.2.33d.iv`; `.d.iii` closes the conditional downstream backstop as measured
+  unnecessary without code.
+- Current state: `.d.ii`'s three signal-authority gates and combined fixed-point regression remain byte-identical
+  and pass five focused oracles. Relations/directions cannot originate a rejected name, so no duplicate
+  convergence/adapter filter is justified. Root-ledger pressure remains closed and warning-safe.
+- Next action: rebuild the real USB EvidenceIR→SemanticIR→IntentIR→ISF cascade with the repaired release binary;
+  prove the four false ports, phantom initiator, and 29-rule model disappear, then run WIRE/KG/FSMGen/full gates.
+- In-flight uncommitted: none after the `.d.iii` commit; product behavior, generated artifacts, shared inputs,
   thresholds, ceilings, capsules, and segment bytes are unchanged.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

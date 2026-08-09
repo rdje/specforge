@@ -178,11 +178,14 @@ today's ephemeral normalized-directory count.
   relation, direction, and provenance surfaces. Initiator selection remains lexicographically last on exact
   ties. Focused serial/table suites, full library 1,779/1,779, WIRE golds plus a fresh SWD rebuild, KG 156/156,
   Clippy, full CI, mdBook, doctrines, and locality pass. Frontier after commit → `.d.iii`.
-- ID: `CORPUS-COVERAGE.2.33d.iii` · Status: `pending` (`2026-08-09`, CODE/DOC, conditional) · Goal: if the
-  `.d.i` proof shows upstream precision cannot structurally prevent every weak candidate from being laundered,
-  add one fail-closed convergence/adapter trust boundary with explicit disposition; otherwise close this leaf as
-  measured unnecessary rather than layering a redundant heuristic.
-- ID: `CORPUS-COVERAGE.2.33d.iv` · Status: `pending` (`2026-08-09`, DATA/DOC) · Goal: rebuild the real USB
+- ID: `CORPUS-COVERAGE.2.33d.iii` · Status: `done` (`2026-08-09`, MEASURE/DOC; no code) · Result: closed the
+  conditional backstop as measured unnecessary. The affected EvidenceIR/ISF files are byte-identical to `.d.ii`
+  commit `5c95a041`; runtime relations consume only the formal/table signal authorities, and direction synthesis
+  copies only an existing relation name. The combined fixed-point regression rejects `AT`/`USB`/`ENHANCED`/`NO`
+  across catalog, relation, direction, and provenance. Five focused authority/tie tests pass; a second downstream
+  filter would duplicate policy and risk false negatives. Commit:
+  `CORPUS-COVERAGE.2.33d.iii — close redundant convergence backstop`.
+- ID: `CORPUS-COVERAGE.2.33d.iv` · Status: `in_progress` (`2026-08-09`, DATA/DOC) · Goal: rebuild the real USB
   EvidenceIR→adapter chain with the repaired release binary, prove the false ports/actor/rules no longer emit,
   run FSMGen/WIRE/KG/full-CI/path/locality gates, align the mdBook and durable facts, and close `.2.33d`/`.2.33`.
 
@@ -226,6 +229,23 @@ today's ephemeral normalized-directory count.
 - [x] **LOCKSTEP** — code comments, durable fact/research conclusions, task frontier, live docs, mdBook, and
   `MEMORY.md` describe the verified behavior and `.d.iii`/`.d.iv` handoff. The forced rationale-ledger rollover
   seals 27 exact records and the archive index warning is recorded below its 90% rollover point.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.33d.iii`
+
+- [x] **REPRODUCE / MEASURE** — `git diff --exit-code 5c95a041..HEAD` proves both affected Rust files unchanged;
+  five focused declaration/table/parenthetical/fixed-point/initiator tests pass individually.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `actor_signal_relation_surface` receives only cataloged names or relations
+  from the same table-authority gate; `synthesize_directions_from_relations` copies those existing names. It
+  amplifies prior authority but cannot originate a rejected name.
+- [x] **ADDRESSED (verified)** — `.d.ii`'s combined EvidenceIR build fixture exercises all three weak USB shapes
+  and proves `AT`/`USB`/`ENHANCED`/`NO` absent from known signals, relations, direction declarations, and table
+  provenance. The conditional downstream backstop is therefore closed without code.
+- [x] **NO REGRESSION** — no product/generated artifact changes; focused tests, exact code diff, doctrines, mdBook,
+  full CI, and locality pass. `.d.iv` retains the independent real-cascade acceptance gate.
+- [x] **GENERICITY** — refusing a duplicate adapter/convergence deny-filter preserves legitimate signals whose
+  only direction evidence is a grounded driver relation and keeps authority at universal grammar/structure seams.
+- [x] **LOCKSTEP** — task, research, durable fact, roadmap/status/resume, and mdBook agree that `.d.iii` is
+  measured unnecessary and `.d.iv` is the active real USB proof.
 
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.33a`
 
@@ -386,6 +406,10 @@ leaving the refreshed SourceIR→adapter stage chains intact.
 
 ## Changelog
 
+- `2026-08-09`: `.2.33d.iii` MEASURE/DOC DONE. Both affected Rust files remain byte-identical to `.d.ii`; runtime
+  path inspection and five focused tests confirm relations/directions cannot originate a name rejected at the
+  three catalog authorities. The downstream backstop is closed as redundant; `.d.iv` is active for real USB
+  cascade signoff.
 - `2026-08-09`: `.2.33d.ii` CODE/DOC DONE. Both declaration catalogs now require canonical
   `Signal <identifier> is <predicate>` grammar (including the broad-gate-preserved `inout` contract), `bus` is
   no longer a width-one parenthetical head, and port/pin tables need explicit compact inventory structure. The

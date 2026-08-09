@@ -138,6 +138,20 @@ test and the real USB rebuild pass, `.d.iii` closes as unnecessary. Adding a sec
 duplicate catalog authority, risk deleting legitimate relation-derived directions, and conceal the actual source
 of trust.
 
+### `.2.33d.iii` closure verification
+
+The conditional leaf is closed as measured unnecessary. `git diff --exit-code 5c95a041..HEAD` proves
+`evidence.rs` and `isf_ir.rs` have not drifted since the `.d.ii` implementation. The direct combined fixture
+`weak_dense_prose_names_cannot_reenter_through_relations` and its four supporting declaration/table/
+parenthetical/initiator tests pass independently. Code inspection reconfirms that prose relations scan the
+known-signal catalog, table relations share the structural authority gate, and direction synthesis copies only
+an existing relation name. No fourth name-authority seam exists.
+
+Adding a convergence or adapter deny-filter would therefore be policy duplication, not defense in depth: it
+could suppress a real signal whose grounded direction exists only as a driver relation. No production or
+generated artifact changes in `.d.iii`. `.d.iv` remains the independent real USB cascade proof and may reopen
+this decision only if current-binary evidence produces a weak name through a newly observed authority path.
+
 ## 5. Initiator ties are deterministic, but the comment is wrong
 
 Across 79 retained IntentIR artifacts, nine documents have a maximum `(outputs, inputs)` net-producer tie,

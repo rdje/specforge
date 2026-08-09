@@ -1,4 +1,15 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.33d.iii (`2026-08-09`) — avoid a second signal-authority policy
+
+Once the three `.d.ii` catalog gates reject a weak token, prose relations cannot see it, table relations share
+the same structural gate, and direction synthesis can only copy a name already present in a relation. The direct
+fixed-point regression proves all four USB tokens absent across catalog, relation, direction, and provenance.
+
+A downstream convergence or adapter filter would therefore restate authority at a second seam and could erase a
+real signal whose only direction evidence is a grounded driver relation. Exact code-diff and five focused tests
+close that conditional backstop without code. The independent real USB cascade remains mandatory in `.d.iv` so
+new evidence can falsify the model rather than being assumed away.
+
 ## ROOT-ROLLING-LEDGER-PRESSURE.2 (`2026-08-09`) — audit both the committed view and the next append
 
 Revalidating the installed chains from the implementation worktree would share its index and runtime state. The

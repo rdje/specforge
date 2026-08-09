@@ -1,3 +1,13 @@
+### CORPUS-COVERAGE.2.33d.iii — close the redundant convergence backstop
+
+- Proved `evidence.rs` and `isf_ir.rs` remain byte-identical to grounded-authority commit `5c95a041` and
+  rechecked the complete catalog→relation→direction fixed point.
+- Five focused tests pass: formal declaration parsing, structured table authority, bus-parenthetical rejection,
+  combined weak-name non-reentry, and deterministic initiator ties.
+- Closed the conditional convergence/adapter filter as measured unnecessary. It would duplicate upstream
+  authority and risk dropping legitimate relation-grounded directions; `.d.iv` remains the real USB
+  falsification/signoff gate. No code, generated artifact, product behavior, or limit changed.
+
 ### ROOT-ROLLING-LEDGER-PRESSURE.2 — independently audit and close ledger pressure
 
 - Cloned committed materialization `10d182ff` without local hardlinks into a repository-volume workspace and

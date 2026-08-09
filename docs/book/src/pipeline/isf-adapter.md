@@ -84,6 +84,9 @@ shapes and proves `AT`, `USB`, `ENHANCED`, and `NO` remain absent from declarati
 relation-derived directions, and table provenance. No downstream adapter heuristic is needed. The tracked real
 USB rebuild is the final proof: the false four-port/29-rule model
 must disappear because its names never gain authority, not because the adapter recognizes USB vocabulary.
+`CORPUS-COVERAGE.2.33d.iii` independently rechecks that the affected code has not drifted and all five focused
+authority/fixed-point/tie oracles pass, then closes the conditional downstream backstop as measured unnecessary.
+The real USB cascade remains the falsification gate: a newly observed authority path would reopen the decision.
 
 ## ISF IR data model
 
