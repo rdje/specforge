@@ -21,13 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2`; `.2.37` signoff is complete and the next action is to select/own `.2.38`.
+- Active unit: `CORPUS-COVERAGE.2.38`; refresh Introducing CoreSight Debug and Trace with the current binary.
 - Current state: 37 refreshes are complete / 19 remain, with 80/6/80/79 stage census and all 66 current emitted
   ISFs strict-clean. The 25-page AArch64 External Debug Guide refresh is portable and deterministic. Current
   generic authority removes 64 stale heuristic interfaces, one visual-label actor, and the fabricated 73-signal
   target while retaining 243 statements, five conditionals, 78 behaviors, and the genuine methodology-guide
   classification. The adapter blocks honestly with exactly `adapter.json`.
-- Next action: commit `.2.37`, then select and own `.2.38` from the remaining ARM-guide/OpenCAPI tail.
-- In-flight uncommitted: `.2.37` generated stages are verified; live-doc/mdBook/fact synchronization and commit
-  signoff are in progress. Authenticated task evidence must remain until the final gates are green.
+- Next action: authenticate the complete retained #38 stage chain and exact same-volume rollback, then run the
+  guarded CPU ingest and deterministic cascade from the resolved caller-authorized SSD input.
+- In-flight uncommitted: only the `.2.38` ownership/resume-pointer commit; no generated artifact has changed.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.
