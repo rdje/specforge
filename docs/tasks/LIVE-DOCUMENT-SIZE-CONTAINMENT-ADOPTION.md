@@ -408,27 +408,41 @@ verification before correction.
   24 protocol plus 55 lifecycle cases enforce chain, route, bounds, and retired-path absence; `.9` is closed.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10`
-  Status: `pending` (`2026-08-09`)
+  Status: `in_progress` (`2026-08-09`)
   Children: `.10a`, `.10b`
   Goal: contain this program's own task-evidence surface after it crossed its byte warning, preserving complete
   decisions, acceptance, verification, and commit history through bounded current navigation and exact history.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10a`
-  Status: `pending` (`2026-08-09`, PROBE/DOC)
+  Status: `done` (`2026-08-09`, PROBE/DOC)
   Goal: measure semantic regions, readers, update rates, and retrieval requirements; select a bounded current
   root plus lossless partition/archive topology before the task file reaches mandatory byte rollover.
+  **Done:** ADR 0018 selects a two-commit terminal boundary: committed exact source, then immutable capsule plus
+  bounded closed root/index. The audit also blocks further PDF-variant appends on separate active-tree ownership.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10b`
-  Status: `pending` (`2026-08-09`, CODE/DOC)
+  Status: `pending` (`2026-08-09`)
+  Children: `.10b.i`, `.10b.ii`
   Goal: implement the accepted task-evidence topology atomically, migrate every reader, verify exact retrieval
   and bounds, and remove only proven superseded live duplication.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10b.i`
+  Status: `pending` (`2026-08-09`, CODE/DOC)
+  Goal: implement and exercise the neutral terminal-task contract/checker against the still-live source, then
+  commit its exact pre-migration identity and complete provenance boundary before any root replacement.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10b.ii`
+  Status: `pending` (`2026-08-09`, CODE/DOC)
+  Goal: copy the committed source byte-for-byte, land the bounded root/index/manifest and surface ratchets,
+  migrate readers, prove retrieval/immutability, close `.10` and the program, then open active-tree containment.
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `.10a` | `pending` (`2026-08-09`) | Task evidence is above line/byte warning; design lossless containment before either rollover. |
-| 2 | `.10b` | `pending` (`2026-08-09`) | Implement the accepted task-evidence route without losing exact decisions or verification history. |
+| 1 | `.10b.i` | `pending` (`2026-08-09`) | Pin and enforce a committed exact source boundary before replacing the stable task root. |
+| 2 | `.10b.ii` | `pending` (`2026-08-09`) | Migrate that boundary to a bounded closed root plus immutable directly retrievable history. |
+| — | `.10a` | `done` (`2026-08-09`) | Exact pressure/regions/readers/growth select ADR 0018's two-commit terminal boundary. |
 | — | `.9b` | `done` (`2026-08-09`) | Fixed landing, four exact authorities, complete graph/index/landing enforcement, and residue gate close `.9`. |
 | — | `.9a` | `done` (`2026-08-09`) | Exact pressure, reader, capacity, and chronology-gap evidence are locked in ADR 0017 and the design report. |
 | — | `.8g` | `done` (`2026-08-09`) | Cold value/consumer scan is clean; all 17 markers, 83 focused cases, full CI, and exact projections pass; `.8` closed. |
@@ -649,8 +663,35 @@ verification before correction.
 - [x] **LOCKSTEP** — registry/surfaces, archives, checker, fact, book, doctrine note, roadmap/status/resume,
   ledgers, exact book authority, verification, and commit records agree; `.9` closes and frontier moves to `.10a`.
 
+### Acceptance Checklist (enforced) — `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10a`
+
+- [x] **REPRODUCE / MEASURE** — pin 2,451 lines / 232,649 bytes / 746 maximum line bytes; four exhaustive
+  semantic regions; 38 commits and recent update deltas; 19 reader files / 21 occurrences; exact warning and
+  rollover headroom; and the next-largest active task-tree boundary.
+- [x] **ROOT CAUSE (WHY + WHERE)** — one finite program mixed current navigation with decisions, historical
+  slice contracts, and 121 evidence-table rows; neither heading sharding nor a rolling window matches that graph.
+- [x] **ADDRESSED (verified design)** — ADR 0018 selects `.10b.i` committed source provenance followed by
+  `.10b.ii` exact capsule + bounded closed root/index/manifest + neutral fail-closed checker.
+- [x] **NO REGRESSION** — no task content moves, archive/checker/control changes, product behavior, threshold,
+  or ceiling changes in this leaf; current doctrine, map, catalog, book, and locality gates remain green.
+- [x] **GENERICITY** — terminal compaction depends on a closed tree and explicit semantic markers, never this
+  program's current headings/counts. Active trees require a separate partition lifecycle.
+- [x] **LOCKSTEP** — task, ADR, design report, fact, roadmap/status/resume, change/development ledgers, mdBook,
+  exact book authority, verification, and commit records agree; `.10b.i` is next and PDF appends are blocked on
+  separately owned active-tree containment after `.10` closes.
+
 ## Decisions
 
+- `2026-08-09`: **A closing task graph uses one exact terminal, not mechanical shards (`.10a`).** The source's
+  651-line operational region already mixes 54 accumulated status records with the two-row frontier; its other
+  1,800 lines are decisions, slice contracts, and evidence. ADR 0018 preserves the whole source byte-for-byte
+  while the stable catalog path becomes a bounded closed summary.
+- `2026-08-09`: **The source boundary is committed before migration (`.10a`).** `.10b.i` pins and commits the
+  complete live source plus verifier; `.10b.ii` copies that Git-durable boundary. A one-commit finalization/copy/
+  replacement would leave the claimed pre-rewrite source without an independently durable provenance seam.
+- `2026-08-09`: **Terminal containment is forbidden for active trees (`.10a`, surfaced finding).** The active
+  `PDF-VARIANT-DIGESTION` tree is 222,616 bytes, 207 before warning. No further PDF leaf may append until a new
+  task tree owns active-tree partitioning; closing `.10` must route that as the next continuity action.
 - `2026-08-09`: **GO on the newer portable derived-state semantics.** External collection-index and bounded
   projection-set semantics are already implemented; field-level classification/enforcement and the stronger
   duplicate-authority wording are the only substantive local adoption delta.
@@ -2157,6 +2198,8 @@ progress state. No other book part changes unless the final audit finds a separa
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-09` | `.10a` | exact current metrics/headroom; four-region byte census; 38-commit history and recent delta window; complete stable-path reader/authority scan; task-catalog and derived-state source audit | design accepted: 2,451 lines / 232,649 bytes / max 746; 18,026 bytes of pre-rollover headroom; recent average 49.7 lines / 5,370 bytes; 19 readers / 21 occurrences; catalog needs H1/status while exact history can route through an optional terminal |
+| `2026-08-09` | `.10a` | next-largest task evidence census; staged doctrines; catalogs/map/book/locality; diff hygiene | green: 635 Markdown / 42 surfaces; 242 catalog members; 159 facts / 1,123 questions / eight shards; book 36 files / 13,163 lines / 796,905 bytes. Active `PDF-VARIANT-DIGESTION` is 2,393 lines / 222,616 bytes, 207 before warning, and blocked on separate containment ownership before its next append |
 | `2026-08-09` | `.9b` | Git-object data-row union/control comparison; immutable-member diff; 24 protocol mutations/report; 55 lifecycle/overflow cases; current-consumer and retired-file census | exact: nine data rows unchanged across four manifests; capsules/segments untouched; landing 34 lines / 1,512 bytes; four indexes 37 / 1,378; old path occurs only as the negative registry invariant and the file is absent |
 | `2026-08-09` | `.9b` | full `bash scripts/run_ci.sh`; six doctrines; format; warning-deny Clippy/tests; rustdoc; mdBook; final locality and projections | green: 1,779 tests / five ignored; 633 tracked Markdown / 42 surfaces, 159 facts / 1,118 questions / eight shards, book 36 files / 13,143 lines / 795,321 bytes; no product/ledger/member/threshold/existing-ceiling change |
 | `2026-08-09` | `.9a` | shared index block/growth/pressure census; manifest record/control/capacity projection; exact reader/consumer occurrences; live-status record boundary; rolling checker/index validator source audit | design accepted: 81 lines / 5,311 bytes leaves 218 bytes while the last route needed 301; four one-capsule/28-segment partitions project to 26,069–28,420 bytes under unchanged 32-record / 32,768-byte controls; current chronology scalars lack reciprocal/acyclic/completeness enforcement |
@@ -2241,6 +2284,7 @@ progress state. No other book part changes unless the final audit finds a separa
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.10a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10a — design the terminal task-evidence boundary` | exact pressure/regions/readers/growth + ADR 0018 two-commit source/capsule/root contract + active-tree follow-up |
 | `.9b` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9b — partition and verify every archive route` | four exact authorities + fixed landing + complete chain/index/landing/residue enforcement + `.9` closure |
 | `.9a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9a — design the bounded archive route` | exact pressure/readers/capacity + ADR 0017 four-part authority + complete-chain acceptance contract |
 | `.8g` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8g — close the derived-state audit plane` | clean data/value/consumer scan + 83 focused cases + full CI + `.8` closure |
@@ -2281,6 +2325,13 @@ progress state. No other book part changes unless the final audit finds a separa
 | `.7` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7 — close the containment and locality program` | independent whole-program retrieval audit + cold-read defect gates + final book method-doc + clean closure |
 
 ## Changelog
+
+- `2026-08-09`: `.10a` PROBE/DOC DONE. The task source is 2,451 lines / 232,649 bytes with 18,026 bytes
+  before rollover; 38 commits and the last nine deltas prove only about 3.4 recent-sized updates remain. Four
+  exhaustive regions and 19 readers select ADR 0018's `.10b.i` committed source boundary followed by `.10b.ii`
+  exact capsule and bounded closed root/index. No topology, executable, threshold, or ceiling changed. The same
+  census finds active `PDF-VARIANT-DIGESTION` only 207 bytes below warning; its next append requires a new owned
+  active-tree containment task after `.10` closes. Frontier → `.10b.i`.
 
 - `2026-08-09`: `.9b` CODE/DOC DONE; `.9` CLOSED. Split nine byte-identical data rows into four bounded
   manifests, replaced the 81-line growing index with a 34-line fixed landing plus four complete indexes, switched

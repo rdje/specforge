@@ -68,6 +68,8 @@
   > can a dense-prose phantom actor reach emitted ISF
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > can ambient validation reports define the tracked corpus KB validation page
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > can an active task tree use the terminal task archive topology
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > can an external absolute input be rebased into the repository
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
@@ -296,5 +298,3 @@
   > how are ACK WDATA RDATA DATAIN bit-widths extracted
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > how are CHANGES DEVELOPMENT_NOTES LIVE_ACHIEVEMENT_STATUS and RUST_CODEBASE_ANALYSIS split into records
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > how are Docling-fragmented register field tables de-fragmented without fabricating a field set

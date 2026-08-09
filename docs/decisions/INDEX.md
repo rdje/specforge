@@ -29,6 +29,7 @@ changed* lives in git (layer D), not here.
 | [0015](0015-mdbook-owns-public-product-contracts.md) | mdBook owns public product contracts; stable root documents are compatibility pointers | 2026-08-08 | accepted | documentation, mdbook, architecture, current-truth, containment |
 | [0016](0016-swd-protocol-projection-and-honest-isf-boundary.md) | SWD protocol projection is lossless; ISF lowering requires complete behavioral bindings | 2026-08-09 | accepted | swd, projection, intentir, isf, residual-honesty |
 | [0017](0017-partitioned-rolling-ledger-archive-route.md) | Rolling-ledger archives use a bounded landing and per-ledger authority partitions | 2026-08-09 | accepted | documentation, continuity, archive, retrieval |
+| [0018](0018-terminal-task-tree-current-history-boundary.md) | A completed oversized task tree becomes a bounded closed root over an exact source capsule | 2026-08-09 | accepted | documentation, continuity, task-tree, archive, retrieval |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /

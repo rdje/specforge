@@ -1,3 +1,16 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10a — design the terminal task-evidence boundary
+
+- Measured the active source at 2,451 lines / 232,649 bytes with 18,026 bytes of pre-rollover headroom. It grew through
+  38 commits; the last nine intervals averaged 49.7 lines / 5,370 bytes. Four exhaustive semantic regions and
+  19 reader files prove the large file is accumulated finite-program history, not one current mandatory read.
+- Accepted ADR 0018: `.10b.i` commits the complete pre-migration source and neutral verifier; `.10b.ii` then
+  copies that durable boundary byte-for-byte to an exact terminal and leaves a bounded closed root plus archive
+  index/manifest. This avoids an unverifiable self-referential one-commit source claim.
+- No content moved and no archive, executable, threshold, ceiling, or product behavior changed. The current task
+  tree has 12,731 bytes of pre-rollover headroom after recording the design; frontier → `.10b.i`.
+- Surfaced the active `PDF-VARIANT-DIGESTION` tree at 222,616 bytes, only 207 bytes below warning. Its next append
+  is blocked on a separately task-owned active-tree containment design after this program closes.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9b — partition and verify every archive route
 
 - Replaced the append-growing shared route with a 34-line / 1,512-byte fixed landing and four complete bounded

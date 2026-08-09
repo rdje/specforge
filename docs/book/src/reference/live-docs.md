@@ -123,6 +123,26 @@ bytes, 82.2% of its health target, with 21,611 bytes of pre-rollover headroom. S
 its lossless current/history topology. The archive-route implementation stayed within that measured margin;
 neither concern authorizes trimming history or widening a ceiling.
 
+#### Terminal task-tree boundary
+
+The `.10a` follow-up measures the task source after archive-route completion at 2,451 lines / 232,649 bytes,
+with 18,026 bytes of pre-rollover headroom. Across 38 commits it accumulated four roles: program/current
+navigation, decisions, slice-specific contracts, and verification/commit/changelog evidence. The last nine
+updates averaged 49.7 lines / 5,370 bytes. This is a finite program approaching closure, not a rolling ledger;
+mechanical heading shards would split one task authority, while trimming would lose revision-bound evidence.
+
+[ADR 0018](../../../decisions/0018-terminal-task-tree-current-history-boundary.md) therefore uses a two-commit
+terminal boundary. `.10b.i` commits the complete still-live source plus its neutral identity checker. `.10b.ii`
+copies that durable source byte-for-byte into an immutable capsule, then leaves a bounded closed summary at the
+stable task path and routes exact history through a bounded index/manifest. The task catalog continues reading
+only the stable H1 and metadata status; ordinary startup never reads the capsule. The compact root retains the
+final verification marker/table required by the derived-state contract, while all historical rows remain exact
+in the capsule.
+
+This topology applies only when every leaf is complete and reopening is forbidden. The same census finds the
+active `PDF-VARIANT-DIGESTION` task tree at 222,616 bytes, 207 bytes below warning. Its next append requires a
+separately owned active-tree partition design; it cannot borrow the terminal rule or a wider ceiling.
+
 All four root-ledger migrations have landed. `CHANGES.md`, `DEVELOPMENT_NOTES.md`,
 `LIVE_ACHIEVEMENT_STATUS.md`, and `RUST_CODEBASE_ANALYSIS.md` are bounded current views, while their
 exact source capsules are the historical authority.

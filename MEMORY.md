@@ -21,15 +21,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9b` — bounded archive-route migration and complete-chain
-  enforcement; complete and verified, commit pending.
-- Current state: a fixed landing and four bounded per-ledger indexes/manifests preserve every old manifest data
-  row and immutable member. Complete graph/index/landing and retired-path checks pass; `.9` is closed. This task
-  evidence is 2,451 lines / 232,637 bytes with 248 lines / 18,038 bytes of pre-rollover headroom;
-  `.10a`/`.10b` own lossless containment.
-- Next action: commit `.9b`, then activate `.10a` and measure task-tree semantic regions, readers, update rate,
-  exact-history requirements, and remaining line/byte headroom before selecting a bounded topology.
-- In-flight uncommitted: verified `.9b` route/data/checker/docs migration; no product behavior, ledger record,
-  immutable member, threshold, or existing ceiling changed. `.project-data/tmp` contains only `.gitkeep` plus
-  `xcrun_db`.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10a` — terminal task-evidence design complete and
+  verified; commit pending.
+- Current state: ADR 0018 selects a `.10b.i` committed exact-source/verifier boundary followed by `.10b.ii`
+  byte-identical capsule + bounded closed root/index. The task file is now 2,502 lines / 237,944 bytes with
+  197 lines / 12,731 bytes of pre-rollover headroom. Active `PDF-VARIANT-DIGESTION` is 207 bytes before warning and may
+  not accept another append until a new task tree owns active-tree containment after `.10` closes.
+- Next action: commit `.10a`, then activate `.10b.i`; implement the neutral contract/checker, pin the complete
+  live-source identity and provenance, exercise fail-closed mutations, and commit before root replacement.
+- In-flight uncommitted: verified `.10a` design/live-doc changes only; no task content moved and no archive,
+  executable, threshold, ceiling, product, or canonical artifact changed. `.project-data/tmp` contains only
+  `.gitkeep` plus `xcrun_db`.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

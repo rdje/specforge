@@ -40,7 +40,10 @@
   `.8`. `.9a` measures the 218-byte shared-route boundary and accepts ADR 0017's fixed four-route landing plus
   bounded per-ledger index/manifest authorities. `.9b` lands that topology, preserves every former manifest data
   row byte-for-byte, removes the exact retired shared manifest, and enforces complete acyclic chronology, exact
-  index order, landing completeness, and residue absence. No existing threshold or ceiling is widened.
+  index order, landing completeness, and residue absence. `.10a` then measures the program's own finite task
+  record and accepts ADR 0018: `.10b.i` commits the exact source/verifier boundary before `.10b.ii` copies it to
+  a terminal and leaves a bounded closed root/index. Active task trees are explicitly excluded from that
+  terminal topology. No existing threshold or ceiling is widened.
 <!-- LIVE-DOCUMENT-SIZE-CONTAINMENT-LOCAL-ADOPTION:END -->
 
 ---

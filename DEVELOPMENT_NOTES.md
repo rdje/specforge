@@ -1,4 +1,22 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10a (`2026-08-09`) — commit the source before replacing it
+
+This task file is a finite dependency graph nearing completion, not an append-forever ledger. Its current-looking
+front half contains 54 accumulated task statuses, while the rest carries durable decisions, slice contracts, and
+121 evidence-table rows. Heading shards would spread one task authority across several files; a rolling window
+would invent chronology semantics the graph does not have. Once the last implementation parent closes, the right
+boundary is a small closed root over one exact terminal.
+
+The provenance seam needs two commits. `.10b.i` completes and commits the still-live source with the neutral
+checker and exact identity contract. `.10b.ii` copies that durable boundary, verifies byte equality, then replaces
+the root. This gives Git history, the manifest, and the resulting-tree checker the same independently identifiable
+source instead of asking one commit to prove a transient pre-rewrite state that never existed durably.
+
+Terminal containment is deliberately unavailable to active work. The same census puts
+`PDF-VARIANT-DIGESTION.md` 207 bytes below warning, but that tree still has active and pending leaves. Its next
+append must wait for a new task tree to design an active partition that preserves its live frontier; pretending it
+is closed or widening its ceiling would destroy the distinction this migration is meant to protect.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9b (`2026-08-09`) — chronology is an executable graph
 
 The partition is intentionally by ledger authority, not by arbitrary row count. Each manifest repeats the same
