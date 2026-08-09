@@ -179,7 +179,11 @@ Five active program groups support that north star:
   signal constraint, four actors, 13 phases, 21 invariants, and 49 behaviors. Lowering blocks honestly with one
   unsupported temporal residual and only `adapter.json`. Two cascades reproduce all 12 hashes; all 66 remaining
   emits are strict-clean. Corpus is 38 done / 18 remaining. Preflight's copied-rollback side effect remains
-  durably closed by `.2.38a`: validation follows the explicit artifact path for all five stages. Separately,
+  durably closed by `.2.38a`: validation follows the explicit artifact path for all five stages. `.2.39` now owns
+  the smallest remaining candidate, the 10-page OpenCAPI 3.0 Ready Test Resources engineering note. Its retained
+  evidence has no relations or declarations, while the blocked downstream adapter still renders a one-bit `DL`
+  output inferred from a terms-section acronym, so this refresh tests current generic signal/interface authority.
+  Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.
