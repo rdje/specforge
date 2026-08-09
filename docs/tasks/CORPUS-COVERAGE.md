@@ -4,7 +4,7 @@
 
 - Tree ID: `CORPUS-COVERAGE`
 - Status: `active` (`.0` build-out + `.1` stage-staleness validator done; `.2` current-binary refresh batch
-  remains active with 39 completed documents and frontier ready to select `.2.40`; `.3`
+  remains active with 39 completed documents and `.2.40` OpenCAPI Certified-note refresh owned next; `.3`
   lifecycle/currentness reconciliation done `2026-08-09`)
 - Roadmap lane: `R15e`/`R16` (corpus digestion — the owner's substantive gap #2)
 - Created: `2026-06-17`
@@ -540,6 +540,39 @@ today's ephemeral normalized-directory count.
 - [x] **LOCKSTEP** — generated artifacts, #39 row/count/frontier, live docs, durable fact when warranted, mdBook,
   and `MEMORY.md` agree; delete only authenticated rollback/task evidence after every final gate is green.
 
+- ID: `CORPUS-COVERAGE.2.40` · Status: `in_progress` (`2026-08-09`, DATA/DOC) · Goal: run a guarded
+  current-binary refresh of `opencapi_3_0_certified_test_resources_engineering_note_v1_0` from the
+  caller-authorized same-SSD source and complete the deterministic EvidenceIR→SemanticIR→IntentIR→adapter
+  cascade. This 13-page / three-visual / two-table / 173-element engineering note is the smallest remaining
+  candidate and a direct sibling falsification test for `.2.39`: retained EvidenceIR has 173 statements and no
+  relations or typed constraints, but synthetic `statement_0174` again says `Signal DL is width 1.` from its
+  terms section. That record creates high-confidence SemanticIR interface
+  `interface_explicit_interface_section_0016_terms` and a one-bit `DL` output in the adapter, which is already
+  blocked for lack of behavioral content. Authenticate the retained six-file chain, source hash
+  `b427a302…2902`, and release binary `5175bf62…8f4` before mutation; preserve an exact same-volume rollback; use
+  CPU Docling with the 85%-used RAM abort and no LLM/VLM inference; replace the obsolete retained boot-volume
+  source provenance through regeneration from the resolved caller-authorized SSD input. Preserve any signal
+  surface satisfying current generic declaration authority, remove only unsupported material, and accept any
+  pipeline-grounded output. If a new product defect appears, preserve exact evidence and add a bounded child leaf
+  before changing code.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.40`
+
+- [ ] **REPRODUCE / MEASURE** — authenticate the source PDF, retained six-file chain, 13-page source structure,
+  zero-relation/constraint evidence, one-interface/one-signal blocked adapter, release binary, and same-volume
+  rollback; record guarded-ingest counts, peak memory, final hashes, and typed before→after deltas.
+- [ ] **ROOT CAUSE (WHY + WHERE)** — classify every material delta against current generic document-class,
+  interface, signal, and behavioral authority rather than assuming the `.2.39` sibling result.
+- [ ] **ADDRESSED (verified)** — promote only complete validated stages; require every page path final and
+  repository-relative; converge obsolete adapter targets; run FSMGen strict only if honestly renderable.
+- [ ] **NO REGRESSION** — reproduce the deterministic cascade, hold nine provider-free WIRE/I2C/SWD gates and KG
+  156/156, sweep all current emitted ISFs through FSMGen strict, and pass mdBook/doctrine/path/locality gates plus
+  broader Rust CI if any product code changes.
+- [ ] **GENERICITY** — no OpenCAPI/vendor/note/document/acronym exception, manual generated-output edit, relaxed
+  validator, fabricated interface/behavior, or LLM/VLM inference enters the slice.
+- [ ] **LOCKSTEP** — generated artifacts, #40 row/count/frontier, live docs, durable fact when warranted, mdBook,
+  and `MEMORY.md` agree; delete only authenticated rollback/task evidence after every final gate is green.
+
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34b.ii.a`
 
 - [x] **REPRODUCE / MEASURE** — fresh USB4 ingest reproducibly leaves 51/51 page-sidecar image paths absolute and
@@ -798,7 +831,9 @@ today's ephemeral normalized-directory count.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: select and own `CORPUS-COVERAGE.2.40` from the 17-document tail before changing another artifact.
+- Frontier: `CORPUS-COVERAGE.2.40` — authenticate the retained OpenCAPI Certified-note source-through-adapter
+  chain and exact same-volume rollback, then run its guarded CPU ingest and deterministic cascade without changing
+  generated artifacts outside this document key.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**39 refreshes done after #39;
   17 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#39: #29/#31 CHI-C2C marquee message-field refreshes,

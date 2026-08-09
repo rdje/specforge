@@ -21,15 +21,12 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.39`; complete the verified OpenCAPI Ready-note signoff and commit workflow.
-- Current state: two guarded ingests reproduce 10 pages / six visuals / five tables / 105 elements at 18% peak
-  used. Evidence 113→112 removes only synthetic `Signal DL is width 1.` from a glossary row; current authority
-  removes the stale one-interface/one-output surface. The guide preserves 12 behaviors/five constraints, blocks
-  on no signals plus no behavior, and leaves only `adapter.json` plus its report. Two cascades reproduce all 12
-  hashes; WIRE/I2C/SWD, KG 156/156, 66/66 FSMGen strict, persisted-path, and locality gates pass.
-- Next action: stage the completed live-doc/mdBook/fact alignment, run final doctrines, commit `.2.39`, then
-  select and own refresh #40 from the 17-document tail.
-- In-flight uncommitted: generated #39 artifacts and tracked signoff alignment are complete; the exact ignored
-  29-file / 804-KiB rollback/task evidence is deleted with zero task-id residue, and only the final commit workflow
-  remains.
+- Active unit: `CORPUS-COVERAGE.2.40`; refresh the OpenCAPI 3.0 Certified Test Resources engineering note.
+- Current state: 39 refreshes are complete / 17 remain, with 80 SourceIR / 8 normalized / 80 EvidenceIR / 79
+  SemanticIR / 79 IntentIR / 79 adapters and all 66 current emitted ISFs strict-clean. The selected 13-page note
+  is a `.2.39` sibling: stale synthetic `Signal DL is width 1.` from its terms section creates one interface and
+  one adapter output despite zero relations/constraints and lowering already blocked for no behavior.
+- Next action: authenticate the complete retained #40 stage chain and exact same-volume rollback, then run the
+  guarded CPU ingest and deterministic cascade from the resolved caller-authorized SSD input.
+- In-flight uncommitted: only the `.2.40` ownership/resume-pointer commit; no #40 artifact has changed.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.
