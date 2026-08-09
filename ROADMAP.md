@@ -144,7 +144,11 @@ Five active program groups support that north star:
   relation-grounded directions. `.2.33d.iv` then used the real USB cascade as a falsification gate: `.iv.a`
   makes generated adapter directories converge after actor/renderability changes, while the audit exposes a
   distinct authority-empty SemanticIR fallback (918 low-confidence interfaces → 556 one-bit outputs with an
-  empty actor graph). `.iv.b` owns that generic repair before `.iv.c` may sign off USB. Separately,
+  empty actor graph). `.iv.b` now closes that generic boundary: 21 affected retained documents (5,527
+  interfaces / 18,397 all-low records) dry-run to zero under a typed-or-signal-led-deontic authority rule;
+  declaration-free `VALID`/`READY` and declared wire surfaces remain intact, and USB blocks honestly with no
+  emitted ISF. `.iv.c` owns final cascade/gate repetition
+  and verified-rollback deletion before the USB tree closes. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

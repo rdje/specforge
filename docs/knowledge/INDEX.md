@@ -134,6 +134,7 @@
 - [section-header-register-block-qualification](section-header-register-block-qualification.md)
 - [section-header-register-field-extraction](section-header-register-field-extraction.md)
 - [section-header-register-identity-collapse](section-header-register-identity-collapse.md)
+- [semantic-interface-authority-empty-fallback](semantic-interface-authority-empty-fallback.md)
 - [signal-presence-matrix-capture](signal-presence-matrix-capture.md)
 - [source-ir-size-scaling](source-ir-size-scaling.md)
 - [source-pdf-registry-authority](source-pdf-registry-authority.md)

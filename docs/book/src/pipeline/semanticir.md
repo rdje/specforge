@@ -67,6 +67,29 @@ Declared signal records also keep table support when the declaration was synthes
 `InterfaceSignalRecord.supporting_table_ids` records the `SourceIR` table ids that backed the declaration, so `SemanticIR` and the carried `IntentIR` can explain that a canonical signal came from a specific signal-description table rather than from free-floating prose.
 `specforge validate` reports this as `with_table_support`, giving users a compact coverage view while leaving exact signal-to-table correctness to canonical IR inspection and `kg-bench` expectations.
 
+### Heuristic grouping needs positive authority
+
+Statement-level signal co-mentions normally group signals that are already authoritative. `SemanticIR` first
+establishes authority from formal `Signal X is ...` declarations and the document system contract, then
+intersects candidates with that surface. A declaration-free document has one narrow positive path: a
+multi-signal statement may ground its own group when it starts with one candidate signal and immediately makes a
+deontic signal action (`must` or `shall` plus assertion, deassertion, or stability).
+
+This fail-closed rule matters for prose-heavy and table-heavy documents. A row such as
+`| F0 84 | 01 | A0 | A4 | D5 |` may contain hardware-shaped uppercase tokens, but without a typed declaration
+there is no evidence that those tokens are top-level interface wires. Before this boundary was enforced, 21
+retained documents accumulated 5,527 low-confidence interfaces / 18,397 records and fed 4,060 signals into ISF
+adapters. The same documents now produce no interface because none satisfies the positive behavior grammar.
+
+The distinction preserves real heuristic-only behavior. `VALID must remain asserted until READY is observed`
+grounds the `VALID`/`READY` pair even without a separate declaration. In contrast, a raw encoding row, ordinary
+uppercase prose, or an actor relation such as `TBU reads DOWNSTREAM` does not declare a wire surface.
+
+Formal declarations are unaffected because they take the explicit interface path. System clock and reset are
+also preserved: the system contract inserts them into the authority set and emits an explicit document
+interface with typed input direction and width one. Actor/signal relations can describe use of an authorized
+signal, but a relation alone is not a signal declaration.
+
 ### Negative-knowledge cautions
 
 If a carried conflict or residual packet shape matches learned negative knowledge, `SemanticIR` validation may report `negative_knowledge_prior_matches`.

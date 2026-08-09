@@ -72,6 +72,8 @@
   > can an active task tree use the terminal task archive topology
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > can an external absolute input be rebased into the repository
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > can low confidence statement tokens create an interface without a formal signal declaration
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > can provenance load after source normalized cleanup removes its leaf
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
@@ -206,6 +208,8 @@
   > does adaptive batch sizing change the ingest output / break byte-identity
 - [dempster-fusion](../knowledge/dempster-fusion.md)
   > does agreement between sources boost confidence
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > does an actor signal relation alone authorize a SemanticIR interface signal
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > does canonical SWD EvidenceIR contain interface edge timing
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
@@ -270,6 +274,8 @@
   > does the NLI verifier actually catch real extraction errors
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > does the agent-identity gate keep Class-B fragments like Subordinate extends
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > does the authority empty repair preserve formal and system contract interfaces
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > does the current FSMGen ISF support named bit-fields inside a storage var (NO — opaque (var NAME (width N)) only on pin 030f8c273; set-field/extract are runtime ops not a declaration)
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
@@ -292,9 +298,3 @@
   > does the stage-staleness detector false-fire on register/command docs with 0 relations (no — both empty)
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > does the trapped-row gap-fill mint duplicate signal declarations
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > does validate detect a stale downstream artifact that silently dropped relations
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > does validate report message_field_records
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > fresh empirical reconfirmation of the .2i body-emission parking on the current 030f8c273 binary

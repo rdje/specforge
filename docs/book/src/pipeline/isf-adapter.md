@@ -56,9 +56,18 @@ model is nevertheless semantically untrustworthy. SpecForge records that result 
 not as successful lowering. `CORPUS-COVERAGE.2.33d.ii` fixes the shared grounding boundary without document-name
 or token special cases. The real rebuild proves those four names and the phantom actor disappear, but also
 exposes a distinct authority-empty interface fallback: 918 low-confidence token-group interfaces become 556
-one-bit outputs even though the actor graph is empty. USB therefore remains blocked while `.2.33d.iv.b` repairs
-that upstream semantic boundary; syntax and the absence of the original four names are both necessary but not
-sufficient proof.
+one-bit outputs even though the actor graph is empty. `CORPUS-COVERAGE.2.33d.iv.b` closes that second boundary:
+heuristic interface grouping now requires formal/system-contract authority or a signal-led deontic behavior
+statement. The retained-corpus census found 21 affected documents with 5,527 interfaces / 18,397 records; every
+member now dry-runs to zero interfaces, while a declaration-free `VALID`/`READY` handshake and the declared
+APB/AHB/AXI/SWD interface surfaces remain preserved.
+
+The rebuilt USB adapter is now honestly blocked with `no signals declared in interface`, zero signals and
+rules, and no emitted `.isf`. A successful blocked write also removes the obsolete `channel.isf`, so the
+document directory contains only `adapter.json`. This is the intended result: behaviors, constraints,
+transactions, storage, and residual source evidence remain in canonical IR, but SpecForge does not fabricate an
+interface merely to make a downstream target renderable. Syntax and the absence of the original four names are
+necessary but not sufficient proof; typed signal authority is the emit boundary.
 
 The measurement behind that repair found three upstream authority errors, not a reason to distrust every
 relation-derived direction. Across the retained corpus, 97 sentence-start phrases use `signal <word>` without

@@ -202,3 +202,61 @@ Two independent findings prevent signoff:
    encoding/data table rows then deduplicate to 556 one-bit `.isf` outputs despite an empty actor graph. This is
    a second authority loop, not residue from the original four names. `.iv.b` owns its corpus measurement and
    generic repair; `.iv.c` owns the final real-cascade proof and rollback deletion.
+
+## Authority-empty SemanticIR repair (`CORPUS-COVERAGE.2.33d.iv.b`)
+
+The retained-corpus before census found 21 documents whose interface signal records were all low confidence:
+5,527 interfaces, 18,397 records, and 4,060 per-document unique names. Their current adapters consumed 4,060
+signals and 544 rules; 19 of 21 were marked renderable. This is the complete affected set:
+
+| document key | interfaces | records | unique | adapter status | signals | rules |
+| --- | ---: | ---: | ---: | --- | ---: | ---: |
+| `5_0_2024_08_intel_virtualization_technology_for_directed_io_specification` | 929 | 3,154 | 510 | renderable | 510 | 44 |
+| `usb_3_2_revision_1_0_2017_09` | 918 | 2,940 | 556 | renderable | 556 | 170 |
+| `ihi0088_g_2024_06_amba_dti_protocol_specification` | 530 | 2,325 | 294 | renderable | 294 | 81 |
+| `nvme_base_specification_2_0a_2021_07_26` | 737 | 2,176 | 550 | renderable | 550 | 116 |
+| `ccix_base_specification_r1_0a_v1_0_for_evaluation` | 480 | 1,694 | 279 | renderable | 279 | 36 |
+| `1_0_1_2026_02_22_risc_v_iommu_architecture_specification` | 426 | 1,384 | 175 | renderable | 175 | 45 |
+| `pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide` | 228 | 825 | 537 | renderable | 537 | 0 |
+| `1_0_2025_03_12_risc_v_advanced_interrupt_architecture` | 211 | 619 | 91 | renderable | 91 | 22 |
+| `bosch_can_specification_2_0_1991` | 131 | 531 | 97 | renderable | 97 | 6 |
+| `ihi0098_b_2026_03_23_amba_chi_chip_to_chip_c2c_architecture_specification` | 195 | 512 | 109 | renderable | 109 | 8 |
+| `109242_0100_01_2023_09_04_arm_smmu_software_guide` | 135 | 470 | 144 | renderable | 144 | 3 |
+| `readme` | 78 | 345 | 152 | renderable | 152 | 3 |
+| `ihi0076_a_2018_05_02_advanced_communications_channel_architecture_specification` | 121 | 293 | 133 | renderable | 133 | 4 |
+| `198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide` | 83 | 276 | 89 | renderable | 89 | 3 |
+| `den0068_2018_07_23_coresight_base_system_architecture` | 88 | 230 | 100 | renderable | 100 | 2 |
+| `ihi0098_a_b_2026_02_03_amba_chi_chip_to_chip_c2c_architecture_specification` | 82 | 208 | 69 | renderable | 69 | 0 |
+| `ihi0098_a_2024_02_07_amba_chi_chip_to_chip_c2c_architecture_specification` | 74 | 193 | 69 | renderable | 69 | 1 |
+| `102196_0100_01_2022_05_05_aarch64_external_debug_guide` | 64 | 182 | 73 | renderable | 73 | 0 |
+| `jesd235_2013_10_hbm_dram` | 7 | 18 | 16 | blocked | 16 | 0 |
+| `opencapi_afu_address_space_usage` | 5 | 12 | 8 | blocked | 8 | 0 |
+| `opencapi_4_0_32gbps_phy_mech_spec_v10_17mar2021` | 5 | 10 | 9 | renderable | 9 | 0 |
+
+Twenty documents have no actor ports or actor/signal relations. DTI alone has one of each:
+`TBU reads DOWNSTREAM` at medium confidence from statement 1740. That is not a grounded heuristic-only wire;
+`DOWNSTREAM` is ordinary direction prose, while the same document's 294 current adapter signals are visibly
+dominated by statement-token groups. Preserving it would make an actor relation a second declaration authority
+and would not justify the other 2,324 records. No exception is selected.
+
+The first unsupported promotion is the empty-set branch in
+`retain_authoritative_interface_candidate_signals`: it returned all candidates when no formal/system-contract
+authority existed. The repair replaces that allow-all with a narrow positive grammar. Formal declarations still
+take the explicit interface path; the system contract inserts clock/reset names before grouping. Without either,
+a multi-signal statement may ground its own group only when it begins with one candidate identifier and then
+makes a deontic signal action (`must`/`shall` plus assert/deassert/stability). This preserves the existing
+declaration-free `VALID must remain asserted until READY is observed` handshake contract while rejecting raw
+encoding rows, ordinary prose, and DTI's `DOWNSTREAM` read. Focused tests lock both empty-authority outcomes,
+full handshake construction, declared-surface filtering, and system-contract preservation.
+
+A release-binary dry run over the exact 21-document cohort produces **0 interfaces / 0 records** in every member.
+Preserved-binary comparison proves APB, AHB, AXI, and SWD interface surfaces byte-identical. WIRE-BASED-100 stays
+1.000 on APB/AHB/AXI constraints, relations, and temporal rules, I2C declarations, SWD relation and complete
+11/4/13/1 derivation; the documented SWD promotion-only constraint remains 0/1. `kg-bench` is 156/156.
+
+The materialized USB rebuild is the concrete downstream proof. SemanticIR and IntentIR contain zero interfaces
+and interface records; actor ports/relations remain zero. `adapt` reports `blocked`, `no signals declared in
+interface`, zero signals/rules, one retained storage record, and 15 honest residuals. The successful blocked
+write removes `channel.isf`, leaving exactly `adapter.json`. Other semantic candidates can remain visible in
+typed rules or residual source text, but none becomes an emitted hardware port without signal authority.
+`.iv.c` retains the complete final cascade/gate repetition and verified-rollback deletion.

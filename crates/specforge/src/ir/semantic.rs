@@ -1988,6 +1988,7 @@ fn build_interfaces(
         let candidate_signals = retain_authoritative_interface_candidate_signals(
             filtered_interface_candidate_signals(statement.signals.as_slice()).as_slice(),
             &authoritative_signal_names,
+            &statement.text,
         );
         // Single-signal control prose should enrich an explicit declaration, not mint a duplicate
         // low-confidence interface for the same canonical signal.
@@ -5074,9 +5075,18 @@ fn filtered_interface_candidate_signals(signals: &[String]) -> Vec<String> {
 fn retain_authoritative_interface_candidate_signals(
     signals: &[String],
     authoritative_signal_names: &BTreeSet<String>,
+    statement_text: &str,
 ) -> Vec<String> {
+    // Co-mention normally enriches only a formal declaration or the document system contract.
+    // A declaration-free document has one narrow positive path: a signal-led deontic behavior
+    // statement can ground its own multi-signal interface (for example, an asserted-until-
+    // observed handshake). Ordinary uppercase prose and table tokens still fail closed.
     if authoritative_signal_names.is_empty() {
-        return signals.to_vec();
+        return if statement_establishes_signal_behavior(signals, statement_text) {
+            signals.to_vec()
+        } else {
+            Vec::new()
+        };
     }
 
     signals
@@ -5084,6 +5094,28 @@ fn retain_authoritative_interface_candidate_signals(
         .filter(|signal| authoritative_signal_names.contains(*signal))
         .cloned()
         .collect()
+}
+
+fn statement_establishes_signal_behavior(signals: &[String], statement_text: &str) -> bool {
+    if signals.len() < 2 {
+        return false;
+    }
+
+    let trimmed = statement_text.trim();
+    let split_at = trimmed.find(char::is_whitespace).unwrap_or(trimmed.len());
+    let subject = &trimmed[..split_at];
+    if !signals.iter().any(|signal| signal == subject) {
+        return false;
+    }
+
+    let behavior = normalize_sentence(trimmed[split_at..].trim()).to_ascii_lowercase();
+    let deontic = behavior.starts_with("must ") || behavior.starts_with("shall ");
+    let signal_action = behavior.contains("assert")
+        || behavior.contains("deassert")
+        || behavior.contains("remain stable")
+        || behavior.contains("held stable");
+
+    deontic && signal_action
 }
 
 fn heuristic_interface_candidate_is_redundant_with_authoritative_surface(
@@ -18427,9 +18459,58 @@ mod tests {
                 "PREADY".to_string(),
             ],
             &authoritative,
+            "PADDR and PREADY participate in the transfer.",
         );
 
         assert_eq!(filtered, vec!["PADDR".to_string(), "PREADY".to_string()]);
+    }
+
+    #[test]
+    fn retain_authoritative_interface_candidate_signals_fails_closed_without_authority() {
+        let filtered = super::retain_authoritative_interface_candidate_signals(
+            &["A0".to_string(), "D0".to_string(), "F0".to_string()],
+            &std::collections::BTreeSet::new(),
+            "| F0 84 | 01 | A0 | D0 |",
+        );
+
+        assert!(
+            filtered.is_empty(),
+            "statement tokens cannot bootstrap a signal surface without typed authority"
+        );
+    }
+
+    #[test]
+    fn retain_authoritative_interface_candidate_signals_keeps_grounded_signal_behavior() {
+        let filtered = super::retain_authoritative_interface_candidate_signals(
+            &["READY".to_string(), "VALID".to_string()],
+            &std::collections::BTreeSet::new(),
+            "VALID must remain asserted until READY is observed.",
+        );
+
+        assert_eq!(filtered, vec!["READY".to_string(), "VALID".to_string()]);
+    }
+
+    #[test]
+    fn authority_empty_statement_tokens_do_not_become_interfaces() {
+        let context = make_semantic_context_with_statements(vec![super::StatementContext {
+            statement_id: "statement_encoding_row".to_string(),
+            class: super::StatementClass::SourceFact,
+            text: "| F0 84 | 01 | A0 | A4 | D5 |".to_string(),
+            related_visual_evidence_ids: vec![],
+            section_ids: vec!["section_encoding".to_string()],
+            signals: vec![
+                "A0".to_string(),
+                "A4".to_string(),
+                "D5".to_string(),
+                "F0".to_string(),
+            ],
+            supporting_table_ids: vec!["table_encoding".to_string()],
+        }]);
+
+        let (interfaces, conflicts) = super::build_interfaces(&context, None, &[], None);
+
+        assert!(interfaces.is_empty());
+        assert!(conflicts.is_empty());
     }
 
     #[test]

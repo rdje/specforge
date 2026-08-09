@@ -4,6 +4,19 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-09 — fail-closed SemanticIR interface authority; `CORPUS-COVERAGE.2.33d.iv.b`)
+
+- `build_interfaces` derives typed authority from formal declarations plus system-contract clock/reset.
+  `retain_authoritative_interface_candidate_signals` intersects co-mentions with that set. If it is empty, only
+  a multi-signal statement led by one candidate and making a deontic assertion/deassertion/stability claim can
+  ground its own group; ordinary statement tokens fail closed.
+- Direct helper/build regressions lock raw-token rejection and the declaration-free `VALID`/`READY` positive.
+  Existing handshake, declared-surface, and system-contract tests retain all positive paths. The production
+  change contains no signal-name list, document, vendor, or adapter policy.
+- Corpus impact is bounded and measured: 21 all-low documents drop from 5,527 interfaces / 18,397 records to
+  zero in release dry-runs; preserved APB/AHB/AXI/SWD interface surfaces are byte-equivalent. Real USB now lowers
+  as blocked with zero signals/rules and no emitted `.isf`, while canonical non-interface intent remains intact.
+
 ## Session update (2026-08-09 — adapter output convergence; `CORPUS-COVERAGE.2.33d.iv.a`)
 
 - `AdapterArtifact::write_to_disk` now reconciles generated `.isf` siblings after writing the current manifest

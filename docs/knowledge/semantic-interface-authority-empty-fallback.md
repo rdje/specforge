@@ -1,0 +1,58 @@
+---
+id: semantic-interface-authority-empty-fallback
+title: Declaration-free heuristic interfaces require a signal-led deontic behavior statement
+answers:
+  - "what happens when SemanticIR has no authoritative signal names"
+  - "can low confidence statement tokens create an interface without a formal signal declaration"
+  - "why did USB 3.2 produce 918 interfaces and 556 adapter signals"
+  - "how many retained documents depended entirely on heuristic SemanticIR interfaces"
+  - "what is the corpus impact of the authority empty interface fallback"
+  - "does an actor signal relation alone authorize a SemanticIR interface signal"
+  - "why is DTI DOWNSTREAM not preserved as a heuristic only wire"
+  - "how does retain_authoritative_interface_candidate_signals behave with an empty authority set"
+  - "does the authority empty repair preserve formal and system contract interfaces"
+  - "how does SemanticIR preserve VALID READY without formal signal declarations"
+  - "what grounded heuristic only interface evidence is preserved"
+  - "why is the repaired USB 3.2 ISF adapter blocked"
+date: 2026-08-09
+tags: [semantic-ir, interfaces, signal-authority, fail-closed, corpus-coverage, dense-prose, isf, false-positive]
+evidence: docs/research/dense-prose-signal-authority-measurement.md; crates/specforge/src/ir/semantic.rs (build_interfaces; retain_authoritative_interface_candidate_signals; authority_empty_statement_tokens_do_not_become_interfaces); generated/semantic_ir/usb_3_2_revision_1_0_2017_09/semantic_ir.json; generated/intent_ir/usb_3_2_revision_1_0_2017_09/intent_ir.json; generated/adapters/isf/usb_3_2_revision_1_0_2017_09/adapter.json; docs/tasks/CORPUS-COVERAGE.md (.2.33d.iv.b)
+reverify: "Build the release binary. Run specforge semantic on the retained USB EvidenceIR, then intent and adapt --target isf. Expect zero interfaces and signal records, zero actor ports/relations, adapter lowering_status blocked with no signals declared in interface, zero ISF signals/rules, and no emitted *.isf sibling. Run the three retain_authoritative_interface_candidate_signals tests, authority_empty_statement_tokens_do_not_become_interfaces, builds_semantic_ir_from_handshake_evidence, and system_contract_signals_become_explicit_interface_records."
+---
+
+**Established `2026-08-09` (`CORPUS-COVERAGE.2.33d.iv.b`).** `build_interfaces` first collects typed
+signal authority from formal `Signal X is ...` declarations and the document system contract. Statement-level
+co-mention groups are a secondary enrichment path. Before this repair,
+`retain_authoritative_interface_candidate_signals` treated an empty authority set as an exception and returned
+every heuristic candidate unchanged. Ordinary uppercase prose, encodings, and data-table cells could therefore
+bootstrap the very interface surface that was supposed to authorize them.
+
+The retained-corpus census found 21 documents whose interface records were entirely low confidence: 5,527
+interfaces, 18,397 records, and 4,060 per-document unique names. Their adapters consumed those records as 4,060
+signals and 544 rules; 19 were marked renderable. USB 3.2 was the clearest falsification: raw encoding rows
+formed 918 interfaces / 2,940 records, deduplicated to 556 one-bit adapter outputs and 170 rules despite zero
+actor ports and zero actor/signal relations.
+
+DTI was the only member with any actor graph evidence: one medium-confidence `TBU reads DOWNSTREAM` relation.
+Its 2,325 all-low interface records and 294 adapter signals are ordinary token soup, and `DOWNSTREAM` is a prose
+direction word rather than a declared wire. A relation can ground actor-relative use of an already authorized
+signal, but it does not independently declare the signal or authorize unrelated statement tokens. No
+heuristic-only preservation exception was therefore justified.
+
+The fail-closed repair replaces the empty-set allow-all bypass with one narrow positive grammar. Formal
+declaration records take their explicit path, and system clock/reset signals enter the typed authority set before
+grouping. When neither exists, a multi-signal statement may ground its own group only if it begins with one of
+those signal identifiers and immediately makes a deontic signal action: `must`/`shall` plus assertion,
+deassertion, or stability. Thus `VALID must remain asserted until READY is observed` remains a canonical
+heuristic-only handshake, while encoding rows, ordinary prose, and `TBU reads DOWNSTREAM` fail closed.
+
+Dry-running all 21 affected retained documents still yields zero interfaces and records. APB, AHB, AXI, and SWD
+interface surfaces are byte-equivalent to the preserved pre-change binary. Executable tests cover raw-token
+rejection, the declaration-free VALID/READY positive, full handshake construction, declared-surface filtering,
+and system-contract preservation.
+
+The real USB rebuild now carries zero interfaces, zero interface records, zero actor ports, and zero actor
+relations. The adapter is honestly blocked on `no signals declared in interface`, emits zero signals/rules, and
+the successful blocked write removes the obsolete `channel.isf`, leaving only `adapter.json`. Typed behaviors,
+constraints, transactions, storage, and exact residual evidence remain in canonical IR; no hardware surface is
+fabricated merely to make the adapter renderable.

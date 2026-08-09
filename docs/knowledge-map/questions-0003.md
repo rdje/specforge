@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > how does the register reader recover a field name with no name column
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > how does the section-heading field reader tell a message container from a register container
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > how does the table-number grammar handle both B1.1 colon and A2-2 dash forms
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > how does the tiling gate keep register-bit recovery honest (no fabrication)
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how does validate classify a document / what is document_class
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > how does validate know an intent_ir is stale relative to its semantic_ir
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
@@ -141,6 +151,8 @@
   > how many register bit-fields fail to lower to .isf (12,638 fields across 32 docs — the largest measurable intent-loss; DOC-INTENT-TAXONOMY.2)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > how many registers can SpecForge compose a faithful ISF reset for (1508 strictly composable corpus-wide; 1339 fit the current emit width; 446 have V>0 — the real .isf diff)
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > how many retained documents depended entirely on heuristic SemanticIR interfaces
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > how many sentence-start signal descriptor phrases pollute the retained corpus
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
@@ -286,15 +298,3 @@
   > is the ATP ihi0082 ARVALID/RVALID/RREADY drop a lowering gap
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
   > is the DOC-INTENT-TAXONOMY .2 per-category scorecard measurement complete (YES after .4e — Gap A lowered .4a.ii, Gap B carrier .4b gated, cat-3 .4c->.4c.i, cat-4 .4d->.4d.i, conditional rules .4e honest residual; remaining work is CODE not measurement)
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > is the DTI ATST 0B01 constraint a real obligation (no — mis-attribution: the source text 'ATTR_OVR.SHCFG must be 0b01' binds SHCFG's value to ATST, which is a value of the FLOW field; an upstream extraction bug spun out of ISF-VALUE-WIDTH-EMIT)
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > is the EvidenceIR build reproducible / deterministic
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > is the ISF storage-var width the register width (no — ir/isf_ir.rs uses max single-field extent, a latent bug; the true width is size_bits or max(bits_high)+1)
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > is the LLM-primary promotion a recall improvement
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > is the LLM-primary promotion gauge improvement reproducible on canonical artifacts (not just /tmp copies)
-- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
-  > is the LLM/VLM provider missing or not wired up

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > does validate detect a stale downstream artifact that silently dropped relations
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > does validate report message_field_records
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > fresh empirical reconfirmation of the .2i body-emission parking on the current 030f8c273 binary
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > have the PDF task migration destinations been created
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
@@ -148,6 +154,8 @@
   > how does FSMGen decide a value literal's width (by notation digit count — 0x7D=8 bits, 0b00=2 bits — NOT by value; it requires an exact width-cast W'… match, no implicit truncation/extension; a bare decimal is unsized and fits any width)
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
   > how does FSMGen decide two rule data-writes conflict (same target, different value, NOT compatible/disjoint/priority/resource resolved) and when is a guard proven disjoint (_condition_terms_prove_disjoint: shared eq: signal with different values; an absent/empty condition is NEVER proven disjoint)
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > how does SemanticIR preserve VALID READY without formal signal declarations
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > how does SpecForge avoid chip/vendor name lists in document classification (structural typed-surface counts + generic front-matter doc-type vocabulary only; ADR 0006)
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
@@ -216,6 +224,8 @@
   > how does learn-priors harvest extraction-profile priors (multi-member clusters only, schema v6)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
   > how does pattern reuse stay agnostic (ADR 0006) and honest (no fabrication / no overfitting)
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > how does retain_authoritative_interface_candidate_signals behave with an empty authority set
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
   > how does specforge capture a signal that is defined in prose not a signal table (SWP S1/S2)
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
@@ -288,13 +298,3 @@
   > how does the fused two-label column ACE5-Lite ACE5-LiteACP split
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
   > how does the no-re-ingest canonical promotion protocol stay in place
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > how does the register reader recover a field name with no name column
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > how does the section-heading field reader tell a message container from a register container
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how does the table-number grammar handle both B1.1 colon and A2-2 dash forms
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > how does the tiling gate keep register-bit recovery honest (no fabrication)
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how does validate classify a document / what is document_class

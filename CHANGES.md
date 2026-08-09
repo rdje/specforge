@@ -1,3 +1,19 @@
+### CORPUS-COVERAGE.2.33d.iv.b — fail closed when SemanticIR has no typed signal authority
+
+- Measured the complete retained class: 21 documents / 5,527 interfaces / 18,397 all-low records / 4,060
+  per-document unique names; 19 adapters were marked renderable and consumed 4,060 signals / 544 rules.
+- Replaced the empty-authority allow-all in `retain_authoritative_interface_candidate_signals`. Groups now
+  require formal/system-contract authority or a signal-led deontic action statement; no name/document denylist,
+  relation exception, or adapter filter was added.
+- Added raw-token, grounded-behavior, full-interface, and handshake regressions. All 21 affected documents dry-run
+  to zero interfaces; declaration-free `VALID`/`READY` survives, and APB/AHB/AXI/SWD surfaces are byte-equivalent.
+- Rebuilt real USB SemanticIR→IntentIR→adapter: zero interfaces/ports/relations, adapter blocked on no signals,
+  zero emitted signals/rules, and only `adapter.json` remains after `channel.isf` reconciliation. Canonical
+  behaviors, constraints, transactions, storage, and residual source evidence remain available.
+- WIRE/I2C/SWD provider-free golds remain 1.000 (the documented SWD promotion-only constraint remains 0/1),
+  KG is 156/156, and full CI passes 1,783 tests / five ignored plus warning-deny Clippy/rustdoc, mdBook, all six
+  doctrines, and final project-data locality.
+
 ### CORPUS-COVERAGE.2.33d.iv.a — converge generated adapter outputs
 
 - Reproduced the stale-output defect on the repaired USB cascade: `channel.isf` became current while the prior

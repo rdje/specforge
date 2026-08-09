@@ -21,7 +21,7 @@ answers:
 date: 2026-08-09
 tags: [corpus-coverage, dense-prose, signal-inventory, actor-signal-relations, isf, semantic-fidelity, false-positive, table-classification, fixed-point]
 evidence: docs/research/dense-prose-signal-authority-measurement.md; generated/source_ir/usb_3_2_revision_1_0_2017_09/source_ir.json; generated/evidence_ir/usb_3_2_revision_1_0_2017_09/evidence_ir.json; generated/semantic_ir/usb_3_2_revision_1_0_2017_09/semantic_ir.json; generated/intent_ir/usb_3_2_revision_1_0_2017_09/intent_ir.json; generated/adapters/isf/usb_3_2_revision_1_0_2017_09/adapter.json; crates/specforge/src/ir/source/docling_backend.rs (classify_table_kind); crates/specforge/src/ir/evidence.rs (collect_known_signal_names, synthesize_signal_declarations_from_prose, actor_signal_relation_surface, synthesize_directions_from_relations); crates/specforge/src/ir/semantic.rs (build_interfaces; retain_authoritative_interface_candidate_signals); crates/specforge/src/ir/isf_ir.rs (select_initiator_actor); docs/tasks/CORPUS-COVERAGE.md (.2.33c/.2.33d)
-reverify: "Build USB 3.2 EvidenceIR through adapter with the current release binary. Expect EvidenceIR 8267 statements and 0 actor_signal_relations; IntentIR 18 actors, 0 actor_ports/relations, and no AT/USB/ENHANCED/NO port; adapter actor channel and no setportfeature_port_over_current.isf sibling. Until CORPUS-COVERAGE.2.33d.iv.b closes, also expect the independently blocked authority-empty fallback signature: 918 SemanticIR interfaces and 556 low-confidence ISF signals sourced from statement token groups."
+reverify: "Build USB 3.2 EvidenceIR through adapter with the current release binary. Expect EvidenceIR 8267 statements and 0 actor_signal_relations; IntentIR 18 actors, 0 interfaces, 0 actor_ports/relations, and no AT/USB/ENHANCED/NO port; adapter blocked with 0 signals/rules, no emitted *.isf, and no setportfeature_port_over_current.isf or channel.isf sibling."
 ---
 
 **Measured `2026-08-09` (`CORPUS-COVERAGE.2.33c`, current release cascade).** USB 3.2 proves a
@@ -145,3 +145,16 @@ are hexadecimal/encoding-table rows: statement 7800 (`F0 84 | 01 | A0 | ...`) cr
 and the adapter deduplicates them into 556 one-bit outputs even though the actor graph is empty. The result is a
 different fabricated hardware surface, so `.d.iv.b` owns a measurement-first authority repair and `.d.iv.c`
 retains final USB signoff. The upstream fixed-point conclusion remains valid; it was not sufficient by itself.
+
+## Authority-empty loop closed (`.2.33d.iv.b`)
+
+The corpus census found 21 all-low-confidence documents carrying 5,527 interfaces / 18,397 signal records; 19
+adapters were marked renderable and consumed 4,060 per-document unique names. The empty-authority bypass is now
+replaced by a fail-closed positive grammar. Formal and clock/reset interfaces remain on their typed paths; a
+declaration-free group survives only when its statement begins with one candidate and makes a deontic signal
+action. This preserves the canonical `VALID must remain asserted until READY is observed` handshake without
+admitting raw rows, ordinary prose, or relation-only `DOWNSTREAM`.
+
+All 21 affected documents dry-run to zero interfaces/records. The real USB rebuild now blocks on `no signals
+declared in interface`, carries zero adapter signals/rules, emits no `.isf`, and removes the obsolete
+`channel.isf`. See `[[semantic-interface-authority-empty-fallback]]` for the complete causal and corpus record.

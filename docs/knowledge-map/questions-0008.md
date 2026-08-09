@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > why does an .isf enum get dropped / held out of the emitted .isf
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > why does an .isf rule get dropped when it conflicts with an unconditional rule on the same signal
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > why does an .isf rule get dropped when its drive value is prose / not a (port expr)
+- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
+  > why does an alphabetic constraint value require a word boundary but a numeric value does not
+- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
+  > why does an evidence/converge build OOM on a doc with many multi-word actor names
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > why does an in-body (drive NAME) need a top-level named-drive definition (drive 'X' not defined)
+- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
+  > why does an incidental 'can' in a source block not drop its other constraints
+- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
+  > why does condition_text matter for the NLI claim
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > why does constraint promotion run outside the convergence loop
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > why does decoder go from 0/0 to connected (decoder also consolidated)
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > why does dropping phantom actors leave the .isf and WIRE-BASED-100 unchanged
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
@@ -96,6 +116,8 @@
   > why is CORPUS-PATTERN-REUSE.3b.3b (activate-only consume) deferred / not built
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > why is CPU-ISA / PHY only recognized from front-matter (no distinct structural signature; cat 5 vs cat 6 indistinguishable by structure)
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > why is DTI DOWNSTREAM not preserved as a heuristic only wire
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > why is For / Then it / is recommended / next / HPROT bit / TREADY input minted as an actor
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -189,6 +211,8 @@
   > why is the nested cross-tab timing table (TRANSMITTER/RECEIVER) left an honest residual
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > why is the ordered multi-phase transaction body the hard deferred part (no structural name bridge AXI handshake to named transaction)
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > why is the repaired USB 3.2 ISF adapter blocked
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > why is the snap trigger absence-from-sentence and not typing failure
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)

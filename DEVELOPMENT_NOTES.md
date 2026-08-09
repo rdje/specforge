@@ -1,4 +1,18 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.33d.iv.b (`2026-08-09`) — co-mention is enrichment, not declaration
+
+`build_interfaces` has two different authorities: formal/system-contract records establish the signal surface,
+while statement co-mentions group and enrich names already on that surface. The old empty-set special case
+collapsed those roles by treating no authority as permission to keep every candidate. That is why encoding rows
+could mint hundreds of one-bit ports after the earlier EvidenceIR repair correctly removed every actor relation.
+
+The safe default is ordinary set intersection, but the full suite protects one declaration-free positive:
+`VALID must remain asserted until READY is observed`. The bounded rule preserves such a multi-signal group only
+when the statement begins with one candidate and immediately makes a deontic assertion/deassertion/stability
+claim. A relation does not become a substitute declaration: DTI's sole `TBU reads DOWNSTREAM` record is ordinary
+direction prose and does not justify 2,325 low-confidence records. The real USB result is intentionally blocked
+rather than padded with fabricated ports; its other typed intent and honest residuals remain lossless upstream.
+
 ## CORPUS-COVERAGE.2.33d.iv.a (`2026-08-09`) — a successful writer owns its generated leaf set
 
 Overwriting the current manifest and actor file is insufficient when actor selection or renderability changes:

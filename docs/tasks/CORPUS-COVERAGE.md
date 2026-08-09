@@ -103,8 +103,8 @@ today's ephemeral normalized-directory count.
   deterministic extractors, not new code); WIRE-BASED-100 + register/wire golds + `kg-bench` stay green
   (orthogonal — the 4 gold docs are not re-ingested). Record per-doc before/after typed-surface deltas here.
 - ID: `CORPUS-COVERAGE.2.33` · Status: `in_progress` (`2026-08-09`, DATA/CODE/DOC) · Children: `.2.33a`
-  probe (done), `.2.33b` UTF-8 boundary fix (done), `.2.33c` cascade/signoff (in progress), `.2.33d`
-  dense-prose adapter trust repair (pending). Goal: re-ingest USB 3.2
+  probe (done), `.2.33b` UTF-8 boundary fix (done), `.2.33c` cascade/signoff (done), `.2.33d`
+  dense-prose adapter trust repair (in progress). Goal: re-ingest USB 3.2
   (`usb_3_2_revision_1_0_2017_09`) from the owner-authorized external PDF resolved through the repository host-library route with the current release
   binary and CPU-only Docling, then build/validate EvidenceIR→SemanticIR→IntentIR→ISF. It is the only current
   SourceIR document with no EvidenceIR; its prior SourceIR records 548 pages / 224 pictures / 283 structured
@@ -193,20 +193,23 @@ today's ephemeral normalized-directory count.
   durable facts, and close `.2.33d`/`.2.33`. **Live finding:** the repaired rebuild emitted `channel.isf`, but the
   prior `setportfeature_port_over_current.isf` remained because `AdapterArtifact::write_to_disk` only overwrites
   named current outputs; this is the previously measured corpus-wide stale-cruft mechanism, now reproduced at the
-  exact semantic-trust boundary rather than accepted as manual cache hygiene. After writer reconciliation, the
-  stale file is gone, but signoff remains blocked: zero authoritative declarations causes
-  `retain_authoritative_interface_candidate_signals` to admit every heuristic statement token; 918 low-confidence
-  interfaces then expose 556 `.isf` outputs from encoding/data rows (`A0`, `B165`, `D995`, …) despite zero actor
-  ports/relations. This is a distinct authority-empty fallback loop and must be repaired before USB is trusted.
+  exact semantic-trust boundary rather than accepted as manual cache hygiene. Writer reconciliation removes the
+  stale file, and `.iv.b` closes the distinct authority-empty fallback: heuristic grouping requires a
+  formal/system-contract signal or a signal-led deontic behavior statement. The real USB rebuild now has zero interfaces/signals/rules, blocks honestly,
+  and leaves only `adapter.json`; `.iv.c` owns final repetition of the complete cascade/gates and rollback removal.
 - ID: `CORPUS-COVERAGE.2.33d.iv.a` · Status: `done` (`2026-08-09`, CODE/DOC) · Result: successful adapter
   writes now retain the manifest-selected `.isf`, remove obsolete regular/symlink `.isf` siblings, preserve
   unrelated files/directories, and remove the last emitted target on a renderable→blocked transition. The real
   USB rerun converges to `adapter.json` + `channel.isf`; no extraction or rendered-source policy changed.
-- ID: `CORPUS-COVERAGE.2.33d.iv.b` · Status: `in_progress` (`2026-08-09`, PROBE/CODE/DOC) · Goal: measure and repair the
-  authority-empty SemanticIR interface fallback that promotes low-confidence statement-token groups when a
-  document has no formal signal declarations. Preserve grounded heuristic-only wire evidence where justified;
-  do not add document/token denylists or merely filter the adapter symptom.
-- ID: `CORPUS-COVERAGE.2.33d.iv.c` · Status: `pending` (DATA/DOC) · Goal: rebuild the exact preserved USB
+- ID: `CORPUS-COVERAGE.2.33d.iv.b` · Status: `done` (`2026-08-09`, PROBE/CODE/DOC) · Result: 21 retained
+  authority-empty documents carried 5,527 interfaces / 18,397 all-low records and fed 4,060 adapter signals;
+  19 were marked renderable. The sole relation-only case was DTI `TBU reads DOWNSTREAM`, ordinary direction
+  prose rather than a declared wire. The empty-set allow-all is replaced by a signal-led deontic behavior
+  grammar, preserving declaration-free `VALID`/`READY` while all 21 affected documents still dry-run to zero
+  interfaces. APB/AHB/AXI/SWD surfaces are byte-equivalent. Real USB is blocked at zero signals/rules and its
+  successful write removes `channel.isf`. Four focused authority/behavior tests, WIRE 1.000, KG 156/156, and
+  full CI (1,783 pass / five ignored) are green. No document/token denylist or adapter symptom filter was added.
+- ID: `CORPUS-COVERAGE.2.33d.iv.c` · Status: `in_progress` (`2026-08-09`, DATA/DOC) · Goal: rebuild the exact preserved USB
   chain with all repairs, prove false-name/phantom/stale/heuristic-soup absence, run every parent acceptance gate,
   remove the verified rollback with zero residue, align the durable layers, and close `.iv`/`.d`/`.2.33`.
 
@@ -295,6 +298,26 @@ today's ephemeral normalized-directory count.
 - [x] **GENERICITY** — reconciliation uses only extension, current manifest path, and leaf file type; no corpus fact.
 - [x] **LOCKSTEP** — task, code analysis, change/development/status ledgers, Knowledge Map fact, mdBook, and memory
   agree that `.iv.a` closes stale-output convergence while `.iv.b` owns the newly proven semantic blocker.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.33d.iv.b`
+
+- [x] **REPRODUCE / MEASURE** — recorded the exact retained-corpus authority-empty interface and downstream adapter
+  impact, including the real USB 918-interface/2,940-record/556-output case and any relation-only exception.
+- [x] **ROOT CAUSE (WHY + WHERE)** — proved the empty authoritative-name branch in
+  `retain_authoritative_interface_candidate_signals` is the first unsupported promotion and distinguish it from
+  formal declarations, system-contract infrastructure, and the already-repaired EvidenceIR signal loop.
+- [x] **ADDRESSED (verified)** — heuristic grouping requires formal/system-contract authority or a signal-led
+  deontic behavior statement; declaration-free `VALID`/`READY` remains, while real USB has zero interfaces and a
+  blocked adapter whose successful write removes the obsolete `channel.isf`.
+- [x] **NO REGRESSION** — four focused authority/behavior tests; real USB stages; APB/AHB/AXI/SWD byte-equivalent
+  interfaces; WIRE/I2C/SWD 1.000; KG 156/156; warning-deny Clippy; full CI 1,783/five ignored; rustdoc, mdBook,
+  all six doctrines, path, and locality pass. FSMGen is not applicable to intentionally blocked USB; its strict
+  adapter regressions pass in the full suite.
+- [x] **GENERICITY** — the repair depends on typed authority or generic statement position/deontic/action
+  structure; no document key, vendor, signal-name list, denylist, or adapter-side symptom filter enters production.
+- [x] **LOCKSTEP** — task/result record, code analysis, durable causal fact, corpus measurement, live docs, mdBook,
+  generated USB artifacts, and `MEMORY.md` report the same verified behavior; `.iv.c` retains final signoff and
+  verified-rollback deletion ownership.
 
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.33a`
 
@@ -455,6 +478,12 @@ leaving the refreshed SourceIR→adapter stage chains intact.
 
 ## Changelog
 
+- `2026-08-09`: `.2.33d.iv.b` CODE/DOC DONE. Corpus measurement found 21 authority-empty documents with
+  5,527 interfaces / 18,397 all-low records feeding 4,060 adapter signals; DTI's lone `DOWNSTREAM` relation is
+  prose, not a wire-authority exception. The replacement preserves signal-led deontic `VALID`/`READY` evidence
+  but all 21 affected documents still dry-run to zero interfaces; wire-gold surfaces are byte-equivalent. Real
+  USB blocks at zero signals/rules and leaves only `adapter.json`. WIRE 1.000, KG 156/156, and full CI (1,783
+  pass / five ignored) are green; frontier → `.iv.c`, rollback still preserved.
 - `2026-08-09`: `.2.33d.iv.a` CODE/DOC DONE. Real USB reproduced a stale prior actor file outside the current
   adapter manifest. Successful writes now reconcile obsolete regular/symlink `.isf` leaves, including blocked
   transitions, while preserving unrelated material. Eight focused adapter tests, warning-deny Clippy, full CI
