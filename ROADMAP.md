@@ -95,8 +95,12 @@ Five active program groups support that north star:
   [`R15C-R15G-LEARNING-PLANE-BACKFILL`](docs/tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md);
 - repository durability and portability: the containment program is reopened only for the measured
   `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8` derived-state contract delta; its `.8a` probe and `.8b` bounded
-  four-class registry/checker plus exact Rust/gitlink authority adapters are complete, while `.8c` owns the
-  independent resulting-tree audit and closure. The completed `.0`–`.7`
+  four-class registry/checker plus exact Rust/gitlink authority adapters are complete. The `.8c` audit refused
+  closure because three secondary copies remain hardcoded in adapter source rather than enumerated by the data
+  registry; `.8d` owns declared secondary-copy repair and `.8e` the independent re-audit. The live-document
+  contracts also forced a second status rollover during that audit; its shared archive index is now 81 lines /
+  5,311 bytes and only 218 bytes before mandatory byte rollover, so `.9a`/`.9b` own a bounded route topology
+  before another segment. The completed `.0`–`.7`
   [`LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`](docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md)
   implementation keeps current documentation and project data bounded on the repository volume; completed
   [`ARTIFACT-PATH-PORTABILITY`](docs/tasks/ARTIFACT-PATH-PORTABILITY.md) extends move-safe storage through every

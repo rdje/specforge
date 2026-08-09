@@ -54,8 +54,20 @@ eight existing projection/currentness authorities without project field names. T
 that workspace `rust-version`—normalized to patch form—agrees with README, mdBook, and CI, and that both retained
 FSMGen pin copies agree with the stage-zero mode-160000 Git-index object. `MEMORY.md` exposes
 `git rev-parse HEAD` at the reader boundary and forbids a stored latest-commit shadow. Existing generators remain
-the authority; no donor value, threshold, or ceiling is copied. `.8c` independently audits the result before the
-reopened program closes.
+the authority; no donor value, threshold, or ceiling is copied. `.8c` was assigned to audit the result before the
+reopened program could close.
+
+The independent `.8c` audit did not permit closure. All 14 primary declarations and current values pass, but
+three secondary copies are still enumerated only in adapter source: the mdBook and CI Rust prerequisites, plus
+the feedback JSON gitlink pin. This means executable comparisons are correct while the data-only registry is not
+yet a complete copy inventory. `.8d` moves those paths and exact markers into bounded declarations and neutral
+validation; `.8e` repeats the audit before the program may close.
+
+Writing that audit result also exercised the status ledger's second post-migration rollover. Twelve exact records
+were sealed in segment 0002 (10,894 bytes; SHA-256 `11e058…28df`) and the live root returned to 60 records without
+touching its trailer or 40-record migration suffix. The added direct route moves the shared archive index to
+81 lines / 5,311 bytes, only 218 bytes before mandatory rollover. `.9a`/`.9b` therefore own a bounded archive-route
+topology before any third segment; no history, route, threshold, or ceiling is silently discarded or widened.
 
 All four root-ledger migrations have landed. `CHANGES.md`, `DEVELOPMENT_NOTES.md`,
 `LIVE_ACHIEVEMENT_STATUS.md`, and `RUST_CODEBASE_ANALYSIS.md` are bounded current views, while their
@@ -153,6 +165,12 @@ record region. The repository's focused project-validation test runs the real Ru
 temporary storage forced under `generated/tmp`, proving the managed block can still be replaced at the
 stable path after migration. Capsule identity, suffix identity, marker literals, pressure, manifest,
 and index routing are all rechecked by the unconditional doctrine gate.
+
+The second rollover seals the next 12 aged-out records at
+`docs/archive/rolling-ledgers/live-achievement-status/segment-0002-2026-08-08.md`; manifest predecessor/successor
+links order it between the live root and segment 0001. Direct comparison with the pre-removal Git content proves
+the segment's exact 10,894-byte identity, while the root again contains 20 newer records plus the exact retained
+40-record suffix.
 
 #### `RUST_CODEBASE_ANALYSIS.md` migration landed
 

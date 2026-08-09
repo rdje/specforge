@@ -93,7 +93,8 @@ why the missing layer is not merely editorial:
    first failing 90% rollover byte. If `.8b` would reach 33,178 bytes, partition under a separately owned leaf
    before the append; never trim evidence or widen the ceiling to pass.
 7. `.8c` independently enumerates all declared markers and consumer paths, exercises both positive and mutation
-   cases, then runs full doctrines/CI and closes `.8`.
+   cases, then runs full doctrines/CI and closes `.8` only if the inventory is complete; otherwise it opens an
+   owned repair before closure.
 
 ## `.8b` implementation result
 
@@ -113,7 +114,33 @@ historical rejection, stored derive-on-read shadows, missing accessors/capture b
 schema and registry displacement, and an undeclared date/number/hash lookalike that must remain ordinary prose.
 The local suite adds 16 Rust/gitlink cases, including every retained-copy drift, malformed/duplicate values,
 wrong Git-index mode, missing index entry, and invalid adapter declaration. The resulting tree reports all 14
-contracts and both authority groups green; `.8c` still owns the independent consumer and mutation audit.
+contracts and both authority groups green; the independent `.8c` result follows below.
+
+## `.8c` independent audit finding
+
+The audit enumerated 14 contracts across 12 primary paths/surfaces: one derive-on-read, two authored-intent, one
+immutable-evidence, ten verified-copy, eight `core:` verifiers, and two `adapter:` verifiers. Every primary marker
+occurs exactly once. The registry is 15 lines / 6,391 bytes; its largest raw record is 508 bytes. The neutral
+checker contains no Rust, FSMGen, Cargo, README, gitlink, date, or hash-shape discovery. Current Cargo/Rust and
+Git-index/FSMGen values agree, and the 28 + 16 mutation suites pass.
+
+Closure is nevertheless blocked. `rust_prerequisite_copies` declares only `README.md` and its exact marker; the
+adapter hardcodes `docs/book/src/getting-started.md` and `.github/workflows/ci.yml`. `fsmgen_gitlink_copies`
+declares only the feedback Markdown path/hash; the adapter hardcodes
+`doctrine/live_document_size/fsmgen_feedback.json`. The local adoption note says the registry owns exact field
+markers, and the selected `.8b` contract says each record names exact paths/markers. Code-visible dependencies
+are bounded and tested, but they are not a data-only exhaustive inventory.
+
+`.8d` must add bounded secondary-copy declarations with exact paths, markers, and an explicit surface versus
+repository-local control-plane ownership distinction. The neutral checker must validate their schema, locality,
+regular-file status, marker cardinality, and uniqueness; the project adapter must consume declared roles without
+fallback hardcoded paths. `.8e` then re-enumerates the data plane and source to prove no copy list remains hidden.
+
+The audit record itself triggered the status ledger's second mandatory rollover. The lossless protocol sealed
+12 exact records / 10,894 bytes at SHA-256 `11e058…28df` and returned the root to 60 records. Adding that direct
+route raised the shared archive index to 81 lines / 5,311 bytes, only 218 bytes before mandatory rollover. This is
+orthogonal to derived-state correctness but not optional continuity work: `.9a`/`.9b` own bounded route design
+and implementation before a third segment can be admitted, with no ceiling increase or hidden archive member.
 
 ## Reverification
 

@@ -319,7 +319,7 @@ verification before correction.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8`
   Status: `in_progress` (`2026-08-09`)
-  Children: `.8a`, `.8b`, `.8c`
+  Children: `.8a`, `.8b`, `.8c`, `.8d`, `.8e`
   Goal: deliberately review the donor's newer portable derived-state-containment revision, adopt only
   locally justified neutral contracts, and prove that exact current-state fields are derived on read or
   retained behind an executed authority verifier without copying FSMGen paths, values, or conclusions.
@@ -345,15 +345,50 @@ verification before correction.
   agree; no donor value, product behavior, threshold, or ceiling changed.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8c`
-  Status: `pending` (`2026-08-09`, AUDIT/DOC)
+  Status: `done` (`2026-08-09`, AUDIT/DOC)
   Goal: independently re-audit every declared field and consumer, execute the composed doctrine/full-CI
-  gates, align the mdBook and durable facts, and close `.8` without widening a surface ceiling.
+  gates, align the mdBook and durable facts, and close `.8` without widening a surface ceiling. **Finding:**
+  `.8` cannot close because three secondary copies remain code-hidden; `.8d` owns repair and `.8e` re-audit.
+  The audit-triggered status rollover also raised the shared archive index to 81 lines / 5,311 bytes, only
+  218 bytes before rollover; `.9` owns partitioning before another segment is admitted.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8d`
+  Status: `pending` (`2026-08-09`, CODE/DOC)
+  Goal: repair the `.8c` completeness defect by moving every secondary Rust/gitlink copy path and exact marker
+  out of project-adapter source and into the bounded data registry; extend the neutral checker and fixtures to
+  validate those declared dependencies while keeping project-specific value parsing isolated in the adapter.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8e`
+  Status: `pending` (`2026-08-09`, AUDIT/DOC)
+  Goal: independently re-enumerate the resulting data-owned primary/secondary copy set, rerun all mutation and
+  composed gates, align the durable surfaces, and close `.8` only if no field path/marker remains code-hidden.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9`
+  Status: `pending` (`2026-08-09`)
+  Children: `.9a`, `.9b`
+  Goal: contain the shared rolling-ledger archive route before another sealed segment would cross its mandatory
+  byte rollover: preserve direct capsule/segment retrieval, bounded manifest authority, and exact chronology
+  without widening a ceiling or making immutable segments mandatory live reads.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9a`
+  Status: `pending` (`2026-08-09`, PROBE/DOC)
+  Goal: measure archive-index growth by ledger and segment, enumerate every reader/verifier/link, and lock a
+  bounded landing/partition or equivalent topology plus atomic migration and fail-closed acceptance contract.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9b`
+  Status: `pending` (`2026-08-09`, CODE/DOC)
+  Goal: implement the accepted archive-route topology, migrate every reader atomically, exercise direct
+  retrieval and overflow mutations, update the book/fact/live surfaces, and close `.9` from a clean commit.
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `.8c` | `pending` (`2026-08-09`) | Independently enumerate the resulting contracts, markers, dependencies, and consumers; repeat mutation probes and composed gates; then close `.8`. |
+| 1 | `.8d` | `pending` (`2026-08-09`) | Move all secondary copy membership into bounded data declarations and make the adapter consume declarations only. |
+| 2 | `.8e` | `pending` (`2026-08-09`) | Independently re-audit the repaired field plane and close `.8` only if no code-hidden copy remains. |
+| 3 | `.9a` | `pending` (`2026-08-09`) | Lock the bounded archive-route topology before another ledger segment crosses the index rollover threshold. |
+| 4 | `.9b` | `pending` (`2026-08-09`) | Implement and independently verify the accepted archive-index containment design. |
+| — | `.8c` | `done` (`2026-08-09`) | Fourteen primary contracts pass, three code-hidden secondary copies are owned by `.8d`, and exact status segment 0002 plus the `.9` route boundary are durable. |
 | — | `.8b` | `done` (`2026-08-09`) | Four-class bounded field registry, neutral checker, eight existing verifiers, exact Rust/gitlink adapters, 44 fail-closed cases, and normative/reader alignment landed. |
 | — | `.8a` | `done` (`2026-08-09`) | The newer portable delta, existing surface oracles, three local gaps, 15 field-family dispositions, and bounded implementation contract are measured and published. |
 | — | `.0` | `done` (`2026-08-08`) | Ownership, measured baseline, full donor review, and the migration/locality graph are recorded; no deletion or migration. |
@@ -423,6 +458,28 @@ verification before correction.
   project adapter, fact/report, live docs/status, roadmap, ledgers, `MEMORY.md`, and mdBook describe one contract;
   the existing `.8` fact is updated without crossing its fact-index rollover threshold.
 
+### Acceptance Checklist (enforced) — `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8c`
+
+- [x] **REPRODUCE / MEASURE** — independently enumerate all 14 contracts by class, exact path/marker,
+  surface ownership, authority/accessor/capture/verifier, secondary control copy, and consuming gate; measure the
+  final registry, fact index, book aggregate, Markdown coverage, and warning headroom from the resulting tree.
+- [x] **ROOT CAUSE (WHY + WHERE)** — re-open the three `.8a` seams and prove why each final disposition is
+  coherent: revision derives at the reader, Rust and gitlink copies compare with independent canonical systems,
+  authored intent is not falsely derived, and immutable evidence cannot masquerade as ambient current state.
+- [x] **ADDRESSED (verified)** — execute every real contract and independent mutation probe for stored HEAD,
+  each Rust copy, both FSMGen pin copies, wrong/missing gitlink mode/object, missing/off-surface markers, failing
+  core/adapter verifiers, lost intent/capture markers, and heuristic lookalikes; route the exact three uncovered
+  secondary consumers to `.8d` rather than falsely claiming exhaustive inventory.
+- [x] **NO REGRESSION** — all focused suites, six doctrines, full CI, mdBook, exact maintained-reference
+  authority, project-data locality, generated projections/catalogs, staged diff, and post-commit handoff pass;
+  no product/canonical artifact, donor checkout, threshold, or ceiling changes.
+- [x] **GENERICITY** — confirm the neutral checker contains no SpecForge field IDs or semantic-shape discovery,
+  every project-specific parser stays in the adapter, every adapter dependency is explicit and mutation-tested,
+  and the bounded registry fails closed under displacement or unknown declarations.
+- [x] **LOCKSTEP** — keep `.8` open for `.8d`/`.8e`; align doctrine, registry, checker/tests, report/fact,
+  roadmap/live status, task catalog, ledgers, `MEMORY.md`, mdBook, and commit evidence; preserve the fact-index
+  disposition and track the archive-index rollover risk under `.9` without widening its ceiling.
+
 ## Decisions
 
 - `2026-08-09`: **GO on the newer portable derived-state semantics.** External collection-index and bounded
@@ -447,6 +504,16 @@ verification before correction.
   object; no project field name enters the neutral checker.
 - `2026-08-09`: **The same fact card satisfies the pressure disposition.** Updating its title/body reduces the
   complete index to 32,639 bytes, leaving 539 bytes before rollover; no new card, evidence trim, or ceiling change.
+- `2026-08-09`: **`.8c` refuses closure because secondary copies remain code-owned.** The registry names the
+  README Rust marker and feedback Markdown hash, while `scripts/check_derived_state_authorities.pl` hardcodes the
+  mdBook/CI Rust paths and feedback JSON path/marker. Current values and 16 adapter mutations pass, but the
+  data-only contract cannot enumerate its own complete copy set. `.8d` must add bounded declared dependencies and
+  neutral path/marker validation; `.8e` then re-audits before `.8` may close.
+- `2026-08-09`: **The second status rollover exposes the archive route's own next boundary.** Segment 0002
+  preserves 12 exact records / 10,894 bytes at SHA-256 `11e058…28df` and returns the root to 60 records, but its
+  direct route moves the shared index to 81 lines / 5,311 bytes (84.4% / 86.4% of health limits), only 218 bytes
+  before mandatory byte rollover. No history, route, threshold, or ceiling is discarded or widened; `.9a`/`.9b`
+  must partition and verify the route before any third segment is admitted.
 
 - `2026-08-08`: **GO on local adoption.** SpecForge meets multiple guide triggers: bounded-pointer
   routing pressure, mandatory multi-megabyte live reads, unbounded append-only neighbors, generated
@@ -1890,6 +1957,9 @@ progress state. No other book part changes unless the final audit finds a separa
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-09` | `.8c` | final `bash scripts/run_ci.sh`; staged doctrine model; format; warning-deny Clippy/tests; rustdoc; mdBook doctests/build; post-producer locality; exact aggregate census | green: six doctrines; 1,779 Rust tests pass / five ignored / zero failed; rustdoc and docs pass; 627 Markdown / 41 surfaces, 159 facts / 1,113 questions / eight shards, fact index 32,626 bytes / 552 before rollover, and book 36 files / 13,089 lines / 790,866 bytes agree; no threshold or ceiling changed |
+| `2026-08-09` | `.8c` | independent 14-contract/class/path/marker/authority matrix; neutral-source semantic-name census; real Cargo/README/book/CI and Git-index/Markdown/JSON comparison; 28 neutral + 16 adapter mutations | values and all 44 mutations green, but registry ownership incomplete: three secondary paths/markers exist only in adapter source; `.8d` repair and `.8e` re-audit opened instead of false closure |
+| `2026-08-09` | `.8c` | mandatory status-ledger rollover; pre-removal Git extraction; segment/live SHA-256 and record/line/byte/width identities; manifest/index chain; rolling-ledger report; complete `LIVE-DOC-SIZE` | exact segment 0002 equals the 12 pre-removal records at 10,894 bytes / `11e058…28df`; live root 72 → 60 with exact 40-record suffix and untouched trailer; 627 Markdown / 41 surfaces pass; archive index 81 lines / 5,311 bytes is owned by `.9` before its next 218-byte rollover boundary |
 | `2026-08-09` | `.8b` | full `bash scripts/run_ci.sh`; composed six-doctrine gate; Cargo format; warning-deny Clippy/tests; rustdoc; mdBook doctests/build; post-producer locality | green: all six doctrines including 99 live-document/field fixtures and the real 14-contract plane pass; formatting and Clippy clean; 1,779 Rust tests pass / five ignored / zero failed; rustdoc and 36-file mdBook 13,071 lines / 789,365 bytes pass; final locality clean |
 | `2026-08-09` | `.8b` | Perl syntax; 28-case neutral field suite; 16-case Rust/gitlink adapter suite; real 14-contract report; composed `LIVE-DOC-SIZE`; book-current-truth | green: 1 derive-on-read / 2 authored-intent / 1 immutable-evidence / 10 verified copies; eight core verifiers and both local authority groups execute; all 44 new cases plus 55 existing lifecycle cases pass; 626 Markdown / 41 surfaces remain classified; fact index 32,639 bytes / 539 before rollover |
 | `2026-08-09` | `.8a` | complete donor guide read; donor/local doctrine diff; SHA-256 + line/byte identities; 41-surface JSON census; existing verifier/currentness inventory; Git-index gitlink and Rust-version copy probes; catalog/map regeneration; book/live-size/locality/diff gates | measured: donor guide 419 / 20,515 / `6f10…4744`, donor doctrine 426 / 26,058 / `5cd3…7d88`, local doctrine 319 / 19,253 / `bb91…a9a`; 41 surfaces / eight currency / 15 executable non-budget verifiers / zero field declarations; three concrete gaps agree in value but lack independent field authority; no code/artifact/donor/ceiling mutation |
@@ -1959,6 +2029,7 @@ progress state. No other book part changes unless the final audit finds a separa
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.8c` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8c — audit derived-state copy completeness` | independent copy-membership finding + exact second status rollover + owned `.8d`/`.8e`/`.9` frontiers |
 | `.8b` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8b — enforce exact current-state field authority` | 14 four-class contracts + neutral checker + exact Rust/gitlink adapters + 44 focused cases + normative/reader alignment |
 | `.8a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8a — measure derived-state contract delta` | donor/local identity + portable-delta classification + 15-family field census + bounded `.8b`/`.8c` design |
 | `.0` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.0 — own and measure the containment/locality program` | ownership + measurement only; commit hash recorded by Git history |
@@ -1992,6 +2063,13 @@ progress state. No other book part changes unless the final audit finds a separa
 | `.7` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7 — close the containment and locality program` | independent whole-program retrieval audit + cold-read defect gates + final book method-doc + clean closure |
 
 ## Changelog
+
+- `2026-08-09`: `.8c` AUDIT/DOC DONE. Independently proved all 14 primary declarations and current
+  comparisons, then refused `.8` closure because mdBook/CI Rust and feedback-JSON membership remain code-hidden;
+  `.8d` owns declaration repair and `.8e` re-audit. The audit entry triggered the required second status rollover:
+  12 exact records moved to authenticated segment 0002, the live root returned to 60 records, and all retrieval
+  checks pass. The shared archive index is now 81 lines / 5,311 bytes, 218 bytes before mandatory rollover;
+  `.9a`/`.9b` own a bounded route design and implementation before another segment.
 
 - `2026-08-09`: `.8b` CODE/DOC DONE. Added a bounded 14-contract four-class registry and neutral checker;
   executed eight existing currentness authorities plus isolated Cargo/Rust and Git-index/FSMGen adapters; added

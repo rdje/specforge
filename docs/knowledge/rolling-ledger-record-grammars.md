@@ -7,6 +7,7 @@ answers:
   - "why are two containment records at the bottom of CHANGES"
   - "what protects the validation projection when LIVE_ACHIEVEMENT_STATUS rolls over"
   - "where is the first post-migration LIVE_ACHIEVEMENT_STATUS rollover segment"
+  - "where is the second LIVE_ACHIEVEMENT_STATUS rollover segment and what blocks the next one"
   - "where is the first post-migration DEVELOPMENT_NOTES rollover segment"
 date: 2026-08-08
 status: current
@@ -53,6 +54,13 @@ The first post-migration rollover sealed the 12 oldest new prepends byte-for-byt
 `docs/archive/rolling-ledgers/live-achievement-status/segment-0001-2026-08-08.md`, linked the newer live root
 to the older source capsule through the manifest/index, and reduced the live window from 72 to 60 records
 without touching the complete trailer or the exact 40-record migration suffix.
+The second rollover sealed the next 12 records in
+`docs/archive/rolling-ledgers/live-achievement-status/segment-0002-2026-08-08.md`: 12 lines / 10,894 bytes /
+SHA-256 `11e058831b33b71bbd7cb0a080cbf6024032ed96587b1a7d7c340945a58328df`. Direct extraction from the
+pre-removal Git content proves byte identity; the manifest chain orders live root → segment 0002 → segment
+0001 → capsule, and the root again retains 20 new records plus the exact 40-record suffix. The added route
+makes the shared index 81 lines / 5,311 bytes, only 218 bytes before its 90% byte rollover; `.9a`/`.9b` own
+partitioned-route design and implementation before another segment.
 `RUST_CODEBASE_ANALYSIS.md` completed the fourth migration in `.4e`. Its immutable 1,350-record
 capsule is
 `docs/archive/rolling-ledgers/rust-codebase-analysis/source-through-2026-08-08.md` with SHA-256

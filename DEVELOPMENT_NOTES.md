@@ -1,4 +1,30 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8c (`2026-08-09`) — executable agreement is not inventory completeness
+
+The adapter correctly compares every copy it knows about, and its mutation suite correctly fails every selected
+drift. That is still weaker than the adopted data-plane contract. A data-only registry can be audited without
+interpreting implementation source; a list split between JSONL and hardcoded adapter paths cannot. If a secondary
+copy is renamed, added, or silently dropped from the adapter and its paired test, the current registry has no
+independent record from which the neutral checker can detect lost coverage.
+
+This distinction is why `.8c` refuses to classify the issue as routine implementation detail. Project-specific
+value parsing belongs in the adapter, but copy membership—path, exact marker, and ownership class—belongs in the
+bounded registry. The neutral checker should validate that declared membership and pass the complete record to the
+adapter; the adapter may then interpret only the declared roles. That preserves both sides of the architecture:
+data-owned completeness and isolated project semantics.
+
+The repair must not turn non-Markdown configuration into invented Markdown surfaces. A bounded secondary-copy
+declaration can distinguish a governed live surface from a repository-local control-plane file, require exact
+literal presence and safe regular-file locality for both, and require surface membership only for the former.
+Unknown roles, duplicate locations, absent markers, off-root paths, and code fallback to undeclared paths must
+fail closed. `.8d` owns that contract; `.8e` must prove the adapter has no remaining hidden copy list.
+
+The audit entry also exercised the rolling-ledger control plane rather than merely inspecting it. Losslessly
+sealing a second status segment returned the live root to its intended 60-record window, but the new direct route
+moved the shared archive index within 218 bytes of mandatory rollover. That is not a reason to widen the index or
+hide segment routes. `.9a` must first measure readers and choose a bounded landing/partition topology; `.9b` then
+migrates and verifies it atomically before any third segment can be admitted.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8b (`2026-08-09`) — classification prevents false equality
 
 The field registry is intentionally not a list of everything that looks current. Its four classes prevent two

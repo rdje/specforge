@@ -1,3 +1,26 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8c — refuse closure on code-hidden secondary copies
+
+- Independently enumerated all 14 contracts: 1 derive-on-read / 2 authored-intent / 1 immutable-evidence / 10
+  verified copies across 12 primary paths and surfaces; every primary marker occurs exactly once, eight core and
+  two adapter authorities execute, and the registry is 15 lines / 6,391 bytes with a 508-byte maximum record.
+- Reopened all three `.8a` seams and confirmed current values agree: HEAD remains derived at the reader; Cargo
+  `1.95` normalizes to all three `1.95.0` copies; and the mode-160000 stage-zero FSMGen Git-index object equals
+  both retained pins. All 28 neutral and 16 adapter mutations still pass, and the neutral checker contains no
+  SpecForge field identifiers or heuristic field discovery.
+- Found a completeness defect that blocks `.8` closure: the data registry declares only the README Rust marker
+  and feedback Markdown hash, while the adapter source hardcodes the mdBook/CI Rust copies and feedback JSON pin.
+  Passing adapter code cannot make a data-only registry an exhaustive copy inventory.
+- Opened `.8d` to move every secondary path/marker into bounded data declarations and add neutral validation;
+  `.8e` owns the independent re-audit. No product code, canonical artifact, donor file, threshold, or ceiling
+  changed in this audit.
+- The new status record reached the rolling ledger's 90% record boundary, so `.8c` sealed the exact 12 oldest
+  post-capsule records as segment 0002 (10,894 bytes; SHA-256 `11e058…28df`) and returned the live root to 60.
+  Retrieval is green. Its route raised the shared archive index to 81 lines / 5,311 bytes, only 218 bytes before
+  mandatory byte rollover; `.9a`/`.9b` now own bounded partition design and implementation before another segment.
+- Full CI passes all six doctrines, formatting, warning-deny Clippy, 1,779 Rust tests / five ignored, rustdoc,
+  mdBook doctests/build, and final locality. The resulting tree is 627 Markdown / 41 surfaces; the 36-part book is
+  13,089 lines / 790,866 bytes and the fact index is 32,626 bytes, 552 before rollover.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8b — enforce exact current-state field authority
 
 - Added a bounded 14-contract field registry with a closed four-class domain: one derive-on-read field, two

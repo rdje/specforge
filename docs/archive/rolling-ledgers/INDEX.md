@@ -55,8 +55,11 @@ perl scripts/check_rolling_ledger_protocol.pl --report
   preserves 12 whole records / 12 lines / 12,671 bytes at SHA-256
   `ee4c7aed44efd79ebc9cbf7b80c4f4f7f599bbcaa8db2acfcc8a00f845ff8067`; it sits between the newer live
   root and the older source capsule.
+- Second sealed segment: [`segment-0002-2026-08-08.md`](live-achievement-status/segment-0002-2026-08-08.md)
+  preserves the next 12 whole records / 12 lines / 10,894 bytes at SHA-256
+  `11e058831b33b71bbd7cb0a080cbf6024032ed96587b1a7d7c340945a58328df`; it sits between the live root and segment 0001.
 - Current-window rule: H1/current heading, the newest post-capsule bullets plus the exact 40-record migration
-  suffix, then the complete gap and writer-managed validation trailer. The first rollover leaves 60 live records.
+  suffix, then the complete gap and writer-managed validation trailer. Each rollover returns the root to 60 records.
 - Overlap: the immutable capsule includes the retained live window; later rollover archives only newly
   aged-out status records and never edits the validation projection in place.
 

@@ -21,13 +21,16 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8b` — field-level derived-state containment; complete in
-  this commit.
-- Current state: 14 explicit contracts classify one derive-on-read, two authored-intent, one immutable-evidence,
-  and ten verified-copy records. Eight existing verifiers plus exact Cargo/Rust and Git-index/FSMGen adapters
-  execute through `LIVE-DOC-SIZE`; 28 neutral and 16 local fail-closed cases protect the field plane.
-- Next action: from the clean `.8b` commit, activate `.8c`; independently enumerate declared markers and
-  consumers, repeat real-tree and mutation probes, run composed doctrines/full CI/locality, and close `.8` before
-  resuming `CORPUS-COVERAGE.2.33d.iii`.
-- In-flight uncommitted: none after the `.8b` commit. `.project-data/tmp` contains only `.gitkeep` plus `xcrun_db`.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8c` — independent derived-state audit; complete with a
+  closure-blocking finding in this commit.
+- Current state: all 14 primary contracts, markers, classes, surfaces, and authority executions pass, but the
+  registry does not enumerate the mdBook/CI Rust copies or feedback JSON pin; those three paths/markers remain
+  hardcoded inside the adapter. `.8` stays open because data-only completeness is therefore unprovable. The
+  exact second status rollover is sealed and retrieval-clean; its shared index is 218 bytes before rollover.
+- Next action: from the clean `.8c` commit, activate `.8d`; add bounded declared secondary-copy locations and
+  neutral exact-marker/locality validation, make the adapter consume only those declarations, expand mutations,
+  then let `.8e` independently re-audit and close `.8` if clean. `.9a`/`.9b` then own archive-route containment
+  before another ledger segment.
+- In-flight uncommitted: none after the `.8c` audit commit. `.project-data/tmp` contains only `.gitkeep` plus
+  `xcrun_db`; the corpus frontier remains pending behind `.8d`/`.8e`.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.
