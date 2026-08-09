@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > does the authority empty repair preserve formal and system contract interfaces
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > does the current FSMGen ISF support named bit-fields inside a storage var (NO — opaque (var NAME (width N)) only on pin 030f8c273; set-field/extract are runtime ops not a declaration)
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
@@ -296,5 +298,3 @@
   > how does specforge reject non-signal constraint subjects (LICENSEE, AXI, RME, MPAM)
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > how does specforge reject prose-fragment non-agents like For / Then it / is recommended / ensures
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > how does specforge split a coordinated X and Y relation subject into both agents

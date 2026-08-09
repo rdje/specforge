@@ -55,14 +55,15 @@ re-ingest means the refreshed EvidenceIR and downstream stages were built and ve
 not undo that work. Report normalized retention separately when discussing whether evidence can be rebuilt again
 without another Docling ingest.
 
-The current measured example (`2026-08-09`) is 39 completed current-binary refreshes with 17 real chip-spec
-documents left in the refresh queue. The local artifact tree separately contains 80 SourceIR files, eight retained
+The current measured example (`2026-08-09`) is 40 completed current-binary refreshes with 16 real chip-spec
+documents left in the refresh queue. The local artifact tree separately contains 80 SourceIR files, nine retained
 normalized bundles, 80 EvidenceIR files, and 79 SemanticIR→IntentIR→adapter chains. The newest bundle belongs to
-the 10-page OpenCAPI Ready Test Resources engineering note: all 10 page image/layout paths are final and
-repository-relative, and both guarded CPU ingests peaked at 18% system memory used. Its six visuals, five tables,
-23 sections, and 105 source elements reproduce exactly; the only downstream statement removed is a stale
-synthetic signal declaration derived from a glossary row. The bundle's presence is cache-retention status, not
-what makes that refresh complete; complete verified downstream artifacts are the durable progress measure.
+the 13-page OpenCAPI Certified Test Resources engineering note: all 13 page image paths and 13 layout paths are
+final and repository-relative, and its two guarded CPU ingests peaked at 21% and 22% system memory used. Its three
+visuals, two tables, 25 sections, and 173 source elements reproduce exactly; the only downstream statement
+removed is the sibling stale synthetic signal declaration derived from a glossary row. The bundle's presence is
+cache-retention status, not what makes that refresh complete; complete verified downstream artifacts are the
+durable progress measure.
 
 ## Why this stage matters
 

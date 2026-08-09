@@ -1,6 +1,6 @@
 ---
 id: opencapi-ready-note-refresh-rejects-dl-signal
-title: OpenCAPI Ready engineering-note refresh rejects an acronym-derived DL signal
+title: OpenCAPI Ready and Certified note refreshes reject acronym-derived DL signals
 answers:
   - "is the OpenCAPI 3.0 Ready Test Resources engineering note refresh complete"
   - "why does the OpenCAPI Ready engineering note emit no ISF"
@@ -12,11 +12,17 @@ answers:
   - "how much memory did the guarded OpenCAPI Ready ingest use"
   - "what are the current OpenCAPI Ready artifact hashes"
   - "how many corpus refreshes remain after the OpenCAPI Ready note"
+  - "is the OpenCAPI 3.0 Certified Test Resources engineering note refresh complete"
+  - "why does the OpenCAPI Certified engineering note emit no ISF"
+  - "why did the OpenCAPI Certified DL signal disappear"
+  - "does the Certified sibling confirm the OpenCAPI Ready glossary result"
+  - "what are the current OpenCAPI Certified artifact hashes"
+  - "how many corpus refreshes remain after the OpenCAPI Certified note"
 date: 2026-08-09
 status: current
 tags: [opencapi, corpus-coverage, engineering-note, signal-authority, glossary, path-portability, isf]
-evidence: docs/tasks/CORPUS-COVERAGE.md (.2.39); generated/source_ir/opencapi_3_0_ready_test_resources_engineering_note_v1_0; generated/evidence_ir/opencapi_3_0_ready_test_resources_engineering_note_v1_0; generated/semantic_ir/opencapi_3_0_ready_test_resources_engineering_note_v1_0; generated/intent_ir/opencapi_3_0_ready_test_resources_engineering_note_v1_0; generated/adapters/isf/opencapi_3_0_ready_test_resources_engineering_note_v1_0
-reverify: "Hash the caller-authorized same-SSD PDF, validate the complete chain, rerun evidence then semantic then intent then adapt --target isf, require 10 repository-relative page image/layout paths and exactly adapter.json plus its report with no ISF, compare stale statement_0114 and interface_explicit_interface_section_0018_terms against current zero-declaration evidence, then run the WIRE/KG/FSMGen-strict/path/locality gates recorded in CORPUS-COVERAGE.2.39."
+evidence: docs/tasks/CORPUS-COVERAGE.md (.2.39 and .2.40); generated/source_ir/opencapi_3_0_ready_test_resources_engineering_note_v1_0; generated/evidence_ir/opencapi_3_0_ready_test_resources_engineering_note_v1_0; generated/semantic_ir/opencapi_3_0_ready_test_resources_engineering_note_v1_0; generated/intent_ir/opencapi_3_0_ready_test_resources_engineering_note_v1_0; generated/adapters/isf/opencapi_3_0_ready_test_resources_engineering_note_v1_0; generated/source_ir/opencapi_3_0_certified_test_resources_engineering_note_v1_0; generated/evidence_ir/opencapi_3_0_certified_test_resources_engineering_note_v1_0; generated/semantic_ir/opencapi_3_0_certified_test_resources_engineering_note_v1_0; generated/intent_ir/opencapi_3_0_certified_test_resources_engineering_note_v1_0; generated/adapters/isf/opencapi_3_0_certified_test_resources_engineering_note_v1_0
+reverify: "Hash both caller-authorized same-SSD PDFs, validate both complete chains, rerun evidence then semantic then intent then adapt --target isf, require every page image/layout path repository-relative and exactly adapter.json plus its report with no ISF, compare stale statements 0114/0174 and terms-section interfaces against current zero-declaration evidence, then run the WIRE/KG/FSMGen-strict/path/locality gates recorded in CORPUS-COVERAGE.2.39 and .2.40."
 ---
 
 **Established `2026-08-09` (`CORPUS-COVERAGE.2.39`).** The caller-authorized same-SSD PDF hashes to
@@ -63,3 +69,30 @@ All nine provider-free WIRE/I2C/SWD datasets hold their declared filtered gates,
 promotion-only SWD constraint miss. KG is 156/156, all 66 emitted ISFs pass FSMGen strict, and persisted-path plus
 project-data-locality gates pass. Corpus refresh is 39 done / 17 remaining, with stage census 80 SourceIR / eight
 normalized / 80 EvidenceIR / 79 SemanticIR→IntentIR→adapter chains.
+
+**Independent sibling confirmation (`CORPUS-COVERAGE.2.40`).** The Certified Test Resources note PDF hashes to
+`b427a3029c46be2d6fa0e4d965d6bec2360c1d7a24ebdf387a1078c0af422902`. Two guarded CPU ingests peak at 21% and
+22% system memory used and reproduce 13 pages, three visuals, two tables, 25 sections, 173 elements, zero
+SourceIR residuals, and 13 repository-relative image plus 13 repository-relative layout paths. Evidence 173→172
+removes only synthetic `statement_0174`, `Signal DL is width 1.`, from the sibling terms table; the one stale
+interface `interface_explicit_interface_section_0016_terms` and adapter output disappear. SemanticIR retains two
+actors, four phases, four invariants, one contract, six gates, one assertion, and 15 decompositions; IntentIR
+retains one actor, 11 behaviors, four constraints, and four temporal invariants. Lowering blocks on no declared
+signals plus no behavior and leaves only `adapter.json` plus its report.
+
+The two Certified cascades reproduce all 12 hashes: SourceIR/report
+`165b019ef1e2139140fb468f062c8a2633e8e5f73c30321e8c84c4c46b83eefc` /
+`60cbd8f8890344f4d8c7a5e89a71371630299ff52572ece2aed2ff3dbe022bfd`; page/visual manifests
+`e0327d06948f82592b2f60af22bbc99c3d677f047adf89e5d708dc6e34d96e47` /
+`4e70b9a29d16f78e09a1cfea405ea1a3beb47974af8a5f1d73d16afa25dea441`; EvidenceIR/report
+`82f4c62615c795eca745aef0bf91d3e1e457521a4b6e68261a61834a962c722a` /
+`181e8c82287aea52243701bb7f6d0a14a5c94bd15761e87b18e10460136d6671`; SemanticIR/report
+`cf2db73c2a1f3726ff9d23679471d8f493b88f1e859361335ebf5c49d601602d` /
+`edf0803602a26f0405f1c10ac260870b769c405a1fca54e35ad3c03e8fa1c412`; IntentIR/report
+`8e5699edf58b87a928a06df0b476e3cdbd266c83603aef681e3f7b8a9d3000ca` /
+`c269c6a2ef492dd62893518627f51b3a7c13f6b82cffec1b5f9f3978df0e36a1`; adapter/report
+`deb2be06757e3a860cf402f301940fcc6cda4e4ce679252483230b8a83dd5011` /
+`12e7bb6f7f0ca0757e53b40a987ebb006bf43bf64be0ce44605396a3ee3c1309`.
+WIRE/I2C/SWD, KG 156/156, all 66 emitted ISFs, persisted paths, and locality remain green. Corpus refresh is now
+40 done / 16 remaining, with 80 SourceIR / nine normalized / 80 EvidenceIR / 79 SemanticIR→IntentIR→adapter
+chains. The sibling agreement confirms glossary rejection is structural rather than document-specific.

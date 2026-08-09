@@ -1,4 +1,23 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.40 (`2026-08-09`) — the sibling glossary independently confirms authority
+
+The OpenCAPI Certified engineering note repeats the Ready note's compact terms-table shape: `DL` denotes data
+link layer, but the retained chain synthesized `Signal DL is width 1.`, promoted it into high-confidence
+interface `interface_explicit_interface_section_0016_terms`, and rendered a one-bit output in an adapter already
+blocked for lack of behavior. This is independent source evidence for the same generic boundary, not an
+assumption copied from the preceding document.
+
+Two guarded current-binary ingests preserve all 173 SourceIR content elements and the complete 13-page /
+three-visual / two-table structure. Evidence falls 173→172 because only synthetic `statement_0174` disappears;
+the remaining 169 source facts, two normative statements, and one conditional statement survive. Semantic and
+Intent retain their prose-derived actors, phases, invariants, decompositions, behaviors, and constraints while
+the single interface and adapter signal disappear.
+
+Validation keeps the guide's low-confidence purpose ambiguity explicit and surfaces two partially structured
+normative statements plus three unenriched visuals. Lowering blocks on both missing signals and missing behavior
+instead of manufacturing a target. The sibling result therefore strengthens the structural rule: glossary
+membership preserves vocabulary, but only declaration authority may establish a hardware interface.
+
 ## CORPUS-COVERAGE.2.39 (`2026-08-09`) — a glossary row is not a signal declaration
 
 The OpenCAPI Ready engineering note preserves a compact headerless terms table. Its `DL` row defines OpenCAPI

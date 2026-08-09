@@ -1,3 +1,16 @@
+### CORPUS-COVERAGE.2.40 — sign off OpenCAPI Certified note refresh
+
+- Two guarded CPU ingests reproduce 13 pages, three visuals, two tables, 25 sections, and 173 elements at 21% and
+  22% peak sampled system memory used; all 13 image paths and 13 layout paths are final and repository-relative.
+- Evidence 173→172 removes only stale synthetic `Signal DL is width 1.`; the cited terms table defines data link
+  layer and does not declare a wire. All 173 SourceIR content elements hold.
+- Current generic authority removes the one stale high-confidence interface and one-output adapter surface while
+  retaining two semantic actors, four phases, four invariants, 11 intent behaviors, and four constraints.
+- The low-structured-design-intent guide blocks on no declared interface signals plus no behavioral content and
+  leaves exactly `adapter.json` plus its report. Two cascades reproduce all 12 hashes; WIRE/I2C/SWD, KG 156/156,
+  66/66 FSMGen strict, persisted-path, locality, mdBook, doctrine, and exact cleanup gates pass. Corpus is 40 done
+  / 16 remaining.
+
 ### CORPUS-COVERAGE.2.39 — sign off OpenCAPI Ready note refresh
 
 - Two guarded CPU ingests reproduce 10 pages, six visuals, five tables, 23 sections, and 105 elements at 18% peak

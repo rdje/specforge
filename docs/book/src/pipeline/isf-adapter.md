@@ -129,9 +129,18 @@ the synthetic declaration. SemanticIR and IntentIR then contain zero interfaces 
 blocks on both `no signals declared in interface` and `no behavioral content`, emits no target, and leaves only
 `adapter.json` plus its validation report. A glossary definition cannot bootstrap a hardware boundary.
 
+The 13-page OpenCAPI Certified Test Resources engineering note independently provides the seventh transfer. Its
+sibling `Terms` table likewise defines `DL` as data link layer, while stale EvidenceIR injected
+`Signal DL is width 1.` and promoted it into one interface and adapter output. Fresh extraction preserves all 173
+SourceIR content elements and 172 real evidence statements while removing only the synthetic declaration.
+SemanticIR and IntentIR retain their actors, phases, invariants, behaviors, and constraints but contain zero
+interfaces or signals. Lowering blocks on both missing signals and missing behavior, emits no target, and leaves
+only `adapter.json` plus its validation report. Independent sibling evidence confirms the boundary is structural,
+not a Ready-note exception.
+
 The corpus cache now has 66 current emitted `.isf` files, all covered by a fresh 66/66 FSMGen-strict sweep; USB
 3.2, USB4 Inter-Domain, USB4 Connection Manager, CoreSight Base System, AArch64 External Debug, and Introducing
-CoreSight, plus the OpenCAPI Ready note, are not among them because honest blocking is the correct lowering
+CoreSight, plus the OpenCAPI Ready and Certified notes, are not among them because honest blocking is the correct lowering
 result.
 
 The measurement behind that repair found three upstream authority errors, not a reason to distrust every

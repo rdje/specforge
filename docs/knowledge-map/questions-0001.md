@@ -284,6 +284,8 @@
   > does specforge validate modify the artifact passed on the command line
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
   > does specforge write to the input path I pass or to a canonical generated path
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > does the Certified sibling confirm the OpenCAPI Ready glossary result
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
   > does the Docling metadata sidecar store repository relative paths
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
@@ -296,5 +298,3 @@
   > does the USB4 Inter-Domain adapter still emit a USB4 signal
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > does the agent-identity gate keep Class-B fragments like Subordinate extends
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > does the authority empty repair preserve formal and system contract interfaces

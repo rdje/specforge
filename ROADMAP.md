@@ -185,10 +185,14 @@ Five active program groups support that north star:
   declaration. Two guarded ingests preserve all 105 SourceIR elements while EvidenceIR 113→112 drops only that
   synthetic statement; the stale one-interface/one-output surface disappears. The guide blocks on no signals
   plus no behavior and leaves only `adapter.json` plus its report. Two cascades reproduce 12 hashes; all 66
-  remaining emits are strict-clean. Corpus is 39 done / 17 remaining. `.2.40` now owns the smallest remaining
-  candidate, the 13-page OpenCAPI 3.0 Certified Test Resources engineering note. Its retained sibling chain also
-  turns a terms-section `DL` record into one interface/output despite zero relations or constraints, providing a
-  direct independent test of the generic glossary/declaration boundary. Separately,
+  remaining emits are strict-clean. `.2.40` independently confirms the same boundary on the 13-page OpenCAPI
+  3.0 Certified Test Resources engineering note. Two guarded ingests reproduce 13 pages / three visuals / two
+  tables / 25 sections / 173 elements; all 13 image and 13 layout paths are repository-relative. Evidence
+  173→172 drops only its sibling synthetic `Signal DL is width 1.` glossary record, removing the stale one-
+  interface/one-output surface while preserving the note's actors, phases, invariants, behaviors, and constraints.
+  Lowering blocks on no signals plus no behavior and leaves only `adapter.json` plus its report; all 66 remaining
+  emits are strict-clean. Corpus is 40 done / 16 remaining; `.2.41` owns selection of the next smallest
+  roadmap-aligned real chip-spec document. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

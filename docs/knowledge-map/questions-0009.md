@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > why is For / Then it / is recommended / next / HPROT bit / TREADY input minted as an actor
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why is KG-ISF-TRANSACTIONS.2i parked/blocked (waiting on FSMGEN to say how to lower phase membership without fabricating drive values or step order)
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > why is MEMORY-BOUNDED-INGEST.5 summary streaming deferred
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > why is NVMe register field_name a bit-range and how is the mnemonic found in the description
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > why is SWD per-signal phase membership degenerate / empty
+- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
+  > why is SWD/ADI hard / different from APB AHB AXI
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
   > why is SWIO not captured as a third SWP signal
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)

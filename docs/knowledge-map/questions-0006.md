@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > what is the DOC-INTENT-TAXONOMY.1 corpus census
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > what is the DOC-INTENT-TAXONOMY.2 per-category ISF-completeness gauge
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > what is the Dempster combiner in fusion
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > what is the EXTRACTION-QUALITY-GAUGE.FIELD design
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > what is the ExtractionProfilePriorRecord 8th prior family / extraction_profile_priors in CorpusMemory
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
@@ -290,11 +298,3 @@
   > where does SpecForge canonicalize upstream artifact paths before serialization
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > where does SpecForge store temporary files and caches
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > where does TransactionPhaseRecord.signal_set come from (build_transaction_phases, ir/semantic.rs — phase-naming statements' signals ∩ declared inventory, the .2c technique)
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > where does a register's byte offset come from when only the caption states it
-- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
-  > where does nli-verify / extract-constraints-llm / semantic / intent / adapt write their output
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > where does recognize_digital_patterns hardcode HTRANS/PSEL/MISO and why is it an ADR-0006 breach

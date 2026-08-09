@@ -106,10 +106,10 @@
     {
       "path": "docs/knowledge-catalog/titles-0003.md",
       "role": "title_part",
-      "sha256": "26e08d9c33db26713c69bc2bc177623fda79b1ff87de8ff2e9496e7c66537b19",
+      "sha256": "7905f824df369dccbcc160756fbc1d728395b0ce031ff9a2661f282cd0c5851f",
       "metrics": {
         "lines": 63,
-        "bytes": 12395,
+        "bytes": 12396,
         "line_bytes": 254
       }
     },

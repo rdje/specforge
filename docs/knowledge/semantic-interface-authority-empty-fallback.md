@@ -96,3 +96,10 @@ row defines data link layer beside other abbreviations. Fresh extraction preserv
 drops only that synthetic statement (113→112), then yields zero interfaces/signals and blocks on both no declared
 signals and no behavior. Glossary syntax does not become declaration authority; the live emitted set remains
 66/66 strict-clean.
+
+**Seventh guide transfer (`CORPUS-COVERAGE.2.40`).** The OpenCAPI Certified sibling independently repeats the
+same terms-table trap: synthetic `statement_0174` turns the `DL` definition for data link layer into one
+high-confidence interface and one adapter output. Fresh extraction preserves all 173 source elements but drops
+only that statement (173→172), leaving zero interfaces/signals and blocking on both no declared signals and no
+behavior. The live emitted set remains 66/66 strict-clean; sibling agreement confirms the authority rule is
+structural rather than a Ready-note exception.
