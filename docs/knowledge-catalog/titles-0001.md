@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md) | 2026-08-09 | `current` | Active task legacy routes bind canonical IDs to exact source spellings |
 | [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md) | 2026-06-15 | `current` | Actor-signal drive/read DIRECTION is already correct in production (voice-separated verb lexicon); the prose… |
 | [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md) | 2026-06-04 | `current` | Per-author adopt/defer ledger — what SpecForge takes from / leaves out of each grounded author |
 | [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md) | 2026-06-16 | `current` | The .1b.iii coordinated-subject split replaces a relation whose subject is "X and Y" with one relation per co… |
@@ -60,4 +61,3 @@
 | [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md) | 2026-08-09 | `current` | Dormant serializable path fields require the portability contract before activation |
 | [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md) | 2026-06-15 | `current` | A constraint subject that is only ever a Reg.Field dotted cross-reference is dropped (not the cell's subject) |
 | [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md) | 2026-06-05 | `current` | Eval gold is reliable — Cohen's kappa 0.90 (almost-perfect) on the constraint task |
-| [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md) | 2026-06-07 | `current` | eval-extraction scores the PERSISTED evidence_ir.json — rebuild before trusting a baseline (it can be stale) |

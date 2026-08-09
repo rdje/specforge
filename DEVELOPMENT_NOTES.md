@@ -1,4 +1,23 @@
 # DEVELOPMENT_NOTES
+## ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2 (`2026-08-09`) — route identity needs two exact spellings
+
+Git history and literal task evidence answer different identity questions. Commit subjects provide the stable,
+fully qualified route set, but the legacy body sometimes records the same work as `.12a` or `.13d`. Six of the
+52 history IDs never appear fully qualified in the final source, and four more have their fully qualified mention
+outside the semantic payload that owns their detail. Requiring the canonical ID inside the primary payload made
+the provisional `complete` state impossible or encouraged a semantically wrong route.
+
+The contract now separates canonical `leaf_id` from exact `source_literal`. The latter may only equal the full ID
+or the suffix obtained by removing the declared tree prefix; the checker token-matches it in the declared payload.
+This is not a general alias facility. Commit-history set equality remains exact, index/manifest identity stays
+fully qualified, post-migration routes cannot carry a legacy source literal, and marker payload bytes remain
+unchanged.
+
+The clean `f04db37a` boundary is the final unpartitioned source authority. All 15 region digests and metrics plus
+52 primary routes are now data, while both destination directories remain absent. That makes `.3.1` a mechanical
+state transition over committed inputs rather than a migration that discovers or repairs its source while moving
+it.
+
 ## FACT-CARD-CATALOG-CONTAINMENT.2.2 (`2026-08-09`) — migration is a verified state transition
 
 The migration commit does not discover its topology while writing. The prior clean commit already pins all four

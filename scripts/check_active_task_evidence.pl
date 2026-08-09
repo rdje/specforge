@@ -99,6 +99,23 @@ sub occurrences {
     return $count;
 }
 
+sub task_token_occurrences {
+    my ($raw, $literal) = @_;
+    $literal = raw_scalar($literal);
+    return 0 if $literal eq '';
+    my ($count, $offset) = (0, 0);
+    while (1) {
+        my $position = index($raw, $literal, $offset);
+        last if $position < 0;
+        my $before = $position == 0 ? '' : substr($raw, $position - 1, 1);
+        my $after_at = $position + length($literal);
+        my $after = $after_at >= length($raw) ? '' : substr($raw, $after_at, 1);
+        $count++ if $before !~ /[A-Za-z0-9.]/ && $after !~ /[A-Za-z0-9.]/;
+        $offset = $position + length($literal);
+    }
+    return $count;
+}
+
 sub metrics {
     my ($raw) = @_;
     my $bytes = length($raw);
@@ -694,7 +711,7 @@ sub validate_contract_schema {
         if ($input_state // '') eq 'complete' && !@$routes;
     my (%route_ids, %route_parts);
     for my $route (@$routes) {
-        reject_unknown($route, 'contract leaf route', $errors, qw(leaf_id part_id origin));
+        reject_unknown($route, 'contract leaf route', $errors, qw(leaf_id part_id origin source_literal));
         my $leaf_id = required_scalar($route, 'leaf_id', 'contract leaf route', $errors);
         my $part_id = required_scalar($route, 'part_id', 'contract leaf route', $errors);
         my $origin = required_scalar($route, 'origin', 'contract leaf route', $errors);
@@ -706,6 +723,17 @@ sub validate_contract_schema {
             if defined($origin) && $origin ne 'legacy' && $origin ne 'post_migration';
         push @$errors, "source-locked contract cannot declare post-migration leaf route '$leaf_id'"
             if ($migration_state // '') eq 'source_locked' && ($origin // '') eq 'post_migration';
+        if (($origin // '') eq 'legacy') {
+            my $literal = required_scalar($route, 'source_literal', 'legacy contract leaf route', $errors);
+            if (defined($literal) && defined($leaf_id)) {
+                my $relative = $leaf_id;
+                $relative =~ s/\A\Q$identity->{tree_id}\E//;
+                push @$errors, "legacy leaf route '$leaf_id' source_literal is not its full or tree-relative id"
+                    if $literal ne $leaf_id && ($relative eq '' || $literal ne $relative);
+            }
+        } elsif (exists($route->{source_literal})) {
+            push @$errors, "post-migration leaf route '$leaf_id' must not declare source_literal";
+        }
     }
     if (($frontier_mode // '') eq 'eligible') {
         push @$errors, 'eligible frontier leaf_id lacks a primary leaf route'
@@ -801,8 +829,9 @@ sub validate_source_and_inputs {
             my $part_id = $route->{part_id} // '';
             next if !$part_by_id{$part_id};
             if (($route->{origin} // '') eq 'legacy') {
-                push @$errors, "legacy leaf route '$id' is absent from its primary part payload"
-                    if index($part_payload{$part_id} // '', raw_scalar($id)) < 0;
+                my $literal = $route->{source_literal} // '';
+                push @$errors, "legacy leaf route '$id' source literal '$literal' is absent from its primary part payload"
+                    if task_token_occurrences($part_payload{$part_id} // '', $literal) == 0;
             }
         }
     }
@@ -1128,7 +1157,7 @@ sub fixture_source {
 - Status: `active`
 ## Task tree
 - ID: `PROGRAM`
-- ID: `PROGRAM.1`
+- ID: `.1`
 ## Verification Log
 | Date | Leaf | Checks | Result |
 | 2026-08-09 | PROGRAM.1 | fixture | green |
@@ -1222,7 +1251,7 @@ sub complete_fixture_inputs {
         $region->{metrics} = metrics($raw);
     }
     $contract->{leaf_routes} = [
-        {leaf_id => 'PROGRAM.1', part_id => 'activity', origin => 'legacy'},
+        {leaf_id => 'PROGRAM.1', part_id => 'activity', origin => 'legacy', source_literal => '.1'},
     ];
 }
 
@@ -1408,6 +1437,9 @@ sub run_self_test {
         ['topology route leakage', 'source_locked', 'topology_declared', sub { $_[1]{leaf_routes} = [{leaf_id => 'PROGRAM.1', part_id => 'activity', origin => 'legacy'}] }, qr/must not contain leaf routes/],
         ['complete region digest missing', 'source_locked', 'complete', sub { delete $_[1]{regions}[0]{sha256} }, qr/lacks non-empty scalar 'sha256'/],
         ['complete route omission', 'source_locked', 'complete', sub { $_[1]{leaf_routes} = [] }, qr/must contain leaf routes|omit boundary-history/],
+        ['complete route source literal missing', 'source_locked', 'complete', sub { delete $_[1]{leaf_routes}[0]{source_literal} }, qr/lacks non-empty scalar 'source_literal'/],
+        ['complete route source literal invalid', 'source_locked', 'complete', sub { $_[1]{leaf_routes}[0]{source_literal} = 'PROGRAM' }, qr/not its full or tree-relative id/],
+        ['complete route source literal absent', 'source_locked', 'complete', sub { $_[1]{leaf_routes}[0]{source_literal} = 'PROGRAM.1' }, qr/source literal 'PROGRAM\.1' is absent/],
         ['premature post-migration route', 'source_locked', 'complete', sub { $_[1]{leaf_routes}[0]{origin} = 'post_migration' }, qr/cannot declare post-migration/],
         ['migrated positive', 'migrated', 'complete', undef, undef],
         ['capsule mutation', 'migrated', 'complete', sub { write_raw($_[0], $_[1]{destinations}{source_capsule}, $_[2] . "changed\n") }, qr/source authority/],
@@ -1415,7 +1447,7 @@ sub run_self_test {
         ['root mandatory rollover', 'migrated', 'complete', sub { $_[1]{limits}{root}{health_targets}{lines} = 20 }, qr/mandatory rollover/],
         ['index part route missing', 'migrated', 'complete', sub { my $raw = fixture_index(); $raw =~ s/^- \[Foundation\].*\n//m; write_raw($_[0], $_[1]{destinations}{index}, $raw) }, qr/links 'docs\/tasks\/program\/foundation.md'/],
         ['index leaf misroute', 'migrated', 'complete', sub { my $raw = fixture_index(); $raw =~ s/\[Activity\]\(activity\.md\) \|/\[Foundation\](foundation.md) |/; write_raw($_[0], $_[1]{destinations}{index}, $raw) }, qr/leaf 'PROGRAM\.1' routes/],
-        ['part payload mutation', 'migrated', 'complete', sub { my $part = $_[1]{destinations}{parts}[1]; my $raw = fixture_part_raw($_[1], $_[2], $part); $raw =~ s/PROGRAM\.1/PROGRAM.2/; write_raw($_[0], $part->{path}, $raw) }, qr/semantic part|payload differs/],
+        ['part payload mutation', 'migrated', 'complete', sub { my $part = $_[1]{destinations}{parts}[1]; my $raw = fixture_part_raw($_[1], $_[2], $part); $raw =~ s/- ID: `\.1`/- ID: `.2`/; write_raw($_[0], $part->{path}, $raw) }, qr/semantic part|payload differs/],
         ['manifest identity drift', 'migrated', 'complete', sub { my $manifest = manifest_expected_subset($_[1]); $manifest->{migrated_on} = '2026-08-09'; $manifest->{reason} = 'fixture migration'; $manifest->{source}{sha256} = 'f' x 64; write_raw($_[0], $_[1]{destinations}{manifest}, JSON::PP->new->canonical(1)->pretty(1)->encode($manifest)) }, qr/manifest field 'source' disagrees/],
         ['manifest scalar overflow', 'migrated', 'complete', sub { my $manifest = manifest_expected_subset($_[1]); $manifest->{migrated_on} = '2026-08-09'; $manifest->{reason} = 'x' x 600; write_raw($_[0], $_[1]{destinations}{manifest}, JSON::PP->new->canonical(1)->pretty(1)->encode($manifest)) }, qr/scalar above 512 bytes/],
         ['sealed part positive', 'migrated', 'complete', sub { seal_fixture_activity_part($_[0], $_[1], $_[2]) }, undef],

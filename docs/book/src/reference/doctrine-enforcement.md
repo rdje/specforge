@@ -70,7 +70,7 @@ The project-owned normative contract is `README_POLICY.md`.
 
 Among its focused suites, the live-document gate runs 55 common lifecycle/control cases, 47 neutral derived-state
 classification cases, 25 SpecForge authority-adapter cases, and 15 terminal-task source/route/identity/boundary
-cases, plus 29 active-task source/topology/route/payload/bound cases, 41 fact-catalog source/plan/route/residue/
+cases, plus 32 active-task source/topology/route/payload/bound cases, 41 fact-catalog source/plan/route/residue/
 bound cases, and the projection-specific Knowledge Map contract and portable-bundle integration suite. Generated
 collections must have complete landing membership, exact derive-and-diff content,
 bounded repository-local check workspaces, and no stale parts or temporary residue. Exact current fields are
@@ -78,8 +78,10 @@ declared rather than guessed: derive-on-read values cannot retain a shadow, veri
 authority check, authored intent remains human-owned, and immutable evidence keeps an exact capture boundary.
 
 The active-task contract binds source-locked Git/file identity, exhaustive semantic regions, planned-part
-pressure, fixed portable caps, and destination absence. Its later state verifies exact legacy routes, capsule and
-marker payloads, current root/frontier, index, manifest, per-part/aggregate pressure, and sealed Git identities.
+pressure, fixed portable caps, and destination absence. Complete inputs bind all 52 canonical history IDs to an
+exact full or tree-relative source literal in one primary semantic payload. Its later state verifies those legacy
+routes, capsule and marker payloads, current root/frontier, index, manifest, per-part/aggregate pressure, and
+sealed Git identities.
 
 The fact-card contract authenticates its legacy commit/blob/index, raw digest/metrics, 158-card sources and row
 union, and former destination absence. Its current migrated state enforces the stable direct-ID landing, deterministic

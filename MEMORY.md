@@ -21,15 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `FACT-CARD-CATALOG-CONTAINMENT.2.2` — migrate and close bounded fact browsing; implementation and
-  focused verification complete, commit pending.
-- Current state: the stable catalog is a 161-line / 11,984-byte direct-ID landing over three deterministic 56-card
-  title parts; the four outputs total 340 lines / 46,890 bytes with no current warning. ADR 0023's three-line
-  scaffold proves the root remains below mandatory rollover at all 198 cards. The exact generated surface is
-  active, migrated enforcement passes, and the task tree is closed.
-- Next action: finish composed/full gates and commit `.2.2`, then resume
-  `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2` at its clean final-source-boundary leaf.
-- In-flight uncommitted: migrated catalog output, state/surface switch, UTF-8 digest regression repair, and
-  impact-routed closure documentation; canonical facts/evidence, product artifacts, PDF task source/destinations,
-  shared inputs, thresholds, and ceilings unchanged.
+- Active unit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2` — complete the final committed active-source boundary and
+  exact migration inputs; implementation and full verification complete, commit pending.
+- Current state: boundary `f04db37a` preserves the exact 2,393-line / 222,616-byte PDF task source. The contract is
+  `source_locked/complete` with 15 region identities and 52 commit-history routes. Ten routes use a constrained
+  tree-relative `source_literal`; both migration directories remain absent.
+- Next action: commit `.2.2` through `COMMIT.md`, verify the brief is empty, then begin `.3.1` atomic migration
+  from the clean boundary.
+- In-flight uncommitted: verified `.2.2` recording transaction only; PDF task bytes, migration destinations,
+  product artifacts, thresholds, and ceilings remain unchanged.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

@@ -81,6 +81,13 @@ destination directories and all files remain absent. Twenty-nine focused cases e
 Git, schema, region, route, marker payload, manifest, frontier, pressure, seal, and residue states. `.2.2` alone
 may complete the exact region digests and boundary-history routes before migration.
 
+`.2.2` now pins final clean boundary `f04db37a`, all 15 region hashes/metrics, and 52 primary routes while every
+destination remains absent. Ten routes use an exact tree-relative source literal because the historical body and
+fully qualified commit subjects do not always use the same spelling; six canonical IDs never occur fully
+qualified in the source at all. The checker permits only the full ID or its exact prefix-stripped form, token-
+matches that value in the primary payload, and keeps index/manifest identity fully qualified. Thirty-two focused
+cases exercise the complete source-locked contract before `.3.1` migration.
+
 `scripts/check_task_tree_archive.pl` now enforces `migrated`: the capsule retains the exact locked identity, and
 the checker validates the closed root, exact index/manifest routes, provenance, milestones, and ceilings. Its
 15-case self-test runs unconditionally through `LIVE-DOC-SIZE`.

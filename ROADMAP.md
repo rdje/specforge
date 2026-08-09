@@ -121,10 +121,11 @@ Five active program groups support that north star:
   identifier-reference inputs, generic readers, and the manual writer. It proves the nominal frontier is a
   124,201-byte activity store and cannot nominate an eligible leaf from contradictory status text. `.1.2` accepts
   ADR 0019's bounded active root, seven semantic legacy parts, exact capsule, 15-region coverage, conservative
-  no-eligible-frontier reconciliation, atomic root+part writer, and fixed route/aggregate limits. `.2.1` now lands
-  the neutral 29-case checker and source-locked topology contract: exact commit/blob/file/index identity, exhaustive
-  regions, planned-part pressure, portable caps, and complete destination absence pass. `.2.2` owns final committed
-  boundary plus exact region/route migration inputs before any destination exists. Separately,
+  no-eligible-frontier reconciliation, atomic root+part writer, and fixed route/aggregate limits. `.2.1` lands
+  the neutral source-locked topology contract. `.2.2` now pins clean boundary `f04db37a`, all 15 region identities,
+  and 52 commit-history routes while every destination remains absent. Its 32-case checker distinguishes canonical
+  route IDs from constrained full-or-tree-relative source literals, closing the mixed historical-spelling defect;
+  full CI passes and `.3.1` now owns the atomic migration. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

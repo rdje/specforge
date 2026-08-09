@@ -77,6 +77,20 @@ Marker-delimited payload extraction, region hashes/metrics, contiguous source co
 and the complete part union are executable checks. The exact capsule and semantic payloads deliberately overlap:
 the capsule proves literal provenance; the parts provide bounded semantic reading and future task continuity.
 
+### Legacy route identity
+
+The committed path history contributes 52 fully qualified IDs through commit subjects, but the source body uses
+both fully qualified IDs and tree-relative shorthand. Six history IDs—`.10p`, `.12a`, `.12b`, `.13a`, `.13c`,
+and `.13d`—never occur fully qualified in the final source; four more are fully qualified only outside their
+primary semantic payload. Requiring the route ID itself inside the chosen payload would therefore make the
+declared `complete` state unreachable or misroute detail to chronology.
+
+Each legacy route consequently carries both its canonical `leaf_id` and an exact `source_literal`. The latter is
+schema-constrained to either the full ID or that ID with the tree prefix removed; arbitrary aliases are forbidden.
+The checker extracts the canonical route set from commit subjects, then token-matches each source literal inside
+its declared semantic payload. Index and manifest routes remain fully qualified. This preserves historical
+spelling without weakening stable identity or inventing normalized text in the exact legacy payloads.
+
 ## Current-state precedence
 
 The migrated root may normalize current state but may not alter literal history. Apply these rules in order:

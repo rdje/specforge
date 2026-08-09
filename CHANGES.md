@@ -1,3 +1,16 @@
+### ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2 — complete the committed active-task migration inputs
+
+- Advanced the active-task contract from `topology_declared` to `complete` against boundary commit `f04db37a`
+  without editing the 2,393-line PDF task source or creating either migration destination.
+- Pinned SHA-256 and exact line/byte/max-line metrics for all 15 contiguous source regions. Fifty-two canonical
+  IDs derived from path commit subjects now route exactly once to one of seven semantic payloads.
+- Root-caused an unreachable-state defect in the provisional route check: six committed IDs exist in the source
+  only as tree-relative shorthand. Legacy routes now bind a canonical `leaf_id` to a constrained full-or-relative
+  `source_literal`; token matching rejects arbitrary aliases, missing evidence, and wrong-part assignments.
+- Expanded the focused suite from 29 to 32 cases. The real `source_locked/complete` report, exact target diff,
+  destination-absence census, six doctrines, full CI (1,779 passed / five ignored), rustdoc, mdBook, and final
+  locality pass; product code, canonical artifacts, thresholds, and ceilings are unchanged.
+
 ### FACT-CARD-CATALOG-CONTAINMENT.2.2 — migrate and close bounded fact browsing
 
 - Switched the source-locked contract to `migrated`, registered `fact_card_titles` as the exact bounded

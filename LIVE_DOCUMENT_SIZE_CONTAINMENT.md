@@ -47,9 +47,12 @@
   migrated state. `.10b.ii` now preserves the exact source in a terminal and leaves a 119-line bounded closed
   root plus a three-link archive index and exact manifest, closing the adoption program. Active task trees are
   explicitly excluded from that terminal topology. ADR 0019 now governs the first active target; `.2.1` adds a
-  neutral 29-case source-locked/complete/migrated checker that authenticates Git/file identity, exhaustive semantic
+  neutral source-locked/complete/migrated checker that authenticates Git/file identity, exhaustive semantic
   regions, planned-part pressure, destination absence, future routes/payloads/frontier/manifest, and fixed portable
-  caps before any source byte moves. ADR 0020 separately accepts a bounded fact-card browse projection: the stable
+  caps before any source byte moves. `.2.2` pins the final clean boundary, 15 exact region identities, and all 52
+  commit-history routes. Its 32 focused cases also enforce full-or-tree-relative source literals so mixed legacy
+  shorthand remains lossless without becoming an arbitrary alias mechanism. ADR 0020 separately accepts a
+  bounded fact-card browse projection: the stable
   root keeps exhaustive direct-ID membership while deterministic count-packed parts carry detailed rows; a derived
   198-card maximum and fixed root/part/aggregate limits preserve the existing 200-file collection ceiling. Its
   `.2.1` legacy lock now authenticates the exact monolith/card/row boundary and validates both catalog states

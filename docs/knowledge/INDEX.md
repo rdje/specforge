@@ -1,6 +1,7 @@
 # Knowledge fact-card catalog
 > **AUTO-GENERATED — DO NOT EDIT.** Run `perl scripts/check_fact_card_catalog.pl --write`. [README](README.md) · [questions](../../KNOWLEDGE_MAP.md) · [decisions](../decisions/INDEX.md).
 > Title parts: [0001](../knowledge-catalog/titles-0001.md) · [0002](../knowledge-catalog/titles-0002.md) · [0003](../knowledge-catalog/titles-0003.md)
+- [active-task-legacy-route-aliases](active-task-legacy-route-aliases.md)
 - [actor-signal-direction-passive-active-handled](actor-signal-direction-passive-active-handled.md)
 - [adopt-defer-ledger](adopt-defer-ledger.md)
 - [agent-coordinated-subject-split](agent-coordinated-subject-split.md)

@@ -80,7 +80,7 @@ open.
   Commit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2 — decide the bounded active task topology`
 
 - ID: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2`
-  Status: active
+  Status: done
   Goal: implement neutral enforcement before moving active evidence
   Children: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1`, `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2`
 
@@ -95,12 +95,13 @@ open.
   Commit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1 — enforce the source-locked active task contract`
 
 - ID: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2`
-  Status: pending
+  Status: done
   Goal: commit the final active source boundary and migration inputs
   Acceptance: a clean commit leaves the target complete and unpartitioned at an exact identity while every
   migration input, semantic marker, and destination-absence condition is independently verifiable
-  Verification: pending
-  Commit: pending
+  Verification: exact boundary/regions/routes, 32/32 focused cases, six doctrines, full CI (1,779 passed / five
+  ignored), rustdoc, mdBook, final locality, target diff, and destination absence pass
+  Commit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2 — complete the active source lock inputs`
 
 - ID: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3`
   Status: active
@@ -127,22 +128,22 @@ open.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2` | `pending` | pin the committed checker boundary and complete every migration input |
+| 1 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.1` | `pending` | atomically materialize the committed bounded active topology |
 
-### Acceptance Checklist (enforced) — `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1`
+### Acceptance Checklist (enforced) — `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2`
 
 - [x] **REPRODUCE / MEASURE** — the real report reopens 2,393 lines / 222,616 bytes / max 191 at SHA-256
-  `9284dce4…a19d4`, proves Git blob `7d89ea4f…b555`, and derives seven payloads of 257–488 lines.
-- [x] **ROOT CAUSE (WHY + WHERE)** — a file hash alone cannot prove a durable pre-migration source, while an empty
-  premature destination directory can strand ambiguous state; the gap is at the Git/source/topology transition.
-- [x] **ADDRESSED (verified)** — the contract binds boundary commit, Git object/index/file identity, exhaustive
-  regions, unique destinations, portable caps, and later-state route/payload/manifest/frontier/seal semantics.
-- [x] **NO REGRESSION** — Perl syntax, 29/29 focused mutations, real report, `scripts/check_live_document_size.sh`,
-  six doctrines, mdBook, target blob/diff, and destination-residue checks pass; no Rust/product artifact changed.
-- [x] **GENERICITY** — all production ids, paths, headings, spans, routes, markers, and limits live in JSON; the
-  checker contains only schema/state semantics and portable architecture caps.
-- [x] **LOCKSTEP** — checker/adapter/contract, doctrine mirrors, task/roadmap/status/resume, fact, ledgers, and
-  mdBook agree that `.2.2` alone may complete the locked migration inputs.
+  `9284dce4…a19d4`, verifies 15 exact region identities, and derives seven payloads of 257–488 lines.
+- [x] **ROOT CAUSE (WHY + WHERE)** — six commit-subject IDs occur only as tree-relative source shorthand, so a
+  full-ID-only payload check made the `complete` contract unreachable; the mismatch is at route/source identity.
+- [x] **ADDRESSED (verified)** — 52 canonical routes now bind only to their full or exact tree-relative source
+  literal, token-match their primary payload, and remain constrained by commit-subject membership.
+- [x] **NO REGRESSION** — 32/32 focused mutations, real report, six doctrines, full CI (1,779 pass / five ignored),
+  rustdoc, mdBook, final locality, exact source diff, and destination absence pass.
+- [x] **GENERICITY** — the checker derives permitted shorthand from the declared tree id; every production route,
+  path, span, digest, marker, and limit remains contract data.
+- [x] **LOCKSTEP** — contract/checker/ADR/fact/task/roadmap/status/resume/live-doc doctrine/mdBook, 160-fact
+  Knowledge Map, 159-card catalog, canonical catalogs, and exact book aggregate authority agree on `.3.1` next.
 
 ## First-target baseline
 
@@ -219,6 +220,8 @@ boundary before rollover. Dedicated root/index/part/capsule limits and a schema-
   until a newly scoped continuation leaf revalidates their current evidence/dependency.
 - `2026-08-09`: `.2.1` keeps `input_state: topology_declared`: exact region digests, result-part identities, and
   primary leaf routes are forbidden until `.2.2` derives them against the committed checker boundary.
+- `2026-08-09`: Canonical history identity and literal source spelling are distinct. A legacy route may name only
+  its full ID or exact tree-relative suffix as `source_literal`; index/manifest identity stays fully qualified.
 - `2026-08-09`: Source locking means four matching authorities—boundary commit bytes/object, stage-zero index,
   current regular file, and SHA-256/metrics—and rejects the existence of either destination directory.
 - `2026-08-09`: Git-backed sealing is necessarily a following transaction: finish and commit the part, then pin
@@ -241,6 +244,7 @@ boundary before rollover. Dedicated root/index/part/capsule limits and a schema-
 | `2026-08-09` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1` | 13-region byte closure; path/id/reader/writer census; target SHA/blob/diff; catalogs; doctrines; mdBook | complete read-only report; target unchanged; `.1.2` decision inputs closed |
 | `2026-08-09` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2` | ADR/index/KM/live-doc cross-links; limit arithmetic; target SHA/blob/diff; lossless status reconstruction/chain; catalogs; doctrines; mdBook | hybrid accepted; status segment 0003 authenticated; `.1` closed; implementation inputs complete |
 | `2026-08-09` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1` | Perl syntax; 29 focused cases; real report; six doctrines; full CI; target blob/diff; destination residue | 1,779 pass / five ignored; source/topology enforced; target untouched; destinations absent; `.2.2` ready |
+| `2026-08-09` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2` | exact regions/routes; 32 focused cases; six doctrines; full CI; target diff; destination residue | source-locked/complete; 1,779 pass / five ignored; target untouched; destinations absent; `.3.1` ready |
 
 ## Commit Log
 
@@ -250,6 +254,7 @@ boundary before rollover. Dedicated root/index/part/capsule limits and a schema-
 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1 — census active task roles and consumers` | exhaustive read-only architecture input |
 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2 — decide the bounded active task topology` | ADR 0019; implementation policy closed |
 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1 — enforce the source-locked active task contract` | neutral checker; topology-declared source lock |
+| `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2 — complete the active source lock inputs` | final boundary; exact regions and canonical/literal routes |
 
 ## Changelog
 
@@ -263,3 +268,6 @@ boundary before rollover. Dedicated root/index/part/capsule limits and a schema-
 - `2026-08-09`: `.2.1` implemented the neutral source-locked/complete/migrated contract, 29 fail-closed cases, and
   unconditional doctrine wiring. The PDF source remains byte-identical, every destination is absent, and `.2.2`
   now owns the committed boundary plus exact region/route inputs.
+- `2026-08-09`: `.2.2` pinned clean boundary `f04db37a`, all 15 region identities, and 52 primary routes. A
+  full-ID-only contradiction exposed mixed historical shorthand; constrained `source_literal` makes that relation
+  exact without changing source bytes. Thirty-two focused cases and full CI pass; `.2` closes and `.3.1` is next.

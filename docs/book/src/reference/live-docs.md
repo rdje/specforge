@@ -157,13 +157,15 @@ the stable path as a bounded active root over seven semantic legacy parts and ex
 has no eligible leaf; future work creates a new activity part and atomically updates root + part, with semantic
 split-before-rollover and fixed route/aggregate bounds.
 
-The `.2.1` source lock is now executable. `scripts/check_active_task_evidence.pl` binds the unchanged target to
-boundary commit `6205f9d5`, Git blob `7d89ea4f…b555`, its stage-zero index entry, SHA-256, and exact metrics. It
-proves the 15 source ranges are contiguous and complete, derives all seven planned payload metrics below warning,
-enforces immutable portable caps, and rejects either destination directory or any declared output. Twenty-nine
-focused cases also exercise the future complete/migrated route, payload-marker, manifest, frontier, pressure, and
-sealed-Git semantics. `.2.2` must replace topology-only inputs with exact committed region/route identities while
-the destination set remains empty; `.3.1` alone may switch the contract to migrated.
+The `.2.1` source lock is executable. `.2.2` advances it to complete inputs against boundary commit `f04db37a`,
+Git blob `7d89ea4f…b555`, the stage-zero index entry, SHA-256, and exact metrics. All 15 source ranges carry exact
+hashes and line/byte/max-line metrics; all 52 IDs derived from path commit subjects have one primary semantic
+route; and all seven planned payloads remain below warning. Historical source spelling is deliberately mixed:
+six canonical IDs occur only as `.10p`/`.12a`-style shorthand, while four more use shorthand in their primary
+payload. Each legacy route therefore binds its canonical ID to a `source_literal` constrained to the full ID or
+its exact tree-relative suffix and token-matched in that payload. Thirty-two focused cases reject arbitrary
+aliases, missing payload evidence, Git/source drift, premature output, pressure, manifest/frontier errors, and
+seal drift. The destination set remains empty; `.3.1` alone may switch the contract to migrated.
 Post-migration sealing is Git-backed: a part's final content commit lands first, then a following state-only
 transaction records that ancestor commit/blob before any later part accepts work. The migrated legacy payloads
 need no such self-reference because exact source-region markers already make their bytes independently immutable.
