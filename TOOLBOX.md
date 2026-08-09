@@ -263,6 +263,19 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
 - **HOW:** `perl scripts/check_corpus_kb_currentness.pl --report` (15 fail-closed cases run
   unconditionally through `LIVE-DOC-SIZE`; canonical IR and typed prior memory are forbidden outputs).
 
+### 6.6 `scripts/check_derived_state_contracts.pl`
+
+- **WHAT:** the neutral exact-field authority gate. It reads the bounded
+  `doctrine/live_document_size/derived_state_contracts.jsonl` registry, proves that every declared path
+  belongs to its current governed surface, locates exact literal markers, distinguishes derive-on-read,
+  verified copies, authored intent, and immutable evidence, and executes every declared copy verifier.
+- **WHEN:** adding or changing a current-state version, hash, count, projection, resume field, selected next
+  action, or revision-bound measurement; use it before deciding that a convenient copy is trustworthy.
+- **HOW:** `perl scripts/check_derived_state_contracts.pl --report`. The unconditional `LIVE-DOC-SIZE`
+  path also runs 28 neutral fail-closed cases and 16 project-adapter cases. Only
+  `scripts/check_derived_state_authorities.pl` knows the local Cargo/Rust and FSMGen-gitlink comparisons;
+  the neutral checker does not infer fields from dates, numbers, hash shapes, or prose.
+
 ---
 
 ## 7. Stage replay, build, and host

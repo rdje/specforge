@@ -285,13 +285,16 @@ The reference deployment. Enforced by `scripts/check_doctrines.sh` via `.githook
 | `KNOWLEDGE-MAP` | structural | `knowledge-map/scripts/check_knowledge_map.sh` | the bounded landing and exact generated question-shard membership/content are regenerated + in sync with fact sources |
 | `TASK-ACCEPTANCE` | evidence | `scripts/check_task_acceptance.sh` | a staged Rust code change is owned by a staged `docs/tasks/*.md` leaf whose acceptance checklist carries ROOT CAUSE + ADDRESSED + NO REGRESSION, ticked and backed by SpecForge tool signatures (see `TOOLBOX.md`) |
 | `README-POLICY` | structural | `scripts/check_readme_policy.sh` | root `README.md` stays within its independently derived line/byte ceilings; every reader link and author-overflow destination is a repository-owned, controlled terminal in the route registry |
-| `LIVE-DOC-SIZE` | structural | `scripts/check_live_document_size.sh` | every parent-tracked Markdown path is classified exactly once and satisfies its lifecycle-specific locality, line/byte/count/aggregate/width, index, currency, frozen-content, transition-debt, maintained-reference, and ceiling-authority contracts |
+| `LIVE-DOC-SIZE` | structural | `scripts/check_live_document_size.sh` | every parent-tracked Markdown path is classified exactly once; each declared current-state field has an explicit derive-on-read, verified-copy, authored-intent, or immutable-evidence contract; and all lifecycle-specific locality, pressure, route, currency, authority, capture, and history rules pass |
 | `PROJECT-DATA-LOCALITY` | structural | `scripts/check_project_data_locality.sh` | Cargo, shell, Rust temp/subprocess, Python dependency, and optional runtime-store paths resolve from the current repository and reject off-root or stale-repository ownership |
 
-`LIVE-DOC-SIZE` also runs `scripts/test_live_document_size.pl`: 55 positive and fail-closed cases for
-all seven local lifecycle classes, internal/external/generated-set membership, and their control plane. Test workspaces are disposable and always
-created below repository-local `generated/`; schema fields, arrays, scalars, routes, independent size
-axes, baselines, and ceiling-history authority are therefore re-proved on every gate.
+`LIVE-DOC-SIZE` also runs three focused suites: 55 positive and fail-closed lifecycle/control-plane
+cases, 28 neutral derived-state classification/authority cases, and 16 SpecForge Rust/gitlink adapter
+cases. Test workspaces are disposable and always created below repository-local `generated/`.
+Schema fields, arrays, scalars, routes, independent size axes, baselines, exact field markers, stored
+derive-on-read shadows, verifier execution, capture boundaries, Cargo semver normalization, Git-index
+mode/object authority, and ceiling history are therefore re-proved on every gate. Undeclared
+date/number/hash lookalikes explicitly remain ordinary prose; the checker never guesses fields.
 The mdBook maintained-reference record additionally executes `scripts/check_book_current_truth.sh`,
 which binds load-bearing product claims to code, requires the completed containment/locality status
 and closing method-doc subsection, and rejects superseded product or migration wording.

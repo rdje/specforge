@@ -46,7 +46,7 @@ DOCTRINES=(
   "KNOWLEDGE-MAP|the bounded Knowledge Map landing and question shards are in sync|knowledge-map/scripts/check_knowledge_map.sh"
   "TASK-ACCEPTANCE|a staged Rust code change is owned by a staged task-tree leaf passing the evidence-backed acceptance checklist (decision 0003 / TOOLBOX.md)|scripts/check_task_acceptance.sh"
   "README-POLICY|the landing README and its reader/author routes satisfy the repository-owned bounded-entrypoint contract|scripts/check_readme_policy.sh"
-  "LIVE-DOC-SIZE|every tracked Markdown surface satisfies its registered lifecycle, coverage, locality, size, currency, and route contracts|scripts/check_live_document_size.sh"
+  "LIVE-DOC-SIZE|every tracked Markdown surface and declared current-state field satisfies its registered lifecycle, authority, coverage, locality, size, currency, and route contracts|scripts/check_live_document_size.sh"
   "PROJECT-DATA-LOCALITY|project-owned temp, cache, dependency, artifact, and subprocess seams resolve from the repository root|scripts/check_project_data_locality.sh"
 )
 

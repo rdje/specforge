@@ -95,6 +95,26 @@ why the missing layer is not merely editorial:
 7. `.8c` independently enumerates all declared markers and consumer paths, exercises both positive and mutation
    cases, then runs full doctrines/CI and closes `.8`.
 
+## `.8b` implementation result
+
+The selected contract is now implemented without widening scope. The bounded registry contains 14 exact
+contracts: one `derive_on_read`, two `authored_intent`, one `immutable_evidence`, and ten `verified_copy` records.
+Eight verified-copy records execute the existing task catalog, Knowledge Map, roadmap, reviewed validation,
+source-PDF, corpus-KB, book/root, and FSMGen-correspondence authorities. Two records delegate only the selected
+local comparisons to `scripts/check_derived_state_authorities.pl`.
+
+The Cargo adapter reads workspace `rust-version`, accepts the local major/minor or major/minor/patch forms, and
+normalizes all values to a patch triplet before comparing README, mdBook, and CI. The FSMGen adapter reads the
+stage-zero `subs/fsmgen` entry from the Git index, requires mode `160000`, and compares its object with both the
+feedback Markdown boundary and JSON protocol copy. It does not require the submodule worktree to be checked out.
+
+The neutral suite adds 28 cases spanning all four classifications, exact-marker uniqueness, off-surface and
+historical rejection, stored derive-on-read shadows, missing accessors/capture boundaries, core/adapter execution,
+schema and registry displacement, and an undeclared date/number/hash lookalike that must remain ordinary prose.
+The local suite adds 16 Rust/gitlink cases, including every retained-copy drift, malformed/duplicate values,
+wrong Git-index mode, missing index entry, and invalid adapter declaration. The resulting tree reports all 14
+contracts and both authority groups green; `.8c` still owns the independent consumer and mutation audit.
+
 ## Reverification
 
 From the SpecForge root:

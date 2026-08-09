@@ -25,6 +25,8 @@ fi
 if [ "$ROOT" = "$ADAPTER_ROOT" ]; then
   "$ROOT/scripts/check_readme_policy.sh" --self-test || fail=1
   perl "$ROOT/scripts/test_live_document_size.pl" --quiet || fail=1
+  perl "$ROOT/scripts/test_derived_state_contracts.pl" --quiet || fail=1
+  perl "$ROOT/scripts/test_derived_state_authorities.pl" --quiet || fail=1
   perl "$ROOT/scripts/check_rolling_ledger_protocol.pl" --self-test || fail=1
   perl "$ROOT/scripts/check_roadmap_projection_contract.pl" --self-test || fail=1
   perl "$ROOT/scripts/check_fsmgen_feedback_protocol.pl" --self-test || fail=1
@@ -60,6 +62,11 @@ perl "$ROOT/scripts/check_corpus_kb_currentness.pl" \
   --root "$ROOT" \
   --contract doctrine/live_document_size/corpus_kb.json \
   --check || fail=1
+
+perl "$ROOT/scripts/check_derived_state_contracts.pl" \
+  --root "$ROOT" \
+  --registry doctrine/live_document_size/derived_state_contracts.jsonl \
+  --surfaces doctrine/live_document_size/surfaces.jsonl || fail=1
 
 perl "$ROOT/scripts/check_live_document_size.pl" \
   --root "$ROOT" \

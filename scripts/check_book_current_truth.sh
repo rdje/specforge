@@ -12,6 +12,9 @@ SUMMARY="$ROOT/docs/book/src/SUMMARY.md"
 EXTRACTION_BOOK="$ROOT/docs/book/src/reference/extraction-architecture.md"
 INTENT_CONTRACT_BOOK="$ROOT/docs/book/src/reference/intentir-contract.md"
 LIVE_DOCS_BOOK="$ROOT/docs/book/src/reference/live-docs.md"
+DERIVED_STATE_REGISTRY="$ROOT/doctrine/live_document_size/derived_state_contracts.jsonl"
+DERIVED_STATE_CHECKER="$ROOT/scripts/check_derived_state_contracts.pl"
+DERIVED_STATE_ADAPTER="$ROOT/scripts/check_derived_state_authorities.pl"
 USER_POINTER="$ROOT/USER_GUIDE.md"
 EXTRACTION_POINTER="$ROOT/EXTRACTION_ARCHITECTURE.md"
 GRAPH_POINTER="$ROOT/KNOWLEDGE_GRAPH_ARCHITECTURE.md"
@@ -47,7 +50,8 @@ reject_literal() {
 for path in \
   "$ACTOR_BOOK" "$SCOPE_BOOK" "$TEMPORAL_BOOK" "$SUMMARY" "$EXTRACTION_BOOK" \
   "$INTENT_CONTRACT_BOOK" "$LIVE_DOCS_BOOK" "$USER_POINTER" "$EXTRACTION_POINTER" "$GRAPH_POINTER" \
-  "$INTENT_POINTER" "$ISF_CODE" "$ADAPTER_CODE" "$INTENT_CODE" "$CLI_CODE" "$DISPATCH_CODE"
+  "$INTENT_POINTER" "$ISF_CODE" "$ADAPTER_CODE" "$INTENT_CODE" "$CLI_CODE" "$DISPATCH_CODE" \
+  "$DERIVED_STATE_REGISTRY" "$DERIVED_STATE_CHECKER" "$DERIVED_STATE_ADAPTER"
 do
   [ -f "$path" ] || problem "required current-truth source '${path#"$ROOT"/}' is missing."
 done
@@ -101,6 +105,16 @@ if [ "$fail" -eq 0 ]; then
     'live-docs.md restored the stale migration-in-progress status.'
   reject_literal "$LIVE_DOCS_BOOK" 'Existing oversized ledgers are explicit transition debt' \
     'live-docs.md restored pre-migration ledger debt as current truth.'
+  require_literal "$LIVE_DOCS_BOOK" 'Fourteen bounded contracts classify one derive-on-read field' \
+    'live-docs.md lost the implemented derived-state contract count and class boundary.'
+  require_literal "$DERIVED_STATE_REGISTRY" '"contract_id":"rust_prerequisite_copies"' \
+    'the derived-state registry lost the Cargo-owned Rust prerequisite contract.'
+  require_literal "$DERIVED_STATE_REGISTRY" '"contract_id":"fsmgen_gitlink_copies"' \
+    'the derived-state registry lost the Git-index-owned FSMGen gitlink contract.'
+  require_literal "$DERIVED_STATE_CHECKER" 'derive_on_read verified_copy authored_intent immutable_evidence' \
+    'the neutral derived-state checker lost its closed four-class domain.'
+  require_literal "$DERIVED_STATE_ADAPTER" "git', '-C', \$root, 'ls-files', '--stage', '--', 'subs/fsmgen'" \
+    'the local derived-state adapter no longer derives the FSMGen object from the Git index.'
 
   require_literal "$USER_POINTER" '(docs/book/src/SUMMARY.md)' \
     'USER_GUIDE.md is no longer a direct compatibility route to the maintained book.'

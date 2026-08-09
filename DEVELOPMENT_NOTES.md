@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8b (`2026-08-09`) — classification prevents false equality
+
+The field registry is intentionally not a list of everything that looks current. Its four classes prevent two
+opposite errors: leaving a mechanically exact copy ungated, and forcing authored choice or historical evidence
+through an equality oracle that cannot represent it. A derive-on-read record proves both sides of absence: the
+stored-value marker is forbidden and the reader accessor is present. A verified copy retains its literal marker
+only while its authority verifier executes. Authored intent needs named human authority, while immutable evidence
+needs an exact capture boundary that keeps it from silently becoming a claim about the ambient tree.
+
+The neutral checker knows none of SpecForge's field names. It validates bounded JSONL, exact literals, surface
+ownership, class requirements, and safe verifier execution. Existing task, map, roadmap, validation, source,
+corpus, book, and feedback checks stay authoritative and are invoked as such. Only the project adapter knows that
+Cargo owns the Rust prerequisite and the parent Git index owns a submodule gitlink. This isolates local parsing
+without weakening the portable contract or creating a second generator.
+
+Non-Markdown control copies are adapter dependencies rather than invented Markdown surfaces: the README field
+contract triggers comparison with the book and CI copy, and the feedback field contract triggers comparison with
+its JSON protocol copy. Both dependency sets are fixed in the local adapter and mutation-tested. The field list
+therefore remains explicit and bounded while the Markdown surface registry keeps its original one-job authority.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8a (`2026-08-09`) — surface freshness and field truth are distinct
 
 SpecForge's existing currentness plane is substantial, but it operates at surfaces: generate the task catalog or

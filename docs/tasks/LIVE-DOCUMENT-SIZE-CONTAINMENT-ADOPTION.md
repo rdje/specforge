@@ -336,9 +336,13 @@ verification before correction.
   Rust/gitlink authority adapters. No product code, canonical artifact, donor file, threshold, or ceiling changed.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8b`
-  Status: `pending` (`2026-08-09`, CODE/DOC)
+  Status: `done` (`2026-08-09`, CODE/DOC)
   Goal: if `.8a` confirms a local gap, add the bounded project-owned field contract, neutral checker
   support, fail-closed fixtures, normative doctrine delta, and reader derivations selected by the probe.
+  **Done:** 14 exact contracts classify one derive-on-read, two authored-intent, one immutable-evidence,
+  and ten verified-copy records; eight existing currentness verifiers plus two exact local authority groups
+  execute through the composed gate; 28 neutral and 16 adapter cases fail closed; doctrine/toolbox/book/readers
+  agree; no donor value, product behavior, threshold, or ceiling changed.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8c`
   Status: `pending` (`2026-08-09`, AUDIT/DOC)
@@ -349,7 +353,8 @@ verification before correction.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `.8b` | `pending` (`2026-08-09`) | Implement the measured local field registry/checker, Rust prerequisite and Git-index gitlink authority comparisons, normative wording, and reader alignment. |
+| 1 | `.8c` | `pending` (`2026-08-09`) | Independently enumerate the resulting contracts, markers, dependencies, and consumers; repeat mutation probes and composed gates; then close `.8`. |
+| — | `.8b` | `done` (`2026-08-09`) | Four-class bounded field registry, neutral checker, eight existing verifiers, exact Rust/gitlink adapters, 44 fail-closed cases, and normative/reader alignment landed. |
 | — | `.8a` | `done` (`2026-08-09`) | The newer portable delta, existing surface oracles, three local gaps, 15 field-family dispositions, and bounded implementation contract are measured and published. |
 | — | `.0` | `done` (`2026-08-08`) | Ownership, measured baseline, full donor review, and the migration/locality graph are recorded; no deletion or migration. |
 | — | `.1` | `done` (`2026-08-08`) | Pointer semantics and impact-based documentation routing are now explicit and mechanically checked. |
@@ -398,6 +403,26 @@ verification before correction.
 - [x] **LOCKSTEP** — task tree/catalog, research/fact routes, roadmap/live status, mdBook method page, ledgers,
   and `MEMORY.md` agree on `.8b` implementation and `.8c` audit before the corpus frontier resumes.
 
+### Acceptance Checklist (enforced) — `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8b`
+
+- [x] **REPRODUCE / MEASURE** — preserve the `.8a` census and add exact resulting-tree registry/checker,
+  declared-field, Cargo-version, and mode-160000 gitlink measurements without heuristic field discovery.
+- [x] **ROOT CAUSE (WHY + WHERE)** — encode the distinction between surface currency and exact field authority:
+  derive-on-read fields have no stored current copy, verified copies name an independent authority and executed
+  verifier, authored intent remains human-owned, and immutable evidence stays revision-bound.
+- [x] **ADDRESSED (verified)** — land a bounded local registry, neutral fail-closed schema/control checker,
+  declared project adapters for Rust semver and the FSMGen Git-index object, stronger neutral doctrine wording,
+  and reader-aligned current values; every selected fixture and real-tree comparison passes.
+- [x] **NO REGRESSION** — existing surface generators/currentness oracles remain authoritative; no donor checkout,
+  product behavior, canonical artifact, threshold, or ceiling changes; focused tests, composed doctrines, full CI,
+  mdBook, locality, and staged diff gates pass.
+- [x] **GENERICITY** — registry discovery is exact-marker only; closed classes, safe repository-relative paths,
+  uniqueness, authority/accessor/verifier requirements, registry limits, and missing/degraded declarations all
+  fail closed in neutral fixtures; project logic is isolated in an explicit adapter.
+- [x] **LOCKSTEP** — task tree/catalog, doctrine and toolbox reader guidance, local registry, checker registry,
+  project adapter, fact/report, live docs/status, roadmap, ledgers, `MEMORY.md`, and mdBook describe one contract;
+  the existing `.8` fact is updated without crossing its fact-index rollover threshold.
+
 ## Decisions
 
 - `2026-08-09`: **GO on the newer portable derived-state semantics.** External collection-index and bounded
@@ -412,6 +437,16 @@ verification before correction.
 - `2026-08-09`: **The fact-card index warning constrains `.8b`.** The `.8a` fact row leaves the complete index at
   32,664 bytes, 514 bytes below its first failing 90% rollover byte. `.8b` updates the same card; if it would reach
   33,178 bytes, partition first under explicit ownership. No trimming or ceiling increase is authorized.
+- `2026-08-09`: **Four classes are the semantic boundary, not a prose scanner.** The local registry contains 14
+  exact contracts across derive-on-read, verified-copy, authored-intent, and immutable-evidence classes. The
+  neutral checker validates literal markers and class requirements; an undeclared date/number/hash lookalike
+  passes as ordinary prose.
+- `2026-08-09`: **Existing oracles execute as authorities; local parsing stays isolated.** Eight pre-existing
+  task/map/roadmap/validation/source/corpus/book/feedback verifiers run as declared core checks. Only
+  `scripts/check_derived_state_authorities.pl` normalizes Cargo Rust semver and reads the mode-160000 Git-index
+  object; no project field name enters the neutral checker.
+- `2026-08-09`: **The same fact card satisfies the pressure disposition.** Updating its title/body reduces the
+  complete index to 32,639 bytes, leaving 539 bytes before rollover; no new card, evidence trim, or ceiling change.
 
 - `2026-08-08`: **GO on local adoption.** SpecForge meets multiple guide triggers: bounded-pointer
   routing pressure, mandatory multi-megabyte live reads, unbounded append-only neighbors, generated
@@ -1855,6 +1890,8 @@ progress state. No other book part changes unless the final audit finds a separa
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-09` | `.8b` | full `bash scripts/run_ci.sh`; composed six-doctrine gate; Cargo format; warning-deny Clippy/tests; rustdoc; mdBook doctests/build; post-producer locality | green: all six doctrines including 99 live-document/field fixtures and the real 14-contract plane pass; formatting and Clippy clean; 1,779 Rust tests pass / five ignored / zero failed; rustdoc and 36-file mdBook 13,071 lines / 789,365 bytes pass; final locality clean |
+| `2026-08-09` | `.8b` | Perl syntax; 28-case neutral field suite; 16-case Rust/gitlink adapter suite; real 14-contract report; composed `LIVE-DOC-SIZE`; book-current-truth | green: 1 derive-on-read / 2 authored-intent / 1 immutable-evidence / 10 verified copies; eight core verifiers and both local authority groups execute; all 44 new cases plus 55 existing lifecycle cases pass; 626 Markdown / 41 surfaces remain classified; fact index 32,639 bytes / 539 before rollover |
 | `2026-08-09` | `.8a` | complete donor guide read; donor/local doctrine diff; SHA-256 + line/byte identities; 41-surface JSON census; existing verifier/currentness inventory; Git-index gitlink and Rust-version copy probes; catalog/map regeneration; book/live-size/locality/diff gates | measured: donor guide 419 / 20,515 / `6f10…4744`, donor doctrine 426 / 26,058 / `5cd3…7d88`, local doctrine 319 / 19,253 / `bb91…a9a`; 41 surfaces / eight currency / 15 executable non-budget verifiers / zero field declarations; three concrete gaps agree in value but lack independent field authority; no code/artifact/donor/ceiling mutation |
 | `2026-08-08` | `.0` | full README/roadmap/code/mdBook ramp-up; all 14 active task-tree frontiers; FSMGEN README policy, adoption guide, and neutral doctrine read; `wc` + max-line + route/locality census; Git/submodule state | measured; adoption is justified; no policy/content migration performed |
 | `2026-08-08` | `.0` | `bash scripts/check_doctrines.sh`; `mdbook build docs/book`; `git diff --check` | green: 3/3 doctrines; book built under repository-local `generated/mdbook/specforge`; clean diff |
@@ -1922,6 +1959,7 @@ progress state. No other book part changes unless the final audit finds a separa
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.8b` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8b — enforce exact current-state field authority` | 14 four-class contracts + neutral checker + exact Rust/gitlink adapters + 44 focused cases + normative/reader alignment |
 | `.8a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8a — measure derived-state contract delta` | donor/local identity + portable-delta classification + 15-family field census + bounded `.8b`/`.8c` design |
 | `.0` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.0 — own and measure the containment/locality program` | ownership + measurement only; commit hash recorded by Git history |
 | `.1` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.1 — stabilize pointer and commit semantics` | impact-based doc routing + stronger bounded-pointer check |
@@ -1954,6 +1992,13 @@ progress state. No other book part changes unless the final audit finds a separa
 | `.7` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7 — close the containment and locality program` | independent whole-program retrieval audit + cold-read defect gates + final book method-doc + clean closure |
 
 ## Changelog
+
+- `2026-08-09`: `.8b` CODE/DOC DONE. Added a bounded 14-contract four-class registry and neutral checker;
+  executed eight existing currentness authorities plus isolated Cargo/Rust and Git-index/FSMGen adapters; added
+  28 neutral and 16 adapter fail-closed cases; adopted the derived-state and compare-before-demotion wording;
+  aligned reader/toolbox/book/live surfaces; and updated the existing fact to 32,639 index bytes / 539 before
+  rollover. Frontier → `.8c` independent audit. No product code, canonical artifact, donor file, threshold, or
+  ceiling changed.
 
 - `2026-08-09`: `.8a` PROBE/DOC DONE. The newer donor guide/doctrine adds a real field-level derived-state
   contract beyond SpecForge's already-enforced surface plane. Pinned all external/local identities; measured

@@ -60,7 +60,7 @@ other re-derivable trace.
 | `KNOWLEDGE-MAP` | structural | the bounded landing and exact question-shard membership/content regenerate from fact cards without drift |
 | `TASK-ACCEPTANCE` | evidence | a Rust code change is owned by a task-tree leaf whose acceptance checklist is ticked **and** backed by real SpecForge tool output |
 | `README-POLICY` | structural | the project landing page stays within its locally derived line and byte ceilings, and every reader or author-overflow route closes at a registered, controlled terminal |
-| `LIVE-DOC-SIZE` | structural | every tracked Markdown path is classified exactly once and satisfies lifecycle-specific locality, size, index, currency, frozen-content, transition-debt, maintained-reference, and ceiling-authority rules |
+| `LIVE-DOC-SIZE` | structural | every tracked Markdown path is classified exactly once, and every declared current-state field satisfies its explicit class, marker, authority, accessor/capture, and executed-verifier contract alongside the lifecycle/pressure/route rules |
 | `PROJECT-DATA-LOCALITY` | structural | Cargo, shell, production temporary-workspace, subprocess, and Python runtime seams keep owned data below the current repository and reject stale or escaping roots |
 
 The README guard is unconditional: it evaluates the resulting tree even when a change does not touch
@@ -68,10 +68,12 @@ The README guard is unconditional: it evaluates the resulting tree even when a c
 may use for changing detail, and rejects missing, off-repository, duplicated, or uncontrolled routes.
 The project-owned normative contract is `README_POLICY.md`.
 
-The live-document gate runs 55 common lifecycle/control cases plus the projection-specific Knowledge
-Map contract and portable-bundle integration suite. Generated collections must have complete landing
-membership, exact derive-and-diff content, bounded repository-local check workspaces, and no stale
-parts or temporary residue.
+The live-document gate runs 55 common lifecycle/control cases, 28 neutral derived-state cases, and 16
+SpecForge authority-adapter cases, plus the projection-specific Knowledge Map contract and portable-bundle
+integration suite. Generated collections must have complete landing membership, exact derive-and-diff content,
+bounded repository-local check workspaces, and no stale parts or temporary residue. Exact current fields are
+declared rather than guessed: derive-on-read values cannot retain a shadow, verified copies execute their named
+authority check, authored intent remains human-owned, and immutable evidence keeps an exact capture boundary.
 
 The project-data gate also runs three focused shell cases. It checks the tracked Cargo environment,
 the common shell initializer, Rust production temp/subprocess boundaries, exact Python environment

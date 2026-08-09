@@ -94,8 +94,9 @@ Five active program groups support that north star:
 - learning, arbitration, and corpus synthesis: the open R15c–R15g lanes remain owned by
   [`R15C-R15G-LEARNING-PLANE-BACKFILL`](docs/tasks/R15C-R15G-LEARNING-PLANE-BACKFILL.md);
 - repository durability and portability: the containment program is reopened only for the measured
-  `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8` derived-state contract delta; its `.8a` probe is complete and
-  `.8b` owns the bounded local field registry/checker before `.8c` closure. The completed `.0`–`.7`
+  `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8` derived-state contract delta; its `.8a` probe and `.8b` bounded
+  four-class registry/checker plus exact Rust/gitlink authority adapters are complete, while `.8c` owns the
+  independent resulting-tree audit and closure. The completed `.0`–`.7`
   [`LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`](docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md)
   implementation keeps current documentation and project data bounded on the repository volume; completed
   [`ARTIFACT-PATH-PORTABILITY`](docs/tasks/ARTIFACT-PATH-PORTABILITY.md) extends move-safe storage through every

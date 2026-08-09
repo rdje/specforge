@@ -1,6 +1,6 @@
 ---
 id: live-document-derived-state-contract-gap
-title: SpecForge has surface currentness but lacks the newer field-level derived-state contract
+title: SpecForge enforces explicit field-level derived-state contracts
 answers:
   - "did SpecForge adopt the 2026 08 09 FSMGen derived state containment revision"
   - "which exact current state copies are not yet independently verified in SpecForge"
@@ -11,28 +11,26 @@ answers:
 date: 2026-08-09
 status: current
 tags: [documentation, live-document-containment, derived-state, currentness, memory, gitlink, rust-toolchain]
-evidence: docs/research/live-document-derived-state-adoption-delta.md; docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md (.8); LIVE_DOCUMENT_SIZE_CONTAINMENT.md; doctrine/live_document_size/surfaces.jsonl; MEMORY.md; README.md; docs/FSMGEN_FEEDBACK.md
-reverify: jq -s '[.[] | select(.surface_id)] | length' doctrine/live_document_size/surfaces.jsonl
+evidence: docs/research/live-document-derived-state-adoption-delta.md; docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md (.8); LIVE_DOCUMENT_SIZE_CONTAINMENT.md; doctrine/live_document_size/derived_state_contracts.jsonl; scripts/check_derived_state_contracts.pl; scripts/check_derived_state_authorities.pl
+reverify: perl scripts/check_derived_state_contracts.pl --report
 ---
 
-SpecForge's `2026-08-08` containment adoption already has 41 governed surfaces, eight enforced currency contracts,
+SpecForge's `2026-08-08` containment adoption already had 41 governed surfaces, eight enforced currency contracts,
 15 non-budget lifecycle verifiers, bounded generated projections, lossless rolling ledgers, and same-volume
-locality. The donor's `2026-08-09` portable revision nevertheless adds a distinct field-level contract that the
-local doctrine, registries, and neutral checker do not yet represent: exact current state must be derived on read
-or retained only as an authority-verified copy, while authored intent and revision-bound evidence remain separate.
+locality. The deliberate `2026-08-09` revision now adds the missing exact-field plane: 14 bounded contracts classify
+one derive-on-read field, two authored-intent regions, one immutable-evidence region, and ten verified copies.
+Field discovery is literal and declared; dates, numbers, hash shapes, and prose are never scanned heuristically.
 
-Three concrete gaps prove this is not wording-only. Before the `.8a` pointer overwrite, `MEMORY.md` carried
-ungated corpus/cache counts as claims about now; the Rust `1.95.0` prerequisite is copied across README/book/CI without comparison to workspace
-`rust-version`; and the feedback root/contract agree on FSMGen gitlink
-`d327129b718ab29fc889db026c19257b0f7fcc49` without checking the mode-`160000` Git-index authority. The current
-values agree, so this is missing enforcement rather than observed drift.
+The three `.8a` seams are closed. Task-scoped corpus/cache counts remain outside the resume pointer;
+`MEMORY.md` exposes `git rev-parse HEAD` and forbids a self-invalidating latest-commit shadow. Workspace
+`rust-version` is normalized to patch form and compared with README, mdBook, and CI. The feedback Markdown and
+JSON pin copies are compared with the stage-zero mode-`160000` Git-index object for `subs/fsmgen`.
 
-`LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8a` selects a bounded local adoption. `.8b` adds explicit field markers
-and closed classifications, a neutral bounded registry/checker plus project-specific authority adapter, and the
-two deterministic comparisons; the `.8a` pointer overwrite has already removed the misplaced resume counts. Existing surface generators/currentness
-oracles remain authoritative rather than being duplicated. `.8c` independently audits the result. Donor paths,
-thresholds, measurements, and conclusions are not copied, and no ceiling is widened.
+`LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8b` implements the bounded local adoption. The neutral checker executes
+eight existing projection/currentness verifiers plus the two declared local adapter contracts. Forty-four focused
+cases reject stored derive-on-read values, missing/off-surface/duplicate markers, invalid classes, absent or failing
+verifiers, malformed capture boundaries, registry displacement, Cargo-copy drift, and gitlink mode/object drift.
+Existing generators remain authoritative, `.8c` independently audits the result, and no ceiling is widened.
 
-The card/index plane is an explicit implementation constraint: this card's catalog row leaves
-`docs/knowledge/INDEX.md` at 32,664 bytes, 514 bytes below its first failing 90% rollover byte. `.8b` updates this
-card rather than adding another; any crossing requires an owned partition before the append, not a wider ceiling.
+The card/index plane remains an explicit implementation constraint. `.8b` updates this same card rather than
+adding another; any future crossing of the rollover threshold requires an owned partition, not a wider ceiling.

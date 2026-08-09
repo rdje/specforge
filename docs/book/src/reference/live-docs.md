@@ -26,7 +26,8 @@ separate Git authority and is not swept into SpecForge's registry.
 The control plane is bounded too: schema version, allowed fields, record count, registry and record
 bytes, array cardinality, and scalar bytes all fail closed. A 55-case fixture suite exercises every
 local lifecycle plus index, freshness, currency, routing, transition-baseline, and ceiling-history
-paths. Its disposable workspaces live only under repository-local `generated/`.
+path. Another 44 cases exercise the neutral field classifier and the two local authority adapters.
+All disposable workspaces live only under repository-local `generated/`.
 
 Because the mdBook is a maintained reference, its current-state contract is executable as well.
 `scripts/check_book_current_truth.sh` binds actor-direction and constrained-extraction claims to code,
@@ -47,9 +48,14 @@ were misplaced current copies; Rust `1.95.0` is published in README/book/CI with
 `rust-version`; and the current FSMGen hash is checked against a JSON copy but not derived from the mode-160000
 Git-index entry.
 
-The owned `.8b` follow-up adds explicit local markers and classifications, a bounded neutral registry/checker,
-and only the two deterministic project-specific authority comparisons. Existing generators remain the authority;
-no donor values or ceilings are copied. `.8c` independently audits the result before the reopened program closes.
+The owned `.8b` follow-up is now implemented. Fourteen bounded contracts classify one derive-on-read field, two
+authored-intent regions, one immutable-evidence region, and ten verified copies. The neutral checker executes
+eight existing projection/currentness authorities without project field names. The separate local adapter proves
+that workspace `rust-version`—normalized to patch form—agrees with README, mdBook, and CI, and that both retained
+FSMGen pin copies agree with the stage-zero mode-160000 Git-index object. `MEMORY.md` exposes
+`git rev-parse HEAD` at the reader boundary and forbids a stored latest-commit shadow. Existing generators remain
+the authority; no donor value, threshold, or ceiling is copied. `.8c` independently audits the result before the
+reopened program closes.
 
 All four root-ledger migrations have landed. `CHANGES.md`, `DEVELOPMENT_NOTES.md`,
 `LIVE_ACHIEVEMENT_STATUS.md`, and `RUST_CODEBASE_ANALYSIS.md` are bounded current views, while their

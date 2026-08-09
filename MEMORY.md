@@ -7,6 +7,8 @@
 > (The prior ever-growing MEMORY.md is preserved in git history before commit `6d668eb2`.)
 
 ## How to resume (any AI, any harness)
+- Derive the current repository revision on read with `git rev-parse HEAD`; never store a
+  latest-commit shadow that the recording commit would immediately invalidate.
 - Read `MEMORY_ARCHITECTURE.md` (memory system), `DOCTRINE_ENFORCEMENT.md` (the 4th
   architecture — doctrines are mechanically gated), and `README.md` (the project).
 - All work is tracked in task-trees under `docs/tasks/` (index: `docs/TASK_TREE.md`);
@@ -19,15 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8a` — newer derived-state contract probe; complete in
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8b` — field-level derived-state containment; complete in
   this commit.
-- Current state: the donor's newer neutral revision is pinned and compared. Existing SpecForge surface-level
-  generators/currentness remain valid, but field-level derive-on-read / verified-copy declarations are absent.
-  The durable report identifies the exact Rust prerequisite and FSMGen gitlink comparisons plus the bounded
-  neutral registry/checker contract; task-scoped corpus counts are no longer repeated in this resume pointer.
-- Next action: from the clean `.8a` commit, activate `.8b`; implement the measured field registry, neutral
-  fail-closed checks, Rust/gitlink authority adapter, normative wording, and reader alignment without widening
-  any surface ceiling. `.8c` then independently audits and closes the reopened program.
-- In-flight uncommitted: none after the `.8a` commit. The `.2.33d.iii` corpus leaf remains pending behind this
-  director-requested bounded adoption review; `.project-data/tmp` contains only `.gitkeep` plus `xcrun_db`.
+- Current state: 14 explicit contracts classify one derive-on-read, two authored-intent, one immutable-evidence,
+  and ten verified-copy records. Eight existing verifiers plus exact Cargo/Rust and Git-index/FSMGen adapters
+  execute through `LIVE-DOC-SIZE`; 28 neutral and 16 local fail-closed cases protect the field plane.
+- Next action: from the clean `.8b` commit, activate `.8c`; independently enumerate declared markers and
+  consumers, repeat real-tree and mutation probes, run composed doctrines/full CI/locality, and close `.8` before
+  resuming `CORPUS-COVERAGE.2.33d.iii`.
+- In-flight uncommitted: none after the `.8b` commit. `.project-data/tmp` contains only `.gitkeep` plus `xcrun_db`.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

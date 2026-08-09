@@ -1,3 +1,21 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8b — enforce exact current-state field authority
+
+- Added a bounded 14-contract field registry with a closed four-class domain: one derive-on-read field, two
+  authored-intent regions, one immutable-evidence region, and ten verified copies. Exact path/marker ownership,
+  scalar/record/registry bounds, uniqueness, current-surface membership, accessors, and capture boundaries fail
+  closed without date/number/hash/prose inference.
+- Added a neutral checker that executes eight existing projection/currentness verifiers, plus a separate local
+  adapter that normalizes workspace Rust semver against README/book/CI and compares the feedback Markdown/JSON
+  pins with the stage-zero mode-160000 Git-index object for `subs/fsmgen`.
+- Added 28 neutral and 16 local-adapter cases covering every class, stored revision shadows, missing/off-surface
+  declarations, absent/failing verifiers, registry displacement, copy drift, wrong gitlink mode, missing index
+  entries, and undeclared lookalikes. The complete `LIVE-DOC-SIZE` path executes them unconditionally.
+- Adopted the newer neutral derived-state and compare-before-demotion wording, exposed `git rev-parse HEAD` at
+  the resume reader, and aligned the doctrine/toolbox/mdBook/current-truth gate. Existing generators remain
+  authoritative; no donor value, product behavior, threshold, or ceiling changed.
+- Updated the existing `.8` fact instead of adding a card. Its catalog is now 32,639 bytes, leaving 539 bytes
+  before mandatory rollover; `.8c` owns the independent resulting-tree audit.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8a — measure the newer derived-state contract
 
 - Reviewed the complete `2026-08-09` FSMGen adoption guide and neutral doctrine against SpecForge's locally

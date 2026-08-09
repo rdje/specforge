@@ -2,14 +2,16 @@
 ## Local adoption note — SpecForge
 
 - Authority: SpecForge owner, adopted 2026-08-08 under decision 0007 and task-tree
-  `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3b`.
+  `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3b`; deliberately revised 2026-08-09 under `.8b`.
 - Authoritative copy: repository-root `LIVE_DOCUMENT_SIZE_CONTAINMENT.md`. Bootstrap files may
   point here, but they are not the doctrine's authority.
 - Independence: the FSMGen doctrine and adoption guide were reviewed as precedent, not as an
   upstream. Later changes require deliberate local review; thresholds, paths, debt, and migration
   conclusions never synchronize automatically.
 - Data plane: `doctrine/live_document_size/surfaces.jsonl` owns surface classification, local
-  limits, baselines, transitions, indexes, and verifiers.
+  limits, baselines, transitions, indexes, and verifiers;
+  `doctrine/live_document_size/derived_state_contracts.jsonl` owns exact field markers,
+  classifications, authorities, accessors, capture boundaries, and executed verifiers.
 - Enforcement: `scripts/check_live_document_size.sh` runs unconditionally as `LIVE-DOC-SIZE`
   through `scripts/check_doctrines.sh`; the existing README guard remains independently enforced.
 - Local milestones: warning at 80% and rollover review at 90% of a health target. These values follow
@@ -26,7 +28,9 @@
 - Adoption state: `.3b` activated doctrine, ADR, complete registry, and checker atomically. `.3c`
   closed the common contract with 48 same-volume positive/fail-closed fixture checks before any
   `.4`/`.5` migration. Later leaves add surface-specific lossless migration and currentness oracles;
-  the registry remains the executable source of their present status.
+  the registry remains the executable source of their present status. The deliberate `.8b`
+  revision adds 14 explicit four-class field contracts, neutral control checks, and only the two
+  SpecForge authority adapters selected by `.8a`; no donor value, threshold, or ceiling is copied.
 <!-- LIVE-DOCUMENT-SIZE-CONTAINMENT-LOCAL-ADOPTION:END -->
 
 ---
@@ -115,6 +119,47 @@ to remain old. Historical terminals and frozen records are therefore exempt
 from current-state contracts. A local verifier may detect a document's exact
 self-contradiction or compare a projection with its canonical source, but its
 grammar and false-positive calibration belong to the adopting project.
+
+## Derived-state containment
+
+Mechanically owned current state is a separate truth boundary. If a canonical
+system can answer a field's question exactly, deterministically, and cheaply,
+the field is derived state rather than independent information. Classify each
+such maintained current-state field in one of two ways:
+
+1. **Derive on read.** Do not store the value. Keep the exact command or
+   accessor at the reader's point of need so the answer is computed from its
+   authority when requested. A value invalidated by the commit or write that
+   records it must always use this class; periodic correction cannot make a
+   self-invalidating copy coherent.
+2. **Verified copy.** Retain a value only because the copy itself is a
+   deliberate contract, published baseline, or bounded projection. Name its
+   canonical authority and recomputation method, and execute a verifier that
+   fails whenever the stored copy disagrees. Declaring a verifier without
+   running it is not verification.
+
+Judgement, intent, rationale, ownership, blockers, and a deliberately selected
+next action are not mechanically derivable and remain ordinary authored
+content. An immutable evidence snapshot is also distinct from a mutable claim
+about now: it must name an exact capture boundary such as a revision, digest,
+invocation, or externally owned observation and remain under the applicable
+evidence, retention, archive, or frozen-identity contract. Removing the
+boundary or relabeling the snapshot as current turns it back into an
+unverified copy.
+
+Field discovery is declared, not guessed. The adopting project keeps an
+explicit bounded list of governed paths and exact field markers; the neutral
+checker contains no project-specific names and does not infer semantics from
+dates, number shapes, or prose. Generated projections with declared canonical
+inputs and executed freshness already satisfy the verified-copy rule at
+surface scope.
+
+Before demoting a duplicate, compare it with its authority and inspect the
+authority for divergence the convenient copy may have concealed. Preserve the
+reader's question in place through the derivation, repair the canonical source
+first if it is wrong, and only then remove the duplicate. A smaller document
+that silently loses the answer or preserves a defective authority is not a
+successful containment migration.
 
 ## Lifecycle classes
 
@@ -229,8 +274,9 @@ applicable steps:
    successor links, and query route.
 6. Run link, freshness, ordering, uniqueness, retrieval, and pressure checks;
    a declared executable must actually run successfully, not merely exist.
-7. Only after those checks pass, remove any live duplicate whose retained copy
-   or archive retrieval has been proved.
+7. Compare each duplicate with its authority, repair any divergence the copy
+   concealed, and only after those checks pass remove a live duplicate whose
+   derivation, retained copy, or archive retrieval has been proved.
 8. Commit the transition atomically so no durable state exposes half a move.
 
 Sealed units are immutable. Corrections create a superseding record or segment
@@ -283,6 +329,9 @@ At minimum, fail on:
 - a missing owner, lifecycle, limit, or retrieval/freshness control;
 - a route cycle or a route ending at an uncontrolled neighbor;
 - a stale generated projection or broken current/history link;
+- a declared derive-on-read field that retains a stored current value, a
+  missing reader accessor, an off-surface field contract, or a verified copy
+  whose authority verifier is absent, unexecuted, degraded, or failing;
 - a mutable sealed/frozen unit or failed archive digest/retrieval proof;
 - a version object without a named retention owner, guarantee, and recovery
   action, or migration evidence that conflates overlapping products;
@@ -302,18 +351,21 @@ and never the canonical copy.
 2. Inventory every live document, generated view, collection, route, and
    historical terminal; follow routes transitively.
 3. Classify each surface by lifecycle and identify its actual canonical source.
-4. Measure lines, bytes, maximum content-line bytes, file counts, aggregates,
+4. Classify mechanically owned current-state fields as derive-on-read or
+   verified copies; publish exact local markers, authorities, accessors,
+   capture boundaries, and verifier contracts without heuristic discovery.
+5. Measure lines, bytes, maximum content-line bytes, file counts, aggregates,
    structure, and read path.
-5. Derive health targets from reviewed survivors and set separate inclusive
+6. Derive health targets from reviewed survivors and set separate inclusive
    ceilings with only transaction-sized headroom.
-6. Open an owner for every surface already at warning or structurally
+7. Open an owner for every surface already at warning or structurally
    monolithic even if it remains below a numeric threshold.
-7. Choose bounded snapshot, semantic partitions, maintained reference,
+8. Choose bounded snapshot, semantic partitions, maintained reference,
    generated shards, rolling ledger, archive, external, or frozen topology
    from the information role.
-8. Prove any duplicate before deletion and prove any archive before removing
-   its live copy.
-9. Add the data registry, unconditional checker, positive/fail-closed tests,
+9. Prove any duplicate and compare its authority before deletion; prove any
+   archive before removing its live copy.
+10. Add the data registry, unconditional checker, positive/fail-closed tests,
    and commit/CI wiring.
-10. Re-audit after each migration and periodically thereafter; lower limits to
+11. Re-audit after each migration and periodically thereafter; lower limits to
     the retained steady-state surface instead of preserving legacy headroom.
