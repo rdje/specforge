@@ -194,7 +194,11 @@ Five active program groups support that north star:
   emits are strict-clean. Corpus is 40 done / 16 remaining. `.2.41` now owns the 14-page OpenCAPI AFU Address
   Space Usage engineering note, the smallest remaining real chip-spec candidate. Its retained zero-declaration
   evidence still feeds five heuristic interfaces and eight one-bit acronym outputs into an adapter blocked for
-  no behavior, providing a prose-grouping transfer check for the current generic authority boundary. Separately,
+  no behavior, providing a prose-grouping transfer check for the current generic authority boundary. The fresh
+  cascade removes that false topology but exposes one distinct legal-boilerplate defect: a rights-and-permissions
+  paragraph under generic heading `Approved` contains `while`, so the conditional-cue-only semantic gate builder
+  promotes it into a gate and Intent behavior. Child `.2.41a` owns the universal content-structural repair and
+  real-cascade proof before parent signoff. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

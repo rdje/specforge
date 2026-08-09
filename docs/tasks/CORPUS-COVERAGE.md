@@ -587,7 +587,8 @@ today's ephemeral normalized-directory count.
 - [x] **LOCKSTEP** — generated artifacts, #40 row/count/frontier, live docs, durable fact when warranted, mdBook,
   and `MEMORY.md` agree; delete only authenticated rollback/task evidence after every final gate is green.
 
-- ID: `CORPUS-COVERAGE.2.41` · Status: `in_progress` (`2026-08-09`, DATA/DOC) · Goal: run a guarded
+- ID: `CORPUS-COVERAGE.2.41` · Status: `in_progress` (`2026-08-09`, DATA/CODE/DOC) · Children: `.2.41a`
+  legal-boilerplate semantic-gate repair (in progress). Goal: run a guarded
   current-binary refresh of `opencapi_afu_address_space_usage` from the caller-authorized same-SSD source and
   complete the deterministic EvidenceIR→SemanticIR→IntentIR→adapter cascade. This 14-page / nine-visual /
   two-table / 118-element engineering note is the smallest remaining real chip-spec candidate. Its retained
@@ -623,6 +624,37 @@ today's ephemeral normalized-directory count.
   validator, fabricated interface/behavior, or LLM/VLM inference enters the slice.
 - [ ] **LOCKSTEP** — generated artifacts, #41 row/count/frontier, live docs, durable fact when warranted, mdBook,
   and `MEMORY.md` agree; delete only authenticated rollback/task evidence after every final gate is green.
+
+- ID: `CORPUS-COVERAGE.2.41a` · Status: `in_progress` (`2026-08-09`, PROBE/CODE/DATA/DOC) · Goal: repair the
+  universal legal/administrative prose path exposed by the fresh #41 cascade before accepting its IntentIR.
+  Exact current evidence `statement_0011` says that limited permissions are perpetual until a new specification
+  version causes rights to cease. It is source-grounded legal text, but `build_gates` accepts any statement
+  containing `if`/`when`/`unless`/`while`/`after`/`before`/`until`; the word `while` therefore creates a SemanticIR
+  gate and IntentIR behavior. Existing section-title boilerplate filtering misses it because Docling placed the
+  paragraph under the generic heading `Approved`. Measure this failure family across all retained current
+  EvidenceIR/SemanticIR chains; distinguish legal/administrative conditions from hardware lifecycle and protocol
+  gates; implement the smallest content-structural authority gate at the earliest shared semantic boundary; add
+  positive and negative regressions; rebuild #41 from unchanged EvidenceIR; and hold WIRE/KG/FSMGen/full-CI gates.
+  No OpenCAPI, organization, exact-sentence, document-key, section-index, or single-token denylist is permitted.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.41a`
+
+- [ ] **REPRODUCE / MEASURE** — pin #41 `statement_0011`→semantic gate→Intent behavior provenance and census all
+  retained semantic gates for the same legal/administrative family, including valid protocol-gate controls.
+- [ ] **ROOT CAUSE (WHY + WHERE)** — prove the semantic context excludes only recognized boilerplate section
+  titles while `build_gates` treats a conditional cue alone as authority, so legal prose under `Approved` enters.
+- [ ] **ADDRESSED (verified)** — add a reusable content-structural legal/administrative predicate at the earliest
+  semantic statement boundary; remove #41's false gate/behavior without altering its 106 evidence statements or
+  17 legitimate invariants.
+- [ ] **NO REGRESSION** — exact regressions reject legal conditions under generic headings and preserve legitimate
+  `if`/`when`/`while`/`after`/`before`/`until` hardware conditions; pass focused semantic/intent suites, all nine
+  WIRE/I2C/SWD datasets, KG 156/156, every emitted ISF through FSMGen strict, full CI, book, doctrine, path, and
+  locality gates.
+- [ ] **GENERICITY** — no vendor/document/organization/exact-phrase exception or broad conditional-cue removal;
+  the predicate combines independently meaningful legal/administrative concepts and is tested against technical
+  permissions, rights, assignments, versions, and lifecycle prose.
+- [ ] **LOCKSTEP** — source comment, #41 real cascade, task parent/child, roadmap, live docs, mdBook, durable fact,
+  and `MEMORY.md` agree before commit; parent `.2.41` closes only after its refreshed artifacts are reverified.
 
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34b.ii.a`
 
@@ -882,9 +914,9 @@ today's ephemeral normalized-directory count.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: `CORPUS-COVERAGE.2.41` — authenticate the retained OpenCAPI AFU Address Space Usage source-through-
-  adapter chain and exact same-volume rollback, then run its guarded CPU ingest and deterministic cascade without
-  changing generated artifacts outside this document key.
+- Frontier: `CORPUS-COVERAGE.2.41a` — measure and repair legal/administrative prose promoted to semantic gates,
+  then rebuild the already-authenticated #41 cascade from unchanged current evidence before resuming parent
+  signoff.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**39 refreshes done after #39;
   17 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#39: #29/#31 CHI-C2C marquee message-field refreshes,

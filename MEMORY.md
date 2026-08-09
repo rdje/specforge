@@ -21,15 +21,18 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.41`; refresh the OpenCAPI AFU Address Space Usage engineering note.
+- Active unit: `CORPUS-COVERAGE.2.41a`; repair legal/administrative prose promoted to semantic gates during the
+  OpenCAPI AFU Address Space Usage refresh.
 - Current state: 40 refreshes are complete / 16 remain, with 80 SourceIR / 9 normalized / 80 EvidenceIR / 79
   SemanticIR / 79 IntentIR / 79 adapters and all 66 current emitted ISFs strict-clean. Two guarded 13-page
   ingests and complete cascades reproduce all 12 hashes at 21% and 22% peak memory used. Evidence 173→172 removes
   only stale synthetic `Signal DL is width 1.` from the terms glossary; the one-interface/one-output surface
   disappears, lowering blocks honestly on no signals plus no behavior, and only `adapter.json` plus its report
   remain. All 13 image and 13 layout paths are repository-relative.
-- Next action: preserve and authenticate the complete six-file #41 chain in an exact SSD-local rollback, validate
-  copied artifacts, then run the guarded CPU ingest and deterministic cascade from the authorized SSD source.
-- In-flight uncommitted: only `.2.41` ownership and its durable preflight record; no #41 generated artifact has
-  changed. The two mistakenly created off-volume candidate-key lists were deleted with zero residue.
+- Next action: census the retained corpus for legal/administrative semantic gates and valid protocol controls,
+  then implement the smallest universal statement-authority predicate with paired regressions.
+- In-flight uncommitted: #41 has an exact six-file rollback plus deterministic current cascade under SSD-local
+  task evidence. Fresh SourceIR/EvidenceIR are content-exact to baseline; current generic interface authority
+  removes five actors/five interfaces/eight adapter outputs, but legal `statement_0011` still becomes one false
+  semantic gate and Intent behavior. Two monitored replay ingests peak at 20% and 19% system memory used.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.
