@@ -1,3 +1,17 @@
+### ROOT-ROLLING-LEDGER-PRESSURE.0 — pin and plan coordinated root-ledger rollover
+
+- Pinned clean boundary `4d24b13c` and all four root blobs/SHA-256 identities, grammars, retained suffixes,
+  record/line/byte/width metrics, chains, capacities, readers, and writers. Changes is at 91.4% of line health;
+  development, status, and Rust are at warning.
+- Root-caused the enforcement split: the generic surface gate correctly measures milestones against health
+  targets, while the focused rolling-ledger checker measures them against larger quarantine ceilings.
+- Locked four contiguous whole-record cuts: 29 changes, 24 development, 12 status, and eight Rust records.
+  Candidate segment/endpoint hashes, bounded roots, reciprocal chain edits, index routes, and archive capacity
+  all close without widening a threshold or ceiling.
+- Planning verification passes 24 focused protocol cases, exact catalog/map derivation, all six doctrines,
+  1,779 Rust tests / five ignored, rustdoc, mdBook, and locality. `.1` owns the generic root-last transaction,
+  pressure binding, exact materialization, and mutations. No record moved or archive/product artifact changed.
+
 ### ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.2 — audit and close active task containment
 
 - Cloned committed migration `06eb3941` into a repository-local, no-hardlink audit workspace. Its clean Git

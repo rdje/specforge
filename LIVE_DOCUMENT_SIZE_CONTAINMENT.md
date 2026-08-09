@@ -58,9 +58,11 @@
   bytes so rendered Unicode scaffolds cannot silently normalize or double-encode evidence. `.3.2` independently
   reproduces that tree from a clean clone and adds the positive 35th case: a new active part, frontier, canonical
   route, index, manifest, root, and contract update validate as one continuation transaction. The containment
-  tree is closed. Its audit separately reports `CHANGES.md` above rollover, development close to rollover, and
-  status above its byte warning; a new root-ledger pressure tree must remeasure all four and rotate changes first
-  before another ordinary append. ADR 0020 separately accepts a
+  tree is closed. Its audit separately reports root-ledger pressure. `ROOT-ROLLING-LEDGER-PRESSURE.0` now pins
+  clean boundary `4d24b13c`: changes is at 91.4% of line health, while development, status, and Rust are at
+  warning. The focused checker currently applies milestones to enforcement ceilings rather than the generic
+  health targets. Four exact 29/24/12/8-record cuts and a root-last `.1` transaction restore aligned headroom
+  without widening a threshold or ceiling. ADR 0020 separately accepts a
   bounded fact-card browse projection: the stable
   root keeps exhaustive direct-ID membership while deterministic count-packed parts carry detailed rows; a derived
   198-card maximum and fixed root/part/aggregate limits preserve the existing 200-file collection ceiling. Its

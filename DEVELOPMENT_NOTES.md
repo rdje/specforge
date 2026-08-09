@@ -1,4 +1,13 @@
 # DEVELOPMENT_NOTES
+## ROOT-ROLLING-LEDGER-PRESSURE.0 (`2026-08-09`) — health targets control rollover
+
+Enforcement ceilings are quarantine boundaries, not rollover denominators. The focused checker conflated them,
+so it passed changes at 1,645 lines even though the generic 1,800-line health target requires rollover at 1,620.
+
+The repair binds each ledger to its generic surface and keeps record pressure ledger-local. Exact opening ranges
+produce 29/24/12/8-record segments and warning-safe roots; `.1` must rediscover those ranges by identity, stage
+on the repository volume, install roots last, and roll back exactly on failure.
+
 ## ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.2 (`2026-08-09`) — continuation needs a positive executable path
 
 Fail-closed checks can prove that malformed future routes are rejected without proving any well-formed

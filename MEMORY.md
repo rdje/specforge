@@ -21,14 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: none after `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.2`; the bounded active-task containment tree is
-  closed and must not be reopened.
-- Current state: a clean clone of `.3.1` commit `06eb3941` reproduces the 106-line current root, 79-line index,
-  seven bounded parts, 52 routes, 15 exact payloads, and 2,393-line source capsule. A positive continuation
-  fixture brings focused coverage to 35/35; full CI passes.
-- Next action: create a separately owned root rolling-ledger pressure tree, remeasure all four roots, and rotate
-  `CHANGES.md` first before another ordinary ledger append; development is also near rollover and status is above
-  its byte warning.
-- In-flight uncommitted: none after the `.3.2` commit; product artifacts, shared inputs, thresholds, and ceilings
-  are unchanged.
+- Active unit: `ROOT-ROLLING-LEDGER-PRESSURE.1`; `.0` has completed the exact census/transaction plan.
+- Current state: clean opening commit `4d24b13c` pins the four roots at 114/84/69/62 records. Changes is at 91.4%
+  of its line health target; development, status, and Rust are at warning. The focused checker incorrectly uses
+  enforcement ceilings as milestone denominators. Four exact segment cuts (29/24/12/8 records) restore headroom.
+- Next action: commit `.0`, then `.1` binds focused pressure to generic health authority, adds a generic dry-run/
+  root-last transaction, and materializes segments `changes-0002`, `development-notes-0002`,
+  `live-achievement-status-0004`, and `rust-codebase-analysis-0002`.
+- In-flight uncommitted: none after the `.0` planning commit; no record moved and no archive, product artifact,
+  shared input, threshold, or ceiling changed.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

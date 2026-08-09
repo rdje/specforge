@@ -15,7 +15,7 @@ answers:
 date: 2026-08-08
 status: current
 tags: [documentation, rolling-ledger, archive, continuity, validation]
-evidence: doctrine/live_document_size/rolling_ledgers.jsonl; docs/archive/rolling-ledgers/INDEX.md; docs/archive/rolling-ledgers/changes/manifest.jsonl; docs/archive/rolling-ledgers/development-notes/manifest.jsonl; docs/archive/rolling-ledgers/live-achievement-status/manifest.jsonl; docs/archive/rolling-ledgers/rust-codebase-analysis/manifest.jsonl
+evidence: doctrine/live_document_size/rolling_ledgers.jsonl; docs/archive/rolling-ledgers/INDEX.md; docs/archive/rolling-ledgers/changes/manifest.jsonl; docs/archive/rolling-ledgers/development-notes/manifest.jsonl; docs/archive/rolling-ledgers/live-achievement-status/manifest.jsonl; docs/archive/rolling-ledgers/rust-codebase-analysis/manifest.jsonl; docs/research/root-rolling-ledger-pressure-plan.jsonl
 reverify: perl scripts/check_rolling_ledger_protocol.pl --report
 ---
 
@@ -37,11 +37,11 @@ prepended records. The validation writer's root path and managed markers are req
 `docs/archive/rolling-ledgers/changes/source-through-2026-08-08.md` with SHA-256
 `d89809322857aab3c506dde1cc6caaf57e22d0349655b37ddaab1f7bf22ba994`; the root is the bounded current
 view and `docs/archive/rolling-ledgers/INDEX.md` is the retrieval route.
-At clean commit `06eb3941`, the independent live-size audit measures the root at 1,631/1,800 health lines, above
-its 90% rollover signal, and 221,438/255,000 health bytes. The closure update also leaves development close to
-rollover and status above its byte warning. A new owning pressure tree must remeasure all four roots and rotate
-whole `CHANGES.md` records through the existing per-ledger index/manifest protocol first, before another ordinary
-ledger append.
+At clean commit `4d24b13c`, the owned pressure census measures this root at 114 records / 1,645 lines / 222,725
+bytes, or 91.4% of line health. Development is 89.3% of line health, status is 80.7% of byte health, and Rust is
+87.9% of line health. The focused checker incorrectly applies milestones to enforcement ceilings; `.1` must bind
+the generic health authority and materialize exact 29/24/12/8-record cuts through the existing per-ledger
+index/manifest topology. Segment and endpoint hashes are pinned in the owning research plan.
 
 `DEVELOPMENT_NOTES.md` completed the second migration in `.4c`. Its immutable 1,601-record capsule is
 `docs/archive/rolling-ledgers/development-notes/source-through-2026-08-08.md` with SHA-256

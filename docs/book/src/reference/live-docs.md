@@ -197,9 +197,17 @@ need no such self-reference because exact source-region markers already make the
 All four root-ledger migrations have landed. `CHANGES.md`, `DEVELOPMENT_NOTES.md`,
 `LIVE_ACHIEVEMENT_STATUS.md`, and `RUST_CODEBASE_ANALYSIS.md` are bounded current views, while their
 exact source capsules are the historical authority.
-The same clean-clone audit finds root-ledger pressure led by `CHANGES.md` at 1,631/1,800 health lines, above its
-rollover signal. The closure update also leaves development close to rollover and status above its byte warning;
-a new owned pressure audit must remeasure all four roots and rotate changes first before another ordinary append.
+The same clean-clone audit finds root-ledger pressure. The owned follow-up pins clean boundary `4d24b13c` and
+measures changes at 114 records / 1,645 lines / 222,725 bytes, development at 84 / 1,697 / 208,089, status at
+69 / 111 / 92,847, and Rust at 62 / 1,187 / 100,701. Changes is at 91.4% of its line health target;
+development, status, and Rust are at warning.
+
+That census also catches an enforcement split: the generic surface contract correctly applies warning and
+rollover milestones to reviewed health targets, while the focused rolling-ledger checker applies them to the
+larger quarantine ceilings. The implementation follow-up binds those authorities and uses exact whole-record
+cuts of 29 changes, 24 development, 12 status, and eight Rust records. Candidate segments, endpoint hashes,
+chronology edits, warning-safe roots, same-volume staging, root-last visibility, and rollback are pinned before
+materialization. No threshold or ceiling is widened.
 No historical content is removed before its identity, replacement route, consumers, and retrieval
 procedure are proved.
 The top-level README remains a first-class landing page; changing detail and

@@ -129,9 +129,12 @@ Five active program groups support that north star:
   over a 79-line index, seven bounded semantic parts, 52 canonical routes, and the exact 2,393-line source
   capsule. A non-ASCII fixture closes byte/character boundary risk. `.3.2` reproduces the result from a clean
   clone, adds a positive root+part continuation case (35 focused cases total), and closes the tree. That audit
-  also finds root-ledger pressure: `CHANGES.md` is above rollover, development is close, and status is above its
-  byte warning. A new coordinated rolling-ledger pressure tree is the next continuity action, with `CHANGES.md`
-  first, before another ordinary ledger append. Separately,
+  also finds root-ledger pressure. The new
+  [`ROOT-ROLLING-LEDGER-PRESSURE`](docs/tasks/ROOT-ROLLING-LEDGER-PRESSURE.md) tree now owns it. `.0` pins clean
+  boundary `4d24b13c`, finds changes at 91.4% of line health plus warning pressure in development/status/Rust,
+  and root-causes a focused-checker defect: it applies milestones to quarantine ceilings rather than generic
+  health targets. Four exact 29/24/12/8-record cuts and a root-last transaction are locked for `.1`; no threshold
+  or ceiling widens. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.
