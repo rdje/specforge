@@ -19,15 +19,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.33d.ii` — grounded dense-prose signal-authority repair; complete in this commit.
-- Current state: both declaration catalogs require canonical `Signal <identifier> is <predicate>` grammar,
-  parenthetical `bus` no longer means a one-bit wire, and ordinary port/pin tables require compact inventory
-  structure. A direct EvidenceIR regression proves `AT`/`USB`/`ENHANCED`/`NO` cannot re-enter through relations,
-  directions, or table provenance; initiator tie behavior remains lexicographically last. Serial/table/full-lib,
-  WIRE, KG, Clippy, full-CI, book, doctrine, and locality gates pass. Corpus remains 80 SourceIR / 2 normalized /
-  80 EvidenceIR / 79 downstream chains; refresh progress is 33 complete / 23 left.
-- Next action: from the clean `.2.33d.ii` commit, activate `.2.33d.iii` and close the conditional downstream
-  heuristic as measured unnecessary; then `.2.33d.iv` rebuilds and signs off the real USB cascade.
-- In-flight uncommitted: none after the `.2.33d.ii` commit. Retained USB stages remain the `.d.iv` regression
-  input; `.project-data/tmp` contains only `.gitkeep` plus the current project-owned `xcrun_db` cache.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8a` — newer derived-state contract probe; complete in
+  this commit.
+- Current state: the donor's newer neutral revision is pinned and compared. Existing SpecForge surface-level
+  generators/currentness remain valid, but field-level derive-on-read / verified-copy declarations are absent.
+  The durable report identifies the exact Rust prerequisite and FSMGen gitlink comparisons plus the bounded
+  neutral registry/checker contract; task-scoped corpus counts are no longer repeated in this resume pointer.
+- Next action: from the clean `.8a` commit, activate `.8b`; implement the measured field registry, neutral
+  fail-closed checks, Rust/gitlink authority adapter, normative wording, and reader alignment without widening
+  any surface ceiling. `.8c` then independently audits and closes the reopened program.
+- In-flight uncommitted: none after the `.8a` commit. The `.2.33d.iii` corpus leaf remains pending behind this
+  director-requested bounded adoption review; `.project-data/tmp` contains only `.gitkeep` plus `xcrun_db`.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

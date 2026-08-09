@@ -33,6 +33,24 @@ Because the mdBook is a maintained reference, its current-state contract is exec
 requires this program's completed status and closing verification section, and rejects their stale
 forms; `LIVE-DOC-SIZE` runs that currency check on every commit and CI build.
 
+#### Newer derived-state contract review (`2026-08-09`)
+
+The donor's newer portable revision adds a field-level truth boundary beyond surface size and freshness. An exact
+fact about *now* must be derived when read or retained only as a verified copy of a named authority. Authored
+intent—such as the selected next action—and revision-bound task evidence are different classes and must not be
+forced into an equality oracle.
+
+The `.8a` SpecForge-local probe found that the existing surface plane remains sound: 41 surfaces are governed,
+eight currency contracts and 15 non-budget lifecycle verifiers execute, and bounded generated projections are
+fresh. It also found zero field declarations and three concrete seams. Old corpus/cache counts in `MEMORY.md`
+were misplaced current copies; Rust `1.95.0` is published in README/book/CI without comparison to workspace
+`rust-version`; and the current FSMGen hash is checked against a JSON copy but not derived from the mode-160000
+Git-index entry.
+
+The owned `.8b` follow-up adds explicit local markers and classifications, a bounded neutral registry/checker,
+and only the two deterministic project-specific authority comparisons. Existing generators remain the authority;
+no donor values or ceilings are copied. `.8c` independently audits the result before the reopened program closes.
+
 All four root-ledger migrations have landed. `CHANGES.md`, `DEVELOPMENT_NOTES.md`,
 `LIVE_ACHIEVEMENT_STATUS.md`, and `RUST_CODEBASE_ANALYSIS.md` are bounded current views, while their
 exact source capsules are the historical authority.

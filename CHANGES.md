@@ -1,3 +1,20 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8a — measure the newer derived-state contract
+
+- Reviewed the complete `2026-08-09` FSMGen adoption guide and neutral doctrine against SpecForge's locally
+  owned `2026-08-08` adoption, pinning all three document identities. Donor-local notes, paths, values,
+  thresholds, and conclusions remain external and were not copied.
+- Classified four portable changes: external collection indexes and bounded projection sets are already shipped;
+  duplicate-authority comparison was practiced but not stated in the local neutral body; explicit field-level
+  derive-on-read / verified-copy semantics are a real missing contract.
+- Measured 41 governed surfaces, eight enforced currency contracts, and 15 executable non-budget lifecycle
+  verifiers, but zero field-level declarations. Found three concrete ungated seams: resume-pointer corpus counts,
+  Rust prerequisite copies, and a feedback gitlink checked only against its own contract copy.
+- Published the field-family disposition and bounded `.8b` implementation: explicit local markers and closed
+  classifications, neutral schema/checker, project-specific Rust/gitlink authority comparisons, no heuristic
+  discovery, no ceiling increase, and an independent `.8c` audit.
+- The new durable fact leaves its complete index at 32,664 bytes, 514 bytes below mandatory rollover. `.8b` must
+  update that card or partition before crossing; evidence trimming and ceiling growth are not authorized.
+
 ### CORPUS-COVERAGE.2.33d.ii — ground dense-prose signal authority
 
 - Replaced loose sentence-start signal discovery with one canonical declaration parser requiring

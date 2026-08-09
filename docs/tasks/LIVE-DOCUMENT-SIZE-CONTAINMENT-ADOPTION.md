@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`
-- Status: `done`
+- Status: `in_progress`
 - Roadmap lane: process / continuity / repository portability
 - Created: `2026-08-08`
-- Last updated: `2026-08-08`
+- Last updated: `2026-08-09`
 - Owner: SpecForge maintainers through the repo-local workflow
 - Owner directives:
   - adopt the FSMGEN `README_POLICY.md` locally so `README.md` stops growing;
@@ -317,10 +317,40 @@ verification before correction.
   Goal: final closure audit: resulting-tree doctrine check, documentation build, retrieval drills,
   route/locality census, roadmap/code/mdBook lockstep, transition-debt disposition, and clean handoff.
 
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8`
+  Status: `in_progress` (`2026-08-09`)
+  Children: `.8a`, `.8b`, `.8c`
+  Goal: deliberately review the donor's newer portable derived-state-containment revision, adopt only
+  locally justified neutral contracts, and prove that exact current-state fields are derived on read or
+  retained behind an executed authority verifier without copying FSMGen paths, values, or conclusions.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8a`
+  Status: `done` (`2026-08-09`, PROBE/DOC)
+  Goal: diff the current donor guide/doctrine against SpecForge's adopted copy; inventory mechanically
+  owned current-state fields and existing surface-level freshness oracles; identify self-invalidating,
+  unverified, historical, and authored-intent classes; and publish the smallest local implementation
+  contract before changing the doctrine, registry, or checker. **Done:** pinned the 419-line donor guide,
+  426-line donor doctrine, and 319-line local doctrine; classified every portable delta; measured 41 surface
+  records, eight enforced currency contracts, 15 executable non-budget lifecycle verifiers, and zero field
+  declarations; dispositioned 15 field families; and selected the bounded `.8b` registry/checker plus exact
+  Rust/gitlink authority adapters. No product code, canonical artifact, donor file, threshold, or ceiling changed.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8b`
+  Status: `pending` (`2026-08-09`, CODE/DOC)
+  Goal: if `.8a` confirms a local gap, add the bounded project-owned field contract, neutral checker
+  support, fail-closed fixtures, normative doctrine delta, and reader derivations selected by the probe.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8c`
+  Status: `pending` (`2026-08-09`, AUDIT/DOC)
+  Goal: independently re-audit every declared field and consumer, execute the composed doctrine/full-CI
+  gates, align the mdBook and durable facts, and close `.8` without widening a surface ceiling.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
+| 1 | `.8b` | `pending` (`2026-08-09`) | Implement the measured local field registry/checker, Rust prerequisite and Git-index gitlink authority comparisons, normative wording, and reader alignment. |
+| — | `.8a` | `done` (`2026-08-09`) | The newer portable delta, existing surface oracles, three local gaps, 15 field-family dispositions, and bounded implementation contract are measured and published. |
 | — | `.0` | `done` (`2026-08-08`) | Ownership, measured baseline, full donor review, and the migration/locality graph are recorded; no deletion or migration. |
 | — | `.1` | `done` (`2026-08-08`) | Pointer semantics and impact-based documentation routing are now explicit and mechanically checked. |
 | — | `.2` | `done` (`2026-08-08`) | The retained landing page, local policy, route registry, and unconditional doctrine guard are live. |
@@ -351,7 +381,37 @@ verification before correction.
 | — | `.6a` | `done` (`2026-08-08`) | Repository-derived Cargo/shell/Rust roots, exact local Python rebuilds and model copies, child-process control, residue gates, and the old-tree copy/verify/use/delete sequence are complete. |
 | — | `.7` | `done` (`2026-08-08`) | Every adoption promise was independently reopened; cold-read defects are gated, remaining warnings are explicitly owned below rollover, the closing book section is current, and no program frontier remains. |
 
+### Acceptance Checklist (enforced) — `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8a`
+
+- [x] **REPRODUCE / MEASURE** — pinned exact SHA-256/line/byte identities for the donor guide, donor doctrine,
+  and local doctrine; classified all portable diffs; measured 41 surfaces / eight currency contracts / 15
+  executable non-budget verifiers / zero field declarations; and enumerated every scoped field family.
+- [x] **ROOT CAUSE (WHY + WHERE)** — separated already-executed surface freshness from the absent field plane;
+  identified misplaced resume counts, unverified Rust prerequisite copies, and a self-referential feedback-pin
+  check while preserving authored task choice and revision-bound evidence as distinct classes.
+- [x] **ADDRESSED (verified)** — the durable report assigns 15 field families to derive-on-read, verified-copy,
+  authored-intent, immutable-evidence, or removal and specifies the exact bounded `.8b`/`.8c` implementation.
+- [x] **NO REGRESSION** — no product code, canonical artifact, donor checkout, existing currentness data,
+  threshold, or ceiling changed; book, map, catalogs, locality, doctrine, and diff gates pass.
+- [x] **GENERICITY** — the design uses explicit local markers and authorities with a neutral schema/checker plus
+  a local adapter; no donor field names/paths/measurements or heuristically guessed date/number/hash enters code.
+- [x] **LOCKSTEP** — task tree/catalog, research/fact routes, roadmap/live status, mdBook method page, ledgers,
+  and `MEMORY.md` agree on `.8b` implementation and `.8c` audit before the corpus frontier resumes.
+
 ## Decisions
+
+- `2026-08-09`: **GO on the newer portable derived-state semantics.** External collection-index and bounded
+  projection-set semantics are already implemented; field-level classification/enforcement and the stronger
+  duplicate-authority wording are the only substantive local adoption delta.
+- `2026-08-09`: **Explicit fields, never heuristic discovery.** `.8b` uses one bounded local registry of exact
+  paths/markers/classes and a neutral checker. Project comparisons live in a declared adapter; dates, number
+  shapes, hashes, and prose are not field discovery mechanisms.
+- `2026-08-09`: **Git and Cargo remain canonical.** The current FSMGen object derives from the mode-160000 Git
+  index entry; workspace `rust-version` owns the published prerequisite after semver normalization. Contract
+  copies cannot certify themselves.
+- `2026-08-09`: **The fact-card index warning constrains `.8b`.** The `.8a` fact row leaves the complete index at
+  32,664 bytes, 514 bytes below its first failing 90% rollover byte. `.8b` updates the same card; if it would reach
+  33,178 bytes, partition first under explicit ownership. No trimming or ceiling increase is authorized.
 
 - `2026-08-08`: **GO on local adoption.** SpecForge meets multiple guide triggers: bounded-pointer
   routing pressure, mandatory multi-megabyte live reads, unbounded append-only neighbors, generated
@@ -1795,6 +1855,7 @@ progress state. No other book part changes unless the final audit finds a separa
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-09` | `.8a` | complete donor guide read; donor/local doctrine diff; SHA-256 + line/byte identities; 41-surface JSON census; existing verifier/currentness inventory; Git-index gitlink and Rust-version copy probes; catalog/map regeneration; book/live-size/locality/diff gates | measured: donor guide 419 / 20,515 / `6f10…4744`, donor doctrine 426 / 26,058 / `5cd3…7d88`, local doctrine 319 / 19,253 / `bb91…a9a`; 41 surfaces / eight currency / 15 executable non-budget verifiers / zero field declarations; three concrete gaps agree in value but lack independent field authority; no code/artifact/donor/ceiling mutation |
 | `2026-08-08` | `.0` | full README/roadmap/code/mdBook ramp-up; all 14 active task-tree frontiers; FSMGEN README policy, adoption guide, and neutral doctrine read; `wc` + max-line + route/locality census; Git/submodule state | measured; adoption is justified; no policy/content migration performed |
 | `2026-08-08` | `.0` | `bash scripts/check_doctrines.sh`; `mdbook build docs/book`; `git diff --check` | green: 3/3 doctrines; book built under repository-local `generated/mdbook/specforge`; clean diff |
 | `2026-08-08` | `.1` | `bash -n scripts/check_memory_architecture.sh`; `bash scripts/check_doctrines.sh`; forced line/byte/max-line cap probes; `mdbook build docs/book`; `git diff --check` | green: current pointer passes 50 lines / 4,096 bytes / 160 max-line bytes + required fields + no HEAD shadow; all three forced caps fail closed; doctrines 3/3; book and diff clean |
@@ -1861,6 +1922,7 @@ progress state. No other book part changes unless the final audit finds a separa
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.8a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8a — measure derived-state contract delta` | donor/local identity + portable-delta classification + 15-family field census + bounded `.8b`/`.8c` design |
 | `.0` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.0 — own and measure the containment/locality program` | ownership + measurement only; commit hash recorded by Git history |
 | `.1` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.1 — stabilize pointer and commit semantics` | impact-based doc routing + stronger bounded-pointer check |
 | `.2` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.2 — bound the README and close its routes` | project-owned policy + retained landing page + unconditional doctrine guard |
@@ -1892,6 +1954,14 @@ progress state. No other book part changes unless the final audit finds a separa
 | `.7` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7 — close the containment and locality program` | independent whole-program retrieval audit + cold-read defect gates + final book method-doc + clean closure |
 
 ## Changelog
+
+- `2026-08-09`: `.8a` PROBE/DOC DONE. The newer donor guide/doctrine adds a real field-level derived-state
+  contract beyond SpecForge's already-enforced surface plane. Pinned all external/local identities; measured
+  41 surfaces, eight currency contracts, 15 executable lifecycle verifiers, and zero field declarations; found
+  the misplaced resume counts plus ungated Rust prerequisite and gitlink copies; classified 15 field families;
+  and selected an explicit-marker neutral registry/checker with two local authority adapters. The fact index is
+  dispositioned at 32,664 bytes / 514 bytes before rollover. Frontier → `.8b`; no product code, canonical
+  artifact, donor file, threshold, or ceiling changed.
 
 - `2026-08-08`: Created from the owner's external-SSD move, README-policy directive, and FSMGEN
   live-document-containment adoption guide. Recorded local measurements, task-owned the two ramp-up

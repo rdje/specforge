@@ -1,4 +1,25 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8a (`2026-08-09`) — surface freshness and field truth are distinct
+
+SpecForge's existing currentness plane is substantial, but it operates at surfaces: generate the task catalog or
+Knowledge Map, compare a reviewed snapshot, check a source registry, or bind book claims to code. The newer donor
+revision asks a narrower question inside those surfaces: when prose stores one exact fact about *now*, what proves
+that value still equals its authority? A surface can be bounded and generally current while one copied hash,
+version, count, or status remains self-referential.
+
+The measured gaps illustrate three different dispositions. Corpus/cache counts do not belong in `MEMORY.md` at
+all because they are task evidence, not a fresh-clone resume requirement. The Rust prerequisite is a legitimate
+published copy whose authority is workspace `rust-version`; semver-normalized README/book/CI values should be
+verified. The FSMGen pin is also legitimate, but the canonical answer is the mode-160000 Git-index object—not a
+JSON contract and Markdown root agreeing with each other. Meanwhile the active task and chosen next action remain
+authored intent, and dated task/ledger measurements remain revision-bound evidence rather than current copies.
+
+The implementation should not infer fields from numbers, dates, hashes, or prose. A bounded data registry names
+each exact marker and closed classification. The neutral checker enforces schema, locality, uniqueness, and class
+requirements; a local adapter executes only the declared project comparisons. Existing lifecycle verifiers stay
+authoritative and are referenced instead of wrapped in duplicate generators. This is a deliberate local adoption
+of portable semantics, not synchronization with FSMGen.
+
 ## CORPUS-COVERAGE.2.33d.ii (`2026-08-09`) — authority is a grammar and structure contract
 
 The two declaration consumers now share a parser for the exact form the pipeline itself emits:
