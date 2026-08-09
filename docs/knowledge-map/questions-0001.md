@@ -26,6 +26,8 @@
   > are currently-strict-clean .isf affected by the overlap drop (no — a clean doc cannot contain an unconditional-overlap config or FSMGen would already reject it → byte-identical by construction; 100/107 emitted .isf unchanged)
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > are description bracket slices like Store Data[63:32] positions or values
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > are extracted evidence and semantic records rewritten by validate
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > are normalized pages page JSON image paths repository relative
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
@@ -88,6 +90,8 @@
   > can the subject snap fabricate or rewrite a signal name
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > can typed-surface counts alone determine a PDF's purpose category (no — 2 vs 3 not separable, ISA has no signature, 5 vs 6 indistinguishable)
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > can validating a copied artifact modify the canonical generated artifact
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > could a huge PDF OOM the downstream stages even though ingest is bounded
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
@@ -274,6 +278,8 @@
   > does specforge handle coordinated drive/read objects (X drives A and B)
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
   > does specforge handle passive voice for actor-signal relations (X is driven by Y)
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > does specforge validate modify the artifact passed on the command line
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
   > does specforge write to the input path I pass or to a canonical generated path
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
@@ -292,9 +298,3 @@
   > does the authority empty repair preserve formal and system contract interfaces
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > does the current FSMGen ISF support named bit-fields inside a storage var (NO — opaque (var NAME (width N)) only on pin 030f8c273; set-field/extract are runtime ops not a declaration)
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > does the current SWD chain come from the tracked ADI PDF
-- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
-  > does the emitted .isf signal direction affect FSMGen downstream correctness
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > does the explicit-direction signal catalog repeat the UTF-8 boundary bug

@@ -2124,6 +2124,15 @@ fn write_validation_report_sidecar(
     Ok(())
 }
 
+fn write_backannotated_artifact(artifact_path: &Path, artifact_json: String) -> Result<()> {
+    // Validation is addressed by its explicit CLI artifact path. A loaded artifact retains its
+    // embedded canonical output layout, so calling the stage's normal `write_to_disk()` here would
+    // backannotate that canonical artifact when the caller is validating a copied snapshot.
+    let artifact_path = resolve_repository_output(artifact_path)?;
+    fs::write(artifact_path, artifact_json)?;
+    Ok(())
+}
+
 fn print_validation_findings(report: &ValidationReportRecord) {
     println!("=== Validation Findings ===");
     println!("  count: {}", report.findings.len());
@@ -2163,7 +2172,7 @@ fn persist_source_validation(
     report: &ValidationReportRecord,
 ) -> Result<()> {
     backannotate_report(&mut ir.validation_reports, report);
-    ir.write_to_disk()?;
+    write_backannotated_artifact(artifact_path, ir.to_pretty_json()?)?;
     write_validation_report_sidecar(artifact_path, report)
 }
 
@@ -2173,7 +2182,7 @@ fn persist_evidence_validation(
     report: &ValidationReportRecord,
 ) -> Result<()> {
     backannotate_report(&mut ir.validation_reports, report);
-    ir.write_to_disk()?;
+    write_backannotated_artifact(artifact_path, ir.to_pretty_json()?)?;
     write_validation_report_sidecar(artifact_path, report)
 }
 
@@ -2183,7 +2192,7 @@ fn persist_semantic_validation(
     report: &ValidationReportRecord,
 ) -> Result<()> {
     backannotate_report(&mut ir.validation_reports, report);
-    ir.write_to_disk()?;
+    write_backannotated_artifact(artifact_path, ir.to_pretty_json()?)?;
     write_validation_report_sidecar(artifact_path, report)
 }
 
@@ -2193,7 +2202,7 @@ fn persist_intent_validation(
     report: &ValidationReportRecord,
 ) -> Result<()> {
     backannotate_report(&mut ir.validation_reports, report);
-    ir.write_to_disk()?;
+    write_backannotated_artifact(artifact_path, ir.to_pretty_json()?)?;
     write_validation_report_sidecar(artifact_path, report)
 }
 
@@ -2203,7 +2212,7 @@ fn persist_isf_adapter_validation(
     report: &ValidationReportRecord,
 ) -> Result<()> {
     backannotate_report(&mut artifact.validation_reports, report);
-    artifact.write_to_disk()?;
+    write_backannotated_artifact(artifact_path, artifact.to_pretty_json()?)?;
     write_validation_report_sidecar(artifact_path, report)
 }
 
@@ -7522,7 +7531,7 @@ fn sorted_by_value<'a>(map: &'a HashMap<&str, usize>) -> Vec<(&'a &'a str, &'a u
 
 #[cfg(test)]
 mod tests {
-    use std::collections::BTreeSet;
+    use std::collections::{BTreeMap, BTreeSet};
     use std::fs;
 
     use tempfile::tempdir;
@@ -7588,6 +7597,31 @@ mod tests {
             assert!(validation_output_suppressed());
         });
         assert!(!validation_output_suppressed());
+    }
+
+    fn file_tree_snapshot(root: &Path) -> Result<BTreeMap<PathBuf, Vec<u8>>> {
+        let mut files = BTreeMap::new();
+        let mut pending = vec![root.to_path_buf()];
+
+        while let Some(directory) = pending.pop() {
+            let mut entries = fs::read_dir(&directory)?.collect::<std::io::Result<Vec<_>>>()?;
+            entries.sort_by_key(|entry| entry.path());
+            for entry in entries {
+                let path = entry.path();
+                if path.is_dir() {
+                    pending.push(path);
+                } else if path.is_file() {
+                    files.insert(
+                        path.strip_prefix(root)
+                            .expect("snapshot entry must remain below its root")
+                            .to_path_buf(),
+                        fs::read(path)?,
+                    );
+                }
+            }
+        }
+
+        Ok(files)
     }
 
     fn actor_port(
@@ -7820,6 +7854,91 @@ mod tests {
             validation_report_path_for(&artifact_path)?.exists(),
             "expected stage-local validation_report.json sidecar to exist"
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn copied_artifact_validation_never_follows_embedded_canonical_layout() -> Result<()> {
+        let tempdir = tempdir()?;
+        let generated_root = tempdir.path().join("generated");
+        let source = tempdir.path().join("copied_validation_spec.md");
+        fs::write(
+            &source,
+            concat!(
+                "# Protocol\n",
+                "Clock clk.\n\n",
+                "Reset rst_n is active-low.\n\n",
+                "Signal data_in is input width 8.\n\n",
+                "Signal data_out is output width 8.\n\n",
+                "Signal valid is output width 1.\n\n",
+                "When valid is HIGH then data_out must be stable.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &generated_root.join("source_ir"))?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &generated_root.join("evidence_ir"),
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &generated_root.join("semantic_ir"),
+        )?;
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &generated_root.join("intent_ir"),
+        )?;
+        intent_ir.write_to_disk()?;
+        let adapter = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            &generated_root,
+        )?;
+        adapter.write_to_disk()?;
+
+        let canonical_snapshot = file_tree_snapshot(&generated_root)?;
+        let artifact_paths = [
+            source_ir.artifact_layout.source_ir_path,
+            evidence_ir.artifact_layout.evidence_ir_path,
+            semantic_ir.artifact_layout.semantic_ir_path,
+            intent_ir.artifact_layout.intent_ir_path,
+            adapter.artifact_layout.adapter_artifact_path,
+        ];
+
+        for (index, canonical_path) in artifact_paths.into_iter().enumerate() {
+            let copy_dir = tempdir.path().join("copies").join(format!("stage_{index}"));
+            fs::create_dir_all(&copy_dir)?;
+            let copy_path = copy_dir.join(
+                canonical_path
+                    .file_name()
+                    .ok_or_else(|| AppError::MissingPath(canonical_path.clone()))?,
+            );
+            fs::copy(&canonical_path, &copy_path)?;
+
+            run_quiet(ValidateArgs {
+                artifact: copy_path.clone(),
+            })?;
+
+            assert_eq!(
+                file_tree_snapshot(&generated_root)?,
+                canonical_snapshot,
+                "validating copied stage {index} mutated its embedded canonical output tree"
+            );
+            let copied_json: serde_json::Value = serde_json::from_slice(&fs::read(&copy_path)?)?;
+            assert_eq!(
+                copied_json["validation_reports"].as_array().map(Vec::len),
+                Some(1),
+                "copied stage {index} was not backannotated in place"
+            );
+            assert!(
+                validation_report_path_for(&copy_path)?.exists(),
+                "copied stage {index} is missing its adjacent validation report"
+            );
+        }
 
         Ok(())
     }

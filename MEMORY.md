@@ -21,14 +21,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.38a`; contain copied-artifact validation backannotation before resuming #38.
-- Current state: #38 source `08a37c35…162`, release binary, typed baseline, and six original artifact hashes were
-  authenticated before mutation. Running `validate` on copied rollback artifacts exposed that each IR persistence
-  helper follows the embedded canonical artifact layout for the JSON write, even though the sidecar/reporting path
-  follows the caller's copy. The canonical #38 SourceIR→IntentIR chain was backannotated and two normalized summary
-  files materialized; the copied rollback was also updated, so it is no longer a byte-exact recovery set.
-- Next action: commit `.2.38a` ownership, add a hermetic all-stage reproducer, persist validation JSON beside the
-  explicit CLI artifact, then recover #38 from its authenticated same-SSD source and resume the guarded refresh.
-- In-flight uncommitted: ignored canonical/rollback #38 artifacts preserve the validator side effect; no tracked
-  product code has changed yet. Original pre-side-effect hashes/counts are recorded in the active task evidence.
+- Active unit: `CORPUS-COVERAGE.2.38a`; commit the verified path-containment repair before resuming parent #38.
+- Current state: `validate <artifact>` now backannotates only the explicit repository-owned artifact and its
+  adjacent report; it cannot follow embedded canonical output paths. One all-stage regression and a five-stage
+  real #38 copy replay keep the complete canonical tree byte-identical. Existing canonical-path tests, Clippy,
+  and full CI pass 1,788 tests / five ignored. Original pre-side-effect #38 hashes/counts and the complete
+  validator-side-effect state remain in task evidence; the source is authenticated at `08a37c35…162`.
+- Next action: commit `.2.38a`, then run a guarded CPU ingest from the authenticated same-SSD source to regenerate
+  and refresh the #38 canonical chain before measuring relation/topology authority.
+- In-flight uncommitted: verified `.2.38a` code/docs/fact signoff awaits commit; ignored #38 task evidence must
+  remain until fresh regeneration and the parent refresh gates are complete.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

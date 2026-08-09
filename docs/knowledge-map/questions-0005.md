@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > what document class is a chip-spec PDF (protocol / register / interface / guide)
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > what does (on start (sample S as s)) assert in FSMGen semantics (an entry-cycle D-input capture, cycle N port && can_accept)
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > what does .10h do that .10g did not (block-qualified register-mnemonic recovery)
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > what does .10i do that .10h did not (block-qualified recovery of the disjoint register class)
+- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
+  > what does AdapterArtifact write_to_disk reconcile
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > what does CORPUS-COVERAGE.1 add
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > what does DOCLING_DEVICE do
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
@@ -102,6 +114,8 @@
   > what happened to the USB4 Connection Manager device_also.isf
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > what happened to the USB4 Inter-Domain channel.isf
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > what happened to the original Introducing CoreSight rollback
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > what happens to a page sidecar path when page images are not persisted
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
@@ -283,17 +297,3 @@
   > what is the NLI entailment verifier
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > what is the NVMe register-field recall / precision
-- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
-  > what is the PDF-VARIANT-DIGESTION whole-corpus coverage / re-triage
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the PHASE_NAME_STOPWORDS gate and why is it stronger than the anchor gate (prose is noisier)
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > what is the RAM-safe per-doc protocol for the CANONICAL-PROMOTION-SWEEP
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > what is the RISC-V Debug register-field recall / precision
-- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
-  > what is the SWD line state machine (reset/operating/protocol-error/lockout)
-- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
-  > what is the VLM table strategy / PDF-VARIANT-DIGESTION.2b
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > what is the `<role> channel signals` caption cue and how is it parsed

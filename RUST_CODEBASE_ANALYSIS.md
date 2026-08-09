@@ -4,6 +4,17 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-09 — explicit validation-path containment; `CORPUS-COVERAGE.2.38a`)
+
+- Validation persistence is command-addressed, not producer-addressed. `run` resolves the caller's artifact;
+  `write_backannotated_artifact` writes that artifact's persisted JSON back to the same resolved path, and
+  `write_validation_report_sidecar` writes its adjacent report.
+- The five stage `write_to_disk()` methods remain canonical producer APIs. They intentionally follow embedded
+  layouts and may materialize stage-owned siblings, so validation must not call them for a copied artifact.
+- The all-stage regression validates copied SourceIR, EvidenceIR, SemanticIR, IntentIR, and adapter JSON while a
+  full-tree byte snapshot protects every embedded canonical artifact and sibling. Existing canonical-path tests
+  prove the ordinary same-path case remains intact.
+
 ## Session update (2026-08-09 — fail-closed SemanticIR interface authority; `CORPUS-COVERAGE.2.33d.iv.b`)
 
 - `build_interfaces` derives typed authority from formal declarations plus system-contract clock/reset.

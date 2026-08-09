@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
+  > what is the PDF-VARIANT-DIGESTION whole-corpus coverage / re-triage
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the PHASE_NAME_STOPWORDS gate and why is it stronger than the anchor gate (prose is noisier)
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > what is the RAM-safe per-doc protocol for the CANONICAL-PROMOTION-SWEEP
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > what is the RISC-V Debug register-field recall / precision
+- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
+  > what is the SWD line state machine (reset/operating/protocol-error/lockout)
+- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
+  > what is the VLM table strategy / PDF-VARIANT-DIGESTION.2b
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > what is the `<role> channel signals` caption cue and how is it parsed
 - [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
   > what is the ambiguous_statements metric in validate
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
@@ -34,6 +48,8 @@
   > what is the declared-signal eval surface / EvalTask::DeclaredSignal
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
   > what is the difference between a refreshed EvidenceIR and a retained normalized bundle
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > what is the difference between validate persistence and stage write_to_disk
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what is the exact active PDF task evidence baseline
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
@@ -252,6 +268,8 @@
   > where does recognize_digital_patterns hardcode HTRANS/PSEL/MISO and why is it an ADR-0006 breach
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > where does signal_channel_memberships live (EvidenceIR) and how is it carried (SemanticIR -> IntentIR)
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > where does specforge validate write validation_report.json
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > where does the .isf signal direction/width come from (direction_hint/width_hint, not the actor graph)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -280,21 +298,3 @@
   > where is adaptive_batch_pages / BatchSizePolicy in the code
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > where is classify_document_intent_category implemented (crates/specforge/src/ir/completeness.rs)
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > where is consolidate_interface_actor_relations and strip_interface_suffix wired
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > where is consolidate_trailing_fragment and how is it ordered against the .1a reject
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > where is coordinated-object actor-signal relation extraction implemented
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > where is is_pure_inferred_phantom_role and the build_intent_actors phantom guard
-- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
-  > where is normalized staging removed from Docling metadata
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > where is register bit-field ISF emission implemented (register_storage_fields + normalize_field_access + IsfStorageField + the storage render in crates/specforge/src/ir/isf_ir.rs; residual isf_register_fields_not_lowered)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > where is register-field reset_value extracted and carried (ir/source.rs:432 RegisterFieldRecord.reset_value; ir/evidence.rs:11509/11838 populate it; ir/intent.rs:193 clones register_records to IntentIR)
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > where is split_coordinated_actor_relations and split_coordinated_actor_subject wired
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > where is the I2C signal gold seed

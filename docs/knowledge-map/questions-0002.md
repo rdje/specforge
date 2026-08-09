@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
+  > does the current SWD chain come from the tracked ADI PDF
+- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
+  > does the emitted .isf signal direction affect FSMGen downstream correctness
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > does the explicit-direction signal catalog repeat the UTF-8 boundary bug
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
   > does the external SSD project directory contain the USB4 Inter-Domain Service PDF
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
@@ -20,6 +26,10 @@
   > does the trapped-row gap-fill mint duplicate signal declarations
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > does validate detect a stale downstream artifact that silently dropped relations
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > does validate follow the embedded artifact layout
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > does validate materialize SourceIR normalized manifests
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > does validate report message_field_records
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
@@ -288,13 +298,3 @@
   > how does specforge split a coordinated X and Y relation subject into both agents
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
   > how does specforge tell a trapped data row from a genuine multi-row column header without a list or case
-- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
-  > how does the EXTRACTOR-ARCHITECTURE run manifest enable cross-document clustering
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > how does the LLM-primary extractor avoid extracting a when/if/unless clause subject as an obligation
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > how does the LLM-primary extractor handle 'It is recommended' / 'It is permitted' / 'would be' frames
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > how does the SemanticIR Phase-2 role-term scan (build_actors ACTOR_TERMS) mint Class-C actors
-- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
-  > how does the VLM understand tables / can a VLM read PDF tables

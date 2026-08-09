@@ -417,58 +417,76 @@ today's ephemeral normalized-directory count.
   cascade. This 32-page / 25-visual / four-table / 333-element guide is the next-smallest ARM candidate and a
   deliberately different authority test: retained EvidenceIR carries nine actor-signal relations, SemanticIR /
   IntentIR carry six interfaces, eight ports, and four connectivity edges, while the four-signal adapter is
-  already blocked for lack of behavioral content. Authenticate the retained six-file chain, source hash
-  `08a37c35…162`, and release binary before mutation; preserve an exact same-volume rollback; use CPU Docling with
-  the 85%-used RAM abort and no LLM/VLM inference; resolve the repository discovery route to the caller-authorized
-  SSD input. Preserve any relation/topology surface that satisfies current generic authority, remove only
-  unsupported material, and accept any output grounded by the refreshed pipeline. If a new product defect
-  appears, preserve exact evidence and add a bounded child leaf before changing code.
+  already blocked for lack of behavioral content. The retained six-file chain, source hash `08a37c35…162`, and
+  release binary were authenticated before mutation. `.2.38a` records that copied validation backannotated both
+  canonical and rollback JSON after those hashes/counts were captured, so do not claim the original bytes remain
+  recoverable: retain the complete side-effect snapshot and regenerate from the authenticated source. Use CPU
+  Docling with the 85%-used RAM abort and no LLM/VLM inference; preserve any relation/topology surface satisfying
+  current generic authority, remove only unsupported material, and accept any output grounded by the refreshed
+  pipeline. If another product defect appears, preserve exact evidence and add a bounded child leaf before code.
 
-### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.38`
+### Closure criteria (pending) — `CORPUS-COVERAGE.2.38`
 
-- [ ] **REPRODUCE / MEASURE** — authenticate the source PDF, retained six-file chain, nine relations, six
-  interfaces/eight ports/four connectivity edges, blocked four-signal adapter, release binary, and same-volume
-  rollback; record guarded-ingest counts, peak memory, final hashes, and typed before→after deltas.
-- [ ] **ROOT CAUSE (WHY + WHERE)** — classify every material delta against current generic relation, topology,
+These become the earned acceptance checklist when the DATA/DOC parent closes; while the bounded CODE child
+`.2.38a` is landing, they remain explicit pending criteria rather than an unchecked enforced checklist that
+would be mistaken for the child commit's owning acceptance section.
+
+- **REPRODUCE / MEASURE** — authenticate the source PDF, original six hashes/counts, nine relations, six
+  interfaces/eight ports/four connectivity edges, blocked four-signal adapter, release binary, and preserved
+  validator-side-effect set; record guarded-ingest counts, peak memory, final hashes, and typed deltas.
+- **ROOT CAUSE (WHY + WHERE)** — classify every material delta against current generic relation, topology,
   signal/interface, and behavioral authority rather than treating guide vocabulary or strict syntax as trust.
-- [ ] **ADDRESSED (verified)** — promote only complete validated stages; require every page path final and
+- **ADDRESSED (verified)** — promote only complete validated stages; require every page path final and
   repository-relative; converge obsolete adapter targets; run FSMGen strict only if honestly renderable.
-- [ ] **NO REGRESSION** — reproduce the deterministic cascade, hold nine provider-free WIRE/I2C/SWD gates and KG
+- **NO REGRESSION** — reproduce the deterministic cascade, hold nine provider-free WIRE/I2C/SWD gates and KG
   156/156, sweep all current emitted ISFs through FSMGen strict, and pass mdBook/doctrine/path/locality gates plus
   broader Rust CI if any product code changes.
-- [ ] **GENERICITY** — no CoreSight/Arm/guide/document/token exception, manual generated-output edit, relaxed
+- **GENERICITY** — no CoreSight/Arm/guide/document/token exception, manual generated-output edit, relaxed
   validator, fabricated topology/behavior, or LLM/VLM inference enters the slice.
-- [ ] **LOCKSTEP** — generated artifacts, #38 row/count/frontier, live docs, durable fact when warranted, mdBook,
+- **LOCKSTEP** — generated artifacts, #38 row/count/frontier, live docs, durable fact when warranted, mdBook,
   and `MEMORY.md` agree; delete only authenticated rollback/task evidence after every final gate is green.
 
-- ID: `CORPUS-COVERAGE.2.38a` · Status: `in_progress` (`2026-08-09`, CODE/DATA/DOC) · Goal: make `validate`
-  backannotation honor the artifact path explicitly supplied by the caller before resuming `.2.38`. Baseline
-  authentication copied the retained chain into `.cache/task-work/CORPUS-COVERAGE.2.38/rollback`, but validating
-  those copies loaded their repository-relative embedded artifact layouts and `persist_*_validation` called
-  `write_to_disk()`. That method correctly targets the embedded canonical layout for normal stage production,
-  but it is wrong for validation of a copied artifact: the command backannotated the canonical SourceIR /
-  EvidenceIR / SemanticIR / IntentIR and materialized two canonical normalized summary files while its console
-  reported the copied artifact path. The exact pre-side-effect hashes and typed counts were recorded first, but
-  the copied rollback was subsequently backannotated too and cannot serve as the promised byte-exact recovery.
-  Preserve the current side-effect state and recorded original hashes; reproduce in a hermetic fixture; persist
-  the mutated IR JSON and report beside the explicit CLI path without following its embedded output layout; prove
-  canonical bytes and canonical sibling files stay unchanged for all supported stages; then rebuild and recover
-  `.2.38` from the authenticated source rather than misclassifying validator backannotation as an ingest delta.
+- ID: `CORPUS-COVERAGE.2.38a` · Status: `done` (`2026-08-09`, CODE/DATA/DOC) · Result: reproduced and repaired
+  copied-artifact validation backannotation before resuming `.2.38`. The original six retained hashes were
+  captured before the side effect: SourceIR `5b374be5…6fb`; EvidenceIR/report `2af7b31e…dd9` /
+  `41b2ab7f…f79`; SemanticIR `6dbbc56b…672`; IntentIR `02657b54…e06`; adapter `6b2303fa…175`.
+  `persist_*_validation` loaded the explicit copy but called each stage's normal `write_to_disk()`, which follows
+  the embedded canonical artifact layout. Therefore validating the copied SourceIR→IntentIR chain backannotated
+  the canonical JSON and materialized canonical `normalized/page_artifacts.json` and `visual_assets.json`, while
+  the adjacent report and console correctly named the copy. Because both canonical and rollback JSON were
+  backannotated before detection, the original bytes cannot honestly be called recoverable; their hashes/counts
+  remain preserved, and the complete side-effect state is retained until #38 regenerates from authenticated
+  source `08a37c35…162`.
+
+  The new path-generic `write_backannotated_artifact` resolves the caller's explicit repository-owned artifact
+  path and writes `to_pretty_json()` there; the report remains its adjacent `validation_report.json`. It does not
+  call a stage producer or materialize embedded-layout siblings. One all-stage regression builds canonical
+  SourceIR, EvidenceIR, SemanticIR, IntentIR, and adapter artifacts, validates copied JSON, requires each copy to
+  gain one report plus its adjacent sidecar, and snapshots the complete canonical output tree byte-for-byte after
+  every stage. Existing canonical SourceIR and IntentIR backannotation tests remain green. A real release-binary
+  replay over five copied #38 artifacts likewise leaves the complete canonical chain byte-identical to the
+  preserved side-effect set. Formatting, warning-deny Clippy, 1,788 tests / five ignored, rustdoc, mdBook,
+  doctrines, and project-data locality pass. The required live product record reached the 72-record rollover
+  threshold; an exact dry-run/apply plan seals the 12 oldest live duplicates as status segment `0005`, updates the
+  reciprocal chain, and leaves a 60-record warning-safe root with zero transaction residue. Parent `.2.38` now
+  owns authenticated-source regeneration and the guarded refresh; validator metadata cannot contaminate its
+  delta again.
+  Commit: `CORPUS-COVERAGE.2.38a — contain validation backannotation paths`.
 
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.38a`
 
-- [ ] **REPRODUCE / MEASURE** — preserve the original six hashes/counts and current side-effect chain; a hermetic
+- [x] **REPRODUCE / MEASURE** — preserve the original six hashes/counts and current side-effect chain; a hermetic
   copied-artifact test must reproduce canonical mutation and source normalized-summary creation before the fix.
-- [ ] **ROOT CAUSE (WHY + WHERE)** — prove each `persist_*_validation` ignores its `artifact_path` for the IR write
+- [x] **ROOT CAUSE (WHY + WHERE)** — prove each `persist_*_validation` ignores its `artifact_path` for the IR write
   by calling embedded-layout `write_to_disk()`, while the sidecar helper correctly uses the explicit path.
-- [ ] **ADDRESSED (verified)** — write each backannotated JSON to the resolved explicit artifact path and its
+- [x] **ADDRESSED (verified)** — write each backannotated JSON to the resolved explicit artifact path and its
   report to that path's sibling; canonical artifacts and unrelated embedded-layout siblings remain byte-exact.
-- [ ] **NO REGRESSION** — canonical-path validation still backannotates normally; focused tests cover SourceIR,
+- [x] **NO REGRESSION** — canonical-path validation still backannotates normally; focused tests cover SourceIR,
   EvidenceIR, SemanticIR, IntentIR, and adapter artifacts; formatting, warning-deny Clippy, full CI, mdBook,
   doctrines, persisted paths, and project-data locality pass.
-- [ ] **GENERICITY** — the repair is stage-generic and path/containment based, with no document, stage-key,
+- [x] **GENERICITY** — the repair is stage-generic and path/containment based, with no document, stage-key,
   workstation, or corpus exception and no relaxed validation semantics.
-- [ ] **LOCKSTEP** — source comment, task result, durable fact, live docs, mdBook command contract, and
+- [x] **LOCKSTEP** — source comment, task result, durable fact, live docs, mdBook command contract, and
   `MEMORY.md` explain that `validate <artifact>` mutates only that artifact and its adjacent report.
 
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34b.ii.a`
@@ -729,9 +747,9 @@ today's ephemeral normalized-directory count.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: `CORPUS-COVERAGE.2.38a` — reproduce and repair copied-artifact validation backannotation, then recover
-  the #38 canonical chain from its authenticated source and resume the guarded refresh only after focused/full
-  gates prove validation cannot follow embedded output paths away from the explicit CLI artifact.
+- Frontier: `CORPUS-COVERAGE.2.38a` — complete the verified repair's commit workflow; immediately afterward,
+  parent `.2.38` regenerates the canonical chain from the authenticated same-SSD source and resumes the guarded
+  ingest/cascade without classifying validator metadata as a document refresh delta.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**37 refreshes done after #37;
   19 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#37: #29/#31 CHI-C2C marquee message-field refreshes,
@@ -833,6 +851,13 @@ strict syntax is not a semantic-fidelity oracle. **Levers A, B, C, F + the rule-
 
 ## Changelog
 
+- `2026-08-09`: `.2.38a` CODE/DATA/DOC DONE. Validating copied #38 artifacts exposed that all five persistence
+  helpers backannotated IR through embedded canonical layouts while reports followed the copy. The explicit-path
+  writer now updates only the CLI artifact plus its adjacent report. One hermetic all-stage regression and one
+  real five-stage release replay keep the complete canonical tree byte-exact; canonical-path tests stay green.
+  Clippy, 1,788 tests / five ignored, rustdoc, mdBook, doctrines, persisted paths, and locality pass. The required
+  status record triggers an exact rollover of 12 oldest live duplicates into sealed segment `0005`, leaving 60
+  warning-safe records. Parent #38 resumes from authenticated-source regeneration.
 - `2026-08-09`: `.2.37` DATA/DOC DONE. Guarded AArch64 External Debug ingest produces 25 pages / 11 visuals /
   two tables / 36 sections / 266 elements at 19% peak system memory used; 25/25 page paths are final and
   repository-relative. Exactly 81 stale visual-label body records disappear while every structural class holds.

@@ -16,7 +16,11 @@ For the deeper rationale behind validation, fixture truthfulness, and cross-docu
 cargo run --manifest-path Cargo.toml -- validate generated/intent_ir/<document_key>/intent_ir.json
 ```
 
-`validate` writes a deterministic stage-local `validation_report.json` and backannotates the artifact.
+`validate` writes a deterministic `validation_report.json` beside the artifact and backannotates validation
+metadata into the artifact path you explicitly passed. That path is authoritative for the write. If you validate
+a copied snapshot whose embedded `artifact_layout` still names the canonical generated tree, only the copied JSON
+and its adjacent report change; validation does not follow the embedded output layout or materialize stage-owned
+siblings. Extracted evidence and semantic records are not rewritten.
 
 It reports things like:
 

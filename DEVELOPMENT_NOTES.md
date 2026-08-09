@@ -1,4 +1,25 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.38a (`2026-08-09`) — command identity must outrank embedded output identity
+
+Stage producers correctly persist through their embedded `artifact_layout`: that is the canonical destination
+contract for `ingest`, `evidence`, `semantic`, `intent`, and `adapt`. Validation is different. Its input is an
+explicit artifact path, and users legitimately validate preserved snapshots or copied candidates whose embedded
+layout still names the canonical tree. Reusing `write_to_disk()` in `persist_*_validation` silently crossed those
+two identities: report placement and console output followed the copy, while IR backannotation followed the
+embedded canonical destination. SourceIR also materialized its normalized summary siblings there.
+
+The repair keeps the distinction local and structural. `write_backannotated_artifact` resolves the explicit
+repository-owned input path and writes the artifact's persisted JSON representation there; the existing sidecar
+helper derives the adjacent report. It deliberately does not call any stage producer, rewrite embedded layout,
+or materialize producer-owned siblings. The normal canonical command remains the same-path special case. A single
+all-stage test validates copies of all five artifact kinds and snapshots the entire canonical output tree after
+each operation, so future stages cannot reintroduce the identity split unnoticed.
+
+The real #38 incident is retained honestly. Six pre-side-effect hashes and all typed counts were captured, but
+both canonical and copied JSON were backannotated before detection; those original bytes are not claimed as a
+rollback. The authenticated PDF plus preserved side-effect snapshot provide the safe regeneration route, and the
+parent refresh will compare semantic counts against the recorded baseline rather than validator metadata.
+
 ## CORPUS-COVERAGE.2.37 (`2026-08-09`) — guide vocabulary is not a declared hardware boundary
 
 The AArch64 External Debug Guide is the fourth independent transfer of the authority-empty interface rule and

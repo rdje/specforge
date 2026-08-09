@@ -1,6 +1,6 @@
 # Knowledge fact-card catalog
 > **AUTO-GENERATED — DO NOT EDIT.** Run `perl scripts/check_fact_card_catalog.pl --write`. [README](README.md) · [questions](../../KNOWLEDGE_MAP.md) · [decisions](../decisions/INDEX.md).
-> Title parts: [0001](../knowledge-catalog/titles-0001.md) · [0002](../knowledge-catalog/titles-0002.md) · [0003](../knowledge-catalog/titles-0003.md)
+> Title parts: [0001](../knowledge-catalog/titles-0001.md) · [0002](../knowledge-catalog/titles-0002.md) · [0003](../knowledge-catalog/titles-0003.md) · [0004](../knowledge-catalog/titles-0004.md)
 - [aarch64-external-debug-guide-refresh-is-authority-empty](aarch64-external-debug-guide-refresh-is-authority-empty.md)
 - [active-task-legacy-route-aliases](active-task-legacy-route-aliases.md)
 - [active-task-migration-transaction](active-task-migration-transaction.md)
@@ -166,6 +166,7 @@
 - [transition-bound-state-fsm](transition-bound-state-fsm.md)
 - [usb4-connection-manager-refresh-is-authority-empty](usb4-connection-manager-refresh-is-authority-empty.md)
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+- [validate-explicit-artifact-path-contained-backannotation](validate-explicit-artifact-path-contained-backannotation.md)
 - [validation-snapshot-reviewed-boundary](validation-snapshot-reviewed-boundary.md)
 - [value-binder-alphabetic-whole-word](value-binder-alphabetic-whole-word.md)
 - [vlm-table-strategy](vlm-table-strategy.md)

@@ -480,11 +480,15 @@ helps you catch.
 
 `Info` means "we noticed this; here's the signal." `Warning`
 means "this is likely worth your attention." `Error` means
-"this is a hard correctness issue." The validator is
-read-only — it never silently rewrites your IR (see the
-"Tracked approval evidence" section below for the design
-that makes the read-only-by-default contract structural even
-if canonical IR mutation is ever introduced).
+"this is a hard correctness issue." The validator never
+silently rewrites extracted evidence or semantic records. It
+does persist deterministic validation metadata into the exact
+artifact path passed on the command line and writes an adjacent
+`validation_report.json`. Even when that artifact is a copied
+snapshot with an embedded canonical layout, no other IR or
+stage-owned sibling is touched (see the "Tracked approval
+evidence" section below for the design that keeps substantive
+mutation read-only by default).
 
 #### The four findings/metrics surfaces this tree delivered
 

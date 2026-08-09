@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > why is the .isf module named after the initiator (manager / requester / debugger) instead of actors.first()
+- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
+  > why is the AHB eval baseline wrong or stale
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > why is the Docling table capture of a register diagram unreliable
+- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
+  > why is the FSM important for SWD/JTAG
+- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
+  > why is the NLI framing better than free-form labeling
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > why is the PSEL antecedent dropped in a temporal rule
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > why is the SpecForge fact-card catalog almost out of capacity
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why is the USB 3.2 adapter syntactically valid but semantically untrustworthy
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > why is the X interface strip gated on X being a connected agent in this doc
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > why is the _WIDTH enum-member leak a real fidelity defect (.5.iii: 7 _WIDTH members in real-signal-named enums in AXI gold ihi0022_l reach manager.isf — (BRESP (BRESP_WIDTH 0)(OKAY 0)…) duplicates value 0, (RRESP (RRESP_WIDTH 0)) REPLACES the real RRESP codes, (AXSNOOP (AWSNOOP_WIDTH 0)(ARSNOOP_WIDTH 1)) pure junk; a width PARAMETER 'Enum BRESP BRESP_WIDTH = 0.' mis-read as
   > an encoding VALUE — a false bar-#6 fact, unscored by WIRE-BASED-100 since enums are emitter-orthogonal)

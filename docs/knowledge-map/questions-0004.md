@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > is a better VLM needed to read register bit-layout diagrams
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > is a name-only gate enough to fix the generic enum (no — 271 real-named enums like COMMAND/DWORD_MISR/AMBA are themselves fragment-heavy/dup-heavy; the load-bearing signal is member quality)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > is a transaction's phase ORDER recoverable from prose (no — first-occurrence wrong on SWD, cues sparse, precedence conflicting)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > is a value-less drive valid in ISF / can an output participate in a transaction body without a value (no — every (drive …) needs a concrete actual; raised to FSMGEN)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > is an ISF transaction body ordered (yes — totally ordered, one clause ≈ one cycle; same-cycle concurrency only via a multi-pair drive block)
+- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
+  > is bar #5 (no silent drop of behavior/temporal) still honest after CORPUS-COVERAGE.0
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > is bar #6 (ISF round-trip, no silent drop) a large faithful-lowering gap
 - [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
@@ -285,15 +297,3 @@
   > what distinguishes a PURE-INFERRED phantom from a PROSE-GROUNDED or SECTION+INFERRED 0/0 actor
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > what do leading_section_number and is_descendant_section_number do
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > what document class is a chip-spec PDF (protocol / register / interface / guide)
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > what does (on start (sample S as s)) assert in FSMGen semantics (an entry-cycle D-input capture, cycle N port && can_accept)
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > what does .10h do that .10g did not (block-qualified register-mnemonic recovery)
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > what does .10i do that .10h did not (block-qualified recovery of the disjoint register class)
-- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
-  > what does AdapterArtifact write_to_disk reconcile
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > what does CORPUS-COVERAGE.1 add

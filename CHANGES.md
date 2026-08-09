@@ -1,3 +1,16 @@
+### CORPUS-COVERAGE.2.38a — contain validation backannotation paths
+
+- `validate <artifact>` now writes the backannotated IR JSON to the explicit repository-owned CLI path and the
+  report to its adjacent `validation_report.json`; it never invokes an embedded canonical stage writer.
+- A copied-artifact regression covers SourceIR, EvidenceIR, SemanticIR, IntentIR, and ISF adapter artifacts. Each
+  copy gains its report while a byte snapshot proves the complete canonical output tree stays unchanged.
+- A real five-stage #38 copy replay with the release binary confirms the same containment. The original six
+  baseline hashes/counts and the validator-side-effect chain remain preserved until authenticated-source ingest
+  regenerates #38; the overwritten original bytes are not misrepresented as recoverable.
+- Formatting, warning-deny Clippy, 1,788 tests / five ignored, rustdoc, mdBook, doctrines, persisted paths, and
+  project-data locality pass. The required status record triggers an exact 12-record rollover into sealed segment
+  `0005`, leaving a 60-record warning-safe live root. Parent `.2.38` resumes at guarded source regeneration.
+
 ### CORPUS-COVERAGE.2.37 — sign off AArch64 External Debug refresh
 
 - Guarded CPU ingest produces 25 pages, 11 visuals, two tables, 36 sections, and 266 elements at 19% peak
