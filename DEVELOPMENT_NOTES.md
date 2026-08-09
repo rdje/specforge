@@ -1,4 +1,28 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9a (`2026-08-09`) — partition authority, not chronology
+
+The shared index is not merely near a configured limit: the measured next normal route is larger than its
+remaining pre-rollover headroom. Continuing to append would make the retrieval route itself the first
+uncontained surface. The stable part of this topology is the ledger set, not the segment set, so the shared file
+should name exactly four ledgers and stop growing. Each ledger can then own its independently bounded membership
+and identity plane.
+
+The manifest capacity calculation uses existing segment ceilings rather than optimistic growth guesses. At one
+capsule plus 28 segments, every ledger stays below the unchanged 32-record and 32,768-byte controls, and projected
+indexes fit the new per-ledger bounds. This keeps ordinary navigation to two bounded hops and does not make any
+immutable member a mandatory live read.
+
+The reader census exposed a separate correctness issue worth fixing in the same atomic migration: requiring edge
+strings is not equivalent to validating a graph. A broken successor, cycle, or disconnected segment can carry
+well-formed scalar fields and still defeat exact chronology. `.9b` therefore treats the manifest as a verified
+simple chain and the index as its exact ordered human projection. The old shared manifest is removed only after
+the partitioned byte union, every switched consumer, identity, route, and residue check succeeds.
+
+The same resulting-tree report showed that the containment program's own task file is now 229,064 bytes, above
+its warning with 21,611 bytes of pre-rollover headroom. That is intentionally not hidden inside the archive-route
+implementation. `.10a`/`.10b` own a separate lossless current/history task-evidence topology, and `.9b` must stay
+within the measured remaining margin.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8g (`2026-08-09`) — currentness is a data-flow property
 
 The closure scan does not ban a number or hash from appearing more than once. It asks whether an occurrence

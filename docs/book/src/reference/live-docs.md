@@ -88,13 +88,40 @@ The `.8g` audit now closes the derived-state program. It independently confirms 
 members, 17 once-only markers, both Cargo/Rust and Git-index/FSMGen authority groups, and zero live FSMGen values
 in executable source. Historical records remain immutable evidence; Rust constants in the adapter suite are
 self-contained temporary contracts rather than repository-current shadows. All 83 focused cases and full CI
-pass. The next containment frontier is `.9a`, which must bound the shared archive route before another segment.
+pass. The next containment frontier is the archive route itself.
 
 Writing that audit result also exercised the status ledger's second post-migration rollover. Twelve exact records
 were sealed in segment 0002 (10,894 bytes; SHA-256 `11e058…28df`) and the live root returned to 60 records without
 touching its trailer or 40-record migration suffix. The added direct route moves the shared archive index to
-81 lines / 5,311 bytes, only 218 bytes before mandatory rollover. `.9a`/`.9b` therefore own a bounded archive-route
-topology before any third segment; no history, route, threshold, or ceiling is silently discarded or widened.
+81 lines / 5,311 bytes, only 218 bytes before mandatory rollover. The last route entry used 301 bytes, so another
+same-shaped append cannot be admitted. `.9a` measured all readers and accepted ADR 0017; `.9b` must land its
+bounded archive-route topology before any third segment. No history, route, threshold, or ceiling is silently
+discarded or widened.
+
+#### Bounded archive-route design
+
+The shared file becomes a stable landing that names exactly the four ledgers and never lists a capsule or
+segment. Each existing ledger archive directory instead owns a bounded complete `INDEX.md` and `manifest.jsonl`.
+The ledger index links its live root, all sealed segments, immutable capsule, and manifest in verified
+newest-to-oldest order; the manifest contains only that ledger's records. Reader navigation remains bounded at
+landing → ledger index → selected member, and immutable history is not part of ordinary bootstrap reads.
+
+The design retains the current landing and manifest controls. Existing archive surfaces allow no more than 28
+segments per ledger; one capsule plus all 28 projects to at most 29 records / 28,420 bytes, below the unchanged
+32-record / 32,768-byte manifest limits. The four ledger indexes receive independent per-file and aggregate
+bounds rather than borrowing headroom from a wider shared ceiling.
+
+The design audit also corrected the acceptance contract. The current checker requires predecessor and successor
+strings but does not yet prove that they describe one reciprocal, acyclic, complete chain. `.9b` must reject
+missing or duplicate edges, broken successors, cycles, disconnected or foreign members, and any index whose
+exact membership/order differs from the verified chain. It must copy and verify the existing manifest lines
+byte-for-byte, switch every consumer, prove direct retrieval, and only then remove the exact retired shared
+manifest with a zero-residue census.
+
+The `.9a` resulting-tree report also catches pressure in the containment program's own task record: 229,064
+bytes, 82.2% of its health target, with 21,611 bytes of pre-rollover headroom. Separate `.10a`/`.10b` leaves own
+its lossless current/history topology. The archive-route implementation must stay within that measured margin;
+neither concern authorizes trimming history or widening a ceiling.
 
 All four root-ledger migrations have landed. `CHANGES.md`, `DEVELOPMENT_NOTES.md`,
 `LIVE_ACHIEVEMENT_STATUS.md`, and `RUST_CODEBASE_ANALYSIS.md` are bounded current views, while their

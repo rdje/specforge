@@ -37,7 +37,9 @@
   still stores the live gitlink value. `.8f` now derives every synthetic required literal from the contract and
   proves unrelated replacement literals have no executable fallback. `.8g` independently confirms all 17
   declared members/markers and both authority groups, finds no live FSMGen value in executable source, and closes
-  `.8`; `.9a` is the next local containment frontier.
+  `.8`. `.9a` measures the 218-byte shared-route boundary and accepts ADR 0017's fixed four-route landing plus
+  bounded per-ledger index/manifest authorities. It also makes complete acyclic chronology and exact index order
+  mandatory `.9b` checks before the atomic migration; no existing threshold or ceiling is widened.
 <!-- LIVE-DOCUMENT-SIZE-CONTAINMENT-LOCAL-ADOPTION:END -->
 
 ---

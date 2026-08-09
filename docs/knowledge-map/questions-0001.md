@@ -278,6 +278,8 @@
   > does the path portability contract cover FigureRegion raw images
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > does the persisted path gate cover dormant schemas
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > does the rolling ledger verifier validate predecessor successor chronology
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > does the stage-staleness detector false-fire on register/command docs with 0 relations (no — both empty)
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
@@ -296,5 +298,3 @@
   > how are CHANGES DEVELOPMENT_NOTES LIVE_ACHIEVEMENT_STATUS and RUST_CODEBASE_ANALYSIS split into records
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
   > how are Docling-fragmented register field tables de-fragmented without fabricating a field set
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > how are FSM states recovered when the protocol quotes them as node modes instead of <Name> state

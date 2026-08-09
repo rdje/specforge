@@ -394,21 +394,41 @@ verification before correction.
   without widening a ceiling or making immutable segments mandatory live reads.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9a`
-  Status: `pending` (`2026-08-09`, PROBE/DOC)
+  Status: `done` (`2026-08-09`, PROBE/DOC)
   Goal: measure archive-index growth by ledger and segment, enumerate every reader/verifier/link, and lock a
   bounded landing/partition or equivalent topology plus atomic migration and fail-closed acceptance contract.
+  **Done:** ADR 0017 locks a stable four-route landing plus four bounded per-ledger index/manifest authorities;
+  the exact consumer/capacity census and missing complete-chain enforcement become `.9b` acceptance requirements.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9b`
   Status: `pending` (`2026-08-09`, CODE/DOC)
   Goal: implement the accepted archive-route topology, migrate every reader atomically, exercise direct
   retrieval and overflow mutations, update the book/fact/live surfaces, and close `.9` from a clean commit.
 
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10`
+  Status: `pending` (`2026-08-09`)
+  Children: `.10a`, `.10b`
+  Goal: contain this program's own task-evidence surface after it crossed its byte warning, preserving complete
+  decisions, acceptance, verification, and commit history through bounded current navigation and exact history.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10a`
+  Status: `pending` (`2026-08-09`, PROBE/DOC)
+  Goal: measure semantic regions, readers, update rates, and retrieval requirements; select a bounded current
+  root plus lossless partition/archive topology before the task file reaches mandatory byte rollover.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10b`
+  Status: `pending` (`2026-08-09`, CODE/DOC)
+  Goal: implement the accepted task-evidence topology atomically, migrate every reader, verify exact retrieval
+  and bounds, and remove only proven superseded live duplication.
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `.9a` | `pending` (`2026-08-09`) | Lock the bounded archive-route topology before another ledger segment crosses the index rollover threshold. |
-| 2 | `.9b` | `pending` (`2026-08-09`) | Implement and independently verify the accepted archive-index containment design. |
+| 1 | `.9b` | `pending` (`2026-08-09`) | Implement the accepted four-part route and complete-chain verifier before another segment is admitted. |
+| 2 | `.10a` | `pending` (`2026-08-09`) | The program task file is 229,064 bytes (82.2% of health); design containment before 250,676-byte rollover. |
+| 3 | `.10b` | `pending` (`2026-08-09`) | Implement the accepted task-evidence route without losing the program's exact decisions or verification history. |
+| — | `.9a` | `done` (`2026-08-09`) | Exact pressure, reader, capacity, and chronology-gap evidence are locked in ADR 0017 and the design report. |
 | — | `.8g` | `done` (`2026-08-09`) | Cold value/consumer scan is clean; all 17 markers, 83 focused cases, full CI, and exact projections pass; `.8` closed. |
 | — | `.8f` | `done` (`2026-08-09`) | Synthetic required literals derive from contract data; a changed-literal fixture and 11/11 protocol cases pass. |
 | — | `.8e` | `done` (`2026-08-09`) | Data markers and authorities pass, but a broader scan found the live FSMGen pin stored in a self-test renderer; closure refused. |
@@ -591,6 +611,26 @@ verification before correction.
   change/development ledgers, local doctrine note, mdBook, exact book authority, verification and commit records;
   preserve `.9a` as the next owned archive-route frontier.
 
+### Acceptance Checklist (enforced) — `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9a`
+
+- [x] **REPRODUCE / MEASURE** — pin the shared index at 81 lines / 5,311 bytes with 218 bytes before rollover;
+  prove the last route needed 301 bytes; measure all per-ledger index blocks, every manifest row/control, current
+  reader occurrence, and the live-status record boundary.
+- [x] **ROOT CAUSE (WHY + WHERE)** — four independently growing ledgers share one append-growing route, while
+  the checker requires predecessor/successor strings but never proves reciprocal, complete, acyclic chronology.
+- [x] **ADDRESSED (verified design)** — ADR 0017 selects a fixed four-route landing plus one complete bounded
+  index/manifest authority per ledger; existing 28-segment surface limits fit below unchanged per-manifest
+  controls, and `.9b` has an atomic copy/verify/switch/delete plan.
+- [x] **NO REGRESSION** — no archive member, shared route/manifest, consumer, executable checker, product
+  artifact, threshold, or ceiling changes in this design leaf; current doctrine, documentation, map, and
+  retrieval checks remain green.
+- [x] **GENERICITY** — partitioning follows declared ledger ownership and graph consistency, not current segment
+  names or counts. Chain validation rejects foreign, missing, duplicate, cyclic, disconnected, or misordered
+  members for any declared ledger.
+- [x] **LOCKSTEP** — ADR, research report, Knowledge Map fact, task/roadmap/status/resume pointer,
+  change/development ledgers, doctrine note, mdBook, exact book authority, verification, and commit records all
+  route the next action to `.9b` before any next rollover.
+
 ## Decisions
 
 - `2026-08-09`: **GO on the newer portable derived-state semantics.** External collection-index and bounded
@@ -643,6 +683,15 @@ verification before correction.
   authority-checked. Historical ledgers/reports and self-contained test-contract constants are not ambient
   current claims because they neither consume nor shadow repository authorities. `.8g` therefore closes `.8`;
   `.9a` is the next containment frontier.
+- `2026-08-09`: **Use a stable landing plus per-ledger archive authorities (`.9a`, ADR 0017).** The shared index
+  has 218 bytes before rollover and the last route needed 301. Its fixed replacement names only four ledgers;
+  each ledger owns a bounded complete index and byte-preserving manifest under unchanged controls. `.9b` must
+  additionally prove one reciprocal, acyclic, complete live→segments→capsule chain and exact index order because
+  the current verifier checks only that predecessor/successor scalars exist.
+- `2026-08-09`: **Own the containment tree's own byte warning before rollover.** The `.9a` resulting-tree report
+  identifies this file as the largest `task_evidence` member at 2,420 lines / 229,064 bytes, above its 222,823-byte
+  warning and with 21,611 bytes of pre-rollover headroom before 250,676 bytes. `.10a` must design a lossless bounded current/history
+  topology; `.10b` implements it. No trimming or ceiling increase is authorized.
 
 - `2026-08-08`: **GO on local adoption.** SpecForge meets multiple guide triggers: bounded-pointer
   routing pressure, mandatory multi-megabyte live reads, unbounded append-only neighbors, generated
@@ -2086,6 +2135,8 @@ progress state. No other book part changes unless the final audit finds a separa
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-09` | `.9a` | shared index block/growth/pressure census; manifest record/control/capacity projection; exact reader/consumer occurrences; live-status record boundary; rolling checker/index validator source audit | design accepted: 81 lines / 5,311 bytes leaves 218 bytes while the last route needed 301; four one-capsule/28-segment partitions project to 26,069–28,420 bytes under unchanged 32-record / 32,768-byte controls; current chronology scalars lack reciprocal/acyclic/completeness enforcement |
+| `2026-08-09` | `.9a` | focused rolling-ledger self-test/report; composed doctrines/docs/map/catalog checks; exact book and fact-index aggregates; diff/locality hygiene | green: 159 facts / 1,118 questions / eight shards, fact catalog 172 lines / 32,634 bytes, book 36 files / 13,143 lines / 795,294 bytes; no archive member, route, consumer, checker, threshold, or ceiling changed; ADR 0017 makes `.9b` the next archive action. The report separately exposes this task file at 229,064 bytes / 82.2% health and opens `.10a`/`.10b` before rollover |
 | `2026-08-09` | `.8g` | cold 14-primary/3-secondary JSONL inventory; 17/17 exact marker cardinality; tracked Rust/hash/route/path occurrence classification; executable-source scans; Cargo and Git-index authorities | clean: no live FSMGen hash/route exists in executable source; three Rust and two FSMGen live copies are declared and agree; historical evidence and self-contained temporary Rust fixtures have no authority coupling; neutral/adapter/protocol source boundaries hold |
 | `2026-08-09` | `.8g` | 47 neutral + 25 adapter + 11 protocol cases; real derived-state/protocol reports; full `bash scripts/run_ci.sh`; composed doctrines; exact projections/aggregates | green: 83 focused cases, six doctrines, 1,779 Rust tests / five ignored / zero failed, rustdoc, mdBook, and final locality pass; 627 Markdown / 41 surfaces, 159 facts / 1,114 questions / eight shards, fact index 32,634 bytes / 544 before rollover, and book 36 files / 13,116 lines / 793,253 bytes agree; `.8` closes with no product/artifact/data/donor/submodule/surface/threshold/ceiling change |
 | `2026-08-09` | `.8f` | Perl syntax; live-hash source absence; changed-entire-array derive-on-read case; real protocol `--check`/`--report`; protocol self-test; 47 neutral + 25 adapter cases; real 14-primary/3-secondary report | green: source stores no live pin and knows no literal role/index/shape; unrelated declared literals render and validate; protocol 11/11 plus all 72 derived-state cases pass; canonical feedback root/report and registry values remain unchanged |
@@ -2166,6 +2217,7 @@ progress state. No other book part changes unless the final audit finds a separa
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.9a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9a — design the bounded archive route` | exact pressure/readers/capacity + ADR 0017 four-part authority + complete-chain acceptance contract |
 | `.8g` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8g — close the derived-state audit plane` | clean data/value/consumer scan + 83 focused cases + full CI + `.8` closure |
 | `.8f` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8f — derive feedback self-test literals from data` | complete-array rendering + unrelated-literal proof + 11/11 protocol cases + zero stored live hash |
 | `.8e` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8e — reject closure on a hidden self-test pin` | cold data/source inventory + repository-wide value scan + owned `.8f` derive-on-read repair / `.8g` re-audit |
@@ -2204,6 +2256,15 @@ progress state. No other book part changes unless the final audit finds a separa
 | `.7` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7 — close the containment and locality program` | independent whole-program retrieval audit + cold-read defect gates + final book method-doc + clean closure |
 
 ## Changelog
+
+- `2026-08-09`: `.9a` PROBE/DOC DONE. The shared route is 81 lines / 5,311 bytes with 218 bytes before rollover,
+  while its last segment route needed 301 bytes. Exact reader, block, manifest, and future-capacity measurements
+  select ADR 0017's stable four-route landing plus one bounded index/manifest per ledger under unchanged limits.
+  The audit also finds chronology scalars are not validated as a complete acyclic chain; `.9b` owns that repair
+  and the atomic archive migration before another segment. No archive, consumer, executable, threshold, or
+  ceiling changed. Frontier → `.9b`.
+  The resulting-tree report also identifies this task file at 229,064 bytes, above its 80% warning with 21,611
+  bytes of pre-rollover headroom; `.10a`/`.10b` now own lossless task-evidence containment rather than hiding it.
 
 - `2026-08-09`: `.8g` AUDIT/DOC DONE; `.8` CLOSED. Cold enumeration proves all 14 primary plus three secondary
   declarations and 17 exact markers; current Cargo/Rust and Git-index/FSMGen authorities agree; executable source

@@ -1,3 +1,20 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9a — design the bounded archive route
+
+- Measured the shared route at 81 lines / 5,311 bytes with only 218 bytes before its mandatory byte rollover;
+  its last direct segment route used 301 bytes. Enumerated all four index blocks, ten manifest records, four
+  registry readers, 12 archive-surface consumers, current status-ledger pressure, and future partition capacity.
+- Accepted ADR 0017: keep one stable four-route landing and give each ledger a bounded complete `INDEX.md` and
+  `manifest.jsonl`. One capsule plus all 28 segments permitted by existing surface ceilings projects to at most
+  29 records / 28,420 bytes, under unchanged 32-record / 32,768-byte manifest controls.
+- Found that required predecessor/successor strings are not currently checked as a reciprocal, acyclic, complete
+  chain. `.9b` must add that proof, exact index membership/order, atomic byte-preserving manifest partitioning,
+  direct retrieval, and retired-shared-manifest residue rejection before another segment is admitted.
+- No archive member, shared route/manifest, consumer, executable checker, product artifact, threshold, or ceiling
+  changed. Focused rolling-ledger and composed documentation/doctrine gates pass. Frontier → `.9b`.
+- The resulting-tree report also exposed this program's task file at 229,064 bytes (82.2% of health), with 21,611
+  bytes of pre-rollover headroom. `.10a`/`.10b` now own lossless task-evidence containment; no ceiling increase or
+  history trimming is authorized.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8g — close the derived-state audit plane
 
 - Independently re-enumerated all 14 primary and three secondary records from JSONL and proved 17/17 exact

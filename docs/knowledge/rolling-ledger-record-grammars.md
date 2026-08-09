@@ -9,6 +9,8 @@ answers:
   - "where is the first post-migration LIVE_ACHIEVEMENT_STATUS rollover segment"
   - "where is the second LIVE_ACHIEVEMENT_STATUS rollover segment and what blocks the next one"
   - "where is the first post-migration DEVELOPMENT_NOTES rollover segment"
+  - "how will the shared rolling ledger archive index be partitioned"
+  - "does the rolling ledger verifier validate predecessor successor chronology"
 date: 2026-08-08
 status: current
 tags: [documentation, rolling-ledger, archive, continuity, validation]
@@ -66,7 +68,16 @@ capsule is
 `docs/archive/rolling-ledgers/rust-codebase-analysis/source-through-2026-08-08.md` with SHA-256
 `95e1665628b615498e94f67d6dc6e0083d4d104a6ca8a815b4c23cf2f97cc7ce`; its root is exactly the
 H1/Purpose prologue plus newest 60 H2 records. The lifecycle-only slice adds no architecture record.
-All four registry entries are now `migrated` and share the bounded manifest/index route.
+All four registry entries are now `migrated` and still share the bounded manifest/index route until `.9b` lands.
+The `.9a` census proves that the index has only 218 bytes before mandatory rollover while the last direct segment
+route required 301 bytes. ADR 0017 therefore selects a fixed four-route landing plus one bounded index and
+manifest per ledger. Existing per-ledger manifest capacity remains sufficient through each declared 28-segment
+surface ceiling without widening a control; direct retrieval remains at most two bounded hops.
+
+The same audit found an enforcement gap: manifest `predecessor` and `successor` values are required today, but
+the checker does not yet prove reciprocal edges, a complete acyclic chain, or the absence of disconnected
+segments. `.9b` must add that fail-closed chain proof and require each per-ledger index to list every verified
+member exactly once in chain order before the shared route can be retired.
 
 For an H2 live cut, one blank line immediately before the removed successor is boundary structure,
 not retained record content. The capsule preserves it exactly; the root renderer omits exactly that

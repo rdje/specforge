@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [repository-local-scratch](../knowledge/repository-local-scratch.md)
+  > what proved that analysis commands can violate project data locality
+- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
+  > what research did SpecForge leave out and why
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > what reset_value shapes are composable vs residual (numeric dec/0x/0b/…h compose; UNKNOWN, IMPLEMENTATION DEFINED, 0x-------- partial-unknown, -, X, Impl Spec, Configuration dependent, enum-annotated are honest residuals — ADR-0006, no name list)
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > what signals belong to which AXI channel
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
@@ -270,6 +276,8 @@
   > which task owns deterministic Rust tests under repository-local TMPDIR
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
   > which task owns mdBook fence classification and doctest enforcement
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > which task tree crossed its live-document byte warning
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > which validate metrics/finding surface channel membership
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
@@ -290,11 +298,3 @@
   > why are conditional_rules excluded from the document-class decision
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > why are determiners (All Managers) NOT rejected by the .1a agent gate
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why are many distinct value-tables merged into one enum (build_symbol_definitions accumulates members by enum_name key, semantic.rs:2782-2789 — every 'TABLE'-named table fuses into one SymbolDefinitionRecord)
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > why are message fields not part of the document_class decision
-- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
-  > why are modal verbs must shall should may not flagged as ambiguous
-- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
-  > why are prior candidate fixture names not joined into one long Markdown line

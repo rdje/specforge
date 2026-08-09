@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
+  > how are FSM states recovered when the protocol quotes them as node modes instead of <Name> state
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > how are GICD_CHIPR<n> / TCU_NODE_CTRL n array registers named
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
@@ -296,5 +298,3 @@
   > how good is prose signal capture / .3a quality
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how is AXI organized / what are the AXI channels
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how is AXI per-signal channel membership recovered without a VLM

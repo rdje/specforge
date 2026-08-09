@@ -103,8 +103,11 @@ Five active program groups support that north star:
   contract data and proves whole-array replacement; `.8g` independently confirms 17/17 markers, both authority
   groups, and no executable live FSMGen value, closing `.8`. The live-document
   contracts also forced a second status rollover during that audit; its shared archive index is now 81 lines /
-  5,311 bytes and only 218 bytes before mandatory byte rollover, so `.9a`/`.9b` own a bounded route topology
-  before another segment. The completed `.0`–`.7`
+  5,311 bytes and only 218 bytes before mandatory byte rollover. `.9a` has measured every reader and accepted
+  ADR 0017's fixed four-route landing plus bounded per-ledger index/manifest authorities. It also found that the
+  existing checker does not prove complete acyclic predecessor/successor chronology. `.9b` now owns the atomic
+  migration and stronger verifier before another segment. The same report finds the adoption task evidence at
+  229,064 bytes / 82.2% health; `.10a`/`.10b` own lossless containment before its byte rollover. The completed `.0`–`.7`
   [`LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`](docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md)
   implementation keeps current documentation and project data bounded on the repository volume; completed
   [`ARTIFACT-PATH-PORTABILITY`](docs/tasks/ARTIFACT-PATH-PORTABILITY.md) extends move-safe storage through every
