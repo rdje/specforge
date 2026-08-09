@@ -63,6 +63,14 @@ the feedback JSON gitlink pin. This means executable comparisons are correct whi
 yet a complete copy inventory. `.8d` moves those paths and exact markers into bounded declarations and neutral
 validation; `.8e` repeats the audit before the program may close.
 
+`.8d` repairs that inventory boundary without inventing three more field contracts. The two adapter-backed
+primary records now carry three bounded `secondary_copies` entries: mdBook Rust is a governed `surface` member;
+CI Rust and the feedback JSON pin are repository-local `control` members. Each declaration names a closed role,
+safe path, and exact once-only marker. The neutral checker validates role/schema uniqueness, same-volume regular
+files, surface membership versus non-Markdown control ownership, and marker cardinality. The adapter consumes
+the required roles and contains none of the three path literals; alternate-path fixtures prove it cannot fall
+back. The focused plane is now 47 neutral plus 25 adapter cases. `.8e` remains the independent closure audit.
+
 Writing that audit result also exercised the status ledger's second post-migration rollover. Twelve exact records
 were sealed in segment 0002 (10,894 bytes; SHA-256 `11e058…28df`) and the live root returned to 60 records without
 touching its trailer or 40-record migration suffix. The added direct route moves the shared archive index to

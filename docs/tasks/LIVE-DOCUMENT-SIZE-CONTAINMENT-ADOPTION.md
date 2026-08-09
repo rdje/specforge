@@ -353,10 +353,12 @@ verification before correction.
   218 bytes before rollover; `.9` owns partitioning before another segment is admitted.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8d`
-  Status: `pending` (`2026-08-09`, CODE/DOC)
+  Status: `done` (`2026-08-09`, CODE/DOC)
   Goal: repair the `.8c` completeness defect by moving every secondary Rust/gitlink copy path and exact marker
   out of project-adapter source and into the bounded data registry; extend the neutral checker and fixtures to
   validate those declared dependencies while keeping project-specific value parsing isolated in the adapter.
+  **Done:** three data-owned secondary copies, neutral surface/control validation, declaration-only adapter reads,
+  and 72 no-fallback/fail-closed cases pass; `.8e` retains independent closure authority.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8e`
   Status: `pending` (`2026-08-09`, AUDIT/DOC)
@@ -384,10 +386,10 @@ verification before correction.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `.8d` | `pending` (`2026-08-09`) | Move all secondary copy membership into bounded data declarations and make the adapter consume declarations only. |
-| 2 | `.8e` | `pending` (`2026-08-09`) | Independently re-audit the repaired field plane and close `.8` only if no code-hidden copy remains. |
-| 3 | `.9a` | `pending` (`2026-08-09`) | Lock the bounded archive-route topology before another ledger segment crosses the index rollover threshold. |
-| 4 | `.9b` | `pending` (`2026-08-09`) | Implement and independently verify the accepted archive-index containment design. |
+| 1 | `.8e` | `pending` (`2026-08-09`) | Independently re-audit the repaired field plane and close `.8` only if no code-hidden copy remains. |
+| 2 | `.9a` | `pending` (`2026-08-09`) | Lock the bounded archive-route topology before another ledger segment crosses the index rollover threshold. |
+| 3 | `.9b` | `pending` (`2026-08-09`) | Implement and independently verify the accepted archive-index containment design. |
+| — | `.8d` | `done` (`2026-08-09`) | Three secondary copies are data-owned; neutral surface/control validation and declaration-only adapter execution pass 72 focused cases. |
 | — | `.8c` | `done` (`2026-08-09`) | Fourteen primary contracts pass, three code-hidden secondary copies are owned by `.8d`, and exact status segment 0002 plus the `.9` route boundary are durable. |
 | — | `.8b` | `done` (`2026-08-09`) | Four-class bounded field registry, neutral checker, eight existing verifiers, exact Rust/gitlink adapters, 44 fail-closed cases, and normative/reader alignment landed. |
 | — | `.8a` | `done` (`2026-08-09`) | The newer portable delta, existing surface oracles, three local gaps, 15 field-family dispositions, and bounded implementation contract are measured and published. |
@@ -480,6 +482,28 @@ verification before correction.
   roadmap/live status, task catalog, ledgers, `MEMORY.md`, mdBook, and commit evidence; preserve the fact-index
   disposition and track the archive-index rollover risk under `.9` without widening its ceiling.
 
+### Acceptance Checklist (enforced) — `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8d`
+
+- [x] **REPRODUCE / MEASURE** — preserve the `.8c` primary matrix and enumerate the three code-hidden secondary
+  copies, their exact paths/markers, adapter roles, surface/control ownership, and current values before mutation;
+  report final registry record/byte/scalar/array headroom and primary/secondary counts.
+- [x] **ROOT CAUSE (WHY + WHERE)** — encode copy membership in the data plane rather than executable source:
+  neutral validation owns bounded membership/locality/cardinality, while the adapter owns only declared-role
+  interpretation and Cargo/Git canonical comparisons.
+- [x] **ADDRESSED (verified)** — add bounded `secondary_copies` declarations for mdBook Rust, CI Rust, and
+  feedback JSON; validate their closed schema, safe same-volume regular paths, exact unique markers, role
+  uniqueness, and surface versus control ownership; remove all three path literals from adapter source and prove
+  alternate declared paths work without fallback.
+- [x] **NO REGRESSION** — existing 14 primary contracts/classes, eight core verifiers, canonical Cargo/Git
+  authorities, project behavior/artifacts, surfaces, thresholds, ceilings, and donor/submodule files remain
+  unchanged; focused suites, six doctrines, full CI, mdBook, locality, staged diff, and clean handoff pass.
+- [x] **GENERICITY** — the neutral checker contains no SpecForge field IDs, adapter roles, file names, semver/hash
+  inference, or heuristic discovery; closed ownership semantics and exact declarations fail closed in portable
+  repository-local fixtures.
+- [x] **LOCKSTEP** — registry/checkers/tests, doctrine/toolbox guidance, report/facts, task/roadmap/live ledgers,
+  `MEMORY.md`, and mdBook agree on data-owned exhaustive copy membership; `.8e` remains an independent audit and
+  `.9` retains the archive-index boundary.
+
 ## Decisions
 
 - `2026-08-09`: **GO on the newer portable derived-state semantics.** External collection-index and bounded
@@ -514,6 +538,11 @@ verification before correction.
   direct route moves the shared index to 81 lines / 5,311 bytes (84.4% / 86.4% of health limits), only 218 bytes
   before mandatory byte rollover. No history, route, threshold, or ceiling is discarded or widened; `.9a`/`.9b`
   must partition and verify the route before any third segment is admitted.
+- `2026-08-09`: **Secondary membership is a bounded nested declaration, not another field contract.** Each
+  adapter-backed primary may carry `secondary_copies` records with a closed role, safe path, exact marker, and
+  `surface` or `control` ownership. Surface members must name a current governed surface and match its targets;
+  control members must be repository-local non-Markdown regular files without a surface claim. The neutral
+  checker validates membership; the project adapter consumes required roles and contains no fallback paths.
 
 - `2026-08-08`: **GO on local adoption.** SpecForge meets multiple guide triggers: bounded-pointer
   routing pressure, mandatory multi-megabyte live reads, unbounded append-only neighbors, generated
@@ -1957,6 +1986,8 @@ progress state. No other book part changes unless the final audit finds a separa
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-09` | `.8d` | full `bash scripts/run_ci.sh`; composed six doctrines; format; warning-deny Clippy/tests; rustdoc; mdBook doctests/build; post-producer locality; exact projections/aggregates | green: six doctrines; 1,779 Rust tests pass / five ignored / zero failed; 627 Markdown / 41 surfaces, 159 facts / 1,113 questions / eight shards, fact index 32,643 bytes / 535 before rollover, and book 36 files / 13,097 lines / 791,641 bytes agree; no product/artifact/threshold/ceiling change |
+| `2026-08-09` | `.8d` | Perl syntax; real 14-primary/3-secondary report; 47 neutral cases; 25 adapter cases; forbidden-literal source scans; alternate declared mdBook/CI/JSON paths; composed `LIVE-DOC-SIZE`; mdBook doctests/build | green: one surface + two control secondaries, 6,865-byte registry / 789-byte maximum record; all 72 focused cases pass; old paths corrupted without fallback; neutral checker contains no local ids/roles; 36-file book 13,097 lines / 791,641 bytes and all current values agree |
 | `2026-08-09` | `.8c` | final `bash scripts/run_ci.sh`; staged doctrine model; format; warning-deny Clippy/tests; rustdoc; mdBook doctests/build; post-producer locality; exact aggregate census | green: six doctrines; 1,779 Rust tests pass / five ignored / zero failed; rustdoc and docs pass; 627 Markdown / 41 surfaces, 159 facts / 1,113 questions / eight shards, fact index 32,626 bytes / 552 before rollover, and book 36 files / 13,089 lines / 790,866 bytes agree; no threshold or ceiling changed |
 | `2026-08-09` | `.8c` | independent 14-contract/class/path/marker/authority matrix; neutral-source semantic-name census; real Cargo/README/book/CI and Git-index/Markdown/JSON comparison; 28 neutral + 16 adapter mutations | values and all 44 mutations green, but registry ownership incomplete: three secondary paths/markers exist only in adapter source; `.8d` repair and `.8e` re-audit opened instead of false closure |
 | `2026-08-09` | `.8c` | mandatory status-ledger rollover; pre-removal Git extraction; segment/live SHA-256 and record/line/byte/width identities; manifest/index chain; rolling-ledger report; complete `LIVE-DOC-SIZE` | exact segment 0002 equals the 12 pre-removal records at 10,894 bytes / `11e058…28df`; live root 72 → 60 with exact 40-record suffix and untouched trailer; 627 Markdown / 41 surfaces pass; archive index 81 lines / 5,311 bytes is owned by `.9` before its next 218-byte rollover boundary |
@@ -2029,6 +2060,7 @@ progress state. No other book part changes unless the final audit finds a separa
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.8d` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8d — declare every adapter secondary copy` | three bounded data-owned copies + neutral surface/control validation + declaration-only adapter + 72 focused cases |
 | `.8c` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8c — audit derived-state copy completeness` | independent copy-membership finding + exact second status rollover + owned `.8d`/`.8e`/`.9` frontiers |
 | `.8b` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8b — enforce exact current-state field authority` | 14 four-class contracts + neutral checker + exact Rust/gitlink adapters + 44 focused cases + normative/reader alignment |
 | `.8a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8a — measure derived-state contract delta` | donor/local identity + portable-delta classification + 15-family field census + bounded `.8b`/`.8c` design |
@@ -2063,6 +2095,11 @@ progress state. No other book part changes unless the final audit finds a separa
 | `.7` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7 — close the containment and locality program` | independent whole-program retrieval audit + cold-read defect gates + final book method-doc + clean closure |
 
 ## Changelog
+
+- `2026-08-09`: `.8d` CODE/DOC DONE. Added exactly three nested secondary-copy declarations; neutral
+  same-volume schema/role/ownership/surface/marker validation; declaration-only adapter reads; and alternate-path
+  no-fallback proofs. Registry 15 lines / 6,865 bytes / 789 maximum record; 47 + 25 focused cases, six doctrines,
+  1,779 tests / five ignored, rustdoc, mdBook, and locality pass. Frontier → `.8e` independent audit.
 
 - `2026-08-09`: `.8c` AUDIT/DOC DONE. Independently proved all 14 primary declarations and current
   comparisons, then refused `.8` closure because mdBook/CI Rust and feedback-JSON membership remain code-hidden;

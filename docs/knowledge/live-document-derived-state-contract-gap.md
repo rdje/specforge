@@ -1,6 +1,6 @@
 ---
 id: live-document-derived-state-contract-gap
-title: Derived-state secondary-copy coverage remains open
+title: Derived-state secondary-copy membership is data-owned pending audit
 answers:
   - "did SpecForge adopt the 2026 08 09 FSMGen derived state containment revision"
   - "which exact current state copies are not yet independently verified in SpecForge"
@@ -27,16 +27,23 @@ The three `.8a` value seams currently agree. Task-scoped corpus/cache counts rem
 JSON pin copies are compared with the stage-zero mode-`160000` Git-index object for `subs/fsmgen`.
 
 `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8b` implements the bounded local adoption. The neutral checker executes
-eight existing projection/currentness verifiers plus the two declared local adapter contracts. Forty-four focused
-cases reject stored derive-on-read values, missing/off-surface/duplicate markers, invalid classes, absent or failing
-verifiers, malformed capture boundaries, registry displacement, Cargo-copy drift, and gitlink mode/object drift.
-Existing generators remain authoritative and no ceiling is widened.
+eight existing projection/currentness verifiers plus the two declared local adapter contracts. Existing
+generators remain authoritative and no ceiling is widened.
 
 The `.8c` audit found that agreement is not yet complete data-plane ownership. The registry declares the README
 Rust marker and feedback Markdown hash, while the adapter hardcodes the mdBook/CI Rust paths and feedback JSON
 pin. Those comparisons and all 16 mutations pass, but a data-only audit cannot enumerate the complete copy set
 without reading implementation source. `.8` therefore remains open: `.8d` owns bounded secondary-copy
 declarations and neutral path/marker validation, and `.8e` independently re-audits before closure.
+
+`.8d` now owns the complete copy membership in data. The Rust record declares mdBook Rust as a governed surface
+copy and CI Rust as a control copy; the FSMGen record declares the feedback JSON pin as a control copy. The
+registry remains 14 primary contracts and adds exactly three nested secondary entries. The neutral checker
+validates closed roles/ownership, safe same-volume regular paths, exact markers, and current surface membership;
+the adapter source contains none of the three paths and consumes only required declared roles. Forty-seven
+neutral plus 25 adapter cases include alternate declared paths, missing/unknown/duplicate roles, marker drift,
+unsafe paths, and surface/control misuse. `.8e` still must independently prove the resulting tree before `.8`
+closes.
 
 The card/index plane remains an explicit implementation constraint. `.8b` updates this same card rather than
 adding another; any future crossing of the rollover threshold requires an owned partition, not a wider ceiling.

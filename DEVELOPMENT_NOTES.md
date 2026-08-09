@@ -1,4 +1,22 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8d (`2026-08-09`) — parsing may be code; membership must be data
+
+The repair deliberately keeps semantic interpretation in the project adapter. Cargo semver normalization, the
+feedback JSON structure, and the Git-index mode/stage/object grammar are project-specific and do not belong in a
+neutral checker. What moved is the exhaustive copy set: roles, paths, exact markers, and surface/control
+ownership now live in the bounded registry where a reader can audit them without interpreting Perl source.
+
+`surface` and `control` are ownership claims, not convenience labels. A surface copy must name a current
+governed surface whose target pattern includes the path. A control copy must be a repository-local non-Markdown
+regular file and cannot claim a surface. Both must stay on the repository volume and contain their exact marker
+once. This prevents control YAML/JSON from becoming invented documentation surfaces while preventing Markdown
+copies from escaping the complete surface census.
+
+The strongest no-fallback proof is behavioral: each secondary role is redirected to an alternate declared path
+while the former hardcoded location is corrupted. All three adapters still pass. Missing, unknown, duplicate,
+unsafe, and marker-drift declarations fail. A source scan additionally rejects reintroduction of the three old
+path literals, so registry and execution cannot silently split again before `.8e` performs its cold audit.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8c (`2026-08-09`) — executable agreement is not inventory completeness
 
 The adapter correctly compares every copy it knows about, and its mutation suite correctly fails every selected

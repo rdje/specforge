@@ -79,6 +79,15 @@ sub contract {
     die "fixture contract '$id' does not exist\n";
 }
 
+sub secondary_copy {
+    my ($fixture, $role) = @_;
+    my $copies = contract($fixture, 'adapter_copy')->{secondary_copies};
+    for my $copy (@$copies) {
+        return $copy if ($copy->{role} // '') eq $role;
+    }
+    die "fixture secondary copy '$role' does not exist\n";
+}
+
 sub new_fixture {
     my $directory = tempdir(
         'derived-state-tests.XXXXXX',
@@ -101,6 +110,8 @@ sub new_fixture {
         "# Evidence\nImmutable measurement: 7\nCaptured by fixture revision\n",
     );
     write_text($directory, 'history.md', "# Historical terminal\n");
+    write_text($directory, 'secondary.md', "# Secondary\nSurface copy: yes\n");
+    write_text($directory, 'control.yml', "control_copy: yes\n");
     write_text(
         $directory,
         'scripts/core-ok.pl',
@@ -153,6 +164,11 @@ sub new_fixture {
                 targets => ['history.md'],
                 lifecycle => 'archive_terminal',
             },
+            {
+                surface_id => 'secondary_surface',
+                targets => ['secondary.md'],
+                lifecycle => 'maintained_reference',
+            },
         ],
         derived_meta => $derived_meta,
         contracts => [
@@ -195,6 +211,21 @@ sub new_fixture {
                 authority => 'fixture adapter authority',
                 accessor => 'scripts/adapter-ok.pl',
                 verifier => 'adapter:scripts/adapter-ok.pl',
+                secondary_copies => [
+                    {
+                        role => 'surface_copy',
+                        ownership => 'surface',
+                        surface_id => 'secondary_surface',
+                        path => 'secondary.md',
+                        field_marker => 'Surface copy: yes',
+                    },
+                    {
+                        role => 'control_copy',
+                        ownership => 'control',
+                        path => 'control.yml',
+                        field_marker => 'control_copy: yes',
+                    },
+                ],
             },
             {
                 record_type => 'contract',
@@ -275,6 +306,18 @@ sub expect_case {
 }
 
 {
+    my $source = read_text($root, 'scripts/check_derived_state_contracts.pl');
+    my @project_terms = grep { index($source, $_) >= 0 } qw(
+      rust_prerequisite_copies fsmgen_gitlink_copies rust_book rust_ci feedback_contract_json
+    );
+    report_result(
+        'neutral checker contains no project contract identifiers or adapter roles',
+        !@project_terms,
+        @project_terms ? "project terms: @project_terms\n" : '',
+    );
+}
+
+{
     my $fixture = new_fixture();
     my ($status, $output) = run_checker($fixture);
     my $passed = $status == 0
@@ -315,6 +358,77 @@ expect_case('duplicate exact markers fail closed', 0, qr/marker is declared more
     $copy{contract_id} = 'intent_duplicate_marker';
     $copy{field_id} = 'intent_other_field';
     push @{ $fixture->{contracts} }, \%copy;
+});
+expect_case('secondary copies reject unknown fields', 0, qr/unknown field 'fallback_path'/, sub {
+    secondary_copy($_[0], 'control_copy')->{fallback_path} = 'hidden.yml';
+});
+expect_case('non-copy classes reject secondary declarations', 0, qr/unknown field 'secondary_copies'/, sub {
+    contract($_[0], 'intent')->{secondary_copies} = [];
+});
+expect_case('secondary copies must be a non-empty array', 0, qr/secondary_copies must be a non-empty array/, sub {
+    contract($_[0], 'adapter_copy')->{secondary_copies} = [];
+});
+expect_case('secondary copy roles must be unique', 0, qr/secondary role 'surface_copy' is declared more than once/, sub {
+    secondary_copy($_[0], 'control_copy')->{role} = 'surface_copy';
+});
+expect_case('secondary copy roles use bounded identifiers', 0, qr/role 'Surface Copy' has an invalid identifier shape/, sub {
+    secondary_copy($_[0], 'surface_copy')->{role} = 'Surface Copy';
+});
+expect_case('secondary copy ownership is closed', 0, qr/invalid ownership 'external'/, sub {
+    secondary_copy($_[0], 'control_copy')->{ownership} = 'external';
+});
+expect_case('secondary copy paths reject traversal', 0, qr/secondary_copies\[1\] path is absolute, escaping, or malformed/, sub {
+    secondary_copy($_[0], 'control_copy')->{path} = '../control.yml';
+});
+expect_case('secondary copy paths require regular files', 0, qr/path is missing or not a regular file: missing.yml/, sub {
+    secondary_copy($_[0], 'control_copy')->{path} = 'missing.yml';
+});
+expect_case('secondary copy paths reject symlinks', 0, qr/path is missing or not a regular file: linked.yml/, sub {
+    my ($fixture) = @_;
+    symlink path_in($fixture->{root}, 'control.yml'), path_in($fixture->{root}, 'linked.yml')
+        or die "cannot create fixture symlink: $!\n";
+    secondary_copy($fixture, 'control_copy')->{path} = 'linked.yml';
+});
+expect_case('surface copies require a surface identifier', 0, qr/surface ownership requires surface_id/, sub {
+    delete secondary_copy($_[0], 'surface_copy')->{surface_id};
+});
+expect_case('surface copies reject unknown surfaces', 0, qr/names unknown surface 'missing_surface'/, sub {
+    secondary_copy($_[0], 'surface_copy')->{surface_id} = 'missing_surface';
+});
+expect_case('surface copies reject historical surfaces', 0, qr/must govern a current maintained surface/, sub {
+    my ($fixture) = @_;
+    my $copy = secondary_copy($fixture, 'surface_copy');
+    $copy->{surface_id} = 'historical_surface';
+    $copy->{path} = 'history.md';
+    $copy->{field_marker} = '# Historical terminal';
+});
+expect_case('surface copies reject off-surface paths', 0, qr/path is outside surface 'secondary_surface'/, sub {
+    my ($fixture) = @_;
+    my $copy = secondary_copy($fixture, 'surface_copy');
+    $copy->{path} = 'current.md';
+    $copy->{field_marker} = '# Current';
+});
+expect_case('control copies reject surface identifiers', 0, qr/control ownership must not declare surface_id/, sub {
+    secondary_copy($_[0], 'control_copy')->{surface_id} = 'secondary_surface';
+});
+expect_case('Markdown secondary copies require surface ownership', 0, qr/Markdown path must use surface ownership/, sub {
+    my ($fixture) = @_;
+    my $copy = secondary_copy($fixture, 'control_copy');
+    $copy->{path} = 'secondary.md';
+    $copy->{field_marker} = 'Surface copy: yes';
+});
+expect_case('secondary copies reject missing exact markers', 0, qr/secondary_copies\[1\] field marker must occur exactly once.*found 0/, sub {
+    secondary_copy($_[0], 'control_copy')->{field_marker} = 'control_copy: missing';
+});
+expect_case('secondary copies reject duplicated exact markers', 0, qr/secondary_copies\[1\] field marker must occur exactly once.*found 2/, sub {
+    my ($fixture) = @_;
+    write_text($fixture->{root}, 'control.yml', "control_copy: yes\ncontrol_copy: yes\n");
+});
+expect_case('secondary and primary locations cannot duplicate exact markers', 0, qr/marker is declared more than once/, sub {
+    my ($fixture) = @_;
+    my $copy = secondary_copy($fixture, 'control_copy');
+    $copy->{path} = 'current.md';
+    $copy->{field_marker} = 'Verified adapter: yes';
 });
 expect_case('unsafe paths fail closed', 0, qr/path is absolute, escaping, or malformed/, sub {
     contract($_[0], 'intent')->{path} = '../escape.md';

@@ -1,3 +1,20 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8d — declare every adapter secondary copy
+
+- Extended the two adapter-backed field contracts with exactly three bounded `secondary_copies` entries:
+  mdBook Rust is a governed surface copy; CI Rust and the feedback JSON pin are repository-local control copies.
+  The registry remains 14 primary contracts / 15 lines and is 6,865 bytes with a 789-byte maximum record.
+- The neutral checker now validates the nested closed schema, unique roles, `surface` versus `control` ownership,
+  safe same-volume regular paths, current surface membership, non-Markdown control identity, and exact globally
+  unique markers. Its source contains no local field IDs, roles, paths, or value-shape discovery.
+- The project adapter consumes the primary declaration plus required secondary roles and contains none of the
+  three secondary path literals. Alternate declared mdBook, CI, and JSON fixtures pass while their former paths
+  are deliberately corrupted, proving there is no fallback list.
+- Focused enforcement is now 47 neutral plus 25 adapter cases. Cargo `rust-version` and the stage-zero mode-160000
+  Git-index object remain canonical; all actual copies agree and no product behavior or canonical artifact changed.
+- Full CI passes all six doctrines, formatting, warning-deny Clippy, 1,779 Rust tests / five ignored, rustdoc,
+  mdBook doctests/build, and final locality. The resulting fact index is 32,643 bytes, 535 before rollover;
+  `.8e` owns independent closure rather than reusing implementation confidence.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8c — refuse closure on code-hidden secondary copies
 
 - Independently enumerated all 14 contracts: 1 derive-on-read / 2 authored-intent / 1 immutable-evidence / 10

@@ -42,6 +42,8 @@ my %historical_lifecycle = map { $_ => 1 } qw(
 );
 my %executed_core;
 my %class_count;
+my %secondary_ownership_count;
+my $secondary_copy_count = 0;
 
 my (undef, $surfaces) = read_jsonl_registry(
     absolute($surfaces_rel),
@@ -93,6 +95,8 @@ if ($report) {
         contracts => scalar(@$contracts),
         classifications => \%class_count,
         executed_core_verifiers => scalar(keys %executed_core),
+        secondary_copies => $secondary_copy_count,
+        secondary_ownership => \%secondary_ownership_count,
     }), "\n";
 } else {
     print "derived-state: ", scalar(@$contracts),
@@ -243,7 +247,7 @@ sub validate_contract {
     my @class_fields = $classification eq 'derive_on_read'
         ? qw(accessor forbidden_storage_marker verifier)
         : $classification eq 'verified_copy'
-        ? qw(accessor verifier)
+        ? qw(accessor verifier secondary_copies)
         : $classification eq 'immutable_evidence'
         ? qw(capture_boundary)
         : ();
@@ -339,6 +343,12 @@ sub validate_contract {
             if defined($verifier) && $verifier ne 'builtin:derive_on_read';
     } elsif ($classification eq 'verified_copy') {
         required_class_scalar($contract, 'accessor', $id);
+        validate_secondary_copies(
+            $contract->{secondary_copies},
+            $id,
+            $surfaces,
+            $marker_seen,
+        ) if exists $contract->{secondary_copies};
         my $verifier = required_class_scalar($contract, 'verifier', $id);
         execute_verifier($id, $verifier) if defined $verifier;
     } elsif ($classification eq 'immutable_evidence') {
@@ -346,6 +356,107 @@ sub validate_contract {
         my $count = defined($boundary) ? literal_occurrences($content, $boundary) : 0;
         problem("derived-state contract '$id' capture boundary must occur exactly once in $path (found $count)")
             if defined($boundary) && $count != 1;
+    }
+}
+
+sub validate_secondary_copies {
+    my ($copies, $contract_id, $surfaces, $marker_seen) = @_;
+    if (ref($copies) ne 'ARRAY' || !@$copies) {
+        problem("derived-state contract '$contract_id' secondary_copies must be a non-empty array");
+        return;
+    }
+
+    my %role_seen;
+    for my $index (0 .. $#$copies) {
+        my $copy = $copies->[$index];
+        my $label = "derived-state contract '$contract_id' secondary_copies[$index]";
+        if (ref($copy) ne 'HASH') {
+            problem("$label must be an object");
+            next;
+        }
+        reject_unknown_fields(
+            $copy,
+            $label,
+            qw(role ownership surface_id path field_marker),
+        );
+
+        my %value;
+        for my $field (qw(role ownership path field_marker)) {
+            $value{$field} = scalar_value($copy->{$field});
+            problem("$label lacks non-empty scalar '$field'") if !defined $value{$field};
+        }
+        my $role = $value{role};
+        if (defined $role) {
+            problem("$label role '$role' has an invalid identifier shape")
+                if $role !~ /\A[a-z][a-z0-9._-]*\z/;
+            problem("derived-state contract '$contract_id' secondary role '$role' is declared more than once")
+                if $role_seen{$role}++;
+        }
+
+        my $ownership = $value{ownership};
+        if (defined($ownership) && $ownership ne 'surface' && $ownership ne 'control') {
+            problem("$label has invalid ownership '$ownership'");
+        }
+
+        my $path = $value{path};
+        if (!defined($path) || !safe_relative_path($path)) {
+            problem("$label path is absolute, escaping, or malformed");
+            next;
+        }
+        my $absolute_path = absolute($path);
+        if (!-f $absolute_path || -l $absolute_path) {
+            problem("$label path is missing or not a regular file: $path");
+            next;
+        }
+        my $device = (stat($absolute_path))[0];
+        if (!defined($device) || $device != $root_device) {
+            problem("$label path is off the repository volume: $path");
+            next;
+        }
+
+        my $surface_id = scalar_value($copy->{surface_id});
+        if (defined($ownership) && $ownership eq 'surface') {
+            if (!defined $surface_id) {
+                problem("$label surface ownership requires surface_id");
+            } else {
+                my $surface = $surfaces->{$surface_id};
+                if (!defined $surface) {
+                    problem("$label names unknown surface '$surface_id'");
+                } else {
+                    my $lifecycle = scalar_value($surface->{lifecycle}) // '';
+                    problem("$label must govern a current maintained surface")
+                        if $historical_lifecycle{$lifecycle};
+                    my $targets = $surface->{targets};
+                    if (ref($targets) ne 'ARRAY'
+                        || !grep { safe_relative_pattern($_) && $path =~ glob_regex($_) } @$targets) {
+                        problem("$label path is outside surface '$surface_id': $path");
+                    }
+                }
+            }
+        } elsif (defined($ownership) && $ownership eq 'control') {
+            problem("$label control ownership must not declare surface_id") if defined $surface_id;
+            problem("$label Markdown path must use surface ownership: $path") if $path =~ /\.md\z/i;
+        }
+
+        open my $fh, '<:raw', $absolute_path or do {
+            problem("$label cannot read $path: $!");
+            next;
+        };
+        local $/;
+        my $content = <$fh> // '';
+        close $fh or problem("$label cannot close $path: $!");
+
+        my $marker = $value{field_marker};
+        if (defined $marker) {
+            my $marker_key = join("\0", $path, $marker);
+            problem("derived-state marker is declared more than once: $path $marker")
+                if $marker_seen->{$marker_key}++;
+            my $count = literal_occurrences($content, $marker);
+            problem("$label field marker must occur exactly once in $path (found $count)")
+                if $count != 1;
+        }
+        $secondary_copy_count++;
+        $secondary_ownership_count{$ownership}++ if defined $ownership;
     }
 }
 

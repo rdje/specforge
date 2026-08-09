@@ -2,7 +2,7 @@
 ## Local adoption note — SpecForge
 
 - Authority: SpecForge owner, adopted 2026-08-08 under decision 0007 and task-tree
-  `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3b`; deliberately revised 2026-08-09 under `.8b`.
+  `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3b`; deliberately revised 2026-08-09 under `.8b` and `.8d`.
 - Authoritative copy: repository-root `LIVE_DOCUMENT_SIZE_CONTAINMENT.md`. Bootstrap files may
   point here, but they are not the doctrine's authority.
 - Independence: the FSMGen doctrine and adoption guide were reviewed as precedent, not as an
@@ -10,8 +10,8 @@
   conclusions never synchronize automatically.
 - Data plane: `doctrine/live_document_size/surfaces.jsonl` owns surface classification, local
   limits, baselines, transitions, indexes, and verifiers;
-  `doctrine/live_document_size/derived_state_contracts.jsonl` owns exact field markers,
-  classifications, authorities, accessors, capture boundaries, and executed verifiers.
+  `doctrine/live_document_size/derived_state_contracts.jsonl` owns exact primary and secondary field markers,
+  classifications, authorities, accessors, capture boundaries, copy roles/ownership, and executed verifiers.
 - Enforcement: `scripts/check_live_document_size.sh` runs unconditionally as `LIVE-DOC-SIZE`
   through `scripts/check_doctrines.sh`; the existing README guard remains independently enforced.
 - Local milestones: warning at 80% and rollover review at 90% of a health target. These values follow
@@ -30,7 +30,9 @@
   `.4`/`.5` migration. Later leaves add surface-specific lossless migration and currentness oracles;
   the registry remains the executable source of their present status. The deliberate `.8b`
   revision adds 14 explicit four-class field contracts, neutral control checks, and only the two
-  SpecForge authority adapters selected by `.8a`; no donor value, threshold, or ceiling is copied.
+  SpecForge authority adapters selected by `.8a`. `.8d` moves their three secondary copy paths and markers into
+  bounded declarations, leaving only declared-role interpretation in adapter source; no donor value, threshold,
+  or ceiling is copied.
 <!-- LIVE-DOCUMENT-SIZE-CONTAINMENT-LOCAL-ADOPTION:END -->
 
 ---
@@ -153,6 +155,12 @@ checker contains no project-specific names and does not infer semantics from
 dates, number shapes, or prose. Generated projections with declared canonical
 inputs and executed freshness already satisfy the verified-copy rule at
 surface scope.
+
+A verified-copy contract that compares more than one retained copy must declare every copy location and exact
+marker in that bounded data plane. Executable verifier source may interpret declared roles, but it must not hide
+the membership list behind embedded paths or fallbacks. Distinguish copies on governed current surfaces from
+repository-local control files, and validate both as safe same-volume regular paths; surface copies must prove
+surface membership, while control copies must not impersonate documentation surfaces.
 
 Before demoting a duplicate, compare it with its authority and inspect the
 authority for divergence the convenient copy may have concealed. Preserve the

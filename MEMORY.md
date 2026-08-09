@@ -21,16 +21,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8c` — independent derived-state audit; complete with a
-  closure-blocking finding in this commit.
-- Current state: all 14 primary contracts, markers, classes, surfaces, and authority executions pass, but the
-  registry does not enumerate the mdBook/CI Rust copies or feedback JSON pin; those three paths/markers remain
-  hardcoded inside the adapter. `.8` stays open because data-only completeness is therefore unprovable. The
-  exact second status rollover is sealed and retrieval-clean; its shared index is 218 bytes before rollover.
-- Next action: from the clean `.8c` commit, activate `.8d`; add bounded declared secondary-copy locations and
-  neutral exact-marker/locality validation, make the adapter consume only those declarations, expand mutations,
-  then let `.8e` independently re-audit and close `.8` if clean. `.9a`/`.9b` then own archive-route containment
-  before another ledger segment.
-- In-flight uncommitted: none after the `.8c` audit commit. `.project-data/tmp` contains only `.gitkeep` plus
-  `xcrun_db`; the corpus frontier remains pending behind `.8d`/`.8e`.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8d` — declared secondary-copy repair; complete in this
+  commit.
+- Current state: all 14 primary contracts and three nested secondary copies are data-owned. The neutral checker
+  validates surface/control ownership, same-volume paths, and exact markers; the adapter consumes required roles,
+  contains no secondary path literals, and passes alternate-path no-fallback proofs. All 72 focused cases pass.
+- Next action: from the clean `.8d` commit, activate `.8e`; independently enumerate the primary/secondary plane,
+  source-scan both checkers/adapters, repeat mutations and all composed/full gates, and close `.8` only if no copy
+  membership remains hidden. Then proceed to `.9a` archive-route design.
+- In-flight uncommitted: none after the `.8d` commit. `.project-data/tmp` contains only `.gitkeep` plus `xcrun_db`;
+  `.9a`/`.9b` remain queued behind the independent derived-state audit.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

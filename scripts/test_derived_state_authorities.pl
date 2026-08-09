@@ -85,6 +85,23 @@ sub save_registry {
     );
 }
 
+sub contract {
+    my ($fixture, $id) = @_;
+    for my $candidate (@{ $fixture->{contracts} }) {
+        return $candidate if ($candidate->{contract_id} // '') eq $id;
+    }
+    die "fixture contract '$id' does not exist\n";
+}
+
+sub secondary_copy {
+    my ($fixture, $contract_id, $role) = @_;
+    my $copies = contract($fixture, $contract_id)->{secondary_copies};
+    for my $copy (@$copies) {
+        return $copy if ($copy->{role} // '') eq $role;
+    }
+    die "fixture secondary copy '$contract_id/$role' does not exist\n";
+}
+
 sub new_fixture {
     my $directory = tempdir(
         'derived-state-authority-tests.XXXXXX',
@@ -136,12 +153,39 @@ sub new_fixture {
                 schema_version => 1,
                 contract_id => 'rust_prerequisite_copies',
                 classification => 'verified_copy',
+                path => 'README.md',
+                field_marker => '- Rust `1.95.0`',
+                secondary_copies => [
+                    {
+                        role => 'rust_book',
+                        ownership => 'surface',
+                        surface_id => 'shipped_behavior',
+                        path => 'docs/book/src/getting-started.md',
+                        field_marker => '- Rust `1.95.0`',
+                    },
+                    {
+                        role => 'rust_ci',
+                        ownership => 'control',
+                        path => '.github/workflows/ci.yml',
+                        field_marker => 'toolchain: 1.95.0',
+                    },
+                ],
             },
             {
                 record_type => 'contract',
                 schema_version => 1,
                 contract_id => 'fsmgen_gitlink_copies',
                 classification => 'verified_copy',
+                path => 'docs/FSMGEN_FEEDBACK.md',
+                field_marker => $gitlink,
+                secondary_copies => [
+                    {
+                        role => 'feedback_contract_json',
+                        ownership => 'control',
+                        path => 'doctrine/live_document_size/fsmgen_feedback.json',
+                        field_marker => $gitlink,
+                    },
+                ],
             },
         ],
     };
@@ -205,6 +249,20 @@ sub expect_case {
     report_result($name, $passed, $output);
 }
 
+{
+    my $source = read_text($root, 'scripts/check_derived_state_authorities.pl');
+    my @hidden = grep { index($source, $_) >= 0 } (
+        'docs/book/src/getting-started.md',
+        '.github/workflows/ci.yml',
+        'doctrine/live_document_size/fsmgen_feedback.json',
+    );
+    report_result(
+        'adapter source contains no secondary copy path literals',
+        !@hidden,
+        @hidden ? "hidden paths: @hidden\n" : '',
+    );
+}
+
 expect_case(
     'workspace short semver normalizes and all Rust copies agree',
     'rust_prerequisite_copies',
@@ -220,18 +278,24 @@ expect_case(
     sub { write_text($_[0]{root}, 'Cargo.toml', "[workspace.package]\nrust-version = \"1.95.0\"\n"); },
 );
 expect_case('README Rust drift fails closed', 'rust_prerequisite_copies', 0, qr/README\.md Rust copy .* differs/, sub {
-    write_text($_[0]{root}, 'README.md', "# Fixture\n\n- Rust `1.96.0`\n");
+    my ($fixture) = @_;
+    write_text($fixture->{root}, 'README.md', "# Fixture\n\n- Rust `1.96.0`\n");
+    contract($fixture, 'rust_prerequisite_copies')->{field_marker} = '- Rust `1.96.0`';
 });
 expect_case('mdBook Rust drift fails closed', 'rust_prerequisite_copies', 0, qr/getting-started\.md Rust copy .* differs/, sub {
-    write_text($_[0]{root}, 'docs/book/src/getting-started.md', "# Getting Started\n\n- Rust `1.96.0`\n");
+    my ($fixture) = @_;
+    write_text($fixture->{root}, 'docs/book/src/getting-started.md', "# Getting Started\n\n- Rust `1.96.0`\n");
+    secondary_copy($fixture, 'rust_prerequisite_copies', 'rust_book')->{field_marker} = '- Rust `1.96.0`';
 });
 expect_case('CI Rust drift fails closed', 'rust_prerequisite_copies', 0, qr/ci\.yml Rust copy .* differs/, sub {
-    write_text($_[0]{root}, '.github/workflows/ci.yml', "toolchain: 1.96.0\n");
+    my ($fixture) = @_;
+    write_text($fixture->{root}, '.github/workflows/ci.yml', "toolchain: 1.96.0\n");
+    secondary_copy($fixture, 'rust_prerequisite_copies', 'rust_ci')->{field_marker} = 'toolchain: 1.96.0';
 });
 expect_case('unsupported workspace semver fails closed', 'rust_prerequisite_copies', 0, qr/unsupported Rust version/, sub {
     write_text($_[0]{root}, 'Cargo.toml', "[workspace.package]\nrust-version = \"1.95-beta\"\n");
 });
-expect_case('duplicate Rust declarations fail closed', 'rust_prerequisite_copies', 0, qr/expected one README Rust prerequisite, found 2/, sub {
+expect_case('duplicate Rust declarations fail closed', 'rust_prerequisite_copies', 0, qr/primary Rust prerequisite marker must occur exactly once.*found 2/, sub {
     write_text($_[0]{root}, 'README.md', "- Rust `1.95.0`\n- Rust `1.95.0`\n");
 });
 expect_case(
@@ -249,13 +313,16 @@ expect_case('feedback gitlink drift fails closed', 'fsmgen_gitlink_copies', 0, q
         'docs/FSMGEN_FEEDBACK.md',
         "# Feedback\n\n## Current downstream boundary\n\nPinned object `$wrong`.\n\n## Open correspondence\n",
     );
+    contract($fixture, 'fsmgen_gitlink_copies')->{field_marker} = $wrong;
 });
 expect_case('feedback JSON gitlink drift fails closed', 'fsmgen_gitlink_copies', 0, qr/fsmgen_feedback\.json gitlink .* differs/, sub {
+    my ($fixture) = @_;
     write_text(
-        $_[0]{root},
+        $fixture->{root},
         'doctrine/live_document_size/fsmgen_feedback.json',
         $json->encode({ current_root => { required_literals => ['0' x 40] } }) . "\n",
     );
+    secondary_copy($fixture, 'fsmgen_gitlink_copies', 'feedback_contract_json')->{field_marker} = '0' x 40;
 });
 expect_case('non-gitlink index mode fails closed', 'fsmgen_gitlink_copies', 0, qr/index mode is '100644'/, sub {
     my ($fixture) = @_;
@@ -271,7 +338,7 @@ expect_case('non-gitlink index mode fails closed', 'fsmgen_gitlink_copies', 0, q
 expect_case('missing gitlink index entry fails closed', 'fsmgen_gitlink_copies', 0, qr/expected one FSMGen Git-index entry, found 0/, sub {
     git_command($_[0]{root}, 'update-index', '--force-remove', 'subs/fsmgen');
 });
-expect_case('duplicate current-boundary hashes fail closed', 'fsmgen_gitlink_copies', 0, qr/expected one current feedback gitlink, found 2/, sub {
+expect_case('duplicate current-boundary hashes fail closed', 'fsmgen_gitlink_copies', 0, qr/primary FSMGen feedback copy marker must occur exactly once.*found 2/, sub {
     my ($fixture) = @_;
     my $hash = $fixture->{gitlink};
     write_text(
@@ -281,7 +348,46 @@ expect_case('duplicate current-boundary hashes fail closed', 'fsmgen_gitlink_cop
     );
 });
 expect_case('invalid feedback JSON fails closed', 'fsmgen_gitlink_copies', 0, qr/contract is invalid JSON/, sub {
-    write_text($_[0]{root}, 'doctrine/live_document_size/fsmgen_feedback.json', "{invalid\n");
+    my ($fixture) = @_;
+    write_text(
+        $fixture->{root},
+        'doctrine/live_document_size/fsmgen_feedback.json',
+        '{invalid "' . $fixture->{gitlink} . '"' . "\n",
+    );
+});
+expect_case('declared alternate mdBook path works without fallback', 'rust_prerequisite_copies', 1, qr/agrees with its canonical authority/, sub {
+    my ($fixture) = @_;
+    write_text($fixture->{root}, 'declared/book-copy.md', "- Rust `1.95.0`\n");
+    write_text($fixture->{root}, 'docs/book/src/getting-started.md', "- Rust `9.9.9`\n");
+    secondary_copy($fixture, 'rust_prerequisite_copies', 'rust_book')->{path} = 'declared/book-copy.md';
+});
+expect_case('declared alternate CI path works without fallback', 'rust_prerequisite_copies', 1, qr/agrees with its canonical authority/, sub {
+    my ($fixture) = @_;
+    write_text($fixture->{root}, 'declared/ci-copy.yml', "toolchain: 1.95.0\n");
+    write_text($fixture->{root}, '.github/workflows/ci.yml', "toolchain: 9.9.9\n");
+    secondary_copy($fixture, 'rust_prerequisite_copies', 'rust_ci')->{path} = 'declared/ci-copy.yml';
+});
+expect_case('declared alternate JSON path works without fallback', 'fsmgen_gitlink_copies', 1, qr/agrees with its canonical authority/, sub {
+    my ($fixture) = @_;
+    my $content = read_text($fixture->{root}, 'doctrine/live_document_size/fsmgen_feedback.json');
+    write_text($fixture->{root}, 'declared/feedback-copy.json', $content);
+    write_text($fixture->{root}, 'doctrine/live_document_size/fsmgen_feedback.json', "{broken\n");
+    secondary_copy($fixture, 'fsmgen_gitlink_copies', 'feedback_contract_json')->{path} = 'declared/feedback-copy.json';
+});
+expect_case('missing secondary roles fail closed', 'rust_prerequisite_copies', 0, qr/required secondary copy role 'rust_ci' is missing/, sub {
+    pop @{ contract($_[0], 'rust_prerequisite_copies')->{secondary_copies} };
+});
+expect_case('duplicate secondary roles fail closed', 'rust_prerequisite_copies', 0, qr/secondary copy role 'rust_book' is declared more than once/, sub {
+    secondary_copy($_[0], 'rust_prerequisite_copies', 'rust_ci')->{role} = 'rust_book';
+});
+expect_case('unknown secondary roles fail closed', 'rust_prerequisite_copies', 0, qr/unknown secondary copy role 'hidden_fallback'/, sub {
+    secondary_copy($_[0], 'rust_prerequisite_copies', 'rust_ci')->{role} = 'hidden_fallback';
+});
+expect_case('unsafe declared secondary paths fail closed', 'rust_prerequisite_copies', 0, qr/secondary copy role 'rust_ci' has unsafe or missing declared path/, sub {
+    secondary_copy($_[0], 'rust_prerequisite_copies', 'rust_ci')->{path} = '../ci.yml';
+});
+expect_case('missing declared secondary markers fail closed', 'rust_prerequisite_copies', 0, qr/secondary copy role 'rust_book' marker must occur exactly once.*found 0/, sub {
+    secondary_copy($_[0], 'rust_prerequisite_copies', 'rust_book')->{field_marker} = '- Rust `1.94.0`';
 });
 expect_case('unknown adapter contracts fail closed', 'unknown_contract', 0, qr/expected one registry contract 'unknown_contract'/, undef);
 expect_case('non-verified adapter contracts fail closed', 'rust_prerequisite_copies', 0, qr/is not a verified copy/, sub {

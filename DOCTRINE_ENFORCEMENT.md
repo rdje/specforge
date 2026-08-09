@@ -289,11 +289,12 @@ The reference deployment. Enforced by `scripts/check_doctrines.sh` via `.githook
 | `PROJECT-DATA-LOCALITY` | structural | `scripts/check_project_data_locality.sh` | Cargo, shell, Rust temp/subprocess, Python dependency, and optional runtime-store paths resolve from the current repository and reject off-root or stale-repository ownership |
 
 `LIVE-DOC-SIZE` also runs three focused suites: 55 positive and fail-closed lifecycle/control-plane
-cases, 28 neutral derived-state classification/authority cases, and 16 SpecForge Rust/gitlink adapter
+cases, 47 neutral derived-state classification/authority cases, and 25 SpecForge Rust/gitlink adapter
 cases. Test workspaces are disposable and always created below repository-local `generated/`.
 Schema fields, arrays, scalars, routes, independent size axes, baselines, exact field markers, stored
 derive-on-read shadows, verifier execution, capture boundaries, Cargo semver normalization, Git-index
-mode/object authority, and ceiling history are therefore re-proved on every gate. Undeclared
+mode/object authority, declared secondary roles/paths/ownership, no-fallback alternate paths, and ceiling history
+are therefore re-proved on every gate. Undeclared
 date/number/hash lookalikes explicitly remain ordinary prose; the checker never guesses fields.
 The mdBook maintained-reference record additionally executes `scripts/check_book_current_truth.sh`,
 which binds load-bearing product claims to code, requires the completed containment/locality status

@@ -136,6 +136,22 @@ repository-local control-plane ownership distinction. The neutral checker must v
 regular-file status, marker cardinality, and uniqueness; the project adapter must consume declared roles without
 fallback hardcoded paths. `.8e` then re-enumerates the data plane and source to prove no copy list remains hidden.
 
+## `.8d` declared-copy repair
+
+The two existing adapter-backed primary records now carry exactly three bounded `secondary_copies` entries.
+`rust_book` names `docs/book/src/getting-started.md` as a governed `shipped_behavior` surface member; `rust_ci`
+names `.github/workflows/ci.yml` as a repository-local control file; `feedback_contract_json` names the feedback
+JSON contract as a control file. Every entry owns its exact current marker. The registry remains 15 lines / 14
+primary contracts and grows to 6,865 bytes with a 789-byte maximum raw record, two array items at most, and
+three secondary copies split one surface / two control.
+
+The neutral checker validates the nested closed schema, roles, ownership, safe same-volume regular paths,
+surface membership, non-Markdown control distinction, global marker uniqueness, and exact cardinality without
+knowing any local role or path. The adapter loads the primary and required secondary declarations, refuses
+missing/unknown/duplicate roles, and contains no secondary path literal. Forty-seven neutral and 25 adapter cases
+pass, including alternate declared mdBook/CI/JSON paths with the old locations deliberately corrupted; this
+proves execution follows data rather than fallback source. `.8e` retains independent closure authority.
+
 The audit record itself triggered the status ledger's second mandatory rollover. The lossless protocol sealed
 12 exact records / 10,894 bytes at SHA-256 `11e058…28df` and returned the root to 60 records. Adding that direct
 route raised the shared archive index to 81 lines / 5,311 bytes, only 218 bytes before mandatory rollover. This is

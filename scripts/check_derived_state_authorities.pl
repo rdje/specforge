@@ -35,9 +35,9 @@ my $contract = load_contract($registry_rel, $contract_id);
     or die "derived-state-authority: contract '$contract_id' is not a verified copy\n";
 
 if ($contract_id eq 'rust_prerequisite_copies') {
-    check_rust_prerequisite();
+    check_rust_prerequisite($contract);
 } elsif ($contract_id eq 'fsmgen_gitlink_copies') {
-    check_fsmgen_gitlink();
+    check_fsmgen_gitlink($contract);
 } else {
     die "derived-state-authority: contract '$contract_id' is not a declared project adapter\n";
 }
@@ -104,6 +104,67 @@ sub one_capture {
     return $values[0];
 }
 
+sub literal_occurrences {
+    my ($content, $literal) = @_;
+    return 0 if !defined($literal) || $literal eq '';
+    my $count = 0;
+    my $offset = 0;
+    while (1) {
+        my $position = index($content, $literal, $offset);
+        last if $position < 0;
+        $count++;
+        $offset = $position + length($literal);
+    }
+    return $count;
+}
+
+sub declared_copy {
+    my ($record, $label) = @_;
+    ref($record) eq 'HASH'
+        or die "derived-state-authority: $label declaration must be an object\n";
+    my $path = $record->{path};
+    my $marker = $record->{field_marker};
+    safe_relative_path($path)
+        or die "derived-state-authority: $label has unsafe or missing declared path\n";
+    defined($marker) && !ref($marker) && $marker ne ''
+        or die "derived-state-authority: $label lacks a declared field marker\n";
+    my $content = slurp($path, $label);
+    my $count = literal_occurrences($content, $marker);
+    $count == 1
+        or die "derived-state-authority: $label marker must occur exactly once in '$path', found $count\n";
+    return {
+        path => $path,
+        marker => $marker,
+        content => $content,
+    };
+}
+
+sub required_secondary_copies {
+    my ($contract, @required_roles) = @_;
+    my $copies = $contract->{secondary_copies};
+    ref($copies) eq 'ARRAY'
+        or die "derived-state-authority: contract lacks secondary_copies declarations\n";
+    my %required = map { $_ => 1 } @required_roles;
+    my %by_role;
+    for my $copy (@$copies) {
+        ref($copy) eq 'HASH'
+            or die "derived-state-authority: secondary copy declaration must be an object\n";
+        my $role = $copy->{role};
+        defined($role) && !ref($role) && $role =~ /\A[a-z][a-z0-9._-]*\z/
+            or die "derived-state-authority: secondary copy has invalid or missing role\n";
+        $required{$role}
+            or die "derived-state-authority: unknown secondary copy role '$role'\n";
+        !exists $by_role{$role}
+            or die "derived-state-authority: secondary copy role '$role' is declared more than once\n";
+        $by_role{$role} = declared_copy($copy, "secondary copy role '$role'");
+    }
+    for my $role (@required_roles) {
+        exists $by_role{$role}
+            or die "derived-state-authority: required secondary copy role '$role' is missing\n";
+    }
+    return \%by_role;
+}
+
 sub normalize_rust_version {
     my ($value, $label) = @_;
     $value =~ /\A(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:\.(0|[1-9][0-9]*))?\z/
@@ -112,10 +173,10 @@ sub normalize_rust_version {
 }
 
 sub check_rust_prerequisite {
+    my ($contract) = @_;
     my $cargo = slurp('Cargo.toml', 'workspace manifest');
-    my $readme = slurp('README.md', 'README prerequisite');
-    my $book = slurp('docs/book/src/getting-started.md', 'mdBook prerequisite');
-    my $ci = slurp('.github/workflows/ci.yml', 'CI toolchain declaration');
+    my $primary = declared_copy($contract, 'primary Rust prerequisite');
+    my $secondary = required_secondary_copies($contract, qw(rust_book rust_ci));
 
     my $authority = one_capture(
         $cargo,
@@ -123,26 +184,26 @@ sub check_rust_prerequisite {
         'workspace rust-version',
     );
     my $readme_copy = one_capture(
-        $readme,
+        $primary->{content},
         qr/^- Rust `([0-9]+\.[0-9]+\.[0-9]+)`\s*$/m,
-        'README Rust prerequisite',
+        "$primary->{path} Rust prerequisite",
     );
     my $book_copy = one_capture(
-        $book,
+        $secondary->{rust_book}{content},
         qr/^- Rust `([0-9]+\.[0-9]+\.[0-9]+)`\s*$/m,
-        'mdBook Rust prerequisite',
+        "$secondary->{rust_book}{path} Rust prerequisite",
     );
     my $ci_copy = one_capture(
-        $ci,
+        $secondary->{rust_ci}{content},
         qr/^\s*toolchain:\s*([0-9]+\.[0-9]+\.[0-9]+)\s*$/m,
-        'CI Rust toolchain',
+        "$secondary->{rust_ci}{path} Rust toolchain",
     );
 
     my $normalized = normalize_rust_version($authority, 'workspace rust-version');
     for my $copy (
-        ['README.md', $readme_copy],
-        ['docs/book/src/getting-started.md', $book_copy],
-        ['.github/workflows/ci.yml', $ci_copy],
+        [$primary->{path}, $readme_copy],
+        [$secondary->{rust_book}{path}, $book_copy],
+        [$secondary->{rust_ci}{path}, $ci_copy],
     ) {
         my $actual = normalize_rust_version($copy->[1], "$copy->[0] Rust copy");
         $actual eq $normalized
@@ -152,11 +213,11 @@ sub check_rust_prerequisite {
 }
 
 sub check_fsmgen_gitlink {
-    my $feedback = slurp('docs/FSMGEN_FEEDBACK.md', 'FSMGen feedback root');
-    my $contract_text = slurp(
-        'doctrine/live_document_size/fsmgen_feedback.json',
-        'FSMGen feedback contract',
-    );
+    my ($field_contract) = @_;
+    my $primary = declared_copy($field_contract, 'primary FSMGen feedback copy');
+    my $secondary = required_secondary_copies($field_contract, 'feedback_contract_json');
+    my $feedback = $primary->{content};
+    my $contract_text = $secondary->{feedback_contract_json}{content};
     my $contract = eval { decode_json($contract_text) };
     die "derived-state-authority: FSMGen feedback contract is invalid JSON\n"
         if $@ || ref($contract) ne 'HASH';
@@ -197,8 +258,8 @@ sub check_fsmgen_gitlink {
         or die "derived-state-authority: subs/fsmgen index stage is '$stage', expected '0'\n";
 
     for my $copy (
-        ['docs/FSMGEN_FEEDBACK.md', $feedback_copy],
-        ['doctrine/live_document_size/fsmgen_feedback.json', $contract_copies[0]],
+        [$primary->{path}, $feedback_copy],
+        [$secondary->{feedback_contract_json}{path}, $contract_copies[0]],
     ) {
         $copy->[1] eq $object
             or die "derived-state-authority: $copy->[0] gitlink '$copy->[1]' differs from "
