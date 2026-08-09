@@ -21,14 +21,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8d` — declared secondary-copy repair; complete in this
-  commit.
-- Current state: all 14 primary contracts and three nested secondary copies are data-owned. The neutral checker
-  validates surface/control ownership, same-volume paths, and exact markers; the adapter consumes required roles,
-  contains no secondary path literals, and passes alternate-path no-fallback proofs. All 72 focused cases pass.
-- Next action: from the clean `.8d` commit, activate `.8e`; independently enumerate the primary/secondary plane,
-  source-scan both checkers/adapters, repeat mutations and all composed/full gates, and close `.8` only if no copy
-  membership remains hidden. Then proceed to `.9a` archive-route design.
-- In-flight uncommitted: none after the `.8d` commit. `.project-data/tmp` contains only `.gitkeep` plus `xcrun_db`;
-  `.9a`/`.9b` remain queued behind the independent derived-state audit.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8e` — independent derived-state closure audit; complete
+  with a closure-blocking finding in this commit.
+- Current state: all 14 primaries, three secondaries, 17 exact markers, declared authorities, and 72 mutations
+  pass, but the older feedback-protocol self-test renderer stores the live FSMGen hash in executable source.
+  Full CI is green but does not prove repository-wide current-value exhaustiveness. `.8` remains open.
+- Next action: from the clean `.8e` commit, activate `.8f`; render all synthetic feedback required literals from
+  contract data and add a changed-pin no-fallback mutation. `.8g` then independently re-audits before `.8` may
+  close; `.9a` remains the next archive-route boundary.
+- In-flight uncommitted: none after the `.8e` audit commit. `.project-data/tmp` contains only `.gitkeep` plus
+  `xcrun_db`; no doctrine code, registry value, product behavior, artifact, donor/submodule, threshold, or ceiling
+  changed in the audit.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

@@ -1,3 +1,19 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8e — reject closure on a hidden self-test pin
+
+- Independently enumerated all 14 primary plus three secondary data records and proved each exact marker occurs
+  once. The neutral checker remains project-agnostic; the authority adapter has no secondary path literal and
+  follows all alternate declarations without fallback.
+- All 47 neutral plus 25 adapter mutations, both real authority comparisons, and the feedback-protocol 10/10
+  self-test pass. Full CI remains green with six doctrines, 1,779 Rust tests / five ignored, rustdoc, mdBook,
+  and final project-data locality. The fact index is 32,636 bytes / 542 before rollover; the 36-file book is
+  13,104 lines / 792,209 bytes under its exact `.8e` change authority.
+- A repository-wide value/consumer scan nevertheless found the live FSMGen gitlink embedded in the older
+  feedback-protocol self-test renderer. Its synthetic current root is checked against the live contract, making
+  this an update-coupled executable copy rather than an independent fixture constant.
+- Refused `.8` closure. `.8f` owns derive-on-read rendering of all declared current-root literals plus a changed-
+  pin mutation; `.8g` owns the independent re-audit. No product behavior, registry value, canonical artifact,
+  donor/submodule file, threshold, or ceiling changed.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8d — declare every adapter secondary copy
 
 - Extended the two adapter-backed field contracts with exactly three bounded `secondary_copies` entries:

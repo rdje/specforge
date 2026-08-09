@@ -1,11 +1,12 @@
 ---
 id: live-document-derived-state-contract-gap
-title: Derived-state secondary-copy membership is data-owned pending audit
+title: Derived-state closure awaits removal of a self-test pin copy
 answers:
   - "did SpecForge adopt the 2026 08 09 FSMGen derived state containment revision"
   - "which exact current state copies are not yet independently verified in SpecForge"
   - "how should Rust version copies be verified across Cargo README book and CI"
   - "how should the current FSMGen gitlink in documentation be verified"
+  - "why does the feedback protocol self test block derived state closure"
   - "why should corpus counts leave MEMORY md"
   - "what does LIVE DOCUMENT SIZE CONTAINMENT ADOPTION 8 implement"
 date: 2026-08-09
@@ -42,8 +43,14 @@ registry remains 14 primary contracts and adds exactly three nested secondary en
 validates closed roles/ownership, safe same-volume regular paths, exact markers, and current surface membership;
 the adapter source contains none of the three paths and consumes only required declared roles. Forty-seven
 neutral plus 25 adapter cases include alternate declared paths, missing/unknown/duplicate roles, marker drift,
-unsafe paths, and surface/control misuse. `.8e` still must independently prove the resulting tree before `.8`
-closes.
+unsafe paths, and surface/control misuse.
+
+The `.8e` cold audit confirms every one of those 17 data members and all 72 mutations, but refuses closure on a
+different stored value. `scripts/check_fsmgen_feedback_protocol.pl` embeds the live FSMGen hash while rendering
+its synthetic self-test current root, even though that root is validated against the contract's declared
+`current_root.required_literals`. This is update-coupled project-current executable state, not an independent
+fixture or historical measurement. `.8f` must derive all rendered literals from contract data and prove a changed
+pin has no fallback; `.8g` then repeats the repository-wide current-value scan before `.8` may close.
 
 The card/index plane remains an explicit implementation constraint. `.8b` updates this same card rather than
 adding another; any future crossing of the rollover threshold requires an owned partition, not a wider ceiling.

@@ -152,6 +152,27 @@ missing/unknown/duplicate roles, and contains no secondary path literal. Forty-s
 pass, including alternate declared mdBook/CI/JSON paths with the old locations deliberately corrupted; this
 proves execution follows data rather than fallback source. `.8e` retains independent closure authority.
 
+## `.8e` independent audit finding
+
+The cold data-only enumeration confirms 14 primary records plus exactly three nested secondary records. All 17
+declared markers occur once in their owned paths; the neutral checker contains no project identifiers or roles;
+the authority adapter contains none of the three secondary paths and follows alternate declarations without
+fallback. All 47 neutral and 25 adapter mutations, both real authorities, and the ten-case feedback-protocol
+self-test pass. Full CI also passes six doctrines, 1,779 Rust tests / five ignored, rustdoc, mdBook, and locality.
+
+Repository-wide current-value review nevertheless finds one undeclared executable copy. The
+feedback-protocol self-test helper `render_current_root` writes the live FSMGen gitlink directly into its
+synthetic `Current pinned FSMGen` sentence. That value is not an independent fixture constant: the generated
+root is validated against the live contract's `current_root.required_literals`, so a real pin change couples
+contract data and executable source. Historical task/research/ledger occurrences are revision evidence, and the
+Rust adapter's `1.95.0` fixture values remain independent sample contracts; neither is an ambient current copy.
+
+The existing gates are green because `.8d` deliberately proved declaration-only behavior only in the new
+authority adapter, while the older feedback-protocol self-test validates its renderer against today's unchanged
+contract. `.8f` must render the entire `required_literals` array from contract data and add a changed-pin
+mutation; `.8g` then repeats this repository-wide occurrence/consumer scan. `.8` remains open until that audit
+finds no stored project-current value in executable source.
+
 The audit record itself triggered the status ledger's second mandatory rollover. The lossless protocol sealed
 12 exact records / 10,894 bytes at SHA-256 `11e058…28df` and returned the root to 60 records. Adding that direct
 route raised the shared archive index to 81 lines / 5,311 bytes, only 218 bytes before mandatory rollover. This is

@@ -319,7 +319,7 @@ verification before correction.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8`
   Status: `in_progress` (`2026-08-09`)
-  Children: `.8a`, `.8b`, `.8c`, `.8d`, `.8e`
+  Children: `.8a`, `.8b`, `.8c`, `.8d`, `.8e`, `.8f`, `.8g`
   Goal: deliberately review the donor's newer portable derived-state-containment revision, adopt only
   locally justified neutral contracts, and prove that exact current-state fields are derived on read or
   retained behind an executed authority verifier without copying FSMGen paths, values, or conclusions.
@@ -361,9 +361,23 @@ verification before correction.
   and 72 no-fallback/fail-closed cases pass; `.8e` retains independent closure authority.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8e`
-  Status: `pending` (`2026-08-09`, AUDIT/DOC)
+  Status: `done` (`2026-08-09`, AUDIT/DOC)
   Goal: independently re-enumerate the resulting data-owned primary/secondary copy set, rerun all mutation and
   composed gates, align the durable surfaces, and close `.8` only if no field path/marker remains code-hidden.
+  **Finding:** the 14-primary/3-secondary registry plane is exact, but the feedback-protocol self-test renderer
+  stores the live FSMGen hash in executable source; `.8f` owns derive-on-read repair and `.8g` re-audits.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8f`
+  Status: `pending` (`2026-08-09`, CODE/DOC)
+  Goal: remove the feedback-protocol self-test renderer's stored live FSMGen hash by rendering every required
+  current-root literal from its bounded contract; add a changed-pin mutation that proves no executable fallback,
+  and preserve the production protocol, derived-state, artifact, threshold, and ceiling contracts.
+
+- ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8g`
+  Status: `pending` (`2026-08-09`, AUDIT/DOC)
+  Goal: independently scan every current Rust/FSMGen value occurrence and consumer after `.8f`, re-enumerate
+  exact primary/secondary markers and authorities, rerun all mutations and composed/full gates, and close `.8`
+  only if executable source stores no undeclared project-current value.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9`
   Status: `pending` (`2026-08-09`)
@@ -386,9 +400,11 @@ verification before correction.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `.8e` | `pending` (`2026-08-09`) | Independently re-audit the repaired field plane and close `.8` only if no code-hidden copy remains. |
-| 2 | `.9a` | `pending` (`2026-08-09`) | Lock the bounded archive-route topology before another ledger segment crosses the index rollover threshold. |
-| 3 | `.9b` | `pending` (`2026-08-09`) | Implement and independently verify the accepted archive-index containment design. |
+| 1 | `.8f` | `pending` (`2026-08-09`) | Derive the feedback self-test's synthetic current literals from its contract instead of executable source. |
+| 2 | `.8g` | `pending` (`2026-08-09`) | Independently re-audit all live-value occurrences and close `.8` only if no executable current copy remains. |
+| 3 | `.9a` | `pending` (`2026-08-09`) | Lock the bounded archive-route topology before another ledger segment crosses the index rollover threshold. |
+| 4 | `.9b` | `pending` (`2026-08-09`) | Implement and independently verify the accepted archive-index containment design. |
+| — | `.8e` | `done` (`2026-08-09`) | Data markers and authorities pass, but a broader scan found the live FSMGen pin stored in a self-test renderer; closure refused. |
 | — | `.8d` | `done` (`2026-08-09`) | Three secondary copies are data-owned; neutral surface/control validation and declaration-only adapter execution pass 72 focused cases. |
 | — | `.8c` | `done` (`2026-08-09`) | Fourteen primary contracts pass, three code-hidden secondary copies are owned by `.8d`, and exact status segment 0002 plus the `.9` route boundary are durable. |
 | — | `.8b` | `done` (`2026-08-09`) | Four-class bounded field registry, neutral checker, eight existing verifiers, exact Rust/gitlink adapters, 44 fail-closed cases, and normative/reader alignment landed. |
@@ -504,6 +520,28 @@ verification before correction.
   `MEMORY.md`, and mdBook agree on data-owned exhaustive copy membership; `.8e` remains an independent audit and
   `.9` retains the archive-index boundary.
 
+### Acceptance Checklist (enforced) — `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8e`
+
+- [x] **REPRODUCE / MEASURE** — independently enumerate 14 primary plus three secondary records from data only;
+  prove every exact marker occurs once; scan all tracked occurrences of the live Rust and FSMGen values, every
+  executable consumer, and both checker sources; rerun 47 neutral, 25 adapter, and ten feedback-protocol cases.
+- [x] **ROOT CAUSE (WHY + WHERE)** — locate the remaining executable copy in
+  `scripts/check_fsmgen_feedback_protocol.pl`: `render_current_root` writes the live pin into its synthetic root
+  instead of consuming `current_root.required_literals`; the `.8d` tests intentionally scoped only the authority
+  adapter and therefore could not establish repository-wide current-value exhaustiveness.
+- [x] **ADDRESSED (verified)** — refuse `.8` closure and open `.8f` for derive-on-read renderer repair plus a
+  changed-pin mutation, followed by `.8g` independent closure authority. Do not reclassify tests, evidence, or
+  declarations merely because they contain number/hash lookalikes.
+- [x] **NO REGRESSION** — the audit changes no product behavior, registry value, canonical artifact, donor or
+  submodule file, surface threshold, or ceiling; all 72 derived-state cases, the existing ten-case protocol
+  self-test, six doctrines, 1,779 Rust tests / five ignored, rustdoc, mdBook, and locality remain green.
+- [x] **GENERICITY** — distinguish a real project-current executable claim by data flow and update coupling, not
+  by a 40-hex heuristic: historical docs and independent fixtures are not ambient copies, while the renderer's
+  synthetic `Current pinned FSMGen` line is validated against the live protocol contract and must change with it.
+- [x] **LOCKSTEP** — durable fact/report, task/roadmap/status/resume pointer, change/development ledgers, local
+  adoption note, mdBook, and exact verification evidence agree that `.8` remains open for `.8f`/`.8g`; `.9`
+  retains the separate archive-index boundary.
+
 ## Decisions
 
 - `2026-08-09`: **GO on the newer portable derived-state semantics.** External collection-index and bounded
@@ -543,6 +581,10 @@ verification before correction.
   `surface` or `control` ownership. Surface members must name a current governed surface and match its targets;
   control members must be repository-local non-Markdown regular files without a surface claim. The neutral
   checker validates membership; the project adapter consumes required roles and contains no fallback paths.
+- `2026-08-09`: **Synthetic current-state fixtures must derive their values too.** A self-test-only renderer is
+  still maintained executable state when it emits the project's live pin and is expected to evolve with that
+  pin. The feedback protocol fixture must render its declared `current_root.required_literals` rather than store
+  a second source literal. `.8f` repairs that seam and adds a changed-pin proof; `.8g`, not `.8e`, may close `.8`.
 
 - `2026-08-08`: **GO on local adoption.** SpecForge meets multiple guide triggers: bounded-pointer
   routing pressure, mandatory multi-megabyte live reads, unbounded append-only neighbors, generated
@@ -1986,6 +2028,8 @@ progress state. No other book part changes unless the final audit finds a separa
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-09` | `.8e` | independent data-only 14-primary/3-secondary inventory; literal cardinality for all 17 members; tracked live-value and executable-consumer scans; neutral/adapter source review | all registry markers occur exactly once and adapters follow declarations, but `render_current_root` stores the live FSMGen hash in feedback-protocol executable source; `.8` closure refused, `.8f`/`.8g` opened |
+| `2026-08-09` | `.8e` | 47 neutral + 25 adapter mutations; real authority report; feedback-protocol 10/10 self-test; full `bash scripts/run_ci.sh`; exact projections/aggregates | green despite finding: six doctrines, 1,779 Rust tests / five ignored / zero failed, rustdoc, mdBook, and final locality pass; 627 Markdown / 41 surfaces, 159 facts / 1,114 questions / eight shards, fact index 32,636 bytes / 542 before rollover, and book 36 files / 13,104 lines / 792,209 bytes agree; the gates did not establish repository-wide current-value exhaustiveness |
 | `2026-08-09` | `.8d` | full `bash scripts/run_ci.sh`; composed six doctrines; format; warning-deny Clippy/tests; rustdoc; mdBook doctests/build; post-producer locality; exact projections/aggregates | green: six doctrines; 1,779 Rust tests pass / five ignored / zero failed; 627 Markdown / 41 surfaces, 159 facts / 1,113 questions / eight shards, fact index 32,643 bytes / 535 before rollover, and book 36 files / 13,097 lines / 791,641 bytes agree; no product/artifact/threshold/ceiling change |
 | `2026-08-09` | `.8d` | Perl syntax; real 14-primary/3-secondary report; 47 neutral cases; 25 adapter cases; forbidden-literal source scans; alternate declared mdBook/CI/JSON paths; composed `LIVE-DOC-SIZE`; mdBook doctests/build | green: one surface + two control secondaries, 6,865-byte registry / 789-byte maximum record; all 72 focused cases pass; old paths corrupted without fallback; neutral checker contains no local ids/roles; 36-file book 13,097 lines / 791,641 bytes and all current values agree |
 | `2026-08-09` | `.8c` | final `bash scripts/run_ci.sh`; staged doctrine model; format; warning-deny Clippy/tests; rustdoc; mdBook doctests/build; post-producer locality; exact aggregate census | green: six doctrines; 1,779 Rust tests pass / five ignored / zero failed; rustdoc and docs pass; 627 Markdown / 41 surfaces, 159 facts / 1,113 questions / eight shards, fact index 32,626 bytes / 552 before rollover, and book 36 files / 13,089 lines / 790,866 bytes agree; no threshold or ceiling changed |
@@ -2060,6 +2104,7 @@ progress state. No other book part changes unless the final audit finds a separa
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.8e` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8e — reject closure on a hidden self-test pin` | cold data/source inventory + repository-wide value scan + owned `.8f` derive-on-read repair / `.8g` re-audit |
 | `.8d` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8d — declare every adapter secondary copy` | three bounded data-owned copies + neutral surface/control validation + declaration-only adapter + 72 focused cases |
 | `.8c` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8c — audit derived-state copy completeness` | independent copy-membership finding + exact second status rollover + owned `.8d`/`.8e`/`.9` frontiers |
 | `.8b` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8b — enforce exact current-state field authority` | 14 four-class contracts + neutral checker + exact Rust/gitlink adapters + 44 focused cases + normative/reader alignment |
@@ -2095,6 +2140,11 @@ progress state. No other book part changes unless the final audit finds a separa
 | `.7` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7 — close the containment and locality program` | independent whole-program retrieval audit + cold-read defect gates + final book method-doc + clean closure |
 
 ## Changelog
+
+- `2026-08-09`: `.8e` AUDIT/DOC DONE. All 14 primary and three secondary declarations, exact markers, declared
+  authority comparisons, and 72 focused mutations pass. A broader tracked-value/consumer scan found the live
+  FSMGen pin stored in the feedback-protocol self-test renderer; its current ten cases and full CI remain green,
+  exposing the coverage gap. `.8` stays open; frontier → `.8f` derive-on-read repair, then `.8g` re-audit.
 
 - `2026-08-09`: `.8d` CODE/DOC DONE. Added exactly three nested secondary-copy declarations; neutral
   same-volume schema/role/ownership/surface/marker validation; declaration-only adapter reads; and alternate-path

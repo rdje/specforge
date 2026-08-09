@@ -271,6 +271,8 @@
   > why does the emitted .isf module name get sanitized / how is the (actor <name>) label derived
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > why does the fact-card file count differ from the Knowledge Map fact count
+- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
+  > why does the feedback protocol self test block derived state closure
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > why does the pre-commit hook run check_doctrines.sh
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -295,5 +297,3 @@
   > why doesn't the NLI-oracle conformal calibration produce a threshold
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > why doesn't the disk estimate use the page count
-- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
-  > why doesn't the temporal_rule eval reach precision 1.0

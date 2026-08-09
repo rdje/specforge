@@ -1,4 +1,19 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8e (`2026-08-09`) — a synthetic self-test root is current state
+
+The `.8e` audit deliberately widened its read-only search beyond the two new derived-state scripts. That found
+the live FSMGen gitlink inside `check_fsmgen_feedback_protocol.pl`'s `render_current_root`, even though the new
+authority adapter itself is fully declaration-driven. The distinction matters: a test fixture number that can
+stay unchanged when the project version moves is independent sample data, but this renderer's value must move
+with `current_root.required_literals` or its own valid self-test will fail. It is therefore a maintained current
+copy in executable source.
+
+Green gates do not prove exhaustive membership unless their search boundary does. The 72 new cases prove the
+registry/authority-adapter relationship; the older protocol self-test proves only that its hardcoded renderer
+matches today's unchanged contract. `.8f` should render every required literal generically from the declared
+array and mutate the pin in the contract before seeding a valid fixture. `.8g` must then repeat the broader
+tracked-occurrence and consumer scan before closure.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8d (`2026-08-09`) — parsing may be code; membership must be data
 
 The repair deliberately keeps semantic interpretation in the project adapter. Cargo semver normalization, the

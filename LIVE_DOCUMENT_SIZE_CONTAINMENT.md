@@ -2,7 +2,8 @@
 ## Local adoption note — SpecForge
 
 - Authority: SpecForge owner, adopted 2026-08-08 under decision 0007 and task-tree
-  `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3b`; deliberately revised 2026-08-09 under `.8b` and `.8d`.
+  `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.3b`; deliberately revised 2026-08-09 under `.8b` and `.8d`, with
+  `.8e` closure audit evidence retained below.
 - Authoritative copy: repository-root `LIVE_DOCUMENT_SIZE_CONTAINMENT.md`. Bootstrap files may
   point here, but they are not the doctrine's authority.
 - Independence: the FSMGen doctrine and adoption guide were reviewed as precedent, not as an
@@ -32,7 +33,9 @@
   revision adds 14 explicit four-class field contracts, neutral control checks, and only the two
   SpecForge authority adapters selected by `.8a`. `.8d` moves their three secondary copy paths and markers into
   bounded declarations, leaving only declared-role interpretation in adapter source; no donor value, threshold,
-  or ceiling is copied.
+  or ceiling is copied. `.8e` confirms that data plane but finds the older feedback-protocol self-test renderer
+  still stores the live gitlink value. `.8f` must derive its synthetic required literals from contract data and
+  `.8g` must independently re-audit before `.8` closes.
 <!-- LIVE-DOCUMENT-SIZE-CONTAINMENT-LOCAL-ADOPTION:END -->
 
 ---

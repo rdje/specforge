@@ -69,7 +69,14 @@ CI Rust and the feedback JSON pin are repository-local `control` members. Each d
 safe path, and exact once-only marker. The neutral checker validates role/schema uniqueness, same-volume regular
 files, surface membership versus non-Markdown control ownership, and marker cardinality. The adapter consumes
 the required roles and contains none of the three path literals; alternate-path fixtures prove it cannot fall
-back. The focused plane is now 47 neutral plus 25 adapter cases. `.8e` remains the independent closure audit.
+back. The focused plane is now 47 neutral plus 25 adapter cases.
+
+The `.8e` cold audit confirms all 14 primary and three secondary declarations, their once-only markers, and all
+72 focused mutations, but it does not close the program. A repository-wide current-value scan finds the live
+FSMGen gitlink embedded in the older feedback-protocol self-test renderer. That synthetic root is validated
+against the live contract, so the value is update-coupled executable state rather than an independent fixture.
+`.8f` derives every synthetic required literal from contract data and adds a changed-pin proof; `.8g` then
+repeats the independent source/data audit before `.8` may close.
 
 Writing that audit result also exercised the status ledger's second post-migration rollover. Twelve exact records
 were sealed in segment 0002 (10,894 bytes; SHA-256 `11e058…28df`) and the live root returned to 60 records without
