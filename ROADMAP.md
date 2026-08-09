@@ -105,9 +105,10 @@ Five active program groups support that north star:
   contracts also forced a second status rollover during that audit; its shared archive index is now 81 lines /
   5,311 bytes and only 218 bytes before mandatory byte rollover. `.9a` has measured every reader and accepted
   ADR 0017's fixed four-route landing plus bounded per-ledger index/manifest authorities. It also found that the
-  existing checker does not prove complete acyclic predecessor/successor chronology. `.9b` now owns the atomic
-  migration and stronger verifier before another segment. The same report finds the adoption task evidence at
-  229,064 bytes / 82.2% health; `.10a`/`.10b` own lossless containment before its byte rollover. The completed `.0`–`.7`
+  existing checker does not prove complete acyclic predecessor/successor chronology. `.9b` has now atomically
+  landed the four-part authority, exact chain/index/landing enforcement, and retired-manifest residue gate,
+  closing `.9` before another segment. The same report finds the adoption task evidence at
+  2,451 lines / 232,637 bytes; `.10a`/`.10b` own lossless containment before either rollover. The completed `.0`–`.7`
   [`LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`](docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md)
   implementation keeps current documentation and project data bounded on the repository volume; completed
   [`ARTIFACT-PATH-PORTABILITY`](docs/tasks/ARTIFACT-PATH-PORTABILITY.md) extends move-safe storage through every

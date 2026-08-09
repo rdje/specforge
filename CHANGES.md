@@ -1,3 +1,18 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9b — partition and verify every archive route
+
+- Replaced the append-growing shared route with a 34-line / 1,512-byte fixed landing and four complete bounded
+  per-ledger indexes totaling 37 lines / 1,378 bytes. Every root, segment, capsule, and manifest remains directly
+  retrievable in newest-to-oldest order within two bounded hops.
+- Split the shared manifest into four unchanged-control authorities. Their nine data rows are byte-identical to
+  the retired source; capsules and segments are unchanged. All four registry and 12 surface consumers now use
+  the matching partition, and the exact old manifest is absent under a declared residue gate.
+- Upgraded the registry to schema v2 with `landing` and `retired_paths`. The checker now rejects foreign members,
+  missing/duplicate edges, broken successors, cycles, disconnected chains, incomplete/misordered indexes,
+  incomplete landings, manifest overflow, or retired-path residue. Twenty-four focused and 55 lifecycle/overflow
+  cases pass with real four-ledger retrieval.
+- No product behavior, ledger record, immutable member, threshold, or existing ceiling changed. `.9` closes;
+  frontier → `.10a` task-evidence containment design.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9a — design the bounded archive route
 
 - Measured the shared route at 81 lines / 5,311 bytes with only 218 bytes before its mandatory byte rollover;

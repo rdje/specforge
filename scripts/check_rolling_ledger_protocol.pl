@@ -62,6 +62,7 @@ for my $ledger (@$ledgers) {
         if $id !~ /\A[a-z0-9][a-z0-9._-]*\z/;
     validate_ledger($ledger, $id);
 }
+validate_archive_landings($meta, $ledgers);
 
 emit_planned_view() if defined $emit_id && !@errors;
 
@@ -128,6 +129,7 @@ sub read_registry {
     my $control = shift @records;
     reject_unknown($control, 'registry control', qw(
       record_type schema_version max_records max_bytes max_record_bytes max_array_items max_scalar_bytes
+      retired_paths
     ));
     problem('first record must have record_type=registry')
         if ($control->{record_type} // '') ne 'registry';
@@ -135,8 +137,8 @@ sub read_registry {
         problem("registry control lacks numeric '$field'")
             if !defined($control->{$field}) || ref($control->{$field}) || $control->{$field} !~ /\A\d+\z/;
     }
-    problem('registry schema_version must be 1')
-        if defined($control->{schema_version}) && $control->{schema_version} != 1;
+    problem('registry schema_version must be 2')
+        if defined($control->{schema_version}) && $control->{schema_version} != 2;
     my %hard = (
         max_records => 32,
         max_bytes => 65_536,
@@ -162,7 +164,28 @@ sub read_registry {
         validate_value_bounds($_, 'registry record', $control->{max_array_items}, $control->{max_scalar_bytes})
             for @records;
     }
+    validate_retired_paths($control);
     return ($control, \@records);
+}
+
+sub validate_retired_paths {
+    my ($control) = @_;
+    my $paths = $control->{retired_paths};
+    if (ref($paths) ne 'ARRAY' || !@$paths) {
+        problem('registry control retired_paths must be a non-empty array');
+        return;
+    }
+    problem('registry control retired_paths exceeds max_array_items')
+        if defined($control->{max_array_items}) && @$paths > $control->{max_array_items};
+    validate_value_bounds($paths, 'registry control.retired_paths', $control->{max_array_items}, $control->{max_scalar_bytes})
+        if defined($control->{max_array_items}) && defined($control->{max_scalar_bytes});
+    my %seen;
+    for my $path (@$paths) {
+        problem("registry retired path '$path' is unsafe") if !safe_relative($path);
+        problem("registry retired path '$path' is duplicated") if defined($path) && !ref($path) && $seen{$path}++;
+        problem("registry retired path '$path' still exists")
+            if safe_relative($path) && -e absolute($path);
+    }
 }
 
 sub validate_ledger_schema {
@@ -179,7 +202,7 @@ sub validate_ledger_schema {
     reject_unknown($ledger->{live_limits}, 'live_limits', qw(records lines bytes line_bytes warning_pct rollover_pct))
         if ref($ledger->{live_limits}) eq 'HASH';
     reject_unknown($ledger->{archive}, 'archive', qw(
-      manifest index directory source_capsule retrieval verifier overlap
+      landing manifest index directory source_capsule retrieval verifier overlap
     )) if ref($ledger->{archive}) eq 'HASH';
     reject_unknown($ledger->{consumers}, 'consumers', qw(readers writers required_literals))
         if ref($ledger->{consumers}) eq 'HASH';
@@ -558,7 +581,7 @@ sub validate_archive_contract {
         problem("ledger '$id' archive must be an object");
         return;
     }
-    for my $field (qw(manifest index directory source_capsule verifier)) {
+    for my $field (qw(landing manifest index directory source_capsule verifier)) {
         my $path = scalar_field($archive, $field, "ledger '$id' archive");
         problem("ledger '$id' archive '$field' path '$path' is unsafe")
             if defined($path) && !safe_relative($path);
@@ -571,21 +594,21 @@ sub validate_archive_contract {
     problem("ledger '$id' archive overlap must declare source_capsule_overlaps_live_window")
         if ($archive->{overlap} // '') ne 'source_capsule_overlaps_live_window';
     my $directory = $archive->{directory} // '';
-    for my $field (qw(source_capsule)) {
+    for my $field (qw(manifest index source_capsule)) {
         my $path = $archive->{$field} // '';
         problem("ledger '$id' archive $field must be below '$directory/'")
             if $directory ne '' && index($path, "$directory/") != 0;
     }
     return if $state ne 'migrated';
-    for my $field (qw(manifest index source_capsule verifier)) {
+    for my $field (qw(landing manifest index source_capsule verifier)) {
         my $path = $archive->{$field} // '';
         problem("ledger '$id' migrated archive '$path' is missing")
             if safe_relative($path) && !-f absolute($path);
     }
-    validate_archive_manifest(
+    my $chain = validate_archive_manifest(
         $archive->{manifest}, $id, $source, $archive->{source_capsule}, $metrics, $parsed, $grammar
     );
-    validate_archive_index($archive->{index}, $id, $source, $archive->{source_capsule});
+    validate_archive_index($archive->{index}, $id, $archive->{manifest}, $chain) if defined $chain;
 }
 
 sub validate_archive_manifest {
@@ -647,13 +670,7 @@ sub validate_archive_manifest {
         problem("ledger '$id' archive manifest '$field' exceeds portable hard cap $hard{$field}")
             if $control->{$field} > $hard{$field};
     }
-    problem("ledger '$id' archive manifest exceeds its max_records")
-        if defined($control->{max_records}) && @objects > $control->{max_records};
-    problem("ledger '$id' archive manifest exceeds its max_bytes")
-        if defined($control->{max_bytes}) && $file_bytes > $control->{max_bytes};
-    problem("ledger '$id' archive manifest contains a record above max_record_bytes")
-        if defined($control->{max_record_bytes})
-        && grep { $_ > $control->{max_record_bytes} } @raw_lengths;
+    validate_archive_manifest_limits($control, $file_bytes, \@objects, \@raw_lengths, $id);
     validate_value_bounds($_, 'archive manifest record', 1, $control->{max_scalar_bytes})
         for grep { defined $control->{max_scalar_bytes} } @objects;
 
@@ -680,6 +697,7 @@ sub validate_archive_manifest {
         for my $field (qw(ledger_id path sealed_on reason sha256 first_record_sha256 last_record_sha256 verifier)) {
             scalar_field($entry, $field, "$type manifest record");
         }
+        validate_manifest_ledger_membership($entry, $id);
         for my $field (qw(records lines bytes line_bytes)) {
             problem("$type manifest record '$field' must be a nonnegative integer")
                 if !defined($entry->{$field}) || ref($entry->{$field}) || $entry->{$field} !~ /\A\d+\z/;
@@ -732,9 +750,10 @@ sub validate_archive_manifest {
     problem("ledger '$id' archive manifest last record identity mismatch")
         if ($entry->{last_record_sha256} // '') ne sha256_hex($parsed->{records}[-1]{bytes});
 
-    for my $segment (grep {
+    my @segments = grep {
         ($_->{record_type} // '') eq 'sealed_segment' && ($_->{ledger_id} // '') eq $id
-    } @objects) {
+    } @objects;
+    for my $segment (@segments) {
         my $path = $segment->{path} // '';
         next if !safe_relative($path) || !-f absolute($path);
         my $segment_bytes = slurp(absolute($path), "ledger '$id' sealed segment");
@@ -750,6 +769,24 @@ sub validate_archive_manifest {
         problem("ledger '$id' sealed segment last record identity mismatch")
             if ($segment->{last_record_sha256} // '') ne sha256_hex($segment_parsed->[-1]{bytes});
     }
+    return validate_archive_chain($id, $source, $capsule, \@segments);
+}
+
+sub validate_archive_manifest_limits {
+    my ($control, $file_bytes, $objects, $raw_lengths, $id) = @_;
+    problem("ledger '$id' archive manifest exceeds its max_records")
+        if defined($control->{max_records}) && @$objects > $control->{max_records};
+    problem("ledger '$id' archive manifest exceeds its max_bytes")
+        if defined($control->{max_bytes}) && $file_bytes > $control->{max_bytes};
+    problem("ledger '$id' archive manifest contains a record above max_record_bytes")
+        if defined($control->{max_record_bytes})
+        && grep { $_ > $control->{max_record_bytes} } @$raw_lengths;
+}
+
+sub validate_manifest_ledger_membership {
+    my ($entry, $id) = @_;
+    problem("ledger '$id' archive manifest contains foreign ledger_id '" . ($entry->{ledger_id} // '') . "'")
+        if ($entry->{ledger_id} // '') ne $id;
 }
 
 sub parse_segment {
@@ -793,14 +830,180 @@ sub parse_segment {
     return;
 }
 
+sub validate_archive_chain {
+    my ($id, $source, $capsule, $segments) = @_;
+    my %by_path;
+    my %by_predecessor;
+    for my $segment (@$segments) {
+        my $path = $segment->{path} // '';
+        my $predecessor = scalar_field($segment, 'predecessor', 'sealed segment manifest record');
+        my $successor = scalar_field($segment, 'successor', 'sealed segment manifest record');
+        if ($path ne '' && exists $by_path{$path}) {
+            problem("ledger '$id' segment path '$path' is duplicated in chronology");
+        } elsif ($path ne '') {
+            $by_path{$path} = $segment;
+        }
+        for my $pair ([predecessor => $predecessor], [successor => $successor]) {
+            my ($field, $value) = @$pair;
+            problem("ledger '$id' segment '$path' $field '$value' is unsafe")
+                if defined($value) && !safe_relative($value);
+        }
+        if (defined $predecessor) {
+            problem("ledger '$id' has duplicate chronology edge after '$predecessor'")
+                if exists $by_predecessor{$predecessor};
+            $by_predecessor{$predecessor} = $segment;
+        }
+    }
+
+    my @ordered = ($source);
+    my %visited;
+    my $predecessor = $source;
+    while (my $segment = $by_predecessor{$predecessor}) {
+        my $path = $segment->{path} // '';
+        if ($visited{$path}++) {
+            problem("ledger '$id' archive chronology contains a cycle at '$path'");
+            last;
+        }
+        push @ordered, $path;
+        my $next = $by_predecessor{$path};
+        my $expected_successor = $next ? ($next->{path} // '') : $capsule;
+        problem("ledger '$id' segment '$path' successor mismatch: actual '"
+            . ($segment->{successor} // '') . "', expected '$expected_successor'")
+            if ($segment->{successor} // '') ne $expected_successor;
+        $predecessor = $path;
+    }
+    push @ordered, $capsule;
+    problem("ledger '$id' archive chronology does not start at live source '$source'")
+        if @$segments && !exists $by_predecessor{$source};
+    my $visited_count = scalar keys %visited;
+    problem("ledger '$id' archive chronology is disconnected: visited $visited_count of " . scalar(@$segments) . ' segments')
+        if $visited_count != @$segments;
+    my %reported_cycle;
+    for my $start (keys %by_path) {
+        my %trail;
+        my $cursor = $start;
+        while (my $segment = $by_path{$cursor}) {
+            if ($trail{$cursor}++) {
+                problem("ledger '$id' archive chronology contains a cycle at '$cursor'")
+                    if !$reported_cycle{$cursor}++;
+                last;
+            }
+            my $successor = $segment->{successor} // '';
+            last if !exists $by_path{$successor};
+            $cursor = $successor;
+        }
+    }
+    return \@ordered;
+}
+
 sub validate_archive_index {
-    my ($index_rel, $id, $source, $capsule) = @_;
+    my ($index_rel, $id, $manifest_rel, $chain) = @_;
     return if !safe_relative($index_rel) || !-f absolute($index_rel);
     my $bytes = slurp(absolute($index_rel), "ledger '$id' archive index");
     return if !defined $bytes;
-    for my $needle ($source, $capsule, $id) {
-        problem("ledger '$id' archive index lacks '$needle'") if index($bytes, $needle) < 0;
+    validate_archive_index_content($bytes, $index_rel, $id, $manifest_rel, $chain);
+}
+
+sub validate_archive_index_content {
+    my ($bytes, $index_rel, $id, $manifest_rel, $chain) = @_;
+    my @links = markdown_link_paths($bytes, $index_rel);
+    my %counts;
+    $counts{$_}++ for @links;
+    for my $path (@$chain, $manifest_rel) {
+        problem("ledger '$id' archive index must link '$path' exactly once")
+            if ($counts{$path} // 0) != 1;
     }
+    my %chain_member = map { $_ => 1 } @$chain;
+    my @actual_order = grep { $chain_member{$_} } @links;
+    problem("ledger '$id' archive index member order differs from verified chronology")
+        if join("\0", @actual_order) ne join("\0", @$chain);
+    my %allowed = (%chain_member, $manifest_rel => 1);
+    for my $path (@links) {
+        problem("ledger '$id' archive index links undeclared member '$path'") if !$allowed{$path};
+    }
+}
+
+sub validate_archive_landings {
+    my ($control, $ledgers) = @_;
+    my @migrated = grep { ($_->{migration_state} // '') eq 'migrated' } @$ledgers;
+    return if !@migrated;
+    my %landing_seen;
+    my %index_seen;
+    my %manifest_seen;
+    my %directory_seen;
+    my %retired = map { $_ => 1 } grep { defined($_) && !ref($_) } @{ $control->{retired_paths} // [] };
+    my @ids;
+    my @expected_links;
+    for my $ledger (@migrated) {
+        my $id = $ledger->{ledger_id} // '';
+        my $archive = $ledger->{archive};
+        next if ref($archive) ne 'HASH';
+        my $landing = $archive->{landing} // '';
+        $landing_seen{$landing}++ if $landing ne '';
+        for my $pair ([index => \%index_seen], [manifest => \%manifest_seen], [directory => \%directory_seen]) {
+            my ($field, $seen) = @$pair;
+            my $path = $archive->{$field} // '';
+            problem("ledger '$id' reuses archive $field '$path'") if $path ne '' && $seen->{$path}++;
+            problem("ledger '$id' archive $field still uses retired path '$path'") if $retired{$path};
+        }
+        push @ids, $id;
+        push @expected_links, $ledger->{source}, $archive->{index}, $archive->{manifest};
+    }
+    problem('migrated rolling ledgers must share exactly one archive landing') if keys(%landing_seen) != 1;
+    my ($landing_rel) = keys %landing_seen;
+    return if !defined($landing_rel) || !safe_relative($landing_rel) || !-f absolute($landing_rel);
+    my $bytes = slurp(absolute($landing_rel), 'rolling-ledger archive landing');
+    return if !defined $bytes;
+    validate_archive_landing_content($bytes, $landing_rel, \@ids, \@expected_links);
+}
+
+sub validate_archive_landing_content {
+    my ($bytes, $landing_rel, $ids, $expected_links) = @_;
+    my @headings = $bytes =~ /^## `([^`]+)`\s*$/mg;
+    problem('rolling-ledger archive landing ledger order/membership differs from the registry')
+        if join("\0", @headings) ne join("\0", @$ids);
+    my @links = markdown_link_paths($bytes, $landing_rel);
+    my %counts;
+    $counts{$_}++ for @links;
+    my %allowed = map { $_ => 1 } @$expected_links;
+    for my $path (@$expected_links) {
+        problem("rolling-ledger archive landing must link '$path' exactly once")
+            if ($counts{$path} // 0) != 1;
+    }
+    for my $path (@links) {
+        problem("rolling-ledger archive landing links undeclared route '$path'") if !$allowed{$path};
+    }
+}
+
+sub markdown_link_paths {
+    my ($bytes, $document_rel) = @_;
+    my $base = dirname($document_rel);
+    my @paths;
+    while ($bytes =~ /\]\(([^)]+)\)/g) {
+        my $href = $1;
+        $href =~ s/^<|>$//g;
+        $href =~ s/#.*\z//;
+        next if $href eq '' || $href =~ m{\A[a-z][a-z0-9+.-]*:}i || $href =~ m{\A/};
+        my $path = normalize_relative_link($base, $href);
+        push @paths, $path if defined $path;
+    }
+    return @paths;
+}
+
+sub normalize_relative_link {
+    my ($base, $href) = @_;
+    return if $href =~ /[\x00\r\n?]/;
+    my @parts;
+    for my $part (split m{/}, "$base/$href") {
+        next if $part eq '' || $part eq '.';
+        if ($part eq '..') {
+            return if !@parts;
+            pop @parts;
+        } else {
+            push @parts, $part;
+        }
+    }
+    return join '/', @parts;
 }
 
 sub validate_consumers {
@@ -1019,6 +1222,133 @@ sub run_self_test {
 
     push @failures, 'an escaping path was accepted' if safe_relative('../archive.md');
     $checks++;
+
+    my $source = 'CURRENT.md';
+    my $capsule = 'docs/archive/rolling-ledgers/fixture/capsule.md';
+    my @segments = (
+        {
+            path => 'docs/archive/rolling-ledgers/fixture/segment-0002.md',
+            predecessor => $source,
+            successor => 'docs/archive/rolling-ledgers/fixture/segment-0001.md',
+        },
+        {
+            path => 'docs/archive/rolling-ledgers/fixture/segment-0001.md',
+            predecessor => 'docs/archive/rolling-ledgers/fixture/segment-0002.md',
+            successor => $capsule,
+        },
+    );
+    @errors = ();
+    my $chain = validate_archive_chain('fixture', $source, $capsule, [map { +{%$_} } @segments]);
+    push @failures, 'a valid archive chronology failed' if @errors;
+    push @failures, 'valid archive chronology order drifted'
+        if join("\0", @$chain) ne join("\0", $source, (map { $_->{path} } @segments), $capsule);
+    $checks++;
+
+    @errors = ();
+    my @missing_edge = map { +{%$_} } @segments;
+    delete $missing_edge[0]{predecessor};
+    validate_archive_chain('fixture', $source, $capsule, \@missing_edge);
+    push @failures, 'a missing predecessor edge was accepted' if !@errors;
+    $checks++;
+
+    @errors = ();
+    my @duplicate_edge = map { +{%$_} } @segments;
+    $duplicate_edge[1]{predecessor} = $source;
+    validate_archive_chain('fixture', $source, $capsule, \@duplicate_edge);
+    push @failures, 'a duplicate predecessor edge was accepted' if !@errors;
+    $checks++;
+
+    @errors = ();
+    my @broken_successor = map { +{%$_} } @segments;
+    $broken_successor[0]{successor} = $capsule;
+    validate_archive_chain('fixture', $source, $capsule, \@broken_successor);
+    push @failures, 'a broken successor edge was accepted' if !@errors;
+    $checks++;
+
+    @errors = ();
+    my @disconnected_cycle = map { +{%$_} } @segments;
+    $disconnected_cycle[1]{predecessor} = $disconnected_cycle[1]{path};
+    $disconnected_cycle[1]{successor} = $disconnected_cycle[1]{path};
+    validate_archive_chain('fixture', $source, $capsule, \@disconnected_cycle);
+    push @failures, 'a disconnected chronology cycle was accepted' if !@errors;
+    $checks++;
+
+    @errors = ();
+    validate_manifest_ledger_membership({ ledger_id => 'foreign' }, 'fixture');
+    push @failures, 'a foreign-ledger manifest record was accepted' if !@errors;
+    $checks++;
+
+    @errors = ();
+    validate_archive_manifest_limits(
+        { max_records => 1, max_bytes => 10, max_record_bytes => 4 },
+        11,
+        [{}, {}],
+        [5, 1],
+        'fixture',
+    );
+    push @failures, 'manifest record/byte limits were not enforced' if @errors < 3;
+    $checks++;
+
+    my $index_rel = 'docs/archive/rolling-ledgers/fixture/INDEX.md';
+    my $manifest_rel = 'docs/archive/rolling-ledgers/fixture/manifest.jsonl';
+    my $valid_index = join '',
+        "[Current](../../../../CURRENT.md)\n",
+        "[New segment](segment-0002.md)\n",
+        "[Old segment](segment-0001.md)\n",
+        "[Capsule](capsule.md)\n",
+        "[Manifest](manifest.jsonl)\n";
+    @errors = ();
+    validate_archive_index_content($valid_index, $index_rel, 'fixture', $manifest_rel, $chain);
+    push @failures, 'a complete ordered archive index failed' if @errors;
+    $checks++;
+
+    @errors = ();
+    (my $missing_index_member = $valid_index) =~ s/^\[Old segment\].*\n//m;
+    validate_archive_index_content($missing_index_member, $index_rel, 'fixture', $manifest_rel, $chain);
+    push @failures, 'an archive index missing a member was accepted' if !@errors;
+    $checks++;
+
+    @errors = ();
+    my $duplicate_index_member = $valid_index . "[Duplicate](segment-0001.md)\n";
+    validate_archive_index_content($duplicate_index_member, $index_rel, 'fixture', $manifest_rel, $chain);
+    push @failures, 'an archive index with a duplicate member was accepted' if !@errors;
+    $checks++;
+
+    @errors = ();
+    (my $wrong_index_order = $valid_index) =~ s{(\[New segment\].*\n)(\[Old segment\].*\n)}{$2$1};
+    validate_archive_index_content($wrong_index_order, $index_rel, 'fixture', $manifest_rel, $chain);
+    push @failures, 'an archive index with wrong chronology order was accepted' if !@errors;
+    $checks++;
+
+    @errors = ();
+    my $landing_rel = 'docs/archive/rolling-ledgers/INDEX.md';
+    my @landing_links = ($source, $index_rel, $manifest_rel);
+    my $valid_landing = "## `fixture`\n"
+        . "[Current](../../../CURRENT.md)\n"
+        . "[Index](fixture/INDEX.md)\n"
+        . "[Manifest](fixture/manifest.jsonl)\n";
+    validate_archive_landing_content($valid_landing, $landing_rel, ['fixture'], \@landing_links);
+    push @failures, 'a complete archive landing failed' if @errors;
+    $checks++;
+
+    @errors = ();
+    (my $missing_landing_route = $valid_landing) =~ s/^\[Manifest\].*\n//m;
+    validate_archive_landing_content($missing_landing_route, $landing_rel, ['fixture'], \@landing_links);
+    push @failures, 'an archive landing missing a route was accepted' if !@errors;
+    $checks++;
+
+    @errors = ();
+    my $residue_rel = "generated/rolling-ledger-retired-self-test-$$";
+    my $residue_path = absolute($residue_rel);
+    sysopen my $residue_fh, $residue_path, O_CREAT | O_EXCL | O_WRONLY
+        or die "rolling-ledger self-test: cannot create retired-path fixture: $!\n";
+    print {$residue_fh} "retired\n";
+    close $residue_fh;
+    validate_retired_paths({ retired_paths => [$residue_rel], max_array_items => 1 });
+    unlink $residue_path or die "rolling-ledger self-test: cannot remove retired-path fixture: $!\n";
+    push @failures, 'a retired manifest residue was accepted' if !@errors;
+    $checks++;
+
     @errors = @saved_errors;
     die "rolling-ledger self-test: $_\n" for @failures;
     print "rolling-ledger: $checks parser/control self-tests pass.\n";

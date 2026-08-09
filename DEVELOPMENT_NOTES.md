@@ -1,4 +1,21 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9b (`2026-08-09`) — chronology is an executable graph
+
+The partition is intentionally by ledger authority, not by arbitrary row count. Each manifest repeats the same
+small control record and retains only byte-identical rows for one ledger. This keeps each authority independently
+bounded through the already-declared 28-segment maximum and lets a future ledger exhaust or repartition without
+coupling unrelated histories.
+
+The verifier treats segment edges as a graph now. Starting from the live root, exactly one path must visit every
+declared segment once and terminate at the capsule; each successor must equal the next node. That makes missing or
+duplicate edges, broken successors, cycles, and disconnected components structural failures. The human index is
+then checked as the exact ordered projection of that verified chain, while the fixed landing is checked as the
+exact registry-ordered projection of all four ledger routes.
+
+Deletion is fail-closed rather than conventional cleanup. The old nine-row data plane was compared byte-for-byte
+with the four-part union before its exact file was removed. Registry schema v2 retains the retired path as a
+negative invariant, so recreating the old shared manifest fails even when all new authorities remain valid.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9a (`2026-08-09`) — partition authority, not chronology
 
 The shared index is not merely near a configured limit: the measured next normal route is larger than its

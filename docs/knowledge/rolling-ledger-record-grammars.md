@@ -14,7 +14,7 @@ answers:
 date: 2026-08-08
 status: current
 tags: [documentation, rolling-ledger, archive, continuity, validation]
-evidence: doctrine/live_document_size/rolling_ledgers.jsonl; docs/archive/rolling-ledgers/manifest.jsonl; docs/archive/rolling-ledgers/INDEX.md
+evidence: doctrine/live_document_size/rolling_ledgers.jsonl; docs/archive/rolling-ledgers/INDEX.md; docs/archive/rolling-ledgers/changes/manifest.jsonl; docs/archive/rolling-ledgers/development-notes/manifest.jsonl; docs/archive/rolling-ledgers/live-achievement-status/manifest.jsonl; docs/archive/rolling-ledgers/rust-codebase-analysis/manifest.jsonl
 reverify: perl scripts/check_rolling_ledger_protocol.pl --report
 ---
 
@@ -61,23 +61,27 @@ The second rollover sealed the next 12 records in
 SHA-256 `11e058831b33b71bbd7cb0a080cbf6024032ed96587b1a7d7c340945a58328df`. Direct extraction from the
 pre-removal Git content proves byte identity; the manifest chain orders live root → segment 0002 → segment
 0001 → capsule, and the root again retains 20 new records plus the exact 40-record suffix. The added route
-makes the shared index 81 lines / 5,311 bytes, only 218 bytes before its 90% byte rollover; `.9a`/`.9b` own
-partitioned-route design and implementation before another segment.
+makes the former shared index 81 lines / 5,311 bytes, only 218 bytes before its 90% byte rollover; `.9a` designed
+and `.9b` landed the bounded partitioned authority before another segment.
 `RUST_CODEBASE_ANALYSIS.md` completed the fourth migration in `.4e`. Its immutable 1,350-record
 capsule is
 `docs/archive/rolling-ledgers/rust-codebase-analysis/source-through-2026-08-08.md` with SHA-256
 `95e1665628b615498e94f67d6dc6e0083d4d104a6ca8a815b4c23cf2f97cc7ce`; its root is exactly the
 H1/Purpose prologue plus newest 60 H2 records. The lifecycle-only slice adds no architecture record.
-All four registry entries are now `migrated` and still share the bounded manifest/index route until `.9b` lands.
-The `.9a` census proves that the index has only 218 bytes before mandatory rollover while the last direct segment
-route required 301 bytes. ADR 0017 therefore selects a fixed four-route landing plus one bounded index and
-manifest per ledger. Existing per-ledger manifest capacity remains sufficient through each declared 28-segment
-surface ceiling without widening a control; direct retrieval remains at most two bounded hops.
+All four `migrated` registry entries now share only the fixed landing; each points to a distinct bounded index and
+manifest inside its ledger directory. The landing is 34 lines / 1,512 bytes. The four complete indexes are 37
+lines / 1,378 bytes in aggregate, with 10 lines / 421 bytes as the largest part. Existing per-ledger manifest
+capacity remains sufficient through every declared 28-segment surface ceiling without widening a control;
+direct retrieval is at most two bounded hops.
 
-The same audit found an enforcement gap: manifest `predecessor` and `successor` values are required today, but
-the checker does not yet prove reciprocal edges, a complete acyclic chain, or the absence of disconnected
-segments. `.9b` must add that fail-closed chain proof and require each per-ledger index to list every verified
-member exactly once in chain order before the shared route can be retired.
+The four manifests repeat the unchanged bounded control row and preserve the former nine data records
+byte-for-byte. Their data-row union equals the retired shared manifest exactly; capsules and segments are
+unchanged. The schema-v2 registry declares the retired path, and the checker rejects any residue.
+
+The checker now proves reciprocal edges, one complete acyclic live→segments→capsule chain, and absence of foreign
+or disconnected members. Each per-ledger index must link every chain member exactly once in verified order plus
+its manifest, while the landing must expose exactly the four registry-ordered ledger routes. Twenty-four focused
+parser/control/chain/route mutations and 55 generic lifecycle/overflow cases pass.
 
 For an H2 live cut, one blank line immediately before the removed successor is boundary structure,
 not retained record content. The capsule preserves it exactly; the root renderer omits exactly that

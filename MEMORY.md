@@ -21,15 +21,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9a` — bounded archive-route topology design; verified,
-  commit pending.
-- Current state: ADR 0017 selects a fixed four-route landing plus bounded per-ledger indexes/manifests. The shared
-  index has 218 bytes before rollover versus a 301-byte last route. Per-ledger projections fit unchanged controls;
-  the current checker does not yet prove complete acyclic predecessor/successor chronology. This task file is
-  229,064 bytes / 82.2% of health with 21,611 bytes of pre-rollover headroom; `.10a`/`.10b` own containment.
-- Next action: commit `.9a`, then activate `.9b` and atomically migrate every route/consumer while
-  adding complete-chain, exact index-order, direct-retrieval, overflow, and retired-manifest residue checks.
-- In-flight uncommitted: `.9a` design/current-truth documents only; no archive route/member, consumer, executable
-  checker, product artifact, threshold, or ceiling has changed. `.project-data/tmp` contains only `.gitkeep` plus
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9b` — bounded archive-route migration and complete-chain
+  enforcement; complete and verified, commit pending.
+- Current state: a fixed landing and four bounded per-ledger indexes/manifests preserve every old manifest data
+  row and immutable member. Complete graph/index/landing and retired-path checks pass; `.9` is closed. This task
+  evidence is 2,451 lines / 232,637 bytes with 248 lines / 18,038 bytes of pre-rollover headroom;
+  `.10a`/`.10b` own lossless containment.
+- Next action: commit `.9b`, then activate `.10a` and measure task-tree semantic regions, readers, update rate,
+  exact-history requirements, and remaining line/byte headroom before selecting a bounded topology.
+- In-flight uncommitted: verified `.9b` route/data/checker/docs migration; no product behavior, ledger record,
+  immutable member, threshold, or existing ceiling changed. `.project-data/tmp` contains only `.gitkeep` plus
   `xcrun_db`.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

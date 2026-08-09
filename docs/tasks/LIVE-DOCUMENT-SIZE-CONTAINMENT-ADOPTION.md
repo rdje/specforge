@@ -387,7 +387,7 @@ verification before correction.
   Rust script occurrences are independent temporary fixtures; full CI is green and `.8` is closed.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9`
-  Status: `pending` (`2026-08-09`)
+  Status: `done` (`2026-08-09`)
   Children: `.9a`, `.9b`
   Goal: contain the shared rolling-ledger archive route before another sealed segment would cross its mandatory
   byte rollover: preserve direct capsule/segment retrieval, bounded manifest authority, and exact chronology
@@ -401,9 +401,11 @@ verification before correction.
   the exact consumer/capacity census and missing complete-chain enforcement become `.9b` acceptance requirements.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9b`
-  Status: `pending` (`2026-08-09`, CODE/DOC)
+  Status: `done` (`2026-08-09`, CODE/DOC)
   Goal: implement the accepted archive-route topology, migrate every reader atomically, exercise direct
   retrieval and overflow mutations, update the book/fact/live surfaces, and close `.9` from a clean commit.
+  **Done:** four byte-preserving per-ledger manifests and exact ordered indexes sit behind the fixed landing;
+  24 protocol plus 55 lifecycle cases enforce chain, route, bounds, and retired-path absence; `.9` is closed.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10`
   Status: `pending` (`2026-08-09`)
@@ -425,9 +427,9 @@ verification before correction.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `.9b` | `pending` (`2026-08-09`) | Implement the accepted four-part route and complete-chain verifier before another segment is admitted. |
-| 2 | `.10a` | `pending` (`2026-08-09`) | The program task file is 229,064 bytes (82.2% of health); design containment before 250,676-byte rollover. |
-| 3 | `.10b` | `pending` (`2026-08-09`) | Implement the accepted task-evidence route without losing the program's exact decisions or verification history. |
+| 1 | `.10a` | `pending` (`2026-08-09`) | Task evidence is above line/byte warning; design lossless containment before either rollover. |
+| 2 | `.10b` | `pending` (`2026-08-09`) | Implement the accepted task-evidence route without losing exact decisions or verification history. |
+| — | `.9b` | `done` (`2026-08-09`) | Fixed landing, four exact authorities, complete graph/index/landing enforcement, and residue gate close `.9`. |
 | — | `.9a` | `done` (`2026-08-09`) | Exact pressure, reader, capacity, and chronology-gap evidence are locked in ADR 0017 and the design report. |
 | — | `.8g` | `done` (`2026-08-09`) | Cold value/consumer scan is clean; all 17 markers, 83 focused cases, full CI, and exact projections pass; `.8` closed. |
 | — | `.8f` | `done` (`2026-08-09`) | Synthetic required literals derive from contract data; a changed-literal fixture and 11/11 protocol cases pass. |
@@ -631,6 +633,22 @@ verification before correction.
   change/development ledgers, doctrine note, mdBook, exact book authority, verification, and commit records all
   route the next action to `.9b` before any next rollover.
 
+### Acceptance Checklist (enforced) — `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9b`
+
+- [x] **REPRODUCE / MEASURE** — prove the four data-row partitions equal the retired nine-row Git object
+  byte-for-byte; measure landing, indexes, and manifests; prove every capsule/segment unchanged and directly read.
+- [x] **ROOT CAUSE (WHY + WHERE)** — remove multi-ledger growth from the shared route and replace presence-only
+  predecessor/successor fields with one executable complete simple-chain contract.
+- [x] **ADDRESSED (verified)** — fixed landing + four per-ledger indexes/manifests; schema-v2 landing/retired-path
+  declarations; exact chain/order/membership, foreign-member, bound, overflow, and residue rejection.
+- [x] **NO REGRESSION** — 24 protocol + 55 lifecycle cases, real retrieval, six doctrines, 1,779 Rust tests / five
+  ignored, rustdoc, mdBook, and locality pass; no ledger record, immutable member, product behavior, threshold,
+  or existing ceiling changed.
+- [x] **GENERICITY** — validation follows registry ledger identity and graph edges, never known segment counts or
+  names; a zero-segment ledger and future declared segments use the same traversal and exact projection checks.
+- [x] **LOCKSTEP** — registry/surfaces, archives, checker, fact, book, doctrine note, roadmap/status/resume,
+  ledgers, exact book authority, verification, and commit records agree; `.9` closes and frontier moves to `.10a`.
+
 ## Decisions
 
 - `2026-08-09`: **GO on the newer portable derived-state semantics.** External collection-index and bounded
@@ -688,6 +706,10 @@ verification before correction.
   each ledger owns a bounded complete index and byte-preserving manifest under unchanged controls. `.9b` must
   additionally prove one reciprocal, acyclic, complete live→segments→capsule chain and exact index order because
   the current verifier checks only that predecessor/successor scalars exist.
+- `2026-08-09`: **The manifest is the graph authority; the index is its exact human projection (`.9b`).** Four
+  unchanged-control manifests preserve every former data row byte-for-byte. Traversal starts at the live root,
+  visits every segment once, terminates at the capsule, and fixes index order; the fixed landing projects the four
+  registry routes. Registry v2 retains the deleted shared path only as a fail-closed negative invariant.
 - `2026-08-09`: **Own the containment tree's own byte warning before rollover.** The `.9a` resulting-tree report
   identifies this file as the largest `task_evidence` member at 2,420 lines / 229,064 bytes, above its 222,823-byte
   warning and with 21,611 bytes of pre-rollover headroom before 250,676 bytes. `.10a` must design a lossless bounded current/history
@@ -2135,6 +2157,8 @@ progress state. No other book part changes unless the final audit finds a separa
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-09` | `.9b` | Git-object data-row union/control comparison; immutable-member diff; 24 protocol mutations/report; 55 lifecycle/overflow cases; current-consumer and retired-file census | exact: nine data rows unchanged across four manifests; capsules/segments untouched; landing 34 lines / 1,512 bytes; four indexes 37 / 1,378; old path occurs only as the negative registry invariant and the file is absent |
+| `2026-08-09` | `.9b` | full `bash scripts/run_ci.sh`; six doctrines; format; warning-deny Clippy/tests; rustdoc; mdBook; final locality and projections | green: 1,779 tests / five ignored; 633 tracked Markdown / 42 surfaces, 159 facts / 1,118 questions / eight shards, book 36 files / 13,143 lines / 795,321 bytes; no product/ledger/member/threshold/existing-ceiling change |
 | `2026-08-09` | `.9a` | shared index block/growth/pressure census; manifest record/control/capacity projection; exact reader/consumer occurrences; live-status record boundary; rolling checker/index validator source audit | design accepted: 81 lines / 5,311 bytes leaves 218 bytes while the last route needed 301; four one-capsule/28-segment partitions project to 26,069–28,420 bytes under unchanged 32-record / 32,768-byte controls; current chronology scalars lack reciprocal/acyclic/completeness enforcement |
 | `2026-08-09` | `.9a` | focused rolling-ledger self-test/report; composed doctrines/docs/map/catalog checks; exact book and fact-index aggregates; diff/locality hygiene | green: 159 facts / 1,118 questions / eight shards, fact catalog 172 lines / 32,634 bytes, book 36 files / 13,143 lines / 795,294 bytes; no archive member, route, consumer, checker, threshold, or ceiling changed; ADR 0017 makes `.9b` the next archive action. The report separately exposes this task file at 229,064 bytes / 82.2% health and opens `.10a`/`.10b` before rollover |
 | `2026-08-09` | `.8g` | cold 14-primary/3-secondary JSONL inventory; 17/17 exact marker cardinality; tracked Rust/hash/route/path occurrence classification; executable-source scans; Cargo and Git-index authorities | clean: no live FSMGen hash/route exists in executable source; three Rust and two FSMGen live copies are declared and agree; historical evidence and self-contained temporary Rust fixtures have no authority coupling; neutral/adapter/protocol source boundaries hold |
@@ -2217,6 +2241,7 @@ progress state. No other book part changes unless the final audit finds a separa
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.9b` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9b — partition and verify every archive route` | four exact authorities + fixed landing + complete chain/index/landing/residue enforcement + `.9` closure |
 | `.9a` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9a — design the bounded archive route` | exact pressure/readers/capacity + ADR 0017 four-part authority + complete-chain acceptance contract |
 | `.8g` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8g — close the derived-state audit plane` | clean data/value/consumer scan + 83 focused cases + full CI + `.8` closure |
 | `.8f` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8f — derive feedback self-test literals from data` | complete-array rendering + unrelated-literal proof + 11/11 protocol cases + zero stored live hash |
@@ -2256,6 +2281,12 @@ progress state. No other book part changes unless the final audit finds a separa
 | `.7` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7 — close the containment and locality program` | independent whole-program retrieval audit + cold-read defect gates + final book method-doc + clean closure |
 
 ## Changelog
+
+- `2026-08-09`: `.9b` CODE/DOC DONE; `.9` CLOSED. Split nine byte-identical data rows into four bounded
+  manifests, replaced the 81-line growing index with a 34-line fixed landing plus four complete indexes, switched
+  all readers, removed/gated the old manifest, and added complete chain/order/landing enforcement. 24 + 55 cases
+  and full CI pass; immutable members, product behavior, thresholds, and existing ceilings are unchanged.
+  Frontier → `.10a` task-evidence containment design.
 
 - `2026-08-09`: `.9a` PROBE/DOC DONE. The shared route is 81 lines / 5,311 bytes with 218 bytes before rollover,
   while its last segment route needed 301 bytes. Exact reader, block, manifest, and future-capacity measurements

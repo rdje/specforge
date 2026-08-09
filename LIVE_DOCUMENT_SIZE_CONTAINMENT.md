@@ -38,8 +38,9 @@
   proves unrelated replacement literals have no executable fallback. `.8g` independently confirms all 17
   declared members/markers and both authority groups, finds no live FSMGen value in executable source, and closes
   `.8`. `.9a` measures the 218-byte shared-route boundary and accepts ADR 0017's fixed four-route landing plus
-  bounded per-ledger index/manifest authorities. It also makes complete acyclic chronology and exact index order
-  mandatory `.9b` checks before the atomic migration; no existing threshold or ceiling is widened.
+  bounded per-ledger index/manifest authorities. `.9b` lands that topology, preserves every former manifest data
+  row byte-for-byte, removes the exact retired shared manifest, and enforces complete acyclic chronology, exact
+  index order, landing completeness, and residue absence. No existing threshold or ceiling is widened.
 <!-- LIVE-DOCUMENT-SIZE-CONTAINMENT-LOCAL-ADOPTION:END -->
 
 ---
