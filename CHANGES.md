@@ -1,3 +1,16 @@
+### FACT-CARD-CATALOG-CONTAINMENT.2.1.1 — correct cross-directory fact routes
+
+- Found before implementation that ADR 0020's byte-identical row clause would copy `(card-id.md)` links into a
+  sibling directory, resolving them to nonexistent `docs/knowledge-catalog/card-id.md` paths.
+- Accepted ADR 0021's narrow correction: pin the legacy monolith byte-for-byte, but require migrated rows to
+  preserve exact ID/date/status/title tuples and resolve to each canonical `docs/knowledge/<card-id>.md`; rewrite
+  only the necessary relative target as `../knowledge/<card-id>.md`.
+- Recomputed the current three title parts at 176 lines / 34,720 bytes aggregate; the largest is 70 lines /
+  14,306 bytes and the widest line is 268 bytes. The landing remains 172 lines / 12,361 bytes, so every accepted
+  root/part/aggregate bound remains valid with a 47,081-byte combined result.
+- No code, catalog output, card identity/evidence, product artifact, surface limit, or question semantic changed.
+  The monolith stays blob `dcac9e58…5081` and the destination directory remains absent; frontier → `.2.1.2`.
+
 ### FACT-CARD-CATALOG-CONTAINMENT.1 — decide the bounded fact catalog topology
 
 - Accepted ADR 0020: keep `docs/knowledge/INDEX.md` stable as an exhaustive direct-ID membership index, and move

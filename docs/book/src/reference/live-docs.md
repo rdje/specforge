@@ -376,6 +376,12 @@ bounded hops. `.2.1` must lock the current monolith and reject destinations befo
 Canonical facts and question semantics stay separate; neither deleting evidence nor widening a surface limit is
 an accepted repair.
 
+ADR 0021 corrects one route-level assumption before code. A legacy `(card-id.md)` link copied byte-for-byte into
+the sibling title-part directory would resolve to the wrong place. The monolith therefore remains exact byte
+provenance, while each migrated row preserves its ID/date/status/title and resolved canonical destination and
+rewrites only the relative target to `../knowledge/card-id.md`. The corrected three-part simulation is 176 lines /
+34,720 bytes; its 14,306-byte largest part and 268-byte widest line remain within ADR 0020's original bounds.
+
 #### Remaining canonical collection catalogs landed
 
 At `.5c.iii`, no partitioned canonical Markdown collection relied only on a Git query. The bounded

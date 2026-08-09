@@ -52,7 +52,9 @@
   caps before any source byte moves. ADR 0020 separately accepts a bounded fact-card browse projection: the stable
   root keeps exhaustive direct-ID membership while deterministic 64-card parts carry detailed rows; a derived
   198-card maximum and fixed root/part/aggregate limits preserve the existing 200-file collection ceiling. Its
-  `.2.1` legacy lock must land before any generated row moves. No existing threshold or ceiling is widened.
+  `.2.1` legacy lock must land before any generated row moves. ADR 0021 corrects cross-directory row identity:
+  exact legacy bytes remain provenance, while migrated rows preserve semantic fields and resolved card targets
+  through the required `../knowledge/` relative rewrite. No existing threshold or ceiling is widened.
 <!-- LIVE-DOCUMENT-SIZE-CONTAINMENT-LOCAL-ADOPTION:END -->
 
 ---

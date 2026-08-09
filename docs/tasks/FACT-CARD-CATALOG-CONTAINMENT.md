@@ -68,6 +68,22 @@ retrieval, direct id/title browsing, derive-and-diff freshness, and repository-v
   Children: `FACT-CARD-CATALOG-CONTAINMENT.2.1`, `FACT-CARD-CATALOG-CONTAINMENT.2.2`
 
 - ID: `FACT-CARD-CATALOG-CONTAINMENT.2.1`
+  Status: active
+  Goal: lock the legacy monolith and enforce both catalog states before migration
+  Children: `FACT-CARD-CATALOG-CONTAINMENT.2.1.1`, `FACT-CARD-CATALOG-CONTAINMENT.2.1.2`
+
+- ID: `FACT-CARD-CATALOG-CONTAINMENT.2.1.1`
+  Status: done
+  Goal: correct cross-directory row-link preservation before implementation
+  Acceptance: a durable correction preserves every legacy row field and exact card destination while replacing
+  only the now-relative link text required by the separate title-part directory; limits remain valid
+  Verification: ADR 0021 proves literal `(card.md)` rows break after the sibling-directory move; semantic tuple
+  and resolved-destination preservation replaces only that clause; current corrected parts are 176 lines /
+  34,720 bytes aggregate, largest 70 lines / 14,306 bytes / max line 268; all ADR 0020 limits remain valid; source
+  monolith unchanged and destination absent; decision/catalog/KM/live-size/doctrine/book gates pass
+  Commit: `FACT-CARD-CATALOG-CONTAINMENT.2.1.1 — correct cross-directory fact routes`
+
+- ID: `FACT-CARD-CATALOG-CONTAINMENT.2.1.2`
   Status: pending
   Goal: lock the legacy monolith and enforce both catalog states before migration
   Acceptance: a schema-closed contract/checker pins the committed monolith, proves every source row and planned
@@ -88,7 +104,7 @@ retrieval, direct id/title browsing, derive-and-diff freshness, and repository-v
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `FACT-CARD-CATALOG-CONTAINMENT.2.1` | `pending` | enforce the committed legacy boundary and future topology before moving generated rows |
+| 1 | `FACT-CARD-CATALOG-CONTAINMENT.2.1.2` | `pending` | implement the corrected semantic/destination-preserving contract before migration |
 
 ## Pre-Containment Boundary
 
@@ -133,6 +149,9 @@ The immutable measurement boundary is commit `47e915409bbe6065544f86e49739b9e93c
   surface after two fixed routes; do not treat the old premature 160 literal as a second authority.
 - `2026-08-09`: Use `legacy_locked` then `migrated` commits. Generated output needs no archive terminal, but the
   old monolith's committed identity and ordered row union remain executable provenance until migration closes.
+- `2026-08-09`: ADR 0021 supersedes only byte-identical migrated rows. A sibling-directory copy of `(card.md)`
+  would be broken; enforce exact semantic tuples and resolved `docs/knowledge/<card>.md` destinations while
+  retaining byte-exact legacy provenance. All accepted topology and limits remain unchanged.
 
 ## Open Questions
 
@@ -149,6 +168,7 @@ The immutable measurement boundary is commit `47e915409bbe6065544f86e49739b9e93c
 | --- | --- | --- | --- |
 | `2026-08-09` | `FACT-CARD-CATALOG-CONTAINMENT.0` | Git tree/blob/SHA/metrics; card/index limits; reader/writer census; catalog/KM/live-size/task/doctrine/book gates | exact committed baseline; no catalog contract/output, fact evidence deletion, product, artifact, threshold, or ceiling changed |
 | `2026-08-09` | `FACT-CARD-CATALOG-CONTAINMENT.1` | worst-case root/part arithmetic; current in-memory render simulation; ADR/index links; source-index diff; catalogs/KM/live-size/doctrines/mdBook | bounded stable landing + deterministic title parts accepted; implementation policy closed; existing output unchanged |
+| `2026-08-09` | `FACT-CARD-CATALOG-CONTAINMENT.2.1.1` | cross-directory link resolution; corrected render metrics/worst-case bounds; ADR/index links; source blob/destination absence; catalogs/KM/live-size/doctrines/mdBook | broken relative-link assumption corrected before code; semantic fields/destinations lossless; other ADR 0020 decisions unchanged |
 
 ## Commit Log
 
@@ -156,6 +176,7 @@ The immutable measurement boundary is commit `47e915409bbe6065544f86e49739b9e93c
 | --- | --- | --- |
 | `FACT-CARD-CATALOG-CONTAINMENT.0` | `FACT-CARD-CATALOG-CONTAINMENT.0 — own and pin fact catalog pressure` | ownership and exact pre-containment boundary |
 | `FACT-CARD-CATALOG-CONTAINMENT.1` | `FACT-CARD-CATALOG-CONTAINMENT.1 — decide the bounded fact catalog topology` | ADR 0020; output unchanged |
+| `FACT-CARD-CATALOG-CONTAINMENT.2.1.1` | `FACT-CARD-CATALOG-CONTAINMENT.2.1.1 — correct cross-directory fact routes` | ADR 0021; no code/output change |
 
 ## Changelog
 
@@ -164,3 +185,5 @@ The immutable measurement boundary is commit `47e915409bbe6065544f86e49739b9e93c
   independent limits, and all current reader/writer seams; frontier advances to topology decision `.1`.
 - `2026-08-09`: `.1` accepted ADR 0020's stable direct-ID landing, three current/at-most-four deterministic title
   parts, derived 198-card authority, independent bounds, stale-output contract, and two-stage migration.
+- `2026-08-09`: `.2.1.1` caught the sibling-directory relative-link contradiction before implementation; ADR 0021
+  preserves exact row semantics and destinations with a deterministic `../knowledge/` rewrite.

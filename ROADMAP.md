@@ -130,7 +130,10 @@ Five active program groups support that north star:
   monolithic index has only 134 bytes below its independent ceiling. Its `.0` pins the exact source and reader
   boundary; `.1` accepts ADR 0020's stable direct-ID landing over deterministic 64-card title parts, derives a
   198-card maximum from the unchanged 200-file collection, and fixes independent root/part/aggregate bounds.
-  `.2.1` now owns the legacy-locked checker boundary before `.2.2` may migrate generated rows. The
+  `.2.1.1` catches and corrects one pre-code contradiction through ADR 0021: sibling title parts must preserve
+  semantic row fields and resolved card destinations while rewriting only their relative `../knowledge/` target;
+  literal `(card.md)` bytes would be broken from the new directory. `.2.1.2` now owns the corrected legacy-locked
+  checker boundary before `.2.2` may migrate generated rows. The
   completed `.0`–`.10`
   [`LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`](docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md)
   implementation keeps current documentation and project data bounded on the repository volume; completed

@@ -1,4 +1,22 @@
 # DEVELOPMENT_NOTES
+## FACT-CARD-CATALOG-CONTAINMENT.2.1.1 (`2026-08-09`) — link identity is resolved destination, not source spelling
+
+Relative Markdown syntax is location-dependent. The legacy `(card-id.md)` bytes are correct only because the
+monolith and cards share `docs/knowledge/`; the same bytes under `docs/knowledge-catalog/` name a different,
+nonexistent target. A byte-preservation claim that breaks retrieval is not lossless migration.
+
+ADR 0021 separates the authorities precisely. The committed monolith retains exact byte provenance. Each row's
+semantic tuple—ID, canonical path, date, status, compacted title—and its resolved destination are the migration
+invariant. The renderer changes only the relative path spelling to `../knowledge/card-id.md`, and the checker must
+resolve it from the part before comparison. Redirect stubs, HTML base behavior, and mixing generated parts into
+the canonical-card surface are rejected because each hides or relocates the underlying role boundary.
+
+The 13-byte prefix increase is already covered by the accepted limits. A worst-case migrated row is 333 bytes,
+below the 384-byte health target. Current detailed output rises from the original simulation's 32,636 bytes to
+34,720 bytes, while the largest part remains only 14,306 of 24,576 health bytes. Correctness therefore costs no
+threshold change and was safest to settle in a separately committed decision before checker code encoded the
+wrong invariant.
+
 ## FACT-CARD-CATALOG-CONTAINMENT.1 (`2026-08-09`) — preserve direct membership while sharding human detail
 
 The generic membership gate and human browse route ask different questions. Membership needs the stable index to

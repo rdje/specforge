@@ -7,6 +7,10 @@ scope: documentation, knowledge-map, generated-projection, retrieval, containmen
 
 # ADR 0020: Fact-card browsing uses a bounded ID landing over deterministic title parts
 
+> **Correction:** ADR 0021 supersedes only this record's byte-identical detailed-row claim. Cross-directory
+> parts preserve every semantic field and exact card destination while rewriting `(card.md)` to
+> `(../knowledge/card.md)`. All topology, capacity, limit, and staging decisions below remain accepted.
+
 ## Context
 
 At commit `47e915409bbe6065544f86e49739b9e93c1ac75b`, `docs/knowledge/` contains 158 canonical
@@ -56,8 +60,9 @@ routes plus a fixed scaffold capped at 2,048 bytes keep the complete root under 
 
 Cards sort by ID and pack by count, 64 cards per part, into
 `docs/knowledge-catalog/titles-NNNN.md`. Each part carries the existing detailed table columns and row rendering:
-ID link, establishment date, status, and title preview. The migration therefore preserves the 158 current table
-rows byte-for-byte as an ordered union while moving them out of the crowded landing.
+ID link, establishment date, status, and title preview. Per ADR 0021, migration preserves those fields and their
+exact resolved card destinations as an ordered union; only the relative link spelling changes for the new
+directory.
 
 The renderer permits at most 198 cards and four parts. A row remains capped at 320 bytes; a part has at most 64
 rows plus a fixed scaffold capped at 1,024 bytes. The dedicated generated-projection surface uses these limits:
@@ -105,13 +110,14 @@ derive-and-diff content. The generic live-size checker independently proves coll
 the landing's internal card membership and its external membership over all title parts.
 
 The old monolith is generated rather than canonical, so it receives no archive terminal. Its exact committed
-Git/blob/SHA/metric identity and ordered row set remain migration provenance in the executable contract and Git;
-the canonical cards can reproduce the result.
+Git/blob/SHA/metric identity and ordered legacy-row set remain migration provenance in the executable contract
+and Git. ADR 0021 requires migrated rows to preserve each semantic tuple and resolved card destination rather
+than the no-longer-correct relative link bytes; the canonical cards can reproduce the result.
 
 ## Migration stages
 
 1. `FACT-CARD-CATALOG-CONTAINMENT.2.1` lands the schema-closed contract and neutral checker in `legacy_locked`
-   state. It pins the committed monolith, validates all 158 source rows and planned three-part rendering, rejects
+   state. It pins the committed monolith, validates all 158 source tuples and planned three-part rendering, rejects
    every destination part, and exercises both legacy and future migrated states without changing output.
 2. `FACT-CARD-CATALOG-CONTAINMENT.2.2` writes the bounded landing plus three title parts, adds their dedicated
    generated surface, switches the contract to `migrated`, updates current readers/documentation, runs the full
@@ -120,8 +126,9 @@ the canonical cards can reproduce the result.
 ## Consequences
 
 - Existing bootstrap and Knowledge Map links keep the stable browse path.
-- Every current detailed row survives exactly once in bounded title parts; every card remains directly linked
-  from the root for generic membership and ID retrieval.
+- Every current detailed tuple and resolved destination survives exactly once in bounded title parts; every card
+  remains directly linked from the root for generic membership and ID retrieval. ADR 0021 owns the necessary
+  cross-directory relative-link rewrite.
 - Ordinary additions can use the collection capacity already declared by the 200-file surface without reviving
   a monolithic browse bottleneck.
 - Question search remains a separate sharded projection with its own current warning and hard bounds.

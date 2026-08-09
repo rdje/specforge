@@ -11,7 +11,7 @@ answers:
 date: 2026-08-08
 status: current
 tags: [knowledge-map, navigation, generated-index, continuity]
-evidence: docs/knowledge/INDEX.md; scripts/check_fact_card_catalog.pl; docs/decisions/0020-bounded-fact-card-browse-projection.md
+evidence: docs/knowledge/INDEX.md; scripts/check_fact_card_catalog.pl; docs/decisions/0020-bounded-fact-card-browse-projection.md; docs/decisions/0021-cross-directory-fact-catalog-links-preserve-destinations.md
 reverify: perl scripts/check_fact_card_catalog.pl --check
 ---
 
@@ -46,3 +46,10 @@ ID/date/status/title rows; current in-memory rendering produces a 172-line / 12,
 totaling 176 lines / 32,636 bytes. The maximum 198 cards derives from 200 collection files minus the fixed README
 and index. A `legacy_locked` commit must enforce exact old-row provenance and destination absence before a later
 commit migrates generated output.
+
+ADR 0021 corrects one pre-implementation detail: copying `(card-id.md)` rows byte-for-byte into the sibling
+`docs/knowledge-catalog/` directory would break every card link. The migrated parts must preserve each row's
+ID/date/status/title tuple and exact resolved `docs/knowledge/<card-id>.md` destination while rewriting only the
+relative target to `../knowledge/<card-id>.md`. The current corrected parts total 176 lines / 34,720 bytes; their
+largest member is 70 lines / 14,306 bytes with a 268-byte widest line, still within every ADR 0020 bound. The
+legacy monolith remains exact provenance.
