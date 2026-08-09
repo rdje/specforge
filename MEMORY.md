@@ -21,16 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `FACT-CARD-CATALOG-CONTAINMENT.0` — own and pin fact-card catalog pressure; complete and verified,
-  commit pending.
-- Current state: boundary `47e91540` pins 158 cards / 160 collection files and a 32,634-byte generated index with
-  only 134 bytes below its focused ceiling. Thirteen unique path/checker seams are classified. No catalog
-  contract or generated browse output changed; the boundary fact's three new retrieval keys move the separately
-  sharded question projection to its 80.1% aggregate-byte warning.
-- Next action: commit `.0`, then run `FACT-CARD-CATALOG-CONTAINMENT.1` to decide the bounded catalog topology from
-  the exact focused/generic/question-projection limits before implementation, accounting for the adjacent
-  question-projection warning without changing its semantics.
-- In-flight uncommitted: task ownership, exact boundary fact, generated question projection, and impact-routed
-  live documentation only; product code/artifacts, PDF task source/destinations, shared inputs, thresholds, and
-  ceilings unchanged.
+- Active unit: `FACT-CARD-CATALOG-CONTAINMENT.1` — decide the bounded fact-card catalog topology; complete and
+  verified, commit pending.
+- Current state: ADR 0020 accepts the stable direct-ID landing plus deterministic 64-card title parts, derives the
+  198-card maximum from the unchanged 200-file collection, and fixes root/part/aggregate limits plus two-stage
+  migration. The old 32,634-byte monolith is unchanged and every destination remains absent.
+- Next action: commit `.1`, then run `FACT-CARD-CATALOG-CONTAINMENT.2.1` to pin the `.1` monolith boundary and land
+  the schema-closed `legacy_locked`/`migrated` checker before moving generated rows.
+- In-flight uncommitted: ADR/task/fact plus impact-routed live documentation only; catalog code/output, product
+  code/artifacts, PDF task source/destinations, shared inputs, thresholds, and ceilings unchanged.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

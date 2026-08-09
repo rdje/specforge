@@ -11,7 +11,7 @@ answers:
 date: 2026-08-08
 status: current
 tags: [knowledge-map, navigation, generated-index, continuity]
-evidence: docs/knowledge/INDEX.md; scripts/check_fact_card_catalog.pl
+evidence: docs/knowledge/INDEX.md; scripts/check_fact_card_catalog.pl; docs/decisions/0020-bounded-fact-card-browse-projection.md
 reverify: perl scripts/check_fact_card_catalog.pl --check
 ---
 
@@ -38,3 +38,11 @@ Recording the boundary adds three question keys. That moves the separate, alread
 projection from 209,621 bytes (94 bytes below warning) to 209,962 bytes, or 80.1% of its aggregate health target.
 Its 90% rollover and 393,216-byte enforcement ceiling remain independent; the containment decision must account
 for this adjacent pressure without changing question-shard semantics by convenience.
+
+ADR 0020 resolves the browse architecture without changing the stable path or the generic 200-file ceiling.
+`docs/knowledge/INDEX.md` becomes a bounded landing with one direct ID link per card and direct links to
+deterministic 64-card title parts under `docs/knowledge-catalog/`. The detailed parts retain the existing
+ID/date/status/title rows; current in-memory rendering produces a 172-line / 12,361-byte landing plus three parts
+totaling 176 lines / 32,636 bytes. The maximum 198 cards derives from 200 collection files minus the fixed README
+and index. A `legacy_locked` commit must enforce exact old-row provenance and destination absence before a later
+commit migrates generated output.

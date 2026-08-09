@@ -1,3 +1,17 @@
+### FACT-CARD-CATALOG-CONTAINMENT.1 — decide the bounded fact catalog topology
+
+- Accepted ADR 0020: keep `docs/knowledge/INDEX.md` stable as an exhaustive direct-ID membership index, and move
+  the exact detailed ID/date/status/title rows into deterministic 64-card parts under `docs/knowledge-catalog/`.
+- Proved the unchanged 32,768-byte root limit is sufficient at the existing 200-file surface ceiling: 198 maximum
+  cards × 138 route bytes plus fixed/part routes remains under the cap. The card maximum is now derived as
+  `200 - README - INDEX`, eliminating the premature independent 160 literal without widening the surface.
+- Fixed part and aggregate bounds: at most four title parts, 64 rows each, 80 lines / 24,576 bytes health per part,
+  and 320 lines / 90,112 bytes aggregate health. Combined landing plus parts may not exceed five files /
+  512 lines / 122,880 bytes; stale dedicated-prefix output fails closed.
+- Current in-memory rendering is a 172-line / 12,361-byte landing and three parts totaling 176 lines /
+  32,636 bytes. The old monolith remains byte-identical and every destination absent; `.2.1` owns a committed
+  `legacy_locked` checker boundary before `.2.2` migration. Product behavior and question semantics are unchanged.
+
 ### FACT-CARD-CATALOG-CONTAINMENT.0 — own and pin fact catalog pressure
 
 - Opened a separately owned containment program before changing any fact-card catalog contract or output. The

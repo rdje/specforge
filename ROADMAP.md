@@ -128,7 +128,9 @@ Five active program groups support that north star:
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) now owns the durability risk at
   the fact-card browse plane: 158 cards have reached the generic collection's 80% file warning, while the focused
   monolithic index has only 134 bytes below its independent ceiling. Its `.0` pins the exact source and reader
-  boundary; `.1` must select a lossless bounded topology without deleting facts or widening limits. The
+  boundary; `.1` accepts ADR 0020's stable direct-ID landing over deterministic 64-card title parts, derives a
+  198-card maximum from the unchanged 200-file collection, and fixes independent root/part/aggregate bounds.
+  `.2.1` now owns the legacy-locked checker boundary before `.2.2` may migrate generated rows. The
   completed `.0`–`.10`
   [`LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`](docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md)
   implementation keeps current documentation and project data bounded on the repository volume; completed

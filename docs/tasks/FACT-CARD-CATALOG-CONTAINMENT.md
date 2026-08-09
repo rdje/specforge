@@ -52,18 +52,35 @@ retrieval, direct id/title browsing, derive-and-diff freshness, and repository-v
   Commit: `FACT-CARD-CATALOG-CONTAINMENT.0 — own and pin fact catalog pressure`
 
 - ID: `FACT-CARD-CATALOG-CONTAINMENT.1`
-  Status: pending
+  Status: done
   Goal: select and specify the bounded fact-card catalog topology
   Acceptance: a durable decision fixes authorities, membership, routing, partition/aggregate limits, update
   transaction, migration stages, and rejection cases without changing current catalog outputs
+  Verification: ADR 0020 accepts a stable ID landing plus 64-card title parts, derives 198 cards from the unchanged
+  200-file surface, fixes root/part/aggregate bounds and two-hop title retrieval, and separates legacy lock from
+  migration; proposed current rendering is 172 lines / 12,361 bytes plus three parts totaling 176 lines /
+  32,636 bytes; source index diff remains empty; decision/catalog/KM/live-size/doctrine/book gates pass
+  Commit: `FACT-CARD-CATALOG-CONTAINMENT.1 — decide the bounded fact catalog topology`
+
+- ID: `FACT-CARD-CATALOG-CONTAINMENT.2`
+  Status: active
+  Goal: implement, migrate, verify, and close fact-card catalog containment
+  Children: `FACT-CARD-CATALOG-CONTAINMENT.2.1`, `FACT-CARD-CATALOG-CONTAINMENT.2.2`
+
+- ID: `FACT-CARD-CATALOG-CONTAINMENT.2.1`
+  Status: pending
+  Goal: lock the legacy monolith and enforce both catalog states before migration
+  Acceptance: a schema-closed contract/checker pins the committed monolith, proves every source row and planned
+  output, rejects premature title parts, validates the future migrated topology, and runs unconditionally
   Verification: pending
   Commit: pending
 
-- ID: `FACT-CARD-CATALOG-CONTAINMENT.2`
+- ID: `FACT-CARD-CATALOG-CONTAINMENT.2.2`
   Status: pending
-  Goal: implement, migrate, verify, and close fact-card catalog containment
-  Acceptance: every canonical card remains unchanged and directly browsable through a bounded generated route;
-  all readers and enforcement agree; no stale output or unowned capacity remains
+  Goal: migrate to the bounded landing/title-part projection and close containment
+  Acceptance: every canonical card stays at its stable path with identity/evidence intact and is directly
+  ID-routed through the landing; detailed rows occupy bounded generated parts; all readers/enforcement agree;
+  stale output is absent; the owned containment fact may record the outcome; the tree closes
   Verification: pending
   Commit: pending
 
@@ -71,7 +88,7 @@ retrieval, direct id/title browsing, derive-and-diff freshness, and repository-v
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `FACT-CARD-CATALOG-CONTAINMENT.1` | `pending` | choose the lossless bounded topology from the committed baseline before changing outputs |
+| 1 | `FACT-CARD-CATALOG-CONTAINMENT.2.1` | `pending` | enforce the committed legacy boundary and future topology before moving generated rows |
 
 ## Pre-Containment Boundary
 
@@ -111,11 +128,16 @@ The immutable measurement boundary is commit `47e915409bbe6065544f86e49739b9e93c
 - `2026-08-09`: Keep question-shard semantics out of the browse migration, but require `.1` to account for their
   newly crossed aggregate warning. The projection is already partitioned and has ample hard-ceiling headroom;
   the warning is a capacity input, not permission to conflate canonical cards, browse parts, and question shards.
+- `2026-08-09`: Accept ADR 0020. Keep the stable root as an exhaustive direct ID membership index and move exact
+  detailed rows into deterministic 64-card title parts. Derive the 198-card maximum from the unchanged 200-file
+  surface after two fixed routes; do not treat the old premature 160 literal as a second authority.
+- `2026-08-09`: Use `legacy_locked` then `migrated` commits. Generated output needs no archive terminal, but the
+  old monolith's committed identity and ordered row union remain executable provenance until migration closes.
 
 ## Open Questions
 
-- Which bounded browse topology best preserves one-hop id/title discovery while making per-file and aggregate
-  capacity explicit? `.1` owns the decision; it does not block the read-only `.0` boundary census.
+- None. ADR 0020 fixes identity/title retrieval, membership, capacity authority, bounds, write ordering, residue,
+  and migration stages before implementation.
 
 ## Blockers
 
@@ -126,15 +148,19 @@ The immutable measurement boundary is commit `47e915409bbe6065544f86e49739b9e93c
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-08-09` | `FACT-CARD-CATALOG-CONTAINMENT.0` | Git tree/blob/SHA/metrics; card/index limits; reader/writer census; catalog/KM/live-size/task/doctrine/book gates | exact committed baseline; no catalog contract/output, fact evidence deletion, product, artifact, threshold, or ceiling changed |
+| `2026-08-09` | `FACT-CARD-CATALOG-CONTAINMENT.1` | worst-case root/part arithmetic; current in-memory render simulation; ADR/index links; source-index diff; catalogs/KM/live-size/doctrines/mdBook | bounded stable landing + deterministic title parts accepted; implementation policy closed; existing output unchanged |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `FACT-CARD-CATALOG-CONTAINMENT.0` | `FACT-CARD-CATALOG-CONTAINMENT.0 — own and pin fact catalog pressure` | ownership and exact pre-containment boundary |
+| `FACT-CARD-CATALOG-CONTAINMENT.1` | `FACT-CARD-CATALOG-CONTAINMENT.1 — decide the bounded fact catalog topology` | ADR 0020; output unchanged |
 
 ## Changelog
 
 - `2026-08-09`: Opened the separately owned containment program before changing the catalog contract or outputs.
 - `2026-08-09`: `.0` pinned the 158-card/160-file collection, 32,634-byte monolithic index, conflicting
   independent limits, and all current reader/writer seams; frontier advances to topology decision `.1`.
+- `2026-08-09`: `.1` accepted ADR 0020's stable direct-ID landing, three current/at-most-four deterministic title
+  parts, derived 198-card authority, independent bounds, stale-output contract, and two-stage migration.

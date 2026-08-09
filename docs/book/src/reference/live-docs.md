@@ -364,12 +364,17 @@ The later `47e91540` boundary exposed a new pressure asymmetry before data loss 
 collection now has 158 cards plus its README and index—160 files, exactly the generic surface's 80% file
 warning—but the monolithic 32,634-byte browse index has only 134 bytes below its separate 32,768-byte limit.
 Its focused 160-card cap leaves two cards even though the generic surface appears to leave 40 files and the
-question projection permits 200 facts. `FACT-CARD-CATALOG-CONTAINMENT` owns this as a projection-topology issue:
-the canonical cards and question shards remain separate authorities while `.1` selects a lossless bounded browse
-route. Recording the finding added three retrieval keys and moved the already-sharded question projection to
-209,962 aggregate bytes, or 80.1% of its health target, still below rollover. The decision must account for that
-adjacent pressure without changing question semantics. Neither deleting evidence nor widening a limit is an
-accepted repair.
+question projection permits 200 facts. Recording the finding added three retrieval keys and moved that already-
+sharded projection to 209,962 aggregate bytes, or 80.1% of its health target, still below rollover.
+
+ADR 0020 keeps the stable browse path as a compact direct-ID landing and moves the unchanged detailed rows into
+deterministic 64-card title parts under `docs/knowledge-catalog/`. The 198-card maximum derives from the unchanged
+200-file collection minus its README and index. At most four title parts may exist; combined landing and parts
+are capped at five files / 512 lines / 122,880 bytes. Current simulation yields a 172-line / 12,361-byte landing
+plus three parts totaling 176 lines / 32,636 bytes. ID retrieval remains one hop; title browsing remains two
+bounded hops. `.2.1` must lock the current monolith and reject destinations before `.2.2` migrates output.
+Canonical facts and question semantics stay separate; neither deleting evidence nor widening a surface limit is
+an accepted repair.
 
 #### Remaining canonical collection catalogs landed
 

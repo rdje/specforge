@@ -1,4 +1,29 @@
 # DEVELOPMENT_NOTES
+## FACT-CARD-CATALOG-CONTAINMENT.1 (`2026-08-09`) — preserve direct membership while sharding human detail
+
+The generic membership gate and human browse route ask different questions. Membership needs the stable index to
+link every canonical card directly; human title browsing needs descriptive rows, but does not require all of them
+in the landing. ADR 0020 therefore retains a compact direct-ID list in `docs/knowledge/INDEX.md` and moves the
+existing descriptive rows into 64-card title parts. This avoids changing the generic index semantics or teaching
+the common live-size checker one project-specific transitive exception.
+
+Count-based packing is deliberate. Alphabet ranges look stable but can become arbitrarily unbalanced; byte-only
+packing makes the number of cards in a part unpredictable. Sixty-four rows under the existing 320-byte row cap
+need at most 20,544 bytes plus a fixed scaffold, safely below the 24,576-byte health target. At 198 cards the
+renderer needs at most four parts. Every addition may rebalance a bounded suffix, but the complete output set is
+derived and capped, so the diff cost cannot grow without bound.
+
+The focused 160-card literal was not the collection authority. The registered surface already permits exactly
+200 immediate Markdown files, two of which are structurally reserved for README and INDEX. Deriving 198 cards
+from that unchanged ceiling removes a contradictory premature rejection; it does not raise the surface limit.
+The 200-total-fact question-map cap remains separate because decision records may also participate. A commit must
+satisfy both, and neither projection may borrow the other's unused capacity.
+
+Generated output does not need an archive capsule: it contains no unique facts and is reproducible from canonical
+cards. Migration provenance still matters, so `.2.1` must pin the monolith's committed blob/hash/metrics and exact
+ordered row union, validate the proposed output in memory, and reject all title-part residue. Only the next commit
+may replace the landing and add parts, with the landing written last and Git providing the durable atomic boundary.
+
 ## FACT-CARD-CATALOG-CONTAINMENT.0 (`2026-08-09`) — nominal collection capacity is not usable browse capacity
 
 Three separately valid controls have drifted into an operational contradiction. The generic live surface counts

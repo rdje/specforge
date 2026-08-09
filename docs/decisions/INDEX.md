@@ -31,6 +31,7 @@ changed* lives in git (layer D), not here.
 | [0017](0017-partitioned-rolling-ledger-archive-route.md) | Rolling-ledger archives use a bounded landing and per-ledger authority partitions | 2026-08-09 | accepted | documentation, continuity, archive, retrieval |
 | [0018](0018-terminal-task-tree-current-history-boundary.md) | A completed oversized task tree becomes a bounded closed root over an exact source capsule | 2026-08-09 | accepted | documentation, continuity, task-tree, archive, retrieval |
 | [0019](0019-bounded-active-task-root-and-semantic-evidence-parts.md) | An oversized active task uses a bounded current root over semantic evidence parts and exact provenance | 2026-08-09 | accepted | documentation, continuity, task-tree, active-work, archive, retrieval |
+| [0020](0020-bounded-fact-card-browse-projection.md) | Fact-card browsing uses a bounded ID landing over deterministic title parts | 2026-08-09 | accepted | documentation, knowledge-map, generated-projection, retrieval, containment |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /

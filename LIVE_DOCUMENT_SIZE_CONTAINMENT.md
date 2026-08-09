@@ -49,7 +49,10 @@
   explicitly excluded from that terminal topology. ADR 0019 now governs the first active target; `.2.1` adds a
   neutral 29-case source-locked/complete/migrated checker that authenticates Git/file identity, exhaustive semantic
   regions, planned-part pressure, destination absence, future routes/payloads/frontier/manifest, and fixed portable
-  caps before any source byte moves. No existing threshold or ceiling is widened.
+  caps before any source byte moves. ADR 0020 separately accepts a bounded fact-card browse projection: the stable
+  root keeps exhaustive direct-ID membership while deterministic 64-card parts carry detailed rows; a derived
+  198-card maximum and fixed root/part/aggregate limits preserve the existing 200-file collection ceiling. Its
+  `.2.1` legacy lock must land before any generated row moves. No existing threshold or ceiling is widened.
 <!-- LIVE-DOCUMENT-SIZE-CONTAINMENT-LOCAL-ADOPTION:END -->
 
 ---
