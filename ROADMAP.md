@@ -164,7 +164,8 @@ Five active program groups support that north star:
   `.2.35` transfers the same generic boundary to the 96-page USB4 Connection Manager Guide: 96 portable
   sidecars, 13→0 relations, 4→0 interfaces, 11→0 ports, and the stale `SB`/`USB`/`USB4` target removed. The
   methodology guide blocks honestly, all 68 remaining emits are strict-clean, and corpus is 35 done / 21
-  remaining; next is selection and ownership of #36. Separately,
+  remaining. #36 now owns the 29-page CoreSight Base System Architecture as a cat-3 authority/topology transfer
+  check: zero retained relations currently feed 88 stale heuristic interfaces and a 100-signal target. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

@@ -21,15 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2`; refresh #35 is closed and #36 needs selection/ownership.
-- Current state: USB4 Connection Manager now has a portable 252-file source-through-adapter chain. Its guarded
-  96-page ingest peaked at 28% system memory used; 96/96 page paths are repository-relative. Current generic
-  authority removes the stale 13-relation / four-interface / 11-port `SB`/`USB`/`USB4` model while retaining
-  structured source evidence. The methodology guide blocks at zero interfaces/signals/rules, removes
-  `device_also.isf`, and leaves only `adapter.json`. Corpus is 35 done / 21 remaining; 80/4/80/79 stage census
-  and 68/68 strict-clean current emitted ISFs are verified.
-- Next action: select refresh #36 from the remaining 21 real chip-spec documents, add its owning task-tree leaf,
-  authenticate its retained chain/source, then run only that guarded slice.
-- In-flight uncommitted: none after the `.2.35` commit. Its authenticated rollback and first-run replay evidence
-  were deleted only after final gates; exact task-id residue is zero.
+- Active unit: `CORPUS-COVERAGE.2.36`; refresh CoreSight Base System Architecture with the current binary.
+- Current state: #35 is closed at 35 done / 21 remaining, with 80/4/80/79 stage census and 68/68 current emitted
+  ISFs strict-clean. #36 now owns the bounded 29-page CoreSight Base System candidate. Its same-SSD source hash is
+  `c4a5f342…66d`; the retained EvidenceIR has zero actor-signal relations, while stale SemanticIR still carries 88
+  heuristic interfaces and the adapter emits 100 signals/two rules in `agent.isf`. This directly checks the
+  authority-empty fallback against the durable sparse/half-connected/rootless cat-3 topology finding.
+- Next action: authenticate the complete retained #36 stage chain and exact same-volume rollback, then run the
+  guarded CPU ingest and deterministic cascade from the resolved caller-authorized SSD input.
+- In-flight uncommitted: only the `.2.36` ownership/resume-pointer commit; no generated artifact has changed.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

@@ -4,7 +4,7 @@
 
 - Tree ID: `CORPUS-COVERAGE`
 - Status: `active` (`.0` build-out + `.1` stage-staleness validator done; `.2` current-binary refresh batch
-  remains active with 35 completed documents and `.2.36` selection next; `.3`
+  remains active with 35 completed documents and `.2.36` CoreSight Base System refresh owned next; `.3`
   lifecycle/currentness reconciliation done `2026-08-09`)
 - Roadmap lane: `R15e`/`R16` (corpus digestion — the owner's substantive gap #2)
 - Created: `2026-06-17`
@@ -338,6 +338,36 @@ today's ephemeral normalized-directory count.
 - [x] **LOCKSTEP** — generated artifacts, #35 row/count/frontier, live docs, durable fact, mdBook,
   and `MEMORY.md` agree; delete only authenticated rollback/task evidence after every final gate is green.
 
+- ID: `CORPUS-COVERAGE.2.36` · Status: `in_progress` (`2026-08-09`, DATA/DOC) · Goal: run a guarded
+  current-binary refresh of `den0068_2018_07_23_coresight_base_system_architecture` from the caller-authorized
+  same-SSD source and complete the deterministic EvidenceIR→SemanticIR→IntentIR→adapter cascade. The 29-page /
+  19-visual / 12-table candidate is selected because its retained EvidenceIR already has zero actor-signal
+  relations, yet its stale SemanticIR carries 88 heuristic interfaces and its adapter emits 100 signals plus two
+  rules in `agent.isf`. That is a compact transfer test for the generic authority-empty fallback against the
+  durable cat-3 finding that captured topology is sparse/half-connected/rootless and must remain an honest
+  residual rather than be fabricated into a behavioral target. Authenticate the full baseline and source hash
+  `c4a5f342…66d` before mutation; use CPU Docling with the 85%-used RAM abort, no LLM/VLM inference, and the
+  resolved external input rather than the repository discovery symlink escape. Do not assume the adapter must
+  block: accept any output grounded by the refreshed current pipeline. If a new product defect appears, preserve
+  exact rollback evidence and add a bounded child leaf before changing code.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.36`
+
+- [ ] **REPRODUCE / MEASURE** — authenticate the source PDF, complete retained five-stage chain, stale 88-interface/
+  100-signal adapter surfaces, release binary, and same-volume rollback; record guarded-ingest counts, peak memory,
+  final hashes, and typed before→after deltas.
+- [ ] **ROOT CAUSE (WHY + WHERE)** — classify every material delta against current generic extraction, cat-3
+  topology-capture, and authority-empty interface rules rather than treating strict syntax as semantic trust.
+- [ ] **ADDRESSED (verified)** — promote only complete validated stages; require every page path final and
+  repository-relative; converge obsolete adapter targets; run FSMGen strict only if honestly renderable.
+- [ ] **NO REGRESSION** — reproduce the deterministic cascade, hold nine provider-free WIRE/I2C/SWD gates and KG
+  156/156, sweep all current emitted ISFs through FSMGen strict, and pass mdBook/doctrine/path/locality gates plus
+  broader Rust CI if any product code changes.
+- [ ] **GENERICITY** — no CoreSight/vendor/document/token exception, manual generated-output edit, relaxed
+  validator, fabricated topology, or LLM/VLM inference enters the slice.
+- [ ] **LOCKSTEP** — generated artifacts, #36 row/count/frontier, live docs, durable fact when warranted, mdBook,
+  and `MEMORY.md` agree; delete only authenticated rollback/task evidence after every final gate is green.
+
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34b.ii.a`
 
 - [x] **REPRODUCE / MEASURE** — fresh USB4 ingest reproducibly leaves 51/51 page-sidecar image paths absolute and
@@ -596,8 +626,9 @@ today's ephemeral normalized-directory count.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: `CORPUS-COVERAGE.2.36` — select and own current-binary refresh #36 from the remaining 21 real
-  chip-spec documents before changing its generated chain.
+- Frontier: `CORPUS-COVERAGE.2.36` — authenticate the retained CoreSight Base System source-through-adapter chain
+  and same-volume rollback, then run its guarded CPU ingest and deterministic cascade without changing generated
+  artifacts outside this document key.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**35 refreshes done after #35;
   21 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#35: #29/#31 CHI-C2C marquee message-field refreshes,
