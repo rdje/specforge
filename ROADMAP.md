@@ -124,7 +124,11 @@ Five active program groups support that north star:
   no-eligible-frontier reconciliation, atomic root+part writer, and fixed route/aggregate limits. `.2.1` now lands
   the neutral 29-case checker and source-locked topology contract: exact commit/blob/file/index identity, exhaustive
   regions, planned-part pressure, portable caps, and complete destination absence pass. `.2.2` owns final committed
-  boundary plus exact region/route migration inputs before any destination exists. The
+  boundary plus exact region/route migration inputs before any destination exists. Separately,
+  [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) now owns the durability risk at
+  the fact-card browse plane: 158 cards have reached the generic collection's 80% file warning, while the focused
+  monolithic index has only 134 bytes below its independent ceiling. Its `.0` pins the exact source and reader
+  boundary; `.1` must select a lossless bounded topology without deleting facts or widening limits. The
   completed `.0`–`.10`
   [`LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`](docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md)
   implementation keeps current documentation and project data bounded on the repository volume; completed

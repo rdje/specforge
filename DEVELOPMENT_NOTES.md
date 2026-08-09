@@ -1,4 +1,30 @@
 # DEVELOPMENT_NOTES
+## FACT-CARD-CATALOG-CONTAINMENT.0 (`2026-08-09`) — nominal collection capacity is not usable browse capacity
+
+Three separately valid controls have drifted into an operational contradiction. The generic live surface counts
+160 immediate Markdown files against a 200-file ceiling, the focused catalog parser allows 160 actual cards, and
+the question projection allows 200 facts across cards and participating decisions. Meanwhile the browse index is
+a single file capped at 32,768 bytes. At the committed boundary it is 32,634 bytes: an average current row needs
+204.7 bytes, so nominal collection and question capacity cannot be exercised through the required browse route.
+
+This is not evidence that a ceiling should increase. The canonical cards are small independent authorities; the
+problem lies in a generated projection that concentrated every browse row into one capped file. The next leaf
+must choose a topology whose landing, parts, aggregate, membership, and stale-output rules are independently
+bounded. It must also reconcile whether card capacity is derived from reserved collection routes or explicitly
+declared once, so a future operator cannot again see three plausible but incompatible answers.
+
+The baseline distinguishes writers from readers before migration. Canonical cards remain manually authored;
+`check_fact_card_catalog.pl --write` alone renders the browse projection through a same-directory temporary; the
+live-document driver checks both focused semantics and generic membership; and the Knowledge Map generator reads
+cards independently while linking the catalog route. That permits a later browse migration without changing
+question-key retrieval or canonical fact content.
+
+The act of making the finding retrievable is itself measurable pressure: three added question keys move the
+already-sharded projection from 209,621 to 209,962 aggregate bytes, just across its 80% warning. That projection
+still has explicit per-shard and aggregate enforcement bounds and remains below rollover, so the result does not
+justify reopening its semantics. It does require the browse-topology decision to model both routes' independent
+budgets rather than assuming a card addition costs space in only one generated plane.
+
 ## ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1 (`2026-08-09`) — source locking includes Git, topology, and absence
 
 A working-tree digest alone does not prove a migration source was durable. The active-task checker therefore

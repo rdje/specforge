@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
+  > is the WIRE-BASED-100.5a AHB 0.364 baseline real
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > is the canonical SWD normalized bundle path portable
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
@@ -296,5 +298,3 @@
   > what is AppError::IngestAbortedForDisk
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > what is AppError::IngestAbortedForMemory
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > what is CORPUS-COVERAGE.2.33d dense-prose adapter trust repair

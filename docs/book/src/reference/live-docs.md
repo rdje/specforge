@@ -360,6 +360,17 @@ real derive-and-diff check through the live-document doctrine. The root README n
 use the bounded catalog to browse known ids/titles, and the generated Knowledge Map to search by a
 question. The bounded question-shard migration is described below.
 
+The later `47e91540` boundary exposed a new pressure asymmetry before data loss or a failed commit. The
+collection now has 158 cards plus its README and index—160 files, exactly the generic surface's 80% file
+warning—but the monolithic 32,634-byte browse index has only 134 bytes below its separate 32,768-byte limit.
+Its focused 160-card cap leaves two cards even though the generic surface appears to leave 40 files and the
+question projection permits 200 facts. `FACT-CARD-CATALOG-CONTAINMENT` owns this as a projection-topology issue:
+the canonical cards and question shards remain separate authorities while `.1` selects a lossless bounded browse
+route. Recording the finding added three retrieval keys and moved the already-sharded question projection to
+209,962 aggregate bytes, or 80.1% of its health target, still below rollover. The decision must account for that
+adjacent pressure without changing question semantics. Neither deleting evidence nor widening a limit is an
+accepted repair.
+
 #### Remaining canonical collection catalogs landed
 
 At `.5c.iii`, no partitioned canonical Markdown collection relied only on a Git query. The bounded

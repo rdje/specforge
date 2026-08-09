@@ -1,3 +1,19 @@
+### FACT-CARD-CATALOG-CONTAINMENT.0 — own and pin fact catalog pressure
+
+- Opened a separately owned containment program before changing any fact-card catalog contract or output. The
+  committed `47e91540` boundary contains 158 canonical cards plus the collection README and generated index.
+- Pinned the collection Git tree and index Git blob/SHA. The index is 172 lines / 32,634 bytes with only 134 bytes
+  below its focused 32,768-byte ceiling; 158 rows range from 132 to 261 bytes and average 204.7 bytes.
+- Exposed the authority mismatch: the focused checker permits only two more cards, while the generic 200-file
+  surface appears to leave 40 files and the question projection permits 200 facts. The collection is exactly at
+  its generic 80% file warning despite the monolithic index already being 99.59% full under its own limit.
+- Classified 11 direct path readers and 13 unique path/checker seams, including the sole derived-catalog writer.
+  The existing catalog fact records the durable finding; no browse-catalog output, fact evidence, product
+  behavior/artifact, existing threshold, or ceiling changed. Frontier advances to `.1` topology selection.
+- The fact's three new question keys move the separate, already-sharded question projection from 209,621 to
+  209,962 aggregate bytes, crossing its 80% warning by 247 bytes while remaining below its 90% rollover and hard
+  ceiling. `.1` must account for that adjacent pressure without changing question-shard semantics by convenience.
+
 ### ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1 — enforce the source-locked active task contract
 
 - Added a schema-closed, project-neutral active-task contract and checker. The source lock binds the current path

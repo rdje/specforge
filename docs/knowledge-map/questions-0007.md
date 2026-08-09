@@ -2,8 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > which strategy is message_fields.byte_location_table
 - [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
   > which task owns deterministic Rust tests under repository-local TMPDIR
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > which task owns fact-card catalog containment
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
   > which task owns mdBook fence classification and doctest enforcement
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -293,7 +297,3 @@
   > why does the DTI / trace-bus .isf fail FSMGen --strict --check (OperandContract: a value literal wider than the declared signal width)
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > why does the MPAM 'must be included' sentence extract nothing
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > why does the VLM misread register-diagram bit positions and how is it fixed
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > why does the batch size depend on total RAM instead of free memory

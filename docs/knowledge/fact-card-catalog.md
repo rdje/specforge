@@ -5,6 +5,9 @@ answers:
   - "how can I browse every SpecForge knowledge fact card by id or title"
   - "why does the fact-card file count differ from the Knowledge Map fact count"
   - "how is docs knowledge INDEX kept complete"
+  - "why is the SpecForge fact-card catalog almost out of capacity"
+  - "which task owns fact-card catalog containment"
+  - "how much fact-card catalog index headroom remains"
 date: 2026-08-08
 status: current
 tags: [knowledge-map, navigation, generated-index, continuity]
@@ -22,3 +25,16 @@ The collection file count is not the generated Knowledge Map fact count. At `.5c
 map reported 136 facts because it also scans `docs/decisions/`, where ADR 0007 participates as one
 front-mattered fact. After this card and the derived catalog land, the directory has 138 Markdown
 files, 136 of which are cards; the generated map has 137 facts including ADR 0007.
+
+At committed boundary `47e91540`, the collection has 158 cards plus `README.md` and the generated
+index: 160 immediate Markdown files, exactly the generic surface's 80% file-warning point. The
+focused generator is tighter: its 160-card limit leaves two card slots, while the 32,634-byte
+monolithic index has only 134 bytes below its 32,768-byte ceiling. The generated question map still
+permits 200 total facts and currently reports 159, so the three capacity authorities disagree before
+their advertised ceilings. `FACT-CARD-CATALOG-CONTAINMENT` owns a lossless bounded topology; it may
+not delete facts or widen an existing limit to hide the pressure.
+
+Recording the boundary adds three question keys. That moves the separate, already-sharded Knowledge Map
+projection from 209,621 bytes (94 bytes below warning) to 209,962 bytes, or 80.1% of its aggregate health target.
+Its 90% rollover and 393,216-byte enforcement ceiling remain independent; the containment decision must account
+for this adjacent pressure without changing question-shard semantics by convenience.

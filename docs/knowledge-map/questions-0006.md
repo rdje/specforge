@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > what model does the NLI verifier use
 - [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
   > what must SpecForge derive to fully capture SWD; what are the gaps
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
@@ -296,5 +298,3 @@
   > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > which stale roadmap statuses were found before migration
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > which strategy is message_fields.byte_location_table

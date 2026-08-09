@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > what is CORPUS-COVERAGE.2.33d dense-prose adapter trust repair
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
   > what is DOC-INTENT-TAXONOMY .2 Result 3 verdict (closed by .4e: the rule-lowering shortfall is dominated by conditional_rules that are honest residual; signal_constraints + temporal_rules lower well; not an ISF-completeness gap)
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
@@ -295,5 +297,3 @@
   > what message field metrics does validate emit
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
   > what model do converge / enrich / nlp-enrich use by default
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > what model does the NLI verifier use

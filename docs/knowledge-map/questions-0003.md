@@ -137,6 +137,8 @@
   > how many unknown-kind tables does the corpus carry
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > how much RAM did the qwen2.5vl:7b VLM use on a timing-diagram crop (13 GB; host hit 87% used, across the 85% kill threshold)
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > how much fact-card catalog index headroom remains
 - [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
   > how much intent does SpecForge extract across the whole corpus
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
@@ -296,5 +298,3 @@
   > is the VLM the right lever for AXI transaction phase membership (no — a deterministic channel-table cue is)
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > is the VLM-tier transaction frontier exhausted (yes — superseded by the deterministic channel cue / honest absence)
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > is the WIRE-BASED-100.5a AHB 0.364 baseline real

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > why does the VLM misread register-diagram bit positions and how is it fixed
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > why does the batch size depend on total RAM instead of free memory
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
   > why does the eMMC (JEDEC) IntentIR explode to 153 actors while HBM2 consolidates to 38
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
@@ -120,6 +124,8 @@
   > why is the NLI framing better than free-form labeling
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
   > why is the PSEL antecedent dropped in a temporal rule
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > why is the SpecForge fact-card catalog almost out of capacity
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > why is the USB 3.2 adapter syntactically valid but semantically untrustworthy
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
