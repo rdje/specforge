@@ -60,4 +60,11 @@ fabricated merely to make the adapter renderable.
 Final `.iv.c` signoff reproduced all four downstream hashes both before and after documented SourceIR validation
 backannotation and the same typed result, passed focused/WIRE/KG/full-CI/book/doctrine/path/locality gates, then
 deleted the authenticated nine-file rollback with zero task-id residue. The USB parent tree is closed; the current
-70 emitted adapters remain under the established strict-clean contract.
+70 emitted adapters remained under the established strict-clean contract at that boundary.
+
+**Independent transfer proof (`CORPUS-COVERAGE.2.34b.ii.b`).** USB4 Inter-Domain Service previously carried one
+`USB4` interface signal, two rules, and eight enums. A fresh current-binary cascade retains two `USB4` conditional
+consequents as source evidence but produces zero relations, interfaces, ports, connectivity, adapter signals, or
+rules. Lowering blocks on `no signals declared in interface`, keeps six storage records, removes the obsolete
+`channel.isf`, and leaves exactly `adapter.json`. The live emitted set is now 69/69 FSMGen-strict clean. This
+second document confirms the authority-empty repair is structural rather than USB 3.2-specific.

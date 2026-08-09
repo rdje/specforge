@@ -1,6 +1,6 @@
 ---
 id: host-library-route-remains-on-boot-volume
-title: The corpus host-library symlink still resolves to a boot-volume Git checkout after the project move
+title: Historical blocker: the corpus host-library route still named the boot-volume checkout
 answers:
   - "where does the specforge chipdoc host library symlink currently resolve"
   - "why is corpus coverage refresh 34 blocked before ingest"
@@ -9,10 +9,17 @@ answers:
   - "what must happen before the USB4 inter-domain corpus refresh can run"
   - "was any USB4 pipeline artifact changed by the source locality probe"
 date: 2026-08-09
+status: superseded
 tags: [corpus, source-provenance, project-data-locality, host-library, usb4, storage]
 evidence: docs/tasks/CORPUS-COVERAGE.md (.2.34a); .cache/local-references/chipdoc (host-local symlink); PROJECT_DATA_LOCALITY.md
-reverify: "Resolve .cache/local-references/chipdoc and compare its filesystem identity with the repository root; census the external SSD project directory for a chipdoc checkout and the selected USB4 PDF. Do not ingest until the routes share the intended SSD volume or the director explicitly authorizes a documented one-time read-only copy into repository-local project data."
+reverify: "Inspect commit 45ca0dc2 and CORPUS-COVERAGE.2.34a for the historical stop evidence; for the resolved current route and completed refresh, follow usb4-inter-domain-refresh-is-portable-and-authority-empty and run its reverify procedure."
 ---
+
+**Superseded later on `2026-08-09`.** The director supplied the SSD checkout, the ignored discovery symlink now
+resolves on the same SSD filesystem as SpecForge, and `CORPUS-COVERAGE.2.34b.ii.b` completed the guarded USB4
+refresh. The current route and cascade result live in
+`[[usb4-inter-domain-refresh-is-portable-and-authority-empty]]`; the record below remains the exact historical
+reason `.2.34a` stopped before mutation.
 
 **Observed `2026-08-09` (`CORPUS-COVERAGE.2.34a`).** The repository-local
 `.cache/local-references/chipdoc` symlink still resolves to the pre-move checkout on the boot filesystem.

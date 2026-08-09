@@ -220,8 +220,8 @@ today's ephemeral normalized-directory count.
   `adapter.json` remains. Focused tests, all nine WIRE datasets, KG 156/156, warnings-denied full CI (1,783 pass /
   five ignored), rustdoc, mdBook, six doctrines, path/locality, and residue gates pass. The authenticated rollback
   was then deleted at its exact path and a task-id census found no residue. `.iv`/`.d`/`.2.33` are closed.
-- ID: `CORPUS-COVERAGE.2.34` · Status: `in_progress` (`2026-08-09`, DATA/DOC) · Children: `.2.34a`
-  source-route/locality probe (done), `.2.34b` guarded ingest/cascade (in progress). Goal: current-binary,
+- ID: `CORPUS-COVERAGE.2.34` · Status: `done` (`2026-08-09`, DATA/DOC) · Children: `.2.34a`
+  source-route/locality probe (done), `.2.34b` guarded ingest/cascade (done). Goal: current-binary,
   CPU-only guarded re-ingest of `usb4_inter_domain_service_specification_v2_0_2025_11` from the owner-authorized
   host-library route, followed by the complete EvidenceIR→SemanticIR→IntentIR→adapter cascade. The retained
   pre-refresh chain is a high-value transfer check for #33's universal repair: SourceIR has 615 elements / 82
@@ -242,8 +242,8 @@ today's ephemeral normalized-directory count.
   `cec7b91f…151`. No pipeline command, copy, symlink rewrite, or generated-artifact mutation occurred. `.2.34b`
   requires the intended SSD checkout path or explicit authorization for a one-time read-only source copy into
   repository-local project data.
-- ID: `CORPUS-COVERAGE.2.34b` · Status: `in_progress` (`2026-08-09`, DATA/DOC) · Children: `.2.34b.i`
-  SWD signoff-side-effect recovery (done), `.2.34b.ii` USB4 closing signoff (in progress). Goal: after the
+- ID: `CORPUS-COVERAGE.2.34b` · Status: `done` (`2026-08-09`, DATA/DOC) · Children: `.2.34b.i`
+  SWD signoff-side-effect recovery (done), `.2.34b.ii` USB4 closing signoff (done). Goal: after the
   source route is resolved, preserve the exact baseline and execute the `.2.34` guarded ingest/cascade acceptance
   contract without cross-volume project data or an undocumented boot-volume dependency.
 - ID: `CORPUS-COVERAGE.2.34b.i` · Status: `done` (`2026-08-09`, DATA/DOC; recovery) · Result: the attempted
@@ -259,8 +259,8 @@ today's ephemeral normalized-directory count.
   `kg-bench` is 156/156, focused dense-prose tests and the provider-free WIRE battery pass, and only the exact
   authenticated recovery snapshot is eligible for deletion. No production code changed. Commit:
   `CORPUS-COVERAGE.2.34b.i — recover coherent canonical SWD cascade`.
-- ID: `CORPUS-COVERAGE.2.34b.ii` · Status: `in_progress` (`2026-08-09`, CODE/DATA/DOC) · Children: `.ii.a`
-  page-sidecar path portability (done), `.ii.b` USB4 closing signoff (pending). Goal: finish USB4 rollback
+- ID: `CORPUS-COVERAGE.2.34b.ii` · Status: `done` (`2026-08-09`, CODE/DATA/DOC) · Children: `.ii.a`
+  page-sidecar path portability (done), `.ii.b` USB4 closing signoff (done). Goal: finish USB4 rollback
   comparison, all acceptance gates, documentation, and cleanup after `.2.34b.i` restores a coherent corpus state.
 - ID: `CORPUS-COVERAGE.2.34b.ii.a` · Status: `done` (`2026-08-09`, CODE) · Result: the fresh USB4 ingest exposed
   51 `normalized/pages/page-*.json` sidecars whose `rendered_image.path` values retained absolute
@@ -272,9 +272,39 @@ today's ephemeral normalized-directory count.
   `null`. Any missing/malformed/mismatched/escaping record fails with `InvalidBackendOutput` and removes only
   staging. Four focused page tests, three document-metadata tests, two stub-ingest integration tests, formatting,
   and warning-deny Clippy pass. Commit: `CORPUS-COVERAGE.2.34b.ii.a — normalize Docling page-sidecar paths`.
-- ID: `CORPUS-COVERAGE.2.34b.ii.b` · Status: `pending` (`2026-08-09`, DATA/DOC) · Goal: rerun the guarded USB4
-  ingest/cascade with `.ii.a`, prove zero staging/absolute-path residue, finish the authenticated before/after
-  comparison and all gates, then delete only the exact rollback and close `.2.34`.
+- ID: `CORPUS-COVERAGE.2.34b.ii.b` · Status: `done` (`2026-08-09`, DATA/DOC) · Result: rebuilt release and ran
+  two guarded CPU ingests from the director-supplied same-SSD checkout; the monitored replay completed at 82%
+  minimum system memory free (18% peak used). Both produced 51 pages / 82 visuals / 49 tables / 603 elements.
+  All 51 page sidecars now name the final repository-relative PNG, with zero staging/repository-absolute residue;
+  compared with the preserved defective run, exactly those 51 JSON files differ and deleting
+  `rendered_image.path` makes every pair equal. SourceIR plus its validation report reproduce hashes
+  `eddccfb7…eb0` / `b78e76a2…f96`; every downstream artifact is byte-identical to the preserved fresh chain:
+  EvidenceIR/report `111f4dc3…398` / `5bc59e80…253`, SemanticIR/report `422f70f5…a1f` /
+  `df3bb7ae…8c7`, IntentIR/report `144cd981…2a5` / `9ae4c87d…ce4`, adapter `1b16b30b…ded`.
+  The stale one-signal/two-rule USB4 model closes generically: relations/interfaces/ports/connectivity all 1→0,
+  adapter signals 1→0, rules 2→0, enums 8→0, storage holds at six, and lowering blocks on
+  `no signals declared in interface`; exactly `adapter.json` remains. Two `USB4` conditional consequents retain
+  source evidence without becoming interface authority. All nine provider-free WIRE/I2C/SWD datasets are 1.000
+  at their declared gates (including the documented promotion-only SWD constraint miss), KG is 156/156, all 69
+  remaining emitted ISFs are strict-clean, full CI/book/doctrine/locality pass, and only then were the exact
+  seven-file rollback and 198-file defective-chain evidence deleted; the exact task-id residue census is zero. Commit:
+  `CORPUS-COVERAGE.2.34b.ii.b — sign off portable USB4 refresh`.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34b.ii.b`
+
+- [x] **REPRODUCE / MEASURE** — authenticated the seven-file baseline, source PDF `ab337460…396`, 198-file
+  defective fresh chain, two guarded 51-page ingests, nine final artifact hashes, typed deltas, and 18% peak
+  system memory use.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the real rerun confirms `.ii.a` was the only locality delta: all 51 sidecar
+  pairs are content-equal after deleting `rendered_image.path`; every downstream IR/report/adapter is byte-equal.
+- [x] **ADDRESSED (verified)** — 51/51 page image paths are repository-relative and final-rooted with zero
+  staging/absolute residue; USB4 now blocks honestly at zero interfaces/signals/rules and leaves no `.isf`.
+- [x] **NO REGRESSION** — both cascades reproduce every hash; nine WIRE/I2C/SWD datasets hold their 1.000 gates,
+  KG is 156/156, 69/69 emitted ISFs pass FSMGen strict, and full CI/book/doctrine/locality gates pass.
+- [x] **GENERICITY** — the result uses only current generic extraction, authority, path, and output-convergence
+  rules; no USB4/vendor/document/token exception, generated-output edit, relaxed validator, or inference ran.
+- [x] **LOCKSTEP** — generated artifacts, task/count/frontier, live docs, two current/superseded fact cards,
+  mdBook, and `MEMORY.md` agree; authenticated task evidence is deleted only after every final gate is green.
 
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34b.ii.a`
 
@@ -309,19 +339,19 @@ today's ephemeral normalized-directory count.
 - [x] **LOCKSTEP** — task result, SWD durable fact, live docs, mdBook, and `MEMORY.md` record the coherent current
   chain and hand off only the USB4 closing signoff to `.2.34b.ii`.
 
-### Parent completion contract — `CORPUS-COVERAGE.2.34`
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34`
 
-- **REPRODUCE / MEASURE** — authenticate the source PDF and exact five-stage before bundle, run guarded CPU
+- [x] **REPRODUCE / MEASURE** — authenticate the source PDF and exact five-stage before bundle, run guarded CPU
   ingest plus the deterministic cascade, and record source/stage hashes, typed counts, deltas, and peak RAM.
-- **ROOT CAUSE (WHY + WHERE)** — classify every material delta against current generic extractors, including
+- [x] **ROOT CAUSE (WHY + WHERE)** — classify every material delta against current generic extractors, including
   whether the retained `USB4` port is the repaired parenthetical bus-acronym authority class or remains grounded.
-- **ADDRESSED (verified)** — promote only complete successful stages; reconcile obsolete adapter outputs;
+- [x] **ADDRESSED (verified)** — promote only complete successful stages; reconcile obsolete adapter outputs;
   validate the final artifacts and run FSMGen strict only when the adapter is honestly renderable.
-- **NO REGRESSION** — focused transfer checks, WIRE/I2C/SWD, KG 156/156, mdBook, doctrines, path/locality,
+- [x] **NO REGRESSION** — focused transfer checks, WIRE/I2C/SWD, KG 156/156, mdBook, doctrines, path/locality,
   rollback comparison/deletion, and broader Rust gates when any product code changes all pass.
-- **GENERICITY** — no USB4/vendor/document-key/token exception, manual generated-output edit, relaxed
+- [x] **GENERICITY** — no USB4/vendor/document-key/token exception, manual generated-output edit, relaxed
   validator, LLM/VLM inference, or fabricated target model enters the slice.
-- **LOCKSTEP** — task row/changelog, corpus counts/frontier, live docs, durable fact if a new causal finding is
+- [x] **LOCKSTEP** — task row/changelog, corpus counts/frontier, live docs, durable fact if a new causal finding is
   established, mdBook behavior, and `MEMORY.md` agree; delete only the authenticated rollback after green gates.
 
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34a`
@@ -534,12 +564,11 @@ today's ephemeral normalized-directory count.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: `CORPUS-COVERAGE.2.34b.ii.b` — rebuild release with the committed page-sidecar fix, rerun guarded
-  USB4 ingest/cascade, prove all 51 page records portable and zero staging/absolute residue, then complete the
-  authenticated comparison, gates, exact rollback/evidence cleanup, corpus accounting, and `.2.34` closure.
+- Frontier: `CORPUS-COVERAGE.2.35` — select and own current-binary refresh #35 from the remaining 22 real
+  chip-spec documents before changing its generated chain.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
-  `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**33 refreshes done after #33;
-  23 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#33: #29/#31 CHI-C2C marquee message-field refreshes,
+  `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**34 refreshes done after #34;
+  22 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#34: #29/#31 CHI-C2C marquee message-field refreshes,
   #30 RISC-V AIA restoration, #32 JEDEC HBM-gen1 `jesd235` which the re-ingest revealed is a **6-page legal-exhibit cover, not
   the real standard** → honest source-driven thin yield. The remaining tail is overwhelmingly thin/degraded — OpenCAPI×13
   PHY/mech/TL + USB3.2/USB4 guides + CoreSight/debug guides — so the high-value substantive work is now shifting to the
@@ -610,8 +639,14 @@ leaving the refreshed SourceIR→adapter stage chains intact.
 | 31 | `ihi0098_a_b` AMBA CHI C2C (2026) | 122 | **MARQUEE message-field refresh (CHI C2C 2026 variant, sibling of #29 → confirms the CHI-C2C family is a real marquee, not a one-off):** **`message_field_records` 0→143 / 12 containers** (the `.10` families fire on CHI packet/flit field tables absent in the stale pre-`.10` evidence); transactions 2→3 (recognition-only); the lone stale `actor_signal_relations` 1→0 (a fragment relation the current agent-identity gates drop — CHI is a coherency/message protocol, 0 relations is honest per `KG-ISF-COMPLETENESS.3`); conditional_rules 25 held; 2364 statements; 0 registers. **normalized bundle RESTORED** (122pp / 96 visual / 0 residuals; Docling CPU; RAM ~75% free). Same surfaced extraction-precision residuals as #29 (generic-`TABLE` mega-enum conflation + signal-acronym prose noise — not fixed in-slice). | renderable (`agent.isf`, 69 ports / 3 enums / 0 rules) | **0 diagnostics** ✓ (strict-clean, `--strict --check --json`) |
 | 32 | `jesd235_2013_10_hbm_dram` JEDEC HBM gen1 | 6 | **bundle-restoration + CORPUS-PROVENANCE finding (NOT a real-delta doc): the library `JESD235_2013-10_HBM_DRAM.pdf` is a 6-page LEGAL-EXHIBIT COVER** (markdown reads `DOCKET`/`ALARM`/`JEDEC STANDARD … HBM DRAM … OCTOBER 2013`/`Netlist Inc.`/`Netlist Ex 2021` + 12 cover images, **0 tables**), **not the full HBM gen1 standard** — so the thin yield is HONEST SOURCE-DRIVEN ABSENCE, not an extraction gap (contrast #28 HBM2 `jesd235a`, the real 172pp standard, which carried registers/transactions). All deterministic surfaces byte-near-identical to the retained-`source_ir` stale evidence: `register_records` 0 held / `message_field_records` 0 / `actor_signal_relations` 0 / `signal_constraints` 0 / `conditional_rules` 0; `extracted_statements` 69→68; intent `actors` 2→2 / `interfaces` 1→7 (minor current-binary regroup) / 0 txns / 3 behaviors / 5 constraints. `adapt` recovers 16 signals on actor `channel` but **BLOCKS honestly** — `is_renderable: false`, the single blocking reason `no behavioral content (temporal/conditional rules, signal constraints, or control blocks)`, 1 residual_decision (the correct `CORPUS-COVERAGE.0` "intent-no-isf" class; no `.isf` fabricated). **normalized bundle RESTORED** (was missing; 6pp / 12 visual / 0 residuals; Docling CPU; RAM ~83% free). After #32: **24 real chip-spec docs still normalized-missing.** | **BLOCKED** (honest — no behavioral content; 0 emitted `.isf`) | n/a (nothing emitted) |
 | 33 | `usb_3_2_revision_1_0_2017_09` USB 3.2 | 548 | **full current-binary cascade + completed semantic-fidelity repair:** guarded CPU ingest restores 548 pages / 507 visuals / 283 tables / 5,830 elements. SourceIR 6,584→5,830 is cleaner visual-label suppression, not prose loss. The initial cascade exposed a strict-clean but false four-port/29-rule actor; `.2.33d` repaired the three EvidenceIR authority seams, the independent authority-empty SemanticIR fallback, and stale adapter-output convergence without any document/token exception. Final EvidenceIR is 8,267 statements / 0 relations / 10 signal constraints / 542 conditional rules / 102 timing constraints. Final IntentIR is 18 actors / 0 interfaces / 0 ports or relations / 2,705 behaviors / 3,014 constraints / 27 transactions / 1 register. Adapter lowering blocks honestly on no declared interface signals: 0 signals/transactions/rules, 1 storage, 15 residuals, no emitted target, and exactly `adapter.json`. After #33: 80/2/80/79 stage census and **23 real chip-spec refreshes remain.** | **BLOCKED** (honest signal-authority boundary; 0 emitted `.isf`) | n/a (nothing emitted) |
+| 34 | `usb4_inter_domain_service_specification_v2_0_2025_11` USB4 Inter-Domain Service | 51 | **portable current-binary refresh + second-document semantic-authority transfer proof:** two guarded CPU ingests restore 51 pages / 82 visuals / 49 tables / 603 elements at 18% peak system memory used. All 51 page JSON image paths are final-rooted and repository-relative; exactly those paths differ from the preserved defective run, while all nine final IR/report/adapter hashes reproduce. Source elements 615→603; Evidence statements 1,260→1,025, spans 1,037→1,025, relations 1→0, while 27 conditionals / 6 registers / 1 protocol state remain. Semantic actors 12→11 and Intent actors 11→10; interfaces/ports/relations/connectivity all 1→0. The old one-signal/two-rule/eight-enum `USB4` adapter blocks honestly: 0 signals/transactions/rules/constants/enums, six storage records, one residual, no emitted target, exactly `adapter.json`. Only two `USB4` conditional consequents remain as source evidence, not interface authority. After #34: 80/3/80/79 stage census and **22 real chip-spec refreshes remain.** | **BLOCKED** (honest signal-authority boundary; 0 emitted `.isf`) | n/a (nothing emitted) |
 
 **Cumulative (33 docs, protocol + register/arch phases): hundreds of registers + ~385 message fields + transaction recognition surfaced that were ABSENT in stale evidence** — registers e.g. SMMU-arch 1→89, GIC-arch 17→90, MMU-700 13→63, GIC-600 15→33, TMC 2→30; message fields DTI 0→159, CHI-C2C 0→210, VT-d 0→15; transactions e.g. eMMC 0→6, HBM2 0→3 (real ops). **Every current renderable adapter is FSMGen-strict clean; USB #33 and HBM-gen1 #32 block honestly and emit nothing.** **#27 eMMC surfaced a phantom-actor explosion (20→153) on descriptive prose → NEW lever E (agent-identity precision for non-AMBA prose specs); the `.isf` is unaffected. #28 HBM2 confirmed E is PROSE-SPECIFIC (HBM2 consolidated cleanly) but surfaced lever F (enum-value literal format + generic-`TABLE` mega-enum precision).** **Refined #22/#23 phase note:** "already current-binary-equivalent" is not uniform — a doc's stale evidence sits at whatever binary last rebuilt it, so re-ingest can still deliver a real KG refresh when that binary predated a later gate: #22 Cortex-A76 was fully current (byte-identical), but #23 CoreSight SoC-600 predated the `.1a`/`.1b` consolidation + transaction recognizer and got a genuine actor-consolidation + 2-transaction refresh (the #17 Avalon class). So the remaining tail is a MIX of pure confirmation (#21/#22) and consolidation/recognition refreshes (#17/#23), with marquee table-family jumps now the exception. **NEW phase finding (#21):** some of the 57 normalized-missing docs are NOT pre-`.10` stale — their evidence was rebuilt Jun-15 from the retained `source_ir.json` (only the heavyweight `normalized/` page-image bundle was disk-reclaimed) so it already carried the `.10` register families; for those, re-ingest is **normalized-bundle restoration + current-binary confirmation** (modest deterministic delta), distinct from the genuinely pre-`.10` docs (SMMU/GIC/MMU big jumps). The IOMMU also surfaced a **RISC-V STRUCTURE-table recall opportunity** (device-context/command-queue tables not matching the `.10b`/`.10d`/`.10e` two-column families — Lever D). **PHASE FINDING (#17–#19, the non-AMBA protocol specs):** their refresh value is NOT marquee table-family gains — Avalon = consolidation + current-binary freshness; **Wishbone + OpenCAPI-TL surfaced a doc-style TABLE-RECOGNITION recall gap** (Wishbone 1 `signal_description`/25 tables; OpenCAPI 0/246 — both predominantly `unknown`-classified; non-AMBA `Signal\|Direction\|Width` shapes), so their `.isf` degenerate to 1 signal. **REGRESSION RULED OUT** (DTI 159 / MMU-700 63 / AHB 66 all hold on the current binary) → these are the upstream Lever-D signal/table-recall family, not emitter bugs. The high-value AMBA-style protocol specs are now exhausted; **next phase = the register/TRM/ISA docs** (the `.10` register families demonstrably fire there — CoreSight/GIC/JEDEC/RISC-V system-IP). Remaining queue = OpenCAPI×13 (PHY/mechanical/TL-variants, expected thin)/JEDEC/USB/RISC-V system-IP/VT-d/Cortex-A76/GIC-400/CoreSight-SoC-600×3/overview/guides. **#29 (`2026-06-24`) — AMBA CHI C2C `ihi0098_a` is a genuine marquee exception to the "tail is mostly bundle-restoration" phase finding:** its stale evidence was truly pre-`.10` (0 message fields), so the current binary's `.10` families surfaced `message_field_records` 0→149 / 13 containers — a real KG-completeness gain, `.isf` strict-clean. After #29: 29 docs re-ingested, **27 real chip-spec docs still normalized-missing** (plus the project README, not a chip spec). CHI C2C also re-confirmed two standing extraction-precision residuals (generic-`TABLE` mega-enum conflation; signal-inventory prose-acronym noise) — surfaced, not fixed in-slice. **#30 (`2026-06-24`) — RISC-V AIA `1_0_2025_03_12` is the contrasting bundle-restoration case:** all deterministic surfaces byte-near-identical (statements 1193, registers 0, cond_rules 39 all held), so re-ingest value = normalized-bundle restoration + current-binary confirmation, `.isf` strict-clean — and it re-confirms the #21 RISC-V-IOMMU Lever-D recall opportunity (the APLIC/IMSIC register layouts sit in 12 `unknown` structured tables the `.10` families don't match). After #30: **26 real chip-spec docs still normalized-missing**. Phase pattern holds: marquee message-field/register jumps (#29 CHI) now interleave with bundle-restoration confirmations (#30 AIA) in the tail. **#31 (`2026-06-24`) — CHI C2C 2026 variant `ihi0098_a_b` re-confirms the CHI-C2C family marquee:** `message_field_records` 0→143 / 12 containers (sibling of #29's 0→149), `.isf` strict-clean; the lone stale relation 1→0 (fragment drop). After #31: **25 real chip-spec docs still normalized-missing.**
+
+**Cumulative update after #34:** 34 current-binary refreshes are complete and 22 real chip-spec documents remain.
+USB4 Inter-Domain joins USB 3.2 and HBM-gen1 as an honestly blocked, non-emitting document; 69 current renderable
+adapters remain, all FSMGen-strict clean. The preceding long-form cumulative paragraph is the historical
+through-#33 snapshot; this update is the current corpus frontier.
 
 **Spun-out CODE levers (`.2` re-ingest is SURFACING + scoping these — measurement-first; each needs its OWN owned leaf under the `ISF-*-EMIT` family, with WIRE-BASED-100 + register/wire golds + `kg-bench` gating; do NOT fix inside a re-ingest slice):**
 
@@ -620,15 +655,23 @@ leaving the refreshed SourceIR→adapter stage chains intact.
 - **Lever C — rule-write conflicts — ✅ RESOLVED (`2026-06-23`, `KG-ISF-COMPLETENESS.2a.v`).** LPI: `isf_conflicting_rule_writes` on `PREQ` — `rule_5` (PREQ←1, an UNCONDITIONAL rule_action) conflicts with `temporal_..._dyn_sigcon_0012` (PREQ←0, a guarded temporal signal constraint). The same-guard `dedup_conflicting_rules` keyed on `(signal, guard)` so missed it; FSMGen flags it because an unconditional rule's firing set ⊇ every guard (its `_condition_terms_prove_disjoint` can never prove an absent condition disjoint). Fixed by a new `drop_unconditional_overlap_conflicts` post-pass (keep the unconditional value, residualize the conflicting rule; the `(priority …)` hatch was rejected as ungrounded precedence). **MEASUREMENT correction:** a fresh re-emit + FSMGen sweep showed the conflict was NOT LPI-only — the AXI/AHB/AXI-Stream wire golds + LTI + NVMe were ALL failing on it (the cached `.isf` were byte-identical to fresh AND already FAIL); the fix takes **6 docs FAIL→PASS**, 0 PASS→FAIL, 100/107 `.isf` byte-identical, post-fix 97/107 `.isf` PASS. The combined AXI+ACE `ihi0022_h_c` stays FAIL on the orthogonal pre-existing `(port expr)` grammar (Non-Goal).
 - **Lever F — ISF enum value-literal emit-gate — ✅ DONE `2026-06-23` (`KG-ISF-COMPLETENESS.2a.iv`).** HBM2's `.isf` had failed FSMGen strict on `TABLE.REPAIR_LANE_8` value token `1000`. FSMGen rejects a bare token of only `0`/`1` digits with length >= 4 (an un-qualified binary literal — verified by value sweep: `1000`/`1111` fail, `69152`/`999`/`4'b1000` pass); HBM2's REPAIR_LANE values are binary codes mis-read as bare decimals in a mega-conflated `TABLE`. The emitter now drops an enum carrying such a value to an `isf_enum_value_literal_*` residual (honest residual over fabricating a radix). HBM2 now FSMGen `--strict --check` **success / 0 diagnostics** (only `TABLE` dropped; `EXTEST_RX`/`DWORD_MISR` kept); ONLY HBM2 `.isf` changes corpus-wide (wire golds + all enum docs byte-identical); `run_ci.sh` GREEN (lib 1706); `kg-bench` 156/156. KM `isf-enum-value-literal-emit-gate`. (The upstream mega-enum conflation stays an honest residual → a future extraction-precision lever.)
 
-**Running strict tally (post-`.2.33d.iv.c`, measured on the current converged output set):** `adapt` emits one
-primary-actor `.isf` per renderable document. The cache now contains **70 current `.isf`: 70 PASS / 0 FAIL**;
-USB #33 is honestly blocked and emits none. This confirms both that the grammar frontier remains closed and that
+**Running strict tally (post-`.2.34b.ii.b`, measured on the current converged output set):** `adapt` emits one
+primary-actor `.isf` per renderable document. The cache now contains **69 current `.isf`: 69 PASS / 0 FAIL**;
+USB #33 and USB4 #34 are honestly blocked and emit none. This confirms both that the grammar frontier remains closed and that
 strict syntax is not a semantic-fidelity oracle. **Levers A, B, C, F + the rule-value gate all ✅ resolved:** Lever B (module-name HDL-sanitization, `.2a.iii`); Lever A (value width-alignment, `ISF-VALUE-WIDTH-EMIT.2`, re-verified clean `2026-06-23`); Lever F (enum value-literal emit-gate, `.2a.iv`, HBM2 strict-clean); **Lever C (unconditional-rule-overlap conflict residual, `.2a.v`, `2026-06-23` — 6 docs FAIL→PASS incl. all 3 wire golds + LPI/LTI/NVMe, 0 regressions)**; **`.2a.vi` rule-drive-value validity gate (`2026-06-23` — closed the last AXI+ACE `ihi0022_h_c` `(port expr)` FAIL by residualizing its 4 prose-valued loopback rules)**. **The ISF-emit strict-FAIL frontier is fully CLOSED — every renderable doc emits FSMGen-`--strict`-clean `.isf`.** **Surfaced lever D (upstream/non-emitter, now seen on 4 docs):** non-AMBA table/signal recognition — Wishbone-style `*_O`/`*_I` suffix-notation + prose signal-lists, OpenCAPI-style packet/command tables left `unknown` (219/246), and the RISC-V-IOMMU/VT-d in-memory STRUCTURE tables — a `PDF-VARIANT-DIGESTION` signal/table-recall family (kin to the parked `.9.10`). **Surfaced lever E (#27 eMMC — KG-precision, NOT emitter):** **agent-identity precision for descriptive-prose / non-AMBA specs** — fresh Docling of prose-heavy specs mints ~90+ phantom sentence-fragment actors (`host has`/`host to`/`cache in`/`B write`) the `.1a`/`.1b` gates (measured clean on AMBA docs) don't catch; needs its OWN owned `KG-ISF-COMPLETENESS` leaf (probe-first, structural gates not denylists — owner steer). eMMC itself remains ISF-unaffected; USB #33's semantic-trust repair is now closed and is not a syntax strict-FAIL. Watch the long-tail for width-align (A) / rule-conflict (C) / non-AMBA-table-recall (D) / prose-actor-precision (E) / enum-value-literal (F) recurrence to scope those.
 
 **PHASE FINDING (#22, the already-current-binary-equivalent class is now the RULE, not the exception):** a one-pass survey of the 35 remaining normalized-missing docs' persisted evidence (`2026-06-23`) shows the register-heavy ones the frontier had flagged as "genuinely pre-`.10`-stale" are ALREADY current — CoreSight SoC-600 ×3 = 597/631/833 `register_records`, AMD-IOMMU `48882` = 217 `message_field_records`, Intel VT-d = 103 registers — because their evidence was rebuilt from the retained `source_ir.json` before the `normalized/` bundle was reclaimed (the #21/#22 class). So the marquee-jump phase (SMMU/GIC/MMU/DTI/CHI-C2C) is effectively complete; the remaining ~35 slices are predominantly **bundle-restoration + current-binary confirmation + honest-absence / Lever-D-recall documentation**, which is still genuine corpus-coverage work (a doc that depends only on a retained `source_ir.json` is one disk-reclaim away from losing its evidence; restoring `normalized/` makes it rebuildable). A true pre-`.10`-stale jump remains possible in the long tail but is now the exception.
 
 ## Changelog
 
+- `2026-08-09`: `.2.34b.ii.b` DATA/DOC DONE; `.ii`/`.b`/`.2.34` CLOSED. Two guarded USB4 ingests reproduce
+  51 pages / 82 visuals / 49 tables / 603 elements at 18% peak system memory used. All 51 sidecars are
+  repository-relative and final-rooted; their path field is the only difference from the preserved defective
+  bundle, and every downstream artifact hash is byte-identical. Current generic authority removes the stale
+  one-signal/two-rule/eight-enum model; the adapter blocks at zero interfaces/signals/rules and leaves exactly
+  `adapter.json`. Nine WIRE/I2C/SWD datasets, KG 156/156, 69/69 FSMGen strict, full CI/book/doctrines/locality,
+  and exact residue gates pass before authenticated rollback/evidence deletion. Corpus is 34 done / 22 remaining;
+  frontier → select and own #35.
 - `2026-08-09`: `.2.34b.ii.a` CODE DONE. Fresh USB4 exposed 51 page JSON sidecars retaining absolute staging
   image paths. Added a pre-swap page-sidecar rewrite that cross-checks summary identity, rejects traversal and
   symlink escape, persists the final repository-relative image path, keeps the intentional no-image `null`, and

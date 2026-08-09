@@ -157,7 +157,11 @@ Five active program groups support that north star:
   removes one false signal/four relations while all 29 typed SWD protocol facts remain exact. The closing USB4
   locality gate then exposed 51 page sidecars retaining absolute staging image paths. `.ii.a` now rewrites them
   against the final repository-relative destination before promotion, with traversal/symlink containment and
-  last-good rollback; `.ii.b` owns the final real rerun, rollback comparison, and signoff. Separately,
+  last-good rollback. `.ii.b` closes the real rerun: two guarded 51-page ingests reproduce all final hashes at
+  18% peak system memory used; all sidecars are final-rooted and repository-relative; the stale one-signal/
+  two-rule/eight-enum model blocks honestly at zero interfaces/signals/rules and leaves only `adapter.json`.
+  WIRE/I2C/SWD, KG 156/156, 69/69 current strict emits, CI/book/doctrine/locality, and exact cleanup close `.2.34`.
+  Corpus refresh is 34 done / 22 remaining; next is selection and ownership of #35. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

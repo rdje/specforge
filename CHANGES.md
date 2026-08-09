@@ -1,3 +1,15 @@
+### CORPUS-COVERAGE.2.34b.ii.b — sign off the portable USB4 refresh
+
+- Two guarded CPU ingests reproduce 51 pages, 82 visuals, 49 tables, 603 elements, and every final artifact
+  hash; the monitored replay peaked at 18% system memory used.
+- All 51 page sidecars persist final repository-relative image paths. Compared with the preserved defective
+  bundle, their path field is the only difference; all downstream IR, reports, and adapter files are byte-equal.
+- Current generic authority removes the stale one-signal/two-rule/eight-enum USB4 model. Lowering blocks on no
+  declared interface signals, emits no `.isf`, and leaves exactly `adapter.json` with six storage records.
+- Nine WIRE/I2C/SWD datasets hold their 1.000 gates, KG is 156/156, all 69 remaining emitted ISFs pass FSMGen
+  strict, and full CI/book/doctrine/locality gates pass before exact rollback/evidence cleanup. Corpus refresh is
+  34 done / 22 remaining; next is selection and ownership of #35.
+
 ### CORPUS-COVERAGE.2.34b.ii.a — normalize Docling page-sidecar paths
 
 - Fresh USB4 ingest exposed 51 `normalized/pages/page-*.json` files whose `rendered_image.path` still named the

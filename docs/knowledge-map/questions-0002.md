@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
+  > does the live-document registry reject unknown fields oversized arrays or oversized scalars
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > does the move portability repair change PathBuf JSON fields
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > does the path portability contract cover FigureRegion raw images
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
@@ -294,7 +298,3 @@
   > how does the VLM understand tables / can a VLM read PDF tables
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
   > how does the active task migration preserve non-ASCII legacy bytes
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how does the ambiguity gate keep channel membership boundary-precise (bar #3)
-- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
-  > how does the corpus KB aggregate fixture page stay bounded as fixtures grow

@@ -1,4 +1,23 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.34b.ii.b (`2026-08-09`) — a second document is the real genericity gate
+
+The repaired page producer is verified against the failure that opened it, not just against unit fixtures. Two
+fresh USB4 Inter-Domain ingests produce the same 51 pages / 82 visuals / 49 tables / 603 elements and the same
+validated SourceIR. The monitored replay uses only 18% peak system memory. Comparing normalized bundles isolates
+exactly 51 JSON differences; removing `rendered_image.path` makes every sidecar pair equal, and every downstream
+artifact is byte-identical. That is strong evidence that the code leaf changed only path portability.
+
+This document is also an independent transfer check for the USB 3.2 authority repair. The stale chain promoted
+one `USB4` signal into one interface, two rules, and eight enums. Current generic extraction retains two `USB4`
+conditional consequents as source evidence but gives them no declaration/interface authority: all graph and
+interface surfaces fall 1→0, and the adapter blocks at zero signals/rules while preserving six storage records.
+Honest blocking removes the obsolete `channel.isf`; the live emit set is therefore 69, all strict-clean.
+
+The source-library symlink is useful for discovery but cannot be passed as a repository-owned input path because
+its target leaves the repository. The ingest therefore uses the director-authorized resolved external SSD input;
+project-owned normalized, IR, report, adapter, temp, and cache paths remain repository-derived. This distinction
+preserves both source provenance and the no-symlink-escape persisted-path contract.
+
 ## CORPUS-COVERAGE.2.34b.ii.a (`2026-08-09`) — directory promotion does not relocate paths inside JSON
 
 The Docling helper writes page PNGs and their JSON sidecars inside `normalized.staging`. The later directory

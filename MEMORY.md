@@ -21,15 +21,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.34b.ii.b`; rerun and close the guarded USB4 refresh.
-- Current state: the repository-relative host-library route now resolves to the director-supplied SSD checkout.
-  Guarded CPU ingest produced the expected USB4 semantic cleanup, but the locality gate found all 51 persisted
-  page sidecars still named the temporary absolute `normalized.staging` image paths. The complete fresh chain is
-  hash-verified in project-local task storage and the canonical USB4 chain is restored to its authenticated
-  seven-file baseline. `.ii.a` now normalizes every page sidecar before promotion with fail-closed containment;
-  `.2.34b.i` separately restored coherent canonical SWD with all 29 serial facts exact.
-- Next action: rebuild release, rerun guarded USB4 ingest/cascade, prove all 51 sidecars portable, finish rollback
-  comparison and broad gates, then delete only authenticated task evidence and close `.2.34`.
-- In-flight uncommitted: none after the `.2.34b.ii.a` code commit. The authenticated USB4 baseline and exact
-  unportable fresh-chain evidence remain under project-local ignored task work for `.ii.b`.
+- Active unit: `CORPUS-COVERAGE.2`; refresh #34 is closed and #35 needs selection/ownership.
+- Current state: USB4 Inter-Domain now has a complete portable 198-file source-through-adapter chain. Two guarded
+  ingests reproduce all final hashes at 18% peak system memory used; 51/51 page paths are repository-relative,
+  and the only difference from the preserved defective bundle is `rendered_image.path`. Current generic authority
+  removes the stale one-signal/two-rule/eight-enum model: the adapter blocks at zero interfaces/signals/rules,
+  retains six storage records, emits no target, and leaves exactly `adapter.json`. Corpus refresh is 34 done /
+  22 remaining; 80/3/80/79 stage census and 69/69 strict-clean current emitted ISFs are verified.
+- Next action: select refresh #35 from the remaining 22 real chip-spec documents, add its owning task-tree leaf,
+  authenticate its retained chain/source, then run only that guarded slice.
+- In-flight uncommitted: none after the `.2.34b.ii.b` commit. Its exact rollback and defective-chain evidence
+  were deleted only after final gates; exact task-id residue is zero.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

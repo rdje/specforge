@@ -74,9 +74,18 @@ EvidenceIR contains 8,267 statements and zero actor relations; SemanticIR and In
 interface records, actor ports, or relations; the adapter contains zero signals, transactions, and rules, plus
 one independently grounded storage record and 15 explicit residuals. Source words—even a promotion-only `USB`
 constraint subject—may remain in canonical evidence without becoming a declared or emitted port. The hardware
-boundary is the typed interface/emission surface, not a whole-document token search. The corpus cache now has 70
-current emitted `.isf` files, all covered by the established FSMGen-strict-clean contract; USB is not one of
-them because honest blocking is the correct lowering result.
+boundary is the typed interface/emission surface, not a whole-document token search.
+
+The USB4 Inter-Domain Service refresh independently transfers the same generic authority boundary to a second
+document. Its retained chain had one `USB4` interface signal, two rules, and eight enums. Current extraction keeps
+two `USB4` conditional consequents as source evidence, but relations, interfaces, ports, and connectivity all
+fall from one to zero. Lowering therefore blocks on `no signals declared in interface`, preserves six storage
+records, removes the obsolete `channel.isf`, and leaves exactly `adapter.json`. Two complete cascades reproduce
+all final hashes; the only normalized-bundle differences from the preserved defective run are the 51 corrected
+page-sidecar path fields.
+
+The corpus cache now has 69 current emitted `.isf` files, all covered by a fresh 69/69 FSMGen-strict sweep; USB
+3.2 and USB4 Inter-Domain are not among them because honest blocking is the correct lowering result.
 
 The measurement behind that repair found three upstream authority errors, not a reason to distrust every
 relation-derived direction. Across the retained corpus, 97 sentence-start phrases use `signal <word>` without
