@@ -1,6 +1,6 @@
 ---
 id: live-document-derived-state-contract-gap
-title: Derived-state executable-copy repair awaits independent audit
+title: Derived-state field and copy plane is independently closed
 answers:
   - "did SpecForge adopt the 2026 08 09 FSMGen derived state containment revision"
   - "which exact current state copies are not yet independently verified in SpecForge"
@@ -57,6 +57,12 @@ no live hash, literal role, positional selection, or shape inference. An elevent
 members with unrelated fixture strings before rendering; it passes together with the real protocol check/report,
 all 72 derived-state mutations, and full CI. `.8g` remains responsible for the independent resulting-tree scan
 and closure decision.
+
+The `.8g` resulting-tree audit is clean. All 14 primaries plus three secondaries occur exactly once and agree with
+their Cargo or Git-index authorities; no live FSMGen value remains in executable source. Historical occurrences
+are revision evidence, while Rust values in the adapter suite are self-contained temporary contracts with no
+repository-authority coupling. All 83 focused cases and full CI pass, so `.8` is closed and `.9a` becomes the
+next containment frontier.
 
 The card/index plane remains an explicit implementation constraint. `.8b` updates this same card rather than
 adding another; any future crossing of the rollover threshold requires an owned partition, not a wider ceiling.

@@ -1,3 +1,16 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8g — close the derived-state audit plane
+
+- Independently re-enumerated all 14 primary and three secondary records from JSONL and proved 17/17 exact
+  markers occur once. Cargo/README/book/CI and Git-index/feedback/JSON agree with their declared authorities.
+- Repository-wide occurrence and consumer scans find no live FSMGen hash or route literal in executable source.
+  Remaining historical occurrences are revision evidence; Rust `1.95.0` values in the adapter suite are
+  self-contained temporary contracts that neither read nor shadow the repository's Cargo authority.
+- All 47 neutral + 25 adapter + 11 protocol cases, real reports, and full CI pass: six doctrines, 1,779 Rust
+  tests / five ignored, rustdoc, mdBook, and final locality. The fact index is 32,634 bytes / 544 before rollover;
+  the 36-file book is 13,116 lines / 793,253 bytes under its exact `.8g` change authority.
+- Closed `.8` without changing product behavior, canonical artifact/data, donor/submodule state, surface
+  definitions, thresholds, or ceilings. `.9a` is now the archive-route containment frontier.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8f — derive feedback self-test literals from data
 
 - Replaced the feedback-protocol self-test renderer's stored adapter-route and live-gitlink literals with generic

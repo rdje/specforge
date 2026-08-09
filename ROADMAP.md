@@ -100,7 +100,8 @@ Five active program groups support that north star:
   registry. `.8d` now declares all three with neutral surface/control validation and declaration-only adapter
   reads. The `.8e` repository-wide audit confirms that repair but finds the live FSMGen hash still stored in the
   older feedback-protocol self-test renderer. `.8f` now derives the complete synthetic required-literal set from
-  contract data and proves whole-array replacement; `.8g` owns the next independent closure decision. The live-document
+  contract data and proves whole-array replacement; `.8g` independently confirms 17/17 markers, both authority
+  groups, and no executable live FSMGen value, closing `.8`. The live-document
   contracts also forced a second status rollover during that audit; its shared archive index is now 81 lines /
   5,311 bytes and only 218 bytes before mandatory byte rollover, so `.9a`/`.9b` own a bounded route topology
   before another segment. The completed `.0`–`.7`

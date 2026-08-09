@@ -21,13 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8f` — derive-on-read feedback self-test repair; complete in
-  this commit.
-- Current state: the synthetic feedback renderer expands the full declared required-literal array, stores no live
-  hash, and passes an unrelated whole-array mutation. Protocol 11/11, all 72 derived-state cases, and full CI pass;
-  canonical feedback/product/artifact/donor/submodule/threshold/ceiling state is unchanged. `.8` remains open.
-- Next action: from the clean `.8f` commit, activate `.8g`; independently rescan all current Rust/FSMGen values,
-  declared markers, adapters, protocol consumers, historical/fixture dispositions, and full gates. Close `.8`
-  only if no executable project-current copy remains, then proceed to `.9a` archive-route design.
-- In-flight uncommitted: none after the `.8f` commit. `.project-data/tmp` contains only `.gitkeep` plus `xcrun_db`.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8g` — independent resulting-tree closure audit; complete
+  in this commit, closing `.8`.
+- Current state: all 14 primary plus three secondary members and 17 markers agree with Cargo/Git authorities; no
+  live FSMGen value remains in executable source. Historical values are evidence and Rust script values are
+  self-contained fixtures. All 83 focused cases and full CI pass with no canonical/product/ceiling change.
+- Next action: from the clean `.8g` commit, activate `.9a`; measure shared archive-index readers and design a
+  bounded landing/partition topology before another status segment crosses the 218-byte rollover boundary.
+  `.9b` then implements and independently verifies it before returning to the corpus frontier.
+- In-flight uncommitted: none after the `.8g` commit. `.project-data/tmp` contains only `.gitkeep` plus `xcrun_db`.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

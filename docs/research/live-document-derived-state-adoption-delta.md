@@ -187,6 +187,24 @@ project-data locality. The canonical feedback root, JSON contract, Git index, de
 artifacts, donor/submodule files, surface definitions, thresholds, and ceilings are unchanged. `.8g` retains the
 independent repository-wide scan and `.8` closure decision.
 
+## `.8g` independent closure
+
+The final audit re-enumerates 14 primary plus three secondary members directly from JSONL and finds every exact
+marker once. Cargo `rust-version = "1.95"` normalizes to the three declared `1.95.0` copies; the stage-zero
+mode-`160000` Git-index object equals both declared FSMGen copies. The neutral checker still has no local ids or
+roles, the adapter still has no secondary paths, and the protocol renderer consumes the complete declared array.
+
+Tracked executable-source scans find no live FSMGen hash or route literal. Other hash occurrences are the two
+declared data copies, their registry marker, or revision-bound task/research evidence. Rust `1.95.0` values inside
+the adapter mutation suite form self-contained temporary contracts: they do not read the repository registry or
+Cargo value, continue to test the same generic behavior after a real toolchain change, and therefore are not
+ambient current copies. This disposition follows authority coupling rather than value shape.
+
+All 47 neutral, 25 adapter, and 11 protocol cases pass together with real reports and full CI: six doctrines,
+1,779 Rust tests / five ignored, rustdoc, mdBook, and locality. No product behavior, canonical artifact/data,
+donor/submodule file, surface definition, threshold, or ceiling changed. The data plane is exhaustive and every
+retained current value is derived or verified, so `.8g` closes `.8`; `.9a` is the next containment frontier.
+
 The audit record itself triggered the status ledger's second mandatory rollover. The lossless protocol sealed
 12 exact records / 10,894 bytes at SHA-256 `11e058…28df` and returned the root to 60 records. Adding that direct
 route raised the shared archive index to 81 lines / 5,311 bytes, only 218 bytes before mandatory rollover. This is

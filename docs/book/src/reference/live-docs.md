@@ -84,6 +84,12 @@ replaces both members with unrelated fixture strings before rendering and valida
 from executable source, the real protocol output is unchanged, and all 11 protocol plus 72 derived-state cases
 pass. `.8g` retains independent closure authority.
 
+The `.8g` audit now closes the derived-state program. It independently confirms 14 primary plus three secondary
+members, 17 once-only markers, both Cargo/Rust and Git-index/FSMGen authority groups, and zero live FSMGen values
+in executable source. Historical records remain immutable evidence; Rust constants in the adapter suite are
+self-contained temporary contracts rather than repository-current shadows. All 83 focused cases and full CI
+pass. The next containment frontier is `.9a`, which must bound the shared archive route before another segment.
+
 Writing that audit result also exercised the status ledger's second post-migration rollover. Twelve exact records
 were sealed in segment 0002 (10,894 bytes; SHA-256 `11e058…28df`) and the live root returned to 60 records without
 touching its trailer or 40-record migration suffix. The added direct route moves the shared archive index to

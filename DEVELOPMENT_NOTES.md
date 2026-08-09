@@ -1,4 +1,17 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8g (`2026-08-09`) — currentness is a data-flow property
+
+The closure scan does not ban a number or hash from appearing more than once. It asks whether an occurrence
+claims the repository's ambient current state and must move with its authority. That separates the declared
+README/book/CI copies from old ledger evidence, and it separates the former feedback renderer defect from Rust
+values inside isolated temporary test contracts.
+
+This distinction avoids two bad outcomes: treating historical proof as stale ambient state, or making generic
+tests depend on today's project version merely because their sample happens to match it. The decisive evidence is
+coupling. The protocol renderer consumed the live contract and therefore had to derive its literals; the Rust
+fixtures construct their own Cargo, README, book, CI, and registry plane and remain valid when project Cargo
+moves. With the renderer repaired, the executable scan is empty and the declared authority plane is exhaustive.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8f (`2026-08-09`) — derive the set, not a semantic position
 
 The narrowest robust repair is simpler than adding another schema role. The protocol contract already owns a

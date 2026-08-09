@@ -318,11 +318,14 @@ verification before correction.
   route/locality census, roadmap/code/mdBook lockstep, transition-debt disposition, and clean handoff.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8`
-  Status: `in_progress` (`2026-08-09`)
+  Status: `done` (`2026-08-09`)
   Children: `.8a`, `.8b`, `.8c`, `.8d`, `.8e`, `.8f`, `.8g`
   Goal: deliberately review the donor's newer portable derived-state-containment revision, adopt only
   locally justified neutral contracts, and prove that exact current-state fields are derived on read or
   retained behind an executed authority verifier without copying FSMGen paths, values, or conclusions.
+  **Done:** 14 bounded primary plus three secondary contracts, neutral validation, exact Cargo/Git authorities,
+  declaration-only adapters, derive-on-read synthetic fixtures, 72 + 11 mutations, and two cold audits close the
+  resulting tree without a hidden executable current copy.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8a`
   Status: `done` (`2026-08-09`, PROBE/DOC)
@@ -376,10 +379,12 @@ verification before correction.
   alternate two-literal contract passes, the live hash is absent from source, and 11/11 self-tests pass.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8g`
-  Status: `pending` (`2026-08-09`, AUDIT/DOC)
+  Status: `done` (`2026-08-09`, AUDIT/DOC)
   Goal: independently scan every current Rust/FSMGen value occurrence and consumer after `.8f`, re-enumerate
   exact primary/secondary markers and authorities, rerun all mutations and composed/full gates, and close `.8`
   only if executable source stores no undeclared project-current value.
+  **Done:** all 17 declared markers and both authorities pass; no live FSMGen value remains in executable source;
+  Rust script occurrences are independent temporary fixtures; full CI is green and `.8` is closed.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.9`
   Status: `pending` (`2026-08-09`)
@@ -402,9 +407,9 @@ verification before correction.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `.8g` | `pending` (`2026-08-09`) | Independently re-audit all live-value occurrences and close `.8` only if no executable current copy remains. |
-| 2 | `.9a` | `pending` (`2026-08-09`) | Lock the bounded archive-route topology before another ledger segment crosses the index rollover threshold. |
-| 3 | `.9b` | `pending` (`2026-08-09`) | Implement and independently verify the accepted archive-index containment design. |
+| 1 | `.9a` | `pending` (`2026-08-09`) | Lock the bounded archive-route topology before another ledger segment crosses the index rollover threshold. |
+| 2 | `.9b` | `pending` (`2026-08-09`) | Implement and independently verify the accepted archive-index containment design. |
+| — | `.8g` | `done` (`2026-08-09`) | Cold value/consumer scan is clean; all 17 markers, 83 focused cases, full CI, and exact projections pass; `.8` closed. |
 | — | `.8f` | `done` (`2026-08-09`) | Synthetic required literals derive from contract data; a changed-literal fixture and 11/11 protocol cases pass. |
 | — | `.8e` | `done` (`2026-08-09`) | Data markers and authorities pass, but a broader scan found the live FSMGen pin stored in a self-test renderer; closure refused. |
 | — | `.8d` | `done` (`2026-08-09`) | Three secondary copies are data-owned; neutral surface/control validation and declaration-only adapter execution pass 72 focused cases. |
@@ -565,6 +570,27 @@ verification before correction.
   change/development ledgers, local adoption note, mdBook, and verification evidence agree that `.8f` is repaired
   and `.8g` retains independent closure authority.
 
+### Acceptance Checklist (enforced) — `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8g`
+
+- [x] **REPRODUCE / MEASURE** — independently enumerate 14 primary and three secondary records from JSONL;
+  establish 17/17 exact once-only markers; scan every tracked occurrence of the live Rust patch value, FSMGen
+  gitlink, route literal, secondary path, and executable consumer; repeat all 83 focused cases.
+- [x] **ROOT CAUSE (WHY + WHERE)** — confirm the only `.8e` defect was the update-coupled literal removed by
+  `.8f`. Remaining task/research/ledger occurrences are revision-bound evidence; Rust adapter-test values live in
+  self-contained temporary contracts and do not read, shadow, or require changes with repository Cargo state.
+- [x] **ADDRESSED (verified)** — prove zero live FSMGen hash/route occurrences across tracked executable source;
+  confirm the neutral checker has no local ids/roles, the authority adapter has no secondary paths, the protocol
+  renderer expands its declared array, and both Cargo/Rust and Git-index/FSMGen authority groups agree.
+- [x] **NO REGRESSION** — 47 neutral + 25 adapter + 11 protocol cases, real authority/report checks, six
+  doctrines, 1,779 Rust tests / five ignored, rustdoc, mdBook, and final locality pass; no product behavior,
+  canonical artifact/data, donor/submodule, surface definition, threshold, or ceiling changed.
+- [x] **GENERICITY** — classification follows data flow and update coupling rather than numeric/hash shapes:
+  project-current values require authority, historical evidence stays immutable, and independent fixture values
+  remain ordinary test data. No source scan guesses undeclared fields from prose.
+- [x] **LOCKSTEP** — close `.8` in task/roadmap/status/resume state; align durable fact/report,
+  change/development ledgers, local doctrine note, mdBook, exact book authority, verification and commit records;
+  preserve `.9a` as the next owned archive-route frontier.
+
 ## Decisions
 
 - `2026-08-09`: **GO on the newer portable derived-state semantics.** External collection-index and bounded
@@ -612,6 +638,11 @@ verification before correction.
   `current_root.required_literals` member into its synthetic boundary and knows neither role nor value shape. The
   regression replaces the entire array with unrelated strings, proving both prior source literals are gone
   without adding another project-specific adapter or registry field.
+- `2026-08-09`: **Close `.8` on data-flow evidence, not absence of lookalikes.** The resulting tree has no live
+  FSMGen value in executable source; its three current Rust copies and two current FSMGen copies are declared and
+  authority-checked. Historical ledgers/reports and self-contained test-contract constants are not ambient
+  current claims because they neither consume nor shadow repository authorities. `.8g` therefore closes `.8`;
+  `.9a` is the next containment frontier.
 
 - `2026-08-08`: **GO on local adoption.** SpecForge meets multiple guide triggers: bounded-pointer
   routing pressure, mandatory multi-megabyte live reads, unbounded append-only neighbors, generated
@@ -2055,6 +2086,8 @@ progress state. No other book part changes unless the final audit finds a separa
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-09` | `.8g` | cold 14-primary/3-secondary JSONL inventory; 17/17 exact marker cardinality; tracked Rust/hash/route/path occurrence classification; executable-source scans; Cargo and Git-index authorities | clean: no live FSMGen hash/route exists in executable source; three Rust and two FSMGen live copies are declared and agree; historical evidence and self-contained temporary Rust fixtures have no authority coupling; neutral/adapter/protocol source boundaries hold |
+| `2026-08-09` | `.8g` | 47 neutral + 25 adapter + 11 protocol cases; real derived-state/protocol reports; full `bash scripts/run_ci.sh`; composed doctrines; exact projections/aggregates | green: 83 focused cases, six doctrines, 1,779 Rust tests / five ignored / zero failed, rustdoc, mdBook, and final locality pass; 627 Markdown / 41 surfaces, 159 facts / 1,114 questions / eight shards, fact index 32,634 bytes / 544 before rollover, and book 36 files / 13,116 lines / 793,253 bytes agree; `.8` closes with no product/artifact/data/donor/submodule/surface/threshold/ceiling change |
 | `2026-08-09` | `.8f` | Perl syntax; live-hash source absence; changed-entire-array derive-on-read case; real protocol `--check`/`--report`; protocol self-test; 47 neutral + 25 adapter cases; real 14-primary/3-secondary report | green: source stores no live pin and knows no literal role/index/shape; unrelated declared literals render and validate; protocol 11/11 plus all 72 derived-state cases pass; canonical feedback root/report and registry values remain unchanged |
 | `2026-08-09` | `.8f` | full `bash scripts/run_ci.sh`; composed six doctrines; format; warning-deny Clippy/tests; rustdoc; mdBook doctests/build; post-producer locality; exact projections/aggregates | green: six doctrines; 1,779 Rust tests pass / five ignored / zero failed; 627 Markdown / 41 surfaces, 159 facts / 1,114 questions / eight shards, fact index 32,637 bytes / 541 before rollover, and book 36 files / 13,110 lines / 792,698 bytes agree; no product/artifact/donor/submodule/surface/threshold/ceiling change |
 | `2026-08-09` | `.8e` | independent data-only 14-primary/3-secondary inventory; literal cardinality for all 17 members; tracked live-value and executable-consumer scans; neutral/adapter source review | all registry markers occur exactly once and adapters follow declarations, but `render_current_root` stores the live FSMGen hash in feedback-protocol executable source; `.8` closure refused, `.8f`/`.8g` opened |
@@ -2133,6 +2166,7 @@ progress state. No other book part changes unless the final audit finds a separa
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.8g` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8g — close the derived-state audit plane` | clean data/value/consumer scan + 83 focused cases + full CI + `.8` closure |
 | `.8f` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8f — derive feedback self-test literals from data` | complete-array rendering + unrelated-literal proof + 11/11 protocol cases + zero stored live hash |
 | `.8e` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8e — reject closure on a hidden self-test pin` | cold data/source inventory + repository-wide value scan + owned `.8f` derive-on-read repair / `.8g` re-audit |
 | `.8d` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8d — declare every adapter secondary copy` | three bounded data-owned copies + neutral surface/control validation + declaration-only adapter + 72 focused cases |
@@ -2170,6 +2204,12 @@ progress state. No other book part changes unless the final audit finds a separa
 | `.7` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7 — close the containment and locality program` | independent whole-program retrieval audit + cold-read defect gates + final book method-doc + clean closure |
 
 ## Changelog
+
+- `2026-08-09`: `.8g` AUDIT/DOC DONE; `.8` CLOSED. Cold enumeration proves all 14 primary plus three secondary
+  declarations and 17 exact markers; current Cargo/Rust and Git-index/FSMGen authorities agree; executable source
+  contains no live FSMGen value. Historical evidence and self-contained Rust fixtures are dispositioned by data
+  flow, not shape. All 83 focused cases, six doctrines, 1,779 tests / five ignored, rustdoc, mdBook, and locality
+  pass. Frontier → `.9a` bounded archive-route design.
 
 - `2026-08-09`: `.8f` CODE/DOC DONE. Replaced the feedback self-test renderer's two stored current literals with
   generic expansion of `current_root.required_literals`; added an unrelated whole-array mutation; and proved the
