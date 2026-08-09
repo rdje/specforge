@@ -167,7 +167,9 @@ Five active program groups support that north star:
   Architecture: source/evidence structure holds, while 88 stale heuristic interfaces and its 100-signal/two-rule
   target disappear. The adapter blocks honestly; validation preserves the actual upstream cat-3 capture-recall
   gap (19 unenriched visuals / 87 partially structured normative statements / seven untyped temporal sources).
-  All 67 remaining emits are strict-clean; corpus is 36 done / 20 remaining, frontier → own #37. Separately,
+  All 67 remaining emits are strict-clean; corpus is 36 done / 20 remaining. #37 now owns the 25-page AArch64
+  External Debug Guide as the smallest remaining ARM guide and a bounded authority transfer: retained EvidenceIR
+  has zero relations/signals, while stale IntentIR carries 64 heuristic interfaces and a 73-signal target. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

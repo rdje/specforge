@@ -21,13 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2`; select and own refresh #37.
+- Active unit: `CORPUS-COVERAGE.2.37`; refresh the AArch64 External Debug Guide with the current binary.
 - Current state: #36 is closed at 36 done / 20 remaining, with 80/5/80/79 stage census and 67/67 current emitted
   ISFs strict-clean. The 29-page CoreSight Base System refresh is portable and deterministic. Current generic
   authority removes 88 stale heuristic interfaces and the fabricated 100-signal/two-rule target; the adapter
   blocks honestly. Validation records the remaining upstream cat-3 capture-recall gap: 19 unenriched visuals,
   87 partially structured normative statements, and seven untyped temporal-source rules.
-- Next action: choose the next roadmap-aligned retained corpus candidate, add and commit the bounded
-  `CORPUS-COVERAGE.2.37` ownership leaf, then authenticate that document before mutation.
-- In-flight uncommitted: `.2.36` documentation/fact-card signoff pending its commit workflow.
+- Next action: authenticate the complete retained #37 stage chain and exact same-volume rollback, then run the
+  guarded CPU ingest and deterministic cascade from the resolved caller-authorized SSD input.
+- In-flight uncommitted: only the `.2.37` ownership/resume-pointer commit; no generated artifact has changed.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.
