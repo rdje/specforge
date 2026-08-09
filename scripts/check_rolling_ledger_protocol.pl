@@ -6,6 +6,7 @@ use Cwd qw(abs_path);
 use Digest::SHA qw(sha256_hex);
 use Encode qw(decode_utf8);
 use File::Basename qw(dirname);
+use File::Path qw(make_path remove_tree);
 use File::Spec;
 use Fcntl qw(O_CREAT O_EXCL O_WRONLY);
 use JSON::PP;
@@ -15,10 +16,13 @@ binmode STDERR, ':encoding(UTF-8)';
 
 my $root;
 my $registry_rel = 'doctrine/live_document_size/rolling_ledgers.jsonl';
+my $surfaces_rel = 'doctrine/live_document_size/surfaces.jsonl';
 my $report = 0;
 my $self_test = 0;
 my $emit_id;
 my $output_rel;
+my $rollover_plan_rel;
+my $apply_rollover = 0;
 
 while (@ARGV) {
     my $arg = shift @ARGV;
@@ -26,6 +30,8 @@ while (@ARGV) {
         $root = shift @ARGV // usage();
     } elsif ($arg eq '--registry') {
         $registry_rel = shift @ARGV // usage();
+    } elsif ($arg eq '--surfaces') {
+        $surfaces_rel = shift @ARGV // usage();
     } elsif ($arg eq '--report') {
         $report = 1;
     } elsif ($arg eq '--self-test') {
@@ -34,6 +40,10 @@ while (@ARGV) {
         $emit_id = shift @ARGV // usage();
     } elsif ($arg eq '--output') {
         $output_rel = shift @ARGV // usage();
+    } elsif ($arg eq '--rollover-plan') {
+        $rollover_plan_rel = shift @ARGV // usage();
+    } elsif ($arg eq '--apply-rollover') {
+        $apply_rollover = 1;
     } else {
         usage();
     }
@@ -41,17 +51,26 @@ while (@ARGV) {
 
 $root //= File::Spec->catdir(dirname(abs_path($0)), '..');
 $root = abs_path($root) // die "rolling-ledger: repository root does not exist\n";
+usage() if $apply_rollover && !defined($rollover_plan_rel);
+usage() if defined($rollover_plan_rel) && ($report || $self_test || defined($emit_id) || defined($output_rel));
 
 my @errors;
+my %surface_by_source;
+my %planned_rollover_ids;
+my $post_apply_validation = 0;
+my $json = JSON::PP->new->canonical(1);
 run_self_test() if $self_test;
 exit 0 if $self_test;
 
-my $json = JSON::PP->new->canonical(1);
 my %valid_grammar = map { $_ => 1 } qw(changes_mixed_v1 h2_records_v1 current_snapshot_bullets_v1);
 my %valid_state = map { $_ => 1 } qw(planned migrated);
 my %emissions;
 
 my ($meta, $ledgers) = read_registry(absolute($registry_rel));
+my $rollover_plan = defined($rollover_plan_rel) ? read_rollover_plan($rollover_plan_rel) : undef;
+%planned_rollover_ids = map { ($_->{ledger_id} // '') => 1 } @{ $rollover_plan->{rows} // [] }
+    if defined $rollover_plan;
+read_surface_authority(absolute($surfaces_rel));
 my %seen;
 for my $ledger (@$ledgers) {
     validate_ledger_schema($ledger);
@@ -65,6 +84,7 @@ for my $ledger (@$ledgers) {
 validate_archive_landings($meta, $ledgers);
 
 emit_planned_view() if defined $emit_id && !@errors;
+run_rollover_transaction($rollover_plan, $ledgers, $meta) if defined($rollover_plan) && !@errors;
 
 if (@errors) {
     print STDERR "rolling-ledger: $_\n" for @errors;
@@ -77,8 +97,9 @@ print "rolling-ledger: ", scalar(@$ledgers),
 exit 0;
 
 sub usage {
-    die "Usage: $0 [--root DIR] [--registry PATH] [--report] [--self-test] "
-        . "[--emit-planned LEDGER_ID --output SOURCE_PATH]\n";
+    die "Usage: $0 [--root DIR] [--registry PATH] [--surfaces PATH] [--report] [--self-test] "
+        . "[--emit-planned LEDGER_ID --output SOURCE_PATH] "
+        . "[--rollover-plan PATH [--apply-rollover]]\n";
 }
 
 sub absolute {
@@ -168,6 +189,158 @@ sub read_registry {
     return ($control, \@records);
 }
 
+sub read_surface_authority {
+    my ($path) = @_;
+    if (!-f $path) {
+        problem("surface registry is missing: $surfaces_rel");
+        return;
+    }
+    open my $fh, '<:raw', $path or do {
+        problem("cannot read surface registry: $!");
+        return;
+    };
+    my $line_number = 0;
+    while (my $line = <$fh>) {
+        $line_number++;
+        chomp $line;
+        $line =~ s/\r\z//;
+        next if $line eq '';
+        my $record = eval { decode_json($line) };
+        if (!$record || ref($record) ne 'HASH') {
+            problem("surface registry line $line_number is not one JSON object: $@");
+            next;
+        }
+        next if ($record->{record_type} // '') eq 'registry';
+        next if ($record->{lifecycle} // '') ne 'rolling_ledger';
+        my $targets = $record->{targets};
+        if (ref($targets) ne 'ARRAY' || @$targets != 1 || ref($targets->[0])) {
+            problem("rolling-ledger surface at line $line_number must declare one scalar target");
+            next;
+        }
+        my $source = $targets->[0];
+        problem("rolling-ledger surface target '$source' is unsafe") if !safe_relative($source);
+        problem("duplicate rolling-ledger surface authority for '$source'") if exists $surface_by_source{$source};
+        $surface_by_source{$source} = $record;
+    }
+    close $fh;
+}
+
+sub read_rollover_plan {
+    my ($relative) = @_;
+    if (!safe_relative($relative) || $relative !~ /\.jsonl\z/) {
+        problem("rollover plan path '$relative' is unsafe or not JSONL");
+        return { control => {}, rows => [] };
+    }
+    my $path = absolute($relative);
+    if (!-f $path) {
+        problem("rollover plan is missing: $relative");
+        return { control => {}, rows => [] };
+    }
+    open my $fh, '<:raw', $path or do {
+        problem("cannot read rollover plan '$relative': $!");
+        return { control => {}, rows => [] };
+    };
+    my (@objects, @raw_lengths);
+    my $line_number = 0;
+    while (my $line = <$fh>) {
+        $line_number++;
+        chomp $line;
+        $line =~ s/\r\z//;
+        next if $line eq '';
+        my $object = eval { decode_json($line) };
+        if (!$object || ref($object) ne 'HASH') {
+            problem("rollover plan line $line_number is not one JSON object: $@");
+            next;
+        }
+        push @objects, $object;
+        push @raw_lengths, length($line);
+    }
+    close $fh;
+    if (!@objects) {
+        problem('rollover plan is empty');
+        return { control => {}, rows => [] };
+    }
+    my $control = shift @objects;
+    reject_unknown($control, 'rollover plan control', qw(
+      record_type schema_version plan_id owner boundary_commit sealed_on order terminal_separator
+      max_records max_bytes max_record_bytes max_scalar_bytes
+    ));
+    problem('rollover plan control record_type must be rolling_ledger_rollover_plan')
+        if ($control->{record_type} // '') ne 'rolling_ledger_rollover_plan';
+    problem('rollover plan schema_version must be 1') if ($control->{schema_version} // 0) != 1;
+    scalar_field($control, $_, 'rollover plan control')
+        for qw(plan_id owner boundary_commit sealed_on order terminal_separator);
+    problem('rollover plan boundary_commit must be a full Git object id')
+        if ($control->{boundary_commit} // '') !~ /\A[0-9a-f]{40}\z/;
+    problem('rollover plan sealed_on must be an ISO date')
+        if ($control->{sealed_on} // '') !~ /\A\d{4}-\d{2}-\d{2}\z/;
+    problem('rollover plan order must be registry_order')
+        if ($control->{order} // '') ne 'registry_order';
+    problem('rollover plan terminal_separator must be canonical_single_newline')
+        if ($control->{terminal_separator} // '') ne 'canonical_single_newline';
+    for my $field (qw(max_records max_bytes max_record_bytes max_scalar_bytes)) {
+        problem("rollover plan control lacks positive numeric '$field'")
+            if !defined($control->{$field}) || ref($control->{$field})
+            || $control->{$field} !~ /\A\d+\z/ || $control->{$field} < 1;
+    }
+    my %hard = (max_records => 16, max_bytes => 32_768, max_record_bytes => 4_096, max_scalar_bytes => 1_024);
+    for my $field (keys %hard) {
+        next if !defined($control->{$field}) || ref($control->{$field});
+        problem("rollover plan '$field' exceeds portable hard cap $hard{$field}")
+            if $control->{$field} > $hard{$field};
+    }
+    problem('rollover plan exceeds max_records')
+        if defined($control->{max_records}) && @objects > $control->{max_records};
+    problem('rollover plan exceeds max_bytes')
+        if defined($control->{max_bytes}) && -s($path) > $control->{max_bytes};
+    problem('rollover plan contains a record above max_record_bytes')
+        if defined($control->{max_record_bytes}) && grep { $_ > $control->{max_record_bytes} } @raw_lengths;
+
+    my %seen;
+    for my $row (@objects) {
+        reject_unknown($row, 'rollover plan row', qw(
+          ledger_id source opening_sha256 opening_records post_migration_records
+          retained_migration_suffix_records keep_opening_prefix_records segment_id segment_path successor
+          records lines bytes line_bytes sha256 first_record_sha256 last_record_sha256
+          opening_root_after_cut reason
+        ));
+        reject_unknown($row->{opening_root_after_cut}, 'rollover plan opening_root_after_cut',
+            qw(records lines bytes line_bytes sha256));
+        for my $field (qw(ledger_id source segment_id segment_path successor reason)) {
+            scalar_field($row, $field, 'rollover plan row');
+        }
+        for my $field (qw(opening_sha256 sha256 first_record_sha256 last_record_sha256)) {
+            problem("rollover plan row '$field' is not SHA-256")
+                if ($row->{$field} // '') !~ /\A[0-9a-f]{64}\z/;
+        }
+        for my $field (qw(opening_records post_migration_records retained_migration_suffix_records
+          keep_opening_prefix_records records lines bytes line_bytes)) {
+            problem("rollover plan row '$field' must be a nonnegative integer")
+                if !defined($row->{$field}) || ref($row->{$field}) || $row->{$field} !~ /\A\d+\z/;
+        }
+        my $opening = $row->{opening_root_after_cut};
+        if (ref($opening) ne 'HASH') {
+            problem('rollover plan row opening_root_after_cut must be an object');
+        } else {
+            for my $field (qw(records lines bytes line_bytes)) {
+                problem("rollover plan opening_root_after_cut '$field' must be a nonnegative integer")
+                    if !defined($opening->{$field}) || ref($opening->{$field}) || $opening->{$field} !~ /\A\d+\z/;
+            }
+            problem('rollover plan opening_root_after_cut sha256 is not SHA-256')
+                if ($opening->{sha256} // '') !~ /\A[0-9a-f]{64}\z/;
+        }
+        my $id = $row->{ledger_id} // '';
+        problem("rollover plan duplicates ledger_id '$id'") if $seen{$id}++;
+        for my $field (qw(source segment_path successor)) {
+            problem("rollover plan row '$field' path '$row->{$field}' is unsafe")
+                if !safe_relative($row->{$field});
+        }
+        validate_value_bounds($row, 'rollover plan row', 8, $control->{max_scalar_bytes})
+            if defined($control->{max_scalar_bytes});
+    }
+    return { relative => $relative, control => $control, rows => \@objects };
+}
+
 sub validate_retired_paths {
     my ($control) = @_;
     my $paths = $control->{retired_paths};
@@ -228,6 +401,7 @@ sub validate_ledger {
         if !safe_relative($source) || $source !~ /\.md\z/;
     problem("ledger '$id' source '$source' is missing")
         if safe_relative($source) && !-f absolute($source);
+    my $surface = validate_surface_binding($ledger, $id, $source);
 
     my $grammar = $ledger->{grammar};
     if (ref($grammar) ne 'HASH') {
@@ -263,7 +437,7 @@ sub validate_ledger {
     my $planned_metrics = metrics($planned_bytes);
     $planned_metrics->{records} = scalar @$selected;
     validate_planned($ledger->{planned_live}, $planned_metrics, $parsed->{records}, $selected, $id);
-    validate_limits($ledger->{live_limits}, $planned_metrics, $id, 'planned survivor');
+    validate_limits($ledger->{live_limits}, $surface, $planned_metrics, $id, 'planned survivor');
     validate_archive_contract($ledger->{archive}, $id, $state, $source, $metrics, $parsed, $grammar);
     validate_consumers($ledger->{consumers}, $id);
     $emissions{$id} = {
@@ -283,7 +457,7 @@ sub validate_ledger {
                     if reconstruct($live) ne $live_bytes;
                 my $live_metrics = metrics($live_bytes);
                 $live_metrics->{records} = scalar @{ $live->{records} };
-                validate_limits($ledger->{live_limits}, $live_metrics, $id, 'live source');
+                validate_limits($ledger->{live_limits}, $surface, $live_metrics, $id, 'live source');
                 validate_retained_suffix($live->{records}, $selected, $id);
             }
         }
@@ -336,6 +510,465 @@ sub emit_planned_view {
     rename $temporary, $output
         or die "rolling-ledger: cannot atomically replace '$output_rel': $!\n";
     print "rolling-ledger: wrote planned whole-record view for '$emit_id' to '$output_rel'.\n";
+}
+
+sub run_rollover_transaction {
+    my ($plan, $ledgers, $meta) = @_;
+    my %ledger_by_id = map { ($_->{ledger_id} // '') => $_ } @$ledgers;
+    my @registry_order = map { $_->{ledger_id} // '' } @$ledgers;
+    my @plan_order = map { $_->{ledger_id} // '' } @{ $plan->{rows} };
+    my @expected_order = grep { $planned_rollover_ids{$_} } @registry_order;
+    problem('rollover plan rows differ from registry order')
+        if join("\0", @plan_order) ne join("\0", @expected_order);
+    my @prepared;
+    for my $row (@{ $plan->{rows} }) {
+        my $id = $row->{ledger_id} // '';
+        my $ledger = $ledger_by_id{$id};
+        if (ref($ledger) ne 'HASH') {
+            problem("rollover plan names unknown ledger_id '$id'");
+            next;
+        }
+        problem("rollover plan ledger '$id' is not migrated")
+            if ($ledger->{migration_state} // '') ne 'migrated';
+        my $entry = prepare_rollover_entry($plan->{control}, $row, $ledger);
+        push @prepared, $entry if defined $entry;
+    }
+    return if @errors;
+
+    if (!$apply_rollover) {
+        for my $entry (@prepared) {
+            print $json->encode({
+                ledger_id => $entry->{id},
+                segment => {
+                    path => $entry->{segment_path},
+                    %{ $entry->{segment_metrics} },
+                    sha256 => sha256_hex($entry->{segment_bytes}),
+                },
+                resulting_live => {
+                    %{ $entry->{root_metrics} },
+                    sha256 => sha256_hex($entry->{root_bytes}),
+                },
+                future_prepends => $entry->{future_prepends},
+            }), "\n";
+        }
+        print "rolling-ledger: rollover plan '$plan->{control}{plan_id}' dry-run is exact and warning-safe for "
+            . scalar(@prepared) . " ledger(s).\n";
+        return;
+    }
+
+    my $context = install_rollover_transaction($plan->{control}, \@prepared);
+    return if !defined $context;
+
+    $post_apply_validation = 1;
+    @errors = ();
+    %emissions = ();
+    for my $ledger (@$ledgers) {
+        my $id = $ledger->{ledger_id} // '';
+        validate_ledger($ledger, $id);
+    }
+    validate_archive_landings($meta, $ledgers);
+    if (@errors) {
+        my @post_errors = @errors;
+        my $rollback_ok = eval { rollback_rollover_transaction($context); 1 };
+        @errors = @post_errors;
+        problem("rollover transaction rollback failed: " . ($@ || 'unknown failure')) if !$rollback_ok;
+        return;
+    }
+    cleanup_rollover_stage($context->{stage});
+    print "rolling-ledger: applied warning-safe root-last rollover plan '$plan->{control}{plan_id}' for "
+        . scalar(@prepared) . " ledger(s).\n";
+}
+
+sub prepare_rollover_entry {
+    my ($control, $row, $ledger) = @_;
+    my $id = $row->{ledger_id} // '';
+    my $source = $ledger->{source} // '';
+    problem("rollover plan ledger '$id' source differs from registry") if ($row->{source} // '') ne $source;
+    my $archive = $ledger->{archive};
+    return if ref($archive) ne 'HASH';
+    my $directory = $archive->{directory} // '';
+    my $segment_path = $row->{segment_path} // '';
+    problem("rollover plan ledger '$id' segment path is outside '$directory/'")
+        if $directory eq '' || index($segment_path, "$directory/") != 0;
+    my ($sequence) = ($row->{segment_id} // '') =~ /-([0-9]{4})\z/;
+    problem("rollover plan ledger '$id' segment id/path sequence is inconsistent")
+        if !defined($sequence)
+        || $segment_path !~ m{(?:\A|/)segment-\Q$sequence\E-\d{4}-\d{2}-\d{2}\.md\z};
+    problem("rollover plan ledger '$id' segment destination already exists")
+        if safe_relative($segment_path) && -e absolute($segment_path);
+
+    my $live_bytes = slurp(absolute($source), "ledger '$id' rollover source");
+    return if !defined $live_bytes;
+    my $parsed = parse_ledger($live_bytes, $ledger->{grammar}, "$id rollover source");
+    return if !defined $parsed;
+    my @records = @{ $parsed->{records} };
+    my $opening_records = $row->{opening_records} // 0;
+    my $future_prepends = @records - $opening_records;
+    if ($future_prepends < 0) {
+        problem("rollover plan ledger '$id' has fewer records than its opening boundary");
+        return;
+    }
+    my @opening = @records[$future_prepends .. $#records];
+    my $opening_bytes = render_live_view($parsed, \@opening, $ledger->{grammar});
+    problem("rollover plan ledger '$id' opening source identity drift")
+        if sha256_hex($opening_bytes) ne ($row->{opening_sha256} // '');
+    if (($control->{boundary_commit} // '') =~ /\A[0-9a-f]{40}\z/) {
+        my $committed_opening = git_blob_bytes($control->{boundary_commit}, $source, $id);
+        problem("rollover plan ledger '$id' committed opening blob differs from reconstructed boundary")
+            if defined($committed_opening) && $committed_opening ne $opening_bytes;
+    }
+    problem("rollover plan ledger '$id' opening record decomposition drift")
+        if ($row->{post_migration_records} // -1) + ($row->{retained_migration_suffix_records} // -1)
+        != $opening_records;
+    problem("rollover plan ledger '$id' cut does not consume the oldest opening post-migration records")
+        if ($row->{keep_opening_prefix_records} // -1) + ($row->{records} // -1)
+        != ($row->{post_migration_records} // -2);
+
+    my $keep = $row->{keep_opening_prefix_records} // 0;
+    my $cut = $row->{records} // 0;
+    if ($keep < 0 || $cut < 1 || $keep + $cut > @opening) {
+        problem("rollover plan ledger '$id' cut range is invalid");
+        return;
+    }
+    my @segment_records = @opening[$keep .. $keep + $cut - 1];
+    my $segment_bytes = join('', map { $_->{bytes} } @segment_records);
+    $segment_bytes =~ s/\r?\n\r?\n\z/\n/;
+    my $segment_metrics = metrics($segment_bytes);
+    $segment_metrics->{records} = scalar @segment_records;
+    validate_rollover_metrics($row, $segment_metrics, sha256_hex($segment_bytes),
+        "rollover plan ledger '$id' segment");
+    my $segment_parsed = parse_segment($segment_bytes, $ledger->{grammar}, "$id planned segment");
+    if (defined($segment_parsed)) {
+        problem("rollover plan ledger '$id' segment first-record identity drift")
+            if sha256_hex($segment_parsed->[0]{bytes}) ne ($row->{first_record_sha256} // '');
+        problem("rollover plan ledger '$id' segment last-record identity drift")
+            if sha256_hex($segment_parsed->[-1]{bytes}) ne ($row->{last_record_sha256} // '');
+    }
+
+    my @opening_survivors = (
+        ($keep ? @opening[0 .. $keep - 1] : ()),
+        @opening[$keep + $cut .. $#opening],
+    );
+    my $opening_root_bytes = render_live_view($parsed, \@opening_survivors, $ledger->{grammar});
+    my $opening_root_metrics = metrics($opening_root_bytes);
+    $opening_root_metrics->{records} = scalar @opening_survivors;
+    validate_rollover_metrics($row->{opening_root_after_cut}, $opening_root_metrics,
+        sha256_hex($opening_root_bytes), "rollover plan ledger '$id' opening root after cut");
+
+    my $start = $future_prepends + $keep;
+    my @current_survivors = (
+        ($start ? @records[0 .. $start - 1] : ()),
+        @records[$start + $cut .. $#records],
+    );
+    my $root_bytes = render_live_view($parsed, \@current_survivors, $ledger->{grammar});
+    my $root_metrics = metrics($root_bytes);
+    $root_metrics->{records} = scalar @current_survivors;
+    my $surface = $surface_by_source{$source};
+    validate_warning_safe_survivor($ledger->{live_limits}, $surface, $root_metrics, $id);
+
+    my $manifest = prepare_rollover_manifest($control, $row, $ledger, $segment_metrics);
+    return if !defined $manifest;
+    my @chain = @{ $manifest->{chain} };
+    my $index_bytes = render_archive_index($id, $archive->{index}, $archive->{manifest}, \@chain, $manifest->{segments});
+    validate_archive_index_content($index_bytes, $archive->{index}, $id, $archive->{manifest}, \@chain);
+
+    return {
+        id => $id,
+        source => $source,
+        segment_path => $segment_path,
+        segment_bytes => $segment_bytes,
+        segment_metrics => $segment_metrics,
+        root_bytes => $root_bytes,
+        root_metrics => $root_metrics,
+        manifest_path => $archive->{manifest},
+        manifest_bytes => $manifest->{bytes},
+        index_path => $archive->{index},
+        index_bytes => $index_bytes,
+        future_prepends => $future_prepends,
+    };
+}
+
+sub validate_rollover_metrics {
+    my ($expected, $actual, $sha, $label) = @_;
+    if (ref($expected) ne 'HASH') {
+        problem("$label metrics must be an object");
+        return;
+    }
+    for my $field (qw(records lines bytes line_bytes)) {
+        problem("$label $field drift: actual $actual->{$field}, expected " . ($expected->{$field} // '<missing>'))
+            if ($expected->{$field} // -1) != $actual->{$field};
+    }
+    problem("$label SHA-256 drift: actual $sha, expected " . ($expected->{sha256} // '<missing>'))
+        if ($expected->{sha256} // '') ne $sha;
+}
+
+sub validate_warning_safe_survivor {
+    my ($limits, $surface, $actual, $id) = @_;
+    return if ref($limits) ne 'HASH' || ref($surface) ne 'HASH';
+    my $health = $surface->{health_targets};
+    my %health_field = (lines => 'lines_each', bytes => 'bytes_each', line_bytes => 'line_bytes_each');
+    for my $field (qw(records lines bytes line_bytes)) {
+        my $ceiling = $limits->{$field};
+        problem("rollover plan ledger '$id' survivor exceeds $field ceiling")
+            if defined($ceiling) && $actual->{$field} > $ceiling;
+        my $target = $field eq 'records' ? $limits->{records}
+            : ref($health) eq 'HASH' ? $health->{ $health_field{$field} } : undef;
+        next if !defined($target) || !defined($limits->{warning_pct});
+        problem("rollover plan ledger '$id' survivor is not below the $limits->{warning_pct}% warning for $field")
+            if $actual->{$field} * 100 >= $target * $limits->{warning_pct};
+    }
+}
+
+sub prepare_rollover_manifest {
+    my ($plan_control, $row, $ledger, $segment_metrics) = @_;
+    my $id = $row->{ledger_id};
+    my $manifest_rel = $ledger->{archive}{manifest};
+    open my $fh, '<:raw', absolute($manifest_rel) or do {
+        problem("rollover plan ledger '$id' cannot read manifest '$manifest_rel'");
+        return;
+    };
+    my (@raw, @objects);
+    while (my $line = <$fh>) {
+        chomp $line;
+        $line =~ s/\r\z//;
+        next if $line eq '';
+        my $object = eval { decode_json($line) };
+        if (!$object || ref($object) ne 'HASH') {
+            problem("rollover plan ledger '$id' manifest contains invalid JSON");
+            close $fh;
+            return;
+        }
+        push @raw, $line;
+        push @objects, $object;
+    }
+    close $fh;
+    my $control = shift @objects;
+    my $control_raw = shift @raw;
+    my @segments = grep { ($_->{record_type} // '') eq 'sealed_segment' } @objects;
+    my $prior_chain = validate_archive_chain(
+        $id, $ledger->{source}, $ledger->{archive}{source_capsule}, [map { +{%$_} } @segments]
+    );
+    my $successor = $row->{successor};
+    problem("rollover plan ledger '$id' successor is not the current newest segment")
+        if !defined($prior_chain) || (@$prior_chain < 3) || $prior_chain->[1] ne $successor;
+    my @successor_matches = grep {
+        ($_->{record_type} // '') eq 'sealed_segment' && ($_->{path} // '') eq $successor
+    } @objects;
+    problem("rollover plan ledger '$id' successor matches " . scalar(@successor_matches) . ' manifest rows')
+        if @successor_matches != 1;
+    return if @successor_matches != 1;
+    problem("rollover plan ledger '$id' successor is not attached to the live root")
+        if ($successor_matches[0]{predecessor} // '') ne $ledger->{source};
+
+    my @updated_raw;
+    my @updated_objects;
+    for my $index (0 .. $#objects) {
+        my $object = { %{ $objects[$index] } };
+        if (($object->{record_type} // '') eq 'sealed_segment' && ($object->{path} // '') eq $successor) {
+            $object->{predecessor} = $row->{segment_path};
+            push @updated_raw, $json->encode($object);
+        } else {
+            push @updated_raw, $raw[$index];
+        }
+        push @updated_objects, $object;
+    }
+    my $new_entry = {
+        record_type => 'sealed_segment',
+        ledger_id => $id,
+        segment_id => $row->{segment_id},
+        path => $row->{segment_path},
+        sealed_on => $plan_control->{sealed_on},
+        reason => $row->{reason},
+        sha256 => $row->{sha256},
+        records => $segment_metrics->{records},
+        lines => $segment_metrics->{lines},
+        bytes => $segment_metrics->{bytes},
+        line_bytes => $segment_metrics->{line_bytes},
+        first_record_sha256 => $row->{first_record_sha256},
+        last_record_sha256 => $row->{last_record_sha256},
+        verifier => 'scripts/check_rolling_ledger_protocol.pl',
+        predecessor => $ledger->{source},
+        successor => $successor,
+    };
+    push @updated_objects, $new_entry;
+    push @updated_raw, $json->encode($new_entry);
+    my $bytes = join("\n", $control_raw, @updated_raw) . "\n";
+    my @lengths = map { length($_) } ($control_raw, @updated_raw);
+    validate_archive_manifest_limits($control, length($bytes), \@updated_objects, \@lengths, $id);
+    validate_value_bounds($_, 'archive manifest record', 1, $control->{max_scalar_bytes})
+        for @updated_objects;
+    my @updated_segments = grep { ($_->{record_type} // '') eq 'sealed_segment' } @updated_objects;
+    my $chain = validate_archive_chain(
+        $id, $ledger->{source}, $ledger->{archive}{source_capsule}, \@updated_segments
+    );
+    return { bytes => $bytes, prior_chain => $prior_chain, chain => $chain, segments => \@updated_segments };
+}
+
+sub render_archive_index {
+    my ($id, $index_rel, $manifest_rel, $chain, $segments) = @_;
+    my %segment_id = map { ($_->{path} // '') => ($_->{segment_id} // '') } @$segments;
+    my @lines = (
+        "# `$id` Rolling-Ledger Archive",
+        '',
+        'Complete newest-to-oldest chronology:',
+        '',
+    );
+    for my $index (0 .. $#$chain) {
+        my $path = $chain->[$index];
+        my $label = $index == 0 ? 'Current root'
+            : $index == $#$chain ? 'Immutable source capsule'
+            : "Sealed segment `$segment_id{$path}`";
+        push @lines, ($index + 1) . ". [$label](" . relative_markdown_path($index_rel, $path) . ')';
+    }
+    push @lines, '', 'Authority: [bounded JSONL manifest]('
+        . relative_markdown_path($index_rel, $manifest_rel) . ').';
+    return join("\n", @lines) . "\n";
+}
+
+sub relative_markdown_path {
+    my ($document_rel, $target_rel) = @_;
+    my $relative = File::Spec->abs2rel($target_rel, dirname($document_rel));
+    $relative =~ s{\\}{/}g;
+    return $relative;
+}
+
+sub install_rollover_transaction {
+    my ($control, $prepared, $inject_failure) = @_;
+    my $stage_rel = "generated/.rolling-ledger-transaction.$$";
+    my $stage = absolute($stage_rel);
+    if (-e $stage) {
+        problem("rollover transaction stage already exists: $stage_rel");
+        return;
+    }
+    make_path($stage) or do {
+        problem("cannot create rollover transaction stage '$stage_rel'");
+        return;
+    };
+    my $context = { stage => $stage, backups => {}, installed_segments => [] };
+    my $ok = eval {
+        my $root_device = (stat($root))[0];
+        my $stage_device = (stat($stage))[0];
+        die "staging directory is not on the repository filesystem\n"
+            if !defined($root_device) || !defined($stage_device) || $root_device != $stage_device;
+        for my $entry (@$prepared) {
+            for my $pair (
+                [$entry->{segment_path}, $entry->{segment_bytes}],
+                [$entry->{manifest_path}, $entry->{manifest_bytes}],
+                [$entry->{index_path}, $entry->{index_bytes}],
+                [$entry->{source}, $entry->{root_bytes}],
+            ) {
+                my ($relative, $bytes) = @$pair;
+                my $staged = File::Spec->catfile($stage, split m{/}, $relative);
+                make_path(dirname($staged));
+                write_new_file($staged, $bytes);
+                my $staged_bytes = slurp_or_die($staged);
+                die "staged output identity drift for '$relative'\n" if $staged_bytes ne $bytes;
+            }
+            for my $relative ($entry->{source}, $entry->{manifest_path}, $entry->{index_path}) {
+                die "authority input '$relative' is missing before transaction\n" if !-f absolute($relative);
+                $context->{backups}{$relative} = slurp_or_die(absolute($relative));
+            }
+        }
+        for my $entry (@$prepared) {
+            my $destination = absolute($entry->{segment_path});
+            write_new_file($destination, $entry->{segment_bytes});
+            push @{ $context->{installed_segments} }, $entry->{segment_path};
+        }
+        die "injected failure after segment installation\n"
+            if defined($inject_failure) && $inject_failure eq 'after_segments';
+        for my $field (qw(manifest index root)) {
+            for my $entry (@$prepared) {
+                my ($relative, $bytes) = $field eq 'manifest'
+                    ? ($entry->{manifest_path}, $entry->{manifest_bytes})
+                    : $field eq 'index'
+                    ? ($entry->{index_path}, $entry->{index_bytes})
+                    : ($entry->{source}, $entry->{root_bytes});
+                atomic_replace($relative, $bytes);
+            }
+        }
+        1;
+    };
+    if (!$ok) {
+        my $failure = $@ || 'unknown transaction failure';
+        my $rollback_ok = eval { rollback_rollover_transaction($context); 1 };
+        problem("rollover transaction failed: $failure");
+        problem("rollover transaction rollback failed: " . ($@ || 'unknown failure')) if !$rollback_ok;
+        return;
+    }
+    return $context;
+}
+
+sub atomic_replace {
+    my ($relative, $bytes) = @_;
+    my $destination = absolute($relative);
+    my $temporary = "$destination.rolling-ledger-tmp.$$";
+    write_new_file($temporary, $bytes);
+    if (!rename $temporary, $destination) {
+        my $failure = $!;
+        unlink $temporary;
+        die "cannot atomically replace '$relative': $failure\n";
+    }
+}
+
+sub write_new_file {
+    my ($path, $bytes) = @_;
+    sysopen my $fh, $path, O_WRONLY | O_CREAT | O_EXCL, 0644
+        or die "cannot create '$path' exclusively: $!\n";
+    binmode $fh, ':raw';
+    if (!print {$fh} $bytes) {
+        my $failure = $!;
+        close $fh;
+        unlink $path;
+        die "cannot write '$path': $failure\n";
+    }
+    close $fh or do {
+        my $failure = $!;
+        unlink $path;
+        die "cannot close '$path': $failure\n";
+    };
+}
+
+sub slurp_or_die {
+    my ($path) = @_;
+    open my $fh, '<:raw', $path or die "cannot read '$path': $!\n";
+    local $/;
+    my $bytes = <$fh> // '';
+    close $fh or die "cannot close '$path': $!\n";
+    return $bytes;
+}
+
+sub git_blob_bytes {
+    my ($commit, $relative, $id) = @_;
+    open my $fh, '-|', 'git', '-C', $root, 'show', "$commit:$relative" or do {
+        problem("rollover plan ledger '$id' cannot open committed boundary blob");
+        return;
+    };
+    binmode $fh, ':raw';
+    local $/;
+    my $bytes = <$fh>;
+    if (!close $fh) {
+        problem("rollover plan ledger '$id' cannot read '$relative' at boundary '$commit'");
+        return;
+    }
+    return $bytes // '';
+}
+
+sub rollback_rollover_transaction {
+    my ($context) = @_;
+    for my $relative (sort keys %{ $context->{backups} }) {
+        atomic_replace($relative, $context->{backups}{$relative});
+    }
+    for my $relative (reverse @{ $context->{installed_segments} }) {
+        my $path = absolute($relative);
+        unlink $path or die "cannot remove rolled-back segment '$relative': $!\n" if -e $path;
+    }
+    cleanup_rollover_stage($context->{stage});
+}
+
+sub cleanup_rollover_stage {
+    my ($stage) = @_;
+    remove_tree($stage) if defined($stage) && -e $stage;
+    die "rollover transaction stage survived cleanup: '$stage'\n" if defined($stage) && -e $stage;
 }
 
 sub validate_grammar_contract {
@@ -548,8 +1181,44 @@ sub validate_exact_metrics {
         if ($expected->{sha256} // '') ne $sha;
 }
 
+sub validate_surface_binding {
+    my ($ledger, $id, $source) = @_;
+    my $surface = $surface_by_source{$source};
+    if (ref($surface) ne 'HASH') {
+        problem("ledger '$id' lacks one generic rolling-ledger surface authority for '$source'");
+        return;
+    }
+    problem("ledger '$id' generic surface locator must be file") if ($surface->{locator} // '') ne 'file';
+    problem("ledger '$id' generic surface state must be normal") if ($surface->{state} // '') ne 'normal';
+    problem("ledger '$id' generic surface verifier must be builtin:budget")
+        if ($surface->{verifier} // '') ne 'builtin:budget';
+    my $manifest = ref($ledger->{archive}) eq 'HASH' ? ($ledger->{archive}{manifest} // '') : '';
+    problem("ledger '$id' generic surface archive manifest differs from the focused registry")
+        if ($surface->{archive_manifest} // '') ne $manifest;
+    for my $object_field (qw(health_targets enforcement_ceilings milestones)) {
+        problem("ledger '$id' generic surface lacks '$object_field'")
+            if ref($surface->{$object_field}) ne 'HASH';
+    }
+    my $limits = $ledger->{live_limits};
+    if (ref($limits) eq 'HASH' && ref($surface->{enforcement_ceilings}) eq 'HASH') {
+        my %mapping = (lines => 'lines_each', bytes => 'bytes_each', line_bytes => 'line_bytes_each');
+        for my $field (sort keys %mapping) {
+            my $surface_field = $mapping{$field};
+            problem("ledger '$id' focused $field ceiling differs from generic $surface_field")
+                if ($limits->{$field} // -1) != ($surface->{enforcement_ceilings}{$surface_field} // -2);
+        }
+    }
+    if (ref($limits) eq 'HASH' && ref($surface->{milestones}) eq 'HASH') {
+        for my $field (qw(warning_pct rollover_pct)) {
+            problem("ledger '$id' focused $field differs from generic surface authority")
+                if ($limits->{$field} // -1) != ($surface->{milestones}{$field} // -2);
+        }
+    }
+    return $surface;
+}
+
 sub validate_limits {
-    my ($limits, $actual, $id, $label) = @_;
+    my ($limits, $surface, $actual, $id, $label) = @_;
     if (ref($limits) ne 'HASH') {
         problem("ledger '$id' live_limits must be an object");
         return;
@@ -561,16 +1230,25 @@ sub validate_limits {
     problem("ledger '$id' warning_pct must be below rollover_pct")
         if ($limits->{warning_pct} // 100) >= ($limits->{rollover_pct} // 0);
     problem("ledger '$id' rollover_pct must be below 100") if ($limits->{rollover_pct} // 100) >= 100;
+    my $health = ref($surface) eq 'HASH' ? $surface->{health_targets} : undef;
+    my %health_field = (lines => 'lines_each', bytes => 'bytes_each', line_bytes => 'line_bytes_each');
     for my $field (qw(records lines bytes line_bytes)) {
         next if !defined($limits->{$field}) || ref($limits->{$field}) || $limits->{$field} !~ /\A\d+\z/;
         problem("ledger '$id' $label exceeds live $field limit: $actual->{$field} > $limits->{$field}")
             if $actual->{$field} > $limits->{$field};
+        my $target = $field eq 'records' ? $limits->{$field}
+            : ref($health) eq 'HASH' ? $health->{ $health_field{$field} } : undef;
+        if (!defined($target) || ref($target) || $target !~ /\A\d+\z/ || $target < 1) {
+            problem("ledger '$id' lacks positive generic health target for $field");
+            next;
+        }
         if ($label eq 'planned survivor') {
             problem("ledger '$id' planned survivor starts at or above the $limits->{warning_pct}% warning for $field")
-                if $actual->{$field} * 100 >= $limits->{$field} * $limits->{warning_pct};
+                if $actual->{$field} * 100 >= $target * $limits->{warning_pct};
         } elsif ($label eq 'live source') {
             problem("ledger '$id' live source reached the $limits->{rollover_pct}% rollover threshold for $field")
-                if $actual->{$field} * 100 >= $limits->{$field} * $limits->{rollover_pct};
+                if $actual->{$field} * 100 >= $target * $limits->{rollover_pct}
+                && ($post_apply_validation || !$planned_rollover_ids{$id});
         }
     }
 }
@@ -1200,6 +1878,7 @@ sub run_self_test {
     validate_limits(
         { records => 10, lines => 10, bytes => 100, line_bytes => 10,
           warning_pct => 80, rollover_pct => 90 },
+        { health_targets => { lines_each => 10, bytes_each => 100, line_bytes_each => 10 } },
         { records => 8, lines => 1, bytes => 1, line_bytes => 1 },
         'self-test warning', 'planned survivor',
     );
@@ -1338,6 +2017,64 @@ sub run_self_test {
     $checks++;
 
     @errors = ();
+    %planned_rollover_ids = ();
+    $post_apply_validation = 0;
+    my $health_surface = {
+        health_targets => { lines_each => 100, bytes_each => 1_000, line_bytes_each => 100 },
+    };
+    validate_limits(
+        { records => 20, lines => 200, bytes => 2_000, line_bytes => 200,
+          warning_pct => 80, rollover_pct => 90 },
+        $health_surface,
+        { records => 1, lines => 90, bytes => 1, line_bytes => 1 },
+        'self-test health denominator', 'live source',
+    );
+    push @failures, 'live rollover still used the enforcement ceiling as its denominator' if !@errors;
+    $checks++;
+
+    @errors = ();
+    validate_warning_safe_survivor(
+        { records => 20, lines => 200, bytes => 2_000, line_bytes => 200,
+          warning_pct => 80, rollover_pct => 90 },
+        $health_surface,
+        { records => 15, lines => 80, bytes => 1, line_bytes => 1 },
+        'self-test warning-safe survivor',
+    );
+    push @failures, 'a rollover survivor at a generic health warning was accepted' if !@errors;
+    $checks++;
+
+    my %saved_surfaces = %surface_by_source;
+    %surface_by_source = (
+        'CURRENT.md' => {
+            locator => 'file', lifecycle => 'rolling_ledger', state => 'normal',
+            verifier => 'builtin:budget', archive_manifest => 'archive/manifest.jsonl',
+            health_targets => { lines_each => 100, bytes_each => 1_000, line_bytes_each => 100 },
+            enforcement_ceilings => { lines_each => 200, bytes_each => 2_000, line_bytes_each => 200 },
+            milestones => { warning_pct => 80, rollover_pct => 90 },
+        },
+    );
+    my $binding_ledger = {
+        live_limits => { records => 20, lines => 200, bytes => 2_000, line_bytes => 200,
+            warning_pct => 80, rollover_pct => 90 },
+        archive => { manifest => 'archive/manifest.jsonl' },
+    };
+    @errors = ();
+    validate_surface_binding($binding_ledger, 'fixture', 'CURRENT.md');
+    push @failures, 'matching focused/generic surface authorities failed' if @errors;
+    $checks++;
+
+    @errors = ();
+    $surface_by_source{'CURRENT.md'}{enforcement_ceilings}{lines_each} = 201;
+    validate_surface_binding($binding_ledger, 'fixture', 'CURRENT.md');
+    push @failures, 'focused/generic ceiling drift was accepted' if !@errors;
+    $checks++;
+    %surface_by_source = %saved_surfaces;
+
+    my ($rollover_checks, $rollover_failures) = run_rollover_writer_self_test();
+    $checks += $rollover_checks;
+    push @failures, @$rollover_failures;
+
+    @errors = ();
     my $residue_rel = "generated/rolling-ledger-retired-self-test-$$";
     my $residue_path = absolute($residue_rel);
     sysopen my $residue_fh, $residue_path, O_CREAT | O_EXCL | O_WRONLY
@@ -1352,4 +2089,175 @@ sub run_self_test {
     @errors = @saved_errors;
     die "rolling-ledger self-test: $_\n" for @failures;
     print "rolling-ledger: $checks parser/control self-tests pass.\n";
+}
+
+sub run_rollover_writer_self_test {
+    my @failures;
+    my $checks = 0;
+    my @saved_errors = @errors;
+    my %saved_surfaces = %surface_by_source;
+    my %saved_plan_ids = %planned_rollover_ids;
+    my $saved_post_apply = $post_apply_validation;
+    my $fixture_rel = "generated/.rolling-ledger-writer-self-test.$$";
+    my $fixture = absolute($fixture_rel);
+    my $transaction_stage = absolute("generated/.rolling-ledger-transaction.$$");
+    my $unexpected;
+    eval {
+        die "rollover writer self-test fixture already exists\n" if -e $fixture || -e $transaction_stage;
+        my $archive_rel = "$fixture_rel/archive";
+        make_path(absolute($archive_rel));
+        my $source_rel = "$fixture_rel/CURRENT.md";
+        my $manifest_rel = "$archive_rel/manifest.jsonl";
+        my $index_rel = "$archive_rel/INDEX.md";
+        my $capsule_rel = "$archive_rel/capsule.md";
+        my $old_segment_rel = "$archive_rel/segment-0001-2026-08-09.md";
+        my $new_segment_rel = "$archive_rel/segment-0002-2026-08-09.md";
+        my $grammar = {
+            kind => 'h2_records_v1', skipped_h2 => 0,
+            detached_titles => [], trailer_markers => [],
+        };
+        my $opening = "# Fixture\n\n"
+            . "## newest\nA\n\n"
+            . "## oldest new\nB\n\n"
+            . "## retained\nC\n";
+        my $current = "# Fixture\n\n"
+            . "## future\nF\n\n"
+            . "## newest\nA\n\n"
+            . "## oldest new\nB\n\n"
+            . "## retained\nC\n";
+        my $opening_parsed = parse_ledger($opening, $grammar, 'rollover writer opening fixture');
+        my @opening_records = @{ $opening_parsed->{records} };
+        my $segment_bytes = $opening_records[1]{bytes};
+        $segment_bytes =~ s/\r?\n\r?\n\z/\n/;
+        my $segment_metrics = metrics($segment_bytes);
+        $segment_metrics->{records} = 1;
+        my $segment_parsed = parse_segment($segment_bytes, $grammar, 'rollover writer segment fixture');
+        my @opening_survivors = ($opening_records[0], $opening_records[2]);
+        my $opening_root = render_live_view($opening_parsed, \@opening_survivors, $grammar);
+        my $opening_root_metrics = metrics($opening_root);
+        $opening_root_metrics->{records} = 2;
+        my $manifest_control = {
+            record_type => 'archive_manifest', schema_version => 1,
+            max_records => 8, max_bytes => 16_384, max_record_bytes => 2_048, max_scalar_bytes => 768,
+        };
+        my $capsule = {
+            record_type => 'source_capsule', ledger_id => 'fixture', path => $capsule_rel,
+        };
+        my $old_segment = {
+            record_type => 'sealed_segment', ledger_id => 'fixture', segment_id => 'fixture-0001',
+            path => $old_segment_rel, predecessor => $source_rel, successor => $capsule_rel,
+        };
+        my $manifest_bytes = join("\n", map { $json->encode($_) }
+            ($manifest_control, $capsule, $old_segment)) . "\n";
+        my $index_bytes = "old index\n";
+        write_new_file(absolute($source_rel), $current);
+        write_new_file(absolute($manifest_rel), $manifest_bytes);
+        write_new_file(absolute($index_rel), $index_bytes);
+        write_new_file(absolute($capsule_rel), $opening);
+        write_new_file(absolute($old_segment_rel), "## archived\nold\n");
+
+        my $limits = {
+            records => 16, lines => 200, bytes => 4_096, line_bytes => 200,
+            warning_pct => 80, rollover_pct => 90,
+        };
+        %surface_by_source = (
+            $source_rel => {
+                health_targets => { lines_each => 100, bytes_each => 2_000, line_bytes_each => 100 },
+                enforcement_ceilings => { lines_each => 200, bytes_each => 4_096, line_bytes_each => 200 },
+                milestones => { warning_pct => 80, rollover_pct => 90 },
+            },
+        );
+        %planned_rollover_ids = (fixture => 1);
+        $post_apply_validation = 0;
+        my $ledger = {
+            ledger_id => 'fixture', source => $source_rel, grammar => $grammar, live_limits => $limits,
+            archive => {
+                directory => $archive_rel, manifest => $manifest_rel, index => $index_rel,
+                source_capsule => $capsule_rel,
+            },
+        };
+        my $control = { sealed_on => '2026-08-09', plan_id => 'fixture-plan' };
+        my $row = {
+            ledger_id => 'fixture', source => $source_rel,
+            opening_sha256 => sha256_hex($opening), opening_records => 3,
+            post_migration_records => 2, retained_migration_suffix_records => 1,
+            keep_opening_prefix_records => 1, segment_id => 'fixture-0002',
+            segment_path => $new_segment_rel, successor => $old_segment_rel,
+            %$segment_metrics, sha256 => sha256_hex($segment_bytes),
+            first_record_sha256 => sha256_hex($segment_parsed->[0]{bytes}),
+            last_record_sha256 => sha256_hex($segment_parsed->[-1]{bytes}),
+            opening_root_after_cut => {
+                %$opening_root_metrics, sha256 => sha256_hex($opening_root),
+            },
+            reason => 'Fixture rollover transaction.',
+        };
+
+        @errors = ();
+        my $prepared = prepare_rollover_entry($control, $row, $ledger);
+        push @failures, 'a valid rollover plan entry failed preparation' if @errors || !defined $prepared;
+        $checks++;
+
+        @errors = ();
+        my %bad_opening = (%$row, opening_sha256 => ('0' x 64));
+        prepare_rollover_entry($control, \%bad_opening, $ledger);
+        push @failures, 'opening-boundary identity drift was accepted' if !@errors;
+        $checks++;
+
+        @errors = ();
+        my %bad_segment = (%$row, sha256 => ('0' x 64));
+        prepare_rollover_entry($control, \%bad_segment, $ledger);
+        push @failures, 'planned segment identity drift was accepted' if !@errors;
+        $checks++;
+
+        @errors = ();
+        my %bad_successor = (%$row, successor => $capsule_rel);
+        prepare_rollover_entry($control, \%bad_successor, $ledger);
+        push @failures, 'a non-newest rollover successor was accepted' if !@errors;
+        $checks++;
+
+        @errors = ();
+        my $failed_context = install_rollover_transaction($control, [$prepared], 'after_segments');
+        push @failures, 'an injected post-segment transaction failure was accepted'
+            if defined($failed_context) || !@errors;
+        push @failures, 'failed transaction did not restore authority or remove residue'
+            if slurp_or_die(absolute($source_rel)) ne $current
+            || slurp_or_die(absolute($manifest_rel)) ne $manifest_bytes
+            || slurp_or_die(absolute($index_rel)) ne $index_bytes
+            || -e absolute($new_segment_rel) || -e $transaction_stage;
+        $checks++;
+
+        @errors = ();
+        my $context = install_rollover_transaction($control, [$prepared]);
+        push @failures, 'valid root-last rollover installation failed' if @errors || !defined $context;
+        if (defined $context) {
+            push @failures, 'installed rollover root differs from its prepared bytes'
+                if slurp_or_die(absolute($source_rel)) ne $prepared->{root_bytes};
+            push @failures, 'installed rollover segment differs from its prepared bytes'
+                if slurp_or_die(absolute($new_segment_rel)) ne $prepared->{segment_bytes};
+        }
+        $checks++;
+
+        if (defined $context) {
+            rollback_rollover_transaction($context);
+            push @failures, 'rollback did not restore the exact source root'
+                if slurp_or_die(absolute($source_rel)) ne $current;
+            push @failures, 'rollback did not restore the exact manifest'
+                if slurp_or_die(absolute($manifest_rel)) ne $manifest_bytes;
+            push @failures, 'rollback did not restore the exact index'
+                if slurp_or_die(absolute($index_rel)) ne $index_bytes;
+            push @failures, 'rollback left a planned segment or stage residue'
+                if -e absolute($new_segment_rel) || -e $transaction_stage;
+        }
+        $checks++;
+        1;
+    } or $unexpected = $@ || 'unknown rollover writer self-test failure';
+
+    remove_tree($transaction_stage) if -e $transaction_stage;
+    remove_tree($fixture) if -e $fixture;
+    push @failures, $unexpected if defined $unexpected;
+    %surface_by_source = %saved_surfaces;
+    %planned_rollover_ids = %saved_plan_ids;
+    $post_apply_validation = $saved_post_apply;
+    @errors = @saved_errors;
+    return ($checks, \@failures);
 }

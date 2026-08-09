@@ -21,13 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `ROOT-ROLLING-LEDGER-PRESSURE.1`; `.0` has completed the exact census/transaction plan.
-- Current state: clean opening commit `4d24b13c` pins the four roots at 114/84/69/62 records. Changes is at 91.4%
-  of its line health target; development, status, and Rust are at warning. The focused checker incorrectly uses
-  enforcement ceilings as milestone denominators. Four exact segment cuts (29/24/12/8 records) restore headroom.
-- Next action: commit `.0`, then `.1` binds focused pressure to generic health authority, adds a generic dry-run/
-  root-last transaction, and materializes segments `changes-0002`, `development-notes-0002`,
-  `live-achievement-status-0004`, and `rust-codebase-analysis-0002`.
-- In-flight uncommitted: none after the `.0` planning commit; no record moved and no archive, product artifact,
-  shared input, threshold, or ceiling changed.
+- Active unit: `ROOT-ROLLING-LEDGER-PRESSURE.2`; `.1` has materialized and verified the four exact rotations in
+  its work-unit commit.
+- Current state: roots are warning-safe at changes 87 records / 1,246 lines / 188,183 bytes, development
+  62 / 1,294 / 175,215, status 59 / 101 / 82,836, and Rust 55 / 1,064 / 89,706. Exact 29/24/12/8-record
+  segments, reciprocal manifests, and complete indexes pass the focused checker; old members are byte-identical.
+- Next action: commit `.1`, then `.2` independently audits the clean committed continuity plane, future append
+  capacity, reconstruction, routes, generic/focused alignment, and residue before closing this tree.
+- In-flight uncommitted: none after the `.1` implementation commit; product behavior, shared inputs, thresholds,
+  ceilings, capsules, and pre-existing segment bytes are unchanged.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

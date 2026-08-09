@@ -203,11 +203,14 @@ measures changes at 114 records / 1,645 lines / 222,725 bytes, development at 84
 development, status, and Rust are at warning.
 
 That census also catches an enforcement split: the generic surface contract correctly applies warning and
-rollover milestones to reviewed health targets, while the focused rolling-ledger checker applies them to the
-larger quarantine ceilings. The implementation follow-up binds those authorities and uses exact whole-record
-cuts of 29 changes, 24 development, 12 status, and eight Rust records. Candidate segments, endpoint hashes,
-chronology edits, warning-safe roots, same-volume staging, root-last visibility, and rollback are pinned before
-materialization. No threshold or ceiling is widened.
+rollover milestones to reviewed health targets, while the focused rolling-ledger checker applied them to the
+larger quarantine ceilings. The focused checker now binds those authorities, and the guarded transaction has
+materialized exact whole-record cuts of 29 changes, 24 development, 12 status, and eight Rust records. It
+authenticates the committed boundary and selected range, renders into a repository-derived same-volume stage,
+installs segment then manifest/index then root, and restores exact prior bytes after any failure. Injected-failure
+tests prove rollback and residue cleanup. The resulting roots are changes 87 records / 1,246 lines / 188,183
+bytes, development 62 / 1,294 / 175,215, status 59 / 101 / 82,836, and Rust 55 / 1,064 / 89,706: every health
+dimension is below warning, and no threshold or ceiling is widened.
 No historical content is removed before its identity, replacement route, consumers, and retrieval
 procedure are proved.
 The top-level README remains a first-class landing page; changing detail and
@@ -230,6 +233,18 @@ window, local record/line/byte/width limits, consumers, and future archive route
 `scripts/check_rolling_ledger_protocol.pl` parses and reconstructs every byte, then derives the
 planned live view from whole records and checks each pressure axis independently. Its grammar tests
 also reject non-bullet content inside the status record region.
+
+A pinned plan is first proved without writes and then applied explicitly:
+
+```sh
+perl scripts/check_rolling_ledger_protocol.pl --rollover-plan docs/research/<plan>.jsonl
+perl scripts/check_rolling_ledger_protocol.pl --rollover-plan docs/research/<plan>.jsonl --apply-rollover
+```
+
+The plan closes over the committed root blob, contiguous record range, segment digest and endpoints, current
+newest successor, and warning-safe survivor. The checker rejects boundary drift, segment reuse, a stale
+successor, surface-authority disagreement, or any survivor at warning. Thirty-five focused cases include a
+failure injected after segment installation and prove byte-exact rollback with no transaction residue.
 
 Each initial migration copied the exact pre-migration file into an immutable, repository-local source
 capsule before shortening the stable root. The capsule manifest records its digest and dimensions; a
@@ -262,6 +277,12 @@ outside mandatory reads—but still enforces its exact ceiling; the rolling-ledg
 reopens the file, verifies every metric and digest, checks the manifest/index, and proves the retained
 root suffix. This is the retrieval contract, not a reliance on Git history alone.
 
+The next rollover seals 29 more whole records at
+`docs/archive/rolling-ledgers/changes/segment-0002-2026-08-09.md` (428 lines / 37,189 bytes / SHA-256
+`bc87665975d80078697384e89b2127e67164ae0e523a8076b93f81eb5582fbd8`). The current root contains the two
+task records prepended after the pinned boundary, the ten newest opening records, and the exact 75-record
+migration suffix: 87 records / 1,246 lines / 188,183 bytes.
+
 #### `DEVELOPMENT_NOTES.md` migration landed
 
 At the `.4c` migration boundary, the engineering-rationale root became 1,480 lines / 194,412 bytes
@@ -274,9 +295,15 @@ prologue, 60 capsule records, and `.4c` as the first post-capsule prepend.
 The first post-migration rollover landed when a later rationale prepend reached the mandatory 90% record
 threshold. It seals the 27 oldest post-capsule records content-identically and in order at
 `docs/archive/rolling-ledgers/development-notes/segment-0001-2026-08-08.md` (467 lines / 36,125 bytes / SHA-256
-`b07a73670863e283f359911629db691859f41d99021a1902db3adfeb83788b91`). The bounded root now carries the H1
+`b07a73670863e283f359911629db691859f41d99021a1902db3adfeb83788b91`). That bounded root carried the H1
 prologue, 10 newest post-capsule records, and the exact 50-record retained migration suffix. The manifest places
 the sealed segment between that root and the immutable source capsule.
+
+The next rollover seals 24 more whole records at
+`docs/archive/rolling-ledgers/development-notes/segment-0002-2026-08-09.md` (421 lines / 34,258 bytes / SHA-256
+`0576c44b7b95c40bc4669128ce07ebdc6a99b1ebbe9322cd1aca3acad8c04cbd`). The current root contains the H1
+prologue, two later task records, ten newest opening records, and the exact retained 50-record suffix: 62 records /
+1,294 lines / 175,215 bytes.
 
 The retained-record check is byte-sensitive beyond visible prose. During `.4c`, an ordinary edit at
 the top of the derived root exposed an ownership ambiguity for the blank line between records 60 and
@@ -314,20 +341,25 @@ SHA-256 `9bb1607d89fcc67ea2c1824a9c84e21bd95d56f7f0f49a1af43fee9d3b865edb`). The
 exact pre-removal reconstruction proves the segment, then the bounded root returns to 20 newer records plus the
 reviewed 40-record suffix. The manifest chain is root → segment 0003 → segment 0002 → segment 0001 → capsule.
 
+The fourth rollover seals the next 12 records at
+`docs/archive/rolling-ledgers/live-achievement-status/segment-0004-2026-08-09.md` (12 lines / 11,420 bytes /
+SHA-256 `6d1c07596313d0c98c04afde63dd23d7df61fda291bd50d2cbc57a0568b924eb`). The current root contains 19 newer
+records plus the exact retained 40-record suffix and complete trailer: 59 records / 101 lines / 82,836 bytes.
+
 #### `RUST_CODEBASE_ANALYSIS.md` migration landed
 
-The Rust architecture root is now 1,056 lines / 89,727 bytes instead of 9,039 lines / 1,046,679
+The Rust architecture root is now 1,064 lines / 89,706 bytes instead of 9,039 lines / 1,046,679
 bytes. Its initial capsule at
 `docs/archive/rolling-ledgers/rust-codebase-analysis/source-through-2026-08-08.md` retains all 1,350
 pre-migration records under SHA-256
 `95e1665628b615498e94f67d6dc6e0083d4d104a6ca8a815b4c23cf2f97cc7ce`. The live root keeps the H1,
-complete Purpose prologue, and newest 60 whole H2 records.
+complete Purpose prologue, and newest 55 whole H2 records.
 
-No `.4e` record was added to that root. The migration changes documentation lifecycle, not the Rust
-architecture, and the repository's impact-based routing contract reserves this surface for material
-subsystem, integration, implementation, or current-risk changes. The task tree, change/status/rationale
-ledgers, ADR, Knowledge Map fact, and this chapter record the migration without manufacturing an
-architecture fact.
+No `.4e` record was added to that root because the initial migration changed documentation lifecycle rather than
+Rust architecture. The generic materializer is different: it adds a reusable committed-boundary, same-volume,
+root-last, exact-rollback subsystem to the checker, so `.1` has a proper architecture record. Its first later
+segment is `docs/archive/rolling-ledgers/rust-codebase-analysis/segment-0002-2026-08-09.md` (eight records / 134
+lines / 12,009 bytes / SHA-256 `2444822e5f98f04516a20a9a54468e57f99721afcf869c37a12da0bc538bacb6`).
 
 ### Lifecycle controls
 

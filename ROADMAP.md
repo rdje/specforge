@@ -133,8 +133,10 @@ Five active program groups support that north star:
   [`ROOT-ROLLING-LEDGER-PRESSURE`](docs/tasks/ROOT-ROLLING-LEDGER-PRESSURE.md) tree now owns it. `.0` pins clean
   boundary `4d24b13c`, finds changes at 91.4% of line health plus warning pressure in development/status/Rust,
   and root-causes a focused-checker defect: it applies milestones to quarantine ceilings rather than generic
-  health targets. Four exact 29/24/12/8-record cuts and a root-last transaction are locked for `.1`; no threshold
-  or ceiling widens. Separately,
+  health targets. `.1` now binds those authorities, adds a generic committed-boundary/dry-run/root-last/rollback
+  transaction with 35 focused cases, and materializes exact 29/24/12/8-record segments. All four roots are below
+  warning, every chain/index is complete, old archive members are byte-identical, and no threshold or ceiling
+  widens. `.2` owns the independent clean-tree closure audit. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

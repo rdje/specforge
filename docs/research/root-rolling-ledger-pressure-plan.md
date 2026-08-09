@@ -126,13 +126,44 @@ The new segment is each root's successor and the former newest segment's predece
 is that former newest segment; only its manifest predecessor field changes. Capsules and existing segment files
 remain byte-identical. Index rows regenerate in verified chain order.
 
+## `.1` execution result
+
+The guarded transaction consumed the locked plan exactly. It authenticated the four opening Git blobs at commit
+`4d24b13c`, rediscovered each planned contiguous range behind the required task prepends, rendered the pinned
+segment hashes/endpoints, and installed segment then manifest/index then root. All output and transaction staging
+remained on the repository volume.
+
+| Ledger | Resulting root SHA-256 | Records | Lines | Bytes | Max line |
+| --- | --- | ---: | ---: | ---: | ---: |
+| changes | `b5a7fe02e5ba8c7dccfe4dd830f29471e66ddf6f37e4a7481cd315c2f8fb5252` | 87 | 1,246 | 188,183 | 1,629 |
+| development-notes | `44be09c265817320a56ac1f6b98c93d09082cd095393bae7247fd838615b122d` | 62 | 1,294 | 175,215 | 1,401 |
+| live-achievement-status | `9840913ba5d7c78bbe4934abc7098084c5ec5ef9c35306800b9f7d3d66732e5a` | 59 | 101 | 82,836 | 4,824 |
+| rust-codebase-analysis | `d80f1a50550db199da2fdf0f151096e5e43e052431ca5f1fcfbfc9ed2e18c67e` | 55 | 1,064 | 89,706 | 369 |
+
+All four roots are below every generic warning. The installed segment metrics and SHA-256 values equal the locked
+plan. The complete per-ledger indexes now occupy 10/357, 10/397, 12/579, and 10/417 lines/bytes; their SHA-256
+values are `3f230dd8f923b38dadb2ed6bb44eff924b0a1e0bc14a1ebcc929c22b26b603df`,
+`94796d73b0309dd2c40fbf33cb5f570591bea3566bf6a385e37f20795a08d549`,
+`ffab3fd366915440e9c3ce754125c2ccb8b202477b360be9c3997b112b089774`, and
+`873bd64878cb852c0628361e1127cc2913565a9bca2c0fb97eb92ea5427c8800`. The manifests occupy 4/2,567,
+4/2,637, 6/4,676, and 4/2,795 lines/bytes; their SHA-256 values are
+`5a25fa5988e707969f764aaa56059ae0add9fafe8245bb41c26cb564bb64e450`,
+`dac277134d26f15a9429db96af6a6f9527f8eabb380ba833cfc98593bc83b80e`,
+`9ecbdd7e9d2ff07fb14ae62046395bd91f720d2da410c05bb3dbdb1f76a945a2`, and
+`714661664ad78d7e03c8fa85e6d4bbe4669e7a2d1d13da7aea484c931e80987a`.
+
+Every pre-existing capsule and segment is byte-identical to `HEAD`; each new chain is complete and reciprocal;
+and no `generated/.rolling-ledger-transaction.*` workspace remains. Thirty-five focused cases include both a
+successful install/explicit rollback and an injected failure after segment installation, with exact restoration
+and residue proof. Broader doctrine, docs, and full-CI results are recorded in the owning `.1` task-tree leaf.
+
 ## Acceptance disposition
 
 - **Reproduce/measure:** four exact root identities, grammars, suffixes, pressure dimensions, chains, capacities,
   consumers, and candidate cuts are pinned above.
 - **Root cause:** normal post-migration whole-record growth is expected; the actionable defect is that the focused
   milestone denominator drifted from the generic health authority to the quarantine ceiling.
-- **Addressed design:** four bounded cuts restore warning-safe roots while a generic root-last transaction and
-  surface binding make the next rollover reproducible and fail closed.
-- **No regression:** `.0` changes planning/current-truth documentation only. `.1` owns executable enforcement,
+- **Addressed implementation:** four bounded cuts restore warning-safe roots while a generic root-last transaction
+  and surface binding make the next rollover reproducible and fail closed.
+- **No regression:** `.0` changed planning/current-truth documentation only. `.1` owns executable enforcement,
   exact materialization, mutations, full gates, and zero residue; `.2` owns the independent clean-tree audit.

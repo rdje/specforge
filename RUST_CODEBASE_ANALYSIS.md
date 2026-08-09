@@ -4,6 +4,18 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-09 — generic root-ledger transaction; `ROOT-ROLLING-LEDGER-PRESSURE.1`)
+
+- `scripts/check_rolling_ledger_protocol.pl` now joins its grammar/archive registry to the unique generic live
+  surface for each root. Milestones use health targets, ceilings remain hard quarantine bounds, and declared
+  manifest/ceiling/milestone disagreement is rejected.
+- A bounded JSONL transaction authenticates the committed opening blob, removes only an exact contiguous
+  whole-record range, stages on the repository filesystem, installs segments then manifest/index authority, and
+  switches stable roots last. Complete post-write validation is inside the transaction; failure restores exact
+  root/manifest/index bytes and deletes only newly created segments and owned staging data.
+- Thirty-five focused cases cover grammar/chain/route behavior plus pressure binding, range identity, injected
+  post-segment failure, rollback, success, and residue. No Rust product crate or public behavior changes.
+
 ## Session update (2026-08-09 — grounded signal authority; `CORPUS-COVERAGE.2.33d.ii`)
 
 - `parse_signal_declaration_at` is now the single grammar boundary for both known-signal and explicit-direction
@@ -54,141 +66,6 @@
 - **Program status changed.** `.7e.ii`, `.7e`, `.7`, and the SWD parent are complete. Future executable SWD
   lowering requires richer source-backed transition/value/binding records and a new owned tree, not guesses in
   the closed projection path.
-
-## Session update (2026-08-09 — portable Docling sidecar promotion; `SWD-SERIAL-EXTRACTION.7e.ii.a`)
-
-- **Auxiliary metadata now shares the SourceIR persistence boundary.** After the Docling child succeeds,
-  `materialize_pdf` parses the staged metadata object, normalizes its PDF path with the exact source origin,
-  replaces the staged Markdown identity with the final repository-owned destination, and records `path_origin`.
-- **Failure remains atomic.** Metadata read/parse/path/write failures become typed backend failures and remove
-  `normalized.staging` before the existing normalized directory is touched. Repository paths serialize relative;
-  only an explicitly external PDF may remain absolute.
-- **The oracle covers the activated producer.** Three focused Rust cases exercise repository input, external
-  input, and malformed-metadata rollback;
-  the canonical scanner recognizes normalized metadata and accepts only its labeled external input seam. A second
-  fresh ADI run passes 29/29 scoring, exact 11/4/13/1 projection parity, and the 1,072-artifact path oracle. Full
-  CI passes 1,775 tests / five ignored plus all doctrines, warning-deny Clippy, rustdoc, mdBook, and locality.
-- **Closure remains operational.** `.7e.ii.b` owns final full-gate evidence, rollback/residue cleanup, durable
-  canonical-state updates, and closure of the SWD task-tree program.
-
-## Session update (2026-08-09 — protocol-aware convergence; `SWD-SERIAL-EXTRACTION.7e.i`)
-
-- **Convergence now observes the complete protocol product.** `EvidenceSnapshot`, `SemanticSnapshot`, and
-  `IntentSnapshot` clone the four ordered protocol vectors, so equality detects content and order changes rather
-  than reducing those facts to cardinality alone.
-- **The monotone metric accounts for protocol residency.** Each stage's `fact_count` adds the exact four vector
-  lengths; the pass-level EvidenceIR count reports them too. Empty collections add zero and preserve unrelated
-  documents' previous behavior.
-- **The regression crosses the real projections.** A two-field plus operation/state/edge fixture builds
-  EvidenceIR→SemanticIR→IntentIR, proves exact vectors and five added facts at every stage, then proves
-  same-cardinality rewrites and reordering change snapshot equality without changing counts. All 25 convergence
-  tests pass; full CI is green at 1,772 passed / five ignored with all doctrines, warning-deny Clippy, rustdoc,
-  mdBook doctests/build, and final locality.
-- **Remaining SWD work is the fresh canonical run.** `.7e.ii` owns repository-local tracked-PDF ingestion,
-  promotion of the complete 29/29 chain, downstream parity/residual/convergence evidence, and program closure.
-
-## Session update (2026-08-09 — explicit protocol adapter disposition; `SWD-SERIAL-EXTRACTION.7d`)
-
-- **Adapter assembly now accounts for every canonical protocol record.** `protocol_residual_decisions` traverses
-  the four IntentIR collections in schema/input order and emits one `ResidualDecisionPacket` per record. Stable
-  ids combine the surface and upstream record id; the packet records source statement ids and missing bindings.
-- **The typed ISF model remains executable-only.** The currently lowerable protocol subset is empty under ADR
-  0016, so protocol packets stay on `AdapterArtifact.residual_decisions`; they do not enter `IsfIr`, rendered
-  counts/source, or renderability assessment.
-- **The boundary is regression-locked.** Two ordered frame records plus operation/state/edge records produce five
-  exact packets across repeated builds and artifact round-trip. Independently licensed ISF remains byte-identical,
-  renderable, and FSMGen-strict with zero diagnostics; all seven adapter tests and warning-deny Clippy pass. Full
-  CI passes 1,771 tests / five ignored, all six doctrines, rustdoc, mdBook doctests/build, and final locality.
-- **Remaining work is operational, not representational.** `.7e.i` must add protocol collections to convergence
-  snapshots/fact counts, then `.7e.ii` can freshly ingest and promote the tracked ADI chain at 29 records.
-
-## Session update (2026-08-09 — lossless IntentIR protocol projection; `SWD-SERIAL-EXTRACTION.7c`)
-
-- **The canonical product now carries all four protocol collections.** `IntentIr` reuses
-  `SerialFrameField`, `SwdOperation`, `ProtocolStateRecord`, and `InterfaceEdgeTimingRecord` with additive
-  default-empty/skip-empty storage. `IntentIr::build` clones each collection from SemanticIR unchanged.
-- **The projection preserves evidence without manufacturing behavior.** Exact order, ids, optional values, and
-  supporting-statement provenance survive EvidenceIR→SemanticIR→IntentIR. No transaction, transition, signal
-  binding, value, or adapter step is inferred; `.7d` remains the sole adapter-accounting boundary.
-- **Validation and compatibility are explicit.** IntentIR validation prints and persists four counts. The
-  three-stage test covers ordered/non-empty equality, serialized keys, omitted-empty shape, and legacy defaults;
-  focused validation and prior-learning suites plus warning-deny Clippy pass. Full CI passes 1,770 tests / five
-  ignored, all six doctrines, rustdoc, mdBook doctests/build, and final locality.
-- **Remaining architectural gaps are isolated.** The ISF adapter still consumes none of the four collections,
-  and convergence snapshots remain blind to them. `.7d` owns per-record lowering/residual disposition and
-  `.7e.i` owns protocol-aware convergence before fresh canonical promotion.
-
-## Session update (2026-08-09 — lossless SemanticIR protocol projection; `SWD-SERIAL-EXTRACTION.7b`)
-
-- **SemanticIR now carries the four EvidenceIR protocol collections.** The schema reuses
-  `SerialFrameField`, `SwdOperation`, `ProtocolStateRecord`, and `InterfaceEdgeTimingRecord` directly, with
-  serde-default/skip-empty compatibility. `SemanticIr::build` performs an unfiltered clone, so exact record
-  order, optional values, ids, and supporting statement provenance survive.
-- **Projection is observable but non-interpretive.** SemanticIR validation adds four printed/persisted count
-  metrics. No transaction, state transition, temporal rule, or generic semantic record is synthesized from the
-  collections; ADR 0016's missing-binding boundary remains intact.
-- **Verification covers schema and real data.** The focused schema test uses ordered frame records plus all
-  other types to prove exact equality, non-empty serialized keys, omitted-empty shape, and legacy default load.
-  The validation test proves 2/1/1/1 metrics. The complete 394-test semantic module and 18 SemanticIR validation
-  tests pass, as does warning-deny Clippy; current ADI dry-run produces the expected 11/4/13/0 projection. Full
-  CI passes 1,768 tests / five ignored plus doctrines, rustdoc, mdBook, KG fixtures, and final locality.
-- **Deferred convergence risk:** the three `converge.rs` stage snapshots do not yet carry any of the four
-  protocol counts, so protocol-only change can be absent from aggregate fact deltas. `.7e.i` now owns all-stage
-  snapshot/fact-count coverage before the fresh canonical promotion leaf may close.
-
-## Session update (2026-08-09 — SWD protocol projection boundary; `SWD-SERIAL-EXTRACTION.7a`)
-
-- **Four extraction surfaces terminate before the product boundary.** `EvidenceIr` owns
-  `serial_frame_fields`, `swd_operations`, `protocol_states`, and `interface_edge_timings`; the evaluator reads
-  them directly, while `SemanticIr`, `IntentIr`, and `IsfIr` have no fields or consumers for them. The current
-  adapter can therefore render unrelated content while silently omitting protocol records unless explicit
-  accounting is added.
-- **Existing record shapes are evidence-complete but behavior-incomplete.** States lack transitions, guards,
-  initial state, and encoding. Frame/operation/edge records lack complete signal, value, activation, port, and
-  sampled-storage bindings. The typed ISF step enum has `Switch`, `Set`, shifts, and samples but no expression
-  form for the empirically proven FSM idiom's `select`. Direct executable lowering would fabricate semantics.
-- **Chosen boundary:** add exact serde-default/skip-empty record collections to SemanticIR then IntentIR, test
-  full record/provenance equality, report stage counts, and extend adapter residual accounting. Do not block
-  independently licensed ISF merely because protocol records residualize; make the incompleteness visible.
-- **Canonical freshness is a separate execution concern.** Current SWD EvidenceIR measures 11/4/13/0 across
-  frame/operation/state/edge; `.4e`'s 29/29 proof came from an intentionally unpromoted disposable ingest. The
-  retained SourceIR cannot rebuild because its normalized Markdown was reclaimed, while the tracked PDF remains
-  present for the final fresh-ingest/promotion leaf.
-
-## Session update (2026-08-09 — independent portability closure; `ARTIFACT-PATH-PORTABILITY.5`)
-
-- **Dormant serializable schemas are now inside the storage boundary.** The all-`PathBuf` cold read found
-  optional `FigureRegion.raw_image_path` deriving Serde directly while its upstream producer remains absent.
-  Field-level Serde now normalizes it as repository-owned on write, resolves it as a historical reference on
-  read, and rejects an unlabeled external absolute value. This prevents future figure extraction from silently
-  activating a workstation-root schema.
-- **String-typed filesystem identities are pinned by role.** Project-rescan recommendation `artifact_path`,
-  replay `path`, and command `working_directory` fields persist relative displays / `.`, and the producer oracle
-  locks those expressions. The scanner recognizes `working_directory` in addition to `_path`/`_root`, so its
-  12-case self-test covers both typed and naming-boundary failures.
-- **Independent moved-root use closes the program.** Every current canonical loader consumed 80 SourceIR,
-  79 EvidenceIR, and 78 each SemanticIR/IntentIR/adapter artifacts; exact all-IntentIR prior learning matched
-  twice, and recovery accepted migrated provenance. All 667 JSON files parse and contain 343,237 path values:
-  82 labeled external absolutes and zero repository-owned absolutes. Full CI passes 1,766 tests / five ignored,
-  156/156 KG fixtures, doctrines, rustdoc, mdBook, locality, and residue checks.
-
-## Session update (2026-08-09 — persisted corpus migration and reference lifecycle; `ARTIFACT-PATH-PORTABILITY.4`)
-
-- **The generated corpus now exercises the storage form, not only compatibility loading.** A guarded
-  same-volume migration changed 392/978 files, replacing 262,996 retired-root values and adding 157 stable
-  origin labels. The pure 721,679,372-byte migration snapshot has zero repository-owned absolute path values
-  and keeps only 82 explicitly labeled external source-library values; the subsequent complete gate refreshed
-  only ignored mdBook output outside the canonical artifact set.
-- **Provenance identity is no longer confused with current input availability.** `resolve_existing` remains the
-  strict boundary for upstream artifacts and other paths opened now. The new `resolve_reference` admits a
-  missing SourceIR/EvidenceIR provenance leaf only beneath a contained existing ancestor (or as an exact labeled
-  external reference); unique legacy rebasing, traversal refusal, and symlink containment remain fail closed.
-  This matches `clean` intentionally reclaiming normalized bundles while retained IR preserves lineage.
-- **Present state is mechanically gated.** The project-data doctrine self-tests the persisted-artifact oracle,
-  pins ten producer/consumer seams, and scans all JSON below `generated/`, including sidecars and validation
-  outputs. Absolute path/root fields fail unless they are narrow origin-labeled SourceIR/EvidenceIR external
-  provenance. The migration tool requires the retired root and each authorized external root at runtime and
-  uses same-directory atomic replacement; it contains no workstation path or source-library allowlist.
 
 ## Session update (2026-06-24 ramp-up currency correction — size + command + IR-module + test inventory; `AUDIT-DOC-RECONCILE.3`)
 

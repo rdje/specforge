@@ -61,8 +61,10 @@
   tree is closed. Its audit separately reports root-ledger pressure. `ROOT-ROLLING-LEDGER-PRESSURE.0` now pins
   clean boundary `4d24b13c`: changes is at 91.4% of line health, while development, status, and Rust are at
   warning. The focused checker currently applies milestones to enforcement ceilings rather than the generic
-  health targets. Four exact 29/24/12/8-record cuts and a root-last `.1` transaction restore aligned headroom
-  without widening a threshold or ceiling. ADR 0020 separately accepts a
+  health targets. `.1` now joins those authorities and provides a bounded committed-boundary/dry-run/root-last/
+  rollback transaction. Exact 29/24/12/8-record segments leave the roots at 1,246/1,294/101/1,064 lines, all
+  below warning, while old archive members remain byte-identical. Thirty-five focused cases cover the transaction;
+  no threshold or ceiling widens. ADR 0020 separately accepts a
   bounded fact-card browse projection: the stable
   root keeps exhaustive direct-ID membership while deterministic count-packed parts carry detailed rows; a derived
   198-card maximum and fixed root/part/aggregate limits preserve the existing 200-file collection ceiling. Its

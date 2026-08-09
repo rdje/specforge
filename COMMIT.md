@@ -62,6 +62,23 @@ All repository-internal Markdown paths are repository-root-relative. Host-local 
 placeholders. `git_message_brief.txt` and `questions_keep_untracked.txt` remain untracked; the former
 must be cleared to zero bytes after each commit.
 
+## Rolling-ledger rollover
+
+When a root rolling ledger reaches its declared health-target rollover, stop ordinary appends and create a
+task-owned, repository-relative JSONL plan that pins the committed opening blob and exact whole-record cut. Run
+the plan without `--apply-rollover` first; this is a read-only identity, chronology, capacity, and warning-safe
+dry run. Apply only the exact green plan:
+
+```bash
+perl scripts/check_rolling_ledger_protocol.pl --rollover-plan docs/research/<plan>.jsonl
+perl scripts/check_rolling_ledger_protocol.pl --rollover-plan docs/research/<plan>.jsonl --apply-rollover
+```
+
+The writer stages on the repository volume, installs sealed segments then manifests/indexes, writes live roots
+last, validates the complete result, and restores exact preflight bytes on failure. Run the generic live-size
+gate afterward; the focused checker also requires its ceilings/milestones to agree with the generic surface
+authority. Never edit a segment, widen a control, or hand-cut a root to bypass this transaction.
+
 ## Required Commit Workflow (Exact Order)
 
 1. Finish and verify the bounded slice.

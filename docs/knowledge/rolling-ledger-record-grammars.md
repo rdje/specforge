@@ -37,20 +37,25 @@ prepended records. The validation writer's root path and managed markers are req
 `docs/archive/rolling-ledgers/changes/source-through-2026-08-08.md` with SHA-256
 `d89809322857aab3c506dde1cc6caaf57e22d0349655b37ddaab1f7bf22ba994`; the root is the bounded current
 view and `docs/archive/rolling-ledgers/INDEX.md` is the retrieval route.
-At clean commit `4d24b13c`, the owned pressure census measures this root at 114 records / 1,645 lines / 222,725
-bytes, or 91.4% of line health. Development is 89.3% of line health, status is 80.7% of byte health, and Rust is
-87.9% of line health. The focused checker incorrectly applies milestones to enforcement ceilings; `.1` must bind
-the generic health authority and materialize exact 29/24/12/8-record cuts through the existing per-ledger
-index/manifest topology. Segment and endpoint hashes are pinned in the owning research plan.
+At clean commit `4d24b13c`, the owned pressure census measured this root at 114 records / 1,645 lines / 222,725
+bytes, or 91.4% of line health. Development was 89.3% of line health, status was 80.7% of byte health, and Rust
+was 87.9% of line health. The focused checker incorrectly applied milestones to enforcement ceilings. `.1` binds
+the generic health authority and has materialized exact 29/24/12/8-record cuts through the existing per-ledger
+index/manifest topology. The changes segment is `segment-0002-2026-08-09.md`: 29 records / 428 lines / 37,189
+bytes / SHA-256 `bc87665975d80078697384e89b2127e67164ae0e523a8076b93f81eb5582fbd8`; the current root is 87 records /
+1,246 lines / 188,183 bytes.
 
 `DEVELOPMENT_NOTES.md` completed the second migration in `.4c`. Its immutable 1,601-record capsule is
 `docs/archive/rolling-ledgers/development-notes/source-through-2026-08-08.md` with SHA-256
 `76b51a3f450cdb1e764922dc366cf6ff55529cb95f7a6f410bfba1f1f378fedc`. Its first post-migration rollover is
 `docs/archive/rolling-ledgers/development-notes/segment-0001-2026-08-08.md`: 27 whole records / 467 lines /
 36,125 bytes / SHA-256 `b07a73670863e283f359911629db691859f41d99021a1902db3adfeb83788b91`.
-The live root now contains the H1 prologue, 10 newest post-capsule records, then the exact 50-record retained
-migration suffix. The segment is the ordered successor of the live root and predecessor of the immutable
-capsule; its final former-successor separator is represented by the protocol's canonical terminal newline.
+That root contained the H1 prologue, 10 newest post-capsule records, then the exact 50-record retained migration
+suffix. The next rollover seals 24 records in `segment-0002-2026-08-09.md`: 421 lines / 34,258 bytes / SHA-256
+`0576c44b7b95c40bc4669128ce07ebdc6a99b1ebbe9322cd1aca3acad8c04cbd`. The current root contains two later
+task records, the ten newest opening records, and the exact 50-record suffix: 62 records / 1,294 lines / 175,215
+bytes. Segment 0001's final former-successor separator remains represented by the protocol's canonical terminal
+newline.
 
 `LIVE_ACHIEVEMENT_STATUS.md` completed the third migration in `.4d`. Its immutable 1,920-record
 capsule is
@@ -69,25 +74,36 @@ pre-removal Git content proves byte identity; the manifest chain orders live roo
 0001 → capsule, and the root again retains 20 new records plus the exact 40-record suffix. The added route
 makes the former shared index 81 lines / 5,311 bytes, only 218 bytes before its 90% byte rollover; `.9a` designed
 and `.9b` landed the bounded partitioned authority before another segment.
+The third rollover seals 12 records in `segment-0003-2026-08-09.md`: 12 lines / 9,181 bytes / SHA-256
+`9bb1607d89fcc67ea2c1824a9c84e21bd95d56f7f0f49a1af43fee9d3b865edb`. The fourth seals 12 more in
+`segment-0004-2026-08-09.md`: 12 lines / 11,420 bytes / SHA-256
+`6d1c07596313d0c98c04afde63dd23d7df61fda291bd50d2cbc57a0568b924eb`. The current status root has 19 new
+records, the exact 40-record suffix, and its complete trailer: 59 records / 101 lines / 82,836 bytes.
 `RUST_CODEBASE_ANALYSIS.md` completed the fourth migration in `.4e`. Its immutable 1,350-record
 capsule is
 `docs/archive/rolling-ledgers/rust-codebase-analysis/source-through-2026-08-08.md` with SHA-256
 `95e1665628b615498e94f67d6dc6e0083d4d104a6ca8a815b4c23cf2f97cc7ce`; its root is exactly the
-H1/Purpose prologue plus newest 60 H2 records. The lifecycle-only slice adds no architecture record.
+H1/Purpose prologue plus newest 55 H2 records. The lifecycle-only `.4e` slice added no architecture record, but
+the generic material checker in `.1` is a material checker architecture change. Its second segment seals eight
+records in `segment-0002-2026-08-09.md`: 134 lines / 12,009 bytes / SHA-256
+`2444822e5f98f04516a20a9a54468e57f99721afcf869c37a12da0bc538bacb6`. The current root is 55 records /
+1,064 lines / 89,706 bytes.
 All four `migrated` registry entries now share only the fixed landing; each points to a distinct bounded index and
-manifest inside its ledger directory. The landing is 34 lines / 1,512 bytes. The four complete indexes are 37
-lines / 1,378 bytes in aggregate, with 10 lines / 421 bytes as the largest part. Existing per-ledger manifest
+manifest inside its ledger directory. The landing is 34 lines / 1,512 bytes. The four complete indexes are 42
+lines / 1,750 bytes in aggregate, with the 12-line / 579-byte status index as the largest part. Existing per-ledger manifest
 capacity remains sufficient through every declared 28-segment surface ceiling without widening a control;
 direct retrieval is at most two bounded hops.
 
-The four manifests repeat the unchanged bounded control row and preserve the former nine data records
-byte-for-byte. Their data-row union equals the retired shared manifest exactly; capsules and segments are
-unchanged. The schema-v2 registry declares the retired path, and the checker rejects any residue.
+The four manifests repeat the unchanged bounded control row and now carry 3, 3, 5, and 3 data records. Every old
+capsule and segment remains byte-identical. The schema-v2 registry declares the retired path, and the checker
+rejects any residue.
 
 The checker now proves reciprocal edges, one complete acyclic live→segments→capsule chain, and absence of foreign
 or disconnected members. Each per-ledger index must link every chain member exactly once in verified order plus
-its manifest, while the landing must expose exactly the four registry-ordered ledger routes. Twenty-four focused
-parser/control/chain/route mutations and 55 generic lifecycle/overflow cases pass.
+its manifest, while the landing must expose exactly the four registry-ordered ledger routes. Thirty-five focused
+parser/control/chain/route/transaction mutations and 55 generic lifecycle/overflow cases pass. The transaction
+authenticates the committed boundary and exact range, stages on the repository volume, installs the root last,
+and restores exact prior bytes under an injected failure without residue.
 
 For an H2 live cut, one blank line immediately before the removed successor is boundary structure,
 not retained record content. The capsule preserves it exactly; the root renderer omits exactly that
