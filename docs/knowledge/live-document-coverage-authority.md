@@ -15,6 +15,8 @@ answers:
   - "how is the terminal task source archive boundary verified"
   - "what is the exact active PDF task evidence baseline"
   - "is the PDF-VARIANT-DIGESTION current frontier internally consistent"
+  - "who reads or writes the active PDF task tree"
+  - "what did the active PDF task containment census find"
 date: 2026-08-08
 status: current
 tags: [documentation, containment, git, submodule]
@@ -47,6 +49,18 @@ same section records `.9.3a` and `.9.3b` done, several node headers still say `i
 completion evidence, and the later `.10i` completion is absent from that frontier paragraph. The containment
 census must explicitly distinguish historical evidence from current authority; it may neither preserve stale
 text as current truth nor rewrite literal history silently.
+
+The `.1.1` read-only census accounts for every source byte in 13 regions. The nominal `Current frontier` is
+1,392 lines / 124,201 bytes because it contains the `.9`–`.13` activity ledgers. Excluding the census itself, 32
+files hold the exact stable path and 89 hold the task id; current route-sensitive inputs are ROADMAP, 18 citations
+across two mdBook chapters, 24 fact cards, one prior report, and the containment owner. Generic readers consume
+only the stable H1/status/catalog membership or staged task evidence. No executable opens or writes the target,
+and no route uses a Markdown fragment. The only writer is the manual `COMMIT.md` slice transaction.
+
+The census therefore favors a hybrid for ADR selection: a bounded active root and bounded semantic live parts for
+future writes, plus an exact pre-migration capsule for literal legacy evidence. The active root cannot be a
+terminal summary, the capsule cannot accept future writes, and the design must declare current-state precedence,
+complete leaf routing, bounds, rotation, and atomic root/part updates.
 
 `scripts/check_task_tree_archive.pl` now enforces `migrated`: the capsule retains the exact locked identity, and
 the checker validates the closed root, exact index/manifest routes, provenance, milestones, and ceilings. Its

@@ -1,3 +1,17 @@
+### ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1 — census active task roles and consumers
+
+- Accounted for every untouched PDF-task byte across 13 non-overlapping semantic regions. The nominal
+  `Current frontier` is 1,392 lines / 124,201 bytes because it contains `.9`–`.13` activity ledgers, not just a
+  next-action view; the largest candidate semantic part is 73,432 bytes.
+- Classified 32 exact-path and 89 identifier-reference input files, including 18 mdBook citations, 24 Knowledge
+  Map evidence cards, generic catalog/roadmap/acceptance/live-size readers, and the sole manual COMMIT writer.
+  No executable opens or rewrites the target, and no consumer uses a Markdown fragment.
+- Proved the source cannot nominate an eligible leaf without reconciliation: verified commits conflict with stale
+  active/in-progress headers, while formal pending `.6`/`.7` are narratively blocked and `Blockers` says none.
+- Published the repository-local census and handed three measured designs to `.1.2`, favoring a bounded active
+  root + semantic live parts + exact pre-migration capsule. The target remains byte-identical; no product,
+  artifact, threshold, or ceiling changed.
+
 ### ACTIVE-TASK-EVIDENCE-CONTAINMENT.0 — own and pin the active task boundary
 
 - Opened a separate active-tree containment program before touching `PDF-VARIANT-DIGESTION`; the completed

@@ -21,13 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.0` — own and pin the active task boundary; complete and verified,
-  commit pending.
-- Current state: the new active-containment tree owns the unchanged `PDF-VARIANT-DIGESTION` source at 2,393 lines /
-  222,616 bytes / max 191 / `9284dce4…a19d4`, only 207 bytes before warning. The legacy current-frontier and node
-  statuses disagree; `.1.1` owns the evidence-backed current/history census before any target edit.
-- Next action: commit `.0`, then run `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1` to enumerate semantic roles, every
-  reader/writer, reconstruction requirements, and the authoritative active frontier.
-- In-flight uncommitted: new owner tree, exact boundary fact, and impact-routed continuity/live-book updates only;
-  the PDF task, product code, generated artifacts, shared inputs, thresholds, and ceilings are unchanged.
+- Active unit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1` — census active task roles and consumers; complete and
+  verified, commit pending.
+- Current state: the 13-region census closes all 2,393 lines / 222,616 target bytes and classifies 32 direct-path
+  plus 89 identifier-reference inputs, every generic reader, and the manual writer. The legacy text has no
+  internally consistent eligible frontier; the PDF target remains byte-identical.
+- Next action: commit `.1.1`, then run `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2` to accept the bounded active-root,
+  semantic-part, provenance, current-state precedence, update/rotation, limit, and migration contract.
+- In-flight uncommitted: read-only census report, task evidence, current authority fact, and impact-routed live-doc
+  updates only; product code, target source, generated artifacts, shared inputs, thresholds, and ceilings unchanged.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

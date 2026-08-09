@@ -1,4 +1,23 @@
 # DEVELOPMENT_NOTES
+## ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1 (`2026-08-09`) — the frontier heading is an activity store
+
+The target's dominant 124,201-byte section is named `Current frontier`, but it contains the complete `.9`–`.13`
+workstream specifications and results. That explains both the growth and the status drift: later work was added
+under the nearest operational heading, while older introductory sentences and node headers remained in place.
+The problem is not excessive prose per leaf; it is a missing separation between current state and accumulated
+activity authority.
+
+Consumer measurement reduces migration risk. All 29 current direct-path inputs resolve the stable file without
+fragments, so a root-owned complete leaf route can preserve them. The catalog reads only H1 + first metadata
+status; the roadmap checks catalog membership; task acceptance scans staged task text; live-size owns coverage;
+and no executable writes the target. We can therefore design one explicit write transaction instead of preserving
+the accidental monolith for tool compatibility.
+
+The contradictory frontier is an independent correctness concern. Commit subjects and inline verification close
+work whose headers remain open, while two formal pending leaves are called blocked elsewhere. The exact source
+must preserve those statements as history, but a new active root must not guess between them. The design leaf will
+define precedence and a reviewable normalized state table, or truthfully state that no eligible PDF leaf exists.
+
 ## ACTIVE-TASK-EVIDENCE-CONTAINMENT.0 (`2026-08-09`) — an active root needs two kinds of truth
 
 An active task root must answer “what can I do next?” while historical evidence answers “what happened and why?”

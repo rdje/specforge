@@ -148,8 +148,11 @@ active `PDF-VARIANT-DIGESTION` task tree at 222,616 bytes, 207 bytes below warni
 separately owned active-tree partition design; it cannot borrow the terminal rule or a wider ceiling.
 `ACTIVE-TASK-EVIDENCE-CONTAINMENT.0` now supplies that ownership and pins the untouched 2,393-line source at
 SHA-256 `9284dce4…a19d4`. The opening read also finds that the legacy frontier paragraph and several node-status
-headers disagree with completion evidence, so the next leaf inventories current versus historical authority
-before choosing a live partition. No migration may silently turn that stale text into current truth.
+headers disagree with completion evidence. `.1.1` accounts for all source bytes in 13 semantic regions and finds
+that the nominal frontier is a 1,392-line / 124,201-byte `.9`–`.13` activity store. It classifies every stable-path,
+identifier, generic-tool, and writer dependency; no consumer uses a fragment and no executable writes the target.
+Because verified completion and pending/blocked claims conflict, the design must establish explicit current-state
+precedence rather than silently turn stale text into current truth. `.1.2` now owns that live-partition contract.
 
 All four root-ledger migrations have landed. `CHANGES.md`, `DEVELOPMENT_NOTES.md`,
 `LIVE_ACHIEVEMENT_STATUS.md`, and `RUST_CODEBASE_ANALYSIS.md` are bounded current views, while their

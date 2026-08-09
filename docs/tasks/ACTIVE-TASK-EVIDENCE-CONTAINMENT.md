@@ -61,12 +61,13 @@ open.
   Children: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1`, `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2`
 
 - ID: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1`
-  Status: pending
+  Status: done
   Goal: census the target's semantic roles, active frontier, readers, writers, and reconstruction invariants
   Acceptance: a repository-local report distinguishes current state from historical evidence, enumerates every
   consumer and update seam, and derives candidate partition boundaries without editing the target
-  Verification: pending
-  Commit: pending
+  Verification: exact 13-region source accounting closes 2,393 lines / 222,616 bytes; 32 direct-path and 89
+  identifier-reference input files classified; generic readers and sole manual writer enumerated; target diff empty
+  Commit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1 — census active task roles and consumers`
 
 - ID: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2`
   Status: pending
@@ -122,7 +123,7 @@ open.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1` | `pending` | measure all semantic roles and consumers before selecting topology |
+| 1 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.2` | `pending` | convert the closed census into one executable active-tree contract |
 
 ## First-target baseline
 
@@ -147,6 +148,21 @@ completion is not reflected in that frontier paragraph. `.1.1` must distinguish 
 from authoritative current state and record any reconciliation explicitly before a compact active root can claim
 an exact next leaf.
 
+## Census outcome
+
+The [active task-evidence containment census](../research/active-task-evidence-containment-census.md) accounts for
+every source byte across 13 semantic regions. The 1,392-line / 124,201-byte legacy `Current frontier` section is
+actually an activity ledger containing `.9`–`.13`, not a bounded next-action view. The census classifies 32
+direct-path and 89 identifier-reference input files, 18 mdBook citations, 24 Knowledge Map evidence cards, all
+generic catalog/roadmap/acceptance/live-size readers, and the manual COMMIT writer; no executable opens or rewrites
+the target and no consumer uses a Markdown fragment.
+
+The target has no internally consistent eligible frontier: verified commits and inline evidence close several
+headers still marked active/in progress, while `.6`/`.7` are formal pending nodes described as blocked and the
+formal blocker section says none. The report therefore preserves the literal source and hands `.1.2` three
+measured choices. It favors, but does not yet accept, a hybrid bounded active root + semantic live parts + exact
+pre-migration capsule with an explicit future writer/rotation contract. The target remains byte-identical.
+
 ## Decisions
 
 - `2026-08-09`: Use a new top-level tree because the completed containment program is closed and ADR 0018
@@ -159,11 +175,15 @@ an exact next leaf.
   `.0`; later source locking must name a committed boundary rather than a transient working tree.
 - `2026-08-09`: Treat the target's stale frontier/status mismatch as a correctness input, not material to copy
   silently into a new current view or permission to alter historical records.
+- `2026-08-09`: `.1.1` found no automated target writer and no fragment-sensitive consumer. Preserve the stable
+  root and leaf ids, but let `.1.2` move detail behind a complete bounded route.
+- `2026-08-09`: Do not nominate a PDF product leaf from contradictory legacy text. `.1.2` must define explicit
+  current-state precedence and represent parked/blocked work honestly before migration.
 
 ## Open Questions
 
-- Which semantic partition boundaries preserve the target's current-frontier read while keeping every historical
-  leaf and cross-reference directly retrievable? Owned by `.1.1` and `.1.2`; does not block `.0`.
+- Which of the measured semantic boundaries become live parts, and which remain only inside the exact source
+  capsule? Owned by `.1.2`; `.1.1` supplies complete region metrics and route consumers.
 - Should active completion evidence rotate into immutable segments, maintained semantic partitions, or a hybrid?
   Owned by `.1.2`; measurement must decide rather than analogy with the terminal tree.
 - Which target statements constitute the authoritative next eligible PDF work when the legacy frontier and node
@@ -178,14 +198,18 @@ an exact next leaf.
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-08-09` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.0` | SHA-256/blob/metrics/history; HEAD diff; task catalog; six doctrines; mdBook; live-size | exact untouched source boundary; all gates green |
+| `2026-08-09` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1` | 13-region byte closure; path/id/reader/writer census; target SHA/blob/diff; catalogs; doctrines; mdBook | complete read-only report; target unchanged; `.1.2` decision inputs closed |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.0` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.0 — own and pin the active task boundary` | ownership and untouched baseline |
+| `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1.1 — census active task roles and consumers` | exhaustive read-only architecture input |
 
 ## Changelog
 
 - `2026-08-09`: `.0` created the separately owned program, pinned the untouched PDF-task identity/pressure and
   target consumers, surfaced the stale current-frontier/status contradiction, and handed off to `.1.1`.
+- `2026-08-09`: `.1.1` closed the semantic-region, current-authority, consumer, writer, and reconstruction census;
+  no target byte moved, and `.1.2` now owns the active topology decision.

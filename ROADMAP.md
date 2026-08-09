@@ -117,7 +117,10 @@ Five active program groups support that north star:
   `PDF-VARIANT-DIGESTION`—222,616 bytes, 207 before warning. The new
   [`ACTIVE-TASK-EVIDENCE-CONTAINMENT`](docs/tasks/ACTIVE-TASK-EVIDENCE-CONTAINMENT.md) tree now owns that boundary;
   `.0` pins the unchanged source at 2,393 lines / 222,616 bytes / SHA-256 `9284dce4…a19d4` and exposes a legacy
-  frontier/status contradiction that `.1.1` must census before topology is selected or the target changes. The
+  frontier/status contradiction. `.1.1` now closes a 13-region semantic census plus all 32 direct-path / 89
+  identifier-reference inputs, generic readers, and the manual writer. It proves the nominal frontier is a
+  124,201-byte activity store and cannot nominate an eligible leaf from contradictory status text. `.1.2` now
+  owns the bounded active-root/live-part/provenance/update decision before any target change. The
   completed `.0`–`.10`
   [`LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`](docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md)
   implementation keeps current documentation and project data bounded on the repository volume; completed
