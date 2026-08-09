@@ -126,6 +126,8 @@
   > how does .10g differ from .10f (register vs message routing)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
   > how does / will SpecForge reuse extraction patterns across different PDFs
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > how does CORPUS-COVERAGE 2 33d ii prevent weak signal names from reentering through relations
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
   > how does FSMGen decide a value literal's width (by notation digit count — 0x7D=8 bits, 0b00=2 bits — NOT by value; it requires an exact width-cast W'… match, no implicit truncation/extension; a bare decimal is unsized and fits any width)
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
@@ -296,5 +298,3 @@
   > how is AXI per-signal channel membership recovered without a VLM
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > how is AXI per-signal phase membership recoverable without a VLM
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > how is FigureRegion raw_image_path serialized

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
+  > why are stability obligations residuals
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why are temporal_rules not usable to order a transaction body (they are per-signal stability/value constraints not phase edges)
+- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
+  > why are the AHB gold negatives for statements 0561 and 0678 there
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > why are the IntentIR transactions[] entries not real transactions (handshakes/behavior blobs)
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
@@ -292,9 +298,3 @@
   > why is AXI transmitter / SWD host / GIC arbiter kept but APB controller / AHB agent dropped
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > why is AXI/SWD per-signal phase membership empty (document absence — AXI 0/4, SWD 0/63 signal↔phase co-occurrence; phases described abstractly/by-packet, not per declared wire — not an extraction gap)
-- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
-  > why is CORPUS-PATTERN-REUSE.3b.3b (activate-only consume) deferred / not built
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > why is CPU-ISA / PHY only recognized from front-matter (no distinct structural signature; cat 5 vs cat 6 indistinguishable by structure)
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > why is For / Then it / is recommended / next / HPROT bit / TREADY input minted as an actor

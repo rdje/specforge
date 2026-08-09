@@ -40,6 +40,11 @@ Across 80 EvidenceIR artifacts there are 3,201 sentence-start matches:
 | `Signal X is width ...` | 1,369 | formal width-only declaration |
 | every other predicate | **97** | ordinary prose / headings / table text, not declarations |
 
+The retained census contains no `is inout` declaration, but `Signal <name> is inout ...` is an existing
+product grammar and is exercised by the protocol edge-timing contract. The `.d.ii` broad gate caught that
+zero-corpus preservation case; the implementation therefore treats `inout` as a formal direction alongside
+`input`, `output`, `internal`, and `local`. This does not alter the measured 3,104/97 corpus split.
+
 The 97 weak occurrences form 38 unique document/token pairs across 28 documents. Fifteen pairs in 13
 documents become relation-active (120 relations); 11 pairs in 10 documents are promoted to direction-only
 output declarations. Examples include `signal interrupt if enabled`, `Signal level`, `Signal names`, and the
@@ -49,7 +54,7 @@ USB source clause `signal at its upstream port ...`.
 use, but the catalog grants declaration authority.
 
 **Selected repair:** parse the declaration predicate already emitted everywhere else. A catalog entry is valid
-only when the same sentence has `Signal <identifier> is input|output|internal|local|width ...`. This retains all
+only when the same sentence has `Signal <identifier> is input|output|inout|internal|local|width ...`. This retains all
 3,104 formal matches and rejects all 97 weak matches without a token denylist. Original identifier case remains
 permitted because tracked fixtures deliberately use declarations such as `Signal clk is input width 1.`; the
 predicate, not capitalization, is the authority.
@@ -149,11 +154,12 @@ different contract.
 
 `CORPUS-COVERAGE.2.33d.ii` owns three universal changes and no others:
 
-1. declaration catalogs require the formal `is <direction|width>` predicate;
+1. declaration catalogs require the formal `is <direction|width>` predicate, including `inout`;
 2. parenthetical width-one capture removes `bus` from its wire-head grammar;
 3. port/pin-only tables require compact inventory structure before the shared table consumers run.
 
-Required focused regressions: the exact USB clause, acronym, and VBUS matrix; formal declarations after Unicode;
+Required focused regressions: the exact USB clause, acronym, and VBUS matrix; formal declarations after Unicode
+plus an explicit `inout` preservation case;
 I2C/I2S/SWD/SWP prose declarations; genuine signal tables, rotated tables, SWJ pin routing, and field/status
 negatives; convergence absence for all four USB names; explicit initiator tie behavior.
 

@@ -2224,6 +2224,68 @@ fn is_signal_declaration_start(text: &str, match_index: usize) -> bool {
             .is_some_and(|prefix| prefix.ends_with(". "))
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+enum SignalDeclarationPredicate {
+    Input,
+    Output,
+    InOut,
+    Internal,
+    Local,
+    Width,
+}
+
+/// Parse the canonical declaration grammar emitted by the table, prose, and relation
+/// synthesizers: `Signal <identifier> is <direction|width> ...`.
+///
+/// A sentence merely beginning with `signal <word>` is ordinary prose until this predicate is
+/// present. Keeping the authority boundary here prevents descriptor phrases such as `signal at its
+/// upstream port` from entering the known-signal catalog and being reinforced by relation-derived
+/// direction synthesis.
+fn parse_signal_declaration_at(
+    text: &str,
+    match_index: usize,
+) -> Option<(String, SignalDeclarationPredicate)> {
+    let name_tail = text.get(match_index.checked_add("signal ".len())?..)?;
+    let name_len = name_tail
+        .char_indices()
+        .take_while(|(_, character)| character.is_ascii_alphanumeric() || *character == '_')
+        .map(|(index, character)| index + character.len_utf8())
+        .last()?;
+    let name = name_tail.get(..name_len)?.to_ascii_uppercase();
+    if name.len() < 2
+        || name.len() > 30
+        || !name.chars().all(|character| {
+            character.is_ascii_uppercase() || character.is_ascii_digit() || character == '_'
+        })
+    {
+        return None;
+    }
+
+    let mut predicate_words = name_tail.get(name_len..)?.split_whitespace();
+    if !predicate_words.next()?.eq_ignore_ascii_case("is") {
+        return None;
+    }
+    let predicate_word = predicate_words
+        .next()?
+        .trim_matches(|character: char| !character.is_ascii_alphabetic());
+    let predicate = if predicate_word.eq_ignore_ascii_case("input") {
+        SignalDeclarationPredicate::Input
+    } else if predicate_word.eq_ignore_ascii_case("output") {
+        SignalDeclarationPredicate::Output
+    } else if predicate_word.eq_ignore_ascii_case("inout") {
+        SignalDeclarationPredicate::InOut
+    } else if predicate_word.eq_ignore_ascii_case("internal") {
+        SignalDeclarationPredicate::Internal
+    } else if predicate_word.eq_ignore_ascii_case("local") {
+        SignalDeclarationPredicate::Local
+    } else if predicate_word.eq_ignore_ascii_case("width") {
+        SignalDeclarationPredicate::Width
+    } else {
+        return None;
+    };
+    Some((name, predicate))
+}
+
 pub(crate) fn collect_known_signal_names(
     statements: &[ExtractedStatement],
 ) -> std::collections::HashSet<String> {
@@ -2231,7 +2293,7 @@ pub(crate) fn collect_known_signal_names(
     for stmt in statements {
         let text = &stmt.text;
         let lowered = text.to_ascii_lowercase();
-        // Scan for ALL "Signal X is..." occurrences.
+        // Scan for ALL canonical `Signal X is <direction|width> ...` occurrences.
         // Handles both single-line declarations and merged multi-signal blocks
         // (consecutive non-empty lines are concatenated into one statement during markdown parsing).
         // A valid declaration starts either at position 0 or after ". " (sentence boundary).
@@ -2239,22 +2301,7 @@ pub(crate) fn collect_known_signal_names(
             if !is_signal_declaration_start(&lowered, idx) {
                 continue;
             }
-            let name_start = idx + 7; // past "signal "
-            if name_start > text.len() {
-                continue;
-            }
-            let name: String = text[name_start..]
-                .split(|c: char| !c.is_ascii_alphanumeric() && c != '_')
-                .next()
-                .unwrap_or("")
-                .to_ascii_uppercase();
-            // Only keep plausible hardware signal names: uppercase, 2-30 chars
-            if name.len() >= 2
-                && name.len() <= 30
-                && name
-                    .chars()
-                    .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
-            {
+            if let Some((name, _)) = parse_signal_declaration_at(text, idx) {
                 names.insert(name);
             }
         }
@@ -2273,29 +2320,15 @@ pub(crate) fn collect_signals_with_explicit_direction_declarations(
             if !is_signal_declaration_start(&lowered, idx) {
                 continue;
             }
-            let tail = &lowered[idx..];
-            let sentence = tail.find('.').map(|end| &tail[..end]).unwrap_or(tail);
-            if !(sentence.contains(" is input")
-                || sentence.contains(" is output")
-                || sentence.contains(" is internal")
-                || sentence.contains(" is local"))
-            {
-                continue;
-            }
-            let name_start = idx + 7;
-            if name_start > text.len() {
-                continue;
-            }
-            let name: String = text[name_start..]
-                .split(|c: char| !c.is_ascii_alphanumeric() && c != '_')
-                .next()
-                .unwrap_or("")
-                .to_ascii_uppercase();
-            if name.len() >= 2
-                && name.len() <= 30
-                && name
-                    .chars()
-                    .all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '_')
+            if let Some((name, predicate)) = parse_signal_declaration_at(text, idx)
+                && matches!(
+                    predicate,
+                    SignalDeclarationPredicate::Input
+                        | SignalDeclarationPredicate::Output
+                        | SignalDeclarationPredicate::InOut
+                        | SignalDeclarationPredicate::Internal
+                        | SignalDeclarationPredicate::Local
+                )
             {
                 names.insert(name);
             }
@@ -2961,6 +2994,44 @@ fn nearest_section_title_original(
         .map(|(_, title)| title.to_string())
 }
 
+fn contains_ascii_word(text: &str, expected: &str) -> bool {
+    text.split(|character: char| !character.is_ascii_alphanumeric())
+        .any(|word| word.eq_ignore_ascii_case(expected))
+}
+
+/// A compact identity header states what a row identifies. Ordinary uses of `port`/`pin` inside a
+/// longer status or requirements heading do not. The final `pin`/`pins` form preserves routing
+/// inventories such as `SWJ-DP pin` while rejecting headings such as `Port Status Type`.
+fn has_compact_signal_identity_header(header_texts: &[String]) -> bool {
+    header_texts.iter().any(|header| {
+        let words = header
+            .split(|character: char| !character.is_ascii_alphanumeric())
+            .filter(|word| !word.is_empty())
+            .collect::<Vec<_>>();
+        let last = words.last().copied().unwrap_or("");
+        (words.len() <= 4
+            && words.iter().any(|word| {
+                word.eq_ignore_ascii_case("signal") || word.eq_ignore_ascii_case("signals")
+            }))
+            || (words.len() <= 3
+                && (last.eq_ignore_ascii_case("name")
+                    || last.eq_ignore_ascii_case("symbol")
+                    || last.eq_ignore_ascii_case("pin")
+                    || last.eq_ignore_ascii_case("pins")))
+    })
+}
+
+fn is_headerless_connector_pin_diagram(
+    table: &crate::ir::source::StructuredTableRecord,
+    caption_text: &str,
+) -> bool {
+    table.header_rows.is_empty()
+        && contains_ascii_word(caption_text, "connector")
+        && (contains_ascii_word(caption_text, "pin")
+            || contains_ascii_word(caption_text, "pins")
+            || contains_ascii_word(caption_text, "pinout"))
+}
+
 fn should_treat_table_as_top_level_signal_description(
     source_ir: &SourceIr,
     table: &crate::ir::source::StructuredTableRecord,
@@ -2985,6 +3056,11 @@ fn should_treat_table_as_top_level_signal_description(
         .unwrap_or("")
         .to_ascii_lowercase();
     let section_title = nearest_section_title_for_table(source_ir, table).unwrap_or_default();
+    let has_signal_caption = contains_ascii_word(&caption_text, "signal")
+        || contains_ascii_word(&caption_text, "signals");
+    let has_inventory_structure = has_signal_caption
+        || has_compact_signal_identity_header(&header_texts)
+        || is_headerless_connector_pin_diagram(table, &caption_text);
     let has_explicit_signal_header = header_texts.iter().any(|header| {
         header.contains("signal") || header.contains("port") || header.contains("pin")
     });
@@ -3040,6 +3116,10 @@ fn should_treat_table_as_top_level_signal_description(
     }
 
     if table_looks_like_abstract_transport_signal_table(table) {
+        return false;
+    }
+
+    if !has_inventory_structure {
         return false;
     }
 
@@ -8593,8 +8673,9 @@ fn synthesize_signal_declarations_from_prose(
         // PDF-VARIANT-DIGESTION.3 — parenthetical abbreviation form: a signal introduced in prose as
         // "<descriptor> (NAME)", e.g. "a serial data line (SDA)", "serial clock (USCL)". The noun-phrase
         // HEAD (the word immediately before the abbreviation) must be a single-wire noun
-        // (line/signal/clock/data/wire/bus/pin) so arbitrary acronyms — and non-wire heads like a clock
-        // PULSE (ACK), a Data CHANNEL (DDC), or a data RATE (SDR) — are not captured (EXTRACTION-GAP-FIX.1).
+        // (line/signal/clock/data/wire/pin) so arbitrary acronyms — and non-wire heads like a bus,
+        // clock PULSE (ACK), Data CHANNEL (DDC), or data RATE (SDR) — are not captured
+        // (EXTRACTION-GAP-FIX.1).
         // Run only as a FALLBACK for sparse-catalog docs (`enable_parenthetical`):
         // table-rich specs (AXI etc.) get their signals from tables, and prose capture there is redundant
         // noise that can admit garbage constraints. General prose capture, universal vocabulary (ADR 0006).
@@ -8650,7 +8731,6 @@ fn synthesize_signal_declarations_from_prose(
                             | "data"
                             | "wire"
                             | "wires"
-                            | "bus"
                             | "pin"
                             | "pins"
                     )
@@ -15536,23 +15616,41 @@ mod tests {
                 "non-ascii-prefix",
                 "Résumé. Signal PREADY is input width 1.",
             ),
+            statement("width-only-declaration", "Signal PAYLOAD is width 32."),
+            statement(
+                "bidirectional-declaration",
+                "Signal DATA_IO is inout width 1.",
+            ),
+            statement(
+                "ordinary-signal-at-clause",
+                "Signal at its upstream port is repeated by the hub.",
+            ),
+            statement(
+                "ordinary-signal-level-clause",
+                "Signal level descriptions are informative.",
+            ),
         ];
 
         let all_declared = collect_known_signal_names(&statements);
         assert_eq!(
             all_declared.len(),
-            1,
+            3,
             "unexpected declarations: {all_declared:?}"
         );
         assert!(all_declared.contains("PREADY"));
+        assert!(all_declared.contains("PAYLOAD"));
+        assert!(all_declared.contains("DATA_IO"));
+        assert!(!all_declared.contains("AT"));
+        assert!(!all_declared.contains("LEVEL"));
 
         let direction_declared = collect_signals_with_explicit_direction_declarations(&statements);
         assert_eq!(
             direction_declared.len(),
-            1,
+            2,
             "unexpected direction declarations: {direction_declared:?}"
         );
         assert!(direction_declared.contains("PREADY"));
+        assert!(direction_declared.contains("DATA_IO"));
     }
 
     // ── KG-ISF-TRANSACTIONS.2m — signal → channel membership from `<role> channel signals` captions ─
@@ -19935,6 +20033,208 @@ mod tests {
             col_span: 1,
             is_header,
         }
+    }
+
+    fn signal_authority_table(
+        table_id: &str,
+        caption: Option<&str>,
+        headers: &[&str],
+    ) -> StructuredTableRecord {
+        StructuredTableRecord {
+            table_id: table_id.to_string(),
+            asset_id: format!("asset_{table_id}"),
+            page_id: None,
+            caption_text: caption.map(str::to_string),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: if headers.is_empty() {
+                vec![]
+            } else {
+                vec![
+                    headers
+                        .iter()
+                        .map(|header| make_table_cell(header, true))
+                        .collect(),
+                ]
+            },
+            body_rows: vec![vec![
+                make_table_cell("PREADY", false),
+                make_table_cell("1", false),
+                make_table_cell("Requester", false),
+                make_table_cell("Transfer completion", false),
+            ]],
+            row_count: if headers.is_empty() { 1 } else { 2 },
+            col_count: headers.len().max(4) as u32,
+        }
+    }
+
+    #[test]
+    fn signal_table_authority_requires_inventory_structure() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Interface\n")?;
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+
+        let explicit_signal_caption = signal_authority_table(
+            "signal_caption",
+            Some("Table 1 Signal descriptions"),
+            &["Description", "Width", "Source"],
+        );
+        let rotated_name_inventory = signal_authority_table(
+            "rotated",
+            None,
+            &["Name", "Destination", "Width", "Description"],
+        );
+        let swj_pin_routing = signal_authority_table(
+            "swj",
+            Some("Table B5-1 Routing of SWJ-DP pins"),
+            &["SWJ-DP pin", "SW-DP pin", "JTAG-DP pin"],
+        );
+        let headerless_connector = signal_authority_table(
+            "mipi",
+            Some("Table 17. MIPI 10-pin JTAG + nRESET Connector Diagram"),
+            &[],
+        );
+        for table in [
+            &explicit_signal_caption,
+            &rotated_name_inventory,
+            &swj_pin_routing,
+            &headerless_connector,
+        ] {
+            assert!(
+                super::should_treat_table_as_top_level_signal_description(&source_ir, table, None),
+                "genuine inventory structure was rejected: {}",
+                table.table_id
+            );
+        }
+
+        let state_legend = signal_authority_table(
+            "usb_state_legend",
+            Some("Table 10-1. Downstream Facing Hub Port State Machine Diagram Legend"),
+            &["Key", "Description"],
+        );
+        let vbus_requirements = signal_authority_table(
+            "usb_vbus",
+            Some("Table 10-2. Downstream USB Standard-A Port VBUS Requirements"),
+            &[
+                "Hub Upstream Port Connection Status",
+                "Downstream Port Enhanced SuperSpeed Port Power Off",
+                "Downstream Port Enhanced SuperSpeed Port Power On",
+            ],
+        );
+        let port_status_codes = signal_authority_table(
+            "usb_port_status",
+            Some("Table 10-12. Port Status Type Codes"),
+            &[
+                "Port Status Type",
+                "Value",
+                "Port Status Length",
+                "Description",
+            ],
+        );
+        for table in [&state_legend, &vbus_requirements, &port_status_codes] {
+            assert!(
+                !super::should_treat_table_as_top_level_signal_description(&source_ir, table, None),
+                "ordinary port vocabulary received inventory authority: {}",
+                table.table_id
+            );
+        }
+
+        Ok(())
+    }
+
+    #[test]
+    fn weak_dense_prose_names_cannot_reenter_through_relations() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("usb_dense_prose.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        fs::write(
+            &source,
+            concat!(
+                "# Hub behavior\n",
+                "Signal at its upstream port is repeated by the hub.\n",
+                "The Universal Serial Bus (USB) connects the host and downstream devices.\n",
+                "The hub drives AT, USB, ENHANCED, and NO toward the downstream port.\n",
+            ),
+        )?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_0210".to_string(),
+            asset_id: "asset_0210".to_string(),
+            page_id: None,
+            caption_text: Some(
+                "Table 10-2. Downstream USB Standard-A Port VBUS Requirements".to_string(),
+            ),
+            source_ref: None,
+            table_kind: TableKind::SignalDescription,
+            header_rows: vec![vec![
+                make_table_cell("Hub Upstream Port Connection Status", true),
+                make_table_cell(
+                    "Downstream Port Enhanced SuperSpeed Port Power Off (PORT_POWER = 0)",
+                    true,
+                ),
+                make_table_cell(
+                    "Downstream Port Enhanced SuperSpeed Port Power On (PORT_POWER = 1)",
+                    true,
+                ),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("Enhanced SuperSpeed", false),
+                    make_table_cell("On", false),
+                    make_table_cell("May be off", false),
+                ],
+                vec![
+                    make_table_cell("USB 2.0", false),
+                    make_table_cell("On", false),
+                    make_table_cell("May be off", false),
+                ],
+                vec![
+                    make_table_cell("No VBUS", false),
+                    make_table_cell("May be off", false),
+                    make_table_cell("May be off", false),
+                ],
+            ],
+            row_count: 4,
+            col_count: 3,
+        });
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        let known_signals = super::collect_known_signal_names(&evidence_ir.extracted_statements);
+        for rejected in ["AT", "USB", "ENHANCED", "NO"] {
+            assert!(
+                !known_signals.contains(rejected),
+                "weak name re-entered the declaration catalog: {rejected} in {known_signals:?}"
+            );
+            assert!(
+                evidence_ir
+                    .actor_signal_relations
+                    .iter()
+                    .all(|relation| relation.signal_name != rejected),
+                "weak name re-entered through a relation: {rejected}"
+            );
+            assert!(
+                evidence_ir
+                    .extracted_statements
+                    .iter()
+                    .all(|statement| statement.text != format!("Signal {rejected} is output.")),
+                "weak name re-entered through direction synthesis: {rejected}"
+            );
+        }
+        assert!(
+            evidence_ir.table_signal_declaration_provenance.is_empty(),
+            "the requirements matrix must not receive signal-inventory provenance: {:?}",
+            evidence_ir.table_signal_declaration_provenance
+        );
+
+        Ok(())
     }
 
     // --- derive_encoding_enum_name fallback gate (KG-ISF-COMPLETENESS.5.i) ---
@@ -25842,6 +26142,17 @@ mod swd_serial_extraction_2 {
         // a bare parenthetical acronym with no signal descriptor nearby must NOT be captured.
         let names = declared(&[stmt("The protocol (I2C) supports multiple controllers .")]);
         assert!(!names.iter().any(|n| n == "I2C"), "got {names:?}");
+    }
+
+    #[test]
+    fn bus_parenthetical_is_not_synthesized_as_a_single_wire() {
+        let names = declared(&[stmt(
+            "The Universal Serial Bus (USB) connects a host with downstream devices.",
+        )]);
+        assert!(
+            !names.iter().any(|name| name == "USB"),
+            "a bus acronym must not become a width-one signal: {names:?}"
+        );
     }
 
     #[test]

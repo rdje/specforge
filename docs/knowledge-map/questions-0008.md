@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > why is CORPUS-PATTERN-REUSE.3b.3b (activate-only consume) deferred / not built
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > why is CPU-ISA / PHY only recognized from front-matter (no distinct structural signature; cat 5 vs cat 6 indistinguishable by structure)
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > why is For / Then it / is recommended / next / HPROT bit / TREADY input minted as an actor
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > why is KG-ISF-TRANSACTIONS.2i parked/blocked (waiting on FSMGEN to say how to lower phase membership without fabricating drive values or step order)
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)

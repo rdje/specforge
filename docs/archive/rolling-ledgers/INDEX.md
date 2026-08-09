@@ -33,9 +33,15 @@ perl scripts/check_rolling_ledger_protocol.pl --report
   `docs/archive/rolling-ledgers/development-notes/source-through-2026-08-08.md`
 - Frozen boundary: 1,601 records; 20,921 lines; 2,170,230 bytes; SHA-256
   `76b51a3f450cdb1e764922dc366cf6ff55529cb95f7a6f410bfba1f1f378fedc`
-- Current-window rule: H1 prologue followed by the newest 60 whole H2 records.
-- Overlap: the immutable capsule includes the retained live window; later rollover archives only newly
-  aged-out engineering-rationale records.
+- First post-migration rollover: [`segment-0001-2026-08-08.md`](development-notes/segment-0001-2026-08-08.md)
+  preserves 27 whole records / 467 lines / 36,125 bytes at SHA-256
+  `b07a73670863e283f359911629db691859f41d99021a1902db3adfeb83788b91`; only the former successor separator is
+  normalized to the protocol's canonical terminal newline. The segment sits between the newer live root and the
+  older source capsule.
+- Current-window rule: H1 prologue, the newest 10 post-capsule records, then the exact 50-record retained
+  migration suffix.
+- Overlap: the immutable capsule includes the retained suffix; rollover segments preserve newly aged-out
+  engineering-rationale records.
 
 ## `live-achievement-status`
 

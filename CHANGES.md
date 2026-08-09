@@ -1,3 +1,22 @@
+### CORPUS-COVERAGE.2.33d.ii — ground dense-prose signal authority
+
+- Replaced loose sentence-start signal discovery with one canonical declaration parser requiring
+  `Signal <identifier> is input|output|inout|internal|local|width`. Ordinary `signal at ...` and
+  `Signal level ...` prose can no longer enter either catalog; the broad library gate caught and preserved the
+  valid zero-corpus `inout` contract.
+- Removed `bus` from the sparse parenthetical single-wire grammar and required explicit signal captions,
+  compact identity headers, or headerless connector-pin structure before ordinary port/pin tables receive
+  signal-inventory authority. USB state/status/VBUS tables are rejected while serial prose, rotated inventories,
+  SWJ routing, and MIPI connector pins remain accepted.
+- Added a direct fixed-point regression proving `AT`, `USB`, `ENHANCED`, and `NO` remain absent from declarations,
+  relations, direction synthesis, and table provenance. Corrected the initiator tie-order documentation and
+  pinned the existing lexicographically-last equal-maximum behavior without changing selection.
+- Focused serial/table/USB suites, the full 1,779-test library gate, WIRE APB/AHB/AXI/I2C golds, a fresh SWD
+  rebuild, KG 156/156, warning-deny Clippy, full CI, doctrines, mdBook, and project-locality checks pass.
+- The rationale prepend triggered its mandatory rollover: 27 whole records were sealed with exact order,
+  counts, hashes, and retrieval verification, leaving the 60-record live contract. The bounded archive index is
+  newly at its controlled 81.2% line / 81.5% byte warning and remains below the 90% rollover point.
+
 ### CORPUS-COVERAGE.2.33d.i — measure and bound dense-prose signal authority
 
 - Measured every retained artifact before changing extraction code. Sentence-start `signal <word>` has 3,104

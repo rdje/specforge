@@ -7,6 +7,7 @@ answers:
   - "why are two containment records at the bottom of CHANGES"
   - "what protects the validation projection when LIVE_ACHIEVEMENT_STATUS rolls over"
   - "where is the first post-migration LIVE_ACHIEVEMENT_STATUS rollover segment"
+  - "where is the first post-migration DEVELOPMENT_NOTES rollover segment"
 date: 2026-08-08
 status: current
 tags: [documentation, rolling-ledger, archive, continuity, validation]
@@ -35,8 +36,12 @@ view and `docs/archive/rolling-ledgers/INDEX.md` is the retrieval route.
 
 `DEVELOPMENT_NOTES.md` completed the second migration in `.4c`. Its immutable 1,601-record capsule is
 `docs/archive/rolling-ledgers/development-notes/source-through-2026-08-08.md` with SHA-256
-`76b51a3f450cdb1e764922dc366cf6ff55529cb95f7a6f410bfba1f1f378fedc`; its root keeps the H1 prologue,
-60 retained H2 records, and later prepends.
+`76b51a3f450cdb1e764922dc366cf6ff55529cb95f7a6f410bfba1f1f378fedc`. Its first post-migration rollover is
+`docs/archive/rolling-ledgers/development-notes/segment-0001-2026-08-08.md`: 27 whole records / 467 lines /
+36,125 bytes / SHA-256 `b07a73670863e283f359911629db691859f41d99021a1902db3adfeb83788b91`.
+The live root now contains the H1 prologue, 10 newest post-capsule records, then the exact 50-record retained
+migration suffix. The segment is the ordered successor of the live root and predecessor of the immutable
+capsule; its final former-successor separator is represented by the protocol's canonical terminal newline.
 
 `LIVE_ACHIEVEMENT_STATUS.md` completed the third migration in `.4d`. Its immutable 1,920-record
 capsule is

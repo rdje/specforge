@@ -96,8 +96,15 @@ At the `.4c` migration boundary, the engineering-rationale root became 1,480 lin
 instead of 20,921 lines / 2,170,230 bytes. Its initial capsule at
 `docs/archive/rolling-ledgers/development-notes/source-through-2026-08-08.md` retains all 1,601
 pre-migration records under SHA-256
-`76b51a3f450cdb1e764922dc366cf6ff55529cb95f7a6f410bfba1f1f378fedc`. The live root keeps its H1
-prologue and newest 60 capsule records; `.4c` is the first post-capsule prepend.
+`76b51a3f450cdb1e764922dc366cf6ff55529cb95f7a6f410bfba1f1f378fedc`. The migrated root began with its H1
+prologue, 60 capsule records, and `.4c` as the first post-capsule prepend.
+
+The first post-migration rollover landed when a later rationale prepend reached the mandatory 90% record
+threshold. It seals the 27 oldest post-capsule records content-identically and in order at
+`docs/archive/rolling-ledgers/development-notes/segment-0001-2026-08-08.md` (467 lines / 36,125 bytes / SHA-256
+`b07a73670863e283f359911629db691859f41d99021a1902db3adfeb83788b91`). The bounded root now carries the H1
+prologue, 10 newest post-capsule records, and the exact 50-record retained migration suffix. The manifest places
+the sealed segment between that root and the immutable source capsule.
 
 The retained-record check is byte-sensitive beyond visible prose. During `.4c`, an ordinary edit at
 the top of the derived root exposed an ownership ambiguity for the blank line between records 60 and

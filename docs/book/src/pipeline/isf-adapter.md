@@ -53,22 +53,36 @@ USB 3.2 exposed the distinction in a real current-binary cascade (`2026-08-09`).
 became the primary actor `setportfeature_port_over_current`, and the adapter emitted 29 mostly unconditional
 rules. FSMGen correctly reported zero syntax diagnostics because the resulting S-expressions are legal; the
 model is nevertheless semantically untrustworthy. SpecForge records that result as a semantic-fidelity block,
-not as successful lowering. The generic repair is tracked by `CORPUS-COVERAGE.2.33d`; it must fix grounding and
-trust disposition without document-name or token special cases.
+not as successful lowering. `CORPUS-COVERAGE.2.33d.ii` fixes the shared grounding boundary without document-name
+or token special cases; the real USB rebuild remains the final cascade proof.
 
 The measurement behind that repair found three upstream authority errors, not a reason to distrust every
 relation-derived direction. Across the retained corpus, 97 sentence-start phrases use `signal <word>` without
 declaring a signal; 17 `Bus (ACRONYM)` phrases are misread as width-one wires; and 11 port/pin-only tables pass a
-signal-inventory gate despite lacking inventory structure. The repair therefore acts where each name first
-enters the catalog: require the formal declaration predicate, reserve the parenthetical fallback for actual
-single-wire heads (a bus is not one), and require a compact signal/name/symbol/pin structure for ordinary
-port/pin tables. Genuine I2C/I2S/SWD/SWP prose declarations, connector pins, and normal or rotated signal tables
-are explicit retention tests.
+signal-inventory gate despite lacking inventory structure. The shipped repair therefore acts where each name
+first enters the catalog:
+
+- A prose declaration must match `Signal <identifier> is <predicate>`, where the predicate is `input`, `output`,
+  `inout`, `internal`, `local`, or `width`. For example, `Signal PREADY is input width 1.`,
+  `Signal DATA_IO is inout width 1.`, and `Signal PAYLOAD is width 32.` are declarations; `Signal at its upstream
+  port ...` is ordinary prose.
+- The sparse parenthetical fallback is reserved for actual single-wire heads such as `line`, `clock`, `data`,
+  `wire`, and `pin`; a phrase such as `Universal Serial Bus (USB)` does not declare a width-one `USB` signal.
+- An ordinary port/pin table needs an explicit signal caption, a compact signal/name/symbol/pin identity header,
+  or a headerless connector-pin diagram. This retains connector pins and normal or rotated signal inventories
+  while rejecting state, status, and requirements matrices that merely mention ports.
+
+Focused retention tests cover I2C/I2S/SWD/SWP prose declarations, SWJ routing, rotated `Name` tables, and a MIPI
+connector diagram. The broad library gate also caught the valid `inout` declaration contract even though the
+retained corpus measurement happened to contain no such declaration.
 
 This placement matters. Relation extraction scans only cataloged signals, table relations use the same table
 gate, and the direction pass copies a relation's existing name—it does not invent another one. A second adapter
 deny-filter would hide the upstream cause and could erase legitimate signals whose only direction evidence is a
-documented driver relation. The tracked real USB rebuild is the final proof: the false four-port/29-rule model
+documented driver relation. A direct EvidenceIR convergence regression already combines all three weak USB
+shapes and proves `AT`, `USB`, `ENHANCED`, and `NO` remain absent from declarations, actor/signal relations,
+relation-derived directions, and table provenance. No downstream adapter heuristic is needed. The tracked real
+USB rebuild is the final proof: the false four-port/29-rule model
 must disappear because its names never gain authority, not because the adapter recognizes USB vocabulary.
 
 ## ISF IR data model

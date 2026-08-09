@@ -4,6 +4,19 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-09 — grounded signal authority; `CORPUS-COVERAGE.2.33d.ii`)
+
+- `parse_signal_declaration_at` is now the single grammar boundary for both known-signal and explicit-direction
+  catalogs. It requires `Signal <identifier> is <predicate>` and recognizes input/output/inout/internal/local
+  directions plus width-only declarations; descriptive `signal <word>` clauses have no typed authority.
+- Sparse parenthetical synthesis no longer maps a bus acronym to a one-bit signal. Shared table admission now
+  requires an explicit signal caption, compact signal/name/symbol/pin identity header, or a headerless
+  connector-pin diagram before any downstream table consumer can treat rows as top-level signals.
+- A direct EvidenceIR regression proves all four USB weak names remain absent across catalog, relation,
+  direction, and provenance surfaces. The initiator selector's equal-key behavior is unchanged and explicitly
+  tested as lexicographically last. Full library, serial, WIRE, KG, Clippy, CI, book, doctrine, and locality
+  gates protect the shared extraction boundary.
+
 ## Session update (2026-08-09 — UTF-8-safe declaration boundary; `CORPUS-COVERAGE.2.33b`)
 
 - `is_signal_declaration_start` now owns the shared boundary invariant for both signal catalogs. It accepts byte

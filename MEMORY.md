@@ -19,15 +19,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.33d.i` — universal dense-prose signal-authority probe; complete in this commit.
-- Current state: the 80-EvidenceIR/79-IntentIR census locates three upstream authority errors: 97 weak
-  sentence-start declaration matches, 17 bus-acronym width-one captures, and 11 accepted port/pin-only table
-  shapes. Direction synthesis only amplifies names from those catalogs, so no separate downstream heuristic is
-  planned if direct convergence and real USB verification pass. The durable report/fact and exact USB before
-  signature are current; no production/generated artifact changed. Corpus remains 80 SourceIR / 2 normalized /
+- Active unit: `CORPUS-COVERAGE.2.33d.ii` — grounded dense-prose signal-authority repair; complete in this commit.
+- Current state: both declaration catalogs require canonical `Signal <identifier> is <predicate>` grammar,
+  parenthetical `bus` no longer means a one-bit wire, and ordinary port/pin tables require compact inventory
+  structure. A direct EvidenceIR regression proves `AT`/`USB`/`ENHANCED`/`NO` cannot re-enter through relations,
+  directions, or table provenance; initiator tie behavior remains lexicographically last. Serial/table/full-lib,
+  WIRE, KG, Clippy, full-CI, book, doctrine, and locality gates pass. Corpus remains 80 SourceIR / 2 normalized /
   80 EvidenceIR / 79 downstream chains; refresh progress is 33 complete / 23 left.
-- Next action: from a clean post-probe commit, activate `CORPUS-COVERAGE.2.33d.ii`; implement only the measured
-  formal-predicate, non-bus single-wire, and port/pin inventory-structure repairs plus tie-comment regression.
-- In-flight uncommitted: none after the `.2.33d.i` commit. Fresh ignored USB stage artifacts remain the `.d.iv`
-  regression input; temp contains only `.gitkeep`.
+- Next action: from the clean `.2.33d.ii` commit, activate `.2.33d.iii` and close the conditional downstream
+  heuristic as measured unnecessary; then `.2.33d.iv` rebuilds and signs off the real USB cascade.
+- In-flight uncommitted: none after the `.2.33d.ii` commit. Retained USB stages remain the `.d.iv` regression
+  input; `.project-data/tmp` contains only `.gitkeep` plus the current project-owned `xcrun_db` cache.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > is the enum drop a width-overflow rule (no — count-derived width 2a.iv hypothesis was DISPROVEN; GIC-600 emits 69152 strict-clean; FSMGen accepts bare decimals of any magnitude)
 - [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
   > is the eval gold / answer key trustworthy or reliable
 - [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
@@ -296,5 +298,3 @@
   > what is PDF-VARIANT-DIGESTION.12b
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > what is PDF-VARIANT-DIGESTION.3 prose entity capture
-- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
-  > what is ProtocolStateRecord / protocol_states / DBGTAPSM

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
+  > what is ProtocolStateRecord / protocol_states / DBGTAPSM
 - [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
   > what is SWD's actual intent / protocol (from the spec)
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
@@ -295,5 +297,3 @@
   > what structural cues recognize transactions universally (section anchors + enumeration tables)
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > what structural surfaces discriminate document class
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > what table structure is required before port or pin vocabulary grants signal authority

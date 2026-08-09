@@ -13,6 +13,8 @@ answers:
   - "what table structure is required before port or pin vocabulary grants signal authority"
   - "does relation-derived direction synthesis independently invent signal names"
   - "does select_initiator_actor choose the first or last equal maximum"
+  - "which formal signal declaration predicates does the dense prose authority gate accept"
+  - "how does CORPUS-COVERAGE 2 33d ii prevent weak signal names from reentering through relations"
 date: 2026-08-09
 tags: [corpus-coverage, dense-prose, signal-inventory, actor-signal-relations, isf, semantic-fidelity, false-positive, table-classification, fixed-point]
 evidence: docs/research/dense-prose-signal-authority-measurement.md; generated/source_ir/usb_3_2_revision_1_0_2017_09/source_ir.json; generated/evidence_ir/usb_3_2_revision_1_0_2017_09/evidence_ir.json; generated/intent_ir/usb_3_2_revision_1_0_2017_09/intent_ir.json; generated/adapters/isf/usb_3_2_revision_1_0_2017_09/adapter.json; crates/specforge/src/ir/source/docling_backend.rs (classify_table_kind); crates/specforge/src/ir/evidence.rs (collect_known_signal_names, synthesize_signal_declarations_from_prose, actor_signal_relation_surface, synthesize_directions_from_relations); crates/specforge/src/ir/isf_ir.rs (select_initiator_actor); docs/tasks/CORPUS-COVERAGE.md (.2.33c/.2.33d)
@@ -93,3 +95,24 @@ Finally, nine of 79 retained IntentIR artifacts have a maximum net-producer tie 
 iteration selects the lexicographically last equal maximum, contrary to the nearby first-wins comment. USB's
 three `(2,0)` phantoms demonstrate this, but changing tie order would only choose another false actor; the code
 slice should preserve behavior, correct the comment, and test the tie explicitly.
+
+## Implemented authority boundary (`CORPUS-COVERAGE.2.33d.ii`)
+
+The shared declaration parser now requires the canonical `Signal <identifier> is <predicate>` grammar. Accepted
+predicates are `input`, `output`, `inout`, `internal`, `local`, and `width`; the valid `inout` arm is a product
+contract even though the retained measurement contains no occurrence. The full library gate caught and retained
+that zero-corpus case through the SWD interface-edge tests. Ordinary phrases such as `signal at its upstream
+port` and `Signal level ...` no longer enter either declaration catalog.
+
+The parenthetical fallback no longer treats `bus` as a single-wire head. The remaining `line`, `signal`,
+`clock`, `data`, `wire`, and `pin` heads plus the independent pin-appositive and definitional grammars preserve
+the I2C/I2S/SWD/SWP contracts. The shared table authority gate now requires an explicit signal caption, a
+compact signal/name/symbol/pin identity header, or a headerless connector-pin diagram. The real USB state legend,
+VBUS requirements matrix, and port-status table shapes fail that gate; rotated `Name` inventories, SWJ routing,
+and MIPI connector diagrams pass.
+
+A direct build regression combines the exact weak declaration, `Universal Serial Bus (USB)`, VBUS matrix, and
+actor-relation shapes. `AT`, `USB`, `ENHANCED`, and `NO` are absent from the resulting known-signal set, relation
+surface, table provenance, and direction declarations. This proves the fixed point is closed at its three name
+authorities; no adapter deny-filter is added. Initiator selection remains behavior-identical and now explicitly
+tests the lexicographically last equal maximum.

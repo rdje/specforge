@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > what table structure is required before port or pin vocabulary grants signal authority
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
   > what temporal logic backs temporal_rules
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
@@ -151,6 +153,8 @@
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
   > where is the extraction architecture contract
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > where is the first post-migration DEVELOPMENT_NOTES rollover segment
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > where is the first post-migration LIVE_ACHIEVEMENT_STATUS rollover segment
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > where is the mdBook current-truth verifier
@@ -224,6 +228,8 @@
   > which doctrines are registered (MEMORY-ARCH, KNOWLEDGE-MAP, TASK-ACCEPTANCE)
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > which document categories are mature vs partial vs thin for ISF synthesis (cat1 mature, cat2/3 partial, cat4 thin, cat5/6 non-target)
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > which formal signal declaration predicates does the dense prose authority gate accept
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > which guides over-extract spurious .isf wire intent (cortex-a76 sw-opt 537 signals, readme, smmu software guide, gic overview, aarch64 debug guide)
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
@@ -291,9 +297,3 @@
   > residuals)
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > why are some section-heading registers held as a residual instead of emitted
-- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
-  > why are stability obligations residuals
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why are temporal_rules not usable to order a transaction body (they are per-signal stability/value constraints not phase edges)
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > why are the AHB gold negatives for statements 0561 and 0678 there

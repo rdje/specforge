@@ -1975,8 +1975,10 @@ fn actor_port_concrete_widths(actor_ports: &[ActorPortRecord]) -> BTreeMap<Strin
 /// balanced prose-fragment actor like AHB `address decoder` at out=in and an input-dominant completer
 /// like `Subordinate`/`Completer`) and pick the one maximizing `(out, in)` lexicographically: most
 /// driven signals first, then most read signals (a real initiator also reads responses, which breaks
-/// a tie against an output-only register/fragment), then the name for determinism. Returns the raw
-/// actor name (the caller sanitizes it), or `None` when no actor is a net producer (e.g. a
+/// a tie against an output-only register/fragment). Exact `(out, in)` ties resolve to the
+/// lexicographically last actor name because `BTreeMap` iteration is ascending and `max_by_key`
+/// replaces an earlier equal maximum. Returns the raw actor name (the caller sanitizes it), or
+/// `None` when no actor is a net producer (e.g. a
 /// register/command doc with no wire actors) — the honest residual that keeps the current behavior.
 ///
 /// Measured `2026-06-18` on the four wire docs: AHB → `Manager` (out=6/in=2), APB → `Requester`
@@ -1994,8 +1996,8 @@ pub(crate) fn select_initiator_actor(actor_ports: &[ActorPortRecord]) -> Option<
     by_actor
         .into_iter()
         .filter(|(_, (out, inp))| out > inp)
-        // Pick max (out, in); BTreeMap iteration is name-ascending, so a later equal-keyed actor
-        // never displaces an earlier one — the first (lexicographically smallest) name wins ties.
+        // Pick max (out, in); BTreeMap iteration is name-ascending and `Iterator::max_by_key`
+        // replaces an earlier equal maximum, so the lexicographically last name wins exact ties.
         .max_by_key(|(_, (out, inp))| (*out, *inp))
         .map(|(name, _)| name)
 }
@@ -3649,6 +3651,17 @@ mod tests {
         ];
         // Init (3,1) beats Decoy (3,0) on the (out, in) tiebreak; Comp/fragment are not net producers.
         assert_eq!(select_initiator_actor(&ports).as_deref(), Some("Init"));
+        let exact_tie = vec![
+            dir_port("Alpha", "REQA", Output),
+            dir_port("Alpha", "REQB", Output),
+            dir_port("Zulu", "REQC", Output),
+            dir_port("Zulu", "REQD", Output),
+        ];
+        assert_eq!(
+            select_initiator_actor(&exact_tie).as_deref(),
+            Some("Zulu"),
+            "equal producer maxima resolve to the lexicographically last actor"
+        );
         // No net producer → None (honest residual: the interface keeps its default-output behavior).
         let no_producer = vec![
             dir_port("Reader", "RESP", Input),
