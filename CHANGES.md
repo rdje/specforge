@@ -1,3 +1,17 @@
+### CORPUS-COVERAGE.2.43a — require heading authority for section-derived phases
+
+- The first Ready Definition cascade preserved 173 EvidenceIR statements but turned two functional-test sections
+  and one host-system definition into phases/Intent behaviors solely because their prose contained `once` or
+  `when`.
+- An exact 79-document census classifies 11,286 retained generic phases as 3,180 title-authorized and 8,106
+  statement-fallback-only across 77 documents. Generic phases now require a non-empty phase-like heading; the
+  separate typed `<qualifier> phase` recognizer remains intact.
+- Rebuilding unchanged #43 evidence removes all three false phases and reduces behaviors 22→19 without changing
+  any other measured semantic count. Paired false-context, titled-structure, and typed transaction-phase controls
+  pass. The distinct broad title-vocabulary risk is durably owned by pending `.2.43a.i`.
+- Two downstream cascades reproduce six hashes; 408 semantic tests, nine WIRE/I2C/SWD datasets, KG 156/156, full
+  CI (1,796/five ignored), 66/66 FSMGen strict, mdBook, doctrines, paths, and locality pass.
+
 ### CORPUS-COVERAGE.2.42 — sign off OpenCAPI Certified Definition refresh
 
 - Two guarded CPU ingests reproduce 15 pages, eight visuals, five tables, 31 sections, and 151 elements at 18%

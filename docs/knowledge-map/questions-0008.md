@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > why are determiners (All Managers) NOT rejected by the .1a agent gate
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why are many distinct value-tables merged into one enum (build_symbol_definitions accumulates members by enum_name key, semantic.rs:2782-2789 — every 'TABLE'-named table fuses into one SymbolDefinitionRecord)
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > why are message fields not part of the document_class decision
+- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
+  > why are modal verbs must shall should may not flagged as ambiguous
+- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
+  > why are prior candidate fixture names not joined into one long Markdown line
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > why are register-IP (cat 2) and platform-IP (cat 3) reported as one combined register-or-platform category (counts cannot separate them — DOC-INTENT-TAXONOMY.1)
+- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
+  > why are rustup and cargo allowed on the boot volume
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
   > why are sbaddress3 / custom0 / a garbled sizelo register NOT merged
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -75,6 +89,8 @@
   > why did a fresh ingest expose normalized staging in persisted metadata
 - [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
   > why did an EXTRACTOR-ARCHITECTURE byte-identical proof fail on SWD/ADI but pass on other docs
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > why did an OpenCAPI functional test become an IntentIR behavior
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > why did an OpenCAPI permissions paragraph become an IntentIR behavior
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
@@ -281,19 +297,3 @@
   > why does specforge split on 'and' but not 'or' for a coordinated actor subject
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > why does the .isf emit a generic (type TABLE (bits N)) enum / what is the TABLE mega-enum
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > why does the AArch64 External Debug Guide emit no ISF
-- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
-  > why does the ADI spec produce so few signals and so much garbage
-- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
-  > why does the Claude Read tool refuse some PDFs / report password-protected
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > why does the CoreSight Base System Architecture emit no ISF
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > why does the D4.5 CLAIMSET (no block token) stay a residual under .10i
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > why does the DTI / trace-bus .isf fail FSMGen --strict --check (OperandContract: a value literal wider than the declared signal width)
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > why does the Introducing CoreSight guide emit no ISF
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > why does the MPAM 'must be included' sentence extract nothing

@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > what is continuation_inherited_table_heads and what grounds the join
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > what is corpus_cluster / document_fingerprint / cluster_documents / DocumentCluster
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > what is declared_signal_complete_gold_precision
+- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
+  > what is dedup_constraints / its canonical key
+- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
+  > what is definitional_signal_names / the copula + glossary-colon prose-signal grammar
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > what is document_completeness_gauge / document_completeness_gaps / why is a guide not penalized
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > what is document_intent_category / the 6-category purpose recognizer
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -285,15 +297,3 @@
   > what was the HBM2 canonical promotion pilot result
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
   > what was the must_be_value recall gap and how was it closed
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > when does a caption ground a register name
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > when does evidence_extraction_quality_majority_not_entailed or _gauge_stale fire
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > when does presence capture refuse a row vs the whole table
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > when is a bracket-slice leading token a field name
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > when is a single letter a field name
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > when is the purpose category HIGH vs LOW confidence (only clean wire shape + self-declared guide are HIGH; everything else LOW + explicit residual)

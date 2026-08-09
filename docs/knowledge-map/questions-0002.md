@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > does specforge validate modify the artifact passed on the command line
+- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
+  > does specforge write to the input path I pass or to a canonical generated path
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > does the Certified sibling confirm the OpenCAPI Ready glossary result
+- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
+  > does the Docling metadata sidecar store repository relative paths
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > does the ISF adapter consume swd_operations or protocol_states
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
@@ -94,6 +102,8 @@
   > how are duplicate signal constraints deduplicated in the LLM-primary extractor
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > how are extraction-profile priors looked up (extraction_profile_priors_for signature-subset match)
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > how are generic SemanticIR phases different from transaction_phases
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > how are human corpus KB notes preserved during refresh
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
@@ -288,13 +298,3 @@
   > how does specforge declare a signal mentioned only in prose
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > how does specforge drop a zero-evidence phantom actor like controller or agent
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > how does specforge extract a CAN-style error-state FSM (error active / error passive / bus off)
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > how does specforge extract a single-word ALL-CAPS state machine (SWP ACTIVATED / DEACTIVATED / SUSPENDED)
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > how does specforge fold an X interface relation subject onto the bare agent X
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > how does specforge group a transaction's signals by phase (.2i: TransactionIntent.phase_membership, built in mint_named_transaction by intersecting anchor.signal_set with each TransactionPhaseRecord.signal_set; metadata, not .isf steps)
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > how does specforge handle PSEL vs PSELx (or HSEL vs HSELx)

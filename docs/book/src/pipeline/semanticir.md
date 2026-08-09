@@ -90,6 +90,31 @@ also preserved: the system contract inserts them into the authority set and emit
 interface with typed input direction and width one. Actor/signal relations can describe use of an authorized
 signal, but a relation alone is not a signal declaration.
 
+### Section phases need heading authority
+
+The broad `phases` collection describes sections whose headings identify phase-like protocol structure. A
+sentence inside an ordinary section cannot promote the whole section merely because it contains `before`,
+`after`, `until`, `during`, `then`, `next`, `once`, `when`, or `while`. Those words are equally common in notes,
+requirements, register descriptions, test procedures, and qualification statements.
+
+For example, these sections remain ordinary evidence-bearing sections even if their prose contains temporal
+words:
+
+- `Functional test for controller`
+- `Host system definition`
+- `Bit descriptions`
+
+Headings such as `Setup phase`, `Reset sequence`, and `Transaction timing` retain section-phase authority. This
+is a structural floor: the historical heading vocabulary has a separate precision audit, so heading admission
+is not presented as proof that every retained phase record is ideal.
+
+This broad section surface must not be confused with `transaction_phases`. The typed transaction-phase
+recognizer reads explicit `<qualifier> phase` prose, keeps statement provenance, and limits signal membership to
+declared signals. Consequently, `During the address phase the manager drives HADDR` can still establish the
+typed `address` phase even when its containing section is not a generic section phase. The exact corpus
+measurement and the distinction between the two surfaces are recorded in the
+[semantic-phase authority report](../../research/semantic-phase-authority-measurement.md).
+
 ### Legal conditions are evidence, not protocol intent
 
 `EvidenceIR` keeps source-grounded copyright, license, warranty, liability, patent, and administrative text so

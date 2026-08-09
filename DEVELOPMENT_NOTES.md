@@ -1,4 +1,27 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.43a (`2026-08-10`) — temporal prose is not section-wide phase authority
+
+The first fresh Ready Definition cascade exposed a scope error in `build_phases`, not an EvidenceIR loss or an
+OpenCAPI-specific classification problem. A single `once` in a test-completion step or `when` in a manufacturer
+attestation promoted every statement in the containing section into one semantic phase, and IntentIR then turned
+the phase summary into a behavior. Neither section had a phase-like heading or typed hardware surface.
+
+The correct boundary is at the section-phase builder. Filtering temporal words out of EvidenceIR would destroy
+real source evidence, while deleting the words globally would damage gate, timing, and transaction recognition.
+Generic section phases therefore require heading authority; sentence text can remain evidence and serve other
+typed consumers without authorizing its whole section. `transaction_phases[]` stays independent because its
+bounded `<qualifier> phase` grammar captures exact protocol terminology and declared-signal provenance.
+
+The exact retained-artifact census found 8,106 of 11,286 generic phases across 77 documents depended only on the
+sentence fallback. On #43, unchanged 173-statement EvidenceIR now yields zero rather than three generic phases and
+19 rather than 22 behaviors; all other measured semantic counts hold and the adapter remains honestly blocked on
+no declared signals. The measurement also found that the surviving title family needs its own audit—720 of 3,180
+records are headed `Reset value`—so pending `.2.43a.i` owns that separate causal boundary.
+
+Two complete downstream replays reproduce all six hashes. All 408 semantic tests, the nine provider-free
+WIRE/I2C/SWD datasets, KG 156/156, full CI at 1,796 pass/five ignored, 66/66 FSMGen strict, mdBook, six doctrines,
+persisted paths, and project-data locality pass.
+
 ## CORPUS-COVERAGE.2.42 (`2026-08-10`) — the Certified Definition is evidence-rich but interface-empty
 
 The retained chain combined two independent authority errors. Docling had flattened four short diagram labels

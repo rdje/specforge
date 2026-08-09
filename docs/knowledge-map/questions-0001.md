@@ -10,6 +10,8 @@
   > EXTRACTION-QUALITY-GAUGE.3g what is the dotted-cross-reference spurious-subject gate
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > are APB tables 0016 0017 0018 a real catalog miss
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > are Reset value headings valid semantic phases
 - [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
   > are SWCLK and SWDIO extracted / declared
 - [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
@@ -78,6 +80,8 @@
   > can an active task tree use the terminal task archive topology
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > can an external absolute input be rebased into the repository
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > can before after once or while authorize SemanticIR phases
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > can certification administration become a SemanticIR phase or gate
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
@@ -94,6 +98,8 @@
   > can the prose bus-line signal lever (PDF-VARIANT-DIGESTION.9.10) be cluster-scoped as a CORPUS-PATTERN-REUSE opt-in extractor
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > can the subject snap fabricate or rewrite a signal name
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > can the word when in a statement make its whole section a semantic phase
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > can typed-surface counts alone determine a PDF's purpose category (no — 2 vs 3 not separable, ISA has no signature, 5 vs 6 indistinguishable)
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
@@ -280,6 +286,8 @@
   > does register extraction require the table_kind register classification
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > does relation-derived direction synthesis independently invent signal names
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > does removing sentence fallback remove address phase recognition
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
   > does sanitizing the module name break initiator port matching (no — from_intent_ir re-derives the initiator raw; actor_name is only the label)
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
@@ -290,11 +298,3 @@
   > does specforge handle coordinated drive/read objects (X drives A and B)
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
   > does specforge handle passive voice for actor-signal relations (X is driven by Y)
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > does specforge validate modify the artifact passed on the command line
-- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
-  > does specforge write to the input path I pass or to a canonical generated path
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > does the Certified sibling confirm the OpenCAPI Ready glossary result
-- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
-  > does the Docling metadata sidecar store repository relative paths

@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
+  > when does a caption ground a register name
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > when does evidence_extraction_quality_majority_not_entailed or _gauge_stale fire
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > when does presence capture refuse a row vs the whole table
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > when is a bracket-slice leading token a field name
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > when is a single letter a field name
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > when is the purpose category HIGH vs LOW confidence (only clean wire shape + self-declared guide are HIGH; everything else LOW + explicit residual)
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > when should message fields join the document class census
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
@@ -16,6 +28,8 @@
   > where are cross-document prior contradictions surfaced
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > where are register bit-fields dropped on the way to .isf (isf_ir.rs:852, IsfStorageVar { name, width, reset } — field metadata discarded)
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > where are section-derived semantic phases built
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > where did SpecForge suggest LTL/MTL support in ISF
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
@@ -284,17 +298,3 @@
   > why are behaviors and constraints (22k each) not lowered to .isf — is that a gap
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > why are conditional_rules excluded from the document-class decision
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > why are determiners (All Managers) NOT rejected by the .1a agent gate
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why are many distinct value-tables merged into one enum (build_symbol_definitions accumulates members by enum_name key, semantic.rs:2782-2789 — every 'TABLE'-named table fuses into one SymbolDefinitionRecord)
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > why are message fields not part of the document_class decision
-- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
-  > why are modal verbs must shall should may not flagged as ambiguous
-- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
-  > why are prior candidate fixture names not joined into one long Markdown line
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > why are register-IP (cat 2) and platform-IP (cat 3) reported as one combined register-or-platform category (counts cannot separate them — DOC-INTENT-TAXONOMY.1)
-- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
-  > why are rustup and cargo allowed on the boot volume

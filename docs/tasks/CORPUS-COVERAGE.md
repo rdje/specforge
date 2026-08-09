@@ -757,6 +757,117 @@ today's ephemeral normalized-directory count.
   mdBook, durable fact, and `MEMORY.md` agree; parent `.2.42` stayed open through this child commit and subsequently
   closed after final replay and authenticated cleanup.
 
+- ID: `CORPUS-COVERAGE.2.43` · Status: `in_progress` (`2026-08-10`, DATA/CODE/DOC) · Children: `.2.43a`
+  semantic-phase authority repair (in progress). Goal: run a guarded
+  current-binary refresh of `opencapi_3_0_ready_definition_v1_1` from the caller-authorized same-SSD source and
+  complete the deterministic SourceIR→EvidenceIR→SemanticIR→IntentIR→adapter cascade. The 15-page OpenCAPI 3.0
+  Ready Definition is the smallest of the 14 remaining real chip-spec candidates: 171 retained elements and
+  249595 source bytes, ahead of the next candidate at 23 pages / 262 elements / 765080 bytes.
+
+  The caller-authorized read-only source is
+  `/Volumes/SSD/Documents/livework/chipdoc/cxl/opencapi/current/OpenCAPI-3.0-Ready_Definition_v1.1.pdf`;
+  source and repository share SSD device `16777240`. The PDF hashes to `cf553953…0c0`; current release
+  `9692af3e…b4b` owns the run. Before mutation, authenticate and preserve the exact six-file / 390379-byte stale
+  chain under `.cache/task-work/CORPUS-COVERAGE.2.43/rollback`. Stale SourceIR reports 15 pages / six visuals /
+  three tables / 30 sections / 171 elements and still records retired boot-volume provenance. EvidenceIR has 176
+  statements, two conditionals, and zero relations, signal constraints, registers, or timing records. The stale
+  semantic/intent chain nevertheless carries six actors / one interface / seven phases / five gates and 30
+  behaviors; its blocked adapter has one signal and no renderable behavior.
+
+  Re-ingest on CPU with the built-in 85%-used RAM abort, no LLM/VLM inference, and repository-derived task
+  storage. Classify every delta under current generic diagram/glossary, legal, administrative, interface, and
+  behavioral authority without assuming the result from sibling documents. Stop and open an owned child for any
+  new universal defect. Promote only complete validated stages, reproduce the final cascade, hold the full
+  protocol/KG/FSMGen/book/doctrine/path/locality gates, and delete only authenticated task evidence after signoff.
+
+### Pending signoff criteria — `CORPUS-COVERAGE.2.43`
+
+- **PENDING — REPRODUCE / MEASURE** — authenticate the source, release, exact stale six-file chain, same-volume
+  rollback, and stale semantic/adapter surface; record guarded-ingest memory, structural counts, path census,
+  final hashes, and complete typed before→after deltas.
+- **PENDING — ROOT CAUSE (WHY + WHERE)** — classify every material delta against current universal source cleanup
+  and evidence/semantic/behavior authority; preserve source evidence and own any newly exposed generic defect in
+  a child before accepting downstream artifacts.
+- **PENDING — ADDRESSED (verified)** — promote and validate every stage, converge obsolete adapter targets, require
+  generated paths final and repository-relative, and accept only the pipeline-grounded renderable or honestly
+  blocked result.
+- **PENDING — NO REGRESSION** — reproduce the final cascade, pass nine provider-free WIRE/I2C/SWD datasets, KG
+  156/156, every emitted ISF through FSMGen strict, mdBook, doctrines, persisted paths, and project-data locality;
+  run broader Rust CI if product code changes.
+- **PENDING — GENERICITY** — no OpenCAPI/vendor/document/acronym exception, manual generated-artifact edit, relaxed
+  validation, fabricated interface/behavior, or LLM/VLM inference enters the slice.
+- **PENDING — LOCKSTEP** — generated artifacts, #43 row/count/frontier, live docs, durable fact when warranted,
+  mdBook, and `MEMORY.md` agree; remove only the authenticated task bundle after all final gates pass.
+
+- ID: `CORPUS-COVERAGE.2.43a` · Status: `done` (`2026-08-10`, PROBE/CODE/DATA/DOC) · Children:
+  `.2.43a.i` (pending). Result: repaired the universal semantic-phase authority defect exposed by #43 before
+  accepting its SemanticIR or IntentIR. Fresh
+  173-statement EvidenceIR has no typed hardware surface, yet `build_phases` turns `2.1 Functional test for ...`,
+  `3 ... host system definition`, and `3.1 Functional test for ...` into three semantic phases and therefore
+  three Intent behaviors. None of those titles names a protocol phase, sequence, flow, timing, transaction,
+  handshake, operation, mode, startup, shutdown, reset, request, response, transport, state, read, or write.
+
+  Root-cause inspection shows `build_phases` accepts either an explicitly phase-like title OR any section with a
+  supporting statement containing one of nine ubiquitous sequencing words (`before`, `after`, `until`,
+  `during`, `then`, `next`, `once`, `when`, `while`). The fallback promotes the entire section even when the cue
+  appears only in a requirement, register description, note, definition, or test procedure. A first retained-
+  artifact projection finds 11,286 phase records across 79 documents; exact replication of the production ASCII
+  word-boundary predicate classifies 8,106 as statement-fallback-only and 3,180 as title-authorized. The fallback
+  spans 77 documents and includes titles such as `Bit descriptions`, `Configuration`, `Note`, `Approved Approved`,
+  and `Hardware Specification`. This is a corpus-scale semantic precision failure, not an OpenCAPI exception.
+
+  `build_phases` now requires a non-empty section plus phase-like heading authority and no longer consults
+  sentence sequencing words. Three paired regressions retain titled phase/sequence/timing structure and explicit
+  typed `address phase` recognition while rejecting functional-test, system-definition, and bit-description
+  contexts. Under repaired release `c61f0579…b117`, unchanged EvidenceIR `410548a7…f34c` rebuilds #43 from three
+  generic phases / 22 Intent behaviors to zero / 19; every other measured semantic count holds. Two complete
+  downstream replays reproduce SemanticIR/report `9309abd8…d729` / `8550ed8b…9421`, IntentIR/report
+  `91797f8f…9300` / `91ec2866…9f20`, and adapter/report `908ac593…94d` / `0964bbe5…ee3d`.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.43a`
+
+- [x] **REPRODUCE / MEASURE** — pinned all three #43 section→statement→cue→phase→behavior paths. Exact production-
+  boundary replication classifies 11,286 retained generic phases as 3,180 title-authorized and 8,106 sentence-
+  fallback-only across 77 documents; the separate typed surface holds 82 retained transaction phases.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `build_phases` elevated one of nine ubiquitous sentence cues into whole-
+  section authority; git blame traces the unchanged disjunction to initial SemanticIR commit `f8e42eaa9`.
+  `build_transaction_phases` is independent and uses a bounded `<qualifier> phase` grammar.
+- [x] **ADDRESSED (verified)** — generic phases now require non-empty heading authority. Unchanged 173-statement
+  #43 EvidenceIR loses exactly its three false phases/derived behaviors; typed protocol records and every other
+  measured semantic count remain unchanged across two byte-identical downstream cascades.
+- [x] **NO REGRESSION** — three new paired controls and all 408 semantic tests pass; nine WIRE/I2C/SWD datasets
+  retain their declared 1.000 gates, KG is 156/156, full CI is 1,796 pass/five ignored, and all 66 emitted ISFs
+  pass FSMGen strict with zero diagnostics. mdBook, six doctrines, persisted paths, and locality pass.
+- [x] **GENERICITY** — no OpenCAPI/vendor/document/title allowlist or denylist, section index, exact sentence,
+  generated-output edit, or broad deletion of sequencing language entered the repair; the rule is section-
+  structural and leaves sentence evidence plus all other consumers intact.
+- [x] **LOCKSTEP** — source comments, measurement, #43 rebuilt child cascade, parent/child task state, live docs,
+  code analysis, mdBook, durable fact, derived catalogs/maps, and `MEMORY.md` agree. Parent `.2.43` remains open;
+  pending `.2.43a.i` owns the distinct heading-vocabulary audit before final semantic classification.
+
+- ID: `CORPUS-COVERAGE.2.43a.i` · Status: `pending` (`2026-08-10`, PROBE/CODE/DATA/DOC) · Goal: audit and tighten
+  the separate generic phase-title authority family after `.2.43a` is committed. The exact `.2.43a` positive
+  census finds 3,180 title-authorized records across 69 retained documents, but 720 are headed `Reset value` and
+  other high-frequency records include register, response, mode, read, and write headings. Determine which
+  section-title grammars truly authorize the broad section-derived `phases[]` surface, distinguish them from the
+  already precise `<qualifier> phase` `transaction_phases[]` surface, and implement only a universal structural
+  grammar with paired protocol/register controls. This finding does not affect #43's three sentence-fallback-only
+  phases and must not widen `.2.43a` into a second causal repair.
+
+### Pending signoff criteria — `CORPUS-COVERAGE.2.43a.i`
+
+- **PENDING — REPRODUCE / MEASURE** — classify all 3,180 title-authorized records by exact phrase, title grammar,
+  section kind, and downstream use; pin true phase/sequence/timing controls and obvious register/value negatives.
+- **PENDING — ROOT CAUSE (WHY + WHERE)** — determine whether the broad historical keyword family represents a
+  defensible section-derived behavior surface or conflates topics/register metadata with semantic phases.
+- **PENDING — ADDRESSED (verified)** — select the smallest universal heading grammar, or close as no-code with
+  evidence if the existing family is justified; never alter the precise typed `transaction_phases[]` recognizer.
+- **PENDING — NO REGRESSION** — pair negative and positive controls and run the full semantic/protocol/KG/CI/book/
+  doctrine/path/locality gate set for any product change.
+- **PENDING — GENERICITY** — no title/document/vendor/protocol allowlist or denylist; decisions derive only from
+  heading grammar, section structure, and typed evidence.
+- **PENDING — LOCKSTEP** — measurement, task, code analysis, mdBook, durable fact, and resume pointer agree.
+
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34b.ii.a`
 
 - [x] **REPRODUCE / MEASURE** — fresh USB4 ingest reproducibly leaves 51/51 page-sidecar image paths absolute and
@@ -1015,8 +1126,8 @@ today's ephemeral normalized-directory count.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: `CORPUS-COVERAGE.2` — select and own refresh #43 from the 14 remaining real chip-spec documents, then
-  run its guarded one-document current-binary refresh from the caller-authorized same-SSD source.
+- Frontier: `CORPUS-COVERAGE.2.43a.i` — classify the 3,180 heading-authorized generic phases by exact title grammar
+  and section structure, then select the smallest universal precision boundary or close no-code with evidence.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**39 refreshes done after #39;
   17 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#39: #29/#31 CHI-C2C marquee message-field refreshes,
@@ -1123,6 +1234,18 @@ strict syntax is not a semantic-fidelity oracle. **Levers A, B, C, F + the rule-
 
 ## Changelog
 
+- `2026-08-10`: `.2.43a` PROBE/CODE/DATA/DOC DONE. Exact census classifies 11,286 retained generic phases as 3,180
+  heading-authorized and 8,106 sentence-fallback-only across 77 documents. `build_phases` now requires a non-empty
+  phase-like heading; typed `<qualifier> phase` recognition remains independent. Unchanged 173-statement #43
+  evidence rebuilds phases 3→0 / behaviors 22→19 with every other semantic count stable, and two cascades
+  reproduce six hashes. Three controls, 408 semantic tests, WIRE/I2C/SWD, KG 156/156, full CI 1,796/five ignored,
+  66/66 FSMGen strict, book/doctrines/path/locality pass. The separate `Reset value` title risk is owned by pending
+  `.2.43a.i`; frontier → its exact grammatical audit before parent classification.
+- `2026-08-10`: `.2.43` DATA/DOC OWNED from clean commit `7eca3d03`. The 15-page OpenCAPI 3.0 Ready
+  Definition is the smallest remaining candidate at 171 elements / 249595 source bytes; the next candidate is 23
+  pages / 262 elements / 765080 bytes. Same-SSD source `cf553953…0c0`, release `9692af3e…b4b`, and stale six-file /
+  390379-byte chain are identified read-only. Frontier → authenticate exact rollback, then guarded CPU ingest and
+  deterministic cascade.
 - `2026-08-10`: `.2.42` DATA/CODE/DOC DONE. Two guarded OpenCAPI Certified Definition ingests reproduce 15 pages /
   eight visuals / five tables / 31 sections / 151 elements at 18% and 33% peak sampled memory. Source 155→151
   removes exactly four flattened diagram labels; Evidence 172→167 additionally removes synthetic

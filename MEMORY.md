@@ -21,15 +21,22 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2`; refresh #42 is complete and the frontier is selection/ownership of #43.
+- Active unit: `CORPUS-COVERAGE.2.43a.i`; pending generic phase-title grammar audit surfaced by completed `.2.43a`.
 - Current state: 42 refreshes are complete / 14 remain, with 80 SourceIR / 11 normalized / 80 EvidenceIR / 79
   SemanticIR / 79 IntentIR / 79 adapters. OpenCAPI Certified Definition refresh #42 reproduces 15 pages / eight
   visuals / five tables / 31 sections / 151 elements. Evidence is 167 statements with no typed hardware surface;
   SemanticIR has two actors, zero interfaces/phases/gates, eight invariants and four contracts; IntentIR retains
   four genuine compliance behaviors and eight constraints. The adapter blocks on no signals and emits no target.
-  All 12 hashes and two downstream cascades reproduce; nine WIRE/I2C/SWD datasets, KG 156/156, and 66/66 FSMGen
-  strict pass. The exact 89-file / 881263-byte task bundle is removed with zero residue after final gates.
-- Next action: select the smallest roadmap-aligned remaining document, own `CORPUS-COVERAGE.2.43`, then run its
-  guarded one-document refresh from the caller-authorized same-SSD source.
-- In-flight uncommitted: none after the recording commit; generated #42 artifacts are complete and validated.
+  Refresh #43 SourceIR is 15 pages / six visuals / three tables / 30 sections / 169 elements at 62% peak sampled
+  memory; EvidenceIR is 173 statements with no typed hardware surface. Exact `.2.43a` measurement classifies
+  11,286 retained generic phases as 3,180 title-authorized and 8,106 sentence-fallback-only across 77 documents.
+  `build_phases` now requires heading authority; paired controls pass, and rebuilding unchanged #43 evidence
+  removes all three false phases/behaviors while every other measured semantic count holds. The positive census
+  separately found 720 `Reset value` heading phases. Two cascades reproduce six hashes; semantic/WIRE/KG/full-CI/
+  66-FSMGen/book/doctrine/path/locality gates pass.
+- Next action: activate `.2.43a.i`, classify all 3,180 heading-authorized records by exact grammar and section
+  structure, then choose the smallest universal precision boundary or close no-code with evidence.
+- In-flight uncommitted: parent task ownership, exact six-file / 390379-byte same-volume rollback, fresh validated
+  #43 SourceIR→adapter chain, and pending `.2.43a.i` ownership. After the `.2.43a` recording commit, no completed
+  child work remains uncommitted.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

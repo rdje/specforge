@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
+  > how does specforge extract a CAN-style error-state FSM (error active / error passive / bus off)
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > how does specforge extract a single-word ALL-CAPS state machine (SWP ACTIVATED / DEACTIVATED / SUSPENDED)
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > how does specforge fold an X interface relation subject onto the bare agent X
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > how does specforge group a transaction's signals by phase (.2i: TransactionIntent.phase_membership, built in mint_named_transaction by intersecting anchor.signal_set with each TransactionPhaseRecord.signal_set; metadata, not .isf steps)
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > how does specforge handle PSEL vs PSELx (or HSEL vs HSELx)
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > how does specforge handle a signal table whose name column is not first
 - [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
@@ -243,6 +253,8 @@
   > how many retained documents depended entirely on heuristic SemanticIR interfaces
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > how many retained legal semantic gates were measured
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > how many retained phases depended only on sequencing words
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > how many sentence-start signal descriptor phrases pollute the retained corpus
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
@@ -285,15 +297,3 @@
   > how should the agent-identity / actor noise gate stay agnostic (no name list, ADR 0006)
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
   > how should the current FSMGen gitlink in documentation be verified
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > how to compose a register-level ISF reset from per-field reset_value (LSB-tiling: V = OR(parse_int(reset_i) << bits_low_i), mirroring ir/register_bits.rs; only when every field is located + parseable non-neg int fitting its field width + no overlap)
-- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
-  > how to exploit that same-vendor / same-brand PDFs share organization without hardcoding vendor names
-- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
-  > how to express the JTAG TAP / SWD FSM in .isf
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > how to get a fresh eval-extraction baseline for a spec
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > how to re-measure the message-field corpus yield
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > how to re-score SWD derivation

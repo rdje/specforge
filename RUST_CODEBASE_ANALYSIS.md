@@ -4,6 +4,26 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-10 — section-phase heading authority; `CORPUS-COVERAGE.2.43a`)
+
+- `build_phases` now requires a non-empty section anchor plus `phase_like_title`; it no longer promotes an entire
+  section because one supporting sentence contains `before`, `after`, `until`, `during`, `then`, `next`, `once`,
+  `when`, or `while`. The now-unused `sequencing_language` fallback is removed.
+- Exact replication of the producer's ASCII word-boundary predicate classifies 11,286 retained generic phases as
+  3,180 title-authorized and 8,106 statement-fallback-only across 77 documents. The historical rule is unchanged
+  from the initial SemanticIR lifting commit `f8e42eaa9`, so this is an exact classification of emitted records,
+  not a substring estimate.
+- `build_transaction_phases` remains an independent typed surface. Its bounded `<qualifier> phase` grammar and
+  declared-signal intersection preserve explicit address/data/setup/access recognition even when the containing
+  section is not a generic phase.
+- Paired tests cover functional-test/system-definition/bit-description negatives, titled phase/sequence/timing
+  positives, and typed `address phase` independence. On unchanged 173-statement #43 EvidenceIR, phases fall 3→0
+  and derived Intent behaviors 22→19 while every other measured semantic count holds.
+- The positive census exposed a distinct title-grammar risk: 720 of 3,180 heading-authorized records are titled
+  `Reset value`. Pending child `.2.43a.i` owns that audit rather than widening the sentence-fallback repair.
+- Two complete #43 downstream replays reproduce six hashes. All 408 semantic tests, nine WIRE/I2C/SWD datasets,
+  KG 156/156, full CI (1,796 pass/five ignored), and all 66 current emitted ISFs through FSMGen strict pass.
+
 ## Session update (2026-08-10 — administrative-workflow semantic authority; `CORPUS-COVERAGE.2.42a`)
 
 - `SemanticContext::from_evidence_ir` remains the shared authority seam: EvidenceIR preserves organizational

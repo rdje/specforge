@@ -4568,14 +4568,13 @@ fn build_phases(context: &SemanticContext) -> Vec<PhaseRecord> {
     context
         .section_anchors
         .iter()
+        // A whole section needs structural title authority to become a generic
+        // phase. Sentence-level words such as `when` and `after` are common in
+        // requirements, notes, register descriptions, and test procedures; they
+        // do not make the surrounding section a phase. Explicit protocol phrases
+        // such as `address phase` remain available through `transaction_phases`.
         .filter(|section| {
-            !section.supporting_statement_ids.is_empty()
-                && (phase_like_title(&section.title)
-                    || section
-                        .supporting_statement_ids
-                        .iter()
-                        .filter_map(|statement_id| statement_by_id(context, statement_id))
-                        .any(|statement| sequencing_language(&statement.text)))
+            !section.supporting_statement_ids.is_empty() && phase_like_title(&section.title)
         })
         .map(|section| PhaseRecord {
             phase_id: format!("phase_{}", document_key(&section.title)),
@@ -7444,15 +7443,6 @@ fn decomposition_like_title(title: &str) -> bool {
             "decoder",
             "encoder",
             "path",
-        ],
-    )
-}
-
-fn sequencing_language(text: &str) -> bool {
-    contains_any_phrase(
-        &text.to_ascii_lowercase(),
-        &[
-            "before", "after", "until", "during", "then", "next", "once", "when", "while",
         ],
     )
 }
@@ -22641,6 +22631,127 @@ mod tests {
             actor_signal_relations: vec![],
             signal_semantic_hints: vec![],
         }
+    }
+
+    fn phase_test_statement(id: &str, text: &str, section_id: &str) -> super::StatementContext {
+        super::StatementContext {
+            statement_id: id.to_string(),
+            class: super::StatementClass::SourceFact,
+            text: text.to_string(),
+            related_visual_evidence_ids: vec![],
+            section_ids: vec![section_id.to_string()],
+            signals: super::extract_signal_tokens(text),
+            supporting_table_ids: vec![],
+        }
+    }
+
+    #[test]
+    fn build_phases_requires_structural_title_authority() {
+        let sections = [
+            (
+                "section_test",
+                "Functional test for controller",
+                "statement_test",
+                "Once the application reports success, the validation is complete.",
+            ),
+            (
+                "section_definition",
+                "Host system definition",
+                "statement_definition",
+                "The manufacturer shall assert when it meets these requirements.",
+            ),
+            (
+                "section_bits",
+                "Bit descriptions",
+                "statement_bits",
+                "The field is cleared after reset.",
+            ),
+        ];
+        let mut context = make_semantic_context_with_statements(
+            sections
+                .iter()
+                .map(|(section_id, _, statement_id, text)| {
+                    phase_test_statement(statement_id, text, section_id)
+                })
+                .collect(),
+        );
+        context.section_anchors = sections
+            .iter()
+            .map(
+                |(section_id, title, statement_id, _)| super::SemanticSectionContext {
+                    section_id: section_id.to_string(),
+                    title: title.to_string(),
+                    supporting_statement_ids: vec![statement_id.to_string()],
+                },
+            )
+            .collect();
+
+        assert!(
+            super::build_phases(&context).is_empty(),
+            "sentence-level sequencing words must not promote whole sections to phases"
+        );
+    }
+
+    #[test]
+    fn build_phases_retains_titled_protocol_structure() {
+        let sections = [
+            ("section_setup", "Setup phase", "statement_setup"),
+            ("section_reset", "Reset sequence", "statement_reset"),
+            ("section_timing", "Transaction timing", "statement_timing"),
+        ];
+        let mut context = make_semantic_context_with_statements(
+            sections
+                .iter()
+                .map(|(section_id, _, statement_id)| {
+                    phase_test_statement(statement_id, "The controller participates.", section_id)
+                })
+                .collect(),
+        );
+        context.section_anchors = sections
+            .iter()
+            .map(
+                |(section_id, title, statement_id)| super::SemanticSectionContext {
+                    section_id: section_id.to_string(),
+                    title: title.to_string(),
+                    supporting_statement_ids: vec![statement_id.to_string()],
+                },
+            )
+            .collect();
+
+        let phases = super::build_phases(&context);
+        assert_eq!(phases.len(), 3);
+        assert_eq!(
+            phases
+                .iter()
+                .map(|phase| phase.supporting_section_ids.clone())
+                .collect::<Vec<_>>(),
+            vec![
+                vec!["section_setup".to_string()],
+                vec!["section_reset".to_string()],
+                vec!["section_timing".to_string()],
+            ]
+        );
+    }
+
+    #[test]
+    fn typed_transaction_phase_does_not_depend_on_generic_section_phase() {
+        let section_id = "section_test";
+        let mut context = make_semantic_context_with_statements(vec![phase_test_statement(
+            "statement_address",
+            "During the address phase the manager drives HADDR.",
+            section_id,
+        )]);
+        context.section_anchors = vec![super::SemanticSectionContext {
+            section_id: section_id.to_string(),
+            title: "Functional test for controller".to_string(),
+            supporting_statement_ids: vec!["statement_address".to_string()],
+        }];
+
+        assert!(super::build_phases(&context).is_empty());
+        let declared = ["HADDR".to_string()].into_iter().collect();
+        let transaction_phases = super::build_transaction_phases(&context, &declared);
+        assert_eq!(transaction_phases.len(), 1);
+        assert_eq!(transaction_phases[0].phase_name, "address");
     }
 
     // -- contains_phrase high-value mutants --

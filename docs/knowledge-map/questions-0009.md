@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > why does the AArch64 External Debug Guide emit no ISF
+- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
+  > why does the ADI spec produce so few signals and so much garbage
+- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
+  > why does the Claude Read tool refuse some PDFs / report password-protected
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > why does the CoreSight Base System Architecture emit no ISF
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > why does the D4.5 CLAIMSET (no block token) stay a residual under .10i
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > why does the DTI / trace-bus .isf fail FSMGen --strict --check (OperandContract: a value literal wider than the declared signal width)
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > why does the Introducing CoreSight guide emit no ISF
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > why does the MPAM 'must be included' sentence extract nothing
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > why does the OpenCAPI AFU Address Space Usage note emit no ISF
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
