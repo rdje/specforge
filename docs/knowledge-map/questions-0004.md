@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > is the SpecForge extraction robust and can it grow to a vast set of chip-spec PDFs
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > is the VLM the right lever for AXI transaction phase membership (no — a deterministic channel-table cue is)
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -296,5 +298,3 @@
   > what happens to the extraction-quality gauge when the constraint surface is replaced
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > what happens when the NLI provider is down
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > what identifies the canonical inputs to generated Knowledge Map shards

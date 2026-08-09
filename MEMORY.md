@@ -21,13 +21,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.2` — independently audit and close the bounded active-task
-  containment program.
-- Current state: `.3.1` migrated the contract to `migrated/complete`. The stable PDF task path is a 106-line
-  active current root over a 79-line index, seven bounded semantic parts, 52 primary routes, and the exact
-  2,393-line / 222,616-byte source capsule. Thirty-four focused cases and full CI pass.
-- Next action: start `.3.2` from the clean `.3.1` commit and independently prove fresh-clone retrieval, semantic
-  equivalence, ordinary future append safety, and final book/task closure.
-- In-flight uncommitted: none after the `.3.1` commit; product artifacts, shared inputs, thresholds, and ceilings
+- Active unit: none after `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.2`; the bounded active-task containment tree is
+  closed and must not be reopened.
+- Current state: a clean clone of `.3.1` commit `06eb3941` reproduces the 106-line current root, 79-line index,
+  seven bounded parts, 52 routes, 15 exact payloads, and 2,393-line source capsule. A positive continuation
+  fixture brings focused coverage to 35/35; full CI passes.
+- Next action: create a separately owned root rolling-ledger pressure tree, remeasure all four roots, and rotate
+  `CHANGES.md` first before another ordinary ledger append; development is also near rollover and status is above
+  its byte warning.
+- In-flight uncommitted: none after the `.3.2` commit; product artifacts, shared inputs, thresholds, and ceilings
   are unchanged.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

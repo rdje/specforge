@@ -1570,6 +1570,47 @@ Run the declared verifier.
 INDEX
 }
 
+sub append_fixture_activity {
+    my ($base, $contract) = @_;
+    my $part = {
+        part_id => 'activity-02',
+        path => 'docs/tasks/program/activity-02.md',
+        heading => '# PROGRAM — activity 02',
+        state => 'active',
+    };
+    my $part_raw = raw_scalar(
+        "$part->{heading}\n\n- Part ID: `$part->{part_id}`\n- State: `$part->{state}`\n\n"
+        . "## PROGRAM.2\n\nNew bounded activity.\n",
+    );
+    $part->{sha256} = sha256_hex($part_raw);
+    $part->{metrics} = metrics($part_raw);
+    push @{$contract->{destinations}{parts}}, $part;
+    push @{$contract->{leaf_routes}}, {
+        leaf_id => 'PROGRAM.2',
+        part_id => $part->{part_id},
+        origin => 'post_migration',
+    };
+    $contract->{current_frontier} = {
+        mode => 'eligible',
+        literal => 'PROGRAM.2',
+        leaf_id => 'PROGRAM.2',
+        part_id => $part->{part_id},
+    };
+    for my $literal (@{$contract->{migrated_requirements}{root_required_literals}}) {
+        $literal = 'PROGRAM.2' if $literal eq 'No eligible frontier.';
+    }
+    my $root_raw = fixture_root();
+    $root_raw =~ s/No eligible frontier\./PROGRAM.2/;
+    write_raw($base, $contract->{current_path}, $root_raw);
+    write_raw($base, $part->{path}, $part_raw);
+    write_raw($base, $contract->{destinations}{index}, render_migration_index($contract));
+    write_raw(
+        $base,
+        $contract->{destinations}{manifest},
+        JSON::PP->new->canonical(1)->pretty(1)->encode(manifest_expected_subset($contract)),
+    );
+}
+
 sub init_fixture_git {
     my ($base, $contract, $source_raw) = @_;
     write_raw($base, $contract->{current_path}, $source_raw);
@@ -1697,6 +1738,7 @@ sub run_self_test {
         ['part payload mutation', 'migrated', 'complete', sub { my $part = $_[1]{destinations}{parts}[1]; my $raw = fixture_part_raw($_[1], $_[2], $part); $raw =~ s/- ID: `\.1`/- ID: `.2`/; write_raw($_[0], $part->{path}, $raw) }, qr/semantic part|payload differs/],
         ['manifest identity drift', 'migrated', 'complete', sub { my $manifest = manifest_expected_subset($_[1]); $manifest->{migrated_on} = '2026-08-09'; $manifest->{reason} = 'fixture migration'; $manifest->{source}{sha256} = 'f' x 64; write_raw($_[0], $_[1]{destinations}{manifest}, JSON::PP->new->canonical(1)->pretty(1)->encode($manifest)) }, qr/manifest field 'source' disagrees/],
         ['manifest scalar overflow', 'migrated', 'complete', sub { my $manifest = manifest_expected_subset($_[1]); $manifest->{migrated_on} = '2026-08-09'; $manifest->{reason} = 'x' x 600; write_raw($_[0], $_[1]{destinations}{manifest}, JSON::PP->new->canonical(1)->pretty(1)->encode($manifest)) }, qr/scalar above 512 bytes/],
+        ['post-migration active append positive', 'migrated', 'complete', sub { append_fixture_activity($_[0], $_[1]) }, undef],
         ['sealed part positive', 'migrated', 'complete', sub { seal_fixture_activity_part($_[0], $_[1], $_[2]) }, undef],
         ['sealed part mutation', 'migrated', 'complete', sub { seal_fixture_activity_part($_[0], $_[1], $_[2]); my $part = $_[1]{destinations}{parts}[1]; write_raw($_[0], $part->{path}, fixture_part_raw($_[1], $_[2], $part) . "changed\n") }, qr/differs from its sealing commit/],
     );

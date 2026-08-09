@@ -1,4 +1,16 @@
 # DEVELOPMENT_NOTES
+## ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.2 (`2026-08-09`) — continuation needs a positive executable path
+
+Fail-closed checks can prove that malformed future routes are rejected without proving any well-formed
+continuation is reachable. The closure audit found exactly that asymmetry: post-migration routes had negative
+coverage, while no fixture performed the ADR 0019 root+part transaction.
+
+The 35th case begins from a valid migrated fixture, adds one active semantic part and `post_migration` leaf route,
+changes the frontier from none to that eligible leaf, updates the root-required literal, and regenerates the index
+and manifest from the resulting contract. Validation then proves the route lands in an active part containing its
+ID and that every current authority agrees. This is deliberately a fixture transaction, not a PDF-specific
+writer: future product work remains manually scoped and committed through the task-tree workflow.
+
 ## ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.1 (`2026-08-09`) — encode scaffolds before appending evidence bytes
 
 The active migration has two different text domains. Its headings, markers, and normalized current root are

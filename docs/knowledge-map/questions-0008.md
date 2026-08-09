@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
+  > why does shall be 0h still bind the value 0 but shall be non-zero does not bind NO
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > why does slicing idx minus 2 before signal panic
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > why does specforge split on 'and' but not 'or' for a coordinated actor subject
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)

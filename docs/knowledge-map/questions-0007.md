@@ -2,12 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > which persisted paths must exist and which may be historical references
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > which project rescan string fields are treated as filesystem paths
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > which protocols look like register IPs structurally (CCIX, AXI, CHI, DTI, CHI-C2C — the register-heavy-protocol trap)
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > which register-table family stays residual (byte location size tables)
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > which root rolling ledger is currently above its rollover signal
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
@@ -293,7 +297,3 @@
   > why does root KNOWLEDGE_MAP_ARCHITECTURE.md not exist
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > why does setportfeature port over current become the USB 3.2 adapter actor
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > why does shall be 0h still bind the value 0 but shall be non-zero does not bind NO
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > why does slicing idx minus 2 before signal panic

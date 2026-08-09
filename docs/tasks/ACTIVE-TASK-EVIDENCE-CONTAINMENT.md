@@ -3,10 +3,11 @@
 ## Metadata
 
 - Tree ID: `ACTIVE-TASK-EVIDENCE-CONTAINMENT`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: process / continuity / active task evidence
 - Created: `2026-08-09`
 - Last updated: `2026-08-09`
+- Closed: `2026-08-09`
 - Owner: repo-local workflow
 
 ## Goal
@@ -41,7 +42,7 @@ open.
 ## Task Tree
 
 - ID: `ACTIVE-TASK-EVIDENCE-CONTAINMENT`
-  Status: active
+  Status: done
   Goal: keep active task evidence bounded, complete, and directly resumable
   Children: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.0`, `ACTIVE-TASK-EVIDENCE-CONTAINMENT.1`,
   `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2`, `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3`
@@ -104,7 +105,7 @@ open.
   Commit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2 — complete the active source lock inputs`
 
 - ID: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3`
-  Status: active
+  Status: done
   Goal: migrate, prove, and close the first-target containment program
   Children: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.1`, `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.2`
 
@@ -118,18 +119,38 @@ open.
   Commit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.1 — materialize bounded active task evidence`
 
 - ID: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.2`
-  Status: pending
+  Status: done
   Goal: independently audit the resulting active route and close containment work
   Acceptance: a fresh-clone-equivalent audit proves ordinary PNT can resume and append safely, every source byte
   remains retrievable, no target meaning/status changed, the mdBook method section is current, and this tree closes
-  Verification: pending
-  Commit: pending
+  Verification: clean clone at `06eb3941`; exact Git/blob/capsule equality; 15 payloads / 30 markers / 52 index
+  routes; root/manifest/contract state reconciliation; 35/35 cases including positive future append; live-size,
+  six doctrines, full CI (1,779 passed / five ignored), rustdoc, mdBook, locality, and residue pass
+  Commit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.2 — audit and close active task containment`
 
 ## Current Frontier
 
-| Order | Leaf | Status | Why next |
-| --- | --- | --- | --- |
-| 1 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.2` | `pending` | independently audit retrieval, meaning, and future append safety |
+No active frontier. The active PDF task evidence is bounded and this containment tree must not be reopened.
+
+The next continuity action is a separately owned root-ledger pressure tree. The clean-clone audit measures
+`CHANGES.md` at 1,631/1,800 health lines—already above rollover—while the closure update leaves
+`DEVELOPMENT_NOTES.md` close to rollover and the status ledger above its byte warning; remeasure all four, with
+`CHANGES.md` first.
+
+### Acceptance Checklist (enforced) — `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.2`
+
+- [x] **REPRODUCE / MEASURE** — a clean committed-tree audit independently inventories every active authority,
+  route, payload, exact source byte, pressure metric, and local residue without trusting migration narration.
+- [x] **ROOT CAUSE (WHY + WHERE)** — any retrieval, semantic-state, append-protocol, or verifier gap is localized
+  to its canonical root/index/part/manifest/contract/book authority before closure.
+- [x] **ADDRESSED (verified)** — the resulting tree supports bounded startup/current reads, complete semantic and
+  literal-history retrieval, and the declared future root+part transaction from repository-relative paths.
+- [x] **NO REGRESSION** — fresh-index checks, exact Git/capsule/payload comparisons, route/state reconciliation,
+  focused suites, doctrines, full CI, rustdoc, mdBook, locality, and residue census pass.
+- [x] **GENERICITY** — the audit follows registered data/contracts and exercises the fixture writer; it does not
+  rely on PDF-specific implementation branches, host paths, or undocumented manual reconstruction.
+- [x] **LOCKSTEP** — this tree, the stable PDF root, roadmap/status/resume, ledgers, facts, live doctrine, and
+  mdBook agree that containment is complete and ordinary PDF work requires a newly scoped activity.
 
 ### Acceptance Checklist (enforced) — `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.1`
 
@@ -231,11 +252,17 @@ boundary before rollover. Dedicated root/index/part/capsule limits and a schema-
   source/contract and remove only destination directories proven absent at preflight.
 - `2026-08-09`: Encode generated Unicode scaffolds before appending raw legacy slices. A non-ASCII source fixture
   is mandatory because character-upgraded concatenation can double-encode history while ASCII tests remain green.
+- `2026-08-09`: Closure requires a positive post-migration continuation case, not only rejection tests. The
+  fixture now adds an active semantic part, post-migration route, eligible frontier, index, manifest, and contract
+  update as one valid transaction.
+- `2026-08-09`: The clean-clone audit's unrelated root-ledger pressure does not invalidate active-task
+  containment. A new owning tree must remeasure all four roots immediately after this clean closure and rotate
+  `CHANGES.md` first; do not append around the rollover signal.
 
 ## Open Questions
 
-- None for implementation. ADR 0019 closes the topology, authority, state-precedence, update, limit, and migration
-  policy; `.2.1` may split only on a concrete implementation dependency, not reopen the decision by convenience.
+- None. ADR 0019's topology, authority, state precedence, update, limit, migration, and future continuation
+  contracts are implemented and independently audited; this containment tree is closed.
 
 ## Blockers
 
@@ -251,6 +278,7 @@ boundary before rollover. Dedicated root/index/part/capsule limits and a schema-
 | `2026-08-09` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1` | Perl syntax; 29 focused cases; real report; six doctrines; full CI; target blob/diff; destination residue | 1,779 pass / five ignored; source/topology enforced; target untouched; destinations absent; `.2.2` ready |
 | `2026-08-09` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2` | exact regions/routes; 32 focused cases; six doctrines; full CI; target diff; destination residue | source-locked/complete; 1,779 pass / five ignored; target untouched; destinations absent; `.3.1` ready |
 | `2026-08-09` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.1` | atomic writer/rollback; exact capsule/payloads/routes; 34 focused cases; three surfaces; doctrines; full CI; rustdoc; mdBook; locality | migrated/complete; 106-line root; seven bounded parts; exact 2,393-line capsule; 1,779 pass / five ignored; `.3.2` ready |
+| `2026-08-09` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.2` | clean clone/fsck/index; Git capsule cmp; contract/manifest/root reconciliation; 30 markers; 52 routes; positive append; doctrines; full CI; residue | exact retrieval and current meaning preserved; 35/35 focused; 1,779 pass / five ignored; tree closed; separate `CHANGES.md` containment next |
 
 ## Commit Log
 
@@ -262,6 +290,7 @@ boundary before rollover. Dedicated root/index/part/capsule limits and a schema-
 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.1 — enforce the source-locked active task contract` | neutral checker; topology-declared source lock |
 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2 — complete the active source lock inputs` | final boundary; exact regions and canonical/literal routes |
 | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.1` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.1 — materialize bounded active task evidence` | root-last migration; exact provenance and semantic routes |
+| `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.2` | `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.2 — audit and close active task containment` | clean-clone retrieval and future continuation proof |
 
 ## Changelog
 
@@ -282,3 +311,7 @@ boundary before rollover. Dedicated root/index/part/capsule limits and a schema-
   79-line index and seven bounded semantic parts, and preserved the exact 2,393-line source in an immutable
   capsule. A non-ASCII fixture closed a raw-byte rendering defect; 34 focused cases and full CI pass, and `.3.2`
   now owns the independent resulting-tree audit.
+- `2026-08-09`: `.3.2` independently cloned commit `06eb3941`, reproduced every bounded authority and exact
+  source byte, reconciled normalized status with ADR 0019, and added the missing positive post-migration append
+  case. Thirty-five focused cases and full CI pass; this tree closes. The audit separately routes the
+  root-ledger pressure to new ownership before another ledger append.

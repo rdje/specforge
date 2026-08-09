@@ -1,3 +1,17 @@
+### ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.2 — audit and close active task containment
+
+- Cloned committed migration `06eb3941` into a repository-local, no-hardlink audit workspace. Its clean Git
+  index, object integrity, exact blob/capsule comparison, 15 payloads / 30 markers, 52 index routes, root status,
+  manifest/contract identities, all live surfaces, six doctrines, and zero final residue reproduce independently.
+- Added the missing positive continuation fixture: a post-migration active part, eligible frontier, canonical
+  route, root, index, manifest, and contract update pass as one bounded transaction. Focused coverage is 35/35.
+- Reconciled the root's current activity states and no-eligible-frontier result with ADR 0019 while retaining all
+  literal legacy status evidence byte-for-byte. Full CI (1,779 passed / five ignored), rustdoc, mdBook, and final
+  locality pass; the containment tree closes without product, shared-input, threshold, or ceiling changes.
+- The independent live-size report found root-ledger pressure led by this file above rollover, with development
+  close and status above its byte warning. The next PNT action must create coordinated ownership, remeasure all
+  four roots, and rotate `CHANGES.md` first before another ordinary ledger append.
+
 ### ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.1 — materialize bounded active task evidence
 
 - Advanced the exact contract to `migrated/complete` through a project-neutral, same-volume materializer. It

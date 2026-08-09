@@ -127,8 +127,11 @@ Five active program groups support that north star:
   route IDs from constrained full-or-tree-relative source literals, closing the mixed historical-spelling defect;
   full CI passes. `.3.1` now completes the root-last migration: the stable route is a 106-line active current root
   over a 79-line index, seven bounded semantic parts, 52 canonical routes, and the exact 2,393-line source
-  capsule. A non-ASCII fixture closes byte/character boundary risk, and `.3.2` owns the independent closure audit.
-  Separately,
+  capsule. A non-ASCII fixture closes byte/character boundary risk. `.3.2` reproduces the result from a clean
+  clone, adds a positive root+part continuation case (35 focused cases total), and closes the tree. That audit
+  also finds root-ledger pressure: `CHANGES.md` is above rollover, development is close, and status is above its
+  byte warning. A new coordinated rolling-ledger pressure tree is the next continuity action, with `CHANGES.md`
+  first, before another ordinary ledger append. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

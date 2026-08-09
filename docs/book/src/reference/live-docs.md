@@ -182,6 +182,14 @@ rollback when Unicode scaffold concatenation upgraded raw UTF-8 legacy bytes and
 Generated scaffolds are now encoded before raw source slices are appended, and a non-ASCII legacy fixture keeps
 the boundary covered. All 34 focused cases pass. Three separate live-document surfaces enforce index, part, and
 archive-terminal bounds without widening a threshold or ceiling.
+
+`.3.2` independently clones committed migration `06eb3941` into a repository-local workspace and repeats the
+Git object/capsule comparison, marker and route counts, root/manifest/contract reconciliation, live-surface
+checks, and doctrine gate from a clean index. It also adds the missing positive continuation case: a new active
+semantic part, eligible frontier, `post_migration` route, root-required literal, index, manifest, and contract
+update pass together. The 35-case suite therefore proves both rejection and reachability of the future writer
+contract, and the containment program is closed.
+
 Post-migration sealing is Git-backed: a part's final content commit lands first, then a following state-only
 transaction records that ancestor commit/blob before any later part accepts work. The migrated legacy payloads
 need no such self-reference because exact source-region markers already make their bytes independently immutable.
@@ -189,6 +197,9 @@ need no such self-reference because exact source-region markers already make the
 All four root-ledger migrations have landed. `CHANGES.md`, `DEVELOPMENT_NOTES.md`,
 `LIVE_ACHIEVEMENT_STATUS.md`, and `RUST_CODEBASE_ANALYSIS.md` are bounded current views, while their
 exact source capsules are the historical authority.
+The same clean-clone audit finds root-ledger pressure led by `CHANGES.md` at 1,631/1,800 health lines, above its
+rollover signal. The closure update also leaves development close to rollover and status above its byte warning;
+a new owned pressure audit must remeasure all four roots and rotate changes first before another ordinary append.
 No historical content is removed before its identity, replacement route, consumers, and retrieval
 procedure are proved.
 The top-level README remains a first-class landing page; changing detail and

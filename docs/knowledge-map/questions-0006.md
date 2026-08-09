@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > what kind of extractor actually needs the cross-document cluster mechanism
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
   > what makes a valid activate-only opt-in extractor candidate
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
@@ -296,5 +298,3 @@
   > which local models are pulled and what are they for
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > which persisted evidence docs carry message_field_records
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > which persisted paths must exist and which may be historical references

@@ -6,6 +6,7 @@ answers:
   - "why is the bounded active task root written last"
   - "how does the active task migration preserve non-ASCII legacy bytes"
   - "what does the active task migration roll back after a validation failure"
+  - "how is a valid post-migration active task continuation verified"
 date: 2026-08-09
 status: current
 tags: [documentation, task-tree, containment, migration, provenance]
@@ -32,3 +33,8 @@ the two destination directories whose preflighted absence proves that it owns th
 and an exact 2,393-line / 222,616-byte capsule at SHA-256
 `9284dce40ad896c3de3811e95c3fdd347132b1849083499e9c543fc9026a19d4`. Focused cases likewise remove their
 PID-scoped repository workspace before rethrowing any unexpected failure, so the suite does not strand residue.
+
+Closure audit `.3.2` adds the complementary positive proof. Starting from a valid migrated fixture, it creates a
+new active semantic part and post-migration route, changes the current frontier to that eligible leaf, updates
+the root-required literal, and regenerates the index and manifest. All authorities validate together, so the
+35-case suite proves the future continuation path is reachable as well as fail-closed.

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
+  > what identifies the canonical inputs to generated Knowledge Map shards
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > what inputs define corpus KB managed block currentness
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -295,5 +297,3 @@
   > what is the vendor/layout fingerprint, the ExtractionProfile, and the offline corpus pattern miner
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
   > what keeps VALIDATION_SNAPSHOT current without mutating generated artifacts
-- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
-  > what kind of extractor actually needs the cross-document cluster mechanism

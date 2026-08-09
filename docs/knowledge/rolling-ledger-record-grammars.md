@@ -11,6 +11,7 @@ answers:
   - "where is the first post-migration DEVELOPMENT_NOTES rollover segment"
   - "how will the shared rolling ledger archive index be partitioned"
   - "does the rolling ledger verifier validate predecessor successor chronology"
+  - "which root rolling ledger is currently above its rollover signal"
 date: 2026-08-08
 status: current
 tags: [documentation, rolling-ledger, archive, continuity, validation]
@@ -36,6 +37,11 @@ prepended records. The validation writer's root path and managed markers are req
 `docs/archive/rolling-ledgers/changes/source-through-2026-08-08.md` with SHA-256
 `d89809322857aab3c506dde1cc6caaf57e22d0349655b37ddaab1f7bf22ba994`; the root is the bounded current
 view and `docs/archive/rolling-ledgers/INDEX.md` is the retrieval route.
+At clean commit `06eb3941`, the independent live-size audit measures the root at 1,631/1,800 health lines, above
+its 90% rollover signal, and 221,438/255,000 health bytes. The closure update also leaves development close to
+rollover and status above its byte warning. A new owning pressure tree must remeasure all four roots and rotate
+whole `CHANGES.md` records through the existing per-ledger index/manifest protocol first, before another ordinary
+ledger append.
 
 `DEVELOPMENT_NOTES.md` completed the second migration in `.4c`. Its immutable 1,601-record capsule is
 `docs/archive/rolling-ledgers/development-notes/source-through-2026-08-08.md` with SHA-256
