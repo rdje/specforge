@@ -33,6 +33,7 @@ changed* lives in git (layer D), not here.
 | [0019](0019-bounded-active-task-root-and-semantic-evidence-parts.md) | An oversized active task uses a bounded current root over semantic evidence parts and exact provenance | 2026-08-09 | accepted | documentation, continuity, task-tree, active-work, archive, retrieval |
 | [0020](0020-bounded-fact-card-browse-projection.md) | Fact-card browsing uses a bounded ID landing over deterministic title parts | 2026-08-09 | accepted | documentation, knowledge-map, generated-projection, retrieval, containment |
 | [0021](0021-cross-directory-fact-catalog-links-preserve-destinations.md) | Cross-directory fact rows preserve semantics and destinations, not relative link bytes | 2026-08-09 | accepted | documentation, knowledge-map, generated-projection, links, retrieval |
+| [0022](0022-fact-catalog-parts-pack-below-warning.md) | Fact-card title parts pack below the existing warning milestone | 2026-08-09 | accepted | documentation, knowledge-map, generated-projection, containment, pressure |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /

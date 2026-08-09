@@ -1,4 +1,25 @@
 # DEVELOPMENT_NOTES
+## FACT-CARD-CATALOG-CONTAINMENT.2.1.2 (`2026-08-09`) — executable pressure must shape packing
+
+The pre-migration checker deliberately implements both sides of the state switch before any generated row moves.
+That turns the committed legacy catalog, its canonical sources, and the future projection into one executable
+relation instead of relying on a migration script that can only be reviewed after it mutates output. The legacy
+side authenticates Git commit/blob/index, raw bytes, metrics, ordered rows, canonical rendering, and complete
+destination absence. The migrated side already owns exact output membership, content, resolved link targets,
+stale-residue rejection, and safe regenerated writes; `.2.2` only changes the declared state and invokes it.
+
+Running that renderer exposed two useful discrepancies before migration. First, the earlier diagnostic decoded
+raw UTF-8 and then encoded it twice while measuring rows; direct byte measurement gives a 255-byte maximum and
+201.9-byte average. The pinned blob, hash, total bytes, and 134-byte headroom were always correct. Second, the
+initial 64-row part template was 73/80 health lines and therefore above mandatory rollover. Even after removing
+two scaffold lines, 71/80 begins inside warning. ADR 0022 keeps the fixed limits and chooses 56 rows plus seven
+scaffold lines: 63/80, or 78.75%. Because `ceil(198 / 56)` remains four, capacity and topology do not change.
+
+Pressure policy is executable rather than advisory text. A projected dimension at 80% emits a warning; at 90%
+it fails with mandatory rollover. The contract cannot redefine those milestones, the focused cases exercise the
+90/80 split and exact 198-card ceiling, and external checks bind 198 to `200 - README - INDEX`. This keeps future
+edits from quietly restoring either the premature 160-card cap or a packing shape that is born over pressure.
+
 ## FACT-CARD-CATALOG-CONTAINMENT.2.1.1 (`2026-08-09`) — link identity is resolved destination, not source spelling
 
 Relative Markdown syntax is location-dependent. The legacy `(card-id.md)` bytes are correct only because the
@@ -22,14 +43,15 @@ wrong invariant.
 The generic membership gate and human browse route ask different questions. Membership needs the stable index to
 link every canonical card directly; human title browsing needs descriptive rows, but does not require all of them
 in the landing. ADR 0020 therefore retains a compact direct-ID list in `docs/knowledge/INDEX.md` and moves the
-existing descriptive rows into 64-card title parts. This avoids changing the generic index semantics or teaching
-the common live-size checker one project-specific transitive exception.
+existing descriptive rows into count-packed title parts. ADR 0022 later tightens the initially modeled 64-card
+parts to 56 so full output stays below warning. This avoids changing the generic index semantics or teaching the
+common live-size checker one project-specific transitive exception.
 
 Count-based packing is deliberate. Alphabet ranges look stable but can become arbitrarily unbalanced; byte-only
-packing makes the number of cards in a part unpredictable. Sixty-four rows under the existing 320-byte row cap
-need at most 20,544 bytes plus a fixed scaffold, safely below the 24,576-byte health target. At 198 cards the
-renderer needs at most four parts. Every addition may rebalance a bounded suffix, but the complete output set is
-derived and capped, so the diff cost cannot grow without bound.
+packing makes the number of cards in a part unpredictable. The original 64-row byte arithmetic was safe but its
+line shape entered the pressure zone; 56 migrated rows remain below both line and byte health. At 198 cards the
+renderer still needs at most four parts. Every addition may rebalance a bounded suffix, but the complete output
+set is derived and capped, so the diff cost cannot grow without bound.
 
 The focused 160-card literal was not the collection authority. The registered surface already permits exactly
 200 immediate Markdown files, two of which are structurally reserved for README and INDEX. Deriving 198 cards
@@ -48,7 +70,8 @@ Three separately valid controls have drifted into an operational contradiction. 
 160 immediate Markdown files against a 200-file ceiling, the focused catalog parser allows 160 actual cards, and
 the question projection allows 200 facts across cards and participating decisions. Meanwhile the browse index is
 a single file capped at 32,768 bytes. At the committed boundary it is 32,634 bytes: an average current row needs
-204.7 bytes, so nominal collection and question capacity cannot be exercised through the required browse route.
+201.9 raw bytes, so nominal collection and question capacity cannot be exercised through the required browse
+route. `.2.1.2` corrected the earlier 204.7-byte reading, which had encoded already-raw UTF-8 a second time.
 
 This is not evidence that a ceiling should increase. The canonical cards are small independent authorities; the
 problem lies in a generated projection that concentrated every browse row into one capped file. The next leaf

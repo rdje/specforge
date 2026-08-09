@@ -7,9 +7,11 @@ scope: documentation, knowledge-map, generated-projection, retrieval, containmen
 
 # ADR 0020: Fact-card browsing uses a bounded ID landing over deterministic title parts
 
-> **Correction:** ADR 0021 supersedes only this record's byte-identical detailed-row claim. Cross-directory
+> **Corrections:** ADR 0021 supersedes only this record's byte-identical detailed-row claim. Cross-directory
 > parts preserve every semantic field and exact card destination while rewriting `(card.md)` to
-> `(../knowledge/card.md)`. All topology, capacity, limit, and staging decisions below remain accepted.
+> `(../knowledge/card.md)`. ADR 0022 supersedes the original 64-card packing count with 56 cards per part so a
+> full part remains below the existing 80% warning. All other topology, capacity, limit, and staging decisions
+> below remain accepted.
 
 ## Context
 
@@ -21,7 +23,8 @@ The focused catalog checker has two tighter assumptions that no longer compose w
 it rejects more than 160 cards, and it renders every detailed row into one index capped at 32,768 bytes. The
 current index is 172 lines / 32,634 bytes, Git blob `dcac9e587a26304e15eb15743b04142cb03c5081`, and
 SHA-256 `e774d9fcc1b12f9bb83932789ef4268711a7756f491dfd2a492be375b3529d1b`. Its 158 rows range
-from 132 to 261 bytes and average 204.7 bytes, leaving only 134 bytes under the focused byte limit.
+from 132 to 255 raw bytes and average 201.9 bytes, leaving only 134 bytes under the focused byte limit. The
+`.2.1.2` checker corrected an earlier diagnostic that double-encoded raw UTF-8 and overstated these widths.
 
 The separate question projection has 159 facts / 1,136 keys across eight shards after recording this boundary.
 It is already partitioned and derive-and-diff checked, but its 209,962 aggregate bytes have crossed the 80%
@@ -58,14 +61,15 @@ routes plus a fixed scaffold capped at 2,048 bytes keep the complete root under 
 
 ### Detailed title parts
 
-Cards sort by ID and pack by count, 64 cards per part, into
+Cards sort by ID and pack by count, 56 cards per part, into
 `docs/knowledge-catalog/titles-NNNN.md`. Each part carries the existing detailed table columns and row rendering:
 ID link, establishment date, status, and title preview. Per ADR 0021, migration preserves those fields and their
 exact resolved card destinations as an ordered union; only the relative link spelling changes for the new
 directory.
 
-The renderer permits at most 198 cards and four parts. A row remains capped at 320 bytes; a part has at most 64
-rows plus a fixed scaffold capped at 1,024 bytes. The dedicated generated-projection surface uses these limits:
+The renderer permits at most 198 cards and four parts. A migrated row is capped at 333 bytes per ADR 0021; a part
+has at most 56 rows plus a seven-line fixed scaffold capped at 1,024 bytes. A full part is therefore 63 lines,
+78.75% of the unchanged 80-line health target. The dedicated generated-projection surface uses these limits:
 
 | Dimension | Health target | Inclusive ceiling |
 | --- | ---: | ---: |

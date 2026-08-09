@@ -1,3 +1,24 @@
+### FACT-CARD-CATALOG-CONTAINMENT.2.1.2 — enforce the legacy-locked fact catalog
+
+- Replaced the premature monolithic catalog checker with a schema-closed two-state verifier and data contract.
+  `legacy_locked` authenticates commit `9ad08ac`, blob `dcac9e58…5081`, exact SHA-256/metrics, the stage-zero
+  index, all 158 canonical cards, and the ordered 158-row digest while requiring the title-part directory to be
+  completely absent. The already-implemented `migrated` path validates exact deterministic output, direct ID and
+  part membership, semantic tuples, resolved cross-directory destinations, bounds, residue, and stale cleanup.
+- Cross-checked the derived 198-card maximum against the unchanged 200-file `knowledge_cards` surface and kept
+  the separate Knowledge Map 200-fact authority explicit. The future `fact_card_titles` generated-projection
+  surface is forbidden in legacy state and must match the exact path/lifecycle/limits/routes in migrated state.
+  The writer renders and verifies through a repository-local workspace, replaces only its generated namespace,
+  and writes the stable landing last.
+- The executable plan exposed and corrected two pre-migration diagnostics: raw UTF-8 rows are 132–255 bytes
+  (201.9 average), not the earlier double-encoded 261-byte maximum; and 64-card parts entered or crossed existing
+  pressure milestones. ADR 0022 now packs 56 cards, so a full part is 63/80 health lines without raising a target
+  or ceiling. The current plan is a 178-line / 12,390-byte landing plus three parts totaling 179 lines / 34,906
+  bytes; the four-file result is 357 lines / 47,296 bytes with no warnings.
+- Added 40 positive/fail-closed cases covering parsing, escaping, count packing, exact capacity, fixed rollover,
+  Git/file/row/output identities, external authority drift, both states, link routes, residue, and migrated write
+  cleanup. Legacy `--write` is idempotent: the monolith remains unchanged and `docs/knowledge-catalog/` absent.
+
 ### FACT-CARD-CATALOG-CONTAINMENT.2.1.1 — correct cross-directory fact routes
 
 - Found before implementation that ADR 0020's byte-identical row clause would copy `(card-id.md)` links into a
@@ -30,7 +51,8 @@
 - Opened a separately owned containment program before changing any fact-card catalog contract or output. The
   committed `47e91540` boundary contains 158 canonical cards plus the collection README and generated index.
 - Pinned the collection Git tree and index Git blob/SHA. The index is 172 lines / 32,634 bytes with only 134 bytes
-  below its focused 32,768-byte ceiling; 158 rows range from 132 to 261 bytes and average 204.7 bytes.
+  below its focused 32,768-byte ceiling; 158 rows range from 132 to 255 raw bytes and average 201.9 bytes. The
+  later `.2.1.2` checker corrected `.0`'s double-encoded width diagnostic; identity and headroom never changed.
 - Exposed the authority mismatch: the focused checker permits only two more cards, while the generic 200-file
   surface appears to leave 40 files and the question projection permits 200 facts. The collection is exactly at
   its generic 80% file warning despite the monolithic index already being 99.59% full under its own limit.

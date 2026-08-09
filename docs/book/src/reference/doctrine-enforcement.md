@@ -70,8 +70,8 @@ The project-owned normative contract is `README_POLICY.md`.
 
 Among its focused suites, the live-document gate runs 55 common lifecycle/control cases, 47 neutral derived-state
 classification cases, 25 SpecForge authority-adapter cases, and 15 terminal-task source/route/identity/boundary
-cases, plus 29 active-task source/topology/route/payload/bound cases and the projection-specific Knowledge Map
-contract and portable-bundle integration suite. Generated
+cases, plus 29 active-task source/topology/route/payload/bound cases, 40 fact-catalog source/plan/route/residue/
+bound cases, and the projection-specific Knowledge Map contract and portable-bundle integration suite. Generated
 collections must have complete landing membership, exact derive-and-diff content,
 bounded repository-local check workspaces, and no stale parts or temporary residue. Exact current fields are
 declared rather than guessed: derive-on-read values cannot retain a shadow, verified copies execute their named
@@ -80,6 +80,13 @@ authority check, authored intent remains human-owned, and immutable evidence kee
 The active-task contract binds source-locked Git/file identity, exhaustive semantic regions, planned-part
 pressure, fixed portable caps, and destination absence. Its later state verifies exact legacy routes, capsule and
 marker payloads, current root/frontier, index, manifest, per-part/aggregate pressure, and sealed Git identities.
+
+The fact-card contract authenticates its legacy commit/blob/index, raw digest/metrics, 158-card sources and row
+union, and complete destination absence. Its later state enforces the stable direct-ID landing, deterministic
+56-card title parts, semantic tuples and resolved card destinations, exact output membership/content, fixed
+capacity and mandatory-rollover bounds, residue cleanup, and repository-local writes. The 198-card maximum is
+cross-checked against the unchanged 200-file canonical surface while the 200-fact question authority remains
+independent. The title-part generated-projection registry record is forbidden before migration and exact after it.
 
 The project-data gate also runs three focused shell cases. It checks the tracked Cargo environment,
 the common shell initializer, Rust production temp/subprocess boundaries, exact Python environment

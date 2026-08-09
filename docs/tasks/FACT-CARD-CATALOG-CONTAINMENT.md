@@ -56,10 +56,11 @@ retrieval, direct id/title browsing, derive-and-diff freshness, and repository-v
   Goal: select and specify the bounded fact-card catalog topology
   Acceptance: a durable decision fixes authorities, membership, routing, partition/aggregate limits, update
   transaction, migration stages, and rejection cases without changing current catalog outputs
-  Verification: ADR 0020 accepts a stable ID landing plus 64-card title parts, derives 198 cards from the unchanged
-  200-file surface, fixes root/part/aggregate bounds and two-hop title retrieval, and separates legacy lock from
-  migration; proposed current rendering is 172 lines / 12,361 bytes plus three parts totaling 176 lines /
-  32,636 bytes; source index diff remains empty; decision/catalog/KM/live-size/doctrine/book gates pass
+  Verification: ADR 0020 initially accepted a stable ID landing plus 64-card title parts, derives 198 cards from
+  the unchanged 200-file surface, fixes root/part/aggregate bounds and two-hop title retrieval, and separates
+  legacy lock from migration; proposed current rendering at that boundary was 172 lines / 12,361 bytes plus
+  three parts totaling 176 lines / 32,636 bytes; ADR 0022 later superseded only the packing count; source index
+  diff remains empty; decision/catalog/KM/live-size/doctrine/book gates pass
   Commit: `FACT-CARD-CATALOG-CONTAINMENT.1 — decide the bounded fact catalog topology`
 
 - ID: `FACT-CARD-CATALOG-CONTAINMENT.2`
@@ -68,7 +69,7 @@ retrieval, direct id/title browsing, derive-and-diff freshness, and repository-v
   Children: `FACT-CARD-CATALOG-CONTAINMENT.2.1`, `FACT-CARD-CATALOG-CONTAINMENT.2.2`
 
 - ID: `FACT-CARD-CATALOG-CONTAINMENT.2.1`
-  Status: active
+  Status: done
   Goal: lock the legacy monolith and enforce both catalog states before migration
   Children: `FACT-CARD-CATALOG-CONTAINMENT.2.1.1`, `FACT-CARD-CATALOG-CONTAINMENT.2.1.2`
 
@@ -84,12 +85,17 @@ retrieval, direct id/title browsing, derive-and-diff freshness, and repository-v
   Commit: `FACT-CARD-CATALOG-CONTAINMENT.2.1.1 — correct cross-directory fact routes`
 
 - ID: `FACT-CARD-CATALOG-CONTAINMENT.2.1.2`
-  Status: pending
+  Status: done
   Goal: lock the legacy monolith and enforce both catalog states before migration
   Acceptance: a schema-closed contract/checker pins the committed monolith, proves every source row and planned
   output, rejects premature title parts, validates the future migrated topology, and runs unconditionally
-  Verification: pending
-  Commit: pending
+  Verification: schema-closed `legacy_locked` contract pins boundary commit `9ad08ac`, blob `dcac9e58…5081`,
+  SHA-256, 172-line / 32,634-byte / 255-byte-line metrics, 158 ordered rows, and all current cards; deterministic
+  56-card packing yields a 178-line / 12,390-byte landing plus three parts totaling 179 lines / 34,906 bytes,
+  all below warning; 40/40 focused cases cover both states, routes, residue, authorities, exact 198-card capacity,
+  and mandatory rollover; legacy `--write` leaves the source index unchanged and the destination absent; full
+  verification is recorded below
+  Commit: `FACT-CARD-CATALOG-CONTAINMENT.2.1.2 — enforce the legacy-locked fact catalog`
 
 - ID: `FACT-CARD-CATALOG-CONTAINMENT.2.2`
   Status: pending
@@ -104,7 +110,7 @@ retrieval, direct id/title browsing, derive-and-diff freshness, and repository-v
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `FACT-CARD-CATALOG-CONTAINMENT.2.1.2` | `pending` | implement the corrected semantic/destination-preserving contract before migration |
+| 1 | `FACT-CARD-CATALOG-CONTAINMENT.2.2` | `pending` | write the already-enforced bounded projection, switch the contract, and close containment |
 
 ## Pre-Containment Boundary
 
@@ -114,7 +120,8 @@ The immutable measurement boundary is commit `47e915409bbe6065544f86e49739b9e93c
   8,029 lines, and 728,718 bytes. It contains 158 valid canonical cards plus `README.md` and `INDEX.md`.
 - `docs/knowledge/INDEX.md` is Git blob `dcac9e587a26304e15eb15743b04142cb03c5081`, SHA-256
   `e774d9fcc1b12f9bb83932789ef4268711a7756f491dfd2a492be375b3529d1b`, 172 lines / 32,634 bytes /
-  261 maximum content-line bytes. Its 158 data rows range from 132 to 261 bytes and average 204.7 bytes.
+  255 maximum content-line bytes. Its 158 data rows range from 132 to 255 raw bytes and average 201.9 bytes; the
+  `.2.1.2` checker corrected `.0`'s diagnostic-only double encoding without changing file identity or headroom.
 - The focused checker permits 160 cards and a 32,768-byte monolithic index. Two card-count slots and only 134
   index bytes remain; the next average-sized row cannot fit. These are 98.75% and 99.59% utilized respectively.
 - The generic `knowledge_cards` surface counts all 160 Markdown files against a 200-file health target/ceiling,
@@ -145,13 +152,20 @@ The immutable measurement boundary is commit `47e915409bbe6065544f86e49739b9e93c
   newly crossed aggregate warning. The projection is already partitioned and has ample hard-ceiling headroom;
   the warning is a capacity input, not permission to conflate canonical cards, browse parts, and question shards.
 - `2026-08-09`: Accept ADR 0020. Keep the stable root as an exhaustive direct ID membership index and move exact
-  detailed rows into deterministic 64-card title parts. Derive the 198-card maximum from the unchanged 200-file
-  surface after two fixed routes; do not treat the old premature 160 literal as a second authority.
+  detailed rows into deterministic count-packed title parts. Derive the 198-card maximum from the unchanged
+  200-file surface after two fixed routes; do not treat the old premature 160 literal as a second authority.
 - `2026-08-09`: Use `legacy_locked` then `migrated` commits. Generated output needs no archive terminal, but the
   old monolith's committed identity and ordered row union remain executable provenance until migration closes.
 - `2026-08-09`: ADR 0021 supersedes only byte-identical migrated rows. A sibling-directory copy of `(card.md)`
   would be broken; enforce exact semantic tuples and resolved `docs/knowledge/<card>.md` destinations while
   retaining byte-exact legacy provenance. All accepted topology and limits remain unchanged.
+- `2026-08-09`: ADR 0022 supersedes only the original 64-card packing count. The executable renderer exposed a
+  73-line full part above mandatory rollover; a minimal scaffold still left 64 cards inside warning. Pack 56
+  cards so a full part is 63/80 health lines, without changing the four-part maximum, target, or ceiling.
+- `2026-08-09`: Enforce `legacy_locked` and `migrated` from one schema-closed contract. Cross-check capacity
+  against the generic surface and question contract, preserve exact committed provenance and resolved routes,
+  reject stale/premature residue, write from a repository-local workspace with the landing last, and fail at the
+  fixed 90% rollover milestone.
 
 ## Open Questions
 
@@ -169,6 +183,7 @@ The immutable measurement boundary is commit `47e915409bbe6065544f86e49739b9e93c
 | `2026-08-09` | `FACT-CARD-CATALOG-CONTAINMENT.0` | Git tree/blob/SHA/metrics; card/index limits; reader/writer census; catalog/KM/live-size/task/doctrine/book gates | exact committed baseline; no catalog contract/output, fact evidence deletion, product, artifact, threshold, or ceiling changed |
 | `2026-08-09` | `FACT-CARD-CATALOG-CONTAINMENT.1` | worst-case root/part arithmetic; current in-memory render simulation; ADR/index links; source-index diff; catalogs/KM/live-size/doctrines/mdBook | bounded stable landing + deterministic title parts accepted; implementation policy closed; existing output unchanged |
 | `2026-08-09` | `FACT-CARD-CATALOG-CONTAINMENT.2.1.1` | cross-directory link resolution; corrected render metrics/worst-case bounds; ADR/index links; source blob/destination absence; catalogs/KM/live-size/doctrines/mdBook | broken relative-link assumption corrected before code; semantic fields/destinations lossless; other ADR 0020 decisions unchanged |
+| `2026-08-09` | `FACT-CARD-CATALOG-CONTAINMENT.2.1.2` | Perl syntax; 40/40 focused cases; real check/report; legacy write/diff/absence; catalog/KM/live-size/doctrine/mdBook/full-CI gates | schema-closed two-state checker; exact Git/card/row/output authorities; 56-card plan below warning; no migrated output written |
 
 ## Commit Log
 
@@ -177,6 +192,7 @@ The immutable measurement boundary is commit `47e915409bbe6065544f86e49739b9e93c
 | `FACT-CARD-CATALOG-CONTAINMENT.0` | `FACT-CARD-CATALOG-CONTAINMENT.0 — own and pin fact catalog pressure` | ownership and exact pre-containment boundary |
 | `FACT-CARD-CATALOG-CONTAINMENT.1` | `FACT-CARD-CATALOG-CONTAINMENT.1 — decide the bounded fact catalog topology` | ADR 0020; output unchanged |
 | `FACT-CARD-CATALOG-CONTAINMENT.2.1.1` | `FACT-CARD-CATALOG-CONTAINMENT.2.1.1 — correct cross-directory fact routes` | ADR 0021; no code/output change |
+| `FACT-CARD-CATALOG-CONTAINMENT.2.1.2` | `FACT-CARD-CATALOG-CONTAINMENT.2.1.2 — enforce the legacy-locked fact catalog` | checker/contract/ADR 0022; output remains legacy |
 
 ## Changelog
 
@@ -187,3 +203,6 @@ The immutable measurement boundary is commit `47e915409bbe6065544f86e49739b9e93c
   parts, derived 198-card authority, independent bounds, stale-output contract, and two-stage migration.
 - `2026-08-09`: `.2.1.1` caught the sibling-directory relative-link contradiction before implementation; ADR 0021
   preserves exact row semantics and destinations with a deterministic `../knowledge/` rewrite.
+- `2026-08-09`: `.2.1.2` landed the schema-closed two-state contract and checker, corrected raw-byte diagnostics,
+  tightened packing to 56 cards under ADR 0022, and proved the exact future projection without writing it;
+  frontier advances to migration/closure `.2.2`.

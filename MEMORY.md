@@ -21,13 +21,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `FACT-CARD-CATALOG-CONTAINMENT.2.1.1` — correct cross-directory fact routes; complete and verified,
-  commit pending.
-- Current state: ADR 0021 supersedes only byte-identical migrated rows: the committed monolith remains exact, but
-  title parts preserve each semantic tuple and resolved canonical card while rewriting `(card.md)` to
-  `(../knowledge/card.md)`. Corrected metrics remain inside every ADR 0020 bound; destinations are absent.
-- Next action: commit `.2.1.1`, then run `FACT-CARD-CATALOG-CONTAINMENT.2.1.2` to implement the schema-closed
-  `legacy_locked`/`migrated` checker against the corrected route invariant.
-- In-flight uncommitted: ADR/task/fact plus impact-routed live documentation only; catalog code/output, product
-  code/artifacts, PDF task source/destinations, shared inputs, thresholds, and ceilings unchanged.
+- Active unit: `FACT-CARD-CATALOG-CONTAINMENT.2.1.2` — enforce the legacy-locked fact catalog; implementation and
+  focused verification complete, commit pending.
+- Current state: the schema-closed contract/checker authenticates the 158-card committed legacy boundary and
+  already validates the future migrated projection. ADR 0022 tightens count packing to 56 cards: the exact
+  four-file plan is 357 lines / 47,296 bytes with no pressure warning; legacy output is unchanged and the title-
+  part directory remains absent.
+- Next action: finish composed/full gates and commit `.2.1.2`, then run `.2.2` to switch the contract to
+  `migrated`, write the bounded landing/three title parts, register the generated surface, and close the tree.
+- In-flight uncommitted: checker/contract/ADR 0022 and impact-routed live documentation; generated catalog output,
+  product code/artifacts, PDF task source/destinations, shared inputs, thresholds, and ceilings unchanged.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

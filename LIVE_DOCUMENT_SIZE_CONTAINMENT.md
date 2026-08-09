@@ -50,11 +50,14 @@
   neutral 29-case source-locked/complete/migrated checker that authenticates Git/file identity, exhaustive semantic
   regions, planned-part pressure, destination absence, future routes/payloads/frontier/manifest, and fixed portable
   caps before any source byte moves. ADR 0020 separately accepts a bounded fact-card browse projection: the stable
-  root keeps exhaustive direct-ID membership while deterministic 64-card parts carry detailed rows; a derived
+  root keeps exhaustive direct-ID membership while deterministic count-packed parts carry detailed rows; a derived
   198-card maximum and fixed root/part/aggregate limits preserve the existing 200-file collection ceiling. Its
-  `.2.1` legacy lock must land before any generated row moves. ADR 0021 corrects cross-directory row identity:
-  exact legacy bytes remain provenance, while migrated rows preserve semantic fields and resolved card targets
-  through the required `../knowledge/` relative rewrite. No existing threshold or ceiling is widened.
+  `.2.1` legacy lock now authenticates the exact monolith/card/row boundary and validates both catalog states
+  through 40 focused cases before any generated row moves. ADR 0021 corrects cross-directory row identity: exact
+  legacy bytes remain provenance, while migrated rows preserve semantic fields and resolved card targets through
+  the required `../knowledge/` relative rewrite. ADR 0022 packs 56 cards rather than the initially modeled 64 so
+  a full seven-line-scaffold part is 63/80 health lines, below warning. No existing threshold or ceiling is
+  widened; `.2.2` owns the already-enforced migration.
 <!-- LIVE-DOCUMENT-SIZE-CONTAINMENT-LOCAL-ADOPTION:END -->
 
 ---

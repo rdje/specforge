@@ -355,8 +355,8 @@ three explicit counts rather than one overloaded metric.
 
 The focused generator/checker requires filename/id identity, constrained front matter, questions,
 date, valid status (with the architecture-defined `current` default), evidence or reverify, stable
-ordering, and independent field/row/count/index bounds. It runs its nine fail-closed cases and the
-real derive-and-diff check through the live-document doctrine. The root README now offers both routes:
+ordering, and independent field/row/count/index bounds. Its current two-state checker runs 40 positive/fail-
+closed cases plus the real derive-and-diff check through the live-document doctrine. The root README now offers both routes:
 use the bounded catalog to browse known ids/titles, and the generated Knowledge Map to search by a
 question. The bounded question-shard migration is described below.
 
@@ -368,19 +368,28 @@ question projection permits 200 facts. Recording the finding added three retriev
 sharded projection to 209,962 aggregate bytes, or 80.1% of its health target, still below rollover.
 
 ADR 0020 keeps the stable browse path as a compact direct-ID landing and moves the unchanged detailed rows into
-deterministic 64-card title parts under `docs/knowledge-catalog/`. The 198-card maximum derives from the unchanged
+deterministic count-packed title parts under `docs/knowledge-catalog/`. The 198-card maximum derives from the unchanged
 200-file collection minus its README and index. At most four title parts may exist; combined landing and parts
-are capped at five files / 512 lines / 122,880 bytes. Current simulation yields a 172-line / 12,361-byte landing
-plus three parts totaling 176 lines / 32,636 bytes. ID retrieval remains one hop; title browsing remains two
-bounded hops. `.2.1` must lock the current monolith and reject destinations before `.2.2` migrates output.
+are capped at five files / 512 lines / 122,880 bytes. ID retrieval remains one hop; title browsing remains two
+bounded hops. `.2.1` now locks the current monolith and rejects destinations before `.2.2` migrates output.
 Canonical facts and question semantics stay separate; neither deleting evidence nor widening a surface limit is
 an accepted repair.
 
 ADR 0021 corrects one route-level assumption before code. A legacy `(card-id.md)` link copied byte-for-byte into
 the sibling title-part directory would resolve to the wrong place. The monolith therefore remains exact byte
 provenance, while each migrated row preserves its ID/date/status/title and resolved canonical destination and
-rewrites only the relative target to `../knowledge/card-id.md`. The corrected three-part simulation is 176 lines /
-34,720 bytes; its 14,306-byte largest part and 268-byte widest line remain within ADR 0020's original bounds.
+rewrites only the relative target to `../knowledge/card-id.md`.
+
+ADR 0022 records the executable pressure correction: the first 64-card template was 73/80 health lines, already
+past mandatory rollover, and even its minimal form was inside warning. Packing 56 cards with a seven-line
+scaffold produces 63-line full parts while still fitting 198 cards in the accepted four-part maximum. The exact
+current plan is a 178-line / 12,390-byte landing plus three parts totaling 179 lines / 34,906 bytes; the complete
+357-line / 47,296-byte projection has no warning. The schema-closed `legacy_locked` contract authenticates the
+committed Git blob, SHA-256, raw metrics, stage-zero index, 158 source cards, and ordered rows while requiring the
+part directory absent. The same checker already validates migrated membership/content/routes/residue and fails a
+90% pressure crossing. It also forbids the `fact_card_titles` surface in legacy state and requires its exact
+generated-projection lifecycle, inputs, limits, landing, and freshness route after migration; migration changes
+state only after writing the verified projection.
 
 #### Remaining canonical collection catalogs landed
 
