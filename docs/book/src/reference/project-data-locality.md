@@ -43,6 +43,12 @@ read-only operating-system/toolchain inputs. Rust build outputs remain in the re
 The post-compaction hook can also read an optional `../fsmgen` sibling checkout, but only on the same
 filesystem; the pinned submodule remains the reproducible authority.
 
+After moving projects, revalidate host-library symlinks as well as virtual environments. A relative link under
+`.cache/` can still resolve to an old checkout on another volume. Resolve the link, compare its filesystem identity
+with the repository, and fail closed before ingest when it contradicts the declared storage layout. Supply the
+new same-volume route, or explicitly authorize and hash-verify a bounded read-only input copy into repository-local
+project data; do not treat a merely readable stale target as current source authority.
+
 ### Persisted-path contract and migrated local state
 
 The runtime/cache controls above are enforced. A post-move audit also found and repaired a separate historical

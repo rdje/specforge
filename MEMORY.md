@@ -21,12 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2`; USB refresh #33 and its `.2.33d` semantic-trust repair are complete.
-- Current state: final USB has zero actor relations/interfaces/interface records/ports/adapter signals,
-  transactions, and rules. It blocks honestly on no declared interface signals and leaves exactly `adapter.json`;
-  all 70 current emitted `.isf` files remain FSMGen-strict clean. `.iv`/`.d`/`.2.33` are closed.
-- Next action: select and create the owning `CORPUS-COVERAGE.2.34` leaf for the next roadmap-aligned document
-  among the 23 remaining real chip-spec refreshes, then run the one-document guarded current-binary cadence.
-- In-flight uncommitted: none after the `.iv.c` closing commit. Generated USB stages are ignored canonical cache;
-  both task-owned rollbacks are deleted after green gates and task-id residue is zero.
-- Blockers: none. The user-owned `.claude/settings.json` remains untouched.
+- Active unit: `CORPUS-COVERAGE.2.34b`; guarded USB4 Inter-Domain Service refresh is source-route blocked.
+- Current state: `.2.34a` proves `.cache/local-references/chipdoc` still resolves to a 935 MiB Git checkout on the
+  boot filesystem, while no checkout or selected PDF exists in the external SSD project directory. The retained
+  chain remains unchanged at one `USB4` adapter signal / two rules.
+- Next action: obtain the intended external-SSD `chipdoc` checkout route, or explicit director authorization for
+  one read-only copy of the hashed PDF into repository-local project data; then preserve the baseline and ingest.
+- In-flight uncommitted: none after the `.2.34a` probe commit; no source copy, link rewrite, pipeline command,
+  rollback, or generated artifact changed. USB #33 remains final with zero rollback residue.
+- Blockers: source locality conflicts with the director's SSD-only project statement. The user-owned
+  `.claude/settings.json` remains untouched.

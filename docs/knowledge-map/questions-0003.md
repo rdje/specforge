@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
+  > how does the no-re-ingest canonical promotion protocol stay in place
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > how does the register reader recover a field name with no name column
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
@@ -296,5 +298,3 @@
   > is the APB signal catalog extracted
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
   > is the ATP ihi0082 ARVALID/RVALID/RREADY drop a lowering gap
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > is the DOC-INTENT-TAXONOMY .2 per-category scorecard measurement complete (YES after .4e — Gap A lowered .4a.ii, Gap B carrier .4b gated, cat-3 .4c->.4c.i, cat-4 .4d->.4d.i, conditional rules .4e honest residual; remaining work is CODE not measurement)

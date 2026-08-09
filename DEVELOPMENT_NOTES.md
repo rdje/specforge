@@ -1,4 +1,16 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.34a (`2026-08-09`) — a readable symlink is not current source authority
+
+Repository-relative spelling does not make a symlink target repository-local. After a storage move, the route
+must be resolved and its filesystem identity compared with the repository before a heavy source is admitted.
+Here the old host-library link remained readable but still landed on the boot volume, contradicting the
+director's explicit SSD-only project state. Treating readability as authority would silently reinstate an
+off-volume Git dependency.
+
+The safe boundary is before mutation: hash the candidate, census the intended volume, preserve the retained
+pipeline unchanged, and ask for the new route or explicit one-time copy authority. This separates source
+provenance correction from extraction behavior and keeps `.2.34b` reproducible.
+
 ## CORPUS-COVERAGE.2.33d.iv.c (`2026-08-09`) — sign off the typed surface, not word absence
 
 A dense prose specification will legitimately retain words such as `USB` in source text, rule evidence, and even

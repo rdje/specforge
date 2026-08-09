@@ -1,3 +1,14 @@
+### CORPUS-COVERAGE.2.34a — stop stale boot-volume host-library reuse
+
+- Selected USB4 Inter-Domain Service as refresh #34 and authenticated its retained five-stage baseline: the old
+  adapter is renderable with one `USB4` signal and two rules, making it a direct transfer test for #33's generic
+  bus-acronym authority repair.
+- Proved `.cache/local-references/chipdoc` still resolves to a 935 MiB boot-volume Git checkout, not the repository
+  SSD filesystem. No checkout or selected PDF exists in the external SSD project directory; PDF SHA-256 is
+  `ab337460…396`.
+- Failed closed before ingest or copy. No generated artifact or link changed; `.2.34b` awaits the intended SSD
+  route or explicit authorization for one verified read-only copy into repository-local project data.
+
 ### CORPUS-COVERAGE.2.33d.iv.c — sign off the final USB cascade
 
 - Authenticated the exact 9-file / 38,981,655-byte same-volume rollback, then rebuilt USB EvidenceIR through

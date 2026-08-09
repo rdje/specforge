@@ -220,6 +220,61 @@ today's ephemeral normalized-directory count.
   `adapter.json` remains. Focused tests, all nine WIRE datasets, KG 156/156, warnings-denied full CI (1,783 pass /
   five ignored), rustdoc, mdBook, six doctrines, path/locality, and residue gates pass. The authenticated rollback
   was then deleted at its exact path and a task-id census found no residue. `.iv`/`.d`/`.2.33` are closed.
+- ID: `CORPUS-COVERAGE.2.34` · Status: `in_progress` (`2026-08-09`, DATA/DOC) · Children: `.2.34a`
+  source-route/locality probe (done), `.2.34b` guarded ingest/cascade (pending on route). Goal: current-binary,
+  CPU-only guarded re-ingest of `usb4_inter_domain_service_specification_v2_0_2025_11` from the owner-authorized
+  host-library route, followed by the complete EvidenceIR→SemanticIR→IntentIR→adapter cascade. The retained
+  pre-refresh chain is a high-value transfer check for #33's universal repair: SourceIR has 615 elements / 82
+  visuals / 49 tables; EvidenceIR has 1,260 statements / 1 actor relation / 0 signal constraints / 27 conditional
+  rules; IntentIR has 11 actors / 1 interface / 1 relation / 197 behaviors / 287 constraints / 0 transactions /
+  6 registers. Its renderable `channel.isf` carries one `USB4` signal, two rules, eight enums, and six storage
+  records. Preserve an exact same-volume rollback before ingest, authenticate the promoted source/cascade, and
+  determine whether current grounded authority removes that bus-acronym port without a document exception.
+- ID: `CORPUS-COVERAGE.2.34a` · Status: `done` (`2026-08-09`, PROBE/DOC; no generated mutation) · Result:
+  authenticated the retained five-stage baseline and selected source, then stopped before ingest on a locality
+  contradiction. `.cache/local-references/chipdoc` still resolves to the Git checkout under the user boot volume;
+  filesystem identities differ from the SSD repository, while the director stated that every Git project moved
+  to the 4T SSD and only shared Rust stores remain on boot. A bounded census found neither a `chipdoc` checkout nor
+  the exact USB4 PDF in the external SSD project directory; the boot checkout is 935 MiB and the selected PDF is SHA-256
+  `ab337460641c1f012a78c63dcf8cf182bf90deb29a7a841726973be79dcd7396`. Retained
+  Source/Evidence/Semantic/Intent/adapter/ISF hashes are `a83108e3…ded` / `0d0c0659…9e4` / `4deb2481…ebd` /
+  `3ca429f3…ac4` / `c363529c…80b` / `e9837e21…e4b`; the pre-existing Evidence validation report is
+  `cec7b91f…151`. No pipeline command, copy, symlink rewrite, or generated-artifact mutation occurred. `.2.34b`
+  requires the intended SSD checkout path or explicit authorization for a one-time read-only source copy into
+  repository-local project data.
+- ID: `CORPUS-COVERAGE.2.34b` · Status: `pending` (`2026-08-09`, DATA/DOC; locality-blocked) · Goal: after the
+  source route is resolved, preserve the exact baseline and execute the `.2.34` guarded ingest/cascade acceptance
+  contract without cross-volume project data or an undocumented boot-volume dependency.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34`
+
+- [ ] **REPRODUCE / MEASURE** — authenticate the source PDF and exact five-stage before bundle, run guarded CPU
+  ingest plus the deterministic cascade, and record source/stage hashes, typed counts, deltas, and peak RAM.
+- [ ] **ROOT CAUSE (WHY + WHERE)** — classify every material delta against current generic extractors, including
+  whether the retained `USB4` port is the repaired parenthetical bus-acronym authority class or remains grounded.
+- [ ] **ADDRESSED (verified)** — promote only complete successful stages; reconcile obsolete adapter outputs;
+  validate the final artifacts and run FSMGen strict only when the adapter is honestly renderable.
+- [ ] **NO REGRESSION** — focused transfer checks, WIRE/I2C/SWD, KG 156/156, mdBook, doctrines, path/locality,
+  rollback comparison/deletion, and broader Rust gates when any product code changes all pass.
+- [ ] **GENERICITY** — no USB4/vendor/document-key/token exception, manual generated-output edit, relaxed
+  validator, LLM/VLM inference, or fabricated target model enters the slice.
+- [ ] **LOCKSTEP** — task row/changelog, corpus counts/frontier, live docs, durable fact if a new causal finding is
+  established, mdBook behavior, and `MEMORY.md` agree; delete only the authenticated rollback after green gates.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34a`
+
+- [x] **REPRODUCE / MEASURE** — `realpath` plus filesystem identity proves the live host-library route is on the
+  boot volume; SSD census finds no checkout/PDF; source hash is `ab337460…396`, boot checkout size is 935 MiB.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the repository-local symlink target still names the pre-move boot-volume
+  checkout; this conflicts with the director's SSD-only project statement, not with SpecForge path resolution.
+- [x] **ADDRESSED (verified)** — fail closed before `ingest`; no pipeline command, copy, link rewrite, or generated
+  artifact mutation occurred. `.2.34b` owns execution after the source route is explicitly resolved.
+- [x] **NO REGRESSION** — retained Source/Evidence/Semantic/Intent/adapter hashes and output files remain unchanged;
+  `.2.34a` is a read-only path/provenance probe and the prior `.iv.c` product state remains intact.
+- [x] **GENERICITY** — the stop depends only on volume identity, tracked locality doctrine, and explicit director
+  state; it does not depend on USB4 contents, vendor vocabulary, or an extraction result.
+- [x] **LOCKSTEP** — task split, dated durable fact, and `MEMORY.md` preserve the exact blocker and two safe
+  resolutions: provide the SSD checkout route, or explicitly authorize one read-only copy to project-local input.
 
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.33d.i`
 
@@ -416,9 +471,9 @@ today's ephemeral normalized-directory count.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier (active): `CORPUS-COVERAGE.2` — select and task-own refresh #34 from the 23 remaining real chip-spec
-  documents, then continue the one-document current-binary re-ingest cadence. USB #33 and its `.2.33d` trust
-  repair are closed with an honestly blocked adapter and no emitted hardware.
+- Frontier (blocked): `CORPUS-COVERAGE.2.34b` — guarded USB4 Inter-Domain Service refresh awaits the intended
+  external-SSD `chipdoc` route or explicit authorization for a one-time read-only boot-source copy into
+  repository-local project data. The retained artifacts are unchanged; USB #33 remains closed.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**33 refreshes done after #33;
   23 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#33: #29/#31 CHI-C2C marquee message-field refreshes,
@@ -511,6 +566,12 @@ strict syntax is not a semantic-fidelity oracle. **Levers A, B, C, F + the rule-
 
 ## Changelog
 
+- `2026-08-09`: `.2.34a` PROBE/DOC DONE; `.2.34b` locality-blocked before ingest. Selected USB4 Inter-Domain
+  Service because its retained one-signal/two-rule `USB4` adapter directly tests #33's generic bus-acronym repair.
+  The host-library symlink still resolves to a 935 MiB boot-volume Git checkout; no matching SSD checkout/PDF was
+  found, contrary to the director's storage statement. Candidate PDF SHA-256 is `ab337460…396`. No copy, link,
+  pipeline, rollback, or generated artifact changed. Frontier awaits the intended SSD route or explicit verified
+  one-time read-only copy authority.
 - `2026-08-09`: `.2.33d.iv.c` DATA/DOC DONE; `.iv`/`.d`/`.2.33` CLOSED. Authenticated the 9-file /
   38,981,655-byte rollback and reproduced byte-identical downstream USB stage artifacts with release
   `946766cb…488` before and after documented SourceIR validation backannotation.

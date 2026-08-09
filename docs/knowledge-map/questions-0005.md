@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > what does the bounded current ROADMAP contain
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what does uncaptured_normative_statement_ids do
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > what dominates the source_ir.json size (content_elements? page_artifacts?)
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > what enum member values does FSMGen reject (a bare token of only 0/1 digits with length >= 4 — an un-qualified binary literal; verified by value sweep: 1000/1010/1111/10000 fail, 999/1020/69152 and 0/1/111 and 4'b1000/16'd1000 pass)
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
@@ -291,9 +297,3 @@
   > what is the only VLM-unique signal in AXI timing diagrams (phase ORDER, the .2h residual)
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
   > what is the only improvement path for conditional rules (upstream EXTRACTION — extract-constraints-llm / EXTRACTION-QUALITY-GAUGE recovering the concrete obligation from the conditional's source_text for the deontic-modal bucket; then it lowers via the existing (rule) path with no new ISF construct — lower-leverage than register/structure/topology)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the owner directive on transaction recognition / membership / step-by-step / fast / minimum
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > what is the parenthetical noun-phrase head rule / EXTRACTION-GAP-FIX.1
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > what is the per-document fingerprint made of (structural shape + extraction_manifest fired set)
