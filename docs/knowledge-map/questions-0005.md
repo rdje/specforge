@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [docling-device-cpu](../knowledge/docling-device-cpu.md)
+  > what does DOCLING_DEVICE do
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > what does KG-ISF-TRANSACTIONS.2k add
+- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
+  > what does LIVE DOCUMENT SIZE CONTAINMENT ADOPTION 8 implement
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > what does MessageFieldRecord.bit_range mean and when is it set
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > what does MessageFieldRecord.byte_offset mean
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > what does SPECFORGE_INGEST_ADAPTIVE_BATCH do
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > what does SPECFORGE_INGEST_MIN_FREE_DISK_MB do
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > what does SPECFORGE_INGEST_RAM_ABORT_PERCENT do
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
@@ -80,6 +94,8 @@
   > what gates protect the leading-identifier mnemonic form from bleed
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > what grounded heuristic only interface evidence is preserved
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > what happened to the AArch64 External Debug Guide agent.isf
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > what happened to the CoreSight Base System agent.isf
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
@@ -281,19 +297,3 @@
   > what is the VLM table strategy / PDF-VARIANT-DIGESTION.2b
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > what is the `<role> channel signals` caption cue and how is it parsed
-- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
-  > what is the ambiguous_statements metric in validate
-- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
-  > what is the authoritative membership set for corpus SOURCE_PDF_REGISTRY
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > what is the bit-exact adjacency chain rule
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > what is the buildable category-4 lever (.4d.i — recover RISC-V CSR field bit positions + a RISC-V-shaped register recogniser for AIA; once located, fields auto-lower via .4a.ii, no emitter change)
-- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
-  > what is the buildable lever for cat-3 topology if pursued (upstream EXTRACTION-RECALL owned OUTSIDE the .4 ISF-lowering program — denser+fully-connected signal_connectivity capture from TRM integration prose/diagrams + clock/reset source resolution; mirrors .4d.i cat-4 CSR recovery and the cat-2 structure-recall frontier; recorded as a cross-reference, NOT a .4 gap)
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > what is the built-in RAM guard / autonomous memory safeguard during ingest
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > what is the canonical declared signal inventory key on SemanticIR
-- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
-  > what is the canonical knowledge-map architecture path

@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.37 (`2026-08-09`) — guide vocabulary is not a declared hardware boundary
+
+The AArch64 External Debug Guide is the fourth independent transfer of the authority-empty interface rule and
+the first one whose document classification is itself clearly correct. Retained EvidenceIR had no actor-signal
+relations or signal declarations, yet stale SemanticIR/IntentIR carried 64 heuristic interfaces and the adapter
+rendered 73 prose/diagram tokens as one-bit outputs. Current generic authority removes that unsupported surface
+and blocks lowering. It does not erase the guide's useful content: 243 statements, five conditionals, two
+normative facts, five actors, 22 phases, 54 invariants, 56 gates, two assertions, 28 decompositions, 78 behaviors,
+and one assumption remain.
+
+The SourceIR delta explains the removed `host` actor without a new product defect. Elements fall 347→266 solely
+through 81 `body_text` records on seven pages containing visual assets; captions, list items, section headers,
+pages, visuals, tables, and sections hold exactly. The longest removals are flattened diagram-label sequences
+such as the host/debug-probe/target drawing, not prose paragraphs. The current document is therefore a genuine
+high-confidence methodology guide with an authority-empty hardware surface, unlike #36's self-declared
+architecture whose low typed yield remains an upstream capture-recall gap.
+
+The PDF, rollback, repository, and outputs share SSD device `16777240`. The guarded ingest used 19% peak sampled
+system memory, every page path is final and repository-relative, and two complete cascades are byte-identical.
+
 ## CORPUS-COVERAGE.2.36 (`2026-08-09`) — an architecture label is not typed topology authority
 
 CoreSight Base System is the compact cat-3 transfer case. Its retained EvidenceIR already had no actor-signal

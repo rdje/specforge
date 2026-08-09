@@ -21,13 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.37`; refresh the AArch64 External Debug Guide with the current binary.
-- Current state: #36 is closed at 36 done / 20 remaining, with 80/5/80/79 stage census and 67/67 current emitted
-  ISFs strict-clean. The 29-page CoreSight Base System refresh is portable and deterministic. Current generic
-  authority removes 88 stale heuristic interfaces and the fabricated 100-signal/two-rule target; the adapter
-  blocks honestly. Validation records the remaining upstream cat-3 capture-recall gap: 19 unenriched visuals,
-  87 partially structured normative statements, and seven untyped temporal-source rules.
-- Next action: authenticate the complete retained #37 stage chain and exact same-volume rollback, then run the
-  guarded CPU ingest and deterministic cascade from the resolved caller-authorized SSD input.
-- In-flight uncommitted: only the `.2.37` ownership/resume-pointer commit; no generated artifact has changed.
+- Active unit: `CORPUS-COVERAGE.2`; `.2.37` signoff is complete and the next action is to select/own `.2.38`.
+- Current state: 37 refreshes are complete / 19 remain, with 80/6/80/79 stage census and all 66 current emitted
+  ISFs strict-clean. The 25-page AArch64 External Debug Guide refresh is portable and deterministic. Current
+  generic authority removes 64 stale heuristic interfaces, one visual-label actor, and the fabricated 73-signal
+  target while retaining 243 statements, five conditionals, 78 behaviors, and the genuine methodology-guide
+  classification. The adapter blocks honestly with exactly `adapter.json`.
+- Next action: commit `.2.37`, then select and own `.2.38` from the remaining ARM-guide/OpenCAPI tail.
+- In-flight uncommitted: `.2.37` generated stages are verified; live-doc/mdBook/fact synchronization and commit
+  signoff are in progress. Authenticated task evidence must remain until the final gates are green.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

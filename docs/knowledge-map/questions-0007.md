@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
+  > where is the LTL renderer for temporal rules
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > where is the SpecForge FSMGen feedback or handoff channel
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > where is the U+F0B7 signal integrity panic in evidence extraction
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > where is the acceptance checklist a code change must satisfy
+- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
+  > where is the biggest register extraction gap across the corpus
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > where is the canonical SpecForge user guide
+- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
+  > where is the complete index for SpecForge research workflow architecture corpus KB or KG fixtures
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > where is the complete live document containment adoption task history
 - [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
   > where is the declared-signal gate applied (pattern + dynamic constraint paths)
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -209,6 +225,8 @@
   > why can't specforge just drop single-noun or multiword actors to fix the prose phantom explosion
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
   > why did .1b.i NOT strip trailing prepositions and what changed in .1c.i
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > why did 64 AArch64 External Debug interfaces disappear
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > why did 88 CoreSight Base System interfaces disappear
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
@@ -267,6 +285,8 @@
   > why did the canonical SWD relation count change from 25 to 21
 - [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
   > why did the corpus KB size warning appear and how was it removed
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > why did the host actor disappear from AArch64 External Debug
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > why did the moved Python virtual environments still access the old repository
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -277,23 +297,3 @@
   > why do .1a and .1b.iv not catch the eMMC phantom actors like advantage of / basic bus / actual sector
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > why do 8 generic-named enums survive .5.i (they are document-evidenced — the token IS a declared signal or a column header in that doc, e.g. CCIX 'Table of Contents' header cells keep a 'TABLE' enum; the structural gate correctly cannot drop them without a forbidden name-list — honest .5.ii member-quality residuals)
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > why do AMD DTE / NVMe command dword tables go to message fields and not registers
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > why do APB tables 0016 0017 0018 produce no signal records
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > why do CCIX-class docs extract hundreds of register fields now
-- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
-  > why do Docling source tests fail when TMPDIR is inside the repository
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > why do FPs appear in eval that the current code does not produce
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > why do GIC/SMMU/CoreSight architecture-spec registers gain fields from section headings
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > why do I2C/CCIX/USB4 have 0 table signals and how are they recovered
-- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
-  > why do NVMe/CCIX/DTI register-field obligations not lower to the .isf
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > why do conditional_rules lower to .isf only partially
-- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
-  > why do environment-lock tests cascade with PoisonError

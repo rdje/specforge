@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > why do AMD DTE / NVMe command dword tables go to message fields and not registers
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > why do APB tables 0016 0017 0018 produce no signal records
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > why do CCIX-class docs extract hundreds of register fields now
+- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
+  > why do Docling source tests fail when TMPDIR is inside the repository
+- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
+  > why do FPs appear in eval that the current code does not produce
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > why do GIC/SMMU/CoreSight architecture-spec registers gain fields from section headings
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > why do I2C/CCIX/USB4 have 0 table signals and how are they recovered
+- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
+  > why do NVMe/CCIX/DTI register-field obligations not lower to the .isf
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > why do conditional_rules lower to .isf only partially
+- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
+  > why do environment-lock tests cascade with PoisonError
 - [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
   > why do generated IR files contain the old SpecForge repository path
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
@@ -128,6 +148,8 @@
   > why does specforge split on 'and' but not 'or' for a coordinated actor subject
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > why does the .isf emit a generic (type TABLE (bits N)) enum / what is the TABLE mega-enum
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > why does the AArch64 External Debug Guide emit no ISF
 - [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
   > why does the ADI spec produce so few signals and so much garbage
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
@@ -274,26 +296,3 @@
   > why is the USB 3.2 adapter syntactically valid but semantically untrustworthy
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > why is the X interface strip gated on X being a connected agent in this doc
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why is the _WIDTH enum-member leak a real fidelity defect (.5.iii: 7 _WIDTH members in real-signal-named enums in AXI gold ihi0022_l reach manager.isf — (BRESP (BRESP_WIDTH 0)(OKAY 0)…) duplicates value 0, (RRESP (RRESP_WIDTH 0)) REPLACES the real RRESP codes, (AXSNOOP (AWSNOOP_WIDTH 0)(ARSNOOP_WIDTH 1)) pure junk; a width PARAMETER 'Enum BRESP BRESP_WIDTH = 0.' mis-read as
-  > an encoding VALUE — a false bar-#6 fact, unscored by WIRE-BASED-100 since enums are emitter-orthogonal)
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > why is the abbreviation-table I/O-expansion not used to capture signals (MMIO/DMA/IOVA garbage)
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > why is the absolute bit position never derived from offset*8+bit
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > why is the block name not used to qualify the duplicate registers (heading levels flattened)
-- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
-  > why is the bounded active task root written last
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > why is the channel role kept verbatim instead of mapped to address/data/response phases
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > why is the coordination split safe for WIRE-BASED-100 (AHB relation gold)
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > why is the extraction-profile prior family not scoped by ProtocolFamily
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > why is the interface consolidation safe for WIRE-BASED-100 (gold docs have no interface actor)
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > why is the nested cross-tab timing table (TRANSMITTER/RECEIVER) left an honest residual
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why is the ordered multi-phase transaction body the hard deferred part (no structural name bridge AXI handshake to named transaction)

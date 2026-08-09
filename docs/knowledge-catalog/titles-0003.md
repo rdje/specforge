@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md) | 2026-06-14 | `current` | Per-page full-res PNGs are not read downstream — ingest skips persisting them for large PDFs |
 | [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md) | 2026-06-07 | `current` | 12/82 corpus PDFs are permission-encrypted (open w/ empty password); docling+pypdf read all 82; the Read tool… |
 | [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md) | 2026-08-09 | `current` | Persisted paths separate repository ownership from authorized external inputs |
 | [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md) | 2026-06-14 | `current` | prior-phrase normalization UTF-8 byte-as-char mangling — exponential OOM found & FIXED (PDF-VARIANT-DIGESTI… |

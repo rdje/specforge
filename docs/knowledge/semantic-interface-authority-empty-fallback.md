@@ -74,3 +74,10 @@ relations into four interfaces, 11 ports, three signals (`SB`/`USB`/`USB4`), thr
 The current cascade retains four exact `USB4` structured references as source evidence but produces zero
 relations, interfaces, ports, or connectivity. The self-declared methodology guide blocks on no declared
 interface signals, removes `device_also.isf`, and leaves exactly `adapter.json`; the live set is 68/68 strict-clean.
+
+**Fourth guide transfer (`CORPUS-COVERAGE.2.37`).** AArch64 External Debug previously carried 64 heuristic
+interfaces and a 73-signal `agent.isf` despite zero evidence relations or declarations. The current cascade
+retains 243 statements, five conditionals, and 78 behaviors, but removes the unsupported interfaces and the
+diagram-label-derived `host` actor. The high-confidence methodology guide blocks on no declared interface
+signals, removes `agent.isf`, and leaves exactly `adapter.json`; the live emitted set is 66/66 strict-clean.
+Unlike the intervening CoreSight Base System architecture transfer, no under-extracted-spec warning applies.

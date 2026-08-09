@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md) | 2026-06-22 | `current` | Document intent-category recognizer (DOC-INTENT-TAXONOMY.3b) — validate reports a chip-spec PDF's 6-categor… |
 | [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md) | 2026-06-22 | `current` | Per-category ISF-lowering completeness (DOC-INTENT-TAXONOMY.2) — registers lower 1:1 to opaque width-only s… |
 | [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md) | 2026-08-09 | `current` | Dormant serializable path fields require the portability contract before activation |
 | [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md) | 2026-06-15 | `current` | A constraint subject that is only ever a Reg.Field dotted cross-reference is dropped (not the cell's subject) |
@@ -60,4 +61,3 @@
 | [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md) | 2026-06-15 | `current` | Coordinated drive/read objects + relative-clause distribution are already implemented in the production hand… |
 | [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md) | 2026-06-11 | `current` | Offset-suffixed bit cells (31:28 +04) are dword-relative — capture the literal bit_range + byte_offset, nev… |
 | [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md) | 2026-06-10 | `current` | Packet/flit protocols declare message FIELDS in field-titled tables — the header vocabulary types the rows |
-| [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md) | 2026-06-14 | `current` | Per-page full-res PNGs are not read downstream — ingest skips persisting them for large PDFs |

@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md) | 2026-08-09 | `current` | AArch64 External Debug Guide refresh is portable and authority-empty |
 | [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md) | 2026-08-09 | `current` | Active task legacy routes bind canonical IDs to exact source spellings |
 | [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md) | 2026-08-09 | `current` | Active task migration is a byte-safe root-last transaction |
 | [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md) | 2026-06-15 | `current` | Actor-signal drive/read DIRECTION is already correct in production (voice-separated verb lexicon); the prose… |
@@ -60,4 +61,3 @@
 | [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md) | 2026-06-22 | `current` | SpecForge enforces every mechanizable doctrine via one registry/driver (scripts/check_doctrines.sh) gated E1… |
 | [document-class-from-structure](../knowledge/document-class-from-structure.md) | 2026-06-08 | `current` | Document class (protocol/register/interface/guide) inferred from structural intent surfaces, not the doc name |
 | [document-intent-category-census](../knowledge/document-intent-category-census.md) | 2026-06-22 | `current` | The 78-doc corpus splits 36/7/15/2/4/14 across the 6 purpose categories (wire-protocol/register-IP/platform-I… |
-| [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md) | 2026-06-22 | `current` | Document intent-category recognizer (DOC-INTENT-TAXONOMY.3b) — validate reports a chip-spec PDF's 6-categor… |

@@ -104,9 +104,17 @@ as under-extracted: 19 visuals remain unenriched, 87 normative statements remain
 temporal-source rules lack typed grounding. Those records stay on the upstream category-3 capture-recall frontier;
 the adapter does not turn an extraction gap into fabricated topology.
 
-The corpus cache now has 67 current emitted `.isf` files, all covered by a fresh 67/67 FSMGen-strict sweep; USB
-3.2, USB4 Inter-Domain, USB4 Connection Manager, and CoreSight Base System are not among them because honest
-blocking is the correct lowering result.
+The 25-page AArch64 External Debug Guide is a contrasting fourth transfer. Its retained EvidenceIR likewise had
+zero actor-signal relations or declarations, while stale IntentIR carried 64 heuristic interfaces and
+`agent.isf` rendered 73 one-bit tokens. Current extraction removes the unsupported interfaces and the
+visual-label `host` actor, but retains 243 statements, five conditionals, 78 behaviors, 54 invariants, and the
+high-confidence methodology-guide classification. Unlike the CoreSight architecture, this classification is not
+an under-extraction warning: the removed SourceIR records are exactly 81 flattened diagram labels on
+visual-bearing pages, while structural classes hold. Lowering blocks and leaves exactly `adapter.json`.
+
+The corpus cache now has 66 current emitted `.isf` files, all covered by a fresh 66/66 FSMGen-strict sweep; USB
+3.2, USB4 Inter-Domain, USB4 Connection Manager, CoreSight Base System, and AArch64 External Debug are not among
+them because honest blocking is the correct lowering result.
 
 The measurement behind that repair found three upstream authority errors, not a reason to distrust every
 relation-derived direction. Across the retained corpus, 97 sentence-start phrases use `signal <word>` without

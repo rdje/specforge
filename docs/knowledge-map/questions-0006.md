@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
+  > what is the ambiguous_statements metric in validate
+- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
+  > what is the authoritative membership set for corpus SOURCE_PDF_REGISTRY
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > what is the bit-exact adjacency chain rule
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > what is the buildable category-4 lever (.4d.i — recover RISC-V CSR field bit positions + a RISC-V-shaped register recogniser for AIA; once located, fields auto-lower via .4a.ii, no emitter change)
+- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
+  > what is the buildable lever for cat-3 topology if pursued (upstream EXTRACTION-RECALL owned OUTSIDE the .4 ISF-lowering program — denser+fully-connected signal_connectivity capture from TRM integration prose/diagrams + clock/reset source resolution; mirrors .4d.i cat-4 CSR recovery and the cat-2 structure-recall frontier; recorded as a cross-reference, NOT a .4 gap)
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > what is the built-in RAM guard / autonomous memory safeguard during ingest
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > what is the canonical declared signal inventory key on SemanticIR
+- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
+  > what is the canonical knowledge-map architecture path
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > what is the completeness gauge over-counting on APB
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
@@ -282,19 +298,3 @@
   > where is split_coordinated_actor_relations and split_coordinated_actor_subject wired
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > where is the I2C signal gold seed
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > where is the LTL renderer for temporal rules
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > where is the SpecForge FSMGen feedback or handoff channel
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > where is the U+F0B7 signal integrity panic in evidence extraction
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > where is the acceptance checklist a code change must satisfy
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > where is the biggest register extraction gap across the corpus
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > where is the canonical SpecForge user guide
-- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
-  > where is the complete index for SpecForge research workflow architecture corpus KB or KG fixtures
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > where is the complete live document containment adoption task history

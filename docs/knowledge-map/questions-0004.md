@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > is bar #6 (ISF round-trip, no silent drop) a large faithful-lowering gap
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > is collect_known_signal_names UTF-8 safe
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > is dropping a zero-evidence actor safe across AXI vs AXI-Stream
+- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
+  > is intent-bearing content slipping through because nothing reads the full page
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
   > is it a strict error to drive a signal declared (input ...) in an .isf rule
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
@@ -29,6 +37,8 @@
   > codes from the 16-member prose-fused enum; WIRE-BASED-100 1.000 before==after across all 10 seeds, FSMGen --strict success on AXI+APB, kg-bench 156/156, run_ci GREEN lib 1716 +4 tests. .5 enum-surface fidelity now built)
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > is the .isf affected by transaction membership (no — emitter lowers steps, not ports/phase_membership)
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > is the AArch64 External Debug Guide current-binary refresh complete
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > is the APB PSTRB must be LOW constraint extracted
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
@@ -186,6 +196,8 @@
   > was the warning-safe rolling ledger transaction independently audited from a clean clone
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > were the 100 stale CoreSight Base System signals authoritative
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > were the 73 stale AArch64 External Debug signals authoritative
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > what CoreSight Base System evidence still needs VLM or targeted extraction
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -222,6 +234,8 @@
   > what are the agent-surface precision and completeness defects (KG-ISF-COMPLETENESS.1)
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > what are the canonical SWD protocol surface counts
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > what are the current AArch64 External Debug artifact hashes
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > what are the current CoreSight Base System artifact hashes
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
@@ -283,17 +297,3 @@
   > what does AdapterArtifact write_to_disk reconcile
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > what does CORPUS-COVERAGE.1 add
-- [docling-device-cpu](../knowledge/docling-device-cpu.md)
-  > what does DOCLING_DEVICE do
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > what does KG-ISF-TRANSACTIONS.2k add
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > what does LIVE DOCUMENT SIZE CONTAINMENT ADOPTION 8 implement
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > what does MessageFieldRecord.bit_range mean and when is it set
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > what does MessageFieldRecord.byte_offset mean
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > what does SPECFORGE_INGEST_ADAPTIVE_BATCH do
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > what does SPECFORGE_INGEST_MIN_FREE_DISK_MB do

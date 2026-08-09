@@ -147,6 +147,8 @@
   > how is the terminal task source archive boundary verified
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > how is transaction membership kept boundary-precise across read vs write (bar #3)
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > how many AArch64 External Debug page sidecars are repository relative
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
   > how many CORPUS-COVERAGE re-ingests remain after normalized cleanup
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
@@ -161,6 +163,8 @@
   > how many USB4 Inter-Domain page sidecars are repository relative
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
   > how many conditional_rules are concretely lowerable (only ~3 of 603 across 9 representative docs carry a concrete value/level cue; 161/164 declared-consequent candidates are bare modals shall/must/shall not)
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > how many corpus refreshes remain after AArch64 External Debug
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > how many corpus refreshes remain after CoreSight Base System
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
@@ -195,6 +199,8 @@
   > how much fact-card catalog index headroom remains
 - [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
   > how much intent does SpecForge extract across the whole corpus
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > how much memory did the guarded AArch64 External Debug ingest use
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > how much memory did the guarded CoreSight Base System ingest use
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
@@ -255,6 +261,8 @@
   > is 'X, which connects to Y, drives Z and W' clause distribution handled
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > is (sample input as name) value-free in ISF (yes; (drive input) is rejected — drives exist only for outputs)
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > is AArch64 External Debug a methodology guide or under-extracted architecture
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > is AXI/SWD per-signal phase membership recoverable from timing diagrams via a VLM
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
@@ -289,11 +297,3 @@
   > is an ISF transaction body ordered (yes — totally ordered, one clause ≈ one cycle; same-cycle concurrency only via a multi-pair drive block)
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
   > is bar #5 (no silent drop of behavior/temporal) still honest after CORPUS-COVERAGE.0
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > is bar #6 (ISF round-trip, no silent drop) a large faithful-lowering gap
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > is collect_known_signal_names UTF-8 safe
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > is dropping a zero-evidence actor safe across AXI vs AXI-Stream
-- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
-  > is intent-bearing content slipping through because nothing reads the full page

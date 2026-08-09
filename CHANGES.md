@@ -1,3 +1,16 @@
+### CORPUS-COVERAGE.2.37 — sign off AArch64 External Debug refresh
+
+- Guarded CPU ingest produces 25 pages, 11 visuals, two tables, 36 sections, and 266 elements at 19% peak
+  system memory used; all 25 page sidecars are final-rooted and repository-relative.
+- SourceIR 347→266 removes exactly 81 diagram-label `body_text` records on seven visual-bearing pages while
+  captions, lists, headings, pages, visuals, tables, and sections hold. Evidence retains 243 statements, five
+  conditionals, two normative facts, and zero relations/signals.
+- Current generic authority removes 64 stale heuristic interfaces, one visual-label `host` actor, and the
+  73-signal `agent.isf`. The high-confidence methodology guide blocks on no declared interface signals and leaves
+  exactly `adapter.json` with zero residuals.
+- Two cascades reproduce all nine hashes. WIRE/I2C/SWD, KG 156/156, 66/66 FSMGen strict, persisted-path,
+  locality, mdBook, doctrine, and exact cleanup gates pass. Corpus is 37 done / 19 remaining.
+
 ### CORPUS-COVERAGE.2.36 — sign off CoreSight base-system refresh
 
 - Guarded CPU ingest produces 29 pages, 19 visuals, 12 tables, and 404 elements at 17% peak system memory used;
