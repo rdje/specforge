@@ -1,4 +1,25 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.34b.i (`2026-08-09`) — isolate oracle work from canonical artifact resolution
+
+A caller-selected temporary directory is not sufficient isolation when the command derives its artifact root
+from repository identity. The fresh-SWD signoff attempt therefore wrote EvidenceIR into the canonical cache. The
+safe recovery was to stop immediately, preserve the untouched downstream stages, validate the promoted evidence,
+and rebuild the cascade in dependency order rather than mixing old and new stage generations.
+
+The resulting delta is current generic behavior, not protocol loss. Dense-prose authority removes `LEVEL` and
+the phrase-shaped actors `Class x`, `DbgSwEnable flag`, and `system`, taking the graph from 22 actors / 25
+relations to 19 / 21 and the adapter from 12 signals to 11. The independently typed SWD surface remains exactly
+11 frame fields, four operations, 13 states, and one interface-edge timing. Two replays reproduce all artifacts;
+the emitted ISF is strict-clean and the provider-free SWD/WIRE and KG gates pass. Future oracle runs must verify
+their resolved artifact root before executing any stage writer.
+
+The final locality gate found a separate USB4 ingest defect before this recovery commit: each of 51 persisted
+`normalized/pages/page-*.json` files retains the backend's absolute `normalized.staging` image path. The existing
+relocation fixes the in-memory summary, and the document-level metadata rewrite fixes only `.meta.json`; neither
+rewrites the page sidecars already on disk. `.2.34b.ii.a` owns the producer-level, fail-closed repair. The fresh
+USB4 chain was copied and hash-verified in project-local task storage, then canonical USB4 was restored exactly
+to its seven-file baseline so the independent SWD recovery can close under a green locality gate.
+
 ## CORPUS-COVERAGE.2.34a (`2026-08-09`) — a readable symlink is not current source authority
 
 Repository-relative spelling does not make a symlink target repository-local. After a storage move, the route

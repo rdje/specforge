@@ -172,6 +172,13 @@ vectors. The adapter records 29 stable protocol residual packets and remains ren
 passes FSMGen strict with zero diagnostics. Repository-owned metadata paths are relative, so this promoted
 result is current, portable, and reproducible rather than a disposable scoring artifact.
 
+A later deterministic cascade applied the current generic dense-prose authority gates to that same canonical
+source. It removed one synthetic `LEVEL` interface signal and four phrase-fragment relations, reducing the actor
+graph from 22 actors / 25 relations to 19 / 21 and the emitted interface from 12 signals to 11. The four protocol
+vectors remained byte-for-fact exact at 29/29, two complete replays reproduced every downstream artifact, and
+FSMGen strict remained clean. This distinction is intentional: graph cleanup may change an unrelated heuristic
+interface surface without weakening the independently typed and scored serial-protocol surface.
+
 *Authoritative tracking:* `docs/tasks/SWD-SERIAL-EXTRACTION.md` (`.4e` and `.7a`–`.7e`) and ADR 0016.
 
 ## Register fields — measuring the breadth, and surfacing the gaps honestly

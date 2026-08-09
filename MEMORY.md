@@ -21,13 +21,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.34b`; guarded USB4 Inter-Domain Service refresh is source-route blocked.
-- Current state: `.2.34a` proves `.cache/local-references/chipdoc` still resolves to a 935 MiB Git checkout on the
-  boot filesystem, while no checkout or selected PDF exists in the external SSD project directory. The retained
-  chain remains unchanged at one `USB4` adapter signal / two rules.
-- Next action: obtain the intended external-SSD `chipdoc` checkout route, or explicit director authorization for
-  one read-only copy of the hashed PDF into repository-local project data; then preserve the baseline and ingest.
-- In-flight uncommitted: none after the `.2.34a` probe commit; no source copy, link rewrite, pipeline command,
-  rollback, or generated artifact changed. USB #33 remains final with zero rollback residue.
-- Blockers: source locality conflicts with the director's SSD-only project statement. The user-owned
-  `.claude/settings.json` remains untouched.
+- Active unit: `CORPUS-COVERAGE.2.34b.ii.a`; make fresh-ingest page sidecars path-portable.
+- Current state: the repository-relative host-library route now resolves to the director-supplied SSD checkout.
+  Guarded CPU ingest produced the expected USB4 semantic cleanup, but the locality gate found all 51 persisted
+  page sidecars still named the temporary absolute `normalized.staging` image paths. The complete fresh chain is
+  hash-verified in project-local task storage and the canonical USB4 chain is restored to its authenticated
+  seven-file baseline. `.2.34b.i` separately restored coherent canonical SWD with all 29 serial facts exact.
+- Next action: implement `.ii.a` at the staged-bundle producer seam with focused fail-closed tests, then `.ii.b`
+  reruns guarded USB4 ingest/cascade and completes rollback comparison, gates, cleanup, and corpus closure.
+- In-flight uncommitted: none after the `.2.34b.i` recovery commit. The authenticated USB4 baseline and exact
+  unportable fresh-chain evidence remain under project-local ignored task work for `.ii.a`/`.ii.b`; the SWD
+  recovery snapshot has been deleted.
+- Blockers: none. The user-owned `.claude/settings.json` remains untouched.

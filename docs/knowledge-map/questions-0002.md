@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > does the stage-staleness detector false-fire on register/command docs with 0 relations (no — both empty)
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > does the trapped-row gap-fill mint duplicate signal declarations
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
@@ -296,5 +298,3 @@
   > how does the extract-constraints-llm prompt express a validity requirement
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
   > how does the extractor avoid minting a constraint about a cross-referenced register field
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > how does the fused two-label column ACE5-Lite ACE5-LiteACP split

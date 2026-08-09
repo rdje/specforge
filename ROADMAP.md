@@ -150,10 +150,13 @@ Five active program groups support that north star:
   emitted ISF. `.iv.c` now closes the USB tree after reproducing stable downstream hashes (including after the
   documented SourceIR validation backannotation) and zero
   relation/interface/port/adapter-signal/rule surfaces, passing focused/WIRE/KG/full-CI/book/doctrine/locality
-  gates, and deleting only the authenticated rollback with zero residue. `CORPUS-COVERAGE.2.34a` selects USB4
-  Inter-Domain Service next but fails closed before ingest because the host-library symlink still resolves to a
-  boot-volume Git checkout and no SSD copy was found. `.2.34b` awaits the intended external-SSD route or explicit
-  one-time read-only copy authority. Separately,
+  gates, and deleting only the authenticated rollback with zero residue. `CORPUS-COVERAGE.2.34a` then selected
+  USB4 Inter-Domain Service and failed closed on a stale boot-volume source route. After the director supplied the
+  SSD checkout, `.2.34b` completed the guarded ingest/cascade. Its `.i` recovery leaf rebuilt a coherent canonical
+  SWD chain after a temporary oracle command resolved to the live artifact root: current dense-prose authority
+  removes one false signal/four relations while all 29 typed SWD protocol facts remain exact. The closing USB4
+  locality gate then exposed 51 page sidecars retaining absolute staging image paths; `.ii.a` owns that producer
+  fix and `.ii.b` owns the final rerun, rollback comparison, and signoff. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

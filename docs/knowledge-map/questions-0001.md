@@ -100,6 +100,8 @@
   > did a second annotator validate seed_apb.json
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
   > did doubling the corpus (36->78) introduce a new ISF lowering silent-drop gap
+- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
+  > did the USB4 signoff check change canonical SWD
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > did the qwen2.5vl VLM recover a groundable AXI signal-to-phase mapping (no — contradictory, redundant, hallucinated signal semantics)
 - [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
@@ -296,5 +298,3 @@
   > does the persisted path gate cover dormant schemas
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > does the rolling ledger verifier validate predecessor successor chronology
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > does the stage-staleness detector false-fire on register/command docs with 0 relations (no — both empty)

@@ -1,3 +1,14 @@
+### CORPUS-COVERAGE.2.34b.i — recover a coherent canonical SWD cascade
+
+- Preserved the untouched SWD downstream chain after a temporary fresh-oracle command resolved its artifact
+  root to the canonical cache, then validated and rebuilt EvidenceIR through the adapter in order.
+- Current generic dense-prose authority removes the synthetic `LEVEL` signal, three phrase-shaped actors, and
+  four relations: actors 22→19, relations 25→21, ports 22→19, and adapter signals 12→11.
+- All 29 serial facts remain exact at 11 frame / 4 operation / 13 state / 1 edge. Two complete cascade replays
+  reproduced every final hash; SWD derivation, base relation, FSMGen strict, focused/WIRE, and KG 156/156 pass.
+  No production code changed. The closing locality gate separately exposed 51 USB4 page sidecars retaining
+  absolute staging paths; `.2.34b.ii.a` owns that producer fix before `.ii.b` reruns USB4 signoff.
+
 ### CORPUS-COVERAGE.2.34a — stop stale boot-volume host-library reuse
 
 - Selected USB4 Inter-Domain Service as refresh #34 and authenticated its retained five-stage baseline: the old

@@ -221,7 +221,7 @@ today's ephemeral normalized-directory count.
   five ignored), rustdoc, mdBook, six doctrines, path/locality, and residue gates pass. The authenticated rollback
   was then deleted at its exact path and a task-id census found no residue. `.iv`/`.d`/`.2.33` are closed.
 - ID: `CORPUS-COVERAGE.2.34` · Status: `in_progress` (`2026-08-09`, DATA/DOC) · Children: `.2.34a`
-  source-route/locality probe (done), `.2.34b` guarded ingest/cascade (pending on route). Goal: current-binary,
+  source-route/locality probe (done), `.2.34b` guarded ingest/cascade (in progress). Goal: current-binary,
   CPU-only guarded re-ingest of `usb4_inter_domain_service_specification_v2_0_2025_11` from the owner-authorized
   host-library route, followed by the complete EvidenceIR→SemanticIR→IntentIR→adapter cascade. The retained
   pre-refresh chain is a high-value transfer check for #33's universal repair: SourceIR has 615 elements / 82
@@ -242,9 +242,51 @@ today's ephemeral normalized-directory count.
   `cec7b91f…151`. No pipeline command, copy, symlink rewrite, or generated-artifact mutation occurred. `.2.34b`
   requires the intended SSD checkout path or explicit authorization for a one-time read-only source copy into
   repository-local project data.
-- ID: `CORPUS-COVERAGE.2.34b` · Status: `pending` (`2026-08-09`, DATA/DOC; locality-blocked) · Goal: after the
+- ID: `CORPUS-COVERAGE.2.34b` · Status: `in_progress` (`2026-08-09`, DATA/DOC) · Children: `.2.34b.i`
+  SWD signoff-side-effect recovery (done), `.2.34b.ii` USB4 closing signoff (pending). Goal: after the
   source route is resolved, preserve the exact baseline and execute the `.2.34` guarded ingest/cascade acceptance
   contract without cross-volume project data or an undocumented boot-volume dependency.
+- ID: `CORPUS-COVERAGE.2.34b.i` · Status: `done` (`2026-08-09`, DATA/DOC; recovery) · Result: the attempted
+  temporary fresh-SWD oracle rebuild resolved its artifact root to the canonical repository cache, so the
+  untouched downstream chain was preserved before validation and a coherent EvidenceIR→adapter cascade was
+  rebuilt from the promoted evidence. Current dense-prose authority removes false actor fragments `Class x`,
+  `DbgSwEnable flag`, and `system`, the synthetic `LEVEL` signal, and four associated relations: actors 22→19,
+  relations 25→21, ports 22→19, and adapter signals 12→11. All 29 serial facts remain exact at
+  11 frame / 4 operation / 13 state / 1 interface-edge records; SWD derivation is 1.000 on all four surfaces,
+  the base relation remains 1/1, and the known constraint-only `CSYSPWRUPACK` Pattern miss remains 0/1. The
+  final Evidence/Semantic/Intent/adapter hashes are `e125616e…df9` / `0a9d75b5…a82` / `dd32a0a7…2d5` /
+  `5dbf105c…b5b`; two complete cascade replays reproduced them byte-for-byte. FSMGen strict is clean,
+  `kg-bench` is 156/156, focused dense-prose tests and the provider-free WIRE battery pass, and only the exact
+  authenticated recovery snapshot is eligible for deletion. No production code changed. Commit:
+  `CORPUS-COVERAGE.2.34b.i — recover coherent canonical SWD cascade`.
+- ID: `CORPUS-COVERAGE.2.34b.ii` · Status: `in_progress` (`2026-08-09`, CODE/DATA/DOC) · Children: `.ii.a`
+  page-sidecar path portability (pending), `.ii.b` USB4 closing signoff (pending). Goal: finish USB4 rollback
+  comparison, all acceptance gates, documentation, and cleanup after `.2.34b.i` restores a coherent corpus state.
+- ID: `CORPUS-COVERAGE.2.34b.ii.a` · Status: `pending` (`2026-08-09`, CODE) · Goal: fix the fresh-ingest
+  locality failure in all 51 `normalized/pages/page-*.json` sidecars. Their `rendered_image.path` values retain
+  absolute `normalized.staging` paths because `DoclingBackendSummary::relocate_paths` repairs only the summary
+  manifest in memory and the existing staged metadata rewrite covers only the document-level `.meta.json`.
+  Normalize every persisted page-sidecar image path to its final repository-owned form before the staged swap,
+  fail closed without replacing the last-good bundle, and add focused positive/malformed/rollback tests.
+- ID: `CORPUS-COVERAGE.2.34b.ii.b` · Status: `pending` (`2026-08-09`, DATA/DOC) · Goal: rerun the guarded USB4
+  ingest/cascade with `.ii.a`, prove zero staging/absolute-path residue, finish the authenticated before/after
+  comparison and all gates, then delete only the exact rollback and close `.2.34`.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34b.i`
+
+- [x] **REPRODUCE / MEASURE** — authenticated the pre-recovery SWD downstream snapshot and measured the exact
+  22→19 actor, 25→21 relation, 22→19 port, and 12→11 adapter-signal deltas.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the temporary command's artifact-root resolution selected the canonical
+  repository cache; the content delta is the current generic dense-prose authority gate removing `LEVEL` and
+  three phrase-shaped actors, not protocol-fact loss.
+- [x] **ADDRESSED (verified)** — validated the promoted EvidenceIR and rebuilt SemanticIR, IntentIR, and adapter
+  in order; two full replays reproduced all eight stage/report/adapter hashes exactly.
+- [x] **NO REGRESSION** — all 29 SWD derivation facts, base relation 1/1, known base constraint miss 0/1,
+  FSMGen strict, focused dense-prose tests, provider-free WIRE datasets, and KG 156/156 pass.
+- [x] **GENERICITY** — no SWD token, document key, manual generated-artifact edit, relaxed validator, or
+  alternate extractor entered the recovery; the promoted change follows current generic authority behavior.
+- [x] **LOCKSTEP** — task result, SWD durable fact, live docs, mdBook, and `MEMORY.md` record the coherent current
+  chain and hand off only the USB4 closing signoff to `.2.34b.ii`.
 
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34`
 
@@ -471,9 +513,9 @@ today's ephemeral normalized-directory count.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier (blocked): `CORPUS-COVERAGE.2.34b` — guarded USB4 Inter-Domain Service refresh awaits the intended
-  external-SSD `chipdoc` route or explicit authorization for a one-time read-only boot-source copy into
-  repository-local project data. The retained artifacts are unchanged; USB #33 remains closed.
+- Frontier: `CORPUS-COVERAGE.2.34b.ii.a` — after committing the coherent SWD recovery, fix the 51 page-sidecar
+  `rendered_image.path` values that remain absolute and staging-rooted after a fresh ingest. Then `.ii.b` reruns
+  USB4 and owns rollback comparison, final gates, exact cleanup, and `.2.34` closure.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**33 refreshes done after #33;
   23 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#33: #29/#31 CHI-C2C marquee message-field refreshes,
@@ -566,6 +608,13 @@ strict syntax is not a semantic-fidelity oracle. **Levers A, B, C, F + the rule-
 
 ## Changelog
 
+- `2026-08-09`: `.2.34b.i` DATA/DOC RECOVERY DONE. A temporary fresh-SWD oracle command resolved its artifact
+  root to the canonical cache. Preserved the untouched downstream chain, then validated and rebuilt it from the
+  promoted EvidenceIR. Current generic dense-prose authority removes `LEVEL`, three phrase-shaped actors, and
+  four relations while retaining all 29 serial facts. Two cascade replays are byte-identical; SWD derivation,
+  base relation, FSMGen strict, focused/WIRE, and KG 156/156 gates pass. The closing locality gate separately
+  exposed 51 USB4 page sidecars with absolute staging paths, now owned by `.2.34b.ii.a`; the fresh USB4 chain was
+  preserved exactly and canonical USB4 restored to its authenticated baseline. Frontier → `.ii.a`, then `.ii.b`.
 - `2026-08-09`: `.2.34a` PROBE/DOC DONE; `.2.34b` locality-blocked before ingest. Selected USB4 Inter-Domain
   Service because its retained one-signal/two-rule `USB4` adapter directly tests #33's generic bus-acronym repair.
   The host-library symlink still resolves to a 935 MiB boot-volume Git checkout; no matching SSD checkout/PDF was
