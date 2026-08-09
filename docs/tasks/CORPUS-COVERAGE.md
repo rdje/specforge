@@ -4,7 +4,8 @@
 
 - Tree ID: `CORPUS-COVERAGE`
 - Status: `active` (`.0` build-out + `.1` stage-staleness validator done; `.2` current-binary refresh batch
-  remains active with 32 completed documents; `.3` lifecycle/currentness reconciliation done `2026-08-09`)
+  remains active with 32 completed documents and `.2.33` USB 3.2 in progress; `.3` lifecycle/currentness
+  reconciliation done `2026-08-09`)
 - Roadmap lane: `R15e`/`R16` (corpus digestion — the owner's substantive gap #2)
 - Created: `2026-06-17`
 - Owner directive: `2026-06-17` — after the owner rejected the "buildable frontier exhausted" framing
@@ -100,6 +101,71 @@ today's ephemeral normalized-directory count.
   commit per `COMMIT.md` after each doc. No fabrication / ADR-0006 unchanged (this is a re-run of existing
   deterministic extractors, not new code); WIRE-BASED-100 + register/wire golds + `kg-bench` stay green
   (orthogonal — the 4 gold docs are not re-ingested). Record per-doc before/after typed-surface deltas here.
+- ID: `CORPUS-COVERAGE.2.33` · Status: `in_progress` (`2026-08-09`, DATA/CODE/DOC) · Children: `.2.33a`
+  probe (done), `.2.33b` UTF-8 boundary fix (pending), `.2.33c` cascade/signoff (pending). Goal: re-ingest USB 3.2
+  (`usb_3_2_revision_1_0_2017_09`) from the owner-authorized external PDF resolved through the repository host-library route with the current release
+  binary and CPU-only Docling, then build/validate EvidenceIR→SemanticIR→IntentIR→ISF. It is the only current
+  SourceIR document with no EvidenceIR; its prior SourceIR records 548 pages / 224 pictures / 283 structured
+  tables, but its normalized cache and every downstream stage are absent. Preserve a same-volume baseline before
+  ingest, keep the built-in 85% RAM guard active, do not use LLM/VLM, classify thin/blocked output honestly, and
+  record exact typed-surface and FSMGen-strict results before deleting the baseline.
+- ID: `CORPUS-COVERAGE.2.33a` · Status: `done` (`2026-08-09`, PROBE/DOC) · Goal: reproduce and root-cause
+  the first current USB 3.2 cascade blocker before changing code. The repository-relative symlink path fails
+  closed before Docling because the portability boundary forbids repository paths that escape through symlinks;
+  retrying with the resolved, explicitly external PDF is the correct authorized-input route and completed a
+  guarded CPU ingest (548 pages / 507 visual assets / 283 tables / 5,830 elements / zero residuals, 81–82% RAM
+  free). Evidence construction then panics on `- U+F0B7 signal integrity ...`: both signal-declaration catalog
+  collectors use the byte offset returned by `match_indices("signal ")` but inspect the preceding characters with
+  `lowered[idx - 2..idx]`; `idx - 2` lands inside the three-byte private-use bullet. No EvidenceIR was written,
+  the promoted SourceIR is intact, and the 4.9 MiB same-volume pre-ingest rollback remains byte-verified.
+- ID: `CORPUS-COVERAGE.2.33b` · Status: `pending` (`CODE`) · Goal: replace the duplicated unsafe preceding-byte
+  slice with one UTF-8-safe sentence-boundary helper shared by both declaration collectors. Add direct regressions
+  for the USB private-use bullet and a legitimate declaration after a non-ASCII sentence; preserve ASCII behavior
+  and run focused/full gates before committing.
+- ID: `CORPUS-COVERAGE.2.33c` · Status: `pending` (`DATA/DOC`) · Goal: rebuild the release binary, resume from
+  the already-promoted USB SourceIR without a second Docling ingest, complete and validate every downstream stage,
+  classify/render/FSMGen-check the adapter, record deltas, remove exact rollback/residue, and close `.2.33`.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.33a`
+
+- [x] **REPRODUCE / MEASURE** — captured PDF/source hashes and sizes, 548/507/283/6,584 prior structure,
+  80/1/79/78 stage census, current binary identity, 81–82% free RAM, and a byte-identical SSD rollback.
+- [x] **ROOT CAUSE (WHY + WHERE)** — proved the symlink route's fail-closed portability behavior separately
+  from the EvidenceIR panic at `collect_known_signal_names`; its sibling direction collector repeats the bug.
+- [x] **ADDRESSED (verified)** — `.2.33b` owns the shared code repair and `.2.33c` owns cascade resumption;
+  the failed evidence command wrote no partial downstream artifact.
+- [x] **NO REGRESSION** — SourceIR hash stayed unchanged after the rejected symlink launch; the authorized
+  external retry promoted atomically with zero residuals; prior SourceIR remains recoverable from the exact copy.
+- [x] **GENERICITY** — root cause is UTF-8 byte/character boundary handling, not USB wording or a token denylist.
+- [x] **LOCKSTEP** — task, live ledgers, durable fact, and resume pointer name the blocker and exact next leaf.
+  The resulting architecture-ledger update also performs its mandatory lossless rollover: four aged-out records
+  retain exact content/order in segment 0001 (with canonical terminal-newline normalization), and the live view
+  returns to 60 records.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.33b`
+
+- [ ] **REPRODUCE / MEASURE** — direct pre-fix regression panics on the private-use bullet at the catalog seam.
+- [ ] **ROOT CAUSE (WHY + WHERE)** — both collectors share one duplicated `idx - 2..idx` byte-slice defect.
+- [ ] **ADDRESSED (verified)** — one helper checks the prefix at a valid match boundary and both collectors use it.
+- [ ] **NO REGRESSION** — bullet and non-ASCII sentence-boundary tests, focused EvidenceIR tests, formatting,
+  warning-deny Clippy, complete CI, and USB evidence retry pass.
+- [ ] **GENERICITY** — no document key, vendor, bullet codepoint, or signal name appears in production logic.
+- [ ] **LOCKSTEP** — code analysis, live docs, task, book if behavior needs explanation, fact, and memory agree.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.33`
+
+- [ ] **REPRODUCE / MEASURE** — record the pre-ingest stage census, source identity/hash/size, SourceIR
+  structural counts, current binary identity, memory headroom, and a repository-volume rollback copy.
+- [ ] **ROOT CAUSE (WHY + WHERE)** — establish why USB 3.2 alone has SourceIR without EvidenceIR and distinguish
+  missing downstream construction from an extraction failure.
+- [ ] **ADDRESSED (verified)** — one CPU Docling ingest plus deterministic cascade leaves current, valid
+  SourceIR/EvidenceIR/SemanticIR/IntentIR and either a strict-valid adapter output or an explicit honest block.
+- [ ] **NO REGRESSION** — validate the rebuilt stages, run real FSMGen strict when `.isf` renders, preserve all
+  unrelated generated artifacts, and pass focused corpus/KG/doctrine/book/locality checks warranted by findings.
+- [ ] **GENERICITY** — execute existing universal extractors without document-specific code, hard-coded facts,
+  LLM/VLM inference, or relaxed validation.
+- [ ] **LOCKSTEP** — update the `.2` row/count/frontier, live ledgers, mdBook if user-visible corpus truth changes,
+  Knowledge Map for any durable causal fact, and `MEMORY.md`; commit before selecting refresh #34.
 - ID: `CORPUS-COVERAGE.3` · Status: `done` (`2026-08-09`, DOC/AUDIT) · Goal: reconcile the `.2`
   frontier with the later artifact-cleanup lifecycle after a live census found only the freshly promoted SWD
   normalized bundle, while `.2` still claimed 32 restored bundles and only 24 normalized-missing documents.
@@ -122,9 +188,8 @@ today's ephemeral normalized-directory count.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier (active): `CORPUS-COVERAGE.2` — `.3` has separated historical refresh completion from live cache
-  retention. After the `.3` commit, own `.2.33` and re-ingest USB 3.2: it is the only present SourceIR currently
-  lacking EvidenceIR, its host-local PDF is available, and the RAM-guarded CPU Docling workflow applies.
+- Frontier (active): `CORPUS-COVERAGE.2.33b` — land the shared UTF-8-safe declaration-boundary fix proved by
+  `.2.33a`, then `.2.33c` resumes USB EvidenceIR from the already-promoted SourceIR without re-ingesting.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**32 refreshes done after #32;
   24 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#32: #29/#31 CHI-C2C marquee message-field refreshes,
@@ -213,6 +278,15 @@ leaving the refreshed SourceIR→adapter stage chains intact.
 
 ## Changelog
 
+- `2026-08-09`: `.2.33a` PROBE DONE. Preserved a 4.9 MiB byte-identical same-volume SourceIR baseline;
+  rebuilt release `9cd700…`; authorized-external CPU ingest produced USB 3.2 SourceIR at 548 pages / 507 visual /
+  283 tables / 5,830 elements / zero residuals with 81–82% RAM free. The repo-relative symlink launch first
+  failed closed as designed. Evidence then panicked before output on `- U+F0B7 signal ...`: both declaration
+  catalogs slice `idx - 2..idx` even though `match_indices` returns a byte offset. Added the durable fact and
+  split the repair/resume into `.2.33b`/`.2.33c`. The architecture entry also triggered its declared line-based
+  rollover; four whole post-capsule records now live content-identically and in order in sealed segment 0001
+  (canonical terminal newline), and the current window is 60 records. Commit: see
+  `CORPUS-COVERAGE.2.33a — surface USB UTF-8 EvidenceIR blocker`.
 - `2026-08-09`: `.3` lifecycle/currentness audit DONE. A live census found 80 SourceIR / 1 normalized / 79
   EvidenceIR / 78 downstream chains, apparently contradicting `.2`'s 32 restored bundles. Durable history
   root-caused this to the intentional `2026-07-05` normalized-cache cleanup; all five retained stages for the 32

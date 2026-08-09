@@ -3,6 +3,10 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > is the generic-enum conflation an emitter bug or an extraction bug (EXTRACTION-born in evidence.rs + semantic.rs; isf_ir.rs:889-912 lowers it faithfully)
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > is the kg-isf-completeness.3 relation-completeness frontier closed / are any docs still stale
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > is the orphan (type TABLE) line a separate emitter bug (yes — isf_ir.rs:403-409 emits all self.types unconditionally, so a Lever-F-residualized enum still leaves an orphan (type ...) line; gate by emitted_enums())
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > is the register-bit-field ISF gap (Gap A) a SpecForge bug or a missing ISF abstraction (a missing ISF abstraction — fields reach IntentIR fully; ISF has no field-structured storage)
@@ -293,7 +297,3 @@
   > what is TransactionIntent.channel_membership and where is it built (mint_named_transaction)
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > what is a ClusterExtractionProfile / derive_extraction_profiles (the per-cluster extraction profile)
-- [contested-priors](../knowledge/contested-priors.md)
-  > what is a contested prior
-- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
-  > what is audit-extraction / PDF-VARIANT-DIGESTION.4b

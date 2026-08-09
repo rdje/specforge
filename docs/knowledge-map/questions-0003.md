@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > how is a duplicate register mnemonic (AUTHSTATUS/CSW/IDR reused per access-port block) handled
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > how is a fabricated mega-register / over-count avoided when recovering reused register mnemonics
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
@@ -195,6 +197,8 @@
   > is bar #5 (no silent drop of behavior/temporal) still honest after CORPUS-COVERAGE.0
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > is bar #6 (ISF round-trip, no silent drop) a large faithful-lowering gap
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > is collect_known_signal_names UTF-8 safe
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > is dropping a zero-evidence actor safe across AXI vs AXI-Stream
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
@@ -293,7 +297,3 @@
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > is the generic-TABLE enum conflation fixed / what did KG-ISF-COMPLETENESS.5.i do (LANDED 2026-06-24: derive_encoding_enum_name fallback keeps the candidate only when independently evidenced — a declared signal OR a column-header reference token of the table — else None; emitter isf_ir.rs gates the (types) block by emitted_enums() so a member-dropped enum leaves no orphan
   > (type ...). Corpus generic enums 82->8 / total enum records 422->105 across 33 rebuildable docs; real signal-match enums byte-identical; WIRE-BASED-100 1.000 before==after; fsmgen --strict 0 diagnostics)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > is the generic-enum conflation an emitter bug or an extraction bug (EXTRACTION-born in evidence.rs + semantic.rs; isf_ir.rs:889-912 lowers it faithfully)
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > is the kg-isf-completeness.3 relation-completeness frontier closed / are any docs still stale

@@ -258,6 +258,8 @@
   > does the current SWD chain come from the tracked ADI PDF
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
   > does the emitted .isf signal direction affect FSMGen downstream correctness
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > does the explicit-direction signal catalog repeat the UTF-8 boundary bug
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
   > does the live-document registry reject unknown fields oversized arrays or oversized scalars
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
@@ -296,5 +298,3 @@
   > how are SpecForge live documents kept bounded
 - [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
   > how are TAP states (Shift-DR, Run-Test/Idle, Test-Logic-Reset) extracted
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > how are TRM register bit assignments tables without access/reset columns handled

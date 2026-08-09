@@ -68,6 +68,7 @@ Collection guidance: [authoring and lifecycle README](README.md).
 | [eval-gold-interannotator-kappa](eval-gold-interannotator-kappa.md) | 2026-06-05 | `current` | Eval gold is reliable — Cohen's kappa 0.90 (almost-perfect) on the constraint task |
 | [eval-scores-persisted-evidence](eval-scores-persisted-evidence.md) | 2026-06-07 | `current` | eval-extraction scores the PERSISTED evidence_ir.json — rebuild before trusting a baseline (it can be stale) |
 | [evidence-build-nondeterminism](evidence-build-nondeterminism.md) | 2026-06-09 | `current` | EvidenceIR build determinism — two HashSet-iteration leaks (relations + enum name) found & FIXED (EVIDENCE-… |
+| [evidence-signal-declaration-utf8-boundary-panic](evidence-signal-declaration-utf8-boundary-panic.md) | 2026-08-09 | `current` | Evidence signal-declaration catalogs panic when a match follows a multi-byte bullet |
 | [extraction-audit-vlm](extraction-audit-vlm.md) | 2026-06-08 | `current` | audit-extraction — VLM proposer/verifier precision estimate over the broadened table-driven extraction |
 | [extraction-quality-gauge-standing](extraction-quality-gauge-standing.md) | 2026-06-10 | `current` | The NLI extraction-quality gauge is persisted on EvidenceIR and re-measured by converge |
 | [extractor-path-architecture](extractor-path-architecture.md) | 2026-06-09 | `current` | The EvidenceIR extractor path is a flat bank of ~60 free functions wired in one build() — coherent IR targe… |

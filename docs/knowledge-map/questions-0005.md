@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [contested-priors](../knowledge/contested-priors.md)
+  > what is a contested prior
+- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
+  > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > what is capture_signal_presence_rows and who shares it
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
@@ -293,7 +297,3 @@
   > when does a caption ground a register name
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > when does evidence_extraction_quality_majority_not_entailed or _gauge_stale fire
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > when does presence capture refuse a row vs the whole table
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > when is a bracket-slice leading token a field name

@@ -1,4 +1,17 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.33a (`2026-08-09`) — string offsets are bytes, not characters
+
+`match_indices` did exactly what Rust promises: it returned a byte offset on a valid character boundary. The
+bug was treating “two characters before the match” as `idx - 2` bytes. That happened to work for ASCII prefixes,
+then failed when USB prose placed a three-byte private-use bullet immediately before `signal`. The same unsafe
+boundary check existed in both the general and direction-aware declaration catalogs.
+
+The repair must express the real invariant directly: the prefix ending at the match either is empty or ends with
+the ASCII sentence separator `. `. Taking `text.get(..idx)` is safe because the match offset is already a valid
+boundary; asking `ends_with` avoids all backward byte arithmetic. A shared helper prevents the two catalogs from
+drifting. The failed relative-path launch is unrelated and correct: a repo-relative persisted path may not escape
+through the host-library symlink, while the resolved path is explicitly authorized external provenance.
+
 ## CORPUS-COVERAGE.3 (`2026-08-09`) — refresh currency and cache retention are different clocks
 
 The `.2` table records an extraction event: a PDF was re-ingested with the then-current binary and its complete

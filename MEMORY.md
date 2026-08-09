@@ -19,15 +19,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.3` — docs/audit reconciliation of refresh progress versus normalized-cache
-  retention, completed and awaiting commit.
-- Current state: the documented `2026-07-05` cleanup—not artifact loss—explains why only the fresh SWD normalized
-  bundle remains. All 32 `.2` refresh documents retain complete SourceIR→adapter chains (160/160 files); progress
-  is 32 completed refreshes / 24 real chip-spec documents unrefreshed, separate from today's 80/1/79/78 stage
-  and cache census. Task, live docs, Knowledge Map source, and book reflect the lifecycle distinction.
-- Next action: stage and commit `.3`, then add and execute
-  `CORPUS-COVERAGE.2.33` for USB 3.2 (the only SourceIR currently lacking EvidenceIR) under the RAM-guarded CPU
-  Docling workflow.
-- In-flight uncommitted: verified `.3` task/live/book/fact-card corrections awaiting commit; generated artifacts
-  are untouched. The user-owned `.claude/settings.json` remains untouched.
+- Active unit: `CORPUS-COVERAGE.2.33a` — USB 3.2 cascade-blocker probe completed, awaiting commit.
+- Current state: current release `9cd700…` CPU-ingested the authorized external USB 3.2 PDF at 81–82% free RAM,
+  producing 548 pages / 507 visual assets / 283 tables / 5,830 elements / zero residuals. Evidence then panicked
+  before writing output: both signal-declaration collectors slice `lowered[idx - 2..idx]`, and the match byte
+  offset places `idx - 2` inside a three-byte `U+F0B7` bullet. The failed symlink-relative launch was separately
+  an expected portability refusal and made no change.
+- Next action: commit `.2.33a`, then implement `.2.33b`'s shared UTF-8-safe sentence-boundary helper and tests;
+  `.2.33c` will rebuild and resume evidence from the promoted SourceIR without another Docling ingest.
+- In-flight uncommitted: fresh ignored USB normalized/SourceIR plus the 4.9 MiB byte-verified rollback under
+  `.cache/task-workspaces/CORPUS-COVERAGE.2.33`; no EvidenceIR exists. User settings remain untouched.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

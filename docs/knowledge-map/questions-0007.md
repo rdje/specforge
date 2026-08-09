@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > why can the roadmap not be split safely at Markdown headings
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > why can't I just run converge to land the LLM-primary promotion on a canonical artifact
+- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
+  > why can't RISC-V AIA registers be captured by .4d.i (its normalized bundle is ABSENT — re-ingest RAM/Docling-gated under CORPUS-COVERAGE — and its CSR intent is prose conditional_rules, not register tables)
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
   > why can't cluster-scoping replace the forbidden supply-rail (VDD/VSS) denylist
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -144,6 +150,8 @@
   > why does RISC-V AIA capture 0 registers (its IMSIC/APLIC CSR intent is in prose conditional_rules/behaviors; no current register strategy matches RISC-V's CSR layout — the .10g <NAME>, bits [hi:lo] section-heading family fires only on ARM ihiXXXX arch specs)
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > why does SWP yield 0 from extract_protocol_states and extract_quoted_mode_states but 4 from the transition-bound path
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > why does USB 3.2 EvidenceIR panic on start byte index is not a char boundary
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > why does a rebuild drop the extraction-quality gauge
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
@@ -200,6 +208,8 @@
   > why does root KNOWLEDGE_MAP_ARCHITECTURE.md not exist
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
   > why does shall be 0h still bind the value 0 but shall be non-zero does not bind NO
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > why does slicing idx minus 2 before signal panic
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > why does specforge split on 'and' but not 'or' for a coordinated actor subject
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -288,13 +298,3 @@
   > why is SpecForge called forward specification mining
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > why is Subordinate interface merged to Subordinate but GIC CPU interface kept intact
-- [task-tree-catalog](../knowledge/task-tree-catalog.md)
-  > why is TEMPLATE excluded from the task catalog
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > why is a CSW@MEM-AP / CLAIMSET@AP qualified register name emitted, and is it .isf-safe
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > why is a field name accepted or rejected from a description cell
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > why is a gerund after while/when not a condition (action coordination)
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > why is a membership-derived (sample) body NOT faithful even though it is FSMGen-accepted

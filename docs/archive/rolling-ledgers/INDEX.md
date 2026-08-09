@@ -57,6 +57,11 @@ perl scripts/check_rolling_ledger_protocol.pl --report
   `docs/archive/rolling-ledgers/rust-codebase-analysis/source-through-2026-08-08.md`
 - Frozen boundary: 1,350 records; 9,039 lines; 1,046,679 bytes; SHA-256
   `95e1665628b615498e94f67d6dc6e0083d4d104a6ca8a815b4c23cf2f97cc7ce`
+- First post-migration sealed segment: [`segment-0001-2026-08-08.md`](rust-codebase-analysis/segment-0001-2026-08-08.md)
+  preserves four whole records / 101 lines / 8,955 bytes at SHA-256
+  `765cb04793666ddf63ded2ed93ce72e3833d6684febad01eeed739897a5b6fde`; only the former successor separator is
+  normalized to the protocol's canonical terminal newline. The segment sits between the newer live root and the
+  older source capsule.
 - Current-window rule: H1 plus complete Purpose prologue, followed by the newest 60 whole H2 records.
 - Overlap: the immutable capsule includes the retained live window; later rollover archives only newly
   aged-out architecture records.

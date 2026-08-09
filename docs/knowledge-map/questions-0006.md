@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > when does presence capture refuse a row vs the whole table
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > when is a bracket-slice leading token a field name
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > when is a single letter a field name
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
@@ -114,6 +118,8 @@
   > where is the LTL renderer for temporal rules
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > where is the SpecForge FSMGen feedback or handoff channel
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > where is the U+F0B7 signal integrity panic in evidence extraction
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > where is the acceptance checklist a code change must satisfy
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
@@ -291,9 +297,3 @@
   > why can SWD protocol records not be lowered directly to ISF
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > why can SWD score 100 percent while its protocol is absent downstream
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > why can the roadmap not be split safely at Markdown headings
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > why can't I just run converge to land the LLM-primary promotion on a canonical artifact
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > why can't RISC-V AIA registers be captured by .4d.i (its normalized bundle is ABSENT — re-ingest RAM/Docling-gated under CORPUS-COVERAGE — and its CSR intent is prose conditional_rules, not register tables)

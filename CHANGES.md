@@ -1,3 +1,17 @@
+### CORPUS-COVERAGE.2.33a — surface the USB 3.2 UTF-8 EvidenceIR blocker
+
+- Captured a byte-identical same-SSD baseline, rebuilt the current release binary, and CPU-ingested USB 3.2 at
+  81–82% free RAM: 548 pages / 507 visual assets / 283 tables / 5,830 elements / zero residual decisions.
+- Separated an expected portability refusal (a repository-relative symlink may not escape the repo; the resolved
+  PDF is an authorized external input) from the real cascade blocker: EvidenceIR panics before writing output on
+  `- U+F0B7 signal integrity ...`.
+- Root cause is duplicated byte/character confusion in both signal-declaration catalogs:
+  `match_indices` returns a byte offset, then `lowered[idx - 2..idx]` lands inside the three-byte bullet. The
+  universal shared fix is owned by `.2.33b`; `.2.33c` will resume the cascade without another Docling ingest.
+- This architecture entry reached the mandatory 90% live-ledger line threshold, so the same slice seals the four
+  oldest post-capsule records in authenticated segment 0001, preserving content and order while normalizing only
+  the terminal successor separator, and leaves the declared 60-record window without changing the source capsule.
+
 ### CORPUS-COVERAGE.3 — reconcile refresh progress with normalized-cache cleanup
 
 - Root-caused the apparent `32 restored` versus `1 retained` contradiction: a documented `2026-07-05`

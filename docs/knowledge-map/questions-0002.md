@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
+  > how are TRM register bit assignments tables without access/reset columns handled
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > how are bit location | register description | attributes tables extracted
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
@@ -296,5 +298,3 @@
   > how is a Reg.Field cross-reference distinguished from a real constraint subject
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > how is a claim's grounding checked beyond a string match
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > how is a duplicate register mnemonic (AUTHSTATUS/CSW/IDR reused per access-port block) handled
