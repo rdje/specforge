@@ -21,15 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2`; refresh #34 is closed and #35 needs selection/ownership.
-- Current state: USB4 Inter-Domain now has a complete portable 198-file source-through-adapter chain. Two guarded
-  ingests reproduce all final hashes at 18% peak system memory used; 51/51 page paths are repository-relative,
-  and the only difference from the preserved defective bundle is `rendered_image.path`. Current generic authority
-  removes the stale one-signal/two-rule/eight-enum model: the adapter blocks at zero interfaces/signals/rules,
-  retains six storage records, emits no target, and leaves exactly `adapter.json`. Corpus refresh is 34 done /
-  22 remaining; 80/3/80/79 stage census and 69/69 strict-clean current emitted ISFs are verified.
-- Next action: select refresh #35 from the remaining 22 real chip-spec documents, add its owning task-tree leaf,
-  authenticate its retained chain/source, then run only that guarded slice.
-- In-flight uncommitted: none after the `.2.34b.ii.b` commit. Its exact rollback and defective-chain evidence
-  were deleted only after final gates; exact task-id residue is zero.
+- Active unit: `CORPUS-COVERAGE.2.35`; refresh the USB4 Connection Manager Guide with the current binary.
+- Current state: #34 is closed at 34 done / 22 remaining, with 80/3/80/79 stage census and 69/69 current emitted
+  ISFs strict-clean. #35 is now owned on the bounded 96-page USB4 Connection Manager sibling. Its same-SSD source
+  hash is `09f44419…d42`; the retained 46-visual / 23-table / 1,509-element chain ends in a stale renderable
+  three-output (`SB`/`USB`/`USB4`), three-rule, one-enum `device_also.isf`, making it a direct generic authority
+  and path-portability transfer check without presuming the current result.
+- Next action: authenticate the complete retained #35 stage chain and exact same-volume rollback, then run the
+  guarded CPU ingest and deterministic cascade from the resolved caller-authorized SSD input.
+- In-flight uncommitted: only the `.2.35` ownership/resume-pointer commit; no generated artifact has changed.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

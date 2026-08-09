@@ -4,8 +4,8 @@
 
 - Tree ID: `CORPUS-COVERAGE`
 - Status: `active` (`.0` build-out + `.1` stage-staleness validator done; `.2` current-binary refresh batch
-  remains active with 33 completed documents and `.2.33d` USB 3.2 adapter-trust repair next; `.3` lifecycle/currentness
-  reconciliation done `2026-08-09`)
+  remains active with 34 completed documents and `.2.35` USB4 Connection Manager refresh owned next; `.3`
+  lifecycle/currentness reconciliation done `2026-08-09`)
 - Roadmap lane: `R15e`/`R16` (corpus digestion — the owner's substantive gap #2)
 - Created: `2026-06-17`
 - Owner directive: `2026-06-17` — after the owner rejected the "buildable frontier exhausted" framing
@@ -306,6 +306,36 @@ today's ephemeral normalized-directory count.
 - [x] **LOCKSTEP** — generated artifacts, task/count/frontier, live docs, two current/superseded fact cards,
   mdBook, and `MEMORY.md` agree; authenticated task evidence is deleted only after every final gate is green.
 
+- ID: `CORPUS-COVERAGE.2.35` · Status: `in_progress` (`2026-08-09`, DATA/DOC) · Goal: run a guarded
+  current-binary refresh of `usb4_connection_manager_guide_v2_0_2025_11` from the caller-authorized same-SSD
+  source and complete the deterministic EvidenceIR→SemanticIR→IntentIR→adapter cascade. The bounded 96-page
+  sibling is selected because its retained 46-visual / 23-table / 1,509-element chain is a second direct transfer
+  test for the portable page-sidecar producer and the generic USB authority repair: the stale renderable adapter
+  promotes `SB`, `USB`, and `USB4` into three outputs, three `USB4` rules, one generic `TABLE` enum, actor
+  `device_also`, and `device_also.isf`. Authenticate the complete retained baseline and source hash
+  `09f44419…d42` before mutation; use CPU Docling with the 85%-used RAM abort, no LLM/VLM inference, and the
+  resolved external input rather than the repository discovery symlink escape. Classify whatever the current
+  generic pipeline actually produces without assuming that every retained signal is false. If a new product
+  defect appears, preserve exact rollback evidence and add a bounded child leaf before changing code.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.35`
+
+- [ ] **REPRODUCE / MEASURE** — authenticate the source PDF, complete retained five-stage chain, stale adapter
+  surfaces, release binary, and same-volume rollback; record guarded-ingest page/visual/table/element counts,
+  peak memory, final stage hashes, and typed before→after deltas.
+- [ ] **ROOT CAUSE (WHY + WHERE)** — classify every material delta against current generic extraction and
+  authority rules, including the independent grounding or rejection of retained `SB`, `USB`, and `USB4`.
+- [ ] **ADDRESSED (verified)** — promote only complete validated stages; require all page sidecars to be final
+  repository-relative with no staging/absolute residue; converge obsolete adapter targets; run FSMGen strict only
+  if the resulting adapter is honestly renderable.
+- [ ] **NO REGRESSION** — reproduce the deterministic cascade, hold the nine provider-free WIRE/I2C/SWD gates and
+  KG 156/156, sweep every current emitted ISF through FSMGen strict, and pass mdBook/doctrine/path/locality gates
+  plus broader Rust CI if any product code changes.
+- [ ] **GENERICITY** — no USB4/vendor/document/token exception, manual generated-output edit, relaxed validator,
+  fabricated model, or LLM/VLM inference enters the slice.
+- [ ] **LOCKSTEP** — generated artifacts, #35 row/count/frontier, live docs, durable fact when warranted, mdBook,
+  and `MEMORY.md` agree; delete only authenticated rollback/task evidence after every final gate is green.
+
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34b.ii.a`
 
 - [x] **REPRODUCE / MEASURE** — fresh USB4 ingest reproducibly leaves 51/51 page-sidecar image paths absolute and
@@ -564,8 +594,9 @@ today's ephemeral normalized-directory count.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: `CORPUS-COVERAGE.2.35` — select and own current-binary refresh #35 from the remaining 22 real
-  chip-spec documents before changing its generated chain.
+- Frontier: `CORPUS-COVERAGE.2.35` — authenticate the retained USB4 Connection Manager source-through-adapter
+  chain and same-volume rollback, then run its guarded CPU ingest and deterministic cascade without changing
+  generated artifacts outside this document key.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**34 refreshes done after #34;
   22 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#34: #29/#31 CHI-C2C marquee message-field refreshes,

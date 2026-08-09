@@ -161,7 +161,8 @@ Five active program groups support that north star:
   18% peak system memory used; all sidecars are final-rooted and repository-relative; the stale one-signal/
   two-rule/eight-enum model blocks honestly at zero interfaces/signals/rules and leaves only `adapter.json`.
   WIRE/I2C/SWD, KG 156/156, 69/69 current strict emits, CI/book/doctrine/locality, and exact cleanup close `.2.34`.
-  Corpus refresh is 34 done / 22 remaining; next is selection and ownership of #35. Separately,
+  Corpus refresh is 34 done / 22 remaining; #35 now owns the 96-page USB4 Connection Manager Guide as a sibling
+  path-portability and generic signal-authority transfer check. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.
