@@ -121,9 +121,18 @@ produces zero relations, interfaces, ports, or connectivity while preserving 228
 constraint, four actors, 13 phases, 21 invariants, and 49 behaviors. The unsupported CTI stability statement is
 kept as one adapter residual; lowering blocks and leaves exactly `adapter.json`.
 
+The 10-page OpenCAPI Ready Test Resources engineering note provides a sixth, glossary-shaped transfer. Its stale
+EvidenceIR added synthetic `Signal DL is width 1.` from the headerless `Terms` table, whose actual `DL` row means
+data link layer. That record created one high-confidence interface and one output in an already blocked adapter.
+Fresh extraction preserves all 105 SourceIR content elements and 112 real evidence statements while dropping only
+the synthetic declaration. SemanticIR and IntentIR then contain zero interfaces or signal records. Lowering
+blocks on both `no signals declared in interface` and `no behavioral content`, emits no target, and leaves only
+`adapter.json` plus its validation report. A glossary definition cannot bootstrap a hardware boundary.
+
 The corpus cache now has 66 current emitted `.isf` files, all covered by a fresh 66/66 FSMGen-strict sweep; USB
 3.2, USB4 Inter-Domain, USB4 Connection Manager, CoreSight Base System, AArch64 External Debug, and Introducing
-CoreSight are not among them because honest blocking is the correct lowering result.
+CoreSight, plus the OpenCAPI Ready note, are not among them because honest blocking is the correct lowering
+result.
 
 The measurement behind that repair found three upstream authority errors, not a reason to distrust every
 relation-derived direction. Across the retained corpus, 97 sentence-start phrases use `signal <word>` without

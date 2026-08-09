@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.39 (`2026-08-09`) — a glossary row is not a signal declaration
+
+The OpenCAPI Ready engineering note preserves a compact headerless terms table. Its `DL` row defines OpenCAPI
+data link layer beside `AFU`, `DLx`, `DUT`, and `PHY`; it does not provide a signal/name/direction/width inventory
+or a formal interface declaration. The retained chain nevertheless synthesized `Signal DL is width 1.`, promoted
+that statement into high-confidence interface `interface_explicit_interface_section_0018_terms`, and rendered a
+one-bit output in an adapter already blocked for lack of behavior.
+
+Fresh current-binary extraction isolates the correction precisely. All 105 SourceIR content elements and the
+complete 10-page/six-visual/five-table structure hold. Evidence falls 113→112 because only the synthetic `DL`
+statement disappears; the extraction manifest reports zero structured extractors fired. Semantic and Intent
+therefore retain their prose-derived actors, phases, invariants, decompositions, behaviors, and constraints while
+the single interface and adapter signal disappear.
+
+This is the same generic authority boundary exercised by the preceding USB/CoreSight guides in a distinct source
+shape: glossary membership can preserve vocabulary and explanatory intent, but cannot bootstrap a hardware
+boundary. Validation keeps the document-purpose uncertainty explicit—guide by low structured design intent,
+purpose unresolved between physical/electrical and methodology/guide—and lowering blocks on both missing signals
+and missing behavior instead of manufacturing an executable target.
+
 ## CORPUS-COVERAGE.2.38 (`2026-08-09`) — a relation record is not topology authority by itself
 
 Introducing CoreSight was selected specifically because its retained EvidenceIR appeared stronger than the

@@ -55,14 +55,14 @@ re-ingest means the refreshed EvidenceIR and downstream stages were built and ve
 not undo that work. Report normalized retention separately when discussing whether evidence can be rebuilt again
 without another Docling ingest.
 
-The current measured example (`2026-08-09`) is 38 completed current-binary refreshes with 18 real chip-spec
-documents left in the refresh queue. The local artifact tree separately contains 80 SourceIR files, seven retained
+The current measured example (`2026-08-09`) is 39 completed current-binary refreshes with 17 real chip-spec
+documents left in the refresh queue. The local artifact tree separately contains 80 SourceIR files, eight retained
 normalized bundles, 80 EvidenceIR files, and 79 SemanticIR→IntentIR→adapter chains. The newest bundle belongs to
-the 32-page Introducing CoreSight guide: all 32 page image/layout paths are final and repository-relative, and
-the guarded CPU replay peaked at 44% system memory used. Source elements fall 333→250: 83 flattened diagram-label
-records disappear, while five prose/header records contaminated by appended labels are replaced with clean text;
-list items, captions, pages, visuals, tables, and section counts hold. Its presence is cache-retention status, not what
-makes that refresh complete; complete verified downstream artifacts are the durable progress measure.
+the 10-page OpenCAPI Ready Test Resources engineering note: all 10 page image/layout paths are final and
+repository-relative, and both guarded CPU ingests peaked at 18% system memory used. Its six visuals, five tables,
+23 sections, and 105 source elements reproduce exactly; the only downstream statement removed is a stale
+synthetic signal declaration derived from a glossary row. The bundle's presence is cache-retention status, not
+what makes that refresh complete; complete verified downstream artifacts are the durable progress measure.
 
 ## Why this stage matters
 

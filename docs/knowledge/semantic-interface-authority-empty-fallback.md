@@ -88,3 +88,11 @@ EvidenceIR carried nine relations, but those records are sentence fragments such
 all nine relations plus six interfaces, eight ports, four connectivity edges, and the four-signal/two-enum
 surface. The guide retains 228 statements and one signal constraint, blocks with one honest unsupported-temporal
 residual, and leaves exactly `adapter.json`; the live emitted set remains 66/66 strict-clean.
+
+**Sixth guide transfer (`CORPUS-COVERAGE.2.39`).** The OpenCAPI Ready engineering note's retained chain looked
+smaller but more explicit: synthetic `statement_0114` said `Signal DL is width 1.`, producing one high-confidence
+interface and a one-output blocked adapter. The cited source is actually a headerless `Terms` table whose `DL`
+row defines data link layer beside other abbreviations. Fresh extraction preserves all 105 source elements but
+drops only that synthetic statement (113→112), then yields zero interfaces/signals and blocks on both no declared
+signals and no behavior. Glossary syntax does not become declaration authority; the live emitted set remains
+66/66 strict-clean.

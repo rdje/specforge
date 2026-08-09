@@ -179,11 +179,13 @@ Five active program groups support that north star:
   signal constraint, four actors, 13 phases, 21 invariants, and 49 behaviors. Lowering blocks honestly with one
   unsupported temporal residual and only `adapter.json`. Two cascades reproduce all 12 hashes; all 66 remaining
   emits are strict-clean. Corpus is 38 done / 18 remaining. Preflight's copied-rollback side effect remains
-  durably closed by `.2.38a`: validation follows the explicit artifact path for all five stages. `.2.39` now owns
-  the smallest remaining candidate, the 10-page OpenCAPI 3.0 Ready Test Resources engineering note. Its retained
-  evidence has no relations or declarations, while the blocked downstream adapter still renders a one-bit `DL`
-  output inferred from a terms-section acronym, so this refresh tests current generic signal/interface authority.
-  Separately,
+  durably closed by `.2.38a`: validation follows the explicit artifact path for all five stages. `.2.39` then
+  transfers the same authority boundary to the 10-page OpenCAPI 3.0 Ready Test Resources engineering note. Its
+  retained synthetic `Signal DL is width 1.` came from a glossary row defining data link layer, not a signal
+  declaration. Two guarded ingests preserve all 105 SourceIR elements while EvidenceIR 113→112 drops only that
+  synthetic statement; the stale one-interface/one-output surface disappears. The guide blocks on no signals
+  plus no behavior and leaves only `adapter.json` plus its report. Two cascades reproduce 12 hashes; all 66
+  remaining emits are strict-clean. Corpus is 39 done / 17 remaining. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.
