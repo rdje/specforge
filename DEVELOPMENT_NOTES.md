@@ -1,4 +1,18 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.34b.ii.a (`2026-08-09`) — directory promotion does not relocate paths inside JSON
+
+The Docling helper writes page PNGs and their JSON sidecars inside `normalized.staging`. The later directory
+rename moves both files, but the JSON string still points at the old absolute staging name. The in-memory
+`DoclingBackendSummary` relocation cannot repair a file it does not rewrite; the document-level metadata
+normalizer likewise owns a different `.meta.json` schema. This is why SourceIR itself was portable while the
+deeper generated-artifact scan still failed on all 51 USB4 pages.
+
+The repair runs at the last safe producer boundary: after backend success, before the staged swap. It treats the
+summary and sidecar as two witnesses that must agree on image presence and exact staged path, proves the metadata
+and image resolve below staging without lexical traversal or symlink escape, and serializes the corresponding
+final path through the repository-owned path contract. A `null` page image remains `null` for large-document
+disk bounding. Any malformed witness discards only staging, so no partial rewrite can replace last-good data.
+
 ## CORPUS-COVERAGE.2.34b.i (`2026-08-09`) — isolate oracle work from canonical artifact resolution
 
 A caller-selected temporary directory is not sufficient isolation when the command derives its artifact root

@@ -1,7 +1,7 @@
 use std::env;
 use std::fs;
 use std::io::ErrorKind;
-use std::path::{Path, PathBuf};
+use std::path::{Component, Path, PathBuf};
 use std::process::{Command, ExitStatus, Output};
 use std::time::{Duration, Instant};
 
@@ -1731,6 +1731,13 @@ pub fn materialize_pdf(
         promoted_markdown_path,
         &staged_normalized_root,
     )?;
+    // The helper also writes one JSON sidecar per page. Those files are not part of the in-memory
+    // summary relocation below, so rewrite their staged image paths before the directory swap.
+    normalize_staged_page_metadata_paths(
+        &summary.page_artifacts,
+        &staged_normalized_root,
+        &artifact_layout.normalized_root,
+    )?;
 
     cleanup_path_if_exists(&artifact_layout.normalized_root)?;
     fs::rename(&staged_normalized_root, &artifact_layout.normalized_root)?;
@@ -1805,6 +1812,148 @@ fn normalize_backend_metadata_paths(
         ))
     })?;
     Ok(())
+}
+
+fn normalize_staged_page_metadata_paths(
+    page_artifacts: &[PageArtifact],
+    staged_normalized_root: &Path,
+    final_normalized_root: &Path,
+) -> Result<()> {
+    normalize_page_metadata_paths(
+        page_artifacts,
+        staged_normalized_root,
+        final_normalized_root,
+    )
+    .inspect_err(|_| {
+        let _ = cleanup_path_if_exists(staged_normalized_root);
+    })
+}
+
+fn normalize_page_metadata_paths(
+    page_artifacts: &[PageArtifact],
+    staged_normalized_root: &Path,
+    final_normalized_root: &Path,
+) -> Result<()> {
+    for page_artifact in page_artifacts {
+        let metadata_path = page_artifact
+            .layout_metadata_path
+            .as_deref()
+            .ok_or_else(|| {
+                AppError::InvalidBackendOutput(format!(
+                    "docling page {} has no layout metadata path",
+                    page_artifact.page_id
+                ))
+            })?;
+        relative_staged_file_path(
+            metadata_path,
+            staged_normalized_root,
+            "docling page metadata",
+        )?;
+
+        let raw = fs::read_to_string(metadata_path).map_err(|error| {
+            AppError::InvalidBackendOutput(format!(
+                "failed to read docling page metadata at {}: {error}",
+                metadata_path.display()
+            ))
+        })?;
+        let mut metadata = serde_json::from_str::<serde_json::Value>(&raw).map_err(|error| {
+            AppError::InvalidBackendOutput(format!(
+                "failed to parse docling page metadata at {}: {error}",
+                metadata_path.display()
+            ))
+        })?;
+        let rendered_image_path = metadata
+            .as_object_mut()
+            .and_then(|object| object.get_mut("rendered_image"))
+            .and_then(serde_json::Value::as_object_mut)
+            .and_then(|rendered_image| rendered_image.get_mut("path"))
+            .ok_or_else(|| {
+                AppError::InvalidBackendOutput(format!(
+                    "docling page metadata at {} has no rendered_image.path",
+                    metadata_path.display()
+                ))
+            })?;
+
+        match (&page_artifact.page_image_path, rendered_image_path) {
+            (None, serde_json::Value::Null) => {}
+            (Some(summary_path), serde_json::Value::String(sidecar_path)) => {
+                if Path::new(sidecar_path) != summary_path {
+                    return Err(AppError::InvalidBackendOutput(format!(
+                        "docling page metadata at {} disagrees with the summary image path",
+                        metadata_path.display()
+                    )));
+                }
+                let relative_path = relative_staged_file_path(
+                    summary_path,
+                    staged_normalized_root,
+                    "docling page image",
+                )?;
+                let final_path = final_normalized_root.join(relative_path);
+                let persisted =
+                    normalize_for_storage(&final_path, PersistedPathOrigin::RepositoryOwned)?;
+                *sidecar_path = persisted.to_string_lossy().into_owned();
+            }
+            _ => {
+                return Err(AppError::InvalidBackendOutput(format!(
+                    "docling page metadata at {} disagrees with the summary image presence",
+                    metadata_path.display()
+                )));
+            }
+        }
+
+        let persisted = serde_json::to_string_pretty(&metadata)?;
+        fs::write(metadata_path, persisted).map_err(|error| {
+            AppError::InvalidBackendOutput(format!(
+                "failed to rewrite docling page metadata at {}: {error}",
+                metadata_path.display()
+            ))
+        })?;
+    }
+    Ok(())
+}
+
+fn relative_staged_file_path<'a>(
+    path: &'a Path,
+    staged_normalized_root: &Path,
+    label: &str,
+) -> Result<&'a Path> {
+    let relative_path = path.strip_prefix(staged_normalized_root).map_err(|_| {
+        AppError::InvalidBackendOutput(format!(
+            "{label} path escapes the staging bundle: {}",
+            path.display()
+        ))
+    })?;
+    if relative_path.components().any(|component| {
+        matches!(
+            component,
+            Component::Prefix(_) | Component::RootDir | Component::CurDir | Component::ParentDir
+        )
+    }) {
+        return Err(AppError::InvalidBackendOutput(format!(
+            "{label} path escapes the staging bundle: {}",
+            path.display()
+        )));
+    }
+
+    let canonical_staging_root = fs::canonicalize(staged_normalized_root).map_err(|error| {
+        AppError::InvalidBackendOutput(format!(
+            "failed to resolve docling staging bundle at {}: {error}",
+            staged_normalized_root.display()
+        ))
+    })?;
+    let canonical_path = fs::canonicalize(path).map_err(|error| {
+        AppError::InvalidBackendOutput(format!(
+            "failed to resolve {label} at {}: {error}",
+            path.display()
+        ))
+    })?;
+    if !canonical_path.starts_with(&canonical_staging_root) {
+        return Err(AppError::InvalidBackendOutput(format!(
+            "{label} path escapes the staging bundle: {}",
+            path.display()
+        )));
+    }
+    Ok(relative_path)
 }
 
 fn cleanup_path_if_exists(path: &Path) -> std::io::Result<()> {
@@ -2115,7 +2264,8 @@ mod tests {
         INGEST_RAM_SAMPLE_SECS_ENV, RamGuardConfig, adaptive_batch_pages, check_disk_preflight,
         estimate_required_disk_mb, inspect_docling_runtime,
         inspect_docling_runtime_with_repo_search, nearest_existing_ancestor,
-        normalize_backend_metadata_paths, normalize_staged_backend_metadata,
+        normalize_backend_metadata_paths, normalize_page_metadata_paths,
+        normalize_staged_backend_metadata, normalize_staged_page_metadata_paths,
         parse_adaptive_batch_enabled, parse_batch_pages_ceiling, parse_df_available_kb,
         parse_disk_preflight_requirement, parse_leading_number, parse_linux_meminfo_total_mb,
         parse_linux_meminfo_used_percent, parse_macos_memory_pressure_used_percent,
@@ -2124,6 +2274,7 @@ mod tests {
         should_abort_for_memory,
     };
     use crate::error::{AppError, Result};
+    use crate::ir::source::PageArtifact;
     use crate::persisted_path::PersistedPathOrigin;
     use crate::test_support::env_var_lock;
 
@@ -2260,6 +2411,143 @@ mod tests {
             )
             .is_relative()
         );
+        Ok(())
+    }
+
+    #[test]
+    fn page_metadata_persists_the_final_repository_image_path() -> Result<()> {
+        let tempdir = crate::project_data::tempdir()?;
+        let staging_root = tempdir.path().join("normalized.staging");
+        let final_root = tempdir.path().join("normalized");
+        let staged_pages = staging_root.join("pages");
+        let image_path = staged_pages.join("page-0001.png");
+        let metadata_path = staged_pages.join("page-0001.json");
+        fs::create_dir_all(&staged_pages)?;
+        fs::write(&image_path, b"page image")?;
+        fs::write(
+            &metadata_path,
+            serde_json::to_vec_pretty(&serde_json::json!({
+                "page_id": "page_0001",
+                "rendered_image": {"path": image_path}
+            }))?,
+        )?;
+        let page_artifacts = vec![PageArtifact {
+            page_id: "page_0001".to_string(),
+            page_number: 1,
+            page_image_path: Some(image_path),
+            layout_metadata_path: Some(metadata_path.clone()),
+            width_px: Some(800),
+            height_px: Some(600),
+        }];
+
+        normalize_page_metadata_paths(&page_artifacts, &staging_root, &final_root)?;
+
+        let metadata: serde_json::Value = serde_json::from_slice(&fs::read(metadata_path)?)?;
+        let repository_root = crate::project_data::repository_root()?;
+        let expected = final_root
+            .join("pages/page-0001.png")
+            .strip_prefix(repository_root)
+            .expect("project tempdir must be inside the repository")
+            .to_string_lossy()
+            .into_owned();
+        assert_eq!(metadata["rendered_image"]["path"], expected);
+        assert!(!expected.contains("normalized.staging"));
+        Ok(())
+    }
+
+    #[test]
+    fn page_metadata_keeps_an_unpersisted_page_image_null() -> Result<()> {
+        let tempdir = crate::project_data::tempdir()?;
+        let staging_root = tempdir.path().join("normalized.staging");
+        let final_root = tempdir.path().join("normalized");
+        let metadata_path = staging_root.join("pages/page-0001.json");
+        fs::create_dir_all(metadata_path.parent().expect("page metadata parent"))?;
+        fs::write(
+            &metadata_path,
+            serde_json::to_vec_pretty(&serde_json::json!({
+                "page_id": "page_0001",
+                "rendered_image": {"path": null}
+            }))?,
+        )?;
+        let page_artifacts = vec![PageArtifact {
+            page_id: "page_0001".to_string(),
+            page_number: 1,
+            page_image_path: None,
+            layout_metadata_path: Some(metadata_path.clone()),
+            width_px: Some(800),
+            height_px: Some(600),
+        }];
+
+        normalize_page_metadata_paths(&page_artifacts, &staging_root, &final_root)?;
+
+        let metadata: serde_json::Value = serde_json::from_slice(&fs::read(metadata_path)?)?;
+        assert!(metadata["rendered_image"]["path"].is_null());
+        Ok(())
+    }
+
+    #[test]
+    fn page_metadata_rejects_staging_traversal_before_reading_it() -> Result<()> {
+        let tempdir = crate::project_data::tempdir()?;
+        let staging_root = tempdir.path().join("normalized.staging");
+        let final_root = tempdir.path().join("normalized");
+        let outside_metadata = tempdir.path().join("outside.json");
+        fs::create_dir_all(staging_root.join("pages"))?;
+        fs::write(&outside_metadata, b"outside must remain untouched")?;
+        let page_artifacts = vec![PageArtifact {
+            page_id: "page_0001".to_string(),
+            page_number: 1,
+            page_image_path: None,
+            layout_metadata_path: Some(staging_root.join("pages/../../outside.json")),
+            width_px: Some(800),
+            height_px: Some(600),
+        }];
+
+        let error = normalize_page_metadata_paths(&page_artifacts, &staging_root, &final_root)
+            .expect_err("a staging traversal must be rejected before the sidecar is read");
+
+        assert!(error.to_string().contains("escapes the staging bundle"));
+        assert_eq!(
+            fs::read(outside_metadata)?,
+            b"outside must remain untouched"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn malformed_page_metadata_discards_staging_and_keeps_the_last_good_bundle() -> Result<()> {
+        let tempdir = crate::project_data::tempdir()?;
+        let normalized_root = tempdir.path().join("normalized");
+        let staging_root = tempdir.path().join("normalized.staging");
+        let image_path = staging_root.join("pages/page-0001.png");
+        let metadata_path = staging_root.join("pages/page-0001.json");
+        fs::create_dir_all(&normalized_root)?;
+        fs::write(normalized_root.join("keep.txt"), b"last-good-run")?;
+        fs::create_dir_all(metadata_path.parent().expect("page metadata parent"))?;
+        fs::write(&image_path, b"page image")?;
+        fs::write(&metadata_path, b"not JSON")?;
+        let page_artifacts = vec![PageArtifact {
+            page_id: "page_0001".to_string(),
+            page_number: 1,
+            page_image_path: Some(image_path),
+            layout_metadata_path: Some(metadata_path),
+            width_px: Some(800),
+            height_px: Some(600),
+        }];
+
+        let error =
+            normalize_staged_page_metadata_paths(&page_artifacts, &staging_root, &normalized_root)
+                .expect_err("malformed page metadata must block bundle promotion");
+
+        assert!(
+            error
+                .to_string()
+                .contains("failed to parse docling page metadata")
+        );
+        assert_eq!(
+            fs::read(normalized_root.join("keep.txt"))?,
+            b"last-good-run"
+        );
+        assert!(!staging_root.exists());
         Ok(())
     }
 

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > what is the must_be_value + VALID typed convention
+- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
+  > what is the next big PDF-variant digestion lever after the serial class
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > what is the north-star bar #2 relation-completeness finding (KG-ISF-COMPLETENESS.3)
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > what is the only VLM-unique signal in AXI timing diagrams (phase ORDER, the .2h residual)
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
   > what is the only improvement path for conditional rules (upstream EXTRACTION — extract-constraints-llm / EXTRACTION-QUALITY-GAUGE recovering the concrete obligation from the conditional's source_text for the deontic-modal bucket; then it lowers via the existing (rule) path with no new ISF construct — lower-leverage than register/structure/topology)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -120,6 +128,8 @@
   > when should the activate-only ExtractionProfile consume contract be built
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > where are Docling models stored for SpecForge
+- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
+  > where are Docling page sidecar paths normalized
 - [contested-priors](../knowledge/contested-priors.md)
   > where are cross-document prior contradictions surfaced
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
@@ -288,13 +298,3 @@
   > which IR stages have adopted move safe persisted paths
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > which IntentIR surfaces are lowered to the .isf vs silently dropped
-- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
-  > which LLM or VLM does SpecForge use
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > which Markdown files must the live-document containment registry cover
-- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
-  > which PDF task history ids exist only as tree-relative shorthand
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > which SWD protocol facts are safe to lower today
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > which SemanticIR IntentIR adapter and prior memory paths serialize repository relative

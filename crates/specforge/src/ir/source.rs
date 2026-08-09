@@ -1601,7 +1601,7 @@ printf '# normalized\n\n![Image](assets/picture-0001.png)\n' > "$markdown"
 printf '{}' > "$backend_raw_output"
 printf '{"backend":"docling_stub"}\n' > "$metadata_output"
 printf 'stub-page' > "$page_image_root/page-0001.png"
-printf '{"page_number":1}\n' > "$page_image_root/page-0001.json"
+printf '{"page_number":1,"rendered_image":{"path":"%s"}}\n' "$page_image_root/page-0001.png" > "$page_image_root/page-0001.json"
 printf 'stub-asset' > "$visual_asset_root/picture-0001.png"
 cat > "$summary_output" <<EOF
 {
@@ -1717,6 +1717,13 @@ EOF
                 .join("normalized")
                 .join("page_artifacts.json"),
         )?;
+        let page_sidecar = fs::read_to_string(
+            artifact_base
+                .join("bus_spec")
+                .join("normalized")
+                .join("pages")
+                .join("page-0001.json"),
+        )?;
         let visual_manifest = fs::read_to_string(
             artifact_base
                 .join("bus_spec")
@@ -1732,10 +1739,17 @@ EOF
 
         assert!(source_ir_json.contains("\"status\": \"ready\""));
         assert!(page_manifest.contains("\"page_id\": \"page_0001\""));
+        assert!(page_sidecar.contains("normalized/pages/page-0001.png"));
+        assert!(!page_sidecar.contains("normalized.staging"));
         assert!(visual_manifest.contains("\"source_ref\": \"#/pictures/0\""));
         assert!(promoted_markdown.contains("![Image](assets/picture-0001.png)"));
         let repository = crate::project_data::repository_root()?;
-        for persisted_artifact in [&source_ir_json, &page_manifest, &visual_manifest] {
+        for persisted_artifact in [
+            &source_ir_json,
+            &page_manifest,
+            &page_sidecar,
+            &visual_manifest,
+        ] {
             assert!(
                 !persisted_artifact.contains(repository.to_string_lossy().as_ref()),
                 "repository-owned normalization and visual paths must serialize without the runtime root"
@@ -1790,7 +1804,7 @@ printf '# normalized\n' > "$markdown"
 printf '{}' > "$backend_raw_output"
 printf '{"backend":"docling_stub"}\n' > "$metadata_output"
 printf 'stub-page' > "$page_image_root/page-0001.png"
-printf '{"page_number":1}\n' > "$page_image_root/page-0001.json"
+printf '{"page_number":1,"rendered_image":{"path":"%s"}}\n' "$page_image_root/page-0001.png" > "$page_image_root/page-0001.json"
 printf 'stub-asset' > "$visual_asset_root/picture-0001.png"
 cat > "$summary_output" <<EOF
 {

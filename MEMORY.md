@@ -21,15 +21,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.34b.ii.a`; make fresh-ingest page sidecars path-portable.
+- Active unit: `CORPUS-COVERAGE.2.34b.ii.b`; rerun and close the guarded USB4 refresh.
 - Current state: the repository-relative host-library route now resolves to the director-supplied SSD checkout.
   Guarded CPU ingest produced the expected USB4 semantic cleanup, but the locality gate found all 51 persisted
   page sidecars still named the temporary absolute `normalized.staging` image paths. The complete fresh chain is
   hash-verified in project-local task storage and the canonical USB4 chain is restored to its authenticated
-  seven-file baseline. `.2.34b.i` separately restored coherent canonical SWD with all 29 serial facts exact.
-- Next action: implement `.ii.a` at the staged-bundle producer seam with focused fail-closed tests, then `.ii.b`
-  reruns guarded USB4 ingest/cascade and completes rollback comparison, gates, cleanup, and corpus closure.
-- In-flight uncommitted: none after the `.2.34b.i` recovery commit. The authenticated USB4 baseline and exact
-  unportable fresh-chain evidence remain under project-local ignored task work for `.ii.a`/`.ii.b`; the SWD
-  recovery snapshot has been deleted.
+  seven-file baseline. `.ii.a` now normalizes every page sidecar before promotion with fail-closed containment;
+  `.2.34b.i` separately restored coherent canonical SWD with all 29 serial facts exact.
+- Next action: rebuild release, rerun guarded USB4 ingest/cascade, prove all 51 sidecars portable, finish rollback
+  comparison and broad gates, then delete only authenticated task evidence and close `.2.34`.
+- In-flight uncommitted: none after the `.2.34b.ii.a` code commit. The authenticated USB4 baseline and exact
+  unportable fresh-chain evidence remain under project-local ignored task work for `.ii.b`.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

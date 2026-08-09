@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > why does USB 3.2 EvidenceIR panic on start byte index is not a char boundary
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why does USB 3.2 emit AT ENHANCED NO and USB as ISF signals
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why does USB 3.2 still emit hundreds of low confidence ISF outputs after the four false signals are removed
+- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
+  > why does a PDF-VARIANT-DIGESTION commit subject id not appear fully qualified in the task source
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > why does a rebuild drop the extraction-quality gauge
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > why does a register count NOT veto a wire protocol (wire-vs-structure weight dominance; AXI wire 401 >= struct 229)
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > why does a register doc captioned 'message fields' yield zero message fields
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
@@ -286,11 +298,3 @@
   > why were ACK / NACK / DDC / SDR extracted as I2C signals (and how was it fixed)
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
   > why were CHI fields mis-typed as signals (the .gauge spurious-subject class)
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > why were RISC-V/TRM register tables unextracted (unknown table_kind)
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > why were register names synthetic register_table_NNNN and how is the heading association done
-- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
-  > will generated stage artifacts survive moving the repository
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > would a table-column phase cue move AXI/SWD off empty per-phase grouping (no — .2j NO-GO; the cue is already captured where present and genuinely absent on AXI/SWD)

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > what does synthesize_signal_declarations do when the body is rotated
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what does the TASK-ACCEPTANCE check verify / why was my commit blocked
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what does the active task evidence checker verify
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
   > what does the active task migration roll back after a validation failure
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
@@ -30,6 +36,8 @@
   > what gates protect the leading-identifier mnemonic form from bleed
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > what grounded heuristic only interface evidence is preserved
+- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
+  > what happens to a page sidecar path when page images are not persisted
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > what happens to a register-worded caption that grounds no identifier
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -289,11 +297,3 @@
   > what is the message_fields.section_header_field strategy
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > what is the model-misspelled-subject / phantom-subject defect class
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > what is the must_be_value + VALID typed convention
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > what is the next big PDF-variant digestion lever after the serial class
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > what is the north-star bar #2 relation-completeness finding (KG-ISF-COMPLETENESS.3)
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > what is the only VLM-unique signal in AXI timing diagrams (phase ORDER, the .2h residual)

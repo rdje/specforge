@@ -51,6 +51,7 @@
 - [dense-prose-false-signal-loop-reaches-isf](dense-prose-false-signal-loop-reaches-isf.md)
 - [docling-device-cpu](docling-device-cpu.md)
 - [docling-metadata-sidecar-paths-are-portable](docling-metadata-sidecar-paths-are-portable.md)
+- [docling-page-sidecar-paths-are-portable](docling-page-sidecar-paths-are-portable.md)
 - [doctrine-enforcement-adoption](doctrine-enforcement-adoption.md)
 - [document-class-from-structure](document-class-from-structure.md)
 - [document-intent-category-census](document-intent-category-census.md)

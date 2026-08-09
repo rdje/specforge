@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > does the path portability contract cover FigureRegion raw images
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > does the persisted path gate cover dormant schemas
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > does the rolling ledger verifier validate predecessor successor chronology
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > does the stage-staleness detector false-fire on register/command docs with 0 relations (no — both empty)
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
@@ -292,9 +298,3 @@
   > how does the ambiguity gate keep channel membership boundary-precise (bar #3)
 - [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
   > how does the corpus KB aggregate fixture page stay bounded as fixtures grow
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > how does the emitter decide a rule drive value is renderable (is_safe_isf_scalar_value — non-empty, whitespace-free; a prose value like 'the value that was presented on the ARLOOP signal' fails)
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > how does the extract-constraints-llm prompt express a validity requirement
-- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
-  > how does the extractor avoid minting a constraint about a cross-referenced register field

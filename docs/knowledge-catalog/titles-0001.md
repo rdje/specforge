@@ -55,9 +55,9 @@
 | [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md) | 2026-08-09 | `current` | Independent false-signal seeds can reinforce through relation-derived directions and reach a syntactically va… |
 | [docling-device-cpu](../knowledge/docling-device-cpu.md) | 2026-06-01 | `current` | Docling ingest must run on CPU on this stack (torch MPS lacks float64) |
 | [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md) | 2026-08-09 | `current` | Docling metadata paths are normalized before the staged bundle is promoted |
+| [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md) | 2026-08-09 | `current` | Docling page sidecars are normalized before the staged bundle is promoted |
 | [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md) | 2026-06-22 | `current` | SpecForge enforces every mechanizable doctrine via one registry/driver (scripts/check_doctrines.sh) gated E1… |
 | [document-class-from-structure](../knowledge/document-class-from-structure.md) | 2026-06-08 | `current` | Document class (protocol/register/interface/guide) inferred from structural intent surfaces, not the doc name |
 | [document-intent-category-census](../knowledge/document-intent-category-census.md) | 2026-06-22 | `current` | The 78-doc corpus splits 36/7/15/2/4/14 across the 6 purpose categories (wire-protocol/register-IP/platform-I… |
 | [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md) | 2026-06-22 | `current` | Document intent-category recognizer (DOC-INTENT-TAXONOMY.3b) — validate reports a chip-spec PDF's 6-categor… |
 | [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md) | 2026-06-22 | `current` | Per-category ISF-lowering completeness (DOC-INTENT-TAXONOMY.2) — registers lower 1:1 to opaque width-only s… |
-| [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md) | 2026-08-09 | `current` | Dormant serializable path fields require the portability contract before activation |

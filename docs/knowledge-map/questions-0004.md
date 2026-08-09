@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > is the .isf affected by transaction membership (no — emitter lowers steps, not ports/phase_membership)
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > is the APB PSTRB must be LOW constraint extracted
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > is the APB signal catalog extracted
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
   > is the ATP ihi0082 ARVALID/RVALID/RREADY drop a lowering gap
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
@@ -292,9 +298,3 @@
   > what does signal_table_covered_by_inventory do
 - [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
   > what does source_literal mean in the active task evidence contract
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > what does synthesize_signal_declarations do when the body is rotated
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what does the TASK-ACCEPTANCE check verify / why was my commit blocked
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what does the active task evidence checker verify

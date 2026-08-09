@@ -26,6 +26,8 @@
   > are currently-strict-clean .isf affected by the overlap drop (no — a clean doc cannot contain an unconditional-overlap config or FSMGen would already reject it → byte-identical by construction; 100/107 emitted .isf unchanged)
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > are description bracket slices like Store Data[63:32] positions or values
+- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
+  > are normalized pages page JSON image paths repository relative
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > are other docs affected by the rule-drive-value gate (no — only ihi0022_h_c carries a prose-valued rule corpus-wide; every other emit is byte-identical)
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
@@ -188,6 +190,8 @@
   > does SpecForge lower register reset values into the .isf (YES as of ISF-REGISTER-RESET-EMIT.2/.3 — composed from per-field reset_value and emitted at the true register width; it was dropped at the emit boundary before)
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
   > does SpecForge model-check temporal properties
+- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
+  > does SpecForge reject a page metadata staging traversal or symlink escape
 - [contested-priors](../knowledge/contested-priors.md)
   > does SpecForge revise or decay priors
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
@@ -246,6 +250,8 @@
   > does every temporal_rule reach the .isf or a residual
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
   > does lowering cat-3 topology need only an ISF construct or also a multi-actor emit (also a multi-actor emit — ISF is per-actor / one .isf = one FSMGen module and SpecForge's emit is single-initiator-actor; a declarative cross-component netlist is an architectural change, decided WITH FSMGen only after capture-recall clears the bar — not today)
+- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
+  > does malformed page metadata preserve the last good normalized bundle
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
   > does mdbook test pass for the SpecForge book
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
@@ -292,9 +298,3 @@
   > does the live-document registry reject unknown fields oversized arrays or oversized scalars
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > does the move portability repair change PathBuf JSON fields
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > does the path portability contract cover FigureRegion raw images
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > does the persisted path gate cover dormant schemas
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > does the rolling ledger verifier validate predecessor successor chronology

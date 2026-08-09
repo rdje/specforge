@@ -155,8 +155,9 @@ Five active program groups support that north star:
   SSD checkout, `.2.34b` completed the guarded ingest/cascade. Its `.i` recovery leaf rebuilt a coherent canonical
   SWD chain after a temporary oracle command resolved to the live artifact root: current dense-prose authority
   removes one false signal/four relations while all 29 typed SWD protocol facts remain exact. The closing USB4
-  locality gate then exposed 51 page sidecars retaining absolute staging image paths; `.ii.a` owns that producer
-  fix and `.ii.b` owns the final rerun, rollback comparison, and signoff. Separately,
+  locality gate then exposed 51 page sidecars retaining absolute staging image paths. `.ii.a` now rewrites them
+  against the final repository-relative destination before promotion, with traversal/symlink containment and
+  last-good rollback; `.ii.b` owns the final real rerun, rollback comparison, and signoff. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

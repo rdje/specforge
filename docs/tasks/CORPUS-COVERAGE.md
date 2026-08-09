@@ -243,7 +243,7 @@ today's ephemeral normalized-directory count.
   requires the intended SSD checkout path or explicit authorization for a one-time read-only source copy into
   repository-local project data.
 - ID: `CORPUS-COVERAGE.2.34b` · Status: `in_progress` (`2026-08-09`, DATA/DOC) · Children: `.2.34b.i`
-  SWD signoff-side-effect recovery (done), `.2.34b.ii` USB4 closing signoff (pending). Goal: after the
+  SWD signoff-side-effect recovery (done), `.2.34b.ii` USB4 closing signoff (in progress). Goal: after the
   source route is resolved, preserve the exact baseline and execute the `.2.34` guarded ingest/cascade acceptance
   contract without cross-volume project data or an undocumented boot-volume dependency.
 - ID: `CORPUS-COVERAGE.2.34b.i` · Status: `done` (`2026-08-09`, DATA/DOC; recovery) · Result: the attempted
@@ -260,17 +260,38 @@ today's ephemeral normalized-directory count.
   authenticated recovery snapshot is eligible for deletion. No production code changed. Commit:
   `CORPUS-COVERAGE.2.34b.i — recover coherent canonical SWD cascade`.
 - ID: `CORPUS-COVERAGE.2.34b.ii` · Status: `in_progress` (`2026-08-09`, CODE/DATA/DOC) · Children: `.ii.a`
-  page-sidecar path portability (pending), `.ii.b` USB4 closing signoff (pending). Goal: finish USB4 rollback
+  page-sidecar path portability (done), `.ii.b` USB4 closing signoff (pending). Goal: finish USB4 rollback
   comparison, all acceptance gates, documentation, and cleanup after `.2.34b.i` restores a coherent corpus state.
-- ID: `CORPUS-COVERAGE.2.34b.ii.a` · Status: `pending` (`2026-08-09`, CODE) · Goal: fix the fresh-ingest
-  locality failure in all 51 `normalized/pages/page-*.json` sidecars. Their `rendered_image.path` values retain
-  absolute `normalized.staging` paths because `DoclingBackendSummary::relocate_paths` repairs only the summary
-  manifest in memory and the existing staged metadata rewrite covers only the document-level `.meta.json`.
-  Normalize every persisted page-sidecar image path to its final repository-owned form before the staged swap,
-  fail closed without replacing the last-good bundle, and add focused positive/malformed/rollback tests.
+- ID: `CORPUS-COVERAGE.2.34b.ii.a` · Status: `done` (`2026-08-09`, CODE) · Result: the fresh USB4 ingest exposed
+  51 `normalized/pages/page-*.json` sidecars whose `rendered_image.path` values retained absolute
+  `normalized.staging` paths. `DoclingBackendSummary::relocate_paths` repairs only the summary returned in memory,
+  while the existing staged rewrite covers only the document-level `.meta.json`; neither touched page sidecars
+  already written by the helper. `materialize_pdf` now rewrites every page sidecar before deleting the last-good
+  bundle: saved-image paths must agree with the summary, remain canonically below staging with no traversal or
+  symlink escape, and persist against the final `normalized/` destination; intentionally unpersisted images keep
+  `null`. Any missing/malformed/mismatched/escaping record fails with `InvalidBackendOutput` and removes only
+  staging. Four focused page tests, three document-metadata tests, two stub-ingest integration tests, formatting,
+  and warning-deny Clippy pass. Commit: `CORPUS-COVERAGE.2.34b.ii.a — normalize Docling page-sidecar paths`.
 - ID: `CORPUS-COVERAGE.2.34b.ii.b` · Status: `pending` (`2026-08-09`, DATA/DOC) · Goal: rerun the guarded USB4
   ingest/cascade with `.ii.a`, prove zero staging/absolute-path residue, finish the authenticated before/after
   comparison and all gates, then delete only the exact rollback and close `.2.34`.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34b.ii.a`
+
+- [x] **REPRODUCE / MEASURE** — fresh USB4 ingest reproducibly leaves 51/51 page-sidecar image paths absolute and
+  rooted at the renamed staging directory; the canonical chain was restored exactly before implementation.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the helper serializes runtime staging paths into per-page JSON; only the
+  document-level metadata and in-memory summary had post-backend relocation, so directory rename preserved the
+  stale JSON strings.
+- [x] **ADDRESSED (verified)** — every saved-image sidecar is cross-checked with its summary record, contained
+  below staging, and serialized repository-relative against the final destination before the staged swap; the
+  no-image case remains `null`.
+- [x] **NO REGRESSION** — four focused page tests, three existing backend-metadata tests, two full stub-ingest
+  materialization tests, formatting, and warning-deny Clippy pass; malformed metadata preserves last-good data.
+- [x] **GENERICITY** — the repair keys only on the typed page-artifact/sidecar contract and repository path
+  containment; no USB4/document/vendor/page-count exception or generated-output edit exists.
+- [x] **LOCKSTEP** — source comments, task result, durable fact, live docs, mdBook locality contract, and
+  `MEMORY.md` agree; `.ii.b` owns the real USB4 rerun and complete corpus gates.
 
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34b.i`
 
@@ -288,19 +309,19 @@ today's ephemeral normalized-directory count.
 - [x] **LOCKSTEP** — task result, SWD durable fact, live docs, mdBook, and `MEMORY.md` record the coherent current
   chain and hand off only the USB4 closing signoff to `.2.34b.ii`.
 
-### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34`
+### Parent completion contract — `CORPUS-COVERAGE.2.34`
 
-- [ ] **REPRODUCE / MEASURE** — authenticate the source PDF and exact five-stage before bundle, run guarded CPU
+- **REPRODUCE / MEASURE** — authenticate the source PDF and exact five-stage before bundle, run guarded CPU
   ingest plus the deterministic cascade, and record source/stage hashes, typed counts, deltas, and peak RAM.
-- [ ] **ROOT CAUSE (WHY + WHERE)** — classify every material delta against current generic extractors, including
+- **ROOT CAUSE (WHY + WHERE)** — classify every material delta against current generic extractors, including
   whether the retained `USB4` port is the repaired parenthetical bus-acronym authority class or remains grounded.
-- [ ] **ADDRESSED (verified)** — promote only complete successful stages; reconcile obsolete adapter outputs;
+- **ADDRESSED (verified)** — promote only complete successful stages; reconcile obsolete adapter outputs;
   validate the final artifacts and run FSMGen strict only when the adapter is honestly renderable.
-- [ ] **NO REGRESSION** — focused transfer checks, WIRE/I2C/SWD, KG 156/156, mdBook, doctrines, path/locality,
+- **NO REGRESSION** — focused transfer checks, WIRE/I2C/SWD, KG 156/156, mdBook, doctrines, path/locality,
   rollback comparison/deletion, and broader Rust gates when any product code changes all pass.
-- [ ] **GENERICITY** — no USB4/vendor/document-key/token exception, manual generated-output edit, relaxed
+- **GENERICITY** — no USB4/vendor/document-key/token exception, manual generated-output edit, relaxed
   validator, LLM/VLM inference, or fabricated target model enters the slice.
-- [ ] **LOCKSTEP** — task row/changelog, corpus counts/frontier, live docs, durable fact if a new causal finding is
+- **LOCKSTEP** — task row/changelog, corpus counts/frontier, live docs, durable fact if a new causal finding is
   established, mdBook behavior, and `MEMORY.md` agree; delete only the authenticated rollback after green gates.
 
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34a`
@@ -513,9 +534,9 @@ today's ephemeral normalized-directory count.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: `CORPUS-COVERAGE.2.34b.ii.a` — after committing the coherent SWD recovery, fix the 51 page-sidecar
-  `rendered_image.path` values that remain absolute and staging-rooted after a fresh ingest. Then `.ii.b` reruns
-  USB4 and owns rollback comparison, final gates, exact cleanup, and `.2.34` closure.
+- Frontier: `CORPUS-COVERAGE.2.34b.ii.b` — rebuild release with the committed page-sidecar fix, rerun guarded
+  USB4 ingest/cascade, prove all 51 page records portable and zero staging/absolute residue, then complete the
+  authenticated comparison, gates, exact rollback/evidence cleanup, corpus accounting, and `.2.34` closure.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**33 refreshes done after #33;
   23 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#33: #29/#31 CHI-C2C marquee message-field refreshes,
@@ -608,6 +629,11 @@ strict syntax is not a semantic-fidelity oracle. **Levers A, B, C, F + the rule-
 
 ## Changelog
 
+- `2026-08-09`: `.2.34b.ii.a` CODE DONE. Fresh USB4 exposed 51 page JSON sidecars retaining absolute staging
+  image paths. Added a pre-swap page-sidecar rewrite that cross-checks summary identity, rejects traversal and
+  symlink escape, persists the final repository-relative image path, keeps the intentional no-image `null`, and
+  deletes only staging on any malformed record. Four focused page tests, existing metadata tests, two stub
+  ingests, formatting, and warning-deny Clippy pass. Frontier → `.ii.b` real USB4 rerun/signoff.
 - `2026-08-09`: `.2.34b.i` DATA/DOC RECOVERY DONE. A temporary fresh-SWD oracle command resolved its artifact
   root to the canonical cache. Preserved the untouched downstream chain, then validated and rebuilt it from the
   promoted EvidenceIR. Current generic dense-prose authority removes `LEVEL`, three phrase-shaped actors, and

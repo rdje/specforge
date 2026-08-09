@@ -1,3 +1,13 @@
+### CORPUS-COVERAGE.2.34b.ii.a — normalize Docling page-sidecar paths
+
+- Fresh USB4 ingest exposed 51 `normalized/pages/page-*.json` files whose `rendered_image.path` still named the
+  absolute `normalized.staging` runtime location after directory promotion.
+- `materialize_pdf` now validates and rewrites each sidecar before the staged swap: the saved image must match
+  the summary and resolve below staging without traversal/symlink escape, then persists against final
+  `normalized/`; intentionally unpersisted page images remain `null`.
+- Any missing, malformed, mismatched, or escaping record removes only staging and preserves the last-good bundle.
+  Four page tests, three document-metadata tests, two stub ingests, formatting, and warning-deny Clippy pass.
+
 ### CORPUS-COVERAGE.2.34b.i — recover a coherent canonical SWD cascade
 
 - Preserved the untouched SWD downstream chain after a temporary fresh-oracle command resolved its artifact

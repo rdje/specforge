@@ -76,6 +76,13 @@ repository-owned. SemanticIR, IntentIR, and adapter layouts/upstream/emitted-tar
 and typed prior memory stores learned source-artifact paths relative. Validation, project-validation, learning,
 recovery, KG fixtures, and convergence resolve repository artifacts through the common boundary.
 
+Docling page sidecars follow the same rule. The backend creates `normalized/pages/page-*.json` while working in
+`normalized.staging`, so a saved `rendered_image.path` initially names that temporary runtime location. Before
+the staged directory can replace the last-good bundle, SpecForge cross-checks the sidecar against the page
+summary, rejects traversal or symlink escape, and serializes the image's final `normalized/` path relative to the
+repository. When full-page PNG persistence is intentionally disabled, the path remains `null`. A missing,
+malformed, or inconsistent sidecar deletes only staging and preserves the previous normalized bundle.
+
 The closure audit also covered path-bearing schemas that have no current artifact. Optional
 `FigureRegion.raw_image_path` uses repository-owned field-level serialization even though the upstream figure
 extractor is not wired yet. Project-rescan `artifact_path`, replay `path`, and command `working_directory`
