@@ -1,3 +1,15 @@
+### CORPUS-COVERAGE.2.36 — sign off CoreSight base-system refresh
+
+- Guarded CPU ingest produces 29 pages, 19 visuals, 12 tables, and 404 elements at 17% peak system memory used;
+  all 29 page sidecars are final-rooted and repository-relative.
+- Source structure and EvidenceIR counts hold exactly. Current generic authority removes 88 stale heuristic
+  interfaces and the 100-signal/two-rule `agent.isf`; the adapter blocks on no declared interface signals and
+  leaves exactly `adapter.json`.
+- Validation keeps the real gap explicit: the self-declared architecture remains under-extracted, with 19
+  unenriched visuals, 87 partially structured normative statements, and seven untyped temporal-source rules.
+- Two cascades reproduce all nine hashes. WIRE/I2C/SWD, KG 156/156, 67/67 FSMGen strict, mdBook, doctrine,
+  persisted-path, locality, and exact cleanup gates pass. Corpus is 36 done / 20 remaining.
+
 ### CORPUS-COVERAGE.2.35 — sign off USB4 Connection Manager refresh
 
 - Guarded CPU ingest produces 96 pages, 46 visuals, 23 tables, and 1,313 elements at 28% peak system memory

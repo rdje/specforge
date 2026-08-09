@@ -35,6 +35,7 @@
 - [conditional-rule-lowering-triage](conditional-rule-lowering-triage.md)
 - [conformal-tier-agreement-degenerate](conformal-tier-agreement-degenerate.md)
 - [contested-priors](contested-priors.md)
+- [coresight-base-system-refresh-is-authority-empty](coresight-base-system-refresh-is-authority-empty.md)
 - [corpus-cluster-fingerprint](corpus-cluster-fingerprint.md)
 - [corpus-coverage-buildout](corpus-coverage-buildout.md)
 - [corpus-coverage-sweep](corpus-coverage-sweep.md)

@@ -149,6 +149,8 @@
   > how is transaction membership kept boundary-precise across read vs write (bar #3)
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
   > how many CORPUS-COVERAGE re-ingests remain after normalized cleanup
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > how many CoreSight Base System page sidecars are repository relative
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > how many RISC-V Debug register bit diagrams are images vs flattened tables (53/56 images, 34 field tables, only 7 flattened diagram tables; bits live in the image modality)
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
@@ -159,6 +161,8 @@
   > how many USB4 Inter-Domain page sidecars are repository relative
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
   > how many conditional_rules are concretely lowerable (only ~3 of 603 across 9 representative docs carry a concrete value/level cue; 161/164 declared-consequent candidates are bare modals shall/must/shall not)
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > how many corpus refreshes remain after CoreSight Base System
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
   > how many corpus refreshes remain after USB4 Connection Manager
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
@@ -191,6 +195,8 @@
   > how much fact-card catalog index headroom remains
 - [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
   > how much intent does SpecForge extract across the whole corpus
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > how much memory did the guarded CoreSight Base System ingest use
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
   > how much memory did the guarded USB4 Connection Manager ingest use
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
@@ -291,9 +297,3 @@
   > is dropping a zero-evidence actor safe across AXI vs AXI-Stream
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
   > is intent-bearing content slipping through because nothing reads the full page
-- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
-  > is it a strict error to drive a signal declared (input ...) in an .isf rule
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > is it safe to extend the .1b.i trailing-fragment strip to trailing prepositions and auxiliaries (host has -> host, advantage of -> advantage)
-- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
-  > is it safe to measure a backup copy of an evidence_ir with nli-verify

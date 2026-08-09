@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
+  > why do generated IR files contain the old SpecForge repository path
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > why do i / its stay out of the non-actor function-word list (GIC ITS, the letter I)
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > why do many conditional_rules not lower to an ISF (rule) (they name no signal obligation, an undeclared signal, a placeholder action, or only a bare modal shall/must with no concrete value/level — lowering would fabricate the obligation)
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > why do message/flit fields count as wire intent only when there is no register map (CHI/DTI reg=0 vs NVMe/AMD/CCIX reg>0)
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > why do nested register views (AUTHSTATUS) collapse but disjoint ones (MEM-AP CSW vs JTAG-AP CSW) stay a residual
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > why do nvme / tilelink / wbspec / i2c / ccix / vt-d / iommu have zero actor_signal_relations
+- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
+  > why do only 36 of 79 ingested docs reach IntentIR / .isf
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > why do plain English words like Address or Vector become field names under the bracket frame
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > why do producer/consumer/receiver/transmitter actors carry 0 ports and 0 relations
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > why do register bit-fields not appear in the emitted .isf (registers lower as opaque width-only storage vars)
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > why do some docs reach intent but not isf (honest block: no behavioral content to lower)
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
@@ -112,6 +132,8 @@
   > why does the ADI spec produce so few signals and so much garbage
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
   > why does the Claude Read tool refuse some PDFs / report password-protected
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > why does the CoreSight Base System Architecture emit no ISF
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > why does the D4.5 CLAIMSET (no block token) stay a residual under .10i
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
@@ -275,26 +297,3 @@
   > why is the nested cross-tab timing table (TRANSMITTER/RECEIVER) left an honest residual
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > why is the ordered multi-phase transaction body the hard deferred part (no structural name bridge AXI handshake to named transaction)
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > why is the repaired USB 3.2 ISF adapter blocked
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > why is the snap trigger absence-from-sentence and not typing failure
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > why is the stage-staleness check zero-versus-some and not a count comparison
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > why is the strict register-field per-fact score 0 on RISC-V Debug / NVMe
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > why is the structural document_class (protocol/register/interface/guide) too coarse for the purpose taxonomy
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > why is there no fields-without-positions completeness gap
-- [repository-local-scratch](../knowledge/repository-local-scratch.md)
-  > why must read-only census commands avoid /tmp and /private/tmp
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > why must terminal task tree containment use two commits
-- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
-  > why not CTL for temporal behavior
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why not emit a (priority A over B) to resolve a rule/rule conflict instead of dropping (the unconditional minority would conflict with EVERY same-value unconditional rule → an ungrounded precedence over each = fabrication; tested: priority rule_5 over _0012 cleared one pair then rule_6 conflicted next)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why not gate the whole enum on value-restart for .5.ii (DISPROVEN false-positive: AHB HPROT has value restarts=2 from 3 fused sub-encodings but all 15 members are clean identifiers DATA_INST/PRIVILEGED/BUFFERABLE/...; dropping it loses real intent. Restart correlates with conflation but conflation-of-clean-tables is all-real-members, so restart cannot gate a drop — keep it,
-  > sub-enum splitting deferred)

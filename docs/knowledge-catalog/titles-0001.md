@@ -39,6 +39,7 @@
 | [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md) | 2026-06-23 | `current` | Conditional-rule lowering triage (DOC-INTENT-TAXONOMY.4e) — the conditional_rules ISF-lowering shortfall is… |
 | [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md) | 2026-06-06 | `current` | Tier-agreement is a degenerate conformal axis — the extraction tiers complement, they don't corroborate |
 | [contested-priors](../knowledge/contested-priors.md) | 2026-06-04 | `current` | SpecForge detects contested priors (same key, conflicting values across docs) — read-only |
+| [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md) | 2026-08-09 | `current` | CoreSight Base System refresh is portable, authority-empty, and honestly under-extracted |
 | [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md) | 2026-06-09 | `current` | Vendor/layout clustering via a derived structural+behavioral fingerprint (corpus_cluster) — emergent famili… |
 | [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md) | 2026-06-17 | `current` | The whole local corpus builds to IntentIR — semantic->intent needs only the persisted evidence_ir.json (not… |
 | [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md) | 2026-06-08 | `current` | Whole-corpus coverage sweep (2026-06-08) — Lever A+B uplift measured across the 82-PDF library |
@@ -60,4 +61,3 @@
 | [document-class-from-structure](../knowledge/document-class-from-structure.md) | 2026-06-08 | `current` | Document class (protocol/register/interface/guide) inferred from structural intent surfaces, not the doc name |
 | [document-intent-category-census](../knowledge/document-intent-category-census.md) | 2026-06-22 | `current` | The 78-doc corpus splits 36/7/15/2/4/14 across the 6 purpose categories (wire-protocol/register-IP/platform-I… |
 | [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md) | 2026-06-22 | `current` | Document intent-category recognizer (DOC-INTENT-TAXONOMY.3b) — validate reports a chip-spec PDF's 6-categor… |
-| [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md) | 2026-06-22 | `current` | Per-category ISF-lowering completeness (DOC-INTENT-TAXONOMY.2) — registers lower 1:1 to opaque width-only s… |

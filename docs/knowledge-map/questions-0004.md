@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
+  > is it a strict error to drive a signal declared (input ...) in an .isf rule
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > is it safe to extend the .1b.i trailing-fragment strip to trailing prepositions and auxiliaries (host has -> host, advantage of -> advantage)
+- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
+  > is it safe to measure a backup copy of an evidence_ir with nli-verify
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
   > is mdbook test part of the canonical SpecForge CI gate
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
@@ -29,6 +35,10 @@
   > is the APB signal catalog extracted
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
   > is the ATP ihi0082 ARVALID/RVALID/RREADY drop a lowering gap
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > is the CoreSight Base System Architecture current-binary refresh complete
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > is the CoreSight Base System Architecture fully extracted
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
   > is the DOC-INTENT-TAXONOMY .2 per-category scorecard measurement complete (YES after .4e — Gap A lowered .4a.ii, Gap B carrier .4b gated, cat-3 .4c->.4c.i, cat-4 .4d->.4d.i, conditional rules .4e honest residual; remaining work is CODE not measurement)
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
@@ -174,6 +184,10 @@
   > was the fresh SWD 29 of 29 artifact promoted
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > was the warning-safe rolling ledger transaction independently audited from a clean clone
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > were the 100 stale CoreSight Base System signals authoritative
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > what CoreSight Base System evidence still needs VLM or targeted extraction
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what FSMGen question/feature-request did KG-ISF-TRANSACTIONS.2i raise (value-less output participation / unordered-or-partial-order body / phase-group metadata / ordering-as-constraint)
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
@@ -208,6 +222,8 @@
   > what are the agent-surface precision and completeness defects (KG-ISF-COMPLETENESS.1)
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > what are the canonical SWD protocol surface counts
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > what are the current CoreSight Base System artifact hashes
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
   > what are the current USB4 Connection Manager artifact hashes
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
@@ -281,19 +297,3 @@
   > what does SPECFORGE_INGEST_ADAPTIVE_BATCH do
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > what does SPECFORGE_INGEST_MIN_FREE_DISK_MB do
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > what does SPECFORGE_INGEST_RAM_ABORT_PERCENT do
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > what does SPECFORGE_INGEST_RAM_SAMPLE_SECS do
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > what does SPECFORGE_INGEST_SAVE_PAGE_IMAGES do
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > what does SWD Figure B4-1 show (single SWDIO wire packet, bit-field time-phases, Host/Target/Host driver)
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > what does SpecForge defer from conformal prediction NLI Dempster Snorkel NoRBERT
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > what does SpecForge take from Docling OpenIE LayoutLM Chao Chow LLVM MLIR GoldMine Texada Pnueli
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > what does SpecForge take from a grounded author
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > what does SpecForge take from the spec-mining literature and what does it leave out

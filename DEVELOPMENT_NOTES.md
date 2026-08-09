@@ -1,4 +1,23 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.36 (`2026-08-09`) — an architecture label is not typed topology authority
+
+CoreSight Base System is the compact cat-3 transfer case. Its retained EvidenceIR already had no actor-signal
+relations or signal declarations, yet the stale SemanticIR synthesized 88 heuristic interfaces and the adapter
+rendered 100 prose tokens/acronyms as one-bit outputs plus two rules. The current authority-empty fallback removes
+only that unsupported hardware boundary: EvidenceIR stays at 464 statements / 464 spans / seven conditional
+rules; semantic actors, phases, invariants, contracts, gates, assertions, and decomposition candidates hold;
+IntentIR retains five actors, 46 behaviors, 106 invariants, and seven conditional rules. The adapter now blocks
+instead of turning names such as `ARM`, `GIC`, `SMMU`, `TPIU`, and random OCR-like tokens into ports.
+
+That honest block does not mean extraction is complete. Validation recognizes a self-declared architecture with
+low typed yield and explicitly routes it to the under-extracted/VLM frontier: 19 visual assets have no enrichment,
+87 normative statements are only partially structured, and seven temporal-source rules have no typed grounding.
+This is direct real-document evidence for the existing cat-3 conclusion—topology remains capture-recall-gated,
+not permission to fabricate a behavioral target. No LLM/VLM inference or product code enters the refresh slice.
+
+The resolved PDF, rollback, repository, and outputs share SSD device `16777240`. The guarded ingest used 17% peak
+system memory, all 29 page paths are final repository-relative, and two deterministic cascades are byte-identical.
+
 ## CORPUS-COVERAGE.2.35 (`2026-08-09`) — source evidence is not interface authority, even in a behavioral guide
 
 USB4 Connection Manager is a useful third transfer because its stale chain looked superficially stronger than

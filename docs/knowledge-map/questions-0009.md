@@ -2,6 +2,29 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > why is the repaired USB 3.2 ISF adapter blocked
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > why is the snap trigger absence-from-sentence and not typing failure
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > why is the stage-staleness check zero-versus-some and not a count comparison
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > why is the strict register-field per-fact score 0 on RISC-V Debug / NVMe
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > why is the structural document_class (protocol/register/interface/guide) too coarse for the purpose taxonomy
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > why is there no fields-without-positions completeness gap
+- [repository-local-scratch](../knowledge/repository-local-scratch.md)
+  > why must read-only census commands avoid /tmp and /private/tmp
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > why must terminal task tree containment use two commits
+- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
+  > why not CTL for temporal behavior
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > why not emit a (priority A over B) to resolve a rule/rule conflict instead of dropping (the unconditional minority would conflict with EVERY same-value unconditional rule → an ungrounded precedence over each = fabrication; tested: priority rule_5 over _0012 cleared one pair then rule_6 conflicted next)
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why not gate the whole enum on value-restart for .5.ii (DISPROVEN false-positive: AHB HPROT has value restarts=2 from 3 fused sub-encodings but all 15 members are clean identifiers DATA_INST/PRIVILEGED/BUFFERABLE/...; dropping it loses real intent. Restart correlates with conflation but conflation-of-clean-tables is all-real-members, so restart cannot gate a drop — keep it,
+  > sub-enum splitting deferred)
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > why not recover (port ARLOOP) from the loopback prose (the temporal 'was presented' loopback is not the current (port ARLOOP); recovering one would fabricate the timing — honest residual over fabrication)
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)

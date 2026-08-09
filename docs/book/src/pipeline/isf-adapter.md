@@ -92,9 +92,21 @@ classifies the self-declared guide as a high-confidence methodology guide, recog
 names, and blocks lowering on `no signals declared in interface`; the obsolete target is removed and only
 `adapter.json` remains.
 
-The corpus cache now has 68 current emitted `.isf` files, all covered by a fresh 68/68 FSMGen-strict sweep; USB
-3.2, USB4 Inter-Domain, and USB4 Connection Manager are not among them because honest blocking is the correct
-lowering result.
+The 29-page CoreSight Base System Architecture independently exercises the same boundary on a category-3
+architecture. Its retained EvidenceIR already had zero actor-signal relations and zero declared signals, but its
+stale SemanticIR synthesized 88 heuristic interfaces and `agent.isf` emitted 100 one-bit prose/acronym tokens plus
+two rules. The current pipeline retains 464 statements, seven conditional rules, eight semantic actors, five
+intent actors, 46 behaviors, and 106 invariants while removing only the unsupported interfaces and target. It
+blocks on `no signals declared in interface` and leaves exactly `adapter.json`.
+
+That block is honest, but it is not a completeness claim. Validation identifies the self-declared architecture
+as under-extracted: 19 visuals remain unenriched, 87 normative statements remain partially structured, and seven
+temporal-source rules lack typed grounding. Those records stay on the upstream category-3 capture-recall frontier;
+the adapter does not turn an extraction gap into fabricated topology.
+
+The corpus cache now has 67 current emitted `.isf` files, all covered by a fresh 67/67 FSMGen-strict sweep; USB
+3.2, USB4 Inter-Domain, USB4 Connection Manager, and CoreSight Base System are not among them because honest
+blocking is the correct lowering result.
 
 The measurement behind that repair found three upstream authority errors, not a reason to distrust every
 relation-derived direction. Across the retained corpus, 97 sentence-start phrases use `signal <word>` without

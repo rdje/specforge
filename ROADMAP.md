@@ -163,9 +163,11 @@ Five active program groups support that north star:
   WIRE/I2C/SWD, KG 156/156, 69/69 current strict emits, CI/book/doctrine/locality, and exact cleanup close `.2.34`.
   `.2.35` transfers the same generic boundary to the 96-page USB4 Connection Manager Guide: 96 portable
   sidecars, 13→0 relations, 4→0 interfaces, 11→0 ports, and the stale `SB`/`USB`/`USB4` target removed. The
-  methodology guide blocks honestly, all 68 remaining emits are strict-clean, and corpus is 35 done / 21
-  remaining. #36 now owns the 29-page CoreSight Base System Architecture as a cat-3 authority/topology transfer
-  check: zero retained relations currently feed 88 stale heuristic interfaces and a 100-signal target. Separately,
+  methodology guide blocks honestly. `.2.36` then transfers the boundary to the 29-page CoreSight Base System
+  Architecture: source/evidence structure holds, while 88 stale heuristic interfaces and its 100-signal/two-rule
+  target disappear. The adapter blocks honestly; validation preserves the actual upstream cat-3 capture-recall
+  gap (19 unenriched visuals / 87 partially structured normative statements / seven untyped temporal sources).
+  All 67 remaining emits are strict-clean; corpus is 36 done / 20 remaining, frontier → own #37. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

@@ -46,3 +46,11 @@ clock/reset source resolution), recorded as a cross-reference, not a `.4` gap. E
 lowering would additionally need a multi-actor ISF emit + a construct FSMGen's behavioral ATL frontier does not
 subsume — an architectural question resolved *with* FSMGen only after capture clears this bar. Mirrors
 [[cat4-isa-csr-lowering-decision]] and completes the `.4c` decision ([[cat3-topology-isf-lowering-decision]]).
+
+**Current-binary transfer (`CORPUS-COVERAGE.2.36`, `2026-08-09`).** The 29-page CoreSight Base System
+Architecture now supplies a concrete authority-empty example from this category. Its retained EvidenceIR had no
+signal relations or declarations, yet stale downstream stages synthesized 88 interfaces and a 100-signal target.
+Current generic authority removes that target. Validation simultaneously preserves the real upstream gap—19
+unenriched visuals, 87 partially structured normative statements, and seven untyped temporal-source rules—so the
+result strengthens the capture-recall diagnosis without changing the original aggregate topology measurement.
+See [[coresight-base-system-refresh-is-authority-empty]].
