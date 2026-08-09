@@ -54,7 +54,11 @@ became the primary actor `setportfeature_port_over_current`, and the adapter emi
 rules. FSMGen correctly reported zero syntax diagnostics because the resulting S-expressions are legal; the
 model is nevertheless semantically untrustworthy. SpecForge records that result as a semantic-fidelity block,
 not as successful lowering. `CORPUS-COVERAGE.2.33d.ii` fixes the shared grounding boundary without document-name
-or token special cases; the real USB rebuild remains the final cascade proof.
+or token special cases. The real rebuild proves those four names and the phantom actor disappear, but also
+exposes a distinct authority-empty interface fallback: 918 low-confidence token-group interfaces become 556
+one-bit outputs even though the actor graph is empty. USB therefore remains blocked while `.2.33d.iv.b` repairs
+that upstream semantic boundary; syntax and the absence of the original four names are both necessary but not
+sufficient proof.
 
 The measurement behind that repair found three upstream authority errors, not a reason to distrust every
 relation-derived direction. Across the retained corpus, 97 sentence-start phrases use `signal <word>` without
@@ -86,7 +90,8 @@ USB rebuild is the final proof: the false four-port/29-rule model
 must disappear because its names never gain authority, not because the adapter recognizes USB vocabulary.
 `CORPUS-COVERAGE.2.33d.iii` independently rechecks that the affected code has not drifted and all five focused
 authority/fixed-point/tie oracles pass, then closes the conditional downstream backstop as measured unnecessary.
-The real USB cascade remains the falsification gate: a newly observed authority path would reopen the decision.
+The real USB cascade did exactly what a falsification gate should do: it retained the original repair and opened
+the independent authority-empty SemanticIR interface path rather than allowing a misleading signoff.
 
 ## ISF IR data model
 
@@ -522,6 +527,15 @@ generated/adapters/isf/<document_key>/<actor_name>.isf
 
 Legacy absolute forms use the same bounded unique-target rebase as the four IR stages. A successful legacy load
 reserializes to relative paths; an ambiguous, missing, traversing, or repository-escaping target is rejected.
+
+### Convergent document outputs
+
+A successful adapter write makes the document directory agree with `adapter.json`. After writing the manifest
+and optional current target, SpecForge retains that selected `.isf` and removes obsolete regular or symlink
+`.isf` siblings. Unrelated files and directories are preserved. When a formerly renderable adapter becomes
+blocked, the manifest has no emitted target and the successful write removes every former `.isf` for that
+document. This prevents an old actor file from surviving an actor-selection or renderability change and being
+mistaken for current output.
 
 Every behavioral count in the artifact reflects **what the emitter
 actually rendered**, never a blind `IntentIr`-derived guess:

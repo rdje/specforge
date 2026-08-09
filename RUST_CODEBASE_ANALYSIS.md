@@ -4,6 +4,16 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-09 — adapter output convergence; `CORPUS-COVERAGE.2.33d.iv.a`)
+
+- `AdapterArtifact::write_to_disk` now reconciles generated `.isf` siblings after writing the current manifest
+  and optional target. It keeps the exact selected target and removes only obsolete regular/symlink ISF leaves;
+  unrelated files and directories are outside the mutation set.
+- The same path covers renderable-to-blocked transitions because a blocked layout has no emitted target. The
+  focused regression exercises repeat writes, regular and symlink residue, unrelated preservation, and blocking.
+- Real USB output converges from two actor files to `adapter.json` + `channel.isf`. The current model remains
+  semantically blocked on a separate authority-empty SemanticIR fallback; `.iv.b` owns that extraction boundary.
+
 ## Session update (2026-08-09 — generic root-ledger transaction; `ROOT-ROLLING-LEDGER-PRESSURE.1`)
 
 - `scripts/check_rolling_ledger_protocol.pl` now joins its grammar/archive registry to the unique generic live

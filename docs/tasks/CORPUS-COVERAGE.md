@@ -137,7 +137,8 @@ today's ephemeral normalized-directory count.
   `.2.33d` rather than treating strict syntax as faithful output.
 - ID: `CORPUS-COVERAGE.2.33d` · Status: `in_progress` (`2026-08-09`, PROBE/CODE/DOC) · Children: `.d.i`
   universal boundary probe (done), `.d.ii` grounded signal-authority repair (done), `.d.iii`
-  convergence/adapter trust backstop (pending, conditional on `.d.i`), `.d.iv` real-cascade signoff (pending).
+  convergence/adapter trust backstop (done), `.d.iv` real-cascade closure (in progress: `.iv.a` stale-output
+  convergence, `.iv.b` authority-empty semantic-interface repair, `.iv.c` final signoff).
   Goal: repair the
   universal dense-prose false-signal feedback path before USB 3.2 is accepted as a trustworthy ISF result.
   Measurement must preserve all four independently observed seeds: an ordinary `signal at ...` clause admitted
@@ -185,9 +186,29 @@ today's ephemeral normalized-directory count.
   across catalog, relation, direction, and provenance. Five focused authority/tie tests pass; a second downstream
   filter would duplicate policy and risk false negatives. Commit:
   `CORPUS-COVERAGE.2.33d.iii — close redundant convergence backstop`.
-- ID: `CORPUS-COVERAGE.2.33d.iv` · Status: `in_progress` (`2026-08-09`, DATA/DOC) · Goal: rebuild the real USB
-  EvidenceIR→adapter chain with the repaired release binary, prove the false ports/actor/rules no longer emit,
-  run FSMGen/WIRE/KG/full-CI/path/locality gates, align the mdBook and durable facts, and close `.2.33d`/`.2.33`.
+- ID: `CORPUS-COVERAGE.2.33d.iv` · Status: `in_progress` (`2026-08-09`, CODE/DATA/DOC) · Goal: rebuild the real
+  USB EvidenceIR→adapter chain with the repaired release binary, prove the false ports/actor/rules no longer
+  emit, and make a successful adapter write converge the document directory by removing obsolete sibling `.isf`
+  files while preserving unrelated files. Run FSMGen/WIRE/KG/full-CI/path/locality gates, align the mdBook and
+  durable facts, and close `.2.33d`/`.2.33`. **Live finding:** the repaired rebuild emitted `channel.isf`, but the
+  prior `setportfeature_port_over_current.isf` remained because `AdapterArtifact::write_to_disk` only overwrites
+  named current outputs; this is the previously measured corpus-wide stale-cruft mechanism, now reproduced at the
+  exact semantic-trust boundary rather than accepted as manual cache hygiene. After writer reconciliation, the
+  stale file is gone, but signoff remains blocked: zero authoritative declarations causes
+  `retain_authoritative_interface_candidate_signals` to admit every heuristic statement token; 918 low-confidence
+  interfaces then expose 556 `.isf` outputs from encoding/data rows (`A0`, `B165`, `D995`, …) despite zero actor
+  ports/relations. This is a distinct authority-empty fallback loop and must be repaired before USB is trusted.
+- ID: `CORPUS-COVERAGE.2.33d.iv.a` · Status: `done` (`2026-08-09`, CODE/DOC) · Result: successful adapter
+  writes now retain the manifest-selected `.isf`, remove obsolete regular/symlink `.isf` siblings, preserve
+  unrelated files/directories, and remove the last emitted target on a renderable→blocked transition. The real
+  USB rerun converges to `adapter.json` + `channel.isf`; no extraction or rendered-source policy changed.
+- ID: `CORPUS-COVERAGE.2.33d.iv.b` · Status: `in_progress` (`2026-08-09`, PROBE/CODE/DOC) · Goal: measure and repair the
+  authority-empty SemanticIR interface fallback that promotes low-confidence statement-token groups when a
+  document has no formal signal declarations. Preserve grounded heuristic-only wire evidence where justified;
+  do not add document/token denylists or merely filter the adapter symptom.
+- ID: `CORPUS-COVERAGE.2.33d.iv.c` · Status: `pending` (DATA/DOC) · Goal: rebuild the exact preserved USB
+  chain with all repairs, prove false-name/phantom/stale/heuristic-soup absence, run every parent acceptance gate,
+  remove the verified rollback with zero residue, align the durable layers, and close `.iv`/`.d`/`.2.33`.
 
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.33d.i`
 
@@ -246,6 +267,34 @@ today's ephemeral normalized-directory count.
   only direction evidence is a grounded driver relation and keeps authority at universal grammar/structure seams.
 - [x] **LOCKSTEP** — task, research, durable fact, roadmap/status/resume, and mdBook agree that `.d.iii` is
   measured unnecessary and `.d.iv` is the active real USB proof.
+
+### Parent exit criteria — `CORPUS-COVERAGE.2.33d.iv`
+
+- **REPRODUCE / MEASURE** — preserve the exact before cascade and show the repaired rebuild's stage hashes,
+  counts, selected actor, false-name absence, and obsolete `.isf` residue before changing the writer.
+- **ROOT CAUSE (WHY + WHERE)** — prove whether the false model survives in current IR/output or only as an
+  unreconciled sibling left by `AdapterArtifact::write_to_disk`.
+- **ADDRESSED (verified)** — a successful renderable write leaves exactly its current `.isf`; a successful
+  blocked write leaves none; unrelated files survive; the real USB rerun removes the obsolete false-model file.
+- **NO REGRESSION** — the real output is FSMGen-strict clean and WIRE/KG/full-CI/path/locality gates pass.
+- **GENERICITY** — reconciliation is limited to obsolete regular/symlink `.isf` siblings in the resolved
+  document artifact root; it contains no document key, actor name, signal name, or vendor exception.
+- **LOCKSTEP** — generated artifacts, task/result record, durable fact, live docs, mdBook, and resume pointer
+  describe the same current cascade; verified rollback data and temporary test artifacts leave zero residue.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.33d.iv.a`
+
+- [x] **REPRODUCE / MEASURE** — repaired USB adapt writes `channel.isf` while the prior false-actor `.isf` remains.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `AdapterArtifact::write_to_disk` writes only the current named paths and never
+  reconciles obsolete generated siblings; the old file is residue, not current adapter content.
+- [x] **ADDRESSED (verified)** — successful renderable and blocked writes reconcile regular/symlink `.isf` files
+  while preserving unrelated files and directories; real USB rerun leaves only `adapter.json` + `channel.isf`.
+- [x] **NO REGRESSION** — eight focused adapter tests, warning-deny Clippy, full CI (1,780 pass / five ignored),
+  rustdoc, doctrines, mdBook examples/build, and locality pass;
+  current emitted ISF text is unchanged by the reconciliation helper.
+- [x] **GENERICITY** — reconciliation uses only extension, current manifest path, and leaf file type; no corpus fact.
+- [x] **LOCKSTEP** — task, code analysis, change/development/status ledgers, Knowledge Map fact, mdBook, and memory
+  agree that `.iv.a` closes stale-output convergence while `.iv.b` owns the newly proven semantic blocker.
 
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.33a`
 
@@ -406,6 +455,11 @@ leaving the refreshed SourceIR→adapter stage chains intact.
 
 ## Changelog
 
+- `2026-08-09`: `.2.33d.iv.a` CODE/DOC DONE. Real USB reproduced a stale prior actor file outside the current
+  adapter manifest. Successful writes now reconcile obsolete regular/symlink `.isf` leaves, including blocked
+  transitions, while preserving unrelated material. Eight focused adapter tests, warning-deny Clippy, full CI
+  (1,780 pass / five ignored), rustdoc, mdBook, doctrines, and locality pass. The cascade separately proves an
+  authority-empty 918-interface/556-output blocker; frontier → `.iv.b`, and the exact rollback remains preserved.
 - `2026-08-09`: `.2.33d.iii` MEASURE/DOC DONE. Both affected Rust files remain byte-identical to `.d.ii`; runtime
   path inspection and five focused tests confirm relations/directions cannot originate a name rejected at the
   three catalog authorities. The downstream backstop is closed as redundant; `.d.iv` is active for real USB

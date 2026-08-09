@@ -144,6 +144,8 @@ impl AdapterArtifact {
             fs::write(path, text)?;
         }
 
+        reconcile_emitted_isf_files(&runtime_layout)?;
+
         Ok(())
     }
 
@@ -173,6 +175,32 @@ impl AdapterArtifact {
             _ => None,
         }
     }
+}
+
+/// Make the generated document directory agree with the adapter manifest after
+/// a successful write. Actor selection and renderability can change between
+/// runs, so retaining an older sibling `.isf` would expose an output that the
+/// current `adapter.json` neither names nor licenses. Only generated ISF leaf
+/// files are reconciled; unrelated files and directories remain untouched.
+fn reconcile_emitted_isf_files(layout: &AdapterArtifactLayout) -> Result<()> {
+    for entry in fs::read_dir(&layout.artifact_root)? {
+        let entry = entry?;
+        let path = entry.path();
+        if path.extension().is_none_or(|extension| extension != "isf")
+            || layout
+                .emitted_target_path
+                .as_ref()
+                .is_some_and(|current| current == &path)
+        {
+            continue;
+        }
+
+        let file_type = entry.file_type()?;
+        if file_type.is_file() || file_type.is_symlink() {
+            fs::remove_file(path)?;
+        }
+    }
+    Ok(())
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
@@ -763,6 +791,84 @@ mod tests {
                 .to_string_lossy()
                 .ends_with(".isf")
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn adapter_write_reconciles_obsolete_isf_files() -> Result<()> {
+        let tempdir = tempdir()?;
+        let intent_ir = build_intent_ir_from_markdown(
+            tempdir.path(),
+            "isf_reconciliation.md",
+            ISF_ADAPTER_TEST_SPEC,
+        )?;
+        let artifact = AdapterArtifact::build(
+            &intent_ir.artifact_layout.intent_ir_path,
+            AdapterTarget::Isf,
+            tempdir.path(),
+        )?;
+        artifact.write_to_disk()?;
+
+        let artifact_root = &artifact.artifact_layout.artifact_root;
+        let current_isf = artifact
+            .artifact_layout
+            .emitted_target_path
+            .as_ref()
+            .expect("renderable adapter has an emitted path");
+        let obsolete_isf = artifact_root.join("obsolete_actor.isf");
+        let unrelated_file = artifact_root.join("review-notes.txt");
+        let unrelated_directory = artifact_root.join("fixture.isf");
+        fs::write(&obsolete_isf, "(actor obsolete_actor)")?;
+        fs::write(&unrelated_file, "preserve me")?;
+        fs::create_dir(&unrelated_directory)?;
+
+        #[cfg(unix)]
+        let obsolete_symlink = {
+            use std::os::unix::fs::symlink;
+
+            let path = artifact_root.join("obsolete_link.isf");
+            symlink(&unrelated_file, &path)?;
+            Some(path)
+        };
+        #[cfg(not(unix))]
+        let obsolete_symlink: Option<std::path::PathBuf> = None;
+
+        artifact.write_to_disk()?;
+
+        assert!(
+            current_isf.is_file(),
+            "the manifest-selected ISF must remain"
+        );
+        assert!(
+            !obsolete_isf.exists(),
+            "obsolete regular ISF must be removed"
+        );
+        if let Some(path) = obsolete_symlink {
+            assert!(
+                fs::symlink_metadata(path).is_err(),
+                "obsolete ISF symlink must be removed without following it"
+            );
+        }
+        assert_eq!(fs::read_to_string(&unrelated_file)?, "preserve me");
+        assert!(unrelated_directory.is_dir());
+
+        let mut blocked = artifact.clone();
+        blocked.lowering_status = AdapterLoweringStatus::Blocked;
+        blocked.artifact_layout.emitted_target_path = None;
+        let blocked_isf = blocked.isf.as_mut().expect("ISF metadata remains explicit");
+        blocked_isf.is_renderable = false;
+        blocked_isf
+            .blocking_reasons
+            .push("test-only blocked transition".to_string());
+        blocked.write_to_disk()?;
+
+        assert!(
+            !current_isf.exists(),
+            "a blocked manifest must leave no formerly emitted ISF"
+        );
+        assert_eq!(fs::read_to_string(unrelated_file)?, "preserve me");
+        assert!(unrelated_directory.is_dir());
 
         Ok(())
     }

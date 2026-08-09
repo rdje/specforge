@@ -182,3 +182,23 @@ Required broader gates: focused EvidenceIR/ISF tests, `signal_table_inventory_au
 oracles, real FSMGen strict, full `scripts/run_ci.sh`, mdBook, doctrines, and project-data locality. The final
 truth test is `.2.33d.iv`: rebuild the real USB EvidenceIR→adapter chain and prove the four false ports, phantom
 initiator, and 29-rule model disappear without replacing them with fabricated hardware.
+
+## Real-cascade checkpoint (`CORPUS-COVERAGE.2.33d.iv.a`)
+
+The preserved-source rebuild confirms the original three authorities are closed but does **not** yet pass the
+last clause above. SourceIR stays byte-identical at SHA-256 `e87f5003…a13`. Fresh EvidenceIR has 8,267 statements,
+zero actor-signal relations, ten signal constraints, 542 conditional rules, and 102 timing constraints (before:
+8,412 / 45 / 2 / 542 / 102). Fresh IntentIR has 18 actors, zero actor ports, and zero relations (before: 51 / 42 /
+45). `AT`, `USB`, `ENHANCED`, `NO`, and `setportfeature_port_over_current` are absent from the current adapter.
+
+Two independent findings prevent signoff:
+
+1. The first repaired `adapt` wrote `channel.isf` but retained the obsolete false-actor `.isf`. The generic
+   writer reconciliation in `.iv.a` now removes obsolete regular/symlink `.isf` siblings after a successful
+   write and preserves unrelated files/directories. The real document directory now contains only
+   `adapter.json` and `channel.isf`.
+2. SemanticIR still contains 918 low-confidence heuristic interfaces / 2,940 signal records. With the formal
+   authority set empty, `retain_authoritative_interface_candidate_signals` admits every statement token group;
+   encoding/data table rows then deduplicate to 556 one-bit `.isf` outputs despite an empty actor graph. This is
+   a second authority loop, not residue from the original four names. `.iv.b` owns its corpus measurement and
+   generic repair; `.iv.c` owns the final real-cascade proof and rollback deletion.

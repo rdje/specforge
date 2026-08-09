@@ -1,4 +1,15 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.33d.iv.a (`2026-08-09`) — a successful writer owns its generated leaf set
+
+Overwriting the current manifest and actor file is insufficient when actor selection or renderability changes:
+an older sibling remains externally visible although the manifest no longer licenses it. The real USB rebuild
+made that mismatch concrete by producing `channel.isf` beside the old false-actor file.
+
+Reconciliation runs only after the current writes succeed. It removes obsolete regular or symlink `.isf` leaves
+from the resolved document root and preserves unrelated files/directories. A blocked manifest selects no target,
+so the same rule removes all former ISF leaves. This closes output convergence, not semantic trust: the rebuild
+also found a separate 556-signal authority-empty interface fallback now owned by `.iv.b`.
+
 ## CORPUS-COVERAGE.2.33d.iii (`2026-08-09`) — avoid a second signal-authority policy
 
 Once the three `.d.ii` catalog gates reject a weak token, prose relations cannot see it, table relations share

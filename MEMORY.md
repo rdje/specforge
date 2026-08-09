@@ -21,13 +21,12 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.33d.iv`; `.d.iii` closes the conditional downstream backstop as measured
-  unnecessary without code.
-- Current state: `.d.ii`'s three signal-authority gates and combined fixed-point regression remain byte-identical
-  and pass five focused oracles. Relations/directions cannot originate a rejected name, so no duplicate
-  convergence/adapter filter is justified. Root-ledger pressure remains closed and warning-safe.
-- Next action: rebuild the real USB EvidenceIR→SemanticIR→IntentIR→ISF cascade with the repaired release binary;
-  prove the four false ports, phantom initiator, and 29-rule model disappear, then run WIRE/KG/FSMGen/full gates.
-- In-flight uncommitted: none after the `.d.iii` commit; product behavior, generated artifacts, shared inputs,
-  thresholds, ceilings, capsules, and segment bytes are unchanged.
+- Active unit: `CORPUS-COVERAGE.2.33d.iv.b`; `.iv.a` closes generated adapter output convergence.
+- Current state: the repaired USB cascade removes all four weak names, 45 relations, and the phantom actor;
+  `adapt` now removes obsolete `.isf` siblings. Signoff remains blocked because authority-empty SemanticIR emits
+  918 low-confidence interfaces / 556 one-bit outputs from source-fact token groups despite zero actor graph.
+- Next action: corpus-measure the authority-empty fallback and select the smallest structural SemanticIR repair;
+  `.iv.c` owns the final preserved-source cascade, FSMGen/WIRE/KG/full gates, and rollback deletion.
+- In-flight uncommitted: none after the `.iv.a` commit. Ignored rebuilt USB stages and the exact verified rollback
+  at `.project-data/tmp/corpus-coverage-2-33d-iv-before/` remain intentional; do not delete before `.iv.c`.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

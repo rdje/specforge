@@ -1,3 +1,12 @@
+### CORPUS-COVERAGE.2.33d.iv.a — converge generated adapter outputs
+
+- Reproduced the stale-output defect on the repaired USB cascade: `channel.isf` became current while the prior
+  false-actor `.isf` survived outside the current manifest.
+- Successful adapter writes now retain only the manifest-selected `.isf`, remove obsolete regular/symlink ISF
+  siblings, preserve unrelated files/directories, and clear former output when an adapter becomes blocked.
+- Added a focused renderable/repeat/blocked regression. The real rerun leaves only `adapter.json` and
+  `channel.isf`; its separate 556-output authority-empty semantic blocker is owned by `.iv.b`, not hidden.
+
 ### CORPUS-COVERAGE.2.33d.iii — close the redundant convergence backstop
 
 - Proved `evidence.rs` and `isf_ir.rs` remain byte-identical to grounded-authority commit `5c95a041` and

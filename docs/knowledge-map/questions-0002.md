@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > have the PDF task migration destinations been created
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > how are <NAME>, bit [N] / <NAME>, bits [hi:lo] section-heading field defs parsed
+- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
+  > how are ACK WDATA RDATA DATAIN bit-widths extracted
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > how are CHANGES DEVELOPMENT_NOTES LIVE_ACHIEVEMENT_STATUS and RUST_CODEBASE_ANALYSIS split into records
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
@@ -72,6 +78,8 @@
   > how are signal presence matrices with signals trapped in header rows handled
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > how are spacing-artifact field names and the unit word Bits handled
+- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
+  > how are stale generated isf symlinks handled
 - [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
   > how are temporal rules expressed as LTL or MTL
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
@@ -290,11 +298,3 @@
   > how does the tiling gate keep register-bit recovery honest (no fabrication)
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how does validate classify a document / what is document_class
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > how does validate know an intent_ir is stale relative to its semantic_ir
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > how does validate reach the upstream artifact (carried semantic_ir_path / evidence_ir_path)
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how does validate report registers_without_fields / registers_unresolved_width / signals_without_direction / unexplained_intent_bearing_tables
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > how erroneous are the canonical Pattern constraint surfaces on the persisted corpus

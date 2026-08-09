@@ -141,7 +141,10 @@ Five active program groups support that north star:
   warning. Exact restoration and zero residue close the tree; product work resumes at
   `CORPUS-COVERAGE.2.33d.iii`. That conditional leaf now proves no extra convergence/adapter filter is warranted:
   the `.d.ii` fixed-point regression closes every known re-entry path, and duplicating authority would risk real
-  relation-grounded directions. `.2.33d.iv` is active for the real USB cascade signoff. Separately,
+  relation-grounded directions. `.2.33d.iv` then used the real USB cascade as a falsification gate: `.iv.a`
+  makes generated adapter directories converge after actor/renderability changes, while the audit exposes a
+  distinct authority-empty SemanticIR fallback (918 low-confidence interfaces → 556 one-bit outputs with an
+  empty actor graph). `.iv.b` owns that generic repair before `.iv.c` may sign off USB. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

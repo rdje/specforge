@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > how does validate know an intent_ir is stale relative to its semantic_ir
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > how does validate reach the upstream artifact (carried semantic_ir_path / evidence_ir_path)
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how does validate report registers_without_fields / registers_unresolved_width / signals_without_direction / unexplained_intent_bearing_tables
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > how erroneous are the canonical Pattern constraint surfaces on the persisted corpus
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > how flexible is the register model / what register-table shapes are handled
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
@@ -290,11 +298,3 @@
   > is the LLM-primary promotion gauge improvement reproducible on canonical artifacts (not just /tmp copies)
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
   > is the LLM/VLM provider missing or not wired up
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > is the NLP-SHALLOW-PARSE build frontier exhausted
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > is the PDF-VARIANT-DIGESTION current frontier internally consistent
-- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
-  > is the SWD FSM the same as the JTAG TAP DBGTAPSM (no)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > is the SemanticIR phases surface the protocol transaction phases (no — it is section/chapter-derived)

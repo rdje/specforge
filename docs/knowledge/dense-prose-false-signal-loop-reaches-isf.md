@@ -16,10 +16,12 @@ answers:
   - "which formal signal declaration predicates does the dense prose authority gate accept"
   - "how does CORPUS-COVERAGE 2 33d ii prevent weak signal names from reentering through relations"
   - "why was CORPUS-COVERAGE 2 33d iii closed without another convergence or adapter filter"
+  - "why does USB 3.2 still emit hundreds of low confidence ISF outputs after the four false signals are removed"
+  - "what happens when SemanticIR has no authoritative signal declarations"
 date: 2026-08-09
 tags: [corpus-coverage, dense-prose, signal-inventory, actor-signal-relations, isf, semantic-fidelity, false-positive, table-classification, fixed-point]
-evidence: docs/research/dense-prose-signal-authority-measurement.md; generated/source_ir/usb_3_2_revision_1_0_2017_09/source_ir.json; generated/evidence_ir/usb_3_2_revision_1_0_2017_09/evidence_ir.json; generated/intent_ir/usb_3_2_revision_1_0_2017_09/intent_ir.json; generated/adapters/isf/usb_3_2_revision_1_0_2017_09/adapter.json; crates/specforge/src/ir/source/docling_backend.rs (classify_table_kind); crates/specforge/src/ir/evidence.rs (collect_known_signal_names, synthesize_signal_declarations_from_prose, actor_signal_relation_surface, synthesize_directions_from_relations); crates/specforge/src/ir/isf_ir.rs (select_initiator_actor); docs/tasks/CORPUS-COVERAGE.md (.2.33c/.2.33d)
-reverify: "Build USB 3.2 through adapter with the current release binary. jq extracted_statements 7916/8269/8416-8419 and actor_signal_relations for AT/ENHANCED/NO/USB from generated/evidence_ir/usb_3_2_revision_1_0_2017_09/evidence_ir.json; inspect SourceIR table_0210; group generated/intent_ir/usb_3_2_revision_1_0_2017_09/intent_ir.json actor_ports by actor_name and direction; inspect adapter.json .isf; run subs/fsmgen/bin/fsmgen --strict --check --json generated/adapters/isf/usb_3_2_revision_1_0_2017_09/setportfeature_port_over_current.isf. Expect four false signals, three 2-output/0-input phantom candidates, selected setportfeature_port_over_current, and FSMGen success with zero diagnostics."
+evidence: docs/research/dense-prose-signal-authority-measurement.md; generated/source_ir/usb_3_2_revision_1_0_2017_09/source_ir.json; generated/evidence_ir/usb_3_2_revision_1_0_2017_09/evidence_ir.json; generated/semantic_ir/usb_3_2_revision_1_0_2017_09/semantic_ir.json; generated/intent_ir/usb_3_2_revision_1_0_2017_09/intent_ir.json; generated/adapters/isf/usb_3_2_revision_1_0_2017_09/adapter.json; crates/specforge/src/ir/source/docling_backend.rs (classify_table_kind); crates/specforge/src/ir/evidence.rs (collect_known_signal_names, synthesize_signal_declarations_from_prose, actor_signal_relation_surface, synthesize_directions_from_relations); crates/specforge/src/ir/semantic.rs (build_interfaces; retain_authoritative_interface_candidate_signals); crates/specforge/src/ir/isf_ir.rs (select_initiator_actor); docs/tasks/CORPUS-COVERAGE.md (.2.33c/.2.33d)
+reverify: "Build USB 3.2 EvidenceIR through adapter with the current release binary. Expect EvidenceIR 8267 statements and 0 actor_signal_relations; IntentIR 18 actors, 0 actor_ports/relations, and no AT/USB/ENHANCED/NO port; adapter actor channel and no setportfeature_port_over_current.isf sibling. Until CORPUS-COVERAGE.2.33d.iv.b closes, also expect the independently blocked authority-empty fallback signature: 918 SemanticIR interfaces and 556 low-confidence ISF signals sourced from statement token groups."
 ---
 
 **Measured `2026-08-09` (`CORPUS-COVERAGE.2.33c`, current release cascade).** USB 3.2 proves a
@@ -127,3 +129,19 @@ table catalogs, while direction synthesis copies an existing relation name. A re
 remaining re-entry seam. Filtering again in convergence or the adapter would duplicate policy and could delete a
 legitimate relation-grounded direction. The real USB cascade in `.d.iv` remains the independent falsification
 gate for this conclusion.
+
+## Real-cascade falsification: a second authority-empty interface loop (`.2.33d.iv`)
+
+The repaired current-binary rebuild validates the original fixed-point repair: EvidenceIR falls from 45 actor
+relations to zero; IntentIR falls from 51 to 18 actors and from 42 actor ports / 45 relations to zero; the four
+weak names and the phantom `setportfeature_port_over_current` actor do not reach the current adapter. Writer
+reconciliation also removes the obsolete false-actor file, so it cannot masquerade as current output.
+
+The same run falsifies the broader signoff. With no formal signal declarations,
+`retain_authoritative_interface_candidate_signals` returns every heuristic candidate unchanged. `build_interfaces`
+therefore turns uppercase tokens co-mentioned in raw source facts into 918 low-confidence interfaces. Examples
+are hexadecimal/encoding-table rows: statement 7800 (`F0 84 | 01 | A0 | ...`) creates interface signals
+`A0/A4/AF/D5/EE/F0`; statement 7644 (`D0.5 | A0 | ...`) creates `A0/D0`. IntentIR carries 2,940 signal records,
+and the adapter deduplicates them into 556 one-bit outputs even though the actor graph is empty. The result is a
+different fabricated hardware surface, so `.d.iv.b` owns a measurement-first authority repair and `.d.iv.c`
+retains final USB signoff. The upstream fixed-point conclusion remains valid; it was not sufficient by itself.
