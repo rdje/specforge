@@ -21,8 +21,8 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2`; select and own current-binary refresh #42 from the 15-document real chip-spec
-  tail after the clean #41 handoff.
+- Active unit: `CORPUS-COVERAGE.2.42`; guarded current-binary refresh of the 15-page OpenCAPI 3.0 Certified
+  Definition from the caller-authorized same-SSD chipdoc source.
 - Current state: 41 refreshes are complete / 15 remain, with 80 SourceIR / ten normalized / 80 EvidenceIR / 79
   SemanticIR / 79 IntentIR / 79 adapters and all 66 current emitted ISFs strict-clean. OpenCAPI AFU Address Space
   Usage reproduces 14 pages / nine visuals / two tables / 23 sections / 118 elements at 20% and 19% peak memory.
@@ -30,7 +30,9 @@
   group interfaces/five actors/eight outputs; `.2.41a` removes false legal semantics. The final adapter blocks with
   no signals or behavior. Twelve hashes, WIRE/I2C/SWD, KG 156/156, full CI, 66/66 strict, book/doctrines/locality,
   exact task-evidence cleanup, and zero residue pass.
-- Next action: select the smallest roadmap-aligned remaining real chip-spec candidate, create ownership leaf
-  `CORPUS-COVERAGE.2.42` while clean, then run its authenticated guarded refresh.
-- In-flight uncommitted: none after `.2.41` commit; its exact 29-file / 823369-byte SSD-local task bundle is gone.
+- Next action: authenticate the source, release binary, and exact six-file / 364142-byte stale chain; create the
+  same-volume rollback under `.cache/task-work/CORPUS-COVERAGE.2.42`, then run the guarded CPU ingest.
+- In-flight uncommitted: `.2.42` ownership only. Candidate selection found a 15-page tie; Certified Definition
+  wins on 155 elements / 234448 source bytes versus Ready Definition's 171 / 249595. No generated artifact has
+  changed yet.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

@@ -200,7 +200,9 @@ Five active program groups support that north star:
   and leaves only `adapter.json` plus its report. The 12-artifact set and two repaired downstream cascades are
   deterministic; WIRE/I2C/SWD, KG 156/156, full CI, 66/66 FSMGen strict, mdBook/doctrines/path/locality, and exact
   cleanup pass. Corpus is 41 done / 15 remaining with stage census 80 SourceIR / 10 normalized / 80 EvidenceIR /
-  79 SemanticIR→IntentIR→adapter chains; frontier returns to `.2` to select refresh #42. Separately,
+  79 SemanticIR→IntentIR→adapter chains. `.2.42` now owns the 15-page OpenCAPI 3.0 Certified Definition—the
+  smallest remaining candidate by retained elements and source bytes after a page-count tie with Ready
+  Definition—and begins with exact stale-chain authentication before guarded ingest. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

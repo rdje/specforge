@@ -4,7 +4,7 @@
 
 - Tree ID: `CORPUS-COVERAGE`
 - Status: `active` (`.0` build-out + `.1` stage-staleness validator done; `.2` current-binary refresh batch
-  remains active with 41 completed documents and the next current-binary refresh to select; `.3`
+  remains active with 41 completed documents and `.2.42` OpenCAPI Certified Definition refresh owned next; `.3`
   lifecycle/currentness reconciliation done `2026-08-09`)
 - Roadmap lane: `R15e`/`R16` (corpus digestion — the owner's substantive gap #2)
 - Created: `2026-06-17`
@@ -656,6 +656,47 @@ today's ephemeral normalized-directory count.
 - [x] **LOCKSTEP** — source comment, #41 real cascade, task parent/child, roadmap, live docs, mdBook, durable fact,
   and `MEMORY.md` agree before commit; parent `.2.41` closes only after its refreshed artifacts are reverified.
 
+- ID: `CORPUS-COVERAGE.2.42` · Status: `in_progress` (`2026-08-09`, DATA/DOC) · Goal: run a guarded
+  current-binary refresh of `opencapi_3_0_certified_definition_v1_1` from the caller-authorized same-SSD source
+  and complete the deterministic EvidenceIR→SemanticIR→IntentIR→adapter cascade. The 15-page OpenCAPI Certified
+  Definition is tied for the fewest pages among the 15 remaining real chip-spec candidates and is smaller than
+  its Ready sibling by retained elements and source bytes (155 / 234448 versus 171 / 249595), so it is refresh
+  #42. The source is reached read-only through
+  `.cache/local-references/chipdoc/cxl/opencapi/current/OpenCAPI-3.0-Certified_Definition_v1.1.pdf`; source and
+  repository share SSD device `16777240`. Its SHA-256 is `3e768520…9516`; current release
+  `361dd97f…a8c` owns the run.
+
+  Before mutation, authenticate and preserve the exact six-file / 364142-byte retained chain in
+  `.cache/task-work/CORPUS-COVERAGE.2.42/rollback`. The stale SourceIR reports 15 pages / eight visuals / five
+  tables / 31 sections / 155 elements and still records the retired boot-volume provenance. EvidenceIR has 172
+  statements with zero relations, signal constraints, registers, or timing records, but its glossary produces
+  synthetic `statement_0173` (`Signal DL is width 1.`). That statement becomes the retained one-interface /
+  one-signal semantic and intent surface; the adapter contains one `DL` output but already blocks for no
+  behavioral content. Re-ingest on CPU with the 85%-used RAM abort, no LLM/VLM inference, and repository-derived
+  task storage. Classify every delta under current generic authority—including the sibling glossary repair and
+  legal/administrative semantic boundary—without assuming the final topology or lowering result. Promote only
+  complete validated stages, reproduce the repaired cascade, and delete only authenticated rollback/task
+  evidence after all final gates pass.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.42`
+
+- [ ] **REPRODUCE / MEASURE** — authenticate the source PDF, release binary, exact six-file stale chain, stale
+  glossary-derived `DL` surface, blocked adapter, and same-volume rollback; record guarded-ingest counts, peak
+  memory, final hashes/path census, and typed before→after deltas.
+- [ ] **ROOT CAUSE (WHY + WHERE)** — classify each material delta against current generic source cleanup,
+  glossary/signal authority, legal/administrative statement authority, document class, and behavioral authority;
+  stop and open an owned child for any newly exposed universal defect.
+- [ ] **ADDRESSED (verified)** — promote only complete validated SourceIR→adapter stages; require every generated
+  page/layout/visual path final and repository-relative; converge obsolete adapter targets; accept only the
+  pipeline-grounded renderable or honestly blocked result.
+- [ ] **NO REGRESSION** — reproduce the final cascade, hold provider-free WIRE/I2C/SWD gates and KG 156/156,
+  sweep every emitted ISF through FSMGen strict, and pass mdBook/doctrine/path/locality gates plus broader Rust CI
+  if any product code changes.
+- [ ] **GENERICITY** — no OpenCAPI/vendor/document/acronym exception, manual generated-output edit, relaxed
+  validator, fabricated interface/behavior, or LLM/VLM inference enters the slice.
+- [ ] **LOCKSTEP** — generated artifacts, #42 row/count/frontier, live docs, durable fact when warranted, mdBook,
+  and `MEMORY.md` agree; delete only authenticated rollback/task evidence after every final gate is green.
+
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34b.ii.a`
 
 - [x] **REPRODUCE / MEASURE** — fresh USB4 ingest reproducibly leaves 51/51 page-sidecar image paths absolute and
@@ -914,8 +955,8 @@ today's ephemeral normalized-directory count.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: `CORPUS-COVERAGE.2` — select and own current-binary refresh #42 from the 15-document real chip-spec
-  tail; preserve the clean post-#41 handoff before starting it.
+- Frontier: `CORPUS-COVERAGE.2.42` — authenticate the OpenCAPI 3.0 Certified Definition source, release binary,
+  and six-file stale chain; create exact same-volume rollback before the guarded CPU ingest.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**39 refreshes done after #39;
   17 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#39: #29/#31 CHI-C2C marquee message-field refreshes,
@@ -1021,6 +1062,10 @@ strict syntax is not a semantic-fidelity oracle. **Levers A, B, C, F + the rule-
 
 ## Changelog
 
+- `2026-08-09`: `.2.42` DATA/DOC OWNED from clean commit `20fd31a6`. The 15-page OpenCAPI 3.0 Certified
+  Definition wins the remaining-candidate tie on 155 elements / 234448 source bytes. Same-SSD source
+  `3e768520…9516`, release `361dd97f…a8c`, and stale six-file / 364142-byte chain are identified read-only.
+  Frontier → authenticate exact rollback, then guarded CPU ingest and deterministic cascade.
 - `2026-08-09`: `.2.41` DATA/CODE/DOC DONE. Two guarded OpenCAPI AFU Address Space Usage ingests reproduce 14
   pages / nine visuals / two tables / 23 sections / 118 elements at 20% and 19% peak system memory used. All 14
   image/layout pairs and nine visual paths are present and repository-relative. Evidence holds at 106 statements
