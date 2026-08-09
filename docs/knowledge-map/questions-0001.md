@@ -64,6 +64,8 @@
   > can SpecForge use FSMGen's (stable …) sampled-value predicate
 - [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
   > can WIRE-BASED-100 reach 100% on SWD the same way as the parallel buses
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > can a dense-prose phantom actor reach emitted ISF
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > can ambient validation reports define the tracked corpus KB validation page
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
@@ -154,6 +156,8 @@
   > does FSMGen 030f8c273 accept a value-free (sample S as s) transaction body
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
   > does FSMGen accept a symbolic (width PARAM) or only a concrete integer width
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > does FSMGen strict success prove that a SpecForge adapter is semantically faithful
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > does FSMGen support a register reset value in storage (yes — (storage (var NAME (width N) [(reset V)])) is shipped per 13k:42 + 13m:48-68; optional, in-width non-negative int, omission = all-0s byte-identical, over-width/non-integer fails closed)
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
@@ -294,7 +298,3 @@
   > how are NAME[hi:lo] bit-ranges parsed into frame fields
 - [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
   > how are SWCLK and SWDIO captured if they are not in a signal table
-- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
-  > how are SpecForge live documents kept bounded
-- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
-  > how are TAP states (Shift-DR, Run-Test/Idle, Test-Logic-Reset) extracted

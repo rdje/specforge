@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
+  > how are SpecForge live documents kept bounded
+- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
+  > how are TAP states (Shift-DR, Run-Test/Idle, Test-Logic-Reset) extracted
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > how are TRM register bit assignments tables without access/reset columns handled
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -294,7 +298,3 @@
   > how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > how is SourceIr loaded from disk by downstream commands
-- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
-  > how is a Reg.Field cross-reference distinguished from a real constraint subject
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > how is a claim's grounding checked beyond a string match

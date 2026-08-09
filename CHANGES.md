@@ -1,3 +1,19 @@
+### CORPUS-COVERAGE.2.33c — complete the USB cascade and surface the adapter trust block
+
+- Completed and validated the 548-page USB 3.2 chain through SemanticIR, IntentIR, and ISF adapter. The retained
+  stages now cover all 80 SourceIR documents: 80 EvidenceIR and 79 SemanticIR/IntentIR/adapter chains; 33
+  current-binary refreshes are complete and 23 real chip-spec documents remain.
+- Classified the prior→fresh SourceIR element change (6,584→5,830) as visual-label suppression, not missing
+  prose: all 53 loss pages contain visual assets, the five non-visual changed pages each gain one element, short
+  body fragments on changed pages fall 543→3, and page/visual/table counts remain 548/507/283.
+- Root-caused a new semantic-fidelity block. `AT`, `USB`, `ENHANCED`, and `NO` enter through four independently
+  weak declaration/table seams, relation-derived direction synthesis launders them into formal outputs, and a
+  tied phantom actor becomes `setportfeature_port_over_current`. The emitted four-port/29-rule ISF passes FSMGen
+  strict with zero diagnostics but is not a trustworthy hardware model; strict syntax is not semantic fidelity.
+- Added the durable causal fact and the owned universal repair leaf `CORPUS-COVERAGE.2.33d`. Removed the exact
+  one-file/4.9 MiB rollback only after hash/count comparison and a zero-residue census; kept the fresh normalized
+  bundle and diagnostic adapter for the follow-up. KG bench remains 156/156.
+
 ### CORPUS-COVERAGE.2.33b — make signal-declaration catalogs UTF-8 safe
 
 - Replaced both copies of backward byte arithmetic with one helper that checks the already-valid match prefix

@@ -41,6 +41,21 @@ Each of these was a runtime error that only surfaced when FSMGen rejected the ou
 | Invalid syntax | Typed structs (`IsfRule`, `IsfPriority`) — no raw strings |
 | Mismatched parens | Recursive tree walk — parentheses match by construction |
 
+## Strict syntax is not semantic fidelity
+
+FSMGen's `--strict --check` answers an essential but bounded question: can FSMGen parse and validate the emitted
+ISF grammar? It does not prove that the upstream extractor chose real hardware signals, real actors, or the
+correct source semantics. SpecForge must establish those facts before emission or block/residualize output whose
+grounding is not trustworthy.
+
+USB 3.2 exposed the distinction in a real current-binary cascade (`2026-08-09`). Four prose tokens (`AT`,
+`ENHANCED`, `NO`, and `USB`) were promoted through the signal/relation fixed point, a prose request fragment
+became the primary actor `setportfeature_port_over_current`, and the adapter emitted 29 mostly unconditional
+rules. FSMGen correctly reported zero syntax diagnostics because the resulting S-expressions are legal; the
+model is nevertheless semantically untrustworthy. SpecForge records that result as a semantic-fidelity block,
+not as successful lowering. The generic repair is tracked by `CORPUS-COVERAGE.2.33d`; it must fix grounding and
+trust disposition without document-name or token special cases.
+
 ## ISF IR data model
 
 The ISF IR is a typed tree in `ir/isf_ir.rs`. The root struct:

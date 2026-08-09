@@ -1,4 +1,32 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.33c (`2026-08-09`) — downstream syntax cannot certify upstream meaning
+
+The USB cascade completed mechanically, but its adapter result overturns the prior dense-prose assumption that
+phantom relation subjects never reach emitted ISF. Four weak signal seeds arrived independently: sentence-initial
+`signal at ...` made `AT`; `Universal Serial Bus (USB)` passed the sparse parenthetical bus-head rule; a VBUS
+requirements matrix was classified as a signal table because its caption contains `Port`, admitting
+`ENHANCED`/`NO`; and relation-derived direction synthesis promoted the candidates into explicit output
+declarations. Once promoted, they acquired the same typed authority as genuine table declarations.
+
+The actor choice is a consequence, not the root. Three request-fragment actors each have two output ports and no
+inputs. `select_initiator_actor` uses name-ordered `BTreeMap` iteration followed by `max_by_key(out, in)`; the
+live result chooses the lexicographically last tie, `SetPortFeature(PORT_OVER_CURRENT)`, contrary to the nearby
+first-tie-wins comment. Changing tie order would only choose another phantom, so the repair must prevent weak
+signal/relation evidence from becoming an eligible primary actor rather than patching actor names.
+
+FSMGen strict success remains valuable: it proves the adapter obeys the downstream grammar. It does not inspect
+PDF provenance or decide whether `USB` is a wire rather than a protocol name. A syntactically clean result must
+therefore remain semantically blocked when its signal/actor grounding is demonstrably false. The new `.2.33d`
+leaf owns a universal, measurement-first repair across the independent seams; this refresh slice changes no
+extractor logic and preserves the diagnostic artifact as the real regression input.
+
+The 6,584→5,830 SourceIR content-element delta is a separate and benign normalization change. Every page with a
+loss has a visual asset, while all five changed non-visual pages gain one element. On affected pages, 543 prior
+body fragments were ten characters or shorter (diagram tokens such as `TS1`, `Rx`, and `Host`) versus three now;
+median body text length rises 8→204 while pages/visuals/tables remain 548/507/283. The fresh extraction is cleaner
+prose partitioning, not a cascade regression. Only after this comparison and downstream validation was the exact
+one-file rollback removed and its absence verified.
+
 ## CORPUS-COVERAGE.2.33b (`2026-08-09`) — validate boundaries forward from known-safe offsets
 
 `match_indices` already guarantees that its offset is a character boundary. The safe implementation preserves

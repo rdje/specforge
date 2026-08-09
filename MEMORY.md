@@ -19,13 +19,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.33b` — shared UTF-8 repair and real USB EvidenceIR retry complete, awaiting commit.
-- Current state: both declaration catalogs use one valid-prefix boundary helper; the focused 252-test EvidenceIR
-  suite and full CI (1,776 pass / five ignored) are green. Rebuilt release `1710e5…` constructs and validates USB
-  EvidenceIR from the promoted SourceIR: 918 anchors / 8,267 spans / 507 visuals / 22,029 links / 8,412 statements.
-- Next action: commit `.2.33b`, then execute `.2.33c`: build/validate SemanticIR and IntentIR, adapt/render/FSMGen
-  strict if possible, classify the 46 unexplained tables and false-looking semantic signal names honestly, update
-  corpus counts/book truth, remove the exact rollback and residue, and close `.2.33` without another Docling run.
-- In-flight uncommitted: one Rust helper/test, aligned live docs, fresh ignored USB normalized/SourceIR/EvidenceIR,
-  and the 4.9 MiB byte-verified rollback under `.cache/task-workspaces/CORPUS-COVERAGE.2.33`.
+- Active unit: `CORPUS-COVERAGE.2.33d` — next owned PNT leaf, universal dense-prose adapter-trust repair.
+- Current state: `.2.33c` is complete and verified. All USB stages validate; the adapter emits four false prose signals and 29 rules under phantom
+  actor `setportfeature_port_over_current`. FSMGen strict passes syntax, but the result is semantically blocked.
+  The durable causal fact and owned universal repair leaf `.2.33d` are present. Corpus census is 80 SourceIR /
+  2 normalized / 80 EvidenceIR / 79 SemanticIR, IntentIR, and adapters; refresh progress is 33 complete / 23 left.
+- Next action: activate `.2.33d`, measure the universal repair boundaries across all four false-signal seams,
+  then implement a real USB regression with WIRE/FSMGen/KG/full-CI proof.
+- In-flight uncommitted: none after the `.2.33c` commit. Fresh ignored USB stage artifacts remain as the `.2.33d`
+  regression input. The exact rollback is gone after comparison/zero residue; temp contains only `.gitkeep`.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.
