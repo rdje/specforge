@@ -4,7 +4,7 @@
 
 - Tree ID: `CORPUS-COVERAGE`
 - Status: `active` (`.0` build-out + `.1` stage-staleness validator done; `.2` current-binary refresh batch
-  remains active with 40 completed documents and `.2.41` selection owned next; `.3`
+  remains active with 40 completed documents and `.2.41` OpenCAPI AFU-address-note refresh owned next; `.3`
   lifecycle/currentness reconciliation done `2026-08-09`)
 - Roadmap lane: `R15e`/`R16` (corpus digestion — the owner's substantive gap #2)
 - Created: `2026-06-17`
@@ -587,6 +587,43 @@ today's ephemeral normalized-directory count.
 - [x] **LOCKSTEP** — generated artifacts, #40 row/count/frontier, live docs, durable fact when warranted, mdBook,
   and `MEMORY.md` agree; delete only authenticated rollback/task evidence after every final gate is green.
 
+- ID: `CORPUS-COVERAGE.2.41` · Status: `in_progress` (`2026-08-09`, DATA/DOC) · Goal: run a guarded
+  current-binary refresh of `opencapi_afu_address_space_usage` from the caller-authorized same-SSD source and
+  complete the deterministic EvidenceIR→SemanticIR→IntentIR→adapter cascade. This 14-page / nine-visual /
+  two-table / 118-element engineering note is the smallest remaining real chip-spec candidate. Its retained
+  EvidenceIR has 106 statements and zero relations, declarations, constraints, conditionals, registers, or timing
+  records; nevertheless five low-confidence heuristic interfaces group eight address-space acronyms
+  (`AFU`/`BAR`/`CFG`/`GB`/`ID`/`MEM`/`MMIO`/`PASID`) from ordinary explanatory prose, and the already blocked
+  adapter renders all eight as one-bit outputs. This is a distinct prose-grouping transfer test for the generic
+  authority-empty fallback after `.2.39`/`.2.40` closed glossary-derived declarations.
+
+  Authenticate the retained six-file / 248067-byte chain, source PDF hash `0ae0c01c…fbe3`, and release binary
+  `5175bf62…8f4` before mutation; preserve an exact same-volume rollback; use CPU Docling with the 85%-used RAM
+  abort and no LLM/VLM inference; replace obsolete boot-volume source provenance through regeneration from the
+  resolved SSD input. Preserve any interface satisfying current generic declaration/system-contract/behavioral
+  authority, remove only unsupported material, and accept any pipeline-grounded output. During candidate
+  selection, two artifact-key lists were mistakenly materialized as exact `/tmp/specforge_*_keys.txt` files;
+  both were deleted immediately with zero residue before ownership or generated mutation. All remaining census
+  work must stream in memory or use repository-derived `.cache/task-work/CORPUS-COVERAGE.2.41` on the SSD.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.41`
+
+- [ ] **REPRODUCE / MEASURE** — authenticate the source PDF, retained six-file chain, 14-page source structure,
+  zero-declaration evidence, five-interface/eight-signal blocked adapter, release binary, and same-volume rollback;
+  record guarded-ingest counts, peak memory, final hashes, and typed before→after deltas.
+- [ ] **ROOT CAUSE (WHY + WHERE)** — classify every material delta against current generic document-class,
+  interface, signal, and behavioral authority; inspect each retained acronym grouping rather than assuming the
+  preceding glossary result.
+- [ ] **ADDRESSED (verified)** — promote only complete validated stages; require every page path final and
+  repository-relative; converge obsolete adapter targets; run FSMGen strict only if honestly renderable.
+- [ ] **NO REGRESSION** — reproduce the deterministic cascade, hold nine provider-free WIRE/I2C/SWD gates and KG
+  156/156, sweep all current emitted ISFs through FSMGen strict, and pass mdBook/doctrine/path/locality gates plus
+  broader Rust CI if any product code changes.
+- [ ] **GENERICITY** — no OpenCAPI/vendor/note/document/acronym exception, manual generated-output edit, relaxed
+  validator, fabricated interface/behavior, or LLM/VLM inference enters the slice.
+- [ ] **LOCKSTEP** — generated artifacts, #41 row/count/frontier, live docs, durable fact when warranted, mdBook,
+  and `MEMORY.md` agree; delete only authenticated rollback/task evidence after every final gate is green.
+
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34b.ii.a`
 
 - [x] **REPRODUCE / MEASURE** — fresh USB4 ingest reproducibly leaves 51/51 page-sidecar image paths absolute and
@@ -845,9 +882,9 @@ today's ephemeral normalized-directory count.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: `CORPUS-COVERAGE.2.41` — select and own the next smallest roadmap-aligned real chip-spec document,
-  authenticate its caller-authorized same-SSD source and retained chain, then define the guarded refresh contract
-  before changing any generated artifact.
+- Frontier: `CORPUS-COVERAGE.2.41` — authenticate the retained OpenCAPI AFU Address Space Usage source-through-
+  adapter chain and exact same-volume rollback, then run its guarded CPU ingest and deterministic cascade without
+  changing generated artifacts outside this document key.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**39 refreshes done after #39;
   17 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#39: #29/#31 CHI-C2C marquee message-field refreshes,

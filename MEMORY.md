@@ -21,15 +21,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.40` complete; `.2.41` is the next unowned refresh slice.
+- Active unit: `CORPUS-COVERAGE.2.41`; refresh the OpenCAPI AFU Address Space Usage engineering note.
 - Current state: 40 refreshes are complete / 16 remain, with 80 SourceIR / 9 normalized / 80 EvidenceIR / 79
   SemanticIR / 79 IntentIR / 79 adapters and all 66 current emitted ISFs strict-clean. Two guarded 13-page
   ingests and complete cascades reproduce all 12 hashes at 21% and 22% peak memory used. Evidence 173→172 removes
   only stale synthetic `Signal DL is width 1.` from the terms glossary; the one-interface/one-output surface
   disappears, lowering blocks honestly on no signals plus no behavior, and only `adapter.json` plus its report
   remain. All 13 image and 13 layout paths are repository-relative.
-- Next action: select the next smallest roadmap-aligned real chip-spec document, authenticate its same-SSD source
-  and retained chain, then own `.2.41` before changing generated artifacts.
-- In-flight uncommitted: none after the `.2.40` signoff commit. The exact 29-file / 932010-byte / 968-KiB task
-  bundle is deleted with zero task-id residue.
+- Next action: preserve and authenticate the complete six-file #41 chain in an exact SSD-local rollback, validate
+  copied artifacts, then run the guarded CPU ingest and deterministic cascade from the authorized SSD source.
+- In-flight uncommitted: only `.2.41` ownership and its durable preflight record; no #41 generated artifact has
+  changed. The two mistakenly created off-volume candidate-key lists were deleted with zero residue.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

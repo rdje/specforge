@@ -191,8 +191,10 @@ Five active program groups support that north star:
   173→172 drops only its sibling synthetic `Signal DL is width 1.` glossary record, removing the stale one-
   interface/one-output surface while preserving the note's actors, phases, invariants, behaviors, and constraints.
   Lowering blocks on no signals plus no behavior and leaves only `adapter.json` plus its report; all 66 remaining
-  emits are strict-clean. Corpus is 40 done / 16 remaining; `.2.41` owns selection of the next smallest
-  roadmap-aligned real chip-spec document. Separately,
+  emits are strict-clean. Corpus is 40 done / 16 remaining. `.2.41` now owns the 14-page OpenCAPI AFU Address
+  Space Usage engineering note, the smallest remaining real chip-spec candidate. Its retained zero-declaration
+  evidence still feeds five heuristic interfaces and eight one-bit acronym outputs into an adapter blocked for
+  no behavior, providing a prose-grouping transfer check for the current generic authority boundary. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.
