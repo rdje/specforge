@@ -441,6 +441,36 @@ today's ephemeral normalized-directory count.
 - [ ] **LOCKSTEP** — generated artifacts, #38 row/count/frontier, live docs, durable fact when warranted, mdBook,
   and `MEMORY.md` agree; delete only authenticated rollback/task evidence after every final gate is green.
 
+- ID: `CORPUS-COVERAGE.2.38a` · Status: `in_progress` (`2026-08-09`, CODE/DATA/DOC) · Goal: make `validate`
+  backannotation honor the artifact path explicitly supplied by the caller before resuming `.2.38`. Baseline
+  authentication copied the retained chain into `.cache/task-work/CORPUS-COVERAGE.2.38/rollback`, but validating
+  those copies loaded their repository-relative embedded artifact layouts and `persist_*_validation` called
+  `write_to_disk()`. That method correctly targets the embedded canonical layout for normal stage production,
+  but it is wrong for validation of a copied artifact: the command backannotated the canonical SourceIR /
+  EvidenceIR / SemanticIR / IntentIR and materialized two canonical normalized summary files while its console
+  reported the copied artifact path. The exact pre-side-effect hashes and typed counts were recorded first, but
+  the copied rollback was subsequently backannotated too and cannot serve as the promised byte-exact recovery.
+  Preserve the current side-effect state and recorded original hashes; reproduce in a hermetic fixture; persist
+  the mutated IR JSON and report beside the explicit CLI path without following its embedded output layout; prove
+  canonical bytes and canonical sibling files stay unchanged for all supported stages; then rebuild and recover
+  `.2.38` from the authenticated source rather than misclassifying validator backannotation as an ingest delta.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.38a`
+
+- [ ] **REPRODUCE / MEASURE** — preserve the original six hashes/counts and current side-effect chain; a hermetic
+  copied-artifact test must reproduce canonical mutation and source normalized-summary creation before the fix.
+- [ ] **ROOT CAUSE (WHY + WHERE)** — prove each `persist_*_validation` ignores its `artifact_path` for the IR write
+  by calling embedded-layout `write_to_disk()`, while the sidecar helper correctly uses the explicit path.
+- [ ] **ADDRESSED (verified)** — write each backannotated JSON to the resolved explicit artifact path and its
+  report to that path's sibling; canonical artifacts and unrelated embedded-layout siblings remain byte-exact.
+- [ ] **NO REGRESSION** — canonical-path validation still backannotates normally; focused tests cover SourceIR,
+  EvidenceIR, SemanticIR, IntentIR, and adapter artifacts; formatting, warning-deny Clippy, full CI, mdBook,
+  doctrines, persisted paths, and project-data locality pass.
+- [ ] **GENERICITY** — the repair is stage-generic and path/containment based, with no document, stage-key,
+  workstation, or corpus exception and no relaxed validation semantics.
+- [ ] **LOCKSTEP** — source comment, task result, durable fact, live docs, mdBook command contract, and
+  `MEMORY.md` explain that `validate <artifact>` mutates only that artifact and its adjacent report.
+
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34b.ii.a`
 
 - [x] **REPRODUCE / MEASURE** — fresh USB4 ingest reproducibly leaves 51/51 page-sidecar image paths absolute and
@@ -699,9 +729,9 @@ today's ephemeral normalized-directory count.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: `CORPUS-COVERAGE.2.38` — authenticate the retained Introducing CoreSight source-through-adapter chain
-  and exact same-volume rollback, then run its guarded CPU ingest and deterministic cascade without changing
-  generated artifacts outside this document key.
+- Frontier: `CORPUS-COVERAGE.2.38a` — reproduce and repair copied-artifact validation backannotation, then recover
+  the #38 canonical chain from its authenticated source and resume the guarded refresh only after focused/full
+  gates prove validation cannot follow embedded output paths away from the explicit CLI artifact.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**37 refreshes done after #37;
   19 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#37: #29/#31 CHI-C2C marquee message-field refreshes,

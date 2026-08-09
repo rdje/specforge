@@ -21,13 +21,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.38`; refresh Introducing CoreSight Debug and Trace with the current binary.
-- Current state: 37 refreshes are complete / 19 remain, with 80/6/80/79 stage census and all 66 current emitted
-  ISFs strict-clean. The 25-page AArch64 External Debug Guide refresh is portable and deterministic. Current
-  generic authority removes 64 stale heuristic interfaces, one visual-label actor, and the fabricated 73-signal
-  target while retaining 243 statements, five conditionals, 78 behaviors, and the genuine methodology-guide
-  classification. The adapter blocks honestly with exactly `adapter.json`.
-- Next action: authenticate the complete retained #38 stage chain and exact same-volume rollback, then run the
-  guarded CPU ingest and deterministic cascade from the resolved caller-authorized SSD input.
-- In-flight uncommitted: only the `.2.38` ownership/resume-pointer commit; no generated artifact has changed.
+- Active unit: `CORPUS-COVERAGE.2.38a`; contain copied-artifact validation backannotation before resuming #38.
+- Current state: #38 source `08a37c35…162`, release binary, typed baseline, and six original artifact hashes were
+  authenticated before mutation. Running `validate` on copied rollback artifacts exposed that each IR persistence
+  helper follows the embedded canonical artifact layout for the JSON write, even though the sidecar/reporting path
+  follows the caller's copy. The canonical #38 SourceIR→IntentIR chain was backannotated and two normalized summary
+  files materialized; the copied rollback was also updated, so it is no longer a byte-exact recovery set.
+- Next action: commit `.2.38a` ownership, add a hermetic all-stage reproducer, persist validation JSON beside the
+  explicit CLI artifact, then recover #38 from its authenticated same-SSD source and resume the guarded refresh.
+- In-flight uncommitted: ignored canonical/rollback #38 artifacts preserve the validator side effect; no tracked
+  product code has changed yet. Original pre-side-effect hashes/counts are recorded in the active task evidence.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

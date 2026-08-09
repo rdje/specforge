@@ -175,7 +175,10 @@ Five active program groups support that north star:
   `.2.38` now owns the 32-page Introducing CoreSight Debug and Trace guide. Unlike the preceding authority-empty
   cases, its retained EvidenceIR has nine actor-signal relations and the downstream chain has six interfaces,
   eight ports, and four connectivity edges, so the refresh tests whether current generic authority preserves
-  grounded topology; its existing four-signal adapter blocks separately for lack of behavioral content. Separately,
+  grounded topology; its existing four-signal adapter blocks separately for lack of behavioral content. Preflight
+  validation of its copied rollback exposed a generic command-path defect: backannotation writes IR JSON through
+  the embedded canonical layout instead of the explicit CLI artifact path. `.2.38a` owns the all-stage repair and
+  canonical recovery before the ingest resumes. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.
