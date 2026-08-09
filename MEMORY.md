@@ -21,15 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8e` — independent derived-state closure audit; complete
-  with a closure-blocking finding in this commit.
-- Current state: all 14 primaries, three secondaries, 17 exact markers, declared authorities, and 72 mutations
-  pass, but the older feedback-protocol self-test renderer stores the live FSMGen hash in executable source.
-  Full CI is green but does not prove repository-wide current-value exhaustiveness. `.8` remains open.
-- Next action: from the clean `.8e` commit, activate `.8f`; render all synthetic feedback required literals from
-  contract data and add a changed-pin no-fallback mutation. `.8g` then independently re-audits before `.8` may
-  close; `.9a` remains the next archive-route boundary.
-- In-flight uncommitted: none after the `.8e` audit commit. `.project-data/tmp` contains only `.gitkeep` plus
-  `xcrun_db`; no doctrine code, registry value, product behavior, artifact, donor/submodule, threshold, or ceiling
-  changed in the audit.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8f` — derive-on-read feedback self-test repair; complete in
+  this commit.
+- Current state: the synthetic feedback renderer expands the full declared required-literal array, stores no live
+  hash, and passes an unrelated whole-array mutation. Protocol 11/11, all 72 derived-state cases, and full CI pass;
+  canonical feedback/product/artifact/donor/submodule/threshold/ceiling state is unchanged. `.8` remains open.
+- Next action: from the clean `.8f` commit, activate `.8g`; independently rescan all current Rust/FSMGen values,
+  declared markers, adapters, protocol consumers, historical/fixture dispositions, and full gates. Close `.8`
+  only if no executable project-current copy remains, then proceed to `.9a` archive-route design.
+- In-flight uncommitted: none after the `.8f` commit. `.project-data/tmp` contains only `.gitkeep` plus `xcrun_db`.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

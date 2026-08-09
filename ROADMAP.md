@@ -99,8 +99,8 @@ Five active program groups support that north star:
   closure because three secondary copies remained hardcoded in adapter source rather than enumerated by the data
   registry. `.8d` now declares all three with neutral surface/control validation and declaration-only adapter
   reads. The `.8e` repository-wide audit confirms that repair but finds the live FSMGen hash still stored in the
-  older feedback-protocol self-test renderer; `.8f` owns derive-on-read repair and `.8g` the next independent
-  closure decision. The live-document
+  older feedback-protocol self-test renderer. `.8f` now derives the complete synthetic required-literal set from
+  contract data and proves whole-array replacement; `.8g` owns the next independent closure decision. The live-document
   contracts also forced a second status rollover during that audit; its shared archive index is now 81 lines /
   5,311 bytes and only 218 bytes before mandatory byte rollover, so `.9a`/`.9b` own a bounded route topology
   before another segment. The completed `.0`–`.7`

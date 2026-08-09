@@ -368,10 +368,12 @@ verification before correction.
   stores the live FSMGen hash in executable source; `.8f` owns derive-on-read repair and `.8g` re-audits.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8f`
-  Status: `pending` (`2026-08-09`, CODE/DOC)
+  Status: `done` (`2026-08-09`, CODE/DOC)
   Goal: remove the feedback-protocol self-test renderer's stored live FSMGen hash by rendering every required
   current-root literal from its bounded contract; add a changed-pin mutation that proves no executable fallback,
   and preserve the production protocol, derived-state, artifact, threshold, and ceiling contracts.
+  **Done:** the renderer expands the declared required-literal array without value/role/shape knowledge; an
+  alternate two-literal contract passes, the live hash is absent from source, and 11/11 self-tests pass.
 
 - ID: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8g`
   Status: `pending` (`2026-08-09`, AUDIT/DOC)
@@ -400,10 +402,10 @@ verification before correction.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `.8f` | `pending` (`2026-08-09`) | Derive the feedback self-test's synthetic current literals from its contract instead of executable source. |
-| 2 | `.8g` | `pending` (`2026-08-09`) | Independently re-audit all live-value occurrences and close `.8` only if no executable current copy remains. |
-| 3 | `.9a` | `pending` (`2026-08-09`) | Lock the bounded archive-route topology before another ledger segment crosses the index rollover threshold. |
-| 4 | `.9b` | `pending` (`2026-08-09`) | Implement and independently verify the accepted archive-index containment design. |
+| 1 | `.8g` | `pending` (`2026-08-09`) | Independently re-audit all live-value occurrences and close `.8` only if no executable current copy remains. |
+| 2 | `.9a` | `pending` (`2026-08-09`) | Lock the bounded archive-route topology before another ledger segment crosses the index rollover threshold. |
+| 3 | `.9b` | `pending` (`2026-08-09`) | Implement and independently verify the accepted archive-index containment design. |
+| — | `.8f` | `done` (`2026-08-09`) | Synthetic required literals derive from contract data; a changed-literal fixture and 11/11 protocol cases pass. |
 | — | `.8e` | `done` (`2026-08-09`) | Data markers and authorities pass, but a broader scan found the live FSMGen pin stored in a self-test renderer; closure refused. |
 | — | `.8d` | `done` (`2026-08-09`) | Three secondary copies are data-owned; neutral surface/control validation and declaration-only adapter execution pass 72 focused cases. |
 | — | `.8c` | `done` (`2026-08-09`) | Fourteen primary contracts pass, three code-hidden secondary copies are owned by `.8d`, and exact status segment 0002 plus the `.9` route boundary are durable. |
@@ -542,6 +544,27 @@ verification before correction.
   adoption note, mdBook, and exact verification evidence agree that `.8` remains open for `.8f`/`.8g`; `.9`
   retains the separate archive-index boundary.
 
+### Acceptance Checklist (enforced) — `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8f`
+
+- [x] **REPRODUCE / MEASURE** — preserve the `.8e` proof that the live hash occurs in
+  `render_current_root`; establish the baseline protocol self-test at 10/10 and the real check/report as green;
+  confirm the renderer's synthetic current-root section is the only executable current-value copy.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the renderer duplicated two `current_root.required_literals` in source even
+  though it already receives the full contract. Existing validation compared its output with the same unchanged
+  data, so equality at today's value could not prove derive-on-read behavior.
+- [x] **ADDRESSED (verified)** — expand the complete declared required-literal array into the synthetic section;
+  add an eleventh positive case that replaces the entire array with unrelated fixture literals before rendering
+  and validation; prove the live hash has zero occurrences in feedback-protocol source.
+- [x] **NO REGRESSION** — real protocol check/report and 11/11 self-tests, all 47 neutral + 25 adapter cases, six
+  doctrines, 1,779 Rust tests / five ignored, rustdoc, mdBook, and final locality pass; canonical feedback data,
+  product behavior/artifacts, donor/submodule state, surfaces, thresholds, and ceilings remain unchanged.
+- [x] **GENERICITY** — rendering iterates the declared array and knows no FSMGen hash, hash shape, literal role,
+  item index, or project-current value. The mutation replaces both items, so a partial or positional fallback
+  cannot satisfy the case.
+- [x] **LOCKSTEP** — script/self-test count, durable fact/report, task/roadmap/status/resume pointer,
+  change/development ledgers, local adoption note, mdBook, and verification evidence agree that `.8f` is repaired
+  and `.8g` retains independent closure authority.
+
 ## Decisions
 
 - `2026-08-09`: **GO on the newer portable derived-state semantics.** External collection-index and bounded
@@ -585,6 +608,10 @@ verification before correction.
   still maintained executable state when it emits the project's live pin and is expected to evolve with that
   pin. The feedback protocol fixture must render its declared `current_root.required_literals` rather than store
   a second source literal. `.8f` repairs that seam and adds a changed-pin proof; `.8g`, not `.8e`, may close `.8`.
+- `2026-08-09`: **Render the declared literal set, not named positions.** The feedback fixture inserts every
+  `current_root.required_literals` member into its synthetic boundary and knows neither role nor value shape. The
+  regression replaces the entire array with unrelated strings, proving both prior source literals are gone
+  without adding another project-specific adapter or registry field.
 
 - `2026-08-08`: **GO on local adoption.** SpecForge meets multiple guide triggers: bounded-pointer
   routing pressure, mandatory multi-megabyte live reads, unbounded append-only neighbors, generated
@@ -2028,6 +2055,8 @@ progress state. No other book part changes unless the final audit finds a separa
 
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
+| `2026-08-09` | `.8f` | Perl syntax; live-hash source absence; changed-entire-array derive-on-read case; real protocol `--check`/`--report`; protocol self-test; 47 neutral + 25 adapter cases; real 14-primary/3-secondary report | green: source stores no live pin and knows no literal role/index/shape; unrelated declared literals render and validate; protocol 11/11 plus all 72 derived-state cases pass; canonical feedback root/report and registry values remain unchanged |
+| `2026-08-09` | `.8f` | full `bash scripts/run_ci.sh`; composed six doctrines; format; warning-deny Clippy/tests; rustdoc; mdBook doctests/build; post-producer locality; exact projections/aggregates | green: six doctrines; 1,779 Rust tests pass / five ignored / zero failed; 627 Markdown / 41 surfaces, 159 facts / 1,114 questions / eight shards, fact index 32,637 bytes / 541 before rollover, and book 36 files / 13,110 lines / 792,698 bytes agree; no product/artifact/donor/submodule/surface/threshold/ceiling change |
 | `2026-08-09` | `.8e` | independent data-only 14-primary/3-secondary inventory; literal cardinality for all 17 members; tracked live-value and executable-consumer scans; neutral/adapter source review | all registry markers occur exactly once and adapters follow declarations, but `render_current_root` stores the live FSMGen hash in feedback-protocol executable source; `.8` closure refused, `.8f`/`.8g` opened |
 | `2026-08-09` | `.8e` | 47 neutral + 25 adapter mutations; real authority report; feedback-protocol 10/10 self-test; full `bash scripts/run_ci.sh`; exact projections/aggregates | green despite finding: six doctrines, 1,779 Rust tests / five ignored / zero failed, rustdoc, mdBook, and final locality pass; 627 Markdown / 41 surfaces, 159 facts / 1,114 questions / eight shards, fact index 32,636 bytes / 542 before rollover, and book 36 files / 13,104 lines / 792,209 bytes agree; the gates did not establish repository-wide current-value exhaustiveness |
 | `2026-08-09` | `.8d` | full `bash scripts/run_ci.sh`; composed six doctrines; format; warning-deny Clippy/tests; rustdoc; mdBook doctests/build; post-producer locality; exact projections/aggregates | green: six doctrines; 1,779 Rust tests pass / five ignored / zero failed; 627 Markdown / 41 surfaces, 159 facts / 1,113 questions / eight shards, fact index 32,643 bytes / 535 before rollover, and book 36 files / 13,097 lines / 791,641 bytes agree; no product/artifact/threshold/ceiling change |
@@ -2104,6 +2133,7 @@ progress state. No other book part changes unless the final audit finds a separa
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
+| `.8f` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8f — derive feedback self-test literals from data` | complete-array rendering + unrelated-literal proof + 11/11 protocol cases + zero stored live hash |
 | `.8e` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8e — reject closure on a hidden self-test pin` | cold data/source inventory + repository-wide value scan + owned `.8f` derive-on-read repair / `.8g` re-audit |
 | `.8d` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8d — declare every adapter secondary copy` | three bounded data-owned copies + neutral surface/control validation + declaration-only adapter + 72 focused cases |
 | `.8c` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8c — audit derived-state copy completeness` | independent copy-membership finding + exact second status rollover + owned `.8d`/`.8e`/`.9` frontiers |
@@ -2140,6 +2170,11 @@ progress state. No other book part changes unless the final audit finds a separa
 | `.7` | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.7 — close the containment and locality program` | independent whole-program retrieval audit + cold-read defect gates + final book method-doc + clean closure |
 
 ## Changelog
+
+- `2026-08-09`: `.8f` CODE/DOC DONE. Replaced the feedback self-test renderer's two stored current literals with
+  generic expansion of `current_root.required_literals`; added an unrelated whole-array mutation; and proved the
+  live hash is absent from source. Protocol 11/11, all 72 derived-state cases, six doctrines, 1,779 tests / five
+  ignored, rustdoc, mdBook, and locality pass. Frontier → `.8g` independent closure audit.
 
 - `2026-08-09`: `.8e` AUDIT/DOC DONE. All 14 primary and three secondary declarations, exact markers, declared
   authority comparisons, and 72 focused mutations pass. A broader tracked-value/consumer scan found the live

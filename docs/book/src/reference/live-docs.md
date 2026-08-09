@@ -78,6 +78,12 @@ against the live contract, so the value is update-coupled executable state rathe
 `.8f` derives every synthetic required literal from contract data and adds a changed-pin proof; `.8g` then
 repeats the independent source/data audit before `.8` may close.
 
+That `.8f` repair is now implemented without teaching the renderer what either literal means. It expands the
+complete `current_root.required_literals` array into the synthetic section; an eleventh protocol self-test
+replaces both members with unrelated fixture strings before rendering and validation. The live hash is absent
+from executable source, the real protocol output is unchanged, and all 11 protocol plus 72 derived-state cases
+pass. `.8g` retains independent closure authority.
+
 Writing that audit result also exercised the status ledger's second post-migration rollover. Twelve exact records
 were sealed in segment 0002 (10,894 bytes; SHA-256 `11e058…28df`) and the live root returned to 60 records without
 touching its trailer or 40-record migration suffix. The added direct route moves the shared archive index to

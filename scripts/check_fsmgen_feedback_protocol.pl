@@ -531,13 +531,15 @@ sub clone_json {
 sub render_current_root {
     my ($contract) = @_;
     my $current = $contract->{current_root};
+    my $required_literals = $current->{required_literals};
+    ref($required_literals) eq 'ARRAY'
+        or die "feedback-protocol self-test: current_root.required_literals must be an array\n";
     my @out = ($current->{h1}, '');
     push @out, '## Current channel', '',
         'The stable channel is `docs/FSMGEN_FEEDBACK.md`; detailed history is in docs/archive/fsmgen-feedback/INDEX.md.', '';
     push @out, '## Current downstream boundary', '',
         "SPECFORGE's single adapter target is now `.isf`.",
-        'SPECFORGE IntentIR → .isf → FSMGEN',
-        'Current pinned FSMGen: d327129b718ab29fc889db026c19257b0f7fcc49.', '';
+        @$required_literals, '';
     push @out, '## Open correspondence', '', $current->{open_start_marker},
         '- None at the sealed source boundary.', $current->{open_end_marker}, '';
     push @out, '## Closed correspondence register', '', $current->{register_start_marker},
@@ -654,6 +656,22 @@ sub run_self_test {
         $passed++;
     }
 
+    my $changed_literals = clone_json($planned);
+    $changed_literals->{current_root}{required_literals} = [
+        'fixture-declared adapter route',
+        'fixture-declared downstream boundary',
+    ];
+    remove_tree($fixture);
+    make_path($fixture);
+    seed_fixture($fixture, $changed_literals, $source_raw);
+    my @changed_literal_errors = validate_contract($fixture, $changed_literals);
+    if (@changed_literal_errors) {
+        remove_tree($fixture);
+        die "feedback-protocol self-test 'declared current literals drive fixture rendering' failed: "
+            . join('; ', @changed_literal_errors) . "\n";
+    }
+    $passed++;
+
     my $migrated = clone_json($planned);
     $migrated->{migration_state} = 'migrated';
     my @migrated_cases = (
@@ -697,7 +715,7 @@ sub run_self_test {
     }
     remove_tree($fixture);
     die "feedback-protocol self-test residue remains at $fixture\n" if -e $fixture;
-    print "feedback-protocol: self-test $passed/10 passed.\n";
+    print "feedback-protocol: self-test $passed/11 passed.\n";
 }
 
 my $contract_absolute = absolute($root, $contract_path);

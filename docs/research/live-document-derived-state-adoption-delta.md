@@ -173,6 +173,20 @@ contract. `.8f` must render the entire `required_literals` array from contract d
 mutation; `.8g` then repeats this repository-wide occurrence/consumer scan. `.8` remains open until that audit
 finds no stored project-current value in executable source.
 
+## `.8f` derive-on-read repair
+
+`render_current_root` now inserts every member of `current_root.required_literals` into the synthetic downstream
+boundary. It no longer stores the adapter-route text or live FSMGen gitlink and knows no literal role, position,
+hash shape, or current value. The new eleventh self-test replaces the complete two-item array with unrelated
+fixture strings before seeding and validating the synthetic root; the old implementation cannot pass that case.
+
+The live gitlink has zero occurrences in feedback-protocol source. Perl syntax, real protocol check/report,
+11/11 protocol self-tests, 47 neutral plus 25 adapter mutations, and the real 14-primary/3-secondary authority
+report pass. Full CI passes all six doctrines, 1,779 Rust tests / five ignored, rustdoc, mdBook, and final
+project-data locality. The canonical feedback root, JSON contract, Git index, derived-state registry, product
+artifacts, donor/submodule files, surface definitions, thresholds, and ceilings are unchanged. `.8g` retains the
+independent repository-wide scan and `.8` closure decision.
+
 The audit record itself triggered the status ledger's second mandatory rollover. The lossless protocol sealed
 12 exact records / 10,894 bytes at SHA-256 `11e058…28df` and returned the root to 60 records. Adding that direct
 route raised the shared archive index to 81 lines / 5,311 bytes, only 218 bytes before mandatory rollover. This is

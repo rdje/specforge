@@ -1,6 +1,6 @@
 ---
 id: live-document-derived-state-contract-gap
-title: Derived-state closure awaits removal of a self-test pin copy
+title: Derived-state executable-copy repair awaits independent audit
 answers:
   - "did SpecForge adopt the 2026 08 09 FSMGen derived state containment revision"
   - "which exact current state copies are not yet independently verified in SpecForge"
@@ -51,6 +51,12 @@ its synthetic self-test current root, even though that root is validated against
 `current_root.required_literals`. This is update-coupled project-current executable state, not an independent
 fixture or historical measurement. `.8f` must derive all rendered literals from contract data and prove a changed
 pin has no fallback; `.8g` then repeats the repository-wide current-value scan before `.8` may close.
+
+`.8f` removes that executable copy. The renderer now expands the full declared `required_literals` array and has
+no live hash, literal role, positional selection, or shape inference. An eleventh self-test replaces both array
+members with unrelated fixture strings before rendering; it passes together with the real protocol check/report,
+all 72 derived-state mutations, and full CI. `.8g` remains responsible for the independent resulting-tree scan
+and closure decision.
 
 The card/index plane remains an explicit implementation constraint. `.8b` updates this same card rather than
 adding another; any future crossing of the rollover threshold requires an owned partition, not a wider ceiling.

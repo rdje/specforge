@@ -1,4 +1,16 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8f (`2026-08-09`) — derive the set, not a semantic position
+
+The narrowest robust repair is simpler than adding another schema role. The protocol contract already owns a
+bounded `required_literals` array, and the synthetic self-test root only needs every member to exercise the
+validator. Rendering the entire array removes both executable copies while avoiding a hash regex, an assumed
+second-item pin, or a second project adapter.
+
+The regression replaces the whole array with unrelated strings before seeding. This is stronger than merely
+checking today's hash is absent: an implementation that retained either old literal, selected a positional item,
+or silently fell back to source would not produce a root satisfying the changed contract. The real current root
+is never regenerated, so the repair changes test construction only and preserves the canonical protocol surface.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8e (`2026-08-09`) — a synthetic self-test root is current state
 
 The `.8e` audit deliberately widened its read-only search beyond the two new derived-state scripts. That found

@@ -1,3 +1,18 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8f — derive feedback self-test literals from data
+
+- Replaced the feedback-protocol self-test renderer's stored adapter-route and live-gitlink literals with generic
+  expansion of its contract's complete `current_root.required_literals` array. The renderer knows no literal
+  role, item position, hash shape, or project-current value.
+- Added an eleventh positive self-test that replaces both required literals with unrelated fixture strings before
+  seeding and validating the synthetic current root. The live FSMGen hash now has zero occurrences in the
+  executable source; the old implementation cannot satisfy this mutation.
+- Real protocol check/report, 11/11 protocol cases, 47 neutral plus 25 adapter mutations, and the real
+  14-primary/3-secondary authority report pass. Full CI passes six doctrines, 1,779 Rust tests / five ignored,
+  rustdoc, mdBook, and final locality. The fact index is 32,637 bytes / 541 before rollover; the 36-file book is
+  13,110 lines / 792,698 bytes under its exact `.8f` change authority.
+- Canonical feedback data, Git index, derived-state registry, product behavior/artifacts, donor/submodule state,
+  surface definitions, thresholds, and ceilings are unchanged. `.8g` owns independent resulting-tree closure.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8e — reject closure on a hidden self-test pin
 
 - Independently enumerated all 14 primary plus three secondary data records and proved each exact marker occurs
