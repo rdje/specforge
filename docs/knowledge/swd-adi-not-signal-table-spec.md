@@ -7,7 +7,8 @@ answers:
   - "why does the ADI spec produce so few signals and so much garbage"
   - "can WIRE-BASED-100 reach 100% on SWD the same way as the parallel buses"
   - "what extraction approach does SWD/ADI need"
-date: 2026-06-07
+date: 2026-08-09
+status: current
 tags: [swd, adi, jtag, wire-based-100, serial, extraction-limits]
 evidence: corpus/arm/debug/interfaces/adi/current/IHI0074_A_2017-03-09_Arm_Debug_Interface_v6_Architecture_Specification.pdf; generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification
 reverify: python3 -c "import json,re; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); print(sorted({re.match(r'Signal (\w+)',s['text']).group(1) for s in e['extracted_statements'] if s['text'].startswith('Signal ')}))"
@@ -20,16 +21,16 @@ those to 100%:
 - It is an **architecture/register/protocol spec** (~7032 statements: DAP, DP/AP registers, the SWD &
   JTAG-DP serial protocols), not a signal-table spec.
 - The **core SWD wire contract — `SWCLK` and `SWDIO` — is described in prose/figures, never in a signal
-  table**, so it is NOT declared (SWCLK appears 13×, SWDIO 28× in prose, 0 declarations). Only ~9 real
-  signals get declared (JTAG `TCK`/`TDI`/`TDO`, `DBGTDI`/`DBGTDO`/`DBGTMS`, `NSRSTOUT`, `CSYSPWRUPACK`,
-  `PORTCONNECTED`).
-- The pattern/table extractor therefore produces mostly garbage on it (cleaned in `WIRE-BASED-100.5j`:
+  table**. At the original audit they appeared 13×/28× in prose but had zero declarations; the dedicated
+  serial path now captures both from source-backed pin-appositive grammar.
+- The original parallel-bus pattern/table path also produced substantial garbage (cleaned in
+  `WIRE-BASED-100.5j`:
   `0B0`/`0B1` number-literals via the new leading-letter rule in `is_hardware_signal_token`; `IN`/`LEVEL`
   via `is_signal_synthesis_non_signal`).
 
-**Conclusion (no-faking):** SWD/ADI cannot reach a real 100% via the parallel-bus playbook — it needs
-**serial-protocol / architecture-specific extraction** (capture SWCLK/SWDIO from prose+figures, model the
-serial frame request/ack/data sequence and the DP/AP register interface). That is a separate research/
-design effort, a different problem class. APB/AHB/AXI (the three parallel buses) are at 100% on all three
-aspects; SWD is honestly deferred to a dedicated serial-extraction tree rather than faked with a
-cherry-picked gold. See `[[axi-channel-structure]]`, `[[axi-constraint-subject-must-be-declared]]`.
+**Conclusion (no-faking):** SWD/ADI cannot reach a real 100% via the parallel-bus playbook; it requires
+serial-protocol/architecture-specific extraction. The dedicated `SWD-SERIAL-EXTRACTION` tree has now completed
+that path: SWCLK/SWDIO, 11 frame fields, four response-branched operations, 13 protocol states, and the complete
+interface-edge timing tuple score 29/29 at 1.000 and reach canonical IntentIR exactly. APB/AHB/AXI remain 100%
+on constraints/relations/temporal, while SWD uses its faithful serial metric rather than a cherry-picked bus
+gold. See `[[swd-canonical-protocol-artifact-is-current]]` and `[[axi-channel-structure]]`.

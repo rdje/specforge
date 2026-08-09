@@ -83,8 +83,9 @@ Five active program groups support that north star:
   [`EXTRACTION-GAP-FIX`](docs/tasks/EXTRACTION-GAP-FIX.md),
   [`CORPUS-COVERAGE`](docs/tasks/CORPUS-COVERAGE.md),
   [`CORPUS-HARDENING`](docs/tasks/CORPUS-HARDENING.md),
-  [`DOC-INTENT-TAXONOMY`](docs/tasks/DOC-INTENT-TAXONOMY.md), and
-  [`SWD-SERIAL-EXTRACTION`](docs/tasks/SWD-SERIAL-EXTRACTION.md);
+  and [`DOC-INTENT-TAXONOMY`](docs/tasks/DOC-INTENT-TAXONOMY.md); the completed
+  [`SWD-SERIAL-EXTRACTION`](docs/tasks/SWD-SERIAL-EXTRACTION.md) program supplies the serial-protocol
+  29/29 signoff and exact canonical projection baseline;
 - size-immune ingest: [`MEMORY-BOUNDED-INGEST`](docs/tasks/MEMORY-BOUNDED-INGEST.md) keeps large-PDF
   work bounded in RAM and repository-volume storage;
 - meaning-based language extraction: [`PURE-NLP-INTENT-EXTRACTION`](docs/tasks/PURE-NLP-INTENT-EXTRACTION.md),
@@ -97,8 +98,9 @@ Five active program groups support that north star:
   program keeps current documentation and project data bounded on the repository volume; completed
   [`ARTIFACT-PATH-PORTABILITY`](docs/tasks/ARTIFACT-PATH-PORTABILITY.md) extends move-safe storage through every
   canonical IR/adapter stage, consumer, dormant serializable path schema, and rescan-plan field, with the present
-  generated corpus migrated and fail-closed producer/data enforcement installed. The interrupted protocol
-  product work resumes at `SWD-SERIAL-EXTRACTION.7`.
+  generated corpus migrated and fail-closed producer/data enforcement installed. The subsequent
+  `SWD-SERIAL-EXTRACTION.7` closure projects every scored SWD protocol record through IntentIR, accounts for it
+  at the adapter and convergence boundaries, and promotes a fresh portable canonical chain.
 
 The complete, always-current execution/status catalog is [`docs/TASK_TREE.md`](docs/TASK_TREE.md).
 This roadmap owns only high-level direction and milestone status; it does not mirror leaf frontiers or

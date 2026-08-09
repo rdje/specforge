@@ -1,4 +1,16 @@
 # DEVELOPMENT_NOTES
+## SWD-SERIAL-EXTRACTION.7e.ii.b (`2026-08-09`) — promotion closes only when retrieval truth changes too
+
+A fresh generated artifact can be semantically correct while the repository still teaches the opposite. Here,
+the promoted 11/4/13/1 chain coexisted with fact-card ids and book prose saying the edge was absent, convergence
+was blind, and protocol records stopped at EvidenceIR. Artifact verification and retrieval-currentness therefore
+belong to one closure transaction: measure the canonical chain, replace—not merely qualify—stale identifiers,
+regenerate the derived map, and only then remove rollback state.
+
+Rollback deletion is the last irreversible step, not a convenience cleanup. Both exact snapshots remained until
+the score, three-stage parity, validators, adapter disposition, FSMGen strict, WIRE/KG, and path gates were green.
+After deletion, a residue census and locality gate proved that no hidden conversational recovery state remained.
+
 ## SWD-SERIAL-EXTRACTION.7e.ii.a (`2026-08-09`) — an atomic rename does not relocate serialized identity
 
 The staged-swap correctly protected the last-good normalized directory, but it moved the Docling metadata file

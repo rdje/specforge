@@ -38,5 +38,5 @@ because some statements support multiple doc-level facts (e.g. `1679`→A/APnDP/
 — the source-tolerant scorer is the bar used for every spec. Parallel buses + their evals unchanged.
 
 **"100% on all fronts" reached:** APB/AHB/AXI 100% (constraints/relations/temporal) + SWD 100% (frame/
-operations/FSM/edge timing). Scoring is not downstream availability: the protocol records still stop at
-EvidenceIR (`[[swd-protocol-surfaces-stop-at-evidenceir]]`).
+operations/FSM/edge timing). The fresh canonical chain now projects those exact records through SemanticIR and
+IntentIR and gives every record an honest adapter disposition (`[[swd-protocol-surfaces-reach-intentir]]`).

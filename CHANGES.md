@@ -1,3 +1,17 @@
+### SWD-SERIAL-EXTRACTION.7e.ii.b — promote and close the canonical SWD pipeline
+
+- Reverified the repaired canonical tracked-PDF chain at SourceIR 400 pages / 386 visual assets / 210 tables /
+  6,784 elements and exact EvidenceIR→SemanticIR→IntentIR protocol parity of 11 frame fields, four operations,
+  13 states, and one complete interface-edge timing record. All 29 derivation facts score 1.000.
+- Proved complete downstream disposition and regression safety: 29 stable adapter protocol residuals, renderable
+  ISF, FSMGen strict success with zero diagnostics, EvidenceIR/IntentIR validation, 156/156 KG, and 1.000
+  APB/AHB/AXI constraint/relation/temporal evaluations. The known SWD constraint-only promotion miss is unchanged.
+- Passed the 1,072-artifact path oracle with zero repository-owned absolutes, removed 808 exact rollback files
+  plus enumerated parity/FSMGen/compiler temporaries, and proved the final temp root contains only `.gitkeep`.
+  Replaced stale canonical/convergence/projection facts, aligned the roadmap, task indexes, mdBook, and live docs,
+  and closed `.7e.ii`, `.7e`, `.7`, and the parent SWD program. Full CI passes all six doctrines, formatting,
+  warning-deny Clippy, 1,775 tests / five ignored, rustdoc, mdBook, and final locality.
+
 ### SWD-SERIAL-EXTRACTION.7e.ii.a — make fresh Docling metadata portable
 
 - Root-caused a fresh-ingest portability failure that reclaimed canonical bundles could not expose: Docling's

@@ -144,13 +144,13 @@ Collection guidance: [authoring and lifecycle README](README.md).
 | [spec-mining-framing](spec-mining-framing.md) | 2026-06-04 | `current` | SpecForge is forward specification mining (spec -> intent, not implementation -> spec) |
 | [stable-obligation-phase-scoped-residual](stable-obligation-phase-scoped-residual.md) | 2026-06-04 | `current` | SpecForge stability obligations stay .isf residuals — phase-scoped, not FSMGen's unconditional (stable s) |
 | [stage-staleness-validate-detector](stage-staleness-validate-detector.md) | 2026-06-17 | `current` | validate emits a stage_staleness Warning when a downstream IR carries 0 actor_signal_relations while its upst… |
-| [swd-adi-not-signal-table-spec](swd-adi-not-signal-table-spec.md) | 2026-06-07 | `current` | SWD/ADI (IHI0074) is an architecture/serial spec — the parallel-bus signal-table model doesn't fit |
-| [swd-canonical-edge-artifact-is-stale](swd-canonical-edge-artifact-is-stale.md) | 2026-08-09 | `current` | The canonical SWD edge-timing artifact predates the fresh disposable 29/29 proof |
+| [swd-adi-not-signal-table-spec](swd-adi-not-signal-table-spec.md) | 2026-08-09 | `current` | SWD/ADI (IHI0074) is an architecture/serial spec — the parallel-bus signal-table model doesn't fit |
+| [swd-canonical-protocol-artifact-is-current](swd-canonical-protocol-artifact-is-current.md) | 2026-08-09 | `current` | The canonical SWD chain contains all 29 scored protocol facts through the adapter boundary |
 | [swd-derivation-scored-100](swd-derivation-scored-100.md) | 2026-06-07 | `current` | SWD protocol derivation is scored 100% across frame, operation, state, and interface-edge timing tasks |
 | [swd-intent-is-the-fsm-driving-swdio](swd-intent-is-the-fsm-driving-swdio.md) | 2026-06-07 | `current` | SWD's intent = its packet protocol + line state machine on SWDIO (read from spec Chapter B4) |
-| [swd-protocol-convergence-snapshots-are-blind](swd-protocol-convergence-snapshots-are-blind.md) | 2026-08-09 | `current` | Convergence snapshots do not yet count the four SWD protocol collections |
+| [swd-protocol-convergence-snapshots-are-exact](swd-protocol-convergence-snapshots-are-exact.md) | 2026-08-09 | `current` | Convergence snapshots retain and count the exact four SWD protocol collections |
 | [swd-protocol-fsm-surface](swd-protocol-fsm-surface.md) | 2026-06-07 | `current` | The SWD/JTAG protocol FSM is a typed surface (ProtocolStateRecord) — states extracted from "<State> state"… |
-| [swd-protocol-surfaces-stop-at-evidenceir](swd-protocol-surfaces-stop-at-evidenceir.md) | 2026-08-08 | `current` | SWD protocol surfaces reach IntentIR, ISF residuals, and convergence accounting exactly |
+| [swd-protocol-surfaces-reach-intentir](swd-protocol-surfaces-reach-intentir.md) | 2026-08-09 | `current` | SWD protocol surfaces reach IntentIR, ISF residuals, and convergence accounting exactly |
 | [swd-serial-frame-surface](swd-serial-frame-surface.md) | 2026-06-07 | `current` | SWD serial-frame fields are a distinct typed surface (SerialFrameField), double-gated to serial docs + frame… |
 | [task-tree-catalog](task-tree-catalog.md) | 2026-08-08 | `current` | The task-tree catalog is a bounded derived navigation layer |
 | [temporal-eval-residual-fps-are-stale](temporal-eval-residual-fps-are-stale.md) | 2026-06-02 | `current` | The temporal-rule eval's residual false positives are a stale artifact, not a live bug |

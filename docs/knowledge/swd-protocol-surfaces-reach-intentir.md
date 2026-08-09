@@ -1,5 +1,5 @@
 ---
-id: swd-protocol-surfaces-stop-at-evidenceir
+id: swd-protocol-surfaces-reach-intentir
 title: SWD protocol surfaces reach IntentIR, ISF residuals, and convergence accounting exactly
 answers:
   - "do SWD serial frame fields reach IntentIR"
@@ -14,10 +14,7 @@ answers:
   - "does IntentIR preserve SWD protocol provenance and order"
   - "does every SWD protocol record receive an ISF adapter disposition"
   - "what are the isf_protocol residual packet prefixes"
-  - "does converge detect a protocol-only content change"
-  - "do protocol records contribute to knowledge_fact_count"
-  - "does convergence preserve protocol record order"
-date: 2026-08-08
+date: 2026-08-09
 status: current
 tags: [swd, evidence-ir, semantic-ir, intent-ir, isf, projection, completeness]
 evidence: docs/tasks/SWD-SERIAL-EXTRACTION.md (.7e.i); docs/decisions/0016-swd-protocol-projection-and-honest-isf-boundary.md; crates/specforge/src/ir/semantic.rs; crates/specforge/src/ir/intent.rs; crates/specforge/src/ir/adapters.rs; crates/specforge/src/commands/converge.rs
@@ -49,3 +46,8 @@ four collections at EvidenceIR, SemanticIR, and IntentIR. Each record contribute
 `fact_count`, so additions and removals affect the aggregate monotone guard. Snapshot equality compares the
 complete typed vectors, so same-cardinality content changes and reordering are visible too. Empty collections
 add zero and preserve prior behavior for documents without protocol records.
+
+The promoted canonical ADI chain proves the complete boundary on real data: the four collections have exact
+11/4/13/1 membership at EvidenceIR, SemanticIR, and IntentIR; the adapter emits 29 corresponding protocol
+residual packets in stable order and remains renderable; the generated ISF passes FSMGen strict with zero
+diagnostics. This is canonical availability plus honest disposition, not a claim of executable SWD lowering.

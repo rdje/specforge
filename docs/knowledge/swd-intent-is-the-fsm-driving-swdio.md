@@ -45,4 +45,4 @@ and the `.isf` adapter do not consume them, so a perfect extraction score does n
 product or FSMGen receives the protocol. The next architecture slice must project the typed records through
 the canonical stages and lower only what the proven ISF FSM/serial idioms can represent. See
 `[[swd-serial-frame-surface]]`, `[[swd-protocol-fsm-surface]]`,
-`[[swd-protocol-surfaces-stop-at-evidenceir]]`, and `[[isf-fsm-via-switch-select]]`.
+`[[swd-protocol-surfaces-reach-intentir]]`, and `[[isf-fsm-via-switch-select]]`.

@@ -4,6 +4,22 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-09 — canonical SWD protocol closure; `SWD-SERIAL-EXTRACTION.7e.ii.b`)
+
+- **The real canonical product exercises the complete protocol boundary.** Fresh EvidenceIR, SemanticIR, and
+  IntentIR retain exact ordered 11/4/13/1 vectors; all 29 facts score source-tolerant 1.000, and the convergence
+  run stabilizes after two passes at Evidence 6,805 / knowledge 29,699.
+- **Adapter honesty is measurable on live data.** Every canonical protocol record produces one stable residual,
+  for 29 protocol packets within 32 total residuals. The adapter remains renderable and FSMGen strict reports
+  success with zero diagnostics; no transition, value, storage, or schedule was fabricated.
+- **Canonical storage and cleanup are closed.** The path oracle passes 1,072 JSON artifacts / 344,011 path
+  values with zero repository-owned absolutes. After all score/validator/WIRE/KG/FSMGen gates passed, both exact
+  rollback snapshots and disposable verification state were removed; project temp now contains only `.gitkeep`.
+  Full CI passes 1,775 tests / five ignored plus all doctrines, rustdoc, mdBook, and final locality.
+- **Program status changed.** `.7e.ii`, `.7e`, `.7`, and the SWD parent are complete. Future executable SWD
+  lowering requires richer source-backed transition/value/binding records and a new owned tree, not guesses in
+  the closed projection path.
+
 ## Session update (2026-08-09 — portable Docling sidecar promotion; `SWD-SERIAL-EXTRACTION.7e.ii.a`)
 
 - **Auxiliary metadata now shares the SourceIR persistence boundary.** After the Docling child succeeds,

@@ -378,8 +378,8 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   tests; APB/AHB stay 100%; full `scripts/run_ci.sh` green. KM `[[axi-channel-structure]]`,
   `[[axi-constraint-subject-must-be-declared]]`. Three wire-based specs (APB/AHB/AXI) fully done; SWD/ADI
   = `.5j`.
-- ID: `WIRE-BASED-100.5j` · Status: `deferred` (SWD-100% needs serial-specific extraction — a separate
-  research tree; garbage-cleanup precision fix DELIVERED) · Goal: SWD/ADI to 100%. Ingested
+- ID: `WIRE-BASED-100.5j` · Status: `done` (`2026-08-09`; serial-specific work delegated to and closed by
+  `SWD-SERIAL-EXTRACTION`) · Goal: SWD/ADI to 100%. Ingested
   `corpus/.../IHI0074_A_*.pdf` (fresh key). **Honest finding (`2026-06-07`, no-faking):** SWD/ADI is an
   **architecture/serial spec, not a parallel-bus signal-table spec** — ~7032 statements (DAP, DP/AP
   registers, the SWD & JTAG serial protocols); the core **SWD wire contract `SWCLK`/`SWDIO` lives in
@@ -390,11 +390,13 @@ the LLM harness as the general fallback. `.6c`/`.7c` below.
   requires a leading LETTER (drops number-literals `0B0`/`0B1`/`0X1F` a value cell mis-declares), and
   `is_signal_synthesis_non_signal` gained `IN`/`OUT`/`LEVEL` (direction/common words). Result: ADI garbage
   declarations dropped (`0B0`/`0B1`/`IN` gone, the `IN`-actor relations gone); APB/AHB/AXI all still 100%
-  (no real signal leads with a digit); +1 hermetic test; full CI green. **Deferred:** SWD-100% to a future
-  serial-protocol/architecture extraction tree (capture SWCLK/SWDIO from prose+figures, model the serial
-  frame + DP/AP register interface) — NOT faked with a cherry-picked gold. KM `[[swd-adi-not-signal-table-spec]]`.
-  Consequence: 3 of 4 wire-based specs (the parallel buses APB/AHB/AXI) are at 100% all-3-aspects; the 4th
-  (serial SWD) is a different problem class, surfaced to the owner.
+  (no real signal leads with a digit); +1 hermetic test; full CI green. **Delegated closure:** the separate
+  serial-protocol/architecture tree captured SWCLK/SWDIO, packet fields/operations, protocol states, and the
+  complete interface-edge timing tuple; scored the independently verified 29-fact gold at 1.000; projected exact
+  11/4/13/1 collections through IntentIR; accounted for all 29 records at the adapter/convergence boundaries;
+  and promoted a fresh portable tracked-PDF chain. KM `[[swd-adi-not-signal-table-spec]]` and
+  `[[swd-canonical-protocol-artifact-is-current]]`. APB/AHB/AXI remain 1.000 on constraints, relations, and
+  temporal; SWD is 1.000 on its faithful serial frame/operation/state/edge metric without a cherry-picked gold.
 
 ## Picked sequence to APB 100% (owner: "pick the next trees to achieve just that")
 
@@ -404,6 +406,10 @@ recall, full-doc completeness) harden it; then roll the same set to AHB → AXI 
 
 ## Changelog
 
+- `2026-08-09` (`.5j` delegated closure): `SWD-SERIAL-EXTRACTION` completed the serial-specific work that the
+  parallel-bus tree correctly deferred: fresh 29/29 scoring at 1.000, exact canonical 11/4/13/1 projection,
+  complete adapter/convergence accounting, portable tracked-PDF promotion, and full WIRE/KG/FSMGen signoff.
+  `.5j` is now done without pretending the sparse constraint/relation metric represents SWD's packet/FSM intent.
 - `2026-06-06` (`.3b` + `.2` correction): **Integrity correction** — a field-name error
   (`signal_name` vs `subject_signal`) in my `.2` scoping had me believe `statement_0223`'s PSTRB-LOW
   constraint was unextracted. It IS extracted (`dyn_sigcon_0015`, dynamic path); APB gold-100% already

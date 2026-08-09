@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `SWD-SERIAL-EXTRACTION`
-- Status: `active` (research → implementation program)
+- Status: `done` (`2026-08-09`)
 - Roadmap lane: `R15e`/`R16` (extraction quality / signoff)
 - Created: `2026-06-07`
 - Parent: opened by owner decision (a) from `WIRE-BASED-100.5j` — SWD/ADI (IHI0074) is a serial/architecture
@@ -35,7 +35,7 @@ extraction approach distinct from the parallel-bus signal-table path.
 
 ## Task tree
 
-- ID: `SWD-SERIAL-EXTRACTION` · Status: `active` · Children: `.1`–`.7`
+- ID: `SWD-SERIAL-EXTRACTION` · Status: `done` (`2026-08-09`) · Children: `.1`–`.7`
 - ID: `SWD-SERIAL-EXTRACTION.1` · Status: `done` · Goal: research/characterize SWD's extractable serial
   intent. **Findings (`2026-06-07`, from the ingested ADI evidence):** (1) SWCLK/SWDIO ARE describable from
   prose — "The SWD interface uses a single bidirectional data pin, **SWDIO**"; "The SWD interface … requires
@@ -129,7 +129,7 @@ extraction approach distinct from the parallel-bus signal-table path.
   signal, clock signal, edge, and both operations from the document's own timing-class prose; no
   protocol-name or signal-name constants in production. Extend the real SWD derivation gold from 28 to
   29 spec-verified facts and keep every existing wire/corpus gate green.
-- ID: `SWD-SERIAL-EXTRACTION.7` · Status: `active` (container; depends on `.4e`; opened `2026-08-08`;
+- ID: `SWD-SERIAL-EXTRACTION.7` · Status: `done` (`2026-08-09`; container; depends on `.4e`; opened `2026-08-08`;
   activated `2026-08-09`) · Goal:
   audit and close the protocol-surface projection boundary. `serial_frame_fields`, `swd_operations`, and
   `protocol_states` currently live only on `EvidenceIR`; `eval-extraction` scores them by reading that
@@ -148,19 +148,19 @@ extraction approach distinct from the parallel-bus signal-table path.
 - ID: `SWD-SERIAL-EXTRACTION.7d` · Status: `done` (`2026-08-09`) · Goal: make the `.isf` adapter account
   explicitly for every protocol record: lower only a fully licensed representable subset and preserve every
   under-specified record as a typed residual, with FSMGen-strict and generic-adapter regressions.
-- ID: `SWD-SERIAL-EXTRACTION.7e` · Status: `pending` (container) · Goal: restore protocol-aware convergence
+- ID: `SWD-SERIAL-EXTRACTION.7e` · Status: `done` (`2026-08-09`; container) · Goal: restore protocol-aware convergence
   accounting, then rebuild/promote the tracked ADI pipeline and close the program from current artifacts.
 - ID: `SWD-SERIAL-EXTRACTION.7e.i` · Status: `done` (`2026-08-09`) · Goal: extend Evidence/Semantic/Intent convergence
   snapshots and fact counts across all four protocol collections, with protocol-only change detection tests,
   before a fresh canonical run relies on convergence deltas.
-- ID: `SWD-SERIAL-EXTRACTION.7e.ii` · Status: `in_progress` (`2026-08-09`) · Goal: rebuild the tracked ADI pipeline from a fresh
+- ID: `SWD-SERIAL-EXTRACTION.7e.ii` · Status: `done` (`2026-08-09`) · Goal: rebuild the tracked ADI pipeline from a fresh
   repository-local CPU ingest, promote the complete current chain, prove canonical 29/29 scoring plus
   downstream parity/residual/convergence accounting, run full wire/KG/CI gates, and close `.7` and the parent.
 - ID: `SWD-SERIAL-EXTRACTION.7e.ii.a` · Status: `done` (`2026-08-09`) · Goal: repair the fresh-ingest
   Docling metadata sidecar so repository-owned source and promoted-Markdown paths persist relative to the
   repository, external source identity is explicitly labeled, and the canonical path oracle covers this
   producer before promotion proceeds.
-- ID: `SWD-SERIAL-EXTRACTION.7e.ii.b` · Status: `in_progress` (`2026-08-09`) · Goal: repeat the final artifact/path verification
+- ID: `SWD-SERIAL-EXTRACTION.7e.ii.b` · Status: `done` (`2026-08-09`) · Goal: repeat the final artifact/path verification
   against the repaired producer, complete canonical promotion evidence, and close `.7e.ii`, `.7e`, `.7`, and
   the parent program.
 
@@ -252,7 +252,7 @@ extraction approach distinct from the parallel-bus signal-table path.
   locality and residue checks, warning-deny formatting/Clippy, doctrines, and full CI.
 - [x] **GENERICITY / HONESTY** — accept only source-derived records and current generic pipeline behavior; do
   not patch canonical output, weaken gold, preserve a stale cache, or introduce document-name production logic.
-- [ ] **LOCKSTEP / CLOSE** — update tracked artifacts, task-tree/program status, live docs, book, durable facts,
+- [x] **LOCKSTEP / CLOSE** — update tracked artifacts, task-tree/program status, live docs, book, durable facts,
   and resume pointer; close `.7e`, `.7`, and the parent only when every acceptance claim has current evidence.
 
 ### Acceptance Checklist (enforced) — `SWD-SERIAL-EXTRACTION.7e.ii.a`
@@ -271,6 +271,19 @@ extraction approach distinct from the parallel-bus signal-table path.
   doctrines, locality, relevant SourceIR tests, and full CI.
 - [x] **LOCKSTEP** — record the newly activated sidecar contract in durable retrieval, the mdBook, live docs,
   and this tree; commit `.7e.ii.a` cleanly before returning to `.7e.ii.b` promotion closure.
+
+### Acceptance Checklist (enforced) — `SWD-SERIAL-EXTRACTION.7e.ii.b`
+
+- [x] **REPRODUCE / MEASURE** — re-read the repaired canonical chain after the `.7e.ii.a` commit and prove its
+  source identity, 11/4/13/1 vectors, manifest row, 29-item score, exact three-stage parity, and adapter disposition.
+- [x] **ROOT CAUSE / CURRENTNESS** — replace each stale canonical/convergence retrieval claim with the promoted
+  state and a reproducing command; do not preserve a pre-promotion assertion merely because its fact-card id is old.
+- [x] **VERIFY / NO REGRESSION** — pass EvidenceIR/IntentIR validation, FSMGen strict, seven SWD/parallel WIRE
+  evaluations, 156/156 KG, persisted-path/locality/residue oracles, doctrines, mdBook, and full CI.
+- [x] **CLEANUP / DURABILITY** — remove only the two exact verified rollback snapshots and disposable producer
+  residue after all canonical checks pass; prove the task workspace is absent and `.project-data/tmp` is clean.
+- [x] **LOCKSTEP / CLOSE** — align roadmap/task indexes, task-tree statuses, live docs, mdBook, Knowledge Map,
+  bounded resume pointer, and commit log; close `.7e.ii`, `.7e`, `.7`, and the parent only after every box is true.
 
 ### Surfaced portability finding (handoff after `.4e`)
 
@@ -330,8 +343,8 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
   paths, dormant serialized schemas, present artifacts, and moved-root workflows now pass the locality contract.
 - `SWD-SERIAL-EXTRACTION.7a` — **DONE.** ADR 0016 freezes exact Evidence→Semantic→Intent carry-through and
   explicit adapter residual accounting; direct behavioral lowering remains empty until records supply complete
-  bindings. The canonical 11/4/13/0 surface split is the deliberately unpromoted pre-`.4e` cache, and `.7e`
-  owns its fresh tracked-PDF replacement.
+  bindings. Its measured 11/4/13/0 surface split was the deliberately unpromoted pre-`.4e` cache; `.7e` has now
+  replaced that historical baseline with the fresh tracked-PDF chain.
 - `SWD-SERIAL-EXTRACTION.7b` — **DONE.** SemanticIR carries the exact four EvidenceIR record collections through
   additive empty-compatible fields and unfiltered clones; validation reports all four counts. Full CI passes.
 
@@ -344,14 +357,14 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 - `SWD-SERIAL-EXTRACTION.7e.i` — **DONE.** All three convergence snapshots retain exact ordered protocol
   records and count each record at its persisted stage. Same-cardinality rewrites and reordering are visible;
   protocol-empty behavior is unchanged; focused checks and full CI pass.
-- `SWD-SERIAL-EXTRACTION.7e.ii` — **IN PROGRESS (container).** The fresh repository-local CPU ingest converged
-  in two passes and produced canonical 11/4/13/1 records with exact three-stage parity and 29/29 scoring.
+- `SWD-SERIAL-EXTRACTION.7e.ii` — **DONE.** The fresh repository-local CPU ingest converged in two passes and
+  produced canonical 11/4/13/1 records with exact three-stage parity and 29/29 scoring.
 - `SWD-SERIAL-EXTRACTION.7e.ii.a` — **DONE.** The fresh normalized metadata leaf exposed two persisted runtime
   paths that the older reclaimed bundle could not reveal. The producer now rewrites them through the common
   storage boundary before promotion, and the second fresh ingest plus all gates are green.
-- `SWD-SERIAL-EXTRACTION.7e.ii.b` — **IN PROGRESS.** Repeat the final chain/KG/WIRE verification from the repaired
-  canonical artifact, remove both exact rollback workspaces and producer residue after signoff, update canonical
-  currentness facts, and close the SWD program.
+- `SWD-SERIAL-EXTRACTION.7e.ii.b` — **DONE.** Final chain/KG/WIRE/path verification is green; both exact rollback
+  workspaces and disposable producer residue are removed; canonical currentness facts, book, roadmap, and task
+  indexes are aligned; `.7e`, `.7`, and the SWD program are closed.
 
 - `SWD-SERIAL-EXTRACTION.4c` — **DONE.** Added `SwdioDirection {HostDrives, TargetDrives}` + `swdio_direction`
   on `SerialFrameField`; `extract_serial_frame_fields` derives it from the spec's own "from the `<A>` to the
@@ -403,13 +416,13 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 - Resolved by `.3`: serial-frame structure is its own typed surface; `.4e` likewise uses a typed
   interface-edge record because the exact clock signal and both sample/drive-state operations are part of
   identity, while the current generic temporal-score key does not include `clock_signal`.
-- How much of the DP/AP register interface is implementation-relevant for the `IntentIR` consumer?
+- Resolved for this program: the existing register surface remains canonical, while exhaustive DP/AP register
+  modeling is explicitly outside this tree's implementation-relevant serial-interface scope.
 
 ## Blockers
 
-- None. The path-portability defect is closed. The tracked ADI PDF and repository-local Docling environment
-  remain available for `.7e`; the older canonical SourceIR's reclaimed normalized Markdown means freshness
-  requires that planned full ingest rather than an unsafe stage-only rebuild.
+- None. The program is complete; the fresh canonical chain, normalized source bundle, and portable metadata are
+  present, verified, and independently reproducible from the tracked ADI PDF.
 
 ## Verification log
 
@@ -486,6 +499,20 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
   11/4/13/1 parity and 29/29 scoring, and the oracle passes 1,072 JSON artifacts / 344,011 path values / 82
   authorized external absolutes / zero repository-owned absolutes. Full CI is green: all six doctrines,
   formatting, warning-deny Clippy, 1,775 passed / five ignored, rustdoc, mdBook doctests/build, and final locality.
+- `.7e.ii.b`: post-commit canonical inspection proves the tracked repository-owned ADI source, ready SourceIR
+  with 400 pages / 386 visual assets / 210 tables / 6,784 elements, relative Docling metadata, and exact
+  EvidenceIR→SemanticIR→IntentIR 11/4/13/1 vector parity. The edge manifest reports eligible 1 and
+  `timing.interface_edge_prose` produced/kept 1; all 29 derivation facts score source-tolerant P/R/F1 1.000.
+  The adapter is renderable with 29 ordered protocol residuals and FSMGen strict returns success with zero
+  diagnostics. EvidenceIR and IntentIR validators exit zero; KG passes 156/156. APB/AHB/AXI base+temporal
+  evaluations remain 1.000 across constraints, relations, and temporal; SWD derivation remains 1.000 on all
+  four serial tasks. The known SWD constraint-only `CSYSPWRUPACK` promotion miss is unchanged and its relation
+  remains 1.000. The persisted-path oracle passes 1,072 JSON artifacts / 344,011 path values / 82 authorized
+  external absolutes / zero repository-owned absolutes. After signoff, 808 rollback files (~194 MiB), one
+  FSMGen temporary, three parity snapshots, and empty/compiler temp residue were removed by exact path; the
+  final repository-local temp census contains only `.project-data/tmp/.gitkeep`, and locality passes. Full CI is
+  green with all six doctrines, formatting, warning-deny Clippy, 1,775 passed / five ignored, rustdoc, mdBook
+  doctests/build, and final locality.
 
 ## Commit log
 
@@ -501,6 +528,7 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 - `.7d`: see the `SWD-SERIAL-EXTRACTION.7d` commit (per-record protocol residual accounting at ISF boundary).
 - `.7e.i`: see the `SWD-SERIAL-EXTRACTION.7e.i` commit (exact protocol-aware convergence snapshots and counts).
 - `.7e.ii.a`: see the `SWD-SERIAL-EXTRACTION.7e.ii.a` commit (portable pre-promotion Docling metadata rewrite).
+- `.7e.ii.b`: see the `SWD-SERIAL-EXTRACTION.7e.ii.b` commit (canonical promotion signoff and program closure).
 
 ## Changelog
 
@@ -529,3 +557,6 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 - `2026-08-09`: `.7e.ii.a` root-caused and repaired the fresh Docling metadata sidecar's absolute runtime/staging
   paths, reran the full 400-page ingest through the production seam, and advanced the frontier to `.7e.ii.b`
   final canonical verification, cleanup, durable currentness updates, and program closure.
+- `2026-08-09`: `.7e.ii.b` reverified the repaired canonical chain across validators, WIRE, KG, FSMGen, path,
+  locality, and residue oracles; removed exact rollback/disposable state; replaced stale retrieval claims;
+  aligned the roadmap, task indexes, live docs, and book; and closed `.7e.ii`, `.7e`, `.7`, and the parent tree.

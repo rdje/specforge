@@ -19,14 +19,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SWD-SERIAL-EXTRACTION.7e.ii.b` — final canonical verification, cleanup, and SWD closure.
-- Current state: a second fresh repository-local 400-page CPU ingest runs through the repaired release binary,
-  converges in two passes, scores all 29 SWD protocol facts at 1.000, preserves exact 11/4/13/1 parity through
-  IntentIR, and emits 29 adapter residual dispositions. The canonical path oracle now scans 1,072 JSON artifacts
-  / 344,011 path values with zero repository-owned absolutes. Full CI passes 1,775 tests / five ignored plus all
-  doctrines, warning-deny Clippy, rustdoc, mdBook, and final locality.
-- Next action: commit `.7e.ii.a` cleanly, then re-run final chain/KG/WIRE checks from canonical, remove both exact
-  rollback workspaces and producer residue, update canonical-currentness facts, and close the SWD program.
-- In-flight uncommitted: completed `.7e.ii.a` code/docs awaiting commit plus two exact ignored rollback snapshots;
-  the user-owned `.claude/settings.json` remains untouched.
+- Active unit: `SWD-SERIAL-EXTRACTION.7e.ii.b` — completed canonical promotion/signoff awaiting commit.
+- Current state: the fresh portable tracked-PDF chain is exact 11/4/13/1 through IntentIR and 29/29 at 1.000;
+  adapter/FSMGen, Evidence/Intent validation, 156/156 KG, seven WIRE evaluations, path portability, locality, and
+  residue gates are green; full CI passes 1,775 tests / five ignored plus doctrines, rustdoc, and mdBook. Both
+  rollback snapshots and exact temporaries are gone; only `.gitkeep` remains in project temp. The SWD parent and
+  all `.7` containers are closed in the aligned roadmap/task/book/retrieval state.
+- Next action: commit `.7e.ii.b` cleanly, then resume PNT by reading the first active tree in `docs/TASK_TREE.md`
+  (`CORPUS-COVERAGE`) and its Knowledge Map pointers before selecting its next bounded frontier leaf.
+- In-flight uncommitted: completed `.7e.ii.b` documentation/currentness closure awaiting commit; generated SWD
+  canonical artifacts are repository-local and intentionally ignored. The user-owned `.claude/settings.json`
+  remains untouched.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.
