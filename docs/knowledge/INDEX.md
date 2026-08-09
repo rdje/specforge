@@ -116,6 +116,7 @@
 - [nlp-coordination-already-handled](nlp-coordination-already-handled.md)
 - [offset-suffixed-dword-relative-bit-cells](offset-suffixed-dword-relative-bit-cells.md)
 - [opencapi-afu-address-note-refresh](opencapi-afu-address-note-refresh.md)
+- [opencapi-certified-definition-refresh](opencapi-certified-definition-refresh.md)
 - [opencapi-ready-note-refresh-rejects-dl-signal](opencapi-ready-note-refresh-rejects-dl-signal.md)
 - [packet-field-table-declaration](packet-field-table-declaration.md)
 - [page-image-disk-bounding](page-image-disk-bounding.md)

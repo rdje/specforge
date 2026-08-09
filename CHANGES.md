@@ -1,3 +1,19 @@
+### CORPUS-COVERAGE.2.42 — sign off OpenCAPI Certified Definition refresh
+
+- Two guarded CPU ingests reproduce 15 pages, eight visuals, five tables, 31 sections, and 151 elements at 18%
+  and 33% peak sampled system memory used. The authorized external source stays labeled; all 46 project-owned
+  page/layout/visual/caption path references are present and repository-relative.
+- SourceIR 155→151 removes exactly four flattened diagram labels (`DL` twice, `TL/`, and `OpenCAPI 3.0 Host TL/`).
+  EvidenceIR 172→167 removes those four statements plus synthetic `Signal DL is width 1.` while retaining two
+  conditionals and zero typed hardware surfaces.
+- Current authority removes the stale one-interface/one-output surface; child `.2.42a` removes certification
+  administration from semantic intent while preserving four genuine compliance behaviors. Final SemanticIR is
+  two actors / zero interfaces/phases/gates / eight invariants / four contracts / 14 decompositions; IntentIR is
+  four behaviors / eight constraints. Lowering blocks on no signals and leaves only `adapter.json` plus its report.
+- Twelve hashes and two downstream replays reproduce. Nine WIRE/I2C/SWD datasets, KG 156/156, 66/66 FSMGen
+  strict, mdBook, doctrines, path/locality, exact 89-file / 881263-byte cleanup, and zero residue pass. Corpus is
+  42 done / 14 remaining with stage census 80 SourceIR / 11 normalized / 80 EvidenceIR / 79 downstream chains.
+
 ### CORPUS-COVERAGE.2.42a — reject administrative workflows from semantic intent
 
 - The first OpenCAPI Certified Definition cascade preserved 167 evidence statements but promoted product-listing,

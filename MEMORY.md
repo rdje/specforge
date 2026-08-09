@@ -21,17 +21,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.42a`; administrative-workflow semantic-authority repair exposed by the first
-  guarded OpenCAPI 3.0 Certified Definition cascade.
-- Current state: 41 refreshes are complete / 15 remain, with 80 SourceIR / 11 normalized / 80 EvidenceIR / 79
-  SemanticIR / 79 IntentIR / 79 adapters. The child projection finds 238 administrative/reference statements
-  across 23 retained docs. Compound section/statement authority now excludes organizational process without a
-  vendor/document/single-token rule. On unchanged 167-statement #42 evidence, actors fall 5→2, phases 5→0, gates
-  6→0, invariants 20→8, behaviors 15→4, and constraints 20→8; real device/host compliance obligations survive.
-  Two cascades reproduce six hashes. All 402 semantic tests, nine WIRE/I2C/SWD datasets, KG 156/156, and 66/66
-  emitted ISFs through FSMGen strict pass; full CI passes 1,793 tests/five ignored plus mdBook and all doctrines.
-- Next action: complete the final diff/staging/commit workflow for `.2.42a`, then resume parent `.2.42` with the
-  second guarded ingest and final signoff.
-- In-flight uncommitted: child code/docs/fact are implemented but not yet committed. Parent `.2.42` retains its
-  authenticated six-file / 364142-byte rollback and first-pass evidence under repository-derived task storage.
+- Active unit: `CORPUS-COVERAGE.2`; refresh #42 is complete and the frontier is selection/ownership of #43.
+- Current state: 42 refreshes are complete / 14 remain, with 80 SourceIR / 11 normalized / 80 EvidenceIR / 79
+  SemanticIR / 79 IntentIR / 79 adapters. OpenCAPI Certified Definition refresh #42 reproduces 15 pages / eight
+  visuals / five tables / 31 sections / 151 elements. Evidence is 167 statements with no typed hardware surface;
+  SemanticIR has two actors, zero interfaces/phases/gates, eight invariants and four contracts; IntentIR retains
+  four genuine compliance behaviors and eight constraints. The adapter blocks on no signals and emits no target.
+  All 12 hashes and two downstream cascades reproduce; nine WIRE/I2C/SWD datasets, KG 156/156, and 66/66 FSMGen
+  strict pass. The exact 89-file / 881263-byte task bundle is removed with zero residue after final gates.
+- Next action: select the smallest roadmap-aligned remaining document, own `CORPUS-COVERAGE.2.43`, then run its
+  guarded one-document refresh from the caller-authorized same-SSD source.
+- In-flight uncommitted: none after the recording commit; generated #42 artifacts are complete and validated.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

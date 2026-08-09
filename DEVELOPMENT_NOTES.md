@@ -1,4 +1,30 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.42 (`2026-08-10`) — the Certified Definition is evidence-rich but interface-empty
+
+The retained chain combined two independent authority errors. Docling had flattened four short diagram labels
+into SourceIR body records, and the earlier EvidenceIR signal fallback had promoted the glossary acronym `DL`
+into `Signal DL is width 1.`. That fabricated declaration was sufficient for one SemanticIR interface and a
+one-output adapter even though the document contains no relation, signal constraint, register, or timing surface.
+
+Current ingestion removes exactly `DL`, `DL`, `TL/`, and `OpenCAPI 3.0 Host TL/`; every other source element class
+survives. Evidence falls by five because the synthetic `DL` declaration also disappears. The first clean cascade
+then exposed the orthogonal administrative-authority defect closed in `.2.42a`: evidence must preserve listing,
+submission, email review, conflict escalation, certification-mark, and test-lab process, but those statements
+cannot establish hardware phases, gates, or behavior. The final result retains four actual device/host compliance
+behaviors and eight constraints while removing the fabricated interface and organizational workflow intent.
+
+Two guarded CPU ingests at 18% and 33% peak sampled system memory reproduce 15 pages, eight visuals, five tables,
+31 sections, and 151 elements. The authorized PDF and repository share SSD device `16777240`; its absolute path
+is explicitly labeled `external_input`, while 46 project-owned path references are relative and present. The
+blocked adapter has no signals or behavioral surface, emits no target, and leaves only its manifest and report.
+Validation keeps ten partially structured normative statements and eight unenriched visuals visible as upstream
+work rather than fabricating topology.
+
+All 12 artifact/report identities and two final downstream cascades reproduce. The nine provider-free protocol
+datasets, KG 156/156, and a fresh 66/66 FSMGen strict sweep pass. After book/doctrine/path/locality gates, the
+authenticated 89-file / 881263-byte task bundle is deleted with zero residue. This closes refresh #42 at
+80/11/80/79 stage coverage and leaves 14 real documents.
+
 ## CORPUS-COVERAGE.2.42a (`2026-08-10`) — organizational process has no engineering authority
 
 The first fresh OpenCAPI Certified Definition cascade exposed the next semantic trust boundary after legal prose.

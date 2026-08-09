@@ -199,16 +199,19 @@ Five active program groups support that north star:
   invariants/behaviors. Final semantic/intent hardware and behavior surfaces are empty, so lowering blocks honestly
   and leaves only `adapter.json` plus its report. The 12-artifact set and two repaired downstream cascades are
   deterministic; WIRE/I2C/SWD, KG 156/156, full CI, 66/66 FSMGen strict, mdBook/doctrines/path/locality, and exact
-  cleanup pass. Corpus is 41 done / 15 remaining with stage census 80 SourceIR / 10 normalized / 80 EvidenceIR /
-  79 SemanticIR→IntentIR→adapter chains. `.2.42` now owns the 15-page OpenCAPI 3.0 Certified Definition—the
-  smallest remaining candidate by retained elements and source bytes after a page-count tie with Ready
-  Definition. Its first guarded cascade removes the sibling glossary-derived `DL` interface but exposes a distinct
-  administrative-workflow authority gap: certification requests, email review, conflict resolution, test-lab
-  administration, and listing processes still become phases/gates/Intent behaviors despite no typed hardware
-  surface. Child `.2.42a` measured 238 administrative/reference statements across 23 retained documents and is
-  now closed: a compound shared-boundary rule removes #42's five administrative phases, six gates, and 11 of 15
-  behaviors while preserving all 167 evidence statements and four genuine product-compliance behaviors. Parent
-  `.2.42` resumes guarded replay and final signoff. Separately,
+  cleanup pass. `.2.42` is now closed on the 15-page OpenCAPI 3.0 Certified Definition. Two guarded ingests
+  reproduce eight visuals / five tables / 31 sections / 151 elements at 18% and 33% peak sampled memory; all 46
+  project-owned path references are relative and present. Source 155→151 removes exactly four flattened diagram
+  labels; Evidence 172→167 additionally removes synthetic `Signal DL is width 1.` while retaining zero typed
+  hardware surfaces. Current signal authority removes the stale interface/output. Child `.2.42a` separately
+  measured 238 administrative/reference statements across 23 retained documents and closed the shared authority
+  gap: certification requests, email review, conflict resolution, test-lab administration, and listing processes
+  remain evidence but cannot become phases/gates/Intent behaviors. Final SemanticIR has two actors, zero
+  interfaces/phases/gates, eight invariants, four contracts, and 14 decompositions; IntentIR retains four genuine
+  compliance behaviors and eight constraints. Lowering blocks on no signals and leaves only `adapter.json` plus
+  its report. Twelve hashes, two cascades, WIRE/I2C/SWD, KG 156/156, 66/66 FSMGen strict, book/doctrines/path/
+  locality, exact cleanup, and zero residue pass. Corpus is 42 done / 14 remaining with stage census 80 SourceIR /
+  11 normalized / 80 EvidenceIR / 79 SemanticIR→IntentIR→adapter chains; frontier → select and own #43. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

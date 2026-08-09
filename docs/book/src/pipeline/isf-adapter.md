@@ -147,10 +147,20 @@ during the refresh remains in EvidenceIR but cannot become a semantic phase, gat
 Final SemanticIR/IntentIR contain no actors, interfaces, phases, gates, or behaviors, so lowering blocks on no
 signals plus no behavior and leaves only `adapter.json` plus its validation report.
 
+The 15-page OpenCAPI 3.0 Certified Definition provides a ninth transfer across diagram, glossary, and
+organizational-process prose. The stale SourceIR flattened four diagram labels (`DL` twice, `TL/`, and
+`OpenCAPI 3.0 Host TL/`) into body records; EvidenceIR also synthesized `Signal DL is width 1.` from a terms-table
+acronym. Current extraction removes exactly those five evidence statements, leaving 167 statements, two
+conditionals, and no relation, signal-constraint, register, or timing surface. The shared semantic boundary keeps
+certification submission/listing/test-lab workflows as evidence without turning them into phases, gates, or
+adapter behavior. Four genuine device/host compliance behaviors and eight constraints survive, but there is no
+declared signal interface to lower. The adapter therefore blocks on `no signals declared in interface`, emits no
+target, and leaves only `adapter.json` plus its validation report.
+
 The corpus cache now has 66 current emitted `.isf` files, all covered by a fresh 66/66 FSMGen-strict sweep; USB
 3.2, USB4 Inter-Domain, USB4 Connection Manager, CoreSight Base System, AArch64 External Debug, and Introducing
-CoreSight, plus the OpenCAPI Ready, Certified, and AFU Address Space Usage notes, are not among them because honest
-blocking is the correct lowering result.
+CoreSight, plus the OpenCAPI Ready, Certified, AFU Address Space Usage, and Certified Definition documents, are not
+among them because honest blocking is the correct lowering result.
 
 The measurement behind that repair found three upstream authority errors, not a reason to distrust every
 relation-derived direction. Across the retained corpus, 97 sentence-start phrases use `signal <word>` without

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
+  > how to read a chip-spec PDF when the Read tool refuses it
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > how to recover register field bit positions that live in the layout graphic, not the table
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > how was AHB HREADY recovered for the temporal antecedent
 - [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
   > how was AXI constraint precision fixed
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
@@ -127,6 +133,8 @@
   > is the LLM/VLM provider missing or not wired up
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > is the NLP-SHALLOW-PARSE build frontier exhausted
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > is the OpenCAPI 3.0 Certified Definition refresh complete
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > is the OpenCAPI 3.0 Certified Test Resources engineering note refresh complete
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
@@ -264,6 +272,8 @@
   > was the fresh SWD 29 of 29 artifact promoted
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > was the warning-safe rolling ledger transaction independently audited from a clean clone
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > were DL and TL diagram labels signal declarations
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > were the 100 stale CoreSight Base System signals authoritative
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
@@ -288,13 +298,3 @@
   > what architecture contains an oversized active task tree
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > what are AGENT_CLASS_NOUNS / the parenthetical-strip / sentence-boundary / no-preposition guards
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what are APB's remaining completeness candidate misses
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > what are NON_ACTOR_LEADING_FUNCTION_WORDS and NON_ACTOR_LEADING_VERBS for
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > what are examples of false prose relations in Introducing CoreSight
-- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
-  > what are scripts/pdf_text.py and scripts/decrypt_pdf.py
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what are the 3 gaps G1 G2 G3 in specforge transaction capture

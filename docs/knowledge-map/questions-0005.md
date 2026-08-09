@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what are APB's remaining completeness candidate misses
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > what are NON_ACTOR_LEADING_FUNCTION_WORDS and NON_ACTOR_LEADING_VERBS for
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > what are examples of false prose relations in Introducing CoreSight
+- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
+  > what are scripts/pdf_text.py and scripts/decrypt_pdf.py
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what are the 3 gaps G1 G2 G3 in specforge transaction capture
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > what are the 6 chip-spec document intent categories / purpose taxonomy
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
@@ -22,6 +32,8 @@
   > what are the current Introducing CoreSight artifact hashes
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > what are the current OpenCAPI AFU address note artifact hashes
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > what are the current OpenCAPI Certified Definition artifact hashes
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > what are the current OpenCAPI Certified artifact hashes
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
@@ -51,6 +63,8 @@
   > what carries transaction membership faithfully instead of the body (IntentIR metadata: ports / phase_membership / channel_membership)
 - [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
   > what causes actor_signal_relations / extracted_statements to differ run-to-run
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > what changed between stale and current OpenCAPI Certified Definition artifacts
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
   > what confidence axis correlates with extracted-constraint correctness
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
@@ -283,17 +297,3 @@
   > what is definitional_signal_names / the copula + glossary-colon prose-signal grammar
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > what is document_completeness_gauge / document_completeness_gaps / why is a guide not penalized
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what is document_intent_category / the 6-category purpose recognizer
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > what is document_type_declared / front_matter_doc_type_hint
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > what is extract_composition_frame_fields / is_frame_field_name / stated_frame_field_bit_width / parse_count_word
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > what is extract_quoted_mode_states / quoted_mode_states_in / mode_state_ ids
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > what is extract_transition_bound_states / transition_bound_state_names_in / is_bare_state_name / named_state_ ids
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > what is in seed_swd_derivation.json
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > what is index-family signal canonicalization
