@@ -90,6 +90,24 @@ also preserved: the system contract inserts them into the authority set and emit
 interface with typed input direction and width one. Actor/signal relations can describe use of an authorized
 signal, but a relation alone is not a signal declaration.
 
+### Legal conditions are evidence, not protocol intent
+
+`EvidenceIR` keeps source-grounded copyright, license, warranty, liability, patent, and administrative text so
+the document remains auditable. `SemanticIR` does not promote that material into actors, phases, invariants,
+gates, interfaces, or decompositions merely because it contains words such as `if`, `when`, `while`, or `until`.
+This distinction matters because PDF front matter can appear under generic headings such as `Approved`; a
+section-title denylist alone cannot establish semantic authority.
+
+The boundary uses compound legal context rather than isolated vocabulary. For example, copyright plus document
+or notice context, warranty/liability plus product or specification context, and permission plus revocation or
+successor context are excluded from semantic assembly. A technical access-right field, write permission,
+protocol version, reliability condition, register named `license`, or literal ASCII string `Copyright` remains
+eligible. The rule does not name a vendor, specification, document key, source sentence, or section index.
+
+As a result, a sentence about permissions remaining valid *while* a specification is current stays in
+EvidenceIR but cannot become an IntentIR behavior. A real condition such as `While READY is low, VALID must
+remain asserted` still becomes a semantic gate and downstream behavior.
+
 ### Negative-knowledge cautions
 
 If a carried conflict or residual packet shape matches learned negative knowledge, `SemanticIR` validation may report `negative_knowledge_prior_matches`.

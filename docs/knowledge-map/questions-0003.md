@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > how does specforge recognise transaction phases (the <qualifier> phase prose gate, build_transaction_phases/derive_phase_name)
+- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
+  > how does specforge recover CAN's frame fields (SOF/Arbitration/Control/Data/CRC/ACK/EOF)
+- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
+  > how does specforge reject non-signal constraint subjects (LICENSEE, AXI, RME, MPAM)
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > how does specforge reject prose-fragment non-agents like For / Then it / is recommended / ensures
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > how does specforge split a coordinated X and Y relation subject into both agents
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
@@ -211,6 +219,8 @@
   > how many registers can SpecForge compose a faithful ISF reset for (1508 strictly composable corpus-wide; 1339 fit the current emit width; 446 have V>0 — the real .isf diff)
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > how many retained documents depended entirely on heuristic SemanticIR interfaces
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > how many retained legal semantic gates were measured
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > how many sentence-start signal descriptor phrases pollute the retained corpus
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
@@ -287,13 +297,3 @@
   > how will the oversized SpecForge roadmap be made bounded without losing its history
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > how will the shared rolling ledger archive index be partitioned
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > is 'X, which connects to Y, drives Z and W' clause distribution handled
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > is (sample input as name) value-free in ISF (yes; (drive input) is rejected — drives exist only for outputs)
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > is AArch64 External Debug a methodology guide or under-extracted architecture
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > is AXI/SWD per-signal phase membership recoverable from timing diagrams via a VLM
-- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
-  > is CORPUS-PATTERN-REUSE.3b.3a a go or no-go

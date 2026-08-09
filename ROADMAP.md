@@ -195,10 +195,15 @@ Five active program groups support that north star:
   Space Usage engineering note, the smallest remaining real chip-spec candidate. Its retained zero-declaration
   evidence still feeds five heuristic interfaces and eight one-bit acronym outputs into an adapter blocked for
   no behavior, providing a prose-grouping transfer check for the current generic authority boundary. The fresh
-  cascade removes that false topology but exposes one distinct legal-boilerplate defect: a rights-and-permissions
-  paragraph under generic heading `Approved` contains `while`, so the conditional-cue-only semantic gate builder
-  promotes it into a gate and Intent behavior. Child `.2.41a` owns the universal content-structural repair and
-  real-cascade proof before parent signoff. Separately,
+  cascade removes that false topology but exposed one distinct legal-boilerplate defect: a rights-and-permissions
+  paragraph under generic heading `Approved` contained `while`, so the conditional-cue-only semantic gate builder
+  promoted it into a gate and Intent behavior. Child `.2.41a` is now closed: a compound word-bounded predicate at
+  the shared SemanticContext boundary preserves EvidenceIR while excluding legal/administrative prose from every
+  semantic consumer. The retained before projection found 32 affected gates across 21 documents; the real #41
+  rebuild preserves 106 evidence statements while phases/gates fall 1→0, invariants 17→15, and behaviors 2→0.
+  Paired regressions preserve technical permission/right/version/reliability and real protocol conditions; nine
+  WIRE/I2C/SWD datasets, KG 156/156, full CI, and 66/66 FSMGen strict pass. Parent `.2.41` resumes final artifact
+  signoff and authenticated cleanup. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

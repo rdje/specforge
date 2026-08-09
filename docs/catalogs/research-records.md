@@ -39,6 +39,7 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/research/intent-ontology-coverage.md](../../docs/research/intent-ontology-coverage.md) | Design-Intent Ontology & Coverage Matrix |
 | [docs/research/isf-lowering-fidelity-measurement.md](../../docs/research/isf-lowering-fidelity-measurement.md) | ISF lowering-fidelity measurement (`KG-ISF-COMPLETENESS.2`) |
 | [docs/research/isf-value-width-alignment-measurement.md](../../docs/research/isf-value-width-alignment-measurement.md) | ISF value-literal width-alignment — measurement (`ISF-VALUE-WIDTH-EMIT.1`) |
+| [docs/research/legal-administrative-semantic-authority-measurement.md](../../docs/research/legal-administrative-semantic-authority-measurement.md) | Legal and administrative semantic-authority measurement — `CORPUS-COVERAGE.2.41a` |
 | [docs/research/literature-grounding.md](../../docs/research/literature-grounding.md) | Literature Grounding — verified references, corrections, and adopted techniques |
 | [docs/research/live-document-derived-state-adoption-delta.md](../../docs/research/live-document-derived-state-adoption-delta.md) | Derived-state containment adoption delta — `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8a` |
 | [docs/research/miss-detectors-catalog.md](../../docs/research/miss-detectors-catalog.md) | Miss-Detector Catalog — completeness invariants & the miss taxonomy |

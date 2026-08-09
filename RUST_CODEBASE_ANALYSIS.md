@@ -4,6 +4,21 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-09 — legal/administrative semantic authority; `CORPUS-COVERAGE.2.41a`)
+
+- `SemanticContext::from_evidence_ir` is the shared statement-authority seam for actors, phases, invariants,
+  gates, interfaces, and decompositions. Filtering only `build_gates` would leave the same non-engineering prose
+  available to every other semantic consumer; filtering EvidenceIR would erase valid source evidence.
+- `is_legal_or_administrative_statement` therefore runs at context construction. It requires compound,
+  word-bounded copyright/license/warranty/liability/patent/IP/permission/commercial/IPR concepts and has no
+  vendor, organization, document, section, exact-sentence, or single-token rule.
+- Paired regressions prove legal conditions under a generic `Approved` heading survive EvidenceIR but reach no
+  SemanticIR or IntentIR behavior surface, while technical permissions, rights, versions, reliability, literal
+  `Copyright`, and a `While READY ... VALID` condition remain eligible.
+- The retained before projection found 32 legal/administrative gates across 21 documents. Real #41 removes its
+  false gate/phase and two legal behaviors while preserving 106 EvidenceIR statements and 15 engineering
+  invariants; unrelated retained artifacts are not rewritten outside their normal refresh slices.
+
 ## Session update (2026-08-09 — explicit validation-path containment; `CORPUS-COVERAGE.2.38a`)
 
 - Validation persistence is command-addressed, not producer-addressed. `run` resolves the caller's artifact;

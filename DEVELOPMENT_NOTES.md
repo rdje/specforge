@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.41a (`2026-08-09`) — semantic authority starts after evidence preservation
+
+The OpenCAPI AFU address-note refresh exposed a distinct trust boundary. EvidenceIR correctly preserved a legal
+paragraph saying permissions remain in force while the specification is current. Because Docling nested it
+under `Approved`, section-title boilerplate filtering did not apply; the generic conditional-cue builder then
+treated `while` as sufficient authority for a gate and Intent behavior.
+
+The repair belongs neither in EvidenceIR nor only in the gate builder. EvidenceIR must retain source text for
+audit, while a gate-only filter would leave the paragraph available to phases, invariants, actors, interfaces,
+and decompositions. The shared `SemanticContext` statement boundary is the first location that preserves both
+contracts. Its classifier requires compound legal context and deliberately rejects single-token policy: access
+rights, technical permissions, protocol versions, reliability, a `license` register, and the literal string
+`Copyright` all remain eligible.
+
+The retained before projection finds 32 legal/administrative gates across 21 documents, confirming a universal
+family rather than an OpenCAPI exception. The real #41 cascade preserves 106 evidence statements, removes one
+false gate and two legal invariants/behaviors, and keeps 15 engineering invariants. Paired unit/Intent regressions,
+nine protocol golds, KG 156/156, full CI, and 66/66 FSMGen strict close the child leaf; unrelated retained
+artifacts wait for their normal refresh rather than being bulk-mutated.
+
 ## CORPUS-COVERAGE.2.40 (`2026-08-09`) — the sibling glossary independently confirms authority
 
 The OpenCAPI Certified engineering note repeats the Ready note's compact terms-table shape: `DL` denotes data

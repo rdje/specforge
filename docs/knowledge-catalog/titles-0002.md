@@ -40,6 +40,7 @@
 | [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md) | 2026-06-21 | `current` | FSMGen strict rejects an ISF value literal whose notation width ≠ the target signal width (OperandContract,… |
 | [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md) | 2026-08-08 | `current` | Knowledge-map architecture lives inside the knowledge-map bundle |
 | [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md) | 2026-08-08 | `current` | The Knowledge Map shard migration is locked by a bounded executable contract |
+| [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md) | 2026-08-09 | `current` | Legal and administrative prose is retained as evidence but cannot establish semantic intent |
 | [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md) | 2026-08-08 | `current` | Live-document lifecycle and control-plane proofs run on the repository volume |
 | [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md) | 2026-08-08 | `current` | Parent Git index defines SpecForge live-Markdown coverage |
 | [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md) | 2026-08-09 | `current` | Derived-state field and copy plane is independently closed |
@@ -60,4 +61,3 @@
 | [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md) | 2026-06-05 | `current` | NLI gate validated on the real AMBA APB spec — it works, and it exposes constraint over-generation |
 | [nli-intent-gate](../knowledge/nli-intent-gate.md) | 2026-06-05 | `current` | NLI intent gate — active demote-to-residual of un-entailed contracts (intent --nli-verify) |
 | [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md) | 2026-06-15 | `current` | Coordinated drive/read objects + relative-clause distribution are already implemented in the production hand… |
-| [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md) | 2026-06-11 | `current` | Offset-suffixed bit cells (31:28 +04) are dword-relative — capture the literal bit_range + byte_offset, nev… |

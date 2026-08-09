@@ -3,6 +3,16 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > where do transaction phases live (SemanticIr.transaction_phases) and do they reach the .isf (no — SemanticIR-only, recognition only)
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > where do zero-port actors come from in the IntentIR actor surface
+- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
+  > where does .isf record dropped temporal obligations
+- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
+  > where does SpecForge canonicalize upstream artifact paths before serialization
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > where does SpecForge store temporary files and caches
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > where does TransactionPhaseRecord.signal_set come from (build_transaction_phases, ir/semantic.rs — phase-naming statements' signals ∩ declared inventory, the .2c technique)
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > where does a register's byte offset come from when only the caption states it
@@ -50,6 +60,8 @@
   > where is coordinated-object actor-signal relation extraction implemented
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > where is is_pure_inferred_phantom_role and the build_intent_actors phantom guard
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > where is legal administrative prose filtered
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
   > where is normalized staging removed from Docling metadata
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
@@ -285,15 +297,3 @@
   > why did .1b.i NOT strip trailing prepositions and what changed in .1c.i
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > why did 64 AArch64 External Debug interfaces disappear
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > why did 88 CoreSight Base System interfaces disappear
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > why did APB unexplained_intent_bearing_tables go to zero
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > why did AXI atomic_transaction / prefetch / writezero / writedeferrable go from 0 to a real signal set
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > why did AXI unexplained tables go 32 to 31 and ACE 36 to 35 and LTI 6 to 4
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > why did AXI unexplained tables go 39 to 32 and the denominator 94 to 98
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > why did GIC-600's .isf fail fsmgen strict with 'Malformed top-level FSM source ?fsm:redistributor→…'

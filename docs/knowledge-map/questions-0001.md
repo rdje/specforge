@@ -76,6 +76,8 @@
   > can an active task tree use the terminal task archive topology
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > can an external absolute input be rebased into the repository
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > can legal boilerplate become a SemanticIR gate
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > can low confidence statement tokens create an interface without a formal signal declaration
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
@@ -184,6 +186,8 @@
   > does FSMGen's multi-actor ATL frontier provide a home for a connectivity netlist (NO — the ATL backlog wires children GENERATED from transaction composition spawn/do; it is behavioral orchestration, not a declarative static IP-interconnect netlist; verified 14-feature-backlog.md)
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > does IntentIR preserve SWD protocol provenance and order
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > does SemanticIR keep copyright and license text
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > does SemanticIR preserve SWD protocol provenance and order
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
@@ -294,7 +298,3 @@
   > does the ISF adapter lower actor-relative direction
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
   > does the NLI verifier actually catch real extraction errors
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > does the USB4 Inter-Domain adapter still emit a USB4 signal
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > does the agent-identity gate keep Class-B fragments like Subordinate extends

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > does the USB4 Inter-Domain adapter still emit a USB4 signal
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > does the agent-identity gate keep Class-B fragments like Subordinate extends
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > does the authority empty repair preserve formal and system contract interfaces
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
@@ -14,6 +18,8 @@
   > does the explicit-direction signal catalog repeat the UTF-8 boundary bug
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
   > does the external SSD project directory contain the USB4 Inter-Domain Service PDF
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > does the legal statement classifier use a vendor or document denylist
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
   > does the live-document registry reject unknown fields oversized arrays or oversized scalars
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
@@ -202,6 +208,8 @@
   > how does SpecForge detect contradicting or conflicting priors
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > how does SpecForge determine what a chip-spec PDF is about / its purpose category
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > how does SpecForge distinguish legal conditions from protocol conditions
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
   > how does SpecForge emit temporal rules or a bounded-eventually into .isf
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
@@ -290,11 +298,3 @@
   > how does specforge read system memory without a new dependency
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > how does specforge read total physical RAM without a new dependency
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > how does specforge recognise transaction phases (the <qualifier> phase prose gate, build_transaction_phases/derive_phase_name)
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > how does specforge recover CAN's frame fields (SOF/Arbitration/Control/Data/CRC/ACK/EOF)
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > how does specforge reject non-signal constraint subjects (LICENSEE, AXI, RME, MPAM)
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > how does specforge reject prose-fragment non-agents like For / Then it / is recommended / ensures

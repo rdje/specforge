@@ -92,6 +92,7 @@
 - [isf-value-width-operand-contract](isf-value-width-operand-contract.md)
 - [knowledge-map-architecture-location](knowledge-map-architecture-location.md)
 - [knowledge-map-shard-contract](knowledge-map-shard-contract.md)
+- [legal-administrative-prose-is-not-semantic-authority](legal-administrative-prose-is-not-semantic-authority.md)
 - [live-document-containment-fixture-gate](live-document-containment-fixture-gate.md)
 - [live-document-coverage-authority](live-document-coverage-authority.md)
 - [live-document-derived-state-contract-gap](live-document-derived-state-contract-gap.md)

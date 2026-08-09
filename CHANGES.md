@@ -1,3 +1,15 @@
+### CORPUS-COVERAGE.2.41a — reject legal prose from semantic intent
+
+- A rights-and-permissions paragraph under generic heading `Approved` used the word `while` and was incorrectly
+  promoted into a SemanticIR gate, phase/invariants, and IntentIR behavior. The retained-corpus before projection
+  finds 32 legal/administrative gates across 21 documents; 26 have no related interface.
+- Semantic context now rejects only compound, word-bounded legal/administrative signatures before any semantic
+  consumer runs. EvidenceIR remains lossless, and technical permission/right/version/reliability language plus a
+  real `While READY ... VALID` gate remains eligible.
+- The real #41 rebuild preserves all 106 evidence statements while phases/gates fall 1→0, invariants 17→15,
+  behaviors 2→0, and the zero-signal adapter remains honestly blocked. Two cascades reproduce six hashes; nine
+  WIRE/I2C/SWD datasets, KG 156/156, full CI, and 66/66 FSMGen strict pass.
+
 ### CORPUS-COVERAGE.2.40 — sign off OpenCAPI Certified note refresh
 
 - Two guarded CPU ingests reproduce 13 pages, three visuals, two tables, 25 sections, and 173 elements at 21% and

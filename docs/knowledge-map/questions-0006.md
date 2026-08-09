@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > what is the .5.iii _WIDTH parameter-leak gate / is it landed / is it ADR-0006 safe (LANDED 2026-06-24: is_width_parameter_leak_member + a continue-skip in synthesize_encoding_declarations_for_enum after the .5.ii spine gate, known_signals threaded from the signal-match caller. Drops a synthesized encoding member named <X>_WIDTH iff X is a declared signal OR the enum's own name
+  > — document-grounded like .5.i, NOT a name list; corpus FP set EMPTY: no legit FULL_WIDTH/HALF_WIDTH value exists and the declared-signal arm never catches one since FULL/HALF are not signals; per-member not per-enum so BRESP keeps its codes and RRESP/AXSNOOP empty to honest residuals. AXI manager.isf now (BRESP (OKAY 0)(EXOKAY 1)...) + (AWCMO (CLEAN_AND_INVALIDATE
+  > 0)(CLEAN_ONLY 1)); false RRESP/AXSNOOP/RCHUNK* _WIDTH enums gone; FSMGen --strict success/0; WIRE-BASED-100 1.000 before==after; kg-bench 156/156; run_ci GREEN lib 1718 +2)
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what is the 4th portable architecture (doctrine enforcement)
+- [axi-channel-structure](../knowledge/axi-channel-structure.md)
+  > what is the AXI signal naming convention (channel prefix)
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > what is the DOC-INTENT-TAXONOMY.1 corpus census
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
@@ -206,6 +214,8 @@
   > what prevents root documentation from regrowing into a second manual
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > what prevents the actor direction and extract-contracts book claims from drifting
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > what prevents the word while in a license notice from becoming a gate
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > what protects the validation projection when LIVE_ACHIEVEMENT_STATUS rolls over
 - [repository-local-scratch](../knowledge/repository-local-scratch.md)
@@ -288,13 +298,3 @@
   > where do the APB signal declarations come from (which table)
 - [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
   > where do the signal / FSM / register / constraint / actor extractors live and how are they merged
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > where do transaction phases live (SemanticIr.transaction_phases) and do they reach the .isf (no — SemanticIR-only, recognition only)
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > where do zero-port actors come from in the IntentIR actor surface
-- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
-  > where does .isf record dropped temporal obligations
-- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
-  > where does SpecForge canonicalize upstream artifact paths before serialization
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > where does SpecForge store temporary files and caches

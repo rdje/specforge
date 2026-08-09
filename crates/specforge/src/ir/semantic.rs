@@ -1501,6 +1501,15 @@ impl SemanticContext {
             .extracted_statements
             .iter()
             .filter_map(|statement| {
+                // Section headings are not a sufficient legal-content boundary: PDF front matter
+                // is often nested under generic headings such as `Approved`. Exclude only prose
+                // carrying a compound legal/administrative signature so rights, licensing, and
+                // warranty conditions cannot become gates, phases, invariants, or actors. A single
+                // technical word such as permission, rights, version, or Copyright remains usable.
+                if is_legal_or_administrative_statement(&statement.text) {
+                    return None;
+                }
+
                 let section_ids = section_ids_for_statement(
                     statement.evidence_span_ids.as_slice(),
                     &spans_by_id,
@@ -11078,6 +11087,86 @@ fn is_boilerplate_section_title(title: &str) -> bool {
     )
 }
 
+fn is_legal_or_administrative_statement(text: &str) -> bool {
+    let lowered = text.to_ascii_lowercase();
+    let has_any = |phrases: &[&str]| contains_any_phrase(&lowered, phrases);
+
+    let copyright_notice = contains_phrase(&lowered, "copyright")
+        && has_any(&[
+            "document",
+            "notice",
+            "reserved",
+            "permission",
+            "license",
+            "licence",
+        ]);
+    let inherently_legal = has_any(&[
+        "intellectual property",
+        "trademark",
+        "trademarks",
+        "service mark",
+        "service marks",
+        "derivative work",
+        "derivative works",
+        "applicable law",
+        "successors or assigns",
+        "adopters agreement",
+    ]);
+    let warranty_or_liability = has_any(&[
+        "warranty",
+        "warranties",
+        "liability",
+        "liabilities",
+        "liable",
+    ]) && has_any(&[
+        "document",
+        "information",
+        "product",
+        "products",
+        "customer",
+        "commercial sale",
+        "specification",
+    ]);
+    let patent_rights = has_any(&["patent", "patents"])
+        && has_any(&[
+            "right",
+            "rights",
+            "infringe",
+            "infringement",
+            "public domain",
+        ]);
+    let document_license = has_any(&[
+        "license",
+        "licenses",
+        "licence",
+        "licences",
+        "licensee",
+        "licensees",
+    ]) && has_any(&[
+        "document",
+        "specification",
+        "agreement",
+        "intellectual property",
+        "royalty-free",
+        "confidential",
+    ]);
+    let revocable_permission = has_any(&["permission granted", "permissions granted"])
+        && has_any(&["revoked", "right", "rights", "successors", "assigns"]);
+    let commercial_terms = contains_phrase(&lowered, "terms and conditions")
+        && has_any(&["sale", "agreement", "customer"]);
+    let ipr_declaration = has_any(&["ipr", "iprs"])
+        && has_any(&["declared", "rights policy", "deliverable", "deliverables"]);
+
+    copyright_notice
+        || inherently_legal
+        || warranty_or_liability
+        || patent_rights
+        || document_license
+        || revocable_permission
+        || commercial_terms
+        || ipr_declaration
+}
+
 #[cfg(test)]
 mod tests {
     use std::{
@@ -11093,6 +11182,7 @@ mod tests {
         InterfaceEdgeTimingRecord, ProtocolStateRecord, SerialFrameField, SerialFramePhase,
         SignalPolarity, StatementClass, SwdOperation, SwdioDirection, VisualEvidenceRole,
     };
+    use crate::ir::intent::IntentIr;
     use crate::ir::prior_memory::{
         CorpusMemory, CorpusMemoryUpdatePolicyRecord, PriorSourceArtifactRecord, ProtocolFamily,
         SemanticModalityReliabilityPriorRecord, TemporalPhrasePriorRecord,
@@ -19632,6 +19722,124 @@ mod tests {
     fn boilerplate_title_recognizes_proprietary_notice_without_licence() {
         // Catches ||→&& mutant at line 10362 — single || means either licence/license matches
         assert!(super::is_boilerplate_section_title("Proprietary Notice"));
+    }
+
+    #[test]
+    fn legal_statement_classifier_requires_compound_legal_context() {
+        for legal in [
+            "The limited permissions granted above are perpetual and will not be revoked by successors or assigns while the specification is current.",
+            "This document and derivative works may be copied when the copyright notice remains attached.",
+            "The information is provided without warranty and the supplier accepts no liability for this document.",
+            "This specification is distributed under a royalty-free license agreement.",
+            "These patents were reviewed to avoid infringement of intellectual property rights.",
+            "Products are sold under the terms and conditions of commercial sale agreed with the customer.",
+            "Essential IPRs may have been declared for this deliverable.",
+        ] {
+            assert!(
+                super::is_legal_or_administrative_statement(legal),
+                "legal/administrative prose should be excluded: {legal}"
+            );
+        }
+
+        for technical in [
+            "The controller grants write permission after ownership transfer.",
+            "The access rights field is assigned while the request remains valid.",
+            "When the current protocol version is selected, the receiver must acknowledge.",
+            "Some parameters use the ASCII string Copyright and pad it to the right.",
+            "The license register records whether the feature is enabled.",
+            "A RAM reports a fault if reliability is degraded.",
+        ] {
+            assert!(
+                !super::is_legal_or_administrative_statement(technical),
+                "technical permission/version/lifecycle prose must survive: {technical}"
+            );
+        }
+    }
+
+    #[test]
+    fn legal_conditions_under_generic_heading_do_not_reach_semantic_surfaces() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("legal-boundary.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Approved\n",
+                "The limited permissions granted above will not be revoked by successors or assigns while this specification is current.\n\n",
+                "This document and derivative works may be copied when the copyright notice remains attached.\n\n",
+                "# Protocol Operation\n",
+                "Signal READY is input width 1.\n\n",
+                "Signal VALID is output width 1.\n\n",
+                "While READY is low, VALID must remain asserted.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        assert!(
+            evidence_ir
+                .extracted_statements
+                .iter()
+                .any(|statement| statement.text.contains("permissions granted"))
+        );
+        assert!(
+            evidence_ir
+                .extracted_statements
+                .iter()
+                .any(|statement| statement.text.contains("derivative works"))
+        );
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        assert!(semantic_ir.gates.iter().any(|gate| {
+            gate.condition
+                .contains("While READY is low, VALID must remain asserted.")
+        }));
+        assert!(
+            semantic_ir
+                .gates
+                .iter()
+                .all(|gate| !gate.condition.contains("permissions granted")
+                    && !gate.condition.contains("derivative works"))
+        );
+        assert!(semantic_ir.invariants.iter().all(|invariant| {
+            !invariant.statement.contains("permissions granted")
+                && !invariant.statement.contains("derivative works")
+        }));
+        assert!(
+            semantic_ir
+                .phases
+                .iter()
+                .all(|phase| !phase.summary.contains("`Approved`"))
+        );
+
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        assert!(intent_ir.behaviors.iter().any(|behavior| {
+            behavior
+                .statement
+                .contains("While READY is low, VALID must remain asserted.")
+        }));
+        assert!(intent_ir.behaviors.iter().all(|behavior| {
+            !behavior.statement.contains("permissions granted")
+                && !behavior.statement.contains("derivative works")
+        }));
+
+        Ok(())
     }
 
     // parse_identifier unit tests
