@@ -21,14 +21,12 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.38a`; commit the verified path-containment repair before resuming parent #38.
-- Current state: `validate <artifact>` now backannotates only the explicit repository-owned artifact and its
-  adjacent report; it cannot follow embedded canonical output paths. One all-stage regression and a five-stage
-  real #38 copy replay keep the complete canonical tree byte-identical. Existing canonical-path tests, Clippy,
-  and full CI pass 1,788 tests / five ignored. Original pre-side-effect #38 hashes/counts and the complete
-  validator-side-effect state remain in task evidence; the source is authenticated at `08a37c35…162`.
-- Next action: commit `.2.38a`, then run a guarded CPU ingest from the authenticated same-SSD source to regenerate
-  and refresh the #38 canonical chain before measuring relation/topology authority.
-- In-flight uncommitted: verified `.2.38a` code/docs/fact signoff awaits commit; ignored #38 task evidence must
-  remain until fresh regeneration and the parent refresh gates are complete.
+- Active unit: `CORPUS-COVERAGE.2.38`; guarded Introducing CoreSight current-binary refresh.
+- Current state: child `.2.38a` is durably committed and `validate <artifact>` now backannotates only the explicit
+  repository-owned artifact plus its adjacent report. Original pre-side-effect #38 hashes/counts and the complete
+  validator-side-effect state remain in ignored task evidence; the source is authenticated at `08a37c35…162`.
+- Next action: run the guarded CPU ingest from the authenticated same-SSD source, regenerate the complete #38
+  canonical chain, and measure every relation/topology delta against current generic authority.
+- In-flight uncommitted: none; ignored #38 task evidence must remain until fresh regeneration and the parent
+  refresh gates are complete.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

@@ -747,9 +747,9 @@ would be mistaken for the child commit's owning acceptance section.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: `CORPUS-COVERAGE.2.38a` — complete the verified repair's commit workflow; immediately afterward,
-  parent `.2.38` regenerates the canonical chain from the authenticated same-SSD source and resumes the guarded
-  ingest/cascade without classifying validator metadata as a document refresh delta.
+- Frontier: `CORPUS-COVERAGE.2.38` — child `.2.38a` is durably committed; regenerate the canonical chain from
+  the authenticated same-SSD source and resume the guarded ingest/cascade without classifying validator metadata
+  as a document refresh delta.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**37 refreshes done after #37;
   19 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#37: #29/#31 CHI-C2C marquee message-field refreshes,
