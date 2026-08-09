@@ -1,4 +1,27 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.42a (`2026-08-10`) — organizational process has no engineering authority
+
+The first fresh OpenCAPI Certified Definition cascade exposed the next semantic trust boundary after legal prose.
+EvidenceIR correctly retained certification submission and listing procedures, email review, conflict escalation,
+mark licensing, and independent-test-lab administration. The shared semantic context did not recognize those
+organizational workflows, so downstream builders interpreted headings as phases and conditional process prose as
+gates and behaviors despite an entirely empty typed hardware surface.
+
+The repair stays at `SemanticContext::from_evidence_ir`, before actors, phases, invariants, contracts, gates,
+interfaces, and decompositions consume statements. Administrative section recognition and statement recognition
+both require compound context. Protocol request/response, electrical contacts, arbiter conflicts, measured test
+reports, and real product compliance requirements are explicit negative controls. EvidenceIR remains unchanged;
+no OpenCAPI, vendor, consortium, organization, document, section-index, exact-sentence, or single-word rule enters
+the classifier.
+
+The retained-corpus projection finds 238 matching administrative/reference statements across 23 documents. Its
+semantic membership counts describe mixed-vintage artifacts and do not authorize a bulk rewrite; each document
+will apply the boundary on normal refresh. On #42 itself, the repaired cascade reduces actors 5→2, phases 5→0,
+gates 6→0, invariants 20→8, contracts 6→4, decompositions 22→14, behaviors 15→4, and constraints 20→8 while all
+167 evidence statements survive. The four remaining behaviors are genuine device/host Ready Definition and
+passing-test-report obligations. Two cascades reproduce all six downstream hashes, and the full semantic,
+WIRE/I2C/SWD, KG, 1,793-test CI, and FSMGen strict gates pass before parent replay.
+
 ## CORPUS-COVERAGE.2.41 (`2026-08-09`) — explanatory acronyms do not define an AFU interface
 
 The retained AFU Address Space Usage chain looked like a useful hardware surface only after heuristic grouping:

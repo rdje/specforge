@@ -205,7 +205,10 @@ Five active program groups support that north star:
   Definition. Its first guarded cascade removes the sibling glossary-derived `DL` interface but exposes a distinct
   administrative-workflow authority gap: certification requests, email review, conflict resolution, test-lab
   administration, and listing processes still become phases/gates/Intent behaviors despite no typed hardware
-  surface. Child `.2.42a` now owns measurement and a generic shared-boundary repair before parent replay. Separately,
+  surface. Child `.2.42a` measured 238 administrative/reference statements across 23 retained documents and is
+  now closed: a compound shared-boundary rule removes #42's five administrative phases, six gates, and 11 of 15
+  behaviors while preserving all 167 evidence statements and four genuine product-compliance behaviors. Parent
+  `.2.42` resumes guarded replay and final signoff. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

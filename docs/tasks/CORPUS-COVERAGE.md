@@ -5,7 +5,7 @@
 - Tree ID: `CORPUS-COVERAGE`
 - Status: `active` (`.0` build-out + `.1` stage-staleness validator done; `.2` current-binary refresh batch
   remains active with 41 completed documents and `.2.42a` administrative-workflow semantic-authority repair
-  owned under the OpenCAPI Certified Definition refresh; `.3`
+  done under the OpenCAPI Certified Definition refresh; `.3`
   lifecycle/currentness reconciliation done `2026-08-09`)
 - Roadmap lane: `R15e`/`R16` (corpus digestion — the owner's substantive gap #2)
 - Created: `2026-06-17`
@@ -658,7 +658,7 @@ today's ephemeral normalized-directory count.
   and `MEMORY.md` agree before commit; parent `.2.41` closes only after its refreshed artifacts are reverified.
 
 - ID: `CORPUS-COVERAGE.2.42` · Status: `in_progress` (`2026-08-09`, DATA/DOC) · Children: `.2.42a`
-  administrative-workflow semantic-authority repair (in progress). Goal: run a guarded
+  administrative-workflow semantic-authority repair (done). Goal: run a guarded
   current-binary refresh of `opencapi_3_0_certified_definition_v1_1` from the caller-authorized same-SSD source
   and complete the deterministic EvidenceIR→SemanticIR→IntentIR→adapter cascade. The 15-page OpenCAPI Certified
   Definition is tied for the fewest pages among the 15 remaining real chip-spec candidates and is smaller than
@@ -680,26 +680,26 @@ today's ephemeral normalized-directory count.
   complete validated stages, reproduce the repaired cascade, and delete only authenticated rollback/task
   evidence after all final gates pass.
 
-### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.42`
+### Pending parent signoff criteria — `CORPUS-COVERAGE.2.42`
 
-- [ ] **REPRODUCE / MEASURE** — authenticate the source PDF, release binary, exact six-file stale chain, stale
+- **PENDING — REPRODUCE / MEASURE** — authenticate the source PDF, release binary, exact six-file stale chain, stale
   glossary-derived `DL` surface, blocked adapter, and same-volume rollback; record guarded-ingest counts, peak
   memory, final hashes/path census, and typed before→after deltas.
-- [ ] **ROOT CAUSE (WHY + WHERE)** — classify each material delta against current generic source cleanup,
+- **PENDING — ROOT CAUSE (WHY + WHERE)** — classify each material delta against current generic source cleanup,
   glossary/signal authority, legal/administrative statement authority, document class, and behavioral authority;
   stop and open an owned child for any newly exposed universal defect.
-- [ ] **ADDRESSED (verified)** — promote only complete validated SourceIR→adapter stages; require every generated
+- **PENDING — ADDRESSED (verified)** — promote only complete validated SourceIR→adapter stages; require every generated
   page/layout/visual path final and repository-relative; converge obsolete adapter targets; accept only the
   pipeline-grounded renderable or honestly blocked result.
-- [ ] **NO REGRESSION** — reproduce the final cascade, hold provider-free WIRE/I2C/SWD gates and KG 156/156,
+- **PENDING — NO REGRESSION** — reproduce the final cascade, hold provider-free WIRE/I2C/SWD gates and KG 156/156,
   sweep every emitted ISF through FSMGen strict, and pass mdBook/doctrine/path/locality gates plus broader Rust CI
   if any product code changes.
-- [ ] **GENERICITY** — no OpenCAPI/vendor/document/acronym exception, manual generated-output edit, relaxed
+- **PENDING — GENERICITY** — no OpenCAPI/vendor/document/acronym exception, manual generated-output edit, relaxed
   validator, fabricated interface/behavior, or LLM/VLM inference enters the slice.
-- [ ] **LOCKSTEP** — generated artifacts, #42 row/count/frontier, live docs, durable fact when warranted, mdBook,
+- **PENDING — LOCKSTEP** — generated artifacts, #42 row/count/frontier, live docs, durable fact when warranted, mdBook,
   and `MEMORY.md` agree; delete only authenticated rollback/task evidence after every final gate is green.
 
-- ID: `CORPUS-COVERAGE.2.42a` · Status: `in_progress` (`2026-08-09`, PROBE/CODE/DATA/DOC) · Goal: repair the
+- ID: `CORPUS-COVERAGE.2.42a` · Status: `done` (`2026-08-10`, PROBE/CODE/DATA/DOC) · Goal: repair the
   universal administrative-workflow semantic-authority gap exposed by #42's first fresh cascade before accepting
   its SemanticIR or IntentIR. Current `.2.41a` correctly excludes compound legal rights/licensing/liability prose,
   but its classifier does not recognize certification, submission, review, contact, listing, or organizational
@@ -717,25 +717,32 @@ today's ephemeral normalized-directory count.
   constraints and protocol behavior must survive. Rebuild #42 from unchanged fresh EvidenceIR and hold the
   complete corpus gates before parent `.2.42` resumes its second ingest and final signoff.
 
+  Done: the projection finds 238 administrative/reference statements across 23 retained documents and rejects a
+  broad-token rule against Page Request/response, electrical contacts, write conflicts, measured tests, and real
+  compliance controls. Compound administrative section/statement rules now run at the shared SemanticContext
+  boundary. #42's unchanged 167-statement EvidenceIR rebuilds from five phases/six gates/15 behaviors to zero/
+  zero/four, preserving two technical actors and eight constraints. Two cascades reproduce six hashes; 402
+  semantic tests, nine WIRE/I2C/SWD datasets, KG 156/156, full CI 1,793/five ignored, and 66/66 FSMGen strict
+  pass. Commit:
+  `CORPUS-COVERAGE.2.42a — reject administrative workflows from semantic intent`.
+
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.42a`
 
-- [ ] **REPRODUCE / MEASURE** — pin #42's 167-statement EvidenceIR→five phases/six gates/15 behaviors path;
-  inventory the retained-corpus administrative-workflow family and measure plausible broad alternatives against
-  legitimate hardware/protocol/compliance controls.
-- [ ] **ROOT CAUSE (WHY + WHERE)** — prove why the current compound legal predicate misses organizational process
-  prose and identify the earliest shared semantic authority boundary rather than patching phases, gates, or
-  IntentIR independently.
-- [ ] **ADDRESSED (verified)** — implement the smallest generic content-structural authority rule; preserve all
-  source evidence and legitimate technical/compliance semantics while removing only administrative workflow from
-  every semantic consumer; rebuild #42 from unchanged EvidenceIR.
-- [ ] **NO REGRESSION** — add paired unit and Source→Evidence→Semantic→Intent regressions; pass focused semantic
-  suites, provider-free WIRE/I2C/SWD and relevant certification controls, KG 156/156, every emitted ISF through
-  FSMGen strict, full CI, mdBook, doctrines, path, and locality gates.
-- [ ] **GENERICITY** — no OpenCAPI/vendor/consortium/document/section/organization/exact-sentence exception or
-  broad single-token removal; the boundary must use independently meaningful compound administrative concepts.
-- [ ] **LOCKSTEP** — code comments, measurement, parent real cascade, task parent/child, roadmap, live docs,
-  mdBook, durable fact, and `MEMORY.md` agree before commit; parent `.2.42` remains open until final replay and
-  authenticated cleanup.
+- [x] **REPRODUCE / MEASURE** — #42's 167-statement EvidenceIR→five phases/six gates/15 behaviors path is pinned;
+  the projection finds 238 candidates across 23 docs and rejects broad alternatives against protocol/compliance
+  controls.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the legal predicate lacks organizational workflow concepts; all semantic
+  consumers share `SemanticContext::from_evidence_ir`, so filtering there avoids both evidence loss and partial
+  phase/gate-only policy.
+- [x] **ADDRESSED (verified)** — unchanged 167-statement evidence rebuilds to zero phases/gates, four genuine
+  compliance behaviors, and eight constraints; two complete cascades reproduce all six downstream hashes.
+- [x] **NO REGRESSION** — three paired regressions and all 402 semantic tests pass; nine WIRE/I2C/SWD datasets
+  retain filtered F1 1.000, KG is 156/156, all 66 emitted ISFs pass FSMGen strict, and full CI is 1,793/five
+  ignored; mdBook, doctrines, path, and locality gates pass.
+- [x] **GENERICITY** — the compound rules contain no OpenCAPI/vendor/consortium/document/organization/source-
+  sentence/section-index exception or broad single-token removal; technical controls are explicit negatives.
+- [x] **LOCKSTEP** — code comments, measurement, real #42 child cascade, task parent/child, roadmap, live docs,
+  mdBook, durable fact, and `MEMORY.md` agree; parent `.2.42` remains open for final replay and authenticated cleanup.
 
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34b.ii.a`
 
@@ -995,8 +1002,8 @@ today's ephemeral normalized-directory count.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: `CORPUS-COVERAGE.2.42a` — measure the administrative-workflow family and safe controls across retained
-  artifacts; repair the earliest generic semantic authority boundary before parent #42 replay.
+- Frontier: `CORPUS-COVERAGE.2.42` — replay the guarded OpenCAPI Certified Definition ingest with the repaired
+  semantic boundary, verify all final artifacts and paths, then sign off and clean authenticated task evidence.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**39 refreshes done after #39;
   17 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#39: #29/#31 CHI-C2C marquee message-field refreshes,

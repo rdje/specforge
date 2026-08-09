@@ -6,6 +6,7 @@
 - [active-task-migration-transaction](active-task-migration-transaction.md)
 - [actor-signal-direction-passive-active-handled](actor-signal-direction-passive-active-handled.md)
 - [adapter-write-reconciles-stale-isf](adapter-write-reconciles-stale-isf.md)
+- [administrative-workflow-is-not-semantic-authority](administrative-workflow-is-not-semantic-authority.md)
 - [adopt-defer-ledger](adopt-defer-ledger.md)
 - [agent-coordinated-subject-split](agent-coordinated-subject-split.md)
 - [agent-identity-prose-class-measurement](agent-identity-prose-class-measurement.md)

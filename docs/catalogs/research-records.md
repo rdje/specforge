@@ -9,6 +9,7 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | Repository path | Title |
 | --- | --- |
 | [docs/research/active-task-evidence-containment-census.md](../../docs/research/active-task-evidence-containment-census.md) | Active task-evidence containment census |
+| [docs/research/administrative-workflow-semantic-authority-measurement.md](../../docs/research/administrative-workflow-semantic-authority-measurement.md) | Administrative-workflow semantic-authority measurement — `CORPUS-COVERAGE.2.42a` |
 | [docs/research/agent-identity-prose-class-measurement.md](../../docs/research/agent-identity-prose-class-measurement.md) | Agent-identity precision on the dense-prose doc class — Lever E measurement |
 | [docs/research/agent-surface-fidelity-measurement.md](../../docs/research/agent-surface-fidelity-measurement.md) | Agent-surface fidelity — measured baseline and design (`KG-ISF-COMPLETENESS.1`) |
 | [docs/research/behavior-temporal-lowering-completeness-78doc.md](../../docs/research/behavior-temporal-lowering-completeness-78doc.md) | Behavior/temporal lowering completeness — re-assessment on the broader 78-doc corpus |

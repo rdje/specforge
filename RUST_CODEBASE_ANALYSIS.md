@@ -4,6 +4,22 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-10 — administrative-workflow semantic authority; `CORPUS-COVERAGE.2.42a`)
+
+- `SemanticContext::from_evidence_ir` remains the shared authority seam: EvidenceIR preserves organizational
+  procedure for audit, while SemanticIR must withhold it from every semantic consumer rather than patching only
+  phase, gate, or Intent builders.
+- `is_administrative_section_title` strips a numeric heading prefix and recognizes exact reference-list headings
+  plus compound certification/submission/internal-processing/test-lab administration. The statement classifier
+  requires compound submission-channel, institutional-conflict, derivative-listing, mark, test-program, or
+  product-qualification context.
+- Paired negatives preserve hardware Page Request/response, electrical contacts, write-conflict resolution,
+  certified-device requirements, measured test reports, and `READY`/`VALID`. No vendor, organization, document,
+  source sentence, section index, or single-token rule participates.
+- A 23-document projection finds 238 administrative/reference statements. On unchanged #42 evidence, the shared
+  boundary removes five phases, six gates, three non-technical actors, and 11 administrative behaviors while
+  preserving two technical actors, four product-compliance behaviors, and eight constraints.
+
 ## Session update (2026-08-09 — legal/administrative semantic authority; `CORPUS-COVERAGE.2.41a`)
 
 - `SemanticContext::from_evidence_ir` is the shared statement-authority seam for actors, phases, invariants,

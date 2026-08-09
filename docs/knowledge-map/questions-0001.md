@@ -34,6 +34,8 @@
   > are other docs affected by the rule-drive-value gate (no — only ihi0022_h_c carries a prose-valued rule corpus-wide; every other emit is byte-identical)
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > are presence codes like Y N O C OC ever interpreted
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > are reference lists allowed to establish semantic intent
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
   > are temporal rules silently dropped when lowering IntentIR to .isf
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
@@ -76,6 +78,8 @@
   > can an active task tree use the terminal task archive topology
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > can an external absolute input be rebased into the repository
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > can certification administration become a SemanticIR phase or gate
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > can legal boilerplate become a SemanticIR gate
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
@@ -204,6 +208,8 @@
   > does SpecForge lower register reset values into the .isf (YES as of ISF-REGISTER-RESET-EMIT.2/.3 — composed from per-field reset_value and emitted at the true register width; it was dropped at the emit boundary before)
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
   > does SpecForge model-check temporal properties
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > does SpecForge preserve certification workflow source evidence
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > does SpecForge reject a page metadata staging traversal or symlink escape
 - [contested-priors](../knowledge/contested-priors.md)
@@ -292,9 +298,3 @@
   > does the Certified sibling confirm the OpenCAPI Ready glossary result
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
   > does the Docling metadata sidecar store repository relative paths
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > does the ISF adapter consume swd_operations or protocol_states
-- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
-  > does the ISF adapter lower actor-relative direction
-- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
-  > does the NLI verifier actually catch real extraction errors

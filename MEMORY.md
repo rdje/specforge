@@ -23,17 +23,15 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: `CORPUS-COVERAGE.2.42a`; administrative-workflow semantic-authority repair exposed by the first
   guarded OpenCAPI 3.0 Certified Definition cascade.
-- Current state: 41 refreshes are complete / 15 remain, with 80 SourceIR / ten normalized / 80 EvidenceIR / 79
-  SemanticIR / 79 IntentIR / 79 adapters and all 66 current emitted ISFs strict-clean. OpenCAPI AFU Address Space
-  Usage reproduces 14 pages / nine visuals / two tables / 23 sections / 118 elements at 20% and 19% peak memory.
-  Evidence stays at 106 statements with no typed hardware surfaces. Current authority removes five stale acronym-
-  group interfaces/five actors/eight outputs; `.2.41a` removes false legal semantics. The final adapter blocks with
-  no signals or behavior. Twelve hashes, WIRE/I2C/SWD, KG 156/156, full CI, 66/66 strict, book/doctrines/locality,
-  exact task-evidence cleanup, and zero residue pass. #42's fresh EvidenceIR has 167 statements and correctly
-  loses the stale glossary `DL` interface, but administrative certification workflows still become five phases,
-  six gates, and 15 Intent behaviors despite an empty typed hardware surface.
-- Next action: measure the retained-corpus administrative-workflow family and legitimate protocol/compliance
-  controls, then implement the smallest generic shared semantic authority boundary under `.2.42a`.
-- In-flight uncommitted: parent `.2.42` holds its exact six-file / 364142-byte rollback and first fresh cascade in
-  repository-derived task storage. No code has changed; `.2.42a` owns the surfaced defect before implementation.
+- Current state: 41 refreshes are complete / 15 remain, with 80 SourceIR / 11 normalized / 80 EvidenceIR / 79
+  SemanticIR / 79 IntentIR / 79 adapters. The child projection finds 238 administrative/reference statements
+  across 23 retained docs. Compound section/statement authority now excludes organizational process without a
+  vendor/document/single-token rule. On unchanged 167-statement #42 evidence, actors fall 5→2, phases 5→0, gates
+  6→0, invariants 20→8, behaviors 15→4, and constraints 20→8; real device/host compliance obligations survive.
+  Two cascades reproduce six hashes. All 402 semantic tests, nine WIRE/I2C/SWD datasets, KG 156/156, and 66/66
+  emitted ISFs through FSMGen strict pass; full CI passes 1,793 tests/five ignored plus mdBook and all doctrines.
+- Next action: complete the final diff/staging/commit workflow for `.2.42a`, then resume parent `.2.42` with the
+  second guarded ingest and final signoff.
+- In-flight uncommitted: child code/docs/fact are implemented but not yet committed. Parent `.2.42` retains its
+  authenticated six-file / 364142-byte rollback and first-pass evidence under repository-derived task storage.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

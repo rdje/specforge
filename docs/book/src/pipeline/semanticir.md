@@ -108,6 +108,24 @@ As a result, a sentence about permissions remaining valid *while* a specificatio
 EvidenceIR but cannot become an IntentIR behavior. A real condition such as `While READY is low, VALID must
 remain asserted` still becomes a semantic gate and downstream behavior.
 
+### Administrative workflows are evidence, not device behavior
+
+Organizational process receives the same evidence/authority separation. Reference lists, instructions for
+submitting a product, email review, listing and certification-mark requests, institutional escalation, and
+third-party test-lab administration remain in EvidenceIR for audit. They do not create SemanticIR phases, gates,
+actors, invariants, or downstream IntentIR behaviors.
+
+The boundary is structural rather than vocabulary-only. A request must pair with an administrative channel or
+listing/mark object; conflict resolution must pair with institutional escalation; test-lab prose must describe
+certification-program administration; and attestation must name an organizational actor. This preserves
+engineering uses of the same words: a Page Request and its response, an electrical contact, an arbiter resolving
+a write conflict, a measured test report, and a certified controller asserting a signal all remain eligible.
+
+The real OpenCAPI Certified Definition demonstrates the distinction. Its 167 evidence statements are unchanged,
+while five administrative phases, six gates, and 11 of 15 behaviors disappear. The four surviving behaviors are
+device/host product-compliance contracts, not application or listing procedure. The rule contains no vendor,
+consortium, document-key, organization-name, exact-sentence, or single-token exception.
+
 ### Negative-knowledge cautions
 
 If a carried conflict or residual packet shape matches learned negative knowledge, `SemanticIR` validation may report `negative_knowledge_prior_matches`.

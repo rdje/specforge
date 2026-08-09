@@ -1,3 +1,16 @@
+### CORPUS-COVERAGE.2.42a — reject administrative workflows from semantic intent
+
+- The first OpenCAPI Certified Definition cascade preserved 167 evidence statements but promoted product-listing,
+  email review, conflict-resolution, certification-mark, and test-lab procedures into five phases, six gates, and
+  15 Intent behaviors. A retained-corpus projection finds 238 administrative/reference statements across 23 docs.
+- Semantic context now rejects compound organizational workflows and recognized administrative section titles at
+  the shared authority boundary. Evidence remains lossless; Page Request/response, electrical contacts, technical
+  conflict resolution, measured tests, and certified-device electrical requirements remain eligible.
+- Rebuilding unchanged EvidenceIR yields two technical actors, zero phases/gates, eight invariants, four genuine
+  device/host compliance behaviors, and eight constraints. Two cascades reproduce six hashes; 402 semantic tests,
+  nine WIRE/I2C/SWD datasets, KG 156/156, full CI (1,793/five ignored), and all 66 emitted ISFs through FSMGen
+  strict pass.
+
 ### CORPUS-COVERAGE.2.41 — sign off OpenCAPI AFU address-note refresh
 
 - Two guarded CPU ingests reproduce 14 pages, nine visuals, two tables, 23 sections, and 118 elements at 20% and

@@ -10,6 +10,7 @@
 | [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md) | 2026-08-09 | `current` | Active task migration is a byte-safe root-last transaction |
 | [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md) | 2026-06-15 | `current` | Actor-signal drive/read DIRECTION is already correct in production (voice-separated verb lexicon); the prose… |
 | [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md) | 2026-08-09 | `current` | Successful adapter writes reconcile obsolete generated ISF siblings instead of retaining stale actors |
+| [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md) | 2026-08-10 | `current` | Organizational administration remains evidence but cannot establish engineering intent |
 | [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md) | 2026-06-04 | `current` | Per-author adopt/defer ledger — what SpecForge takes from / leaves out of each grounded author |
 | [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md) | 2026-06-16 | `current` | The .1b.iii coordinated-subject split replaces a relation whose subject is "X and Y" with one relation per co… |
 | [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md) | 2026-06-23 | `current` | The dense-prose agent explosion (eMMC 153 actors) is a relation-subject extraction-precision problem (148/153… |
@@ -60,4 +61,3 @@
 | [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md) | 2026-08-09 | `current` | Docling page sidecars are normalized before the staged bundle is promoted |
 | [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md) | 2026-06-22 | `current` | SpecForge enforces every mechanizable doctrine via one registry/driver (scripts/check_doctrines.sh) gated E1… |
 | [document-class-from-structure](../knowledge/document-class-from-structure.md) | 2026-06-08 | `current` | Document class (protocol/register/interface/guide) inferred from structural intent surfaces, not the doc name |
-| [document-intent-category-census](../knowledge/document-intent-category-census.md) | 2026-06-22 | `current` | The 78-doc corpus splits 36/7/15/2/4/14 across the 6 purpose categories (wire-protocol/register-IP/platform-I… |

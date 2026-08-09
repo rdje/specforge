@@ -2,8 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > does the ISF adapter consume swd_operations or protocol_states
+- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
+  > does the ISF adapter lower actor-relative direction
+- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
+  > does the NLI verifier actually catch real extraction errors
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > does the USB4 Inter-Domain adapter still emit a USB4 signal
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > does the administrative classifier name OpenCAPI or a vendor
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > does the agent-identity gate keep Class-B fragments like Subordinate extends
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
@@ -124,6 +132,8 @@
   > how are stale generated isf symlinks handled
 - [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
   > how are temporal rules expressed as LTL or MTL
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > how are test laboratory procedures distinguished from hardware test requirements
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > how are the three FSM grammars (SWD hyphen, quoted-mode, single-word) distinguished
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
@@ -210,6 +220,8 @@
   > how does SpecForge determine what a chip-spec PDF is about / its purpose category
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > how does SpecForge distinguish legal conditions from protocol conditions
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > how does SpecForge distinguish protocol requests from product listing requests
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
   > how does SpecForge emit temporal rules or a bounded-eventually into .isf
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
@@ -286,15 +298,3 @@
   > how does specforge group a transaction's signals by phase (.2i: TransactionIntent.phase_membership, built in mint_named_transaction by intersecting anchor.signal_set with each TransactionPhaseRecord.signal_set; metadata, not .isf steps)
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
   > how does specforge handle PSEL vs PSELx (or HSEL vs HSELx)
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > how does specforge handle a signal table whose name column is not first
-- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
-  > how does specforge model the JTAG TAP / SWD state machine (FSM)
-- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
-  > how does specforge model the SWD serial frame / packet
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > how does specforge read free disk space without a new dependency
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > how does specforge read system memory without a new dependency
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > how does specforge read total physical RAM without a new dependency

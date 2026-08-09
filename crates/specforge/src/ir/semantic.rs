@@ -1481,7 +1481,10 @@ impl SemanticContext {
         let boilerplate_section_ids: BTreeSet<String> = evidence_ir
             .section_anchors
             .iter()
-            .filter(|anchor| is_boilerplate_section_title(&anchor.title))
+            .filter(|anchor| {
+                is_boilerplate_section_title(&anchor.title)
+                    || is_administrative_section_title(&anchor.title)
+            })
             .map(|anchor| anchor.section_id.clone())
             .collect();
 
@@ -11087,6 +11090,62 @@ fn is_boilerplate_section_title(title: &str) -> bool {
     )
 }
 
+fn is_administrative_section_title(title: &str) -> bool {
+    let trimmed = title.trim();
+    let title_without_number = trimmed
+        .find(char::is_whitespace)
+        .and_then(|index| {
+            let prefix = &trimmed[..index];
+            (prefix.chars().any(|character| character.is_ascii_digit())
+                && prefix
+                    .chars()
+                    .all(|character| character.is_ascii_digit() || matches!(character, '.' | ')')))
+            .then_some(trimmed[index..].trim_start())
+        })
+        .unwrap_or(trimmed);
+    let lowered = title_without_number.to_ascii_lowercase();
+
+    if matches!(
+        lowered.as_str(),
+        "references" | "normative references" | "informative references"
+    ) {
+        return true;
+    }
+
+    let certification_context = contains_any_phrase(&lowered, &["certified", "certification"]);
+    let certification_administration = certification_context
+        && contains_any_phrase(
+            &lowered,
+            &[
+                "mark",
+                "logo",
+                "list",
+                "listing",
+                "publication",
+                "demonstrating",
+                "requesting",
+                "program",
+            ],
+        );
+    let submission_administration = contains_phrase(&lowered, "requesting")
+        && contains_any_phrase(
+            &lowered,
+            &[
+                "product", "license", "licence", "mark", "logo", "list", "listing",
+            ],
+        );
+    let internal_request_processing = contains_any_phrase(&lowered, &["request", "requested"])
+        && contains_phrase(&lowered, "information")
+        && contains_phrase(&lowered, "internal processing");
+    let institutional_test_lab =
+        contains_any_phrase(&lowered, &["independent test lab", "independent test labs"]);
+
+    certification_administration
+        || submission_administration
+        || internal_request_processing
+        || institutional_test_lab
+}
+
 fn is_legal_or_administrative_statement(text: &str) -> bool {
     let lowered = text.to_ascii_lowercase();
     let has_any = |phrases: &[&str]| contains_any_phrase(&lowered, phrases);
@@ -11157,6 +11216,108 @@ fn is_legal_or_administrative_statement(text: &str) -> bool {
     let ipr_declaration = has_any(&["ipr", "iprs"])
         && has_any(&["declared", "rights policy", "deliverable", "deliverables"]);
 
+    // Administrative process prose needs the same evidence/authority separation as legal prose.
+    // Require compound organizational context: request/response is ubiquitous in protocols, an
+    // electrical contact is not a contact address, and certification requirements can still be
+    // real product constraints. These combinations identify document-reading, submission,
+    // listing, institutional review, mark licensing, and test-program administration without a
+    // vendor, document, organization, section, or exact-sentence exception.
+    let document_reading_guidance = has_any(&["document", "documents", "specification", "manual"])
+        && has_any(&["when reading", "helpful when reading", "helpful to read"]);
+    let submission = has_any(&[
+        "request",
+        "requests",
+        "requesting",
+        "submitted",
+        "submitting",
+        "submission",
+        "application form",
+        "apply for",
+        "resubmit",
+    ]);
+    let administrative_channel = has_any(&[
+        "email",
+        "contact name",
+        "contact email",
+        "contact phone",
+        "contact information",
+        "contact address",
+        "online form",
+        "online request",
+        "product for approval",
+        "approved product",
+        "certified mark",
+        "certified list",
+        "listing request",
+        "product listing",
+        "logo usage",
+        "trademark license",
+        "trademark licence",
+        "work group",
+        "committee",
+        "board of directors",
+    ]);
+    let submission_or_listing_workflow = submission && administrative_channel;
+    let institutional_conflict_workflow = has_any(&[
+        "conflict resolution",
+        "mutual agreement",
+        "recommended resolution",
+    ]) && has_any(&[
+        "email",
+        "work group",
+        "committee",
+        "board of directors",
+        "chair",
+        "submitted",
+        "escalated",
+        "final determination",
+        "certification program",
+        "certified program",
+        "logo",
+        "test lab",
+    ]);
+    let derivative_listing_workflow = has_any(&[
+        "derivative product",
+        "derivative products",
+        "as a derivative",
+    ]) && has_any(&[
+        "apply",
+        "listing",
+        "listed",
+        "request",
+        "re-test",
+        "re-testing",
+    ]);
+    let certification_attestation_workflow = has_any(&["certified", "certification"])
+        && has_any(&["manufacturer", "manufacturers", "supplier", "applicant"])
+        && has_any(&["shall assert", "must attest", "shall attest"])
+        && has_any(&["requirements", "criteria"]);
+    let certification_mark_administration = has_any(&["mark", "marks", "marking"])
+        && has_any(&[
+            "badge",
+            "logo",
+            "trademark",
+            "license to display",
+            "licence to display",
+            "display the mark",
+            "display the certified",
+            "product listing",
+            "certified list",
+            "ecosystem participants",
+            "organizations wishing",
+        ]);
+    let institutional_testing_administration = has_any(&["test lab", "test labs", "auditor"])
+        && has_any(&[
+            "certification program",
+            "contracted",
+            "selecting a lab",
+            "single site",
+            "administer third party testing",
+        ]);
+    let product_qualification_testing = has_any(&["product", "products"])
+        && has_any(&["tested", "testing", "submitted for test"])
+        && has_any(&["out-of-box", "end user", "offered in the market"]);
+
     copyright_notice
         || inherently_legal
         || warranty_or_liability
@@ -11165,6 +11326,14 @@ fn is_legal_or_administrative_statement(text: &str) -> bool {
         || revocable_permission
         || commercial_terms
         || ipr_declaration
+        || document_reading_guidance
+        || submission_or_listing_workflow
+        || institutional_conflict_workflow
+        || derivative_listing_workflow
+        || certification_attestation_workflow
+        || certification_mark_administration
+        || institutional_testing_administration
+        || product_qualification_testing
 }
 
 #[cfg(test)]
@@ -19757,6 +19926,76 @@ mod tests {
     }
 
     #[test]
+    fn administrative_section_classifier_requires_non_engineering_context() {
+        for administrative in [
+            "References",
+            "2.1 Normative references",
+            "3 Informative references",
+            "1.3 Requesting a product to be included on the Certified list",
+            "1.4 Requesting licence to display the certification mark",
+            "1.7 Independent Test Labs",
+            "Requested information for internal processing",
+            "Publication of Certified products",
+        ] {
+            assert!(
+                super::is_administrative_section_title(administrative),
+                "administrative section should be excluded: {administrative}"
+            );
+        }
+
+        for technical in [
+            "Table 35. Format of PML4E that References a Page Table",
+            "References to the architectural state",
+            "Request and Response Channel",
+            "Receiver compliance",
+            "Compliance mode requirements",
+            "Independent reset test logic",
+            "Requested data internal pipeline",
+        ] {
+            assert!(
+                !super::is_administrative_section_title(technical),
+                "technical section must survive: {technical}"
+            );
+        }
+    }
+
+    #[test]
+    fn administrative_statement_classifier_requires_organizational_workflow() {
+        for administrative in [
+            "The following documents can be helpful when reading this specification.",
+            "Upon receipt of the request, the review team will respond via email regarding its status.",
+            "All requests for conflict resolution must be submitted to the committee chair by email.",
+            "A conflict resolution process lets members challenge products issued a certification logo or third-party test-lab results.",
+            "A derivative product can apply for logo usage through a new listing request.",
+            "When submitting a product for approval, the manufacturer shall assert that the certified requirements are met.",
+            "Organizations wishing to display the certification mark must accept the trademark license.",
+            "The contracted auditor and test lab administer third party testing for the certification program.",
+            "Products are expected to be tested in an out-of-box state before being offered in the market.",
+        ] {
+            assert!(
+                super::is_legal_or_administrative_statement(administrative),
+                "administrative workflow should be excluded: {administrative}"
+            );
+        }
+
+        for technical in [
+            "If the Page Request completes, the response status is Success.",
+            "Upon receiving a Link State Status Request Packet, the manager shall respond with Not Ready.",
+            "The conditions for inactive contacts shall apply to contact C6.",
+            "The arbiter resolves a write conflict before the next clock edge.",
+            "A certified device shall meet all electrical requirements in the protocol definition.",
+            "A certified controller shall assert READY when the protocol requirements are met.",
+            "The test report shall record the measured receiver jitter tolerance.",
+            "While READY is low, VALID must remain asserted.",
+        ] {
+            assert!(
+                !super::is_legal_or_administrative_statement(technical),
+                "technical protocol/compliance prose must survive: {technical}"
+            );
+        }
+    }
+
+    #[test]
     fn legal_conditions_under_generic_heading_do_not_reach_semantic_surfaces() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("legal-boundary.md");
@@ -19837,6 +20076,117 @@ mod tests {
         assert!(intent_ir.behaviors.iter().all(|behavior| {
             !behavior.statement.contains("permissions granted")
                 && !behavior.statement.contains("derivative works")
+        }));
+
+        Ok(())
+    }
+
+    #[test]
+    fn administrative_workflows_remain_evidence_but_not_semantic_behavior() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("administrative-boundary.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# References\n",
+                "The following documents can be helpful when reading this specification.\n\n",
+                "# 1.3 Requesting a product to be included on the Certified list\n",
+                "Upon receipt of a request, the review team will respond via email regarding its status.\n\n",
+                "# Conflict Resolution\n",
+                "All requests for conflict resolution must be submitted to the committee chair by email.\n\n",
+                "# Derivative Products\n",
+                "A derivative product can apply for logo usage through a new listing request.\n\n",
+                "# Device Requirements\n",
+                "When submitting a product for approval, the manufacturer shall assert that the certified requirements are met.\n\n",
+                "A certified device shall meet all electrical requirements in the protocol definition.\n\n",
+                "Signal READY is input width 1.\n\n",
+                "Signal VALID is output width 1.\n\n",
+                "While READY is low, VALID must remain asserted.\n",
+            ),
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        for retained in [
+            "helpful when reading",
+            "respond via email",
+            "conflict resolution",
+            "derivative product",
+            "submitting a product for approval",
+        ] {
+            assert!(
+                evidence_ir
+                    .extracted_statements
+                    .iter()
+                    .any(|statement| statement.text.contains(retained))
+            );
+        }
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        for excluded in [
+            "helpful when reading",
+            "respond via email",
+            "conflict resolution",
+            "derivative product",
+            "submitting a product for approval",
+        ] {
+            assert!(
+                semantic_ir
+                    .gates
+                    .iter()
+                    .all(|gate| !gate.condition.contains(excluded))
+            );
+            assert!(
+                semantic_ir
+                    .invariants
+                    .iter()
+                    .all(|invariant| !invariant.statement.contains(excluded))
+            );
+        }
+        assert!(semantic_ir.phases.iter().all(|phase| {
+            !phase.summary.contains("`References`")
+                && !phase.summary.contains("Requesting a product")
+        }));
+        assert!(semantic_ir.invariants.iter().any(|invariant| {
+            invariant
+                .statement
+                .contains("certified device shall meet all electrical requirements")
+        }));
+        assert!(semantic_ir.gates.iter().any(|gate| {
+            gate.condition
+                .contains("While READY is low, VALID must remain asserted.")
+        }));
+
+        semantic_ir.write_to_disk()?;
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        assert!(intent_ir.behaviors.iter().all(|behavior| {
+            !behavior.statement.contains("respond via email")
+                && !behavior.statement.contains("conflict resolution")
+                && !behavior.statement.contains("derivative product")
+                && !behavior
+                    .statement
+                    .contains("submitting a product for approval")
+        }));
+        assert!(intent_ir.behaviors.iter().any(|behavior| {
+            behavior
+                .statement
+                .contains("While READY is low, VALID must remain asserted.")
         }));
 
         Ok(())
