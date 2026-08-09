@@ -115,6 +115,8 @@
   > was the (contract ... eventually ...) ISF clause removed
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > was the fresh SWD 29 of 29 artifact promoted
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > was the warning-safe rolling ledger transaction independently audited from a clean clone
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what FSMGen question/feature-request did KG-ISF-TRANSACTIONS.2i raise (value-less output participation / unordered-or-partial-order body / phase-group metadata / ordering-as-constraint)
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
@@ -296,5 +298,3 @@
   > what happens to a register-worded caption that grounds no identifier
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > what happens to the extraction-quality gauge when the constraint surface is replaced
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > what happens when the NLI provider is down

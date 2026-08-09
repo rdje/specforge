@@ -21,13 +21,12 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `ROOT-ROLLING-LEDGER-PRESSURE.2`; `.1` has materialized and verified the four exact rotations in
-  its work-unit commit.
-- Current state: roots are warning-safe at changes 87 records / 1,246 lines / 188,183 bytes, development
-  62 / 1,294 / 175,215, status 59 / 101 / 82,836, and Rust 55 / 1,064 / 89,706. Exact 29/24/12/8-record
-  segments, reciprocal manifests, and complete indexes pass the focused checker; old members are byte-identical.
-- Next action: commit `.1`, then `.2` independently audits the clean committed continuity plane, future append
-  capacity, reconstruction, routes, generic/focused alignment, and residue before closing this tree.
-- In-flight uncommitted: none after the `.1` implementation commit; product behavior, shared inputs, thresholds,
-  ceilings, capsules, and pre-existing segment bytes are unchanged.
+- Active unit: `CORPUS-COVERAGE.2.33d.iii`; root-ledger pressure is closed through its independently audited `.2`.
+- Current state: the four ledgers have exact 29/24/12/8-record segments and warning-safe current roots at changes
+  88 records / 1,259 lines / 189,197 bytes, development 63 / 1,306 / 176,145, status 60 / 102 / 83,464, and Rust
+  55 / 1,064 / 89,706. A clean same-SSD clone of `10d182ff` reproduces every chain and a valid next append.
+- Next action: close `.2.33d.iii` as measured-unnecessary if the already-landed direct convergence proof still
+  covers every weak candidate path, then `.2.33d.iv` rebuilds and signs off the real USB cascade.
+- In-flight uncommitted: none after the root-ledger `.2` closure commit; product behavior, shared inputs,
+  thresholds, ceilings, capsules, and segment bytes are unchanged.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

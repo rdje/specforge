@@ -211,6 +211,15 @@ installs segment then manifest/index then root, and restores exact prior bytes a
 tests prove rollback and residue cleanup. The resulting roots are changes 87 records / 1,246 lines / 188,183
 bytes, development 62 / 1,294 / 175,215, status 59 / 101 / 82,836, and Rust 55 / 1,064 / 89,706: every health
 dimension is below warning, and no threshold or ceiling is widened.
+
+The closure audit reproduces commit `10d182ff` from a no-hardlink clone on the repository volume. The clone's
+only initial doctrine failure is the standard uninitialized `subs/fsmgen` gitlink; populating exact commit
+`d327129b` from the existing same-SSD checkout makes all six doctrines pass. A temporary valid record through
+each of the four grammars proves the next concise append remains reachable at 88/63/60/56 records and
+1,250/1,298/102/1,068 lines, still below warning. After exact fixture restoration, clean Git/object checks, zero
+transaction residue, and workspace deletion, the real closure records leave the current roots at changes 88
+records / 1,259 lines / 189,197 bytes, development 63 / 1,306 / 176,145, status 60 / 102 / 83,464, and Rust 55 /
+1,064 / 89,706. The pressure tree is closed.
 No historical content is removed before its identity, replacement route, consumers, and retrieval
 procedure are proved.
 The top-level README remains a first-class landing page; changing detail and

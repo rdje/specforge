@@ -141,7 +141,7 @@ The author template is linked separately and is never classified as active work.
 | `REGISTER-CLASSIFIER-ENCODING-FP` | `done` | stop DVM/encoding cross-reference tables being mis-read as register maps | [open](tasks/REGISTER-CLASSIFIER-ENCODING-FP.md) |
 | `REGISTER-MAP-CLASSIFIER-PRECISION` | `done` | stop the over-eager `register_map` table classification | [open](tasks/REGISTER-MAP-CLASSIFIER-PRECISION.md) |
 | `ROADMAP-TASKTREE-COVERAGE` | `done` | every roadmap milestone task-tree-owned + audited + locked to code & mdBook | [open](tasks/ROADMAP-TASKTREE-COVERAGE.md) |
-| `ROOT-ROLLING-LEDGER-PRESSURE` | `active` | restore bounded headroom in current continuity ledgers | [open](tasks/ROOT-ROLLING-LEDGER-PRESSURE.md) |
+| `ROOT-ROLLING-LEDGER-PRESSURE` | `done` | restore bounded headroom in current continuity ledgers | [open](tasks/ROOT-ROLLING-LEDGER-PRESSURE.md) |
 | `SIGNAL-TABLE-COLUMNLESS-RECALL` | `done` | capture signals from column-less Signal\|Description tables | [open](tasks/SIGNAL-TABLE-COLUMNLESS-RECALL.md) |
 | `SIGNOFF-REMEDIATION` | `done` | Restore signoff quality at HEAD | [open](tasks/SIGNOFF-REMEDIATION.md) |
 | `SPEC-MINING-PROVENANCE` | `done` | name the discipline + a per-author adopt/defer ledger | [open](tasks/SPEC-MINING-PROVENANCE.md) |

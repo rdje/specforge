@@ -1,3 +1,16 @@
+### ROOT-ROLLING-LEDGER-PRESSURE.2 — independently audit and close ledger pressure
+
+- Cloned committed materialization `10d182ff` without local hardlinks into a repository-volume workspace and
+  reproduced Git integrity, all four exact roots, complete archive chains/indexes, generic pressure, 35 focused
+  cases, book/map truth, and all six doctrines.
+- Root-caused the clone's only initial doctrine failure as its normally uninitialized FSMGen gitlink, then
+  populated exact commit `d327129b` from the existing same-SSD checkout; no network or off-volume data was used.
+- Proved future reachability by prepending one valid audit-only record through every ledger grammar. The resulting
+  88/63/60/56-record roots remained below warning and reconstructed every historical byte.
+- Restored a clean clone, verified object integrity and zero transaction residue, removed the audit workspace,
+  synchronized the durable task/research/book facts, and closed this tree without a product, limit, or archive
+  change.
+
 ### ROOT-ROLLING-LEDGER-PRESSURE.1 — enforce and materialize generic ledger rollover
 
 - Bound each focused ledger to its unique generic rolling-ledger surface. Line/byte/max-line milestones now use

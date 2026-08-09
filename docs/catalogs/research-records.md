@@ -48,6 +48,7 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/research/register-reset-emit-measurement.md](../../docs/research/register-reset-emit-measurement.md) | Register-reset → ISF `(storage (var … (reset V)))` lowering — corpus measurement (`ISF-REGISTER-RESET-EMIT.1`) |
 | [docs/research/relation-completeness-measurement.md](../../docs/research/relation-completeness-measurement.md) | Relation-completeness measurement (`KG-ISF-COMPLETENESS.3`, `2026-06-17`) |
 | [docs/research/rolling-ledger-archive-route-containment-design.md](../../docs/research/rolling-ledger-archive-route-containment-design.md) | Rolling-ledger archive-route containment design |
+| [docs/research/root-rolling-ledger-pressure-audit.md](../../docs/research/root-rolling-ledger-pressure-audit.md) | Root rolling-ledger pressure independent closure audit |
 | [docs/research/root-rolling-ledger-pressure-plan.md](../../docs/research/root-rolling-ledger-pressure-plan.md) | Root rolling-ledger pressure census and transaction plan |
 | [docs/research/task-evidence-terminal-containment-design.md](../../docs/research/task-evidence-terminal-containment-design.md) | Terminal task-evidence containment design |
 | [docs/research/transaction-capture-census.md](../../docs/research/transaction-capture-census.md) | Transaction-capture census (`KG-ISF-TRANSACTIONS.1`) |

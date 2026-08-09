@@ -1,4 +1,16 @@
 # DEVELOPMENT_NOTES
+## ROOT-ROLLING-LEDGER-PRESSURE.2 (`2026-08-09`) — audit both the committed view and the next append
+
+Revalidating the installed chains from the implementation worktree would share its index and runtime state. The
+closure instead uses a no-hardlink clone under `generated/` on the same SSD, authenticates commit `10d182ff`, and
+reruns object, focused, generic, book/map, and doctrine checks.
+
+A plain clone correctly leaves gitlinks uninitialized, so its first doctrine run identified five absent FSMGen
+feedback evidence paths. Populating the exact committed `d327129b` gitlink from the existing same-volume checkout
+made the complete gate green; that prerequisite is distinct from ledger state. Four temporary grammar-valid
+prepends then proved a concise next record remains reachable in every root. Exact restoration, clean status,
+object integrity, residue census, and audit-workspace deletion close the independent proof.
+
 ## ROOT-ROLLING-LEDGER-PRESSURE.1 (`2026-08-09`) — authenticate the old view before writing the new one
 
 A plan cannot identify a cut by current ordinal alone because required task records prepend after its boundary.

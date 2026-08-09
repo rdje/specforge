@@ -63,8 +63,10 @@
   warning. The focused checker currently applies milestones to enforcement ceilings rather than the generic
   health targets. `.1` now joins those authorities and provides a bounded committed-boundary/dry-run/root-last/
   rollback transaction. Exact 29/24/12/8-record segments leave the roots at 1,246/1,294/101/1,064 lines, all
-  below warning, while old archive members remain byte-identical. Thirty-five focused cases cover the transaction;
-  no threshold or ceiling widens. ADR 0020 separately accepts a
+  below warning, while old archive members remain byte-identical. Thirty-five focused cases cover the transaction.
+  `.2` independently reproduces commit `10d182ff` from a clean same-SSD clone and proves a valid next record for
+  every grammar remains warning-safe; exact restoration and zero residue close the pressure tree. No threshold or
+  ceiling widens. ADR 0020 separately accepts a
   bounded fact-card browse projection: the stable
   root keeps exhaustive direct-ID membership while deterministic count-packed parts carry detailed rows; a derived
   198-card maximum and fixed root/part/aggregate limits preserve the existing 200-file collection ceiling. Its

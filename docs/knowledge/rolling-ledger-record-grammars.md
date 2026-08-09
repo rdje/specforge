@@ -12,10 +12,11 @@ answers:
   - "how will the shared rolling ledger archive index be partitioned"
   - "does the rolling ledger verifier validate predecessor successor chronology"
   - "which root rolling ledger is currently above its rollover signal"
+  - "was the warning-safe rolling ledger transaction independently audited from a clean clone"
 date: 2026-08-08
 status: current
 tags: [documentation, rolling-ledger, archive, continuity, validation]
-evidence: doctrine/live_document_size/rolling_ledgers.jsonl; docs/archive/rolling-ledgers/INDEX.md; docs/archive/rolling-ledgers/changes/manifest.jsonl; docs/archive/rolling-ledgers/development-notes/manifest.jsonl; docs/archive/rolling-ledgers/live-achievement-status/manifest.jsonl; docs/archive/rolling-ledgers/rust-codebase-analysis/manifest.jsonl; docs/research/root-rolling-ledger-pressure-plan.jsonl
+evidence: doctrine/live_document_size/rolling_ledgers.jsonl; docs/archive/rolling-ledgers/INDEX.md; docs/archive/rolling-ledgers/changes/manifest.jsonl; docs/archive/rolling-ledgers/development-notes/manifest.jsonl; docs/archive/rolling-ledgers/live-achievement-status/manifest.jsonl; docs/archive/rolling-ledgers/rust-codebase-analysis/manifest.jsonl; docs/research/root-rolling-ledger-pressure-plan.jsonl; docs/research/root-rolling-ledger-pressure-audit.md
 reverify: perl scripts/check_rolling_ledger_protocol.pl --report
 ---
 
@@ -43,7 +44,8 @@ was 87.9% of line health. The focused checker incorrectly applied milestones to 
 the generic health authority and has materialized exact 29/24/12/8-record cuts through the existing per-ledger
 index/manifest topology. The changes segment is `segment-0002-2026-08-09.md`: 29 records / 428 lines / 37,189
 bytes / SHA-256 `bc87665975d80078697384e89b2127e67164ae0e523a8076b93f81eb5582fbd8`; the current root is 87 records /
-1,246 lines / 188,183 bytes.
+1,246 lines / 188,183 bytes after `.1`. The closure record makes the current root 88 records / 1,259 lines /
+189,197 bytes.
 
 `DEVELOPMENT_NOTES.md` completed the second migration in `.4c`. Its immutable 1,601-record capsule is
 `docs/archive/rolling-ledgers/development-notes/source-through-2026-08-08.md` with SHA-256
@@ -54,8 +56,8 @@ That root contained the H1 prologue, 10 newest post-capsule records, then the ex
 suffix. The next rollover seals 24 records in `segment-0002-2026-08-09.md`: 421 lines / 34,258 bytes / SHA-256
 `0576c44b7b95c40bc4669128ce07ebdc6a99b1ebbe9322cd1aca3acad8c04cbd`. The current root contains two later
 task records, the ten newest opening records, and the exact 50-record suffix: 62 records / 1,294 lines / 175,215
-bytes. Segment 0001's final former-successor separator remains represented by the protocol's canonical terminal
-newline.
+bytes after `.1`. The closure record makes the current root 63 records / 1,306 lines / 176,145 bytes. Segment
+0001's final former-successor separator remains represented by the protocol's canonical terminal newline.
 
 `LIVE_ACHIEVEMENT_STATUS.md` completed the third migration in `.4d`. Its immutable 1,920-record
 capsule is
@@ -79,6 +81,7 @@ The third rollover seals 12 records in `segment-0003-2026-08-09.md`: 12 lines / 
 `segment-0004-2026-08-09.md`: 12 lines / 11,420 bytes / SHA-256
 `6d1c07596313d0c98c04afde63dd23d7df61fda291bd50d2cbc57a0568b924eb`. The current status root has 19 new
 records, the exact 40-record suffix, and its complete trailer: 59 records / 101 lines / 82,836 bytes.
+The closure bullet makes the current status root 60 records / 102 lines / 83,464 bytes.
 `RUST_CODEBASE_ANALYSIS.md` completed the fourth migration in `.4e`. Its immutable 1,350-record
 capsule is
 `docs/archive/rolling-ledgers/rust-codebase-analysis/source-through-2026-08-08.md` with SHA-256
@@ -104,6 +107,12 @@ its manifest, while the landing must expose exactly the four registry-ordered le
 parser/control/chain/route/transaction mutations and 55 generic lifecycle/overflow cases pass. The transaction
 authenticates the committed boundary and exact range, stages on the repository volume, installs the root last,
 and restores exact prior bytes under an injected failure without residue.
+
+The `.2` closure independently clones commit `10d182ff` without local hardlinks beneath `generated/` on the same
+device, validates Git objects and all four chains, and passes all six doctrines after populating the clone's
+normally uninitialized `subs/fsmgen` gitlink at exact commit `d327129b`. One temporary valid record through each
+grammar leaves 88/63/60/56 records and 1,250/1,298/102/1,068 lines, all below warning. The audit removes those
+fixtures exactly, proves a clean clone and zero transaction residue, then deletes the workspace.
 
 For an H2 live cut, one blank line immediately before the removed successor is boundary structure,
 not retained record content. The capsule preserves it exactly; the root renderer omits exactly that

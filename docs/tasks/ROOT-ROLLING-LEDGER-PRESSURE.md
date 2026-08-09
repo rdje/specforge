@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `ROOT-ROLLING-LEDGER-PRESSURE`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: process / continuity / rolling-ledger pressure
 - Created: `2026-08-09`
 - Last updated: `2026-08-09`
@@ -38,7 +38,7 @@ to fail one commit later.
 ## Task Tree
 
 - ID: `ROOT-ROLLING-LEDGER-PRESSURE`
-  Status: active
+  Status: done
   Goal: restore bounded, lossless continuity-ledger headroom
   Children: `ROOT-ROLLING-LEDGER-PRESSURE.0`, `ROOT-ROLLING-LEDGER-PRESSURE.1`,
   `ROOT-ROLLING-LEDGER-PRESSURE.2`
@@ -66,18 +66,19 @@ to fail one commit later.
   Commit: `ROOT-ROLLING-LEDGER-PRESSURE.1 — materialize warning-safe ledger rollovers`
 
 - ID: `ROOT-ROLLING-LEDGER-PRESSURE.2`
-  Status: in_progress
+  Status: done
   Goal: independently audit the resulting continuity plane and close this tree
   Acceptance: a clean committed-tree audit reconstructs every source byte, proves direct bounded retrieval and
   future append capacity, synchronizes the mdBook method, and closes the tree
-  Verification: pending
-  Commit: pending
+  Verification: clean no-hardlink clone of `10d182ff`; Git object/diff/status/device/gitlink identity; exact
+  focused/generic reconstruction; 35 cases; direct chains/routes; future valid append in all four grammars; six
+  doctrines; final clean clone/residue removal; main-tree full gates
+  Commit: `ROOT-ROLLING-LEDGER-PRESSURE.2 — independently audit and close ledger pressure`
 
 ## Current Frontier
 
-| Order | Leaf | Status | Why next |
-| --- | --- | --- | --- |
-| 1 | `ROOT-ROLLING-LEDGER-PRESSURE.2` | `in_progress` | independently reproduce and audit the committed result before closing the tree |
+Empty — tree closed. Product work resumes at `CORPUS-COVERAGE.2.33d.iii`, where the already-measured conditional
+convergence backstop must be explicitly closed before the real USB cascade signoff in `.d.iv`.
 
 ### Acceptance Checklist (enforced) — `ROOT-ROLLING-LEDGER-PRESSURE.0`
 
@@ -116,6 +117,25 @@ to fail one commit later.
 - [x] **LOCKSTEP** — roots, new segments, reciprocal manifests, complete indexes, rolling-ledger/surface registries,
   `COMMIT.md`, research evidence, Knowledge Map fact, roadmap/status/resume, Rust analysis, and mdBook all describe
   the same installed transaction and `.2` audit frontier.
+
+### Acceptance Checklist (enforced) — `ROOT-ROLLING-LEDGER-PRESSURE.2`
+
+- [x] **REPRODUCE / MEASURE** — a repository-volume `--no-local` clone authenticates commit `10d182ff`, device
+  `16777240`, clean Git state/object graph, the exact four roots, all archive chains/routes, and the committed
+  `d327129b` FSMGen gitlink.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the clone's first doctrine failure is traced to standard uninitialized-gitlink
+  state: five FSMGen feedback evidence paths are absent until the exact gitlink is populated. Focused ledger,
+  generic pressure, book, and map checks already pass, so this is a bootstrap prerequisite rather than drift.
+- [x] **ADDRESSED (verified)** — initializing the exact gitlink from the existing same-SSD checkout makes all six
+  doctrines pass. One valid uncommitted record through each grammar leaves 88/63/60/56 records and
+  1,250/1,298/102/1,068 lines, all below warning with complete reconstruction.
+- [x] **NO REGRESSION** — audit fixtures are removed exactly; clone diff/status and `git fsck --full` pass; no
+  `.rolling-ledger*` residue exists; the audit workspace is deleted; main-tree focused/generic/doctrine/docs/full
+  CI/locality gates close the tree.
+- [x] **GENERICITY** — the audit exercises each declared grammar through the same registry-driven validator and
+  generic surface authority. It does not special-case a historical record, widen a limit, or invent a topology.
+- [x] **LOCKSTEP** — task/research/map/roadmap/status/resume/book record the same committed boundary, gitlink
+  prerequisite, exact metrics, future-append proof, zero residue, closed tree, and resumed corpus frontier.
 
 ## Opening Signal
 
@@ -161,6 +181,7 @@ warning. `.0` must remeasure the exact new clean boundary rather than copy those
 | --- | --- | --- | --- |
 | `2026-08-09` | `.0` | four opening Git blobs/SHA-256 identities; JSONL schema/bounds; 24 protocol and 7 task-catalog self-tests; current protocol/reconstruction report; 244-member canonical catalogs; 161-card/1,146-question map; generic 48-surface report; archive/index/control diff; six doctrines; 1,779 Rust tests / five ignored; Clippy; rustdoc; 36-file / 13,291-line / 808,887-byte mdBook; final locality/residue | exact 29/24/12/8-record plan is reproducible, bounded, and green; required continuity prepends are the only ledger changes |
 | `2026-08-09` | `.1` | Perl syntax; 35 focused protocol/transaction cases; exact planned segment hashes/endpoints; root, chain, manifest, index, suffix, pressure, old-member identity, rollback, and residue checks; generic 48-surface report; 161-card/1,146-question map; six doctrines; mdBook test/build at 36 files / 13,323 lines / 811,271 bytes; formatting; Clippy; 1,779 Rust tests / five ignored; rustdoc; final locality | exact four-ledger materialization is warning-safe, reconstructible, byte-preserving, and green; no threshold or ceiling widens |
+| `2026-08-09` | `.2` | clean no-hardlink same-device clone of `10d182ff`; clean status/diff and `git fsck`; exact `d327129b` gitlink; focused reconstruction and 35 cases; generic pressure; 161-fact/1,147-question map; six clone doctrines; valid future record in every grammar; exact restore/residue/workspace cleanup; 245-member catalogs; six main-tree doctrines; 36-file / 13,332-line / 812,080-byte mdBook; formatting; Clippy; 1,779 Rust tests / five ignored; rustdoc; final locality | committed and next-append states reproduce independently; tree closed without product/archive/limit changes |
 
 ## Commit Log
 
@@ -168,9 +189,13 @@ warning. `.0` must remeasure the exact new clean boundary rather than copy those
 | --- | --- | --- |
 | `.0` | `ROOT-ROLLING-LEDGER-PRESSURE.0 — lock the four-ledger rollover plan` | opening boundary, pressure root cause, exact transaction plan, no record movement |
 | `.1` | `ROOT-ROLLING-LEDGER-PRESSURE.1 — materialize warning-safe ledger rollovers` | generic guarded writer, exact four-ledger materialization, warning-safe roots, rollback proof |
+| `.2` | `ROOT-ROLLING-LEDGER-PRESSURE.2 — independently audit and close ledger pressure` | clean-clone reconstruction, future-append proof, final closure |
 
 ## Changelog
 
+- `2026-08-09`: `.2` independently reproduced commit `10d182ff` from a clean same-SSD clone, closed its standard
+  uninitialized-gitlink prerequisite, passed six doctrines, and proved one valid next record remains warning-safe
+  in every grammar. Exact restoration and zero residue close this tree; corpus work resumes at `.2.33d.iii`.
 - `2026-08-09`: `.1` bound the focused checker to generic health authority, added the guarded committed-boundary
   dry-run/apply transaction plus 11 focused cases, and installed exact 29/24/12/8-record segments. The four roots
   are below warning; manifests/indexes are complete; old archive members are byte-identical; all gates pass. `.2`
