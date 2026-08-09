@@ -238,8 +238,12 @@
   > does platform/system-IP (category 3) topology intent need a new ISF construct or map onto an existing one (ISF has NO declarative static-topology/connectivity construct — composition is transaction-level only; decision deferred to a capture-recall measurement .4c.i before any FR)
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > does register extraction require the table_kind register classification
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > does relation-derived direction synthesis independently invent signal names
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
   > does sanitizing the module name break initiator port matching (no — from_intent_ir re-derives the initiator raw; actor_name is only the label)
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > does select_initiator_actor choose the first or last equal maximum
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > does specforge handle coordinated drive/read objects (X drives A and B)
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
@@ -294,7 +298,3 @@
   > how are FSM states recovered when the protocol quotes them as node modes instead of <Name> state
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > how are GICD_CHIPR<n> / TCU_NODE_CTRL n array registers named
-- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
-  > how are NAME[hi:lo] bit-ranges parsed into frame fields
-- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
-  > how are SWCLK and SWDIO captured if they are not in a signal table

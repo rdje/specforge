@@ -135,7 +135,10 @@ today's ephemeral normalized-directory count.
   seeds reinforce through relation-derived directions and a phantom request actor wins initiator selection. The
   exact one-file/4.9 MiB rollback was removed only after comparison; residue is zero. The repair is handed to
   `.2.33d` rather than treating strict syntax as faithful output.
-- ID: `CORPUS-COVERAGE.2.33d` · Status: `pending` (`2026-08-09`, PROBE/CODE/DOC) · Goal: repair the
+- ID: `CORPUS-COVERAGE.2.33d` · Status: `in_progress` (`2026-08-09`, PROBE/CODE/DOC) · Children: `.d.i`
+  universal boundary probe (done), `.d.ii` grounded signal-authority repair (pending), `.d.iii`
+  convergence/adapter trust backstop (pending, conditional on `.d.i`), `.d.iv` real-cascade signoff (pending).
+  Goal: repair the
   universal dense-prose false-signal feedback path before USB 3.2 is accepted as a trustworthy ISF result.
   Measurement must preserve all four independently observed seeds: an ordinary `signal at ...` clause admitted
   `AT`, a parenthetical non-wire bus acronym admitted `USB`, a VBUS requirements matrix misclassified as a signal
@@ -144,6 +147,52 @@ today's ephemeral normalized-directory count.
   phantom prose actor from winning `select_initiator_actor`, distinguish semantic trust from FSMGen syntax, retain
   the known WIRE/FSMGen/KG corpus wins, and add a real USB regression plus the focused and broad gates warranted by
   every changed extraction seam.
+
+- ID: `CORPUS-COVERAGE.2.33d.i` · Status: `done` (`2026-08-09`, PROBE/DOC) · Goal: measure the
+  four USB false-signal seed families across all retained SourceIR/EvidenceIR/IntentIR artifacts before changing
+  code; locate the first source-grounded authority boundary each lacks; quantify every candidate production and
+  consumer path; verify initiator tie behavior; and choose the smallest universal grammar/structure repair that
+  removes false hardware without deleting real WIRE/serial signals. **Done:** the 80-EvidenceIR census found
+  3,104 formal and 97 weak sentence-start `signal <word>` matches (38 weak doc/token pairs; 15 relation-active /
+  120 relations; 11 direction-promoted), plus 17 `Bus (ACRONYM)` width-one declarations across six docs
+  (14 relation-active / 135 relations / 12 promotions). Of 32 port/pin-only table classifications, 11 pass the
+  current authority gate and yield 32 raw row candidates. Runtime direction synthesis is closed over those
+  upstream catalogs and does not independently invent names, so `.d.iii` is measured unnecessary if direct
+  convergence and real-USB regressions prove closure. Selected `.d.ii`: require a formal declaration predicate,
+  remove `bus` from the single-wire head grammar, and require compact inventory structure for ordinary
+  port/pin tables. Preserve I2C/I2S/SWD/SWP, genuine/rotated signal tables, and connector pins. Nine of 79
+  IntentIR docs have maximum producer ties; live behavior chooses the lexicographically last equal maximum, so
+  `.d.ii` also owns a comment correction and tie test without changing selection behavior. Durable report:
+  `docs/research/dense-prose-signal-authority-measurement.md`.
+- ID: `CORPUS-COVERAGE.2.33d.ii` · Status: `pending` (`2026-08-09`, CODE/DOC) · Goal: implement the
+  `.d.i`-selected universal signal-authority repair with direct regressions for every activated seam and no
+  document/token denylist; retain genuine table/prose declarations and all fixed extraction oracles.
+- ID: `CORPUS-COVERAGE.2.33d.iii` · Status: `pending` (`2026-08-09`, CODE/DOC, conditional) · Goal: if the
+  `.d.i` proof shows upstream precision cannot structurally prevent every weak candidate from being laundered,
+  add one fail-closed convergence/adapter trust boundary with explicit disposition; otherwise close this leaf as
+  measured unnecessary rather than layering a redundant heuristic.
+- ID: `CORPUS-COVERAGE.2.33d.iv` · Status: `pending` (`2026-08-09`, DATA/DOC) · Goal: rebuild the real USB
+  EvidenceIR→adapter chain with the repaired release binary, prove the false ports/actor/rules no longer emit,
+  run FSMGen/WIRE/KG/full-CI/path/locality gates, align the mdBook and durable facts, and close `.2.33d`/`.2.33`.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.33d.i`
+
+- [x] **REPRODUCE / MEASURE** — preserved the exact 45-relation USB before signature and measured 97 weak
+  declaration phrases, 17 bus-acronym width-one captures, and 32 port/pin-only classifications across all
+  retained artifacts; `docs/research/dense-prose-signal-authority-measurement.md` carries the recheckable census.
+- [x] **ROOT CAUSE (WHY + WHERE)** — located the three first unsupported promotions in formal-declaration
+  parsing, parenthetical single-wire heads, and shared table authority; proved direction synthesis only
+  amplifies them; verified nine maximum-tie docs and lexicographically-last live tie behavior.
+- [x] **ADDRESSED (verified)** — `.d.ii` owns the three bounded catalog repairs and exact focused regressions;
+  `.d.iii` is measured unnecessary subject to direct convergence + real-USB proof; current USB artifacts retain
+  the exact reproducible before signature for `.d.iv`.
+- [x] **NO REGRESSION** — the design explicitly retains I2C/I2S/SWD/SWP prose forms, genuine/rotated signal
+  inventories, SWJ/connector pins, and requires focused fixtures plus WIRE-BASED-100 1.000, FSMGen strict,
+  `kg-bench` 156/156, full CI, mdBook, doctrine, and locality gates in the code/signoff leaves.
+- [x] **GENERICITY** — the selected rules use declaration predicates, single-wire category, and table identity
+  structure; no USB/vendor/document key, candidate signal token, or expanding denylist enters the design.
+- [x] **LOCKSTEP** — task, durable research/fact card, live ledgers/status, mdBook repair plan, and `MEMORY.md`
+  agree; no production code or generated artifact changed in the probe.
 
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.33a`
 
@@ -303,6 +352,13 @@ leaving the refreshed SourceIR→adapter stage chains intact.
 **PHASE FINDING (#22, the already-current-binary-equivalent class is now the RULE, not the exception):** a one-pass survey of the 35 remaining normalized-missing docs' persisted evidence (`2026-06-23`) shows the register-heavy ones the frontier had flagged as "genuinely pre-`.10`-stale" are ALREADY current — CoreSight SoC-600 ×3 = 597/631/833 `register_records`, AMD-IOMMU `48882` = 217 `message_field_records`, Intel VT-d = 103 registers — because their evidence was rebuilt from the retained `source_ir.json` before the `normalized/` bundle was reclaimed (the #21/#22 class). So the marquee-jump phase (SMMU/GIC/MMU/DTI/CHI-C2C) is effectively complete; the remaining ~35 slices are predominantly **bundle-restoration + current-binary confirmation + honest-absence / Lever-D-recall documentation**, which is still genuine corpus-coverage work (a doc that depends only on a retained `source_ir.json` is one disk-reclaim away from losing its evidence; restoring `normalized/` makes it rebuildable). A true pre-`.10`-stale jump remains possible in the long tail but is now the exception.
 
 ## Changelog
+
+- `2026-08-09`: `.2.33d.i` PROBE/DOC DONE. The all-artifact census separates three unsupported signal-authority
+  promotions from the downstream direction amplifier: 97 weak sentence-start declaration matches, 17
+  bus-acronym width-one captures, and 11 accepted port/pin-only table shapes. Selected the bounded `.d.ii`
+  grammar/structure repairs, proved `.d.iii` needs no separate heuristic if convergence/USB regressions close,
+  measured producer ties in nine IntentIR docs, and routed the full evidence to the research catalog and durable
+  fact. No production/generated artifact changed. Frontier after commit → `.2.33d.ii`.
 
 - `2026-08-09`: `.2.33c` DATA/DOC DONE. Completed and validated USB 3.2 through SemanticIR, IntentIR,
   adapter, and real FSMGen strict. SourceIR 6,584→5,830 is visual-label suppression, not prose loss: every

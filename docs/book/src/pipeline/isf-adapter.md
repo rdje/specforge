@@ -56,6 +56,21 @@ model is nevertheless semantically untrustworthy. SpecForge records that result 
 not as successful lowering. The generic repair is tracked by `CORPUS-COVERAGE.2.33d`; it must fix grounding and
 trust disposition without document-name or token special cases.
 
+The measurement behind that repair found three upstream authority errors, not a reason to distrust every
+relation-derived direction. Across the retained corpus, 97 sentence-start phrases use `signal <word>` without
+declaring a signal; 17 `Bus (ACRONYM)` phrases are misread as width-one wires; and 11 port/pin-only tables pass a
+signal-inventory gate despite lacking inventory structure. The repair therefore acts where each name first
+enters the catalog: require the formal declaration predicate, reserve the parenthetical fallback for actual
+single-wire heads (a bus is not one), and require a compact signal/name/symbol/pin structure for ordinary
+port/pin tables. Genuine I2C/I2S/SWD/SWP prose declarations, connector pins, and normal or rotated signal tables
+are explicit retention tests.
+
+This placement matters. Relation extraction scans only cataloged signals, table relations use the same table
+gate, and the direction pass copies a relation's existing name—it does not invent another one. A second adapter
+deny-filter would hide the upstream cause and could erase legitimate signals whose only direction evidence is a
+documented driver relation. The tracked real USB rebuild is the final proof: the false four-port/29-rule model
+must disappear because its names never gain authority, not because the adapter recognizes USB vocabulary.
+
 ## ISF IR data model
 
 The ISF IR is a typed tree in `ir/isf_ir.rs`. The root struct:

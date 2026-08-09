@@ -19,13 +19,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.33d` — next owned PNT leaf, universal dense-prose adapter-trust repair.
-- Current state: `.2.33c` is complete and verified. All USB stages validate; the adapter emits four false prose signals and 29 rules under phantom
-  actor `setportfeature_port_over_current`. FSMGen strict passes syntax, but the result is semantically blocked.
-  The durable causal fact and owned universal repair leaf `.2.33d` are present. Corpus census is 80 SourceIR /
-  2 normalized / 80 EvidenceIR / 79 SemanticIR, IntentIR, and adapters; refresh progress is 33 complete / 23 left.
-- Next action: activate `.2.33d`, measure the universal repair boundaries across all four false-signal seams,
-  then implement a real USB regression with WIRE/FSMGen/KG/full-CI proof.
-- In-flight uncommitted: none after the `.2.33c` commit. Fresh ignored USB stage artifacts remain as the `.2.33d`
-  regression input. The exact rollback is gone after comparison/zero residue; temp contains only `.gitkeep`.
+- Active unit: `CORPUS-COVERAGE.2.33d.i` — universal dense-prose signal-authority probe; complete in this commit.
+- Current state: the 80-EvidenceIR/79-IntentIR census locates three upstream authority errors: 97 weak
+  sentence-start declaration matches, 17 bus-acronym width-one captures, and 11 accepted port/pin-only table
+  shapes. Direction synthesis only amplifies names from those catalogs, so no separate downstream heuristic is
+  planned if direct convergence and real USB verification pass. The durable report/fact and exact USB before
+  signature are current; no production/generated artifact changed. Corpus remains 80 SourceIR / 2 normalized /
+  80 EvidenceIR / 79 downstream chains; refresh progress is 33 complete / 23 left.
+- Next action: from a clean post-probe commit, activate `CORPUS-COVERAGE.2.33d.ii`; implement only the measured
+  formal-predicate, non-bus single-wire, and port/pin inventory-structure repairs plus tie-comment regression.
+- In-flight uncommitted: none after the `.2.33d.i` commit. Fresh ignored USB stage artifacts remain the `.d.iv`
+  regression input; temp contains only `.gitkeep`.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

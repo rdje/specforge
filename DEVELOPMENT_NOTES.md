@@ -1,4 +1,30 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.33d.i (`2026-08-09`) — authority must be granted where a name enters the catalog
+
+The fixed-point is not the first place to repair USB. Its direction pass receives an actor/signal relation and
+adds a direction to the relation's existing signal name; it cannot originate a new name. Prose relations scan
+only the known-signal set, and table relations share the same top-level table gate. A downstream deny/filter
+would therefore duplicate catalog authority while endangering 766 retained relation-derived directions, many of
+which are the only direction evidence for genuine signals.
+
+Each activated catalog has a smaller structural correction. A formal declaration is defined by its predicate,
+not merely the words `signal X`; the corpus shows 3,104 `is input|output|width` forms versus 97 ordinary uses.
+A `bus` is categorically not a one-bit wire, while the neighboring `line/clock/data/pin` forms are required by
+the serial golds. Port/pin vocabulary in a caption is context, not inventory structure; compact identity headers
+or a headerless connector/pin diagram separate genuine pins and rotated signal tables from USB state/status
+matrices without a token list.
+
+The producer tie is a documentation defect but not the semantic cause. `Iterator::max_by_key` replaces an equal
+earlier maximum, so name-ascending `BTreeMap` iteration selects the lexicographically last tied actor. Nine of 79
+IntentIR artifacts have such ties; USB's three false `(2,0)` candidates choose `SetPortFeature(...)`. Preserving
+that deterministic behavior while correcting and testing the comment avoids an unrelated behavior change. Once
+the catalog repairs remove the false ports, there is no false actor tie to resolve.
+
+The complete census, mixed-vintage caveat, before signature, repair contract, and verification handoff live in
+`docs/research/dense-prose-signal-authority-measurement.md`. `.2.33d.ii` owns code; `.2.33d.iii` closes as
+measured unnecessary only after the direct convergence regression and `.2.33d.iv` real USB rebuild confirm the
+proof. This probe changes no production code or generated artifact.
+
 ## CORPUS-COVERAGE.2.33c (`2026-08-09`) — downstream syntax cannot certify upstream meaning
 
 The USB cascade completed mechanically, but its adapter result overturns the prior dense-prose assumption that

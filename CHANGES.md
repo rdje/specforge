@@ -1,3 +1,19 @@
+### CORPUS-COVERAGE.2.33d.i — measure and bound dense-prose signal authority
+
+- Measured every retained artifact before changing extraction code. Sentence-start `signal <word>` has 3,104
+  formal declarations and 97 ordinary-prose matches across 28 documents; 15 weak document/token pairs become
+  relation-active (120 relations), and 11 are promoted to output declarations.
+- Found 17 `Bus (ACRONYM)` width-one prose declarations across six documents; 14 become relation-active (135
+  relations) and 12 gain direction. None denotes a single wire. Of 32 port/pin-only table classifications, 11
+  currently pass the shared authority gate and yield 32 raw row candidates.
+- Selected three universal `.2.33d.ii` repairs: require the formal declaration predicate, remove `bus` from the
+  single-wire parenthetical grammar, and require compact inventory structure for ordinary port/pin tables.
+  I2C/I2S/SWD/SWP prose forms, genuine/rotated tables, and connector pins are explicit retention oracles.
+- Proved direction synthesis only amplifies existing catalog names, so a separate downstream trust heuristic is
+  unnecessary if the direct convergence and real USB regressions pass. Nine of 79 IntentIR docs have maximum
+  producer ties; live selection chooses the lexicographically last equal maximum, contrary to its comment.
+  Added the durable research record and refined causal fact; no production or generated artifact changed.
+
 ### CORPUS-COVERAGE.2.33c — complete the USB cascade and surface the adapter trust block
 
 - Completed and validated the 548-page USB 3.2 chain through SemanticIR, IntentIR, and ISF adapter. The retained

@@ -8,9 +8,14 @@ answers:
   - "does FSMGen strict success prove that a SpecForge adapter is semantically faithful"
   - "why is the USB 3.2 adapter syntactically valid but semantically untrustworthy"
   - "what is CORPUS-COVERAGE.2.33d dense-prose adapter trust repair"
+  - "how many sentence-start signal descriptor phrases pollute the retained corpus"
+  - "why is bus not a valid parenthetical single-wire head"
+  - "what table structure is required before port or pin vocabulary grants signal authority"
+  - "does relation-derived direction synthesis independently invent signal names"
+  - "does select_initiator_actor choose the first or last equal maximum"
 date: 2026-08-09
 tags: [corpus-coverage, dense-prose, signal-inventory, actor-signal-relations, isf, semantic-fidelity, false-positive, table-classification, fixed-point]
-evidence: generated/source_ir/usb_3_2_revision_1_0_2017_09/source_ir.json; generated/evidence_ir/usb_3_2_revision_1_0_2017_09/evidence_ir.json; generated/intent_ir/usb_3_2_revision_1_0_2017_09/intent_ir.json; generated/adapters/isf/usb_3_2_revision_1_0_2017_09/adapter.json; crates/specforge/src/ir/source/docling_backend.rs (classify_table_kind); crates/specforge/src/ir/evidence.rs (collect_known_signal_names, synthesize_signal_declarations_from_prose, actor_signal_relation_surface, synthesize_directions_from_relations); crates/specforge/src/ir/isf_ir.rs (select_initiator_actor); docs/tasks/CORPUS-COVERAGE.md (.2.33c/.2.33d)
+evidence: docs/research/dense-prose-signal-authority-measurement.md; generated/source_ir/usb_3_2_revision_1_0_2017_09/source_ir.json; generated/evidence_ir/usb_3_2_revision_1_0_2017_09/evidence_ir.json; generated/intent_ir/usb_3_2_revision_1_0_2017_09/intent_ir.json; generated/adapters/isf/usb_3_2_revision_1_0_2017_09/adapter.json; crates/specforge/src/ir/source/docling_backend.rs (classify_table_kind); crates/specforge/src/ir/evidence.rs (collect_known_signal_names, synthesize_signal_declarations_from_prose, actor_signal_relation_surface, synthesize_directions_from_relations); crates/specforge/src/ir/isf_ir.rs (select_initiator_actor); docs/tasks/CORPUS-COVERAGE.md (.2.33c/.2.33d)
 reverify: "Build USB 3.2 through adapter with the current release binary. jq extracted_statements 7916/8269/8416-8419 and actor_signal_relations for AT/ENHANCED/NO/USB from generated/evidence_ir/usb_3_2_revision_1_0_2017_09/evidence_ir.json; inspect SourceIR table_0210; group generated/intent_ir/usb_3_2_revision_1_0_2017_09/intent_ir.json actor_ports by actor_name and direction; inspect adapter.json .isf; run subs/fsmgen/bin/fsmgen --strict --check --json generated/adapters/isf/usb_3_2_revision_1_0_2017_09/setportfeature_port_over_current.isf. Expect four false signals, three 2-output/0-input phantom candidates, selected setportfeature_port_over_current, and FSMGen success with zero diagnostics."
 ---
 
@@ -57,3 +62,34 @@ alone must never be reported as faithful output.
 The repair must be universal and measurement-first. No USB token, vendor/document key, or expanding word
 denylist can be used. It must address the independently unsafe seams, prevent relation-derived declarations
 from laundering weak candidates, keep WIRE/FSMGen/KG gold behavior, and add a real USB end-to-end regression.
+
+## Corpus boundary measurement and selected repair (`CORPUS-COVERAGE.2.33d.i`)
+
+The follow-up census establishes that the USB loop is an instance of three corpus-wide authority mismatches,
+not four independent name producers. Across 80 retained EvidenceIR artifacts, sentence-start `signal <word>`
+has 3,104 formal `is input|output|width` matches and 97 non-declaration matches across 28 documents. Fifteen
+weak document/token pairs become relation-active (120 relations), and 11 are promoted to output declarations.
+Requiring the emitted formal predicate preserves all formal matches and removes the weak class without a name
+list.
+
+The sparse prose fallback carries 17 `Bus (ACRONYM)` width-one declarations across six documents; 14 become
+relation-active (135 relations) and 12 gain output declarations. Every one names a bus/protocol rather than a
+single wire. Removing only `bus` from the single-wire-head grammar preserves the I2C/I2S/SWD/SWP `line`,
+`clock`, `data`, `pin`, and definitional oracles.
+
+The table census finds 32 port/pin-only `signal_description` classifications across 11 documents; 11 tables
+across five documents pass the current authority gate and yield 32 raw row candidates. Because the family mixes
+real connector pins with false state/status matrices, the repair is structural rather than a blanket drop:
+ordinary port/pin vocabulary must be backed by a compact signal/name/symbol/pin identity header or a headerless
+connector/pin-diagram shape. Explicit signal inventories and rotated name-column tables remain valid.
+
+Relation-derived direction synthesis is an amplifier, not an independent signal-name source: prose relations
+scan only the known-signal set, table relations share the table authority gate, and direction synthesis copies
+an existing relation name. Therefore a separate adapter/convergence heuristic is measured unnecessary if the
+three catalog fixes and real USB rebuild prove closure. The code slice must lock that with a direct convergence
+regression.
+
+Finally, nine of 79 retained IntentIR artifacts have a maximum net-producer tie (51 tied actors). Rust's live
+iteration selects the lexicographically last equal maximum, contrary to the nearby first-wins comment. USB's
+three `(2,0)` phantoms demonstrate this, but changing tie order would only choose another false actor; the code
+slice should preserve behavior, correct the comment, and test the tie explicitly.

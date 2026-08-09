@@ -16,6 +16,7 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/research/cat4-csr-bit-position-recovery-measurement.md](../../docs/research/cat4-csr-bit-position-recovery-measurement.md) | Cat-4 RISC-V CSR bit-position recovery — feasibility measurement (`DOC-INTENT-TAXONOMY.4d.i`) |
 | [docs/research/cat4-isa-csr-lowering-decision.md](../../docs/research/cat4-isa-csr-lowering-decision.md) | Cat-4 (CPU ISA / privileged architecture) ISF-lowering decision packet — `DOC-INTENT-TAXONOMY.4d` |
 | [docs/research/conditional-rule-lowering-triage.md](../../docs/research/conditional-rule-lowering-triage.md) | Conditional-rule lowering triage — `DOC-INTENT-TAXONOMY.4e` (the `.2` Result 3 per-item triage) |
+| [docs/research/dense-prose-signal-authority-measurement.md](../../docs/research/dense-prose-signal-authority-measurement.md) | Dense-prose signal-authority measurement — `CORPUS-COVERAGE.2.33d.i` |
 | [docs/research/document-intent-category-census.md](../../docs/research/document-intent-category-census.md) | Document-intent category census (DOC-INTENT-TAXONOMY.1) |
 | [docs/research/document-intent-isf-completeness.md](../../docs/research/document-intent-isf-completeness.md) | Per-category ISF-lowering completeness gauge (DOC-INTENT-TAXONOMY.2) |
 | [docs/research/full-page-capture-gap.md](../../docs/research/full-page-capture-gap.md) | Full-Page Intent-Capture Gap — measured report (`FULL-PAGE-INTENT-CAPTURE.1`) |
