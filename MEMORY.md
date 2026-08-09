@@ -19,15 +19,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SWD-SERIAL-EXTRACTION.7e.i` — protocol-aware convergence snapshots and fact counts.
-- Current state: `.7b`/`.7c` carry all four protocol collections exactly through canonical IntentIR; `.7d`
-  assigns every record one stable ordered adapter residual with provenance and explicit missing bindings. The
-  directly lowerable subset is empty, while unrelated ISF remains byte-identical, renderable, and FSMGen-strict.
-  Full `.7d` CI is green at 1,771 passed / five ignored. The status ledger's first post-migration segment also
-  preserves 12 aged-out records exactly and leaves 60 live records. Convergence snapshots still omit all four
-  protocol collections and can miss a protocol-only change.
-- Next action: activate `.7e.i`; add all four collections to Evidence/Semantic/Intent convergence snapshots and
-  fact counts, then prove protocol-only changes are visible without perturbing unrelated convergence behavior.
-- In-flight uncommitted: none after the `.7d` commit. Generated migration state remains repository-local and
+- Active unit: `SWD-SERIAL-EXTRACTION.7e.ii` — fresh tracked-PDF promotion and SWD program closure.
+- Current state: all four typed protocol collections now reach convergence snapshots at EvidenceIR, SemanticIR,
+  and IntentIR in exact vector order, and each record contributes to its stage fact count. A real three-stage
+  fixture proves five-record deltas, same-cardinality content detection, reorder detection, and empty
+  compatibility. Full CI is green at 1,772 passed / five ignored with all six doctrines, warning-deny Clippy,
+  rustdoc, mdBook doctests/build, and final locality.
+- Next action: after the `.7e.i` commit, activate `.7e.ii`; perform a fresh repository-local CPU ingest of the
+  tracked ADI PDF, promote the complete 29/29 chain, and prove downstream parity/residual/convergence closure.
+- In-flight uncommitted: none after the `.7e.i` commit. Generated migration state remains repository-local and
   intentionally ignored; the exact rollback and disposable loader workspace are absent.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

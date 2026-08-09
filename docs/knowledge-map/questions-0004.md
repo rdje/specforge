@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > is there a buildable transaction ordered multi-phase body lever beyond .2b
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > is there a first opt-in extractor for the CORPUS-PATTERN-REUSE activate-only consume side
+- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
+  > is there a lowering-completeness check for temporal rules
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
   > is tier-agreement a good confidence axis for conformal calibration
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -291,9 +297,3 @@
   > what is declared_signal_complete_gold_precision
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
   > what is dedup_constraints / its canonical key
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > what is definitional_signal_names / the copula + glossary-colon prose-signal grammar
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > what is document_completeness_gauge / document_completeness_gaps / why is a guide not penalized
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what is document_intent_category / the 6-category purpose recognizer

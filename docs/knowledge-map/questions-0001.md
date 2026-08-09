@@ -120,6 +120,8 @@
   > do field constraints pass the same grounding gates as signal constraints
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
   > do host-local source libraries define tracked corpus membership
+- [swd-protocol-surfaces-stop-at-evidenceir](../knowledge/swd-protocol-surfaces-stop-at-evidenceir.md)
+  > do protocol records contribute to knowledge_fact_count
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > do signal presence records mint signals or declarations
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
@@ -200,8 +202,12 @@
   > does constrained contract extraction ship code
 - [swd-protocol-convergence-snapshots-are-blind](../knowledge/swd-protocol-convergence-snapshots-are-blind.md)
   > does converge detect a protocol only SWD change
+- [swd-protocol-surfaces-stop-at-evidenceir](../knowledge/swd-protocol-surfaces-stop-at-evidenceir.md)
+  > does converge detect a protocol-only content change
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > does converge re-ingest the PDF every run
+- [swd-protocol-surfaces-stop-at-evidenceir](../knowledge/swd-protocol-surfaces-stop-at-evidenceir.md)
+  > does convergence preserve protocol record order
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > does corpus KB refresh mutate canonical IR or CorpusMemory
 - [contested-priors](../knowledge/contested-priors.md)
@@ -292,9 +298,3 @@
   > how are bits | name | function tables extracted
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > how are byte location | size | register description tables extracted
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > how are caption-less page fragments of a split table stitched together
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how are continuation table fragments (B1.1 Continued from previous page) chained to a channel role
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > how are doctrines enforced in specforge

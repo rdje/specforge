@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > where did SpecForge suggest LTL/MTL support in ISF
+- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
+  > where did the AXI AWIDUNQ / WTAGUPDATE duplicate records go
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > where did the root architecture catalog go
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > where do CCIX PER error structure fields land in the IR
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
@@ -291,9 +297,3 @@
   > why did .1b.i NOT strip trailing prepositions and what changed in .1c.i
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > why did APB unexplained_intent_bearing_tables go to zero
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > why did AXI atomic_transaction / prefetch / writezero / writedeferrable go from 0 to a real signal set
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > why did AXI unexplained tables go 32 to 31 and ACE 36 to 35 and LTI 6 to 4
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > why did AXI unexplained tables go 39 to 32 and the denominator 94 to 98

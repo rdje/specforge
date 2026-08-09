@@ -1,6 +1,6 @@
 ---
 id: swd-protocol-surfaces-stop-at-evidenceir
-title: SWD protocol surfaces reach IntentIR exactly and receive per-record ISF residuals
+title: SWD protocol surfaces reach IntentIR, ISF residuals, and convergence accounting exactly
 answers:
   - "do SWD serial frame fields reach IntentIR"
   - "does the ISF adapter consume swd_operations or protocol_states"
@@ -14,11 +14,14 @@ answers:
   - "does IntentIR preserve SWD protocol provenance and order"
   - "does every SWD protocol record receive an ISF adapter disposition"
   - "what are the isf_protocol residual packet prefixes"
+  - "does converge detect a protocol-only content change"
+  - "do protocol records contribute to knowledge_fact_count"
+  - "does convergence preserve protocol record order"
 date: 2026-08-08
 status: current
 tags: [swd, evidence-ir, semantic-ir, intent-ir, isf, projection, completeness]
-evidence: docs/tasks/SWD-SERIAL-EXTRACTION.md (.7d); docs/decisions/0016-swd-protocol-projection-and-honest-isf-boundary.md; crates/specforge/src/ir/semantic.rs; crates/specforge/src/ir/intent.rs; crates/specforge/src/ir/adapters.rs
-reverify: "rg -n 'serial_frame_fields|swd_operations|protocol_states|interface_edge_timings|protocol_residual_decisions' crates/specforge/src/ir/semantic.rs crates/specforge/src/ir/intent.rs crates/specforge/src/ir/adapters.rs && ! rg -n 'serial_frame_fields|swd_operations|protocol_states|interface_edge_timings' crates/specforge/src/ir/isf_ir.rs"
+evidence: docs/tasks/SWD-SERIAL-EXTRACTION.md (.7e.i); docs/decisions/0016-swd-protocol-projection-and-honest-isf-boundary.md; crates/specforge/src/ir/semantic.rs; crates/specforge/src/ir/intent.rs; crates/specforge/src/ir/adapters.rs; crates/specforge/src/commands/converge.rs
+reverify: "rg -n 'serial_frame_fields|swd_operations|protocol_states|interface_edge_timings|protocol_residual_decisions' crates/specforge/src/ir/semantic.rs crates/specforge/src/ir/intent.rs crates/specforge/src/ir/adapters.rs crates/specforge/src/commands/converge.rs && ! rg -n 'serial_frame_fields|swd_operations|protocol_states|interface_edge_timings' crates/specforge/src/ir/isf_ir.rs"
 ---
 
 The typed SWD protocol surfaces — `serial_frame_fields`, `swd_operations`, `protocol_states`, and
@@ -40,3 +43,9 @@ requires exact typed carry-through and residualization of every under-specified 
 directly lowerable subset is empty. Protocol residuals do not enter `IsfIr`, alter emitted counts/source, or
 make otherwise blocked input renderable. Unrelated, independently licensed ISF may still render and pass
 FSMGen strict, while the adapter artifact makes the missing protocol behavior explicit.
+
+`SWD-SERIAL-EXTRACTION.7e.i` also makes the pipeline convergence snapshot retain exact ordered copies of all
+four collections at EvidenceIR, SemanticIR, and IntentIR. Each record contributes once to its stage's
+`fact_count`, so additions and removals affect the aggregate monotone guard. Snapshot equality compares the
+complete typed vectors, so same-cardinality content changes and reordering are visible too. Empty collections
+add zero and preserve prior behavior for documents without protocol records.

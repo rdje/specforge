@@ -1,3 +1,15 @@
+### SWD-SERIAL-EXTRACTION.7e.i — make convergence protocol-aware
+
+- Added exact ordered serial-frame, protocol-operation, protocol-state, and interface-edge collections to the
+  EvidenceIR, SemanticIR, and IntentIR convergence snapshots. Snapshot equality now detects protocol-only
+  rewrites and reordering even when record counts are unchanged.
+- Added every protocol collection's cardinality to its stage `fact_count` and to the user-facing EvidenceIR pass
+  count. Protocol-empty artifacts retain their previous counts and snapshot behavior.
+- Added a real three-stage fixture proving exact snapshot records, five-fact deltas at each stage, same-count
+  content-change detection, order-change detection, and unchanged counts for replacements/reordering. All 25
+  convergence tests pass. Full CI is green with all six doctrines, formatting, warning-deny Clippy, 1,772
+  passed / five ignored, rustdoc, mdBook doctests/build, and final project-data locality.
+
 ### SWD-SERIAL-EXTRACTION.7d — account for every protocol record at the ISF boundary
 
 - Added deterministic adapter residual generation for every serial-frame field, protocol operation, protocol

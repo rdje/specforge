@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
+  > what is definitional_signal_names / the copula + glossary-colon prose-signal grammar
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > what is document_completeness_gauge / document_completeness_gaps / why is a guide not penalized
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > what is document_intent_category / the 6-category purpose recognizer
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > what is document_type_declared / front_matter_doc_type_hint
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
@@ -291,9 +297,3 @@
   > where are cross-document prior contradictions surfaced
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > where are register bit-fields dropped on the way to .isf (isf_ir.rs:852, IsfStorageVar { name, width, reset } — field metadata discarded)
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > where did SpecForge suggest LTL/MTL support in ISF
-- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
-  > where did the AXI AWIDUNQ / WTAGUPDATE duplicate records go
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > where did the root architecture catalog go

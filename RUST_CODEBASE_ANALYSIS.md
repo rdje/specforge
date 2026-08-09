@@ -4,6 +4,22 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-09 — protocol-aware convergence; `SWD-SERIAL-EXTRACTION.7e.i`)
+
+- **Convergence now observes the complete protocol product.** `EvidenceSnapshot`, `SemanticSnapshot`, and
+  `IntentSnapshot` clone the four ordered protocol vectors, so equality detects content and order changes rather
+  than reducing those facts to cardinality alone.
+- **The monotone metric accounts for protocol residency.** Each stage's `fact_count` adds the exact four vector
+  lengths; the pass-level EvidenceIR count reports them too. Empty collections add zero and preserve unrelated
+  documents' previous behavior.
+- **The regression crosses the real projections.** A two-field plus operation/state/edge fixture builds
+  EvidenceIR→SemanticIR→IntentIR, proves exact vectors and five added facts at every stage, then proves
+  same-cardinality rewrites and reordering change snapshot equality without changing counts. All 25 convergence
+  tests pass; full CI is green at 1,772 passed / five ignored with all doctrines, warning-deny Clippy, rustdoc,
+  mdBook doctests/build, and final locality.
+- **Remaining SWD work is the fresh canonical run.** `.7e.ii` owns repository-local tracked-PDF ingestion,
+  promotion of the complete 29/29 chain, downstream parity/residual/convergence evidence, and program closure.
+
 ## Session update (2026-08-09 — explicit protocol adapter disposition; `SWD-SERIAL-EXTRACTION.7d`)
 
 - **Adapter assembly now accounts for every canonical protocol record.** `protocol_residual_decisions` traverses

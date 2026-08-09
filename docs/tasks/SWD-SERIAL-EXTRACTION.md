@@ -150,7 +150,7 @@ extraction approach distinct from the parallel-bus signal-table path.
   under-specified record as a typed residual, with FSMGen-strict and generic-adapter regressions.
 - ID: `SWD-SERIAL-EXTRACTION.7e` · Status: `pending` (container) · Goal: restore protocol-aware convergence
   accounting, then rebuild/promote the tracked ADI pipeline and close the program from current artifacts.
-- ID: `SWD-SERIAL-EXTRACTION.7e.i` · Status: `pending` · Goal: extend Evidence/Semantic/Intent convergence
+- ID: `SWD-SERIAL-EXTRACTION.7e.i` · Status: `done` (`2026-08-09`) · Goal: extend Evidence/Semantic/Intent convergence
   snapshots and fact counts across all four protocol collections, with protocol-only change detection tests,
   before a fresh canonical run relies on convergence deltas.
 - ID: `SWD-SERIAL-EXTRACTION.7e.ii` · Status: `pending` · Goal: rebuild the tracked ADI pipeline from a fresh
@@ -217,6 +217,21 @@ extraction approach distinct from the parallel-bus signal-table path.
   ports/storage, or schedule assumptions enter lowering or residual generation.
 - [x] **LOCKSTEP** — update adapter/product documentation, live truth, and durable retrieval while keeping
   convergence snapshots and fresh canonical promotion explicitly open under `.7e.i`/`.7e.ii`.
+
+### Acceptance Checklist (enforced) — `SWD-SERIAL-EXTRACTION.7e.i`
+
+- [x] **REPRODUCE / MEASURE** — prove Evidence/Semantic/Intent convergence snapshots omit all four typed
+  protocol collections and that their aggregate fact counts can miss a protocol-only change.
+- [x] **ROOT CAUSE (WHY + WHERE)** — localize the blind spot to snapshot construction and `fact_count` in
+  `converge.rs`; do not alter canonical IR projection, comparison semantics, or adapter behavior.
+- [x] **IMPLEMENT / VERIFY** — add exact ordered protocol collections and counts to all three snapshots, then
+  prove protocol-only additions/removals/changes are visible at the correct convergence boundary.
+- [x] **NO REGRESSION** — preserve existing convergence outputs for protocol-empty artifacts and pass focused
+  convergence suites, warning-deny formatting/Clippy, doctrines, and the proportionate broader gate.
+- [x] **GENERICITY / HONESTY** — carry typed records without protocol-name lists, filtering, sorting, inferred
+  semantics, or synthetic facts; counts must equal the exact collection cardinalities.
+- [x] **LOCKSTEP** — update convergence product documentation, live truth, the durable retrieval layer, and
+  the resume pointer while leaving fresh canonical promotion explicitly open under `.7e.ii`.
 
 ### Surfaced portability finding (handoff after `.4e`)
 
@@ -286,7 +301,11 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
   full CI passes.
 - `SWD-SERIAL-EXTRACTION.7d` — **DONE.** Every protocol record receives one stable ordered adapter residual
   naming provenance and missing bindings. The directly lowerable subset remains empty; independent ISF stays
-  byte-identical, renderable, and FSMGen-strict. Next pickable leaf: `.7e.i` protocol-aware convergence.
+  byte-identical, renderable, and FSMGen-strict.
+- `SWD-SERIAL-EXTRACTION.7e.i` — **DONE.** All three convergence snapshots retain exact ordered protocol
+  records and count each record at its persisted stage. Same-cardinality rewrites and reordering are visible;
+  protocol-empty behavior is unchanged; focused checks and full CI pass. Next pickable leaf: `.7e.ii` fresh
+  tracked-PDF promotion and closure.
 
 - `SWD-SERIAL-EXTRACTION.4c` — **DONE.** Added `SwdioDirection {HostDrives, TargetDrives}` + `swdio_direction`
   on `SerialFrameField`; `extract_serial_frame_fields` derives it from the spec's own "from the `<A>` to the
@@ -404,6 +423,12 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
   The status prepend also triggered its mandatory record rollover: 12 oldest post-migration records were copied
   byte-for-byte into authenticated segment `live-achievement-status-0001`, then their live duplicates were
   removed, reducing the window 72→60 while preserving the exact 40-record suffix and validation trailer.
+- `.7e.i`: `EvidenceSnapshot`, `SemanticSnapshot`, and `IntentSnapshot` now retain exact ordered copies of all
+  four protocol vectors and add their lengths to stage `fact_count`; the pass-level EvidenceIR count includes
+  them too. A real two-field plus operation/state/edge projection fixture proves exact five-fact deltas at every
+  stage, same-cardinality content changes, order changes, and unchanged counts for replacements/reordering. All
+  25 convergence tests and warning-deny Clippy pass. Full `scripts/run_ci.sh` is green: all six doctrines,
+  formatting, Clippy, 1,772 passed / 5 ignored, rustdoc, mdBook doctests/build, and final project-data locality.
 
 ## Commit log
 
@@ -417,6 +442,7 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 - `.7b`: see the `SWD-SERIAL-EXTRACTION.7b` commit (lossless EvidenceIR→SemanticIR projection and counts).
 - `.7c`: see the `SWD-SERIAL-EXTRACTION.7c` commit (lossless SemanticIR→IntentIR projection and counts).
 - `.7d`: see the `SWD-SERIAL-EXTRACTION.7d` commit (per-record protocol residual accounting at ISF boundary).
+- `.7e.i`: see the `SWD-SERIAL-EXTRACTION.7e.i` commit (exact protocol-aware convergence snapshots and counts).
 
 ## Changelog
 
@@ -439,3 +465,6 @@ WDATA/RDATA — MISSING Start/Parity/Stop/Park, no direction/sequence/turnaround
 - `2026-08-09`: `.7d` added one stable, ordered adapter residual per protocol record, preserved unrelated ISF
   byte-for-byte and FSMGen-strict, completed the first lossless post-migration status rollover, and advanced the
   frontier to `.7e.i` convergence accounting.
+- `2026-08-09`: `.7e.i` made all three convergence snapshots retain and count exact protocol records, proved
+  same-cardinality content/order detection plus empty compatibility, and advanced the frontier to `.7e.ii` fresh
+  canonical promotion and program closure.

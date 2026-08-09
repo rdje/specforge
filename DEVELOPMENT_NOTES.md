@@ -1,4 +1,16 @@
 # DEVELOPMENT_NOTES
+## SWD-SERIAL-EXTRACTION.7e.i (`2026-08-09`) — convergence needs identity as well as cardinality
+
+A collection length can detect additions and removals, but it cannot detect a same-cardinality rewrite or
+reordering. That is insufficient for protocol records whose exact field order, branch properties, state action,
+edge contract, and provenance are the carried product. Evidence/Semantic/Intent convergence snapshots therefore
+retain the complete typed vectors and derive their fact-count contribution from vector length.
+
+This separates the two convergence duties cleanly. `fact_count` remains the monotone stage-residency metric, so
+each record counts once at every stage that persists it. Full snapshot equality supplies the stronger fixpoint
+test, catching content and order changes even when the aggregate count is unchanged. Empty vectors contribute
+zero, preserving all protocol-empty convergence behavior.
+
 ## SWD-SERIAL-EXTRACTION.7d (`2026-08-09`) — residual identity is the adapter's disposition ledger
 
 When a canonical record lacks enough operands for executable lowering, a collection-level warning is too weak:

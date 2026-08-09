@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > how is a fused contract's automation_confidence computed
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how is a guide reported so it is not a silent 0-yield extraction miss
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > how is a message field's width kept honest (per-variant widths stay None)
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > how is a promoted constraint surface visible in the extraction manifest
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
@@ -291,9 +297,3 @@
   > is the whole renderable corpus FSMGen --strict clean now (yes — 70/70 current-emit .isf after .2a.vi; the ISF-emit strict-FAIL frontier is closed: Levers A/B/C/F + .2a.vi)
 - [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
   > is there a PSL or SVA export of temporal rules
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > is there a buildable transaction ordered multi-phase body lever beyond .2b
-- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
-  > is there a first opt-in extractor for the CORPUS-PATTERN-REUSE activate-only consume side
-- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
-  > is there a lowering-completeness check for temporal rules

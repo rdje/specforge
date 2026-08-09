@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > how are caption-less page fragments of a split table stitched together
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > how are continuation table fragments (B1.1 Continued from previous page) chained to a channel role
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > how are doctrines enforced in specforge
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
   > how are document keys in the source PDF registry derived from filenames
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
@@ -292,9 +298,3 @@
   > how is a frame field's width kept honest (why is ARBITRATION FIELD width None not 11)
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > how is a fused Fields(Continued) caption handled
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > how is a fused contract's automation_confidence computed
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how is a guide reported so it is not a silent 0-yield extraction miss
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > how is a message field's width kept honest (per-variant widths stay None)

@@ -121,6 +121,14 @@ It:
 
 This is the main command when you want a serious local run on a real spec.
 
+The persisted snapshot compares exact ordered records for serial-frame fields, protocol operations,
+protocol states, and interface-edge timings at EvidenceIR, SemanticIR, and IntentIR. Therefore a
+protocol-only content or order change keeps the loop running even when collection cardinalities stay
+the same. Additions and removals also change `knowledge_fact_count`: each protocol record contributes
+once at every persisted stage that carries it, matching the command's existing stage-residency
+accounting rather than a cross-stage deduplicated fact count. Documents with no protocol records keep
+the same snapshot and count behavior as before.
+
 ### Flags
 
 Full surface and defaults (authoritative source: `crates/specforge/src/cli.rs`
@@ -158,7 +166,9 @@ cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target isf 
 ```
 
 This remains an arbitration surface, not an auto-fix path.
-The stable convergence snapshot is the convergence result.
+The stable convergence snapshot is the convergence result. Because it retains complete protocol
+records rather than count-only summaries, a post-rescan rewrite, reorder, addition, or removal on any
+of those four collections sets `rescan_plan_snapshot_changed` even when the aggregate count is unchanged.
 Post-rescan validation changes are reported as `changed_requires_validation_review` until validation and evidence arbitration say they are safe to promote.
 The convergence summary also exposes review-required counters split across possible-improvement, regression, and neutral artifact-change verdicts from the persisted recommendation execution summaries.
 
