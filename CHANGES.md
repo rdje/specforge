@@ -1,3 +1,22 @@
+### ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.1 — materialize bounded active task evidence
+
+- Advanced the exact contract to `migrated/complete` through a project-neutral, same-volume materializer. It
+  preflights the committed source and reviewed root, writes the capsule/parts/index/manifest/contract first,
+  writes the current root last, validates the resulting tree, and rolls back only preflight-proven owned paths.
+- Replaced the 2,393-line legacy task source at its stable path with a 106-line / 5,295-byte active current root.
+  Added a 79-line / 5,053-byte index and seven bounded semantic parts totaling 2,473 lines / 225,132 bytes; all
+  52 canonical leaf routes resolve to one primary part.
+- Preserved the committed 222,616-byte source byte-for-byte in an archive terminal at SHA-256
+  `9284dce40ad896c3de3811e95c3fdd347132b1849083499e9c543fc9026a19d4`. All 15 marker payloads reproduce their
+  exact source slices, while the compact root conservatively reports `No eligible frontier.`
+- Root-caused and fixed a Unicode byte-boundary defect exposed by the first guarded rollback: generated Unicode
+  scaffolds are encoded before raw legacy bytes are appended. A non-ASCII source fixture now covers both the
+  migrated validator and writer; all 34 focused cases pass. The harness now removes its fixture workspace even
+  when a case fails unexpectedly; ten exact checker-owned residues from earlier failed runs were safely deleted.
+- Registered independent bounded index, semantic-part, and archive-terminal surfaces. Exact route/link/residue
+  checks, fact/Knowledge Map projections, six doctrines, full CI (1,779 passed / five ignored), rustdoc, mdBook,
+  and final locality pass without changing product behavior, shared inputs, thresholds, or ceilings.
+
 ### ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2 — complete the committed active-task migration inputs
 
 - Advanced the active-task contract from `topology_declared` to `complete` against boundary commit `f04db37a`

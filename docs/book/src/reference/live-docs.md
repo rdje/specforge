@@ -163,9 +163,25 @@ hashes and line/byte/max-line metrics; all 52 IDs derived from path commit subje
 route; and all seven planned payloads remain below warning. Historical source spelling is deliberately mixed:
 six canonical IDs occur only as `.10p`/`.12a`-style shorthand, while four more use shorthand in their primary
 payload. Each legacy route therefore binds its canonical ID to a `source_literal` constrained to the full ID or
-its exact tree-relative suffix and token-matched in that payload. Thirty-two focused cases reject arbitrary
+its exact tree-relative suffix and token-matched in that payload. Thirty-two pre-migration cases reject arbitrary
 aliases, missing payload evidence, Git/source drift, premature output, pressure, manifest/frontier errors, and
-seal drift. The destination set remains empty; `.3.1` alone may switch the contract to migrated.
+seal drift.
+
+`.3.1` performs the accepted migration through the contract-driven writer. The stable path is now a 106-line /
+5,295-byte active current root; its sole detail route reaches a 79-line / 5,053-byte index, seven bounded semantic
+parts totaling 2,473 lines / 225,132 bytes, and all 52 canonical leaf routes. The exact 2,393-line / 222,616-byte
+source remains independently retrievable from the archive terminal at SHA-256 `9284dce4…a19d4`; every one of its
+15 regions also appears byte-identically between markers in the owning semantic part. The current root reports
+`No eligible frontier.` under ADR 0019's conservative precedence rather than reviving stale legacy status text.
+
+The writer validates the complete locked state and reviewed root template before it creates anything. It writes
+the capsule, parts, index, manifest, and migrated contract before replacing the stable root, then validates the
+whole resulting tree. A failed write or final check restores the source and contract and removes only destination
+directories whose prior absence established ownership. The first guarded production attempt exercised that
+rollback when Unicode scaffold concatenation upgraded raw UTF-8 legacy bytes and changed their payload identity.
+Generated scaffolds are now encoded before raw source slices are appended, and a non-ASCII legacy fixture keeps
+the boundary covered. All 34 focused cases pass. Three separate live-document surfaces enforce index, part, and
+archive-terminal bounds without widening a threshold or ceiling.
 Post-migration sealing is Git-backed: a part's final content commit lands first, then a following state-only
 transaction records that ancestor commit/blob before any later part accepts work. The migrated legacy payloads
 need no such self-reference because exact source-region markers already make their bytes independently immutable.

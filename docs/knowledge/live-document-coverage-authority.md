@@ -88,6 +88,12 @@ qualified in the source at all. The checker permits only the full ID or its exac
 matches that value in the primary payload, and keeps index/manifest identity fully qualified. Thirty-two focused
 cases exercise the complete source-locked contract before `.3.1` migration.
 
+`.3.1` has now migrated that boundary. The stable path is a 106-line active current root over a 79-line index,
+seven semantic parts, and 52 canonical routes; the exact 2,393-line source is an archive terminal at the locked
+SHA-256. All 15 source slices remain byte-identical in their marked semantic payloads. Independent surface
+records govern the index, part collection, and capsule, and the 34-case checker covers the root-last writer plus
+non-ASCII raw-byte preservation and rollback. `.3.2` owns the independent resulting-tree audit.
+
 `scripts/check_task_tree_archive.pl` now enforces `migrated`: the capsule retains the exact locked identity, and
 the checker validates the closed root, exact index/manifest routes, provenance, milestones, and ceilings. Its
 15-case self-test runs unconditionally through `LIVE-DOC-SIZE`.

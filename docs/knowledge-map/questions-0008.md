@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > why does specforge split on 'and' but not 'or' for a coordinated actor subject
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why does the .isf emit a generic (type TABLE (bits N)) enum / what is the TABLE mega-enum
+- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
+  > why does the ADI spec produce so few signals and so much garbage
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
   > why does the Claude Read tool refuse some PDFs / report password-protected
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
@@ -147,6 +153,8 @@
   > why is the absolute bit position never derived from offset*8+bit
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > why is the block name not used to qualify the duplicate registers (heading levels flattened)
+- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
+  > why is the bounded active task root written last
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > why is the channel role kept verbatim instead of mapped to address/data/response phases
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)

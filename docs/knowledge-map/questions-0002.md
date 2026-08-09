@@ -264,6 +264,8 @@
   > how does the SemanticIR Phase-2 role-term scan (build_actors ACTOR_TERMS) mint Class-C actors
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
   > how does the VLM understand tables / can a VLM read PDF tables
+- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
+  > how does the active task migration preserve non-ASCII legacy bytes
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > how does the ambiguity gate keep channel membership boundary-precise (bar #3)
 - [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
@@ -296,5 +298,3 @@
   > how does validate report registers_without_fields / registers_unresolved_width / signals_without_direction / unexplained_intent_bearing_tables
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > how erroneous are the canonical Pattern constraint surfaces on the persisted corpus
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > how flexible is the register model / what register-table shapes are handled

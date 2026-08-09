@@ -51,7 +51,11 @@
   regions, planned-part pressure, destination absence, future routes/payloads/frontier/manifest, and fixed portable
   caps before any source byte moves. `.2.2` pins the final clean boundary, 15 exact region identities, and all 52
   commit-history routes. Its 32 focused cases also enforce full-or-tree-relative source literals so mixed legacy
-  shorthand remains lossless without becoming an arbitrary alias mechanism. ADR 0020 separately accepts a
+  shorthand remains lossless without becoming an arbitrary alias mechanism. `.3.1` then performs the guarded
+  root-last transaction: a 106-line active root routes through a 79-line index to seven semantic parts, while an
+  archive terminal preserves the exact 2,393-line source. The migrated checker validates all 15 raw payloads,
+  52 canonical routes, manifest identities, pressure, and residue; its 34-case suite includes non-ASCII legacy
+  bytes so rendered Unicode scaffolds cannot silently normalize or double-encode evidence. ADR 0020 separately accepts a
   bounded fact-card browse projection: the stable
   root keeps exhaustive direct-ID membership while deterministic count-packed parts carry detailed rows; a derived
   198-card maximum and fixed root/part/aggregate limits preserve the existing 200-file collection ceiling. Its

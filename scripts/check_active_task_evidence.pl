@@ -6,6 +6,7 @@ use utf8;
 use Cwd qw(abs_path);
 use Digest::SHA qw(sha256_hex);
 use Encode qw(encode_utf8);
+use Fcntl qw(O_CREAT O_EXCL O_WRONLY);
 use File::Basename qw(dirname);
 use File::Path qw(make_path remove_tree);
 use File::Spec;
@@ -21,6 +22,7 @@ my $root;
 my $contract_rel = 'doctrine/live_document_size/active_task_evidence.json';
 my $report = 0;
 my $self_test = 0;
+my $migrate_template_rel;
 
 while (@ARGV) {
     my $arg = shift @ARGV;
@@ -34,6 +36,8 @@ while (@ARGV) {
         $report = 1;
     } elsif ($arg eq '--self-test') {
         $self_test = 1;
+    } elsif ($arg eq '--migrate') {
+        $migrate_template_rel = shift @ARGV // usage();
     } else {
         usage();
     }
@@ -41,6 +45,7 @@ while (@ARGV) {
 
 my $project_root = abs_path(File::Spec->catdir(dirname(abs_path($0)), '..'))
     // die "active-task-evidence: cannot resolve repository root\n";
+usage() if defined($migrate_template_rel) && ($self_test || $report);
 if ($self_test) {
     run_self_test($project_root);
     exit 0;
@@ -48,6 +53,10 @@ if ($self_test) {
 
 $root //= $project_root;
 $root = abs_path($root) // die "active-task-evidence: root does not exist\n";
+if (defined $migrate_template_rel) {
+    materialize_migration($root, $contract_rel, $migrate_template_rel, 0);
+    exit 0;
+}
 my ($errors, $result) = validate_tree($root, $contract_rel);
 if (@$errors) {
     print STDERR "active-task-evidence: $_\n" for @$errors;
@@ -63,7 +72,7 @@ if ($report) {
 exit 0;
 
 sub usage {
-    die "Usage: $0 [--root DIR] [--contract PATH] [--check|--report|--self-test]\n";
+    die "Usage: $0 [--root DIR] [--contract PATH] [--check|--report|--self-test|--migrate ROOT_TEMPLATE]\n";
 }
 
 sub raw_scalar {
@@ -483,7 +492,7 @@ sub validate_contract_schema {
         $contract,
         'contract',
         $errors,
-        qw(schema_version contract_id migration_state input_state current_path identity current_frontier source source_requirements destinations regions leaf_routes route_basis marker_prefix limits migrated_requirements verifier),
+        qw(schema_version contract_id migration_state input_state current_path identity current_frontier migration_metadata source source_requirements destinations regions leaf_routes route_basis marker_prefix limits migrated_requirements verifier),
     );
     push @$errors, 'contract schema_version must be 1'
         if !defined($contract->{schema_version}) || ref($contract->{schema_version}) || $contract->{schema_version} != 1;
@@ -524,6 +533,17 @@ sub validate_contract_schema {
     } else {
         push @$errors, 'contract no-frontier object must not declare leaf_id or part_id'
             if exists($frontier->{leaf_id}) || exists($frontier->{part_id});
+    }
+
+    my $migration_metadata = $contract->{migration_metadata};
+    if (defined($migration_metadata) || ($migration_state // '') eq 'migrated') {
+        reject_unknown($migration_metadata, 'contract migration_metadata', $errors, qw(migrated_on reason));
+        my $migrated_on = required_scalar(
+            $migration_metadata, 'migrated_on', 'contract migration_metadata', $errors,
+        );
+        push @$errors, 'contract migration_metadata migrated_on is not an ISO date'
+            if defined($migrated_on) && $migrated_on !~ /\A\d{4}-\d{2}-\d{2}\z/;
+        required_scalar($migration_metadata, 'reason', 'contract migration_metadata', $errors);
     }
 
     my $source = $contract->{source};
@@ -877,6 +897,8 @@ sub manifest_expected_subset {
         parts => deep_clone($contract->{destinations}{parts}),
         regions => deep_clone($contract->{regions}),
         leaf_routes => deep_clone($contract->{leaf_routes}),
+        migrated_on => $contract->{migration_metadata}{migrated_on},
+        reason => $contract->{migration_metadata}{reason},
         verifier => $contract->{verifier},
     };
 }
@@ -1140,6 +1162,228 @@ sub validate_tree {
     return (\@errors, \%result);
 }
 
+sub relative_markdown_link {
+    my ($from_path, $to_path) = @_;
+    my $relative = File::Spec->abs2rel($to_path, dirname($from_path));
+    $relative =~ s{\\}{/}g;
+    return $relative;
+}
+
+sub part_display_label {
+    my ($part_id) = @_;
+    my $label = join ' ', split /-/, ($part_id // '');
+    $label =~ s/\A([a-z])/\U$1/;
+    return $label;
+}
+
+sub render_semantic_part {
+    my ($contract, $source_raw, $part) = @_;
+    my $lines = split_source_lines($source_raw);
+    my $raw = raw_scalar(
+        "$part->{heading}\n\n- Part ID: `$part->{part_id}`\n- State: `$part->{state}`\n\n",
+    );
+    for my $region (@{$contract->{regions}}) {
+        next if ($region->{part_id} // '') ne ($part->{part_id} // '');
+        my $id = $region->{region_id};
+        my $payload = join '', @$lines[$region->{start_line} - 1 .. $region->{end_line} - 1];
+        $raw .= raw_scalar("<!-- $contract->{marker_prefix}:$id:start -->\n");
+        $raw .= $payload;
+        $raw .= raw_scalar("<!-- $contract->{marker_prefix}:$id:end -->\n\n");
+    }
+    return $raw;
+}
+
+sub render_migration_index {
+    my ($contract) = @_;
+    my $path = $contract->{destinations}{index};
+    my %part_by_id = map { $_->{part_id} => $_ } @{$contract->{destinations}{parts}};
+    my $raw = "# $contract->{identity}{tree_id} task-evidence index\n\n";
+    $raw .= '- [Current root](' . relative_markdown_link($path, $contract->{current_path}) . ")\n";
+    $raw .= '- [Manifest](' . relative_markdown_link($path, $contract->{destinations}{manifest}) . ")\n\n";
+    $raw .= "## Semantic parts\n\n";
+    for my $part (@{$contract->{destinations}{parts}}) {
+        my $label = part_display_label($part->{part_id});
+        $raw .= "- [$label](" . relative_markdown_link($path, $part->{path}) . ")\n";
+    }
+    $raw .= "\n## Primary leaf routes\n\n| Leaf | Primary detail |\n| --- | --- |\n";
+    for my $route (@{$contract->{leaf_routes}}) {
+        my $part = $part_by_id{$route->{part_id}};
+        my $label = part_display_label($route->{part_id});
+        $raw .= "| `$route->{leaf_id}` | [$label]("
+            . relative_markdown_link($path, $part->{path}) . ") |\n";
+    }
+    $raw .= "\n## Exact provenance\n\n";
+    $raw .= '- [Source](' . relative_markdown_link($path, $contract->{destinations}{source_capsule}) . ")\n\n";
+    $raw .= "## Verification\n\nRun `$contract->{verifier}` from the repository root.\n";
+    return raw_scalar($raw);
+}
+
+sub validate_migration_root_template {
+    my ($contract, $root_raw, $errors) = @_;
+    my $actual = metrics($root_raw);
+    my $spec = $contract->{limits}{root};
+    enforce_ceilings(
+        $actual,
+        $spec->{enforcement_ceilings},
+        'migration root template',
+        $errors,
+        {lines => 'lines', bytes => 'bytes', line_bytes => 'line_bytes'},
+    );
+    my @warnings;
+    apply_live_pressure(
+        $actual,
+        $spec,
+        'migration root template',
+        {lines => 'lines', bytes => 'bytes', line_bytes => 'line_bytes'},
+        $errors,
+        \@warnings,
+    );
+    push @$errors, "migration root template begins under warning pressure: $_" for @warnings;
+    validate_required_literals(
+        $root_raw,
+        $contract->{migrated_requirements}{root_required_literals},
+        'migration root template',
+        $errors,
+    );
+    validate_forbidden_literals(
+        $root_raw,
+        $contract->{migrated_requirements}{root_forbidden_literals},
+        'migration root template',
+        $errors,
+    );
+    push @$errors, 'migration root template heading does not match contract identity'
+        if index($root_raw, raw_scalar($contract->{identity}{heading})) != 0;
+    my $tree_literal = "- Tree ID: `$contract->{identity}{tree_id}`";
+    push @$errors, 'migration root template does not carry exactly one declared tree identity'
+        if occurrences($root_raw, $tree_literal) != 1;
+    push @$errors, 'migration root template lacks the declared active-status literal'
+        if occurrences($root_raw, $contract->{identity}{active_status_literal}) == 0;
+    push @$errors, 'migration root template does not carry exactly one current-frontier literal'
+        if occurrences($root_raw, $contract->{current_frontier}{literal}) != 1;
+    my $links = link_counts($root_raw, $contract->{current_path}, 'migration root template', $errors);
+    my $index = $contract->{destinations}{index};
+    push @$errors, "migration root template must link index '$index' exactly once"
+        if ($links->{$index} // 0) != 1;
+    push @$errors, "migration root template contains unexpected local link '$_'"
+        for grep { $_ ne $index } sort keys %$links;
+    return $actual;
+}
+
+sub build_migration_outputs {
+    my ($contract, $contract_rel, $source_raw, $root_raw) = @_;
+    my $migrated = deep_clone($contract);
+    $migrated->{migration_state} = 'migrated';
+    my %outputs = ($migrated->{destinations}{source_capsule} => $source_raw);
+    for my $part (@{$migrated->{destinations}{parts}}) {
+        my $raw = render_semantic_part($migrated, $source_raw, $part);
+        $part->{sha256} = sha256_hex($raw);
+        $part->{metrics} = metrics($raw);
+        $outputs{$part->{path}} = $raw;
+    }
+    $outputs{$migrated->{destinations}{index}} = render_migration_index($migrated);
+    my $manifest = manifest_expected_subset($migrated);
+    $outputs{$migrated->{destinations}{manifest}}
+        = raw_scalar(JSON::PP->new->canonical(1)->pretty(1)->encode($manifest));
+    $outputs{$contract_rel}
+        = raw_scalar(JSON::PP->new->canonical(1)->pretty(1)->encode($migrated));
+    $outputs{$migrated->{current_path}} = $root_raw;
+    return ($migrated, \%outputs);
+}
+
+sub write_raw_atomic {
+    my ($base, $relative, $raw) = @_;
+    die "active-task-evidence migration: unsafe output path '$relative'\n" if !safe_relative_path($relative);
+    my $path = absolute($base, $relative);
+    make_path(dirname($path));
+    my $temporary = "$path.active-task-evidence.$$";
+    sysopen(my $fh, $temporary, O_CREAT | O_EXCL | O_WRONLY, 0600)
+        or die "active-task-evidence migration: cannot create temporary for '$relative': $!\n";
+    binmode $fh, ':raw';
+    my $ok = eval {
+        print {$fh} raw_scalar($raw) or die "cannot write: $!";
+        close $fh or die "cannot close: $!";
+        chmod 0644, $temporary or die "cannot chmod: $!";
+        rename $temporary, $path or die "cannot rename: $!";
+        1;
+    };
+    if (!$ok) {
+        my $reason = $@ || 'unknown write failure';
+        close $fh if defined(fileno($fh));
+        unlink $temporary if -e $temporary || -l $temporary;
+        die "active-task-evidence migration: $relative: $reason\n";
+    }
+}
+
+sub materialize_migration {
+    my ($base, $relative_contract, $template_rel, $quiet) = @_;
+    die "active-task-evidence migration: root template path is unsafe\n"
+        if !safe_relative_path($template_rel);
+    my ($existing_errors) = validate_tree($base, $relative_contract);
+    die "active-task-evidence migration: source preflight failed:\n"
+        . join("\n", map { "- $_" } @$existing_errors) . "\n"
+        if @$existing_errors;
+    my @read_errors;
+    my ($contract, $contract_raw) = read_json_object(
+        $base, $relative_contract, 'migration contract', 131_072, \@read_errors,
+    );
+    my $source_raw = defined($contract)
+        ? read_regular($base, $contract->{current_path}, 'migration source', \@read_errors)
+        : undef;
+    my $root_raw = read_regular($base, $template_rel, 'migration root template', \@read_errors);
+    die "active-task-evidence migration: input read failed:\n"
+        . join("\n", map { "- $_" } @read_errors) . "\n"
+        if @read_errors || !defined($contract) || !defined($source_raw) || !defined($root_raw);
+    die "active-task-evidence migration: contract must be source_locked/complete\n"
+        if ($contract->{migration_state} // '') ne 'source_locked'
+        || ($contract->{input_state} // '') ne 'complete';
+    die "active-task-evidence migration: contract lacks migration_metadata\n"
+        if ref($contract->{migration_metadata}) ne 'HASH';
+    die "active-task-evidence migration: root template must not be a declared authority path\n"
+        if $template_rel eq $relative_contract
+        || $template_rel eq $contract->{current_path}
+        || grep { $template_rel eq $_ } (
+            $contract->{destinations}{index},
+            $contract->{destinations}{manifest},
+            $contract->{destinations}{source_capsule},
+            map { $_->{path} } @{$contract->{destinations}{parts}},
+        );
+    my @template_errors;
+    my $root_metrics = validate_migration_root_template($contract, $root_raw, \@template_errors);
+    die "active-task-evidence migration: root template preflight failed:\n"
+        . join("\n", map { "- $_" } @template_errors) . "\n"
+        if @template_errors;
+
+    my ($migrated, $outputs) = build_migration_outputs(
+        $contract, $relative_contract, $source_raw, $root_raw,
+    );
+    my @write_order = (
+        $migrated->{destinations}{source_capsule},
+        (map { $_->{path} } @{$migrated->{destinations}{parts}}),
+        $migrated->{destinations}{index},
+        $migrated->{destinations}{manifest},
+        $relative_contract,
+        $migrated->{current_path},
+    );
+    my $write_error;
+    eval { write_raw_atomic($base, $_, $outputs->{$_}) for @write_order; 1 } or $write_error = $@;
+    my ($migrated_errors) = $write_error ? ([]) : validate_tree($base, $relative_contract);
+    if ($write_error || @$migrated_errors) {
+        my $reason = $write_error || join("\n", map { "- $_" } @$migrated_errors);
+        eval {
+            write_raw_atomic($base, $contract->{current_path}, $source_raw);
+            write_raw_atomic($base, $relative_contract, $contract_raw);
+            remove_tree(absolute($base, $contract->{destinations}{collection_directory}));
+            remove_tree(absolute($base, $contract->{destinations}{archive_directory}));
+            1;
+        } or $reason .= "\nrollback failed: $@";
+        die "active-task-evidence migration: transaction failed and was rolled back:\n$reason\n";
+    }
+    my $part_count = scalar @{$migrated->{destinations}{parts}};
+    print "active-task-evidence migration: wrote bounded root ($root_metrics->{lines} lines / "
+        . "$root_metrics->{bytes} bytes), $part_count semantic parts, index, manifest, and exact source capsule.\n"
+        if !$quiet;
+}
+
 sub write_raw {
     my ($base, $relative, $raw) = @_;
     my $path = absolute($base, $relative);
@@ -1150,12 +1394,12 @@ sub write_raw {
 }
 
 sub fixture_source {
-    return <<'SOURCE';
+    return raw_scalar(<<'SOURCE');
 # PROGRAM: fixture
 ## Metadata
 - Tree ID: `PROGRAM`
 - Status: `active`
-## Task tree
+## Task tree — legacy
 - ID: `PROGRAM`
 - ID: `.1`
 ## Verification Log
@@ -1188,6 +1432,7 @@ sub fixture_contract {
             active_status_literal => '- Status: `active`',
         },
         current_frontier => {mode => 'none', literal => 'No eligible frontier.'},
+        migration_metadata => {migrated_on => '2026-08-09', reason => 'fixture migration'},
         source => {
             boundary_commit => '0' x 40,
             git_blob => '0' x 40,
@@ -1257,13 +1502,15 @@ sub complete_fixture_inputs {
 
 sub fixture_part_raw {
     my ($contract, $source_raw, $part) = @_;
-    my $raw = "$part->{heading}\n\n- Part ID: `$part->{part_id}`\n- State: `$part->{state}`\n\n";
+    my $raw = raw_scalar(
+        "$part->{heading}\n\n- Part ID: `$part->{part_id}`\n- State: `$part->{state}`\n\n",
+    );
     for my $region (@{$contract->{regions}}) {
         next if $region->{part_id} ne $part->{part_id};
         my $id = $region->{region_id};
-        $raw .= "<!-- $contract->{marker_prefix}:$id:start -->\n";
+        $raw .= raw_scalar("<!-- $contract->{marker_prefix}:$id:start -->\n");
         $raw .= region_bytes($source_raw, $region);
-        $raw .= "<!-- $contract->{marker_prefix}:$id:end -->\n\n";
+        $raw .= raw_scalar("<!-- $contract->{marker_prefix}:$id:end -->\n\n");
     }
     return $raw;
 }
@@ -1460,18 +1707,82 @@ sub run_self_test {
         my $fixture = File::Spec->catdir($generated, ".active-task-evidence-self-test.$$.$index");
         remove_tree($fixture) if -e $fixture;
         make_path($fixture);
-        seed_fixture($fixture, $state, $input_state, $mutator);
-        my ($errors) = validate_tree($fixture, 'doctrine/live_document_size/active_task_evidence.json');
-        my $joined = join "\n", @$errors;
-        if (!defined $expected) {
-            die "active-task-evidence self-test '$name' unexpectedly failed:\n$joined\n" if @$errors;
-        } else {
-            die "active-task-evidence self-test '$name' unexpectedly passed\n" if !@$errors;
-            die "active-task-evidence self-test '$name' missed expected diagnostic $expected:\n$joined\n"
-                if $joined !~ $expected;
-        }
+        my $case_failure;
+        eval {
+            seed_fixture($fixture, $state, $input_state, $mutator);
+            my ($errors) = validate_tree($fixture, 'doctrine/live_document_size/active_task_evidence.json');
+            my $joined = join "\n", @$errors;
+            if (!defined $expected) {
+                die "active-task-evidence self-test '$name' unexpectedly failed:\n$joined\n" if @$errors;
+            } else {
+                die "active-task-evidence self-test '$name' unexpectedly passed\n" if !@$errors;
+                die "active-task-evidence self-test '$name' missed expected diagnostic $expected:\n$joined\n"
+                    if $joined !~ $expected;
+            }
+            1;
+        } or $case_failure = $@ || "active-task-evidence self-test '$name' failed without a diagnostic\n";
         remove_tree($fixture);
+        die $case_failure if defined $case_failure;
         $passed++;
     }
+
+    my $writer_fixture = File::Spec->catdir($generated, ".active-task-evidence-writer-self-test.$$");
+    remove_tree($writer_fixture) if -e $writer_fixture;
+    make_path($writer_fixture);
+    my $positive_failure;
+    eval {
+        seed_fixture($writer_fixture, 'source_locked', 'complete', undef);
+        write_raw($writer_fixture, 'generated/root-template.md', fixture_root());
+        materialize_migration(
+            $writer_fixture,
+            'doctrine/live_document_size/active_task_evidence.json',
+            'generated/root-template.md',
+            1,
+        );
+        my ($writer_errors, $writer_result) = validate_tree(
+            $writer_fixture, 'doctrine/live_document_size/active_task_evidence.json',
+        );
+        die "active-task-evidence self-test 'migration writer positive' failed:\n"
+            . join("\n", @$writer_errors) . "\n"
+            if @$writer_errors || ($writer_result->{migration_state} // '') ne 'migrated';
+        1;
+    } or $positive_failure = $@
+        || "active-task-evidence self-test 'migration writer positive' failed without a diagnostic\n";
+    remove_tree($writer_fixture);
+    die $positive_failure if defined $positive_failure;
+    $passed++;
+
+    make_path($writer_fixture);
+    my $refusal_failure;
+    eval {
+        seed_fixture($writer_fixture, 'source_locked', 'complete', undef);
+        my $invalid_root = fixture_root();
+        $invalid_root =~ s/No eligible frontier\./Unknown frontier./;
+        write_raw($writer_fixture, 'generated/root-template.md', $invalid_root);
+        my $writer_failure = eval {
+            materialize_migration(
+                $writer_fixture,
+                'doctrine/live_document_size/active_task_evidence.json',
+                'generated/root-template.md',
+                1,
+            );
+            '';
+        };
+        $writer_failure = $@ if $@;
+        die "active-task-evidence self-test 'migration writer preflight refusal' unexpectedly passed\n"
+            if !$writer_failure;
+        die "active-task-evidence self-test 'migration writer preflight refusal' missed diagnostic\n"
+            if $writer_failure !~ /root template preflight failed/;
+        my ($rollback_errors, $rollback_result) = validate_tree(
+            $writer_fixture, 'doctrine/live_document_size/active_task_evidence.json',
+        );
+        die "active-task-evidence self-test 'migration writer preflight refusal' changed source state\n"
+            if @$rollback_errors || ($rollback_result->{migration_state} // '') ne 'source_locked';
+        1;
+    } or $refusal_failure = $@
+        || "active-task-evidence self-test 'migration writer preflight refusal' failed without a diagnostic\n";
+    remove_tree($writer_fixture);
+    die $refusal_failure if defined $refusal_failure;
+    $passed++;
     print "active-task-evidence self-test: $passed/$passed source/topology/route/payload/bound cases pass.\n";
 }

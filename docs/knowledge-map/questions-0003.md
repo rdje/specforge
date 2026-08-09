@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > how flexible is the register model / what register-table shapes are handled
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > how good is prose signal capture / .3a quality
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
@@ -44,6 +46,8 @@
   > how is a register name recovered from a section heading (RISC-V dmstatus/dmcontrol)
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > how is a register-field mnemonic recovered when the name column is a bit-range (NVMe)
+- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
+  > how is an active task evidence migration written atomically
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > how is an active task source locked before migration
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
@@ -294,7 +298,3 @@
   > is the SemanticIR phases surface the protocol transaction phases (no — it is section/chapter-derived)
 - [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
   > is the SpecForge extraction robust and can it grow to a vast set of chip-spec PDFs
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > is the VLM the right lever for AXI transaction phase membership (no — a deterministic channel-table cue is)
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > is the VLM-tier transaction frontier exhausted (yes — superseded by the deterministic channel cue / honest absence)

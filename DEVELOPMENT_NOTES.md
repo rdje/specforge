@@ -1,4 +1,29 @@
 # DEVELOPMENT_NOTES
+## ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.1 (`2026-08-09`) — encode scaffolds before appending evidence bytes
+
+The active migration has two different text domains. Its headings, markers, and normalized current root are
+Unicode text rendered by the tool; each legacy region is already a raw byte slice whose exact identity is the
+point of the migration. Those domains cannot be joined by first upgrading the whole destination scalar to
+characters: Perl may reinterpret the raw UTF-8 bytes and encode them again when the file is written. ASCII-only
+fixtures do not expose that defect.
+
+The materializer now encodes each generated scaffold and marker to UTF-8 before concatenating the untouched raw
+payload. Its fixture source contains a non-ASCII legacy heading, so both direct migrated validation and the real
+writer exercise the byte boundary. The first real attempt failed final payload comparison and used the designed
+rollback; the stable source/contract returned intact and both preflight-absent destination directories were
+removed. Only after the strengthened 34-case suite passed did the same root-last transaction materialize the
+production topology.
+
+That failed-run audit exposed a separate harness lifecycle issue: an unexpected assertion used `die` before the
+per-case `remove_tree`, leaving an ignored fixture repository behind. Each case and both writer scenarios now
+capture failure, remove the exact PID-scoped workspace, and only then rethrow. Ten checker-owned residues from
+the development failures were removed, and a green run leaves no `.active-task-evidence*` path under `generated/`.
+
+Writing the current root last is a visibility boundary as well as an implementation detail. Until capsule,
+parts, index, manifest, and migrated contract exist and agree, the stable path continues to expose the complete
+legacy authority. Final validation then proves the compact root's one route reaches a complete, bounded, exact
+evidence plane.
+
 ## ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2 (`2026-08-09`) — route identity needs two exact spellings
 
 Git history and literal task evidence answer different identity questions. Commit subjects provide the stable,

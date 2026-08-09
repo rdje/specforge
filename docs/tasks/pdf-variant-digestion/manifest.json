@@ -5,105 +5,7 @@
       "mode" : "none"
    },
    "current_path" : "docs/tasks/PDF-VARIANT-DIGESTION.md",
-   "destinations" : {
-      "archive_directory" : "docs/archive/tasks/pdf-variant-digestion",
-      "collection_directory" : "docs/tasks/pdf-variant-digestion",
-      "index" : "docs/tasks/pdf-variant-digestion/INDEX.md",
-      "manifest" : "docs/tasks/pdf-variant-digestion/manifest.json",
-      "parts" : [
-         {
-            "heading" : "# PDF-VARIANT-DIGESTION — program foundation and legacy planning",
-            "metrics" : {
-               "bytes" : 32829,
-               "line_bytes" : 160,
-               "lines" : 377
-            },
-            "part_id" : "program-foundation",
-            "path" : "docs/tasks/pdf-variant-digestion/program-foundation.md",
-            "sha256" : "3ae264d74e15c2b5c2c43f753b6f7d548c62dc62126c1fa2724a276419a37aa6",
-            "state" : "legacy"
-         },
-         {
-            "heading" : "# PDF-VARIANT-DIGESTION — activity 09 serial protocols",
-            "metrics" : {
-               "bytes" : 42761,
-               "line_bytes" : 152,
-               "lines" : 409
-            },
-            "part_id" : "activity-09-serial",
-            "path" : "docs/tasks/pdf-variant-digestion/activity-09-serial.md",
-            "sha256" : "f54480a54926e0adb3d023a82fd549062b8cafaf97acccb84b48167af28f84a6",
-            "state" : "legacy"
-         },
-         {
-            "heading" : "# PDF-VARIANT-DIGESTION — activities 10a–10c table shapes",
-            "metrics" : {
-               "bytes" : 25843,
-               "line_bytes" : 191,
-               "lines" : 306
-            },
-            "part_id" : "activity-10a-10c-table-shapes",
-            "path" : "docs/tasks/pdf-variant-digestion/activity-10a-10c-table-shapes.md",
-            "sha256" : "d190e57e3391b5b37a8a21141184034303ad0c65ede8a497e51b16caf2965532",
-            "state" : "legacy"
-         },
-         {
-            "heading" : "# PDF-VARIANT-DIGESTION — activities 10d–10e layouts",
-            "metrics" : {
-               "bytes" : 23497,
-               "line_bytes" : 106,
-               "lines" : 284
-            },
-            "part_id" : "activity-10d-10e-layouts",
-            "path" : "docs/tasks/pdf-variant-digestion/activity-10d-10e-layouts.md",
-            "sha256" : "41c7f1faacec7f87c0382ea18b613697a445b6c2d1a0f258fc84c88eb39e9f76",
-            "state" : "legacy"
-         },
-         {
-            "heading" : "# PDF-VARIANT-DIGESTION — activities 10f–10i section headings",
-            "metrics" : {
-               "bytes" : 24810,
-               "line_bytes" : 141,
-               "lines" : 265
-            },
-            "part_id" : "activity-10f-10i-section-headings",
-            "path" : "docs/tasks/pdf-variant-digestion/activity-10f-10i-section-headings.md",
-            "sha256" : "2d9de7e651a03586a4acf9f7491d236bc8f59480bacda7cbe4854594c997e479",
-            "state" : "legacy"
-         },
-         {
-            "heading" : "# PDF-VARIANT-DIGESTION — activities 11–13",
-            "metrics" : {
-               "bytes" : 43441,
-               "line_bytes" : 181,
-               "lines" : 502
-            },
-            "part_id" : "activities-11-13",
-            "path" : "docs/tasks/pdf-variant-digestion/activities-11-13.md",
-            "sha256" : "c330725a35465bca1d68c6a37695da1973efc91b2668db9e5c230e8444c3be18",
-            "state" : "legacy"
-         },
-         {
-            "heading" : "# PDF-VARIANT-DIGESTION — verification and chronology",
-            "metrics" : {
-               "bytes" : 31951,
-               "line_bytes" : 118,
-               "lines" : 330
-            },
-            "part_id" : "verification-and-chronology",
-            "path" : "docs/tasks/pdf-variant-digestion/verification-and-chronology.md",
-            "sha256" : "1650c81cba99a413b0dd0fa7db8af1f606cd7ae7e7bd6b711248be635a5b8aa6",
-            "state" : "legacy"
-         }
-      ],
-      "source_capsule" : "docs/archive/tasks/pdf-variant-digestion/source-through-2026-08-09.md"
-   },
-   "identity" : {
-      "active_status_literal" : "- Status: `active`",
-      "heading" : "# PDF-VARIANT-DIGESTION: make SpecForge digest as many chip-spec PDF variants as possible",
-      "tree_id" : "PDF-VARIANT-DIGESTION"
-   },
-   "input_state" : "complete",
+   "index_path" : "docs/tasks/pdf-variant-digestion/INDEX.md",
    "leaf_routes" : [
       {
          "leaf_id" : "PDF-VARIANT-DIGESTION",
@@ -418,104 +320,96 @@
          "source_literal" : "PDF-VARIANT-DIGESTION.9.9"
       }
    ],
-   "limits" : {
-      "capsule_exact" : {
-         "bytes" : 222616,
-         "line_bytes" : 191,
-         "lines" : 2393
-      },
-      "index" : {
-         "enforcement_ceilings" : {
-            "bytes" : 24576,
-            "line_bytes" : 768,
-            "lines" : 224
-         },
-         "health_targets" : {
-            "bytes" : 16384,
-            "line_bytes" : 384,
-            "lines" : 160
-         },
-         "milestones" : {
-            "rollover_pct" : 90,
-            "warning_pct" : 80
-         }
-      },
-      "manifest" : {
-         "bytes" : 65536,
-         "line_bytes" : 1024,
-         "max_leaf_routes" : 128,
-         "max_parts" : 24,
-         "max_regions" : 32,
-         "scalar_bytes" : 1024
-      },
-      "parts" : {
-         "enforcement_ceilings" : {
-            "bytes_each" : 98304,
-            "bytes_total" : 1179648,
-            "files" : 24,
-            "line_bytes_each" : 1024,
-            "lines_each" : 896,
-            "lines_total" : 9600
-         },
-         "health_targets" : {
-            "bytes_each" : 65536,
-            "bytes_total" : 786432,
-            "files" : 16,
-            "line_bytes_each" : 512,
-            "lines_each" : 640,
-            "lines_total" : 6400
-         },
-         "milestones" : {
-            "rollover_pct" : 90,
-            "warning_pct" : 80
-         }
-      },
-      "root" : {
-         "enforcement_ceilings" : {
-            "bytes" : 36864,
-            "line_bytes" : 1024,
-            "lines" : 384
-         },
-         "health_targets" : {
-            "bytes" : 24576,
-            "line_bytes" : 512,
-            "lines" : 256
-         },
-         "milestones" : {
-            "rollover_pct" : 90,
-            "warning_pct" : 80
-         }
-      }
-   },
    "marker_prefix" : "active-task-source-region",
-   "migrated_requirements" : {
-      "index_required_literals" : [
-         "# PDF-VARIANT-DIGESTION task-evidence index",
-         "## Semantic parts",
-         "## Primary leaf routes",
-         "## Exact provenance",
-         "## Verification"
-      ],
-      "root_forbidden_literals" : [
-         "- Status: `done`",
-         "- Status: `pending`"
-      ],
-      "root_required_literals" : [
-         "# PDF-VARIANT-DIGESTION: make SpecForge digest as many chip-spec PDF variants as possible",
-         "- Tree ID: `PDF-VARIANT-DIGESTION`",
-         "- Status: `active`",
-         "## Current Frontier",
-         "No eligible frontier.",
-         "## Detailed task evidence",
-         "## Verification Log",
-         "## Commit Log"
-      ]
-   },
-   "migration_metadata" : {
-      "migrated_on" : "2026-08-09",
-      "reason" : "Bound the active PDF task root while preserving exact committed provenance and complete semantic history."
-   },
+   "migrated_on" : "2026-08-09",
    "migration_state" : "migrated",
+   "parts" : [
+      {
+         "heading" : "# PDF-VARIANT-DIGESTION — program foundation and legacy planning",
+         "metrics" : {
+            "bytes" : 32829,
+            "line_bytes" : 160,
+            "lines" : 377
+         },
+         "part_id" : "program-foundation",
+         "path" : "docs/tasks/pdf-variant-digestion/program-foundation.md",
+         "sha256" : "3ae264d74e15c2b5c2c43f753b6f7d548c62dc62126c1fa2724a276419a37aa6",
+         "state" : "legacy"
+      },
+      {
+         "heading" : "# PDF-VARIANT-DIGESTION — activity 09 serial protocols",
+         "metrics" : {
+            "bytes" : 42761,
+            "line_bytes" : 152,
+            "lines" : 409
+         },
+         "part_id" : "activity-09-serial",
+         "path" : "docs/tasks/pdf-variant-digestion/activity-09-serial.md",
+         "sha256" : "f54480a54926e0adb3d023a82fd549062b8cafaf97acccb84b48167af28f84a6",
+         "state" : "legacy"
+      },
+      {
+         "heading" : "# PDF-VARIANT-DIGESTION — activities 10a–10c table shapes",
+         "metrics" : {
+            "bytes" : 25843,
+            "line_bytes" : 191,
+            "lines" : 306
+         },
+         "part_id" : "activity-10a-10c-table-shapes",
+         "path" : "docs/tasks/pdf-variant-digestion/activity-10a-10c-table-shapes.md",
+         "sha256" : "d190e57e3391b5b37a8a21141184034303ad0c65ede8a497e51b16caf2965532",
+         "state" : "legacy"
+      },
+      {
+         "heading" : "# PDF-VARIANT-DIGESTION — activities 10d–10e layouts",
+         "metrics" : {
+            "bytes" : 23497,
+            "line_bytes" : 106,
+            "lines" : 284
+         },
+         "part_id" : "activity-10d-10e-layouts",
+         "path" : "docs/tasks/pdf-variant-digestion/activity-10d-10e-layouts.md",
+         "sha256" : "41c7f1faacec7f87c0382ea18b613697a445b6c2d1a0f258fc84c88eb39e9f76",
+         "state" : "legacy"
+      },
+      {
+         "heading" : "# PDF-VARIANT-DIGESTION — activities 10f–10i section headings",
+         "metrics" : {
+            "bytes" : 24810,
+            "line_bytes" : 141,
+            "lines" : 265
+         },
+         "part_id" : "activity-10f-10i-section-headings",
+         "path" : "docs/tasks/pdf-variant-digestion/activity-10f-10i-section-headings.md",
+         "sha256" : "2d9de7e651a03586a4acf9f7491d236bc8f59480bacda7cbe4854594c997e479",
+         "state" : "legacy"
+      },
+      {
+         "heading" : "# PDF-VARIANT-DIGESTION — activities 11–13",
+         "metrics" : {
+            "bytes" : 43441,
+            "line_bytes" : 181,
+            "lines" : 502
+         },
+         "part_id" : "activities-11-13",
+         "path" : "docs/tasks/pdf-variant-digestion/activities-11-13.md",
+         "sha256" : "c330725a35465bca1d68c6a37695da1973efc91b2668db9e5c230e8444c3be18",
+         "state" : "legacy"
+      },
+      {
+         "heading" : "# PDF-VARIANT-DIGESTION — verification and chronology",
+         "metrics" : {
+            "bytes" : 31951,
+            "line_bytes" : 118,
+            "lines" : 330
+         },
+         "part_id" : "verification-and-chronology",
+         "path" : "docs/tasks/pdf-variant-digestion/verification-and-chronology.md",
+         "sha256" : "1650c81cba99a413b0dd0fa7db8af1f606cd7ae7e7bd6b711248be635a5b8aa6",
+         "state" : "legacy"
+      }
+   ],
+   "reason" : "Bound the active PDF task root while preserving exact committed provenance and complete semantic history.",
    "regions" : [
       {
          "end_line" : 42,
@@ -698,7 +592,6 @@
          "start_line" : 2384
       }
    ],
-   "route_basis" : "boundary_path_commit_subject_ids",
    "schema_version" : 1,
    "source" : {
       "boundary_commit" : "f04db37ac0a4d9935f373b2d2887e647ba6f4c4d",
@@ -710,21 +603,6 @@
       },
       "sha256" : "9284dce40ad896c3de3811e95c3fdd347132b1849083499e9c543fc9026a19d4"
    },
-   "source_requirements" : [
-      "# PDF-VARIANT-DIGESTION: make SpecForge digest as many chip-spec PDF variants as possible",
-      "- Tree ID: `PDF-VARIANT-DIGESTION`",
-      "- Status: `active` (high-priority program)",
-      "## Goal (the aim — this is the ORIGINAL roadmap goal, not a pivot)",
-      "## Acceptance criteria",
-      "## Task tree",
-      "- ID: `PDF-VARIANT-DIGESTION.9.3`",
-      "- ID: `PDF-VARIANT-DIGESTION.10i`",
-      "## Current frontier",
-      "## Planned next — from the corpus-sweep learnings (`2026-06-08`)",
-      "## Decisions",
-      "## Verification log",
-      "## Changelog",
-      "## Tooling + multi-strategy (`2026-06-07`)"
-   ],
+   "source_capsule" : "docs/archive/tasks/pdf-variant-digestion/source-through-2026-08-09.md",
    "verifier" : "perl scripts/check_active_task_evidence.pl --check"
 }

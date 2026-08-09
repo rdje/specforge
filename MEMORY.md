@@ -21,13 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2` — complete the final committed active-source boundary and
-  exact migration inputs; implementation and full verification complete, commit pending.
-- Current state: boundary `f04db37a` preserves the exact 2,393-line / 222,616-byte PDF task source. The contract is
-  `source_locked/complete` with 15 region identities and 52 commit-history routes. Ten routes use a constrained
-  tree-relative `source_literal`; both migration directories remain absent.
-- Next action: commit `.2.2` through `COMMIT.md`, verify the brief is empty, then begin `.3.1` atomic migration
-  from the clean boundary.
-- In-flight uncommitted: verified `.2.2` recording transaction only; PDF task bytes, migration destinations,
-  product artifacts, thresholds, and ceilings remain unchanged.
+- Active unit: `ACTIVE-TASK-EVIDENCE-CONTAINMENT.3.2` — independently audit and close the bounded active-task
+  containment program.
+- Current state: `.3.1` migrated the contract to `migrated/complete`. The stable PDF task path is a 106-line
+  active current root over a 79-line index, seven bounded semantic parts, 52 primary routes, and the exact
+  2,393-line / 222,616-byte source capsule. Thirty-four focused cases and full CI pass.
+- Next action: start `.3.2` from the clean `.3.1` commit and independently prove fresh-clone retrieval, semantic
+  equivalence, ordinary future append safety, and final book/task closure.
+- In-flight uncommitted: none after the `.3.1` commit; product artifacts, shared inputs, thresholds, and ceilings
+  are unchanged.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.
