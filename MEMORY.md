@@ -21,14 +21,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10b.i` — exact source/verifier boundary complete and
-  verified; commit pending.
-- Current state: the neutral two-state checker, 15 cases, and source-locked contract pin the complete live task
-  root at 2,538 lines / 242,172 bytes / max 746 / `f8e10e…96b68`; all three declared archive paths are absent.
-  Active `PDF-VARIANT-DIGESTION` remains blocked on later separately owned containment.
-- Next action: commit `.10b.i`, then activate `.10b.ii`; copy the committed task source byte-for-byte, land the
-  bounded closed root/index/manifest and archive surfaces, switch the contract, migrate readers, and close.
-- In-flight uncommitted: verified `.10b.i` checker/contract/docs only; no task content moved and no archive,
-  product, canonical artifact, existing threshold, or ceiling changed. `.project-data/tmp` contains only
-  `.gitkeep` plus `xcrun_db`.
+- Active unit: `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10b.ii` — terminal task migration and program closure;
+  complete and verified, commit pending.
+- Current state: the exact `05d80d29` source is an immutable 2,538-line / 242,172-byte capsule at
+  `f8e10e…96b68`; the stable task path is a 119-line / 7,978-byte closed summary over a bounded three-link index
+  and manifest. Migrated enforcement passes; the adoption program has no frontier.
+- Next action: commit `.10b.ii`, then create a new top-level task tree that owns active containment before any
+  append to `PDF-VARIANT-DIGESTION` (222,616 bytes, 207 before warning).
+- In-flight uncommitted: verified `.10b.ii` capsule/root/index/manifest/surface/reader/docs migration; no product,
+  canonical artifact, shared input, or existing ceiling changed. `.project-data/tmp` contains only `.gitkeep`
+  plus `xcrun_db`.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

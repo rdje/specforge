@@ -25,20 +25,18 @@ repository's Git index. Every such path must match exactly one registry surface.
 `subs/fsmgen` gitlink contributes no parent-tracked Markdown and remains under FSMGen's independent
 authority. Untracked generated mdBook output is project artifact data, not a tracked live document.
 
-The full lifecycle and checker contract lives in
-`docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md` under `.3a`.
+The bounded closed program summary lives at `docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md`; its archive
+index routes the exact source containing the full `.3a` lifecycle/checker contract and all later evidence.
 
-The `.10a` audit measures that program task file at 2,451 lines / 232,649 bytes with 18,026 bytes of
-pre-rollover headroom. ADR 0018 selects a two-commit terminal boundary: `.10b.i` commits the complete live
-source plus its verifier, and `.10b.ii` copies that durable source byte-for-byte to an immutable capsule before
-leaving a bounded closed summary at the stable task path. Exact history remains directly retrievable through a
-bounded index/manifest; the existing ceiling may not be widened and evidence may not be trimmed.
+ADR 0018's migration is complete. `.10b.i` committed the 2,538-line / 242,172-byte source; `.10b.ii` copied it
+byte-for-byte to `docs/archive/tasks/live-document-size-containment-adoption/source-through-2026-08-09.md` at
+SHA-256 `f8e10e…96b68`, then left a 119-line / 7,978-byte closed summary at the stable task path. Exact history is
+directly retrievable through the bounded archive index/manifest; no ceiling widened and no evidence was trimmed.
 
 This rule applies only to a completed tree. Active `PDF-VARIANT-DIGESTION` is 2,393 lines / 222,616 bytes,
 only 207 bytes below warning. Its next append requires separately task-owned active-tree containment; it may not
 borrow the terminal topology or a wider ceiling.
 
-`scripts/check_task_tree_archive.pl` implements the boundary as two explicit states. `source_locked` requires
-the live source's exact contract identity and absence of all declared archive paths. `migrated` moves that same
-identity to the capsule and checks the closed root, exact index/manifest routes, provenance, milestones, and
-ceilings. Its 15-case self-test runs unconditionally through `LIVE-DOC-SIZE`.
+`scripts/check_task_tree_archive.pl` now enforces `migrated`: the capsule retains the exact locked identity, and
+the checker validates the closed root, exact index/manifest routes, provenance, milestones, and ceilings. Its
+15-case self-test runs unconditionally through `LIVE-DOC-SIZE`.

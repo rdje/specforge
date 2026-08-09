@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "migration_state": "source_locked",
+  "migration_state": "migrated",
   "current_path": "docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md",
   "archive": {
     "index": "docs/archive/tasks/live-document-size-containment-adoption/INDEX.md",

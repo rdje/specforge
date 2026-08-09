@@ -135,9 +135,10 @@ mechanical heading shards would split one task authority, while trimming would l
 terminal boundary. `.10b.i` has now committed the complete still-live source contract plus its neutral identity
 checker. In `source_locked`, the current task must match its exact SHA-256/metrics/markers and every declared
 archive path must be absent. Fifteen same-volume cases exercise both source-locked and future migrated failures;
-the checker runs unconditionally through `LIVE-DOC-SIZE`. `.10b.ii` next copies that durable source byte-for-byte
-into an immutable capsule, then leaves a bounded closed summary at the
-stable task path and routes exact history through a bounded index/manifest. The task catalog continues reading
+the checker runs unconditionally through `LIVE-DOC-SIZE`. `.10b.ii` has now copied that durable source byte-for-byte
+into a 2,538-line / 242,172-byte immutable capsule at SHA-256 `f8e10e…96b68`, then left a 119-line /
+7,978-byte bounded closed summary at the stable task path. A 22-line / 812-byte index and exact manifest route
+history in two bounded hops. The task catalog continues reading
 only the stable H1 and metadata status; ordinary startup never reads the capsule. The compact root retains the
 final verification marker/table required by the derived-state contract, while all historical rows remain exact
 in the capsule.

@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "current_path": "docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md",
+  "source_capsule": "docs/archive/tasks/live-document-size-containment-adoption/source-through-2026-08-09.md",
+  "source_sha256": "f8e10e33f697740fc86c91af1511e5a092e734ce7e30386bacb3b93477696b68",
+  "source_metrics": {
+    "lines": 2538,
+    "bytes": 242172,
+    "line_bytes": 746
+  },
+  "source_boundary_commit": "05d80d29bce25e7ae39c515d22789651a90785a2",
+  "sealed_date": "2026-08-09",
+  "reason": "terminal migration of the completed live-document containment adoption task tree",
+  "verifier": "perl scripts/check_task_tree_archive.pl --check"
+}

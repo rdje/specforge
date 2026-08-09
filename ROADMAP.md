@@ -111,9 +111,11 @@ Five active program groups support that north star:
   232,649 bytes, accepts ADR 0018's committed-source → exact-terminal → bounded-closed-root topology, and splits
   implementation into `.10b.i` provenance enforcement plus `.10b.ii` atomic migration. `.10b.i` has now landed
   the neutral two-state checker, 15 fail-closed cases, and an exact 2,538-line / 242,172-byte source lock while
-  proving every archive path absent; `.10b.ii` is the sole remaining migration/closure leaf. Its census also blocks
+  proving every archive path absent. `.10b.ii` has now copied that committed source byte-for-byte to an immutable
+  terminal, replaced the stable task path with a 119-line closed summary behind a bounded index/manifest, and
+  closed `.10` plus the entire adoption program. Its census blocks
   another append to active `PDF-VARIANT-DIGESTION`—222,616 bytes, 207 before warning—until a new task tree owns
-  active-tree containment after `.10` closes. The completed `.0`–`.7`
+  active-tree containment; that new top-level task tree is the next continuity action. The completed `.0`–`.10`
   [`LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`](docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md)
   implementation keeps current documentation and project data bounded on the repository volume; completed
   [`ARTIFACT-PATH-PORTABILITY`](docs/tasks/ARTIFACT-PATH-PORTABILITY.md) extends move-safe storage through every

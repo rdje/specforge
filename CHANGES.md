@@ -1,3 +1,16 @@
+### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10b.ii — migrate and close terminal task evidence
+
+- Copied the exact `.10b.i` task source from commit `05d80d29` to an immutable 2,538-line / 242,172-byte
+  capsule at SHA-256 `f8e10e…96b68`; byte comparison against both the clean source and Git object passes.
+- Replaced the stable task path with a 119-line / 7,978-byte closed summary and added a 22-line / 812-byte
+  three-link archive index plus a 15-line / 652-byte identity/provenance manifest. Complete history remains two
+  bounded hops away; the task catalog still reads the stable path.
+- Switched the neutral checker to `migrated`; it now enforces the exact capsule, closed metadata/frontier,
+  verification boundary, root/index limits and milestones, exact routes, manifest, provenance, and immutable
+  archive surface. All 15 fail-closed cases and real migrated reporting pass.
+- Closed `.10` and the full adoption program without changing product behavior, canonical artifacts, shared
+  inputs, or any existing ceiling. Next continuity action: a new task tree for active PDF task containment.
+
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10b.i — lock the terminal task source boundary
 
 - Added a schema-closed, project-neutral checker with `source_locked` and `migrated` states. The first pins the

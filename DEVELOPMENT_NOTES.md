@@ -1,4 +1,22 @@
 # DEVELOPMENT_NOTES
+## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10b.ii (`2026-08-09`) — terminal closure is a two-product truth
+
+The migrated result deliberately has two authorities. The stable task path answers current operational questions:
+identity, closed status, outcome, completed activity map, empty frontier, key decisions, final verification, and
+where to retrieve detail. The capsule answers historical questions with the exact pre-migration bytes. Neither is
+a degraded copy of the other, and the bounded index/manifest describes their relationship rather than asking a
+reader to infer it from Git history.
+
+The `.10b.i` commit makes provenance independently auditable. Its task blob and the new capsule share the exact
+SHA-256 and metrics recorded before migration; `.10b.ii` changes only which path carries that identity. The new
+root then owns the migration's own evidence, avoiding the paradox of trying to place a record of the replacement
+inside the source that existed before replacement.
+
+The generic task catalog remains unchanged in shape because the stable root keeps the canonical H1 and first
+metadata status. Detailed consumers follow root → bounded index → capsule; the derived-state verifier keeps one
+current final verification table while the capsule retains all earlier rows. New work cannot append here: it must
+open a new top-level tree, beginning with active containment for the near-warning PDF-variant program.
+
 ## LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.10b.i (`2026-08-09`) — source lock is a real lifecycle state
 
 The two-commit seam is useful only if the first commit is mechanically meaningful. The new checker therefore

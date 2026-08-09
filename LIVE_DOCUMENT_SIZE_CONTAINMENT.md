@@ -44,7 +44,9 @@
   record and accepts ADR 0018: `.10b.i` commits the exact source/verifier boundary before `.10b.ii` copies it to
   a terminal and leaves a bounded closed root/index. `.10b.i` now enforces that source-locked boundary and
   archive absence with a neutral two-state checker plus 15 fail-closed cases; `.10b.ii` alone may switch it to
-  migrated state. Active task trees are explicitly excluded from that
+  migrated state. `.10b.ii` now preserves the exact source in a terminal and leaves a 119-line bounded closed
+  root plus a three-link archive index and exact manifest, closing the adoption program. Active task trees are
+  explicitly excluded from that
   terminal topology. No existing threshold or ceiling is widened.
 <!-- LIVE-DOCUMENT-SIZE-CONTAINMENT-LOCAL-ADOPTION:END -->
 
