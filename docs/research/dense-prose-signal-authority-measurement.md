@@ -201,7 +201,7 @@ Two independent findings prevent signoff:
    authority set empty, `retain_authoritative_interface_candidate_signals` admits every statement token group;
    encoding/data table rows then deduplicate to 556 one-bit `.isf` outputs despite an empty actor graph. This is
    a second authority loop, not residue from the original four names. `.iv.b` owns its corpus measurement and
-   generic repair; `.iv.c` owns the final real-cascade proof and rollback deletion.
+   generic repair; `.iv.c` subsequently completed the final real-cascade proof and rollback deletion below.
 
 ## Authority-empty SemanticIR repair (`CORPUS-COVERAGE.2.33d.iv.b`)
 
@@ -259,4 +259,39 @@ and interface records; actor ports/relations remain zero. `adapt` reports `block
 interface`, zero signals/rules, one retained storage record, and 15 honest residuals. The successful blocked
 write removes `channel.isf`, leaving exactly `adapter.json`. Other semantic candidates can remain visible in
 typed rules or residual source text, but none becomes an emitted hardware port without signal authority.
-`.iv.c` retains the complete final cascade/gate repetition and verified-rollback deletion.
+
+## Final cascade and rollback closure (`CORPUS-COVERAGE.2.33d.iv.c`)
+
+The final signoff authenticated the preserved same-volume rollback as nine files / 38,981,655 bytes, including
+the prior release and complete EvidenceIR→adapter chain. Current release SHA-256 is
+`946766cb5e47ce4511caa75b2d7e5bb094d8684af8d6daa9f84c55dd086de488`. The exact rebuild reproduced:
+
+- SourceIR before required validation `e87f5003057ff13a63e12aa523e7d5b65cb2efe6b2e438edfc27f274539d0a13`;
+- validation-backannotated SourceIR `38cbaa8239d389f69fd32907505ac62dfbbb724b345401efec11eff7ccd53a2b`;
+- EvidenceIR `87c01ab519cb2268c0e8f5b775d717bfab1d5e925fafdb0aebbeda3008247efc`;
+- SemanticIR `16736201afe880b8a951231bbde5f42b42d5c8e52a992426a2cf8167f85686b3`;
+- IntentIR `564eba40e75e317655c940351dec0360b514f66ee1536dbce4a1aa22f55537af`;
+- adapter `28d664c0c631a174e1ed870ef73abe3a68f6fd04a173d5565792d75b3869f8f2`.
+
+`validate` is intentionally a writer: it produced the stage-local reports and backannotated SourceIR. Rebuilding
+EvidenceIR→adapter from that validated SourceIR reproduced the four downstream hashes above exactly, so the
+validation provenance changes identity without changing extracted or emitted semantics. The adapter-side report
+was removed after inspection because the blocked output acceptance contract requires exactly `adapter.json`;
+the canonical manifest retains the validation-relevant renderability findings.
+
+EvidenceIR is 8,267 statements / 0 actor relations / 10 signal constraints / 542 conditional rules / 102 timing
+constraints. SemanticIR is 19 actors / 0 interfaces / 0 actor ports or relations; IntentIR is 18 actors / 0
+interfaces / 0 actor ports or any drive/sample/trigger/general relation / 2,705 behaviors / 3,014 constraints /
+27 transactions / 1 register. The blocked adapter has actor `channel`, 0 signals/transactions/rules, 1 storage,
+15 residuals, and no emitted target. Only `adapter.json` exists in its output directory.
+
+This is a typed-boundary result, not a claim that ordinary source words disappear: `USB` remains a promotion-only
+signal-constraint subject, but no relation/interface/port/emitted signal authorizes it as hardware. The original
+four false ports, phantom actor, authority-empty token soup, and both stale actor files are absent from every
+declared or emitted surface.
+
+Focused EvidenceIR/SemanticIR/adapter tests pass; all nine provider-free WIRE datasets retain their expected
+1.000 source-tolerant scores; KG is 156/156; full CI passes 1,783 tests / five ignored plus warnings-denied
+Clippy/rustdoc, mdBook examples/build, all six doctrines, path, and locality. Only after those product gates did
+the exact rollback directory get deleted. Exact-path and task-id residue censuses are empty. The current adapter
+cache contains 70 `.isf` files, all under the previously established strict-clean contract; USB emits none.

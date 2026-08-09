@@ -69,6 +69,15 @@ transactions, storage, and residual source evidence remain in canonical IR, but 
 interface merely to make a downstream target renderable. Syntax and the absence of the original four names are
 necessary but not sufficient proof; typed signal authority is the emit boundary.
 
+Final cascade signoff reproduced that result from the retained SourceIR through every deterministic stage.
+EvidenceIR contains 8,267 statements and zero actor relations; SemanticIR and IntentIR contain zero interfaces,
+interface records, actor ports, or relations; the adapter contains zero signals, transactions, and rules, plus
+one independently grounded storage record and 15 explicit residuals. Source words—even a promotion-only `USB`
+constraint subject—may remain in canonical evidence without becoming a declared or emitted port. The hardware
+boundary is the typed interface/emission surface, not a whole-document token search. The corpus cache now has 70
+current emitted `.isf` files, all covered by the established FSMGen-strict-clean contract; USB is not one of
+them because honest blocking is the correct lowering result.
+
 The measurement behind that repair found three upstream authority errors, not a reason to distrust every
 relation-derived direction. Across the retained corpus, 97 sentence-start phrases use `signal <word>` without
 declaring a signal; 17 `Bus (ACRONYM)` phrases are misread as width-one wires; and 11 port/pin-only tables pass a

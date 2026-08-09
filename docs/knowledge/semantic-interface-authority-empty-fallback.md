@@ -16,7 +16,7 @@ answers:
   - "why is the repaired USB 3.2 ISF adapter blocked"
 date: 2026-08-09
 tags: [semantic-ir, interfaces, signal-authority, fail-closed, corpus-coverage, dense-prose, isf, false-positive]
-evidence: docs/research/dense-prose-signal-authority-measurement.md; crates/specforge/src/ir/semantic.rs (build_interfaces; retain_authoritative_interface_candidate_signals; authority_empty_statement_tokens_do_not_become_interfaces); generated/semantic_ir/usb_3_2_revision_1_0_2017_09/semantic_ir.json; generated/intent_ir/usb_3_2_revision_1_0_2017_09/intent_ir.json; generated/adapters/isf/usb_3_2_revision_1_0_2017_09/adapter.json; docs/tasks/CORPUS-COVERAGE.md (.2.33d.iv.b)
+evidence: docs/research/dense-prose-signal-authority-measurement.md; crates/specforge/src/ir/semantic.rs (build_interfaces; retain_authoritative_interface_candidate_signals; authority_empty_statement_tokens_do_not_become_interfaces); generated/semantic_ir/usb_3_2_revision_1_0_2017_09/semantic_ir.json; generated/intent_ir/usb_3_2_revision_1_0_2017_09/intent_ir.json; generated/adapters/isf/usb_3_2_revision_1_0_2017_09/adapter.json; docs/tasks/CORPUS-COVERAGE.md (.2.33d.iv.b/.iv.c)
 reverify: "Build the release binary. Run specforge semantic on the retained USB EvidenceIR, then intent and adapt --target isf. Expect zero interfaces and signal records, zero actor ports/relations, adapter lowering_status blocked with no signals declared in interface, zero ISF signals/rules, and no emitted *.isf sibling. Run the three retain_authoritative_interface_candidate_signals tests, authority_empty_statement_tokens_do_not_become_interfaces, builds_semantic_ir_from_handshake_evidence, and system_contract_signals_become_explicit_interface_records."
 ---
 
@@ -56,3 +56,8 @@ relations. The adapter is honestly blocked on `no signals declared in interface`
 the successful blocked write removes the obsolete `channel.isf`, leaving only `adapter.json`. Typed behaviors,
 constraints, transactions, storage, and exact residual evidence remain in canonical IR; no hardware surface is
 fabricated merely to make the adapter renderable.
+
+Final `.iv.c` signoff reproduced all four downstream hashes both before and after documented SourceIR validation
+backannotation and the same typed result, passed focused/WIRE/KG/full-CI/book/doctrine/path/locality gates, then
+deleted the authenticated nine-file rollback with zero task-id residue. The USB parent tree is closed; the current
+70 emitted adapters remain under the established strict-clean contract.

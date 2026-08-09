@@ -32,5 +32,7 @@ leaving `adapter.json` and unrelated material intact. No actor, document, vendor
 the rule.
 
 This is output convergence, not semantic validation. The same USB rerun also exposed a separate upstream
-authority-empty interface fallback that produces hundreds of low-confidence ports. That blocker belongs to
-`CORPUS-COVERAGE.2.33d.iv.b`; eliminating stale files does not make their replacement trustworthy.
+authority-empty interface fallback that produced hundreds of low-confidence ports. `.iv.b` closed that upstream
+boundary, and final `.iv.c` proves the blocked USB manifest now leaves exactly `adapter.json` with no old actor
+file, current actor file, or emitted target. Eliminating stale files alone never made a replacement trustworthy;
+the independent typed-authority gate is what licenses—or, for USB, honestly blocks—the hardware surface.

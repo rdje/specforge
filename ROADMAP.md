@@ -147,8 +147,11 @@ Five active program groups support that north star:
   empty actor graph). `.iv.b` now closes that generic boundary: 21 affected retained documents (5,527
   interfaces / 18,397 all-low records) dry-run to zero under a typed-or-signal-led-deontic authority rule;
   declaration-free `VALID`/`READY` and declared wire surfaces remain intact, and USB blocks honestly with no
-  emitted ISF. `.iv.c` owns final cascade/gate repetition
-  and verified-rollback deletion before the USB tree closes. Separately,
+  emitted ISF. `.iv.c` now closes the USB tree after reproducing stable downstream hashes (including after the
+  documented SourceIR validation backannotation) and zero
+  relation/interface/port/adapter-signal/rule surfaces, passing focused/WIRE/KG/full-CI/book/doctrine/locality
+  gates, and deleting only the authenticated rollback with zero residue. `CORPUS-COVERAGE.2` remains active for
+  refresh #34 of the 23-document tail. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

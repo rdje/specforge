@@ -1,4 +1,18 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.33d.iv.c (`2026-08-09`) — sign off the typed surface, not word absence
+
+A dense prose specification will legitimately retain words such as `USB` in source text, rule evidence, and even
+promotion-only constraint subjects. Final semantic-trust acceptance therefore cannot be a whole-file token
+search. It must inspect the typed declaration and emission boundaries: relations, interfaces, interface records,
+actor ports, adapter signals/rules, and emitted targets. USB has zero on every such surface, while its canonical
+behaviors, constraints, transactions, storage, and residual evidence remain available rather than being erased.
+
+Rollback deletion follows the same evidence boundary. The exact nine files and byte count were authenticated,
+the current release reproduced stable downstream hashes, and every product gate passed before that one
+same-volume directory was removed. The required validator backannotation changed only SourceIR identity; rebuilding
+the downstream chain afterward reproduced the exact four hashes again. Exact-path and task-id censuses prove zero
+rollback residue.
+
 ## CORPUS-COVERAGE.2.33d.iv.b (`2026-08-09`) — co-mention is enrichment, not declaration
 
 `build_interfaces` has two different authorities: formal/system-contract records establish the signal surface,

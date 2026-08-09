@@ -1,3 +1,16 @@
+### CORPUS-COVERAGE.2.33d.iv.c — sign off the final USB cascade
+
+- Authenticated the exact 9-file / 38,981,655-byte same-volume rollback, then rebuilt USB EvidenceIR through
+  adapter with release `946766cb…488`; all four downstream hashes reproduced exactly. The required `validate`
+  pass then backannotated only SourceIR (`e87f5003…a13` → `38cbaa82…a2b`), as documented, and a final downstream
+  rebuild again reproduced the exact Evidence/Semantic/Intent/adapter hashes.
+- Proved the final hardware surface is empty: zero actor relations, interfaces, interface records, actor ports,
+  adapter signals, transactions, rules, emitted target, phantom actor file, or stale sibling. The blocked manifest
+  retains one storage record, 15 honest residuals, and exactly `adapter.json`.
+- Passed focused authority/writer tests, all nine provider-free WIRE datasets, KG 156/156, warning-deny full CI
+  (1,783 pass / five ignored), rustdoc, mdBook, six doctrines, path/locality, and residue checks. The exact rollback
+  was deleted only afterward; `.iv`/`.d`/`.2.33` are closed and the 70 current emits remain strict-clean.
+
 ### CORPUS-COVERAGE.2.33d.iv.b — fail closed when SemanticIR has no typed signal authority
 
 - Measured the complete retained class: 21 documents / 5,527 interfaces / 18,397 all-low records / 4,060

@@ -21,14 +21,12 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.33d.iv.c`; `.iv.b` closes authority-empty SemanticIR interface promotion.
-- Current state: heuristic co-mentions now require formal/system-contract authority or a signal-led deontic
-  action statement. All 21 affected retained documents dry-run from 5,527 interfaces / 18,397 records to zero;
-  declaration-free `VALID`/`READY` and declared wire surfaces remain stable. Real USB blocks honestly at zero
-  adapter signals/rules and its output directory contains only `adapter.json`.
-- Next action: rerun the exact preserved USB chain and every parent acceptance gate as `.iv.c`, prove final
-  false-name/phantom/stale/heuristic-soup absence, then remove the verified rollback with zero residue and close
-  `.iv`/`.d`/`.2.33`.
-- In-flight uncommitted: none after the `.iv.b` commit. Ignored rebuilt USB stages and the exact verified rollback
-  at `.project-data/tmp/corpus-coverage-2-33d-iv-before/` remain intentional; `.iv.c` owns its safe deletion.
+- Active unit: `CORPUS-COVERAGE.2`; USB refresh #33 and its `.2.33d` semantic-trust repair are complete.
+- Current state: final USB has zero actor relations/interfaces/interface records/ports/adapter signals,
+  transactions, and rules. It blocks honestly on no declared interface signals and leaves exactly `adapter.json`;
+  all 70 current emitted `.isf` files remain FSMGen-strict clean. `.iv`/`.d`/`.2.33` are closed.
+- Next action: select and create the owning `CORPUS-COVERAGE.2.34` leaf for the next roadmap-aligned document
+  among the 23 remaining real chip-spec refreshes, then run the one-document guarded current-binary cadence.
+- In-flight uncommitted: none after the `.iv.c` closing commit. Generated USB stages are ignored canonical cache;
+  both task-owned rollbacks are deleted after green gates and task-id residue is zero.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

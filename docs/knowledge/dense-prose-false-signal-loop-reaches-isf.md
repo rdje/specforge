@@ -158,3 +158,15 @@ admitting raw rows, ordinary prose, or relation-only `DOWNSTREAM`.
 All 21 affected documents dry-run to zero interfaces/records. The real USB rebuild now blocks on `no signals
 declared in interface`, carries zero adapter signals/rules, emits no `.isf`, and removes the obsolete
 `channel.isf`. See `[[semantic-interface-authority-empty-fallback]]` for the complete causal and corpus record.
+
+## Final signoff (`.2.33d.iv.c`)
+
+The current release reproduced the complete USB chain without hash drift. EvidenceIR has 8,267 statements and
+zero actor relations; SemanticIR/IntentIR have zero interfaces, interface records, ports, and relations; the
+blocked adapter has zero signals/transactions/rules, one storage record, 15 residuals, and no emitted target.
+Exactly `adapter.json` remains. Source words and promotion-only constraint subjects are not erased; the signoff
+tests the typed declaration/emission surface, where none of the four weak names or the phantom actor is licensed.
+
+Focused authority/writer tests, all nine WIRE datasets, KG 156/156, full CI (1,783 pass / five ignored), mdBook,
+six doctrines, path, and locality pass. The authenticated nine-file / 38,981,655-byte rollback was deleted only
+after those gates; exact-path and task-id residue are zero. `.iv`/`.d`/`.2.33` are closed.
