@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.41 (`2026-08-09`) — explanatory acronyms do not define an AFU interface
+
+The retained AFU Address Space Usage chain looked like a useful hardware surface only after heuristic grouping:
+five interfaces joined `AFU`, `BAR`, `CFG`, `GB`, `ID`, `MEM`, `MMIO`, and `PASID`, then five derived channel
+actors and eight one-bit outputs followed. The underlying EvidenceIR has no signal declaration, relation,
+constraint, conditional rule, register, or timing record. The cited paragraphs explain address spaces, BARs,
+memory, and PASID identity; they do not declare top-level wires or a component boundary.
+
+Current generic interface authority removes that entire topology without naming an acronym. The fresh cascade's
+legal-prose finding was orthogonal and closed in `.2.41a`: source evidence remains, while the shared semantic
+boundary prevents copyright and permissions paragraphs from becoming engineering intent. Final SemanticIR is
+zero actors/interfaces/phases/gates with 15 engineering invariants and 14 decompositions; IntentIR has zero
+behaviors with 15 constraints. The blocked adapter therefore reports both missing signals and missing behavior
+instead of manufacturing an executable target.
+
+Two guarded ingests at 20% and 19% peak memory reproduce the 14-page/nine-visual/two-table source, and two repaired
+downstream cascades reproduce all six affected hashes. All page/layout/visual paths are present and relative.
+After complete protocol/KG/CI/FSMGen/book/doctrine/locality gates, the exact 29-file / 823369-byte task bundle is
+deleted with zero residue. This closes refresh #41 at 80/10/80/79 stage coverage and leaves 15 real documents.
+
 ## CORPUS-COVERAGE.2.41a (`2026-08-09`) — semantic authority starts after evidence preservation
 
 The OpenCAPI AFU address-note refresh exposed a distinct trust boundary. EvidenceIR correctly preserved a legal

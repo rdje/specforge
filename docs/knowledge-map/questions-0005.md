@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > what are the current CoreSight Base System artifact hashes
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > what are the current Introducing CoreSight artifact hashes
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > what are the current OpenCAPI AFU address note artifact hashes
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > what are the current OpenCAPI Certified artifact hashes
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > what are the current OpenCAPI Ready artifact hashes
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > what are the current USB4 Connection Manager artifact hashes
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > what are the current USB4 Inter-Domain artifact hashes
 - [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
@@ -41,6 +53,8 @@
   > what did statement 0114 say in the stale OpenCAPI Ready evidence
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what did the .2i Rule-A per-phase grouping measurement find (clean only on AHB, empty on APB/AXI/SWD)
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > what did the OpenCAPI AFU address note prove about legal boilerplate
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what did the active PDF task containment census find
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -283,18 +297,3 @@
   > what is register_field_name_recall / register_field_completeness / register_bit_structure_recall
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > what is scripts/check_doctrines.sh / the doctrine driver
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > what is select_initiator_actor / initiator_perspective_directions
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is signal_presence_records and what does a SignalPresenceRecord hold
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > what is snap_subject_to_sentence_token and when does it fire
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > what is synthesize_register_field_tables
-- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
-  > what is synthesize_signal_declarations_from_prose / the pin-appositive pattern
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > what is the .2m candidate (deterministic AXI-family channel-membership lever)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what is the .5.ii sentence-spine member-fragment predicate (a synthesized enum member_name is a prose fragment if any _-token is an English sentence-spine word — copula/aux/modal IS/ARE/BE/HAS/MUST/SHALL, article/demonstrative THE/THIS/THAT, relativizer/subordinator WHICH/WHEN/IF/BECAUSE — EXCLUDING the .1a collisions A/I/ITS/CAN/MAY/AM. Precision 1.000 (0/115 clean-anchor
-  > flagged), recall 1.000 (269/269 junk-anchor caught), 30.2% of members drop; universal grammar ADR-0006, no name list)

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
+  > how will the million-byte Knowledge Map be sharded without losing question retrieval
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > how will the oversized SpecForge roadmap be made bounded without losing its history
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > how will the shared rolling ledger archive index be partitioned
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > is 'X, which connects to Y, drives Z and W' clause distribution handled
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -111,6 +117,8 @@
   > is the OpenCAPI 3.0 Certified Test Resources engineering note refresh complete
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > is the OpenCAPI 3.0 Ready Test Resources engineering note refresh complete
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > is the OpenCAPI AFU Address Space Usage refresh complete
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > is the PDF-VARIANT-DIGESTION current frontier internally consistent
 - [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
@@ -246,6 +254,8 @@
   > were the 100 stale CoreSight Base System signals authoritative
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > were the 73 stale AArch64 External Debug signals authoritative
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > were the OpenCAPI AFU address-space acronyms signal declarations
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > were the nine Introducing CoreSight actor signal relations grounded topology
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
@@ -288,13 +298,3 @@
   > what are the canonical SWD protocol surface counts
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > what are the current AArch64 External Debug artifact hashes
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > what are the current CoreSight Base System artifact hashes
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > what are the current Introducing CoreSight artifact hashes
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > what are the current OpenCAPI Certified artifact hashes
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > what are the current OpenCAPI Ready artifact hashes
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > what are the current USB4 Connection Manager artifact hashes

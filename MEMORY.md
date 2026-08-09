@@ -21,17 +21,16 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.41`; complete final signoff of the OpenCAPI AFU Address Space Usage refresh now
-  that child `.2.41a` has repaired legal/administrative semantic authority.
-- Current state: 40 refreshes are complete / 16 remain, with 80 SourceIR / nine normalized / 80 EvidenceIR / 79
-  SemanticIR / 79 IntentIR / 79 adapters and all 66 current emitted ISFs strict-clean. Child `.2.41a` measured 32
-  legal/administrative gates across 21 retained documents and added a compound word-bounded SemanticContext
-  boundary. Real #41 preserves 106 EvidenceIR statements while phases/gates fall 1→0, invariants 17→15, Intent
-  behaviors 2→0, and the adapter stays honestly blocked with no signals or behavior. Two repaired cascades
-  reproduce six hashes. Nine WIRE/I2C/SWD gates, KG 156/156, full CI 1,790/five ignored, and FSMGen 66/66 pass.
-- Next action: reverify #41's complete 12-artifact hash/path/count set, update the corpus row and live counts,
-  delete only the authenticated rollback/task evidence with zero residue, then commit parent `.2.41` signoff.
-- In-flight uncommitted: #41 retains its exact six-file rollback and SSD-local task evidence until parent final
-  gates close. Two guarded ingests peak at 20% and 19% system memory used; refreshed SourceIR/EvidenceIR are
-  content-exact to the first current cascade, and the repaired downstream chain is deterministic.
+- Active unit: `CORPUS-COVERAGE.2`; select and own current-binary refresh #42 from the 15-document real chip-spec
+  tail after the clean #41 handoff.
+- Current state: 41 refreshes are complete / 15 remain, with 80 SourceIR / ten normalized / 80 EvidenceIR / 79
+  SemanticIR / 79 IntentIR / 79 adapters and all 66 current emitted ISFs strict-clean. OpenCAPI AFU Address Space
+  Usage reproduces 14 pages / nine visuals / two tables / 23 sections / 118 elements at 20% and 19% peak memory.
+  Evidence stays at 106 statements with no typed hardware surfaces. Current authority removes five stale acronym-
+  group interfaces/five actors/eight outputs; `.2.41a` removes false legal semantics. The final adapter blocks with
+  no signals or behavior. Twelve hashes, WIRE/I2C/SWD, KG 156/156, full CI, 66/66 strict, book/doctrines/locality,
+  exact task-evidence cleanup, and zero residue pass.
+- Next action: select the smallest roadmap-aligned remaining real chip-spec candidate, create ownership leaf
+  `CORPUS-COVERAGE.2.42` while clean, then run its authenticated guarded refresh.
+- In-flight uncommitted: none after `.2.41` commit; its exact 29-file / 823369-byte SSD-local task bundle is gone.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

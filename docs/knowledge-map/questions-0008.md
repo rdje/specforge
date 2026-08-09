@@ -2,8 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > why can't I just run converge to land the LLM-primary promotion on a canonical artifact
+- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
+  > why can't RISC-V AIA registers be captured by .4d.i (its normalized bundle is ABSENT — re-ingest RAM/Docling-gated under CORPUS-COVERAGE — and its CSR intent is prose conditional_rules, not register tables)
+- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
+  > why can't cluster-scoping replace the forbidden supply-rail (VDD/VSS) denylist
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > why can't extract-constraints-llm run inside a converge pass
+- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
+  > why can't specforge evidence rebuild the evidence (normalized missing)
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > why can't specforge just drop single-noun or multiword actors to fix the prose phantom explosion
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > why did .1b.i NOT strip trailing prepositions and what changed in .1c.i
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > why did 64 AArch64 External Debug interfaces disappear
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > why did 88 CoreSight Base System interfaces disappear
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > why did AFU BAR CFG GB ID MEM MMIO and PASID disappear as signals
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > why did APB unexplained_intent_bearing_tables go to zero
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
@@ -246,6 +264,8 @@
   > why does the Introducing CoreSight guide emit no ISF
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > why does the MPAM 'must be included' sentence extract nothing
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > why does the OpenCAPI AFU Address Space Usage note emit no ISF
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > why does the OpenCAPI Certified engineering note emit no ISF
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
@@ -278,23 +298,3 @@
   > why does the same-guard dedup_conflicting_rules miss a conflict between an unconditional rule and a guarded rule
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
   > why does the tracked validation snapshot differ from current generated IntentIR reports
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > why does tilelink have 39 relations in evidence_ir but 0 in intent_ir
-- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
-  > why doesn't SpecForge emit (contract eventually) anymore
-- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
-  > why doesn't SpecForge lower stability obligations to (assert (stable sig))
-- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
-  > why doesn't SpecForge use TLA+
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > why doesn't fusion use the minimum confidence
-- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
-  > why doesn't the NLI-oracle conformal calibration produce a threshold
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > why doesn't the disk estimate use the page count
-- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
-  > why doesn't the temporal_rule eval reach precision 1.0
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > why don't RISC-V Debug register bit-fields reach .isf (all 179 fields are UNLOCATED — field_name/access/reset/description captured but 0 carry bits_high/bits_low/bit_width; the field_table strategy did not parse the bit-layout column)
-- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
-  > why don't parallel buses get serial_frame_fields

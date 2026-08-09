@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > where do interface_edge_timings stop in the pipeline
+- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
+  > where do live-document checker test fixtures create temporary files
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > where do message-field / structure / flit / descriptor layouts go in the pipeline (EvidenceIR only — no IntentIR carrier, never lowered)
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > where do obligations on message fields (TagOp must be 0) live in EvidenceIR
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > where do packet/flit message fields (TxnID / DBID / Opcode) live in EvidenceIR
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > where do the 9 new ACE wires AWBAR AWDOMAIN AWSNOOP come from and when do they land
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > where do the APB signal declarations come from (which table)
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > where do the signal / FSM / register / constraint / actor extractors live and how are they merged
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > where do transaction phases live (SemanticIr.transaction_phases) and do they reach the .isf (no — SemanticIR-only, recognition only)
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
@@ -281,19 +297,3 @@
   > why can an active task legacy route use a shorthand source literal
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > why can the roadmap not be split safely at Markdown headings
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > why can't I just run converge to land the LLM-primary promotion on a canonical artifact
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > why can't RISC-V AIA registers be captured by .4d.i (its normalized bundle is ABSENT — re-ingest RAM/Docling-gated under CORPUS-COVERAGE — and its CSR intent is prose conditional_rules, not register tables)
-- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
-  > why can't cluster-scoping replace the forbidden supply-rail (VDD/VSS) denylist
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > why can't extract-constraints-llm run inside a converge pass
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > why can't specforge evidence rebuild the evidence (normalized missing)
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > why can't specforge just drop single-noun or multiword actors to fix the prose phantom explosion
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > why did .1b.i NOT strip trailing prepositions and what changed in .1c.i
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > why did 64 AArch64 External Debug interfaces disappear

@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > why does tilelink have 39 relations in evidence_ir but 0 in intent_ir
+- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
+  > why doesn't SpecForge emit (contract eventually) anymore
+- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
+  > why doesn't SpecForge lower stability obligations to (assert (stable sig))
+- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
+  > why doesn't SpecForge use TLA+
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > why doesn't fusion use the minimum confidence
+- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
+  > why doesn't the NLI-oracle conformal calibration produce a threshold
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > why doesn't the disk estimate use the page count
+- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
+  > why doesn't the temporal_rule eval reach precision 1.0
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > why don't RISC-V Debug register bit-fields reach .isf (all 179 fields are UNLOCATED — field_name/access/reset/description captured but 0 carry bits_high/bits_low/bit_width; the field_table strategy did not parse the bit-layout column)
+- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
+  > why don't parallel buses get serial_frame_fields
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > why drop the enum instead of width/radix-qualifying it (the value is a binary code mis-read as a decimal — the emitter can't recover the radix without fabricating; honest residual over fabrication)
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)

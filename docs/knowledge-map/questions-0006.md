@@ -2,6 +2,21 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > what is select_initiator_actor / initiator_perspective_directions
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > what is signal_presence_records and what does a SignalPresenceRecord hold
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > what is snap_subject_to_sentence_token and when does it fire
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > what is synthesize_register_field_tables
+- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
+  > what is synthesize_signal_declarations_from_prose / the pin-appositive pattern
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > what is the .2m candidate (deterministic AXI-family channel-membership lever)
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > what is the .5.ii sentence-spine member-fragment predicate (a synthesized enum member_name is a prose fragment if any _-token is an English sentence-spine word — copula/aux/modal IS/ARE/BE/HAS/MUST/SHALL, article/demonstrative THE/THIS/THAT, relativizer/subordinator WHICH/WHEN/IF/BECAUSE — EXCLUDING the .1a collisions A/I/ITS/CAN/MAY/AM. Precision 1.000 (0/115 clean-anchor
+  > flagged), recall 1.000 (269/269 junk-anchor caught), 30.2% of members drop; universal grammar ADR-0006, no name list)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > what is the .5.iii _WIDTH parameter-leak gate / is it landed / is it ADR-0006 safe (LANDED 2026-06-24: is_width_parameter_leak_member + a continue-skip in synthesize_encoding_declarations_for_enum after the .5.ii spine gate, known_signals threaded from the signal-match caller. Drops a synthesized encoding member named <X>_WIDTH iff X is a declared signal OR the enum's own name
   > — document-grounded like .5.i, NOT a name list; corpus FP set EMPTY: no legit FULL_WIDTH/HALF_WIDTH value exists and the declared-signal arm never catches one since FULL/HALF are not signals; per-member not per-enum so BRESP keeps its codes and RRESP/AXSNOOP empty to honest residuals. AXI manager.isf now (BRESP (OKAY 0)(EXOKAY 1)...) + (AWCMO (CLEAN_AND_INVALIDATE
@@ -282,19 +297,3 @@
   > where do I log feedback or a suggestion to FSMGen
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > where do in-memory structure layouts (queue entries, table entries, dwords) live in EvidenceIR
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > where do interface_edge_timings stop in the pipeline
-- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
-  > where do live-document checker test fixtures create temporary files
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > where do message-field / structure / flit / descriptor layouts go in the pipeline (EvidenceIR only — no IntentIR carrier, never lowered)
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > where do obligations on message fields (TagOp must be 0) live in EvidenceIR
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > where do packet/flit message fields (TxnID / DBID / Opcode) live in EvidenceIR
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > where do the 9 new ACE wires AWBAR AWDOMAIN AWSNOOP come from and when do they land
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > where do the APB signal declarations come from (which table)
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > where do the signal / FSM / register / constraint / actor extractors live and how are they merged

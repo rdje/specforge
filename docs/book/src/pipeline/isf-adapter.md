@@ -138,10 +138,19 @@ interfaces or signals. Lowering blocks on both missing signals and missing behav
 only `adapter.json` plus its validation report. Independent sibling evidence confirms the boundary is structural,
 not a Ready-note exception.
 
+The 14-page OpenCAPI AFU Address Space Usage engineering note provides an eighth transfer in ordinary explanatory
+prose. Its retained chain grouped `AFU`, `BAR`, `CFG`, `GB`, `ID`, `MEM`, `MMIO`, and `PASID` into five interfaces,
+five derived channel actors, and eight one-bit outputs. EvidenceIR has no signal declaration, actor relation,
+constraint, conditional rule, register, or timing record; those acronyms describe address-space concepts, not
+top-level wires. Current generic authority removes the complete false topology. A separate legal paragraph found
+during the refresh remains in EvidenceIR but cannot become a semantic phase, gate, invariant, or Intent behavior.
+Final SemanticIR/IntentIR contain no actors, interfaces, phases, gates, or behaviors, so lowering blocks on no
+signals plus no behavior and leaves only `adapter.json` plus its validation report.
+
 The corpus cache now has 66 current emitted `.isf` files, all covered by a fresh 66/66 FSMGen-strict sweep; USB
 3.2, USB4 Inter-Domain, USB4 Connection Manager, CoreSight Base System, AArch64 External Debug, and Introducing
-CoreSight, plus the OpenCAPI Ready and Certified notes, are not among them because honest blocking is the correct lowering
-result.
+CoreSight, plus the OpenCAPI Ready, Certified, and AFU Address Space Usage notes, are not among them because honest
+blocking is the correct lowering result.
 
 The measurement behind that repair found three upstream authority errors, not a reason to distrust every
 relation-derived direction. Across the retained corpus, 97 sentence-start phrases use `signal <word>` without

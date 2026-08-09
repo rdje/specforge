@@ -1,3 +1,15 @@
+### CORPUS-COVERAGE.2.41 — sign off OpenCAPI AFU address-note refresh
+
+- Two guarded CPU ingests reproduce 14 pages, nine visuals, two tables, 23 sections, and 118 elements at 20% and
+  19% peak sampled system memory used; all 14 image/layout pairs and nine visual paths are present and relative.
+- Evidence holds at 106 statements with zero typed hardware surfaces. Current authority removes five stale
+  acronym-group interfaces, five synthetic actors, and eight one-bit outputs; `.2.41a` separately removes the
+  false legal phase/gate and two legal invariants/behaviors while preserving the source text in EvidenceIR.
+- Final SemanticIR has zero actors/interfaces/phases/gates, 15 invariants, and 14 decompositions; IntentIR has zero
+  behaviors / 15 constraints. Lowering blocks on no signals plus no behavior and leaves exactly `adapter.json`
+  plus its report. Twelve hashes, two repaired cascades, WIRE/I2C/SWD, KG 156/156, full CI, 66/66 FSMGen strict,
+  mdBook, doctrines, locality, exact cleanup, and zero residue pass. Corpus is 41 done / 15 remaining.
+
 ### CORPUS-COVERAGE.2.41a — reject legal prose from semantic intent
 
 - A rights-and-permissions paragraph under generic heading `Approved` used the word `while` and was incorrectly

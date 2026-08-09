@@ -6,6 +6,7 @@
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
 | [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md) | 2026-06-11 | `current` | Offset-suffixed bit cells (31:28 +04) are dword-relative — capture the literal bit_range + byte_offset, nev… |
+| [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md) | 2026-08-09 | `current` | OpenCAPI AFU Address Space Usage refresh rejects prose acronyms and legal behavior |
 | [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md) | 2026-08-09 | `current` | OpenCAPI Ready and Certified note refreshes reject acronym-derived DL signals |
 | [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md) | 2026-06-10 | `current` | Packet/flit protocols declare message FIELDS in field-titled tables — the header vocabulary types the rows |
 | [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md) | 2026-06-14 | `current` | Per-page full-res PNGs are not read downstream — ingest skips persisting them for large PDFs |
@@ -60,4 +61,3 @@
 | [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md) | 2026-06-17 | `current` | AXI/SWD per-signal phase membership — the recorded "VLM timing-diagram phase columns" candidate is RESOLVED… |
 | [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md) | 2026-06-09 | `current` | A third agnostic FSM grammar — single ALL-CAPS `<NAME> state` bound by a transition/locative verb (SWP ACTI… |
 | [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md) | 2026-08-09 | `current` | USB4 Connection Manager refresh is portable and honestly non-emitting |
-| [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md) | 2026-08-09 | `current` | USB4 Inter-Domain refresh is path-portable and authority-empty |

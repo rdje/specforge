@@ -179,6 +179,8 @@
   > how many CoreSight Base System page sidecars are repository relative
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > how many Introducing CoreSight page paths are repository relative
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > how many OpenCAPI AFU address note page paths are repository relative
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > how many OpenCAPI Ready page paths are repository relative
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
@@ -197,6 +199,8 @@
   > how many corpus refreshes remain after CoreSight Base System
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > how many corpus refreshes remain after Introducing CoreSight
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > how many corpus refreshes remain after OpenCAPI AFU Address Space Usage
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
   > how many corpus refreshes remain after USB4 Connection Manager
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
@@ -241,6 +245,8 @@
   > how much memory did the guarded CoreSight Base System ingest use
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > how much memory did the guarded Introducing CoreSight ingest use
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > how much memory did the guarded OpenCAPI AFU address note ingest use
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > how much memory did the guarded OpenCAPI Ready ingest use
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
@@ -291,9 +297,3 @@
   > how was the trailing-fragment consolidation proven not to regress real agents (WIRE-BASED-100)
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
   > how were I2S timing_constraints recovered (clock period / clock HIGH / set-up / hold)
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > how will the million-byte Knowledge Map be sharded without losing question retrieval
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > how will the oversized SpecForge roadmap be made bounded without losing its history
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > how will the shared rolling ledger archive index be partitioned

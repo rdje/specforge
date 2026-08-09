@@ -191,19 +191,16 @@ Five active program groups support that north star:
   173→172 drops only its sibling synthetic `Signal DL is width 1.` glossary record, removing the stale one-
   interface/one-output surface while preserving the note's actors, phases, invariants, behaviors, and constraints.
   Lowering blocks on no signals plus no behavior and leaves only `adapter.json` plus its report; all 66 remaining
-  emits are strict-clean. Corpus is 40 done / 16 remaining. `.2.41` now owns the 14-page OpenCAPI AFU Address
-  Space Usage engineering note, the smallest remaining real chip-spec candidate. Its retained zero-declaration
-  evidence still feeds five heuristic interfaces and eight one-bit acronym outputs into an adapter blocked for
-  no behavior, providing a prose-grouping transfer check for the current generic authority boundary. The fresh
-  cascade removes that false topology but exposed one distinct legal-boilerplate defect: a rights-and-permissions
-  paragraph under generic heading `Approved` contained `while`, so the conditional-cue-only semantic gate builder
-  promoted it into a gate and Intent behavior. Child `.2.41a` is now closed: a compound word-bounded predicate at
-  the shared SemanticContext boundary preserves EvidenceIR while excluding legal/administrative prose from every
-  semantic consumer. The retained before projection found 32 affected gates across 21 documents; the real #41
-  rebuild preserves 106 evidence statements while phases/gates fall 1→0, invariants 17→15, and behaviors 2→0.
-  Paired regressions preserve technical permission/right/version/reliability and real protocol conditions; nine
-  WIRE/I2C/SWD datasets, KG 156/156, full CI, and 66/66 FSMGen strict pass. Parent `.2.41` resumes final artifact
-  signoff and authenticated cleanup. Separately,
+  emits are strict-clean. `.2.41` is now closed on the 14-page OpenCAPI AFU Address Space Usage engineering note.
+  Two guarded ingests reproduce 14 pages / nine visuals / two tables / 23 sections / 118 elements at 20% and 19%
+  peak memory; every page and visual path is repository-relative. Evidence stays at 106 statements with zero
+  typed hardware surfaces. Current authority removes five stale acronym-group interfaces/five synthetic actors/
+  eight one-bit outputs; child `.2.41a` keeps legal source evidence but removes its false phase/gate and two legal
+  invariants/behaviors. Final semantic/intent hardware and behavior surfaces are empty, so lowering blocks honestly
+  and leaves only `adapter.json` plus its report. The 12-artifact set and two repaired downstream cascades are
+  deterministic; WIRE/I2C/SWD, KG 156/156, full CI, 66/66 FSMGen strict, mdBook/doctrines/path/locality, and exact
+  cleanup pass. Corpus is 41 done / 15 remaining with stage census 80 SourceIR / 10 normalized / 80 EvidenceIR /
+  79 SemanticIR→IntentIR→adapter chains; frontier returns to `.2` to select refresh #42. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.
