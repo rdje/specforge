@@ -1,3 +1,17 @@
+### SWD-SERIAL-EXTRACTION.7e.ii.a — make fresh Docling metadata portable
+
+- Root-caused a fresh-ingest portability failure that reclaimed canonical bundles could not expose: Docling's
+  normalized metadata sidecar serialized its absolute runtime PDF path and the transient
+  `normalized.staging` Markdown path, then the staged-directory rename preserved both strings unchanged.
+- Added a pre-promotion sidecar rewrite through the common persisted-path boundary. Repository inputs and the
+  final normalized Markdown destination persist relative to the current root; explicitly external PDFs retain
+  absolute identity only with `path_origin: "external_input"`; any rewrite failure removes staging before the
+  previous canonical bundle is replaced.
+- Extended the canonical producer oracle and added repository/external/failure-atomicity unit cases. A second fresh 400-page CPU
+  ingest converges in two passes, scores all 29 SWD facts at 1.000, preserves exact three-stage protocol parity,
+  and passes the 1,072-artifact path scan with zero repository-owned absolute values. Full CI is green with all
+  six doctrines, formatting, warning-deny Clippy, 1,775 passed / five ignored, rustdoc, mdBook, and locality.
+
 ### SWD-SERIAL-EXTRACTION.7e.i — make convergence protocol-aware
 
 - Added exact ordered serial-frame, protocol-operation, protocol-state, and interface-edge collections to the

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > where are Docling models stored for SpecForge
+- [contested-priors](../knowledge/contested-priors.md)
+  > where are cross-document prior contradictions surfaced
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > where are register bit-fields dropped on the way to .isf (isf_ir.rs:852, IsfStorageVar { name, width, reset } — field metadata discarded)
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > where did SpecForge suggest LTL/MTL support in ISF
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
@@ -86,6 +92,8 @@
   > where is coordinated-object actor-signal relation extraction implemented
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > where is is_pure_inferred_phantom_role and the build_intent_actors phantom guard
+- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
+  > where is normalized staging removed from Docling metadata
 - [swd-protocol-convergence-snapshots-are-blind](../knowledge/swd-protocol-convergence-snapshots-are-blind.md)
   > where is protocol aware convergence accounting tracked
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
@@ -289,11 +297,3 @@
   > why can't cluster-scoping replace the forbidden supply-rail (VDD/VSS) denylist
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > why can't extract-constraints-llm run inside a converge pass
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > why can't specforge evidence rebuild the evidence (normalized missing)
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > why can't specforge just drop single-noun or multiword actors to fix the prose phantom explosion
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > why did .1b.i NOT strip trailing prepositions and what changed in .1c.i
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > why did APB unexplained_intent_bearing_tables go to zero

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
+  > how are bits | name | function tables extracted
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > how are byte location | size | register description tables extracted
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > how are caption-less page fragments of a split table stitched together
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -294,7 +298,3 @@
   > how is a duplicate register mnemonic (AUTHSTATUS/CSW/IDR reused per access-port block) handled
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > how is a fabricated mega-register / over-count avoided when recovering reused register mnemonics
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > how is a frame field's width kept honest (why is ARBITRATION FIELD width None not 11)
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > how is a fused Fields(Continued) caption handled

@@ -4,6 +4,22 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-09 — portable Docling sidecar promotion; `SWD-SERIAL-EXTRACTION.7e.ii.a`)
+
+- **Auxiliary metadata now shares the SourceIR persistence boundary.** After the Docling child succeeds,
+  `materialize_pdf` parses the staged metadata object, normalizes its PDF path with the exact source origin,
+  replaces the staged Markdown identity with the final repository-owned destination, and records `path_origin`.
+- **Failure remains atomic.** Metadata read/parse/path/write failures become typed backend failures and remove
+  `normalized.staging` before the existing normalized directory is touched. Repository paths serialize relative;
+  only an explicitly external PDF may remain absolute.
+- **The oracle covers the activated producer.** Three focused Rust cases exercise repository input, external
+  input, and malformed-metadata rollback;
+  the canonical scanner recognizes normalized metadata and accepts only its labeled external input seam. A second
+  fresh ADI run passes 29/29 scoring, exact 11/4/13/1 projection parity, and the 1,072-artifact path oracle. Full
+  CI passes 1,775 tests / five ignored plus all doctrines, warning-deny Clippy, rustdoc, mdBook, and locality.
+- **Closure remains operational.** `.7e.ii.b` owns final full-gate evidence, rollback/residue cleanup, durable
+  canonical-state updates, and closure of the SWD task-tree program.
+
 ## Session update (2026-08-09 — protocol-aware convergence; `SWD-SERIAL-EXTRACTION.7e.i`)
 
 - **Convergence now observes the complete protocol product.** `EvidenceSnapshot`, `SemanticSnapshot`, and

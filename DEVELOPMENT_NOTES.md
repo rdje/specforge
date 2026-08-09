@@ -1,4 +1,17 @@
 # DEVELOPMENT_NOTES
+## SWD-SERIAL-EXTRACTION.7e.ii.a (`2026-08-09`) — an atomic rename does not relocate serialized identity
+
+The staged-swap correctly protected the last-good normalized directory, but it moved the Docling metadata file
+without changing the runtime paths inside it. The transient directory name and current mount point therefore
+survived a successful promotion even though every typed SourceIR path was already portable. Reclaimed normalized
+bundles hid this dormant producer; only a new live ingest could activate and expose it.
+
+The stable boundary is to normalize sidecar identity while it is still staged, using the same typed source-origin
+decision as SourceIR and the final—not staged—Markdown destination. Keeping that rewrite before the directory
+swap preserves atomicity: invalid JSON, an unsafe path, or a write failure discards staging and cannot replace
+the prior bundle. The artifact oracle must scan auxiliary JSON as well as primary stage artifacts, because a
+portable typed schema does not imply every backend-owned sidecar is portable.
+
 ## SWD-SERIAL-EXTRACTION.7e.i (`2026-08-09`) — convergence needs identity as well as cardinality
 
 A collection length can detect additions and removals, but it cannot detect a same-cardinality rewrite or

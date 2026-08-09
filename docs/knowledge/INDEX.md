@@ -56,6 +56,7 @@ Collection guidance: [authoring and lifecycle README](README.md).
 | [definitional-signal-capture](definitional-signal-capture.md) | 2026-06-09 | `current` | Signals named only in prose (no signal table) are captured via a DEFINITIONAL grammar — copula "NAME is a/a… |
 | [dempster-fusion](dempster-fusion.md) | 2026-06-04 | `current` | SpecForge fuses agreeing-source confidence via Dempster corroboration (not min) |
 | [docling-device-cpu](docling-device-cpu.md) | 2026-06-01 | `current` | Docling ingest must run on CPU on this stack (torch MPS lacks float64) |
+| [docling-metadata-sidecar-paths-are-portable](docling-metadata-sidecar-paths-are-portable.md) | 2026-08-09 | `current` | Docling metadata paths are normalized before the staged bundle is promoted |
 | [doctrine-enforcement-adoption](doctrine-enforcement-adoption.md) | 2026-06-22 | `current` | SpecForge enforces every mechanizable doctrine via one registry/driver (scripts/check_doctrines.sh) gated E1… |
 | [document-class-from-structure](document-class-from-structure.md) | 2026-06-08 | `current` | Document class (protocol/register/interface/guide) inferred from structural intent surfaces, not the doc name |
 | [document-intent-category-census](document-intent-category-census.md) | 2026-06-22 | `current` | The 78-doc corpus splits 36/7/15/2/4/14 across the 6 purpose categories (wire-protocol/register-IP/platform-I… |

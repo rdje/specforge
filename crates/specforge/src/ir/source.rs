@@ -761,8 +761,8 @@ impl SourceIr {
                 )
             })?;
 
-        let source_path =
-            resolve_existing(&self.source.canonical_path, self.source_path_origin()?)?;
+        let source_path_origin = self.source_path_origin()?;
+        let source_path = resolve_existing(&self.source.canonical_path, source_path_origin)?;
         let promoted_markdown_path = resolve_repository_output(&promoted_markdown_path)?;
         let metadata_output_path = resolve_repository_output(&metadata_output_path)?;
         let runtime_artifact_layout = self.artifact_layout.runtime_layout()?;
@@ -773,6 +773,7 @@ impl SourceIr {
             &metadata_output_path,
             &runtime_artifact_layout,
             &self.document_identity.document_key,
+            source_path_origin,
         )?;
 
         self.page_artifacts = backend_summary.page_artifacts;

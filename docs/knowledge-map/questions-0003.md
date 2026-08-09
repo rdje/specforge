@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
+  > how is a frame field's width kept honest (why is ARBITRATION FIELD width None not 11)
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > how is a fused Fields(Continued) caption handled
 - [dempster-fusion](../knowledge/dempster-fusion.md)
   > how is a fused contract's automation_confidence computed
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -16,6 +20,8 @@
   > how is a register name recovered from a section heading (RISC-V dmstatus/dmcontrol)
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > how is a register-field mnemonic recovered when the name column is a bit-range (NVMe)
+- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
+  > how is an external PDF labeled in Docling metadata
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how is an under-extracted spec distinguished from a true guide (evidence_document_underextracted_spec)
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
@@ -291,9 +297,3 @@
   > is the register-bit-field ISF gap (Gap A) a SpecForge bug or a missing ISF abstraction (a missing ISF abstraction — fields reach IntentIR fully; ISF has no field-structured storage)
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > is the relation-incompleteness on the 0-relation docs a recoverable gap or genuine absence
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > is the transaction body faithfully complete (yes — only the grounded enum-selector drive is body-lowerable)
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > is the whole renderable corpus FSMGen --strict clean now (yes — 70/70 current-emit .isf after .2a.vi; the ISF-emit strict-FAIL frontier is closed: Levers A/B/C/F + .2a.vi)
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > is there a PSL or SVA export of temporal rules

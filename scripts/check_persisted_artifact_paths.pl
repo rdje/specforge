@@ -176,6 +176,11 @@ sub validate_producer_contract {
         'crates/specforge/src/commands/recover_register_bits.rs' => [
             'resolve_existing(&args.evidence_ir, PersistedPathOrigin::RepositoryOwned)?',
         ],
+        'crates/specforge/src/ir/source/docling_backend.rs' => [
+            'normalize_backend_metadata_paths(',
+            'normalize_for_storage(source_path, source_path_origin)?',
+            'normalize_for_storage(promoted_markdown_path, PersistedPathOrigin::RepositoryOwned)?',
+        ],
     );
 
     for my $relative (sort keys %required) {
@@ -252,6 +257,8 @@ sub persisted_json_artifacts {
 sub artifact_kind {
     my ($relative) = @_;
     return 'source' if $relative =~ m{\Agenerated/source_ir/[^/]+/source_ir\.json\z};
+    return 'source_metadata'
+        if $relative =~ m{\Agenerated/source_ir/[^/]+/normalized/[^/]+\.meta\.json\z};
     return 'evidence' if $relative =~ m{\Agenerated/evidence_ir/[^/]+/evidence_ir\.json\z};
     return 'semantic' if $relative =~ m{\Agenerated/semantic_ir/[^/]+/semantic_ir\.json\z};
     return 'intent' if $relative =~ m{\Agenerated/intent_ir/[^/]+/intent_ir\.json\z};
@@ -267,7 +274,7 @@ sub scan_artifacts {
         path_values => 0,
         authorized_external_paths => 0,
         absolute_repository_paths => 0,
-        producer_files => 11,
+        producer_files => 12,
     };
 
     for my $artifact (@$artifacts) {
@@ -345,6 +352,10 @@ sub is_authorized_external {
         return 1 if $key eq 'requested_path' || $key eq 'canonical_path';
         return 1 if $key eq 'promoted_markdown_path' && ($meta->{source_kind} // '') eq 'markdown';
     }
+    return 1
+        if $kind eq 'source_metadata'
+        && $key eq 'input_path'
+        && ($meta->{path_origin} // '') eq 'external_input';
     return 1
         if $kind eq 'evidence'
         && $key eq 'source_path'
@@ -610,6 +621,15 @@ JSON
 JSON
         ['labeled external evidence accepted', 'evidence', <<'JSON', 1],
 {"source_path_origin":"external_input","source_path":"/inputs/spec.md","source_ir_path":"generated/source_ir/doc/source_ir.json"}
+JSON
+        ['relative docling metadata accepted', 'source_metadata', <<'JSON', 1],
+{"input_path":"corpus/spec.pdf","path_origin":"repository_owned","promoted_markdown_path":"generated/source_ir/doc/normalized/doc.md"}
+JSON
+        ['labeled external docling input accepted', 'source_metadata', <<'JSON', 1],
+{"input_path":"/inputs/spec.pdf","path_origin":"external_input","promoted_markdown_path":"generated/source_ir/doc/normalized/doc.md"}
+JSON
+        ['unlabeled external docling input rejected', 'source_metadata', <<'JSON', 0],
+{"input_path":"/inputs/spec.pdf","promoted_markdown_path":"generated/source_ir/doc/normalized/doc.md"}
 JSON
         ['unknown path field fails closed', 'semantic', <<'JSON', 0],
 {"raw_image_path":"/retired/specforge/generated/source_ir/doc/image.png"}

@@ -19,14 +19,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SWD-SERIAL-EXTRACTION.7e.ii` — fresh tracked-PDF promotion and SWD program closure.
-- Current state: all four typed protocol collections now reach convergence snapshots at EvidenceIR, SemanticIR,
-  and IntentIR in exact vector order, and each record contributes to its stage fact count. A real three-stage
-  fixture proves five-record deltas, same-cardinality content detection, reorder detection, and empty
-  compatibility. Full CI is green at 1,772 passed / five ignored with all six doctrines, warning-deny Clippy,
-  rustdoc, mdBook doctests/build, and final locality.
-- Next action: after the `.7e.i` commit, activate `.7e.ii`; perform a fresh repository-local CPU ingest of the
-  tracked ADI PDF, promote the complete 29/29 chain, and prove downstream parity/residual/convergence closure.
-- In-flight uncommitted: none after the `.7e.i` commit. Generated migration state remains repository-local and
-  intentionally ignored; the exact rollback and disposable loader workspace are absent.
+- Active unit: `SWD-SERIAL-EXTRACTION.7e.ii.b` — final canonical verification, cleanup, and SWD closure.
+- Current state: a second fresh repository-local 400-page CPU ingest runs through the repaired release binary,
+  converges in two passes, scores all 29 SWD protocol facts at 1.000, preserves exact 11/4/13/1 parity through
+  IntentIR, and emits 29 adapter residual dispositions. The canonical path oracle now scans 1,072 JSON artifacts
+  / 344,011 path values with zero repository-owned absolutes. Full CI passes 1,775 tests / five ignored plus all
+  doctrines, warning-deny Clippy, rustdoc, mdBook, and final locality.
+- Next action: commit `.7e.ii.a` cleanly, then re-run final chain/KG/WIRE checks from canonical, remove both exact
+  rollback workspaces and producer residue, update canonical-currentness facts, and close the SWD program.
+- In-flight uncommitted: completed `.7e.ii.a` code/docs awaiting commit plus two exact ignored rollback snapshots;
+  the user-owned `.claude/settings.json` remains untouched.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

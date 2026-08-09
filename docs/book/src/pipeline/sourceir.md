@@ -37,6 +37,13 @@ new path API, and new artifacts do not remember the old workstation or mount poi
 repository paths can load only when their recognized project-data suffix identifies exactly one existing target
 under the current root. An unrelated external absolute path is never silently rebased.
 
+The same contract covers Docling's `normalized/*.meta.json` sidecar, not only `source_ir.json`. Before the
+staged bundle is promoted, SpecForge rewrites the sidecar's `input_path` through the source-origin policy and
+its `promoted_markdown_path` to the final repository-relative `normalized/` location. This prevents a successful
+staged-directory rename from preserving either a workstation root or the temporary `normalized.staging` name.
+If that metadata cannot be parsed, normalized, or rewritten, promotion fails before the prior normalized bundle
+is replaced. An external PDF remains absolute only with `path_origin: "external_input"` in the sidecar.
+
 Source identity is provenance, so it can outlive a materialized local leaf. For example,
 `specforge clean --scope source-normalized --execute` may reclaim promoted Markdown after later stages have
 captured it. Loading the retained SourceIR still resolves that reference beneath the current repository (or keeps

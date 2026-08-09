@@ -8,6 +8,7 @@ use std::time::{Duration, Instant};
 use serde::Deserialize;
 
 use crate::error::{AppError, Result};
+use crate::persisted_path::{PersistedPathOrigin, normalize_for_storage};
 
 use super::{
     ContentElementRecord, ContentSectionRecord, DocumentProfile, PageArtifact, PlaceholderBinding,
@@ -1618,6 +1619,7 @@ pub fn materialize_pdf(
     metadata_output_path: &Path,
     artifact_layout: &SourceArtifactLayout,
     document_key: &str,
+    source_path_origin: PersistedPathOrigin,
 ) -> Result<DoclingBackendSummary> {
     // Pre-flight disk BEFORE creating any staging directory, so a refusal leaves the prior
     // normalized bundle and source_ir.json untouched.
@@ -1722,10 +1724,87 @@ pub fn materialize_pdf(
             ))
         })?;
 
+    normalize_staged_backend_metadata(
+        &staged_metadata_output_path,
+        source_path,
+        source_path_origin,
+        promoted_markdown_path,
+        &staged_normalized_root,
+    )?;
+
     cleanup_path_if_exists(&artifact_layout.normalized_root)?;
     fs::rename(&staged_normalized_root, &artifact_layout.normalized_root)?;
 
     Ok(summary.relocate_paths(&staged_normalized_root, &artifact_layout.normalized_root))
+}
+
+fn normalize_staged_backend_metadata(
+    metadata_path: &Path,
+    source_path: &Path,
+    source_path_origin: PersistedPathOrigin,
+    promoted_markdown_path: &Path,
+    staged_normalized_root: &Path,
+) -> Result<()> {
+    normalize_backend_metadata_paths(
+        metadata_path,
+        source_path,
+        source_path_origin,
+        promoted_markdown_path,
+    )
+    .inspect_err(|_| {
+        let _ = cleanup_path_if_exists(staged_normalized_root);
+    })
+}
+
+fn normalize_backend_metadata_paths(
+    metadata_path: &Path,
+    source_path: &Path,
+    source_path_origin: PersistedPathOrigin,
+    promoted_markdown_path: &Path,
+) -> Result<()> {
+    let raw = fs::read_to_string(metadata_path).map_err(|error| {
+        AppError::InvalidBackendOutput(format!(
+            "failed to read docling metadata at {}: {error}",
+            metadata_path.display()
+        ))
+    })?;
+    let mut metadata = serde_json::from_str::<serde_json::Value>(&raw).map_err(|error| {
+        AppError::InvalidBackendOutput(format!(
+            "failed to parse docling metadata at {}: {error}",
+            metadata_path.display()
+        ))
+    })?;
+    let object = metadata.as_object_mut().ok_or_else(|| {
+        AppError::InvalidBackendOutput(format!(
+            "docling metadata at {} is not a JSON object",
+            metadata_path.display()
+        ))
+    })?;
+
+    let persisted_source = normalize_for_storage(source_path, source_path_origin)?;
+    let persisted_markdown =
+        normalize_for_storage(promoted_markdown_path, PersistedPathOrigin::RepositoryOwned)?;
+    object.insert(
+        "input_path".to_string(),
+        serde_json::Value::String(persisted_source.to_string_lossy().into_owned()),
+    );
+    object.insert(
+        "path_origin".to_string(),
+        serde_json::to_value(source_path_origin)?,
+    );
+    object.insert(
+        "promoted_markdown_path".to_string(),
+        serde_json::Value::String(persisted_markdown.to_string_lossy().into_owned()),
+    );
+
+    let persisted = serde_json::to_string_pretty(&metadata)?;
+    fs::write(metadata_path, persisted).map_err(|error| {
+        AppError::InvalidBackendOutput(format!(
+            "failed to rewrite docling metadata at {}: {error}",
+            metadata_path.display()
+        ))
+    })?;
+    Ok(())
 }
 
 fn cleanup_path_if_exists(path: &Path) -> std::io::Result<()> {
@@ -2036,6 +2115,7 @@ mod tests {
         INGEST_RAM_SAMPLE_SECS_ENV, RamGuardConfig, adaptive_batch_pages, check_disk_preflight,
         estimate_required_disk_mb, inspect_docling_runtime,
         inspect_docling_runtime_with_repo_search, nearest_existing_ancestor,
+        normalize_backend_metadata_paths, normalize_staged_backend_metadata,
         parse_adaptive_batch_enabled, parse_batch_pages_ceiling, parse_df_available_kb,
         parse_disk_preflight_requirement, parse_leading_number, parse_linux_meminfo_total_mb,
         parse_linux_meminfo_used_percent, parse_macos_memory_pressure_used_percent,
@@ -2044,6 +2124,7 @@ mod tests {
         should_abort_for_memory,
     };
     use crate::error::{AppError, Result};
+    use crate::persisted_path::PersistedPathOrigin;
     use crate::test_support::env_var_lock;
 
     struct EnvVarGuard {
@@ -2098,6 +2179,124 @@ mod tests {
         fn drop(&mut self) {
             let _ = std::env::set_current_dir(&self.original);
         }
+    }
+
+    #[test]
+    fn backend_metadata_persists_repository_paths_relative_to_the_final_bundle() -> Result<()> {
+        let tempdir = crate::project_data::tempdir()?;
+        let source_path = tempdir.path().join("source.pdf");
+        let staging_root = tempdir.path().join("normalized.staging");
+        let metadata_path = staging_root.join("document.meta.json");
+        let promoted_markdown_path = tempdir.path().join("normalized/document.md");
+        fs::write(&source_path, b"pdf fixture")?;
+        fs::create_dir_all(&staging_root)?;
+        fs::write(
+            &metadata_path,
+            serde_json::to_vec_pretty(&serde_json::json!({
+                "input_path": source_path,
+                "promoted_markdown_path": staging_root.join("document.md")
+            }))?,
+        )?;
+
+        normalize_backend_metadata_paths(
+            &metadata_path,
+            &source_path,
+            PersistedPathOrigin::RepositoryOwned,
+            &promoted_markdown_path,
+        )?;
+
+        let metadata: serde_json::Value = serde_json::from_slice(&fs::read(&metadata_path)?)?;
+        let repository_root = crate::project_data::repository_root()?;
+        let expected_source = source_path
+            .strip_prefix(&repository_root)
+            .expect("project tempdir must be inside the repository");
+        let expected_markdown = promoted_markdown_path
+            .strip_prefix(&repository_root)
+            .expect("project tempdir must be inside the repository");
+        assert_eq!(
+            metadata["input_path"],
+            expected_source.to_string_lossy().as_ref()
+        );
+        assert_eq!(
+            metadata["promoted_markdown_path"],
+            expected_markdown.to_string_lossy().as_ref()
+        );
+        assert_eq!(metadata["path_origin"], "repository_owned");
+        assert!(
+            !metadata["promoted_markdown_path"]
+                .as_str()
+                .unwrap_or_default()
+                .contains("normalized.staging")
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn backend_metadata_labels_an_authorized_external_pdf() -> Result<()> {
+        let tempdir = crate::project_data::tempdir()?;
+        let metadata_path = tempdir.path().join("document.meta.json");
+        let promoted_markdown_path = tempdir.path().join("normalized/document.md");
+        let external_source = Path::new("/explicitly-authorized-input/document.pdf");
+        fs::write(&metadata_path, b"{}")?;
+
+        normalize_backend_metadata_paths(
+            &metadata_path,
+            external_source,
+            PersistedPathOrigin::ExternalInput,
+            &promoted_markdown_path,
+        )?;
+
+        let metadata: serde_json::Value = serde_json::from_slice(&fs::read(&metadata_path)?)?;
+        assert_eq!(
+            metadata["input_path"],
+            external_source.to_string_lossy().as_ref()
+        );
+        assert_eq!(metadata["path_origin"], "external_input");
+        assert!(
+            Path::new(
+                metadata["promoted_markdown_path"]
+                    .as_str()
+                    .unwrap_or_default()
+            )
+            .is_relative()
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn malformed_backend_metadata_discards_staging_and_keeps_the_last_good_bundle() -> Result<()> {
+        let tempdir = crate::project_data::tempdir()?;
+        let source_path = tempdir.path().join("source.pdf");
+        let normalized_root = tempdir.path().join("normalized");
+        let staging_root = tempdir.path().join("normalized.staging");
+        let metadata_path = staging_root.join("document.meta.json");
+        let promoted_markdown_path = normalized_root.join("document.md");
+        fs::write(&source_path, b"pdf fixture")?;
+        fs::create_dir_all(&normalized_root)?;
+        fs::write(normalized_root.join("keep.txt"), b"last-good-run")?;
+        fs::create_dir_all(&staging_root)?;
+        fs::write(&metadata_path, b"not JSON")?;
+
+        let error = normalize_staged_backend_metadata(
+            &metadata_path,
+            &source_path,
+            PersistedPathOrigin::RepositoryOwned,
+            &promoted_markdown_path,
+            &staging_root,
+        )
+        .expect_err("malformed metadata must block bundle promotion");
+
+        assert!(
+            error
+                .to_string()
+                .contains("failed to parse docling metadata")
+        );
+        assert_eq!(
+            fs::read(normalized_root.join("keep.txt"))?,
+            b"last-good-run"
+        );
+        assert!(!staging_root.exists());
+        Ok(())
     }
 
     #[test]

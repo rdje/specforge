@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > what is corpus_cluster / document_fingerprint / cluster_documents / DocumentCluster
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > what is declared_signal_complete_gold_precision
+- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
+  > what is dedup_constraints / its canonical key
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
   > what is definitional_signal_names / the copula + glossary-colon prose-signal grammar
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -291,9 +297,3 @@
   > when should message fields join the document class census
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
   > when should the activate-only ExtractionProfile consume contract be built
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > where are Docling models stored for SpecForge
-- [contested-priors](../knowledge/contested-priors.md)
-  > where are cross-document prior contradictions surfaced
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > where are register bit-fields dropped on the way to .isf (isf_ir.rs:852, IsfStorageVar { name, width, reset } — field metadata discarded)

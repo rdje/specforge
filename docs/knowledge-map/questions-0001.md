@@ -190,6 +190,8 @@
   > does a PathBuf need portability handling before it has a producer
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > does a deterministic semantic->intent rebuild recover lost actor_signal_relations
+- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
+  > does a metadata rewrite failure preserve the previous normalized bundle
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > does a replaced constraint surface get polarity refinement (apply_persisted_polarity_to_constraints)
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
@@ -240,6 +242,8 @@
   > does specforge handle passive voice for actor-signal relations (X is driven by Y)
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
   > does specforge write to the input path I pass or to a canonical generated path
+- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
+  > does the Docling metadata sidecar store repository relative paths
 - [swd-protocol-surfaces-stop-at-evidenceir](../knowledge/swd-protocol-surfaces-stop-at-evidenceir.md)
   > does the ISF adapter consume swd_operations or protocol_states
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
@@ -294,7 +298,3 @@
   > how are TRM register bit assignments tables without access/reset columns handled
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > how are bit location | register description | attributes tables extracted
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > how are bits | name | function tables extracted
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > how are byte location | size | register description tables extracted
