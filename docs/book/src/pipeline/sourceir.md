@@ -55,12 +55,12 @@ re-ingest means the refreshed EvidenceIR and downstream stages were built and ve
 not undo that work. Report normalized retention separately when discussing whether evidence can be rebuilt again
 without another Docling ingest.
 
-The current measured example (`2026-08-09`) is 34 completed current-binary refreshes with 22 real chip-spec
-documents left in the refresh queue. The local artifact tree separately contains 80 SourceIR files, three retained
+The current measured example (`2026-08-09`) is 35 completed current-binary refreshes with 21 real chip-spec
+documents left in the refresh queue. The local artifact tree separately contains 80 SourceIR files, four retained
 normalized bundles, 80 EvidenceIR files, and 79 SemanticIR→IntentIR→adapter chains. The newest bundle belongs to
-the 51-page USB4 Inter-Domain Service refresh: 51 page sidecars now store final repository-relative image paths,
-and a monitored deterministic replay peaked at 18% system memory used. Its presence is cache-retention status,
-not what makes that refresh complete; complete verified downstream artifacts are the durable progress measure.
+the 96-page USB4 Connection Manager Guide: all 96 page sidecars store final repository-relative image paths, and
+the guarded CPU ingest peaked at 28% system memory used. Its presence is cache-retention status, not what makes
+that refresh complete; complete verified downstream artifacts are the durable progress measure.
 
 ## Why this stage matters
 

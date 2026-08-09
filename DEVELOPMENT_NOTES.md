@@ -1,4 +1,23 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.35 (`2026-08-09`) — source evidence is not interface authority, even in a behavioral guide
+
+USB4 Connection Manager is a useful third transfer because its stale chain looked superficially stronger than
+the prior USB documents: 13 actor-signal relations became four interfaces, 11 actor ports, and a renderable
+three-output `device_also.isf`. The current cascade does not erase the underlying behavioral language. EvidenceIR
+retains one `USB4` signal constraint and three `USB4` conditional consequents; SemanticIR/IntentIR retain three
+temporal rules, two actor contracts, and two recognition-only operations. What disappears is only the unsupported
+hardware boundary: relations/interfaces/ports/connectivity all fall to zero, so lowering blocks honestly.
+
+The SourceIR 1,509→1,313 delta is also structurally bounded. Only `body_text` changes (639→443); list items,
+captions, footnotes, section headers, pages, visuals, tables, and sections hold exactly. Twelve pages lose 197
+body fragments and every one carries visual assets; another page gains one clean body record. Spot-checking the
+longest apparent removal finds the substantive paragraph retained in normalized markdown and current SourceIR
+without the stale injected phrase. This is visual-text cleanup and de-duplication, not prose loss.
+
+The discovery symlink remains unsuitable as a repository-owned persisted input because it escapes the root. The
+resolved caller-authorized PDF, repository, rollback, and output all share SSD device `16777240`; project-owned
+temporary and generated data stay repository-derived. One guarded CPU ingest peaked at 28% system memory used.
+
 ## CORPUS-COVERAGE.2.34b.ii.b (`2026-08-09`) — a second document is the real genericity gate
 
 The repaired page producer is verified against the failure that opened it, not just against unit fixtures. Two

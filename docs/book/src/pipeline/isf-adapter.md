@@ -84,8 +84,17 @@ records, removes the obsolete `channel.isf`, and leaves exactly `adapter.json`. 
 all final hashes; the only normalized-bundle differences from the preserved defective run are the 51 corrected
 page-sidecar path fields.
 
-The corpus cache now has 69 current emitted `.isf` files, all covered by a fresh 69/69 FSMGen-strict sweep; USB
-3.2 and USB4 Inter-Domain are not among them because honest blocking is the correct lowering result.
+The 96-page USB4 Connection Manager Guide is the next sibling transfer. Its retained chain promoted 13 prose
+relations into four interfaces, 11 actor ports, and three one-bit outputs (`SB`, `USB`, `USB4`), then emitted
+three `USB4` rules and a generic table enum in `device_also.isf`. The current pipeline keeps four exact `USB4`
+structured references as source evidence, but produces zero relations, interfaces, ports, or connectivity. It
+classifies the self-declared guide as a high-confidence methodology guide, recognises two ungrounded operation
+names, and blocks lowering on `no signals declared in interface`; the obsolete target is removed and only
+`adapter.json` remains.
+
+The corpus cache now has 68 current emitted `.isf` files, all covered by a fresh 68/68 FSMGen-strict sweep; USB
+3.2, USB4 Inter-Domain, and USB4 Connection Manager are not among them because honest blocking is the correct
+lowering result.
 
 The measurement behind that repair found three upstream authority errors, not a reason to distrust every
 relation-derived direction. Across the retained corpus, 97 sentence-start phrases use `signal <word>` without

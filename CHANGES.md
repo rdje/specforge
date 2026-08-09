@@ -1,3 +1,15 @@
+### CORPUS-COVERAGE.2.35 — sign off USB4 Connection Manager refresh
+
+- Guarded CPU ingest produces 96 pages, 46 visuals, 23 tables, and 1,313 elements at 28% peak system memory
+  used; all 96 page sidecars are final-rooted and repository-relative.
+- Current generic authority removes 13 stale prose relations, four interfaces, 11 ports, and the `SB`/`USB`/
+  `USB4` three-signal adapter while retaining four exact `USB4` structured references as source evidence.
+- The high-confidence methodology guide blocks on no declared interface signals, removes `device_also.isf`, and
+  leaves exactly `adapter.json`. Two downstream cascades reproduce all nine final hashes.
+- Nine WIRE/I2C/SWD datasets hold their declared gates, KG is 156/156, all 68 current emits pass FSMGen strict,
+  and mdBook/doctrine/locality gates pass; exact task evidence is then deleted with zero residue. Corpus is 35
+  done / 21 remaining.
+
 ### CORPUS-COVERAGE.2.34b.ii.b — sign off the portable USB4 refresh
 
 - Two guarded CPU ingests reproduce 51 pages, 82 visuals, 49 tables, 603 elements, and every final artifact

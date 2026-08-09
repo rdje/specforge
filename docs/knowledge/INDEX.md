@@ -162,6 +162,7 @@
 - [transaction-membership-subsection-scope](transaction-membership-subsection-scope.md)
 - [transaction-phase-membership-vlm-vs-channel](transaction-phase-membership-vlm-vs-channel.md)
 - [transition-bound-state-fsm](transition-bound-state-fsm.md)
+- [usb4-connection-manager-refresh-is-authority-empty](usb4-connection-manager-refresh-is-authority-empty.md)
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
 - [validation-snapshot-reviewed-boundary](validation-snapshot-reviewed-boundary.md)
 - [value-binder-alphabetic-whole-word](value-binder-alphabetic-whole-word.md)

@@ -68,3 +68,9 @@ consequents as source evidence but produces zero relations, interfaces, ports, c
 rules. Lowering blocks on `no signals declared in interface`, keeps six storage records, removes the obsolete
 `channel.isf`, and leaves exactly `adapter.json`. The live emitted set is now 69/69 FSMGen-strict clean. This
 second document confirms the authority-empty repair is structural rather than USB 3.2-specific.
+
+**Third sibling transfer (`CORPUS-COVERAGE.2.35`).** USB4 Connection Manager previously promoted 13 prose
+relations into four interfaces, 11 ports, three signals (`SB`/`USB`/`USB4`), three rules, and one generic enum.
+The current cascade retains four exact `USB4` structured references as source evidence but produces zero
+relations, interfaces, ports, or connectivity. The self-declared methodology guide blocks on no declared
+interface signals, removes `device_also.isf`, and leaves exactly `adapter.json`; the live set is 68/68 strict-clean.
