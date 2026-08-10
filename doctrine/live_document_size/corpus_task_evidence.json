@@ -1,8 +1,8 @@
 {
    "contract_id" : "corpus-coverage-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "CORPUS-COVERAGE.2.50",
-      "literal" : "Active product leaf: `CORPUS-COVERAGE.2.50`.",
+      "leaf_id" : "CORPUS-COVERAGE.2.50a",
+      "literal" : "Active product leaf: `CORPUS-COVERAGE.2.50a`.",
       "mode" : "eligible",
       "part_id" : "refreshes-49-56"
    },
@@ -100,13 +100,13 @@
          {
             "heading" : "# CORPUS-COVERAGE — refreshes 49–56",
             "metrics" : {
-               "bytes" : 15337,
+               "bytes" : 20424,
                "line_bytes" : 229,
-               "lines" : 225
+               "lines" : 302
             },
             "part_id" : "refreshes-49-56",
             "path" : "docs/tasks/corpus-coverage/refreshes-49-56.md",
-            "sha256" : "de0fbbe25597544569786756c7f45a43929fb873c8b4d775f7b072ad50e9549a",
+            "sha256" : "860f91f48247b80e375b3e6c25ecc0a43d11946bed1e825659868a9cfb4bd196",
             "state" : "active"
          }
       ],
@@ -416,6 +416,11 @@
          "leaf_id" : "CORPUS-COVERAGE.2.50",
          "origin" : "post_migration",
          "part_id" : "refreshes-49-56"
+      },
+      {
+         "leaf_id" : "CORPUS-COVERAGE.2.50a",
+         "origin" : "post_migration",
+         "part_id" : "refreshes-49-56"
       }
    ],
    "limits" : {
@@ -506,7 +511,7 @@
          "- Status: `active`",
          "49 of 56 real chip-spec refreshes are complete.",
          "## Current Frontier",
-         "Active product leaf: `CORPUS-COVERAGE.2.50`.",
+         "Active product leaf: `CORPUS-COVERAGE.2.50a`.",
          "## Detailed task evidence",
          "## Verification Log",
          "## Commit Log"

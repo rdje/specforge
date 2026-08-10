@@ -216,7 +216,10 @@ feature matrix, not three timing constraints; current generic authority also rem
 intent behaviors, and 88 constraints remain. Corpus coverage is 49/56 with seven refreshes remaining, stages are
 80/21/80/79, and all 58 retained emitted targets pass FSMGen strict validation. The separate `.2.50` leaf now
 owns the 57-page / 527-element OpenCAPI Data Link Layer v2.0 specification, the smallest remaining source; its
-same-SSD PDF, absent normalized bundle, and exact stale seven-file chain are pinned before guarded ingest.
+same-SSD PDF, absent normalized bundle, and exact stale seven-file chain are pinned before guarded ingest. Its
+first cascade safely blocks the stale target but exposes child `.2.50a`: four post-binding uppercase tokens become
+false signal constraints and one temporal conflict. The child owns the measured generic subject-authority repair
+before parent completion; the pre-ingest chain remains the durable handoff state.
 
 Post-migration sealing is Git-backed: a part's final content commit lands first, then a following state-only
 transaction records that ancestor commit/blob before any later part accepts work. The migrated legacy payloads

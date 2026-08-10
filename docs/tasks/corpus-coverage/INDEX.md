@@ -68,6 +68,7 @@
 | `CORPUS-COVERAGE.3` | [Repair acceptance and frontier](repair-acceptance-and-frontier.md) |
 | `CORPUS-COVERAGE.2.49` | [Refreshes 49 56](refreshes-49-56.md) |
 | `CORPUS-COVERAGE.2.50` | [Refreshes 49 56](refreshes-49-56.md) |
+| `CORPUS-COVERAGE.2.50a` | [Refreshes 49 56](refreshes-49-56.md) |
 
 ## Exact provenance
 

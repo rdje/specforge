@@ -30,11 +30,11 @@ ISF pipeline, keep completed chains non-stale, and record extraction gaps withou
 
 ## Current Frontier
 
-Active product leaf: `CORPUS-COVERAGE.2.50`.
+Active product leaf: `CORPUS-COVERAGE.2.50a`.
 
-`CORPUS-COVERAGE.2.50` is owned in the active `refreshes-49-56` part. It selects the 57-page OpenCAPI Data Link
-Layer v2.0 specification, the smallest of seven remaining documents at 527 retained elements, and pins the exact
-same-SSD source plus stale seven-file chain before any ingest or artifact mutation.
+The first owned `.2.50` OpenCAPI Data Link cascade exposes four false signal constraints and one derived temporal
+conflict while adapter lowering safely blocks. Child `.2.50a` owns the measured generic passive-binding subject
+repair before the parent rebuilds from a corrected committed release.
 
 ## Detailed task evidence
 

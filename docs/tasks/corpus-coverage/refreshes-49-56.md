@@ -139,13 +139,13 @@ The eight downstream artifact/report hashes combine to
 
 ## CORPUS-COVERAGE.2.50
 
-- Status: `active` (`2026-08-10`, DATA/DOC; ownership and exact stale boundary only)
+- Status: `active` (`2026-08-10`, DATA/CODE/DOC; child `.2.50a` active)
 - Goal: re-ingest the OpenCAPI Data Link Layer v2.0 specification with the current release, then rebuild and
   validate EvidenceIR → SemanticIR → IntentIR → ISF without promoting glossary entries, encoding-table labels,
   protocol prose, or diagram text into unsupported signals, enums, phases, gates, or executable behavior.
 - Document key: `opencapi_data_link_layer_v20_09jul2020`
 - Source: `.cache/local-references/chipdoc/cxl/opencapi/current/OpenCAPI-Data-Link-Layer_v20_09JUL2020.pdf`
-- Children: none unless the fresh result exposes a generic defect that cannot safely remain inside this refresh.
+- Children: `.2.50a` passive-binding constraint-subject authority repair (active).
 
 ### Selection and source authority
 
@@ -223,3 +223,80 @@ The release binary is the `.2.48a` final binary at SHA-256
 | Unit | Durable evidence |
 | --- | --- |
 | `CORPUS-COVERAGE.2.50` ownership | `CORPUS-COVERAGE.2.50 — own OpenCAPI data-link refresh` |
+
+## CORPUS-COVERAGE.2.50a
+
+- Status: `active` (`2026-08-10`, PROBE/CODE/DATA/DOC; ownership only)
+- Parent: `CORPUS-COVERAGE.2.50`; parent completion pauses until this generic repair is committed and the OpenCAPI
+  chain is rebuilt from the repaired release.
+- Goal: prevent uppercase tokens that occur only after a passive normative binding—or in unrelated later prose—
+  from becoming deterministic signal-constraint subjects, without denying any protocol, vendor, document, or
+  observed identifier.
+
+### Reproduction and root cause
+
+The first current-binary parent cascade removes the stale `CDR`/`DL` interface and emitted target, but its four
+remaining pattern constraints are false:
+
+| Subject | Fabricated value | Actual source role |
+| --- | --- | --- |
+| `CAPI` | `RESET` | uppercase suffix inside `OpenCAPI`, after `shall be held in reset` |
+| `OCDE` | `RESET` | real signal mention after the binding; the sentence constrains the endpoint, not `OCDE` |
+| `CAPI` | `COMPATIBLE` | later protocol-name suffix; the binding constrains lane reversal |
+| `DLX` | `COMPATIBLE` | later device abbreviation; the binding constrains lane reversal |
+
+Those records create four ungrounded temporal rules and a false `CAPI=RESET` versus `CAPI=COMPATIBLE` temporal
+conflict. Adapter lowering still fails closed on no declared signals and emits no target, but the EvidenceIR,
+SemanticIR, and IntentIR constraint surfaces are not acceptable.
+
+The shared defect is in `crates/specforge/src/ir/evidence.rs`. Both `extract_signal_constraints` and
+`extract_dynamic_signal_constraints` collect every uppercase token in a passive obligation fragment. The
+declared-signal filter intentionally becomes a no-op when the catalog is empty. Pattern extraction can then use
+tokens after `must/shall be/remain` as subjects; when the bounded clause has no candidate, its full-text fallback
+can also sweep unrelated later sentences. Existing dotted-reference, descriptive-field, value-position, and
+condition gates do not express the missing grammatical rule: a passive binding's subject must precede its binding
+lead.
+
+### Corpus measurement and selected repair
+
+A read-only census over all current persisted EvidenceIR artifacts separates the two deterministic id families
+and ignores table-row sources, whose row cells can supply legitimate subject context. Of 179 `sigcon_*` records,
+21 across nine documents have no whole-identifier occurrence before their passive binding lead. Of 81
+`dyn_sigcon_*` records, ten across three documents have that shape. The union is 31 records / ten documents.
+Manual source-role audit classifies all 31 as false subjects: later conditions or scopes (`BCOMP`, `HRESP`, `SCL`,
+`CKE`), protocol/device names (`CAPI`, `DLX`, `DTI`, `WISHBONE`, `PCI`), non-subject fields or values (`OAS`,
+`DID`, `IODIR`, `FFFF`), and unrelated later signal mentions. No audited record states an obligation about the
+candidate token.
+
+Implement one pure universal predicate shared by both deterministic extractors. For non-table prose carrying
+`must/shall [not] be/remain`, retain a candidate only if it occurs as a whole identifier before the first passive
+binding lead in the same constraint-bearing sentence. Keep table-row context unchanged, and do not alter active
+`must drive/set <signal>` grammar. Apply the predicate beside the existing `.3e`/`.3g` subject gates. No name,
+document, protocol, vendor, value, or growing denylist is permitted.
+
+### Acceptance
+
+- Add focused unit tests for both extractor paths: the two exact OpenCAPI paragraphs produce no constraint; normal
+  `PSEL must be HIGH`, multi-signal passive obligations, active `must drive PSTRB LOW`, and table-row subject
+  context remain accepted.
+- Re-run the 31-record census against the predicate and prove exact removal with no candidate outside the measured
+  class; rebuild the OpenCAPI chain and require zero signal constraints, temporal rules/conflicts, interfaces, or
+  emitted target.
+- Run all nine provider-free APB/AHB/AXI/SWD/I2C datasets, focused EvidenceIR tests, KG fixtures, full CI, current
+  emitted-ISF FSMGen strict checks, mdBook, doctrines, persisted paths, and project-data locality.
+- Record the generic causal fact, child/parent result, code/book/live-doc changes, hashes, and verification before
+  parent `.2.50` resumes and completes from the repaired committed release.
+
+### Verification log
+
+| Date | Boundary | Result |
+| --- | --- | --- |
+| `2026-08-10` | first parent cascade | four false constraints → four ungrounded temporal rules / one false conflict; adapter safely blocked |
+| `2026-08-10` | read-only corpus census | 179 pattern + 81 dynamic records measured; 31 non-table post-binding-only subjects / ten documents; 31/31 audited false |
+| `2026-08-10` | pre-handoff restoration | pre-ingest seven-file chain restored at 2,666,088 bytes / all stale hashes; normalized and three new validation reports absent; rollback retained through ownership commit |
+
+### Commit log
+
+| Unit | Durable evidence |
+| --- | --- |
+| `CORPUS-COVERAGE.2.50a` ownership | `CORPUS-COVERAGE.2.50a — own passive-binding subject repair` |

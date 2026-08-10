@@ -21,13 +21,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.50`; OpenCAPI Data Link Layer v2.0 refresh.
+- Active unit: `CORPUS-COVERAGE.2.50a`; passive-binding constraint-subject authority repair exposed by parent #50.
 - Current state: refresh #49 is complete at 49 done / seven remaining, 80 SourceIR / 21 normalized / 80 EvidenceIR /
-  79 downstream chains, and 58/58 current emitted ISFs FSMGen-strict clean. `.2.50` selects the smallest remaining
-  document: the 57-page / 527-element OpenCAPI Data Link Layer specification. Its 468,716-byte same-SSD PDF and
-  exact 2,666,088-byte stale seven-file chain are pinned; normalized is absent and no generated artifact changed.
-- Next action: commit the `.2.50` ownership boundary, create authenticated repository-local rollback evidence,
-  then run guarded CPU ingest from the direct caller-authorized same-SSD input and complete deterministic
-  downstream validation.
-- In-flight uncommitted: `.2.50` ownership/root/index/manifest/contract/book alignment only; no background job.
+  79 downstream chains, and 58/58 current emitted ISFs FSMGen-strict clean. The first `.2.50` cascade removes the
+  stale interface/target but exposes four false passive-binding signal constraints and one temporal conflict.
+  Child `.2.50a` pins the shared extractor cause and a 31-record / ten-document all-false corpus measurement.
+- Next action: implement the shared non-table passive-binding pre-lead subject predicate in both deterministic
+  constraint extractors, run focused/corpus/gold/full gates, commit the repair, then rebuild parent `.2.50` twice.
+- In-flight uncommitted: `.2.50a` ownership/task-frontier/book alignment only. The generated OpenCAPI chain is
+  restored to its authenticated pre-ingest seven-file state; its rollback stays until this ownership commit, then
+  exact deletion and a durable clean-handoff checkpoint finish the stop request. No background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.
