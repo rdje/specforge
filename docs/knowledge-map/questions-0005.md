@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > were the nine Introducing CoreSight actor signal relations grounded topology
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > what CoreSight Base System evidence still needs VLM or targeted extraction
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what FSMGen question/feature-request did KG-ISF-TRANSACTIONS.2i raise (value-less output participation / unordered-or-partial-order body / phase-group metadata / ordering-as-constraint)
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > what ISF abstractions does FSMGen need next (field-structured storage / register-with-fields, packet/structure layouts, topology)
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
@@ -291,9 +297,3 @@
   > what is a contested prior
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is capture_signal_presence_rows and who shares it
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > what is consolidate_register_field_fragments / EXTRACTION-GAP-FIX.4c
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > what is content-based name-column detection / rotation offset remapping

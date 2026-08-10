@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
+  > how does specforge declare a signal mentioned only in prose
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > how does specforge drop a zero-evidence phantom actor like controller or agent
 - [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
   > how does specforge extract a CAN-style error-state FSM (error active / error passive / bus off)
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
@@ -259,6 +263,8 @@
   > how many sentence-start signal descriptor phrases pollute the retained corpus
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how many signals does each AXI channel have
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > how many synthetic behaviors came from generic section phases
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > how many transactions does each persisted IntentIR doc have (AXI=9, AHB=3, APB=3)
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
@@ -291,9 +297,3 @@
   > how should Rust version copies be verified across Cargo README book and CI
 - [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
   > how should a behavior-preserving evidence refactor be verified given the non-determinism
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > how should an AXI gold or extraction be structured (per channel)
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > how should the agent-identity / actor noise gate stay agnostic (no name list, ADR 0006)
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > how should the current FSMGen gitlink in documentation be verified

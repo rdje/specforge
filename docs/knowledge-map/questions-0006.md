@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > what is capture_signal_presence_rows and who shares it
+- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
+  > what is consolidate_register_field_fragments / EXTRACTION-GAP-FIX.4c
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > what is content-based name-column detection / rotation offset remapping
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > what is continuation_inherited_table_heads and what grounds the join
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
@@ -151,6 +157,8 @@
   > what is the declared-signal eval surface / EvalTask::DeclaredSignal
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
   > what is the difference between a refreshed EvidenceIR and a retained normalized bundle
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > what is the difference between phases and transaction_phases
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > what is the difference between validate persistence and stage write_to_disk
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -289,11 +297,3 @@
   > what structural surfaces discriminate document class
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > what table structure is required before port or pin vocabulary grants signal authority
-- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
-  > what temporal logic backs temporal_rules
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what validate metrics/findings carry the purpose category (document_intent_category, document_intent_category_confidence, evidence_document_intent_category finding)
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > what was the HBM2 canonical promotion pilot result
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > what was the must_be_value recall gap and how was it closed

@@ -420,7 +420,6 @@ pub struct IntentAssumption {
 #[derive(Debug, Clone)]
 struct IntentContext {
     semantic_actors: Vec<SemanticActorContext>,
-    phases: Vec<PhaseContext>,
     invariants: Vec<ConstraintSourceContext>,
     assertions: Vec<ConstraintSourceContext>,
     contracts: Vec<ContractContext>,
@@ -438,18 +437,6 @@ impl IntentContext {
                 actor_id: actor.actor_id.clone(),
                 actor_name: actor.actor_name.clone(),
                 role_summary: actor.role_summary.clone(),
-                supporting_statement_ids: actor.supporting_statement_ids.clone(),
-                supporting_section_ids: actor.supporting_section_ids.clone(),
-            })
-            .collect();
-        let phases = semantic_ir
-            .phases
-            .iter()
-            .map(|phase| PhaseContext {
-                phase_id: phase.phase_id.clone(),
-                summary: phase.summary.clone(),
-                supporting_statement_ids: phase.supporting_statement_ids.clone(),
-                supporting_section_ids: phase.supporting_section_ids.clone(),
             })
             .collect();
         let invariants = semantic_ir
@@ -499,7 +486,6 @@ impl IntentContext {
 
         Self {
             semantic_actors,
-            phases,
             invariants,
             assertions,
             contracts,
@@ -515,16 +501,6 @@ struct SemanticActorContext {
     actor_id: String,
     actor_name: Option<String>,
     role_summary: String,
-    supporting_statement_ids: Vec<String>,
-    supporting_section_ids: Vec<String>,
-}
-
-#[derive(Debug, Clone)]
-struct PhaseContext {
-    phase_id: String,
-    summary: String,
-    supporting_statement_ids: Vec<String>,
-    supporting_section_ids: Vec<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -605,18 +581,6 @@ fn build_intent_actors(context: &IntentContext) -> Vec<IntentActor> {
             }
         }
 
-        for phase in &context.phases {
-            if overlaps(
-                actor.supporting_statement_ids.as_slice(),
-                phase.supporting_statement_ids.as_slice(),
-            ) || overlaps(
-                actor.supporting_section_ids.as_slice(),
-                phase.supporting_section_ids.as_slice(),
-            ) {
-                responsibilities.insert(format!("participate in {}", phase.summary));
-            }
-        }
-
         if actor.actor_id.ends_with("_channel") {
             responsibilities.insert(
                 "treat grouped interface semantics as a backend-neutral channel abstraction"
@@ -633,12 +597,14 @@ fn build_intent_actors(context: &IntentContext) -> Vec<IntentActor> {
         // (north-star bar #1: every actor is a real agent, zero noise), and it never reaches
         // the `.isf` (zero ports → no signal/behavior lowered). The drop is keyed purely on
         // STRUCTURE, never a chip-name list (ADR 0006), and is provably safe: a grounded
-        // zero-evidence actor keeps a phase ("participate in …") or contract responsibility
-        // (len > 1), and a connected actor carries the relation-evidence summary — so neither
-        // matches the pure-inferred marker. Measured (1b.iv, fresh post-`.1a`/`.1b` IR): drops
+        // zero-evidence actor keeps a contract responsibility (len > 1), and a connected actor
+        // carries the relation-evidence summary — so neither matches the pure-inferred marker.
+        // Measured (1b.iv, fresh post-`.1a`/`.1b` IR): drops
         // exactly the 21 corpus-wide phantoms across 16 docs (wire docs: APB `controller`,
         // AHB `agent`) with zero connected or grounded actors touched, `.isf` byte-identical,
-        // WIRE-BASED-100 held.
+        // WIRE-BASED-100 held. CORPUS-COVERAGE.2.43a.i later retired the unrelated generic
+        // section-phase projection: its synthetic participation strings had been preserving
+        // 48 additional actors of this exact pure-inferred shape across 26 retained documents.
         if responsibilities.len() == 1
             && responsibilities
                 .iter()
@@ -676,21 +642,6 @@ fn is_pure_inferred_phantom_role(role: &str) -> bool {
 fn build_behaviors(context: &IntentContext, actor_ids: BTreeSet<String>) -> Vec<BehaviorIntent> {
     let mut behaviors = Vec::new();
     let mut seen = BTreeSet::new();
-
-    for phase in &context.phases {
-        let statement = normalize_sentence(&phase.summary);
-        let dedupe_key = normalize_text_key(&statement);
-        if !seen.insert(dedupe_key.clone()) {
-            continue;
-        }
-
-        behaviors.push(BehaviorIntent {
-            behavior_id: format!("behavior_{}", document_key(&phase.phase_id)),
-            statement,
-            actor_ids: actor_ids.iter().cloned().collect(),
-            supporting_semantic_ids: vec![phase.phase_id.clone()],
-        });
-    }
 
     for contract in &context.contracts {
         let statement = normalize_sentence(&contract.statement);
@@ -942,15 +893,6 @@ fn build_residual_decisions(
     }
 
     residual_decisions
-}
-
-fn overlaps(left: &[String], right: &[String]) -> bool {
-    if left.is_empty() || right.is_empty() {
-        return false;
-    }
-
-    let right_ids: BTreeSet<&String> = right.iter().collect();
-    left.iter().any(|id| right_ids.contains(id))
 }
 
 fn normalize_sentence(text: &str) -> String {
@@ -2394,8 +2336,8 @@ mod tests {
         SerialFrameField, SerialFramePhase, SwdOperation, SwdioDirection,
     };
     use crate::ir::semantic::{
-        ControlBlockRole, SemanticIr, SymbolDefinitionKind, SystemResetKind, SystemResetPolarity,
-        SystemResetTargetKind, SystemResetTimingRelation,
+        ControlBlockRole, PhaseRecord, SemanticIr, SymbolDefinitionKind, SystemResetKind,
+        SystemResetPolarity, SystemResetTargetKind, SystemResetTimingRelation,
     };
     use crate::ir::source::{
         AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, SourceIr,
@@ -2646,6 +2588,72 @@ mod tests {
     }
 
     #[test]
+    fn legacy_generic_phases_load_but_do_not_authorize_intent() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("legacy-generic-phase.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            "# Reset value\nThe controller participates in the protocol.\n",
+        )?;
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let mut semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        assert!(semantic_ir.phases.is_empty());
+        let inferred_actor = semantic_ir
+            .actors
+            .iter()
+            .find(|actor| actor.actor_id == "actor_controller")
+            .expect("fixture must exercise a pure-inferred controller actor");
+        semantic_ir.phases.push(PhaseRecord {
+            phase_id: "phase_legacy_reset_value".to_string(),
+            summary: "semantic phase derived from section `Reset value`".to_string(),
+            supporting_statement_ids: inferred_actor.supporting_statement_ids.clone(),
+            supporting_section_ids: inferred_actor.supporting_section_ids.clone(),
+        });
+        semantic_ir.write_to_disk()?;
+
+        let reloaded = SemanticIr::load_from_path(&semantic_ir.artifact_layout.semantic_ir_path)?;
+        assert_eq!(
+            reloaded.phases.len(),
+            1,
+            "legacy artifacts must remain load-compatible and auditable"
+        );
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        assert!(
+            intent_ir.behaviors.iter().all(|behavior| {
+                behavior.behavior_id != "behavior_phase_legacy_reset_value"
+                    && !behavior.statement.contains("Reset value")
+            }),
+            "legacy section summaries must not become canonical behaviors"
+        );
+        assert!(
+            intent_ir
+                .actors
+                .iter()
+                .all(|actor| actor.actor_id != "actor_controller"),
+            "a legacy section phase must not preserve a pure-inferred actor"
+        );
+
+        Ok(())
+    }
+
+    #[test]
     fn projects_protocol_surfaces_exactly_across_all_three_stages() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("intent_protocol_projection.md");
@@ -2784,7 +2792,6 @@ mod tests {
     fn preserves_semantic_residual_decisions_in_intent_ir() {
         let context = super::IntentContext {
             semantic_actors: Vec::new(),
-            phases: Vec::new(),
             invariants: Vec::new(),
             assertions: Vec::new(),
             contracts: Vec::new(),
@@ -4858,79 +4865,12 @@ mod tests {
         Ok(())
     }
 
-    // ── overlaps unit tests ──────────────────────────────────────────────
-
-    #[test]
-    fn overlaps_empty_left_returns_false() {
-        assert!(!super::overlaps(&[], &["a".to_string()]));
-    }
-
-    #[test]
-    fn overlaps_empty_right_returns_false() {
-        assert!(!super::overlaps(&["a".to_string()], &[]));
-    }
-
-    #[test]
-    fn overlaps_returns_true_when_common_element_exists() {
-        assert!(super::overlaps(
-            &["a".to_string(), "b".to_string()],
-            &["b".to_string(), "c".to_string()]
-        ));
-    }
-
-    #[test]
-    fn overlaps_returns_false_when_no_common_element() {
-        assert!(!super::overlaps(&["a".to_string()], &["b".to_string()]));
-    }
-
-    #[test]
-    fn overlaps_empty_both_returns_false() {
-        assert!(!super::overlaps(&[], &[]));
-    }
-
     // ── dedup tests ─────────────────────────────────────────────────────
-
-    #[test]
-    fn build_behaviors_deduplicates_phases() {
-        use std::collections::BTreeSet;
-        let context = super::IntentContext {
-            semantic_actors: Vec::new(),
-            phases: vec![
-                super::PhaseContext {
-                    phase_id: "phase_1".to_string(),
-                    summary: "Address phase".to_string(),
-                    supporting_statement_ids: vec![],
-                    supporting_section_ids: vec![],
-                },
-                super::PhaseContext {
-                    phase_id: "phase_2".to_string(),
-                    summary: "Address phase".to_string(), // duplicate summary
-                    supporting_statement_ids: vec![],
-                    supporting_section_ids: vec![],
-                },
-            ],
-            invariants: Vec::new(),
-            assertions: Vec::new(),
-            contracts: Vec::new(),
-            gates: Vec::new(),
-            abstractions: Vec::new(),
-            residual_decisions: Vec::new(),
-        };
-        let actor_ids = BTreeSet::new();
-        let behaviors = super::build_behaviors(&context, actor_ids);
-        assert_eq!(behaviors.len(), 1, "duplicate phases must be deduped");
-        assert!(behaviors[0].statement.contains("Address phase"));
-        assert_eq!(
-            behaviors[0].behavior_id, "behavior_phase_1",
-            "must keep first phase, not second"
-        );
-    }
 
     #[test]
     fn build_constraints_deduplicates_invariants() {
         let context = super::IntentContext {
             semantic_actors: Vec::new(),
-            phases: Vec::new(),
             invariants: vec![
                 super::ConstraintSourceContext {
                     source_id: "inv_1".to_string(),
@@ -4964,7 +4904,6 @@ mod tests {
     fn build_assumptions_emits_for_semantic_role_without_consensus() {
         let context = super::IntentContext {
             semantic_actors: Vec::new(),
-            phases: Vec::new(),
             invariants: Vec::new(),
             assertions: Vec::new(),
             contracts: Vec::new(),
@@ -4990,7 +4929,6 @@ mod tests {
     fn build_assumptions_emits_for_alias_dependent_handshake_completion() {
         let context = super::IntentContext {
             semantic_actors: Vec::new(),
-            phases: Vec::new(),
             invariants: Vec::new(),
             assertions: Vec::new(),
             contracts: Vec::new(),
@@ -5017,7 +4955,6 @@ mod tests {
         use std::collections::BTreeSet;
         let context = super::IntentContext {
             semantic_actors: Vec::new(),
-            phases: Vec::new(),
             invariants: Vec::new(),
             assertions: Vec::new(),
             contracts: Vec::new(),
@@ -5046,7 +4983,6 @@ mod tests {
     fn build_constraints_deduplicates_assertions() {
         let context = super::IntentContext {
             semantic_actors: Vec::new(),
-            phases: Vec::new(),
             invariants: Vec::new(),
             assertions: vec![
                 super::ConstraintSourceContext {
@@ -5074,7 +5010,6 @@ mod tests {
     fn build_constraints_deduplicates_gates() {
         let context = super::IntentContext {
             semantic_actors: Vec::new(),
-            phases: Vec::new(),
             invariants: Vec::new(),
             assertions: Vec::new(),
             contracts: Vec::new(),
@@ -5096,41 +5031,6 @@ mod tests {
         let constraints = super::build_constraints(&context);
         assert_eq!(constraints.len(), 1, "duplicate gates must be deduped");
         assert_eq!(constraints[0].constraint_id, "constraint_gate_3_gate");
-    }
-
-    // ── build_intent_actors overlaps test ────────────────────────────────
-
-    #[test]
-    fn build_intent_actors_attaches_phase_when_statements_overlap() {
-        let context = super::IntentContext {
-            semantic_actors: vec![super::SemanticActorContext {
-                actor_id: "actor_tx".to_string(),
-                actor_name: Some("Transmitter".to_string()),
-                role_summary: String::new(),
-                supporting_statement_ids: vec!["stmt_1".to_string()],
-                supporting_section_ids: vec![], // no section overlap
-            }],
-            phases: vec![super::PhaseContext {
-                phase_id: "phase_addr".to_string(),
-                summary: "Address phase".to_string(),
-                supporting_statement_ids: vec!["stmt_1".to_string()], // overlaps via statement
-                supporting_section_ids: vec!["sec_other".to_string()],
-            }],
-            invariants: Vec::new(),
-            assertions: Vec::new(),
-            contracts: Vec::new(),
-            gates: Vec::new(),
-            abstractions: Vec::new(),
-            residual_decisions: Vec::new(),
-        };
-        let actors = super::build_intent_actors(&context);
-        let tx = actors.iter().find(|a| a.actor_id == "actor_tx").unwrap();
-        assert!(
-            tx.responsibilities
-                .iter()
-                .any(|r| r.contains("Address phase")),
-            "actor must participate in phase when supporting statements overlap (even with empty sections)"
-        );
     }
 
     // KG-ISF-COMPLETENESS.1b.iv — drift guard: the pure-inferred phantom detector must match
@@ -5164,44 +5064,32 @@ mod tests {
     }
 
     // KG-ISF-COMPLETENESS.1b.iv — a Class-C phantom (only the term-scan marker as its sole
-    // responsibility) is dropped, while a grounded zero-evidence actor (phase participation)
-    // and any actor with a real prose/contract responsibility are kept.
+    // responsibility) is dropped, while an actor with a real prose/contract responsibility is
+    // kept. Legacy section phases no longer ground actors.
     #[test]
-    fn build_intent_actors_drops_pure_inferred_phantom_but_keeps_grounded() {
+    fn build_intent_actors_drops_pure_inferred_phantoms_but_keeps_contract_grounded_actor() {
         let phantom_role = "semantic role inferred around `controller` evidence".to_string();
         let context = super::IntentContext {
             semantic_actors: vec![
-                // (1) PURE-INFERRED phantom: only the term-scan marker, no phase, no contract.
+                // (1) PURE-INFERRED phantom: only the term-scan marker, no contract.
                 super::SemanticActorContext {
                     actor_id: "actor_controller".to_string(),
                     actor_name: Some("controller".to_string()),
                     role_summary: phantom_role.clone(),
-                    supporting_statement_ids: vec!["stmt_phantom".to_string()],
-                    supporting_section_ids: vec![],
                 },
-                // (2) SECTION+INFERRED: same marker shape but a phase overlaps → kept.
+                // (2) A second pure-inferred actor is likewise ungrounded.
                 super::SemanticActorContext {
                     actor_id: "actor_agent".to_string(),
                     actor_name: Some("agent".to_string()),
                     role_summary: "semantic role inferred around `agent` evidence".to_string(),
-                    supporting_statement_ids: vec!["stmt_phase".to_string()],
-                    supporting_section_ids: vec![],
                 },
                 // (3) PROSE-GROUNDED: a contract attaches a real sentence → kept.
                 super::SemanticActorContext {
                     actor_id: "actor_arbiter".to_string(),
                     actor_name: Some("arbiter".to_string()),
                     role_summary: "semantic role inferred around `arbiter` evidence".to_string(),
-                    supporting_statement_ids: vec!["stmt_contract".to_string()],
-                    supporting_section_ids: vec![],
                 },
             ],
-            phases: vec![super::PhaseContext {
-                phase_id: "phase_arb".to_string(),
-                summary: "arbitration phase".to_string(),
-                supporting_statement_ids: vec!["stmt_phase".to_string()],
-                supporting_section_ids: vec![],
-            }],
             invariants: Vec::new(),
             assertions: Vec::new(),
             contracts: vec![super::ContractContext {
@@ -5220,8 +5108,8 @@ mod tests {
             "pure-inferred phantom `controller` must be dropped, got {ids:?}"
         );
         assert!(
-            ids.contains(&"actor_agent"),
-            "phase-grounded `agent` must be kept, got {ids:?}"
+            !ids.contains(&"actor_agent"),
+            "legacy section phases must not preserve inferred `agent`, got {ids:?}"
         );
         assert!(
             ids.contains(&"actor_arbiter"),

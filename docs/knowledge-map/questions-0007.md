@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
+  > what temporal logic backs temporal_rules
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > what validate metrics/findings carry the purpose category (document_intent_category, document_intent_category_confidence, evidence_document_intent_category finding)
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > what was the HBM2 canonical promotion pilot result
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > what was the must_be_value recall gap and how was it closed
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > when does a caption ground a register name
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
@@ -190,6 +198,8 @@
   > where may diagnostic scratch files and comparison lists be written
 - [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
   > where must SpecForge project artifacts caches and temporary workspaces live
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > where was build_phases removed
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
   > which 15 docs are category-3 platform/system-IP in the corpus (GIC-600/400 TRMs, CoreSight SoC-600 x3 / SDC-600 / TMC TRMs, MMU-700 TRM, Cortex-A76 TRM, CoreSight Base System Arch, CoreSight/GIC/SMMU/ARM-Debug-v6/Advanced-Comms-Channel architecture specs; the .1 census never persisted the per-doc labels — .4c.i enumerates them in scripts/measure_cat3_topology_recall.py)
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -288,13 +298,3 @@
   > why an allowlist instead of a denylist for .isf identifier sanitization (a denylist can't enumerate every bad char — it missed the arrow →)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > why are 169 composable registers not yet emittable (their composed reset needs more bits than the current storage-var width which is max-field-extent not register width — e.g. CoreSight DPIDR V=0x1c013477 at width 11 over-width; var-width reconciliation spun to ISF-REGISTER-RESET-EMIT.3)
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > why are GIC/SMMU/CoreSight section-heading fields NOT message fields
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > why are SWD recognized phases signal_set empty and transactions ports empty
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > why are USER_GUIDE.md and the root architecture documents only pointers
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > why are behaviors and constraints (22k each) not lowered to .isf — is that a gap
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > why are conditional_rules excluded from the document-class decision

@@ -758,7 +758,8 @@ today's ephemeral normalized-directory count.
   closed after final replay and authenticated cleanup.
 
 - ID: `CORPUS-COVERAGE.2.43` · Status: `in_progress` (`2026-08-10`, DATA/CODE/DOC) · Children: `.2.43a`
-  semantic-phase authority repair (in progress). Goal: run a guarded
+  semantic-phase authority repair (done), `.2.43a.i` legacy generic-phase retirement (done), and `.2.43a.ii`
+  typed transaction-phase precision follow-up (pending). Goal: run a guarded
   current-binary refresh of `opencapi_3_0_ready_definition_v1_1` from the caller-authorized same-SSD source and
   complete the deterministic SourceIR→EvidenceIR→SemanticIR→IntentIR→adapter cascade. The 15-page OpenCAPI 3.0
   Ready Definition is the smallest of the 14 remaining real chip-spec candidates: 171 retained elements and
@@ -800,7 +801,8 @@ today's ephemeral normalized-directory count.
   mdBook, and `MEMORY.md` agree; remove only the authenticated task bundle after all final gates pass.
 
 - ID: `CORPUS-COVERAGE.2.43a` · Status: `done` (`2026-08-10`, PROBE/CODE/DATA/DOC) · Children:
-  `.2.43a.i` (pending). Result: repaired the universal semantic-phase authority defect exposed by #43 before
+  `.2.43a.i` (done) and `.2.43a.ii` (pending). Result: repaired the universal semantic-phase authority defect
+  exposed by #43 before
   accepting its SemanticIR or IntentIR. Fresh
   173-statement EvidenceIR has no typed hardware surface, yet `build_phases` turns `2.1 Functional test for ...`,
   `3 ... host system definition`, and `3.1 Functional test for ...` into three semantic phases and therefore
@@ -843,29 +845,72 @@ today's ephemeral normalized-directory count.
   structural and leaves sentence evidence plus all other consumers intact.
 - [x] **LOCKSTEP** — source comments, measurement, #43 rebuilt child cascade, parent/child task state, live docs,
   code analysis, mdBook, durable fact, derived catalogs/maps, and `MEMORY.md` agree. Parent `.2.43` remains open;
-  pending `.2.43a.i` owns the distinct heading-vocabulary audit before final semantic classification.
+  completed `.2.43a.i` subsequently retired the entire generic collection, while pending `.2.43a.ii` owns the
+  independent typed transaction-phase qualifier audit.
 
-- ID: `CORPUS-COVERAGE.2.43a.i` · Status: `pending` (`2026-08-10`, PROBE/CODE/DATA/DOC) · Goal: audit and tighten
-  the separate generic phase-title authority family after `.2.43a` is committed. The exact `.2.43a` positive
+- ID: `CORPUS-COVERAGE.2.43a.i` · Status: `done` (`2026-08-10`, PROBE/CODE/DATA/DOC) · Result: audited and retired
+  the separate generic phase-title authority family after `.2.43a`. The exact `.2.43a` positive
   census finds 3,180 title-authorized records across 69 retained documents, but 720 are headed `Reset value` and
   other high-frequency records include register, response, mode, read, and write headings. Determine which
   section-title grammars truly authorize the broad section-derived `phases[]` surface, distinguish them from the
-  already precise `<qualifier> phase` `transaction_phases[]` surface, and implement only a universal structural
-  grammar with paired protocol/register controls. This finding does not affect #43's three sentence-fallback-only
-  phases and must not widen `.2.43a` into a second causal repair.
+  separate bounded `<qualifier> phase` `transaction_phases[]` surface, and implement only a universal structural
+  grammar with paired protocol/register controls. No defensible grammar exists: the field carries a synthetic
+  section-topic summary rather than a typed phase, and IntentIR broadcasts it to all actors without role or
+  effect evidence. Current SemanticIR producers therefore serialize `phases: []`; populated legacy artifacts
+  remain loadable and round-trippable but have no current IntentIR authority. The separate typed
+  `transaction_phases[]` surface is unchanged.
 
-### Pending signoff criteria — `CORPUS-COVERAGE.2.43a.i`
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.43a.i`
 
-- **PENDING — REPRODUCE / MEASURE** — classify all 3,180 title-authorized records by exact phrase, title grammar,
-  section kind, and downstream use; pin true phase/sequence/timing controls and obvious register/value negatives.
-- **PENDING — ROOT CAUSE (WHY + WHERE)** — determine whether the broad historical keyword family represents a
-  defensible section-derived behavior surface or conflates topics/register metadata with semantic phases.
-- **PENDING — ADDRESSED (verified)** — select the smallest universal heading grammar, or close as no-code with
-  evidence if the existing family is justified; never alter the precise typed `transaction_phases[]` recognizer.
-- **PENDING — NO REGRESSION** — pair negative and positive controls and run the full semantic/protocol/KG/CI/book/
-  doctrine/path/locality gate set for any product change.
-- **PENDING — GENERICITY** — no title/document/vendor/protocol allowlist or denylist; decisions derive only from
-  heading grammar, section structure, and typed evidence.
+- [x] **REPRODUCE / MEASURE** — classified all 3,180 title-authorized records across 69 documents by exact phrase
+  and downstream use. They create 2,238 deduplicated behaviors, preserve 48 pure-inferred actors, and account for
+  2,257 responsibilities while changing zero adapter statuses or executable counts.
+- [x] **ROOT CAUSE (WHY + WHERE)** — initial SemanticIR commit `f8e42eaa9` created one provenance-only synthetic
+  phase per admitted section; initial IntentIR commit `b128fd58` projected each summary to every actor. The record
+  has no typed name, ordering, condition, role, signal membership, or effect that could justify that authority.
+- [x] **ADDRESSED (verified)** — new producers serialize the compatibility-stable field empty; old populated
+  artifacts still deserialize and round-trip, but IntentIR ignores them. A 79-document post-repair replay makes
+  populated/empty variants byte-identical at IntentIR and identical at the adapter. Typed transaction phases are
+  unchanged and separately owned by pending `.2.43a.ii`.
+- [x] **NO REGRESSION** — 404 SemanticIR tests, 50 IntentIR tests, warning-deny Clippy, release build, nine
+  WIRE/I2C/SWD datasets, KG 156/156, full CI 1,789 pass/five ignored, and all 66 current emitted ISFs through
+  FSMGen strict pass. mdBook, six doctrines, persisted paths, and project-data locality pass.
+- [x] **GENERICITY** — the repair removes an untyped authority path rather than substituting a narrower keyword
+  list; no title, document, vendor, protocol, phase-name allowlist/denylist, or generated-artifact edit exists.
+- [x] **LOCKSTEP** — source comments/tests, measurement, task state, live docs, Rust analysis, mdBook, durable fact,
+  derived catalogs/maps, containment authority, and `MEMORY.md` agree. Parent `.2.43` resumes final cascade
+  signoff; pending `.2.43a.ii` owns the distinct typed-qualifier audit.
+
+Final measurement (`2026-08-10`): an exact current-rule/no-generic two-variant replay over all 79 retained
+SemanticIR artifacts confirms the 3,180 title-authorized records across 69 documents create 2,238 deduplicated
+IntentIR behaviors, preserve 48 otherwise-rejected pure-inferred actors across 26 documents, and account for
+2,257 actor responsibilities. Removing them changes no adapter renderability, lowering status, signal count,
+transaction count, or rule count. Three rendered sources change only because the adapter's ungrounded
+`actors.first()` fallback improves from a phase-preserved phantom (`agent`/`device`) to a grounded
+`channel`/`manager`; their executable counts remain identical. Only six of 3,180 titles literally contain the
+word `phase`, and five are a duplicate CAN two-segment heading, duplicate CAN phase-error measurement heading,
+or a Wishbone glossary entry; the sole clean section is SWD `Data transfer phase`, whose actual phase vocabulary
+is already present in typed `transaction_phases[]`. The legacy surface therefore has no measured executable value
+and its one-section→one-tautological-behavior→all-actors projection has no defensible structural grammar.
+
+- ID: `CORPUS-COVERAGE.2.43a.ii` · Status: `pending` (`2026-08-10`, PROBE/CODE/DOC) · Goal: audit the separate
+  typed `transaction_phases[]` qualifier grammar after `.2.43a.i` is committed. The title audit incidentally
+  found retained Wishbone `called` and CAN `edge` / `positive` transaction-phase names, so the bounded
+  `<qualifier> phase` recognizer must not be described as perfectly precise without its own exact corpus census.
+  Reproduce each statement path, classify all 82 retained records, and tighten only through universal phrase
+  grammar with paired real-phase controls. Do not widen `.2.43a.i` or change typed recognition inside that leaf.
+
+### Pending signoff criteria — `CORPUS-COVERAGE.2.43a.ii`
+
+- **PENDING — REPRODUCE / MEASURE** — classify all 82 retained typed transaction-phase records and pin the
+  Wishbone/CAN false-positive paths plus real APB/AHB/SWD controls.
+- **PENDING — ROOT CAUSE (WHY + WHERE)** — identify which qualifier grammar admits relational nouns/adjectives
+  from phrases that discuss phase names, errors, or polarity rather than declaring transaction phases.
+- **PENDING — ADDRESSED (verified)** — apply the smallest universal qualifier boundary without coupling to
+  documents, vendors, protocols, exact phase-name lists, or generated artifacts.
+- **PENDING — NO REGRESSION** — retain declared-signal membership/provenance and run focused, protocol, KG, CI,
+  mdBook, doctrine, path, and locality gates.
+- **PENDING — GENERICITY** — all decisions derive from English phrase structure and typed evidence only.
 - **PENDING — LOCKSTEP** — measurement, task, code analysis, mdBook, durable fact, and resume pointer agree.
 
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34b.ii.a`
@@ -1126,8 +1171,8 @@ today's ephemeral normalized-directory count.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: `CORPUS-COVERAGE.2.43a.i` — classify the 3,180 heading-authorized generic phases by exact title grammar
-  and section structure, then select the smallest universal precision boundary or close no-code with evidence.
+- Frontier: `CORPUS-COVERAGE.2.43` — rebuild the Ready Definition downstream cascade with the final repaired
+  release, prove deterministic hashes/counts and honest non-renderability, then close the parent refresh.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**39 refreshes done after #39;
   17 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#39: #29/#31 CHI-C2C marquee message-field refreshes,
@@ -1234,6 +1279,16 @@ strict syntax is not a semantic-fidelity oracle. **Levers A, B, C, F + the rule-
 
 ## Changelog
 
+- `2026-08-10`: `.2.43a.i` PROBE/CODE/DATA/DOC DONE. Exact classification and two-variant replay prove the
+  3,180-record legacy section-phase surface has no defensible typed authority or executable value. New SemanticIR
+  emits the compatibility field empty; current IntentIR ignores populated old records; 79/79 variants converge.
+  Full product/protocol/KG/CI/FSMGen/book/doctrine/path/locality gates pass. Recording commit subject:
+  `CORPUS-COVERAGE.2.43a.i — retire generic section-phase authority`. Frontier → parent `.2.43` final replay.
+- `2026-08-10`: `.2.43a.i` PROBE/CODE/DATA/DOC ACTIVATED from clean commit `74f3b447`. The first exact heading
+  breakdown finds only six of 3,180 records with the literal word `phase`; those six include two duplicate CAN
+  `PHASE SEG1, PHASE SEG2` sections, two `PHASE ERROR` measurement sections, one real SWD `Data transfer phase`,
+  and one Wishbone glossary definition. Frontier → measure downstream value/actor retention and determine whether
+  any heading-only grammar can safely authorize the legacy one-section→one-phase→all-actors behavior projection.
 - `2026-08-10`: `.2.43a` PROBE/CODE/DATA/DOC DONE. Exact census classifies 11,286 retained generic phases as 3,180
   heading-authorized and 8,106 sentence-fallback-only across 77 documents. `build_phases` now requires a non-empty
   phase-like heading; typed `<qualifier> phase` recognition remains independent. Unchanged 173-statement #43

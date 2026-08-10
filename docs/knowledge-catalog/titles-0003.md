@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [nli-intent-gate](../knowledge/nli-intent-gate.md) | 2026-06-05 | `current` | NLI intent gate — active demote-to-residual of un-entailed contracts (intent --nli-verify) |
 | [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md) | 2026-06-15 | `current` | Coordinated drive/read objects + relative-clause distribution are already implemented in the production hand… |
 | [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md) | 2026-06-11 | `current` | Offset-suffixed bit cells (31:28 +04) are dword-relative — capture the literal bit_range + byte_offset, nev… |
 | [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md) | 2026-08-09 | `current` | OpenCAPI AFU Address Space Usage refresh rejects prose acronyms and legal behavior |
@@ -37,7 +38,7 @@
 | [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md) | 2026-06-17 | `current` | GIC/SMMU/CoreSight/ACC/ARM-Debug register fields live in SECTION HEADINGS (`<NAME>, bits [hi:lo]`), not table… |
 | [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md) | 2026-06-24 | `current` | A register mnemonic reused across blocks (ARM-Debug/CoreSight AUTHSTATUS/IDR/CSW) is resolved by FIELD-SET CO… |
 | [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md) | 2026-08-09 | `current` | Declaration-free heuristic interfaces require a signal-led deontic behavior statement |
-| [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md) | 2026-08-10 | `current` | Generic SemanticIR section phases require heading authority |
+| [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md) | 2026-08-10 | `superseded` | Generic SemanticIR section phases require heading authority |
 | [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md) | 2026-06-11 | `current` | Signal-presence matrices — the literal presence-CONDITION typed surface (.12b) |
 | [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md) | 2026-06-15 | `current` | source_ir.json is O(pages) at ~9.3 KB/page; downstream stages load it with a full serde deserialize |
 | [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md) | 2026-08-08 | `current` | Git-indexed corpus PDFs are the source-registry membership authority |
@@ -60,4 +61,3 @@
 | [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md) | 2026-06-17 | `current` | The transaction ISF BODY is faithfully complete — a value-free `(sample S)` membership body is FSMGen-ACCEP… |
 | [transaction-capture-census](../knowledge/transaction-capture-census.md) | 2026-06-16 | `current` | SpecForge's IntentIR transactions[] surface is THIN and MIS-LEVELLED — 63 entries/16 of 36 docs are per-cha… |
 | [transaction-channel-membership](../knowledge/transaction-channel-membership.md) | 2026-06-17 | `current` | KG-ISF-TRANSACTIONS.2m — a transaction's signal-set membership is grouped by the document-declared CHANNEL,… |
-| [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md) | 2026-06-17 | `current` | a named transaction's .2c signal-set membership includes its section's DESCENDANT-SUBSECTION statements (dott… |

@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > why are GIC/SMMU/CoreSight section-heading fields NOT message fields
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > why are SWD recognized phases signal_set empty and transactions ports empty
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > why are USER_GUIDE.md and the root architecture documents only pointers
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > why are behaviors and constraints (22k each) not lowered to .isf — is that a gap
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > why are conditional_rules excluded from the document-class decision
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > why are determiners (All Managers) NOT rejected by the .1a agent gate
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -107,6 +117,8 @@
   > why did normalize_prior_phrase grow a string exponentially
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > why did rendered_image.path contain normalized.staging
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > why did retiring generic phases remove pure inferred actors
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
   > why did running nli-verify on a .prepromote.bak overwrite the real evidence_ir.json
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
@@ -233,6 +245,8 @@
   > why does USB 3.2 still emit hundreds of low confidence ISF outputs after the four false signals are removed
 - [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
   > why does a PDF-VARIANT-DIGESTION commit subject id not appear fully qualified in the task source
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > why does a new SemanticIR have an empty phases array
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > why does a rebuild drop the extraction-quality gauge
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
@@ -283,17 +297,3 @@
   > why does one register appear as several RegisterRecords / how are split register-field tables merged
 - [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
   > why does rebuilding the same SourceIR give a different evidence_ir.json (non-determinism)
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > why does recover-register-bits still recover 0 bits after the plumbing is complete
-- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
-  > why does root KNOWLEDGE_MAP_ARCHITECTURE.md not exist
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why does setportfeature port over current become the USB 3.2 adapter actor
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > why does shall be 0h still bind the value 0 but shall be non-zero does not bind NO
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > why does slicing idx minus 2 before signal panic
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > why does specforge split on 'and' but not 'or' for a coordinated actor subject
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why does the .isf emit a generic (type TABLE (bits N)) enum / what is the TABLE mega-enum

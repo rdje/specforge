@@ -20,11 +20,12 @@
 This is the stage the rest of the project is trying to reach.
 Everything earlier exists to make this artifact strong, inspectable, and reusable.
 
-Generic section-derived `SemanticIR.phases` become IntentIR behavior records, so their authority boundary matters
-at the product surface. An ordinary section no longer becomes a behavior merely because one supporting sentence
-contains a sequencing word such as `when`, `after`, or `once`; the section needs phase-like heading authority.
-This is distinct from the precise `SemanticIR.transaction_phases` inventory described below, which recognizes
-explicit `<qualifier> phase` prose and is not removed by the generic-section rule.
+Legacy section-derived `SemanticIR.phases` do not become IntentIR behavior or actor responsibilities. The old
+projection turned each synthetic section summary into a behavior assigned to every retained actor and used phase
+overlap to preserve pure-inferred actors. Corpus measurement found 2,238 such behaviors and 48 such actors with
+no executable adapter value. Populated old artifacts remain loadable, but current IntentIR treats the collection
+as audit-only compatibility data. Typed `SemanticIR.transaction_phases`, named transactions, contracts, gates,
+and constraints remain independent.
 
 ## How protocol observations cross the product boundary
 

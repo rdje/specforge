@@ -1,3 +1,19 @@
+### CORPUS-COVERAGE.2.43a.i — retire generic section-phase authority
+
+- The exact 3,180-record title audit finds 720 `Reset value` headings and only six literal-`phase` headings; five
+  of those are CAN multi-segment/error terminology or a Wishbone glossary definition. The sole clean SWD heading
+  duplicates phase vocabulary already represented by typed `transaction_phases[]`.
+- A 79-document two-variant replay proves the legacy surface creates 2,238 synthetic all-actor behaviors,
+  preserves 48 pure-inferred actors, and adds 2,257 responsibilities without changing adapter renderability,
+  lowering status, or any emitted signal/transaction/rule count.
+- New SemanticIR builds now serialize the compatibility-stable `phases` field empty. Old populated artifacts
+  still load and round-trip, but IntentIR no longer grants those records behavior or actor authority. Typed
+  transaction phases, transactions, contracts, gates, and constraints are unchanged.
+- The repaired release makes all 79 populated/empty phase variants byte-identical at IntentIR and identical at
+  the adapter. A separate pending `.2.43a.ii` owns the incidentally surfaced typed-qualifier precision audit.
+- Gates pass: 404 SemanticIR tests, 50 IntentIR tests, warning-deny Clippy, nine WIRE/I2C/SWD datasets, KG
+  156/156, full CI 1,789/five ignored, 66/66 FSMGen strict, mdBook, doctrines, persisted paths, and locality.
+
 ### CORPUS-COVERAGE.2.43a — require heading authority for section-derived phases
 
 - The first Ready Definition cascade preserved 173 EvidenceIR statements but turned two functional-test sections

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > does specforge handle coordinated drive/read objects (X drives A and B)
+- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
+  > does specforge handle passive voice for actor-signal relations (X is driven by Y)
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > does specforge validate modify the artifact passed on the command line
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
@@ -294,7 +298,3 @@
   > how does specforge consolidate a dense-prose agent fragment like host has or host to onto host
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > how does specforge currently capture transactions and why is it thin
-- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
-  > how does specforge declare a signal mentioned only in prose
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > how does specforge drop a zero-evidence phantom actor like controller or agent

@@ -90,30 +90,29 @@ also preserved: the system contract inserts them into the authority set and emit
 interface with typed input direction and width one. Actor/signal relations can describe use of an authorized
 signal, but a relation alone is not a signal declaration.
 
-### Section phases need heading authority
+### Generic section phases are legacy compatibility data
 
-The broad `phases` collection describes sections whose headings identify phase-like protocol structure. A
-sentence inside an ordinary section cannot promote the whole section merely because it contains `before`,
-`after`, `until`, `during`, `then`, `next`, `once`, `when`, or `while`. Those words are equally common in notes,
-requirements, register descriptions, test procedures, and qualification statements.
+The schema still contains `phases`, but current SemanticIR producers leave it empty. The historical producer
+treated a section topic as one semantic phase when its title or prose contained broad words such as `reset`,
+`read`, `write`, `mode`, `timing`, `when`, or `after`. The record then said only `semantic phase derived from
+section <title>`; it did not identify a phase name, order, entry condition, signal membership, or actor role.
 
-For example, these sections remain ordinary evidence-bearing sections even if their prose contains temporal
-words:
+An exact 79-document audit found 11,286 retained records. Sentence-level sequencing words alone authorized
+8,106. Of the remaining 3,180 title-authorized records, 720 were `Reset value`; common others were registers,
+timing diagrams, results, and transaction topics. Only six titles literally used `phase`, and five were CAN
+multi-segment/error terminology or a Wishbone glossary definition. The sole clean SWD heading added only a
+tautological section summary, while its actual `data` phase was already present in the typed inventory.
 
-- `Functional test for controller`
-- `Host system definition`
-- `Bit descriptions`
+Old SemanticIR artifacts remain loadable and round-trippable with populated `phases`, preserving provenance for
+audit. Current IntentIR builders deliberately give those legacy records no behavioral or actor authority. This
+prevents a stale artifact from broadcasting a section summary to every actor or preserving an otherwise
+pure-inferred actor.
 
-Headings such as `Setup phase`, `Reset sequence`, and `Transaction timing` retain section-phase authority. This
-is a structural floor: the historical heading vocabulary has a separate precision audit, so heading admission
-is not presented as proof that every retained phase record is ideal.
-
-This broad section surface must not be confused with `transaction_phases`. The typed transaction-phase
-recognizer reads explicit `<qualifier> phase` prose, keeps statement provenance, and limits signal membership to
-declared signals. Consequently, `During the address phase the manager drives HADDR` can still establish the
-typed `address` phase even when its containing section is not a generic section phase. The exact corpus
-measurement and the distinction between the two surfaces are recorded in the
-[semantic-phase authority report](../../research/semantic-phase-authority-measurement.md).
+The active phase surface is `transaction_phases`. Its bounded `<qualifier> phase` recognizer reads explicit
+prose, keeps statement provenance, and limits signal membership to declared signals. Consequently, `During the
+address phase the manager drives HADDR` can establish a typed `address` record without creating a generic
+section phase. See the [sentence-authority measurement](../../research/semantic-phase-authority-measurement.md)
+and the [retirement measurement](../../research/generic-section-phase-retirement-measurement.md).
 
 ### Legal conditions are evidence, not protocol intent
 

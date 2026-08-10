@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [axi-channel-structure](../knowledge/axi-channel-structure.md)
+  > how should an AXI gold or extraction be structured (per channel)
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > how should the agent-identity / actor noise gate stay agnostic (no name list, ADR 0006)
+- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
+  > how should the current FSMGen gitlink in documentation be verified
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > how to compose a register-level ISF reset from per-field reset_value (LSB-tiling: V = OR(parse_int(reset_i) << bits_low_i), mirroring ir/register_bits.rs; only when every field is located + parseable non-neg int fitting its field width + no overlap)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
@@ -292,9 +298,3 @@
   > were the 73 stale AArch64 External Debug signals authoritative
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > were the OpenCAPI AFU address-space acronyms signal declarations
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > were the nine Introducing CoreSight actor signal relations grounded topology
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > what CoreSight Base System evidence still needs VLM or targeted extraction
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what FSMGen question/feature-request did KG-ISF-TRANSACTIONS.2i raise (value-less output participation / unordered-or-partial-order body / phase-group metadata / ordering-as-constraint)

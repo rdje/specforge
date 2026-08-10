@@ -152,6 +152,8 @@
   > do field constraints pass the same grounding gates as signal constraints
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
   > do host-local source libraries define tracked corpus membership
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > do old SemanticIR phases create IntentIR behaviors
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > do signal presence records mint signals or declarations
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
@@ -196,6 +198,8 @@
   > does FSMGen's multi-actor ATL frontier provide a home for a connectivity netlist (NO — the ATL backlog wires children GENERATED from transaction composition spawn/do; it is behavioral orchestration, not a declarative static IP-interconnect netlist; verified 14-feature-backlog.md)
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > does IntentIR preserve SWD protocol provenance and order
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > does PhaseRecord remain schema compatible
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > does SemanticIR keep copyright and license text
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
@@ -294,7 +298,3 @@
   > does select_initiator_actor choose the first or last equal maximum
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
   > does specforge adapt remove an old actor isf when actor selection changes
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > does specforge handle coordinated drive/read objects (X drives A and B)
-- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
-  > does specforge handle passive voice for actor-signal relations (X is driven by Y)

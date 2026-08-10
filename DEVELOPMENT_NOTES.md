@@ -1,4 +1,33 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.43a.i (`2026-08-10`) — section topics are not canonical phase behavior
+
+The post-`.2.43a` title family could not be repaired by choosing better keywords. `PhaseRecord` contained only a
+synthetic summary plus provenance, while IntentIR broadcast that summary as a behavior to every actor and treated
+section overlap as actor grounding. No phase name, ordering, condition, signal membership, actor role, or effect
+supported either inference. Git history confirms this was first-pass scaffolding from the initial SemanticIR and
+IntentIR commits rather than a later typed design contract.
+
+The exact census makes the precision failure structural. Of 3,180 title-authorized records, 720 are `Reset
+value`; frequent others are registers, timing diagrams, results, modes, and transaction topics. Literal `phase`
+does not rescue the design: five of six records are CAN multi-segment/error headings or a Wishbone glossary
+definition, and the sole clean SWD heading contributes only a tautological section summary while typed
+`transaction_phases[]` already carries the actual `data` vocabulary.
+
+The downstream experiment also rules out latent value. Removing the records eliminates 2,238 deduplicated
+behaviors, 48 pure-inferred actors, and 2,257 responsibilities across the retained corpus. No adapter changes
+renderability, lowering status, or executable counts. Three source hashes improve only because a phantom
+`agent`/`device` no longer wins the ungrounded first-actor module-name fallback over a real `channel`/`manager`.
+
+The repaired release makes every populated/empty variant byte-identical at IntentIR and identical at the
+adapter. Verification passes 404 SemanticIR tests, 50 IntentIR tests, warning-deny Clippy, nine WIRE/I2C/SWD
+datasets, KG 156/156, full CI 1,789/five ignored, 66/66 FSMGen strict, mdBook, doctrines, paths, and locality.
+
+The repair therefore retires authority rather than substituting another heading list. New SemanticIR retains an
+empty serialized field for schema stability; old populated artifacts remain loadable and auditable; IntentIR
+ignores the legacy records so stale data cannot restore synthetic intent. The separate typed phase recognizer is
+untouched. Its incidentally observed Wishbone/CAN precision risk is durably owned by `.2.43a.ii`, not hidden or
+widened into this slice.
+
 ## CORPUS-COVERAGE.2.43a (`2026-08-10`) — temporal prose is not section-wide phase authority
 
 The first fresh Ready Definition cascade exposed a scope error in `build_phases`, not an EvidenceIR loss or an

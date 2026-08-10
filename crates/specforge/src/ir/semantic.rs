@@ -50,6 +50,14 @@ pub struct SemanticIr {
     #[serde(default)]
     pub signal_semantic_conflicts: Vec<SignalSemanticConflictRecord>,
     pub interfaces: Vec<InterfaceRecord>,
+    /// Legacy generic section-phase records retained for schema compatibility.
+    ///
+    /// The original producer elevated a whole section from broad title or sentence
+    /// vocabulary and downstream treated the resulting summary as behavior for every
+    /// actor. Corpus measurement found no defensible one-section/one-phase grammar or
+    /// executable value, so current producers leave this collection empty. Typed
+    /// protocol phases live in `transaction_phases`.
+    #[serde(default)]
     pub phases: Vec<PhaseRecord>,
     pub invariants: Vec<InvariantRecord>,
     pub contracts: Vec<ContractRecord>,
@@ -221,7 +229,10 @@ impl SemanticIr {
         let signal_polarities = evidence_ir.signal_polarities.clone();
         let signal_polarity_conflicts = evidence_ir.signal_polarity_conflicts.clone();
         let signal_semantic_conflicts = evidence_ir.signal_semantic_conflicts.clone();
-        let phases = build_phases(&context);
+        // CORPUS-COVERAGE.2.43a.i: retain the schema field but retire the legacy
+        // section-heading producer. A section topic does not by itself establish one
+        // canonical phase, and its synthetic summary is not an executable behavior.
+        let phases = Vec::new();
         let interface_ids_by_signal = interface_ids_by_signal(&interfaces);
         let invariants = build_invariants(&context, &interface_ids_by_signal);
         let contracts = build_contracts(&context, &actor_build.actor_id_by_term);
@@ -4564,27 +4575,6 @@ fn build_signal_connectivity_conflicts(
     conflicts
 }
 
-fn build_phases(context: &SemanticContext) -> Vec<PhaseRecord> {
-    context
-        .section_anchors
-        .iter()
-        // A whole section needs structural title authority to become a generic
-        // phase. Sentence-level words such as `when` and `after` are common in
-        // requirements, notes, register descriptions, and test procedures; they
-        // do not make the surrounding section a phase. Explicit protocol phrases
-        // such as `address phase` remain available through `transaction_phases`.
-        .filter(|section| {
-            !section.supporting_statement_ids.is_empty() && phase_like_title(&section.title)
-        })
-        .map(|section| PhaseRecord {
-            phase_id: format!("phase_{}", document_key(&section.title)),
-            summary: format!("semantic phase derived from section `{}`", section.title),
-            supporting_statement_ids: section.supporting_statement_ids.clone(),
-            supporting_section_ids: vec![section.section_id.clone()],
-        })
-        .collect()
-}
-
 fn build_invariants(
     context: &SemanticContext,
     interface_ids_by_signal: &HashMap<String, BTreeSet<String>>,
@@ -7398,31 +7388,6 @@ fn related_interface_ids(
     }
 
     related_ids.into_iter().collect()
-}
-
-fn phase_like_title(title: &str) -> bool {
-    contains_any_phrase(
-        &title.to_ascii_lowercase(),
-        &[
-            "phase",
-            "sequence",
-            "flow",
-            "timing",
-            "transaction",
-            "handshake",
-            "operation",
-            "mode",
-            "startup",
-            "shutdown",
-            "reset",
-            "request",
-            "response",
-            "transport",
-            "state",
-            "write",
-            "read",
-        ],
-    )
 }
 
 fn decomposition_like_title(title: &str) -> bool {
@@ -22646,95 +22611,52 @@ mod tests {
     }
 
     #[test]
-    fn build_phases_requires_structural_title_authority() {
-        let sections = [
-            (
-                "section_test",
-                "Functional test for controller",
-                "statement_test",
-                "Once the application reports success, the validation is complete.",
+    fn semantic_builder_retires_generic_section_phases() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("legacy-section-phases.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        fs::write(
+            &source,
+            concat!(
+                "# Setup phase\nThe controller participates.\n\n",
+                "# Reset value\nThe field reads as zero after reset.\n\n",
+                "# Transaction timing\nThe request is sampled when ready.\n",
             ),
-            (
-                "section_definition",
-                "Host system definition",
-                "statement_definition",
-                "The manufacturer shall assert when it meets these requirements.",
-            ),
-            (
-                "section_bits",
-                "Bit descriptions",
-                "statement_bits",
-                "The field is cleared after reset.",
-            ),
-        ];
-        let mut context = make_semantic_context_with_statements(
-            sections
-                .iter()
-                .map(|(section_id, _, statement_id, text)| {
-                    phase_test_statement(statement_id, text, section_id)
-                })
-                .collect(),
-        );
-        context.section_anchors = sections
-            .iter()
-            .map(
-                |(section_id, title, statement_id, _)| super::SemanticSectionContext {
-                    section_id: section_id.to_string(),
-                    title: title.to_string(),
-                    supporting_statement_ids: vec![statement_id.to_string()],
-                },
-            )
-            .collect();
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
 
         assert!(
-            super::build_phases(&context).is_empty(),
-            "sentence-level sequencing words must not promote whole sections to phases"
+            semantic_ir.phases.is_empty(),
+            "section topics must not mint generic semantic phases"
         );
-    }
-
-    #[test]
-    fn build_phases_retains_titled_protocol_structure() {
-        let sections = [
-            ("section_setup", "Setup phase", "statement_setup"),
-            ("section_reset", "Reset sequence", "statement_reset"),
-            ("section_timing", "Transaction timing", "statement_timing"),
-        ];
-        let mut context = make_semantic_context_with_statements(
-            sections
-                .iter()
-                .map(|(section_id, _, statement_id)| {
-                    phase_test_statement(statement_id, "The controller participates.", section_id)
-                })
-                .collect(),
-        );
-        context.section_anchors = sections
-            .iter()
-            .map(
-                |(section_id, title, statement_id)| super::SemanticSectionContext {
-                    section_id: section_id.to_string(),
-                    title: title.to_string(),
-                    supporting_statement_ids: vec![statement_id.to_string()],
-                },
-            )
-            .collect();
-
-        let phases = super::build_phases(&context);
-        assert_eq!(phases.len(), 3);
         assert_eq!(
-            phases
-                .iter()
-                .map(|phase| phase.supporting_section_ids.clone())
-                .collect::<Vec<_>>(),
-            vec![
-                vec!["section_setup".to_string()],
-                vec!["section_reset".to_string()],
-                vec!["section_timing".to_string()],
-            ]
+            serde_json::to_value(&semantic_ir)?
+                .get("phases")
+                .and_then(serde_json::Value::as_array)
+                .map(Vec::len),
+            Some(0),
+            "the legacy field remains serialized for schema compatibility"
         );
+
+        Ok(())
     }
 
     #[test]
-    fn typed_transaction_phase_does_not_depend_on_generic_section_phase() {
+    fn typed_transaction_phase_survives_generic_section_phase_retirement() {
         let section_id = "section_test";
         let mut context = make_semantic_context_with_statements(vec![phase_test_statement(
             "statement_address",
@@ -22747,7 +22669,6 @@ mod tests {
             supporting_statement_ids: vec!["statement_address".to_string()],
         }];
 
-        assert!(super::build_phases(&context).is_empty());
         let declared = ["HADDR".to_string()].into_iter().collect();
         let transaction_phases = super::build_transaction_phases(&context, &declared);
         assert_eq!(transaction_phases.len(), 1);

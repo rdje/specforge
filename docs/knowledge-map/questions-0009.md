@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > why does recover-register-bits still recover 0 bits after the plumbing is complete
+- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
+  > why does root KNOWLEDGE_MAP_ARCHITECTURE.md not exist
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why does setportfeature port over current become the USB 3.2 adapter actor
+- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
+  > why does shall be 0h still bind the value 0 but shall be non-zero does not bind NO
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > why does slicing idx minus 2 before signal panic
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > why does specforge split on 'and' but not 'or' for a coordinated actor subject
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why does the .isf emit a generic (type TABLE (bits N)) enum / what is the TABLE mega-enum
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > why does the AArch64 External Debug Guide emit no ISF
 - [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
@@ -96,6 +110,8 @@
   > why is MEMORY-BOUNDED-INGEST.5 summary streaming deferred
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > why is NVMe register field_name a bit-range and how is the mnemonic found in the description
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > why is Reset value not a semantic phase
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > why is SWD per-signal phase membership degenerate / empty
 - [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)

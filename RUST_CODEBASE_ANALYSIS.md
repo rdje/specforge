@@ -4,6 +4,27 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-10 — retire generic section-phase authority; `CORPUS-COVERAGE.2.43a.i`)
+
+- `SemanticIr.phases` remains a required, defaultable serialized `Vec<PhaseRecord>` for schema compatibility, but
+  `SemanticIr::build` now assigns it an empty collection. `build_phases` and the broad `phase_like_title`
+  vocabulary are removed; no section topic is interpreted as exactly one canonical phase.
+- `IntentContext` no longer copies legacy phases. The phase→all-actors behavior loop, overlap-based
+  `participate in …` responsibilities, dead `PhaseContext`, and now-unused overlap helper are removed. This also
+  lets the existing structural pure-inferred-actor gate operate without synthetic phase grounding.
+- Compatibility is intentional and tested: a manually populated legacy SemanticIR loads and round-trips its
+  `PhaseRecord`, while current IntentIR emits neither its behavior nor its otherwise pure-inferred actor. New
+  artifacts continue to serialize `"phases": []`, avoiding a schema-version change.
+- Exact pre-repair projection over all 79 retained artifacts: 3,180 title-authorized records produce 2,238
+  deduplicated behaviors, preserve 48 pure-inferred actors across 26 documents, and add 2,257 responsibilities;
+  zero adapter renderability/status/executable-count value. Only three fallback actor labels change, all toward
+  structurally grounded names.
+- Repaired release `834e335a…d3d3` makes title-populated and empty variants byte-identical at IntentIR for all 79
+  documents and identical at the adapter. `transaction_phases[]` remains separate and untouched; pending
+  `.2.43a.ii` owns the retained Wishbone/CAN qualifier-grammar precision audit.
+- Verification passes 404 SemanticIR tests, 50 IntentIR tests, warning-deny Clippy, nine WIRE/I2C/SWD datasets,
+  KG 156/156, full CI 1,789/five ignored, and all 66 current emitted ISFs through FSMGen strict.
+
 ## Session update (2026-08-10 — section-phase heading authority; `CORPUS-COVERAGE.2.43a`)
 
 - `build_phases` now requires a non-empty section anchor plus `phase_like_title`; it no longer promotes an entire

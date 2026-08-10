@@ -118,8 +118,9 @@ eight ports, four connectivity edges, and a four-signal/two-enum adapter. Fresh 
 quality directly: examples include `RAM is reads APB`, `means drives ATB`, and `debugger does reads DRW`. These
 sentence fragments do not declare signals or establish component endpoints. Current generic authority therefore
 produces zero relations, interfaces, ports, or connectivity while preserving 228 guide statements, one signal
-constraint, four actors, 13 phases, 21 invariants, and 49 behaviors. The unsupported CTI stability statement is
-kept as one adapter residual; lowering blocks and leaves exactly `adapter.json`.
+constraint, four semantic actors, three grounded Intent actors, zero generic phases, 21 invariants, and 36
+behaviors. The unsupported CTI stability statement is kept as one adapter residual; lowering blocks and leaves
+exactly `adapter.json`.
 
 The 10-page OpenCAPI Ready Test Resources engineering note provides a sixth, glossary-shaped transfer. Its stale
 EvidenceIR added synthetic `Signal DL is width 1.` from the headerless `Terms` table, whose actual `DL` row means
@@ -133,7 +134,7 @@ The 13-page OpenCAPI Certified Test Resources engineering note independently pro
 sibling `Terms` table likewise defines `DL` as data link layer, while stale EvidenceIR injected
 `Signal DL is width 1.` and promoted it into one interface and adapter output. Fresh extraction preserves all 173
 SourceIR content elements and 172 real evidence statements while removing only the synthetic declaration.
-SemanticIR and IntentIR retain their actors, phases, invariants, behaviors, and constraints but contain zero
+SemanticIR and IntentIR retain grounded actors, invariants, behaviors, and constraints but contain zero phases,
 interfaces or signals. Lowering blocks on both missing signals and missing behavior, emits no target, and leaves
 only `adapter.json` plus its validation report. Independent sibling evidence confirms the boundary is structural,
 not a Ready-note exception.
