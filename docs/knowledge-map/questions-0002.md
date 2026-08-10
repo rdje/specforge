@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > does removing sentence fallback remove address phase recognition
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > does retiring gates remove conditional rules or temporal rules
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
@@ -296,5 +298,3 @@
   > how does ingest avoid being RAM-guard-aborted on a small/restricted machine
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > how does ingest avoid crashing the host when memory runs out
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > how does ingest avoid filling the disk on a very large PDF

@@ -1,3 +1,17 @@
+### CORPUS-COVERAGE.2.46a — qualify ambiguous parenthetical `data` signal heads
+
+- The complete 80-EvidenceIR census finds six `data (ACRONYM)` width-one declarations: four real serial wires
+  (`SDA`, `USDA`, `SDAH`, `SD`) and two false property/example names (`VPD`, `DO`) that reached emitted ISF.
+- Sparse parenthetical signal synthesis now requires only a `data` head to carry adjacent `serial` or
+  `high-speed` authority. Other wire heads and declaration grammars are unchanged; paired tests contain no
+  vendor, document, or candidate-name production policy.
+- OpenCAPI Discovery and Wishbone replays remove `VPD`/`DO`; I2C keeps all six declarations and its
+  six-signal/26-rule target; I2S keeps `SCK`/`SD` and blocks only on its independent no-behavior condition.
+- Two four-document cascades reproduce 33 hashes. EvidenceIR 346/five ignored, warning-deny Clippy, nine
+  WIRE/I2C/SWD datasets, KG 156/156, 61/61 FSMGen strict, full CI, book, doctrines, persisted paths, and
+  project-data locality pass. The required achievement record triggers an exact, warning-safe 12-record
+  root-last rollover into `live-achievement-status-0006`; no status record is lost.
+
 ### CORPUS-COVERAGE.2.45 — refresh OpenCAPI 25 Gbps PHY Signaling without false acronym ports
 
 - One guarded CPU ingest holds 30 pages / 26 visuals / 19 tables / 59 sections at 17% peak sampled memory,

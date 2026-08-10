@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > which guides over-extract spurious .isf wire intent (cortex-a76 sw-opt 537 signals, readme, smmu software guide, gic overview, aarch64 debug guide)
+- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
+  > which header signatures are unrecovered register tables
+- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
+  > which local model should SpecForge use for NLI or entailment verification
+- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
+  > which local models are pulled and what are they for
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > which persisted evidence docs carry message_field_records
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
@@ -217,6 +225,8 @@
   > why do FPs appear in eval that the current code does not produce
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > why do GIC/SMMU/CoreSight architecture-spec registers gain fields from section headings
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why do I2C SDA USDA and SDAH remain signals
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > why do I2C/CCIX/USB4 have 0 table signals and how are they recovered
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
@@ -275,6 +285,8 @@
   > why does DTI (ihi0088) have zero message_field_records
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > why does Docling re-ingest fail on Apple Silicon
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why does I2S SD remain a signal
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
   > why does RISC-V AIA capture 0 registers (its IMSIC/APLIC CSR intent is in prose conditional_rules/behaviors; no current register strategy matches RISC-V's CSR layout — the .10g <NAME>, bits [hi:lo] section-heading family fires only on ARM ihiXXXX arch specs)
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
@@ -285,15 +297,3 @@
   > why does USB 3.2 emit AT ENHANCED NO and USB as ISF signals
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > why does USB 3.2 still emit hundreds of low confidence ISF outputs after the four false signals are removed
-- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
-  > why does a PDF-VARIANT-DIGESTION commit subject id not appear fully qualified in the task source
-- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
-  > why does a new SemanticIR have an empty gates array
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > why does a new SemanticIR have an empty phases array
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > why does a rebuild drop the extraction-quality gauge
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > why does a register count NOT veto a wire protocol (wire-vs-structure weight dominance; AXI wire 401 >= struct 229)
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > why does a register doc captioned 'message fields' yield zero message fields

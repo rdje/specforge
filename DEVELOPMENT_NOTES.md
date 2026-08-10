@@ -1,4 +1,28 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.46a (`2026-08-10`) — `data` needs evidence that it names a wire
+
+The sparse parenthetical fallback had a sound shape but one ambiguous noun. Requiring an uppercase acronym and
+an immediate wire-like head already rejected `Universal Serial Bus (USB)`, yet the accepted head `data` can mean
+either a physical serial line or the contents of a register, memory, product record, or structure. That ambiguity
+made `Vital Product Data (VPD)` and Wishbone example-memory `output data (DO)` indistinguishable from a real
+serial declaration at the producer seam. Both became synthetic width-one declarations and then canonical ports;
+the Wishbone sentence even named the actual bus output separately as `DAT_O`.
+
+The complete corpus boundary is small enough to close precisely. All six retained `data (ACRONYM)` declarations
+live in four documents. The four true signals—`SDA`, `USDA`, `SDAH`, and `SD`—carry adjacent `serial` or
+`high-speed`; the two false candidates carry `product` or `output`. The implementation therefore special-cases
+only the semantic ambiguity of the generic noun `data`: it requires one of those measured wire qualifiers, while
+`line`, `signal`, `clock`, `wire`, and `pin` retain their existing authority. No proper name enters production
+policy, and the independent pin/definition/table grammars are untouched.
+
+Real replay proves both precision and retention. OpenCAPI Discovery and Wishbone lose `VPD`/`DO` and their stale
+targets; I2C remains renderable with exactly six signals and 26 rules; I2S retains `SCK` and `SD` even though its
+current adapter independently blocks for lack of behavioral content. Two complete four-document cascades and
+validation reproduce 33 hashes. The live emitted cache is consequently 61 strict-clean ISFs rather than 64;
+this is honest convergence of three stale targets, not a loss of grounded serial wiring. Recording that product
+change reaches the status ledger's mandatory record threshold; the generic writer authenticates the committed
+opening and losslessly seals its 12 oldest post-capsule records before installing the smaller live root.
+
 ## CORPUS-COVERAGE.2.45 (`2026-08-10`) — physical timing survives without acronym ports
 
 The stale 25 Gbps PHY-signaling chain conflated three glossary/measurement acronyms with a digital interface.

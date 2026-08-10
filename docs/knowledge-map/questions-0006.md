@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > what is KG-ISF-TRANSACTIONS.2m / the channel-membership lever
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
   > what is Lever E / KG-ISF-COMPLETENESS.1c agent-identity precision for the dense-prose doc class
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
@@ -173,6 +175,8 @@
   > what is the canonical declared signal inventory key on SemanticIR
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
   > what is the canonical knowledge-map architecture path
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > what is the complete parenthetical data-head declaration census
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > what is the completeness gauge over-counting on APB
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
@@ -293,7 +297,3 @@
   > what must SpecForge derive to fully capture SWD; what are the gaps
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > what must be rebuilt after moving the SpecForge repository
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > what must happen before the USB4 inter-domain corpus refresh can run
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what owns containment of the live document adoption task history

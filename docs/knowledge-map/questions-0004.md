@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
+  > how much intent does SpecForge extract across the whole corpus
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > how much memory did the guarded AArch64 External Debug ingest use
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
@@ -296,5 +298,3 @@
   > should specforge mint actor-signal relations for nvme / iommu / ccix / register protocols
 - [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
   > should specforge record a residual for every typed rule that does not lower to .isf
-- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
-  > should specforge record an adapter residual for rules whose subject is not a declared signal

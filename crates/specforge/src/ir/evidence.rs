@@ -8709,34 +8709,9 @@ fn synthesize_signal_declarations_from_prose(
             // condition, another bus, a rate — not a wire. Requiring the head to be the wire noun keeps the
             // real lines ("serial data line (SDA)", "serial clock (USCL)", "high-speed data (SDAH)") and
             // drops those over-captures. General grammar, universal vocabulary (ADR 0006).
-            let head_word: Option<String> = if open > 0 {
-                Some(w[..open].to_string())
-            } else {
-                i.checked_sub(1)
-                    .and_then(|h| words.get(h))
-                    .map(|s| s.to_string())
-            };
-            let head_is_wire_noun = head_word
-                .as_deref()
-                .map(|p| {
-                    matches!(
-                        p.trim_matches(|c: char| !c.is_ascii_alphabetic())
-                            .to_ascii_lowercase()
-                            .as_str(),
-                        "line"
-                            | "lines"
-                            | "signal"
-                            | "signals"
-                            | "clock"
-                            | "data"
-                            | "wire"
-                            | "wires"
-                            | "pin"
-                            | "pins"
-                    )
-                })
-                .unwrap_or(false);
-            if !head_is_wire_noun || !seen.insert(token.clone()) {
+            if !parenthetical_head_has_single_wire_authority(&words, i, open)
+                || !seen.insert(token.clone())
+            {
                 continue;
             }
             *statement_counter += 1;
@@ -8775,6 +8750,57 @@ fn synthesize_signal_declarations_from_prose(
         }
     }
     out
+}
+
+/// Returns whether the noun phrase immediately before a parenthetical acronym names one wire.
+///
+/// `data` is ambiguous: it can name a serial wire or the payload/property of a register, memory,
+/// product, or structure. The retained-corpus boundary is precise when `data` additionally carries
+/// the adjacent wire qualifier `serial` or `high-speed`; the other accepted heads are intrinsically
+/// singular wire nouns. This stays grammatical and keeps candidate names out of production policy.
+fn parenthetical_head_has_single_wire_authority(
+    words: &[&str],
+    abbreviation_index: usize,
+    open: usize,
+) -> bool {
+    let (head_word, modifier_word) = if open > 0 {
+        (
+            &words[abbreviation_index][..open],
+            abbreviation_index
+                .checked_sub(1)
+                .and_then(|index| words.get(index).copied()),
+        )
+    } else {
+        let Some(head_index) = abbreviation_index.checked_sub(1) else {
+            return false;
+        };
+        let Some(head_word) = words.get(head_index).copied() else {
+            return false;
+        };
+        (
+            head_word,
+            head_index
+                .checked_sub(1)
+                .and_then(|index| words.get(index).copied()),
+        )
+    };
+
+    let normalize = |word: &str| {
+        word.trim_matches(|character: char| !character.is_ascii_alphanumeric() && character != '-')
+            .to_ascii_lowercase()
+    };
+    let head = normalize(head_word);
+    if head == "data" {
+        return modifier_word
+            .map(normalize)
+            .map(|modifier| matches!(modifier.as_str(), "serial" | "high-speed"))
+            .unwrap_or(false);
+    }
+
+    matches!(
+        head.as_str(),
+        "line" | "lines" | "signal" | "signals" | "clock" | "wire" | "wires" | "pin" | "pins"
+    )
 }
 
 /// PDF-VARIANT-DIGESTION.9.8 — recover the NAME(s) of single-wire signal(s) a spec DEFINES in prose via a
@@ -26187,6 +26213,38 @@ mod swd_serial_extraction_2 {
                 "non-wire-head over-capture {drop} must be dropped; got {names:?}"
             );
         }
+    }
+
+    #[test]
+    fn qualified_data_parentheticals_remain_single_wire_signals() {
+        let names = declared(&[
+            stmt("Only two bus lines are required: serial data (SDA) and serial clock (SCL)."),
+            stmt("The driver consists of serial clock (USCL) and serial data (USDA)."),
+            stmt(
+                "During transfer, high-speed data (SDAH) and high-speed serial clock (SCLH) are used.",
+            ),
+            stmt("Serial Data (SD);"),
+        ]);
+        for keep in ["SDA", "USDA", "SDAH", "SD"] {
+            assert!(
+                names.contains(&keep.to_string()),
+                "qualified data wire {keep} must remain declared; got {names:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn unqualified_data_parentheticals_do_not_become_single_wire_signals() {
+        let names = declared(&[
+            stmt("Vital Product Data (VPD) is stored in a capability structure."),
+            stmt("The memory output data (DO) is made available at the DAT_O output port."),
+        ]);
+        assert!(
+            !names
+                .iter()
+                .any(|name| matches!(name.as_str(), "VPD" | "DO")),
+            "property and example-memory data acronyms must not become wires; got {names:?}"
+        );
     }
 
     #[test]

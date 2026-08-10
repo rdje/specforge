@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
+  > why does a PDF-VARIANT-DIGESTION commit subject id not appear fully qualified in the task source
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > why does a new SemanticIR have an empty gates array
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > why does a new SemanticIR have an empty phases array
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > why does a rebuild drop the extraction-quality gauge
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > why does a register count NOT veto a wire protocol (wire-vs-structure weight dominance; AXI wire 401 >= struct 229)
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > why does a register doc captioned 'message fields' yield zero message fields
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > why does a sentence-period caption label yield nothing
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
@@ -170,6 +182,10 @@
   > why is Subordinate interface merged to Subordinate but GIC CPU interface kept intact
 - [task-tree-catalog](../knowledge/task-tree-catalog.md)
   > why is TEMPLATE excluded from the task catalog
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why is Vital Product Data (VPD) not a signal
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why is Wishbone memory output data (DO) not a port
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > why is a CSW@MEM-AP / CLAIMSET@AP qualified register name emitted, and is it .isf-safe
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -282,19 +298,3 @@
   > why was CORPUS-COVERAGE 2 33d iii closed without another convergence or adapter filter
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
   > why was FULL-PAGE-INTENT-CAPTURE.2 not built / closed NO-GO
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > why was HPROT[0] / HSEL / HTRANS IDLE extracted as a constraint (and how was it fixed)
-- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
-  > why was NVMe MPS must_be_value 0 removed / where did the bogus MPS subject come from
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > why was NVMe SANICAP must_be_value NO removed / where did the bogus NO come from
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > why was PSELx / HRESP ERROR / ACTIVATEACK LOW extracted as a constraint (and how was it fixed)
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > why was a property like RME_Support or MPAM_WIDTH extracted as a signal constraint
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > why was a signal not extracted from a signal table (e.g. AHB HREADY)
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > why was an emitter-only fix for register bit-fields rejected (per-field vars fabricate/lose grouping; set-field/extract fabricate runtime behavior; comments are not intent — feedback_isf_no_hacks)
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > why was nearest-heading anchoring rejected for capless table adoption

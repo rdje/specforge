@@ -15,6 +15,7 @@
 | [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md) | 2026-08-09 | `current` | OpenCAPI Ready and Certified note refreshes reject acronym-derived DL signals |
 | [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md) | 2026-06-10 | `current` | Packet/flit protocols declare message FIELDS in field-titled tables — the header vocabulary types the rows |
 | [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md) | 2026-06-14 | `current` | Per-page full-res PNGs are not read downstream — ingest skips persisting them for large PDFs |
+| [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md) | 2026-08-10 | `current` | Parenthetical data heads require an adjacent wire qualifier |
 | [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md) | 2026-06-07 | `current` | 12/82 corpus PDFs are permission-encrypted (open w/ empty password); docling+pypdf read all 82; the Read tool… |
 | [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md) | 2026-08-09 | `current` | Persisted paths separate repository ownership from authorized external inputs |
 | [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md) | 2026-06-14 | `current` | prior-phrase normalization UTF-8 byte-as-char mangling — exponential OOM found & FIXED (PDF-VARIANT-DIGESTI… |
@@ -60,4 +61,3 @@
 | [temporal-logic-choice](../knowledge/temporal-logic-choice.md) | 2026-06-04 | `current` | SpecForge captures temporal behavior in LTL/MTL, not CTL or TLA+ |
 | [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md) | 2026-06-04 | `current` | Temporal rules render to standard LTL/MTL via ir/temporal_ltl.rs |
 | [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md) | 2026-06-09 | `current` | Timing-table data rows trapped in header_rows (row-label cell is_header=true) are recovered structurally, not… |
-| [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md) | 2026-06-17 | `current` | The transaction ISF BODY is faithfully complete — a value-free `(sample S)` membership body is FSMGen-ACCEP… |

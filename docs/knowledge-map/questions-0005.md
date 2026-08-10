@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
+  > should specforge record an adapter residual for rules whose subject is not a declared signal
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
   > should specforge recover consumer edges from 'X is sent/returned to Y' recipient frames
 - [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
@@ -295,5 +297,3 @@
   > what is KG-ISF-COMPLETENESS.2a.vi (ISF rule-drive-value validity gate)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > what is KG-ISF-COMPLETENESS.5 (the generic-enum-conflation measurement + decision packet)
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > what is KG-ISF-TRANSACTIONS.2m / the channel-membership lever

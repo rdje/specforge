@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > what must happen before the USB4 inter-domain corpus refresh can run
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what owns containment of the live document adoption task history
 - [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
   > what owns live-document size limits and transition debt
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
@@ -46,6 +50,8 @@
   > what was the must_be_value recall gap and how was it closed
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > when does a caption ground a register name
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > when does data (ACRONYM) declare a one-bit signal
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > when does evidence_extraction_quality_majority_not_entailed or _gauge_stale fire
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
@@ -166,6 +172,8 @@
   > where is legal administrative prose filtered
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
   > where is normalized staging removed from Docling metadata
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > where is parenthetical single-wire authority enforced
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > where is register bit-field ISF emission implemented (register_storage_fields + normalize_field_access + IsfStorageField + the storage render in crates/specforge/src/ir/isf_ir.rs; residual isf_register_fields_not_lowered)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
@@ -290,11 +298,3 @@
   > which exact current state copies are not yet independently verified in SpecForge
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > which formal signal declaration predicates does the dense prose authority gate accept
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > which guides over-extract spurious .isf wire intent (cortex-a76 sw-opt 537 signals, readme, smmu software guide, gic overview, aarch64 debug guide)
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > which header signatures are unrecovered register tables
-- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
-  > which local model should SpecForge use for NLI or entailment verification
-- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
-  > which local models are pulled and what are they for

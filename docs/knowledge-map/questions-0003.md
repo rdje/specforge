@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > how does ingest avoid filling the disk on a very large PDF
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > how does learn-priors harvest extraction-profile priors (multi-member clusters only, schema v6)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
@@ -295,5 +297,3 @@
   > how much RAM did the qwen2.5vl:7b VLM use on a timing-diagram crop (13 GB; host hit 87% used, across the 85% kill threshold)
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > how much fact-card catalog index headroom remains
-- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
-  > how much intent does SpecForge extract across the whole corpus

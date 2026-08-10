@@ -233,10 +233,12 @@ Five active program groups support that north star:
   KG 156/156, 64/64 FSMGen strict, full CI, book/doctrines/path/locality pass. Corpus is 45 done / 11 remaining at
   80 SourceIR / 14 normalized / 80 EvidenceIR / 79 downstream chains. `.2.46` now owns the 40-page OpenCAPI
   Discovery Configuration refresh, the smallest of 11 remaining candidates at 181 retained elements; source,
-  release, and the exact seven-file stale chain are authenticated. Its first cascade exposed child `.2.46a`:
-  the sparse parenthetical fallback turns both `Vital Product Data (VPD)` and Wishbone example-memory `output
-  data (DO)` into emitted one-bit ports, while the four genuine `data`-head declarations all carry adjacent
-  `serial`/`high-speed` qualifiers. The child owns that generic authority repair before parent signoff. Separately,
+  release, and the exact seven-file stale chain are authenticated. Its first cascade exposed child `.2.46a`, now
+  closed: the complete six-candidate census showed four qualified serial-data wires and two false property/example
+  ports. The sparse parenthetical fallback now requires adjacent `serial`/`high-speed` authority only for the
+  ambiguous `data` head. Four real-document replays remove OpenCAPI `VPD` and Wishbone `DO`, preserve the I2C/I2S
+  positives, and reproduce 33 downstream hashes; all 61 current emitted ISFs remain strict-clean. Parent `.2.46`
+  resumes its final Discovery cascade, documentation, cleanup, and signoff. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

@@ -186,10 +186,12 @@ IntentIR retains four behaviors / 27 constraints / two assumptions / 70 timing c
 correctly blocks on no declared interface signals. Nine unknown tables, 26 unclassified visuals, and 12 normative
 residuals remain explicit capture frontiers.
 
-The corpus cache now has 64 current emitted `.isf` files, all covered by a fresh 64/64 FSMGen-strict sweep. The
+The corpus cache now has 61 current emitted `.isf` files, all covered by a fresh 61/61 FSMGen-strict sweep. The
 blocked/non-emitting set includes USB 3.2, USB4 Inter-Domain, USB4 Connection Manager, CoreSight Base System,
 AArch64 External Debug, Introducing CoreSight, and the recently refreshed OpenCAPI notes/definitions/PHY
-Mechanical/Signaling specs. Honest blocking is the correct lowering result for each.
+Mechanical/Signaling/Discovery specs. A current four-document signal-authority replay also removes stale
+Wishbone and I2S targets: Wishbone has no declared bus signal after its example-memory `DO` is rejected, while
+I2S keeps `SCK`/`SD` but has no lowerable behavior. Honest blocking is the correct result for each.
 
 The measurement behind that repair found three upstream authority errors, not a reason to distrust every
 relation-derived direction. Across the retained corpus, 97 sentence-start phrases use `signal <word>` without
@@ -201,15 +203,18 @@ first enters the catalog:
   `inout`, `internal`, `local`, or `width`. For example, `Signal PREADY is input width 1.`,
   `Signal DATA_IO is inout width 1.`, and `Signal PAYLOAD is width 32.` are declarations; `Signal at its upstream
   port ...` is ordinary prose.
-- The sparse parenthetical fallback is reserved for actual single-wire heads such as `line`, `clock`, `data`,
+- The sparse parenthetical fallback is reserved for actual single-wire heads such as `line`, `signal`, `clock`,
   `wire`, and `pin`; a phrase such as `Universal Serial Bus (USB)` does not declare a width-one `USB` signal.
+  `data` is deliberately stricter because it can name a register/property/payload rather than a wire: it gains
+  authority only with the adjacent qualifier `serial` or `high-speed`. Thus `serial data (SDA)` and `Serial Data
+  (SD)` remain declarations, while `Vital Product Data (VPD)` and example-memory `output data (DO)` do not.
 - An ordinary port/pin table needs an explicit signal caption, a compact signal/name/symbol/pin identity header,
   or a headerless connector-pin diagram. This retains connector pins and normal or rotated signal inventories
   while rejecting state, status, and requirements matrices that merely mention ports.
 
-Focused retention tests cover I2C/I2S/SWD/SWP prose declarations, SWJ routing, rotated `Name` tables, and a MIPI
-connector diagram. The broad library gate also caught the valid `inout` declaration contract even though the
-retained corpus measurement happened to contain no such declaration.
+Focused retention tests cover the positive and negative parenthetical forms, I2C/I2S/SWD/SWP prose declarations,
+SWJ routing, rotated `Name` tables, and a MIPI connector diagram. The broad library gate also caught the valid
+`inout` declaration contract even though the retained corpus measurement happened to contain no such declaration.
 
 This placement matters. Relation extraction scans only cataloged signals, table relations use the same table
 gate, and the direction pass copies a relation's existing name—it does not invent another one. A second adapter
