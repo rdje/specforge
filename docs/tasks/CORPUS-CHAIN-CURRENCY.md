@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CORPUS-CHAIN-CURRENCY`
-- Status: `active`
+- Status: `active` (`.0`/`.1`/`.3` done; `.2` bundle retention open)
 - Roadmap lane: `R15e`/`R16` corpus digestion (sibling of `CORPUS-COVERAGE`)
 - Created: `2026-08-10`
 - Last updated: `2026-08-10`
@@ -95,12 +95,13 @@ See [`docs/decisions/0025-persisted-chain-currency-is-measured-not-assumed.md`](
   count. `--self-test` proves the comparison core fail-closed in 10 cases. The driver gained a **tier** column so a
   §4.7 CI-tier doctrine stays registered and meta-checked while the pre-commit hook keeps running only `gate` tier;
   a deferred doctrine prints as `DEFER`, never as absent. `run_ci.sh` now invokes `--all`.
-- ID: `CORPUS-CHAIN-CURRENCY.3` · Status: `open` · Goal: close the drift `.1` measured (see the census below).
-  Rebuild the downstream chain — `semantic` → `intent` → `adapt` — for every stale document, re-validate, and
-  re-measure the FSMGen-strict emitted-`.isf` population, which this rebuild will move. No re-ingest is needed:
-  only the evidence stage reads a normalized bundle, so all 79 downstream chains are rebuildable today. Decide the
-  `readme` scratch chain's fate in the same leaf (refresh it or drop it) instead of letting a demo artifact
-  permanently redden a corpus gate.
+- ID: `CORPUS-CHAIN-CURRENCY.3` · Status: `done` (`2026-08-10`, DATA/DOC) · Goal: close the drift `.1` measured.
+  Rebuilt `semantic` → `intent` → `adapt --target isf` for all 79 chains from their unchanged persisted
+  EvidenceIR (2m32s, zero failures) and re-validated the same 90 artifacts that carried validation state, so the
+  reported population neither grew nor shrank. No re-ingest: only the evidence stage reads a normalized bundle.
+  The two non-corpus scratch chains were removed with `clean --scope document` — `readme` (its promoted markdown
+  *is* the live `README.md`, so every `README_POLICY` edit would redden a corpus gate) and `spec` (residue whose
+  source was a deleted `.project-data/tmp` file, therefore permanently unmeasurable). The gate is now GREEN.
 - ID: `CORPUS-CHAIN-CURRENCY.2` · Status: `open` · Goal: make bundle retention real — stop routine
   `clean --scope source-normalized` in the refresh routine, state the retention rule in the book's generated-
   artifacts chapter, and record each refresh's bundle as retained so the measurable population grows by one per
@@ -135,6 +136,39 @@ The 14 stale adapters are computed from stale IntentIRs, so that number will mov
 This is exactly the silent drift ADR 0025 predicted, at a scale `.0` could not see, and it is why `.1` shipped a
 gate rather than a one-off census.
 
+## Closing census (`2026-08-10`, `.3`) — the corpus after the rebuild
+
+| Stage | Replayed | Current | Stale | Not persisted | Unmeasurable |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| `evidence` | 22 | 22 | 0 | 0 | 56 |
+| `semantic` | 78 | 78 | 0 | 0 | — |
+| `intent` | 78 | 78 | 0 | 0 | — |
+| `isf-adapter` | 78 | 78 | 0 | 0 | — |
+
+**Product-status change: the emitted-`.isf` population is 57 → 44, and all 44 are FSMGen `--strict --check
+--json` clean (0 diagnostics).** The cause is measured, not inferred: exactly 14 documents' SemanticIR
+`interfaces[]` collapsed from a heuristic bulk (929, 737, 530, 480, 426, 211, 195, 135, 131, 121, 82, 78, 74, 7)
+to **zero** under current authority, and all 14 now block on `no signals declared in interface` and emit
+nothing — a 14/14 correspondence with zero exceptions. Each `.2.4x` refresh removed stale heuristic interfaces
+for its **own** document only; every un-refreshed document kept its false interface set, and its `.isf`, until
+this rebuild. The gate/phase retirements are exonerated: their own fact cards' "no adapter renderability value"
+claim survives this measurement intact.
+
+Honest limits of this measurement:
+
+- The **per-document pre-rebuild emitted set was not snapshotted**, so the single offsetting gain implied by
+  57 − 14 = 43 vs the measured 44 cannot be attributed to a named document. That state was in any case a
+  mixture of code vintages and irreproducible by construction — which is the condition this doctrine ends.
+  From now on the before-state is always reproducible, because the gate reproduces it.
+- 56 documents remain **unmeasurable at the evidence stage** until their normalized bundles are backfilled at
+  each document's own refresh (ADR 0025 decision 3). Every later stage is measured for the whole corpus.
+- Two documents (`opencapi_25gbps_phy_mechanical_spec_v10`, `um11732_v3_2022_02_17_i2s_bus_specification`) have
+  declared signals yet block on `no behavioral content`. That is the documented `R6-ISF-ADAPTER.4` policy —
+  `assess_isf_renderability` counts only `temporal_rules`, `conditional_rules`, `signal_constraints`, and
+  `control_blocks`, never `behaviors`/`constraints`/`temporal_invariants`. `um11732` was already fully current
+  before the rebuild, proving the pattern pre-dates this leaf; it is a standing lowering-recall question, not a
+  regression, and it is surfaced rather than closed here.
+
 ### Acceptance Checklist (enforced) — `CORPUS-CHAIN-CURRENCY.0`
 
 - [x] **REPRODUCE / MEASURE** — read-only `evidence --dry-run` census over all 22 rebuildable documents pinned 19
@@ -168,6 +202,22 @@ gate rather than a one-off census.
 - [x] **LOCKSTEP** — this tree, `DOCTRINE_ENFORCEMENT.md` §5/§8/§10, `TOOLBOX.md` §7.2/§7.2a, the book's
   doctrine-enforcement chapter, the `chain-currency-doctrine` fact card, and the resume pointer agree.
 
+### Acceptance Checklist (enforced) — `CORPUS-CHAIN-CURRENCY.3`
+
+- [x] **REPRODUCE / MEASURE** — the `.1` gate measured the drift (semantic 14/79, intent 15/79, isf-adapter
+  65/79 current) before anything was rebuilt.
+- [x] **ROOT CAUSE (WHY + WHERE)** — 14/14 correspondence between `interfaces(N->0)` in the `.1` semantic
+  replay and `no signals declared in interface` in the rebuilt adapter; blocking policy read at
+  `crates/specforge/src/ir/adapters.rs` `assess_isf_renderability`.
+- [x] **ADDRESSED (verified)** — the closing census reports 22/22 evidence, 78/78 semantic, 78/78 intent, and
+  78/78 isf-adapter current, with all 78 emitted-`.isf` checks passing; `check_chain_currency.sh` exits 0.
+- [x] **NO REGRESSION** — no Rust changed, so `kg-bench` and the WIRE-BASED-100 golds are orthogonal by
+  construction and every EvidenceIR is byte-unchanged (the rebuild never touched that stage); all 44 emitted
+  ISFs pass `fsmgen --strict --check --json` with 0 diagnostics, and `scripts/check_doctrines.sh` is green.
+- [x] **GENERICITY (ADR 0006)** — no code changed; the rebuild applies existing universal rules uniformly.
+- [x] **LOCKSTEP** — this tree, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, the
+  `corpus-wide-interface-authority-rebuild` fact card, and the resume pointer agree before commit.
+
 ## Verification Log
 
 | Date | Boundary | Result |
@@ -177,6 +227,9 @@ gate rather than a one-off census.
 | `2026-08-10` | no regression | KG 156/156; 57/57 FSMGen strict; SWD gold surfaces all 1.000 after rebuilding its document |
 | `2026-08-10` | `CHAIN-CURRENCY` shipped | `--self-test` 10/10; driver reports 6 executed PASS / 7 registered with `DEFER CHAIN-CURRENCY`; full run `6m58s`, exit 1 |
 | `2026-08-10` | full-chain census | evidence 22/23 current (57 unmeasurable); semantic 14/79; intent 15/79; isf-adapter 65/79 — the drift `.3` owns |
+| `2026-08-10` | `.3` rebuild | 79 chains rebuilt in `2m32s`, 0 failures; 90 previously-validated artifacts re-validated, 0 failures |
+| `2026-08-10` | `.3` closing census | 22/22 evidence · 78/78 semantic · 78/78 intent · 78/78 isf-adapter current; gate exits 0 |
+| `2026-08-10` | `.3` emitted ISFs | 57 → 44 emitted; 44/44 FSMGen `--strict --check --json` clean; 14/14 loss correspondence with `interfaces(N->0)` |
 
 ## Commit Log
 
@@ -184,4 +237,5 @@ gate rather than a one-off census.
 | --- | --- |
 | `CORPUS-CHAIN-CURRENCY` ownership | `8475900d` — `CORPUS-CHAIN-CURRENCY — track measured persisted-chain currency` |
 | `CORPUS-CHAIN-CURRENCY.0` completion | `CORPUS-CHAIN-CURRENCY.0 — decide currency policy and close measured drift` |
-| `CORPUS-CHAIN-CURRENCY.1` completion | `CORPUS-CHAIN-CURRENCY.1 — gate persisted-chain currency as a CI-tier doctrine` |
+| `CORPUS-CHAIN-CURRENCY.1` completion | `ddc2f798` — `CORPUS-CHAIN-CURRENCY.1 — gate persisted-chain currency as a CI-tier doctrine` |
+| `CORPUS-CHAIN-CURRENCY.3` completion | `CORPUS-CHAIN-CURRENCY.3 — rebuild the corpus chain to currency` |

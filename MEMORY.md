@@ -21,13 +21,12 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-CHAIN-CURRENCY.3` — close the corpus drift the new gate measured.
-- Current state: `CORPUS-CHAIN-CURRENCY.1` shipped and registered the `CHAIN-CURRENCY` doctrine (CI-tier; the
-  driver now carries tiers and prints DEFER). Its first full-chain run is RED and correctly so: evidence 22/23
-  current (57 unmeasurable), semantic 14/79, intent 15/79, isf-adapter 65/79. Cause: `.2.43a.i`/`.2.43b` retired
-  the generic phase/gate producers, and only later-refreshed documents carry post-retirement artifacts.
-- Next action: `CORPUS-CHAIN-CURRENCY.3` — rebuild `semantic`→`intent`→`adapt` for every stale document (no
-  re-ingest needed; only the evidence stage reads a bundle), re-validate, re-measure the FSMGen-strict ISF
-  population, and settle the `readme` demo chain. Then `.2` bundle retention, then refresh #51.
+- Active unit: none; `CORPUS-CHAIN-CURRENCY.1` and `.3` are complete and committed.
+- Current state: the `CHAIN-CURRENCY` doctrine is registered CI-tier and GREEN. The corpus is 78 documents at
+  22/78/78/78 measured-current stages (56 unmeasurable at the evidence stage only, pending bundle backfill) with
+  **44/44 emitted ISFs FSMGen-strict clean, down from 57**: 14 documents' false heuristic interfaces collapsed to
+  zero under current authority, which exonerates the `.2.43a.i`/`.2.43b` gate/phase retirements.
+- Next action: `CORPUS-CHAIN-CURRENCY.2` — stop routine `clean --scope source-normalized` in the refresh routine
+  and state bundle retention in the book, so the measurable population grows by one per refresh; then refresh #51.
 - In-flight uncommitted: none; no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

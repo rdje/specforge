@@ -50,6 +50,7 @@
 - [corpus-reuse-activate-only-no-current-consumer](corpus-reuse-activate-only-no-current-consumer.md)
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
 - [corpus-task-evidence-containment-design](corpus-task-evidence-containment-design.md)
+- [corpus-wide-interface-authority-rebuild](corpus-wide-interface-authority-rebuild.md)
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](cortex-a76-optimization-guide-refresh-is-authority-empty.md)
 - [cross-stage-artifact-paths-are-absolute](cross-stage-artifact-paths-are-absolute.md)
 - [definitional-signal-capture](definitional-signal-capture.md)

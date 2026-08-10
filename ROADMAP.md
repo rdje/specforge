@@ -271,7 +271,14 @@ Five active program groups support that north star:
   ingests reproduce 527 elements and a 184-file / 52,570,034-byte bundle, current authority removes four
   interfaces/ports/relations, 54 phases, 71 gates, 38 contracts, and the synthetic `endpoint_dlx.isf`, and 87
   invariants / 24 behaviors / 87 constraints remain with lowering blocked on no declared signals. Corpus is 50
-  done / six remaining at 80/22/80/79 stages with 57/57 emitted ISFs strict-clean. The guarded migration owned by
+  done / six remaining. [`CORPUS-CHAIN-CURRENCY`](docs/tasks/CORPUS-CHAIN-CURRENCY.md) then makes chain currency
+  measured rather than assumed: `.1` registers the `CHAIN-CURRENCY` oracle as the doctrine registry's first
+  CI-tier check, and its first full run exposes real standing drift — only 14 of 79 SemanticIRs and 15 of 79
+  IntentIRs were what the current binary produces. `.3` rebuilds all 79 downstream chains from their unchanged
+  EvidenceIR without any re-ingest and drops two non-corpus scratch chains, leaving **78 documents at
+  22/78/78/78 measured-current stages with 44/44 emitted ISFs strict-clean**. The emitted population fell 57 → 44
+  because 14 documents' false heuristic interfaces collapsed to zero under current authority; the retired generic
+  gates and phases cost no renderability. The guarded migration owned by
   [`CORPUS-TASK-EVIDENCE-CONTAINMENT`](docs/tasks/CORPUS-TASK-EVIDENCE-CONTAINMENT.md) is lossless and below all
   local warnings. Its same-SSD no-hardlink clean clone passed every doctrine, a temporary eighth active part proved
   the eligible post-migration #49 route through the composed live gate, and exact restoration left no residue.

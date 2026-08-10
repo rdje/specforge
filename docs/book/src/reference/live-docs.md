@@ -222,8 +222,19 @@ visuals / 53 tables / 111 sections / 527 elements and a 184-file / 52,570,034-by
 cascades reproduced every downstream hash. Current authority removes four stale interfaces, ports, and relations,
 54 phases, 71 gates, 38 contracts, and the synthetic `endpoint_dlx.isf`; six semantic actors, 87 invariants, four
 assertions, 24 intent behaviors, and 87 constraints remain, with lowering blocking honestly on no declared
-interface signals. Corpus coverage is 50/56 with six refreshes remaining, stages are 80/22/80/79, and all 57
-retained emitted targets pass FSMGen strict validation.
+interface signals. Corpus coverage is 50/56 with six refreshes remaining.
+
+`CORPUS-CHAIN-CURRENCY` then replaced the assumption that those persisted artifacts still match the code with a
+measurement. Its registered `CHAIN-CURRENCY` oracle replays every stage from the persisted artifact one stage
+upstream, and its first full run found real standing drift: only 14 of 79 SemanticIRs and 15 of 79 IntentIRs were
+what the current binary produces, because each earlier repair had rebuilt only the documents it measured. The
+closing leaf rebuilt every downstream chain from its unchanged EvidenceIR — no re-ingest, since only the evidence
+stage reads a normalized markdown bundle — and dropped two non-corpus scratch chains. Stages are now
+**22/78/78/78 measured-current across 78 documents, and all 44 retained emitted targets pass FSMGen strict
+validation**. That count fell from 57 for a measured reason: 14 documents' heuristic interfaces collapsed to zero
+under current authority, so their lowering now blocks honestly on having no declared signals. Fifty-six documents
+remain unmeasurable at the evidence stage alone until their bundles are backfilled, which the check reports as a
+count rather than implying full coverage.
 
 Post-migration sealing is Git-backed: a part's final content commit lands first, then a following state-only
 transaction records that ancestor commit/blob before any later part accepts work. The migrated legacy payloads
