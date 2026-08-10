@@ -1,3 +1,14 @@
+### CORPUS-TASK-EVIDENCE-CONTAINMENT.4a — migrate corpus task evidence losslessly
+
+- The guarded root-last writer replaced the 2,308-line / 277,636-byte mixed-role monolith with a truthful
+  65-line / 2,822-byte current root, a 75-line index, seven semantic parts, and a schema-closed manifest.
+- An exact 2,308-line capsule at SHA-256 `5d7acb0c…123f` preserves every old byte. Independent marker extraction
+  reconstructs the capsule exactly and proves the 48 formal routes split 41 legacy / seven structural.
+- Three dedicated live-document surfaces govern index, parts, and archive; all 51 surfaces, focused checks,
+  mdBook, doctrines, and full CI pass with no writer/template residue. Product status remains 48/eight/80/20/80/79.
+- Final diff hygiene removed the writer's terminal scaffold blank line from each semantic part; the generic
+  positive writer test now rejects recurrence, and part metrics/hashes are resealed without touching source payload.
+
 ### CORPUS-TASK-EVIDENCE-CONTAINMENT.3b — lock corpus task migration contract
 
 - A separate schema-closed contract pins boundary `f1b202f2`, source blob/SHA/metrics, seven exact regions, 41

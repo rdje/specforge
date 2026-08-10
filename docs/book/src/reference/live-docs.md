@@ -190,19 +190,21 @@ semantic part, eligible frontier, `post_migration` route, root-required literal,
 update pass together. The 35-case suite therefore proves both rejection and reachability of the future writer
 contract, and the containment program is closed.
 
-#### Corpus task migration inputs are locked
+#### Corpus task migration landed losslessly
 
-The same architecture is now measured independently for active `CORPUS-COVERAGE`. Its source remains untouched
-at 2,308 lines / 277,636 bytes / 4,746 maximum content-line bytes, with only 892 bytes left at the direct
-task-evidence ceiling. Seven exact regions reconstruct every byte and route all 48 formal ids: 41
-completion-subject ids are `legacy` routes and seven formal containers absent from those subjects are
-source-backed `structural` routes. The planned payloads stay below their measured warning boundaries.
+The same architecture was measured independently for active `CORPUS-COVERAGE`. Its pre-migration source was
+2,308 lines / 277,636 bytes / 4,746 maximum content-line bytes, with only 892 bytes left at the direct
+task-evidence ceiling. The guarded root-last writer has replaced that monolith with a 65-line / 2,822-byte current
+root and a 75-line / 4,349-byte index. Seven semantic parts total 2,357 lines / 279,157 bytes; every one remains
+below warning. They reconstruct all seven source regions byte-for-byte and route all 48 formal ids: 41
+completion-subject ids are `legacy` routes and seven formal containers are source-backed `structural` routes.
 
-`doctrine/live_document_size/corpus_task_evidence.json` locks boundary commit `f1b202f2`, the source blob/SHA,
-regions, routes, fixed limits, reviewed writer metadata, and root/index requirements. The live-document driver
-invokes this contract independently of the already-migrated PDF-variant contract. While it is `source_locked`,
-the stable source must remain byte-identical and every corpus collection/archive destination must remain absent.
-Only the guarded migration leaf may create them; refresh #49 remains a separate later product slice.
+The exact 2,308-line / 277,636-byte source remains independently retrievable at SHA-256 `5d7acb0…123f` from the
+archive capsule. `doctrine/live_document_size/corpus_task_evidence.json` now binds the migrated root, 488-line
+manifest, index, parts, capsule, Git/source identity, fixed limits, and migration metadata. Three dedicated
+live-document surfaces enforce index, part-collection, and exact archive bounds; all 51 resulting surfaces pass.
+The repository-local template was removed after the transaction. Refresh #49 remains a separately owned product
+slice after the independent clean-clone/continuation audit closes containment.
 
 Post-migration sealing is Git-backed: a part's final content commit lands first, then a following state-only
 transaction records that ancestor commit/blob before any later part accepts work. The migrated legacy payloads

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
+  > qwen2.5vl vs qwen3-vl which model
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
   > should I build an isf lowering-completeness verifier for temporal rules
 - [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
@@ -295,5 +297,3 @@
   > what happened to the AArch64 External Debug Guide agent.isf
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > what happened to the CoreSight Base System agent.isf
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > what happened to the USB4 Connection Manager device_also.isf

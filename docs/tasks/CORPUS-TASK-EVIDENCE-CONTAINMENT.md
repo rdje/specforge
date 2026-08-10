@@ -90,10 +90,25 @@ evidence, bounded retrieval, and an unambiguous write transaction for refresh #4
   Commit: `CORPUS-TASK-EVIDENCE-CONTAINMENT.3b — lock corpus task migration contract`
 
 - ID: `CORPUS-TASK-EVIDENCE-CONTAINMENT.4`
-  Status: `pending`
+  Status: `active`
   Goal: migrate atomically, verify losslessness and bounded continuity, close containment, and return to refresh #49
-  Acceptance: the stable root and every declared destination pass focused and composed gates; exact provenance and
-  route coverage hold; no residue remains; live docs and mdBook are synchronized; the next action is refresh #49
+  Children: `CORPUS-TASK-EVIDENCE-CONTAINMENT.4a`, `CORPUS-TASK-EVIDENCE-CONTAINMENT.4b`
+
+- ID: `CORPUS-TASK-EVIDENCE-CONTAINMENT.4a`
+  Status: `done` (`2026-08-10`, DATA/DOC/MIGRATION)
+  Goal: invoke and commit the guarded root-last migration with every resulting surface registered
+  Acceptance: bounded root, seven exact semantic parts, 48-route index, manifest, and exact capsule pass the
+  corpus contract and composed live-document gate; source reconstructs exactly; no writer/template residue remains
+  Verification: 65-line root; 75-line index; seven-part 2,357-line collection; 488-line manifest; exact
+  2,308-line capsule; independent seven-region reconstruction and 48-route-set proof; no residue; 51 governed
+  surfaces; focused contract; task catalog; Knowledge Map; roadmap/book; doctrines; mdBook test/build; full CI pass
+  Commit: `CORPUS-TASK-EVIDENCE-CONTAINMENT.4a — migrate corpus task evidence losslessly`
+
+- ID: `CORPUS-TASK-EVIDENCE-CONTAINMENT.4b`
+  Status: `pending`
+  Goal: independently reproduce the committed migration and prove bounded future continuation before closure
+  Acceptance: a same-volume no-hardlink clean clone verifies Git/capsule/source/region/route/manifest identity,
+  all doctrines, and one temporary post-migration active-part/eligible-frontier append with exact cleanup
   Verification: pending
   Commit: pending
 
@@ -101,7 +116,7 @@ evidence, bounded retrieval, and an unambiguous write transaction for refresh #4
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `CORPUS-TASK-EVIDENCE-CONTAINMENT.4` | `pending` | Review the bounded root and invoke the guarded root-last migration. |
+| 1 | `CORPUS-TASK-EVIDENCE-CONTAINMENT.4b` | `pending` | Reproduce the committed migration and prove one real bounded continuation before closure. |
 
 ## Locked Source Boundary
 
@@ -138,6 +153,11 @@ measure and decide the actual destinations. `git diff -- docs/tasks/CORPUS-COVER
   blockers: exact corpus ledger rows require 4,746 content-line bytes while the verifier capped parts at 1,024,
   and seven formal container ids lack completion-subject history. `.3a` owns a bounded generic 6,400-byte cap and
   source-backed `structural` route origin; `.3b` alone may lock/invoke the corpus contract afterward.
+- `2026-08-10`: `.4` split before its first commit so the actual migration (`.4a`) becomes a durable clean
+  boundary before `.4b` independently clones it and proves exact recovery plus a real bounded continuation.
+- `2026-08-10`: `.4a` final diff hygiene caught a terminal scaffold blank line on every generated semantic part.
+  The generic writer now removes only that final separator and its positive self-test rejects recurrence; source
+  payload bytes and capsule identity remain unchanged, while part hashes/metrics were resealed before final gates.
 
 ## Open Questions
 
@@ -155,6 +175,7 @@ measure and decide the actual destinations. `git diff -- docs/tasks/CORPUS-COVER
 | `2026-08-10` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.2` | seven raw regions/source reconstruction; 42 exact-path readers at `3a40b152`; 48 formal / 41 subject / 48 union ids; growth census; target diff; Knowledge Map derive-and-diff; task catalog; doctrines; mdBook test/build | pass; selected bounded root + seven parts + exact capsule |
 | `2026-08-10` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3a` | Perl syntax; 39/39 neutral cases; existing real contract; exact source/destination absence; live-document gate; task/Knowledge Map/doctrine gates; mdBook test/build; full CI | pass; 6,400 cap and source-backed structural routes fail closed |
 | `2026-08-10` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3b` | JSON/shell syntax; real 7-region / 48-route source-locked report; 39/39 neutral cases; unconditional driver; exact source/destination absence; task/Knowledge Map/doctrine gates; mdBook test/build; full CI | pass; complete corpus migration contract locked before mutation |
+| `2026-08-10` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.4a` | guarded root-last writer; migrated report; independent source reconstruction/route-set proof; template/transaction residue; 51 live surfaces; task/Knowledge Map/doctrine gates; mdBook test/build; full CI | pass; exact source retained and bounded current/task authorities installed |
 
 ## Commit Log
 
@@ -164,6 +185,7 @@ measure and decide the actual destinations. `git diff -- docs/tasks/CORPUS-COVER
 | `CORPUS-TASK-EVIDENCE-CONTAINMENT.2` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.2 — select measured corpus task partition` | Complete census and corpus-specific topology/bounds. |
 | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3a` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3a — support exact structural task routes` | Neutral checker supports bounded exact-wide rows and formal container routes. |
 | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3b` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3b — lock corpus task migration contract` | Complete source lock and unconditional verifier invocation. |
+| `CORPUS-TASK-EVIDENCE-CONTAINMENT.4a` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.4a — migrate corpus task evidence losslessly` | Guarded root-last migration and resulting-surface activation. |
 
 ## Changelog
 
@@ -175,6 +197,8 @@ measure and decide the actual destinations. `git diff -- docs/tasks/CORPUS-COVER
   source-backed `structural` container routes, and advanced the frontier to the corpus-specific contract.
 - `2026-08-10`: `.3b` locked every source/region/route/bound/writer input, invoked the independent corpus
   contract unconditionally, and advanced the frontier to the guarded migration.
+- `2026-08-10`: `.4a` installed the bounded root, seven semantic parts, route index/manifest, and exact capsule;
+  independent reconstruction is exact and the frontier advances to clean-clone/continuation proof.
 
 ### Acceptance Checklist (enforced) — `CORPUS-TASK-EVIDENCE-CONTAINMENT.2`
 
@@ -220,3 +244,18 @@ measure and decide the actual destinations. `git diff -- docs/tasks/CORPUS-COVER
   the shared checker and shell driver contain no corpus document/vendor/refresh parsing or special-case behavior.
 - [x] **LOCKSTEP** — ADR 0024, census, fact, task tree, changes, mdBook, and resume pointer agree that only `.4`
   may invoke the reviewed root-last writer and refresh #49 remains a later separately owned product slice.
+
+### Acceptance Checklist (enforced) — `CORPUS-TASK-EVIDENCE-CONTAINMENT.4a`
+
+- [x] **REPRODUCE / MEASURE** — resulting metrics are root 65/2,822/120, index 75/4,349/93, manifest
+  488/15,856/88, seven parts 2,357/279,157 with maxima 492/59,454/4,746, and exact capsule 2,308/277,636/4,746.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the 277,636-byte mixed-role root had only 892 bytes left; the accepted
+  partition moves literal history to exact semantic payloads/capsule while retaining a bounded truthful root.
+- [x] **ADDRESSED (verified)** — the guarded writer installed capsule → parts → index → manifest → migrated
+  contract → root, then validated the complete tree; three dedicated surfaces govern the new Markdown authorities.
+- [x] **NO REGRESSION** — an independent raw marker reconstruction equals the capsule/source SHA and exact 48-id
+  set; focused contract, 51-surface live gate, task/Knowledge Map/doctrine gates, mdBook, and full CI pass.
+- [x] **GENERICITY** — migration used only the neutral contract-driven writer and corpus data contract; no task
+  payload was reworded, no limit widened, and no document/vendor/product special case entered executable code.
+- [x] **LOCKSTEP** — bounded root, semantic parts, exact capsule, contract, surfaces, roadmap, fact, task, changes,
+  mdBook, and memory agree; `.4b` alone owns the clean-clone/future-continuation proof before closure.

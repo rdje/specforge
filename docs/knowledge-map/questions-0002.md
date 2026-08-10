@@ -88,6 +88,8 @@
   > does validate report message_field_records
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > fresh empirical reconfirmation of the .2i body-emission parking on the current 030f8c273 binary
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > has the corpus task evidence migration landed
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > have the PDF task migration destinations been created
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
@@ -296,5 +298,3 @@
   > how does build_transaction_phases distinguish a named phase from phase error or phase tolerance
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > how does collapse_section_header_register_identity decide same-register vs different-register
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > how does converge report per-document extraction quality after stabilization

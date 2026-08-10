@@ -1201,6 +1201,9 @@ sub render_semantic_part {
         $raw .= $payload;
         $raw .= raw_scalar("<!-- $contract->{marker_prefix}:$id:end -->\n\n");
     }
+    # Preserve the blank separator between regions without emitting a blank
+    # line after the final region.
+    $raw =~ s/\n\n\z/\n/;
     return $raw;
 }
 
@@ -1798,6 +1801,30 @@ sub run_self_test {
             'generated/root-template.md',
             1,
         );
+        my @hygiene_errors;
+        my ($writer_contract) = read_json_object(
+            $writer_fixture,
+            'doctrine/live_document_size/active_task_evidence.json',
+            'migration writer contract',
+            131_072,
+            \@hygiene_errors,
+        );
+        die "active-task-evidence self-test 'migration writer positive' could not read its contract:\n"
+            . join("\n", @hygiene_errors) . "\n"
+            if @hygiene_errors || !defined $writer_contract;
+        for my $part (@{$writer_contract->{destinations}{parts}}) {
+            my $raw = read_regular(
+                $writer_fixture,
+                $part->{path},
+                "migration writer part '$part->{part_id}'",
+                \@hygiene_errors,
+            );
+            die "active-task-evidence self-test 'migration writer positive' could not read semantic parts:\n"
+                . join("\n", @hygiene_errors) . "\n"
+                if @hygiene_errors || !defined $raw;
+            die "active-task-evidence self-test 'migration writer positive' left a blank line at the end of '$part->{path}'\n"
+                if $raw =~ /\n\n\z/;
+        }
         my ($writer_errors, $writer_result) = validate_tree(
             $writer_fixture, 'doctrine/live_document_size/active_task_evidence.json',
         );

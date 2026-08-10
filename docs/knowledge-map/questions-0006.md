@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > what happened to the USB4 Connection Manager device_also.isf
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > what happened to the USB4 Inter-Domain channel.isf
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
@@ -295,5 +297,3 @@
   > what is the message_fields.section_header_field strategy
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > what is the model-misspelled-subject / phantom-subject defect class
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > what is the must_be_value + VALID typed convention

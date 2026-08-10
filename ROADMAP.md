@@ -254,10 +254,11 @@ Five active program groups support that north star:
   OpenCAPI timings. Current authority removes three stale interfaces / 18 phases / 19 gates and the four-port/
   one-enum target; final IntentIR retains seven actors / 21 behaviors / 75 constraints / four assumptions. Corpus
   is 48 done / eight remaining at 80 SourceIR / 20 normalized / 80 EvidenceIR / 79 downstream chains, with 59/59
-  current emitted ISFs strict-clean. The corpus task record is now at its registered byte boundary, so a bounded
-  canonical partition owned by
-  [`CORPUS-TASK-EVIDENCE-CONTAINMENT`](docs/tasks/CORPUS-TASK-EVIDENCE-CONTAINMENT.md) must land before refresh
-  #49 can be owned. Separately,
+  current emitted ISFs strict-clean. The corpus task record now has a 65-line bounded current root over seven
+  semantic parts, a 48-route index/manifest, and an exact 2,308-line source capsule. The guarded migration owned by
+  [`CORPUS-TASK-EVIDENCE-CONTAINMENT`](docs/tasks/CORPUS-TASK-EVIDENCE-CONTAINMENT.md) is lossless and below all
+  local warnings; its independent clean-clone/continuation audit must close before refresh #49 can be owned.
+  Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

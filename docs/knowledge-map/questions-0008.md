@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > where is the structural gate that drops function-word-led and verb-led actor candidates
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > where is the tiling-gated register bit recovery implemented
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
@@ -295,5 +297,3 @@
   > why do 8 generic-named enums survive .5.i (they are document-evidenced — the token IS a declared signal or a column header in that doc, e.g. CCIX 'Table of Contents' header cells keep a 'TABLE' enum; the structural gate correctly cannot drop them without a forbidden name-list — honest .5.ii member-quality residuals)
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > why do AMD DTE / NVMe command dword tables go to message fields and not registers
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > why do APB tables 0016 0017 0018 produce no signal records

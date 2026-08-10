@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > how does converge report per-document extraction quality after stabilization
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
   > how does de-fragmentation enable the recover-register-bits gate (b)
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
@@ -295,5 +297,3 @@
   > how many register bit-fields fail to lower to .isf (12,638 fields across 32 docs — the largest measurable intent-loss; DOC-INTENT-TAXONOMY.2)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > how many registers can SpecForge compose a faithful ISF reset for (1508 strictly composable corpus-wide; 1339 fit the current emit width; 446 have V>0 — the real .isf diff)
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > how many retained documents depended entirely on heuristic SemanticIR interfaces

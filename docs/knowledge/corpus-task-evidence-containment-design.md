@@ -14,6 +14,7 @@ answers:
   - "what is the current corpus refresh frontier after refresh 48"
   - "why was corpus task maximum line width corrected from 4747 to 4746"
   - "is the corpus task migration contract locked"
+  - "has the corpus task evidence migration landed"
 date: 2026-08-10
 status: current
 tags: [documentation, containment, task-tree, corpus-coverage, continuity]
@@ -52,9 +53,11 @@ the stable active root over seven semantic legacy parts and an exact source caps
 active-task checker with a separate corpus-specific contract. Future refreshes atomically update root, one active
 part, index, and manifest; legacy parts seal and the active part splits at a refresh boundary before rollover.
 
-The complete source-locked contract is `doctrine/live_document_size/corpus_task_evidence.json`. It authenticates
-boundary commit `f1b202f2`, Git blob `d7ac9aa2…`, the exact source SHA/metrics, all seven region hashes, 41
-completion-history `legacy` routes, and seven source-backed `structural` container routes. The unconditional
-live-document driver invokes it separately from the earlier active-task contract. In `source_locked`, the stable
-source stays byte-identical and the collection, archive, index, manifest, parts, and capsule must all remain absent;
-only the guarded migration leaf may create them.
+The complete contract is `doctrine/live_document_size/corpus_task_evidence.json`. It authenticates boundary
+commit `f1b202f2`, Git blob `d7ac9aa2…`, the exact source SHA/metrics, all seven region hashes, 41
+completion-history `legacy` routes, and seven source-backed `structural` container routes. The guarded transaction
+advanced it from `source_locked` to `migrated`, writing a 65-line / 2,822-byte root last, a 75-line / 4,349-byte
+index, seven parts totaling 2,357 lines / 279,157 bytes, a 488-line manifest, and an exact source capsule. All
+parts are below warning and every source region reconstructs byte-for-byte. The unconditional driver invokes this
+contract separately from the earlier active-task contract, while three dedicated live-document surfaces govern
+the corpus index, parts, and archive terminal.

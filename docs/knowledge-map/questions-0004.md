@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > how many retained documents depended entirely on heuristic SemanticIR interfaces
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > how many retained legal semantic gates were measured
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
@@ -296,5 +298,3 @@
   > must a post-build signal_constraints replace re-apply build-path invariants
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > per-wire-doc direction flip results (APB input 2->12, AXI 4->52, SWD 0->1, AHB residual)
-- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
-  > qwen2.5vl vs qwen3-vl which model

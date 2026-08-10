@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > what is the must_be_value + VALID typed convention
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > what is the next big PDF-variant digestion lever after the serial class
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
@@ -296,5 +298,3 @@
   > where is the shared section-heading container-walk that .10f and .10g both use
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > where is the spawn+poll+kill memory guard in materialize_pdf
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > where is the structural gate that drops function-word-led and verb-led actor candidates

@@ -5,105 +5,7 @@
       "mode" : "none"
    },
    "current_path" : "docs/tasks/CORPUS-COVERAGE.md",
-   "destinations" : {
-      "archive_directory" : "docs/archive/tasks/corpus-coverage",
-      "collection_directory" : "docs/tasks/corpus-coverage",
-      "index" : "docs/tasks/corpus-coverage/INDEX.md",
-      "manifest" : "docs/tasks/corpus-coverage/manifest.json",
-      "parts" : [
-         {
-            "heading" : "# CORPUS-COVERAGE — program and latest refreshes",
-            "metrics" : {
-               "bytes" : 43251,
-               "line_bytes" : 147,
-               "lines" : 476
-            },
-            "part_id" : "program-and-latest-refreshes",
-            "path" : "docs/tasks/corpus-coverage/program-and-latest-refreshes.md",
-            "sha256" : "f50c146fd072920b20a1aab7c35c048a2e4fc5ed95fb20ad26d0fa5cb3b5be70",
-            "state" : "legacy"
-         },
-         {
-            "heading" : "# CORPUS-COVERAGE — refreshes 33–40",
-            "metrics" : {
-               "bytes" : 47169,
-               "line_bytes" : 152,
-               "lines" : 492
-            },
-            "part_id" : "refreshes-33-40",
-            "path" : "docs/tasks/corpus-coverage/refreshes-33-40.md",
-            "sha256" : "13eb27118cbc17912e675d10a587cb300d757cbb998e806ab9f0465a628841cc",
-            "state" : "legacy"
-         },
-         {
-            "heading" : "# CORPUS-COVERAGE — refreshes 41–43",
-            "metrics" : {
-               "bytes" : 38610,
-               "line_bytes" : 124,
-               "lines" : 425
-            },
-            "part_id" : "refreshes-41-43",
-            "path" : "docs/tasks/corpus-coverage/refreshes-41-43.md",
-            "sha256" : "8b0100445e16a72926425ea1995dbb861ceb96b627e97921e1cb6fc7e86f6c34",
-            "state" : "legacy"
-         },
-         {
-            "heading" : "# CORPUS-COVERAGE — repair acceptance and frontier",
-            "metrics" : {
-               "bytes" : 26476,
-               "line_bytes" : 150,
-               "lines" : 295
-            },
-            "part_id" : "repair-acceptance-and-frontier",
-            "path" : "docs/tasks/corpus-coverage/repair-acceptance-and-frontier.md",
-            "sha256" : "7b4b068c03a1b8cb18f69d5f3f7d3ee88b756bdbc316a26e573848c7d3116217",
-            "state" : "legacy"
-         },
-         {
-            "heading" : "# CORPUS-COVERAGE — refresh ledger",
-            "metrics" : {
-               "bytes" : 59454,
-               "line_bytes" : 4746,
-               "lines" : 97
-            },
-            "part_id" : "refresh-ledger",
-            "path" : "docs/tasks/corpus-coverage/refresh-ledger.md",
-            "sha256" : "56efbc0f0d25d4d089f6ce4cfd7f7af65f22f2f1ef193cfcc144823439aa2956",
-            "state" : "legacy"
-         },
-         {
-            "heading" : "# CORPUS-COVERAGE — recent chronology",
-            "metrics" : {
-               "bytes" : 37987,
-               "line_bytes" : 1459,
-               "lines" : 337
-            },
-            "part_id" : "recent-chronology",
-            "path" : "docs/tasks/corpus-coverage/recent-chronology.md",
-            "sha256" : "32eb6a549d75808c79285c519678af2e3fb3ee02aaa0ad219ee85526ffd7c809",
-            "state" : "legacy"
-         },
-         {
-            "heading" : "# CORPUS-COVERAGE — legacy chronology",
-            "metrics" : {
-               "bytes" : 26210,
-               "line_bytes" : 180,
-               "lines" : 235
-            },
-            "part_id" : "legacy-chronology",
-            "path" : "docs/tasks/corpus-coverage/legacy-chronology.md",
-            "sha256" : "ee4f67c758b5d1970a710b281c0cddf03759aab2e98b5b20f88966fc241cc249",
-            "state" : "legacy"
-         }
-      ],
-      "source_capsule" : "docs/archive/tasks/corpus-coverage/source-through-2026-08-10.md"
-   },
-   "identity" : {
-      "active_status_literal" : "- Status: `active`",
-      "heading" : "# CORPUS-COVERAGE: build every ingested doc through to IntentIR/.isf + keep downstream stages non-stale",
-      "tree_id" : "CORPUS-COVERAGE"
-   },
-   "input_state" : "complete",
+   "index_path" : "docs/tasks/corpus-coverage/INDEX.md",
    "leaf_routes" : [
       {
          "leaf_id" : "CORPUS-COVERAGE",
@@ -394,105 +296,96 @@
          "source_literal" : "CORPUS-COVERAGE.3"
       }
    ],
-   "limits" : {
-      "capsule_exact" : {
-         "bytes" : 277636,
-         "line_bytes" : 4746,
-         "lines" : 2308
-      },
-      "index" : {
-         "enforcement_ceilings" : {
-            "bytes" : 24576,
-            "line_bytes" : 768,
-            "lines" : 192
-         },
-         "health_targets" : {
-            "bytes" : 16384,
-            "line_bytes" : 512,
-            "lines" : 128
-         },
-         "milestones" : {
-            "rollover_pct" : 90,
-            "warning_pct" : 80
-         }
-      },
-      "manifest" : {
-         "bytes" : 65536,
-         "line_bytes" : 1024,
-         "max_leaf_routes" : 96,
-         "max_parts" : 16,
-         "max_regions" : 32,
-         "scalar_bytes" : 1024
-      },
-      "parts" : {
-         "enforcement_ceilings" : {
-            "bytes_each" : 98304,
-            "bytes_total" : 655360,
-            "files" : 16,
-            "line_bytes_each" : 6400,
-            "lines_each" : 896,
-            "lines_total" : 6144
-         },
-         "health_targets" : {
-            "bytes_each" : 76800,
-            "bytes_total" : 524288,
-            "files" : 12,
-            "line_bytes_each" : 6144,
-            "lines_each" : 640,
-            "lines_total" : 4096
-         },
-         "milestones" : {
-            "rollover_pct" : 90,
-            "warning_pct" : 80
-         }
-      },
-      "root" : {
-         "enforcement_ceilings" : {
-            "bytes" : 36864,
-            "line_bytes" : 1024,
-            "lines" : 320
-         },
-         "health_targets" : {
-            "bytes" : 24576,
-            "line_bytes" : 512,
-            "lines" : 224
-         },
-         "milestones" : {
-            "rollover_pct" : 90,
-            "warning_pct" : 80
-         }
-      }
-   },
    "marker_prefix" : "corpus-task-source-region",
-   "migrated_requirements" : {
-      "index_required_literals" : [
-         "# CORPUS-COVERAGE task-evidence index",
-         "## Semantic parts",
-         "## Primary leaf routes",
-         "## Exact provenance",
-         "## Verification"
-      ],
-      "root_forbidden_literals" : [
-         "- Status: `done`",
-         "- Status: `pending`"
-      ],
-      "root_required_literals" : [
-         "# CORPUS-COVERAGE: build every ingested doc through to IntentIR/.isf + keep downstream stages non-stale",
-         "- Tree ID: `CORPUS-COVERAGE`",
-         "- Status: `active`",
-         "48 of 56 real chip-spec refreshes are complete.",
-         "## Current Frontier",
-         "No eligible product leaf.",
-         "## Detailed task evidence",
-         "## Verification Log",
-         "## Commit Log"
-      ]
-   },
-   "migration_metadata" : {
-      "migrated_on" : "2026-08-10",
-      "reason" : "contain oversized active corpus task without losing task evidence"
-   },
+   "migrated_on" : "2026-08-10",
    "migration_state" : "migrated",
+   "parts" : [
+      {
+         "heading" : "# CORPUS-COVERAGE — program and latest refreshes",
+         "metrics" : {
+            "bytes" : 43251,
+            "line_bytes" : 147,
+            "lines" : 476
+         },
+         "part_id" : "program-and-latest-refreshes",
+         "path" : "docs/tasks/corpus-coverage/program-and-latest-refreshes.md",
+         "sha256" : "f50c146fd072920b20a1aab7c35c048a2e4fc5ed95fb20ad26d0fa5cb3b5be70",
+         "state" : "legacy"
+      },
+      {
+         "heading" : "# CORPUS-COVERAGE — refreshes 33–40",
+         "metrics" : {
+            "bytes" : 47169,
+            "line_bytes" : 152,
+            "lines" : 492
+         },
+         "part_id" : "refreshes-33-40",
+         "path" : "docs/tasks/corpus-coverage/refreshes-33-40.md",
+         "sha256" : "13eb27118cbc17912e675d10a587cb300d757cbb998e806ab9f0465a628841cc",
+         "state" : "legacy"
+      },
+      {
+         "heading" : "# CORPUS-COVERAGE — refreshes 41–43",
+         "metrics" : {
+            "bytes" : 38610,
+            "line_bytes" : 124,
+            "lines" : 425
+         },
+         "part_id" : "refreshes-41-43",
+         "path" : "docs/tasks/corpus-coverage/refreshes-41-43.md",
+         "sha256" : "8b0100445e16a72926425ea1995dbb861ceb96b627e97921e1cb6fc7e86f6c34",
+         "state" : "legacy"
+      },
+      {
+         "heading" : "# CORPUS-COVERAGE — repair acceptance and frontier",
+         "metrics" : {
+            "bytes" : 26476,
+            "line_bytes" : 150,
+            "lines" : 295
+         },
+         "part_id" : "repair-acceptance-and-frontier",
+         "path" : "docs/tasks/corpus-coverage/repair-acceptance-and-frontier.md",
+         "sha256" : "7b4b068c03a1b8cb18f69d5f3f7d3ee88b756bdbc316a26e573848c7d3116217",
+         "state" : "legacy"
+      },
+      {
+         "heading" : "# CORPUS-COVERAGE — refresh ledger",
+         "metrics" : {
+            "bytes" : 59454,
+            "line_bytes" : 4746,
+            "lines" : 97
+         },
+         "part_id" : "refresh-ledger",
+         "path" : "docs/tasks/corpus-coverage/refresh-ledger.md",
+         "sha256" : "56efbc0f0d25d4d089f6ce4cfd7f7af65f22f2f1ef193cfcc144823439aa2956",
+         "state" : "legacy"
+      },
+      {
+         "heading" : "# CORPUS-COVERAGE — recent chronology",
+         "metrics" : {
+            "bytes" : 37987,
+            "line_bytes" : 1459,
+            "lines" : 337
+         },
+         "part_id" : "recent-chronology",
+         "path" : "docs/tasks/corpus-coverage/recent-chronology.md",
+         "sha256" : "32eb6a549d75808c79285c519678af2e3fb3ee02aaa0ad219ee85526ffd7c809",
+         "state" : "legacy"
+      },
+      {
+         "heading" : "# CORPUS-COVERAGE — legacy chronology",
+         "metrics" : {
+            "bytes" : 26210,
+            "line_bytes" : 180,
+            "lines" : 235
+         },
+         "part_id" : "legacy-chronology",
+         "path" : "docs/tasks/corpus-coverage/legacy-chronology.md",
+         "sha256" : "ee4f67c758b5d1970a710b281c0cddf03759aab2e98b5b20f88966fc241cc249",
+         "state" : "legacy"
+      }
+   ],
+   "reason" : "contain oversized active corpus task without losing task evidence",
    "regions" : [
       {
          "end_line" : 469,
@@ -579,7 +472,6 @@
          "start_line" : 2081
       }
    ],
-   "route_basis" : "boundary_path_commit_subject_ids",
    "schema_version" : 1,
    "source" : {
       "boundary_commit" : "f1b202f21f2aaed2cd99ca2839374b5ceeb2be62",
@@ -591,16 +483,6 @@
       },
       "sha256" : "5d7acb0c973a75d821c9d5a963aac5c3899da19261dcf6427274cb123804123f"
    },
-   "source_requirements" : [
-      "# CORPUS-COVERAGE: build every ingested doc through to IntentIR/.isf + keep downstream stages non-stale",
-      "- Tree ID: `CORPUS-COVERAGE`",
-      "- Status: `active`",
-      "- ID: `CORPUS-COVERAGE.2.48`",
-      "- ID: `CORPUS-COVERAGE.2.33d.iv.c`",
-      "- ID: `CORPUS-COVERAGE.3`",
-      "## `.2` re-ingest log (per doc — current-binary refresh; generated/ is git-ignored, so this table is the durable trace)",
-      "## Changelog",
-      "Corpus → 48 done / eight remaining /"
-   ],
+   "source_capsule" : "docs/archive/tasks/corpus-coverage/source-through-2026-08-10.md",
    "verifier" : "perl scripts/check_active_task_evidence.pl --check"
 }

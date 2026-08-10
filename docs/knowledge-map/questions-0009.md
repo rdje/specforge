@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > why do APB tables 0016 0017 0018 produce no signal records
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > why do CCIX-class docs extract hundreds of register fields now
 - [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
@@ -296,5 +298,3 @@
   > why is category 3 (platform/system-IP) topology not lowered to .isf (ISF has no static-topology construct + the emit is single-initiator-actor; cross-component topology is structurally absent from the emit by design — KG-ISF-COMPLETENESS.2a.ii)
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
   > why is category 4 (CPU ISA) ISF-thin (the only lowerable cat-4 intent is CSRs, which are registers; their bit-fields are UNLOCATED so they don't reach .isf — an extraction-recall gap, not a missing ISF construct)
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > why is channel membership metadata-only and not lowered to .isf
