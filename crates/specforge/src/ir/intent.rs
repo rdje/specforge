@@ -204,8 +204,7 @@ impl IntentIr {
         let interfaces = semantic_ir.interfaces.clone();
         let system_contract = semantic_ir.system_contract.clone();
         let actors = build_intent_actors(&context);
-        let actor_ids = actors.iter().map(|actor| actor.actor_id.clone()).collect();
-        let behaviors = build_behaviors(&context, actor_ids);
+        let behaviors = build_behaviors(&context);
         let constraints = build_constraints(&context);
         let assumptions = build_assumptions(&context, &actors);
         let regular_states = semantic_ir.regular_states.clone();
@@ -423,7 +422,6 @@ struct IntentContext {
     invariants: Vec<ConstraintSourceContext>,
     assertions: Vec<ConstraintSourceContext>,
     contracts: Vec<ContractContext>,
-    gates: Vec<GateContext>,
     abstractions: Vec<AbstractionContext>,
     residual_decisions: Vec<ResidualDecisionPacket>,
 }
@@ -466,15 +464,6 @@ impl IntentContext {
                 actor_ids: contract.actor_ids.clone(),
             })
             .collect();
-        let gates = semantic_ir
-            .gates
-            .iter()
-            .map(|gate| GateContext {
-                gate_id: gate.gate_id.clone(),
-                condition: gate.condition.clone(),
-                related_interface_ids: gate.related_interface_ids.clone(),
-            })
-            .collect();
         let abstractions = semantic_ir
             .abstractions
             .iter()
@@ -489,7 +478,6 @@ impl IntentContext {
             invariants,
             assertions,
             contracts,
-            gates,
             abstractions,
             residual_decisions: semantic_ir.residual_decisions.clone(),
         }
@@ -515,13 +503,6 @@ struct ContractContext {
     contract_id: String,
     statement: String,
     actor_ids: Vec<String>,
-}
-
-#[derive(Debug, Clone)]
-struct GateContext {
-    gate_id: String,
-    condition: String,
-    related_interface_ids: Vec<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -639,7 +620,7 @@ fn is_pure_inferred_phantom_role(role: &str) -> bool {
     role.starts_with("semantic role inferred around `") && role.ends_with("` evidence")
 }
 
-fn build_behaviors(context: &IntentContext, actor_ids: BTreeSet<String>) -> Vec<BehaviorIntent> {
+fn build_behaviors(context: &IntentContext) -> Vec<BehaviorIntent> {
     let mut behaviors = Vec::new();
     let mut seen = BTreeSet::new();
 
@@ -655,21 +636,6 @@ fn build_behaviors(context: &IntentContext, actor_ids: BTreeSet<String>) -> Vec<
             statement,
             actor_ids: contract.actor_ids.clone(),
             supporting_semantic_ids: vec![contract.contract_id.clone()],
-        });
-    }
-
-    for gate in &context.gates {
-        let statement = normalize_sentence(&gate.condition);
-        let dedupe_key = normalize_text_key(&statement);
-        if !seen.insert(dedupe_key.clone()) {
-            continue;
-        }
-
-        behaviors.push(BehaviorIntent {
-            behavior_id: format!("behavior_{}", document_key(&gate.gate_id)),
-            statement,
-            actor_ids: actor_ids.iter().cloned().collect(),
-            supporting_semantic_ids: vec![gate.gate_id.clone()],
         });
     }
 
@@ -707,28 +673,6 @@ fn build_constraints(context: &IntentContext) -> Vec<IntentConstraint> {
             statement,
             related_interface_ids: assertion.related_interface_ids.clone(),
             supporting_semantic_ids: vec![assertion.source_id.clone()],
-        });
-    }
-
-    for gate in &context.gates {
-        if gate.related_interface_ids.is_empty() {
-            continue;
-        }
-
-        let statement = format!(
-            "{} [interface-coupled rule]",
-            normalize_sentence(&gate.condition)
-        );
-        let dedupe_key = normalize_text_key(&statement);
-        if !seen.insert(dedupe_key.clone()) {
-            continue;
-        }
-
-        constraints.push(IntentConstraint {
-            constraint_id: format!("constraint_{}_gate", document_key(&gate.gate_id)),
-            statement,
-            related_interface_ids: gate.related_interface_ids.clone(),
-            supporting_semantic_ids: vec![gate.gate_id.clone()],
         });
     }
 
@@ -2336,8 +2280,8 @@ mod tests {
         SerialFrameField, SerialFramePhase, SwdOperation, SwdioDirection,
     };
     use crate::ir::semantic::{
-        ControlBlockRole, PhaseRecord, SemanticIr, SymbolDefinitionKind, SystemResetKind,
-        SystemResetPolarity, SystemResetTargetKind, SystemResetTimingRelation,
+        ControlBlockRole, GateRecord, PhaseRecord, SemanticIr, SymbolDefinitionKind,
+        SystemResetKind, SystemResetPolarity, SystemResetTargetKind, SystemResetTimingRelation,
     };
     use crate::ir::source::{
         AutomationConfidence, CandidateInterpretation, ResidualDecisionPacket, SourceIr,
@@ -2654,6 +2598,69 @@ mod tests {
     }
 
     #[test]
+    fn legacy_generic_gates_load_but_do_not_authorize_intent() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("legacy-generic-gate.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+        let intent_artifact_base = tempdir.path().join("generated").join("intent_ir");
+
+        fs::write(
+            &source,
+            "# Protocol\nSignal READY is input width 1.\nSignal VALID is output width 1.\n",
+        )?;
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let mut semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        assert!(semantic_ir.gates.is_empty());
+        semantic_ir.gates.push(GateRecord {
+            gate_id: "gate_legacy_whole_sentence".to_string(),
+            condition: "legacy whole-sentence gate marker".to_string(),
+            supporting_statement_ids: vec!["statement_legacy".to_string()],
+            related_interface_ids: semantic_ir
+                .interfaces
+                .first()
+                .map(|interface| vec![interface.interface_id.clone()])
+                .unwrap_or_default(),
+        });
+        semantic_ir.write_to_disk()?;
+
+        let reloaded = SemanticIr::load_from_path(&semantic_ir.artifact_layout.semantic_ir_path)?;
+        assert_eq!(
+            reloaded.gates.len(),
+            1,
+            "legacy artifacts must retain auditable GateRecord provenance"
+        );
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        assert!(intent_ir.behaviors.iter().all(|behavior| {
+            !behavior
+                .supporting_semantic_ids
+                .contains(&"gate_legacy_whole_sentence".to_string())
+                && !behavior.statement.contains("whole-sentence gate marker")
+        }));
+        assert!(intent_ir.constraints.iter().all(|constraint| {
+            !constraint
+                .supporting_semantic_ids
+                .contains(&"gate_legacy_whole_sentence".to_string())
+                && !constraint.statement.contains("whole-sentence gate marker")
+        }));
+
+        Ok(())
+    }
+
+    #[test]
     fn projects_protocol_surfaces_exactly_across_all_three_stages() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("intent_protocol_projection.md");
@@ -2795,7 +2802,6 @@ mod tests {
             invariants: Vec::new(),
             assertions: Vec::new(),
             contracts: Vec::new(),
-            gates: Vec::new(),
             abstractions: Vec::new(),
             residual_decisions: vec![ResidualDecisionPacket {
                 packet_id: "semantic_ambiguous_visual_grounding".to_string(),
@@ -4885,7 +4891,6 @@ mod tests {
             ],
             assertions: Vec::new(),
             contracts: Vec::new(),
-            gates: Vec::new(),
             abstractions: Vec::new(),
             residual_decisions: Vec::new(),
         };
@@ -4907,7 +4912,6 @@ mod tests {
             invariants: Vec::new(),
             assertions: Vec::new(),
             contracts: Vec::new(),
-            gates: Vec::new(),
             abstractions: Vec::new(),
             residual_decisions: vec![ResidualDecisionPacket {
                 packet_id: "semantic_resolved_role_without_consensus".to_string(),
@@ -4932,7 +4936,6 @@ mod tests {
             invariants: Vec::new(),
             assertions: Vec::new(),
             contracts: Vec::new(),
-            gates: Vec::new(),
             abstractions: Vec::new(),
             residual_decisions: vec![ResidualDecisionPacket {
                 packet_id: "semantic_alias_dependent_handshake_completion".to_string(),
@@ -4948,35 +4951,6 @@ mod tests {
                 .iter()
                 .any(|a| { a.assumption_id == "assumption_alias_dependent_handshake_completion" })
         );
-    }
-
-    #[test]
-    fn build_behaviors_deduplicates_gates() {
-        use std::collections::BTreeSet;
-        let context = super::IntentContext {
-            semantic_actors: Vec::new(),
-            invariants: Vec::new(),
-            assertions: Vec::new(),
-            contracts: Vec::new(),
-            gates: vec![
-                super::GateContext {
-                    gate_id: "gate_1".to_string(),
-                    condition: "HREADY is HIGH".to_string(),
-                    related_interface_ids: vec![],
-                },
-                super::GateContext {
-                    gate_id: "gate_2".to_string(),
-                    condition: "HREADY is HIGH".to_string(), // duplicate
-                    related_interface_ids: vec![],
-                },
-            ],
-            abstractions: Vec::new(),
-            residual_decisions: Vec::new(),
-        };
-        let actor_ids = BTreeSet::new();
-        let behaviors = super::build_behaviors(&context, actor_ids);
-        assert_eq!(behaviors.len(), 1, "duplicate gates must be deduped");
-        assert_eq!(behaviors[0].behavior_id, "behavior_gate_1");
     }
 
     #[test]
@@ -4997,40 +4971,12 @@ mod tests {
                 },
             ],
             contracts: Vec::new(),
-            gates: Vec::new(),
             abstractions: Vec::new(),
             residual_decisions: Vec::new(),
         };
         let constraints = super::build_constraints(&context);
         assert_eq!(constraints.len(), 1, "duplicate assertions must be deduped");
         assert_eq!(constraints[0].constraint_id, "constraint_asrt_1");
-    }
-
-    #[test]
-    fn build_constraints_deduplicates_gates() {
-        let context = super::IntentContext {
-            semantic_actors: Vec::new(),
-            invariants: Vec::new(),
-            assertions: Vec::new(),
-            contracts: Vec::new(),
-            gates: vec![
-                super::GateContext {
-                    gate_id: "gate_3".to_string(),
-                    condition: "HREADY is HIGH".to_string(),
-                    related_interface_ids: vec!["if_1".to_string()],
-                },
-                super::GateContext {
-                    gate_id: "gate_4".to_string(),
-                    condition: "HREADY is HIGH".to_string(), // duplicate
-                    related_interface_ids: vec!["if_2".to_string()],
-                },
-            ],
-            abstractions: Vec::new(),
-            residual_decisions: Vec::new(),
-        };
-        let constraints = super::build_constraints(&context);
-        assert_eq!(constraints.len(), 1, "duplicate gates must be deduped");
-        assert_eq!(constraints[0].constraint_id, "constraint_gate_3_gate");
     }
 
     // KG-ISF-COMPLETENESS.1b.iv — drift guard: the pure-inferred phantom detector must match
@@ -5097,7 +5043,6 @@ mod tests {
                 statement: "The arbiter grants access to one Manager at a time.".to_string(),
                 actor_ids: vec!["actor_arbiter".to_string()],
             }],
-            gates: Vec::new(),
             abstractions: Vec::new(),
             residual_decisions: Vec::new(),
         };

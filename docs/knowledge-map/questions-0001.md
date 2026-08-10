@@ -152,6 +152,8 @@
   > do field constraints pass the same grounding gates as signal constraints
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
   > do host-local source libraries define tracked corpus membership
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > do old SemanticIR gates create IntentIR behaviors or constraints
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
   > do old SemanticIR phases create IntentIR behaviors
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
@@ -196,6 +198,8 @@
   > does FSMGen support a register reset value in storage (yes — (storage (var NAME (width N) [(reset V)])) is shipped per 13k:42 + 13m:48-68; optional, in-width non-negative int, omission = all-0s byte-identical, over-width/non-integer fails closed)
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
   > does FSMGen's multi-actor ATL frontier provide a home for a connectivity netlist (NO — the ATL backlog wires children GENERATED from transaction composition spawn/do; it is behavioral orchestration, not a declarative static IP-interconnect netlist; verified 14-feature-backlog.md)
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > does GateRecord remain schema compatible
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > does IntentIR preserve SWD protocol provenance and order
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
@@ -292,9 +296,5 @@
   > does relation-derived direction synthesis independently invent signal names
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > does removing sentence fallback remove address phase recognition
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > does sanitizing the module name break initiator port matching (no — from_intent_ir re-derives the initiator raw; actor_name is only the label)
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > does select_initiator_actor choose the first or last equal maximum
-- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
-  > does specforge adapt remove an old actor isf when actor selection changes
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > does retiring gates remove conditional rules or temporal rules

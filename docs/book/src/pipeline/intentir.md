@@ -24,8 +24,17 @@ Legacy section-derived `SemanticIR.phases` do not become IntentIR behavior or ac
 projection turned each synthetic section summary into a behavior assigned to every retained actor and used phase
 overlap to preserve pure-inferred actors. Corpus measurement found 2,238 such behaviors and 48 such actors with
 no executable adapter value. Populated old artifacts remain loadable, but current IntentIR treats the collection
-as audit-only compatibility data. Typed `SemanticIR.transaction_phases`, named transactions, contracts, gates,
-and constraints remain independent.
+as audit-only compatibility data. Typed `SemanticIR.transaction_phases`, named transactions, contracts, and
+constraints remain independent.
+
+Legacy generic `SemanticIR.gates` receive the same compatibility treatment. Their historical producer copied a
+whole cue-bearing sentence without parsed condition, effect, actor role, or action; IntentIR then assigned each
+sentence to every retained actor and made an interface-coupled constraint when a related interface happened to
+be mentioned. Across the retained corpus that projection created 21,206 deduplicated behaviors / 642,401 actor
+assignments and 5,974 constraints / 366,087 interface assignments, with zero rendered-ISF, renderability,
+lowering-status, or executable-count value. Populated old gate records still load and round-trip, but current
+IntentIR ignores them. Source evidence, technical invariant/constraint projection, and independently typed
+`conditional_rules` / `temporal_rules` remain active; no real conditional meaning depends on the legacy copy.
 
 ## How protocol observations cross the product boundary
 

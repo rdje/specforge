@@ -759,7 +759,8 @@ today's ephemeral normalized-directory count.
 
 - ID: `CORPUS-COVERAGE.2.43` · Status: `in_progress` (`2026-08-10`, DATA/CODE/DOC) · Children: `.2.43a`
   semantic-phase authority repair (done), `.2.43a.i` legacy generic-phase retirement (done), and `.2.43a.ii`
-  typed transaction-phase precision follow-up (pending). Goal: run a guarded
+  typed transaction-phase precision follow-up (pending), plus `.2.43b` generic gate-authority audit (done).
+  Goal: run a guarded
   current-binary refresh of `opencapi_3_0_ready_definition_v1_1` from the caller-authorized same-SSD source and
   complete the deterministic SourceIR→EvidenceIR→SemanticIR→IntentIR→adapter cascade. The 15-page OpenCAPI 3.0
   Ready Definition is the smallest of the 14 remaining real chip-spec candidates: 171 retained elements and
@@ -912,6 +913,58 @@ and its one-section→one-tautological-behavior→all-actors projection has no d
   mdBook, doctrine, path, and locality gates.
 - **PENDING — GENERICITY** — all decisions derive from English phrase structure and typed evidence only.
 - **PENDING — LOCKSTEP** — measurement, task, code analysis, mdBook, durable fact, and resume pointer agree.
+
+- ID: `CORPUS-COVERAGE.2.43b` · Status: `done` (`2026-08-10`, PROBE/CODE/DOC) · Goal: audit the generic
+  `SemanticIR.gates[]` authority path exposed during parent #43 final classification. The repaired Ready
+  Definition retains one gate whose entire condition is a product-compliance paragraph: a manufacturer shall
+  assert when host requirements have been met. It has no related interface, parsed antecedent, consequent, or
+  effect and adds no unique Intent behavior because the same statement is already a contract/invariant/assertion.
+  `build_gates` currently admits any retained statement containing `if`, `when`, `unless`, `while`, `after`,
+  `before`, or `until`. Determine whether this provenance-only whole-statement surface has defensible semantic
+  or downstream value; repair only through universal typed/structural authority with genuine protocol controls.
+  Keep the separately known over-produced `conditional_rules[]` residual outside this leaf.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.43b`
+
+- [x] **REPRODUCE / MEASURE** — exact 79-document census classifies all 27,168 gates by cue, interface support,
+  stronger-surface/typed-rule overlap, section context, and unique Intent/adapter contribution; #43 and genuine
+  technical-condition controls are pinned.
+- [x] **ROOT CAUSE (WHY + WHERE)** — initial commits `f8e42eaa9` / `b128fd58` added an unchanged whole-sentence
+  producer plus all-actor consumers even though `GateRecord` has no antecedent, consequent, effect, actor role,
+  signal/value operands, or executable action.
+- [x] **ADDRESSED (verified)** — new SemanticIR emits `gates: []`; old populated records load and round-trip but
+  current IntentIR ignores them. Repaired release `5a43f1b5…11f` makes all 79 populated/empty variants
+  byte-identical at IntentIR and identical at the adapter.
+- [x] **NO REGRESSION** — source evidence and typed conditions remain; focused controls, 407 SemanticIR tests, 49
+  IntentIR tests, warning-deny Clippy, nine WIRE/I2C/SWD datasets, KG 156/156, full CI 1,788/five ignored, 66/66
+  FSMGen strict, mdBook, six doctrines, persisted paths, and project-data locality pass.
+- [x] **GENERICITY** — no OpenCAPI/vendor/document/section/sentence/signal/cue allowlist or denylist, generated-
+  artifact edit, adapter-side suppression, or typed-rule policy enters the repair.
+- [x] **LOCKSTEP** — measurement, parent/child state, code analysis, mdBook, durable fact, live docs, Knowledge
+  Map, book aggregate authority, lossless engineering-note rollover, and `MEMORY.md` agree; parent #43 resumes.
+
+Live investigation (`2026-08-10`): exact current-artifact classification finds 27,168 generic gates across 77
+documents. Only 5,974 have any related interface, 2,676 overlap a typed conditional/temporal rule, and 24,492
+have no typed-rule overlap. The legacy Intent projection creates 21,206 unique whole-sentence behaviors with
+642,401 all-actor assignments and 5,974 suffixed constraints with 366,087 interface assignments. Removing only
+`gates[]` changes 76 Intent artifacts but zero adapter source hashes, renderability decisions, lowering statuses,
+or executable counts. Two adapter manifests change only because their entirely gate-fabricated behavior inventory
+becomes an honest no-explicit-behavior residual. Initial SemanticIR commit `f8e42eaa9` and IntentIR commit
+`b128fd58` introduced the unchanged producer/consumers as first-pass scaffolding. The record carries one whole
+source sentence plus provenance/interface co-mentions, not a parsed antecedent, consequent, effect, actor role,
+or executable action; typed `conditional_rules[]`, `temporal_rules[]`, and source evidence are independent.
+
+Decision (`2026-08-10`): no narrower cue list can supply the missing gate structure or justify an all-actor
+assignment. New SemanticIR builds therefore serialize `gates: []`; the schema and `GateRecord` remain loadable
+and round-trippable, while current IntentIR ignores populated legacy records. Evidence, technical
+invariants/contracts/constraints, and typed conditional/temporal collections remain independent. Repaired release
+`5a43f1b5…11f` makes the same 79 populated/empty variants byte-identical at IntentIR and identical at the adapter.
+Focused compatibility/protocol controls, all 407 SemanticIR tests, all 49 IntentIR tests, warning-deny Clippy,
+and release compilation pass. Nine WIRE/I2C/SWD datasets, KG 156/156, full CI at 1,788 pass/five ignored, all 66
+emitted ISFs through FSMGen strict with zero diagnostics, mdBook, six doctrines, 2,008-artifact persisted-path
+census, and project-data locality also pass. The required engineering-note entry crossed its 90% line rollover;
+the authenticated root-last plan sealed 24 exact oldest records into `segment-0003-2026-08-10.md`, restoring the
+live ledger to 61 records / 1,303 lines without loss.
 
 ### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.34b.ii.a`
 
@@ -1171,8 +1224,8 @@ and its one-section→one-tautological-behavior→all-actors projection has no d
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: `CORPUS-COVERAGE.2.43` — rebuild the Ready Definition downstream cascade with the final repaired
-  release, prove deterministic hashes/counts and honest non-renderability, then close the parent refresh.
+- Frontier: `CORPUS-COVERAGE.2.43` — rebuild the Ready Definition downstream chain with empty generic gates,
+  reproduce final hashes, validate the honestly blocked adapter, and complete authenticated cleanup/signoff.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**39 refreshes done after #39;
   17 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#39: #29/#31 CHI-C2C marquee message-field refreshes,
@@ -1279,6 +1332,16 @@ strict syntax is not a semantic-fidelity oracle. **Levers A, B, C, F + the rule-
 
 ## Changelog
 
+- `2026-08-10`: `.2.43b` PROBE/CODE/DOC DONE. The 27,168-record census proves the legacy projection creates
+  21,206 behaviors / 642,401 actor assignments and 5,974 constraints / 366,087 interface assignments with zero
+  rendered-ISF or executable value. New SemanticIR emits `gates: []`; old records round-trip but Intent ignores
+  them; all 79 populated/empty variants converge under release `5a43f1b5…11f`. Focused/module/WIRE/KG/full-CI/
+  66-FSMGen/book/doctrine/path/locality gates pass. The root-last ledger transaction losslessly seals 24 old
+  engineering-note records after the required entry reaches rollover. Recording commit subject:
+  `CORPUS-COVERAGE.2.43b — retire generic whole-statement gate authority`. Frontier → parent `.2.43` final replay.
+- `2026-08-10`: `.2.43b` PROBE/CODE/DOC OWNED from clean commit `2a6355b3`. Parent final classification found one
+  remaining provenance-only whole-paragraph gate with no interface, parsed condition/effect, or unique behavior.
+  Frontier → exact retained-corpus gate/consumer census before any producer change.
 - `2026-08-10`: `.2.43a.i` PROBE/CODE/DATA/DOC DONE. Exact classification and two-variant replay prove the
   3,180-record legacy section-phase surface has no defensible typed authority or executable value. New SemanticIR
   emits the compatibility field empty; current IntentIR ignores populated old records; 79/79 variants converge.

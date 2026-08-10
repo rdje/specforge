@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > which task tree crossed its live-document byte warning
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > which validate metrics/finding surface channel membership
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > who reads or writes the active PDF task tree
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > why a parallel field-constraint surface instead of a subject-kind discriminator
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > why an allowlist instead of a denylist for .isf identifier sanitization (a denylist can't enumerate every bad char — it missed the arrow →)
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > why are 169 composable registers not yet emittable (their composed reset needs more bits than the current storage-var width which is max-field-extent not register width — e.g. CoreSight DPIDR V=0x1c013477 at width 11 over-width; var-width reconciliation spun to ISF-REGISTER-RESET-EMIT.3)
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > why are GIC/SMMU/CoreSight section-heading fields NOT message fields
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -245,6 +257,8 @@
   > why does USB 3.2 still emit hundreds of low confidence ISF outputs after the four false signals are removed
 - [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
   > why does a PDF-VARIANT-DIGESTION commit subject id not appear fully qualified in the task source
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > why does a new SemanticIR have an empty gates array
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
   > why does a new SemanticIR have an empty phases array
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
@@ -283,17 +297,3 @@
   > why does condition_text matter for the NLI claim
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > why does constraint promotion run outside the convergence loop
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > why does decoder go from 0/0 to connected (decoder also consolidated)
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > why does dropping phantom actors leave the .isf and WIRE-BASED-100 unchanged
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > why does ingest still generate page images if it does not save them
-- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
-  > why does inspect_docling_runtime PATH probe select RepoLocalVenv in tests
-- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
-  > why does mdbook test interpret ISF and console examples as Rust
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > why does one register appear as several RegisterRecords / how are split register-field tables merged
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > why does rebuilding the same SourceIR give a different evidence_ir.json (non-determinism)

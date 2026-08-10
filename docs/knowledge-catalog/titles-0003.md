@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md) | 2026-06-05 | `current` | NLI gate validated on the real AMBA APB spec — it works, and it exposes constraint over-generation |
 | [nli-intent-gate](../knowledge/nli-intent-gate.md) | 2026-06-05 | `current` | NLI intent gate — active demote-to-residual of un-entailed contracts (intent --nli-verify) |
 | [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md) | 2026-06-15 | `current` | Coordinated drive/read objects + relative-clause distribution are already implemented in the production hand… |
 | [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md) | 2026-06-11 | `current` | Offset-suffixed bit cells (31:28 +04) are dword-relative — capture the literal bit_range + byte_offset, nev… |
@@ -60,4 +61,3 @@
 | [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md) | 2026-06-09 | `current` | Timing-table data rows trapped in header_rows (row-label cell is_header=true) are recovered structurally, not… |
 | [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md) | 2026-06-17 | `current` | The transaction ISF BODY is faithfully complete — a value-free `(sample S)` membership body is FSMGen-ACCEP… |
 | [transaction-capture-census](../knowledge/transaction-capture-census.md) | 2026-06-16 | `current` | SpecForge's IntentIR transactions[] surface is THIN and MIS-LEVELLED — 63 entries/16 of 36 docs are per-cha… |
-| [transaction-channel-membership](../knowledge/transaction-channel-membership.md) | 2026-06-17 | `current` | KG-ISF-TRANSACTIONS.2m — a transaction's signal-set membership is grouped by the document-declared CHANNEL,… |

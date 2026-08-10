@@ -61,6 +61,13 @@ pub struct SemanticIr {
     pub phases: Vec<PhaseRecord>,
     pub invariants: Vec<InvariantRecord>,
     pub contracts: Vec<ContractRecord>,
+    /// Legacy cue-matched whole-statement gates retained for schema compatibility.
+    ///
+    /// The original producer copied any statement containing a broad conditional or
+    /// sequencing word, without parsing an antecedent, consequent, effect, or actor
+    /// role. Current producers leave this collection empty. Structured conditions
+    /// remain available through `conditional_rules` and `temporal_rules`.
+    #[serde(default)]
     pub gates: Vec<GateRecord>,
     pub assertions: Vec<AssertionRecord>,
     pub abstractions: Vec<AbstractionRecord>,
@@ -236,7 +243,10 @@ impl SemanticIr {
         let interface_ids_by_signal = interface_ids_by_signal(&interfaces);
         let invariants = build_invariants(&context, &interface_ids_by_signal);
         let contracts = build_contracts(&context, &actor_build.actor_id_by_term);
-        let gates = build_gates(&context, &interface_ids_by_signal);
+        // CORPUS-COVERAGE.2.43b: retain the schema field but retire the legacy
+        // cue-matched whole-statement producer. Typed conditional and temporal
+        // records carry structured condition authority independently.
+        let gates = Vec::new();
         let assertions = build_assertions(&context);
         let abstractions = build_abstractions(&context);
         let decomposition_candidates = build_decomposition_candidates(&context);
@@ -4650,50 +4660,6 @@ fn build_contracts(
     }
 
     contracts
-}
-
-fn build_gates(
-    context: &SemanticContext,
-    interface_ids_by_signal: &HashMap<String, BTreeSet<String>>,
-) -> Vec<GateRecord> {
-    let mut gates = Vec::new();
-    let mut seen = BTreeSet::new();
-
-    for statement in &context.statements {
-        let lowered_text = statement.text.to_ascii_lowercase();
-        if !contains_any_phrase(
-            &lowered_text,
-            &[
-                "if",
-                "when",
-                "unless",
-                "only when",
-                "while",
-                "after",
-                "before",
-                "until",
-            ],
-        ) {
-            continue;
-        }
-
-        let dedupe_key = normalize_text_key(&statement.text);
-        if !seen.insert(dedupe_key.clone()) {
-            continue;
-        }
-
-        gates.push(GateRecord {
-            gate_id: format!("gate_{}", document_key(&dedupe_key)),
-            condition: statement.text.clone(),
-            supporting_statement_ids: vec![statement.statement_id.clone()],
-            related_interface_ids: related_interface_ids(
-                statement.signals.as_slice(),
-                interface_ids_by_signal,
-            ),
-        });
-    }
-
-    gates
 }
 
 fn build_assertions(context: &SemanticContext) -> Vec<AssertionRecord> {
@@ -11513,12 +11479,9 @@ mod tests {
                 .contains("VALID must remain asserted until READY is observed.")
                 && !invariant.supporting_statement_ids.is_empty()
         }));
-        assert!(!semantic_ir.gates.is_empty());
         assert!(
-            semantic_ir
-                .gates
-                .iter()
-                .all(|gate| !gate.supporting_statement_ids.is_empty())
+            semantic_ir.gates.is_empty(),
+            "cue-matched whole-statement gates are compatibility data only"
         );
         assert!(semantic_ir.residual_decisions.is_empty());
 
@@ -19996,17 +19959,7 @@ mod tests {
             &evidence_ir.artifact_layout.evidence_ir_path,
             &semantic_artifact_base,
         )?;
-        assert!(semantic_ir.gates.iter().any(|gate| {
-            gate.condition
-                .contains("While READY is low, VALID must remain asserted.")
-        }));
-        assert!(
-            semantic_ir
-                .gates
-                .iter()
-                .all(|gate| !gate.condition.contains("permissions granted")
-                    && !gate.condition.contains("derivative works"))
-        );
+        assert!(semantic_ir.gates.is_empty());
         assert!(semantic_ir.invariants.iter().all(|invariant| {
             !invariant.statement.contains("permissions granted")
                 && !invariant.statement.contains("derivative works")
@@ -20023,8 +19976,8 @@ mod tests {
             &semantic_ir.artifact_layout.semantic_ir_path,
             &intent_artifact_base,
         )?;
-        assert!(intent_ir.behaviors.iter().any(|behavior| {
-            behavior
+        assert!(intent_ir.constraints.iter().any(|constraint| {
+            constraint
                 .statement
                 .contains("While READY is low, VALID must remain asserted.")
         }));
@@ -20100,12 +20053,6 @@ mod tests {
         ] {
             assert!(
                 semantic_ir
-                    .gates
-                    .iter()
-                    .all(|gate| !gate.condition.contains(excluded))
-            );
-            assert!(
-                semantic_ir
                     .invariants
                     .iter()
                     .all(|invariant| !invariant.statement.contains(excluded))
@@ -20120,10 +20067,7 @@ mod tests {
                 .statement
                 .contains("certified device shall meet all electrical requirements")
         }));
-        assert!(semantic_ir.gates.iter().any(|gate| {
-            gate.condition
-                .contains("While READY is low, VALID must remain asserted.")
-        }));
+        assert!(semantic_ir.gates.is_empty());
 
         semantic_ir.write_to_disk()?;
         let intent_ir = IntentIr::build(
@@ -20138,8 +20082,8 @@ mod tests {
                     .statement
                     .contains("submitting a product for approval")
         }));
-        assert!(intent_ir.behaviors.iter().any(|behavior| {
-            behavior
+        assert!(intent_ir.constraints.iter().any(|constraint| {
+            constraint
                 .statement
                 .contains("While READY is low, VALID must remain asserted.")
         }));

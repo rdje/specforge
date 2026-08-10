@@ -29,9 +29,11 @@ patent/IP, revocable-permission, commercial-term, and IPR concepts require conte
 as permission, rights, version, reliability, license, or `Copyright` do not trigger the boundary. The production
 rule contains no vendor, organization, document key, exact source sentence, or section index.
 
-The retained-corpus before projection found 32 legal/administrative gates across 21 documents among 27,180
-total gates; 26 lacked a related interface. The real #41 rebuild preserves all 106 EvidenceIR statements while
-removing its false phase/gate and both legal Intent behaviors. A legitimate `While READY is low, VALID must remain
-asserted` condition survives in the regression. See the [SemanticIR chapter](../book/src/pipeline/semanticir.md)
-and the [measurement](../research/legal-administrative-semantic-authority-measurement.md) for the public contract
-and exact evidence.
+The retained-corpus before projection found 32 legal/administrative generic gates across 21 documents among
+27,180 total gates; 26 lacked a related interface. The real #41 rebuild preserves all 106 EvidenceIR statements
+while removing its false phase/gate and both legal Intent behaviors. A legitimate `While READY is low, VALID
+must remain asserted` condition survives as a technical invariant and downstream constraint. Generic gate
+production was subsequently retired corpus-wide without changing typed conditional/temporal surfaces; see
+[[legacy-generic-gates-are-audit-only]]. The [SemanticIR chapter](../book/src/pipeline/semanticir.md) and
+[measurement](../research/legal-administrative-semantic-authority-measurement.md) contain the public authority
+contract and exact historical evidence.

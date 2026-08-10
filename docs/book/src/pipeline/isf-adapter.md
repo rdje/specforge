@@ -220,6 +220,14 @@ pub(crate) struct IsfIr {
 
 ### Construction: `IsfIr::from_intent_ir(intent_ir, actor_name) -> IsfIr`
 
+Legacy generic `SemanticIR.gates` are not an ISF input. Their former IntentIR projection produced free-text
+behaviors assigned to every actor and generic `[interface-coupled rule]` constraints, while the typed adapter
+reads neither surface. A 79-document paired replay removed 21,206 such behaviors and 5,974 such constraints with
+zero rendered source, renderability, lowering-status, or executable-count changes. Two adapter manifests changed
+only to report the honest absence of explicit behavior; their source remained byte-identical. Executable rules
+come from the typed sources listed below—conditional rules, signal constraints, and temporal rules/invariants—not
+from a cue-bearing sentence copied wholesale.
+
 The adapter walks `IntentIr` and populates the typed tree:
 
 1. **Clock** — from the system contract

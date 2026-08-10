@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
+  > how does specforge capture a signal that is defined in prose not a signal table (SWP S1/S2)
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > how does specforge consolidate a Class-B agent fragment like Subordinate extends onto Subordinate
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > how does specforge consolidate a dense-prose agent fragment like host has or host to onto host
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > how does specforge currently capture transactions and why is it thin
 - [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
   > how does specforge declare a signal mentioned only in prose
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
@@ -263,6 +271,8 @@
   > how many sentence-start signal descriptor phrases pollute the retained corpus
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how many signals does each AXI channel have
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > how many synthetic behaviors came from generic gates
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
   > how many synthetic behaviors came from generic section phases
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -287,13 +297,3 @@
   > how much memory did the guarded OpenCAPI Certified Definition ingest use
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > how much memory did the guarded OpenCAPI Ready ingest use
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > how much memory did the guarded USB4 Connection Manager ingest use
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > how much memory did the guarded USB4 Inter-Domain ingest use
-- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
-  > how much page content escapes both the structured-element path and the region-crop path
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > how should Rust version copies be verified across Cargo README book and CI
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > how should a behavior-preserving evidence refactor be verified given the non-determinism

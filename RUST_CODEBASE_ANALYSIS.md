@@ -4,6 +4,25 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-10 — retire generic whole-statement gate authority; `CORPUS-COVERAGE.2.43b`)
+
+- `SemanticIr.gates` remains a defaultable serialized `Vec<GateRecord>` for schema compatibility, but
+  `SemanticIr::build` now assigns it an empty collection. `build_gates` and its seven word-cue admission path are
+  removed; no whole sentence becomes a canonical gate merely because it contains a temporal conjunction.
+- `IntentContext` no longer copies legacy gates. The gate→all-actors behavior loop and gate→all-interface-actors
+  generic constraint loop are removed, as are their dead context types and actor-id plumbing.
+- Compatibility is tested by loading and round-tripping a manually populated old artifact, then proving current
+  IntentIR grants its `GateRecord` no behavior or constraint authority. New artifacts continue to serialize
+  `"gates": []`, avoiding a schema-version change.
+- Exact pre-repair projection over 79 retained artifacts: 27,168 gates create 21,206 behaviors / 642,401 actor
+  assignments and 5,974 constraints / 366,087 interface assignments. Removing them changes no rendered ISF,
+  renderability, lowering status, or executable count.
+- Repaired release `5a43f1b5…11f` makes all 79 populated/empty variants byte-identical at IntentIR and identical
+  at the adapter. Source evidence, invariants/contracts/constraints, and typed conditional/temporal rule
+  collections are independent and unchanged.
+- Focused controls, 407 SemanticIR tests, 49 IntentIR tests, warning-deny Clippy, nine WIRE/I2C/SWD datasets, KG
+  156/156, full CI 1,788/five ignored, 66/66 FSMGen strict, mdBook, doctrines, persisted paths, and locality pass.
+
 ## Session update (2026-08-10 — retire generic section-phase authority; `CORPUS-COVERAGE.2.43a.i`)
 
 - `SemanticIr.phases` remains a required, defaultable serialized `Vec<PhaseRecord>` for schema compatibility, but

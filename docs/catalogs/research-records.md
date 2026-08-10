@@ -23,6 +23,7 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/research/document-intent-isf-completeness.md](../../docs/research/document-intent-isf-completeness.md) | Per-category ISF-lowering completeness gauge (DOC-INTENT-TAXONOMY.2) |
 | [docs/research/full-page-capture-gap.md](../../docs/research/full-page-capture-gap.md) | Full-Page Intent-Capture Gap — measured report (`FULL-PAGE-INTENT-CAPTURE.1`) |
 | [docs/research/generic-enum-conflation-measurement.md](../../docs/research/generic-enum-conflation-measurement.md) | Generic-`TABLE` mega-enum conflation — measurement (`KG-ISF-COMPLETENESS.5`) |
+| [docs/research/generic-gate-authority-retirement-measurement.md](../../docs/research/generic-gate-authority-retirement-measurement.md) | Generic whole-statement gate retirement measurement — `CORPUS-COVERAGE.2.43b` |
 | [docs/research/generic-section-phase-retirement-measurement.md](../../docs/research/generic-section-phase-retirement-measurement.md) | Generic section-phase retirement measurement — `CORPUS-COVERAGE.2.43a.i` |
 | [docs/research/grounding/README.md](../../docs/research/grounding/README.md) | Literature grounding — synthesis map & reach-full-potential backlog |
 | [docs/research/grounding/adopt-defer-ledger.md](../../docs/research/grounding/adopt-defer-ledger.md) | Adopt / defer ledger — what SpecForge takes from each author, and what it leaves out |

@@ -30,8 +30,10 @@ certification-program administration. Exact generic reference-list headings are 
 no OpenCAPI, vendor, organization, document, section-index, exact-sentence, or single-token exception.
 
 The retained-corpus projection found 238 candidate administrative/reference statements across 23 documents.
-On the real OpenCAPI Certified Definition, unchanged 167-statement EvidenceIR rebuilds from five semantic phases,
-six gates, and 15 Intent behaviors to zero phases, zero gates, and four genuine product-compliance behaviors.
+On the real OpenCAPI Certified Definition, unchanged 167-statement EvidenceIR rebuilt from five semantic phases,
+six generic gates, and 15 Intent behaviors to zero phases, zero gates, and four genuine product-compliance
+behaviors. Generic gate production was subsequently retired corpus-wide; see
+[[legacy-generic-gates-are-audit-only]].
 Technical controls—including Page Request/response, electrical contacts, write-conflict resolution, measured
 test reports, and certified-device electrical requirements—remain eligible. See the
 [measurement](../research/administrative-workflow-semantic-authority-measurement.md) and the

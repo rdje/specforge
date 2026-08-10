@@ -1,3 +1,20 @@
+### CORPUS-COVERAGE.2.43b — retire generic whole-statement gate authority
+
+- An exact 79-document census finds 27,168 legacy generic gates across 77 documents; 24,492 do not overlap a
+  typed conditional/temporal rule. The old Intent projection fabricates 21,206 whole-sentence behaviors with
+  642,401 all-actor assignments plus 5,974 constraints with 366,087 interface assignments.
+- Paired populated/empty replays change 76 pre-repair IntentIR artifacts but zero rendered ISF sources,
+  renderability decisions, lowering statuses, or executable counts. Two adapter manifest deltas only expose an
+  honest no-explicit-behavior residual.
+- New SemanticIR builds now serialize `gates: []`. Old populated `GateRecord` artifacts still load and
+  round-trip, but current IntentIR ignores them. Evidence, invariants/contracts/constraints, and independently
+  typed conditional/temporal rules remain intact.
+- The repaired release makes all 79 populated/empty variants byte-identical at IntentIR and identical at the
+  adapter. Focused/module tests, nine WIRE/I2C/SWD datasets, KG 156/156, full CI 1,788/five ignored, 66/66 FSMGen
+  strict, mdBook, doctrines, persisted paths, and locality pass.
+- The required engineering-note record triggered the registered line rollover. An authenticated root-last
+  transaction sealed 24 exact old records into development-notes segment 0003 and restored warning-safe headroom.
+
 ### CORPUS-COVERAGE.2.43a.i — retire generic section-phase authority
 
 - The exact 3,180-record title audit finds 720 `Reset value` headings and only six literal-`phase` headings; five

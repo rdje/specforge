@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > was the warning-safe rolling ledger transaction independently audited from a clean clone
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > were DL and TL diagram labels signal declarations
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > were the 100 stale CoreSight Base System signals authoritative
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > were the 73 stale AArch64 External Debug signals authoritative
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > were the OpenCAPI AFU address-space acronyms signal declarations
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > were the nine Introducing CoreSight actor signal relations grounded topology
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
@@ -287,13 +297,3 @@
   > what is SWD's actual intent / protocol (from the spec)
 - [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
   > what is SerialFrameField / serial_frame_fields / SerialFramePhase
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > what is SpecForge doing in academic or research terms
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > what is TransactionIntent.channel_membership and where is it built (mint_named_transaction)
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > what is a ClusterExtractionProfile / derive_extraction_profiles (the per-cluster extraction profile)
-- [contested-priors](../knowledge/contested-priors.md)
-  > what is a contested prior
-- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
-  > what is audit-extraction / PDF-VARIANT-DIGESTION.4b

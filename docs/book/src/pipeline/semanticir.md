@@ -8,9 +8,9 @@
 - interfaces
 - actor-relative ports
 - signal connectivity
-- phases
+- typed transaction phases; legacy generic section phases remain schema-compatible audit data
 - invariants
-- gates
+- typed conditional/temporal rules; legacy generic whole-statement gates remain schema-compatible audit data
 - timing constraints
 - temporal rules
 - losslessly projected serial-frame, protocol-operation, protocol-state, and interface-edge observations
@@ -114,6 +114,28 @@ address phase the manager drives HADDR` can establish a typed `address` record w
 section phase. See the [sentence-authority measurement](../../research/semantic-phase-authority-measurement.md)
 and the [retirement measurement](../../research/generic-section-phase-retirement-measurement.md).
 
+### Generic whole-statement gates are legacy compatibility data
+
+The schema still contains `gates`, but current SemanticIR producers leave it empty. The historical producer
+copied an entire retained statement into one `GateRecord` whenever the prose contained the word-bounded cue
+`if`, `when`, `unless`, `while`, `after`, `before`, or `until`. The record preserved statement/section provenance
+and interface co-mentions, but it did not parse an antecedent, consequent, effect, actor role, signal action, or
+executable operation. A cue-bearing sentence was therefore evidence *about a possible condition*, not a typed
+canonical gate.
+
+An exact replay over all 79 retained SemanticIR artifacts found 27,168 such records in 77 documents. Only 2,676
+overlapped an independently typed conditional or temporal rule, and 24,492 did not. The old IntentIR projection
+turned the source sentences into 21,206 deduplicated behaviors assigned 642,401 times across every retained
+actor; 5,974 interface co-mentions also became generic constraints with 366,087 interface assignments. Removing
+only that authority changed no rendered ISF source, renderability decision, lowering status, or executable count.
+
+Old SemanticIR artifacts remain loadable and round-trippable with populated `gates`, preserving their provenance
+for audit. Current IntentIR builders deliberately ignore those legacy records, so stale artifacts cannot restore
+the all-actor projection. Conditional meaning is not discarded: the source statement remains in EvidenceIR,
+technical obligations can remain invariants and IntentIR constraints, and independently grounded
+`conditional_rules[]` and `temporal_rules[]` keep their typed operands. See the
+[generic-gate retirement measurement](../../research/generic-gate-authority-retirement-measurement.md).
+
 ### Legal conditions are evidence, not protocol intent
 
 `EvidenceIR` keeps source-grounded copyright, license, warranty, liability, patent, and administrative text so
@@ -129,8 +151,10 @@ protocol version, reliability condition, register named `license`, or literal AS
 eligible. The rule does not name a vendor, specification, document key, source sentence, or section index.
 
 As a result, a sentence about permissions remaining valid *while* a specification is current stays in
-EvidenceIR but cannot become an IntentIR behavior. A real condition such as `While READY is low, VALID must
-remain asserted` still becomes a semantic gate and downstream behavior.
+EvidenceIR but cannot become engineering intent. A real condition such as `While READY is low, VALID must remain
+asserted` remains a technical invariant and downstream constraint; where extraction establishes typed operands,
+the independent conditional/temporal rule surfaces preserve them as well. It does not need a generic
+whole-sentence gate to survive.
 
 ### Administrative workflows are evidence, not device behavior
 

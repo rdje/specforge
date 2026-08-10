@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [spec-mining-framing](../knowledge/spec-mining-framing.md)
+  > what is SpecForge doing in academic or research terms
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > what is TransactionIntent.channel_membership and where is it built (mint_named_transaction)
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > what is a ClusterExtractionProfile / derive_extraction_profiles (the per-cluster extraction profile)
+- [contested-priors](../knowledge/contested-priors.md)
+  > what is a contested prior
+- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
+  > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > what is capture_signal_presence_rows and who shares it
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
@@ -287,13 +297,3 @@
   > what research did SpecForge leave out and why
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > what reset_value shapes are composable vs residual (numeric dec/0x/0b/…h compose; UNKNOWN, IMPLEMENTATION DEFINED, 0x-------- partial-unknown, -, X, Impl Spec, Configuration dependent, enum-annotated are honest residuals — ADR-0006, no name list)
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > what signals belong to which AXI channel
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > what structural cue separates a message-field table from a register-field table
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what structural cues recognize transactions universally (section anchors + enumeration tables)
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > what structural surfaces discriminate document class
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > what table structure is required before port or pin vocabulary grants signal authority

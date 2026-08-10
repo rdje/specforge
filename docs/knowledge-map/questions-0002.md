@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > does sanitizing the module name break initiator port matching (no — from_intent_ir re-derives the initiator raw; actor_name is only the label)
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > does select_initiator_actor choose the first or last equal maximum
+- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
+  > does specforge adapt remove an old actor isf when actor selection changes
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > does specforge handle coordinated drive/read objects (X drives A and B)
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
@@ -18,6 +24,8 @@
   > does the ISF adapter consume swd_operations or protocol_states
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > does the ISF adapter lower actor-relative direction
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > does the ISF adapter lower generic gate behaviors
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
   > does the NLI verifier actually catch real extraction errors
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
@@ -290,11 +298,3 @@
   > how does pattern reuse stay agnostic (ADR 0006) and honest (no fabrication / no overfitting)
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > how does retain_authoritative_interface_candidate_signals behave with an empty authority set
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > how does specforge capture a signal that is defined in prose not a signal table (SWP S1/S2)
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > how does specforge consolidate a Class-B agent fragment like Subordinate extends onto Subordinate
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > how does specforge consolidate a dense-prose agent fragment like host has or host to onto host
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > how does specforge currently capture transactions and why is it thin

@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > how much memory did the guarded USB4 Connection Manager ingest use
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > how much memory did the guarded USB4 Inter-Domain ingest use
+- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
+  > how much page content escapes both the structured-element path and the region-crop path
+- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
+  > how should Rust version copies be verified across Cargo README book and CI
+- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
+  > how should a behavior-preserving evidence refactor be verified given the non-determinism
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how should an AXI gold or extraction be structured (per channel)
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
@@ -288,13 +298,3 @@
   > was the (contract ... eventually ...) ISF clause removed
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > was the fresh SWD 29 of 29 artifact promoted
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > was the warning-safe rolling ledger transaction independently audited from a clean clone
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > were DL and TL diagram labels signal declarations
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > were the 100 stale CoreSight Base System signals authoritative
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > were the 73 stale AArch64 External Debug signals authoritative
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > were the OpenCAPI AFU address-space acronyms signal declarations

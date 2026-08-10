@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [axi-channel-structure](../knowledge/axi-channel-structure.md)
+  > what signals belong to which AXI channel
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > what structural cue separates a message-field table from a register-field table
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what structural cues recognize transactions universally (section anchors + enumeration tables)
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > what structural surfaces discriminate document class
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > what table structure is required before port or pin vocabulary grants signal authority
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
   > what temporal logic backs temporal_rules
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
@@ -198,6 +208,8 @@
   > where may diagnostic scratch files and comparison lists be written
 - [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
   > where must SpecForge project artifacts caches and temporary workspaces live
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > where was build_gates removed
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
   > where was build_phases removed
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
@@ -286,15 +298,3 @@
   > which task owns fact-card catalog containment
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
   > which task owns mdBook fence classification and doctest enforcement
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > which task tree crossed its live-document byte warning
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > which validate metrics/finding surface channel membership
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > who reads or writes the active PDF task tree
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > why a parallel field-constraint surface instead of a subject-kind discriminator
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > why an allowlist instead of a denylist for .isf identifier sanitization (a denylist can't enumerate every bad char — it missed the arrow →)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > why are 169 composable registers not yet emittable (their composed reset needs more bits than the current storage-var width which is max-field-extent not register width — e.g. CoreSight DPIDR V=0x1c013477 at width 11 over-width; var-width reconciliation spun to ISF-REGISTER-RESET-EMIT.3)

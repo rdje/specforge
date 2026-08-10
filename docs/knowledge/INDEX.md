@@ -93,6 +93,7 @@
 - [isf-value-width-operand-contract](isf-value-width-operand-contract.md)
 - [knowledge-map-architecture-location](knowledge-map-architecture-location.md)
 - [knowledge-map-shard-contract](knowledge-map-shard-contract.md)
+- [legacy-generic-gates-are-audit-only](legacy-generic-gates-are-audit-only.md)
 - [legacy-generic-section-phases-are-audit-only](legacy-generic-section-phases-are-audit-only.md)
 - [legal-administrative-prose-is-not-semantic-authority](legal-administrative-prose-is-not-semantic-authority.md)
 - [live-document-containment-fixture-gate](live-document-containment-fixture-gate.md)

@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > why does decoder go from 0/0 to connected (decoder also consolidated)
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > why does dropping phantom actors leave the .isf and WIRE-BASED-100 unchanged
+- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
+  > why does ingest still generate page images if it does not save them
+- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
+  > why does inspect_docling_runtime PATH probe select RepoLocalVenv in tests
+- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
+  > why does mdbook test interpret ISF and console examples as Rust
+- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
+  > why does one register appear as several RegisterRecords / how are split register-field tables merged
+- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
+  > why does rebuilding the same SourceIR give a different evidence_ir.json (non-determinism)
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > why does recover-register-bits still recover 0 bits after the plumbing is complete
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
@@ -134,6 +148,8 @@
   > why is a membership-derived (sample) body NOT faithful even though it is FSMGen-accepted
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
   > why is a pure-hex-literal subject filter unsafe (CBA, BADD)
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > why is a sentence containing when not necessarily a semantic gate
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > why is bus not a valid parenthetical single-wire head
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)

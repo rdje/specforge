@@ -41,6 +41,7 @@
 | [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md) | 2026-06-21 | `current` | FSMGen strict rejects an ISF value literal whose notation width ≠ the target signal width (OperandContract,… |
 | [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md) | 2026-08-08 | `current` | Knowledge-map architecture lives inside the knowledge-map bundle |
 | [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md) | 2026-08-08 | `current` | The Knowledge Map shard migration is locked by a bounded executable contract |
+| [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md) | 2026-08-10 | `current` | Legacy generic whole-statement gates are schema-compatible audit data only |
 | [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md) | 2026-08-10 | `current` | Legacy generic section phases are schema-compatible audit data only |
 | [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md) | 2026-08-09 | `current` | Legal and administrative prose is retained as evidence but cannot establish semantic intent |
 | [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md) | 2026-08-08 | `current` | Live-document lifecycle and control-plane proofs run on the repository volume |
@@ -60,4 +61,3 @@
 | [message-field-validate-integration](../knowledge/message-field-validate-integration.md) | 2026-06-11 | `current` | validate reports the message-field surfaces (5 metrics + inventory finding); class census and completeness ga… |
 | [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md) | 2026-06-10 | `current` | A subject absent from its own source sentence snaps to the sentence's declared token (edit distance 1, unambi… |
 | [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md) | 2026-06-05 | `current` | NLI entailment verifier — a semantic "does the source entail this claim?" grounding gate |
-| [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md) | 2026-06-05 | `current` | NLI gate validated on the real AMBA APB spec — it works, and it exposes constraint over-generation |
