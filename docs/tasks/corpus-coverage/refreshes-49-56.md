@@ -293,10 +293,11 @@ document, protocol, vendor, value, or growing denylist is permitted.
 | --- | --- | --- |
 | `2026-08-10` | first parent cascade | four false constraints → four ungrounded temporal rules / one false conflict; adapter safely blocked |
 | `2026-08-10` | read-only corpus census | 179 pattern + 81 dynamic records measured; 31 non-table post-binding-only subjects / ten documents; 31/31 audited false |
-| `2026-08-10` | pre-handoff restoration | pre-ingest seven-file chain restored at 2,666,088 bytes / all stale hashes; normalized and three new validation reports absent; rollback retained through ownership commit |
+| `2026-08-10` | clean handoff | pre-ingest seven-file chain restored at 2,666,088 bytes / all stale hashes; normalized and three new reports absent; post-ownership rollback deletion has zero residue; locality passes |
 
 ### Commit log
 
 | Unit | Durable evidence |
 | --- | --- |
-| `CORPUS-COVERAGE.2.50a` ownership | `CORPUS-COVERAGE.2.50a — own passive-binding subject repair` |
+| `CORPUS-COVERAGE.2.50a` ownership | `26cfc13e` — `CORPUS-COVERAGE.2.50a — own passive-binding subject repair` |
+| `CORPUS-COVERAGE.2.50a` clean handoff | `CORPUS-COVERAGE.2.50a — checkpoint clean repair handoff` |

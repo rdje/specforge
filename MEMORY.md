@@ -28,7 +28,6 @@
   Child `.2.50a` pins the shared extractor cause and a 31-record / ten-document all-false corpus measurement.
 - Next action: implement the shared non-table passive-binding pre-lead subject predicate in both deterministic
   constraint extractors, run focused/corpus/gold/full gates, commit the repair, then rebuild parent `.2.50` twice.
-- In-flight uncommitted: `.2.50a` ownership/task-frontier/book alignment only. The generated OpenCAPI chain is
-  restored to its authenticated pre-ingest seven-file state; its rollback stays until this ownership commit, then
-  exact deletion and a durable clean-handoff checkpoint finish the stop request. No background job is running.
+- In-flight uncommitted: none. The generated OpenCAPI chain is restored to its authenticated pre-ingest seven-file
+  state, normalized output is absent, rollback residue is zero, and no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.
