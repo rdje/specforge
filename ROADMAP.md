@@ -210,8 +210,17 @@ Five active program groups support that north star:
   interfaces/phases/gates, eight invariants, four contracts, and 14 decompositions; IntentIR retains four genuine
   compliance behaviors and eight constraints. Lowering blocks on no signals and leaves only `adapter.json` plus
   its report. Twelve hashes, two cascades, WIRE/I2C/SWD, KG 156/156, 66/66 FSMGen strict, book/doctrines/path/
-  locality, exact cleanup, and zero residue pass. Corpus is 42 done / 14 remaining with stage census 80 SourceIR /
-  11 normalized / 80 EvidenceIR / 79 SemanticIR→IntentIR→adapter chains; frontier → select and own #43. Separately,
+  locality, exact cleanup, and zero residue pass. `.2.43` then closes the 15-page OpenCAPI 3.0 Ready Definition.
+  One guarded CPU ingest peaks at 62% sampled memory and produces six visuals / three tables / 30 sections / 169
+  elements with all 42 project-owned paths relative and present. Source 171→169 removes two flattened diagram
+  labels; Evidence 176→173 additionally removes synthetic `Signal DL is width 1.` while retaining two typed
+  conditionals and no hardware surface. Completed children retire untyped generic phase/gate projections. Final
+  SemanticIR has three actors, zero interfaces/phases/gates, 21 invariants, 19 contracts, five assertions, and 17
+  decompositions; IntentIR retains 19 compliance behaviors / 25 constraints / two assumptions. Lowering blocks
+  only on no signals and leaves its manifest/report. Twelve hashes, two cascades, WIRE/I2C/SWD, KG 156/156, 66/66
+  FSMGen strict, book/doctrines/path/locality, exact cleanup, and zero residue pass. Corpus is 43 done / 13
+  remaining with stage census 80 SourceIR / 12 normalized / 80 EvidenceIR / 79 SemanticIR→IntentIR→adapter
+  chains; frontier → `.2.43a.ii` typed transaction-phase precision, then select refresh #44. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

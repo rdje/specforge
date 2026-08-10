@@ -1,3 +1,19 @@
+### CORPUS-COVERAGE.2.43 — sign off OpenCAPI Ready Definition refresh
+
+- One guarded CPU ingest peaks at 62% sampled system memory used and produces 15 pages, six visuals, three
+  tables, 30 sections, and 169 elements. The authorized external source stays labeled; all 42 project-owned
+  page/layout/visual/caption paths are present and repository-relative.
+- SourceIR 171→169 removes exactly flattened `TL/` and `OpenCAPI 3.0 Host TL/`. EvidenceIR 176→173 additionally
+  removes synthetic `Signal DL is width 1.` while retaining two conditional rules and zero typed hardware
+  declarations, relations, constraints, registers, or timing records.
+- Current authority plus completed children `.2.43a`/`.2.43a.i`/`.2.43b` removes the stale interface and generic
+  phase/gate projections. Final SemanticIR is three actors / zero interfaces/phases/gates / 21 invariants / 19
+  contracts / five assertions / 17 decompositions; IntentIR is 19 behaviors / 25 constraints / two assumptions.
+  Lowering blocks only on no signals and leaves `adapter.json` plus its report.
+- Twelve hashes and two downstream replays reproduce. Nine WIRE/I2C/SWD datasets, KG 156/156, 66/66 FSMGen
+  strict, mdBook, doctrines, path/locality, exact nine-file / 392462-byte cleanup, and zero residue pass. Corpus
+  is 43 done / 13 remaining with stage census 80 SourceIR / 12 normalized / 80 EvidenceIR / 79 downstream chains.
+
 ### CORPUS-COVERAGE.2.43b — retire generic whole-statement gate authority
 
 - An exact 79-document census finds 27,168 legacy generic gates across 77 documents; 24,492 do not overlap a

@@ -158,10 +158,19 @@ adapter behavior. Four genuine device/host compliance behaviors and eight constr
 declared signal interface to lower. The adapter therefore blocks on `no signals declared in interface`, emits no
 target, and leaves only `adapter.json` plus its validation report.
 
+The 15-page OpenCAPI 3.0 Ready Definition provides a tenth transfer and shows why non-emitting does not mean
+content-free. Fresh extraction removes only two flattened diagram labels (`TL/` and
+`OpenCAPI 3.0 Host TL/`) plus the glossary-derived `Signal DL is width 1.`, leaving 173 evidence statements and
+two typed conditional rules with no hardware declaration, relation, constraint, register, or timing surface.
+The completed semantic audits keep three grounded actors, 19 product-compliance behaviors, 25 constraints, and
+two assumptions while refusing to promote section topics or cue-bearing sentences into generic phases/gates.
+With no declared signal interface, the adapter correctly blocks on `no signals declared in interface`, emits no
+target, and leaves only `adapter.json` plus its validation report.
+
 The corpus cache now has 66 current emitted `.isf` files, all covered by a fresh 66/66 FSMGen-strict sweep; USB
 3.2, USB4 Inter-Domain, USB4 Connection Manager, CoreSight Base System, AArch64 External Debug, and Introducing
 CoreSight, plus the OpenCAPI Ready, Certified, AFU Address Space Usage, and Certified Definition documents, are not
-among them because honest blocking is the correct lowering result.
+among them; neither is the OpenCAPI Ready Definition. Honest blocking is the correct lowering result for each.
 
 The measurement behind that repair found three upstream authority errors, not a reason to distrust every
 relation-derived direction. Across the retained corpus, 97 sentence-start phrases use `signal <word>` without

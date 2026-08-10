@@ -1,4 +1,29 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.43 (`2026-08-10`) — compliance prose remains useful without invented topology
+
+The stale Ready Definition chain looked richer than the source justified because three independent heuristics
+reinforced one another. Two flattened diagram labels survived as body elements, a terms-table acronym became a
+width-one `DL` declaration, and untyped section/cue summaries became generic phases and gates. The resulting
+one-interface chain carried six semantic actors, seven phases, five gates, 30 Intent behaviors, and a one-signal
+adapter despite no declaration, relation, signal constraint, register, or timing evidence.
+
+The final refresh keeps the actual compliance content. Current source/evidence cleanup removes only `TL/`,
+`OpenCAPI 3.0 Host TL/`, and synthetic `Signal DL is width 1.`. The three child audits then remove authority from
+generic phases and gates without deleting their source sentences or weakening the independently typed conditional
+rules. This separation is important: useful contractual evidence does not need fabricated wire topology or a
+whole-section behavior projection to remain available downstream.
+
+Release `5a43f1b5…11f` therefore produces a deliberately mixed result: three grounded actors, 19 compliance
+behaviors, 25 constraints, and two assumptions survive, while interfaces, generic phases, and generic gates are
+empty. The adapter blocks only because no interface signal is declared; it emits no target and carries no
+executable or residual surface. That is a faithful result for a product-readiness definition rather than an
+under-extraction failure.
+
+Two final cascades reproduce all downstream hashes. The protocol/KG/FSMGen/path/locality gates pass, all 42
+project-owned paths are relative and present, and the authenticated nine-file task bundle is removed only after
+the complete signoff. Refresh progress is now 43 done / 13 remaining; the next product-code frontier is the
+separately owned typed transaction-phase qualifier audit `.2.43a.ii`.
+
 ## CORPUS-COVERAGE.2.43b (`2026-08-10`) — a cue-bearing sentence is not a canonical gate
 
 The Ready Definition's final semantic classification exposed a structural first-pass scaffold: `build_gates`

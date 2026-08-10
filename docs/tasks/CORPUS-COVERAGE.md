@@ -4,8 +4,7 @@
 
 - Tree ID: `CORPUS-COVERAGE`
 - Status: `active` (`.0` build-out + `.1` stage-staleness validator done; `.2` current-binary refresh batch
-  remains active with 41 completed documents and `.2.42a` administrative-workflow semantic-authority repair
-  done under the OpenCAPI Certified Definition refresh; `.3`
+  remains active with 43 completed documents and `.2.43` OpenCAPI Ready Definition refresh done; `.3`
   lifecycle/currentness reconciliation done `2026-08-09`)
 - Roadmap lane: `R15e`/`R16` (corpus digestion — the owner's substantive gap #2)
 - Created: `2026-06-17`
@@ -757,7 +756,7 @@ today's ephemeral normalized-directory count.
   mdBook, durable fact, and `MEMORY.md` agree; parent `.2.42` stayed open through this child commit and subsequently
   closed after final replay and authenticated cleanup.
 
-- ID: `CORPUS-COVERAGE.2.43` · Status: `in_progress` (`2026-08-10`, DATA/CODE/DOC) · Children: `.2.43a`
+- ID: `CORPUS-COVERAGE.2.43` · Status: `done` (`2026-08-10`, DATA/CODE/DOC) · Children: `.2.43a`
   semantic-phase authority repair (done), `.2.43a.i` legacy generic-phase retirement (done), and `.2.43a.ii`
   typed transaction-phase precision follow-up (pending), plus `.2.43b` generic gate-authority audit (done).
   Goal: run a guarded
@@ -768,8 +767,9 @@ today's ephemeral normalized-directory count.
 
   The caller-authorized read-only source is
   `/Volumes/SSD/Documents/livework/chipdoc/cxl/opencapi/current/OpenCAPI-3.0-Ready_Definition_v1.1.pdf`;
-  source and repository share SSD device `16777240`. The PDF hashes to `cf553953…0c0`; current release
-  `9692af3e…b4b` owns the run. Before mutation, authenticate and preserve the exact six-file / 390379-byte stale
+  source and repository share SSD device `16777240`. The PDF hashes to `cf553953…0c0`; release
+  `9692af3e…b4b` owns the guarded ingest and final release `5a43f1b5…11f` owns the downstream replay. Before
+  mutation, authenticate and preserve the exact six-file / 390379-byte stale
   chain under `.cache/task-work/CORPUS-COVERAGE.2.43/rollback`. Stale SourceIR reports 15 pages / six visuals /
   three tables / 30 sections / 171 elements and still records retired boot-volume provenance. EvidenceIR has 176
   statements, two conditionals, and zero relations, signal constraints, registers, or timing records. The stale
@@ -782,24 +782,38 @@ today's ephemeral normalized-directory count.
   new universal defect. Promote only complete validated stages, reproduce the final cascade, hold the full
   protocol/KG/FSMGen/book/doctrine/path/locality gates, and delete only authenticated task evidence after signoff.
 
-### Pending signoff criteria — `CORPUS-COVERAGE.2.43`
+  Done: one guarded CPU ingest peaks at 62% sampled system memory used and produces 15 pages / six visuals /
+  three tables / 30 sections / 169 elements. SourceIR 171→169 removes exactly flattened `TL/` and
+  `OpenCAPI 3.0 Host TL/`; EvidenceIR 176→173 additionally removes synthetic `Signal DL is width 1.` while
+  retaining two typed conditionals and no hardware declaration/relation/constraint/register/timing surface. All
+  42 page/layout/visual/caption paths are present and repository-relative. Children `.2.43a`/`.2.43a.i` and
+  `.2.43b` retire untyped generic phase/gate authority before final acceptance. Release `5a43f1b5…11f` produces
+  three grounded actors, zero interfaces/phases/gates, 21 invariants, 19 contracts, five assertions, two
+  abstractions, 17 decompositions, and two conditional rules; IntentIR has 19 behaviors / 25 constraints / two
+  assumptions. Lowering blocks only on no signals and emits nothing. Two final cascades reproduce all six
+  downstream hashes. Nine WIRE/I2C/SWD datasets, KG 156/156, 66/66 FSMGen strict, mdBook, doctrines, persisted
+  paths, locality, exact nine-file / 392462-byte cleanup, and zero residue pass.
 
-- **PENDING — REPRODUCE / MEASURE** — authenticate the source, release, exact stale six-file chain, same-volume
-  rollback, and stale semantic/adapter surface; record guarded-ingest memory, structural counts, path census,
-  final hashes, and complete typed before→after deltas.
-- **PENDING — ROOT CAUSE (WHY + WHERE)** — classify every material delta against current universal source cleanup
-  and evidence/semantic/behavior authority; preserve source evidence and own any newly exposed generic defect in
-  a child before accepting downstream artifacts.
-- **PENDING — ADDRESSED (verified)** — promote and validate every stage, converge obsolete adapter targets, require
-  generated paths final and repository-relative, and accept only the pipeline-grounded renderable or honestly
-  blocked result.
-- **PENDING — NO REGRESSION** — reproduce the final cascade, pass nine provider-free WIRE/I2C/SWD datasets, KG
-  156/156, every emitted ISF through FSMGen strict, mdBook, doctrines, persisted paths, and project-data locality;
-  run broader Rust CI if product code changes.
-- **PENDING — GENERICITY** — no OpenCAPI/vendor/document/acronym exception, manual generated-artifact edit, relaxed
-  validation, fabricated interface/behavior, or LLM/VLM inference enters the slice.
-- **PENDING — LOCKSTEP** — generated artifacts, #43 row/count/frontier, live docs, durable fact when warranted,
-  mdBook, and `MEMORY.md` agree; remove only the authenticated task bundle after all final gates pass.
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.43`
+
+- [x] **REPRODUCE / MEASURE** — authenticated same-SSD PDF `cf553953…0c0`, release `5a43f1b5…11f`, exact stale
+  six-file / 390379-byte chain, and guarded-ingest peak 62%; pinned all 12 final hashes, complete typed deltas,
+  42/42 relative/present project paths, and two byte-identical downstream cascades.
+- [x] **ROOT CAUSE (WHY + WHERE)** — exact deltas separate two flattened diagram labels and one glossary-derived
+  declaration from independent semantic authority failures; owned and completed universal child repairs before
+  accepting final artifacts, without deleting EvidenceIR statements that remain legitimate evidence.
+- [x] **ADDRESSED (verified)** — validated the complete SourceIR→adapter chain; final SemanticIR has no generic
+  phases/gates or interface, IntentIR retains genuine compliance intent, and lowering honestly blocks on
+  `no signals declared in interface` with no emitted target or obsolete target residue.
+- [x] **NO REGRESSION** — nine provider-free WIRE/I2C/SWD datasets hold their declared gates, KG is 156/156,
+  66/66 current emitted ISFs pass FSMGen strict with zero diagnostics, and mdBook, doctrines, 2,008-artifact
+  persisted-path, and project-data-locality gates pass. Child `.2.43b` supplied the just-passed full Rust CI.
+- [x] **GENERICITY** — the parent uses current universal extraction and completed generic authority repairs; no
+  OpenCAPI/vendor/document/acronym exception, generated-output edit, relaxed validator, fabricated topology, or
+  LLM/VLM inference entered the refresh.
+- [x] **LOCKSTEP** — generated artifacts, #43 row/count/frontier, roadmap, live docs, mdBook, durable fact,
+  derived catalogs/maps, and `MEMORY.md` agree; only the authenticated nine-file task bundle was removed after
+  the complete final gate set passed.
 
 - ID: `CORPUS-COVERAGE.2.43a` · Status: `done` (`2026-08-10`, PROBE/CODE/DATA/DOC) · Children:
   `.2.43a.i` (done) and `.2.43a.ii` (pending). Result: repaired the universal semantic-phase authority defect
@@ -1224,8 +1238,9 @@ live ledger to 61 records / 1,303 lines without loss.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: `CORPUS-COVERAGE.2.43` — rebuild the Ready Definition downstream chain with empty generic gates,
-  reproduce final hashes, validate the honestly blocked adapter, and complete authenticated cleanup/signoff.
+- Frontier: `CORPUS-COVERAGE.2.43a.ii` — classify all 82 retained typed transaction-phase records, reproduce the
+  Wishbone/CAN false-positive paths and real APB/AHB/SWD controls, then tighten only through universal phrase
+  grammar before selecting refresh #44.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**39 refreshes done after #39;
   17 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#39: #29/#31 CHI-C2C marquee message-field refreshes,
@@ -1308,11 +1323,12 @@ leaving the refreshed SourceIR→adapter stage chains intact.
 | 40 | `opencapi_3_0_certified_test_resources_engineering_note_v1_0` OpenCAPI Certified Test Resources engineering note | 13 | **portable current-binary refresh + independent glossary-authority confirmation:** two guarded CPU ingests reproduce 13 pages / three visuals / two tables / 25 sections / 173 elements at 21% and 22% peak system memory used; all 13 page image paths and 13 layout paths are final and repository-relative. Evidence 173→172 removes only synthetic `Signal DL is width 1.` from the sibling terms table; current authority removes one stale interface and one adapter output while preserving two semantic actors / four phases / four invariants and 11 intent behaviors / four constraints. The low-structured-design-intent guide blocks on no signals plus no behavior, emits no target, and leaves exactly `adapter.json` plus its report. Two cascades reproduce all 12 hashes. After #40: 80/9/80/79 stage census and **16 real chip-spec refreshes remain.** | **BLOCKED** (honest glossary/signal-authority boundary; 0 emitted `.isf`) | n/a (nothing emitted) |
 | 41 | `opencapi_afu_address_space_usage` OpenCAPI AFU Address Space Usage engineering note | 14 | **portable current-binary refresh + prose-grouping and legal-authority closure:** two guarded CPU ingests reproduce 14 pages / nine visuals / two tables / 23 sections / 118 elements at 20% and 19% peak system memory used; all 14 image/layout pairs and nine visual paths are present and repository-relative. Evidence holds exactly at 106 statements / zero relations, declarations, signal constraints, conditionals, registers, or timing records. Current generic authority removes five stale acronym-group interfaces / five synthetic actors / eight one-bit adapter outputs (`AFU`/`BAR`/`CFG`/`GB`/`ID`/`MEM`/`MMIO`/`PASID`). Child `.2.41a` then keeps the legal text in EvidenceIR but removes its false `Approved` phase, one gate, and two legal invariants/Intent behaviors. Final SemanticIR is zero actors/interfaces/phases/gates with 15 engineering invariants and 14 decompositions; IntentIR has zero behaviors / 15 constraints; lowering blocks on no signals plus no behavior, emits no target, and leaves exactly `adapter.json` plus its report. Two repaired cascades reproduce the six downstream hashes and the complete 12-artifact set is pinned. After #41: 80/10/80/79 stage census and **15 real chip-spec refreshes remain.** | **BLOCKED** (honest guide/signal-and-behavior authority boundary; 0 emitted `.isf`) | n/a (nothing emitted) |
 | 42 | `opencapi_3_0_certified_definition_v1_1` OpenCAPI 3.0 Certified Definition | 15 | **portable current-binary refresh + diagram/glossary/administrative-authority closure:** two guarded CPU ingests reproduce 15 pages / eight visuals / five tables / 31 sections / 151 elements at 18% and 33% peak sampled memory; the external source is labeled and all 46 project-owned path references are relative and present. Source 155→151 removes exactly `DL`, `DL`, `TL/`, and `OpenCAPI 3.0 Host TL/`; Evidence 172→167 additionally removes synthetic `Signal DL is width 1.` while retaining two conditionals and zero typed hardware surfaces. Current signal authority removes the stale interface/output; child `.2.42a` preserves administrative evidence but removes its false phases/gates/11 behaviors. Final SemanticIR is two actors / zero interfaces/phases/gates / eight invariants / four contracts / 14 decompositions; IntentIR is four genuine compliance behaviors / eight constraints. Lowering blocks on no signals, emits no target, and leaves exactly `adapter.json` plus its report. Twelve hashes and two downstream cascades reproduce. After #42: 80/11/80/79 stage census and **14 real chip-spec refreshes remain.** | **BLOCKED** (honest guide/signal-authority boundary; 0 emitted `.isf`) | n/a (nothing emitted) |
+| 43 | `opencapi_3_0_ready_definition_v1_1` OpenCAPI 3.0 Ready Definition | 15 | **portable current-binary refresh + diagram/glossary/semantic-scaffold closure:** one guarded CPU ingest produces 15 pages / six visuals / three tables / 30 sections / 169 elements at 62% peak sampled memory; the external source is labeled and all 42 project-owned paths are relative and present. Source 171→169 removes exactly flattened `TL/` and `OpenCAPI 3.0 Host TL/`; Evidence 176→173 additionally removes synthetic `Signal DL is width 1.` while retaining two conditionals and zero typed hardware surfaces. Current signal/actor authority removes the stale interface and three phantom actors; children `.2.43a`/`.2.43a.i`/`.2.43b` retire untyped phase/gate projections. Final SemanticIR is three actors / zero interfaces/phases/gates / 21 invariants / 19 contracts / five assertions / 17 decompositions; IntentIR is 19 genuine compliance behaviors / 25 constraints / two assumptions. Lowering blocks only on no signals, emits no target, and leaves exactly `adapter.json` plus its report. Twelve hashes and two downstream cascades reproduce. After #43: 80/12/80/79 stage census and **13 real chip-spec refreshes remain.** | **BLOCKED** (honest guide/signal-authority boundary; 0 emitted `.isf`) | n/a (nothing emitted) |
 
 **Cumulative (33 docs, protocol + register/arch phases): hundreds of registers + ~385 message fields + transaction recognition surfaced that were ABSENT in stale evidence** — registers e.g. SMMU-arch 1→89, GIC-arch 17→90, MMU-700 13→63, GIC-600 15→33, TMC 2→30; message fields DTI 0→159, CHI-C2C 0→210, VT-d 0→15; transactions e.g. eMMC 0→6, HBM2 0→3 (real ops). **Every current renderable adapter is FSMGen-strict clean; USB #33 and HBM-gen1 #32 block honestly and emit nothing.** **#27 eMMC surfaced a phantom-actor explosion (20→153) on descriptive prose → NEW lever E (agent-identity precision for non-AMBA prose specs); the `.isf` is unaffected. #28 HBM2 confirmed E is PROSE-SPECIFIC (HBM2 consolidated cleanly) but surfaced lever F (enum-value literal format + generic-`TABLE` mega-enum precision).** **Refined #22/#23 phase note:** "already current-binary-equivalent" is not uniform — a doc's stale evidence sits at whatever binary last rebuilt it, so re-ingest can still deliver a real KG refresh when that binary predated a later gate: #22 Cortex-A76 was fully current (byte-identical), but #23 CoreSight SoC-600 predated the `.1a`/`.1b` consolidation + transaction recognizer and got a genuine actor-consolidation + 2-transaction refresh (the #17 Avalon class). So the remaining tail is a MIX of pure confirmation (#21/#22) and consolidation/recognition refreshes (#17/#23), with marquee table-family jumps now the exception. **NEW phase finding (#21):** some of the 57 normalized-missing docs are NOT pre-`.10` stale — their evidence was rebuilt Jun-15 from the retained `source_ir.json` (only the heavyweight `normalized/` page-image bundle was disk-reclaimed) so it already carried the `.10` register families; for those, re-ingest is **normalized-bundle restoration + current-binary confirmation** (modest deterministic delta), distinct from the genuinely pre-`.10` docs (SMMU/GIC/MMU big jumps). The IOMMU also surfaced a **RISC-V STRUCTURE-table recall opportunity** (device-context/command-queue tables not matching the `.10b`/`.10d`/`.10e` two-column families — Lever D). **PHASE FINDING (#17–#19, the non-AMBA protocol specs):** their refresh value is NOT marquee table-family gains — Avalon = consolidation + current-binary freshness; **Wishbone + OpenCAPI-TL surfaced a doc-style TABLE-RECOGNITION recall gap** (Wishbone 1 `signal_description`/25 tables; OpenCAPI 0/246 — both predominantly `unknown`-classified; non-AMBA `Signal\|Direction\|Width` shapes), so their `.isf` degenerate to 1 signal. **REGRESSION RULED OUT** (DTI 159 / MMU-700 63 / AHB 66 all hold on the current binary) → these are the upstream Lever-D signal/table-recall family, not emitter bugs. The high-value AMBA-style protocol specs are now exhausted; **next phase = the register/TRM/ISA docs** (the `.10` register families demonstrably fire there — CoreSight/GIC/JEDEC/RISC-V system-IP). Remaining queue = OpenCAPI×13 (PHY/mechanical/TL-variants, expected thin)/JEDEC/USB/RISC-V system-IP/VT-d/Cortex-A76/GIC-400/CoreSight-SoC-600×3/overview/guides. **#29 (`2026-06-24`) — AMBA CHI C2C `ihi0098_a` is a genuine marquee exception to the "tail is mostly bundle-restoration" phase finding:** its stale evidence was truly pre-`.10` (0 message fields), so the current binary's `.10` families surfaced `message_field_records` 0→149 / 13 containers — a real KG-completeness gain, `.isf` strict-clean. After #29: 29 docs re-ingested, **27 real chip-spec docs still normalized-missing** (plus the project README, not a chip spec). CHI C2C also re-confirmed two standing extraction-precision residuals (generic-`TABLE` mega-enum conflation; signal-inventory prose-acronym noise) — surfaced, not fixed in-slice. **#30 (`2026-06-24`) — RISC-V AIA `1_0_2025_03_12` is the contrasting bundle-restoration case:** all deterministic surfaces byte-near-identical (statements 1193, registers 0, cond_rules 39 all held), so re-ingest value = normalized-bundle restoration + current-binary confirmation, `.isf` strict-clean — and it re-confirms the #21 RISC-V-IOMMU Lever-D recall opportunity (the APLIC/IMSIC register layouts sit in 12 `unknown` structured tables the `.10` families don't match). After #30: **26 real chip-spec docs still normalized-missing**. Phase pattern holds: marquee message-field/register jumps (#29 CHI) now interleave with bundle-restoration confirmations (#30 AIA) in the tail. **#31 (`2026-06-24`) — CHI C2C 2026 variant `ihi0098_a_b` re-confirms the CHI-C2C family marquee:** `message_field_records` 0→143 / 12 containers (sibling of #29's 0→149), `.isf` strict-clean; the lone stale relation 1→0 (fragment drop). After #31: **25 real chip-spec docs still normalized-missing.**
 
-**Cumulative update after #42:** 42 current-binary refreshes are complete and 14 real chip-spec documents remain.
-The OpenCAPI Certified Definition, AFU Address Space Usage, Ready, and Certified notes join Introducing CoreSight, AArch64 External Debug, CoreSight Base System, USB4 Connection Manager, USB4 Inter-Domain, USB 3.2, and HBM-gen1 as honestly blocked/non-emitting; 66 current renderable
+**Cumulative update after #43:** 43 current-binary refreshes are complete and 13 real chip-spec documents remain.
+The OpenCAPI Ready and Certified Definitions, AFU Address Space Usage, Ready, and Certified notes join Introducing CoreSight, AArch64 External Debug, CoreSight Base System, USB4 Connection Manager, USB4 Inter-Domain, USB 3.2, and HBM-gen1 as honestly blocked/non-emitting; 66 current renderable
 adapters remain, all FSMGen-strict clean. The preceding long-form cumulative paragraph is the historical
 through-#33 snapshot; this update is the current corpus frontier.
 
@@ -1323,15 +1339,23 @@ through-#33 snapshot; this update is the current corpus frontier.
 - **Lever C — rule-write conflicts — ✅ RESOLVED (`2026-06-23`, `KG-ISF-COMPLETENESS.2a.v`).** LPI: `isf_conflicting_rule_writes` on `PREQ` — `rule_5` (PREQ←1, an UNCONDITIONAL rule_action) conflicts with `temporal_..._dyn_sigcon_0012` (PREQ←0, a guarded temporal signal constraint). The same-guard `dedup_conflicting_rules` keyed on `(signal, guard)` so missed it; FSMGen flags it because an unconditional rule's firing set ⊇ every guard (its `_condition_terms_prove_disjoint` can never prove an absent condition disjoint). Fixed by a new `drop_unconditional_overlap_conflicts` post-pass (keep the unconditional value, residualize the conflicting rule; the `(priority …)` hatch was rejected as ungrounded precedence). **MEASUREMENT correction:** a fresh re-emit + FSMGen sweep showed the conflict was NOT LPI-only — the AXI/AHB/AXI-Stream wire golds + LTI + NVMe were ALL failing on it (the cached `.isf` were byte-identical to fresh AND already FAIL); the fix takes **6 docs FAIL→PASS**, 0 PASS→FAIL, 100/107 `.isf` byte-identical, post-fix 97/107 `.isf` PASS. The combined AXI+ACE `ihi0022_h_c` stays FAIL on the orthogonal pre-existing `(port expr)` grammar (Non-Goal).
 - **Lever F — ISF enum value-literal emit-gate — ✅ DONE `2026-06-23` (`KG-ISF-COMPLETENESS.2a.iv`).** HBM2's `.isf` had failed FSMGen strict on `TABLE.REPAIR_LANE_8` value token `1000`. FSMGen rejects a bare token of only `0`/`1` digits with length >= 4 (an un-qualified binary literal — verified by value sweep: `1000`/`1111` fail, `69152`/`999`/`4'b1000` pass); HBM2's REPAIR_LANE values are binary codes mis-read as bare decimals in a mega-conflated `TABLE`. The emitter now drops an enum carrying such a value to an `isf_enum_value_literal_*` residual (honest residual over fabricating a radix). HBM2 now FSMGen `--strict --check` **success / 0 diagnostics** (only `TABLE` dropped; `EXTEST_RX`/`DWORD_MISR` kept); ONLY HBM2 `.isf` changes corpus-wide (wire golds + all enum docs byte-identical); `run_ci.sh` GREEN (lib 1706); `kg-bench` 156/156. KM `isf-enum-value-literal-emit-gate`. (The upstream mega-enum conflation stays an honest residual → a future extraction-precision lever.)
 
-**Running strict tally (post-`.2.42`, measured on the current converged output set):** `adapt` emits one
+**Running strict tally (post-`.2.43`, measured on the current converged output set):** `adapt` emits one
 primary-actor `.isf` per renderable document. The cache now contains **66 current `.isf`: 66 PASS / 0 FAIL**;
-USB #33, USB4 #34, USB4 Connection Manager #35, CoreSight Base System #36, AArch64 External Debug #37, Introducing CoreSight #38, and the OpenCAPI Ready #39, Certified #40, AFU Address Space Usage #41, and Certified Definition #42 documents are honestly blocked and emit none. This confirms both that the grammar frontier remains closed and that
+USB #33, USB4 #34, USB4 Connection Manager #35, CoreSight Base System #36, AArch64 External Debug #37, Introducing CoreSight #38, and the OpenCAPI Ready #39, Certified #40, AFU Address Space Usage #41, Certified Definition #42, and Ready Definition #43 documents are honestly blocked and emit none. This confirms both that the grammar frontier remains closed and that
 strict syntax is not a semantic-fidelity oracle. **Levers A, B, C, F + the rule-value gate all ✅ resolved:** Lever B (module-name HDL-sanitization, `.2a.iii`); Lever A (value width-alignment, `ISF-VALUE-WIDTH-EMIT.2`, re-verified clean `2026-06-23`); Lever F (enum value-literal emit-gate, `.2a.iv`, HBM2 strict-clean); **Lever C (unconditional-rule-overlap conflict residual, `.2a.v`, `2026-06-23` — 6 docs FAIL→PASS incl. all 3 wire golds + LPI/LTI/NVMe, 0 regressions)**; **`.2a.vi` rule-drive-value validity gate (`2026-06-23` — closed the last AXI+ACE `ihi0022_h_c` `(port expr)` FAIL by residualizing its 4 prose-valued loopback rules)**. **The ISF-emit strict-FAIL frontier is fully CLOSED — every renderable doc emits FSMGen-`--strict`-clean `.isf`.** **Surfaced lever D (upstream/non-emitter, now seen on 4 docs):** non-AMBA table/signal recognition — Wishbone-style `*_O`/`*_I` suffix-notation + prose signal-lists, OpenCAPI-style packet/command tables left `unknown` (219/246), and the RISC-V-IOMMU/VT-d in-memory STRUCTURE tables — a `PDF-VARIANT-DIGESTION` signal/table-recall family (kin to the parked `.9.10`). **Surfaced lever E (#27 eMMC — KG-precision, NOT emitter):** **agent-identity precision for descriptive-prose / non-AMBA specs** — fresh Docling of prose-heavy specs mints ~90+ phantom sentence-fragment actors (`host has`/`host to`/`cache in`/`B write`) the `.1a`/`.1b` gates (measured clean on AMBA docs) don't catch; needs its OWN owned `KG-ISF-COMPLETENESS` leaf (probe-first, structural gates not denylists — owner steer). eMMC itself remains ISF-unaffected; USB #33's semantic-trust repair is now closed and is not a syntax strict-FAIL. Watch the long-tail for width-align (A) / rule-conflict (C) / non-AMBA-table-recall (D) / prose-actor-precision (E) / enum-value-literal (F) recurrence to scope those.
 
 **PHASE FINDING (#22, the already-current-binary-equivalent class is now the RULE, not the exception):** a one-pass survey of the 35 remaining normalized-missing docs' persisted evidence (`2026-06-23`) shows the register-heavy ones the frontier had flagged as "genuinely pre-`.10`-stale" are ALREADY current — CoreSight SoC-600 ×3 = 597/631/833 `register_records`, AMD-IOMMU `48882` = 217 `message_field_records`, Intel VT-d = 103 registers — because their evidence was rebuilt from the retained `source_ir.json` before the `normalized/` bundle was reclaimed (the #21/#22 class). So the marquee-jump phase (SMMU/GIC/MMU/DTI/CHI-C2C) is effectively complete; the remaining ~35 slices are predominantly **bundle-restoration + current-binary confirmation + honest-absence / Lever-D-recall documentation**, which is still genuine corpus-coverage work (a doc that depends only on a retained `source_ir.json` is one disk-reclaim away from losing its evidence; restoring `normalized/` makes it rebuildable). A true pre-`.10`-stale jump remains possible in the long tail but is now the exception.
 
 ## Changelog
 
+- `2026-08-10`: `.2.43` DATA/CODE/DOC DONE. One guarded Ready Definition ingest peaks at 62% sampled memory and
+  produces 15 pages / six visuals / three tables / 30 sections / 169 elements. Source 171→169 removes two
+  flattened diagram labels; Evidence 176→173 additionally removes synthetic `Signal DL is width 1.`. Completed
+  children retire generic phase/gate scaffolds; final SemanticIR has three actors / zero interfaces/phases/gates,
+  IntentIR has 19 behaviors / 25 constraints, and the adapter blocks only on no signals. Twelve hashes, two
+  cascades, 42/42 project paths, WIRE/I2C/SWD, KG 156/156, 66/66 strict, book/doctrine/path/locality, exact
+  nine-file / 392462-byte cleanup, and zero residue pass. Recording commit subject:
+  `CORPUS-COVERAGE.2.43 — sign off OpenCAPI Ready Definition refresh`. Frontier → `.2.43a.ii` typed-phase audit.
 - `2026-08-10`: `.2.43b` PROBE/CODE/DOC DONE. The 27,168-record census proves the legacy projection creates
   21,206 behaviors / 642,401 actor assignments and 5,974 constraints / 366,087 interface assignments with zero
   rendered-ISF or executable value. New SemanticIR emits `gates: []`; old records round-trip but Intent ignores

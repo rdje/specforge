@@ -55,17 +55,17 @@ re-ingest means the refreshed EvidenceIR and downstream stages were built and ve
 not undo that work. Report normalized retention separately when discussing whether evidence can be rebuilt again
 without another Docling ingest.
 
-The current measured example (`2026-08-10`) is 42 completed current-binary refreshes with 14 real chip-spec
-documents left in the refresh queue. The local artifact tree separately contains 80 SourceIR files, 11 retained
+The current measured example (`2026-08-10`) is 43 completed current-binary refreshes with 13 real chip-spec
+documents left in the refresh queue. The local artifact tree separately contains 80 SourceIR files, 12 retained
 normalized bundles, 80 EvidenceIR files, and 79 SemanticIR→IntentIR→adapter chains. The newest bundle belongs to
-the 15-page OpenCAPI 3.0 Certified Definition: all 15 page image paths, 15 layout paths, eight visual paths, and
-eight caption-source references are final, present, and repository-relative. The explicitly authorized source
-PDF remains absolute and is labeled `external_input`; source and repository are on the same SSD. Two guarded CPU
-ingests peaked at 18% and 33% sampled system memory used and reproduce eight visuals, five tables, 31 sections,
-and 151 source elements. The stale 155→151 delta removes exactly four flattened diagram labels: `DL` twice,
-`TL/`, and `OpenCAPI 3.0 Host TL/`. EvidenceIR 172→167 additionally removes only the synthetic glossary-derived
-statement `Signal DL is width 1.`. The bundle's presence is cache-retention status, not what makes that refresh
-complete; complete verified downstream artifacts are the durable progress measure.
+the 15-page OpenCAPI 3.0 Ready Definition: all 15 page image paths, 15 layout paths, six visual paths, and six
+caption-source references are final, present, and repository-relative. The explicitly authorized source PDF
+remains absolute and is labeled `external_input`; source and repository are on the same SSD. One guarded CPU
+ingest peaked at 62% sampled system memory used and produced six visuals, three tables, 30 sections, and 169
+source elements. The stale 171→169 delta removes exactly two flattened diagram labels: `TL/` and
+`OpenCAPI 3.0 Host TL/`. EvidenceIR 176→173 additionally removes only the synthetic glossary-derived statement
+`Signal DL is width 1.`. The bundle's presence is cache-retention status, not what makes that refresh complete;
+complete verified downstream artifacts are the durable progress measure.
 
 ## Why this stage matters
 
