@@ -240,10 +240,11 @@ Five active program groups support that north star:
   normative/temporal capture frontier; two repaired cascades reproduce eight downstream hashes and final
   committed-binary validation pins all 12 artifact/report hashes. Corpus is 46 done / ten remaining at 80
   SourceIR / 18 normalized / 80 EvidenceIR / 79 downstream chains; all 61 current emitted ISFs are strict-clean.
-  `.2.47` now owns the 46-page Cortex-A76 Software Optimization Guide, the smallest of ten remaining candidates
-  at 260 retained elements / 637434 source bytes. Its same-SSD source, current release, and exact stale chain are
-  authenticated read-only; the next action is guarded ingest and deterministic cascade after the ownership
-  commit. Separately,
+  `.2.47` now owns the 46-page Cortex-A76 Software Optimization Guide, the smallest of ten remaining candidates.
+  Its first deterministic cascade removes a stale 537-output instruction adapter but exposes child `.2.47a`:
+  all-header-row vocabulary contamination and substring `ns` unit matching create 151 value-empty timing records
+  from instruction-performance tables. The child owns a corpus census and generic structural timing-authority
+  repair before parent signoff. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

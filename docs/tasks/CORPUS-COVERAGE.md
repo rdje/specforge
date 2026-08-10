@@ -102,7 +102,8 @@ today's ephemeral normalized-directory count.
   commit per `COMMIT.md` after each doc. No fabrication / ADR-0006 unchanged (this is a re-run of existing
   deterministic extractors, not new code); WIRE-BASED-100 + register/wire golds + `kg-bench` stay green
   (orthogonal — the 4 gold docs are not re-ingested). Record per-doc before/after typed-surface deltas here.
-- ID: `CORPUS-COVERAGE.2.47` · Status: `in_progress` (`2026-08-10`, DATA/DOC) · Goal: re-ingest the
+- ID: `CORPUS-COVERAGE.2.47` · Status: `in_progress` (`2026-08-10`, DATA/CODE/DOC) · Children: `.2.47a`
+  timing-table structural-authority repair (in progress). Goal: re-ingest the
   46-page Cortex-A76 Software Optimization Guide
   (`pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide`) from the owner-authorized same-SSD host
   library with the current release, then rebuild and validate EvidenceIR→SemanticIR→IntentIR→ISF without
@@ -136,6 +137,43 @@ today's ephemeral normalized-directory count.
   Cortex, document, mnemonic, or optimization-specific exception is authorized by this data leaf.
 - **PENDING — LOCKSTEP** — task state, per-document row, live docs, mdBook, resume pointer, and generated chain
   agree; delete the exact rollback/task bundle only after verification and the durable recording commit.
+- ID: `CORPUS-COVERAGE.2.47a` · Status: `in_progress` (`2026-08-10`, PROBE/CODE/DATA/DOC) · Goal: repair the
+  universal timing-table structural-authority defect exposed by #47 before accepting its cascade. Fresh SourceIR
+  classifies 11 Cortex-A76 instruction-performance tables as `timing_parameter` and current EvidenceIR emits 151
+  `TimingConstraintRecord`s, apparently a 3→151 recall gain. Inspection falsifies that interpretation: records such
+  as `Load, immed offset` have no min/typ/max value and duplicate the operation name into `unit`.
+
+  The failure crosses two producer seams. Docling marks the first row-label cell of data rows as a header cell;
+  `classify_table_kind` flattens *all* `header_rows`, so instruction data contaminates column-header vocabulary.
+  Substring matching then lets mnemonic/text fragments supply `min` and lets `instruction` supply `ns`, creating
+  false timing authority. Downstream, `synthesize_timing_constraints` searches the real first header row but uses
+  the same broad `contains("ns")`; `Instruction group` is therefore selected as the unit column, and the builder
+  emits a record even when every min/typ/max cell is absent. This is a shared structural bug, not an ARM or
+  document exception. The genuine `Exec latency` / `Execution throughput` columns do not fit the current
+  min/typ/max timing schema and must remain an honest residual until a separately typed performance surface owns
+  them.
+
+  First measure the complete retained SourceIR/EvidenceIR population: distinguish real timing tables from
+  contaminated instruction/optimization tables, enumerate value-empty timing records and every consumer, and
+  calibrate positive/negative headers. Then constrain classification to actual column-header structure with
+  token-aware unit vocabulary, require a recognized value-bearing timing schema before emitting constraints,
+  add paired trapped-row/normal/body-row regressions, and replay every affected real document. No vendor,
+  document, mnemonic, table id, caption phrase, or expanding denylist is permitted.
+
+### Pending signoff criteria — `CORPUS-COVERAGE.2.47a`
+
+- **PENDING — REPRODUCE / MEASURE** — census all retained timing tables/records, pin the false-positive and true
+  timing populations, and reproduce both column-header contamination and `ns`-substring unit selection.
+- **PENDING — ROOT CAUSE (WHY + WHERE)** — prove the exact source-classifier and EvidenceIR authority seams and
+  reject any fix that merely denies ARM mnemonics, guide titles, or observed table ids.
+- **PENDING — IMPLEMENT / VERIFY** — use structural column-header/token/value authority, retain trapped genuine
+  min/typ/max rows, remove #47's value-empty false constraints, and replay every measured affected document.
+- **PENDING — NO REGRESSION** — pass focused SourceIR/EvidenceIR tests, all affected real cascades, WIRE/I2C/SWD,
+  KG, full CI, FSMGen strict, mdBook, doctrines, persisted paths, and locality.
+- **PENDING — GENERICITY** — production policy contains only normalized header tokens, row structure, and typed
+  value requirements; no proper name, vendor, document, instruction, table id, or growing token denylist.
+- **PENDING — LOCKSTEP** — code/tests, parent/child tasks, measurement, durable fact, live docs, mdBook, and resume
+  pointer agree before parent `.2.47` resumes from the repaired committed binary.
 - ID: `CORPUS-COVERAGE.2.46` · Status: `done` (`2026-08-10`, DATA/CODE/DOC) · Children: `.2.46a`
   parenthetical `data`-head signal-authority repair (done). Goal: re-ingest the 40-page
   OpenCAPI Discovery Configuration specification (`opencapi_discovery_configuration_v201`) from the
@@ -1482,8 +1520,8 @@ live ledger to 61 records / 1,303 lines without loss.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: `CORPUS-COVERAGE.2.47` — authenticate the exact stale-chain rollback, then run guarded CPU ingest and
-  the deterministic current-binary cascade for the Cortex-A76 Software Optimization Guide.
+- Frontier: `CORPUS-COVERAGE.2.47a` — census timing tables/value-empty records corpus-wide, implement a structural
+  timing-authority boundary, and replay every affected real document before parent #47 resumes.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**39 refreshes done after #39;
   17 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#39: #29/#31 CHI-C2C marquee message-field refreshes,
@@ -1601,6 +1639,12 @@ strict syntax is not a semantic-fidelity oracle. **Levers A, B, C, F + the rule-
 
 ## Changelog
 
+- `2026-08-10`: `.2.47a` PROBE/CODE/DATA/DOC ACTIVATED after the first owned #47 cascade from clean tracked
+  commit `4082c00c`. Eleven instruction-performance tables produce 151 apparent timing constraints, but records
+  lack min/typ/max values and duplicate operation names into `unit`. Root cause is all-header-row vocabulary
+  contamination plus substring `ns` matching `Instruction group`, followed by value-free emission. Frontier →
+  complete corpus census, structural/token-aware/value-bearing repair, affected-document replay, then parent
+  `.2.47` final cascade. Recording subject: `CORPUS-COVERAGE.2.47a — own timing-table authority repair`.
 - `2026-08-10`: `.2.47` DATA/DOC OWNED from clean tracked commit `c631840d`. The Cortex-A76 Software
   Optimization Guide is the smallest of ten remaining candidates at 46 pages / 260 elements / 637434 source
   bytes. Same-SSD source `8358c5ae…3a22`, release `c4072c33…a1b05`, and the stale seven-file / 2208588-byte chain

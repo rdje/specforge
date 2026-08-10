@@ -21,15 +21,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.47`; Cortex-A76 Software Optimization Guide current-binary refresh.
-- Current state: refresh #46 is committed and its exact task bundle is removed with zero residue. Read-only queue
-  selection identifies the 46-page / 260-element / 637434-byte Cortex-A76 optimization guide as the smallest of
-  ten remaining real candidates. Its portable same-SSD source hashes to `8358c5ae…3a22`; release
-  `c4072c33…a1b05` and a seven-file / 2208588-byte stale chain are authenticated. The stale chain has 971 Evidence
-  statements but zero relations, while mixed-vintage grouping emits 228 interfaces and a 537-output
-  instruction-name `consumer.isf`; this is a baseline to investigate, not accepted topology.
-- Next action: commit `.2.47` ownership, copy and byte-verify its exact stale chain under repository-local task
-  storage, then run guarded CPU ingest and the deterministic SourceIR-through-adapter cascade.
-- In-flight uncommitted: `.2.47` ownership/task-frontier documentation only. No generated artifact changed and no
-  background job is running.
+- Active unit: `CORPUS-COVERAGE.2.47a`; timing-table structural-authority repair exposed by parent #47.
+- Current state: parent #47 owns an exact seven-file / 2208588-byte rollback. Two guarded ingests reproduce 46
+  pages / 71 visuals / 68 tables / 68 sections / 249 elements and one SourceIR hash with 52–64% sampled memory
+  free. The first cascade correctly removes the stale 537-output instruction adapter, but exposes a distinct
+  shared defect: 11 instruction-performance tables create 151 apparent timing constraints with no min/typ/max;
+  operation names are duplicated into `unit`. Source classification flattens trapped data rows into header
+  vocabulary, and substring `ns` matches `Instruction group`; EvidenceIR then emits without a typed value.
+- Next action: commit `.2.47a` ownership, census the full retained corpus for true/false timing populations, then
+  implement and replay a generic column-header/token/value-authority repair before parent #47 resumes.
+- In-flight uncommitted: `.2.47a` ownership/task-frontier documentation plus ignored parent generated/rollback
+  evidence. No background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.
