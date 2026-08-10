@@ -194,7 +194,7 @@ contract, and the containment program is closed.
 
 The same architecture was measured independently for active `CORPUS-COVERAGE`. Its pre-migration source was
 2,308 lines / 277,636 bytes / 4,746 maximum content-line bytes, with only 892 bytes left at the direct
-task-evidence ceiling. The guarded root-last writer has replaced that monolith with a 65-line / 2,822-byte current
+task-evidence ceiling. The guarded root-last writer has replaced that monolith with a 65-line / 2,819-byte current
 root and a 75-line / 4,349-byte index. Seven semantic parts total 2,357 lines / 279,157 bytes; every one remains
 below warning. They reconstruct all seven source regions byte-for-byte and route all 48 formal ids: 41
 completion-subject ids are `legacy` routes and seven formal containers are source-backed `structural` routes.
@@ -204,7 +204,11 @@ archive capsule. `doctrine/live_document_size/corpus_task_evidence.json` now bin
 manifest, index, parts, capsule, Git/source identity, fixed limits, and migration metadata. Three dedicated
 live-document surfaces enforce index, part-collection, and exact archive bounds; all 51 resulting surfaces pass.
 The repository-local template was removed after the transaction. Refresh #49 remains a separately owned product
-slice after the independent clean-clone/continuation audit closes containment.
+slice. An independent same-SSD no-hardlink clone authenticated `67e726f1`, the source capsule, seven regions,
+48 routes, index, manifest, and all doctrines. A temporary eighth active part then made `CORPUS-COVERAGE.2.49`
+an eligible `post_migration` route; the focused contract and composed 720-file live-document gate passed without
+warnings from the corpus surfaces. The clone returned to the exact committed tree and was removed, so containment
+is closed and refresh #49 can begin only after its separate product leaf is created.
 
 Post-migration sealing is Git-backed: a part's final content commit lands first, then a following state-only
 transaction records that ancestor commit/blob before any later part accepts work. The migrated legacy payloads

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > how many registers can SpecForge compose a faithful ISF reset for (1508 strictly composable corpus-wide; 1339 fit the current emit width; 446 have V>0 — the real .isf diff)
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > how many retained documents depended entirely on heuristic SemanticIR interfaces
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
@@ -296,5 +298,3 @@
   > is tier-agreement a good confidence axis for conformal calibration
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > must a post-build signal_constraints replace re-apply build-path invariants
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > per-wire-doc direction flip results (APB input 2->12, AXI 4->52, SWD 0->1, AHB residual)

@@ -50,7 +50,7 @@ The author template is linked separately and is never classified as active work.
 | `CORPUS-COVERAGE` | `active` | build every ingested doc through to IntentIR/.isf + keep downstream stages non-stale | [open](tasks/CORPUS-COVERAGE.md) |
 | `CORPUS-HARDENING` | `active` | harden SpecForge against the real chip-doc corpus (AMBA core first) | [open](tasks/CORPUS-HARDENING.md) |
 | `CORPUS-PATTERN-REUSE` | `active` | reuse extraction patterns across PDFs, clustered by derived vendor/layout fingerprint | [open](tasks/CORPUS-PATTERN-REUSE.md) |
-| `CORPUS-TASK-EVIDENCE-CONTAINMENT` | `active` | keep the active corpus task bounded and lossless | [open](tasks/CORPUS-TASK-EVIDENCE-CONTAINMENT.md) |
+| `CORPUS-TASK-EVIDENCE-CONTAINMENT` | `done` | keep the active corpus task bounded and lossless | [open](tasks/CORPUS-TASK-EVIDENCE-CONTAINMENT.md) |
 | `CVE-PROSE-EXTRACTION` | `done` | wire a live prose→ActorContract extractor into the R16 constrained-verified surface | [open](tasks/CVE-PROSE-EXTRACTION.md) |
 | `DEMPSTER-FUSION-COMBINER` | `done` | corroboration-boosting confidence fusion (Dempster's rule) | [open](tasks/DEMPSTER-FUSION-COMBINER.md) |
 | `DOC-INTENT-TAXONOMY` | `active` | chip-spec document intent taxonomy → per-category complete ISF synthesis | [open](tasks/DOC-INTENT-TAXONOMY.md) |

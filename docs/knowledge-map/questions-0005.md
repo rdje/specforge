@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > per-wire-doc direction flip results (APB input 2->12, AXI 4->52, SWD 0->1, AHB residual)
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
   > qwen2.5vl vs qwen3-vl which model
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
@@ -295,5 +297,3 @@
   > what happened in OpenCAPI Discovery Configuration refresh 46
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > what happened to the AArch64 External Debug Guide agent.isf
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > what happened to the CoreSight Base System agent.isf

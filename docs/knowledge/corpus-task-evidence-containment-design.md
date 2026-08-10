@@ -15,6 +15,7 @@ answers:
   - "why was corpus task maximum line width corrected from 4747 to 4746"
   - "is the corpus task migration contract locked"
   - "has the corpus task evidence migration landed"
+  - "did a clean clone prove corpus task continuation after migration"
 date: 2026-08-10
 status: current
 tags: [documentation, containment, task-tree, corpus-coverage, continuity]
@@ -61,3 +62,9 @@ index, seven parts totaling 2,357 lines / 279,157 bytes, a 488-line manifest, an
 parts are below warning and every source region reconstructs byte-for-byte. The unconditional driver invokes this
 contract separately from the earlier active-task contract, while three dedicated live-document surfaces govern
 the corpus index, parts, and archive terminal.
+
+Containment closed after an independent same-volume no-hardlink clone at `67e726f1` reproduced the migrated report
+and passed all six doctrines. A temporary eighth active part, eligible `CORPUS-COVERAGE.2.49` post-migration route,
+updated root/index/manifest/contract, and explicit part-surface registration passed the 720-file composed live gate.
+The clone's restored index tree equaled `HEAD^{tree}` at `8bab2dd341807e4767a96f0d1ee06ff962d37132`, status was
+empty, and the exact fixture was removed. No refresh #49 product work occurred; its separate task leaf is next.

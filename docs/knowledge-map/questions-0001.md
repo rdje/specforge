@@ -128,6 +128,8 @@
   > did SB USB and USB4 survive as USB4 Connection Manager interface signals
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
   > did SpecForge adopt the 2026 08 09 FSMGen derived state containment revision
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > did a clean clone prove corpus task continuation after migration
 - [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
   > did a second annotator validate seed_apb.json
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
@@ -296,5 +298,3 @@
   > does every SWD protocol record receive an ISF adapter disposition
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
   > does every temporal_rule reach the .isf or a residual
-- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
-  > does lowering cat-3 topology need only an ISF construct or also a multi-actor emit (also a multi-actor emit — ISF is per-actor / one .isf = one FSMGen module and SpecForge's emit is single-initiator-actor; a declarative cross-component netlist is an architectural change, decided WITH FSMGen only after capture-recall clears the bar — not today)

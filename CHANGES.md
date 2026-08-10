@@ -1,3 +1,13 @@
+### CORPUS-TASK-EVIDENCE-CONTAINMENT.4b — prove clean recovery and continuation
+
+- A same-SSD `--no-hardlinks` clone at `67e726f1` reproduced the exact migrated capsule/root/parts/index/manifest;
+  after the local FSMGen gitlink checkout supplied its required evidence, all six doctrines passed.
+- A temporary eighth active part made `CORPUS-COVERAGE.2.49` an eligible `post_migration` route. Its root,
+  49-route index/manifest, contract, and explicit surface registration passed the focused and 720-file live gates.
+- Restoration produced the exact `8bab2dd3…` HEAD tree with empty staged/unstaged status; the authenticated clone
+  was removed and no residue remains. Main-tree full CI passes; containment is closed, product status stays 48/56,
+  and refresh #49 is next.
+
 ### CORPUS-TASK-EVIDENCE-CONTAINMENT.4a — migrate corpus task evidence losslessly
 
 - The guarded root-last writer replaced the 2,308-line / 277,636-byte mixed-role monolith with a truthful

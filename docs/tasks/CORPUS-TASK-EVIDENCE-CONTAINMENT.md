@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CORPUS-TASK-EVIDENCE-CONTAINMENT`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R15e`/`R16` continuity prerequisite for `CORPUS-COVERAGE.2`
 - Created: `2026-08-10`
 - Last updated: `2026-08-10`
@@ -39,7 +39,7 @@ evidence, bounded retrieval, and an unambiguous write transaction for refresh #4
 ## Task Tree
 
 - ID: `CORPUS-TASK-EVIDENCE-CONTAINMENT`
-  Status: `active`
+  Status: `done` (`2026-08-10`, CODE/DOC/DATA/VERIFICATION)
   Goal: keep the active corpus task bounded, lossless, truthful, and ready for refresh #49
   Children: `CORPUS-TASK-EVIDENCE-CONTAINMENT.1`, `CORPUS-TASK-EVIDENCE-CONTAINMENT.2`,
   `CORPUS-TASK-EVIDENCE-CONTAINMENT.3`, `CORPUS-TASK-EVIDENCE-CONTAINMENT.4`
@@ -90,7 +90,7 @@ evidence, bounded retrieval, and an unambiguous write transaction for refresh #4
   Commit: `CORPUS-TASK-EVIDENCE-CONTAINMENT.3b — lock corpus task migration contract`
 
 - ID: `CORPUS-TASK-EVIDENCE-CONTAINMENT.4`
-  Status: `active`
+  Status: `done` (`2026-08-10`, DATA/DOC/VERIFICATION)
   Goal: migrate atomically, verify losslessness and bounded continuity, close containment, and return to refresh #49
   Children: `CORPUS-TASK-EVIDENCE-CONTAINMENT.4a`, `CORPUS-TASK-EVIDENCE-CONTAINMENT.4b`
 
@@ -105,18 +105,21 @@ evidence, bounded retrieval, and an unambiguous write transaction for refresh #4
   Commit: `CORPUS-TASK-EVIDENCE-CONTAINMENT.4a — migrate corpus task evidence losslessly`
 
 - ID: `CORPUS-TASK-EVIDENCE-CONTAINMENT.4b`
-  Status: `pending`
+  Status: `done` (`2026-08-10`, DOC/VERIFICATION)
   Goal: independently reproduce the committed migration and prove bounded future continuation before closure
   Acceptance: a same-volume no-hardlink clean clone verifies Git/capsule/source/region/route/manifest identity,
   all doctrines, and one temporary post-migration active-part/eligible-frontier append with exact cleanup
-  Verification: pending
-  Commit: pending
+  Verification: clean clone at `67e726f1`; same device `16777240`; distinct top-level object inodes/link count one;
+  exact migrated report; all six doctrines with local same-SSD FSMGen checkout; temporary eighth active part,
+  eligible `CORPUS-COVERAGE.2.49` route, 720-file live gate; exact index-tree restoration; zero clone residue;
+  main-tree focused/live/book gates and full CI
+  Commit: `CORPUS-TASK-EVIDENCE-CONTAINMENT.4b — prove clean recovery and continuation`
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `CORPUS-TASK-EVIDENCE-CONTAINMENT.4b` | `pending` | Reproduce the committed migration and prove one real bounded continuation before closure. |
+| — | None | `done` | Containment is closed; the next separately owned product slice creates `CORPUS-COVERAGE.2.49`. |
 
 ## Locked Source Boundary
 
@@ -158,6 +161,9 @@ measure and decide the actual destinations. `git diff -- docs/tasks/CORPUS-COVER
 - `2026-08-10`: `.4a` final diff hygiene caught a terminal scaffold blank line on every generated semantic part.
   The generic writer now removes only that final separator and its positive self-test rejects recurrence; source
   payload bytes and capsule identity remain unchanged, while part hashes/metrics were resealed before final gates.
+- `2026-08-10`: `.4b` used no-hardlink clones of SpecForge and the required FSMGen gitlink, both from the SSD.
+  The clean boundary passed all doctrines; an eighth active part plus eligible post-migration `.2.49` route passed
+  the focused and composed live gates, after which the index tree was restored exactly and the clone was removed.
 
 ## Open Questions
 
@@ -176,6 +182,7 @@ measure and decide the actual destinations. `git diff -- docs/tasks/CORPUS-COVER
 | `2026-08-10` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3a` | Perl syntax; 39/39 neutral cases; existing real contract; exact source/destination absence; live-document gate; task/Knowledge Map/doctrine gates; mdBook test/build; full CI | pass; 6,400 cap and source-backed structural routes fail closed |
 | `2026-08-10` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3b` | JSON/shell syntax; real 7-region / 48-route source-locked report; 39/39 neutral cases; unconditional driver; exact source/destination absence; task/Knowledge Map/doctrine gates; mdBook test/build; full CI | pass; complete corpus migration contract locked before mutation |
 | `2026-08-10` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.4a` | guarded root-last writer; migrated report; independent source reconstruction/route-set proof; template/transaction residue; 51 live surfaces; task/Knowledge Map/doctrine gates; mdBook test/build; full CI | pass; exact source retained and bounded current/task authorities installed |
+| `2026-08-10` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.4b` | same-volume/no-hardlink identity; migrated report; six doctrines; temporary eighth active part + eligible `.2.49` route; 720-file live gate; tree restoration; residue census; main-tree full CI | pass; clean recovery and bounded continuation independently proven |
 
 ## Commit Log
 
@@ -186,6 +193,7 @@ measure and decide the actual destinations. `git diff -- docs/tasks/CORPUS-COVER
 | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3a` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3a — support exact structural task routes` | Neutral checker supports bounded exact-wide rows and formal container routes. |
 | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3b` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3b — lock corpus task migration contract` | Complete source lock and unconditional verifier invocation. |
 | `CORPUS-TASK-EVIDENCE-CONTAINMENT.4a` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.4a — migrate corpus task evidence losslessly` | Guarded root-last migration and resulting-surface activation. |
+| `CORPUS-TASK-EVIDENCE-CONTAINMENT.4b` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.4b — prove clean recovery and continuation` | Independent recovery, continuation, and cleanup proof; closes the tree. |
 
 ## Changelog
 
@@ -199,6 +207,8 @@ measure and decide the actual destinations. `git diff -- docs/tasks/CORPUS-COVER
   contract unconditionally, and advanced the frontier to the guarded migration.
 - `2026-08-10`: `.4a` installed the bounded root, seven semantic parts, route index/manifest, and exact capsule;
   independent reconstruction is exact and the frontier advances to clean-clone/continuation proof.
+- `2026-08-10`: `.4b` reproduced the committed tree from a same-volume no-hardlink clone, proved a bounded real
+  post-migration `.2.49` continuation, restored and removed the fixture exactly, and closed containment.
 
 ### Acceptance Checklist (enforced) — `CORPUS-TASK-EVIDENCE-CONTAINMENT.2`
 
@@ -259,3 +269,19 @@ measure and decide the actual destinations. `git diff -- docs/tasks/CORPUS-COVER
   payload was reworded, no limit widened, and no document/vendor/product special case entered executable code.
 - [x] **LOCKSTEP** — bounded root, semantic parts, exact capsule, contract, surfaces, roadmap, fact, task, changes,
   mdBook, and memory agree; `.4b` alone owns the clean-clone/future-continuation proof before closure.
+
+### Acceptance Checklist (enforced) — `CORPUS-TASK-EVIDENCE-CONTAINMENT.4b`
+
+- [x] **REPRODUCE / MEASURE** — clone `HEAD` equals `67e726f1`; repository device is `16777240`; source/clone
+  commit objects have distinct inodes `19505743`/`19507290` and link count one; the migrated report is exact.
+- [x] **ROOT CAUSE (WHY + WHERE)** — a plain clone omits the FSMGen submodule worktree, so five feedback-evidence
+  paths fail honestly; a no-hardlink checkout from the existing same-SSD FSMGen repository supplies the gitlink.
+- [x] **ADDRESSED (verified)** — all six doctrines pass in the clean clone; a temporary eighth active part,
+  `post_migration` `.2.49` route, eligible frontier, root, 49-route index/manifest, and surface registration pass.
+- [x] **NO REGRESSION** — the proof keeps capsule SHA `5d7acb0c…123f`; its 720-file live gate passes; afterward
+  index tree `8bab2dd3…` equals `HEAD^{tree}`, staged/unstaged status is empty, the exact clone is removed, and
+  main-tree full CI passes 1,798 tests / five ignored plus rustdoc, mdBook, and final locality.
+- [x] **GENERICITY** — the proof uses the real data contract and normal post-migration fields; no product ingest,
+  task-specific executable branch, threshold widening, off-volume cache, network source, or committed fixture exists.
+- [x] **LOCKSTEP** — task, roadmap, current root, changes, fact card, mdBook, task catalog, and memory agree that
+  containment is closed and a separately owned `CORPUS-COVERAGE.2.49` product slice is next.

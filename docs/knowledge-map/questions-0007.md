@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > what is the model-misspelled-subject / phantom-subject defect class
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
   > what is the must_be_value + VALID typed convention
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
@@ -296,5 +298,3 @@
   > where is the shared 0.6 fingerprint clustering threshold defined (DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD)
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > where is the shared section-heading container-walk that .10f and .10g both use
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > where is the spawn+poll+kill memory guard in materialize_pdf

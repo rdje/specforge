@@ -32,7 +32,7 @@ ISF pipeline, keep completed chains non-stale, and record extraction gaps withou
 
 No eligible product leaf.
 
-After containment closes, the next clean product slice must create and own `CORPUS-COVERAGE.2.49`, select one of
+Containment is closed. The next clean product slice must create and own `CORPUS-COVERAGE.2.49`, select one of
 the eight remaining real documents from current corpus evidence, and record its exact source and stale-chain
 boundary before any ingest or artifact mutation.
 

@@ -257,7 +257,9 @@ Five active program groups support that north star:
   current emitted ISFs strict-clean. The corpus task record now has a 65-line bounded current root over seven
   semantic parts, a 48-route index/manifest, and an exact 2,308-line source capsule. The guarded migration owned by
   [`CORPUS-TASK-EVIDENCE-CONTAINMENT`](docs/tasks/CORPUS-TASK-EVIDENCE-CONTAINMENT.md) is lossless and below all
-  local warnings; its independent clean-clone/continuation audit must close before refresh #49 can be owned.
+  local warnings. Its same-SSD no-hardlink clean clone passed every doctrine, a temporary eighth active part proved
+  the eligible post-migration #49 route through the composed live gate, and exact restoration left no residue.
+  Containment is closed; the next separately owned product slice is refresh #49.
   Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID

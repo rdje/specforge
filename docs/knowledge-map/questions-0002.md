@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
+  > does lowering cat-3 topology need only an ISF construct or also a multi-actor emit (also a multi-actor emit — ISF is per-actor / one .isf = one FSMGen module and SpecForge's emit is single-initiator-actor; a declarative cross-component netlist is an architectural change, decided WITH FSMGen only after capture-recall clears the bar — not today)
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > does malformed page metadata preserve the last good normalized bundle
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
@@ -296,5 +298,3 @@
   > how does an unknown-kind Continued from previous page table fragment get a kind
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > how does build_transaction_phases distinguish a named phase from phase error or phase tolerance
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > how does collapse_section_header_register_identity decide same-register vs different-register
