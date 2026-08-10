@@ -121,6 +121,7 @@
 - [nli-gate-real-apb-validation](nli-gate-real-apb-validation.md)
 - [nli-intent-gate](nli-intent-gate.md)
 - [nlp-coordination-already-handled](nlp-coordination-already-handled.md)
+- [normalized-bundle-retention-is-declared](normalized-bundle-retention-is-declared.md)
 - [offset-suffixed-dword-relative-bit-cells](offset-suffixed-dword-relative-bit-cells.md)
 - [opencapi-32g-phy-timing-without-interface-topology](opencapi-32g-phy-timing-without-interface-topology.md)
 - [opencapi-afu-address-note-refresh](opencapi-afu-address-note-refresh.md)

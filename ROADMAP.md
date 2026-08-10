@@ -278,7 +278,11 @@ Five active program groups support that north star:
   EvidenceIR without any re-ingest and drops two non-corpus scratch chains, leaving **78 documents at
   22/78/78/78 measured-current stages with 44/44 emitted ISFs strict-clean**. The emitted population fell 57 → 44
   because 14 documents' false heuristic interfaces collapsed to zero under current authority; the retired generic
-  gates and phases cost no renderability. The guarded migration owned by
+  gates and phases cost no renderability. `.2` then closes the tree by making retention itself accountable:
+  reclaiming a normalized bundle is no longer refresh routine, the retained set is declared in
+  `doctrine/chain_currency/retained_bundles.json`, and the same oracle fails closed on a vanished declared bundle
+  or an undeclared retained one — so the measurable population grows exactly one document per refresh.
+  The guarded migration owned by
   [`CORPUS-TASK-EVIDENCE-CONTAINMENT`](docs/tasks/CORPUS-TASK-EVIDENCE-CONTAINMENT.md) is lossless and below all
   local warnings. Its same-SSD no-hardlink clean clone passed every doctrine, a temporary eighth active part proved
   the eligible post-migration #49 route through the composed live gate, and exact restoration left no residue.

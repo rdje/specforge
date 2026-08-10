@@ -93,10 +93,11 @@ SourceIR exposes their current absolute runtime locations.
 
 Generated artifacts are not meant to grow forever without supervision.
 
-Two cleanup rules now define the normal lifecycle:
+Three rules now define the normal lifecycle:
 
 1. Re-ingesting the same PDF document key replaces that document's `normalized/` bundle atomically.
-2. `specforge clean` provides an explicit local reclamation command for rebuildable generated state.
+2. A document's `normalized/` bundle is **retained** after its ingest, and the retained set is declared.
+3. `specforge clean` provides an explicit local reclamation command for rebuildable generated state.
 
 The first rule matters because old page images, visual crops, and backend dumps can otherwise survive across reruns even after the current normalization no longer references them.
 `specforge` now stages PDF normalization into a sibling `normalized.staging/` tree and only swaps it into place after the backend succeeds.
@@ -105,15 +106,37 @@ That means:
 - stale leftovers from earlier runs do not accumulate inside `normalized/`
 - failed reruns do not destroy the last good normalized bundle
 
-The second rule matters because some generated artifacts are intentionally heavy.
-The default cleanup path is:
+### Normalized bundles are retained
+
+The second rule exists because retention is what makes a document *checkable*. Rebuilding `EvidenceIR`
+reads the document's promoted markdown, which lives inside `normalized/`; every later stage reads only
+the persisted JSON one stage upstream. So a document that still has its bundle can be replayed — and
+therefore proven current — from the beginning of the chain, while a document whose bundle was reclaimed
+is honestly reported as *unmeasurable* at that one stage until it is re-ingested.
+
+Reclaiming a bundle is no longer part of the routine. It is a deliberate, separately owned decision, and
+it is recorded: `doctrine/chain_currency/retained_bundles.json` names every document key whose bundle
+must be present, plus any reclamation with the leaf that authorized it and the reason. The
+`CHAIN-CURRENCY` doctrine compares that declaration with what is actually on disk and fails closed both
+ways — a declared bundle that has disappeared, and a bundle kept by an ingest that never recorded it.
+Each refresh therefore adds exactly one document to the checkable population.
+
+The cost is deliberately modest: the retained bundles are roughly 1.4 GB against several terabytes free,
+and the full corpus extrapolates to about 4.7 GB. See
+[Doctrine Enforcement](doctrine-enforcement.md) for how the check runs.
+
+### Explicit reclamation
+
+The third rule matters because some generated artifacts are intentionally heavy.
+The cleanup command is:
 
 ```bash
 cargo run --manifest-path Cargo.toml -- clean
 ```
 
-That dry-runs the heavyweight `generated/source_ir/*/normalized` bundles and reports reclaimable size.
+That dry-runs the heavyweight `generated/source_ir/*/normalized` bundles and reports reclaimable size — it never deletes anything without `--execute`.
 Add `--execute` to delete them, use `--scope document --document-key <key>` when you intentionally want a cold rebuild of one document's whole generated stage tree, or use `--scope all-generated --execute` when you intentionally want to discard the whole local `generated/` root and rebuild everything later.
+Reclaiming a bundle that the retention declaration still names will redden `CHAIN-CURRENCY`; update the declaration in the same task that decides to reclaim.
 
 ## Validation reports
 

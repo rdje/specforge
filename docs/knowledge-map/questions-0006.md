@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
+  > what does source_literal mean in the active task evidence contract
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > what does synthesize_signal_declarations do when the body is rotated
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what does the TASK-ACCEPTANCE check verify / why was my commit blocked
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what does the active task evidence checker verify
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
   > what does the active task migration roll back after a validation failure
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
@@ -54,6 +62,8 @@
   > what happened to the stale Cortex-A76 consumer.isf with 537 outputs
 - [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
   > what happened to the stale OpenCAPI CDR DDJ DL and DL3 ports
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > what happens if someone runs clean --scope source-normalized on a declared document
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > what happens to a page sidecar path when page images are not persisted
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
@@ -287,13 +297,3 @@
   > what is the constraint-subject-must-be-declared filter
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > what is the corpus coverage build-out (CORPUS-COVERAGE.0)
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what is the corpus distribution of purpose categories (21 wire / 8 guide high; 28 register-or-platform / 16 unresolved / 5 physical-link low; 0 high-confidence false positives)
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > what is the corpus impact of the authority empty interface fallback
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > what is the corpus pre-bind subject measurement (26 false records across nine documents)
-- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
-  > what is the corpus task evidence writer transaction after migration
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > what is the corpus timing-table authority repair measurement (2144 to 608 across 39 documents)

@@ -40,9 +40,14 @@ replayed there and is reported as an explicit *unmeasurable* count — never as 
 downstream chain is measurable — and rebuildable — for the entire corpus without any re-ingest.
 
 An absent `generated/` skips loudly and exits 0: a fresh clone and a hosted CI runner have no corpus, and
-silence would read as a pass. `--self-test` proves the comparison core fail-closed in ten cases
+silence would read as a pass. `--self-test` proves both comparison cores fail-closed in sixteen cases
 (identity, the `validation_reports` exclusion, key-order independence, shrunken and vanished sections,
-the four `.isf` emission outcomes, and the end-to-end absent-corpus skip) before any PASS is trusted.
+the four `.isf` emission outcomes, the end-to-end absent-corpus skip, and six retention cases) before any
+PASS is trusted.
+
+Its second leg checks *which documents are measurable at all*: the retained normalized bundles must be
+exactly the set declared in `doctrine/chain_currency/retained_bundles.json`, so neither a silent
+reclamation nor an unrecorded retention survives. See [[normalized-bundle-retention-is-declared]].
 
 A full corpus run is **measured at about seven minutes** (80 documents, debug binary, `2026-08-10`) plus
 a cargo freshness build, so it is the registry's first **CI-tier** doctrine

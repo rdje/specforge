@@ -13,6 +13,7 @@
 | [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md) | 2026-06-05 | `current` | NLI gate validated on the real AMBA APB spec — it works, and it exposes constraint over-generation |
 | [nli-intent-gate](../knowledge/nli-intent-gate.md) | 2026-06-05 | `current` | NLI intent gate — active demote-to-residual of un-entailed contracts (intent --nli-verify) |
 | [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md) | 2026-06-15 | `current` | Coordinated drive/read objects + relative-clause distribution are already implemented in the production hand… |
+| [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md) | 2026-08-10 | `current` | Normalized bundles are retained by declaration, and the declaration is gated |
 | [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md) | 2026-06-11 | `current` | Offset-suffixed bit cells (31:28 +04) are dword-relative — capture the literal bit_range + byte_offset, nev… |
 | [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md) | 2026-08-10 | `current` | OpenCAPI 32G PHY Signaling is timing-rich but has no grounded digital interface topology |
 | [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md) | 2026-08-09 | `current` | OpenCAPI AFU Address Space Usage refresh rejects prose acronyms and legal behavior |
@@ -60,4 +61,3 @@
 | [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md) | 2026-08-09 | `current` | SWD/ADI (IHI0074) is an architecture/serial spec — the parallel-bus signal-table model doesn't fit |
 | [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md) | 2026-08-09 | `current` | The canonical SWD chain contains all 29 scored protocol facts through the adapter boundary |
 | [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md) | 2026-06-07 | `current` | SWD protocol derivation is scored 100% across frame, operation, state, and interface-edge timing tasks |
-| [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md) | 2026-06-07 | `current` | SWD's intent = its packet protocol + line state machine on SWDIO (read from spec Chapter B4) |

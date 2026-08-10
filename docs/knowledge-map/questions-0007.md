@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > what is the corpus distribution of purpose categories (21 wire / 8 guide high; 28 register-or-platform / 16 unresolved / 5 physical-link low; 0 high-confidence false positives)
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > what is the corpus impact of the authority empty interface fallback
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > what is the corpus pre-bind subject measurement (26 false records across nine documents)
+- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
+  > what is the corpus task evidence writer transaction after migration
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > what is the corpus timing-table authority repair measurement (2144 to 608 across 39 documents)
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > what is the current corpus refresh frontier after refresh 48
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
@@ -288,13 +298,3 @@
   > where is consolidate_trailing_fragment and how is it ordered against the .1a reject
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > where is coordinated-object actor-signal relation extraction implemented
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > where is is_pure_inferred_phantom_role and the build_intent_actors phantom guard
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > where is legal administrative prose filtered
-- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
-  > where is normalized staging removed from Docling metadata
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > where is parenthetical single-wire authority enforced
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > where is register bit-field ISF emission implemented (register_storage_fields + normalize_field_access + IsfStorageField + the storage render in crates/specforge/src/ir/isf_ir.rs; residual isf_register_fields_not_lowered)

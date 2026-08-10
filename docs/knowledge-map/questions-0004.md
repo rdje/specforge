@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > how many corpus refreshes remain after the OpenCAPI Certified note
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > how many corpus refreshes remain after the OpenCAPI Ready note
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > how many corpus task ids and source regions must containment preserve
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -48,6 +52,8 @@
   > how much RAM did the qwen2.5vl:7b VLM use on a timing-diagram crop (13 GB; host hit 87% used, across the 85% kill threshold)
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
   > how much disk do normalized bundles cost across the corpus
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > how much disk do the retained normalized bundles cost
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > how much fact-card catalog index headroom remains
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
@@ -292,9 +298,3 @@
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > is the generic-TABLE enum conflation fixed / what did KG-ISF-COMPLETENESS.5.i do (LANDED 2026-06-24: derive_encoding_enum_name fallback keeps the candidate only when independently evidenced — a declared signal OR a column-header reference token of the table — else None; emitter isf_ir.rs gates the (types) block by emitted_enums() so a member-dropped enum leaves no orphan
   > (type ...). Corpus generic enums 82->8 / total enum records 422->105 across 33 rebuildable docs; real signal-match enums byte-identical; WIRE-BASED-100 1.000 before==after; fsmgen --strict 0 diagnostics)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > is the generic-enum conflation an emitter bug or an extraction bug (EXTRACTION-born in evidence.rs + semantic.rs; isf_ir.rs:889-912 lowers it faithfully)
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > is the kg-isf-completeness.3 relation-completeness frontier closed / are any docs still stale
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > is the orphan (type TABLE) line a separate emitter bug (yes — isf_ir.rs:403-409 emits all self.types unconditionally, so a Lever-F-residualized enum still leaves an orphan (type ...) line; gate by emitted_enums())

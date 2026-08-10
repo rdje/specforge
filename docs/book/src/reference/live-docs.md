@@ -236,6 +236,15 @@ under current authority, so their lowering now blocks honestly on having no decl
 remain unmeasurable at the evidence stage alone until their bundles are backfilled, which the check reports as a
 count rather than implying full coverage.
 
+The closing leaf then made that backfill inevitable rather than hoped for. Reclaiming a document's normalized
+bundle used to be routine cleanup, which is why only 22 documents could be replayed from the start of the chain
+at all. A refresh now keeps its bundle, the retained set is declared in
+`doctrine/chain_currency/retained_bundles.json`, and the same oracle compares that declaration with what is on
+disk — failing closed on a bundle that disappeared and on a bundle no leaf recorded. The measurable population
+therefore grows by exactly one document per refresh, and a reclamation has to name the leaf that authorized it.
+Verified by the full gate reporting `22/78/78/78` current stages plus an exact retention match, by sixteen
+fail-closed self-test cases, and by three live negatives run against the real declaration.
+
 Post-migration sealing is Git-backed: a part's final content commit lands first, then a following state-only
 transaction records that ancestor commit/blob before any later part accepts work. The migrated legacy payloads
 need no such self-reference because exact source-region markers already make their bytes independently immutable.

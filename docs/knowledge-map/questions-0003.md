@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > how does a deliberate normalized-bundle reclamation get authorized
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
   > how does a repair prove its change is isolated if it also rebuilds drifted documents
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
@@ -110,6 +112,8 @@
   > how does the extractor avoid minting a constraint about a cross-referenced register field
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > how does the fused two-label column ACE5-Lite ACE5-LiteACP split
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > how does the measurable corpus population grow
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
   > how does the no-re-ingest canonical promotion protocol stay in place
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -293,7 +297,3 @@
   > how many corpus refreshes remain after USB4 Inter-Domain
 - [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
   > how many corpus refreshes remain after the GIC Overview Guide
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > how many corpus refreshes remain after the OpenCAPI Certified note
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > how many corpus refreshes remain after the OpenCAPI Ready note

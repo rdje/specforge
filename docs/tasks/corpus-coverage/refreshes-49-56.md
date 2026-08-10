@@ -214,8 +214,8 @@ The release binary is the `.2.48a` final binary at SHA-256
 
 ### Fresh current-binary result
 
-Two guarded CPU ingests reproduce 57 pages / 64 visuals / 53 tables / 111 sections / 527 elements and a 184-file /
-52,570,034-byte normalized bundle at SourceIR `13769977…ca7e`, with 83–84% system memory free throughout and every
+Two guarded CPU ingests reproduce 57 pages / 64 visuals / 53 tables / 111 sections / 527 elements and a 183-file /
+51,754,156-byte normalized bundle at SourceIR `13769977…ca7e`, with 83–84% system memory free throughout and every
 project-owned workspace repository-relative. Two full downstream cascades then reproduce all seven current
 artifact and report hashes, including EvidenceIR `590b53ab…fb14`, SemanticIR `b2740965…6b8a`, IntentIR
 `a8c747e8…582d`, and adapter manifest `415c0f43…f6f0`.
@@ -243,7 +243,8 @@ timing constraints remain honestly absent.
 | Date | Boundary | Result |
 | --- | --- | --- |
 | `2026-08-10` | ownership selection | seven candidates ranked; same-device source/hash and seven-file stale chain authenticated; normalized bundle absent; no generated mutation |
-| `2026-08-10` | deterministic refresh | two guarded ingests reproduce 184 files / 52,570,034 bytes and SourceIR `13769977…ca7e`; two cascades reproduce all seven downstream hashes; four stages validate |
+| `2026-08-10` | deterministic refresh | two guarded ingests reproduce the bundle and SourceIR `13769977…ca7e`; two cascades reproduce all seven downstream hashes; four stages validate |
+| `2026-08-10` | bundle measurement corrected (`CORPUS-CHAIN-CURRENCY.2`) | the originally recorded 184 files / 52,570,034 bytes measured the whole document root; the `normalized/` bundle itself is 183 files / 51,754,156 bytes, and the 815,878-byte difference is exactly this document's `source_ir.json`. Re-measured referentially complete: 5 manifests + 64 asset crops + 57 page images + 57 page sidecars, every path in `page_artifacts.json`/`visual_assets.json` present, no file lost |
 | `2026-08-10` | no regression | KG 156/156; 57/57 current emitted ISFs FSMGen strict; nine provider-free evals at baseline; full CI 1,804/five ignored; doctrines, persisted paths, and locality pass |
 | `2026-08-10` | corpus frontier | 50 done / six remaining at 80 SourceIR / 22 normalized / 80 EvidenceIR / 79 downstream chains |
 

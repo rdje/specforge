@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
+  > why does the refreshed OpenCAPI 4.0 32 Gbps PHY Signaling specification emit no ISF
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > why does the same token AXI interface merge in one doc but not another
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > why does the same-guard dedup_conflicting_rules miss a conflict between an unconditional rule and a guarded rule
+- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
+  > why does the tracked validation snapshot differ from current generated IntentIR reports
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > why does tilelink have 39 relations in evidence_ir but 0 in intent_ir
+- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
+  > why doesn't SpecForge emit (contract eventually) anymore
+- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
+  > why doesn't SpecForge lower stability obligations to (assert (stable sig))
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
   > why doesn't SpecForge use TLA+
 - [dempster-fusion](../knowledge/dempster-fusion.md)
@@ -66,6 +80,8 @@
   > why is a membership-derived (sample) body NOT faithful even though it is FSMGen-accepted
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
   > why is a pure-hex-literal subject filter unsafe (CBA, BADD)
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > why is a retained bundle count not the same as corpus refresh progress
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > why is a sentence containing when not necessarily a semantic gate
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)

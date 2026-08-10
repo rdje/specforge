@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "contract_id": "chain-currency-retained-bundles",
+  "owner_leaf": "CORPUS-CHAIN-CURRENCY.2",
+  "authority": "ADR 0025 decision 3 — a refresh keeps its normalized bundle, because retention is what makes the document's evidence stage replayable; reclamation is deliberate, task-owned, and recorded below.",
+  "declared_on": "2026-08-10",
+  "retained": [
+    "102196_0100_01_2022_05_05_aarch64_external_debug_guide",
+    "102520_0101_01_2025_09_15_introducing_coresight_debug_and_trace",
+    "198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide",
+    "den0068_2018_07_23_coresight_base_system_architecture",
+    "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+    "opencapi_25gbps_phy_signaling_spec_1_0",
+    "opencapi_3_0_certified_definition_v1_1",
+    "opencapi_3_0_certified_test_resources_engineering_note_v1_0",
+    "opencapi_3_0_ready_definition_v1_1",
+    "opencapi_3_0_ready_test_resources_engineering_note_v1_0",
+    "opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020",
+    "opencapi_4_0_32gbps_phy_mech_spec_v10_17mar2021",
+    "opencapi_afu_address_space_usage",
+    "opencapi_data_link_layer_v20_09jul2020",
+    "opencapi_discovery_configuration_v201",
+    "pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide",
+    "um10204_rev7_0_2021_i2c_bus_specification",
+    "um11732_v3_2022_02_17_i2s_bus_specification",
+    "usb4_connection_manager_guide_v2_0_2025_11",
+    "usb4_inter_domain_service_specification_v2_0_2025_11",
+    "usb_3_2_revision_1_0_2017_09",
+    "wbspec_b4_wishbone_b4_specification"
+  ],
+  "reclamations": []
+}

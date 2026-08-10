@@ -21,12 +21,12 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: none; `CORPUS-CHAIN-CURRENCY.1` and `.3` are complete and committed.
-- Current state: the `CHAIN-CURRENCY` doctrine is registered CI-tier and GREEN. The corpus is 78 documents at
-  22/78/78/78 measured-current stages (56 unmeasurable at the evidence stage only, pending bundle backfill) with
-  **44/44 emitted ISFs FSMGen-strict clean, down from 57**: 14 documents' false heuristic interfaces collapsed to
-  zero under current authority, which exonerates the `.2.43a.i`/`.2.43b` gate/phase retirements.
-- Next action: `CORPUS-CHAIN-CURRENCY.2` — stop routine `clean --scope source-normalized` in the refresh routine
-  and state bundle retention in the book, so the measurable population grows by one per refresh; then refresh #51.
+- Active unit: none; the whole `CORPUS-CHAIN-CURRENCY` tree (`.0`–`.3`) is complete and committed.
+- Current state: the `CHAIN-CURRENCY` doctrine is registered CI-tier and GREEN on both legs. The corpus is 78
+  documents at 22/78/78/78 measured-current stages with **44/44 emitted ISFs FSMGen-strict clean**; the 22
+  retained normalized bundles are now declared in `doctrine/chain_currency/retained_bundles.json` and gated, so
+  the remaining 56 unmeasurable documents can only shrink, one per refresh, as each backfills its own bundle.
+- Next action: open `CORPUS-COVERAGE.2.51` — select one of the six remaining real chip-spec documents, pin its
+  source and stale-chain boundary, then refresh it and add its retained bundle to the declaration.
 - In-flight uncommitted: none; no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

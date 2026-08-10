@@ -51,20 +51,21 @@ an explicitly labeled external path exact), provided its existing ancestor is co
 real inputs: a SourceIR file passed to the next stage must still exist before SpecForge opens it.
 
 For the same reason, corpus refresh progress is not a count of live `normalized/` directories. A completed
-re-ingest means the refreshed EvidenceIR and downstream stages were built and verified; later cache cleanup does
-not undo that work. Report normalized retention separately when discussing whether evidence can be rebuilt again
-without another Docling ingest.
+re-ingest means the refreshed EvidenceIR and downstream stages were built and verified; a later reclamation does
+not undo that work. Report normalized retention separately: it is the *measurability* census — which documents
+can be rebuilt again without another Docling ingest — and a refresh now keeps its bundle so that census grows by
+one each time (see [Generated Artifacts](../reference/generated-artifacts.md#normalized-bundles-are-retained)).
 
-The current measured example (`2026-08-10`) is 47 completed current-binary refreshes with nine real chip-spec
-documents left in the refresh queue. The local artifact tree separately contains 80 SourceIR files, 19 retained
-normalized bundles, 80 EvidenceIR files, and 79 SemanticIR→IntentIR→adapter chains. The newest bundle belongs to
-the 46-page Cortex-A76 Software Optimization Guide: all project-owned path values are final, present, and
+The current measured example (`2026-08-10`) is 50 completed current-binary refreshes with six real chip-spec
+documents left in the refresh queue. The local artifact tree separately contains 78 SourceIR files, 22 retained
+normalized bundles, 78 EvidenceIR files, and 78 SemanticIR→IntentIR→adapter chains. The newest bundle belongs to
+the 57-page OpenCAPI Data Link Layer v2.0 specification: all project-owned path values are final, present, and
 repository-relative. The explicitly authorized source PDF remains absolute and labeled `external_input`; source
-and repository are on the same SSD. Three guarded CPU ingests reproduce 71 visuals, 68 tables, 68 sections, and
-249 source elements; the two sampled runs keep 52–64% system memory free. The stale 260→249 delta removes only
-11 flattened labels from visual-bearing pages. The 168-file / 46,082,616-byte bundle's presence is cache-retention
-status, not what makes that refresh complete; complete verified downstream artifacts are the durable progress
-measure.
+and repository are on the same SSD. Two guarded CPU ingests reproduce 64 visuals, 53 tables, 111 sections, and
+527 source elements while keeping 83–84% of system memory free. That bundle is 183 files / 51,754,156 bytes —
+five manifest files, 64 visual crops, and one image plus one sidecar for each of the 57 pages — and its presence
+is measurability status, not what makes the refresh complete; complete verified downstream artifacts remain the
+durable progress measure.
 
 ## Why this stage matters
 

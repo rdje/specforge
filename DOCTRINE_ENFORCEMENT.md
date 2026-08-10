@@ -291,7 +291,7 @@ The reference deployment. Enforced by `scripts/check_doctrines.sh` via `.githook
 | `README-POLICY` | structural | gate | `scripts/check_readme_policy.sh` | root `README.md` stays within its independently derived line/byte ceilings; every reader link and author-overflow destination is a repository-owned, controlled terminal in the route registry |
 | `LIVE-DOC-SIZE` | structural | gate | `scripts/check_live_document_size.sh` | every parent-tracked Markdown path is classified exactly once; each declared current-state field has an explicit derive-on-read, verified-copy, authored-intent, or immutable-evidence contract; and all lifecycle-specific locality, pressure, route, currency, authority, capture, and history rules pass |
 | `PROJECT-DATA-LOCALITY` | structural | gate | `scripts/check_project_data_locality.sh` | Cargo, shell, Rust temp/subprocess, Python dependency, and optional runtime-store paths resolve from the current repository and reject off-root or stale-repository ownership |
-| `CHAIN-CURRENCY` | oracle | ci | `scripts/check_chain_currency.sh` | every persisted corpus artifact is exactly what the current binary reproduces from its persisted input — the evidence, semantic, intent, and `.isf`-adapter stages replayed `--dry-run`, plus each emitted `.isf` against the adapter's rendered `source_text` (ADR 0025) |
+| `CHAIN-CURRENCY` | oracle | ci | `scripts/check_chain_currency.sh` | every persisted corpus artifact is exactly what the current binary reproduces from its persisted input — the evidence, semantic, intent, and `.isf`-adapter stages replayed `--dry-run`, plus each emitted `.isf` against the adapter's rendered `source_text` — and the retained normalized bundles that make a document replayable are exactly the set declared in `doctrine/chain_currency/retained_bundles.json` (ADR 0025 decisions 2 and 3) |
 
 Among its focused suites, `LIVE-DOC-SIZE` runs 55 positive and fail-closed lifecycle/control-plane
 cases, 47 neutral derived-state classification cases, 25 SpecForge Rust/gitlink authority-adapter cases,
@@ -351,8 +351,17 @@ rule instead of inventing one. Measurability is stated, never implied: only the 
 document's normalized markdown bundle, so a reclaimed bundle makes that one stage **unmeasurable** and
 the check always prints that count; every later stage reads a persisted artifact and stays measurable
 corpus-wide. An absent `generated/` skips loudly and passes, because a fresh clone and hosted CI have
-no corpus for the doctrine to govern. `--self-test` proves the comparison core fail-closed in ten
-cases before any PASS is trusted.
+no corpus for the doctrine to govern.
+
+Its second leg makes measurability itself accountable (ADR 0025 decision 3): a bundle is retained
+because a refresh chose to keep it, so `doctrine/chain_currency/retained_bundles.json` declares the
+exact retained document-key set, and the check compares it with what is on disk. A declared bundle that
+is gone is an unauthorised reclamation; a bundle no leaf declared is a refresh that failed to record
+what it kept. Both fail closed, and a deliberate reclamation is a `reclamations` record naming its
+owning leaf and reason — which is what "task-owned" means mechanically. The declaration is
+schema-closed (unknown, missing, mistyped, unsorted, duplicated, or self-contradictory fields are
+breaches), so it cannot decay into free-form prose. `--self-test` proves both comparison cores
+fail-closed in sixteen cases before any PASS is trusted.
 
 Deterministic-oracle doctrines that run via `scripts/run_ci.sh` / CI (`kg-bench` 156/156,
 WIRE-BASED-100 constraint+temporal/relation golds = 1.000, the byte-identical evidence/`.isf` checks,

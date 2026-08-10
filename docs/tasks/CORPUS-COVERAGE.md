@@ -22,8 +22,10 @@ ISF pipeline, keep completed chains non-stale, and record extraction gaps withou
 
 50 of 56 real chip-spec refreshes are complete.
 
-- Stage coverage: 80 SourceIR / 22 normalized / 80 EvidenceIR / 79 downstream chains.
-- Emitted ISF: 57/57 current targets pass FSMGen strict validation.
+- Stage coverage: 78 SourceIR / 22 normalized / 78 EvidenceIR / 78 downstream chains, all measured current by
+  the `CHAIN-CURRENCY` gate (`CORPUS-CHAIN-CURRENCY.3`, which also dropped the two non-corpus scratch chains).
+- Emitted ISF: 44/44 current targets pass FSMGen strict validation. The population fell from 57 because 14
+  documents' stale heuristic interfaces collapsed to zero under current authority and now block honestly.
 - Completed program lanes: `.0` build-out, `.1` stage-staleness validation, and `.3` lifecycle reconciliation.
 - Active program lane: `.2` current-binary corpus refresh, with six real documents remaining.
 - Blockers: none.

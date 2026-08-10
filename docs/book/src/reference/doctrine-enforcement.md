@@ -62,7 +62,7 @@ other re-derivable trace.
 | `README-POLICY` | structural | the project landing page stays within its locally derived line and byte ceilings, and every reader or author-overflow route closes at a registered, controlled terminal |
 | `LIVE-DOC-SIZE` | structural | every tracked Markdown path is classified exactly once, and every declared current-state field satisfies its explicit class, marker, authority, accessor/capture, and executed-verifier contract alongside the lifecycle/pressure/route rules |
 | `PROJECT-DATA-LOCALITY` | structural | Cargo, shell, production temporary-workspace, subprocess, and Python runtime seams keep owned data below the current repository and reject stale or escaping roots |
-| `CHAIN-CURRENCY` | oracle | every artifact already on disk under `generated/` is exactly what today's binary reproduces from the artifact one stage upstream — so a shared extractor change cannot leave older documents quietly one code delta behind |
+| `CHAIN-CURRENCY` | oracle | every artifact already on disk under `generated/` is exactly what today's binary reproduces from the artifact one stage upstream — so a shared extractor change cannot leave older documents quietly one code delta behind — and the normalized bundles that make a document checkable are exactly the declared retained set |
 
 The README guard is unconditional: it evaluates the resulting tree even when a change does not touch
 `README.md`. Its data-only route registry distinguishes links readers follow from destinations authors
@@ -151,6 +151,14 @@ document's normalized markdown bundle, so a document whose bundle was reclaimed 
 *unmeasurable* at that one stage rather than quietly counted as fine, while every later stage stays
 measurable for the whole corpus. With no `generated/` at all — a fresh clone, a hosted runner — it skips
 loudly instead of pretending to have checked something.
+
+Which documents *are* measurable is not left to chance either. Because an ingest keeps its normalized
+bundle, the retained set is declared in `doctrine/chain_currency/retained_bundles.json`, and the check
+compares that declaration with the bundles actually on disk. A declared bundle that has vanished is an
+unauthorized reclamation; a bundle no leaf recorded is a refresh that never declared what it kept. Both
+fail closed, so the checkable population can only grow deliberately, one refresh at a time, and a
+reclamation must name the leaf that decided it. The declaration is schema-closed — an unknown, mistyped,
+unsorted, or self-contradictory field is itself a breach — so it cannot decay into prose.
 
 The heavy deterministic oracles — `kg-bench`, the WIRE-BASED-100 golds, the byte-identical
 evidence/`.isf` checks, chain currency, the full `cargo` suite, and the mdBook doctest/build pair — are the

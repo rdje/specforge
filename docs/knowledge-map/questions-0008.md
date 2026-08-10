@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > where is is_pure_inferred_phantom_role and the build_intent_actors phantom guard
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > where is legal administrative prose filtered
+- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
+  > where is normalized staging removed from Docling metadata
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > where is parenthetical single-wire authority enforced
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > where is register bit-field ISF emission implemented (register_storage_fields + normalize_field_access + IsfStorageField + the storage render in crates/specforge/src/ir/isf_ir.rs; residual isf_register_fields_not_lowered)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > where is register-field reset_value extracted and carried (ir/source.rs:432 RegisterFieldRecord.reset_value; ir/evidence.rs:11509/11838 populate it; ir/intent.rs:193 clones register_records to IntentIR)
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
@@ -48,6 +58,8 @@
   > where is the register-field gold seed
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > where is the second LIVE_ACHIEVEMENT_STATUS rollover segment and what blocks the next one
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > where is the set of retained normalized bundles declared
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > where is the shared 0.6 fingerprint clustering threshold defined (DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD)
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
@@ -285,15 +297,3 @@
   > why did OpenCAPI produce constraints on CAPI OCDE and DLX that the document never constrains
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > why did TL disappear from the OpenCAPI Ready Definition
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > why did USB 3.2 produce 918 interfaces and 556 adapter signals
-- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
-  > why did a fresh ingest expose normalized staging in persisted metadata
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > why did an EXTRACTOR-ARCHITECTURE byte-identical proof fail on SWD/ADI but pass on other docs
-- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
-  > why did an OpenCAPI Notes footer become a timing constraint with parameter min typ max and unit
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > why did an OpenCAPI functional test become an IntentIR behavior
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > why did an OpenCAPI permissions paragraph become an IntentIR behavior

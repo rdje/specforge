@@ -32,6 +32,14 @@
 # and is reported as a count. Every later stage reads a persisted artifact, so the rest of the chain
 # stays measurable for the whole corpus.
 #
+# RETENTION (CORPUS-CHAIN-CURRENCY.2 / ADR 0025 decision 3) is the second leg. Measurability is not
+# a fact about luck: a bundle is retained because a refresh kept it. So the retained set is DECLARED
+# in `doctrine/chain_currency/retained_bundles.json` and compared, exactly, with what is on disk:
+#   - a declared bundle that is gone  = an unauthorised reclamation (the blindness this doctrine ends)
+#   - a bundle on disk that is undeclared = a refresh that did not record what it retained
+# Both fail closed. Deliberate reclamation stays possible — it is recorded as a `reclamations` entry
+# naming its owning leaf and reason, which is what "deliberate, task-owned" means mechanically.
+#
 # Skips LOUDLY when the corpus root is absent: a fresh clone and a hosted CI runner have no
 # `generated/`, and the doctrine does not govern them. Silence would read as a pass.
 #
@@ -40,6 +48,8 @@
 #
 # Knobs: SPECFORGE_CHAIN_CURRENCY_GENERATED_ROOT=<dir> to point at another corpus root (used by
 #        --self-test to prove the absent-corpus skip end to end).
+#        SPECFORGE_CHAIN_CURRENCY_RETENTION_CONTRACT=<file> to point at another retained-bundle
+#        declaration (used by --self-test to exercise the retention core).
 # Bash-3.2-safe (no associative arrays, no mapfile) so a stock macOS clone runs it.
 set -uo pipefail
 export LC_ALL=C
@@ -50,6 +60,7 @@ source "$ROOT/scripts/project_data_env.sh"
 specforge_activate_project_data "$ROOT"
 
 GENERATED_ROOT="${SPECFORGE_CHAIN_CURRENCY_GENERATED_ROOT:-generated}"
+RETENTION_CONTRACT="${SPECFORGE_CHAIN_CURRENCY_RETENTION_CONTRACT:-doctrine/chain_currency/retained_bundles.json}"
 
 MODE=check
 while [ "$#" -gt 0 ]; do
@@ -199,6 +210,161 @@ close $handle;
 PERL
 }
 
+# compare_retention <declaration.json> <retained-keys-file> <corpus-keys-file>
+# The declaration is schema-CLOSED: an unknown, missing, mistyped, duplicated, or unsorted field is
+# itself a breach, so the file cannot decay into free-form prose that no longer means anything. Then
+# the declared retained set must equal the set measured on disk, exactly. Prints every breach and
+# exits 1.
+compare_retention() {
+  perl - "$1" "$2" "$3" <<'PERL'
+use strict;
+use warnings;
+use JSON::PP;
+
+my ($declaration_path, $retained_path, $corpus_path) = @ARGV;
+
+sub read_key_set {
+    my ($path) = @_;
+    my %set;
+    local $/ = "\n";
+    open my $handle, '<:raw', $path or die "cannot read $path: $!\n";
+    while (my $line = <$handle>) {
+        chomp $line;
+        $set{$line} = 1 if $line ne '';
+    }
+    close $handle;
+    return \%set;
+}
+
+sub slurp {
+    my ($path) = @_;
+    local $/;
+    open my $handle, '<:raw', $path or die "cannot read $path: $!\n";
+    my $text = <$handle>;
+    close $handle;
+    return defined $text ? $text : '';
+}
+
+my @breaches;
+
+my $text = eval { slurp($declaration_path) };
+if (!defined $text) {
+    print "the retained-bundle declaration $declaration_path cannot be read\n";
+    exit 1;
+}
+
+my $declaration = eval { JSON::PP->new->utf8->decode($text) };
+if (!$declaration || ref $declaration ne 'HASH') {
+    print "the retained-bundle declaration is not a JSON object\n";
+    exit 1;
+}
+
+# ── Schema (closed) ────────────────────────────────────────────────────────
+my @required = qw(schema_version contract_id owner_leaf authority declared_on retained reclamations);
+my %expected = map { $_ => 1 } @required;
+for my $key (sort keys %$declaration) {
+    push @breaches, "unknown declaration field: $key" if !$expected{$key};
+}
+for my $key (@required) {
+    push @breaches, "missing declaration field: $key" if !exists $declaration->{$key};
+}
+
+sub nonempty_string {
+    my ($value) = @_;
+    return defined $value && !ref $value && $value =~ /\S/;
+}
+
+push @breaches, 'schema_version must be 1'
+  if !exists $declaration->{schema_version} || !defined $declaration->{schema_version}
+  || ref $declaration->{schema_version} || $declaration->{schema_version} ne '1';
+push @breaches, 'contract_id must be chain-currency-retained-bundles'
+  if !exists $declaration->{contract_id} || !defined $declaration->{contract_id}
+  || ref $declaration->{contract_id} || $declaration->{contract_id} ne 'chain-currency-retained-bundles';
+for my $key (qw(owner_leaf authority)) {
+    push @breaches, "$key must be a non-empty string"
+      if exists $declaration->{$key} && !nonempty_string($declaration->{$key});
+}
+push @breaches, 'declared_on must be an ISO date (YYYY-MM-DD)'
+  if exists $declaration->{declared_on}
+  && (!nonempty_string($declaration->{declared_on}) || $declaration->{declared_on} !~ /\A\d{4}-\d{2}-\d{2}\z/);
+
+my @declared;
+if (exists $declaration->{retained}) {
+    if (ref $declaration->{retained} ne 'ARRAY') {
+        push @breaches, 'retained must be an array of document keys';
+    } else {
+        @declared = @{ $declaration->{retained} };
+        my $previous;
+        for my $key (@declared) {
+            if (!nonempty_string($key) || $key !~ m{\A[A-Za-z0-9._-]+\z}) {
+                push @breaches, 'retained holds a value that is not a document key';
+                next;
+            }
+            push @breaches, "retained is not sorted and unique at: $key"
+              if defined $previous && $key le $previous;
+            $previous = $key;
+        }
+    }
+}
+
+my %reclaimed;
+if (exists $declaration->{reclamations}) {
+    if (ref $declaration->{reclamations} ne 'ARRAY') {
+        push @breaches, 'reclamations must be an array of records';
+    } else {
+        my @fields = qw(document_key owning_leaf date reason);
+        my %allowed = map { $_ => 1 } @fields;
+        my $previous;
+        for my $record (@{ $declaration->{reclamations} }) {
+            if (ref $record ne 'HASH') {
+                push @breaches, 'reclamations holds a value that is not a record';
+                next;
+            }
+            for my $field (sort keys %$record) {
+                push @breaches, "unknown reclamation field: $field" if !$allowed{$field};
+            }
+            for my $field (@fields) {
+                push @breaches, "reclamation is missing $field" if !exists $record->{$field};
+                push @breaches, "reclamation $field must be a non-empty string"
+                  if exists $record->{$field} && !nonempty_string($record->{$field});
+            }
+            push @breaches, 'reclamation date must be an ISO date (YYYY-MM-DD)'
+              if nonempty_string($record->{date}) && $record->{date} !~ /\A\d{4}-\d{2}-\d{2}\z/;
+            my $key = $record->{document_key};
+            next if !nonempty_string($key);
+            push @breaches, "reclamations is not sorted and unique at: $key"
+              if defined $previous && $key le $previous;
+            $previous = $key;
+            $reclaimed{$key} = 1;
+        }
+    }
+}
+for my $key (@declared) {
+    push @breaches, "$key is declared both retained and reclaimed" if $reclaimed{$key};
+}
+
+# ── The declared set must equal the measured set, exactly ──────────────────
+my $retained = read_key_set($retained_path);
+my $corpus   = read_key_set($corpus_path);
+
+my %is_declared = map { $_ => 1 } @declared;
+for my $key (@declared) {
+    next if $retained->{$key};
+    push @breaches, $corpus->{$key}
+      ? "$key is declared retained but its normalized bundle is absent — an unauthorised reclamation"
+      : "$key is declared retained but is no longer a corpus document";
+}
+for my $key (sort keys %$retained) {
+    push @breaches, "$key retains a normalized bundle that no leaf declared — record it as retained"
+      if !$is_declared{$key};
+}
+
+exit 0 if !@breaches;
+print "$_\n" for @breaches;
+exit 1;
+PERL
+}
+
 # ── Self-test: prove the comparison core is fail-CLOSED before trusting its PASS ─
 run_self_test() {
   local work passed=0 output status
@@ -266,12 +432,65 @@ run_self_test() {
   if [ "$status" -eq 0 ]; then passed=$((passed + 1))
   else fail_note "self-test 10: an absent corpus root did not skip loudly (status $status, output '$output')"; fi
 
+  # 11-16) The retention leg: exact declared-versus-measured agreement over a schema-closed file.
+  printf '%s\n' alpha beta gamma > "$work/corpus.txt"
+  printf '%s\n' alpha beta       > "$work/retained.txt"
+  printf '%s' '{"schema_version":1,"contract_id":"chain-currency-retained-bundles","owner_leaf":"T.1","authority":"a","declared_on":"2026-08-10","retained":["alpha","beta"],"reclamations":[{"document_key":"gamma","owning_leaf":"T.2","date":"2026-08-10","reason":"r"}]}' > "$work/retention.json"
+
+  if compare_retention "$work/retention.json" "$work/retained.txt" "$work/corpus.txt" >/dev/null; then passed=$((passed + 1))
+  else fail_note 'self-test 11: an exactly-declared retained set was reported as a breach'; fi
+
+  printf '%s\n' alpha > "$work/retained-shrunk.txt"
+  output="$(compare_retention "$work/retention.json" "$work/retained-shrunk.txt" "$work/corpus.txt")"; status=$?
+  case "$output" in
+    *'beta is declared retained but its normalized bundle is absent'*) : ;;
+    *) status=0 ;;
+  esac
+  if [ "$status" -ne 0 ]; then passed=$((passed + 1))
+  else fail_note "self-test 12: a reclaimed declared bundle was not caught (got '$output')"; fi
+
+  printf '%s\n' alpha beta gamma > "$work/retained-extra.txt"
+  output="$(compare_retention "$work/retention.json" "$work/retained-extra.txt" "$work/corpus.txt")"; status=$?
+  case "$output" in
+    *'gamma retains a normalized bundle that no leaf declared'*) : ;;
+    *) status=0 ;;
+  esac
+  if [ "$status" -ne 0 ]; then passed=$((passed + 1))
+  else fail_note "self-test 13: an undeclared retained bundle was not caught (got '$output')"; fi
+
+  printf '%s' '{"schema_version":1,"contract_id":"chain-currency-retained-bundles","owner_leaf":"T.1","authority":"a","declared_on":"2026-08-10","retained":["alpha","beta"],"reclamations":[],"note":"free-form"}' > "$work/retention-unknown.json"
+  output="$(compare_retention "$work/retention-unknown.json" "$work/retained.txt" "$work/corpus.txt")"; status=$?
+  case "$output" in
+    *'unknown declaration field: note'*) : ;;
+    *) status=0 ;;
+  esac
+  if [ "$status" -ne 0 ]; then passed=$((passed + 1))
+  else fail_note "self-test 14: an unknown declaration field was not caught (got '$output')"; fi
+
+  printf '%s' '{"schema_version":1,"contract_id":"chain-currency-retained-bundles","owner_leaf":"T.1","authority":"a","declared_on":"2026-08-10","retained":["beta","alpha"],"reclamations":[]}' > "$work/retention-unsorted.json"
+  output="$(compare_retention "$work/retention-unsorted.json" "$work/retained.txt" "$work/corpus.txt")"; status=$?
+  case "$output" in
+    *'retained is not sorted and unique at: alpha'*) : ;;
+    *) status=0 ;;
+  esac
+  if [ "$status" -ne 0 ]; then passed=$((passed + 1))
+  else fail_note "self-test 15: an unsorted retained list was not caught (got '$output')"; fi
+
+  printf '%s' '{"schema_version":1,"contract_id":"chain-currency-retained-bundles","owner_leaf":"T.1","authority":"a","declared_on":"2026-08-10","retained":["alpha","beta"],"reclamations":[{"document_key":"beta","owning_leaf":"T.2","date":"2026-08-10","reason":"r"}]}' > "$work/retention-contradictory.json"
+  output="$(compare_retention "$work/retention-contradictory.json" "$work/retained.txt" "$work/corpus.txt")"; status=$?
+  case "$output" in
+    *'beta is declared both retained and reclaimed'*) : ;;
+    *) status=0 ;;
+  esac
+  if [ "$status" -ne 0 ]; then passed=$((passed + 1))
+  else fail_note "self-test 16: a key declared both retained and reclaimed was not caught (got '$output')"; fi
+
   rm -rf "$work"
-  if [ "$passed" -ne 10 ]; then
-    fail_note "self-test $passed/10 passed"
+  if [ "$passed" -ne 16 ]; then
+    fail_note "self-test $passed/16 passed"
     return 1
   fi
-  note 'self-test 10/10 passed.'
+  note 'self-test 16/16 passed.'
   return 0
 }
 
@@ -424,6 +643,44 @@ if [ "$fail" -ne 0 ]; then
   fail_note 'the persisted corpus chain is NOT current with this binary.'
   fail_note 'Rebuild every drifted document under its owning CORPUS-COVERAGE leaf and attribute each'
   fail_note 'delta to this change or to a named earlier leaf (ADR 0025 decision 1). Do not bypass.'
+fi
+
+# ── Retention (ADR 0025 decision 3) ─────────────────────────────────────────
+# What is measurable above is a consequence of what earlier refreshes chose to keep. Declared and
+# measured must agree exactly, so neither a silent reclamation nor an unrecorded retention survives.
+if [ ! -f "$RETENTION_CONTRACT" ]; then
+  fail_note "the retained-bundle declaration is missing: $RETENTION_CONTRACT"
+  fail_note 'It is this doctrine data, not a convention, that makes bundle retention checkable.'
+  exit 1
+fi
+
+for key_file in "$WORK/retained.keys" "$WORK/corpus.keys"; do : > "$key_file"; done
+for source_ir in "$GENERATED_ROOT"/source_ir/*/source_ir.json; do
+  [ -f "$source_ir" ] || continue
+  key="$(basename "$(dirname "$source_ir")")"
+  printf '%s\n' "$key" >> "$WORK/corpus.keys"
+  markdown="$(promoted_markdown_path "$source_ir")"
+  if [ -n "$markdown" ] && [ -f "$markdown" ]; then
+    printf '%s\n' "$key" >> "$WORK/retained.keys"
+  fi
+done
+retained_count="$(grep -c '^' "$WORK/retained.keys")"
+
+if ! breaches="$(compare_retention "$RETENTION_CONTRACT" "$WORK/retained.keys" "$WORK/corpus.keys")"; then
+  while IFS= read -r breach; do
+    [ -n "$breach" ] && fail_note "retention — $breach"
+  done <<EOF
+$breaches
+EOF
+  fail_note "Retention is deliberate and task-owned (ADR 0025 decision 3): a refresh keeps its bundle"
+  fail_note "and records it in $RETENTION_CONTRACT; a reclamation is recorded there with its owning"
+  fail_note 'leaf and reason. Do not reconcile by deleting evidence or by widening the declaration.'
+  fail=1
+else
+  note "retention: $retained_count normalized bundle(s) on disk — exactly the declared retained set."
+fi
+
+if [ "$fail" -ne 0 ]; then
   exit 1
 fi
 

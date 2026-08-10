@@ -47,7 +47,7 @@ The author template is linked separately and is never classified as active work.
 | `CONSTRAINT-DRIVE-LEVEL-RECALL` | `done` | extract "drive <signal> LOW/HIGH" as a value constraint | [open](tasks/CONSTRAINT-DRIVE-LEVEL-RECALL.md) |
 | `CONSTRAINT-EXTRACTION-V2` | `done` | fix the 3 constraint bug classes REEXTRACTION-REMEASURE found | [open](tasks/CONSTRAINT-EXTRACTION-V2.md) |
 | `CONSTRAINT-SUBJECT-PRECISION` | `done` | stop the constraint extractor minting non-subject signals | [open](tasks/CONSTRAINT-SUBJECT-PRECISION.md) |
-| `CORPUS-CHAIN-CURRENCY` | `active` | prove, not assume, that every persisted chain matches the current binary | [open](tasks/CORPUS-CHAIN-CURRENCY.md) |
+| `CORPUS-CHAIN-CURRENCY` | `done` | prove, not assume, that every persisted chain matches the current binary | [open](tasks/CORPUS-CHAIN-CURRENCY.md) |
 | `CORPUS-COVERAGE` | `active` | build every ingested doc through to IntentIR/.isf + keep downstream stages non-stale | [open](tasks/CORPUS-COVERAGE.md) |
 | `CORPUS-HARDENING` | `active` | harden SpecForge against the real chip-doc corpus (AMBA core first) | [open](tasks/CORPUS-HARDENING.md) |
 | `CORPUS-PATTERN-REUSE` | `active` | reuse extraction patterns across PDFs, clustered by derived vendor/layout fingerprint | [open](tasks/CORPUS-PATTERN-REUSE.md) |

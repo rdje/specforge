@@ -301,9 +301,11 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
   semantic, intent, `.isf` adapter, plus each emitted `.isf` against the adapter's rendered
   `source_text`) and fails when the persisted artifact is not what the current binary produces.
   `validation_reports` is excluded exactly as the product's `*_ir_fingerprint` helpers exclude it.
+  Its second leg compares `doctrine/chain_currency/retained_bundles.json` with the normalized bundles
+  actually on disk: a declared bundle that is gone, or a bundle no leaf declared, fails closed.
 - **WHEN:** after any shared-extractor or stage change, and before signing off a refresh — it is the
   measurement ADR 0025 decision 1 requires before attributing a delta. Skips loudly with no corpus.
-- **HOW:** `bash scripts/check_chain_currency.sh` (`--self-test` for its ten fail-closed cases)
+- **HOW:** `bash scripts/check_chain_currency.sh` (`--self-test` for its sixteen fail-closed cases)
 
 ### 7.3 `scripts/check_task_tree_archive.pl`
 - **WHAT:** validates the contract-driven terminal task lifecycle. `source_locked` pins the still-live source and
@@ -332,6 +334,11 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
 - **WHAT:** first-class local artifact reclamation (dry-run by default): `--scope source-normalized` keeps
   `source_ir.json` but drops the heavy `normalized/` bundle; `--scope document`/`all-generated` for deeper
   sweeps. **Never** delete a `source_ir` before a re-ingest succeeds (`project_docling_mps_cpu`).
+- **WHEN:** never as refresh routine. A refresh **keeps** its normalized bundle (ADR 0025 decision 3) —
+  that retention is what keeps the document's evidence stage replayable. Reclaiming is a deliberate,
+  separately owned decision that must also drop the key from
+  `doctrine/chain_currency/retained_bundles.json` and record a `reclamations` row, or `CHAIN-CURRENCY`
+  reddens.
 - **HOW:** `cargo run --manifest-path Cargo.toml -- clean --scope source-normalized --document-key <key>`
 
 ---

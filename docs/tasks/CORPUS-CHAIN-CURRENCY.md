@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `CORPUS-CHAIN-CURRENCY`
-- Status: `active` (`.0`/`.1`/`.3` done; `.2` bundle retention open)
+- Status: `done` (`.0`, `.1`, `.2`, `.3` complete)
 - Roadmap lane: `R15e`/`R16` corpus digestion (sibling of `CORPUS-COVERAGE`)
 - Created: `2026-08-10`
 - Last updated: `2026-08-10`
@@ -102,10 +102,18 @@ See [`docs/decisions/0025-persisted-chain-currency-is-measured-not-assumed.md`](
   The two non-corpus scratch chains were removed with `clean --scope document` — `readme` (its promoted markdown
   *is* the live `README.md`, so every `README_POLICY` edit would redden a corpus gate) and `spec` (residue whose
   source was a deleted `.project-data/tmp` file, therefore permanently unmeasurable). The gate is now GREEN.
-- ID: `CORPUS-CHAIN-CURRENCY.2` · Status: `open` · Goal: make bundle retention real — stop routine
-  `clean --scope source-normalized` in the refresh routine, state the retention rule in the book's generated-
-  artifacts chapter, and record each refresh's bundle as retained so the measurable population grows by one per
-  refresh.
+- ID: `CORPUS-CHAIN-CURRENCY.2` · Status: `done` (`2026-08-10`, CODE/DATA/DOC) · Goal: make bundle retention
+  real — stop routine `clean --scope source-normalized` in the refresh routine, state the retention rule in the
+  book's generated-artifacts chapter, and record each refresh's bundle as retained so the measurable population
+  grows by one per refresh. Shipped: retention is **declared and gated**, not conventional. The new schema-closed
+  `doctrine/chain_currency/retained_bundles.json` names the exact 22 retained document keys, and
+  `check_chain_currency.sh` gained a second leg that compares that declaration with the bundles on disk. It fails
+  closed both ways — a declared bundle that vanished is an unauthorised reclamation, a bundle no leaf declared is
+  a refresh that never recorded what it kept — so the measurable population can only grow deliberately, one
+  refresh at a time. Deliberate reclamation stays possible as a `reclamations` record naming its owning leaf,
+  date, and reason. Six new fail-closed self-test cases take the check to 16/16. `TOOLBOX.md` §7.6 now tells a
+  refresh **never** to run `clean --scope source-normalized` as routine, and the book's generated-artifacts
+  chapter states the retention rule, its cost, and the declaration.
 
 ## Measured corpus census (`2026-08-10`, `.1`) — the drift `.3` closes
 
@@ -218,6 +226,31 @@ Honest limits of this measurement:
 - [x] **LOCKSTEP** — this tree, `ROADMAP.md`, `LIVE_ACHIEVEMENT_STATUS.md`, the
   `corpus-wide-interface-authority-rebuild` fact card, and the resume pointer agree before commit.
 
+### Acceptance Checklist (enforced) — `CORPUS-CHAIN-CURRENCY.2`
+
+- [x] **REPRODUCE / MEASURE** — the retained set was measured, not assumed, before anything was declared: 22 of
+  78 documents resolve an existing `promoted_markdown_path`, exactly matching the 22 `normalized/` directories
+  on disk and the gate's own 56-unmeasurable count. Cost re-measured at 1.4 GB against 3.4 TB free.
+- [x] **ROOT CAUSE (WHY + WHERE)** — measurability was a side effect of whatever cleanup happened to have been
+  run: the `2026-07-05` bulk reclamation removed every bundle then existing, and nothing recorded or re-checked
+  retention afterwards, so the population that `CHAIN-CURRENCY` can measure was untracked state. The refresh
+  routine's own guidance (`TOOLBOX.md` §7.6) still presented `clean --scope source-normalized` neutrally.
+- [x] **ADDRESSED (verified)** — the full gate reports `retention: 22 normalized bundle(s) on disk — exactly
+  the declared retained set` alongside 22/78/78/78 current stages and exits 0. Fail-closed behaviour is proven
+  against the real declaration, not only fixtures: dropping one measured key reports `opencapi_afu_address_
+  space_usage is declared retained but its normalized bundle is absent — an unauthorised reclamation`, adding an
+  undeclared key reports `retains a normalized bundle that no leaf declared`, and removing the document entirely
+  reports `is no longer a corpus document`.
+- [x] **NO REGRESSION** — the change is shell + data + docs; no Rust changed, so `kg-bench` and the
+  WIRE-BASED-100 golds are orthogonal by construction. `--self-test` is 16/16, `scripts/check_doctrines.sh` is
+  green, and the full four-stage census is byte-unchanged from `.3`.
+- [x] **GENERICITY (ADR 0006)** — the retention leg names no chip, vendor, or protocol; document keys are data
+  in a declaration file, and the check derives the measured set from the corpus tree and each SourceIR's own
+  `promoted_markdown_path`.
+- [x] **LOCKSTEP** — this tree, `DOCTRINE_ENFORCEMENT.md` §10, `TOOLBOX.md` §7.2a/§7.6, the book's
+  generated-artifacts / doctrine-enforcement / SourceIR chapters, both retention fact cards, the corpus tree's
+  corrected census, and the resume pointer agree before commit.
+
 ## Verification Log
 
 | Date | Boundary | Result |
@@ -230,6 +263,10 @@ Honest limits of this measurement:
 | `2026-08-10` | `.3` rebuild | 79 chains rebuilt in `2m32s`, 0 failures; 90 previously-validated artifacts re-validated, 0 failures |
 | `2026-08-10` | `.3` closing census | 22/22 evidence · 78/78 semantic · 78/78 intent · 78/78 isf-adapter current; gate exits 0 |
 | `2026-08-10` | `.3` emitted ISFs | 57 → 44 emitted; 44/44 FSMGen `--strict --check --json` clean; 14/14 loss correspondence with `interfaces(N->0)` |
+| `2026-08-10` | `.2` retention declared | 22 retained keys measured from `promoted_markdown_path`, matching the 22 `normalized/` directories exactly; declaration written and gated |
+| `2026-08-10` | `.2` gate re-run | 78 documents: 22/78/78/78 current, 78 emitted `.isf` bodies checked, `retention: 22 … exactly the declared retained set`, exit 0 |
+| `2026-08-10` | `.2` fail-closed | `--self-test` 16/16; three live negatives against the real declaration (vanished bundle, undeclared bundle, dropped document) each named and rejected |
+| `2026-08-10` | `.2` corpus-record audit | `.2.50`'s "184-file / 52,570,034-byte bundle" measured the document root; the bundle is 183 files / 51,754,156 bytes and the 815,878-byte difference is exactly its `source_ir.json`. Referential integrity confirmed complete — nothing lost. `.2.48`/`.2.49` records match their bundles exactly |
 
 ## Commit Log
 
@@ -239,3 +276,4 @@ Honest limits of this measurement:
 | `CORPUS-CHAIN-CURRENCY.0` completion | `CORPUS-CHAIN-CURRENCY.0 — decide currency policy and close measured drift` |
 | `CORPUS-CHAIN-CURRENCY.1` completion | `ddc2f798` — `CORPUS-CHAIN-CURRENCY.1 — gate persisted-chain currency as a CI-tier doctrine` |
 | `CORPUS-CHAIN-CURRENCY.3` completion | `CORPUS-CHAIN-CURRENCY.3 — rebuild the corpus chain to currency` |
+| `CORPUS-CHAIN-CURRENCY.2` completion | `CORPUS-CHAIN-CURRENCY.2 — declare and gate normalized-bundle retention` |

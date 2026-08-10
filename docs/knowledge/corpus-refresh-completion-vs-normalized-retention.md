@@ -25,7 +25,14 @@ canonical), 79 EvidenceIR, and 78 SemanticIR/IntentIR/adapter artifacts. The 32 
 have all five expected stage files: **160/160 present**. Cleanup therefore did not undo those completed refreshes.
 
 Progress must come from the durable per-document refresh log, not a live `normalized/` directory count. The
-correct frontier remains **32 completed refreshes and 24 real chip-spec documents not yet refreshed by `.2`**.
-Normalized retention is an ephemeral rebuildability/cache census and must be reported separately whenever it is
-operationally relevant. Historical task rows saying `RESTORED` describe their slice-completion postcondition;
-they do not promise permanent cache retention.
+frontier at that census was **32 completed refreshes and 24 real chip-spec documents not yet refreshed by `.2`**.
+Retention is a separate *measurability* census and must be reported separately whenever it is operationally
+relevant. Historical task rows saying `RESTORED` describe their slice-completion postcondition; they did not
+promise permanent cache retention.
+
+**Policy change (`2026-08-10`, ADR 0025 decision 3 / `CORPUS-CHAIN-CURRENCY.2`):** retention is no longer
+ephemeral or incidental. A refresh keeps its bundle, the retained set is declared in
+`doctrine/chain_currency/retained_bundles.json`, and `CHAIN-CURRENCY` fails closed on any divergence between
+that declaration and the bundles on disk. Everything above still holds — completion is a verified
+current-binary chain, not a directory count — but reclamation is now a deliberate, task-owned, recorded act
+rather than routine cleanup. See [[normalized-bundle-retention-is-declared]].
