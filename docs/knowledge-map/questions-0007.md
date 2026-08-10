@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > what is the `<role> channel signals` caption cue and how is it parsed
+- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
+  > what is the ambiguous_statements metric in validate
+- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
+  > what is the authoritative membership set for corpus SOURCE_PDF_REGISTRY
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > what is the bit-exact adjacency chain rule
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
@@ -184,6 +190,8 @@
   > what reset_value shapes are composable vs residual (numeric dec/0x/0b/…h compose; UNKNOWN, IMPLEMENTATION DEFINED, 0x-------- partial-unknown, -, X, Impl Spec, Configuration dependent, enum-annotated are honest residuals — ADR-0006, no name list)
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > what signals belong to which AXI channel
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > what stops a bounded snapshot from accreting chronology
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
   > what stops a later sentence or trailing agent phrase from supplying a passive constraint subject
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
@@ -284,17 +292,9 @@
   > where does nli-verify / extract-constraints-llm / semantic / intent / adapt write their output
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > where does recognize_digital_patterns hardcode HTRANS/PSEL/MISO and why is it an ADR-0006 breach
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > where does retired roadmap direction go
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > where does signal_channel_memberships live (EvidenceIR) and how is it carried (SemanticIR -> IntentIR)
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > where does specforge validate write validation_report.json
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > where does the .isf signal direction/width come from (direction_hint/width_hint, not the actor graph)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > where does the <qualifier> phase vocabulary live (extracted_statements prose, not section_anchors)
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > where does the ISF emitter lower a rule value literal (ir/isf_ir.rs:1493-1495 render_isf_control_expression → ControlExpressionRecord::Literal{literal}=>literal.clone(); copied verbatim, no width reconciliation at the emit site isf_ir.rs:418-432)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > where does the ISF emitter lower register reset_value (ir/isf_ir.rs: IsfStorageVar.reset + classify_register_reset + register_var_width; render emits (var NAME (width W) (reset V)); before .2/.3 IsfStorageVar had only name+width and dropped it)
-- [nli-intent-gate](../knowledge/nli-intent-gate.md)
-  > where does the NLI gate route a not-entailed contract

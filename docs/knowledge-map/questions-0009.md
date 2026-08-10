@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > why can't extract-constraints-llm run inside a converge pass
+- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
+  > why can't specforge evidence rebuild the evidence (normalized missing)
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > why can't specforge just drop single-noun or multiword actors to fix the prose phantom explosion
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > why did .1b.i NOT strip trailing prepositions and what changed in .1c.i
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > why did 64 AArch64 External Debug interfaces disappear
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > why did 88 CoreSight Base System interfaces disappear
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
@@ -288,13 +298,3 @@
   > why does the Introducing CoreSight guide emit no ISF
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > why does the MPAM 'must be included' sentence extract nothing
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > why does the OpenCAPI AFU Address Space Usage note emit no ISF
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > why does the OpenCAPI Certified Definition emit no ISF
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > why does the OpenCAPI Certified engineering note emit no ISF
-- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
-  > why does the OpenCAPI Data Link Layer specification emit no isf target
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > why does the OpenCAPI Ready Definition emit no ISF

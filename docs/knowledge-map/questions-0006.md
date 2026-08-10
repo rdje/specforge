@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > what does drop_unrenderable_rule_values / unrenderable_rule_value_residual_packet do in ir/isf_ir.rs
+- [nli-intent-gate](../knowledge/nli-intent-gate.md)
+  > what does intent --nli-verify do
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
   > what does is_dotted_cross_reference_subject do in evidence.rs
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
@@ -110,6 +114,8 @@
   > what is ADR 0027
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
   > what is ADR 0029
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > what is ADR 0030
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > what is AppError::IngestAbortedForDisk
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
@@ -291,9 +297,3 @@
   > what is the SWD line state machine (reset/operating/protocol-error/lockout)
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
   > what is the VLM table strategy / PDF-VARIANT-DIGESTION.2b
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > what is the `<role> channel signals` caption cue and how is it parsed
-- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
-  > what is the ambiguous_statements metric in validate
-- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
-  > what is the authoritative membership set for corpus SOURCE_PDF_REGISTRY

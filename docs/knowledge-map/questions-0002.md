@@ -224,6 +224,8 @@
   > how do I measure the extraction-quality gauge before and after a canonical promotion
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > how do I promote a document's constraint surface on canonical without re-ingesting the PDF
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > how do I roll ROADMAP.md when it approaches its ceiling
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > how do I run a Docling ingest or re-ingest on this machine
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
@@ -296,5 +298,3 @@
   > how does SpecForge relate to GoldMine Texada Pnueli Ammons
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > how does SpecForge resolve a persisted path after the repository moves
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > how does SpecForge serialize repository owned paths

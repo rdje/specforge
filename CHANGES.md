@@ -1,3 +1,46 @@
+### LIVE-DOC-STOP-RISK.0 — give the bounded roadmap a declared repeatable rollover
+
+- `ROADMAP.md` was 364 of 384 ceiling lines — 20 from stopping an unrelated slice — but the size was the
+  symptom. Reading the root against its own contract found the growth had one shape: **213 of the 364 lines
+  were a single bullet under `Current strategic priorities`** that had grown by one sentence per closed
+  task-tree leaf. Nine lines below it, the same file says it "does not mirror leaf frontiers or delivery
+  chronology", and the `bounded_snapshot` lifecycle forbids embedded chronology outright. The contract's three
+  `forbidden_literals` name legacy shapes (`### Applied task trees since`, `- done:`, `- **Progress (`) and
+  matched none of it, because this chronology was written as ordinary prose.
+- The deeper defect was that **the surface had no declared way out.** ADR 0010 modelled the archive as one
+  sealed pre-migration capsule, so the contract schema held exactly one, and the index said Git preserves
+  everything after it. When the bounded root filled a second time the compliant options were to hand-delete
+  direction — leaving it to Git object reachability, which the doctrine treats as conditional retention rather
+  than an archive — or to widen the ceiling. Neither is a rollover. This is exactly the shape ADR 0029 named
+  for the fact plane: a bound a surface can actually reach must have a remedy compliant work can take.
+- [ADR 0030](docs/decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md) makes the roadmap
+  archive a **series**. A rollover copies the bounded root to `docs/archive/roadmap/root-through-<date>.md`,
+  appends one contract record carrying its SHA-256/lines/bytes/max-line-bytes/date/reason, adds one archive
+  index row, and rewrites the root. The gate re-reads every capsule on every run, so recovering retired
+  direction never depends on Git object reachability. The pre-containment `source-through-2026-08-08.md`
+  capsule keeps its distinct role and may never be reused as a rollover target.
+- Three properties stop the new series from becoming the problem it solves. A capsule is checked against the
+  **current root's** ceilings, so a capsule above them is a gate failure rather than a rescue — the gate's
+  silence proves the surface never actually overflowed. `rollover_policy` bounds the series at 16 capsules,
+  warns at 12, and names its own remedy in the same record, because `archive_terminal` surfaces are exempt
+  from the live-document milestone report by design and a growing terminal collection would otherwise be
+  silent to its hard ceiling. And per ADR 0029 the aggregates are the file bound times the per-file bound
+  (16 x 384 lines, 16 x 49,152 bytes), with the per-file bound set to the current root's ceiling because that
+  is the largest thing a rollover can retire.
+- Result: the sealed capsule holds the exact 364-line / 34,938-byte root at SHA-256 `2cc2fa4a...7190`, and the
+  live root is **156 lines / 12,394 bytes — 40.6% of its ceiling** with roughly 100 lines before warning. No
+  health target, ceiling, or milestone moved; the surface came back under its bounds by rolling.
+- The contract's focused cases go from nine to 31. The 22 new ones cover duplicate ids and capsules, reuse of
+  the pre-migration capsule, non-chronological seal dates, unsafe and non-Markdown paths, over-cap counts, a
+  capsule above the current-root ceiling, a rollover declared in `planned` state, and every capsule metric or
+  digest mismatch. Writing them caught a real Perl trap first: `return (LIST)` collapses to its last element
+  in scalar context, so a one-element error return read as "no errors" — fixed at the source by returning
+  `@found`, not by working around it in the test.
+- Honest limit, recorded rather than implied: this is an exit, not a lock. Nothing yet bounds an individual
+  section of the root, so the same prose accretion can start again — it will simply reach a wall it can now
+  leave. `LIVE-DOC-STOP-RISK.0a` owns bounding each section so the signal names the growing section instead of
+  the whole file.
+
 ### FACT-CARD-CAPACITY-HEADROOM.3a — retire the consumed ceiling-increase authorities
 
 - Against committed `.3`, the containment gate reported exactly four `unused or banked ceiling-increase

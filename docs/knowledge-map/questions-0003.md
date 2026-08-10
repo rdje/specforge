@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > how does SpecForge serialize repository owned paths
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how does SpecForge tell a guide from a real spec / report low-yield docs honestly
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
@@ -184,6 +186,8 @@
   > how is a register name recovered from a section heading (RISC-V dmstatus/dmcontrol)
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > how is a register-field mnemonic recovered when the name column is a bit-range (NVMe)
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > how is a roadmap rollover capsule verified
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
   > how is a valid post-migration active task continuation verified
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
@@ -293,7 +297,3 @@
   > how many corpus refreshes remain after Introducing CoreSight
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > how many corpus refreshes remain after OpenCAPI AFU Address Space Usage
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > how many corpus refreshes remain after OpenCAPI Certified Definition
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > how many corpus refreshes remain after OpenCAPI Discovery

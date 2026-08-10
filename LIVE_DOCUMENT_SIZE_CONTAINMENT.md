@@ -86,6 +86,12 @@
   collection that may never be deleted or rolled over must never refuse a corpus whose every file is legal;
   the 10,000-line card total could, and 198 advertised cards did not fit inside it. All fact-plane rollover
   warnings clear at 195/338 files, 30/44 records, and 2,976/12,384 projection lines.
+  ADR 0030 applies the same rule to a `bounded_snapshot`. The roadmap archive becomes a bounded capsule series
+  rather than one pre-migration seal, because a one-time migration bounds a document once and says nothing
+  about the next fill: a rollover copies the bounded root to a dated capsule, appends one contract record, adds
+  one index row, and rewrites the root. Capsules are held to the current root's own ceilings, and the series
+  declares its 16-capsule bound, 12-capsule warning, and remedy in the contract — `archive_terminal` surfaces
+  are exempt from the generic milestone report, so a growing terminal collection must carry its own signal.
 <!-- LIVE-DOCUMENT-SIZE-CONTAINMENT-LOCAL-ADOPTION:END -->
 
 ---

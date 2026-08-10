@@ -21,22 +21,20 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: none — `FACT-CARD-CAPACITY-HEADROOM` is **closed** (`.0`/`.2`/`.2a`/`.3`/`.3a` done, `.1` superseded).
-- Current state: `.3` re-derived the whole fact plane as one profile (ADR 0029). Measuring found the advertised
-  198-card capacity was never reachable — 198 cards need 10,026 lines against a 10,000-line aggregate — and that
-  the breach had no legal exit, because cards are canonical and never deleted or rolled over. Pressure now sits
-  only on dimensions with a remedy; aggregates are the file bound times the per-file bound; the profile derives
-  from one parameter (`max_parts` 6). Capacity is **336 cards / 44 decision records / 379 facts**, currently
-  193 / 30 / 199, with every fact-plane rollover warning gone. Writing fact cards and decision records is
-  unblocked.
-  `.3a` then retired the four ceiling-increase authorities `.3` consumed, which the containment protocol
-  requires — a surviving authority is banked and fails closed.
-  That closing audit surfaced a class beyond the fact plane, now owned by the new `LIVE-DOC-STOP-RISK` tree:
-  ten surfaces carry an aggregate ceiling tighter than `files × per-file` (eight with no named remedy), and
-  **`ROADMAP.md` is 364 lines against a hard 384-line ceiling** — 20 lines from stopping an unrelated slice.
-- Next action: `LIVE-DOC-STOP-RISK.0` — roll `ROADMAP.md` through its declared current/history boundary
-  (`doctrine/live_document_size/roadmap_projection.json`, archive at `docs/archive/roadmap/`) before that
-  ceiling stops a slice. It is the only finding with a measured deadline; `CORPUS-COVERAGE.2.51` follows.
-  Note before appending: `CHANGES.md` is at 81.4% of its line health target, approaching its 90% rollover.
+- Active unit: `LIVE-DOC-STOP-RISK` — `.0` done; `.0a` and `.1` pending.
+- Current state: `.0` removed the only finding with a deadline. `ROADMAP.md` was 364 of 384 ceiling lines, but
+  213 of those lines were one `Current strategic priorities` bullet grown a sentence per closed leaf — the
+  delivery chronology its own `bounded_snapshot` lifecycle forbids and the file itself disclaims. The real
+  defect was that ADR 0010 gave the surface a one-time migration and no rollover, so the only exits were
+  deleting direction into Git reachability or widening a ceiling. ADR 0030 makes the archive a **series**:
+  copy the root to a dated capsule, append one contract record, add one index row, rewrite the root — all
+  gate-proved. Capsules are checked against the *current root's* ceilings (so a capsule above them is a
+  failure, not a rescue), and `rollover_policy` bounds the series at 16, warns at 12, and names its remedy,
+  because `archive_terminal` surfaces are exempt from the milestone report. Root is now **156 lines /
+  40.6% of ceiling**; no target, ceiling, or milestone moved. Contract self-test 9 → 31 cases.
+- Next action: `LIVE-DOC-STOP-RISK.0a` — bound each current-root section so the accretion that filled the
+  roadmap fails closed where it happens; `.0` gave the surface an exit but left the entrance open. Then `.1`
+  (eight remedy-less aggregates + the near-ceiling reporting question), then `CORPUS-COVERAGE.2.51`.
+  Note before appending: `CHANGES.md` is at 84.3% of its line health target, past warning, 90% rolls over.
 - In-flight uncommitted: none; no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

@@ -729,10 +729,51 @@ The exact capsule retains all 1,487 lines / 183,445 bytes at SHA-256
 [archive index](../../../archive/roadmap/INDEX.md) and manifest provide direct retrieval and verification.
 The migrated gate pins that identity, five exhaustive source regions, all 23
 workstream ids and owning task routes, known readers/writer, four stale-current findings, archive
-topology, and independent root limits. Its nine focused cases fail on duplicate, reordered, or
-missing source workstreams; missing or duplicate current rows; forbidden chronology; and unsafe
-paths. The live-document doctrine verifies capsule identity plus bounded-root/index/manifest
-retrieval on every run.
+topology, and independent root limits. The live-document doctrine verifies capsule identity plus
+bounded-root/index/manifest retrieval on every run.
+
+##### The rollover that makes the bound survivable
+
+A one-time migration bounds a document once. It does not say what to do the next time the bounded root
+fills — and this one filled again three days later, at 364 of 384 ceiling lines. Root-causing that growth
+found a single shape: 213 of the 364 lines were one bullet under `Current strategic priorities` that had
+grown by one sentence per closed task-tree leaf, which is exactly the delivery chronology the same file
+disclaims nine lines further down. The contract's `forbidden_literals` guard three legacy chronology
+shapes and matched none of it, because this chronology was written as ordinary prose.
+
+[ADR 0030](../../../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md) turns the
+one-time migration into a repeatable operation. A rollover copies the bounded root to a dated capsule
+under `docs/archive/roadmap/root-through-<date>.md`, appends one record to the contract, adds one archive
+index row, and rewrites the root. The contract record carries the capsule's SHA-256, lines, bytes, maximum
+line bytes, seal date, and reason, and the gate re-reads every capsule on every run — so recovering retired
+direction never depends on Git object reachability.
+
+Three properties keep the new series from becoming the problem it solves:
+
+- **A capsule must have been legal when it was sealed.** Every capsule is checked against the *current
+  root's* enforcement ceilings, so a capsule above them is a gate failure rather than a rescue. The gate's
+  silence is the evidence that the surface never actually overflowed.
+- **The series is bounded, reported, and remedied.** `rollover_policy` declares 16 capsules maximum,
+  warns at 12, and names its own remedy in the same record. This is deliberate: `archive_terminal`
+  surfaces are exempt from the live-document milestone report, because immutable history has no per-file
+  remedy — so a growing terminal collection would otherwise stay silent until its hard ceiling.
+- **The bounds are derived, not chosen.** Per ADR 0029, the collection's aggregates are the file bound
+  times the per-file bound (16 × 384 lines, 16 × 49,152 bytes), and the per-file bound is the current
+  root's ceiling, because that is the largest thing a rollover can retire.
+
+The first rollover sealed the exact 364-line / 34,938-byte root at SHA-256
+`2cc2fa4a39ff7a654ec0c24ec59a715d016bb0625a4846a9e583afc94fb77190` and left a 156-line / 12,394-byte root
+— 40.6% of its ceiling — without moving a single health target, ceiling, or milestone. The contract's
+focused cases grew from nine to 31: the original nine still fail on duplicate, reordered, or missing source
+workstreams, missing or duplicate current rows, forbidden chronology, and unsafe paths, and 22 new ones
+cover rollover schema and identity — duplicate ids and capsules, reuse of the pre-migration capsule,
+non-chronological seal dates, unsafe and non-Markdown paths, over-cap counts, a capsule above the
+current-root ceiling, a rollover declared in `planned` state, and every capsule metric or digest mismatch.
+
+One honest limit: the rollover is an exit, not a lock. Nothing yet bounds an individual section of the
+root, so the same prose accretion can start again — it will simply reach a wall it can now leave. Bounding
+each section, so the signal names the growing section rather than the whole file, is owned by
+`LIVE-DOC-STOP-RISK.0a`.
 
 #### Bounded FSMGen feedback channel landed
 

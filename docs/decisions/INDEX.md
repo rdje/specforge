@@ -41,6 +41,7 @@ changed* lives in git (layer D), not here.
 | [0027](0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md) | Fact-plane capacity requires reshaping the projection, because 198 cards is already the exact maximum its shape permits | 2026-08-10 | accepted | documentation, knowledge-map, generated-projection, containment, pressure, continuity |
 | [0028](0028-a-file-locator-means-one-file-and-aggregate-ceilings-must-warn.md) | A file locator means one file, so multi-file surfaces stopped being blind to their own aggregate ceilings | 2026-08-10 | accepted | documentation, containment, live-document-size, pressure, continuity |
 | [0029](0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md) | Fact-plane capacity is one derived profile, and an aggregate bound with no remedy is a trap | 2026-08-11 | accepted | documentation, knowledge-map, generated-projection, containment, pressure, continuity |
+| [0030](0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md) | A bounded snapshot needs a declared repeatable rollover, not a one-time migration | 2026-08-11 | accepted | documentation, containment, live-document-size, roadmap, archive, retrieval |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /

@@ -163,6 +163,7 @@ sub validate_contract {
     my ($c) = @_;
     reject_unknown($c, 'contract', qw(
       schema_version owner migration_state source layout drift_findings current_root archive consumers
+      rollover_policy rollovers
     ));
     problem('contract schema_version must be 1')
         if !defined($c->{schema_version}) || ref($c->{schema_version}) || $c->{schema_version} != 1;
@@ -192,6 +193,9 @@ sub validate_contract {
     validate_drift_findings($c->{drift_findings});
     validate_current_root_schema($c->{current_root});
     validate_archive_schema($c->{archive});
+    validate_rollover_policy_schema($c->{rollover_policy});
+    problem($_) for rollover_schema_errors(
+        $c->{rollovers}, $state, $c->{rollover_policy}, $c->{archive}, $c->{current_root});
     validate_consumers($c->{consumers});
 
     if (safe_relative($source_path) && !-f absolute($source_path)) {
@@ -223,6 +227,7 @@ sub validate_contract {
         drift_findings => scalar(@{ ref($c->{drift_findings}) eq 'ARRAY' ? $c->{drift_findings} : [] }),
         current_root_limits => $c->{current_root}{enforcement_ceilings},
         archive => $c->{archive},
+        rollovers => rollover_summary($c->{rollovers}),
     };
 
     if ($state eq 'migrated') {
@@ -232,6 +237,7 @@ sub validate_contract {
             $report_record->{current_root} = metrics($live);
         }
         validate_archive($c, $frozen);
+        validate_rollovers($c);
     }
 }
 
@@ -371,6 +377,151 @@ sub validate_archive_schema {
     my $limits = $archive->{index_limits};
     reject_unknown($limits, 'archive index_limits', qw(lines bytes line_bytes));
     required_positive_integer($limits, $_, 'archive index_limits') for qw(lines bytes line_bytes);
+}
+
+sub validate_rollover_policy_schema {
+    my ($policy) = @_;
+    reject_unknown($policy, 'rollover_policy', qw(max_capsules warning_capsules remedy));
+    return if ref($policy) ne 'HASH';
+    my $max = required_positive_integer($policy, 'max_capsules', 'rollover_policy');
+    my $warning = required_positive_integer($policy, 'warning_capsules', 'rollover_policy');
+    required_string($policy, 'remedy', 'rollover_policy');
+    problem('rollover_policy warning_capsules must stay below max_capsules')
+        if defined($max) && defined($warning) && $warning >= $max;
+}
+
+# Pure schema rules for the sealed-rollover series. A rollover retires the bounded current root, so
+# every capsule must have been legal when it was sealed: an entry above the current-root ceiling would
+# mean the surface breached its own bound before the rollover, not that the rollover recovered from it.
+sub rollover_schema_errors {
+    my ($rollovers, $state, $policy, $archive, $current) = @_;
+    my @found;
+    if (ref($rollovers) ne 'ARRAY') {
+        push @found, 'rollovers must be an array';
+        return @found;
+    }
+    my $max = ref($policy) eq 'HASH' ? $policy->{max_capsules} : undef;
+    $max = 16 if !defined($max) || ref($max) || $max !~ /\A\d+\z/;
+    my $pre_migration = ref($archive) eq 'HASH' ? ($archive->{source_capsule} // '') : '';
+    my $ceilings = ref($current) eq 'HASH' ? $current->{enforcement_ceilings} : undef;
+    push @found, 'planned migration_state may not declare a sealed rollover'
+        if $state ne 'migrated' && @$rollovers;
+    push @found, "rollovers exceed the declared maximum of $max capsules" if @$rollovers > $max;
+    my (%seen_id, %seen_capsule);
+    my $previous_date = '';
+    for my $index (0 .. $#$rollovers) {
+        my $record = $rollovers->[$index];
+        if (ref($record) ne 'HASH') {
+            push @found, "rollover $index must be an object";
+            next;
+        }
+        my %allowed = map { $_ => 1 } qw(id capsule sha256 lines bytes line_bytes sealed_date reason);
+        push @found, "rollover $index has unknown field '$_'"
+            for sort grep { !$allowed{$_} } keys %$record;
+        my $id = $record->{id};
+        if (!defined($id) || ref($id) || $id !~ /\A[a-z0-9][a-z0-9-]*\z/) {
+            push @found, "rollover $index lacks a lowercase identifier";
+            $id = "index $index";
+        } else {
+            push @found, "duplicate rollover id '$id'" if $seen_id{$id}++;
+        }
+        my $capsule = $record->{capsule} // '';
+        if (!safe_relative($capsule) || $capsule !~ /\.md\z/) {
+            push @found, "rollover '$id' capsule is not a safe repository-relative Markdown path";
+        } else {
+            push @found, "duplicate rollover capsule '$capsule'" if $seen_capsule{$capsule}++;
+            push @found, "rollover '$id' may not reuse the pre-migration source capsule"
+                if $pre_migration ne '' && $capsule eq $pre_migration;
+        }
+        push @found, "rollover '$id' sha256 must be a lowercase SHA-256"
+            if !defined($record->{sha256}) || ref($record->{sha256}) || $record->{sha256} !~ /\A[0-9a-f]{64}\z/;
+        for my $axis (qw(lines bytes line_bytes)) {
+            my $value = $record->{$axis};
+            if (!defined($value) || ref($value) || $value !~ /\A\d+\z/ || $value < 1) {
+                push @found, "rollover '$id' lacks positive integer '$axis'";
+                next;
+            }
+            next if ref($ceilings) ne 'HASH' || !defined($ceilings->{$axis});
+            push @found, "rollover '$id' $axis exceeds the current-root enforcement ceiling"
+                if $value > $ceilings->{$axis};
+        }
+        my $date = $record->{sealed_date} // '';
+        if (ref($date) || $date !~ /\A\d{4}-\d{2}-\d{2}\z/) {
+            push @found, "rollover '$id' lacks an ISO sealed_date";
+        } else {
+            push @found, "rollover '$id' seals before its predecessor" if $date lt $previous_date;
+            $previous_date = $date;
+        }
+        push @found, "rollover '$id' lacks a nonempty 'reason'"
+            if !defined($record->{reason}) || ref($record->{reason}) || $record->{reason} eq '';
+    }
+    return @found;
+}
+
+# Pure identity rules: each declared capsule must exist byte-for-byte as declared and be reachable
+# from the bounded archive index. $reader maps a repository-relative path to raw bytes or undef.
+sub rollover_content_errors {
+    my ($rollovers, $reader, $index_bytes) = @_;
+    my @found;
+    return () if ref($rollovers) ne 'ARRAY';
+    for my $record (@$rollovers) {
+        next if ref($record) ne 'HASH';
+        my $id = $record->{id} // '?';
+        my $capsule = $record->{capsule} // '';
+        next if !safe_relative($capsule);
+        my $bytes = $reader->($capsule);
+        if (!defined $bytes) {
+            push @found, "rollover '$id' capsule '$capsule' is missing";
+            next;
+        }
+        my $actual = metrics($bytes);
+        for my $axis (qw(lines bytes line_bytes)) {
+            push @found, "rollover '$id' $axis mismatch: expected $record->{$axis}, found $actual->{$axis}"
+                if defined($record->{$axis}) && $actual->{$axis} != $record->{$axis};
+        }
+        push @found, "rollover '$id' capsule bytes do not match its sealed SHA-256"
+            if sha256_hex($bytes) ne ($record->{sha256} // '');
+        push @found, "rollover '$id' capsule is not reachable from the roadmap archive index"
+            if defined($index_bytes) && index($index_bytes, basename($capsule)) < 0;
+    }
+    return @found;
+}
+
+sub rollover_summary {
+    my ($rollovers) = @_;
+    return [] if ref($rollovers) ne 'ARRAY';
+    return [ map { ref($_) eq 'HASH'
+        ? { id => $_->{id}, sealed_date => $_->{sealed_date}, lines => $_->{lines}, bytes => $_->{bytes} }
+        : {} } @$rollovers ];
+}
+
+sub validate_rollovers {
+    my ($c) = @_;
+    my $rollovers = $c->{rollovers};
+    return if ref($rollovers) ne 'ARRAY';
+    my $index_rel = ref($c->{archive}) eq 'HASH' ? ($c->{archive}{index} // '') : '';
+    my $index_bytes;
+    $index_bytes = slurp(absolute($index_rel), "roadmap archive index '$index_rel'")
+        if safe_relative($index_rel) && -f absolute($index_rel);
+    my $reader = sub {
+        my ($relative) = @_;
+        my $path = absolute($relative);
+        return undef if !-f $path;
+        open my $fh, '<:raw', $path or return undef;
+        local $/;
+        my $bytes = <$fh>;
+        close $fh;
+        return $bytes;
+    };
+    problem($_) for rollover_content_errors($rollovers, $reader, $index_bytes);
+
+    my $policy = $c->{rollover_policy};
+    return if ref($policy) ne 'HASH';
+    my $warning = $policy->{warning_capsules};
+    return if !defined($warning) || ref($warning) || $warning !~ /\A\d+\z/;
+    return if @$rollovers < $warning;
+    printf STDERR "roadmap-projection: WARNING sealed rollovers are at %d of %s capsules; remedy: %s\n",
+        scalar(@$rollovers), $policy->{max_capsules} // '?', $policy->{remedy} // 'undeclared';
 }
 
 sub validate_consumers {
@@ -718,6 +869,85 @@ LIVE
     (my $chronology = $valid_live) =~ s/## History and execution/\- done: old delivery\n## History and execution/;
     push @cases, ['current chronology rejected', scalar(live_root_errors($chronology, $current, $layout, $owners)) > 0];
     push @cases, ['unsafe archive path rejected', !safe_relative('../ROADMAP.md')];
+
+    my $policy = { max_capsules => 3, warning_capsules => 2, remedy => 'seal the series' };
+    my $archive = { source_capsule => 'docs/archive/roadmap/source-through-2026-08-08.md' };
+    my $capsule_bytes = "# ROADMAP\n## Objective\n- retired\n";
+    my $capsule_digest = sha256_hex($capsule_bytes);
+    my $capsule_metrics = metrics($capsule_bytes);
+    my $sealed = sub {
+        my (%override) = @_;
+        return {
+            id => 'root-through-2026-08-11',
+            capsule => 'docs/archive/roadmap/root-through-2026-08-11.md',
+            sha256 => $capsule_digest,
+            lines => $capsule_metrics->{lines},
+            bytes => $capsule_metrics->{bytes},
+            line_bytes => $capsule_metrics->{line_bytes},
+            sealed_date => '2026-08-11',
+            reason => 'chronology accretion reached the ceiling',
+            %override,
+        };
+    };
+    my $schema_errors = sub {
+        my ($rollovers, $state) = @_;
+        my @found = rollover_schema_errors($rollovers, $state // 'migrated', $policy, $archive, $current);
+        return scalar(@found);
+    };
+    push @cases, ['valid sealed rollover accepted', !$schema_errors->([$sealed->()])];
+    push @cases, ['empty rollover series accepted', !$schema_errors->([])];
+    push @cases, ['non-array rollovers rejected', $schema_errors->({}) > 0];
+    push @cases, ['unknown rollover field rejected', $schema_errors->([$sealed->(note => 'x')]) > 0];
+    push @cases, ['non-identifier rollover id rejected', $schema_errors->([$sealed->(id => 'Root 1')]) > 0];
+    push @cases, ['duplicate rollover id rejected',
+        $schema_errors->([$sealed->(), $sealed->(capsule => 'docs/archive/roadmap/root-through-2026-08-12.md')]) > 0];
+    push @cases, ['duplicate rollover capsule rejected',
+        $schema_errors->([$sealed->(), $sealed->(id => 'root-through-2026-08-12')]) > 0];
+    push @cases, ['pre-migration capsule reuse rejected',
+        $schema_errors->([$sealed->(capsule => $archive->{source_capsule})]) > 0];
+    push @cases, ['unsafe rollover capsule rejected',
+        $schema_errors->([$sealed->(capsule => '../ROADMAP.md')]) > 0];
+    push @cases, ['non-Markdown rollover capsule rejected',
+        $schema_errors->([$sealed->(capsule => 'docs/archive/roadmap/root.txt')]) > 0];
+    push @cases, ['out-of-order rollover dates rejected', $schema_errors->([
+        $sealed->(),
+        $sealed->(id => 'root-through-2026-08-09', capsule => 'docs/archive/roadmap/root-through-2026-08-09.md',
+            sealed_date => '2026-08-09'),
+    ]) > 0];
+    push @cases, ['malformed rollover date rejected', $schema_errors->([$sealed->(sealed_date => '11-08-2026')]) > 0];
+    push @cases, ['missing rollover reason rejected', $schema_errors->([$sealed->(reason => '')]) > 0];
+    push @cases, ['rollover above the current-root ceiling rejected',
+        $schema_errors->([$sealed->(lines => $current->{enforcement_ceilings}{lines} + 1)]) > 0];
+    push @cases, ['rollover count above the declared maximum rejected', $schema_errors->([
+        $sealed->(),
+        $sealed->(id => 'root-through-2026-08-12', capsule => 'docs/archive/roadmap/root-through-2026-08-12.md',
+            sealed_date => '2026-08-12'),
+        $sealed->(id => 'root-through-2026-08-13', capsule => 'docs/archive/roadmap/root-through-2026-08-13.md',
+            sealed_date => '2026-08-13'),
+        $sealed->(id => 'root-through-2026-08-14', capsule => 'docs/archive/roadmap/root-through-2026-08-14.md',
+            sealed_date => '2026-08-14'),
+    ]) > 0];
+    push @cases, ['rollover declared in planned state rejected', $schema_errors->([$sealed->()], 'planned') > 0];
+
+    my $stored = { 'docs/archive/roadmap/root-through-2026-08-11.md' => $capsule_bytes };
+    my $reader = sub { return $stored->{ $_[0] } };
+    my $sealed_index = "# Roadmap archive\n[current](../../../ROADMAP.md)\n"
+        . "[retired](root-through-2026-08-11.md)\n";
+    my $content_errors = sub {
+        my ($rollovers, $index_text) = @_;
+        my @found = rollover_content_errors($rollovers, $reader, $index_text // $sealed_index);
+        return scalar(@found);
+    };
+    push @cases, ['sealed capsule identity accepted', !$content_errors->([$sealed->()])];
+    push @cases, ['missing capsule rejected',
+        $content_errors->([$sealed->(capsule => 'docs/archive/roadmap/root-through-2026-08-12.md')]) > 0];
+    push @cases, ['capsule digest mismatch rejected', $content_errors->([$sealed->(sha256 => '0' x 64)]) > 0];
+    push @cases, ['capsule line-count mismatch rejected',
+        $content_errors->([$sealed->(lines => $capsule_metrics->{lines} + 1)]) > 0];
+    push @cases, ['capsule byte-count mismatch rejected',
+        $content_errors->([$sealed->(bytes => $capsule_metrics->{bytes} + 1)]) > 0];
+    push @cases, ['capsule absent from the archive index rejected',
+        $content_errors->([$sealed->()], "# Roadmap archive\n[current](../../../ROADMAP.md)\n") > 0];
 
     my $passed = 0;
     for my $case (@cases) {

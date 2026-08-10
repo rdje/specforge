@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > how many corpus refreshes remain after OpenCAPI Certified Definition
+- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
+  > how many corpus refreshes remain after OpenCAPI Discovery
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > how many corpus refreshes remain after OpenCAPI Ready Definition
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
@@ -293,7 +297,3 @@
   > is the conditional_rules ISF-lowering shortfall a real gap or honest residual (HONEST RESIDUAL — 73% prose/undeclared/placeholder; the rest are bare deontic modals with no concrete obligation; no buildable ISF lever, no FR)
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > is the corpus task migration contract locked
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > is the dense-prose phantom-actor explosion a relation-subject seam or an actors[] prose-mint seam problem
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > is the descendant-subsection scope over-broad (no — 0 over-broad corpus-wide)

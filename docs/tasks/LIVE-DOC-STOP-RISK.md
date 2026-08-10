@@ -81,13 +81,23 @@ from "one slice from a hard failure".
   Status: `active`
   Goal: no live-document surface can reach a stop that compliant work cannot leave, and no near-stop is
   reported only as a stale soft-target percentage
-  Children: `LIVE-DOC-STOP-RISK.0`, `.1`
+  Children: `LIVE-DOC-STOP-RISK.0`, `.0a`, `.1`
 
 - ID: `LIVE-DOC-STOP-RISK.0`
-  Status: `pending`
+  Status: `done`
   Goal: roll `ROADMAP.md` through its declared current/history boundary before the 384-line ceiling stops an
   unrelated slice. This is first because it is the only finding with a measured deadline.
   Acceptance: `ROADMAP.md is below its enforcement ceiling with room for ordinary status edits; the archived history is byte-exact and reachable; the roadmap-projection contract, live-document gate, and book routes pass; no milestone or ceiling moves`
+  Verification: `ROADMAP.md is 156 lines / 12,394 bytes (40.6% of the 384-line ceiling, 60.9% of the 256-line health target); docs/archive/roadmap/root-through-2026-08-11.md holds the exact 364-line / 34,938-byte / SHA-256 2cc2fa4a…7190 pre-rollover root; check_roadmap_projection_contract.pl --self-test is 31/31 and --check passes; check_live_document_size.sh passes with 736 files across 52 surfaces and no roadmap warning; scripts/check_doctrines.sh is 6/6; no health target, ceiling, or milestone changed`
+  Commit: `LIVE-DOC-STOP-RISK.0 — give the bounded roadmap a declared repeatable rollover`
+
+- ID: `LIVE-DOC-STOP-RISK.0a`
+  Status: `pending`
+  Goal: make the accretion that filled the root fail closed where it happens. `.0` gave the surface an exit
+  but did not stop it being re-entered: the 213 retired lines were one prose bullet in one H2 section, and
+  nothing bounds a section. Bound each current-root section so the signal names the growing section rather
+  than the whole file.
+  Acceptance: `the current_root contract declares a per-section line bound derived from the measured section shape; check_roadmap_projection_contract.pl fails closed on an over-bound section with focused cases for the boundary, an unknown section, and a missing declaration; the present root passes with recorded headroom per section; no file-level ceiling or milestone moves`
   Verification: `pending`
   Commit: `pending`
 
@@ -104,14 +114,26 @@ from "one slice from a hard failure".
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `LIVE-DOC-STOP-RISK.0` | `pending` | 20 lines of headroom is the only measured deadline here; every other finding is a latent shape |
-| 2 | `LIVE-DOC-STOP-RISK.1` | `pending` | needs `.0`'s experience of applying a declared remedy before deciding which surfaces genuinely have one |
+| 1 | `LIVE-DOC-STOP-RISK.0` | `done` | 20 lines of headroom was the only measured deadline here; every other finding is a latent shape |
+| 2 | `LIVE-DOC-STOP-RISK.0a` | `pending` | `.0` proved the exit exists but left the entrance open; the root can re-accrete the same way |
+| 3 | `LIVE-DOC-STOP-RISK.1` | `pending` | now has `.0`'s worked example of what "a surface with a declared remedy" actually costs |
 
 ## Decisions
 
 - `2026-08-11`: track this as its own tree rather than reopening the closed `FACT-CARD-CAPACITY-HEADROOM`.
   That tree closed on its own evidence and owned one plane; this owns a class the closing audit measured
   elsewhere, on surfaces that tree never touched.
+- `2026-08-11` (`.0`): seal the retired root byte-exact rather than prove 213 dense prose lines duplicate
+  against ~130 task trees and `CHANGES.md`. Both satisfy the doctrine; the capsule costs 35 KB and is
+  mechanically re-provable, while the duplicate proof costs a day and is only as good as the reader.
+- `2026-08-11` (`.0`): make the rollover a *declared repeatable operation* rather than a second one-off
+  migration ([ADR 0030](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)).
+  `ROADMAP.md` filled twice in three days, so the question was never "how do we shrink it once" but "what
+  is the compliant exit next time" — which is the tree's own goal applied to its first case.
+- `2026-08-11` (`.0`): give the new capsule series its own count signal in the roadmap contract rather than
+  rely on the live-document report. `archive_terminal` surfaces are exempt from milestone warnings by
+  design, so a growing immutable collection is silent to its hard ceiling — exactly Finding 1's shape.
+  Declaring `rollover_policy` where the remedy is declared avoids adding an instance of the defect.
 
 ## Open Questions
 
@@ -131,16 +153,27 @@ from "one slice from a hard failure".
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-08-11` | ownership | enumerated every multi-file surface in `doctrine/live_document_size/surfaces.jsonl`, comparing each aggregate ceiling with `files × per-file ceiling`; read `ROADMAP.md` metrics from `check_live_document_size.pl --report` | 10 surfaces carry an aggregate tighter than their legal maximum, 8 of them with no named remedy; `ROADMAP.md` is 364/384 lines and 34,938/49,152 bytes |
+| `2026-08-11` | `.0` root cause | read the 364-line root against its own `bounded_snapshot` contract | 213 of 364 lines were one `Current strategic priorities` bullet grown one sentence per closed leaf — chronology the lifecycle forbids and the file itself disclaims nine lines later; the contract's three `forbidden_literals` name legacy shapes and match none of it |
+| `2026-08-11` | `.0` sealed identity | `cp ROADMAP.md docs/archive/roadmap/root-through-2026-08-11.md` then recomputed metrics with the checker's own routine | capsule is byte-exact: 364 lines / 34,938 bytes / 205 max line bytes / SHA-256 `2cc2fa4a39ff7a654ec0c24ec59a715d016bb0625a4846a9e583afc94fb77190` |
+| `2026-08-11` | `.0` contract | `perl scripts/check_roadmap_projection_contract.pl --self-test` | 31/31 (9 pre-existing + 22 rollover cases); a first run failed `non-array rollovers rejected` because `return (LIST)` collapses to its last element in scalar context — fixed at the source by returning `@found` |
+| `2026-08-11` | `.0` bounded root | recomputed `ROADMAP.md` metrics after the rewrite | 156 lines / 12,394 bytes / 205 max line bytes = 40.6% of the line ceiling, 60.9% of the line health target; ~100 lines before warning |
+| `2026-08-11` | `.0` gate | `perl scripts/check_roadmap_projection_contract.pl --check`; `bash scripts/check_live_document_size.sh`; `bash scripts/check_doctrines.sh` | contract passes in migrated state; live-document gate passes with 736 Markdown files across 52 governed surfaces and no `roadmap` warning (was 142.2% of health); doctrines 6/6 PASS, `CHAIN-CURRENCY` DEFER as registered |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `LIVE-DOC-STOP-RISK` ownership | `LIVE-DOC-STOP-RISK — track live-document stops with no compliant exit` | surfaced by `FACT-CARD-CAPACITY-HEADROOM.3`'s closing audit |
-| `LIVE-DOC-STOP-RISK.0` | `pending` | `pending` |
+| `LIVE-DOC-STOP-RISK.0` | `LIVE-DOC-STOP-RISK.0 — give the bounded roadmap a declared repeatable rollover` | ADR 0030; 364 → 156 lines with the retired root sealed byte-exact |
+| `LIVE-DOC-STOP-RISK.0a` | `pending` | `pending` |
 | `LIVE-DOC-STOP-RISK.1` | `pending` | `pending` |
 
 ## Changelog
 
 - `2026-08-11`: Created from the measured class `FACT-CARD-CAPACITY-HEADROOM.3` found while fixing one instance
   of it, plus the `ROADMAP.md` near-ceiling measurement taken in the same pass.
+- `2026-08-11`: `.0` closed. Root-causing the 364 lines found the growth was not diffuse — 213 of them were a
+  single chronology bullet the lifecycle already forbids — and that the surface had no declared rollover at
+  all, only ADR 0010's one-time migration. ADR 0030 makes the rollover a repeatable, data-declared,
+  gate-proved operation with its own bounded and reported capsule series. `.0a` opened for the entrance the
+  rollover does not close: nothing bounds a section, so the root can re-accrete the same way.

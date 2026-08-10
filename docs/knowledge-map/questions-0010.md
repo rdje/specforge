@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > why does the OpenCAPI AFU Address Space Usage note emit no ISF
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > why does the OpenCAPI Certified Definition emit no ISF
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > why does the OpenCAPI Certified engineering note emit no ISF
+- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
+  > why does the OpenCAPI Data Link Layer specification emit no isf target
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > why does the OpenCAPI Ready Definition emit no ISF
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > why does the OpenCAPI Ready engineering note emit no ISF
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
@@ -38,6 +48,8 @@
   > why does the refreshed Generic Interrupt Controller Overview Guide emit no ISF
 - [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
   > why does the refreshed OpenCAPI 4.0 32 Gbps PHY Signaling specification emit no ISF
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > why does the roadmap archive hold more than one capsule
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > why does the same token AXI interface merge in one doc but not another
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)

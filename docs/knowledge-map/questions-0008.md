@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > where does the .isf signal direction/width come from (direction_hint/width_hint, not the actor graph)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > where does the <qualifier> phase vocabulary live (extracted_statements prose, not section_anchors)
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > where does the ISF emitter lower a rule value literal (ir/isf_ir.rs:1493-1495 render_isf_control_expression → ControlExpressionRecord::Literal{literal}=>literal.clone(); copied verbatim, no width reconciliation at the emit site isf_ir.rs:418-432)
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > where does the ISF emitter lower register reset_value (ir/isf_ir.rs: IsfStorageVar.reset + classify_register_reset + register_var_width; render emits (var NAME (width W) (reset V)); before .2/.3 IsfStorageVar had only name+width and dropped it)
+- [nli-intent-gate](../knowledge/nli-intent-gate.md)
+  > where does the NLI gate route a not-entailed contract
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > where does the SpecForge chipdoc source route currently resolve
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
@@ -287,13 +297,3 @@
   > why can't RISC-V AIA registers be captured by .4d.i (its normalized bundle is ABSENT — re-ingest RAM/Docling-gated under CORPUS-COVERAGE — and its CSR intent is prose conditional_rules, not register tables)
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
   > why can't cluster-scoping replace the forbidden supply-rail (VDD/VSS) denylist
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > why can't extract-constraints-llm run inside a converge pass
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > why can't specforge evidence rebuild the evidence (normalized missing)
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > why can't specforge just drop single-noun or multiword actors to fix the prose phantom explosion
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > why did .1b.i NOT strip trailing prepositions and what changed in .1c.i
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > why did 64 AArch64 External Debug interfaces disappear

@@ -316,7 +316,13 @@ The adapter also executes `scripts/check_roadmap_projection_contract.pl`: its fo
 contract pin the exact pre-migration roadmap identity, five exhaustive semantic regions, ordered
 23-workstream/task ownership, drift evidence, consumers, bounded-current structure, and archive
 topology. The migrated contract authenticates the immutable capsule at the pinned identity and
-verifies the bounded current root plus manifest/index retrieval on every run.
+verifies the bounded current root plus manifest/index retrieval on every run. Its sealed-rollover
+series (ADR 0030) is proved on the same run: every declared capsule must exist byte-for-byte at its
+declared metrics and digest, be reachable from the bounded archive index, carry a chronological seal
+date and unique id, stay distinct from the pre-migration capsule, and sit within the *current root's*
+enforcement ceilings — so a capsule above them fails closed rather than legitimizing an overflow. The
+declared `rollover_policy` bounds the series and prints its count and named remedy at the warning,
+because `archive_terminal` surfaces are exempt from the generic milestone report.
 The adapter also executes `scripts/check_fsmgen_feedback_protocol.pl`. Its focused cases and real
 contract pin the exact feedback source, five exhaustive regions, six closed exchanges with explicit
 direction/status/evidence, two stale-current findings, 26 consumers, bounded open-record schema, and
