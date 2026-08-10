@@ -362,10 +362,19 @@ sub validate_external_authorities {
                 if ($surface->{index} // '') ne $paths->{landing};
             push @$errors, 'knowledge-card surface verifier disagrees with catalog checker'
                 if ($surface->{verifier} // '') ne 'scripts/check_fact_card_catalog.pl';
-            push @$errors, 'knowledge-card surface must retain direct membership links'
-                if ref($surface->{index_contract}) ne 'HASH'
-                || ($surface->{index_contract}{kind} // '') ne 'membership'
-                || ($surface->{index_contract}{verifier} // '') ne 'builtin:markdown_links';
+            my $index_contract = ref($surface->{index_contract}) eq 'HASH'
+                ? $surface->{index_contract} : {};
+            push @$errors, 'knowledge-card surface index verifier must remain builtin:markdown_links'
+                if ($index_contract->{verifier} // '') ne 'builtin:markdown_links';
+            if (($contract->{migration_state} // '') eq 'migrated') {
+                push @$errors, 'knowledge-card surface must route membership through the title parts'
+                    if ($index_contract->{kind} // '') ne 'routed_membership'
+                    || ($index_contract->{route_surface} // '') ne ($contract->{part_surface_id} // '');
+            } else {
+                push @$errors, 'knowledge-card surface must retain direct membership links'
+                    if ($index_contract->{kind} // '') ne 'membership'
+                    || exists $index_contract->{route_surface};
+            }
             my $health_files = ref($surface->{health_targets}) eq 'HASH'
                 ? $surface->{health_targets}{files} : undef;
             my $ceiling_files = ref($surface->{enforcement_ceilings}) eq 'HASH'
@@ -627,23 +636,34 @@ sub render_projection {
     push @$errors, "projection requires $part_count parts; limit is $limits->{max_parts}"
         if $part_count > $limits->{max_parts};
 
-    my @part_links;
+    my @range_rows;
     for my $index (0 .. $part_count - 1) {
         my $start = $index * $limits->{cards_per_part};
         my $end = $start + $limits->{cards_per_part} - 1;
         $end = $#$cards if $end > $#$cards;
         my $path = part_path($paths, $index + 1);
         my $relative = relative_link($paths->{landing}, $path);
-        push @part_links, sprintf('[%04d](%s)', $index + 1, $relative);
+        push @range_rows, sprintf(
+            '| [%04d](%s) | %d | `%s` | `%s` |',
+            $index + 1, $relative, $end - $start + 1,
+            $cards->[$start]{id}, $cards->[$end]{id},
+        );
     }
     my @root = (
         '# Knowledge fact-card catalog',
         '> **AUTO-GENERATED — DO NOT EDIT.** Run `perl scripts/check_fact_card_catalog.pl --write`. '
             . '[README](README.md) · [questions](../../KNOWLEDGE_MAP.md) · '
             . '[decisions](../decisions/INDEX.md).',
-        '> Title parts: ' . join(' · ', @part_links),
+        sprintf(
+            '> %d fact card%s route through %d title part%s; find an id inside a range, then open that part.',
+            scalar(@$cards), @$cards == 1 ? '' : 's',
+            $part_count, $part_count == 1 ? '' : 's',
+        ),
+        '',
+        '| Part | Cards | First id | Last id |',
+        '| --- | ---: | --- | --- |',
+        @range_rows,
     );
-    push @root, map { '- [' . $_->{id} . '](' . $_->{name} . ')' } @$cards;
 
     my @outputs = ({path => $paths->{landing}, role => 'landing', raw => raw_scalar(join("\n", @root) . "\n")});
     for my $index (0 .. $part_count - 1) {
@@ -674,7 +694,42 @@ sub render_projection {
     }
     validate_projection_metrics(\@outputs, $limits, $errors);
     validate_expected_links(\@outputs, $cards, $paths, $errors);
+    validate_landing_ranges($outputs[0]{raw}, $cards, $limits, $part_count, $errors);
     return \@outputs;
+}
+
+# Re-read the rendered router and prove it is range-complete against the canonical card list:
+# one ordered row per title part, per-part counts that sum to the catalog, and inclusive
+# first/last ids. This is what replaces the removed per-card landing line as the browse proof.
+sub validate_landing_ranges {
+    my ($raw, $cards, $limits, $part_count, $errors) = @_;
+    my @rows;
+    while ($raw =~ /^\| \[(\d{4})\]\([^)\r\n]+\) \| (\d+) \| `([^`\r\n]+)` \| `([^`\r\n]+)` \|$/mg) {
+        push @rows, {number => $1, count => $2, first => $3, last => $4};
+    }
+    if (@rows != $part_count) {
+        push @$errors, 'planned landing must carry exactly one range row per title part';
+        return;
+    }
+    my $covered = 0;
+    for my $index (0 .. $#rows) {
+        my $row = $rows[$index];
+        my $number = $index + 1;
+        my $start = $index * $limits->{cards_per_part};
+        my $end = $start + $limits->{cards_per_part} - 1;
+        $end = $#$cards if $end > $#$cards;
+        push @$errors, "planned landing range row $number is out of part order"
+            if $row->{number} != $number;
+        push @$errors, "planned landing range row $number miscounts its title part"
+            if $row->{count} != $end - $start + 1;
+        push @$errors, "planned landing range row $number names the wrong first id"
+            if $row->{first} ne $cards->[$start]{id};
+        push @$errors, "planned landing range row $number names the wrong last id"
+            if $row->{last} ne $cards->[$end]{id};
+        $covered += $row->{count};
+    }
+    push @$errors, 'planned landing ranges do not cover every card exactly once'
+        if $covered != scalar(@$cards);
 }
 
 sub validate_projection_metrics {
@@ -790,13 +845,14 @@ sub validate_expected_links {
     push @$errors, 'planned landing must link collection README exactly once'
         if ($root_links->{$paths->{collection_readme}} // 0) != 1;
     for my $card (@$cards) {
-        push @$errors, "planned landing must link card '$card->{path}' exactly once"
-            if ($root_links->{$card->{path}} // 0) != 1;
+        push @$errors, "planned landing must route card '$card->{path}' through a title part, not link it"
+            if $root_links->{$card->{path}};
     }
     for my $output (@$outputs[1 .. $#$outputs]) {
         push @$errors, "planned landing must link title part '$output->{path}' exactly once"
             if ($root_links->{$output->{path}} // 0) != 1;
     }
+    my %routed;
     my $part_index = 0;
     for my $output (@$outputs[1 .. $#$outputs]) {
         my $links = resolved_links($output->{raw}, $output->{path}, "planned title part", $errors);
@@ -807,7 +863,12 @@ sub validate_expected_links {
             push @$errors, "planned title part '$output->{path}' must resolve card '$card->{path}' exactly once"
                 if ($links->{$card->{path}} // 0) != 1;
         }
+        $routed{$_} += $links->{$_} // 0 for map { $_->{path} } @$cards;
         $part_index++;
+    }
+    for my $card (@$cards) {
+        push @$errors, "card '$card->{path}' is not reachable exactly once through the landing's title parts"
+            if ($routed{$card->{path}} // 0) != 1;
     }
 }
 
@@ -1189,6 +1250,14 @@ Fixture fact.
 CARD
 }
 
+sub self_test_paths {
+    return {
+        card_directory => 'docs/knowledge', collection_readme => 'docs/knowledge/README.md',
+        landing => 'docs/knowledge/INDEX.md', part_directory => 'docs/knowledge-catalog',
+        part_prefix => 'titles-',
+    };
+}
+
 sub fixture_contract {
     my ($state) = @_;
     return {
@@ -1220,14 +1289,21 @@ sub fixture_contract {
 }
 
 sub fixture_surface {
-    my ($files) = @_;
+    my ($files, $state) = @_;
+    $state //= 'legacy_locked';
+    my $index_contract = $state eq 'migrated'
+        ? {
+            kind => 'routed_membership', verifier => 'builtin:markdown_links',
+            route_surface => 'fact_card_titles',
+        }
+        : {kind => 'membership', verifier => 'builtin:markdown_links'};
     return {
         surface_id => 'knowledge_cards', targets => ['docs/knowledge/*.md'], locator => 'file',
         lifecycle => 'partitioned_canonical', state => 'normal', owner => 'fixture',
         health_targets => {files => $files}, enforcement_ceilings => {files => $files},
         milestones => {warning_pct => 80, rollover_pct => 90},
         verifier => 'scripts/check_fact_card_catalog.pl', index => 'docs/knowledge/INDEX.md',
-        index_contract => {kind => 'membership', verifier => 'builtin:markdown_links'},
+        index_contract => $index_contract,
     };
 }
 
@@ -1249,7 +1325,7 @@ sub fixture_part_surface {
 sub init_fixture {
     my ($base, $state, $mutator) = @_;
     my $contract = fixture_contract($state);
-    my @fixture_surfaces = (fixture_surface(200));
+    my @fixture_surfaces = (fixture_surface(200, $state));
     push @fixture_surfaces, fixture_part_surface() if $state eq 'migrated';
     write_raw(
         $base, 'doctrine/live_document_size/surfaces.jsonl',
@@ -1350,10 +1426,7 @@ sub run_self_test {
     my @packing_errors;
     my $packing = render_projection(
         \@packing_cards,
-        {card_directory => 'docs/knowledge', collection_readme => 'docs/knowledge/README.md',
-         landing => 'docs/knowledge/INDEX.md', part_directory => 'docs/knowledge-catalog',
-         part_prefix => 'titles-'},
-        $limits, \@packing_errors,
+        self_test_paths(), $limits, \@packing_errors,
     );
     die "fact-card-catalog parser self-test: 57-card packing failed: @packing_errors\n"
         if @packing_errors || @$packing != 3;
@@ -1365,10 +1438,7 @@ sub run_self_test {
     my @overflow_errors;
     render_projection(
         \@overflow_cards,
-        {card_directory => 'docs/knowledge', collection_readme => 'docs/knowledge/README.md',
-         landing => 'docs/knowledge/INDEX.md', part_directory => 'docs/knowledge-catalog',
-         part_prefix => 'titles-'},
-        $limits, \@overflow_errors,
+        self_test_paths(), $limits, \@overflow_errors,
     );
     die "fact-card-catalog parser self-test: 199-card ceiling did not fail closed\n"
         if join("\n", @overflow_errors) !~ /card count exceeds migrated maximum 198/;
@@ -1382,10 +1452,7 @@ sub run_self_test {
     my @capacity_errors;
     my $capacity_projection = render_projection(
         \@capacity_cards,
-        {card_directory => 'docs/knowledge', collection_readme => 'docs/knowledge/README.md',
-         landing => 'docs/knowledge/INDEX.md', part_directory => 'docs/knowledge-catalog',
-         part_prefix => 'titles-'},
-        $limits, \@capacity_errors,
+        self_test_paths(), $limits, \@capacity_errors,
     );
     my ($capacity_landing_errors) = pressure_findings(
         metrics($capacity_projection->[0]{raw}), $limits->{landing}{health_targets},
@@ -1399,6 +1466,45 @@ sub run_self_test {
     die "fact-card-catalog parser self-test: exact 198-card capacity crosses mandatory pressure: "
         . join('; ', @capacity_errors, @$capacity_landing_errors, @$capacity_part_errors) . "\n"
         if @capacity_errors || @$capacity_landing_errors || @$capacity_part_errors;
+
+    # The landing is a router: its size follows the title-part count, never the card count.
+    my @single_errors;
+    my $single_projection = render_projection(
+        [$capacity_cards[0]], self_test_paths(), $limits, \@single_errors,
+    );
+    die "fact-card-catalog parser self-test: single-card projection failed: @single_errors\n"
+        if @single_errors;
+    for my $case ([$single_projection, 1], [$packing, 2], [$capacity_projection, 4]) {
+        my ($projection, $parts) = @$case;
+        my $lines = metrics($projection->[0]{raw})->{lines};
+        die "fact-card-catalog parser self-test: landing is $lines lines for $parts parts, "
+            . "expected " . ($parts + 6) . "\n"
+            if $lines != $parts + 6 || $#$projection != $parts;
+    }
+    my @landing_link_errors;
+    my $capacity_landing_links = resolved_links(
+        $capacity_projection->[0]{raw}, 'docs/knowledge/INDEX.md',
+        'capacity landing', \@landing_link_errors,
+    );
+    die "fact-card-catalog parser self-test: capacity landing has unsafe links: @landing_link_errors\n"
+        if @landing_link_errors;
+    die "fact-card-catalog parser self-test: the router landing still links a card directly\n"
+        if grep { $capacity_landing_links->{$_->{path}} } @capacity_cards;
+    for my $case (
+        ['miscounted part', sub { $_[0] =~ s/\| 56 \| /| 55 | /; $_[0] }, qr/miscounts its title part/],
+        ['renamed first id', sub {
+            $_[0] =~ s/\| `\Q$capacity_cards[0]{id}\E`/| `fact-000-renamed`/; $_[0];
+        }, qr/names the wrong first id/],
+        ['dropped range row', sub { $_[0] =~ s/^\| \[0004\][^\n]*\n//m; $_[0] }, qr/exactly one range row per title part/],
+    ) {
+        my ($name, $mutator, $expected) = @$case;
+        my @range_errors;
+        validate_landing_ranges(
+            $mutator->($capacity_projection->[0]{raw}), \@capacity_cards, $limits, 4, \@range_errors,
+        );
+        die "fact-card-catalog parser self-test: range rule missed '$name': @range_errors\n"
+            if join("\n", @range_errors) !~ $expected;
+    }
     my ($rollover_errors, $rollover_warnings) = pressure_findings(
         {lines => 90, bytes => 80, line_bytes => 1},
         {lines => 100, bytes => 100, line_bytes => 100},
@@ -1429,8 +1535,10 @@ sub run_self_test {
         ['planned hash drift', 'legacy_locked', sub { $_[1]{planned_outputs}[0]{sha256} = 'f' x 64 }, qr/planned_outputs membership/],
         ['planned duplicate path', 'legacy_locked', sub { $_[1]{planned_outputs}[1]{path} = $_[1]{planned_outputs}[0]{path} }, qr/duplicate path|membership\/order/],
         ['migrated positive', 'migrated', undef, undef],
-        ['missing migrated title surface', 'migrated', sub { write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode(fixture_surface(200)) . "\n") }, qr/must contain title-part surface/],
-        ['migrated title surface drift', 'migrated', sub { my $part = fixture_part_surface(); $part->{health_targets}{lines_each}++; write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode(fixture_surface(200)) . "\n" . JSON::PP->new->canonical(1)->encode($part) . "\n") }, qr/title-part surface health targets differ/],
+        ['missing migrated title surface', 'migrated', sub { write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode(fixture_surface(200, 'migrated')) . "\n") }, qr/must contain title-part surface/],
+        ['migrated title surface drift', 'migrated', sub { my $part = fixture_part_surface(); $part->{health_targets}{lines_each}++; write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode(fixture_surface(200, 'migrated')) . "\n" . JSON::PP->new->canonical(1)->encode($part) . "\n") }, qr/title-part surface health targets differ/],
+        ['migrated membership kind drift', 'migrated', sub { write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode(fixture_surface(200, 'legacy_locked')) . "\n" . JSON::PP->new->canonical(1)->encode(fixture_part_surface()) . "\n") }, qr/must route membership through the title parts/],
+        ['migrated route surface drift', 'migrated', sub { my $surface = fixture_surface(200, 'migrated'); $surface->{index_contract}{route_surface} = 'other_titles'; write_raw($_[0], 'doctrine/live_document_size/surfaces.jsonl', JSON::PP->new->canonical(1)->encode($surface) . "\n" . JSON::PP->new->canonical(1)->encode(fixture_part_surface()) . "\n") }, qr/must route membership through the title parts/],
         ['missing migrated part', 'migrated', sub { unlink absolute($_[0], $_[1]{planned_outputs}[1]{path}) }, qr/migrated title_part is missing/],
         ['stale migrated part', 'migrated', sub { write_raw($_[0], $_[1]{paths}{part_directory} . '/titles-9999.md', "stale\n") }, qr/stale title-part output/],
         ['unexpected part residue', 'migrated', sub { write_raw($_[0], $_[1]{paths}{part_directory} . '/notes.md', "residue\n") }, qr/unexpected title-part residue/],
@@ -1439,7 +1547,7 @@ sub run_self_test {
         ['migrated card addition without regeneration', 'migrated', sub { write_raw($_[0], 'docs/knowledge/delta.md', fixture_card('delta', 'Delta title')) }, qr/migrated output differs/],
     );
 
-    my $passed = 12;
+    my $passed = 18;
     for my $index (0 .. $#cases) {
         my ($name, $state, $mutator, $expected) = @{$cases[$index]};
         my $fixture = File::Spec->catdir($generated, ".fact-card-catalog-self-test.$$.$index");
@@ -1472,7 +1580,7 @@ sub run_self_test {
     );
     write_raw(
         $write_fixture, 'doctrine/live_document_size/surfaces.jsonl',
-        JSON::PP->new->canonical(1)->encode(fixture_surface(200)) . "\n"
+        JSON::PP->new->canonical(1)->encode(fixture_surface(200, 'migrated')) . "\n"
             . JSON::PP->new->canonical(1)->encode(fixture_part_surface()) . "\n",
     );
     write_raw($write_fixture, 'docs/knowledge-catalog/titles-9999.md', "stale\n");

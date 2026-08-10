@@ -63,6 +63,18 @@ and rollover,
 Git/file/card/row/output identity, external authorities, routes, residue, and safe write cleanup. Before `.2.2`,
 the monolithic landing remained unchanged and `docs/knowledge-catalog/` remained absent.
 
+`FACT-CARD-CAPACITY-HEADROOM.2` later removed the landing's per-card line, because that line — not the file
+ceiling — was what capped the plane. The landing is now a fixed-size router: H1, the generated/navigation line, a
+count line, and one table row per title part carrying the part link, its card count, and its inclusive first and
+last id. Any id is still reached deterministically, in one extra hop through the part whose range contains it.
+At 193 cards it fell from 196 lines / 15,417 bytes to 10 lines / 878 bytes and now scales with the part count
+(7 lines at one part, 10 at the four-part maximum) rather than the card count. The parts were byte-identical.
+The membership proof moved with it: the landing must not link a card directly, its rendered table must re-derive
+the canonical card list exactly (ordered rows, counts summing to the catalog, confirmed boundary ids), every card
+must resolve exactly once across the parts, and the `knowledge_cards` surface declares `routed_membership`
+through `fact_card_titles` so the generic gate proves the same completeness in one declared hop. Capacity itself
+is unchanged at this leaf — `.3` re-derives the whole profile against the new shape.
+
 `.2.2` has now activated the exact `fact_card_titles` generated surface and written those four pinned outputs.
 The first real migrated check also found that decoded non-ASCII semantic rows must be explicitly encoded before
 SHA-256; the row-digest helper now hashes raw UTF-8 and an em-dash fixture prevents an ASCII-only regression.

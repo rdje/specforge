@@ -1,3 +1,23 @@
+### FACT-CARD-CAPACITY-HEADROOM.2 — make the fact-card landing a fixed-size router
+
+- `docs/knowledge/INDEX.md` no longer carries one bare ID line per card. It states how many cards route through
+  how many title parts and then carries one table row per part: the part link, its card count, and its inclusive
+  first and last id. At 193 cards it falls from 196 lines / 15,417 bytes to 10 lines / 878 bytes, and its size
+  now follows the part count (7 lines at one part, 10 at the four-part maximum). All four title parts are
+  byte-identical, and no card content changed.
+- The completeness proof moved with the shape rather than being dropped. The landing is rejected if it links a
+  card directly instead of routing it; its rendered table is re-parsed and re-derived against the canonical card
+  list (ordered rows, counts summing to the catalog, confirmed boundary ids); and every card must resolve exactly
+  once across the parts.
+- The containment doctrine gained a third index kind, `routed_membership`. A routed index lives inside its
+  surface, names one declared `route_surface`, must link every file of it, and proves membership from the union
+  of its own links and that companion's. The hop count is fixed at one: the companion may not itself be routed,
+  and `route_surface` is rejected on any other kind. `knowledge_cards` now uses it through `fact_card_titles`.
+- 49/49 catalog cases (18 inline, including the three-point `lines == parts + 6` law, the card-free landing, and
+  three range regressions) and 64/64 live-document cases pass; the real gate reports 731 files / 51 surfaces and
+  the catalog's 87.5%-of-health landing warning is gone. Capacity is deliberately unchanged at 198 cards / 200
+  facts — `.3` re-derives the whole profile against the new shape.
+
 ### CORPUS-COVERAGE.2.50 — refresh OpenCAPI data link without false topology
 
 - Two guarded CPU ingests reproduce 57 pages / 64 visuals / 53 tables / 111 sections / 527 elements and a

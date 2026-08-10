@@ -76,11 +76,11 @@
     {
       "path": "docs/knowledge/INDEX.md",
       "role": "landing",
-      "sha256": "a5b7b3b81e4bca5b8d02571bd1a613cab9ec6040370b81fe3ecc354e7f697112",
+      "sha256": "a4a9a5c739f9c19ac6964234e40ea5be8f0b83c9ddd92180118453e86bd30521",
       "metrics": {
-        "lines": 196,
-        "bytes": 15417,
-        "line_bytes": 199
+        "lines": 10,
+        "bytes": 878,
+        "line_bytes": 190
       }
     },
     {

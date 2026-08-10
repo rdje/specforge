@@ -90,11 +90,15 @@ destinations. The positive continuation fixture also proves that a new active pa
 post-migration route, root, index, manifest, and contract update form one accepted bounded transaction.
 
 The fact-card contract authenticates its legacy commit/blob/index, raw digest/metrics, 158-card sources and row
-union, and former destination absence. Its current migrated state enforces the stable direct-ID landing, deterministic
-56-card title parts, semantic tuples and resolved card destinations, exact output membership/content, fixed
-capacity and mandatory-rollover bounds, residue cleanup, and repository-local writes. The 198-card maximum is
-cross-checked against the unchanged 200-file canonical surface while the 200-fact question authority remains
-independent. The title-part generated-projection registry record was forbidden before migration and is exact now.
+union, and former destination absence. Its current migrated state enforces the fixed-size landing router,
+deterministic 56-card title parts, semantic tuples and resolved card destinations, exact output
+membership/content, fixed capacity and mandatory-rollover bounds, residue cleanup, and repository-local writes.
+The landing carries one range row per title part — part number, card count, and inclusive first/last id — and is
+rejected if it links a card directly, misorders or drops a row, miscounts a part, or names a boundary id the card
+list does not confirm. The 198-card maximum is cross-checked against the unchanged 200-file canonical surface
+while the 200-fact question authority remains independent. The title-part generated-projection registry record
+was forbidden before migration and is exact now; the canonical card surface declares `routed_membership` through
+that record, so the generic gate proves every card through exactly one hop.
 
 The project-data gate also runs three focused shell cases. It checks the tracked Cargo environment,
 the common shell initializer, Rust production temp/subprocess boundaries, exact Python environment

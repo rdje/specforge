@@ -7,7 +7,8 @@ the code, a book chapter), not a copy of it.
 
 - Author one: copy `knowledge-map/templates/FACT_TEMPLATE.md`, rename it `<id>.md`.
 - Read first: `knowledge-map/KNOWLEDGE_MAP_ARCHITECTURE.md` and `knowledge-map/FAQ.md`.
-- Browse by id/title: [bounded fact-card catalog](INDEX.md), derived from this directory.
+- Browse by id/title: [bounded fact-card catalog](INDEX.md), derived from this directory. It is a
+  fixed-size router: find the id range that contains yours, then open that title part.
 - Search by question: open the derived [`KNOWLEDGE_MAP.md`](../../KNOWLEDGE_MAP.md) landing and run
   its one `rg` command across the linked shards; neither landing nor shards is hand-edited.
 

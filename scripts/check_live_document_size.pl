@@ -312,7 +312,7 @@ sub validate_surface_schema {
     }
     reject_unknown_fields($surface->{currency}, "surface '$id' currency", qw(status owner verifier))
         if exists $surface->{currency};
-    reject_unknown_fields($surface->{index_contract}, "surface '$id' index_contract", qw(kind verifier))
+    reject_unknown_fields($surface->{index_contract}, "surface '$id' index_contract", qw(kind verifier route_surface))
         if exists $surface->{index_contract};
     if (exists $surface->{reference_contract}) {
         my $contract = $surface->{reference_contract};
@@ -676,13 +676,15 @@ sub validate_index {
     }
     my $kind = $contract->{kind} // '';
     my $verifier = required_scalar($contract, 'verifier', "surface '$id' index_contract");
+    problem("surface '$id' index_contract route_surface is only valid for routed_membership")
+        if exists($contract->{route_surface}) && $kind ne 'routed_membership';
     if ($kind eq 'query') {
         problem("surface '$id' query index must be git:query") if ($index // '') ne 'git:query';
         problem("surface '$id' query index verifier must be builtin:registry_targets")
             if defined($verifier) && $verifier ne 'builtin:registry_targets';
         return;
     }
-    if ($kind ne 'membership' && $kind ne 'external_membership') {
+    if ($kind ne 'membership' && $kind ne 'external_membership' && $kind ne 'routed_membership') {
         problem("surface '$id' has unknown index kind '$kind'");
         return;
     }
@@ -694,22 +696,77 @@ sub validate_index {
         return;
     }
     my $inside = grep { $_ eq $index } @$paths;
-    if ($kind eq 'membership') {
-        problem("surface '$id' membership index '$index' is outside the surface") if !$inside;
-    } else {
+    if ($kind eq 'external_membership') {
         problem("surface '$id' external_membership index '$index' must be outside the surface") if $inside;
         problem("surface '$id' external_membership index '$index' is not a classified Markdown surface")
             if !$path_seen{$index};
+    } else {
+        problem("surface '$id' $kind index '$index' is outside the surface") if !$inside;
     }
-    my $absolute_index = absolute($index);
-    if (!-f $absolute_index) {
+    if (!-f absolute($index)) {
         problem("surface '$id' membership index '$index' is missing");
         return;
     }
-    open my $fh, '<:raw', $absolute_index or do {
+    my $linked = markdown_link_targets($index);
+    if (!defined $linked) {
         problem("surface '$id' cannot read membership index '$index'");
         return;
-    };
+    }
+    if ($kind eq 'routed_membership') {
+        return if !expand_route_hop($contract, $paths, $id, $index, $linked);
+    }
+    for my $path (@$paths) {
+        next if $path eq $index;
+        problem("surface '$id' index '$index' does not link member '$path'") if !$linked->{$path};
+    }
+}
+
+# One declared hop, never a chain: the routed index must link every file of the named route
+# surface, and those route files' links join the index's own before member completeness is proven.
+sub expand_route_hop {
+    my ($contract, $paths, $id, $index, $linked) = @_;
+    my $route_id = $contract->{route_surface};
+    if (!defined($route_id) || ref($route_id) || $route_id eq '') {
+        problem("surface '$id' routed_membership lacks a route_surface");
+        return 0;
+    }
+    if ($route_id eq $id) {
+        problem("surface '$id' routed_membership route_surface must name another surface");
+        return 0;
+    }
+    if (!$surface_by_id{$route_id}) {
+        problem("surface '$id' routed_membership route_surface '$route_id' is not a registered surface");
+        return 0;
+    }
+    my $route_contract = $surface_by_id{$route_id}{index_contract};
+    if (ref($route_contract) eq 'HASH' && ($route_contract->{kind} // '') eq 'routed_membership') {
+        problem("surface '$id' routed_membership route_surface '$route_id' must not itself route");
+        return 0;
+    }
+    my $route_paths = $matches_by_surface{$route_id} // [];
+    if (!@$route_paths) {
+        problem("surface '$id' routed_membership route surface '$route_id' matches no Markdown path");
+        return 0;
+    }
+    for my $route_path (@$route_paths) {
+        if (!$linked->{$route_path}) {
+            problem("surface '$id' index '$index' does not link route member '$route_path'");
+            next;
+        }
+        my $hop = markdown_link_targets($route_path);
+        if (!defined $hop) {
+            problem("surface '$id' cannot read route member '$route_path'");
+            next;
+        }
+        $linked->{$_} = 1 for keys %$hop;
+    }
+    return 1;
+}
+
+sub markdown_link_targets {
+    my ($relative) = @_;
+    my $absolute = absolute($relative);
+    open my $fh, '<:raw', $absolute or return;
     local $/;
     my $content = <$fh> // '';
     close $fh;
@@ -718,14 +775,11 @@ sub validate_index {
         my $href = $1;
         $href =~ s/#.*\z//;
         next if $href eq '' || $href =~ m{^[a-z]+://}i;
-        my $candidate = abs_path(File::Spec->catfile(dirname($absolute_index), split m{/}, $href));
+        my $candidate = abs_path(File::Spec->catfile(dirname($absolute), split m{/}, $href));
         next if !defined $candidate || index($candidate, "$root/") != 0;
         $linked{relative_to_root($candidate)} = 1;
     }
-    for my $path (@$paths) {
-        next if $path eq $index;
-        problem("surface '$id' index '$index' does not link member '$path'") if !$linked{$path};
-    }
+    return \%linked;
 }
 
 sub validate_routes {

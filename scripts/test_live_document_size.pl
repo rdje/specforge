@@ -147,6 +147,18 @@ sub new_fixture {
     write_text($directory, 'canonical/part.md', "# Canonical part\n");
     write_text($directory, 'query/part.md', "# Query part\n");
     write_text($directory, 'external/part.md', "# External-index part\n");
+    write_text(
+        $directory,
+        'routed/INDEX.md',
+        "# Routed landing\n[Collection README](README.md)\n[Titles 0001](../routed-titles/titles-0001.md)\n",
+    );
+    write_text($directory, 'routed/README.md', "# Routed collection guidance\n");
+    write_text($directory, 'routed/part.md', "# Routed member\n");
+    write_text(
+        $directory,
+        'routed-titles/titles-0001.md',
+        "# Routed titles part 0001\n[Routed member](../routed/part.md)\n",
+    );
     write_text($directory, 'canonical/source.txt', "canonical input\n");
     write_text($directory, 'generated.md', "# Generated\n");
     write_text($directory, 'archive.md', "# Archive descriptor\n");
@@ -210,6 +222,31 @@ sub new_fixture {
     );
     $external->{index} = 'snapshot.md';
     $external->{index_contract} = {
+        kind => 'external_membership',
+        verifier => 'builtin:markdown_links',
+    };
+
+    my $routed = base_surface(
+        id => 'routed',
+        targets => ['routed/*.md'],
+        locator => 'collection',
+        lifecycle => 'partitioned_canonical',
+    );
+    $routed->{index} = 'routed/INDEX.md';
+    $routed->{index_contract} = {
+        kind => 'routed_membership',
+        verifier => 'builtin:markdown_links',
+        route_surface => 'routed_titles',
+    };
+
+    my $routed_titles = base_surface(
+        id => 'routed_titles',
+        targets => ['routed-titles/*.md'],
+        locator => 'collection',
+        lifecycle => 'partitioned_canonical',
+    );
+    $routed_titles->{index} = 'routed/INDEX.md';
+    $routed_titles->{index_contract} = {
         kind => 'external_membership',
         verifier => 'builtin:markdown_links',
     };
@@ -290,6 +327,8 @@ sub new_fixture {
             $canonical,
             $query,
             $external,
+            $routed,
+            $routed_titles,
             $generated_projection,
             $archive,
             $frozen,
@@ -400,12 +439,13 @@ for my $lifecycle (
     'rolling_ledger',
     'partitioned_canonical membership and query',
     'partitioned_canonical external membership',
+    'partitioned_canonical routed membership',
     'generated_projection',
     'archive_terminal',
     'frozen_legacy',
     'maintained_reference',
 ) {
-    expect_case("positive $lifecycle", 1, qr/9 governed surfaces/, undef);
+    expect_case("positive $lifecycle", 1, qr/11 governed surfaces/, undef);
 }
 
 expect_case('bounded snapshot rejects multiple files', 0, qr/bounded_snapshot must contain exactly one file/, sub {
@@ -455,6 +495,48 @@ expect_case('external membership rejects an index inside the member surface', 0,
     surface($fixture, 'external')->{index} = 'external/part.md';
     save_registry($fixture);
 });
+expect_case('routed membership rejects a member no declared hop reaches', 0, qr/does not link member 'routed\/part\.md'/, sub {
+    my ($fixture) = @_;
+    write_text($fixture->{root}, 'routed-titles/titles-0001.md', "# Routed titles part 0001\n");
+});
+expect_case('routed membership rejects an unrouted route member', 0, qr/does not link route member 'routed-titles\/titles-0001\.md'/, sub {
+    my ($fixture) = @_;
+    write_text($fixture->{root}, 'routed/INDEX.md', "# Routed landing\n[Collection README](README.md)\n");
+});
+expect_case('routed membership rejects a missing route surface declaration', 0, qr/routed_membership lacks a route_surface/, sub {
+    my ($fixture) = @_;
+    delete surface($fixture, 'routed')->{index_contract}{route_surface};
+    save_registry($fixture);
+});
+expect_case('routed membership rejects an unregistered route surface', 0, qr/route_surface 'absent_titles' is not a registered surface/, sub {
+    my ($fixture) = @_;
+    surface($fixture, 'routed')->{index_contract}{route_surface} = 'absent_titles';
+    save_registry($fixture);
+});
+expect_case('routed membership rejects a self-referencing route surface', 0, qr/route_surface must name another surface/, sub {
+    my ($fixture) = @_;
+    surface($fixture, 'routed')->{index_contract}{route_surface} = 'routed';
+    save_registry($fixture);
+});
+expect_case('routed membership rejects a chained route surface', 0, qr/route_surface 'routed_titles' must not itself route/, sub {
+    my ($fixture) = @_;
+    surface($fixture, 'routed_titles')->{index_contract} = {
+        kind => 'routed_membership',
+        verifier => 'builtin:markdown_links',
+        route_surface => 'routed',
+    };
+    save_registry($fixture);
+});
+expect_case('routed membership rejects an index outside the surface', 0, qr/routed_membership index 'snapshot\.md' is outside the surface/, sub {
+    my ($fixture) = @_;
+    surface($fixture, 'routed')->{index} = 'snapshot.md';
+    save_registry($fixture);
+});
+expect_case('route_surface is rejected on a direct membership contract', 0, qr/route_surface is only valid for routed_membership/, sub {
+    my ($fixture) = @_;
+    surface($fixture, 'canonical')->{index_contract}{route_surface} = 'routed_titles';
+    save_registry($fixture);
+});
 expect_case('generated projection rejects a failing freshness verifier', 0, qr/freshness verifier .* failed/, sub {
     my ($fixture) = @_;
     write_text($fixture->{root}, 'scripts/freshness-ok.sh', "#!/usr/bin/env bash\nexit 1\n", 0755);
@@ -468,7 +550,7 @@ expect_case('generated projection rejects a missing freshness proof', 0, qr/fres
     my ($fixture) = @_;
     chmod 0644, path_in($fixture->{root}, 'scripts/freshness-ok.sh');
 });
-expect_case('generated projection collection accepts bounded indexed shards', 1, qr/9 governed surfaces/, sub {
+expect_case('generated projection collection accepts bounded indexed shards', 1, qr/11 governed surfaces/, sub {
     my ($fixture) = @_;
     write_text($fixture->{root}, 'generated.md', "# Generated index\n[Shard](generated-shard.md)\n");
     write_text($fixture->{root}, 'generated-shard.md', "# Generated shard\n");
@@ -611,7 +693,7 @@ expect_history_case('ceiling increase rejects missing exact authority', 0, qr/in
     surface($fixture, 'snapshot')->{enforcement_ceilings}{bytes_each}++;
     save_registry($fixture);
 });
-expect_history_case('ceiling increase accepts one exact fresh authority', 1, qr/9 governed surfaces/, sub {
+expect_history_case('ceiling increase accepts one exact fresh authority', 1, qr/11 governed surfaces/, sub {
     my ($fixture) = @_;
     my $surface = surface($fixture, 'snapshot');
     my $old = { %{ $surface->{enforcement_ceilings} } };
@@ -652,7 +734,7 @@ expect_history_case('maintained reference rejects reused aggregate authority', 0
     $change->{delta}{bytes_total} = $metrics->{bytes_total} - $change->{baseline}{bytes_total};
     save_registry($fixture);
 });
-expect_history_case('maintained reference accepts fresh exact aggregate authority', 1, qr/9 governed surfaces/, sub {
+expect_history_case('maintained reference accepts fresh exact aggregate authority', 1, qr/11 governed surfaces/, sub {
     my ($fixture) = @_;
     write_text($fixture->{root}, 'book/part.md', "# Maintained part\nextra\n");
     my $metrics = dimensions_for($fixture->{root}, 'book/SUMMARY.md', 'book/part.md');

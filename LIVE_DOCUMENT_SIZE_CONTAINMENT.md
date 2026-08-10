@@ -146,7 +146,17 @@ or an explicit query contract defines the complete target expansion. Presence
 of an index file alone proves none of these. A membership index may live inside
 the collection or in a separately classified bounded catalog surface; the
 external form must be a safe repository-relative Markdown path outside the
-member surface and must pass the same direct-link completeness proof. Likewise,
+member surface and must pass the same direct-link completeness proof.
+
+A front door whose direct member list would itself grow with the collection is
+not bounded, however complete it is. Such an index may instead route: it names
+one declared companion surface, links every file of that surface, and proves
+completeness from the union of its own links and the companion's. The hop count
+is fixed at one — a routed index may not name another routed index — so the
+front door's size follows the companion's file count rather than the member
+count, and completeness stays one mechanical proof instead of a chain a reader
+must walk. Routing changes where the member list lives, never whether it is
+proven. Likewise,
 a human evidence map is
 only trustworthy when every fenced repository-relative path resolves
 mechanically in the resulting tree.

@@ -21,14 +21,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: none; the whole `CORPUS-CHAIN-CURRENCY` tree (`.0`–`.3`) is complete and committed.
-- Current state: the `CHAIN-CURRENCY` doctrine is registered CI-tier and GREEN on both legs. The corpus is 78
-  documents at 22/78/78/78 measured-current stages with **44/44 emitted ISFs FSMGen-strict clean**; the 22
-  retained normalized bundles are now declared in `doctrine/chain_currency/retained_bundles.json` and gated, so
-  the remaining 56 unmeasurable documents can only shrink, one per refresh, as each backfills its own bundle.
-- Next action: `FACT-CARD-CAPACITY-HEADROOM.2` — **198 facts of 200; 193 cards of 198.** ADR 0027 proves no
-  bound can be raised first: 198 cards is the exact maximum the projection shape permits (201/224 landing
-  lines = 89.7%, and a 199-card regression fails closed). Make the landing a fixed-size router over the title
-  parts, then `.3` re-derives the profile. `CORPUS-COVERAGE.2.51` follows.
+- Active unit: `FACT-CARD-CAPACITY-HEADROOM` — `.0`/`.2` done, `.1` superseded, `.3` is the frontier.
+- Current state: `.2` made the fact-card landing a fixed-size router — 10 lines / 878 bytes at 193 cards, sized
+  by the part count instead of the card count — and gave the containment doctrine a `routed_membership` index
+  kind with a fixed one-hop completeness proof. **Capacity is still 198 cards / 200 facts: 193 cards, 198 facts,
+  2 free fact slots.** Do not write a new fact card or an `answers:`-bearing ADR until `.3` lands.
+- Next action: `FACT-CARD-CAPACITY-HEADROOM.3` — re-derive the whole profile against the new shape in one
+  transaction (per-part lines, part totals, part count, the `knowledge_cards` file ceiling that `max_cards`
+  derives from, `max_facts`, `max_question_keys`), each against its own 90%-rollover rule, with both-sided
+  boundary regressions. `CORPUS-COVERAGE.2.51` follows.
 - In-flight uncommitted: none; no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

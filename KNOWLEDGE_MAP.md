@@ -4,7 +4,7 @@
 
 - Facts: **198**
 - Unique question keys: **1452**
-- Canonical input SHA-256: `dc658418b69dab98bda1fefb99697d977ed7ad4ea02fabb279eb14cd497a9ac7`
+- Canonical input SHA-256: `a58e390a092953281bb8543ca84c97d29ae196ede8a58d835fe385b8b996e02a`
 - Browse by id/title: [`docs/knowledge/INDEX.md`](docs/knowledge/INDEX.md)
 - Search all question shards: `rg -i --glob 'questions-*.md' 'terms' docs/knowledge-map`
 

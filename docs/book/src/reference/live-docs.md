@@ -517,10 +517,10 @@ ADR 0022 records the executable pressure correction: the first 64-card template 
 past mandatory rollover, and even its minimal form was inside warning. Packing 56 cards with a seven-line
 scaffold produces 63-line full parts while still fitting 198 cards in the accepted four-part maximum. ADR 0023
 then applies pressure to the root at that maximum: the verbose scaffold would produce 218/224 health lines, so
-the landing now keeps only H1, generated/navigation, and title-route scaffold lines. It is 201/224 lines at 198
-cards, below mandatory rollover without a limit change. Current migrated output is a 161-line / 11,984-byte
-landing plus three parts totaling 179 lines / 34,906 bytes; the complete 340-line / 46,890-byte projection has no
-warning. The schema-closed contract retains the committed legacy Git blob,
+the landing kept only H1, generated/navigation, and title-route scaffold lines. It was 201/224 lines at 198
+cards, below mandatory rollover without a limit change. At that boundary the migrated output was a 161-line /
+11,984-byte landing plus three parts totaling 179 lines / 34,906 bytes; the complete 340-line / 46,890-byte
+projection had no warning. The schema-closed contract retains the committed legacy Git blob,
 SHA-256, raw metrics, 158 source cards, and ordered-row provenance while its current `migrated` state enforces
 exact output membership, content, routes, residue, and pressure. It required the part directory and
 `fact_card_titles` surface absent in legacy state; it now requires that surface's exact generated-projection
@@ -534,6 +534,31 @@ fixture locks the boundary. A separate exact-capacity fixture keeps 198 below ro
 Forty-one focused cases, direct link resolution, both generic surface memberships, full
 doctrine enforcement, and the mdBook build verify the delivered method. Canonical facts remain the only fact
 authority; the generated projection contains no unique evidence and therefore needs no archive copy.
+
+#### The fact-card landing stopped scaling with cards
+
+That landing listed one bare ID line per card, so it grew as `lines = cards + 3` and its 224-line health target
+was the tightest of the four authorities bounding the fact plane. Because the checker treats 90% of a health
+target as a mandatory-rollover error, 198 cards (201 lines, 89.7%) was not a chosen maximum but the exact edge
+the shape permitted, and no bound could be raised while the landing stayed O(cards). ADR 0026 and ADR 0027
+record that measurement and its correction.
+
+`FACT-CARD-CAPACITY-HEADROOM.2` therefore reshaped the landing into a fixed-size router. It keeps its H1 and
+generated/navigation lines, states how many cards route through how many parts, and then carries one table row
+per title part: the part link, its card count, and its inclusive first and last id. The unchanged title parts
+still carry every card's id, date, status, and title, so any id is reached in one deterministic extra hop —
+find the range that contains it, open that part. At 193 cards the landing fell from 196 lines / 15,417 bytes to
+**10 lines / 878 bytes**, and its size now follows the part count: seven lines at one part, ten at the four-part
+maximum. The four title parts were byte-identical through the change.
+
+The proof moved with the shape. The landing is rejected if it links a card directly instead of routing it, and a
+re-read of the rendered table must reproduce the canonical card list exactly: one ordered row per part, counts
+summing to the catalog, and boundary ids the card list confirms. Every card must resolve exactly once across the
+parts. The canonical card surface declares `routed_membership` through the `fact_card_titles` record, so the
+generic membership gate proves the same completeness independently. Eighteen inline assertions and 49 focused
+cases pin the fixed-size law, the card-free landing, and three range regressions, alongside the unchanged
+198-card capacity and 199-card fail-closed boundaries. No card content changed and no limit moved; re-deriving
+the whole profile against the new shape belongs to `FACT-CARD-CAPACITY-HEADROOM.3`.
 
 #### Remaining canonical collection catalogs landed
 
@@ -561,6 +586,16 @@ catalog remain outside fixture inputs and lets the task collection preserve one 
 Fifty-three lifecycle/control-plane fixtures cover the positive path plus missing, stale, off-root,
 and improperly internal external-index failures. The common catalog generator adds independent
 path/title/row/member/index bounds and derive-and-diff; no generated catalog contains canonical facts.
+
+A third kind, `routed_membership`, exists for a front door whose direct member list would itself grow
+with the collection. A routed index lives inside its surface like an internal membership index, but it
+additionally names one declared `route_surface`; it must link every file of that companion surface,
+and completeness is then proven from the union of its own links and the companion files' links. The
+hop count is fixed at one: the companion may not itself be routed, and `route_surface` is rejected on
+any other index kind. Size then follows the companion's file count rather than the member count. The
+fixture suite runs 64 cases; eight of them cover the routed positive path plus an unreachable member,
+an unrouted companion file, a missing, unregistered, self-referencing, or chained `route_surface`, an
+index placed outside its own surface, and `route_surface` smuggled onto a direct membership contract.
 
 #### Knowledge Map projection migration landed
 

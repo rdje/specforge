@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `FACT-CARD-CAPACITY-HEADROOM`
-- Status: `active` (`.0` done; `.1` superseded; `.2`/`.3` pending)
+- Status: `active` (`.0`/`.2` done; `.1` superseded; `.3` pending)
 - Roadmap lane: repository durability and portability (sibling of `FACT-CARD-CATALOG-CONTAINMENT`)
 - Created: `2026-08-10`
 - Last updated: `2026-08-10`
@@ -34,6 +34,10 @@ Discovered while adding this session's retention card, not predicted from theory
 | Card count | `doctrine/live_document_size/fact_card_catalog.json` `max_cards` | 193 | 198 | 5 |
 | Landing lines | catalog `limits.landing.health_targets.lines` | 196 | 224 | 28 (87.5% — the checker already warns) |
 | Title parts | catalog `limits.title_parts` | 4 parts / 193 cards | 4 parts / 224 slots | not binding |
+
+`.2` has since removed the landing row from this table's logic: the landing is 10 lines at 193 cards and at most
+10 at full capacity, so it is no longer a capacity dimension at all. The remaining three authorities are
+unchanged and still bind at 198 cards / 200 facts; `.3` re-derives them.
 
 The binding authority is therefore `max_facts`, and it counts three `docs/decisions/` records alongside the
 193 cards. Failure is not graceful — `KNOWLEDGE-MAP` is a `gate`-tier doctrine, so the pre-commit hook refuses
@@ -88,7 +92,7 @@ which shows there is no join to raise to until the projection is reshaped.
 - ID: `FACT-CARD-CAPACITY-HEADROOM`
   Status: `active`
   Goal: restore deliberate headroom in the fact plane before it blocks an unrelated slice
-  Children: `FACT-CARD-CAPACITY-HEADROOM.0`, `.1` (superseded), `.2`, `.3`
+  Children: `FACT-CARD-CAPACITY-HEADROOM.0`, `.1` (superseded), `.2` (done), `.3`
 
 - ID: `FACT-CARD-CAPACITY-HEADROOM.0`
   Status: `done` (`2026-08-10`, PROBE/DOC)
@@ -109,13 +113,19 @@ which shows there is no join to raise to until the projection is reshaped.
   before the shape changes, so this leaf's work moves behind `.2` and is re-scoped as `.3`.
 
 - ID: `FACT-CARD-CAPACITY-HEADROOM.2`
-  Status: `pending`
+  Status: `done` (`2026-08-10`, DOCTRINE/PROJECTION)
   Goal: stop the landing scaling with cards (ADR 0026 decision 2, promoted to the critical path by ADR 0027) —
   the landing becomes a bounded router over the title parts with each part's explicit ID range, so capacity is
   no longer bounded by a per-card landing line.
   Acceptance: `the landing is fixed-size and range-complete; every card is reachable in one extra deterministic hop; derive-and-diff, membership, residue, and exact-boundary rules still hold; the book and FACT-CARD-CATALOG-CONTAINMENT bounds agree`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: the landing is 10 lines / 878 bytes at 193 cards (was 196 / 15,417) and its size follows the part
+  count — 7 lines at one part, 10 at the four-part maximum — proven by a three-point self-test asserting
+  `lines == parts + 6`. Range rows are re-parsed and re-derived against the canonical card list; three focused
+  regressions reject a miscounted part, a renamed boundary id, and a dropped row. The landing is rejected if it
+  links a card directly, and every card must resolve exactly once across the parts. `knowledge_cards` now
+  declares `routed_membership` through `fact_card_titles`, a new generic index kind with a fixed one-hop
+  contract. 49/49 catalog cases and 64/64 live-document cases pass; the four title parts are byte-identical.
+  Commit: `FACT-CARD-CAPACITY-HEADROOM.2 — make the fact-card landing a fixed-size router`
 
 - ID: `FACT-CARD-CAPACITY-HEADROOM.3`
   Status: `pending`
@@ -130,8 +140,7 @@ which shows there is no join to raise to until the projection is reshaped.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `FACT-CARD-CAPACITY-HEADROOM.2` | `pending` | the landing's per-card line is the binding dimension; nothing can be raised until it stops scaling with cards |
-| 2 | `FACT-CARD-CAPACITY-HEADROOM.3` | `pending` | the re-derived raise is only possible after `.2`, and only with both-sided boundary pins |
+| 1 | `FACT-CARD-CAPACITY-HEADROOM.3` | `pending` | `.2` removed the O(cards) landing, so the profile can now be re-derived; capacity is still 198 cards / 2 free fact slots until it lands |
 
 ## Decisions
 
@@ -150,9 +159,10 @@ which shows there is no join to raise to until the projection is reshaped.
 
 - Answered by `.0`: compaction is not a lever (two superseded cards out of 193), and the binding join is the
   landing's linear growth, not the file ceiling everyone would reach for first.
-- Still open for `.2`: should a title part's ID range be published in the landing as literal first/last ids, or
-  as a stable alphabetic partition rule? The literal range is exact but changes on every part rewrite; the rule
-  is stable but needs its own derive-and-diff proof.
+- Answered by `.2`: the landing publishes literal first/last ids, not an alphabetic partition rule. The landing
+  is regenerated on every card addition regardless (its count line and at least one boundary id move), so the
+  rule's only advantage — stability across rewrites — buys nothing, while the literal range is exactly
+  re-derivable from the card list and is now checked that way.
 - Still open: `max_facts` counts `answers:`-bearing decision records alongside cards. ADR 0026 reserves eight
   slots for them (three exist). If decision records ever grow quickly, that reservation needs its own measure.
 
@@ -168,6 +178,10 @@ which shows there is no join to raise to until the projection is reshaped.
 | `2026-08-10` | `.0` census | catalog report, shard contract, `check_fact_card_catalog.pl` pinned literals, `git log --diff-filter=A` over `docs/knowledge/`, `status:` distribution | four authorities enumerated with their pinned readers; landing law `lines = cards + 3`; landing-derived join first read as 221 cards, corrected to the exact 198 by the next row; burn 23/25/20 cards per active day; two superseded cards |
 | `2026-08-10` | `.0` no mutation | `git status --short` | only the tree, ADR 0026, its index row, and the resume pointer changed; no contract, card, or generated projection touched |
 | `2026-08-10` | `.0` correction (ADR 0027) | set `max_cards => 199` in `fixed_limits()`, run `perl scripts/check_fact_card_catalog.pl --self-test`, restore | `199-card ceiling did not fail closed` — the raise is rejected by an existing exact-boundary regression; restored file is byte-identical, and 41/41 cases pass again |
+| `2026-08-10` | `.2` shape | `perl scripts/check_fact_card_catalog.pl --print-plan`, `--write`, `--check` | landing 196 lines / 15,417 bytes → 10 lines / 878 bytes / 190 max-line bytes at 193 cards; all four title-part digests unchanged; contract `planned_outputs` re-pinned |
+| `2026-08-10` | `.2` fixed-size law | `perl scripts/check_fact_card_catalog.pl --self-test` | 49/49 cases; `lines == parts + 6` holds at 1, 57, and 198 cards; the 198-card capacity render crosses no mandatory pressure and 199 still fails closed |
+| `2026-08-10` | `.2` route proof | `perl scripts/test_live_document_size.pl`; `bash scripts/check_live_document_size.sh` | 64/64 cases including eight `routed_membership` cases; the real gate passes at 731 files / 51 surfaces, and the catalog's own 87.5%-of-health landing warning is gone (17 → 16 warnings) |
+| `2026-08-10` | `.2` no content change | `git status --short`; `git diff --stat docs/knowledge-catalog/` | only the landing, contract, registry, checkers, tests, and prose changed; no card front matter and no title part touched |
 
 ## Commit Log
 
@@ -176,7 +190,7 @@ which shows there is no join to raise to until the projection is reshaped.
 | `FACT-CARD-CAPACITY-HEADROOM` ownership | `FACT-CARD-CAPACITY-HEADROOM — track measured fact-plane capacity pressure` | surfaced by `CORPUS-CHAIN-CURRENCY.2` |
 | `FACT-CARD-CAPACITY-HEADROOM.0` | `FACT-CARD-CAPACITY-HEADROOM.0 — measure the fact plane and decide its capacity law` | measurement + ADR 0026 only |
 | `FACT-CARD-CAPACITY-HEADROOM.1` | `superseded` | premise falsified by ADR 0027 before any implementation |
-| `FACT-CARD-CAPACITY-HEADROOM.2` | `pending` | `pending` |
+| `FACT-CARD-CAPACITY-HEADROOM.2` | `FACT-CARD-CAPACITY-HEADROOM.2 — make the fact-card landing a fixed-size router` | shape only; no limit moved and no card content changed |
 | `FACT-CARD-CAPACITY-HEADROOM.3` | `pending` | `pending` |
 
 ## Changelog
@@ -185,3 +199,6 @@ which shows there is no join to raise to until the projection is reshaped.
 - `2026-08-10`: `.0` closed with the four-authority census; ADR 0026 accepted; `.1` and `.2` added.
 - `2026-08-10`: ADR 0027 corrected ADR 0026 decision 1 against the checker's mandatory-rollover rule; `.1`
   superseded, `.2` promoted to the frontier, `.3` added for the re-derived raise.
+- `2026-08-10`: `.2` closed. The landing is a fixed-size router over the title parts; the containment doctrine
+  gained a `routed_membership` index kind with a fixed one-hop completeness proof. Capacity is deliberately
+  unchanged — `.3` owns the re-derivation.

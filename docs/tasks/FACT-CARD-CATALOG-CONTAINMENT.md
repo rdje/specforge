@@ -117,6 +117,11 @@ retrieval, direct id/title browsing, derive-and-diff freshness, and repository-v
 
 No active frontier. The bounded catalog is migrated and this tree must not be reopened.
 
+The direct-ID landing recorded throughout this tree is its boundary shape, not the current one.
+`FACT-CARD-CAPACITY-HEADROOM.2` replaced that per-card list with a fixed-size router over the same title parts
+(ADR 0026 decision 2, promoted by ADR 0027 decision 2). Every card, part, and capacity bound this tree derived is
+unchanged by that reshape.
+
 The next continuity action is `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2`: pin the final active PDF-task source and
 migration inputs before its already-designed bounded evidence migration.
 
