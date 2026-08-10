@@ -95,6 +95,7 @@ The author template is linked separately and is never classified as active work.
 | `KG-ISF-TRANSACTIONS` | `active` | every supported protocol transaction + its signals, fully captured & ISF-ready | [open](tasks/KG-ISF-TRANSACTIONS.md) |
 | `KNOWLEDGE-MAP-ADOPTION` | `done` | adopt the portable Knowledge Map retrieval layer | [open](tasks/KNOWLEDGE-MAP-ADOPTION.md) |
 | `LITERATURE-GROUNDING` | `done` | ground every SpecForge aspect in published research | [open](tasks/LITERATURE-GROUNDING.md) |
+| `LIVE-DOC-STOP-RISK` | `active` | find the live-document stops that no current signal makes actionable | [open](tasks/LIVE-DOC-STOP-RISK.md) |
 | `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION` | `done` | bounded live docs, stable README, and same-volume project data | [open](tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md) |
 | `LLM-EXTRACTION-EVAL` | `done` | a labeled precision/recall eval set for the LLM extraction passes | [open](tasks/LLM-EXTRACTION-EVAL.md) |
 | `LLM-PRIMARY-PROMOTION` | `done` | promote the LLM-primary constraint surface into the canonical pipeline | [open](tasks/LLM-PRIMARY-PROMOTION.md) |

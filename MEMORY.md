@@ -31,8 +31,12 @@
   unblocked.
   `.3a` then retired the four ceiling-increase authorities `.3` consumed, which the containment protocol
   requires — a surviving authority is banked and fails closed.
-- Next action: pick up `CORPUS-COVERAGE.2.51` — select and own corpus refresh #51 from the six remaining
-  sources (corpus is 50 done / six remaining). Note before appending: `CHANGES.md` is now at 81.4% of its line
-  health target, so its next few entries approach the 90% rollover.
+  That closing audit surfaced a class beyond the fact plane, now owned by the new `LIVE-DOC-STOP-RISK` tree:
+  ten surfaces carry an aggregate ceiling tighter than `files × per-file` (eight with no named remedy), and
+  **`ROADMAP.md` is 364 lines against a hard 384-line ceiling** — 20 lines from stopping an unrelated slice.
+- Next action: `LIVE-DOC-STOP-RISK.0` — roll `ROADMAP.md` through its declared current/history boundary
+  (`doctrine/live_document_size/roadmap_projection.json`, archive at `docs/archive/roadmap/`) before that
+  ceiling stops a slice. It is the only finding with a measured deadline; `CORPUS-COVERAGE.2.51` follows.
+  Note before appending: `CHANGES.md` is at 81.4% of its line health target, approaching its 90% rollover.
 - In-flight uncommitted: none; no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.
