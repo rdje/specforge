@@ -166,7 +166,26 @@
       "- **Progress ("
     ],
     "health_targets": {"lines": 256, "bytes": 32768, "line_bytes": 384},
-    "enforcement_ceilings": {"lines": 384, "bytes": 49152, "line_bytes": 512}
+    "enforcement_ceilings": {"lines": 384, "bytes": 49152, "line_bytes": 512},
+    "section_limits": {
+      "warning_pct": 80,
+      "sections": [
+        {"heading": "Objective", "max_lines": 14,
+         "remedy": "an objective needing more than 14 lines is a program description; it belongs in the book introduction"},
+        {"heading": "Canonical pipeline", "max_lines": 6,
+         "remedy": "the pipeline is one line; anything longer belongs in docs/book/src/pipeline/overview.md"},
+        {"heading": "Cross-cutting implementation doctrine", "max_lines": 80,
+         "remedy": "a cross-cutting rule needing its own paragraph is a decision record under docs/decisions/, not a roadmap bullet"},
+        {"heading": "Current strategic priorities", "max_lines": 56,
+         "remedy": "route per-leaf detail to its owning docs/tasks/ tree, or roll the root per ADR 0030"},
+        {"heading": "Workstream status", "max_lines": 44,
+         "remedy": "the table is one row per workstream; a longer one means the workstream set itself needs restructuring"},
+        {"heading": "Recommended implementation order", "max_lines": 20,
+         "remedy": "an order longer than 20 lines is a plan; it belongs in the owning task tree"},
+        {"heading": "History and execution", "max_lines": 16,
+         "remedy": "this section holds routes only; a new route replaces an old one rather than lengthening the list"}
+      ]
+    }
   },
   "archive": {
     "index": "docs/archive/roadmap/INDEX.md",

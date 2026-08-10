@@ -21,20 +21,20 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOC-STOP-RISK` — `.0` done; `.0a` and `.1` pending.
-- Current state: `.0` removed the only finding with a deadline. `ROADMAP.md` was 364 of 384 ceiling lines, but
-  213 of those lines were one `Current strategic priorities` bullet grown a sentence per closed leaf — the
-  delivery chronology its own `bounded_snapshot` lifecycle forbids and the file itself disclaims. The real
-  defect was that ADR 0010 gave the surface a one-time migration and no rollover, so the only exits were
-  deleting direction into Git reachability or widening a ceiling. ADR 0030 makes the archive a **series**:
-  copy the root to a dated capsule, append one contract record, add one index row, rewrite the root — all
-  gate-proved. Capsules are checked against the *current root's* ceilings (so a capsule above them is a
-  failure, not a rescue), and `rollover_policy` bounds the series at 16, warns at 12, and names its remedy,
-  because `archive_terminal` surfaces are exempt from the milestone report. Root is now **156 lines /
-  40.6% of ceiling**; no target, ceiling, or milestone moved. Contract self-test 9 → 31 cases.
-- Next action: `LIVE-DOC-STOP-RISK.0a` — bound each current-root section so the accretion that filled the
-  roadmap fails closed where it happens; `.0` gave the surface an exit but left the entrance open. Then `.1`
-  (eight remedy-less aggregates + the near-ceiling reporting question), then `CORPUS-COVERAGE.2.51`.
-  Note before appending: `CHANGES.md` is at 84.3% of its line health target, past warning, 90% rolls over.
+- Active unit: `LIVE-DOC-STOP-RISK` — `.0` and `.0a` done; `.1` pending.
+- Current state: the roadmap surface is fully repaired. `ROADMAP.md` was 364 of 384 ceiling lines, but 213 of
+  those were one `Current strategic priorities` bullet grown a sentence per closed leaf — chronology its own
+  `bounded_snapshot` lifecycle forbids. `.0` (ADR 0030) supplied the missing **exit**: the archive is now a
+  bounded capsule series, so a rollover is copy-root-to-dated-capsule, append one contract record, add one
+  index row, rewrite the root, all gate-proved; capsules are held to the current root's ceilings, and
+  `rollover_policy` (16 max / 12 warning / named remedy) carries the signal that `archive_terminal` surfaces
+  are exempt from. `.0a` (ADR 0031) closed the **entrance**: each H2 declares its own line bound and remedy,
+  the declared set must equal the required H2 order, and the bounds' legal sum plus scaffold must fit the
+  health target (243 of 256). Root is **156 lines / 40.6% of ceiling**, every section below its 80% warning.
+  Replayed accretion fails at 180 total lines where the file bound stayed silent to 384. Self-test 9 → 49.
+- Next action: `LIVE-DOC-STOP-RISK.1` — decide each of the eight remedy-less aggregate surfaces in Finding 1
+  (name the remedy its aggregate triggers, or re-derive it as `files × per-file` under ADR 0029) and settle
+  whether near-ceiling pressure needs its own signal. `CORPUS-COVERAGE.2.51` is the next product slice after.
+  Note before appending: `CHANGES.md` is at 86.1% of its line health target, past warning, 90% rolls over.
 - In-flight uncommitted: none; no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

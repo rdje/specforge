@@ -322,7 +322,11 @@ declared metrics and digest, be reachable from the bounded archive index, carry 
 date and unique id, stay distinct from the pre-migration capsule, and sit within the *current root's*
 enforcement ceilings — so a capsule above them fails closed rather than legitimizing an overflow. The
 declared `rollover_policy` bounds the series and prints its count and named remedy at the warning,
-because `archive_terminal` surfaces are exempt from the generic milestone report.
+because `archive_terminal` surfaces are exempt from the generic milestone report. The same run also
+enforces per-section bounds on the current root (ADR 0031): the declared sections must equal the
+required H2 order exactly, each carries its own line bound and remedy, and their legal sum plus
+scaffold must fit the file's health target — so an accreting section fails closed and names its own
+remedy while the file is still under half its ceiling.
 The adapter also executes `scripts/check_fsmgen_feedback_protocol.pl`. Its focused cases and real
 contract pin the exact feedback source, five exhaustive regions, six closed exchanges with explicit
 direction/status/evidence, two stale-current findings, 26 consumers, bounded open-record schema, and

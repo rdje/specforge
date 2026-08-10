@@ -234,7 +234,11 @@ sub validate_contract {
         my $live = slurp(absolute($source_path), "current roadmap '$source_path'");
         if (defined $live) {
             problem($_) for live_root_errors($live, $c->{current_root}, $layout, $owners);
+            problem($_) for section_limit_errors($live, $c->{current_root});
+            print STDERR "roadmap-projection: WARNING $_\n"
+                for section_pressure_warnings($live, $c->{current_root});
             $report_record->{current_root} = metrics($live);
+            $report_record->{sections} = [ section_line_counts($live) ];
         }
         validate_archive($c, $frozen);
         validate_rollovers($c);
@@ -339,7 +343,7 @@ sub validate_current_root_schema {
     my ($current) = @_;
     reject_unknown($current, 'current_root', qw(
       required_h2_order workstream_start_marker workstream_end_marker required_links forbidden_literals
-      health_targets enforcement_ceilings
+      health_targets enforcement_ceilings section_limits
     ));
     return if ref($current) ne 'HASH';
     validate_unique_strings(require_array($current, 'required_h2_order', 'current_root'), 'current_root h2 order');
@@ -358,6 +362,134 @@ sub validate_current_root_schema {
                 if $current->{health_targets}{$axis} > $current->{enforcement_ceilings}{$axis};
         }
     }
+    problem($_) for section_limit_schema_errors($current);
+}
+
+# A per-section bound is what makes the file bound survivable: the root's last overflow was one section
+# growing by a sentence per closed leaf, and a file-level ceiling can only report that after the fact and
+# without naming the cause. The declared sections must therefore be exactly the required H2 set, and no
+# legal combination of them may exceed the reviewed working set (ADR 0029's rule applied inward).
+sub section_limit_schema_errors {
+    my ($current) = @_;
+    my @found;
+    return @found if ref($current) ne 'HASH';
+    my $limits = $current->{section_limits};
+    if (ref($limits) ne 'HASH') {
+        push @found, 'current_root section_limits must be an object';
+        return @found;
+    }
+    my %allowed = map { $_ => 1 } qw(warning_pct sections);
+    push @found, "current_root section_limits has unknown field '$_'"
+        for sort grep { !$allowed{$_} } keys %$limits;
+    my $warning = $limits->{warning_pct};
+    push @found, 'current_root section_limits warning_pct must be an integer percentage below 100'
+        if !defined($warning) || ref($warning) || $warning !~ /\A\d+\z/ || $warning < 1 || $warning >= 100;
+    my $sections = $limits->{sections};
+    if (ref($sections) ne 'ARRAY' || !@$sections) {
+        push @found, 'current_root section_limits sections must be a nonempty array';
+        return @found;
+    }
+    my @expected = @{ ref($current->{required_h2_order}) eq 'ARRAY' ? $current->{required_h2_order} : [] };
+    my $total = 0;
+    for my $index (0 .. $#$sections) {
+        my $section = $sections->[$index];
+        if (ref($section) ne 'HASH') {
+            push @found, "current_root section $index must be an object";
+            next;
+        }
+        my %section_allowed = map { $_ => 1 } qw(heading max_lines remedy);
+        push @found, "current_root section $index has unknown field '$_'"
+            for sort grep { !$section_allowed{$_} } keys %$section;
+        my $heading = $section->{heading};
+        if (!defined($heading) || ref($heading) || $heading eq '') {
+            push @found, "current_root section $index lacks a heading";
+            $heading = "index $index";
+        }
+        my $max = $section->{max_lines};
+        if (!defined($max) || ref($max) || $max !~ /\A\d+\z/ || $max < 1) {
+            push @found, "current_root section '$heading' lacks a positive 'max_lines'";
+        } else {
+            $total += $max;
+        }
+        push @found, "current_root section '$heading' lacks a nonempty 'remedy'"
+            if !defined($section->{remedy}) || ref($section->{remedy}) || $section->{remedy} eq '';
+    }
+    my @declared = map { ref($_) eq 'HASH' ? ($_->{heading} // '') : '' } @$sections;
+    push @found, 'current_root section_limits must declare exactly the required H2 sections in order'
+        if join("\0", @declared) ne join("\0", @expected);
+    my $health = ref($current->{health_targets}) eq 'HASH' ? $current->{health_targets}{lines} : undef;
+    if (defined($health) && !ref($health) && $health =~ /\A\d+\z/) {
+        my $largest = $total + scalar(@$sections);
+        push @found, "current_root sections sum to $largest legal lines above the $health-line health target"
+            if $largest > $health;
+    }
+    return @found;
+}
+
+# Section lines are the heading plus its body up to the next H2, with trailing blank separators trimmed so
+# the count does not depend on how many blank lines an author left behind.
+sub section_line_counts {
+    my ($bytes) = @_;
+    my @counts;
+    my ($heading, @body);
+    my $flush = sub {
+        return if !defined $heading;
+        pop @body while @body && $body[-1] =~ /\A\s*\z/;
+        push @counts, { heading => $heading, lines => scalar(@body) + 1 };
+        @body = ();
+    };
+    for my $line (physical_lines($bytes)) {
+        if ($line =~ /\A## (?!\#)([^\r\n]+)\r?\n?\z/) {
+            $flush->();
+            $heading = $1;
+            next;
+        }
+        push @body, $line if defined $heading;
+    }
+    $flush->();
+    return @counts;
+}
+
+sub section_limit_errors {
+    my ($bytes, $current) = @_;
+    my @found;
+    my $limits = ref($current) eq 'HASH' ? $current->{section_limits} : undef;
+    return @found if ref($limits) ne 'HASH' || ref($limits->{sections}) ne 'ARRAY';
+    my @measured = section_line_counts($bytes);
+    my %bound = map { ref($_) eq 'HASH' ? ($_->{heading} // '' => $_) : () } @{ $limits->{sections} };
+    for my $section (@measured) {
+        my $declared = $bound{ $section->{heading} };
+        if (!$declared) {
+            push @found, "current roadmap section '$section->{heading}' has no declared line bound";
+            next;
+        }
+        my $max = $declared->{max_lines};
+        next if !defined($max) || ref($max) || $max !~ /\A\d+\z/;
+        push @found, "current roadmap section '$section->{heading}' is $section->{lines} lines over its "
+            . "$max-line bound; remedy: " . ($declared->{remedy} // 'undeclared')
+            if $section->{lines} > $max;
+    }
+    return @found;
+}
+
+sub section_pressure_warnings {
+    my ($bytes, $current) = @_;
+    my @found;
+    my $limits = ref($current) eq 'HASH' ? $current->{section_limits} : undef;
+    return @found if ref($limits) ne 'HASH' || ref($limits->{sections}) ne 'ARRAY';
+    my $warning = $limits->{warning_pct};
+    return @found if !defined($warning) || ref($warning) || $warning !~ /\A\d+\z/;
+    my %bound = map { ref($_) eq 'HASH' ? ($_->{heading} // '' => $_) : () } @{ $limits->{sections} };
+    for my $section (section_line_counts($bytes)) {
+        my $declared = $bound{ $section->{heading} } or next;
+        my $max = $declared->{max_lines};
+        next if !defined($max) || ref($max) || $max !~ /\A\d+\z/ || $max == 0;
+        my $percent = 100 * $section->{lines} / $max;
+        next if $percent < $warning || $section->{lines} > $max;
+        push @found, sprintf("section '%s' is at %.1f%% of its %d-line bound; remedy: %s",
+            $section->{heading}, $percent, $max, $declared->{remedy} // 'undeclared');
+    }
+    return @found;
 }
 
 sub validate_archive_schema {
@@ -948,6 +1080,69 @@ LIVE
         $content_errors->([$sealed->(bytes => $capsule_metrics->{bytes} + 1)]) > 0];
     push @cases, ['capsule absent from the archive index rejected',
         $content_errors->([$sealed->()], "# Roadmap archive\n[current](../../../ROADMAP.md)\n") > 0];
+
+    my $bounded = sub {
+        my (@sections) = @_;
+        return {
+            %$current,
+            health_targets => { lines => 30, bytes => 4096, line_bytes => 256 },
+            section_limits => { warning_pct => 80, sections => \@sections },
+        };
+    };
+    my $remedy = 'route the detail to its owning task tree';
+    my @declared = (
+        { heading => 'Objective', max_lines => 4, remedy => $remedy },
+        { heading => 'Workstream status', max_lines => 10, remedy => $remedy },
+        { heading => 'History and execution', max_lines => 8, remedy => $remedy },
+    );
+    my $schema_of = sub {
+        my (@sections) = @_;
+        my @found = section_limit_schema_errors($bounded->(@sections));
+        return scalar(@found);
+    };
+    my $bounds_of = sub {
+        my ($text, @sections) = @_;
+        my @found = section_limit_errors($text, $bounded->(@sections));
+        return scalar(@found);
+    };
+    push @cases, ['valid section bounds accepted', !$schema_of->(@declared)];
+    push @cases, ['missing section_limits rejected',
+        scalar(section_limit_schema_errors({ %$current, required_h2_order => $current->{required_h2_order} })) > 0];
+    push @cases, ['section declaration missing a required H2 rejected', $schema_of->(@declared[0, 1]) > 0];
+    push @cases, ['section declaration in the wrong order rejected', $schema_of->(@declared[1, 0, 2]) > 0];
+    push @cases, ['undeclared extra section rejected',
+        $schema_of->(@declared, { heading => 'Appendix', max_lines => 4, remedy => $remedy }) > 0];
+    push @cases, ['section without max_lines rejected',
+        $schema_of->({ heading => 'Objective', remedy => $remedy }, @declared[1, 2]) > 0];
+    push @cases, ['section without a remedy rejected',
+        $schema_of->({ heading => 'Objective', max_lines => 4 }, @declared[1, 2]) > 0];
+    push @cases, ['section with an unknown field rejected',
+        $schema_of->({ %{ $declared[0] }, owner => 'x' }, @declared[1, 2]) > 0];
+    push @cases, ['section bounds summing above the health target rejected',
+        $schema_of->({ %{ $declared[0] }, max_lines => 20 }, @declared[1, 2]) > 0];
+    push @cases, ['section measurement counts the heading and trims trailing blanks',
+        join('|', map { "$_->{heading}=$_->{lines}" } section_line_counts($valid_live))
+            eq 'Objective=2|Workstream status=7|History and execution=4'];
+    push @cases, ['section within its bound accepted', !$bounds_of->($valid_live, @declared)];
+    push @cases, ['section exactly at its bound accepted',
+        !$bounds_of->($valid_live, { %{ $declared[0] }, max_lines => 2 }, @declared[1, 2])];
+    push @cases, ['section one line over its bound rejected',
+        $bounds_of->($valid_live, { %{ $declared[0] }, max_lines => 1 }, @declared[1, 2]) > 0];
+    (my $accreted = $valid_live) =~ s/^- current\n/- current\n- and then this leaf closed\n/m;
+    push @cases, ['prose accretion inside one section rejected',
+        $bounds_of->($accreted, { %{ $declared[0] }, max_lines => 2 }, @declared[1, 2]) > 0];
+    push @cases, ['section present in the root but undeclared rejected',
+        $bounds_of->($valid_live, @declared[0, 1]) > 0];
+    my $pressure = sub {
+        my ($text, @sections) = @_;
+        my @found = section_pressure_warnings($text, $bounded->(@sections));
+        return scalar(@found);
+    };
+    push @cases, ['section below the warning percentage stays quiet', !$pressure->($valid_live, @declared)];
+    push @cases, ['section at the warning percentage reports its remedy',
+        $pressure->($valid_live, { %{ $declared[0] }, max_lines => 2 }, @declared[1, 2]) == 1];
+    push @cases, ['an over-bound section warns as an error, not a warning',
+        !$pressure->($valid_live, { %{ $declared[0] }, max_lines => 1 }, @declared[1, 2])];
 
     my $passed = 0;
     for my $case (@cases) {

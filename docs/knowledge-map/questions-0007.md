@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > what is the RISC-V Debug register-field recall / precision
+- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
+  > what is the SWD line state machine (reset/operating/protocol-error/lockout)
+- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
+  > what is the VLM table strategy / PDF-VARIANT-DIGESTION.2b
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > what is the `<role> channel signals` caption cue and how is it parsed
 - [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
@@ -292,9 +298,3 @@
   > where does nli-verify / extract-constraints-llm / semantic / intent / adapt write their output
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > where does recognize_digital_patterns hardcode HTRANS/PSEL/MISO and why is it an ADR-0006 breach
-- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
-  > where does retired roadmap direction go
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > where does signal_channel_memberships live (EvidenceIR) and how is it carried (SemanticIR -> IntentIR)
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > where does specforge validate write validation_report.json

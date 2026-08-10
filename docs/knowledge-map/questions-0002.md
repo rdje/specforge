@@ -184,6 +184,8 @@
   > how are temporal rules expressed as LTL or MTL
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > how are test laboratory procedures distinguished from hardware test requirements
+- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
+  > how are the roadmap section bounds derived
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > how are the three FSM grammars (SWD hyphen, quoted-mode, single-word) distinguished
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
@@ -296,5 +298,3 @@
   > how does SpecForge recover a subject the model misspelled
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
   > how does SpecForge relate to GoldMine Texada Pnueli Ammons
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > how does SpecForge resolve a persisted path after the repository moves

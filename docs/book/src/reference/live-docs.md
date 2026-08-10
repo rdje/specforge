@@ -770,10 +770,40 @@ cover rollover schema and identity — duplicate ids and capsules, reuse of the 
 non-chronological seal dates, unsafe and non-Markdown paths, over-cap counts, a capsule above the
 current-root ceiling, a rollover declared in `planned` state, and every capsule metric or digest mismatch.
 
-One honest limit: the rollover is an exit, not a lock. Nothing yet bounds an individual section of the
-root, so the same prose accretion can start again — it will simply reach a wall it can now leave. Bounding
-each section, so the signal names the growing section rather than the whole file, is owned by
-`LIVE-DOC-STOP-RISK.0a`.
+##### Why the file bound was the wrong detector
+
+The rollover is an exit, not a lock, so
+[ADR 0031](../../../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md) closes the
+entrance. A file-level bound detects this failure badly: 213 lines grew inside one of seven sections, and
+measured against the file that reads as "`ROADMAP.md` is at 142.2% of health" — a number about the whole
+document that names no cause and points at no action. Measured against the section, the same growth reads
+as "`Current strategic priorities` is at 82% of its 56-line bound; route per-leaf detail to its owning task
+tree."
+
+Each H2 of the bounded root therefore declares its own `max_lines` and its own remedy, and the gate proves
+three things about the set: the declared sections are exactly the required H2 order, no section exceeds its
+bound, and `Σ max_lines + section_count` fits inside the file's health target. That last rule is ADR 0029's
+reachability requirement applied inward — a fully legal set of sections must be a healthy document, so the
+file ceiling stays a quarantine backstop rather than the operative control. The present bounds sum to 243 of
+256.
+
+Bounds follow measured shape and change frequency rather than an even split:
+
+| Section | Lines | Bound | Pressure | Remedy on breach |
+| --- | ---: | ---: | ---: | --- |
+| Objective | 7 | 14 | 50.0% | it belongs in the book introduction |
+| Canonical pipeline | 2 | 6 | 33.3% | it belongs in the pipeline overview |
+| Cross-cutting implementation doctrine | 57 | 80 | 71.2% | a rule needing a paragraph is a decision record |
+| Current strategic priorities | 34 | 56 | 60.7% | route leaf detail to its task tree, or roll the root |
+| Workstream status | 29 | 44 | 65.9% | the workstream set itself needs restructuring |
+| Recommended implementation order | 11 | 20 | 55.0% | an order that long is a plan; move it to its tree |
+| History and execution | 9 | 16 | 56.2% | a new route replaces an old one |
+
+Replaying the real accretion is what proves the control: the gate warns at 46 of 56 section lines and fails
+at 58, with the whole file at 180 of its 384 lines — less than half its ceiling and still inside its health
+target. The file-level bound would have stayed silent for roughly another 200 lines. Whether other bounded
+snapshots need the same inner bound is a separate measurement owned by `LIVE-DOC-STOP-RISK.1`, not an
+assumption.
 
 #### Bounded FSMGen feedback channel landed
 

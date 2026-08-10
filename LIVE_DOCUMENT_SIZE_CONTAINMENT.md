@@ -92,6 +92,10 @@
   one index row, and rewrites the root. Capsules are held to the current root's own ceilings, and the series
   declares its 16-capsule bound, 12-capsule warning, and remedy in the contract — `archive_terminal` surfaces
   are exempt from the generic milestone report, so a growing terminal collection must carry its own signal.
+  ADR 0031 then bounds the root's individual sections, because a file-level bound reports this failure as a
+  percentage of the whole document and names no cause. Each declared H2 carries its own line bound and remedy,
+  the declared set must equal the required H2 order, and the bounds' legal sum plus scaffold must fit the
+  file's health target, so a fully legal root is a healthy one and the file ceiling stays a backstop.
 <!-- LIVE-DOCUMENT-SIZE-CONTAINMENT-LOCAL-ADOPTION:END -->
 
 ---

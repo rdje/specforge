@@ -1,3 +1,32 @@
+### LIVE-DOC-STOP-RISK.0a — bound each roadmap section so accretion fails where it happens
+
+- `.0` gave `ROADMAP.md` a compliant exit and said plainly that it left the entrance open. This closes it,
+  and the reason is a detection argument rather than a size one: the accretion was 213 lines inside **one of
+  seven sections**, and against the file that reads as "142.2% of health" — a number about the whole
+  document that names no cause, arrives late, and points at no action.
+- [ADR 0031](docs/decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md) gives every H2
+  of the bounded root its own `max_lines` **and its own remedy**, carried in the declaration so the red gate
+  states the compliant action instead of leaving a reader to infer it. The declared set must equal the
+  required H2 order exactly — a new section cannot appear unbounded, a removed one cannot leave a stale
+  entry, and a reorder is a breach — so chronology has nowhere unbounded to land.
+- The bounds must also satisfy `sum + section_count <= health_targets.lines`, which is ADR 0029's
+  reachability rule turned inward: no legal combination of parts may violate the whole. The present set sums
+  to **243 of the 256-line health target**, so a fully legal root is a healthy root and the 384-line file
+  ceiling reverts to being a quarantine backstop rather than the operative control.
+- Bounds follow measured shape and change frequency, not an even split: 14 / 6 / 80 / 56 / 44 / 20 / 16
+  against measured 7 / 2 / 57 / 34 / 29 / 11 / 9. Every section is below the 80% warning; the tightest is
+  `Cross-cutting implementation doctrine` at 71.2%, whose declared remedy is that a rule needing its own
+  paragraph is a decision record, not a roadmap bullet.
+- Proved by falsification rather than by assertion: replaying the real accretion into the live root warns at
+  46/56 section lines naming the section and remedy, and **fails closed at 58/56 with the whole file at 180
+  of 384 lines**. The file-level bound would have stayed silent for roughly another 200. `ROADMAP.md` was
+  restored byte-identical after both runs.
+- Self-test 31 → 49 cases, covering the declaration (missing, reordered, extra, or unbounded sections; a
+  missing remedy; an unknown field; bounds summing above the health target), the measurement (heading
+  counted, trailing blanks trimmed), the boundary (exactly at bound passes, one over fails), an undeclared
+  section present in the root, and that the warning fires at the declared percentage and stays silent both
+  below it and above the hard bound. No file-level ceiling, health target, or milestone moved.
+
 ### LIVE-DOC-STOP-RISK.0 — give the bounded roadmap a declared repeatable rollover
 
 - `ROADMAP.md` was 364 of 384 ceiling lines — 20 from stopping an unrelated slice — but the size was the

@@ -92,14 +92,14 @@ from "one slice from a hard failure".
   Commit: `LIVE-DOC-STOP-RISK.0 — give the bounded roadmap a declared repeatable rollover`
 
 - ID: `LIVE-DOC-STOP-RISK.0a`
-  Status: `pending`
+  Status: `done`
   Goal: make the accretion that filled the root fail closed where it happens. `.0` gave the surface an exit
   but did not stop it being re-entered: the 213 retired lines were one prose bullet in one H2 section, and
   nothing bounds a section. Bound each current-root section so the signal names the growing section rather
   than the whole file.
   Acceptance: `the current_root contract declares a per-section line bound derived from the measured section shape; check_roadmap_projection_contract.pl fails closed on an over-bound section with focused cases for the boundary, an unknown section, and a missing declaration; the present root passes with recorded headroom per section; no file-level ceiling or milestone moves`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `ADR 0031; seven declared sections each carry max_lines + a remedy, summing to 243 of the 256-line health target so a fully legal root is a healthy root; measured pressure 50.0/33.3/71.2/60.7/65.9/55.0/56.2% — all below the 80% warning; replaying the real accretion warns at 82.1% of the 56-line priorities bound and fails at 58/56 with the whole file at 180 of 384 lines; self-test 31 → 49 cases; ROADMAP.md restored byte-identical after both falsification runs; scripts/check_doctrines.sh 6/6`
+  Commit: `LIVE-DOC-STOP-RISK.0a — bound each roadmap section so accretion fails where it happens`
 
 - ID: `LIVE-DOC-STOP-RISK.1`
   Status: `pending`
@@ -115,8 +115,8 @@ from "one slice from a hard failure".
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `LIVE-DOC-STOP-RISK.0` | `done` | 20 lines of headroom was the only measured deadline here; every other finding is a latent shape |
-| 2 | `LIVE-DOC-STOP-RISK.0a` | `pending` | `.0` proved the exit exists but left the entrance open; the root can re-accrete the same way |
-| 3 | `LIVE-DOC-STOP-RISK.1` | `pending` | now has `.0`'s worked example of what "a surface with a declared remedy" actually costs |
+| 2 | `LIVE-DOC-STOP-RISK.0a` | `done` | `.0` proved the exit exists but left the entrance open; the root can no longer re-accrete silently |
+| 3 | `LIVE-DOC-STOP-RISK.1` | `pending` | now has `.0`/`.0a`'s worked example of what a declared remedy and a reported inner bound actually cost |
 
 ## Decisions
 
@@ -158,6 +158,10 @@ from "one slice from a hard failure".
 | `2026-08-11` | `.0` contract | `perl scripts/check_roadmap_projection_contract.pl --self-test` | 31/31 (9 pre-existing + 22 rollover cases); a first run failed `non-array rollovers rejected` because `return (LIST)` collapses to its last element in scalar context — fixed at the source by returning `@found` |
 | `2026-08-11` | `.0` bounded root | recomputed `ROADMAP.md` metrics after the rewrite | 156 lines / 12,394 bytes / 205 max line bytes = 40.6% of the line ceiling, 60.9% of the line health target; ~100 lines before warning |
 | `2026-08-11` | `.0` gate | `perl scripts/check_roadmap_projection_contract.pl --check`; `bash scripts/check_live_document_size.sh`; `bash scripts/check_doctrines.sh` | contract passes in migrated state; live-document gate passes with 736 Markdown files across 52 governed surfaces and no `roadmap` warning (was 142.2% of health); doctrines 6/6 PASS, `CHAIN-CURRENCY` DEFER as registered |
+| `2026-08-11` | `.0a` measurement | measured the post-rollover root per H2 with the checker's own routine | 7 / 2 / 57 / 34 / 29 / 11 / 9 section lines + 7 scaffold = 156; the section that accreted (`Current strategic priorities`) is 34 lines, so the 213 retired lines had been 6× its own current size |
+| `2026-08-11` | `.0a` derivation | chose bounds from measured shape and change frequency, then checked the sum | 14 / 6 / 80 / 56 / 44 / 20 / 16 sums to 236 + 7 scaffold = **243 of the 256-line health target**, so a fully legal root is a healthy root and the 384-line file ceiling stays a backstop |
+| `2026-08-11` | `.0a` falsification | replayed the real accretion into the live root twice, then `git checkout -- ROADMAP.md` | warns at 46/56 (82.1%) naming the section and its remedy; **fails closed at 58/56 with the whole file at 180 of 384 lines** — the file-level bound would have stayed silent for another ~200 lines; root restored byte-identical both times |
+| `2026-08-11` | `.0a` gate | `perl scripts/check_roadmap_projection_contract.pl --self-test`; `--check`; `bash scripts/check_doctrines.sh` | 49/49 self-test cases; contract passes; doctrines 6/6 PASS |
 
 ## Commit Log
 
@@ -165,7 +169,7 @@ from "one slice from a hard failure".
 | --- | --- | --- |
 | `LIVE-DOC-STOP-RISK` ownership | `LIVE-DOC-STOP-RISK — track live-document stops with no compliant exit` | surfaced by `FACT-CARD-CAPACITY-HEADROOM.3`'s closing audit |
 | `LIVE-DOC-STOP-RISK.0` | `LIVE-DOC-STOP-RISK.0 — give the bounded roadmap a declared repeatable rollover` | ADR 0030; 364 → 156 lines with the retired root sealed byte-exact |
-| `LIVE-DOC-STOP-RISK.0a` | `pending` | `pending` |
+| `LIVE-DOC-STOP-RISK.0a` | `LIVE-DOC-STOP-RISK.0a — bound each roadmap section so accretion fails where it happens` | ADR 0031; the failure now arrives ~200 lines earlier and names its cause |
 | `LIVE-DOC-STOP-RISK.1` | `pending` | `pending` |
 
 ## Changelog
@@ -177,3 +181,8 @@ from "one slice from a hard failure".
   all, only ADR 0010's one-time migration. ADR 0030 makes the rollover a repeatable, data-declared,
   gate-proved operation with its own bounded and reported capsule series. `.0a` opened for the entrance the
   rollover does not close: nothing bounds a section, so the root can re-accrete the same way.
+- `2026-08-11`: `.0a` closed. ADR 0031 bounds each H2 of the root with its own line limit and its own declared
+  remedy, requires the declared set to equal the required H2 order exactly, and requires the bounds to sum
+  (with scaffold) within the health target — ADR 0029's reachability rule applied inward. Replaying the real
+  accretion proves the point: the section bound fails at 180 total file lines where the file bound would have
+  stayed silent to 384. Only `.1` remains.
