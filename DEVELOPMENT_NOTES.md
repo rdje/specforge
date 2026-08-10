@@ -1,4 +1,23 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.48 (`2026-08-10`) — physical timing does not imply a digital port graph
+
+The stale OpenCAPI chain looked renderable because four measurement/glossary acronyms (`CDR`, `DDJ`, `DL`, and
+`DL3`) had become synthetic one-bit signal declarations. Three inferred interfaces and a generic `TABLE` enum
+were enough for the adapter to emit `channel.isf`, even though the document contained no signal-description
+table, direction relation, signal constraint, register, or other declaration authority. Timing richness and
+interface topology had been conflated.
+
+The current pipeline preserves the strong surface and removes only the unsupported projection. Sixty scalar
+receiver/transmitter timing records remain after the value and cell-geometry repairs, along with 75 engineering
+constraints, 21 behaviors, and four assumptions. The acronym declarations, generic enum, untyped phases/gates,
+and stale target disappear. Blocking on no declared signals is the faithful result for a physical-link document
+whose timing obligations are useful but whose synthesizable boundary is not grounded.
+
+The remaining frontier stays visible rather than being classified away: 39 visuals have no VLM observations, 27
+normative statements remain partially structured, two narrative conditionals lack actor-signal grounding, and
+eight timing/conditional source IDs have no typed temporal rule. Those are existing visual/NLP recall lanes. They
+do not justify recreating ports from acronyms or translating scalar electrical quantities into executable rules.
+
 ## CORPUS-COVERAGE.2.48a (`2026-08-10`) — repeated text is not repeated scalar evidence
 
 The OpenCAPI false record was initially deceptive because every field was populated. A single `Notes:` footer

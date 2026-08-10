@@ -118,6 +118,7 @@
 - [nli-intent-gate](nli-intent-gate.md)
 - [nlp-coordination-already-handled](nlp-coordination-already-handled.md)
 - [offset-suffixed-dword-relative-bit-cells](offset-suffixed-dword-relative-bit-cells.md)
+- [opencapi-32g-phy-timing-without-interface-topology](opencapi-32g-phy-timing-without-interface-topology.md)
 - [opencapi-afu-address-note-refresh](opencapi-afu-address-note-refresh.md)
 - [opencapi-certified-definition-refresh](opencapi-certified-definition-refresh.md)
 - [opencapi-discovery-configuration-refresh](opencapi-discovery-configuration-refresh.md)

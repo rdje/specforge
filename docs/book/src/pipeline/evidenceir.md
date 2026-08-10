@@ -676,6 +676,26 @@ parameter spelling, or note prefix participates in the decision. *Authoritative 
 `docs/tasks/CORPUS-COVERAGE.md` (`CORPUS-COVERAGE.2.48a`); Knowledge Map
 `[[timing-scalar-rows-require-independent-cell-geometry]]`.
 
+### `CORPUS-COVERAGE.2.48` — keep physical timing without inventing an interface
+
+A physical-link specification can be rich in scalar electrical timing and still provide no synthesizable signal
+inventory. OpenCAPI 32 Gbps PHY Signaling is one such case: current EvidenceIR retains 60 timing constraints, but
+the source has no signal-description table, direction relation, signal constraint, or register surface that
+would declare a digital interface.
+
+Older artifacts promoted four glossary or measurement acronyms—`CDR`, `DDJ`, `DL`, and `DL3`—into one-bit
+signals, grouped them into three interfaces, and emitted a four-port `channel.isf` plus a generic table enum.
+Current authority removes those synthetic declarations and the untyped phase/gate projections. IntentIR still
+keeps seven actors, 21 behaviors, 75 constraints, four assumptions, and all 60 grounded timings; adapter lowering
+blocks because no signal is declared instead of fabricating a runnable topology.
+
+Validation keeps the recall boundary explicit: all 39 visuals still need local visual enrichment, 27 normative
+statements remain partially structured, two narrative conditionals lack an actor-signal graph, and eight local
+timing/conditional source IDs have no typed temporal rule. These are future visual and language extraction
+opportunities, not authority to turn physical quantities or acronyms into ports. *Authoritative tracking:*
+`docs/tasks/CORPUS-COVERAGE.md` (`CORPUS-COVERAGE.2.48`); Knowledge Map
+`[[opencapi-32g-phy-timing-without-interface-topology]]`.
+
 ### `PDF-VARIANT-DIGESTION.10a` — a register table whose field names hide inside the description
 
 A corpus-wide census of every table the ingest classifier left "unknown" pointed at one family as the

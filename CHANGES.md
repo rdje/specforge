@@ -1,3 +1,18 @@
+### CORPUS-COVERAGE.2.48 — refresh OpenCAPI 32G PHY signaling without false topology
+
+- Two guarded CPU ingests reproduce 43 pages / 39 visuals / 27 tables / 73 sections / 318 elements. The final
+  committed-child run restores 130 normalized files / 34,843,407 bytes in 27.2 seconds and pins SourceIR
+  `e2c0b9e5…859f` plus bundle `30f70511…8232`.
+- Source 376→318 removes exactly 58 flattened chart/diagram labels from ten pages. Evidence 613→547 additionally
+  removes four synthetic acronym declarations and four generic-enum statements; child `.2.48a` removes the one
+  spanned footer after eight value-empty stale timing rows, leaving 60 grounded physical timings.
+- Current authority removes three stale interfaces / 18 phases / 19 gates. IntentIR retains seven actors / 21
+  behaviors / 75 constraints / four assumptions / 60 timings; the stale four-port/one-enum `channel.isf` is gone
+  and lowering blocks only on no declared signals.
+- All eight downstream artifact/report hashes reproduce. Nine provider-free evals, KG 156/156, 59/59 current
+  emitted ISFs under FSMGen strict, child full CI, book, doctrines, path, and locality pass. Corpus is 48 done /
+  eight remaining at 80/20/80/79 stage coverage; next select refresh #49.
+
 ### CORPUS-COVERAGE.2.48a — require independent timing scalar cell geometry
 
 - The complete 80-document / 105-timing-table retained surface identifies 23 false records whose parameter or

@@ -21,14 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.48`; OpenCAPI 4.0 32 Gbps PHY Signaling refresh resumed after child `.2.48a`.
-- Current state: `.2.48a` closes the universal spanned-row timing defect. The 80-document / 105-table retained
-  surface changes 608→585 scalar records; parameter and populated min/typ/max roles now require independent
-  source cells. The active OpenCAPI chain has 43 pages / 39 visuals / 27 tables / 73 sections / 318 elements,
-  547 statements, 60 timings, no signal declarations or relations, and no emitted target. Its downstream hash
-  reproduces twice; three non-rebuildable affected controls remain byte-exact.
-- Next action: build the release from the `.2.48a` recording commit, run the second guarded CPU ingest, reproduce
-  SourceIR/normalized/downstream hashes, then finish parent delta classification, validation, docs, and commit.
-- In-flight uncommitted: parent `.2.48` exact ignored rollback, first ingest measurement, and corrected current
-  generated chain remain task-owned. No background job is running.
+- Active unit: `CORPUS-COVERAGE.2`; refresh #48 is complete, but its task file has reached the size boundary.
+- Current state: OpenCAPI 4.0 32 Gbps PHY Signaling now reproduces 43 pages / 39 visuals / 27 tables / 73 sections /
+  318 elements, 130 normalized files, 547 statements, 60 timings, no declared signal graph, and no emitted target.
+  SourceIR, normalized bundle, and eight downstream hashes reproduce. Corpus is 48 done / eight remaining at
+  80 SourceIR / 20 normalized / 80 EvidenceIR / 79 downstream chains; all 59 current ISFs are FSMGen-strict clean.
+- Next action: after the clean `.2.48` commit, open the smallest owning containment leaf and partition the
+  277636/278528-byte corpus task tree; then select and own refresh #49.
+- In-flight uncommitted: `.2.48` live-doc/book/task recording and its exact ignored rollback pending commit-time
+  authentication and deletion. No background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

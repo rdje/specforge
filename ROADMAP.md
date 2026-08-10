@@ -247,12 +247,15 @@ Five active program groups support that north star:
   keeps two canonicalization residuals. The committed release reproduces SourceIR `a396a074…d478`, normalized
   manifest `872e7dba…1bae`, and downstream `b4b50237…9ade` twice. Corpus is 47 done / nine remaining at 80
   SourceIR / 19 normalized / 80 EvidenceIR / 79 downstream chains; all 60 current emitted ISFs are strict-clean.
-  `.2.48` now owns the 43-page OpenCAPI 4.0 32 Gbps PHY Signaling specification. Its first guarded ingest produces
-  318 current elements and exposed child `.2.48a`: a Docling-expanded eight-column footer cell was falsely indexed
-  as independent parameter/min/typ/max/unit data. The complete 80-document / 105-timing-table census finds 23 such
-  records across four documents; the shared geometry boundary changes 608→585 scalar records while preserving
-  independent repeated values and optional prose spans. The corrected OpenCAPI cascade reproduces 60 genuine
-  timings twice; parent `.2.48` resumes committed-release re-ingest and final signoff. Separately,
+  `.2.48` refreshes the 43-page OpenCAPI 4.0 32 Gbps PHY Signaling specification. Two guarded ingests reproduce
+  318 elements and a 130-file normalized bundle. Source 376→318 removes 58 flattened visual labels; Evidence
+  613→547 additionally removes four synthetic declarations and four generic-enum statements. Child `.2.48a`
+  closes the Docling-expanded footer defect across the 80-document timing surface (608→585), leaving 60 grounded
+  OpenCAPI timings. Current authority removes three stale interfaces / 18 phases / 19 gates and the four-port/
+  one-enum target; final IntentIR retains seven actors / 21 behaviors / 75 constraints / four assumptions. Corpus
+  is 48 done / eight remaining at 80 SourceIR / 20 normalized / 80 EvidenceIR / 79 downstream chains, with 59/59
+  current emitted ISFs strict-clean. The corpus task record is now at its registered byte boundary, so a bounded
+  canonical partition must land before refresh #49 can be owned. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.
