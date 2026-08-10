@@ -20,21 +20,21 @@ ISF pipeline, keep completed chains non-stale, and record extraction gaps withou
 
 ## Current State
 
-49 of 56 real chip-spec refreshes are complete.
+50 of 56 real chip-spec refreshes are complete.
 
-- Stage coverage: 80 SourceIR / 21 normalized / 80 EvidenceIR / 79 downstream chains.
-- Emitted ISF: 58/58 current targets pass FSMGen strict validation.
+- Stage coverage: 80 SourceIR / 22 normalized / 80 EvidenceIR / 79 downstream chains.
+- Emitted ISF: 57/57 current targets pass FSMGen strict validation.
 - Completed program lanes: `.0` build-out, `.1` stage-staleness validation, and `.3` lifecycle reconciliation.
-- Active program lane: `.2` current-binary corpus refresh, with seven real documents remaining.
+- Active program lane: `.2` current-binary corpus refresh, with six real documents remaining.
 - Blockers: none.
 
 ## Current Frontier
 
-Active product leaf: `CORPUS-COVERAGE.2.50`.
+No eligible product leaf.
 
-Child `.2.50a` is complete: a passive obligation's subject must now be named before its `must/shall be|remain`
-lead, which removes 26 measured false constraints corpus-wide and rebuilds the three affected rebuildable
-cascades. The parent now re-ingests the OpenCAPI Data Link Layer specification from the repaired release.
+`CORPUS-COVERAGE.2.50` and its child `.2.50a` are complete in the active `refreshes-49-56` part. The next clean
+slice must create and own `CORPUS-COVERAGE.2.51`, select one of the six remaining real documents from current
+corpus evidence, and pin its exact source and stale-chain boundary before any ingest or artifact mutation.
 
 ## Detailed task evidence
 
@@ -54,6 +54,7 @@ doctrines, and the risk-proportionate `COMMIT.md` gates before committing each l
 
 | Date | Boundary | Result |
 | --- | --- | --- |
+| `2026-08-10` | refresh `.2.50` | 50 done / six remaining; 80/22/80/79; 57/57 strict-clean |
 | `2026-08-10` | repair `.2.50a` | 26 false pre-bind subjects measured; eight removed in three rebuilt cascades; 58/58 strict-clean |
 | `2026-08-10` | refresh `.2.49` | 49 done / seven remaining; 80/21/80/79; 58/58 strict-clean |
 | `2026-08-10` | refresh `.2.48` | 48 done / eight remaining; 80/20/80/79; 59/59 strict-clean |
@@ -63,6 +64,7 @@ doctrines, and the risk-proportionate `COMMIT.md` gates before committing each l
 
 | Unit | Durable evidence |
 | --- | --- |
-| `CORPUS-COVERAGE.2.49` | latest completed product refresh |
-| `CORPUS-COVERAGE.2.48` | latest completed product refresh |
+| `CORPUS-COVERAGE.2.50` | latest completed product refresh |
+| `CORPUS-COVERAGE.2.49` | preceding completed product refresh |
+| `CORPUS-COVERAGE.2.48` | earlier completed product refresh |
 | `CORPUS-TASK-EVIDENCE-CONTAINMENT` | bounded root, semantic evidence parts, and exact provenance |

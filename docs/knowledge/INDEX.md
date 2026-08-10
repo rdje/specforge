@@ -123,6 +123,7 @@
 - [opencapi-32g-phy-timing-without-interface-topology](opencapi-32g-phy-timing-without-interface-topology.md)
 - [opencapi-afu-address-note-refresh](opencapi-afu-address-note-refresh.md)
 - [opencapi-certified-definition-refresh](opencapi-certified-definition-refresh.md)
+- [opencapi-data-link-layer-refresh-is-signal-empty](opencapi-data-link-layer-refresh-is-signal-empty.md)
 - [opencapi-discovery-configuration-refresh](opencapi-discovery-configuration-refresh.md)
 - [opencapi-ready-definition-refresh](opencapi-ready-definition-refresh.md)
 - [opencapi-ready-note-refresh-rejects-dl-signal](opencapi-ready-note-refresh-rejects-dl-signal.md)

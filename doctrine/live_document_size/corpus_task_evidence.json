@@ -1,10 +1,8 @@
 {
    "contract_id" : "corpus-coverage-active-task-evidence",
    "current_frontier" : {
-      "leaf_id" : "CORPUS-COVERAGE.2.50",
-      "literal" : "Active product leaf: `CORPUS-COVERAGE.2.50`.",
-      "mode" : "eligible",
-      "part_id" : "refreshes-49-56"
+      "literal" : "No eligible product leaf.",
+      "mode" : "none"
    },
    "current_path" : "docs/tasks/CORPUS-COVERAGE.md",
    "destinations" : {
@@ -100,13 +98,13 @@
          {
             "heading" : "# CORPUS-COVERAGE — refreshes 49–56",
             "metrics" : {
-               "bytes" : 27746,
+               "bytes" : 32032,
                "line_bytes" : 276,
-               "lines" : 383
+               "lines" : 433
             },
             "part_id" : "refreshes-49-56",
             "path" : "docs/tasks/corpus-coverage/refreshes-49-56.md",
-            "sha256" : "56c38422cee3c8717328929c306338e79d44cdc88bb87032e76ceeef8fa3c632",
+            "sha256" : "ebc3c5afa854b7f376a7f454ec5dbccc4fe0015140d6023e07ae0d0f30e510e9",
             "state" : "active"
          }
       ],
@@ -509,9 +507,9 @@
          "# CORPUS-COVERAGE: build every ingested doc through to IntentIR/.isf + keep downstream stages non-stale",
          "- Tree ID: `CORPUS-COVERAGE`",
          "- Status: `active`",
-         "49 of 56 real chip-spec refreshes are complete.",
+         "50 of 56 real chip-spec refreshes are complete.",
          "## Current Frontier",
-         "Active product leaf: `CORPUS-COVERAGE.2.50`.",
+         "No eligible product leaf.",
          "## Detailed task evidence",
          "## Verification Log",
          "## Commit Log"

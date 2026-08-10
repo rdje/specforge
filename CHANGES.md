@@ -1,3 +1,18 @@
+### CORPUS-COVERAGE.2.50 — refresh OpenCAPI data link without false topology
+
+- Two guarded CPU ingests reproduce 57 pages / 64 visuals / 53 tables / 111 sections / 527 elements and a
+  184-file / 52,570,034-byte normalized bundle at SourceIR `13769977…ca7e`; two full cascades reproduce every
+  downstream artifact and report hash with 83–84% system memory free.
+- Current authority removes four stale interfaces, ports, and actor-signal relations, 54 phases, 71 gates, 38
+  contracts, and the synthetic `endpoint_dlx.isf` whose `CDR`/`DL` outputs and `REPRESENTATION`/`DL` enums were
+  never declared signals. Evidence statements move 1,176 → 1,018 through visual-label and duplicate suppression.
+- The current chain retains 87 invariants, four assertions, 24 intent behaviors, and 87 constraints, with zero
+  signal constraints, temporal rules, temporal conflicts, registers, or timings. `adapt --target isf` blocks on
+  `no signals declared in interface` and emits nothing — an honest boundary, not an extraction gap.
+- KG 156/156, 57/57 current emitted ISFs under FSMGen strict, nine provider-free evals at baseline, full CI
+  1,804/five ignored, doctrines, mdBook, persisted paths, and locality pass. Corpus frontier: 50 done / six
+  remaining at 80/22/80/79 stages; next select and own #51.
+
 ### CORPUS-COVERAGE.2.50a — require pre-bind passive constraint subjects
 
 - Both deterministic constraint extractors now keep a subject only when the document names it at identifier

@@ -21,14 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.50`; OpenCAPI Data Link Layer refresh, resuming from the repaired release.
-- Current state: child `.2.50a` is done. Both deterministic constraint extractors now keep a passive obligation's
-  subject only when the document names it before the `must/shall be|remain` lead, removing 26 measured false
-  records across nine documents; active `must drive`/`must have … tied` grammar and table-row context are
-  untouched. I2C, USB 3.2, and WISHBONE rebuilt twice at combined `3538fec9…fd49`; corpus is 49 done / seven
-  remaining at 80/21/80/79 stages with 58/58 emitted ISFs FSMGen-strict clean.
-- Next action: re-ingest `opencapi_data_link_layer_v20_09jul2020` under the guarded CPU path, rebuild and validate
-  the full cascade twice, and confirm zero signal constraints, temporal rules/conflicts, interfaces, and targets.
-- In-flight uncommitted: none. The generated OpenCAPI chain is still its authenticated pre-ingest seven-file state,
-  its normalized bundle is absent, and no background job is running.
+- Active unit: none; `CORPUS-COVERAGE.2.50` and its child `.2.50a` are complete and committed.
+- Current state: corpus is 50 done / six remaining at 80 SourceIR / 22 normalized / 80 EvidenceIR / 79 downstream
+  chains, with 57/57 current emitted ISFs FSMGen-strict clean. The OpenCAPI Data Link Layer chain is current-binary
+  and declares no interface signals, so lowering blocks honestly and emits no target. Both deterministic
+  constraint extractors now bind a passive obligation only to a subject named before its `must/shall be|remain`
+  lead.
+- Next action: select refresh #51 by the smallest-retained-source rule from the six remaining documents, create its
+  separately owned `CORPUS-COVERAGE.2.51` leaf, and authenticate its source and stale chain before any ingest.
+- In-flight uncommitted: none; no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

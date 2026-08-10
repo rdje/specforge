@@ -139,7 +139,7 @@ The eight downstream artifact/report hashes combine to
 
 ## CORPUS-COVERAGE.2.50
 
-- Status: `active` (`2026-08-10`, DATA/CODE/DOC; child `.2.50a` done — rebuild from the repaired release)
+- Status: `done` (`2026-08-10`, DATA/CODE/DOC; child `.2.50a` done)
 - Goal: re-ingest the OpenCAPI Data Link Layer v2.0 specification with the current release, then rebuild and
   validate EvidenceIR → SemanticIR → IntentIR → ISF without promoting glossary entries, encoding-table labels,
   protocol prose, or diagram text into unsupported signals, enums, phases, gates, or executable behavior.
@@ -212,17 +212,67 @@ The release binary is the `.2.48a` final binary at SHA-256
   the ignored `chipdoc` symlink. Runtime ingest will use the directly resolved caller-authorized same-SSD input and
   keep every project-owned workspace/output repository-relative; no failed symlink ingest is repeated.
 
+### Fresh current-binary result
+
+Two guarded CPU ingests reproduce 57 pages / 64 visuals / 53 tables / 111 sections / 527 elements and a 184-file /
+52,570,034-byte normalized bundle at SourceIR `13769977…ca7e`, with 83–84% system memory free throughout and every
+project-owned workspace repository-relative. Two full downstream cascades then reproduce all seven current
+artifact and report hashes, including EvidenceIR `590b53ab…fb14`, SemanticIR `b2740965…6b8a`, IntentIR
+`a8c747e8…582d`, and adapter manifest `415c0f43…f6f0`.
+
+Every stale→fresh delta is classified at its first causal stage:
+
+| Surface | Stale | Current | First cause |
+| --- | ---: | ---: | --- |
+| Source elements | 527 | 527 | structure holds; only the retired boot-volume provenance is replaced |
+| Evidence statements | 1,176 | 1,018 | flattened visual-label and duplicate-presentation suppression |
+| Actor-signal relations | 4 | 0 | the document declares no interface signals to relate |
+| Signal constraints | 0 | 0 | `.2.50a` keeps the four post-binding candidates out of the subject slot |
+| Semantic actors / interfaces / ports | 10 / 4 / 4 | 6 / 0 / 0 | retired heuristic interface and port synthesis |
+| Semantic phases / gates / contracts | 54 / 71 / 38 | 0 / 0 / 0 | retired prose phase, gate, and contract authority |
+| Semantic invariants / assertions | 88 / 4 | 87 / 4 | one invariant loses its statement source |
+| Intent actors / behaviors / constraints | 10 / 144 / 114 | 4 / 24 / 87 | the removed interface, phase, and gate topology |
+| Emitted target | `endpoint_dlx.isf` | none | lowering blocks honestly on no declared interface signals |
+
+The stale target's `CDR`/`DL` outputs and `REPRESENTATION`/`DL` enums had no grounded protocol authority; the
+current chain refuses them and retains no residual decisions. Conditional rules hold at 14, and registers and
+timing constraints remain honestly absent.
+
 ### Verification log
 
 | Date | Boundary | Result |
 | --- | --- | --- |
 | `2026-08-10` | ownership selection | seven candidates ranked; same-device source/hash and seven-file stale chain authenticated; normalized bundle absent; no generated mutation |
+| `2026-08-10` | deterministic refresh | two guarded ingests reproduce 184 files / 52,570,034 bytes and SourceIR `13769977…ca7e`; two cascades reproduce all seven downstream hashes; four stages validate |
+| `2026-08-10` | no regression | KG 156/156; 57/57 current emitted ISFs FSMGen strict; nine provider-free evals at baseline; full CI 1,804/five ignored; doctrines, persisted paths, and locality pass |
+| `2026-08-10` | corpus frontier | 50 done / six remaining at 80 SourceIR / 22 normalized / 80 EvidenceIR / 79 downstream chains |
 
 ### Commit log
 
 | Unit | Durable evidence |
 | --- | --- |
-| `CORPUS-COVERAGE.2.50` ownership | `CORPUS-COVERAGE.2.50 — own OpenCAPI data-link refresh` |
+| `CORPUS-COVERAGE.2.50` ownership | `9c83062e` — `CORPUS-COVERAGE.2.50 — own OpenCAPI data-link refresh` |
+| `CORPUS-COVERAGE.2.50` completion | `CORPUS-COVERAGE.2.50 — refresh OpenCAPI data link without false topology` |
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.50`
+
+- [x] **REPRODUCE / MEASURE** — the same-device 468,716-byte source at `778ecc99…5ec7` and the exact seven-file /
+  2,666,088-byte stale chain are authenticated, and a rollback capsule of all seven files is taken inside a
+  repository-derived same-volume workspace before ingest.
+- [x] **ROOT CAUSE (WHY + WHERE)** — every stale→fresh delta is classified at its first causal stage in the table
+  above; the removed interface, port, phase, gate, and contract topology explains the behavior and constraint
+  movement, and the four false post-binding constraint subjects are owned and closed by child `.2.50a`.
+- [x] **ADDRESSED (verified)** — the complete current-binary chain builds and validates with zero signal
+  constraints, temporal rules, temporal conflicts, interfaces, and emitted targets, retaining 87 invariants, four
+  assertions, 24 behaviors, and 87 constraints; `adapt` blocks on `no signals declared in interface`.
+- [x] **NO REGRESSION** — `kg-bench` 156/156; 57/57 current emitted ISFs pass FSMGen `--strict --check`; nine
+  provider-free evals hold their recorded baseline; full CI is 1,804 tests / five ignored; doctrines, mdBook,
+  persisted-path, live-size, and project-data locality gates pass.
+- [x] **GENERICITY (ADR 0006)** — no OpenCAPI, vendor, document, acronym, or token exception enters production; no
+  artifact was hand-edited and no validator was relaxed.
+- [x] **LOCKSTEP** — generated chain, this leaf, the tree root and frontier, roadmap, current status, live docs,
+  mdBook, the Knowledge Map fact card, and the resume pointer agree before commit; the authenticated rollback
+  capsule is deleted only after durable recording.
 
 ## CORPUS-COVERAGE.2.50a
 

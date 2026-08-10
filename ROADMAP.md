@@ -267,7 +267,11 @@ Five active program groups support that north star:
   both deterministic extractors now keep a passive obligation's subject only when the document names it before the
   `must/shall be|remain` lead, which deletes 26 measured false records across nine documents, rebuilds the I2C,
   USB 3.2, and WISHBONE cascades, and drops a false `SCL` rule from an emitted target while active
-  `must drive`/`must have … tied` grammar and table-row context are untouched. The guarded migration owned by
+  `must drive`/`must have … tied` grammar and table-row context are untouched. `.2.50` then completes: two guarded
+  ingests reproduce 527 elements and a 184-file / 52,570,034-byte bundle, current authority removes four
+  interfaces/ports/relations, 54 phases, 71 gates, 38 contracts, and the synthetic `endpoint_dlx.isf`, and 87
+  invariants / 24 behaviors / 87 constraints remain with lowering blocked on no declared signals. Corpus is 50
+  done / six remaining at 80/22/80/79 stages with 57/57 emitted ISFs strict-clean. The guarded migration owned by
   [`CORPUS-TASK-EVIDENCE-CONTAINMENT`](docs/tasks/CORPUS-TASK-EVIDENCE-CONTAINMENT.md) is lossless and below all
   local warnings. Its same-SSD no-hardlink clean clone passed every doctrine, a temporary eighth active part proved
   the eligible post-migration #49 route through the composed live gate, and exact restoration left no residue.

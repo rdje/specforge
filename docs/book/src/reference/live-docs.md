@@ -213,13 +213,17 @@ Controller Overview Guide with two deterministic guarded CPU ingests. Source str
 the normalized bundle is restored at 139 files / 30,731,394 bytes. The guide's GIC-version/CPU-family table is a
 feature matrix, not three timing constraints; current generic authority also removes 83 heuristic interfaces,
 26 section phases, 54 prose gates, and the unsupported `controller.isf`. Grounded invariants, contracts, four
-intent behaviors, and 88 constraints remain. Corpus coverage is 49/56 with seven refreshes remaining, stages are
-80/21/80/79, and all 58 retained emitted targets pass FSMGen strict validation. The separate `.2.50` leaf now
-owns the 57-page / 527-element OpenCAPI Data Link Layer v2.0 specification, the smallest remaining source; its
-same-SSD PDF, absent normalized bundle, and exact stale seven-file chain are pinned before guarded ingest. Its
-first cascade safely blocks the stale target but exposes child `.2.50a`: four post-binding uppercase tokens become
-false signal constraints and one temporal conflict. The child owns the measured generic subject-authority repair
-before parent completion; the pre-ingest chain remains the durable handoff state.
+intent behaviors, and 88 constraints remain. The separate `.2.50` leaf then refreshed the 57-page / 527-element
+OpenCAPI Data Link Layer v2.0 specification, the smallest remaining source. Its first cascade safely blocked the
+stale target but exposed child `.2.50a`: four post-binding uppercase tokens became false signal constraints and
+one temporal conflict, so both deterministic extractors now bind a passive obligation only to a subject the
+document names before its `must/shall be|remain` lead. Two guarded CPU ingests then reproduced 57 pages / 64
+visuals / 53 tables / 111 sections / 527 elements and a 184-file / 52,570,034-byte normalized bundle, and two full
+cascades reproduced every downstream hash. Current authority removes four stale interfaces, ports, and relations,
+54 phases, 71 gates, 38 contracts, and the synthetic `endpoint_dlx.isf`; six semantic actors, 87 invariants, four
+assertions, 24 intent behaviors, and 87 constraints remain, with lowering blocking honestly on no declared
+interface signals. Corpus coverage is 50/56 with six refreshes remaining, stages are 80/22/80/79, and all 57
+retained emitted targets pass FSMGen strict validation.
 
 Post-migration sealing is Git-backed: a part's final content commit lands first, then a following state-only
 transaction records that ancestor commit/blob before any later part accepts work. The migrated legacy payloads
