@@ -30,11 +30,11 @@ ISF pipeline, keep completed chains non-stale, and record extraction gaps withou
 
 ## Current Frontier
 
-No eligible product leaf.
+Active product leaf: `CORPUS-COVERAGE.2.50`.
 
-`CORPUS-COVERAGE.2.49` is complete in the active `refreshes-49-56` part. The next clean slice must create and own
-`CORPUS-COVERAGE.2.50`, select one of the seven remaining real documents from current corpus evidence, and pin its
-exact source and stale-chain boundary before any ingest or artifact mutation.
+`CORPUS-COVERAGE.2.50` is owned in the active `refreshes-49-56` part. It selects the 57-page OpenCAPI Data Link
+Layer v2.0 specification, the smallest of seven remaining documents at 527 retained elements, and pins the exact
+same-SSD source plus stale seven-file chain before any ingest or artifact mutation.
 
 ## Detailed task evidence
 

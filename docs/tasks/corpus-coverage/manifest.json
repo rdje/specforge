@@ -1,8 +1,10 @@
 {
    "contract_id" : "corpus-coverage-active-task-evidence",
    "current_frontier" : {
-      "literal" : "No eligible product leaf.",
-      "mode" : "none"
+      "leaf_id" : "CORPUS-COVERAGE.2.50",
+      "literal" : "Active product leaf: `CORPUS-COVERAGE.2.50`.",
+      "mode" : "eligible",
+      "part_id" : "refreshes-49-56"
    },
    "current_path" : "docs/tasks/CORPUS-COVERAGE.md",
    "index_path" : "docs/tasks/corpus-coverage/INDEX.md",
@@ -299,6 +301,11 @@
          "leaf_id" : "CORPUS-COVERAGE.2.49",
          "origin" : "post_migration",
          "part_id" : "refreshes-49-56"
+      },
+      {
+         "leaf_id" : "CORPUS-COVERAGE.2.50",
+         "origin" : "post_migration",
+         "part_id" : "refreshes-49-56"
       }
    ],
    "marker_prefix" : "corpus-task-source-region",
@@ -392,13 +399,13 @@
       {
          "heading" : "# CORPUS-COVERAGE — refreshes 49–56",
          "metrics" : {
-            "bytes" : 9808,
+            "bytes" : 15337,
             "line_bytes" : 229,
-            "lines" : 138
+            "lines" : 225
          },
          "part_id" : "refreshes-49-56",
          "path" : "docs/tasks/corpus-coverage/refreshes-49-56.md",
-         "sha256" : "28246147b951f786720e8d5a53dcae7fcd0dc81f4219bdf5960ccca982e0d678",
+         "sha256" : "de0fbbe25597544569786756c7f45a43929fb873c8b4d775f7b072ad50e9549a",
          "state" : "active"
       }
    ],

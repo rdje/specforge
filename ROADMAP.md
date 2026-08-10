@@ -260,12 +260,13 @@ Five active program groups support that north star:
   current semantic authority removes 83 stale heuristic interfaces, 26 generic phases, 54 prose gates, and the
   unsupported `controller.isf` while preserving 87 invariants, four contracts, one assertion, four grounded intent
   behaviors, and 88 constraints. The corpus task record now has a bounded current root over eight semantic parts,
-  a 49-route index/manifest, and an exact 2,308-line source capsule. The guarded migration owned by
+  a 50-route index/manifest, and an exact 2,308-line source capsule. The next separately owned `.2.50` leaf selects
+  the 57-page / 527-element OpenCAPI Data Link Layer v2.0 specification, the smallest of seven remaining sources;
+  its same-SSD PDF and exact stale seven-file chain are pinned before guarded ingest. The guarded migration owned by
   [`CORPUS-TASK-EVIDENCE-CONTAINMENT`](docs/tasks/CORPUS-TASK-EVIDENCE-CONTAINMENT.md) is lossless and below all
   local warnings. Its same-SSD no-hardlink clean clone passed every doctrine, a temporary eighth active part proved
   the eligible post-migration #49 route through the composed live gate, and exact restoration left no residue.
-  Containment is closed and the first post-migration product route is complete. The next separately owned product
-  slice is refresh #50.
+  Containment is closed; the first post-migration product route is complete and the second is owned.
   Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID

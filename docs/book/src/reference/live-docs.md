@@ -214,7 +214,9 @@ the normalized bundle is restored at 139 files / 30,731,394 bytes. The guide's G
 feature matrix, not three timing constraints; current generic authority also removes 83 heuristic interfaces,
 26 section phases, 54 prose gates, and the unsupported `controller.isf`. Grounded invariants, contracts, four
 intent behaviors, and 88 constraints remain. Corpus coverage is 49/56 with seven refreshes remaining, stages are
-80/21/80/79, and all 58 retained emitted targets pass FSMGen strict validation.
+80/21/80/79, and all 58 retained emitted targets pass FSMGen strict validation. The separate `.2.50` leaf now
+owns the 57-page / 527-element OpenCAPI Data Link Layer v2.0 specification, the smallest remaining source; its
+same-SSD PDF, absent normalized bundle, and exact stale seven-file chain are pinned before guarded ingest.
 
 Post-migration sealing is Git-backed: a part's final content commit lands first, then a following state-only
 transaction records that ancestor commit/blob before any later part accepts work. The migrated legacy payloads

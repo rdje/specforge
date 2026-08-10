@@ -136,3 +136,90 @@ The eight downstream artifact/report hashes combine to
 | --- | --- |
 | `CORPUS-COVERAGE.2.49` ownership | `d23c26b4` — `CORPUS-COVERAGE.2.49 — own GIC overview refresh` |
 | `CORPUS-COVERAGE.2.49` completion | `CORPUS-COVERAGE.2.49 — refresh GIC overview without false topology` |
+
+## CORPUS-COVERAGE.2.50
+
+- Status: `active` (`2026-08-10`, DATA/DOC; ownership and exact stale boundary only)
+- Goal: re-ingest the OpenCAPI Data Link Layer v2.0 specification with the current release, then rebuild and
+  validate EvidenceIR → SemanticIR → IntentIR → ISF without promoting glossary entries, encoding-table labels,
+  protocol prose, or diagram text into unsupported signals, enums, phases, gates, or executable behavior.
+- Document key: `opencapi_data_link_layer_v20_09jul2020`
+- Source: `.cache/local-references/chipdoc/cxl/opencapi/current/OpenCAPI-Data-Link-Layer_v20_09JUL2020.pdf`
+- Children: none unless the fresh result exposes a generic defect that cannot safely remain inside this refresh.
+
+### Selection and source authority
+
+The durable frontier contains seven real documents. The established smallest-retained-source policy selects this
+specification at 527 elements; all alternatives are larger:
+
+| Rank | Document key | Elements | Pages | Source bytes |
+| --- | --- | ---: | ---: | ---: |
+| 1 | `opencapi_data_link_layer_v20_09jul2020` | 527 | 57 | 468,716 |
+| 2 | `109242_0100_01_2023_09_04_arm_smmu_software_guide` | 600 | 52 | 878,792 |
+| 3 | `opencapi_25gbps_phy_mechanical_spec_v10` | 760 | 34 | 4,494,801 |
+| 4 | `opencapi_3_0_transaction_layer_28jan2020` | 774 | 121 | 712,534 |
+| 5 | `opencapi_3_1_transaction_layer_28jan2020` | 870 | 137 | 870,740 |
+| 6 | `lpc_memory_agent_reference_design_guide_17jul2020` | 891 | 59 | 1,356,427 |
+| 7 | `den0034_a_2013_09_13_debug_and_trace_configuration_and_usage_models` | 936 | 48 | 946,338 |
+
+The source resolves through the owner-authorized SSD-local `chipdoc` symlink. Source and repository share device
+`16777240`; the PDF is 468,716 bytes at SHA-256
+`778ecc99a791716a6f793008b300732cbb79bcb683ae797789cb61d2dd875ec7`.
+
+### Exact stale-chain boundary
+
+The normalized bundle is absent. The current seven-file chain totals 2,666,088 bytes:
+
+| Artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| SourceIR | 815,888 | `fd41a46af955e58d9908cc7f895df41322846db2ee4bce15e515c9c4c1596f65` |
+| EvidenceIR | 1,127,724 | `126dc749d7857b6b7e4ebb0f56c33b43ac2563589b5605845020e1403a47a1c2` |
+| Evidence validation | 13,766 | `22a6255000afc797e1845673052c369eb84ce984b438772a7ce400e893a95232` |
+| SemanticIR | 290,691 | `8eb5fc58092b4780f78ba1020485afbb2198c759ba87329f9fa375cd681c13eb` |
+| IntentIR | 413,737 | `d448aefe2185e5ef1bc74cf0960e1b047fa68dc9b80eece3eecab553481edea4` |
+| Adapter manifest | 3,249 | `70f4eb0276279bfd9bd08918b642ba3b1222c90e68ccf6f2d4e9d30d09a5f46b` |
+| `endpoint_dlx.isf` | 1,033 | `e9ced2f0d7b6e3f99b008da3dfd95a1fe52289319186f24592b9d7b5c9fd0964` |
+
+Stale SourceIR contains 57 pages / 64 visuals / 53 tables / 111 sections / 527 elements and persists the retired
+boot-volume source path. EvidenceIR has 1,176 statements / 1,308 links / four actor-signal relations / 14
+conditionals / zero registers or timings. SemanticIR has ten actors / four interfaces / four ports and relations /
+54 phases / 71 gates / 88 invariants / 38 contracts / four assertions. IntentIR has ten actors / four interfaces /
+144 behaviors / 114 constraints / one assumption and no transaction or timing record. The renderable adapter emits
+`endpoint_dlx.isf` with synthetic-looking `CDR` and `DL` outputs plus `REPRESENTATION` and `DL` enums; the fresh
+chain must establish which, if any, of those surfaces are grounded protocol authority.
+
+The release binary is the `.2.48a` final binary at SHA-256
+`efb57ab3904c1652605624e79b64abf087d7bed6b0ae79dd5d72f2a3697a8ab4`; the latest Rust authority is commit
+`7eda2928ac086fdb8bbeb91cac9250e0fe1beca0`.
+
+### Acceptance
+
+- Authenticate rollback copies of every stale chain artifact inside a repository-derived same-volume workspace.
+- Run guarded CPU ingest from the directly resolved caller-authorized same-SSD input, with the 85% memory abort
+  ceiling and no off-volume project temp/cache/output.
+- Rebuild and validate the complete current-binary chain; rerun to establish deterministic hashes where required.
+- Classify every stale→fresh delta at its first causal stage and refuse unsupported hardware authority.
+- Run focused validation, provider-free evals, KG fixtures, emitted-ISF FSMGen strict checks, doctrines, mdBook,
+  project-path/locality checks, and broader CI proportional to any code change.
+- Update root, active part, index/manifest/contract, roadmap, current status, live docs/book, facts, and memory;
+  commit before deleting authenticated rollback evidence or moving to refresh #51.
+
+### Decisions and incidents
+
+- `2026-08-10`: selection uses the established smallest-retained-source rule; no vendor or document exception is
+  introduced. The OpenCAPI Data Link Layer document wins at 527 elements, ahead of the 600-element Arm SMMU guide.
+- `2026-08-10`: the persisted-path contract already proves that a repository-looking path may not escape through
+  the ignored `chipdoc` symlink. Runtime ingest will use the directly resolved caller-authorized same-SSD input and
+  keep every project-owned workspace/output repository-relative; no failed symlink ingest is repeated.
+
+### Verification log
+
+| Date | Boundary | Result |
+| --- | --- | --- |
+| `2026-08-10` | ownership selection | seven candidates ranked; same-device source/hash and seven-file stale chain authenticated; normalized bundle absent; no generated mutation |
+
+### Commit log
+
+| Unit | Durable evidence |
+| --- | --- |
+| `CORPUS-COVERAGE.2.50` ownership | `CORPUS-COVERAGE.2.50 — own OpenCAPI data-link refresh` |

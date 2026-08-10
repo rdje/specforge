@@ -21,14 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.49`; closing the Generic Interrupt Controller Overview Guide refresh.
+- Active unit: `CORPUS-COVERAGE.2.50`; OpenCAPI Data Link Layer v2.0 refresh.
 - Current state: refresh #49 is complete at 49 done / seven remaining, 80 SourceIR / 21 normalized / 80 EvidenceIR /
-  79 downstream chains, and 58/58 current emitted ISFs FSMGen-strict clean. Two guarded CPU ingests reproduce the
-  430-element SourceIR, 139-file / 30,731,394-byte normalized bundle, and all ten artifact/report hashes. Current
-  authority retires three false timings, 83 heuristic interfaces, 26 generic phases, 54 prose gates, and the stale
-  `controller.isf`; the methodology guide retains grounded invariants, contracts, behaviors, and constraints.
-- Next action: commit the `.2.49` completion/alignment checkpoint, remove its authenticated repository-local
-  rollback evidence with a zero-residue census, then create and own `CORPUS-COVERAGE.2.50`.
-- In-flight uncommitted: `.2.49` completion/task/status/book/fact alignment only; authenticated ignored rollback
-  evidence remains until the durable completion commit; no background job is running.
+  79 downstream chains, and 58/58 current emitted ISFs FSMGen-strict clean. `.2.50` selects the smallest remaining
+  document: the 57-page / 527-element OpenCAPI Data Link Layer specification. Its 468,716-byte same-SSD PDF and
+  exact 2,666,088-byte stale seven-file chain are pinned; normalized is absent and no generated artifact changed.
+- Next action: commit the `.2.50` ownership boundary, create authenticated repository-local rollback evidence,
+  then run guarded CPU ingest from the direct caller-authorized same-SSD input and complete deterministic
+  downstream validation.
+- In-flight uncommitted: `.2.50` ownership/root/index/manifest/contract/book alignment only; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.
