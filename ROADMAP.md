@@ -289,15 +289,15 @@ Five active program groups support that north star:
   Containment is closed; the first post-migration product route is complete and the second is owned.
   Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
-  158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
-  landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.
-  `.2.1.1` and ADR 0021 preserve semantic rows and resolved cards through the required `../knowledge/` rewrite;
-  `.2.1.2` lands the schema-closed checker and 40 pre-migration cases. ADR 0022 tightens title parts from 64 to 56
-  cards so full parts remain below warning. `.2.2` writes the 161-line landing and three parts, activates their
-  generated surface, and closes the Unicode row-digest gap with a non-ASCII fixture. ADR 0023 catches the verbose
-  root at 218/224 health lines for 198 cards and reduces only its scaffold: full capacity is now 201/224 with an
-  exact-boundary regression. The migrated checker has no current pressure warning, the tree is closed, and the
-  frontier returns to `ACTIVE-TASK-EVIDENCE-CONTAINMENT.2.2`. The
+  158 cards / 134 monolith bytes of headroom, and closed on ADR 0020–0023: a bounded landing over count-packed
+  56-card title parts, independent root/part/aggregate bounds, and exact-boundary regressions.
+  [`FACT-CARD-CAPACITY-HEADROOM`](docs/tasks/FACT-CARD-CAPACITY-HEADROOM.md) then owned the *capacity* plane that
+  tree did not change. `.2` made the landing a fixed-size router; `.2a` and ADR 0028 exposed aggregate ceilings
+  that were enforced but never reported; `.3` and ADR 0029 re-derived the whole profile after finding the
+  advertised 198-card capacity unreachable inside its own 10,000-line aggregate, with no legal exit. Pressure now
+  sits only on dimensions that have a remedy, aggregates are the file bound times the per-file bound, and the
+  profile derives from one parameter: 336 cards / 44 decision records / 379 facts, every fact-plane rollover
+  warning gone. `.3a` retires the consumed ceiling authorities. The
   completed `.0`–`.10`
   [`LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION`](docs/tasks/LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.md)
   implementation keeps current documentation and project data bounded on the repository volume; completed

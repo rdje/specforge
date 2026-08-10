@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > how many corpus refreshes remain after OpenCAPI Ready Definition
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > how many corpus refreshes remain after USB4 Connection Manager
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > how many corpus refreshes remain after USB4 Inter-Domain
 - [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
@@ -22,6 +26,8 @@
   > how many emitted .isf files does the corpus have and are they FSMGen-strict clean
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
   > how many fact cards can SpecForge hold
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > how many fact cards can SpecForge hold now
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > how many false timing records were removed by the independent-cell geometry boundary (23; 608 to 585)
 - [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
@@ -291,9 +297,3 @@
   > is the dense-prose phantom-actor explosion a relation-subject seam or an actors[] prose-mint seam problem
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > is the descendant-subsection scope over-broad (no — 0 over-broad corpus-wide)
-- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
-  > is the drive/read direction correct for passive vs active prose relations
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > is the enum drop a width-overflow rule (no — count-derived width 2a.iv hypothesis was DISPROVEN; GIC-600 emits 69152 strict-clean; FSMGen accepts bare decimals of any magnitude)
-- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
-  > is the eval gold / answer key trustworthy or reliable

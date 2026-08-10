@@ -555,10 +555,66 @@ The proof moved with the shape. The landing is rejected if it links a card direc
 re-read of the rendered table must reproduce the canonical card list exactly: one ordered row per part, counts
 summing to the catalog, and boundary ids the card list confirms. Every card must resolve exactly once across the
 parts. The canonical card surface declares `routed_membership` through the `fact_card_titles` record, so the
-generic membership gate proves the same completeness independently. Eighteen inline assertions and 49 focused
-cases pin the fixed-size law, the card-free landing, and three range regressions, alongside the unchanged
-198-card capacity and 199-card fail-closed boundaries. No card content changed and no limit moved; re-deriving
-the whole profile against the new shape belongs to `FACT-CARD-CAPACITY-HEADROOM.3`.
+generic membership gate proves the same completeness independently. Inline assertions and focused cases pin the
+fixed-size law, the card-free landing, and three range regressions, alongside the exact capacity and
+fail-closed boundaries. That leaf changed no card content and moved no limit; re-deriving the whole profile
+against the new shape is the next subsection.
+
+#### Fact-plane capacity became one derived profile
+
+With the landing fixed-size, `FACT-CARD-CAPACITY-HEADROOM.3` re-derived every remaining authority in one
+transaction. Measuring first exposed a plainer problem than a tight limit: **the declared capacity was not
+reachable**. `max_cards` was 198, but 198 cards at the measured mean of 50.5 lines each need 10,026 aggregate
+lines against a 10,000-line ceiling, so the plane would have refused its own advertised last card — in
+whichever unrelated slice happened to write it. `decision_records` had the same shape (a 4,000-line total
+against 32 × 512 legal per-file lines), and the question projection was already **over** its aggregate byte
+health target at 267,938 of 262,144.
+
+None of those totals had a legal exit. Cards and decision records are canonical: ADR 0026 forbids deleting or
+merging a card to buy capacity, and neither collection rolls over into an archive. A total that
+individually-legal files can exceed is therefore a state ordinary compliant writing reaches and compliant
+work cannot leave. ADR 0029 fixes the class, not the instance: **pressure belongs on a dimension that has a
+remedy.** For a never-deleted collection that dimension is the count, whose remedy is to add capacity, so the
+aggregate line and byte bounds become the file bound times the per-file bound. The per-file bounds keep their
+warning bands and stay the quality signal; the totals only guarantee that a legal corpus is never refused.
+The title parts already satisfied that rule for lines (320 = 4 × 80), which is where it was read off.
+
+Capacity itself is set from measurement against the doctrine's own milestones: a bound is chosen so the
+measured population sits below the 80% warning and one measured peak active-day of growth still sits below
+the 90% mandatory rollover, then rounded up to the surface's natural quantum. Growth was taken from Git —
+cards per active day median 8, 90th percentile 20, peak 25 over 20 active days; decision records peak 9.
+The binding dimension turned out to be the part-file count: four rendered parts must stay under 80% of the
+permitted parts, which needs six.
+
+Everything else follows from `max_parts`, the only free parameter:
+
+| Quantity | Derivation | Value |
+| --- | --- | ---: |
+| `cards_per_part` | ADR 0022 — 56 cards + 7 scaffold lines = 63 of an 80-line health target | 56 |
+| `max_parts` | four rendered parts below 80%, five below 90% | 6 |
+| `max_cards` | `cards_per_part × max_parts` | 336 |
+| `knowledge_cards.files` | `max_cards + 2` (README, landing) | 338 |
+| Card aggregates | `338 × 300` lines, `338 × 36,864` bytes | 101,400 / 12,460,032 |
+| `decision_records.files` | 30 measured, peak 9 → `(30 + 9)/0.90` | 44 |
+| `max_facts` | `max_cards` + every record but the index | 379 |
+| `max_question_keys` | `max_facts ×` the 8-keys-per-fact ratio the Knowledge Map bundle's hard caps declare | 3,072 |
+| Projection aggregates | landing bound + `max_shards ×` shard bound | 12,384 / 1,581,056 |
+
+The derivation is pinned as a derivation. The catalog self-test asserts the identities — capacity is the part
+quantum times the part count, each aggregate band equals files times that band's per-file bound, the
+projection ceiling equals the landing ceiling plus the part aggregate — so a raise cannot move one literal and
+strand another. `max_facts` is no longer a pinned literal at all: the checker derives it from `max_cards` plus
+the decision-record file ceiling and rejects any other value, with a focused case for each writer drifting
+alone. A full 336-card render must cross no mandatory pressure and a 337th must fail closed, replacing the old
+198/199 pair; 58 focused cases pass.
+
+Every fact-plane rollover warning is gone: 195 of 338 collection files (57.7%), 30 of 44 decision records
+(68.2%), 2,976 of 12,384 projection lines (24.0%), and 199 of 379 facts. No card and no decision record was
+edited. One warning survives deliberately — `knowledge_cards` `lines_each` at 81.0%, because one 243-line card
+sits against a 300-line per-card bound. That is a per-card quality signal with a local remedy, not capacity
+pressure. The portable bundle's own hard caps (512 facts, 4,096 question keys, 64 shards) are now the visible
+architectural ceiling: this profile uses 74% of the fact cap, and growing past roughly 470 cards would have to
+raise the bundle's caps first.
 
 #### Remaining canonical collection catalogs landed
 

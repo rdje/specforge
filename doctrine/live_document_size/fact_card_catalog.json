@@ -25,9 +25,9 @@
     "row_sha256": "2b8b6185cd766049c27a4bc504aac34c548beece043c68d0279b6b4a1a1f50a7"
   },
   "limits": {
-    "max_cards": 198,
+    "max_cards": 336,
     "cards_per_part": 56,
-    "max_parts": 4,
+    "max_parts": 6,
     "max_id_bytes": 64,
     "max_source_title_bytes": 1024,
     "max_title_cell_bytes": 112,
@@ -49,26 +49,26 @@
     },
     "title_parts": {
       "health_targets": {
-        "files": 4,
+        "files": 6,
         "lines_each": 80,
         "bytes_each": 24576,
-        "lines_total": 320,
-        "bytes_total": 90112,
+        "lines_total": 480,
+        "bytes_total": 147456,
         "line_bytes_each": 384
       },
       "enforcement_ceilings": {
-        "files": 4,
+        "files": 6,
         "lines_each": 96,
         "bytes_each": 32768,
-        "lines_total": 384,
-        "bytes_total": 98304,
+        "lines_total": 576,
+        "bytes_total": 196608,
         "line_bytes_each": 512
       }
     },
     "projection_ceiling": {
-      "files": 5,
-      "lines": 512,
-      "bytes": 122880,
+      "files": 7,
+      "lines": 832,
+      "bytes": 229376,
       "line_bytes": 512
     }
   },

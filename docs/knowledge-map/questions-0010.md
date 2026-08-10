@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > why does the OpenCAPI Ready engineering note emit no ISF
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > why does the USB4 Connection Manager Guide emit no ISF
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > why does the VLM misread register-diagram bit positions and how is it fixed
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > why does the batch size depend on total RAM instead of free memory
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > why does the chain-currency check ignore validation_reports
+- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
+  > why does the corpus task reuse the active task evidence checker
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
   > why does the eMMC (JEDEC) IntentIR explode to 153 actors while HBM2 consolidates to 38
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
@@ -96,6 +108,8 @@
   > why is Wishbone memory output data (DO) not a port
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > why is a CSW@MEM-AP / CLAIMSET@AP qualified register name emitted, and is it .isf-safe
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > why is a fact-card aggregate ceiling the file bound times the per-file bound
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > why is a field name accepted or rejected from a description cell
 - [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)

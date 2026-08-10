@@ -95,8 +95,9 @@ deterministic 56-card title parts, semantic tuples and resolved card destination
 membership/content, fixed capacity and mandatory-rollover bounds, residue cleanup, and repository-local writes.
 The landing carries one range row per title part — part number, card count, and inclusive first/last id — and is
 rejected if it links a card directly, misorders or drops a row, miscounts a part, or names a boundary id the card
-list does not confirm. The 198-card maximum is cross-checked against the unchanged 200-file canonical surface
-while the 200-fact question authority remains independent. The title-part generated-projection registry record
+list does not confirm. The 336-card maximum is cross-checked against the 338-file canonical surface, and the
+379-fact question authority is derived from that maximum plus the decision-record file ceiling rather than
+pinned as a literal, so the two fact writers can never disagree. The title-part generated-projection registry record
 was forbidden before migration and is exact now; the canonical card surface declares `routed_membership` through
 that record, so the generic gate proves every card through exactly one hop.
 

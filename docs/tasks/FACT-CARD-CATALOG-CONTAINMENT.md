@@ -1,5 +1,13 @@
 # FACT-CARD-CATALOG-CONTAINMENT: keep fact-card browsing bounded before capacity fails
 
+> **Bounds superseded (`2026-08-11`).** This tree's recorded numbers — the 198-card maximum, the 200-file
+> collection ceiling, the four-part projection, and the 200-fact question authority — were correct when it
+> closed and are preserved here as history. The fact plane's current capacity is
+> [ADR 0029](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)'s
+> derived profile: six 56-card title parts, 336 cards, 338 collection files, 44 decision records, and 379
+> facts, delivered by [`FACT-CARD-CAPACITY-HEADROOM.3`](FACT-CARD-CAPACITY-HEADROOM.md). This tree's own
+> conclusions about the *browse* plane are unchanged.
+
 ## Metadata
 
 - Tree ID: `FACT-CARD-CATALOG-CONTAINMENT`

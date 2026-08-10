@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > where does the SpecForge chipdoc source route currently resolve
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > where does the block name come from when the PDF backend flattens heading levels (parent section title via dotted-parent)
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > where does the generic enum name TABLE/FIGURE/DATA come from (derive_encoding_enum_name fallback, evidence.rs:4457-4461 — first caption token passing is_hardware_signal_token at evidence.rs:7106, which accepts 'Table'->'TABLE')
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > where does the nli-verify measurement go / is the extraction-quality gauge persisted
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > where does the specforge chipdoc host library symlink currently resolve
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
   > where is KNOWLEDGE_MAP_ARCHITECTURE.md
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
@@ -287,13 +297,3 @@
   > why did .1b.i NOT strip trailing prepositions and what changed in .1c.i
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > why did 64 AArch64 External Debug interfaces disappear
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > why did 88 CoreSight Base System interfaces disappear
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > why did AFU BAR CFG GB ID MEM MMIO and PASID disappear as signals
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > why did APB unexplained_intent_bearing_tables go to zero
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > why did AXI atomic_transaction / prefetch / writezero / writedeferrable go from 0 to a real signal set
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > why did AXI unexplained tables go 32 to 31 and ACE 36 to 35 and LTI 6 to 4

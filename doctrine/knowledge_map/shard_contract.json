@@ -9,8 +9,8 @@
   "shard_prefix": "questions-",
   "fact_catalog": "docs/knowledge/INDEX.md",
   "limits": {
-    "max_facts": 200,
-    "max_question_keys": 2048,
+    "max_facts": 379,
+    "max_question_keys": 3072,
     "max_question_bytes": 2048,
     "max_id_bytes": 96,
     "max_path_bytes": 192,
@@ -21,8 +21,8 @@
     "max_shard_lines": 384,
     "max_shard_bytes": 49152,
     "max_shards": 32,
-    "max_projection_lines": 4096,
-    "max_projection_bytes": 393216,
+    "max_projection_lines": 12384,
+    "max_projection_bytes": 1581056,
     "max_landing_lines": 96,
     "max_landing_bytes": 8192,
     "max_landing_line_bytes": 256

@@ -79,6 +79,13 @@
   lands the exact four-file projection and activates `fact_card_titles` as a generated-projection surface; all
   hashes, direct membership, resolved destinations, derive-and-diff freshness, 41 focused cases, and residue
   checks pass. The tree is closed without widening an existing threshold or ceiling.
+  ADR 0029 then re-derives that whole profile once, after ADR 0028 made every authority visible. Capacity is
+  the part quantum times the part count — six 56-card parts, so 336 cards, 338 collection files, and 379 facts
+  — chosen so the measured population stays below the 80% warning and one measured peak day stays below the
+  90% rollover. Every aggregate line/byte bound becomes the file bound times the per-file bound, because a
+  collection that may never be deleted or rolled over must never refuse a corpus whose every file is legal;
+  the 10,000-line card total could, and 198 advertised cards did not fit inside it. All fact-plane rollover
+  warnings clear at 195/338 files, 30/44 records, and 2,976/12,384 projection lines.
 <!-- LIVE-DOCUMENT-SIZE-CONTAINMENT-LOCAL-ADOPTION:END -->
 
 ---

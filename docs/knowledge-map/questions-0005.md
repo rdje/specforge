@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
+  > is the drive/read direction correct for passive vs active prose relations
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > is the enum drop a width-overflow rule (no — count-derived width 2a.iv hypothesis was DISPROVEN; GIC-600 emits 69152 strict-clean; FSMGen accepts bare decimals of any magnitude)
+- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
+  > is the eval gold / answer key trustworthy or reliable
 - [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
   > is the eval-extraction temporal precision 0.6 a real defect
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
@@ -292,9 +298,3 @@
   > what does drop_unrenderable_rule_values / unrenderable_rule_value_residual_packet do in ir/isf_ir.rs
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
   > what does intent --nli-verify do
-- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
-  > what does is_dotted_cross_reference_subject do in evidence.rs
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > what does isf_enum_value_is_emittable_literal / isf_enum_is_emittable do in ir/isf_ir.rs
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > what does lead_binds_value do in evidence.rs

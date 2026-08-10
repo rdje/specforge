@@ -332,9 +332,12 @@ canonical cards, and an ordered row digest; legacy state also required the futur
 current migrated state enforces a stable direct-ID landing over deterministic 56-card title parts, exact semantic
 tuples and resolved
 card destinations, complete output hashes/membership, fixed capacity/pressure/aggregate bounds, and residue-free
-repository-local writes. It cross-checks the derived 198-card maximum against the unchanged 200-file canonical
-surface, keeps the independent 200-fact question authority explicit, and requires the title-part generated-
-projection registry record to be absent in legacy state and exact in migrated state.
+repository-local writes. It cross-checks the derived 336-card maximum against the 338-file canonical surface,
+derives the 379-fact question authority from that maximum plus the `decision_records` file ceiling rather than
+pinning a literal, and requires the title-part generated-projection registry record to be absent in legacy
+state and exact in migrated state. The self-test asserts the derivation itself — capacity is the 56-card part
+quantum times the six-part count, and each aggregate band is its file bound times its per-file bound — so no
+future raise can move one literal and strand another (ADR 0029).
 
 `PROJECT-DATA-LOCALITY` composes three focused shell cases with resulting-tree checks. It proves the
 tracked temp root exists before Cargo starts, all canonical scripts establish the common environment,

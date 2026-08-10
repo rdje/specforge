@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > what is the bit-exact adjacency chain rule
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > what is the buildable category-4 lever (.4d.i — recover RISC-V CSR field bit positions + a RISC-V-shaped register recogniser for AIA; once located, fields auto-lower via .4a.ii, no emitter change)
+- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
+  > what is the buildable lever for cat-3 topology if pursued (upstream EXTRACTION-RECALL owned OUTSIDE the .4 ISF-lowering program — denser+fully-connected signal_connectivity capture from TRM integration prose/diagrams + clock/reset source resolution; mirrors .4d.i cat-4 CSR recovery and the cat-2 structure-recall frontier; recorded as a cross-reference, NOT a .4 gap)
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > what is the built-in RAM guard / autonomous memory safeguard during ingest
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > what is the canonical declared signal inventory key on SemanticIR
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
@@ -208,6 +216,8 @@
   > when is a single letter a field name
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > when is the purpose category HIGH vs LOW confidence (only clean wire shape + self-declared guide are HIGH; everything else LOW + explicit residual)
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > when should a live-document capacity bound be raised
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > when should message fields join the document class census
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
@@ -288,13 +298,3 @@
   > where does the ISF emitter lower register reset_value (ir/isf_ir.rs: IsfStorageVar.reset + classify_register_reset + register_var_width; render emits (var NAME (width W) (reset V)); before .2/.3 IsfStorageVar had only name+width and dropped it)
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
   > where does the NLI gate route a not-entailed contract
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > where does the SpecForge chipdoc source route currently resolve
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > where does the block name come from when the PDF backend flattens heading levels (parent section title via dotted-parent)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > where does the generic enum name TABLE/FIGURE/DATA come from (derive_encoding_enum_name fallback, evidence.rs:4457-4461 — first caption token passing is_hardware_signal_token at evidence.rs:7106, which accepts 'Table'->'TABLE')
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > where does the nli-verify measurement go / is the extraction-quality gauge persisted
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > where does the specforge chipdoc host library symlink currently resolve

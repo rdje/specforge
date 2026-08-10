@@ -3,10 +3,10 @@
 ## Metadata
 
 - Tree ID: `FACT-CARD-CAPACITY-HEADROOM`
-- Status: `active` (`.0`/`.2`/`.2a` done; `.1` superseded; `.3` pending)
+- Status: `active` (`.0`/`.2`/`.2a`/`.3` done; `.1` superseded; `.3a` pending)
 - Roadmap lane: repository durability and portability (sibling of `FACT-CARD-CATALOG-CONTAINMENT`)
 - Created: `2026-08-10`
-- Last updated: `2026-08-10`
+- Last updated: `2026-08-11`
 - Owner: repo-local workflow
 
 ## Goal
@@ -106,7 +106,7 @@ which shows there is no join to raise to until the projection is reshaped.
 - ID: `FACT-CARD-CAPACITY-HEADROOM`
   Status: `active`
   Goal: restore deliberate headroom in the fact plane before it blocks an unrelated slice
-  Children: `FACT-CARD-CAPACITY-HEADROOM.0`, `.1` (superseded), `.2` (done), `.2a` (done), `.3`
+  Children: `FACT-CARD-CAPACITY-HEADROOM.0`, `.1` (superseded), `.2` (done), `.2a` (done), `.3` (done), `.3a`
 
 - ID: `FACT-CARD-CAPACITY-HEADROOM.0`
   Status: `done` (`2026-08-10`, PROBE/DOC)
@@ -161,11 +161,31 @@ which shows there is no join to raise to until the projection is reshaped.
   Commit: `FACT-CARD-CAPACITY-HEADROOM.2a — make aggregate pressure visible before re-deriving capacity`
 
 - ID: `FACT-CARD-CAPACITY-HEADROOM.3`
-  Status: `pending`
+  Status: `done` (`2026-08-11`, DOCTRINE/CAPACITY)
   Goal: re-derive the whole projection profile once the landing is fixed-size (ADR 0027 decision 3) — per-part
   lines, part totals, part count, the surface file ceiling that `max_cards` derives from, and the independent
   `max_facts` / `max_question_keys` authorities — each against its own 90%-rollover rule, in one transaction.
   Acceptance: `every raised literal is derived and re-pinned from both sides (a full-capacity projection crosses no mandatory pressure and one card beyond it fails closed); no card content changes; catalog, knowledge-map, and live-document gates pass`
+  Verification: measurement found a plainer defect than a tight limit — **the declared capacity was not
+  reachable**: 198 cards at the measured 50.5-line mean need 10,026 aggregate lines against a 10,000-line
+  ceiling, and that ceiling had no legal exit (cards are canonical and never deleted or rolled over).
+  ADR 0029 fixes the class: pressure belongs on a dimension with a remedy, so every aggregate becomes the file
+  bound times the per-file bound, and capacity is set so the measured population is below the 80% warning and
+  one measured peak day is below the 90% rollover. `max_parts` is the only free parameter (6, bound by the
+  part-file dimension: four rendered parts must stay under 80%); `max_cards` 336, `knowledge_cards.files` 338,
+  `decision_records.files` 44, `max_facts` 379, `max_question_keys` 3,072, projection 12,384 lines /
+  1,581,056 bytes. `max_facts` stopped being a literal — the checker derives it from `max_cards` plus the
+  decision-record file ceiling. 58/58 catalog cases (was 49) including the derived-profile identities, the
+  336-card no-pressure render, the 337-card fail-closed, and a case per fact writer drifting alone; 67/67
+  live-document cases; the real gate is green at 733 files / 51 surfaces with every fact-plane rollover
+  warning gone. No card and no decision record was edited.
+  Commit: `FACT-CARD-CAPACITY-HEADROOM.3 — re-derive the fact plane as one capacity profile`
+
+- ID: `FACT-CARD-CAPACITY-HEADROOM.3a`
+  Status: `pending`
+  Goal: retire the four consumed `ceiling_increase_authorities` records. The containment protocol rejects a
+  banked authority, and once `.3` is committed its increases are history, so the records must not outlive them.
+  Acceptance: `the four increase records are removed, no ceiling or target moves, and the live-document gate passes against the committed .3 boundary`
   Verification: `pending`
   Commit: `pending`
 
@@ -173,7 +193,7 @@ which shows there is no join to raise to until the projection is reshaped.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `FACT-CARD-CAPACITY-HEADROOM.3` | `pending` | every authority is now visible and measured; the profile can be re-derived in one transaction. Capacity is still 198 cards / 2 free fact slots / 2 free decision-record slots until it lands |
+| 1 | `FACT-CARD-CAPACITY-HEADROOM.3a` | `pending` | `.3`'s ceiling-increase authorities are consumed the moment it commits; the protocol treats a surviving authority as banked and fails closed, so retiring them is the only work left before the tree closes |
 
 ## Decisions
 
@@ -187,6 +207,11 @@ which shows there is no join to raise to until the projection is reshaped.
   ≥ 90% of a health target as a mandatory-rollover **error**, so full capacity at 198 cards (201/224 lines,
   89.7%) is already the exact edge, 199 fails closed by an existing regression, and a raise requires reshaping
   the projection first. Caught before any contract, card, or generated surface was edited.
+- `2026-08-11` (ADR 0029): pressure belongs on a dimension that has a remedy. For a collection that may never
+  be deleted or rolled over, every aggregate line/byte bound is the file bound times the per-file bound, so a
+  corpus of individually-legal files can never be refused; capacity is then set from the measured population
+  against the doctrine's own 80/90 milestones, and the whole profile derives from a single free parameter
+  (`max_parts`) whose identities the self-test asserts.
 
 ## Open Questions
 
@@ -219,6 +244,12 @@ which shows there is no join to raise to until the projection is reshaped.
 | `2026-08-10` | `.2a` first-pass correction | compared a shell-glob approximation with the checker's `glob_regex` | the approximation let `*` cross `/` and mis-scored `task_evidence` at 147 files / 88.1%; the checker's 130 files / 74.5% is authoritative and is what the ADR records |
 | `2026-08-10` | `.2a` ledger rollover | `perl scripts/check_rolling_ledger_protocol.pl --rollover-plan docs/research/fact-card-capacity-headroom-2a-changes-rollover-plan.jsonl` then `--apply-rollover` | this leaf's required `CHANGES.md` entry crossed the 90% record threshold (116/128); the minimal exact cut is 15 records — 14 clears records but leaves lines at 80.3% — sealing `changes-0004` (15 records / 184 lines / 14,899 bytes) and returning the live root to 101 records / 1,433 lines / 203,366 bytes, every dimension below 80% |
 | `2026-08-10` | `.2a` fix | `perl scripts/test_live_document_size.pl`; `bash scripts/check_live_document_size.sh` | 67/67 cases; a `file` locator over two paths is rejected, a collection at 91% of its aggregate line target warns, a genuinely single-file surface stays exempt; the real gate reports the two previously-silent `knowledge_cards` aggregates and still exits 0 |
+| `2026-08-11` | `.3` reachability | measured card corpus (195 files: 193 cards + README + INDEX) against every declared bound | 9,747 card lines / 851,983 bytes; mean 50.50 lines / 4,414 bytes; max card 243 lines / 29,329 bytes. **198 cards need 10,026 lines against a 10,000 ceiling** — the advertised capacity was unreachable, and with cards never deleted or rolled over the breach had no legal exit. `decision_records` (4,000 vs 32 × 512 legal lines) and `fact_index` (267,938 bytes vs a 262,144 health target — already over) share the shape |
+| `2026-08-11` | `.3` burn | `git log --diff-filter=A` over `docs/knowledge/*.md` and `docs/decisions/0*.md` | cards: 196 created over 20 active days — median 8, p90 20, **peak 25**; records: 29 over 7 active days, **peak 9**. Both peaks feed the milestone rule directly |
+| `2026-08-11` | `.3` derivation | ADR 0029 profile against each dimension's own milestone | binding dimension is the part-file count, not the card count: four rendered parts must stay under 80% of permitted parts → `max_parts` 6 → `max_cards` 336 (the card rule alone would have allowed 5 parts / 280). `knowledge_cards.files` 338 = 336 + 2; aggregates 338 × 300 lines / 338 × 36,864 bytes; `decision_records.files` 44 = ⌈39/0.90⌉; `max_facts` 379 = 336 + 43; `max_question_keys` 3,072 = 379 × the bundle's own declared 8-keys-per-fact ratio, rounded to its 512 step |
+| `2026-08-11` | `.3` both-side pins | `perl scripts/check_fact_card_catalog.pl --self-test`, `--check` | 58/58 (was 49). Eight new inline assertions pin the identities themselves — `max_cards = cards_per_part × max_parts`, each aggregate band = files × that band's per-file bound, projection ceiling = landing ceiling + part aggregate. The 336-card capacity render crosses no mandatory pressure; 337 fails closed. `max_facts` is derived from the `decision_records` ceiling, with a fail-closed case for each writer drifting alone |
+| `2026-08-11` | `.3` gates | `bash scripts/check_live_document_size.sh`; `bash knowledge-map/scripts/check_knowledge_map.sh`; `perl scripts/check_knowledge_map_shard_contract.pl --check` | green at 733 files / 51 surfaces; 67/67 live-document cases; every fact-plane rollover warning gone (files 195/338 = 57.7%, records 30/44 = 68.2%, projection lines 2,976/12,384 = 24.0%). Contract feasible for 199 facts / 1,459 keys in 10 shards. The surviving `knowledge_cards` `lines_each` warning (81.0%) is one 243-line card, a per-card signal this leaf may not touch |
+| `2026-08-11` | `.3` no content change | `git status --short`; `git diff --stat docs/knowledge/ docs/decisions/` | only contracts, the registry, the checker, ADR 0029 + its index row, the regenerated question projection, and prose changed; no card front matter, no title part, and no existing decision record touched |
 
 ## Commit Log
 
@@ -229,7 +260,8 @@ which shows there is no join to raise to until the projection is reshaped.
 | `FACT-CARD-CAPACITY-HEADROOM.1` | `superseded` | premise falsified by ADR 0027 before any implementation |
 | `FACT-CARD-CAPACITY-HEADROOM.2` | `FACT-CARD-CAPACITY-HEADROOM.2 — make the fact-card landing a fixed-size router` | shape only; no limit moved and no card content changed |
 | `FACT-CARD-CAPACITY-HEADROOM.2a` | `FACT-CARD-CAPACITY-HEADROOM.2a — make aggregate pressure visible before re-deriving capacity` | ADR 0028; visibility only, no ceiling moved; carries the `changes-0004` ledger rollover its own entry required |
-| `FACT-CARD-CAPACITY-HEADROOM.3` | `pending` | `pending` |
+| `FACT-CARD-CAPACITY-HEADROOM.3` | `FACT-CARD-CAPACITY-HEADROOM.3 — re-derive the fact plane as one capacity profile` | ADR 0029; four consumed `ceiling_increase_authorities` records travel with it |
+| `FACT-CARD-CAPACITY-HEADROOM.3a` | `pending` | `pending` |
 
 ## Changelog
 
@@ -243,3 +275,9 @@ which shows there is no join to raise to until the projection is reshaped.
 - `2026-08-10`: `.3`'s opening measurement found a fifth authority the `.0` census missed and that no warning
   could have surfaced — `knowledge_cards.lines_total` at 97.7% of a hard ceiling. `.2a` inserted before `.3`,
   ADR 0028 accepted, and the blindness fixed before any bound is re-derived.
+- `2026-08-11`: `.3` closed. Re-measuring against every now-visible authority found that the advertised
+  198-card capacity was never reachable — its own aggregate line ceiling refused it — and that the breach had
+  no legal exit. ADR 0029 accepted: pressure belongs on a dimension with a remedy, aggregates are the file
+  bound times the per-file bound, and the whole profile derives from `max_parts`. Capacity is now 336 cards /
+  44 decision records / 379 facts with every fact-plane rollover warning gone. `.3a` added to retire the
+  consumed ceiling-increase authorities before the tree closes.

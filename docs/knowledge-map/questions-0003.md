@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how does SpecForge tell a guide from a real spec / report low-yield docs honestly
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > how does SpecForge verify an extracted claim semantically / catch hallucination
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
@@ -204,6 +206,8 @@
   > how is docs TASK_TREE kept complete without mirroring task history
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > how is docs knowledge INDEX kept complete
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > how is fact-plane capacity derived
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
   > how is max_cards derived from the knowledge_cards surface
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
@@ -293,7 +297,3 @@
   > how many corpus refreshes remain after OpenCAPI Certified Definition
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
   > how many corpus refreshes remain after OpenCAPI Discovery
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > how many corpus refreshes remain after OpenCAPI Ready Definition
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > how many corpus refreshes remain after USB4 Connection Manager

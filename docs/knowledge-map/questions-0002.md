@@ -212,6 +212,8 @@
   > how do Continued from previous page fragments find their home
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > how do I add a new enforced doctrine / doctrine check
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > how do I add fact-card capacity
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > how do I file an FSMGen bug report or feature request
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -296,5 +298,3 @@
   > how does SpecForge resolve a persisted path after the repository moves
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > how does SpecForge serialize repository owned paths
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how does SpecForge tell a guide from a real spec / report low-yield docs honestly

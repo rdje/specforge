@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > why did 88 CoreSight Base System interfaces disappear
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > why did AFU BAR CFG GB ID MEM MMIO and PASID disappear as signals
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > why did APB unexplained_intent_bearing_tables go to zero
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > why did AXI atomic_transaction / prefetch / writezero / writedeferrable go from 0 to a real signal set
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > why did AXI unexplained tables go 32 to 31 and ACE 36 to 35 and LTI 6 to 4
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > why did AXI unexplained tables go 39 to 32 and the denominator 94 to 98
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
@@ -44,6 +54,8 @@
   > why did ingest stop with 'ingest aborted before launching'
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > why did ingest stop with 'ingest aborted to protect the host'
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > why did max_facts become 379
 - [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
   > why did normalize_prior_phrase grow a string exponentially
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
@@ -286,15 +298,3 @@
   > why does the OpenCAPI Data Link Layer specification emit no isf target
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > why does the OpenCAPI Ready Definition emit no ISF
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > why does the OpenCAPI Ready engineering note emit no ISF
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > why does the USB4 Connection Manager Guide emit no ISF
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > why does the VLM misread register-diagram bit positions and how is it fixed
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > why does the batch size depend on total RAM instead of free memory
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > why does the chain-currency check ignore validation_reports
-- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
-  > why does the corpus task reuse the active task evidence checker

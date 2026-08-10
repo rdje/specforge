@@ -1,3 +1,35 @@
+### FACT-CARD-CAPACITY-HEADROOM.3 — re-derive the fact plane as one capacity profile
+
+- Re-measuring against every now-visible authority found a plainer defect than a tight limit: **the advertised
+  capacity was never reachable.** `max_cards` was 198, but 198 cards at the measured mean of 50.5 lines each
+  need 10,026 aggregate lines against a 10,000-line ceiling. The plane would have refused its own last
+  advertised card, in whichever unrelated slice happened to write it.
+- Nor did that total have a legal exit. Cards and decision records are canonical: ADR 0026 forbids deleting or
+  merging a card for capacity, and neither collection rolls over. A total that individually-legal files can
+  exceed is a state ordinary compliant writing reaches and compliant work cannot leave. `decision_records`
+  (4,000 lines against 32 x 512 legal per-file lines) and `fact_index` (267,938 bytes against a 262,144 health
+  target it was already **over**) had the same shape.
+- ADR 0029 fixes the class: **pressure belongs on a dimension that has a remedy.** For a never-deleted
+  collection that is the count, whose remedy is to add capacity, so every aggregate line/byte bound becomes the
+  file bound times the per-file bound. Per-file bounds keep their warning bands and stay the quality signal.
+  The title parts already satisfied the rule for lines (320 = 4 x 80), which is where it was read off.
+- Capacity is then set from measurement against the doctrine's own milestones — below 80% at the measured
+  population, below 90% after one measured peak active-day — with growth taken from Git: cards median 8 / p90
+  20 / peak 25 per active day over 20 days; records peak 9. The binding dimension was the part-file count, not
+  the card count: four rendered parts must stay under 80% of permitted parts, so `max_parts` is 6 where the
+  card rule alone would have allowed 5.
+- One free parameter now generates the profile: `max_cards` 336 (56 x 6), `knowledge_cards.files` 338,
+  `decision_records.files` 44, `max_facts` 379, `max_question_keys` 3,072 (the bundle's own hard caps declare
+  an 8-keys-per-fact ratio), projection 12,384 lines / 1,581,056 bytes.
+- The derivation is pinned as a derivation. Eight new inline assertions check the identities themselves, and
+  `max_facts` stopped being a literal — the checker derives it from `max_cards` plus the `decision_records`
+  file ceiling, with a fail-closed case for each fact writer drifting alone. 58/58 catalog cases (was 49),
+  including a 336-card render that crosses no mandatory pressure and a 337th that fails closed.
+- 67/67 live-document cases; the real gate is green at 733 files / 51 surfaces with every fact-plane rollover
+  warning gone (files 195/338, records 30/44, projection lines 2,976/12,384). No card and no existing decision
+  record was edited. The surviving `knowledge_cards` `lines_each` warning (81.0%) is one 243-line card — a
+  per-card signal with a local remedy, not capacity pressure.
+
 ### FACT-CARD-CAPACITY-HEADROOM.2a — make aggregate pressure visible before re-deriving capacity
 
 - `.3`'s opening measurement found a fifth authority that ADR 0026's census missed and that **no warning could

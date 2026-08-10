@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
+  > what does is_dotted_cross_reference_subject do in evidence.rs
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > what does isf_enum_value_is_emittable_literal / isf_enum_is_emittable do in ir/isf_ir.rs
+- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
+  > what does lead_binds_value do in evidence.rs
 - [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
   > what does mandatory rollover pressure mean for the fact-card landing
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
@@ -102,6 +108,8 @@
   > what is ADR 0026
 - [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
   > what is ADR 0027
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > what is ADR 0029
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > what is AppError::IngestAbortedForDisk
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
@@ -289,11 +297,3 @@
   > what is the ambiguous_statements metric in validate
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
   > what is the authoritative membership set for corpus SOURCE_PDF_REGISTRY
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > what is the bit-exact adjacency chain rule
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > what is the buildable category-4 lever (.4d.i — recover RISC-V CSR field bit positions + a RISC-V-shaped register recogniser for AIA; once located, fields auto-lower via .4a.ii, no emitter change)
-- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
-  > what is the buildable lever for cat-3 topology if pursued (upstream EXTRACTION-RECALL owned OUTSIDE the .4 ISF-lowering program — denser+fully-connected signal_connectivity capture from TRM integration prose/diagrams + clock/reset source resolution; mirrors .4d.i cat-4 CSR recovery and the cat-2 structure-recall frontier; recorded as a cross-reference, NOT a .4 gap)
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > what is the built-in RAM guard / autonomous memory safeguard during ingest
