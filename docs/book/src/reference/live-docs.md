@@ -587,15 +587,27 @@ Fifty-three lifecycle/control-plane fixtures cover the positive path plus missin
 and improperly internal external-index failures. The common catalog generator adds independent
 path/title/row/member/index bounds and derive-and-diff; no generated catalog contains canonical facts.
 
+Locator honesty became mechanical at the same time. A `file` locator must match exactly one path; a target
+matching several is a collection and must say so. That rule closed a real blind spot: the aggregate
+`lines_total` and `bytes_total` milestones are suppressed for a one-file surface, where they merely repeat the
+per-file measure, and the suppression keyed off the *declared* locator. Four surfaces declared `file` over a
+multi-file glob, so their aggregate ceilings kept failing closed while their milestones stayed silent —
+`knowledge_cards` sat at 97.7% of a hard 10,000-line aggregate with no warning ever emitted, and before the
+landing was reshaped it was at 99.6%, under one average card from a stop nobody could see coming. The exemption
+is now decided from the measured file count, the four surfaces are reclassified, and both directions are pinned
+by fixtures. ADR 0028 records the finding and its root cause.
+
 A third kind, `routed_membership`, exists for a front door whose direct member list would itself grow
 with the collection. A routed index lives inside its surface like an internal membership index, but it
 additionally names one declared `route_surface`; it must link every file of that companion surface,
 and completeness is then proven from the union of its own links and the companion files' links. The
 hop count is fixed at one: the companion may not itself be routed, and `route_surface` is rejected on
 any other index kind. Size then follows the companion's file count rather than the member count. The
-fixture suite runs 64 cases; eight of them cover the routed positive path plus an unreachable member,
+fixture suite runs 67 cases; eight of them cover the routed positive path plus an unreachable member,
 an unrouted companion file, a missing, unregistered, self-referencing, or chained `route_surface`, an
 index placed outside its own surface, and `route_surface` smuggled onto a direct membership contract.
+Three more pin locator honesty: a `file` locator over several paths is rejected, a collection near its
+aggregate line target warns, and a genuinely single-file surface stays exempt from the duplicate warning.
 
 #### Knowledge Map projection migration landed
 

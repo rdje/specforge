@@ -307,6 +307,17 @@ rollover transaction. A ceiling increase requires a new, separate, reviewed
 authority record proving that the surface's user contract expanded; editing
 the surface declaration alone cannot authorize itself. Lowering is free.
 
+**Every enforced dimension must also be a reported one.** A bound that fails
+closed while its milestones stay silent has no early-warning path at all: the
+surface reads healthy until the commit it rejects. Suppress a milestone only
+where it would duplicate another — a surface holding exactly one file measures
+the same content twice, so its aggregate merely repeats its per-file value —
+and decide that from the surface's *measured* shape, never from how it
+described itself. A locator that names one document must therefore match
+exactly one path; a target that matches several is a collection whatever it is
+called, and a declaration allowed to disagree with the measurement will
+eventually be believed instead of it.
+
 At first adoption, a surface already beyond warning or rollover may be entered
 as explicit transition debt only with its exact measured baseline, named
 remediation owner, deadline or ordered frontier, and unchanged ceiling.

@@ -39,6 +39,7 @@ changed* lives in git (layer D), not here.
 | [0025](0025-persisted-chain-currency-is-measured-not-assumed.md) | Persisted chain currency is measured and gated, isolation comes from replay, and normalized bundles are retained | 2026-08-10 | accepted | corpus-coverage, extraction, artifacts, doctrine-enforcement, continuity, storage |
 | [0026](0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md) | Fact-plane capacity is re-derived from its binding structural join, and the landing stops scaling with cards | 2026-08-10 | decision 1 superseded by 0027 | documentation, knowledge-map, generated-projection, containment, pressure, continuity |
 | [0027](0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md) | Fact-plane capacity requires reshaping the projection, because 198 cards is already the exact maximum its shape permits | 2026-08-10 | accepted | documentation, knowledge-map, generated-projection, containment, pressure, continuity |
+| [0028](0028-a-file-locator-means-one-file-and-aggregate-ceilings-must-warn.md) | A file locator means one file, so multi-file surfaces stopped being blind to their own aggregate ceilings | 2026-08-10 | accepted | documentation, containment, live-document-size, pressure, continuity |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /

@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `FACT-CARD-CAPACITY-HEADROOM`
-- Status: `active` (`.0`/`.2` done; `.1` superseded; `.3` pending)
+- Status: `active` (`.0`/`.2`/`.2a` done; `.1` superseded; `.3` pending)
 - Roadmap lane: repository durability and portability (sibling of `FACT-CARD-CATALOG-CONTAINMENT`)
 - Created: `2026-08-10`
 - Last updated: `2026-08-10`
@@ -36,11 +36,25 @@ Discovered while adding this session's retention card, not predicted from theory
 | Title parts | catalog `limits.title_parts` | 4 parts / 193 cards | 4 parts / 224 slots | not binding |
 
 `.2` has since removed the landing row from this table's logic: the landing is 10 lines at 193 cards and at most
-10 at full capacity, so it is no longer a capacity dimension at all. The remaining three authorities are
-unchanged and still bind at 198 cards / 200 facts; `.3` re-derives them.
+10 at full capacity, so it is no longer a capacity dimension at all.
 
-The binding authority is therefore `max_facts`, and it counts three `docs/decisions/` records alongside the
-193 cards. Failure is not graceful — `KNOWLEDGE-MAP` is a `gate`-tier doctrine, so the pre-commit hook refuses
+`.2a` then found that this table was **incomplete**, not merely superseded in one row. Two further hard
+authorities bound the plane and neither appears above:
+
+| Authority | Contract | Current | Ceiling | Headroom | Warned before `.2a`? |
+| --- | --- | ---: | ---: | ---: | --- |
+| Card aggregate lines | `knowledge_cards` `enforcement_ceilings.lines_total` | 9,773 | 10,000 | **~4.5 cards** | **no** |
+| Card aggregate bytes | `knowledge_cards` `enforcement_ceilings.bytes_total` | 853,926 | 1,048,576 | ~44 cards | **no** |
+| Decision-record files | `decision_records` `enforcement_ceilings.files` | 30 | 32 | **2 records** | yes (93.8%) |
+
+The first is the tightest hard bound on the whole plane and was invisible: `check_live_document_size.pl`
+suppressed aggregate milestones for `locator: "file"` surfaces while still failing their aggregate ceilings
+closed, and `knowledge_cards` declared a `file` locator over a 195-file glob. Before `.2` shrank the landing it
+stood at 9,959/10,000 — 41 lines against an average card of 50.1, i.e. under one card from a stop with no
+warning. `.2a` fixed the blindness; `.3` re-derives all of it.
+
+The originally-recorded binding authority is `max_facts`, and it counts five `docs/decisions/` records alongside
+the 193 cards. Failure is not graceful — `KNOWLEDGE-MAP` is a `gate`-tier doctrine, so the pre-commit hook refuses
 the commit that writes the 201st fact, in whatever unrelated slice happens to write it.
 
 ### `.0` census (`2026-08-10`)
@@ -92,7 +106,7 @@ which shows there is no join to raise to until the projection is reshaped.
 - ID: `FACT-CARD-CAPACITY-HEADROOM`
   Status: `active`
   Goal: restore deliberate headroom in the fact plane before it blocks an unrelated slice
-  Children: `FACT-CARD-CAPACITY-HEADROOM.0`, `.1` (superseded), `.2` (done), `.3`
+  Children: `FACT-CARD-CAPACITY-HEADROOM.0`, `.1` (superseded), `.2` (done), `.2a` (done), `.3`
 
 - ID: `FACT-CARD-CAPACITY-HEADROOM.0`
   Status: `done` (`2026-08-10`, PROBE/DOC)
@@ -127,6 +141,25 @@ which shows there is no join to raise to until the projection is reshaped.
   contract. 49/49 catalog cases and 64/64 live-document cases pass; the four title parts are byte-identical.
   Commit: `FACT-CARD-CAPACITY-HEADROOM.2 — make the fact-card landing a fixed-size router`
 
+- ID: `FACT-CARD-CAPACITY-HEADROOM.2a`
+  Status: `done` (`2026-08-10`, DOCTRINE)
+  Goal: make aggregate pressure visible before any capacity is re-derived. `.3`'s measurement found a fifth
+  authority the `.0` census missed and that no warning could ever have surfaced: `knowledge_cards.lines_total`
+  is 9,773 of a hard 10,000-line ceiling (97.7%, ~4.5 average cards), because
+  `check_live_document_size.pl:490` suppresses aggregate milestone warnings for `locator: "file"` surfaces while
+  `:475` still fails their aggregate ceilings closed. Four surfaces declare a `file` locator over a multi-file
+  glob — `knowledge_cards` (195), `task_evidence` (147), `decision_records` (29), `fsmgen_issue_packets` (7) —
+  so the whole class runs silent up to a hard error.
+  Acceptance: `the aggregate exemption applies only to a genuinely single-file surface; a file locator is proven to match exactly one path; every multi-file surface is reclassified and its real aggregate pressure is reported; each rule is covered by a fail-closed case; no ceiling moves and the gate stays green`
+  Verification: the exemption now keys off the measured `files` count, not the declared locator; a `file`
+  locator matching more than one path is rejected outright; `knowledge_cards`, `task_evidence`,
+  `decision_records`, and `fsmgen_issue_packets` are reclassified as collections with no ceiling, target,
+  milestone, lifecycle, index, or verifier change. `knowledge_cards` now reports `lines_total` 9,773/10,000
+  (97.7%, rollover) and `bytes_total` 853,926/1,048,576 (81.4%, warning) — pressure it always had and never
+  showed. 67/67 live-document cases pass, including a rejected multi-path file locator, a warning collection,
+  and a still-exempt single-file surface. ADR 0028 accepted, deliberately without an `answers:` block.
+  Commit: `FACT-CARD-CAPACITY-HEADROOM.2a — make aggregate pressure visible before re-deriving capacity`
+
 - ID: `FACT-CARD-CAPACITY-HEADROOM.3`
   Status: `pending`
   Goal: re-derive the whole projection profile once the landing is fixed-size (ADR 0027 decision 3) — per-part
@@ -140,7 +173,7 @@ which shows there is no join to raise to until the projection is reshaped.
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `FACT-CARD-CAPACITY-HEADROOM.3` | `pending` | `.2` removed the O(cards) landing, so the profile can now be re-derived; capacity is still 198 cards / 2 free fact slots until it lands |
+| 1 | `FACT-CARD-CAPACITY-HEADROOM.3` | `pending` | every authority is now visible and measured; the profile can be re-derived in one transaction. Capacity is still 198 cards / 2 free fact slots / 2 free decision-record slots until it lands |
 
 ## Decisions
 
@@ -182,6 +215,10 @@ which shows there is no join to raise to until the projection is reshaped.
 | `2026-08-10` | `.2` fixed-size law | `perl scripts/check_fact_card_catalog.pl --self-test` | 49/49 cases; `lines == parts + 6` holds at 1, 57, and 198 cards; the 198-card capacity render crosses no mandatory pressure and 199 still fails closed |
 | `2026-08-10` | `.2` route proof | `perl scripts/test_live_document_size.pl`; `bash scripts/check_live_document_size.sh` | 64/64 cases including eight `routed_membership` cases; the real gate passes at 731 files / 51 surfaces, and the catalog's own 87.5%-of-health landing warning is gone (17 → 16 warnings) |
 | `2026-08-10` | `.2` no content change | `git status --short`; `git diff --stat docs/knowledge-catalog/` | only the landing, contract, registry, checkers, tests, and prose changed; no card front matter and no title part touched |
+| `2026-08-10` | `.2a` blind-authority census | `perl scripts/check_live_document_size.pl --no-history --report` against the registry ceilings | four surfaces declare a `file` locator over a multi-file glob; `knowledge_cards` `lines_total` 9,773/10,000 (97.7%) and `bytes_total` 853,926/1,048,576 (81.4%) were enforced but never reported; `task_evidence` 74.5%/67.7%, `decision_records` 55.9%/53.7%, `fsmgen_issue_packets` 5.7%/6.0% |
+| `2026-08-10` | `.2a` first-pass correction | compared a shell-glob approximation with the checker's `glob_regex` | the approximation let `*` cross `/` and mis-scored `task_evidence` at 147 files / 88.1%; the checker's 130 files / 74.5% is authoritative and is what the ADR records |
+| `2026-08-10` | `.2a` ledger rollover | `perl scripts/check_rolling_ledger_protocol.pl --rollover-plan docs/research/fact-card-capacity-headroom-2a-changes-rollover-plan.jsonl` then `--apply-rollover` | this leaf's required `CHANGES.md` entry crossed the 90% record threshold (116/128); the minimal exact cut is 15 records — 14 clears records but leaves lines at 80.3% — sealing `changes-0004` (15 records / 184 lines / 14,899 bytes) and returning the live root to 101 records / 1,433 lines / 203,366 bytes, every dimension below 80% |
+| `2026-08-10` | `.2a` fix | `perl scripts/test_live_document_size.pl`; `bash scripts/check_live_document_size.sh` | 67/67 cases; a `file` locator over two paths is rejected, a collection at 91% of its aggregate line target warns, a genuinely single-file surface stays exempt; the real gate reports the two previously-silent `knowledge_cards` aggregates and still exits 0 |
 
 ## Commit Log
 
@@ -191,6 +228,7 @@ which shows there is no join to raise to until the projection is reshaped.
 | `FACT-CARD-CAPACITY-HEADROOM.0` | `FACT-CARD-CAPACITY-HEADROOM.0 — measure the fact plane and decide its capacity law` | measurement + ADR 0026 only |
 | `FACT-CARD-CAPACITY-HEADROOM.1` | `superseded` | premise falsified by ADR 0027 before any implementation |
 | `FACT-CARD-CAPACITY-HEADROOM.2` | `FACT-CARD-CAPACITY-HEADROOM.2 — make the fact-card landing a fixed-size router` | shape only; no limit moved and no card content changed |
+| `FACT-CARD-CAPACITY-HEADROOM.2a` | `FACT-CARD-CAPACITY-HEADROOM.2a — make aggregate pressure visible before re-deriving capacity` | ADR 0028; visibility only, no ceiling moved; carries the `changes-0004` ledger rollover its own entry required |
 | `FACT-CARD-CAPACITY-HEADROOM.3` | `pending` | `pending` |
 
 ## Changelog
@@ -202,3 +240,6 @@ which shows there is no join to raise to until the projection is reshaped.
 - `2026-08-10`: `.2` closed. The landing is a fixed-size router over the title parts; the containment doctrine
   gained a `routed_membership` index kind with a fixed one-hop completeness proof. Capacity is deliberately
   unchanged — `.3` owns the re-derivation.
+- `2026-08-10`: `.3`'s opening measurement found a fifth authority the `.0` census missed and that no warning
+  could have surfaced — `knowledge_cards.lines_total` at 97.7% of a hard ceiling. `.2a` inserted before `.3`,
+  ADR 0028 accepted, and the blindness fixed before any bound is re-derived.

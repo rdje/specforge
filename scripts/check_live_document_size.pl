@@ -123,6 +123,9 @@ for my $surface (@$surfaces) {
     if (!@matched) {
         problem("surface '$id' matches no Markdown path");
     }
+    problem("surface '$id' declares a file locator but matches " . scalar(@matched)
+        . " paths; use the collection locator")
+        if ($locator // '') eq 'file' && @matched > 1;
     $matches_by_surface{$id} = \@matched;
 }
 
@@ -487,7 +490,10 @@ sub validate_limits {
                 next if !defined $targets->{$dimension} || $targets->{$dimension} == 0;
                 my $percent = 100 * $metrics->{$dimension} / $targets->{$dimension};
                 next if $dimension eq 'files' && $metrics->{$dimension} == $targets->{$dimension};
-                next if ($surface->{locator} // '') eq 'file'
+                # A one-file surface's aggregate merely repeats its per-file measure, so warning on both is
+                # noise. Decide that from the measured file count, never from the declared locator: a
+                # multi-file surface that called itself a file was silent up to its hard ceiling (ADR 0028).
+                next if $metrics->{files} == 1
                     && ($dimension eq 'lines_total' || $dimension eq 'bytes_total');
                 next if ($surface->{lifecycle} // '') eq 'frozen_legacy'
                     || ($surface->{lifecycle} // '') eq 'archive_terminal';

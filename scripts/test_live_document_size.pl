@@ -660,6 +660,30 @@ expect_case('coverage rejects a double-classified Markdown file', 0, qr/tracked 
     push @{ surface($fixture, 'ledger')->{targets} }, 'snapshot.md';
     save_registry($fixture);
 });
+expect_case('coverage rejects a file locator over several paths', 0, qr/surface 'snapshot' declares a file locator but matches 2 paths/, sub {
+    my ($fixture) = @_;
+    write_text($fixture->{root}, 'snapshot-extra.md', "# Extra\n[External part](external/part.md)\n");
+    push @{ surface($fixture, 'snapshot')->{targets} }, 'snapshot-extra.md';
+    save_registry($fixture);
+});
+expect_case('a multi-file surface reports its aggregate pressure', 1, qr/surface 'canonical' lines_total is at or above rollover/, sub {
+    my ($fixture) = @_;
+    # A collection near its aggregate line target must warn, not stay silent until the hard ceiling.
+    write_text($fixture->{root}, 'canonical/part.md', "# Canonical part\n" x 90);
+    surface($fixture, 'canonical')->{health_targets}{lines_total} = 100;
+    save_registry($fixture);
+});
+expect_case(
+    'a single-file surface stays exempt from duplicate aggregate warnings',
+    1, qr/\A(?:(?!surface 'snapshot' lines_total).)*\z/s,
+    sub {
+        my ($fixture) = @_;
+        # snapshot.md is two lines against a two-line aggregate target: 100% of health, and silent
+        # only because the surface genuinely holds one file, where lines_total repeats lines_each.
+        surface($fixture, 'snapshot')->{health_targets}{lines_total} = 2;
+        save_registry($fixture);
+    },
+);
 expect_case('coverage rejects an off-root target', 0, qr/absolute, parent-relative, or off-root/, sub {
     my ($fixture) = @_;
     surface($fixture, 'snapshot')->{targets} = ['../escape.md'];

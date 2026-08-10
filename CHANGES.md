@@ -1,3 +1,26 @@
+### FACT-CARD-CAPACITY-HEADROOM.2a — make aggregate pressure visible before re-deriving capacity
+
+- `.3`'s opening measurement found a fifth authority that ADR 0026's census missed and that **no warning could
+  ever have surfaced**: `knowledge_cards` `lines_total` at 9,773 of a hard 10,000-line ceiling (97.7%, about 4.5
+  average cards). `validate_limits` enforces every declared aggregate ceiling but suppressed the `lines_total` and
+  `bytes_total` milestones whenever a surface declared `locator: "file"` — correct for one file, wrong for the
+  four surfaces that declared `file` over a multi-file glob.
+- How close it was is measurable: before `.2` shrank the landing, the same aggregate stood at 9,959 of 10,000 —
+  41 lines against an average card of 50.1. The next ordinary fact card would have broken a hard ceiling nobody
+  could see approaching, in whatever unrelated slice wrote it.
+- The exemption is now decided from the measured file count, not the declared locator; a `file` locator must
+  match exactly one path; and `knowledge_cards` (195), `task_evidence` (130), `decision_records` (30), and
+  `fsmgen_issue_packets` (7) are reclassified as collections. No ceiling, health target, milestone, lifecycle,
+  index, or verifier moved.
+- A first pass using shell-style globbing scored `task_evidence` at 147 files / 88.1% because `*` was allowed to
+  cross a directory separator, folding the bounded `docs/tasks/corpus-coverage/` parts into the root surface. The
+  checker's own matcher gives 130 files / 74.5%, and that is what is recorded — the approximation is noted rather
+  than dropped, because trusting it over the enforcing authority is the same failure mode as the finding.
+- 67/67 live-document cases pass, including a rejected multi-path file locator, a warning collection, and a
+  still-exempt single-file surface. The gate now reports the two `knowledge_cards` aggregates and still exits 0.
+  ADR 0028 records the finding, deliberately without an `answers:` block: `decision_records` is at 30 of a hard
+  32 files, and spending one of the last two fact slots on the record about the shortage would be self-defeating.
+
 ### FACT-CARD-CAPACITY-HEADROOM.2 — make the fact-card landing a fixed-size router
 
 - `docs/knowledge/INDEX.md` no longer carries one bare ID line per card. It states how many cards route through
@@ -354,191 +377,6 @@
   behaviors / 15 constraints. Lowering blocks on no signals plus no behavior and leaves exactly `adapter.json`
   plus its report. Twelve hashes, two repaired cascades, WIRE/I2C/SWD, KG 156/156, full CI, 66/66 FSMGen strict,
   mdBook, doctrines, locality, exact cleanup, and zero residue pass. Corpus is 41 done / 15 remaining.
-
-### CORPUS-COVERAGE.2.41a — reject legal prose from semantic intent
-
-- A rights-and-permissions paragraph under generic heading `Approved` used the word `while` and was incorrectly
-  promoted into a SemanticIR gate, phase/invariants, and IntentIR behavior. The retained-corpus before projection
-  finds 32 legal/administrative gates across 21 documents; 26 have no related interface.
-- Semantic context now rejects only compound, word-bounded legal/administrative signatures before any semantic
-  consumer runs. EvidenceIR remains lossless, and technical permission/right/version/reliability language plus a
-  real `While READY ... VALID` gate remains eligible.
-- The real #41 rebuild preserves all 106 evidence statements while phases/gates fall 1→0, invariants 17→15,
-  behaviors 2→0, and the zero-signal adapter remains honestly blocked. Two cascades reproduce six hashes; nine
-  WIRE/I2C/SWD datasets, KG 156/156, full CI, and 66/66 FSMGen strict pass.
-
-### CORPUS-COVERAGE.2.40 — sign off OpenCAPI Certified note refresh
-
-- Two guarded CPU ingests reproduce 13 pages, three visuals, two tables, 25 sections, and 173 elements at 21% and
-  22% peak sampled system memory used; all 13 image paths and 13 layout paths are final and repository-relative.
-- Evidence 173→172 removes only stale synthetic `Signal DL is width 1.`; the cited terms table defines data link
-  layer and does not declare a wire. All 173 SourceIR content elements hold.
-- Current generic authority removes the one stale high-confidence interface and one-output adapter surface while
-  retaining two semantic actors, four phases, four invariants, 11 intent behaviors, and four constraints.
-- The low-structured-design-intent guide blocks on no declared interface signals plus no behavioral content and
-  leaves exactly `adapter.json` plus its report. Two cascades reproduce all 12 hashes; WIRE/I2C/SWD, KG 156/156,
-  66/66 FSMGen strict, persisted-path, locality, mdBook, doctrine, and exact cleanup gates pass. Corpus is 40 done
-  / 16 remaining.
-
-### CORPUS-COVERAGE.2.39 — sign off OpenCAPI Ready note refresh
-
-- Two guarded CPU ingests reproduce 10 pages, six visuals, five tables, 23 sections, and 105 elements at 18% peak
-  sampled system memory used; all 10 page image/layout paths are final and repository-relative.
-- Evidence 113→112 removes only stale synthetic `Signal DL is width 1.`; the cited headerless terms table defines
-  `DL` as data link layer and does not declare a wire. All 105 SourceIR content elements hold.
-- Current generic authority removes the one stale high-confidence interface and one-output adapter surface while
-  retaining two semantic actors, three phases, four invariants, 12 intent behaviors, and five constraints.
-- The low-structured-design-intent guide blocks on no declared interface signals plus no behavioral content and
-  leaves exactly `adapter.json` plus its report. Two cascades reproduce all 12 hashes; WIRE/I2C/SWD, KG 156/156,
-  66/66 FSMGen strict, persisted-path, locality, mdBook, doctrine, and exact cleanup gates pass. Corpus is 39 done
-  / 17 remaining.
-
-### CORPUS-COVERAGE.2.38 — sign off Introducing CoreSight refresh
-
-- Two guarded CPU ingests produce 32 pages, 25 visuals, four tables, 42 sections, and 250 elements at 44% peak
-  sampled system memory used; all 32 page image/layout paths are final and repository-relative.
-- SourceIR 333→250 removes a net 83 flattened diagram-label records while replacing five label-contaminated
-  prose/header records with clean text. Evidence becomes 228 statements / six normative facts / one signal
-  constraint / zero actor-signal relations or declarations.
-- The nine stale relations were prose artifacts (`RAM is reads APB`, `means drives ATB`, and peers), not grounded
-  topology. Current generic authority removes six interfaces, eight ports, four connectivity edges, and the old
-  four-signal/two-enum adapter surface.
-- The high-confidence methodology guide blocks on no declared interface signals, retains one unsupported temporal
-  residual, and leaves exactly `adapter.json`. Two cascades reproduce all 12 hashes; WIRE/I2C/SWD, KG 156/156,
-  66/66 FSMGen strict, persisted-path, locality, mdBook, doctrine, and exact cleanup gates pass. Corpus is 38 done
-  / 18 remaining.
-
-### CORPUS-COVERAGE.2.38a — contain validation backannotation paths
-
-- `validate <artifact>` now writes the backannotated IR JSON to the explicit repository-owned CLI path and the
-  report to its adjacent `validation_report.json`; it never invokes an embedded canonical stage writer.
-- A copied-artifact regression covers SourceIR, EvidenceIR, SemanticIR, IntentIR, and ISF adapter artifacts. Each
-  copy gains its report while a byte snapshot proves the complete canonical output tree stays unchanged.
-- A real five-stage #38 copy replay with the release binary confirms the same containment. The original six
-  baseline hashes/counts and the validator-side-effect chain remain preserved until authenticated-source ingest
-  regenerates #38; the overwritten original bytes are not misrepresented as recoverable.
-- Formatting, warning-deny Clippy, 1,788 tests / five ignored, rustdoc, mdBook, doctrines, persisted paths, and
-  project-data locality pass. The required status record triggers an exact 12-record rollover into sealed segment
-  `0005`, leaving a 60-record warning-safe live root. Parent `.2.38` resumes at guarded source regeneration.
-
-### CORPUS-COVERAGE.2.37 — sign off AArch64 External Debug refresh
-
-- Guarded CPU ingest produces 25 pages, 11 visuals, two tables, 36 sections, and 266 elements at 19% peak
-  system memory used; all 25 page sidecars are final-rooted and repository-relative.
-- SourceIR 347→266 removes exactly 81 diagram-label `body_text` records on seven visual-bearing pages while
-  captions, lists, headings, pages, visuals, tables, and sections hold. Evidence retains 243 statements, five
-  conditionals, two normative facts, and zero relations/signals.
-- Current generic authority removes 64 stale heuristic interfaces, one visual-label `host` actor, and the
-  73-signal `agent.isf`. The high-confidence methodology guide blocks on no declared interface signals and leaves
-  exactly `adapter.json` with zero residuals.
-- Two cascades reproduce all nine hashes. WIRE/I2C/SWD, KG 156/156, 66/66 FSMGen strict, persisted-path,
-  locality, mdBook, doctrine, and exact cleanup gates pass. Corpus is 37 done / 19 remaining.
-
-### CORPUS-COVERAGE.2.36 — sign off CoreSight base-system refresh
-
-- Guarded CPU ingest produces 29 pages, 19 visuals, 12 tables, and 404 elements at 17% peak system memory used;
-  all 29 page sidecars are final-rooted and repository-relative.
-- Source structure and EvidenceIR counts hold exactly. Current generic authority removes 88 stale heuristic
-  interfaces and the 100-signal/two-rule `agent.isf`; the adapter blocks on no declared interface signals and
-  leaves exactly `adapter.json`.
-- Validation keeps the real gap explicit: the self-declared architecture remains under-extracted, with 19
-  unenriched visuals, 87 partially structured normative statements, and seven untyped temporal-source rules.
-- Two cascades reproduce all nine hashes. WIRE/I2C/SWD, KG 156/156, 67/67 FSMGen strict, mdBook, doctrine,
-  persisted-path, locality, and exact cleanup gates pass. Corpus is 36 done / 20 remaining.
-
-### CORPUS-COVERAGE.2.35 — sign off USB4 Connection Manager refresh
-
-- Guarded CPU ingest produces 96 pages, 46 visuals, 23 tables, and 1,313 elements at 28% peak system memory
-  used; all 96 page sidecars are final-rooted and repository-relative.
-- Current generic authority removes 13 stale prose relations, four interfaces, 11 ports, and the `SB`/`USB`/
-  `USB4` three-signal adapter while retaining four exact `USB4` structured references as source evidence.
-- The high-confidence methodology guide blocks on no declared interface signals, removes `device_also.isf`, and
-  leaves exactly `adapter.json`. Two downstream cascades reproduce all nine final hashes.
-- Nine WIRE/I2C/SWD datasets hold their declared gates, KG is 156/156, all 68 current emits pass FSMGen strict,
-  and mdBook/doctrine/locality gates pass; exact task evidence is then deleted with zero residue. Corpus is 35
-  done / 21 remaining.
-
-### CORPUS-COVERAGE.2.34b.ii.b — sign off the portable USB4 refresh
-
-- Two guarded CPU ingests reproduce 51 pages, 82 visuals, 49 tables, 603 elements, and every final artifact
-  hash; the monitored replay peaked at 18% system memory used.
-- All 51 page sidecars persist final repository-relative image paths. Compared with the preserved defective
-  bundle, their path field is the only difference; all downstream IR, reports, and adapter files are byte-equal.
-- Current generic authority removes the stale one-signal/two-rule/eight-enum USB4 model. Lowering blocks on no
-  declared interface signals, emits no `.isf`, and leaves exactly `adapter.json` with six storage records.
-- Nine WIRE/I2C/SWD datasets hold their 1.000 gates, KG is 156/156, all 69 remaining emitted ISFs pass FSMGen
-  strict, and full CI/book/doctrine/locality gates pass before exact rollback/evidence cleanup. Corpus refresh is
-  34 done / 22 remaining; next is selection and ownership of #35.
-
-### CORPUS-COVERAGE.2.34b.ii.a — normalize Docling page-sidecar paths
-
-- Fresh USB4 ingest exposed 51 `normalized/pages/page-*.json` files whose `rendered_image.path` still named the
-  absolute `normalized.staging` runtime location after directory promotion.
-- `materialize_pdf` now validates and rewrites each sidecar before the staged swap: the saved image must match
-  the summary and resolve below staging without traversal/symlink escape, then persists against final
-  `normalized/`; intentionally unpersisted page images remain `null`.
-- Any missing, malformed, mismatched, or escaping record removes only staging and preserves the last-good bundle.
-  Four page tests, three document-metadata tests, two stub ingests, formatting, and warning-deny Clippy pass.
-
-### CORPUS-COVERAGE.2.34b.i — recover a coherent canonical SWD cascade
-
-- Preserved the untouched SWD downstream chain after a temporary fresh-oracle command resolved its artifact
-  root to the canonical cache, then validated and rebuilt EvidenceIR through the adapter in order.
-- Current generic dense-prose authority removes the synthetic `LEVEL` signal, three phrase-shaped actors, and
-  four relations: actors 22→19, relations 25→21, ports 22→19, and adapter signals 12→11.
-- All 29 serial facts remain exact at 11 frame / 4 operation / 13 state / 1 edge. Two complete cascade replays
-  reproduced every final hash; SWD derivation, base relation, FSMGen strict, focused/WIRE, and KG 156/156 pass.
-  No production code changed. The closing locality gate separately exposed 51 USB4 page sidecars retaining
-  absolute staging paths; `.2.34b.ii.a` owns that producer fix before `.ii.b` reruns USB4 signoff.
-
-### CORPUS-COVERAGE.2.34a — stop stale boot-volume host-library reuse
-
-- Selected USB4 Inter-Domain Service as refresh #34 and authenticated its retained five-stage baseline: the old
-  adapter is renderable with one `USB4` signal and two rules, making it a direct transfer test for #33's generic
-  bus-acronym authority repair.
-- Proved `.cache/local-references/chipdoc` still resolves to a 935 MiB boot-volume Git checkout, not the repository
-  SSD filesystem. No checkout or selected PDF exists in the external SSD project directory; PDF SHA-256 is
-  `ab337460…396`.
-- Failed closed before ingest or copy. No generated artifact or link changed; `.2.34b` awaits the intended SSD
-  route or explicit authorization for one verified read-only copy into repository-local project data.
-
-### CORPUS-COVERAGE.2.33d.iv.c — sign off the final USB cascade
-
-- Authenticated the exact 9-file / 38,981,655-byte same-volume rollback, then rebuilt USB EvidenceIR through
-  adapter with release `946766cb…488`; all four downstream hashes reproduced exactly. The required `validate`
-  pass then backannotated only SourceIR (`e87f5003…a13` → `38cbaa82…a2b`), as documented, and a final downstream
-  rebuild again reproduced the exact Evidence/Semantic/Intent/adapter hashes.
-- Proved the final hardware surface is empty: zero actor relations, interfaces, interface records, actor ports,
-  adapter signals, transactions, rules, emitted target, phantom actor file, or stale sibling. The blocked manifest
-  retains one storage record, 15 honest residuals, and exactly `adapter.json`.
-- Passed focused authority/writer tests, all nine provider-free WIRE datasets, KG 156/156, warning-deny full CI
-  (1,783 pass / five ignored), rustdoc, mdBook, six doctrines, path/locality, and residue checks. The exact rollback
-  was deleted only afterward; `.iv`/`.d`/`.2.33` are closed and the 70 current emits remain strict-clean.
-
-### CORPUS-COVERAGE.2.33d.iv.b — fail closed when SemanticIR has no typed signal authority
-
-- Measured the complete retained class: 21 documents / 5,527 interfaces / 18,397 all-low records / 4,060
-  per-document unique names; 19 adapters were marked renderable and consumed 4,060 signals / 544 rules.
-- Replaced the empty-authority allow-all in `retain_authoritative_interface_candidate_signals`. Groups now
-  require formal/system-contract authority or a signal-led deontic action statement; no name/document denylist,
-  relation exception, or adapter filter was added.
-- Added raw-token, grounded-behavior, full-interface, and handshake regressions. All 21 affected documents dry-run
-  to zero interfaces; declaration-free `VALID`/`READY` survives, and APB/AHB/AXI/SWD surfaces are byte-equivalent.
-- Rebuilt real USB SemanticIR→IntentIR→adapter: zero interfaces/ports/relations, adapter blocked on no signals,
-  zero emitted signals/rules, and only `adapter.json` remains after `channel.isf` reconciliation. Canonical
-  behaviors, constraints, transactions, storage, and residual source evidence remain available.
-- WIRE/I2C/SWD provider-free golds remain 1.000 (the documented SWD promotion-only constraint remains 0/1),
-  KG is 156/156, and full CI passes 1,783 tests / five ignored plus warning-deny Clippy/rustdoc, mdBook, all six
-  doctrines, and final project-data locality.
-
-### CORPUS-COVERAGE.2.33d.iv.a — converge generated adapter outputs
-
-- Reproduced the stale-output defect on the repaired USB cascade: `channel.isf` became current while the prior
-  false-actor `.isf` survived outside the current manifest.
-- Successful adapter writes now retain only the manifest-selected `.isf`, remove obsolete regular/symlink ISF
-  siblings, preserve unrelated files/directories, and clear former output when an adapter becomes blocked.
-- Added a focused renderable/repeat/blocked regression. The real rerun leaves only `adapter.json` and
-  `channel.isf`; its separate 556-output authority-empty semantic blocker is owned by `.iv.b`, not hidden.
 
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4a — lossless rolling-ledger protocol locked
 
