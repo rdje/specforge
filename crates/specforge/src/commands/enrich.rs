@@ -4,7 +4,8 @@ use std::process::Command;
 use crate::cli::{EnrichArgs, VlmProviderArg};
 use crate::error::{AppError, Result};
 use crate::ir::source::{
-    DiagramKind, SourceIr, StructuredTableCellRecord, StructuredTableRecord, TableKind, VisualAsset,
+    DiagramKind, SourceIr, StructuredTableCellRecord, StructuredTableRecord, TableKind,
+    VisualAsset, timing_table_has_structural_authority,
 };
 
 /// Environment variable overriding the VLM helper script (for unit testing).
@@ -445,7 +446,7 @@ fn vlm_kind_structurally_consistent(table: &StructuredTableRecord, kind: TableKi
                 && has(&["access", "reset", "type", "attribut", "bits"])
         }
         TableKind::Encoding => has(&["value", "encoding", "code", "binary", "hex"]),
-        TableKind::TimingParameter => has(&["min", "max", "typ", "unit"]),
+        TableKind::TimingParameter => timing_table_has_structural_authority(table),
         TableKind::FeatureMatrix => has(&[
             "feature",
             "property",

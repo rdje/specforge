@@ -17,8 +17,8 @@ use crate::ir::semantic::InterfaceSignalSemanticRole;
 use crate::ir::source::{
     ActorSignalRelation, ConditionalRuleRecord, RegisterFieldEnumRecord, RegisterFieldRecord,
     RegisterRecord, RelationKind, SignalConstraintKind, SignalConstraintRecord,
-    StructuredTableCellRecord, StructuredTableRecord, TimingConstraintRecord,
-    ValidationReportRecord, WidthHint,
+    StructuredTableCellRecord, StructuredTableRecord, TimingConstraintRecord, TimingTableColumns,
+    ValidationReportRecord, WidthHint, timing_table_columns, timing_table_has_structural_authority,
 };
 use crate::ir::source::{
     AutomationConfidence, DiagramKind, NormalizationStatus, SectionKind, SourceIr, TableKind,
@@ -2949,17 +2949,24 @@ fn effective_table_kind(
     table: &crate::ir::source::StructuredTableRecord,
     prior_guidance: Option<&EvidencePriorGuidance>,
 ) -> TableKind {
-    if !matches!(table.table_kind, TableKind::Unknown) {
-        return table.table_kind;
-    }
+    let candidate = if !matches!(table.table_kind, TableKind::Unknown) {
+        table.table_kind
+    } else {
+        prior_guidance
+            .and_then(|prior_guidance| {
+                prior_guidance
+                    .corpus_memory
+                    .table_kind_for_structured_table(Some(prior_guidance.protocol_family), table)
+            })
+            .unwrap_or(TableKind::Unknown)
+    };
 
-    prior_guidance
-        .and_then(|prior_guidance| {
-            prior_guidance
-                .corpus_memory
-                .table_kind_for_structured_table(Some(prior_guidance.protocol_family), table)
-        })
-        .unwrap_or(TableKind::Unknown)
+    match candidate {
+        TableKind::TimingParameter if !timing_table_has_structural_authority(table) => {
+            TableKind::Unknown
+        }
+        _ => candidate,
+    }
 }
 
 fn nearest_section_title_for_table(
@@ -14832,11 +14839,17 @@ fn synthesize_timing_constraints(
         .collect();
 
     for table in timing_tables {
-        let header: Vec<String> = table
-            .header_rows
-            .first()
-            .map(|r| r.iter().map(|c| c.text.to_ascii_lowercase()).collect())
-            .unwrap_or_default();
+        let Some(TimingTableColumns {
+            name: name_col,
+            min: min_col,
+            typ: typ_col,
+            max: max_col,
+            unit: unit_col,
+            description: desc_col,
+        }) = timing_table_columns(table)
+        else {
+            continue;
+        };
 
         // PDF-VARIANT-DIGESTION.9.11 — recover data rows Docling trapped in `header_rows`
         // (e.g. I2S `table_0004`, SMBus `table_0012`); the shared `.12a` rule definition keeps
@@ -14849,20 +14862,6 @@ fn synthesize_timing_constraints(
         if effective_rows.is_empty() {
             continue;
         }
-
-        let name_col = header
-            .iter()
-            .position(|h| h.contains("parameter") || h.contains("symbol") || h.contains("name"))
-            .unwrap_or(0);
-        let min_col = header.iter().position(|h| h.contains("min"));
-        let typ_col = header
-            .iter()
-            .position(|h| h.contains("typ") || h.contains("typical"));
-        let max_col = header.iter().position(|h| h.contains("max"));
-        let unit_col = header
-            .iter()
-            .position(|h| h.contains("unit") || h.contains("ns") || h.contains("ps"));
-        let desc_col = header.iter().position(|h| h.contains("description"));
 
         let table_id = table.table_id.clone();
         for (row_idx, row) in effective_rows.iter().enumerate() {
@@ -14880,12 +14879,19 @@ fn synthesize_timing_constraints(
                     .filter(|s| !s.is_empty() && s != "-")
             };
 
+            let min_value = get_cell(min_col);
+            let typ_value = get_cell(typ_col);
+            let max_value = get_cell(max_col);
+            if min_value.is_none() && typ_value.is_none() && max_value.is_none() {
+                continue;
+            }
+
             records.push(TimingConstraintRecord {
                 constraint_id: format!("timing_{}_{row_idx:03}", document_key(&table_id)),
                 parameter_name: name,
-                min_value: get_cell(min_col),
-                typ_value: get_cell(typ_col),
-                max_value: get_cell(max_col),
+                min_value,
+                typ_value,
+                max_value,
                 unit: get_cell(unit_col),
                 description: get_cell(desc_col),
                 supporting_statement_ids: Vec::new(),
@@ -16728,6 +16734,92 @@ mod tests {
         assert_eq!(recs[0].parameter_name, "t BUF");
         assert_eq!(recs[0].min_value.as_deref(), Some("1.3"));
         assert_eq!(recs[1].parameter_name, "t HD");
+        Ok(())
+    }
+
+    // CORPUS-COVERAGE.2.47a — instruction/performance columns do not implement the scalar
+    // MIN/TYP/MAX timing schema. In particular, `Instruction group` must never match a unit merely
+    // because `instruction` contains the letters `ns`, and data-row mnemonics/text cannot classify
+    // the table by leaking through `header_rows`.
+    #[test]
+    fn instruction_performance_table_emits_no_scalar_timing_constraints() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Performance\nInstruction performance.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_instruction".to_string(),
+            asset_id: "asset_instruction".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            table_kind: TableKind::TimingParameter,
+            header_rows: vec![
+                vec![
+                    make_table_cell("Instruction group", true),
+                    make_table_cell("AArch64 instructions", true),
+                    make_table_cell("Exec latency", true),
+                    make_table_cell("Execution throughput", true),
+                ],
+                vec![
+                    make_table_cell("Signed minimum", true),
+                    make_table_cell("SMIN", false),
+                    make_table_cell("4", false),
+                    make_table_cell("2", false),
+                ],
+            ],
+            body_rows: vec![],
+            row_count: 2,
+            col_count: 4,
+        });
+
+        let recs = super::synthesize_timing_constraints(&source_ir, None);
+        assert!(
+            recs.is_empty(),
+            "instruction text is neither a unit nor scalar timing-column authority"
+        );
+        Ok(())
+    }
+
+    // CORPUS-COVERAGE.2.47a — a structurally valid table can contain an informational row with
+    // every scalar value absent. Such a row is not a timing constraint; retaining only its name or
+    // unit would create the same value-free record shape that exposed the defect.
+    #[test]
+    fn timing_table_row_without_a_scalar_value_is_not_emitted() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Timing\nTiming limits.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_value_empty".to_string(),
+            asset_id: "asset_value_empty".to_string(),
+            page_id: None,
+            caption_text: Some("Timing limits".to_string()),
+            source_ref: None,
+            table_kind: TableKind::TimingParameter,
+            header_rows: vec![vec![
+                make_table_cell("Symbol", true),
+                make_table_cell("Min", true),
+                make_table_cell("Max", true),
+                make_table_cell("Unit", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("t EMPTY", false),
+                make_table_cell("-", false),
+                make_table_cell("", false),
+                make_table_cell("ns", false),
+            ]],
+            row_count: 2,
+            col_count: 4,
+        });
+
+        let recs = super::synthesize_timing_constraints(&source_ir, None);
+        assert!(
+            recs.is_empty(),
+            "a name plus unit is not a value-bearing constraint"
+        );
         Ok(())
     }
 

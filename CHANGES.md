@@ -1,3 +1,17 @@
+### CORPUS-COVERAGE.2.47a — enforce structural timing-table authority
+
+- Timing-table classification now reads only the leading all-column-header prefix and matches identifier-safe
+  tokens. Trapped data rows, `SMIN`, `Instruction group`, and underscore-delimited identifiers can no longer
+  fabricate min/unit authority.
+- Structural shape validates an ingest/prior classification but does not promote an otherwise unknown table.
+  Scalar extraction separately requires unique min/typ/max columns and at least one actual row value; genuine
+  multi-variant limit tables remain timing-category residuals instead of being flattened.
+- The 39-document / 284-table retained population changes from 2,144 timing records to 608 grounded records;
+  Cortex instruction tables fall 151→0, I2S holds at five, and every survivor has a min/typ/max value.
+- Eight rebuildable real cascades reproduce combined hash `58411566…6457a` twice with 32 stage validations.
+  Source/Evidence regressions, nine provider-free evals, KG 156/156, full CI 1,796/five ignored, and all 60
+  emitted ISFs under FSMGen strict pass. Parent `.2.47` resumes final Cortex-A76 signoff.
+
 ### CORPUS-COVERAGE.2.46 — refresh OpenCAPI Discovery Configuration without invented topology
 
 - Three guarded CPU ingests reproduce 40 pages / 54 visuals / 49 tables / 50 sections / 172 elements, a

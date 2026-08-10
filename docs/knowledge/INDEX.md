@@ -169,6 +169,7 @@
 - [temporal-eval-residual-fps-are-stale](temporal-eval-residual-fps-are-stale.md)
 - [temporal-logic-choice](temporal-logic-choice.md)
 - [temporal-rule-ltl-rendering](temporal-rule-ltl-rendering.md)
+- [timing-table-structural-authority](timing-table-structural-authority.md)
 - [timing-table-trapped-row-recovery](timing-table-trapped-row-recovery.md)
 - [transaction-body-emission-faithfully-complete](transaction-body-emission-faithfully-complete.md)
 - [transaction-capture-census](transaction-capture-census.md)

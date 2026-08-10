@@ -448,10 +448,45 @@ def classify_table_kind(header_rows, body_rows=None, caption_text=None):
     ):
         return "register_map"
 
-    # Timing parameter: min/max/typical + unit columns.
-    has_minmax = any(any(kw in h for kw in ["min", "max", "typ", "typical", "maximum", "minimum"]) for h in all_headers)
-    has_unit = any(any(kw in h for kw in ["unit", "ns", "ps", "cycles", "period"]) for h in all_headers)
-    if has_minmax and (has_unit or "parameter" in header_set or "symbol" in header_set):
+    # Timing parameter candidate: only genuine leading column-header rows contribute
+    # vocabulary. Docling can mark a data row's label cell as a row header, so flattening
+    # every `header_rows` entry lets instruction/data text fabricate timing authority
+    # (`instruction` contains `ns`, for example). Keep `_` inside identifier tokens too:
+    # `OPTIMAL_TRIM_UNIT_SIZE` is not a standalone `unit`. Rust revalidates this candidate
+    # with the shared structural category authority before SourceIR is persisted. A separate
+    # Rust scalar-layout gate decides whether MIN/TYP/MAX can be emitted without losing a
+    # variant dimension.
+    column_header_rows = []
+    for row in header_rows:
+        non_empty = [cell for cell in row if cell.get("text", "").strip()]
+        if not non_empty or any(not cell.get("is_header", False) for cell in non_empty):
+            break
+        column_header_rows.append(row)
+    column_count = max((len(row) for row in column_header_rows), default=0)
+    timing_columns = [[] for _ in range(column_count)]
+    for row in column_header_rows:
+        for index, cell in enumerate(row):
+            timing_columns[index].extend(
+                re.findall(r"[a-z0-9_]+", cell.get("text", "").lower())
+            )
+    min_cols = [i for i, words in enumerate(timing_columns) if set(words) & {"min", "minimum"}]
+    typ_cols = [i for i, words in enumerate(timing_columns) if set(words) & {"typ", "typical", "nominal"}]
+    max_cols = [i for i, words in enumerate(timing_columns) if set(words) & {"max", "maximum"}]
+    value_cols = min_cols + typ_cols + max_cols
+    has_value_role = bool(value_cols)
+    unit_words = {"unit", "units", "ns", "ps", "cycles", "period"}
+    has_unit = any(set(words) & unit_words for words in timing_columns)
+    has_identity = any(
+        cell.get("text", "").strip().lower()
+        in {"parameter", "parameters", "symbol", "symbols"}
+        for row in column_header_rows
+        for cell in row
+    )
+    caption_words = set(re.findall(r"[a-z0-9_]+", cap_lower))
+    has_caption_context = bool(
+        caption_words & {"timing", "timings", "ns", "ps", "cycles", "period"}
+    )
+    if has_value_role and (has_unit or has_identity or has_caption_context):
         return "timing_parameter"
 
     # Feature matrix: mandatory/optional/prohibited support levels.

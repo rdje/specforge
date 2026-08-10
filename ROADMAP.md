@@ -241,10 +241,11 @@ Five active program groups support that north star:
   committed-binary validation pins all 12 artifact/report hashes. Corpus is 46 done / ten remaining at 80
   SourceIR / 18 normalized / 80 EvidenceIR / 79 downstream chains; all 61 current emitted ISFs are strict-clean.
   `.2.47` now owns the 46-page Cortex-A76 Software Optimization Guide, the smallest of ten remaining candidates.
-  Its first deterministic cascade removes a stale 537-output instruction adapter but exposes child `.2.47a`:
-  all-header-row vocabulary contamination and substring `ns` unit matching create 151 value-empty timing records
-  from instruction-performance tables. The child owns a corpus census and generic structural timing-authority
-  repair before parent signoff. Separately,
+  Its first deterministic cascade removes a stale 537-output instruction adapter and exposed child `.2.47a`.
+  That child is now done: leading structural column headers, identifier-safe tokens, classification provenance,
+  and value-bearing scalar columns replace all-row/raw-substring authority. The retained 39-document timing
+  surface moves 2,144→608 grounded records; Cortex moves 151→0 and I2S holds at five. Eight rebuildable cascades
+  reproduce twice, KG/full CI/FSMGen strict pass, and `.2.47` resumes final release replay/signoff. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

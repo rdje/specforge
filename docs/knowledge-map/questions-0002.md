@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
+  > does register extraction require the table_kind register classification
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > does relation-derived direction synthesis independently invent signal names
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
@@ -248,6 +250,8 @@
   > how does SpecForge detect contradicting or conflicting priors
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > how does SpecForge determine what a chip-spec PDF is about / its purpose category
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > how does SpecForge distinguish a timing table category from a scalar min typ max layout
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > how does SpecForge distinguish legal conditions from protocol conditions
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
@@ -294,7 +298,3 @@
   > how does derive_register_block_name parse a block out of a register-descriptions section heading
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
   > how does extract_discovered_state_value_from_text match a constraint value
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > how does ground_constraint recover a value the model did not echo
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > how does ingest avoid being RAM-guard-aborted on a small/restricted machine

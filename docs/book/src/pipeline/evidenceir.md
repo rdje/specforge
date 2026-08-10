@@ -632,6 +632,30 @@ With this in place, the I2S spec went from **0 to 5** recovered timing parameter
 clock-low times, set-up and hold times, with their stated limits), while the timing tables that already read
 correctly are untouched. *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.9.11`).
 
+### `CORPUS-COVERAGE.2.47a` — scalar timing records require scalar values
+
+Timing *category* and scalar timing *layout* are separate contracts. A genuine timing table may contain several
+variant-specific `MIN`/`MAX` pairs. That table is timing-bearing, but flattening its variants into one
+`TimingConstraintRecord` would lose which limit belongs to which mode. EvidenceIR therefore keeps the table in
+the timing category and exposes it through unexplained-table accounting until a dimension-preserving record type
+exists; it does not collapse the table or pass it to an unrelated extractor.
+
+For a table that can use the current scalar record, each of `min`, `typ`, and `max` must identify at most one
+distinct column. Every emitted row must then contain at least one actual value in those columns. A parameter name,
+description, or unit without a min/typ/max value is evidence about a row, but it is not a timing constraint.
+
+For example, an instruction-performance table headed `Instruction group | AArch64 instructions | Exec latency |
+Execution throughput` has meaningful performance data, but it does not implement the scalar min/typ/max schema.
+SpecForge leaves that table as residual evidence rather than emitting a value-empty timing record or pretending
+that `Instruction group` is the unit. By contrast, the structurally trapped I2S table described above remains a
+classified timing table and still emits its five genuine value-bearing records.
+
+Across the retained corpus, this boundary changes 2,144 timing records across 39 documents into 608 grounded
+scalar records: 38 documents change, I2S remains at five, and every survivor has at least one min/typ/max value.
+The Cortex-A76 optimization guide's 151 instruction-derived records become zero. *Authoritative tracking:*
+`docs/tasks/CORPUS-COVERAGE.md` (`CORPUS-COVERAGE.2.47a`); Knowledge Map
+`[[timing-table-structural-authority]]`.
+
 ### `PDF-VARIANT-DIGESTION.10a` — a register table whose field names hide inside the description
 
 A corpus-wide census of every table the ingest classifier left "unknown" pointed at one family as the

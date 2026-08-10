@@ -1,4 +1,27 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.47a (`2026-08-10`) — table shape can corroborate authority, not create it
+
+The Cortex failure looked like a timing-vocabulary problem, but the real boundary was provenance plus structure.
+Docling legitimately records row-label cells as headers; treating every row containing one as a column header
+lets data manufacture its own category. Raw substring matching compounded that mistake: `SMIN` became `min`, and
+the `ns` inside `Instruction group` became a unit. EvidenceIR then accepted a name plus that false unit as a
+constraint even though all scalar values were absent.
+
+The repair separates category validation from scalar representability. A timing classification proposed by
+ingest or a protocol-matched prior must survive a structural leading-header check. The same shape does not promote
+an unknown table by itself—otherwise a generic `Parameter | Min | Max | Unit` fixture would bypass the prior
+boundary. Once classified, a table emits scalar records only when min/typ/max roles map unambiguously and the row
+contains a real value. Multi-variant timing tables retain their category and become explicit residuals because
+collapsing mode-specific limits would lose a dimension; instruction latency/throughput likewise needs a future
+performance type rather than counterfeit scalar timing.
+
+The complete retained timing surface makes the precision effect measurable: 2,144→608 records across 39
+documents, with every survivor value-bearing. Thirty documents lack intentionally reclaimed normalized Markdown,
+so exact surface replay—not a falsely claimed full cascade—is the strongest available evidence for them. Eight
+rebuildable documents completed two full cascades and reproduced one combined hash; seven controls were restored
+exactly. This distinction between retained IR verification and full rebuildability is part of the result, not a
+testing caveat to hide.
+
 ## CORPUS-COVERAGE.2.46 (`2026-08-10`) — discovery prose is not an implicit interface
 
 The stale Discovery Configuration chain was unusually convincing syntactically and still unsupported

@@ -217,6 +217,203 @@ pub enum TableKind {
     Unknown,
 }
 
+/// Column authority for the current scalar timing-constraint schema.
+///
+/// Docling can place data rows in `header_rows` when their row-label cell is marked as a
+/// row header.  Only the leading rows whose non-empty cells are all actual header cells may
+/// therefore name columns.  Header words keep `_` as an identifier character, so `instruction`
+/// is not `ns` and `OPTIMAL_TRIM_UNIT_SIZE` is not a standalone `unit`.  A layout is accepted only
+/// when each scalar MIN/TYP/MAX role maps to at most one column and the table also carries timing
+/// context (a parameter/symbol header, an explicit unit marker, or timing/unit words in its
+/// caption).  Variant tables with several MIN/MAX columns remain residual because
+/// `TimingConstraintRecord` cannot preserve the variant dimension.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) struct TimingTableColumns {
+    pub name: usize,
+    pub min: Option<usize>,
+    pub typ: Option<usize>,
+    pub max: Option<usize>,
+    pub unit: Option<usize>,
+    pub description: Option<usize>,
+}
+
+fn timing_header_words(text: &str) -> impl Iterator<Item = &str> {
+    text.split(|character: char| !character.is_ascii_alphanumeric() && character != '_')
+        .filter(|word| !word.is_empty())
+}
+
+fn timing_text_has_word(text: &str, expected: &[&str]) -> bool {
+    timing_header_words(text).any(|word| {
+        expected
+            .iter()
+            .any(|candidate| word.eq_ignore_ascii_case(candidate))
+    })
+}
+
+fn timing_header_cell_is_identity(text: &str, include_name: bool) -> bool {
+    let normalized = text.trim();
+    normalized.eq_ignore_ascii_case("parameter")
+        || normalized.eq_ignore_ascii_case("parameters")
+        || normalized.eq_ignore_ascii_case("symbol")
+        || normalized.eq_ignore_ascii_case("symbols")
+        || (include_name && normalized.eq_ignore_ascii_case("name"))
+}
+
+fn unique_timing_column(
+    columns: &[Vec<&str>],
+    vocabulary: &[&str],
+) -> std::result::Result<Option<usize>, ()> {
+    let matches = columns
+        .iter()
+        .enumerate()
+        .filter_map(|(index, texts)| {
+            texts
+                .iter()
+                .any(|text| timing_text_has_word(text, vocabulary))
+                .then_some(index)
+        })
+        .collect::<Vec<_>>();
+    match matches.as_slice() {
+        [] => Ok(None),
+        [index] => Ok(Some(*index)),
+        _ => Err(()),
+    }
+}
+
+fn timing_structural_header_columns(table: &StructuredTableRecord) -> Option<Vec<Vec<&str>>> {
+    let structural_header_rows = table
+        .header_rows
+        .iter()
+        .take_while(|row| {
+            let non_empty = row
+                .iter()
+                .filter(|cell| !cell.text.trim().is_empty())
+                .collect::<Vec<_>>();
+            !non_empty.is_empty() && non_empty.iter().all(|cell| cell.is_header)
+        })
+        .collect::<Vec<_>>();
+    let column_count = structural_header_rows.iter().map(|row| row.len()).max()?;
+    let mut columns = vec![Vec::new(); column_count];
+    for row in structural_header_rows {
+        for (index, cell) in row.iter().enumerate() {
+            let text = cell.text.trim();
+            if !text.is_empty() {
+                columns[index].push(text);
+            }
+        }
+    }
+    Some(columns)
+}
+
+fn timing_columns_have_context(table: &StructuredTableRecord, columns: &[Vec<&str>]) -> bool {
+    let has_parameter_or_symbol = columns.iter().any(|texts| {
+        texts
+            .iter()
+            .any(|text| timing_header_cell_is_identity(text, false))
+    });
+    let has_unit = columns.iter().any(|texts| {
+        texts.iter().any(|text| {
+            timing_text_has_word(text, &["unit", "units", "ns", "ps", "cycles", "period"])
+        })
+    });
+    let caption_has_timing_context = table.caption_text.as_deref().is_some_and(|caption| {
+        timing_text_has_word(
+            caption,
+            &["timing", "timings", "ns", "ps", "cycles", "period"],
+        )
+    });
+    has_parameter_or_symbol || has_unit || caption_has_timing_context
+}
+
+/// Whether structural column headers establish that this is a timing/limits table at all.
+/// This category authority is intentionally broader than [`timing_table_columns`]: a table with
+/// several variant-specific MIN/MAX pairs is genuinely timing-bearing but cannot be collapsed into
+/// the current scalar record without losing its variant dimension. It stays classified as timing
+/// and becomes an explicit unexplained-table residual instead of falling through to another table
+/// extractor.
+pub(crate) fn timing_table_has_structural_authority(table: &StructuredTableRecord) -> bool {
+    let Some(columns) = timing_structural_header_columns(table) else {
+        return false;
+    };
+    let has_value_role = columns.iter().flatten().any(|text| {
+        timing_text_has_word(
+            text,
+            &[
+                "min", "minimum", "typ", "typical", "nominal", "max", "maximum",
+            ],
+        )
+    });
+    has_value_role && timing_columns_have_context(table, &columns)
+}
+
+pub(crate) fn timing_table_columns(table: &StructuredTableRecord) -> Option<TimingTableColumns> {
+    let columns = timing_structural_header_columns(table)?;
+
+    let min = unique_timing_column(&columns, &["min", "minimum"]).ok()?;
+    let typ = unique_timing_column(&columns, &["typ", "typical", "nominal"]).ok()?;
+    let max = unique_timing_column(&columns, &["max", "maximum"]).ok()?;
+    let value_columns = [min, typ, max].into_iter().flatten().collect::<Vec<_>>();
+    if value_columns.is_empty()
+        || value_columns
+            .iter()
+            .enumerate()
+            .any(|(index, column)| value_columns[..index].contains(column))
+    {
+        return None;
+    }
+
+    let name = columns
+        .iter()
+        .position(|texts| {
+            texts
+                .iter()
+                .any(|text| timing_header_cell_is_identity(text, true))
+        })
+        .unwrap_or(0);
+    let unit_columns = columns
+        .iter()
+        .enumerate()
+        .filter_map(|(index, texts)| {
+            texts
+                .iter()
+                .any(|text| {
+                    timing_text_has_word(text, &["unit", "units", "ns", "ps", "cycles", "period"])
+                })
+                .then_some(index)
+        })
+        .collect::<Vec<_>>();
+    if !timing_columns_have_context(table, &columns) {
+        return None;
+    }
+
+    let unit = unit_columns
+        .into_iter()
+        .find(|column| !value_columns.contains(column));
+    let description = columns.iter().position(|texts| {
+        texts
+            .iter()
+            .any(|text| timing_text_has_word(text, &["description"]))
+    });
+    Some(TimingTableColumns {
+        name,
+        min,
+        typ,
+        max,
+        unit,
+        description,
+    })
+}
+
+fn normalize_timing_table_kinds(tables: &mut [StructuredTableRecord]) {
+    for table in tables {
+        if matches!(table.table_kind, TableKind::TimingParameter)
+            && !timing_table_has_structural_authority(table)
+        {
+            table.table_kind = TableKind::Unknown;
+        }
+    }
+}
+
 /// Section kind as heuristically classified from the heading title at ingest time.
 /// Downstream stages can use this to avoid re-discovering section roles.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
@@ -572,7 +769,12 @@ impl SourceIr {
     pub fn load_from_path(path: &Path) -> Result<Self> {
         let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
         let source_ir = serde_json::from_str::<Self>(&fs::read_to_string(path)?)?;
-        source_ir.runtime_clone()
+        let mut source_ir = source_ir.runtime_clone()?;
+        // Old SourceIR remains readable, but no current consumer trusts a timing classification
+        // that lacks structural authority. Structural shape is necessary, not sufficient: an
+        // unknown table still needs an upstream classifier or prior to establish its category.
+        normalize_timing_table_kinds(&mut source_ir.structured_tables);
+        Ok(source_ir)
     }
     pub fn build(source: &Path, artifact_base_root: &Path) -> Result<Self> {
         let source_path_origin = if source.is_relative() {
@@ -779,6 +981,7 @@ impl SourceIr {
         self.page_artifacts = backend_summary.page_artifacts;
         self.visual_assets = backend_summary.visual_assets;
         self.structured_tables = backend_summary.structured_tables;
+        normalize_timing_table_kinds(&mut self.structured_tables);
         self.content_elements = backend_summary.content_elements;
         self.document_sections = backend_summary.document_sections;
         self.document_profile = backend_summary.document_profile;
@@ -1298,8 +1501,41 @@ mod tests {
     use crate::test_support::env_var_lock;
 
     use super::{
-        AutomationConfidence, NormalizationBackend, SourceIr, SourceKind, document_key, stable_stem,
+        AutomationConfidence, NormalizationBackend, SourceIr, SourceKind,
+        StructuredTableCellRecord, StructuredTableRecord, TableKind, document_key,
+        normalize_timing_table_kinds, stable_stem, timing_table_columns,
+        timing_table_has_structural_authority,
     };
+
+    fn table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
+        StructuredTableCellRecord {
+            text: text.to_string(),
+            row_span: 1,
+            col_span: 1,
+            is_header,
+        }
+    }
+
+    fn timing_test_table(
+        kind: TableKind,
+        caption: Option<&str>,
+        header_rows: Vec<Vec<StructuredTableCellRecord>>,
+    ) -> StructuredTableRecord {
+        let row_count = header_rows.len() as u32;
+        let col_count = header_rows.iter().map(|row| row.len()).max().unwrap_or(0) as u32;
+        StructuredTableRecord {
+            table_id: "table_test".to_string(),
+            asset_id: "asset_test".to_string(),
+            page_id: None,
+            caption_text: caption.map(str::to_string),
+            source_ref: None,
+            table_kind: kind,
+            header_rows,
+            body_rows: Vec::new(),
+            row_count,
+            col_count,
+        }
+    }
 
     struct EnvVarGuard {
         key: &'static str,
@@ -1364,6 +1600,111 @@ mod tests {
     fn document_key_normalizes_non_identifier_characters() {
         assert_eq!(document_key("Spec Rev.A"), "spec_rev_a");
         assert_eq!(document_key("$$$"), "source");
+    }
+
+    #[test]
+    fn timing_table_authority_uses_structural_identifier_safe_headers() {
+        let mut instruction_table = timing_test_table(
+            TableKind::TimingParameter,
+            None,
+            vec![
+                vec![
+                    table_cell("Instruction group", true),
+                    table_cell("AArch64 instructions", true),
+                    table_cell("Exec latency", true),
+                    table_cell("Execution throughput", true),
+                ],
+                vec![
+                    table_cell("Signed minimum", true),
+                    table_cell("SMIN", false),
+                    table_cell("4", false),
+                    table_cell("2", false),
+                ],
+            ],
+        );
+        assert!(
+            timing_table_columns(&instruction_table).is_none(),
+            "data-row text and substrings inside instruction headers grant no timing authority"
+        );
+
+        let identifier_table = timing_test_table(
+            TableKind::TimingParameter,
+            None,
+            vec![vec![
+                table_cell("OPTIMAL_TRIM_UNIT_SIZE", true),
+                table_cell("Maximum value", true),
+            ]],
+        );
+        assert!(
+            timing_table_columns(&identifier_table).is_none(),
+            "underscored identifiers do not contribute a standalone unit token"
+        );
+
+        let mut trapped_timing = timing_test_table(
+            TableKind::Unknown,
+            Some("Receiver timing (all values in ns)"),
+            vec![
+                vec![
+                    table_cell("", false),
+                    table_cell("MIN", true),
+                    table_cell("TYP", true),
+                    table_cell("MAX", true),
+                ],
+                vec![
+                    table_cell("clock period", true),
+                    table_cell("360", false),
+                    table_cell("400", false),
+                    table_cell("440", false),
+                ],
+            ],
+        );
+        let columns = timing_table_columns(&trapped_timing)
+            .expect("the genuine first-row min/typ/max schema is authoritative");
+        assert_eq!(
+            (columns.name, columns.min, columns.typ, columns.max),
+            (0, Some(1), Some(2), Some(3))
+        );
+
+        let mut variant_timing = timing_test_table(
+            TableKind::TimingParameter,
+            Some("AC timing limits"),
+            vec![
+                vec![
+                    table_cell("Symbol", true),
+                    table_cell("Parameters", true),
+                    table_cell("Mode A", true),
+                    table_cell("Mode A", true),
+                    table_cell("Mode B", true),
+                    table_cell("Mode B", true),
+                    table_cell("Units", true),
+                ],
+                vec![
+                    table_cell("Symbol", true),
+                    table_cell("Parameters", true),
+                    table_cell("Min", true),
+                    table_cell("Max", true),
+                    table_cell("Min", true),
+                    table_cell("Max", true),
+                    table_cell("Units", true),
+                ],
+            ],
+        );
+        assert!(timing_table_has_structural_authority(&variant_timing));
+        assert!(
+            timing_table_columns(&variant_timing).is_none(),
+            "variant limits remain timing-bearing but cannot be collapsed into one scalar record"
+        );
+
+        normalize_timing_table_kinds(std::slice::from_mut(&mut instruction_table));
+        normalize_timing_table_kinds(std::slice::from_mut(&mut trapped_timing));
+        normalize_timing_table_kinds(std::slice::from_mut(&mut variant_timing));
+        assert_eq!(instruction_table.table_kind, TableKind::Unknown);
+        assert_eq!(
+            trapped_timing.table_kind,
+            TableKind::Unknown,
+            "structural shape alone must not promote an unclassified table"
+        );
+        assert_eq!(variant_timing.table_kind, TableKind::TimingParameter);
     }
 
     #[test]

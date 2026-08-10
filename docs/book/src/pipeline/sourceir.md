@@ -55,17 +55,15 @@ re-ingest means the refreshed EvidenceIR and downstream stages were built and ve
 not undo that work. Report normalized retention separately when discussing whether evidence can be rebuilt again
 without another Docling ingest.
 
-The current measured example (`2026-08-10`) is 45 completed current-binary refreshes with 11 real chip-spec
-documents left in the refresh queue. The local artifact tree separately contains 80 SourceIR files, 14 retained
+The current measured example (`2026-08-10`) is 46 completed current-binary refreshes with ten real chip-spec
+documents left in the refresh queue. The local artifact tree separately contains 80 SourceIR files, 18 retained
 normalized bundles, 80 EvidenceIR files, and 79 SemanticIR→IntentIR→adapter chains. The newest bundle belongs to
-the 30-page OpenCAPI 25 Gbps PHY Signaling Specification: its 60 page image/layout paths and 52
-visual/caption-source path values are final, present, and repository-relative. The explicitly authorized source
-PDF remains absolute and labeled `external_input`; source and repository are on the same SSD. One guarded CPU
-ingest peaked at 17% sampled system memory used and produced 26 visuals, 19 tables, 59 sections, and 224
-source elements. The stale 231→224 delta removes only flattened diagram labels on four pages that retain their
-visual evidence; one affected prose paragraph gains a clean replacement. The bundle's presence is cache-retention
-status, not what makes that refresh complete; complete verified downstream artifacts are the durable progress
-measure.
+the 40-page OpenCAPI Discovery Configuration specification: all 188 project-owned path values are final,
+present, and repository-relative. The explicitly authorized source PDF remains absolute and labeled
+`external_input`; source and repository are on the same SSD. Three guarded CPU ingests kept 47–53% system memory
+free and reproduced 54 visuals, 49 tables, 50 sections, and 172 source elements. The stale 181→172 delta removes
+only nine flattened labels from visual-bearing pages. The bundle's presence is cache-retention status, not what
+makes that refresh complete; complete verified downstream artifacts are the durable progress measure.
 
 ## Why this stage matters
 
@@ -400,6 +398,26 @@ and 32 further tables whose captions literally name an encoding move
 from `unknown`/`feature_matrix`/`timing_parameter` to the correct
 `encoding` — a net precision gain with no regression. *Authoritative
 tracking:* `docs/tasks/REGISTER-CLASSIFIER-ENCODING-FP.md`.
+
+### `CORPUS-COVERAGE.2.47a` — timing-table shape validates a category; it does not invent one
+
+A table is not a timing table merely because some cell contains the letters `min` or `ns`. PDF table models can
+mark a data row's label as a row header and place the whole row in `header_rows`. If classification flattens all
+of those rows, data such as an `SMIN` instruction mnemonic can masquerade as a `MIN` column, and the letters `ns`
+inside `Instruction group` can masquerade as a nanosecond unit.
+
+SourceIR now gives timing classification a structural boundary. Only the leading rows whose non-empty cells are
+all genuine column headers supply vocabulary. Header text is tokenized as identifiers, with underscores retained,
+so an embedded character sequence or a name such as `OPTIMAL_TRIM_UNIT_SIZE` does not create a standalone
+`min`, `ns`, or `unit` token. A candidate also needs a min/typ/max role plus parameter/symbol, explicit unit, or
+timing/unit caption context.
+
+This structural check is deliberately **necessary, not sufficient**. It can demote a persisted or newly proposed
+`TimingParameter` kind that lacks support, but it cannot promote an otherwise `Unknown` table by shape alone.
+Category authority must still come from the ingest classifier or a protocol-matched prior. That distinction
+keeps a generic four-column `Parameter | Min | Max | Unit` shape from silently becoming canonical timing evidence
+when no classifier selected it. *Authoritative tracking:* `docs/tasks/CORPUS-COVERAGE.md`
+(`CORPUS-COVERAGE.2.47a`); Knowledge Map `[[timing-table-structural-authority]]`.
 
 ### `DOCLING-DEVICE-CPU-DEFAULT` — ingest picks a working compute device
 

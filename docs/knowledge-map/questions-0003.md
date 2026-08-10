@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > how does ground_constraint recover a value the model did not echo
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > how does ingest avoid being RAM-guard-aborted on a small/restricted machine
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > how does ingest avoid crashing the host when memory runs out
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
@@ -293,7 +297,3 @@
   > how many synthetic behaviors came from generic gates
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
   > how many synthetic behaviors came from generic section phases
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > how many transactions does each persisted IntentIR doc have (AXI=9, AHB=3, APB=3)
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > how many unknown-kind tables does the corpus carry

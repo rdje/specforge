@@ -104,6 +104,8 @@
   > can the subject snap fabricate or rewrite a signal name
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > can the word when in a statement make its whole section a semantic phase
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > can timing table shape promote an unknown table to timing_parameter (no; shape validates upstream classification or a prior)
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > can typed-surface counts alone determine a PDF's purpose category (no — 2 vs 3 not separable, ISA has no signature, 5 vs 6 indistinguishable)
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
@@ -296,5 +298,3 @@
   > does mdbook test pass for the SpecForge book
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
   > does platform/system-IP (category 3) topology intent need a new ISF construct or map onto an existing one (ISF has NO declarative static-topology/connectivity construct — composition is transaction-level only; decision deferred to a capture-recall measurement .4c.i before any FR)
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > does register extraction require the table_kind register classification
