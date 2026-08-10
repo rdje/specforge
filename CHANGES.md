@@ -1,3 +1,17 @@
+### CORPUS-COVERAGE.2.49 — refresh GIC overview without false topology
+
+- Two guarded CPU ingests reproduce 45 pages / 44 visuals / 13 tables / 58 sections / 430 elements and a
+  139-file / 30,731,394-byte normalized bundle. Final SourceIR, bundle, and all eight downstream artifact/report
+  hashes reproduce.
+- The GIC-version/CPU-family compatibility table is a feature matrix, not three timing records. Evidence retains
+  439 statements / 12 narrative conditionals with no typed signal, relation, register, or timing authority.
+- Current generic authority removes 83 heuristic interfaces, 26 section phases, 54 prose gates, and the stale
+  `controller.isf`; it preserves 87 invariants, four contracts, one assertion, four intent behaviors, and 88
+  constraints. Adapter lowering blocks honestly on no declared signals.
+- Nine provider-free datasets, KG 156/156, EvidenceIR 350/five ignored, full CI 1,798/five ignored, 58/58 FSMGen
+  strict, mdBook, doctrines, 2,508-artifact persisted paths, and locality pass. Corpus is 49 done / seven remaining
+  at 80/21/80/79; the stale fact-card checker name is corrected to `check_persisted_artifact_paths.pl`.
+
 ### CORPUS-TASK-EVIDENCE-CONTAINMENT.4b — prove clean recovery and continuation
 
 - A same-SSD `--no-hardlinks` clone at `67e726f1` reproduced the exact migrated capsule/root/parts/index/manifest;

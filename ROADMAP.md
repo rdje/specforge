@@ -253,15 +253,19 @@ Five active program groups support that north star:
   closes the Docling-expanded footer defect across the 80-document timing surface (608→585), leaving 60 grounded
   OpenCAPI timings. Current authority removes three stale interfaces / 18 phases / 19 gates and the four-port/
   one-enum target; final IntentIR retains seven actors / 21 behaviors / 75 constraints / four assumptions. Corpus
-  is 48 done / eight remaining at 80 SourceIR / 20 normalized / 80 EvidenceIR / 79 downstream chains, with 59/59
-  current emitted ISFs strict-clean. The corpus task record now has a 65-line bounded current root over seven
-  semantic parts, a 48-route index/manifest, and an exact 2,308-line source capsule. The guarded migration owned by
+  is 49 done / seven remaining at 80 SourceIR / 21 normalized / 80 EvidenceIR / 79 downstream chains, with 58/58
+  current emitted ISFs strict-clean. `.2.49` refreshes the 45-page Generic Interrupt Controller Overview Guide:
+  two guarded ingests reproduce 430 elements and a 139-file / 30,731,394-byte normalized bundle. Current source
+  classification identifies the GIC-version/CPU-family table as a feature matrix rather than three timing values;
+  current semantic authority removes 83 stale heuristic interfaces, 26 generic phases, 54 prose gates, and the
+  unsupported `controller.isf` while preserving 87 invariants, four contracts, one assertion, four grounded intent
+  behaviors, and 88 constraints. The corpus task record now has a bounded current root over eight semantic parts,
+  a 49-route index/manifest, and an exact 2,308-line source capsule. The guarded migration owned by
   [`CORPUS-TASK-EVIDENCE-CONTAINMENT`](docs/tasks/CORPUS-TASK-EVIDENCE-CONTAINMENT.md) is lossless and below all
   local warnings. Its same-SSD no-hardlink clean clone passed every doctrine, a temporary eighth active part proved
   the eligible post-migration #49 route through the composed live gate, and exact restoration left no residue.
-  Containment is closed. `CORPUS-COVERAGE.2.49` now owns the 45-page Generic Interrupt Controller Overview Guide,
-  the smallest of eight remaining documents at 430 retained elements; source and stale-chain boundaries are pinned
-  before its guarded current-binary ingest.
+  Containment is closed and the first post-migration product route is complete. The next separately owned product
+  slice is refresh #50.
   Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID

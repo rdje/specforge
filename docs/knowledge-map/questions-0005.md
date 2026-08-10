@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
+  > is tier-agreement a good confidence axis for conformal calibration
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > must a post-build signal_constraints replace re-apply build-path invariants
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > per-wire-doc direction flip results (APB input 2->12, AXI 4->52, SWD 0->1, AHB residual)
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
@@ -137,6 +141,8 @@
   > what are the extraction_quality_* validate metrics and when do they read n/a
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
   > what are the final Cortex-A76 SourceIR normalized and downstream reproducibility hashes
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > what are the final GIC Overview Guide reproducibility hashes
 - [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
   > what are the final OpenCAPI 32G PHY Signaling SourceIR and normalized bundle hashes
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
@@ -291,9 +297,3 @@
   > what gates protect the leading-identifier mnemonic form from bleed
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
   > what grounded content survives the Cortex-A76 optimization guide refresh
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > what grounded heuristic only interface evidence is preserved
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > what happened in OpenCAPI Discovery Configuration refresh 46
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > what happened to the AArch64 External Debug Guide agent.isf

@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > where is the normative IntentIR product contract
+- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
+  > where is the per-author adopt-vs-defer provenance
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > where is the register-field gold seed
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > where is the second LIVE_ACHIEVEMENT_STATUS rollover segment and what blocks the next one
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > where is the shared 0.6 fingerprint clustering threshold defined (DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD)
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > where is the shared section-heading container-walk that .10f and .10g both use
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > where is the spawn+poll+kill memory guard in materialize_pdf
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
@@ -285,15 +297,3 @@
   > why did the host actor disappear from AArch64 External Debug
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > why did the moved Python virtual environments still access the old repository
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > why did the promoted surface lose the AXI reset temporal rules (DEASSERTED vs LOW)
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > why did the register-at-offset placement-map hypothesis get overturned
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > why did transaction_phases contain called edge or positive
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > why did validating a copied rollback backannotate the canonical chain
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > why do .1a and .1b.iv not catch the eMMC phantom actors like advantage of / basic bus / actual sector
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why do 8 generic-named enums survive .5.i (they are document-evidenced — the token IS a declared signal or a column header in that doc, e.g. CCIX 'Table of Contents' header cells keep a 'TABLE' enum; the structural gate correctly cannot drop them without a forbidden name-list — honest .5.ii member-quality residuals)

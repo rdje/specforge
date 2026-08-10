@@ -77,6 +77,7 @@
 - [fsmgen-temporal-isf-form](fsmgen-temporal-isf-form.md)
 - [full-page-capture-gap](full-page-capture-gap.md)
 - [generic-enum-conflation](generic-enum-conflation.md)
+- [gic-overview-guide-refresh-is-authority-empty](gic-overview-guide-refresh-is-authority-empty.md)
 - [header-trapped-signal-table-recovery](header-trapped-signal-table-recovery.md)
 - [host-library-route-remains-on-boot-volume](host-library-route-remains-on-boot-volume.md)
 - [indexed-signal-family-canonicalization](indexed-signal-family-canonicalization.md)

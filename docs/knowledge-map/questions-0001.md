@@ -10,6 +10,8 @@
   > EXTRACTION-QUALITY-GAUGE.3g what is the dotted-cross-reference spurious-subject gate
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > are APB tables 0016 0017 0018 a real catalog miss
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > are GICv2 GICv3 and GICv4 CPU-family rows timing constraints (no)
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
   > are OpenCAPI Discovery normalized paths portable
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
@@ -296,5 +298,3 @@
   > does eval-extraction rebuild evidence or load the persisted file
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > does every SWD protocol record receive an ISF adapter disposition
-- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
-  > does every temporal_rule reach the .isf or a residual

@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > what is the intent_stale_relations_dropped / semantic_stale_relations_dropped finding
+- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
+  > what is the inter-annotator agreement of the eval gold
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > what is the largest faithful-lowering gap in the IntentIR -> .isf round trip
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what is the live-document coverage authority
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > what is the message_field_catalog_dump measurement harness
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > what is the message_fields.section_header_field strategy
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > what is the model-misspelled-subject / phantom-subject defect class
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
@@ -286,15 +298,3 @@
   > where is the first post-migration LIVE_ACHIEVEMENT_STATUS rollover segment
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > where is the mdBook current-truth verifier
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > where is the normative IntentIR product contract
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > where is the per-author adopt-vs-defer provenance
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > where is the register-field gold seed
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > where is the second LIVE_ACHIEVEMENT_STATUS rollover segment and what blocks the next one
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > where is the shared 0.6 fingerprint clustering threshold defined (DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD)
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > where is the shared section-heading container-walk that .10f and .10g both use

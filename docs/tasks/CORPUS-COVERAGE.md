@@ -20,21 +20,21 @@ ISF pipeline, keep completed chains non-stale, and record extraction gaps withou
 
 ## Current State
 
-48 of 56 real chip-spec refreshes are complete.
+49 of 56 real chip-spec refreshes are complete.
 
-- Stage coverage: 80 SourceIR / 20 normalized / 80 EvidenceIR / 79 downstream chains.
-- Emitted ISF: 59/59 current targets pass FSMGen strict validation.
+- Stage coverage: 80 SourceIR / 21 normalized / 80 EvidenceIR / 79 downstream chains.
+- Emitted ISF: 58/58 current targets pass FSMGen strict validation.
 - Completed program lanes: `.0` build-out, `.1` stage-staleness validation, and `.3` lifecycle reconciliation.
-- Active program lane: `.2` current-binary corpus refresh, with eight real documents remaining.
+- Active program lane: `.2` current-binary corpus refresh, with seven real documents remaining.
 - Blockers: none.
 
 ## Current Frontier
 
-Active product leaf: `CORPUS-COVERAGE.2.49`.
+No eligible product leaf.
 
-`CORPUS-COVERAGE.2.49` is owned in the active `refreshes-49-56` part. It selects the 45-page Generic Interrupt
-Controller Overview Guide, the smallest of eight remaining documents at 430 retained elements, and pins the exact
-same-SSD source plus stale seven-file chain before any ingest or artifact mutation.
+`CORPUS-COVERAGE.2.49` is complete in the active `refreshes-49-56` part. The next clean slice must create and own
+`CORPUS-COVERAGE.2.50`, select one of the seven remaining real documents from current corpus evidence, and pin its
+exact source and stale-chain boundary before any ingest or artifact mutation.
 
 ## Detailed task evidence
 
@@ -54,6 +54,7 @@ doctrines, and the risk-proportionate `COMMIT.md` gates before committing each l
 
 | Date | Boundary | Result |
 | --- | --- | --- |
+| `2026-08-10` | refresh `.2.49` | 49 done / seven remaining; 80/21/80/79; 58/58 strict-clean |
 | `2026-08-10` | refresh `.2.48` | 48 done / eight remaining; 80/20/80/79; 59/59 strict-clean |
 | `2026-08-10` | containment source lock | 2,308 lines / 277,636 bytes / seven exact regions / 48 formal routes |
 
@@ -61,5 +62,6 @@ doctrines, and the risk-proportionate `COMMIT.md` gates before committing each l
 
 | Unit | Durable evidence |
 | --- | --- |
+| `CORPUS-COVERAGE.2.49` | latest completed product refresh |
 | `CORPUS-COVERAGE.2.48` | latest completed product refresh |
 | `CORPUS-TASK-EVIDENCE-CONTAINMENT` | bounded root, semantic evidence parts, and exact provenance |

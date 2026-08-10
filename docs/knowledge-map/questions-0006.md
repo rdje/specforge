@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > what grounded heuristic only interface evidence is preserved
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > what grounded intent remains in the GIC Overview Guide
+- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
+  > what happened in OpenCAPI Discovery Configuration refresh 46
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > what happened to the AArch64 External Debug Guide agent.isf
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
   > what happened to the CoreSight Base System agent.isf
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
@@ -12,6 +20,8 @@
   > what happened to the four signal two enum Introducing CoreSight adapter
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > what happened to the original Introducing CoreSight rollback
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > what happened to the stale 83 interfaces in the GIC Overview Guide
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
   > what happened to the stale Cortex-A76 consumer.isf with 537 outputs
 - [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
@@ -102,6 +112,8 @@
   > what is continuation_inherited_table_heads and what grounds the join
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
   > what is corpus refresh 47 and why is its adapter honestly blocked
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > what is corpus refresh 49
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > what is corpus_cluster / document_fingerprint / cluster_documents / DocumentCluster
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
@@ -285,15 +297,3 @@
   > what is the ingest disk pre-flight check
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > what is the initiator-perspective direction emission / KG-ISF-COMPLETENESS.2a.ii
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > what is the intent_stale_relations_dropped / semantic_stale_relations_dropped finding
-- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
-  > what is the inter-annotator agreement of the eval gold
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > what is the largest faithful-lowering gap in the IntentIR -> .isf round trip
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what is the live-document coverage authority
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > what is the message_field_catalog_dump measurement harness
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > what is the message_fields.section_header_field strategy

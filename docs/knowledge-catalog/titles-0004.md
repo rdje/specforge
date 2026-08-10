@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [task-tree-catalog](../knowledge/task-tree-catalog.md) | 2026-08-08 | `current` | The task-tree catalog is a bounded derived navigation layer |
 | [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md) | 2026-06-02 | `current` | The temporal-rule eval's residual false positives are a stale artifact, not a live bug |
 | [temporal-logic-choice](../knowledge/temporal-logic-choice.md) | 2026-06-04 | `current` | SpecForge captures temporal behavior in LTL/MTL, not CTL or TLA+ |
 | [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md) | 2026-06-04 | `current` | Temporal rules render to standard LTL/MTL via ir/temporal_ltl.rs |

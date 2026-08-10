@@ -5,7 +5,7 @@
 
 ## CORPUS-COVERAGE.2.49
 
-- Status: `active` (`2026-08-10`, DATA/DOC; ownership and exact stale boundary only)
+- Status: `done` (`2026-08-10`, DATA/DOC)
 - Goal: re-ingest the Generic Interrupt Controller Overview Guide with the current release, then rebuild and
   validate EvidenceIR → SemanticIR → IntentIR → ISF without treating glossary, architecture-overview prose,
   generic sections, diagram labels, or administrative material as typed hardware authority.
@@ -58,15 +58,50 @@ The release binary is the `.2.48a` final binary at SHA-256
 `efb57ab3904c1652605624e79b64abf087d7bed6b0ae79dd5d72f2a3697a8ab4`; the latest Rust authority is commit
 `7eda2928ac086fdb8bbeb91cac9250e0fe1beca0`.
 
+### Current result
+
+Two guarded CPU ingests from the directly resolved, caller-authorized same-SSD external input reproduce the
+45-page / 44-visual / 13-table / 58-section / 430-element SourceIR. The normalized bundle contains 139 files /
+30,731,394 bytes at SHA-256 `b1905855cbacf03a4a2fc07644f2418749d85a00d1d02e78fe3bb46cde1e4b56`.
+The source counts hold exactly; current table classification changes the CPU-family compatibility matrix from
+`timing_parameter` to `feature_matrix`, so three false GICv2/GICv3/GICv4 timing records disappear.
+
+EvidenceIR retains 439 statements / 33 links / 12 narrative conditionals and has zero typed signals, relations,
+registers, or timings. Validation classifies the self-declared overview as a high-confidence methodology guide.
+Current generic authority removes 83 heuristic interface groups built from CPU names, exception levels, register
+identifiers, and interrupt labels; it also retires 26 section-derived phases and 54 whole-prose gates. SemanticIR
+retains seven actors / 87 invariants / four contracts / one assertion. IntentIR retains three actors / four
+grounded contract behaviors / 88 constraints / nine assumptions / one recognition-only transaction, with zero
+interfaces or timings. Adapter lowering blocks only on `no signals declared in interface`, emits no target, and
+removes the stale `controller.isf`.
+
+The final validated artifacts reproduce twice:
+
+| Artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| SourceIR | 234,486 | `421166d5f13c914229462e034cc0311e90b0891e9cc783fa08f5f9d364181dd5` |
+| Source validation | 2,330 | `57cdf6e4a5c17921b9b65aff36798be914121e1aba14b6192e6604598dae493e` |
+| EvidenceIR | 423,844 | `6468c0a74ddcad621ff79214a92c339aa8853db5a6998886df9238c49ab286c9` |
+| Evidence validation | 14,327 | `8d4648e0ae16ef47a4a7c6e7065a04acfa8000905a52e15c32e871132ec18d65` |
+| SemanticIR | 103,167 | `a9efb0f0ceda67b04448bbdbf9b47691820385718ff4cdf90e89cf85da9e76f6` |
+| Semantic validation | 7,462 | `c992378923416bc0acfe5e7eb77d21bfc3278cb9ef919a752e4374626e1bee52` |
+| IntentIR | 150,437 | `64ab094a652fe56043a474d1b2b0ed0d56802aafea0da21416dd523452862376` |
+| Intent validation | 9,278 | `5e743c6c7cb9dcae5262f5550721aa0be31dbed35887da74186c8b0fd1022702` |
+| Adapter manifest | 3,620 | `47724699ba894ecad6b62c7a7f3819de4be5c32a5cbdb2cafeeaef882238063e` |
+| Adapter validation | 1,794 | `ef2a75255de63f5ee02f56cfada2b60031059c5b318e819923791894181a7c22` |
+
+The eight downstream artifact/report hashes combine to
+`99bd34c14c5bb638df35e183ab4dea68f6e7a2769f5a6ea81fff915d33a89a00`.
+
 ### Acceptance
 
-- Authenticate rollback copies of every stale chain artifact inside a repository-derived same-volume workspace.
-- Run guarded CPU ingest with the 85% memory abort ceiling and no off-volume project temp/cache/output.
-- Rebuild and validate the complete current-binary chain; rerun to establish deterministic hashes where required.
-- Classify every stale→fresh delta at its first causal stage and refuse unsupported hardware authority.
-- Run focused validation, provider-free evals, KG fixtures, emitted-ISF FSMGen strict checks, doctrines, mdBook,
+- [x] Authenticate rollback copies of every stale chain artifact inside a repository-derived same-volume workspace.
+- [x] Run guarded CPU ingest with the 85% memory abort ceiling and no off-volume project temp/cache/output.
+- [x] Rebuild and validate the complete current-binary chain; rerun to establish deterministic hashes where required.
+- [x] Classify every stale→fresh delta at its first causal stage and refuse unsupported hardware authority.
+- [x] Run focused validation, provider-free evals, KG fixtures, emitted-ISF FSMGen strict checks, doctrines, mdBook,
   project-path/locality checks, and broader CI proportional to any code change.
-- Update root, active part, index/manifest/contract, roadmap, current status, live docs/book, facts, and memory;
+- [x] Update root, active part, index/manifest/contract, roadmap, current status, live docs/book, facts, and memory;
   commit before deleting authenticated rollback evidence or moving to refresh #50.
 
 ### Decisions and incidents
@@ -77,6 +112,13 @@ The release binary is the `.2.48a` final binary at SHA-256
   `/tmp/specforge-current-source-keys.txt`. It contained no source content, was deleted immediately, and an exact
   absence check passed. All subsequent census work is in-memory; every task-owned workspace/output remains on the
   repository volume. This incident does not authorize `/tmp` for later workflow steps.
+- `2026-08-10`: ingest through the ignored `.cache/local-references/chipdoc` symlink failed closed before mutation
+  because a repository-looking persisted source may not escape through a symlink. The stale SourceIR hash and
+  normalized absence re-verified. The successful runs used the directly resolved caller-authorized same-SSD input,
+  persisted it as `external_input`, and kept every project-owned output repository-relative.
+- `2026-08-10`: verification found one stale fact-card command naming removed
+  `scripts/check_persisted_paths.pl`; the canonical checker is `scripts/check_persisted_artifact_paths.pl`.
+  The existing fact is corrected in this slice; no executable or gate was missing.
 
 ### Verification log
 
@@ -84,9 +126,13 @@ The release binary is the `.2.48a` final binary at SHA-256
 | --- | --- | --- |
 | `2026-08-10` | ownership selection | eight candidates ranked; same-device source/hash and seven-file stale chain authenticated; normalized bundle absent; no generated mutation |
 | `2026-08-10` | prospective ownership topology | focused task-evidence, catalog, Knowledge Map, 720-file live-document gate, mdBook test/build, and diff checks pass |
+| `2026-08-10` | rollback and locality | seven rollback files / 1,400,092 bytes match every stale hash on device `16777240`; symlink invocation fails before mutation; direct external input persists with the correct origin label |
+| `2026-08-10` | deterministic refresh | two guarded ingests reproduce 139 files / 30,731,394 bytes, bundle hash, and all ten artifact/report hashes; five stages validate; no emitted target |
+| `2026-08-10` | no regression | EvidenceIR 350/five ignored; nine provider-free datasets; KG 156/156; 58/58 FSMGen strict; 2,508 artifacts / 357,904 paths; full CI 1,798/five ignored; locality pass |
 
 ### Commit log
 
 | Unit | Durable evidence |
 | --- | --- |
-| `CORPUS-COVERAGE.2.49` | `CORPUS-COVERAGE.2.49 — own GIC overview refresh` |
+| `CORPUS-COVERAGE.2.49` ownership | `d23c26b4` — `CORPUS-COVERAGE.2.49 — own GIC overview refresh` |
+| `CORPUS-COVERAGE.2.49` completion | `CORPUS-COVERAGE.2.49 — refresh GIC overview without false topology` |

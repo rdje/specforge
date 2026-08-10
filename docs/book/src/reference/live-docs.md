@@ -208,9 +208,13 @@ slice. An independent same-SSD no-hardlink clone authenticated `67e726f1`, the s
 48 routes, index, manifest, and all doctrines. A temporary eighth active part then made `CORPUS-COVERAGE.2.49`
 an eligible `post_migration` route; the focused contract and composed 720-file live-document gate passed without
 warnings from the corpus surfaces. The clone returned to the exact committed tree and was removed, so containment
-is closed. The separate `CORPUS-COVERAGE.2.49` leaf now owns the 45-page Generic Interrupt Controller Overview
-Guide, the smallest of eight remaining documents at 430 retained elements; its same-SSD source and exact stale
-seven-file chain are pinned before guarded ingest.
+is closed. The first separate post-migration leaf, `CORPUS-COVERAGE.2.49`, refreshes the 45-page Generic Interrupt
+Controller Overview Guide with two deterministic guarded CPU ingests. Source structure holds at 430 elements and
+the normalized bundle is restored at 139 files / 30,731,394 bytes. The guide's GIC-version/CPU-family table is a
+feature matrix, not three timing constraints; current generic authority also removes 83 heuristic interfaces,
+26 section phases, 54 prose gates, and the unsupported `controller.isf`. Grounded invariants, contracts, four
+intent behaviors, and 88 constraints remain. Corpus coverage is 49/56 with seven refreshes remaining, stages are
+80/21/80/79, and all 58 retained emitted targets pass FSMGen strict validation.
 
 Post-migration sealing is Git-backed: a part's final content commit lands first, then a following state-only
 transaction records that ancestor commit/blob before any later part accepts work. The migrated legacy payloads

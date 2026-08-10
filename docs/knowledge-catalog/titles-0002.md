@@ -25,6 +25,7 @@
 | [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md) | 2026-06-04 | `current` | SpecForge emits bounded-eventually as (assert (monitor (within s N))) into .isf (fsmgen pin 43b29f5c) |
 | [full-page-capture-gap](../knowledge/full-page-capture-gap.md) | 2026-06-14 | `current` | SpecForge captures a page's intent-bearing content; the residual outside Docling regions is decoration/furnit… |
 | [generic-enum-conflation](../knowledge/generic-enum-conflation.md) | 2026-06-24 | `current` | The `.isf` generic-`TABLE` (and `FIGURE`/`DATA`/…) mega-enum is an EXTRACTION-born conflation — `derive_e… |
+| [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md) | 2026-08-10 | `current` | The GIC Overview Guide carries interrupt constraints, not an 83-interface hardware surface |
 | [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md) | 2026-06-11 | `current` | Header-trapped SIGNAL tables — shared trapped-row rule, continuation-kind inheritance, inventory-gated gap-… |
 | [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md) | 2026-08-09 | `superseded` | Historical blocker: the corpus host-library route still named the boot-volume checkout |
 | [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md) | 2026-06-06 | `current` | Un-indexed prose signal refs resolve to the declared indexed family member (PSEL → PSELx) |
@@ -60,4 +61,3 @@
 | [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md) | 2026-08-08 | `current` | The live book classifies illustrative fences explicitly and passes mdBook doctests |
 | [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md) | 2026-06-10 | `current` | message_field_constraints — field-subject obligations are routed, not dropped (CHI TagOp/PBHA live) |
 | [message-field-records-surface](../knowledge/message-field-records-surface.md) | 2026-06-10 | `current` | message_field_records — the typed home for packet/flit message fields (CHI 106, C2C ≤189, CCIX ~50) |
-| [message-field-validate-integration](../knowledge/message-field-validate-integration.md) | 2026-06-11 | `current` | validate reports the message-field surfaces (5 metrics + inventory finding); class census and completeness ga… |

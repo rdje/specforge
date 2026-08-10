@@ -21,15 +21,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.49`; Generic Interrupt Controller Overview Guide refresh.
-- Current state: `CORPUS-COVERAGE.2` refresh #48 is complete at 48 done / eight remaining, 80 SourceIR / 20
-  normalized / 80 EvidenceIR / 79 downstream chains, and 59/59 current emitted ISFs FSMGen-strict clean. Its task
-  stable root is now 65 lines / 2,819 bytes over a 75-line index, seven semantic parts, and an exact 2,308-line /
-  277,636-byte / SHA-256 `5d7acb0c…` capsule. The migrated contract authenticates all seven regions / 41 legacy +
-  seven structural routes. Containment is closed. `.2.49` selects the smallest remaining document: the 45-page /
-  430-element GIC Overview Guide. Its same-SSD PDF SHA and exact 1,400,092-byte stale seven-file chain are pinned;
-  normalized is absent and no generated artifact has changed.
-- Next action: commit the `.2.49` ownership boundary, create authenticated repository-local rollback evidence,
-  then run the guarded CPU ingest and complete deterministic downstream validation.
-- In-flight uncommitted: `.2.49` ownership/root/index/manifest/contract/book alignment only; no background job.
+- Active unit: `CORPUS-COVERAGE.2.49`; closing the Generic Interrupt Controller Overview Guide refresh.
+- Current state: refresh #49 is complete at 49 done / seven remaining, 80 SourceIR / 21 normalized / 80 EvidenceIR /
+  79 downstream chains, and 58/58 current emitted ISFs FSMGen-strict clean. Two guarded CPU ingests reproduce the
+  430-element SourceIR, 139-file / 30,731,394-byte normalized bundle, and all ten artifact/report hashes. Current
+  authority retires three false timings, 83 heuristic interfaces, 26 generic phases, 54 prose gates, and the stale
+  `controller.isf`; the methodology guide retains grounded invariants, contracts, behaviors, and constraints.
+- Next action: commit the `.2.49` completion/alignment checkpoint, remove its authenticated repository-local
+  rollback evidence with a zero-residue census, then create and own `CORPUS-COVERAGE.2.50`.
+- In-flight uncommitted: `.2.49` completion/task/status/book/fact alignment only; authenticated ignored rollback
+  evidence remains until the durable completion commit; no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

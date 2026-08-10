@@ -41,10 +41,10 @@ stable path (33 fact cards, three book chapters, three root live docs, one task 
 none with a fragment or query, and no executable opens the target. The only writer is the manual task-tree and
 `COMMIT.md` slice transaction.
 
-The current product truth is 48 of 56 real chip-spec refreshes done, eight remaining, stages 80/20/80/79, and
-59/59 emitted ISFs strict-clean. Literal stale text remains exact history. Containment itself selected no product,
-but after closure the separate `CORPUS-COVERAGE.2.49` leaf selected the 45-page / 430-element Generic Interrupt
-Controller Overview Guide and pinned its same-SSD source plus stale seven-file chain before ingest.
+The current product truth is 49 of 56 real chip-spec refreshes done, seven remaining, stages 80/21/80/79, and
+58/58 emitted ISFs strict-clean. Literal stale text remains exact history. Containment itself selected no product;
+after closure the separate `CORPUS-COVERAGE.2.49` leaf used the eligible post-migration route to refresh the
+45-page / 430-element Generic Interrupt Controller Overview Guide and remove its unsupported emitted target.
 
 A new top-level continuation is rejected because it would break the established `.2.<refresh>` namespace or
 misstate the active `.2` parent. Archive-only is rejected because unique completed task authority would become a
@@ -67,4 +67,4 @@ and passed all six doctrines. A temporary eighth active part, eligible `CORPUS-C
 updated root/index/manifest/contract, and explicit part-surface registration passed the 720-file composed live gate.
 The clone's restored index tree equaled `HEAD^{tree}` at `8bab2dd341807e4767a96f0d1ee06ff962d37132`, status was
 empty, and the exact fixture was removed. No refresh #49 product work occurred inside containment; the separately
-owned `.2.49` active part now carries that product work.
+owned `.2.49` part subsequently completed that product work, leaving refresh #50 as the next separately owned leaf.
