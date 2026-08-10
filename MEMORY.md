@@ -26,7 +26,8 @@
   documents at 22/78/78/78 measured-current stages with **44/44 emitted ISFs FSMGen-strict clean**; the 22
   retained normalized bundles are now declared in `doctrine/chain_currency/retained_bundles.json` and gated, so
   the remaining 56 unmeasurable documents can only shrink, one per refresh, as each backfills its own bundle.
-- Next action: open `CORPUS-COVERAGE.2.51` — select one of the six remaining real chip-spec documents, pin its
-  source and stale-chain boundary, then refresh it and add its retained bundle to the declaration.
+- Next action: `FACT-CARD-CAPACITY-HEADROOM.0` — the fact plane is four facts from its `max_facts` 200 bound
+  (193 cards / 196 facts), and a routine slice writes cards; measure both authorities and accept an ADR before
+  anything widens. Then `CORPUS-COVERAGE.2.51` selects one of the six remaining real chip-spec documents.
 - In-flight uncommitted: none; no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

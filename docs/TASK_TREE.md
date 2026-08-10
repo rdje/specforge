@@ -65,6 +65,7 @@ The author template is linked separately and is never classified as active work.
 | `EXTRACTION-GAP-FIX` | `active` | close the extraction gaps PDF-VARIANT-DIGESTION.4 quantified | [open](tasks/EXTRACTION-GAP-FIX.md) |
 | `EXTRACTION-QUALITY-GAUGE` | `active` | measure the extraction-quality gap — and CHI's is large | [open](tasks/EXTRACTION-QUALITY-GAUGE.md) |
 | `EXTRACTOR-ARCHITECTURE` | `done` | make the EvidenceIR extractor path a coherent whole | [open](tasks/EXTRACTOR-ARCHITECTURE.md) |
+| `FACT-CARD-CAPACITY-HEADROOM` | `active` | restore headroom before the fact plane refuses new knowledge | [open](tasks/FACT-CARD-CAPACITY-HEADROOM.md) |
 | `FACT-CARD-CATALOG-CONTAINMENT` | `done` | keep fact-card browsing bounded before capacity fails | [open](tasks/FACT-CARD-CATALOG-CONTAINMENT.md) |
 | `FSMGEN-ASSERT-LOWERING` | `done` | lower stable / antecedent→consequent / min>1 obligations into the ISF verification family | [open](tasks/FSMGEN-ASSERT-LOWERING.md) |
 | `FSMGEN-ASSERT-MIGRATE` | `done` | re-pin to 43b29f5c + migrate `(contract … eventually …)` → `(assert (monitor …))` | [open](tasks/FSMGEN-ASSERT-MIGRATE.md) |
