@@ -21,15 +21,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2`; `.2.44` OpenCAPI 4.0 32 Gbps PHY Mechanical refresh is complete.
-- Current state: guarded CPU ingest and two validated cascades complete Source 262→212 diagram-label cleanup;
-  Evidence 350→267 additionally removes 33 synthetic ToC enum statements; current authority removes five stale
-  interfaces plus generic/false phase and gate projections. Final IntentIR has three actors / zero interfaces /
-  three behaviors / 45 constraints / two assumptions. Adapter blocks honestly on no signals and removes the stale
-  nine-port `.isf`; 65/65 remaining ISFs pass FSMGen strict. Stage census is 80/13/80/79; 44 refreshes are complete
-  with 12 remaining. WIRE/I2C/SWD, KG 156/156, full CI 1,791/five ignored, mdBook, doctrines, path census, and
-  locality pass.
-- Next action: select and authenticate the smallest roadmap-aligned refresh #45 candidate, create its owned leaf,
-  then run the guarded repository-local ingest and deterministic cascade.
-- In-flight uncommitted: none. No background job.
+- Active unit: `CORPUS-COVERAGE.2`; current-binary corpus refresh program, with slice `.2.45` complete.
+- Current state: guarded CPU ingest and two validated cascades for `.2.45` are complete. Source 231→224 removes diagram labels;
+  Evidence 395→385 additionally removes only three synthetic acronym declarations while all 70 physical timing
+  constraints hold. Current authority removes two stale interfaces plus false/generic phase and gate projections.
+  Final IntentIR has four actors / zero interfaces / four behaviors / 27 constraints / two assumptions / 70
+  timing constraints. Adapter blocks honestly on no signals and removes the stale three-port `.isf`; 64/64
+  remaining ISFs pass FSMGen strict. Stage census is 80/14/80/79; 45 refreshes are complete with 11 remaining.
+  WIRE/I2C/SWD, KG 156/156, full CI 1,791/five ignored, mdBook, six doctrines, paths, and locality pass.
+- Next action: select and authenticate refresh #46 from the 11 remaining real chip-spec candidates, create its
+  owning leaf from a clean repository, and continue the one-document guarded-cascade workflow.
+- In-flight uncommitted: none after the `.2.45` recording commit; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

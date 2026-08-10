@@ -226,7 +226,13 @@ Five active program groups support that north star:
   Final IntentIR keeps three behaviors / 45 constraints / two assumptions; lowering blocks honestly on no
   declared signals. Two cascades reproduce; WIRE/I2C/SWD, KG 156/156, and 65/65 FSMGen strict pass. Corpus is 44
   done / 12 remaining at 80 SourceIR / 13 normalized / 80 EvidenceIR / 79 downstream chains; full CI,
-  book/doctrines/path/locality pass; frontier → select refresh #45. Separately,
+  book/doctrines/path/locality pass. `.2.45` refreshes the 30-page OpenCAPI 25 Gbps PHY Signaling spec: Source
+  231→224 and Evidence 395→385 remove visual-label noise plus synthetic `DL`/`DDJ`/`CDR` declarations while all 70
+  physical timing constraints hold. Current authority removes two stale interfaces and the three-port `.isf`;
+  final IntentIR keeps four behaviors / 27 constraints / two assumptions. Two cascades reproduce; WIRE/I2C/SWD,
+  KG 156/156, 64/64 FSMGen strict, full CI, book/doctrines/path/locality pass. Corpus is 45 done / 11 remaining at
+  80 SourceIR / 14 normalized / 80 EvidenceIR / 79 downstream chains; frontier → select and authenticate refresh
+  #46 from a clean repository. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

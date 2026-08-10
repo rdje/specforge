@@ -176,10 +176,20 @@ engineering prose intact while removing the unsupported topology. The adapter no
 in interface`, emits no target, and leaves its manifest/report. Validation keeps eight unknown tables, 19
 unclassified visuals, and 21 normative residuals visible as the honest physical-link capture frontier.
 
-The corpus cache now has 65 current emitted `.isf` files, all covered by a fresh 65/65 FSMGen-strict sweep. The
+The 30-page OpenCAPI 25 Gbps PHY Signaling Specification provides a twelfth transfer and demonstrates that
+physical timing can survive without an invented digital port list. Its stale chain synthesized width-one `DL`,
+`DDJ`, and `CDR` declarations from glossary/measurement prose, grouped two interfaces, and emitted a three-port
+`channel.isf`. Current EvidenceIR removes exactly those three synthetic statements while preserving all 70
+constraints from ten recognized timing tables. Shared interface and phase authority removes the false ports and
+physical-property `recovery` phase; generic phase/gate retirement removes only untyped projections. Final
+IntentIR retains four behaviors / 27 constraints / two assumptions / 70 timing constraints, but the adapter
+correctly blocks on no declared interface signals. Nine unknown tables, 26 unclassified visuals, and 12 normative
+residuals remain explicit capture frontiers.
+
+The corpus cache now has 64 current emitted `.isf` files, all covered by a fresh 64/64 FSMGen-strict sweep. The
 blocked/non-emitting set includes USB 3.2, USB4 Inter-Domain, USB4 Connection Manager, CoreSight Base System,
 AArch64 External Debug, Introducing CoreSight, and the recently refreshed OpenCAPI notes/definitions/PHY
-Mechanical spec. Honest blocking is the correct lowering result for each.
+Mechanical/Signaling specs. Honest blocking is the correct lowering result for each.
 
 The measurement behind that repair found three upstream authority errors, not a reason to distrust every
 relation-derived direction. Across the retained corpus, 97 sentence-start phrases use `signal <word>` without

@@ -1,3 +1,18 @@
+### CORPUS-COVERAGE.2.45 — refresh OpenCAPI 25 Gbps PHY Signaling without false acronym ports
+
+- One guarded CPU ingest holds 30 pages / 26 visuals / 19 tables / 59 sections at 17% peak sampled memory,
+  restores a 91-file / 21360835-byte normalized bundle, and keeps all 112 project-owned path values relative and
+  present. Source 231→224 removes only diagram-label records on four visual-bearing pages.
+- Evidence 395→385 additionally removes only synthetic `Signal DL/DDJ/CDR is width 1.` statements and marks one
+  figure caption mixed-modality. Twelve normative statements, one conditional, and all 70 physical timing
+  constraints hold; relations, declarations, signal constraints, and registers remain zero.
+- Current authority removes two stale interfaces, false typed phase `recovery`, and retired generic phase/gate
+  projections. Final IntentIR retains four actors / four behaviors / 27 constraints / two assumptions / 70 timing
+  constraints. The stale three-port `.isf` is removed; lowering blocks honestly on no declared interface signals.
+- Two validated cascades reproduce eight downstream hashes. Nine WIRE/I2C/SWD datasets, KG 156/156, all 64
+  remaining emitted ISFs through real FSMGen strict, full CI 1,791/five ignored, mdBook, six doctrines, the
+  2,077-artifact / 355906-path census, and locality pass.
+
 ### CORPUS-COVERAGE.2.44 — refresh OpenCAPI 32 Gbps PHY Mechanical without false topology
 
 - One guarded CPU ingest holds 23 pages / 19 visuals / eight tables / 45 sections at 21% peak sampled memory,

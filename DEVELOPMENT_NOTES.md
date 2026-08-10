@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.45 (`2026-08-10`) — physical timing survives without acronym ports
+
+The stale 25 Gbps PHY-signaling chain conflated three glossary/measurement acronyms with a digital interface.
+Evidence synthesized width-one declarations for `DL`, `DDJ`, and `CDR`; SemanticIR grouped them into two
+interfaces, and the adapter emitted a three-output `channel.isf`. Yet the same document had zero direction
+relations, signal constraints, registers, or declared-signal table provenance. The strong surface was different:
+ten recognized timing tables produced 70 physical timing constraints.
+
+Current shared authority keeps that distinction intact. Source cleanup removes seven net visual-label elements;
+Evidence drops exactly the three synthetic declaration sentences while preserving every timing constraint. The
+typed-phase repair rejects `recovery phase` as a physical-property phrase, and generic phase/gate retirement
+removes the remaining section/cue projections. The resulting IntentIR still carries four behaviors, 27
+constraints, two assumptions, and all 70 timing measurements; it simply no longer claims that three acronyms are
+ports of a synthesizable actor.
+
+The honest result removes one more stale adapter, taking the live emitted corpus from 65 to 64 `.isf` files;
+all 64 pass real FSMGen strict. Validation continues to surface nine unknown tables, 26 unclassified visuals, and
+12 normative prose residuals alongside the ten typed timing tables. That is a measured physical-link capture
+frontier, not a reason to turn timing quantities or glossary abbreviations into executable signals.
+
 ## CORPUS-COVERAGE.2.44 (`2026-08-10`) — mechanical prose is evidence, not an implicit port declaration
 
 The stale OpenCAPI PHY-mechanical chain illustrates why a renderable adapter is not automatically a faithful
