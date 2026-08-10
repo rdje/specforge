@@ -102,6 +102,36 @@ today's ephemeral normalized-directory count.
   commit per `COMMIT.md` after each doc. No fabrication / ADR-0006 unchanged (this is a re-run of existing
   deterministic extractors, not new code); WIRE-BASED-100 + register/wire golds + `kg-bench` stay green
   (orthogonal — the 4 gold docs are not re-ingested). Record per-doc before/after typed-surface deltas here.
+- ID: `CORPUS-COVERAGE.2.46` · Status: `in_progress` (`2026-08-10`, DATA/DOC) · Goal: re-ingest the 40-page
+  OpenCAPI Discovery Configuration specification (`opencapi_discovery_configuration_v201`) from the
+  owner-authorized same-SSD host library with the current release, then rebuild and validate
+  EvidenceIR→SemanticIR→IntentIR→ISF without treating table/glossary acronyms as declared hardware signals.
+  This is the smallest of the 11 remaining real chip-spec candidates: 181 retained source elements and a
+  403646-byte input. Read-only authentication pins source `bc767d6e…fe103`, release `463a79e3…b06510`, and an
+  exact seven-file / 1951530-byte stale chain before any generated mutation.
+
+### Pending signoff criteria — `CORPUS-COVERAGE.2.46`
+
+- **PENDING — REPRODUCE / MEASURE** — copy/verify the exact rollback on the repository volume; run guarded
+  CPU-only Docling; record page/visual/table/section/element counts, peak memory, and current-vs-stale deltas.
+- **PENDING — ROOT CAUSE (WHY + WHERE)** — classify each material delta as normalization cleanup, current shared
+  authority, or stale-stage age; stop and own any distinct shared producer defect before proceeding.
+- **PENDING — ADDRESSED (verified)** — retain the faithful current cascade and adapter decision, whether rich,
+  thin, or honestly blocked; do not turn discovery/configuration labels into invented ports or behavior.
+- **PENDING — NO REGRESSION** — reproduce downstream hashes, validate the chain, run WIRE/I2C/SWD, KG, FSMGen
+  strict, mdBook, doctrines, persisted paths, and locality; restore the rollback on an unresolved failure.
+- **PENDING — GENERICITY** — use only current shared pipeline rules and typed/source-grounded evidence; no
+  OpenCAPI-specific extraction, signal, phase, or lowering rule is authorized by this data leaf.
+- **PENDING — LOCKSTEP** — task state, per-document log, live docs, mdBook, resume pointer, and generated chain
+  agree; delete the exact rollback/task bundle only after verification and durable commit.
+
+Stale baseline (`2026-08-10`, read-only): SourceIR has 40 pages / 54 visuals / 49 tables / 50 sections / 181
+elements. EvidenceIR has 50 anchors / 763 spans / 54 visuals / 636 links / 831 statements / one relation / four
+conditionals / one register / six timings. SemanticIR has six actors / two interfaces / one actor port / one
+relation / 16 phases / 20 gates / 57 invariants / ten contracts / five assertions / 38 decompositions / six
+timings. IntentIR has six actors / two interfaces / one actor port / one relation / 42 behaviors / 58 constraints /
+six assumptions / six timings. The adapter is renderable as `controller.isf` with synthetic width-one
+`BDF`/`DL`/`VPD` outputs, three enums, one storage record, and no transactions or rules.
 - ID: `CORPUS-COVERAGE.2.45` · Status: `done` (`2026-08-10`, DATA/DOC) · Goal: re-ingest the
   30-page OpenCAPI 25 Gbps PHY Signaling Specification (`opencapi_25gbps_phy_signaling_spec_1_0`) from the
   owner-authorized same-SSD host library with the current release, then rebuild and validate
@@ -1348,8 +1378,8 @@ live ledger to 61 records / 1,303 lines without loss.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: select and authenticate refresh #46 from the 11 remaining real chip-spec candidates; create its
-  owning leaf from a clean repository before any generated mutation.
+- Frontier: `CORPUS-COVERAGE.2.46` — preserve the authenticated seven-file rollback, then run the guarded
+  repository-local CPU ingest and deterministic cascade for OpenCAPI Discovery Configuration.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**39 refreshes done after #39;
   17 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#39: #29/#31 CHI-C2C marquee message-field refreshes,
@@ -1464,6 +1494,11 @@ strict syntax is not a semantic-fidelity oracle. **Levers A, B, C, F + the rule-
 
 ## Changelog
 
+- `2026-08-10`: `.2.46` DATA/DOC OWNED from clean commit `c7538a61`. OpenCAPI Discovery Configuration is the
+  smallest of 11 remaining candidates at 40 pages / 181 elements / 403646 source bytes. Same-SSD source
+  `bc767d6e…fe103`, release `463a79e3…b06510`, and stale seven-file / 1951530-byte chain are identified read-only.
+  Frontier → authenticate exact rollback, then guarded CPU ingest and deterministic cascade. Recording commit
+  subject: `CORPUS-COVERAGE.2.46 — own OpenCAPI Discovery Configuration refresh`.
 - `2026-08-10`: `.2.45` DATA/DOC DONE from clean commit `7fa0b072`. Guarded CPU ingest holds 30 pages / 26
   visuals / 19 tables / 59 sections, cleans Source 231→224 and Evidence 395→385, and current shared authority
   removes two stale interfaces plus false/generic phase/gate projections while retaining all 70 physical timing

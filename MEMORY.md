@@ -21,15 +21,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2`; current-binary corpus refresh program, with slice `.2.45` complete.
-- Current state: guarded CPU ingest and two validated cascades for `.2.45` are complete. Source 231→224 removes diagram labels;
-  Evidence 395→385 additionally removes only three synthetic acronym declarations while all 70 physical timing
-  constraints hold. Current authority removes two stale interfaces plus false/generic phase and gate projections.
-  Final IntentIR has four actors / zero interfaces / four behaviors / 27 constraints / two assumptions / 70
-  timing constraints. Adapter blocks honestly on no signals and removes the stale three-port `.isf`; 64/64
-  remaining ISFs pass FSMGen strict. Stage census is 80/14/80/79; 45 refreshes are complete with 11 remaining.
-  WIRE/I2C/SWD, KG 156/156, full CI 1,791/five ignored, mdBook, six doctrines, paths, and locality pass.
-- Next action: select and authenticate refresh #46 from the 11 remaining real chip-spec candidates, create its
-  owning leaf from a clean repository, and continue the one-document guarded-cascade workflow.
-- In-flight uncommitted: none after the `.2.45` recording commit; no background job.
+- Active unit: `CORPUS-COVERAGE.2.46`; current-binary refresh of OpenCAPI Discovery Configuration.
+- Current state: the smallest of 11 remaining candidates is authenticated read-only at 40 pages / 181 retained
+  elements / 403646 source bytes. Same-SSD source hashes `bc767d6e…fe103`; current release hashes
+  `463a79e3…b06510`; the stale chain is seven files / 1951530 bytes. Its adapter currently fabricates width-one
+  `BDF`/`DL`/`VPD` outputs from a chain with one actor relation, one port, four conditionals, one register, and six
+  timing constraints; the refresh must preserve grounded intent while reapplying current shared authority.
+- Next action: commit the `.2.46` owning leaf, copy and byte-verify its exact rollback on the repository volume,
+  then run guarded CPU ingest and the deterministic EvidenceIR→SemanticIR→IntentIR→adapter cascade.
+- In-flight uncommitted: `.2.46` task ownership, roadmap frontier, and this resume pointer await their recording
+  commit; no generated artifact has changed and no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

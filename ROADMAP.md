@@ -231,8 +231,9 @@ Five active program groups support that north star:
   physical timing constraints hold. Current authority removes two stale interfaces and the three-port `.isf`;
   final IntentIR keeps four behaviors / 27 constraints / two assumptions. Two cascades reproduce; WIRE/I2C/SWD,
   KG 156/156, 64/64 FSMGen strict, full CI, book/doctrines/path/locality pass. Corpus is 45 done / 11 remaining at
-  80 SourceIR / 14 normalized / 80 EvidenceIR / 79 downstream chains; frontier → select and authenticate refresh
-  #46 from a clean repository. Separately,
+  80 SourceIR / 14 normalized / 80 EvidenceIR / 79 downstream chains. `.2.46` now owns the 40-page OpenCAPI
+  Discovery Configuration refresh, the smallest of 11 remaining candidates at 181 retained elements; source,
+  release, and the exact seven-file stale chain are authenticated read-only before mutation. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.
