@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > why does the fact-card landing have one line per card
+- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
+  > why does the feedback protocol self test block derived state closure
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > why does the pre-commit hook run check_doctrines.sh
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why does the project README get spurious ahb_transfer/apb_transfer transactions
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > why does the refreshed Cortex-A76 Software Optimization Guide emit no ISF
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > why does the refreshed Generic Interrupt Controller Overview Guide emit no ISF
 - [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
   > why does the refreshed OpenCAPI 4.0 32 Gbps PHY Signaling specification emit no ISF
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
@@ -151,6 +163,8 @@
   > why is the coordination split safe for WIRE-BASED-100 (AHB relation gold)
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > why is the extraction-profile prior family not scoped by ProtocolFamily
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > why is the fact-card catalog about to run out of capacity
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > why is the interface consolidation safe for WIRE-BASED-100 (gold docs have no interface actor)
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)

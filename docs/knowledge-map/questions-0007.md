@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what is the completeness gauge over-counting on APB
+- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
+  > what is the condition-read-as-obligation error class and its gate
+- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
+  > what is the constraint-subject-must-be-declared filter
+- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
+  > what is the corpus coverage build-out (CORPUS-COVERAGE.0)
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > what is the corpus distribution of purpose categories (21 wire / 8 guide high; 28 register-or-platform / 16 unresolved / 5 physical-link low; 0 high-confidence false positives)
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
@@ -290,11 +298,3 @@
   > where is actor-signal relation drive/read direction decided in evidence.rs
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > where is adaptive_batch_pages / BatchSizePolicy in the code
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > where is classify_document_intent_category implemented (crates/specforge/src/ir/completeness.rs)
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > where is consolidate_interface_actor_relations and strip_interface_suffix wired
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > where is consolidate_trailing_fragment and how is it ordered against the .1a reject
-- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
-  > where is coordinated-object actor-signal relation extraction implemented

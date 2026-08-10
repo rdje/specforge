@@ -202,6 +202,8 @@
   > how is docs TASK_TREE kept complete without mirroring task history
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > how is docs knowledge INDEX kept complete
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > how is max_cards derived from the knowledge_cards surface
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > how is prose signal over-capture prevented (no garbage)
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
@@ -295,5 +297,3 @@
   > how many corpus refreshes remain after USB4 Connection Manager
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > how many corpus refreshes remain after USB4 Inter-Domain
-- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
-  > how many corpus refreshes remain after the GIC Overview Guide

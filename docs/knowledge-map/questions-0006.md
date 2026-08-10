@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > what does sanitize_isf_name do (allowlist [A-Za-z0-9_] -> everything else becomes _)
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > what does scripts/check_chain_currency.sh check
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what does signal_table_covered_by_inventory do
 - [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
   > what does source_literal mean in the active task evidence contract
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
@@ -88,6 +94,8 @@
   > what is ADR 0024
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
   > what is ADR 0025
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > what is ADR 0026
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > what is AppError::IngestAbortedForDisk
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
@@ -289,11 +297,3 @@
   > what is the canonical knowledge-map architecture path
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
   > what is the complete parenthetical data-head declaration census
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what is the completeness gauge over-counting on APB
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > what is the condition-read-as-obligation error class and its gate
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > what is the constraint-subject-must-be-declared filter
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > what is the corpus coverage build-out (CORPUS-COVERAGE.0)

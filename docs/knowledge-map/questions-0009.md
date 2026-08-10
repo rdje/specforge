@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > why did LTI unexplained tables go UP from 5 to 6
+- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
+  > why did OpenCAPI data link semantic phases gates and contracts drop to zero
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > why did OpenCAPI email review become an IntentIR behavior
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > why did OpenCAPI produce constraints on CAPI OCDE and DLX that the document never constrains
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > why did TL disappear from the OpenCAPI Ready Definition
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > why did USB 3.2 produce 918 interfaces and 556 adapter signals
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
@@ -288,13 +298,3 @@
   > why does the emitted .isf module name get sanitized / how is the (actor <name>) label derived
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > why does the fact-card file count differ from the Knowledge Map fact count
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > why does the feedback protocol self test block derived state closure
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > why does the pre-commit hook run check_doctrines.sh
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why does the project README get spurious ahb_transfer/apb_transfer transactions
-- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
-  > why does the refreshed Cortex-A76 Software Optimization Guide emit no ISF
-- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
-  > why does the refreshed Generic Interrupt Controller Overview Guide emit no ISF

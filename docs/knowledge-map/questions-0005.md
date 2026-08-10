@@ -2,6 +2,11 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
+  > is the extraction audit chip-spec-PDF agnostic (yes)
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > is the generic-TABLE enum conflation fixed / what did KG-ISF-COMPLETENESS.5.i do (LANDED 2026-06-24: derive_encoding_enum_name fallback keeps the candidate only when independently evidenced — a declared signal OR a column-header reference token of the table — else None; emitter isf_ir.rs gates the (types) block by emitted_enums() so a member-dropped enum leaves no orphan
+  > (type ...). Corpus generic enums 82->8 / total enum records 422->105 across 33 rebuildable docs; real signal-match enums byte-identical; WIRE-BASED-100 1.000 before==after; fsmgen --strict 0 diagnostics)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > is the generic-enum conflation an emitter bug or an extraction bug (EXTRACTION-born in evidence.rs + semantic.rs; isf_ir.rs:889-912 lowers it faithfully)
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
@@ -26,6 +31,8 @@
   > is there a lowering-completeness check for temporal rules
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
   > is tier-agreement a good confidence axis for conformal calibration
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > may fact cards be deleted or merged to free catalog capacity
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > must a post-build signal_constraints replace re-apply build-path invariants
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
@@ -291,9 +298,3 @@
   > what does lead_binds_value do in evidence.rs
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
   > what does resolve_indexed_signal_family do
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > what does sanitize_isf_name do (allowlist [A-Za-z0-9_] -> everything else becomes _)
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > what does scripts/check_chain_currency.sh check
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what does signal_table_covered_by_inventory do

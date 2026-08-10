@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > where is classify_document_intent_category implemented (crates/specforge/src/ir/completeness.rs)
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > where is consolidate_interface_actor_relations and strip_interface_suffix wired
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > where is consolidate_trailing_fragment and how is it ordered against the .1a reject
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > where is coordinated-object actor-signal relation extraction implemented
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > where is is_pure_inferred_phantom_role and the build_intent_actors phantom guard
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
@@ -142,6 +150,8 @@
   > which guides over-extract spurious .isf wire intent (cortex-a76 sw-opt 537 signals, readme, smmu software guide, gic overview, aarch64 debug guide)
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > which header signatures are unrecovered register tables
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > which limit binds first when adding a fact card
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
   > which local model should SpecForge use for NLI or entailment verification
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
@@ -287,13 +297,3 @@
   > why did GIC-600's .isf fail fsmgen strict with 'Malformed top-level FSM source ?fsm:redistributor→…'
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > why did HBM2's .isf fail fsmgen strict with enum member 'TABLE.REPAIR_LANE_8' value token '1000'
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > why did LTI unexplained tables go UP from 5 to 6
-- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
-  > why did OpenCAPI data link semantic phases gates and contracts drop to zero
-- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
-  > why did OpenCAPI email review become an IntentIR behavior
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > why did OpenCAPI produce constraints on CAPI OCDE and DLX that the document never constrains
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > why did TL disappear from the OpenCAPI Ready Definition
