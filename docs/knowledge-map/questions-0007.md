@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > what is the exact pre-containment FSMGEN_FEEDBACK source identity
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > what is the exact pre-containment ROADMAP source identity
+- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
+  > what is the executable currentness authority for VALIDATION_SNAPSHOT
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > what is the faithful fix for an over-width ISF value literal (1: recover the signal's grounded width across ALL interface signal_records + actor_ports; 2: re-render the literal as a width-cast W'<radix><digits> when value<2^W, else residualize — never truncate; ADR-0006 numeric only)
+- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
+  > what is the first opt-in extractor for CORPUS-PATTERN-REUSE.3b.3 / activate-only consume
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > what is the genuine lever for RISC-V CSR bit recall (a sharper VLM read for the existing recover-register-bits / register_bits.rs path — stronger/cloud model, upscaling, voting, tighter prompt — owned OUTSIDE the .4 ISF-lowering program; bound purely by VLM accuracy)
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
@@ -288,13 +298,3 @@
   > where is the biggest register extraction gap across the corpus
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
   > where is the canonical SpecForge user guide
-- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
-  > where is the complete index for SpecForge research workflow architecture corpus KB or KG fixtures
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > where is the complete live document containment adoption task history
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > where is the declared-signal gate applied (pattern + dynamic constraint paths)
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > where is the default-flip decision packet / should promote-constraints-llm become the default
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > where is the dropped enum surfaced (an isf_enum_value_literal_<name> ResidualDecisionPacket via enum_residuals(), wired into adapters.rs residual_decisions)

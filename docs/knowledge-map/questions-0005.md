@@ -2,12 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > is there a buildable transaction ordered multi-phase body lever beyond .2b
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > is there a first opt-in extractor for the CORPUS-PATTERN-REUSE activate-only consume side
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
   > is there a lowering-completeness check for temporal rules
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
   > is tier-agreement a good confidence axis for conformal calibration
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > must a post-build signal_constraints replace re-apply build-path invariants
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > must a repair leaf rebuild every affected document or only the ones it measures
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > per-wire-doc direction flip results (APB input 2->12, AXI 4->52, SWD 0->1, AHB residual)
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
@@ -34,6 +40,8 @@
   > should a documented reset of 0 be emitted as (reset 0) in ISF (no — omit; the FSMGen all-0s default faithfully represents it; 893 of the fits-current registers are V==0)
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
   > should corpus refresh progress be counted from normalized directories
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > should persisted chain currency be a gated doctrine or an advisory report
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > should specforge connect producer/consumer/etc. to their signals
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
@@ -289,11 +297,3 @@
   > what eval-extraction tasks score the SWD surfaces
 - [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
   > what extraction approach does SWD/ADI need
-- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
-  > what falls outside Docling's segmented bounding boxes on a page
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what field holds the constrained signal name (signal_name vs subject_signal)
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > what fraction of a chip-spec PDF's intent reaches the emitted .isf, per purpose category
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what fsmgen pin carries the phase-membership answer (030f8c273, FSMGEN-REFRESH-INTEGRATE-3, ISF-SPECFORGE-PHASE-MEMBERSHIP-RESPONSE.1/.2)

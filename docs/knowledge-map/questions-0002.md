@@ -292,9 +292,9 @@
   > how does SpecForge tell a guide from a real spec / report low-yield docs honestly
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > how does SpecForge verify an extracted claim semantically / catch hallucination
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > how does a repair prove its change is isolated if it also rebuilds drifted documents
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > how does a section-heading register avoid double-counting an existing register record
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > how does a transaction absorb signals from its subsections (3.1.1 / 3.1.2)
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > how does an unknown-kind Continued from previous page table fragment get a kind

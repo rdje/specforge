@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
+  > what falls outside Docling's segmented bounding boxes on a page
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what field holds the constrained signal name (signal_name vs subject_signal)
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > what fraction of a chip-spec PDF's intent reaches the emitted .isf, per purpose category
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what fsmgen pin carries the phase-membership answer (030f8c273, FSMGEN-REFRESH-INTEGRATE-3, ISF-SPECFORGE-PHASE-MEMBERSHIP-RESPONSE.1/.2)
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
   > what fsmgen pin does SpecForge target for temporal properties
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -54,6 +62,8 @@
   > what is ADR 0019
 - [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
   > what is ADR 0024
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > what is ADR 0025
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > what is AppError::IngestAbortedForDisk
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
@@ -287,13 +297,3 @@
   > what is the exact CORPUS-COVERAGE task evidence boundary
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what is the exact active PDF task evidence baseline
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > what is the exact pre-containment FSMGEN_FEEDBACK source identity
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > what is the exact pre-containment ROADMAP source identity
-- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
-  > what is the executable currentness authority for VALIDATION_SNAPSHOT
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > what is the faithful fix for an over-width ISF value literal (1: recover the signal's grounded width across ALL interface signal_records + actor_ports; 2: re-render the literal as a width-cast W'<radix><digits> when value<2^W, else residualize — never truncate; ADR-0006 numeric only)
-- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
-  > what is the first opt-in extractor for CORPUS-PATTERN-REUSE.3b.3 / activate-only consume

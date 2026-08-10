@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > how does an unknown-kind Continued from previous page table fragment get a kind
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > how does build_transaction_phases distinguish a named phase from phase error or phase tolerance
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
@@ -295,5 +297,3 @@
   > how many docs are wire-protocol vs register-IP vs platform vs ISA vs PHY vs guide
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > how many docs reach evidence vs semantic vs intent vs isf
-- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
-  > how many false timing records were removed by the independent-cell geometry boundary (23; 608 to 585)
