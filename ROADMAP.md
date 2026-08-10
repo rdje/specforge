@@ -259,7 +259,9 @@ Five active program groups support that north star:
   [`CORPUS-TASK-EVIDENCE-CONTAINMENT`](docs/tasks/CORPUS-TASK-EVIDENCE-CONTAINMENT.md) is lossless and below all
   local warnings. Its same-SSD no-hardlink clean clone passed every doctrine, a temporary eighth active part proved
   the eligible post-migration #49 route through the composed live gate, and exact restoration left no residue.
-  Containment is closed; the next separately owned product slice is refresh #49.
+  Containment is closed. `CORPUS-COVERAGE.2.49` now owns the 45-page Generic Interrupt Controller Overview Guide,
+  the smallest of eight remaining documents at 430 retained elements; source and stale-chain boundaries are pinned
+  before its guarded current-binary ingest.
   Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID

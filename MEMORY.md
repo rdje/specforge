@@ -21,14 +21,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-TASK-EVIDENCE-CONTAINMENT.4b`; closing commit after independent verification passed.
+- Active unit: `CORPUS-COVERAGE.2.49`; Generic Interrupt Controller Overview Guide refresh.
 - Current state: `CORPUS-COVERAGE.2` refresh #48 is complete at 48 done / eight remaining, 80 SourceIR / 20
   normalized / 80 EvidenceIR / 79 downstream chains, and 59/59 current emitted ISFs FSMGen-strict clean. Its task
   stable root is now 65 lines / 2,819 bytes over a 75-line index, seven semantic parts, and an exact 2,308-line /
   277,636-byte / SHA-256 `5d7acb0c…` capsule. The migrated contract authenticates all seven regions / 41 legacy +
-  seven structural routes. A same-volume no-hardlink clone passed all doctrines and a real temporary `.2.49`
-  continuation; exact tree restoration and fixture removal prove zero residue. Containment is closed.
-- Next action: create and own `CORPUS-COVERAGE.2.49`, select one of the eight remaining documents from current
-  evidence, record its exact stale-chain boundary, then run the next product refresh.
-- In-flight uncommitted: none after the `.4b` closing commit; no background job is running.
+  seven structural routes. Containment is closed. `.2.49` selects the smallest remaining document: the 45-page /
+  430-element GIC Overview Guide. Its same-SSD PDF SHA and exact 1,400,092-byte stale seven-file chain are pinned;
+  normalized is absent and no generated artifact has changed.
+- Next action: commit the `.2.49` ownership boundary, create authenticated repository-local rollback evidence,
+  then run the guarded CPU ingest and complete deterministic downstream validation.
+- In-flight uncommitted: `.2.49` ownership/root/index/manifest/contract/book alignment only; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

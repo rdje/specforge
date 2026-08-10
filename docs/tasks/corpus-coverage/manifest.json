@@ -1,8 +1,10 @@
 {
    "contract_id" : "corpus-coverage-active-task-evidence",
    "current_frontier" : {
-      "literal" : "No eligible product leaf.",
-      "mode" : "none"
+      "leaf_id" : "CORPUS-COVERAGE.2.49",
+      "literal" : "Active product leaf: `CORPUS-COVERAGE.2.49`.",
+      "mode" : "eligible",
+      "part_id" : "refreshes-49-56"
    },
    "current_path" : "docs/tasks/CORPUS-COVERAGE.md",
    "index_path" : "docs/tasks/corpus-coverage/INDEX.md",
@@ -294,6 +296,11 @@
          "origin" : "legacy",
          "part_id" : "repair-acceptance-and-frontier",
          "source_literal" : "CORPUS-COVERAGE.3"
+      },
+      {
+         "leaf_id" : "CORPUS-COVERAGE.2.49",
+         "origin" : "post_migration",
+         "part_id" : "refreshes-49-56"
       }
    ],
    "marker_prefix" : "corpus-task-source-region",
@@ -383,6 +390,18 @@
          "path" : "docs/tasks/corpus-coverage/legacy-chronology.md",
          "sha256" : "ee4f67c758b5d1970a710b281c0cddf03759aab2e98b5b20f88966fc241cc249",
          "state" : "legacy"
+      },
+      {
+         "heading" : "# CORPUS-COVERAGE — refreshes 49–56",
+         "metrics" : {
+            "bytes" : 5807,
+            "line_bytes" : 179,
+            "lines" : 92
+         },
+         "part_id" : "refreshes-49-56",
+         "path" : "docs/tasks/corpus-coverage/refreshes-49-56.md",
+         "sha256" : "a7cdbf28f2f31489f805673b6d3396d552bba366af333774e170d33c8dce05cf",
+         "state" : "active"
       }
    ],
    "reason" : "contain oversized active corpus task without losing task evidence",

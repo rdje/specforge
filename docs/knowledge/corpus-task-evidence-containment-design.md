@@ -19,7 +19,7 @@ answers:
 date: 2026-08-10
 status: current
 tags: [documentation, containment, task-tree, corpus-coverage, continuity]
-evidence: docs/research/corpus-task-evidence-containment-census.md; docs/tasks/CORPUS-TASK-EVIDENCE-CONTAINMENT.md
+evidence: docs/research/corpus-task-evidence-containment-census.md; docs/tasks/CORPUS-TASK-EVIDENCE-CONTAINMENT.md; docs/tasks/corpus-coverage/refreshes-49-56.md
 reverify: "git show d78d842e4e7fc8d1fd902937cf6902f07d96b68e:docs/tasks/CORPUS-COVERAGE.md | shasum -a 256"
 ---
 
@@ -42,10 +42,9 @@ none with a fragment or query, and no executable opens the target. The only writ
 `COMMIT.md` slice transaction.
 
 The current product truth is 48 of 56 real chip-spec refreshes done, eight remaining, stages 80/20/80/79, and
-59/59 emitted ISFs strict-clean. The source metadata is one refresh stale, while row 48, the cumulative table
-statement, newest changelog, roadmap, status, book, and committed result agree. Literal stale text remains exact
-history; a bounded root will normalize current authority. Containment does not select #49, so the migrated root
-will name no eligible product leaf and direct the next clean slice to create `CORPUS-COVERAGE.2.49`.
+59/59 emitted ISFs strict-clean. Literal stale text remains exact history. Containment itself selected no product,
+but after closure the separate `CORPUS-COVERAGE.2.49` leaf selected the 45-page / 430-element Generic Interrupt
+Controller Overview Guide and pinned its same-SSD source plus stale seven-file chain before ingest.
 
 A new top-level continuation is rejected because it would break the established `.2.<refresh>` namespace or
 misstate the active `.2` parent. Archive-only is rejected because unique completed task authority would become a
@@ -67,4 +66,5 @@ Containment closed after an independent same-volume no-hardlink clone at `67e726
 and passed all six doctrines. A temporary eighth active part, eligible `CORPUS-COVERAGE.2.49` post-migration route,
 updated root/index/manifest/contract, and explicit part-surface registration passed the 720-file composed live gate.
 The clone's restored index tree equaled `HEAD^{tree}` at `8bab2dd341807e4767a96f0d1ee06ff962d37132`, status was
-empty, and the exact fixture was removed. No refresh #49 product work occurred; its separate task leaf is next.
+empty, and the exact fixture was removed. No refresh #49 product work occurred inside containment; the separately
+owned `.2.49` active part now carries that product work.
