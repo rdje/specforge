@@ -220,7 +220,13 @@ Five active program groups support that north star:
   only on no signals and leaves its manifest/report. Twelve hashes, two cascades, WIRE/I2C/SWD, KG 156/156, 66/66
   FSMGen strict, book/doctrines/path/locality, exact cleanup, and zero residue pass. Corpus is 43 done / 13
   remaining with stage census 80 SourceIR / 12 normalized / 80 EvidenceIR / 79 SemanticIR→IntentIR→adapter
-  chains; frontier → `.2.43a.ii` typed transaction-phase precision, then select refresh #44. Separately,
+  chains. `.2.43a.ii` then closes typed transaction-phase precision without downstream change. `.2.44` refreshes
+  the 23-page OpenCAPI 32 Gbps PHY Mechanical spec: Source 262→212 and Evidence 350→267 remove visual-label and
+  synthetic-ToC-enum noise; current authority removes five stale interfaces and the nine-port/one-enum `.isf`.
+  Final IntentIR keeps three behaviors / 45 constraints / two assumptions; lowering blocks honestly on no
+  declared signals. Two cascades reproduce; WIRE/I2C/SWD, KG 156/156, and 65/65 FSMGen strict pass. Corpus is 44
+  done / 12 remaining at 80 SourceIR / 13 normalized / 80 EvidenceIR / 79 downstream chains; full CI,
+  book/doctrines/path/locality pass; frontier → select refresh #45. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

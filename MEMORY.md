@@ -21,15 +21,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2`; `.2.43a.ii` typed transaction-phase qualifier precision is complete.
-- Current state: the 82 retained typed phase records classify as 59 valid / 23 false; a complete old-rule replay
-  is 101 candidates and repaired release `463a79e3…510` emits 70 valid records across 27 documents. Positive phrase
-  authority removes all 31 false candidates with zero retained-provenance change, zero non-empty rejected signal
-  sets, and byte-identical populated/repaired IntentIR variants. Focused + 407 SemanticIR tests, warning-deny
-  Clippy, nine WIRE/I2C/SWD datasets, KG 156/156, full CI 1,791/five ignored, 66/66 FSMGen strict, mdBook,
-  doctrines, persisted paths, and locality pass. Corpus remains 43 refreshes complete / 13 remaining with
-  80/12/80/79 stage counts.
-- Next action: select and authenticate the smallest roadmap-aligned refresh #44 candidate, create its owned leaf,
+- Active unit: `CORPUS-COVERAGE.2`; `.2.44` OpenCAPI 4.0 32 Gbps PHY Mechanical refresh is complete.
+- Current state: guarded CPU ingest and two validated cascades complete Source 262→212 diagram-label cleanup;
+  Evidence 350→267 additionally removes 33 synthetic ToC enum statements; current authority removes five stale
+  interfaces plus generic/false phase and gate projections. Final IntentIR has three actors / zero interfaces /
+  three behaviors / 45 constraints / two assumptions. Adapter blocks honestly on no signals and removes the stale
+  nine-port `.isf`; 65/65 remaining ISFs pass FSMGen strict. Stage census is 80/13/80/79; 44 refreshes are complete
+  with 12 remaining. WIRE/I2C/SWD, KG 156/156, full CI 1,791/five ignored, mdBook, doctrines, path census, and
+  locality pass.
+- Next action: select and authenticate the smallest roadmap-aligned refresh #45 candidate, create its owned leaf,
   then run the guarded repository-local ingest and deterministic cascade.
 - In-flight uncommitted: none. No background job.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

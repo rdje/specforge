@@ -167,10 +167,19 @@ two assumptions while refusing to promote section topics or cue-bearing sentence
 With no declared signal interface, the adapter correctly blocks on `no signals declared in interface`, emits no
 target, and leaves only `adapter.json` plus its validation report.
 
-The corpus cache now has 66 current emitted `.isf` files, all covered by a fresh 66/66 FSMGen-strict sweep; USB
-3.2, USB4 Inter-Domain, USB4 Connection Manager, CoreSight Base System, AArch64 External Debug, and Introducing
-CoreSight, plus the OpenCAPI Ready, Certified, AFU Address Space Usage, and Certified Definition documents, are not
-among them; neither is the OpenCAPI Ready Definition. Honest blocking is the correct lowering result for each.
+The 23-page OpenCAPI 4.0 32 Gbps PHY Mechanical Specification provides an eleventh transfer. Its stale chain
+grouped mechanical/acronym prose into five interfaces and emitted a nine-port `channel.isf` plus a synthetic
+table-of-contents enum despite zero declared signal, relation, constraint, register, or timing evidence. Current
+ingest removes only flattened diagram labels; current evidence also removes 33 synthetic `CONTENTS` enum
+statements. Shared signal authority, typed-phase phrase authority, and generic phase/gate retirement leave the
+engineering prose intact while removing the unsupported topology. The adapter now blocks on `no signals declared
+in interface`, emits no target, and leaves its manifest/report. Validation keeps eight unknown tables, 19
+unclassified visuals, and 21 normative residuals visible as the honest physical-link capture frontier.
+
+The corpus cache now has 65 current emitted `.isf` files, all covered by a fresh 65/65 FSMGen-strict sweep. The
+blocked/non-emitting set includes USB 3.2, USB4 Inter-Domain, USB4 Connection Manager, CoreSight Base System,
+AArch64 External Debug, Introducing CoreSight, and the recently refreshed OpenCAPI notes/definitions/PHY
+Mechanical spec. Honest blocking is the correct lowering result for each.
 
 The measurement behind that repair found three upstream authority errors, not a reason to distrust every
 relation-derived direction. Across the retained corpus, 97 sentence-start phrases use `signal <word>` without

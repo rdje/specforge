@@ -1,3 +1,18 @@
+### CORPUS-COVERAGE.2.44 — refresh OpenCAPI 32 Gbps PHY Mechanical without false topology
+
+- One guarded CPU ingest holds 23 pages / 19 visuals / eight tables / 45 sections at 21% peak sampled memory,
+  restores a 70-file / 18190643-byte normalized bundle, and keeps all 84 project-owned path values relative and
+  present. Source 262→212 removes only diagram-label records on seven visual-bearing pages.
+- Evidence 350→267 additionally removes 33 synthetic `CONTENTS` enum statements while retaining 21 normative
+  statements, two conditionals, and zero typed hardware surface. Current shared authority removes five stale
+  interfaces, false typed phases `dynamic`/`static`, and the retired generic phase/gate projections.
+- Final SemanticIR has four actors / zero interfaces/phases/gates / 45 invariants / three contracts / six
+  assertions / 30 decompositions; IntentIR has three actors / three behaviors / 45 constraints / two assumptions.
+  The stale nine-port/one-enum `.isf` is removed; lowering blocks honestly on no declared interface signals.
+- Two validated cascades reproduce eight downstream hashes. Nine WIRE/I2C/SWD datasets, KG 156/156, all 65
+  remaining emitted ISFs through real FSMGen strict, full CI 1,791/five ignored, mdBook, six doctrines,
+  2,039-artifact / 355769-path census, and locality pass.
+
 ### CORPUS-COVERAGE.2.43a.ii — require positive authority for typed phase names
 
 - The exact 82-record retained census classifies 59 valid typed phases and 23 false qualifiers. A deterministic

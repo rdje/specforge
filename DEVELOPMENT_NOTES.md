@@ -1,4 +1,25 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.44 (`2026-08-10`) — mechanical prose is evidence, not an implicit port declaration
+
+The stale OpenCAPI PHY-mechanical chain illustrates why a renderable adapter is not automatically a faithful
+one. Five heuristic interfaces grouped `AAC/GND`, `I2C/SCL/SDA`, `INT/RST`, `LGA/PCB`, and `RST`; the adapter then
+emitted nine one-bit ports plus a `CONTENTS` enum synthesized from the table of contents. Some tokens name real
+pins, but the retained evidence carried no declared signal inventory, direction relation, signal constraint,
+register, or timing record. Grouping and acronym adjacency could not supply that missing authority.
+
+Current shared boundaries cleanly separate preservation from promotion. Docling keeps 23 pages, 19 visuals,
+eight tables, and the real prose; visual-label suppression removes 50 net SourceIR elements, and current EvidenceIR
+drops 33 synthetic ToC enum statements. The preceding typed-phase repair independently rejects physical-property
+phrases `dynamic phase` and `static phase`, while the generic phase/gate retirements remove their untyped
+whole-section/whole-sentence projections. The remaining three behaviors and 45 constraints preserve the document's
+engineering obligations without claiming executable topology.
+
+The honest outcome is therefore one fewer emitted adapter: the live corpus changes from 66 to 65 `.isf` files,
+and all 65 still pass real FSMGen strict. Validation does not hide the recall boundary: it reports eight unknown
+tables, 19 unclassified visuals, 21 partially structured normative statements, and an under-extracted
+physical-link specification. That is the already-owned vision/table-recall frontier, not permission to restore a
+port list from weak grouping evidence.
+
 ## CORPUS-COVERAGE.2.43a.ii (`2026-08-10`) — a qualifier is not yet a phase name
 
 The original typed phase recognizer had the right source and the wrong final discriminator. Scanning exact
