@@ -70,7 +70,7 @@ The project-owned normative contract is `README_POLICY.md`.
 
 Among its focused suites, the live-document gate runs 55 common lifecycle/control cases, 47 neutral derived-state
 classification cases, 25 SpecForge authority-adapter cases, and 15 terminal-task source/route/identity/boundary
-cases, plus 35 active-task source/topology/route/payload/bound/writer cases, 41 fact-catalog source/plan/route/residue/
+cases, plus 39 active-task source/topology/route/payload/bound/writer cases, 41 fact-catalog source/plan/route/residue/
 bound cases, and the projection-specific Knowledge Map contract and portable-bundle integration suite. Generated
 collections must have complete landing membership, exact derive-and-diff content,
 bounded repository-local check workspaces, and no stale parts or temporary residue. Exact current fields are
@@ -78,10 +78,12 @@ declared rather than guessed: derive-on-read values cannot retain a shadow, veri
 authority check, authored intent remains human-owned, and immutable evidence keeps an exact capture boundary.
 
 The active-task contract binds source-locked Git/file identity, exhaustive semantic regions, planned-part
-pressure, fixed portable caps, and destination absence. Complete inputs bind all 52 canonical history IDs to an
-exact full or tree-relative source literal in one primary semantic payload. Its migrated state verifies those
-legacy routes, capsule and marker payloads, current root/frontier, index, manifest, per-part/aggregate pressure,
-and sealed Git identities. Its guarded materializer preflights all inputs, preserves raw legacy bytes beneath
+pressure, fixed portable caps, and destination absence. A task-specific part may preserve an exact wide legacy
+row only at or below the existing 6,400-byte direct task-evidence cap. Complete inputs bind completion-subject ids as
+`legacy` routes and formal container ids absent from those subjects as `structural` routes; both require an exact
+full or tree-relative source literal in one primary semantic payload. Its migrated state verifies those routes,
+capsule and marker payloads, current root/frontier, index, manifest, per-part/aggregate pressure, and sealed Git
+identities. Its guarded materializer preflights all inputs, preserves raw legacy bytes beneath
 UTF-8 scaffolds, writes the stable root last, validates the final tree, and rolls back only its proven-owned
 destinations. The positive continuation fixture also proves that a new active part, eligible frontier,
 post-migration route, root, index, manifest, and contract update form one accepted bounded transaction.

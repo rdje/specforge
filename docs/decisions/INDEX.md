@@ -35,6 +35,7 @@ changed* lives in git (layer D), not here.
 | [0021](0021-cross-directory-fact-catalog-links-preserve-destinations.md) | Cross-directory fact rows preserve semantics and destinations, not relative link bytes | 2026-08-09 | accepted | documentation, knowledge-map, generated-projection, links, retrieval |
 | [0022](0022-fact-catalog-parts-pack-below-warning.md) | Fact-card title parts pack below the existing warning milestone | 2026-08-09 | accepted | documentation, knowledge-map, generated-projection, containment, pressure |
 | [0023](0023-fact-catalog-landing-fits-full-capacity.md) | The fact-card landing scaffold fits the full declared capacity | 2026-08-09 | accepted | documentation, knowledge-map, generated-projection, containment, pressure |
+| [0024](0024-corpus-task-bounded-active-root-and-evidence-parts.md) | Corpus coverage keeps a bounded active root over seven evidence parts and exact provenance | 2026-08-10 | accepted | documentation, continuity, task-tree, corpus-coverage, active-work, archive, retrieval |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /

@@ -18,6 +18,9 @@ use Symbol qw(gensym);
 binmode STDOUT, ':encoding(UTF-8)';
 binmode STDERR, ':encoding(UTF-8)';
 
+# Nested exact evidence may be as wide as the repository's direct task-evidence
+# surface, while each task-specific contract remains free to set a tighter cap.
+my $TASK_EVIDENCE_LINE_BYTES_CAP = 6_400;
 my $root;
 my $contract_rel = 'doctrine/live_document_size/active_task_evidence.json';
 my $report = 0;
@@ -645,7 +648,14 @@ sub validate_contract_schema {
     );
     enforce_portable_caps(
         $limits->{parts}{enforcement_ceilings},
-        {files => 24, lines_each => 896, bytes_each => 98_304, line_bytes_each => 1_024, lines_total => 9_600, bytes_total => 1_179_648},
+        {
+            files => 24,
+            lines_each => 896,
+            bytes_each => 98_304,
+            line_bytes_each => $TASK_EVIDENCE_LINE_BYTES_CAP,
+            lines_total => 9_600,
+            bytes_total => 1_179_648,
+        },
         'contract parts enforcement ceiling',
         $errors,
     );
@@ -740,15 +750,15 @@ sub validate_contract_schema {
         push @$errors, "contract leaf route '$leaf_id' references unknown part '$part_id'"
             if defined($part_id) && !$part_ids{$part_id};
         push @$errors, "contract leaf route '$leaf_id' has invalid origin '$origin'"
-            if defined($origin) && $origin ne 'legacy' && $origin ne 'post_migration';
+            if defined($origin) && $origin ne 'legacy' && $origin ne 'structural' && $origin ne 'post_migration';
         push @$errors, "source-locked contract cannot declare post-migration leaf route '$leaf_id'"
             if ($migration_state // '') eq 'source_locked' && ($origin // '') eq 'post_migration';
-        if (($origin // '') eq 'legacy') {
-            my $literal = required_scalar($route, 'source_literal', 'legacy contract leaf route', $errors);
+        if (($origin // '') eq 'legacy' || ($origin // '') eq 'structural') {
+            my $literal = required_scalar($route, 'source_literal', "$origin contract leaf route", $errors);
             if (defined($literal) && defined($leaf_id)) {
                 my $relative = $leaf_id;
                 $relative =~ s/\A\Q$identity->{tree_id}\E//;
-                push @$errors, "legacy leaf route '$leaf_id' source_literal is not its full or tree-relative id"
+                push @$errors, "$origin leaf route '$leaf_id' source_literal is not its full or tree-relative id"
                     if $literal ne $leaf_id && ($relative eq '' || $literal ne $relative);
             }
         } elsif (exists($route->{source_literal})) {
@@ -848,9 +858,10 @@ sub validate_source_and_inputs {
             my $id = $route->{leaf_id} // '';
             my $part_id = $route->{part_id} // '';
             next if !$part_by_id{$part_id};
-            if (($route->{origin} // '') eq 'legacy') {
+            if (($route->{origin} // '') eq 'legacy' || ($route->{origin} // '') eq 'structural') {
+                my $origin = $route->{origin};
                 my $literal = $route->{source_literal} // '';
-                push @$errors, "legacy leaf route '$id' source literal '$literal' is absent from its primary part payload"
+                push @$errors, "$origin leaf route '$id' source literal '$literal' is absent from its primary part payload"
                     if task_token_occurrences($part_payload{$part_id} // '', $literal) == 0;
             }
         }
@@ -1497,6 +1508,7 @@ sub complete_fixture_inputs {
     }
     $contract->{leaf_routes} = [
         {leaf_id => 'PROGRAM.1', part_id => 'activity', origin => 'legacy', source_literal => '.1'},
+        {leaf_id => 'PROGRAM', part_id => 'foundation', origin => 'structural', source_literal => 'PROGRAM'},
     ];
 }
 
@@ -1559,6 +1571,7 @@ sub fixture_index {
 | Leaf | Primary detail |
 | --- | --- |
 | `PROGRAM.1` | [Activity](activity.md) |
+| `PROGRAM` | [Foundation](foundation.md) |
 
 ## Exact provenance
 
@@ -1720,6 +1733,8 @@ sub run_self_test {
         ['duplicate part path', 'source_locked', 'topology_declared', sub { $_[1]{destinations}{parts}[1]{path} = $_[1]{destinations}{parts}[0]{path} }, qr/duplicate part path/],
         ['invalid limit pair', 'source_locked', 'topology_declared', sub { $_[1]{limits}{root}{health_targets}{bytes} = 7000 }, qr/health bytes exceeds/],
         ['portable ceiling inflation', 'source_locked', 'topology_declared', sub { $_[1]{limits}{parts}{enforcement_ceilings}{files} = 25 }, qr/exceeds portable cap 24/],
+        ['exact wide part ceiling positive', 'source_locked', 'topology_declared', sub { $_[1]{limits}{parts}{enforcement_ceilings}{line_bytes_each} = 6400 }, undef],
+        ['exact wide part ceiling inflation', 'source_locked', 'topology_declared', sub { $_[1]{limits}{parts}{enforcement_ceilings}{line_bytes_each} = 6401 }, qr/exceeds portable cap 6400/],
         ['premature collection directory', 'source_locked', 'topology_declared', sub { make_path(absolute($_[0], $_[1]{destinations}{collection_directory})) }, qr/premature collection_directory/],
         ['premature archive directory', 'source_locked', 'topology_declared', sub { make_path(absolute($_[0], $_[1]{destinations}{archive_directory})) }, qr/premature archive_directory/],
         ['topology route leakage', 'source_locked', 'topology_declared', sub { $_[1]{leaf_routes} = [{leaf_id => 'PROGRAM.1', part_id => 'activity', origin => 'legacy'}] }, qr/must not contain leaf routes/],
@@ -1728,6 +1743,8 @@ sub run_self_test {
         ['complete route source literal missing', 'source_locked', 'complete', sub { delete $_[1]{leaf_routes}[0]{source_literal} }, qr/lacks non-empty scalar 'source_literal'/],
         ['complete route source literal invalid', 'source_locked', 'complete', sub { $_[1]{leaf_routes}[0]{source_literal} = 'PROGRAM' }, qr/not its full or tree-relative id/],
         ['complete route source literal absent', 'source_locked', 'complete', sub { $_[1]{leaf_routes}[0]{source_literal} = 'PROGRAM.1' }, qr/source literal 'PROGRAM\.1' is absent/],
+        ['structural route source literal missing', 'source_locked', 'complete', sub { delete $_[1]{leaf_routes}[1]{source_literal} }, qr/structural contract leaf route lacks non-empty scalar 'source_literal'/],
+        ['structural route source literal absent', 'source_locked', 'complete', sub { $_[1]{leaf_routes}[1]{leaf_id} = 'PROGRAM.9'; $_[1]{leaf_routes}[1]{source_literal} = '.9' }, qr/structural leaf route 'PROGRAM\.9' source literal '\.9' is absent/],
         ['premature post-migration route', 'source_locked', 'complete', sub { $_[1]{leaf_routes}[0]{origin} = 'post_migration' }, qr/cannot declare post-migration/],
         ['migrated positive', 'migrated', 'complete', undef, undef],
         ['capsule mutation', 'migrated', 'complete', sub { write_raw($_[0], $_[1]{destinations}{source_capsule}, $_[2] . "changed\n") }, qr/source authority/],

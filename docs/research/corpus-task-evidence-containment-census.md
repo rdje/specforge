@@ -38,9 +38,11 @@ boundary rather than an arbitrary size cut.
 | `legacy-chronology` | 2,081–2,308 | 228 | 26,003 | 180 | `4e3162ba6220e44b3c17a3cc25a1f1b6fbdc1658b61b1b3a83d29f95acc91e27` |
 | **Total** | **1–2,308** | **2,308** | **277,636** | **4,746** | source identity above |
 
-The first four regions own all 48 formal routes: 12, 26, nine, and one respectively. The ledger and chronology
-regions retain complete cross-cutting evidence but need no primary leaf route. Marker scaffolds make each payload
-independently hashable; concatenation in source order reconstructs the exact source.
+The first four regions own all 48 formal routes: 12, 26, nine, and one respectively. Forty-one are `legacy`
+routes authenticated by both completion-subject history and their source literal; the seven formal container ids
+absent from completion subjects are source-backed `structural` routes. The ledger and chronology regions retain
+complete cross-cutting evidence but need no primary leaf route. Marker scaffolds make each payload independently
+hashable; concatenation in source order reconstructs the exact source.
 
 ## Current-state reconciliation
 
@@ -140,7 +142,7 @@ parts are at most 485 source lines / 59,259 bytes / 4,746 content-line bytes bef
 | Surface | Health targets | Inclusive ceilings |
 | --- | --- | --- |
 | stable active root | 224 lines / 24,576 bytes / 512 max-line bytes | 320 / 36,864 / 1,024 |
-| bounded index | 128 lines / 16,384 bytes / 512 max-line bytes | 192 / 24,576 / 1,024 |
+| bounded index | 128 lines / 16,384 bytes / 512 max-line bytes | 192 / 24,576 / 768 |
 | semantic parts | 12 files; 640 lines / 76,800 bytes / 6,144 max-line bytes each; 4,096 lines / 524,288 bytes aggregate | 16 files; 896 / 98,304 / 6,400 each; 6,144 / 655,360 aggregate |
 | exact source capsule | exact 2,308 lines / 277,636 bytes / 4,746 max-line bytes | exact same values |
 

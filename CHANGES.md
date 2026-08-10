@@ -1,3 +1,13 @@
+### CORPUS-TASK-EVIDENCE-CONTAINMENT.3a — support exact structural task routes
+
+- The neutral active-task checker now permits task-specific part lines through the existing 6,400-byte direct
+  task-evidence ceiling; 6,401 bytes still fails closed and narrower local contracts remain authoritative.
+- A source-backed `structural` origin preserves formal container ids absent from completion-subject history. It
+  requires the same full/tree-relative ID grammar and exact primary-payload occurrence as a `legacy` route,
+  without weakening the exact completion-subject boundary.
+- Four new positive/negative cases bring the focused suite to 39/39. ADR 0024, the corpus census, fact card, and
+  mdBook describe the 41 legacy plus seven structural route design; the corpus source and destinations are unchanged.
+
 ### CORPUS-TASK-EVIDENCE-CONTAINMENT.2 — select measured corpus task partition
 
 - The untouched source is 2,308 lines / 277,636 bytes / 4,746 maximum content-line bytes, leaving 892 bytes at

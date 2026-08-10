@@ -31,8 +31,9 @@ leaf reported 4,747 by counting LF; `.2` root-caused and corrected only that not
 count, total bytes, and the untouched source all remain exact.
 
 The census partitions every source byte into seven natural regions, all below 59,259 bytes before marker
-scaffolding, and finds 48 formal fully qualified task ids. Forty-one also occur in completion-subject history;
-there are no commit-only or shorthand-only routes. At census boundary `3a40b152`, 42 tracked files cite the
+scaffolding, and finds 48 formal fully qualified task ids. Forty-one also occur in completion-subject history and
+use `legacy` routes; seven formal container ids absent from those subjects use source-backed `structural` routes.
+There are no commit-only or shorthand-only routes. At census boundary `3a40b152`, 42 tracked files cite the
 stable path (33 fact cards, three book chapters, three root live docs, one task owner, two immutable capsules),
 none with a fragment or query, and no executable opens the target. The only writer is the manual task-tree and
 `COMMIT.md` slice transaction.

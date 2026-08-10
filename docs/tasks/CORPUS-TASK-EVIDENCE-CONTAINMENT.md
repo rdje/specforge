@@ -63,10 +63,25 @@ evidence, bounded retrieval, and an unambiguous write transaction for refresh #4
   Commit: `CORPUS-TASK-EVIDENCE-CONTAINMENT.2 — select measured corpus task partition`
 
 - ID: `CORPUS-TASK-EVIDENCE-CONTAINMENT.3`
-  Status: `pending`
+  Status: `active`
   Goal: lock the corpus-specific migration contract and neutral verifier before moving source bytes
-  Acceptance: committed contract, decision record, source lock, destination bounds, route map, writer transaction,
-  rollback behavior, and positive future-append proof all validate while the source remains byte-identical
+  Children: `CORPUS-TASK-EVIDENCE-CONTAINMENT.3a`, `CORPUS-TASK-EVIDENCE-CONTAINMENT.3b`
+
+- ID: `CORPUS-TASK-EVIDENCE-CONTAINMENT.3a`
+  Status: `done` (`2026-08-10`, CODE/DOCTRINE)
+  Goal: let the neutral active-task checker preserve exact wide legacy rows and formal container routes
+  Acceptance: the portable active-part cap permits at most the existing 6,400-byte task-evidence line ceiling;
+  a source-backed `structural` origin covers formal ids absent from commit subjects; focused positive/fail-closed
+  cases pass; the corpus source and all destinations remain untouched
+  Verification: Perl syntax; 39/39 focused cases; existing active-task contract; live-document gate; source
+  identity/destination absence; task catalog; Knowledge Map; doctrines; mdBook test/build; full CI pass
+  Commit: `CORPUS-TASK-EVIDENCE-CONTAINMENT.3a — support exact structural task routes`
+
+- ID: `CORPUS-TASK-EVIDENCE-CONTAINMENT.3b`
+  Status: `pending`
+  Goal: commit the complete corpus-specific migration contract and unconditional verifier invocation
+  Acceptance: decision record, source lock, seven regions, 41 legacy plus seven structural routes, bounds, writer
+  transaction, destination absence, rollback, and future-append proof validate with the source byte-identical
   Verification: pending
   Commit: pending
 
@@ -82,7 +97,7 @@ evidence, bounded retrieval, and an unambiguous write transaction for refresh #4
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3` | `pending` | Lock the selected topology and exact migration inputs before source mutation. |
+| 1 | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3b` | `pending` | Lock and invoke the complete corpus-specific contract against the untouched source. |
 
 ## Locked Source Boundary
 
@@ -115,6 +130,10 @@ measure and decide the actual destinations. `git diff -- docs/tasks/CORPUS-COVER
   rejected because they respectively break `.2.<refresh>` identity, demote browsable task authority, or lose task
   hierarchy. Corpus-specific bounds and the root+one-part+index+manifest writer transaction are recorded in
   `docs/research/corpus-task-evidence-containment-census.md`.
+- `2026-08-10`: `.3` split before implementation after the real source-locked check found two neutral-contract
+  blockers: exact corpus ledger rows require 4,746 content-line bytes while the verifier capped parts at 1,024,
+  and seven formal container ids lack completion-subject history. `.3a` owns a bounded generic 6,400-byte cap and
+  source-backed `structural` route origin; `.3b` alone may lock/invoke the corpus contract afterward.
 
 ## Open Questions
 
@@ -130,6 +149,7 @@ measure and decide the actual destinations. `git diff -- docs/tasks/CORPUS-COVER
 | --- | --- | --- | --- |
 | `2026-08-10` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.1` | source commit/blob/SHA/metrics; target diff; candidate destination absence; `perl scripts/check_task_tree_catalog.pl --check`; `scripts/check_doctrines.sh`; `mdbook test docs/book`; `mdbook build docs/book` | pass |
 | `2026-08-10` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.2` | seven raw regions/source reconstruction; 42 exact-path readers at `3a40b152`; 48 formal / 41 subject / 48 union ids; growth census; target diff; Knowledge Map derive-and-diff; task catalog; doctrines; mdBook test/build | pass; selected bounded root + seven parts + exact capsule |
+| `2026-08-10` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3a` | Perl syntax; 39/39 neutral cases; existing real contract; exact source/destination absence; live-document gate; task/Knowledge Map/doctrine gates; mdBook test/build; full CI | pass; 6,400 cap and source-backed structural routes fail closed |
 
 ## Commit Log
 
@@ -137,6 +157,7 @@ measure and decide the actual destinations. `git diff -- docs/tasks/CORPUS-COVER
 | --- | --- | --- |
 | `CORPUS-TASK-EVIDENCE-CONTAINMENT.1` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.1 — lock untouched corpus task source` | Exact untouched-source ownership boundary. |
 | `CORPUS-TASK-EVIDENCE-CONTAINMENT.2` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.2 — select measured corpus task partition` | Complete census and corpus-specific topology/bounds. |
+| `CORPUS-TASK-EVIDENCE-CONTAINMENT.3a` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3a — support exact structural task routes` | Neutral checker supports bounded exact-wide rows and formal container routes. |
 
 ## Changelog
 
@@ -144,6 +165,8 @@ measure and decide the actual destinations. `git diff -- docs/tasks/CORPUS-COVER
 - `2026-08-10`: `.1` pinned the untouched committed source and advanced the frontier to the corpus-specific census.
 - `2026-08-10`: `.2` corrected width semantics, accounted for every source byte/route/reader/writer, selected the
   measured hybrid, and advanced the frontier to the locked migration contract.
+- `2026-08-10`: `.3a` aligned the neutral part-width cap with the existing direct task-evidence ceiling, added
+  source-backed `structural` container routes, and advanced the frontier to the corpus-specific contract.
 
 ### Acceptance Checklist (enforced) — `CORPUS-TASK-EVIDENCE-CONTAINMENT.2`
 
@@ -159,3 +182,18 @@ measure and decide the actual destinations. `git diff -- docs/tasks/CORPUS-COVER
   corpus/document/vendor rule or copied first-target threshold enters executable policy.
 - [x] **LOCKSTEP** — research census, durable fact card, owning task, change history, roadmap, and resume pointer
   agree that `.3` must lock the complete contract before `.4` may mutate the source.
+
+### Acceptance Checklist (enforced) — `CORPUS-TASK-EVIDENCE-CONTAINMENT.3a`
+
+- [x] **REPRODUCE / MEASURE** — the exact corpus ledger needs 4,746 content-line bytes and seven formal container
+  ids are absent from the 41-ID completion-subject boundary; both measured blockers reproduce before change.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the neutral checker capped nested part lines at 1,024 bytes and modeled only
+  completion-subject `legacy` or future `post_migration` routes, so neither exact source shape could validate.
+- [x] **ADDRESSED (verified)** — part ceilings may reach but not exceed the existing 6,400-byte direct
+  task-evidence cap; source-backed `structural` routes require a full/tree-relative literal in their primary part.
+- [x] **NO REGRESSION** — 39/39 focused cases, the existing migrated active-task contract, live-document gate,
+  task/Knowledge Map/doctrine gates, mdBook test/build, and full CI pass; the corpus source/destinations are untouched.
+- [x] **GENERICITY** — policy is expressed only through task identity, source literals, origin class, and the
+  repository-wide evidence cap; no corpus, document, vendor, refresh, or path-specific rule enters the checker.
+- [x] **LOCKSTEP** — ADR 0024, census, fact card, mdBook doctrine reference, task tree, changes, and resume pointer
+  agree that `.3b` must lock 41 legacy plus seven structural corpus routes before migration.
