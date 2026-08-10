@@ -21,12 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-TASK-EVIDENCE-CONTAINMENT`; `.1` owns the untouched corpus task source boundary.
+- Active unit: `CORPUS-TASK-EVIDENCE-CONTAINMENT`; `.2` completed the corpus-specific containment census/design.
 - Current state: `CORPUS-COVERAGE.2` refresh #48 is complete at 48 done / eight remaining, 80 SourceIR / 20
   normalized / 80 EvidenceIR / 79 downstream chains, and 59/59 current emitted ISFs FSMGen-strict clean. Its task
   source is pinned at commit `d78d842e`, blob `d7ac9aa2…`, SHA-256 `5d7acb0c…`, 2,308 lines / 277,636 bytes /
-  4,747 maximum line bytes, with 892 bytes below the registered ceiling and no target mutation.
-- Next action: run `CORPUS-TASK-EVIDENCE-CONTAINMENT.2` to measure source roles, readers, writers, routes, growth,
-  current authority, and candidate topologies; then lock and execute the smallest lossless partition before #49.
-- In-flight uncommitted: none after the `.1` source-boundary commit. No background job is running.
+  4,746 maximum content-line bytes, with 892 bytes below the registered ceiling and no target mutation. Seven exact
+  source regions / 48 formal routes select a bounded active root, seven semantic parts, and an exact capsule.
+- Next action: run `CORPUS-TASK-EVIDENCE-CONTAINMENT.3` to commit the complete source-locked corpus contract,
+  unconditional verifier invocation, decision record, regions/routes/bounds, and absent-destination proof.
+- In-flight uncommitted: none after the `.2` measured-design commit. No background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

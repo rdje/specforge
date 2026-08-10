@@ -1,3 +1,16 @@
+### CORPUS-TASK-EVIDENCE-CONTAINMENT.2 — select measured corpus task partition
+
+- The untouched source is 2,308 lines / 277,636 bytes / 4,746 maximum content-line bytes, leaving 892 bytes at
+  the task-evidence ceiling. The latest fourteen growth intervals average 4,134.7 bytes and never fall below
+  1,215, so refresh #49 cannot fit safely.
+- Seven natural regions reconstruct all 277,636 bytes exactly and cover 48 fully qualified formal ids. At the
+  committed reader boundary, 42 tracked files cite the stable path and no executable opens it.
+- A bounded active root, seven semantic legacy parts, a 48-route index/manifest, and an exact capsule preserve
+  current authority, direct browsing, stable `.2.<refresh>` identity, and literal history. Corpus-derived limits
+  replace copied thresholds; the existing neutral active-task checker will enforce a separate contract.
+- The source remains byte-identical. Product status stays 48 done / eight remaining and 59/59 strict-clean; `.3`
+  locks every migration input before `.4` may move a source byte.
+
 ### CORPUS-COVERAGE.2.48 — refresh OpenCAPI 32G PHY signaling without false topology
 
 - Two guarded CPU ingests reproduce 43 pages / 39 visuals / 27 tables / 73 sections / 318 elements. The final

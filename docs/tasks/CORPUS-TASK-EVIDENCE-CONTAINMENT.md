@@ -54,12 +54,13 @@ evidence, bounded retrieval, and an unambiguous write transaction for refresh #4
   Commit: `CORPUS-TASK-EVIDENCE-CONTAINMENT.1 — lock untouched corpus task source`
 
 - ID: `CORPUS-TASK-EVIDENCE-CONTAINMENT.2`
-  Status: `pending`
+  Status: `done` (`2026-08-10`, DOC/MEASURE/DESIGN)
   Goal: measure source roles, current-state contradictions, readers, writers, routes, growth, and candidate topologies
   Acceptance: a task-owned census partitions every source byte, inventories all consumers and write obligations,
   reconciles current authority from durable evidence, and selects or rejects each topology with measured reasons
-  Verification: pending
-  Commit: pending
+  Verification: seven-region reconstruction, route/id/reader census, target identity, Knowledge Map, task
+  catalog, doctrines, and mdBook checks pass
+  Commit: `CORPUS-TASK-EVIDENCE-CONTAINMENT.2 — select measured corpus task partition`
 
 - ID: `CORPUS-TASK-EVIDENCE-CONTAINMENT.3`
   Status: `pending`
@@ -81,7 +82,7 @@ evidence, bounded retrieval, and an unambiguous write transaction for refresh #4
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `CORPUS-TASK-EVIDENCE-CONTAINMENT.2` | `pending` | Measure this corpus task before choosing a topology or limit. |
+| 1 | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3` | `pending` | Lock the selected topology and exact migration inputs before source mutation. |
 
 ## Locked Source Boundary
 
@@ -90,7 +91,7 @@ The target remains byte-identical to committed `d78d842e4e7fc8d1fd902937cf6902f0
 - Path: `docs/tasks/CORPUS-COVERAGE.md`
 - Git blob: `d7ac9aa2c07723cb4a7a8f3a15332ef84fe09f07`
 - SHA-256: `5d7acb0c973a75d821c9d5a963aac5c3899da19261dcf6427274cb123804123f`
-- Metrics: 2,308 lines / 277,636 bytes / 4,747 maximum line bytes (line 1,722)
+- Metrics: 2,308 lines / 277,636 bytes / 4,746 maximum content-line bytes (line 1,722)
 - History: 94 path-touching commits through the boundary
 - Registered byte ceiling: 278,528 bytes; exact remaining headroom: 892 bytes
 
@@ -106,11 +107,18 @@ measure and decide the actual destinations. `git diff -- docs/tasks/CORPUS-COVER
   its architecture only through a separately measured contract.
 - `2026-08-10`: Keep `docs/tasks/CORPUS-COVERAGE.md` byte-identical throughout `.1`; diagnostics may read it, but
   no partition or current-state rewrite is authorized until the measured design and locked migration leaves.
+- `2026-08-10`: `.2` corrected `.1`'s width notation from 4,747 bytes including LF to the doctrine-defined 4,746
+  content-line bytes excluding LF/optional CR. The locked commit/blob/SHA/line/total-byte identity is unchanged.
+- `2026-08-10`: `.2` selects a bounded active root, seven exact semantic legacy parts, a 48-route index/manifest,
+  and the exact source capsule. The seven measured regions total 2,308 lines / 277,636 bytes exactly; no route
+  alias is needed. A new top-level continuation, archive-only authority, and chronological-only topology are
+  rejected because they respectively break `.2.<refresh>` identity, demote browsable task authority, or lose task
+  hierarchy. Corpus-specific bounds and the root+one-part+index+manifest writer transaction are recorded in
+  `docs/research/corpus-task-evidence-containment-census.md`.
 
 ## Open Questions
 
-- Can the corpus task use a smaller continuation boundary than the hybrid active-root architecture, while keeping
-  all established ids and the active `.2` parent truthful? `.2` must answer from the measured source and consumers.
+- None.
 
 ## Blockers
 
@@ -121,14 +129,33 @@ measure and decide the actual destinations. `git diff -- docs/tasks/CORPUS-COVER
 | Date | Leaf | Checks | Result |
 | --- | --- | --- | --- |
 | `2026-08-10` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.1` | source commit/blob/SHA/metrics; target diff; candidate destination absence; `perl scripts/check_task_tree_catalog.pl --check`; `scripts/check_doctrines.sh`; `mdbook test docs/book`; `mdbook build docs/book` | pass |
+| `2026-08-10` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.2` | seven raw regions/source reconstruction; 42 exact-path readers at `3a40b152`; 48 formal / 41 subject / 48 union ids; growth census; target diff; Knowledge Map derive-and-diff; task catalog; doctrines; mdBook test/build | pass; selected bounded root + seven parts + exact capsule |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `CORPUS-TASK-EVIDENCE-CONTAINMENT.1` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.1 — lock untouched corpus task source` | Exact untouched-source ownership boundary. |
+| `CORPUS-TASK-EVIDENCE-CONTAINMENT.2` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.2 — select measured corpus task partition` | Complete census and corpus-specific topology/bounds. |
 
 ## Changelog
 
 - `2026-08-10`: Created the corpus-specific containment tree and opened `.1` as the only executable frontier.
 - `2026-08-10`: `.1` pinned the untouched committed source and advanced the frontier to the corpus-specific census.
+- `2026-08-10`: `.2` corrected width semantics, accounted for every source byte/route/reader/writer, selected the
+  measured hybrid, and advanced the frontier to the locked migration contract.
+
+### Acceptance Checklist (enforced) — `CORPUS-TASK-EVIDENCE-CONTAINMENT.2`
+
+- [x] **REPRODUCE / MEASURE** — seven raw regions reconstruct the exact 2,308-line / 277,636-byte source and
+  locked SHA; reader, id, history, current-state, and recent-growth censuses are explicit.
+- [x] **ROOT CAUSE (WHY + WHERE)** — recent minimum growth (1,215 bytes) exceeds 892 bytes of headroom; the source
+  mixes active current authority, semantic leaf evidence, a dense result table, and chronology in one append path.
+- [x] **ADDRESSED (verified)** — selected seven exact semantic parts plus a bounded root/index/manifest and capsule;
+  corpus-derived bounds and the future atomic writer transaction cover all 48 formal routes.
+- [x] **NO REGRESSION** — the target remains byte-identical to `d78d842e`; Knowledge Map, task catalog, doctrines,
+  and mdBook test/build pass; no product artifact, code, schema, CLI, source PDF, or public behavior changed.
+- [x] **GENERICITY** — the existing neutral active-task checker is reused through a separate data contract; no
+  corpus/document/vendor rule or copied first-target threshold enters executable policy.
+- [x] **LOCKSTEP** — research census, durable fact card, owning task, change history, roadmap, and resume pointer
+  agree that `.3` must lock the complete contract before `.4` may mutate the source.
