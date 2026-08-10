@@ -30,11 +30,11 @@ ISF pipeline, keep completed chains non-stale, and record extraction gaps withou
 
 ## Current Frontier
 
-Active product leaf: `CORPUS-COVERAGE.2.50a`.
+Active product leaf: `CORPUS-COVERAGE.2.50`.
 
-The first owned `.2.50` OpenCAPI Data Link cascade exposes four false signal constraints and one derived temporal
-conflict while adapter lowering safely blocks. Child `.2.50a` owns the measured generic passive-binding subject
-repair before the parent rebuilds from a corrected committed release.
+Child `.2.50a` is complete: a passive obligation's subject must now be named before its `must/shall be|remain`
+lead, which removes 26 measured false constraints corpus-wide and rebuilds the three affected rebuildable
+cascades. The parent now re-ingests the OpenCAPI Data Link Layer specification from the repaired release.
 
 ## Detailed task evidence
 
@@ -54,6 +54,7 @@ doctrines, and the risk-proportionate `COMMIT.md` gates before committing each l
 
 | Date | Boundary | Result |
 | --- | --- | --- |
+| `2026-08-10` | repair `.2.50a` | 26 false pre-bind subjects measured; eight removed in three rebuilt cascades; 58/58 strict-clean |
 | `2026-08-10` | refresh `.2.49` | 49 done / seven remaining; 80/21/80/79; 58/58 strict-clean |
 | `2026-08-10` | refresh `.2.48` | 48 done / eight remaining; 80/20/80/79; 59/59 strict-clean |
 | `2026-08-10` | containment source lock | 2,308 lines / 277,636 bytes / seven exact regions / 48 formal routes |

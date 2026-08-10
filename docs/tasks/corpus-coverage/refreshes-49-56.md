@@ -139,13 +139,13 @@ The eight downstream artifact/report hashes combine to
 
 ## CORPUS-COVERAGE.2.50
 
-- Status: `active` (`2026-08-10`, DATA/CODE/DOC; child `.2.50a` active)
+- Status: `active` (`2026-08-10`, DATA/CODE/DOC; child `.2.50a` done — rebuild from the repaired release)
 - Goal: re-ingest the OpenCAPI Data Link Layer v2.0 specification with the current release, then rebuild and
   validate EvidenceIR → SemanticIR → IntentIR → ISF without promoting glossary entries, encoding-table labels,
   protocol prose, or diagram text into unsupported signals, enums, phases, gates, or executable behavior.
 - Document key: `opencapi_data_link_layer_v20_09jul2020`
 - Source: `.cache/local-references/chipdoc/cxl/opencapi/current/OpenCAPI-Data-Link-Layer_v20_09JUL2020.pdf`
-- Children: `.2.50a` passive-binding constraint-subject authority repair (active).
+- Children: `.2.50a` passive-binding constraint-subject authority repair (done).
 
 ### Selection and source authority
 
@@ -226,7 +226,7 @@ The release binary is the `.2.48a` final binary at SHA-256
 
 ## CORPUS-COVERAGE.2.50a
 
-- Status: `active` (`2026-08-10`, PROBE/CODE/DATA/DOC; ownership only)
+- Status: `done` (`2026-08-10`, PROBE/CODE/DATA/DOC)
 - Parent: `CORPUS-COVERAGE.2.50`; parent completion pauses until this generic repair is committed and the OpenCAPI
   chain is rebuilt from the repaired release.
 - Goal: prevent uppercase tokens that occur only after a passive normative binding—or in unrelated later prose—
@@ -287,6 +287,58 @@ document, protocol, vendor, value, or growing denylist is permitted.
 - Record the generic causal fact, child/parent result, code/book/live-doc changes, hashes, and verification before
   parent `.2.50` resumes and completes from the repaired committed release.
 
+### Implemented repair
+
+`crates/specforge/src/ir/evidence.rs` gains one pure predicate, `is_post_passive_binding_only_subject`, applied in
+both deterministic paths beside the existing `.3e`/`.3g` subject gates. It keeps a candidate only when the document
+names it at identifier boundaries before the first passive binding lead of its constraint-bearing sentence, where a
+lead is a `must`/`shall` modal, optionally negated by `not`/`never`, immediately followed by `be`/`remain`
+(`first_passive_binding_lead`). Table-row sources are exempt because a row's other cells legitimately supply the
+subject its obligation cell then constrains. An active binding states its object after the verb, carries no passive
+lead, and is therefore untouched: `must drive PSTRB LOW` and `must have its WSTRB input tied HIGH` both survive by
+construction. The shared identifier-boundary test is factored into `contains_whole_identifier`, which now also
+serves the `.3e` gate in place of its private duplicate scan. No name, document, protocol, vendor, or value list
+enters production.
+
+### Measured effect
+
+The pre-repair persisted corpus carries 175 `sigcon_*` and 81 `dyn_sigcon_*` deterministic records. The predicate
+selects 26 of them — 17 pattern records across eight documents and nine dynamic records across two — and each was
+audited as a later condition or scope (`BCOMP`, `HRESP`, `SCL`, `CKE`), a protocol or device name (`WISHBONE`,
+`PCI`, `DTI`), the modal word `MUST` itself, or a non-subject field (`OAS`, `DID`, `IODIR`). Adding the four
+OpenCAPI records the parent cascade exposed reproduces the recorded pattern leg exactly at 21 across nine
+documents.
+
+An isolated old-versus-new `evidence --dry-run` replay over all 21 rebuildable documents changes exactly three of
+them and removes exactly eight records with none added; the other 18 are byte-identical, and inside the three the
+only other movement is sequential id renumbering. The three affected rebuildable cascades were then rebuilt and
+validated through all four stages, twice, byte-identically at combined hash `3538fec9…fd49`:
+
+| Document | Constraints | Temporal rules | Actor contracts | Fidelity findings | Temporal invariants |
+| --- | --- | --- | --- | --- | --- |
+| `um10204_rev7_0_2021_i2c_bus_specification` | 11 → 10 | 11 → 10 | 7 → 6 | 42 → 36 | 144 → 143 |
+| `usb_3_2_revision_1_0_2017_09` | 10 → 9 | 10 → 9 | 10 → 9 | 60 → 54 | 3,014 → 3,013 |
+| `wbspec_b4_wishbone_b4_specification` | 42 → 36 | 42 → 36 | 24 → 20 | 144 → 120 | 240 → 234 |
+
+The only emitted-target movement is I2C `wiring_patterns.isf`, which loses exactly the false `(SCL 1)` rule minted
+from a timing footnote; everything else in that file is renumbering, and all 58 current emitted targets stay
+FSMGen-strict clean. The six affected non-rebuildable documents — AXI, AHB, DTI, HBM2, NVMe, and the RISC-V IOMMU
+specification — keep 18 measured records and byte-exact stage directories; they clear at their own refresh leaves.
+
+### Decisions and incidents
+
+- `2026-08-10`: the passive lead is restricted to the `be`/`remain` copula on purpose. Widening it to `have` would
+  additionally select NVMe `dyn_sigcon_0011` (`FFFF`), but it would also delete the real AXI `WSTRB` and Arm
+  low-power `PREQ` obligations of the form `must have its <signal> input tied HIGH/LOW`. The `FFFF` record is a
+  distinct value-position defect — a hex literal in `shall have … set to FFFFh` reaching the subject slot — and is
+  recorded as a separate candidate rather than forced into this grammar.
+- `2026-08-10`: the three rebuilt documents' pre-existing chains were **not** reproducible under the pre-repair
+  binary, so they carried older-release state. Rebuilding them therefore also advanced them across every delta
+  accumulated since their own refresh, measured for USB 3.2 as timings 102 → 74, actors 18 → 16, and behaviors
+  2,705 → 866 before this repair's own subtraction. The isolated repair delta is proven by the old-versus-new
+  replay above, not by comparing against those superseded artifacts. Row 33 continues to describe USB 3.2 at its
+  own refresh boundary.
+
 ### Verification log
 
 | Date | Boundary | Result |
@@ -294,10 +346,38 @@ document, protocol, vendor, value, or growing denylist is permitted.
 | `2026-08-10` | first parent cascade | four false constraints → four ungrounded temporal rules / one false conflict; adapter safely blocked |
 | `2026-08-10` | read-only corpus census | 179 pattern + 81 dynamic records measured; 31 non-table post-binding-only subjects / ten documents; 31/31 audited false |
 | `2026-08-10` | clean handoff | pre-ingest seven-file chain restored at 2,666,088 bytes / all stale hashes; normalized and three new reports absent; post-ownership rollback deletion has zero residue; locality passes |
+| `2026-08-10` | focused tests | six new gate cases pass: both exact OpenCAPI paragraphs yield no record on either path; single/multi-signal pre-lead subjects, active `must drive`/`must have … tied`, and table-row context survive |
+| `2026-08-10` | isolated replay | 21 rebuildable documents replayed old-versus-new: 18 byte-identical, three changed, eight records removed, none added, no other section content moved |
+| `2026-08-10` | rebuilt cascades | I2C / USB 3.2 / WISHBONE rebuilt and validated through four stages twice, byte-identical at combined `3538fec9…fd49`; 77 untouched documents byte-exact |
+| `2026-08-10` | no regression | corpus census 26 → 18 remaining, all in non-rebuildable documents; KG 156/156; 58/58 FSMGen strict; nine provider-free evals at their recorded baseline with wire constraint/temporal golds 1.000; `cargo fmt`/clippy/test 1,804 / five ignored |
 
 ### Commit log
 
 | Unit | Durable evidence |
 | --- | --- |
 | `CORPUS-COVERAGE.2.50a` ownership | `26cfc13e` — `CORPUS-COVERAGE.2.50a — own passive-binding subject repair` |
-| `CORPUS-COVERAGE.2.50a` clean handoff | `CORPUS-COVERAGE.2.50a — checkpoint clean repair handoff` |
+| `CORPUS-COVERAGE.2.50a` clean handoff | `b9fc4512` — `CORPUS-COVERAGE.2.50a — checkpoint clean repair handoff` |
+| `CORPUS-COVERAGE.2.50a` completion | `CORPUS-COVERAGE.2.50a — require pre-bind passive constraint subjects` |
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.50a`
+
+- [x] **REPRODUCE / MEASURE** — the parent cascade's four false OpenCAPI records and their two exact source
+  paragraphs are pinned, and the complete deterministic corpus is censused at 175 `sigcon_*` + 81 `dyn_sigcon_*`
+  with 26 in-class records across nine documents before any production code changes.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: `extract_signal_constraints`'s
+  full-text fallback and `extract_dynamic_signal_constraints`'s whole-statement subject scan both admit uppercase
+  tokens that occur only after a passive `must/shall be|remain` lead, and no existing dotted, descriptive-field,
+  value-position, or condition gate expresses the missing grammatical rule.
+- [x] **ADDRESSED (verified)** — one shared pre-lead subject predicate now guards both paths; the two exact
+  OpenCAPI paragraphs emit nothing, the isolated 21-document replay removes exactly eight records and adds none,
+  and the three rebuilt cascades drop the matching temporal rules, contracts, findings, invariants, and the false
+  emitted `(SCL 1)` rule.
+- [x] **NO REGRESSION** — `kg-bench` 156/156; 58/58 current emitted-ISF FSMGen `--strict --check`; nine
+  provider-free APB/AHB/AXI/SWD/I2C evals at their recorded baseline with wire constraint and temporal golds at
+  1.000 and the known `CSYSPWRUPACK` residual unchanged; `cargo fmt --all --check`, warning-deny clippy, and
+  1,804 tests / five ignored green; doctrines, mdBook, persisted-path, live-size, and locality gates pass.
+- [x] **GENERICITY (ADR 0006)** — the rule is modal/copula grammar plus identifier-boundary occurrence and the
+  repository-wide table-row marker; no document, protocol, vendor, signal, or value list, and no artifact was
+  hand-edited.
+- [x] **LOCKSTEP** — code, corpus measurement, this leaf, the tree root and frontier, roadmap, live docs, mdBook,
+  the Knowledge Map fact card, and the resume pointer agree before commit.

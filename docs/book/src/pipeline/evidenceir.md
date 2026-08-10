@@ -1253,6 +1253,26 @@ hex letters. The effect is again surgical: NVMe's `MPS` co-subject leaves, the w
 identical (zero wire records touched), and the gold gates stay at 1.000. *Authoritative tracking:*
 `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.3g`).
 
+A sixth companion gate closes the last member of this family: **a passive obligation's subject has to be named
+before the obligation**. English puts the subject of *"… must/shall be …"* in front of the modal, so anything the
+sentence only reaches *afterwards* is an agent, an aside, or a later mention — never the constrained thing. In
+*"The endpoint **shall be held in reset** by an out-of-band OpenCAPI Device Enable (OCDE) signal"* the obligation
+is about the endpoint; `OCDE` names the signal that does the enabling, and `CAPI` is not even a word — it is the
+uppercase tail of *OpenCAPI*. In *"Lane reversal … **shall be compatible** with all supported lane widths"* the
+candidates (`DLX`, `CAPI` again) appear two sentences later. Both deterministic paths could reach such a token —
+the pattern path through its full-text fallback, the value path through its whole-statement scan — and mint a
+`must_be_*` about something the document never constrains. The gate keeps a candidate only when it occurs, at word
+boundaries, *before* the sentence's first `must`/`shall` (optionally *not*/*never*) `be`/`remain`. Three things are
+deliberately left alone: an **active** obligation, which states its object after the verb (*"must drive PSTRB
+LOW"*, *"must have its WSTRB input tied HIGH"*), carries no passive lead at all; a **table row**, whose other
+cells legitimately name the subject its obligation cell then constrains; and every ordinary passive constraint,
+single- or multi-signal (*"PADDR, PWDATA, and PWRITE must be stable when PSEL is asserted"*), whose subjects all
+precede the lead. Measured live over the whole corpus: 26 fabricated subjects leave (a WISHBONE sentence that had
+been minting a constraint about the word `MUST` itself, protocol names like `WISHBONE`/`PCI`/`DTI`, later
+conditions like `HRESP` and `CKE`, non-subject fields like `OAS`/`DID`/`IODIR`), the wire golds stay at 1.000,
+`kg-bench` stays green, and one emitted `.isf` improves — the I2C target loses a false `SCL = 1` rule that a
+timing footnote had produced. *Authoritative tracking:* `docs/tasks/CORPUS-COVERAGE.md` (`.2.50a`).
+
 ### `EXTRACTION-QUALITY-GAUGE.0` — the artifact carries its own quality measurement
 
 Every surface above is about extracting more, and extracting it correctly. This one is about

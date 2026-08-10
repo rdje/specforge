@@ -129,6 +129,7 @@
 - [packet-field-table-declaration](packet-field-table-declaration.md)
 - [page-image-disk-bounding](page-image-disk-bounding.md)
 - [parenthetical-data-head-requires-wire-qualifier](parenthetical-data-head-requires-wire-qualifier.md)
+- [passive-binding-subject-authority](passive-binding-subject-authority.md)
 - [pdf-encryption-and-read-access](pdf-encryption-and-read-access.md)
 - [persisted-path-origin-and-rebase-contract](persisted-path-origin-and-rebase-contract.md)
 - [prior-phrase-utf8-byte-as-char](prior-phrase-utf8-byte-as-char.md)

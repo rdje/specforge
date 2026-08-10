@@ -263,9 +263,11 @@ Five active program groups support that north star:
   a 50-route index/manifest, and an exact 2,308-line source capsule. The next separately owned `.2.50` leaf selects
   the 57-page / 527-element OpenCAPI Data Link Layer v2.0 specification, the smallest of seven remaining sources.
   Its first cascade removes the stale interface/target but exposes child `.2.50a`: four uppercase tokens that occur
-  only after passive binding leads become false signal constraints and one temporal conflict. A corpus audit finds
-  31/31 records of that structural shape false across ten documents; the child owns a universal pre-bind subject
-  authority repair before parent completion. The guarded migration owned by
+  only after passive binding leads become false signal constraints and one temporal conflict. `.2.50a` is closed —
+  both deterministic extractors now keep a passive obligation's subject only when the document names it before the
+  `must/shall be|remain` lead, which deletes 26 measured false records across nine documents, rebuilds the I2C,
+  USB 3.2, and WISHBONE cascades, and drops a false `SCL` rule from an emitted target while active
+  `must drive`/`must have … tied` grammar and table-row context are untouched. The guarded migration owned by
   [`CORPUS-TASK-EVIDENCE-CONTAINMENT`](docs/tasks/CORPUS-TASK-EVIDENCE-CONTAINMENT.md) is lossless and below all
   local warnings. Its same-SSD no-hardlink clean clone passed every doctrine, a temporary eighth active part proved
   the eligible post-migration #49 route through the composed live gate, and exact restoration left no residue.

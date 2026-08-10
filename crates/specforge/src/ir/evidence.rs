@@ -5697,23 +5697,136 @@ fn is_descriptive_field_cell_spurious_subject(text: &str, subject: &str) -> bool
     };
     // (3) keep when the subject appears (identifier-boundary) BEFORE the marker — it is the field's
     // own name; otherwise it was lifted from the descriptive body → spurious.
-    let subject_lc = subject.to_ascii_lowercase();
-    let before = &lowered[..marker_pos];
+    !contains_whole_identifier(&lowered[..marker_pos], subject)
+}
+
+/// True when `needle` occurs in `haystack` at IDENTIFIER BOUNDARIES (case-insensitive) — i.e. it is
+/// a whole token there, not the tail of a longer word (`CAPI` inside `OpenCAPI`) or the head of one.
+/// The shared spelling of "the document really names this token here", used by the spurious-subject
+/// gates below.
+fn contains_whole_identifier(haystack: &str, needle: &str) -> bool {
+    let is_ident = |c: char| c.is_ascii_alphanumeric() || c == '_';
+    let haystack = haystack.to_ascii_lowercase();
+    let needle = needle.to_ascii_lowercase();
     let mut scan = 0usize;
-    while let Some(pos) = before[scan..].find(subject_lc.as_str()) {
-        let start = scan + pos;
-        let end = start + subject_lc.len();
-        let before_ok = before[..start]
+    while let Some(position) = haystack[scan..].find(needle.as_str()) {
+        let start = scan + position;
+        let end = start + needle.len();
+        let before_ok = haystack[..start]
             .chars()
             .next_back()
             .is_none_or(|c| !is_ident(c));
-        let after_ok = before[end..].chars().next().is_none_or(|c| !is_ident(c));
+        let after_ok = haystack[end..].chars().next().is_none_or(|c| !is_ident(c));
         if before_ok && after_ok {
-            return false;
+            return true;
         }
         scan = start + 1;
     }
-    true
+    false
+}
+
+/// The identifier-shaped words of `text` paired with their byte offsets, in reading order.
+fn identifier_words(text: &str) -> Vec<(usize, &str)> {
+    let mut words = Vec::new();
+    let mut start: Option<usize> = None;
+    for (index, character) in text.char_indices() {
+        if character.is_ascii_alphanumeric() || character == '_' {
+            start.get_or_insert(index);
+        } else if let Some(begin) = start.take() {
+            words.push((begin, &text[begin..index]));
+        }
+    }
+    if let Some(begin) = start {
+        words.push((begin, &text[begin..]));
+    }
+    words
+}
+
+/// Byte offset of the first PASSIVE normative binding lead in `text` — a `must`/`shall` modal,
+/// optionally negated by `not`/`never`, immediately followed by the copula `be`/`remain`. Returns
+/// `None` when the fragment carries no such lead: an ACTIVE binding (`"must drive PSTRB LOW"`,
+/// `"must have its WSTRB input tied HIGH"`) states its object AFTER the verb, so it is deliberately
+/// not a passive lead and its grammar stays untouched.
+///
+/// The offset is taken on the ASCII-lowercased copy, whose byte layout is identical to `text`
+/// (`to_ascii_lowercase` maps only `A-Z` and never changes a byte count), so the caller may slice
+/// `text` with it.
+fn first_passive_binding_lead(text: &str) -> Option<usize> {
+    const MODALS: [&str; 2] = ["must", "shall"];
+    const NEGATORS: [&str; 2] = ["not", "never"];
+    const COPULAS: [&str; 2] = ["be", "remain"];
+
+    let lowered = text.to_ascii_lowercase();
+    let words = identifier_words(&lowered);
+    for (index, (offset, word)) in words.iter().enumerate() {
+        if !MODALS.contains(word) {
+            continue;
+        }
+        let mut next = index + 1;
+        if words
+            .get(next)
+            .is_some_and(|(_, following)| NEGATORS.contains(following))
+        {
+            next += 1;
+        }
+        if words
+            .get(next)
+            .is_some_and(|(_, following)| COPULAS.contains(following))
+        {
+            return Some(*offset);
+        }
+    }
+    None
+}
+
+/// CORPUS-COVERAGE.2.50a — recognize a SPURIOUS constraint subject the document never NAMES before
+/// the passive normative binding this record attributes to it. English binds a passive obligation
+/// (`"… must/shall [not] be/remain …"`) to a subject that PRECEDES the modal, so a token reachable
+/// only AFTER the lead is an agent, an apposition, a scope, a later mention — anything but the
+/// constrained thing. `"The endpoint shall be held in reset by an out-of-band OpenCAPI Device
+/// Enable (OCDE) signal."` constrains *the endpoint*: `CAPI` (the uppercase tail of `OpenCAPI`) and
+/// `OCDE` sit in the trailing agent phrase. `"Lane reversal … shall be compatible with all
+/// supported lane widths. … OpenCAPI devices (DLX) …"` constrains *lane reversal*: its candidates
+/// live in a later sentence entirely. Both deterministic paths can reach such a token — the pattern
+/// path through its full-text fallback, the dynamic path through its whole-statement subject scan —
+/// and mint a `must_be_*` about something the document never constrains. Returns `true` for a
+/// `(text, subject)` pair → drop THAT subject (an honest residual; the obligation's real pre-lead
+/// subject, if any, is kept).
+///
+/// Conservative + structurally decidable, in the shape of the `.3e`/`.3g` gates:
+///   1. `subject` is a plain identifier (alphanumeric/underscore) — a bracketed/dotted candidate is
+///      never touched;
+///   2. the source is PROSE, not a TABLE ROW (a leading `|`, the repository-wide row marker): a
+///      row's other cells legitimately name the subject that an obligation cell then constrains, so
+///      row context is left exactly as it is;
+///   3. the constraint-bearing sentence carries a PASSIVE binding lead (`first_passive_binding_lead`);
+///      an active `"must drive/set <signal> …"` obligation has none and is never touched;
+///   4. the subject does NOT occur at identifier boundaries BEFORE that lead. A candidate that does
+///      — `PSEL` in `"PSEL must be HIGH"`, each of `"PADDR, PWDATA, and PWRITE must be stable"` — is
+///      a legitimate subject and is kept.
+///
+/// Universal grammar only (ADR 0006 — no document, protocol, vendor, value, or token list). Measured
+/// over the 80-document persisted corpus: drops 26 of 256 deterministic records (17 `sigcon_*` across
+/// eight documents, nine `dyn_sigcon_*` across two), each audited as a later condition or scope
+/// (`BCOMP`, `HRESP`, `SCL`, `CKE`), a protocol/device name (`WISHBONE`, `PCI`, `DTI`), a modal word
+/// (`MUST`), or a non-subject field (`OAS`, `DID`, `IODIR`) — and keeps every pre-lead subject.
+fn is_post_passive_binding_only_subject(text: &str, subject: &str) -> bool {
+    let is_ident = |c: char| c.is_ascii_alphanumeric() || c == '_';
+    // (1) only a plain-identifier subject is ever in scope.
+    if subject.is_empty() || !subject.chars().all(is_ident) {
+        return false;
+    }
+    // (2) a table row supplies subject context from its other cells → out of scope.
+    if text.trim_start().starts_with('|') {
+        return false;
+    }
+    // (3) the passive binding this record claims, inside the sentence that carries it.
+    let sentence = constraint_bearing_sentence(text);
+    let Some(lead) = first_passive_binding_lead(sentence) else {
+        return false;
+    };
+    // (4) a subject named before the lead is real; one reachable only after it is not.
+    !contains_whole_identifier(&sentence[..lead], subject)
 }
 
 /// EXTRACTION-QUALITY-GAUGE.3g — recognize a SPURIOUS constraint subject lifted from a `Reg.Field`
@@ -5841,6 +5954,10 @@ fn extract_dynamic_signal_constraints(
         // in the cell body ("… aligned to the memory page size (CC.MPS) …" → `MPS`); a subject that
         // ever appears standalone (its own declaration) is kept.
         subject_signals.retain(|s| !is_dotted_cross_reference_subject(&statement.text, s));
+        // CORPUS-COVERAGE.2.50a: drop a subject the document never names BEFORE the passive binding
+        // this record attributes to it (`OpenCAPI`/`OCDE` after "shall be held in reset"); the same
+        // obligation's real pre-lead subject, and every active `must drive …` binding, are kept.
+        subject_signals.retain(|s| !is_post_passive_binding_only_subject(&statement.text, s));
         if subject_signals.is_empty() {
             continue;
         }
@@ -7567,6 +7684,9 @@ fn extract_signal_constraints(
         // EXTRACTION-QUALITY-GAUGE.3g: drop a subject lifted from a `Reg.Field` dotted cross-reference
         // in the cell body ("… (CC.MPS) …" → `MPS`); a standalone occurrence is always kept.
         subject_signals.retain(|s| !is_dotted_cross_reference_subject(text, s));
+        // CORPUS-COVERAGE.2.50a: the same universal pre-lead subject authority as the dynamic path —
+        // a passive obligation's subject must be named before its `must/shall be|remain` lead.
+        subject_signals.retain(|s| !is_post_passive_binding_only_subject(text, s));
         if subject_signals.is_empty() {
             continue;
         }
@@ -26344,6 +26464,143 @@ mod wire_based_100_5i {
         assert!(
             recs.iter().any(|r| r.subject_signal == "HADDR"),
             "with no catalog the filter must not drop the constraint, got {recs:?}"
+        );
+    }
+}
+
+#[cfg(test)]
+mod corpus_coverage_2_50a {
+    //! CORPUS-COVERAGE.2.50a — a passive obligation's subject must be NAMED before its
+    //! `must/shall [not] be|remain` lead. Both deterministic constraint paths otherwise mint a
+    //! `must_be_*` about a trailing agent/apposition or an unrelated later sentence.
+    use super::*;
+
+    /// The exact OpenCAPI Data Link Layer v2.0 paragraph behind the false `CAPI`/`OCDE` = `RESET`
+    /// records: the obligation is on *the endpoint*; both candidates sit in the agent phrase.
+    const RESET_PARAGRAPH: &str = "The endpoint shall be held in reset by an out-of-band OpenCAPI Device Enable (OCDE) signal. After the OCDE signal is enabled (active high), link training begins. The definition of the OCDE implementation is found in a host's platform architecture specification.";
+
+    /// The exact paragraph behind the false `CAPI`/`DLX` = `COMPATIBLE` records: the obligation is
+    /// on *lane reversal*; both candidates appear only in a later sentence.
+    const LANE_REVERSAL_PARAGRAPH: &str = "Lane reversal is independently determined on both of the RX and TX domains and shall be compatible with all supported lane widths. During training, the host DL detects reversed lane connections and attempts to swap the lanes. If incorrect lane connections are still present, the link does not train. OpenCAPI devices (DLX) are not required to support the multiplexers for lane reversal and shall indicate lane swap requests to the host in the deskew training sets. Then, the host reverses the lanes before transmitting the data.";
+
+    fn stmt(class: StatementClass, text: &str) -> ExtractedStatement {
+        ExtractedStatement {
+            statement_id: "s1".to_string(),
+            class,
+            modality: EvidenceModality::Text,
+            text: text.to_string(),
+            evidence_span_ids: vec![],
+            related_visual_evidence_ids: vec![],
+        }
+    }
+
+    fn values(names: &[&str]) -> HashSet<String> {
+        names.iter().map(|n| n.to_string()).collect()
+    }
+
+    /// Every subject both deterministic paths mint for one statement.
+    fn subjects(text: &str, discovered: &HashSet<String>) -> Vec<String> {
+        let mut counter = 0usize;
+        let pattern = vec![stmt(StatementClass::SignalValueConstraint, text)];
+        let mut found: Vec<String> = extract_signal_constraints(&pattern, &mut counter)
+            .into_iter()
+            .map(|r| r.subject_signal)
+            .collect();
+        let mut dyn_counter = 0usize;
+        let dynamic = vec![stmt(StatementClass::NormativeStatement, text)];
+        found.extend(
+            extract_dynamic_signal_constraints(&dynamic, &mut dyn_counter, discovered)
+                .into_iter()
+                .map(|r| r.subject_signal),
+        );
+        found
+    }
+
+    #[test]
+    fn trailing_agent_phrase_yields_no_constraint() {
+        // `CAPI` is only the uppercase tail of "OpenCAPI"; `OCDE` names the enabling signal, not the
+        // thing held in reset. Neither precedes "shall be" → the paragraph is an honest residual.
+        assert_eq!(
+            subjects(RESET_PARAGRAPH, &values(&["RESET"])),
+            Vec::<String>::new()
+        );
+    }
+
+    #[test]
+    fn later_sentence_candidates_yield_no_constraint() {
+        // The obligation is on lane reversal; `CAPI`/`DLX` appear two sentences later.
+        assert_eq!(
+            subjects(LANE_REVERSAL_PARAGRAPH, &values(&["COMPATIBLE"])),
+            Vec::<String>::new()
+        );
+    }
+
+    #[test]
+    fn pre_lead_subject_is_kept() {
+        // The ordinary passive obligation, single- and multi-signal, is untouched.
+        assert!(subjects("PSEL must be HIGH.", &values(&["HIGH"])).contains(&"PSEL".to_string()));
+        let multi = subjects(
+            "PADDR, PWDATA, and PWRITE must be stable when PSEL is asserted.",
+            &HashSet::new(),
+        );
+        for signal in ["PADDR", "PWDATA", "PWRITE"] {
+            assert!(
+                multi.contains(&signal.to_string()),
+                "{signal} precedes the lead and must survive, got {multi:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn active_binding_grammar_is_untouched() {
+        // An ACTIVE obligation states its object AFTER the verb, so it carries no passive lead and
+        // the gate never fires — "must drive/set <signal> <level>" and "must have … tied HIGH".
+        assert!(
+            subjects("The Requester must drive PSTRB LOW.", &HashSet::new())
+                .contains(&"PSTRB".to_string())
+        );
+        assert!(
+            subjects(
+                "An attached Subordinate must have its WSTRB input tied HIGH.",
+                &HashSet::new()
+            )
+            .contains(&"WSTRB".to_string())
+        );
+    }
+
+    #[test]
+    fn table_row_subject_context_is_untouched() {
+        // A row's other cells legitimately name the subject its obligation cell then constrains, so
+        // a candidate absent from the obligation's own sentence is still kept inside a row.
+        let row = "| paccept | Output | Power controller | preq is synchronized into the GIC-600. pstate must be stable when preq is asserted. |";
+        assert!(!is_post_passive_binding_only_subject(row, "PACCEPT"));
+        // The same prose (no leading `|`) is in scope: `GIC` is reachable only outside the
+        // obligation's sentence, so it is not that obligation's subject.
+        let prose =
+            "preq is synchronized into the GIC-600. pstate must be stable when preq is asserted.";
+        assert!(is_post_passive_binding_only_subject(prose, "GIC"));
+    }
+
+    #[test]
+    fn lead_recognition_is_grammatical_not_lexical() {
+        // Negated passive leads count; an active binder and a bare modal do not.
+        assert_eq!(
+            first_passive_binding_lead("HTRANS must not be SEQ."),
+            Some(7)
+        );
+        assert_eq!(
+            first_passive_binding_lead("HTRANS shall never remain HIGH."),
+            Some(7)
+        );
+        assert_eq!(
+            first_passive_binding_lead("The Manager must drive PSTRB."),
+            None
+        );
+        assert_eq!(first_passive_binding_lead("PSEL is asserted."), None);
+        // A modal that only LOOKS like one ("mustard") is not a lead.
+        assert_eq!(
+            first_passive_binding_lead("mustard shall bear no lead."),
+            None
         );
     }
 }

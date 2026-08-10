@@ -1,3 +1,21 @@
+### CORPUS-COVERAGE.2.50a — require pre-bind passive constraint subjects
+
+- Both deterministic constraint extractors now keep a subject only when the document names it at identifier
+  boundaries before the first `must`/`shall` (optionally `not`/`never`) `be`/`remain` lead of the sentence that
+  carries the obligation. Active `must drive PSTRB LOW` and `must have its WSTRB input tied HIGH` grammar has no
+  passive lead and is untouched, and table-row sources stay exempt because a row's other cells legitimately supply
+  the subject its obligation cell constrains.
+- The measured corpus effect is 26 of 256 deterministic records across nine documents: later conditions and scopes
+  (`BCOMP`, `HRESP`, `SCL`, `CKE`), protocol and device names (`WISHBONE`, `PCI`, `DTI`), the modal word `MUST`
+  itself, and non-subject fields (`OAS`, `DID`, `IODIR`).
+- An isolated old-versus-new replay over the 21 rebuildable documents changes exactly three of them, removing
+  eight records and adding none while the other 18 stay byte-identical. The I2C, USB 3.2, and WISHBONE cascades
+  rebuild and validate twice at combined hash `3538fec9…fd49`, dropping the matching temporal rules, contracts,
+  findings, invariants, and the false `(SCL 1)` rule from the emitted I2C target.
+- Focused gate tests, KG 156/156, 58/58 emitted-ISF FSMGen strict, nine provider-free evals at their recorded
+  baseline, full CI 1,804/five ignored, doctrines, book, path, and locality gates pass. Parent `.2.50` resumes the
+  OpenCAPI Data Link Layer refresh from the repaired release.
+
 ### CORPUS-COVERAGE.2.49 — refresh GIC overview without false topology
 
 - Two guarded CPU ingests reproduce 45 pages / 44 visuals / 13 tables / 58 sections / 430 elements and a
