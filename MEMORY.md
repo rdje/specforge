@@ -30,4 +30,6 @@
 - Next action: select refresh #51 by the smallest-retained-source rule from the six remaining documents, create its
   separately owned `CORPUS-COVERAGE.2.51` leaf, and authenticate its source and stale chain before any ingest.
 - In-flight uncommitted: none; no background job is running.
-- Blockers: none. The user-owned `.claude/settings.json` remains untouched.
+- Blockers: none for refresh work. `CORPUS-CHAIN-CURRENCY` tracks a measured finding awaiting a director decision:
+  three of 22 rebuildable documents carry stale timing surfaces and 58 are unmeasurable without re-ingest. The
+  user-owned `.claude/settings.json` remains untouched.
