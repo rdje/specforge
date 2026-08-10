@@ -231,14 +231,16 @@ Five active program groups support that north star:
   physical timing constraints hold. Current authority removes two stale interfaces and the three-port `.isf`;
   final IntentIR keeps four behaviors / 27 constraints / two assumptions. Two cascades reproduce; WIRE/I2C/SWD,
   KG 156/156, 64/64 FSMGen strict, full CI, book/doctrines/path/locality pass. Corpus is 45 done / 11 remaining at
-  80 SourceIR / 14 normalized / 80 EvidenceIR / 79 downstream chains. `.2.46` now owns the 40-page OpenCAPI
-  Discovery Configuration refresh, the smallest of 11 remaining candidates at 181 retained elements; source,
-  release, and the exact seven-file stale chain are authenticated. Its first cascade exposed child `.2.46a`, now
-  closed: the complete six-candidate census showed four qualified serial-data wires and two false property/example
-  ports. The sparse parenthetical fallback now requires adjacent `serial`/`high-speed` authority only for the
-  ambiguous `data` head. Four real-document replays remove OpenCAPI `VPD` and Wishbone `DO`, preserve the I2C/I2S
-  positives, and reproduce 33 downstream hashes; all 61 current emitted ISFs remain strict-clean. Parent `.2.46`
-  resumes its final Discovery cascade, documentation, cleanup, and signoff. Separately,
+  80 SourceIR / 14 normalized / 80 EvidenceIR / 79 downstream chains. `.2.46` refreshes the 40-page OpenCAPI
+  Discovery Configuration spec: Source 181→172 removes nine flattened visual labels; Evidence 831→754 further
+  removes 65 synthetic table/front-matter enums and false `BDF`/`DL`/`VPD` declarations. Child `.2.46a` closes
+  the distinct ambiguous bare-`data` authority defect while preserving real I2C/I2S serial signals. Current
+  authority removes the stale interfaces/port/relation/phases/gates, but keeps ten behaviors / 55 constraints /
+  six timings. Lowering blocks honestly on no declared signals. Validators retain the known table/visual/
+  normative/temporal capture frontier; two repaired cascades reproduce eight downstream hashes and final
+  committed-binary validation pins all 12 artifact/report hashes. Corpus is 46 done / ten remaining at 80
+  SourceIR / 18 normalized / 80 EvidenceIR / 79 downstream chains; all 61 current emitted ISFs are strict-clean.
+  Frontier: select and own refresh #47 from the authenticated same-SSD library. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

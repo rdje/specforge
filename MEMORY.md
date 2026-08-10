@@ -21,15 +21,17 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.46`; final OpenCAPI Discovery Configuration refresh replay and signoff.
-- Current state: child `.2.46a` closes the ambiguous parenthetical `data` authority defect. OpenCAPI `VPD` and
-  Wishbone `DO` no longer become ports; I2C `SDA`/`USDA`/`SDAH` and I2S `SD` remain. Two validated four-document
-  cascades reproduce 33 hashes; EvidenceIR, WIRE/I2C/SWD, KG 156/156, Clippy, path/locality, and 61/61 FSMGen
-  strict gates pass. The final #46 chain has 754 Evidence statements, zero interfaces, 55 Semantic invariants,
-  ten contracts, five assertions, six timings, and an honestly blocked zero-signal adapter with one storage var.
-  The required status append is preserved through exact warning-safe segment `live-achievement-status-0006`.
-- Next action: commit child `.2.46a`, then rerun and validate parent #46 once from the committed binary, record
-  final hashes/path census, update parent live surfaces, delete only its authenticated task bundle, and commit.
-- In-flight uncommitted: child code/docs plus the parent generated chain and exact repository-local rollback/task
-  evidence. No background job.
+- Active unit: `CORPUS-COVERAGE.2`; next corpus refresh selection (#47).
+- Current state: refresh #46 is complete. Three guarded OpenCAPI Discovery ingests reproduce 40 pages / 54 visuals /
+  49 tables / 50 sections / 172 elements with 47–53% memory free and 188 portable normalized paths. Current SourceIR
+  181→172 and EvidenceIR 831→754 remove only flattened labels, synthetic table/front-matter enums, and false
+  `BDF`/`DL`/`VPD` declarations. Final IntentIR retains ten behaviors / 55 constraints / six timings; adapter
+  lowering blocks honestly on no grounded signals while validators expose the remaining capture frontier. Two
+  repaired cascades reproduce eight downstream hashes; final committed-binary validation pins all 12 hashes.
+  Corpus status is 46 done / ten remaining at 80 SourceIR / 18 normalized / 80 EvidenceIR / 79 downstream chains;
+  all 61 emitted ISFs are FSMGen-strict clean.
+- Next action: from a clean tracked tree, select the smallest/highest-value authenticated same-SSD candidate for
+  refresh #47 and commit its owning task leaf before any generated mutation.
+- In-flight uncommitted: the verified #46 parent documentation/fact bundle and its exact repository-local task
+  evidence pending doctrine gates, exact cleanup, and recording commit. No background job.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

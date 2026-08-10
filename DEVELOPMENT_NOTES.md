@@ -1,4 +1,25 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.46 (`2026-08-10`) — discovery prose is not an implicit interface
+
+The stale Discovery Configuration chain was unusually convincing syntactically and still unsupported
+semantically. Glossary/table fragments produced width-one `BDF`, `DL`, and `VPD` declarations, which were enough
+for mixed-vintage interface grouping to emit a three-output `controller.isf`; 65 front-matter/table fragments
+also became enums. Yet the document had only one relation and one port, no signal constraints, and no behavioral
+rule capable of grounding that interface. Renderability was therefore an artifact of weak acronym authority,
+not evidence of a controller boundary.
+
+Current shared rules preserve the useful engineering content while refusing that promotion. Nine flattened
+visual labels and the synthetic enum/declaration statements disappear, but 754 evidence statements, four
+conditionals, one register, six timings, ten behaviors, and 55 constraints remain. The adapter still retains a
+storage record, demonstrating that honest blocking does not erase typed facts; it simply refuses to emit a target
+without declared signals. Child `.2.46a` closes the only newly exposed producer defect (`Vital Product Data`
+admitted through ambiguous bare `data`), while `BDF` and `DL` converge under rules already shipped.
+
+The remaining weakness is upstream recall, not a reason to relax signal authority. Fifteen intent-bearing tables,
+54 visuals, 37 normative statements, one overlapping register, and eight temporal sources remain incompletely
+typed. Validators keep each class visible. Future table/vision/temporal work can improve them from grounded
+evidence; this refresh deliberately does not infer ports or executable behavior from their presence alone.
+
 ## CORPUS-COVERAGE.2.46a (`2026-08-10`) — `data` needs evidence that it names a wire
 
 The sparse parenthetical fallback had a sound shape but one ambiguous noun. Requiring an uppercase acronym and

@@ -186,6 +186,19 @@ IntentIR retains four behaviors / 27 constraints / two assumptions / 70 timing c
 correctly blocks on no declared interface signals. Nine unknown tables, 26 unclassified visuals, and 12 normative
 residuals remain explicit capture frontiers.
 
+The 40-page OpenCAPI Discovery Configuration Specification provides a thirteenth transfer and demonstrates why
+configuration content does not itself declare a hardware interface. Its stale chain turned glossary/table terms
+`BDF`, `DL`, and `VPD` into width-one outputs, grouped two interfaces, and emitted a three-port/three-enum
+`controller.isf`. Current extraction removes nine flattened visual labels and 65 synthetic front-matter/table
+enums; shared signal authority plus the qualified-`data` repair removes the three false declarations. Final
+EvidenceIR still retains 754 statements, four conditionals, one register, and six timings. IntentIR retains ten
+behaviors / 55 constraints / six assumptions / six timings, but has no declared interface signal, so lowering
+correctly blocks and keeps only one storage record plus a field-lowering residual. Validation explicitly reports
+37 partially structured normative statements, 15 unexplained intent-bearing tables, 54 unenriched visuals, one
+overlapping register, and eight temporal-source IDs without typed rules. Those are upstream capture frontiers,
+not authority to infer ports. Three ingests and two repaired cascades reproduce; all 188 normalized project paths
+are relative and present.
+
 The corpus cache now has 61 current emitted `.isf` files, all covered by a fresh 61/61 FSMGen-strict sweep. The
 blocked/non-emitting set includes USB 3.2, USB4 Inter-Domain, USB4 Connection Manager, CoreSight Base System,
 AArch64 External Debug, Introducing CoreSight, and the recently refreshed OpenCAPI notes/definitions/PHY

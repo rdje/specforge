@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > does relation-derived direction synthesis independently invent signal names
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > does removing sentence fallback remove address phase recognition
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
@@ -296,5 +298,3 @@
   > how does ground_constraint recover a value the model did not echo
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > how does ingest avoid being RAM-guard-aborted on a small/restricted machine
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > how does ingest avoid crashing the host when memory runs out
