@@ -170,6 +170,7 @@
 - [temporal-eval-residual-fps-are-stale](temporal-eval-residual-fps-are-stale.md)
 - [temporal-logic-choice](temporal-logic-choice.md)
 - [temporal-rule-ltl-rendering](temporal-rule-ltl-rendering.md)
+- [timing-scalar-rows-require-independent-cell-geometry](timing-scalar-rows-require-independent-cell-geometry.md)
 - [timing-table-structural-authority](timing-table-structural-authority.md)
 - [timing-table-trapped-row-recovery](timing-table-trapped-row-recovery.md)
 - [transaction-body-emission-faithfully-complete](transaction-body-emission-faithfully-complete.md)

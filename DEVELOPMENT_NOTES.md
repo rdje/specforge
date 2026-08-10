@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.48a (`2026-08-10`) — repeated text is not repeated scalar evidence
+
+The OpenCAPI false record was initially deceptive because every field was populated. A single `Notes:` footer
+cell spans all eight columns, and Docling faithfully expands the covered geometry into eight positional clones
+while retaining `col_span: 8` on each clone. Index-based extraction then mistook those clones for independent
+parameter, min, typ, max, and unit evidence. The earlier value-bearing gate could not reject the row because its
+problem was source identity, not emptiness.
+
+Geometry supplies the missing authority without interpreting prose. A parameter must originate in one column,
+and each populated min/typ/max value must do the same. Blank and `-` scalar cells remain honest absences even when
+a layout span covers them; units and descriptions do not create scalar authority, so their spans remain legal.
+Equal numeric strings in separate cells also remain distinct evidence. This boundary rejects merged notes and
+group headings without relying on `Notes`, a document key, vendor vocabulary, or parameter names.
+
+The complete retained SourceIR surface is small enough to falsify overreach: 23 of 608 current records fail the
+geometry rule across four documents, and no survivor has an authority-bearing span. Only active OpenCAPI retains
+normalized Markdown and can complete a new cascade; it reproduces 60 timings and the same downstream hash twice.
+The three other current chains remain byte-exact controls. Calling those controls "full cascades" would overstate
+the evidence, so the task records the distinction explicitly.
+
 ## CORPUS-COVERAGE.2.47 (`2026-08-10`) — an instruction catalog is evidence, not a hardware boundary
 
 The stale Cortex-A76 chain was richly renderable for the wrong reason. It grouped 228 instruction names into

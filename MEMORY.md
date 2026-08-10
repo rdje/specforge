@@ -21,15 +21,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.47`; final Cortex-A76 Software Optimization Guide refresh recording.
-- Current state: the committed release reproduces 46 pages / 71 visuals / 68 tables / 68 sections / 249 elements,
-  SourceIR `a396a074…d478`, normalized manifest `872e7dba…1bae`, and downstream `b4b50237…9ade` twice. Current
-  authority removes the stale 537-output instruction topology; IntentIR retains 15 constraints / two assumptions,
-  and adapter lowering blocks only on no signals. Five-stage validation, nine provider-free evals, KG 156/156,
-  and 60/60 FSMGen strict pass; child full CI passed at the same code revision.
-- Next action: finish the parent task/live-doc/mdBook/Knowledge Map record, run doctrine/path/locality/book gates,
-  commit `.2.47`, clear `git_message_brief.txt`, remove the exact `.2.47`/`.2.47a` task bundles, then select and
-  own refresh #48 (43-page OpenCAPI 4.0 32 Gbps PHY Signaling).
-- In-flight uncommitted: parent `.2.47` task/live-doc/book/fact recording plus the two exact ignored task bundles.
-  No background job is running.
+- Active unit: `CORPUS-COVERAGE.2.48`; OpenCAPI 4.0 32 Gbps PHY Signaling refresh resumed after child `.2.48a`.
+- Current state: `.2.48a` closes the universal spanned-row timing defect. The 80-document / 105-table retained
+  surface changes 608→585 scalar records; parameter and populated min/typ/max roles now require independent
+  source cells. The active OpenCAPI chain has 43 pages / 39 visuals / 27 tables / 73 sections / 318 elements,
+  547 statements, 60 timings, no signal declarations or relations, and no emitted target. Its downstream hash
+  reproduces twice; three non-rebuildable affected controls remain byte-exact.
+- Next action: build the release from the `.2.48a` recording commit, run the second guarded CPU ingest, reproduce
+  SourceIR/normalized/downstream hashes, then finish parent delta classification, validation, docs, and commit.
+- In-flight uncommitted: parent `.2.48` exact ignored rollback, first ingest measurement, and corrected current
+  generated chain remain task-owned. No background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

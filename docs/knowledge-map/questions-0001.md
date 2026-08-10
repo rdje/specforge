@@ -80,6 +80,8 @@
   > can WIRE-BASED-100 reach 100% on SWD the same way as the parallel buses
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > can a dense-prose phantom actor reach emitted ISF
+- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
+  > can a timing description or comment cell span columns without losing the timing record
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > can ambient validation reports define the tracked corpus KB validation page
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -90,6 +92,8 @@
   > can before after once or while authorize SemanticIR phases
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > can certification administration become a SemanticIR phase or gate
+- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
+  > can identical values in separate timing cells remain valid
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > can legal boilerplate become a SemanticIR gate
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
@@ -294,7 +298,3 @@
   > does every temporal_rule reach the .isf or a residual
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
   > does lowering cat-3 topology need only an ISF construct or also a multi-actor emit (also a multi-actor emit — ISF is per-actor / one .isf = one FSMGen module and SpecForge's emit is single-initiator-actor; a declarative cross-component netlist is an architectural change, decided WITH FSMGen only after capture-recall clears the bar — not today)
-- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
-  > does malformed page metadata preserve the last good normalized bundle
-- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
-  > does mdbook test pass for the SpecForge book

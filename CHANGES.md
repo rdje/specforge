@@ -1,3 +1,17 @@
+### CORPUS-COVERAGE.2.48a — require independent timing scalar cell geometry
+
+- The complete 80-document / 105-timing-table retained surface identifies 23 false records whose parameter or
+  populated scalar roles came from one multi-column source cell: three SWP notes, seven HBM2 group rows, twelve
+  eMMC note/group rows, and one OpenCAPI footer. The grounded scalar population changes 608→585.
+- EvidenceIR now requires independent geometry for the parameter and populated min/typ/max cells. Blank or `-`
+  scalar absences, equal values in distinct cells, and spans confined to optional unit/description prose remain
+  valid; no document, vendor, table, parameter, or note-text exception enters production.
+- The active OpenCAPI cascade retains both real table 5-11 rows, changes 61→60 timings, and reproduces downstream
+  hash `b9418108…8951` twice. Three non-rebuildable affected controls remain byte-exact across twelve stage
+  comparisons rather than being misreported as full cascades.
+- Focused EvidenceIR tests, nine provider-free evals, KG 156/156, 59/59 current emitted ISFs under FSMGen strict,
+  and full CI 1,798/five ignored pass. Parent `.2.48` resumes committed-release re-ingest and final signoff.
+
 ### CORPUS-COVERAGE.2.47 — refresh Cortex-A76 guide without instruction topology
 
 - Three guarded CPU ingests reproduce 46 pages / 71 visuals / 68 tables / 68 sections / 249 elements; the

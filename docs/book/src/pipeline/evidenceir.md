@@ -656,6 +656,26 @@ The Cortex-A76 optimization guide's 151 instruction-derived records become zero.
 `docs/tasks/CORPUS-COVERAGE.md` (`CORPUS-COVERAGE.2.47a`); Knowledge Map
 `[[timing-table-structural-authority]]`.
 
+### `CORPUS-COVERAGE.2.48a` — one spanned source cell cannot ground several scalar roles
+
+PDF table conversion can preserve a merged cell by expanding it into one positional record for every covered
+column. Those records may contain identical text and retain the original multi-column span. Positional indexing
+alone would then make one footer or group heading look like independent parameter, minimum, typical, maximum,
+and unit evidence.
+
+EvidenceIR therefore checks source-cell geometry before emitting a scalar timing row. The parameter and every
+populated min/typ/max cell must each originate from exactly one column. Blank or `-` scalar cells are still honest
+absences, even when a layout span covers them. Optional unit, description, and comment cells do not establish
+scalar authority, so their spans remain legal. Equal values in separate one-column cells remain valid too: the
+boundary is source independence, not text uniqueness.
+
+In OpenCAPI table 5-11 this keeps the two real receiver-jitter rows and removes the following eight-column note.
+Across 80 retained SourceIR documents and 105 timing-classified tables, the rule changes 608 scalar records to
+585 by removing 23 spanned informational/group rows in four documents. No document name, vendor, table ID,
+parameter spelling, or note prefix participates in the decision. *Authoritative tracking:*
+`docs/tasks/CORPUS-COVERAGE.md` (`CORPUS-COVERAGE.2.48a`); Knowledge Map
+`[[timing-scalar-rows-require-independent-cell-geometry]]`.
+
 ### `PDF-VARIANT-DIGESTION.10a` — a register table whose field names hide inside the description
 
 A corpus-wide census of every table the ingest classifier left "unknown" pointed at one family as the

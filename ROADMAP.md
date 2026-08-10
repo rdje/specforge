@@ -247,7 +247,12 @@ Five active program groups support that north star:
   keeps two canonicalization residuals. The committed release reproduces SourceIR `a396a074…d478`, normalized
   manifest `872e7dba…1bae`, and downstream `b4b50237…9ade` twice. Corpus is 47 done / nine remaining at 80
   SourceIR / 19 normalized / 80 EvidenceIR / 79 downstream chains; all 60 current emitted ISFs are strict-clean.
-  Frontier: select and own #48, the 43-page OpenCAPI 4.0 32 Gbps PHY Signaling specification. Separately,
+  `.2.48` now owns the 43-page OpenCAPI 4.0 32 Gbps PHY Signaling specification. Its first guarded ingest produces
+  318 current elements and exposed child `.2.48a`: a Docling-expanded eight-column footer cell was falsely indexed
+  as independent parameter/min/typ/max/unit data. The complete 80-document / 105-timing-table census finds 23 such
+  records across four documents; the shared geometry boundary changes 608→585 scalar records while preserving
+  independent repeated values and optional prose spans. The corrected OpenCAPI cascade reproduces 60 genuine
+  timings twice; parent `.2.48` resumes committed-release re-ingest and final signoff. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

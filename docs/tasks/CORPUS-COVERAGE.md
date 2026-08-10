@@ -102,6 +102,92 @@ today's ephemeral normalized-directory count.
   commit per `COMMIT.md` after each doc. No fabrication / ADR-0006 unchanged (this is a re-run of existing
   deterministic extractors, not new code); WIRE-BASED-100 + register/wire golds + `kg-bench` stay green
   (orthogonal — the 4 gold docs are not re-ingested). Record per-doc before/after typed-surface deltas here.
+- ID: `CORPUS-COVERAGE.2.48` · Status: `in_progress` (`2026-08-10`, DATA/CODE/DOC) · Children: `.2.48a`
+  spanned-row timing scalar-authority repair (done). Goal: re-ingest the
+  43-page OpenCAPI 4.0 32 Gbps PHY Signaling Specification
+  (`opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020`) from the owner-authorized same-SSD library with the current
+  release, then rebuild and validate EvidenceIR→SemanticIR→IntentIR→ISF. Preserve all grounded physical timing
+  while refusing glossary/measurement acronyms, generic sections, or broad prose cues as interface, phase, gate,
+  behavior, or enum authority. It is the smallest of the nine remaining candidates at 376 retained elements.
+
+  Read-only authentication pins portable source
+  `.cache/local-references/chipdoc/cxl/opencapi/current/OpenCAPI-4.0-32G_PHY_Signal_Spec_1.0_16NOV2020.pdf` at
+  `d3eb19fc…38be`, 855025 bytes, and the current release at `0b497079…5756`. Source and repository share device
+  `16777240`. The exact stale seven-file / 1476701-byte chain is SourceIR `6e1d7395…abd` (43 pages / 39 visuals /
+  27 tables / 73 sections / 376 elements), EvidenceIR `41752734…dad` (73 anchors / 605 spans / 613 statements /
+  39 visuals / 460 links / zero relations / two conditionals / zero registers / 69 timings), SemanticIR
+  `47dd8220…13c0` (eight actors / three interfaces / zero ports or relations / 18 phases / 19 gates / 76
+  invariants / 21 contracts / one assertion / 69 timings), and IntentIR `d0f481fe…0b03` (seven actors / three
+  interfaces / 51 behaviors / 77 constraints / four assumptions / 69 timings). Adapter `bb614867…84a` emits a
+  four-output / one-enum `channel.isf` (`CDR`, `DDJ`, `DL`, `DL3`) with no transactions, rules, constants, or
+  storage; the stale SourceIR still records retired boot-volume provenance.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.48`
+
+- [ ] **REPRODUCE / MEASURE** — preserve and authenticate the exact stale chain before mutation; run guarded CPU
+  ingest at least twice when safe; record source/bundle hashes, full stage counts, path locality, and resource use.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the complete stale→current delta is classified at its first shared seam.
+  Source 376→318 removes exactly 58 flattened chart/diagram labels from ten visual-bearing pages. Evidence
+  613→547 additionally removes four synthetic acronym-signal and four synthetic generic-enum statements while
+  links 460→510 gain current cross-modal grounding; child `.2.48a` owns the distinct timing 69→60 repair (eight
+  value-empty rows plus one spanned footer). Retired generic phase/gate authority explains Semantic interfaces
+  3→0 / phases 18→0 / gates 19→0 and Intent behaviors 51→21; the unsupported four-port/one-enum adapter therefore
+  blocks on no declared signals instead of rendering false topology.
+- [x] **ADDRESSED (verified)** — the current SourceIR→EvidenceIR→SemanticIR→IntentIR→adapter chain validates with
+  60 grounded timings, 75 constraints, 21 behaviors, no declared interface or relation, and no emitted target.
+  Two final-code downstream replays preserve all four artifact hashes byte-for-byte.
+- [x] **NO REGRESSION** — final downstream hashes reproduce; focused EvidenceIR tests, nine provider-free evals,
+  KG 156/156, 59/59 current emitted-ISF FSMGen strict, full CI 1,798/five ignored, mdBook, doctrines, path,
+  locality, and live-size gates pass. The pending second ingest is a parent reproducibility/lockstep gate, not a
+  code-regression gap.
+- [ ] **GENERICITY** — no OpenCAPI/document/acronym allowlist or denylist, manual artifact edit, fabricated model,
+  validator relaxation, or host-specific persisted path enters production.
+- [ ] **LOCKSTEP** — generated chain, row 48, task/frontier, roadmap, status, live docs, mdBook, Knowledge Map,
+  and resume pointer agree before commit; delete only authenticated rollback data after durable recording.
+- ID: `CORPUS-COVERAGE.2.48a` · Status: `done` (`2026-08-10`, PROBE/CODE/DATA/DOC) · Goal: repair the
+  universal spanned informational-row defect exposed by parent #48 before accepting its cascade. OpenCAPI table
+  5-11 has a valid eight-column timing schema and two real scalar rows, followed by one `Notes:` cell spanning all
+  eight columns. Docling expands that cell into eight identical `StructuredTableCellRecord`s, each retaining
+  `col_span: 8`; `synthesize_timing_constraints` indexes the expanded row as if every position were independent.
+  The note therefore becomes parameter, min, typ, max, and unit simultaneously and survives `.2.47a`'s
+  value-bearing gate as false `timing_table_0023_002`. This is a shared row-role/span defect, not an OpenCAPI or
+  note-prefix exception.
+
+  First census every retained timing-classified table row that carries a multi-column span or repeats one source
+  value across scalar roles; distinguish genuine merged-value layouts from informational/footer rows and measure
+  every current false record. Then reject only rows whose source-cell geometry cannot independently ground the
+  mapped parameter and scalar columns, add paired spanned-footer/ordinary/legitimate-span regressions, and replay
+  every affected real EvidenceIR consumer through the adapter. No note wording, document key, table id, vendor,
+  parameter name, or expanding text denylist is permitted.
+
+  The complete retained boundary contains 80 SourceIR documents, 105 timing-classified tables, and 608 current
+  scalar records. Exact structural replay identifies 23 records whose mapped parameter or populated scalar role
+  comes from a multi-column source cell: three SWP notes, seven HBM2 section/group rows, twelve eMMC note/group
+  rows, and the one OpenCAPI footer. None of the 585 survivors has a span in an authority-bearing role.
+
+  The shared EvidenceIR seam now requires the parameter cell and every populated min/typ/max cell to have
+  `col_span: 1`. Blank or `-` scalar absences and optional unit/description spans remain legal. Paired tests prove
+  that independently repeated values survive, a spanned optional description survives, and cloned footer or
+  parameter cells do not emit. The active rebuildable OpenCAPI cascade reproduces downstream hash
+  `b9418108…8951` twice and changes timings 61→60; the three non-rebuildable controls remain byte-exact across all
+  twelve current stage directories instead of being misreported as complete cascades.
+
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.48a`
+
+- [x] **REPRODUCE / MEASURE** — pin the exact real false record and complete retained-corpus span/role census;
+  identify every changed EvidenceIR consumer and positive/negative calibration case before production code.
+- [x] **ROOT CAUSE (WHY + WHERE)** — prove how Docling-expanded `col_span` geometry reaches independent
+  name/min/typ/max/unit indexing, and distinguish the defect from valid repeated values or ordinary scalar rows.
+- [x] **ADDRESSED (verified)** — enforce source-cell geometry at the shared timing-row extraction seam; the real
+  footer emits no constraint while both real table 5-11 scalar rows and all independently grounded controls hold.
+- [x] **NO REGRESSION** — focused EvidenceIR tests, the active rebuildable cascade twice, exact retained-surface
+  replay for all four affected documents, twelve byte-exact non-rebuildable control comparisons, nine
+  provider-free evals, KG 156/156, 59/59 current emitted-ISF FSMGen strict, full CI 1,798/five ignored, mdBook,
+  doctrines, path, locality, and live-size gates pass.
+- [x] **GENERICITY** — production policy uses only row geometry and mapped scalar roles; no `Notes`, OpenCAPI,
+  document/table/parameter identity, text denylist, or manual artifact edit.
+- [x] **LOCKSTEP** — code, corpus measurement, child/parent task state, durable fact, live docs, mdBook, and resume
+  pointer agree; exact controls/rollback artifacts restore or remain intentionally active before child commit.
 - ID: `CORPUS-COVERAGE.2.47` · Status: `done` (`2026-08-10`, DATA/CODE/DOC) · Children: `.2.47a`
   timing-table structural-authority repair (done). Goal: re-ingest the
   46-page Cortex-A76 Software Optimization Guide
@@ -1544,9 +1630,9 @@ live ledger to 61 records / 1,303 lines without loss.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: select and own refresh #48 — the 43-page OpenCAPI 4.0 32 Gbps PHY Signaling specification is the
-  smallest remaining candidate after parent `.2.47` records the completed Cortex-A76 refresh and removes its
-  exact rollback bundles.
+- Frontier: `CORPUS-COVERAGE.2.48` — build the release from the committed `.2.48a` geometry boundary, run the
+  second guarded OpenCAPI ingest, reproduce the final SourceIR/normalized/downstream hashes, classify every
+  stale→current delta, and close row 48 plus corpus accounting.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**39 refreshes done after #39;
   17 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#39: #29/#31 CHI-C2C marquee message-field refreshes,
@@ -1666,6 +1752,15 @@ strict syntax is not a semantic-fidelity oracle. **Levers A, B, C, F + the rule-
 
 ## Changelog
 
+- `2026-08-10`: `.2.48a` PROBE/CODE/DATA/DOC DONE. The complete 80-document / 105-timing-table surface
+  measures 608→585 scalar records: three SWP notes, seven HBM2 group rows, twelve eMMC note/group rows, and one
+  OpenCAPI footer lacked independent source-cell geometry. EvidenceIR now requires `col_span: 1` for the
+  parameter and each populated min/typ/max role while allowing blank/`-` scalar absences and optional prose
+  spans. The active OpenCAPI cascade reproduces `b9418108…8951` twice at 60 genuine timings; twelve comparisons
+  prove three non-rebuildable controls remain byte-exact. Focused tests, nine provider-free evals, KG 156/156,
+  full CI 1,798/five ignored, 59/59 FSMGen strict, book, doctrines, path, and locality pass. Frontier → parent
+  `.2.48` committed-release re-ingest and final signoff. Recording subject: `CORPUS-COVERAGE.2.48a — require
+  independent timing scalar cell geometry`.
 - `2026-08-10`: `.2.47` DATA/CODE/DOC DONE. Three guarded CPU ingests reproduce 46 pages / 71 visuals / 68
   tables / 68 sections / 249 elements; the committed release pins SourceIR `a396a074…d478`, normalized manifest
   `872e7dba…1bae`, and downstream `b4b50237…9ade` twice. Evidence 971→960 / timings 3→0 while current authority

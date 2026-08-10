@@ -14822,6 +14822,29 @@ pub(crate) fn capture_signal_presence_rows(
     }
 }
 
+// CORPUS-COVERAGE.2.48a — Docling expands one multi-column source cell into a record at
+// every covered column while retaining the original `col_span` on each clone. A scalar
+// timing row therefore has independent authority only when its parameter and populated
+// min/typ/max cells each originate from one column. Optional unit/description cells do not
+// create scalar authority and may still span layout columns.
+fn timing_row_has_independent_scalar_cells(
+    row: &[StructuredTableCellRecord],
+    columns: TimingTableColumns,
+) -> bool {
+    let independent_scalar_cell = |column: usize| {
+        row.get(column).is_none_or(|cell| {
+            let text = cell.text.trim();
+            text.is_empty() || text == "-" || cell.col_span == 1
+        })
+    };
+
+    row.get(columns.name).is_some_and(|cell| cell.col_span == 1)
+        && [columns.min, columns.typ, columns.max]
+            .into_iter()
+            .flatten()
+            .all(independent_scalar_cell)
+}
+
 fn synthesize_timing_constraints(
     source_ir: &SourceIr,
     prior_guidance: Option<&EvidencePriorGuidance>,
@@ -14839,14 +14862,16 @@ fn synthesize_timing_constraints(
         .collect();
 
     for table in timing_tables {
-        let Some(TimingTableColumns {
-            name: name_col,
-            min: min_col,
-            typ: typ_col,
-            max: max_col,
-            unit: unit_col,
-            description: desc_col,
-        }) = timing_table_columns(table)
+        let Some(
+            columns @ TimingTableColumns {
+                name: name_col,
+                min: min_col,
+                typ: typ_col,
+                max: max_col,
+                unit: unit_col,
+                description: desc_col,
+            },
+        ) = timing_table_columns(table)
         else {
             continue;
         };
@@ -14865,6 +14890,9 @@ fn synthesize_timing_constraints(
 
         let table_id = table.table_id.clone();
         for (row_idx, row) in effective_rows.iter().enumerate() {
+            if !timing_row_has_independent_scalar_cells(row, columns) {
+                continue;
+            }
             let name = row
                 .get(name_col)
                 .map(|c| c.text.trim().to_string())
@@ -16820,6 +16848,126 @@ mod tests {
             recs.is_empty(),
             "a name plus unit is not a value-bearing constraint"
         );
+        Ok(())
+    }
+
+    // CORPUS-COVERAGE.2.48a — Docling expands one footer cell spanning the full table into one
+    // clone per covered column. Those clones do not independently ground parameter/min/typ/max,
+    // even though the repeated prose makes every scalar slot non-empty.
+    #[test]
+    fn timing_table_spanned_informational_row_is_not_emitted() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Timing\nReceiver timing.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        let mut spanned_note = make_table_cell("One note spanning every column", false);
+        spanned_note.col_span = 5;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_spanned_note".to_string(),
+            asset_id: "asset_spanned_note".to_string(),
+            page_id: None,
+            caption_text: Some("Receiver timing limits".to_string()),
+            source_ref: None,
+            table_kind: TableKind::TimingParameter,
+            header_rows: vec![vec![
+                make_table_cell("Symbol", true),
+                make_table_cell("Min", true),
+                make_table_cell("Typ", true),
+                make_table_cell("Max", true),
+                make_table_cell("Unit", true),
+            ]],
+            body_rows: vec![vec![spanned_note; 5]],
+            row_count: 2,
+            col_count: 5,
+        });
+
+        let records = super::synthesize_timing_constraints(&source_ir, None);
+        assert!(
+            records.is_empty(),
+            "one source cell cannot independently ground several scalar roles"
+        );
+        Ok(())
+    }
+
+    // CORPUS-COVERAGE.2.48a — geometry, not repeated text, is the boundary. Equal values in
+    // independent scalar cells remain valid, an absent-marker span cannot erase an independent
+    // maximum, and a span confined to optional prose columns does not erase a grounded constraint.
+    #[test]
+    fn timing_table_independent_equal_values_with_spanned_description_are_retained() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Timing\nEqual timing limits.\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        let mut spanned_description = make_table_cell("Applies in every mode", false);
+        spanned_description.col_span = 2;
+        let mut spanned_parameter = make_table_cell("t INVALID", false);
+        spanned_parameter.col_span = 2;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_independent_equal_values".to_string(),
+            asset_id: "asset_independent_equal_values".to_string(),
+            page_id: None,
+            caption_text: Some("Timing limits".to_string()),
+            source_ref: None,
+            table_kind: TableKind::TimingParameter,
+            header_rows: vec![vec![
+                make_table_cell("Symbol", true),
+                make_table_cell("Min", true),
+                make_table_cell("Typ", true),
+                make_table_cell("Max", true),
+                make_table_cell("Unit", true),
+                make_table_cell("Description", true),
+                make_table_cell("Comment", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("t EQUAL", false),
+                    make_table_cell("5", false),
+                    make_table_cell("", false),
+                    make_table_cell("5", false),
+                    make_table_cell("ns", false),
+                    spanned_description.clone(),
+                    spanned_description,
+                ],
+                {
+                    let mut absent = make_table_cell("-", false);
+                    absent.col_span = 2;
+                    vec![
+                        make_table_cell("t MAX", false),
+                        absent.clone(),
+                        absent,
+                        make_table_cell("8", false),
+                        make_table_cell("ns", false),
+                        make_table_cell("Independent maximum", false),
+                        make_table_cell("", false),
+                    ]
+                },
+                vec![
+                    spanned_parameter.clone(),
+                    spanned_parameter,
+                    make_table_cell("", false),
+                    make_table_cell("9", false),
+                    make_table_cell("ns", false),
+                    make_table_cell("Invalid merged parameter", false),
+                    make_table_cell("", false),
+                ],
+            ],
+            row_count: 4,
+            col_count: 7,
+        });
+
+        let records = super::synthesize_timing_constraints(&source_ir, None);
+        assert_eq!(records.len(), 2);
+        assert_eq!(records[0].min_value.as_deref(), Some("5"));
+        assert_eq!(records[0].max_value.as_deref(), Some("5"));
+        assert_eq!(
+            records[0].description.as_deref(),
+            Some("Applies in every mode")
+        );
+        assert_eq!(records[1].min_value, None);
+        assert_eq!(records[1].typ_value, None);
+        assert_eq!(records[1].max_value.as_deref(), Some("8"));
         Ok(())
     }
 

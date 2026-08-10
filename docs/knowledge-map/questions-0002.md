@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
+  > does malformed page metadata preserve the last good normalized bundle
+- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
+  > does mdbook test pass for the SpecForge book
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
   > does platform/system-IP (category 3) topology intent need a new ISF construct or map onto an existing one (ISF has NO declarative static-topology/connectivity construct — composition is transaction-level only; decision deferred to a capture-recall measurement .4c.i before any FR)
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
@@ -266,6 +270,8 @@
   > how does SpecForge flag vague or ambiguous spec language
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > how does SpecForge group a transaction's signals by channel
+- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
+  > how does SpecForge handle Docling clones of a table cell with col_span greater than one
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how does SpecForge read a PDF's front-matter / title / ToC to know its doc type
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
@@ -292,9 +298,3 @@
   > how does collapse_section_header_register_identity decide same-register vs different-register
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > how does converge report per-document extraction quality after stabilization
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > how does de-fragmentation enable the recover-register-bits gate (b)
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > how does derive_isf_actor_name produce a valid HDL identifier ([A-Za-z_]\\w*)
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > how does derive_register_block_name parse a block out of a register-descriptions section heading

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
+  > how does de-fragmentation enable the recover-register-bits gate (b)
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > how does derive_isf_actor_name produce a valid HDL identifier ([A-Za-z_]\\w*)
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > how does derive_register_block_name parse a block out of a register-descriptions section heading
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
   > how does extract_discovered_state_value_from_text match a constraint value
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
@@ -277,6 +283,8 @@
   > how many docs are wire-protocol vs register-IP vs platform vs ISA vs PHY vs guide
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > how many docs reach evidence vs semantic vs intent vs isf
+- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
+  > how many false timing records were removed by the independent-cell geometry boundary (23; 608 to 585)
 - [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
   > how many generated artifacts still mention the deleted boot-volume repository
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
@@ -289,11 +297,3 @@
   > how many retained legal semantic gates were measured
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > how many retained phases depended only on sequencing words
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > how many retained typed transaction phases were false positives
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > how many sentence-start signal descriptor phrases pollute the retained corpus
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > how many signals does each AXI channel have
-- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
-  > how many synthetic behaviors came from generic gates
