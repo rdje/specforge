@@ -2673,20 +2673,20 @@ pub struct TransactionPhaseRecord {
 /// (`derive_transaction_name`), so beyond the shared function-word / cardinal
 /// grammar this also rejects determiners, demonstratives, ordinals, and the
 /// position/quantity adjectives that *modify* a phase rather than *name* one
-/// ("the/this/each/next/first/separate phase"). Universal English grammar,
-/// never chip-spec vocabulary (ADR 0006) — the same kind of curated
-/// function-word list `TXN_NAME_STOPWORDS` already is. Tuned against a
-/// corpus-wide before/after measurement (`docs/research/transaction-capture-census.md`
-/// §4.5): on the wire docs it keeps exactly the protocol phases
-/// (APB setup/access, AHB/AXI address/data, SWD address/data/response/turnaround/
-/// acknowledge) and rejects the determiner/cardinal/ordinal/head-noun/boundary
-/// noise.
+/// ("the/this/each/next/first/separate/different phase"). Universal English
+/// grammar, never chip-spec vocabulary (ADR 0006) — the same kind of curated
+/// function-word list `TXN_NAME_STOPWORDS` already is. The qualifier gate is
+/// only the first half of recognition: `phase_occurrence_has_authority` also
+/// requires evidence that the resulting noun phrase is actually being used as
+/// a phase, rather than as part of "phase error" / "phase tolerance" physical
+/// terminology. Both halves are tuned against the exact corpus-wide census in
+/// `docs/research/transaction-phase-qualifier-precision-measurement.md`.
 #[rustfmt::skip]
 const PHASE_NAME_STOPWORDS: &[&str] = &[
     // determiners / demonstratives / quantifiers
     "the", "a", "an", "this", "that", "these", "those", "each", "its", "their", "his", "her",
     "our", "your", "my", "any", "some", "no", "none", "every", "all", "both", "either", "neither",
-    "another", "such", "same",
+    "another", "such", "same", "what", "whatever", "whichever", "whose",
     // prepositions / conjunctions
     "after", "before", "for", "of", "to", "with", "during", "per", "on", "in", "by", "as", "and",
     "or", "which", "when", "if", "from", "into", "between", "about", "than", "via", "without",
@@ -2699,7 +2699,7 @@ const PHASE_NAME_STOPWORDS: &[&str] = &[
     // position / quantity adjectives that modify (not name) a phase
     "next", "previous", "last", "current", "final", "initial", "prior", "preceding", "single",
     "multiple", "separate", "other", "given", "various", "several", "additional", "further",
-    "main", "only", "new", "certain", "following",
+    "main", "only", "new", "certain", "following", "different",
 ];
 
 /// Trim a raw token's leading/trailing non-alphanumeric punctuation and
@@ -2727,7 +2727,21 @@ fn derive_phase_name(raw_prev: &str) -> Option<String> {
     // previous token ends a sentence/clause, the `phase` token actually starts a
     // NEW clause, so this is not a `<qualifier> phase` name (e.g. "… data on the
     // lanes. Phase 2 …" must not yield a `lanes` phase).
-    if raw_prev.trim_end().ends_with(['.', ':', ';', '!', '?']) {
+    if raw_prev
+        .trim_end()
+        .ends_with(['.', ':', ';', '!', '?', ','])
+    {
+        return None;
+    }
+    // An opening delimiter that is not closed within the qualifier token means
+    // the token starts a parenthetical predicate, not a phase-name atom:
+    // "individual cycles (called phases)". Balanced edge punctuation such as
+    // "(data) phase" remains valid and is normalized below.
+    let trimmed = raw_prev.trim();
+    if (trimmed.starts_with('(') && !trimmed.ends_with(')'))
+        || (trimmed.starts_with('[') && !trimmed.ends_with(']'))
+        || (trimmed.starts_with('{') && !trimmed.ends_with('}'))
+    {
         return None;
     }
     let q = normalize_phase_token(raw_prev);
@@ -2750,11 +2764,197 @@ fn derive_phase_name(raw_prev: &str) -> Option<String> {
     if name.is_empty() { None } else { Some(name) }
 }
 
+/// True when a token ends the local clause used by the phase-authority grammar.
+/// A comma is a boundary here because a predicate in the next comma-delimited
+/// clause cannot authorize the earlier noun phrase.
+fn phase_clause_boundary(raw: &str) -> bool {
+    raw.trim_end().ends_with(['.', ':', ';', '!', '?', ','])
+}
+
+fn phase_window_contains(tokens: &[&str], expected: &[&str]) -> bool {
+    tokens
+        .iter()
+        .any(|raw| expected.contains(&normalize_phase_token(raw).as_str()))
+}
+
+/// Reject a passive participle immediately after a copula. In "transfers are
+/// called phases", `called` is the predicate, not the name of a phase. The
+/// morphology + copula relationship is universal grammar; it does not enumerate
+/// any document or phase name.
+fn phase_occurrence_is_passive_predicate(tokens: &[&str], phase_index: usize, name: &str) -> bool {
+    if phase_index < 2 || !name.ends_with("ed") {
+        return false;
+    }
+    matches!(
+        normalize_phase_token(tokens[phase_index - 2]).as_str(),
+        "am" | "are" | "be" | "been" | "being" | "is" | "was" | "were"
+    )
+}
+
+/// Does this grammatical `<qualifier> phase` occurrence carry positive evidence
+/// that the phrase is being used as a phase?
+///
+/// Authority is phrase-structural and deliberately name-agnostic. It accepts a
+/// standalone/heading phrase, a numbered phase, a finite predicate governing the
+/// phase, a temporal preposition, an explicit naming construction, or a verb that
+/// enters/reports a phase. It does not authorize a bare noun compound such as
+/// "edge phase errors", "dynamic phase tolerance", or a table column header
+/// `Sequence phase | Actions`. One authoritative occurrence admits the document's
+/// name; all grammatical occurrences of that admitted name remain provenance, so
+/// true signal membership is not narrowed to the particular authority sentence.
+fn phase_occurrence_has_authority(tokens: &[&str], phase_index: usize) -> bool {
+    debug_assert!(phase_index > 0 && is_phase_head_token(tokens[phase_index]));
+
+    let head = tokens[phase_index];
+    let following = tokens.get(phase_index + 1..).unwrap_or_default();
+    let terminal = following.is_empty()
+        || head.trim_end().ends_with(['.', ':', ';', '!', '?', ','])
+        || (normalize_phase_token(following[0]).is_empty() && following[0] != "|");
+    if terminal {
+        return true;
+    }
+
+    let next = normalize_phase_token(following[0]);
+    if !next.is_empty() && next.chars().all(|c| c.is_ascii_digit()) {
+        return true;
+    }
+    if following.len() >= 2
+        && normalize_phase_token(following[0]) == "in"
+        && normalize_phase_token(following[1]) == "which"
+    {
+        return true;
+    }
+    if matches!(next.as_str(), "after" | "before" | "until") {
+        return true;
+    }
+
+    const PHASE_PREDICATES: &[&str] = &[
+        "is",
+        "are",
+        "was",
+        "were",
+        "occur",
+        "occurs",
+        "begin",
+        "begins",
+        "end",
+        "ends",
+        "continue",
+        "continues",
+        "follow",
+        "follows",
+        "complete",
+        "completes",
+        "completed",
+        "extend",
+        "extends",
+        "extended",
+        "require",
+        "requires",
+        "required",
+        "delimit",
+        "delimits",
+        "delimited",
+        "start",
+        "starts",
+        "started",
+        "arrive",
+        "arrives",
+    ];
+    if PHASE_PREDICATES.contains(&next.as_str()) {
+        return true;
+    }
+    let following_clause: Vec<&str> = following
+        .iter()
+        .copied()
+        .take_while(|raw| !phase_clause_boundary(raw))
+        .take(9)
+        .collect();
+    if matches!(next.as_str(), "of" | "for" | "then" | "that" | "which")
+        && phase_window_contains(&following_clause, PHASE_PREDICATES)
+    {
+        return true;
+    }
+
+    // Exclude the qualifier itself, then stay within this clause. Bounded windows
+    // make the cue govern the phase phrase rather than some remote sentence part.
+    let prior = &tokens[..phase_index - 1];
+    let clause_start = prior
+        .iter()
+        .rposition(|raw| phase_clause_boundary(raw))
+        .map_or(0, |index| index + 1);
+    let prior_clause = &prior[clause_start..];
+    let last = |width: usize| &prior_clause[prior_clause.len().saturating_sub(width)..];
+
+    const TEMPORAL_GOVERNORS: &[&str] = &[
+        "during",
+        "within",
+        "throughout",
+        "beyond",
+        "before",
+        "after",
+        "between",
+        "into",
+        "entering",
+    ];
+    let head_continuation = matches!(
+        next.as_str(),
+        "of" | "for"
+            | "by"
+            | "with"
+            | "to"
+            | "from"
+            | "and"
+            | "or"
+            | "that"
+            | "which"
+            | "if"
+            | "when"
+            | "unless"
+    ) || following[0].starts_with(['(', '[', '{']);
+    if phase_window_contains(last(5), TEMPORAL_GOVERNORS) || phase_window_contains(last(3), &["in"])
+    {
+        return true;
+    }
+    if head_continuation
+        && (phase_window_contains(last(5), &["called", "named", "termed"])
+            || phase_window_contains(last(3), &["is", "are", "was", "were", "has", "have"]))
+    {
+        return true;
+    }
+
+    // Object-complement construction: "indicates the transition phase busy by
+    // pulling DAT0". `busy by` terminates the phase object and introduces how
+    // that state is reported; unlike "phase error/tolerance", it does not make
+    // `phase` a modifier of a following measurement noun.
+    if next == "busy"
+        && following
+            .get(1)
+            .is_some_and(|raw| normalize_phase_token(raw) == "by")
+        && phase_window_contains(
+            last(4),
+            &[
+                "indicate",
+                "indicates",
+                "mark",
+                "marks",
+                "signal",
+                "signals",
+            ],
+        )
+    {
+        return true;
+    }
+
+    false
+}
+
 /// Recover the protocol PHASES the document NAMES in its prose (the document's
-/// own `<qualifier> phase` vocabulary). Deterministic: first statement-order
-/// occurrence sets the phase order; every naming statement is recorded as
-/// provenance (sorted + deduped). KG-ISF-TRANSACTIONS.2g — recognition only,
-/// no body composition. Universal English grammar, no chip-spec name list
+/// own `<qualifier> phase` vocabulary). A name must have at least one positively
+/// authoritative occurrence, after which every grammatical occurrence remains
+/// provenance. Deterministic: first statement-order occurrence sets the phase
+/// order; provenance is sorted + deduped. KG-ISF-TRANSACTIONS.2g — recognition
+/// only, no body composition. Universal English grammar, no chip-spec name list
 /// (ADR 0006).
 fn build_transaction_phases(
     context: &SemanticContext,
@@ -2770,6 +2970,7 @@ fn build_transaction_phases(
         .collect();
     let mut order: Vec<String> = Vec::new();
     let mut provenance: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    let mut authorized_names: BTreeSet<String> = BTreeSet::new();
     for statement in &context.statements {
         let tokens: Vec<&str> = statement.text.split_whitespace().collect();
         for (i, raw) in tokens.iter().enumerate() {
@@ -2779,8 +2980,14 @@ fn build_transaction_phases(
             let Some(name) = derive_phase_name(tokens[i - 1]) else {
                 continue;
             };
+            if phase_occurrence_is_passive_predicate(&tokens, i, &name) {
+                continue;
+            }
             if !provenance.contains_key(&name) {
                 order.push(name.clone());
+            }
+            if phase_occurrence_has_authority(&tokens, i) {
+                authorized_names.insert(name.clone());
             }
             provenance
                 .entry(name)
@@ -2790,6 +2997,7 @@ fn build_transaction_phases(
     }
     order
         .into_iter()
+        .filter(|name| authorized_names.contains(name))
         .map(|name| {
             let supporting_statement_ids: Vec<String> = provenance
                 .get(&name)
@@ -11296,8 +11504,9 @@ mod tests {
         control_block_role_key, control_reference_kind_key, control_reference_suffix_key,
         control_unary_operator_key, decision_tree_comparison_operator_key, derive_phase_name,
         derive_transaction_name, is_descendant_section_number,
-        is_explicit_infrastructure_component_term, is_false, is_zero, leading_section_number,
-        split_control_header_keyword, width_hint_key,
+        is_explicit_infrastructure_component_term, is_false, is_phase_head_token, is_zero,
+        leading_section_number, phase_occurrence_has_authority,
+        phase_occurrence_is_passive_predicate, split_control_header_keyword, width_hint_key,
     };
 
     fn make_table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
@@ -23182,11 +23391,15 @@ mod tests {
             "four",       // cardinal
             "first",      // ordinal
             "separate",   // position/quantity adjective
+            "different",  // non-naming comparison adjective
+            "what",       // interrogative determiner
             "transfer",   // transaction head noun used as a modifier ("data transfer phase")
             "transfers",  // plural head noun
             "processing", // gerund-led verb
             "data.",      // sentence/clause boundary (previous token ends a sentence)
             "lanes:",     // clause boundary
+            "jitter,",    // comma boundary ("jitter, phase noise")
+            "(called",    // unclosed parenthetical predicate
             "|",          // symbol → empty after trim
             "aw",         // too short
             "3-1",        // non-alphabetic
@@ -23198,6 +23411,81 @@ mod tests {
                 "qualifier {raw:?} must not name a phase"
             );
         }
+    }
+
+    #[test]
+    fn phase_occurrence_authority_distinguishes_named_phases_from_phase_properties() {
+        let accepted = [
+            "During the address phase the manager drives HADDR.",
+            "The Setup phase of the write transfer occurs at T1.",
+            "This is the address phase of the READ command.",
+            "A barrier transaction has an address phase and a response.",
+            "Link Phase 2 Request/Acknowledge.",
+            "The cycle is called the read phase .",
+            "The device indicates the transition phase busy by pulling DAT0 low.",
+        ];
+        for text in accepted {
+            let tokens: Vec<&str> = text.split_whitespace().collect();
+            let index = tokens
+                .iter()
+                .position(|raw| is_phase_head_token(raw))
+                .expect("accepted fixture must contain a phase head");
+            assert!(
+                phase_occurrence_has_authority(&tokens, index),
+                "named phase occurrence should have authority: {text:?}"
+            );
+        }
+
+        let rejected = [
+            "Segments compensate for edge phase errors.",
+            "Resynchronization follows a positive PHASE ERROR.",
+            "Dynamic phase tolerance equals ten mils.",
+            "Edges occur in the middle of stable phases of the data signals.",
+            "| Sequence phase | Actions |",
+            "A slew-rate limited phase tracking device.",
+        ];
+        for text in rejected {
+            let tokens: Vec<&str> = text.split_whitespace().collect();
+            let index = tokens
+                .iter()
+                .position(|raw| is_phase_head_token(raw))
+                .expect("rejected fixture must contain a phase head");
+            assert!(
+                !phase_occurrence_has_authority(&tokens, index),
+                "phase property/adjacency must not have authority: {text:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn passive_phase_predicate_is_not_a_phase_name() {
+        let tokens: Vec<&str> = "Individual transfers are called phases ."
+            .split_whitespace()
+            .collect();
+        let index = tokens
+            .iter()
+            .position(|raw| is_phase_head_token(raw))
+            .unwrap();
+        let name = derive_phase_name(tokens[index - 1]).unwrap();
+        assert!(phase_occurrence_is_passive_predicate(&tokens, index, &name));
+
+        let definition: Vec<&str> = "The portion is called the read phase ."
+            .split_whitespace()
+            .collect();
+        let definition_index = definition
+            .iter()
+            .position(|raw| is_phase_head_token(raw))
+            .unwrap();
+        let definition_name = derive_phase_name(definition[definition_index - 1]).unwrap();
+        assert!(!phase_occurrence_is_passive_predicate(
+            &definition,
+            definition_index,
+            &definition_name
+        ));
+        assert!(phase_occurrence_has_authority(
+            &definition,
+            definition_index
+        ));
     }
 
     #[test]
@@ -23265,6 +23553,84 @@ mod tests {
         assert_eq!(
             data.signal_set,
             vec!["HREADY".to_string(), "HWDATA".to_string()]
+        );
+    }
+
+    #[test]
+    fn build_transaction_phases_requires_name_authority_and_preserves_all_true_provenance() {
+        let mk_stmt = |id: &str, text: &str, signals: &[&str]| super::StatementContext {
+            statement_id: id.to_string(),
+            class: super::StatementClass::SourceFact,
+            text: text.to_string(),
+            related_visual_evidence_ids: vec![],
+            section_ids: vec![],
+            signals: signals.iter().map(|s| s.to_string()).collect(),
+            supporting_table_ids: vec![],
+        };
+        let context = make_semantic_context_with_statements(vec![
+            mk_stmt(
+                "false_edge",
+                "Segments compensate for edge phase errors.",
+                &[],
+            ),
+            mk_stmt(
+                "false_positive",
+                "The edge has a positive PHASE ERROR.",
+                &[],
+            ),
+            mk_stmt(
+                "false_called",
+                "Individual transfers are called phases .",
+                &[],
+            ),
+            mk_stmt(
+                "address_authority",
+                "During the address phase the manager drives HADDR.",
+                &["HADDR"],
+            ),
+            // This mention has no independent phase-authority cue, but once
+            // `address` is authorized it remains valid provenance and contributes
+            // declared-signal membership.
+            mk_stmt(
+                "address_membership",
+                "Rules for the address phase signal HNONSEC.",
+                &["HNONSEC"],
+            ),
+            mk_stmt(
+                "setup_authority",
+                "The Setup phase of the transfer occurs at T1.",
+                &["PSEL"],
+            ),
+            mk_stmt(
+                "ack_authority",
+                "The target responds by entering the acknowledge phase.",
+                &[],
+            ),
+        ]);
+        let declared: std::collections::HashSet<String> = ["HADDR", "HNONSEC", "PSEL"]
+            .iter()
+            .map(|signal| signal.to_string())
+            .collect();
+
+        let phases = build_transaction_phases(&context, &declared);
+        assert_eq!(
+            phases
+                .iter()
+                .map(|phase| phase.phase_name.as_str())
+                .collect::<Vec<_>>(),
+            vec!["address", "setup", "acknowledge"]
+        );
+        let address = &phases[0];
+        assert_eq!(
+            address.supporting_statement_ids,
+            vec![
+                "address_authority".to_string(),
+                "address_membership".to_string()
+            ]
+        );
+        assert_eq!(
+            address.signal_set,
+            vec!["HADDR".to_string(), "HNONSEC".to_string()]
         );
     }
 }

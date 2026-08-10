@@ -21,16 +21,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.43a.ii`; typed transaction-phase qualifier precision follows completed #43.
-- Current state: 43 refreshes are complete / 13 remain, with 80 SourceIR / 12 normalized / 80 EvidenceIR / 79
-  SemanticIR / 79 IntentIR / 79 adapters. Ready Definition #43 is complete: one guarded CPU ingest produced 15
-  pages / six visuals / three tables / 30 sections / 169 elements at 62% peak sampled memory. Source 171→169
-  removed two flattened diagram labels; Evidence 176→173 additionally removed synthetic `Signal DL is width 1.`.
-  Release `5a43f1b5…11f` now yields three actors, zero interfaces/phases/gates, 21 invariants, 19 contracts, 19
-  Intent behaviors, and 25 constraints. Two final cascades reproduce all hashes. The adapter blocks only on no
-  signals and emits nothing. Nine WIRE/I2C/SWD datasets, KG 156/156, 66/66 FSMGen strict, mdBook, six doctrines,
-  2,008-artifact paths, locality, exact nine-file cleanup, and zero residue pass.
-- Next action: classify all 82 retained `transaction_phases[]` records, pin the Wishbone/CAN false-positive paths
-  and APB/AHB/SWD controls, then tighten only through universal phrase grammar under `.2.43a.ii`.
-- In-flight uncommitted: none after the parent signoff commit. No background job.
+- Active unit: `CORPUS-COVERAGE.2`; `.2.43a.ii` typed transaction-phase qualifier precision is complete.
+- Current state: the 82 retained typed phase records classify as 59 valid / 23 false; a complete old-rule replay
+  is 101 candidates and repaired release `463a79e3…510` emits 70 valid records across 27 documents. Positive phrase
+  authority removes all 31 false candidates with zero retained-provenance change, zero non-empty rejected signal
+  sets, and byte-identical populated/repaired IntentIR variants. Focused + 407 SemanticIR tests, warning-deny
+  Clippy, nine WIRE/I2C/SWD datasets, KG 156/156, full CI 1,791/five ignored, 66/66 FSMGen strict, mdBook,
+  doctrines, persisted paths, and locality pass. Corpus remains 43 refreshes complete / 13 remaining with
+  80/12/80/79 stage counts.
+- Next action: select and authenticate the smallest roadmap-aligned refresh #44 candidate, create its owned leaf,
+  then run the guarded repository-local ingest and deterministic cascade.
+- In-flight uncommitted: none. No background job.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

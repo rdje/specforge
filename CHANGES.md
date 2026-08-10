@@ -1,3 +1,17 @@
+### CORPUS-COVERAGE.2.43a.ii — require positive authority for typed phase names
+
+- The exact 82-record retained census classifies 59 valid typed phases and 23 false qualifiers. A deterministic
+  current-rule replay over all 79 downstream-ready EvidenceIR inputs exposes mixed-vintage staleness and the full
+  population: 101 candidates, 70 valid, and 31 false.
+- Transaction-phase recognition now combines its qualifier grammar with positive local phrase authority. Headings,
+  numbering, temporal/naming/possessive constructions, and phase predicates remain generic; passive `called
+  phases`, CAN `phase error`, physical phase properties, and comma/table adjacency do not authorize names.
+- The two-pass producer preserves every grammatical occurrence, signal set, and supporting statement for an
+  authorized name. All 31 rejected replay candidates have empty signal sets; populated/repaired IntentIR variants
+  are byte-identical, so adapter and executable output do not change.
+- Focused tests, all 407 SemanticIR tests, warning-deny Clippy, nine WIRE/I2C/SWD datasets, KG 156/156, full CI
+  1,791/five ignored, 66/66 FSMGen strict, mdBook, six doctrines, persisted paths, and locality pass.
+
 ### CORPUS-COVERAGE.2.43 — sign off OpenCAPI Ready Definition refresh
 
 - One guarded CPU ingest peaks at 62% sampled system memory used and produces 15 pages, six visuals, three

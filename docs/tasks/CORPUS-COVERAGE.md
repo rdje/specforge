@@ -908,25 +908,50 @@ or a Wishbone glossary entry; the sole clean section is SWD `Data transfer phase
 is already present in typed `transaction_phases[]`. The legacy surface therefore has no measured executable value
 and its one-section→one-tautological-behavior→all-actors projection has no defensible structural grammar.
 
-- ID: `CORPUS-COVERAGE.2.43a.ii` · Status: `pending` (`2026-08-10`, PROBE/CODE/DOC) · Goal: audit the separate
+- ID: `CORPUS-COVERAGE.2.43a.ii` · Status: `done` (`2026-08-10`, PROBE/CODE/DOC) · Goal: audit the separate
   typed `transaction_phases[]` qualifier grammar after `.2.43a.i` is committed. The title audit incidentally
   found retained Wishbone `called` and CAN `edge` / `positive` transaction-phase names, so the bounded
   `<qualifier> phase` recognizer must not be described as perfectly precise without its own exact corpus census.
   Reproduce each statement path, classify all 82 retained records, and tighten only through universal phrase
   grammar with paired real-phase controls. Do not widen `.2.43a.i` or change typed recognition inside that leaf.
 
-### Pending signoff criteria — `CORPUS-COVERAGE.2.43a.ii`
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.43a.ii`
 
-- **PENDING — REPRODUCE / MEASURE** — classify all 82 retained typed transaction-phase records and pin the
-  Wishbone/CAN false-positive paths plus real APB/AHB/SWD controls.
-- **PENDING — ROOT CAUSE (WHY + WHERE)** — identify which qualifier grammar admits relational nouns/adjectives
-  from phrases that discuss phase names, errors, or polarity rather than declaring transaction phases.
-- **PENDING — ADDRESSED (verified)** — apply the smallest universal qualifier boundary without coupling to
-  documents, vendors, protocols, exact phase-name lists, or generated artifacts.
-- **PENDING — NO REGRESSION** — retain declared-signal membership/provenance and run focused, protocol, KG, CI,
-  mdBook, doctrine, path, and locality gates.
-- **PENDING — GENERICITY** — all decisions derive from English phrase structure and typed evidence only.
-- **PENDING — LOCKSTEP** — measurement, task, code analysis, mdBook, durable fact, and resume pointer agree.
+- [x] **REPRODUCE / MEASURE** — all 82 retained records are classified 59 valid / 23 false; a complete old-rule
+  replay over all 79 downstream-ready inputs pins 101 candidates, 70 valid results, and 31 false candidates.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `derive_phase_name` selected one token before `phase`, and
+  `build_transaction_phases` admitted it without requiring the phrase head, predicate, or local clause to use
+  that qualifier as a named phase. Git history pins admission and signal membership to `bb83a32b0` / `4edb2c1fa`.
+- [x] **ADDRESSED (verified)** — release `463a79e3…b06510` combines the qualifier grammar with positive phrase
+  authority, then retains every grammatical occurrence of an authorized name for provenance and signal membership.
+- [x] **NO REGRESSION** — all 70 valid payloads and their provenance are stable; all 31 removals have empty signal
+  sets; populated/repaired IntentIR variants are byte-identical. Twelve focused tests, 407 SemanticIR tests,
+  warning-deny Clippy, nine WIRE/I2C/SWD datasets, KG 156/156, full CI 1,791/five ignored, 66/66 FSMGen strict,
+  mdBook, six doctrines, persisted paths, and project-data locality pass.
+- [x] **GENERICITY** — the production rule uses only English phrase structure and typed signal evidence, with no
+  protocol, vendor, document, section, signal, or exact phase-name allowlist or denylist.
+- [x] **LOCKSTEP** — source comments/tests, measurement, task state, live docs, mdBook, durable fact, derived
+  catalogs/maps, containment authority, and `MEMORY.md` agree; frontier returns to `.2` refresh #44 selection.
+
+Live measurement (`2026-08-10`): the requested 82-record retained snapshot contains 59 valid named phases across
+23 documents and 23 false records. The false set is Wishbone `called`; CAN `edge`/`positive`; USB
+`different`/`introduces`/`limited`/`see`/`total`; OpenCAPI `dynamic`/`static`/`recovery`/`triangular`; eMMC
+`jitter`/`momentary`/`random`; GIC `key`; CCIX `lanes`×3; DTI `sequence`/`what`; LPI `significant`; and SoC-600
+`stable`. They are passive predicates, quantifiers/interrogatives, physical-property compounds, table/commas, or
+administrative attribution—not phase names. All 23 carry empty signal sets; all 59 valid payloads replay exactly.
+
+Mixed-vintage correction: rebuilding the 79 downstream-ready EvidenceIR inputs with the unchanged old rule would
+produce 101 candidates, not 82. Eleven valid APB-d/AXI-h/trace-bus/CCIX-r1.0a records and eight additional false
+candidates were absent from older retained SemanticIR artifacts. Release `463a79e3…510` plus the positive phrase-
+authority gate emits 70 valid records across 27 documents and removes all 31 false candidates. No retained
+provenance changes; token-preserving authority probes find zero non-empty rejected signal sets; old-rule-populated
+and repaired IntentIR variants are byte-identical for every affected document.
+
+Decision: keep the document's own single-word qualifier but require one positive local use as a phase (terminal/
+heading, number, local phase predicate, temporal governor, naming/copular/possessive form, or bounded busy-state
+object complement). Collect first, authorize by name, then retain every grammatical occurrence for provenance and
+signal membership. The production rule has no protocol/vendor/document/section/signal/name allowlist or denylist.
+Git history traces the one-token admission to `bb83a32b0` and signal-set membership to `4edb2c1fa`.
 
 - ID: `CORPUS-COVERAGE.2.43b` · Status: `done` (`2026-08-10`, PROBE/CODE/DOC) · Goal: audit the generic
   `SemanticIR.gates[]` authority path exposed during parent #43 final classification. The repaired Ready
@@ -1238,9 +1263,8 @@ live ledger to 61 records / 1,303 lines without loss.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: `CORPUS-COVERAGE.2.43a.ii` — classify all 82 retained typed transaction-phase records, reproduce the
-  Wishbone/CAN false-positive paths and real APB/AHB/SWD controls, then tighten only through universal phrase
-  grammar before selecting refresh #44.
+- Frontier: `CORPUS-COVERAGE.2` — select and authenticate roadmap-aligned corpus refresh #44 from the 13 remaining
+  candidates, then run its guarded repository-local ingest and deterministic cascade as the next owned leaf.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**39 refreshes done after #39;
   17 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#39: #29/#31 CHI-C2C marquee message-field refreshes,
@@ -1348,6 +1372,9 @@ strict syntax is not a semantic-fidelity oracle. **Levers A, B, C, F + the rule-
 
 ## Changelog
 
+- `2026-08-10`: `.2.43a.ii` PROBE/CODE/DOC ACTIVATED from clean commit `336e0267`. The parent is durably signed
+  off; the existing typed-phase leaf now owns the exact 82-record corpus classification and universal qualifier-
+  grammar repair. Frontier → reproduce Wishbone/CAN paths and classify every retained phase before code changes.
 - `2026-08-10`: `.2.43` DATA/CODE/DOC DONE. One guarded Ready Definition ingest peaks at 62% sampled memory and
   produces 15 pages / six visuals / three tables / 30 sections / 169 elements. Source 171→169 removes two
   flattened diagram labels; Evidence 176→173 additionally removes synthetic `Signal DL is width 1.`. Completed

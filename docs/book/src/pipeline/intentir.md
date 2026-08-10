@@ -176,12 +176,19 @@ SpecForge recognizes these phases the same way it recognizes transaction names: 
 document's own words, with no built-in protocol name list. It reads the prose for the
 `<qualifier> phase` shape and keeps the single word the document places in front of
 `phase` — `address`, `data`, `setup`, `access`, `response`, `turnaround`. Because prose is
-noisier than a section heading, the recognizer is deliberately strict, and rejects:
+noisier than a section heading, the recognizer is deliberately strict. It rejects:
 grammatical filler (`the phase`, `this phase`, `each phase`); counting and ordering words
 (`first phase`, `two phases`, `next phase`); a head noun used only as a modifier (`data
 transfer phase` is about the *data* phase, not a "transfer" phase); and anything that
-crosses a sentence boundary. What survives is a clean list of the phases the document
-actually names — on the AMBA buses, exactly their address/data and setup/access phases.
+crosses a sentence or comma boundary.
+
+A valid qualifier must also have positive phrase authority somewhere in the document. A phase heading,
+`Phase 2`, `During the address phase`, `the Setup phase ... occurs`, or `the transaction has an address phase`
+supplies that authority. A bare compound or accidental adjacency does not: `edge phase errors`, `dynamic phase
+tolerance`, `jitter, phase noise`, `Lanes, Phase 2`, and `transfers are called phases` are rejected. Once one
+occurrence authorizes a name, all of its grammatical mentions remain supporting evidence; a signal-bearing
+`address phase signal` row is therefore preserved rather than forced to repeat the authority syntax. The rule is
+English phrase structure only, with no built-in protocol or phase-name list.
 
 This is *recognition only* at this stage: SpecForge records which phases exist and which
 sentences name them, but it does not yet sequence a transaction's signals through them —

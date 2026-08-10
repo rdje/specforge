@@ -370,6 +370,14 @@ noise. **Surfaced for the operator** via `validate <semantic-ir>`: a `transactio
 `blocking_reasons: None`; field absent from the rebuilt IntentIR) ✓; `kg-bench` 156/156 ✓; `run_ci.sh` green (lib
 **1645**, +3 tests) ✓. Frontier → `.2h` (phase ordering recovery).
 
+> **Precision correction (`2026-08-10`, `CORPUS-COVERAGE.2.43a.ii`):** the wire-only tuning above established
+> recall but overclaimed corpus-wide precision. An exact 82-record retained audit found 59 valid / 23 false;
+> mixed-vintage current-rule replay found 101 candidates / 31 false. The one-token gate admitted passive `called
+> phases`, CAN `phase error`, physical `phase tolerance/relation/modulation`, comma/table adjacency, and similar
+> non-head uses. Current recognition additionally requires positive local phrase authority, preserves every
+> valid record payload, and emits 70 valid records across a complete 79-EvidenceIR replay. See
+> [the correction measurement](transaction-phase-qualifier-precision-measurement.md).
+
 ### 4.6 `.2h` OUTCOME (`2026-06-16`) — phase-ordering recoverability (measurement-first, docs-only)
 
 `KG-ISF-TRANSACTIONS.2h` asked the `.2f`-style question for ordering: **is a transaction's phase ORDER reliably +

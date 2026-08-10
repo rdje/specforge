@@ -57,4 +57,5 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/research/semantic-phase-authority-measurement.md](../../docs/research/semantic-phase-authority-measurement.md) | Semantic-phase authority measurement — `CORPUS-COVERAGE.2.43a` |
 | [docs/research/task-evidence-terminal-containment-design.md](../../docs/research/task-evidence-terminal-containment-design.md) | Terminal task-evidence containment design |
 | [docs/research/transaction-capture-census.md](../../docs/research/transaction-capture-census.md) | Transaction-capture census (`KG-ISF-TRANSACTIONS.1`) |
+| [docs/research/transaction-phase-qualifier-precision-measurement.md](../../docs/research/transaction-phase-qualifier-precision-measurement.md) | Transaction-phase qualifier precision — `CORPUS-COVERAGE.2.43a.ii` |
 | [docs/research/verb-coverage-corpus.md](../../docs/research/verb-coverage-corpus.md) | Verb-coverage corpus mine — candidate report (VERB-COVERAGE-CORPUS.1) |

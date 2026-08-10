@@ -109,10 +109,16 @@ prevents a stale artifact from broadcasting a section summary to every actor or 
 pure-inferred actor.
 
 The active phase surface is `transaction_phases`. Its bounded `<qualifier> phase` recognizer reads explicit
-prose, keeps statement provenance, and limits signal membership to declared signals. Consequently, `During the
-address phase the manager drives HADDR` can establish a typed `address` record without creating a generic
-section phase. See the [sentence-authority measurement](../../research/semantic-phase-authority-measurement.md)
-and the [retirement measurement](../../research/generic-section-phase-retirement-measurement.md).
+prose, keeps statement provenance, and limits signal membership to declared signals. A surviving qualifier is
+not sufficient by itself: at least one occurrence must positively use the phrase as a phase—for example as a
+heading, a numbered phase, the subject/object of a local predicate, or under a temporal/naming construction.
+This rejects `edge phase errors`, `dynamic phase tolerance`, and passive `are called phases` without any
+protocol-name list. Once `address` is authorized by `During the address phase ...`, every grammatical
+`address phase` mention remains provenance and can still contribute declared-signal membership.
+
+See the [transaction-phase precision measurement](../../research/transaction-phase-qualifier-precision-measurement.md),
+the [sentence-authority measurement](../../research/semantic-phase-authority-measurement.md), and the
+[retirement measurement](../../research/generic-section-phase-retirement-measurement.md).
 
 ### Generic whole-statement gates are legacy compatibility data
 

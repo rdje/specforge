@@ -1,4 +1,31 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.43a.ii (`2026-08-10`) — a qualifier is not yet a phase name
+
+The original typed phase recognizer had the right source and the wrong final discriminator. Scanning exact
+`phase` / `phases` heads in retained EvidenceIR prose was far more grounded than the now-retired generic section
+phase surface, but `derive_phase_name` still saw only one token to the left. It could reject `the`, `first`,
+`transfer`, punctuation, and gerunds; it could not know whether `phase` headed a named temporal concept or merely
+modified `error`, `tolerance`, `relation`, `noise`, or another noun.
+
+That missing head authority explains several superficially unrelated records. Wishbone `called` is a passive
+predicate, CAN `edge` and `positive` modify `phase error`, CCIX `lanes` crosses a comma into `Phase 2`, DTI
+`sequence` is a column header, and USB `Total Phase` is contributor data. The exact retained snapshot is 59 valid
+/ 23 false across 82 records. Replaying the current rule against all 79 downstream-ready EvidenceIR inputs exposes
+mixed-vintage staleness: eleven valid records and eight false records were absent from older SemanticIR artifacts,
+so the complete producer population is 101 candidates and the repaired result is 70.
+
+The repair stays document-agnostic. A candidate name needs one local, positive use as a phase: a heading or
+terminal phrase, numbering, a phase predicate, a temporal governor, an explicit naming/copular/possessive form,
+or the bounded transition-phase busy object complement. The producer then retains every grammatical occurrence
+for that authorized name. That two-pass detail matters because an AHB `address phase signal` row carries valuable
+signal membership even though a different statement supplies the clean `During the address phase ...` authority.
+
+Every retained valid record payload is unchanged. A token-preserving authority probe confirms all 31 rejected
+replay candidates have empty declared-signal intersections, and old-rule-populated versus repaired IntentIR
+variants are byte-identical. Thus the slice improves the typed inventory without perturbing phase membership,
+adapter decisions, or emitted ISF. Wire evaluations, KG 156/156, all 407 SemanticIR tests, warning-deny Clippy,
+full CI 1,791/five ignored, 66/66 FSMGen strict, mdBook, doctrines, persisted paths, and locality pass.
+
 ## CORPUS-COVERAGE.2.43 (`2026-08-10`) — compliance prose remains useful without invented topology
 
 The stale Ready Definition chain looked richer than the source justified because three independent heuristics
