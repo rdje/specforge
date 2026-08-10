@@ -1,3 +1,13 @@
+### CORPUS-TASK-EVIDENCE-CONTAINMENT.3b — lock corpus task migration contract
+
+- A separate schema-closed contract pins boundary `f1b202f2`, source blob/SHA/metrics, seven exact regions, 41
+  completion-history routes, seven structural container routes, fixed local bounds, and root-last writer inputs.
+- The live-document driver invokes the corpus contract independently of the prior active-task contract. Its
+  `source_locked/complete` state validates with no warnings only while the source is exact and every collection,
+  archive, part, index, manifest, and capsule destination remains absent.
+- JSON/shell syntax, the exact formal-route census, 39/39 neutral cases, both real contracts, mdBook, doctrines,
+  and full CI pass. Product status stays 48 done / eight remaining; only `.4` may migrate before refresh #49.
+
 ### CORPUS-TASK-EVIDENCE-CONTAINMENT.3a — support exact structural task routes
 
 - The neutral active-task checker now permits task-specific part lines through the existing 6,400-byte direct

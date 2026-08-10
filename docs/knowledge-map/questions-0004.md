@@ -249,6 +249,8 @@
   > is the clock/reset distribution tree captured for platform docs (only partially — infrastructure_signals is a near-fixed 2-per-doc surface; 6/10 carry a fan-out distributed_to_actor_ids list but 0/10 carry a resolved recovered_source_actor_ids root, so the tree has no captured origin)
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
   > is the conditional_rules ISF-lowering shortfall a real gap or honest residual (HONEST RESIDUAL — 73% prose/undeclared/placeholder; the rest are bare deontic modals with no concrete obligation; no buildable ISF lever, no FR)
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > is the corpus task migration contract locked
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
   > is the dense-prose phantom-actor explosion a relation-subject seam or an actors[] prose-mint seam problem
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
@@ -296,5 +298,3 @@
   > per-wire-doc direction flip results (APB input 2->12, AXI 4->52, SWD 0->1, AHB residual)
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
   > qwen2.5vl vs qwen3-vl which model
-- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
-  > should I build an isf lowering-completeness verifier for temporal rules

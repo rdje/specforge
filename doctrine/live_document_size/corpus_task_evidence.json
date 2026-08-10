@@ -1,0 +1,564 @@
+{
+  "schema_version": 1,
+  "contract_id": "corpus-coverage-active-task-evidence",
+  "migration_state": "source_locked",
+  "input_state": "complete",
+  "current_path": "docs/tasks/CORPUS-COVERAGE.md",
+  "identity": {
+    "tree_id": "CORPUS-COVERAGE",
+    "heading": "# CORPUS-COVERAGE: build every ingested doc through to IntentIR/.isf + keep downstream stages non-stale",
+    "active_status_literal": "- Status: `active`"
+  },
+  "current_frontier": {
+    "mode": "none",
+    "literal": "No eligible product leaf."
+  },
+  "migration_metadata": {
+    "migrated_on": "2026-08-10",
+    "reason": "contain oversized active corpus task without losing task evidence"
+  },
+  "source": {
+    "boundary_commit": "f1b202f21f2aaed2cd99ca2839374b5ceeb2be62",
+    "git_blob": "d7ac9aa2c07723cb4a7a8f3a15332ef84fe09f07",
+    "sha256": "5d7acb0c973a75d821c9d5a963aac5c3899da19261dcf6427274cb123804123f",
+    "metrics": {
+      "lines": 2308,
+      "bytes": 277636,
+      "line_bytes": 4746
+    }
+  },
+  "source_requirements": [
+    "# CORPUS-COVERAGE: build every ingested doc through to IntentIR/.isf + keep downstream stages non-stale",
+    "- Tree ID: `CORPUS-COVERAGE`",
+    "- Status: `active`",
+    "- ID: `CORPUS-COVERAGE.2.48`",
+    "- ID: `CORPUS-COVERAGE.2.33d.iv.c`",
+    "- ID: `CORPUS-COVERAGE.3`",
+    "## `.2` re-ingest log (per doc — current-binary refresh; generated/ is git-ignored, so this table is the durable trace)",
+    "## Changelog",
+    "Corpus → 48 done / eight remaining /"
+  ],
+  "destinations": {
+    "collection_directory": "docs/tasks/corpus-coverage",
+    "index": "docs/tasks/corpus-coverage/INDEX.md",
+    "manifest": "docs/tasks/corpus-coverage/manifest.json",
+    "parts": [
+      {
+        "part_id": "program-and-latest-refreshes",
+        "path": "docs/tasks/corpus-coverage/program-and-latest-refreshes.md",
+        "heading": "# CORPUS-COVERAGE — program and latest refreshes",
+        "state": "legacy"
+      },
+      {
+        "part_id": "refreshes-33-40",
+        "path": "docs/tasks/corpus-coverage/refreshes-33-40.md",
+        "heading": "# CORPUS-COVERAGE — refreshes 33–40",
+        "state": "legacy"
+      },
+      {
+        "part_id": "refreshes-41-43",
+        "path": "docs/tasks/corpus-coverage/refreshes-41-43.md",
+        "heading": "# CORPUS-COVERAGE — refreshes 41–43",
+        "state": "legacy"
+      },
+      {
+        "part_id": "repair-acceptance-and-frontier",
+        "path": "docs/tasks/corpus-coverage/repair-acceptance-and-frontier.md",
+        "heading": "# CORPUS-COVERAGE — repair acceptance and frontier",
+        "state": "legacy"
+      },
+      {
+        "part_id": "refresh-ledger",
+        "path": "docs/tasks/corpus-coverage/refresh-ledger.md",
+        "heading": "# CORPUS-COVERAGE — refresh ledger",
+        "state": "legacy"
+      },
+      {
+        "part_id": "recent-chronology",
+        "path": "docs/tasks/corpus-coverage/recent-chronology.md",
+        "heading": "# CORPUS-COVERAGE — recent chronology",
+        "state": "legacy"
+      },
+      {
+        "part_id": "legacy-chronology",
+        "path": "docs/tasks/corpus-coverage/legacy-chronology.md",
+        "heading": "# CORPUS-COVERAGE — legacy chronology",
+        "state": "legacy"
+      }
+    ],
+    "archive_directory": "docs/archive/tasks/corpus-coverage",
+    "source_capsule": "docs/archive/tasks/corpus-coverage/source-through-2026-08-10.md"
+  },
+  "regions": [
+    {
+      "region_id": "program-and-latest-refreshes",
+      "start_line": 1,
+      "end_line": 469,
+      "part_id": "program-and-latest-refreshes",
+      "sha256": "33b9e61f33081fc558638128ea1a0c728c4d401d3ee6c92d3f2054496f53593f",
+      "metrics": {
+        "lines": 469,
+        "bytes": 43000,
+        "line_bytes": 147
+      }
+    },
+    {
+      "region_id": "refreshes-33-40",
+      "start_line": 470,
+      "end_line": 954,
+      "part_id": "refreshes-33-40",
+      "sha256": "7d06b66249b529c7628bf1426890d1ab7424d2179ea0b77b388e62772b3e0007",
+      "metrics": {
+        "lines": 485,
+        "bytes": 46968,
+        "line_bytes": 152
+      }
+    },
+    {
+      "region_id": "refreshes-41-43",
+      "start_line": 955,
+      "end_line": 1372,
+      "part_id": "refreshes-41-43",
+      "sha256": "8f0caf40f64cd1a3ec393d252ebaf30bcc6d1299d3903ff7baa195a243913eef",
+      "metrics": {
+        "lines": 418,
+        "bytes": 38409,
+        "line_bytes": 124
+      }
+    },
+    {
+      "region_id": "repair-acceptance-and-frontier",
+      "start_line": 1373,
+      "end_line": 1660,
+      "part_id": "repair-acceptance-and-frontier",
+      "sha256": "2a5769cf9d79036c1fca9174dcce49a20a2de704e61cb6e91e744c61bdcd51dd",
+      "metrics": {
+        "lines": 288,
+        "bytes": 26217,
+        "line_bytes": 150
+      }
+    },
+    {
+      "region_id": "refresh-ledger",
+      "start_line": 1661,
+      "end_line": 1750,
+      "part_id": "refresh-ledger",
+      "sha256": "934fa91d9a6d9b837c99b10bfa8bcf84a15275db7ddd2fea4a127db1d32a1de9",
+      "metrics": {
+        "lines": 90,
+        "bytes": 59259,
+        "line_bytes": 4746
+      }
+    },
+    {
+      "region_id": "recent-chronology",
+      "start_line": 1751,
+      "end_line": 2080,
+      "part_id": "recent-chronology",
+      "sha256": "20bf16fe43797d44c61a3de39c8dc40c2977b0b3d3f0bcb50e873120b1f0065d",
+      "metrics": {
+        "lines": 330,
+        "bytes": 37780,
+        "line_bytes": 1459
+      }
+    },
+    {
+      "region_id": "legacy-chronology",
+      "start_line": 2081,
+      "end_line": 2308,
+      "part_id": "legacy-chronology",
+      "sha256": "4e3162ba6220e44b3c17a3cc25a1f1b6fbdc1658b61b1b3a83d29f95acc91e27",
+      "metrics": {
+        "lines": 228,
+        "bytes": 26003,
+        "line_bytes": 180
+      }
+    }
+  ],
+  "leaf_routes": [
+    {
+      "leaf_id": "CORPUS-COVERAGE",
+      "part_id": "program-and-latest-refreshes",
+      "origin": "structural",
+      "source_literal": "CORPUS-COVERAGE"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.0",
+      "part_id": "program-and-latest-refreshes",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.0"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.1",
+      "part_id": "program-and-latest-refreshes",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.1"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2",
+      "part_id": "program-and-latest-refreshes",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.48",
+      "part_id": "program-and-latest-refreshes",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.48"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.48a",
+      "part_id": "program-and-latest-refreshes",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.48a"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.47",
+      "part_id": "program-and-latest-refreshes",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.47"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.47a",
+      "part_id": "program-and-latest-refreshes",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.47a"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.46",
+      "part_id": "program-and-latest-refreshes",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.46"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.46a",
+      "part_id": "program-and-latest-refreshes",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.46a"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.45",
+      "part_id": "program-and-latest-refreshes",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.45"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.44",
+      "part_id": "program-and-latest-refreshes",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.44"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.33",
+      "part_id": "refreshes-33-40",
+      "origin": "structural",
+      "source_literal": "CORPUS-COVERAGE.2.33"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.33a",
+      "part_id": "refreshes-33-40",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.33a"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.33b",
+      "part_id": "refreshes-33-40",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.33b"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.33c",
+      "part_id": "refreshes-33-40",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.33c"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.33d",
+      "part_id": "refreshes-33-40",
+      "origin": "structural",
+      "source_literal": "CORPUS-COVERAGE.2.33d"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.33d.i",
+      "part_id": "refreshes-33-40",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.33d.i"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.33d.ii",
+      "part_id": "refreshes-33-40",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.33d.ii"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.33d.iii",
+      "part_id": "refreshes-33-40",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.33d.iii"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.33d.iv",
+      "part_id": "refreshes-33-40",
+      "origin": "structural",
+      "source_literal": "CORPUS-COVERAGE.2.33d.iv"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.33d.iv.a",
+      "part_id": "refreshes-33-40",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.33d.iv.a"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.33d.iv.b",
+      "part_id": "refreshes-33-40",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.33d.iv.b"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.33d.iv.c",
+      "part_id": "refreshes-33-40",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.33d.iv.c"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.34",
+      "part_id": "refreshes-33-40",
+      "origin": "structural",
+      "source_literal": "CORPUS-COVERAGE.2.34"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.34a",
+      "part_id": "refreshes-33-40",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.34a"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.34b",
+      "part_id": "refreshes-33-40",
+      "origin": "structural",
+      "source_literal": "CORPUS-COVERAGE.2.34b"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.34b.i",
+      "part_id": "refreshes-33-40",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.34b.i"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.34b.ii",
+      "part_id": "refreshes-33-40",
+      "origin": "structural",
+      "source_literal": "CORPUS-COVERAGE.2.34b.ii"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.34b.ii.a",
+      "part_id": "refreshes-33-40",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.34b.ii.a"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.34b.ii.b",
+      "part_id": "refreshes-33-40",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.34b.ii.b"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.35",
+      "part_id": "refreshes-33-40",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.35"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.36",
+      "part_id": "refreshes-33-40",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.36"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.37",
+      "part_id": "refreshes-33-40",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.37"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.38",
+      "part_id": "refreshes-33-40",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.38"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.38a",
+      "part_id": "refreshes-33-40",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.38a"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.39",
+      "part_id": "refreshes-33-40",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.39"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.40",
+      "part_id": "refreshes-33-40",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.40"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.41",
+      "part_id": "refreshes-41-43",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.41"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.41a",
+      "part_id": "refreshes-41-43",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.41a"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.42",
+      "part_id": "refreshes-41-43",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.42"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.42a",
+      "part_id": "refreshes-41-43",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.42a"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.43",
+      "part_id": "refreshes-41-43",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.43"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.43a",
+      "part_id": "refreshes-41-43",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.43a"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.43a.i",
+      "part_id": "refreshes-41-43",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.43a.i"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.43a.ii",
+      "part_id": "refreshes-41-43",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.43a.ii"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.2.43b",
+      "part_id": "refreshes-41-43",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.2.43b"
+    },
+    {
+      "leaf_id": "CORPUS-COVERAGE.3",
+      "part_id": "repair-acceptance-and-frontier",
+      "origin": "legacy",
+      "source_literal": "CORPUS-COVERAGE.3"
+    }
+  ],
+  "route_basis": "boundary_path_commit_subject_ids",
+  "marker_prefix": "corpus-task-source-region",
+  "limits": {
+    "root": {
+      "health_targets": {
+        "lines": 224,
+        "bytes": 24576,
+        "line_bytes": 512
+      },
+      "enforcement_ceilings": {
+        "lines": 320,
+        "bytes": 36864,
+        "line_bytes": 1024
+      },
+      "milestones": {
+        "warning_pct": 80,
+        "rollover_pct": 90
+      }
+    },
+    "index": {
+      "health_targets": {
+        "lines": 128,
+        "bytes": 16384,
+        "line_bytes": 512
+      },
+      "enforcement_ceilings": {
+        "lines": 192,
+        "bytes": 24576,
+        "line_bytes": 768
+      },
+      "milestones": {
+        "warning_pct": 80,
+        "rollover_pct": 90
+      }
+    },
+    "parts": {
+      "health_targets": {
+        "files": 12,
+        "lines_each": 640,
+        "bytes_each": 76800,
+        "line_bytes_each": 6144,
+        "lines_total": 4096,
+        "bytes_total": 524288
+      },
+      "enforcement_ceilings": {
+        "files": 16,
+        "lines_each": 896,
+        "bytes_each": 98304,
+        "line_bytes_each": 6400,
+        "lines_total": 6144,
+        "bytes_total": 655360
+      },
+      "milestones": {
+        "warning_pct": 80,
+        "rollover_pct": 90
+      }
+    },
+    "capsule_exact": {
+      "lines": 2308,
+      "bytes": 277636,
+      "line_bytes": 4746
+    },
+    "manifest": {
+      "bytes": 65536,
+      "line_bytes": 1024,
+      "scalar_bytes": 1024,
+      "max_parts": 16,
+      "max_regions": 32,
+      "max_leaf_routes": 96
+    }
+  },
+  "migrated_requirements": {
+    "root_required_literals": [
+      "# CORPUS-COVERAGE: build every ingested doc through to IntentIR/.isf + keep downstream stages non-stale",
+      "- Tree ID: `CORPUS-COVERAGE`",
+      "- Status: `active`",
+      "48 of 56 real chip-spec refreshes are complete.",
+      "## Current Frontier",
+      "No eligible product leaf.",
+      "## Detailed task evidence",
+      "## Verification Log",
+      "## Commit Log"
+    ],
+    "root_forbidden_literals": [
+      "- Status: `done`",
+      "- Status: `pending`"
+    ],
+    "index_required_literals": [
+      "# CORPUS-COVERAGE task-evidence index",
+      "## Semantic parts",
+      "## Primary leaf routes",
+      "## Exact provenance",
+      "## Verification"
+    ]
+  },
+  "verifier": "perl scripts/check_active_task_evidence.pl --check"
+}

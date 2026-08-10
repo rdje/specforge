@@ -13,6 +13,7 @@ answers:
   - "who reads and writes docs tasks CORPUS-COVERAGE md"
   - "what is the current corpus refresh frontier after refresh 48"
   - "why was corpus task maximum line width corrected from 4747 to 4746"
+  - "is the corpus task migration contract locked"
 date: 2026-08-10
 status: current
 tags: [documentation, containment, task-tree, corpus-coverage, continuity]
@@ -50,3 +51,10 @@ misstate the active `.2` parent. Archive-only is rejected because unique complet
 the stable active root over seven semantic legacy parts and an exact source capsule, using the existing neutral
 active-task checker with a separate corpus-specific contract. Future refreshes atomically update root, one active
 part, index, and manifest; legacy parts seal and the active part splits at a refresh boundary before rollover.
+
+The complete source-locked contract is `doctrine/live_document_size/corpus_task_evidence.json`. It authenticates
+boundary commit `f1b202f2`, Git blob `d7ac9aa2…`, the exact source SHA/metrics, all seven region hashes, 41
+completion-history `legacy` routes, and seven source-backed `structural` container routes. The unconditional
+live-document driver invokes it separately from the earlier active-task contract. In `source_locked`, the stable
+source stays byte-identical and the collection, archive, index, manifest, parts, and capsule must all remain absent;
+only the guarded migration leaf may create them.

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
+  > why is conformal calibration still blocked at CHI scale
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
   > why is corpus coverage refresh 34 blocked before ingest
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)

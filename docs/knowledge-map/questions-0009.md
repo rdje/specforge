@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > why do CCIX-class docs extract hundreds of register fields now
 - [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
   > why do Docling source tests fail when TMPDIR is inside the repository
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
@@ -296,5 +298,3 @@
   > why is category 4 (CPU ISA) ISF-thin (the only lowerable cat-4 intent is CSRs, which are registers; their bit-fields are UNLOCATED so they don't reach .isf — an extraction-recall gap, not a missing ISF construct)
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > why is channel membership metadata-only and not lowered to .isf
-- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
-  > why is conformal calibration still blocked at CHI scale

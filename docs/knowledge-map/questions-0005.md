@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
+  > should I build an isf lowering-completeness verifier for temporal rules
 - [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
   > should I fix the PSEL valid when PSEL asserted temporal rule
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
@@ -295,5 +297,3 @@
   > what happened to the CoreSight Base System agent.isf
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
   > what happened to the USB4 Connection Manager device_also.isf
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > what happened to the USB4 Inter-Domain channel.isf

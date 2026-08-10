@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > where is the tiling-gated register bit recovery implemented
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
   > where is the trailing function-word strip in consolidate_trailing_fragment
 - [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
@@ -295,5 +297,3 @@
   > why do AMD DTE / NVMe command dword tables go to message fields and not registers
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > why do APB tables 0016 0017 0018 produce no signal records
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > why do CCIX-class docs extract hundreds of register fields now

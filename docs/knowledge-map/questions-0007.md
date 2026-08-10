@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
+  > what is the next big PDF-variant digestion lever after the serial class
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > what is the north-star bar #2 relation-completeness finding (KG-ISF-COMPLETENESS.3)
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -296,5 +298,3 @@
   > where is the spawn+poll+kill memory guard in materialize_pdf
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > where is the structural gate that drops function-word-led and verb-led actor candidates
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > where is the tiling-gated register bit recovery implemented

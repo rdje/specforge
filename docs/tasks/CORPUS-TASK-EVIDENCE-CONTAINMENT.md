@@ -63,9 +63,11 @@ evidence, bounded retrieval, and an unambiguous write transaction for refresh #4
   Commit: `CORPUS-TASK-EVIDENCE-CONTAINMENT.2 — select measured corpus task partition`
 
 - ID: `CORPUS-TASK-EVIDENCE-CONTAINMENT.3`
-  Status: `active`
+  Status: `done` (`2026-08-10`, CODE/DOC/CONTRACT)
   Goal: lock the corpus-specific migration contract and neutral verifier before moving source bytes
   Children: `CORPUS-TASK-EVIDENCE-CONTAINMENT.3a`, `CORPUS-TASK-EVIDENCE-CONTAINMENT.3b`
+  Verification: both children pass; the complete corpus contract is invoked unconditionally while source and
+  declared destinations remain respectively byte-identical and absent
 
 - ID: `CORPUS-TASK-EVIDENCE-CONTAINMENT.3a`
   Status: `done` (`2026-08-10`, CODE/DOCTRINE)
@@ -78,12 +80,14 @@ evidence, bounded retrieval, and an unambiguous write transaction for refresh #4
   Commit: `CORPUS-TASK-EVIDENCE-CONTAINMENT.3a — support exact structural task routes`
 
 - ID: `CORPUS-TASK-EVIDENCE-CONTAINMENT.3b`
-  Status: `pending`
+  Status: `done` (`2026-08-10`, CODE/DOC/CONTRACT)
   Goal: commit the complete corpus-specific migration contract and unconditional verifier invocation
   Acceptance: decision record, source lock, seven regions, 41 legacy plus seven structural routes, bounds, writer
   transaction, destination absence, rollback, and future-append proof validate with the source byte-identical
-  Verification: pending
-  Commit: pending
+  Verification: JSON/shell syntax; 7-region / 48-route / 41-legacy / 7-structural census; source-locked report;
+  39/39 neutral cases; unconditional live-document driver; source identity/destination absence; task catalog;
+  Knowledge Map; doctrines; mdBook test/build; full CI pass
+  Commit: `CORPUS-TASK-EVIDENCE-CONTAINMENT.3b — lock corpus task migration contract`
 
 - ID: `CORPUS-TASK-EVIDENCE-CONTAINMENT.4`
   Status: `pending`
@@ -97,7 +101,7 @@ evidence, bounded retrieval, and an unambiguous write transaction for refresh #4
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3b` | `pending` | Lock and invoke the complete corpus-specific contract against the untouched source. |
+| 1 | `CORPUS-TASK-EVIDENCE-CONTAINMENT.4` | `pending` | Review the bounded root and invoke the guarded root-last migration. |
 
 ## Locked Source Boundary
 
@@ -150,6 +154,7 @@ measure and decide the actual destinations. `git diff -- docs/tasks/CORPUS-COVER
 | `2026-08-10` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.1` | source commit/blob/SHA/metrics; target diff; candidate destination absence; `perl scripts/check_task_tree_catalog.pl --check`; `scripts/check_doctrines.sh`; `mdbook test docs/book`; `mdbook build docs/book` | pass |
 | `2026-08-10` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.2` | seven raw regions/source reconstruction; 42 exact-path readers at `3a40b152`; 48 formal / 41 subject / 48 union ids; growth census; target diff; Knowledge Map derive-and-diff; task catalog; doctrines; mdBook test/build | pass; selected bounded root + seven parts + exact capsule |
 | `2026-08-10` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3a` | Perl syntax; 39/39 neutral cases; existing real contract; exact source/destination absence; live-document gate; task/Knowledge Map/doctrine gates; mdBook test/build; full CI | pass; 6,400 cap and source-backed structural routes fail closed |
+| `2026-08-10` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3b` | JSON/shell syntax; real 7-region / 48-route source-locked report; 39/39 neutral cases; unconditional driver; exact source/destination absence; task/Knowledge Map/doctrine gates; mdBook test/build; full CI | pass; complete corpus migration contract locked before mutation |
 
 ## Commit Log
 
@@ -158,6 +163,7 @@ measure and decide the actual destinations. `git diff -- docs/tasks/CORPUS-COVER
 | `CORPUS-TASK-EVIDENCE-CONTAINMENT.1` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.1 — lock untouched corpus task source` | Exact untouched-source ownership boundary. |
 | `CORPUS-TASK-EVIDENCE-CONTAINMENT.2` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.2 — select measured corpus task partition` | Complete census and corpus-specific topology/bounds. |
 | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3a` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3a — support exact structural task routes` | Neutral checker supports bounded exact-wide rows and formal container routes. |
+| `CORPUS-TASK-EVIDENCE-CONTAINMENT.3b` | `CORPUS-TASK-EVIDENCE-CONTAINMENT.3b — lock corpus task migration contract` | Complete source lock and unconditional verifier invocation. |
 
 ## Changelog
 
@@ -167,6 +173,8 @@ measure and decide the actual destinations. `git diff -- docs/tasks/CORPUS-COVER
   measured hybrid, and advanced the frontier to the locked migration contract.
 - `2026-08-10`: `.3a` aligned the neutral part-width cap with the existing direct task-evidence ceiling, added
   source-backed `structural` container routes, and advanced the frontier to the corpus-specific contract.
+- `2026-08-10`: `.3b` locked every source/region/route/bound/writer input, invoked the independent corpus
+  contract unconditionally, and advanced the frontier to the guarded migration.
 
 ### Acceptance Checklist (enforced) — `CORPUS-TASK-EVIDENCE-CONTAINMENT.2`
 
@@ -197,3 +205,18 @@ measure and decide the actual destinations. `git diff -- docs/tasks/CORPUS-COVER
   repository-wide evidence cap; no corpus, document, vendor, refresh, or path-specific rule enters the checker.
 - [x] **LOCKSTEP** — ADR 0024, census, fact card, mdBook doctrine reference, task tree, changes, and resume pointer
   agree that `.3b` must lock 41 legacy plus seven structural corpus routes before migration.
+
+### Acceptance Checklist (enforced) — `CORPUS-TASK-EVIDENCE-CONTAINMENT.3b`
+
+- [x] **REPRODUCE / MEASURE** — the real source-locked report reproduces exact 2,308/277,636/4,746 source
+  metrics and the seven planned payload metrics, with 48 formal routes split 41 legacy / seven structural.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the old monolith has 892 bytes of headroom and no independent contract;
+  the new data file binds its exact Git/source authority, semantic cut, routes, bounds, and root-last writer inputs.
+- [x] **ADDRESSED (verified)** — the complete schema-closed contract authenticates every region/route and declares
+  root/index/part/capsule limits, migration metadata, future root requirements, and destination absence.
+- [x] **NO REGRESSION** — JSON/shell syntax, 39/39 neutral cases, both real active-task contracts, the unconditional
+  live-document driver, task/Knowledge Map/doctrine gates, mdBook test/build, and full CI pass; source is untouched.
+- [x] **GENERICITY** — corpus identity, measurements, regions, and policy live only in the separate data contract;
+  the shared checker and shell driver contain no corpus document/vendor/refresh parsing or special-case behavior.
+- [x] **LOCKSTEP** — ADR 0024, census, fact, task tree, changes, mdBook, and resume pointer agree that only `.4`
+  may invoke the reviewed root-last writer and refresh #49 remains a later separately owned product slice.
