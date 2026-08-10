@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > which boot-volume Rust directories are allowed
+- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
+  > which canonical Markdown collections still rely only on git query
+- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
+  > which corpus PDFs are password/permission protected
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > which corpus docs declare fields with a Field-titled column
+- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
+  > which corpus docs still yield nothing (the VLM frontier)
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
   > which corpus documents are category 4 CPU-ISA (exactly 2: 1_0_risc_v_debug_specification and 1_0_2025_03_12_risc_v_advanced_interrupt_architecture; the RISC-V IOMMU doc is category 2)
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
@@ -287,13 +297,3 @@
   > why does .1b.i NOT strip a trailing conjunction (and/or) or X interface
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > why does .2i not emit a universal address/data/response phase order (ordering is an honest residual per .2h)
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > why does ACE table_0275 stay flagged after presence capture
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > why does AHB not flip any signal to input under Manager perspective (sparse stale grounding — Manager's only graph inputs are HCLK/HRESETN, excluded as clock/reset)
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > why does AMD IOMMU extract no register fields
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why does APB phase grouping stay minimal despite phase prose naming signals (.2c membership thinness — read/write_transfer carry only PCLK; a .2c-breadth lever, not a phase-cue one)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > why does AXI have 71 registers but zero composable resets (AXI register_records are encoding pseudo-tables — Valid and Ready signals / Resource plane number properties — fields with no bit positions and symbolic resets like -, False, AxPROT[1])

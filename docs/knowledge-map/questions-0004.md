@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > how many synthetic behaviors came from generic section phases
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > how many transactions does each persisted IntentIR doc have (AXI=9, AHB=3, APB=3)
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
@@ -296,5 +298,3 @@
   > should SpecForge file an FSMGen FR for a declarative static-topology ISF construct (NO / not yet — DOC-INTENT-TAXONOMY.4c.i: the bottleneck is upstream extraction-recall, not the missing ISF abstraction; an FR on a 12x-too-sparse / three-quarters-half-connected capture would be unfalsifiable — feedback_verify_fsmgen_before_fr)
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
   > should SpecForge file an FSMGen FR for cat-3 topology (NOT YET — premature: capture is sparse/noisy AND ISF may deliberately be a per-actor format with topology owned by the integrator above per-module synthesis; resolve with FSMGen after .4c.i, never a speculative FR — feedback_verify_fsmgen_before_fr)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > should a documented reset of 0 be emitted as (reset 0) in ISF (no — omit; the FSMGen all-0s default faithfully represents it; 893 of the fits-current registers are V==0)

@@ -55,15 +55,16 @@ re-ingest means the refreshed EvidenceIR and downstream stages were built and ve
 not undo that work. Report normalized retention separately when discussing whether evidence can be rebuilt again
 without another Docling ingest.
 
-The current measured example (`2026-08-10`) is 46 completed current-binary refreshes with ten real chip-spec
-documents left in the refresh queue. The local artifact tree separately contains 80 SourceIR files, 18 retained
+The current measured example (`2026-08-10`) is 47 completed current-binary refreshes with nine real chip-spec
+documents left in the refresh queue. The local artifact tree separately contains 80 SourceIR files, 19 retained
 normalized bundles, 80 EvidenceIR files, and 79 SemanticIR→IntentIR→adapter chains. The newest bundle belongs to
-the 40-page OpenCAPI Discovery Configuration specification: all 188 project-owned path values are final,
-present, and repository-relative. The explicitly authorized source PDF remains absolute and labeled
-`external_input`; source and repository are on the same SSD. Three guarded CPU ingests kept 47–53% system memory
-free and reproduced 54 visuals, 49 tables, 50 sections, and 172 source elements. The stale 181→172 delta removes
-only nine flattened labels from visual-bearing pages. The bundle's presence is cache-retention status, not what
-makes that refresh complete; complete verified downstream artifacts are the durable progress measure.
+the 46-page Cortex-A76 Software Optimization Guide: all project-owned path values are final, present, and
+repository-relative. The explicitly authorized source PDF remains absolute and labeled `external_input`; source
+and repository are on the same SSD. Three guarded CPU ingests reproduce 71 visuals, 68 tables, 68 sections, and
+249 source elements; the two sampled runs keep 52–64% system memory free. The stale 260→249 delta removes only
+11 flattened labels from visual-bearing pages. The 168-file / 46,082,616-byte bundle's presence is cache-retention
+status, not what makes that refresh complete; complete verified downstream artifacts are the durable progress
+measure.
 
 ## Why this stage matters
 

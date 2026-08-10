@@ -199,11 +199,20 @@ overlapping register, and eight temporal-source IDs without typed rules. Those a
 not authority to infer ports. Three ingests and two repaired cascades reproduce; all 188 normalized project paths
 are relative and present.
 
-The corpus cache now has 61 current emitted `.isf` files, all covered by a fresh 61/61 FSMGen-strict sweep. The
+The 46-page Cortex-A76 Software Optimization Guide provides a fourteenth transfer. Its stale chain treated 228
+instruction names as interfaces, projected 18 phases / 23 gates / 37 behaviors, and emitted a 537-output
+`consumer.isf`. Current extraction retains 960 evidence statements and one conditional while the structural
+timing repair removes 151 value-empty instruction-table records. IntentIR retains 15 constraints and two
+assumptions but no actor, behavior, signal, or timing authority. Lowering therefore blocks only on no signals,
+keeps two canonicalization residuals, removes the obsolete target, and leaves its adapter manifest/report. The
+software guide remains useful engineering evidence without masquerading as a synthesizable interface.
+
+The corpus cache now has 60 current emitted `.isf` files, all covered by a fresh 60/60 FSMGen-strict sweep. The
 blocked/non-emitting set includes USB 3.2, USB4 Inter-Domain, USB4 Connection Manager, CoreSight Base System,
 AArch64 External Debug, Introducing CoreSight, and the recently refreshed OpenCAPI notes/definitions/PHY
-Mechanical/Signaling/Discovery specs. A current four-document signal-authority replay also removes stale
-Wishbone and I2S targets: Wishbone has no declared bus signal after its example-memory `DO` is rejected, while
+Mechanical/Signaling/Discovery specs and Cortex-A76 optimization guide. A current four-document signal-authority
+replay also removes stale Wishbone and I2S targets: Wishbone has no declared bus signal after its example-memory
+`DO` is rejected, while
 I2S keeps `SCK`/`SD` but has no lowerable behavior. Honest blocking is the correct result for each.
 
 The measurement behind that repair found three upstream authority errors, not a reason to distrust every

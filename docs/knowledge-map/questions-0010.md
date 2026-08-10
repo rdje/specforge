@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > why is the interface consolidation safe for WIRE-BASED-100 (gold docs have no interface actor)
+- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
+  > why is the nested cross-tab timing table (TRANSMITTER/RECEIVER) left an honest residual
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why is the ordered multi-phase transaction body the hard deferred part (no structural name bridge AXI handshake to named transaction)
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > why is the repaired USB 3.2 ISF adapter blocked
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > why is the snap trigger absence-from-sentence and not typing failure
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > why is the stage-staleness check zero-versus-some and not a count comparison
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > why is the strict register-field per-fact score 0 on RISC-V Debug / NVMe
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)

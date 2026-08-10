@@ -52,6 +52,7 @@
 | [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md) | 2026-06-10 | `current` | The corpus's biggest structural digestion gap is register-shaped unknown tables (CCIX/AMD-IOMMU class) |
 | [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md) | 2026-06-15 | `current` | The CORPUS-PATTERN-REUSE activate-only consume mechanism has no valid first opt-in extractor in the current c… |
 | [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md) | 2026-06-15 | `current` | The .9.10 serial-prose bus-line lever cannot be a CORPUS-PATTERN-REUSE first opt-in extractor — its safe/no… |
+| [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md) | 2026-08-10 | `current` | The Cortex-A76 optimization guide is constraint evidence, not a 537-output instruction interface |
 | [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md) | 2026-08-09 | `current` | Canonical stages and the migrated generated corpus contain move-safe repository paths |
 | [definitional-signal-capture](../knowledge/definitional-signal-capture.md) | 2026-06-09 | `current` | Signals named only in prose (no signal table) are captured via a DEFINITIONAL grammar — copula "NAME is a/a… |
 | [dempster-fusion](../knowledge/dempster-fusion.md) | 2026-06-04 | `current` | SpecForge fuses agreeing-source confidence via Dempster corroboration (not min) |
@@ -60,4 +61,3 @@
 | [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md) | 2026-08-09 | `current` | Docling metadata paths are normalized before the staged bundle is promoted |
 | [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md) | 2026-08-09 | `current` | Docling page sidecars are normalized before the staged bundle is promoted |
 | [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md) | 2026-06-22 | `current` | SpecForge enforces every mechanizable doctrine via one registry/driver (scripts/check_doctrines.sh) gated E1… |
-| [document-class-from-structure](../knowledge/document-class-from-structure.md) | 2026-06-08 | `current` | Document class (protocol/register/interface/guide) inferred from structural intent surfaces, not the doc name |

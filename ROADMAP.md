@@ -238,14 +238,16 @@ Five active program groups support that north star:
   authority removes the stale interfaces/port/relation/phases/gates, but keeps ten behaviors / 55 constraints /
   six timings. Lowering blocks honestly on no declared signals. Validators retain the known table/visual/
   normative/temporal capture frontier; two repaired cascades reproduce eight downstream hashes and final
-  committed-binary validation pins all 12 artifact/report hashes. Corpus is 46 done / ten remaining at 80
-  SourceIR / 18 normalized / 80 EvidenceIR / 79 downstream chains; all 61 current emitted ISFs are strict-clean.
-  `.2.47` now owns the 46-page Cortex-A76 Software Optimization Guide, the smallest of ten remaining candidates.
-  Its first deterministic cascade removes a stale 537-output instruction adapter and exposed child `.2.47a`.
-  That child is now done: leading structural column headers, identifier-safe tokens, classification provenance,
-  and value-bearing scalar columns replace all-row/raw-substring authority. The retained 39-document timing
-  surface moves 2,144→608 grounded records; Cortex moves 151→0 and I2S holds at five. Eight rebuildable cascades
-  reproduce twice, KG/full CI/FSMGen strict pass, and `.2.47` resumes final release replay/signoff. Separately,
+  committed-binary validation pins all 12 artifact/report hashes. `.2.47` refreshes the 46-page Cortex-A76
+  Software Optimization Guide: Source 260→249 and Evidence 971→960 remove flattened visual labels while the
+  instruction catalog no longer fabricates 228 interfaces, 18 phases, 23 gates, 37 behaviors, three timing
+  constraints, or a 537-output `.isf`. Child `.2.47a` repairs the shared structural timing authority, moving the
+  retained 39-document surface 2,144→608 grounded scalar records while Cortex moves 151→0 and I2S holds at five.
+  Final IntentIR retains 15 constraints / two assumptions; lowering blocks honestly on no declared signals and
+  keeps two canonicalization residuals. The committed release reproduces SourceIR `a396a074…d478`, normalized
+  manifest `872e7dba…1bae`, and downstream `b4b50237…9ade` twice. Corpus is 47 done / nine remaining at 80
+  SourceIR / 19 normalized / 80 EvidenceIR / 79 downstream chains; all 60 current emitted ISFs are strict-clean.
+  Frontier: select and own #48, the 43-page OpenCAPI 4.0 32 Gbps PHY Signaling specification. Separately,
   [`FACT-CARD-CATALOG-CONTAINMENT`](docs/tasks/FACT-CARD-CATALOG-CONTAINMENT.md) owned the browse-plane risk at
   158 cards / 134 monolith bytes of headroom. `.0` pins the source/readers; `.1` accepts ADR 0020's stable direct-ID
   landing, count-packed title parts, derived 198-card maximum, and independent root/part/aggregate bounds.

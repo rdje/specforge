@@ -1,4 +1,21 @@
 # DEVELOPMENT_NOTES
+## CORPUS-COVERAGE.2.47 (`2026-08-10`) — an instruction catalog is evidence, not a hardware boundary
+
+The stale Cortex-A76 chain was richly renderable for the wrong reason. It grouped 228 instruction names into
+interfaces, projected 18 generic phases and 23 generic gates, derived 37 behaviors, and emitted 537 output ports.
+Nothing in the guide declared those mnemonics as interface signals. The apparent completeness was a projection
+of optimization prose and instruction tables into an executable topology.
+
+Current authority keeps the useful engineering layer: 960 evidence statements, one conditional, 15 constraints,
+two assumptions, and 44 semantic decompositions. It removes the unsupported interface and timing surfaces, so
+the adapter blocks only because no signal is declared and retains two canonicalization residuals. A blocked
+target is more faithful than a syntactically valid but fabricated `consumer.isf`.
+
+The first replay also exposed a shared producer defect rather than a Cortex exception. Child `.2.47a` repaired
+structural timing classification and scalar value authority across the retained corpus before the parent was
+allowed to close. The final release then reproduced the SourceIR, normalized-manifest, and downstream hashes;
+this orders the work by causal authority instead of merely deleting the one surprising target.
+
 ## CORPUS-COVERAGE.2.47a (`2026-08-10`) — table shape can corroborate authority, not create it
 
 The Cortex failure looked like a timing-vocabulary problem, but the real boundary was provenance plus structure.

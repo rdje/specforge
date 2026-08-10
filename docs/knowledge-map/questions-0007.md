@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
+  > what is the transaction phase qualifier authority rule
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the validate intent transaction phase-membership surface (transactions_with_phase_membership + transaction_phase_groups metrics + intent_transaction_phase_membership finding)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the validate transaction inventory surface (intent_transaction_inventory metrics + finding)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the validate transaction-phase inventory (semantic_transaction_phase_inventory metric + finding)
+- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
+  > what is the vendor/layout fingerprint, the ExtractionProfile, and the offline corpus pattern miner
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
   > what keeps VALIDATION_SNAPSHOT current without mutating generated artifacts
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
@@ -288,13 +298,3 @@
   > which SourceIR and EvidenceIR paths serialize repository relative
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > which active task tree is next at the live document warning
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > which boot-volume Rust directories are allowed
-- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
-  > which canonical Markdown collections still rely only on git query
-- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
-  > which corpus PDFs are password/permission protected
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > which corpus docs declare fields with a Field-titled column
-- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
-  > which corpus docs still yield nothing (the VLM frontier)

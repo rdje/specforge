@@ -1,3 +1,16 @@
+### CORPUS-COVERAGE.2.47 — refresh Cortex-A76 guide without instruction topology
+
+- Three guarded CPU ingests reproduce 46 pages / 71 visuals / 68 tables / 68 sections / 249 elements; the
+  release build pins SourceIR `a396a074…d478` and normalized manifest `872e7dba…1bae`.
+- Source 260→249 removes flattened visual labels. Evidence 971→960 and timings 3→0 while the guide's grounded
+  prose remains; child `.2.47a` closes the shared structural timing-authority defect exposed by the refresh.
+- Current authority removes 228 stale instruction interfaces, 18 phases, 23 gates, 37 behaviors, and the
+  537-output `consumer.isf`. Final IntentIR keeps 15 constraints / two assumptions; lowering blocks only on no
+  declared signals and retains two canonicalization residuals.
+- Two downstream release cascades reproduce `b4b50237…9ade`; all five stages validate. Nine provider-free evals,
+  KG 156/156, and all 60 emitted ISFs under FSMGen strict pass. Corpus is 47 done / nine remaining; next select
+  #48, the 43-page OpenCAPI 4.0 32 Gbps PHY Signaling specification.
+
 ### CORPUS-COVERAGE.2.47a — enforce structural timing-table authority
 
 - Timing-table classification now reads only the leading all-column-header prefix and matches identifier-safe

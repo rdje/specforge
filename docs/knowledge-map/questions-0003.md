@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
+  > how does extract_discovered_state_value_from_text match a constraint value
 - [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
   > how does ground_constraint recover a value the model did not echo
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
@@ -295,5 +297,3 @@
   > how many signals does each AXI channel have
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > how many synthetic behaviors came from generic gates
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > how many synthetic behaviors came from generic section phases

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
+  > does platform/system-IP (category 3) topology intent need a new ISF construct or map onto an existing one (ISF has NO declarative static-topology/connectivity construct — composition is transaction-level only; decision deferred to a capture-recall measurement .4c.i before any FR)
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > does register extraction require the table_kind register classification
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
@@ -296,5 +298,3 @@
   > how does derive_isf_actor_name produce a valid HDL identifier ([A-Za-z_]\\w*)
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > how does derive_register_block_name parse a block out of a register-descriptions section heading
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > how does extract_discovered_state_value_from_text match a constraint value

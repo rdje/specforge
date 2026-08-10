@@ -21,12 +21,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.47a`; timing-table structural-authority repair exposed by parent #47.
-- Current state: `.2.47a` is implemented and verified. The retained 39-document / 284-table timing surface moves
-  2,144→608 records; Cortex moves 151→0, I2S holds at five, and every survivor is value-bearing. Eight complete
-  cascades reproduce `58411566…6457a` twice; KG 156/156, full CI, and 60/60 FSMGen strict pass.
-- Next action: record the `.2.47a` commit, clear `git_message_brief.txt`, then resume parent `.2.47` from the
-  committed repair for release build, final Cortex replay/signoff, row 47, and parent rollback cleanup.
-- In-flight uncommitted: verified `.2.47a` code, tests, task/book/Knowledge Map/live-doc recording, plus ignored
-  parent generated/rollback evidence. No background job is running.
+- Active unit: `CORPUS-COVERAGE.2.47`; final Cortex-A76 Software Optimization Guide refresh recording.
+- Current state: the committed release reproduces 46 pages / 71 visuals / 68 tables / 68 sections / 249 elements,
+  SourceIR `a396a074…d478`, normalized manifest `872e7dba…1bae`, and downstream `b4b50237…9ade` twice. Current
+  authority removes the stale 537-output instruction topology; IntentIR retains 15 constraints / two assumptions,
+  and adapter lowering blocks only on no signals. Five-stage validation, nine provider-free evals, KG 156/156,
+  and 60/60 FSMGen strict pass; child full CI passed at the same code revision.
+- Next action: finish the parent task/live-doc/mdBook/Knowledge Map record, run doctrine/path/locality/book gates,
+  commit `.2.47`, clear `git_message_brief.txt`, remove the exact `.2.47`/`.2.47a` task bundles, then select and
+  own refresh #48 (43-page OpenCAPI 4.0 32 Gbps PHY Signaling).
+- In-flight uncommitted: parent `.2.47` task/live-doc/book/fact recording plus the two exact ignored task bundles.
+  No background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > should a documented reset of 0 be emitted as (reset 0) in ISF (no — omit; the FSMGen all-0s default faithfully represents it; 893 of the fits-current registers are V==0)
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
   > should corpus refresh progress be counted from normalized directories
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
@@ -109,6 +111,8 @@
   > and the bulk of 319 section-caption survivors sit in generic-named enums .5.i drops whole), EXCEPT the _WIDTH leak which reaches the AXI wire-gold .isf and is materially damaging)
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > what are the extraction_quality_* validate metrics and when do they read n/a
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > what are the final Cortex-A76 SourceIR normalized and downstream reproducibility hashes
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
   > what are the final OpenCAPI Discovery artifact hashes
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
@@ -257,6 +261,8 @@
   > what fsmgen pin does SpecForge target for temporal properties
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > what gates protect the leading-identifier mnemonic form from bleed
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > what grounded content survives the Cortex-A76 optimization guide refresh
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > what grounded heuristic only interface evidence is preserved
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
@@ -273,6 +279,8 @@
   > what happened to the four signal two enum Introducing CoreSight adapter
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > what happened to the original Introducing CoreSight rollback
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > what happened to the stale Cortex-A76 consumer.isf with 537 outputs
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > what happens to a page sidecar path when page images are not persisted
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
@@ -289,11 +297,3 @@
   > what happens when the NLI provider is down
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
   > what identifies the canonical inputs to generated Knowledge Map shards
-- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
-  > what inputs define corpus KB managed block currentness
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what is ADR 0019
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > what is AppError::IngestAbortedForDisk
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > what is AppError::IngestAbortedForMemory

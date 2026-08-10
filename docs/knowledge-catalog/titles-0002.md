@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [document-class-from-structure](../knowledge/document-class-from-structure.md) | 2026-06-08 | `current` | Document class (protocol/register/interface/guide) inferred from structural intent surfaces, not the doc name |
 | [document-intent-category-census](../knowledge/document-intent-category-census.md) | 2026-06-22 | `current` | The 78-doc corpus splits 36/7/15/2/4/14 across the 6 purpose categories (wire-protocol/register-IP/platform-I… |
 | [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md) | 2026-06-22 | `current` | Document intent-category recognizer (DOC-INTENT-TAXONOMY.3b) — validate reports a chip-spec PDF's 6-categor… |
 | [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md) | 2026-06-22 | `current` | Per-category ISF-lowering completeness (DOC-INTENT-TAXONOMY.2) — registers lower 1:1 to opaque width-only s… |
@@ -60,4 +61,3 @@
 | [message-field-records-surface](../knowledge/message-field-records-surface.md) | 2026-06-10 | `current` | message_field_records — the typed home for packet/flit message fields (CHI 106, C2C ≤189, CCIX ~50) |
 | [message-field-validate-integration](../knowledge/message-field-validate-integration.md) | 2026-06-11 | `current` | validate reports the message-field surfaces (5 metrics + inventory finding); class census and completeness ga… |
 | [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md) | 2026-06-10 | `current` | A subject absent from its own source sentence snaps to the sentence's declared token (edit distance 1, unambi… |
-| [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md) | 2026-06-05 | `current` | NLI entailment verifier — a semantic "does the source entail this claim?" grounding gate |

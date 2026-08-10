@@ -32,6 +32,8 @@
   > are description bracket slices like Store Data[63:32] positions or values
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > are extracted evidence and semantic records rewritten by validate
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > are instruction mnemonics in a software optimization guide declared interface signals (no)
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > are normalized pages page JSON image paths repository relative
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
@@ -296,5 +298,3 @@
   > does malformed page metadata preserve the last good normalized bundle
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
   > does mdbook test pass for the SpecForge book
-- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
-  > does platform/system-IP (category 3) topology intent need a new ISF construct or map onto an existing one (ISF has NO declarative static-topology/connectivity construct — composition is transaction-level only; decision deferred to a capture-recall measurement .4c.i before any FR)

@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > why does ACE table_0275 stay flagged after presence capture
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > why does AHB not flip any signal to input under Manager perspective (sparse stale grounding — Manager's only graph inputs are HCLK/HRESETN, excluded as clock/reset)
+- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
+  > why does AMD IOMMU extract no register fields
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why does APB phase grouping stay minimal despite phase prose naming signals (.2c membership thinness — read/write_transfer carry only PCLK; a .2c-breadth lever, not a phase-cue one)
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > why does AXI have 71 registers but zero composable resets (AXI register_records are encoding pseudo-tables — Valid and Ready signals / Resource plane number properties — fields with no bit positions and symbolic resets like -, False, AxPROT[1])
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
   > why does CAN serial_frame_fields use SerialFrameField with phase None and order = composition index
 - [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
@@ -146,6 +156,8 @@
   > why does the pre-commit hook run check_doctrines.sh
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > why does the project README get spurious ahb_transfer/apb_transfer transactions
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > why does the refreshed Cortex-A76 Software Optimization Guide emit no ISF
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > why does the same token AXI interface merge in one doc but not another
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
@@ -285,15 +297,3 @@
   > why is the coordination split safe for WIRE-BASED-100 (AHB relation gold)
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > why is the extraction-profile prior family not scoped by ProtocolFamily
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > why is the interface consolidation safe for WIRE-BASED-100 (gold docs have no interface actor)
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > why is the nested cross-tab timing table (TRANSMITTER/RECEIVER) left an honest residual
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why is the ordered multi-phase transaction body the hard deferred part (no structural name bridge AXI handshake to named transaction)
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > why is the repaired USB 3.2 ISF adapter blocked
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > why is the snap trigger absence-from-sentence and not typing failure
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > why is the stage-staleness check zero-versus-some and not a count comparison

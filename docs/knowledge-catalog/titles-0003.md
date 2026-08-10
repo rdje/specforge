@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md) | 2026-06-05 | `current` | NLI entailment verifier — a semantic "does the source entail this claim?" grounding gate |
 | [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md) | 2026-06-05 | `current` | NLI gate validated on the real AMBA APB spec — it works, and it exposes constraint over-generation |
 | [nli-intent-gate](../knowledge/nli-intent-gate.md) | 2026-06-05 | `current` | NLI intent gate — active demote-to-residual of un-entailed contracts (intent --nli-verify) |
 | [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md) | 2026-06-15 | `current` | Coordinated drive/read objects + relative-clause distribution are already implemented in the production hand… |
@@ -60,4 +61,3 @@
 | [task-tree-catalog](../knowledge/task-tree-catalog.md) | 2026-08-08 | `current` | The task-tree catalog is a bounded derived navigation layer |
 | [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md) | 2026-06-02 | `current` | The temporal-rule eval's residual false positives are a stale artifact, not a live bug |
 | [temporal-logic-choice](../knowledge/temporal-logic-choice.md) | 2026-06-04 | `current` | SpecForge captures temporal behavior in LTL/MTL, not CTL or TLA+ |
-| [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md) | 2026-06-04 | `current` | Temporal rules render to standard LTL/MTL via ir/temporal_ltl.rs |

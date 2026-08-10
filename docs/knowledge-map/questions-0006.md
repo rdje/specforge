@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
+  > what inputs define corpus KB managed block currentness
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what is ADR 0019
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > what is AppError::IngestAbortedForDisk
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > what is AppError::IngestAbortedForMemory
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > what is CORPUS-COVERAGE.2.33d dense-prose adapter trust repair
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
@@ -60,6 +68,8 @@
   > what is content-based name-column detection / rotation offset remapping
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > what is continuation_inherited_table_heads and what grounds the join
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > what is corpus refresh 47 and why is its adapter honestly blocked
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > what is corpus_cluster / document_fingerprint / cluster_documents / DocumentCluster
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
@@ -287,13 +297,3 @@
   > what is the standing per-doc quality report wired into converge/CI
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > what is the table-kind precision estimate and the flagged-mismatch list
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > what is the transaction phase qualifier authority rule
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the validate intent transaction phase-membership surface (transactions_with_phase_membership + transaction_phase_groups metrics + intent_transaction_phase_membership finding)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the validate transaction inventory surface (intent_transaction_inventory metrics + finding)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the validate transaction-phase inventory (semantic_transaction_phase_inventory metric + finding)
-- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
-  > what is the vendor/layout fingerprint, the ExtractionProfile, and the offline corpus pattern miner

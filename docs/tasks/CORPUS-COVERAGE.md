@@ -4,7 +4,7 @@
 
 - Tree ID: `CORPUS-COVERAGE`
 - Status: `active` (`.0` build-out + `.1` stage-staleness validator done; `.2` current-binary refresh batch
-  remains active with 46 completed documents and `.2.46` OpenCAPI Discovery refresh done; `.3`
+  remains active with 47 completed documents and `.2.47` Cortex-A76 Optimization Guide refresh done; `.3`
   lifecycle/currentness reconciliation done `2026-08-09`)
 - Roadmap lane: `R15e`/`R16` (corpus digestion — the owner's substantive gap #2)
 - Created: `2026-06-17`
@@ -102,7 +102,7 @@ today's ephemeral normalized-directory count.
   commit per `COMMIT.md` after each doc. No fabrication / ADR-0006 unchanged (this is a re-run of existing
   deterministic extractors, not new code); WIRE-BASED-100 + register/wire golds + `kg-bench` stay green
   (orthogonal — the 4 gold docs are not re-ingested). Record per-doc before/after typed-surface deltas here.
-- ID: `CORPUS-COVERAGE.2.47` · Status: `in_progress` (`2026-08-10`, DATA/CODE/DOC) · Children: `.2.47a`
+- ID: `CORPUS-COVERAGE.2.47` · Status: `done` (`2026-08-10`, DATA/CODE/DOC) · Children: `.2.47a`
   timing-table structural-authority repair (done). Goal: re-ingest the
   46-page Cortex-A76 Software Optimization Guide
   (`pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide`) from the owner-authorized same-SSD host
@@ -122,21 +122,33 @@ today's ephemeral normalized-directory count.
   two assumptions / three timings. The stale adapter emits a 537-output `consumer.isf` made predominantly from
   instruction names, with zero transactions, rules, constants, enums, or storage.
 
-### Pending signoff criteria — `CORPUS-COVERAGE.2.47`
+### Acceptance Checklist (enforced) — `CORPUS-COVERAGE.2.47`
 
-- **PENDING — REPRODUCE / MEASURE** — copy/verify the exact stale chain on the repository volume; run guarded
-  CPU-only Docling; record page/visual/table/section/element counts, peak memory, path portability, and every
-  current-vs-stale delta.
-- **PENDING — ROOT CAUSE (WHY + WHERE)** — classify instruction-name/interface and other material deltas under
-  current shared authority; stop and own any distinct universal producer defect before accepting the cascade.
-- **PENDING — ADDRESSED (verified)** — retain the faithful current guide content and adapter decision, whether
-  rich, thin, or honestly blocked; do not turn an instruction catalog into invented design topology.
-- **PENDING — NO REGRESSION** — reproduce downstream hashes, validate the chain, run WIRE/I2C/SWD, KG, FSMGen
-  strict, mdBook, doctrines, persisted paths, and locality; restore the rollback on an unresolved failure.
-- **PENDING — GENERICITY** — use only current shared pipeline rules and typed/source-grounded evidence; no ARM,
-  Cortex, document, mnemonic, or optimization-specific exception is authorized by this data leaf.
-- **PENDING — LOCKSTEP** — task state, per-document row, live docs, mdBook, resume pointer, and generated chain
-  agree; delete the exact rollback/task bundle only after verification and the durable recording commit.
+- [x] **REPRODUCE / MEASURE** — the exact seven-file / 2208588-byte stale chain is preserved and verified before
+  mutation. Three guarded CPU ingests reproduce 46 pages / 71 visuals / 68 tables / 68 sections / 249 elements,
+  SourceIR hash `a396a074…d478`, and normalized-manifest hash `872e7dba…1bae`; two sampled runs keep 52–64% system
+  memory free and the final committed-release run completes without a guard abort. The final
+  normalized bundle is 168 files / 46082616 bytes, repository-relative; the authorized source stays labeled
+  external and read-only on the same SSD.
+- [x] **ROOT CAUSE (WHY + WHERE)** — stale instruction names entered the sparse interface surface and produced
+  228 false interfaces / a 537-output adapter under retired mixed-vintage authority. Current shared signal,
+  phase, and gate boundaries remove that topology. Child `.2.47a` owns and closes the distinct universal timing
+  defect that initially turned instruction-performance rows into 151 value-empty constraints.
+- [x] **ADDRESSED (verified)** — final EvidenceIR has 68 anchors / 960 spans and statements / 71 visuals / one
+  link / one conditional and zero relations, registers, or timings. SemanticIR has four actors, zero interfaces,
+  ports, relations, phases, gates, or timings, 15 invariants, and 44 decompositions. IntentIR has zero actors,
+  interfaces, behaviors, or timings, 15 constraints, and two assumptions. The adapter blocks only on no declared
+  signals, carries two canonicalization residuals, and emits no target instead of fabricating instruction ports.
+- [x] **NO REGRESSION** — release binary `0b497079…5756` from child commit `46af2eca` reproduces downstream hash
+  `b4b50237…9ade` across two complete cascades; all five stages validate. Nine provider-free eval datasets retain
+  their established results, KG is 156/156, all 60 emitted ISFs pass FSMGen strict, and the child full-CI run
+  passes 1,796/five ignored. mdBook, doctrines, persisted-path, locality, and live-size gates pass.
+- [x] **GENERICITY** — the parent adds no producer exception. Its child uses only category provenance,
+  identifier-safe header tokens, structural row roles, and typed scalar values; no ARM/Cortex/document/mnemonic
+  policy appears in production.
+- [x] **LOCKSTEP** — generated chain, row 47, task/frontier, roadmap, status, mdBook, ledgers, and resume pointer
+  agree on 47 completed / nine remaining / 60 strict-clean emitted ISFs. The exact parent and child task bundles
+  are deleted only after this durable recording commit, then frontier selection may begin for refresh #48.
 - ID: `CORPUS-COVERAGE.2.47a` · Status: `done` (`2026-08-10`, PROBE/CODE/DATA/DOC) · Goal: repair the
   universal timing-table structural-authority defect exposed by #47 before accepting its cascade. Fresh SourceIR
   classifies 11 Cortex-A76 instruction-performance tables as `timing_parameter` and current EvidenceIR emits 151
@@ -1532,9 +1544,9 @@ live ledger to 61 records / 1,303 lines without loss.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: `CORPUS-COVERAGE.2.47` — rebuild the release binary from the committed child repair, perform the
-  parent Cortex-A76 final replay/signoff, update row 47 and the corpus frontier, then remove the exact parent
-  rollback bundle.
+- Frontier: select and own refresh #48 — the 43-page OpenCAPI 4.0 32 Gbps PHY Signaling specification is the
+  smallest remaining candidate after parent `.2.47` records the completed Cortex-A76 refresh and removes its
+  exact rollback bundles.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**39 refreshes done after #39;
   17 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#39: #29/#31 CHI-C2C marquee message-field refreshes,
@@ -1621,15 +1633,16 @@ leaving the refreshed SourceIR→adapter stage chains intact.
 | 44 | `opencapi_4_0_32gbps_phy_mech_spec_v10_17mar2021` OpenCAPI 4.0 32 Gbps PHY Mechanical | 23 | **portable physical-link refresh + false mechanical-topology removal:** guarded CPU ingest holds 23 pages / 19 visuals / eight tables / 45 sections at 21% peak sampled memory and produces 212 elements. Source 262→212 is diagram-label suppression on seven visual-bearing pages; Evidence 350→267 additionally drops 33 synthetic ToC/`CONTENTS` enum statements while retaining 21 normative statements / two conditionals / zero typed hardware surfaces. Current authority removes five stale acronym interfaces, false typed phases `dynamic`/`static`, seven generic phases, and 13 generic gates. Final SemanticIR has four actors / zero interfaces/phases/gates / 45 invariants / three contracts / six assertions / 30 decompositions; IntentIR has three actors / three behaviors / 45 constraints / two assumptions. The stale nine-port/one-enum `channel.isf` is removed; adapter blocks on no declared signals and leaves only its manifest/report. Validator keeps eight unknown tables / 19 unclassified visuals / 21 normative residuals visible as the known physical-link capture frontier. Two cascades reproduce eight downstream hashes. After #44: 80/13/80/79 stage census and **12 real chip-spec refreshes remain.** | **BLOCKED** (honest physical-link/signal-authority boundary; 0 emitted `.isf`) | n/a (nothing emitted) |
 | 45 | `opencapi_25gbps_phy_signaling_spec_1_0` OpenCAPI 25 Gbps PHY Signaling | 30 | **portable physical-link refresh + false acronym-topology removal with timing preservation:** guarded CPU ingest holds 30 pages / 26 visuals / 19 tables / 59 sections at 17% peak sampled memory and produces 224 elements. Source 231→224 removes diagram labels on four visual-bearing pages; Evidence 395→385 additionally removes only synthetic `Signal DL/DDJ/CDR is width 1.` statements and correctly marks one figure caption mixed-modality. Twelve normative statements / one conditional / all 70 physical timing constraints hold; relations/declarations/signal constraints/registers remain zero. Current authority removes two stale interfaces, false typed phase `recovery`, 12 generic phases, and 11 generic gates. Final SemanticIR has six actors / zero interfaces/phases/gates / 27 invariants / four contracts / one assertion / 42 decompositions / 70 timing constraints; IntentIR has four actors / four behaviors / 27 constraints / two assumptions / 70 timing constraints. The stale three-port `channel.isf` is removed; adapter blocks on no declared signals and leaves only its manifest/report. Validator preserves ten typed timing tables while surfacing nine unknown tables / 26 unclassified visuals / 12 normative residuals as the known physical-link capture frontier. Two cascades reproduce eight downstream hashes. After #45: 80/14/80/79 stage census and **11 real chip-spec refreshes remain.** | **BLOCKED** (honest physical-link/signal-authority boundary; 0 emitted `.isf`) | n/a (nothing emitted) |
 | 46 | `opencapi_discovery_configuration_v201` OpenCAPI Discovery Configuration | 40 | **portable discovery/configuration refresh + false glossary/table topology removal:** three guarded CPU ingests reproduce 40 pages / 54 visuals / 49 tables / 50 sections / 172 elements with 47–53% system memory free. Source 181→172 removes nine flattened visual labels; Evidence 831→754 additionally removes 65 synthetic table/front-matter enum statements and false `BDF`/`DL`/`VPD` declarations. Child `.2.46a` closes the distinct bare-`data` authority defect behind `VPD`. Current authority removes two stale interfaces, one port/relation, 16 phases, and 20 gates. Final SemanticIR has four actors / zero interfaces/phases/gates / 55 invariants / ten contracts / five assertions / 37 decompositions / six timings; IntentIR has three actors / ten behaviors / 55 constraints / six assumptions / six timings. The stale three-port/three-enum `controller.isf` is removed; adapter blocks on no declared signals, retains one storage record plus one field-lowering residual, and leaves only its manifest/report. Validator surfaces 37 partially structured normative statements, 15 unexplained intent-bearing tables, 54 unenriched visuals, one overlapping register, and eight temporal-source IDs without typed rules as the honest capture frontier. Two repaired cascades reproduce eight downstream hashes; final committed-binary validation pins all 12 artifact/report hashes. After #46: 80/18/80/79 stage census and **ten real chip-spec refreshes remain.** | **BLOCKED** (honest capture-recall/signal-authority boundary; 0 emitted `.isf`) | n/a (nothing emitted) |
+| 47 | `pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide` Cortex-A76 Software Optimization Guide | 46 | **portable optimization-guide refresh + instruction-topology and timing-authority closure:** three guarded CPU ingests reproduce 46 pages / 71 visuals / 68 tables / 68 sections / 249 elements; Source 260→249 removes flattened visual labels and retires boot-volume provenance. Evidence 971→960 and timings 3→0 while one conditional and all grounded prose remain. Current authority removes 228 stale instruction-name interfaces, 18 phases, 23 gates, 37 behaviors, and the 537-output `consumer.isf`; child `.2.47a` additionally proves and repairs the shared classifier/extractor path behind a transient 151 value-empty timing records. Final SemanticIR has four actors / zero interfaces/phases/gates / 15 invariants / 44 decompositions; IntentIR has zero actors/behaviors / 15 constraints / two assumptions. Adapter blocks only on no signals, retains two canonicalization residuals, and leaves only its manifest/report. The committed release reproduces SourceIR `a396a074…d478`, normalized manifest `872e7dba…1bae`, and downstream `b4b50237…9ade` twice. After #47: 80/19/80/79 stage census and **nine real chip-spec refreshes remain.** | **BLOCKED** (honest software-guide/signal-authority boundary; 0 emitted `.isf`) | n/a (nothing emitted) |
 
 **Cumulative (33 docs, protocol + register/arch phases): hundreds of registers + ~385 message fields + transaction recognition surfaced that were ABSENT in stale evidence** — registers e.g. SMMU-arch 1→89, GIC-arch 17→90, MMU-700 13→63, GIC-600 15→33, TMC 2→30; message fields DTI 0→159, CHI-C2C 0→210, VT-d 0→15; transactions e.g. eMMC 0→6, HBM2 0→3 (real ops). **Every current renderable adapter is FSMGen-strict clean; USB #33 and HBM-gen1 #32 block honestly and emit nothing.** **#27 eMMC surfaced a phantom-actor explosion (20→153) on descriptive prose → NEW lever E (agent-identity precision for non-AMBA prose specs); the `.isf` is unaffected. #28 HBM2 confirmed E is PROSE-SPECIFIC (HBM2 consolidated cleanly) but surfaced lever F (enum-value literal format + generic-`TABLE` mega-enum precision).** **Refined #22/#23 phase note:** "already current-binary-equivalent" is not uniform — a doc's stale evidence sits at whatever binary last rebuilt it, so re-ingest can still deliver a real KG refresh when that binary predated a later gate: #22 Cortex-A76 was fully current (byte-identical), but #23 CoreSight SoC-600 predated the `.1a`/`.1b` consolidation + transaction recognizer and got a genuine actor-consolidation + 2-transaction refresh (the #17 Avalon class). So the remaining tail is a MIX of pure confirmation (#21/#22) and consolidation/recognition refreshes (#17/#23), with marquee table-family jumps now the exception. **NEW phase finding (#21):** some of the 57 normalized-missing docs are NOT pre-`.10` stale — their evidence was rebuilt Jun-15 from the retained `source_ir.json` (only the heavyweight `normalized/` page-image bundle was disk-reclaimed) so it already carried the `.10` register families; for those, re-ingest is **normalized-bundle restoration + current-binary confirmation** (modest deterministic delta), distinct from the genuinely pre-`.10` docs (SMMU/GIC/MMU big jumps). The IOMMU also surfaced a **RISC-V STRUCTURE-table recall opportunity** (device-context/command-queue tables not matching the `.10b`/`.10d`/`.10e` two-column families — Lever D). **PHASE FINDING (#17–#19, the non-AMBA protocol specs):** their refresh value is NOT marquee table-family gains — Avalon = consolidation + current-binary freshness; **Wishbone + OpenCAPI-TL surfaced a doc-style TABLE-RECOGNITION recall gap** (Wishbone 1 `signal_description`/25 tables; OpenCAPI 0/246 — both predominantly `unknown`-classified; non-AMBA `Signal\|Direction\|Width` shapes), so their `.isf` degenerate to 1 signal. **REGRESSION RULED OUT** (DTI 159 / MMU-700 63 / AHB 66 all hold on the current binary) → these are the upstream Lever-D signal/table-recall family, not emitter bugs. The high-value AMBA-style protocol specs are now exhausted; **next phase = the register/TRM/ISA docs** (the `.10` register families demonstrably fire there — CoreSight/GIC/JEDEC/RISC-V system-IP). Remaining queue = OpenCAPI×13 (PHY/mechanical/TL-variants, expected thin)/JEDEC/USB/RISC-V system-IP/VT-d/Cortex-A76/GIC-400/CoreSight-SoC-600×3/overview/guides. **#29 (`2026-06-24`) — AMBA CHI C2C `ihi0098_a` is a genuine marquee exception to the "tail is mostly bundle-restoration" phase finding:** its stale evidence was truly pre-`.10` (0 message fields), so the current binary's `.10` families surfaced `message_field_records` 0→149 / 13 containers — a real KG-completeness gain, `.isf` strict-clean. After #29: 29 docs re-ingested, **27 real chip-spec docs still normalized-missing** (plus the project README, not a chip spec). CHI C2C also re-confirmed two standing extraction-precision residuals (generic-`TABLE` mega-enum conflation; signal-inventory prose-acronym noise) — surfaced, not fixed in-slice. **#30 (`2026-06-24`) — RISC-V AIA `1_0_2025_03_12` is the contrasting bundle-restoration case:** all deterministic surfaces byte-near-identical (statements 1193, registers 0, cond_rules 39 all held), so re-ingest value = normalized-bundle restoration + current-binary confirmation, `.isf` strict-clean — and it re-confirms the #21 RISC-V-IOMMU Lever-D recall opportunity (the APLIC/IMSIC register layouts sit in 12 `unknown` structured tables the `.10` families don't match). After #30: **26 real chip-spec docs still normalized-missing**. Phase pattern holds: marquee message-field/register jumps (#29 CHI) now interleave with bundle-restoration confirmations (#30 AIA) in the tail. **#31 (`2026-06-24`) — CHI C2C 2026 variant `ihi0098_a_b` re-confirms the CHI-C2C family marquee:** `message_field_records` 0→143 / 12 containers (sibling of #29's 0→149), `.isf` strict-clean; the lone stale relation 1→0 (fragment drop). After #31: **25 real chip-spec docs still normalized-missing.**
 
-**Cumulative update after #46:** 46 current-binary refreshes are complete and ten real chip-spec documents remain.
+**Cumulative update after #47:** 47 current-binary refreshes are complete and nine real chip-spec documents remain.
 The OpenCAPI Ready and Certified Definitions, AFU Address Space Usage, Ready, Certified, and 32 Gbps
 PHY-mechanical and Discovery Configuration documents join Introducing CoreSight, AArch64 External Debug,
-CoreSight Base System, USB4 Connection Manager, USB4 Inter-Domain, USB 3.2, and HBM-gen1 as honestly
-blocked/non-emitting. Child `.2.46a` also converges stale Wishbone and I2S targets, reducing the current
-renderable set to 61; all 61 are FSMGen-strict clean. The preceding long-form cumulative paragraph is the historical
+CoreSight Base System, USB4 Connection Manager, USB4 Inter-Domain, USB 3.2, HBM-gen1, and the Cortex-A76
+Optimization Guide as honestly blocked/non-emitting. Child `.2.46a` also converges stale Wishbone and I2S
+targets; the current renderable set is 60 and all 60 are FSMGen-strict clean. The preceding long-form cumulative paragraph is the historical
 through-#33 snapshot; this update is the current corpus frontier.
 
 **Spun-out CODE levers (`.2` re-ingest is SURFACING + scoping these — measurement-first; each needs its OWN owned leaf under the `ISF-*-EMIT` family, with WIRE-BASED-100 + register/wire golds + `kg-bench` gating; do NOT fix inside a re-ingest slice):**
@@ -1639,12 +1652,13 @@ through-#33 snapshot; this update is the current corpus frontier.
 - **Lever C — rule-write conflicts — ✅ RESOLVED (`2026-06-23`, `KG-ISF-COMPLETENESS.2a.v`).** LPI: `isf_conflicting_rule_writes` on `PREQ` — `rule_5` (PREQ←1, an UNCONDITIONAL rule_action) conflicts with `temporal_..._dyn_sigcon_0012` (PREQ←0, a guarded temporal signal constraint). The same-guard `dedup_conflicting_rules` keyed on `(signal, guard)` so missed it; FSMGen flags it because an unconditional rule's firing set ⊇ every guard (its `_condition_terms_prove_disjoint` can never prove an absent condition disjoint). Fixed by a new `drop_unconditional_overlap_conflicts` post-pass (keep the unconditional value, residualize the conflicting rule; the `(priority …)` hatch was rejected as ungrounded precedence). **MEASUREMENT correction:** a fresh re-emit + FSMGen sweep showed the conflict was NOT LPI-only — the AXI/AHB/AXI-Stream wire golds + LTI + NVMe were ALL failing on it (the cached `.isf` were byte-identical to fresh AND already FAIL); the fix takes **6 docs FAIL→PASS**, 0 PASS→FAIL, 100/107 `.isf` byte-identical, post-fix 97/107 `.isf` PASS. The combined AXI+ACE `ihi0022_h_c` stays FAIL on the orthogonal pre-existing `(port expr)` grammar (Non-Goal).
 - **Lever F — ISF enum value-literal emit-gate — ✅ DONE `2026-06-23` (`KG-ISF-COMPLETENESS.2a.iv`).** HBM2's `.isf` had failed FSMGen strict on `TABLE.REPAIR_LANE_8` value token `1000`. FSMGen rejects a bare token of only `0`/`1` digits with length >= 4 (an un-qualified binary literal — verified by value sweep: `1000`/`1111` fail, `69152`/`999`/`4'b1000` pass); HBM2's REPAIR_LANE values are binary codes mis-read as bare decimals in a mega-conflated `TABLE`. The emitter now drops an enum carrying such a value to an `isf_enum_value_literal_*` residual (honest residual over fabricating a radix). HBM2 now FSMGen `--strict --check` **success / 0 diagnostics** (only `TABLE` dropped; `EXTEST_RX`/`DWORD_MISR` kept); ONLY HBM2 `.isf` changes corpus-wide (wire golds + all enum docs byte-identical); `run_ci.sh` GREEN (lib 1706); `kg-bench` 156/156. KM `isf-enum-value-literal-emit-gate`. (The upstream mega-enum conflation stays an honest residual → a future extraction-precision lever.)
 
-**Running strict tally (post-`.2.46`, measured on the current converged output set):** `adapt` emits one
-primary-actor `.isf` per renderable document. The cache now contains **61 current `.isf`: 61 PASS / 0 FAIL**;
+**Running strict tally (post-`.2.47`, measured on the current converged output set):** `adapt` emits one
+primary-actor `.isf` per renderable document. The cache now contains **60 current `.isf`: 60 PASS / 0 FAIL**;
 USB #33, USB4 #34, USB4 Connection Manager #35, CoreSight Base System #36, AArch64 External Debug #37,
 Introducing CoreSight #38, and the OpenCAPI Ready #39, Certified #40, AFU Address Space Usage #41, Certified
 Definition #42, Ready Definition #43, 32 Gbps PHY Mechanical #44, 25 Gbps PHY Signaling #45, and Discovery
-Configuration #46 documents are honestly blocked and emit none. Wishbone and I2S are also currently
+Configuration #46 documents, plus the Cortex-A76 Software Optimization Guide #47, are honestly blocked and emit
+none. Wishbone and I2S are also currently
 non-emitting after the shared parenthetical-data repair; I2C remains renderable. This confirms both that the grammar frontier remains closed and that
 strict syntax is not a semantic-fidelity oracle. **Levers A, B, C, F + the rule-value gate all ✅ resolved:** Lever B (module-name HDL-sanitization, `.2a.iii`); Lever A (value width-alignment, `ISF-VALUE-WIDTH-EMIT.2`, re-verified clean `2026-06-23`); Lever F (enum value-literal emit-gate, `.2a.iv`, HBM2 strict-clean); **Lever C (unconditional-rule-overlap conflict residual, `.2a.v`, `2026-06-23` — 6 docs FAIL→PASS incl. all 3 wire golds + LPI/LTI/NVMe, 0 regressions)**; **`.2a.vi` rule-drive-value validity gate (`2026-06-23` — closed the last AXI+ACE `ihi0022_h_c` `(port expr)` FAIL by residualizing its 4 prose-valued loopback rules)**. **The ISF-emit strict-FAIL frontier is fully CLOSED — every renderable doc emits FSMGen-`--strict`-clean `.isf`.** **Surfaced lever D (upstream/non-emitter, now seen on 4 docs):** non-AMBA table/signal recognition — Wishbone-style `*_O`/`*_I` suffix-notation + prose signal-lists, OpenCAPI-style packet/command tables left `unknown` (219/246), and the RISC-V-IOMMU/VT-d in-memory STRUCTURE tables — a `PDF-VARIANT-DIGESTION` signal/table-recall family (kin to the parked `.9.10`). **Surfaced lever E (#27 eMMC — KG-precision, NOT emitter):** **agent-identity precision for descriptive-prose / non-AMBA specs** — fresh Docling of prose-heavy specs mints ~90+ phantom sentence-fragment actors (`host has`/`host to`/`cache in`/`B write`) the `.1a`/`.1b` gates (measured clean on AMBA docs) don't catch; needs its OWN owned `KG-ISF-COMPLETENESS` leaf (probe-first, structural gates not denylists — owner steer). eMMC itself remains ISF-unaffected; USB #33's semantic-trust repair is now closed and is not a syntax strict-FAIL. Watch the long-tail for width-align (A) / rule-conflict (C) / non-AMBA-table-recall (D) / prose-actor-precision (E) / enum-value-literal (F) recurrence to scope those.
 
@@ -1652,6 +1666,15 @@ strict syntax is not a semantic-fidelity oracle. **Levers A, B, C, F + the rule-
 
 ## Changelog
 
+- `2026-08-10`: `.2.47` DATA/CODE/DOC DONE. Three guarded CPU ingests reproduce 46 pages / 71 visuals / 68
+  tables / 68 sections / 249 elements; the committed release pins SourceIR `a396a074…d478`, normalized manifest
+  `872e7dba…1bae`, and downstream `b4b50237…9ade` twice. Evidence 971→960 / timings 3→0 while current authority
+  removes 228 stale instruction interfaces, 18 phases, 23 gates, 37 behaviors, and the 537-output `consumer.isf`.
+  Final IntentIR keeps 15 constraints / two assumptions; adapter lowering blocks only on no signals and retains
+  two canonicalization residuals. Five-stage validation, nine provider-free evals, KG 156/156, child full CI,
+  60/60 FSMGen strict, book, doctrines, path, and locality gates pass. Corpus → 47 done / nine remaining; frontier
+  → select and own #48. Recording subject: `CORPUS-COVERAGE.2.47 — refresh Cortex-A76 guide without instruction
+  topology`.
 - `2026-08-10`: `.2.47a` PROBE/CODE/DATA/DOC DONE. The 39-document / 284-table retained timing population
   measures 2,144→608 scalar records, with all 151 Cortex instruction-table records removed and every survivor
   value-bearing. Structural category validation is now distinct from scalar min/typ/max extraction: shape cannot
