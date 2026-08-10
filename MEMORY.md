@@ -21,17 +21,15 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2`; next corpus refresh selection (#47).
-- Current state: refresh #46 is complete. Three guarded OpenCAPI Discovery ingests reproduce 40 pages / 54 visuals /
-  49 tables / 50 sections / 172 elements with 47–53% memory free and 188 portable normalized paths. Current SourceIR
-  181→172 and EvidenceIR 831→754 remove only flattened labels, synthetic table/front-matter enums, and false
-  `BDF`/`DL`/`VPD` declarations. Final IntentIR retains ten behaviors / 55 constraints / six timings; adapter
-  lowering blocks honestly on no grounded signals while validators expose the remaining capture frontier. Two
-  repaired cascades reproduce eight downstream hashes; final committed-binary validation pins all 12 hashes.
-  Corpus status is 46 done / ten remaining at 80 SourceIR / 18 normalized / 80 EvidenceIR / 79 downstream chains;
-  all 61 emitted ISFs are FSMGen-strict clean.
-- Next action: from a clean tracked tree, select the smallest/highest-value authenticated same-SSD candidate for
-  refresh #47 and commit its owning task leaf before any generated mutation.
-- In-flight uncommitted: the verified #46 parent documentation/fact bundle and its exact repository-local task
-  evidence pending doctrine gates, exact cleanup, and recording commit. No background job.
+- Active unit: `CORPUS-COVERAGE.2.47`; Cortex-A76 Software Optimization Guide current-binary refresh.
+- Current state: refresh #46 is committed and its exact task bundle is removed with zero residue. Read-only queue
+  selection identifies the 46-page / 260-element / 637434-byte Cortex-A76 optimization guide as the smallest of
+  ten remaining real candidates. Its portable same-SSD source hashes to `8358c5ae…3a22`; release
+  `c4072c33…a1b05` and a seven-file / 2208588-byte stale chain are authenticated. The stale chain has 971 Evidence
+  statements but zero relations, while mixed-vintage grouping emits 228 interfaces and a 537-output
+  instruction-name `consumer.isf`; this is a baseline to investigate, not accepted topology.
+- Next action: commit `.2.47` ownership, copy and byte-verify its exact stale chain under repository-local task
+  storage, then run guarded CPU ingest and the deterministic SourceIR-through-adapter cascade.
+- In-flight uncommitted: `.2.47` ownership/task-frontier documentation only. No generated artifact changed and no
+  background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

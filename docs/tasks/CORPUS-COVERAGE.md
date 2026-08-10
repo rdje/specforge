@@ -4,7 +4,7 @@
 
 - Tree ID: `CORPUS-COVERAGE`
 - Status: `active` (`.0` build-out + `.1` stage-staleness validator done; `.2` current-binary refresh batch
-  remains active with 43 completed documents and `.2.43` OpenCAPI Ready Definition refresh done; `.3`
+  remains active with 46 completed documents and `.2.46` OpenCAPI Discovery refresh done; `.3`
   lifecycle/currentness reconciliation done `2026-08-09`)
 - Roadmap lane: `R15e`/`R16` (corpus digestion — the owner's substantive gap #2)
 - Created: `2026-06-17`
@@ -102,6 +102,40 @@ today's ephemeral normalized-directory count.
   commit per `COMMIT.md` after each doc. No fabrication / ADR-0006 unchanged (this is a re-run of existing
   deterministic extractors, not new code); WIRE-BASED-100 + register/wire golds + `kg-bench` stay green
   (orthogonal — the 4 gold docs are not re-ingested). Record per-doc before/after typed-surface deltas here.
+- ID: `CORPUS-COVERAGE.2.47` · Status: `in_progress` (`2026-08-10`, DATA/DOC) · Goal: re-ingest the
+  46-page Cortex-A76 Software Optimization Guide
+  (`pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide`) from the owner-authorized same-SSD host
+  library with the current release, then rebuild and validate EvidenceIR→SemanticIR→IntentIR→ISF without
+  treating instruction mnemonics or optimization terminology as declared hardware ports. It is the smallest of
+  the ten remaining real chip-spec candidates at 260 retained elements / 637434 source bytes, ahead of the
+  43-page / 376-element OpenCAPI 4.0 32G PHY Signaling candidate.
+
+  Read-only authentication pins portable source
+  `.cache/local-references/chipdoc/arm/processors/cortex-a/cortex-a76/current/PJDOC-466751330-7215_10.0_Cortex_A76_Software_Optimization_Guide.pdf`
+  at `8358c5ae…3a22`, release `c4072c33…a1b05`, and an exact seven-file / 2208588-byte stale chain. Source,
+  repository, and generated chain share device `16777240`. The stale SourceIR has 46 pages / 71 visuals / 68
+  tables / 68 sections / 260 elements and retired boot-volume provenance. EvidenceIR has 68 anchors / 971 spans
+  and statements / 71 visuals / one link / zero relations / one conditional / zero registers / three timings.
+  SemanticIR has four actors / 228 interfaces / zero ports or relations / 18 phases / 23 gates / 15 invariants /
+  48 decompositions / three timings; IntentIR has three actors / 228 interfaces / 37 behaviors / 28 constraints /
+  two assumptions / three timings. The stale adapter emits a 537-output `consumer.isf` made predominantly from
+  instruction names, with zero transactions, rules, constants, enums, or storage.
+
+### Pending signoff criteria — `CORPUS-COVERAGE.2.47`
+
+- **PENDING — REPRODUCE / MEASURE** — copy/verify the exact stale chain on the repository volume; run guarded
+  CPU-only Docling; record page/visual/table/section/element counts, peak memory, path portability, and every
+  current-vs-stale delta.
+- **PENDING — ROOT CAUSE (WHY + WHERE)** — classify instruction-name/interface and other material deltas under
+  current shared authority; stop and own any distinct universal producer defect before accepting the cascade.
+- **PENDING — ADDRESSED (verified)** — retain the faithful current guide content and adapter decision, whether
+  rich, thin, or honestly blocked; do not turn an instruction catalog into invented design topology.
+- **PENDING — NO REGRESSION** — reproduce downstream hashes, validate the chain, run WIRE/I2C/SWD, KG, FSMGen
+  strict, mdBook, doctrines, persisted paths, and locality; restore the rollback on an unresolved failure.
+- **PENDING — GENERICITY** — use only current shared pipeline rules and typed/source-grounded evidence; no ARM,
+  Cortex, document, mnemonic, or optimization-specific exception is authorized by this data leaf.
+- **PENDING — LOCKSTEP** — task state, per-document row, live docs, mdBook, resume pointer, and generated chain
+  agree; delete the exact rollback/task bundle only after verification and the durable recording commit.
 - ID: `CORPUS-COVERAGE.2.46` · Status: `done` (`2026-08-10`, DATA/CODE/DOC) · Children: `.2.46a`
   parenthetical `data`-head signal-authority repair (done). Goal: re-ingest the 40-page
   OpenCAPI Discovery Configuration specification (`opencapi_discovery_configuration_v201`) from the
@@ -1448,8 +1482,8 @@ live ledger to 61 records / 1,303 lines without loss.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: `CORPUS-COVERAGE.2` — select and own refresh #47 from the ten remaining authenticated same-SSD
-  chip-spec candidates before any generated mutation.
+- Frontier: `CORPUS-COVERAGE.2.47` — authenticate the exact stale-chain rollback, then run guarded CPU ingest and
+  the deterministic current-binary cascade for the Cortex-A76 Software Optimization Guide.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**39 refreshes done after #39;
   17 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#39: #29/#31 CHI-C2C marquee message-field refreshes,
@@ -1567,6 +1601,12 @@ strict syntax is not a semantic-fidelity oracle. **Levers A, B, C, F + the rule-
 
 ## Changelog
 
+- `2026-08-10`: `.2.47` DATA/DOC OWNED from clean tracked commit `c631840d`. The Cortex-A76 Software
+  Optimization Guide is the smallest of ten remaining candidates at 46 pages / 260 elements / 637434 source
+  bytes. Same-SSD source `8358c5ae…3a22`, release `c4072c33…a1b05`, and the stale seven-file / 2208588-byte chain
+  are identified read-only. Its 537-output instruction-name adapter is the measured stale baseline, not an
+  accepted topology. Frontier → authenticate exact rollback, then guarded CPU ingest and deterministic cascade.
+  Recording subject: `CORPUS-COVERAGE.2.47 — own Cortex-A76 optimization-guide refresh`.
 - `2026-08-10`: `.2.46` DATA/CODE/DOC DONE. Three guarded ingests reproduce 40 pages / 54 visuals / 49 tables /
   50 sections / 172 elements with 47–53% memory free; Source 181→172 and Evidence 831→754 remove only flattened
   labels, synthetic table/front-matter enums, and false `BDF`/`DL`/`VPD` declarations. Current authority removes
