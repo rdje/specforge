@@ -3,10 +3,11 @@
 ## Metadata
 
 - Tree ID: `FACT-CARD-CAPACITY-HEADROOM`
-- Status: `active` (`.0`/`.2`/`.2a`/`.3` done; `.1` superseded; `.3a` pending)
+- Status: `done` (`.0`/`.2`/`.2a`/`.3`/`.3a` done; `.1` superseded)
 - Roadmap lane: repository durability and portability (sibling of `FACT-CARD-CATALOG-CONTAINMENT`)
 - Created: `2026-08-10`
 - Last updated: `2026-08-11`
+- Closed: `2026-08-11`
 - Owner: repo-local workflow
 
 ## Goal
@@ -15,6 +16,12 @@ Keep writing a Knowledge Map fact card possible. Two independent authorities bou
 tighter one is now **four facts** from refusing the next card — while the working discipline
 (`AGENTS.md`, `COMMIT.md`) tells every slice to write a card whenever it establishes a durable fact. Restore
 deliberate headroom before a routine slice hits a hard gate failure it did not cause and cannot locally fix.
+
+> **Outcome (`2026-08-11`, closed).** The plane holds **336 cards / 44 decision records / 379 facts**, currently
+> 193 / 30 / 199, and every fact-plane rollover warning is gone. The measurements and bounds recorded below
+> describe the problem as it was found; ADR 0029 owns the current profile. The tree also answered a question it
+> did not set out to ask: the advertised 198-card capacity had never been reachable, because the plane's own
+> aggregate line ceiling refused it — and no compliant action could have cleared that state.
 
 ## Non-Goals
 
@@ -98,15 +105,19 @@ which shows there is no join to raise to until the projection is reshaped.
   combination) keeps every existing card and decision record reachable and byte-honest.
 - `scripts/check_fact_card_catalog.pl`, `knowledge-map/scripts/check_knowledge_map.sh`, and
   `scripts/check_live_document_size.sh` pass with no pressure warning at the new state.
+  **Met for every capacity dimension.** One non-capacity warning survives and is recorded rather than hidden:
+  `knowledge_cards` `lines_each` at 81.0%, because `transaction-capture-census.md` is 243 lines against a
+  300-line per-card bound. That is a per-card quality signal with a local remedy (split or supersede that card)
+  and `.3` is forbidden from editing card content.
 - The book's live-docs / doctrine-enforcement chapters and `FACT-CARD-CATALOG-CONTAINMENT`'s recorded bounds
   agree with the new authority before the tree closes.
 
 ## Task Tree
 
 - ID: `FACT-CARD-CAPACITY-HEADROOM`
-  Status: `active`
+  Status: `done`
   Goal: restore deliberate headroom in the fact plane before it blocks an unrelated slice
-  Children: `FACT-CARD-CAPACITY-HEADROOM.0`, `.1` (superseded), `.2` (done), `.2a` (done), `.3` (done), `.3a`
+  Children: `FACT-CARD-CAPACITY-HEADROOM.0`, `.1` (superseded), `.2` (done), `.2a` (done), `.3` (done), `.3a` (done)
 
 - ID: `FACT-CARD-CAPACITY-HEADROOM.0`
   Status: `done` (`2026-08-10`, PROBE/DOC)
@@ -182,18 +193,22 @@ which shows there is no join to raise to until the projection is reshaped.
   Commit: `FACT-CARD-CAPACITY-HEADROOM.3 — re-derive the fact plane as one capacity profile`
 
 - ID: `FACT-CARD-CAPACITY-HEADROOM.3a`
-  Status: `pending`
+  Status: `done` (`2026-08-11`, DOCTRINE)
   Goal: retire the four consumed `ceiling_increase_authorities` records. The containment protocol rejects a
   banked authority, and once `.3` is committed its increases are history, so the records must not outlive them.
   Acceptance: `the four increase records are removed, no ceiling or target moves, and the live-document gate passes against the committed .3 boundary`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: against committed `.3` the gate reported exactly the predicted four
+  `unused or banked ceiling-increase authority` violations, which is the protocol working — the increase is in
+  history, so the authority that licensed it is spent. Removing the four `increase` records leaves the registry
+  meta record alone; no ceiling, health target, milestone, or surface field moved. The gate is green again at
+  734 files / 51 surfaces with no fact-plane pressure.
+  Commit: `FACT-CARD-CAPACITY-HEADROOM.3a — retire the consumed ceiling-increase authorities`
 
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `FACT-CARD-CAPACITY-HEADROOM.3a` | `pending` | `.3`'s ceiling-increase authorities are consumed the moment it commits; the protocol treats a surviving authority as banked and fails closed, so retiring them is the only work left before the tree closes |
+| — | — | — | The tree is closed. `.0`, `.2`, `.2a`, `.3`, and `.3a` are done and `.1` is superseded; capacity is 336 cards / 44 decision records / 379 facts with no fact-plane pressure. Work returns to `CORPUS-COVERAGE.2.51` |
 
 ## Decisions
 
@@ -226,7 +241,7 @@ which shows there is no join to raise to until the projection is reshaped.
 
 ## Blockers
 
-- None. The frontier is executable now, and the pressure is not yet a failure.
+- None. The tree is closed; the pressure it tracked never became a failure.
 
 ## Verification Log
 
@@ -261,7 +276,7 @@ which shows there is no join to raise to until the projection is reshaped.
 | `FACT-CARD-CAPACITY-HEADROOM.2` | `FACT-CARD-CAPACITY-HEADROOM.2 — make the fact-card landing a fixed-size router` | shape only; no limit moved and no card content changed |
 | `FACT-CARD-CAPACITY-HEADROOM.2a` | `FACT-CARD-CAPACITY-HEADROOM.2a — make aggregate pressure visible before re-deriving capacity` | ADR 0028; visibility only, no ceiling moved; carries the `changes-0004` ledger rollover its own entry required |
 | `FACT-CARD-CAPACITY-HEADROOM.3` | `FACT-CARD-CAPACITY-HEADROOM.3 — re-derive the fact plane as one capacity profile` | ADR 0029; four consumed `ceiling_increase_authorities` records travel with it |
-| `FACT-CARD-CAPACITY-HEADROOM.3a` | `pending` | `pending` |
+| `FACT-CARD-CAPACITY-HEADROOM.3a` | `FACT-CARD-CAPACITY-HEADROOM.3a — retire the consumed ceiling-increase authorities` | the increase is history once `.3` commits, so its authority is spent |
 
 ## Changelog
 
@@ -281,3 +296,6 @@ which shows there is no join to raise to until the projection is reshaped.
   bound times the per-file bound, and the whole profile derives from `max_parts`. Capacity is now 336 cards /
   44 decision records / 379 facts with every fact-plane rollover warning gone. `.3a` added to retire the
   consumed ceiling-increase authorities before the tree closes.
+- `2026-08-11`: `.3a` closed and the tree with it. The four ceiling-increase authorities `.3` consumed are
+  retired; a banked authority fails the containment gate by design, and the gate is green again with no
+  fact-plane pressure. Frontier returns to `CORPUS-COVERAGE.2.51`.

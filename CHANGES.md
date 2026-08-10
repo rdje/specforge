@@ -1,3 +1,16 @@
+### FACT-CARD-CAPACITY-HEADROOM.3a — retire the consumed ceiling-increase authorities
+
+- Against committed `.3`, the containment gate reported exactly four `unused or banked ceiling-increase
+  authority` violations. That is the protocol working, not a regression: the increase is now history, so the
+  record that licensed it is spent, and the checker refuses to let a spent authority sit in the registry where
+  it could silently license a future raise.
+- The four `increase` records are removed and the registry meta record is untouched. No ceiling, health target,
+  milestone, lifecycle, index, or verifier moved; the diff is deletions only.
+- The gate is green again at 734 files / 51 surfaces with no fact-plane pressure, and `FACT-CARD-CAPACITY-HEADROOM`
+  closes: 336 cards / 44 decision records / 379 facts, currently 193 / 30 / 199.
+- Regenerating the derived task catalog for the closed tree is part of the same slice; `docs/TASK_TREE.md` is
+  written by `scripts/check_task_tree_catalog.pl --write`, never by hand.
+
 ### FACT-CARD-CAPACITY-HEADROOM.3 — re-derive the fact plane as one capacity profile
 
 - Re-measuring against every now-visible authority found a plainer defect than a tight limit: **the advertised

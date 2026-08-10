@@ -21,7 +21,7 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `FACT-CARD-CAPACITY-HEADROOM` — `.0`/`.2`/`.2a`/`.3` done, `.1` superseded, `.3a` is the frontier.
+- Active unit: none — `FACT-CARD-CAPACITY-HEADROOM` is **closed** (`.0`/`.2`/`.2a`/`.3`/`.3a` done, `.1` superseded).
 - Current state: `.3` re-derived the whole fact plane as one profile (ADR 0029). Measuring found the advertised
   198-card capacity was never reachable — 198 cards need 10,026 lines against a 10,000-line aggregate — and that
   the breach had no legal exit, because cards are canonical and never deleted or rolled over. Pressure now sits
@@ -29,9 +29,10 @@
   from one parameter (`max_parts` 6). Capacity is **336 cards / 44 decision records / 379 facts**, currently
   193 / 30 / 199, with every fact-plane rollover warning gone. Writing fact cards and decision records is
   unblocked.
-- Next action: `FACT-CARD-CAPACITY-HEADROOM.3a` — delete the four `ceiling_increase_authorities` records `.3`
-  consumed. The containment checker treats an authority that outlives its increase as banked and fails closed,
-  so the gate does not pass again until they are retired. Then the tree closes and `CORPUS-COVERAGE.2.51`
-  follows.
+  `.3a` then retired the four ceiling-increase authorities `.3` consumed, which the containment protocol
+  requires — a surviving authority is banked and fails closed.
+- Next action: pick up `CORPUS-COVERAGE.2.51` — select and own corpus refresh #51 from the six remaining
+  sources (corpus is 50 done / six remaining). Note before appending: `CHANGES.md` is now at 81.4% of its line
+  health target, so its next few entries approach the 90% rollover.
 - In-flight uncommitted: none; no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.
