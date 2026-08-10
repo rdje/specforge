@@ -25,8 +25,8 @@
 - Current state: corpus is 50 done / six remaining at 80 SourceIR / 22 normalized / 80 EvidenceIR / 79 downstream
   chains, with 57/57 current emitted ISFs FSMGen-strict clean and all 22 rebuildable chains proven current
   (ADR 0025). Both deterministic constraint extractors bind a passive obligation only to a subject named before
-  its `must/shall be|remain` lead.
-- Next action: `EXTRACTION-QUALITY-GAUGE.3h` — stop a value-position token (`shall have … set to FFFFh` → `FFFF`)
-  from becoming a constraint subject; then `CORPUS-CHAIN-CURRENCY.1` (the gated currency check), then refresh #51.
+  its `must/shall be|remain` lead, and `.3h` keeps a value-position literal out of the subject slot.
+- Next action: `CORPUS-CHAIN-CURRENCY.1` — ship and register `scripts/check_chain_currency.sh` so currency cannot
+  decay silently again; then `.2` bundle retention, then refresh #51.
 - In-flight uncommitted: none; no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

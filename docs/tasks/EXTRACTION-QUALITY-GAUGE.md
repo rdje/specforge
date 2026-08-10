@@ -170,7 +170,7 @@ honestly-qualified) path to "human-SpecForge in Rust."
 
 ## Task Tree
 
-- ID: `EXTRACTION-QUALITY-GAUGE` · Status: `active` · Children: `.0`–`.4` (incl. `.3a`–`.3g`)
+- ID: `EXTRACTION-QUALITY-GAUGE` · Status: `active` · Children: `.0`–`.4` (incl. `.3a`–`.3h`)
 - ID: `EXTRACTION-QUALITY-GAUGE.gauge` · Status: `done` · Goal: establish the NLI-oracle not-entailed
   rate as a per-doc extraction-quality gauge; measure CHI (~83%) + APB (~29%), hand-validate (18/18).
 - ID: `EXTRACTION-QUALITY-GAUGE.1` · Status: `done` (prototype) · Goal: **entity discrimination** —
@@ -600,6 +600,45 @@ honestly-qualified) path to "human-SpecForge in Rust."
   kept); NVMe `evidence --dry-run` drops `MPS` (18 with `.3f`+`.3g`); wire Pattern builds byte-identical
   (0 records altered, proven by fresh-bin scan) → wire gold ×4 1.000; kg-bench 156/156; full `run_ci.sh`
   GREEN; book `pipeline/evidenceir.md` `.3g` note + KM card.
+- ID: `EXTRACTION-QUALITY-GAUGE.3h` · Status: `done` (`2026-08-10`, CODE + full gold battery) · Goal: the
+  **value-position spurious-subject** gate — the last member of the `.3d`–`.3g` family, carried over as a named
+  residual from `CORPUS-COVERAGE.2.50a` rather than left as a note.
+  **Probe-first (read-only, all 80 persisted evidence docs):** a value-binding preposition phrase puts the bound
+  VALUE after it, never the constrained thing, so a candidate reachable only there is a literal wearing a
+  subject's clothes. NVMe: "… all entries … **shall have the Controller ID field set to FFFFh**" mints
+  `FFFF must_be_value NO` — the obligation is on the Controller ID field, `FFFF` is the hex literal it is set to,
+  and the record's own `target_value` (`NO`, from a later "shall be no more than one") comes from a *different*
+  phrase, so the pattern path's positional value exclusion never reaches it. **Measured impact:** the class =
+  subjects whose EVERY uppercase-run occurrence is immediately preceded by a value binder — **1 record
+  corpus-wide (NVMe `FFFF`), 0 wire-doc, 0 in any rebuildable document.**
+  **SHIPPED + VERIFIED:** pure `is_value_position_subject(text, subject)` in `ir/evidence.rs` over
+  `uppercase_run_tokens` (the same tokenization `collect_subject_signal_tokens` uses, so `FFFFh` is seen as the
+  candidate `FFFF` the extractor actually lifted), wired as a `subject_signals.retain(…)` in BOTH deterministic
+  extractors right after the `.2.50a` retain. Standalone wins, exactly as in `.3g`: a candidate that occurs even
+  once outside a value position is never touched. +3 test fns (the exact NVMe sentence yields no `FFFF`;
+  standalone-beats-value-position; `PSEL must be set to HIGH` still yields `PSEL`), lib 1,804 → **1,807**.
+  The all-hex-literal shortcut stays rejected by the `.3g` measurement (it would flag real `CBA`/`BADD`).
+  Universal grammar, no name/radix/literal list (ADR 0006).
+  **Honest limit:** NVMe has no normalized bundle, so its persisted artifact keeps the `FFFF` record until that
+  document's own refresh re-ingests it; the replay proves the code is correct and ADR 0025's currency check
+  reports the unmeasurable population rather than implying coverage.
+
+### Acceptance Checklist (enforced) — `EXTRACTION-QUALITY-GAUGE.3h`
+
+- [x] **REPRODUCE / MEASURE** — read-only census over all 248 deterministic constraint records: exactly one
+  value-position-only subject (NVMe `dyn_sigcon_0011` `FFFF`), across one document, zero wire-protocol records.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs`: the pattern path excludes only the
+  value it bound itself, and the dynamic path's subject scan admits any uppercase run, so a literal bound by a
+  *different* phrase (`set to FFFFh`) reaches the subject slot; `.3d`–`.3g` express no value-position rule.
+- [x] **ADDRESSED (verified)** — `is_value_position_subject` guards both paths; the exact NVMe sentence now yields
+  no `FFFF` record, and standalone/ordinary value-binding subjects are provably kept.
+- [x] **NO REGRESSION** — `kg-bench` 156/156; full `run_ci.sh` GREEN with 1,807 tests / five ignored; an isolated
+  replay over all 22 rebuildable documents is unchanged 22/22, so the gate alters zero live records outside NVMe;
+  57/57 emitted ISFs stay FSMGen-strict clean.
+- [x] **GENERICITY (ADR 0006)** — value-binder preposition grammar plus identifier-boundary occurrence; no name,
+  radix, literal-shape, vendor, or document list.
+- [x] **LOCKSTEP** — code, this leaf, the book gate narrative, the Knowledge Map card, and the resume pointer
+  agree before commit.
 - ID: `EXTRACTION-QUALITY-GAUGE.4` · Status: `done` (`2026-06-10`) · Goal: constraint dedup by
   (subject, kind, condition) in the LLM-primary extractor. Shipped: pure `dedup_constraints` —
   canonical key = the eval's `signal_constraint_record_key` (subject + kind incl. value + negation)
@@ -673,6 +712,11 @@ honestly-qualified) path to "human-SpecForge in Rust."
   EvidenceIR pages) + README + KM card.
 
 ## Changelog
+
+- `2026-08-10`: **`.3h` DONE** — the value-position spurious-subject gate ships, closing the last
+  named residual of the `.3d`–`.3g` family (NVMe `FFFF` from `set to FFFFh`). Probe: 1 record corpus-wide, 0
+  wire-doc. Both deterministic paths guarded; standalone occurrence always wins. kg-bench 156/156, full CI green
+  at 1,807 tests, 22/22 rebuildable documents byte-unchanged.
 
 - `2026-06-15`: **`.3g` DONE** — the dotted-cross-reference spurious-subject gate ships (PNT pick;
   owner-chosen "EQG constraint precision" direction; orthogonal sibling of `.3e`). A register/structure

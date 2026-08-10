@@ -44,7 +44,7 @@ Measured over the 80-document persisted corpus: 26 of 256 deterministic records 
 `sigcon_*` across eight documents and nine `dyn_sigcon_*` across two — covering later conditions and scopes, a
 protocol or device name, the modal word `MUST` itself, and non-subject fields. An isolated old-versus-new replay
 over the 21 rebuildable documents removes exactly eight records, adds none, and leaves the other 18 documents
-byte-identical; one emitted target improves, the I2C `wiring_patterns.isf` losing a false `SCL = 1` rule. A
-residual sibling defect stays open: a hex literal in `shall have … set to FFFFh` still reaches the subject slot,
-which is a value-position error rather than a word-order one. See also
+byte-identical; one emitted target improves, the I2C `wiring_patterns.isf` losing a false `SCL = 1` rule. The sibling
+value-position defect — a hex literal in `shall have … set to FFFFh` reaching the subject slot — is a different
+error class and was closed separately by `EXTRACTION-QUALITY-GAUGE.3h`. See also
 [[timing-table-structural-authority]].

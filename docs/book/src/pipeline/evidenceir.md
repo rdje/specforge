@@ -1273,6 +1273,18 @@ conditions like `HRESP` and `CKE`, non-subject fields like `OAS`/`DID`/`IODIR`),
 `kg-bench` stays green, and one emitted `.isf` improves — the I2C target loses a false `SCL = 1` rule that a
 timing footnote had produced. *Authoritative tracking:* `docs/tasks/CORPUS-COVERAGE.md` (`.2.50a`).
 
+One last member of the family (`.3h`) closes the mirror-image error: a **value** wearing a subject's clothes. A
+value-binding phrase puts the bound literal *after* it — *"all entries … shall have the Controller ID field **set
+to FFFFh**"* — so the obligation is about the Controller ID field and `FFFF` is merely what it is set to. The
+value-binding path had already learned to skip the value *it* bound, but here the record's own bound value came
+from a different phrase later in the paragraph, so nothing stopped the hex literal from becoming the subject. The
+gate keeps a candidate unless *every* place it appears sits directly behind a value binder (*set to*, *cleared
+to*, *written to*, *programmed to*, …); one standalone mention anywhere and it is treated as a real subject, the
+same "standalone wins" rule `.3g` uses. The tempting shortcut — "anything spelled with only hex letters is a
+literal" — stays rejected by measurement, because real field names like `CBA` and `BADD` are spelled that way.
+Measured live: exactly one record leaves the corpus, and no wire-protocol record moves at all.
+*Authoritative tracking:* `docs/tasks/EXTRACTION-QUALITY-GAUGE.md` (`.3h`).
+
 ### `EXTRACTION-QUALITY-GAUGE.0` — the artifact carries its own quality measurement
 
 Every surface above is about extracting more, and extracting it correctly. This one is about

@@ -5779,6 +5779,77 @@ fn first_passive_binding_lead(text: &str) -> Option<usize> {
     None
 }
 
+/// The maximal `[A-Z0-9_]` runs of `text` with their byte offsets — exactly the tokenization
+/// [`collect_subject_signal_tokens`] uses, so a subject gate sees the same candidate spelling the
+/// extractor lifted (`FFFFh` yields the candidate `FFFF`, whose trailing radix letter is not part of
+/// the token).
+fn uppercase_run_tokens(text: &str) -> Vec<(usize, &str)> {
+    let mut tokens = Vec::new();
+    let mut start: Option<usize> = None;
+    for (index, character) in text.char_indices() {
+        if character.is_ascii_uppercase() || character.is_ascii_digit() || character == '_' {
+            start.get_or_insert(index);
+        } else if let Some(begin) = start.take() {
+            tokens.push((begin, &text[begin..index]));
+        }
+    }
+    if let Some(begin) = start {
+        tokens.push((begin, &text[begin..]));
+    }
+    tokens
+}
+
+/// EXTRACTION-QUALITY-GAUGE.3h — recognize a SPURIOUS constraint subject lifted from a VALUE
+/// POSITION. A value-binding preposition phrase (`"… set to FFFFh"`, `"… cleared to 0h"`) puts the
+/// bound VALUE after the phrase, never the constrained thing, so a candidate reachable only there is
+/// a literal masquerading as a subject. NVMe's `"… all entries … shall have the Controller ID field
+/// set to FFFFh"` minted `FFFF must_be_value NO`: the obligation is on the Controller ID field, and
+/// `FFFF` is the hex literal it is set to. The pattern path already drops the value it *itself*
+/// bound (positionally, after the normative verb), but neither path recognizes a value bound by a
+/// different phrase than the one that produced the record's own `target_value`.
+///
+/// Conservative + structurally decidable, in the shape of the `.3e`/`.3g` gates: fires only for a
+/// plain-identifier subject that occurs at least once and whose EVERY occurrence is immediately
+/// preceded by a value binder. A subject that appears even once standalone — its own declaration or
+/// mention — is a real subject and is never touched, exactly as in `.3g`.
+///
+/// Universal grammar only (ADR 0006 — no name, radix, or literal-shape list; the rejected
+/// "any all-hex token is a literal" shortcut would wrongly flag real fields such as `CBA`/`BADD`).
+/// Probe-confirmed over the 80-document persisted corpus: exactly one record matches (NVMe `FFFF`),
+/// and zero wire-protocol records.
+fn is_value_position_subject(text: &str, subject: &str) -> bool {
+    const VALUE_BINDERS: [&str; 8] = [
+        "set to",
+        "cleared to",
+        "written to",
+        "programmed to",
+        "initialized to",
+        "initialised to",
+        "reset to",
+        "defaults to",
+    ];
+    let is_ident = |c: char| c.is_ascii_alphanumeric() || c == '_';
+    if subject.is_empty() || !subject.chars().all(is_ident) {
+        return false;
+    }
+    // Byte layout is preserved by ASCII lowercasing, so `text` offsets index `lowered` directly.
+    let lowered = text.to_ascii_lowercase();
+    let mut saw_occurrence = false;
+    for (start, token) in uppercase_run_tokens(text) {
+        if token != subject {
+            continue;
+        }
+        saw_occurrence = true;
+        let before = lowered[..start]
+            .trim_end_matches(|c: char| c.is_whitespace() || matches!(c, '(' | '"' | '\'' | '`'));
+        if !VALUE_BINDERS.iter().any(|binder| before.ends_with(binder)) {
+            // a standalone (non-value-position) occurrence → a real subject, never touched.
+            return false;
+        }
+    }
+    saw_occurrence
+}
+
 /// CORPUS-COVERAGE.2.50a — recognize a SPURIOUS constraint subject the document never NAMES before
 /// the passive normative binding this record attributes to it. English binds a passive obligation
 /// (`"… must/shall [not] be/remain …"`) to a subject that PRECEDES the modal, so a token reachable
@@ -5958,6 +6029,9 @@ fn extract_dynamic_signal_constraints(
         // this record attributes to it (`OpenCAPI`/`OCDE` after "shall be held in reset"); the same
         // obligation's real pre-lead subject, and every active `must drive …` binding, are kept.
         subject_signals.retain(|s| !is_post_passive_binding_only_subject(&statement.text, s));
+        // EXTRACTION-QUALITY-GAUGE.3h: drop a subject reachable only from a VALUE position
+        // ("… set to FFFFh" → `FFFF`); a standalone occurrence is always kept.
+        subject_signals.retain(|s| !is_value_position_subject(&statement.text, s));
         if subject_signals.is_empty() {
             continue;
         }
@@ -7687,6 +7761,8 @@ fn extract_signal_constraints(
         // CORPUS-COVERAGE.2.50a: the same universal pre-lead subject authority as the dynamic path —
         // a passive obligation's subject must be named before its `must/shall be|remain` lead.
         subject_signals.retain(|s| !is_post_passive_binding_only_subject(text, s));
+        // EXTRACTION-QUALITY-GAUGE.3h: the same universal value-position authority as the dynamic path.
+        subject_signals.retain(|s| !is_value_position_subject(text, s));
         if subject_signals.is_empty() {
             continue;
         }
@@ -26579,6 +26655,36 @@ mod corpus_coverage_2_50a {
         let prose =
             "preq is synchronized into the GIC-600. pstate must be stable when preq is asserted.";
         assert!(is_post_passive_binding_only_subject(prose, "GIC"));
+    }
+
+    #[test]
+    fn value_position_literal_is_not_a_subject() {
+        // EXTRACTION-QUALITY-GAUGE.3h — the exact NVMe sentence: the obligation is on the Controller
+        // ID field; `FFFF` is the hex literal that field is set to, reached only via "set to".
+        let nvme = "If an NVM subsystem supports the dynamic controller model, then all entries for that NVM subsystem shall have the Controller ID field set to FFFFh. For a particular NVM subsystem port and NVMe Transport address in an NVM subsystem, there shall be no more than one entry with the Controller ID field set to:";
+        assert!(is_value_position_subject(nvme, "FFFF"));
+        assert!(!subjects(nvme, &values(&["NO"])).contains(&"FFFF".to_string()));
+    }
+
+    #[test]
+    fn standalone_occurrence_beats_a_value_position_one() {
+        // Mirrors the `.3g` discipline: a candidate that appears even once outside a value position
+        // is that document's real subject and is never dropped.
+        let mixed = "MPS must be stable. The page-size field is set to MPS.";
+        assert!(!is_value_position_subject(mixed, "MPS"));
+        // A subject the text never mentions is not this gate's business either.
+        assert!(!is_value_position_subject(
+            "PADDR must be stable.",
+            "PWDATA"
+        ));
+    }
+
+    #[test]
+    fn ordinary_value_binding_subject_survives() {
+        // "<signal> must be set to <level>" still yields the signal: `PSEL` occurs standalone.
+        assert!(
+            subjects("PSEL must be set to HIGH.", &values(&["HIGH"])).contains(&"PSEL".to_string())
+        );
     }
 
     #[test]
