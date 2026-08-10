@@ -102,7 +102,8 @@ today's ephemeral normalized-directory count.
   commit per `COMMIT.md` after each doc. No fabrication / ADR-0006 unchanged (this is a re-run of existing
   deterministic extractors, not new code); WIRE-BASED-100 + register/wire golds + `kg-bench` stay green
   (orthogonal — the 4 gold docs are not re-ingested). Record per-doc before/after typed-surface deltas here.
-- ID: `CORPUS-COVERAGE.2.46` · Status: `in_progress` (`2026-08-10`, DATA/DOC) · Goal: re-ingest the 40-page
+- ID: `CORPUS-COVERAGE.2.46` · Status: `in_progress` (`2026-08-10`, DATA/CODE/DOC) · Children: `.2.46a`
+  parenthetical `data`-head signal-authority repair (in progress). Goal: re-ingest the 40-page
   OpenCAPI Discovery Configuration specification (`opencapi_discovery_configuration_v201`) from the
   owner-authorized same-SSD host library with the current release, then rebuild and validate
   EvidenceIR→SemanticIR→IntentIR→ISF without treating table/glossary acronyms as declared hardware signals.
@@ -132,6 +133,40 @@ relation / 16 phases / 20 gates / 57 invariants / ten contracts / five assertion
 timings. IntentIR has six actors / two interfaces / one actor port / one relation / 42 behaviors / 58 constraints /
 six assumptions / six timings. The adapter is renderable as `controller.isf` with synthetic width-one
 `BDF`/`DL`/`VPD` outputs, three enums, one storage record, and no transactions or rules.
+
+- ID: `CORPUS-COVERAGE.2.46a` · Status: `in_progress` (`2026-08-10`, PROBE/CODE/DATA/DOC) · Goal: repair the
+  universal sparse-catalog parenthetical signal-authority gap exposed by #46 before accepting its cascade.
+  `synthesize_signal_declarations_from_prose` correctly requires the immediate noun-phrase head before
+  `(ACRONYM)` to be a single-wire noun, but `data` remains ambiguous: fresh #46 turns table-field phrase
+  `Vital Product Data (VPD)` into synthetic `Signal VPD is width 1.`, and that declaration becomes a one-port
+  SemanticIR interface and emitted `device.isf` despite zero actor ports or relations.
+
+  The complete 80-EvidenceIR census finds exactly six current width-one declarations admitted through a `data`
+  head across four documents. Four are genuine and have an adjacent wire qualifier: I2C `serial data (SDA)`,
+  `serial data (USDA)`, `high-speed data (SDAH)`, and I2S `Serial Data (SD)`. Two are false: OpenCAPI `Vital
+  Product Data (VPD)` and Wishbone example-memory `memory output data (DO)`; the latter reaches the corpus's
+  only Wishbone adapter port even though the named Wishbone bus port in the same sentence is `DAT_O`.
+
+  Selected repair: when and only when the immediate parenthetical head is `data`, require the adjacent modifier
+  `serial` or `high-speed` (case-insensitive) before granting single-wire authority. Preserve all other current
+  wire heads, the pin-appositive and definitional forms, and the four measured positive declarations. Add paired
+  unit tests, replay the four affected real documents, prove `VPD`/`DO` absent and the I2C/I2S positive set held,
+  then rebuild #46 through adapter. No vendor, document, signal-name, or expanding token denylist is permitted.
+
+### Pending signoff criteria — `CORPUS-COVERAGE.2.46a`
+
+- **PENDING — REPRODUCE / MEASURE** — pin the six-candidate / four-document `data (ACRONYM)` declaration census,
+  supporting source spans, and current SemanticIR/adapter consequences for both false candidates.
+- **PENDING — ROOT CAUSE (WHY + WHERE)** — trace the sparse `<8` fallback through the immediate-head grammar and
+  show why `data` needs a qualifier while `line`/`signal`/`clock`/`wire`/`pin` do not.
+- **PENDING — IMPLEMENT / VERIFY** — enforce only the selected modifier condition and add paired false/true
+  regressions plus real OpenCAPI/Wishbone/I2C/I2S replays.
+- **PENDING — NO REGRESSION** — run focused EvidenceIR tests, all EvidenceIR tests, WIRE/I2C/SWD datasets, KG,
+  FSMGen strict, full CI, mdBook, doctrines, persisted paths, and locality.
+- **PENDING — GENERICITY** — production logic contains only generic noun/modifier grammar and no candidate name,
+  vendor, document key, section, source sentence, or fallback denylist.
+- **PENDING — LOCKSTEP** — code comments, task parent/child, real cascades, durable fact, live docs, mdBook, and
+  resume pointer agree before the child commits and parent `.2.46` resumes final replay/signoff.
 - ID: `CORPUS-COVERAGE.2.45` · Status: `done` (`2026-08-10`, DATA/DOC) · Goal: re-ingest the
   30-page OpenCAPI 25 Gbps PHY Signaling Specification (`opencapi_25gbps_phy_signaling_spec_1_0`) from the
   owner-authorized same-SSD host library with the current release, then rebuild and validate
@@ -1378,8 +1413,8 @@ live ledger to 61 records / 1,303 lines without loss.
   path in the rule. No new currentness gate forces intentional caches to remain.
 - [x] **LOCKSTEP** — roadmap and task index required no status/count change; task, live ledgers, mdBook,
   Knowledge Map, book aggregate authority, and resume pointer agree on the corrected frontier.
-- Frontier: `CORPUS-COVERAGE.2.46` — preserve the authenticated seven-file rollback, then run the guarded
-  repository-local CPU ingest and deterministic cascade for OpenCAPI Discovery Configuration.
+- Frontier: `CORPUS-COVERAGE.2.46a` — implement the measured parenthetical `data`-qualifier authority boundary,
+  run paired and four-document real-corpus falsification, then resume parent #46's final cascade.
   Historical `.2` phase context follows: re-ingest the 57-document cohort from the
   `.cache/local-references/chipdoc` symlink, register/TRM/ISA phase, one doc per slice (**39 refreshes done after #39;
   17 real chip-spec docs remain unrefreshed by `.2`** — see the `.2` log table below for #29–#39: #29/#31 CHI-C2C marquee message-field refreshes,
@@ -1494,6 +1529,11 @@ strict syntax is not a semantic-fidelity oracle. **Levers A, B, C, F + the rule-
 
 ## Changelog
 
+- `2026-08-10`: `.2.46a` PROBE/CODE/DATA/DOC ACTIVATED after the first owned #46 cascade from clean tracked
+  commit `1355d590`. The 80-artifact census finds exactly six `data (ACRONYM)` width-one declarations: four
+  genuine `serial`/`high-speed` signals and two false `VPD`/`DO` ports that reach ISF. The shared sparse-catalog
+  parenthetical fallback grants bare `data` head authority without a modifier. Frontier → require the measured
+  adjacent wire qualifier, add paired tests, and replay all four affected documents before parent signoff.
 - `2026-08-10`: `.2.46` DATA/DOC OWNED from clean commit `c7538a61`. OpenCAPI Discovery Configuration is the
   smallest of 11 remaining candidates at 40 pages / 181 elements / 403646 source bytes. Same-SSD source
   `bc767d6e…fe103`, release `463a79e3…b06510`, and stale seven-file / 1951530-byte chain are identified read-only.

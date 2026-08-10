@@ -21,14 +21,14 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.46`; current-binary refresh of OpenCAPI Discovery Configuration.
-- Current state: the smallest of 11 remaining candidates is authenticated read-only at 40 pages / 181 retained
-  elements / 403646 source bytes. Same-SSD source hashes `bc767d6e…fe103`; current release hashes
-  `463a79e3…b06510`; the stale chain is seven files / 1951530 bytes. Its adapter currently fabricates width-one
-  `BDF`/`DL`/`VPD` outputs from a chain with one actor relation, one port, four conditionals, one register, and six
-  timing constraints; the refresh must preserve grounded intent while reapplying current shared authority.
-- Next action: commit the `.2.46` owning leaf, copy and byte-verify its exact rollback on the repository volume,
-  then run guarded CPU ingest and the deterministic EvidenceIR→SemanticIR→IntentIR→adapter cascade.
-- In-flight uncommitted: `.2.46` task ownership, roadmap frontier, and this resume pointer await their recording
-  commit; no generated artifact has changed and no background job is running.
+- Active unit: `CORPUS-COVERAGE.2.46a`; parenthetical `data`-head signal-authority repair exposed by refresh #46.
+- Current state: three CPU ingests reproduce 40 pages / 54 visuals / 49 tables / 50 sections / 172 elements at
+  53% peak sampled memory used. The first cascade removes stale `BDF`/`DL`, all generic phases/gates, and the lone
+  relation, but `Vital Product Data (VPD)` still becomes a one-bit emitted port. Across 80 EvidenceIR artifacts,
+  `data (ACRONYM)` produces exactly six width-one declarations: genuine `SDA`/`USDA`/`SDAH`/`SD`, all qualified
+  by `serial` or `high-speed`, and false `VPD`/Wishbone `DO`, qualified by `product`/`output`.
+- Next action: commit `.2.46a` ownership, implement the measured adjacent-qualifier gate with paired tests, replay
+  OpenCAPI Discovery/Wishbone/I2C/I2S, then rebuild and sign off parent `.2.46`.
+- In-flight uncommitted: fresh #46 generated chain, exact seven-file rollback, three-ingest identity evidence,
+  and `.2.46a` task/roadmap/memory ownership. No background job.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.
