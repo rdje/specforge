@@ -2,7 +2,7 @@
 id: fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards
 title: Fact-plane capacity is re-derived from its binding structural join, and the landing stops scaling with cards
 date: 2026-08-10
-status: accepted
+status: decision 1 superseded by 0027
 scope: documentation, knowledge-map, generated-projection, containment, pressure, continuity
 evidence: docs/tasks/FACT-CARD-CAPACITY-HEADROOM.md; scripts/check_fact_card_catalog.pl; doctrine/knowledge_map/shard_contract.json; doctrine/live_document_size/surfaces.jsonl
 answers:
@@ -16,6 +16,12 @@ answers:
 ---
 
 # ADR 0026: Fact-plane capacity is re-derived from its binding structural join, and the landing stops scaling with cards
+
+> **Decision 1 below is superseded by
+> [ADR 0027](0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md).** It compared
+> full capacity against the landing's health target when the checker treats ≥ 90% of health as a
+> mandatory-rollover error, so its derived 221-card join is unreachable; 198 is already the exact maximum this
+> projection shape permits. The context measurements below, and decisions 2 and 3, stand unchanged.
 
 ## Context
 
