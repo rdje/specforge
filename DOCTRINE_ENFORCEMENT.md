@@ -119,11 +119,15 @@ A check that obeys (1)–(7) is portable: the driver does not care what it check
 One driver owns the list of doctrines and runs them all. The **registry is the source of truth**
 for "which doctrines are enforced by what"; a human-readable manifest mirrors it.
 
-- **Registry**: a list of `id | what-it-proves | path/to/check.sh`.
-- **Driver**: runs every check (collecting *all* results, not stopping at the first failure),
+- **Registry**: a list of `id | tier | what-it-proves | path/to/check.sh`.
+- **Tier**: `gate` (cheap enough for the pre-commit hook, and re-run in CI) or `ci` (§4.7 — too heavy
+  for a hook, so it is deferred but stays registered). A default run executes the `gate` tier and
+  prints every deferred doctrine as **DEFER**, so a CI-tier doctrine is enforced-but-deferred, never
+  silently absent from the report. `--all` runs every tier and is what the CI entrypoint invokes.
+- **Driver**: runs every in-tier check (collecting *all* results, not stopping at the first failure),
   prints a per-doctrine report, and exits nonzero iff any failed. It also **meta-checks** that
-  every registered check exists and is executable — so a registry entry can never be a dangling
-  promise.
+  every registered check — deferred ones included — exists and is executable, so a registry entry can
+  never be a dangling promise.
 - **Adding a doctrine** = write a `check_*.sh` obeying §4 + add one registry line. Nothing else.
 
 SpecForge ships the reference driver at `scripts/check_doctrines.sh` and the evidence-archetype
@@ -215,7 +219,7 @@ own doctrines.
 ### A — CORE, copy VERBATIM (project- and harness-neutral)
 | Artifact | Role |
 |---|---|
-| `scripts/check_doctrines.sh` | the registry+driver — runs every check, reports, exits nonzero on any breach |
+| `scripts/check_doctrines.sh` | the registry+driver — runs every in-tier check, reports (PASS/FAIL/DEFER), exits nonzero on any breach |
 | `scripts/check_task_acceptance.sh` | reference EVIDENCE check (the task-acceptance checklist gate) |
 | `.githooks/pre-commit` | E3 local gate: regenerate derived artifacts, then run the driver |
 | `.githooks/commit-msg` | E3: require an identifier-shaped work-unit id in the subject |
@@ -223,7 +227,7 @@ own doctrines.
 | `TOOLBOX.md` | the diagnostic-toolbox catalog + the **acceptance-checklist template** a code change must satisfy |
 
 ### B — ADAPT (the only project-specific knobs)
-- `scripts/check_doctrines.sh`: edit the `DOCTRINES=(…)` array (your doctrine ids → your check scripts).
+- `scripts/check_doctrines.sh`: edit the `DOCTRINES=(…)` array (your doctrine ids → tier → check scripts).
 - `scripts/check_task_acceptance.sh`: the "what counts as a code change" path globs + the evidence/checklist signature regexes (your tools' output strings).
 - `TOOLBOX.md`: your project's tools + the required checklist boxes.
 - which heavy checks are CI-only vs pre-commit.
@@ -246,7 +250,7 @@ harness-neutral.** The reminders only *nudge*; the gate is what *enforces*.
 ```bash
 chmod +x scripts/check_*.sh
 git config core.hooksPath .githooks          # activate the local gate (E3)
-# add ONE line to your CI pipeline (E4):  bash scripts/check_doctrines.sh
+# add ONE line to your CI pipeline (E4):  bash scripts/check_doctrines.sh --all
 ```
 
 **Harness-agnostic guarantee.** The ENFORCEMENT (A) is git-level: `.githooks/pre-commit` + CI run
@@ -279,14 +283,15 @@ cannot be defeated from a clone.
 The reference deployment. Enforced by `scripts/check_doctrines.sh` via `.githooks/pre-commit` (E3)
 + `scripts/run_ci.sh` / CI (E4).
 
-| Doctrine | Archetype | Check | Proves |
-|---|---|---|---|
-| `MEMORY-ARCH` | structural | `scripts/check_memory_architecture.sh` | the durable 4-layer memory-architecture invariants (`MEMORY_ARCHITECTURE.md` §9): the standard present, `MEMORY.md` bounded, bootstrap pointers route to it, layers B/C present |
-| `KNOWLEDGE-MAP` | structural | `knowledge-map/scripts/check_knowledge_map.sh` | the bounded landing and exact generated question-shard membership/content are regenerated + in sync with fact sources |
-| `TASK-ACCEPTANCE` | evidence | `scripts/check_task_acceptance.sh` | a staged Rust code change is owned by a staged `docs/tasks/*.md` leaf whose acceptance checklist carries ROOT CAUSE + ADDRESSED + NO REGRESSION, ticked and backed by SpecForge tool signatures (see `TOOLBOX.md`) |
-| `README-POLICY` | structural | `scripts/check_readme_policy.sh` | root `README.md` stays within its independently derived line/byte ceilings; every reader link and author-overflow destination is a repository-owned, controlled terminal in the route registry |
-| `LIVE-DOC-SIZE` | structural | `scripts/check_live_document_size.sh` | every parent-tracked Markdown path is classified exactly once; each declared current-state field has an explicit derive-on-read, verified-copy, authored-intent, or immutable-evidence contract; and all lifecycle-specific locality, pressure, route, currency, authority, capture, and history rules pass |
-| `PROJECT-DATA-LOCALITY` | structural | `scripts/check_project_data_locality.sh` | Cargo, shell, Rust temp/subprocess, Python dependency, and optional runtime-store paths resolve from the current repository and reject off-root or stale-repository ownership |
+| Doctrine | Archetype | Tier | Check | Proves |
+|---|---|---|---|---|
+| `MEMORY-ARCH` | structural | gate | `scripts/check_memory_architecture.sh` | the durable 4-layer memory-architecture invariants (`MEMORY_ARCHITECTURE.md` §9): the standard present, `MEMORY.md` bounded, bootstrap pointers route to it, layers B/C present |
+| `KNOWLEDGE-MAP` | structural | gate | `knowledge-map/scripts/check_knowledge_map.sh` | the bounded landing and exact generated question-shard membership/content are regenerated + in sync with fact sources |
+| `TASK-ACCEPTANCE` | evidence | gate | `scripts/check_task_acceptance.sh` | a staged Rust code change is owned by a staged `docs/tasks/*.md` leaf whose acceptance checklist carries ROOT CAUSE + ADDRESSED + NO REGRESSION, ticked and backed by SpecForge tool signatures (see `TOOLBOX.md`) |
+| `README-POLICY` | structural | gate | `scripts/check_readme_policy.sh` | root `README.md` stays within its independently derived line/byte ceilings; every reader link and author-overflow destination is a repository-owned, controlled terminal in the route registry |
+| `LIVE-DOC-SIZE` | structural | gate | `scripts/check_live_document_size.sh` | every parent-tracked Markdown path is classified exactly once; each declared current-state field has an explicit derive-on-read, verified-copy, authored-intent, or immutable-evidence contract; and all lifecycle-specific locality, pressure, route, currency, authority, capture, and history rules pass |
+| `PROJECT-DATA-LOCALITY` | structural | gate | `scripts/check_project_data_locality.sh` | Cargo, shell, Rust temp/subprocess, Python dependency, and optional runtime-store paths resolve from the current repository and reject off-root or stale-repository ownership |
+| `CHAIN-CURRENCY` | oracle | ci | `scripts/check_chain_currency.sh` | every persisted corpus artifact is exactly what the current binary reproduces from its persisted input — the evidence, semantic, intent, and `.isf`-adapter stages replayed `--dry-run`, plus each emitted `.isf` against the adapter's rendered `source_text` (ADR 0025) |
 
 Among its focused suites, `LIVE-DOC-SIZE` runs 55 positive and fail-closed lifecycle/control-plane
 cases, 47 neutral derived-state classification cases, 25 SpecForge Rust/gitlink authority-adapter cases,
@@ -336,6 +341,18 @@ tracked temp root exists before Cargo starts, all canonical scripts establish th
 production temp/subprocess seams use the Rust locality helper, Python environments have tracked lock
 authority, and any present venv resolves and launches through this repository. Missing roots and
 off-root cache symlinks fail; `~/.rustup` and `~/.cargo` remain explicit shared inputs.
+
+`CHAIN-CURRENCY` is the registry's first `ci`-tier doctrine. It re-executes the pipeline rather than
+reading a claim: each stage is replayed `--dry-run` from the **persisted** upstream artifact, and the
+result must equal the persisted downstream artifact. Content identity excludes `validation_reports`,
+because `specforge validate` back-annotates that section after the stage runs and the product's own
+`*_ir_fingerprint` helpers clear the same field before hashing — the check adopts the code's identity
+rule instead of inventing one. Measurability is stated, never implied: only the evidence stage needs a
+document's normalized markdown bundle, so a reclaimed bundle makes that one stage **unmeasurable** and
+the check always prints that count; every later stage reads a persisted artifact and stays measurable
+corpus-wide. An absent `generated/` skips loudly and passes, because a fresh clone and hosted CI have
+no corpus for the doctrine to govern. `--self-test` proves the comparison core fail-closed in ten
+cases before any PASS is trusted.
 
 Deterministic-oracle doctrines that run via `scripts/run_ci.sh` / CI (`kg-bench` 156/156,
 WIRE-BASED-100 constraint+temporal/relation golds = 1.000, the byte-identical evidence/`.isf` checks,

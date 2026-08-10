@@ -62,6 +62,7 @@ other re-derivable trace.
 | `README-POLICY` | structural | the project landing page stays within its locally derived line and byte ceilings, and every reader or author-overflow route closes at a registered, controlled terminal |
 | `LIVE-DOC-SIZE` | structural | every tracked Markdown path is classified exactly once, and every declared current-state field satisfies its explicit class, marker, authority, accessor/capture, and executed-verifier contract alongside the lifecycle/pressure/route rules |
 | `PROJECT-DATA-LOCALITY` | structural | Cargo, shell, production temporary-workspace, subprocess, and Python runtime seams keep owned data below the current repository and reject stale or escaping roots |
+| `CHAIN-CURRENCY` | oracle | every artifact already on disk under `generated/` is exactly what today's binary reproduces from the artifact one stage upstream — so a shared extractor change cannot leave older documents quietly one code delta behind |
 
 The README guard is unconditional: it evaluates the resulting tree even when a change does not touch
 `README.md`. Its data-only route registry distinguishes links readers follow from destinations authors
@@ -138,10 +139,25 @@ implementation/verification subsection while rejecting the earlier migration/deb
 The adapter also runs 55 repository-volume positive and fail-closed fixtures, including every local
 lifecycle, registry schema/size controls, independent pressure axis, and Git-history authority path.
 
+The chain-currency check answers a question the other gates cannot: *are the artifacts already sitting in
+`generated/` still the artifacts this code would produce?* A repair normally rebuilds only the documents
+it measured, so every other completed document silently absorbs one code delta at a time. The check
+replays each stage `--dry-run` from the **persisted** artifact one stage upstream — evidence, semantic,
+intent, the `.isf` adapter, and each emitted `.isf` against the adapter's own rendered text — and fails
+when what comes back is not what is stored. It deliberately ignores the `validation_reports` section,
+because `specforge validate` writes that *after* the stage has run and the product's own fingerprint
+helpers exclude it too. What it cannot measure it says out loud: only the evidence stage needs a
+document's normalized markdown bundle, so a document whose bundle was reclaimed is reported as
+*unmeasurable* at that one stage rather than quietly counted as fine, while every later stage stays
+measurable for the whole corpus. With no `generated/` at all — a fresh clone, a hosted runner — it skips
+loudly instead of pretending to have checked something.
+
 The heavy deterministic oracles — `kg-bench`, the WIRE-BASED-100 golds, the byte-identical
-evidence/`.isf` checks, the full `cargo` suite, and the mdBook doctest/build pair — are the strongest leg of
-all. They are too slow to run on every local commit, so they run in the full CI gate (`scripts/run_ci.sh`)
-rather than in the fast pre-commit hook. That is a deliberate split, stated openly: the local hook
+evidence/`.isf` checks, chain currency, the full `cargo` suite, and the mdBook doctest/build pair — are the
+strongest leg of all. They are too slow to run on every local commit, so they run in the full CI gate
+(`scripts/run_ci.sh`) rather than in the fast pre-commit hook. That is a deliberate split, stated openly
+and now visible in the tooling: heavy doctrines stay in the same registry marked *CI-tier*, and the fast
+default run prints each one as `DEFER` so a deferred rule can never read as an absent one. The local hook
 catches the cheap structural and evidence breaches instantly; the un-fakeable re-run happens in CI.
 
 ## The acceptance checklist (for code changes)
@@ -185,8 +201,15 @@ strongest guarantee is restored by re-enabling an automatic CI gate.
 ## Running and extending it yourself
 
 ```bash
-# run every registered doctrine check (the fast gate the pre-commit hook uses):
+# run the fast gate the pre-commit hook uses (CI-tier doctrines are listed as DEFER):
 bash scripts/check_doctrines.sh
+
+# run every registered doctrine, CI-tier ones included:
+bash scripts/check_doctrines.sh --all
+
+# ask the chain-currency oracle directly, or prove it is fail-closed first:
+bash scripts/check_chain_currency.sh
+bash scripts/check_chain_currency.sh --self-test
 
 # run the book's Rust examples and then build the complete HTML book:
 bash scripts/run_docs_ci.sh
@@ -198,8 +221,9 @@ bash scripts/run_ci.sh
 The driver prints a per-doctrine report and exits nonzero if any check fails. Adding a new enforced
 doctrine is intentionally a two-step move: write a `scripts/check_<id>.sh` that obeys the check-script
 contract (exit nonzero on breach, deterministic, reads the repo and mutates nothing, scope-aware), then
-add one line to the driver's registry. The driver meta-checks that every registered check actually
-exists and is executable, so a registry entry can never become a dangling promise.
+add one line to the driver's registry naming its tier. The driver meta-checks that every registered
+check — deferred ones included — actually exists and is executable, so a registry entry can never become
+a dangling promise.
 
 ## How this was verified
 

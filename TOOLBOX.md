@@ -290,9 +290,20 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
 - **HOW:** `bash scripts/run_ci.sh`
 
 ### 7.2 `scripts/check_doctrines.sh` — the doctrine gate only
-- **WHAT:** the registry/driver alone (fast; structural + evidence checks, no heavy build).
+- **WHAT:** the registry/driver alone. The default `gate` tier is fast (structural + evidence checks,
+  no heavy build) and reports every `ci`-tier doctrine as `DEFER` so none is silently absent; `--all`
+  also runs the CI-tier doctrines and is what `run_ci.sh` invokes.
 - **WHEN:** before any commit; what the pre-commit hook runs.
-- **HOW:** `bash scripts/check_doctrines.sh`
+- **HOW:** `bash scripts/check_doctrines.sh` / `bash scripts/check_doctrines.sh --all`
+
+### 7.2a `scripts/check_chain_currency.sh` — the CHAIN-CURRENCY oracle (CI-tier)
+- **WHAT:** replays every persisted corpus artifact `--dry-run` from its persisted input (evidence,
+  semantic, intent, `.isf` adapter, plus each emitted `.isf` against the adapter's rendered
+  `source_text`) and fails when the persisted artifact is not what the current binary produces.
+  `validation_reports` is excluded exactly as the product's `*_ir_fingerprint` helpers exclude it.
+- **WHEN:** after any shared-extractor or stage change, and before signing off a refresh — it is the
+  measurement ADR 0025 decision 1 requires before attributing a delta. Skips loudly with no corpus.
+- **HOW:** `bash scripts/check_chain_currency.sh` (`--self-test` for its ten fail-closed cases)
 
 ### 7.3 `scripts/check_task_tree_archive.pl`
 - **WHAT:** validates the contract-driven terminal task lifecycle. `source_locked` pins the still-live source and

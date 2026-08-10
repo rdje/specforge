@@ -21,12 +21,13 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: none; `CORPUS-COVERAGE.2.50`/`.2.50a` and `CORPUS-CHAIN-CURRENCY.0` are complete and committed.
-- Current state: corpus is 50 done / six remaining at 80 SourceIR / 22 normalized / 80 EvidenceIR / 79 downstream
-  chains, with 57/57 current emitted ISFs FSMGen-strict clean and all 22 rebuildable chains proven current
-  (ADR 0025). Both deterministic constraint extractors bind a passive obligation only to a subject named before
-  its `must/shall be|remain` lead, and `.3h` keeps a value-position literal out of the subject slot.
-- Next action: `CORPUS-CHAIN-CURRENCY.1` — ship and register `scripts/check_chain_currency.sh` so currency cannot
-  decay silently again; then `.2` bundle retention, then refresh #51.
+- Active unit: `CORPUS-CHAIN-CURRENCY.3` — close the corpus drift the new gate measured.
+- Current state: `CORPUS-CHAIN-CURRENCY.1` shipped and registered the `CHAIN-CURRENCY` doctrine (CI-tier; the
+  driver now carries tiers and prints DEFER). Its first full-chain run is RED and correctly so: evidence 22/23
+  current (57 unmeasurable), semantic 14/79, intent 15/79, isf-adapter 65/79. Cause: `.2.43a.i`/`.2.43b` retired
+  the generic phase/gate producers, and only later-refreshed documents carry post-retirement artifacts.
+- Next action: `CORPUS-CHAIN-CURRENCY.3` — rebuild `semantic`→`intent`→`adapt` for every stale document (no
+  re-ingest needed; only the evidence stage reads a bundle), re-validate, re-measure the FSMGen-strict ISF
+  population, and settle the `readme` demo chain. Then `.2` bundle retention, then refresh #51.
 - In-flight uncommitted: none; no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

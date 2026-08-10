@@ -34,6 +34,7 @@
 - [cat3-topology-isf-lowering-decision](cat3-topology-isf-lowering-decision.md)
 - [cat4-csr-bit-position-recovery-not-deterministic](cat4-csr-bit-position-recovery-not-deterministic.md)
 - [cat4-isa-csr-lowering-decision](cat4-isa-csr-lowering-decision.md)
+- [chain-currency-doctrine](chain-currency-doctrine.md)
 - [conditional-rule-lowering-triage](conditional-rule-lowering-triage.md)
 - [conformal-tier-agreement-degenerate](conformal-tier-agreement-degenerate.md)
 - [contested-priors](contested-priors.md)

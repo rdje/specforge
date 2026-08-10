@@ -8,8 +8,8 @@ specforge_activate_project_data "$ROOT_DIR"
 
 cd "${ROOT_DIR}"
 
-echo "[specforge-ci] enforcing every registered doctrine via the registry/driver"
-./scripts/check_doctrines.sh
+echo "[specforge-ci] enforcing every registered doctrine via the registry/driver (all tiers)"
+./scripts/check_doctrines.sh --all
 
 echo "[specforge-ci] checking formatting"
 cargo fmt --all --check
