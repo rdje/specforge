@@ -3,7 +3,7 @@
 ## Metadata
 
 - Tree ID: `LIVE-DOC-STOP-RISK`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: repository durability and portability (successor of `FACT-CARD-CAPACITY-HEADROOM`)
 - Created: `2026-08-11`
 - Last updated: `2026-08-11`
@@ -55,6 +55,16 @@ aggregate re-derived. `task_evidence` is already at 81.2% of its file target, so
 `fact_index` is deliberately excluded: its 12,384-line total is `max_landing_lines + max_shards ×
 max_shard_lines`, which is that surface's exact legal maximum given a landing bound smaller than a shard bound.
 
+> **Corrected by `.1` (`2026-08-11`) — left in place because how it was wrong is the point.** This table was
+> assembled by reading the registry rather than enumerating it, and it is wrong three ways. It **missed**
+> `achievement_status_archive_segments`, whose health byte band is tight. Its `task_evidence` file figure is
+> 81.2% — that is `research_records`; `task_evidence` is 81.9%. And its central claim, that the two
+> `*_task_evidence_parts` surfaces have a remedy because they have a parts route, does not survive testing: a
+> parts route only lets a tree *add* parts and is neither triggered by the aggregate nor able to reduce it.
+> `.1` re-enumerated all 20 multi-file surfaces mechanically and found **eleven** tight, of which `fact_index`
+> is the only legitimate one — for exactly the reason stated above, now declared as data and checked
+> ([ADR 0032](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)).
+
 ### Finding 2 — `ROADMAP.md` is 20 lines from a hard stop, and its warning understates that
 
 Measured 364 lines / 34,938 bytes against a **384-line / 49,152-byte enforcement ceiling**. The gate reports
@@ -78,7 +88,7 @@ from "one slice from a hard failure".
 ## Task Tree
 
 - ID: `LIVE-DOC-STOP-RISK`
-  Status: `active`
+  Status: `done`
   Goal: no live-document surface can reach a stop that compliant work cannot leave, and no near-stop is
   reported only as a stale soft-target percentage
   Children: `LIVE-DOC-STOP-RISK.0`, `.0a`, `.1`, `.1a`
@@ -111,12 +121,12 @@ from "one slice from a hard failure".
   Commit: `LIVE-DOC-STOP-RISK.1 — make aggregate reachability a mechanical rule and pressure name the wall`
 
 - ID: `LIVE-DOC-STOP-RISK.1a`
-  Status: `pending`
+  Status: `done`
   Goal: retire the ten ceiling-increase authorities `.1` consumed. The containment protocol requires it — a
   surviving authority is banked and the gate fails closed on it.
   Acceptance: `the ten increase records are removed, the registry meta record is untouched, no ceiling/health target/milestone/lifecycle moves, the diff is deletions only, and the gate passes`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `against committed .1 the gate reported exactly ten "unused or banked ceiling-increase authority" violations — the protocol working, not a regression, because the increase is now history and the licence is spent; the ten increase records are deleted, the registry meta record is byte-identical, the diff is deletions only, and scripts/check_doctrines.sh is 6/6 with 738 files across 52 surfaces`
+  Commit: `LIVE-DOC-STOP-RISK.1a — retire the ten consumed ceiling-increase authorities`
 
 ## Current Frontier
 
@@ -125,7 +135,7 @@ from "one slice from a hard failure".
 | 1 | `LIVE-DOC-STOP-RISK.0` | `done` | 20 lines of headroom was the only measured deadline here; every other finding is a latent shape |
 | 2 | `LIVE-DOC-STOP-RISK.0a` | `done` | `.0` proved the exit exists but left the entrance open; the root can no longer re-accrete silently |
 | 3 | `LIVE-DOC-STOP-RISK.1` | `done` | closed the class mechanically instead of surface by surface |
-| 4 | `LIVE-DOC-STOP-RISK.1a` | `pending` | `.1`'s ten authorities are spent; a surviving authority is banked and fails closed |
+| 4 | `LIVE-DOC-STOP-RISK.1a` | `done` | `.1`'s ten authorities were spent; the gate reported all ten as banked and they are retired |
 
 ## Decisions
 
@@ -189,7 +199,7 @@ from "one slice from a hard failure".
 | `LIVE-DOC-STOP-RISK.0` | `LIVE-DOC-STOP-RISK.0 — give the bounded roadmap a declared repeatable rollover` | ADR 0030; 364 → 156 lines with the retired root sealed byte-exact |
 | `LIVE-DOC-STOP-RISK.0a` | `LIVE-DOC-STOP-RISK.0a — bound each roadmap section so accretion fails where it happens` | ADR 0031; the failure now arrives ~200 lines earlier and names its cause |
 | `LIVE-DOC-STOP-RISK.1` | `LIVE-DOC-STOP-RISK.1 — make aggregate reachability a mechanical rule and pressure name the wall` | ADR 0032; 10 aggregates re-derived, `fact_index` exempted by summed partition |
-| `LIVE-DOC-STOP-RISK.1a` | `pending` | `pending` |
+| `LIVE-DOC-STOP-RISK.1a` | `LIVE-DOC-STOP-RISK.1a — retire the ten consumed ceiling-increase authorities` | deletions only; the gate had already flagged all ten |
 
 ## Changelog
 
@@ -211,3 +221,8 @@ from "one slice from a hard failure".
   user. ADR 0032 makes `aggregate ≥ files × per-file` a gate rule for every collection, with one exemption
   that must *sum* to the declared bounds rather than assert it, and makes every pressure line name the
   absolute headroom to its ceiling. `.1a` opened to retire the ten consumed authorities.
+- `2026-08-11`: `.1a` closed and with it the tree. Against committed `.1` the gate reported exactly ten banked
+  authorities — the protocol working, not a regression — and the deletions-only change clears them. Both
+  findings are resolved, both open questions are answered, and one new question is left owned and stated: a
+  ceiling raise needs an exact authority record but a *health-target* raise does not, and a health raise
+  lowers reported pressure.

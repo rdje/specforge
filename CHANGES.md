@@ -1,3 +1,14 @@
+### LIVE-DOC-STOP-RISK.1a — retire the ten consumed ceiling-increase authorities
+
+- Against committed `.1`, the gate reported exactly ten `unused or banked ceiling-increase authority`
+  violations. That is the protocol working: the increase is now history, so the record that licensed it is
+  spent, and the checker refuses to leave a spent licence where it could silently authorise a future raise.
+- Deletions only. The ten `increase` records are removed and the registry meta record is byte-identical; no
+  ceiling, health target, milestone, lifecycle, index, or verifier moves.
+- `LIVE-DOC-STOP-RISK` closes. Both measured findings are resolved and both open questions are answered; one
+  new question is left owned and stated rather than closed by assertion — a ceiling raise needs an exact
+  authority record, but a *health-target* raise does not, and a health raise lowers reported pressure.
+
 ### LIVE-DOC-STOP-RISK.1 — make aggregate reachability a mechanical rule and pressure name the wall
 
 - The roadmap was one instance of a class, and the class was still being handled by reading. Enumerating

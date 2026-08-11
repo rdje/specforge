@@ -21,7 +21,7 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOC-STOP-RISK` — `.0`, `.0a`, `.1` done; only `.1a` (retire spent authorities) remains.
+- Active unit: none — `LIVE-DOC-STOP-RISK` is **closed** (`.0`, `.0a`, `.1`, `.1a` all done).
 - Current state: the whole "bound with no compliant exit" class is now gated. `.0`/ADR 0030 gave `ROADMAP.md`
   the missing **exit** — the archive is a bounded capsule series, so a rollover is copy-root-to-dated-capsule
   + one contract record + one index row + rewrite, all gate-proved. `.0a`/ADR 0031 closed the **entrance** —
@@ -31,9 +31,9 @@
   *sum* to the declared bounds — `fact_index` is its only user. Ten aggregates were re-derived under exact
   authorities; `task_evidence` can now get the file capacity its 81.9% warning needs. Pressure lines name the
   headroom to the ceiling. Suites: roadmap 9 → 49 cases, live-doc 68 → 81.
-- Next action: `LIVE-DOC-STOP-RISK.1a` — delete the ten spent `increase` records from
-  `doctrine/live_document_size/ceiling_increase_authorities.jsonl` (deletions only; a banked authority fails
-  closed). That closes the tree; `CORPUS-COVERAGE.2.51` is the next product slice.
-  Note before appending: `CHANGES.md` is at 88.4% of its line health target — 90% forces a rollover.
+- Next action: `CORPUS-COVERAGE.2.51` — the next product slice (six corpus documents remain).
+  **Blocking housekeeping first:** `CHANGES.md` is at ~89% of its 1,800-line health target, so the next
+  ledger append trips the 90% mandatory rollover. Open an owning leaf and run the declared transaction in
+  `COMMIT.md` ("Rolling-ledger rollover") before writing another entry.
 - In-flight uncommitted: none; no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.
