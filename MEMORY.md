@@ -17,19 +17,18 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.3`; `.0` through `.2` are complete. Tracking-only:
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.3`; `.0` through `.3` are complete pending this slice's commit. Tracking-only:
   `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: the six-category source-to-IntentIR contract remains the acceptance authority. `converge` now
-  emits 17 machine-readable capability rows covering all 16 production subcommands; each separates stable
-  participation (`integrated`, `scheduled`, `omitted`) from this run's state and reason. A Clap-derived test
-  partitions all 28 commands and prevents unreported production capability. Contract extraction, Tier-3
-  relation resolution, register-bit recovery, and IntentIR NLI demotion remain explicit omissions; the ledger
-  changes stdout/report state only, not canonical IR or adapter bytes.
-- Next action: execute `.3` by tracing the real PDF visual/layout producer path into typed multimodal IR,
-  selecting a retained source fixture with an applicable timing/state/register figure, and proving real input
-  reaches the required consumer or is reported unavailable. Do not count synthetic waveform tests as delivery.
-- In-flight uncommitted: none after the `.2` commit. No background job runs.
-- Blockers: none for the provider-free `.3` audit. Startup `doctor --strict` found no ready Ollama or LM Studio
-  endpoint, so a live VLM proof may require the endpoint to become ready; do not substitute a fabricated
-  observation. Rolling-ledger and corpus-frontier reports pass. The user-owned `.claude/settings.json` is
-  untouched.
+- Current state: timing VLM notes now optionally produce typed EvidenceIR `FigureRegion`s. SemanticIR grounds
+  lanes to the document signal catalog, converts through `PartialTrace`, and requires verifier `Pass` before
+  lowerability; IntentIR carries the result. Validation counts available/unavailable regions. A reviewed NXP
+  UM11732 fixture proves the persisted real-PDF path and rejection of a model-only lane without claiming a live
+  provider run. Unenriched corpus artifacts stay compatible and currently contain zero VLM notes. The required
+  Rust-analysis rollover is applied root-last and preserves its exact 14-record segment through the archive chain.
+- Next action: commit `.3` through `COMMIT.md`, then pivot cleanly to `.4` and build held-out reviewed
+  source-to-IntentIR gold with per-stage survival/loss, provenance, residual, recall, and precision accounting.
+- In-flight uncommitted: `.3` code, reviewed fixture, exact Rust-analysis rollover, book/roadmap/retrieval/live-doc
+  updates, and derived projections passed the final doctrine/CI gate and await only the commit workflow. No
+  background job runs.
+- Blockers: none. A live VLM endpoint remains unavailable, so `.3` proves production wiring with an explicitly
+  reviewed fixture and leaves live-provider recall to `.4`. The user-owned `.claude/settings.json` is untouched.

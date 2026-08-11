@@ -8,6 +8,7 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 
 | Repository path | Title |
 | --- | --- |
+| [crates/specforge/test_data/figure_region_i2s_reviewed/source.md](../../crates/specforge/test_data/figure_region_i2s_reviewed/source.md) | I2S reviewed vertical fixture |
 | [crates/specforge/test_data/kg_quality/actor_boundary_residual/source.md](../../crates/specforge/test_data/kg_quality/actor_boundary_residual/source.md) | Protocol |
 | [crates/specforge/test_data/kg_quality/actor_port_gap_surface_negative/source.md](../../crates/specforge/test_data/kg_quality/actor_port_gap_surface_negative/source.md) | Protocol |
 | [crates/specforge/test_data/kg_quality/actor_ports_gold/source.md](../../crates/specforge/test_data/kg_quality/actor_ports_gold/source.md) | Protocol |

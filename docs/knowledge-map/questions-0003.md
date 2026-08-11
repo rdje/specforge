@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > how do byte-granular page fragments chain (offset plus size adjacency)
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > how do continuation tables (Table B2.2 Continued) merge into one container
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > how do dword-relative page fragments chain
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > how do packet/flit protocols (CHI-class) declare message fields vs signals
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > how do you audit registers/signals against the table image with the VLM
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
@@ -64,6 +72,8 @@
   > how does SpecForge tell a guide from a real spec / report low-yield docs honestly
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > how does SpecForge verify an extracted claim semantically / catch hallucination
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > how does a VLM timing note become a FigureRegion
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
   > how does a deliberate normalized-bundle reclamation get authorized
 - [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
@@ -72,6 +82,8 @@
   > how does a repair prove its change is isolated if it also rebuilds drifted documents
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > how does a section-heading register avoid double-counting an existing register record
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > how does a timing diagram become an ActorContract in SemanticIR and IntentIR
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > how does a transaction absorb signals from its subsections (3.1.1 / 3.1.2)
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
@@ -285,15 +297,3 @@
   > how is the EvidenceIR extractor path / extraction layer structured and wired
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > how is the FSMGen feedback channel kept bounded without losing old requests and responses
-- [nli-intent-gate](../knowledge/nli-intent-gate.md)
-  > how is the NLI gate tested without Ollama
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > how is the SWD FSM/frame derivation scored (not constraints/relations/temporal)
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > how is the SWDIO sampling and drive-change edge scored
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > how is the agent-definition grammar kept garbage-free without a fragile noun denylist
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > how is the composition-frame grammar kept free of corpus false positives
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > how is the corpus distributed across the document intent categories

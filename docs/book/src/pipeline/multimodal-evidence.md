@@ -50,6 +50,7 @@ A visual evidence item can carry:
 - caption text
 - figure reference text
 - observations
+- an optional typed `figure_region` for a usable timing observation
 - automation confidence
 
 It also records links between text spans and visual evidence, such as caption links or figure references.
@@ -81,6 +82,11 @@ When `EvidenceIR` is rebuilt, those notes become typed visual observations:
 This keeps the model output bounded.
 The VLM does not get to directly author canonical `IntentIR`.
 It contributes a structured observation that later stages can parse, validate, and reject if it is too weak or noisy.
+For a timing observation, `EvidenceIR` also attempts a typed `FigureRegion` projection on the same visual item.
+That projection requires an explicit `cycle` on every retained sample: a zero-based integer or `T<n>` label tied
+to a visible clock grid/edge. Response-array position and unclocked visual position are never time authority.
+Only concrete `HIGH`/`LOW` states become lane levels; other values remain `Unknown`, and free-form annotations
+remain typed `Unknown` annotations rather than being guessed into delay semantics.
 
 ## Timing diagrams
 
@@ -109,6 +115,20 @@ It can also lift grounded `signals[].values[]` tuples into signal-value constrai
 It also filters low-value standalone labels such as pure cycle markers, address labels, compact sample labels, and bit-select/range markup like `XREQ[0]`, `XREQ<1>`, or `XREQ[3:0]` when they do not carry real timing semantics.
 Waveform motion descriptors such as `rising`, `stable`, `falling`, `UNCHANGED`, `RISING_EDGE`, `LOW_TO_HIGH`, `POS_EDGE`, `risingedge`, and `LOW2HIGH` are also filtered from the signal-value path; they describe movement or persistence, not concrete sampled values.
 Generic visual words such as `transfer` should not become fake signal names just because they appear in a timing diagram observation.
+
+The typed contract-mining path is stricter than the raw observation path. Before a `FigureRegion` is converted
+to a `PartialTrace`, every lane must resolve uniquely to a signal already known from the document. A model-only
+lane remains inspectable in `EvidenceIR` but cannot mint a semantic contract. The waveform generalizer then
+round-trip verifies every lowerable candidate against its source trace before fusion and the ordinary fidelity
+gates. Unsupported obligations and verifier disagreement become explicit residuals. A stable span beginning
+after tick zero also stays residual unless a future contract shape supplies its missing trigger/phase anchor;
+silently relocating it to the trace origin would change the observation.
+
+The repository includes a reviewed vertical fixture based on NXP UM11732 Figure 1. It exercises the persisted
+PDF → SourceIR → EvidenceIR `FigureRegion` → `PartialTrace` → verified SemanticIR/IntentIR `ActorContract`
+path and proves that an invented lane is filtered. It is deliberately labeled as reviewed fixture data, not as
+the output of a live VLM. The current retained corpus still has zero persisted VLM notes, so this proof activates
+the production seam without claiming operational provider coverage that has not been measured.
 
 ## State-machine diagrams
 
@@ -188,6 +208,8 @@ Validation exposes several visual and multimodal surfaces, including:
 - visual evidence with captions
 - prior-memory visual classification observations
 - timing diagram extractions
+- typed figure regions available
+- timing observations whose typed region is unavailable
 - semantic hints from visual captions
 - visual semantic grounding
 - cross-modality semantic grounding
@@ -197,6 +219,7 @@ These metrics help distinguish:
 - the document has figures, but they are not classified
 - figures are classified, but not VLM-enriched
 - VLM observations exist, but do not carry usable semantics
+- a timing observation exists, but lacks explicit tick-addressed samples for a typed region
 - visual semantics exist, but conflict with text/table evidence
 - visual evidence genuinely strengthens a canonical role
 
@@ -239,11 +262,13 @@ When debugging visual behavior, inspect:
 - visual asset `diagram_kind`
 - visual asset `note`
 - `EvidenceIR.visual_evidence`
+- `EvidenceIR.visual_evidence[*].figure_region`
 - `EvidenceIR.evidence_links`
 - visual observations
 - `visual_classification_observations`
 - semantic observations with supporting visual evidence ids
 - validation metrics for VLM readiness and visual semantic grounding
+- `typed_figure_regions` and `typed_figure_regions_unavailable`
 
 The goal is not to let images bypass the typed pipeline.
 The goal is to give figures and diagrams a grounded, inspectable path into the same truthfulness machinery as tables and prose.

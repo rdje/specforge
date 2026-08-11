@@ -70,11 +70,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.2 — guard canonical capability accounting`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.3`
-  Status: `pending`
+  Status: `done`
   Goal: `close the real PDF-to-typed-multimodal-IR producer gap`
-  Acceptance: `real PDF figure/table/layout evidence reaches the typed consumers needed for semantic recovery; FigureRegion/waveform support is exercised from a real source fixture or is reported as unavailable, never inferred from synthetic-only downstream tests`
-  Verification: `pending`
-  Commit: `pending`
+  Acceptance: `a VLM timing observation on a real PDF visual asset produces a typed FigureRegion in EvidenceIR; only source-grounded lanes reach the FigureRegion-to-PartialTrace-to-verified-ActorContract path in SemanticIR/IntentIR; evidence validation counts both available and unavailable typed regions; a reviewed real-PDF fixture exercises the vertical path without pretending that a live VLM was available`
+  Verification: `a reviewed retained-PDF fixture crosses every persisted stage and proves grounded WS contract survival plus model-only lane rejection; 14 FigureRegion tests, 17 waveform tests, the vertical semantic/intent test, the available/unavailable validation test, warning-deny Clippy, mdBook, Knowledge Map, doctrines, and full repository CI pass`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.3 — activate typed figure-region mining`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.4`
   Status: `pending`
@@ -97,7 +97,7 @@ expressiveness as the bottleneck.
 | 1 | `SPEC-TO-INTENT-ALIGNMENT.0` | `done` | assessment, owner direction, and controller design are durable and verified |
 | 2 | `SPEC-TO-INTENT-ALIGNMENT.1` | `done` | six category-aware source-to-IntentIR contracts and strict honesty floors are durable |
 | 3 | `SPEC-TO-INTENT-ALIGNMENT.2` | `done` | every production command has guarded integrated/scheduled/omitted accounting |
-| 4 | `SPEC-TO-INTENT-ALIGNMENT.3` | `pending` | next: replace multimodal architectural dormancy with real upstream input |
+| 4 | `SPEC-TO-INTENT-ALIGNMENT.3` | `done` | typed timing observations now cross a grounded, verified retained-PDF vertical path |
 | 5 | `SPEC-TO-INTENT-ALIGNMENT.4` | `pending` | measure whether the complete pipeline is actually converging |
 | 6 | `SPEC-TO-INTENT-ALIGNMENT.5` | `pending` | convert measured outcomes into automatic, reviewable steering |
 
@@ -129,6 +129,13 @@ expressiveness as the bottleneck.
 - `2026-08-11`: do not imply integration to close `.2`. Constrained contracts, Tier-3 actor/signal resolution,
   register-bit recovery, and IntentIR NLI demotion remain explicit omissions; condition repair is covered only
   when the integrated LLM-primary replacement actually executes.
+- `2026-08-11`: close `.3` at the existing production observation seam: carry an optional typed `FigureRegion`
+  on the matching EvidenceIR visual item, mine only lanes grounded in the document's known signal catalog, and
+  round-trip-verify every candidate before fusion/fidelity. Do not add a full-page pass (measured NO-GO), infer
+  lane order from unlabeled samples, or claim a live VLM run while no endpoint is ready.
+- `2026-08-11`: a later stable span is not lowerable without a trigger/phase anchor. The current `Stable`
+  obligation cannot represent a nonzero trace origin, so moving such a span to tick zero would change the
+  evidence; retain it as an explicit residual even if the lane is otherwise clean.
 
 ## Open Questions
 
@@ -161,6 +168,12 @@ expressiveness as the bottleneck.
 | `2026-08-11` | `.2` documentation and projections | mdBook test/build; book-current-truth; Knowledge Map derive/check at 211 facts / 1,568 questions; fact-card catalog at 200 cards; roadmap projection; live-size; rolling-ledger protocol | PASS: code, public contract, retrieval, roadmap, and bounded live surfaces agree |
 | `2026-08-11` | `.2` required CHANGES rollover | dry-run then apply `docs/research/spec-to-intent-alignment-2-changes-rollover-plan.jsonl` | PASS: exact `changes-0007` seals 15 records / 302 lines / 27,085 bytes at SHA-256 `609abef2…d9d2f`; live root is warning-safe and all four archive chains validate |
 | `2026-08-11` | `.2` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines, formatting, clippy with warnings denied, 1,813 Rust tests passed / five ignored / zero failed, Rust docs, mdBook test/build, and final project-data-locality residue check |
+| `2026-08-11` | `.3` pre-change producer audit | Knowledge Map reverify plus source/evidence/semantic/waveform call graph and corpus census | region crops already reach `enrich` and its JSON note reaches typed visual observations, but zero persisted VLM notes exist; `FigureRegion` has no producer or IR field and appears only in synthetic adapter tests; the retained I2S PDF supplies a real timing asset for reviewed-fixture proof while live VLM availability remains honestly absent |
+| `2026-08-11` | `.3` reviewed retained-PDF vertical fixture | `cargo test -p specforge --lib reviewed_i2s_pdf_figure_reaches_verified_intent_contract`; retained NXP UM11732 PDF size/header and fixture identity; persisted SourceIR → EvidenceIR → SemanticIR → IntentIR | PASS: explicit `WS` samples produce a typed region and verified figure contract; `INVENTED_BY_MODEL` remains visible in EvidenceIR but is absent from semantic/intent contracts; fixture declares `reviewed_fixture_no_live_vlm` |
+| `2026-08-11` | `.3` typed-producer and honesty tests | `cargo test -p specforge --lib ir::figure_region`; `cargo test -p specforge --lib ir::waveform`; `cargo test -p specforge --lib validate_evidence_ir_counts_available_and_unavailable_typed_regions`; warning-deny `cargo clippy -p specforge --lib` | PASS: 14 region tests, 17 waveform tests, validation reports 2 raw timing observations / 1 available region / 1 unavailable region, and Clippy emits no warnings |
+| `2026-08-11` | `.3` retrieval and public-contract checks | Knowledge Map derive/check; mdBook test/build; book-current-truth and projection/catalog checks | PASS: typed producer, limits, real-fixture status, and next measurement frontier agree across code, book, roadmap, analysis, and retrieval |
+| `2026-08-11` | `.3` required Rust-analysis rollover | dry-run then root-last apply `docs/research/spec-to-intent-alignment-3-rust-analysis-rollover-plan.jsonl` | PASS: exact `rust-codebase-analysis-0003` seals 14 records / 203 lines / 17,582 bytes at SHA-256 `12fbadf1…631f`; the current `.3` prepend survives and all four archive chains validate warning-safe |
+| `2026-08-11` | `.3` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines, formatting, warning-deny Clippy, 1,820 Rust tests passed / five ignored / zero failed, Rust docs, mdBook test/build, and final project-data-locality residue check |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
 
@@ -184,6 +197,30 @@ expressiveness as the bottleneck.
 - [x] **LOCKSTEP** — code, task frontier, roadmap, current status, architecture analysis, public mdBook,
   Knowledge Map fact/projections, bounded live state, and the lossless CHANGES archive transaction agree.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.3`
+
+- [x] **REPRODUCE / MEASURE** — the baseline census found zero persisted VLM notes and no EvidenceIR
+  `FigureRegion` field or producer; the retained NXP UM11732 page-4 timing asset was visually reviewed and pinned
+  by PDF/crop identities while `doctor --strict` showed no ready live endpoint.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/evidence.rs` already injects timing JSON notes as
+  `VisualObservation`, while `crates/specforge/src/ir/figure_region.rs` and `waveform.rs` began only at a typed
+  synthetic consumer. The observation therefore stopped before `FigureRegion`; no source grounding or verifier
+  could govern a real producer.
+- [x] **ADDRESSED (verified)** — the reviewed vertical `cargo test` proves retained PDF → persisted EvidenceIR
+  typed region → grounded/verified SemanticIR contract → identical IntentIR carry. Validation independently
+  measures two observations as one available + one unavailable; a model-only lane is rejected per item.
+- [x] **NO REGRESSION** — warning-deny `cargo clippy`, focused region/waveform/vertical/validation tests, and
+  `bash scripts/run_ci.sh` are green with 1,820 passed / five ignored / zero failed; artifacts without timing
+  notes omit the serde-default field and the persisted corpus remains unchanged. The exact Rust-analysis
+  rollover leaves 51 live records / 1,018 lines / 85,828 bytes and preserves every sealed record through the
+  validated archive chain.
+- [x] **GENERICITY (ADR 0006)** — the producer accepts the bounded observation schema and grounds against each
+  document's own signal catalog. Runtime code contains no vendor, protocol, document, or signal exception; I2S
+  exists only in reviewed test data.
+- [x] **LOCKSTEP** — code, fixture, validation metrics, roadmap, current status, architecture analysis, mdBook,
+  Knowledge Map, task frontier, bounded resume pointer, and the owned rollover plan/archive describe the same
+  delivered boundary and live-VLM limitation.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -191,6 +228,7 @@ expressiveness as the bottleneck.
 | `SPEC-TO-INTENT-ALIGNMENT.0` | `SPEC-TO-INTENT-ALIGNMENT.0 — fix the upstream objective and trajectory control` | durable trajectory and priority alignment; no product-code or generated-IR mutation |
 | `SPEC-TO-INTENT-ALIGNMENT.1` | `SPEC-TO-INTENT-ALIGNMENT.1 — define source-to-IntentIR category contracts` | versioned category contract, book contract, and retrieval fact; no product-code or generated-IR mutation |
 | `SPEC-TO-INTENT-ALIGNMENT.2` | `SPEC-TO-INTENT-ALIGNMENT.2 — guard canonical capability accounting` | 17-row per-run ledger, full CLI partition guard, public contract, and required lossless CHANGES rollover |
+| `SPEC-TO-INTENT-ALIGNMENT.3` | `SPEC-TO-INTENT-ALIGNMENT.3 — activate typed figure-region mining` | optional EvidenceIR region producer, source grounding, verifier gate, explicit availability metrics, reviewed retained-PDF vertical fixture, and required Rust-analysis rollover |
 
 ## Changelog
 
@@ -204,3 +242,6 @@ expressiveness as the bottleneck.
   to `.2`, canonical production-workflow capability accounting.
 - `2026-08-11`: Closed `.2` with complete guarded capability accounting and explicit current omissions;
   frontier advances to `.3`, real PDF-to-typed-multimodal producer proof.
+- `2026-08-11`: Closed `.3` with a typed timing-observation producer, source-grounded and verifier-gated
+  contract mining, explicit availability accounting, and reviewed real-PDF vertical proof; frontier advances to
+  `.4`, held-out source-to-IntentIR evaluation and stage-loss accounting.

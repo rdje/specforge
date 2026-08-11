@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nli-intent-gate](../knowledge/nli-intent-gate.md)
+  > how is the NLI gate tested without Ollama
+- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
+  > how is the SWD FSM/frame derivation scored (not constraints/relations/temporal)
+- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
+  > how is the SWDIO sampling and drive-change edge scored
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > how is the agent-definition grammar kept garbage-free without a fragile noun denylist
+- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
+  > how is the composition-frame grammar kept free of corpus false positives
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > how is the corpus distributed across the document intent categories
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
   > how is the ingest DISK footprint bounded for very large PDFs
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
@@ -284,16 +296,3 @@
   > is mdbook test part of the canonical SpecForge CI gate
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
   > is qwen2.5:14b-instruct good enough for NLI
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > is re-measuring the candidate list enough to keep the corpus frontier honest (NO — .2.51 correctly re-measured all six of its listed candidates from their own SourceIR profiles and still could not see the omission, because re-deriving the ROWS cannot validate the CARDINALITY. A document already absent from the list is invisible to any check over that list; only the
-  > independent identity cohort == refreshed + remaining exposes it)
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > is relation-completeness the right bar dimension for register / command / coherency protocols
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > is removing the generic enums WIRE-BASED-100-safe (scores ORTHOGONAL/SAFE — generic enums are in no scored gold; but the .isf BYTES change on all 4 wire golds — APB/AHB/AXI/SWP each emit a junk TABLE; AHB's TABLE fuses HTRANS+HSIZE which already have correct enums — a strict improvement needing a deliberate snapshot refresh, NOT byte-identical)
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > is replace_term_with_placeholder safe on non-ASCII signal/actor names
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > is signal direction faithful to the document now or still defaulted to output
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > is source_ir.json bounded in size for very large PDFs

@@ -102,7 +102,7 @@ pub enum EvidenceLinkKind {
     Refines,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct EvidenceIr {
     pub schema_version: u32,
     pub stage: IrStage,
@@ -1527,7 +1527,7 @@ pub struct EvidenceSpan {
     pub note: Option<String>,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct VisualEvidenceItem {
     pub evidence_id: String,
     pub asset_id: String,
@@ -1538,6 +1538,11 @@ pub struct VisualEvidenceItem {
     pub caption_text: Option<String>,
     pub figure_reference_text: Option<String>,
     pub observations: Vec<VisualObservation>,
+    /// Typed timing-region projection of the matching VLM observation. `None` means no timing
+    /// observation was present or its samples lacked explicit tick authority; validation reports
+    /// that boundary separately from the raw observation count.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub figure_region: Option<crate::ir::figure_region::FigureRegion>,
     pub automation_confidence: AutomationConfidence,
 }
 
@@ -1831,6 +1836,7 @@ fn build_visual_evidence_items(
                 caption_text: asset.caption_text.clone(),
                 figure_reference_text: None,
                 observations,
+                figure_region: None,
                 automation_confidence: if asset.caption_text.is_some() {
                     AutomationConfidence::High
                 } else {
@@ -15654,16 +15660,28 @@ fn inject_vlm_observations(
         };
 
         let observation_id = format!("obs_vlm_{kind:?}_{}", &asset.asset_id);
-        visual_evidence[visual_idx]
-            .observations
-            .push(VisualObservation {
-                observation_id,
-                kind,
-                created_by: "specforge_vlm_enrich".to_string(),
-                text: json_str.to_string(),
-                supporting_span_ids: vec![],
-                automation_confidence: AutomationConfidence::High,
+        let figure_region = matches!(kind, VisualObservationKind::TimingDiagramExtraction)
+            .then(|| parse_visual_observation_json(json_str))
+            .flatten()
+            .and_then(|value| {
+                crate::ir::figure_region::FigureRegion::from_timing_observation(
+                    asset,
+                    &value,
+                    AutomationConfidence::High,
+                )
             });
+        let visual_item = &mut visual_evidence[visual_idx];
+        visual_item.observations.push(VisualObservation {
+            observation_id,
+            kind,
+            created_by: "specforge_vlm_enrich".to_string(),
+            text: json_str.to_string(),
+            supporting_span_ids: vec![],
+            automation_confidence: AutomationConfidence::High,
+        });
+        if matches!(kind, VisualObservationKind::TimingDiagramExtraction) {
+            visual_item.figure_region = figure_region;
+        }
 
         // Upgrade VLM-enriched figures to Normative role —
         // timing and state machine diagrams are the most normative content in chip specs.
@@ -15672,7 +15690,7 @@ fn inject_vlm_observations(
             VisualObservationKind::TimingDiagramExtraction
                 | VisualObservationKind::StateMachineExtraction
         ) {
-            visual_evidence[visual_idx].role = crate::ir::evidence::VisualEvidenceRole::Normative;
+            visual_item.role = crate::ir::evidence::VisualEvidenceRole::Normative;
         }
     }
 }

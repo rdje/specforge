@@ -2582,9 +2582,31 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             }
         }
     }
+    let typed_figure_regions = ir
+        .visual_evidence
+        .iter()
+        .filter(|item| item.figure_region.is_some())
+        .count();
+    let typed_figure_regions_unavailable_ids = ir
+        .visual_evidence
+        .iter()
+        .filter(|item| {
+            item.figure_region.is_none()
+                && item.observations.iter().any(|observation| {
+                    matches!(
+                        observation.kind,
+                        VisualObservationKind::TimingDiagramExtraction
+                    )
+                })
+        })
+        .map(|item| item.evidence_id.clone())
+        .collect::<Vec<_>>();
+    let typed_figure_regions_unavailable = typed_figure_regions_unavailable_ids.len();
     println!("  classification_observations: {classification_obs}");
     println!("  timing_diagram_extractions: {timing_obs}");
     println!("  state_machine_extractions: {state_obs}");
+    println!("  typed_figure_regions: {typed_figure_regions}");
+    println!("  typed_figure_regions_unavailable: {typed_figure_regions_unavailable}");
     if timing_obs == 0 && state_obs == 0 {
         println!(
             "  hint: run `specforge enrich` then re-run `specforge evidence` to populate VLM observations"
@@ -3298,6 +3320,18 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             &missing_vlm_observation_related_ids,
         );
     }
+    if typed_figure_regions_unavailable > 0 {
+        findings.push(finding(
+            "evidence_timing_figure_region_unavailable",
+            ValidationFindingSeverity::Warning,
+            "visual_enrichment",
+            format!(
+                "{} timing-diagram observation(s) could not produce a typed FigureRegion because they lacked explicit tick-addressed lane samples",
+                typed_figure_regions_unavailable
+            ),
+            typed_figure_regions_unavailable_ids.clone(),
+        ));
+    }
     if ir.actor_signal_relations.is_empty()
         && (!ir.signal_constraints.is_empty() || !ir.conditional_rules.is_empty())
     {
@@ -3786,6 +3820,11 @@ fn validate_evidence_ir(ir: &EvidenceIr, artifact_fingerprint: String) -> Valida
             ),
             metric("timing_diagram_extractions", timing_obs.to_string()),
             metric("state_machine_extractions", state_obs.to_string()),
+            metric("typed_figure_regions", typed_figure_regions.to_string()),
+            metric(
+                "typed_figure_regions_unavailable",
+                typed_figure_regions_unavailable.to_string(),
+            ),
             metric(
                 "visual_evidence_total",
                 ir.visual_evidence.len().to_string(),
@@ -9316,6 +9355,71 @@ mod tests {
             missing_vlm_rescan_guidance.related_ids,
             vec!["visual_0001".to_string()]
         );
+
+        Ok(())
+    }
+
+    #[test]
+    fn validate_evidence_ir_counts_available_and_unavailable_typed_regions() -> Result<()> {
+        let workspace = crate::project_data::tempdir()?;
+        let source = workspace.path().join("visual_region_counts.md");
+        let source_artifact_base = workspace.path().join("generated/source_ir");
+        let evidence_artifact_base = workspace.path().join("generated/evidence_ir");
+        fs::write(&source, "# Figures\n\nSignal XREQ is output width 1.\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.visual_assets = vec![
+            VisualAsset {
+                asset_id: "asset_explicit_trace".to_string(),
+                asset_kind: VisualAssetKind::Diagram,
+                page_id: Some("page_0001".to_string()),
+                image_path: None,
+                caption_text: Some("XREQ explicit cycle trace".to_string()),
+                caption_source_path: None,
+                source_ref: None,
+                placeholder_text: None,
+                note: Some(
+                    "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":0,\"state\":\"LOW\"},{\"cycle\":1,\"state\":\"LOW\"}]}],\"annotations\":[]}".to_string(),
+                ),
+                diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            },
+            VisualAsset {
+                asset_id: "asset_unaddressed_trace".to_string(),
+                asset_kind: VisualAssetKind::Diagram,
+                page_id: Some("page_0002".to_string()),
+                image_path: None,
+                caption_text: Some("XREQ unaddressed trace".to_string()),
+                caption_source_path: None,
+                source_ref: None,
+                placeholder_text: None,
+                note: Some(
+                    "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"XREQ\",\"values\":[{\"cycle\":\"address phase\",\"state\":\"HIGH\"}]}],\"annotations\":[]}".to_string(),
+                ),
+                diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+            },
+        ];
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        let report = validate_evidence_ir(&evidence_ir, "typed_region_counts".to_string());
+        assert_eq!(
+            metric_value(&report, "timing_diagram_extractions"),
+            Some("2")
+        );
+        assert_eq!(metric_value(&report, "typed_figure_regions"), Some("1"));
+        assert_eq!(
+            metric_value(&report, "typed_figure_regions_unavailable"),
+            Some("1")
+        );
+        let unavailable = report
+            .findings
+            .iter()
+            .find(|finding| finding.finding_id == "evidence_timing_figure_region_unavailable")
+            .expect("expected unavailable typed-region warning");
+        assert_eq!(unavailable.related_ids, vec!["visual_0002".to_string()]);
 
         Ok(())
     }

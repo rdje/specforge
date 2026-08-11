@@ -15,16 +15,15 @@ must stay consistent with them.
 > doctrines) — see the per-sub-tree sections below and the **R16 PROGRAM
 > COMPLETE** recap at the end of this chapter.
 >
-> The thesis crux — accurate prose + timing-diagram extraction *into*
-> that target — is deliberately **not yet wired to a live extractor**.
-> Two pieces stay honestly deferred to future trees because each is
-> blocked on upstream capability that does not exist yet: a PDF →
-> `FigureRegion` raster/vector figure extractor (feeds waveform mining),
-> and a prose LLM/VLM provider feeding `parse_constrained_contract`
-> (feeds constrained extraction). Until those land the R16 surface is
-> **dormant but verified** — every typed target, gate, and honesty
-> doctrine is unit-tested and ready, and on the real corpus the surface
-> reads all-zero rather than faking a pass.
+> **Current activation note (`2026-08-11`):** the production VLM timing-note
+> path now projects usable observations into an optional EvidenceIR
+> `FigureRegion`, grounds its lanes to document-known signals, converts it
+> through `PartialTrace`, and admits an `ActorContract` only after round-trip
+> verification. A reviewed retained-PDF fixture proves the persisted path
+> through IntentIR without claiming a live VLM run. The current corpus still
+> has zero persisted VLM notes, so operational visual recall remains
+> unmeasured rather than being inferred from the fixture. Prose constrained-
+> contract provider wiring remains separate work.
 
 ## Thesis
 
@@ -1178,9 +1177,11 @@ the rest of the R16 family. A new module
 intermediate `PartialTrace` and the generalizer + verifier
 that operate on it. The figure→`PartialTrace` adapter lives
 in a sibling module `crates/specforge/src/ir/figure_region.rs`
-(detailed under `.3.1` / `.3.2` below). Both are additive;
-nothing on `SemanticIr` / `IntentIr` changes shape until an
-upstream figure-extractor produces `PartialTrace`s.
+(detailed under `.3.1` / `.3.2` below). The production builder now stores an
+optional `FigureRegion` on the matching EvidenceIR visual item; SemanticIR
+mines it before fusion/fidelity, and IntentIR carries the resulting contracts.
+Older and unenriched artifacts remain compatible because the field defaults
+to absent and is skipped while empty.
 
 ### `PartialTrace` — what a figure-extractor produces
 
@@ -1279,13 +1280,13 @@ WAVEFORM-derived candidate flows through.)
 
 ### `.3.1` — the typed `FigureRegion` input contract
 
-A corpus survey (`find … *.pdf *.svg` over the SpecForge
-tree) returned nothing — the test corpus is **pre-processed**;
-raw PDF / SVG bytes are out-of-tree. So `WAVEFORM.3`'s
-"extractor" is in fact a **typed adapter** consuming the
-upstream record an out-of-tree PDF pipeline produces. The
-question for `.3.1` was: *what shape should that upstream
-record take so the WAVEFORM tree can consume it cleanly?*
+At the original `WAVEFORM.3` delivery boundary, the extractor was a typed
+adapter waiting for an upstream producer. That historical scope has now been
+activated at the existing production seam: `enrich` reads the region crop and
+writes a bounded timing JSON note on `VisualAsset`; rebuilding EvidenceIR
+turns a usable note into `FigureRegion`. Raw image bytes still stay outside the
+IR record, and the full-page pass remains deliberately absent because the
+page-capture study found no useful intent-recall case for it.
 
 The closest existing upstream record is
 `crates/specforge/src/ir/source.rs::VisualAsset`
@@ -1316,12 +1317,12 @@ pub enum FigureAnnotation {
 }
 ```
 
-The contract is deliberately additive: `VisualAsset` doesn't
-change; `FigureRegion` is the **new typed record** an upstream
-extractor populates when it has structure to record. When
-upstream produces zero `FigureRegion`s (today's corpus),
-the adapter is a no-op and the rest of the pipeline runs
-exactly as it did before this tree.
+The contract remains additive: `VisualAsset` does not change. The matching
+`VisualEvidenceItem` carries `figure_region: Option<FigureRegion>`. Projection
+accepts only samples with explicit integer or `T<n>` tick addresses tied to a
+visible clock grid/edge; array position is never time authority. `HIGH` and
+`LOW` become concrete levels, all other states remain `Unknown`, and untyped
+annotation text remains `Unknown` instead of being guessed into bounds.
 
 `raw_image_path` is optional but already follows the repository-owned persisted-path contract. A serialized
 record stores a repository-relative value; deserialization resolves it at the current repository root, and an
@@ -1353,22 +1354,28 @@ The adapter maps `FigureRegion` ⇒ `PartialTrace` cleanly:
 
 ### What you see in the report today
 
-Run `specforge validate <intent.json>` and the SemanticIR /
-IntentIR count blocks include:
+EvidenceIR validation now distinguishes raw timing observations from usable
+typed regions:
+
+```text
+  timing_diagram_extractions: N
+  typed_figure_regions: A
+  typed_figure_regions_unavailable: U
+```
+
+SemanticIR / IntentIR validation also includes:
 
 ```text
   waveform: figure_contracts=0 verifier_fail_residuals=0
 ```
 
-Both zero, on the nvme corpus today. That's the honest
-dormancy signal: no `FigureRegion`s are produced upstream
-today, so the adapter generates no `PartialTrace`s, and the
-generalizer mints no contracts. The typed pathway is
-unit-tested end-to-end with synthetic inputs (13 waveform
-tests + 6 adapter tests), so the moment upstream lands real
-records, the numbers move and the rest of the pipeline
-(fusion, fidelity, .isf lowering) consumes the figure-mined
-contracts the same way it consumes prose-mined ones.
+The retained corpus still reports zero because it contains no persisted VLM
+timing notes. That is an operational-data absence, not producer dormancy. A
+reviewed NXP UM11732 fixture now exercises a real retained PDF identity through
+the persisted SourceIR, EvidenceIR, SemanticIR, and IntentIR boundaries. It
+keeps the raw model-only lane visible in EvidenceIR, proves semantic grounding
+removes it, and proves the grounded `WS` span reaches a verified figure contract.
+The fixture is explicitly not presented as live-provider output.
 
 Counts derive from the IR itself — `figure_contracts` is the
 count of contracts whose `provenance.modality` is `Figure`;
@@ -1399,10 +1406,11 @@ synthetic-input level:
   one rank, so downstream consumers see the reduced
   confidence even when other parts of the trace are clean.
 
-Corpus-level proof activates the moment upstream produces
-`FigureRegion`s — and when it does, those tests are the
-guardrails that say *"a contract with `Lowerable` lowering
-came from a trace the verifier accepted; you can trust it."*
+The reviewed real-PDF vertical fixture supplies the first producer-level proof;
+held-out live-provider recall/precision remains the next measurement boundary.
+These tests are the guardrails that say *"a contract with `Lowerable` lowering
+came from a grounded trace the verifier accepted; you can trust that bounded
+claim."*
 
 ### The four user-facing guarantees
 
@@ -1420,10 +1428,9 @@ This design buys you four properties you can rely on:
    mined from a single figure never reaches `High` on its
    own; promotion requires cross-modal agreement through
    FUSION.
-4. **Today's pipeline is byte-identical.** With no
-   `FigureRegion`s in the corpus, every record is empty, the
-   adapter is a no-op, the validate counts read zero, and
-   nothing in `IntentIR` / `.isf` changes shape.
+4. **Unenriched artifacts stay compatible.** With no timing note, the optional
+   `FigureRegion` is omitted and the pipeline behaves as before. When a note is
+   present, availability and unavailability are both counted explicitly.
 
 ### Status — delivered (`2026-05-20`)
 
@@ -1456,10 +1463,11 @@ leaves landed under the standard CI bar:
   `Residual.reason` `"verifier disagreement: "` prefix —
   IR is self-describing.
 
-**Future raster / vector handling** is honestly deferred to
-a new tree, when the upstream PDF pipeline produces those
-bytes. That's not a re-opened leaf of this tree — it's a
-new piece of work with its own scope.
+**Later activation (`SPEC-TO-INTENT-ALIGNMENT.3`, 2026-08-11):** the existing
+VLM region-crop observation is now the producer for the typed record. Direct
+vector geometry and richer typed delay/value annotation recovery remain future
+accuracy work; they are not prerequisites for the conservative lane path that
+ships today.
 
 *Authoritative tracking:*
 `docs/tasks/R16-WAVEFORM-CONTRACT-MINING.md`.

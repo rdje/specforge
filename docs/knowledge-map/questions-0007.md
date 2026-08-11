@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > what is TransactionIntent.channel_membership and where is it built (mint_named_transaction)
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > what is a ClusterExtractionProfile / derive_extraction_profiles (the per-cluster extraction profile)
+- [contested-priors](../knowledge/contested-priors.md)
+  > what is a contested prior
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > what is aggregate_composition in surfaces.jsonl
+- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
+  > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > what is capture_signal_presence_rows and who shares it
+- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
+  > what is consolidate_register_field_fragments / EXTRACTION-GAP-FIX.4c
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > what is content-based name-column detection / rotation offset remapping
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > what is continuation_inherited_table_heads and what grounds the join
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
@@ -281,20 +297,3 @@
   > what message field metrics does validate emit
 - [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
   > what model do converge / enrich / nlp-enrich use by default
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > what model does the NLI verifier use
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what must .5.iv.a exclude before header-sourced naming can land (four measured junk classes among the 134: OFFSET-headed register-offset tables where the header names a column concept not a field (3, CoreSight SDC-600); *_WIDTH self-named pseudo-enums whose only member is LEGAL_VALUES (the .5.iii honest residual, reappearing from the header side); garbled members (AXADDR ->
-  > VA_40/NUM_2_0_A); and 12 RESERVED-only enums carrying no intent. It is byte-changing on the AXI wire gold ihi0022_l (a new AWATOP enum) so it needs the full before/after WIRE-BASED-100 protocol)
-- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
-  > what must SpecForge derive to fully capture SWD; what are the gaps
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > what must be rebuilt after moving the SpecForge repository
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > what must happen before the USB4 inter-domain corpus refresh can run
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what owns containment of the live document adoption task history
-- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
-  > what owns live-document size limits and transition debt
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > what owns the SWD EvidenceIR to IntentIR projection gap

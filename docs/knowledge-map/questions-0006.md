@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > what are the final GIC Overview Guide reproducibility hashes
+- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
+  > what are the final OpenCAPI 32G PHY Signaling SourceIR and normalized bundle hashes
+- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
+  > what are the final OpenCAPI Discovery artifact hashes
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > what are the isf_protocol residual packet prefixes
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > what are the two dominant ISF-lowering completeness gaps (register bit-fields, message-field structures)
+- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
+  > what are the undeclared-named-subject rule drops at ISF lowering (conditional_rules / signal_constraints / temporal_invariants)
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > what blocks a Rust code change from committing in specforge
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
@@ -166,6 +178,8 @@
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > what gates the corpus refresh frontier / what is the CORPUS-FRONTIER doctrine (scripts/check_corpus_frontier.sh -> scripts/check_corpus_frontier_census.pl against doctrine/corpus_frontier/census.json, gate-tier, eighth registered doctrine. Four checks: IDENTITY derived cohort/refreshed equal the declared expected; MEMBERSHIP every declared-remaining key exists, is in the
   > cohort, and retains no bundle; OMISSION no cohort member outside the declared set still has a retired-root path and no bundle; PROSE the root task file states the same counts. Self-test 10/10, 52 ms for the whole corpus, skips loudly when generated/ is absent)
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > what gives timing observation samples tick authority
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > what global provenance and stage-conservation gates apply before executable lowering
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
@@ -210,6 +224,8 @@
   > what happens when SemanticIR has no authoritative signal names
 - [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
   > what happens when a roadmap section grows too long
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > what happens when a timing observation has no explicit tick-addressed samples
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > what happens when document intent category is unresolved
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
@@ -282,19 +298,3 @@
   > what is SerialFrameField / serial_frame_fields / SerialFramePhase
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
   > what is SpecForge doing in academic or research terms
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > what is TransactionIntent.channel_membership and where is it built (mint_named_transaction)
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > what is a ClusterExtractionProfile / derive_extraction_profiles (the per-cluster extraction profile)
-- [contested-priors](../knowledge/contested-priors.md)
-  > what is a contested prior
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > what is aggregate_composition in surfaces.jsonl
-- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
-  > what is audit-extraction / PDF-VARIANT-DIGESTION.4b
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is capture_signal_presence_rows and who shares it
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > what is consolidate_register_field_fragments / EXTRACTION-GAP-FIX.4c
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > what is content-based name-column detection / rotation offset remapping

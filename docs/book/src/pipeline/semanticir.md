@@ -311,6 +311,12 @@ A good semantic artifact should have:
 
 When those observations come from captions or VLM-enriched diagrams, the dedicated [Multimodal Evidence And Visual Grounding](multimodal-evidence.md) chapter explains how that visual provenance is preserved.
 
+For a typed timing `FigureRegion`, `SemanticIR` first grounds every lane against the document's known signal
+catalog, converts the region to a `PartialTrace`, generalizes conservative figure-provenance `ActorContract`
+candidates, and retains lowerability only after the trace verifier returns `Pass`. The candidates then enter the
+same fusion and fidelity path as prose-derived contracts. This is a production builder path; current corpus
+artifacts remain empty until enrichment supplies timing notes.
+
 ## Portable lineage paths
 
 `SemanticIR` keeps two representations of repository-owned paths. A loaded or newly built Rust value exposes

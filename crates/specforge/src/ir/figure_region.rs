@@ -2,11 +2,10 @@
 //! adapter (R16-WAVEFORM-CONTRACT-MINING.3.1 design / `.3.2`
 //! implementation).
 //!
-//! `FigureRegion` is the typed *extension* an upstream PDF pipeline
-//! produces when it classifies a `VisualAsset` (already present in
-//! `crates/specforge/src/ir/source.rs`) as a timing diagram and
-//! recovers lane / annotation structure. SpecForge consumes these
-//! typed records; raw raster/SVG bytes stay out-of-tree.
+//! `FigureRegion` is the typed extension projected from an enriched
+//! `VisualAsset` when its timing observation carries explicit
+//! tick-addressed lane structure. EvidenceIR stores the optional
+//! region; raw raster/SVG bytes remain outside the typed record.
 //!
 //! `.3.2` refinement of the `.3.1` design: `FigureAnnotation` is
 //! modelled as an enum so each variant carries exactly the fields it
@@ -14,15 +13,16 @@
 //! The adapter trivially maps `Delay → RelativeDelay`, `Value →
 //! ValueSpan`, and `Unknown` lowers the trace confidence.
 //!
-//! No producer wiring; `SemanticIr`/`IntentIr` schemas unchanged ⇒
-//! zero artifact churn until an upstream pipeline produces typed
-//! `FigureRegion`s.
+//! `SPEC-TO-INTENT-ALIGNMENT.3` wires the producer into EvidenceIR and
+//! grounds/mines it in SemanticIR. Artifacts without a usable timing
+//! observation keep the optional field absent, preserving compatibility.
 
+use std::collections::{BTreeMap, HashSet};
 use std::path::PathBuf;
 
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-use crate::ir::source::AutomationConfidence;
+use crate::ir::source::{AutomationConfidence, VisualAsset};
 use crate::persisted_path::{PersistedPathOrigin, normalize_for_storage, resolve_reference};
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq)]
@@ -155,6 +155,190 @@ where
 }
 
 impl FigureRegion {
+    /// Build the typed waveform surface from one production timing-diagram observation.
+    ///
+    /// The VLM must supply an explicit numeric tick (a JSON integer, decimal string, or `T<n>`
+    /// label) for every sample. Array order and arbitrary labels never become time authority.
+    /// Only concrete HIGH/LOW values carry behavior; all other states stay `Unknown` and break
+    /// spans in the downstream adapter. Free-form annotations remain `Unknown` rather than being
+    /// reinterpreted as delays or values without a typed producer contract.
+    pub fn from_timing_observation(
+        asset: &VisualAsset,
+        value: &serde_json::Value,
+        confidence: AutomationConfidence,
+    ) -> Option<Self> {
+        let signals = value.get("signals")?.as_array()?;
+        let mut lanes = BTreeMap::<String, BTreeMap<u32, LaneLevel>>::new();
+
+        for signal in signals {
+            let Some(signal_name) = signal
+                .get("name")
+                .and_then(serde_json::Value::as_str)
+                .map(str::trim)
+                .filter(|name| !name.is_empty())
+            else {
+                continue;
+            };
+            let Some(values) = signal.get("values").and_then(serde_json::Value::as_array) else {
+                continue;
+            };
+
+            for sample in values {
+                let Some(tick) = sample.get("cycle").and_then(parse_explicit_tick) else {
+                    continue;
+                };
+                let Some(level) = sample
+                    .get("state")
+                    .and_then(serde_json::Value::as_str)
+                    .map(parse_lane_level)
+                else {
+                    continue;
+                };
+                merge_sample(
+                    lanes.entry(signal_name.to_string()).or_default(),
+                    tick,
+                    level,
+                );
+            }
+        }
+
+        let waveform_lanes = lanes
+            .into_iter()
+            .filter_map(|(signal_name, samples)| {
+                (!samples.is_empty()).then(|| FigureLane {
+                    signal_name,
+                    samples: samples
+                        .into_iter()
+                        .map(|(at_tick, level)| LaneSample { at_tick, level })
+                        .collect(),
+                })
+            })
+            .collect::<Vec<_>>();
+        let annotations = value
+            .get("annotations")
+            .and_then(serde_json::Value::as_array)
+            .into_iter()
+            .flatten()
+            .filter_map(serde_json::Value::as_str)
+            .map(str::trim)
+            .filter(|text| !text.is_empty())
+            .map(|text| FigureAnnotation::Unknown {
+                text: text.to_string(),
+                bbox: None,
+            })
+            .collect::<Vec<_>>();
+
+        if waveform_lanes.is_empty() && annotations.is_empty() {
+            return None;
+        }
+
+        Some(Self {
+            visual_asset_id: asset.asset_id.clone(),
+            bbox: None,
+            annotations,
+            waveform_lanes,
+            tick_count: None,
+            raw_image_path: asset.image_path.clone(),
+            confidence,
+        })
+    }
+
+    /// Retain only signal-bearing records that resolve uniquely to the document's current signal
+    /// catalog, canonicalizing case back to that catalog. Ambiguous case-folded identities and
+    /// VLM-only names disappear before contract mining; informational/unknown annotations remain
+    /// visible so they can still lower confidence honestly.
+    pub fn grounded_to(&self, known_signal_names: &HashSet<String>) -> Self {
+        let mut canonical_by_fold = BTreeMap::<String, Vec<String>>::new();
+        for name in known_signal_names {
+            canonical_by_fold
+                .entry(name.to_ascii_lowercase())
+                .or_default()
+                .push(name.clone());
+        }
+        for names in canonical_by_fold.values_mut() {
+            names.sort();
+            names.dedup();
+        }
+
+        let canonical = |name: &str| -> Option<String> {
+            if known_signal_names.contains(name) {
+                return Some(name.to_string());
+            }
+            let matches = canonical_by_fold.get(&name.to_ascii_lowercase())?;
+            (matches.len() == 1).then(|| matches[0].clone())
+        };
+
+        let mut grounded_lanes = BTreeMap::<String, BTreeMap<u32, LaneLevel>>::new();
+        for lane in &self.waveform_lanes {
+            let Some(signal_name) = canonical(&lane.signal_name) else {
+                continue;
+            };
+            let samples = grounded_lanes.entry(signal_name).or_default();
+            for sample in &lane.samples {
+                merge_sample(samples, sample.at_tick, sample.level.clone());
+            }
+        }
+
+        let annotations = self
+            .annotations
+            .iter()
+            .filter_map(|annotation| match annotation {
+                FigureAnnotation::Delay {
+                    from_signal,
+                    to_signal,
+                    min_cycles,
+                    max_cycles,
+                    text,
+                    bbox,
+                } => Some(FigureAnnotation::Delay {
+                    from_signal: canonical(from_signal)?,
+                    to_signal: canonical(to_signal)?,
+                    min_cycles: *min_cycles,
+                    max_cycles: *max_cycles,
+                    text: text.clone(),
+                    bbox: *bbox,
+                }),
+                FigureAnnotation::Value {
+                    signal,
+                    value,
+                    from_tick,
+                    to_tick,
+                    text,
+                    bbox,
+                } => Some(FigureAnnotation::Value {
+                    signal: canonical(signal)?,
+                    value: value.clone(),
+                    from_tick: *from_tick,
+                    to_tick: *to_tick,
+                    text: text.clone(),
+                    bbox: *bbox,
+                }),
+                FigureAnnotation::Label { .. } | FigureAnnotation::Unknown { .. } => {
+                    Some(annotation.clone())
+                }
+            })
+            .collect();
+
+        Self {
+            visual_asset_id: self.visual_asset_id.clone(),
+            bbox: self.bbox,
+            annotations,
+            waveform_lanes: grounded_lanes
+                .into_iter()
+                .map(|(signal_name, samples)| FigureLane {
+                    signal_name,
+                    samples: samples
+                        .into_iter()
+                        .map(|(at_tick, level)| LaneSample { at_tick, level })
+                        .collect(),
+                })
+                .collect(),
+            tick_count: self.tick_count,
+            raw_image_path: self.raw_image_path.clone(),
+            confidence: self.confidence,
+        }
+    }
+
     /// Inferred tick count: explicit `tick_count` if present, else the
     /// max `at_tick + 1` across all lanes / Value annotations, else 0.
     pub fn inferred_ticks(&self) -> u32 {
@@ -180,6 +364,39 @@ impl FigureRegion {
             (None, None) => 0,
         }
     }
+}
+
+fn parse_explicit_tick(value: &serde_json::Value) -> Option<u32> {
+    if let Some(tick) = value.as_u64() {
+        return u32::try_from(tick).ok();
+    }
+    let label = value.as_str()?.trim();
+    label.parse::<u32>().ok().or_else(|| {
+        label
+            .strip_prefix('T')
+            .or_else(|| label.strip_prefix('t'))?
+            .parse::<u32>()
+            .ok()
+    })
+}
+
+fn parse_lane_level(value: &str) -> LaneLevel {
+    match value.trim().to_ascii_uppercase().as_str() {
+        "HIGH" | "1" => LaneLevel::High,
+        "LOW" | "0" => LaneLevel::Low,
+        _ => LaneLevel::Unknown,
+    }
+}
+
+fn merge_sample(samples: &mut BTreeMap<u32, LaneLevel>, tick: u32, level: LaneLevel) {
+    samples
+        .entry(tick)
+        .and_modify(|existing| {
+            if *existing != level {
+                *existing = LaneLevel::Unknown;
+            }
+        })
+        .or_insert(level);
 }
 
 #[cfg(test)]
@@ -435,5 +652,109 @@ mod tests {
 
         let error = serde_json::from_value::<FigureRegion>(json).unwrap_err();
         assert!(error.to_string().contains("/tmp/fig.png"));
+    }
+
+    fn timing_asset() -> VisualAsset {
+        VisualAsset {
+            asset_id: "picture_0005".to_string(),
+            asset_kind: crate::ir::source::VisualAssetKind::Figure,
+            page_id: Some("page_0004".to_string()),
+            image_path: Some(PathBuf::from(
+                "generated/source_ir/i2s/normalized/assets/picture-0005.png",
+            )),
+            caption_text: Some(
+                "Figure 1. Simple system configurations and basic interface timing".to_string(),
+            ),
+            caption_source_path: None,
+            source_ref: Some("#/pictures/4".to_string()),
+            placeholder_text: None,
+            note: None,
+            diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+        }
+    }
+
+    #[test]
+    fn timing_observation_requires_explicit_ticks_and_coalesces_conflicts_honestly() {
+        let value = serde_json::json!({
+            "signals": [
+                {
+                    "name": "WS",
+                    "values": [
+                        {"cycle": "T2", "state": "LOW"},
+                        {"cycle": 0, "state": "LOW"},
+                        {"cycle": "2", "state": "HIGH"},
+                        {"cycle": "address phase", "state": "LOW"}
+                    ]
+                },
+                {"name": "", "values": [{"cycle": 0, "state": "HIGH"}]}
+            ],
+            "annotations": ["word-select boundary is visible"]
+        });
+
+        let region = FigureRegion::from_timing_observation(
+            &timing_asset(),
+            &value,
+            AutomationConfidence::High,
+        )
+        .expect("the explicit samples should produce a region");
+        assert_eq!(region.waveform_lanes.len(), 1);
+        assert_eq!(region.waveform_lanes[0].signal_name, "WS");
+        assert_eq!(
+            region.waveform_lanes[0].samples,
+            vec![
+                LaneSample {
+                    at_tick: 0,
+                    level: LaneLevel::Low,
+                },
+                LaneSample {
+                    at_tick: 2,
+                    level: LaneLevel::Unknown,
+                },
+            ]
+        );
+        assert_eq!(region.inferred_ticks(), 3);
+        assert!(matches!(
+            region.annotations.as_slice(),
+            [FigureAnnotation::Unknown { .. }]
+        ));
+    }
+
+    #[test]
+    fn timing_observation_without_explicit_samples_or_annotations_is_unavailable() {
+        let value = serde_json::json!({
+            "signals": [{
+                "name": "WS",
+                "values": [{"cycle": "left channel", "state": "LOW"}]
+            }],
+            "annotations": []
+        });
+        assert!(
+            FigureRegion::from_timing_observation(
+                &timing_asset(),
+                &value,
+                AutomationConfidence::High,
+            )
+            .is_none()
+        );
+    }
+
+    #[test]
+    fn grounding_canonicalizes_known_lanes_and_drops_vlm_only_names() {
+        let value = serde_json::json!({
+            "signals": [
+                {"name": "ws", "values": [{"cycle": 0, "state": "LOW"}]},
+                {"name": "INVENTED", "values": [{"cycle": 0, "state": "HIGH"}]}
+            ],
+            "annotations": []
+        });
+        let region = FigureRegion::from_timing_observation(
+            &timing_asset(),
+            &value,
+            AutomationConfidence::High,
+        )
+        .unwrap();
+        let grounded = region.grounded_to(&HashSet::from(["WS".to_string()]));
+        assert_eq!(grounded.waveform_lanes.len(), 1);
+        assert_eq!(grounded.waveform_lanes[0].signal_name, "WS");
     }
 }

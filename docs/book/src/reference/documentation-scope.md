@@ -202,10 +202,10 @@ the code does:
   provider into `parse_constrained_contract` (an edit), plus
   adding a `signal_relation` extraction type (R14) — not
   building a provider;
-- the one genuinely upstream-absent piece is a typed
-  PDF→`FigureRegion` raster/vector decoder (the VLM already
-  reads diagram images — just to text, not the typed
-  geometric path);
+- at that audit revision, the genuinely upstream-absent piece was a typed
+  PDF→`FigureRegion` producer. Since `SPEC-TO-INTENT-ALIGNMENT.3`, usable VLM
+  timing-note JSON is projected into an EvidenceIR `FigureRegion` and mined
+  through grounded, verified contracts; direct vector geometry remains absent;
 - stale `.fsm` example blocks in `INTENTIR_SPEC.md` were
   corrected to `.isf`, and `RUST_CODEBASE_ANALYSIS.md` gained
   a dated currency note (provider + full 17-command surface).
@@ -215,11 +215,10 @@ the code does:
 The "what's left to build" picture is now honest in both
 directions: it doesn't **under**-claim (the extraction
 pipeline is live, default, and validated) and it doesn't
-**over**-claim (the typed R16 honesty surfaces are still
-dormant until wired). If you're choosing what to work on
-next, the docs now point you at *wiring* and a *figure
-decoder* — not at re-inventing a provider that already
-ships.
+**over**-claim. The later `.3` activation closes the basic typed timing-lane
+wiring but does not establish live-provider recall, direct geometry recovery,
+or constrained-prose integration. Those measured gaps—not provider invention—
+are the remaining work.
 
 *Authoritative tracking:*
 `docs/tasks/AUDIT-PROVIDER-FRAMING-RECONCILE.md`.

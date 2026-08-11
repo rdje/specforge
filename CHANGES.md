@@ -1,3 +1,24 @@
+### SPEC-TO-INTENT-ALIGNMENT.3 — timing observations now reach verified figure contracts
+
+- `EvidenceIR.visual_evidence[*]` can now carry an optional typed `FigureRegion` projected from the matching
+  timing-diagram VLM note. Samples require explicit integer/string/`T<n>` tick addresses; conflicting duplicate
+  samples become unknown, non-concrete levels remain unknown, and untyped annotations are never guessed into
+  timing bounds.
+- `SemanticIR` grounds lanes against the document's own signal catalog, converts the region through
+  `PartialTrace`, and keeps a candidate lowerable only after the round-trip trace verifier passes. Model-only
+  lanes disappear before mining; unsupported contracts and nonzero-origin stable spans remain explicit
+  residuals. `IntentIR` carries the result unchanged before adapter lowering.
+- Evidence validation now reports `typed_figure_regions` and `typed_figure_regions_unavailable`, including a
+  warning with per-item evidence ids when a raw timing observation lacks usable tick-addressed samples.
+- Added a reviewed vertical fixture tied to the retained NXP UM11732 PDF/crop identities. It proves persisted
+  PDF → SourceIR → EvidenceIR → SemanticIR → IntentIR flow, a verified `WS` figure contract, and rejection of an
+  injected model-only lane. It explicitly does not claim live-VLM output; the corpus still has zero persisted
+  VLM notes.
+- The required architecture-analysis prepend crossed its mandatory line rollover threshold. An exact root-last
+  transaction seals all 14 opening-boundary post-migration records as `rust-codebase-analysis-0003` (203 lines,
+  17,582 bytes, SHA-256 `12fbadf1…631f`) while keeping the current `.3` record and retained migration suffix live;
+  the resulting root is warning-safe at 51 records / 1,018 lines / 85,828 bytes.
+
 ### SPEC-TO-INTENT-ALIGNMENT.2 — `converge` now reports every production capability
 
 - Every successful convergence run emits 17 JSON capability rows covering all 16 production subcommands.

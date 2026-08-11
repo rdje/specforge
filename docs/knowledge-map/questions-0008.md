@@ -2,6 +2,23 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > what model does the NLI verifier use
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > what must .5.iv.a exclude before header-sourced naming can land (four measured junk classes among the 134: OFFSET-headed register-offset tables where the header names a column concept not a field (3, CoreSight SDC-600); *_WIDTH self-named pseudo-enums whose only member is LEGAL_VALUES (the .5.iii honest residual, reappearing from the header side); garbled members (AXADDR ->
+  > VA_40/NUM_2_0_A); and 12 RESERVED-only enums carrying no intent. It is byte-changing on the AXI wire gold ihi0022_l (a new AWATOP enum) so it needs the full before/after WIRE-BASED-100 protocol)
+- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
+  > what must SpecForge derive to fully capture SWD; what are the gaps
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > what must be rebuilt after moving the SpecForge repository
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > what must happen before the USB4 inter-domain corpus refresh can run
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what owns containment of the live document adoption task history
+- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
+  > what owns live-document size limits and transition debt
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > what owns the SWD EvidenceIR to IntentIR projection gap
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
   > what parts of the literature are deferred or flagged as future work
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -22,6 +39,8 @@
   > what protects the validation projection when LIVE_ACHIEVEMENT_STATUS rolls over
 - [repository-local-scratch](../knowledge/repository-local-scratch.md)
   > what proved that analysis commands can violate project data locality
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > what real PDF proves the FigureRegion vertical path
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
   > what remains under-extracted in OpenCAPI Discovery Configuration
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
@@ -166,6 +185,8 @@
   > where does the nli-verify measurement go / is the extraction-quality gauge persisted
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
   > where does the specforge chipdoc host library symlink currently resolve
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > where is FigureRegion stored in EvidenceIR
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
   > where is KNOWLEDGE_MAP_ARCHITECTURE.md
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
@@ -276,25 +297,3 @@
   > which LLM or VLM does SpecForge use
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > which Markdown files must the live-document containment registry cover
-- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
-  > which PDF task history ids exist only as tree-relative shorthand
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > which SWD protocol facts are safe to lower today
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > which SemanticIR IntentIR adapter and prior memory paths serialize repository relative
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > which SourceIR and EvidenceIR paths serialize repository relative
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > which active task tree is next at the live document warning
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > which boot-volume Rust directories are allowed
-- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
-  > which canonical Markdown collections still rely only on git query
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > which command produces the document_class metric
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > which conditional rules survive when a document declares no signals
-- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
-  > which corpus PDFs are password/permission protected
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > which corpus docs declare fields with a Field-titled column

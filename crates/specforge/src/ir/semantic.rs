@@ -343,6 +343,15 @@ impl SemanticIr {
             .iter()
             .map(crate::ir::contract::contract_from_temporal_rule)
             .collect::<Vec<_>>();
+        // SPEC-TO-INTENT-ALIGNMENT.3: production timing observations now carry an optional typed
+        // FigureRegion on EvidenceIR. Ground its lanes against this document's signal catalog,
+        // generalize through the existing waveform adapter, and require round-trip verifier Pass
+        // before a candidate remains lowerable. This runs before fusion/fidelity so figure/prose
+        // agreement and disagreement use the same established honesty path.
+        actor_contracts.extend(mine_verified_figure_contracts(
+            &evidence_ir,
+            &vlm_known_signal_names,
+        ));
         // CVE-PROSE-EXTRACTION.2: fold prose-extracted contracts (from the
         // `extract-contracts` command — already fails-closed parsed +
         // entailment-gated when written) into `actor_contracts` BEFORE fusion
@@ -10367,6 +10376,21 @@ fn extract_records_from_vlm_observations(
         state_records,
         transition_records,
     )
+}
+
+fn mine_verified_figure_contracts(
+    evidence_ir: &EvidenceIr,
+    known_signal_names: &HashSet<String>,
+) -> Vec<crate::ir::contract::ActorContract> {
+    evidence_ir
+        .visual_evidence
+        .iter()
+        .filter_map(|item| item.figure_region.as_ref())
+        .flat_map(|region| {
+            let grounded = region.grounded_to(known_signal_names);
+            crate::ir::waveform::verified_contracts_from_figure_region(&grounded)
+        })
+        .collect()
 }
 
 /// Parse a `TimingDiagramExtraction` JSON observation into `TimingConstraintRecord` entries.
@@ -23934,6 +23958,151 @@ mod tests {
             address.signal_set,
             vec!["HADDR".to_string(), "HNONSEC".to_string()]
         );
+    }
+
+    #[test]
+    fn reviewed_i2s_pdf_figure_reaches_verified_intent_contract() -> Result<()> {
+        let fixture: serde_json::Value = serde_json::from_str(include_str!(
+            "../../test_data/figure_region_i2s_reviewed/fixture.json"
+        ))?;
+        let repository_root = crate::project_data::repository_root()?;
+        let source_pdf = repository_root.join(
+            fixture["source_pdf_path"]
+                .as_str()
+                .expect("fixture source path must be a string"),
+        );
+        let source_metadata = fs::metadata(&source_pdf)?;
+        assert_eq!(
+            source_metadata.len(),
+            fixture["source_pdf_size_bytes"]
+                .as_u64()
+                .expect("fixture source size must be an integer")
+        );
+        assert!(fs::read(&source_pdf)?.starts_with(b"%PDF"));
+
+        // Keep every transient artifact on the repository volume while exercising the same
+        // persisted stage boundaries as production. The retained PDF supplies identity and real
+        // source provenance; the reviewed companion markdown supplies only deterministic signal
+        // declarations so the test does not depend on Docling or a live VLM.
+        let workspace = crate::project_data::tempdir()?;
+        let source_artifact_base = workspace.path().join("generated/source_ir");
+        let evidence_artifact_base = workspace.path().join("generated/evidence_ir");
+        let semantic_artifact_base = workspace.path().join("generated/semantic_ir");
+        let intent_artifact_base = workspace.path().join("generated/intent_ir");
+        let mut source_ir = SourceIr::build(&source_pdf, &source_artifact_base)?;
+        assert_eq!(
+            source_ir.document_identity.document_key,
+            fixture["document_key"]
+                .as_str()
+                .expect("fixture document key must be a string")
+        );
+        source_ir.normalization_plan.status = crate::ir::source::NormalizationStatus::Ready;
+        source_ir.normalization_plan.promoted_markdown_path = Some(
+            repository_root.join("crates/specforge/test_data/figure_region_i2s_reviewed/source.md"),
+        );
+        source_ir.visual_assets = vec![VisualAsset {
+            asset_id: fixture["asset"]["asset_id"]
+                .as_str()
+                .expect("fixture asset id must be a string")
+                .to_string(),
+            asset_kind: VisualAssetKind::Figure,
+            page_id: Some(
+                fixture["asset"]["page_id"]
+                    .as_str()
+                    .expect("fixture page id must be a string")
+                    .to_string(),
+            ),
+            image_path: None,
+            caption_text: Some(
+                fixture["asset"]["caption_text"]
+                    .as_str()
+                    .expect("fixture caption must be a string")
+                    .to_string(),
+            ),
+            caption_source_path: None,
+            source_ref: Some(
+                fixture["asset"]["source_ref"]
+                    .as_str()
+                    .expect("fixture source ref must be a string")
+                    .to_string(),
+            ),
+            placeholder_text: None,
+            note: Some(format!(
+                "vlm_timing_diagram_extraction: {}",
+                serde_json::to_string(&fixture["observation"])?
+            )),
+            diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
+        }];
+        source_ir.write_to_disk()?;
+
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        let region = evidence_ir
+            .visual_evidence
+            .iter()
+            .find_map(|item| item.figure_region.as_ref())
+            .expect("the reviewed timing observation must produce one typed region");
+        assert!(
+            region
+                .waveform_lanes
+                .iter()
+                .any(|lane| lane.signal_name == "WS")
+        );
+        assert!(
+            region
+                .waveform_lanes
+                .iter()
+                .any(|lane| lane.signal_name == "INVENTED_BY_MODEL"),
+            "EvidenceIR must preserve the raw typed observation before semantic grounding"
+        );
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+        let figure_stable = semantic_ir.actor_contracts.iter().find(|contract| {
+            matches!(
+                &contract.obligation,
+                crate::ir::contract::Obligation::Stable { signal, .. } if signal == "WS"
+            ) && matches!(
+                contract.provenance.modality,
+                crate::ir::contract::EvidenceModality::Figure
+            ) && matches!(
+                contract.lowering,
+                crate::ir::contract::LoweringDisposition::Lowerable
+            )
+        });
+        assert!(
+            figure_stable.is_some(),
+            "a source-grounded WS span that passes the trace verifier must remain lowerable"
+        );
+        assert!(semantic_ir.actor_contracts.iter().all(|contract| {
+            !matches!(
+                &contract.obligation,
+                crate::ir::contract::Obligation::Stable { signal, .. }
+                    if signal == "INVENTED_BY_MODEL"
+            )
+        }));
+        semantic_ir.write_to_disk()?;
+
+        let intent_ir = IntentIr::build(
+            &semantic_ir.artifact_layout.semantic_ir_path,
+            &intent_artifact_base,
+        )?;
+        assert!(intent_ir.actor_contracts.iter().any(|contract| {
+            matches!(
+                &contract.obligation,
+                crate::ir::contract::Obligation::Stable { signal, .. } if signal == "WS"
+            ) && matches!(
+                contract.provenance.modality,
+                crate::ir::contract::EvidenceModality::Figure
+            )
+        }));
+
+        Ok(())
     }
 }
 

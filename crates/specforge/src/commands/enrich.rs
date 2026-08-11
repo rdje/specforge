@@ -270,7 +270,7 @@ fn build_vlm_prompt(diagram_type: &str, caption: &str) -> String {
              Caption: \"{caption}\"\n\n\
              Please describe the diagram precisely:\n\
              1. List every signal shown (one per line) with its name.\n\
-             2. For each signal, describe its state (HIGH/LOW/X/Z/VALID/UNKNOWN) at each labeled clock cycle.\n\
+             2. For each signal, describe its state (HIGH/LOW/X/Z/VALID/UNKNOWN) only at clock positions tied to a visible clock grid/edge or a printed cycle label. The cycle field must be a zero-based integer or a printed T<n> label; never infer time from response-array position or an unclocked visual position.\n\
              3. List any timing annotations (setup time, hold time, cycle labels, arrow annotations).\n\
              Respond in structured JSON: \
              {{\"signals\": [{{\"name\": str, \"values\": [{{\"cycle\": str, \"state\": str}}]}}], \

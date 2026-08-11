@@ -412,7 +412,9 @@ pub fn generalize_partial_trace(trace: &PartialTrace) -> Vec<ActorContract> {
         }
     }
 
-    // Multi-tick ValueSpan ⇒ Stable{Within{max=span_len}}.
+    // Multi-tick ValueSpan rooted at trace origin ⇒ Stable{Within{max=span_len}}. A later
+    // span has no representable trigger/phase anchor in this contract shape, so retaining it as
+    // lowerable would silently relocate the observation to tick zero.
     for (i, s) in trace.spans.iter().enumerate() {
         let id = format!("wf:{}:span:{}", trace.figure_id, i);
         if s.to_tick > s.from_tick {
@@ -427,7 +429,15 @@ pub fn generalize_partial_trace(trace: &PartialTrace) -> Vec<ActorContract> {
             out.push(make_contract(
                 id,
                 obligation,
-                LoweringDisposition::Lowerable,
+                if s.from_tick == 0 {
+                    LoweringDisposition::Lowerable
+                } else {
+                    LoweringDisposition::Residual {
+                        reason:
+                            "stable span starts after tick zero — no contract anchor is licensed"
+                                .into(),
+                    }
+                },
                 provenance(
                     &trace.figure_id,
                     &format!(
@@ -600,6 +610,27 @@ pub fn verify_contract_against_trace(
     evaluate_figure_trace(contract, &ft)
 }
 
+/// Mine one typed region and enforce the round-trip oracle before any candidate reaches fusion.
+/// A lowerable candidate survives only on an explicit verifier `Pass`; `Fail` and `NotEvaluated`
+/// are both honest residuals, never an implicit approval.
+pub fn verified_contracts_from_figure_region(region: &FigureRegion) -> Vec<ActorContract> {
+    let trace = figure_region_to_partial_trace(region);
+    generalize_partial_trace(&trace)
+        .into_iter()
+        .map(|mut contract| {
+            if matches!(contract.lowering, LoweringDisposition::Lowerable) {
+                let status = verify_contract_against_trace(&contract, &trace);
+                if !matches!(status, FindingStatus::Pass) {
+                    contract.lowering = LoweringDisposition::Residual {
+                        reason: format!("verifier disagreement: {status:?}"),
+                    };
+                }
+            }
+            contract
+        })
+        .collect()
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -694,7 +725,10 @@ mod tests {
 
     #[test]
     fn value_span_generalizes_to_stable_within_span_len() {
-        let t = trace_with_span();
+        let mut t = trace_with_span();
+        t.spans[0].from_tick = 0;
+        t.spans[0].to_tick = 2;
+        t.ticks = 3;
         let cs = generalize_partial_trace(&t);
         assert_eq!(cs.len(), 1);
         match (&cs[0].obligation, &cs[0].lowering) {
@@ -1088,5 +1122,89 @@ mod tests {
             verify_contract_against_trace(&cs[0], &t),
             FindingStatus::NotEvaluated
         );
+    }
+
+    #[test]
+    fn verified_region_keeps_passing_stable_and_demotes_unsupported_candidate() {
+        let stable_region = FigureRegion {
+            visual_asset_id: "fig:verified-stable".into(),
+            bbox: None,
+            annotations: vec![],
+            waveform_lanes: vec![FigureLane {
+                signal_name: "WS".into(),
+                samples: vec![
+                    LaneSample {
+                        at_tick: 0,
+                        level: LaneLevel::Low,
+                    },
+                    LaneSample {
+                        at_tick: 1,
+                        level: LaneLevel::Low,
+                    },
+                    LaneSample {
+                        at_tick: 2,
+                        level: LaneLevel::Low,
+                    },
+                ],
+            }],
+            tick_count: None,
+            raw_image_path: None,
+            confidence: AutomationConfidence::High,
+        };
+        let contracts = verified_contracts_from_figure_region(&stable_region);
+        assert_eq!(contracts.len(), 1);
+        assert!(matches!(
+            contracts[0].lowering,
+            LoweringDisposition::Lowerable
+        ));
+
+        let unsupported_region = FigureRegion {
+            visual_asset_id: "fig:unsupported-delay".into(),
+            bbox: None,
+            annotations: vec![FigureAnnotation::Delay {
+                from_signal: "REQ".into(),
+                to_signal: "ACK".into(),
+                min_cycles: Some(0),
+                max_cycles: Some(1),
+                text: "ACK follows REQ".into(),
+                bbox: None,
+            }],
+            waveform_lanes: vec![],
+            tick_count: Some(2),
+            raw_image_path: None,
+            confidence: AutomationConfidence::High,
+        };
+        let contracts = verified_contracts_from_figure_region(&unsupported_region);
+        assert_eq!(contracts.len(), 1);
+        assert!(matches!(
+            &contracts[0].lowering,
+            LoweringDisposition::Residual { reason }
+                if reason == "verifier disagreement: NotEvaluated"
+        ));
+    }
+
+    #[test]
+    fn nonzero_origin_stable_span_stays_residual_without_an_anchor() {
+        let trace = PartialTrace {
+            figure_id: "fig:offset-span".into(),
+            signals: vec!["WS".into()],
+            edges: vec![],
+            spans: vec![ValueSpan {
+                signal: "WS".into(),
+                value: "1".into(),
+                from_tick: 4,
+                to_tick: 7,
+            }],
+            delays: vec![],
+            causal: vec![],
+            ticks: 8,
+            confidence: AutomationConfidence::High,
+        };
+        let contracts = generalize_partial_trace(&trace);
+        assert!(matches!(
+            &contracts[0].lowering,
+            LoweringDisposition::Residual { reason }
+                if reason == "stable span starts after tick zero — no contract anchor is licensed"
+        ));
     }
 }

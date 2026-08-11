@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "source_pdf_path": "corpus/nxp/i2s/current/UM11732_v3_2022-02-17_I2S_Bus_Specification.pdf",
+  "source_pdf_size_bytes": 204649,
+  "source_pdf_sha256": "905d20f3cd7c38f8118a5fab0aa7f7a65d0fb8608681af6d8b6156842e603f53",
+  "document_key": "um11732_v3_2022_02_17_i2s_bus_specification",
+  "asset": {
+    "asset_id": "picture_0005",
+    "page_id": "page_0004",
+    "caption_text": "Figure 1. Simple system configurations and basic interface timing",
+    "source_ref": "#/pictures/4",
+    "reviewed_crop_path": "generated/source_ir/um11732_v3_2022_02_17_i2s_bus_specification/normalized/assets/picture-0005.png",
+    "reviewed_crop_size_bytes": 71642,
+    "reviewed_crop_sha256": "9094ebc06e0a70c369a54c74dcf37eac1ea6afa3e9c6a775069cccc2d46608ca",
+    "reviewed_crop_width_px": 992,
+    "reviewed_crop_height_px": 557
+  },
+  "observation": {
+    "signals": [
+      {
+        "name": "WS",
+        "values": [
+          { "cycle": 0, "state": "LOW" },
+          { "cycle": 1, "state": "LOW" },
+          { "cycle": 2, "state": "LOW" },
+          { "cycle": 3, "state": "LOW" },
+          { "cycle": 4, "state": "HIGH" },
+          { "cycle": 5, "state": "HIGH" },
+          { "cycle": 6, "state": "HIGH" },
+          { "cycle": 7, "state": "HIGH" }
+        ]
+      },
+      {
+        "name": "INVENTED_BY_MODEL",
+        "values": [
+          { "cycle": 0, "state": "HIGH" },
+          { "cycle": 1, "state": "HIGH" }
+        ]
+      }
+    ],
+    "annotations": []
+  },
+  "availability": "reviewed_fixture_no_live_vlm",
+  "review_note": "The retained page-4 crop was visually reviewed: its SCK grid gives explicit zero-based sample authority, WS is low across the illustrated left-channel word and high across the right-channel word, and no INVENTED_BY_MODEL lane exists. This fixture exercises the production observation schema without claiming that a live VLM produced these values."
+}

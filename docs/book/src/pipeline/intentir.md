@@ -51,6 +51,11 @@ step requires. The adapter must account for that incompleteness explicitly rathe
 meaning. `specforge validate <intent-ir>` reports one count for each collection so a reviewer can verify the
 three-stage projection before inspecting adapter disposition.
 
+`IntentIR` also carries `SemanticIR.actor_contracts` unchanged, including verified figure-provenance contracts
+and their residual dispositions. It does not reinterpret a timing trace, restore a lane rejected by semantic
+grounding, or upgrade verifier disagreement. That makes the EvidenceIR → SemanticIR boundary the only place a
+typed figure becomes canonical temporal intent, while IntentIR remains a faithful product projection.
+
 ## How transactions are recognized
 
 A protocol or platform specification is, in large part, a *catalogue of supported

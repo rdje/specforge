@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > why is ATID emitted (width 1) when the IntentIR grounds width 7 (the emitter's first-seen signal dedup isf_ir.rs:696-700 takes the first signal_records entry (w=None→1) and skips the later w=7 record; the .2a.i recovery only falls back to actor_ports, and ATID has none)
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > why is AXI transmitter / SWD host / GIC arbiter kept but APB controller / AHB agent dropped
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why is AXI/SWD per-signal phase membership empty (document absence — AXI 0/4, SWD 0/63 signal↔phase co-occurrence; phases described abstractly/by-packet, not per declared wire — not an extraction gap)
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > why is CORPUS-PATTERN-REUSE.3b.3b (activate-only consume) deferred / not built
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > why is CPU-ISA / PHY only recognized from front-matter (no distinct structural signature; cat 5 vs cat 6 indistinguishable by structure)
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > why is DTI DOWNSTREAM not preserved as a heuristic only wire
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > why is For / Then it / is recommended / next / HPROT bit / TREADY input minted as an actor
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > why is KG-ISF-TRANSACTIONS.2i parked/blocked (waiting on FSMGEN to say how to lower phase membership without fabricating drive values or step order)
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > why is MEMORY-BOUNDED-INGEST.5 summary streaming deferred
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > why is NVMe register field_name a bit-range and how is the mnemonic found in the description
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > why is Reset value not a semantic phase
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > why is SWD per-signal phase membership degenerate / empty
 - [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
@@ -40,6 +62,8 @@
   > why is a retained bundle count not the same as corpus refresh progress
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > why is a sentence containing when not necessarily a semantic gate
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > why is a stable span after tick zero residual
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > why is an emitted-ISF count from an earlier refresh slice not the current number
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)

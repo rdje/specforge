@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > does adaptive batch sizing change the ingest output / break byte-identity
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > does agreement between sources boost confidence
+- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
+  > does an actor signal relation alone authorize a SemanticIR interface signal
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > does an empty declared-signal catalog disable the SemanticIR grounding filter
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
@@ -127,6 +133,8 @@
   > does the path portability contract cover FigureRegion raw images
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > does the persisted path gate cover dormant schemas
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > does the reviewed I2S fixture claim a live VLM run
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > does the rolling ledger verifier validate predecessor successor chronology
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
@@ -290,11 +298,3 @@
   > how do I verify every task tree is linked exactly once
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > how do I waive or range-scope the task-acceptance check
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > how do byte-granular page fragments chain (offset plus size adjacency)
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > how do continuation tables (Table B2.2 Continued) merge into one container
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > how do dword-relative page fragments chain
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > how do packet/flit protocols (CHI-class) declare message fields vs signals

@@ -64,6 +64,7 @@ missing current-stage inputs look valid.
 - prose-grounded actor relations
 - visual-caption semantic hints
 - VLM timing-note observations
+- optional typed `FigureRegion` records projected from tick-addressed VLM timing observations
 - polarity extraction, including explicit asserted-when-level prose such as `CS_N is asserted when LOW`, unambiguous collective prose such as `CS_N and WE_N are active LOW signals`, and safe clause-local mixed prose such as `CS_N is active LOW and ENABLE is active HIGH`
 - negative-knowledge caution surfacing during validation
 
@@ -77,6 +78,12 @@ These wins are valuable because they give later stages something much stronger t
 - explicit caution signals
 
 The dedicated [Multimodal Evidence And Visual Grounding](multimodal-evidence.md) chapter explains the visual part of that evidence flow in more detail.
+
+A timing observation and a usable typed region are separate facts. `EvidenceIR` always preserves the bounded
+raw observation. It adds `VisualEvidenceItem.figure_region` only when the observation contains explicit
+tick-addressed lane samples; older artifacts load with that optional field absent. Validation reports both the
+available count and timing observations for which the typed projection was unavailable, so raw VLM activity is
+never mistaken for contract-ready evidence.
 
 ## What this stage is allowed to do
 

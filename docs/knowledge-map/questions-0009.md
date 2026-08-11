@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
+  > which PDF task history ids exist only as tree-relative shorthand
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > which SWD protocol facts are safe to lower today
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > which SemanticIR IntentIR adapter and prior memory paths serialize repository relative
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > which SourceIR and EvidenceIR paths serialize repository relative
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > which active task tree is next at the live document warning
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > which boot-volume Rust directories are allowed
+- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
+  > which canonical Markdown collections still rely only on git query
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > which command produces the document_class metric
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > which conditional rules survive when a document declares no signals
+- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
+  > which corpus PDFs are password/permission protected
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > which corpus docs declare fields with a Field-titled column
 - [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
   > which corpus docs still yield nothing (the VLM frontier)
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
@@ -276,25 +298,3 @@
   > why did the moved Python virtual environments still access the old repository
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > why did the promoted surface lose the AXI reset temporal rules (DEASSERTED vs LOW)
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > why did the register-at-offset placement-map hypothesis get overturned
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > why did the task_evidence aggregate ceiling become 480000
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > why did transaction_phases contain called edge or positive
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > why did validating a copied rollback backannotate the canonical chain
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > why do .1a and .1b.iv not catch the eMMC phantom actors like advantage of / basic bus / actual sector
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why do 8 generic-named enums survive .5.i (they are document-evidenced — the token IS a declared signal or a column header in that doc, e.g. CCIX 'Table of Contents' header cells keep a 'TABLE' enum; the structural gate correctly cannot drop them without a forbidden name-list — honest .5.ii member-quality residuals)
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > why do AMD DTE / NVMe command dword tables go to message fields and not registers
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > why do APB tables 0016 0017 0018 produce no signal records
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > why do CCIX-class docs extract hundreds of register fields now
-- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
-  > why do Docling source tests fail when TMPDIR is inside the repository
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > why do FPs appear in eval that the current code does not produce

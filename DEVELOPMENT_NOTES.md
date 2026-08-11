@@ -1,4 +1,35 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.3 (`2026-08-11`) — a raw visual answer is not yet temporal authority
+
+The existing production seam already had the expensive and provenance-sensitive part: `enrich` sends a
+document's region crop to the local VLM and stores bounded JSON on its `VisualAsset`. The missing step was not a
+second image pass. EvidenceIR preserved that answer only as text, while `FigureRegion` and waveform mining began
+behind a synthetic typed boundary. Wiring the existing note into an optional typed field closes that discontinuity
+without adding full-page capture, a new provider, or a fifth IR stage.
+
+Three independent authorities are required before the observation can become canonical intent. Time comes from
+an explicit sample address tied to the visible clock grid/edge, never response-array order. Signal identity comes
+from the same document's signal catalog, never a model-only name. Lowerability comes from a round-trip verifier
+`Pass`, never merely from successful parsing. These gates deliberately preserve different failure states: raw
+observations stay inspectable, unavailable typed regions are counted, ungrounded lanes vanish before mining, and
+unsupported or disagreeing candidates become residuals.
+
+Activation exposed a subtler representability boundary. A later stable run in a trace cannot be lowered as the
+current unanchored `Stable { signal, Within }` obligation without moving it to tick zero. The parser did see real
+stability, but the contract cannot say *when* it begins. That span therefore remains residual until a trigger or
+phase anchor is available. This is the kind of honest loss `.4` must count rather than hiding behind a contract
+total.
+
+The NXP I2S fixture proves the real persisted seam while keeping provider claims exact. It pins the retained PDF
+and reviewed crop identities, passes reviewer-authored observation JSON through the production schema, and
+includes an invented lane solely to prove grounding rejects it. It is labeled `reviewed_fixture_no_live_vlm`:
+no local endpoint was ready and the corpus contains zero persisted VLM notes. The next meaningful question is
+held-out live recall/precision and per-stage loss, not whether the typed path compiles.
+
+The architecture record itself crossed the rolling ledger's mandatory line signal. The owned root-last
+transaction seals the exact 14-record opening post-migration window and keeps this slice's current record live,
+restoring 62 lines of warning-safe headroom while preserving a manifest-linked, byte-identical chronology.
+
 ## SPEC-TO-INTENT-ALIGNMENT.2 (`2026-08-11`) — participation and execution are different facts
 
 A default command can know about a stage without executing it in one run, and a stage can compile without the

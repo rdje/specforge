@@ -2,6 +2,19 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > is re-measuring the candidate list enough to keep the corpus frontier honest (NO — .2.51 correctly re-measured all six of its listed candidates from their own SourceIR profiles and still could not see the omission, because re-deriving the ROWS cannot validate the CARDINALITY. A document already absent from the list is invisible to any check over that list; only the
+  > independent identity cohort == refreshed + remaining exposes it)
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > is relation-completeness the right bar dimension for register / command / coherency protocols
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > is removing the generic enums WIRE-BASED-100-safe (scores ORTHOGONAL/SAFE — generic enums are in no scored gold; but the .isf BYTES change on all 4 wire golds — APB/AHB/AXI/SWP each emit a junk TABLE; AHB's TABLE fuses HTRANS+HSIZE which already have correct enums — a strict improvement needing a deliberate snapshot refresh, NOT byte-identical)
+- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
+  > is replace_term_with_placeholder safe on non-ASCII signal/actor names
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > is signal direction faithful to the document now or still defaulted to output
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > is source_ir.json bounded in size for very large PDFs
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > is subject coordination (Actor1 and Actor2 drive X) handled / worth building
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -285,15 +298,3 @@
   > what are the extraction_quality_* validate metrics and when do they read n/a
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
   > what are the final Cortex-A76 SourceIR normalized and downstream reproducibility hashes
-- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
-  > what are the final GIC Overview Guide reproducibility hashes
-- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
-  > what are the final OpenCAPI 32G PHY Signaling SourceIR and normalized bundle hashes
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > what are the final OpenCAPI Discovery artifact hashes
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > what are the isf_protocol residual packet prefixes
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > what are the two dominant ISF-lowering completeness gaps (register bit-fields, message-field structures)
-- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
-  > what are the undeclared-named-subject rule drops at ISF lowering (conditional_rules / signal_constraints / temporal_invariants)
