@@ -351,11 +351,12 @@ outside mandatory reads—but still enforces its exact ceiling; the rolling-ledg
 reopens the file, verifies every metric and digest, checks the manifest/index, and proves the retained
 root suffix. This is the retrieval contract, not a reliance on Git history alone.
 
-The next rollover seals 29 more whole records at
+The first post-migration rollover seals 29 more whole records at
 `docs/archive/rolling-ledgers/changes/segment-0002-2026-08-09.md` (428 lines / 37,189 bytes / SHA-256
-`bc87665975d80078697384e89b2127e67164ae0e523a8076b93f81eb5582fbd8`). The current root contains the two
-task records prepended after the pinned boundary, the ten newest opening records, and the exact 75-record
-migration suffix: 87 records / 1,246 lines / 188,183 bytes.
+`bc87665975d80078697384e89b2127e67164ae0e523a8076b93f81eb5582fbd8`). Every later rollover repeats that
+shape: the root keeps the records prepended since the pinned boundary, the newest surviving opening
+records, and the exact 75-record migration suffix. The complete newest-to-oldest chain is
+`docs/archive/rolling-ledgers/changes/INDEX.md`.
 
 #### `DEVELOPMENT_NOTES.md` migration landed
 
@@ -375,9 +376,10 @@ the sealed segment between that root and the immutable source capsule.
 
 The next rollover seals 24 more whole records at
 `docs/archive/rolling-ledgers/development-notes/segment-0002-2026-08-09.md` (421 lines / 34,258 bytes / SHA-256
-`0576c44b7b95c40bc4669128ce07ebdc6a99b1ebbe9322cd1aca3acad8c04cbd`). The current root contains the H1
-prologue, two later task records, ten newest opening records, and the exact retained 50-record suffix: 62 records /
-1,294 lines / 175,215 bytes.
+`0576c44b7b95c40bc4669128ce07ebdc6a99b1ebbe9322cd1aca3acad8c04cbd`). Every later rollover repeats that shape:
+the root keeps the H1 prologue, the records prepended since the pinned boundary, the newest surviving opening
+records, and the exact retained 50-record suffix. The complete chain is
+`docs/archive/rolling-ledgers/development-notes/INDEX.md`.
 
 The retained-record check is byte-sensitive beyond visible prose. During `.4c`, an ordinary edit at
 the top of the derived root exposed an ownership ambiguity for the blank line between records 60 and
@@ -403,27 +405,29 @@ temporary storage forced under `generated/tmp`, proving the managed block can st
 stable path after migration. Capsule identity, suffix identity, marker literals, pressure, manifest,
 and index routing are all rechecked by the unconditional doctrine gate.
 
-The second rollover seals the next 12 aged-out records at
-`docs/archive/rolling-ledgers/live-achievement-status/segment-0002-2026-08-08.md`; manifest predecessor/successor
-links order it between the live root and segment 0001. Direct comparison with the pre-removal Git content proves
-the segment's exact 10,894-byte identity, while the root again contains 20 newer records plus the exact retained
-40-record suffix.
+Rollovers two through six each seal the next 12 aged-out records — `segment-0002-2026-08-08.md` through
+`segment-0006-2026-08-10.md` — under the same contract: manifest predecessor/successor links order each new
+segment between the live root and its predecessor, direct comparison with the pre-removal Git content proves
+its exact identity, and the root returns to its newest surviving records plus the exact retained 40-record
+suffix and complete trailer.
 
-The third rollover seals the next 12 aged-out records at
-`docs/archive/rolling-ledgers/live-achievement-status/segment-0003-2026-08-09.md` (12 records / 9,181 bytes /
-SHA-256 `9bb1607d89fcc67ea2c1824a9c84e21bd95d56f7f0f49a1af43fee9d3b865edb`). The root had reached 72 records;
-exact pre-removal reconstruction proves the segment, then the bounded root returns to 20 newer records plus the
-reviewed 40-record suffix. The manifest chain is root → segment 0003 → segment 0002 → segment 0001 → capsule.
+The seventh rollover is the first sized for the records that follow it rather than for the committed root. A
+minimal cut satisfies the checker and then loses the margin to the very next entry, which is what
+`CHANGES-LEDGER-ROLLOVER.1` had to correct one day earlier. `STATUS-LEDGER-ROLLOVER.0` therefore seals 21
+records at `docs/archive/rolling-ledgers/live-achievement-status/segment-0007-2026-08-11.md` (21 records /
+21 lines / 17,031 bytes / SHA-256 `b1a7bcce7a3477aee077ed60bf3d8905753f7ebab548fd93159a4a11e19b61b9`),
+leaving the ten newest records plus the retained suffix — about twelve ordinary status records below the
+warning instead of one.
 
-The fourth rollover seals the next 12 records at
-`docs/archive/rolling-ledgers/live-achievement-status/segment-0004-2026-08-09.md` (12 lines / 11,420 bytes /
-SHA-256 `6d1c07596313d0c98c04afde63dd23d7df61fda291bd50d2cbc57a0568b924eb`). The current root contains 19 newer
-records plus the exact retained 40-record suffix and complete trailer: 59 records / 101 lines / 82,836 bytes.
+Current root sizes are not restated here. They change with every commit, so a stored copy would be a
+self-invalidating claim about now; `perl scripts/check_rolling_ledger_protocol.pl --report` measures all four
+roots from their own authority, and `docs/archive/rolling-ledgers/live-achievement-status/INDEX.md` is the
+complete newest-to-oldest chain.
 
 #### `RUST_CODEBASE_ANALYSIS.md` migration landed
 
-The Rust architecture root is now 1,064 lines / 89,706 bytes instead of 9,039 lines / 1,046,679
-bytes. Its initial capsule at
+At the migration boundary, the Rust architecture root became 1,064 lines / 89,706 bytes instead of
+9,039 lines / 1,046,679 bytes. Its initial capsule at
 `docs/archive/rolling-ledgers/rust-codebase-analysis/source-through-2026-08-08.md` retains all 1,350
 pre-migration records under SHA-256
 `95e1665628b615498e94f67d6dc6e0083d4d104a6ca8a815b4c23cf2f97cc7ce`. The live root keeps the H1,

@@ -1,3 +1,29 @@
+### STATUS-LEDGER-ROLLOVER.0 — seal segment-0007 and give the status ledger real headroom
+
+- `CORPUS-COVERAGE.2.51`'s record took `LIVE_ACHIEVEMENT_STATUS.md` to 71 records, 88.8% of its 80-record
+  health target. The 90% milestone is 72, so the next genuine product-status entry was refused unless the same
+  change performed the declared rollover. Run as its own transaction rather than bundled into the next corpus
+  refresh, for the same reason `CHANGES-LEDGER-ROLLOVER` was.
+- The cut is 21 records, not the minimal 8. Eight is the smallest cut the checker accepts (63 records / 91,787
+  bytes) and the very next product record would put the root back at the 64-record warning — the exact failure
+  `CHANGES-LEDGER-ROLLOVER.1` corrected one day earlier. Twenty-one leaves 50 records / 92 lines / 80,586 bytes:
+  62.5% of the record target and 70.1% of bytes, about twelve ordinary records below the warning.
+- `segment-0007-2026-08-11.md` seals 21 records / 17,031 bytes at SHA-256 `b1a7bcce…61b9`. The dry run was exact
+  and warning-safe on the first attempt; the applied run is root-last; `git diff` proves all six older segments
+  and the source capsule byte-identical, with only the root, the new segment, the manifest, and the index
+  changing. No limit, milestone, or ceiling moved, and no status record was edited or reordered.
+- `.1` repairs what the mandatory alignment review found: the book's rolling-ledger chapter stored a "current
+  root is N records / L lines / B bytes" sentence for each of the four ledgers, and all four were false. A value
+  every commit invalidates is derive-on-read state, so the chapter now states the repeating rollover shape,
+  records seal seven, and names `perl scripts/check_rolling_ledger_protocol.pl --report` plus the per-ledger
+  archive index. Immutable per-segment identities and migration-boundary captures stay.
+- `.2` is opened as tracking-only with the root cause: `validate_retained_suffix` pins the 2026-08-08 migration
+  window live permanently, so no cut can release it. It is the dominant consumer on every root ledger — 66.9% /
+  62.3% / 59.2% / 46.9% of byte health — which is why this one returns to its threshold so quickly.
+- No Rust changed, so every extraction oracle is orthogonal by construction. `scripts/check_doctrines.sh` is
+  6/6 with `CHAIN-CURRENCY` deferred as registered, `mdbook build` exits 0, and the `achievement_status`
+  pressure warning is gone from the report.
+
 ### KG-ISF-COMPLETENESS.5.iv — measure whether an encoding table's header may name its enum
 
 - `CORPUS-COVERAGE.2.51` surfaced an asymmetry in the `.5.i` gate. `derive_encoding_enum_name` sources a

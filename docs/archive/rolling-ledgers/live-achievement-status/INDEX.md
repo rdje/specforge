@@ -3,12 +3,13 @@
 Complete newest-to-oldest chronology:
 
 1. [Current root](../../../../LIVE_ACHIEVEMENT_STATUS.md)
-2. [Sealed segment `live-achievement-status-0006`](segment-0006-2026-08-10.md)
-3. [Sealed segment `live-achievement-status-0005`](segment-0005-2026-08-09.md)
-4. [Sealed segment `live-achievement-status-0004`](segment-0004-2026-08-09.md)
-5. [Sealed segment `live-achievement-status-0003`](segment-0003-2026-08-09.md)
-6. [Sealed segment `live-achievement-status-0002`](segment-0002-2026-08-08.md)
-7. [Sealed segment `live-achievement-status-0001`](segment-0001-2026-08-08.md)
-8. [Immutable source capsule](source-through-2026-08-08.md)
+2. [Sealed segment `live-achievement-status-0007`](segment-0007-2026-08-11.md)
+3. [Sealed segment `live-achievement-status-0006`](segment-0006-2026-08-10.md)
+4. [Sealed segment `live-achievement-status-0005`](segment-0005-2026-08-09.md)
+5. [Sealed segment `live-achievement-status-0004`](segment-0004-2026-08-09.md)
+6. [Sealed segment `live-achievement-status-0003`](segment-0003-2026-08-09.md)
+7. [Sealed segment `live-achievement-status-0002`](segment-0002-2026-08-08.md)
+8. [Sealed segment `live-achievement-status-0001`](segment-0001-2026-08-08.md)
+9. [Immutable source capsule](source-through-2026-08-08.md)
 
 Authority: [bounded JSONL manifest](manifest.jsonl).
