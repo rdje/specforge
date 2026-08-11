@@ -4,6 +4,26 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-11 — vertical evaluation boundary; `SPEC-TO-INTENT-ALIGNMENT.4a`)
+
+- New `ir/source_to_intent_eval.rs` is an evaluation subsystem, not a fifth IR stage or extractor dependency.
+  It consumes bounded JSON snapshots plus data-defined JSON-pointer queries, keeping reviewed document truth
+  outside production branches and isolating the oracle from ongoing production-schema evolution.
+- `VerticalEvalDataset` pins selection, source, and four original artifact identities; Serde rejects unknown
+  fields and semantic validation rejects unsafe paths, malformed pointers, invalid hashes, duplicate reviewed
+  keys, missing modalities, and inconsistent canonical/residual shapes. External read-only inputs retain no
+  host path.
+- Evaluation uses multiset keys so duplicate predictions remain false positives. Per-cell exact stage scores
+  feed first-failing-stage, provenance, source/modality disposition, conservation/residual, actionability,
+  fabrication, and unexplained-drop rollups. Insufficient document count or incomplete review scope takes
+  category precedence as `unmeasurable`; provisional diagnostics remain visible without becoming support.
+- Twelve focused tests cover a clean synthetic baseline, six controlled fault classes, deterministic output,
+  portability/root resolution, incomplete-gold semantics, and public-schema/Serde parity. The subsystem makes no
+  category claim until `.4b/.4c` provide and score the reviewed population.
+- Rust source is now approximately 139.9K lines; the evaluator is intentionally self-contained at roughly 1.7K
+  lines including tests. If later query/report behavior grows materially, split schema validation, scoring, and
+  test fixtures along those existing pure-function seams rather than coupling them to production builders.
+
 ## Session update (2026-08-11 — typed visual activation; `SPEC-TO-INTENT-ALIGNMENT.3`)
 
 - A VLM timing note now has production producer wiring: EvidenceIR attempts an optional typed `FigureRegion`,

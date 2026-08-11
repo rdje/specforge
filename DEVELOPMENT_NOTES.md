@@ -1,4 +1,28 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.4a (`2026-08-11`) — measurement authority must be frozen before the score
+
+The evaluator is deliberately independent of production IR Rust types. A held-out review needs a bounded,
+stable observation of what each stage actually persisted, while production schemas will keep evolving. Each
+stage is therefore represented by a reviewed JSON snapshot tied to the SHA-256 of its original artifact; the
+queries that interpret that snapshot are versioned dataset data. This separates artifact identity, review
+meaning, and evaluator implementation without copying document-specific exceptions into runtime code.
+
+Closed-world keys are compared as multisets. This matters because set comparison would let a duplicated
+prediction disappear, inflating precision, while record-count comparison would not say which reviewed fact was
+lost. A zero denominator remains `null`, and a category with incomplete review scope or too few documents is
+`unmeasurable` before hard-failure status is considered. Provisional faults stay visible for diagnosis, but
+missing oracle authority can neither pass nor manufacture a supported-product claim.
+
+Portability is part of the schema rather than a cleanup convention. Repository inputs must be root-relative;
+an unavoidable external read-only PDF is represented only by portable id, digest, and necessity. The evaluator
+rejects absolute paths, parent traversal, Windows drive paths, backslashes, and unknown fields. This lets `.4b`
+lock reviewed truth without fossilizing the current workstation or copying external source content into Git.
+
+Mutation adequacy is the acceptance boundary for the oracle itself. A clean synthetic baseline is useful only
+because omission, fabrication, provenance loss, silent inter-stage loss, missing modality, and residual
+inactionability each move a distinct hard result. `.4a` therefore makes no support claim; it proves the
+instrument that `.4b/.4c` will use cannot silently bless those controlled failures.
+
 ## SPEC-TO-INTENT-ALIGNMENT.3 (`2026-08-11`) — a raw visual answer is not yet temporal authority
 
 The existing production seam already had the expensive and provenance-sensitive part: `enrich` sends a

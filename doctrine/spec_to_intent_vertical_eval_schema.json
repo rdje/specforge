@@ -1,0 +1,282 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "specforge://doctrine/spec-to-intent-vertical-eval-schema/1",
+  "title": "SpecForge source-to-IntentIR vertical evaluation dataset",
+  "description": "Versioned, review-locked input contract for deterministic per-document, per-family, per-modality stage-loss evaluation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "dataset_id",
+    "owner",
+    "selection_boundary_commit",
+    "selection_claim",
+    "minimum_documents_per_category",
+    "documents"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "dataset_id": { "$ref": "#/$defs/non_empty" },
+    "owner": { "$ref": "#/$defs/non_empty" },
+    "selection_boundary_commit": { "$ref": "#/$defs/git_commit" },
+    "selection_claim": { "$ref": "#/$defs/non_empty" },
+    "minimum_documents_per_category": { "type": "integer", "minimum": 1 },
+    "documents": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/document" }
+    }
+  },
+  "$defs": {
+    "non_empty": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": ".*\\S.*"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "git_commit": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "json_pointer": {
+      "type": "string",
+      "pattern": "^/(?!.*//).+"
+    },
+    "repository_path": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?=.*\\S)(?!/)(?!.*\\\\)(?!\\.{1,2}(?:/|$))(?!.*\\/\\.{1,2}(?:/|$))(?![A-Za-z]:).+"
+    },
+    "category": {
+      "enum": [
+        "wire-protocol",
+        "register-ip",
+        "platform-system-ip",
+        "cpu-isa",
+        "physical-link",
+        "methodology-guide"
+      ]
+    },
+    "source_identity": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["location", "relative_path", "sha256"],
+          "properties": {
+            "location": { "const": "repository" },
+            "relative_path": { "$ref": "#/$defs/repository_path" },
+            "sha256": { "$ref": "#/$defs/sha256" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["location", "portable_id", "sha256", "necessity"],
+          "properties": {
+            "location": { "const": "external_read_only" },
+            "portable_id": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^(?=.*\\S)[^/\\\\]+$"
+            },
+            "sha256": { "$ref": "#/$defs/sha256" },
+            "necessity": { "$ref": "#/$defs/non_empty" }
+          }
+        }
+      ]
+    },
+    "stage_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["original_sha256", "snapshot"],
+      "properties": {
+        "original_sha256": { "$ref": "#/$defs/sha256" },
+        "snapshot": { "type": "object" }
+      }
+    },
+    "stage_snapshots": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_ir", "evidence_ir", "semantic_ir", "intent_ir"],
+      "properties": {
+        "source_ir": { "$ref": "#/$defs/stage_snapshot" },
+        "evidence_ir": { "$ref": "#/$defs/stage_snapshot" },
+        "semantic_ir": { "$ref": "#/$defs/stage_snapshot" },
+        "intent_ir": { "$ref": "#/$defs/stage_snapshot" }
+      }
+    },
+    "predicate": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["operator", "field", "value"],
+          "properties": {
+            "operator": { "const": "equals" },
+            "field": { "$ref": "#/$defs/json_pointer" },
+            "value": true
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["operator", "field", "prefix"],
+          "properties": {
+            "operator": { "const": "prefix" },
+            "field": { "$ref": "#/$defs/json_pointer" },
+            "prefix": { "$ref": "#/$defs/non_empty" }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["operator", "field", "values"],
+          "properties": {
+            "operator": { "const": "array_contains_any" },
+            "field": { "$ref": "#/$defs/json_pointer" },
+            "values": { "type": "array", "minItems": 1, "items": true }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["operator", "needle"],
+          "properties": {
+            "operator": { "const": "recursive_contains" },
+            "needle": { "$ref": "#/$defs/non_empty" }
+          }
+        }
+      ]
+    },
+    "query": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["collection_pointer", "key_fields", "expected_keys"],
+      "properties": {
+        "collection_pointer": { "$ref": "#/$defs/json_pointer" },
+        "predicates": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/predicate" }
+        },
+        "key_fields": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/json_pointer" }
+        },
+        "expected_keys": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string" }
+        },
+        "provenance_fields": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/json_pointer" }
+        },
+        "required_provenance_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/non_empty" }
+        }
+      }
+    },
+    "canonical_queries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_ir", "semantic_ir", "intent_ir"],
+      "properties": {
+        "evidence_ir": { "$ref": "#/$defs/query" },
+        "semantic_ir": { "$ref": "#/$defs/query" },
+        "intent_ir": { "$ref": "#/$defs/query" }
+      }
+    },
+    "residual_queries": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["semantic_ir", "intent_ir", "required_actionability_fields"],
+      "properties": {
+        "semantic_ir": { "$ref": "#/$defs/query" },
+        "intent_ir": { "$ref": "#/$defs/query" },
+        "required_actionability_fields": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/json_pointer" }
+        }
+      }
+    },
+    "cell": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cell_id",
+        "semantic_family",
+        "modality",
+        "oracle",
+        "review_scope",
+        "complete_gold",
+        "expected_disposition",
+        "source_region",
+        "evidence_capture"
+      ],
+      "properties": {
+        "cell_id": { "$ref": "#/$defs/non_empty" },
+        "semantic_family": { "$ref": "#/$defs/non_empty" },
+        "modality": { "$ref": "#/$defs/non_empty" },
+        "oracle": { "$ref": "#/$defs/non_empty" },
+        "review_scope": { "$ref": "#/$defs/non_empty" },
+        "complete_gold": { "type": "boolean" },
+        "expected_disposition": {
+          "enum": ["canonical", "residual", "non_applicable"]
+        },
+        "source_region": { "$ref": "#/$defs/query" },
+        "evidence_capture": { "$ref": "#/$defs/query" },
+        "canonical": { "$ref": "#/$defs/canonical_queries" },
+        "residual": { "$ref": "#/$defs/residual_queries" }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "expected_disposition": { "const": "canonical" } },
+            "required": ["expected_disposition"]
+          },
+          "then": { "required": ["canonical"] },
+          "else": { "required": ["residual"] }
+        }
+      ]
+    },
+    "document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document_key",
+        "category",
+        "source",
+        "review_scope_complete",
+        "present_modalities",
+        "stages",
+        "cells"
+      ],
+      "properties": {
+        "document_key": { "$ref": "#/$defs/non_empty" },
+        "category": { "$ref": "#/$defs/category" },
+        "source": { "$ref": "#/$defs/source_identity" },
+        "review_scope_complete": { "type": "boolean" },
+        "present_modalities": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "#/$defs/non_empty" }
+        },
+        "stages": { "$ref": "#/$defs/stage_snapshots" },
+        "cells": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/cell" }
+        }
+      }
+    }
+  }
+}

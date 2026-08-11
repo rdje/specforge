@@ -77,9 +77,31 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.3 — activate typed figure-region mining`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.4`
-  Status: `pending`
+  Status: `in_progress`
   Goal: `prove trajectory with held-out source-to-IntentIR vertical slices and stage-loss accounting`
   Acceptance: `representative held-out PDFs have reviewed intent gold, per-stage survival/loss accounting, recall/precision/provenance/residual results, and an explicit conclusion about which remaining blocker is upstream extraction versus demonstrated ISF expressiveness`
+  Verification: `pending`
+  Commit: `pending`
+  Children: `.4a`, `.4b`, `.4c`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.4a`
+  Status: `done`
+  Goal: `build the deterministic vertical-evaluation contract and prove the evaluator detects controlled faults`
+  Acceptance: `a versioned, root-relative dataset schema and evaluator compute scoped precision/recall, source/modality disposition, provenance closure, residual actionability, stage conservation, and first-failing-stage results; omission, fabrication, provenance-loss, silent-drop, and missing-modality mutations are all detected`
+  Verification: `12 focused evaluator tests; schema parse/semantic assertions; formatting and warning-deny Clippy; mdBook test/build; Knowledge Map, catalog, book-current-truth, live-size, and rolling-ledger checks; full CI with all eight doctrines and 1,832 passed / five ignored / zero failed`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.4a — build the vertical evaluation engine`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.4b`
+  Status: `pending`
+  Goal: `lock two representative reviewed vertical documents per category without extractor tuning`
+  Acceptance: `the 12-document population pins portable source and four-stage identities, records source presence and complete bounded-scope gold, and distinguishes repository inputs from necessary read-only external inputs without persisting host paths`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.4c`
+  Status: `pending`
+  Goal: `publish exact held-out outcomes, stage-loss diagnosis, and the next measured blocker`
+  Acceptance: `the deterministic snapshot publishes every denominator and category status, names all hard failures and first failing stages, and concludes whether the next constraint is upstream capture or a demonstrated downstream expressiveness gap`
   Verification: `pending`
   Commit: `pending`
 
@@ -98,8 +120,10 @@ expressiveness as the bottleneck.
 | 2 | `SPEC-TO-INTENT-ALIGNMENT.1` | `done` | six category-aware source-to-IntentIR contracts and strict honesty floors are durable |
 | 3 | `SPEC-TO-INTENT-ALIGNMENT.2` | `done` | every production command has guarded integrated/scheduled/omitted accounting |
 | 4 | `SPEC-TO-INTENT-ALIGNMENT.3` | `done` | typed timing observations now cross a grounded, verified retained-PDF vertical path |
-| 5 | `SPEC-TO-INTENT-ALIGNMENT.4` | `pending` | measure whether the complete pipeline is actually converging |
-| 6 | `SPEC-TO-INTENT-ALIGNMENT.5` | `pending` | convert measured outcomes into automatic, reviewable steering |
+| 5 | `SPEC-TO-INTENT-ALIGNMENT.4a` | `done` | strict portable evaluator and controlled-fault adequacy are verified; no category claim made |
+| 6 | `SPEC-TO-INTENT-ALIGNMENT.4b` | `pending` | lock two portable reviewed verticals per category without tuning extraction |
+| 7 | `SPEC-TO-INTENT-ALIGNMENT.4c` | `pending` | publish exact stage losses and the evidence-ranked blocker |
+| 8 | `SPEC-TO-INTENT-ALIGNMENT.5` | `pending` | convert measured outcomes into automatic, reviewable steering |
 
 ## Decisions
 
@@ -145,8 +169,8 @@ expressiveness as the bottleneck.
 
 ## Blockers
 
-- None for `.3`'s provider-free producer audit. Live visual extraction will need a ready VLM endpoint or an
-  existing reviewed observation, but the typed-path and real-fixture work can begin without one.
+- None for `.4b`: repository and necessary external read-only source identities are available. Live-provider
+  absence remains measured input availability, not permission to substitute synthetic output or claim support.
 
 ## Verification Log
 
@@ -174,6 +198,10 @@ expressiveness as the bottleneck.
 | `2026-08-11` | `.3` retrieval and public-contract checks | Knowledge Map derive/check; mdBook test/build; book-current-truth and projection/catalog checks | PASS: typed producer, limits, real-fixture status, and next measurement frontier agree across code, book, roadmap, analysis, and retrieval |
 | `2026-08-11` | `.3` required Rust-analysis rollover | dry-run then root-last apply `docs/research/spec-to-intent-alignment-3-rust-analysis-rollover-plan.jsonl` | PASS: exact `rust-codebase-analysis-0003` seals 14 records / 203 lines / 17,582 bytes at SHA-256 `12fbadf1…631f`; the current `.3` prepend survives and all four archive chains validate warning-safe |
 | `2026-08-11` | `.3` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines, formatting, warning-deny Clippy, 1,820 Rust tests passed / five ignored / zero failed, Rust docs, mdBook test/build, and final project-data-locality residue check |
+| `2026-08-11` | `.4a` evaluator/schema boundary | version-1 public JSON schema; Serde round trip and strict unknown-field behavior; repository-relative/external-portable identity validation; data-defined query and exact multiset scoring audit | PASS: one generic runtime module owns no document/vendor/protocol/layout cases; all four original stage identities and selection boundary are pinned; incomplete review authority stays `unmeasurable` |
+| `2026-08-11` | `.4a` controlled-fault adequacy | `cargo test -p specforge --lib ir::source_to_intent_eval`; schema parse plus semantic assertions; `cargo fmt --all -- --check`; `cargo clippy -p specforge --lib -- -D warnings` | PASS: 12/12 focused tests; omission, fabrication, provenance loss, silent stage drop, missing modality, and inactionable residual each move the intended hard result; stable serialization, portability rejection, and root-derived loading pass |
+| `2026-08-11` | `.4a` public/retrieval/live alignment | mdBook test/build; book-current-truth; Knowledge Map derive/check at 213 facts / 1,586 questions; fact-card catalog at 202 cards; live-size and rolling-ledger protocols | PASS: schema, API, public semantics, roadmap, current status, architecture, retrieval, and bounded-size authorities agree that this is evaluator adequacy, not category support |
+| `2026-08-11` | `.4a` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines, formatting, warning-deny Clippy, 1,832 Rust tests passed / five ignored / zero failed, Rust docs, mdBook test/build, and final project-data-locality residue check |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
 
@@ -221,6 +249,23 @@ expressiveness as the bottleneck.
   Knowledge Map, task frontier, bounded resume pointer, and the owned rollover plan/archive describe the same
   delivered boundary and live-VLM limitation.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.4a`
+
+- [x] **REPRODUCE / MEASURE** — lock the evaluator schema before population review; every score carries exact
+  TP/FP/FN denominators, source and stage identities, semantic family, modality, and oracle metadata.
+- [x] **ROOT CAUSE (WHY + WHERE)** — distinguish source absence, missing EvidenceIR capture, EvidenceIR →
+  SemanticIR loss, SemanticIR → IntentIR loss, fabrication, provenance loss, and missing/inactionable residuals
+  rather than collapsing them into one failed score.
+- [x] **ADDRESSED (verified)** — a reusable Rust module validates repository-relative paths and dataset shape,
+  evaluates stage snapshots deterministically, and serializes a stable machine-readable result.
+- [x] **NO REGRESSION** — controlled omission, fabrication, provenance-loss, silent-drop, and missing-modality
+  mutations each change the expected hard metric and are killed by focused tests; formatting, warning-deny
+  Clippy, doctrines, and full CI pass.
+- [x] **GENERICITY (ADR 0006)** — evaluation queries are data-defined JSON pointers, filters, keys, provenance
+  fields, categories, families, and modalities; runtime code contains no document/vendor/protocol exceptions.
+- [x] **LOCKSTEP** — task ownership, evaluator schema/API, public evaluator contract, architecture analysis,
+  Knowledge Map, and resume pointer agree that `.4a` builds the oracle but makes no category-support claim.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -229,6 +274,7 @@ expressiveness as the bottleneck.
 | `SPEC-TO-INTENT-ALIGNMENT.1` | `SPEC-TO-INTENT-ALIGNMENT.1 — define source-to-IntentIR category contracts` | versioned category contract, book contract, and retrieval fact; no product-code or generated-IR mutation |
 | `SPEC-TO-INTENT-ALIGNMENT.2` | `SPEC-TO-INTENT-ALIGNMENT.2 — guard canonical capability accounting` | 17-row per-run ledger, full CLI partition guard, public contract, and required lossless CHANGES rollover |
 | `SPEC-TO-INTENT-ALIGNMENT.3` | `SPEC-TO-INTENT-ALIGNMENT.3 — activate typed figure-region mining` | optional EvidenceIR region producer, source grounding, verifier gate, explicit availability metrics, reviewed retained-PDF vertical fixture, and required Rust-analysis rollover |
+| `SPEC-TO-INTENT-ALIGNMENT.4a` | `SPEC-TO-INTENT-ALIGNMENT.4a — build the vertical evaluation engine` | strict portable dataset/API, exact stage-loss rollups, and six controlled-fault classes; no held-out category claim |
 
 ## Changelog
 
@@ -245,3 +291,6 @@ expressiveness as the bottleneck.
 - `2026-08-11`: Closed `.3` with a typed timing-observation producer, source-grounded and verifier-gated
   contract mining, explicit availability accounting, and reviewed real-PDF vertical proof; frontier advances to
   `.4`, held-out source-to-IntentIR evaluation and stage-loss accounting.
+- `2026-08-11`: Closed `.4a` with the strict portable dataset contract, deterministic exact evaluator, and six
+  controlled-fault classes; frontier advances to `.4b`, lock two reviewed documents per category without tuning
+  extraction before `.4c` publishes product conclusions.

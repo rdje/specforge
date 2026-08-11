@@ -143,6 +143,8 @@
   > does the trapped-row gap-fill mint duplicate signal declarations
 - [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
   > does the upstream-first decision weaken the executable-intent objective
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > does the vertical evaluator make a category support claim yet
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > does transaction phase precision change phase membership or ISF output
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
@@ -197,12 +199,16 @@
   > how are document keys in the source PDF registry derived from filenames
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
   > how are duplicate signal constraints deduplicated in the LLM-primary extractor
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > how are external held-out PDFs identified without absolute host paths
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > how are extraction-profile priors looked up (extraction_profile_priors_for signature-subset match)
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > how are generic SemanticIR phases different from transaction_phases
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > how are human corpus KB notes preserved during refresh
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > how are incomplete gold and product failure distinguished
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
   > how are live-document ceiling increases and immutable debt baselines tested
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
@@ -292,9 +298,3 @@
   > how do I roll ROADMAP.md when it approaches its ceiling
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > how do I run a Docling ingest or re-ingest on this machine
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > how do I see which ingested PDFs form structural families (the corpus-cluster command)
-- [task-tree-catalog](../knowledge/task-tree-catalog.md)
-  > how do I verify every task tree is linked exactly once
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > how do I waive or range-scope the task-acceptance check

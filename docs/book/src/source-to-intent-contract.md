@@ -172,10 +172,41 @@ None of these are valid shortcuts:
 For an unresolved category, no contract pass is possible. The pipeline preserves the category residual and
 applies the union of plausible modality checks until review resolves the dominant purpose.
 
+## The vertical evaluator
+
+`SPEC-TO-INTENT-ALIGNMENT.4a` ships the deterministic oracle that applies this contract. Its public dataset
+schema is `doctrine/spec_to_intent_vertical_eval_schema.json`; the matching Rust API is
+`ir::source_to_intent_eval`. The evaluator itself does not extract facts and contains no document, vendor,
+protocol, signal, or page-layout exceptions.
+
+Each dataset pins the review-selection Git boundary and gives every source a SHA-256 identity. Repository
+sources use repository-relative paths. A necessary read-only external source uses only a portable id, digest,
+and necessity statement; host paths are rejected. Each document then carries bounded JSON snapshots of all
+four IR stages with the digest of the original artifact. Unknown JSON fields and unsafe paths fail closed.
+
+Review cells are data, not Rust branches. A cell declares category, semantic family, modality, oracle, bounded
+review scope, source/evidence queries, and either canonical or residual queries. Queries select arrays and
+records with JSON pointers and data-defined predicates, then compare exhaustive key sets as multisets. A
+duplicate prediction remains a false positive. Precision or recall with a zero denominator is JSON `null`,
+never an invented perfect score.
+
+The report keeps exact TP/FP/FN counts for each stage, names the first failing boundary, and separately totals
+source disposition, required-modality accounting, provenance closure, conservation-or-residual, residual
+actionability, fabrication, and unexplained drops. A residual counts only when it survives SemanticIR and
+IntentIR and every required actionability field is populated. A category is `supported` only when its minimum
+document count, complete review scopes, and all hard floors pass. Incomplete gold or too few documents is
+`unmeasurable`, even if provisional scores already reveal faults; measured failures become `incomplete` only
+for a complete review population.
+
+Mutation controls prove the oracle notices omission, fabrication, provenance loss, a silent inter-stage drop,
+a missing required modality, and an inactionable residual. They prove evaluator adequacy, not category support.
+The reviewed held-out population and its product conclusions belong to `.4b` and `.4c`.
+
 ## Current status
 
 This is the acceptance boundary, not a retroactive claim that every category passes. Existing wire gold,
 register-field evaluation, SWD protocol scoring, category census, source-region accounting, and conflict tests
 provide pieces of the required evidence. The held-out vertical-slice leaf
-`SPEC-TO-INTENT-ALIGNMENT.4` will apply the complete contract, publish denominators, and determine category by
-category what is supported, incomplete, or unmeasurable.
+`SPEC-TO-INTENT-ALIGNMENT.4a` now provides the strict schema and mutation-tested evaluator. `.4b` will lock two
+held-out documents per category without tuning extraction, and `.4c` will publish their denominators and decide
+category by category what is supported, incomplete, or unmeasurable.

@@ -83,8 +83,9 @@ SpecForge does not spend the present frontier anticipating one. [`SPEC-TO-INTENT
 owns the per-category IR contract, canonical-path integration, real multimodal producer, held-out vertical
 slices, and reviewable trajectory controller that make this ordering measurable (ADR 0033/0034). Its category
 contract, guarded per-run production-capability ledger, and typed timing-note → FigureRegion → verified
-ActorContract path now ship. The next frontier is held-out source-to-IntentIR vertical evaluation and exact
-stage-loss accounting; the real-PDF reviewed fixture proves wiring, not live-provider recall.
+ActorContract path now ship, together with the strict mutation-tested vertical evaluation engine. The next
+frontier is locking and scoring two held-out documents per category without extractor tuning; the real-PDF
+reviewed figure fixture proves wiring, not live-provider recall or category support.
 
 Five active program groups support that north star:
 

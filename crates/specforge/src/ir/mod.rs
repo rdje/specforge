@@ -23,6 +23,7 @@ pub mod protocol_graph;
 pub mod register_bits;
 pub mod semantic;
 pub mod source;
+pub mod source_to_intent_eval;
 pub mod temporal_ltl;
 pub mod waveform;
 

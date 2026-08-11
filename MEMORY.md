@@ -17,18 +17,15 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.3`; `.0` through `.3` are complete pending this slice's commit. Tracking-only:
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.4a`; `.0` through `.3` are committed. Tracking-only:
   `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: timing VLM notes now optionally produce typed EvidenceIR `FigureRegion`s. SemanticIR grounds
-  lanes to the document signal catalog, converts through `PartialTrace`, and requires verifier `Pass` before
-  lowerability; IntentIR carries the result. Validation counts available/unavailable regions. A reviewed NXP
-  UM11732 fixture proves the persisted real-PDF path and rejection of a model-only lane without claiming a live
-  provider run. Unenriched corpus artifacts stay compatible and currently contain zero VLM notes. The required
-  Rust-analysis rollover is applied root-last and preserves its exact 14-record segment through the archive chain.
-- Next action: commit `.3` through `COMMIT.md`, then pivot cleanly to `.4` and build held-out reviewed
-  source-to-IntentIR gold with per-stage survival/loss, provenance, residual, recall, and precision accounting.
-- In-flight uncommitted: `.3` code, reviewed fixture, exact Rust-analysis rollover, book/roadmap/retrieval/live-doc
-  updates, and derived projections passed the final doctrine/CI gate and await only the commit workflow. No
-  background job runs.
-- Blockers: none. A live VLM endpoint remains unavailable, so `.3` proves production wiring with an explicitly
-  reviewed fixture and leaves live-provider recall to `.4`. The user-owned `.claude/settings.json` is untouched.
+- Current state: `.4a` is complete and fully verified: its strict portable schema plus generic Rust engine score
+  pinned four-stage snapshots with exact multiset metrics, first-stage diagnosis, provenance/residual/modality
+  accounting, and six controlled-fault classes. No extractor or canonical corpus artifact changed, and no
+  category-support claim was made.
+- Next action: commit `.4a` through `COMMIT.md`, then pivot cleanly to `.4b` and lock two review-complete
+  documents per category against the frozen evaluator without tuning extraction.
+- In-flight uncommitted: the completed `.4a` code/schema, public/retrieval/live-doc alignment, and derived
+  projections passed the full CI gate and await only the commit workflow. No background job runs.
+- Blockers: none. Live-provider output remains unavailable and must report `unmeasurable`, never passing. The
+  user-owned `.claude/settings.json` is untouched.

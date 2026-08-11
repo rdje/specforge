@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > how do I see which ingested PDFs form structural families (the corpus-cluster command)
+- [task-tree-catalog](../knowledge/task-tree-catalog.md)
+  > how do I verify every task tree is linked exactly once
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > how do I waive or range-scope the task-acceptance check
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > how do byte-granular page fragments chain (offset plus size adjacency)
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
@@ -56,6 +62,8 @@
   > how does SpecForge group a transaction's signals by channel
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > how does SpecForge handle Docling clones of a table cell with col_span greater than one
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > how does SpecForge measure source-to-IntentIR stage loss
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > how does SpecForge prove a persisted corpus artifact is still what the current binary produces
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -190,6 +198,8 @@
   > how does the extractor avoid minting a constraint about a cross-referenced register field
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > how does the fused two-label column ACE5-Lite ACE5-LiteACP split
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > how does the held-out evaluator detect omission fabrication provenance loss and silent drops
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
   > how does the measurable corpus population grow
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
@@ -288,12 +298,3 @@
   > how is max_cards derived from the knowledge_cards surface
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > how is prose signal over-capture prevented (no garbage)
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > how is register-field extraction quality measured / scored
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > how is the .5.ii member-quality gate designed / what did the .5.ii calibration find (measured 2026-06-24 read-only over 78 docs/561 enums/12509 members: the gate is PER-MEMBER not per-enum — a whole-enum drop destroys AXI BRESP's real codes OKAY/EXOKAY/SLVERR/DECERR which are FUSED with prose fragments in one conflated enum; value-restart is NOT a junk signal — AHB HPROT
-  > restarts but every member is a clean identifier. The load-bearing signal is per-member NAME shape: an English sentence-SPINE token marks a prose fragment. Land a per-member sentence-spine fragment drop at synthesize_encoding_declarations_for_enum)
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > how is the EvidenceIR extractor path / extraction layer structured and wired
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > how is the FSMGen feedback channel kept bounded without losing old requests and responses

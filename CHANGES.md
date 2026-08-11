@@ -1,3 +1,16 @@
+### SPEC-TO-INTENT-ALIGNMENT.4a — source-to-IntentIR loss now has a deterministic oracle
+
+- Added a strict versioned dataset schema and generic Rust evaluator for review-locked SourceIR, EvidenceIR,
+  SemanticIR, and IntentIR snapshots. Sources and original stage artifacts are hash-pinned; repository paths
+  must be root-relative, and external read-only inputs retain portable identities without host paths.
+- Data-defined JSON-pointer queries produce exact multiset TP/FP/FN scores, provenance loss, first failing
+  stages, stage conservation or actionable residuals, required-modality accounting, fabrication, and explicit
+  `supported` / `incomplete` / `unmeasurable` category states. Incomplete review authority cannot become a pass.
+- Twelve focused tests include controlled omission, fabrication, provenance-loss, silent-drop, missing-modality,
+  and inactionable-residual faults plus deterministic serialization, strict portability/root resolution, and
+  schema/Serde parity.
+  This slice ships the evaluator only; the reviewed 12-document population and product scores remain `.4b/.4c`.
+
 ### SPEC-TO-INTENT-ALIGNMENT.3 — timing observations now reach verified figure contracts
 
 - `EvidenceIR.visual_evidence[*]` can now carry an optional typed `FigureRegion` projected from the matching
