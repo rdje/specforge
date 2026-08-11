@@ -1,0 +1,273 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://specforge.local/schema/trajectory-controller-input-v1.json",
+  "title": "SpecForge trajectory controller input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "snapshot_id",
+    "owner",
+    "reviewed_revision",
+    "objective_contract",
+    "stall_window",
+    "dimensions",
+    "hard_gates",
+    "history",
+    "gaps",
+    "authority"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "snapshot_id": { "type": "string", "minLength": 1 },
+    "owner": { "type": "string", "minLength": 1 },
+    "reviewed_revision": { "type": "string", "minLength": 1 },
+    "objective_contract": { "$ref": "#/$defs/evidence_ref" },
+    "stall_window": { "type": "integer", "minimum": 2 },
+    "dimensions": {
+      "type": "array",
+      "minItems": 9,
+      "maxItems": 9,
+      "items": { "$ref": "#/$defs/dimension_observation" }
+    },
+    "hard_gates": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/hard_gate" }
+    },
+    "history": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/comparable_snapshot" }
+    },
+    "gaps": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/gap" }
+    },
+    "authority": { "$ref": "#/$defs/authority" }
+  },
+  "$defs": {
+    "fraction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["numerator", "denominator"],
+      "properties": {
+        "numerator": { "type": "integer", "minimum": 0, "maximum": 1000000000 },
+        "denominator": { "type": "integer", "minimum": 1, "maximum": 1000000000 }
+      }
+    },
+    "evidence_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256", "role"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "role": { "type": "string", "minLength": 1 }
+      }
+    },
+    "uncertainty": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind"],
+          "properties": { "kind": { "const": "exact" } }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "method", "lower", "upper", "sample_size"],
+          "properties": {
+            "kind": { "const": "estimated" },
+            "method": { "type": "string", "minLength": 1 },
+            "lower": { "$ref": "#/$defs/fraction" },
+            "upper": { "$ref": "#/$defs/fraction" },
+            "sample_size": { "type": "integer", "minimum": 1 }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind", "reason"],
+          "properties": {
+            "kind": { "const": "unavailable" },
+            "reason": { "type": "string", "minLength": 1 }
+          }
+        }
+      ]
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["operator", "value"],
+      "properties": {
+        "operator": { "enum": ["at_least", "at_most", "equal"] },
+        "value": { "$ref": "#/$defs/fraction" }
+      }
+    },
+    "metric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "metric_id",
+        "question",
+        "measure",
+        "target",
+        "improvement",
+        "material_change",
+        "hard",
+        "required",
+        "oracle",
+        "population",
+        "uncertainty",
+        "evidence"
+      ],
+      "properties": {
+        "metric_id": { "type": "string", "minLength": 1 },
+        "question": { "type": "string", "minLength": 1 },
+        "measure": { "oneOf": [{ "$ref": "#/$defs/fraction" }, { "type": "null" }] },
+        "target": { "$ref": "#/$defs/target" },
+        "improvement": { "enum": ["higher_is_better", "lower_is_better", "exact_invariant"] },
+        "material_change": { "$ref": "#/$defs/fraction" },
+        "hard": { "type": "boolean" },
+        "required": { "type": "boolean" },
+        "oracle": { "type": "string", "minLength": 1 },
+        "population": { "type": "string", "minLength": 1 },
+        "uncertainty": { "$ref": "#/$defs/uncertainty" },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/evidence_ref" }
+        }
+      }
+    },
+    "dimension": {
+      "enum": [
+        "source_capture",
+        "semantic_correctness",
+        "semantic_completeness",
+        "stage_conservation",
+        "provenance_honesty",
+        "production_participation",
+        "generalization_robustness",
+        "operational_confidence",
+        "executable_readiness"
+      ]
+    },
+    "dimension_observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dimension", "objective", "metrics"],
+      "properties": {
+        "dimension": { "$ref": "#/$defs/dimension" },
+        "objective": { "type": "string", "minLength": 1 },
+        "metrics": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/metric" }
+        }
+      }
+    },
+    "hard_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["gate_id", "question", "violations", "target_violations", "evidence"],
+      "properties": {
+        "gate_id": { "type": "string", "minLength": 1 },
+        "question": { "type": "string", "minLength": 1 },
+        "violations": { "type": "integer", "minimum": 0 },
+        "target_violations": { "type": "integer", "minimum": 0 },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/evidence_ref" }
+        }
+      }
+    },
+    "comparable_snapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["revision", "artifact_fingerprint", "metrics", "hard_gate_violations"],
+      "properties": {
+        "revision": { "type": "string", "minLength": 1 },
+        "artifact_fingerprint": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "metrics": {
+          "type": "object",
+          "additionalProperties": { "$ref": "#/$defs/fraction" }
+        },
+        "hard_gate_violations": {
+          "type": "object",
+          "additionalProperties": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+    "task_owner": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["task_id", "task_tree_path"],
+      "properties": {
+        "task_id": { "type": "string", "minLength": 1 },
+        "task_tree_path": { "type": "string", "minLength": 1 }
+      }
+    },
+    "gap": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "gap_id",
+        "objective_id",
+        "tier",
+        "observed",
+        "target",
+        "first_failing_stage",
+        "affected_population",
+        "causal_confidence",
+        "reversible_slice",
+        "uncertainty",
+        "estimated_impact",
+        "reproduction",
+        "owner",
+        "evidence"
+      ],
+      "properties": {
+        "gap_id": { "type": "string", "minLength": 1 },
+        "objective_id": { "type": "string", "minLength": 1 },
+        "tier": {
+          "enum": [
+            "hard_invariant",
+            "source_evidence_loss",
+            "semantic_regression",
+            "missing_oracle",
+            "persistent_residual",
+            "breadth_efficiency"
+          ]
+        },
+        "observed": { "type": "string", "minLength": 1 },
+        "target": { "type": "string", "minLength": 1 },
+        "first_failing_stage": { "type": "string", "minLength": 1 },
+        "affected_population": { "type": "integer", "minimum": 1 },
+        "causal_confidence": { "enum": ["high", "medium", "low"] },
+        "reversible_slice": { "enum": ["small", "medium", "large"] },
+        "uncertainty": { "enum": ["exact", "bounded", "high"] },
+        "estimated_impact": { "type": "string", "minLength": 1 },
+        "reproduction": { "type": "string", "minLength": 1 },
+        "owner": { "$ref": "#/$defs/task_owner" },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/evidence_ref" }
+        }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "canonical_semantic_mutation_allowed", "task_tree_review_required"],
+      "properties": {
+        "mode": { "const": "report_only" },
+        "canonical_semantic_mutation_allowed": { "const": false },
+        "task_tree_review_required": { "const": true }
+      }
+    }
+  }
+}

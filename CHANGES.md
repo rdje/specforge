@@ -1,3 +1,17 @@
+### SPEC-TO-INTENT-ALIGNMENT.5a — trajectory state and ranking now have a strict engine
+
+- Added a versioned, unknown-field-denying controller input for all nine accepted trajectory dimensions. Every
+  metric retains a bounded exact ratio, target, improvement direction, material threshold, oracle, population,
+  uncertainty, and root-relative evidence; no weighted total exists.
+- Added deterministic `converging`, `diverging`, `stalled`, `mixed`, and `unmeasurable` classification. Hard
+  failures cannot be averaged away, stall requires its declared history window, and estimated point values
+  cannot claim trend without paired uncertainty history.
+- Added lexicographic gap ranking with task-tree ownership verification. Recommendations are report-only, must
+  pass task review, and cannot authorize canonical semantic mutation.
+- Sixteen focused tests cover all states, fabrication/dimension/authority/path/unknown-field mutants, statistical
+  refusal, hard-first ranking, owner reachability, schema parity, and stable serialization. Current `.4c` product
+  values remain outside the engine until `.5b` composition.
+
 ### SPEC-TO-INTENT-ALIGNMENT.4c — the first reviewed result localizes the blocker upstream
 
 - Published the byte-pinned 12-document / 14-cell evaluator report. All six categories are `incomplete`; none is

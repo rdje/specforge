@@ -6,7 +6,7 @@
 - Status: `active`
 - Roadmap lane: extraction quality and breadth
 - Created: `2026-08-11`
-- Last updated: `2026-08-11`
+- Last updated: `2026-08-12`
 - Owner: project owner and repo-local workflow
 
 ## Goal
@@ -106,9 +106,24 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.4c — publish the first reviewed result`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.5`
-  Status: `pending`
+  Status: `in_progress`
   Goal: `build an evidence-driven trajectory controller that detects convergence, stall, and divergence and proposes the next highest-value owned slice`
   Acceptance: `a machine-readable objective contract drives a multidimensional trajectory snapshot; held-out semantic outcomes, per-stage loss, modality/category coverage, residual debt, canonical-path participation, and hard honesty gates are measured; statistically justified drift/stall rules cannot be hidden by a blended score; recommended work is task-tree-owned and remains human-reviewable`
+  Verification: `pending`
+  Commit: `pending`
+  Children: `.5a`, `.5b`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.5a`
+  Status: `done`
+  Goal: `build the versioned multi-metric trajectory state and ranking engine before attaching current product evidence`
+  Acceptance: `a strict root-relative input contract preserves nine separate objective dimensions, denominators, oracles, uncertainty, hard gates, comparable history, and task ownership; deterministic classification distinguishes converging, diverging, stalled, mixed, and unmeasurable; lexicographic ranking cannot trade away hard failures; seeded omissions, fabrications, regressions, mixed deltas, missing history, and semantic-mutation attempts fail closed`
+  Verification: `16 focused state/fault/authority tests; schema JSON semantics; format and all-target warning-deny Clippy; mdBook; Knowledge Map/catalog; live/currentness projections; all eight doctrines; full CI with 1,850 passed / five ignored / zero failed`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.5a — build the trajectory control engine`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.5b`
+  Status: `pending`
+  Goal: `compose the frozen reviewed result and canonical capability evidence into the first trajectory snapshot and owned task proposal`
+  Acceptance: `the byte-pinned snapshot derives exact .4c category/stage metrics and .2 production-path participation without changing either authority, classifies missing trend history honestly, publishes every ranked gap and why the winner outranks the rest, and opens the recommended task-tree leaf before any implementation pivot`
   Verification: `pending`
   Commit: `pending`
 
@@ -123,7 +138,8 @@ expressiveness as the bottleneck.
 | 5 | `SPEC-TO-INTENT-ALIGNMENT.4a` | `done` | strict portable evaluator and controlled-fault adequacy are verified; no category claim made |
 | 6 | `SPEC-TO-INTENT-ALIGNMENT.4b` | `done` | 12 portable reviewed verticals and 14 complete cells are frozen without tuning extraction |
 | 7 | `SPEC-TO-INTENT-ALIGNMENT.4c` | `done` | exact result localizes the constraint to source-to-evidence fact formation and residualization |
-| 8 | `SPEC-TO-INTENT-ALIGNMENT.5` | `pending` | convert measured outcomes into automatic, reviewable steering |
+| 8 | `SPEC-TO-INTENT-ALIGNMENT.5a` | `done` | strict multi-metric state/ranking engine and mutation controls are verified |
+| 9 | `SPEC-TO-INTENT-ALIGNMENT.5b` | `pending` | compose frozen evidence into the first snapshot and owned task proposal |
 
 ## Decisions
 
@@ -163,6 +179,8 @@ expressiveness as the bottleneck.
 - `2026-08-11`: the frozen `.4c` result leaves all six categories incomplete. Ten cells first fail at SourceIR
   → EvidenceIR and four at EvidenceIR → SemanticIR; none first fails at SemanticIR → IntentIR. Therefore the
   measured next constraint is upstream fact formation and residualization, not a demonstrated ISF/FSMGen gap.
+- `2026-08-11`: freeze the generic controller in `.5a` before composing the known `.4c` result in `.5b`. This
+  prevents state and ranking branches from being tuned to produce a preferred label for the current population.
 
 ## Open Questions
 
@@ -172,8 +190,8 @@ expressiveness as the bottleneck.
 
 ## Blockers
 
-- None for `.5`: the exact reviewed result, category contract, stage-loss split, capability ledger, and
-  automatic-steering research design are available. Semantic mutation must remain review-gated.
+- None for `.5b`: the committed generic engine, exact reviewed result, category contract, stage-loss split,
+  capability ledger, and automatic-steering design are available. Semantic mutation remains review-gated.
 
 ## Verification Log
 
@@ -213,6 +231,9 @@ expressiveness as the bottleneck.
 | `2026-08-11` | `.4c` persisted result | generic `cargo run --example source_to_intent_eval` over the frozen dataset, byte comparison, SHA-256/size census, and exact JSON aggregation | PASS: 104,669 bytes at `6b72f1fc…47eb`; all six categories incomplete; canonical TP/FP/FN = 7/41/33; 10 cells first fail SourceIR → EvidenceIR, four EvidenceIR → SemanticIR, none later |
 | `2026-08-11` | `.4c` focused code/public checks | 14 evaluator tests; byte regeneration; format check; all-target warning-deny Clippy; mdBook test/build; Knowledge Map 216 facts / 1,604 questions; fact catalog 205 cards; book/currentness/roadmap/live-size/rolling-ledger checks | PASS: exact snapshot and every public/durable conclusion agree; registered warning bands remain below rollover triggers |
 | `2026-08-11` | `.4c` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines, formatting, warning-deny Clippy, 1,834 Rust tests passed / five ignored / zero failed, Rust docs, mdBook test/build, and final project-data-locality residue check |
+| `2026-08-12` | `.5a` controller semantics | `cargo test -p specforge --lib ir::trajectory`; JSON schema parse/semantic assertions; format check; all-target warning-deny Clippy | PASS: 16/16 tests cover five states, hard-failure precedence, dimension/fabrication/authority/path/owner/unknown-field mutants, estimated-history refusal, hard-first ranking, and deterministic serialization |
+| `2026-08-12` | `.5a` public/retrieval/live alignment | mdBook test/build; Knowledge Map 217 facts / 1,611 questions; fact catalog 206 cards; book-current-truth; roadmap projection; active-task evidence; live-size | PASS: schema, engine, research, book, roadmap, status, architecture, and retrieval agree; warning bands stay below mandatory rollover |
+| `2026-08-12` | `.5a` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines, formatting, warning-deny Clippy, 1,850 Rust tests passed / five ignored / zero failed, Rust docs, mdBook test/build, and final project-data-locality residue check |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
 
@@ -318,6 +339,23 @@ expressiveness as the bottleneck.
 - [x] **LOCKSTEP** — snapshot, evaluator test, task frontier, roadmap, public book, live docs, Knowledge Map,
   architecture record, and resume pointer publish the same exact outcomes and upstream blocker conclusion.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.5a`
+
+- [x] **REPRODUCE / MEASURE** — define a strict public input that carries all nine accepted dimensions, bounded
+  rational denominators, targets, materiality, hard/required status, oracle, population, uncertainty, evidence,
+  comparable history, gaps, and task ownership without a blended score.
+- [x] **ROOT CAUSE (WHY + WHERE)** — encode the distinct evidence preconditions for current hard-failure,
+  exact paired trend, mixed deltas, configured stall windows, missing oracles/history, and estimated uncertainty;
+  do not let one state rule manufacture authority for another.
+- [x] **ADDRESSED (verified)** — deterministically classify five states, rank gaps hard-first with visible
+  tie-breakers, verify every proposed task ID in its root-relative task tree, and fix authority to report-only.
+- [x] **NO REGRESSION** — state/fault/authority mutants, schema semantics, stable serialization, formatting,
+  warning-deny Clippy, mdBook, projections, doctrines, and full repository CI pass.
+- [x] **GENERICITY (ADR 0006)** — controller code contains no current `.4c` metric, document, vendor, protocol,
+  signal, or page-layout branch; `.5b` owns product-evidence composition after the engine is committed.
+- [x] **LOCKSTEP** — schema, engine, research status, task frontier, roadmap, public book, Knowledge Map, live
+  docs, architecture record, and resume pointer agree on state/ranking semantics and review authority.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -329,6 +367,7 @@ expressiveness as the bottleneck.
 | `SPEC-TO-INTENT-ALIGNMENT.4a` | `SPEC-TO-INTENT-ALIGNMENT.4a — build the vertical evaluation engine` | strict portable dataset/API, exact stage-loss rollups, and six controlled-fault classes; no held-out category claim |
 | `SPEC-TO-INTENT-ALIGNMENT.4b` | `SPEC-TO-INTENT-ALIGNMENT.4b — lock the reviewed vertical population` | 12 reviewed verticals / 14 cells, SSD source-authority repair, and path-neutral corpus-frontier lifecycle partition; `.4c` owns results |
 | `SPEC-TO-INTENT-ALIGNMENT.4c` | `SPEC-TO-INTENT-ALIGNMENT.4c — publish the first reviewed result` | byte-pinned exact result; all six categories incomplete; first failures rank upstream fact formation and residualization |
+| `SPEC-TO-INTENT-ALIGNMENT.5a` | `SPEC-TO-INTENT-ALIGNMENT.5a — build the trajectory control engine` | strict nine-dimension state/ranking contract, five states, statistical refusal, hard-first task ownership, and report-only authority |
 
 ## Changelog
 
@@ -354,3 +393,5 @@ expressiveness as the bottleneck.
 - `2026-08-11`: Closed `.4c` and parent `.4` with the byte-pinned first reviewed result. All six categories are
   incomplete; 10/14 cells first fail SourceIR → EvidenceIR and four EvidenceIR → SemanticIR. Frontier advances
   to `.5`, compose these exact dimensions into reviewable automatic steering.
+- `2026-08-12`: Closed `.5a` with the strict nine-dimension state/ranking engine and 16 mutation/authority tests;
+  frontier advances to `.5b`, compose the frozen `.4c` and `.2` authorities into the first snapshot and task.

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > does a deterministic semantic->intent rebuild recover lost actor_signal_relations
+- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
+  > does a metadata rewrite failure preserve the previous normalized bundle
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > does a replaced constraint surface get polarity refinement (apply_persisted_polarity_to_constraints)
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
   > does adapter output reconciliation delete unrelated files or directories
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
@@ -291,9 +297,3 @@
   > how do I derive how many corpus refreshes remain (run scripts/check_corpus_frontier.sh; it derives the SourceIR cohort and requires every member in exactly one explicit refreshed or remaining set)
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > how do I file an FSMGen bug report or feature request
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > how do I get the clean LLM-primary constraint surface onto the canonical artifacts
-- [nli-intent-gate](../knowledge/nli-intent-gate.md)
-  > how do I make the NLI verifier actively change extraction / demote claims
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > how do I measure the extraction-quality gauge before and after a canonical promotion

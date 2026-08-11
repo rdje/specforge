@@ -1,7 +1,7 @@
 # SpecForge trajectory control: measuring convergence, stall, and divergence
 
 - Date: 2026-08-11
-- Status: accepted design baseline; runtime controller not yet implemented
+- Status: accepted design baseline; generic state/ranking engine implemented in `.5a`, first composed snapshot pending `.5b`
 - Owner: `SPEC-TO-INTENT-ALIGNMENT.0` (design), `.5` (implementation)
 
 ## Direct answer
@@ -170,7 +170,8 @@ shared knowledge base, consistent with autonomic-computing control principles
 3. Close the real multimodal producer gap (`.3`).
 4. Establish held-out vertical slices and stage-loss accounting (`.4`).
 5. Persist versioned trajectory snapshots; classify state; protect evaluators with seeded negatives; emit the
-   reviewable next-task recommendation (`.5`).
+   reviewable next-task recommendation (`.5`). `.5a` now supplies the strict nine-dimension state/ranking engine;
+   `.5b` attaches the frozen product evidence and emits the first owned recommendation.
 
 The controller should initially report and recommend. Only exact hard invariants should fail CI. Statistical
 or heuristic signals graduate to gates after their false-alarm behavior is calibrated on real history.

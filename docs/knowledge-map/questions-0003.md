@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > how do I get the clean LLM-primary constraint surface onto the canonical artifacts
+- [nli-intent-gate](../knowledge/nli-intent-gate.md)
+  > how do I make the NLI verifier actively change extraction / demote claims
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > how do I measure the extraction-quality gauge before and after a canonical promotion
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > how do I promote a document's constraint surface on canonical without re-ingesting the PDF
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
@@ -102,6 +108,8 @@
   > how does a transaction absorb signals from its subsections (3.1.1 / 3.1.2)
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > how does an unknown-kind Continued from previous page table fragment get a kind
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > how does automatic task ranking keep hard failures ahead of breadth work
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > how does build_transaction_phases distinguish a named phase from phase error or phase tolerance
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
@@ -192,6 +200,8 @@
   > how does the active task migration preserve non-ASCII legacy bytes
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > how does the ambiguity gate keep channel membership boundary-precise (bar #3)
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > how does the controller prove a proposed task is task-tree owned
 - [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
   > how does the corpus KB aggregate fixture page stay bounded as fixtures grow
 - [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
@@ -218,6 +228,8 @@
   > how does the table-number grammar handle both B1.1 colon and A2-2 dash forms
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > how does the tiling gate keep register-bit recovery honest (no fabrication)
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > how does the trajectory controller classify converging diverging stalled mixed and unmeasurable
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how does validate classify a document / what is document_class
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
@@ -286,15 +298,3 @@
   > how is an external PDF labeled in Docling metadata
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how is an under-extracted spec distinguished from a true guide (evidence_document_underextracted_spec)
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > how is an unless/except exception clause handled in a temporal condition
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > how is copied artifact validation path containment tested
-- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
-  > how is corpus SOURCE_PDF_REGISTRY currentness checked
-- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
-  > how is corpus_kb currentness checked
-- [task-tree-catalog](../knowledge/task-tree-catalog.md)
-  > how is docs TASK_TREE kept complete without mirroring task history
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > how is docs knowledge INDEX kept complete

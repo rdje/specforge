@@ -1,4 +1,30 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.5a (`2026-08-12`) — trajectory state is a claim with an evidence precondition
+
+Five labels do not make a controller. Each state needs a different authority threshold. A current hard failure
+is enough to report divergence because the contract already forbids it. An exact improvement needs a comparable
+prior value and no regression. Stall needs an unchanged-deficit window, not one disappointing run. A sampled
+estimate needs paired uncertainty; comparing two point estimates would quietly turn noise into direction.
+
+The engine therefore keeps the objective vector intact and makes missing comparison authority visible as
+`unmeasurable`. It does not expose a scalar score. The material-change threshold belongs to each metric because
+one threshold across provenance counts, document-level recall, provider variance, and residual aging would be
+another disguised weighting system.
+
+Task selection is also an authority problem. A gap is not actionable merely because its label sounds urgent:
+it must name observed/target values, first stage, affected population, causal confidence, uncertainty,
+reproduction, impact, and a task ID that already exists in a root-relative task tree. Hard invariants sort ahead
+of source loss, semantic regressions, missing oracles, persistent residuals, and breadth. Within one tier the
+population/evidence/reversibility ordering stays in the report instead of disappearing inside weights.
+
+The report-only boundary is structural. The schema has no semantic patch field, rejects unknown fields, fixes
+`canonical_semantic_mutation_allowed` false, and requires task-tree review. The controller may diagnose and
+propose; review remains the only authority that can change canonical meaning.
+
+Separating `.5a` from `.5b` is an anti-tuning control. The engine and its state mutants are fixed before the
+current 7/41/33 result is attached, so classifier branches cannot be written to produce a preferred label or
+recommendation for one known dataset.
+
 ## SPEC-TO-INTENT-ALIGNMENT.4c (`2026-08-11`) — preservation after a bad first boundary is not recovery
 
 The frozen result separates raw region capture from semantic fact capture. Every reviewed region and modality

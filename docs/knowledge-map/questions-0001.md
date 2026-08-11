@@ -105,6 +105,8 @@
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > can an encoding table's column header SOURCE an enum name rather than only veto one / what did .5.iv measure (measured 2026-08-11 read-only, reproducer scripts/measure_encoding_enum_header_naming.py: derive_encoding_enum_name sources candidates ONLY from caption_text or the section title (evidence.rs:4698-4703) and then validates them against known_signals + the header
   > (:4715-4733), so the header is a veto and never a source. Corpus: 2,540 encoding tables -> 281 header-nameable <FIELD> value|Description -> 134 minting a non-empty enum after the .5.ii spine gate, in 10 docs. GO on the lever, NO-GO on the naive predicate; CODE deferred to .5.iv.a)
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > can an estimated point claim a trend without paired uncertainty history
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > can an external absolute input be rebased into the repository
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
@@ -133,6 +135,10 @@
   > can the prose bus-line signal lever (PDF-VARIANT-DIGESTION.9.10) be cluster-scoped as a CORPUS-PATTERN-REUSE opt-in extractor
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > can the subject snap fabricate or rewrite a signal name
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > can the trajectory controller mutate canonical semantic artifacts
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > can the trajectory controller use one weighted score
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > can the word when in a statement make its whole section a semantic phase
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
@@ -291,9 +297,3 @@
   > does a PathBuf need portability handling before it has a producer
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
   > does a blocked adapter remove a previously emitted isf
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > does a deterministic semantic->intent rebuild recover lost actor_signal_relations
-- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
-  > does a metadata rewrite failure preserve the previous normalized bundle
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > does a replaced constraint surface get polarity refinement (apply_persisted_polarity_to_constraints)

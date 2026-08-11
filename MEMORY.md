@@ -17,13 +17,13 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.5`; `.0` through `.4c` are complete. Tracking-only:
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.5b`; `.0` through `.5a` are complete. Tracking-only:
   `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: `.4c` publishes a byte-pinned result over 12 documents / 14 complete cells. All six categories
-  are incomplete; canonical TP/FP/FN is 7/41/33, 10 cells first fail SourceIR → EvidenceIR and four first fail
-  EvidenceIR → SemanticIR. The measured blocker is upstream fact formation/residualization, not ISF expressiveness.
-- Next action: open `.5` from the accepted research design and compose the exact `.4c` vector, stage-loss split,
-  `.2` capability ledger, source coverage, residual debt, and hard gates into a reviewable trajectory snapshot
-  and deterministic task proposal without permitting semantic mutation.
-- In-flight uncommitted: none after the `.4c` commit. No background job runs.
+- Current state: `.5a` supplies a strict nine-dimension controller with five states, exact denominator and
+  uncertainty authority, hard-first owned gap ranking, and report-only semantics. Sixteen focused tests and full
+  CI pass; the engine contains no `.4c` outcome constants.
+- Next action: in `.5b`, authenticate and compose the frozen `.4c` report plus `.2` capability participation,
+  persist the first byte-current trajectory input/report, classify current hard failures without inventing
+  history, rank every gap transparently, and open the winning task leaf before implementation pivots.
+- In-flight uncommitted: none after the `.5a` commit. No background job runs.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

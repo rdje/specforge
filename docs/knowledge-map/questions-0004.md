@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > how is an unless/except exception clause handled in a temporal condition
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > how is copied artifact validation path containment tested
+- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
+  > how is corpus SOURCE_PDF_REGISTRY currentness checked
+- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
+  > how is corpus_kb currentness checked
+- [task-tree-catalog](../knowledge/task-tree-catalog.md)
+  > how is docs TASK_TREE kept complete without mirroring task history
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > how is docs knowledge INDEX kept complete
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
   > how is fact-plane capacity derived
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
@@ -285,15 +297,3 @@
   > is SpecForge's constraint extraction over-generating
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
   > is VALIDATION_SNAPSHOT the latest local artifact validation or the last reviewed projection
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > is a better VLM needed to read register bit-layout diagrams
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > is a name-only gate enough to fix the generic enum (no — 271 real-named enums like COMMAND/DWORD_MISR/AMBA are themselves fragment-heavy/dup-heavy; the load-bearing signal is member quality)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > is a transaction's phase ORDER recoverable from prose (no — first-occurrence wrong on SWD, cues sparse, precedence conflicting)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > is a value-less drive valid in ISF / can an output participate in a transaction body without a value (no — every (drive …) needs a concrete actual; raised to FSMGEN)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > is an ISF transaction body ordered (yes — totally ordered, one clause ≈ one cycle; same-cycle concurrency only via a multi-pair drive block)
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > is any corpus document ingested at fewer pages than its source PDF

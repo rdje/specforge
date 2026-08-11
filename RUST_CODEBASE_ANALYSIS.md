@@ -4,6 +4,22 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-12 — multi-metric controller engine; `SPEC-TO-INTENT-ALIGNMENT.5a`)
+
+- New `ir/trajectory.rs` implements a strict report-only controller boundary over nine required dimensions,
+  bounded rational measures/targets, uncertainty, repository-relative evidence, hard gates, comparable history,
+  task-owned gaps, and deterministic reports. The public version-1 JSON contract denies unknown fields.
+- State priority is explicit: current hard failures diverge; otherwise exact paired gains/regressions yield
+  converging/diverging/mixed, unchanged deficits need the configured history window before `stalled`, and missing
+  or statistically inadequate comparison authority stays `unmeasurable`. Estimated points cannot use point-only
+  history to manufacture a trend.
+- Gap ranking is lexicographic by tier, affected population, causal confidence, reversible slice size,
+  uncertainty, and id. Every recommendation is rejected unless its task ID exists in the named root-relative
+  task tree; controller authority forbids canonical semantic mutation and requires review.
+- Sixteen focused tests cover five states and the principal Goodhart/authority mutants. The module is 1,408
+  lines including tests; total Rust source/tooling is 141,468 lines. `.5a` intentionally contains no `.4c`
+  outcome constants; `.5b` owns real evidence composition.
+
 ## Session update (2026-08-11 — first reviewed result; `SPEC-TO-INTENT-ALIGNMENT.4c`)
 
 - A 35-line generic example loads any safe repository-relative vertical dataset and emits the evaluator's pretty

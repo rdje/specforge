@@ -87,7 +87,8 @@ ActorContract path now ship, together with the strict mutation-tested vertical e
 12-document reviewed population, and the exact frozen result. All six categories are incomplete: 10/14 cells
 first fail at SourceIR → EvidenceIR and four at EvidenceIR → SemanticIR, with no first failure at SemanticIR →
 IntentIR. The measured frontier remains upstream fact formation and residualization, not an ISF/FSMGen
-expressiveness gap. The next leaf turns these separate exact dimensions into reviewable automatic steering.
+expressiveness gap. The strict nine-dimension state/ranking engine now ships with hard-first task ownership and
+report-only authority; the next leaf composes the frozen result and capability ledger into its first snapshot.
 
 Five active program groups support that north star:
 
