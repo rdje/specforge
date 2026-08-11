@@ -153,6 +153,7 @@ The author template is linked separately and is never classified as active work.
 | `SWD-SERIAL-EXTRACTION` | `done` | serial-protocol/architecture extraction for SWD/ADI → WIRE-BASED-100 100% | [open](tasks/SWD-SERIAL-EXTRACTION.md) |
 | `SYMBOL-CLOSURE-CORPUS-VALIDATION` | `done` | corpus-validate (and settle) the descoped symbol-closure detector | [open](tasks/SYMBOL-CLOSURE-CORPUS-VALIDATION.md) |
 | `TABLE-GRITS-CONFORMAL` | `done` | GriTS table-structure metric + split-conformal calibration | [open](tasks/TABLE-GRITS-CONFORMAL.md) |
+| `TASK-PART-SEAL-REACHABILITY` | `active` | give a completed task-evidence part a reachable closed state | [open](tasks/TASK-PART-SEAL-REACHABILITY.md) |
 | `TEMPORAL-ANTECEDENT-RECALL` | `done` | distribute a shared assertion-value across coordinated condition signals | [open](tasks/TEMPORAL-ANTECEDENT-RECALL.md) |
 | `TEMPORAL-RULE-EVAL` | `done` | supervised precision/recall/F1 for mined temporal rules | [open](tasks/TEMPORAL-RULE-EVAL.md) |
 | `TEMPORAL-RULE-LTL-RENDER` | `done` | render mined temporal rules in standard LTL/MTL notation | [open](tasks/TEMPORAL-RULE-LTL-RENDER.md) |

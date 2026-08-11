@@ -21,21 +21,19 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: none — `LIVE-DOC-STOP-RISK` is **closed** (`.0`, `.0a`, `.1`, `.1a` all done).
-- Current state: the whole "bound with no compliant exit" class is now gated. `.0`/ADR 0030 gave `ROADMAP.md`
-  the missing **exit** — the archive is a bounded capsule series, so a rollover is copy-root-to-dated-capsule
-  + one contract record + one index row + rewrite, all gate-proved. `.0a`/ADR 0031 closed the **entrance** —
-  each H2 declares its own bound and remedy, and their legal sum fits the health target (243/256); the root is
-  156 lines, every section under its warning. `.1`/ADR 0032 generalized it: every `collection` surface must
-  declare `aggregate ≥ files × per-file` on both bands, with one exemption (`aggregate_composition`) that must
-  *sum* to the declared bounds — `fact_index` is its only user. Ten aggregates were re-derived under exact
-  authorities; `task_evidence` can now get the file capacity its 81.9% warning needs. Pressure lines name the
-  headroom to the ceiling. Suites: roadmap 9 → 49 cases, live-doc 68 → 81.
-  `CHANGES-LEDGER-ROLLOVER` then rolled the ledger the above filled: `segment-0005`, then `segment-0006` after
-  `.0`'s minimal cut proved too small — a rollover writes a ledger record itself, so size the cut to include
-  it. Root is 92 records / 1,385 lines (~77%), all older archive members byte-identical.
-- Next action: `CORPUS-COVERAGE.2.51` — the next product slice; six corpus documents remain. No housekeeping
-  blocks it. Note that `docs/tasks/` is at 82.5% of its file target (132/160); ADR 0032 made that count's
-  remedy — raise the capacity under an exact authority — actually usable, so it is a decision, not a trap.
+- Active unit: `TASK-PART-SEAL-REACHABILITY` at `.0` (pending) — tracking only; it blocks no product work.
+- Current state: found while choosing where `CORPUS-COVERAGE.2.51` should write. A partitioned task-evidence
+  part has three declared states and a finished post-migration part can reach none of the closed ones:
+  `legacy` requires a capsule source region, and `sealed` is unreachable in any commit sequence. Measured on
+  the live contract and restored exactly — sealing with the body unchanged fails `lacks state literal
+  '- State: \`sealed\`'`, and sealing with the body changed fails `differs from its sealing commit`, because
+  `check_active_task_evidence.pl:956` derives the body literal from the contract state while `:968-973`
+  requires that body to equal an ancestor commit's blob. A commit cannot name its own hash, and the
+  intermediate state is the first failing candidate, so there is no two-commit path either. `.0` owns the
+  mechanism decision (three candidates recorded) and must land as an ADR before any code.
+- Next action: `CORPUS-COVERAGE.2.51` — refresh #51 selects `109242_0100_01_2023_09_04_arm_smmu_software_guide`,
+  smallest of the six remaining at 600 elements. Own it in a **new** part `refreshes-51-56`, because
+  `refreshes-49-56` is at 434 of 640 lines and a refresh has cost 131–295 lines, so the next write could not
+  finish under its 90% rollover; leave that part byte-identical and `active` per the finding above.
 - In-flight uncommitted: none; no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.
