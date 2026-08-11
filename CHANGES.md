@@ -1,3 +1,14 @@
+### CHANGES-LEDGER-ROLLOVER.1 — size a rollover cut to include the record it must itself write
+
+- `.0` claimed to return the ledger to its warning band and did not. Its cut was the minimal one against the
+  root *as committed*, so the eighteen-line entry the transaction itself had to append put the ledger straight
+  back to 80.1% — one line over. The leaf's own acceptance criterion was false in the tree it committed.
+- A rollover is not free of the ledger: it writes a record like any other change, so a minimal cut is minimal
+  only until the transaction finishes. `segment-0006` seals four more post-capsule records, leaving 92 records
+  / 1,385 lines / 200,226 bytes, which stays near 77% after this entry and holds for several ordinary slices.
+- Older members, `segment-0005` included, are byte-identical; no limit, milestone, or ceiling moved. The plan
+  was exact on its first dry run, using the byte-offset record derivation `.0` had to work out.
+
 ### CHANGES-LEDGER-ROLLOVER.0 — seal segment-0005 and return the change ledger to its warning band
 
 - Four `LIVE-DOC-STOP-RISK` entries took this ledger from 81.4% to 89.1% of its 1,800-line health target,
@@ -329,62 +340,6 @@
   replace copied thresholds; the existing neutral active-task checker will enforce a separate contract.
 - The source remains byte-identical. Product status stays 48 done / eight remaining and 59/59 strict-clean; `.3`
   locks every migration input before `.4` may move a source byte.
-
-### CORPUS-COVERAGE.2.48 — refresh OpenCAPI 32G PHY signaling without false topology
-
-- Two guarded CPU ingests reproduce 43 pages / 39 visuals / 27 tables / 73 sections / 318 elements. The final
-  committed-child run restores 130 normalized files / 34,843,407 bytes in 27.2 seconds and pins SourceIR
-  `e2c0b9e5…859f` plus bundle `30f70511…8232`.
-- Source 376→318 removes exactly 58 flattened chart/diagram labels from ten pages. Evidence 613→547 additionally
-  removes four synthetic acronym declarations and four generic-enum statements; child `.2.48a` removes the one
-  spanned footer after eight value-empty stale timing rows, leaving 60 grounded physical timings.
-- Current authority removes three stale interfaces / 18 phases / 19 gates. IntentIR retains seven actors / 21
-  behaviors / 75 constraints / four assumptions / 60 timings; the stale four-port/one-enum `channel.isf` is gone
-  and lowering blocks only on no declared signals.
-- All eight downstream artifact/report hashes reproduce. Nine provider-free evals, KG 156/156, 59/59 current
-  emitted ISFs under FSMGen strict, child full CI, book, doctrines, path, and locality pass. Corpus is 48 done /
-  eight remaining at 80/20/80/79 stage coverage; next select refresh #49.
-
-### CORPUS-COVERAGE.2.48a — require independent timing scalar cell geometry
-
-- The complete 80-document / 105-timing-table retained surface identifies 23 false records whose parameter or
-  populated scalar roles came from one multi-column source cell: three SWP notes, seven HBM2 group rows, twelve
-  eMMC note/group rows, and one OpenCAPI footer. The grounded scalar population changes 608→585.
-- EvidenceIR now requires independent geometry for the parameter and populated min/typ/max cells. Blank or `-`
-  scalar absences, equal values in distinct cells, and spans confined to optional unit/description prose remain
-  valid; no document, vendor, table, parameter, or note-text exception enters production.
-- The active OpenCAPI cascade retains both real table 5-11 rows, changes 61→60 timings, and reproduces downstream
-  hash `b9418108…8951` twice. Three non-rebuildable affected controls remain byte-exact across twelve stage
-  comparisons rather than being misreported as full cascades.
-- Focused EvidenceIR tests, nine provider-free evals, KG 156/156, 59/59 current emitted ISFs under FSMGen strict,
-  and full CI 1,798/five ignored pass. Parent `.2.48` resumes committed-release re-ingest and final signoff.
-
-### CORPUS-COVERAGE.2.47 — refresh Cortex-A76 guide without instruction topology
-
-- Three guarded CPU ingests reproduce 46 pages / 71 visuals / 68 tables / 68 sections / 249 elements; the
-  release build pins SourceIR `a396a074…d478` and normalized manifest `872e7dba…1bae`.
-- Source 260→249 removes flattened visual labels. Evidence 971→960 and timings 3→0 while the guide's grounded
-  prose remains; child `.2.47a` closes the shared structural timing-authority defect exposed by the refresh.
-- Current authority removes 228 stale instruction interfaces, 18 phases, 23 gates, 37 behaviors, and the
-  537-output `consumer.isf`. Final IntentIR keeps 15 constraints / two assumptions; lowering blocks only on no
-  declared signals and retains two canonicalization residuals.
-- Two downstream release cascades reproduce `b4b50237…9ade`; all five stages validate. Nine provider-free evals,
-  KG 156/156, and all 60 emitted ISFs under FSMGen strict pass. Corpus is 47 done / nine remaining; next select
-  #48, the 43-page OpenCAPI 4.0 32 Gbps PHY Signaling specification.
-
-### CORPUS-COVERAGE.2.47a — enforce structural timing-table authority
-
-- Timing-table classification now reads only the leading all-column-header prefix and matches identifier-safe
-  tokens. Trapped data rows, `SMIN`, `Instruction group`, and underscore-delimited identifiers can no longer
-  fabricate min/unit authority.
-- Structural shape validates an ingest/prior classification but does not promote an otherwise unknown table.
-  Scalar extraction separately requires unique min/typ/max columns and at least one actual row value; genuine
-  multi-variant limit tables remain timing-category residuals instead of being flattened.
-- The 39-document / 284-table retained population changes from 2,144 timing records to 608 grounded records;
-  Cortex instruction tables fall 151→0, I2S holds at five, and every survivor has a min/typ/max value.
-- Eight rebuildable real cascades reproduce combined hash `58411566…6457a` twice with 32 stage validations.
-  Source/Evidence regressions, nine provider-free evals, KG 156/156, full CI 1,796/five ignored, and all 60
-  emitted ISFs under FSMGen strict pass. Parent `.2.47` resumes final Cortex-A76 signoff.
 
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4a — lossless rolling-ledger protocol locked
 

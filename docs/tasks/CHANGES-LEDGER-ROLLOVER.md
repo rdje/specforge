@@ -52,7 +52,7 @@ Lines and records are both past warning; lines are 17 from the mandatory rollove
   Status: `done`
   Goal: the change ledger is back inside its warning band through its declared transaction, with no record
   edited and no bound moved
-  Children: `CHANGES-LEDGER-ROLLOVER.0`
+  Children: `CHANGES-LEDGER-ROLLOVER.0`, `.1`
 
 - ID: `CHANGES-LEDGER-ROLLOVER.0`
   Status: `done`
@@ -61,11 +61,21 @@ Lines and records are both past warning; lines are 17 from the mandatory rollove
   Verification: `plan docs/research/changes-ledger-rollover-2026-08-11-plan.jsonl pins commit 9dc39c61 and opening SHA-256 6c2c5684…0ff3; the dry run reported "exact and warning-safe" before the applied run; the root is 95 records / 1,423 lines / 203,398 bytes = 79.1% of the line health target, 79.8% of bytes, 74.2% of records — every dimension below its 80% warning; segment-0005-2026-08-11.md holds 12 records / 179 lines / 15,551 bytes at SHA-256 355afe2b…9af6; git diff proves all four older segments and the source capsule byte-identical; scripts/check_doctrines.sh 6/6`
   Commit: `CHANGES-LEDGER-ROLLOVER.0 — seal segment-0005 and return the change ledger to its warning band`
 
+- ID: `CHANGES-LEDGER-ROLLOVER.1`
+  Status: `done`
+  Goal: correct `.0`. Its cut was minimal against the root *as committed*, so the entry the transaction itself
+  had to write put the ledger back over the warning — the leaf's own acceptance criterion was false in the tree
+  it committed. Size the cut to include the record the rollover must write.
+  Acceptance: `the root is below the 80% warning on every dimension after this leaf's own ledger entry lands; older members including segment-0005 stay byte-identical; no limit, milestone, or ceiling moves; the gate passes`
+  Verification: `segment-0006-2026-08-11.md seals four more post-capsule records (55 lines / 4,713 bytes, SHA-256 72af06cd…a2f7), leaving the root at 92 records / 1,385 lines / 200,226 bytes; with this leaf's own 14-line entry the ledger is ~77% of its line health target, against 80.1% after .0; dry run exact on the first attempt; git diff proves segment-0005 and every earlier member byte-identical; scripts/check_doctrines.sh 6/6 with no change_history warning`
+  Commit: `CHANGES-LEDGER-ROLLOVER.1 — size a rollover cut to include the record it must itself write`
+
 ## Current Frontier
 
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
-| 1 | `CHANGES-LEDGER-ROLLOVER.0` | `done` | landed; the ledger is back inside its warning band |
+| 1 | `CHANGES-LEDGER-ROLLOVER.0` | `done` | landed, but one line short of its own acceptance |
+| 2 | `CHANGES-LEDGER-ROLLOVER.1` | `done` | corrected the cut to account for the record the rollover itself writes |
 
 ## Decisions
 
@@ -94,12 +104,16 @@ Lines and records are both past warning; lines are 17 from the mandatory rollove
 | `2026-08-11` | `.0` diagnosability | the first dry run failed on an opaque `segment first-record identity drift` with no actual value, unlike every neighbouring drift message | fixed the two messages to print actual-vs-expected, then hand-derived the digest from exact byte offsets: leading records retain their blank separator (`…\n\n`), only the final record loses it to the canonical single-newline collapse — the earlier line-join attempt dropped that byte |
 | `2026-08-11` | `.0` transaction | `--rollover-plan` dry run, then `--apply-rollover`; `git diff` over every prior archive member | dry run "exact and warning-safe"; applied root-last; all four older segments and the source capsule byte-identical; only the root, the new segment, the manifest, and the index changed |
 | `2026-08-11` | `.0` gate | `bash scripts/check_doctrines.sh` | 6/6 PASS, `CHAIN-CURRENCY` DEFER as registered |
+| `2026-08-11` | `.0` post-commit | read the live-document pressure report after committing `.0` | **`.0` did not meet its own acceptance**: `change_history lines_each at or above warning (80.1%)`. The cut was minimal against the committed root, and the transaction's own 18-line entry then pushed it back over the 1,440-line warning by one line |
+| `2026-08-11` | `.1` sizing | recomputed the cut with the entry it would itself require included | N=4 leaves 1,385 lines → ~1,399 after a 14-line entry (77.7%); N=1 would have reproduced the same 80.1% failure |
+| `2026-08-11` | `.1` transaction | dry run, then `--apply-rollover`; `git diff` over every earlier archive member | exact on the first dry run using the byte-offset record derivation `.0` established; root 92 records / 1,385 lines / 200,226 bytes; `segment-0005` and all earlier members byte-identical |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
-| `CHANGES-LEDGER-ROLLOVER.0` | `CHANGES-LEDGER-ROLLOVER.0 — seal segment-0005 and return the change ledger to its warning band` | 12 records sealed; older members byte-identical |
+| `CHANGES-LEDGER-ROLLOVER.0` | `CHANGES-LEDGER-ROLLOVER.0 — seal segment-0005 and return the change ledger to its warning band` | 12 records sealed; older members byte-identical; left the root at 80.1% |
+| `CHANGES-LEDGER-ROLLOVER.1` | `CHANGES-LEDGER-ROLLOVER.1 — size a rollover cut to include the record it must itself write` | 4 more records sealed into segment-0006; root ~77% |
 
 ## Changelog
 
@@ -108,3 +122,7 @@ Lines and records are both past warning; lines are 17 from the mandatory rollove
 - `2026-08-11`: `.0` closed and with it the tree. The declared transaction ran unmodified; the only code change
   was to make an exact-identity failure report its computed value, which is what made the plan derivable by
   hand at all.
+- `2026-08-11`: reopened for `.1`, because `.0`'s closure was premature: the committed tree did not satisfy
+  `.0`'s own acceptance criterion. A rollover writes a ledger record like any other change, so a cut that is
+  minimal against the committed root stops being minimal the moment the transaction finishes. `.1` re-cut with
+  that record included and the tree is closed for real.
