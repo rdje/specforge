@@ -63,11 +63,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.1 — define source-to-IntentIR category contracts`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.2`
-  Status: `pending`
+  Status: `done`
   Goal: `make the canonical production workflow account for every production extraction capability`
   Acceptance: `the default workflow invokes, deliberately schedules, or explicitly reports omission of contract extraction, relation resolution, register recovery, NLI enforcement, and other production stages; tests prevent capability islands from being mistaken for end-to-end delivery`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `the 17-row per-run ledger covers all 16 production commands; the Clap-derived test partitions all 28 subcommands and fails on an unclassified or unreported producer; provider-free CLI smoke, warning-deny Clippy, focused tests, mdBook, projections, exact rolling-ledger transaction, all doctrines, and full repository CI pass`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.2 — guard canonical capability accounting`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.3`
   Status: `pending`
@@ -96,8 +96,8 @@ expressiveness as the bottleneck.
 | --- | --- | --- | --- |
 | 1 | `SPEC-TO-INTENT-ALIGNMENT.0` | `done` | assessment, owner direction, and controller design are durable and verified |
 | 2 | `SPEC-TO-INTENT-ALIGNMENT.1` | `done` | six category-aware source-to-IntentIR contracts and strict honesty floors are durable |
-| 3 | `SPEC-TO-INTENT-ALIGNMENT.2` | `pending` | next: prevent standalone capability from being counted as canonical-path capability |
-| 4 | `SPEC-TO-INTENT-ALIGNMENT.3` | `pending` | replace multimodal architectural dormancy with real upstream input |
+| 3 | `SPEC-TO-INTENT-ALIGNMENT.2` | `done` | every production command has guarded integrated/scheduled/omitted accounting |
+| 4 | `SPEC-TO-INTENT-ALIGNMENT.3` | `pending` | next: replace multimodal architectural dormancy with real upstream input |
 | 5 | `SPEC-TO-INTENT-ALIGNMENT.4` | `pending` | measure whether the complete pipeline is actually converging |
 | 6 | `SPEC-TO-INTENT-ALIGNMENT.5` | `pending` | convert measured outcomes into automatic, reviewable steering |
 
@@ -120,17 +120,26 @@ expressiveness as the bottleneck.
   the typed-content requirement it replaces.
 - `2026-08-11`: non-applicability requires independent evidence that the source content is absent. A blocked
   adapter or zero emitted ISF is never sufficient evidence that upstream capture is complete.
+- `2026-08-11`: capability participation and per-run execution are independent. A provider-backed stage can
+  be integrated yet `not_executed` for one run; a standalone capability remains `omitted` until the canonical
+  path composes or deliberately schedules it.
+- `2026-08-11`: the CLI itself is the completeness oracle for capability accounting. All 28 subcommands need
+  a role classification, and each of the 16 classified production commands must appear in the convergence
+  ledger; adding an unclassified or unreported command fails tests.
+- `2026-08-11`: do not imply integration to close `.2`. Constrained contracts, Tier-3 actor/signal resolution,
+  register-bit recovery, and IntentIR NLI demotion remain explicit omissions; condition repair is covered only
+  when the integrated LLM-primary replacement actually executes.
 
 ## Open Questions
 
 - Which representative PDFs form the first held-out category set for `.1` and `.4`?
-- Which existing extractor commands should be composed directly into `converge`, and which should remain
-  explicitly scheduled passes because of provider cost or review requirements?
+- Which currently omitted capability produces the largest held-out source-to-IntentIR gain and should therefore
+  be integrated first? `.4` supplies the evidence; `.2` makes each omission measurable in the meantime.
 
 ## Blockers
 
-- None for `.2`. Optional local model runtimes were unavailable during startup diagnostics, but `.2` begins
-  with provider-free orchestration and code-path accounting.
+- None for `.3`'s provider-free producer audit. Live visual extraction will need a ready VLM endpoint or an
+  existing reviewed observation, but the typed-path and real-fixture work can begin without one.
 
 ## Verification Log
 
@@ -146,6 +155,34 @@ expressiveness as the bottleneck.
 | `2026-08-11` | `.1` focused implementation checks | `mdbook test docs/book`; `mdbook build docs/book`; Knowledge Map derive/check; fact-card catalog check at 200 cards; `cargo test -p specforge --lib -- completeness` | PASS: book and projections current; 66 completeness tests passed / zero failed |
 | `2026-08-11` | `.1` startup-artifact hygiene | remove the exact repo-local `generated/{source_ir,evidence_ir,semantic_ir,intent_ir,adapters/isf}/readme` smoke chain, prove no `readme` residue, then run `bash scripts/check_corpus_frontier.sh` | PASS: only the reproducible startup smoke output was removed; corpus identity restored to 57 cohort = 52 refreshed + five remaining |
 | `2026-08-11` | `.1` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines, formatting, clippy with warnings denied, 1,810 Rust tests passed / five ignored / zero failed, Rust docs, mdBook test/build, and post-producer project-data locality |
+| `2026-08-11` | `.2` capability audit | compare all clap subcommands and dispatch paths with `converge`, rescan execution, post-stability promotion, NLI measurement, IntentIR construction, and every standalone producer | 28 commands partition into 16 production commands plus orchestrator/quality/corpus/diagnostic/maintenance roles; 17 capability rows are required because ordinary IntentIR and NLI demotion are distinct modes |
+| `2026-08-11` | `.2` focused code checks | warning-deny `cargo clippy -p specforge --all-targets`; `cargo test -p specforge --lib commands::converge` | PASS: 28/28 focused tests; CLI partition, production coverage, unique IDs, provider-free omissions, promotion coverage, and JSON serialization are pinned |
+| `2026-08-11` | `.2` provider-free CLI and hygiene | `cargo run -p specforge -- converge README.md --target isf --vlm-provider skip --nlp-provider skip --max-iterations 3`; remove exact five-stage `generated/**/readme` outputs; `bash scripts/check_corpus_frontier.sh` | PASS: stable after two passes; all 17 JSON rows emitted; scratch residue empty; corpus restored to 57 = 52 + five |
+| `2026-08-11` | `.2` documentation and projections | mdBook test/build; book-current-truth; Knowledge Map derive/check at 211 facts / 1,568 questions; fact-card catalog at 200 cards; roadmap projection; live-size; rolling-ledger protocol | PASS: code, public contract, retrieval, roadmap, and bounded live surfaces agree |
+| `2026-08-11` | `.2` required CHANGES rollover | dry-run then apply `docs/research/spec-to-intent-alignment-2-changes-rollover-plan.jsonl` | PASS: exact `changes-0007` seals 15 records / 302 lines / 27,085 bytes at SHA-256 `609abef2…d9d2f`; live root is warning-safe and all four archive chains validate |
+| `2026-08-11` | `.2` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines, formatting, clippy with warnings denied, 1,813 Rust tests passed / five ignored / zero failed, Rust docs, mdBook test/build, and final project-data-locality residue check |
+
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
+
+- [x] **REPRODUCE / MEASURE** — the pre-change command/path audit measured 28 clap subcommands, 16 production
+  commands, and four standalone capability islands absent from canonical `converge`; the provider-free CLI
+  smoke emitted no capability-accounting surface at baseline.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/cli.rs:19-76` exposes every producer independently,
+  while `crates/specforge/src/commands/converge.rs:205-254` directly composes only enrich, EvidenceIR, NLP
+  enrichment, SemanticIR, IntentIR, and adapter construction. Therefore `extract-contracts`, `signal-resolve`,
+  `recover-register-bits`, and IntentIR NLI demotion could remain uninvoked without an operator-visible record.
+- [x] **ADDRESSED (verified)** — provider-free `converge README.md` now emits exactly 17 JSON capability rows:
+  all 16 production commands are accounted for, ordinary IntentIR and its NLI mode remain distinct, and the
+  four genuine islands report `omitted` / `not_executed`. The Clap-derived test partitions all 28 commands and
+  fails if a production command is unclassified, unreported, or assigned a duplicate capability ID.
+- [x] **NO REGRESSION** — `bash scripts/run_ci.sh` exits zero with all eight doctrines, warnings-denied Clippy,
+  1,813 Rust tests passed / five ignored / zero failed, Rust docs, mdBook test/build, and the final locality
+  residue check; the provider-free smoke's exact five reproducible artifacts were removed and the corpus
+  frontier remains 57 = 52 refreshed + five remaining.
+- [x] **GENERICITY (ADR 0006)** — accounting is derived from command roles and runtime participation, with no
+  document, vendor, protocol, signal, or chip-specific exception.
+- [x] **LOCKSTEP** — code, task frontier, roadmap, current status, architecture analysis, public mdBook,
+  Knowledge Map fact/projections, bounded live state, and the lossless CHANGES archive transaction agree.
 
 ## Commit Log
 
@@ -153,6 +190,7 @@ expressiveness as the bottleneck.
 | --- | --- | --- |
 | `SPEC-TO-INTENT-ALIGNMENT.0` | `SPEC-TO-INTENT-ALIGNMENT.0 — fix the upstream objective and trajectory control` | durable trajectory and priority alignment; no product-code or generated-IR mutation |
 | `SPEC-TO-INTENT-ALIGNMENT.1` | `SPEC-TO-INTENT-ALIGNMENT.1 — define source-to-IntentIR category contracts` | versioned category contract, book contract, and retrieval fact; no product-code or generated-IR mutation |
+| `SPEC-TO-INTENT-ALIGNMENT.2` | `SPEC-TO-INTENT-ALIGNMENT.2 — guard canonical capability accounting` | 17-row per-run ledger, full CLI partition guard, public contract, and required lossless CHANGES rollover |
 
 ## Changelog
 
@@ -164,3 +202,5 @@ expressiveness as the bottleneck.
   to `.1`, the per-document-category EvidenceIR-to-IntentIR content contract.
 - `2026-08-11`: Closed `.1` with strict, source-grounded acceptance for all six categories; frontier advances
   to `.2`, canonical production-workflow capability accounting.
+- `2026-08-11`: Closed `.2` with complete guarded capability accounting and explicit current omissions;
+  frontier advances to `.3`, real PDF-to-typed-multimodal producer proof.

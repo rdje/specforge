@@ -121,12 +121,31 @@ It:
 
 This is the main command when you want a serious local run on a real spec.
 
-It is not currently the union of every production extraction command. The ordinary path does not directly run
-`extract-contracts`, `signal-resolve`, or `recover-register-bits`; those remain additive commands. Its
-post-stability NLI pass records an extraction-quality gauge on EvidenceIR and is not the same operation as the
-IntentIR demotion enabled by `intent --nli-verify`. Until those capabilities are integrated, deliberately
-scheduled, or explicitly reported omitted, “default” must not be read as “every shipped capability.” See
+It is not the union of every production extraction command, and it no longer leaves that fact implicit. Every
+successful run emits a machine-readable production-capability ledger. The current ledger has 17 capability
+rows covering all 16 production subcommands; ordinary IntentIR construction and `intent --nli-verify` are
+separate rows because they have different effects. Each JSON row names the exact command/entrypoint,
+`participation` (`integrated`, `scheduled`, or `omitted`), this run's `run_state`, and a reason.
+
+The ordinary path still does not directly run `extract-contracts`, `signal-resolve`, or
+`recover-register-bits`, and its EvidenceIR NLI quality measurement is not the IntentIR demotion gate. Those
+capability islands now appear explicitly as `omitted` / `not_executed`; they cannot be mistaken for default
+end-to-end delivery. Provider-backed stages that are wired into `converge` but disabled for a particular run
+remain `integrated` and report `not_executed` with the responsible flag. `validate` and cross-document
+`learn-priors` are `scheduled` outside the single-document run rather than silently claimed complete. See
 [Trajectory And Automatic Steering](../quality/trajectory.md).
+
+For example, a provider-free run includes:
+
+```text
+production_capability_count: 17
+production_capability: {"capability_id":"constrained_contract_extraction","command":"extract-contracts","entrypoint":"extract-contracts","participation":"omitted","run_state":"not_executed","reason":"standalone extractor is not composed by converge; run it explicitly and rebuild downstream stages"}
+production_capability: {"capability_id":"intent_nli_enforcement","command":"intent","entrypoint":"intent --nli-verify","participation":"omitted","run_state":"not_executed","reason":"converge measures EvidenceIR extraction quality but does not invoke the separate IntentIR NLI demotion gate"}
+```
+
+The code test partitions the complete CLI surface. Adding a subcommand without classifying it fails, and every
+command classified as production must occur in the ledger. This turns capability participation into a guarded
+product contract instead of a prose inventory.
 
 The persisted snapshot compares exact ordered records for serial-frame fields, protocol operations,
 protocol states, and interface-edge timings at EvidenceIR, SemanticIR, and IntentIR. Therefore a
@@ -234,9 +253,9 @@ silently did nothing would be worse than an error), and a provider-free run neve
 the deterministic Pattern surface remains the provider-free default, byte-stable in CI. The
 promotion's recall universe is the Pattern surface's own sentences (it re-reads what Pattern
 found; it does not discover new sentences), so it is a precision play measured by the gauge,
-not a recall claim. Promotion is opt-in while the corpus evidence accumulates; flipping the
-default is tracked as a separate, explicitly-measured decision
-(`docs/tasks/LLM-PRIMARY-PROMOTION.md`).
+not a recall claim. Live-NLP convergence now promotes by default after the corpus-wide measured flip;
+`--no-promote-constraints-llm` is the explicit opt-out. The evidence and decision history live in
+`docs/tasks/LLM-PRIMARY-PROMOTION.md`.
 
 ### The standing extraction-quality gauge
 

@@ -1,6 +1,6 @@
 ---
 id: default-converge-production-boundary
-title: The ordinary converge path is not the union of all production extraction commands
+title: Converge emits a guarded per-run ledger for every production command and every capability island
 answers:
   - "which extraction commands does converge run directly"
   - "does converge automatically run extract-contracts"
@@ -11,11 +11,13 @@ answers:
   - "why can a shipped standalone extractor fail to improve the default end-to-end result"
   - "what does converge do after stabilization"
   - "does the converge NLI pass measure quality or demote unsupported intent"
+  - "how does converge report integrated scheduled and omitted production capabilities"
+  - "will a new standalone extraction command fail if converge does not account for it"
 date: 2026-08-11
 status: current
 tags: [converge, orchestration, extraction, intentir, nli, contracts, relations, register-bits]
-evidence: crates/specforge/src/commands/converge.rs; crates/specforge/src/lib.rs; crates/specforge/src/commands/rescan_plan.rs; docs/book/src/commands/pipeline.md; docs/book/src/commands/quality-and-learning.md; docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md
-reverify: "rg -n 'use crate::commands|enrich::run|nlp_enrich::run|promote_constraints|measure_and_persist_gauge|extract_contracts|signal_resolve|recover_register_bits' crates/specforge/src/commands/converge.rs; then compare command dispatch in crates/specforge/src/lib.rs and the nlp-enrich-only rescan allowlist in crates/specforge/src/commands/rescan_plan.rs"
+evidence: crates/specforge/src/commands/converge.rs (production_capability_report and Clap-surface partition tests); crates/specforge/src/lib.rs; crates/specforge/src/commands/rescan_plan.rs; docs/book/src/commands/pipeline.md; docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.2)
+reverify: "cargo test -p specforge --lib commands::converge::tests::production_capability_registry_partitions_cli_and_accounts_for_every_producer && cargo test -p specforge --lib commands::converge::tests::provider_free_capability_report_names_every_current_capability_island"
 ---
 
 The ordinary `converge` pass directly runs visual enrichment when enabled, builds EvidenceIR, runs
@@ -29,7 +31,14 @@ The direct path does **not** invoke the standalone `extract-contracts`, `signal-
 demotes not-entailed IntentIR values; its NLI call records a gauge on EvidenceIR. Those capabilities are real
 and command-dispatched in `lib.rs`, but ordinary convergence does not compose them.
 
-Therefore `converge` is the default orchestration path, not evidence that every shipped extraction capability
-participates in the default result. A roadmap capability must be classified as integrated, deliberately
-scheduled, or explicitly omitted before it can count as end-to-end product capability. This distinction is
-owned by `SPEC-TO-INTENT-ALIGNMENT.2`.
+Every successful run now emits a 17-row JSON ledger covering all 16 commands classified as production
+capabilities. Each row separates stable participation (`integrated`, `scheduled`, or `omitted`) from the
+per-run state (`executed`, `inspected_only`, or `not_executed`) and names the exact command/entrypoint plus a
+reason. Provider-backed integrated stages therefore remain visible when disabled, while the four capability
+islands above are explicit omissions rather than implied delivery. Standalone condition repair is reported
+covered only when the integrated LLM-primary replacement actually ran.
+
+A test derives all subcommand names from Clap, compares them with a complete 28-command role partition, and
+requires all 16 production commands to occur in the ledger. Adding a subcommand without classification, or
+classifying a production command without a ledger row, fails. `converge` remains the default orchestration path,
+but its exact end-to-end boundary is now guarded and machine-readable (`SPEC-TO-INTENT-ALIGNMENT.2`).

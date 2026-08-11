@@ -1,4 +1,23 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.2 (`2026-08-11`) — participation and execution are different facts
+
+A default command can know about a stage without executing it in one run, and a stage can compile without the
+default command knowing about it at all. One status cannot represent both cases. The convergence ledger
+therefore records stable participation (`integrated`, `scheduled`, or `omitted`) separately from per-run state
+(`executed`, `inspected_only`, or `not_executed`). `enrich --provider skip` is integrated-but-not-executed;
+`extract-contracts` is omitted even when an NLP provider is live. That distinction is the anti-overclaim gate.
+
+The registry boundary is derived from Clap rather than a hand-counted subset. Tests compare all 28 subcommands
+with one exhaustive role partition, then require every one of the 16 production commands to occur in the
+17-row ledger. Intent has two rows because ordinary projection and NLI demotion are materially different;
+condition extraction changes from omitted to integrated/executed only when the LLM-primary replacement that
+performs its grounding actually ran.
+
+This slice deliberately reports gaps instead of silently wiring expensive or review-sensitive model passes.
+The ledger is observation-only: no artifact schema, provider default, SourceIR/EvidenceIR/SemanticIR/IntentIR
+content, adapter bytes, or review gate changes. Held-out `.4` evidence can now rank which omission merits real
+integration rather than rewarding whatever standalone feature was easiest to add.
+
 ## SPEC-TO-INTENT-ALIGNMENT.1 (`2026-08-11`) — completeness is per source meaning, not per output
 
 An artifact-count or emitted-ISF measure cannot distinguish a faithful non-target document from a document

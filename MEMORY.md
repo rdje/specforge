@@ -17,20 +17,19 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.2`; `.0` and `.1` are complete. Tracking-only:
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.3`; `.0` through `.2` are complete. Tracking-only:
   `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: `doctrine/spec_to_intent_category_contract.json` now defines six category-aware,
-  source-to-IntentIR contracts with exact reviewed precision/recall, provenance, conservation, residual, and
-  anti-fabrication floors. Residuals preserve loss but do not count as complete typed capture; non-applicability
-  needs independent source evidence. Message-field transport and platform-topology/clock-domain carrier gaps
-  are explicitly incomplete. No category is retroactively claimed supported; `.4` will decide support from
-  held-out documents. ISF remains a separate, later boundary (ADR 0033).
-- Next action: execute `.2` by auditing every production extractor against the canonical workflow, then make
-  `converge` invoke, deliberately schedule, or explicitly report omission of contract extraction, signal
-  resolution, register recovery, NLI enforcement, and every other production capability. Pin the accounting
-  with tests so standalone capability cannot be reported as default end-to-end delivery.
-- In-flight uncommitted: none after the `.1` commit. No background job runs.
-- Blockers: none for `.2`. Optional Ollama and LM Studio endpoints were unavailable during startup `doctor
-  --strict`; provider-free orchestration work is not blocked. Rolling-ledger pressure is derived by
-  `perl scripts/check_rolling_ledger_protocol.pl --report`; the current report passes. The user-owned
-  `.claude/settings.json` is untouched.
+- Current state: the six-category source-to-IntentIR contract remains the acceptance authority. `converge` now
+  emits 17 machine-readable capability rows covering all 16 production subcommands; each separates stable
+  participation (`integrated`, `scheduled`, `omitted`) from this run's state and reason. A Clap-derived test
+  partitions all 28 commands and prevents unreported production capability. Contract extraction, Tier-3
+  relation resolution, register-bit recovery, and IntentIR NLI demotion remain explicit omissions; the ledger
+  changes stdout/report state only, not canonical IR or adapter bytes.
+- Next action: execute `.3` by tracing the real PDF visual/layout producer path into typed multimodal IR,
+  selecting a retained source fixture with an applicable timing/state/register figure, and proving real input
+  reaches the required consumer or is reported unavailable. Do not count synthetic waveform tests as delivery.
+- In-flight uncommitted: none after the `.2` commit. No background job runs.
+- Blockers: none for the provider-free `.3` audit. Startup `doctor --strict` found no ready Ollama or LM Studio
+  endpoint, so a live VLM proof may require the endpoint to become ready; do not substitute a fabricated
+  observation. Rolling-ledger and corpus-frontier reports pass. The user-owned `.claude/settings.json` is
+  untouched.

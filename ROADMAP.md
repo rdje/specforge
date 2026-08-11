@@ -81,7 +81,9 @@ canonical `IntentIR` before adapter expressiveness can be called the blocker. IS
 executable boundary and can evolve when a source-grounded IntentIR value proves a concrete language gap, but
 SpecForge does not spend the present frontier anticipating one. [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md)
 owns the per-category IR contract, canonical-path integration, real multimodal producer, held-out vertical
-slices, and reviewable trajectory controller that make this ordering measurable (ADR 0033/0034).
+slices, and reviewable trajectory controller that make this ordering measurable (ADR 0033/0034). Its category
+contract and guarded per-run production-capability ledger now ship; real multimodal producer wiring is the next
+frontier.
 
 Five active program groups support that north star:
 

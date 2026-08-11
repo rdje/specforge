@@ -80,6 +80,8 @@
   > how does build_transaction_phases distinguish a named phase from phase error or phase tolerance
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > how does collapse_section_header_register_identity decide same-register vs different-register
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > how does converge report integrated scheduled and omitted production capabilities
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > how does converge report per-document extraction quality after stabilization
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
@@ -295,5 +297,3 @@
   > how is the composition-frame grammar kept free of corpus false positives
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > how is the corpus distributed across the document intent categories
-- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
-  > how is the ingest DISK footprint bounded for very large PDFs

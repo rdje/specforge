@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > why is SWD per-signal phase membership degenerate / empty
 - [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
   > why is SWD/ADI hard / different from APB AHB AXI
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
@@ -193,6 +195,8 @@
   > why were RISC-V/TRM register tables unextracted (unknown table_kind)
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > why were register names synthetic register_table_NNNN and how is the heading association done
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > will a new standalone extraction command fail if converge does not account for it
 - [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
   > will generated stage artifacts survive moving the repository
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)

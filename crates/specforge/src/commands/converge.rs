@@ -126,6 +126,17 @@ pub fn run(args: ConvergeArgs) -> Result<()> {
             crate::commands::nli_verify::gauge_summary_line(gauge)
         );
     }
+    println!("--- production capability accounting ---");
+    println!(
+        "production_capability_count: {}",
+        report.production_capabilities.len()
+    );
+    for capability in &report.production_capabilities {
+        println!(
+            "production_capability: {}",
+            serde_json::to_string(capability)?
+        );
+    }
     println!(
         "next_step_hint: run `specforge validate {}` for a stage-aware report",
         report.paths.intent_ir_path.display()
@@ -264,6 +275,12 @@ fn run_convergence_with_roots(
                 // measurement describes the surface the artifacts actually carry.
                 let promotion = maybe_promote_constraints(&args, &paths, roots)?;
                 let extraction_quality = measure_extraction_quality(&args, &paths)?;
+                let production_capabilities = production_capability_report(
+                    &args,
+                    rescan_plan.as_ref(),
+                    promotion.is_some(),
+                    extraction_quality.is_some(),
+                );
                 return Ok(ConvergenceReport {
                     converged: true,
                     passes_run: pass,
@@ -272,6 +289,7 @@ fn run_convergence_with_roots(
                     rescan_plan,
                     promotion,
                     extraction_quality,
+                    production_capabilities,
                 });
             }
         }
@@ -449,6 +467,266 @@ fn render_lowering_status(status: AdapterLoweringStatus) -> &'static str {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "snake_case")]
+enum CapabilityParticipation {
+    Integrated,
+    Scheduled,
+    Omitted,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+#[serde(rename_all = "snake_case")]
+enum CapabilityRunState {
+    Executed,
+    InspectedOnly,
+    NotExecuted,
+}
+
+/// One stable, machine-readable row in the canonical production-capability ledger.
+///
+/// `command` is always the exact clap subcommand name. Multiple capabilities may share a command
+/// when one entrypoint has materially different modes, such as ordinary IntentIR construction and
+/// `intent --nli-verify` demotion. `entrypoint` names the precise operator-facing form.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+struct ProductionCapabilityRecord {
+    capability_id: &'static str,
+    command: &'static str,
+    entrypoint: &'static str,
+    participation: CapabilityParticipation,
+    run_state: CapabilityRunState,
+    reason: &'static str,
+}
+
+impl ProductionCapabilityRecord {
+    fn new(
+        capability_id: &'static str,
+        command: &'static str,
+        entrypoint: &'static str,
+        participation: CapabilityParticipation,
+        run_state: CapabilityRunState,
+        reason: &'static str,
+    ) -> Self {
+        Self {
+            capability_id,
+            command,
+            entrypoint,
+            participation,
+            run_state,
+            reason,
+        }
+    }
+}
+
+/// Classify every production capability that can affect the canonical source-to-adapter result.
+///
+/// This ledger is deliberately per-run: an integrated provider-backed stage reports
+/// `not_executed` when the operator disables its provider, while a capability island reports
+/// `omitted` regardless of provider availability. The tests below partition the complete clap
+/// subcommand surface and require every command classified as production to appear here.
+fn production_capability_report(
+    args: &ConvergeArgs,
+    rescan_plan: Option<&ConvergenceRescanPlanReport>,
+    promotion_executed: bool,
+    extraction_quality_measured: bool,
+) -> Vec<ProductionCapabilityRecord> {
+    use CapabilityParticipation::{Integrated, Omitted, Scheduled};
+    use CapabilityRunState::{Executed, InspectedOnly, NotExecuted};
+
+    let vlm_live = !matches!(args.vlm_provider, VlmProviderArg::Skip);
+    let nlp_live = !matches!(args.nlp_provider, VlmProviderArg::Skip);
+    let rescan_state = match rescan_plan {
+        Some(report) if report.executed => Executed,
+        Some(_) => InspectedOnly,
+        None => NotExecuted,
+    };
+
+    vec![
+        ProductionCapabilityRecord::new(
+            "source_ingest",
+            "ingest",
+            "ingest",
+            Integrated,
+            Executed,
+            "converge builds, materializes, and persists SourceIR before iteration",
+        ),
+        ProductionCapabilityRecord::new(
+            "visual_enrichment",
+            "enrich",
+            "enrich",
+            Integrated,
+            if vlm_live { Executed } else { NotExecuted },
+            if vlm_live {
+                "the configured VLM enrichment pass ran inside each convergence iteration"
+            } else {
+                "omitted for this run because --vlm-provider skip was selected"
+            },
+        ),
+        ProductionCapabilityRecord::new(
+            "deterministic_evidence_extraction",
+            "evidence",
+            "evidence",
+            Integrated,
+            Executed,
+            "converge rebuilt and persisted EvidenceIR inside each iteration",
+        ),
+        ProductionCapabilityRecord::new(
+            "nlp_constraint_enrichment",
+            "nlp-enrich",
+            "nlp-enrich",
+            Integrated,
+            if nlp_live { Executed } else { NotExecuted },
+            if nlp_live {
+                "the configured NLP enrichment pass ran inside each convergence iteration"
+            } else {
+                "omitted for this run because --nlp-provider skip was selected"
+            },
+        ),
+        ProductionCapabilityRecord::new(
+            "constrained_contract_extraction",
+            "extract-contracts",
+            "extract-contracts",
+            Omitted,
+            NotExecuted,
+            "standalone extractor is not composed by converge; run it explicitly and rebuild downstream stages",
+        ),
+        ProductionCapabilityRecord::new(
+            "actor_signal_relation_resolution",
+            "signal-resolve",
+            "signal-resolve",
+            Omitted,
+            NotExecuted,
+            "standalone Tier-3 resolver is not composed by converge; run it explicitly and rebuild downstream stages",
+        ),
+        ProductionCapabilityRecord::new(
+            "register_bit_recovery",
+            "recover-register-bits",
+            "recover-register-bits",
+            Omitted,
+            NotExecuted,
+            "diagram-backed recovery is not composed by converge; run it explicitly when candidate registers and a VLM are available",
+        ),
+        ProductionCapabilityRecord::new(
+            "condition_extraction",
+            "extract-conditions",
+            "extract-conditions",
+            if promotion_executed {
+                Integrated
+            } else {
+                Omitted
+            },
+            if promotion_executed {
+                Executed
+            } else {
+                NotExecuted
+            },
+            if promotion_executed {
+                "condition grounding was covered by the integrated LLM-primary constraint replacement"
+            } else {
+                "standalone condition repair did not run and LLM-primary replacement was not executed"
+            },
+        ),
+        ProductionCapabilityRecord::new(
+            "llm_primary_constraint_extraction",
+            "extract-constraints-llm",
+            "extract-constraints-llm",
+            Integrated,
+            if promotion_executed {
+                Executed
+            } else {
+                NotExecuted
+            },
+            if promotion_executed {
+                "the post-stability grounded replacement ran and downstream stages were rebuilt"
+            } else if nlp_live {
+                "omitted for this run because --no-promote-constraints-llm was selected"
+            } else {
+                "omitted for this run because --nlp-provider skip was selected"
+            },
+        ),
+        ProductionCapabilityRecord::new(
+            "semantic_projection",
+            "semantic",
+            "semantic",
+            Integrated,
+            Executed,
+            "converge rebuilt and persisted SemanticIR",
+        ),
+        ProductionCapabilityRecord::new(
+            "intent_projection",
+            "intent",
+            "intent",
+            Integrated,
+            Executed,
+            "converge rebuilt and persisted canonical IntentIR",
+        ),
+        ProductionCapabilityRecord::new(
+            "intent_nli_enforcement",
+            "intent",
+            "intent --nli-verify",
+            Omitted,
+            NotExecuted,
+            "converge measures EvidenceIR extraction quality but does not invoke the separate IntentIR NLI demotion gate",
+        ),
+        ProductionCapabilityRecord::new(
+            "adapter_lowering",
+            "adapt",
+            "adapt",
+            Integrated,
+            Executed,
+            "converge rebuilt and persisted the selected adapter artifact",
+        ),
+        ProductionCapabilityRecord::new(
+            "evidence_nli_quality_measurement",
+            "nli-verify",
+            "nli-verify",
+            Integrated,
+            if extraction_quality_measured {
+                Executed
+            } else {
+                NotExecuted
+            },
+            if extraction_quality_measured {
+                "the post-stability EvidenceIR quality gauge was measured and persisted"
+            } else if nlp_live {
+                "the configured measurement produced no labeled claims, so no gauge was persisted"
+            } else {
+                "omitted for this run because --nlp-provider skip was selected"
+            },
+        ),
+        ProductionCapabilityRecord::new(
+            "validation_rescan",
+            "rescan-plan",
+            "rescan-plan",
+            Integrated,
+            rescan_state,
+            match rescan_state {
+                Executed => "the supplied validation rescan plan executed for this document",
+                InspectedOnly => {
+                    "the supplied validation rescan plan was inspected without executing recommendations"
+                }
+                NotExecuted => "no --rescan-plan was supplied for this run",
+            },
+        ),
+        ProductionCapabilityRecord::new(
+            "artifact_validation",
+            "validate",
+            "validate",
+            Scheduled,
+            NotExecuted,
+            "scheduled as the explicit next-step hint after converge; validation is not silently claimed for this run",
+        ),
+        ProductionCapabilityRecord::new(
+            "prior_memory_learning",
+            "learn-priors",
+            "learn-priors",
+            Scheduled,
+            NotExecuted,
+            "cross-document prior learning remains a separate reviewed-corpus operation; converge only consumes the configured store",
+        ),
+    ]
+}
+
 #[derive(Debug, Clone)]
 struct PipelineArtifactPaths {
     document_key: String,
@@ -514,6 +792,10 @@ struct ConvergenceReport {
     /// persisted into the artifact. `None` when `--nlp-provider skip` (the gauge needs the text
     /// LLM) or when the pass labeled nothing.
     extraction_quality: Option<crate::ir::evidence::ExtractionQualityGaugeRecord>,
+    /// SPEC-TO-INTENT-ALIGNMENT.2: exact per-run participation for every production command.
+    /// Capability islands must remain visible as `omitted`; provider/config skips are reported as
+    /// integrated capabilities whose `run_state` is `not_executed`.
+    production_capabilities: Vec<ProductionCapabilityRecord>,
 }
 
 #[derive(Debug, Clone)]
@@ -989,8 +1271,10 @@ impl AdapterSnapshot {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::BTreeSet;
     use std::fs;
 
+    use clap::CommandFactory;
     use tempfile::tempdir;
 
     use super::*;
@@ -1201,6 +1485,126 @@ mod tests {
             execute_rescan_plan: false,
             rescan_plan_limit: 0,
         }
+    }
+
+    #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+    enum CliSurfaceRole {
+        Orchestrator,
+        Production,
+        QualityOrReview,
+        CorpusManagement,
+        Diagnostic,
+        Maintenance,
+    }
+
+    /// Complete clap-surface partition. A new subcommand fails the coverage test below until it is
+    /// classified; every `Production` command must additionally appear in the converge ledger.
+    const CLI_SURFACE_REGISTRY: &[(&str, CliSurfaceRole)] = &[
+        ("inspect", CliSurfaceRole::Diagnostic),
+        ("doctor", CliSurfaceRole::Diagnostic),
+        ("converge", CliSurfaceRole::Orchestrator),
+        ("ingest", CliSurfaceRole::Production),
+        ("evidence", CliSurfaceRole::Production),
+        ("semantic", CliSurfaceRole::Production),
+        ("intent", CliSurfaceRole::Production),
+        ("adapt", CliSurfaceRole::Production),
+        ("enrich", CliSurfaceRole::Production),
+        ("validate", CliSurfaceRole::Production),
+        ("project-validation", CliSurfaceRole::QualityOrReview),
+        ("rescan-plan", CliSurfaceRole::Production),
+        ("corpus-cluster", CliSurfaceRole::CorpusManagement),
+        ("kg-bench", CliSurfaceRole::QualityOrReview),
+        ("learn-priors", CliSurfaceRole::Production),
+        ("corpus-kb", CliSurfaceRole::CorpusManagement),
+        ("clean", CliSurfaceRole::Maintenance),
+        ("nlp-enrich", CliSurfaceRole::Production),
+        ("extract-contracts", CliSurfaceRole::Production),
+        ("signal-resolve", CliSurfaceRole::Production),
+        ("eval-extraction", CliSurfaceRole::QualityOrReview),
+        ("nli-verify", CliSurfaceRole::Production),
+        ("grits-consensus", CliSurfaceRole::QualityOrReview),
+        ("entity-type", CliSurfaceRole::QualityOrReview),
+        ("extract-conditions", CliSurfaceRole::Production),
+        ("extract-constraints-llm", CliSurfaceRole::Production),
+        ("audit-extraction", CliSurfaceRole::QualityOrReview),
+        ("recover-register-bits", CliSurfaceRole::Production),
+    ];
+
+    #[test]
+    fn production_capability_registry_partitions_cli_and_accounts_for_every_producer() {
+        let clap_commands: BTreeSet<String> = crate::cli::Cli::command()
+            .get_subcommands()
+            .map(|command| command.get_name().to_string())
+            .collect();
+        let classified_commands: BTreeSet<String> = CLI_SURFACE_REGISTRY
+            .iter()
+            .map(|(command, _)| (*command).to_string())
+            .collect();
+        assert_eq!(classified_commands.len(), CLI_SURFACE_REGISTRY.len());
+        assert_eq!(classified_commands, clap_commands);
+
+        let report = production_capability_report(
+            &promotion_decision_args(VlmProviderArg::Skip, false, false),
+            None,
+            false,
+            false,
+        );
+        let capability_ids: BTreeSet<&str> =
+            report.iter().map(|record| record.capability_id).collect();
+        assert_eq!(capability_ids.len(), report.len());
+        let reported_commands: BTreeSet<&str> =
+            report.iter().map(|record| record.command).collect();
+        let production_commands: BTreeSet<&str> = CLI_SURFACE_REGISTRY
+            .iter()
+            .filter_map(|(command, role)| (*role == CliSurfaceRole::Production).then_some(*command))
+            .collect();
+        assert_eq!(reported_commands, production_commands);
+    }
+
+    #[test]
+    fn provider_free_capability_report_names_every_current_capability_island() {
+        let report = production_capability_report(
+            &promotion_decision_args(VlmProviderArg::Skip, false, false),
+            None,
+            false,
+            false,
+        );
+        for capability_id in [
+            "constrained_contract_extraction",
+            "actor_signal_relation_resolution",
+            "register_bit_recovery",
+            "condition_extraction",
+            "intent_nli_enforcement",
+        ] {
+            let record = report
+                .iter()
+                .find(|record| record.capability_id == capability_id)
+                .unwrap_or_else(|| panic!("missing capability record: {capability_id}"));
+            assert_eq!(record.participation, CapabilityParticipation::Omitted);
+            assert_eq!(record.run_state, CapabilityRunState::NotExecuted);
+            assert!(!record.reason.is_empty());
+        }
+    }
+
+    #[test]
+    fn live_promotion_reports_condition_repair_as_covered_and_serializes_stably() {
+        let report = production_capability_report(
+            &promotion_decision_args(VlmProviderArg::Ollama, false, false),
+            None,
+            true,
+            true,
+        );
+        let condition = report
+            .iter()
+            .find(|record| record.capability_id == "condition_extraction")
+            .expect("condition extraction record");
+        assert_eq!(condition.participation, CapabilityParticipation::Integrated);
+        assert_eq!(condition.run_state, CapabilityRunState::Executed);
+
+        let serialized = serde_json::to_value(condition).expect("serialize capability");
+        assert_eq!(serialized["command"], "extract-conditions");
+        assert_eq!(serialized["participation"], "integrated");
+        assert_eq!(serialized["run_state"], "executed");
     }
 
     #[test]

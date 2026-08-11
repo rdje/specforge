@@ -78,12 +78,17 @@ The controller keeps those instruments separate and complementary.
 
 ## Current production-path caveat
 
-`converge` is the default orchestration command, but it does not yet compose every production extractor. Its
+`converge` is the default orchestration command, but it does not compose every production extractor. Its
 ordinary path runs visual enrichment, EvidenceIR construction, `nlp-enrich`, downstream IR construction,
 constraint promotion, and an NLI quality measurement. The standalone `extract-contracts`, `signal-resolve`,
 and `recover-register-bits` capabilities are not directly invoked, and the NLI measurement is not the same as
-the IntentIR demotion path. Until every capability is integrated, deliberately scheduled, or explicitly
-reported omitted, “default end to end” must not be read as “all shipped extraction capabilities.”
+the IntentIR demotion path.
+
+That boundary is now executable rather than inferential. Every successful run emits 17 machine-readable
+capability rows spanning all 16 production subcommands, with `integrated`, `scheduled`, or `omitted`
+participation plus a per-run state and reason. A complete CLI partition test fails if a new subcommand is not
+classified or a production command is absent from the ledger. “Default end to end” therefore means exactly
+the integrated rows that report `executed`, never every feature that happens to compile.
 
 ## Verification strategy for the controller
 
@@ -102,9 +107,9 @@ The evaluator must prove it notices bad outcomes:
 
 The durable objective/priority decision, controller design, code-path audit, and this public trajectory contract
 are the documentation slice `SPEC-TO-INTENT-ALIGNMENT.0`. The per-category source-to-IntentIR acceptance contract
-is `.1`. Implementation remains decomposed into canonical-path capability accounting, real multimodal
-production, held-out vertical slices, and finally the versioned trajectory controller. Until those leaves close,
-the chapter describes an accepted direction—not a claim that automatic steering already runs.
+is `.1`; the guarded canonical-path capability ledger is `.2`. Implementation remains decomposed into real
+multimodal production, held-out vertical slices, and finally the versioned trajectory controller. Until those
+leaves close, the chapter describes an accepted direction—not a claim that automatic steering already runs.
 
 The detailed design and literature mapping live in
 [`docs/research/specforge-trajectory-control.md`](../../../research/specforge-trajectory-control.md).
