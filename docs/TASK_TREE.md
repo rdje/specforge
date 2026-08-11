@@ -103,7 +103,7 @@ The author template is linked separately and is never classified as active work.
 | `LLM-TEXT-TRANSPORT-DEDUP` | `done` | consolidate the duplicated text chat transport (extract-contracts + signal-resolve) | [open](tasks/LLM-TEXT-TRANSPORT-DEDUP.md) |
 | `LOGIC-LEVEL-BOUNDARY` | `done` | resolve HIGH/LOW as universal "how"; centralize the vocabulary | [open](tasks/LOGIC-LEVEL-BOUNDARY.md) |
 | `MDBOOK-DOCTEST-HYGIENE` | `done` | classify examples and make the live book doctest-safe | [open](tasks/MDBOOK-DOCTEST-HYGIENE.md) |
-| `MEASUREMENT-PLANE-CONVERGENCE-RISK` | `proposed` | can we tell whether SpecForge is converging? | [open](tasks/MEASUREMENT-PLANE-CONVERGENCE-RISK.md) |
+| `MEASUREMENT-PLANE-CONVERGENCE-RISK` | `superseded` | can we tell whether SpecForge is converging? | [open](tasks/MEASUREMENT-PLANE-CONVERGENCE-RISK.md) |
 | `MEMORY-ARCHITECTURE-DOC` | `done` | author a portable, harness-agnostic durable-memory standard | [open](tasks/MEMORY-ARCHITECTURE-DOC.md) |
 | `MEMORY-BOUNDED-INGEST` | `active` | bounded-memory ingestion of very large PDFs | [open](tasks/MEMORY-BOUNDED-INGEST.md) |
 | `NLI-CLAIM-CONDITION` | `done` | carry a constraint's condition into its NLI claim (precision fix) | [open](tasks/NLI-CLAIM-CONDITION.md) |
@@ -151,6 +151,7 @@ The author template is linked separately and is never classified as active work.
 | `SEMANTIC-EMPTY-CATALOG-FILTER` | `done` | stop disabling the grounding filter on documents with no grounding | [open](tasks/SEMANTIC-EMPTY-CATALOG-FILTER.md) |
 | `SIGNAL-CATALOG-CAPTURE-GAP` | `active` | protocol specifications that declare no signals at all | [open](tasks/SIGNAL-CATALOG-CAPTURE-GAP.md) |
 | `SIGNAL-TABLE-COLUMNLESS-RECALL` | `done` | capture signals from column-less Signal\|Description tables | [open](tasks/SIGNAL-TABLE-COLUMNLESS-RECALL.md) |
+| `SIGNOFF-BURNDOWN` | `proposed` | one unsaturated top-line number, over a fixed target set, driven to done | [open](tasks/SIGNOFF-BURNDOWN.md) |
 | `SIGNOFF-REMEDIATION` | `done` | Restore signoff quality at HEAD | [open](tasks/SIGNOFF-REMEDIATION.md) |
 | `SPEC-MINING-PROVENANCE` | `done` | name the discipline + a per-author adopt/defer ledger | [open](tasks/SPEC-MINING-PROVENANCE.md) |
 | `STATUS-LEDGER-ROLLOVER` | `active` | roll the status ledger before its next product record is refused | [open](tasks/STATUS-LEDGER-ROLLOVER.md) |

@@ -3,12 +3,25 @@
 ## Metadata
 
 - Tree ID: `MEASUREMENT-PLANE-CONVERGENCE-RISK`
-- Status: `proposed`
+- Status: `superseded` by [`SIGNOFF-BURNDOWN`](SIGNOFF-BURNDOWN.md) (`2026-08-11`, same day)
 - Roadmap lane: cross-cutting (`R15e` evaluation / `R9` extraction breadth)
 - Created: `2026-08-11`
 - Owner: repo-local workflow
 - Raised by: the director, mid-`SIGNAL-CATALOG-CAPTURE-GAP.1` — *"is SpecForge's spine, backbone, structure
   robust? I am starting to wonder if we'll converge towards SpecForge's objectives."*
+
+## Superseded the same day — read `SIGNOFF-BURNDOWN` instead
+
+This tree named the right symptom and the **wrong cause**. It concluded that SpecForge cannot measure whether
+a document was understood. Running all 11 eval datasets hours later showed the instrument exists, is
+rigorous, and reads **1.000 on every filtered `WIRE-BASED-100` surface but one**. The instrument is not
+missing — it is *saturated*, because gold was sized to seed the method and never rescaled to the artifact it
+now judges (AXI: 13 gold facts against 502 emitted constructs). A pegged gauge steers no better than no
+gauge, which is why effort drifted to the unbounded breadth and governance lanes.
+
+The corrected diagnosis and the falsifiable recovery plan live in
+[`SIGNOFF-BURNDOWN`](SIGNOFF-BURNDOWN.md). Everything below is kept unedited as the honest record of the
+first pass; the gold-coverage measurement in it remains correct and is reused there.
 
 ## Why this tree exists
 
