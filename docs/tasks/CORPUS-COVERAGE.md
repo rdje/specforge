@@ -5,7 +5,7 @@
 - Tree ID: `CORPUS-COVERAGE`
 - Status: `active`
 - Roadmap lane: `R15e`/`R16` corpus digestion
-- Updated: `2026-08-10`
+- Updated: `2026-08-11`
 
 ## Goal
 
@@ -20,32 +20,35 @@ ISF pipeline, keep completed chains non-stale, and record extraction gaps withou
 
 ## Current State
 
-51 of 57 real chip-spec refreshes are complete.
+52 of 57 real chip-spec refreshes are complete.
 
-- Stage coverage: 78 SourceIR / 23 normalized / 78 EvidenceIR / 78 downstream chains, all measured current by
+- Stage coverage: 78 SourceIR / 24 normalized / 78 EvidenceIR / 78 downstream chains, all measured current by
   the `CHAIN-CURRENCY` gate. The measurable evidence-stage population grows by exactly one per refresh.
 - Emitted ISF: 44/44 current targets pass FSMGen strict validation. The population fell from 57 because 14
   documents' stale heuristic interfaces collapsed to zero under current authority and now block honestly.
 - Completed program lanes: `.0` build-out, `.1` stage-staleness validation, and `.3` lifecycle reconciliation.
-- Active program lane: `.2` current-binary corpus refresh, with six real documents remaining. Completed lane
+- Active program lane: `.2` current-binary corpus refresh, with five real documents remaining. Completed lane
   `.4` frontier census integrity derived that count, restored the document a hand-carried decrement had lost,
   and made the census a registered doctrine so it can no longer drift.
-- Blockers: none.
+- Blockers: none. `.2.52` measured a general defect it deliberately did not repair inside a data refresh:
+  `SEMANTIC-EMPTY-CATALOG-FILTER` owns it.
 
 ## Current Frontier
 
 No eligible product leaf.
 
-`CORPUS-COVERAGE.4` is complete in the `frontier-census-integrity` part, and the frontier it derived — 57 cohort
-documents = 51 refreshed + six remaining — is now gated by the `CORPUS-FRONTIER` doctrine rather than carried.
+`CORPUS-COVERAGE.4` is complete in the `frontier-census-integrity` part, and the 57-document cohort it derived is
+now gated by the `CORPUS-FRONTIER` doctrine rather than carried, so the split below is re-derived on every run
+instead of decremented by hand.
 
-`CORPUS-COVERAGE.2.52` is owned and `in_progress` in `refreshes-51-56`: it selects
-`opencapi_25gbps_phy_mechanical_spec_v10` at 760 elements, the smallest of the six, and pins its authenticated
-same-device source and its exact six-file / 1,151,838-byte stale chain. No artifact has been mutated, so the
-census still reads 51 refreshed and the gate is green. The next slice executes that refresh: guarded CPU ingest,
-full current-binary cascade, per-stage delta attribution, and — in the same transaction — moving
-`doctrine/corpus_frontier/census.json` and this root to 52/57 with five remaining, or `CORPUS-FRONTIER` fails
-closed. `refreshes-49-56` is closed to further product writes at the `.2.50a` boundary.
+`CORPUS-COVERAGE.2.52` is complete in `refreshes-51-56`, so the census, the retention declaration, and this root
+all read 52 refreshed with five remaining. The next product slice selects `opencapi_3_0_transaction_layer_28jan2020`
+at 774 elements, the smallest of the five the `CORPUS-FRONTIER` gate now declares. `refreshes-49-56` is closed to
+further product writes at the `.2.50a` boundary, and `refreshes-51-56` holds two of its six refreshes.
+
+`.2.52` also measured a general defect and routed it to its own tree rather than repairing it inside a data
+refresh: `SEMANTIC-EMPTY-CATALOG-FILTER` owns the `semantic.rs` empty-declared-set branch that disables the
+conditional-rule and signal-constraint grounding filters exactly when a document has no declared signals.
 
 ## Detailed task evidence
 
@@ -65,6 +68,7 @@ doctrines, and the risk-proportionate `COMMIT.md` gates before committing each l
 
 | Date | Boundary | Result |
 | --- | --- | --- |
+| `2026-08-11` | refresh `.2.52` | 52 done / five remaining; 78/24/78/78; 44/44 strict-clean; two false acronym signals retired and a 29-document unfiltered-rule defect measured and routed |
 | `2026-08-11` | gate `.4.1` | `CORPUS-FRONTIER` registered gate-tier; self-test 10/10; two live negatives on the real corpus fail closed; driver 7 executed / 8 registered PASS |
 | `2026-08-11` | census `.4.0` | derived 57 cohort = 51 refreshed + six remaining; the lost document is `nvme_base_specification_2_0a_2021_07_26`; no artifact moved |
 | `2026-08-11` | refresh `.2.51` | 51 done; 78/23/78/78; 44/44 strict-clean (its "five remaining" is superseded by `.4.0`) |
@@ -78,10 +82,11 @@ doctrines, and the risk-proportionate `COMMIT.md` gates before committing each l
 
 | Unit | Durable evidence |
 | --- | --- |
+| `CORPUS-COVERAGE.2.52` | latest completed product refresh |
 | `CORPUS-COVERAGE.4.1` | the `CORPUS-FRONTIER` doctrine gating the derived census |
 | `CORPUS-COVERAGE.4.0` | derived frontier census and the restored cohort document |
-| `CORPUS-COVERAGE.2.51` | latest completed product refresh |
-| `CORPUS-COVERAGE.2.50` | preceding completed product refresh |
+| `CORPUS-COVERAGE.2.51` | preceding completed product refresh |
+| `CORPUS-COVERAGE.2.50` | earlier completed product refresh |
 | `CORPUS-COVERAGE.2.49` | earlier completed product refresh |
 | `CORPUS-COVERAGE.2.48` | earlier completed product refresh |
 | `CORPUS-TASK-EVIDENCE-CONTAINMENT` | bounded root, semantic evidence parts, and exact provenance |

@@ -18,19 +18,18 @@
   },
   "expected": {
     "cohort": 57,
-    "refreshed": 51
+    "refreshed": 52
   },
   "remaining": [
     "den0034_a_2013_09_13_debug_and_trace_configuration_and_usage_models",
     "lpc_memory_agent_reference_design_guide_17jul2020",
     "nvme_base_specification_2_0a_2021_07_26",
-    "opencapi_25gbps_phy_mechanical_spec_v10",
     "opencapi_3_0_transaction_layer_28jan2020",
     "opencapi_3_1_transaction_layer_28jan2020"
   ],
   "root_claim": {
     "path": "docs/tasks/CORPUS-COVERAGE.md",
-    "completed_sentence": "51 of 57 real chip-spec refreshes are complete.",
-    "remaining_phrase": "six real documents remaining"
+    "completed_sentence": "52 of 57 real chip-spec refreshes are complete.",
+    "remaining_phrase": "five real documents remaining"
   }
 }

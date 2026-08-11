@@ -201,6 +201,8 @@
   > do the wire-gold .isf carry over-width value literals (only AXI ihi0022_l has one — AWCMO; and AXI already fails strict on the orthogonal (port expr) error; APB/AHB/SWD have none; WIRE-BASED-100 measures extraction F1 not .isf bytes so it is orthogonal)
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > do transactions lower to .isf (only those with composed steps; signal-set/channel/phase membership is recognised-but-unlowered)
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > do unfiltered SemanticIR conditional rules reach an emitted .isf
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > does (sample S) work for an interface OUTPUT signal too (yes — FSMGen does not gate sample on direction)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -295,5 +297,3 @@
   > does convergence preserve protocol record order
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
   > does corpus KB refresh mutate canonical IR or CorpusMemory
-- [contested-priors](../knowledge/contested-priors.md)
-  > does corpus prior memory only accrete

@@ -1,3 +1,33 @@
+### CORPUS-COVERAGE.2.52 — refresh the OpenCAPI 25 Gbps PHY mechanical spec and retire its acronym signals
+
+- Refresh #52 takes the 34-page / 760-element OpenCAPI 25 Gbps PHY Mechanical Specification, smallest of the
+  five gated remaining documents. Source structure was already current, so the fresh SourceIR differs from the
+  stale one in exactly two leaves — the source path leaving the retired boot volume — and a whole-tree diff
+  finds no third. The entire downstream delta is therefore code, not content.
+- That delta is two prose tokens ceasing to be signals. `OD` is the drive-type acronym *open-drain* qualifying
+  the real signal `PWR_BRAKE_N` in "1.8 V level signal only (OD, pull up is on motherboard)" — the parenthetical
+  rule requires the noun-phrase **head** before the abbreviation to be a wire, and that head is `only`, so it is
+  refused where the older window rule accepted it on `signal` appearing earlier. `IS` is the English copula in
+  "the X1 connector size provides full power and is most universal", which had also minted a false `X connector`
+  actor. The order is causal: `Signal IS is output.` is synthesized only from a `Drives` triple, and the relation
+  extractor returns immediately on an empty catalog, so refusing the one parenthetical candidate forecloses both.
+- The adapter's honest block **moves** rather than clears — `x_connector` with two one-bit outputs blocked on
+  `no behavioral content`; `device` with no interface now blocks on `no signals declared in interface` — and
+  still emits no target, so 44/44 emitted ISFs are untouched. `validate` categorises the document
+  `physical-link`, an ISF non-target whose own rationale calls a thin result correct rather than a gap.
+- **A regression was found and deliberately not fixed here.** Semantic and Intent conditional rules move 0 → 2:
+  removing false signals *added* ungrounded records. Replaying the semantic stage from the stale EvidenceIR with
+  the current binary reproduces the stale result exactly, proving the movement is input-driven — emptying the
+  catalog flips the guard at `semantic.rs:293`, which skips the grounding filter whenever a document declares no
+  signals. A census over all 78 SemanticIRs finds 29 documents carrying 1,423 unfiltered conditional rules and
+  100 unfiltered signal constraints, with subjects like `NOTICE`, `PDF`, `IMPLEMENTATION`, and `MUST`. None
+  reaches an emitted target. New tree `SEMANTIC-EMPTY-CATALOG-FILTER` owns the repair, which moves 29 documents
+  and needs its own corpus-wide replay — the reasoning `.2.51` used to defer the `SEC_SID` lever.
+- Two guarded ingests and two cascades reproduce all nine artifacts and the 105-file / 35,661,265-byte bundle
+  byte-identically. `CHAIN-CURRENCY` is green at 24/78/78/78 with retention exactly the 24 declared bundles, and
+  `CORPUS-FRONTIER` re-derives 57 = 52 + 5 rather than accepting it. Corpus coverage is 52/57 with five
+  remaining at 78/24/78/78 stages.
+
 ### CORPUS-COVERAGE.4.1 — gate the corpus frontier census as the eighth doctrine
 
 - `CORPUS-FRONTIER` is registered gate-tier in `scripts/check_doctrines.sh`: adapter

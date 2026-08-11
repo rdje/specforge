@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [contested-priors](../knowledge/contested-priors.md)
+  > does corpus prior memory only accrete
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > does emitting (input) signals break fsmgen --strict (no — 0 new diagnostics; drives are suppressed for inputs)
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
@@ -296,5 +298,3 @@
   > how does SpecForge distinguish protocol requests from product listing requests
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
   > how does SpecForge emit temporal rules or a bounded-eventually into .isf
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > how does SpecForge extract register fields from tables

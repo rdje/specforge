@@ -234,6 +234,31 @@ untouched. `validate` reports the document as a self-declared `methodology-guide
 category-6 ISF non-target — so a blocked adapter and an empty signal inventory are the correct answer here, not a
 miss. The retained-bundle declaration grows to 23.
 
+Refresh `.2.52` then took the 34-page / 760-element OpenCAPI 25 Gbps PHY Mechanical Specification and showed the
+same shape with a different mechanism. Its source structure was also already current — the fresh SourceIR differs
+in exactly two path values and nothing else — so the delta is again pure code. Two prose tokens stop being
+signals. `OD` is the electrical drive-type acronym *open-drain* qualifying the real signal `PWR_BRAKE_N` in
+"1.8 V level signal only (OD, pull up is on motherboard)": the parenthetical single-wire rule requires the noun
+immediately before the abbreviation to be a wire, and that word is `only`, so the candidate is refused where an
+older window-style rule had accepted it on the strength of `signal` appearing earlier in the phrase. `IS` is
+simply the English copula in "the X1 connector size provides full power and is most universal", which had also
+minted a false `X connector` actor. With no declaration left, the relation extractor has an empty catalog and
+returns nothing, so both the relation and its synthesized direction statement disappear together. The adapter's
+honest block therefore *moves* rather than clears — from "no behavioral content" to "no signals declared in
+interface" — and still emits no target. `validate` categorises the document `physical-link`, whose own rationale
+notes that a physical/electrical layer is behaviorally near-empty by nature, so a thin result is correct here
+rather than a gap. The retained-bundle declaration grows to 24.
+
+That refresh also surfaced a defect worth stating plainly, because it runs against intuition: removing false
+signals *added* ungrounded records. `SemanticIR` promotes evidence conditional rules and signal constraints only
+when their subject is a declared signal — but that filter is skipped entirely when a document declares no signals
+at all, so emptying the catalog switched the filter off. A census over all 78 persisted `SemanticIR` artifacts
+found 29 documents carrying 1,423 conditional rules and 100 signal constraints promoted with no grounding check,
+with subjects such as `NOTICE`, `PDF`, `IMPLEMENTATION`, and `MUST`. None reaches an emitted `.isf` — every one
+of the 44 emitted targets comes from a document with a populated catalog — so this pollutes the canonical IR and
+the surfaces that read it, not the product boundary. It is tracked as `SEMANTIC-EMPTY-CATALOG-FILTER` rather than
+patched inside a data refresh, because the repair moves 29 documents and needs its own corpus-wide replay.
+
 Refresh #51's own progress line said "51 of 56 with five remaining", and `CORPUS-COVERAGE.4.0` then established
 that the denominator was wrong. The program's progress had been carried rather than derived: every refresh from
 #29 onward decremented the previous slice's number by exactly one, so a base error propagated through
@@ -244,8 +269,10 @@ identifies the missing document as the 454-page NVM Express Base Specification, 
 rule and simply fell off a hand-maintained list. The instructive part is why the previous slice could not have
 noticed: it *did* carefully re-measure all six documents it listed, but re-deriving a list's rows never validates
 that list's completeness. Only the independent identity `cohort = refreshed + remaining`, computed without
-reference to the list, exposes an omission — which is what the pending `CORPUS-COVERAGE.4.1` makes mechanical.
-Corpus coverage is therefore **51 of 57 with six refreshes remaining**.
+reference to the list, exposes an omission — which is what `CORPUS-COVERAGE.4.1` made mechanical, registering the
+census as the gate-tier `CORPUS-FRONTIER` doctrine so a refresh must move the declaration in the same transaction
+or the gate fails closed. Corpus coverage is therefore **52 of 57 with five refreshes remaining**, a figure the
+gate re-derives on every run instead of accepting.
 
 `CORPUS-CHAIN-CURRENCY` then replaced the assumption that those persisted artifacts still match the code with a
 measurement. Its registered `CHAIN-CURRENCY` oracle replays every stage from the persisted artifact one stage

@@ -207,7 +207,7 @@ EvidenceIR / 78 SemanticIR / 78 IntentIR / 78 adapters and 44 emitted targets. R
 
 ## CORPUS-COVERAGE.2.52
 
-- Status: `in_progress` (`2026-08-11`, ownership pinned; no artifact mutated)
+- Status: `done` (`2026-08-11`, DATA/DOC; one child tree opened, see below)
 - Goal: re-ingest the OpenCAPI 25 Gbps PHY Mechanical Specification with the current release, then rebuild and
   validate EvidenceIR → SemanticIR → IntentIR → ISF without promoting connector-mechanical prose, glossary
   acronyms, drawing callouts, or section headings into unsupported signals, interfaces, or executable behavior.
@@ -290,22 +290,130 @@ behavior. That is a hypothesis the fresh chain must confirm or refute from its o
 so a confirming result is not mistaken for a measurement, and so a *diverging* result is recognised as the
 interesting one.
 
+### Current result
+
+Two guarded CPU ingests and two full cascades reproduce the document byte-identically at every stage. The fresh
+SourceIR holds the stale structure exactly — 34 pages / 32 visuals / 11 tables / 21 figures / 61 sections / 760
+elements — and differs from the stale artifact in exactly two values, `requested_path` and `canonical_path`,
+which move from the retired boot-volume root to the same-SSD one. A whole-tree leaf diff finds no third
+difference. The normalized bundle is restored at 105 files / 35,661,265 bytes, digest
+`9866810fac9296cdec1cb5f53790bbfff1202218e9bbfa8e7ee2684620b6c543` over sorted repository-relative path and
+per-file SHA-256.
+
+Because the source content is unchanged, the whole downstream delta is a pure code delta accumulated since this
+document's last EvidenceIR build. EvidenceIR loses exactly two `source_fact` statements — `Signal OD is width 1.`
+(`statement_0807`) and `Signal IS is output.` (`statement_0808`) — plus the single actor-signal relation
+`X CONNECTOR|Drives|IS` and its one `fact_provenance` row. Nothing else moves: 805 spans, 297 links, 61 anchors,
+32 visual records, two conditional rules, and one protocol actor are unchanged, no statement is added, and no
+statement changes in place.
+
+Both retired tokens are connector-mechanical prose, confirmed against the document's own normalized text:
+
+- `OD` is the electrical drive-type acronym *open-drain*, qualifying the real signal `PWR_BRAKE_N` —
+  "`1.8 V level signal only (OD, pull up is on motherboard)`" (normalized line 1284). The parenthetical
+  single-wire rule at `crates/specforge/src/ir/evidence.rs:8964-9007` requires the noun-phrase **head**
+  immediately before the abbreviation to be a wire noun; that head is `only`, so the candidate is refused. The
+  superseded window-style rule saw `signal` earlier in the same phrase and admitted it.
+- `IS` is the English copula — "`The X1 connector size provides full power and is most universal …`"
+  (normalized line 1319) — which also produced the false actor `X connector`.
+
+The removal order is causal, not coincidental. `Signal IS is output.` is synthesized only from a `Drives` triple
+(`evidence.rs:3992-4028`), and `extract_actor_signal_relations` returns immediately on an empty signal catalog
+(`evidence.rs:3733-3735`). Refusing the one parenthetical candidate therefore empties the catalog, and the empty
+catalog structurally forecloses the relation and its synthesized direction declaration. The stale binary's own
+admission path for `IS` is not reconstructable from the current tree and is not claimed here; the *refusal* is
+fully grounded in the document's own sentence.
+
+SemanticIR drops `actor_x_connector` (actors 7 → 6), both interfaces, its one actor port, its one relation, and
+its one connectivity record. IntentIR follows exactly (actors 4 → 3, interfaces 2 → 0, drive relation 1 → 0), and
+its identity summary tracks the counts. The adapter's blocking reason **moves**: `x_connector` with
+`(output IS (width 1))` / `(output OD (width 1))` blocked on `no behavioral content`; `device` with no interface
+now blocks on `no signals declared in interface`, signals 2 → 0. Still no emitted target and no residual, so the
+44 emitted ISFs are untouched. This is the `.2.44`/`.2.45`/`.2.48` acronym outcome the ownership record predicted,
+reached through a gate those refreshes did not exercise.
+
+Validation calls the result honest rather than thin. EvidenceIR classifies the document
+`document_intent_category: physical-link` — category 5, whose rationale states that a physical/electrical/link
+layer is "behaviorally near-empty by nature — a thin `.isf` is correct, not a gap" — so zero signals, an empty
+interface set, and a blocked adapter are the correct answer for this source. The standing residuals are the 32
+visual assets with no VLM observation, 20 partially structured normative statements, and three vague-language
+statements; the structural `document_class: guide` call keeps its honest under-extracted-spec warning, because
+the front matter self-declares a specification and the document is image-heavy.
+
+One delta is a **regression, not a gain**, and it is why this refresh opened a child tree. SemanticIR and
+IntentIR conditional rules move 0 → 2. Replaying the semantic stage from the *stale* EvidenceIR with the current
+binary reproduces the stale result exactly (0 rules / 2 interfaces / 7 actors), which proves the movement is
+input-driven rather than a code delta: emptying the declared-signal set flips the guard at
+`crates/specforge/src/ir/semantic.rs:293`, which disables the grounding filter whenever a document declares no
+signals. The two promoted rules are ungrounded — `consequent_signal` `PWR` (a prefix of `PWR_GOOD`, action
+`(see source_text)`) and `OPEN` (a prefix of `OPEN_CAPI`, action `must be taken`, captured from the idiom "Care
+must be taken that…"). A census over all 78 persisted SemanticIR artifacts finds 33 empty-catalog documents, 29
+of which carry 1,423 unfiltered conditional rules and 100 unfiltered signal constraints. No such record reaches
+an emitted target — all 44 come from populated-catalog documents — so the defect is pre-existing, corpus-wide,
+and off the product boundary. `SEMANTIC-EMPTY-CATALOG-FILTER` owns it; repairing it inside a data refresh is
+refused for the reason `.2.51` refused the `SEC_SID` lever.
+
+The final validated artifacts reproduce twice, at 1,197,052 bytes across nine files:
+
+| Artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| SourceIR | 295,876 | `dbf9afd22200bc7ba5d8b7a978248bc06afe4f1e622b38a49a667593f75ba062` |
+| EvidenceIR | 658,989 | `bf94399b9bd5d32f013bd65feeaa9a95446ce85f25926c20092d899e3b74b152` |
+| Evidence validation | 13,840 | `3864fb68d08a0ef0018ecdb3282baf74798e1f91b4fc09014c9d9d295508c433` |
+| SemanticIR | 93,198 | `29f799a336c2337152fbfa39d7772d479c2e382c2c0585b7d355678f8a0debfb` |
+| Semantic validation | 7,131 | `d85307ece02eafb56ab4dcde13cba67854ab97e383377b6dc37a154a899a45f6` |
+| IntentIR | 114,325 | `c58c9166446f52fc6444960138a2e0d42513fea1e520eb54cc71b4977f4f10ea` |
+| Intent validation | 8,557 | `067925259fc50dfd1b4835437c32f0f57442a30a87d48866b7c7e861d4a4271c` |
+| Adapter manifest | 3,372 | `35b443cd95178cac066f8c7b400ce87293b3e4a8a4bd0a5b0482657e7cced5df` |
+| Adapter validation | 1,764 | `1d6b42f1fac4733f3dea84acc7bc7a3bb68aa8240af82414c15ae46581557977` |
+
+The corpus is 52 of 57 refreshes complete with five real documents remaining, at 78 SourceIR / 24 normalized / 78
+EvidenceIR / 78 SemanticIR / 78 IntentIR / 78 adapters and 44 emitted targets. Retention grows by exactly one:
+`doctrine/chain_currency/retained_bundles.json` declares 24 keys, and `CORPUS-FRONTIER` re-derives
+57 = 52 + 5 rather than accepting the number.
+
 ### Acceptance
 
-- [ ] Authenticate rollback copies of every stale chain artifact inside a repository-derived same-volume
+- [x] Authenticate rollback copies of every stale chain artifact inside a repository-derived same-volume
   workspace.
-- [ ] Run guarded CPU ingest from the directly resolved caller-authorized same-SSD input, with the 85% memory
+- [x] Run guarded CPU ingest from the directly resolved caller-authorized same-SSD input, with the 85% memory
   abort ceiling and no off-volume project temp/cache/output.
-- [ ] Rebuild and validate the complete current-binary chain; rerun to establish deterministic hashes.
-- [ ] Classify every stale→fresh delta at its first causal stage and refuse unsupported hardware authority.
-- [ ] Declare the retained normalized bundle in `doctrine/chain_currency/retained_bundles.json` and prove
+- [x] Rebuild and validate the complete current-binary chain; rerun to establish deterministic hashes.
+- [x] Classify every stale→fresh delta at its first causal stage and refuse unsupported hardware authority.
+- [x] Declare the retained normalized bundle in `doctrine/chain_currency/retained_bundles.json` and prove
   `CHAIN-CURRENCY` green on both its currency and retention legs.
-- [ ] Move `doctrine/corpus_frontier/census.json` and the root's stated counts to 52/57 with five remaining in
+- [x] Move `doctrine/corpus_frontier/census.json` and the root's stated counts to 52/57 with five remaining in
   the same transaction, so `CORPUS-FRONTIER` stays green rather than failing closed.
-- [ ] Run focused validation, provider-free evals, KG fixtures, emitted-ISF FSMGen strict checks, doctrines,
+- [x] Run focused validation, provider-free evals, KG fixtures, emitted-ISF FSMGen strict checks, doctrines,
   mdBook, project-path/locality checks, and broader CI proportional to any code change.
-- [ ] Update root, active part, index/manifest/contract, roadmap, current status, live docs/book, facts, and
+- [x] Update root, active part, index/manifest/contract, roadmap, current status, live docs/book, facts, and
   memory; commit before deleting authenticated rollback evidence or moving to refresh #53.
+
+### Decisions and incidents
+
+- `2026-08-11`: the recorded hypothesis is confirmed but not by the predicted route. `.2.44`/`.2.45`/`.2.48`
+  retired acronym interfaces that never had wire authority; here the two candidates fail *different* gates —
+  `OD` at the parenthetical head rule, `IS` by never surviving an empty catalog — and the adapter's block moves
+  from `no behavioral content` to `no signals declared in interface` exactly as predicted. Recorded as a
+  confirming instance reached through an unexercised gate, not as a re-measurement of the sibling refreshes.
+- `2026-08-11`: the `OD` case is worth keeping because it is *not* the ordinary "acronym was never a signal"
+  story. `OD` is a genuine electrical term, and the sentence it sits in genuinely describes a wire — but the
+  wire is `PWR_BRAKE_N`, and `OD` is its drive type. The head rule gets this right for a structural reason: a
+  drive-type qualifier never occupies the head slot of the noun phrase it qualifies. That is the general form of
+  the fix, and it needs no vendor or document exception.
+- `2026-08-11`: no new Knowledge Map card is written for the retirement. `[[parenthetical-data-head-requires-wire-qualifier]]`
+  already owns the parenthetical single-wire authority rule and its measured corpus effect; this refresh is a
+  confirming instance on a document that had never been rebuilt under the head rule, not a new durable fact.
+- `2026-08-11`: the conditional-rule regression is **not** repaired here. It moves 29 documents and 1,423
+  records, so it needs its own leaf, its own corpus-wide old-versus-new replay, and its own before/after evals —
+  the same reasoning `.2.51` applied to the `SEC_SID` header-sourcing lever. `SEMANTIC-EMPTY-CATALOG-FILTER`
+  owns it with the reproduction, the census, and three candidate rules. This refresh records its own two
+  promoted rules as the honest current-binary result rather than hand-suppressing them, because suppressing
+  them would have hidden the defect inside the artifact that exposed it.
+- `2026-08-11`: the stale binary's admission path for `IS` is deliberately left unclaimed. The binary that
+  produced the stale EvidenceIR is superseded and the current tree cannot mint `IS` at all, so any reconstructed
+  pass sequence would be inference, not measurement. The refusal is what this refresh proves, and it is proved
+  from the document's own sentence.
 
 ### Verification log
 
@@ -313,10 +421,20 @@ interesting one.
 | --- | --- | --- |
 | `2026-08-11` | ownership selection | six gated candidates re-measured from their own SourceIR profiles; same-device source authenticated at 4,494,801 bytes / `0621543a…7bf3`, equal to the stale `source.size_bytes`; six-file 1,151,838-byte stale chain pinned; normalized bundle absent; no generated artifact mutated |
 | `2026-08-11` | part boundary | `refreshes-51-56` at 206/640 lines (32.2%); largest observed refresh cost 295 lines lands at 78.3%, below the 90% rollover, so this refresh appends |
+| `2026-08-11` | rollback and locality | six rollback files / 1,151,838 bytes match every pinned stale hash on device `16777240`; workspace is repository-derived under `.project-data/tmp/`; ingest ran `DOCLING_DEVICE=cpu` with `SPECFORGE_INGEST_RAM_ABORT_PERCENT=85` and the host held at 39% used |
+| `2026-08-11` | deterministic refresh | two guarded ingests and two cascades reproduce all nine artifact/report hashes and the 105-file / 35,661,265-byte bundle byte-identically; four stages validate; no emitted target |
+| `2026-08-11` | delta attribution | SourceIR differs from stale in exactly two path leaves and no third; EvidenceIR loses exactly `statement_0807`/`statement_0808`, one relation, and one provenance row, with nothing added or changed in place; Semantic/Intent drop `actor_x_connector`, both interfaces, the port, the relation, and the connectivity record; adapter `signal_count` 2 → 0 with its blocking reason moved to `no signals declared in interface` |
+| `2026-08-11` | regression found | semantic replay from the *stale* EvidenceIR with the current binary yields 0 rules / 2 interfaces / 7 actors, proving the 0 → 2 conditional-rule movement is input-driven; census over 78 SemanticIR artifacts finds 33 empty-catalog documents and 29 carrying 1,423 unfiltered rules / 100 unfiltered constraints; zero reach an emitted target |
+| `2026-08-11` | chain currency | `check_chain_currency.sh` exits 0: evidence 24/24, semantic 78/78, intent 78/78, isf-adapter 78/78 current, 78 emitted `.isf` bodies checked, retention exactly the 24 declared bundles |
+| `2026-08-11` | corpus frontier | `check_corpus_frontier.sh` exits 0: self-test 10/10; 57 cohort = 52 refreshed + 5 remaining; declaration, retention, and the root frontier agree |
+| `2026-08-11` | persisted paths | 2,669 persisted JSON artifacts / 359,231 path values / 104 authorized external absolute paths / zero repository-owned absolute paths |
+| `2026-08-11` | no regression | 44/44 emitted ISFs pass FSMGen `--strict --check --json`; `kg-bench` 156/156; nine provider-free WIRE/I2C/SWD evals at baseline with every filtered surface at 1.000 and only the known SWD `CSYSPWRUPACK` residual missing; the two register datasets hold their known baseline |
+| `2026-08-11` | locality incident | the first gate run failed closed on `PROJECT-DATA-LOCALITY`: this slice's own `*.log` files sat at the top level of `.project-data/tmp`, which the residue rule forbids. Logs moved one directory down and the check returns PASS — the gate caught the operator, which is the point |
+| `2026-08-11` | full gate | `scripts/run_ci.sh` exits 0 under `set -euo pipefail` — all eight doctrines including CI-tier `CHAIN-CURRENCY`, `cargo fmt --all --check`, warning-deny clippy, warning-deny tests, rustdoc, mdBook examples and build, and the closing project-data residue recheck |
 
 ### Commit log
 
 | Unit | Durable evidence |
 | --- | --- |
 | `CORPUS-COVERAGE.2.52` ownership | `CORPUS-COVERAGE.2.52 — own the OpenCAPI 25 Gbps PHY mechanical refresh` |
-| `CORPUS-COVERAGE.2.52` completion | pending |
+| `CORPUS-COVERAGE.2.52` completion | `CORPUS-COVERAGE.2.52 — refresh the OpenCAPI 25 Gbps PHY mechanical spec and retire its acronym signals` |

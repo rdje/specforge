@@ -17,25 +17,21 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `CORPUS-COVERAGE.2.52` — owned and `in_progress`, ownership committed, refresh not yet run.
-  `CORPUS-COVERAGE.4` (frontier census integrity) closed at `.4.1`. `STATUS-LEDGER-ROLLOVER` is open at `.2`
-  and `TASK-PART-SEAL-REACHABILITY` at `.0` — both tracking only.
-- Current state: corpus coverage is **51/57 with six real documents remaining**, at 78 SourceIR / 23
-  normalized / 78 EvidenceIR / 78 downstream chains, 44/44 emitted ISFs FSMGen-strict clean. `.4.0` derived
-  that census instead of reading it and found the tracked count short by one — hand-decremented once per
-  refresh since `.2.29`, so a stale denominator adjustment dropped
-  `nvme_base_specification_2_0a_2021_07_26` off the queue. `.4.1` made it the eighth doctrine:
-  `CORPUS-FRONTIER`, gate-tier, `bash scripts/check_corpus_frontier.sh`. **A refresh must now update
-  `doctrine/corpus_frontier/census.json` in the same transaction or the gate fails closed.**
-- Next action: execute `CORPUS-COVERAGE.2.52`. Its ownership record in
-  `docs/tasks/corpus-coverage/refreshes-51-56.md` pins the source
-  (4,494,801 B, `0621543a…7bf3`, same device `16777240`, byte count equal to the stale `source.size_bytes`) and
-  the exact six-file / 1,151,838-byte stale chain; work its unchecked acceptance list top to bottom. **The
-  completion transaction must also move `doctrine/corpus_frontier/census.json` and the root to 52/57 with five
-  remaining, or `CORPUS-FRONTIER` fails closed.** Hypothesis to test, not assume: the stale `IS`/`OD` one-bit
-  interfaces are the acronym class `.2.44`/`.2.45`/`.2.48` retired, so the adapter should block on no signals
-  rather than on no behavior.
-- In-flight uncommitted: none once the ownership commit lands; the refresh itself has not started, so no
-  artifact, rollback copy, or workspace exists yet. No background job is running.
-- Blockers: none. `CHANGES.md` sits near 84% of its line health target — roughly eight commits of runway before
-  its own rollover becomes mandatory. The user-owned `.claude/settings.json` remains untouched.
+- Active unit: none. `CORPUS-COVERAGE.2.52` is `done` and committed. Open trees, all tracking-only:
+  `SEMANTIC-EMPTY-CATALOG-FILTER` at `.0`, `STATUS-LEDGER-ROLLOVER` at `.2`, `TASK-PART-SEAL-REACHABILITY` at `.0`.
+- Current state: corpus coverage is **52/57 with five real documents remaining**, at 78 SourceIR / 24
+  normalized / 78 EvidenceIR / 78 downstream chains, 44/44 emitted ISFs FSMGen-strict clean. `CORPUS-FRONTIER`
+  (gate-tier, `bash scripts/check_corpus_frontier.sh`) re-derives 57 = 52 + 5 on every run, so **a refresh must
+  move `doctrine/corpus_frontier/census.json` and the root prose in the same transaction or it fails closed**;
+  a refresh must likewise add its key to `doctrine/chain_currency/retained_bundles.json` (now 24).
+- Next action: select and own `CORPUS-COVERAGE.2.53`. The smallest of the five gated remaining documents is
+  `opencapi_3_0_transaction_layer_28jan2020` at 774 elements; re-measure all five from their own persisted
+  SourceIR `document_profile` before committing to that pick. Append to `refreshes-51-56` (440/640 lines, 68.8%
+  — a third refresh at the largest observed 295-line cost would overshoot the 90% rollover, so measure before
+  writing and split at the boundary if it would).
+- In-flight uncommitted: none. Rollback/run snapshots and logs live under `.project-data/tmp/corpus-coverage-2-52-*`
+  and are disposable — delete them freely (keep `*.log` out of the top level of `.project-data/tmp`, which
+  `PROJECT-DATA-LOCALITY` fails closed on). No background job is running.
+- Blockers: none. `SEMANTIC-EMPTY-CATALOG-FILTER` is a measured, pre-existing defect on 29 documents that reaches
+  no emitted target; it blocks no refresh. `CHANGES.md` is near 87% of its 1800-line health target — roughly
+  four commits before its 90% rollover becomes mandatory. The user-owned `.claude/settings.json` is untouched.
