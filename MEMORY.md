@@ -19,20 +19,22 @@
 ## Current state (OVERWRITE this block each update — do not append)
 - Active unit: `SIGNAL-CATALOG-CAPTURE-GAP.2` — `.0` (ownership + census) and `.1` (classification) done, no
   code touched yet. Tracking-only: `STATUS-LEDGER-ROLLOVER` `.2`, `TASK-PART-SEAL-REACHABILITY` `.0`.
-- Current state: `.1` classified all 33 empty-catalog documents — **32 honest absence, 1 capture miss**. No
-  empty-catalog document has an identity-header `signal_description` table, so the table gate is not the cause;
-  `wbspec_b4_wishbone_b4_specification` alone is a real miss and declares its wires as 32 section *headings*.
-  Two corpus facts fell out: markdown escaping (`\_`) in the normalized text EvidenceIR reads truncates
-  underscore-bearing identifiers on 67 of 78 documents (`.4`), and 14 of 78 evidence artifacts carry no
-  validation report, hence no `document_class` (`.5`). Ingest is complete on all 77 available sources.
-- Next action: **roll the `changes` ledger first** — it is now mandatory (below), and `.1`'s ledger entry is
-  deferred into that slice; its content is fully recoverable from the `.1` task-tree block and the research
-  record. Then `SIGNAL-CATALOG-CAPTURE-GAP.2`: design the heading-as-declaration rule and measure what it would
-  admit across all 78 before writing code — a title shape alone is measured unsafe, so the rule must be
-  corroborative (title names an identifier **and** body states a direction). `.4` is a valid smaller slice.
-- In-flight uncommitted: none. Census/probe scripts under `.project-data/tmp/signal-catalog-capture-gap-1/`
-  are disposable — delete freely (keep `*.log` out of the top level of `.project-data/tmp`, which
-  `PROJECT-DATA-LOCALITY` fails closed on). No background job runs.
+- Current state: `.1` classified all 33 empty-catalog documents — **32 honest absence, 1 capture miss**; the
+  table gate is not the cause (no such document has an identity-header table). Wishbone alone is a real miss
+  and declares its wires as 32 section *headings*. Two corpus facts fell out: the `\_` escape in the
+  normalized text EvidenceIR reads truncates identifiers on 67 of 78 documents (`.4`), and 14 of 78 evidence
+  artifacts carry no validation report, hence no `document_class` (`.5`).
+- Real open owner decision (pre-existing, not new): `KG-ISF-COMPLETENESS.2a` is `deferred` **with-trigger** —
+  `.isf` direction/width fidelity needs an FSMGen-contract check on `(width PARAM)`, a reference-boundary
+  design, and an **owner decision**, because carrying direction/width is in tension with the `2026-06-16`
+  north star. `SIGNOFF-BURNDOWN` and `MEASUREMENT-PLANE-CONVERGENCE-RISK` were both withdrawn `2026-08-11`
+  as archaeology over that leaf; ignore them except as a cautionary record.
+- Next action: **roll the `changes` ledger** — mandatory (below); `SIGNAL-CATALOG-CAPTURE-GAP.1`'s ledger
+  entry is deferred into it. Then `SIGNAL-CATALOG-CAPTURE-GAP.2` (corroborative heading-as-declaration rule)
+  or `.4` (the markdown escape). **Grep `KNOWLEDGE_MAP.md` before forming any diagnosis, not only before
+  touching code** — that omission produced two withdrawn trees in one session.
+- In-flight uncommitted: none. Scripts under `.project-data/tmp/signal-catalog-capture-gap-1/` are disposable
+  (keep `*.log` out of `.project-data/tmp`'s top level). No background job runs.
 - Blockers: **`CHANGES.md` rollover is mandatory before its next append.** At 1,598 lines it is 88.8% of its
   1,800-line health target; the 90% trigger lands at 1,620, so any entry of ~22 lines or more fails
   `LIVE-DOC-SIZE` (measured: a 31-line entry gave 1,629 = 90.5%). Follow the `COMMIT.md` rolling-ledger

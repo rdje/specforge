@@ -3,7 +3,9 @@
 ## Metadata
 
 - Tree ID: `MEASUREMENT-PLANE-CONVERGENCE-RISK`
-- Status: `superseded` by [`SIGNOFF-BURNDOWN`](SIGNOFF-BURNDOWN.md) (`2026-08-11`, same day)
+- Status: `superseded` — withdrawn `2026-08-11`. Its successor [`SIGNOFF-BURNDOWN`](SIGNOFF-BURNDOWN.md) was
+  withdrawn the same day too: both were archaeology over `KG-ISF-COMPLETENESS.2a`, which already owns the
+  `.isf` direction/width fidelity gap and is `deferred` pending an owner decision. Read neither as guidance.
 - Roadmap lane: cross-cutting (`R15e` evaluation / `R9` extraction breadth)
 - Created: `2026-08-11`
 - Owner: repo-local workflow
