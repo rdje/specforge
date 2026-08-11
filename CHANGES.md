@@ -1,3 +1,23 @@
+### SPEC-TO-INTENT-ALIGNMENT.6a — current replay truth is separate from the frozen baseline
+
+- Added a generic isolated SourceIR → EvidenceIR → SemanticIR → IntentIR replay tool. It accepts only
+  repository-contained inputs, requires a fresh child of `.project-data/tmp`, refuses symlink escapes, and never
+  overwrites canonical `generated/` artifacts or the frozen reviewed result.
+- Replayed the RISC-V AIA source from a hash-equal 827,669-byte SSD-local copy. Reviewed TOC `table_0004` remains
+  20×2, but current normalization changes its kind from frozen `timing_parameter` to `unknown`; promoted timing
+  records move 19→0 at all three later stages, false/unprovenanced IntentIR facts move 19→0, and expected true
+  positives hold 0→0. No production extractor repair was needed.
+- Added strict tracked replay evidence with all source/stage hashes, revisions, command, comparison, and cleanup
+  proof. The 132 MB output, failed empty first root, and copied PDF were removed exactly; residue is absent.
+- Corrected controller authority: `.4c`'s 41 fabrication / 45 provenance / 33 drop counts are retrospective
+  baseline measures, not asserted current whole-population gates. Controller v2 hard-gates current-binary replay
+  at 1/12 (11 unqualified), remains `diverging`, and recommends `.6` qualification before repair.
+- Applied one exact root-last containment transaction after the required records crossed mandatory thresholds:
+  19 whole Development Notes records became `segment-0004`, and 13 whole achievement-status records became
+  `segment-0008`. Both live roots are warning-safe; all prior capsules/segments remain byte-identical.
+- Full CI passes all eight doctrines, formatting, warning-deny Clippy, 1,857 Rust tests / five ignored / zero
+  failed, Rust docs, mdBook, and final project-data locality.
+
 ### SPEC-TO-INTENT-ALIGNMENT.5b — the first evidence-composed trajectory now selects owned work
 
 - Added an isolated `.4c`/`.2` composition layer plus a guarded provider-free 17-row capability observation.

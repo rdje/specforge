@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "replay_id": "spec-to-intent-6a-aia-toc",
+  "owner": "SPEC-TO-INTENT-ALIGNMENT.6a",
+  "baseline": {
+    "reviewed_revision": "03e89b66cf87fcc1ec0bf342f47a147261a8d739",
+    "result_path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
+    "result_sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
+    "document_key": "1_0_2025_03_12_risc_v_advanced_interrupt_architecture",
+    "source": {
+      "portable_id": "1.0_2025-03-12_RISC_V_Advanced_Interrupt_Architecture.pdf",
+      "sha256": "2d359579dcb84c6d00a1b284db3a7f8ec8c87764d96406a45cbaa9052f04c7c8",
+      "byte_count": 827669
+    },
+    "stages": {
+      "source_ir_sha256": "fa59dc4db30db381eb594ea93fe27f4297b61b99984d2cba6e89c0b1e3be1f07",
+      "evidence_ir_sha256": "3a952401ffc6bcc6ea614010d262c71247a1b3ffe4bee1772ebb460ba3225550",
+      "semantic_ir_sha256": "c68b70a7580a7b55d8ddad9a6767d34db62027c8ba9834317c866ee248b88ce8",
+      "intent_ir_sha256": "182b0759e79f343fa3ae3ee56719c2c14db51364b8cf8054514b1a664e695830"
+    },
+    "observed_table": {
+      "table_id": "table_0004",
+      "table_kind": "timing_parameter",
+      "row_count": 20,
+      "column_count": 2,
+      "expected_canonical_facts": 0,
+      "evidence_timing_constraints": 19,
+      "semantic_timing_constraints": 19,
+      "intent_timing_constraints": 19,
+      "intent_true_positives": 0,
+      "intent_false_positives": 19,
+      "intent_unprovenanced_records": 19
+    }
+  },
+  "current_replay": {
+    "production_revision": "c4331a516bb7c3e5b6230bc45149e541cfca2ac1",
+    "timing_authority_revision": "46af2eca7a4c59e25a014e532716c92be371e29b",
+    "source_copy": {
+      "repository_relative_path": ".project-data/tmp/spec-to-intent-6a-source/aia.pdf",
+      "sha256": "2d359579dcb84c6d00a1b284db3a7f8ec8c87764d96406a45cbaa9052f04c7c8",
+      "byte_count": 827669,
+      "verified_equal_to_authority": true
+    },
+    "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-6a-source/aia.pdf .project-data/tmp/spec-to-intent-6a-aia-r2 generated/prior_memory/corpus_memory.json table_0004",
+    "scratch_output_root": ".project-data/tmp/spec-to-intent-6a-aia-r2",
+    "stages": {
+      "source_ir_sha256": "879e386620b79a17616e32a5d2b07b5f544c62f412a801a82d787d992ceb562e",
+      "evidence_ir_sha256": "11bd52edc2264248ba4b551c2318d7de3dba544b58e57c98764e9629d2ed842f",
+      "semantic_ir_sha256": "b66b1a9fe461eeb745eae461539cea2f78a59ef8378e9014866087728a3773c9",
+      "intent_ir_sha256": "bb19f32064b1369097f58cf5c17252f751449a637a19b583bd48494f8ee84d38"
+    },
+    "observed_table": {
+      "table_id": "table_0004",
+      "table_kind": "unknown",
+      "row_count": 20,
+      "column_count": 2,
+      "expected_canonical_facts": 0,
+      "evidence_timing_constraints": 0,
+      "semantic_timing_constraints": 0,
+      "intent_timing_constraints": 0,
+      "intent_true_positives": 0,
+      "intent_false_positives": 0,
+      "intent_unprovenanced_records": 0
+    }
+  },
+  "comparison": {
+    "current_binary_replayed_documents": 1,
+    "reviewed_documents": 12,
+    "intent_false_positive_delta": -19,
+    "intent_unprovenanced_delta": -19,
+    "expected_true_positives_before": 0,
+    "expected_true_positives_after": 0,
+    "interpretation": "The current binary removes the complete reviewed TOC fabrication family without sacrificing a source-grounded true positive. The other 11 reviewed documents remain unreplayed, so the frozen baseline is not a current whole-population product result."
+  },
+  "cleanup": {
+    "source_copy": ".project-data/tmp/spec-to-intent-6a-source",
+    "scratch_roots": [
+      ".project-data/tmp/spec-to-intent-6a-aia-r1",
+      ".project-data/tmp/spec-to-intent-6a-aia-r2"
+    ],
+    "status": "removed_and_residue_absent"
+  }
+}

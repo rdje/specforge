@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
+  > what is ADR 0027
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > what is ADR 0029
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > what is ADR 0030
+- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
+  > what is ADR 0031
+- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+  > what is ADR 0032
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > what is AppError::IngestAbortedForDisk
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > what is AppError::IngestAbortedForMemory
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
@@ -285,15 +297,3 @@
   > what is the only improvement path for conditional rules (upstream EXTRACTION — extract-constraints-llm / EXTRACTION-QUALITY-GAUGE recovering the concrete obligation from the conditional's source_text for the deontic-modal bucket; then it lowers via the existing (rule) path with no new ISF construct — lower-leverage than register/structure/topology)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what is the owner directive on transaction recognition / membership / step-by-step / fast / minimum
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > what is the parenthetical noun-phrase head rule / EXTRACTION-GAP-FIX.1
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > what is the per-document fingerprint made of (structural shape + extraction_manifest fired set)
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > what is the permission-vs-obligation gate / frame error class
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is the presence-matrix structural gate and how many tables fire it
-- [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
-  > what is the present blocking point on the specification-to-executable-intent path
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > what is the proposed Extractor framework (registry / driver / SurfacePolicy / run manifest)

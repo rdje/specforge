@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > where is the authoritative chipdoc source library now
+- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
+  > where is the biggest register extraction gap across the corpus
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > where is the canonical SpecForge user guide
+- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
+  > where is the complete index for SpecForge research workflow architecture corpus KB or KG fixtures
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > where is the complete live document containment adoption task history
+- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
+  > where is the declared-signal gate applied (pattern + dynamic constraint paths)
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > where is the default-flip decision packet / should promote-constraints-llm become the default
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > where is the dropped enum surfaced (an isf_enum_value_literal_<name> ResidualDecisionPacket via enum_residuals(), wired into adapters.rs residual_decisions)
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
@@ -283,17 +297,3 @@
   > why did AXI unexplained tables go 39 to 32 and the denominator 94 to 98
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > why did Cortex-A76 instruction performance tables produce 151 timing constraints with no min typ max values
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > why did DL disappear from the OpenCAPI Certified Definition
-- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
-  > why did GIC-600's .isf fail fsmgen strict with 'Malformed top-level FSM source ?fsm:redistributor→…'
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > why did HBM2's .isf fail fsmgen strict with enum member 'TABLE.REPAIR_LANE_8' value token '1000'
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > why did LTI unexplained tables go UP from 5 to 6
-- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
-  > why did OpenCAPI data link semantic phases gates and contracts drop to zero
-- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
-  > why did OpenCAPI email review become an IntentIR behavior
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > why did OpenCAPI produce constraints on CAPI OCDE and DLX that the document never constrains

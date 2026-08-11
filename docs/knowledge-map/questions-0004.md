@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
+  > how is an active task evidence migration written atomically
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > how is an active task source locked before migration
+- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
+  > how is an external PDF labeled in Docling metadata
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how is an under-extracted spec distinguished from a true guide (evidence_document_underextracted_spec)
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
@@ -215,6 +221,8 @@
   > how much memory did the guarded USB4 Connection Manager ingest use
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > how much memory did the guarded USB4 Inter-Domain ingest use
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > how much of the reviewed trajectory population has current binary replay evidence
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
   > how much page content escapes both the structured-element path and the region-crop path
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
@@ -289,11 +297,3 @@
   > is RISC-V Debug register bit-position recovery a deterministic text-table parse or a VLM-image read (VLM-image — 53/56 diagrams are images, the 7 flattened tables are garbled/symbolic; deterministic parse would fabricate)
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > is SPECFORGE_INGEST_BATCH_PAGES a fixed size or a ceiling
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > is SWD at 100% and on what metric
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > is SpecForge converging diverging stalled mixed or unmeasurable
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > is SpecForge specification mining
-- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
-  > is SpecForge still allowed to read chipdoc from the boot volume

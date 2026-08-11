@@ -47,6 +47,7 @@
 | [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md) | 2026-06-17 | `current` | Docs with actors+constraints but ZERO actor_signal_relations are NOT an extraction gap — it is (A) stale In… |
 | [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md) | 2026-08-08 | `current` | Repository-local temp exposes a Docling test root-discovery and mutex-poison cascade |
 | [repository-local-scratch](../knowledge/repository-local-scratch.md) | 2026-08-08 | `current` | Diagnostic scratch data is project data and must stay on the repository volume |
+| [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md) | 2026-08-12 | `current` | Frozen stage artifacts are retrospective baselines until the current binary replays them |
 | [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md) | 2026-08-08 | `current` | The roadmap has a bounded current view and exact history capsule |
 | [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md) | 2026-08-08 | `current` | The four root rolling ledgers use three explicit whole-record grammars |
 | [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md) | 2026-08-08 | `current` | Root user and architecture documents are bounded pointers to mdBook product contracts |
@@ -60,4 +61,3 @@
 | [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md) | 2026-08-09 | `current` | Declaration-free heuristic interfaces require a signal-led deontic behavior statement |
 | [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md) | 2026-08-10 | `superseded` | Generic SemanticIR section phases require heading authority |
 | [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md) | 2026-06-11 | `current` | Signal-presence matrices — the literal presence-CONDITION typed surface (.12b) |
-| [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md) | 2026-06-15 | `current` | source_ir.json is O(pages) at ~9.3 KB/page; downstream stages load it with a full serde deserialize |

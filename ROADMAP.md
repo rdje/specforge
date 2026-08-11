@@ -76,18 +76,14 @@ represented without fabricated certainty. [`KG-ISF-COMPLETENESS`](docs/tasks/KG-
 and [`KG-ISF-TRANSACTIONS`](docs/tasks/KG-ISF-TRANSACTIONS.md) own that bar;
 [`WIRE-BASED-100`](docs/tasks/WIRE-BASED-100.md) is the hard wire-protocol gate.
 
-The current sequencing decision is upstream-first: faithful PDF evidence must populate SourceIR through
-canonical `IntentIR` before adapter expressiveness can be called the blocker. ISF/FSMGen remains the eventual
-executable boundary and can evolve when a source-grounded IntentIR value proves a concrete language gap, but
-SpecForge does not spend the present frontier anticipating one. [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md)
-owns the per-category IR contract, canonical-path integration, real multimodal producer, held-out vertical
-slices, and reviewable trajectory controller that make this ordering measurable (ADR 0033/0034). Its category
-contract, guarded production ledger, typed timing-note → FigureRegion → verified ActorContract path, strict
-vertical evaluator, balanced 12-document population, exact result, and reviewable controller now ship. The first
-evidence-composed snapshot is `diverging` on hard fabrication/provenance/drop gates while history remains
-`insufficient_history`; it recommends owned `.6` honesty repair before `.7` source loss, `.8` residual
-actionability, or `.9` capability breadth. The measured frontier remains upstream, not an ISF/FSMGen
-expressiveness gap; the next leaf executes the controller-selected hard honesty/provenance repair.
+The current sequencing is upstream-first: faithful PDF evidence must populate SourceIR through canonical
+`IntentIR` before adapter expressiveness can be called the blocker. ISF/FSMGen remains the eventual executable
+boundary, but SpecForge does not anticipate a language gap without a source-grounded value.
+[`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md) makes that ordering measurable (ADR
+0033/0034). Its contracts, production ledger, multimodal path, evaluator, reviewed population, retrospective
+result, controller, and first current replay ship. The replay removes the frozen AIA TOC family's 19 false facts
+without true-positive loss; controller state is still `diverging` on exact 1/12 artifact currency, so `.6`
+replays the other 11 documents before repairing only defects that remain. The task tree owns all detailed counts.
 
 Five active program groups support that north star:
 

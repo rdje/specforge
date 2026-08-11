@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "snapshot_id": "specforge-source-to-intent-reviewed-v1",
-  "owner": "SPEC-TO-INTENT-ALIGNMENT.5b",
+  "snapshot_id": "specforge-source-to-intent-reviewed-v2",
+  "owner": "SPEC-TO-INTENT-ALIGNMENT.6a",
   "reviewed_revision": "03e89b66cf87fcc1ec0bf342f47a147261a8d739",
   "objective_contract": {
     "path": "doctrine/spec_to_intent_category_contract.json",
@@ -221,7 +221,7 @@
             "numerator": 1,
             "denominator": 100
           },
-          "hard": true,
+          "hard": false,
           "required": true,
           "oracle": "exact three-boundary vertical conservation accounting",
           "population": "54 required stage-boundary crossings",
@@ -261,7 +261,7 @@
             "numerator": 1,
             "denominator": 100
           },
-          "hard": true,
+          "hard": false,
           "required": true,
           "oracle": "complete bounded provenance requirements",
           "population": "all emitted canonical records in 14 reviewed cells",
@@ -295,7 +295,7 @@
             "numerator": 1,
             "denominator": 100
           },
-          "hard": true,
+          "hard": false,
           "required": true,
           "oracle": "complete bounded canonical IntentIR answer keys",
           "population": "all emitted canonical facts in 14 reviewed cells",
@@ -428,7 +428,7 @@
     },
     {
       "dimension": "operational_confidence",
-      "objective": "separate complete reviewed oracles from context-dependent provider-free execution availability",
+      "objective": "separate complete reviewed oracles, artifact currency, and context-dependent execution availability",
       "metrics": [
         {
           "metric_id": "complete_review_scope_documents",
@@ -461,6 +461,40 @@
               "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
               "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
               "role": "frozen .4c reviewed vertical result"
+            }
+          ]
+        },
+        {
+          "metric_id": "current_binary_replay_coverage",
+          "question": "what fraction of the reviewed population has been replayed with the current binary",
+          "measure": {
+            "numerator": 1,
+            "denominator": 12
+          },
+          "target": {
+            "operator": "equal",
+            "value": {
+              "numerator": 1,
+              "denominator": 1
+            }
+          },
+          "improvement": "higher_is_better",
+          "material_change": {
+            "numerator": 1,
+            "denominator": 100
+          },
+          "hard": true,
+          "required": true,
+          "oracle": "hash-pinned isolated four-stage current-binary replay",
+          "population": "12 documents in the frozen reviewed population",
+          "uncertainty": {
+            "kind": "exact"
+          },
+          "evidence": [
+            {
+              "path": "crates/specforge/test_data/trajectory/replays/aia_toc_current_binary_replay.json",
+              "sha256": "15e6a021a6e78cd23e9a31702f3a5b34bf45e43b3660fb8c38c2435d069fdd7a",
+              "role": "isolated .6a current-binary replay of the dominant frozen defect"
             }
           ]
         },
@@ -543,41 +577,15 @@
   ],
   "hard_gates": [
     {
-      "gate_id": "no_fabricated_canonical_facts",
-      "question": "are fabricated canonical facts absent",
-      "violations": 41,
+      "gate_id": "complete_current_binary_replay",
+      "question": "does every reviewed document have a hash-pinned current-binary replay",
+      "violations": 11,
       "target_violations": 0,
       "evidence": [
         {
-          "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
-          "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
-          "role": "frozen .4c reviewed vertical result"
-        }
-      ]
-    },
-    {
-      "gate_id": "full_canonical_provenance",
-      "question": "does every emitted canonical fact close required provenance",
-      "violations": 45,
-      "target_violations": 0,
-      "evidence": [
-        {
-          "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
-          "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
-          "role": "frozen .4c reviewed vertical result"
-        }
-      ]
-    },
-    {
-      "gate_id": "no_unexplained_stage_drops",
-      "question": "does every required stage crossing conserve or residualize the fact",
-      "violations": 33,
-      "target_violations": 0,
-      "evidence": [
-        {
-          "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
-          "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
-          "role": "frozen .4c reviewed vertical result"
+          "path": "crates/specforge/test_data/trajectory/replays/aia_toc_current_binary_replay.json",
+          "sha256": "15e6a021a6e78cd23e9a31702f3a5b34bf45e43b3660fb8c38c2435d069fdd7a",
+          "role": "isolated .6a current-binary replay of the dominant frozen defect"
         }
       ]
     }
@@ -585,18 +593,18 @@
   "history": [],
   "gaps": [
     {
-      "gap_id": "canonical-fabrication-and-provenance",
-      "objective_id": "provenance_honesty",
+      "gap_id": "current-binary-honesty-qualification",
+      "objective_id": "operational_confidence",
       "tier": "hard_invariant",
-      "observed": "41 fabricated facts and 45 of 48 emitted records lack required provenance closure",
-      "target": "zero fabricated facts and full canonical provenance closure",
-      "first_failing_stage": "source_to_evidence_ir",
-      "affected_population": 48,
+      "observed": "the frozen baseline has 41 fabricated facts and 45 provenance failures, but only 1 of 12 reviewed documents has current-binary replay evidence; that replay removes the largest 19-record family",
+      "target": "current-binary replay covers all 12 reviewed documents before remaining fabrication or provenance repairs are ranked",
+      "first_failing_stage": "artifact_currency_before_semantic_diagnosis",
+      "affected_population": 11,
       "causal_confidence": "high",
-      "reversible_slice": "small",
+      "reversible_slice": "medium",
       "uncertainty": "exact",
-      "estimated_impact": "restore the non-tradeable honesty floor before optimizing recall or breadth",
-      "reproduction": "cargo run --quiet -p specforge --example source_to_intent_eval -- crates/specforge/test_data/source_to_intent_vertical/reviewed_dataset.json",
+      "estimated_impact": "establish current product truth, then repair only defects the current binary still reproduces",
+      "reproduction": "cargo run --quiet -p specforge --example source_to_intent_replay -- <repository-relative-source> <.project-data/tmp/output-root> generated/prior_memory/corpus_memory.json <observed-table-id-or->",
       "owner": {
         "task_id": "SPEC-TO-INTENT-ALIGNMENT.6",
         "task_tree_path": "docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md"
@@ -606,6 +614,11 @@
           "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
           "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
           "role": "frozen .4c reviewed vertical result"
+        },
+        {
+          "path": "crates/specforge/test_data/trajectory/replays/aia_toc_current_binary_replay.json",
+          "sha256": "15e6a021a6e78cd23e9a31702f3a5b34bf45e43b3660fb8c38c2435d069fdd7a",
+          "role": "isolated .6a current-binary replay of the dominant frozen defect"
         }
       ]
     },

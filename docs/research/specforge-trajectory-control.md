@@ -171,12 +171,17 @@ shared knowledge base, consistent with autonomic-computing control principles
 4. Establish held-out vertical slices and stage-loss accounting (`.4`).
 5. Persist versioned trajectory snapshots; classify state; protect evaluators with seeded negatives; emit the
    reviewable next-task recommendation (`.5`). `.5a` supplies the strict nine-dimension state/ranking engine;
-   `.5b` attaches the frozen product evidence and emits the first owned recommendation, `.6`.
+   `.5b` attaches the frozen retrospective evidence and emits the first owned recommendation, `.6`; `.6a`
+   adds an isolated current-binary replay boundary before the recommendation can imply a production repair.
 
-The first snapshot is `diverging` because current exact hard gates count 41 fabricated canonical facts, 45
-provenance failures, and 33 unexplained stage drops. Its history status remains `insufficient_history`, so this
-baseline makes no direction or stall claim. The report ranks `.6` honesty/provenance ahead of `.7` source loss,
-`.8` residual actionability, and `.9` capability breadth, with report-only review authority unchanged.
+The first composition originally treated 41 fabricated facts, 45 provenance failures, and 33 unexplained stage
+drops as current exact hard gates. `.6a` found that claim stronger than the evidence: `.4c` pins the artifacts
+reviewed, but does not prove every document was replayed after earlier extraction repairs. A hash-equal replay of
+the dominant AIA TOC family removes all 19 false/unprovenanced timing records with no true-positive loss. The
+corrected snapshot is `diverging` on a current artifact-currency gate—1/12 documents replayed, 11 unqualified—
+while those quality counts remain retrospective baseline measures and history remains `insufficient_history`.
+The report ranks `.6` replay qualification and surviving honesty defects ahead of `.7` source loss, `.8`
+residual actionability, and `.9` capability breadth, with report-only review authority unchanged.
 
 The controller should initially report and recommend. Only exact hard invariants should fail CI. Statistical
 or heuristic signals graduate to gates after their false-alarm behavior is calibrated on real history.

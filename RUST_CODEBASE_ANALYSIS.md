@@ -4,6 +4,21 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-12 — isolated current-binary replay; `SPEC-TO-INTENT-ALIGNMENT.6a`)
+
+- New `ir/source_to_intent_replay.rs` is an orchestration harness around existing stage builders, not a new
+  extractor. It requires contained repository files and a fresh `.project-data/tmp` output root, then writes an
+  isolated SourceIR → EvidenceIR → SemanticIR → IntentIR chain without touching `generated/`.
+- The first replay validates the current structural timing-authority path on real AIA bytes: reviewed TOC
+  `table_0004` stays 20×2 but normalizes `timing_parameter`→`unknown`; promoted timing records are 19→0 at all
+  later stages, with no expected true positive to lose. A two-test path guard includes the external-symlink case.
+- `ir/trajectory_snapshot.rs` now strictly loads typed replay evidence, kills cleanup/currency/fabrication/
+  preservation mutants, and makes current-binary replay coverage a hard 1/12 metric plus 11-document gate.
+  Historical `.4c` semantic ratios remain visible deficits but no longer act as current hard failures.
+- The tracked replay carries only portable/root-relative identities and hashes; all 132 MB of generated scratch
+  plus the copied PDF were removed after capture. Canonical corpus artifacts and the frozen `.4c` report are
+  byte-unchanged.
+
 ## Session update (2026-08-12 — first composed trajectory; `SPEC-TO-INTENT-ALIGNMENT.5b`)
 
 - New `ir/trajectory_snapshot.rs` is a product-evidence adapter around, not a policy branch inside, the generic

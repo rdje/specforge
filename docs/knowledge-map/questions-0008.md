@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > what is the parenthetical noun-phrase head rule / EXTRACTION-GAP-FIX.1
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > what is the per-document fingerprint made of (structural shape + extraction_manifest fired set)
+- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
+  > what is the permission-vs-obligation gate / frame error class
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > what is the presence-matrix structural gate and how many tables fire it
+- [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
+  > what is the present blocking point on the specification-to-executable-intent path
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > what is the proposed Extractor framework (registry / driver / SurfacePolicy / run manifest)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > what is the recommended fix (.5.i extraction-side fallback name-gate: derive_encoding_enum_name must return None unless the candidate token is a declared signal -> no enum minted; + emitter orphan-type fix isf_ir.rs:403-409 gate types block by emitted_enums(); .5.ii member-quality gate for the 271 real-named junk enums, calibration-gated)
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
@@ -257,6 +269,8 @@
   > where is consolidate_trailing_fragment and how is it ordered against the .1a reject
 - [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
   > where is coordinated-object actor-signal relation extraction implemented
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > where is current binary replay evidence stored
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
   > where is is_pure_inferred_phantom_role and the build_intent_actors phantom guard
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
@@ -283,17 +297,3 @@
   > where is the U+F0B7 signal integrity panic in evidence extraction
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > where is the acceptance checklist a code change must satisfy
-- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
-  > where is the authoritative chipdoc source library now
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > where is the biggest register extraction gap across the corpus
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > where is the canonical SpecForge user guide
-- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
-  > where is the complete index for SpecForge research workflow architecture corpus KB or KG fixtures
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > where is the complete live document containment adoption task history
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > where is the declared-signal gate applied (pattern + dynamic constraint paths)
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > where is the default-flip decision packet / should promote-constraints-llm become the default

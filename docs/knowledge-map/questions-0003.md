@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > how do I add fact-card capacity
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > how do I derive how many corpus refreshes remain (run scripts/check_corpus_frontier.sh; it derives the SourceIR cohort and requires every member in exactly one explicit refreshed or remaining set)
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > how do I file an FSMGen bug report or feature request
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -12,6 +16,8 @@
   > how do I measure the extraction-quality gauge before and after a canonical promotion
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > how do I promote a document's constraint surface on canonical without re-ingesting the PDF
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > how do I replay a source through SourceIR EvidenceIR SemanticIR and IntentIR without overwriting generated artifacts
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
   > how do I roll ROADMAP.md when it approaches its ceiling
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
@@ -292,9 +298,3 @@
   > how is a roadmap rollover capsule verified
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
   > how is a valid post-migration active task continuation verified
-- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
-  > how is an active task evidence migration written atomically
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > how is an active task source locked before migration
-- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
-  > how is an external PDF labeled in Docling metadata

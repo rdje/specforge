@@ -115,7 +115,7 @@ expressiveness as the bottleneck.
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.5a`
   Status: `done`
-  Goal: `build the versioned multi-metric trajectory state and ranking engine before attaching current product evidence`
+  Goal: `build the versioned multi-metric trajectory state and ranking engine before attaching product evidence`
   Acceptance: `a strict root-relative input contract preserves nine separate objective dimensions, denominators, oracles, uncertainty, hard gates, comparable history, and task ownership; deterministic classification distinguishes converging, diverging, stalled, mixed, and unmeasurable; lexicographic ranking cannot trade away hard failures; seeded omissions, fabrications, regressions, mixed deltas, missing history, and semantic-mutation attempts fail closed`
   Verification: `16 focused state/fault/authority tests; schema JSON semantics; format and all-target warning-deny Clippy; mdBook; Knowledge Map/catalog; live/currentness projections; all eight doctrines; full CI with 1,850 passed / five ignored / zero failed`
   Commit: `SPEC-TO-INTENT-ALIGNMENT.5a — build the trajectory control engine`
@@ -128,9 +128,24 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.5b — publish the first trajectory snapshot`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6`
+  Status: `in_progress`
+  Goal: `qualify current-binary truth before eliminating the fabrication and provenance defects that still reproduce`
+  Acceptance: `hash-pinned isolated replay separates the retrospective baseline from current product truth across all 12 reviewed documents; a reversible upstream repair then reduces the exact current fabricated-fact and unprovenanced-record populations without sacrificing a source-grounded true positive; controlled fabrication, provenance, and artifact-currency mutants remain detected; a comparable snapshot records the result`
+  Verification: `pending`
+  Commit: `pending`
+  Children: `.6a`, `.6b`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6a`
+  Status: `done`
+  Goal: `replay the largest frozen fabrication family with the current binary and separate historical baseline truth from current-product truth`
+  Acceptance: `a repository-local isolated four-stage replay from the hash-equal SSD-local source copy proves whether the current timing-authority gate removes all 19 table-of-contents fabrications; no canonical generated artifact or frozen .4c result changes; the replay identity and exact before/after counts are durable; public/controller language cannot imply that an unreplayed pinned stage is current-binary output`
+  Verification: `hash-equal 827,669-byte SSD source copy; isolated four-stage replay at production revision c4331a51; table_0004 retains 20x2 TOC shape but kind timing_parameter→unknown and promoted timing records 19→0 at EvidenceIR/SemanticIR/IntentIR; expected TP 0→0; strict replay-evidence validation and currency/preservation mutants; scratch copy and both exact output roots removed with residue absent; controller v2 input/report SHA-256 58dd10e5…33bc / 5bec293b…3238; full CI passes all eight doctrines, formatting, warning-deny Clippy, 1,857 tests / five ignored / zero failed, Rust docs, mdBook, and final locality`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6a — separate replay truth from the frozen baseline`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6b`
   Status: `pending`
-  Goal: `eliminate fabricated canonical facts and close canonical provenance on the frozen reviewed verticals`
-  Acceptance: `a reversible upstream repair reduces the exact fabricated-fact and unprovenanced-record populations without sacrificing a source-grounded true positive; controlled fabrication and provenance mutants remain detected; a new comparable snapshot records the result`
+  Goal: `complete current-binary replay coverage, then rank and repair the remaining fabrication and provenance families`
+  Acceptance: `all 12 reviewed documents have hash-pinned comparable replay evidence; that inventory, not the retrospective .4c baseline alone, identifies the next bounded production defect; the repair removes false canonical facts or closes genuine provenance without sacrificing a reviewed true positive`
   Verification: `pending`
   Commit: `pending`
 
@@ -167,11 +182,12 @@ expressiveness as the bottleneck.
 | 6 | `SPEC-TO-INTENT-ALIGNMENT.4b` | `done` | 12 portable reviewed verticals and 14 complete cells are frozen without tuning extraction |
 | 7 | `SPEC-TO-INTENT-ALIGNMENT.4c` | `done` | exact result localizes the constraint to source-to-evidence fact formation and residualization |
 | 8 | `SPEC-TO-INTENT-ALIGNMENT.5a` | `done` | strict multi-metric state/ranking engine and mutation controls are verified |
-| 9 | `SPEC-TO-INTENT-ALIGNMENT.5b` | `done` | first snapshot is byte-current and selects hard honesty/provenance repair |
-| 10 | `SPEC-TO-INTENT-ALIGNMENT.6` | `pending` | repair the hard fabrication/provenance invariant selected by the first snapshot |
-| 11 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
-| 12 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
-| 13 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
+| 9 | `SPEC-TO-INTENT-ALIGNMENT.5b` | `done` | first retrospective snapshot is byte-current and selects the .6 honesty lane |
+| 10 | `SPEC-TO-INTENT-ALIGNMENT.6a` | `done` | dominant frozen TOC defect replayed; 19 fabrications disappear and controller now gates 1/12 replay currency |
+| 11 | `SPEC-TO-INTENT-ALIGNMENT.6b` | `pending` | replay the remaining 11 documents, then repair only current-binary honesty defects |
+| 12 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
+| 13 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
+| 14 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
 
 ## Decisions
 
@@ -216,6 +232,16 @@ expressiveness as the bottleneck.
 - `2026-08-12`: keep `.5b` composition outside the generic engine and preserve the provider-free `.2` ledger as
   contextual execution evidence. A current hard-gate failure may classify divergence without history, while
   `insufficient_history` independently forbids a trend or stall claim.
+- `2026-08-12`: `.4c` is a pinned retrospective stage-artifact baseline, not proof that every selected artifact
+  was replayed by the selection-boundary binary. The dominant 19-fact TOC family persists in an unreplayed
+  EvidenceIR artifact even though pre-boundary commit `46af2eca` added the generic structural timing gate; its
+  normalized input was reclaimed. `.6a` must replay from the hash-equal repository-local SSD copy in an isolated
+  repository-volume root before `.6` changes production code or claims a current-product repair.
+- `2026-08-12`: `.6a` proves the distinction empirically. The hash-equal source replay keeps reviewed TOC
+  `table_0004` at 20 rows × two columns, while current normalization classifies it `unknown` rather than
+  `timing_parameter`; the 19 timing records disappear at all three promoted stages and the reviewed true-positive
+  population remains zero. The controller therefore treats `.4c` quality counts as retrospective baseline
+  measures, gates current-binary coverage at 1/12, and ranks qualification of the remaining 11 documents first.
 
 ## Open Questions
 
@@ -272,6 +298,11 @@ expressiveness as the bottleneck.
 | `2026-08-12` | `.5b` composition/currentness | three trajectory-snapshot tests; live provider-free ledger equality; generic runner byte comparison; regeneration `--check`; format; all-target warning-deny Clippy | PASS: exact `.4c` and `.2` counts produce `diverging` + `insufficient_history`; all four ranked gaps are owned and `.6` wins hard-first; input/report SHA-256 `9901b420…a654` / `2fef8189…0a34` |
 | `2026-08-12` | `.5b` public/retrieval/live alignment | mdBook test/build; Knowledge Map 218 facts / 1,618 questions; fact catalog 207 cards; book-current-truth; roadmap projection; live-size | PASS: report, book, roadmap, research, architecture, live state, and retrieval agree; 775 Markdown files satisfy 52 governed surfaces without a mandatory rollover |
 | `2026-08-12` | `.5b` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines, formatting, warning-deny Clippy, 1,854 Rust tests passed / five ignored / zero failed, Rust docs, mdBook test/build, and final project-data-locality residue check |
+| `2026-08-12` | `.6a` isolated replay | source SHA/size equality; four replay-stage hashes; exact `table_0004` inspection; baseline/replay constraint counts; scratch census | PASS: source `2d359579…4c7c8` / 827,669 bytes; TOC stays 20×2, kind `timing_parameter`→`unknown`; EvidenceIR/SemanticIR/IntentIR timing records each 19→0; expected TP 0→0; three exact scratch roots removed and absent |
+| `2026-08-12` | `.6a` controller authority | strict replay-evidence loader; cleanup/currency and surviving-fabrication mutants; snapshot regeneration and generic check | PASS: current-binary coverage is a hard 1/12 metric/gate; historical 41/45/33 counts no longer masquerade as current gates; `.6` remains the owned recommendation; input/report SHA-256 `58dd10e5…33bc` / `5bec293b…3238` |
+| `2026-08-12` | `.6a` focused code/public checks | two replay path guards; four composition/currentness/mutant tests; all-target warning-deny Clippy; format; mdBook test/build; trajectory `--check` | PASS: replay rejects unsafe/external paths before output creation; evidence and artifacts are byte-current; public contract builds and tests cleanly |
+| `2026-08-12` | `.6a` mandatory live-ledger containment | exact two-row plan dry run then root-last apply; protocol and live-size checks | PASS: dry run exact/warning-safe; 19 Development Notes records sealed at `17f28fd7…0eea`, 13 status records at `6dcff897…ef84`; both roots warning-safe; prior archive members unchanged |
+| `2026-08-12` | `.6a` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines, formatting, warning-deny Clippy, 1,857 Rust tests passed / five ignored / zero failed, Rust docs, mdBook test/build, and final project-data-locality residue check |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
 
@@ -389,8 +420,8 @@ expressiveness as the bottleneck.
   tie-breakers, verify every proposed task ID in its root-relative task tree, and fix authority to report-only.
 - [x] **NO REGRESSION** — state/fault/authority mutants, schema semantics, stable serialization, formatting,
   warning-deny Clippy, mdBook, projections, doctrines, and full repository CI pass.
-- [x] **GENERICITY (ADR 0006)** — controller code contains no current `.4c` metric, document, vendor, protocol,
-  signal, or page-layout branch; `.5b` owns product-evidence composition after the engine is committed.
+- [x] **GENERICITY (ADR 0006)** — controller code contains no `.4c` metric, document, vendor, protocol, signal,
+  or page-layout branch; `.5b` owns baseline-evidence composition after the engine is committed.
 - [x] **LOCKSTEP** — schema, engine, research status, task frontier, roadmap, public book, Knowledge Map, live
   docs, architecture record, and resume pointer agree on state/ranking semantics and review authority.
 
@@ -399,11 +430,13 @@ expressiveness as the bottleneck.
 - [x] **REPRODUCE / MEASURE** — authenticate the frozen `.4c` result and exact provider-free `.2` ledger, derive
   all nine dimensions without hand-maintained metric totals, persist byte-current input/report artifacts, and
   reproduce the report through a generic repository-relative runner.
-- [x] **ROOT CAUSE (WHY + WHERE)** — preserve `diverging` as a current hard-gate conclusion while independently
-  reporting `insufficient_history`; expose fabrication, provenance, first-boundary loss, residual debt, and
-  capability participation without a scalar score or downstream-language inference.
-- [x] **ADDRESSED (verified)** — publish every ranked gap and open its owner before evaluation; recommend `.6`
-  hard honesty/provenance ahead of `.7` source loss, `.8` residual actionability, and `.9` capability breadth.
+- [x] **ROOT CAUSE (WHY + WHERE)** — preserve the frozen baseline's hard failures while independently reporting
+  `insufficient_history`; expose fabrication, provenance, first-boundary loss, residual debt, and capability
+  participation without a scalar score or downstream-language inference. `.6a` later proved that `.5b` had not
+  established whole-population artifact currency and corrected the controller's currentness claim.
+- [x] **ADDRESSED (verified)** — publish every ranked gap and open its owner before evaluation; recommend the
+  `.6` honesty lane ahead of `.7` source loss, `.8` residual actionability, and `.9` capability breadth. `.6a`
+  later corrected the lane's first action from assumed repair to current-binary qualification.
 - [x] **NO REGRESSION** — live-ledger equality, authority/profile mutants, byte currentness, generic replay,
   formatting, warning-deny Clippy, mdBook, projections, doctrines, and full repository CI pass without changing
   the reviewed dataset, `.4c` result, extractor behavior, or canonical IR.
@@ -412,6 +445,28 @@ expressiveness as the bottleneck.
   category outcome, and page layout.
 - [x] **LOCKSTEP** — input/report, code, task ranking, roadmap, public book, live docs, research, architecture,
   Knowledge Map, and resume pointer publish the same exact state, denominators, history authority, and `.6` next.
+
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6a`
+
+- [x] **REPRODUCE / MEASURE** — copy the caller-authorized AIA PDF into repository-local SSD scratch, prove
+  827,669-byte / SHA-256 equality, run SourceIR → EvidenceIR → SemanticIR → IntentIR below a fresh
+  `.project-data/tmp` root, and record all four baseline/replay hashes plus exact table and promotion counts.
+- [x] **ROOT CAUSE (WHY + WHERE)** — the frozen SourceIR persisted reviewed TOC `table_0004` as
+  `timing_parameter`, producing 19 unprovenanced false timing records at every later stage. Current runtime
+  normalization applies pre-selection commit `46af2eca` and classifies the unchanged 20×2 TOC shape `unknown`;
+  `.4c` remained stale because its reclaimed normalized input had never been replayed.
+- [x] **ADDRESSED (verified)** — the isolated replay produces zero timing records at EvidenceIR, SemanticIR, and
+  IntentIR, with expected true positives holding 0→0. Controller v2 makes replay coverage a hard 1/12 metric and
+  11-document gate, treats 41/45/33 as retrospective baseline measures, and keeps `.6` as the owned next action.
+- [x] **NO REGRESSION** — canonical `generated/` artifacts and the frozen `.4c` result remain unchanged; strict
+  replay-path, evidence-shape, cleanup, currency, surviving-fabrication, and preservation mutants pass; the
+  source copy plus two exact replay roots were deleted after use and a residue census proved all three absent.
+- [x] **GENERICITY (ADR 0006)** — the replay tool accepts any repository-contained source, fresh project-local
+  output root, optional prior memory, and optional observed table id. The AIA document/table truth exists only
+  in tracked replay evidence and the composition adapter, never in production extraction behavior.
+- [x] **LOCKSTEP** — replay evidence, controller artifacts, task frontier, roadmap, book, research correction,
+  live ledgers, architecture analysis, Knowledge Map, and resume pointer distinguish historical baseline truth
+  from current product truth and retain repository-relative persisted paths.
 
 ## Commit Log
 
@@ -426,6 +481,7 @@ expressiveness as the bottleneck.
 | `SPEC-TO-INTENT-ALIGNMENT.4c` | `SPEC-TO-INTENT-ALIGNMENT.4c — publish the first reviewed result` | byte-pinned exact result; all six categories incomplete; first failures rank upstream fact formation and residualization |
 | `SPEC-TO-INTENT-ALIGNMENT.5a` | `SPEC-TO-INTENT-ALIGNMENT.5a — build the trajectory control engine` | strict nine-dimension state/ranking contract, five states, statistical refusal, hard-first task ownership, and report-only authority |
 | `SPEC-TO-INTENT-ALIGNMENT.5b` | `SPEC-TO-INTENT-ALIGNMENT.5b — publish the first trajectory snapshot` | live-equal `.4c`/`.2` composition, byte-current baseline, honest history refusal, and owned `.6` recommendation |
+| `SPEC-TO-INTENT-ALIGNMENT.6a` | `SPEC-TO-INTENT-ALIGNMENT.6a — separate replay truth from the frozen baseline` | isolated four-stage replay tool/evidence, dominant 19-record TOC defect retired by current code, 1/12 currentness gate, and residue-free SSD-local scratch lifecycle |
 
 ## Changelog
 
@@ -456,3 +512,6 @@ expressiveness as the bottleneck.
 - `2026-08-12`: Closed `.5b` and parent `.5` with byte-current input/report, a live-equal provider-free ledger,
   `diverging` hard gates plus honest `insufficient_history`, and owned `.6`/`.7`/`.8`/`.9` ranking. Full CI is
   green; after this slice commits cleanly, frontier advances to controller-selected `.6` honesty/provenance.
+- `2026-08-12`: Activated `.6a` after localizing 19/41 frozen false positives to AIA table-of-contents timing
+  records. The pinned stage hashes match the unreplayed generated artifacts, but current generic timing authority
+  predates `.4c` selection and rejects that shape; an isolated replay must establish current truth before repair.

@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what are APB's remaining completeness candidate misses
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > what are NON_ACTOR_LEADING_FUNCTION_WORDS and NON_ACTOR_LEADING_VERBS for
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > what are examples of false prose relations in Introducing CoreSight
+- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
+  > what are scripts/pdf_text.py and scripts/decrypt_pdf.py
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what are the 3 gaps G1 G2 G3 in specforge transaction capture
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > what are the 6 chip-spec document intent categories / purpose taxonomy
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
@@ -81,6 +91,8 @@
   > what did KG-ISF-TRANSACTIONS.2l measure / decide
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > what did KG-ISF-TRANSACTIONS.2n measure / decide
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > what did SPEC-TO-INTENT-ALIGNMENT.6a prove
 - [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
   > what did refresh 50 change in the OpenCAPI data link chain
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
@@ -285,15 +297,3 @@
   > what is ADR 0025
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
   > what is ADR 0026
-- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
-  > what is ADR 0027
-- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
-  > what is ADR 0029
-- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
-  > what is ADR 0030
-- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
-  > what is ADR 0031
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > what is ADR 0032
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > what is AppError::IngestAbortedForDisk

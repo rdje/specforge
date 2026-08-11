@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
+  > is SWD at 100% and on what metric
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > is SpecForge converging diverging stalled mixed or unmeasurable
+- [spec-mining-framing](../knowledge/spec-mining-framing.md)
+  > is SpecForge specification mining
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > is SpecForge still allowed to read chipdoc from the boot volume
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
   > is SpecForge's constraint extraction over-generating
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
@@ -153,6 +161,8 @@
   > is the eval-extraction temporal precision 0.6 a real defect
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > is the extraction audit chip-spec-PDF agnostic (yes)
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > is the frozen source to intent result current binary output
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > is the generic-TABLE enum conflation fixed / what did KG-ISF-COMPLETENESS.5.i do (LANDED 2026-06-24: derive_encoding_enum_name fallback keeps the candidate only when independently evidenced — a declared signal OR a column-header reference token of the table — else None; emitter isf_ir.rs gates the (types) block by emitted_enums() so a member-dropped enum leaves no orphan
   > (type ...). Corpus generic enums 82->8 / total enum records 422->105 across 33 rebuildable docs; real signal-match enums byte-identical; WIRE-BASED-100 1.000 before==after; fsmgen --strict 0 diagnostics)
@@ -288,13 +298,3 @@
   > what architecture contains the active CORPUS-COVERAGE task tree
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > what are AGENT_CLASS_NOUNS / the parenthetical-strip / sentence-boundary / no-preposition guards
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what are APB's remaining completeness candidate misses
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > what are NON_ACTOR_LEADING_FUNCTION_WORDS and NON_ACTOR_LEADING_VERBS for
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > what are examples of false prose relations in Introducing CoreSight
-- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
-  > what are scripts/pdf_text.py and scripts/decrypt_pdf.py
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what are the 3 gaps G1 G2 G3 in specforge transaction capture

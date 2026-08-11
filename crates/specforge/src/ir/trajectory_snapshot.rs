@@ -11,6 +11,7 @@ use std::path::Path;
 
 use serde::{Deserialize, Serialize};
 
+use super::source::TableKind;
 use super::source_to_intent_eval::{CategoryStatus, QueryScore, VerticalEvalReport};
 use super::trajectory::{
     CausalConfidence, ControllerAuthority, ControllerMode, DimensionObservation, EvidenceRef,
@@ -29,6 +30,8 @@ pub const CURRENT_CONTROLLER_INPUT_PATH: &str =
     "crates/specforge/test_data/trajectory/controller_input.json";
 pub const CURRENT_TRAJECTORY_REPORT_PATH: &str =
     "crates/specforge/test_data/trajectory/trajectory_report.json";
+pub const CURRENT_REPLAY_EVIDENCE_PATH: &str =
+    "crates/specforge/test_data/trajectory/replays/aia_toc_current_binary_replay.json";
 pub const OBJECTIVE_CONTRACT_PATH: &str = "doctrine/spec_to_intent_category_contract.json";
 pub const TASK_TREE_PATH: &str = "docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md";
 
@@ -39,7 +42,12 @@ const OBJECTIVE_CONTRACT_SHA256: &str =
 // Updated only when the `.2` ledger-currentness test accepts a reviewed observation change.
 const CAPABILITY_OBSERVATION_SHA256: &str =
     "b37f13d28b90a6e6b0fb4c554d0e9fc861ff5e993d3276743b15d0ad1736994e";
+const REPLAY_EVIDENCE_SHA256: &str =
+    "15e6a021a6e78cd23e9a31702f3a5b34bf45e43b3660fb8c38c2435d069fdd7a";
 const REVIEWED_REVISION: &str = "03e89b66cf87fcc1ec0bf342f47a147261a8d739";
+const AIA_DOCUMENT_KEY: &str = "1_0_2025_03_12_risc_v_advanced_interrupt_architecture";
+const AIA_SOURCE_SHA256: &str = "2d359579dcb84c6d00a1b284db3a7f8ec8c87764d96406a45cbaa9052f04c7c8";
+const TIMING_AUTHORITY_REVISION: &str = "46af2eca7a4c59e25a014e532716c92be371e29b";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -85,6 +93,104 @@ pub struct CapabilityObservation {
     pub observation_id: String,
     pub profile: CapabilityProfile,
     pub production_capabilities: Vec<CapabilityObservationRecord>,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ReplaySourceIdentity {
+    portable_id: String,
+    sha256: String,
+    byte_count: u64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ReplayStageIdentities {
+    source_ir_sha256: String,
+    evidence_ir_sha256: String,
+    semantic_ir_sha256: String,
+    intent_ir_sha256: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ReplayTableObservation {
+    table_id: String,
+    table_kind: TableKind,
+    row_count: usize,
+    column_count: usize,
+    expected_canonical_facts: usize,
+    evidence_timing_constraints: usize,
+    semantic_timing_constraints: usize,
+    intent_timing_constraints: usize,
+    intent_true_positives: usize,
+    intent_false_positives: usize,
+    intent_unprovenanced_records: usize,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ReplayBaseline {
+    reviewed_revision: String,
+    result_path: String,
+    result_sha256: String,
+    document_key: String,
+    source: ReplaySourceIdentity,
+    stages: ReplayStageIdentities,
+    observed_table: ReplayTableObservation,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ReplaySourceCopy {
+    repository_relative_path: String,
+    sha256: String,
+    byte_count: u64,
+    verified_equal_to_authority: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct CurrentReplay {
+    production_revision: String,
+    timing_authority_revision: String,
+    source_copy: ReplaySourceCopy,
+    command: String,
+    scratch_output_root: String,
+    stages: ReplayStageIdentities,
+    observed_table: ReplayTableObservation,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ReplayComparison {
+    current_binary_replayed_documents: usize,
+    reviewed_documents: usize,
+    intent_false_positive_delta: i64,
+    intent_unprovenanced_delta: i64,
+    expected_true_positives_before: usize,
+    expected_true_positives_after: usize,
+    interpretation: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ReplayCleanup {
+    source_copy: String,
+    scratch_roots: Vec<String>,
+    status: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct CurrentReplayEvidence {
+    schema_version: u32,
+    replay_id: String,
+    owner: String,
+    baseline: ReplayBaseline,
+    current_replay: CurrentReplay,
+    comparison: ReplayComparison,
+    cleanup: ReplayCleanup,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -180,7 +286,170 @@ pub fn validate_capability_observation(
     }
 }
 
-/// Derive the current controller input from the frozen `.4c` and `.2` authorities.
+fn load_current_replay_evidence(path: &Path) -> Result<CurrentReplayEvidence> {
+    let bytes = read_repository_relative(path, "current-binary replay evidence")?;
+    let replay: CurrentReplayEvidence = serde_json::from_slice(&bytes)?;
+    validate_current_replay_evidence(&replay).map_err(|problems| {
+        AppError::InvalidStageArtifact(format!(
+            "invalid current-binary replay evidence: {}",
+            problems.join("; ")
+        ))
+    })?;
+    Ok(replay)
+}
+
+fn validate_current_replay_evidence(
+    replay: &CurrentReplayEvidence,
+) -> std::result::Result<(), Vec<String>> {
+    let mut problems = Vec::new();
+    if replay.schema_version != 1 {
+        problems.push("schema_version must be 1".to_string());
+    }
+    if replay.owner != "SPEC-TO-INTENT-ALIGNMENT.6a" || replay.replay_id.trim().is_empty() {
+        problems.push("replay identity must name owning leaf .6a".to_string());
+    }
+    if replay.baseline.reviewed_revision != REVIEWED_REVISION
+        || replay.baseline.result_path != CURRENT_VERTICAL_RESULT_PATH
+        || replay.baseline.result_sha256 != VERTICAL_RESULT_SHA256
+        || replay.baseline.document_key != AIA_DOCUMENT_KEY
+    {
+        problems.push("baseline identity must match the frozen .4c AIA authority".to_string());
+    }
+    if replay.baseline.source.sha256 != AIA_SOURCE_SHA256
+        || replay.current_replay.source_copy.sha256 != AIA_SOURCE_SHA256
+        || replay.baseline.source.byte_count != replay.current_replay.source_copy.byte_count
+        || !replay
+            .current_replay
+            .source_copy
+            .verified_equal_to_authority
+    {
+        problems
+            .push("replay source copy must be byte-identical to reviewed authority".to_string());
+    }
+    if replay.current_replay.timing_authority_revision != TIMING_AUTHORITY_REVISION
+        || !is_git_revision(&replay.current_replay.production_revision)
+    {
+        problems.push("replay must name the production and timing-authority revisions".to_string());
+    }
+    validate_stage_hashes(&replay.baseline.stages, "baseline", &mut problems);
+    validate_stage_hashes(
+        &replay.current_replay.stages,
+        "current replay",
+        &mut problems,
+    );
+    let baseline = &replay.baseline.observed_table;
+    if baseline.table_id != "table_0004"
+        || baseline.table_kind != TableKind::TimingParameter
+        || baseline.row_count != 20
+        || baseline.column_count != 2
+        || baseline.expected_canonical_facts != 0
+        || baseline.evidence_timing_constraints != 19
+        || baseline.semantic_timing_constraints != 19
+        || baseline.intent_timing_constraints != 19
+        || baseline.intent_true_positives != 0
+        || baseline.intent_false_positives != 19
+        || baseline.intent_unprovenanced_records != 19
+    {
+        problems.push("baseline must retain the exact reviewed 19-record TOC defect".to_string());
+    }
+    let current = &replay.current_replay.observed_table;
+    if current.table_id != "table_0004"
+        || current.table_kind != TableKind::Unknown
+        || current.row_count != 20
+        || current.column_count != 2
+        || current.expected_canonical_facts != 0
+        || current.evidence_timing_constraints != 0
+        || current.semantic_timing_constraints != 0
+        || current.intent_timing_constraints != 0
+        || current.intent_true_positives != 0
+        || current.intent_false_positives != 0
+        || current.intent_unprovenanced_records != 0
+    {
+        problems.push(
+            "current replay must retain the TOC shape while promoting zero timing facts"
+                .to_string(),
+        );
+    }
+    if replay.comparison.current_binary_replayed_documents != 1
+        || replay.comparison.reviewed_documents != 12
+        || replay.comparison.intent_false_positive_delta != -19
+        || replay.comparison.intent_unprovenanced_delta != -19
+        || replay.comparison.expected_true_positives_before != 0
+        || replay.comparison.expected_true_positives_after != 0
+        || replay.comparison.interpretation.trim().is_empty()
+    {
+        problems.push("comparison must state the exact 1/12, 19-to-zero result".to_string());
+    }
+    for path in [
+        replay
+            .current_replay
+            .source_copy
+            .repository_relative_path
+            .as_str(),
+        replay.current_replay.scratch_output_root.as_str(),
+        replay.cleanup.source_copy.as_str(),
+    ]
+    .into_iter()
+    .chain(replay.cleanup.scratch_roots.iter().map(String::as_str))
+    {
+        if !is_safe_relative_path(path) || !path.starts_with(".project-data/tmp/") {
+            problems.push(format!(
+                "replay scratch path is not repository-local: {path}"
+            ));
+        }
+    }
+    if replay.cleanup.status != "removed_and_residue_absent"
+        || replay.cleanup.scratch_roots.len() != 2
+    {
+        problems.push("replay scratch cleanup must be complete and residue-free".to_string());
+    }
+    if replay.current_replay.command.trim().is_empty() {
+        problems.push("replay reproduction command must not be empty".to_string());
+    }
+    if problems.is_empty() {
+        Ok(())
+    } else {
+        Err(problems)
+    }
+}
+
+fn validate_stage_hashes(stages: &ReplayStageIdentities, label: &str, problems: &mut Vec<String>) {
+    for (stage, digest) in [
+        ("SourceIR", stages.source_ir_sha256.as_str()),
+        ("EvidenceIR", stages.evidence_ir_sha256.as_str()),
+        ("SemanticIR", stages.semantic_ir_sha256.as_str()),
+        ("IntentIR", stages.intent_ir_sha256.as_str()),
+    ] {
+        if !is_sha256_digest(digest) {
+            problems.push(format!("{label} {stage} hash must be lowercase SHA-256"));
+        }
+    }
+}
+
+fn is_sha256_digest(value: &str) -> bool {
+    value.len() == 64
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_hexdigit() && !byte.is_ascii_uppercase())
+}
+
+fn is_git_revision(value: &str) -> bool {
+    value.len() == 40
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_hexdigit() && !byte.is_ascii_uppercase())
+}
+
+fn is_safe_relative_path(value: &str) -> bool {
+    let path = Path::new(value);
+    !value.is_empty()
+        && !path.is_absolute()
+        && !path
+            .components()
+            .any(|component| matches!(component, std::path::Component::ParentDir))
+}
+
+/// Derive the current controller input from the frozen `.4c`, `.2`, and `.6a` authorities.
 pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
     let result_bytes = read_repository_relative(
         Path::new(CURRENT_VERTICAL_RESULT_PATH),
@@ -188,6 +457,7 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
     )?;
     let result: VerticalEvalReport = serde_json::from_slice(&result_bytes)?;
     let capability = load_capability_observation(Path::new(CURRENT_CAPABILITY_OBSERVATION_PATH))?;
+    let replay = load_current_replay_evidence(Path::new(CURRENT_REPLAY_EVIDENCE_PATH))?;
     let counts = derive_counts(&result, &capability)?;
 
     let result_evidence = evidence(
@@ -204,6 +474,11 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
         OBJECTIVE_CONTRACT_PATH,
         OBJECTIVE_CONTRACT_SHA256,
         "category-aware source-to-IntentIR objective contract",
+    );
+    let replay_evidence = evidence(
+        CURRENT_REPLAY_EVIDENCE_PATH,
+        REPLAY_EVIDENCE_SHA256,
+        "isolated .6a current-binary replay of the dominant frozen defect",
     );
 
     let intent_actual = counts.intent_true_positives + counts.intent_false_positives;
@@ -307,7 +582,7 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
                 1,
                 1,
                 ImprovementDirection::HigherIsBetter,
-                true,
+                false,
                 "exact three-boundary vertical conservation accounting",
                 "54 required stage-boundary crossings",
                 &result_evidence,
@@ -326,7 +601,7 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
                     1,
                     1,
                     ImprovementDirection::HigherIsBetter,
-                    true,
+                    false,
                     "complete bounded provenance requirements",
                     "all emitted canonical records in 14 reviewed cells",
                     &result_evidence,
@@ -340,7 +615,7 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
                     0,
                     1,
                     ImprovementDirection::LowerIsBetter,
-                    true,
+                    false,
                     "complete bounded canonical IntentIR answer keys",
                     "all emitted canonical facts in 14 reviewed cells",
                     &result_evidence,
@@ -401,7 +676,7 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
         ),
         dimension(
             TrajectoryDimension::OperationalConfidence,
-            "separate complete reviewed oracles from context-dependent provider-free execution availability",
+            "separate complete reviewed oracles, artifact currency, and context-dependent execution availability",
             vec![
                 metric(
                     "complete_review_scope_documents",
@@ -416,6 +691,20 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
                     "review-lock declarations in the frozen result",
                     "12 reviewed documents",
                     &result_evidence,
+                ),
+                metric(
+                    "current_binary_replay_coverage",
+                    "what fraction of the reviewed population has been replayed with the current binary",
+                    replay.comparison.current_binary_replayed_documents,
+                    replay.comparison.reviewed_documents,
+                    TargetOperator::Equal,
+                    1,
+                    1,
+                    ImprovementDirection::HigherIsBetter,
+                    true,
+                    "hash-pinned isolated four-stage current-binary replay",
+                    "12 documents in the frozen reviewed population",
+                    &replay_evidence,
                 ),
                 metric(
                     "provider_free_integrated_execution",
@@ -455,26 +744,28 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
 
     let gaps = vec![
         gap(
-            "canonical-fabrication-and-provenance",
-            "provenance_honesty",
+            "current-binary-honesty-qualification",
+            "operational_confidence",
             GapPriorityTier::HardInvariant,
             format!(
-                "{} fabricated facts and {} of {} emitted records lack required provenance closure",
+                "the frozen baseline has {} fabricated facts and {} provenance failures, but only {} of {} reviewed documents has current-binary replay evidence; that replay removes the largest 19-record family",
                 result.global.fabricated_canonical_facts,
                 result.global.canonical_provenance_closure.total
                     - result.global.canonical_provenance_closure.met,
-                result.global.canonical_provenance_closure.total
+                replay.comparison.current_binary_replayed_documents,
+                replay.comparison.reviewed_documents,
             ),
-            "zero fabricated facts and full canonical provenance closure",
-            "source_to_evidence_ir",
-            intent_actual,
+            "current-binary replay covers all 12 reviewed documents before remaining fabrication or provenance repairs are ranked",
+            "artifact_currency_before_semantic_diagnosis",
+            replay.comparison.reviewed_documents
+                - replay.comparison.current_binary_replayed_documents,
             CausalConfidence::High,
-            ReversibleSliceSize::Small,
+            ReversibleSliceSize::Medium,
             GapUncertainty::Exact,
-            "restore the non-tradeable honesty floor before optimizing recall or breadth",
-            "cargo run --quiet -p specforge --example source_to_intent_eval -- crates/specforge/test_data/source_to_intent_vertical/reviewed_dataset.json",
+            "establish current product truth, then repair only defects the current binary still reproduces",
+            "cargo run --quiet -p specforge --example source_to_intent_replay -- <repository-relative-source> <.project-data/tmp/output-root> generated/prior_memory/corpus_memory.json <observed-table-id-or->",
             "SPEC-TO-INTENT-ALIGNMENT.6",
-            &result_evidence,
+            &[result_evidence.clone(), replay_evidence.clone()],
         ),
         gap(
             "source-to-evidence-canonical-loss",
@@ -493,7 +784,7 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
             "recover the dominant measured loss boundary after the honesty invariant",
             "cargo test -p specforge --lib ir::source_to_intent_eval::tests::reviewed_result_snapshot_is_current_and_names_the_upstream_loss_boundary",
             "SPEC-TO-INTENT-ALIGNMENT.7",
-            &result_evidence,
+            std::slice::from_ref(&result_evidence),
         ),
         gap(
             "non-actionable-required-residuals",
@@ -513,7 +804,7 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
             "make promotion losses operable without disguising missing canonical facts",
             "cargo test -p specforge --lib ir::source_to_intent_eval",
             "SPEC-TO-INTENT-ALIGNMENT.8",
-            &result_evidence,
+            std::slice::from_ref(&result_evidence),
         ),
         gap(
             "omitted-production-capability-islands",
@@ -532,39 +823,25 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
             "measure and compose capability breadth only after semantic honesty and conservation",
             "cargo test -p specforge --lib commands::converge::tests::provider_free_capability_report_names_every_current_capability_island",
             "SPEC-TO-INTENT-ALIGNMENT.9",
-            &capability_evidence,
+            std::slice::from_ref(&capability_evidence),
         ),
     ];
 
     Ok(TrajectoryControllerInput {
         schema_version: 1,
-        snapshot_id: "specforge-source-to-intent-reviewed-v1".to_string(),
-        owner: "SPEC-TO-INTENT-ALIGNMENT.5b".to_string(),
+        snapshot_id: "specforge-source-to-intent-reviewed-v2".to_string(),
+        owner: "SPEC-TO-INTENT-ALIGNMENT.6a".to_string(),
         reviewed_revision: REVIEWED_REVISION.to_string(),
         objective_contract,
         stall_window: 3,
         dimensions,
-        hard_gates: vec![
-            hard_gate(
-                "no_fabricated_canonical_facts",
-                "are fabricated canonical facts absent",
-                result.global.fabricated_canonical_facts,
-                &result_evidence,
-            ),
-            hard_gate(
-                "full_canonical_provenance",
-                "does every emitted canonical fact close required provenance",
-                result.global.canonical_provenance_closure.total
-                    - result.global.canonical_provenance_closure.met,
-                &result_evidence,
-            ),
-            hard_gate(
-                "no_unexplained_stage_drops",
-                "does every required stage crossing conserve or residualize the fact",
-                result.global.unexplained_stage_drops,
-                &result_evidence,
-            ),
-        ],
+        hard_gates: vec![hard_gate(
+            "complete_current_binary_replay",
+            "does every reviewed document have a hash-pinned current-binary replay",
+            replay.comparison.reviewed_documents
+                - replay.comparison.current_binary_replayed_documents,
+            &replay_evidence,
+        )],
         history: Vec::new(),
         gaps,
         authority: ControllerAuthority {
@@ -794,7 +1071,7 @@ fn gap(
     estimated_impact: &str,
     reproduction: &str,
     task_id: &str,
-    evidence: &EvidenceRef,
+    evidence: &[EvidenceRef],
 ) -> TrajectoryGap {
     TrajectoryGap {
         gap_id: gap_id.to_string(),
@@ -813,7 +1090,7 @@ fn gap(
             task_id: task_id.to_string(),
             task_tree_path: TASK_TREE_PATH.to_string(),
         },
-        evidence: vec![evidence.clone()],
+        evidence: evidence.to_vec(),
     }
 }
 
@@ -882,7 +1159,7 @@ mod tests {
         assert!(
             report
                 .state_reasons
-                .contains(&"hard_gate_failed:no_fabricated_canonical_facts:41>0".to_string())
+                .contains(&"hard_gate_failed:complete_current_binary_replay:11>0".to_string())
         );
         assert_eq!(
             report
@@ -942,6 +1219,7 @@ mod tests {
                 "required_modality_document_accounting",
                 Fraction::new(0, 12),
             ),
+            ("current_binary_replay_coverage", Fraction::new(1, 12)),
         ] {
             assert_eq!(measure(metric_id), expected, "metric {metric_id}");
         }
@@ -984,6 +1262,42 @@ mod tests {
                 .expect_err("missing row mutant must fail")
                 .iter()
                 .any(|problem| problem.contains("17 rows"))
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn current_replay_evidence_rejects_currency_and_preservation_mutants() -> Result<()> {
+        let replay = load_current_replay_evidence(Path::new(CURRENT_REPLAY_EVIDENCE_PATH))?;
+
+        let mut incomplete = replay.clone();
+        incomplete.cleanup.status = "pending".to_string();
+        assert!(
+            validate_current_replay_evidence(&incomplete)
+                .expect_err("unclean replay evidence must fail")
+                .iter()
+                .any(|problem| problem.contains("cleanup"))
+        );
+
+        let mut fabricated = replay.clone();
+        fabricated
+            .current_replay
+            .observed_table
+            .intent_false_positives = 1;
+        assert!(
+            validate_current_replay_evidence(&fabricated)
+                .expect_err("a surviving TOC fabrication must fail")
+                .iter()
+                .any(|problem| problem.contains("promoting zero"))
+        );
+
+        let mut lost = replay;
+        lost.comparison.expected_true_positives_after = 1;
+        assert!(
+            validate_current_replay_evidence(&lost)
+                .expect_err("a changed reviewed true-positive population must fail")
+                .iter()
+                .any(|problem| problem.contains("19-to-zero"))
         );
         Ok(())
     }

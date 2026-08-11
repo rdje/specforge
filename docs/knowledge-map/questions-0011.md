@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > why does the Introducing CoreSight guide emit no ISF
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > why does the MPAM 'must be included' sentence extract nothing
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > why does the OpenCAPI AFU Address Space Usage note emit no ISF
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > why does the OpenCAPI Certified Definition emit no ISF
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > why does the OpenCAPI Certified engineering note emit no ISF
+- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
+  > why does the OpenCAPI Data Link Layer specification emit no isf target
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > why does the OpenCAPI Ready Definition emit no ISF
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > why does the OpenCAPI Ready engineering note emit no ISF
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
   > why does the USB4 Connection Manager Guide emit no ISF
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
@@ -150,6 +166,8 @@
   > why is consequent_signal NOTICE or PDF or IMPLEMENTATION or MUST in SemanticIR
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
   > why is corpus coverage refresh 34 blocked before ingest
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > why is current binary replay coverage 1 of 12
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
   > why is descriptor apposition (signal NAME / NAME signal) NOT used to capture signal names
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
@@ -280,21 +298,3 @@
   > why was the spike's 'manager Reads ARID' direction error not in production
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > why were ACK / NACK / DDC / SDR extracted as I2C signals (and how was it fixed)
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > why were BDF DL and VPD removed from OpenCAPI Discovery
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > why were CHI fields mis-typed as signals (the .gauge spurious-subject class)
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > why were PWR and OPEN promoted as conditional-rule consequent signals
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > why were RISC-V/TRM register tables unextracted (unknown table_kind)
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > why were register names synthetic register_table_NNNN and how is the heading association done
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > will a new standalone extraction command fail if converge does not account for it
-- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
-  > will generated stage artifacts survive moving the repository
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > would a table-column phase cue move AXI/SWD off empty per-phase grouping (no — .2j NO-GO; the cue is already captured where present and genuinely absent on AXI/SWD)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > would header-sourced naming have recovered the Arm SMMU guide's SEC_SID enum (NO — honest correction recorded at .5.iv: that table's members are whole description sentences, so the .5.ii spine gate drops them all and the enum empties however it is named. The lever is real but does not help the document that surfaced it)

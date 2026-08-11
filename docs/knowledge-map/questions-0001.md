@@ -52,6 +52,8 @@
   > are temporal_invariants / conditional_rules / signal_constraints silently dropped at ISF lowering
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
   > are the 'unknown diagram_kind' visual assets a capture gap
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > are the .4c fabrication counts current product truth
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > are the 33 empty signal catalogs a capture miss or honest absence
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
@@ -295,5 +297,3 @@
   > does Wishbone declare its signals in a table
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > does a PathBuf need portability handling before it has a producer
-- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
-  > does a blocked adapter remove a previously emitted isf

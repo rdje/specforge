@@ -5,8 +5,9 @@ or a strict-valid `.isf` file does not by itself prove movement toward that obje
 while important source intent was never captured.
 
 The project therefore treats trajectory as a source-understanding control problem. The accepted design is
-tracked by `SPEC-TO-INTENT-ALIGNMENT`. The generic state/ranking engine and first evidence-composed product
-snapshot now ship; the controller has selected the next owned repair without changing canonical semantics.
+tracked by `SPEC-TO-INTENT-ALIGNMENT`. The generic state/ranking engine, retrospective evidence baseline, and
+first current-binary replay now ship; the controller has selected the next owned slice without changing
+canonical semantics.
 
 The controller's reviewed input boundary is the
 [Source-to-Intent Completeness Contract](../source-to-intent-contract.md). It fixes category-specific modalities,
@@ -83,8 +84,8 @@ emits deterministic per-cell, per-document, per-category, and global stage-loss 
 reject omission, fabrication, provenance loss, silent stage drops, missing modalities, and inactionable
 residuals. The first 12-document reviewed population is locked without extractor tuning and its exact outcome
 is now published. All six categories are `incomplete`; 10/14 cells first fail at SourceIR → EvidenceIR and four
-at EvidenceIR → SemanticIR, while no cell first fails at SemanticIR → IntentIR. Those exact outcomes now feed
-the first automatic product-evidence report.
+at EvidenceIR → SemanticIR, while no cell first fails at SemanticIR → IntentIR. Those exact outcomes feed the
+first automatic retrospective-baseline report; current-product claims require a later hash-pinned replay.
 
 ## The controller engine
 
@@ -129,15 +130,18 @@ For example, the authority and one metric have this shape:
 }
 ```
 
-The example is illustrative; `.5a` contains no current product values. `.5b` attaches the frozen `.4c` report
-and `.2` capability evidence in a separate composition module, so controller policy remains untuned. The
-controller can report and propose; it cannot edit canonical IR.
+The example is illustrative; `.5a` contains no product values. `.5b` attaches the frozen `.4c` report and `.2`
+capability evidence in a separate composition module, so controller policy remains untuned. `.6a` adds an
+independent current-binary replay authority without changing the generic engine. The controller can report and
+propose; it cannot edit canonical IR.
 
-## First evidence-composed snapshot
+## Evidence-composed baseline and currentness boundary
 
 The tracked input and report live under `crates/specforge/test_data/trajectory/`. The composition tool derives
-them from the byte-pinned `.4c` result and a provider-free `.2` capability observation. A `converge` test compares
-all 17 observation rows with the live registry, and the generic runner reproduces the report byte for byte:
+them from the byte-pinned `.4c` result, a provider-free `.2` capability observation, and tracked current-binary
+replay evidence. A `converge` test compares all 17 observation rows with the live registry, strict replay
+validation rejects identity/currency/preservation mutants, and the generic runner reproduces the report byte
+for byte:
 
 ```console
 cargo run --quiet -p specforge --example trajectory_snapshot -- --check
@@ -146,33 +150,54 @@ cargo run --quiet -p specforge --example trajectory_controller -- \
   | cmp - crates/specforge/test_data/trajectory/trajectory_report.json
 ```
 
-The baseline state is `diverging`, while `history_status` is `insufficient_history`. These fields answer
-different questions. Current exact hard failures are enough to establish that the state violates the contract;
-missing history prevents the controller from claiming that the state is improving, worsening over time, or
-stalled.
+The state is `diverging`, while `history_status` is `insufficient_history`. These fields answer different
+questions. Divergence now comes from an exact currentness failure: only 1/12 reviewed documents has a
+current-binary replay, leaving 11 unqualified. Missing history independently prevents the controller from
+claiming that the state is improving, worsening over time, or stalled. The `.4c` quality counts remain useful
+retrospective baseline measures, but they are not presented as whole-population current-product facts.
 
 | Dimension | First exact observation | Status |
 | --- | --- | --- |
 | Source capture | source regions 14/14; required-modality captures 14/14 | meets target |
 | Semantic correctness | canonical IntentIR precision 7/48 | deficit |
 | Semantic completeness | recall 7/40; supported categories 0/6 | deficit |
-| Stage conservation | conserved or residualized crossings 21/54 | hard deficit |
-| Provenance/honesty | closure 3/48; fabricated-fact rate 41/48 | hard deficit |
+| Stage conservation | frozen conserved or residualized crossings 21/54 | retrospective deficit |
+| Provenance/honesty | frozen closure 3/48; fabricated-fact rate 41/48 | retrospective deficit |
 | Production participation | accounted 17/17; integrated or scheduled 12/17 | deficit, fully reported |
 | Generalization/robustness | reviewed category-oracle coverage 6/6 | meets target |
-| Operational confidence | complete review 12/12; provider-free integrated execution 5/10 | deficit |
+| Operational confidence | complete review 12/12; current replay 1/12; provider-free execution 5/10 | hard deficit |
 | Executable readiness | required-modality document accounting 0/12 | deficit |
 
-Three current hard gates record 41 fabricated canonical facts, 45 provenance-closure violations, and 33
-unexplained stage drops. The controller therefore ranks the existing repair leaves as follows:
+The current hard gate records 11 documents without current-binary replay. The frozen baseline still records 41
+fabricated canonical facts, 45 provenance-closure violations, and 33 unexplained stage drops, but the controller
+does not assume they all survive. It ranks the existing leaves as follows:
 
-1. `.6` — remove fabrication and close canonical provenance (`hard_invariant`, 48 affected emitted records);
+1. `.6` — complete current-binary honesty qualification, then repair defects that reproduce (`hard_invariant`,
+   11 unreplayed documents);
 2. `.7` — recover 33 source-to-evidence canonical losses (`source_evidence_loss`);
 3. `.8` — make 0/24 required residual observations actionable (`persistent_residual`); and
 4. `.9` — measure and resolve five omitted capability islands (`breadth_efficiency`).
 
 The recommendation is `.6`. All four task IDs existed before evaluation, the complete ordering remains in the
 report, and review is still required before implementation.
+
+### What the first current replay proved
+
+`.6a` isolates all four deterministic stages below a fresh `.project-data/tmp` root; it refuses absolute paths,
+parent traversal, symlink escapes, existing outputs, and off-repository source authority. The source must first
+be copied onto the repository volume and byte-verified. Canonical `generated/` artifacts and the frozen `.4c`
+result are never overwritten.
+
+The first replay uses the hash-equal 827,669-byte RISC-V AIA source. The reviewed `table_0004` remains the same
+20-row × two-column table of contents, and its expected canonical fact population remains empty. The frozen
+artifact labeled it `timing_parameter` and promoted 19 timing records through all three later stages. Current
+runtime normalization labels it `unknown`; EvidenceIR, SemanticIR, and IntentIR each promote zero timing
+records. Thus false positives and unprovenanced records both move 19→0 without losing a true positive (0→0).
+
+The evidence report retains the source, baseline, and replay hashes plus the reproduction command and exact
+cleanup census. The 132 MB replay output, failed empty first root, and copied source were removed after their
+facts were captured. This proves one current repair already exists; it does not extrapolate that result to the
+remaining 11 documents.
 
 ## Current production-path caveat
 
@@ -208,7 +233,8 @@ are the documentation slice `SPEC-TO-INTENT-ALIGNMENT.0`. The per-category sourc
 is `.1`; the guarded canonical-path capability ledger is `.2`; typed visual activation is `.3`; the vertical
 evaluator foundation is `.4a`; `.4b` locks the balanced reviewed population; `.4c` publishes the exact
 incomplete result and upstream blocker diagnosis; `.5a` supplies the generic controller; and `.5b` composes the
-first product-evidence snapshot. Automatic steering now recommends `.6`, but remains report-only and reviewable.
+first retrospective-baseline snapshot; `.6a` supplies the first current-binary replay and hard artifact-currency
+gate. Automatic steering still recommends `.6`, but remains report-only and reviewable.
 
 The detailed design and literature mapping live in
 [`docs/research/specforge-trajectory-control.md`](../../../research/specforge-trajectory-control.md).
