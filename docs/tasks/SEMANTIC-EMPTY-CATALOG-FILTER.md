@@ -107,7 +107,10 @@ document promotes everything.
 1. The empty-declared-set branch applies a grounding rule at least as strict as the populated branch.
 2. The census above re-runs with a materially smaller unfiltered population, and every surviving record is
    explained (a real system-level rule with no consequent signal, or a genuinely grounded subject).
-3. No document with a populated catalog changes at all — proved byte-identical by `--dry-run` old-versus-new.
+3. No populated-catalog document **loses a promoted record**, proved by `--dry-run` old-versus-new. Whether the
+   bar is full byte-identity or "added residuals only" depends on the demotion scope chosen in Current Frontier;
+   the `2026-08-11` measurement shows byte-identity is unreachable under uniform demotion, because 41 of the 45
+   populated documents already drop records that (c) would now surface.
 4. `kg-bench` 156/156; WIRE-BASED-100 constraint+temporal/relation golds hold at 1.000; all emitted `.isf` pass
    FSMGen `--strict --check` with zero new diagnostics; `scripts/run_ci.sh` green.
 5. The rule is structural grammar with no chip/vendor/protocol-name list (ADR 0006).
@@ -122,22 +125,76 @@ document promotes everything.
 
 ## Current Frontier
 
-`SEMANTIC-EMPTY-CATALOG-FILTER.1` — choose the rule. The candidates, in the order they should be measured:
+`SEMANTIC-EMPTY-CATALOG-FILTER.1` — **the rule is chosen. The director authorised (c) composed with (a) on
+`2026-08-11`.** Implement it; do not re-open the choice.
 
-- **(a) Symmetric filter.** Drop the special case: an empty catalog filters everything with a
-  `consequent_signal`/`subject_signal` and keeps only the no-consequent system-level rules. Simplest and most
-  honest; measure how much genuine content it costs on the 29 documents.
-- **(b) Grounded-token test.** Keep a record whose subject appears in the document as an identifier-shaped token
-  with independent evidence (a table cell, a declaration, an alias-map entry) rather than as a prose prefix. More
-  recall, more machinery.
-- **(c) Demote, don't drop.** Route unfiltered records to `residual_decisions` so the evidence survives visibly
-  without claiming canonical authority — consistent with the project's residual-over-fabrication doctrine.
+- **(a) Symmetric filter.** Delete the `declared_signal_names.is_empty()` special case at `semantic.rs:283`
+  and `:293`. One predicate governs both branches: keep a record when its `consequent_signal`/`subject_signal`
+  is a declared signal, or when it has none (a genuine system-level rule). With an empty catalog the predicate
+  is simply never satisfied by a named subject, which is the intended outcome rather than a special case.
+- **(c) Demote, don't drop.** A record the predicate rejects becomes a `residual_decision` rather than
+  vanishing, so the evidence stays visible without claiming canonical authority — the project's
+  residual-over-fabrication doctrine.
 
-(c) composes with either (a) or (b) and is likely the honest default; (a) is the measurement baseline that says
-what (b) would have to buy.
+**A measurement taken `2026-08-11`, after the rule was chosen, constrains how (c) is applied — read this before
+writing code.** The populated branch is *not* a no-op today: of the 45 populated-catalog documents, **41 already
+drop records silently**, totalling **1,230 conditional rules and 47 signal constraints** (AMD IOMMU 154 → 29,
+AXI `ihi0022_h_c` 175 → 147, CCIX rev 2.0 76 → 7). So applying (c) uniformly does *not* leave populated
+documents untouched — it gives 41 of them new `residual_decisions` — which contradicts Acceptance Criterion 3 as
+originally written. Two ways forward:
+
+- **Uniform demotion (recommended).** Apply (a) and (c) to both branches and revise Criterion 3 from
+  "byte-identical" to "no populated-catalog document loses a promoted record; the only permitted change is added
+  residuals". An asymmetric rule — demote on the empty branch, drop silently on the populated one — would
+  reintroduce exactly the discontinuity this tree exists to remove, and the corpus needs a full downstream
+  rebuild either way because any semantic-stage change invalidates every persisted `SemanticIR` under
+  `CHAIN-CURRENCY`.
+- **Scoped demotion.** Apply (c) only where the catalog is empty, preserving byte-identity on all 45 populated
+  documents. Smaller blast radius, but it keeps two different answers to the same question.
+
+Take the recommended path unless the replay shows a populated-document regression that the scoped variant avoids.
+
+Reproducer for the constraint above:
+
+```bash
+python3 - <<'PY'
+import json,glob,os
+for sp in sorted(glob.glob("generated/semantic_ir/*/semantic_ir.json")):
+    key=sp.split(os.sep)[2]; ep=f"generated/evidence_ir/{key}/evidence_ir.json"
+    if not os.path.exists(ep): continue
+    s=json.load(open(sp)); e=json.load(open(ep))
+    declared={r.get("signal_name") for i in s.get("interfaces",[])
+              for r in i.get("signal_records",[]) if r.get("automation_confidence")!="low"}
+    if not declared: continue
+    dcr=len(e.get("conditional_rules",[]))-len(s.get("conditional_rules",[]))
+    dsc=len(e.get("signal_constraints",[]))-len(s.get("signal_constraints",[]))
+    if dcr or dsc: print(key, dcr, dsc)
+PY
+```
+
+### Implementation order for the next session
+
+1. Mark `.1` `in_progress` and paste the `TOOLBOX.md` acceptance checklist into this tree — a Rust change
+   cannot commit without it (`scripts/check_task_acceptance.sh`).
+2. Change `crates/specforge/src/ir/semantic.rs:276-308`; add paired unit tests (an empty catalog rejects a named
+   subject and emits a residual; a populated catalog keeps its declared subjects).
+3. Corpus-wide old-versus-new `--dry-run` replay; classify every moved document.
+4. Rebuild all 78 downstream chains from their unchanged EvidenceIR — no re-ingest is needed, only the evidence
+   stage reads a normalized bundle (`CORPUS-CHAIN-CURRENCY.3` did exactly this in 2m32s) — then re-validate.
+5. `kg-bench` 156/156, the nine provider-free evals, 44/44 FSMGen strict, `scripts/run_ci.sh`.
+6. Update this tree, the fact card `[[semantic-empty-catalog-disables-grounding-filter]]`, the book, and the
+   live docs; commit per `COMMIT.md`.
 
 ## Decisions
 
+- `2026-08-11`: **the director authorised (c) composed with (a)** — symmetric filter, with rejected records
+  demoted to `residual_decisions` rather than dropped. The choice is settled; `.1` implements it. Recorded here
+  because a decision that lives only in a conversation is not saved.
+- `2026-08-11`: measuring the populated branch *after* the decision changed what "orthogonal" can mean. 41 of 45
+  populated-catalog documents already drop 1,230 conditional rules and 47 signal constraints silently, so
+  uniform demotion necessarily adds residuals there. Acceptance Criterion 3 is therefore the open sub-question,
+  not the rule itself. The recommendation is uniform demotion plus a revised criterion; the reasoning is in
+  Current Frontier.
 - `2026-08-11`: found by `CORPUS-COVERAGE.2.52` and deliberately **not** repaired inside that refresh. A data
   refresh may not carry a shared-extractor change: the repair moves 29 documents, so it needs its own leaf, its
   own corpus-wide replay, and its own before/after evals. `.2.51` set the same precedent for the `SEC_SID`
@@ -170,6 +227,7 @@ what (b) would have to buy.
 | `2026-08-11` | `.0` | read `crates/specforge/src/ir/semantic.rs:276-308` | both `signal_constraints` and `conditional_rules` bypass their grounding filter when `declared_signal_names.is_empty()` |
 | `2026-08-11` | `.0` | census over all 78 persisted `SemanticIR` artifacts | 33 empty-catalog documents; 29 carry 1,423 unfiltered conditional rules and 100 unfiltered signal constraints |
 | `2026-08-11` | `.0` | checked every emitted target against the census | 44/44 emitted `.isf` come from populated-catalog documents; no unfiltered record reaches the product boundary today |
+| `2026-08-11` | `.1` | measured the populated branch's silent drop volume before designing the demotion | 41 of 45 populated-catalog documents already drop records — 1,230 conditional rules and 47 signal constraints — so uniform demotion cannot leave them byte-identical; read-only, no artifact mutated |
 
 ## Commit Log
 
