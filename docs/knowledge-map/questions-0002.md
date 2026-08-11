@@ -2,12 +2,19 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
+  > does encryption block the VLM from reading tables (no)
+- [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
+  > does enrich / audit-extraction / recover-register-bits read full-page images or region images
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
   > does eval-extraction rebuild evidence or load the persisted file
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > does every SWD protocol record receive an ISF adapter disposition
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
   > does every temporal_rule reach the .isf or a residual
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > does header-sourced enum naming re-create the merge-by-name conflation (NO — 28 of 28 collision groups agree on every shared value, 0 conflicts. Structural, not lucky: a caption keyword like Table is shared by unrelated tables, but a header names the actual field and a field encodes the same way throughout a document. Worked example SMMU SH: 11 tables in ihi0070_e_a, every
+  > shared value identical 0b00=NON_SHAREABLE/0b10=OUTER_SHAREABLE/0b11=INNER_SHAREABLE/0b01=RESERVED — the merge IS the correct encoding)
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
   > does lowering cat-3 topology need only an ISF construct or also a multi-actor emit (also a multi-actor emit — ISF is per-actor / one .isf = one FSMGen module and SpecForge's emit is single-initiator-actor; a declarative cross-component netlist is an architectural change, decided WITH FSMGen only after capture-recall clears the bar — not today)
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
@@ -290,11 +297,3 @@
   > how does SpecForge group a transaction's signals by channel
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > how does SpecForge handle Docling clones of a table cell with col_span greater than one
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > how does SpecForge prove a persisted corpus artifact is still what the current binary produces
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how does SpecForge read a PDF's front-matter / title / ToC to know its doc type
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > how does SpecForge recover a subject the model misspelled
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > how does SpecForge relate to GoldMine Texada Pnueli Ammons

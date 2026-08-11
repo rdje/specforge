@@ -1,3 +1,30 @@
+### KG-ISF-COMPLETENESS.5.iv — measure whether an encoding table's header may name its enum
+
+- `CORPUS-COVERAGE.2.51` surfaced an asymmetry in the `.5.i` gate. `derive_encoding_enum_name` sources a
+  candidate enum name only from the table caption or the section title, then validates it against the declared
+  signals and the table's own header — so the header is a veto and never a source. A table whose caption
+  carries no field token mints nothing even when its header names the field outright, which is exactly the
+  shape of the SMMU guide's `SEC_SID value | Description`.
+- Measured read-only over all 78 persisted SourceIRs with the tracked reproducer
+  `scripts/measure_encoding_enum_header_naming.py`: 2,540 encoding tables, 281 header-nameable, 134 that would
+  mint a non-empty enum after the `.5.ii` spine gate, across ten documents.
+- The load-bearing result is that `.5.i`'s objection does not reproduce. That gate exists because
+  `build_symbol_definitions` merges by name and one caption keyword fused unrelated tables into the generic
+  `TABLE` mega-enum. Of 28 collision groups here, **28 agree on every shared value and none conflict** —
+  structurally, because a header names the field while a caption keyword is shared by strangers. SMMU `SH` is
+  eleven tables whose merge reconstructs the Shareability encoding rather than fusing eleven unrelated ones.
+- Decision: GO on the lever, NO-GO on the naive predicate. The 134 mix genuine field encodings (`AWATOP`,
+  `ENDIAN`, `EXCL`, `RESPERR`, `ARCHID`, `ST_LEVEL`, `CD2L`, `VMID16`, `PRI`) with four classes a code slice
+  must exclude first: `OFFSET`-headed register-offset tables, the `*_WIDTH` self-named pseudo-enums already
+  recorded as a `.5.iii` residual, garbled members, and twelve `RESERVED`-only enums.
+- Honest correction recorded with the finding: the SMMU guide table that motivated this would still mint
+  nothing, because its members are description sentences the spine gate correctly drops. The lever is real and
+  does not help the document that surfaced it — which is the case for measuring before implementing.
+- `.5.iv.a` (CODE) is deliberately its own focused slice: it changes a shared extractor and would mint a new
+  `AWATOP` enum on the AXI wire gold, so it carries the full before/after WIRE-BASED-100 protocol on rebuilt
+  gold evidence, a corpus-wide old-versus-new replay, and FSMGen strict on every changed target. No Rust
+  changed here, so every oracle is orthogonal by construction and the doctrine gate is green.
+
 ### CORPUS-COVERAGE.2.51 — refresh the Arm SMMU guide and retire its caption-named enum
 
 - Refresh #51 takes the 52-page / 600-element Arm SMMU Software Guide, the smallest of the six remaining

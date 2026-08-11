@@ -491,3 +491,69 @@ evidence holds the documented state (APB/AHB/AXI all 1.000; SWD relation 1/1 + t
 promotion-only constraint 0/1; SWD-derivation 11/11·4/4·13/13; i2c 6/6). `kg-bench` 156/156. `run_ci.sh`
 GREEN (lib 1718, +2 tests: `width_parameter_leak_member_predicate` pins `FULL_WIDTH` KEPT;
 `encoding_member_synthesis_drops_width_parameter_leak_keeps_codes`).
+
+## `.5.iv` measurement (`2026-08-11`, read-only) — the header may source a name, and merge-by-name does not conflate
+
+Surfaced by `CORPUS-COVERAGE.2.51`. Refreshing the Arm SMMU Software Guide retired its generic-`TABLE`
+mega-enum exactly as `.5.i` intends, and in doing so exposed an asymmetry in the gate. The source table is
+`Table 3-1: Stream Security determination`, whose header reads `SEC_SID value | Description`.
+`derive_encoding_enum_name` draws its candidate from `caption_text` or the section title
+(`crates/specforge/src/ir/evidence.rs:4698-4703`) and only then validates it against `known_signals` and the
+header (`:4715-4733`). The header is therefore a **veto** and never a **source**: a table whose caption
+carries no field token mints nothing even when its header names the field outright. The signal-match loop
+above the fallback cannot close the gap either, because it fires only where the token is already a declared
+signal — precisely the case that does not need help.
+
+Reproducer: `scripts/measure_encoding_enum_header_naming.py` (read-only over the 78 persisted SourceIRs; no
+VLM, Docling, or stage rebuild; repository-root-relative; `--json` for the machine-readable census).
+
+| Population | Count |
+| --- | ---: |
+| `encoding` tables corpus-wide | 2,540 |
+| …single header row shaped `<FIELD> value \| Description` with exactly one non-generic field token | 281 |
+| …whose members survive the `.5.ii` sentence-spine gate, so a non-empty enum would be minted | 134 |
+| …documents involved | 10 |
+| distinct (document, candidate name) pairs | 82 |
+| pairs drawing one name from more than one table in the same document | 28 |
+| **collision groups conflicting on any shared value → member mapping** | **0 of 28** |
+
+### Why the last row decides it
+
+`.5.i`'s objection to a name fallback was never "the name looks wrong"; it was
+`build_symbol_definitions`' merge-by-name (`ir/semantic.rs`), which fused every `TABLE`-named table into one
+junk enum. That failure mode **does not reproduce** for header-sourced names, and the reason is structural
+rather than lucky. A caption keyword like `Table` is shared by tables with nothing in common, whereas a
+header names the actual field, and a field encodes the same way throughout a document — so the merge
+reconstructs the field rather than fusing strangers.
+
+The worked example is SMMU `SH`: eleven separate tables in `ihi0070_e_a`, every shared value identical
+(`0b00=NON_SHAREABLE`, `0b10=OUTER_SHAREABLE`, `0b11=INNER_SHAREABLE`, and `0b01=RESERVED` where the table
+lists it). Merging the eleven yields the correct Shareability encoding.
+
+### Why the naive predicate is still a NO-GO
+
+The 134 are a mix. Genuine field encodings — `AWATOP`, `ENDIAN`, `EXCL`, `RESPERR`, `ARCHID`, `DATASOURCE`,
+`ST_LEVEL`, `CD2L`, `VMID16`, `PRI`, and the 102-table SMMU architecture-spec body — sit beside four classes
+a code slice must exclude first:
+
+- **`OFFSET`-headed register-offset tables** (three, CoreSight SDC-600): the header names a column concept,
+  not a field; members are `RESERVED` / `CORESIGHT_MANAGEMENT_REGISTERS`.
+- **`*_WIDTH` self-named pseudo-enums** (`NODEID_WIDTH`, `REQ_ADDR_WIDTH`, `DATA_WIDTH`) whose only member is
+  `LEGAL_VALUES` — the family `.5.iii` already recorded as an honest residual, reappearing from the header side.
+- **Garbled members**: `AXADDR` → `VA_40`, `NUM_2_0_A`.
+- **Twelve `RESERVED`-only enums**, which carry no intent at all.
+
+### Honest correction
+
+The observation that opened this leaf is partly wrong. The SMMU *guide* table that motivated it would still
+mint nothing under a header-sourced name, because its members are whole description sentences and the `.5.ii`
+spine gate correctly drops them, emptying the enum. The lever is real, but it does not help the document that
+surfaced it — which is the argument for measuring before implementing, not after.
+
+### Handoff to `.5.iv.a` (CODE)
+
+Deferred to its own focused slice under the high-stakes gate-code rule `.5.i` ran under. It changes a shared
+extractor and would mint a new `AWATOP` enum on the AXI wire gold `ihi0022_l`, so it is byte-changing on a
+scored document and requires the before/after WIRE-BASED-100 protocol on rebuilt gold evidence, a corpus-wide
+old-versus-new `--dry-run` replay, and FSMGen `--strict --check --json` on every changed `.isf`. The exclusion
+predicate must itself be measured FP-free before it lands, exactly as `.5.iii`'s `_WIDTH` gate was.

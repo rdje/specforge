@@ -867,6 +867,55 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
     (enum NAME ends `_WIDTH`, prefix not a declared signal) stay an honest residual (out of scope — a
     name-level case overlapping `.5.i`).
 
+- ID: `KG-ISF-COMPLETENESS.5.iv` · Status: `done` (**MEASUREMENT `2026-08-11`**, read-only, docs-only; the
+  CODE slice is `.5.iv.a`, deliberately not started here) · Goal: **decide whether an encoding table's own
+  column header may SOURCE an enum name, not merely veto one.** Surfaced by `CORPUS-COVERAGE.2.51`: the Arm
+  SMMU *guide* carries `Table 3-1: Stream Security determination` with the header `SEC_SID value |
+  Description`. `.5.i` correctly rejected the caption-derived `TABLE`, but the header — the most authoritative
+  naming evidence the table has — is only ever read as a **veto** on a caption candidate, never as a
+  **source**. `derive_encoding_enum_name` draws candidates from `caption_text` or the section title alone
+  (`crates/specforge/src/ir/evidence.rs:4698-4703`), then validates them against `known_signals` and the
+  header (`:4715-4733`). The asymmetry is incidental, not designed, and it sits directly on the roadmap's
+  symbol surface ("all real agents, relations, constraints, behaviors, transactions, **symbols**, and
+  storage") and its "prefer deterministic extraction … **enum rows**" doctrine.
+  **Measured read-only over all 78 persisted SourceIRs** (tracked reproducer
+  `scripts/measure_encoding_enum_header_naming.py`; no VLM/Docling/rebuild):
+
+  | Population | Count |
+  | --- | ---: |
+  | `encoding` tables corpus-wide | 2,540 |
+  | …matching a single-header-row `<FIELD> value \| Description` shape with exactly one non-generic field token | 281 |
+  | …whose member names then survive the `.5.ii` sentence-spine gate (a non-empty enum would actually be minted) | 134 |
+  | …documents involved | 10 |
+  | distinct (document, candidate name) pairs | 82 |
+  | pairs drawing the same name from more than one table in the same document | 28 |
+  | **collision groups whose tables CONFLICT on any shared value→member mapping** | **0 of 28** |
+
+  **The decisive result is the last row.** `.5.i`'s core objection to a name fallback was
+  `build_symbol_definitions`' merge-by-name: many unrelated tables fusing into one junk enum. That failure
+  mode **does not reproduce** for header-sourced names, and the reason is structural rather than lucky — a
+  caption word like `Table` is shared by tables that have nothing to do with each other, whereas a header
+  names the actual field, and one field encodes the same way throughout a document. The worked example is
+  SMMU `SH`: eleven separate tables, every shared value identical
+  (`0b00=NON_SHAREABLE`, `0b10=OUTER_SHAREABLE`, `0b11=INNER_SHAREABLE`, `0b01=RESERVED` where present), so
+  the merge *is* the correct enum rather than a conflation of eleven.
+  **Decision: GO on the lever, NO-GO on the naive predicate** — the measured 134 are a mix. Genuine field
+  encodings (`AWATOP`, `ENDIAN`, `EXCL`, `RESPERR`, `ARCHID`, `DATASOURCE`, `ST_LEVEL`, `CD2L`, `VMID16`,
+  `PRI`, and the 102-table SMMU architecture-spec body) sit beside four junk classes a code slice must
+  exclude first: `OFFSET`-headed register-offset tables (three, CoreSight SDC-600) where the header names a
+  column concept and not a field; the `*_WIDTH` self-named pseudo-enums whose only member is `LEGAL_VALUES`,
+  already recorded as a `.5.iii` honest residual; garbled members (`AXADDR` → `VA_40`, `NUM_2_0_A`); and
+  twelve `RESERVED`-only enums that carry no intent.
+  **Honest correction to the observation that opened this leaf:** the SMMU *guide* table that motivated it
+  would still mint nothing, because its members are description sentences that `.5.ii` correctly drops. The
+  lever is real, but not for the document that surfaced it.
+  **`.5.iv.a` (CODE) is deliberately deferred to its own focused slice.** It changes a shared extractor and
+  would mint a new `AWATOP` enum on the AXI wire gold `ihi0022_l`, so it is byte-changing on a scored
+  document and carries the full before/after WIRE-BASED-100 protocol on rebuilt gold evidence, a corpus-wide
+  old-versus-new replay, and FSMGen `--strict` on every changed `.isf` — the same high-stakes gate-code rule
+  `.5.i` was run under. No code changed in this leaf. Report
+  `docs/research/generic-enum-conflation-measurement.md` §`.5.iv measurement`; KM `[[generic-enum-conflation]]`.
+
 ## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.5.ii` — DONE `2026-06-24`
 - [x] **REPRODUCE / MEASURE** — read-only census over all 78 persisted IntentIR docs (561 enums / 12 509 members). The `.5.i` name-gate cannot reach enums whose NAME is a real signal but whose MEMBERS are junk: AXI-gold `BRESP` is 16 members = 7 prose fragments + `BRESP_WIDTH` FUSED with the 8 genuine codes; AHB-gold `HPROT` has value-restart but 15 clean members. Report `docs/research/generic-enum-conflation-measurement.md` §`.5.ii measurement`.
 - [x] **ROOT CAUSE (WHY + WHERE)** — `synthesize_encoding_declarations_for_enum` (`crates/specforge/src/ir/evidence.rs`) sanitizes a name-cell to `[A-Z0-9_]`, so a prose sentence in a name-cell becomes one `_`-joined member name; `build_symbol_definitions` (`semantic.rs`) then accumulates those members by enum name. The per-enum drop the `.5` packet proposed is wrong (loses BRESP's codes; false-positives HPROT) — the gate must be per-MEMBER on NAME shape.
@@ -889,6 +938,15 @@ The agent surface has TWO coexisting defects (the naive single fix fails — pro
 - [x] **NO REGRESSION** — **WIRE-BASED-100 = 1.000 before==after (PROVEN)**: AXI before/after `eval-extraction --provider skip` on baseline-vs-gated evidence is byte-identical (seed_axi constraint 4/4 + relation 6/6, seed_axi_temporal 3/3); APB/AHB/SWD/i2c evidence rebuilt with both binaries is **byte-identical** (the gate is inert — the 7 leaks are AXI-only). Full wire eval on canonical (new) evidence: APB 6/6·6/6·3/3, AHB 6/6·6/6·4/4, AXI 4/4·6/6·3/3, SWD relation 1/1 (+ documented promotion-only constraint 0/1), SWD-derivation 11/11·4/4·13/13, i2c 6/6. `kg-bench` **156/156**. `run_ci.sh` GREEN (lib **1718**, +2 tests; warning-deny clippy/fmt/rustdoc + mdBook). FSMGen `--strict` success on the rebuilt AXI `.isf`.
 - [x] **GENERICITY (ADR 0006)** — document-grounded gate (the enum's own name + the document's declared-signal set), NOT a structure-word name list; corpus false-positive set EMPTY — no legit `FULL_WIDTH`/`HALF_WIDTH` value exists, and the declared-signal arm never catches one because `FULL`/`HALF` are not declared signals (the predicate unit test pins `FULL_WIDTH` KEPT). Same "independently evidenced" discipline as `.5.i`.
 - [x] **LOCKSTEP** — report §`.5.iii LANDED`; KM card `[[generic-enum-conflation]]` → `.5.iii` LANDED + `KNOWLEDGE_MAP.md` regen; README current-state bullet (`.5.iii`); book `pipeline/isf-adapter.md` enum-fidelity note extended; CHANGES.md / DEVELOPMENT_NOTES.md / LIVE_ACHIEVEMENT_STATUS.md / MEMORY.md / `docs/TASK_TREE.md` index. **`.5` enum-surface fidelity: `.5.i` name-gate + `.5.ii` spine member-gate + `.5.iii` `_WIDTH` member-gate** — the AXI gold `.isf` enum surface is now faithful; the `*_WIDTH`-named self-pseudo-enums are an honest residual.
+
+## Acceptance Checklist (enforced) — `KG-ISF-COMPLETENESS.5.iv` (MEASUREMENT) — DONE `2026-08-11`
+- [x] **REPRODUCE / MEASURE** — read-only census over all 78 persisted SourceIRs with the tracked deterministic reproducer `scripts/measure_encoding_enum_header_naming.py` (no VLM/Docling/rebuild; repository-root-relative). 2,540 `encoding` tables → 281 header-nameable → **134** minting a non-empty enum after the `.5.ii` spine gate, across **10** documents, 82 (document, name) pairs, 28 collision groups, **0 in conflict**, 12 `RESERVED`-only. Report §`.5.iv measurement`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `derive_encoding_enum_name` (`crates/specforge/src/ir/evidence.rs:4698-4703`) sources candidates only from `caption_text` or the section title, then validates them against `known_signals` and the header at `:4715-4733`. So a table's own header is a veto and never a source, and a table whose caption carries no field token mints nothing even when its header names the field outright (`SEC_SID value | Description`, surfaced by `CORPUS-COVERAGE.2.51`). The signal-match loop above the fallback cannot cover the gap, because it fires only when the token is already a declared signal.
+- [x] **DECISION (per-item, `[[feedback_scoring_rigor]]`)** — **GO on the lever, NO-GO on the naive predicate.** `.5.i`'s load-bearing objection was `build_symbol_definitions`' merge-by-name, and it **does not reproduce**: 28 of 28 collision groups agree on every shared value, structurally so, because a header names the field while a caption keyword is shared by unrelated tables — SMMU `SH` is eleven tables whose merge *is* the correct encoding. But the 134 mix genuine field encodings (`AWATOP`, `ENDIAN`, `EXCL`, `RESPERR`, `ARCHID`, `ST_LEVEL`, `CD2L`, `VMID16`, `PRI`) with four exclusion classes a code slice must gate first: `OFFSET`-headed register-offset tables (column concept, not a field), the `*_WIDTH` self-named pseudo-enums whose only member is `LEGAL_VALUES` (already a `.5.iii` honest residual), garbled members (`AXADDR` → `VA_40`/`NUM_2_0_A`), and 12 `RESERVED`-only enums carrying no intent.
+- [x] **HONEST CORRECTION** — the observation that opened this leaf is partly wrong and is recorded as such: the SMMU *guide* table that motivated it would still mint nothing, because its members are description sentences the `.5.ii` gate correctly drops. The lever is real; it does not help the document that surfaced it.
+- [x] **NO CODE → ORACLES ORTHOGONAL** — measurement/docs-only; no Rust touched, so WIRE-BASED-100, the register/wire golds, and `kg-bench` are orthogonal by construction. `scripts/check_doctrines.sh` GREEN.
+- [x] **GENERICITY (ADR 0006)** — the measured predicate is table geometry plus column-role and document-structure word classes, with no chip, vendor, protocol, or document key; the candidate is the table's own header token, which is document-grounded in the same sense `.5.i` requires.
+- [x] **LOCKSTEP** — `.5.iv` node; report §`.5.iv measurement` + tracked reproducer; KM card `[[generic-enum-conflation]]` extended + `KNOWLEDGE_MAP.md`/shard/fact-catalog regeneration; `CHANGES.md` / `MEMORY.md`. **`LIVE_ACHIEVEMENT_STATUS.md` is deliberately unchanged:** its routing contract says it moves only when the current product-status snapshot moves, and a read-only measurement ships no capability — the product does exactly what it did before. Drafting an entry also proved the point mechanically, tipping the `live-achievement-status` rolling ledger past its 90% record threshold; that ledger now needs its own owned rollover transaction before the next genuine product-status entry, which is recorded in the resume pointer rather than bundled into this measurement. **Frontier → `.5.iv.a` (CODE)**, deliberately its own focused slice: it changes a shared extractor and would mint `AWATOP` on the AXI wire gold `ihi0022_l`, so it is byte-changing on a scored document and carries the full before/after WIRE-BASED-100 protocol on rebuilt gold evidence, a corpus-wide old-versus-new replay, and FSMGen `--strict` on every changed `.isf` — the high-stakes gate-code rule `.5.i` ran under.
 
 ## Changelog
 
