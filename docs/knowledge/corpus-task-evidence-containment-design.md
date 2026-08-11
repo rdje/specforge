@@ -41,8 +41,10 @@ stable path (33 fact cards, three book chapters, three root live docs, one task 
 none with a fragment or query, and no executable opens the target. The only writer is the manual task-tree and
 `COMMIT.md` slice transaction.
 
-The current product truth is 49 of 56 real chip-spec refreshes done, seven remaining, stages 80/21/80/79, and
-58/58 emitted ISFs strict-clean. Literal stale text remains exact history. Containment itself selected no product;
+At this card's date the product truth was 49 refreshes done, stages 80/21/80/79, and 58/58 emitted ISFs
+strict-clean; its denominator of 56 was later shown wrong by `[[corpus-refresh-frontier-derivation]]`, which
+replaced the carried count with a derived one. Do not read a refresh count from this card — derive it, or read
+the root `docs/tasks/CORPUS-COVERAGE.md`. Literal stale text remains exact history. Containment itself selected no product;
 after closure the separate `CORPUS-COVERAGE.2.49` leaf used the eligible post-migration route to refresh the
 45-page / 430-element Generic Interrupt Controller Overview Guide and remove its unsupported emitted target. The
 next separately owned `.2.50` route selects the 57-page / 527-element OpenCAPI Data Link Layer v2.0 specification

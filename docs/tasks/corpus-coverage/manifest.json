@@ -314,6 +314,21 @@
          "leaf_id" : "CORPUS-COVERAGE.2.51",
          "origin" : "post_migration",
          "part_id" : "refreshes-51-56"
+      },
+      {
+         "leaf_id" : "CORPUS-COVERAGE.4",
+         "origin" : "post_migration",
+         "part_id" : "frontier-census-integrity"
+      },
+      {
+         "leaf_id" : "CORPUS-COVERAGE.4.0",
+         "origin" : "post_migration",
+         "part_id" : "frontier-census-integrity"
+      },
+      {
+         "leaf_id" : "CORPUS-COVERAGE.4.1",
+         "origin" : "post_migration",
+         "part_id" : "frontier-census-integrity"
       }
    ],
    "marker_prefix" : "corpus-task-source-region",
@@ -419,13 +434,25 @@
       {
          "heading" : "# CORPUS-COVERAGE — refreshes 51–56",
          "metrics" : {
-            "bytes" : 16205,
+            "bytes" : 16683,
             "line_bytes" : 339,
-            "lines" : 200
+            "lines" : 206
          },
          "part_id" : "refreshes-51-56",
          "path" : "docs/tasks/corpus-coverage/refreshes-51-56.md",
-         "sha256" : "05e5e91e3938e7fd90f1487d1ba74ab305913572184c5b127ca595f8e746f234",
+         "sha256" : "0074c749f5d4bf421c5808298758f9dc0059323a86f8ee08f37a1f5b0b159189",
+         "state" : "active"
+      },
+      {
+         "heading" : "# CORPUS-COVERAGE — frontier census integrity",
+         "metrics" : {
+            "bytes" : 11293,
+            "line_bytes" : 240,
+            "lines" : 162
+         },
+         "part_id" : "frontier-census-integrity",
+         "path" : "docs/tasks/corpus-coverage/frontier-census-integrity.md",
+         "sha256" : "db263b3655e44ad7b23d934e800e1be3568de43ff3b9e8fb74120dfd2ab5849d",
          "state" : "active"
       }
    ],

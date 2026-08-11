@@ -232,7 +232,20 @@ rebuild retires the enum, its single symbol definition, and the adapter's last r
 semantic actors, 76 invariants, 17 contracts, five intent actors, 17 behaviors, and 77 constraints survive
 untouched. `validate` reports the document as a self-declared `methodology-guide` at high confidence — a
 category-6 ISF non-target — so a blocked adapter and an empty signal inventory are the correct answer here, not a
-miss. Corpus coverage is 51/56 with five refreshes remaining, and the retained-bundle declaration grows to 23.
+miss. The retained-bundle declaration grows to 23.
+
+Refresh #51's own progress line said "51 of 56 with five remaining", and `CORPUS-COVERAGE.4.0` then established
+that the denominator was wrong. The program's progress had been carried rather than derived: every refresh from
+#29 onward decremented the previous slice's number by exactly one, so a base error propagated through
+twenty-two consecutive slices with nothing able to catch it. Re-deriving the census from persisted evidence —
+cohort as the documents whose SourceIR source is not the tracked in-repo `corpus/` tree, refreshed as those with
+a retained normalized bundle or a source path already off the retired boot volume — gives **57 = 51 + 6**, and
+identifies the missing document as the 454-page NVM Express Base Specification, which was never excluded by any
+rule and simply fell off a hand-maintained list. The instructive part is why the previous slice could not have
+noticed: it *did* carefully re-measure all six documents it listed, but re-deriving a list's rows never validates
+that list's completeness. Only the independent identity `cohort = refreshed + remaining`, computed without
+reference to the list, exposes an omission — which is what the pending `CORPUS-COVERAGE.4.1` makes mechanical.
+Corpus coverage is therefore **51 of 57 with six refreshes remaining**.
 
 `CORPUS-CHAIN-CURRENCY` then replaced the assumption that those persisted artifacts still match the code with a
 measurement. Its registered `CHAIN-CURRENCY` oracle replays every stage from the persisted artifact one stage

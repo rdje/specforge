@@ -17,18 +17,19 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: none. `STATUS-LEDGER-ROLLOVER` is open at `.2` and `TASK-PART-SEAL-REACHABILITY` at `.0`
-  — both pending, tracking only; neither blocks anything.
-- Current state: corpus coverage is **51/56 with five real documents remaining**, at 78 SourceIR / 23
-  normalized / 78 EvidenceIR / 78 downstream chains, 44/44 emitted ISFs FSMGen-strict clean. The status
-  ledger is rolled: `segment-0007` seals 21 records and leaves the root at 50 records / 80,586 bytes
-  (62.5% of records, 70.1% of bytes), so product-status entries are unblocked for roughly twelve slices
-  instead of one. The mdBook no longer stores any current live-root size — four such sentences were false,
-  and a value every commit invalidates is now derived on read.
-- Next action: pick one. `CORPUS-COVERAGE.2.52` — own refresh #52; the smallest-retained-source rule points
-  at `opencapi_25gbps_phy_mechanical_spec_v10` (760 elements), re-measure before pinning. Or
-  `KG-ISF-COMPLETENESS.5.iv.a`, the deferred CODE slice, which is byte-changing on the AXI wire gold and
-  wants a fresh focused session plus the full before/after WIRE-BASED-100 protocol.
+- Active unit: `CORPUS-COVERAGE.4` (frontier census integrity) — `.4.0` done, `.4.1` pending.
+  `STATUS-LEDGER-ROLLOVER` is open at `.2` and `TASK-PART-SEAL-REACHABILITY` at `.0` — both tracking only.
+- Current state: corpus coverage is **51/57 with six real documents remaining**, at 78 SourceIR / 23
+  normalized / 78 EvidenceIR / 78 downstream chains, 44/44 emitted ISFs FSMGen-strict clean. `.4.0` derived
+  that census instead of reading it and found the tracked count short by one: it had been hand-decremented
+  once per refresh since `.2.29`, so a stale denominator adjustment dropped
+  `nvme_base_specification_2_0a_2021_07_26` off the queue. Re-derive with the `reverify` command in
+  `docs/knowledge/corpus-refresh-frontier-derivation.md`; never trust a transcribed refresh count.
+- Next action: pick one. `CORPUS-COVERAGE.4.1` — the mechanical census gate that makes
+  `cohort = refreshed + remaining` enforced rather than carried; until it lands the corrected count is still
+  only carried. Or `CORPUS-COVERAGE.2.52` — own refresh #52; smallest-retained-source points at
+  `opencapi_25gbps_phy_mechanical_spec_v10` (760 elements). Or `KG-ISF-COMPLETENESS.5.iv.a`, the deferred
+  CODE slice, byte-changing on the AXI wire gold, wanting a fresh session plus the full WIRE-BASED-100 protocol.
 - In-flight uncommitted: none; no background job is running.
-- Blockers: none. `CHANGES.md` sits at 82.2% of its line health target — about ten commits of runway before
+- Blockers: none. `CHANGES.md` sits near 84% of its line health target — roughly eight commits of runway before
   its own rollover becomes mandatory. The user-owned `.claude/settings.json` remains untouched.

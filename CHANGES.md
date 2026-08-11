@@ -1,3 +1,34 @@
+### CORPUS-COVERAGE.4.0 — derive the corpus frontier census and restore the lost document
+
+- Selecting refresh #52 required stating the frontier, so the frontier was re-derived instead of read. The
+  census over 78 persisted `source_ir.json` files plus the retention declaration is **57 cohort documents = 51
+  refreshed + six remaining**, against a tracked claim of 51 of 56 with five remaining. The identity is exact.
+- The sixth is `nvme_base_specification_2_0a_2021_07_26` — the 454-page NVM Express Base Specification 2.0a,
+  source present at 5,154,704 bytes under the authorized `chipdoc` symlink, no normalized bundle, and a persisted
+  path still on the retired boot volume. No tracked surface records any exception for it; it was not excluded,
+  it was dropped.
+- Root cause is that the count was carried, not derived. Every refresh from `.2.29` to `.2.51` decrements the
+  previous number by exactly one — 27, 26, 25, … 6, 5 — so a base error propagates through twenty-two slices
+  untouched. The base error was the `.2.29` record's adjustment of the 57-document cohort down to 56 "real
+  chip-spec" documents for the project's own `ingest README.md` artifact. That was true when written; the
+  artifact later left `generated/`, and because the number was only ever decremented the retired adjustment
+  outlived it.
+- `.2.51` shows why candidate re-measurement is not a substitute. It deliberately re-derived all six documents
+  it listed from their own SourceIR profiles rather than inheriting `.2.50`'s table — and still could not see
+  this, because re-deriving a list's rows never validates that list's completeness. Only the independent
+  identity `cohort = refreshed + remaining` exposes an omission.
+- Both refreshed witnesses are load-bearing. The path leg accounts for 50 of 51, but
+  `usb_3_2_revision_1_0_2017_09` was refreshed at `.2.33` before the volume migration and still records a
+  retired path, so it is recovered only by its retained bundle. Dropping either leg mis-counts.
+- Selection is unaffected: NVMe is the largest of the six at 4,577 elements, so smallest-retained-source still
+  picks `opencapi_25gbps_phy_mechanical_spec_v10` at 760 elements for `.2.52`, and NVMe lands last at `.2.57`.
+  The correction had to land first only because a refresh's ownership record states the frontier it selected
+  from.
+- Read-only over `generated/`: no ingest, no artifact mutation, no Rust change, so every extraction oracle is
+  orthogonal by construction. `check_chain_currency.sh` exits 0 at evidence 23/23, semantic 78/78, intent 78/78,
+  isf-adapter 78/78 with retention exactly the 23 declared bundles. `.4.1` is opened pending — until it lands
+  the corrected count is still carried rather than enforced, which is this slice's honest residual.
+
 ### STATUS-LEDGER-ROLLOVER.0 — seal segment-0007 and give the status ledger real headroom
 
 - `CORPUS-COVERAGE.2.51`'s record took `LIVE_ACHIEVEMENT_STATUS.md` to 71 records, 88.8% of its 80-record

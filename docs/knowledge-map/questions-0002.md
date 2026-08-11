@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > does emitting (input) signals break fsmgen --strict (no — 0 new diagnostics; drives are suppressed for inputs)
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
   > does encryption block the VLM from reading tables (no)
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
@@ -67,6 +69,8 @@
   > does the agent-identity gate keep Class-B fragments like Subordinate extends
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > does the authority empty repair preserve formal and system contract interfaces
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > does the corpus census correction change which document refresh 52 selects (no — NVMe is the largest of the six at 4,577 elements, so the smallest-retained-source policy still selects opencapi_25gbps_phy_mechanical_spec_v10 at 760 elements. The correction changes the denominator and the length of the tail, not the next pick; NVMe lands last, at .2.57)
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > does the current FSMGen ISF support named bit-fields inside a storage var (NO — opaque (var NAME (width N)) only on pin 030f8c273; set-field/extract are runtime ops not a declaration)
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
@@ -223,6 +227,9 @@
   > how do I add a new enforced doctrine / doctrine check
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
   > how do I add fact-card capacity
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > how do I derive how many corpus refreshes remain (do NOT read a carried number: cohort = count of generated/source_ir/*/source_ir.json whose source.requested_path does NOT begin 'corpus/' = 57; refreshed = those with a retained bundle in doctrine/chain_currency/retained_bundles.json OR a requested_path not beginning '/Users/' = 51; remaining = neither = 6. The identity cohort
+  > == refreshed + remaining must hold exactly)
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > how do I file an FSMGen bug report or feature request
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -291,9 +298,3 @@
   > how does SpecForge emit temporal rules or a bounded-eventually into .isf
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > how does SpecForge extract register fields from tables
-- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
-  > how does SpecForge flag vague or ambiguous spec language
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how does SpecForge group a transaction's signals by channel
-- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
-  > how does SpecForge handle Docling clones of a table cell with col_span greater than one

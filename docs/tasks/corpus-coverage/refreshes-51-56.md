@@ -135,6 +135,12 @@ The corpus is 51 of 56 refreshes complete with five real documents remaining, at
 EvidenceIR / 78 SemanticIR / 78 IntentIR / 78 adapters and 44 emitted targets. Retention grows by exactly one:
 `doctrine/chain_currency/retained_bundles.json` declares 23 keys.
 
+> Superseded in part by `CORPUS-COVERAGE.4.0` (`2026-08-11`): the completion count, stage census, retention, and
+> emitted-target figures above all hold, but "51 of 56 … five real documents remaining" is short by one. The
+> derived cohort is 57 = 51 refreshed + six remaining; the sixth is
+> `nvme_base_specification_2_0a_2021_07_26`, which a hand-carried decrement had dropped from the queue. This
+> refresh's own selection is unaffected — NVMe is the largest of the six.
+
 ### Acceptance
 
 - [x] Authenticate rollback copies of every stale chain artifact inside a repository-derived same-volume

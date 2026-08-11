@@ -147,6 +147,8 @@
   > did the OpenCAPI Ready terms table declare an interface
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > did the USB4 signoff check change canonical SWD
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > did the corpus census correction move any generated artifact (no — CORPUS-COVERAGE.4.0 is read-only over generated/; check_chain_currency.sh exits 0 at evidence 23/23, semantic 78/78, intent 78/78, isf-adapter 78/78 with retention exactly the 23 declared bundles, before and after)
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > did the page sidecar repair change USB4 semantic artifacts
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
@@ -295,5 +297,3 @@
   > does corpus KB refresh mutate canonical IR or CorpusMemory
 - [contested-priors](../knowledge/contested-priors.md)
   > does corpus prior memory only accrete
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > does emitting (input) signals break fsmgen --strict (no — 0 new diagnostics; drives are suppressed for inputs)

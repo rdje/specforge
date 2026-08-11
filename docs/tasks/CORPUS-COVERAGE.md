@@ -20,24 +20,29 @@ ISF pipeline, keep completed chains non-stale, and record extraction gaps withou
 
 ## Current State
 
-51 of 56 real chip-spec refreshes are complete.
+51 of 57 real chip-spec refreshes are complete.
 
 - Stage coverage: 78 SourceIR / 23 normalized / 78 EvidenceIR / 78 downstream chains, all measured current by
   the `CHAIN-CURRENCY` gate. The measurable evidence-stage population grows by exactly one per refresh.
 - Emitted ISF: 44/44 current targets pass FSMGen strict validation. The population fell from 57 because 14
   documents' stale heuristic interfaces collapsed to zero under current authority and now block honestly.
 - Completed program lanes: `.0` build-out, `.1` stage-staleness validation, and `.3` lifecycle reconciliation.
-- Active program lane: `.2` current-binary corpus refresh, with five real documents remaining.
+- Active program lanes: `.2` current-binary corpus refresh, with six real documents remaining, and `.4`
+  frontier census integrity, whose `.4.0` derived that count and restored the document a hand-carried
+  decrement had lost.
 - Blockers: none.
 
 ## Current Frontier
 
 No eligible product leaf.
 
-`CORPUS-COVERAGE.2.51` is complete in the active `refreshes-51-56` part. The next clean slice must create and own
-`CORPUS-COVERAGE.2.52`, select one of the five remaining real documents from current corpus evidence, and pin its
-exact source and stale-chain boundary before any ingest or artifact mutation. `refreshes-49-56` is closed to
-further product writes at the `.2.50a` boundary.
+`CORPUS-COVERAGE.4.0` is complete in the active `frontier-census-integrity` part, and the frontier it derived is
+57 cohort documents = 51 refreshed + six remaining. The next clean slice must create and own
+`CORPUS-COVERAGE.2.52`, select one of the six remaining real documents from current corpus evidence, and pin its
+exact source and stale-chain boundary before any ingest or artifact mutation; the smallest-retained-source policy
+points at `opencapi_25gbps_phy_mechanical_spec_v10` at 760 elements. `CORPUS-COVERAGE.4.1` is the alternative
+eligible slice and makes the derived census mechanically enforced. `refreshes-49-56` is closed to further product
+writes at the `.2.50a` boundary, and `refreshes-51-56` holds the `.2.51` record only.
 
 ## Detailed task evidence
 
@@ -57,7 +62,8 @@ doctrines, and the risk-proportionate `COMMIT.md` gates before committing each l
 
 | Date | Boundary | Result |
 | --- | --- | --- |
-| `2026-08-11` | refresh `.2.51` | 51 done / five remaining; 78/23/78/78; 44/44 strict-clean |
+| `2026-08-11` | census `.4.0` | derived 57 cohort = 51 refreshed + six remaining; the lost document is `nvme_base_specification_2_0a_2021_07_26`; no artifact moved |
+| `2026-08-11` | refresh `.2.51` | 51 done; 78/23/78/78; 44/44 strict-clean (its "five remaining" is superseded by `.4.0`) |
 | `2026-08-10` | refresh `.2.50` | 50 done / six remaining; 80/22/80/79; 57/57 strict-clean |
 | `2026-08-10` | repair `.2.50a` | 26 false pre-bind subjects measured; eight removed in three rebuilt cascades; 58/58 strict-clean |
 | `2026-08-10` | refresh `.2.49` | 49 done / seven remaining; 80/21/80/79; 58/58 strict-clean |
@@ -68,6 +74,7 @@ doctrines, and the risk-proportionate `COMMIT.md` gates before committing each l
 
 | Unit | Durable evidence |
 | --- | --- |
+| `CORPUS-COVERAGE.4.0` | derived frontier census and the restored cohort document |
 | `CORPUS-COVERAGE.2.51` | latest completed product refresh |
 | `CORPUS-COVERAGE.2.50` | preceding completed product refresh |
 | `CORPUS-COVERAGE.2.49` | earlier completed product refresh |
