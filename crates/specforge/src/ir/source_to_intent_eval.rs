@@ -1774,4 +1774,41 @@ mod tests {
             serde_json::to_vec_pretty(&second).unwrap()
         );
     }
+
+    #[test]
+    fn reviewed_result_snapshot_is_current_and_names_the_upstream_loss_boundary() {
+        let path =
+            Path::new("crates/specforge/test_data/source_to_intent_vertical/reviewed_dataset.json");
+        let dataset = load_dataset(path).expect("reviewed vertical dataset must load");
+        let report = evaluate_dataset(&dataset).expect("reviewed population must evaluate");
+
+        assert!(
+            report
+                .categories
+                .iter()
+                .all(|category| category.status == CategoryStatus::Incomplete)
+        );
+        assert_eq!(
+            report
+                .documents
+                .iter()
+                .flat_map(|document| &document.cells)
+                .filter(
+                    |cell| cell.first_failing_stage == Some(FirstFailingStage::SourceToEvidenceIr)
+                )
+                .count(),
+            10
+        );
+        assert_eq!(report.global.stage_conservation_or_residual.met, 21);
+        assert_eq!(report.global.stage_conservation_or_residual.total, 54);
+        assert_eq!(report.global.fabricated_canonical_facts, 41);
+        assert_eq!(report.global.unexplained_stage_drops, 33);
+
+        let mut actual = serde_json::to_vec_pretty(&report).unwrap();
+        actual.push(b'\n');
+        assert_eq!(
+            actual,
+            include_bytes!("../../test_data/source_to_intent_vertical/result_snapshot.json")
+        );
+    }
 }

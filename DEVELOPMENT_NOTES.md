@@ -1,4 +1,31 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.4c (`2026-08-11`) — preservation after a bad first boundary is not recovery
+
+The frozen result separates raw region capture from semantic fact capture. Every reviewed region and modality
+is present in EvidenceIR, yet canonical precision is 7/48 and recall is 7/40. “The table/figure/prose was found”
+therefore cannot serve as a proxy for “its reviewed meaning was typed correctly.” Required-modality accounting
+remains zero because a modality is accounted only when its cells also receive the right canonical or residual
+disposition.
+
+The repeated 7 TP / 41 FP / 33 FN canonical counts at EvidenceIR, SemanticIR, and IntentIR are diagnostic, not
+encouraging by themselves. SemanticIR and IntentIR preserve what EvidenceIR gave them, including the mistakes.
+All 33 unexplained drops occur at SourceIR → EvidenceIR. Four other cells capture a figure/prose region but first
+fail at EvidenceIR → SemanticIR because no actionable residual is created. The next upstream work must improve
+fact formation and residualization; optimizing later carry would preserve the same incomplete state faster.
+
+Support remains exact and per category. APB's 3/4 reviewed canonical facts and each OpenCAPI digital cell's 2/2
+are useful footholds, but neither can compensate for another cell, missing provenance, a fabricated fact, or an
+absent residual. All six categories therefore remain incomplete even though no category is unmeasurable.
+
+The result is not evidence of an ISF limitation. Evaluation stops at IntentIR, and there is no reviewed fact that
+is correct, complete, provenanced, and residual-clean through IntentIR but blocked only by adapter grammar. That
+distinction preserves the upstream-first roadmap order while leaving downstream expansion available when a
+future populated IntentIR value actually demonstrates the need.
+
+The tracked report is the complete pretty-JSON output, not a hand-maintained summary. A generic example emits it
+from the repository-relative dataset and a test compares all bytes, so changing evaluator semantics or fixture
+truth requires an explicit snapshot review.
+
 ## SPEC-TO-INTENT-ALIGNMENT.4b (`2026-08-11`) — selection, locality, and lifecycle are separate authorities
 
 The first vertical population is retrospective. Its honest claim is that selection was frozen before gold

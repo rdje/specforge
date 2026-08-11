@@ -41,5 +41,6 @@ modality, semantic family, provenance, and canonical/residual/non-applicable dis
 builder refuses drift in source bytes, four-stage bytes, reviewed regions, or evidence capture.
 
 `.4b` locks review authority and proves the population is complete, balanced, portable, measurable, and
-deterministic. It deliberately does not publish category status or exact product scores. Those conclusions
-belong to `.4c`; evaluator semantics remain in `[[source-to-intent-vertical-evaluator]]`.
+deterministic. It deliberately does not publish category status or exact product scores. The separately frozen
+result and blocker diagnosis are `[[source-to-intent-first-reviewed-result]]`; evaluator semantics remain in
+`[[source-to-intent-vertical-evaluator]]`.

@@ -31,5 +31,6 @@ The selection boundary is a Git id; every original source and stage is hash-pinn
 root-relative paths. Necessary external read-only PDFs retain only a portable id, digest, and necessity, never a
 host path. Too few documents or incomplete gold makes a category `unmeasurable` even if provisional diagnostics
 already expose faults. The evaluator therefore cannot turn missing review authority into a pass. `.4a` ships the
-oracle only; [[spec-to-intent-category-contract]] remains the acceptance authority, and `.4b`/`.4c` own the
-reviewed population and actual category conclusions.
+oracle only; [[spec-to-intent-category-contract]] remains the acceptance authority,
+[[source-to-intent-reviewed-population]] owns the frozen gold, and
+[[source-to-intent-first-reviewed-result]] records the first actual category conclusions.

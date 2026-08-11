@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
+  > what is the transaction phase qualifier authority rule
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the validate intent transaction phase-membership surface (transactions_with_phase_membership + transaction_phase_groups metrics + intent_transaction_phase_membership finding)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the validate transaction inventory surface (intent_transaction_inventory metrics + finding)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the validate transaction-phase inventory (semantic_transaction_phase_inventory metric + finding)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
   > what is the vendor/layout fingerprint, the ExtractionProfile, and the offline corpus pattern miner
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
@@ -203,6 +211,8 @@
   > where does the SpecForge chipdoc source route currently resolve
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > where does the block name come from when the PDF backend flattens heading levels (parent section title via dotted-parent)
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > where does the first reviewed source-to-IntentIR population fail
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > where does the generic enum name TABLE/FIGURE/DATA come from (derive_encoding_enum_name fallback, evidence.rs:4457-4461 — first caption token passing is_hardware_signal_token at evidence.rs:7106, which accepts 'Table'->'TABLE')
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
@@ -279,21 +289,11 @@
   > where is the normative IntentIR product contract
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
   > where is the per-author adopt-vs-defer provenance
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > where is the persisted source-to-IntentIR result snapshot
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > where is the register-field gold seed
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
   > where is the reviewed source-to-intent dataset
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > where is the second LIVE_ACHIEVEMENT_STATUS rollover segment and what blocks the next one
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > where is the set of retained normalized bundles declared
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > where is the shared 0.6 fingerprint clustering threshold defined (DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD)
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > where is the shared section-heading container-walk that .10f and .10g both use
-- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
-  > where is the source-to-Intent vertical evaluation schema
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > where is the spawn+poll+kill memory guard in materialize_pdf
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > where is the structural gate that drops function-word-led and verb-led actor candidates

@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > where is the set of retained normalized bundles declared
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > where is the shared 0.6 fingerprint clustering threshold defined (DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD)
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > where is the shared section-heading container-walk that .10f and .10g both use
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > where is the source-to-Intent vertical evaluation schema
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > where is the spawn+poll+kill memory guard in materialize_pdf
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > where is the structural gate that drops function-word-led and verb-led actor candidates
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > where is the tiling-gated register bit recovery implemented
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
@@ -116,6 +128,8 @@
   > which source modalities and IntentIR surfaces are required per chip-spec category
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
   > which source modalities are represented in the first vertical population
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > which source-to-IntentIR categories are supported incomplete or unmeasurable
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > which stale roadmap statuses were found before migration
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
@@ -283,17 +297,3 @@
   > why did ingest stop with 'ingest aborted to protect the host'
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
   > why did max_facts become 379
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > why did normalize_prior_phrase grow a string exponentially
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > why did removing false signals ADD conditional rules to SemanticIR
-- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
-  > why did rendered_image.path contain normalized.staging
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > why did retiring generic phases remove pure inferred actors
-- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
-  > why did running nli-verify on a .prepromote.bak overwrite the real evidence_ir.json
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > why did seed_axi_temporal fail after constraint promotion and how was it fixed
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > why did six Introducing CoreSight interfaces disappear

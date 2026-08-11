@@ -81,7 +81,7 @@
       },
       "path": "docs/knowledge/INDEX.md",
       "role": "landing",
-      "sha256": "2827cabf62dea26b55bcf8d633fc6101533d6ce758151073c6737c295b794d8c"
+      "sha256": "82fa4249464757ece7c0307565e3370c30e3acdff05d44a7db03dfc5a5215ce8"
     },
     {
       "metrics": {
@@ -115,13 +115,13 @@
     },
     {
       "metrics": {
-        "bytes": 8077,
+        "bytes": 8305,
         "line_bytes": 256,
-        "lines": 43
+        "lines": 44
       },
       "path": "docs/knowledge-catalog/titles-0004.md",
       "role": "title_part",
-      "sha256": "6559c1da84bb8ad3bcefb1e282cc4bc5ec455e24b0451449de75e009fc913a9c"
+      "sha256": "635aa7d215d1b7412979b2586f42de9fc17d8b533b251305fdecc6188690e0a8"
     }
   ],
   "verifier": "perl scripts/check_fact_card_catalog.pl --check"

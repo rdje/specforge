@@ -17,14 +17,13 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.4c`; `.0` through `.4b` are complete. Tracking-only:
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.5`; `.0` through `.4c` are complete. Tracking-only:
   `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: `.4b` locks 12 reviewed documents / two per category and 14 complete bounded cells without
-  extractor tuning. External dataset identities are portable; the authorized source library resolves at
-  `/Volumes/SSD/Documents/livework/chipdoc` on the repository's SSD. `CORPUS-FRONTIER` now separates source
-  locality from exact refreshed/remaining lifecycle state.
-- Next action: run the `.4a` evaluator over the frozen `.4b` population, commit the exact result snapshot and
-  stage-loss diagnosis, and name the evidence-ranked upstream versus downstream blocker without changing gold,
-  selection, extraction behavior, or source artifacts.
-- In-flight uncommitted: none after the `.4b` commit. No background job runs.
+- Current state: `.4c` publishes a byte-pinned result over 12 documents / 14 complete cells. All six categories
+  are incomplete; canonical TP/FP/FN is 7/41/33, 10 cells first fail SourceIR → EvidenceIR and four first fail
+  EvidenceIR → SemanticIR. The measured blocker is upstream fact formation/residualization, not ISF expressiveness.
+- Next action: open `.5` from the accepted research design and compose the exact `.4c` vector, stage-loss split,
+  `.2` capability ledger, source coverage, residual debt, and hard gates into a reviewable trajectory snapshot
+  and deterministic task proposal without permitting semantic mutation.
+- In-flight uncommitted: none after the `.4c` commit. No background job runs.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

@@ -1,3 +1,17 @@
+### SPEC-TO-INTENT-ALIGNMENT.4c — the first reviewed result localizes the blocker upstream
+
+- Published the byte-pinned 12-document / 14-cell evaluator report. All six categories are `incomplete`; none is
+  `supported` or `unmeasurable`. Every source region and required-modality capture is found, but no cell has a
+  fully accounted canonical, residual, or non-applicable disposition.
+- Canonical IntentIR precision is 7/48 and recall is 7/40; provenance closure is 3/48, stage conservation or
+  residual is 21/54, residual actionability is 0/24, fabricated canonical facts total 41, and unexplained drops
+  total 33. The report retains every per-cell denominator and hard failure rather than blending them.
+- Ten cells first fail at SourceIR → EvidenceIR and four at EvidenceIR → SemanticIR. All 33 unexplained drops
+  occur at the first boundary, while the seven captured canonical facts remain 7/7 through both later stages.
+  This ranks upstream fact formation and explicit residualization ahead of speculative ISF/FSMGen expansion.
+- Added a generic repository-relative result runner and a full byte-currentness test. The result is reproduced
+  without changing selection, reviewed gold, extractor behavior, or any frozen source/stage artifact.
+
 ### SPEC-TO-INTENT-ALIGNMENT.4b — twelve reviewed verticals are locked without tuning
 
 - Added a deterministic reviewed dataset with 12 documents, exactly two per category and 14 bounded cells.

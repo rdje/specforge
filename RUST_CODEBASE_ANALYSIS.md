@@ -4,6 +4,21 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-11 — first reviewed result; `SPEC-TO-INTENT-ALIGNMENT.4c`)
+
+- A 35-line generic example loads any safe repository-relative vertical dataset and emits the evaluator's pretty
+  JSON report. The tracked 104,669-byte result is guarded by a full byte-comparison test, so documentation cannot
+  drift from scoring code or the frozen `.4b` inputs.
+- All six categories are `incomplete`. Exact aggregation finds 7/48 canonical precision, 7/40 recall, 3/48
+  provenance closure, 21/54 conservation-or-residual, 0/24 residual actionability, 41 fabricated canonical
+  facts, and 33 unexplained drops. Ten cells first fail at SourceIR → EvidenceIR; four at EvidenceIR → SemanticIR.
+- Canonical TP/FP/FN counts are identical in EvidenceIR, SemanticIR, and IntentIR. Thus later promotion preserves
+  the small typed subset; source-to-evidence fact formation and missing residuals are the measured constraint.
+  No correct, provenanced IntentIR value reaches an adapter-only failure, so this result does not demonstrate an
+  ISF/FSMGen expressiveness gap.
+- The evaluator is 1,814 lines; Rust source plus the result example totals 140,059 lines. Document-specific truth
+  remains fixture data, and neither extractor code nor the frozen source/four-stage artifacts changed.
+
 ## Session update (2026-08-11 — reviewed vertical population; `SPEC-TO-INTENT-ALIGNMENT.4b`)
 
 - The production evaluator remains generic; all 12 document-specific reviewed projections and gold cells live

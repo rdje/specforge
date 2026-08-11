@@ -153,6 +153,8 @@
   > how many retained typed transaction phases were false positives
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
   > how many reviewed documents are locked per source category
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > how many reviewed source regions and modalities were found
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > how many sentence-start signal descriptor phrases pollute the retained corpus
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
@@ -295,5 +297,3 @@
   > is an ISF transaction body ordered (yes — totally ordered, one clause ≈ one cycle; same-cycle concurrency only via a multi-pair drive block)
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > is any corpus document ingested at fewer pages than its source PDF
-- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
-  > is bar #5 (no silent drop of behavior/temporal) still honest after CORPUS-COVERAGE.0

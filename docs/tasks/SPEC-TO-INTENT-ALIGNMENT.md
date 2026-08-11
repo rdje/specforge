@@ -77,11 +77,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.3 — activate typed figure-region mining`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.4`
-  Status: `in_progress`
+  Status: `done`
   Goal: `prove trajectory with held-out source-to-IntentIR vertical slices and stage-loss accounting`
   Acceptance: `representative held-out PDFs have reviewed intent gold, per-stage survival/loss accounting, recall/precision/provenance/residual results, and an explicit conclusion about which remaining blocker is upstream extraction versus demonstrated ISF expressiveness`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `the frozen 12-document / 14-cell report publishes every exact score and first stage; focused evaluator/example checks, formatting, warning-deny Clippy, mdBook, Knowledge Map/catalog, live/currentness projections, all eight doctrines, and full CI with 1,834 passed / five ignored / zero failed all pass`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.4c — publish the first reviewed result`
   Children: `.4a`, `.4b`, `.4c`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.4a`
@@ -99,11 +99,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.4b — lock the reviewed vertical population`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.4c`
-  Status: `pending`
+  Status: `done`
   Goal: `publish exact held-out outcomes, stage-loss diagnosis, and the next measured blocker`
   Acceptance: `the deterministic snapshot publishes every denominator and category status, names all hard failures and first failing stages, and concludes whether the next constraint is upstream capture or a demonstrated downstream expressiveness gap`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `104,669-byte result snapshot at SHA-256 6b72f1fc…47eb; generic runner reproduces it byte-for-byte; 14 focused evaluator tests, formatting, all-target warning-deny Clippy, mdBook, projections, all doctrines, and full CI with 1,834 passed / five ignored / zero failed`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.4c — publish the first reviewed result`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.5`
   Status: `pending`
@@ -122,7 +122,7 @@ expressiveness as the bottleneck.
 | 4 | `SPEC-TO-INTENT-ALIGNMENT.3` | `done` | typed timing observations now cross a grounded, verified retained-PDF vertical path |
 | 5 | `SPEC-TO-INTENT-ALIGNMENT.4a` | `done` | strict portable evaluator and controlled-fault adequacy are verified; no category claim made |
 | 6 | `SPEC-TO-INTENT-ALIGNMENT.4b` | `done` | 12 portable reviewed verticals and 14 complete cells are frozen without tuning extraction |
-| 7 | `SPEC-TO-INTENT-ALIGNMENT.4c` | `pending` | publish exact stage losses and the evidence-ranked blocker |
+| 7 | `SPEC-TO-INTENT-ALIGNMENT.4c` | `done` | exact result localizes the constraint to source-to-evidence fact formation and residualization |
 | 8 | `SPEC-TO-INTENT-ALIGNMENT.5` | `pending` | convert measured outcomes into automatic, reviewable steering |
 
 ## Decisions
@@ -160,17 +160,20 @@ expressiveness as the bottleneck.
 - `2026-08-11`: a later stable span is not lowerable without a trigger/phase anchor. The current `Stable`
   obligation cannot represent a nonzero trace origin, so moving such a span to tick zero would change the
   evidence; retain it as an explicit residual even if the lane is otherwise clean.
+- `2026-08-11`: the frozen `.4c` result leaves all six categories incomplete. Ten cells first fail at SourceIR
+  → EvidenceIR and four at EvidenceIR → SemanticIR; none first fails at SemanticIR → IntentIR. Therefore the
+  measured next constraint is upstream fact formation and residualization, not a demonstrated ISF/FSMGen gap.
 
 ## Open Questions
 
-- Which representative PDFs form the first held-out category set for `.1` and `.4`?
 - Which currently omitted capability produces the largest held-out source-to-IntentIR gain and should therefore
-  be integrated first? `.4` supplies the evidence; `.2` makes each omission measurable in the meantime.
+  be integrated first? `.4` supplies the first frozen evidence; `.5` must rank it against the `.2` capability
+  ledger without hiding hard failures in one score.
 
 ## Blockers
 
-- None for `.4c`: the reviewed population, strict evaluator, and all pinned identities are available. `.4c`
-  must publish the persisted result without changing selection, gold, extraction, or the population fixture.
+- None for `.5`: the exact reviewed result, category contract, stage-loss split, capability ledger, and
+  automatic-steering research design are available. Semantic mutation must remain review-gated.
 
 ## Verification Log
 
@@ -207,6 +210,9 @@ expressiveness as the bottleneck.
 | `2026-08-11` | `.4b` frontier authority correction | `perl scripts/check_corpus_frontier_census.pl --self-test`; real corpus check/report | PASS: 13/13 lifecycle-partition mutations and real 57 cohort = 52 refreshed + five remaining; refreshed/remaining state no longer depends on a workstation path |
 | `2026-08-11` | `.4b` focused population/public checks | builder `--check`; `cargo test -p specforge --lib ir::source_to_intent_eval`; warning-deny Clippy; mdBook test/build; Knowledge Map at 215 facts / 1,597 questions; fact catalog at 204 cards; book/currentness/live-size/rolling-ledger checks | PASS: builder byte-stable; 13/13 evaluator tests; balanced/complete/portable/measurable population; no result snapshot or category conclusion published before `.4c` |
 | `2026-08-11` | `.4b` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines, formatting, warning-deny Clippy, 1,833 Rust tests passed / five ignored / zero failed, Rust docs, mdBook test/build, and final project-data-locality residue check |
+| `2026-08-11` | `.4c` persisted result | generic `cargo run --example source_to_intent_eval` over the frozen dataset, byte comparison, SHA-256/size census, and exact JSON aggregation | PASS: 104,669 bytes at `6b72f1fc…47eb`; all six categories incomplete; canonical TP/FP/FN = 7/41/33; 10 cells first fail SourceIR → EvidenceIR, four EvidenceIR → SemanticIR, none later |
+| `2026-08-11` | `.4c` focused code/public checks | 14 evaluator tests; byte regeneration; format check; all-target warning-deny Clippy; mdBook test/build; Knowledge Map 216 facts / 1,604 questions; fact catalog 205 cards; book/currentness/roadmap/live-size/rolling-ledger checks | PASS: exact snapshot and every public/durable conclusion agree; registered warning bands remain below rollover triggers |
+| `2026-08-11` | `.4c` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines, formatting, warning-deny Clippy, 1,834 Rust tests passed / five ignored / zero failed, Rust docs, mdBook test/build, and final project-data-locality residue check |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
 
@@ -296,6 +302,22 @@ expressiveness as the bottleneck.
 - [x] **LOCKSTEP** — dataset review notes, task frontier, public fixture boundary, Knowledge Map, live status,
   architecture record, and resume pointer agree that `.4b` freezes inputs and `.4c` owns product conclusions.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.4c`
+
+- [x] **REPRODUCE / MEASURE** — generate the complete pretty-JSON report from the frozen `.4b` dataset with the
+  generic evaluator runner; pin its identity and every category, cell, denominator, failure, and first stage.
+- [x] **ROOT CAUSE (WHY + WHERE)** — distinguish exact region/modality capture from typed canonical correctness,
+  residual disposition, provenance, and boundary conservation; rank the blocker from the first-failing-stage
+  evidence rather than from an aggregate score or adapter output count.
+- [x] **ADDRESSED (verified)** — publish a byte-current result snapshot plus exact public/retrieval summaries;
+  preserve selection, reviewed gold, extractor behavior, and every source/four-stage artifact unchanged.
+- [x] **NO REGRESSION** — the result regenerates byte-identically; the focused evaluator suite, formatting,
+  warning-deny Clippy, mdBook, projections, doctrines, and full repository CI pass.
+- [x] **GENERICITY (ADR 0006)** — the result runner accepts any safe repository-relative dataset and contains no
+  document, vendor, protocol, signal, category-outcome, or page-layout exception.
+- [x] **LOCKSTEP** — snapshot, evaluator test, task frontier, roadmap, public book, live docs, Knowledge Map,
+  architecture record, and resume pointer publish the same exact outcomes and upstream blocker conclusion.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -306,6 +328,7 @@ expressiveness as the bottleneck.
 | `SPEC-TO-INTENT-ALIGNMENT.3` | `SPEC-TO-INTENT-ALIGNMENT.3 — activate typed figure-region mining` | optional EvidenceIR region producer, source grounding, verifier gate, explicit availability metrics, reviewed retained-PDF vertical fixture, and required Rust-analysis rollover |
 | `SPEC-TO-INTENT-ALIGNMENT.4a` | `SPEC-TO-INTENT-ALIGNMENT.4a — build the vertical evaluation engine` | strict portable dataset/API, exact stage-loss rollups, and six controlled-fault classes; no held-out category claim |
 | `SPEC-TO-INTENT-ALIGNMENT.4b` | `SPEC-TO-INTENT-ALIGNMENT.4b — lock the reviewed vertical population` | 12 reviewed verticals / 14 cells, SSD source-authority repair, and path-neutral corpus-frontier lifecycle partition; `.4c` owns results |
+| `SPEC-TO-INTENT-ALIGNMENT.4c` | `SPEC-TO-INTENT-ALIGNMENT.4c — publish the first reviewed result` | byte-pinned exact result; all six categories incomplete; first failures rank upstream fact formation and residualization |
 
 ## Changelog
 
@@ -328,3 +351,6 @@ expressiveness as the bottleneck.
 - `2026-08-11`: Closed `.4b` with two reviewed documents per category, portable four-stage identities, complete
   bounded-scope gold, verified SSD source authority, and root-neutral corpus lifecycle accounting; frontier
   advances to `.4c`, publish exact outcomes without changing selection, gold, or extraction.
+- `2026-08-11`: Closed `.4c` and parent `.4` with the byte-pinned first reviewed result. All six categories are
+  incomplete; 10/14 cells first fail SourceIR → EvidenceIR and four EvidenceIR → SemanticIR. Frontier advances
+  to `.5`, compose these exact dimensions into reviewable automatic steering.

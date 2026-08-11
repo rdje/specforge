@@ -80,8 +80,10 @@ The first controller-specific instrument now ships as `ir::source_to_intent_eval
 review-locked, repository-relative dataset of bounded SourceIR/EvidenceIR/SemanticIR/IntentIR snapshots and
 emits deterministic per-cell, per-document, per-category, and global stage-loss results. Its mutation controls
 reject omission, fabrication, provenance loss, silent stage drops, missing modalities, and inactionable
-residuals. The first 12-document reviewed population is now locked without extractor tuning; its exact outcome
-snapshot is still unpublished, and the automatic controller does not yet run.
+residuals. The first 12-document reviewed population is locked without extractor tuning and its exact outcome
+is now published. All six categories are `incomplete`; 10/14 cells first fail at SourceIR → EvidenceIR and four
+at EvidenceIR → SemanticIR, while no cell first fails at SemanticIR → IntentIR. The automatic controller does
+not yet run.
 
 ## Current production-path caveat
 
@@ -115,9 +117,9 @@ The evaluator must prove it notices bad outcomes:
 The durable objective/priority decision, controller design, code-path audit, and this public trajectory contract
 are the documentation slice `SPEC-TO-INTENT-ALIGNMENT.0`. The per-category source-to-IntentIR acceptance contract
 is `.1`; the guarded canonical-path capability ledger is `.2`; typed visual activation is `.3`; the vertical
-evaluator foundation is `.4a`; `.4b` locks the balanced reviewed population; and `.4c` owns the result and
-blocker diagnosis. The versioned trajectory controller follows. Until those leaves close, automatic steering
-does not run.
+evaluator foundation is `.4a`; `.4b` locks the balanced reviewed population; and `.4c` publishes the exact
+incomplete result and upstream blocker diagnosis. The versioned trajectory controller is the remaining `.5`
+leaf. Until that leaf closes, automatic steering does not run.
 
 The detailed design and literature mapping live in
 [`docs/research/specforge-trajectory-control.md`](../../../research/specforge-trajectory-control.md).

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > what is KG-ISF-TRANSACTIONS.2m / the channel-membership lever
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > what is Lever E / KG-ISF-COMPLETENESS.1c agent-identity precision for the dense-prose doc class
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > what is MessageFieldConstraintRecord / ground_constraint_typed / GroundedConstraint
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > what is MessageFieldRecord / message_field_surface / message_fields manifest entry
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
@@ -223,6 +229,8 @@
   > what is the faithful fix for an over-width ISF value literal (1: recover the signal's grounded width across ALL interface signal_records + actor_ports; 2: re-render the literal as a width-cast W'<radix><digits> when value<2^W, else residualize — never truncate; ADR-0006 numeric only)
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
   > what is the first opt-in extractor for CORPUS-PATTERN-REUSE.3b.3 / activate-only consume
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > what is the first reviewed source-to-IntentIR evaluation result
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > what is the genuine lever for RISC-V CSR bit recall (a sharper VLM read for the existing recover-register-bits / register_bits.rs path — stronger/cloud model, upscaling, voting, tighter prompt — owned OUTSIDE the .4 ISF-lowering program; bound purely by VLM accuracy)
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
@@ -289,11 +297,3 @@
   > what is the standing per-doc quality report wired into converge/CI
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > what is the table-kind precision estimate and the flagged-mismatch list
-- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
-  > what is the transaction phase qualifier authority rule
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the validate intent transaction phase-membership surface (transactions_with_phase_membership + transaction_phase_groups metrics + intent_transaction_phase_membership finding)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the validate transaction inventory surface (intent_transaction_inventory metrics + finding)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the validate transaction-phase inventory (semantic_transaction_phase_inventory metric + finding)

@@ -83,10 +83,11 @@ SpecForge does not spend the present frontier anticipating one. [`SPEC-TO-INTENT
 owns the per-category IR contract, canonical-path integration, real multimodal producer, held-out vertical
 slices, and reviewable trajectory controller that make this ordering measurable (ADR 0033/0034). Its category
 contract, guarded per-run production-capability ledger, and typed timing-note → FigureRegion → verified
-ActorContract path now ship, together with the strict mutation-tested vertical evaluation engine and its
-balanced 12-document reviewed population. The next frontier is publishing the exact per-stage score and blocker
-diagnosis without extractor tuning; the real-PDF reviewed figure fixture proves wiring, not live-provider recall
-or category support.
+ActorContract path now ship, together with the strict mutation-tested vertical evaluation engine, its balanced
+12-document reviewed population, and the exact frozen result. All six categories are incomplete: 10/14 cells
+first fail at SourceIR → EvidenceIR and four at EvidenceIR → SemanticIR, with no first failure at SemanticIR →
+IntentIR. The measured frontier remains upstream fact formation and residualization, not an ISF/FSMGen
+expressiveness gap. The next leaf turns these separate exact dimensions into reviewable automatic steering.
 
 Five active program groups support that north star:
 
