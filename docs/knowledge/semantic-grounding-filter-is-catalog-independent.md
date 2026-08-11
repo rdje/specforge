@@ -54,5 +54,8 @@ adapter on `no signals declared in interface`, so no unfiltered record had ever 
 empty-catalog corpus documents carry **zero** interface signal records of any confidence — none has a merely
 low-confidence catalog — and their rejected subjects mix obvious noise (`DATASHEET`, `MUST`, `PCI`,
 `IMPLEMENTATION`, `PDF`) with real tokens truncated at an underscore or suffix (Wishbone `CLK`/`CYC`/`STB` for
-`CLK_I`/`CYC_O`/`STB_O`, AMBA DTI `TDATA`/`TKEEP`/`TLAST`, USB `ACK`/`ERDY`/`NRDY`). Related:
-[[dense-prose-false-signal-loop-reaches-isf]], [[axi-constraint-subject-must-be-declared]].
+`CLK_I`/`CYC_O`/`STB_O`, AMBA DTI `TDATA`/`TKEEP`/`TLAST`, USB `ACK`/`ERDY`/`NRDY`). Crossing those 33 with each
+document's own `document_class` separates the two cases without a name list: 17 `guide` (honest absence), 7
+`register`, 5 **`protocol`** — and a wire-level protocol specification with zero signals is a capture miss.
+`SIGNAL-CATALOG-CAPTURE-GAP` owns that. Related: [[dense-prose-false-signal-loop-reaches-isf]],
+[[axi-constraint-subject-must-be-declared]].

@@ -148,6 +148,7 @@ The author template is linked separately and is never classified as active work.
 | `ROADMAP-TASKTREE-COVERAGE` | `done` | every roadmap milestone task-tree-owned + audited + locked to code & mdBook | [open](tasks/ROADMAP-TASKTREE-COVERAGE.md) |
 | `ROOT-ROLLING-LEDGER-PRESSURE` | `done` | restore bounded headroom in current continuity ledgers | [open](tasks/ROOT-ROLLING-LEDGER-PRESSURE.md) |
 | `SEMANTIC-EMPTY-CATALOG-FILTER` | `done` | stop disabling the grounding filter on documents with no grounding | [open](tasks/SEMANTIC-EMPTY-CATALOG-FILTER.md) |
+| `SIGNAL-CATALOG-CAPTURE-GAP` | `active` | protocol specifications that declare no signals at all | [open](tasks/SIGNAL-CATALOG-CAPTURE-GAP.md) |
 | `SIGNAL-TABLE-COLUMNLESS-RECALL` | `done` | capture signals from column-less Signal\|Description tables | [open](tasks/SIGNAL-TABLE-COLUMNLESS-RECALL.md) |
 | `SIGNOFF-REMEDIATION` | `done` | Restore signoff quality at HEAD | [open](tasks/SIGNOFF-REMEDIATION.md) |
 | `SPEC-MINING-PROVENANCE` | `done` | name the discipline + a per-author adopt/defer ledger | [open](tasks/SPEC-MINING-PROVENANCE.md) |
