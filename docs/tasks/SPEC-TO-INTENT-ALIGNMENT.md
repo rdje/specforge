@@ -56,11 +56,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.0 — fix the upstream objective and trajectory control`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.1`
-  Status: `pending`
+  Status: `done`
   Goal: `define the per-document-category evidence-to-IntentIR content and completeness contract`
   Acceptance: `each supported category names required source modalities, typed IR surfaces, provenance and residual outcomes, measurable recall/precision floors, and honest non-applicable content without using ISF emission as the upstream completeness proxy`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `the versioned machine-readable contract covers all six categories and passes strict semantic validation; mdBook test/build, Knowledge Map derive/check, fact-card catalog, 66 focused completeness tests, all doctrine checks, and the full repository CI gate pass`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.1 — define source-to-IntentIR category contracts`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.2`
   Status: `pending`
@@ -95,8 +95,8 @@ expressiveness as the bottleneck.
 | Order | Leaf | Status | Why next |
 | --- | --- | --- | --- |
 | 1 | `SPEC-TO-INTENT-ALIGNMENT.0` | `done` | assessment, owner direction, and controller design are durable and verified |
-| 2 | `SPEC-TO-INTENT-ALIGNMENT.1` | `pending` | turn the north star into content-level acceptance criteria |
-| 3 | `SPEC-TO-INTENT-ALIGNMENT.2` | `pending` | prevent standalone capability from being counted as canonical-path capability |
+| 2 | `SPEC-TO-INTENT-ALIGNMENT.1` | `done` | six category-aware source-to-IntentIR contracts and strict honesty floors are durable |
+| 3 | `SPEC-TO-INTENT-ALIGNMENT.2` | `pending` | next: prevent standalone capability from being counted as canonical-path capability |
 | 4 | `SPEC-TO-INTENT-ALIGNMENT.3` | `pending` | replace multimodal architectural dormancy with real upstream input |
 | 5 | `SPEC-TO-INTENT-ALIGNMENT.4` | `pending` | measure whether the complete pipeline is actually converging |
 | 6 | `SPEC-TO-INTENT-ALIGNMENT.5` | `pending` | convert measured outcomes into automatic, reviewable steering |
@@ -115,6 +115,11 @@ expressiveness as the bottleneck.
 - `2026-08-11`: automatic steering will compose existing exact snapshots, gold evaluation, region accounting,
   closure invariants, recall estimates, and residuals into a versioned objective vector. It may gate exact
   invariants and propose the next owned task; it may not silently promote canonical semantic truth (ADR 0034).
+- `2026-08-11`: category completeness is judged per reviewed source meaning and required modality, with exact
+  precision/recall and conservation/provenance floors. A residual preserves loss honestly but does not satisfy
+  the typed-content requirement it replaces.
+- `2026-08-11`: non-applicability requires independent evidence that the source content is absent. A blocked
+  adapter or zero emitted ISF is never sufficient evidence that upstream capture is complete.
 
 ## Open Questions
 
@@ -124,7 +129,8 @@ expressiveness as the bottleneck.
 
 ## Blockers
 
-- None for `.0`.
+- None for `.2`. Optional local model runtimes were unavailable during startup diagnostics, but `.2` begins
+  with provider-free orchestration and code-path accounting.
 
 ## Verification Log
 
@@ -135,12 +141,18 @@ expressiveness as the bottleneck.
 | `2026-08-11` | `.0` literature grounding | Basili/Weiss GQM; Bifet/Gavaldà ADWIN; NIST CUSUM; Chen/Cheung/Yiu metamorphic testing; Jia/Harman mutation testing; Pnueli/Siegel/Singerman translation validation; Kephart/Chess autonomic control; Li/Chen/Yao Pareto evaluation | techniques mapped to objective traceability, drift detection, evaluator strength, per-run conservation, closed-loop planning, and non-scalar trade-off handling in `docs/research/specforge-trajectory-control.md` |
 | `2026-08-11` | `.0` focused documentation and projection gates | `mdbook test docs/book`; `mdbook build docs/book`; Knowledge Map derive/check; fact-card catalog check at 199 cards; task-tree catalog check at 138 trees; canonical collection catalog check at five indexes / 254 Markdown members; roadmap projection; book-current-truth; live-document-size | all pass; generated projections agree with their canonical inputs |
 | `2026-08-11` | `.0` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines, formatting, clippy with warnings denied, 1,810 tests passed / five ignored / zero failed, Rust docs, mdBook test/build, and final project-data-locality residue check |
+| `2026-08-11` | `.1` ownership and source audit | complete startup read of roadmap, codebase, and mdBook; Knowledge Map routing; audit of category classification, completeness instrumentation, and SourceIR/EvidenceIR/SemanticIR/IntentIR carriers | all changes owned before editing; six category contracts are grounded in current typed surfaces and explicitly mark the wire/register message-field and platform-topology carrier gaps incomplete |
+| `2026-08-11` | `.1` contract semantics | JSON parse plus schema assertions over `doctrine/spec_to_intent_category_contract.json` | PASS: exactly six categories; each declares required modalities, artifact families, and typed outcomes; reviewed precision/recall are 1.0; fabrication, unexplained-drop, and silent-conflict-loss floors are zero |
+| `2026-08-11` | `.1` focused implementation checks | `mdbook test docs/book`; `mdbook build docs/book`; Knowledge Map derive/check; fact-card catalog check at 200 cards; `cargo test -p specforge --lib -- completeness` | PASS: book and projections current; 66 completeness tests passed / zero failed |
+| `2026-08-11` | `.1` startup-artifact hygiene | remove the exact repo-local `generated/{source_ir,evidence_ir,semantic_ir,intent_ir,adapters/isf}/readme` smoke chain, prove no `readme` residue, then run `bash scripts/check_corpus_frontier.sh` | PASS: only the reproducible startup smoke output was removed; corpus identity restored to 57 cohort = 52 refreshed + five remaining |
+| `2026-08-11` | `.1` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines, formatting, clippy with warnings denied, 1,810 Rust tests passed / five ignored / zero failed, Rust docs, mdBook test/build, and post-producer project-data locality |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `SPEC-TO-INTENT-ALIGNMENT.0` | `SPEC-TO-INTENT-ALIGNMENT.0 — fix the upstream objective and trajectory control` | durable trajectory and priority alignment; no product-code or generated-IR mutation |
+| `SPEC-TO-INTENT-ALIGNMENT.1` | `SPEC-TO-INTENT-ALIGNMENT.1 — define source-to-IntentIR category contracts` | versioned category contract, book contract, and retrieval fact; no product-code or generated-IR mutation |
 
 ## Changelog
 
@@ -150,3 +162,5 @@ expressiveness as the bottleneck.
   the upstream-first sequence and reviewable multi-metric controller.
 - `2026-08-11`: Closed `.0` after focused projection checks and the full repository gate; frontier advances
   to `.1`, the per-document-category EvidenceIR-to-IntentIR content contract.
+- `2026-08-11`: Closed `.1` with strict, source-grounded acceptance for all six categories; frontier advances
+  to `.2`, canonical production-workflow capability accounting.

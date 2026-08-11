@@ -7,6 +7,11 @@ while important source intent was never captured.
 The project therefore treats trajectory as a source-understanding control problem. The accepted design is
 tracked by `SPEC-TO-INTENT-ALIGNMENT`; the runtime controller is **not shipped yet**.
 
+The controller's reviewed input boundary is the
+[Source-to-Intent Completeness Contract](../source-to-intent-contract.md). It fixes category-specific modalities,
+canonical semantic families, strict held-gold floors, and non-applicability rules before snapshots or task
+ranking can be implemented.
+
 ## What “on track” means
 
 Trajectory is evaluated as a vector rather than one progress score:
@@ -95,11 +100,11 @@ The evaluator must prove it notices bad outcomes:
 
 ## Implementation and verification status
 
-The durable objective/priority decision, controller design, code-path audit, and this public contract are the
-documentation slice `SPEC-TO-INTENT-ALIGNMENT.0`. Implementation is decomposed into per-category contracts,
-canonical-path capability accounting, real multimodal production, held-out vertical slices, and finally the
-versioned trajectory controller. Until those leaves close, the chapter describes an accepted direction—not a
-claim that automatic steering already runs.
+The durable objective/priority decision, controller design, code-path audit, and this public trajectory contract
+are the documentation slice `SPEC-TO-INTENT-ALIGNMENT.0`. The per-category source-to-IntentIR acceptance contract
+is `.1`. Implementation remains decomposed into canonical-path capability accounting, real multimodal
+production, held-out vertical slices, and finally the versioned trajectory controller. Until those leaves close,
+the chapter describes an accepted direction—not a claim that automatic steering already runs.
 
 The detailed design and literature mapping live in
 [`docs/research/specforge-trajectory-control.md`](../../../research/specforge-trajectory-control.md).

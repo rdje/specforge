@@ -1,3 +1,18 @@
+### SPEC-TO-INTENT-ALIGNMENT.1 — source meaning now has category-aware acceptance
+
+- Added `doctrine/spec_to_intent_category_contract.json`, a versioned contract for all six document categories
+  from SourceIR through IntentIR. Every category declares required modalities, artifact families, typed
+  destinations, provenance/conflict outcomes, and honest non-applicability rules.
+- Reviewed gold is exact per document, family, and modality: precision and recall are 1.0; source-region
+  disposition, required-modality accounting, canonical provenance closure, and stage conservation are 1.0;
+  fabricated facts, unexplained drops, silent conflict removal, and forced-category errors are zero.
+- Residuals make loss inspectable but do not satisfy the missing typed-content requirement. Zero ISF output or
+  an adapter block cannot prove upstream completeness. The current message-field and platform-topology carrier
+  gaps are named incomplete rather than hidden by aggregate stage counts.
+- Published the contract and category matrix in the mdBook and Knowledge Map. JSON semantics, 66 focused
+  completeness tests, book test/build, projections, doctrines, and full CI pass. No product code or generated
+  corpus artifact changed. Frontier advances to canonical-workflow capability accounting in `.2`.
+
 ### SEMANTIC-EMPTY-CATALOG-FILTER — one grounding predicate for every document, rejected records demoted
 
 - Both `SemanticIR` grounding filters were wrapped in the same guard: if the document declares no signals,

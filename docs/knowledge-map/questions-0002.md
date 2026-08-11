@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > does an empty declared-signal catalog disable the SemanticIR grounding filter
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > does canonical SWD EvidenceIR contain interface edge timing
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
@@ -296,5 +298,3 @@
   > how do dword-relative page fragments chain
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
   > how do packet/flit protocols (CHI-class) declare message fields vs signals
-- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
-  > how do you audit registers/signals against the table image with the VLM

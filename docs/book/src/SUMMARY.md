@@ -3,6 +3,7 @@
 - [Introduction](introduction.md)
 - [Architecture Rationale](architecture-rationale.md)
 - [Chip-Spec Document Categories](document-categories.md)
+- [Source-to-Intent Completeness Contract](source-to-intent-contract.md)
 - [Getting Started](getting-started.md)
 - [Runtime And Doctor](runtime-and-doctor.md)
 - [Commands](commands/overview.md)

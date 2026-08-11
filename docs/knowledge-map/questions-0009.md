@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > which corpus documents are category 4 CPU-ISA (exactly 2: 1_0_risc_v_debug_specification and 1_0_2025_03_12_risc_v_advanced_interrupt_architecture; the RISC-V IOMMU doc is category 2)
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > which corpus documents are real signal-catalog capture misses
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > which corpus stages are measurable without re-ingesting a document
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > which docs exhibit the dense-prose actor explosion (is it AMBA or non-AMBA)
+- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
+  > which docs fail to ingest (giants / timeouts)
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > which docs gain a register reset in the .isf (only the 3 CoreSight SoC-600 TRMs — 199/127/120 V>0 resets; the register-heavy non-wire docs)
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > which docs have the ISF value-width defect (4 docs / 13 clauses: DTI ATST ×3 [mis-attribution], AXI+ACE ARTAGOP/BTAGMATCH ×6 [width-2 under-emitted, masked by (port expr)], AXI-gold AWCMO ×1 [parametric AWCMO_WIDTH], trace-bus ATID ×3 [width-7 under-emitted — the clean lever])
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > which docs need a re-ingest (Docling + source PDF) vs a cheap stage rebuild
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
@@ -45,6 +59,8 @@
   > which root rolling ledger is currently above its rollover signal
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > which source modalities and IntentIR surfaces are required per chip-spec category
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > which stale roadmap statuses were found before migration
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
@@ -282,19 +298,3 @@
   > why do FPs appear in eval that the current code does not produce
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > why do GIC/SMMU/CoreSight architecture-spec registers gain fields from section headings
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > why do I2C SDA USDA and SDAH remain signals
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > why do I2C/CCIX/USB4 have 0 table signals and how are they recovered
-- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
-  > why do NVMe/CCIX/DTI register-field obligations not lower to the .isf
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > why do conditional_rules lower to .isf only partially
-- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
-  > why do environment-lock tests cascade with PoisonError
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > why do four corpus documents have no document_class
-- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
-  > why do generated IR files contain the old SpecForge repository path
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > why do i / its stay out of the non-actor function-word list (GIC ITS, the letter I)

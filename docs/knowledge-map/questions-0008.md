@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what phases does each wire doc recognise (APB setup/access, AHB/AXI address/data, SWD address/data/response/turnaround)
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > what precision and recall floors must a supported document category meet
+- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
+  > what prevents one Knowledge Map question from pointing to multiple fact cards
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > what prevents root documentation from regrowing into a second manual
+- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
+  > what prevents the actor direction and extract-contracts book claims from drifting
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > what prevents the word while in a license notice from becoming a gate
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > what produces the backslash in an EvidenceIR statement text
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
@@ -50,6 +62,8 @@
   > when is a single letter a field name
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > when is the purpose category HIGH vs LOW confidence (only clean wire shape + self-declared guide are HIGH; everything else LOW + explicit residual)
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > when may a semantic family or source modality be marked non-applicable
 - [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
   > when should SpecForge request a new ISF or FSMGen construct
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
@@ -284,17 +298,3 @@
   > which corpus docs declare fields with a Field-titled column
 - [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
   > which corpus docs still yield nothing (the VLM frontier)
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > which corpus documents are category 4 CPU-ISA (exactly 2: 1_0_risc_v_debug_specification and 1_0_2025_03_12_risc_v_advanced_interrupt_architecture; the RISC-V IOMMU doc is category 2)
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > which corpus documents are real signal-catalog capture misses
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > which corpus stages are measurable without re-ingesting a document
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > which docs exhibit the dense-prose actor explosion (is it AMBA or non-AMBA)
-- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
-  > which docs fail to ingest (giants / timeouts)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > which docs gain a register reset in the .isf (only the 3 CoreSight SoC-600 TRMs — 199/127/120 V>0 resets; the register-heavy non-wire docs)
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > which docs have the ISF value-width defect (4 docs / 13 clauses: DTI ATST ×3 [mis-attribution], AXI+ACE ARTAGOP/BTAGMATCH ×6 [width-2 under-emitted, masked by (port expr)], AXI-gold AWCMO ×1 [parametric AWCMO_WIDTH], trace-bus ATID ×3 [width-7 under-emitted — the clean lever])

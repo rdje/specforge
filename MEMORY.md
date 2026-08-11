@@ -17,23 +17,20 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.1`; `.0` is complete. Tracking-only:
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.2`; `.0` and `.1` are complete. Tracking-only:
   `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: the specification-to-executable-intent endpoint is unchanged, but the current program
-  constraint is faithful PDF content population through SourceIR, EvidenceIR, SemanticIR, and IntentIR — not
-  speculative ISF expansion (ADR 0033). The architecture is directionally convergent but the product is not
-  semantically complete: all four persisted IR stages have 78 artifacts and only 44 emit `.isf`, while the
-  default `converge` path does not directly run every production extractor and the typed `FigureRegion`
-  surface still has no real producer. ADR 0034 and `docs/research/specforge-trajectory-control.md` specify a
-  reviewable, non-scalar convergence controller; no runtime controller ships yet.
-- Next action: define `.1`'s machine-readable, per-document-category EvidenceIR-to-IntentIR content contract,
-  including required modalities, typed surfaces, provenance/residual outcomes, and measurable recall and
-  precision floors. Use it to rank the already-owned Wishbone heading capture (`SIGNAL-CATALOG-CAPTURE-GAP.2`)
-  and normalized Markdown identifier loss (`.4`) before composing the canonical workflow in `.2`.
-- In-flight uncommitted: none after the `.0` commit. No background job runs.
-- Blockers: **`CHANGES.md` rollover is mandatory before its next append.** At 1,598 lines it is 88.8% of its
-  1,800-line health target; the 90% trigger lands at 1,620, so any entry of ~22 lines or more fails
-  `LIVE-DOC-SIZE` (measured: a 31-line entry gave 1,629 = 90.5%). Follow the `COMMIT.md` rolling-ledger
-  protocol. `LIVE_ACHIEVEMENT_STATUS.md` is second at 70 of 80 records, rollover at 72
-  (`STATUS-LEDGER-ROLLOVER`). Avoid further append-only growth in `RUST_CODEBASE_ANALYSIS.md`, now near its
-  90% health trigger. The user-owned `.claude/settings.json` is untouched.
+- Current state: `doctrine/spec_to_intent_category_contract.json` now defines six category-aware,
+  source-to-IntentIR contracts with exact reviewed precision/recall, provenance, conservation, residual, and
+  anti-fabrication floors. Residuals preserve loss but do not count as complete typed capture; non-applicability
+  needs independent source evidence. Message-field transport and platform-topology/clock-domain carrier gaps
+  are explicitly incomplete. No category is retroactively claimed supported; `.4` will decide support from
+  held-out documents. ISF remains a separate, later boundary (ADR 0033).
+- Next action: execute `.2` by auditing every production extractor against the canonical workflow, then make
+  `converge` invoke, deliberately schedule, or explicitly report omission of contract extraction, signal
+  resolution, register recovery, NLI enforcement, and every other production capability. Pin the accounting
+  with tests so standalone capability cannot be reported as default end-to-end delivery.
+- In-flight uncommitted: none after the `.1` commit. No background job runs.
+- Blockers: none for `.2`. Optional Ollama and LM Studio endpoints were unavailable during startup `doctor
+  --strict`; provider-free orchestration work is not blocked. Rolling-ledger pressure is derived by
+  `perl scripts/check_rolling_ledger_protocol.pl --report`; the current report passes. The user-owned
+  `.claude/settings.json` is untouched.

@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
+  > what is corpus refresh 47 and why is its adapter honestly blocked
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > what is corpus refresh 49
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > what is corpus_cluster / document_fingerprint / cluster_documents / DocumentCluster
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > what is declared_signal_complete_gold_precision
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
   > what is dedup_constraints / its canonical key
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
@@ -237,6 +245,8 @@
   > what is the shipped ISF field-structured storage grammar ((storage (var NAME (width N) [(reset V)] (fields (field NAME (bits HI LO) [(access ...)] [(reset V)] [(enum ...)]))))) — metadata-only/schedule-safe, report key inferred_storage[].fields[])
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > what is the size-immunity binding constraint for source_ir.json at extreme page counts
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > what is the source-to-IntentIR completeness contract
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > what is the standing per-doc quality report wired into converge/CI
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
@@ -288,13 +298,3 @@
   > what owns the SWD EvidenceIR to IntentIR projection gap
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
   > what parts of the literature are deferred or flagged as future work
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what phases does each wire doc recognise (APB setup/access, AHB/AXI address/data, SWD address/data/response/turnaround)
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > what prevents one Knowledge Map question from pointing to multiple fact cards
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > what prevents root documentation from regrowing into a second manual
-- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
-  > what prevents the actor direction and extract-contracts book claims from drifting
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > what prevents the word while in a license notice from becoming a gate

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > what carries register bit-fields in SpecForge (RegisterFieldRecord in source.rs:414; IntentIr.register_records clone at intent.rs:193 — full metadata survives to IntentIR)
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > what carries transaction membership faithfully instead of the body (IntentIR metadata: ports / phase_membership / channel_membership)
 - [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
   > what causes actor_signal_relations / extracted_statements to differ run-to-run
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
@@ -160,6 +164,8 @@
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > what gates the corpus refresh frontier / what is the CORPUS-FRONTIER doctrine (scripts/check_corpus_frontier.sh -> scripts/check_corpus_frontier_census.pl against doctrine/corpus_frontier/census.json, gate-tier, eighth registered doctrine. Four checks: IDENTITY derived cohort/refreshed equal the declared expected; MEMBERSHIP every declared-remaining key exists, is in the
   > cohort, and retains no bundle; OMISSION no cohort member outside the declared set still has a retired-root path and no bundle; PROSE the root task file states the same counts. Self-test 10/10, 52 ms for the whole corpus, skips loudly when generated/ is absent)
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > what global provenance and stage-conservation gates apply before executable lowering
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
   > what grounded content survives the Cortex-A76 optimization guide refresh
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
@@ -202,6 +208,8 @@
   > what happens when SemanticIR has no authoritative signal names
 - [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
   > what happens when a roadmap section grows too long
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > what happens when document intent category is unresolved
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > what happens when the NLI provider is down
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
@@ -290,11 +298,3 @@
   > what is content-based name-column detection / rotation offset remapping
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > what is continuation_inherited_table_heads and what grounds the join
-- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
-  > what is corpus refresh 47 and why is its adapter honestly blocked
-- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
-  > what is corpus refresh 49
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > what is corpus_cluster / document_fingerprint / cluster_documents / DocumentCluster
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > what is declared_signal_complete_gold_precision

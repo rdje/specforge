@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.1 (`2026-08-11`) — completeness is per source meaning, not per output
+
+An artifact-count or emitted-ISF measure cannot distinguish a faithful non-target document from a document
+whose tables, figures, message fields, topology, or behavior disappeared before IntentIR. The acceptance unit is
+therefore one reviewed source meaning within one required modality and artifact family. Each applicable gold
+cell must arrive at its typed IntentIR destination with canonical provenance; every source region and every
+stage transition must end in typed content, an actionable residual, or a reviewed non-applicability decision.
+
+The floors are deliberately exact because these are support claims, not noisy operational dashboards: reviewed
+precision and recall are 1.0, conservation/provenance/accounting ratios are 1.0, and fabricated facts,
+unexplained drops, silently removed conflicts, and forced category classifications are zero. A residual is an
+honest loss record, not recovered content. Non-applicability needs evidence that the source content is absent;
+an adapter block or empty target is never that evidence.
+
+The contract exposes two present carrier limits without pretending to solve them. Wire/register message-field
+records and constraints stop before a typed IntentIR carrier, while platform specifications lack a complete
+clock-domain/topology path. Those cells remain incomplete until a later owned slice adds and verifies the
+carrier. Category support itself remains unclaimed until `.4` passes at least two held-out documents per
+category; `.2` first closes the canonical-workflow capability-accounting gap.
+
 ## CORPUS-COVERAGE.2.48 (`2026-08-10`) — physical timing does not imply a digital port graph
 
 The stale OpenCAPI chain looked renderable because four measurement/glossary acronyms (`CDR`, `DDJ`, `DL`, and

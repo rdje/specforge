@@ -34,6 +34,10 @@ reach around `SemanticIR` to reinterpret raw source text or allow an adapter to 
 backward into the canonical model. Incomplete grounded intent is acceptable. Fabricated completeness
 is not.
 
+The category-aware measurement of that boundary lives in the
+[Source-to-Intent Completeness Contract](../source-to-intent-contract.md). It requires every applicable
+source-grounded fact to survive into `IntentIR` or gain a source-linked residual, with no ISF-emission proxy.
+
 ## Residual decisions
 
 Residual decisions are first-class product data. Each unresolved packet must preserve enough

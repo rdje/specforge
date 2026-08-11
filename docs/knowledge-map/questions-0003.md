@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
+  > how do you audit registers/signals against the table image with the VLM
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > how does .10g differ from .10f (register vs message routing)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
@@ -295,5 +297,3 @@
   > how is the corpus distributed across the document intent categories
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
   > how is the ingest DISK footprint bounded for very large PDFs
-- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
-  > how is the live-document containment checker tested

@@ -1,0 +1,449 @@
+{
+  "schema_version": 1,
+  "contract_id": "spec-to-intent-category-contract",
+  "contract_version": "1.0.0",
+  "owner": "SPEC-TO-INTENT-ALIGNMENT.1",
+  "objective": "Measure whether materially relevant, source-grounded chip-spec meaning reaches canonical IntentIR without fabrication, silent loss, or ISF emission being used as an upstream-completeness proxy.",
+  "scope": {
+    "source_boundary": "SourceIR",
+    "canonical_boundary": "IntentIR",
+    "stages": [
+      "SourceIR",
+      "EvidenceIR",
+      "SemanticIR",
+      "IntentIR"
+    ],
+    "lowering_boundary": "ISF is measured separately and only after this upstream contract passes.",
+    "category_authority": "reviewed dominant-purpose label; an automatic unresolved result never becomes a forced category"
+  },
+  "support_claim": {
+    "minimum_held_out_documents_per_category": 2,
+    "gold_rule": "Each applicable family and present modality needs reviewed, exhaustive positive and negative gold for the stated document scope.",
+    "sparse_rule": "A category/family with an insufficient denominator is unmeasurable, not passing.",
+    "aggregation_rule": "Every floor applies per document, per semantic family, and per present modality before any category roll-up; macro or blended averages cannot hide a failing cell.",
+    "current_claim": "This contract defines the acceptance boundary. SPEC-TO-INTENT-ALIGNMENT.4 must establish which categories currently satisfy it."
+  },
+  "global_floors": [
+    {
+      "metric": "reviewed_gold_precision",
+      "operator": "equal",
+      "threshold": 1.0,
+      "unit": "fraction",
+      "denominator": "all canonical facts for the applicable held-out document/family/modality cell"
+    },
+    {
+      "metric": "reviewed_gold_recall",
+      "operator": "equal",
+      "threshold": 1.0,
+      "unit": "fraction",
+      "denominator": "all reviewed gold facts for the applicable held-out document/family/modality cell"
+    },
+    {
+      "metric": "intent_bearing_source_region_disposition",
+      "operator": "equal",
+      "threshold": 1.0,
+      "unit": "fraction",
+      "denominator": "all source regions reviewed as intent-bearing; each must link to a canonical fact or a source-linked residual"
+    },
+    {
+      "metric": "required_modality_accounting",
+      "operator": "equal",
+      "threshold": 1.0,
+      "unit": "fraction",
+      "denominator": "all category-required modalities present according to an independent source-presence oracle"
+    },
+    {
+      "metric": "canonical_provenance_closure",
+      "operator": "equal",
+      "threshold": 1.0,
+      "unit": "fraction",
+      "denominator": "all promoted IntentIR facts and typed conflict/residual packets"
+    },
+    {
+      "metric": "stage_conservation_or_residual",
+      "operator": "equal",
+      "threshold": 1.0,
+      "unit": "fraction",
+      "denominator": "all source-grounded facts entering each SourceIR-to-EvidenceIR, EvidenceIR-to-SemanticIR, and SemanticIR-to-IntentIR boundary"
+    },
+    {
+      "metric": "residual_actionability",
+      "operator": "equal",
+      "threshold": 1.0,
+      "unit": "fraction",
+      "denominator": "all residuals; each must name source provenance, reason, first failing stage, and review or replay route"
+    },
+    {
+      "metric": "fabricated_canonical_facts",
+      "operator": "equal",
+      "threshold": 0,
+      "unit": "count"
+    },
+    {
+      "metric": "unexplained_stage_drops",
+      "operator": "equal",
+      "threshold": 0,
+      "unit": "count"
+    },
+    {
+      "metric": "silently_removed_conflicts",
+      "operator": "equal",
+      "threshold": 0,
+      "unit": "count"
+    },
+    {
+      "metric": "high_confidence_category_precision",
+      "operator": "equal",
+      "threshold": 1.0,
+      "unit": "fraction",
+      "denominator": "all high-confidence category claims in the reviewed held-out population"
+    },
+    {
+      "metric": "forced_category_errors",
+      "operator": "equal",
+      "threshold": 0,
+      "unit": "count"
+    }
+  ],
+  "universal_intent_outcomes": [
+    {
+      "family": "provenance",
+      "intent_ir_surfaces": [
+        "record-specific supporting ids",
+        "residual_decisions"
+      ],
+      "requirement": "Every promoted fact and every withheld fact remains traceable to source evidence."
+    },
+    {
+      "family": "conflict_and_uncertainty",
+      "intent_ir_surfaces": [
+        "interface_signal_conflicts",
+        "signal_connectivity_conflicts",
+        "signal_polarity_conflicts",
+        "signal_semantic_conflicts",
+        "temporal_conflicts",
+        "assumptions",
+        "residual_decisions"
+      ],
+      "requirement": "Applicable disagreement and uncertainty remain typed and source-linked; absence is non-applicable only when the reviewed source oracle found none."
+    }
+  ],
+  "categories": [
+    {
+      "taxonomy_id": 1,
+      "id": "wire-protocol",
+      "purpose": "wire-level bus, interconnect, or serial protocol",
+      "executable_target": "buildable",
+      "required_source_modalities": [
+        "normative and definitional prose",
+        "signal/interface, timing, encoding, frame, and field tables when present",
+        "section and list structure",
+        "captions and block/interface figures when present",
+        "timing and state diagrams when present"
+      ],
+      "semantic_families": [
+        {
+          "family": "interface_inventory_and_shape",
+          "intent_ir_surfaces": [
+            "interfaces",
+            "actor_ports",
+            "signal_polarities"
+          ],
+          "required_when": "the source declares boundary signals or pins"
+        },
+        {
+          "family": "actors_and_connectivity",
+          "intent_ir_surfaces": [
+            "actors",
+            "actor_signal_relations",
+            "signal_connectivity"
+          ],
+          "required_when": "the source names producer, consumer, initiator, target, controller, or endpoint responsibilities"
+        },
+        {
+          "family": "normative_and_temporal_behavior",
+          "intent_ir_surfaces": [
+            "signal_constraints",
+            "conditional_rules",
+            "temporal_rules",
+            "actor_contracts",
+            "fidelity_findings"
+          ],
+          "required_when": "the source states values, stability, ordering, latency, sampling, or handshake obligations"
+        },
+        {
+          "family": "protocol_structure_and_state",
+          "intent_ir_surfaces": [
+            "transactions",
+            "protocol_graph",
+            "regular_states",
+            "state_transitions",
+            "control_blocks"
+          ],
+          "required_when": "the source names transactions, phases, handshakes, states, transitions, or executable control"
+        },
+        {
+          "family": "serial_protocol_observations",
+          "intent_ir_surfaces": [
+            "serial_frame_fields",
+            "swd_operations",
+            "protocol_states",
+            "interface_edge_timings"
+          ],
+          "required_when": "the source defines a serialized frame, response branch, protocol state, or interface edge"
+        },
+        {
+          "family": "symbols_and_secondary_storage",
+          "intent_ir_surfaces": [
+            "symbol_definitions",
+            "register_records"
+          ],
+          "required_when": "the protocol contains encodings or register-backed secondary content"
+        },
+        {
+          "family": "message_and_flit_structure",
+          "evidence_ir_surfaces": [
+            "message_field_records",
+            "message_field_constraints"
+          ],
+          "intent_ir_surfaces": [],
+          "required_when": "the source defines packet, flit, header, or message fields",
+          "current_outcome": "known carrier gap; each fact requires a source-linked residual until a typed IntentIR carrier exists, and the category cannot pass this family"
+        }
+      ]
+    },
+    {
+      "taxonomy_id": 2,
+      "id": "register-ip",
+      "purpose": "programmable register, CSR, or memory-mapped IP contract",
+      "executable_target": "buildable",
+      "required_source_modalities": [
+        "register and field tables",
+        "bit-layout figures and geometric labels when present",
+        "register/field description prose",
+        "address, reset, access, and encoding tables",
+        "section structure that scopes register blocks"
+      ],
+      "semantic_families": [
+        {
+          "family": "register_map",
+          "intent_ir_surfaces": [
+            "register_records",
+            "register_records[].fields"
+          ],
+          "required_when": "the source declares registers, CSRs, fields, offsets, or bit ranges"
+        },
+        {
+          "family": "field_semantics",
+          "intent_ir_surfaces": [
+            "register_records[].fields.access_type",
+            "register_records[].fields.reset_value",
+            "register_records[].fields.enumerated_values",
+            "symbol_definitions",
+            "signal_constraints",
+            "actor_contracts"
+          ],
+          "required_when": "the source states access, reset, enumeration, side effect, ordering, or update behavior"
+        },
+        {
+          "family": "programming_structures",
+          "evidence_ir_surfaces": [
+            "message_field_records",
+            "message_field_constraints"
+          ],
+          "intent_ir_surfaces": [],
+          "required_when": "the source defines descriptors, queues, page tables, contexts, command layouts, or other packed records",
+          "current_outcome": "known carrier gap; source-linked residual required and no completeness claim permitted"
+        },
+        {
+          "family": "hardware_interface",
+          "intent_ir_surfaces": [
+            "interfaces",
+            "actor_ports",
+            "actor_signal_relations"
+          ],
+          "required_when": "the document itself specifies a hardware boundary rather than only a software-visible programming model"
+        }
+      ]
+    },
+    {
+      "taxonomy_id": 3,
+      "id": "platform-system-ip",
+      "purpose": "platform, subsystem, topology, and integration contract",
+      "executable_target": "buildable_after_faithful_capture",
+      "required_source_modalities": [
+        "component and integration prose",
+        "block, connectivity, clock, reset, and topology diagrams plus captions",
+        "interface and distribution tables",
+        "register maps and bit layouts when present",
+        "section hierarchy that scopes components and domains"
+      ],
+      "semantic_families": [
+        {
+          "family": "components_and_boundaries",
+          "intent_ir_surfaces": [
+            "actors",
+            "explicit_modules",
+            "explicit_tops",
+            "interfaces",
+            "actor_ports"
+          ],
+          "required_when": "the source defines components, blocks, instances, or external boundaries"
+        },
+        {
+          "family": "integration_connectivity",
+          "intent_ir_surfaces": [
+            "actor_signal_relations",
+            "signal_connectivity",
+            "infrastructure_signals",
+            "system_contract"
+          ],
+          "required_when": "the source defines component links, clock/reset distribution, or integration ownership"
+        },
+        {
+          "family": "component_topology_and_domains",
+          "intent_ir_surfaces": [],
+          "required_when": "the source defines static component topology, hierarchy, clock domains, or asynchronous-domain relationships",
+          "current_outcome": "known ontology/carrier gap beyond the sparse signal-connectivity view; source-linked residual required and no completeness claim permitted"
+        },
+        {
+          "family": "programming_model_and_behavior",
+          "intent_ir_surfaces": [
+            "register_records",
+            "symbol_definitions",
+            "signal_constraints",
+            "temporal_rules",
+            "actor_contracts"
+          ],
+          "required_when": "the platform document includes register-backed configuration or behavioral integration obligations"
+        }
+      ]
+    },
+    {
+      "taxonomy_id": 4,
+      "id": "cpu-isa",
+      "purpose": "CPU ISA or privileged architecture with a hardware-realization subset",
+      "executable_target": "buildable_subset",
+      "required_source_modalities": [
+        "CSR and register tables",
+        "register bit-layout figures",
+        "encoding tables and diagrams",
+        "normative state and ordering prose",
+        "exception, privilege, and state diagrams when present"
+      ],
+      "semantic_families": [
+        {
+          "family": "hardware_csrs_and_registers",
+          "intent_ir_surfaces": [
+            "register_records",
+            "register_records[].fields",
+            "symbol_definitions"
+          ],
+          "required_when": "the source defines hardware CSRs, debug registers, fields, encodings, access, or reset behavior"
+        },
+        {
+          "family": "hardware_control_obligations",
+          "intent_ir_surfaces": [
+            "signal_constraints",
+            "conditional_rules",
+            "temporal_rules",
+            "control_blocks",
+            "actor_contracts"
+          ],
+          "required_when": "the source states implementation-relevant hardware behavior rather than software semantics alone"
+        },
+        {
+          "family": "software_architecture_semantics",
+          "intent_ir_surfaces": [],
+          "required_when": "the source defines instruction semantics, privilege policy, exceptions, or abstract memory ordering without a hardware boundary contract",
+          "current_outcome": "honest non-applicable content for executable IntentIR; every region still requires an explicit non-applicable disposition and must not mint fake hardware behavior"
+        }
+      ]
+    },
+    {
+      "taxonomy_id": 5,
+      "id": "physical-link",
+      "purpose": "physical, electrical, signaling, mechanical, or link-layer specification",
+      "executable_target": "honest_non_target_by_default",
+      "required_source_modalities": [
+        "electrical and timing tables",
+        "pin and lane tables",
+        "eye, waveform, package, mechanical, and link-training figures when present",
+        "normative physical/electrical prose",
+        "captions and units"
+      ],
+      "semantic_families": [
+        {
+          "family": "digital_boundary_subset",
+          "intent_ir_surfaces": [
+            "interfaces",
+            "actor_ports",
+            "timing_constraints",
+            "signal_constraints"
+          ],
+          "required_when": "the source explicitly defines a digital pin/interface or implementation-relevant digital timing contract"
+        },
+        {
+          "family": "physical_electrical_and_mechanical_content",
+          "intent_ir_surfaces": [],
+          "required_when": "the content is physical, electrical, analog, package, or mechanical rather than executable digital intent",
+          "current_outcome": "honest non-applicable disposition or source-linked unsupported residual; no fabricated wire behavior"
+        }
+      ],
+      "additional_floor": {
+        "metric": "false_executable_intent_facts",
+        "operator": "equal",
+        "threshold": 0
+      }
+    },
+    {
+      "taxonomy_id": 6,
+      "id": "methodology-guide",
+      "purpose": "methodology, language, EDA standard, overview, or user guide rather than a chip contract",
+      "executable_target": "honest_non_target",
+      "required_source_modalities": [
+        "front matter and section structure",
+        "prose, tables, and figures sufficient to distinguish guidance from an embedded hardware contract"
+      ],
+      "semantic_families": [
+        {
+          "family": "non_contract_disposition",
+          "intent_ir_surfaces": [
+            "residual_decisions"
+          ],
+          "required_when": "the reviewed source is guidance or methodology rather than a hardware contract"
+        },
+        {
+          "family": "embedded_hardware_contract",
+          "intent_ir_surfaces": [
+            "the applicable category 1-5 surfaces"
+          ],
+          "required_when": "a bounded region actually defines a hardware contract; it must be reviewed under the applicable category contract rather than ignored because the document is mostly a guide"
+        }
+      ],
+      "additional_floor": {
+        "metric": "false_executable_intent_facts",
+        "operator": "equal",
+        "threshold": 0
+      }
+    }
+  ],
+  "unresolved_category_policy": {
+    "contract_pass_allowed": false,
+    "requirements": [
+      "Preserve the category decision as low-confidence with an explicit residual.",
+      "Apply the union of plausible category source-modality checks until review resolves the dominant purpose.",
+      "Do not use low output volume, blocked ISF emission, or an empty typed surface as evidence that content is non-applicable."
+    ]
+  },
+  "non_applicable_policy": {
+    "allowed_only_when": "An independent source-presence review establishes that the semantic family or modality is absent or outside executable digital intent.",
+    "required_record": "category, family/modality, source scope, reason, oracle or reviewer, and evidence ids",
+    "forbidden_shortcuts": [
+      "zero extracted records",
+      "blocked adapter output",
+      "strict-valid empty ISF",
+      "low-confidence automatic category guess"
+    ]
+  }
+}

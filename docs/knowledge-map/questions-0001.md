@@ -115,6 +115,8 @@
   > can provenance load after source normalized cleanup removes its leaf
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
   > can specforge emit a symbolic signal width like (width ADDR_WIDTH) to the .isf
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > can strict-valid ISF prove that a PDF was understood (no)
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > can the Docling-flattened register diagram table be parsed into bits_high/bits_low (no — garbled: wrong explicit positions, dropped field bands, doubled cells, two stacked halves, or symbolic XLEN-relative positions)
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
@@ -295,5 +297,3 @@
   > does agreement between sources boost confidence
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > does an actor signal relation alone authorize a SemanticIR interface signal
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > does an empty declared-signal catalog disable the SemanticIR grounding filter

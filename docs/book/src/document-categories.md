@@ -149,3 +149,8 @@ lowering paths benefit from a richer, more expressive ISF.
 
 This taxonomy is the map for that journey: it names every destination, marks how far each road is built,
 and makes the honest gaps visible so they can be closed one category at a time.
+
+The measurable acceptance boundary for each road—including required source modalities, exact `IntentIR`
+families, provenance/conservation rules, strict held-gold floors, and evidenced non-applicability—is defined in
+the [Source-to-Intent Completeness Contract](source-to-intent-contract.md). That contract measures the upstream
+`SourceIR -> EvidenceIR -> SemanticIR -> IntentIR` path independently of ISF emission.

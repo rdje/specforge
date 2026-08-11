@@ -6,6 +6,7 @@
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
 | [spec-mining-framing](../knowledge/spec-mining-framing.md) | 2026-06-04 | `current` | SpecForge is forward specification mining (spec -> intent, not implementation -> spec) |
+| [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md) | 2026-08-11 | `current` | The source-to-IntentIR completeness contract is category-aware, per-cell exact, and independent of ISF emission |
 | [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md) | 2026-06-04 | `current` | SpecForge stability obligations stay .isf residuals — phase-scoped, not FSMGen's unconditional (stable s) |
 | [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md) | 2026-06-17 | `current` | validate emits a stage_staleness Warning when a downstream IR carries 0 actor_signal_relations while its upst… |
 | [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md) | 2026-08-09 | `current` | SWD/ADI (IHI0074) is an architecture/serial spec — the parallel-bus signal-table model doesn't fit |
