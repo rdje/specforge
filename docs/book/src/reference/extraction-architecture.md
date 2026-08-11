@@ -78,6 +78,19 @@ A high-quality result should expose, when the source supports them:
 This target is deliberately stronger than a score or one protocol fixture. Validation and corpus
 benchmarks measure progress; they do not redefine the architecture.
 
+## Completion order
+
+The specification-to-executable-intent endpoint does not make adapter syntax the first problem. SpecForge
+first accounts for the PDF's relevant modalities, carries source-grounded semantics through canonical
+`IntentIR`, and makes every loss or unresolved interpretation explicit. Only then can an adapter result prove
+that ISF lacks a required abstraction. ISF/FSMGen is actively evolvable, but language work is triggered by a
+real, reviewed IntentIR value—not by a predicted future need.
+
+Program convergence is likewise not inferred from a stable pipeline or a valid output file. The
+[trajectory contract](../quality/trajectory.md) measures source capture, semantic correctness/completeness,
+stage conservation, honesty, production-path participation, robustness, and eventual executable behavior as
+separate dimensions.
+
 ## Authority routes
 
 - [Architecture Rationale](../architecture-rationale.md) explains why the design takes this shape.

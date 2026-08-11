@@ -99,6 +99,8 @@
   > (:4715-4733), so the header is a veto and never a source. Corpus: 2,540 encoding tables -> 281 header-nameable <FIELD> value|Description -> 134 minting a non-empty enum after the .5.ii spine gate, in 10 docs. GO on the lever, NO-GO on the naive predicate; CODE deferred to .5.iv.a)
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > can an external absolute input be rebased into the repository
+- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
+  > can automatic steering mutate canonical IntentIR without review
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > can before after once or while authorize SemanticIR phases
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
@@ -295,5 +297,3 @@
   > does an actor signal relation alone authorize a SemanticIR interface signal
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > does an empty declared-signal catalog disable the SemanticIR grounding filter
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > does canonical SWD EvidenceIR contain interface edge timing

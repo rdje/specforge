@@ -2,12 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
+  > does canonical SWD EvidenceIR contain interface edge timing
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > does cargo test need TMPDIR set manually
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
   > does cleaning normalized bundles undo a completed corpus re-ingest
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > does constrained contract extraction ship code
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > does converge apply the IntentIR NLI demotion gate
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > does converge automatically run extract-contracts
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > does converge automatically run recover-register-bits
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > does converge automatically run signal-resolve
 - [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
   > does converge detect a protocol only SWD change
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
@@ -89,6 +99,8 @@
   > does the agent-identity gate keep Class-B fragments like Subordinate extends
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > does the authority empty repair preserve formal and system contract interfaces
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > does the converge NLI pass measure quality or demote unsupported intent
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > does the corpus census correction change which document refresh 52 selects (no — NVMe is the largest of the six at 4,577 elements, so the smallest-retained-source policy still selects opencapi_25gbps_phy_mechanical_spec_v10 at 760 elements. The correction changes the denominator and the length of the tail, not the next pick; NVMe lands last, at .2.57)
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
@@ -119,6 +131,8 @@
   > does the stage-staleness detector false-fire on register/command docs with 0 relations (no — both empty)
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > does the trapped-row gap-fill mint duplicate signal declarations
+- [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
+  > does the upstream-first decision weaken the executable-intent objective
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > does transaction phase precision change phase membership or ISF output
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
@@ -231,6 +245,8 @@
   > how big does source_ir.json get / how does it scale with page count
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > how can I browse every SpecForge knowledge fact card by id or title
+- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
+  > how can SpecForge automatically choose the next task without gaming metrics
 - [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
   > how can a collection use a membership index outside its own surface
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
@@ -282,19 +298,3 @@
   > how do packet/flit protocols (CHI-class) declare message fields vs signals
 - [extraction-audit-vlm](../knowledge/extraction-audit-vlm.md)
   > how do you audit registers/signals against the table image with the VLM
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > how does .10g differ from .10f (register vs message routing)
-- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
-  > how does / will SpecForge reuse extraction patterns across different PDFs
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > how does CORPUS-COVERAGE 2 33d ii prevent weak signal names from reentering through relations
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > how does FSMGen decide a value literal's width (by notation digit count — 0x7D=8 bits, 0b00=2 bits — NOT by value; it requires an exact width-cast W'… match, no implicit truncation/extension; a bare decimal is unsized and fits any width)
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > how does FSMGen decide two rule data-writes conflict (same target, different value, NOT compatible/disjoint/priority/resource resolved) and when is a guard proven disjoint (_condition_terms_prove_disjoint: shared eq: signal with different values; an absent/empty condition is NEVER proven disjoint)
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > how does SemanticIR preserve VALID READY without formal signal declarations
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > how does SpecForge avoid chip/vendor name lists in document classification (structural typed-surface counts + generic front-matter doc-type vocabulary only; ADR 0006)
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > how does SpecForge capture protocol actors/agents defined in prose (.3b/.8 extract_protocol_actors)

@@ -76,6 +76,13 @@ represented without fabricated certainty. [`KG-ISF-COMPLETENESS`](docs/tasks/KG-
 and [`KG-ISF-TRANSACTIONS`](docs/tasks/KG-ISF-TRANSACTIONS.md) own that bar;
 [`WIRE-BASED-100`](docs/tasks/WIRE-BASED-100.md) is the hard wire-protocol gate.
 
+The current sequencing decision is upstream-first: faithful PDF evidence must populate SourceIR through
+canonical `IntentIR` before adapter expressiveness can be called the blocker. ISF/FSMGen remains the eventual
+executable boundary and can evolve when a source-grounded IntentIR value proves a concrete language gap, but
+SpecForge does not spend the present frontier anticipating one. [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md)
+owns the per-category IR contract, canonical-path integration, real multimodal producer, held-out vertical
+slices, and reviewable trajectory controller that make this ordering measurable (ADR 0033/0034).
+
 Five active program groups support that north star:
 
 - extraction quality and breadth: [`EXTRACTION-QUALITY-GAUGE`](docs/tasks/EXTRACTION-QUALITY-GAUGE.md),
@@ -83,7 +90,8 @@ Five active program groups support that north star:
   [`EXTRACTION-GAP-FIX`](docs/tasks/EXTRACTION-GAP-FIX.md),
   [`CORPUS-COVERAGE`](docs/tasks/CORPUS-COVERAGE.md),
   [`CORPUS-HARDENING`](docs/tasks/CORPUS-HARDENING.md),
-  and [`DOC-INTENT-TAXONOMY`](docs/tasks/DOC-INTENT-TAXONOMY.md); the completed
+  [`DOC-INTENT-TAXONOMY`](docs/tasks/DOC-INTENT-TAXONOMY.md), and
+  [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md); the completed
   [`SWD-SERIAL-EXTRACTION`](docs/tasks/SWD-SERIAL-EXTRACTION.md) program supplies the serial-protocol
   29/29 signoff and exact canonical projection baseline;
 - size-immune ingest: [`MEMORY-BOUNDED-INGEST`](docs/tasks/MEMORY-BOUNDED-INGEST.md) keeps large-PDF
@@ -136,14 +144,18 @@ the [roadmap archive](docs/archive/roadmap/INDEX.md) rather than deleted.
 ## Recommended implementation order
 
 1. Preserve `IntentIR` as the canonical product boundary and `.isf` as the sole adapter target.
-2. Advance the KG/IntentIR completeness and transaction-fidelity north star under the wire-protocol
-   signoff gates.
-3. Turn measured corpus misses into general extraction capability while expanding PDF/protocol breadth.
-4. Keep large-document ingest bounded in RAM, disk, temporary storage, and host impact.
-5. Deepen deterministic and model-assisted language understanding without hardcoded document vocabulary.
-6. Extend R15c–R15g learning, arbitration, evaluation, priors, and corpus synthesis only behind typed
+2. Define and measure what each document category must contribute from every source modality through
+   canonical `IntentIR`; never use emitted-file count or strict validity as the upstream recall proxy.
+3. Turn measured PDF-to-IR misses into general extraction capability, and make the canonical workflow account
+   for every production extractor before expanding breadth for its own sake.
+4. Advance KG/IntentIR completeness and transaction fidelity under held-out, provenance, residual-honesty,
+   stage-conservation, and wire-protocol gates.
+5. Keep large-document ingest bounded in RAM, disk, temporary storage, and host impact.
+6. Deepen deterministic and model-assisted language understanding without hardcoded document vocabulary.
+7. Extend R15c–R15g learning, arbitration, evaluation, priors, and corpus synthesis only behind typed
    provenance, local grounding, and measurable no-regression gates.
-7. Keep `.fsm`, scheduling, and HDL downstream in FSMGen; do not recreate those concerns in SpecForge.
+8. Extend ISF/FSMGen only after a source-grounded IntentIR value demonstrates a concrete executable-language
+   gap; keep `.fsm`, scheduling, and HDL downstream in FSMGen.
 
 ## History and execution
 

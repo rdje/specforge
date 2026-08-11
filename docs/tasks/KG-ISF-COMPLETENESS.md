@@ -12,6 +12,10 @@
   all of these PDFs."* This REVERSES the prior "defer ISF lowering" steer — ISF-lowering fidelity of the
   KG/IntentIR is now the near-term north star; digestion breadth + `EXTRACTION-QUALITY-GAUGE` /
   `WIRE-BASED-100` are the means to a complete-KG-for-ISF end. Memory: `project_kg_isf_completeness`.
+- Current sequencing update (`2026-08-11`, ADR 0033): the endpoint is unchanged, but ISF is not the present
+  blocker. Populate and measure source-grounded PDF content through canonical IntentIR first; take ISF/FSMGen
+  work only when that content demonstrates a concrete expressiveness gap. `SPEC-TO-INTENT-ALIGNMENT` owns the
+  cross-program measurement and integration work.
 
 ## The point (why this tree exists)
 

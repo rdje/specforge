@@ -22,6 +22,7 @@
   - [Temporal Semantics And Timing](domain/temporal-semantics.md)
 - [SOTA Temporal-Intent Capture (R16)](direction/temporal-intent-capture.md)
 - [Validation And Learning](quality/validation.md)
+  - [Trajectory And Automatic Steering](quality/trajectory.md)
   - [KG Bench And Fixtures](quality/kg-bench.md)
   - [Extraction Eval](quality/extraction-eval.md)
   - [Corpus Memory And Priors](quality/corpus-memory.md)

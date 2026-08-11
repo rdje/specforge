@@ -6,10 +6,11 @@ Before SpecForge can extract a document's intent, it helps to step back and ask 
 Every chip-specification PDF has a *purpose*. One document defines how two blocks talk to each other on a
 bus; another defines the registers software pokes to configure an IP; another defines a CPU's instruction
 set. Knowing the **category** up front is not bookkeeping — it is the lens that tells SpecForge what
-"complete intent" even *means* for that document, and therefore how to lower it faithfully to `.isf`.
+"complete intent" even *means* for that document, which semantics must reach canonical `IntentIR`, and which
+of those semantics must eventually become executable through `.isf`.
 
 This page describes the six categories SpecForge recognizes, what each one is *about*, and — honestly —
-how completely SpecForge can synthesize each one to ISF today. It is meant to be read as a **guide**: when
+how completely SpecForge can capture and synthesize each one today. It is meant to be read as a **guide**: when
 you hand SpecForge a new PDF, this is the mental model for what to expect.
 
 ## Why categorize at all?
@@ -24,9 +25,11 @@ So SpecForge treats the category as a **per-document yardstick**. A register IP 
 registers, fields, and structures are captured; a bus protocol is "complete" when its signals,
 transactions, relations, and temporal rules are captured. Same tool, different bar — chosen by category.
 
-> **ISF is the synthesis target for *every* category.** SpecForge's north star is that each document's
-> intent, whatever its category, is recovered into a complete `IntentIR` and lowered fully to `.isf`.
-> `.isf` is how SpecForge *synthesizes* the PDF's intent for the downstream FSMGen toolchain.
+> **Complete `IntentIR` comes first.** Every supported category must preserve its materially relevant,
+> source-grounded intent in canonical IR, including non-executable knowledge and honest residuals. Every
+> executable semantic must ultimately lower through `.isf`; when current ISF cannot express a demonstrated
+> IntentIR value, SpecForge and the actively developed FSMGen evolve the contract together. Speculative target
+> expansion does not outrank missing PDF-to-IR content.
 
 ## The six categories
 
@@ -48,7 +51,7 @@ to produce little or no `.isf`. SpecForge reporting "nothing to synthesize here"
 user guide is the **right** answer — not a failure to be papered over. The buildable program is
 categories **1–4**.
 
-## How completely does each category reach `.isf` today? (measured)
+## How completely does each category reach `IntentIR` and `.isf` today? (measured)
 
 The "maturity" column above is not a vibe — it is **measured**. SpecForge profiled all 78 ingested documents
 and asked, surface by surface, *how much of each document's captured intent actually appears in the emitted
@@ -92,9 +95,10 @@ The rest of the scorecard, in plain terms:
 | **5 — PHY** | **Correctly near-empty.** A thin `.isf` is the right answer here. | — (not behavioral wire intent). |
 | **6 — guide** | **Correctly near-empty for most.** | A few guides currently *over*-produce `.isf` content they shouldn't — a precision matter for the category recognizer, not a synthesis gap. |
 
-The takeaway: **the wire-protocol road is built; the register, platform, and ISA roads are paved partway** —
-but the next stretch differs by category. For register and platform IP it is *synthesizing* captured
-structure (fields and layouts) once ISF can express it. For CPU ISA the lowering road already exists — a CSR
+The takeaway: **the wire-protocol road is strongest; the register, platform, and ISA roads are paved partway** —
+but the next stretch differs by category. The current program order is to close PDF-to-IR capture and carrier
+losses first: structure that stops before IntentIR, sparse topology, unread figures, and prose relations are
+upstream work regardless of what ISF may later need. For CPU ISA the lowering road already exists — a CSR
 is a register — so the next stretch is *recall*, and it is a **vision** problem, not a parsing one: RISC-V
 draws each register's bit positions in a layout *graphic* (measured: 53 of 56 Debug registers are images, and
 the few that a backend flattened to text are garbled or `XLEN`-symbolic, so parsing them would fabricate). So
@@ -125,18 +129,20 @@ the [Validation](quality/validation.md) chapter for how to read the metric, the 
 residual. (The honest distribution over today's corpus: 21 `wire-protocol` and 8 `methodology-guide` at high
 confidence with zero high-confidence mislabels, the rest reported at low confidence with their residuals.)
 
-## What "fully handled" requires — and the FSMGen feedback loop
+## What "fully handled" requires — and when FSMGen enters the loop
 
-The goal is that **all six categories are fully handled**: each document's intent recovered completely and
-synthesized to `.isf`. That is a deliberate, quality-first program, not a quick sweep — categories 2, 3,
-and 4 each need real extraction and lowering work.
+The goal is that **all six categories are handled honestly and completely for their purpose**: materially
+relevant intent reaches canonical `IntentIR`; every executable semantic lowers through `.isf`; and genuinely
+non-executable knowledge remains typed and queryable rather than being discarded or forced into fake behavior.
+That is a deliberate, quality-first program, not a quick sweep — categories 2, 3, and 4 each need substantial
+source capture and IR work before target expressiveness is the controlling question.
 
 It also reaches *downstream*. ISF is consumed by FSMGen, which lowers it to hardware — and FSMGen is
 growing **two** lowering paths: its default **synthesizable HDL** path, and a new **verification-oriented**
-path (SystemVerilog/UVM + VHDL). Capturing every category naturally and elegantly will, at some point,
-require ISF abstractions the current grammar does not yet have — for example **memory banks** and
-**single- and dual-port memory modules** for the register/structure and platform categories. Where SpecForge
-hits such a wall, the right move is **not** to hack the emitter, but to **feed the gap back to FSMGen** as a
+path (SystemVerilog/UVM + VHDL). Once a source-grounded semantic survives into reviewed IntentIR, faithfully
+executing it may require ISF abstractions the current grammar does not yet have — for example **memory banks**
+and **single- and dual-port memory modules** for the register/structure and platform categories. At that
+demonstrated wall, the right move is **not** to hack the emitter, but to **feed the gap back to FSMGen** as a
 considered feature request so ISF gains the abstraction cleanly (see the
 [ISF Adapter](pipeline/isf-adapter.md) chapter and the project's FSMGen feedback notes). Both of FSMGen's
 lowering paths benefit from a richer, more expressive ISF.

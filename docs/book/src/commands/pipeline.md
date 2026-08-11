@@ -110,7 +110,7 @@ When ISF lowering is blocked, the adapter artifact still preserves the recovered
 cargo run --manifest-path Cargo.toml -- converge /path/to/spec.pdf --target isf
 ```
 
-`converge` is the default end-to-end path.
+`converge` is the default orchestration path from a source document through the adapter.
 
 It:
 
@@ -120,6 +120,13 @@ It:
 4. repeats until the persisted knowledge snapshot stops changing
 
 This is the main command when you want a serious local run on a real spec.
+
+It is not currently the union of every production extraction command. The ordinary path does not directly run
+`extract-contracts`, `signal-resolve`, or `recover-register-bits`; those remain additive commands. Its
+post-stability NLI pass records an extraction-quality gauge on EvidenceIR and is not the same operation as the
+IntentIR demotion enabled by `intent --nli-verify`. Until those capabilities are integrated, deliberately
+scheduled, or explicitly reported omitted, “default” must not be read as “every shipped capability.” See
+[Trajectory And Automatic Steering](../quality/trajectory.md).
 
 The persisted snapshot compares exact ordered records for serial-frame fields, protocol operations,
 protocol states, and interface-edge timings at EvidenceIR, SemanticIR, and IntentIR. Therefore a

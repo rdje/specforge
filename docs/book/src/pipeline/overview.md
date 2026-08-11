@@ -8,6 +8,11 @@ This chapter explains the four canonical IR stages in increasing semantic depth.
 
 The design goal is not to "parse English" directly. The design goal is to build a typed protocol-world model and feed it with grounded multimodal evidence.
 
+The current program constraint is getting that evidence faithfully from PDFs into every required canonical
+IR surface. ISF remains the executable adapter boundary, but adapter expansion is evidence-triggered: the
+project first proves that a source-grounded semantic reached `IntentIR`, then extends ISF/FSMGen only if the
+existing target cannot represent it. See [Trajectory And Automatic Steering](../quality/trajectory.md).
+
 The chapters that follow should be read as stage boundaries, not just stage names.
 Each stage has a different job, a different truthfulness contract, and a different kind of allowed decision-making.
 

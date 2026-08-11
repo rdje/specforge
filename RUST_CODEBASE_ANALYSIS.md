@@ -4,6 +4,20 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-11 — trajectory and canonical-path audit; `SPEC-TO-INTENT-ALIGNMENT.0`)
+
+- Persisted corpus stages are 78 SourceIR / 78 EvidenceIR / 78 SemanticIR / 78 IntentIR, with 44 emitted ISF
+  files. This establishes stage population and honest target selectivity, not semantic completeness.
+- The ordinary `converge` path directly composes enrichment, EvidenceIR, `nlp-enrich`, SemanticIR, IntentIR,
+  adapter lowering, constraint promotion, and an NLI gauge. It does not directly compose `extract-contracts`,
+  `signal-resolve`, `recover-register-bits`, or IntentIR NLI demotion; standalone capability can therefore
+  remain outside the default product result.
+- `FigureRegion` explicitly has no producer wiring, so waveform code is a typed, synthetic-tested consumer
+  awaiting real PDF input rather than an operational corpus capability.
+- Rust source is 137,075 lines; `ir/evidence.rs` + `ir/semantic.rs` + `commands/validate.rs` total 69,379
+  (50.6%). Treat that concentration as a change-risk signal and extract seams only when a measured capability
+  needs them—not as authority for an untargeted rewrite.
+
 ## Session update (2026-08-10 — retire generic whole-statement gate authority; `CORPUS-COVERAGE.2.43b`)
 
 - `SemanticIr.gates` remains a defaultable serialized `Vec<GateRecord>` for schema compatibility, but
