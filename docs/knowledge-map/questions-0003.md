@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > how do I file an FSMGen bug report or feature request
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > how do I get the clean LLM-primary constraint surface onto the canonical artifacts
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
@@ -296,5 +298,3 @@
   > how is an active task source locked before migration
 - [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
   > how is an external PDF labeled in Docling metadata
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how is an under-extracted spec distinguished from a true guide (evidence_document_underextracted_spec)

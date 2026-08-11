@@ -1,4 +1,18 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.5b (`2026-08-12`) — the first snapshot is a baseline, not a trend
+
+Composition must not weaken either input authority. The `.4c` result remains the complete reviewed semantic
+oracle; the `.2` capability ledger remains a contextual provider-free execution observation. A live equality
+test pins all 17 ledger rows, while a separate adapter derives controller ratios from typed report counts.
+
+The resulting `diverging` label needs no historical comparison: current fabrication, provenance, and unexplained
+drop counts violate non-tradeable gates. Its simultaneous `insufficient_history` field is not contradictory—it
+refuses to call the baseline improving, worsening over time, or stalled until a comparable revision exists.
+
+Ranking also preserves causal order. The 41 fabricated facts and 45 provenance failures must be repaired before
+optimizing 33 source drops, 24 non-actionable residual observations, or five omitted capability islands. Opening
+`.6` through `.9` before evaluation makes that ordering executable without letting the controller invent work.
+
 ## SPEC-TO-INTENT-ALIGNMENT.5a (`2026-08-12`) — trajectory state is a claim with an evidence precondition
 
 Five labels do not make a controller. Each state needs a different authority threshold. A current hard failure

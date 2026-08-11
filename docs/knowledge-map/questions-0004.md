@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how is an under-extracted spec distinguished from a true guide (evidence_document_underextracted_spec)
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > how is an unless/except exception clause handled in a temporal condition
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
@@ -289,11 +291,9 @@
   > is SPECFORGE_INGEST_BATCH_PAGES a fixed size or a ceiling
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
   > is SWD at 100% and on what metric
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > is SpecForge converging diverging stalled mixed or unmeasurable
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
   > is SpecForge specification mining
 - [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
   > is SpecForge still allowed to read chipdoc from the boot volume
-- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
-  > is SpecForge's constraint extraction over-generating
-- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
-  > is VALIDATION_SNAPSHOT the latest local artifact validation or the last reviewed projection

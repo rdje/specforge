@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > what is AppError::IngestAbortedForMemory
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > what is CORPUS-COVERAGE.2.33d dense-prose adapter trust repair
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > what is DOC-INTENT-TAXONOMY .2 Result 3 verdict (closed by .4e: the rule-lowering shortfall is dominated by conditional_rules that are honest residual; signal_constraints + temporal_rules lower well; not an ISF-completeness gap)
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > what is EvidenceIr.extraction_quality_gauge and who writes it
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
@@ -239,6 +245,8 @@
   > what is the executable currentness authority for VALIDATION_SNAPSHOT
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
   > what is the faithful fix for an over-width ISF value literal (1: recover the signal's grounded width across ALL interface signal_records + actor_ports; 2: re-render the literal as a width-cast W'<radix><digits> when value<2^W, else residualize — never truncate; ADR-0006 numeric only)
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > what is the first SpecForge trajectory snapshot
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
   > what is the first opt-in extractor for CORPUS-PATTERN-REUSE.3b.3 / activate-only consume
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
@@ -289,11 +297,3 @@
   > what is the present blocking point on the specification-to-executable-intent path
 - [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
   > what is the proposed Extractor framework (registry / driver / SurfacePolicy / run manifest)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what is the recommended fix (.5.i extraction-side fallback name-gate: derive_encoding_enum_name must return None unless the candidate token is a declared signal -> no enum minted; + emitter orphan-type fix isf_ir.rs:403-409 gate types block by emitted_enums(); .5.ii member-quality gate for the 271 real-named junk enums, calibration-gated)
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > what is the register-field eval surface (EvalTask::RegisterField)
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > what is the registers.section_header_field strategy
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > what is the rolling ledger archive protocol

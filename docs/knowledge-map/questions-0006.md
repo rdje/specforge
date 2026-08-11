@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > what are the 6 chip-spec document intent categories / purpose taxonomy
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > what are the 6 purpose categories (wire-protocol, register-or-platform, cpu-isa, physical-link, methodology-guide, unresolved)
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > what are the AXI B1.x channel-signal tables and how do channels map to phases
 - [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
@@ -47,6 +51,8 @@
   > what are the final OpenCAPI 32G PHY Signaling SourceIR and normalized bundle hashes
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
   > what are the final OpenCAPI Discovery artifact hashes
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > what are the first ranked trajectory gaps
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > what are the isf_protocol residual packet prefixes
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
@@ -291,9 +297,3 @@
   > what is ADR 0032
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
   > what is AppError::IngestAbortedForDisk
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > what is AppError::IngestAbortedForMemory
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > what is CORPUS-COVERAGE.2.33d dense-prose adapter trust repair
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > what is DOC-INTENT-TAXONOMY .2 Result 3 verdict (closed by .4e: the rule-lowering shortfall is dominated by conditional_rules that are honest residual; signal_constraints + temporal_rules lower well; not an ISF-completeness gap)

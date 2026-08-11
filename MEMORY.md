@@ -17,13 +17,13 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.5b`; `.0` through `.5a` are complete. Tracking-only:
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.5b` closing commit; `.0` through `.5b` are verified complete. Tracking-only:
   `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: `.5a` supplies a strict nine-dimension controller with five states, exact denominator and
-  uncertainty authority, hard-first owned gap ranking, and report-only semantics. Sixteen focused tests and full
-  CI pass; the engine contains no `.4c` outcome constants.
-- Next action: in `.5b`, authenticate and compose the frozen `.4c` report plus `.2` capability participation,
-  persist the first byte-current trajectory input/report, classify current hard failures without inventing
-  history, rank every gap transparently, and open the winning task leaf before implementation pivots.
-- In-flight uncommitted: none after the `.5a` commit. No background job runs.
+- Current state: `.5b` composes the frozen `.4c` result and live-equal provider-free `.2` ledger
+  into byte-current input/report artifacts. It yields `diverging` on 41 fabrication, 45 provenance, and 33 drop
+  violations with `insufficient_history`, and recommends already-open `.6` ahead of `.7`/`.8`/`.9`. Full CI
+  passes all eight doctrines and 1,854 tests / five ignored / zero failed.
+- Next action: commit `.5b`, verify the clean boundary and zero transient brief, then activate the controller-
+  selected `.6` hard honesty/provenance repair.
+- In-flight uncommitted: completed, fully verified `.5b` slice awaiting its commit only. No background job runs.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

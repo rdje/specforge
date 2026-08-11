@@ -5,8 +5,8 @@ or a strict-valid `.isf` file does not by itself prove movement toward that obje
 while important source intent was never captured.
 
 The project therefore treats trajectory as a source-understanding control problem. The accepted design is
-tracked by `SPEC-TO-INTENT-ALIGNMENT`. The generic state/ranking engine now ships; the first composed product
-snapshot and task proposal are still pending.
+tracked by `SPEC-TO-INTENT-ALIGNMENT`. The generic state/ranking engine and first evidence-composed product
+snapshot now ship; the controller has selected the next owned repair without changing canonical semantics.
 
 The controller's reviewed input boundary is the
 [Source-to-Intent Completeness Contract](../source-to-intent-contract.md). It fixes category-specific modalities,
@@ -83,8 +83,8 @@ emits deterministic per-cell, per-document, per-category, and global stage-loss 
 reject omission, fabrication, provenance loss, silent stage drops, missing modalities, and inactionable
 residuals. The first 12-document reviewed population is locked without extractor tuning and its exact outcome
 is now published. All six categories are `incomplete`; 10/14 cells first fail at SourceIR → EvidenceIR and four
-at EvidenceIR → SemanticIR, while no cell first fails at SemanticIR → IntentIR. The automatic controller does
-not yet run on product evidence.
+at EvidenceIR → SemanticIR, while no cell first fails at SemanticIR → IntentIR. Those exact outcomes now feed
+the first automatic product-evidence report.
 
 ## The controller engine
 
@@ -129,9 +129,50 @@ For example, the authority and one metric have this shape:
 }
 ```
 
-The example is illustrative; `.5a` contains no current product values. `.5b` must attach the frozen `.4c`
-report and `.2` capability evidence without changing either authority, persist the first complete snapshot, and
-open the recommended owned leaf. The controller can report and propose; it cannot edit canonical IR.
+The example is illustrative; `.5a` contains no current product values. `.5b` attaches the frozen `.4c` report
+and `.2` capability evidence in a separate composition module, so controller policy remains untuned. The
+controller can report and propose; it cannot edit canonical IR.
+
+## First evidence-composed snapshot
+
+The tracked input and report live under `crates/specforge/test_data/trajectory/`. The composition tool derives
+them from the byte-pinned `.4c` result and a provider-free `.2` capability observation. A `converge` test compares
+all 17 observation rows with the live registry, and the generic runner reproduces the report byte for byte:
+
+```console
+cargo run --quiet -p specforge --example trajectory_snapshot -- --check
+cargo run --quiet -p specforge --example trajectory_controller -- \
+  crates/specforge/test_data/trajectory/controller_input.json \
+  | cmp - crates/specforge/test_data/trajectory/trajectory_report.json
+```
+
+The baseline state is `diverging`, while `history_status` is `insufficient_history`. These fields answer
+different questions. Current exact hard failures are enough to establish that the state violates the contract;
+missing history prevents the controller from claiming that the state is improving, worsening over time, or
+stalled.
+
+| Dimension | First exact observation | Status |
+| --- | --- | --- |
+| Source capture | source regions 14/14; required-modality captures 14/14 | meets target |
+| Semantic correctness | canonical IntentIR precision 7/48 | deficit |
+| Semantic completeness | recall 7/40; supported categories 0/6 | deficit |
+| Stage conservation | conserved or residualized crossings 21/54 | hard deficit |
+| Provenance/honesty | closure 3/48; fabricated-fact rate 41/48 | hard deficit |
+| Production participation | accounted 17/17; integrated or scheduled 12/17 | deficit, fully reported |
+| Generalization/robustness | reviewed category-oracle coverage 6/6 | meets target |
+| Operational confidence | complete review 12/12; provider-free integrated execution 5/10 | deficit |
+| Executable readiness | required-modality document accounting 0/12 | deficit |
+
+Three current hard gates record 41 fabricated canonical facts, 45 provenance-closure violations, and 33
+unexplained stage drops. The controller therefore ranks the existing repair leaves as follows:
+
+1. `.6` — remove fabrication and close canonical provenance (`hard_invariant`, 48 affected emitted records);
+2. `.7` — recover 33 source-to-evidence canonical losses (`source_evidence_loss`);
+3. `.8` — make 0/24 required residual observations actionable (`persistent_residual`); and
+4. `.9` — measure and resolve five omitted capability islands (`breadth_efficiency`).
+
+The recommendation is `.6`. All four task IDs existed before evaluation, the complete ordering remains in the
+report, and review is still required before implementation.
 
 ## Current production-path caveat
 
@@ -166,8 +207,8 @@ The durable objective/priority decision, controller design, code-path audit, and
 are the documentation slice `SPEC-TO-INTENT-ALIGNMENT.0`. The per-category source-to-IntentIR acceptance contract
 is `.1`; the guarded canonical-path capability ledger is `.2`; typed visual activation is `.3`; the vertical
 evaluator foundation is `.4a`; `.4b` locks the balanced reviewed population; `.4c` publishes the exact
-incomplete result and upstream blocker diagnosis; and `.5a` supplies the generic multi-metric controller engine.
-The `.5b` composition/snapshot leaf remains. Until it closes, automatic steering does not run on product evidence.
+incomplete result and upstream blocker diagnosis; `.5a` supplies the generic controller; and `.5b` composes the
+first product-evidence snapshot. Automatic steering now recommends `.6`, but remains report-only and reviewable.
 
 The detailed design and literature mapping live in
 [`docs/research/specforge-trajectory-control.md`](../../../research/specforge-trajectory-control.md).

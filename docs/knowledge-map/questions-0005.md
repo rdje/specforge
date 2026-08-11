@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
+  > is SpecForge's constraint extraction over-generating
+- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
+  > is VALIDATION_SNAPSHOT the latest local artifact validation or the last reviewed projection
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
   > is a better VLM needed to read register bit-layout diagrams
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -294,7 +298,3 @@
   > what are scripts/pdf_text.py and scripts/decrypt_pdf.py
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what are the 3 gaps G1 G2 G3 in specforge transaction capture
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > what are the 6 chip-spec document intent categories / purpose taxonomy
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what are the 6 purpose categories (wire-protocol, register-or-platform, cpu-isa, physical-link, methodology-guide, unresolved)

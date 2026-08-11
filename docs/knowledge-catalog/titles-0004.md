@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md) | 2026-08-11 | `current` | The caller-authorized chipdoc source library is on the same SSD as SpecForge |
 | [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md) | 2026-08-08 | `current` | Git-indexed corpus PDFs are the source-registry membership authority |
 | [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md) | 2026-08-11 | `current` | The first reviewed source-to-IntentIR result is incomplete in all six categories and fails upstream |
 | [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md) | 2026-08-11 | `current` | The first source-to-IntentIR vertical population locks twelve reviewed documents without extractor tuning |

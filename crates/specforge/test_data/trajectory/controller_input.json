@@ -1,0 +1,693 @@
+{
+  "schema_version": 1,
+  "snapshot_id": "specforge-source-to-intent-reviewed-v1",
+  "owner": "SPEC-TO-INTENT-ALIGNMENT.5b",
+  "reviewed_revision": "03e89b66cf87fcc1ec0bf342f47a147261a8d739",
+  "objective_contract": {
+    "path": "doctrine/spec_to_intent_category_contract.json",
+    "sha256": "b5d0582f213b38a0273594a46e6a11cca3b1cce24a3c7156d300156b81ca7007",
+    "role": "category-aware source-to-IntentIR objective contract"
+  },
+  "stall_window": 3,
+  "dimensions": [
+    {
+      "dimension": "source_capture",
+      "objective": "prove that each bounded source region and required modality is observable before semantic scoring",
+      "metrics": [
+        {
+          "metric_id": "exact_source_region_capture",
+          "question": "are all reviewed intent-bearing source regions found exactly",
+          "measure": {
+            "numerator": 14,
+            "denominator": 14
+          },
+          "target": {
+            "operator": "equal",
+            "value": {
+              "numerator": 1,
+              "denominator": 1
+            }
+          },
+          "improvement": "higher_is_better",
+          "material_change": {
+            "numerator": 1,
+            "denominator": 100
+          },
+          "hard": false,
+          "required": true,
+          "oracle": "complete bounded source-region gold",
+          "population": "14 reviewed document-family-modality cells",
+          "uncertainty": {
+            "kind": "exact"
+          },
+          "evidence": [
+            {
+              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
+              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
+              "role": "frozen .4c reviewed vertical result"
+            }
+          ]
+        },
+        {
+          "metric_id": "exact_required_modality_capture",
+          "question": "are all reviewed required-modality captures found exactly",
+          "measure": {
+            "numerator": 14,
+            "denominator": 14
+          },
+          "target": {
+            "operator": "equal",
+            "value": {
+              "numerator": 1,
+              "denominator": 1
+            }
+          },
+          "improvement": "higher_is_better",
+          "material_change": {
+            "numerator": 1,
+            "denominator": 100
+          },
+          "hard": false,
+          "required": true,
+          "oracle": "complete bounded evidence-capture gold",
+          "population": "14 reviewed document-family-modality cells",
+          "uncertainty": {
+            "kind": "exact"
+          },
+          "evidence": [
+            {
+              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
+              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
+              "role": "frozen .4c reviewed vertical result"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dimension": "semantic_correctness",
+      "objective": "retain only canonical IntentIR facts that match complete reviewed gold",
+      "metrics": [
+        {
+          "metric_id": "intent_canonical_precision",
+          "question": "what fraction of emitted canonical IntentIR facts is correct",
+          "measure": {
+            "numerator": 7,
+            "denominator": 48
+          },
+          "target": {
+            "operator": "equal",
+            "value": {
+              "numerator": 1,
+              "denominator": 1
+            }
+          },
+          "improvement": "higher_is_better",
+          "material_change": {
+            "numerator": 1,
+            "denominator": 100
+          },
+          "hard": false,
+          "required": true,
+          "oracle": "complete bounded canonical IntentIR answer keys",
+          "population": "all emitted canonical facts in 14 reviewed cells",
+          "uncertainty": {
+            "kind": "exact"
+          },
+          "evidence": [
+            {
+              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
+              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
+              "role": "frozen .4c reviewed vertical result"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dimension": "semantic_completeness",
+      "objective": "preserve every expected canonical fact and support every reviewed category",
+      "metrics": [
+        {
+          "metric_id": "intent_canonical_recall",
+          "question": "what fraction of expected canonical facts reaches IntentIR correctly",
+          "measure": {
+            "numerator": 7,
+            "denominator": 40
+          },
+          "target": {
+            "operator": "equal",
+            "value": {
+              "numerator": 1,
+              "denominator": 1
+            }
+          },
+          "improvement": "higher_is_better",
+          "material_change": {
+            "numerator": 1,
+            "denominator": 100
+          },
+          "hard": false,
+          "required": true,
+          "oracle": "complete bounded canonical IntentIR answer keys",
+          "population": "40 expected canonical facts in 14 reviewed cells",
+          "uncertainty": {
+            "kind": "exact"
+          },
+          "evidence": [
+            {
+              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
+              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
+              "role": "frozen .4c reviewed vertical result"
+            }
+          ]
+        },
+        {
+          "metric_id": "supported_reviewed_categories",
+          "question": "how many reviewed dominant-purpose categories meet the completeness contract",
+          "measure": {
+            "numerator": 0,
+            "denominator": 6
+          },
+          "target": {
+            "operator": "equal",
+            "value": {
+              "numerator": 1,
+              "denominator": 1
+            }
+          },
+          "improvement": "higher_is_better",
+          "material_change": {
+            "numerator": 1,
+            "denominator": 100
+          },
+          "hard": false,
+          "required": true,
+          "oracle": "category-aware completeness status",
+          "population": "six reviewed dominant-purpose categories",
+          "uncertainty": {
+            "kind": "exact"
+          },
+          "evidence": [
+            {
+              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
+              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
+              "role": "frozen .4c reviewed vertical result"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dimension": "stage_conservation",
+      "objective": "conserve each expected fact across every required boundary or explain it with a typed residual",
+      "metrics": [
+        {
+          "metric_id": "stage_conservation_or_residual",
+          "question": "what fraction of required boundary crossings is conserved or residualized",
+          "measure": {
+            "numerator": 21,
+            "denominator": 54
+          },
+          "target": {
+            "operator": "equal",
+            "value": {
+              "numerator": 1,
+              "denominator": 1
+            }
+          },
+          "improvement": "higher_is_better",
+          "material_change": {
+            "numerator": 1,
+            "denominator": 100
+          },
+          "hard": true,
+          "required": true,
+          "oracle": "exact three-boundary vertical conservation accounting",
+          "population": "54 required stage-boundary crossings",
+          "uncertainty": {
+            "kind": "exact"
+          },
+          "evidence": [
+            {
+              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
+              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
+              "role": "frozen .4c reviewed vertical result"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dimension": "provenance_honesty",
+      "objective": "forbid fabricated canonical facts and retain source provenance on every promoted fact",
+      "metrics": [
+        {
+          "metric_id": "canonical_provenance_closure",
+          "question": "what fraction of emitted canonical facts closes required provenance",
+          "measure": {
+            "numerator": 3,
+            "denominator": 48
+          },
+          "target": {
+            "operator": "equal",
+            "value": {
+              "numerator": 1,
+              "denominator": 1
+            }
+          },
+          "improvement": "higher_is_better",
+          "material_change": {
+            "numerator": 1,
+            "denominator": 100
+          },
+          "hard": true,
+          "required": true,
+          "oracle": "complete bounded provenance requirements",
+          "population": "all emitted canonical records in 14 reviewed cells",
+          "uncertainty": {
+            "kind": "exact"
+          },
+          "evidence": [
+            {
+              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
+              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
+              "role": "frozen .4c reviewed vertical result"
+            }
+          ]
+        },
+        {
+          "metric_id": "fabricated_canonical_fact_rate",
+          "question": "what fraction of emitted canonical facts is fabricated",
+          "measure": {
+            "numerator": 41,
+            "denominator": 48
+          },
+          "target": {
+            "operator": "equal",
+            "value": {
+              "numerator": 0,
+              "denominator": 1
+            }
+          },
+          "improvement": "lower_is_better",
+          "material_change": {
+            "numerator": 1,
+            "denominator": 100
+          },
+          "hard": true,
+          "required": true,
+          "oracle": "complete bounded canonical IntentIR answer keys",
+          "population": "all emitted canonical facts in 14 reviewed cells",
+          "uncertainty": {
+            "kind": "exact"
+          },
+          "evidence": [
+            {
+              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
+              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
+              "role": "frozen .4c reviewed vertical result"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dimension": "production_participation",
+      "objective": "account for every production capability without implying that omitted islands participate",
+      "metrics": [
+        {
+          "metric_id": "production_capability_accounting",
+          "question": "is every production capability classified in the per-run ledger",
+          "measure": {
+            "numerator": 17,
+            "denominator": 17
+          },
+          "target": {
+            "operator": "equal",
+            "value": {
+              "numerator": 1,
+              "denominator": 1
+            }
+          },
+          "improvement": "exact_invariant",
+          "material_change": {
+            "numerator": 1,
+            "denominator": 100
+          },
+          "hard": true,
+          "required": true,
+          "oracle": "complete Clap-derived production-command partition",
+          "population": "17 guarded production-capability rows",
+          "uncertainty": {
+            "kind": "exact"
+          },
+          "evidence": [
+            {
+              "path": "crates/specforge/test_data/trajectory/converge_provider_free_capabilities.json",
+              "sha256": "b37f13d28b90a6e6b0fb4c554d0e9fc861ff5e993d3276743b15d0ad1736994e",
+              "role": "provider-free .2 production-capability observation"
+            }
+          ]
+        },
+        {
+          "metric_id": "non_omitted_production_participation",
+          "question": "what fraction of production capabilities is integrated or explicitly scheduled",
+          "measure": {
+            "numerator": 12,
+            "denominator": 17
+          },
+          "target": {
+            "operator": "equal",
+            "value": {
+              "numerator": 1,
+              "denominator": 1
+            }
+          },
+          "improvement": "higher_is_better",
+          "material_change": {
+            "numerator": 1,
+            "denominator": 100
+          },
+          "hard": false,
+          "required": true,
+          "oracle": "provider-free canonical converge capability ledger",
+          "population": "17 guarded production-capability rows",
+          "uncertainty": {
+            "kind": "exact"
+          },
+          "evidence": [
+            {
+              "path": "crates/specforge/test_data/trajectory/converge_provider_free_capabilities.json",
+              "sha256": "b37f13d28b90a6e6b0fb4c554d0e9fc861ff5e993d3276743b15d0ad1736994e",
+              "role": "provider-free .2 production-capability observation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dimension": "generalization_robustness",
+      "objective": "retain reviewed oracle coverage across every supported dominant-purpose category",
+      "metrics": [
+        {
+          "metric_id": "reviewed_category_oracle_coverage",
+          "question": "does the reviewed population cover every category in the objective contract",
+          "measure": {
+            "numerator": 6,
+            "denominator": 6
+          },
+          "target": {
+            "operator": "equal",
+            "value": {
+              "numerator": 1,
+              "denominator": 1
+            }
+          },
+          "improvement": "higher_is_better",
+          "material_change": {
+            "numerator": 1,
+            "denominator": 100
+          },
+          "hard": false,
+          "required": true,
+          "oracle": "balanced review-locked category population",
+          "population": "six required dominant-purpose categories",
+          "uncertainty": {
+            "kind": "exact"
+          },
+          "evidence": [
+            {
+              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
+              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
+              "role": "frozen .4c reviewed vertical result"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dimension": "operational_confidence",
+      "objective": "separate complete reviewed oracles from context-dependent provider-free execution availability",
+      "metrics": [
+        {
+          "metric_id": "complete_review_scope_documents",
+          "question": "how many evaluated documents have complete bounded review scope",
+          "measure": {
+            "numerator": 12,
+            "denominator": 12
+          },
+          "target": {
+            "operator": "equal",
+            "value": {
+              "numerator": 1,
+              "denominator": 1
+            }
+          },
+          "improvement": "higher_is_better",
+          "material_change": {
+            "numerator": 1,
+            "denominator": 100
+          },
+          "hard": false,
+          "required": true,
+          "oracle": "review-lock declarations in the frozen result",
+          "population": "12 reviewed documents",
+          "uncertainty": {
+            "kind": "exact"
+          },
+          "evidence": [
+            {
+              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
+              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
+              "role": "frozen .4c reviewed vertical result"
+            }
+          ]
+        },
+        {
+          "metric_id": "provider_free_integrated_execution",
+          "question": "what fraction of integrated capabilities executed in the provider-free observation",
+          "measure": {
+            "numerator": 5,
+            "denominator": 10
+          },
+          "target": {
+            "operator": "equal",
+            "value": {
+              "numerator": 1,
+              "denominator": 1
+            }
+          },
+          "improvement": "higher_is_better",
+          "material_change": {
+            "numerator": 1,
+            "denominator": 100
+          },
+          "hard": false,
+          "required": true,
+          "oracle": "provider-free canonical converge capability ledger",
+          "population": "10 capabilities classified integrated in this run profile",
+          "uncertainty": {
+            "kind": "exact"
+          },
+          "evidence": [
+            {
+              "path": "crates/specforge/test_data/trajectory/converge_provider_free_capabilities.json",
+              "sha256": "b37f13d28b90a6e6b0fb4c554d0e9fc861ff5e993d3276743b15d0ad1736994e",
+              "role": "provider-free .2 production-capability observation"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dimension": "executable_readiness",
+      "objective": "require each reviewed document to account for its intent before downstream lowering is credited",
+      "metrics": [
+        {
+          "metric_id": "required_modality_document_accounting",
+          "question": "how many reviewed documents completely account for required modalities",
+          "measure": {
+            "numerator": 0,
+            "denominator": 12
+          },
+          "target": {
+            "operator": "equal",
+            "value": {
+              "numerator": 1,
+              "denominator": 1
+            }
+          },
+          "improvement": "higher_is_better",
+          "material_change": {
+            "numerator": 1,
+            "denominator": 100
+          },
+          "hard": false,
+          "required": true,
+          "oracle": "category-aware document completeness contract",
+          "population": "12 reviewed documents",
+          "uncertainty": {
+            "kind": "exact"
+          },
+          "evidence": [
+            {
+              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
+              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
+              "role": "frozen .4c reviewed vertical result"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "hard_gates": [
+    {
+      "gate_id": "no_fabricated_canonical_facts",
+      "question": "are fabricated canonical facts absent",
+      "violations": 41,
+      "target_violations": 0,
+      "evidence": [
+        {
+          "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
+          "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
+          "role": "frozen .4c reviewed vertical result"
+        }
+      ]
+    },
+    {
+      "gate_id": "full_canonical_provenance",
+      "question": "does every emitted canonical fact close required provenance",
+      "violations": 45,
+      "target_violations": 0,
+      "evidence": [
+        {
+          "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
+          "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
+          "role": "frozen .4c reviewed vertical result"
+        }
+      ]
+    },
+    {
+      "gate_id": "no_unexplained_stage_drops",
+      "question": "does every required stage crossing conserve or residualize the fact",
+      "violations": 33,
+      "target_violations": 0,
+      "evidence": [
+        {
+          "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
+          "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
+          "role": "frozen .4c reviewed vertical result"
+        }
+      ]
+    }
+  ],
+  "history": [],
+  "gaps": [
+    {
+      "gap_id": "canonical-fabrication-and-provenance",
+      "objective_id": "provenance_honesty",
+      "tier": "hard_invariant",
+      "observed": "41 fabricated facts and 45 of 48 emitted records lack required provenance closure",
+      "target": "zero fabricated facts and full canonical provenance closure",
+      "first_failing_stage": "source_to_evidence_ir",
+      "affected_population": 48,
+      "causal_confidence": "high",
+      "reversible_slice": "small",
+      "uncertainty": "exact",
+      "estimated_impact": "restore the non-tradeable honesty floor before optimizing recall or breadth",
+      "reproduction": "cargo run --quiet -p specforge --example source_to_intent_eval -- crates/specforge/test_data/source_to_intent_vertical/reviewed_dataset.json",
+      "owner": {
+        "task_id": "SPEC-TO-INTENT-ALIGNMENT.6",
+        "task_tree_path": "docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md"
+      },
+      "evidence": [
+        {
+          "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
+          "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
+          "role": "frozen .4c reviewed vertical result"
+        }
+      ]
+    },
+    {
+      "gap_id": "source-to-evidence-canonical-loss",
+      "objective_id": "stage_conservation",
+      "tier": "source_evidence_loss",
+      "observed": "33 expected canonical facts disappear before EvidenceIR without disposition",
+      "target": "every expected canonical fact is conserved or explicitly residualized",
+      "first_failing_stage": "source_to_evidence_ir",
+      "affected_population": 33,
+      "causal_confidence": "high",
+      "reversible_slice": "medium",
+      "uncertainty": "exact",
+      "estimated_impact": "recover the dominant measured loss boundary after the honesty invariant",
+      "reproduction": "cargo test -p specforge --lib ir::source_to_intent_eval::tests::reviewed_result_snapshot_is_current_and_names_the_upstream_loss_boundary",
+      "owner": {
+        "task_id": "SPEC-TO-INTENT-ALIGNMENT.7",
+        "task_tree_path": "docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md"
+      },
+      "evidence": [
+        {
+          "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
+          "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
+          "role": "frozen .4c reviewed vertical result"
+        }
+      ]
+    },
+    {
+      "gap_id": "non-actionable-required-residuals",
+      "objective_id": "stage_conservation",
+      "tier": "persistent_residual",
+      "observed": "0 of 24 required residual observations are actionable",
+      "target": "every required residual is typed, source-linked, and actionable",
+      "first_failing_stage": "evidence_to_semantic_ir",
+      "affected_population": 24,
+      "causal_confidence": "high",
+      "reversible_slice": "medium",
+      "uncertainty": "exact",
+      "estimated_impact": "make promotion losses operable without disguising missing canonical facts",
+      "reproduction": "cargo test -p specforge --lib ir::source_to_intent_eval",
+      "owner": {
+        "task_id": "SPEC-TO-INTENT-ALIGNMENT.8",
+        "task_tree_path": "docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md"
+      },
+      "evidence": [
+        {
+          "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
+          "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
+          "role": "frozen .4c reviewed vertical result"
+        }
+      ]
+    },
+    {
+      "gap_id": "omitted-production-capability-islands",
+      "objective_id": "production_participation",
+      "tier": "breadth_efficiency",
+      "observed": "5 of 17 production capabilities are explicitly omitted in provider-free converge",
+      "target": "integrate or explicitly schedule each capability whose reviewed value is demonstrated",
+      "first_failing_stage": "canonical_converge_orchestration",
+      "affected_population": 5,
+      "causal_confidence": "medium",
+      "reversible_slice": "large",
+      "uncertainty": "bounded",
+      "estimated_impact": "measure and compose capability breadth only after semantic honesty and conservation",
+      "reproduction": "cargo test -p specforge --lib commands::converge::tests::provider_free_capability_report_names_every_current_capability_island",
+      "owner": {
+        "task_id": "SPEC-TO-INTENT-ALIGNMENT.9",
+        "task_tree_path": "docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md"
+      },
+      "evidence": [
+        {
+          "path": "crates/specforge/test_data/trajectory/converge_provider_free_capabilities.json",
+          "sha256": "b37f13d28b90a6e6b0fb4c554d0e9fc861ff5e993d3276743b15d0ad1736994e",
+          "role": "provider-free .2 production-capability observation"
+        }
+      ]
+    }
+  ],
+  "authority": {
+    "mode": "report_only",
+    "canonical_semantic_mutation_allowed": false,
+    "task_tree_review_required": true
+  }
+}

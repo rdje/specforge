@@ -1,0 +1,36 @@
+---
+id: first-reviewed-trajectory-snapshot
+title: The first evidence-composed trajectory is diverging on hard honesty gates and recommends task .6
+answers:
+  - "what is the first SpecForge trajectory snapshot"
+  - "is SpecForge converging diverging stalled mixed or unmeasurable"
+  - "why is the first trajectory snapshot diverging with insufficient history"
+  - "which task does the trajectory controller recommend first"
+  - "how are the .4c result and .2 capability ledger composed"
+  - "where are the persisted trajectory controller input and report"
+  - "what are the first ranked trajectory gaps"
+date: 2026-08-12
+status: current
+tags: [spec-to-intent-alignment, trajectory, snapshot, provenance, fabrication, task-ranking]
+evidence: crates/specforge/test_data/trajectory/controller_input.json; crates/specforge/test_data/trajectory/trajectory_report.json; crates/specforge/src/ir/trajectory_snapshot.rs; docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.5b)
+reverify: "cargo run --quiet -p specforge --example trajectory_snapshot -- --check && cargo run --quiet -p specforge --example trajectory_controller -- crates/specforge/test_data/trajectory/controller_input.json | cmp - crates/specforge/test_data/trajectory/trajectory_report.json"
+---
+
+`SPEC-TO-INTENT-ALIGNMENT.5b` composes the byte-pinned [[source-to-intent-first-reviewed-result]] with the exact
+provider-free [[default-converge-production-boundary]] observation outside the generic
+[[trajectory-controller-engine]]. A live equality test requires all 17 capability rows to match `converge`.
+The tracked input and report reproduce byte for byte from repository-relative tooling.
+
+The program state is `diverging`: current hard gates record 41 fabricated canonical facts, 45 of 48 emitted
+canonical records without required provenance closure, and 33 unexplained stage drops. History is separately
+`insufficient_history`; that prevents a baseline from claiming improvement, worsening over time, or stall, but
+does not excuse a current non-tradeable violation.
+
+All nine dimensions remain visible. Source-region and modality capture are 14/14; precision is 7/48, recall
+7/40, stage conservation 21/54, provenance 3/48, production accounting 17/17 with 12/17 non-omitted, reviewed
+category coverage 6/6, provider-free integrated execution 5/10, and required-modality document accounting 0/12.
+No scalar score hides these differences.
+
+The full owned ranking selects `SPEC-TO-INTENT-ALIGNMENT.6` for hard fabrication/provenance repair, then `.7`
+for 33 source-to-evidence losses, `.8` for 0/24 actionable residual observations, and `.9` for five omitted
+capability islands. The controller remains report-only and every leaf existed before evaluation emitted it.

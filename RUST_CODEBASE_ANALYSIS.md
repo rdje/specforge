@@ -4,6 +4,16 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-12 — first composed trajectory; `SPEC-TO-INTENT-ALIGNMENT.5b`)
+
+- New `ir/trajectory_snapshot.rs` is a product-evidence adapter around, not a policy branch inside, the generic
+  controller. It strictly loads the frozen `.4c` report and `.2` provider-free observation, derives every ratio,
+  and emits byte-current input/report artifacts; the live `converge` ledger must equal all 17 observed rows.
+- The 990-line module includes exact authority-shape guards and three focused tests. Two small examples regenerate
+  or check the current artifacts and evaluate any safe root-relative input. Rust source/tooling is 142,556 lines.
+- Current hard gates yield `diverging` with `insufficient_history`; the report proposes existing `.6` before
+  `.7`/`.8`/`.9`. No extractor, canonical IR, reviewed dataset, or `.4c` result changes in this composition slice.
+
 ## Session update (2026-08-12 — multi-metric controller engine; `SPEC-TO-INTENT-ALIGNMENT.5a`)
 
 - New `ir/trajectory.rs` implements a strict report-only controller boundary over nine required dimensions,

@@ -106,11 +106,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.4c — publish the first reviewed result`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.5`
-  Status: `in_progress`
+  Status: `done`
   Goal: `build an evidence-driven trajectory controller that detects convergence, stall, and divergence and proposes the next highest-value owned slice`
   Acceptance: `a machine-readable objective contract drives a multidimensional trajectory snapshot; held-out semantic outcomes, per-stage loss, modality/category coverage, residual debt, canonical-path participation, and hard honesty gates are measured; statistically justified drift/stall rules cannot be hidden by a blended score; recommended work is task-tree-owned and remains human-reviewable`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `generic .5a state/ranking controls plus .5b live-equal evidence composition, byte-current input/report, owned ranking, all focused/public checks, and full repository CI with 1,854 passed / five ignored / zero failed`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.5b — publish the first trajectory snapshot`
   Children: `.5a`, `.5b`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.5a`
@@ -121,9 +121,37 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.5a — build the trajectory control engine`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.5b`
-  Status: `pending`
+  Status: `done`
   Goal: `compose the frozen reviewed result and canonical capability evidence into the first trajectory snapshot and owned task proposal`
   Acceptance: `the byte-pinned snapshot derives exact .4c category/stage metrics and .2 production-path participation without changing either authority, classifies missing trend history honestly, publishes every ranked gap and why the winner outranks the rest, and opens the recommended task-tree leaf before any implementation pivot`
+  Verification: `three snapshot/currentness/mutant tests; live provider-free ledger equality; generic byte replay; format and all-target warning-deny Clippy; mdBook; Knowledge Map/catalog; public/live projections; all eight doctrines; full CI with 1,854 passed / five ignored / zero failed`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.5b — publish the first trajectory snapshot`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6`
+  Status: `pending`
+  Goal: `eliminate fabricated canonical facts and close canonical provenance on the frozen reviewed verticals`
+  Acceptance: `a reversible upstream repair reduces the exact fabricated-fact and unprovenanced-record populations without sacrificing a source-grounded true positive; controlled fabrication and provenance mutants remain detected; a new comparable snapshot records the result`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.7`
+  Status: `pending`
+  Goal: `recover source-grounded canonical facts lost at the first failing source-to-evidence boundary`
+  Acceptance: `the frozen vertical oracle identifies and repairs a bounded high-impact SourceIR-to-EvidenceIR loss family; stage conservation and held-out recall improve without fabrication, provenance, or category regression; a comparable snapshot records the result`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.8`
+  Status: `pending`
+  Goal: `make required promotion-loss residuals typed, source-linked, and actionable`
+  Acceptance: `a bounded residual family gains exact source linkage, typed cause, and operator action at SemanticIR and IntentIR; the vertical evaluator records the disposition without relabeling missing canonical facts as residual success`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.9`
+  Status: `pending`
+  Goal: `resolve the highest-value omitted canonical production capability after upstream honesty and conservation gaps`
+  Acceptance: `the .2 ledger and a reviewed vertical establish which omitted island has measured value; the selected capability is integrated or explicitly scheduled with per-run accounting and no implied participation; a comparable snapshot records the outcome`
   Verification: `pending`
   Commit: `pending`
 
@@ -139,7 +167,11 @@ expressiveness as the bottleneck.
 | 6 | `SPEC-TO-INTENT-ALIGNMENT.4b` | `done` | 12 portable reviewed verticals and 14 complete cells are frozen without tuning extraction |
 | 7 | `SPEC-TO-INTENT-ALIGNMENT.4c` | `done` | exact result localizes the constraint to source-to-evidence fact formation and residualization |
 | 8 | `SPEC-TO-INTENT-ALIGNMENT.5a` | `done` | strict multi-metric state/ranking engine and mutation controls are verified |
-| 9 | `SPEC-TO-INTENT-ALIGNMENT.5b` | `pending` | compose frozen evidence into the first snapshot and owned task proposal |
+| 9 | `SPEC-TO-INTENT-ALIGNMENT.5b` | `done` | first snapshot is byte-current and selects hard honesty/provenance repair |
+| 10 | `SPEC-TO-INTENT-ALIGNMENT.6` | `pending` | repair the hard fabrication/provenance invariant selected by the first snapshot |
+| 11 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
+| 12 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
+| 13 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
 
 ## Decisions
 
@@ -181,6 +213,9 @@ expressiveness as the bottleneck.
   measured next constraint is upstream fact formation and residualization, not a demonstrated ISF/FSMGen gap.
 - `2026-08-11`: freeze the generic controller in `.5a` before composing the known `.4c` result in `.5b`. This
   prevents state and ranking branches from being tuned to produce a preferred label for the current population.
+- `2026-08-12`: keep `.5b` composition outside the generic engine and preserve the provider-free `.2` ledger as
+  contextual execution evidence. A current hard-gate failure may classify divergence without history, while
+  `insufficient_history` independently forbids a trend or stall claim.
 
 ## Open Questions
 
@@ -234,6 +269,9 @@ expressiveness as the bottleneck.
 | `2026-08-12` | `.5a` controller semantics | `cargo test -p specforge --lib ir::trajectory`; JSON schema parse/semantic assertions; format check; all-target warning-deny Clippy | PASS: 16/16 tests cover five states, hard-failure precedence, dimension/fabrication/authority/path/owner/unknown-field mutants, estimated-history refusal, hard-first ranking, and deterministic serialization |
 | `2026-08-12` | `.5a` public/retrieval/live alignment | mdBook test/build; Knowledge Map 217 facts / 1,611 questions; fact catalog 206 cards; book-current-truth; roadmap projection; active-task evidence; live-size | PASS: schema, engine, research, book, roadmap, status, architecture, and retrieval agree; warning bands stay below mandatory rollover |
 | `2026-08-12` | `.5a` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines, formatting, warning-deny Clippy, 1,850 Rust tests passed / five ignored / zero failed, Rust docs, mdBook test/build, and final project-data-locality residue check |
+| `2026-08-12` | `.5b` composition/currentness | three trajectory-snapshot tests; live provider-free ledger equality; generic runner byte comparison; regeneration `--check`; format; all-target warning-deny Clippy | PASS: exact `.4c` and `.2` counts produce `diverging` + `insufficient_history`; all four ranked gaps are owned and `.6` wins hard-first; input/report SHA-256 `9901b420…a654` / `2fef8189…0a34` |
+| `2026-08-12` | `.5b` public/retrieval/live alignment | mdBook test/build; Knowledge Map 218 facts / 1,618 questions; fact catalog 207 cards; book-current-truth; roadmap projection; live-size | PASS: report, book, roadmap, research, architecture, live state, and retrieval agree; 775 Markdown files satisfy 52 governed surfaces without a mandatory rollover |
+| `2026-08-12` | `.5b` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines, formatting, warning-deny Clippy, 1,854 Rust tests passed / five ignored / zero failed, Rust docs, mdBook test/build, and final project-data-locality residue check |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
 
@@ -356,6 +394,25 @@ expressiveness as the bottleneck.
 - [x] **LOCKSTEP** — schema, engine, research status, task frontier, roadmap, public book, Knowledge Map, live
   docs, architecture record, and resume pointer agree on state/ranking semantics and review authority.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.5b`
+
+- [x] **REPRODUCE / MEASURE** — authenticate the frozen `.4c` result and exact provider-free `.2` ledger, derive
+  all nine dimensions without hand-maintained metric totals, persist byte-current input/report artifacts, and
+  reproduce the report through a generic repository-relative runner.
+- [x] **ROOT CAUSE (WHY + WHERE)** — preserve `diverging` as a current hard-gate conclusion while independently
+  reporting `insufficient_history`; expose fabrication, provenance, first-boundary loss, residual debt, and
+  capability participation without a scalar score or downstream-language inference.
+- [x] **ADDRESSED (verified)** — publish every ranked gap and open its owner before evaluation; recommend `.6`
+  hard honesty/provenance ahead of `.7` source loss, `.8` residual actionability, and `.9` capability breadth.
+- [x] **NO REGRESSION** — live-ledger equality, authority/profile mutants, byte currentness, generic replay,
+  formatting, warning-deny Clippy, mdBook, projections, doctrines, and full repository CI pass without changing
+  the reviewed dataset, `.4c` result, extractor behavior, or canonical IR.
+- [x] **GENERICITY (ADR 0006)** — product constants exist only in the `.5b` composition adapter and tracked
+  evidence; the `.5a` engine and generic input runner remain independent of document, vendor, protocol, signal,
+  category outcome, and page layout.
+- [x] **LOCKSTEP** — input/report, code, task ranking, roadmap, public book, live docs, research, architecture,
+  Knowledge Map, and resume pointer publish the same exact state, denominators, history authority, and `.6` next.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -368,6 +425,7 @@ expressiveness as the bottleneck.
 | `SPEC-TO-INTENT-ALIGNMENT.4b` | `SPEC-TO-INTENT-ALIGNMENT.4b — lock the reviewed vertical population` | 12 reviewed verticals / 14 cells, SSD source-authority repair, and path-neutral corpus-frontier lifecycle partition; `.4c` owns results |
 | `SPEC-TO-INTENT-ALIGNMENT.4c` | `SPEC-TO-INTENT-ALIGNMENT.4c — publish the first reviewed result` | byte-pinned exact result; all six categories incomplete; first failures rank upstream fact formation and residualization |
 | `SPEC-TO-INTENT-ALIGNMENT.5a` | `SPEC-TO-INTENT-ALIGNMENT.5a — build the trajectory control engine` | strict nine-dimension state/ranking contract, five states, statistical refusal, hard-first task ownership, and report-only authority |
+| `SPEC-TO-INTENT-ALIGNMENT.5b` | `SPEC-TO-INTENT-ALIGNMENT.5b — publish the first trajectory snapshot` | live-equal `.4c`/`.2` composition, byte-current baseline, honest history refusal, and owned `.6` recommendation |
 
 ## Changelog
 
@@ -395,3 +453,6 @@ expressiveness as the bottleneck.
   to `.5`, compose these exact dimensions into reviewable automatic steering.
 - `2026-08-12`: Closed `.5a` with the strict nine-dimension state/ranking engine and 16 mutation/authority tests;
   frontier advances to `.5b`, compose the frozen `.4c` and `.2` authorities into the first snapshot and task.
+- `2026-08-12`: Closed `.5b` and parent `.5` with byte-current input/report, a live-equal provider-free ledger,
+  `diverging` hard gates plus honest `insufficient_history`, and owned `.6`/`.7`/`.8`/`.9` ranking. Full CI is
+  green; after this slice commits cleanly, frontier advances to controller-selected `.6` honesty/provenance.

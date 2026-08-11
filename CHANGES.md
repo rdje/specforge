@@ -1,3 +1,17 @@
+### SPEC-TO-INTENT-ALIGNMENT.5b — the first evidence-composed trajectory now selects owned work
+
+- Added an isolated `.4c`/`.2` composition layer plus a guarded provider-free 17-row capability observation.
+  The live `converge` registry must equal that observation, and the generic `.5a` controller still contains no
+  current product constants.
+- Persisted byte-current controller input and report artifacts with regeneration/check tooling. The nine visible
+  dimensions retain exact denominators: source capture 14/14, precision 7/48, recall 7/40, conservation 21/54,
+  provenance 3/48, production accounting 17/17 with 12/17 non-omitted, six-category oracle coverage, provider-
+  free integrated execution 5/10, and required-modality document accounting 0/12.
+- The first snapshot is `diverging` because 41 fabricated facts, 45 provenance failures, and 33 unexplained
+  drops violate current hard gates. History remains honestly `insufficient_history`; no trend is inferred.
+- Opened four owned repair leaves and published the full ranking. Hard honesty/provenance `.6` outranks source
+  loss `.7`, residual actionability `.8`, and capability breadth `.9`; proposals remain report-only and reviewed.
+
 ### SPEC-TO-INTENT-ALIGNMENT.5a — trajectory state and ranking now have a strict engine
 
 - Added a versioned, unknown-field-denying controller input for all nine accepted trajectory dimensions. Every

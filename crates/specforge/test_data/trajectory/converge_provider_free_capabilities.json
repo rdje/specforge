@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "observation_id": "converge-provider-free-v1",
+  "profile": {
+    "vlm_provider": "skip",
+    "nlp_provider": "skip",
+    "rescan_plan_supplied": false,
+    "promotion_executed": false,
+    "extraction_quality_measured": false
+  },
+  "production_capabilities": [
+    {
+      "capability_id": "source_ingest",
+      "command": "ingest",
+      "entrypoint": "ingest",
+      "participation": "integrated",
+      "run_state": "executed",
+      "reason": "converge builds, materializes, and persists SourceIR before iteration"
+    },
+    {
+      "capability_id": "visual_enrichment",
+      "command": "enrich",
+      "entrypoint": "enrich",
+      "participation": "integrated",
+      "run_state": "not_executed",
+      "reason": "omitted for this run because --vlm-provider skip was selected"
+    },
+    {
+      "capability_id": "deterministic_evidence_extraction",
+      "command": "evidence",
+      "entrypoint": "evidence",
+      "participation": "integrated",
+      "run_state": "executed",
+      "reason": "converge rebuilt and persisted EvidenceIR inside each iteration"
+    },
+    {
+      "capability_id": "nlp_constraint_enrichment",
+      "command": "nlp-enrich",
+      "entrypoint": "nlp-enrich",
+      "participation": "integrated",
+      "run_state": "not_executed",
+      "reason": "omitted for this run because --nlp-provider skip was selected"
+    },
+    {
+      "capability_id": "constrained_contract_extraction",
+      "command": "extract-contracts",
+      "entrypoint": "extract-contracts",
+      "participation": "omitted",
+      "run_state": "not_executed",
+      "reason": "standalone extractor is not composed by converge; run it explicitly and rebuild downstream stages"
+    },
+    {
+      "capability_id": "actor_signal_relation_resolution",
+      "command": "signal-resolve",
+      "entrypoint": "signal-resolve",
+      "participation": "omitted",
+      "run_state": "not_executed",
+      "reason": "standalone Tier-3 resolver is not composed by converge; run it explicitly and rebuild downstream stages"
+    },
+    {
+      "capability_id": "register_bit_recovery",
+      "command": "recover-register-bits",
+      "entrypoint": "recover-register-bits",
+      "participation": "omitted",
+      "run_state": "not_executed",
+      "reason": "diagram-backed recovery is not composed by converge; run it explicitly when candidate registers and a VLM are available"
+    },
+    {
+      "capability_id": "condition_extraction",
+      "command": "extract-conditions",
+      "entrypoint": "extract-conditions",
+      "participation": "omitted",
+      "run_state": "not_executed",
+      "reason": "standalone condition repair did not run and LLM-primary replacement was not executed"
+    },
+    {
+      "capability_id": "llm_primary_constraint_extraction",
+      "command": "extract-constraints-llm",
+      "entrypoint": "extract-constraints-llm",
+      "participation": "integrated",
+      "run_state": "not_executed",
+      "reason": "omitted for this run because --nlp-provider skip was selected"
+    },
+    {
+      "capability_id": "semantic_projection",
+      "command": "semantic",
+      "entrypoint": "semantic",
+      "participation": "integrated",
+      "run_state": "executed",
+      "reason": "converge rebuilt and persisted SemanticIR"
+    },
+    {
+      "capability_id": "intent_projection",
+      "command": "intent",
+      "entrypoint": "intent",
+      "participation": "integrated",
+      "run_state": "executed",
+      "reason": "converge rebuilt and persisted canonical IntentIR"
+    },
+    {
+      "capability_id": "intent_nli_enforcement",
+      "command": "intent",
+      "entrypoint": "intent --nli-verify",
+      "participation": "omitted",
+      "run_state": "not_executed",
+      "reason": "converge measures EvidenceIR extraction quality but does not invoke the separate IntentIR NLI demotion gate"
+    },
+    {
+      "capability_id": "adapter_lowering",
+      "command": "adapt",
+      "entrypoint": "adapt",
+      "participation": "integrated",
+      "run_state": "executed",
+      "reason": "converge rebuilt and persisted the selected adapter artifact"
+    },
+    {
+      "capability_id": "evidence_nli_quality_measurement",
+      "command": "nli-verify",
+      "entrypoint": "nli-verify",
+      "participation": "integrated",
+      "run_state": "not_executed",
+      "reason": "omitted for this run because --nlp-provider skip was selected"
+    },
+    {
+      "capability_id": "validation_rescan",
+      "command": "rescan-plan",
+      "entrypoint": "rescan-plan",
+      "participation": "integrated",
+      "run_state": "not_executed",
+      "reason": "no --rescan-plan was supplied for this run"
+    },
+    {
+      "capability_id": "artifact_validation",
+      "command": "validate",
+      "entrypoint": "validate",
+      "participation": "scheduled",
+      "run_state": "not_executed",
+      "reason": "scheduled as the explicit next-step hint after converge; validation is not silently claimed for this run"
+    },
+    {
+      "capability_id": "prior_memory_learning",
+      "command": "learn-priors",
+      "entrypoint": "learn-priors",
+      "participation": "scheduled",
+      "run_state": "not_executed",
+      "reason": "cross-document prior learning remains a separate reviewed-corpus operation; converge only consumes the configured store"
+    }
+  ]
+}

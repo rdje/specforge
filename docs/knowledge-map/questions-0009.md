@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > where is the dropped enum surfaced (an isf_enum_value_literal_<name> ResidualDecisionPacket via enum_residuals(), wired into adapters.rs residual_decisions)
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > where is the exact historical SpecForge roadmap after containment
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > where is the extraction architecture contract
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > where is the first post-migration DEVELOPMENT_NOTES rollover segment
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > where is the first post-migration LIVE_ACHIEVEMENT_STATUS rollover segment
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
   > where is the mdBook current-truth verifier
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
@@ -148,6 +158,8 @@
   > which stale roadmap statuses were found before migration
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > which strategy is message_fields.byte_location_table
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > which task does the trajectory controller recommend first
 - [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
   > which task owns deterministic Rust tests under repository-local TMPDIR
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
@@ -285,15 +297,3 @@
   > why did OpenCAPI email review become an IntentIR behavior
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
   > why did OpenCAPI produce constraints on CAPI OCDE and DLX that the document never constrains
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > why did TL disappear from the OpenCAPI Ready Definition
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > why did USB 3.2 produce 918 interfaces and 556 adapter signals
-- [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md)
-  > why did a fresh ingest expose normalized staging in persisted metadata
-- [evidence-build-nondeterminism](../knowledge/evidence-build-nondeterminism.md)
-  > why did an EXTRACTOR-ARCHITECTURE byte-identical proof fail on SWD/ADI but pass on other docs
-- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
-  > why did an OpenCAPI Notes footer become a timing constraint with parameter min typ max and unit
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > why did an OpenCAPI functional test become an IntentIR behavior

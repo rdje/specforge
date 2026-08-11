@@ -82,13 +82,12 @@ executable boundary and can evolve when a source-grounded IntentIR value proves 
 SpecForge does not spend the present frontier anticipating one. [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md)
 owns the per-category IR contract, canonical-path integration, real multimodal producer, held-out vertical
 slices, and reviewable trajectory controller that make this ordering measurable (ADR 0033/0034). Its category
-contract, guarded per-run production-capability ledger, and typed timing-note → FigureRegion → verified
-ActorContract path now ship, together with the strict mutation-tested vertical evaluation engine, its balanced
-12-document reviewed population, and the exact frozen result. All six categories are incomplete: 10/14 cells
-first fail at SourceIR → EvidenceIR and four at EvidenceIR → SemanticIR, with no first failure at SemanticIR →
-IntentIR. The measured frontier remains upstream fact formation and residualization, not an ISF/FSMGen
-expressiveness gap. The strict nine-dimension state/ranking engine now ships with hard-first task ownership and
-report-only authority; the next leaf composes the frozen result and capability ledger into its first snapshot.
+contract, guarded production ledger, typed timing-note → FigureRegion → verified ActorContract path, strict
+vertical evaluator, balanced 12-document population, exact result, and reviewable controller now ship. The first
+evidence-composed snapshot is `diverging` on hard fabrication/provenance/drop gates while history remains
+`insufficient_history`; it recommends owned `.6` honesty repair before `.7` source loss, `.8` residual
+actionability, or `.9` capability breadth. The measured frontier remains upstream, not an ISF/FSMGen
+expressiveness gap; the next leaf executes the controller-selected hard honesty/provenance repair.
 
 Five active program groups support that north star:
 

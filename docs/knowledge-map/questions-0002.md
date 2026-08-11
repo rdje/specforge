@@ -259,6 +259,8 @@
   > how are temporal rules expressed as LTL or MTL
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > how are test laboratory procedures distinguished from hardware test requirements
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > how are the .4c result and .2 capability ledger composed
 - [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
   > how are the roadmap section bounds derived
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
@@ -295,5 +297,3 @@
   > how do I add fact-card capacity
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
   > how do I derive how many corpus refreshes remain (run scripts/check_corpus_frontier.sh; it derives the SourceIR cohort and requires every member in exactly one explicit refreshed or remaining set)
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > how do I file an FSMGen bug report or feature request

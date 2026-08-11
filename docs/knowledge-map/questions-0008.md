@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > what is the recommended fix (.5.i extraction-side fallback name-gate: derive_encoding_enum_name must return None unless the candidate token is a declared signal -> no enum minted; + emitter orphan-type fix isf_ir.rs:403-409 gate types block by emitted_enums(); .5.ii member-quality gate for the 271 real-named junk enums, calibration-gated)
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > what is the register-field eval surface (EvalTask::RegisterField)
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > what is the registers.section_header_field strategy
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > what is the rolling ledger archive protocol
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > what is the semantic_ungrounded_records_not_promoted residual packet
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
@@ -147,6 +155,8 @@
   > where are register bit-fields dropped on the way to .isf (isf_ir.rs:852, IsfStorageVar { name, width, reset } — field metadata discarded)
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
   > where are section-derived semantic phases built
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > where are the persisted trajectory controller input and report
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > where did SpecForge suggest LTL/MTL support in ISF
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
@@ -287,13 +297,3 @@
   > where is the declared-signal gate applied (pattern + dynamic constraint paths)
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > where is the default-flip decision packet / should promote-constraints-llm become the default
-- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
-  > where is the dropped enum surfaced (an isf_enum_value_literal_<name> ResidualDecisionPacket via enum_residuals(), wired into adapters.rs residual_decisions)
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > where is the exact historical SpecForge roadmap after containment
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > where is the extraction architecture contract
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > where is the first post-migration DEVELOPMENT_NOTES rollover segment
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > where is the first post-migration LIVE_ACHIEVEMENT_STATUS rollover segment
