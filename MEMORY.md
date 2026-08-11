@@ -31,8 +31,9 @@
   *sum* to the declared bounds — `fact_index` is its only user. Ten aggregates were re-derived under exact
   authorities; `task_evidence` can now get the file capacity its 81.9% warning needs. Pressure lines name the
   headroom to the ceiling. Suites: roadmap 9 → 49 cases, live-doc 68 → 81.
-  `CHANGES-LEDGER-ROLLOVER` then sealed `segment-0005` so the ledger the above filled is back inside its
-  warning band: 95 records / 1,423 lines, every dimension under 80%, all older archive members byte-identical.
+  `CHANGES-LEDGER-ROLLOVER` then rolled the ledger the above filled: `segment-0005`, then `segment-0006` after
+  `.0`'s minimal cut proved too small — a rollover writes a ledger record itself, so size the cut to include
+  it. Root is 92 records / 1,385 lines (~77%), all older archive members byte-identical.
 - Next action: `CORPUS-COVERAGE.2.51` — the next product slice; six corpus documents remain. No housekeeping
   blocks it. Note that `docs/tasks/` is at 82.5% of its file target (132/160); ADR 0032 made that count's
   remedy — raise the capacity under an exact authority — actually usable, so it is a decision, not a trap.
