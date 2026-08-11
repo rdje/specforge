@@ -2,6 +2,33 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what did the active PDF task containment census find
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > what did the corpus promotion sweep measure (gauge deltas per doc)
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > what did the corpus task evidence containment census find
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > what distinguishes a PURE-INFERRED phantom from a PROSE-GROUNDED or SECTION+INFERRED 0/0 actor
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > what do leading_section_number and is_descendant_section_number do
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > what document class is a chip-spec PDF (protocol / register / interface / guide)
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > what does (on start (sample S as s)) assert in FSMGen semantics (an entry-cycle D-input capture, cycle N port && can_accept)
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > what does .10h do that .10g did not (block-qualified register-mnemonic recovery)
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > what does .10i do that .10h did not (block-qualified recovery of the disjoint register class)
+- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
+  > what does AdapterArtifact write_to_disk reconcile
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > what does CORPUS-COVERAGE.1 add
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > what does CORPUS-COVERAGE.4 own (frontier census integrity, complete: .4.0 derived the census, corrected every live surface, and restored the lost document; .4.1 registered CORPUS-FRONTIER as the eighth doctrine so the identity is enforced rather than carried. .3 closed the sibling frontier-vs-lifecycle defect but its currentness check covers retention only, not the
+  > remaining-work count)
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > what does DEFER mean in the doctrine enforcement report
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > what does DOCLING_DEVICE do
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
@@ -271,30 +298,3 @@
   > what is recovered_trapped_data_rows and who shares it
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > what is register_field_name_recall / register_field_completeness / register_bit_structure_recall
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what is scripts/check_doctrines.sh / the doctrine driver
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > what is select_initiator_actor / initiator_perspective_directions
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is signal_presence_records and what does a SignalPresenceRecord hold
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > what is snap_subject_to_sentence_token and when does it fire
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > what is synthesize_register_field_tables
-- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
-  > what is synthesize_signal_declarations_from_prose / the pin-appositive pattern
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > what is the .2m candidate (deterministic AXI-family channel-membership lever)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what is the .5.ii sentence-spine member-fragment predicate (a synthesized enum member_name is a prose fragment if any _-token is an English sentence-spine word — copula/aux/modal IS/ARE/BE/HAS/MUST/SHALL, article/demonstrative THE/THIS/THAT, relativizer/subordinator WHICH/WHEN/IF/BECAUSE — EXCLUDING the .1a collisions A/I/ITS/CAN/MAY/AM. Precision 1.000 (0/115 clean-anchor
-  > flagged), recall 1.000 (269/269 junk-anchor caught), 30.2% of members drop; universal grammar ADR-0006, no name list)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > what is the .5.iii _WIDTH parameter-leak gate / is it landed / is it ADR-0006 safe (LANDED 2026-06-24: is_width_parameter_leak_member + a continue-skip in synthesize_encoding_declarations_for_enum after the .5.ii spine gate, known_signals threaded from the signal-match caller. Drops a synthesized encoding member named <X>_WIDTH iff X is a declared signal OR the enum's own name
-  > — document-grounded like .5.i, NOT a name list; corpus FP set EMPTY: no legit FULL_WIDTH/HALF_WIDTH value exists and the declared-signal arm never catches one since FULL/HALF are not signals; per-member not per-enum so BRESP keeps its codes and RRESP/AXSNOOP empty to honest residuals. AXI manager.isf now (BRESP (OKAY 0)(EXOKAY 1)...) + (AWCMO (CLEAN_AND_INVALIDATE
-  > 0)(CLEAN_ONLY 1)); false RRESP/AXSNOOP/RCHUNK* _WIDTH enums gone; FSMGen --strict success/0; WIRE-BASED-100 1.000 before==after; kg-bench 156/156; run_ci GREEN lib 1718 +2)
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what is the 4th portable architecture (doctrine enforcement)
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > what is the AXI signal naming convention (channel prefix)
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > what is the DOC-INTENT-TAXONOMY.1 corpus census

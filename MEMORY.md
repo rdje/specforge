@@ -17,21 +17,24 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SIGNAL-CATALOG-CAPTURE-GAP.1` — new tree; `.0` (ownership + census) done, no code touched.
-  `SEMANTIC-EMPTY-CATALOG-FILTER` is `done`/closed. Tracking-only: `STATUS-LEDGER-ROLLOVER` `.2`,
-  `TASK-PART-SEAL-REACHABILITY` `.0`.
-- Current state: the closed tree deleted the `declared_signal_names.is_empty()` special case in
-  `crates/specforge/src/ir/semantic.rs`, so one grounding predicate governs every document and a rejected record
-  is demoted to a `semantic_ungrounded_records_not_promoted` packet. All 78 chains were rebuilt from unchanged
-  EvidenceIR and the 179-artifact validation population re-validated: `CHAIN-CURRENCY` green at 24/78/78/78, all
-  44 emitted `.isf` byte-identical and FSMGen-strict clean. Corpus coverage unchanged at 52/57, five remaining.
-- Next action: `SIGNAL-CATALOG-CAPTURE-GAP.1` — classify the 33 empty-catalog documents as honest absence vs
-  capture miss, starting with the five `protocol`-classed ones; that tree's frontier holds the census and the
-  honesty guardrail. Alternative if a refresh is preferred: `CORPUS-COVERAGE.2.53` (its tree holds the pick
-  criteria and the frontier/retention declarations a refresh must move in the same transaction).
-- In-flight uncommitted: none. Replay/rebuild/snapshot evidence under
-  `.project-data/tmp/semantic-empty-catalog-filter-1/` is disposable — delete freely (keep `*.log` out of the top
-  level of `.project-data/tmp`, which `PROJECT-DATA-LOCALITY` fails closed on). No background job runs.
-- Blockers: none. Two ledgers are tight: `CHANGES.md` at 1,598 of its 1,800-line health target, and
-  `LIVE_ACHIEVEMENT_STATUS.md` at 69 of 80 records — its 90% rollover lands at 72, so three more product records
-  before `STATUS-LEDGER-ROLLOVER` becomes mandatory. The user-owned `.claude/settings.json` is untouched.
+- Active unit: `SIGNAL-CATALOG-CAPTURE-GAP.2` — `.0` (ownership + census) and `.1` (classification) done, no
+  code touched yet. Tracking-only: `STATUS-LEDGER-ROLLOVER` `.2`, `TASK-PART-SEAL-REACHABILITY` `.0`.
+- Current state: `.1` classified all 33 empty-catalog documents — **32 honest absence, 1 capture miss**. No
+  empty-catalog document has an identity-header `signal_description` table, so the table gate is not the cause;
+  `wbspec_b4_wishbone_b4_specification` alone is a real miss and declares its wires as 32 section *headings*.
+  Two corpus facts fell out: markdown escaping (`\_`) in the normalized text EvidenceIR reads truncates
+  underscore-bearing identifiers on 67 of 78 documents (`.4`), and 14 of 78 evidence artifacts carry no
+  validation report, hence no `document_class` (`.5`). Ingest is complete on all 77 available sources.
+- Next action: **roll the `changes` ledger first** — it is now mandatory (below), and `.1`'s ledger entry is
+  deferred into that slice; its content is fully recoverable from the `.1` task-tree block and the research
+  record. Then `SIGNAL-CATALOG-CAPTURE-GAP.2`: design the heading-as-declaration rule and measure what it would
+  admit across all 78 before writing code — a title shape alone is measured unsafe, so the rule must be
+  corroborative (title names an identifier **and** body states a direction). `.4` is a valid smaller slice.
+- In-flight uncommitted: none. Census/probe scripts under `.project-data/tmp/signal-catalog-capture-gap-1/`
+  are disposable — delete freely (keep `*.log` out of the top level of `.project-data/tmp`, which
+  `PROJECT-DATA-LOCALITY` fails closed on). No background job runs.
+- Blockers: **`CHANGES.md` rollover is mandatory before its next append.** At 1,598 lines it is 88.8% of its
+  1,800-line health target; the 90% trigger lands at 1,620, so any entry of ~22 lines or more fails
+  `LIVE-DOC-SIZE` (measured: a 31-line entry gave 1,629 = 90.5%). Follow the `COMMIT.md` rolling-ledger
+  protocol. `LIVE_ACHIEVEMENT_STATUS.md` is second at 69 of 80 records, rollover at 72
+  (`STATUS-LEDGER-ROLLOVER`). The user-owned `.claude/settings.json` is untouched.

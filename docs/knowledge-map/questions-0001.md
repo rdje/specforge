@@ -50,6 +50,8 @@
   > are temporal_invariants / conditional_rules / signal_constraints silently dropped at ISF lowering
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
   > are the 'unknown diagram_kind' visual assets a capture gap
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > are the 33 empty signal catalogs a capture miss or honest absence
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > are the APB signals PCLK PADDR PWDATA the parity-check PADDRCHK extracted
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -84,6 +86,8 @@
   > can WIRE-BASED-100 reach 100% on SWD the same way as the parallel buses
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > can a dense-prose phantom actor reach emitted ISF
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > can a section-title shape alone license a signal declaration
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > can a timing description or comment cell span columns without losing the timing record
 - [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
@@ -159,6 +163,8 @@
   > did the qwen2.5vl VLM recover a groundable AXI signal-to-phase mapping (no — contradictory, redundant, hallucinated signal semantics)
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > did the symmetric grounding filter change any emitted .isf
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > do EvidenceIR statements read SourceIR content elements or the normalized markdown
 - [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
   > do EvidenceSnapshot SemanticSnapshot and IntentSnapshot count protocol states
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
@@ -197,6 +203,8 @@
   > do the Pattern and Nlp extraction tiers find the same constraints
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > do the emergent clusters actually track real vendor/layout families
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > do the register-classed empty-catalog documents deserve the same bar as protocol-classed ones
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > do the register_bits.rs tiling gates validate field order (NO — only width-sum + name-multiset; a row-jumbled flattened table could pass both gates with WRONG bits, so a deterministic-table reader is strictly more dangerous than the VLM front-end)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
@@ -265,6 +273,8 @@
   > does SpecForge use LTL CTL or TLA+
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
   > does SpecForge use the full scope of a page's visual information
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > does Wishbone declare its signals in a table
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > does a PathBuf need portability handling before it has a producer
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
@@ -287,13 +297,3 @@
   > does an empty declared-signal catalog disable the SemanticIR grounding filter
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > does canonical SWD EvidenceIR contain interface edge timing
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > does cargo test need TMPDIR set manually
-- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
-  > does cleaning normalized bundles undo a completed corpus re-ingest
-- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
-  > does constrained contract extraction ship code
-- [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
-  > does converge detect a protocol only SWD change
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > does converge re-ingest the PDF every run

@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > how does SpecForge capture signals that are in prose not tables (I2C SDA/SCL)
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > how does SpecForge cluster chip-spec PDFs by vendor/layout without hardcoding vendor names
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > how does SpecForge combine confidence across modalities or sources
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > how does SpecForge decide signal direction (input/output) in the emitted .isf
+- [contested-priors](../knowledge/contested-priors.md)
+  > how does SpecForge detect contradicting or conflicting priors
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > how does SpecForge determine what a chip-spec PDF is about / its purpose category
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > how does SpecForge distinguish a timing table category from a scalar min typ max layout
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > how does SpecForge distinguish legal conditions from protocol conditions
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
@@ -283,17 +297,3 @@
   > how is the required free disk for an ingest estimated
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > how is the single-word `<NAME> state` grammar kept false-positive-free without a keyword doc-gate (ADR 0006)
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > how is the terminal task source archive boundary verified
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > how is transaction membership kept boundary-precise across read vs write (bar #3)
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > how many AArch64 External Debug page sidecars are repository relative
-- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
-  > how many CORPUS-COVERAGE re-ingests remain after normalized cleanup
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > how many CoreSight Base System page sidecars are repository relative
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > how many Introducing CoreSight page paths are repository relative
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > how many OpenCAPI AFU address note page paths are repository relative

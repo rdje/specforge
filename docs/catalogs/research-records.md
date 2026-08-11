@@ -22,6 +22,7 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/research/dense-prose-signal-authority-measurement.md](../../docs/research/dense-prose-signal-authority-measurement.md) | Dense-prose signal-authority measurement — `CORPUS-COVERAGE.2.33d.i` |
 | [docs/research/document-intent-category-census.md](../../docs/research/document-intent-category-census.md) | Document-intent category census (DOC-INTENT-TAXONOMY.1) |
 | [docs/research/document-intent-isf-completeness.md](../../docs/research/document-intent-isf-completeness.md) | Per-category ISF-lowering completeness gauge (DOC-INTENT-TAXONOMY.2) |
+| [docs/research/empty-signal-catalog-classification.md](../../docs/research/empty-signal-catalog-classification.md) | Empty signal catalogs: honest absence vs capture miss |
 | [docs/research/full-page-capture-gap.md](../../docs/research/full-page-capture-gap.md) | Full-Page Intent-Capture Gap — measured report (`FULL-PAGE-INTENT-CAPTURE.1`) |
 | [docs/research/generic-enum-conflation-measurement.md](../../docs/research/generic-enum-conflation-measurement.md) | Generic-`TABLE` mega-enum conflation — measurement (`KG-ISF-COMPLETENESS.5`) |
 | [docs/research/generic-gate-authority-retirement-measurement.md](../../docs/research/generic-gate-authority-retirement-measurement.md) | Generic whole-statement gate retirement measurement — `CORPUS-COVERAGE.2.43b` |

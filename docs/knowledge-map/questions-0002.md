@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > does cargo test need TMPDIR set manually
+- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
+  > does cleaning normalized bundles undo a completed corpus re-ingest
+- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
+  > does constrained contract extraction ship code
+- [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
+  > does converge detect a protocol only SWD change
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > does converge re-ingest the PDF every run
 - [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
   > does convergence detect a same count protocol rewrite
 - [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
@@ -29,6 +39,8 @@
   > does lowering cat-3 topology need only an ISF construct or also a multi-actor emit (also a multi-actor emit — ISF is per-actor / one .isf = one FSMGen module and SpecForge's emit is single-initiator-actor; a declarative cross-component netlist is an architectural change, decided WITH FSMGen only after capture-recall clears the bar — not today)
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > does malformed page metadata preserve the last good normalized bundle
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > does markdown escaping cost recall on documents that already have a signal catalog
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
   > does mdbook test pass for the SpecForge book
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
@@ -89,6 +101,8 @@
   > does the explicit-direction signal catalog repeat the UTF-8 boundary bug
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
   > does the external SSD project directory contain the USB4 Inter-Domain Service PDF
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > does the extractor cut identifiers at the underscore character
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > does the legal statement classifier use a vendor or document denylist
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
@@ -284,17 +298,3 @@
   > how does SpecForge avoid chip/vendor name lists in document classification (structural typed-surface counts + generic front-matter doc-type vocabulary only; ADR 0006)
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > how does SpecForge capture protocol actors/agents defined in prose (.3b/.8 extract_protocol_actors)
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > how does SpecForge capture signals that are in prose not tables (I2C SDA/SCL)
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > how does SpecForge cluster chip-spec PDFs by vendor/layout without hardcoding vendor names
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > how does SpecForge combine confidence across modalities or sources
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > how does SpecForge decide signal direction (input/output) in the emitted .isf
-- [contested-priors](../knowledge/contested-priors.md)
-  > how does SpecForge detect contradicting or conflicting priors
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > how does SpecForge determine what a chip-spec PDF is about / its purpose category
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > how does SpecForge distinguish a timing table category from a scalar min typ max layout

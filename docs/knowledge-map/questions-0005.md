@@ -2,6 +2,30 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > is the Introducing CoreSight Debug and Trace refresh complete
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > is the LLM-primary promotion a recall improvement
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > is the LLM-primary promotion gauge improvement reproducible on canonical artifacts (not just /tmp copies)
+- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
+  > is the LLM/VLM provider missing or not wired up
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > is the NLP-SHALLOW-PARSE build frontier exhausted
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > is the OpenCAPI 3.0 Certified Definition refresh complete
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > is the OpenCAPI 3.0 Certified Test Resources engineering note refresh complete
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > is the OpenCAPI 3.0 Ready Definition refresh complete
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > is the OpenCAPI 3.0 Ready Test Resources engineering note refresh complete
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > is the OpenCAPI AFU Address Space Usage refresh complete
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > is the PDF-VARIANT-DIGESTION current frontier internally consistent
+- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
+  > is the SWD FSM the same as the JTAG TAP DBGTAPSM (no)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > is the SemanticIR phases surface the protocol transaction phases (no — it is section/chapter-derived)
 - [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
@@ -42,6 +66,8 @@
   > is the descendant-subsection scope over-broad (no — 0 over-broad corpus-wide)
 - [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
   > is the drive/read direction correct for passive vs active prose relations
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > is the empty catalog caused by the table authority gate rejecting real signal tables
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > is the enum drop a width-overflow rule (no — count-derived width 2a.iv hypothesis was DISPROVEN; GIC-600 emits 69152 strict-clean; FSMGen accepts bare decimals of any magnitude)
 - [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
@@ -55,6 +81,8 @@
   > (type ...). Corpus generic enums 82->8 / total enum records 422->105 across 33 rebuildable docs; real signal-match enums byte-identical; WIRE-BASED-100 1.000 before==after; fsmgen --strict 0 diagnostics)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > is the generic-enum conflation an emitter bug or an extraction bug (EXTRACTION-born in evidence.rs + semantic.rs; isf_ir.rs:889-912 lowers it faithfully)
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > is the jesd235 HBM artifact a truncated ingest
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > is the kg-isf-completeness.3 relation-completeness frontier closed / are any docs still stale
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -270,30 +298,3 @@
   > what did the .2i Rule-A per-phase grouping measurement find (clean only on AHB, empty on APB/AXI/SWD)
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > what did the OpenCAPI AFU address note prove about legal boilerplate
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what did the active PDF task containment census find
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > what did the corpus promotion sweep measure (gauge deltas per doc)
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > what did the corpus task evidence containment census find
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > what distinguishes a PURE-INFERRED phantom from a PROSE-GROUNDED or SECTION+INFERRED 0/0 actor
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > what do leading_section_number and is_descendant_section_number do
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > what document class is a chip-spec PDF (protocol / register / interface / guide)
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > what does (on start (sample S as s)) assert in FSMGen semantics (an entry-cycle D-input capture, cycle N port && can_accept)
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > what does .10h do that .10g did not (block-qualified register-mnemonic recovery)
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > what does .10i do that .10h did not (block-qualified recovery of the disjoint register class)
-- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
-  > what does AdapterArtifact write_to_disk reconcile
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > what does CORPUS-COVERAGE.1 add
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > what does CORPUS-COVERAGE.4 own (frontier census integrity, complete: .4.0 derived the census, corrected every live surface, and restored the lost document; .4.1 registered CORPUS-FRONTIER as the eighth doctrine so the identity is enforced rather than carried. .3 closed the sibling frontier-vs-lifecycle defect but its currentness check covers retention only, not the
-  > remaining-work count)
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > what does DEFER mean in the doctrine enforcement report
