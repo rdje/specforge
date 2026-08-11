@@ -5,8 +5,7 @@
 
 ## CORPUS-COVERAGE.4
 
-- Status: `active` (`2026-08-11`) · Children: `.4.0` census correction (done), `.4.1` mechanical census gate
-  (pending)
+- Status: `done` (`2026-08-11`) · Children: `.4.0` census correction (done), `.4.1` mechanical census gate (done)
 - Goal: make the `.2` refresh frontier a **derived** count rather than a hand-carried decrement, so the
   program cannot silently lose a document from its own remaining-work queue.
 
@@ -151,12 +150,77 @@ snapshots.
 
 ## CORPUS-COVERAGE.4.1
 
-- Status: `pending`
+- Status: `done` (`2026-08-11`, CODE/DOC; no child required)
 - Goal: a mechanical census gate that derives cohort / refreshed / remaining from persisted corpus evidence and
   fails when the tracked frontier disagrees, so the identity `cohort = refreshed + remaining` cannot drift
   again.
-- Acceptance: the check derives all three counts with no document, vendor, or protocol name in the rule; it
-  fails closed on a seeded omission and on a seeded denominator edit; it is registered in
-  `scripts/check_doctrines.sh` at the tier its runtime justifies; and it carries a self-test.
-- Verification: pending
-- Commit: pending
+
+### What landed
+
+`CORPUS-FRONTIER` is the eighth registered doctrine, gate-tier, wired into `scripts/check_doctrines.sh` through
+the adapter `scripts/check_corpus_frontier.sh`. The core is `scripts/check_corpus_frontier_census.pl`
+(derive-and-diff archetype) against the declaration `doctrine/corpus_frontier/census.json`.
+
+Cohort and refreshed are derived; remaining is declared and then attacked four ways, each catching a failure the
+others cannot see:
+
+| # | Check | Catches |
+| --- | --- | --- |
+| 1 | **IDENTITY** — derived cohort and refreshed equal the declared `expected` | a count that drifted from the artifacts in either direction |
+| 2 | **MEMBERSHIP** — every declared-remaining key exists, is in the cohort, and retains no bundle | a stale declaration naming a document that has since been refreshed |
+| 3 | **OMISSION** — no cohort member outside the declared set still has a retired-root path and no bundle | the original defect: a document dropped from the list, invisible to any check over that list |
+| 4 | **PROSE** — the root task file states exactly the declared counts | the read frontier and the derived census saying different things |
+
+Check 3 is the one the defect needed, and it is why the rule scans the whole cohort rather than the list.
+
+### Design decisions
+
+- **Declared, not inferred, remaining set.** Mirrors `retained_bundles.json`: the derivation needs something
+  exact to disagree with, and a set is strictly stronger than a count — check 2 caught a seeded swap whose
+  cardinality was still correct.
+- **The retired-root prefix lives in the declaration, not the executable.** It is workstation-shaped and will
+  change again when the library moves; that makes it data an owner revises under a named leaf, not logic. No
+  document, vendor, or protocol name appears in any check (ADR 0006) — NVMe is admitted by exactly the rule
+  that admits the other five.
+- **Gate-tier, not CI-tier like its `CHAIN-CURRENCY` sibling.** Only each SourceIR's `source` object is needed,
+  so the check reads a bounded 8 KiB prefix and locates the object with an exact brace scan that tracks string
+  and escape state — a naive scan would miscount a brace inside a path, and a regex would guess. The whole
+  corpus costs 52 ms measured, so the drift is caught at commit time rather than after merge.
+- **Skips loudly on an absent corpus.** A fresh clone and a hosted runner have no `generated/`; silence would
+  read as a pass, so the skip is printed and proven by a self-test case.
+
+### Acceptance
+
+- [x] **REPRODUCE / MEASURE** — before this leaf the corrected census was carried in prose with nothing binding
+  it to the artifacts; `.4.0`'s own record names that as its honest residual.
+- [x] **ROOT CAUSE (WHY + WHERE)** — no check related the tracked frontier to persisted evidence.
+  `CORPUS-COVERAGE.3`'s currentness check covers retention only, and `CHAIN-CURRENCY` proves artifacts match the
+  binary, not that the frontier matches the artifacts. `check_corpus_frontier_census.pl` closes exactly that gap.
+- [x] **ADDRESSED (verified)** — the gate reports `57 cohort = 51 refreshed + 6 remaining` and agrees with the
+  declaration, retention, and the root. Two **live negatives on the real corpus** fail closed: reproducing the
+  historical defect (NVMe removed, denominator shortened to 56/five to match) raises five violations including
+  the omission; and a swap that keeps the cardinality correct while listing a refreshed document
+  (`usb_3_2_revision_1_0_2017_09`) still raises two.
+- [x] **NO REGRESSION** — no Rust changed, so every extraction oracle is orthogonal by construction. The driver
+  reports **all seven executed doctrines PASS (8 registered)** with `CHAIN-CURRENCY` deferred as registered, and
+  the ten-case self-test passes, including the absent-corpus skip and the braced-path brace-scan case.
+- [x] **GENERICITY (ADR 0006)** — the rule is structural (persisted source root, bundle retention) with every
+  workstation-shaped prefix in the declaration; the executable contains no document, vendor, or protocol name.
+- [x] **LOCKSTEP** — `DOCTRINE_ENFORCEMENT.md` §10, the book's doctrine-enforcement chapter, `TOOLBOX.md`,
+  `CHANGES.md`, `LIVE_ACHIEVEMENT_STATUS.md`, the root, and the resume pointer record the new doctrine.
+
+### Verification log
+
+| Date | Boundary | Result |
+| --- | --- | --- |
+| `2026-08-11` | self-test | 10/10 — clean fixture, dropped remaining, inflated denominator, identity-breaking refreshed count, declared-remaining-with-bundle, non-cohort key, disagreeing root prose, duplicate key, absent-corpus skip, braced-path brace scan |
+| `2026-08-11` | real corpus | `57 cohort = 51 refreshed + 6 remaining`; declaration, retention, and root frontier agree; 52 ms |
+| `2026-08-11` | live negative 1 | the historical defect reproduced against the real corpus raises 5 violations, naming `nvme_base_specification_2_0a_2021_07_26` as absent from the declared set |
+| `2026-08-11` | live negative 2 | a cardinality-preserving swap raises 2 violations, so a correct count cannot hide a wrong set |
+| `2026-08-11` | driver | `ALL 7 executed doctrines PASS (8 registered, tier=gate)` with `CHAIN-CURRENCY` deferred |
+
+### Commit log
+
+| Unit | Durable evidence |
+| --- | --- |
+| `CORPUS-COVERAGE.4.1` | `CORPUS-COVERAGE.4.1 — gate the corpus frontier census as the eighth doctrine` |

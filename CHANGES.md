@@ -1,3 +1,29 @@
+### CORPUS-COVERAGE.4.1 — gate the corpus frontier census as the eighth doctrine
+
+- `CORPUS-FRONTIER` is registered gate-tier in `scripts/check_doctrines.sh`: adapter
+  `scripts/check_corpus_frontier.sh`, core `scripts/check_corpus_frontier_census.pl` (derive-and-diff),
+  declaration `doctrine/corpus_frontier/census.json`. `.4.0` corrected the census; this makes it enforced.
+- Cohort and refreshed are derived; remaining is declared and attacked four ways. IDENTITY catches a count that
+  drifted either direction. MEMBERSHIP catches a declared document that has since been refreshed. **OMISSION**
+  scans the whole cohort for an unrefreshed document the declaration forgot — the check the original defect
+  needed, because a document dropped from a list is invisible to every check written over that list. PROSE
+  requires the root task file to state the same counts, so the read frontier cannot diverge from the derived one.
+- Proven on the real corpus, not only fixtures. Reproducing the historical defect — NVMe removed and the
+  denominator shortened to 56/five to match — raises five violations naming the omitted document. A subtler
+  negative that keeps the cardinality correct while listing a refreshed document
+  (`usb_3_2_revision_1_0_2017_09`) still raises two, so a right count cannot hide a wrong set.
+- Gate-tier rather than CI-tier like its `CHAIN-CURRENCY` sibling: only each SourceIR's `source` object is
+  needed, so the check reads a bounded 8 KiB prefix and locates the object with an exact brace scan tracking
+  string and escape state — a naive scan miscounts a brace inside a path and a regex would guess. 52 ms for all
+  78 documents, so the drift is caught before the commit rather than after the merge.
+- The workstation-shaped input — which source root counts as retired — lives in the declaration under a named
+  owner, not in the executable, because it is data an owner revises when the library moves. No document,
+  vendor, or protocol name appears in any check (ADR 0006).
+- A refresh must now move `doctrine/corpus_frontier/census.json` in the same transaction or the gate fails
+  closed. Self-test 10/10 including the absent-corpus skip and the braced-path scan; no Rust changed, so every
+  extraction oracle is orthogonal by construction; the driver reports all seven executed doctrines PASS of eight
+  registered, with `CHAIN-CURRENCY` deferred as registered.
+
 ### CORPUS-COVERAGE.4.0 — derive the corpus frontier census and restore the lost document
 
 - Selecting refresh #52 required stating the frontier, so the frontier was re-derived instead of read. The

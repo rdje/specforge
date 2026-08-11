@@ -94,6 +94,7 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
 | "What fraction of each document's intent reaches `.isf`?" | [6.1 `measure_isf_completeness.py`](#61-scriptsmeasure_isf_completenesspy) |
 | "Which documents form an extraction family / share a shape?" | [6.2 `corpus-cluster`](#62-corpus-cluster) |
 | "Run the full gate before committing code." | [7.1 `run_ci.sh`](#71-scriptsrun_cish--the-full-gate) |
+| "How many corpus documents are still unrefreshed?" | [7.2b `check_corpus_frontier.sh`](#72b-scriptscheck_corpus_frontiersh--the-corpus-frontier-derive-and-diff-gate) |
 | "Is the terminal task source/archive boundary intact?" | [7.3 `check_task_tree_archive.pl`](#73-scriptscheck_task_tree_archivepl) |
 
 ---
@@ -306,6 +307,18 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
 - **WHEN:** after any shared-extractor or stage change, and before signing off a refresh — it is the
   measurement ADR 0025 decision 1 requires before attributing a delta. Skips loudly with no corpus.
 - **HOW:** `bash scripts/check_chain_currency.sh` (`--self-test` for its sixteen fail-closed cases)
+
+### 7.2b `scripts/check_corpus_frontier.sh` — the CORPUS-FRONTIER derive-and-diff gate
+- **WHAT:** derives how much of the corpus is still unrefreshed from each document's own persisted
+  `source.requested_path` plus bundle retention, then diffs it against `doctrine/corpus_frontier/census.json`
+  four ways: the cohort/refreshed identity, the declared remaining set's membership, an **omission** scan of
+  the whole cohort for any unrefreshed document the declaration forgot, and the counts the root task file
+  states in prose. A refresh must move the declaration in the same transaction or this fails closed.
+- **WHEN:** to answer "how many documents are left, really" — never read a carried number. Also the fastest
+  way to confirm a refresh's bookkeeping landed. Skips loudly with no corpus; 52 ms for all 78 documents.
+- **HOW:** `bash scripts/check_corpus_frontier.sh`
+  (`perl scripts/check_corpus_frontier_census.pl --report` for the JSON census;
+  `--self-test` for its ten fail-closed cases)
 
 ### 7.3 `scripts/check_task_tree_archive.pl`
 - **WHAT:** validates the contract-driven terminal task lifecycle. `source_locked` pins the still-live source and

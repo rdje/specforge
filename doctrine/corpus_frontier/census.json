@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "contract_id": "corpus-frontier-census",
+  "owner_leaf": "CORPUS-COVERAGE.4.1",
+  "authority": "CORPUS-COVERAGE.4.0 — the .2 refresh frontier must be DERIVED from persisted evidence, never carried. A count decremented once per refresh cannot detect an omission at its base, which is how nvme_base_specification_2_0a_2021_07_26 left the queue for twenty-two consecutive slices. This declaration names the remaining set so the derivation has something exact to disagree with.",
+  "declared_on": "2026-08-11",
+  "cohort_rule": {
+    "corpus_root": "generated/source_ir",
+    "artifact_name": "source_ir.json",
+    "source_field": "requested_path",
+    "excluded_source_prefixes": [
+      "corpus/"
+    ],
+    "retired_source_prefixes": [
+      "/Users/"
+    ],
+    "retention_contract": "doctrine/chain_currency/retained_bundles.json"
+  },
+  "expected": {
+    "cohort": 57,
+    "refreshed": 51
+  },
+  "remaining": [
+    "den0034_a_2013_09_13_debug_and_trace_configuration_and_usage_models",
+    "lpc_memory_agent_reference_design_guide_17jul2020",
+    "nvme_base_specification_2_0a_2021_07_26",
+    "opencapi_25gbps_phy_mechanical_spec_v10",
+    "opencapi_3_0_transaction_layer_28jan2020",
+    "opencapi_3_1_transaction_layer_28jan2020"
+  ],
+  "root_claim": {
+    "path": "docs/tasks/CORPUS-COVERAGE.md",
+    "completed_sentence": "51 of 57 real chip-spec refreshes are complete.",
+    "remaining_phrase": "six real documents remaining"
+  }
+}

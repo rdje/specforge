@@ -67,6 +67,8 @@
   > is tier-agreement a good confidence axis for conformal calibration
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
   > may fact cards be deleted or merged to free catalog capacity
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > must a corpus refresh update the frontier declaration (yes — doctrine/corpus_frontier/census.json must move in the same transaction as the refresh, or CORPUS-FRONTIER fails closed on IDENTITY and MEMBERSHIP. That coupling is the point: the declaration cannot lag the artifacts)
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > must a post-build signal_constraints replace re-apply build-path invariants
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
@@ -279,7 +281,8 @@
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > what does CORPUS-COVERAGE.1 add
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > what does CORPUS-COVERAGE.4 own (frontier census integrity: .4.0 derived the census, corrected every live surface, and restored the lost document; .4.1 is the pending mechanical gate that makes the identity enforced rather than carried. .3 closed the sibling frontier-vs-lifecycle defect but its currentness check covers retention only, not the remaining-work count)
+  > what does CORPUS-COVERAGE.4 own (frontier census integrity, complete: .4.0 derived the census, corrected every live surface, and restored the lost document; .4.1 registered CORPUS-FRONTIER as the eighth doctrine so the identity is enforced rather than carried. .3 closed the sibling frontier-vs-lifecycle defect but its currentness check covers retention only, not the
+  > remaining-work count)
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > what does DEFER mean in the doctrine enforcement report
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
@@ -294,7 +297,3 @@
   > what does MessageFieldRecord.byte_offset mean
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > what does SPECFORGE_INGEST_ADAPTIVE_BATCH do
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > what does SPECFORGE_INGEST_MIN_FREE_DISK_MB do
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > what does SPECFORGE_INGEST_RAM_ABORT_PERCENT do
