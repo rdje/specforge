@@ -316,6 +316,11 @@
          "part_id" : "refreshes-51-56"
       },
       {
+         "leaf_id" : "CORPUS-COVERAGE.2.52",
+         "origin" : "post_migration",
+         "part_id" : "refreshes-51-56"
+      },
+      {
          "leaf_id" : "CORPUS-COVERAGE.4",
          "origin" : "post_migration",
          "part_id" : "frontier-census-integrity"
@@ -434,13 +439,13 @@
       {
          "heading" : "# CORPUS-COVERAGE — refreshes 51–56",
          "metrics" : {
-            "bytes" : 16683,
+            "bytes" : 24761,
             "line_bytes" : 339,
-            "lines" : 206
+            "lines" : 322
          },
          "part_id" : "refreshes-51-56",
          "path" : "docs/tasks/corpus-coverage/refreshes-51-56.md",
-         "sha256" : "0074c749f5d4bf421c5808298758f9dc0059323a86f8ee08f37a1f5b0b159189",
+         "sha256" : "6f86690ad4e030d582273ed6928caf67788c632057c9d545365741cb2123b3a8",
          "state" : "active"
       },
       {

@@ -38,12 +38,14 @@ No eligible product leaf.
 
 `CORPUS-COVERAGE.4` is complete in the `frontier-census-integrity` part, and the frontier it derived — 57 cohort
 documents = 51 refreshed + six remaining — is now gated by the `CORPUS-FRONTIER` doctrine rather than carried.
-The next clean slice must create and own `CORPUS-COVERAGE.2.52`, select one of the six remaining real documents
-from current corpus evidence, and pin its exact source and stale-chain boundary before any ingest or artifact
-mutation; the smallest-retained-source policy points at `opencapi_25gbps_phy_mechanical_spec_v10` at 760
-elements. A refresh must update `doctrine/corpus_frontier/census.json` in the same transaction, or the gate
-fails closed. `refreshes-49-56` is closed to further product writes at the `.2.50a` boundary, and
-`refreshes-51-56` holds the `.2.51` record only.
+
+`CORPUS-COVERAGE.2.52` is owned and `in_progress` in `refreshes-51-56`: it selects
+`opencapi_25gbps_phy_mechanical_spec_v10` at 760 elements, the smallest of the six, and pins its authenticated
+same-device source and its exact six-file / 1,151,838-byte stale chain. No artifact has been mutated, so the
+census still reads 51 refreshed and the gate is green. The next slice executes that refresh: guarded CPU ingest,
+full current-binary cascade, per-stage delta attribution, and — in the same transaction — moving
+`doctrine/corpus_frontier/census.json` and this root to 52/57 with five remaining, or `CORPUS-FRONTIER` fails
+closed. `refreshes-49-56` is closed to further product writes at the `.2.50a` boundary.
 
 ## Detailed task evidence
 

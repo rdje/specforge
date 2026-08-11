@@ -204,3 +204,119 @@ EvidenceIR / 78 SemanticIR / 78 IntentIR / 78 adapters and 44 emitted targets. R
 | --- | --- |
 | `CORPUS-COVERAGE.2.51` ownership | `83b81f25` — `CORPUS-COVERAGE.2.51 — own Arm SMMU software-guide refresh` |
 | `CORPUS-COVERAGE.2.51` completion | `CORPUS-COVERAGE.2.51 — refresh the Arm SMMU guide and retire its caption-named enum` |
+
+## CORPUS-COVERAGE.2.52
+
+- Status: `in_progress` (`2026-08-11`, ownership pinned; no artifact mutated)
+- Goal: re-ingest the OpenCAPI 25 Gbps PHY Mechanical Specification with the current release, then rebuild and
+  validate EvidenceIR → SemanticIR → IntentIR → ISF without promoting connector-mechanical prose, glossary
+  acronyms, drawing callouts, or section headings into unsupported signals, interfaces, or executable behavior.
+- Document key: `opencapi_25gbps_phy_mechanical_spec_v10`
+- Source: `.cache/local-references/chipdoc/cxl/opencapi/current/OpenCAPI-25Gbps_PHY_mechanical_spec_v10.pdf`
+- Children: none unless the fresh result exposes a generic defect that cannot safely remain inside this refresh.
+
+### Part boundary
+
+This refresh appends to `refreshes-51-56` rather than opening a new part. The part holds the `.2.51` record at
+206 lines against a 640-line health target — 32.2%, with the 80% warning at 512 and the 90% rollover at 576. A
+refresh has cost 134 lines (`.2.49`), 295 lines (`.2.50` including its `.2.50a` child), and 195 lines (`.2.51`),
+so even the largest observed cost lands at 78.3% and the write is guaranteed to finish below the rollover. This
+is the measurement `.2.51` made before splitting; here it says append.
+
+### Selection and source authority
+
+The frontier is the six documents `CORPUS-COVERAGE.4.0` derived and `CORPUS-FRONTIER` now gates. The
+smallest-retained-source policy selects this specification at 760 elements; every alternative is larger:
+
+| Rank | Document key | Elements | Pages | Source bytes |
+| --- | --- | ---: | ---: | ---: |
+| 1 | `opencapi_25gbps_phy_mechanical_spec_v10` | 760 | 34 | 4,494,801 |
+| 2 | `opencapi_3_0_transaction_layer_28jan2020` | 774 | 121 | 712,534 |
+| 3 | `opencapi_3_1_transaction_layer_28jan2020` | 870 | 137 | 870,740 |
+| 4 | `lpc_memory_agent_reference_design_guide_17jul2020` | 891 | 59 | 1,356,427 |
+| 5 | `den0034_a_2013_09_13_debug_and_trace_configuration_and_usage_models` | 936 | 48 | 946,338 |
+| 6 | `nvme_base_specification_2_0a_2021_07_26` | 4,577 | 454 | 5,154,704 |
+
+Rank 6 is the document `.4.0` restored; it is last by the ordinary policy, so the correction changes the tail
+rather than this pick. Every row is measured from its own persisted SourceIR `document_profile`, and each of the
+six independently satisfies the gated unrefreshed test: no retained normalized bundle, and a persisted source
+path still rooted at the retired boot volume.
+
+The source resolves through the owner-authorized SSD-local `chipdoc` symlink. Source and repository share device
+`16777240`; the PDF is 4,494,801 bytes at SHA-256
+`0621543ade2c1f6369186a7f4de1cb1262e3097ca0e5f796bfc496c260ec7bf3`. That byte count equals the `source.size_bytes`
+the stale SourceIR recorded, so the source content is unchanged since the stale ingest and any downstream
+movement in this refresh is attributable to code rather than content — the `.2.51` attribution shape.
+
+### Exact stale-chain boundary
+
+The normalized bundle is absent and no `.isf` is emitted. The current six-file chain totals 1,151,838 bytes:
+
+| Artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| SourceIR | 295,886 | `ef115b0312842944fcac88a387301e06d29b5f920ce3077703ff16d2dcbcafb1` |
+| EvidenceIR | 651,994 | `348487711e15aada7de88d991aa97ca8014ba1532fff76b6f2450d04e7c4e498` |
+| Evidence validation | 11,897 | `2f65ce1682cc368b10783aa84caed448e3c9fd8b779cf88a6deb41a5a4d25370` |
+| SemanticIR | 85,495 | `e633ed790874af6fe2c5609c0dd7566e18a2d66b985c07b30a80f952d310b058` |
+| IntentIR | 105,093 | `e1c80f1c05f55656b5547e2ce962aa3617c40dc45ad6ad39ad0af286570a432a` |
+| Adapter manifest | 1,473 | `05b94c3c380691f7cd2aada0e5e4e271b852eab8e5d65480872b813a22b944f6` |
+
+Stale SourceIR contains 34 pages / 32 visuals / 11 tables / 61 sections / 760 elements and still persists the
+retired boot-volume source path. EvidenceIR has 807 statements / 805 spans / 297 links / 61 section anchors /
+one actor-signal relation / two conditionals, and zero registers, signal constraints, timings, or polarities.
+SemanticIR has seven actors / two interfaces / one relation / 65 invariants / seven contracts / two assertions /
+46 decomposition candidates / five abstractions, and zero phases, gates, symbol definitions, or timings.
+IntentIR has four actors / two interfaces / seven behaviors / 66 constraints / 65 temporal invariants / five
+assumptions, and zero transactions, registers, or timings.
+
+The stale typed hardware surface is exactly two one-bit signals, and both are the acronym class the sibling
+OpenCAPI physical-link refreshes retired. `interface_explicit_document_interface` carries `IS` and
+`interface_explicit_interface_section_0039_3_5_mezzanine_sideband_signals` carries `OD`; the adapter builds actor
+`x_connector` with `(output IS (width 1))` and `(output OD (width 1))` plus a synthetic clock, reset, and
+watchdog, then blocks with `is_renderable: false` on `no behavioral content (temporal rules, conditional rules,
+signal constraints, or control blocks)`, emitting no target and no residual. Three semantic actors — `receiver`,
+`source`, `transmitter` — are already dropped by the time IntentIR is built.
+
+The release binary is the current `EXTRACTION-QUALITY-GAUGE.3h` build at SHA-256
+`7c8c68ef47ec5fe9a995b43d5269044f7037e67540267033fe3ffbb781747ce4`; the latest Rust authority is commit
+`c489050015a182c8c42ef88bc01dc00ff0df58ce`.
+
+### Expectation to test, not assume
+
+Refreshes `.2.44`, `.2.45`, and `.2.48` all took OpenCAPI physical-link specifications and all removed false
+acronym interfaces under current signal authority. This document is the mechanical sibling, so the plausible
+result is that `IS` and `OD` fail the declared-signal gate and the adapter blocks on no signals rather than on no
+behavior. That is a hypothesis the fresh chain must confirm or refute from its own evidence; it is recorded here
+so a confirming result is not mistaken for a measurement, and so a *diverging* result is recognised as the
+interesting one.
+
+### Acceptance
+
+- [ ] Authenticate rollback copies of every stale chain artifact inside a repository-derived same-volume
+  workspace.
+- [ ] Run guarded CPU ingest from the directly resolved caller-authorized same-SSD input, with the 85% memory
+  abort ceiling and no off-volume project temp/cache/output.
+- [ ] Rebuild and validate the complete current-binary chain; rerun to establish deterministic hashes.
+- [ ] Classify every stale→fresh delta at its first causal stage and refuse unsupported hardware authority.
+- [ ] Declare the retained normalized bundle in `doctrine/chain_currency/retained_bundles.json` and prove
+  `CHAIN-CURRENCY` green on both its currency and retention legs.
+- [ ] Move `doctrine/corpus_frontier/census.json` and the root's stated counts to 52/57 with five remaining in
+  the same transaction, so `CORPUS-FRONTIER` stays green rather than failing closed.
+- [ ] Run focused validation, provider-free evals, KG fixtures, emitted-ISF FSMGen strict checks, doctrines,
+  mdBook, project-path/locality checks, and broader CI proportional to any code change.
+- [ ] Update root, active part, index/manifest/contract, roadmap, current status, live docs/book, facts, and
+  memory; commit before deleting authenticated rollback evidence or moving to refresh #53.
+
+### Verification log
+
+| Date | Boundary | Result |
+| --- | --- | --- |
+| `2026-08-11` | ownership selection | six gated candidates re-measured from their own SourceIR profiles; same-device source authenticated at 4,494,801 bytes / `0621543a…7bf3`, equal to the stale `source.size_bytes`; six-file 1,151,838-byte stale chain pinned; normalized bundle absent; no generated artifact mutated |
+| `2026-08-11` | part boundary | `refreshes-51-56` at 206/640 lines (32.2%); largest observed refresh cost 295 lines lands at 78.3%, below the 90% rollover, so this refresh appends |
+
+### Commit log
+
+| Unit | Durable evidence |
+| --- | --- |
+| `CORPUS-COVERAGE.2.52` ownership | `CORPUS-COVERAGE.2.52 — own the OpenCAPI 25 Gbps PHY mechanical refresh` |
+| `CORPUS-COVERAGE.2.52` completion | pending |
