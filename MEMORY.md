@@ -31,9 +31,10 @@
   *sum* to the declared bounds — `fact_index` is its only user. Ten aggregates were re-derived under exact
   authorities; `task_evidence` can now get the file capacity its 81.9% warning needs. Pressure lines name the
   headroom to the ceiling. Suites: roadmap 9 → 49 cases, live-doc 68 → 81.
-- Next action: `CORPUS-COVERAGE.2.51` — the next product slice (six corpus documents remain).
-  **Blocking housekeeping first:** `CHANGES.md` is at ~89% of its 1,800-line health target, so the next
-  ledger append trips the 90% mandatory rollover. Open an owning leaf and run the declared transaction in
-  `COMMIT.md` ("Rolling-ledger rollover") before writing another entry.
+  `CHANGES-LEDGER-ROLLOVER` then sealed `segment-0005` so the ledger the above filled is back inside its
+  warning band: 95 records / 1,423 lines, every dimension under 80%, all older archive members byte-identical.
+- Next action: `CORPUS-COVERAGE.2.51` — the next product slice; six corpus documents remain. No housekeeping
+  blocks it. Note that `docs/tasks/` is at 82.5% of its file target (132/160); ADR 0032 made that count's
+  remedy — raise the capacity under an exact authority — actually usable, so it is a decision, not a trap.
 - In-flight uncommitted: none; no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

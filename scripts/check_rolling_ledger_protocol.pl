@@ -639,10 +639,16 @@ sub prepare_rollover_entry {
         "rollover plan ledger '$id' segment");
     my $segment_parsed = parse_segment($segment_bytes, $ledger->{grammar}, "$id planned segment");
     if (defined($segment_parsed)) {
-        problem("rollover plan ledger '$id' segment first-record identity drift")
-            if sha256_hex($segment_parsed->[0]{bytes}) ne ($row->{first_record_sha256} // '');
-        problem("rollover plan ledger '$id' segment last-record identity drift")
-            if sha256_hex($segment_parsed->[-1]{bytes}) ne ($row->{last_record_sha256} // '');
+        # Report the computed digest, like every neighbouring drift check. A bare "drift" on a value the
+        # planner cannot recompute by hand makes an exact-identity gate undiagnosable.
+        my $first = sha256_hex($segment_parsed->[0]{bytes});
+        my $last = sha256_hex($segment_parsed->[-1]{bytes});
+        problem("rollover plan ledger '$id' segment first-record identity drift: actual $first, expected "
+            . ($row->{first_record_sha256} // '<missing>'))
+            if $first ne ($row->{first_record_sha256} // '');
+        problem("rollover plan ledger '$id' segment last-record identity drift: actual $last, expected "
+            . ($row->{last_record_sha256} // '<missing>'))
+            if $last ne ($row->{last_record_sha256} // '');
     }
 
     my @opening_survivors = (

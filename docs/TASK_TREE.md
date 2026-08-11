@@ -38,6 +38,7 @@ The author template is linked separately and is never classified as active work.
 | `BOOK-METHOD-DOC` | `done` | per-task-tree implementation & verification, in the book | [open](tasks/BOOK-METHOD-DOC.md) |
 | `BOOK-USER-FRIENDLY-BACKFILL` | `done` | upgrade existing book subsections to the user-friendly standard | [open](tasks/BOOK-USER-FRIENDLY-BACKFILL.md) |
 | `CANONICAL-PROMOTION-SWEEP` | `done` | land the default LLM-primary constraint promotion across the corpus's canonical artifacts | [open](tasks/CANONICAL-PROMOTION-SWEEP.md) |
+| `CHANGES-LEDGER-ROLLOVER` | `done` | roll the change ledger before its next append is refused | [open](tasks/CHANGES-LEDGER-ROLLOVER.md) |
 | `COMPLETENESS-CLOSURE-INVARIANTS` | `done` | first completeness miss-detectors (symbol closure + register tiling) | [open](tasks/COMPLETENESS-CLOSURE-INVARIANTS.md) |
 | `COMPLETENESS-RECALL-GAUGE` | `done` | a calibrated capture–recapture recall estimate | [open](tasks/COMPLETENESS-RECALL-GAUGE.md) |
 | `COMPLETENESS-RECALL-RELATIONS` | `done` | extend per-extractor tagging + recall gauge to actor-signal relations | [open](tasks/COMPLETENESS-RECALL-RELATIONS.md) |

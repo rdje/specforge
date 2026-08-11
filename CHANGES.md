@@ -1,3 +1,21 @@
+### CHANGES-LEDGER-ROLLOVER.0 — seal segment-0005 and return the change ledger to its warning band
+
+- Four `LIVE-DOC-STOP-RISK` entries took this ledger from 81.4% to 89.1% of its 1,800-line health target,
+  leaving 17 lines before the 90% milestone refuses the next ordinary append. Rolled as its own transaction
+  rather than bundled into the next corpus slice, so a control-plane migration and a product ingest stay
+  independently reviewable and independently revertible.
+- The cut takes only post-capsule records. The 75 retained migration-suffix records below them are already
+  byte-exact in `source-through-2026-08-08.md`, so sealing them would archive the same bytes twice. Twelve is
+  the minimal exact cut returning records, lines, and bytes below their 80% warnings together: the root is now
+  95 records / 1,423 lines / 203,398 bytes, and `segment-0005-2026-08-11.md` holds 12 records / 179 lines.
+- Every older archive member, the source capsule included, is byte-identical; no limit, milestone, or ceiling
+  moved, and no record was edited or reordered.
+- One checker fix earned along the way: the segment first/last-record identity drift messages said only
+  "drift" while every neighbouring check printed actual-vs-expected, so an exact-identity gate on a value no
+  planner can recompute by hand was undiagnosable. They now print both. Reaching the correct digest by hand
+  first exposed why: leading records keep their blank separator line, and only the final record loses it to
+  the canonical single-newline collapse.
+
 ### LIVE-DOC-STOP-RISK.1a — retire the ten consumed ceiling-increase authorities
 
 - Against committed `.1`, the gate reported exactly ten `unused or banked ceiling-increase authority`
@@ -367,186 +385,6 @@
 - Eight rebuildable real cascades reproduce combined hash `58411566…6457a` twice with 32 stage validations.
   Source/Evidence regressions, nine provider-free evals, KG 156/156, full CI 1,796/five ignored, and all 60
   emitted ISFs under FSMGen strict pass. Parent `.2.47` resumes final Cortex-A76 signoff.
-
-### CORPUS-COVERAGE.2.46 — refresh OpenCAPI Discovery Configuration without invented topology
-
-- Three guarded CPU ingests reproduce 40 pages / 54 visuals / 49 tables / 50 sections / 172 elements, a
-  139-file normalized bundle, and one SourceIR hash while system memory remains 47–53% free. All 188 normalized
-  project paths are relative and present.
-- Source 181→172 removes nine flattened visual labels. Evidence 831→754 additionally removes 65 synthetic
-  table/front-matter enum statements and false `BDF`/`DL`/`VPD` declarations; no statement is added.
-- Current shared authority removes the stale interfaces/port/relation/phases/gates while retaining ten grounded
-  behaviors, 55 constraints, six assumptions, and six timings. Lowering blocks honestly on no declared signals
-  and leaves only its adapter manifest/report.
-- Validation keeps the capture frontier explicit: 37 partially structured normative statements, 15 unexplained
-  intent-bearing tables, 54 unenriched visuals, one overlapping register, and eight untyped temporal-source IDs.
-  Two repaired cascades reproduce eight downstream hashes; final committed-binary validation pins all 12
-  artifact/report hashes. Corpus status is 46 done / ten remaining / 61 strict-clean emitted ISFs.
-- The required record crosses the change ledger's mandatory record/line threshold. An authenticated root-last
-  rollover seals the 14 oldest opening-boundary post-capsule records into `changes-0003`; the 102-record live
-  root is warning-safe and the complete chronology remains lossless.
-
-### CORPUS-COVERAGE.2.46a — qualify ambiguous parenthetical `data` signal heads
-
-- The complete 80-EvidenceIR census finds six `data (ACRONYM)` width-one declarations: four real serial wires
-  (`SDA`, `USDA`, `SDAH`, `SD`) and two false property/example names (`VPD`, `DO`) that reached emitted ISF.
-- Sparse parenthetical signal synthesis now requires only a `data` head to carry adjacent `serial` or
-  `high-speed` authority. Other wire heads and declaration grammars are unchanged; paired tests contain no
-  vendor, document, or candidate-name production policy.
-- OpenCAPI Discovery and Wishbone replays remove `VPD`/`DO`; I2C keeps all six declarations and its
-  six-signal/26-rule target; I2S keeps `SCK`/`SD` and blocks only on its independent no-behavior condition.
-- Two four-document cascades reproduce 33 hashes. EvidenceIR 346/five ignored, warning-deny Clippy, nine
-  WIRE/I2C/SWD datasets, KG 156/156, 61/61 FSMGen strict, full CI, book, doctrines, persisted paths, and
-  project-data locality pass. The required achievement record triggers an exact, warning-safe 12-record
-  root-last rollover into `live-achievement-status-0006`; no status record is lost.
-
-### CORPUS-COVERAGE.2.45 — refresh OpenCAPI 25 Gbps PHY Signaling without false acronym ports
-
-- One guarded CPU ingest holds 30 pages / 26 visuals / 19 tables / 59 sections at 17% peak sampled memory,
-  restores a 91-file / 21360835-byte normalized bundle, and keeps all 112 project-owned path values relative and
-  present. Source 231→224 removes only diagram-label records on four visual-bearing pages.
-- Evidence 395→385 additionally removes only synthetic `Signal DL/DDJ/CDR is width 1.` statements and marks one
-  figure caption mixed-modality. Twelve normative statements, one conditional, and all 70 physical timing
-  constraints hold; relations, declarations, signal constraints, and registers remain zero.
-- Current authority removes two stale interfaces, false typed phase `recovery`, and retired generic phase/gate
-  projections. Final IntentIR retains four actors / four behaviors / 27 constraints / two assumptions / 70 timing
-  constraints. The stale three-port `.isf` is removed; lowering blocks honestly on no declared interface signals.
-- Two validated cascades reproduce eight downstream hashes. Nine WIRE/I2C/SWD datasets, KG 156/156, all 64
-  remaining emitted ISFs through real FSMGen strict, full CI 1,791/five ignored, mdBook, six doctrines, the
-  2,077-artifact / 355906-path census, and locality pass.
-
-### CORPUS-COVERAGE.2.44 — refresh OpenCAPI 32 Gbps PHY Mechanical without false topology
-
-- One guarded CPU ingest holds 23 pages / 19 visuals / eight tables / 45 sections at 21% peak sampled memory,
-  restores a 70-file / 18190643-byte normalized bundle, and keeps all 84 project-owned path values relative and
-  present. Source 262→212 removes only diagram-label records on seven visual-bearing pages.
-- Evidence 350→267 additionally removes 33 synthetic `CONTENTS` enum statements while retaining 21 normative
-  statements, two conditionals, and zero typed hardware surface. Current shared authority removes five stale
-  interfaces, false typed phases `dynamic`/`static`, and the retired generic phase/gate projections.
-- Final SemanticIR has four actors / zero interfaces/phases/gates / 45 invariants / three contracts / six
-  assertions / 30 decompositions; IntentIR has three actors / three behaviors / 45 constraints / two assumptions.
-  The stale nine-port/one-enum `.isf` is removed; lowering blocks honestly on no declared interface signals.
-- Two validated cascades reproduce eight downstream hashes. Nine WIRE/I2C/SWD datasets, KG 156/156, all 65
-  remaining emitted ISFs through real FSMGen strict, full CI 1,791/five ignored, mdBook, six doctrines,
-  2,039-artifact / 355769-path census, and locality pass.
-
-### CORPUS-COVERAGE.2.43a.ii — require positive authority for typed phase names
-
-- The exact 82-record retained census classifies 59 valid typed phases and 23 false qualifiers. A deterministic
-  current-rule replay over all 79 downstream-ready EvidenceIR inputs exposes mixed-vintage staleness and the full
-  population: 101 candidates, 70 valid, and 31 false.
-- Transaction-phase recognition now combines its qualifier grammar with positive local phrase authority. Headings,
-  numbering, temporal/naming/possessive constructions, and phase predicates remain generic; passive `called
-  phases`, CAN `phase error`, physical phase properties, and comma/table adjacency do not authorize names.
-- The two-pass producer preserves every grammatical occurrence, signal set, and supporting statement for an
-  authorized name. All 31 rejected replay candidates have empty signal sets; populated/repaired IntentIR variants
-  are byte-identical, so adapter and executable output do not change.
-- Focused tests, all 407 SemanticIR tests, warning-deny Clippy, nine WIRE/I2C/SWD datasets, KG 156/156, full CI
-  1,791/five ignored, 66/66 FSMGen strict, mdBook, six doctrines, persisted paths, and locality pass.
-
-### CORPUS-COVERAGE.2.43 — sign off OpenCAPI Ready Definition refresh
-
-- One guarded CPU ingest peaks at 62% sampled system memory used and produces 15 pages, six visuals, three
-  tables, 30 sections, and 169 elements. The authorized external source stays labeled; all 42 project-owned
-  page/layout/visual/caption paths are present and repository-relative.
-- SourceIR 171→169 removes exactly flattened `TL/` and `OpenCAPI 3.0 Host TL/`. EvidenceIR 176→173 additionally
-  removes synthetic `Signal DL is width 1.` while retaining two conditional rules and zero typed hardware
-  declarations, relations, constraints, registers, or timing records.
-- Current authority plus completed children `.2.43a`/`.2.43a.i`/`.2.43b` removes the stale interface and generic
-  phase/gate projections. Final SemanticIR is three actors / zero interfaces/phases/gates / 21 invariants / 19
-  contracts / five assertions / 17 decompositions; IntentIR is 19 behaviors / 25 constraints / two assumptions.
-  Lowering blocks only on no signals and leaves `adapter.json` plus its report.
-- Twelve hashes and two downstream replays reproduce. Nine WIRE/I2C/SWD datasets, KG 156/156, 66/66 FSMGen
-  strict, mdBook, doctrines, path/locality, exact nine-file / 392462-byte cleanup, and zero residue pass. Corpus
-  is 43 done / 13 remaining with stage census 80 SourceIR / 12 normalized / 80 EvidenceIR / 79 downstream chains.
-
-### CORPUS-COVERAGE.2.43b — retire generic whole-statement gate authority
-
-- An exact 79-document census finds 27,168 legacy generic gates across 77 documents; 24,492 do not overlap a
-  typed conditional/temporal rule. The old Intent projection fabricates 21,206 whole-sentence behaviors with
-  642,401 all-actor assignments plus 5,974 constraints with 366,087 interface assignments.
-- Paired populated/empty replays change 76 pre-repair IntentIR artifacts but zero rendered ISF sources,
-  renderability decisions, lowering statuses, or executable counts. Two adapter manifest deltas only expose an
-  honest no-explicit-behavior residual.
-- New SemanticIR builds now serialize `gates: []`. Old populated `GateRecord` artifacts still load and
-  round-trip, but current IntentIR ignores them. Evidence, invariants/contracts/constraints, and independently
-  typed conditional/temporal rules remain intact.
-- The repaired release makes all 79 populated/empty variants byte-identical at IntentIR and identical at the
-  adapter. Focused/module tests, nine WIRE/I2C/SWD datasets, KG 156/156, full CI 1,788/five ignored, 66/66 FSMGen
-  strict, mdBook, doctrines, persisted paths, and locality pass.
-- The required engineering-note record triggered the registered line rollover. An authenticated root-last
-  transaction sealed 24 exact old records into development-notes segment 0003 and restored warning-safe headroom.
-
-### CORPUS-COVERAGE.2.43a.i — retire generic section-phase authority
-
-- The exact 3,180-record title audit finds 720 `Reset value` headings and only six literal-`phase` headings; five
-  of those are CAN multi-segment/error terminology or a Wishbone glossary definition. The sole clean SWD heading
-  duplicates phase vocabulary already represented by typed `transaction_phases[]`.
-- A 79-document two-variant replay proves the legacy surface creates 2,238 synthetic all-actor behaviors,
-  preserves 48 pure-inferred actors, and adds 2,257 responsibilities without changing adapter renderability,
-  lowering status, or any emitted signal/transaction/rule count.
-- New SemanticIR builds now serialize the compatibility-stable `phases` field empty. Old populated artifacts
-  still load and round-trip, but IntentIR no longer grants those records behavior or actor authority. Typed
-  transaction phases, transactions, contracts, gates, and constraints are unchanged.
-- The repaired release makes all 79 populated/empty phase variants byte-identical at IntentIR and identical at
-  the adapter. A separate pending `.2.43a.ii` owns the incidentally surfaced typed-qualifier precision audit.
-- Gates pass: 404 SemanticIR tests, 50 IntentIR tests, warning-deny Clippy, nine WIRE/I2C/SWD datasets, KG
-  156/156, full CI 1,789/five ignored, 66/66 FSMGen strict, mdBook, doctrines, persisted paths, and locality.
-
-### CORPUS-COVERAGE.2.43a — require heading authority for section-derived phases
-
-- The first Ready Definition cascade preserved 173 EvidenceIR statements but turned two functional-test sections
-  and one host-system definition into phases/Intent behaviors solely because their prose contained `once` or
-  `when`.
-- An exact 79-document census classifies 11,286 retained generic phases as 3,180 title-authorized and 8,106
-  statement-fallback-only across 77 documents. Generic phases now require a non-empty phase-like heading; the
-  separate typed `<qualifier> phase` recognizer remains intact.
-- Rebuilding unchanged #43 evidence removes all three false phases and reduces behaviors 22→19 without changing
-  any other measured semantic count. Paired false-context, titled-structure, and typed transaction-phase controls
-  pass. The distinct broad title-vocabulary risk is durably owned by pending `.2.43a.i`.
-- Two downstream cascades reproduce six hashes; 408 semantic tests, nine WIRE/I2C/SWD datasets, KG 156/156, full
-  CI (1,796/five ignored), 66/66 FSMGen strict, mdBook, doctrines, paths, and locality pass.
-
-### CORPUS-COVERAGE.2.42 — sign off OpenCAPI Certified Definition refresh
-
-- Two guarded CPU ingests reproduce 15 pages, eight visuals, five tables, 31 sections, and 151 elements at 18%
-  and 33% peak sampled system memory used. The authorized external source stays labeled; all 46 project-owned
-  page/layout/visual/caption path references are present and repository-relative.
-- SourceIR 155→151 removes exactly four flattened diagram labels (`DL` twice, `TL/`, and `OpenCAPI 3.0 Host TL/`).
-  EvidenceIR 172→167 removes those four statements plus synthetic `Signal DL is width 1.` while retaining two
-  conditionals and zero typed hardware surfaces.
-- Current authority removes the stale one-interface/one-output surface; child `.2.42a` removes certification
-  administration from semantic intent while preserving four genuine compliance behaviors. Final SemanticIR is
-  two actors / zero interfaces/phases/gates / eight invariants / four contracts / 14 decompositions; IntentIR is
-  four behaviors / eight constraints. Lowering blocks on no signals and leaves only `adapter.json` plus its report.
-- Twelve hashes and two downstream replays reproduce. Nine WIRE/I2C/SWD datasets, KG 156/156, 66/66 FSMGen
-  strict, mdBook, doctrines, path/locality, exact 89-file / 881263-byte cleanup, and zero residue pass. Corpus is
-  42 done / 14 remaining with stage census 80 SourceIR / 11 normalized / 80 EvidenceIR / 79 downstream chains.
-
-### CORPUS-COVERAGE.2.42a — reject administrative workflows from semantic intent
-
-- The first OpenCAPI Certified Definition cascade preserved 167 evidence statements but promoted product-listing,
-  email review, conflict-resolution, certification-mark, and test-lab procedures into five phases, six gates, and
-  15 Intent behaviors. A retained-corpus projection finds 238 administrative/reference statements across 23 docs.
-- Semantic context now rejects compound organizational workflows and recognized administrative section titles at
-  the shared authority boundary. Evidence remains lossless; Page Request/response, electrical contacts, technical
-  conflict resolution, measured tests, and certified-device electrical requirements remain eligible.
-- Rebuilding unchanged EvidenceIR yields two technical actors, zero phases/gates, eight invariants, four genuine
-  device/host compliance behaviors, and eight constraints. Two cascades reproduce six hashes; 402 semantic tests,
-  nine WIRE/I2C/SWD datasets, KG 156/156, full CI (1,793/five ignored), and all 66 emitted ISFs through FSMGen
-  strict pass.
-
-### CORPUS-COVERAGE.2.41 — sign off OpenCAPI AFU address-note refresh
-
-- Two guarded CPU ingests reproduce 14 pages, nine visuals, two tables, 23 sections, and 118 elements at 20% and
-  19% peak sampled system memory used; all 14 image/layout pairs and nine visual paths are present and relative.
-- Evidence holds at 106 statements with zero typed hardware surfaces. Current authority removes five stale
-  acronym-group interfaces, five synthetic actors, and eight one-bit outputs; `.2.41a` separately removes the
-  false legal phase/gate and two legal invariants/behaviors while preserving the source text in EvidenceIR.
-- Final SemanticIR has zero actors/interfaces/phases/gates, 15 invariants, and 14 decompositions; IntentIR has zero
-  behaviors / 15 constraints. Lowering blocks on no signals plus no behavior and leaves exactly `adapter.json`
-  plus its report. Twelve hashes, two repaired cascades, WIRE/I2C/SWD, KG 156/156, full CI, 66/66 FSMGen strict,
-  mdBook, doctrines, locality, exact cleanup, and zero residue pass. Corpus is 41 done / 15 remaining.
 
 ### LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.4a — lossless rolling-ledger protocol locked
 
