@@ -21,19 +21,18 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `TASK-PART-SEAL-REACHABILITY` at `.0` (pending) — tracking only; it blocks no product work.
-- Current state: found while choosing where `CORPUS-COVERAGE.2.51` should write. A partitioned task-evidence
-  part has three declared states and a finished post-migration part can reach none of the closed ones:
-  `legacy` requires a capsule source region, and `sealed` is unreachable in any commit sequence. Measured on
-  the live contract and restored exactly — sealing with the body unchanged fails `lacks state literal
-  '- State: \`sealed\`'`, and sealing with the body changed fails `differs from its sealing commit`, because
-  `check_active_task_evidence.pl:956` derives the body literal from the contract state while `:968-973`
-  requires that body to equal an ancestor commit's blob. A commit cannot name its own hash, and the
-  intermediate state is the first failing candidate, so there is no two-commit path either. `.0` owns the
-  mechanism decision (three candidates recorded) and must land as an ADR before any code.
-- Next action: `CORPUS-COVERAGE.2.51` — refresh #51 selects `109242_0100_01_2023_09_04_arm_smmu_software_guide`,
-  smallest of the six remaining at 600 elements. Own it in a **new** part `refreshes-51-56`, because
-  `refreshes-49-56` is at 434 of 640 lines and a refresh has cost 131–295 lines, so the next write could not
-  finish under its 90% rollover; leave that part byte-identical and `active` per the finding above.
+- Active unit: `CORPUS-COVERAGE.2.51` — refresh #51, the Arm SMMU Software Guide, owned but not yet executed.
+  `TASK-PART-SEAL-REACHABILITY` is also open at `.0` (pending, tracking only; it blocks nothing).
+- Current state: refresh #51 selects `109242_0100_01_2023_09_04_arm_smmu_software_guide` — smallest of the six
+  remaining at 600 elements, re-measured from all six persisted SourceIR profiles rather than inherited from
+  `.2.50`'s table. Source is same-device (`16777240`), 878,792 bytes, SHA-256 `21cd873e…7f14`. The stale chain
+  is six files / 1,087,030 bytes, no normalized bundle, no emitted `.isf`. Only SourceIR and EvidenceIR are
+  stale: `CORPUS-CHAIN-CURRENCY.3` already rebuilt this document's Semantic/Intent/adapter from the unchanged
+  EvidenceIR, so every downstream delta must be attributed to the fresh ingest alone. Evidence writes to a new
+  part, `refreshes-51-56`; `refreshes-49-56` is byte-identical and stays `active` because the contract's
+  `sealed` state is unreachable — measured, both candidate seals fail (`TASK-PART-SEAL-REACHABILITY`).
+- Next action: execute refresh #51 — rollback copies into a repository-derived same-volume workspace, guarded
+  CPU ingest from the resolved same-SSD input (never through the `chipdoc` symlink), rebuild and validate every
+  stage twice, declare the retained bundle in `doctrine/chain_currency/retained_bundles.json`, then all gates.
 - In-flight uncommitted: none; no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

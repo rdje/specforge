@@ -32,11 +32,12 @@ ISF pipeline, keep completed chains non-stale, and record extraction gaps withou
 
 ## Current Frontier
 
-No eligible product leaf.
+Active product leaf: `CORPUS-COVERAGE.2.51`.
 
-`CORPUS-COVERAGE.2.50` and its child `.2.50a` are complete in the active `refreshes-49-56` part. The next clean
-slice must create and own `CORPUS-COVERAGE.2.51`, select one of the six remaining real documents from current
-corpus evidence, and pin its exact source and stale-chain boundary before any ingest or artifact mutation.
+`CORPUS-COVERAGE.2.51` is owned in the new active `refreshes-51-56` part. It selects the 52-page Arm SMMU Software
+Guide, the smallest of six remaining documents at 600 retained elements, and pins the exact same-SSD source plus
+stale six-file chain before any ingest or artifact mutation. `refreshes-49-56` is complete at the `.2.50a`
+boundary and closed to further product writes.
 
 ## Detailed task evidence
 
