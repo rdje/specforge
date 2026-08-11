@@ -20,24 +20,24 @@ ISF pipeline, keep completed chains non-stale, and record extraction gaps withou
 
 ## Current State
 
-50 of 56 real chip-spec refreshes are complete.
+51 of 56 real chip-spec refreshes are complete.
 
-- Stage coverage: 78 SourceIR / 22 normalized / 78 EvidenceIR / 78 downstream chains, all measured current by
-  the `CHAIN-CURRENCY` gate (`CORPUS-CHAIN-CURRENCY.3`, which also dropped the two non-corpus scratch chains).
+- Stage coverage: 78 SourceIR / 23 normalized / 78 EvidenceIR / 78 downstream chains, all measured current by
+  the `CHAIN-CURRENCY` gate. The measurable evidence-stage population grows by exactly one per refresh.
 - Emitted ISF: 44/44 current targets pass FSMGen strict validation. The population fell from 57 because 14
   documents' stale heuristic interfaces collapsed to zero under current authority and now block honestly.
 - Completed program lanes: `.0` build-out, `.1` stage-staleness validation, and `.3` lifecycle reconciliation.
-- Active program lane: `.2` current-binary corpus refresh, with six real documents remaining.
+- Active program lane: `.2` current-binary corpus refresh, with five real documents remaining.
 - Blockers: none.
 
 ## Current Frontier
 
-Active product leaf: `CORPUS-COVERAGE.2.51`.
+No eligible product leaf.
 
-`CORPUS-COVERAGE.2.51` is owned in the new active `refreshes-51-56` part. It selects the 52-page Arm SMMU Software
-Guide, the smallest of six remaining documents at 600 retained elements, and pins the exact same-SSD source plus
-stale six-file chain before any ingest or artifact mutation. `refreshes-49-56` is complete at the `.2.50a`
-boundary and closed to further product writes.
+`CORPUS-COVERAGE.2.51` is complete in the active `refreshes-51-56` part. The next clean slice must create and own
+`CORPUS-COVERAGE.2.52`, select one of the five remaining real documents from current corpus evidence, and pin its
+exact source and stale-chain boundary before any ingest or artifact mutation. `refreshes-49-56` is closed to
+further product writes at the `.2.50a` boundary.
 
 ## Detailed task evidence
 
@@ -57,6 +57,7 @@ doctrines, and the risk-proportionate `COMMIT.md` gates before committing each l
 
 | Date | Boundary | Result |
 | --- | --- | --- |
+| `2026-08-11` | refresh `.2.51` | 51 done / five remaining; 78/23/78/78; 44/44 strict-clean |
 | `2026-08-10` | refresh `.2.50` | 50 done / six remaining; 80/22/80/79; 57/57 strict-clean |
 | `2026-08-10` | repair `.2.50a` | 26 false pre-bind subjects measured; eight removed in three rebuilt cascades; 58/58 strict-clean |
 | `2026-08-10` | refresh `.2.49` | 49 done / seven remaining; 80/21/80/79; 58/58 strict-clean |
@@ -67,7 +68,8 @@ doctrines, and the risk-proportionate `COMMIT.md` gates before committing each l
 
 | Unit | Durable evidence |
 | --- | --- |
-| `CORPUS-COVERAGE.2.50` | latest completed product refresh |
-| `CORPUS-COVERAGE.2.49` | preceding completed product refresh |
+| `CORPUS-COVERAGE.2.51` | latest completed product refresh |
+| `CORPUS-COVERAGE.2.50` | preceding completed product refresh |
+| `CORPUS-COVERAGE.2.49` | earlier completed product refresh |
 | `CORPUS-COVERAGE.2.48` | earlier completed product refresh |
 | `CORPUS-TASK-EVIDENCE-CONTAINMENT` | bounded root, semantic evidence parts, and exact provenance |

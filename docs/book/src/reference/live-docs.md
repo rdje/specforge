@@ -222,7 +222,17 @@ visuals / 53 tables / 111 sections / 527 elements and a 184-file / 52,570,034-by
 cascades reproduced every downstream hash. Current authority removes four stale interfaces, ports, and relations,
 54 phases, 71 gates, 38 contracts, and the synthetic `endpoint_dlx.isf`; six semantic actors, 87 invariants, four
 assertions, 24 intent behaviors, and 87 constraints remain, with lowering blocking honestly on no declared
-interface signals. Corpus coverage is 50/56 with six refreshes remaining.
+interface signals. The separate `.2.51` leaf then refreshed the 52-page / 600-element Arm SMMU Software Guide,
+the smallest remaining source, into the cleanest attribution the program has produced. Its source structure was
+already current, so the fresh SourceIR differs from the stale one in exactly two values — the source path moving
+off the retired boot volume — and the whole downstream delta is therefore code, not content. That delta is one
+thing: three `Enum TABLE …` statements minted when an older binary named `Table 3-1: Stream Security
+determination` after the word in its caption. `KG-ISF-COMPLETENESS.5.i` had already closed that fallback, so the
+rebuild retires the enum, its single symbol definition, and the adapter's last rendered type, while all 13
+semantic actors, 76 invariants, 17 contracts, five intent actors, 17 behaviors, and 77 constraints survive
+untouched. `validate` reports the document as a self-declared `methodology-guide` at high confidence — a
+category-6 ISF non-target — so a blocked adapter and an empty signal inventory are the correct answer here, not a
+miss. Corpus coverage is 51/56 with five refreshes remaining, and the retained-bundle declaration grows to 23.
 
 `CORPUS-CHAIN-CURRENCY` then replaced the assumption that those persisted artifacts still match the code with a
 measurement. Its registered `CHAIN-CURRENCY` oracle replays every stage from the persisted artifact one stage

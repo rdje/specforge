@@ -3,10 +3,11 @@
   "contract_id": "chain-currency-retained-bundles",
   "owner_leaf": "CORPUS-CHAIN-CURRENCY.2",
   "authority": "ADR 0025 decision 3 — a refresh keeps its normalized bundle, because retention is what makes the document's evidence stage replayable; reclamation is deliberate, task-owned, and recorded below.",
-  "declared_on": "2026-08-10",
+  "declared_on": "2026-08-11",
   "retained": [
     "102196_0100_01_2022_05_05_aarch64_external_debug_guide",
     "102520_0101_01_2025_09_15_introducing_coresight_debug_and_trace",
+    "109242_0100_01_2023_09_04_arm_smmu_software_guide",
     "198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide",
     "den0068_2018_07_23_coresight_base_system_architecture",
     "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",

@@ -1,3 +1,33 @@
+### CORPUS-COVERAGE.2.51 — refresh the Arm SMMU guide and retire its caption-named enum
+
+- Refresh #51 takes the 52-page / 600-element Arm SMMU Software Guide, the smallest of the six remaining
+  documents, re-measured from all six persisted SourceIR profiles rather than inherited from `.2.50`'s table.
+- The cleanest attribution the program has produced, and structurally so rather than by luck. Source structure
+  was already current, so the fresh SourceIR differs from the stale one in exactly two values — the source path
+  leaving the retired boot volume — which isolates the entire downstream delta to code; and
+  `CORPUS-CHAIN-CURRENCY.3` had already rebuilt the last three stages, which isolates it further to the evidence
+  stage alone.
+- That delta is one thing. Three `Enum TABLE THE_STREAM_IS_A_…` statements disappear: an older binary named
+  `Table 3-1: Stream Security determination` after the word in its caption and made its three description
+  sentences the members. `KG-ISF-COMPLETENESS.5.i` closed that fallback — a candidate survives only when it is a
+  declared signal or a column-header reference token of the same table — and this is the first rebuild of this
+  document under the gate. `.5.ii`'s sentence-spine member gate would have emptied it independently.
+- Nothing else moves: 523 spans, 100 links, 87 anchors, 29 visual records, seven conditional rules, 27 normative
+  statements, 13 semantic actors, 76 invariants, 17 contracts, five intent actors, 17 behaviors, and 77
+  constraints are unchanged. Semantic and Intent drop `symbol_definitions` 1 → 0; the adapter keeps the same
+  `no signals declared in interface` block and loses its last rendered type.
+- `validate` reports a self-declared `methodology-guide` at high confidence — category 6, an ISF non-target — so
+  the empty signal inventory and blocked lowering are the correct answer for this source, not a miss.
+- Two guarded ingests and two cascades reproduce all nine artifacts and the 138-file / 39,252,339-byte bundle
+  byte-identically. `CHAIN-CURRENCY` is green at 23/78/78/78 with retention exactly the 23 declared bundles —
+  the measurable evidence population grew by exactly one, as the doctrine intends. 44/44 FSMGen strict,
+  `kg-bench` 156/156, nine provider-free evals at baseline, persisted paths clean, and `run_ci.sh` green with
+  1,807 tests / five ignored.
+- Evidence opens a new `refreshes-51-56` part: a refresh has cost 134 to 295 lines and `refreshes-49-56` sat at
+  434 of its 640-line health target, so the next write could not be guaranteed to finish under its rollover
+  point. Sizing a cut to include the writes it must itself carry is the `CHANGES-LEDGER-ROLLOVER.1` lesson.
+  Corpus coverage is 51/56 with five remaining.
+
 ### CHANGES-LEDGER-ROLLOVER.1 — size a rollover cut to include the record it must itself write
 
 - `.0` claimed to return the ledger to its warning band and did not. Its cut was the minimal one against the
