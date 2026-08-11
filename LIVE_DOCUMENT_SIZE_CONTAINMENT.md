@@ -96,6 +96,12 @@
   percentage of the whole document and names no cause. Each declared H2 carries its own line bound and remedy,
   the declared set must equal the required H2 order, and the bounds' legal sum plus scaffold must fit the
   file's health target, so a fully legal root is a healthy one and the file ceiling stays a backstop.
+  ADR 0032 then closes the class the roadmap was one instance of. Enumerating all 20 multi-file surfaces found
+  eleven whose aggregate was below their own `files × per-file` legal maximum; ten are re-derived under exact
+  consumed authorities, and the rule is now mechanical for every `collection` surface on both bands. Its one
+  exemption, `aggregate_composition`, must sum to the declared bounds rather than assert them; `fact_index` is
+  its sole user, because a 96-line landing plus 32 × 384-line shards is 12,384, not 33 × 384. Pressure lines
+  also name the absolute distance to the enforcement ceiling, while report ordering stays by surface id.
 <!-- LIVE-DOCUMENT-SIZE-CONTAINMENT-LOCAL-ADOPTION:END -->
 
 ---

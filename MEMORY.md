@@ -21,20 +21,19 @@
   run it too. Retrieval starts at bounded `KNOWLEDGE_MAP.md`, then searches its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `LIVE-DOC-STOP-RISK` — `.0` and `.0a` done; `.1` pending.
-- Current state: the roadmap surface is fully repaired. `ROADMAP.md` was 364 of 384 ceiling lines, but 213 of
-  those were one `Current strategic priorities` bullet grown a sentence per closed leaf — chronology its own
-  `bounded_snapshot` lifecycle forbids. `.0` (ADR 0030) supplied the missing **exit**: the archive is now a
-  bounded capsule series, so a rollover is copy-root-to-dated-capsule, append one contract record, add one
-  index row, rewrite the root, all gate-proved; capsules are held to the current root's ceilings, and
-  `rollover_policy` (16 max / 12 warning / named remedy) carries the signal that `archive_terminal` surfaces
-  are exempt from. `.0a` (ADR 0031) closed the **entrance**: each H2 declares its own line bound and remedy,
-  the declared set must equal the required H2 order, and the bounds' legal sum plus scaffold must fit the
-  health target (243 of 256). Root is **156 lines / 40.6% of ceiling**, every section below its 80% warning.
-  Replayed accretion fails at 180 total lines where the file bound stayed silent to 384. Self-test 9 → 49.
-- Next action: `LIVE-DOC-STOP-RISK.1` — decide each of the eight remedy-less aggregate surfaces in Finding 1
-  (name the remedy its aggregate triggers, or re-derive it as `files × per-file` under ADR 0029) and settle
-  whether near-ceiling pressure needs its own signal. `CORPUS-COVERAGE.2.51` is the next product slice after.
-  Note before appending: `CHANGES.md` is at 86.1% of its line health target, past warning, 90% rolls over.
+- Active unit: `LIVE-DOC-STOP-RISK` — `.0`, `.0a`, `.1` done; only `.1a` (retire spent authorities) remains.
+- Current state: the whole "bound with no compliant exit" class is now gated. `.0`/ADR 0030 gave `ROADMAP.md`
+  the missing **exit** — the archive is a bounded capsule series, so a rollover is copy-root-to-dated-capsule
+  + one contract record + one index row + rewrite, all gate-proved. `.0a`/ADR 0031 closed the **entrance** —
+  each H2 declares its own bound and remedy, and their legal sum fits the health target (243/256); the root is
+  156 lines, every section under its warning. `.1`/ADR 0032 generalized it: every `collection` surface must
+  declare `aggregate ≥ files × per-file` on both bands, with one exemption (`aggregate_composition`) that must
+  *sum* to the declared bounds — `fact_index` is its only user. Ten aggregates were re-derived under exact
+  authorities; `task_evidence` can now get the file capacity its 81.9% warning needs. Pressure lines name the
+  headroom to the ceiling. Suites: roadmap 9 → 49 cases, live-doc 68 → 81.
+- Next action: `LIVE-DOC-STOP-RISK.1a` — delete the ten spent `increase` records from
+  `doctrine/live_document_size/ceiling_increase_authorities.jsonl` (deletions only; a banked authority fails
+  closed). That closes the tree; `CORPUS-COVERAGE.2.51` is the next product slice.
+  Note before appending: `CHANGES.md` is at 88.4% of its line health target — 90% forces a rollover.
 - In-flight uncommitted: none; no background job is running.
 - Blockers: none. The user-owned `.claude/settings.json` remains untouched.

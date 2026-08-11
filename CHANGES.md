@@ -1,3 +1,45 @@
+### LIVE-DOC-STOP-RISK.1 — make aggregate reachability a mechanical rule and pressure name the wall
+
+- The roadmap was one instance of a class, and the class was still being handled by reading. Enumerating
+  **all 20** multi-file surfaces against `files × per-file` found **eleven** tight, not the ten the tree's
+  hand-assembled Finding 1 listed: it had missed `achievement_status_archive_segments` (health bytes) and had
+  correctly excluded `fact_index` for a reason nothing checked.
+- Finding 1 had proposed keeping a tight aggregate "where a remedy exists — a bounded-parts or archive route
+  means breaching the total triggers the migration." Tested against each surface, **no case survives.** A
+  parts route only lets a tree *add* parts; it is neither triggered by the aggregate nor reduces it. The
+  archive migration is triggered by the *per-file* bound and cannot help a collection of many medium-sized
+  legal members — which is what all ten actually are. The imagined escape hatch had no user, so it was
+  dropped rather than shipped empty.
+- `task_evidence` shows the cost was not theoretical. Its 40,000-line aggregate binds at a 250-line mean
+  against a measured 229.7 across 131 trees, while its **file count is already at 81.9% warning**. The
+  declared remedy for a count is to add capacity — but raising it to 200 trees would have produced 45,940
+  lines of capacity the aggregate could not accept. The fact plane's unreachable 198 cards, in progress on
+  the repository's largest collection.
+- [ADR 0032](docs/decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md) makes
+  the rule mechanical: every `collection` surface must satisfy `lines_total >= files x lines_each` and
+  `bytes_total >= files x bytes_each` on **both** bands, so the shape cannot be declared again. A `file`
+  locator stays exempt — it holds one document, where the aggregate repeats the per-file bound (ADR 0028).
+- The one exemption does arithmetic instead of making a claim. `aggregate_composition` declares a rationale
+  plus at least two member roles with counts and explicit health/ceiling bounds; the gate requires the counts
+  to sum to the file bound, the products to sum **exactly** to each total, and the largest member to equal
+  the per-file bound. `fact_index` is its sole user and its reason for existing: 1 x 96 landing + 32 x 384
+  shards = 12,384, not 33 x 384 = 12,672.
+- Ten aggregates were re-derived, each under its own exact ceiling-increase authority naming why that
+  surface's members can never leave. `LIVE-DOC-STOP-RISK.1a` retires them, because an authority that outlives
+  its increase is banked and fails closed.
+- Finding 2's second question is answered both ways, explicitly. Every warning and rollover line now ends
+  with `— N below its M ceiling`, because a surface past its health target reports a percentage of a bound it
+  already blew — `ROADMAP.md` read "142.2% of health" while 20 lines from a stop. **Ranking** the report by
+  that distance is declined and the reason recorded: surface-id order lets consecutive runs diff cleanly, and
+  the headroom figure already carries the urgency at each line.
+- The harness proving the rule was violating it: `generous_dimensions` declared 16 x 100 lines against a
+  500-line total. That is the cheapest available evidence that this shape is easy to write by accident, and
+  it is recorded rather than quietly fixed. Suite 68 → 81 cases; every aggregate warning is gone and the 13
+  survivors are all per-file or file-count dimensions that have remedies.
+- One honest gap stated rather than hidden: only ceiling increases need an authority record. Raising a
+  *health target* is ungated and lowers reported pressure. It was correct here — the pressure removed was
+  measuring an unreachable bound — but the asymmetry is real and now tracked as an open question.
+
 ### LIVE-DOC-STOP-RISK.0a — bound each roadmap section so accretion fails where it happens
 
 - `.0` gave `ROADMAP.md` a compliant exit and said plainly that it left the entrance open. This closes it,

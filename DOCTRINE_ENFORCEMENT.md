@@ -293,7 +293,15 @@ The reference deployment. Enforced by `scripts/check_doctrines.sh` via `.githook
 | `PROJECT-DATA-LOCALITY` | structural | gate | `scripts/check_project_data_locality.sh` | Cargo, shell, Rust temp/subprocess, Python dependency, and optional runtime-store paths resolve from the current repository and reject off-root or stale-repository ownership |
 | `CHAIN-CURRENCY` | oracle | ci | `scripts/check_chain_currency.sh` | every persisted corpus artifact is exactly what the current binary reproduces from its persisted input — the evidence, semantic, intent, and `.isf`-adapter stages replayed `--dry-run`, plus each emitted `.isf` against the adapter's rendered `source_text` — and the retained normalized bundles that make a document replayable are exactly the set declared in `doctrine/chain_currency/retained_bundles.json` (ADR 0025 decisions 2 and 3) |
 
-Among its focused suites, `LIVE-DOC-SIZE` runs 55 positive and fail-closed lifecycle/control-plane
+Every `collection` surface must also declare an aggregate at least as large as its own file bound times its
+per-file bound, on both the health and ceiling bands (ADR 0032) — otherwise a corpus whose every file is
+legal is refused by a total no single file can see. The sole exemption is a declared `aggregate_composition`
+whose member counts sum to the file bound, whose products sum exactly to each total, and whose largest member
+equals the per-file bound, so a heterogeneous collection proves its legal maximum instead of asserting it.
+Every warning and rollover line additionally names the absolute distance to the enforcement ceiling, because
+a surface past its health target reports a percentage of a bound it already blew.
+
+Among its focused suites, `LIVE-DOC-SIZE` runs 81 positive and fail-closed lifecycle/control-plane
 cases, 47 neutral derived-state classification cases, 25 SpecForge Rust/gitlink authority-adapter cases,
 15 neutral terminal-task source/route/identity/boundary cases, and 29 neutral active-task
 source/topology/route/payload/bound cases, plus 41 fact-catalog source/plan/route/residue/bound cases. Test

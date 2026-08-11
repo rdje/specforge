@@ -77,8 +77,10 @@ sub generous_dimensions {
         files => 16,
         lines_each => 100,
         bytes_each => 4_096,
-        lines_total => 500,
-        bytes_total => 16_384,
+        # A collection's aggregate is its file bound times its per-file bound, so a corpus of individually
+        # legal files is never refused by a total no single file can see (ADR 0032).
+        lines_total => 1_600,
+        bytes_total => 65_536,
         line_bytes_each => 256,
     };
 }
@@ -668,9 +670,12 @@ expect_case('coverage rejects a file locator over several paths', 0, qr/surface 
 });
 expect_case('a multi-file surface reports its aggregate pressure', 1, qr/surface 'canonical' lines_total is at or above rollover/, sub {
     my ($fixture) = @_;
-    # A collection near its aggregate line target must warn, not stay silent until the hard ceiling.
+    # A collection near its aggregate line target must warn, not stay silent until the hard ceiling. The
+    # health band is tightened as a whole so it stays reachable — files times per-file equals the total —
+    # because an aggregate below its own legal maximum is now itself a breach (ADR 0032).
     write_text($fixture->{root}, 'canonical/part.md', "# Canonical part\n" x 90);
-    surface($fixture, 'canonical')->{health_targets}{lines_total} = 100;
+    my $health = surface($fixture, 'canonical')->{health_targets};
+    @{$health}{qw(files lines_each lines_total bytes_each bytes_total)} = (2, 50, 100, 4_096, 8_192);
     save_registry($fixture);
 });
 expect_case(
@@ -684,6 +689,182 @@ expect_case(
         save_registry($fixture);
     },
 );
+expect_case('pressure names the distance to the hard ceiling, not only the health percentage',
+    1, qr/lines_each is at or above rollover \(\d+\.\d%\) — \d+ below its 100 ceiling/, sub {
+        my ($fixture) = @_;
+        # A surface past its health target reports a percentage of a number it already blew; the actionable
+        # fact is how many lines remain before the enforcement ceiling stops the next unrelated change.
+        write_text($fixture->{root}, 'canonical/part.md', "# Canonical part\n" x 95);
+        surface($fixture, 'canonical')->{health_targets}{lines_each} = 50;
+        save_registry($fixture);
+    });
+expect_case('a collection aggregate below its own legal maximum is rejected',
+    0, qr/lines_total 500 is below its own legal maximum 16 x 100/, sub {
+        my ($fixture) = @_;
+        surface($fixture, 'canonical')->{enforcement_ceilings}{lines_total} = 500;
+        save_registry($fixture);
+    });
+expect_case('a collection byte aggregate below its own legal maximum is rejected',
+    0, qr/bytes_total 16384 is below its own legal maximum 16 x 4096/, sub {
+        my ($fixture) = @_;
+        surface($fixture, 'canonical')->{enforcement_ceilings}{bytes_total} = 16_384;
+        save_registry($fixture);
+    });
+expect_case('a tight health band is rejected even when the ceiling is reachable',
+    0, qr/health_targets lines_total 500 is below its own legal maximum/, sub {
+        my ($fixture) = @_;
+        surface($fixture, 'canonical')->{health_targets}{lines_total} = 500;
+        save_registry($fixture);
+    });
+expect_case('a file-locator surface is exempt from the collection reachability rule', 1, undef, sub {
+        my ($fixture) = @_;
+        # A file locator holds one document, so its aggregate merely repeats its per-file bound.
+        surface($fixture, 'snapshot')->{enforcement_ceilings}{lines_total} = 5;
+        surface($fixture, 'snapshot')->{health_targets}{lines_total} = 5;
+        save_registry($fixture);
+    });
+expect_case('an exact aggregate composition permits a heterogeneous collection', 1, undef, sub {
+        my ($fixture) = @_;
+        my $canonical = surface($fixture, 'canonical');
+        for my $band (qw(health_targets enforcement_ceilings)) {
+            @{ $canonical->{$band} }{qw(files lines_each bytes_each lines_total bytes_total)} =
+                (16, 100, 4_096, 1_510, 61_952);
+        }
+        $canonical->{aggregate_composition} = {
+            rationale => 'one small index plus fifteen full members',
+            members => [
+                { role => 'index', count => 1,
+                  health => { lines => 10, bytes => 512 }, ceiling => { lines => 10, bytes => 512 } },
+                { role => 'member', count => 15,
+                  health => { lines => 100, bytes => 4_096 }, ceiling => { lines => 100, bytes => 4_096 } },
+            ],
+        };
+        save_registry($fixture);
+    });
+expect_case('an aggregate composition that does not sum to the declared total is rejected',
+    0, qr/aggregate_composition ceiling lines sum to 1510, not lines_total 1509/, sub {
+        my ($fixture) = @_;
+        my $canonical = surface($fixture, 'canonical');
+        for my $band (qw(health_targets enforcement_ceilings)) {
+            @{ $canonical->{$band} }{qw(files lines_each bytes_each lines_total bytes_total)} =
+                (16, 100, 4_096, 1_509, 61_952);
+        }
+        $canonical->{aggregate_composition} = {
+            rationale => 'one small index plus fifteen full members',
+            members => [
+                { role => 'index', count => 1,
+                  health => { lines => 10, bytes => 512 }, ceiling => { lines => 10, bytes => 512 } },
+                { role => 'member', count => 15,
+                  health => { lines => 100, bytes => 4_096 }, ceiling => { lines => 100, bytes => 4_096 } },
+            ],
+        };
+        save_registry($fixture);
+    });
+expect_case('an aggregate composition whose counts miss the file bound is rejected',
+    0, qr/aggregate_composition counts sum to 15, not the enforcement_ceilings files bound 16/, sub {
+        my ($fixture) = @_;
+        my $canonical = surface($fixture, 'canonical');
+        for my $band (qw(health_targets enforcement_ceilings)) {
+            @{ $canonical->{$band} }{qw(files lines_each bytes_each lines_total bytes_total)} =
+                (16, 100, 4_096, 1_410, 57_856);
+        }
+        $canonical->{aggregate_composition} = {
+            rationale => 'fourteen full members and one index, one member short',
+            members => [
+                { role => 'index', count => 1,
+                  health => { lines => 10, bytes => 512 }, ceiling => { lines => 10, bytes => 512 } },
+                { role => 'member', count => 14,
+                  health => { lines => 100, bytes => 4_096 }, ceiling => { lines => 100, bytes => 4_096 } },
+            ],
+        };
+        save_registry($fixture);
+    });
+expect_case('an aggregate composition whose largest member misses the per-file bound is rejected',
+    0, qr/aggregate_composition largest ceiling member is 90 lines, not lines_each 100/, sub {
+        my ($fixture) = @_;
+        my $canonical = surface($fixture, 'canonical');
+        for my $band (qw(health_targets enforcement_ceilings)) {
+            @{ $canonical->{$band} }{qw(files lines_each bytes_each lines_total bytes_total)} =
+                (16, 100, 4_096, 1_360, 61_952);
+        }
+        $canonical->{aggregate_composition} = {
+            rationale => 'every member below the declared per-file bound',
+            members => [
+                { role => 'index', count => 1,
+                  health => { lines => 10, bytes => 512 }, ceiling => { lines => 10, bytes => 512 } },
+                { role => 'member', count => 15,
+                  health => { lines => 90, bytes => 4_096 }, ceiling => { lines => 90, bytes => 4_096 } },
+            ],
+        };
+        save_registry($fixture);
+    });
+expect_case('a single-role aggregate composition is rejected',
+    0, qr/aggregate_composition members must list at least two member roles/, sub {
+        my ($fixture) = @_;
+        surface($fixture, 'canonical')->{aggregate_composition} = {
+            rationale => 'a homogeneous collection needs no exemption',
+            members => [
+                { role => 'member', count => 16,
+                  health => { lines => 100, bytes => 4_096 }, ceiling => { lines => 100, bytes => 4_096 } },
+            ],
+        };
+        save_registry($fixture);
+    });
+expect_case('an aggregate composition without a rationale is rejected',
+    0, qr/aggregate_composition lacks a nonempty rationale/, sub {
+        my ($fixture) = @_;
+        surface($fixture, 'canonical')->{aggregate_composition} = {
+            members => [
+                { role => 'index', count => 1,
+                  health => { lines => 10, bytes => 512 }, ceiling => { lines => 10, bytes => 512 } },
+                { role => 'member', count => 15,
+                  health => { lines => 100, bytes => 4_096 }, ceiling => { lines => 100, bytes => 4_096 } },
+            ],
+        };
+        save_registry($fixture);
+    });
+expect_case('an aggregate composition with a repeated role is rejected',
+    0, qr/aggregate_composition repeats member role 'member'/, sub {
+        my ($fixture) = @_;
+        surface($fixture, 'canonical')->{aggregate_composition} = {
+            rationale => 'duplicated roles hide which members were counted',
+            members => [
+                { role => 'member', count => 1,
+                  health => { lines => 10, bytes => 512 }, ceiling => { lines => 10, bytes => 512 } },
+                { role => 'member', count => 15,
+                  health => { lines => 100, bytes => 4_096 }, ceiling => { lines => 100, bytes => 4_096 } },
+            ],
+        };
+        save_registry($fixture);
+    });
+expect_case('an aggregate composition with an unknown field is rejected',
+    0, qr/aggregate_composition has unknown field 'note'/, sub {
+        my ($fixture) = @_;
+        surface($fixture, 'canonical')->{aggregate_composition} = {
+            rationale => 'unknown control-plane fields fail closed',
+            note => 'x',
+            members => [
+                { role => 'index', count => 1,
+                  health => { lines => 10, bytes => 512 }, ceiling => { lines => 10, bytes => 512 } },
+                { role => 'member', count => 15,
+                  health => { lines => 100, bytes => 4_096 }, ceiling => { lines => 100, bytes => 4_096 } },
+            ],
+        };
+        save_registry($fixture);
+    });
+expect_case('an aggregate composition member missing a band is rejected',
+    0, qr/aggregate_composition member 'member' lacks health bounds/, sub {
+        my ($fixture) = @_;
+        surface($fixture, 'canonical')->{aggregate_composition} = {
+            rationale => 'both bands must be partitioned, not just the ceiling',
+            members => [
+                { role => 'index', count => 1,
+                  health => { lines => 10, bytes => 512 }, ceiling => { lines => 10, bytes => 512 } },
+                { role => 'member', count => 15, ceiling => { lines => 100, bytes => 4_096 } },
+            ],
+        };
+        save_registry($fixture);
+    });
 expect_case('coverage rejects an off-root target', 0, qr/absolute, parent-relative, or off-root/, sub {
     my ($fixture) = @_;
     surface($fixture, 'snapshot')->{targets} = ['../escape.md'];

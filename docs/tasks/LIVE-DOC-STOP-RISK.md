@@ -81,7 +81,7 @@ from "one slice from a hard failure".
   Status: `active`
   Goal: no live-document surface can reach a stop that compliant work cannot leave, and no near-stop is
   reported only as a stale soft-target percentage
-  Children: `LIVE-DOC-STOP-RISK.0`, `.0a`, `.1`
+  Children: `LIVE-DOC-STOP-RISK.0`, `.0a`, `.1`, `.1a`
 
 - ID: `LIVE-DOC-STOP-RISK.0`
   Status: `done`
@@ -102,11 +102,19 @@ from "one slice from a hard failure".
   Commit: `LIVE-DOC-STOP-RISK.0a — bound each roadmap section so accretion fails where it happens`
 
 - ID: `LIVE-DOC-STOP-RISK.1`
-  Status: `pending`
+  Status: `done`
   Goal: decide each of the eight remedy-less surfaces in Finding 1 — name the remedy its aggregate triggers, or
   re-derive the aggregate as `files × per-file` under ADR 0029 — and settle whether near-ceiling pressure needs
   its own signal.
   Acceptance: `every listed surface has a recorded per-surface decision backed by its measured shape; any re-derivation carries a ceiling-increase authority and is retired after use; the near-ceiling reporting question is answered with cases or a recorded refusal; the gate passes`
+  Verification: `ADR 0032; enumerating all 20 multi-file surfaces found 11 tight (one more than Finding 1) and proved the "keep tight where a remedy exists" escape has no qualifying user; 10 aggregates re-derived with 10 exact consumed authorities, fact_index declares the sole aggregate_composition (1×96 + 32×384 = 12,384 exactly), and the rule is now mechanical for every collection; pressure lines carry "— N below its M ceiling"; test suite 68 → 81 cases; scripts/check_doctrines.sh 6/6 and 738 files across 52 surfaces with every aggregate warning gone`
+  Commit: `LIVE-DOC-STOP-RISK.1 — make aggregate reachability a mechanical rule and pressure name the wall`
+
+- ID: `LIVE-DOC-STOP-RISK.1a`
+  Status: `pending`
+  Goal: retire the ten ceiling-increase authorities `.1` consumed. The containment protocol requires it — a
+  surviving authority is banked and the gate fails closed on it.
+  Acceptance: `the ten increase records are removed, the registry meta record is untouched, no ceiling/health target/milestone/lifecycle moves, the diff is deletions only, and the gate passes`
   Verification: `pending`
   Commit: `pending`
 
@@ -116,7 +124,8 @@ from "one slice from a hard failure".
 | --- | --- | --- | --- |
 | 1 | `LIVE-DOC-STOP-RISK.0` | `done` | 20 lines of headroom was the only measured deadline here; every other finding is a latent shape |
 | 2 | `LIVE-DOC-STOP-RISK.0a` | `done` | `.0` proved the exit exists but left the entrance open; the root can no longer re-accrete silently |
-| 3 | `LIVE-DOC-STOP-RISK.1` | `pending` | now has `.0`/`.0a`'s worked example of what a declared remedy and a reported inner bound actually cost |
+| 3 | `LIVE-DOC-STOP-RISK.1` | `done` | closed the class mechanically instead of surface by surface |
+| 4 | `LIVE-DOC-STOP-RISK.1a` | `pending` | `.1`'s ten authorities are spent; a surviving authority is banked and fails closed |
 
 ## Decisions
 
@@ -137,12 +146,16 @@ from "one slice from a hard failure".
 
 ## Open Questions
 
-- Does a `partitioned_canonical` surface with a bounded-parts route count as having a remedy for its *root*
-  aggregate, or only for its parts? `active_task_evidence_parts` and `corpus_task_evidence_parts` are the test
-  cases.
-- Should the live-document report rank findings by distance to the enforcement ceiling rather than by
-  percentage of health target? Finding 2 is the motivating case: the loudest percentage was the least urgent
-  fact about that surface.
+- ~~Does a `partitioned_canonical` surface with a bounded-parts route count as having a remedy for its *root*
+  aggregate, or only for its parts?~~ Answered by `.1`: **neither.** A parts route only lets a tree add parts;
+  it is not triggered by the aggregate and does not reduce it. Both surfaces were re-derived.
+- ~~Should the live-document report rank findings by distance to the enforcement ceiling rather than by
+  percentage of health target?~~ Answered by `.1` (ADR 0032 decision 5): every pressure line now *names* the
+  absolute headroom, but the report stays ordered by surface id so consecutive runs diff cleanly. Reordering
+  was declined because headroom already conveys urgency at each line.
+- Raising an `enforcement_ceiling` needs an exact authority record; raising a **health target** does not, and
+  a health raise lowers reported pressure. `.1` raised health targets legitimately (the pressure it removed
+  was measuring an unreachable bound), but the asymmetry is real and currently unowned.
 
 ## Blockers
 
@@ -162,6 +175,11 @@ from "one slice from a hard failure".
 | `2026-08-11` | `.0a` derivation | chose bounds from measured shape and change frequency, then checked the sum | 14 / 6 / 80 / 56 / 44 / 20 / 16 sums to 236 + 7 scaffold = **243 of the 256-line health target**, so a fully legal root is a healthy root and the 384-line file ceiling stays a backstop |
 | `2026-08-11` | `.0a` falsification | replayed the real accretion into the live root twice, then `git checkout -- ROADMAP.md` | warns at 46/56 (82.1%) naming the section and its remedy; **fails closed at 58/56 with the whole file at 180 of 384 lines** — the file-level bound would have stayed silent for another ~200 lines; root restored byte-identical both times |
 | `2026-08-11` | `.0a` gate | `perl scripts/check_roadmap_projection_contract.pl --self-test`; `--check`; `bash scripts/check_doctrines.sh` | 49/49 self-test cases; contract passes; doctrines 6/6 PASS |
+| `2026-08-11` | `.1` census | enumerated **all 20** multi-file surfaces against `files × per-file` on both bands, not just Finding 1's ten | 11 tight — Finding 1 missed `fact_index` (legitimately tight) and `achievement_status_archive_segments` (health bytes only); the list was incomplete because it was assembled by reading, not by enumerating |
+| `2026-08-11` | `.1` remedy test | tested Finding 1's proposed "keep tight where the aggregate triggers a migration" against each surface | no qualifying user: a bounded-parts route only *adds* parts, and the archive migration is triggered by the per-file bound and cannot help a collection of many medium legal members — which is what all ten are; the escape hatch was dropped and replaced by a summed-partition exemption with one real user |
+| `2026-08-11` | `.1` coupling | measured `task_evidence` against the capacity its own 81.9% file warning calls for | the 40,000-line aggregate binds at a 250-line mean against a measured 229.7 across 131 trees, so raising the count to 200 would have produced 45,940 unreachable lines — the fact-plane defect in progress on the repository's largest collection |
+| `2026-08-11` | `.1` self-defect | ran the new rule against the test harness | `generous_dimensions` declared 16 × 100 lines against a 500-line total, so the fixture proving the rule violated it — the cheapest possible evidence that the shape is easy to write by accident |
+| `2026-08-11` | `.1` gate | `perl scripts/test_live_document_size.pl`; `bash scripts/check_live_document_size.sh`; `bash scripts/check_doctrines.sh` | 81/81 cases (was 68); 738 files across 52 surfaces; every aggregate warning gone, 13 surviving warnings are all per-file or file-count with remedies; doctrines 6/6 PASS |
 
 ## Commit Log
 
@@ -170,7 +188,8 @@ from "one slice from a hard failure".
 | `LIVE-DOC-STOP-RISK` ownership | `LIVE-DOC-STOP-RISK — track live-document stops with no compliant exit` | surfaced by `FACT-CARD-CAPACITY-HEADROOM.3`'s closing audit |
 | `LIVE-DOC-STOP-RISK.0` | `LIVE-DOC-STOP-RISK.0 — give the bounded roadmap a declared repeatable rollover` | ADR 0030; 364 → 156 lines with the retired root sealed byte-exact |
 | `LIVE-DOC-STOP-RISK.0a` | `LIVE-DOC-STOP-RISK.0a — bound each roadmap section so accretion fails where it happens` | ADR 0031; the failure now arrives ~200 lines earlier and names its cause |
-| `LIVE-DOC-STOP-RISK.1` | `pending` | `pending` |
+| `LIVE-DOC-STOP-RISK.1` | `LIVE-DOC-STOP-RISK.1 — make aggregate reachability a mechanical rule and pressure name the wall` | ADR 0032; 10 aggregates re-derived, `fact_index` exempted by summed partition |
+| `LIVE-DOC-STOP-RISK.1a` | `pending` | `pending` |
 
 ## Changelog
 
@@ -186,3 +205,9 @@ from "one slice from a hard failure".
   (with scaffold) within the health target — ADR 0029's reachability rule applied inward. Replaying the real
   accretion proves the point: the section bound fails at 180 total file lines where the file bound would have
   stayed silent to 384. Only `.1` remains.
+- `2026-08-11`: `.1` closed the class mechanically rather than surface by surface. Enumerating all 20
+  multi-file surfaces found 11 tight — Finding 1's hand-assembled list of ten had missed two and included one
+  that was legitimately tight — and testing the proposed "remedy exists" escape found it had no qualifying
+  user. ADR 0032 makes `aggregate ≥ files × per-file` a gate rule for every collection, with one exemption
+  that must *sum* to the declared bounds rather than assert it, and makes every pressure line name the
+  absolute headroom to its ceiling. `.1a` opened to retire the ten consumed authorities.

@@ -802,8 +802,42 @@ Bounds follow measured shape and change frequency rather than an even split:
 Replaying the real accretion is what proves the control: the gate warns at 46 of 56 section lines and fails
 at 58, with the whole file at 180 of its 384 lines — less than half its ceiling and still inside its health
 target. The file-level bound would have stayed silent for roughly another 200 lines. Whether other bounded
-snapshots need the same inner bound is a separate measurement owned by `LIVE-DOC-STOP-RISK.1`, not an
-assumption.
+snapshots need the same inner bound is a separate measurement, not an assumption.
+
+#### An aggregate a collection can exceed is not a bound
+
+The roadmap was one instance of a class. A collection declares a file bound, a per-file bound, and an
+aggregate; if the aggregate is smaller than `files × per-file`, then a corpus whose every file is legal is
+refused by a total no single file can see — a state ordinary compliant writing reaches and no compliant
+action leaves.
+[ADR 0032](../../../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
+makes that shape impossible to declare.
+
+Enumerating all 20 multi-file surfaces found eleven tight. The clearest was `task_evidence`, the task-tree
+collection: its 40,000-line aggregate bound bit at a mean of 250 lines per tree against a measured 229.7
+across 131 trees, while its **file count was already at 81.9% of its warning**. The declared remedy for a
+count is to add capacity — but raising it to 200 trees would have produced 45,940 lines of capacity the
+aggregate could not accept. The advertised capacity would have been unreachable, exactly as the fact plane's
+198 cards were.
+
+The gate now requires `lines_total ≥ files × lines_each` and `bytes_total ≥ files × bytes_each` on both the
+health and ceiling bands of every `collection` surface. A `file` locator is exempt, because it holds one
+document where the aggregate merely repeats the per-file bound.
+
+One exemption exists, and it must do arithmetic rather than make a claim. A heterogeneous collection may
+declare `aggregate_composition` — a rationale plus at least two member roles, each with a count and explicit
+health and ceiling bounds — and the gate then requires the counts to sum to the file bound, the products to
+sum *exactly* to each total, and the largest member to equal the per-file bound. `fact_index` is its only
+user and its reason for existing: the Knowledge Map projection is one 96-line landing plus up to 32 384-line
+shards, so its exact legal maximum is 12,384 lines rather than 33 × 384 = 12,672.
+
+Two smaller consequences are worth stating plainly. First, every pressure line now ends with the distance to
+the wall — `— 20 below its 384 ceiling` — because a surface past its health target reports a percentage of a
+number it already blew, which is the least urgent fact about it. Ranking the report by that distance was
+declined: surface-id order lets consecutive runs diff cleanly, and the headroom figure already carries the
+urgency. Second, the test harness itself was violating the new rule — `generous_dimensions` declared 16 × 100
+lines against a 500-line total — which is the cheapest available evidence that this shape is easy to write by
+accident.
 
 #### Bounded FSMGen feedback channel landed
 

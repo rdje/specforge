@@ -301,8 +301,9 @@ sub validate_surface_schema {
     reject_unknown_fields(
         $surface,
         "surface '$id'",
-        qw(surface_id targets locator lifecycle state owner health_targets enforcement_ceilings milestones verifier baseline transition currency index index_contract freshness_verifier canonical_inputs sha256 reference_contract archive_manifest),
+        qw(surface_id targets locator lifecycle state owner health_targets enforcement_ceilings milestones verifier baseline transition currency index index_contract freshness_verifier canonical_inputs sha256 reference_contract archive_manifest aggregate_composition),
     );
+    validate_aggregate_reachability($surface, $id);
     reject_unknown_fields($surface->{health_targets}, "surface '$id' health_targets", @dimensions);
     reject_unknown_fields($surface->{enforcement_ceilings}, "surface '$id' enforcement_ceilings", @dimensions);
     reject_unknown_fields($surface->{baseline}, "surface '$id' baseline", @dimensions)
@@ -330,6 +331,112 @@ sub validate_surface_schema {
             }
         }
     }
+}
+
+# A collection's aggregate must be at least what its own file and per-file bounds permit, or a corpus whose
+# every file is legal is refused by a total no single file can see — a state ordinary compliant writing
+# reaches and no compliant action leaves (ADR 0029, ADR 0032). The single exemption is a heterogeneous
+# collection that declares its exact member partition, which must sum to the declared bounds rather than
+# merely assert that it does.
+sub validate_aggregate_reachability {
+    my ($surface, $id) = @_;
+    return if ($surface->{locator} // '') ne 'collection';
+    my $composition = $surface->{aggregate_composition};
+    my $members = validate_aggregate_composition_schema($composition, $id);
+    for my $band (qw(health_targets enforcement_ceilings)) {
+        my $limits = $surface->{$band};
+        next if ref($limits) ne 'HASH';
+        my ($files, $per_line, $per_byte, $total_line, $total_byte) =
+            @{$limits}{qw(files lines_each bytes_each lines_total bytes_total)};
+        next if grep { !defined($_) || ref($_) || $_ !~ /^\d+$/ }
+            ($files, $per_line, $per_byte, $total_line, $total_byte);
+        if (!$members) {
+            problem("surface '$id' $band lines_total $total_line is below its own legal maximum "
+                . "$files x $per_line; raise the total or declare an aggregate_composition")
+                if $total_line < $files * $per_line;
+            problem("surface '$id' $band bytes_total $total_byte is below its own legal maximum "
+                . "$files x $per_byte; raise the total or declare an aggregate_composition")
+                if $total_byte < $files * $per_byte;
+            next;
+        }
+        my $band_key = $band eq 'health_targets' ? 'health' : 'ceiling';
+        my ($count, $lines, $bytes, $max_line, $max_byte) = (0, 0, 0, 0, 0);
+        for my $member (@$members) {
+            my $bounds = $member->{$band_key};
+            next if ref($bounds) ne 'HASH';
+            $count += $member->{count};
+            $lines += $member->{count} * $bounds->{lines};
+            $bytes += $member->{count} * $bounds->{bytes};
+            $max_line = $bounds->{lines} if $bounds->{lines} > $max_line;
+            $max_byte = $bounds->{bytes} if $bounds->{bytes} > $max_byte;
+        }
+        problem("surface '$id' aggregate_composition counts sum to $count, not the $band files bound $files")
+            if $count != $files;
+        problem("surface '$id' aggregate_composition $band_key lines sum to $lines, not lines_total $total_line")
+            if $lines != $total_line;
+        problem("surface '$id' aggregate_composition $band_key bytes sum to $bytes, not bytes_total $total_byte")
+            if $bytes != $total_byte;
+        problem("surface '$id' aggregate_composition largest $band_key member is $max_line lines, not lines_each $per_line")
+            if $max_line != $per_line;
+        problem("surface '$id' aggregate_composition largest $band_key member is $max_byte bytes, not bytes_each $per_byte")
+            if $max_byte != $per_byte;
+    }
+}
+
+sub validate_aggregate_composition_schema {
+    my ($composition, $id) = @_;
+    return undef if !defined $composition;
+    if (ref($composition) ne 'HASH') {
+        problem("surface '$id' aggregate_composition must be an object");
+        return undef;
+    }
+    reject_unknown_fields($composition, "surface '$id' aggregate_composition", qw(rationale members));
+    problem("surface '$id' aggregate_composition lacks a nonempty rationale")
+        if !defined($composition->{rationale}) || ref($composition->{rationale}) || $composition->{rationale} eq '';
+    my $members = $composition->{members};
+    if (ref($members) ne 'ARRAY' || @$members < 2) {
+        problem("surface '$id' aggregate_composition members must list at least two member roles");
+        return undef;
+    }
+    my $valid = 1;
+    my %seen_role;
+    for my $member (@$members) {
+        if (ref($member) ne 'HASH') {
+            problem("surface '$id' aggregate_composition member must be an object");
+            $valid = 0;
+            next;
+        }
+        reject_unknown_fields($member, "surface '$id' aggregate_composition member", qw(role count health ceiling));
+        my $role = $member->{role};
+        if (!defined($role) || ref($role) || $role eq '') {
+            problem("surface '$id' aggregate_composition member lacks a role");
+            $valid = 0;
+        } elsif ($seen_role{$role}++) {
+            problem("surface '$id' aggregate_composition repeats member role '$role'");
+            $valid = 0;
+        }
+        $role //= '<unknown>';
+        if (!defined($member->{count}) || ref($member->{count}) || $member->{count} !~ /^\d+$/ || $member->{count} < 1) {
+            problem("surface '$id' aggregate_composition member '$role' lacks a positive count");
+            $valid = 0;
+        }
+        for my $band (qw(health ceiling)) {
+            my $bounds = $member->{$band};
+            if (ref($bounds) ne 'HASH') {
+                problem("surface '$id' aggregate_composition member '$role' lacks $band bounds");
+                $valid = 0;
+                next;
+            }
+            reject_unknown_fields($bounds, "surface '$id' aggregate_composition member '$role' $band", qw(lines bytes));
+            for my $axis (qw(lines bytes)) {
+                next if defined($bounds->{$axis}) && !ref($bounds->{$axis})
+                    && $bounds->{$axis} =~ /^\d+$/ && $bounds->{$axis} >= 1;
+                problem("surface '$id' aggregate_composition member '$role' $band lacks a positive '$axis'");
+                $valid = 0;
+            }
+        }
+    }
+    return $valid ? $members : undef;
 }
 
 sub validate_authority_schema {
@@ -498,10 +605,18 @@ sub validate_limits {
                 next if ($surface->{lifecycle} // '') eq 'frozen_legacy'
                     || ($surface->{lifecycle} // '') eq 'archive_terminal';
                 next if ($surface->{state} // '') eq 'transition_debt';
+                # Report the distance to the hard boundary next to the percentage. A surface past its health
+                # target reports a percentage of a number it already blew, which is the least urgent fact
+                # about it: ROADMAP.md read "142.2% of health" while it was 20 lines from a stop that would
+                # have landed on an unrelated slice (ADR 0032).
+                my $headroom = '';
+                my $ceiling = ref($ceilings) eq 'HASH' ? $ceilings->{$dimension} : undef;
+                $headroom = sprintf(' — %d below its %d ceiling', $ceiling - $metrics->{$dimension}, $ceiling)
+                    if defined($ceiling) && $ceiling >= $metrics->{$dimension};
                 if ($percent >= $rollover) {
-                    push @warnings, sprintf("surface '%s' %s is at or above rollover (%.1f%%)", $id, $dimension, $percent);
+                    push @warnings, sprintf("surface '%s' %s is at or above rollover (%.1f%%)%s", $id, $dimension, $percent, $headroom);
                 } elsif ($percent >= $warning) {
-                    push @warnings, sprintf("surface '%s' %s is at or above warning (%.1f%%)", $id, $dimension, $percent);
+                    push @warnings, sprintf("surface '%s' %s is at or above warning (%.1f%%)%s", $id, $dimension, $percent, $headroom);
                 }
             }
         }
