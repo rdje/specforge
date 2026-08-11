@@ -17,30 +17,29 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SEMANTIC-EMPTY-CATALOG-FILTER.1` — authorised, not started, no code touched.
-  `CORPUS-COVERAGE.2.52` is `done` and committed. Also open, tracking-only: `STATUS-LEDGER-ROLLOVER` at `.2`,
-  `TASK-PART-SEAL-REACHABILITY` at `.0`.
-- Current state: corpus coverage is **52/57 with five real documents remaining**, at 78 SourceIR / 24
-  normalized / 78 EvidenceIR / 78 downstream chains, 44/44 emitted ISFs FSMGen-strict clean. `CORPUS-FRONTIER`
-  (gate-tier, `bash scripts/check_corpus_frontier.sh`) re-derives 57 = 52 + 5 on every run, so **a refresh must
-  move `doctrine/corpus_frontier/census.json` and the root prose in the same transaction or it fails closed**;
-  a refresh must likewise add its key to `doctrine/chain_currency/retained_bundles.json` (now 24).
-- Next action: implement `SEMANTIC-EMPTY-CATALOG-FILTER.1`. The director authorised **(c) composed with (a)** on
-  `2026-08-11`: delete the `declared_signal_names.is_empty()` special case at `crates/specforge/src/ir/semantic.rs:283`
-  and `:293`, and demote rejected records to `residual_decisions` instead of dropping them. That tree's Current
-  Frontier holds the settled rule, the open sub-question (demotion scope), a measured constraint — 41 of 45
-  populated documents already drop 1,230 rules / 47 constraints, so byte-identity there is unreachable under
-  uniform demotion — and a six-step implementation order. **It is a Rust change: paste the `TOOLBOX.md`
-  acceptance checklist into the leaf first, or `check_task_acceptance.sh` blocks the commit**, and expect to
-  rebuild all 78 downstream chains from unchanged EvidenceIR (no re-ingest) to keep `CHAIN-CURRENCY` green.
+- Active unit: `SEMANTIC-EMPTY-CATALOG-FILTER.2` — the closing leaf. `.1` is `done` and committed (the code
+  change landed). Also open, tracking-only: `STATUS-LEDGER-ROLLOVER` at `.2`, `TASK-PART-SEAL-REACHABILITY` at `.0`.
+- Current state: `.1` deleted the `declared_signal_names.is_empty()` special case in
+  `crates/specforge/src/ir/semantic.rs`, so **one grounding predicate now governs every document** and a rejected
+  record is demoted to a `semantic_ungrounded_records_not_promoted` residual packet instead of dropped. All 78
+  downstream chains were rebuilt from unchanged EvidenceIR and the 179-artifact validation population re-validated,
+  so `CHAIN-CURRENCY` is green at 24/78/78/78. Corpus coverage is unchanged at **52/57 with five real documents
+  remaining**; all 44 emitted `.isf` are **byte-identical** and FSMGen-strict clean at 0 diagnostics.
+- Next action: land `SEMANTIC-EMPTY-CATALOG-FILTER.2` — the closing leaf. The corpus-wide evidence is already
+  measured and recorded in the tree (11 identical / 41 residual-packet-only / 26 content-moved, all 26
+  empty-catalog; `kg-bench` 156/156; nine provider-free evals at baseline; `run_ci.sh` green). What remains is the
+  write-up: the `BOOK-METHOD-DOC` subsection in `docs/book/src/pipeline/semanticir.md`, refreshing the fact card
+  `docs/knowledge/semantic-empty-catalog-disables-grounding-filter.md` to `.1`'s landed rule, one `CHANGES.md`
+  entry for the whole tree, `LIVE_ACHIEVEMENT_STATUS.md`, and closing the tree.
 - Deferred behind it: `CORPUS-COVERAGE.2.53`. Smallest of the five gated remaining is
   `opencapi_3_0_transaction_layer_28jan2020` at 774 elements; re-measure all five from their own persisted
   SourceIR `document_profile` before committing to that pick. Append to `refreshes-51-56` (440/640 lines, 68.8%
   — a third refresh at the largest observed 295-line cost would overshoot the 90% rollover, so measure before
   writing and split at the boundary if it would).
-- In-flight uncommitted: none. Rollback/run snapshots and logs live under `.project-data/tmp/corpus-coverage-2-52-*`
-  and are disposable — delete them freely (keep `*.log` out of the top level of `.project-data/tmp`, which
-  `PROJECT-DATA-LOCALITY` fails closed on). No background job is running.
-- Blockers: none. `SEMANTIC-EMPTY-CATALOG-FILTER` is a measured, pre-existing defect on 29 documents that reaches
-  no emitted target; it blocks no refresh. `CHANGES.md` is near 87% of its 1800-line health target — roughly
-  four commits before its 90% rollover becomes mandatory. The user-owned `.claude/settings.json` is untouched.
+- In-flight uncommitted: none. Replay/rebuild/snapshot evidence lives under
+  `.project-data/tmp/semantic-empty-catalog-filter-1/` and is disposable — delete it freely (keep `*.log` out of
+  the top level of `.project-data/tmp`, which `PROJECT-DATA-LOCALITY` fails closed on). No background job runs.
+- Blockers: none. `CHANGES.md` is at 1,566 of its 1,800-line health target (87%) — write **one** entry for this
+  whole tree at `.2`, not one per leaf, to stay under the 1,620-line mandatory rollover. `.1` opened a new tracked
+  question (the missing signal catalogs its demotion made visible); it belongs to the extraction-breadth lane, not
+  this tree. The user-owned `.claude/settings.json` is untouched.

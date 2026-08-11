@@ -267,9 +267,7 @@ impl SemanticIr {
         // Build the set of authoritative signal names from High-confidence interface records
         // (those that came from formal `Signal X is input/output` declarations synthesized
         // from signal description tables).  NLP records for signals outside this set are
-        // heuristic noise and are suppressed so they do not pollute downstream scoring.
-        // If no explicit declarations exist (e.g. pure prose specs with no tables), the set
-        // is empty and gating is disabled so we never drop records unnecessarily.
+        // heuristic noise and must not become canonical hardware authority.
         // Declared signals = High confidence (from structured tables) OR
         // Medium confidence (from Tier 2 KG actor-signal relation extraction).
         // Low confidence = heuristic co-mention noise; still excluded.
@@ -280,33 +278,34 @@ impl SemanticIr {
             .map(|r| r.signal_name.clone())
             .collect();
 
-        let mut signal_constraints = if declared_signal_names.is_empty() {
-            evidence_ir.signal_constraints.clone()
-        } else {
+        // SEMANTIC-EMPTY-CATALOG-FILTER.1: ONE predicate governs every document.
+        // A record is promoted when the signal it names is declared, or — for a rule —
+        // when it names no signal at all (a genuine system-level behavioral rule).
+        // There is deliberately no `declared_signal_names.is_empty()` escape hatch: that
+        // former special case disabled the grounding filter on exactly the documents with
+        // no signal authority, which is where an ungrounded record is *least* likely to be
+        // real. An empty catalog now simply satisfies no named subject, which is the
+        // intended outcome rather than a separate branch.
+        // Rejected records are not deleted: they stay in EvidenceIR (the honest capture
+        // layer) and are demoted into a proportionate `residual_decisions` packet below,
+        // so the evidence remains visible without claiming canonical authority.
+        let (signal_constraints_grounded, ungrounded_signal_constraints): (Vec<_>, Vec<_>) =
             evidence_ir
                 .signal_constraints
                 .iter()
-                .filter(|r| declared_signal_names.contains(&r.subject_signal))
                 .cloned()
-                .collect()
-        };
-        let conditional_rules = if declared_signal_names.is_empty() {
-            evidence_ir.conditional_rules.clone()
-        } else {
-            evidence_ir
-                .conditional_rules
-                .iter()
-                .filter(|r| {
-                    // Keep rules where the consequent signal is declared, or rules with
-                    // no specific consequent signal (system-level behavioral rules).
-                    r.consequent_signal
-                        .as_ref()
-                        .map(|s| declared_signal_names.contains(s))
-                        .unwrap_or(true)
-                })
-                .cloned()
-                .collect()
-        };
+                .partition(|r| declared_signal_names.contains(&r.subject_signal));
+        let (conditional_rules, ungrounded_conditional_rules): (Vec<_>, Vec<_>) = evidence_ir
+            .conditional_rules
+            .iter()
+            .cloned()
+            .partition(|r| {
+                r.consequent_signal
+                    .as_ref()
+                    .map(|s| declared_signal_names.contains(s))
+                    .unwrap_or(true)
+            });
+        let mut signal_constraints = signal_constraints_grounded;
         let known_actor_names =
             collect_known_actor_names(actor_build.actors.as_slice(), actor_ports.as_slice());
         let mut vlm_known_signal_names: HashSet<String> = interfaces
@@ -375,12 +374,20 @@ impl SemanticIr {
             signal_polarities.as_slice(),
             system_contract.as_ref(),
         );
-        let residual_decisions = build_residual_decisions(
+        let mut residual_decisions = build_residual_decisions(
             &context,
             &interfaces,
             actor_build.explicit_actor_count,
             temporal_rules.as_slice(),
         );
+        // SEMANTIC-EMPTY-CATALOG-FILTER.1: demote, don't drop. The grounding filter above
+        // refuses ungrounded records canonical authority; this packet keeps that refusal
+        // visible instead of silent.
+        residual_decisions.extend(ungrounded_promotion_residual_packet(
+            &ungrounded_signal_constraints,
+            &ungrounded_conditional_rules,
+            declared_signal_names.len(),
+        ));
 
         // Merge state/transition records: formal syntax + VLM diagram observations.
         // VLM-sourced records are appended so they don’t replace existing formal records.
@@ -4934,6 +4941,97 @@ fn build_decomposition_candidates(context: &SemanticContext) -> Vec<Decompositio
             supporting_section_ids: vec![section.section_id.clone()],
         })
         .collect()
+}
+
+/// Maximum distinct undeclared signal names the demotion packet names in prose
+/// (SEMANTIC-EMPTY-CATALOG-FILTER.1). The packet is a proportionate summary, not a
+/// per-record dump: one corpus document rejects 216 rules, and an unbounded list would
+/// bloat every downstream artifact that carries residual decisions.
+const UNGROUNDED_PROMOTION_SAMPLE_LIMIT: usize = 12;
+
+/// One proportionate summary packet for the EvidenceIR records the declared-signal
+/// grounding filter refused to promote into `SemanticIR`
+/// (SEMANTIC-EMPTY-CATALOG-FILTER.1 — demote, don't drop).
+///
+/// The records themselves are untouched in EvidenceIR, the honest capture layer; what is
+/// withheld is *canonical authority*, because a record whose subject the document never
+/// declares as a signal is prose noise as often as it is hardware truth. Returns `None`
+/// when every record was grounded, so a clean promotion pass adds no packet at all.
+fn ungrounded_promotion_residual_packet(
+    ungrounded_signal_constraints: &[SignalConstraintRecord],
+    ungrounded_conditional_rules: &[ConditionalRuleRecord],
+    declared_signal_count: usize,
+) -> Option<ResidualDecisionPacket> {
+    let constraint_count = ungrounded_signal_constraints.len();
+    let rule_count = ungrounded_conditional_rules.len();
+    if constraint_count + rule_count == 0 {
+        return None;
+    }
+
+    // A rule with no `consequent_signal` is a system-level behavioral rule and is always
+    // promoted, so every rejected rule names a signal.
+    let undeclared_names: BTreeSet<&str> = ungrounded_signal_constraints
+        .iter()
+        .map(|record| record.subject_signal.as_str())
+        .chain(
+            ungrounded_conditional_rules
+                .iter()
+                .filter_map(|record| record.consequent_signal.as_deref()),
+        )
+        .collect();
+    let sample: Vec<&str> = undeclared_names
+        .iter()
+        .take(UNGROUNDED_PROMOTION_SAMPLE_LIMIT)
+        .copied()
+        .collect();
+    let elided = undeclared_names.len() - sample.len();
+    let named = if elided == 0 {
+        sample.join(", ")
+    } else {
+        format!("{}, and {elided} more", sample.join(", "))
+    };
+
+    Some(ResidualDecisionPacket {
+        packet_id: "semantic_ungrounded_records_not_promoted".to_string(),
+        question:
+            "Should records naming a signal this document never declares carry canonical authority?"
+                .to_string(),
+        why_unresolved: format!(
+            "{constraint_count} signal constraint(s) and {rule_count} conditional rule(s) name a \
+             signal that is not in this document's declared-signal catalog ({declared_signal_count} \
+             declared), so SemanticIR did not promote them: {named}. The records remain in \
+             EvidenceIR with their provenance; only canonical authority is withheld. The same \
+             predicate governs every document — an empty catalog grounds no named subject rather \
+             than disabling the filter."
+        ),
+        automation_confidence: AutomationConfidence::Medium,
+        candidate_interpretations: vec![
+            CandidateInterpretation {
+                interpretation_id: "require_declared_subject".to_string(),
+                description:
+                    "Keep the records evidence-only until the document's signal catalog (or a later \
+                     extraction pass) declares the subject they name."
+                        .to_string(),
+                downstream_impact:
+                    "Canonical IntentIR stays grounded in declared hardware, but a real constraint \
+                     whose signal declaration was never captured stays out of the product boundary \
+                     until extraction recovers it."
+                        .to_string(),
+            },
+            CandidateInterpretation {
+                interpretation_id: "promote_undeclared_subject".to_string(),
+                description:
+                    "Promote the records anyway and treat the named token as a signal on the \
+                     strength of the prose alone."
+                        .to_string(),
+                downstream_impact:
+                    "More behavioral structure appears immediately, but document metadata, \
+                     boilerplate, English modals, and table noise become canonical hardware \
+                     authority whenever the extractor mistakes one for a signal name."
+                        .to_string(),
+            },
+        ],
+    })
 }
 
 fn build_residual_decisions(
@@ -11692,7 +11790,17 @@ mod tests {
             semantic_ir.gates.is_empty(),
             "cue-matched whole-statement gates are compatibility data only"
         );
-        assert!(semantic_ir.residual_decisions.is_empty());
+        // SEMANTIC-EMPTY-CATALOG-FILTER.1: this fixture is prose-only, so its VALID/READY
+        // interface records are Low-confidence and the declared-signal catalog is empty.
+        // The one residual packet is the grounding filter demoting the records that name
+        // them — the same answer a populated-catalog document has always given for an
+        // undeclared subject, no longer inverted by the absence of a catalog.
+        assert_eq!(semantic_ir.residual_decisions.len(), 1);
+        let packet = &semantic_ir.residual_decisions[0];
+        assert_eq!(packet.packet_id, "semantic_ungrounded_records_not_promoted");
+        assert!(packet.why_unresolved.contains("READY, VALID"));
+        assert!(semantic_ir.signal_constraints.is_empty());
+        assert!(semantic_ir.conditional_rules.is_empty());
 
         Ok(())
     }
@@ -18714,6 +18822,200 @@ mod tests {
                 .iter()
                 .any(|r| r.subject_signal == "NOTSIG"),
             "NOTSIG is not declared and its constraint must be removed by Layer D gating"
+        );
+        // SEMANTIC-EMPTY-CATALOG-FILTER.1: the rejection is demoted, not silent.
+        let packet = semantic_ir
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "semantic_ungrounded_records_not_promoted")
+            .expect("a rejected record must surface as a residual decision, never vanish");
+        assert!(
+            packet.why_unresolved.contains("NOTSIG"),
+            "the packet must name the rejected subject: {}",
+            packet.why_unresolved
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn layer_d_gating_still_applies_when_the_document_declares_no_signals() -> Result<()> {
+        // SEMANTIC-EMPTY-CATALOG-FILTER.1: the empty-catalog branch used to disable the
+        // grounding filter entirely, promoting every prose-derived record on exactly the
+        // documents with no signal authority. One predicate now governs both branches:
+        //   • a constraint whose subject is undeclared      → rejected + demoted
+        //   • a rule whose consequent signal is undeclared  → rejected + demoted
+        //   • a rule with NO consequent signal              → kept (system-level behavior)
+        use crate::ir::evidence::EvidenceIr;
+        use crate::ir::source::{
+            ConditionalRuleRecord, SignalConstraintKind, SignalConstraintRecord,
+        };
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("prose_only.md");
+        let source_artifact_base = tempdir.path().join("generated").join("source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
+        let semantic_artifact_base = tempdir.path().join("generated").join("semantic_ir");
+
+        // Prose with no signal declaration and no signal-description table, so the
+        // document has no signal authority at all.
+        fs::write(
+            &source,
+            "# Mechanical overview\nCare must be taken that the connector is fully seated.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "sigcon_notice".to_string(),
+            subject_signal: "NOTICE".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeStable,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "NOTICE must be stable.".to_string(),
+            supporting_statement_ids: vec!["stmt_001".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.conditional_rules.push(ConditionalRuleRecord {
+            rule_id: "condrule_open".to_string(),
+            antecedent_text: "when the link is up".to_string(),
+            consequent_signal: Some("OPEN".to_string()),
+            consequent_action: "must be taken".to_string(),
+            source_text: "Care must be taken that the OPEN_CAPI link is up.".to_string(),
+            supporting_statement_ids: vec!["stmt_002".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.conditional_rules.push(ConditionalRuleRecord {
+            rule_id: "condrule_system".to_string(),
+            antecedent_text: "when the connector is seated".to_string(),
+            consequent_signal: None,
+            consequent_action: "the link trains".to_string(),
+            source_text: "When the connector is seated the link trains.".to_string(),
+            supporting_statement_ids: vec!["stmt_003".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        evidence_ir.write_to_disk()?;
+
+        let semantic_ir = SemanticIr::build(
+            &evidence_ir.artifact_layout.evidence_ir_path,
+            &semantic_artifact_base,
+        )?;
+
+        // Guard the premise: this test is only meaningful on the empty-catalog branch.
+        let declared: std::collections::HashSet<&str> = semantic_ir
+            .interfaces
+            .iter()
+            .flat_map(|interface| interface.signal_records.iter())
+            .filter(|record| !matches!(record.automation_confidence, AutomationConfidence::Low))
+            .map(|record| record.signal_name.as_str())
+            .collect();
+        assert!(
+            declared.is_empty(),
+            "fixture must declare no signals to exercise the empty-catalog branch, got {declared:?}"
+        );
+
+        assert!(
+            !semantic_ir
+                .signal_constraints
+                .iter()
+                .any(|record| record.subject_signal == "NOTICE"),
+            "an undeclared subject must not be promoted just because the catalog is empty"
+        );
+        assert!(
+            !semantic_ir
+                .conditional_rules
+                .iter()
+                .any(|record| record.consequent_signal.as_deref() == Some("OPEN")),
+            "an undeclared consequent must not be promoted just because the catalog is empty"
+        );
+        assert!(
+            semantic_ir
+                .conditional_rules
+                .iter()
+                .any(|record| record.rule_id == "condrule_system"),
+            "a rule naming no signal is a system-level behavioral rule and must survive"
+        );
+
+        let packet = semantic_ir
+            .residual_decisions
+            .iter()
+            .find(|packet| packet.packet_id == "semantic_ungrounded_records_not_promoted")
+            .expect("rejected records must be demoted to a residual decision, not dropped");
+        assert!(
+            packet.why_unresolved.contains("NOTICE") && packet.why_unresolved.contains("OPEN"),
+            "the packet must name both rejected subjects: {}",
+            packet.why_unresolved
+        );
+        assert_eq!(packet.automation_confidence, AutomationConfidence::Medium);
+
+        Ok(())
+    }
+
+    #[test]
+    fn fully_grounded_documents_carry_no_ungrounded_promotion_packet() -> Result<()> {
+        // The packet is proportionate: a document whose records are all grounded gains
+        // nothing, so the demotion surface never becomes ambient noise.
+        use crate::ir::source::SignalConstraintRecord;
+
+        let constraint = SignalConstraintRecord {
+            constraint_id: "sigcon_hready".to_string(),
+            subject_signal: "HREADY".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeAsserted,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "HREADY shall be asserted.".to_string(),
+            supporting_statement_ids: vec!["stmt_001".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        };
+        assert!(super::ungrounded_promotion_residual_packet(&[], &[], 3).is_none());
+        assert!(
+            super::ungrounded_promotion_residual_packet(std::slice::from_ref(&constraint), &[], 3)
+                .is_some()
+        );
+
+        Ok(())
+    }
+
+    #[test]
+    fn ungrounded_promotion_packet_bounds_the_names_it_lists() -> Result<()> {
+        // A corpus document rejects hundreds of records; the packet stays a proportionate
+        // summary rather than a per-record dump embedded in every downstream artifact.
+        use crate::ir::source::SignalConstraintRecord;
+
+        let constraints: Vec<SignalConstraintRecord> = (0..40)
+            .map(|index| SignalConstraintRecord {
+                constraint_id: format!("sigcon_{index:03}"),
+                subject_signal: format!("NOISE{index:03}"),
+                constraint_kind: SignalConstraintKind::MustBeStable,
+                target_value: None,
+                condition_text: None,
+                negated: false,
+                source_text: format!("NOISE{index:03} must be stable."),
+                supporting_statement_ids: vec![format!("stmt_{index:03}")],
+                automation_confidence: AutomationConfidence::Medium,
+            })
+            .collect();
+
+        let packet = super::ungrounded_promotion_residual_packet(&constraints, &[], 0)
+            .expect("40 rejected constraints must produce a packet");
+        assert!(packet.why_unresolved.contains("40 signal constraint(s)"));
+        assert!(
+            packet.why_unresolved.contains("and 28 more"),
+            "names beyond the sample limit must be elided: {}",
+            packet.why_unresolved
+        );
+        // The sample is sorted, so the packet text is deterministic across runs.
+        assert!(
+            packet
+                .why_unresolved
+                .contains("NOISE000, NOISE001, NOISE002")
         );
 
         Ok(())

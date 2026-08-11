@@ -2526,7 +2526,15 @@ mod tests {
                 .contains("backend-neutral transport abstraction")
                 && !assumption.supporting_semantic_ids.is_empty()
         }));
-        assert!(intent_ir.residual_decisions.is_empty());
+        // SEMANTIC-EMPTY-CATALOG-FILTER.1: the prose-only fixture declares no signals, so
+        // SemanticIR demotes the records naming VALID/READY instead of promoting them, and
+        // IntentIR carries that one packet forward. The behaviors/constraints asserted
+        // above are statement-derived and unaffected.
+        assert_eq!(intent_ir.residual_decisions.len(), 1);
+        assert_eq!(
+            intent_ir.residual_decisions[0].packet_id,
+            "semantic_ungrounded_records_not_promoted"
+        );
 
         Ok(())
     }

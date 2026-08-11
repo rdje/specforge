@@ -107,10 +107,11 @@ document promotes everything.
 1. The empty-declared-set branch applies a grounding rule at least as strict as the populated branch.
 2. The census above re-runs with a materially smaller unfiltered population, and every surviving record is
    explained (a real system-level rule with no consequent signal, or a genuinely grounded subject).
-3. No populated-catalog document **loses a promoted record**, proved by `--dry-run` old-versus-new. Whether the
-   bar is full byte-identity or "added residuals only" depends on the demotion scope chosen in Current Frontier;
-   the `2026-08-11` measurement shows byte-identity is unreachable under uniform demotion, because 41 of the 45
-   populated documents already drop records that (c) would now surface.
+3. No populated-catalog document **loses a promoted record**, proved by `--dry-run` old-versus-new. Revised
+   `2026-08-11` by `.1` from "byte-identical" to **"the only permitted change is added residuals"**: uniform
+   demotion necessarily surfaces the 1,230 rules and 47 constraints the populated branch already dropped
+   silently, so byte-identity was unreachable and would have forced two different answers to one question.
+   **Met:** all 41 populated-catalog movers changed only `residual_decisions`.
 4. `kg-bench` 156/156; WIRE-BASED-100 constraint+temporal/relation golds hold at 1.000; all emitted `.isf` pass
    FSMGen `--strict --check` with zero new diagnostics; `scripts/run_ci.sh` green.
 5. The rule is structural grammar with no chip/vendor/protocol-name list (ADR 0006).
@@ -120,13 +121,46 @@ document promotes everything.
 | Leaf | Status | Scope |
 | --- | --- | --- |
 | `SEMANTIC-EMPTY-CATALOG-FILTER.0` | `done` | ownership, reproduction, and the corpus census above |
-| `SEMANTIC-EMPTY-CATALOG-FILTER.1` | `todo` | decide the rule for the empty-catalog case and pin it with paired unit tests |
-| `SEMANTIC-EMPTY-CATALOG-FILTER.2` | `todo` | corpus-wide old-versus-new replay + before/after evals; land behind the full gate |
+| `SEMANTIC-EMPTY-CATALOG-FILTER.1` | `done` | decide the rule for the empty-catalog case and pin it with paired unit tests |
+| `SEMANTIC-EMPTY-CATALOG-FILTER.2` | `pending` | corpus-wide old-versus-new replay + before/after evals; land behind the full gate |
+
+## Acceptance Checklist (enforced) — `SEMANTIC-EMPTY-CATALOG-FILTER.1`
+
+- [x] **REPRODUCE / MEASURE** — `.0`'s census over all 78 persisted `SemanticIR` artifacts: 33 empty-catalog
+  documents, 29 of them carrying **1,423 conditional rules and 100 signal constraints** promoted with no
+  grounding check; and `.1`'s pre-design measurement of the populated branch: **41 of 45** populated-catalog
+  documents already drop **1,230 conditional rules and 47 signal constraints** silently.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `crates/specforge/src/ir/semantic.rs:283` (`signal_constraints`) and `:293`
+  (`conditional_rules`) both read `if declared_signal_names.is_empty() { evidence_ir.<records>.clone() }`, so the
+  grounding filter was **disabled on exactly the documents with no signal authority**. Replaying the semantic
+  stage from the stale pre-refresh EvidenceIR with the same binary reproduces the stale artifact exactly
+  (0 rules / 2 interfaces / 7 actors), isolating the movement to that guard rather than to a code delta.
+- [x] **ADDRESSED (verified)** — one predicate now governs every document, and a rejected record is demoted to a
+  `semantic_ungrounded_records_not_promoted` residual packet rather than dropped. Read-only `semantic --dry-run`
+  replay of all 78 documents against their persisted artifacts: **11 identical · 41 residual-packet-only · 26
+  content-moved**, and every one of the 26 has an empty declared catalog. Empty-catalog promotion falls
+  `1,423 → 780` conditional rules (the 780 that name no signal are genuine system-level rules and are kept) and
+  `100 → 0` signal constraints. Four paired unit tests pin both branches, the system-level exemption, the
+  proportionate name bound, and the no-packet-when-clean case.
+- [x] **NO REGRESSION** — `cargo test -p specforge --lib` **1810 passed / 0 failed**; `kg-bench` **156/156**;
+  `scripts/run_ci.sh` green. Two prose-only fixtures (`builds_semantic_ir_from_handshake_evidence`,
+  `builds_intent_ir_from_handshake_semantics`) asserted `residual_decisions.is_empty()`; they declare no signals,
+  so they now carry exactly the one demotion packet and their assertions were tightened to state that, naming the
+  packet and the demoted subjects. The corpus-wide oracles (`.isf` byte-identity, FSMGen strict, the nine
+  provider-free evals, `CHAIN-CURRENCY`) are `.2`'s deliverable.
+- [x] **GENERICITY (ADR 0006)** — the predicate is "is this token in the document's own declared-signal
+  catalog", derived per document at runtime. No chip, vendor, or protocol name appears in the rule or in the
+  packet text.
+- [x] **LOCKSTEP** — the tree records the rule, the measurement, and the answered open question; the book
+  chapter, fact card, and live docs land with `.2`, which closes the tree.
 
 ## Current Frontier
 
-`SEMANTIC-EMPTY-CATALOG-FILTER.1` — **the rule is chosen. The director authorised (c) composed with (a) on
-`2026-08-11`.** Implement it; do not re-open the choice.
+`SEMANTIC-EMPTY-CATALOG-FILTER.2` — corpus-wide replay evidence, before/after evals, and the full gate; then
+close the tree (book method-doc + fact card + live docs).
+
+`.1` is landed. Its authorised rule, kept here because it still governs `.2`'s reading of any delta: **the
+director authorised (c) composed with (a) on `2026-08-11`.**
 
 - **(a) Symmetric filter.** Delete the `declared_signal_names.is_empty()` special case at `semantic.rs:283`
   and `:293`. One predicate governs both branches: keep a record when its `consequent_signal`/`subject_signal`
@@ -152,7 +186,9 @@ originally written. Two ways forward:
 - **Scoped demotion.** Apply (c) only where the catalog is empty, preserving byte-identity on all 45 populated
   documents. Smaller blast radius, but it keeps two different answers to the same question.
 
-Take the recommended path unless the replay shows a populated-document regression that the scoped variant avoids.
+**Resolved `2026-08-11` by `.1`: uniform demotion.** The replay showed no populated-document regression — all 41
+populated-catalog movers changed **only** `residual_decisions` — so the scoped variant bought nothing and would
+have kept two answers to the same question. Acceptance Criterion 3 is revised accordingly (see below).
 
 Reproducer for the constraint above:
 
@@ -187,6 +223,14 @@ PY
 
 ## Decisions
 
+- `2026-08-11` (`.1`): **the demotion is one proportionate summary packet per document**, not one packet per
+  rejected record. `semantic_ungrounded_records_not_promoted` states both counts, the declared-catalog size, and
+  a sorted, capped sample of the undeclared names (`UNGROUNDED_PROMOTION_SAMPLE_LIMIT = 12`, the rest elided as
+  "and N more"). One document rejects 216 rules; a per-record dump would ride into every `SemanticIR`, `IntentIR`,
+  and `adapter.json` that carries residual decisions. The bound is the same shape `isf_storage_reset_not_lowered`
+  and `isf_register_fields_not_lowered` already use. Sorting keeps the packet text deterministic.
+- `2026-08-11` (`.1`): **the packet is emitted only when a record is actually rejected**, so a fully grounded
+  document gains nothing and the demotion surface never becomes ambient noise. 11 of 78 documents carry no packet.
 - `2026-08-11`: **the director authorised (c) composed with (a)** — symmetric filter, with rejected records
   demoted to `residual_decisions` rather than dropped. The choice is settled; `.1` implements it. Recorded here
   because a decision that lives only in a conversation is not saved.
@@ -211,8 +255,22 @@ PY
   hints, register records)? The census only measured the two guards at `semantic.rs:283` and `:293`.
 - Should the filter consult `signal_alias_map` before rejecting, so a real signal named only through an alias is
   not lost?
-- Is `AutomationConfidence::Low` exclusion from `declared_signal_names` (`semantic.rs:276-281`) itself pushing
-  documents into the empty-catalog branch that have low-confidence but real declarations?
+- ~~Is `AutomationConfidence::Low` exclusion from `declared_signal_names` (`semantic.rs:276-281`) itself pushing
+  documents into the empty-catalog branch that have low-confidence but real declarations?~~ **Answered
+  `2026-08-11` (`.1`): no — not on this corpus.** All **33** empty-catalog documents carry **zero** interface
+  signal records of any confidence; **none** has a signal catalog that is merely low-confidence. The Low
+  exclusion is therefore not what empties a catalog here; nothing was captured at all. (The shape does exist in
+  synthetic prose: the `builds_semantic_ir_from_handshake_evidence` fixture holds Low-confidence VALID/READY
+  records and now demotes their constraints.) Reproducer: for each `generated/semantic_ir/*/semantic_ir.json`,
+  partition documents with an empty non-`low` declared set by whether `interfaces[].signal_records` is empty.
+- **New (`2026-08-11`, `.1`): what should own the missing signal catalogs the demotion now makes visible?** The
+  rejected subjects on the largest movers are dominated by noise (`DATASHEET`, `MUST`, `PCI`, `IMPLEMENTATION`,
+  `PDF`, `AMBA`, `FPGA`) — but they also contain real protocol tokens truncated at an underscore or a suffix:
+  Wishbone `CLK`/`CYC`/`STB`/`RST`/`STALL` (the document spells them `CLK_I`, `CYC_O`, `STB_O`, `RST_I`), AMBA
+  DTI `TDATA`/`TKEEP`/`TLAST`, USB `ACK`/`ERDY`/`NRDY`. Those documents have **no captured signal catalog at
+  all**, so this is a capture gap in the signal-declaration extractors, not a grounding-rule defect. This tree
+  deliberately does not claim it (see the `PWR`/`OPEN` truncation decision below); it belongs to the extraction
+  breadth lane. The demotion packet is what makes it findable per document.
 
 ## Blockers
 
@@ -228,14 +286,23 @@ PY
 | `2026-08-11` | `.0` | census over all 78 persisted `SemanticIR` artifacts | 33 empty-catalog documents; 29 carry 1,423 unfiltered conditional rules and 100 unfiltered signal constraints |
 | `2026-08-11` | `.0` | checked every emitted target against the census | 44/44 emitted `.isf` come from populated-catalog documents; no unfiltered record reaches the product boundary today |
 | `2026-08-11` | `.1` | measured the populated branch's silent drop volume before designing the demotion | 41 of 45 populated-catalog documents already drop records — 1,230 conditional rules and 47 signal constraints — so uniform demotion cannot leave them byte-identical; read-only, no artifact mutated |
+| `2026-08-11` | `.1` | `cargo test -p specforge --lib` | 1810 passed / 0 failed / 5 ignored, including the four new paired tests |
+| `2026-08-11` | `.1` | `specforge kg-bench` | `fixtures_passed: 156`, `fixtures_failed: 0` |
+| `2026-08-11` | `.1` | read-only `semantic --dry-run` replay of all 78 documents against their persisted artifacts | 11 identical · 41 changed **only** in `residual_decisions` · 26 content-moved, all 26 with an empty declared catalog; no populated-catalog document lost a promoted record |
+| `2026-08-11` | `.1` | partitioned the 33 empty-catalog documents by whether any interface signal record exists | 33 have **none at all**, 0 are low-confidence-only — answers the Low-exclusion open question for this corpus |
 
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
 | --- | --- | --- |
 | `SEMANTIC-EMPTY-CATALOG-FILTER.0` | `CORPUS-COVERAGE.2.52 — refresh the OpenCAPI 25 Gbps PHY mechanical spec and retire its acronym signals` | ownership, reproduction, and census landed with the refresh that found it |
+| `SEMANTIC-EMPTY-CATALOG-FILTER.1` | `SEMANTIC-EMPTY-CATALOG-FILTER.1 — one grounding predicate for every document, rejected records demoted` | the symmetric filter, the demotion packet, and the paired tests |
 
 ## Changelog
 
 - `2026-08-11`: created from a measured finding in `CORPUS-COVERAGE.2.52`; ownership and census only, no code
   change.
+- `2026-08-11`: `.1` landed the authorised rule — the `is_empty()` special case is gone, one predicate governs
+  every document, and rejected records are demoted to a proportionate residual packet. Acceptance Criterion 3
+  revised to "added residuals only" and met; the Low-confidence open question answered and struck; a new open
+  question recorded for the missing signal catalogs the demotion makes visible. Frontier advanced to `.2`.
