@@ -1710,4 +1710,68 @@ mod tests {
 
         assert_eq!(load_dataset(relative).unwrap(), baseline_dataset());
     }
+
+    #[test]
+    fn reviewed_population_is_complete_balanced_portable_and_deterministic() {
+        let path =
+            Path::new("crates/specforge/test_data/source_to_intent_vertical/reviewed_dataset.json");
+        let dataset = load_dataset(path).expect("reviewed vertical dataset must load");
+        assert_eq!(dataset.owner, "SPEC-TO-INTENT-ALIGNMENT.4b");
+        assert_eq!(dataset.documents.len(), 12);
+        assert_eq!(dataset.minimum_documents_per_category, 2);
+        assert!(
+            dataset
+                .documents
+                .iter()
+                .all(|document| document.review_scope_complete)
+        );
+        assert_eq!(
+            dataset
+                .documents
+                .iter()
+                .filter(|document| matches!(document.source, SourceIdentity::Repository { .. }))
+                .count(),
+            4
+        );
+        assert_eq!(
+            dataset
+                .documents
+                .iter()
+                .filter(|document| {
+                    matches!(document.source, SourceIdentity::ExternalReadOnly { .. })
+                })
+                .count(),
+            8
+        );
+
+        let counts = dataset.documents.iter().fold(
+            BTreeMap::<VerticalCategory, usize>::new(),
+            |mut counts, document| {
+                *counts.entry(document.category).or_default() += 1;
+                counts
+            },
+        );
+        assert_eq!(counts.len(), 6);
+        assert!(counts.values().all(|count| *count == 2));
+
+        let first = evaluate_dataset(&dataset).expect("reviewed population must evaluate");
+        let second = evaluate_dataset(&dataset).expect("repeated evaluation must succeed");
+        assert_eq!(first.categories.len(), 6);
+        assert!(
+            first
+                .categories
+                .iter()
+                .all(|category| category.document_count == 2 && category.cell_count > 0)
+        );
+        assert!(
+            first
+                .categories
+                .iter()
+                .all(|category| category.status != CategoryStatus::Unmeasurable)
+        );
+        assert_eq!(
+            serde_json::to_vec_pretty(&first).unwrap(),
+            serde_json::to_vec_pretty(&second).unwrap()
+        );
+    }
 }

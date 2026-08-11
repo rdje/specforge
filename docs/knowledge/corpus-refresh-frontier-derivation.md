@@ -1,62 +1,54 @@
 ---
 id: corpus-refresh-frontier-derivation
-title: The CORPUS-COVERAGE refresh frontier is DERIVED from persisted evidence — cohort = documents whose SourceIR source is not the in-repo `corpus/` tree (57); refreshed = retained normalized bundle OR a `requested_path` off the retired `/Users/…` boot volume (51); remaining = neither (6). Carrying the count instead of deriving it lost `nvme_base_specification_2_0a_2021_07_26` for 22 consecutive refreshes (CORPUS-COVERAGE.4.0, 2026-08-11)
+title: The corpus refresh frontier derives the cohort and gates an exact root-neutral lifecycle partition
 answers:
-  - "how do I derive how many corpus refreshes remain (do NOT read a carried number: cohort = count of generated/source_ir/*/source_ir.json whose source.requested_path does NOT begin 'corpus/' = 57; refreshed = those with a retained bundle in doctrine/chain_currency/retained_bundles.json OR a requested_path not beginning '/Users/' = 51; remaining = neither = 6. The identity cohort == refreshed + remaining must hold exactly)"
-  - "how many corpus refreshes are done and how many remain (51 of 57 done, six remaining as of 2026-08-11 — NOT the 51 of 56 / five that every surface said before CORPUS-COVERAGE.4.0; the root docs/tasks/CORPUS-COVERAGE.md carries current truth, re-derive rather than trust a number older than the last refresh)"
-  - "why was nvme_base_specification_2_0a_2021_07_26 missing from the corpus refresh frontier (it was never excluded by a rule — the remaining count was hand-decremented by one per refresh from .2.29 to .2.51 and never re-derived, so a one-document denominator adjustment made at .2.29 for the project's own `ingest README.md` artifact outlived that artifact and silently shortened the queue. NVMe is the largest of the six at 4,577 elements so it sat at the tail and no candidate re-measurement could surface it)"
-  - "which documents remain unrefreshed by CORPUS-COVERAGE.2 (ranked smallest-retained-source: opencapi_25gbps_phy_mechanical_spec_v10 760 elems, opencapi_3_0_transaction_layer_28jan2020 774, opencapi_3_1_transaction_layer_28jan2020 870, lpc_memory_agent_reference_design_guide_17jul2020 891, den0034_a_2013_09_13_debug_and_trace_configuration_and_usage_models 936, nvme_base_specification_2_0a_2021_07_26 4,577)"
-  - "why does the refreshed test need BOTH a retention leg and a path leg (the path leg alone accounts for 50 of 51 — 31 cohort members carry a repository-relative .cache/local-references/… path and 19 a same-SSD /Volumes/SSD/… path — but usb_3_2_revision_1_0_2017_09 was refreshed at .2.33 BEFORE the volume migration, so it still records a retired /Users/… path and is recovered only by its retained normalized bundle. Dropping either leg mis-counts)"
-  - "why is the in-repo corpus/ tree outside the .2 refresh cohort (its 21 documents are the tracked gold/eval corpus copied into the repository for the reproducible WIRE-BASED-100 path; they were never on the host-local library reached through .cache/local-references/chipdoc, so they have no retired-volume provenance to refresh)"
-  - "is re-measuring the candidate list enough to keep the corpus frontier honest (NO — .2.51 correctly re-measured all six of its listed candidates from their own SourceIR profiles and still could not see the omission, because re-deriving the ROWS cannot validate the CARDINALITY. A document already absent from the list is invisible to any check over that list; only the independent identity cohort == refreshed + remaining exposes it)"
-  - "what does CORPUS-COVERAGE.4 own (frontier census integrity, complete: .4.0 derived the census, corrected every live surface, and restored the lost document; .4.1 registered CORPUS-FRONTIER as the eighth doctrine so the identity is enforced rather than carried. .3 closed the sibling frontier-vs-lifecycle defect but its currentness check covers retention only, not the remaining-work count)"
-  - "what gates the corpus refresh frontier / what is the CORPUS-FRONTIER doctrine (scripts/check_corpus_frontier.sh -> scripts/check_corpus_frontier_census.pl against doctrine/corpus_frontier/census.json, gate-tier, eighth registered doctrine. Four checks: IDENTITY derived cohort/refreshed equal the declared expected; MEMBERSHIP every declared-remaining key exists, is in the cohort, and retains no bundle; OMISSION no cohort member outside the declared set still has a retired-root path and no bundle; PROSE the root task file states the same counts. Self-test 10/10, 52 ms for the whole corpus, skips loudly when generated/ is absent)"
-  - "must a corpus refresh update the frontier declaration (yes — doctrine/corpus_frontier/census.json must move in the same transaction as the refresh, or CORPUS-FRONTIER fails closed on IDENTITY and MEMBERSHIP. That coupling is the point: the declaration cannot lag the artifacts)"
-  - "does the corpus census correction change which document refresh 52 selects (no — NVMe is the largest of the six at 4,577 elements, so the smallest-retained-source policy still selects opencapi_25gbps_phy_mechanical_spec_v10 at 760 elements. The correction changes the denominator and the length of the tail, not the next pick; NVMe lands last, at .2.57)"
-  - "did the corpus census correction move any generated artifact (no — CORPUS-COVERAGE.4.0 is read-only over generated/; check_chain_currency.sh exits 0 at evidence 23/23, semantic 78/78, intent 78/78, isf-adapter 78/78 with retention exactly the 23 declared bundles, before and after)"
+  - "how do I derive how many corpus refreshes remain (run scripts/check_corpus_frontier.sh; it derives the SourceIR cohort and requires every member in exactly one explicit refreshed or remaining set)"
+  - "how many corpus refreshes are done and how many remain (52 of 57 done and five remaining as of 2026-08-11; re-run the gate rather than trusting an older count)"
+  - "why was nvme_base_specification_2_0a_2021_07_26 missing from the corpus refresh frontier (the old count was decremented rather than re-derived, so an expired denominator adjustment silently removed it for twenty-two slices)"
+  - "why must source-library paths not determine whether a corpus document was refreshed"
+  - "does moving a PDF from the boot volume to SSD complete a current-binary corpus refresh"
+  - "what gates the corpus refresh frontier / what is the CORPUS-FRONTIER doctrine"
+  - "what does the corpus frontier refreshed list mean"
+  - "must a corpus refresh update the frontier declaration"
+  - "why is the in-repo corpus tree outside the host-library refresh cohort"
+  - "can a correct refreshed count hide a missing corpus document"
 date: 2026-08-11
 status: current
-tags: [corpus-coverage, census, task-tree, continuity, chain-currency]
-evidence: docs/tasks/corpus-coverage/frontier-census-integrity.md; docs/tasks/CORPUS-COVERAGE.md; doctrine/chain_currency/retained_bundles.json
-reverify: "python3 -c \"import json,os; P=lambda k: json.load(open(f'generated/source_ir/{k}/source_ir.json'))['source']['requested_path']; R=set(json.load(open('doctrine/chain_currency/retained_bundles.json'))['retained']); K=[k for k in sorted(os.listdir('generated/source_ir')) if not P(k).startswith('corpus/')]; rem=[k for k in K if k not in R and P(k).startswith('/Users/')]; print('cohort',len(K),'refreshed',len(K)-len(rem),'remaining',len(rem))\""
+tags: [corpus-coverage, census, task-tree, continuity, chain-currency, project-data-locality]
+evidence: scripts/check_corpus_frontier_census.pl; doctrine/corpus_frontier/census.json; docs/tasks/corpus-coverage/frontier-census-integrity.md; docs/tasks/CORPUS-COVERAGE.md
+reverify: "bash scripts/check_corpus_frontier.sh && perl scripts/check_corpus_frontier_census.pl --report"
 ---
 
-The `.2` refresh program's progress is a **derived** quantity, not a running total. Every input is a persisted
-artifact, so the census reproduces from a clean checkout of `generated/` plus the retention declaration:
+The `.2` refresh program's progress is not a carried number. `CORPUS-FRONTIER` derives the cohort from every
+persisted `generated/source_ir/*/source_ir.json`: documents whose `source.requested_path` begins `corpus/` are
+the 21 tracked in-repository gold/evaluation sources and are outside the host-library refresh program; the other
+57 documents form the cohort.
 
-| Quantity | Rule | Count (`2026-08-11`) |
+Lifecycle is an exact, explicit partition in `doctrine/corpus_frontier/census.json`:
+
+| Quantity | Authority | Count (`2026-08-11`) |
 | --- | --- | ---: |
-| Persisted documents | one `source_ir.json` per key under `generated/source_ir/` | 78 |
-| Outside the cohort | `source.requested_path` begins `corpus/` | 21 |
-| `.2` cohort | persisted minus in-repo | 57 |
-| Refreshed | retained normalized bundle **or** `requested_path` not under `/Users/…` | 51 |
-| Remaining | neither witness | 6 |
+| Persisted documents | one SourceIR per key | 78 |
+| Outside the refresh cohort | repository `corpus/` source | 21 |
+| Refresh cohort | derived persisted set | 57 |
+| Refreshed | explicit completed set | 52 |
+| Remaining | explicit unfinished set | 5 |
 
-`57 = 51 + 6` is the invariant. It is the only check that can catch an omission, because it is computed without
-reference to any maintained list of remaining documents.
+The gate proves that the refreshed and remaining sets are duplicate-free, disjoint, entirely within the
+derived cohort, and together cover it exactly. It also requires every retained cohort bundle to be refreshed,
+forbids retention on a remaining key, and checks that the root task file states the same counts. Its 13-case
+self-test kills missing members, overlaps, duplicates, out-of-cohort entries, retention disagreements, count
+drift, and prose drift.
 
-**The failure it catches.** From `.2.29` to `.2.51` the remaining count was decremented by exactly one per
-refresh — 27, 26, 25, … 7, 6, 5 — and never re-derived, so an error at the base propagated through twenty-two
-consecutive slices untouched. The base error was a denominator adjustment recorded at `.2.29`: the cohort then
-included the project's own `ingest README.md` artifact, so "57 documents" was annotated down to "56 real
-chip-spec documents". That was correct when written. The README artifact later left `generated/`, making all 57
-present cohort members real chip specs, but because the number was only ever decremented the retired adjustment
-was never retired with it. The resulting deficit of exactly one dropped `nvme_base_specification_2_0a_2021_07_26`
-— the 454-page NVM Express Base Specification 2.0a, source present at 5,154,704 bytes under the authorized
-`chipdoc` symlink — out of the queue with no exception recorded anywhere against it.
+Source location deliberately does **not** classify lifecycle state. The earlier gate used departure from a
+retired workstation prefix as an omission witness. That coupled locality repair to extraction history: after a
+required library move, an unfinished document could name its correct new source and become invisible to the
+omission scan. `SPEC-TO-INTENT-ALIGNMENT.4b` removed that coupling. The self-test now gives refreshed and
+remaining documents the same synthetic SSD root and still distinguishes them solely through the lifecycle
+partition. Moving or repairing a source path never completes a current-binary refresh.
 
-**Why candidate re-measurement is not a substitute.** `.2.51` deliberately re-measured all six documents it
-listed from their own SourceIR `document_profile`s rather than inheriting the previous slice's table. That is
-good practice and it verified every row it had — but it re-derived the rows, not the cardinality, and a document
-already missing from a list cannot be recovered by checking that list. The lesson generalises past this program:
-a self-referential audit validates contents, never completeness. See `[[corpus-refresh-completion-vs-normalized-retention]]`
-for the sibling distinction between a completed refresh and a currently retained bundle, and
-`[[corpus-task-evidence-containment-design]]` for the containment topology this census is recorded in.
-
-**The census is now gated, not carried.** `CORPUS-COVERAGE.4.1` registered `CORPUS-FRONTIER` as the eighth
-doctrine, gate-tier: `scripts/check_corpus_frontier.sh` derives cohort and refreshed from the artifacts, diffs
-them against the declared remaining set in `doctrine/corpus_frontier/census.json`, and additionally scans the
-whole cohort for any unrefreshed document missing from that set — the check the original defect needed. It also
-requires the root task file's prose to state the same counts, so the frontier a reader sees cannot diverge from
-the one the artifacts support. A refresh must therefore update the declaration in the same transaction, or the
-gate fails closed. Re-derive with the `reverify` command rather than trusting any transcribed number.
+The historical defect remains instructive. From `.2.29` through `.2.51`, one document was lost because each
+slice decremented the previous count and never re-derived the denominator. Re-measuring rows inside an already
+incomplete list cannot recover a missing row. The whole-cohort partition is what prevents recurrence: deleting
+a remaining key now creates an uncovered cohort member even if its source path is perfectly current. A refresh
+must update the exact lifecycle declaration in the same transaction or the doctrine fails closed.

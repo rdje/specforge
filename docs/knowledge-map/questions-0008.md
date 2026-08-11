@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
+  > what is the vendor/layout fingerprint, the ExtractionProfile, and the offline corpus pattern miner
+- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
+  > what keeps VALIDATION_SNAPSHOT current without mutating generated artifacts
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > what kind of extractor actually needs the cross-document cluster mechanism
+- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
+  > what limits govern the corpus task root index parts and capsule
+- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
+  > what made 14 corpus documents stop emitting an .isf
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > what makes a corpus document unmeasurable for chain currency
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
@@ -155,6 +165,8 @@
   > where do transaction phases live (SemanticIr.transaction_phases) and do they reach the .isf (no — SemanticIR-only, recognition only)
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > where do zero-port actors come from in the IntentIR actor surface
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > where does .cache/local-references/chipdoc resolve
 - [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
   > where does .isf record dropped temporal obligations
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
@@ -237,6 +249,8 @@
   > where is the U+F0B7 signal integrity panic in evidence extraction
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > where is the acceptance checklist a code change must satisfy
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > where is the authoritative chipdoc source library now
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
   > where is the biggest register extraction gap across the corpus
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
@@ -267,6 +281,8 @@
   > where is the per-author adopt-vs-defer provenance
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > where is the register-field gold seed
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > where is the reviewed source-to-intent dataset
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > where is the second LIVE_ACHIEVEMENT_STATUS rollover segment and what blocks the next one
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
@@ -281,19 +297,3 @@
   > where is the spawn+poll+kill memory guard in materialize_pdf
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
   > where is the structural gate that drops function-word-led and verb-led actor candidates
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > where is the tiling-gated register bit recovery implemented
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > where is the trailing function-word strip in consolidate_trailing_fragment
-- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
-  > where is the weak-phrase / NASA ARM ambiguity detector
-- [repository-local-scratch](../knowledge/repository-local-scratch.md)
-  > where may diagnostic scratch files and comparison lists be written
-- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
-  > where must SpecForge project artifacts caches and temporary workspaces live
-- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
-  > where was build_gates removed
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > where was build_phases removed
-- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
-  > which 15 docs are category-3 platform/system-IP in the corpus (GIC-600/400 TRMs, CoreSight SoC-600 x3 / SDC-600 / TMC TRMs, MMU-700 TRM, Cortex-A76 TRM, CoreSight Base System Arch, CoreSight/GIC/SMMU/ARM-Debug-v6/Advanced-Comms-Channel architecture specs; the .1 census never persisted the per-doc labels — .4c.i enumerates them in scripts/measure_cat3_topology_recall.py)

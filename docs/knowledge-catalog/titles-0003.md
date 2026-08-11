@@ -60,4 +60,4 @@
 | [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md) | 2026-08-10 | `superseded` | Generic SemanticIR section phases require heading authority |
 | [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md) | 2026-06-11 | `current` | Signal-presence matrices — the literal presence-CONDITION typed surface (.12b) |
 | [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md) | 2026-06-15 | `current` | source_ir.json is O(pages) at ~9.3 KB/page; downstream stages load it with a full serde deserialize |
-| [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md) | 2026-08-08 | `current` | Git-indexed corpus PDFs are the source-registry membership authority |
+| [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md) | 2026-08-11 | `current` | The caller-authorized chipdoc source library is on the same SSD as SpecForge |

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
+  > how is fact-plane capacity derived
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > how is max_cards derived from the knowledge_cards surface
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > how is prose signal over-capture prevented (no garbage)
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > how is register-field extraction quality measured / scored
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -78,7 +84,7 @@
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > how many corpus documents carry markdown-escaped underscores in their statements
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > how many corpus refreshes are done and how many remain (51 of 57 done, six remaining as of 2026-08-11 — NOT the 51 of 56 / five that every surface said before CORPUS-COVERAGE.4.0; the root docs/tasks/CORPUS-COVERAGE.md carries current truth, re-derive rather than trust a number older than the last refresh)
+  > how many corpus refreshes are done and how many remain (52 of 57 done and five remaining as of 2026-08-11; re-run the gate rather than trusting an older count)
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > how many corpus refreshes remain after AArch64 External Debug
 - [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
@@ -125,6 +131,8 @@
   > how many fact cards can SpecForge hold now
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > how many false timing records were removed by the independent-cell geometry boundary (23; 608 to 585)
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > how many generated SourceIR records still name the old livework checkout
 - [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
   > how many generated artifacts still mention the deleted boot-volume repository
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -143,10 +151,14 @@
   > how many retained phases depended only on sequencing words
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > how many retained typed transaction phases were false positives
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > how many reviewed documents are locked per source category
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > how many sentence-start signal descriptor phrases pollute the retained corpus
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > how many signals does each AXI channel have
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > how many source-to-intent evaluation inputs are repository sources versus external read-only sources
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > how many synthetic behaviors came from generic gates
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
@@ -265,6 +277,8 @@
   > is SWD at 100% and on what metric
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
   > is SpecForge specification mining
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > is SpecForge still allowed to read chipdoc from the boot volume
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
   > is SpecForge's constraint extraction over-generating
 - [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
@@ -283,17 +297,3 @@
   > is any corpus document ingested at fewer pages than its source PDF
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
   > is bar #5 (no silent drop of behavior/temporal) still honest after CORPUS-COVERAGE.0
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > is bar #6 (ISF round-trip, no silent drop) a large faithful-lowering gap
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > is collect_known_signal_names UTF-8 safe
-- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
-  > is converge the complete production capability path
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > is dropping a zero-evidence actor safe across AXI vs AXI-Stream
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > is identifier truncation a separate extractor defect or the same empty-catalog gap
-- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
-  > is intent-bearing content slipping through because nothing reads the full page
-- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
-  > is it a strict error to drive a signal declared (input ...) in an .isf rule

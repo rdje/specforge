@@ -224,3 +224,19 @@ Check 3 is the one the defect needed, and it is why the rule scans the whole coh
 | Unit | Durable evidence |
 | --- | --- |
 | `CORPUS-COVERAGE.4.1` | `CORPUS-COVERAGE.4.1 — gate the corpus frontier census as the eighth doctrine` |
+
+### Current locality follow-up (`SPEC-TO-INTENT-ALIGNMENT.4b`, 2026-08-11)
+
+The original omission check treated a `requested_path` outside the retired boot-volume prefix as a refresh
+witness. That was sufficient for the historical migration sequence, but it coupled two independent facts:
+where a source currently lives and whether the document completed a current-binary refresh. The director's
+required cleanup of every stale boot-volume reference exposed the defect: all five unfinished documents could
+name their correct SSD source while remaining unfinished, and the path-based omission scan would then lose the
+ability to detect one being dropped from the declaration.
+
+`SPEC-TO-INTENT-ALIGNMENT.4b` supersedes that current mechanism, not the historical measurements above. The
+contract now declares exact, disjoint `refreshed` and `remaining` sets over the independently derived 57-member
+cohort. The gate rejects an absent member, overlap, duplicate, out-of-cohort declaration, retained-but-not-
+refreshed member, remaining member with retention, count drift, and prose drift. Its 13-case self-test uses SSD
+paths for both refreshed and remaining fixtures, proving that path locality cannot change lifecycle state. The
+real result remains 57 = 52 + 5.

@@ -451,13 +451,13 @@
       {
          "heading" : "# CORPUS-COVERAGE — frontier census integrity",
          "metrics" : {
-            "bytes" : 16377,
+            "bytes" : 17638,
             "line_bytes" : 261,
-            "lines" : 226
+            "lines" : 242
          },
          "part_id" : "frontier-census-integrity",
          "path" : "docs/tasks/corpus-coverage/frontier-census-integrity.md",
-         "sha256" : "5a4480f81be1402eb5a4057ca0d30f1efacb95394a5773de476bf197d41a605f",
+         "sha256" : "b1a878d9f4acfbd75a8be213a27f731a23266f284ff6ca5068d2d6c6528a13fb",
          "state" : "active"
       }
    ],

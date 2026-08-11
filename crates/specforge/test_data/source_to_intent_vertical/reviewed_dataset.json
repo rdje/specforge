@@ -1,0 +1,4461 @@
+{
+  "schema_version": 1,
+  "dataset_id": "source-to-intent-vertical-reviewed-v1",
+  "owner": "SPEC-TO-INTENT-ALIGNMENT.4b",
+  "selection_boundary_commit": "a3e9757d63ca5499a2393864fb503d6537de0035",
+  "selection_claim": "Retrospective corpus baseline frozen before gold construction and held out from extractor changes at or after the selection boundary; it is not claimed historically untouched.",
+  "minimum_documents_per_category": 2,
+  "documents": [
+    {
+      "document_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+      "category": "wire-protocol",
+      "source": {
+        "location": "repository",
+        "relative_path": "corpus/arm/amba/core/apb/current/IHI0024_E_2023-02_AMBA_5_APB_Protocol_Specification.pdf",
+        "sha256": "c1e0fbc73d7bc61f1fdb63de75e78607ea989c1bffc8da0476bca3a84e40f204"
+      },
+      "review_scope_complete": true,
+      "present_modalities": [
+        "prose"
+      ],
+      "stages": {
+        "source_ir": {
+          "original_sha256": "0eb30dfe48d44f3ca6e2e5d945717c706673276c4ffadfe42715120126009fc3",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "regions": [
+              {
+                "region_id": "elem_00205",
+                "modality": "prose",
+                "source_excerpt": "The Setup phase of the write transfer occurs at T1 in Figure 3-1. The select signal, PSEL , is asserted, which means that PADDR , PWRITE , and PWDATA must be valid.",
+                "reviewed_source_facts": [
+                  "PADDR|must_be_value|VALID",
+                  "PSEL|must_be_value|HIGH",
+                  "PWDATA|must_be_value|VALID",
+                  "PWRITE|must_be_value|VALID"
+                ]
+              }
+            ]
+          }
+        },
+        "evidence_ir": {
+          "original_sha256": "0fe31edf71f9c51f7122ab3b1967f564af592c50438103ac702fee5d570b7cc1",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "captures": [
+              {
+                "region_id": "elem_00205",
+                "family": "setup_signal_state",
+                "capture_key": "setup_signal_state",
+                "source_ids": [
+                  "statement_0203"
+                ]
+              }
+            ],
+            "canonical": [
+              {
+                "region_id": "elem_00205",
+                "family": "setup_signal_state",
+                "fact_key": "PADDR|must_be_value|VALID",
+                "source_ids": [
+                  "statement_0203"
+                ]
+              },
+              {
+                "region_id": "elem_00205",
+                "family": "setup_signal_state",
+                "fact_key": "PWDATA|must_be_value|VALID",
+                "source_ids": [
+                  "statement_0203"
+                ]
+              },
+              {
+                "region_id": "elem_00205",
+                "family": "setup_signal_state",
+                "fact_key": "PWRITE|must_be_value|VALID",
+                "source_ids": [
+                  "statement_0203"
+                ]
+              }
+            ],
+            "residuals": []
+          }
+        },
+        "semantic_ir": {
+          "original_sha256": "33eb31ba9ce43319e87178ac5bc7920ea0a806a8ec2b6e7186df55cb5268142e",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [
+              {
+                "region_id": "elem_00205",
+                "family": "setup_signal_state",
+                "fact_key": "PADDR|must_be_value|VALID",
+                "source_ids": [
+                  "statement_0203"
+                ]
+              },
+              {
+                "region_id": "elem_00205",
+                "family": "setup_signal_state",
+                "fact_key": "PWDATA|must_be_value|VALID",
+                "source_ids": [
+                  "statement_0203"
+                ]
+              },
+              {
+                "region_id": "elem_00205",
+                "family": "setup_signal_state",
+                "fact_key": "PWRITE|must_be_value|VALID",
+                "source_ids": [
+                  "statement_0203"
+                ]
+              }
+            ],
+            "residuals": []
+          }
+        },
+        "intent_ir": {
+          "original_sha256": "f044ec43a9fe2bcc13891e7d965791d077df56babbc250f01d5bc7e958f215f1",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [
+              {
+                "region_id": "elem_00205",
+                "family": "setup_signal_state",
+                "fact_key": "PADDR|must_be_value|VALID",
+                "source_ids": [
+                  "statement_0203"
+                ]
+              },
+              {
+                "region_id": "elem_00205",
+                "family": "setup_signal_state",
+                "fact_key": "PWDATA|must_be_value|VALID",
+                "source_ids": [
+                  "statement_0203"
+                ]
+              },
+              {
+                "region_id": "elem_00205",
+                "family": "setup_signal_state",
+                "fact_key": "PWRITE|must_be_value|VALID",
+                "source_ids": [
+                  "statement_0203"
+                ]
+              }
+            ],
+            "residuals": []
+          }
+        }
+      },
+      "cells": [
+        {
+          "cell_id": "ihi0024_e_2023_02_amba_5_apb_protocol_specification__01_setup_signal_state",
+          "semantic_family": "setup_signal_state",
+          "modality": "prose",
+          "oracle": "The prose states PSEL asserted and PADDR/PWRITE/PWDATA valid at setup T1.",
+          "review_scope": "Complete review of SourceIR elem_00205 and its four explicit signal-state obligations.",
+          "complete_gold": true,
+          "expected_disposition": "canonical",
+          "source_region": {
+            "collection_pointer": "/regions",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "elem_00205"
+              }
+            ],
+            "key_fields": [
+              "/region_id"
+            ],
+            "expected_keys": [
+              "elem_00205"
+            ]
+          },
+          "evidence_capture": {
+            "collection_pointer": "/captures",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "elem_00205"
+              },
+              {
+                "operator": "equals",
+                "field": "/family",
+                "value": "setup_signal_state"
+              }
+            ],
+            "key_fields": [
+              "/capture_key"
+            ],
+            "expected_keys": [
+              "setup_signal_state"
+            ]
+          },
+          "canonical": {
+            "evidence_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "elem_00205"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "setup_signal_state"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "PADDR|must_be_value|VALID",
+                "PSEL|must_be_value|HIGH",
+                "PWDATA|must_be_value|VALID",
+                "PWRITE|must_be_value|VALID"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "statement_0203"
+              ]
+            },
+            "semantic_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "elem_00205"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "setup_signal_state"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "PADDR|must_be_value|VALID",
+                "PSEL|must_be_value|HIGH",
+                "PWDATA|must_be_value|VALID",
+                "PWRITE|must_be_value|VALID"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "statement_0203"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "elem_00205"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "setup_signal_state"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "PADDR|must_be_value|VALID",
+                "PSEL|must_be_value|HIGH",
+                "PWDATA|must_be_value|VALID",
+                "PWRITE|must_be_value|VALID"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "statement_0203"
+              ]
+            }
+          },
+          "residual": {
+            "semantic_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "elem_00205"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "setup_signal_state"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "PSEL|must_be_value|HIGH"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "statement_0203"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "elem_00205"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "setup_signal_state"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "PSEL|must_be_value|HIGH"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "statement_0203"
+              ]
+            },
+            "required_actionability_fields": [
+              "/reason",
+              "/first_failing_stage",
+              "/replay"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "document_key": "um11732_v3_2022_02_17_i2s_bus_specification",
+      "category": "wire-protocol",
+      "source": {
+        "location": "repository",
+        "relative_path": "corpus/nxp/i2s/current/UM11732_v3_2022-02-17_I2S_Bus_Specification.pdf",
+        "sha256": "905d20f3cd7c38f8118a5fab0aa7f7a65d0fb8608681af6d8b6156842e603f53"
+      },
+      "review_scope_complete": true,
+      "present_modalities": [
+        "table"
+      ],
+      "stages": {
+        "source_ir": {
+          "original_sha256": "905e97c88051caa3e30697846662328b801c014a28b742b1b7ec7db826da1c81",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "regions": [
+              {
+                "region_id": "table_0004",
+                "modality": "table",
+                "source_excerpt": {
+                  "caption": "Table 2. Target receiver with data rate of 2.5 MHz (±10 %) (all values in ns)",
+                  "row_count": 6,
+                  "col_count": 5
+                },
+                "reviewed_source_facts": [
+                  "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                  "clock LOW t LC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                  "clock period T|min=360|typ=400|max=440|unit=ns",
+                  "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=ns",
+                  "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=ns"
+                ]
+              }
+            ]
+          }
+        },
+        "evidence_ir": {
+          "original_sha256": "574b771cbe974ed99a76f3ee3844a73f24c3ef4f1f82b1dee4bd69b3773b838f",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "captures": [
+              {
+                "region_id": "table_0004",
+                "family": "receiver_timing",
+                "capture_key": "receiver_timing",
+                "source_ids": [
+                  "table_0004"
+                ]
+              }
+            ],
+            "canonical": [
+              {
+                "region_id": "table_0004",
+                "family": "receiver_timing",
+                "fact_key": "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "receiver_timing",
+                "fact_key": "clock LOW t LC|min=110|typ=<missing>|max=<missing>|unit=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "receiver_timing",
+                "fact_key": "clock period T|min=360|typ=400|max=440|unit=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "receiver_timing",
+                "fact_key": "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "receiver_timing",
+                "fact_key": "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=<missing>",
+                "source_ids": []
+              }
+            ],
+            "residuals": []
+          }
+        },
+        "semantic_ir": {
+          "original_sha256": "a8d474684dadca12e3543e5dbb8e6efce892d032577cbb8f04af95818c7c5e83",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [
+              {
+                "region_id": "table_0004",
+                "family": "receiver_timing",
+                "fact_key": "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "receiver_timing",
+                "fact_key": "clock LOW t LC|min=110|typ=<missing>|max=<missing>|unit=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "receiver_timing",
+                "fact_key": "clock period T|min=360|typ=400|max=440|unit=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "receiver_timing",
+                "fact_key": "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "receiver_timing",
+                "fact_key": "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=<missing>",
+                "source_ids": []
+              }
+            ],
+            "residuals": []
+          }
+        },
+        "intent_ir": {
+          "original_sha256": "8aa3938506131c91c696067a6d1ecd86412d6b8b8c36c799241a472cee9a44e7",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [
+              {
+                "region_id": "table_0004",
+                "family": "receiver_timing",
+                "fact_key": "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "receiver_timing",
+                "fact_key": "clock LOW t LC|min=110|typ=<missing>|max=<missing>|unit=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "receiver_timing",
+                "fact_key": "clock period T|min=360|typ=400|max=440|unit=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "receiver_timing",
+                "fact_key": "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "receiver_timing",
+                "fact_key": "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=<missing>",
+                "source_ids": []
+              }
+            ],
+            "residuals": []
+          }
+        }
+      },
+      "cells": [
+        {
+          "cell_id": "um11732_v3_2022_02_17_i2s_bus_specification__01_receiver_timing",
+          "semantic_family": "receiver_timing",
+          "modality": "table",
+          "oracle": "All five receiver timing rows are canonical timing facts and inherit nanoseconds from the caption.",
+          "review_scope": "Complete review of all five data rows in SourceIR table_0004 and its caption-level unit.",
+          "complete_gold": true,
+          "expected_disposition": "canonical",
+          "source_region": {
+            "collection_pointer": "/regions",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "table_0004"
+              }
+            ],
+            "key_fields": [
+              "/region_id"
+            ],
+            "expected_keys": [
+              "table_0004"
+            ]
+          },
+          "evidence_capture": {
+            "collection_pointer": "/captures",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "table_0004"
+              },
+              {
+                "operator": "equals",
+                "field": "/family",
+                "value": "receiver_timing"
+              }
+            ],
+            "key_fields": [
+              "/capture_key"
+            ],
+            "expected_keys": [
+              "receiver_timing"
+            ]
+          },
+          "canonical": {
+            "evidence_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0004"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "receiver_timing"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock LOW t LC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock period T|min=360|typ=400|max=440|unit=ns",
+                "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=ns",
+                "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=ns"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0004"
+              ]
+            },
+            "semantic_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0004"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "receiver_timing"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock LOW t LC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock period T|min=360|typ=400|max=440|unit=ns",
+                "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=ns",
+                "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=ns"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0004"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0004"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "receiver_timing"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock LOW t LC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock period T|min=360|typ=400|max=440|unit=ns",
+                "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=ns",
+                "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=ns"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0004"
+              ]
+            }
+          },
+          "residual": {
+            "semantic_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0004"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "receiver_timing"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock LOW t LC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock period T|min=360|typ=400|max=440|unit=ns",
+                "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=ns",
+                "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=ns"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0004"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0004"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "receiver_timing"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock LOW t LC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock period T|min=360|typ=400|max=440|unit=ns",
+                "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=ns",
+                "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=ns"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0004"
+              ]
+            },
+            "required_actionability_fields": [
+              "/reason",
+              "/first_failing_stage",
+              "/replay"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "document_key": "ddi0471_a_2011_06_23_gic_400_technical_reference_manual",
+      "category": "register-ip",
+      "source": {
+        "location": "external_read_only",
+        "portable_id": "DDI0471_A_2011-06-23_GIC_400_Technical_Reference_Manual.pdf",
+        "sha256": "afcac68f733304fb2a236a5667d502783a3965d4609cc97d2115fc5d911fd7ec",
+        "necessity": "Second register-IP document is necessary because only one selected register-IP source is repository-tracked."
+      },
+      "review_scope_complete": true,
+      "present_modalities": [
+        "table"
+      ],
+      "stages": {
+        "source_ir": {
+          "original_sha256": "89d9d73772b4f8931d38c4c13fb842c7247ac9054ee68f81cd107492a314f54c",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "regions": [
+              {
+                "region_id": "table_0014",
+                "modality": "table",
+                "source_excerpt": {
+                  "caption": "Table 3-6 CPU interface register summary",
+                  "row_count": 16,
+                  "col_count": 5
+                },
+                "reviewed_source_facts": [
+                  "GICC_ABPR|access=RW|offset=0x001C",
+                  "GICC_AEOIR|access=WO|offset=0x0024",
+                  "GICC_AHPPIR|access=RO|offset=0x0028",
+                  "GICC_AIAR|access=RO|offset=0x0020",
+                  "GICC_APR0|access=RW|offset=0x00D0",
+                  "GICC_BPR|access=RW|offset=0x0008",
+                  "GICC_CTLR|access=RW|offset=0x0000",
+                  "GICC_DIR|access=WO|offset=0x1000",
+                  "GICC_EOIR|access=WO|offset=0x0010",
+                  "GICC_HPPIR|access=RO|offset=0x0018",
+                  "GICC_IAR|access=RO|offset=0x000C",
+                  "GICC_IIDR|access=RO|offset=0x00FC",
+                  "GICC_NSAPR0|access=RW|offset=0x00E0",
+                  "GICC_PMR|access=RW|offset=0x0004",
+                  "GICC_RPR|access=RO|offset=0x0014"
+                ]
+              }
+            ]
+          }
+        },
+        "evidence_ir": {
+          "original_sha256": "4a69d49bd936e8c25fed29fc0b2a3015cc02ebe7d933a64b10ce57d9c5a2b787",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "captures": [
+              {
+                "region_id": "table_0014",
+                "family": "register_summary",
+                "capture_key": "register_summary",
+                "source_ids": [
+                  "table_0014"
+                ]
+              }
+            ],
+            "canonical": [
+              {
+                "region_id": "table_0014",
+                "family": "register_summary",
+                "fact_key": "Table 3-6 CPU interface summary|access=<missing>|offset=<missing>",
+                "source_ids": []
+              }
+            ],
+            "residuals": []
+          }
+        },
+        "semantic_ir": {
+          "original_sha256": "9255f4b42831415a8ce3eceffb716a8a9b2280528d1fbe86fde068a19d4f1cf5",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [
+              {
+                "region_id": "table_0014",
+                "family": "register_summary",
+                "fact_key": "Table 3-6 CPU interface summary|access=<missing>|offset=<missing>",
+                "source_ids": []
+              }
+            ],
+            "residuals": []
+          }
+        },
+        "intent_ir": {
+          "original_sha256": "5bf8705f8a4390b8c29f8311c705b83e12ad9a7c3e87e277230f30e9ae6e2edd",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [
+              {
+                "region_id": "table_0014",
+                "family": "register_summary",
+                "fact_key": "Table 3-6 CPU interface summary|access=<missing>|offset=<missing>",
+                "source_ids": []
+              }
+            ],
+            "residuals": []
+          }
+        }
+      },
+      "cells": [
+        {
+          "cell_id": "ddi0471_a_2011_06_23_gic_400_technical_reference_manual__01_register_summary",
+          "semantic_family": "register_summary",
+          "modality": "table",
+          "oracle": "The 15 table body rows are 15 registers with name, access, offset, reset, and description.",
+          "review_scope": "Complete review of all 15 body rows in SourceIR table_0014.",
+          "complete_gold": true,
+          "expected_disposition": "canonical",
+          "source_region": {
+            "collection_pointer": "/regions",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "table_0014"
+              }
+            ],
+            "key_fields": [
+              "/region_id"
+            ],
+            "expected_keys": [
+              "table_0014"
+            ]
+          },
+          "evidence_capture": {
+            "collection_pointer": "/captures",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "table_0014"
+              },
+              {
+                "operator": "equals",
+                "field": "/family",
+                "value": "register_summary"
+              }
+            ],
+            "key_fields": [
+              "/capture_key"
+            ],
+            "expected_keys": [
+              "register_summary"
+            ]
+          },
+          "canonical": {
+            "evidence_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0014"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "register_summary"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "GICC_ABPR|access=RW|offset=0x001C",
+                "GICC_AEOIR|access=WO|offset=0x0024",
+                "GICC_AHPPIR|access=RO|offset=0x0028",
+                "GICC_AIAR|access=RO|offset=0x0020",
+                "GICC_APR0|access=RW|offset=0x00D0",
+                "GICC_BPR|access=RW|offset=0x0008",
+                "GICC_CTLR|access=RW|offset=0x0000",
+                "GICC_DIR|access=WO|offset=0x1000",
+                "GICC_EOIR|access=WO|offset=0x0010",
+                "GICC_HPPIR|access=RO|offset=0x0018",
+                "GICC_IAR|access=RO|offset=0x000C",
+                "GICC_IIDR|access=RO|offset=0x00FC",
+                "GICC_NSAPR0|access=RW|offset=0x00E0",
+                "GICC_PMR|access=RW|offset=0x0004",
+                "GICC_RPR|access=RO|offset=0x0014"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0014"
+              ]
+            },
+            "semantic_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0014"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "register_summary"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "GICC_ABPR|access=RW|offset=0x001C",
+                "GICC_AEOIR|access=WO|offset=0x0024",
+                "GICC_AHPPIR|access=RO|offset=0x0028",
+                "GICC_AIAR|access=RO|offset=0x0020",
+                "GICC_APR0|access=RW|offset=0x00D0",
+                "GICC_BPR|access=RW|offset=0x0008",
+                "GICC_CTLR|access=RW|offset=0x0000",
+                "GICC_DIR|access=WO|offset=0x1000",
+                "GICC_EOIR|access=WO|offset=0x0010",
+                "GICC_HPPIR|access=RO|offset=0x0018",
+                "GICC_IAR|access=RO|offset=0x000C",
+                "GICC_IIDR|access=RO|offset=0x00FC",
+                "GICC_NSAPR0|access=RW|offset=0x00E0",
+                "GICC_PMR|access=RW|offset=0x0004",
+                "GICC_RPR|access=RO|offset=0x0014"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0014"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0014"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "register_summary"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "GICC_ABPR|access=RW|offset=0x001C",
+                "GICC_AEOIR|access=WO|offset=0x0024",
+                "GICC_AHPPIR|access=RO|offset=0x0028",
+                "GICC_AIAR|access=RO|offset=0x0020",
+                "GICC_APR0|access=RW|offset=0x00D0",
+                "GICC_BPR|access=RW|offset=0x0008",
+                "GICC_CTLR|access=RW|offset=0x0000",
+                "GICC_DIR|access=WO|offset=0x1000",
+                "GICC_EOIR|access=WO|offset=0x0010",
+                "GICC_HPPIR|access=RO|offset=0x0018",
+                "GICC_IAR|access=RO|offset=0x000C",
+                "GICC_IIDR|access=RO|offset=0x00FC",
+                "GICC_NSAPR0|access=RW|offset=0x00E0",
+                "GICC_PMR|access=RW|offset=0x0004",
+                "GICC_RPR|access=RO|offset=0x0014"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0014"
+              ]
+            }
+          },
+          "residual": {
+            "semantic_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0014"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "register_summary"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "GICC_ABPR|access=RW|offset=0x001C",
+                "GICC_AEOIR|access=WO|offset=0x0024",
+                "GICC_AHPPIR|access=RO|offset=0x0028",
+                "GICC_AIAR|access=RO|offset=0x0020",
+                "GICC_APR0|access=RW|offset=0x00D0",
+                "GICC_BPR|access=RW|offset=0x0008",
+                "GICC_CTLR|access=RW|offset=0x0000",
+                "GICC_DIR|access=WO|offset=0x1000",
+                "GICC_EOIR|access=WO|offset=0x0010",
+                "GICC_HPPIR|access=RO|offset=0x0018",
+                "GICC_IAR|access=RO|offset=0x000C",
+                "GICC_IIDR|access=RO|offset=0x00FC",
+                "GICC_NSAPR0|access=RW|offset=0x00E0",
+                "GICC_PMR|access=RW|offset=0x0004",
+                "GICC_RPR|access=RO|offset=0x0014"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0014"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0014"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "register_summary"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "GICC_ABPR|access=RW|offset=0x001C",
+                "GICC_AEOIR|access=WO|offset=0x0024",
+                "GICC_AHPPIR|access=RO|offset=0x0028",
+                "GICC_AIAR|access=RO|offset=0x0020",
+                "GICC_APR0|access=RW|offset=0x00D0",
+                "GICC_BPR|access=RW|offset=0x0008",
+                "GICC_CTLR|access=RW|offset=0x0000",
+                "GICC_DIR|access=WO|offset=0x1000",
+                "GICC_EOIR|access=WO|offset=0x0010",
+                "GICC_HPPIR|access=RO|offset=0x0018",
+                "GICC_IAR|access=RO|offset=0x000C",
+                "GICC_IIDR|access=RO|offset=0x00FC",
+                "GICC_NSAPR0|access=RW|offset=0x00E0",
+                "GICC_PMR|access=RW|offset=0x0004",
+                "GICC_RPR|access=RO|offset=0x0014"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0014"
+              ]
+            },
+            "required_actionability_fields": [
+              "/reason",
+              "/first_failing_stage",
+              "/replay"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "document_key": "48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification",
+      "category": "register-ip",
+      "source": {
+        "location": "repository",
+        "relative_path": "corpus/amd/system-ip/iommu/current/48882_PUB_3.10_2025-02_AMD_IO_Virtualization_Technology_IOMMU_Specification.pdf",
+        "sha256": "cd7559334b3f46a72d56e9f2fac786fcbf5d6a2c41e7770a46fcacc080bc8a12"
+      },
+      "review_scope_complete": true,
+      "present_modalities": [
+        "table"
+      ],
+      "stages": {
+        "source_ir": {
+          "original_sha256": "c34bb5d7dd786e7a686437fb6e4dc2006da6c06bd532d44ed105e0663af4cf4e",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "regions": [
+              {
+                "region_id": "table_0067",
+                "modality": "table",
+                "source_excerpt": {
+                  "caption": null,
+                  "row_count": 4,
+                  "col_count": 21
+                },
+                "reviewed_source_facts": [
+                  "table_0067|packed_page_table_entry"
+                ]
+              }
+            ]
+          }
+        },
+        "evidence_ir": {
+          "original_sha256": "e0431096295d9eb9852a40e2bb4c09e9daf519bfa8ec891e09261c9c589da51f",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "captures": [
+              {
+                "region_id": "table_0067",
+                "family": "packed_page_table_entry",
+                "capture_key": "packed_page_table_entry",
+                "source_ids": [
+                  "table_0067"
+                ]
+              }
+            ],
+            "canonical": [
+              {
+                "region_id": "table_0067",
+                "family": "packed_page_table_entry",
+                "fact_key": "Guest-Physical Page-Table Base Address[31:21]",
+                "source_ids": []
+              }
+            ],
+            "residuals": []
+          }
+        },
+        "semantic_ir": {
+          "original_sha256": "6e405451c02fec729ac8b8a9db8788ccf641ce147416a9271efa280f0ba6f1b8",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [
+              {
+                "region_id": "table_0067",
+                "family": "packed_page_table_entry",
+                "fact_key": "Guest-Physical Page-Table Base Address[31:21]",
+                "source_ids": []
+              }
+            ],
+            "residuals": []
+          }
+        },
+        "intent_ir": {
+          "original_sha256": "18554337e70cf5304b9a4b6019111285120e11b16396662208a11a905ad46f65",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [
+              {
+                "region_id": "table_0067",
+                "family": "packed_page_table_entry",
+                "fact_key": "Guest-Physical Page-Table Base Address[31:21]",
+                "source_ids": []
+              }
+            ],
+            "residuals": []
+          }
+        }
+      },
+      "cells": [
+        {
+          "cell_id": "48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification__01_packed_page_table_entry",
+          "semantic_family": "packed_page_table_entry",
+          "modality": "table",
+          "oracle": "The bit-layout is a packed page-table entry with address and NX/PAT/AVL/G/D/A/PCD/PWT/U-S/R-W/P fields, not a register named for one address slice.",
+          "review_scope": "Complete review of the single 64-bit packed layout represented by SourceIR table_0067.",
+          "complete_gold": true,
+          "expected_disposition": "residual",
+          "source_region": {
+            "collection_pointer": "/regions",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "table_0067"
+              }
+            ],
+            "key_fields": [
+              "/region_id"
+            ],
+            "expected_keys": [
+              "table_0067"
+            ]
+          },
+          "evidence_capture": {
+            "collection_pointer": "/captures",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "table_0067"
+              },
+              {
+                "operator": "equals",
+                "field": "/family",
+                "value": "packed_page_table_entry"
+              }
+            ],
+            "key_fields": [
+              "/capture_key"
+            ],
+            "expected_keys": [
+              "packed_page_table_entry"
+            ]
+          },
+          "canonical": {
+            "evidence_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0067"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "packed_page_table_entry"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0067"
+              ]
+            },
+            "semantic_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0067"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "packed_page_table_entry"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0067"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0067"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "packed_page_table_entry"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0067"
+              ]
+            }
+          },
+          "residual": {
+            "semantic_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0067"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "packed_page_table_entry"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "table_0067|packed_page_table_entry"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0067"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0067"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "packed_page_table_entry"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "table_0067|packed_page_table_entry"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0067"
+              ]
+            },
+            "required_actionability_fields": [
+              "/reason",
+              "/first_failing_stage",
+              "/replay"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "document_key": "den0068_2018_07_23_coresight_base_system_architecture",
+      "category": "platform-system-ip",
+      "source": {
+        "location": "external_read_only",
+        "portable_id": "DEN0068_2018-07-23_CoreSight_Base_System_Architecture.pdf",
+        "sha256": "c4a5f342afbae7ef5229f5f8344dbd63ec6b5473cd319830dd148d9dc732a66d",
+        "necessity": "A visually reviewed component-topology figure is required for platform/system-IP coverage."
+      },
+      "review_scope_complete": true,
+      "present_modalities": [
+        "figure"
+      ],
+      "stages": {
+        "source_ir": {
+          "original_sha256": "adcfcb07786211eae17b0e492a7ecba8ee1fac0ba37ccaa8368dc9ba70c67da3",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "regions": [
+              {
+                "region_id": "picture_0001",
+                "modality": "figure",
+                "source_excerpt": "Figure 1: Example 1, with a shared ETB",
+                "reviewed_source_facts": [
+                  "picture_0001|static_component_topology"
+                ]
+              }
+            ]
+          }
+        },
+        "evidence_ir": {
+          "original_sha256": "e2a7455d61bf8bded41378d80ed352685847afb7da82209886285eb51f72ea16",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "captures": [
+              {
+                "region_id": "picture_0001",
+                "family": "static_component_topology",
+                "capture_key": "static_component_topology",
+                "source_ids": [
+                  "visual_0008"
+                ]
+              }
+            ],
+            "canonical": [],
+            "residuals": []
+          }
+        },
+        "semantic_ir": {
+          "original_sha256": "bd1fe1ad57006c4f7121e17887636f4611246dc43a53ac735bc6694927087ef6",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [],
+            "residuals": []
+          }
+        },
+        "intent_ir": {
+          "original_sha256": "459e48c4f721e40c908e4c5e2a90bce714b32988ce37225e42e779b5161857ac",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [],
+            "residuals": []
+          }
+        }
+      },
+      "cells": [
+        {
+          "cell_id": "den0068_2018_07_23_coresight_base_system_architecture__01_static_component_topology",
+          "semantic_family": "static_component_topology",
+          "modality": "figure",
+          "oracle": "The reviewed figure shows four PE/Trace Unit pairs feeding a Trace Funnel, then an ETB containing SRAM.",
+          "review_scope": "Complete visual review of every labeled component and directed edge in Figure 1 picture_0001.",
+          "complete_gold": true,
+          "expected_disposition": "residual",
+          "source_region": {
+            "collection_pointer": "/regions",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "picture_0001"
+              }
+            ],
+            "key_fields": [
+              "/region_id"
+            ],
+            "expected_keys": [
+              "picture_0001"
+            ]
+          },
+          "evidence_capture": {
+            "collection_pointer": "/captures",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "picture_0001"
+              },
+              {
+                "operator": "equals",
+                "field": "/family",
+                "value": "static_component_topology"
+              }
+            ],
+            "key_fields": [
+              "/capture_key"
+            ],
+            "expected_keys": [
+              "static_component_topology"
+            ]
+          },
+          "canonical": {
+            "evidence_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "picture_0001"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "static_component_topology"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "visual_0008"
+              ]
+            },
+            "semantic_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "picture_0001"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "static_component_topology"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "visual_0008"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "picture_0001"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "static_component_topology"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "visual_0008"
+              ]
+            }
+          },
+          "residual": {
+            "semantic_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "picture_0001"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "static_component_topology"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "picture_0001|static_component_topology"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "visual_0008"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "picture_0001"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "static_component_topology"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "picture_0001|static_component_topology"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "visual_0008"
+              ]
+            },
+            "required_actionability_fields": [
+              "/reason",
+              "/first_failing_stage",
+              "/replay"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "document_key": "1_0_1_2026_02_22_risc_v_iommu_architecture_specification",
+      "category": "platform-system-ip",
+      "source": {
+        "location": "external_read_only",
+        "portable_id": "1.0.1_2026-02-22_RISC_V_IOMMU_Architecture_Specification.pdf",
+        "sha256": "be2134b407a1a3ce5a9da1779cbdc4b4c641ee50ab32676e0a858e5a04ff2b8e",
+        "necessity": "A second visually reviewed platform integration figure is required for the category floor."
+      },
+      "review_scope_complete": true,
+      "present_modalities": [
+        "figure"
+      ],
+      "stages": {
+        "source_ir": {
+          "original_sha256": "ed61e3a1276b965eb4e0eac52c3aede6feea0771567e019c1664fe90ca6043f3",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "regions": [
+              {
+                "region_id": "picture_0008",
+                "modality": "figure",
+                "source_excerpt": "Figure 5. Example of IOMMUs integration in SoC.",
+                "reviewed_source_facts": [
+                  "picture_0008|static_component_topology"
+                ]
+              }
+            ]
+          }
+        },
+        "evidence_ir": {
+          "original_sha256": "686db01abf627f6eac62cab06547a507ee55c00a474610bd12add99dfd179157",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "captures": [
+              {
+                "region_id": "picture_0008",
+                "family": "static_component_topology",
+                "capture_key": "static_component_topology",
+                "source_ids": [
+                  "visual_0018"
+                ]
+              }
+            ],
+            "canonical": [],
+            "residuals": []
+          }
+        },
+        "semantic_ir": {
+          "original_sha256": "8ae929873b7b8162bd7cef827309eee648e73bfbd3b4a5263c51b94a36804e68",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [],
+            "residuals": []
+          }
+        },
+        "intent_ir": {
+          "original_sha256": "46061f5d551e615dcc7308f379b014da873a8114a9e253a3b643e6008e6fa107",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [],
+            "residuals": []
+          }
+        }
+      },
+      "cells": [
+        {
+          "cell_id": "1_0_1_2026_02_22_risc_v_iommu_architecture_specification__01_static_component_topology",
+          "semantic_family": "static_component_topology",
+          "modality": "figure",
+          "oracle": "The reviewed figure shows two IOMMU/IO-Bridge placements, system interconnect/memory, root-port/switch/endpoints, ATS, host/data-structure/translation interfaces, and inbound/outbound flows.",
+          "review_scope": "Complete visual review of every labeled component, interface, and directed traffic edge in Figure 5 picture_0008.",
+          "complete_gold": true,
+          "expected_disposition": "residual",
+          "source_region": {
+            "collection_pointer": "/regions",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "picture_0008"
+              }
+            ],
+            "key_fields": [
+              "/region_id"
+            ],
+            "expected_keys": [
+              "picture_0008"
+            ]
+          },
+          "evidence_capture": {
+            "collection_pointer": "/captures",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "picture_0008"
+              },
+              {
+                "operator": "equals",
+                "field": "/family",
+                "value": "static_component_topology"
+              }
+            ],
+            "key_fields": [
+              "/capture_key"
+            ],
+            "expected_keys": [
+              "static_component_topology"
+            ]
+          },
+          "canonical": {
+            "evidence_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "picture_0008"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "static_component_topology"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "visual_0018"
+              ]
+            },
+            "semantic_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "picture_0008"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "static_component_topology"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "visual_0018"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "picture_0008"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "static_component_topology"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "visual_0018"
+              ]
+            }
+          },
+          "residual": {
+            "semantic_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "picture_0008"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "static_component_topology"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "picture_0008|static_component_topology"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "visual_0018"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "picture_0008"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "static_component_topology"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "picture_0008|static_component_topology"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "visual_0018"
+              ]
+            },
+            "required_actionability_fields": [
+              "/reason",
+              "/first_failing_stage",
+              "/replay"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "document_key": "1_0_2025_03_12_risc_v_advanced_interrupt_architecture",
+      "category": "cpu-isa",
+      "source": {
+        "location": "external_read_only",
+        "portable_id": "1.0_2025-03-12_RISC_V_Advanced_Interrupt_Architecture.pdf",
+        "sha256": "2d359579dcb84c6d00a1b284db3a7f8ec8c87764d96406a45cbaa9052f04c7c8",
+        "necessity": "A CPU/ISA negative table case is necessary to measure TOC-shape overclassification."
+      },
+      "review_scope_complete": true,
+      "present_modalities": [
+        "table"
+      ],
+      "stages": {
+        "source_ir": {
+          "original_sha256": "fa59dc4db30db381eb594ea93fe27f4297b61b99984d2cba6e89c0b1e3be1f07",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "regions": [
+              {
+                "region_id": "table_0004",
+                "modality": "table",
+                "source_excerpt": {
+                  "caption": null,
+                  "row_count": 20,
+                  "col_count": 2
+                },
+                "reviewed_source_facts": [
+                  "table_0004|toc_non_contract"
+                ]
+              }
+            ]
+          }
+        },
+        "evidence_ir": {
+          "original_sha256": "3a952401ffc6bcc6ea614010d262c71247a1b3ffe4bee1772ebb460ba3225550",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "captures": [
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "capture_key": "table_of_contents",
+                "source_ids": [
+                  "table_0004"
+                ]
+              }
+            ],
+            "canonical": [
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_000",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_001",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_002",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_003",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_004",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_005",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_006",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_007",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_008",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_009",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_010",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_011",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_012",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_013",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_014",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_015",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_016",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_017",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_018",
+                "source_ids": []
+              }
+            ],
+            "residuals": []
+          }
+        },
+        "semantic_ir": {
+          "original_sha256": "c68b70a7580a7b55d8ddad9a6767d34db62027c8ba9834317c866ee248b88ce8",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_000",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_001",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_002",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_003",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_004",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_005",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_006",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_007",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_008",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_009",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_010",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_011",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_012",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_013",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_014",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_015",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_016",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_017",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_018",
+                "source_ids": []
+              }
+            ],
+            "residuals": []
+          }
+        },
+        "intent_ir": {
+          "original_sha256": "182b0759e79f343fa3ae3ee56719c2c14db51364b8cf8054514b1a664e695830",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_000",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_001",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_002",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_003",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_004",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_005",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_006",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_007",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_008",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_009",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_010",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_011",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_012",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_013",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_014",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_015",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_016",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_017",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0004",
+                "family": "table_of_contents",
+                "fact_key": "timing_table_0004_018",
+                "source_ids": []
+              }
+            ],
+            "residuals": []
+          }
+        }
+      },
+      "cells": [
+        {
+          "cell_id": "1_0_2025_03_12_risc_v_advanced_interrupt_architecture__01_table_of_contents",
+          "semantic_family": "table_of_contents",
+          "modality": "table",
+          "oracle": "All 20 rows are table-of-contents titles plus page numbers; none is a timing parameter or executable fact.",
+          "review_scope": "Complete review of all 20 TOC rows in SourceIR table_0004.",
+          "complete_gold": true,
+          "expected_disposition": "non_applicable",
+          "source_region": {
+            "collection_pointer": "/regions",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "table_0004"
+              }
+            ],
+            "key_fields": [
+              "/region_id"
+            ],
+            "expected_keys": [
+              "table_0004"
+            ]
+          },
+          "evidence_capture": {
+            "collection_pointer": "/captures",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "table_0004"
+              },
+              {
+                "operator": "equals",
+                "field": "/family",
+                "value": "table_of_contents"
+              }
+            ],
+            "key_fields": [
+              "/capture_key"
+            ],
+            "expected_keys": [
+              "table_of_contents"
+            ]
+          },
+          "canonical": {
+            "evidence_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0004"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "table_of_contents"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0004"
+              ]
+            },
+            "semantic_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0004"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "table_of_contents"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0004"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0004"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "table_of_contents"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0004"
+              ]
+            }
+          },
+          "residual": {
+            "semantic_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0004"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "table_of_contents"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "table_0004|toc_non_contract"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0004"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0004"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "table_of_contents"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "table_0004|toc_non_contract"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0004"
+              ]
+            },
+            "required_actionability_fields": [
+              "/reason",
+              "/first_failing_stage",
+              "/replay"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "document_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+      "category": "cpu-isa",
+      "source": {
+        "location": "repository",
+        "relative_path": "corpus/arm/debug/interfaces/adi/current/IHI0074_A_2017-03-09_Arm_Debug_Interface_v6_Architecture_Specification.pdf",
+        "sha256": "0e370b75bf96d0e2625ba71474bec8ae8718b21d687f8e0424dcfe3740969c01"
+      },
+      "review_scope_complete": true,
+      "present_modalities": [
+        "table"
+      ],
+      "stages": {
+        "source_ir": {
+          "original_sha256": "fddbb31d84bb141814b02990394172dcff6b3e7baf7a7082497255ca0e8e5257",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "regions": [
+              {
+                "region_id": "table_0044",
+                "modality": "table",
+                "source_excerpt": {
+                  "caption": "Table B3-5 JTAG-DP Register access summary.",
+                  "row_count": 14,
+                  "col_count": 6
+                },
+                "reviewed_source_facts": [
+                  "BASEPTR0|access=RO",
+                  "BASEPTR1|access=RO",
+                  "CTRL/STAT|access=RW",
+                  "DLCR|access=RW",
+                  "DLPIDR|access=RO",
+                  "DPIDR1|access=RO",
+                  "DPIDR|access=RO",
+                  "EVENTSTAT|access=RO",
+                  "RDBUFF|access=RO",
+                  "SELECT1|access=WO b",
+                  "SELECT|access=WO b",
+                  "TARGETID|access=RO"
+                ]
+              }
+            ]
+          }
+        },
+        "evidence_ir": {
+          "original_sha256": "b8c7b401cee2fac508bf1a1c01001c95fe80d813c43efe1be453b5aa0378c5fb",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "captures": [
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "capture_key": "debug_register_summary",
+                "source_ids": [
+                  "table_0044"
+                ]
+              }
+            ],
+            "canonical": [
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "BASEPTR0|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "BASEPTR1|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "CTRL/STAT|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "DLCR|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "DLPIDR|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "DPIDR1|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "DPIDR|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "EVENTSTAT|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "RDBUFF|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "SELECT1|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "SELECT|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "TARGETID|access=<missing>",
+                "source_ids": []
+              }
+            ],
+            "residuals": []
+          }
+        },
+        "semantic_ir": {
+          "original_sha256": "4d6cebf8fdb3b9f7764919d572be5ef28b55226699000de07e5c0e46d7a5f010",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "BASEPTR0|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "BASEPTR1|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "CTRL/STAT|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "DLCR|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "DLPIDR|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "DPIDR1|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "DPIDR|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "EVENTSTAT|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "RDBUFF|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "SELECT1|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "SELECT|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "TARGETID|access=<missing>",
+                "source_ids": []
+              }
+            ],
+            "residuals": []
+          }
+        },
+        "intent_ir": {
+          "original_sha256": "82a0d27831e83b1656bcbecc7ea4cc341de00f2cdf4fc255081190e6bf1fa662",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "BASEPTR0|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "BASEPTR1|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "CTRL/STAT|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "DLCR|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "DLPIDR|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "DPIDR1|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "DPIDR|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "EVENTSTAT|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "RDBUFF|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "SELECT1|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "SELECT|access=<missing>",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0044",
+                "family": "debug_register_summary",
+                "fact_key": "TARGETID|access=<missing>",
+                "source_ids": []
+              }
+            ],
+            "residuals": []
+          }
+        }
+      },
+      "cells": [
+        {
+          "cell_id": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification__01_debug_register_summary",
+          "semantic_family": "debug_register_summary",
+          "modality": "table",
+          "oracle": "The 12 table body rows are JTAG-DP registers and the Access column is part of each reviewed fact.",
+          "review_scope": "Complete review of all 12 body rows in SourceIR table_0044.",
+          "complete_gold": true,
+          "expected_disposition": "canonical",
+          "source_region": {
+            "collection_pointer": "/regions",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "table_0044"
+              }
+            ],
+            "key_fields": [
+              "/region_id"
+            ],
+            "expected_keys": [
+              "table_0044"
+            ]
+          },
+          "evidence_capture": {
+            "collection_pointer": "/captures",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "table_0044"
+              },
+              {
+                "operator": "equals",
+                "field": "/family",
+                "value": "debug_register_summary"
+              }
+            ],
+            "key_fields": [
+              "/capture_key"
+            ],
+            "expected_keys": [
+              "debug_register_summary"
+            ]
+          },
+          "canonical": {
+            "evidence_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0044"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "debug_register_summary"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "BASEPTR0|access=RO",
+                "BASEPTR1|access=RO",
+                "CTRL/STAT|access=RW",
+                "DLCR|access=RW",
+                "DLPIDR|access=RO",
+                "DPIDR1|access=RO",
+                "DPIDR|access=RO",
+                "EVENTSTAT|access=RO",
+                "RDBUFF|access=RO",
+                "SELECT1|access=WO b",
+                "SELECT|access=WO b",
+                "TARGETID|access=RO"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0044"
+              ]
+            },
+            "semantic_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0044"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "debug_register_summary"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "BASEPTR0|access=RO",
+                "BASEPTR1|access=RO",
+                "CTRL/STAT|access=RW",
+                "DLCR|access=RW",
+                "DLPIDR|access=RO",
+                "DPIDR1|access=RO",
+                "DPIDR|access=RO",
+                "EVENTSTAT|access=RO",
+                "RDBUFF|access=RO",
+                "SELECT1|access=WO b",
+                "SELECT|access=WO b",
+                "TARGETID|access=RO"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0044"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0044"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "debug_register_summary"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "BASEPTR0|access=RO",
+                "BASEPTR1|access=RO",
+                "CTRL/STAT|access=RW",
+                "DLCR|access=RW",
+                "DLPIDR|access=RO",
+                "DPIDR1|access=RO",
+                "DPIDR|access=RO",
+                "EVENTSTAT|access=RO",
+                "RDBUFF|access=RO",
+                "SELECT1|access=WO b",
+                "SELECT|access=WO b",
+                "TARGETID|access=RO"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0044"
+              ]
+            }
+          },
+          "residual": {
+            "semantic_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0044"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "debug_register_summary"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "BASEPTR0|access=RO",
+                "BASEPTR1|access=RO",
+                "CTRL/STAT|access=RW",
+                "DLCR|access=RW",
+                "DLPIDR|access=RO",
+                "DPIDR1|access=RO",
+                "DPIDR|access=RO",
+                "EVENTSTAT|access=RO",
+                "RDBUFF|access=RO",
+                "SELECT1|access=WO b",
+                "SELECT|access=WO b",
+                "TARGETID|access=RO"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0044"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0044"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "debug_register_summary"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "BASEPTR0|access=RO",
+                "BASEPTR1|access=RO",
+                "CTRL/STAT|access=RW",
+                "DLCR|access=RW",
+                "DLPIDR|access=RO",
+                "DPIDR1|access=RO",
+                "DPIDR|access=RO",
+                "EVENTSTAT|access=RO",
+                "RDBUFF|access=RO",
+                "SELECT1|access=WO b",
+                "SELECT|access=WO b",
+                "TARGETID|access=RO"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0044"
+              ]
+            },
+            "required_actionability_fields": [
+              "/reason",
+              "/first_failing_stage",
+              "/replay"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "document_key": "opencapi_25gbps_phy_signaling_spec_1_0",
+      "category": "physical-link",
+      "source": {
+        "location": "external_read_only",
+        "portable_id": "OpenCAPI-25Gbps_PHY_Signaling_Spec_1.0.pdf",
+        "sha256": "0e0c8afc1d89189f610dd8340ebb2206270958faa247c6b345c64ee5c8dece12",
+        "necessity": "Physical-link channel requirements are not available from a repository-tracked selected PDF."
+      },
+      "review_scope_complete": true,
+      "present_modalities": [
+        "table"
+      ],
+      "stages": {
+        "source_ir": {
+          "original_sha256": "b15b4203a28e3faecbcdbf2bf45a7b0a095ffb2baa923d452b9adc6410b91638",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "regions": [
+              {
+                "region_id": "table_0008",
+                "modality": "table",
+                "source_excerpt": {
+                  "caption": "Table 4-1  Channel requirements",
+                  "row_count": 5,
+                  "col_count": 7
+                },
+                "reviewed_source_facts": [
+                  "IL(f)|max=21|unit=dB",
+                  "ILD(f)|max=0.45|unit=dB_RMS",
+                  "T CH_SKEW _Host_RX|max=132|unit=UI",
+                  "T CH_SKEW _Host_TX|max=10|unit=UI"
+                ]
+              }
+            ]
+          }
+        },
+        "evidence_ir": {
+          "original_sha256": "928184282b9f0582d5ad403df7dfed938aebefd03f81f00173eb98a5b0740f92",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "captures": [
+              {
+                "region_id": "table_0008",
+                "family": "digital_lane_skew",
+                "capture_key": "digital_lane_skew",
+                "source_ids": [
+                  "table_0008"
+                ]
+              },
+              {
+                "region_id": "table_0008",
+                "family": "analog_channel_loss",
+                "capture_key": "analog_channel_loss",
+                "source_ids": [
+                  "table_0008"
+                ]
+              }
+            ],
+            "canonical": [
+              {
+                "region_id": "table_0008",
+                "family": "analog_channel_loss",
+                "fact_key": "IL(f)|max=21|unit=dB",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0008",
+                "family": "analog_channel_loss",
+                "fact_key": "ILD(f)|max=0.45|unit=dB_RMS",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0008",
+                "family": "digital_lane_skew",
+                "fact_key": "T CH_SKEW _Host_RX|max=132|unit=UI",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0008",
+                "family": "digital_lane_skew",
+                "fact_key": "T CH_SKEW _Host_TX|max=10|unit=UI",
+                "source_ids": []
+              }
+            ],
+            "residuals": []
+          }
+        },
+        "semantic_ir": {
+          "original_sha256": "7335772a11925997eb2f35ae5b7178d307ccf95b006b8cce52d2b32fe4cf0ff7",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [
+              {
+                "region_id": "table_0008",
+                "family": "analog_channel_loss",
+                "fact_key": "IL(f)|max=21|unit=dB",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0008",
+                "family": "analog_channel_loss",
+                "fact_key": "ILD(f)|max=0.45|unit=dB_RMS",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0008",
+                "family": "digital_lane_skew",
+                "fact_key": "T CH_SKEW _Host_RX|max=132|unit=UI",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0008",
+                "family": "digital_lane_skew",
+                "fact_key": "T CH_SKEW _Host_TX|max=10|unit=UI",
+                "source_ids": []
+              }
+            ],
+            "residuals": []
+          }
+        },
+        "intent_ir": {
+          "original_sha256": "d1f65b764beee49ee26319c62f3663534ab83c28be5f77be3dadd03dd23a7050",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [
+              {
+                "region_id": "table_0008",
+                "family": "analog_channel_loss",
+                "fact_key": "IL(f)|max=21|unit=dB",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0008",
+                "family": "analog_channel_loss",
+                "fact_key": "ILD(f)|max=0.45|unit=dB_RMS",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0008",
+                "family": "digital_lane_skew",
+                "fact_key": "T CH_SKEW _Host_RX|max=132|unit=UI",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0008",
+                "family": "digital_lane_skew",
+                "fact_key": "T CH_SKEW _Host_TX|max=10|unit=UI",
+                "source_ids": []
+              }
+            ],
+            "residuals": []
+          }
+        }
+      },
+      "cells": [
+        {
+          "cell_id": "opencapi_25gbps_phy_signaling_spec_1_0__01_digital_lane_skew",
+          "semantic_family": "digital_lane_skew",
+          "modality": "table",
+          "oracle": "Lane-to-lane skew bounds in UI are digital boundary timing facts.",
+          "review_scope": "Complete review of all four body rows in SourceIR table_0008.",
+          "complete_gold": true,
+          "expected_disposition": "canonical",
+          "source_region": {
+            "collection_pointer": "/regions",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "table_0008"
+              }
+            ],
+            "key_fields": [
+              "/region_id"
+            ],
+            "expected_keys": [
+              "table_0008"
+            ]
+          },
+          "evidence_capture": {
+            "collection_pointer": "/captures",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "table_0008"
+              },
+              {
+                "operator": "equals",
+                "field": "/family",
+                "value": "digital_lane_skew"
+              }
+            ],
+            "key_fields": [
+              "/capture_key"
+            ],
+            "expected_keys": [
+              "digital_lane_skew"
+            ]
+          },
+          "canonical": {
+            "evidence_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0008"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "digital_lane_skew"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "T CH_SKEW _Host_RX|max=132|unit=UI",
+                "T CH_SKEW _Host_TX|max=10|unit=UI"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0008"
+              ]
+            },
+            "semantic_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0008"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "digital_lane_skew"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "T CH_SKEW _Host_RX|max=132|unit=UI",
+                "T CH_SKEW _Host_TX|max=10|unit=UI"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0008"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0008"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "digital_lane_skew"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "T CH_SKEW _Host_RX|max=132|unit=UI",
+                "T CH_SKEW _Host_TX|max=10|unit=UI"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0008"
+              ]
+            }
+          }
+        },
+        {
+          "cell_id": "opencapi_25gbps_phy_signaling_spec_1_0__02_analog_channel_loss",
+          "semantic_family": "analog_channel_loss",
+          "modality": "table",
+          "oracle": "Insertion-loss and insertion-loss-deviation values in dB/dB_RMS are analog channel facts, not executable digital intent.",
+          "review_scope": "Complete review of all four body rows in SourceIR table_0008.",
+          "complete_gold": true,
+          "expected_disposition": "non_applicable",
+          "source_region": {
+            "collection_pointer": "/regions",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "table_0008"
+              }
+            ],
+            "key_fields": [
+              "/region_id"
+            ],
+            "expected_keys": [
+              "table_0008"
+            ]
+          },
+          "evidence_capture": {
+            "collection_pointer": "/captures",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "table_0008"
+              },
+              {
+                "operator": "equals",
+                "field": "/family",
+                "value": "analog_channel_loss"
+              }
+            ],
+            "key_fields": [
+              "/capture_key"
+            ],
+            "expected_keys": [
+              "analog_channel_loss"
+            ]
+          },
+          "canonical": {
+            "evidence_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0008"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "analog_channel_loss"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0008"
+              ]
+            },
+            "semantic_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0008"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "analog_channel_loss"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0008"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0008"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "analog_channel_loss"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0008"
+              ]
+            }
+          },
+          "residual": {
+            "semantic_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0008"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "analog_channel_loss"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "IL(f)|max=21|unit=dB",
+                "ILD(f)|max=0.45|unit=dB_RMS"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0008"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0008"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "analog_channel_loss"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "IL(f)|max=21|unit=dB",
+                "ILD(f)|max=0.45|unit=dB_RMS"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0008"
+              ]
+            },
+            "required_actionability_fields": [
+              "/reason",
+              "/first_failing_stage",
+              "/replay"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "document_key": "opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020",
+      "category": "physical-link",
+      "source": {
+        "location": "external_read_only",
+        "portable_id": "OpenCAPI-4.0-32G_PHY_Signal_Spec_1.0_16NOV2020.pdf",
+        "sha256": "d3eb19fc39dd5d1a3925e381bdc9c2f22683d2485d26a447c7ccdeb0080e38be",
+        "necessity": "A second independent physical-link rate/specification is required for the category floor."
+      },
+      "review_scope_complete": true,
+      "present_modalities": [
+        "table"
+      ],
+      "stages": {
+        "source_ir": {
+          "original_sha256": "ce4cefecde07969f89e29fa86188f5181c3df4c28b161f10620c92e744b1edac",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "regions": [
+              {
+                "region_id": "table_0009",
+                "modality": "table",
+                "source_excerpt": {
+                  "caption": "Table 4-1. Channel requirements",
+                  "row_count": 4,
+                  "col_count": 7
+                },
+                "reviewed_source_facts": [
+                  "IL(f)|max=30|unit=dB",
+                  "T CH_SKEW _Host_RX|max=132|unit=UI",
+                  "T CH_SKEW _Host_TX|max=12.5|unit=UI"
+                ]
+              }
+            ]
+          }
+        },
+        "evidence_ir": {
+          "original_sha256": "256b453f94712f713fc879553da03baea629331166598df17910384bdfccf3f5",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "captures": [
+              {
+                "region_id": "table_0009",
+                "family": "digital_lane_skew",
+                "capture_key": "digital_lane_skew",
+                "source_ids": [
+                  "table_0009"
+                ]
+              },
+              {
+                "region_id": "table_0009",
+                "family": "analog_channel_loss",
+                "capture_key": "analog_channel_loss",
+                "source_ids": [
+                  "table_0009"
+                ]
+              }
+            ],
+            "canonical": [
+              {
+                "region_id": "table_0009",
+                "family": "analog_channel_loss",
+                "fact_key": "IL(f)|max=30|unit=dB",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0009",
+                "family": "digital_lane_skew",
+                "fact_key": "T CH_SKEW _Host_RX|max=132|unit=UI",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0009",
+                "family": "digital_lane_skew",
+                "fact_key": "T CH_SKEW _Host_TX|max=12.5|unit=UI",
+                "source_ids": []
+              }
+            ],
+            "residuals": []
+          }
+        },
+        "semantic_ir": {
+          "original_sha256": "6e43e8cd25acf7aa99b8c3bcf764b9119619afb9c7ec5e0570927a099b2c9059",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [
+              {
+                "region_id": "table_0009",
+                "family": "analog_channel_loss",
+                "fact_key": "IL(f)|max=30|unit=dB",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0009",
+                "family": "digital_lane_skew",
+                "fact_key": "T CH_SKEW _Host_RX|max=132|unit=UI",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0009",
+                "family": "digital_lane_skew",
+                "fact_key": "T CH_SKEW _Host_TX|max=12.5|unit=UI",
+                "source_ids": []
+              }
+            ],
+            "residuals": []
+          }
+        },
+        "intent_ir": {
+          "original_sha256": "08a362677545057b928ab6351ae149baa443defdc129e86f64fb60a5d9371707",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [
+              {
+                "region_id": "table_0009",
+                "family": "analog_channel_loss",
+                "fact_key": "IL(f)|max=30|unit=dB",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0009",
+                "family": "digital_lane_skew",
+                "fact_key": "T CH_SKEW _Host_RX|max=132|unit=UI",
+                "source_ids": []
+              },
+              {
+                "region_id": "table_0009",
+                "family": "digital_lane_skew",
+                "fact_key": "T CH_SKEW _Host_TX|max=12.5|unit=UI",
+                "source_ids": []
+              }
+            ],
+            "residuals": []
+          }
+        }
+      },
+      "cells": [
+        {
+          "cell_id": "opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020__01_digital_lane_skew",
+          "semantic_family": "digital_lane_skew",
+          "modality": "table",
+          "oracle": "Lane-to-lane skew bounds in UI are digital boundary timing facts.",
+          "review_scope": "Complete review of all three body rows in SourceIR table_0009.",
+          "complete_gold": true,
+          "expected_disposition": "canonical",
+          "source_region": {
+            "collection_pointer": "/regions",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "table_0009"
+              }
+            ],
+            "key_fields": [
+              "/region_id"
+            ],
+            "expected_keys": [
+              "table_0009"
+            ]
+          },
+          "evidence_capture": {
+            "collection_pointer": "/captures",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "table_0009"
+              },
+              {
+                "operator": "equals",
+                "field": "/family",
+                "value": "digital_lane_skew"
+              }
+            ],
+            "key_fields": [
+              "/capture_key"
+            ],
+            "expected_keys": [
+              "digital_lane_skew"
+            ]
+          },
+          "canonical": {
+            "evidence_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0009"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "digital_lane_skew"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "T CH_SKEW _Host_RX|max=132|unit=UI",
+                "T CH_SKEW _Host_TX|max=12.5|unit=UI"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0009"
+              ]
+            },
+            "semantic_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0009"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "digital_lane_skew"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "T CH_SKEW _Host_RX|max=132|unit=UI",
+                "T CH_SKEW _Host_TX|max=12.5|unit=UI"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0009"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0009"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "digital_lane_skew"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "T CH_SKEW _Host_RX|max=132|unit=UI",
+                "T CH_SKEW _Host_TX|max=12.5|unit=UI"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0009"
+              ]
+            }
+          }
+        },
+        {
+          "cell_id": "opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020__02_analog_channel_loss",
+          "semantic_family": "analog_channel_loss",
+          "modality": "table",
+          "oracle": "Insertion-loss and insertion-loss-deviation values in dB/dB_RMS are analog channel facts, not executable digital intent.",
+          "review_scope": "Complete review of all three body rows in SourceIR table_0009.",
+          "complete_gold": true,
+          "expected_disposition": "non_applicable",
+          "source_region": {
+            "collection_pointer": "/regions",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "table_0009"
+              }
+            ],
+            "key_fields": [
+              "/region_id"
+            ],
+            "expected_keys": [
+              "table_0009"
+            ]
+          },
+          "evidence_capture": {
+            "collection_pointer": "/captures",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "table_0009"
+              },
+              {
+                "operator": "equals",
+                "field": "/family",
+                "value": "analog_channel_loss"
+              }
+            ],
+            "key_fields": [
+              "/capture_key"
+            ],
+            "expected_keys": [
+              "analog_channel_loss"
+            ]
+          },
+          "canonical": {
+            "evidence_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0009"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "analog_channel_loss"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0009"
+              ]
+            },
+            "semantic_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0009"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "analog_channel_loss"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0009"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0009"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "analog_channel_loss"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0009"
+              ]
+            }
+          },
+          "residual": {
+            "semantic_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0009"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "analog_channel_loss"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "IL(f)|max=30|unit=dB"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0009"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "table_0009"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "analog_channel_loss"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "IL(f)|max=30|unit=dB"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "table_0009"
+              ]
+            },
+            "required_actionability_fields": [
+              "/reason",
+              "/first_failing_stage",
+              "/replay"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "document_key": "pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide",
+      "category": "methodology-guide",
+      "source": {
+        "location": "external_read_only",
+        "portable_id": "PJDOC-466751330-7215_10.0_Cortex_A76_Software_Optimization_Guide.pdf",
+        "sha256": "8358c5ae0d4b9fbc713b40dfec840d76e9ab3ce57cdf66badbdb41e0e60b3a22",
+        "necessity": "A genuine software-optimization recommendation is required for guide non-contract coverage."
+      },
+      "review_scope_complete": true,
+      "present_modalities": [
+        "prose"
+      ],
+      "stages": {
+        "source_ir": {
+          "original_sha256": "7a9e81cd878a759ad5b1585451b23c977516f6a5eca32c63ef66446a31bb0387",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "regions": [
+              {
+                "region_id": "elem_00219",
+                "modality": "prose",
+                "source_excerpt": "Register transfers between general-purpose registers (GPR) and ASIMD registers (VPR) are lower latency than reads and writes to the cache hierarchy, thus it is recommended that GPR registers be filled/spilled to the VPR rather to memory, when possible.",
+                "reviewed_source_facts": [
+                  "elem_00219|software_guidance"
+                ]
+              }
+            ]
+          }
+        },
+        "evidence_ir": {
+          "original_sha256": "201984f779d5a5b830a9c57587b4b75af530ae0d048450d2054911d0cf06cc03",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "captures": [
+              {
+                "region_id": "elem_00219",
+                "family": "software_guidance",
+                "capture_key": "software_guidance",
+                "source_ids": [
+                  "statement_0843"
+                ]
+              }
+            ],
+            "canonical": [],
+            "residuals": []
+          }
+        },
+        "semantic_ir": {
+          "original_sha256": "e8755034f360db40313f30de4814f8a7bd323fa323f524c96b01b75599efd4c5",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [],
+            "residuals": []
+          }
+        },
+        "intent_ir": {
+          "original_sha256": "6fa2f0f6629a8aeafb4e8dde864f84565ec30265ba24c012f5d825d8a0e3fe0b",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [],
+            "residuals": []
+          }
+        }
+      },
+      "cells": [
+        {
+          "cell_id": "pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide__01_software_guidance",
+          "semantic_family": "software_guidance",
+          "modality": "prose",
+          "oracle": "This is performance advice to keep GPR/VPR transfers out of memory, not an executable hardware contract.",
+          "review_scope": "Complete review of the one recommendation in SourceIR elem_00219.",
+          "complete_gold": true,
+          "expected_disposition": "non_applicable",
+          "source_region": {
+            "collection_pointer": "/regions",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "elem_00219"
+              }
+            ],
+            "key_fields": [
+              "/region_id"
+            ],
+            "expected_keys": [
+              "elem_00219"
+            ]
+          },
+          "evidence_capture": {
+            "collection_pointer": "/captures",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "elem_00219"
+              },
+              {
+                "operator": "equals",
+                "field": "/family",
+                "value": "software_guidance"
+              }
+            ],
+            "key_fields": [
+              "/capture_key"
+            ],
+            "expected_keys": [
+              "software_guidance"
+            ]
+          },
+          "canonical": {
+            "evidence_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "elem_00219"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "software_guidance"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "statement_0843"
+              ]
+            },
+            "semantic_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "elem_00219"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "software_guidance"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "statement_0843"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "elem_00219"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "software_guidance"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "statement_0843"
+              ]
+            }
+          },
+          "residual": {
+            "semantic_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "elem_00219"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "software_guidance"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "elem_00219|software_guidance"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "statement_0843"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "elem_00219"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "software_guidance"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "elem_00219|software_guidance"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "statement_0843"
+              ]
+            },
+            "required_actionability_fields": [
+              "/reason",
+              "/first_failing_stage",
+              "/replay"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "document_key": "198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide",
+      "category": "methodology-guide",
+      "source": {
+        "location": "external_read_only",
+        "portable_id": "198123_0302_03_2025-04-22_Generic_Interrupt_Controller_Overview_Guide.pdf",
+        "sha256": "5358701e080664f2db98fb9d066a0c90a4deb2ba34ca35c81597332534707e97",
+        "necessity": "A second guide source is required to test explicit informational-only disposition."
+      },
+      "review_scope_complete": true,
+      "present_modalities": [
+        "prose"
+      ],
+      "stages": {
+        "source_ir": {
+          "original_sha256": "421166d5f13c914229462e034cc0311e90b0891e9cc783fa08f5f9d364181dd5",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "regions": [
+              {
+                "region_id": "elem_00017",
+                "modality": "prose",
+                "source_excerpt": "The content of this document is informational only. Any solutions presented herein are subject to changing conditions, information, scope, and data. This document was produced using reasonable efforts based on information available as of the date of issue of this document. The scope of information in this document may exceed that which Arm is required to provide, and such additional information is merely intended to further assist the recipient and does not represent Arm's view of the scope of its obligations. You acknowledge and agree that you possess the necessary expertise in system security and functional safety and that you shall be solely responsible for compliance with all legal, regulatory, safety and security related requirements concerning your products, notwithstanding any information or support that may be provided by Arm herein. In addition, you are responsible for any applications which are used in conjunction with any Arm technology described in this document, and to minimize risks, adequate design and operating safeguards should be provided for by you.",
+                "reviewed_source_facts": [
+                  "elem_00017|informational_non_contract"
+                ]
+              }
+            ]
+          }
+        },
+        "evidence_ir": {
+          "original_sha256": "6468c0a74ddcad621ff79214a92c339aa8853db5a6998886df9238c49ab286c9",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "captures": [
+              {
+                "region_id": "elem_00017",
+                "family": "informational_disclaimer",
+                "capture_key": "informational_disclaimer",
+                "source_ids": [
+                  "statement_0013"
+                ]
+              }
+            ],
+            "canonical": [],
+            "residuals": []
+          }
+        },
+        "semantic_ir": {
+          "original_sha256": "8611c60789f3d70bc6c285e9a863087adff754695d7a049675ff7beb9aa1bde3",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [],
+            "residuals": []
+          }
+        },
+        "intent_ir": {
+          "original_sha256": "b6142cc482722dc5dec95fba0ed55cc53adfe559af1ce58b987b80b579a0389b",
+          "snapshot": {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "canonical": [],
+            "residuals": []
+          }
+        }
+      },
+      "cells": [
+        {
+          "cell_id": "198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide__01_informational_disclaimer",
+          "semantic_family": "informational_disclaimer",
+          "modality": "prose",
+          "oracle": "The region explicitly says the document is informational and disclaims normative obligation.",
+          "review_scope": "Complete review of the informational-only disclaimer in SourceIR elem_00017.",
+          "complete_gold": true,
+          "expected_disposition": "non_applicable",
+          "source_region": {
+            "collection_pointer": "/regions",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "elem_00017"
+              }
+            ],
+            "key_fields": [
+              "/region_id"
+            ],
+            "expected_keys": [
+              "elem_00017"
+            ]
+          },
+          "evidence_capture": {
+            "collection_pointer": "/captures",
+            "predicates": [
+              {
+                "operator": "equals",
+                "field": "/region_id",
+                "value": "elem_00017"
+              },
+              {
+                "operator": "equals",
+                "field": "/family",
+                "value": "informational_disclaimer"
+              }
+            ],
+            "key_fields": [
+              "/capture_key"
+            ],
+            "expected_keys": [
+              "informational_disclaimer"
+            ]
+          },
+          "canonical": {
+            "evidence_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "elem_00017"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "informational_disclaimer"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "statement_0013"
+              ]
+            },
+            "semantic_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "elem_00017"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "informational_disclaimer"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "statement_0013"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/canonical",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "elem_00017"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "informational_disclaimer"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "statement_0013"
+              ]
+            }
+          },
+          "residual": {
+            "semantic_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "elem_00017"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "informational_disclaimer"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "elem_00017|informational_non_contract"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "statement_0013"
+              ]
+            },
+            "intent_ir": {
+              "collection_pointer": "/residuals",
+              "predicates": [
+                {
+                  "operator": "equals",
+                  "field": "/region_id",
+                  "value": "elem_00017"
+                },
+                {
+                  "operator": "equals",
+                  "field": "/family",
+                  "value": "informational_disclaimer"
+                }
+              ],
+              "key_fields": [
+                "/fact_key"
+              ],
+              "expected_keys": [
+                "elem_00017|informational_non_contract"
+              ],
+              "provenance_fields": [
+                "/source_ids"
+              ],
+              "required_provenance_ids": [
+                "statement_0013"
+              ]
+            },
+            "required_actionability_fields": [
+              "/reason",
+              "/first_failing_stage",
+              "/replay"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

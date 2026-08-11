@@ -80,7 +80,8 @@ The first controller-specific instrument now ships as `ir::source_to_intent_eval
 review-locked, repository-relative dataset of bounded SourceIR/EvidenceIR/SemanticIR/IntentIR snapshots and
 emits deterministic per-cell, per-document, per-category, and global stage-loss results. Its mutation controls
 reject omission, fabrication, provenance loss, silent stage drops, missing modalities, and inactionable
-residuals. This is an evaluation engine, not yet the 12-document held-out result or the automatic controller.
+residuals. The first 12-document reviewed population is now locked without extractor tuning; its exact outcome
+snapshot is still unpublished, and the automatic controller does not yet run.
 
 ## Current production-path caveat
 
@@ -113,9 +114,10 @@ The evaluator must prove it notices bad outcomes:
 
 The durable objective/priority decision, controller design, code-path audit, and this public trajectory contract
 are the documentation slice `SPEC-TO-INTENT-ALIGNMENT.0`. The per-category source-to-IntentIR acceptance contract
-is `.1`; the guarded canonical-path capability ledger is `.2`; typed visual activation is `.3`; and the vertical
-evaluator foundation is `.4a`. The held-out population/results remain `.4b`/`.4c`, followed by the versioned
-trajectory controller. Until those leaves close, automatic steering does not run.
+is `.1`; the guarded canonical-path capability ledger is `.2`; typed visual activation is `.3`; the vertical
+evaluator foundation is `.4a`; `.4b` locks the balanced reviewed population; and `.4c` owns the result and
+blocker diagnosis. The versioned trajectory controller follows. Until those leaves close, automatic steering
+does not run.
 
 The detailed design and literature mapping live in
 [`docs/research/specforge-trajectory-control.md`](../../../research/specforge-trajectory-control.md).

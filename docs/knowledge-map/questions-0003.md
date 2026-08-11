@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > how do I promote a document's constraint surface on canonical without re-ingesting the PDF
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > how do I roll ROADMAP.md when it approaches its ceiling
+- [docling-device-cpu](../knowledge/docling-device-cpu.md)
+  > how do I run a Docling ingest or re-ingest on this machine
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > how do I see which ingested PDFs form structural families (the corpus-cluster command)
 - [task-tree-catalog](../knowledge/task-tree-catalog.md)
@@ -292,9 +298,3 @@
   > how is docs TASK_TREE kept complete without mirroring task history
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > how is docs knowledge INDEX kept complete
-- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
-  > how is fact-plane capacity derived
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > how is max_cards derived from the knowledge_cards surface
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > how is prose signal over-capture prevented (no garbage)

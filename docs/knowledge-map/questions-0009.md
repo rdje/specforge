@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > where is the tiling-gated register bit recovery implemented
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > where is the trailing function-word strip in consolidate_trailing_fragment
+- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
+  > where is the weak-phrase / NASA ARM ambiguity detector
+- [repository-local-scratch](../knowledge/repository-local-scratch.md)
+  > where may diagnostic scratch files and comparison lists be written
+- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
+  > where must SpecForge project artifacts caches and temporary workspaces live
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > where was build_gates removed
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > where was build_phases removed
+- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
+  > which 15 docs are category-3 platform/system-IP in the corpus (GIC-600/400 TRMs, CoreSight SoC-600 x3 / SDC-600 / TMC TRMs, MMU-700 TRM, Cortex-A76 TRM, CoreSight Base System Arch, CoreSight/GIC/SMMU/ARM-Debug-v6/Advanced-Comms-Channel architecture specs; the .1 census never persisted the per-doc labels — .4c.i enumerates them in scripts/measure_cat3_topology_recall.py)
 - [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
   > which ADR 0026 decision was wrong and why
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -60,9 +76,8 @@
   > which doctrines are registered (MEMORY-ARCH, KNOWLEDGE-MAP, TASK-ACCEPTANCE)
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > which document categories are mature vs partial vs thin for ISF synthesis (cat1 mature, cat2/3 partial, cat4 thin, cat5/6 non-target)
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > which documents remain unrefreshed by CORPUS-COVERAGE.2 (ranked smallest-retained-source: opencapi_25gbps_phy_mechanical_spec_v10 760 elems, opencapi_3_0_transaction_layer_28jan2020 774, opencapi_3_1_transaction_layer_28jan2020 870, lpc_memory_agent_reference_design_guide_17jul2020 891, den0034_a_2013_09_13_debug_and_trace_configuration_and_usage_models 936,
-  > nvme_base_specification_2_0a_2021_07_26 4,577)
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > which documents are in the first source-to-IntentIR vertical evaluation population
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
   > which exact current state copies are not yet independently verified in SpecForge
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
@@ -99,6 +114,8 @@
   > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > which source modalities and IntentIR surfaces are required per chip-spec category
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > which source modalities are represented in the first vertical population
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > which stale roadmap statuses were found before migration
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
@@ -280,21 +297,3 @@
   > why did seed_axi_temporal fail after constraint promotion and how was it fixed
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > why did six Introducing CoreSight interfaces disappear
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > why did the .2a direction deferral get reopened (explicit owner steer 2026-06-17 — Build it, initiator perspective)
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > why did the ACE evidence build run out of memory / get SIGKILLed (exit 137)
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > why did the AMBA AXI+ACE ihi0022_h_c manager.isf fail fsmgen strict with 'rule constraint_48 assignment actions require (port expr)'
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why did the AMBA LPI controller.isf fail fsmgen strict with isf_conflicting_rule_writes on PREQ/PACCEPT
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why did the AXI/AHB/AXI-Stream wire-gold .isf fail fsmgen --strict on a fresh re-emit (isf_conflicting_rule_writes), and what fixed them
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > why did the Knowledge Map shard simulator and generator report different canonical input hashes
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > why did the LLM-primary extractor lose SYSCOREQ from a coordinated-subject sentence
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > why did the LLM-primary extractor miss PBUSER / PNSE / HAUSER must_be_value VALID
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > why did the OpenCAPI Certified DL signal disappear

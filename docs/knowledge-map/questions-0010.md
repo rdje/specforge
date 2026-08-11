@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > why did the .2a direction deferral get reopened (explicit owner steer 2026-06-17 — Build it, initiator perspective)
+- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
+  > why did the ACE evidence build run out of memory / get SIGKILLed (exit 137)
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > why did the AMBA AXI+ACE ihi0022_h_c manager.isf fail fsmgen strict with 'rule constraint_48 assignment actions require (port expr)'
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > why did the AMBA LPI controller.isf fail fsmgen strict with isf_conflicting_rule_writes on PREQ/PACCEPT
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > why did the AXI/AHB/AXI-Stream wire-gold .isf fail fsmgen --strict on a fresh re-emit (isf_conflicting_rule_writes), and what fixed them
+- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
+  > why did the Knowledge Map shard simulator and generator report different canonical input hashes
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > why did the LLM-primary extractor lose SYSCOREQ from a coordinated-subject sentence
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > why did the LLM-primary extractor miss PBUSER / PNSE / HAUSER must_be_value VALID
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > why did the OpenCAPI Certified DL signal disappear
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
   > why did the OpenCAPI Ready DL signal disappear
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
@@ -276,24 +294,7 @@
   > why does the refreshed Generic Interrupt Controller Overview Guide emit no ISF
 - [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
   > why does the refreshed OpenCAPI 4.0 32 Gbps PHY Signaling specification emit no ISF
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > why does the refreshed test need BOTH a retention leg and a path leg (the path leg alone accounts for 50 of 51 — 31 cohort members carry a repository-relative .cache/local-references/… path and 19 a same-SSD /Volumes/SSD/… path — but usb_3_2_revision_1_0_2017_09 was refreshed at .2.33 BEFORE the volume migration, so it still records a retired /Users/… path and is
-  > recovered only by its retained normalized bundle. Dropping either leg mis-counts)
 - [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
   > why does the roadmap archive hold more than one capsule
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > why does the same token AXI interface merge in one doc but not another
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why does the same-guard dedup_conflicting_rules miss a conflict between an unconditional rule and a guarded rule
-- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
-  > why does the tracked validation snapshot differ from current generated IntentIR reports
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > why does tilelink have 39 relations in evidence_ir but 0 in intent_ir
-- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
-  > why doesn't SpecForge emit (contract eventually) anymore
-- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
-  > why doesn't SpecForge lower stability obligations to (assert (stable sig))
-- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
-  > why doesn't SpecForge use TLA+
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > why doesn't fusion use the minimum confidence

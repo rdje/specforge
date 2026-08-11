@@ -62,6 +62,8 @@
   > are the degenerate PSEL-header or WIDTH-subject temporal rules a live bug
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > are the disconnected/unconnected KG agents a recoverable relation gap or false positives
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > are the external corpus PDFs on the same filesystem volume as the repository
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
   > are the per-page full-res page images read by any downstream consumer
 - [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
@@ -88,6 +90,8 @@
   > can WIRE-BASED-100 reach 100% on SWD the same way as the parallel buses
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > can a VLM-invented waveform lane become canonical intent
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > can a correct refreshed count hide a missing corpus document
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > can a dense-prose phantom actor reach emitted ISF
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -161,8 +165,6 @@
   > did the OpenCAPI Ready terms table declare an interface
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > did the USB4 signoff check change canonical SWD
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > did the corpus census correction move any generated artifact (no — CORPUS-COVERAGE.4.0 is read-only over generated/; check_chain_currency.sh exits 0 at evidence 23/23, semantic 78/78, intent 78/78, isf-adapter 78/78 with retention exactly the 23 declared bundles, before and after)
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > did the page sidecar repair change USB4 semantic artifacts
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
@@ -295,5 +297,3 @@
   > does a metadata rewrite failure preserve the previous normalized bundle
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > does a replaced constraint surface get polarity refinement (apply_persisted_polarity_to_constraints)
-- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
-  > does adapter output reconciliation delete unrelated files or directories

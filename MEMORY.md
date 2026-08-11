@@ -17,15 +17,14 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.4a`; `.0` through `.3` are committed. Tracking-only:
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.4c`; `.0` through `.4b` are complete. Tracking-only:
   `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: `.4a` is complete and fully verified: its strict portable schema plus generic Rust engine score
-  pinned four-stage snapshots with exact multiset metrics, first-stage diagnosis, provenance/residual/modality
-  accounting, and six controlled-fault classes. No extractor or canonical corpus artifact changed, and no
-  category-support claim was made.
-- Next action: commit `.4a` through `COMMIT.md`, then pivot cleanly to `.4b` and lock two review-complete
-  documents per category against the frozen evaluator without tuning extraction.
-- In-flight uncommitted: the completed `.4a` code/schema, public/retrieval/live-doc alignment, and derived
-  projections passed the full CI gate and await only the commit workflow. No background job runs.
-- Blockers: none. Live-provider output remains unavailable and must report `unmeasurable`, never passing. The
-  user-owned `.claude/settings.json` is untouched.
+- Current state: `.4b` locks 12 reviewed documents / two per category and 14 complete bounded cells without
+  extractor tuning. External dataset identities are portable; the authorized source library resolves at
+  `/Volumes/SSD/Documents/livework/chipdoc` on the repository's SSD. `CORPUS-FRONTIER` now separates source
+  locality from exact refreshed/remaining lifecycle state.
+- Next action: run the `.4a` evaluator over the frozen `.4b` population, commit the exact result snapshot and
+  stage-loss diagnosis, and name the evidence-ranked upstream versus downstream blocker without changing gold,
+  selection, extraction behavior, or source artifacts.
+- In-flight uncommitted: none after the `.4b` commit. No background job runs.
+- Blockers: none. The user-owned `.claude/settings.json` is untouched.

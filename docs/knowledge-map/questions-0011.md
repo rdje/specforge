@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > why does the same-guard dedup_conflicting_rules miss a conflict between an unconditional rule and a guarded rule
+- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
+  > why does the tracked validation snapshot differ from current generated IntentIR reports
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > why does tilelink have 39 relations in evidence_ir but 0 in intent_ir
+- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
+  > why doesn't SpecForge emit (contract eventually) anymore
+- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
+  > why doesn't SpecForge lower stability obligations to (assert (stable sig))
+- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
+  > why doesn't SpecForge use TLA+
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > why doesn't fusion use the minimum confidence
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
   > why doesn't the NLI-oracle conformal calibration produce a threshold
 - [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
@@ -150,7 +164,7 @@
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
   > why is the fact-card catalog about to run out of capacity
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > why is the in-repo corpus/ tree outside the .2 refresh cohort (its 21 documents are the tracked gold/eval corpus copied into the repository for the reproducible WIRE-BASED-100 path; they were never on the host-local library reached through .cache/local-references/chipdoc, so they have no retired-volume provenance to refresh)
+  > why is the in-repo corpus tree outside the host-library refresh cohort
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
   > why is the interface consolidation safe for WIRE-BASED-100 (gold docs have no interface actor)
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
@@ -173,6 +187,8 @@
   > why must a collection aggregate be at least files times per-file
 - [repository-local-scratch](../knowledge/repository-local-scratch.md)
   > why must read-only census commands avoid /tmp and /private/tmp
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > why must source-library paths not determine whether a corpus document was refreshed
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > why must terminal task tree containment use two commits
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
@@ -213,8 +229,7 @@
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > why was nearest-heading anchoring rejected for capless table adoption
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > why was nvme_base_specification_2_0a_2021_07_26 missing from the corpus refresh frontier (it was never excluded by a rule — the remaining count was hand-decremented by one per refresh from .2.29 to .2.51 and never re-derived, so a one-document denominator adjustment made at .2.29 for the project's own `ingest README.md` artifact outlived that artifact and silently shortened
-  > the queue. NVMe is the largest of the six at 4,577 elements so it sat at the tail and no candidate re-measurement could surface it)
+  > why was nvme_base_specification_2_0a_2021_07_26 missing from the corpus refresh frontier (the old count was decremented rather than re-derived, so an expired denominator adjustment silently removed it for twenty-two slices)
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > why was the .4d.i pre-investigation 'deterministically tractable' verdict overturned (gold check: dmstatus flattened table off-by-8 + dropped 7-field band; dmcontrol image-only no table; tdata1 symbolic XLEN-relative positions)
 - [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)

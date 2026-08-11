@@ -5,6 +5,8 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md) | 2026-08-08 | `current` | Git-indexed corpus PDFs are the source-registry membership authority |
+| [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md) | 2026-08-11 | `current` | The first source-to-IntentIR vertical population locks twelve reviewed documents without extractor tuning |
 | [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md) | 2026-08-11 | `current` | Vertical evaluation is a strict data-defined oracle over pinned four-stage snapshots |
 | [spec-mining-framing](../knowledge/spec-mining-framing.md) | 2026-06-04 | `current` | SpecForge is forward specification mining (spec -> intent, not implementation -> spec) |
 | [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md) | 2026-08-11 | `current` | The source-to-IntentIR completeness contract is category-aware, per-cell exact, and independent of ISF emission |

@@ -17,31 +17,27 @@
 # artifacts and compared with an exact declaration, so a disagreement is a failure rather than a
 # discrepancy nobody is looking for.
 #
-# The census, all three quantities derived from `generated/source_ir/<key>/source_ir.json`:
+# The census derives the cohort from `generated/source_ir/<key>/source_ir.json` and checks it against
+# an exact, root-neutral lifecycle partition:
 #   cohort     documents whose `source.requested_path` is NOT under a declared excluded prefix.
 #              `corpus/` is the tracked in-repo gold/eval corpus — copied into the repository, never
-#              on the host-local library, so it has no retired-volume provenance to refresh.
-#   refreshed  cohort minus remaining.
-#   remaining  DECLARED in the contract, then checked four ways below.
+#              part of the host-library refresh program.
+#   refreshed  DECLARED completed document keys.
+#   remaining  DECLARED unfinished document keys.
 #
 # The four checks, each catching a distinct failure:
-#   1. IDENTITY      cohort == refreshed + remaining, and both match the declared `expected`.
-#                    Catches a count that drifted from the artifacts in either direction.
-#   2. MEMBERSHIP    every declared-remaining key exists, is in the cohort, and has NO retained
-#                    normalized bundle. A refreshed document keeps its bundle, so a declared-remaining
-#                    key that has one is a stale declaration.
-#   3. OMISSION      no cohort member OUTSIDE the declared-remaining set still carries a retired-root
-#                    `requested_path` without a retained bundle. This is the check that would have
-#                    caught the original defect: a document dropped from the list is invisible to any
-#                    check over that list, and only a scan of the whole cohort finds it.
+#   1. IDENTITY      cohort == refreshed UNION remaining, the sets are disjoint, and all three counts
+#                    match `expected`. Catches a count or partition that drifted in either direction.
+#   2. MEMBERSHIP    every declared key exists in the cohort; a remaining key has NO retained bundle;
+#                    every retained cohort key is declared refreshed.
+#   3. OMISSION      every cohort member occurs in exactly one lifecycle set. This catches the original
+#                    dropped-document defect without treating a workstation path as refresh evidence.
 #   4. PROSE         the root task file states exactly the declared counts. The frontier a human or
 #                    agent reads and the census the artifacts support cannot say different things.
 #
-# Check 3 needs a retired-root prefix, which is workstation-shaped and will change again if the
-# library moves. That is precisely why it lives in the DECLARATION with an owning leaf rather than in
-# this executable: the rule is data an owner revises, not logic. No document, vendor, or protocol
-# name participates in any check (ADR 0006) — NVMe is admitted by exactly the rule that admits the
-# other five.
+# A source path deliberately does not participate in lifecycle classification. The library may move and
+# stale references may be repaired without falsely completing a current-binary refresh. No document,
+# vendor, protocol, workstation root, or volume name participates in executable logic (ADR 0006).
 #
 # Skips LOUDLY when the corpus root is absent: a fresh clone and a hosted CI runner have no
 # `generated/`, and the doctrine does not govern them. Silence would read as a pass.
@@ -212,7 +208,7 @@ sub validate_contract {
         problem($errors, "contract cohort_rule.$field is missing")
             if !defined $rule->{$field} || ref($rule->{$field});
     }
-    for my $field (qw(excluded_source_prefixes retired_source_prefixes)) {
+    for my $field (qw(excluded_source_prefixes)) {
         problem($errors, "contract cohort_rule.$field must be a non-empty array")
             if ref($rule->{$field}) ne 'ARRAY' || !@{$rule->{$field}};
     }
@@ -222,8 +218,10 @@ sub validate_contract {
         problem($errors, "contract expected.$field must be a non-negative integer")
             if !defined $expected->{$field} || $expected->{$field} !~ /\A\d+\z/;
     }
-    problem($errors, 'contract remaining must be an array')
-        if ref($contract->{remaining}) ne 'ARRAY';
+    for my $field (qw(refreshed remaining)) {
+        problem($errors, "contract $field must be an array")
+            if ref($contract->{$field}) ne 'ARRAY';
+    }
     my $claim = $contract->{root_claim};
     if (ref($claim) ne 'HASH') { problem($errors, 'contract root_claim must be an object'); return 0 }
     for my $field (qw(path completed_sentence remaining_phrase)) {
@@ -258,7 +256,7 @@ sub run_census {
     my @keys = sort grep { $_ !~ /\A\.\.?\z/ && -d "$corpus_root/$_" } readdir($dh);
     closedir $dh;
 
-    my (@cohort, %retired_path);
+    my @cohort;
     for my $key (@keys) {
         my $artifact = "$corpus_root/$key/$rule->{artifact_name}";
         next if !-f $artifact;
@@ -276,27 +274,39 @@ sub run_census {
         }
         next if has_prefix($requested, $rule->{excluded_source_prefixes});
         push @cohort, $key;
-        $retired_path{$key} = 1 if has_prefix($requested, $rule->{retired_source_prefixes});
     }
     return undef if @$errors;
 
     my %cohort = map { $_ => 1 } @cohort;
-    my @declared = @{$contract->{remaining}};
-    my %declared = map { $_ => 1 } @declared;
+    my @refreshed = @{$contract->{refreshed}};
+    my @remaining = @{$contract->{remaining}};
+    my %refreshed = map { $_ => 1 } @refreshed;
+    my %remaining = map { $_ => 1 } @remaining;
+    problem($errors, 'contract refreshed contains a duplicate key')
+        if scalar(keys %refreshed) != scalar(@refreshed);
     problem($errors, 'contract remaining contains a duplicate key')
-        if scalar(keys %declared) != scalar(@declared);
+        if scalar(keys %remaining) != scalar(@remaining);
 
     # 1. IDENTITY
     my $cohort_n    = scalar(@cohort);
-    my $remaining_n = scalar(keys %declared);
-    my $refreshed_n = $cohort_n - $remaining_n;
+    my $refreshed_n = scalar(keys %refreshed);
+    my $remaining_n = scalar(keys %remaining);
     problem($errors, "derived cohort $cohort_n disagrees with declared expected.cohort $contract->{expected}{cohort}")
         if $cohort_n != $contract->{expected}{cohort};
     problem($errors, "derived refreshed $refreshed_n disagrees with declared expected.refreshed $contract->{expected}{refreshed}")
         if $refreshed_n != $contract->{expected}{refreshed};
+    problem($errors,
+        "declared lifecycle partition has $refreshed_n refreshed + $remaining_n remaining, not cohort $cohort_n")
+        if $refreshed_n + $remaining_n != $cohort_n;
 
     # 2. MEMBERSHIP
-    for my $key (sort keys %declared) {
+    for my $key (sort keys %refreshed) {
+        problem($errors, "declared-refreshed '$key' is not a cohort document")
+            if !$cohort{$key};
+        problem($errors, "lifecycle key '$key' is both refreshed and remaining")
+            if $remaining{$key};
+    }
+    for my $key (sort keys %remaining) {
         if (!$cohort{$key}) {
             problem($errors, "declared-remaining '$key' is not a cohort document");
             next;
@@ -304,15 +314,16 @@ sub run_census {
         problem($errors, "declared-remaining '$key' retains a normalized bundle, so it is refreshed")
             if $retained{$key};
     }
+    for my $key (sort keys %retained) {
+        next if !$cohort{$key};
+        problem($errors, "retained cohort document '$key' is not declared refreshed")
+            if !$refreshed{$key};
+    }
 
     # 3. OMISSION — the check the original defect needed
     for my $key (@cohort) {
-        next if $declared{$key};
-        next if $retained{$key};
-        next if !$retired_path{$key};
-        problem($errors,
-            "cohort document '$key' is unrefreshed (retired source path, no retained bundle) "
-                . 'but is absent from the declared remaining set');
+        next if $refreshed{$key} || $remaining{$key};
+        problem($errors, "cohort document '$key' is absent from the declared lifecycle partition");
     }
 
     # 4. PROSE
@@ -335,7 +346,8 @@ sub run_census {
         cohort    => $cohort_n,
         refreshed => $refreshed_n,
         remaining => $remaining_n,
-        remaining_keys => [sort keys %declared],
+        refreshed_keys => [sort keys %refreshed],
+        remaining_keys => [sort keys %remaining],
     };
 }
 
@@ -357,18 +369,19 @@ sub self_test {
         close $fh;
     };
 
-    # A fixture corpus: two in-repo documents outside the cohort, one refreshed by path, one
-    # refreshed by retention alone, and two genuinely remaining.
+    # A fixture corpus: two in-repo documents outside the cohort, two explicitly refreshed
+    # documents (one with retention), and two genuinely remaining. Every external path already
+    # uses the same synthetic SSD root, proving that location does not classify lifecycle state.
     my $build = sub {
         my (%override) = @_;
         remove_tree("$dir/tree");
         my %docs = (
             gold_a      => 'corpus/vendor/gold_a.pdf',
             gold_b      => 'corpus/vendor/gold_b.pdf',
-            moved       => '.cache/local-references/chipdoc/vendor/moved.pdf',
-            kept_bundle => '/Users/someone/library/kept_bundle.pdf',
-            left_one    => '/Users/someone/library/left_one.pdf',
-            left_two    => '/Users/someone/library/left_two.pdf',
+            moved       => '/Volumes/SSD/library/moved.pdf',
+            kept_bundle => '/Volumes/SSD/library/kept_bundle.pdf',
+            left_one    => '/Volumes/SSD/library/left_one.pdf',
+            left_two    => '/Volumes/SSD/library/left_two.pdf',
             %{ $override{docs} // {} },
         );
         for my $key (sort keys %docs) {
@@ -396,10 +409,10 @@ sub self_test {
                 artifact_name            => 'source_ir.json',
                 source_field             => 'requested_path',
                 excluded_source_prefixes => ['corpus/'],
-                retired_source_prefixes  => ['/Users/'],
                 retention_contract       => 'doctrine/chain_currency/retained_bundles.json',
             },
             expected   => $override{expected}  // { cohort => 4, refreshed => 2 },
+            refreshed  => $override{refreshed} // ['kept_bundle', 'moved'],
             remaining  => $override{remaining} // ['left_one', 'left_two'],
             root_claim => {
                 path               => 'docs/tasks/FIXTURE.md',
@@ -438,13 +451,13 @@ sub self_test {
     $case->('clean fixture passes', 1, undef);
     $case->(
         'a dropped remaining document fails closed', 0,
-        qr/absent from the declared remaining set/,
-        remaining => ['left_one'], expected => { cohort => 4, refreshed => 3 },
+        qr/absent from the declared lifecycle partition/,
+        remaining => ['left_one'],
     );
     $case->(
         'an inflated denominator fails closed', 0,
         qr/derived cohort 4 disagrees/,
-        expected => { cohort => 5, refreshed => 3 },
+        expected => { cohort => 5, refreshed => 2 },
     );
     $case->(
         'a refreshed count that does not fit the identity fails closed', 0,
@@ -462,6 +475,16 @@ sub self_test {
         remaining => ['left_one', 'gold_a'],
     );
     $case->(
+        'a declared-refreshed key outside the cohort fails closed', 0,
+        qr/declared-refreshed 'gold_a' is not a cohort document/,
+        refreshed => ['kept_bundle', 'gold_a'],
+    );
+    $case->(
+        'overlapping lifecycle sets fail closed', 0,
+        qr/is both refreshed and remaining/,
+        refreshed => ['kept_bundle', 'moved', 'left_one'],
+    );
+    $case->(
         'a root frontier stating another count fails closed', 0,
         qr/does not state/,
         root_text => "# fixture\n\n3 of 4 real chip-spec refreshes are complete.\n\nWith two real documents remaining.\n",
@@ -470,6 +493,11 @@ sub self_test {
         'a duplicate remaining key fails closed', 0,
         qr/duplicate key/,
         remaining => ['left_one', 'left_one', 'left_two'],
+    );
+    $case->(
+        'a duplicate refreshed key fails closed', 0,
+        qr/duplicate key/,
+        refreshed => ['kept_bundle', 'moved', 'moved'],
     );
 
     # The absent-corpus skip, proven end to end rather than assumed.
@@ -484,8 +512,8 @@ sub self_test {
     }
 
     # The brace scanner must not be fooled by a brace inside a path string.
-    my $tricky = slice_json_object('{"source": {"requested_path": "/Users/a{b}/x.pdf"}, "next": 1}', '"source"');
-    if (defined($tricky) && $tricky eq '{"requested_path": "/Users/a{b}/x.pdf"}') { $passed++ }
+    my $tricky = slice_json_object('{"source": {"requested_path": "/Volumes/a{b}/x.pdf"}, "next": 1}', '"source"');
+    if (defined($tricky) && $tricky eq '{"requested_path": "/Volumes/a{b}/x.pdf"}') { $passed++ }
     else {
         $failed++;
         print STDERR "corpus-frontier-census self-test FAILED: brace scan mishandled a braced string\n";

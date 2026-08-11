@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.4b (`2026-08-11`) — selection, locality, and lifecycle are separate authorities
+
+The first vertical population is retrospective. Its honest claim is that selection was frozen before gold
+construction and no extractor change followed the selection boundary—not that twelve long-lived corpus
+documents were historically unseen. Keeping that sentence in the dataset prevents “held out” from silently
+acquiring a stronger meaning than the evidence supports.
+
+The fixture builder authenticates complete source and four-stage bytes, then projects only the bounded records
+that reviewers inspected. Document truth remains data beside the fixture, never a runtime branch. External PDFs
+are necessary read-only inputs, so the builder may resolve their current SourceIR path to hash the bytes, but the
+tracked dataset stores only portable identity. This separates reproducibility from workstation topology.
+
+Repairing the obsolete livework paths exposed a deeper authority bug: `CORPUS-FRONTIER` used departure from a
+retired root as a refresh witness. Location and lifecycle happened to move together during earlier refreshes,
+but they are not the same fact. The exact refreshed/remaining partition now covers the independently derived
+cohort, while retention supplies a second consistency witness. A library move changes neither set.
+
+`.4b` tests population adequacy and deterministic evaluability, not the score. Avoiding assertions on specific
+`supported`/`incomplete` outcomes keeps selection and review closure independent of `.4c`'s diagnosis.
+
 ## SPEC-TO-INTENT-ALIGNMENT.4a (`2026-08-11`) — measurement authority must be frozen before the score
 
 The evaluator is deliberately independent of production IR Rust types. A held-out review needs a bounded,

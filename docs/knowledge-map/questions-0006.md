@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > what are the current OpenCAPI Certified Definition artifact hashes
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > what are the current OpenCAPI Certified artifact hashes
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > what are the current OpenCAPI Ready Definition artifact hashes
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > what are the current OpenCAPI Ready artifact hashes
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > what are the current USB4 Connection Manager artifact hashes
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > what are the current USB4 Inter-Domain artifact hashes
 - [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
   > what are the current corpus KB live-document size metrics
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -81,9 +93,6 @@
   > what does AdapterArtifact write_to_disk reconcile
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > what does CORPUS-COVERAGE.1 add
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > what does CORPUS-COVERAGE.4 own (frontier census integrity, complete: .4.0 derived the census, corrected every live surface, and restored the lost document; .4.1 registered CORPUS-FRONTIER as the eighth doctrine so the identity is enforced rather than carried. .3 closed the sibling frontier-vs-lifecycle defect but its currentness check covers retention only, not the
-  > remaining-work count)
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > what does DEFER mean in the doctrine enforcement report
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
@@ -160,6 +169,8 @@
   > what does the active task migration roll back after a validation failure
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > what does the bounded current ROADMAP contain
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > what does the corpus frontier refreshed list mean
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > what does the declared_signal_names.is_empty() branch in semantic.rs do
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
@@ -185,8 +196,7 @@
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > what gates protect the leading-identifier mnemonic form from bleed
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > what gates the corpus refresh frontier / what is the CORPUS-FRONTIER doctrine (scripts/check_corpus_frontier.sh -> scripts/check_corpus_frontier_census.pl against doctrine/corpus_frontier/census.json, gate-tier, eighth registered doctrine. Four checks: IDENTITY derived cohort/refreshed equal the declared expected; MEMBERSHIP every declared-remaining key exists, is in the
-  > cohort, and retains no bundle; OMISSION no cohort member outside the declared set still has a retired-root path and no bundle; PROSE the root task file states the same counts. Self-test 10/10, 52 ms for the whole corpus, skips loudly when generated/ is absent)
+  > what gates the corpus refresh frontier / what is the CORPUS-FRONTIER doctrine
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > what gives timing observation samples tick authority
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
@@ -287,13 +297,3 @@
   > what is Lever E / KG-ISF-COMPLETENESS.1c agent-identity precision for the dense-prose doc class
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
   > what is MessageFieldConstraintRecord / ground_constraint_typed / GroundedConstraint
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > what is MessageFieldRecord / message_field_surface / message_fields manifest entry
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > what is NON_ACTOR_TRAILING_DISCOURSE_MARKERS and why is it a subset of the leading function-word list
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > what is NON_ACTOR_TRAILING_FUNCTION_WORDS and why does it exclude conjunctions
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > what is PDF-VARIANT-DIGESTION.12a
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is PDF-VARIANT-DIGESTION.12b

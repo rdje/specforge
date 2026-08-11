@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > what is MessageFieldRecord / message_field_surface / message_fields manifest entry
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > what is NON_ACTOR_TRAILING_DISCOURSE_MARKERS and why is it a subset of the leading function-word list
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > what is NON_ACTOR_TRAILING_FUNCTION_WORDS and why does it exclude conjunctions
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > what is PDF-VARIANT-DIGESTION.12a
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > what is PDF-VARIANT-DIGESTION.12b
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > what is PDF-VARIANT-DIGESTION.3 prose entity capture
 - [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
@@ -287,13 +297,3 @@
   > what is the validate transaction inventory surface (intent_transaction_inventory metrics + finding)
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what is the validate transaction-phase inventory (semantic_transaction_phase_inventory metric + finding)
-- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
-  > what is the vendor/layout fingerprint, the ExtractionProfile, and the offline corpus pattern miner
-- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
-  > what keeps VALIDATION_SNAPSHOT current without mutating generated artifacts
-- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
-  > what kind of extractor actually needs the cross-document cluster mechanism
-- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
-  > what limits govern the corpus task root index parts and capsule
-- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
-  > what made 14 corpus documents stop emitting an .isf

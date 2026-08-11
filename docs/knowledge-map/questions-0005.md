@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > is bar #6 (ISF round-trip, no silent drop) a large faithful-lowering gap
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > is collect_known_signal_names UTF-8 safe
+- [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
+  > is converge the complete production capability path
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > is dropping a zero-evidence actor safe across AXI vs AXI-Stream
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > is identifier truncation a separate extractor defect or the same empty-catalog gap
+- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
+  > is intent-bearing content slipping through because nothing reads the full page
+- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
+  > is it a strict error to drive a signal declared (input ...) in an .isf rule
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
   > is it safe to extend the .1b.i trailing-fragment strip to trailing prepositions and auxiliaries (host has -> host, advantage of -> advantage)
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
@@ -10,9 +24,6 @@
   > is mdbook test part of the canonical SpecForge CI gate
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
   > is qwen2.5:14b-instruct good enough for NLI
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > is re-measuring the candidate list enough to keep the corpus frontier honest (NO — .2.51 correctly re-measured all six of its listed candidates from their own SourceIR profiles and still could not see the omission, because re-deriving the ROWS cannot validate the CARDINALITY. A document already absent from the list is invisible to any check over that list; only the
-  > independent identity cohort == refreshed + remaining exposes it)
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > is relation-completeness the right bar dimension for register / command / coherency protocols
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
@@ -156,7 +167,7 @@
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
   > may fact cards be deleted or merged to free catalog capacity
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > must a corpus refresh update the frontier declaration (yes — doctrine/corpus_frontier/census.json must move in the same transaction as the refresh, or CORPUS-FRONTIER fails closed on IDENTITY and MEMBERSHIP. That coupling is the point: the declaration cannot lag the artifacts)
+  > must a corpus refresh update the frontier declaration
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > must a post-build signal_constraints replace re-apply build-path invariants
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
@@ -219,6 +230,8 @@
   > was any USB4 pipeline artifact changed by the source locality probe
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
   > was the (contract ... eventually ...) ISF clause removed
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > was the first vertical population historically unseen
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > was the fresh SWD 29 of 29 artifact promoted
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
@@ -285,15 +298,3 @@
   > what are the current Introducing CoreSight artifact hashes
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > what are the current OpenCAPI AFU address note artifact hashes
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > what are the current OpenCAPI Certified Definition artifact hashes
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > what are the current OpenCAPI Certified artifact hashes
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > what are the current OpenCAPI Ready Definition artifact hashes
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > what are the current OpenCAPI Ready artifact hashes
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > what are the current USB4 Connection Manager artifact hashes
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > what are the current USB4 Inter-Domain artifact hashes

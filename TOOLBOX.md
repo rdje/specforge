@@ -309,13 +309,13 @@ so the live Ollama/LM-Studio VLM/NLP is never a CI dependency.
 - **HOW:** `bash scripts/check_chain_currency.sh` (`--self-test` for its sixteen fail-closed cases)
 
 ### 7.2b `scripts/check_corpus_frontier.sh` — the CORPUS-FRONTIER derive-and-diff gate
-- **WHAT:** derives how much of the corpus is still unrefreshed from each document's own persisted
-  `source.requested_path` plus bundle retention, then diffs it against `doctrine/corpus_frontier/census.json`
-  four ways: the cohort/refreshed identity, the declared remaining set's membership, an **omission** scan of
-  the whole cohort for any unrefreshed document the declaration forgot, and the counts the root task file
-  states in prose. A refresh must move the declaration in the same transaction or this fails closed.
+- **WHAT:** derives the corpus cohort from each document's persisted SourceIR and diffs it against the explicit,
+  disjoint `refreshed`/`remaining` partition in `doctrine/corpus_frontier/census.json`. It checks exact identity,
+  lifecycle membership, retained-bundle agreement, whole-cohort omission, and the counts stated by the root task.
+  Source locations never classify lifecycle state, so a library move cannot impersonate a current-binary refresh.
+  A refresh must move the declaration in the same transaction or this fails closed.
 - **WHEN:** to answer "how many documents are left, really" — never read a carried number. Also the fastest
-  way to confirm a refresh's bookkeeping landed. Skips loudly with no corpus; 52 ms for all 78 documents.
+  way to confirm a refresh's bookkeeping landed. Skips loudly with no corpus.
 - **HOW:** `bash scripts/check_corpus_frontier.sh`
   (`perl scripts/check_corpus_frontier_census.pl --report` for the JSON census;
   `--self-test` for its ten fail-closed cases)

@@ -62,7 +62,7 @@ other re-derivable trace.
 | `README-POLICY` | structural | the project landing page stays within its locally derived line and byte ceilings, and every reader or author-overflow route closes at a registered, controlled terminal |
 | `LIVE-DOC-SIZE` | structural | every tracked Markdown path is classified exactly once, and every declared current-state field satisfies its explicit class, marker, authority, accessor/capture, and executed-verifier contract alongside the lifecycle/pressure/route rules |
 | `PROJECT-DATA-LOCALITY` | structural | Cargo, shell, production temporary-workspace, subprocess, and Python runtime seams keep owned data below the current repository and reject stale or escaping roots |
-| `CORPUS-FRONTIER` | derive-and-diff | how much of the corpus is still unrefreshed is derived from each document's own persisted provenance and bundle retention, then diffed against an exact declaration and against the counts the task file states in prose — so remaining work can never be a number each slice decrements |
+| `CORPUS-FRONTIER` | derive-and-diff | the SourceIR-derived corpus cohort is partitioned exactly into explicit refreshed and remaining sets, retained bundles agree, and the task file states the same counts — source-library relocation cannot impersonate a refresh |
 | `CHAIN-CURRENCY` | oracle | every artifact already on disk under `generated/` is exactly what today's binary reproduces from the artifact one stage upstream — so a shared extractor change cannot leave older documents quietly one code delta behind — and the normalized bundles that make a document checkable are exactly the declared retained set |
 
 `CORPUS-FRONTIER` exists because of a defect worth stating plainly. The corpus refresh program tracked its own
@@ -70,9 +70,9 @@ remaining work as prose that each slice decremented by one, across twenty-two co
 decrement cannot detect an error at its base, so a document stopped being counted and nobody could see it. The
 lesson generalises past this project: re-deriving the rows of a list never validates that the list is complete,
 because anything already missing from it is invisible to every check written over it. The doctrine therefore
-derives the totals independently and scans the *whole* population for anything the declaration omits. Its
-workstation-shaped input — which source-path root counts as retired — lives in the declaration under a named
-owner, not in the executable, because that is data an owner revises rather than logic.
+derives the whole cohort independently and requires every member to occur exactly once in a declared lifecycle
+partition. Location is deliberately orthogonal: repairing or relocating a source path does not complete a
+current-binary refresh. Retained bundles remain an independent witness and must agree with the refreshed set.
 
 The README guard is unconditional: it evaluates the resulting tree even when a change does not touch
 `README.md`. Its data-only route registry distinguishes links readers follow from destinations authors

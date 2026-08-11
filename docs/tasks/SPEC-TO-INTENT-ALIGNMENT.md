@@ -92,11 +92,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.4a — build the vertical evaluation engine`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.4b`
-  Status: `pending`
+  Status: `done`
   Goal: `lock two representative reviewed vertical documents per category without extractor tuning`
-  Acceptance: `the 12-document population pins portable source and four-stage identities, records source presence and complete bounded-scope gold, and distinguishes repository inputs from necessary read-only external inputs without persisting host paths`
-  Verification: `pending`
-  Commit: `pending`
+  Acceptance: `the 12-document population pins portable source and four-stage identities, records source presence and complete bounded-scope gold, distinguishes repository inputs from necessary read-only external inputs without persisting host paths, and removes the obsolete boot-volume livework prefix from generated repository records in favor of the verified SSD location`
+  Verification: `12 documents / 14 complete cells / two documents in every category; four repository and eight portable external sources; deterministic builder and 13 evaluator tests; corpus-frontier self-test 13/13; zero obsolete livework references; 104 authorized SSD fields resolve; formatting, warning-deny Clippy, mdBook, projections, all eight doctrines, and full CI with 1,833 passed / five ignored / zero failed`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.4b — lock the reviewed vertical population`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.4c`
   Status: `pending`
@@ -121,7 +121,7 @@ expressiveness as the bottleneck.
 | 3 | `SPEC-TO-INTENT-ALIGNMENT.2` | `done` | every production command has guarded integrated/scheduled/omitted accounting |
 | 4 | `SPEC-TO-INTENT-ALIGNMENT.3` | `done` | typed timing observations now cross a grounded, verified retained-PDF vertical path |
 | 5 | `SPEC-TO-INTENT-ALIGNMENT.4a` | `done` | strict portable evaluator and controlled-fault adequacy are verified; no category claim made |
-| 6 | `SPEC-TO-INTENT-ALIGNMENT.4b` | `pending` | lock two portable reviewed verticals per category without tuning extraction |
+| 6 | `SPEC-TO-INTENT-ALIGNMENT.4b` | `done` | 12 portable reviewed verticals and 14 complete cells are frozen without tuning extraction |
 | 7 | `SPEC-TO-INTENT-ALIGNMENT.4c` | `pending` | publish exact stage losses and the evidence-ranked blocker |
 | 8 | `SPEC-TO-INTENT-ALIGNMENT.5` | `pending` | convert measured outcomes into automatic, reviewable steering |
 
@@ -169,8 +169,8 @@ expressiveness as the bottleneck.
 
 ## Blockers
 
-- None for `.4b`: repository and necessary external read-only source identities are available. Live-provider
-  absence remains measured input availability, not permission to substitute synthetic output or claim support.
+- None for `.4c`: the reviewed population, strict evaluator, and all pinned identities are available. `.4c`
+  must publish the persisted result without changing selection, gold, extraction, or the population fixture.
 
 ## Verification Log
 
@@ -202,6 +202,11 @@ expressiveness as the bottleneck.
 | `2026-08-11` | `.4a` controlled-fault adequacy | `cargo test -p specforge --lib ir::source_to_intent_eval`; schema parse plus semantic assertions; `cargo fmt --all -- --check`; `cargo clippy -p specforge --lib -- -D warnings` | PASS: 12/12 focused tests; omission, fabrication, provenance loss, silent stage drop, missing modality, and inactionable residual each move the intended hard result; stable serialization, portability rejection, and root-derived loading pass |
 | `2026-08-11` | `.4a` public/retrieval/live alignment | mdBook test/build; book-current-truth; Knowledge Map derive/check at 213 facts / 1,586 questions; fact-card catalog at 202 cards; live-size and rolling-ledger protocols | PASS: schema, API, public semantics, roadmap, current status, architecture, retrieval, and bounded-size authorities agree that this is evaluator adequacy, not category support |
 | `2026-08-11` | `.4a` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines, formatting, warning-deny Clippy, 1,832 Rust tests passed / five ignored / zero failed, Rust docs, mdBook test/build, and final project-data-locality residue check |
+| `2026-08-11` | `.4b` selection and review lock | source and four-stage SHA-256 pinning at the `.4a` selection boundary; direct review of 12 bounded regions including two platform figures | PASS: exactly two documents in each of six categories, 14 complete gold cells, 4 repository / 8 necessary external sources, and prose/table/figure coverage at 3/7/2 documents; no extractor was tuned and the population is explicitly retrospective rather than historically unseen |
+| `2026-08-11` | `.4b` SSD locality repair | whole-workspace retired-prefix census; exact target existence/hash checks; generated path repair; `check_persisted_artifact_paths.pl`; project-data locality | PASS: 44 stale fields in 38 generated records moved to the verified same-volume SSD library; all 104 authorized external absolute fields resolve, zero repository-owned absolute paths and zero obsolete livework references remain; three selected SourceIR metadata hashes changed and every downstream stage hash stayed fixed |
+| `2026-08-11` | `.4b` frontier authority correction | `perl scripts/check_corpus_frontier_census.pl --self-test`; real corpus check/report | PASS: 13/13 lifecycle-partition mutations and real 57 cohort = 52 refreshed + five remaining; refreshed/remaining state no longer depends on a workstation path |
+| `2026-08-11` | `.4b` focused population/public checks | builder `--check`; `cargo test -p specforge --lib ir::source_to_intent_eval`; warning-deny Clippy; mdBook test/build; Knowledge Map at 215 facts / 1,597 questions; fact catalog at 204 cards; book/currentness/live-size/rolling-ledger checks | PASS: builder byte-stable; 13/13 evaluator tests; balanced/complete/portable/measurable population; no result snapshot or category conclusion published before `.4c` |
+| `2026-08-11` | `.4b` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines, formatting, warning-deny Clippy, 1,833 Rust tests passed / five ignored / zero failed, Rust docs, mdBook test/build, and final project-data-locality residue check |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
 
@@ -266,6 +271,31 @@ expressiveness as the bottleneck.
 - [x] **LOCKSTEP** — task ownership, evaluator schema/API, public evaluator contract, architecture analysis,
   Knowledge Map, and resume pointer agree that `.4a` builds the oracle but makes no category-support claim.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.4b`
+
+- [x] **REPRODUCE / MEASURE** — select exactly two documents in each of the six reviewed categories at the
+  committed pre-selection boundary; pin every source and original four-stage artifact identity before reading
+  the score or changing extraction behavior; census all obsolete
+  boot-volume livework references before replacing them with the verified SSD path.
+- [x] **ROOT CAUSE (WHY + WHERE)** — review bounded source regions directly and record exhaustive positive and
+  negative gold for the stated scope, including source presence, required modality, canonical/residual
+  disposition, provenance ids, and any first boundary where the persisted representation changes shape. For
+  locality, prove that a source location is not evidence of a completed current-binary corpus refresh and that
+  repairing retired paths would otherwise weaken the frontier's omission check.
+- [x] **ADDRESSED (verified)** — a tracked version-1 dataset loads through the `.4a` root-derived strict loader,
+  contains 12 unique documents / two per category, and evaluates deterministically without an unknown field,
+  unsafe path, duplicate key, incomplete gold cell, or missing category/modality declaration. The corpus
+  frontier uses an explicit root-neutral refreshed/remaining partition, and a seeded silent-drop mutation fails
+  even when every external source path already names the SSD.
+- [x] **NO REGRESSION** — no extractor or canonical corpus artifact changes; every migrated path resolves to the
+  same source bytes on SSD, no boot-volume livework reference remains, downstream stage identities are
+  re-pinned after generated metadata changes, and fixture identity, schema, focused evaluator tests,
+  formatting, warning-deny Clippy, mdBook, doctrines, and full CI pass.
+- [x] **GENERICITY (ADR 0006)** — document-specific truth exists only in reviewed fixture data; evaluator/runtime
+  code remains free of vendor, protocol, document-key, signal-name, and page-layout exceptions.
+- [x] **LOCKSTEP** — dataset review notes, task frontier, public fixture boundary, Knowledge Map, live status,
+  architecture record, and resume pointer agree that `.4b` freezes inputs and `.4c` owns product conclusions.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -275,6 +305,7 @@ expressiveness as the bottleneck.
 | `SPEC-TO-INTENT-ALIGNMENT.2` | `SPEC-TO-INTENT-ALIGNMENT.2 — guard canonical capability accounting` | 17-row per-run ledger, full CLI partition guard, public contract, and required lossless CHANGES rollover |
 | `SPEC-TO-INTENT-ALIGNMENT.3` | `SPEC-TO-INTENT-ALIGNMENT.3 — activate typed figure-region mining` | optional EvidenceIR region producer, source grounding, verifier gate, explicit availability metrics, reviewed retained-PDF vertical fixture, and required Rust-analysis rollover |
 | `SPEC-TO-INTENT-ALIGNMENT.4a` | `SPEC-TO-INTENT-ALIGNMENT.4a — build the vertical evaluation engine` | strict portable dataset/API, exact stage-loss rollups, and six controlled-fault classes; no held-out category claim |
+| `SPEC-TO-INTENT-ALIGNMENT.4b` | `SPEC-TO-INTENT-ALIGNMENT.4b — lock the reviewed vertical population` | 12 reviewed verticals / 14 cells, SSD source-authority repair, and path-neutral corpus-frontier lifecycle partition; `.4c` owns results |
 
 ## Changelog
 
@@ -294,3 +325,6 @@ expressiveness as the bottleneck.
 - `2026-08-11`: Closed `.4a` with the strict portable dataset contract, deterministic exact evaluator, and six
   controlled-fault classes; frontier advances to `.4b`, lock two reviewed documents per category without tuning
   extraction before `.4c` publishes product conclusions.
+- `2026-08-11`: Closed `.4b` with two reviewed documents per category, portable four-stage identities, complete
+  bounded-scope gold, verified SSD source authority, and root-neutral corpus lifecycle accounting; frontier
+  advances to `.4c`, publish exact outcomes without changing selection, gold, or extraction.

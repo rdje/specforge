@@ -1,3 +1,19 @@
+### SPEC-TO-INTENT-ALIGNMENT.4b — twelve reviewed verticals are locked without tuning
+
+- Added a deterministic reviewed dataset with 12 documents, exactly two per category and 14 bounded cells.
+  Four sources are repository-relative; eight necessary read-only sources retain only portable id, SHA-256,
+  and necessity. Source and all four stage identities are pinned, and the builder refuses source/stage/region
+  drift before emitting bounded projections.
+- Added a Rust population contract test for balanced category coverage, complete review authority, portable
+  source identities, measurable evaluation, and byte-stable repeated reports. Exact product outcomes remain
+  unpublished until `.4c`.
+- Migrated every stale generated livework reference to the verified same-volume SSD source library. All 104
+  current absolute SSD fields resolve; no boot-volume livework reference remains. Three selected SourceIR hashes
+  changed only because of path metadata; every downstream stage hash stayed fixed.
+- Decoupled `CORPUS-FRONTIER` from workstation paths. Its declaration now partitions the derived 57-document
+  cohort into exact refreshed/remaining sets; 13 mutation cases prove SSD relocation cannot masquerade as a
+  refresh, while the real frontier remains 52 refreshed / five remaining.
+
 ### SPEC-TO-INTENT-ALIGNMENT.4a — source-to-IntentIR loss now has a deterministic oracle
 
 - Added a strict versioned dataset schema and generic Rust evaluator for review-locked SourceIR, EvidenceIR,

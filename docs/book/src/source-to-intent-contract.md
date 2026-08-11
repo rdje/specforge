@@ -200,13 +200,42 @@ for a complete review population.
 
 Mutation controls prove the oracle notices omission, fabrication, provenance loss, a silent inter-stage drop,
 a missing required modality, and an inactionable residual. They prove evaluator adequacy, not category support.
-The reviewed held-out population and its product conclusions belong to `.4b` and `.4c`.
+The reviewed population and its product conclusions belong to `.4b` and `.4c`.
+
+## The first reviewed population
+
+`SPEC-TO-INTENT-ALIGNMENT.4b` locks twelve documents—exactly two per category—without changing extractor
+behavior. This is a retrospective baseline frozen before gold construction and held out from extractor changes
+at or after selection commit `a3e9757d63ca5499a2393864fb503d6537de0035`; it is not claimed to have been
+historically unseen.
+
+| Category | Documents | Reviewed source modality |
+| --- | --- | --- |
+| wire protocol | Arm AMBA APB; NXP I2S | prose; table |
+| register IP | Arm GIC-400 TRM; AMD IOMMU | tables |
+| platform/system IP | Arm CoreSight Base System Architecture; RISC-V IOMMU | figures |
+| CPU/ISA | RISC-V Advanced Interrupt Architecture; Arm Debug Interface v6 | tables |
+| physical/link | OpenCAPI 25 Gbps PHY Signaling; OpenCAPI 32G PHY Signaling | tables |
+| methodology/guide | Cortex-A76 Software Optimization Guide; GIC Overview Guide | prose |
+
+Four PDFs are repository inputs. Eight are necessary caller-authorized read-only inputs; the dataset stores only
+their portable filename, SHA-256 digest, and necessity. The tracked dataset and deterministic builder live under
+`crates/specforge/test_data/source_to_intent_vertical/`. The builder authenticates every source and all four
+original stage artifacts, then emits bounded reviewed projections rather than copying host paths or full IRs.
+
+There are 14 complete review cells because each physical-link source has separate digital-boundary and analog
+non-applicable dispositions. Every cell declares its exact region, family, modality, oracle, provenance, and
+exhaustive bounded-scope gold. Rebuilding the fixture or evaluating it twice is deterministic, all six
+categories have two complete documents, and no category is unmeasurable for missing review authority.
+
+This section describes population adequacy only. It intentionally does not publish the resulting precision,
+recall, hard failures, category status, or blocker diagnosis; `.4c` owns those product conclusions.
 
 ## Current status
 
 This is the acceptance boundary, not a retroactive claim that every category passes. Existing wire gold,
 register-field evaluation, SWD protocol scoring, category census, source-region accounting, and conflict tests
 provide pieces of the required evidence. The held-out vertical-slice leaf
-`SPEC-TO-INTENT-ALIGNMENT.4a` now provides the strict schema and mutation-tested evaluator. `.4b` will lock two
-held-out documents per category without tuning extraction, and `.4c` will publish their denominators and decide
-category by category what is supported, incomplete, or unmeasurable.
+`SPEC-TO-INTENT-ALIGNMENT.4a` provides the strict schema and mutation-tested evaluator, and `.4b` locks two
+reviewed documents per category without tuning extraction. `.4c` is the next frontier: publish their exact
+denominators and decide category by category what is supported, incomplete, or unmeasurable.

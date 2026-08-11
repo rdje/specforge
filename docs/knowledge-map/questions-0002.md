@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
+  > does adapter output reconciliation delete unrelated files or directories
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > does adaptive batch sizing change the ingest output / break byte-identity
 - [dempster-fusion](../knowledge/dempster-fusion.md)
@@ -14,6 +16,8 @@
   > does canonical SWD EvidenceIR contain interface edge timing
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > does cargo test need TMPDIR set manually
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > does changing a source path mean a corpus document was refreshed
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
   > does cleaning normalized bundles undo a completed corpus re-ingest
 - [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
@@ -61,6 +65,8 @@
   > does markdown escaping cost recall on documents that already have a signal catalog
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
   > does mdbook test pass for the SpecForge book
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > does moving a PDF from the boot volume to SSD complete a current-binary corpus refresh
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
   > does platform/system-IP (category 3) topology intent need a new ISF construct or map onto an existing one (ISF has NO declarative static-topology/connectivity construct — composition is transaction-level only; decision deferred to a capture-recall measurement .4c.i before any FR)
 - [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
@@ -109,8 +115,6 @@
   > does the authority empty repair preserve formal and system contract interfaces
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > does the converge NLI pass measure quality or demote unsupported intent
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > does the corpus census correction change which document refresh 52 selects (no — NVMe is the largest of the six at 4,577 elements, so the smallest-retained-source policy still selects opencapi_25gbps_phy_mechanical_spec_v10 at 760 elements. The correction changes the denominator and the length of the tail, not the next pick; NVMe lands last, at .2.57)
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > does the current FSMGen ISF support named bit-fields inside a storage var (NO — opaque (var NAME (width N)) only on pin 030f8c273; set-field/extract are runtime ops not a declaration)
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
@@ -135,6 +139,8 @@
   > does the persisted path gate cover dormant schemas
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > does the reviewed I2S fixture claim a live VLM run
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > does the reviewed population publish product support results
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > does the rolling ledger verifier validate predecessor successor chronology
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
@@ -282,8 +288,7 @@
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
   > how do I add fact-card capacity
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > how do I derive how many corpus refreshes remain (do NOT read a carried number: cohort = count of generated/source_ir/*/source_ir.json whose source.requested_path does NOT begin 'corpus/' = 57; refreshed = those with a retained bundle in doctrine/chain_currency/retained_bundles.json OR a requested_path not beginning '/Users/' = 51; remaining = neither = 6. The identity cohort
-  > == refreshed + remaining must hold exactly)
+  > how do I derive how many corpus refreshes remain (run scripts/check_corpus_frontier.sh; it derives the SourceIR cohort and requires every member in exactly one explicit refreshed or remaining set)
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > how do I file an FSMGen bug report or feature request
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -292,9 +297,3 @@
   > how do I make the NLI verifier actively change extraction / demote claims
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > how do I measure the extraction-quality gauge before and after a canonical promotion
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > how do I promote a document's constraint surface on canonical without re-ingesting the PDF
-- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
-  > how do I roll ROADMAP.md when it approaches its ceiling
-- [docling-device-cpu](../knowledge/docling-device-cpu.md)
-  > how do I run a Docling ingest or re-ingest on this machine
