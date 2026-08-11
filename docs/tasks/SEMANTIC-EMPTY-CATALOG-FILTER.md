@@ -3,13 +3,18 @@
 ## Metadata
 
 - Tree ID: `SEMANTIC-EMPTY-CATALOG-FILTER`
-- Status: `active`
+- Status: `done`
 - Roadmap lane: `R15e`/`R16` extraction quality — semantic grounding
 - Created: `2026-08-11`
 - Last updated: `2026-08-11`
 - Owner: repo-local workflow
 
 ## Goal
+
+> **Landed `2026-08-11` — the guard quoted below no longer exists at HEAD.** This section is the problem
+> statement as it was measured. For current behavior read
+> `docs/book/src/pipeline/semanticir.md` or the fact card
+> [`semantic-grounding-filter-is-catalog-independent`](../knowledge/semantic-grounding-filter-is-catalog-independent.md).
 
 `SemanticIr::build` filters EvidenceIR's `signal_constraints` and `conditional_rules` down to records whose
 subject/consequent is a **declared signal** — the grounding rule that keeps prose-derived records from becoming
@@ -122,7 +127,41 @@ document promotes everything.
 | --- | --- | --- |
 | `SEMANTIC-EMPTY-CATALOG-FILTER.0` | `done` | ownership, reproduction, and the corpus census above |
 | `SEMANTIC-EMPTY-CATALOG-FILTER.1` | `done` | decide the rule for the empty-catalog case and pin it with paired unit tests |
-| `SEMANTIC-EMPTY-CATALOG-FILTER.2` | `pending` | corpus-wide old-versus-new replay + before/after evals; land behind the full gate |
+| `SEMANTIC-EMPTY-CATALOG-FILTER.2` | `done` | corpus-wide old-versus-new replay + before/after evals; land behind the full gate |
+
+## Acceptance Checklist (enforced) — `SEMANTIC-EMPTY-CATALOG-FILTER.2`
+
+- [x] **REPRODUCE / MEASURE** — snapshotted the pre-rebuild corpus before touching it: SHA-256 of all 44 emitted
+  `.isf`, all 78 `adapter.json`, all 78 `intent_ir.json`, and the exact 179-artifact set carrying
+  `validation_reports`. `CORPUS-CHAIN-CURRENCY.3` recorded not snapshotting the emitted set as a past miss; this
+  leaf does not repeat it.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `.1`'s change is confined to the semantic stage, so `EvidenceIR` is not an
+  input to it; no evidence artifact was written and the nine provider-free evals (which read
+  `generated/evidence_ir`) are orthogonal by construction, not by claim.
+- [x] **ADDRESSED (verified)** — rebuilt `semantic` → `intent` → `adapt --target isf` for all 78 chains from
+  their unchanged persisted `EvidenceIR` in **28s**, zero failures, no re-ingest; then re-validated the same 179
+  artifacts, **0 failures**, population unchanged (179 before, 179 after, none lost, none gained).
+  `check_chain_currency.sh` is green at **24 evidence / 78 semantic / 78 intent / 78 isf-adapter current**, with
+  retention exactly the 24 declared bundles.
+- [x] **NO REGRESSION** — all **44 emitted `.isf` byte-identical** (SHA-256 diff empty) and **44/44** pass
+  FSMGen `--strict --check --json` with **0 diagnostics**; `kg-bench` **156/156**; the nine provider-free evals
+  at baseline with every WIRE-BASED-100 filtered surface at **1.000** (APB/AHB/AXI constraint + document-level
+  relation + temporal, SWD `swd_operation` and document-level `serial_frame_field`) and only the known SWD
+  `CSYSPWRUPACK` residual missing; `scripts/run_ci.sh` exit **0** with all eight doctrines PASS.
+  **Reconciliation, because the raw counts do not match at first glance:** 77 `intent_ir.json` and 72
+  `adapter.json` hashes changed against 67 moved SemanticIRs. The excess is exactly the `validation_reports`
+  back-annotation a rebuild clears — of the 11 documents with no demotion packet, 10 carried intent validation
+  reports and 5 carried adapter ones, giving `67 + 10 = 77` and `67 + 5 = 72` exactly. Re-validation restored
+  every one.
+- [x] **GENERICITY (ADR 0006)** — no code changed in this leaf; the rebuild applies `.1`'s universal rule
+  uniformly across the corpus.
+- [x] **LOCKSTEP** — `docs/book/src/pipeline/semanticir.md` gains the grounding principle, a worked
+  `semantic_ungrounded_records_not_promoted` example under Residual decisions, and the `BOOK-METHOD-DOC` closing
+  subsection; the new fact card `[[semantic-grounding-filter-is-catalog-independent]]` states current behavior
+  and `[[semantic-empty-catalog-disables-grounding-filter]]` is marked `superseded` with a reverify that
+  confirms the supersession instead of a census that can no longer reproduce; `CHANGES.md`,
+  `LIVE_ACHIEVEMENT_STATUS.md`, and `MEMORY.md` updated; the book aggregate authority and fact-card catalog
+  projections re-derived.
 
 ## Acceptance Checklist (enforced) — `SEMANTIC-EMPTY-CATALOG-FILTER.1`
 
@@ -156,11 +195,13 @@ document promotes everything.
 
 ## Current Frontier
 
-`SEMANTIC-EMPTY-CATALOG-FILTER.2` — corpus-wide replay evidence, before/after evals, and the full gate; then
-close the tree (book method-doc + fact card + live docs).
+**Empty — the tree is closed (`2026-08-11`).** All three leaves are `done` and every acceptance criterion is
+met. The authorised rule, kept for readers of any later delta: **the director authorised (c) composed with (a)
+on `2026-08-11`** — symmetric filter, rejected records demoted rather than dropped.
 
-`.1` is landed. Its authorised rule, kept here because it still governs `.2`'s reading of any delta: **the
-director authorised (c) composed with (a) on `2026-08-11`.**
+The one thing this tree deliberately did **not** claim is now the open question below: the documents whose
+signal catalogs were never captured at all. That belongs to the extraction-breadth lane, and the demotion packet
+is what makes it findable per document.
 
 - **(a) Symmetric filter.** Delete the `declared_signal_names.is_empty()` special case at `semantic.rs:283`
   and `:293`. One predicate governs both branches: keep a record when its `consequent_signal`/`subject_signal`
@@ -290,6 +331,13 @@ PY
 | `2026-08-11` | `.1` | `specforge kg-bench` | `fixtures_passed: 156`, `fixtures_failed: 0` |
 | `2026-08-11` | `.1` | read-only `semantic --dry-run` replay of all 78 documents against their persisted artifacts | 11 identical · 41 changed **only** in `residual_decisions` · 26 content-moved, all 26 with an empty declared catalog; no populated-catalog document lost a promoted record |
 | `2026-08-11` | `.1` | partitioned the 33 empty-catalog documents by whether any interface signal record exists | 33 have **none at all**, 0 are low-confidence-only — answers the Low-exclusion open question for this corpus |
+| `2026-08-11` | `.2` | rebuilt `semantic` → `intent` → `adapt --target isf` for all 78 chains from unchanged persisted EvidenceIR | 28s, zero failures, no re-ingest |
+| `2026-08-11` | `.2` | re-validated the exact 179-artifact population that carried `validation_reports` | 0 failures; 179 before, 179 after — none lost, none gained |
+| `2026-08-11` | `.2` | SHA-256 diff of all 44 emitted `.isf` against the pre-rebuild snapshot | **byte-identical**; the 77 intent / 72 adapter hash changes reconcile exactly as 67 moved + 10 / 5 cleared `validation_reports` |
+| `2026-08-11` | `.2` | `subs/fsmgen/bin/fsmgen --strict --check --json` over all 44 emitted `.isf` | **44 pass / 0 fail, 0 diagnostics** |
+| `2026-08-11` | `.2` | nine provider-free `eval-extraction` datasets | at baseline; every WIRE-BASED-100 filtered surface 1.000, only the known SWD `CSYSPWRUPACK` residual missing |
+| `2026-08-11` | `.2` | `bash scripts/check_chain_currency.sh` | green: 24 evidence / 78 semantic / 78 intent / 78 isf-adapter current, retention exactly the 24 declared bundles |
+| `2026-08-11` | `.2` | `bash scripts/run_ci.sh` | exit 0; all eight doctrines PASS; lib 1810 passed / 0 failed |
 
 ## Commit Log
 
@@ -297,6 +345,7 @@ PY
 | --- | --- | --- |
 | `SEMANTIC-EMPTY-CATALOG-FILTER.0` | `CORPUS-COVERAGE.2.52 — refresh the OpenCAPI 25 Gbps PHY mechanical spec and retire its acronym signals` | ownership, reproduction, and census landed with the refresh that found it |
 | `SEMANTIC-EMPTY-CATALOG-FILTER.1` | `SEMANTIC-EMPTY-CATALOG-FILTER.1 — one grounding predicate for every document, rejected records demoted` | the symmetric filter, the demotion packet, and the paired tests |
+| `SEMANTIC-EMPTY-CATALOG-FILTER.2` | `SEMANTIC-EMPTY-CATALOG-FILTER.2 — rebuild the corpus to the new rule and close the tree` | corpus replay/rebuild evidence, the oracles, the book method-doc, and the fact cards |
 
 ## Changelog
 
@@ -306,3 +355,7 @@ PY
   every document, and rejected records are demoted to a proportionate residual packet. Acceptance Criterion 3
   revised to "added residuals only" and met; the Low-confidence open question answered and struck; a new open
   question recorded for the missing signal catalogs the demotion makes visible. Frontier advanced to `.2`.
+- `2026-08-11`: `.2` rebuilt all 78 downstream chains and closed the tree. The product boundary did not move —
+  44/44 emitted `.isf` byte-identical and FSMGen-strict clean at zero diagnostics — and the validated-artifact
+  population is exactly restored at 179. Book, fact cards, `CHANGES.md`, and `LIVE_ACHIEVEMENT_STATUS.md` are in
+  lockstep. **Tree status `done`.**

@@ -90,6 +90,33 @@ also preserved: the system contract inserts them into the authority set and emit
 interface with typed input direction and width one. Actor/signal relations can describe use of an authorized
 signal, but a relation alone is not a signal declaration.
 
+### Grounding does not switch off when there is nothing to ground against
+
+`SemanticIR` promotes an `EvidenceIR` signal constraint only when its subject signal is one the document
+declares, and a conditional rule only when its consequent signal is declared — or when the rule names no signal
+at all, which is how a genuine system-level behavioral rule is preserved.
+
+The rule that matters most is what happens when a document declares **nothing**. A document with no signal
+catalog has no authority to check a named subject against, and the tempting reading is that a filter with an
+empty catalog should stand aside. `specforge` does the opposite: one predicate governs every document, and an
+empty catalog simply grounds no named subject.
+
+That is deliberate, because the alternative inverts the guarantee. Under a stand-aside rule the filter would be
+strongest on documents that *have* signal authority and absent on documents that have none — exactly where an
+ungrounded record is least likely to be real. The effect was measurable: a document that declared one real
+signal filtered every prose-derived record against that one-element catalog, while a near-miss document that
+declared none promoted its entire prose-derived record set as canonical. Across the corpus that admitted
+subjects such as `NOTICE`, `PDF`, `IMPLEMENTATION`, `UNPREDICTABLE`, `MUST`, and `FFFF` — document metadata,
+boilerplate, English modals, and table noise, none of them wires.
+
+A refresh made the inversion visible in the most counter-intuitive way available: removing two false signals
+from a document emptied its catalog, and its promoted conditional rules went **up**, from zero to two.
+
+**Nothing is deleted.** The records stay in `EvidenceIR` with full provenance — that is the honest capture
+layer, and this rule governs promotion into canonical `SemanticIR`, not what the evidence stage may observe.
+What is withheld is canonical authority, and the withholding is stated rather than silent (see
+[Residual decisions](#residual-decisions)).
+
 ### Generic section phases are legacy compatibility data
 
 The schema still contains `phases`, but current SemanticIR producers leave it empty. The historical producer
@@ -212,6 +239,30 @@ They can preserve current-document evidence for gated clock branches, reset sync
 ## Residual decisions
 
 Residual packets exist because the project would rather preserve unresolved ambiguity than fabricate a clean but wrong canonical answer.
+
+They also carry the *refusals*. When the grounding rule above declines to promote a record,
+`SemanticIR` emits a single `semantic_ungrounded_records_not_promoted` packet for that document rather than
+letting the records disappear quietly. The packet states how many signal constraints and conditional rules were
+refused, how many signals the document actually declares, and a sorted, capped sample of the undeclared names:
+
+```text
+packet_id:  semantic_ungrounded_records_not_promoted
+question:   Should records naming a signal this document never declares carry canonical authority?
+why:        16 signal constraint(s) and 78 conditional rule(s) name a signal that is not in this
+            document's declared-signal catalog (0 declared), so SemanticIR did not promote them:
+            ALLOW, AMBA, ATTR, BYPASS, COMB, DTI, EL2, FAULT, FLOW, IMPLEMENTATION, IPA, MECID,
+            and 29 more. …
+```
+
+The sample is bounded on purpose — one corpus document refuses 216 rules, and an unbounded list would ride into
+every `IntentIR` and adapter artifact that carries residual decisions. A document whose records are all grounded
+gets no packet at all, so this surface stays proportionate rather than becoming ambient noise. The two candidate
+interpretations spell out the trade honestly: require a declared subject, or promote the name on the strength of
+the prose alone.
+
+Reading the packet is also the fastest way to find a document whose **signal catalog was never captured**. If
+the names it lists look like real wires rather than boilerplate, the gap is upstream in signal extraction, not
+in this filter.
 
 ## What this stage is trying to resolve
 
@@ -368,3 +419,40 @@ fusion separates agreement from disagreement up front, so the conflict
 mass is always zero on the path that combines confidence — noted so the
 math is not mysterious.) *Authoritative tracking:*
 `docs/tasks/DEMPSTER-FUSION-COMBINER.md`.
+
+### `SEMANTIC-EMPTY-CATALOG-FILTER` — the grounding filter no longer switches itself off
+
+**The defect.** Both grounding filters — signal constraints and conditional rules — were wrapped in the same
+guard: *if the document declares no signals, promote everything unchecked.* The intent was generous ("there is
+no catalog, so do not drop records unnecessarily"), but the effect was an inversion. The filter was strongest on
+documents that had signal authority and absent on documents that had none. A document declaring one real signal
+filtered every prose-derived record against that one-element catalog; a document declaring zero filtered
+nothing. It was found the hard way: a refresh that retired two *false* signals emptied a document's catalog and
+its promoted conditional rules rose from **0 to 2**, both of them prose noise (`PWR` cut from `PWR_GOOD`, `OPEN`
+cut from `OPEN_CAPI`).
+
+**How the blast radius was bounded before anything changed.** A read-only census over all 78 persisted
+`SemanticIR` artifacts found 33 empty-catalog documents, 29 of them riding the unfiltered branch with **1,423
+conditional rules and 100 signal constraints** promoted unchecked. Every emitted `.isf` was then checked against
+that set: all 44 come from populated-catalog documents, and an empty catalog blocks the adapter on
+`no signals declared in interface` before any rule renders. So the defect polluted canonical `SemanticIR` /
+`IntentIR` and the surfaces reading them — never the product boundary.
+
+**The fix, and the one thing that made it non-obvious.** Deleting the special case is the whole repair: one
+predicate, and an empty catalog satisfies no named subject. But measuring the *populated* branch first changed
+what "no regression" could mean — 41 of the 45 populated-catalog documents were **already** dropping records
+silently (1,230 rules, 47 constraints). Applying the same rule uniformly therefore could not leave them
+byte-identical; it necessarily surfaces what they had been discarding. The project took uniform demotion anyway
+and revised the bar to *"no populated-catalog document loses a promoted record; the only permitted change is
+added residuals."* An asymmetric rule — demote here, drop silently there — would have reintroduced the very
+discontinuity the tree existed to remove.
+
+**Verified.** A read-only `semantic --dry-run` replay of all 78 documents against their persisted artifacts:
+**11 identical · 41 changed only in `residual_decisions` · 26 content-moved**, and every one of the 26 has an
+empty declared catalog — so the revised bar is met exactly. Empty-catalog promotion falls `1,423 → 780`
+conditional rules (the 780 naming no signal are system-level rules and are kept) and `100 → 0` signal
+constraints. All 78 downstream chains were then rebuilt from unchanged `EvidenceIR` and the whole
+179-artifact validation population re-validated: all **44 emitted `.isf` are byte-identical** and pass FSMGen
+`--strict --check` with **zero** diagnostics, `kg-bench` holds `156/156`, the nine provider-free evals sit at
+baseline, and `CHAIN-CURRENCY` is green at 24/78/78/78. *Authoritative tracking:*
+`docs/tasks/SEMANTIC-EMPTY-CATALOG-FILTER.md`.

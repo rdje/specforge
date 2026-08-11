@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > what is the DOC-INTENT-TAXONOMY.2 per-category ISF-completeness gauge
+- [dempster-fusion](../knowledge/dempster-fusion.md)
+  > what is the Dempster combiner in fusion
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > what is the EXTRACTION-QUALITY-GAUGE.FIELD design
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > what is the ExtractionProfilePriorRecord 8th prior family / extraction_profile_priors in CorpusMemory
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > what is the FSMGen feature request for field-structured storage (declarative (var NAME (width N) (fields (field NAME (bits hi lo) (access ..) (reset ..) (enum ..)))); docs/FSMGEN_FEEDBACK.md 2026-06-22)
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
@@ -160,6 +168,8 @@
   > what is the registers.section_header_field strategy
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > what is the rolling ledger archive protocol
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > what is the semantic_ungrounded_records_not_promoted residual packet
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > what is the shipped ISF field-structured storage grammar ((storage (var NAME (width N) [(reset V)] (fields (field NAME (bits HI LO) [(access ...)] [(reset V)] [(enum ...)]))))) — metadata-only/schedule-safe, report key inferred_storage[].fields[])
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
@@ -287,13 +297,3 @@
   > where are cross-document prior contradictions surfaced
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > where are register bit-fields dropped on the way to .isf (isf_ir.rs:852, IsfStorageVar { name, width, reset } — field metadata discarded)
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > where are section-derived semantic phases built
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > where did SpecForge suggest LTL/MTL support in ISF
-- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
-  > where did the AXI AWIDUNQ / WTAGUPDATE duplicate records go
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > where did the root architecture catalog go
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > where do CCIX PER error structure fields land in the IR

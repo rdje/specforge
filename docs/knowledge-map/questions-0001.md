@@ -68,6 +68,8 @@
   > are the wire-gold / other .isf affected by the enum emit gate (no — byte-identical; only HBM2 hbm.isf changes corpus-wide; the criterion never flags a legit decimal)
 - [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
   > are transaction phase names allowlisted by protocol
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > are ungrounded SemanticIR records dropped silently or demoted
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > can FigureRegion raw_image_path store an absolute path
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
@@ -155,6 +157,8 @@
   > did the parenthetical data-head repair change real serial signals
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > did the qwen2.5vl VLM recover a groundable AXI signal-to-phase mapping (no — contradictory, redundant, hallucinated signal semantics)
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > did the symmetric grounding filter change any emitted .isf
 - [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
   > do EvidenceSnapshot SemanticSnapshot and IntentSnapshot count protocol states
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
@@ -279,6 +283,8 @@
   > does agreement between sources boost confidence
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > does an actor signal relation alone authorize a SemanticIR interface signal
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > does an empty declared-signal catalog disable the SemanticIR grounding filter
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > does canonical SWD EvidenceIR contain interface edge timing
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
@@ -291,9 +297,3 @@
   > does converge detect a protocol only SWD change
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > does converge re-ingest the PDF every run
-- [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
-  > does convergence detect a same count protocol rewrite
-- [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
-  > does convergence preserve protocol record order
-- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
-  > does corpus KB refresh mutate canonical IR or CorpusMemory

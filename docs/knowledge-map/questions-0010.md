@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > why does a register count NOT veto a wire protocol (wire-vs-structure weight dominance; AXI wire 401 >= struct 229)
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > why does a register doc captioned 'message fields' yield zero message fields
+- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
+  > why does a sentence-period caption label yield nothing
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > why does a symbolic bit cell reject the whole table
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > why does a temporal antecedent use PSELX not PSEL
+- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
+  > why does a timing_parameter table produce 0 timing_constraints when it clearly has rows (I2S table_0004, SMBus table_0012)
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > why does adding a new extractor feel fragile / erratic (god-orchestrator + inline dedup loops)
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > why does adding an extractor change every doc's extraction manifest
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > why does an .isf enum get dropped / held out of the emitted .isf
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
@@ -187,6 +203,8 @@
   > why is Wishbone memory output data (DO) not a port
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > why is a CSW@MEM-AP / CLAIMSET@AP qualified register name emitted, and is it .isf-safe
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > why is a conditional rule in EvidenceIR but not in SemanticIR
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
   > why is a fact-card aggregate ceiling the file bound times the per-file bound
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
@@ -280,21 +298,3 @@
   > why is the interface consolidation safe for WIRE-BASED-100 (gold docs have no interface actor)
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
   > why is the nested cross-tab timing table (TRANSMITTER/RECEIVER) left an honest residual
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why is the ordered multi-phase transaction body the hard deferred part (no structural name bridge AXI handshake to named transaction)
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > why is the repaired USB 3.2 ISF adapter blocked
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > why is the snap trigger absence-from-sentence and not typing failure
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > why is the stage-staleness check zero-versus-some and not a count comparison
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > why is the strict register-field per-fact score 0 on RISC-V Debug / NVMe
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > why is the structural document_class (protocol/register/interface/guide) too coarse for the purpose taxonomy
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > why is there no fields-without-positions completeness gap
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > why must a collection aggregate be at least files times per-file
-- [repository-local-scratch](../knowledge/repository-local-scratch.md)
-  > why must read-only census commands avoid /tmp and /private/tmp

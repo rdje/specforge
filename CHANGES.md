@@ -1,3 +1,35 @@
+### SEMANTIC-EMPTY-CATALOG-FILTER — one grounding predicate for every document, rejected records demoted
+
+- Both `SemanticIR` grounding filters were wrapped in the same guard: if the document declares no signals,
+  promote everything unchecked. The intent was generous; the effect was an inversion. The filter was strongest
+  on documents that *had* signal authority and absent on documents that had none — exactly where an ungrounded
+  record is least likely to be real. A document declaring one real signal filtered every prose-derived record
+  against that one-element catalog; a document declaring zero filtered nothing.
+- `.1` deletes the `declared_signal_names.is_empty()` special case. One predicate governs every document: keep a
+  record when the signal it names is declared, or when a rule names no signal at all (a system-level behavioral
+  rule). An empty catalog satisfies no named subject, which is the intended outcome rather than a branch.
+- Demote, don't drop. A rejected record stays in `EvidenceIR` with its provenance and surfaces as one
+  proportionate `semantic_ungrounded_records_not_promoted` packet stating both counts, the declared-catalog
+  size, and a sorted, capped sample of the undeclared names — one document rejects 216 rules, so an unbounded
+  list would ride into every `IntentIR` and adapter artifact. A fully grounded document gets no packet.
+- Measuring the *populated* branch before writing code changed what "no regression" could mean: 41 of 45
+  populated-catalog documents were already dropping records silently (1,230 rules, 47 constraints), so uniform
+  demotion could not leave them byte-identical. Acceptance Criterion 3 was revised from byte-identity to "added
+  residuals only" and met — the read-only replay of all 78 documents gives **11 identical, 41 changed only in
+  `residual_decisions`, 26 content-moved**, and all 26 have an empty declared catalog.
+- Empty-catalog promotion falls 1,423 → 780 conditional rules (the 780 naming no signal are kept) and 100 → 0
+  signal constraints. All 78 downstream chains were rebuilt from unchanged EvidenceIR and the same 179-artifact
+  validation population re-validated, so the reported population neither grew nor shrank.
+- **The product boundary did not move:** all 44 emitted `.isf` are byte-identical and pass FSMGen
+  `--strict --check` with zero diagnostics. `kg-bench` 156/156, the nine provider-free evals at baseline,
+  `CHAIN-CURRENCY` green at 24/78/78/78, `CORPUS-FRONTIER` re-deriving 57 = 52 + 5, `run_ci.sh` green with all
+  eight doctrines passing.
+- Two questions were settled by measurement rather than argument. The Low-confidence exclusion is **not** what
+  empties a catalog here: all 33 empty-catalog documents carry zero interface signal records of any confidence.
+  And the demoted names are not uniformly noise — Wishbone `CLK`/`CYC`/`STB`, DTI `TDATA`/`TKEEP`/`TLAST`, USB
+  `ACK`/`ERDY`/`NRDY` are real wires whose catalogs were never captured. That is an extraction-breadth gap the
+  packet now makes findable per document, recorded as a tracked open question rather than claimed here.
+
 ### CORPUS-COVERAGE.2.52 — refresh the OpenCAPI 25 Gbps PHY mechanical spec and retire its acronym signals
 
 - Refresh #52 takes the 34-page / 760-element OpenCAPI 25 Gbps PHY Mechanical Specification, smallest of the

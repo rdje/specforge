@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [docling-device-cpu](../knowledge/docling-device-cpu.md)
+  > what does DOCLING_DEVICE do
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > what does KG-ISF-TRANSACTIONS.2k add
+- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
+  > what does LIVE DOCUMENT SIZE CONTAINMENT ADOPTION 8 implement
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > what does MessageFieldRecord.bit_range mean and when is it set
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > what does MessageFieldRecord.byte_offset mean
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
@@ -290,11 +298,3 @@
   > what is the AXI signal naming convention (channel prefix)
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > what is the DOC-INTENT-TAXONOMY.1 corpus census
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > what is the DOC-INTENT-TAXONOMY.2 per-category ISF-completeness gauge
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > what is the Dempster combiner in fusion
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > what is the EXTRACTION-QUALITY-GAUGE.FIELD design
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > what is the ExtractionProfilePriorRecord 8th prior family / extraction_profile_priors in CorpusMemory

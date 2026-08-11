@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > how many OpenCAPI Certified Definition paths are repository relative
+- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
+  > how many OpenCAPI Ready Definition paths are repository relative
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > how many OpenCAPI Ready page paths are repository relative
 - [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
   > how many RISC-V Debug register bit diagrams are images vs flattened tables (53/56 images, 34 field tables, only 7 flattened diagram tables; bits live in the image modality)
 - [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
@@ -50,6 +56,8 @@
   > how many docs reach evidence vs semantic vs intent vs isf
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > how many documents carry unfiltered conditional rules and signal constraints
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > how many documents lost promoted records when the empty-catalog special case was deleted
 - [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
   > how many emitted .isf files does the corpus have and are they FSMGen-strict clean
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
@@ -290,11 +298,3 @@
   > is the PDF-VARIANT-DIGESTION current frontier internally consistent
 - [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
   > is the SWD FSM the same as the JTAG TAP DBGTAPSM (no)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > is the SemanticIR phases surface the protocol transaction phases (no — it is section/chapter-derived)
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > is the SpecForge extraction robust and can it grow to a vast set of chip-spec PDFs
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > is the USB4 Connection Manager current-binary refresh complete
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > is the USB4 Inter-Domain Service corpus refresh complete

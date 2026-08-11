@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > how does SpecForge distinguish legal conditions from protocol conditions
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > how does SpecForge distinguish protocol requests from product listing requests
+- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
+  > how does SpecForge emit temporal rules or a bounded-eventually into .isf
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > how does SpecForge extract register fields from tables
 - [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
@@ -291,9 +297,3 @@
   > how many Introducing CoreSight page paths are repository relative
 - [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
   > how many OpenCAPI AFU address note page paths are repository relative
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > how many OpenCAPI Certified Definition paths are repository relative
-- [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
-  > how many OpenCAPI Ready Definition paths are repository relative
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > how many OpenCAPI Ready page paths are repository relative

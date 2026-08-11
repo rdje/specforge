@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > why are SWD recognized phases signal_set empty and transactions ports empty
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > why are USER_GUIDE.md and the root architecture documents only pointers
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > why are behaviors and constraints (22k each) not lowered to .isf — is that a gap
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > why are conditional_rules excluded from the document-class decision
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > why are determiners (All Managers) NOT rejected by the .1a agent gate
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why are many distinct value-tables merged into one enum (build_symbol_definitions accumulates members by enum_name key, semantic.rs:2782-2789 — every 'TABLE'-named table fuses into one SymbolDefinitionRecord)
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > why are message fields not part of the document_class decision
 - [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
   > why are modal verbs must shall should may not flagged as ambiguous
 - [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
@@ -273,6 +287,8 @@
   > why does USB 3.2 still emit hundreds of low confidence ISF outputs after the four false signals are removed
 - [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
   > why does a PDF-VARIANT-DIGESTION commit subject id not appear fully qualified in the task source
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > why does a SemanticIR residual packet list only some undeclared signal names
 - [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
   > why does a document with no declared signals carry more ungrounded rules than one with signals
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
@@ -281,19 +297,3 @@
   > why does a new SemanticIR have an empty phases array
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > why does a rebuild drop the extraction-quality gauge
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > why does a register count NOT veto a wire protocol (wire-vs-structure weight dominance; AXI wire 401 >= struct 229)
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > why does a register doc captioned 'message fields' yield zero message fields
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > why does a sentence-period caption label yield nothing
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > why does a symbolic bit cell reject the whole table
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > why does a temporal antecedent use PSELX not PSEL
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > why does a timing_parameter table produce 0 timing_constraints when it clearly has rows (I2S table_0004, SMBus table_0012)
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > why does adding a new extractor feel fragile / erratic (god-orchestrator + inline dedup loops)
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > why does adding an extractor change every doc's extraction manifest

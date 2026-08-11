@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > is the SemanticIR phases surface the protocol transaction phases (no — it is section/chapter-derived)
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > is the SpecForge extraction robust and can it grow to a vast set of chip-spec PDFs
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > is the USB4 Connection Manager current-binary refresh complete
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > is the USB4 Inter-Domain Service corpus refresh complete
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > is the VLM the right lever for AXI transaction phase membership (no — a deterministic channel-table cue is)
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -289,11 +297,3 @@
   > remaining-work count)
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > what does DEFER mean in the doctrine enforcement report
-- [docling-device-cpu](../knowledge/docling-device-cpu.md)
-  > what does DOCLING_DEVICE do
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > what does KG-ISF-TRANSACTIONS.2k add
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > what does LIVE DOCUMENT SIZE CONTAINMENT ADOPTION 8 implement
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > what does MessageFieldRecord.bit_range mean and when is it set

@@ -1,6 +1,6 @@
 ---
 id: semantic-empty-catalog-disables-grounding-filter
-title: SemanticIR skips its grounding filter exactly when a document declares no signals
+title: SemanticIR skipped its grounding filter exactly when a document declared no signals (repaired)
 answers:
   - "why did removing false signals ADD conditional rules to SemanticIR"
   - "why does a document with no declared signals carry more ungrounded rules than one with signals"
@@ -11,11 +11,17 @@ answers:
   - "why were PWR and OPEN promoted as conditional-rule consequent signals"
   - "which tree owns the empty-catalog grounding filter defect"
 date: 2026-08-11
-status: current
+status: superseded
 tags: [semantic-ir, grounding, signal-authority, conditional-rules, signal-constraints, corpus-coverage, adr-0006]
-evidence: crates/specforge/src/ir/semantic.rs:276-308; docs/tasks/SEMANTIC-EMPTY-CATALOG-FILTER.md; docs/tasks/corpus-coverage/refreshes-51-56.md (`CORPUS-COVERAGE.2.52`); generated/semantic_ir/opencapi_25gbps_phy_mechanical_spec_v10
-reverify: "Replay the semantic stage from a stale pre-refresh EvidenceIR that still declares signals and from the refreshed one that does not; the declaring input yields zero conditional rules and the non-declaring input yields two. Then census every generated/semantic_ir/*/semantic_ir.json for an empty non-low-confidence declared-signal set carrying conditional_rules or signal_constraints; expect 33 empty-catalog documents of 78, 29 of them carrying 1,423 rules and 100 constraints, and zero of those documents holding an emitted .isf."
+evidence: crates/specforge/src/ir/semantic.rs (declared-signal gating, as of commit b6bedd3e); docs/tasks/SEMANTIC-EMPTY-CATALOG-FILTER.md; docs/tasks/corpus-coverage/refreshes-51-56.md (`CORPUS-COVERAGE.2.52`); generated/semantic_ir/opencapi_25gbps_phy_mechanical_spec_v10
+reverify: "Confirm the supersession, not the defect: `grep -n 'declared_signal_names.is_empty()' crates/specforge/src/ir/semantic.rs` must find NOTHING at HEAD. The measurements below are reproducible only against the pre-repair tree — `git show b6bedd3e:crates/specforge/src/ir/semantic.rs` still carries the guard, and the corpus census it describes needs the pre-rebuild artifacts from that revision."
 ---
+
+This card records the **defect as measured**, before it was repaired. `SEMANTIC-EMPTY-CATALOG-FILTER.1` deleted
+the `declared_signal_names.is_empty()` special case on `2026-08-11`: one predicate now governs every document,
+and a rejected record is demoted to a `semantic_ungrounded_records_not_promoted` residual packet rather than
+dropped. Use [[semantic-grounding-filter-is-catalog-independent]] for current behavior; the reproduction,
+census, and blast-radius bound below remain the honest record of what the inversion cost and how it was found.
 
 **Established `2026-08-11` (`CORPUS-COVERAGE.2.52`).** `SemanticIr::build` filters EvidenceIR's
 `signal_constraints` and `conditional_rules` to records whose subject/consequent is a **declared signal** — the

@@ -51,7 +51,8 @@
 | [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md) | 2026-06-24 | `current` | A genuinely-different register reused under one mnemonic (MEM-AP CSW vs JTAG-AP CSW) is recovered by BLOCK-QU… |
 | [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md) | 2026-06-17 | `current` | GIC/SMMU/CoreSight/ACC/ARM-Debug register fields live in SECTION HEADINGS (`<NAME>, bits [hi:lo]`), not table… |
 | [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md) | 2026-06-24 | `current` | A register mnemonic reused across blocks (ARM-Debug/CoreSight AUTHSTATUS/IDR/CSW) is resolved by FIELD-SET CO… |
-| [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md) | 2026-08-11 | `current` | SemanticIR skips its grounding filter exactly when a document declares no signals |
+| [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md) | 2026-08-11 | `superseded` | SemanticIR skipped its grounding filter exactly when a document declared no signals (repaired) |
+| [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md) | 2026-08-11 | `current` | One grounding predicate governs every document; rejected records are demoted, not dropped |
 | [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md) | 2026-08-09 | `current` | Declaration-free heuristic interfaces require a signal-led deontic behavior statement |
 | [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md) | 2026-08-10 | `superseded` | Generic SemanticIR section phases require heading authority |
 | [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md) | 2026-06-11 | `current` | Signal-presence matrices — the literal presence-CONDITION typed surface (.12b) |
@@ -60,4 +61,3 @@
 | [spec-mining-framing](../knowledge/spec-mining-framing.md) | 2026-06-04 | `current` | SpecForge is forward specification mining (spec -> intent, not implementation -> spec) |
 | [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md) | 2026-06-04 | `current` | SpecForge stability obligations stay .isf residuals — phase-scoped, not FSMGen's unconditional (stable s) |
 | [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md) | 2026-06-17 | `current` | validate emits a stage_staleness Warning when a downstream IR carries 0 actor_signal_relations while its upst… |
-| [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md) | 2026-08-09 | `current` | SWD/ADI (IHI0074) is an architecture/serial spec — the parallel-bus signal-table model doesn't fit |

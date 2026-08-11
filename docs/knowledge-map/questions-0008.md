@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > where are section-derived semantic phases built
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > where did SpecForge suggest LTL/MTL support in ISF
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > where did my signal constraint go between EvidenceIR and SemanticIR
+- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
+  > where did the AXI AWIDUNQ / WTAGUPDATE duplicate records go
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > where did the root architecture catalog go
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > where do CCIX PER error structure fields land in the IR
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
   > where do DBID / TxnID / ReturnNID style names come from in CHI
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
@@ -194,6 +206,8 @@
   > which boot-volume Rust directories are allowed
 - [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
   > which canonical Markdown collections still rely only on git query
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > which conditional rules survive when a document declares no signals
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
   > which corpus PDFs are password/permission protected
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
@@ -283,17 +297,3 @@
   > why are 58 corpus documents not currency-measurable
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
   > why are GIC/SMMU/CoreSight section-heading fields NOT message fields
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > why are SWD recognized phases signal_set empty and transactions ports empty
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > why are USER_GUIDE.md and the root architecture documents only pointers
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > why are behaviors and constraints (22k each) not lowered to .isf — is that a gap
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > why are conditional_rules excluded from the document-class decision
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > why are determiners (All Managers) NOT rejected by the .1a agent gate
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why are many distinct value-tables merged into one enum (build_symbol_definitions accumulates members by enum_name key, semantic.rs:2782-2789 — every 'TABLE'-named table fuses into one SymbolDefinitionRecord)
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > why are message fields not part of the document_class decision

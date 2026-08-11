@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
+  > does convergence detect a same count protocol rewrite
+- [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
+  > does convergence preserve protocol record order
+- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
+  > does corpus KB refresh mutate canonical IR or CorpusMemory
 - [contested-priors](../knowledge/contested-priors.md)
   > does corpus prior memory only accrete
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
@@ -292,9 +298,3 @@
   > how does SpecForge determine what a chip-spec PDF is about / its purpose category
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
   > how does SpecForge distinguish a timing table category from a scalar min typ max layout
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > how does SpecForge distinguish legal conditions from protocol conditions
-- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
-  > how does SpecForge distinguish protocol requests from product listing requests
-- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
-  > how does SpecForge emit temporal rules or a bounded-eventually into .isf
