@@ -109,24 +109,26 @@ grounded model attestations, validated scoped priors, registered universal axiom
 spelling-free symbol uses, unique claim addresses, and conclusion digests. It returns a non-deserializable
 verification witness; a merely schema-valid persisted ledger still has no canonical authority.
 
-This is still not end-to-end proof-carrying genericity. The current artifact schemas and producers deliberately
-remain unchanged: no historical claim is wrapped in a synthetic proof. `.e.iv` must register and migrate every
-grammar, inference, carry, residual, and lowering family before a current artifact can earn the new authority;
-AST/information-flow gates, per-rule alpha execution, structural qualification, and whole-population behavioral
-qualification follow. Until those close, SpecForge does not claim production-genericity signoff.
+This is still not end-to-end proof-carrying genericity, but the first two stage migrations are now concrete.
+SourceIR schema 3 executes all five source-family derivations. EvidenceIR schema 3 verifies that exact source
+ledger as its ordered prefix, then executes all 11 EvidenceIR families from exact current-document capture,
+optional validated prior, and ordered typed enrichment proposals. Historical claims are never wrapped in a
+synthetic proof. SemanticIR, IntentIR, and adapter migration, followed by AST/information-flow gates, per-rule
+alpha execution, structural qualification, and whole-population behavioral qualification, remain mandatory.
+Until those close, SpecForge does not claim production-genericity signoff.
 
 That migration now has an exact checked contract. The 38 claim families expand to 168 current top-level-field
-rules and cover 113 reviewed producer/mutator entrypoints plus 39 canonical seams. One cumulative ledger starts
+rules and cover 111 reviewed producer/mutator entrypoints plus 39 canonical seams. One cumulative ledger starts
 from exact SourceIR capture, is verified and retained as an ordered prefix at every downstream stage, and gains
 field-root proofs (including empty fields) plus stable per-record proofs. Canonical load, serialization, write,
 downstream build, and ISF lowering require a complete current ledger; post-build mutation invalidates authority
 until a registered rule proves the change. Historical proofless artifacts remain inspectable but must rebuild or
 residualize rather than receive synthetic proofs.
 
-Conformance fixtures do not receive an exception. Four current evaluation paths temporarily patch stage values;
-they must become noncanonical typed overlays that cannot call production writers, downstream builders, or
-lowering. A temporary filename or repository-local location is storage, never evidence of trust. The checked
-census freezes this integration denominator; it does not claim the stage migrations are already shipped.
+Conformance fixtures do not receive an exception. SourceIR and EvidenceIR fixture patches use noncanonical typed
+overlays that cannot call production writers or downstream builders; the same closure remains required for later
+stages. A temporary filename or repository-local location is storage, never evidence of trust. The checked
+census is the integration denominator, while the stage-specific ledgers are the executable authority.
 
 ## Target quality
 

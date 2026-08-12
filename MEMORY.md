@@ -17,16 +17,17 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii` is closing under `.e.iv`.
-  `.6d.ii.e.iv.i`, `.6d.ii.e.iii`, `.6d.ii.e.ii`, `.6d.ii.e.i`, `.6d.ii.d.iv`, `.6d.ii.d.iii`, `.6d.ii.d.ii`, `.6d.ii.d.i`,
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii` is complete pending its commit under `.e.iv`.
+  `.6d.ii.e.iv.ii`, `.6d.ii.e.iv.i`, `.6d.ii.e.iii`, `.6d.ii.e.ii`, `.6d.ii.e.i`, `.6d.ii.d.iv`, `.6d.ii.d.iii`, `.6d.ii.d.ii`, `.6d.ii.d.i`,
   `.6d.ii.c`, `FSMGEN-REFRESH-INTEGRATE-8.1`, `.6d.ii.b`, `.6d.ii.a`, and
   `.6d.i` are committed complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2`
   and `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: `.e.iv.ii` is complete and fully qualified pending only the `COMMIT.md` transaction. SourceIR
-  schema 3 proves all five families with executable registered relations and exact typed premises; 24 retained
-  chains are rebuilt/current, while 54 legacy SourceIRs remain inspection-only. All eight doctrines pass.
-- Next action: complete the `COMMIT.md` workflow for `.e.iv.ii`; from a clean commit activate
-  `.e.iv.iii` and migrate all 11 EvidenceIR families plus post-build mutation paths.
-- In-flight uncommitted: the verified `.e.iv.ii` production/test/docs change set only; rollback and incremental-
-  cache scratch are deleted with residue absent, and no background job remains.
+- Current state: `.e.iv.iii` implementation, corpus migration, full CI, and cleanup are complete pending commit.
+  EvidenceIR schema 3 proves all 39 fields / 11 families, preserves exact SourceIR proof, and closes all productive
+  mutation paths. The retained 24 have zero field delta; 54 legacy EvidenceIRs are inspection-only. Currency is
+  EvidenceIR 24 current, SemanticIR 24 current / 54 proof-unmeasurable, and later stages 78/78 stage-local.
+- Next action: commit `.e.iv.iii`, verify clean/zero-byte brief, then activate `.e.iv.iv` from that clean boundary.
+- In-flight uncommitted: the owned `.e.iv.iii` code, schemas, corpus proof metadata, ADRs, live docs, mdBook,
+  Knowledge Map projection, and task evidence. Exact rollback/comparison scratch and rebuildable incremental cache
+  are removed; no background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

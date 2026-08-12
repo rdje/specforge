@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > why did six Introducing CoreSight interfaces disappear
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > why did the .2a direction deferral get reopened (explicit owner steer 2026-06-17 — Build it, initiator perspective)
+- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
+  > why did the ACE evidence build run out of memory / get SIGKILLed (exit 137)
+- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
+  > why did the AIA table of contents have 19 timing false positives
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > why did the AMBA AXI+ACE ihi0022_h_c manager.isf fail fsmgen strict with 'rule constraint_48 assignment actions require (port expr)'
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > why did the AMBA LPI controller.isf fail fsmgen strict with isf_conflicting_rule_writes on PREQ/PACCEPT
+- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
+  > why did the AXI/AHB/AXI-Stream wire-gold .isf fail fsmgen --strict on a fresh re-emit (isf_conflicting_rule_writes), and what fixed them
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
   > why did the Knowledge Map shard simulator and generator report different canonical input hashes
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
@@ -284,17 +298,3 @@
   > why does the pre-commit hook run check_doctrines.sh
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > why does the project README get spurious ahb_transfer/apb_transfer transactions
-- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
-  > why does the refreshed Cortex-A76 Software Optimization Guide emit no ISF
-- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
-  > why does the refreshed Generic Interrupt Controller Overview Guide emit no ISF
-- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
-  > why does the refreshed OpenCAPI 4.0 32 Gbps PHY Signaling specification emit no ISF
-- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
-  > why does the roadmap archive hold more than one capsule
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > why does the same token AXI interface merge in one doc but not another
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why does the same-guard dedup_conflicting_rules miss a conflict between an unconditional rule and a guarded rule
-- [validation-snapshot-reviewed-boundary](../knowledge/validation-snapshot-reviewed-boundary.md)
-  > why does the tracked validation snapshot differ from current generated IntentIR reports

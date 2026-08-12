@@ -63,7 +63,7 @@ other re-derivable trace.
 | `LIVE-DOC-SIZE` | structural | every tracked Markdown path is classified exactly once, and every declared current-state field satisfies its explicit class, marker, authority, accessor/capture, and executed-verifier contract alongside the lifecycle/pressure/route rules |
 | `PROJECT-DATA-LOCALITY` | structural | Cargo, shell, production temporary-workspace, subprocess, and Python runtime seams keep owned data below the current repository and reject stale or escaping roots |
 | `CORPUS-FRONTIER` | derive-and-diff | the SourceIR-derived corpus cohort is partitioned exactly into explicit refreshed and remaining sets, retained bundles agree, and the task file states the same counts — source-library relocation cannot impersonate a refresh |
-| `CHAIN-CURRENCY` | oracle | every artifact already on disk under `generated/` is exactly what today's binary reproduces from the artifact one stage upstream — so a shared extractor change cannot leave older documents quietly one code delta behind — and the normalized bundles that make a document checkable are exactly the declared retained set |
+| `CHAIN-CURRENCY` | oracle | every proof-current artifact under `generated/` is exactly what today's binary reproduces from verified upstream authority; a legacy/proofless compatibility refusal is reported as an explicit unmeasurable frontier, while a stale current proof still fails — and retained normalized bundles match their declaration exactly |
 
 `CORPUS-FRONTIER` exists because of a defect worth stating plainly. The corpus refresh program tracked its own
 remaining work as prose that each slice decremented by one, across twenty-two consecutive refreshes — and a

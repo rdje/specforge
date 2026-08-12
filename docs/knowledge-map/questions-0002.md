@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
+  > did a second annotator validate seed_apb.json
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > did bounded ingestion change the Arm Debug SourceIR
+- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
+  > did doubling the corpus (36->78) introduce a new ISF lowering silent-drop gap
+- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
+  > did retiring generic gates and phases cost ISF renderability
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > did the OpenCAPI Ready terms table declare an interface
+- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
+  > did the USB4 signoff check change canonical SWD
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > did the page sidecar repair change USB4 semantic artifacts
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
   > did the parenthetical data-head repair change real serial signals
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -283,17 +297,3 @@
   > does the legal statement classifier use a vendor or document denylist
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
   > does the live-document registry reject unknown fields oversized arrays or oversized scalars
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > does the move portability repair change PathBuf JSON fields
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > does the path portability contract cover FigureRegion raw images
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > does the persisted path gate cover dormant schemas
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > does the reviewed I2S fixture claim a live VLM run
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > does the reviewed population publish product support results
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > does the rolling ledger verifier validate predecessor successor chronology
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > does the stage-staleness detector false-fire on register/command docs with 0 relations (no — both empty)

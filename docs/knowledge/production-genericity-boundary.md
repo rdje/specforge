@@ -30,11 +30,17 @@ answers:
   - "Can recomputing SourceIR JSON hashes self-attest an edited claim?"
   - "Why can legacy SourceIR not feed EvidenceIR?"
   - "How are named SourceIR fixtures kept out of canonical production authority?"
-date: 2026-08-12
+  - "How is EvidenceIR proof-carrying?"
+  - "Can a model proposal authorize EvidenceIR by itself?"
+  - "How are EvidenceIR mutations authorized after extraction?"
+  - "Why was EvidenceIR carry-forward removed?"
+  - "Can legacy EvidenceIR feed SemanticIR?"
+  - "Why can downstream chain currency be unmeasurable rather than stale?"
+date: 2026-08-13
 status: current
 tags: [genericity, extraction, architecture, doctrine]
-evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge/src/ir/derivation.rs; crates/specforge/src/ir/source.rs; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; doctrine/production_genericity/rule_family_inventory.tsv; doctrine/production_genericity/conformance_bypass_inventory.tsv; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_inventory.pl; scripts/check_production_genericity_rules.pl
-reverify: cargo test -p specforge-core source_rule --offline && cargo test -p specforge-core derivation --offline && bash scripts/check_chain_currency.sh --check
+evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge/src/ir/derivation.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; doctrine/production_genericity/rule_family_inventory.tsv; doctrine/production_genericity/conformance_bypass_inventory.tsv; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_inventory.pl; scripts/check_production_genericity_rules.pl; scripts/check_chain_currency.sh
+reverify: cargo test -p specforge-core evidence_proof --offline && cargo test -p specforge-core derivation --offline && perl scripts/check_production_genericity_rules.pl && bash scripts/check_chain_currency.sh --check
 ---
 
 A neutral SpecForge is feasible when universal digital-intent semantics are separated from opaque,
@@ -44,7 +50,7 @@ by production module/type boundaries, registered grammar access, and renaming/id
 invariance—not by a finite token denylist. The canonical audit and enforcement design are in
 `docs/research/production-genericity-pipeline-audit.md`; ADR 0006 owns the invariant.
 
-SourceIR is the first remediated production boundary. Schema 2 classifies only explicit generic
+SourceIR was the first remediated production boundary. Its schema-2 classifier established that only explicit generic
 visual/section forms and typed table roles; operation, participant, filename, protocol, and symbol
 spellings cannot grant a kind. Unsupported shapes remain `unknown`. Loading a schema-1 SourceIR
 preserves its captured source structure and provenance but neutralizes old diagram/table/section
@@ -52,13 +58,12 @@ semantic labels until re-ingest, because those labels were produced by the retir
 policy. Future schemas fail closed. A read-only 78-document replay measured the intentional re-ingest
 delta as 2,293 diagram, 2,123 section, and 3,484 table label changes without mutating an artifact.
 
-ADR 0025 then identified and rebuilt the exact ten affected replayable cascades. Current-binary equality is
-restored for 24/24 measurable EvidenceIR and all 78 SemanticIR, IntentIR, and adapter chains; both renderable
-ISFs are FSMGen-strict clean. The reconciliation deliberately accepts 194 removed table-derived timing guesses
-and other weak label-driven facts. Those are inputs to later generic recovery work, never justification for a
-document-specific exception.
+ADR 0025 then identified and rebuilt the exact affected replayable cascades. That reconciliation deliberately
+accepted removed table-derived timing guesses and other weak label-driven facts. Those are inputs to later generic
+recovery work, never justification for a document-specific exception. The later proof migration intentionally
+supersedes the older 78-chain currency claim with a stricter proof frontier described below.
 
-EvidenceIR is the second remediated boundary. Schema 2 replaces fixed protocol operations, phase enums, and
+EvidenceIR's schema-2 remediation replaced fixed protocol operations, phase enums, and
 participant-direction roles with input-derived generic records. Frame, operation, state, and direction
 extractors admit only explicit structural grammar and preserve document terms opaquely. Schema-1 loads clear
 the old vocabulary-bound protocol surfaces before typed deserialization, preventing a retained artifact from
@@ -83,10 +88,9 @@ Exact fixture names remain visible only as conformance provenance.
 
 The combined `.6d.ii.d` qualification compares `89d8dee7..9c38b569`: three commits, 129 changed
 files, and 24 compiled-crate Rust source files. Focused alpha, identity, prompt, spelling, fixture-name, and
-fail-closed proposal controls pass; current-binary chain currency is 24/24 measurable EvidenceIR and
-78/78 at every downstream stage. The expected honesty cost is preserved rather than hidden: constraints,
-invariants, transactions, and renderable adapters fall where name-derived authority was removed, while
-all 17 remaining ISFs pass FSMGen strict. This closes identity/spelling/prompt/corpus remediation only.
+fail-closed proposal controls pass. The expected honesty cost is preserved rather than hidden: constraints,
+invariants, transactions, and renderable adapters fall where name-derived authority was removed. This closes
+identity/spelling/prompt/corpus remediation only.
 Structural proof enforcement and population-level metamorphic qualification remain release blockers in
 `.6d.ii.e` and `.6d.ii.f`; SpecForge is not yet whole-core genericity signoff-ready.
 
@@ -111,7 +115,7 @@ The live inventory is now 77 modules / 38 families / 168 fields. Existing produc
 exact `.e.iv` migration, so whole-core signoff remains open.
 
 The first `.e.iv` child freezes the exact reviewed migration graph before a stage schema changes. Its 38 rows
-expand to 168 field-root rules and resolve 113 current producer/mutator entrypoints, 39 canonical seams, and four
+expand to 168 field-root rules and resolve 111 current producer/mutator entrypoints, 39 canonical seams, and four
 conformance-only mutation bypasses. The target is one cumulative ledger: each stage verifies and preserves the
 exact upstream proof prefix, then appends its own field-root and per-record claims. Canonical load, serialization,
 write, downstream build, and ISF lowering all require a current complete ledger; an unregistered mutation makes
@@ -133,4 +137,25 @@ EvidenceIR. Legacy SourceIR can only load through the inspection API, which neut
 An audited maintenance feature migrated the exact 24 documents whose source and normalized capture bundles were
 still retained; the other 54 remain inspection-only. Named conformance fixtures now use typed noncanonical
 overlays with no canonical writer, while each production writer independently reloads its upstream canonical
-artifact. This closes SourceIR only; the later stages and AST-aware doctrine remain open work.
+artifact.
+
+EvidenceIR schema 3 is the second completed stage migration. It verifies and retains the complete SourceIR
+ledger as an exact ordered prefix, then proves all 39 public fields across 11 families with field-root and
+per-record or per-alias claims. Its private replay context owns the exact normalized Markdown, the exact validated
+prior when consulted, and an ordered list of closed typed post-build proposals. A proposal records what a bounded
+extractor or model-assisted command changed and the existing current-document support it cited; it does not
+self-attest semantic truth. The current registered stage derivation must reconstruct every conclusion exactly.
+
+Post-build mutation is closed by kind and allowed field set for NLP enrichment, condition and constraint
+extraction, contract extraction, signal resolution, register-bit recovery, NLI measurement, and validation
+backannotation. Each mutation rebuilds the verified predecessor, applies the exact patch, and extends proof before
+writing. The old path that copied selected state from an older EvidenceIR without recording a derivation is gone.
+Schemas 1 and 2 are inspection-only and cannot feed SemanticIR.
+
+Exactly 24 retained documents have both verifiable SourceIR capture and current schema-3 EvidenceIR; their
+extracted fields and SemanticIR replay are unchanged by this migration. The other 54 remain behind a deliberate
+legacy/proofless frontier until owned source recapture is available. `CHAIN-CURRENCY` reports only that closed
+condition as unmeasurable. It still fails any stale current proof, so the distinction neither claims the historical
+EvidenceIR-to-SemanticIR edge is current nor creates a bypass. IntentIR and adapters remain 78/78 stage-locally
+reproducible from persisted SemanticIR, but that is not end-to-end proof authority. SemanticIR, IntentIR, adapter,
+AST-aware information-flow, and population qualification remain open work.

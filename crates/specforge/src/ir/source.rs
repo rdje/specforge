@@ -11,7 +11,7 @@ use crate::ir::derivation::{
     AlphaObligation, ClaimAddress, DerivationError, DerivationResult, PremiseKind, PremiseRef,
     PromotionKernelBuilder, ProofConfidence, ProofLedger, RuleCompatibility, RuleDescriptor,
     RuleId, RuleRegistration, RuleRegistry, RuleVerificationContext, Sha256Digest,
-    SymbolCapabilityClass,
+    SymbolCapabilityClass, VerifiedProofLedger,
 };
 use crate::persisted_path::{
     PersistedPathOrigin, infer_existing_origin, normalize_for_storage, resolve_existing,
@@ -2085,6 +2085,13 @@ fn verify_source_rule_relation(context: RuleVerificationContext<'_>) -> Derivati
 
 impl SourceIr {
     pub fn load_from_path(path: &Path) -> Result<Self> {
+        Self::load_with_verified_proof(path).map(|(source_ir, _)| source_ir)
+    }
+
+    /// Load canonical SourceIR and retain the non-deserializable verification witness required by
+    /// the next IR stage. The witness describes persisted conclusions; runtime-only absolute path
+    /// expansion never enters the proof chain.
+    pub(crate) fn load_with_verified_proof(path: &Path) -> Result<(Self, VerifiedProofLedger)> {
         let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
         let source_ir = serde_json::from_str::<Self>(&fs::read_to_string(&path)?)?;
         if source_ir.schema_version > SOURCE_IR_SCHEMA_VERSION {
@@ -2101,8 +2108,8 @@ impl SourceIr {
                 path.display()
             )));
         }
-        source_ir.verify_canonical_proof()?;
-        source_ir.runtime_clone()
+        let verified = source_ir.verified_canonical_proof()?;
+        Ok((source_ir.runtime_clone()?, verified))
     }
 
     /// Parse an old SourceIR for diagnostics or an explicit rebuild command without granting it
@@ -2131,25 +2138,50 @@ impl SourceIr {
     #[cfg(feature = "source-proof-migration")]
     #[doc(hidden)]
     pub fn rebuild_legacy_from_retained_capture(path: &Path) -> Result<Self> {
+        Self::rebuild_from_retained_capture(path)
+    }
+
+    /// Refresh either a legacy artifact or a current-schema artifact whose proof implementation
+    /// digest is stale. Current artifacts retain their exact, already-captured proof context; this
+    /// path re-executes that context with the current registry and never recaptures source or model
+    /// output. The capability is feature-gated to audited corpus reconciliation builds.
+    #[cfg(feature = "source-proof-migration")]
+    #[doc(hidden)]
+    pub fn rebuild_from_retained_capture(path: &Path) -> Result<Self> {
         let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
         let raw = fs::read_to_string(&path)?;
-        let legacy = serde_json::from_str::<Self>(&raw)?;
-        if legacy.schema_version >= SOURCE_IR_SCHEMA_VERSION {
+        let retained = serde_json::from_str::<Self>(&raw)?;
+        if retained.schema_version > SOURCE_IR_SCHEMA_VERSION {
             return Err(AppError::InvalidStageArtifact(format!(
-                "SourceIR at {} is schema {}; retained-capture migration accepts only legacy schemas below {SOURCE_IR_SCHEMA_VERSION}",
+                "SourceIR at {} is schema {}; retained-capture migration supports schemas through {SOURCE_IR_SCHEMA_VERSION}",
                 path.display(),
-                legacy.schema_version
+                retained.schema_version
             )));
         }
-        if !matches!(legacy.stage, IrStage::SourceIr) {
+        if !matches!(retained.stage, IrStage::SourceIr) {
             return Err(AppError::InvalidStageArtifact(format!(
                 "artifact at {} is not SourceIR",
                 path.display()
             )));
         }
-        legacy.verify_retained_capture_backing(&path)?;
+        retained.verify_retained_capture_backing(&path)?;
 
-        let mut rebuilt = legacy;
+        if retained.schema_version == SOURCE_IR_SCHEMA_VERSION {
+            let context = retained.proof_context.clone().ok_or_else(|| {
+                AppError::InvalidStageArtifact(format!(
+                    "current SourceIR at {} has no retained proof context to refresh",
+                    path.display()
+                ))
+            })?;
+            let mut rebuilt = retained;
+            rebuilt.proof_context = None;
+            rebuilt.proof_ledger = None;
+            let persisted = rebuilt.persisted_clone()?;
+            rebuilt.refresh_proof_from_context(persisted, context)?;
+            return Ok(rebuilt);
+        }
+
+        let mut rebuilt = retained;
         neutralize_legacy_source_classifications(&mut rebuilt);
         classify_source_captures(
             &mut rebuilt.visual_assets,
@@ -2686,12 +2718,6 @@ impl SourceIr {
     #[cfg(any(test, feature = "test-support"))]
     #[doc(hidden)]
     pub fn write_test_fixture_to_disk(&self) -> Result<()> {
-        // Preserve canonical coverage for ordinary test setup. The synthetic branch exists only
-        // for tests that deliberately patch public fields without going through production
-        // mutation APIs.
-        if self.persisted_clone()?.verify_canonical_proof().is_ok() {
-            return self.write_to_disk();
-        }
         let mut fixture = self.clone();
         let mut persisted = fixture.persisted_clone()?;
         persisted.proof_context = None;
@@ -2701,6 +2727,13 @@ impl SourceIr {
             .map_err(source_derivation_error)?;
         fixture.refresh_proof_from_context(persisted, context)?;
         fixture.write_to_disk()
+    }
+
+    #[cfg(any(test, feature = "test-support"))]
+    pub(crate) fn is_test_fixture(&self) -> bool {
+        self.proof_context
+            .as_ref()
+            .is_some_and(|context| context.test_fixture)
     }
 
     /// Current proof ledger after successful construction or canonical reload.
@@ -3164,6 +3197,10 @@ impl SourceIr {
     }
 
     fn verify_canonical_proof(&self) -> Result<()> {
+        self.verified_canonical_proof().map(|_| ())
+    }
+
+    fn verified_canonical_proof(&self) -> Result<VerifiedProofLedger> {
         if self.schema_version != SOURCE_IR_SCHEMA_VERSION {
             return Err(AppError::InvalidStageArtifact(format!(
                 "SourceIR schema {} cannot receive current canonical authority",
@@ -3199,8 +3236,7 @@ impl SourceIr {
             .map_err(source_derivation_error)?;
         kernel
             .verify_persisted(ledger, &conclusions)
-            .map_err(source_derivation_error)?;
-        Ok(())
+            .map_err(source_derivation_error)
     }
 
     fn persisted_clone(&self) -> Result<Self> {
@@ -4215,6 +4251,51 @@ mod tests {
         let error = SourceIr::rebuild_legacy_from_retained_capture(&artifact)
             .expect_err("changed source backing must reject migration");
         assert!(error.to_string().contains("source-size mismatch"));
+        Ok(())
+    }
+
+    #[cfg(feature = "source-proof-migration")]
+    #[test]
+    fn retained_capture_migration_refreshes_a_stale_current_ruleset_without_field_drift()
+    -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("current.md");
+        let artifact_base = tempdir.path().join("artifacts");
+        fs::write(&source, "# current\nSignal ALPHA is input width 1.\n")?;
+        let source_ir = SourceIr::build(&source, &artifact_base)?;
+        source_ir.write_to_disk()?;
+        let artifact = source_ir.artifact_layout.source_ir_path.clone();
+
+        let mut stale = serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&artifact)?)?;
+        let expected_fields = {
+            let mut fields = stale.clone();
+            fields
+                .as_object_mut()
+                .expect("SourceIR object")
+                .remove("proof_context");
+            fields
+                .as_object_mut()
+                .expect("SourceIR object")
+                .remove("proof_ledger");
+            fields
+        };
+        stale["proof_ledger"]["ruleset_sha256"] = serde_json::Value::String("0".repeat(64));
+        fs::write(&artifact, serde_json::to_string_pretty(&stale)?)?;
+        assert!(SourceIr::load_from_path(&artifact).is_err());
+
+        let rebuilt = SourceIr::rebuild_from_retained_capture(&artifact)?;
+        let mut rebuilt_fields = serde_json::to_value(&rebuilt)?;
+        rebuilt_fields
+            .as_object_mut()
+            .expect("SourceIR object")
+            .remove("proof_context");
+        rebuilt_fields
+            .as_object_mut()
+            .expect("SourceIR object")
+            .remove("proof_ledger");
+        assert_eq!(rebuilt_fields, expected_fields);
+        rebuilt.write_to_disk()?;
+        SourceIr::load_from_path(&artifact)?;
         Ok(())
     }
 

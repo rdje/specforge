@@ -453,6 +453,7 @@ pub enum PremiseKind {
     TableCell,
     VisualRegion,
     UpstreamClaim,
+    RegisteredDerivation,
     GroundedModelProposal,
     ValidatedPrior,
     UniversalAxiom,
@@ -491,6 +492,12 @@ pub enum PremiseRef {
         address: ClaimAddress,
         conclusion_sha256: Sha256Digest,
     },
+    RegisteredDerivation {
+        scope: DocumentScope,
+        derivation_id: String,
+        output_sha256: Sha256Digest,
+        inputs_sha256: Sha256Digest,
+    },
     GroundedModelProposal {
         scope: DocumentScope,
         proposal_id: String,
@@ -515,6 +522,7 @@ impl PremiseRef {
             Self::TableCell { .. } => PremiseKind::TableCell,
             Self::VisualRegion { .. } => PremiseKind::VisualRegion,
             Self::UpstreamClaim { .. } => PremiseKind::UpstreamClaim,
+            Self::RegisteredDerivation { .. } => PremiseKind::RegisteredDerivation,
             Self::GroundedModelProposal { .. } => PremiseKind::GroundedModelProposal,
             Self::ValidatedPrior { .. } => PremiseKind::ValidatedPrior,
             Self::UniversalAxiom { .. } => PremiseKind::UniversalAxiom,
@@ -796,7 +804,8 @@ pub(crate) struct RuleVerificationContext<'a> {
     proof: &'a ClaimProof,
     conclusion_json: &'a [u8],
     evidence: &'a EvidenceCatalog,
-    verified_upstream: &'a BTreeMap<ClaimAddress, Vec<u8>>,
+    verified_prefix: &'a BTreeMap<ClaimAddress, Vec<u8>>,
+    verified_local: &'a BTreeMap<ClaimAddress, Vec<u8>>,
 }
 
 impl RuleVerificationContext<'_> {
@@ -813,7 +822,8 @@ impl RuleVerificationContext<'_> {
             self.proof.premises.get(index).ok_or_else(|| {
                 DerivationError::new("rule verifier premise index is out of bounds")
             })?;
-        self.evidence.premise_bytes(premise, self.verified_upstream)
+        self.evidence
+            .premise_bytes(premise, self.verified_prefix, self.verified_local)
     }
 }
 
@@ -884,6 +894,22 @@ struct RulesetHashInput<'a> {
     descriptor_schema_version: u32,
     descriptors: Vec<&'a RuleDescriptor>,
     axioms: Vec<&'a UniversalAxiomDescriptor>,
+}
+
+#[derive(Serialize)]
+struct CumulativeRulesetHashInput<'a> {
+    upstream_ruleset_sha256: &'a Sha256Digest,
+    local_ruleset_sha256: &'a Sha256Digest,
+}
+
+fn cumulative_ruleset_sha256(
+    upstream: &Sha256Digest,
+    local: &Sha256Digest,
+) -> DerivationResult<Sha256Digest> {
+    Sha256Digest::of_serializable(&CumulativeRulesetHashInput {
+        upstream_ruleset_sha256: upstream,
+        local_ruleset_sha256: local,
+    })
 }
 
 impl RuleRegistry {
@@ -973,11 +999,20 @@ struct CapturedEvidence {
 }
 
 #[derive(Debug, Clone)]
+struct RegisteredDerivationAttestation {
+    output_sha256: Sha256Digest,
+    exact_output: Vec<u8>,
+    inputs_sha256: Sha256Digest,
+    inputs: Vec<PremiseRef>,
+}
+
+#[derive(Debug, Clone)]
 struct EvidenceCatalog {
     scope: DocumentScope,
     source_spans: BTreeMap<String, CapturedEvidence>,
     table_cells: BTreeMap<(String, u32, u32), CapturedEvidence>,
     visual_regions: BTreeMap<String, CapturedEvidence>,
+    registered_derivations: BTreeMap<String, RegisteredDerivationAttestation>,
     model_proposals: BTreeMap<String, GroundingAttestation>,
     validated_priors: BTreeMap<String, GroundingAttestation>,
 }
@@ -989,6 +1024,7 @@ impl EvidenceCatalog {
             source_spans: BTreeMap::new(),
             table_cells: BTreeMap::new(),
             visual_regions: BTreeMap::new(),
+            registered_derivations: BTreeMap::new(),
             model_proposals: BTreeMap::new(),
             validated_priors: BTreeMap::new(),
         }
@@ -1050,7 +1086,8 @@ impl EvidenceCatalog {
     fn premise_bytes<'a>(
         &'a self,
         premise: &PremiseRef,
-        verified_upstream: &'a BTreeMap<ClaimAddress, Vec<u8>>,
+        verified_prefix: &'a BTreeMap<ClaimAddress, Vec<u8>>,
+        verified_local: &'a BTreeMap<ClaimAddress, Vec<u8>>,
     ) -> DerivationResult<Option<&'a [u8]>> {
         let bytes = match premise {
             PremiseRef::SourceSpan { span_id, .. } => self
@@ -1070,9 +1107,14 @@ impl EvidenceCatalog {
                 .visual_regions
                 .get(region_id)
                 .map(|capture| capture.exact_content.as_slice()),
-            PremiseRef::UpstreamClaim { address, .. } => {
-                verified_upstream.get(address).map(Vec::as_slice)
-            }
+            PremiseRef::UpstreamClaim { address, .. } => verified_local
+                .get(address)
+                .or_else(|| verified_prefix.get(address))
+                .map(Vec::as_slice),
+            PremiseRef::RegisteredDerivation { derivation_id, .. } => self
+                .registered_derivations
+                .get(derivation_id)
+                .map(|attestation| attestation.exact_output.as_slice()),
             PremiseRef::GroundedModelProposal { proposal_id, .. } => self
                 .model_proposals
                 .get(proposal_id)
@@ -1106,6 +1148,7 @@ pub(crate) struct PromotionKernelBuilder {
     registry: RuleRegistry,
     evidence: EvidenceCatalog,
     symbols: SymbolInterner,
+    upstream_conclusions: BTreeMap<ClaimAddress, Vec<u8>>,
 }
 
 impl PromotionKernelBuilder {
@@ -1122,7 +1165,21 @@ impl PromotionKernelBuilder {
             registry,
             evidence: EvidenceCatalog::new(scope.clone()),
             symbols: SymbolInterner::new(scope),
+            upstream_conclusions: BTreeMap::new(),
         })
+    }
+
+    /// Start a downstream stage from an already verified cumulative prefix. The witness is
+    /// intentionally non-deserializable: persisted bytes cannot seed upstream authority without
+    /// first passing their owning stage verifier.
+    pub(crate) fn with_verified_upstream(
+        capture_digest: Sha256Digest,
+        registry: RuleRegistry,
+        upstream: &VerifiedProofLedger,
+    ) -> DerivationResult<Self> {
+        let mut builder = Self::new(capture_digest, registry)?;
+        builder.upstream_conclusions = upstream.conclusions.clone();
+        Ok(builder)
     }
 
     pub(crate) fn capture(&mut self) -> CaptureCapability<'_> {
@@ -1140,6 +1197,7 @@ impl PromotionKernelBuilder {
             evidence: self.evidence,
             claims: Vec::new(),
             conclusions: BTreeMap::new(),
+            upstream_conclusions: self.upstream_conclusions,
         }
     }
 }
@@ -1245,6 +1303,92 @@ impl CaptureCapability<'_> {
             scope: self.evidence.scope.clone(),
             region_id,
             content_sha256: digest,
+        })
+    }
+
+    /// Bind the exact output of a deterministic registered computation to its complete typed
+    /// input topology. The output is recomputed by trusted stage code before this capability is
+    /// called; it is never deserialized from the artifact under verification.
+    pub(crate) fn registered_derivation(
+        &mut self,
+        derivation_id: impl Into<String>,
+        exact_output: &[u8],
+        inputs: Vec<PremiseRef>,
+    ) -> DerivationResult<PremiseRef> {
+        let derivation_id = derivation_id.into();
+        validate_identifier("registered derivation id", &derivation_id, 256)?;
+        if inputs.is_empty() {
+            return Err(DerivationError::new(
+                "registered derivation requires at least one typed input",
+            ));
+        }
+        if inputs
+            .iter()
+            .any(|premise| matches!(premise, PremiseRef::UniversalAxiom { .. }))
+        {
+            return Err(DerivationError::new(
+                "registered derivation inputs cannot be universal axioms",
+            ));
+        }
+        for input in &inputs {
+            if let PremiseRef::RegisteredDerivation {
+                derivation_id,
+                output_sha256,
+                inputs_sha256,
+                ..
+            } = input
+            {
+                let dependency = self
+                    .evidence
+                    .registered_derivations
+                    .get(derivation_id)
+                    .ok_or_else(|| {
+                        DerivationError::new(format!(
+                            "registered derivation dependency '{derivation_id}' must already exist"
+                        ))
+                    })?;
+                if &dependency.output_sha256 != output_sha256
+                    || &dependency.inputs_sha256 != inputs_sha256
+                {
+                    return Err(DerivationError::new(format!(
+                        "registered derivation dependency '{derivation_id}' is stale"
+                    )));
+                }
+            }
+        }
+        let output_sha256 = Sha256Digest::of_bytes(exact_output);
+        let inputs_sha256 = Sha256Digest::of_serializable(&inputs)?;
+        let attestation = RegisteredDerivationAttestation {
+            output_sha256: output_sha256.clone(),
+            exact_output: exact_output.to_vec(),
+            inputs_sha256: inputs_sha256.clone(),
+            inputs,
+        };
+        if let Some(existing) = self.evidence.registered_derivations.get(&derivation_id) {
+            if existing.output_sha256 == attestation.output_sha256
+                && existing.exact_output == attestation.exact_output
+                && existing.inputs_sha256 == attestation.inputs_sha256
+                && existing.inputs == attestation.inputs
+            {
+                return Ok(PremiseRef::RegisteredDerivation {
+                    scope: self.evidence.scope.clone(),
+                    derivation_id,
+                    output_sha256,
+                    inputs_sha256,
+                });
+            }
+            return Err(DerivationError::new(
+                "duplicate registered derivation has conflicting output or inputs",
+            ));
+        }
+        self.evidence
+            .registered_derivations
+            .insert(derivation_id.clone(), attestation);
+        Ok(PremiseRef::RegisteredDerivation {
+            scope: self.evidence.scope.clone(),
+            derivation_id,
+            output_sha256,
+            inputs_sha256,
         })
     }
 
@@ -1419,6 +1563,40 @@ impl ProofLedger {
             DerivationError::new(format!("cannot serialize proof ledger: {error}"))
         })
     }
+
+    /// Validate an exact verified upstream prefix and recover the current stage's local ledger for
+    /// executable verification. A cumulative hash or matching claim count alone is insufficient.
+    pub(crate) fn local_suffix_after(
+        &self,
+        upstream: &VerifiedProofLedger,
+        local_ruleset_sha256: &Sha256Digest,
+    ) -> DerivationResult<ProofLedger> {
+        if self.schema_version != PROOF_LEDGER_SCHEMA_VERSION {
+            return Err(DerivationError::new(format!(
+                "unsupported cumulative proof ledger schema {}; expected {PROOF_LEDGER_SCHEMA_VERSION}",
+                self.schema_version
+            )));
+        }
+        let expected_ruleset =
+            cumulative_ruleset_sha256(&upstream.ledger.ruleset_sha256, local_ruleset_sha256)?;
+        if self.ruleset_sha256 != expected_ruleset {
+            return Err(DerivationError::new(
+                "cumulative proof ledger ruleset hash is stale",
+            ));
+        }
+        let prefix_len = upstream.ledger.claims.len();
+        if self.claims.len() < prefix_len || self.claims[..prefix_len] != upstream.ledger.claims[..]
+        {
+            return Err(DerivationError::new(
+                "cumulative proof ledger does not retain the exact verified upstream prefix",
+            ));
+        }
+        Ok(ProofLedger {
+            schema_version: PROOF_LEDGER_SCHEMA_VERSION,
+            ruleset_sha256: local_ruleset_sha256.clone(),
+            claims: self.claims[prefix_len..].to_vec(),
+        })
+    }
 }
 
 /// Canonical value paired with its checked proof. The value cannot be extracted outside core.
@@ -1452,6 +1630,7 @@ pub(crate) struct PromotionKernel {
     evidence: EvidenceCatalog,
     claims: Vec<ClaimProof>,
     conclusions: BTreeMap<ClaimAddress, Vec<u8>>,
+    upstream_conclusions: BTreeMap<ClaimAddress, Vec<u8>>,
 }
 
 impl PromotionKernel {
@@ -1478,7 +1657,9 @@ impl PromotionKernel {
         &mut self,
         proposal: GroundedProposal<T>,
     ) -> DerivationResult<Proved<T>> {
-        if self.conclusions.contains_key(&proposal.address) {
+        if self.conclusions.contains_key(&proposal.address)
+            || self.upstream_conclusions.contains_key(&proposal.address)
+        {
             return Err(DerivationError::new(format!(
                 "claim address '{}:{}' already has a proof",
                 proposal.address.surface, proposal.address.stable_record_key
@@ -1501,6 +1682,7 @@ impl PromotionKernel {
             &conclusion_json,
             &self.registry,
             &self.evidence,
+            &self.upstream_conclusions,
             &self.conclusions,
         )?;
         self.conclusions
@@ -1517,8 +1699,17 @@ impl PromotionKernel {
         ledger: ProofLedger,
         conclusions: &BTreeMap<ClaimAddress, Vec<u8>>,
     ) -> DerivationResult<VerifiedProofLedger> {
-        verify_ledger(&ledger, &self.registry, &self.evidence, conclusions)?;
-        Ok(VerifiedProofLedger { ledger })
+        verify_ledger(
+            &ledger,
+            &self.registry,
+            &self.evidence,
+            &self.upstream_conclusions,
+            conclusions,
+        )?;
+        Ok(VerifiedProofLedger {
+            ledger,
+            conclusions: conclusions.clone(),
+        })
     }
 
     pub(crate) fn finish(self) -> DerivationResult<VerifiedProofLedger> {
@@ -1527,8 +1718,17 @@ impl PromotionKernel {
             ruleset_sha256: self.registry.ruleset_sha256.clone(),
             claims: self.claims,
         };
-        verify_ledger(&ledger, &self.registry, &self.evidence, &self.conclusions)?;
-        Ok(VerifiedProofLedger { ledger })
+        verify_ledger(
+            &ledger,
+            &self.registry,
+            &self.evidence,
+            &self.upstream_conclusions,
+            &self.conclusions,
+        )?;
+        Ok(VerifiedProofLedger {
+            ledger,
+            conclusions: self.conclusions,
+        })
     }
 }
 
@@ -1537,6 +1737,7 @@ impl PromotionKernel {
 #[derive(Debug)]
 pub struct VerifiedProofLedger {
     ledger: ProofLedger,
+    conclusions: BTreeMap<ClaimAddress, Vec<u8>>,
 }
 
 impl VerifiedProofLedger {
@@ -1550,6 +1751,38 @@ impl VerifiedProofLedger {
 
     pub(crate) fn into_ledger(self) -> ProofLedger {
         self.ledger
+    }
+
+    /// Join a verified upstream chain with a verified current-stage suffix. The persisted claim
+    /// order remains an exact prefix relation, while the cumulative ruleset digest commits to the
+    /// ordered stage composition.
+    pub(crate) fn compose(upstream: &Self, local: Self) -> DerivationResult<VerifiedProofLedger> {
+        let mut claims = upstream.ledger.claims.clone();
+        claims.extend(local.ledger.claims.iter().cloned());
+        let mut conclusions = upstream.conclusions.clone();
+        for (address, bytes) in local.conclusions {
+            if conclusions.insert(address, bytes).is_some() {
+                return Err(DerivationError::new(
+                    "cumulative proof chain has a duplicate claim address",
+                ));
+            }
+        }
+        if claims.len() != conclusions.len() {
+            return Err(DerivationError::new(
+                "cumulative proof chain does not cover every conclusion exactly once",
+            ));
+        }
+        Ok(VerifiedProofLedger {
+            ledger: ProofLedger {
+                schema_version: PROOF_LEDGER_SCHEMA_VERSION,
+                ruleset_sha256: cumulative_ruleset_sha256(
+                    &upstream.ledger.ruleset_sha256,
+                    &local.ledger.ruleset_sha256,
+                )?,
+                claims,
+            },
+            conclusions,
+        })
     }
 }
 
@@ -1651,6 +1884,7 @@ fn verify_ledger(
     ledger: &ProofLedger,
     registry: &RuleRegistry,
     evidence: &EvidenceCatalog,
+    verified_prefix: &BTreeMap<ClaimAddress, Vec<u8>>,
     conclusions: &BTreeMap<ClaimAddress, Vec<u8>>,
 ) -> DerivationResult<()> {
     if ledger.schema_version != PROOF_LEDGER_SCHEMA_VERSION {
@@ -1662,6 +1896,7 @@ fn verify_ledger(
     if ledger.ruleset_sha256 != registry.ruleset_sha256 {
         return Err(DerivationError::new("proof ledger ruleset hash is stale"));
     }
+    validate_registered_derivation_catalog(evidence, registry, verified_prefix)?;
     let mut verified = BTreeMap::new();
     for proof in &ledger.claims {
         if verified.contains_key(&proof.address) {
@@ -1681,7 +1916,14 @@ fn verify_ledger(
                 proof.address.surface, proof.address.stable_record_key
             )));
         }
-        validate_claim(proof, conclusion_json, registry, evidence, &verified)?;
+        validate_claim(
+            proof,
+            conclusion_json,
+            registry,
+            evidence,
+            verified_prefix,
+            &verified,
+        )?;
         verified.insert(proof.address.clone(), conclusion_json.clone());
     }
     if verified.len() != conclusions.len() {
@@ -1692,12 +1934,38 @@ fn verify_ledger(
     Ok(())
 }
 
+/// Validate each registered deterministic replay once per ledger verification. A single replay is
+/// deliberately shared by every field/record proof in a stage; recursively revalidating thousands
+/// of identical upstream inputs for every conclusion would turn proof checking into a quadratic
+/// corpus-size operation without adding authority.
+fn validate_registered_derivation_catalog(
+    evidence: &EvidenceCatalog,
+    registry: &RuleRegistry,
+    verified_prefix: &BTreeMap<ClaimAddress, Vec<u8>>,
+) -> DerivationResult<()> {
+    let no_local_claims = BTreeMap::new();
+    for (derivation_id, attestation) in &evidence.registered_derivations {
+        if Sha256Digest::of_bytes(&attestation.exact_output) != attestation.output_sha256
+            || Sha256Digest::of_serializable(&attestation.inputs)? != attestation.inputs_sha256
+        {
+            return Err(DerivationError::new(format!(
+                "registered derivation '{derivation_id}' attestation is internally inconsistent"
+            )));
+        }
+        for input in &attestation.inputs {
+            validate_premise(input, registry, evidence, verified_prefix, &no_local_claims)?;
+        }
+    }
+    Ok(())
+}
+
 fn validate_claim(
     proof: &ClaimProof,
     conclusion_json: &[u8],
     registry: &RuleRegistry,
     evidence: &EvidenceCatalog,
-    verified_upstream: &BTreeMap<ClaimAddress, Vec<u8>>,
+    verified_prefix: &BTreeMap<ClaimAddress, Vec<u8>>,
+    verified_local: &BTreeMap<ClaimAddress, Vec<u8>>,
 ) -> DerivationResult<()> {
     proof.address.validate()?;
     let descriptor = registry.descriptor(&proof.rule_id).ok_or_else(|| {
@@ -1727,7 +1995,7 @@ fn validate_claim(
                 premise.kind()
             )));
         }
-        validate_premise(premise, registry, evidence, verified_upstream)?;
+        validate_premise(premise, registry, evidence, verified_prefix, verified_local)?;
     }
     validate_confidence(proof)?;
     validate_symbol_uses(proof, descriptor, evidence)?;
@@ -1741,7 +2009,8 @@ fn validate_claim(
         proof,
         conclusion_json,
         evidence,
-        verified_upstream,
+        verified_prefix,
+        verified_local,
     })
 }
 
@@ -1749,7 +2018,8 @@ fn validate_premise(
     premise: &PremiseRef,
     registry: &RuleRegistry,
     evidence: &EvidenceCatalog,
-    verified_upstream: &BTreeMap<ClaimAddress, Vec<u8>>,
+    verified_prefix: &BTreeMap<ClaimAddress, Vec<u8>>,
+    verified_local: &BTreeMap<ClaimAddress, Vec<u8>>,
 ) -> DerivationResult<()> {
     match premise {
         PremiseRef::SourceSpan { .. }
@@ -1759,9 +2029,12 @@ fn validate_premise(
             address,
             conclusion_sha256,
         } => {
-            let exact = verified_upstream.get(address).ok_or_else(|| {
-                DerivationError::new(format!("upstream claim {:?} is absent", address))
-            })?;
+            let exact = verified_local
+                .get(address)
+                .or_else(|| verified_prefix.get(address))
+                .ok_or_else(|| {
+                    DerivationError::new(format!("upstream claim {:?} is absent", address))
+                })?;
             if Sha256Digest::of_bytes(exact) == *conclusion_sha256 {
                 Ok(())
             } else {
@@ -1770,6 +2043,30 @@ fn validate_premise(
                     address
                 )))
             }
+        }
+        PremiseRef::RegisteredDerivation {
+            scope,
+            derivation_id,
+            output_sha256,
+            inputs_sha256,
+        } => {
+            evidence.require_current_scope(scope)?;
+            let attestation = evidence
+                .registered_derivations
+                .get(derivation_id)
+                .ok_or_else(|| {
+                    DerivationError::new(format!(
+                        "registered derivation '{derivation_id}' is not available from the current binary replay"
+                    ))
+                })?;
+            if &attestation.output_sha256 != output_sha256
+                || &attestation.inputs_sha256 != inputs_sha256
+            {
+                return Err(DerivationError::new(format!(
+                    "registered derivation '{derivation_id}' output or input topology is stale"
+                )));
+            }
+            Ok(())
         }
         PremiseRef::GroundedModelProposal {
             scope,
@@ -2841,6 +3138,193 @@ mod tests {
     }
 
     #[test]
+    fn cumulative_chain_preserves_exact_verified_prefix_and_replays_local_suffix() {
+        let (mut source_kernel, premise, symbol) = source_kernel();
+        let source = source_kernel.grammar_capability().propose(
+            address("source"),
+            RuleId::try_from("synthetic.source_copy".to_string()).unwrap(),
+            vec![premise],
+            vec![SymbolUse::introduced(&symbol, 0)],
+            ProofConfidence::Deterministic,
+            7_u32,
+        );
+        source_kernel.promote(source).unwrap();
+        let upstream = source_kernel.finish().unwrap();
+        let source_proof = upstream.claims().first().unwrap();
+        let upstream_premise = PremiseRef::UpstreamClaim {
+            address: source_proof.address().clone(),
+            conclusion_sha256: source_proof.conclusion_sha256().clone(),
+        };
+
+        let downstream_registry = registry(vec![rule(
+            "synthetic.carry",
+            [PremiseKind::UpstreamClaim],
+            SymbolCapabilityClass::LosslessCarry,
+            AlphaObligation::LosslessTopologyInvariant,
+        )]);
+        let local_ruleset = downstream_registry.ruleset_sha256().clone();
+        let mut downstream = PromotionKernelBuilder::with_verified_upstream(
+            Sha256Digest::of_bytes(b"capture"),
+            downstream_registry.clone(),
+            &upstream,
+        )
+        .unwrap()
+        .seal();
+        let carried = downstream.grammar_capability().propose(
+            address("evidence"),
+            RuleId::try_from("synthetic.carry".to_string()).unwrap(),
+            vec![upstream_premise],
+            vec![],
+            ProofConfidence::Deterministic,
+            7_u32,
+        );
+        downstream.promote(carried).unwrap();
+        let local = downstream.finish().unwrap();
+        let local_conclusions = local.conclusions.clone();
+        let cumulative = VerifiedProofLedger::compose(&upstream, local).unwrap();
+
+        assert_eq!(
+            &cumulative.claims()[..upstream.claims().len()],
+            upstream.claims()
+        );
+        let local_suffix = cumulative
+            .ledger()
+            .local_suffix_after(&upstream, &local_ruleset)
+            .unwrap();
+        let verifier = PromotionKernelBuilder::with_verified_upstream(
+            Sha256Digest::of_bytes(b"capture"),
+            downstream_registry,
+            &upstream,
+        )
+        .unwrap()
+        .seal();
+        verifier
+            .verify_persisted(local_suffix, &local_conclusions)
+            .unwrap();
+    }
+
+    #[test]
+    fn cumulative_chain_rejects_prefix_or_stage_composition_tampering() {
+        let (mut source_kernel, premise, symbol) = source_kernel();
+        let source = source_kernel.grammar_capability().propose(
+            address("source"),
+            RuleId::try_from("synthetic.source_copy".to_string()).unwrap(),
+            vec![premise],
+            vec![SymbolUse::introduced(&symbol, 0)],
+            ProofConfidence::Deterministic,
+            7_u32,
+        );
+        source_kernel.promote(source).unwrap();
+        let upstream = source_kernel.finish().unwrap();
+        let downstream_registry = registry(vec![rule(
+            "synthetic.carry",
+            [PremiseKind::UpstreamClaim],
+            SymbolCapabilityClass::LosslessCarry,
+            AlphaObligation::LosslessTopologyInvariant,
+        )]);
+        let local_ruleset = downstream_registry.ruleset_sha256().clone();
+        let source_proof = upstream.claims().first().unwrap();
+        let mut downstream = PromotionKernelBuilder::with_verified_upstream(
+            Sha256Digest::of_bytes(b"capture"),
+            downstream_registry,
+            &upstream,
+        )
+        .unwrap()
+        .seal();
+        let carried = downstream.grammar_capability().propose(
+            address("evidence"),
+            RuleId::try_from("synthetic.carry".to_string()).unwrap(),
+            vec![PremiseRef::UpstreamClaim {
+                address: source_proof.address().clone(),
+                conclusion_sha256: source_proof.conclusion_sha256().clone(),
+            }],
+            vec![],
+            ProofConfidence::Deterministic,
+            7_u32,
+        );
+        downstream.promote(carried).unwrap();
+        let mut cumulative = VerifiedProofLedger::compose(&upstream, downstream.finish().unwrap())
+            .unwrap()
+            .into_ledger();
+
+        cumulative.claims[0].conclusion_sha256 = Sha256Digest::of_bytes(b"forged-prefix");
+        assert!(
+            cumulative
+                .local_suffix_after(&upstream, &local_ruleset)
+                .unwrap_err()
+                .to_string()
+                .contains("exact verified upstream prefix")
+        );
+
+        cumulative.claims[0] = upstream.claims()[0].clone();
+        cumulative.ruleset_sha256 = Sha256Digest::of_bytes(b"reordered-stage-composition");
+        assert!(
+            cumulative
+                .local_suffix_after(&upstream, &local_ruleset)
+                .unwrap_err()
+                .to_string()
+                .contains("ruleset hash is stale")
+        );
+    }
+
+    #[test]
+    fn registered_derivation_binds_recomputed_output_and_input_topology() {
+        let descriptor = rule(
+            "synthetic.registered_replay",
+            [PremiseKind::RegisteredDerivation],
+            SymbolCapabilityClass::SymbolBlind,
+            AlphaObligation::ByteIdenticalNonSymbolOutput,
+        );
+        let registry =
+            RuleRegistry::new([RuleRegistration::new(descriptor, verify_exact_copy)], []).unwrap();
+        let mut builder =
+            PromotionKernelBuilder::new(Sha256Digest::of_bytes(b"capture"), registry).unwrap();
+        let replay = serde_json::to_vec(&7_u32).unwrap();
+        let registered = {
+            let mut capture = builder.capture();
+            let input = capture
+                .source_span("source", b"exact current input")
+                .unwrap();
+            capture
+                .registered_derivation("synthetic.replay", &replay, vec![input])
+                .unwrap()
+        };
+        let mut kernel = builder.seal();
+        let proposal = kernel.grammar_capability().propose(
+            address("derived"),
+            RuleId::try_from("synthetic.registered_replay".to_string()).unwrap(),
+            vec![registered],
+            vec![],
+            ProofConfidence::Deterministic,
+            7_u32,
+        );
+        kernel.promote(proposal).unwrap();
+        let registry = kernel.registry.clone();
+        let evidence = kernel.evidence.clone();
+        let verified = kernel.finish().unwrap();
+
+        let mut ledger = verified.ledger.clone();
+        let forged = serde_json::to_vec(&8_u32).unwrap();
+        ledger.claims[0].conclusion_sha256 = Sha256Digest::of_bytes(&forged);
+        let conclusions = BTreeMap::from([(address("derived"), forged)]);
+        let verifier = PromotionKernel {
+            seal: CapabilitySeal,
+            registry,
+            evidence,
+            claims: Vec::new(),
+            conclusions: BTreeMap::new(),
+            upstream_conclusions: BTreeMap::new(),
+        };
+        assert!(
+            verifier
+                .verify_persisted(ledger, &conclusions)
+                .unwrap_err()
+                .to_string()
+                .contains("executable exact-copy relation rejected")
+        );
+    }
+
+    #[test]
     fn conclusion_digest_and_upstream_topology_detect_tampering() {
         let registry = registry(vec![
             rule(
@@ -2898,6 +3382,7 @@ mod tests {
             evidence,
             claims: vec![],
             conclusions: BTreeMap::new(),
+            upstream_conclusions: BTreeMap::new(),
         };
         let error = verifier
             .verify_persisted(reparsed, &conclusions)

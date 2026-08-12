@@ -134,7 +134,9 @@ sub validate_producer_contract {
             'resolve_reference(&runtime.source.canonical_path, source_origin)?',
         ],
         'crates/specforge/src/ir/evidence.rs' => [
-            'to_string_pretty(&self.persisted_clone()?)',
+            'let persisted = self.persisted_clone()?;',
+            'persisted.verify_canonical_proof()?;',
+            'to_string_pretty(&persisted)?',
             'evidence_ir.runtime_clone()',
             'persisted.artifact_layout.normalize_for_storage()?;',
             'anchor.source_path = resolve_reference(&anchor.source_path, source_path_origin)?;',

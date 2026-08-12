@@ -27,7 +27,7 @@ use crate::ir::cve::{
     apply_entailment_to_contract, parse_constrained_contract,
 };
 use crate::ir::entity_typing::declared_signal_catalog;
-use crate::ir::evidence::{EvidenceIr, StatementClass};
+use crate::ir::evidence::{EvidenceIr, EvidenceMutationKind, StatementClass};
 use crate::llm_text;
 use std::collections::BTreeSet;
 
@@ -227,6 +227,7 @@ pub fn run(args: ExtractContractsArgs) -> Result<()> {
         schema_rejects,
         contracts_accepted,
     });
+    ir.authorize_mutation(EvidenceMutationKind::ContractExtraction)?;
     ir.write_to_disk()?;
     println!("wrote: {}", evidence_ir_path.display());
     println!("next: re-run `specforge semantic` to fold these into actor_contracts");

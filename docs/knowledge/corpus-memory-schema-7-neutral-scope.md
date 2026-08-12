@@ -32,6 +32,7 @@ learn produced 29 actor, 83 semantic, four modality, 443 temporal, zero table, 1
 structural-profile priors; a third learn was byte-identical at SHA-256
 `a416cc8b7b6bd84947e4b6780d5253b13c2985c57ca4e8f1c02d6daf56239633`.
 
-All measurable persisted artifacts are current: EvidenceIR 24/24, and SemanticIR, IntentIR, and adapters 78/78.
-The neutral store can influence a document only through matching normalized current-document evidence or a
-structural fingerprint. One globally contested actor term remains explicitly unresolved.
+The later proof migration leaves 24 documents measurable through current EvidenceIR; the other 54 are an explicit
+legacy/proofless frontier rather than current replay claims. The neutral store can influence a document only
+through matching normalized current-document evidence or a structural fingerprint, and schema-3 EvidenceIR
+captures the exact prior used by its executable replay. One globally contested actor term remains unresolved.

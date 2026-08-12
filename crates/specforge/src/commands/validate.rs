@@ -8,7 +8,7 @@ use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::adapters::AdapterArtifact;
 use crate::ir::evidence::{
-    EvidenceIr, SignalSemanticConflictRecord, SignalSemanticHintRecord,
+    EvidenceIr, EvidenceMutationKind, SignalSemanticConflictRecord, SignalSemanticHintRecord,
     SignalSemanticHintSourceKind, StatementClass, VisualEvidenceRole, VisualObservationKind,
 };
 use crate::ir::intent::{IntentIr, count_nested_steps};
@@ -233,7 +233,11 @@ fn source_ir_fingerprint(ir: &SourceIr) -> Result<String> {
 fn evidence_ir_fingerprint(ir: &EvidenceIr) -> Result<String> {
     let mut clone = ir.clone();
     clone.validation_reports.clear();
-    Ok(stable_fingerprint(&clone.to_pretty_json()?))
+    // Validation also evaluates explicitly noncanonical, in-memory conformance overlays.
+    // Fingerprinting is diagnostic serialization, not persistence authority: routing this
+    // through `EvidenceIr::to_pretty_json` would correctly demand a verified canonical proof
+    // and would therefore make the test-only overlay impossible to inspect.
+    Ok(stable_fingerprint(&serde_json::to_string_pretty(&clone)?))
 }
 
 fn semantic_ir_fingerprint(ir: &SemanticIr) -> Result<String> {
@@ -2200,6 +2204,7 @@ fn persist_evidence_validation(
     report: &ValidationReportRecord,
 ) -> Result<()> {
     backannotate_report(&mut ir.validation_reports, report);
+    ir.authorize_mutation(EvidenceMutationKind::ValidationBackannotation)?;
     write_backannotated_artifact(artifact_path, ir.to_pretty_json()?)?;
     write_validation_report_sidecar(artifact_path, report)
 }

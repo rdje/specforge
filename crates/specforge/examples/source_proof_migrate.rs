@@ -74,7 +74,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let stdout = io::stdout();
     let mut output = stdout.lock();
     for path in paths {
-        let rebuilt = SourceIr::rebuild_legacy_from_retained_capture(&path)?;
+        let rebuilt = SourceIr::rebuild_from_retained_capture(&path)?;
         if write {
             rebuilt.write_to_disk()?;
         }

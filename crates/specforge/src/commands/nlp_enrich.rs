@@ -2,8 +2,8 @@ use crate::cli::{NlpEnrichArgs, VlmProviderArg};
 use crate::error::{AppError, Result};
 use crate::ir::entity_typing::declared_signal_catalog;
 use crate::ir::evidence::{
-    EvidenceIr, ExtractorTier, FactKind, FactProvenanceRecord, StatementClass,
-    signal_constraint_fact_key,
+    EvidenceIr, EvidenceMutationKind, ExtractorTier, FactKind, FactProvenanceRecord,
+    StatementClass, signal_constraint_fact_key,
 };
 use crate::ir::source::{
     AutomationConfidence, ConditionalRuleRecord, SignalConstraintKind, SignalConstraintRecord,
@@ -350,6 +350,7 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
                     evidence_ir.conditional_rules.extend(new_conditional_rules);
                     evidence_ir.dedup_loopback_records();
                     evidence_ir.refresh_signal_semantic_hints()?;
+                    evidence_ir.authorize_mutation(EvidenceMutationKind::NlpEnrichment)?;
                     // Write after every pass so progress is durable.
                     evidence_ir.write_to_disk()?;
                     normalized_records_written = true;
@@ -358,6 +359,7 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
                     // Persist so the alias map accumulates correctly.
                     evidence_ir.dedup_loopback_records();
                     evidence_ir.refresh_signal_semantic_hints()?;
+                    evidence_ir.authorize_mutation(EvidenceMutationKind::NlpEnrichment)?;
                     evidence_ir.write_to_disk()?;
                     normalized_records_written = true;
                 }
@@ -367,6 +369,7 @@ pub fn run(args: NlpEnrichArgs) -> Result<()> {
 
             if !args.dry_run && normalized_existing_records && !normalized_records_written {
                 evidence_ir.refresh_signal_semantic_hints()?;
+                evidence_ir.authorize_mutation(EvidenceMutationKind::NlpEnrichment)?;
                 evidence_ir.write_to_disk()?;
             }
 
@@ -1009,6 +1012,7 @@ mod tests {
             &evidence_artifact_base,
         )?;
         add_declared_signal(&mut evidence_ir, "HTRANS");
+        evidence_ir.authorize_mutation(EvidenceMutationKind::NlpEnrichment)?;
         evidence_ir.write_to_disk()?;
 
         // Verify the sentence is NormativeStatement (not SignalValueConstraint).
@@ -1032,6 +1036,7 @@ mod tests {
                 evidence_span_ids: vec![],
                 related_visual_evidence_ids: vec![],
             });
+        evidence_ir.authorize_mutation(EvidenceMutationKind::NlpEnrichment)?;
         evidence_ir.write_to_disk()?;
 
         // Write mock helper that returns a signal_constraint for "HTRANS".
@@ -1412,6 +1417,7 @@ mod tests {
                 evidence_span_ids: vec![],
                 related_visual_evidence_ids: vec![],
             });
+        evidence_ir.authorize_mutation(EvidenceMutationKind::NlpEnrichment)?;
         evidence_ir.write_to_disk()?;
 
         // Mock LLM returns HADDR as the subject signal.
@@ -1487,6 +1493,7 @@ mod tests {
                 evidence_span_ids: vec![],
                 related_visual_evidence_ids: vec![],
             });
+        evidence_ir.authorize_mutation(EvidenceMutationKind::NlpEnrichment)?;
         evidence_ir.write_to_disk()?;
 
         let helper = write_mock_helper(
@@ -1607,6 +1614,7 @@ mod tests {
                 evidence_span_ids: vec![],
                 related_visual_evidence_ids: vec![],
             });
+        evidence_ir.authorize_mutation(EvidenceMutationKind::NlpEnrichment)?;
         evidence_ir.write_to_disk()?;
 
         let helper = write_mock_helper(
@@ -1674,6 +1682,7 @@ mod tests {
                     related_visual_evidence_ids: vec![],
                 });
         }
+        evidence_ir.authorize_mutation(EvidenceMutationKind::NlpEnrichment)?;
         evidence_ir.write_to_disk()?;
 
         let helper = write_mock_helper(

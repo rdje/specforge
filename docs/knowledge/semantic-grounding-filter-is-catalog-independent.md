@@ -15,7 +15,7 @@ date: 2026-08-11
 status: current
 tags: [semantic-ir, grounding, signal-authority, conditional-rules, signal-constraints, residual-decisions, adr-0006]
 evidence: crates/specforge/src/ir/semantic.rs (declared-signal gating + `ungrounded_promotion_residual_packet`); docs/tasks/SEMANTIC-EMPTY-CATALOG-FILTER.md; docs/book/src/pipeline/semanticir.md
-reverify: "Replay every document read-only and classify the result: for each generated/evidence_ir/<k>/evidence_ir.json run `specforge semantic <path> --dry-run`, strip `validation_reports`, and diff against generated/semantic_ir/<k>/semantic_ir.json — expect it to be current at 78/78 (`bash scripts/check_chain_currency.sh`). To re-derive the landed rule's effect, recompute promotion from EvidenceIR against each document's non-low-confidence declared-signal set: 11 documents unchanged, 41 changed only in `residual_decisions`, 26 content-moved and all 26 with an empty declared catalog."
+reverify: "Run `bash scripts/check_chain_currency.sh --check`: current schema-3 EvidenceIR must replay through SemanticIR for all 24 retained proof-verifiable documents, while the 54 legacy/proofless inputs are explicitly unmeasurable. To re-derive the landed rule's historical population effect, use the measurements retained in docs/tasks/SEMANTIC-EMPTY-CATALOG-FILTER.md."
 ---
 
 **Established `2026-08-11` (`SEMANTIC-EMPTY-CATALOG-FILTER.1`).** `SemanticIr::build` promotes an `EvidenceIR`
@@ -44,9 +44,10 @@ populated branch was *already* dropping 1,230 rules and 47 constraints silently 
 demotion surfaces those as residuals, which is why the tree's acceptance bar was revised from byte-identity to
 "added residuals only".
 
-**The product boundary did not move.** After rebuilding all 78 downstream chains from unchanged `EvidenceIR`,
+**At the original slice, the product boundary did not move.** After rebuilding all 78 downstream chains from unchanged `EvidenceIR`,
 all **44 emitted `.isf` are byte-identical** and pass FSMGen `--strict --check` with zero diagnostics;
-`kg-bench` holds `156/156`; `CHAIN-CURRENCY` is green at 24/78/78/78. An empty catalog already blocked the `.isf`
+`kg-bench` held `156/156`. The later proof migration narrows current replay authority to the 24 documents with
+verifiable capture and reports the other 54 as unmeasurable rather than current. An empty catalog already blocked the `.isf`
 adapter on `no signals declared in interface`, so no unfiltered record had ever reached an emitted target.
 
 **What the packet is good for.** If the names it lists read as real wires rather than boilerplate, the document's

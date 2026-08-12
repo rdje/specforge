@@ -1,4 +1,33 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii (`2026-08-13`) — replayable proposals, not semantic self-attestation
+
+EvidenceIR is the first stage where deterministic extraction, current-document text, scoped priors, and bounded
+model-assisted enrichment meet. Its schema-3 proof context therefore captures the exact normalized Markdown, the
+exact validated prior if one was used, and every approved post-build mutation as an ordered typed proposal. The
+verifier reconstructs the complete artifact from verified SourceIR plus those inputs and compares each registered
+conclusion exactly; the proposal is evidence for replay, never a claim that a model response is inherently true.
+
+The cumulative ledger composes rather than restarts. All verified SourceIR claims are retained byte-for-byte as
+the prefix, then 39 field roots across 11 EvidenceIR families and all populated record/alias claims are appended.
+Registered derivations are exact relations: each claim binds its output bytes to the already verified global
+stage replay, and nested derivations must name an existing dependency with matching input/output digests. Registry
+validation is once per ledger, keeping verification linear in the number of claims rather than recursively
+replaying the whole artifact for every record.
+
+Mutation authority is closed by kind and field set. The application commands that enrich NLP facts, conditions,
+constraints, contracts, signal relations, register bits, NLI quality, or validation reports must reconstruct an
+exact predecessor, cite existing source support, apply only their allowed patch, and extend proof before writing.
+The former carry-forward behavior that silently imported selected fields from an older EvidenceIR was removed;
+unrecorded state cannot regain canonical authority.
+
+Only 24 documents retain verifiable SourceIR capture inputs. Their schema-3 EvidenceIR migration changed no
+extracted field, and their SemanticIR replay is likewise unchanged. The 54 remaining schema-2 EvidenceIRs stay
+inspection-only until owned source recapture is possible. Chain currency treats this closed legacy/proofless
+condition as an explicit unmeasurable EvidenceIR-to-SemanticIR frontier, never as current and never as an
+exception for a stale proof. IntentIR and adapter replay remain 78/78 stage-locally reproducible from the
+persisted SemanticIRs because those stages have not crossed their proof migrations; that is not an end-to-end
+proof-current claim.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii (`2026-08-12`) — a hash is not a derivation
 
 SourceIR is the first canonical stage to cross the proof boundary. Its proof context records the exact

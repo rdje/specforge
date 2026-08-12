@@ -28,8 +28,8 @@ my $BYPASS_HEADER = join "\t", qw(
 );
 
 my %ALLOWED_PREMISE = map { $_ => 1 } qw(
-    source_span table_cell visual_region upstream_claim grounded_model_proposal validated_prior
-    universal_axiom
+    source_span table_cell visual_region upstream_claim registered_derivation
+    grounded_model_proposal validated_prior universal_axiom
 );
 my %CAPABILITY_ALPHA = (
     symbol_blind       => 'byte_identical_non_symbol_output',

@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
+  > what is dedup_constraints / its canonical key
+- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
+  > what is definitional_signal_names / the copula + glossary-colon prose-signal grammar
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > what is document_completeness_gauge / document_completeness_gaps / why is a guide not penalized
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > what is document_intent_category / the 6-category purpose recognizer
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > what is document_type_declared / front_matter_doc_type_hint
+- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
+  > what is extract_composition_frame_fields / is_frame_field_name / stated_frame_field_bit_width / parse_count_word
+- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
+  > what is extract_quoted_mode_states / quoted_mode_states_in / mode_state_ ids
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > what is extract_transition_bound_states / transition_bound_state_names_in / is_bare_state_name / named_state_ ids
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
@@ -284,17 +298,3 @@
   > what owns live-document size limits and transition debt
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > what owns the SWD EvidenceIR to IntentIR projection gap
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > what parts of the literature are deferred or flagged as future work
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what phases does each wire doc recognise (APB setup/access, AHB/AXI address/data, SWD address/data/response/turnaround)
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > what precision and recall floors must a supported document category meet
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > what prevents one Knowledge Map question from pointing to multiple fact cards
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > what prevents root documentation from regrowing into a second manual
-- [mdbook-current-truth-drift-lock](../knowledge/mdbook-current-truth-drift-lock.md)
-  > what prevents the actor direction and extract-contracts book claims from drifting
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > what prevents the word while in a license notice from becoming a gate

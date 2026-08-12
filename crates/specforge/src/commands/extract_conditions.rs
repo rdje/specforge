@@ -8,7 +8,7 @@ use crate::error::Result;
 use crate::ir::condition_extract::{
     ConditionEvidence, DEFAULT_CONDITION_MODEL, extract_condition, propose_condition_llm,
 };
-use crate::ir::evidence::EvidenceIr;
+use crate::ir::evidence::{EvidenceIr, EvidenceMutationKind};
 use crate::ir::nli_verify::constraint_claim_text;
 
 /// Source-text cues that a requirement is conditional — only these spend an LLM call.
@@ -74,6 +74,7 @@ pub fn run(args: ExtractConditionsArgs) -> Result<()> {
             captured += 1;
         }
     }
+    ir.authorize_mutation(EvidenceMutationKind::ConditionExtraction)?;
     ir.write_to_disk()?;
     println!(
         "candidate constraints (unconditional + source has a condition cue): {processed}; conditions captured + grounded: {captured}"

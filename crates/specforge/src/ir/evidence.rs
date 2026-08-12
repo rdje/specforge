@@ -6,6 +6,12 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
+use crate::ir::derivation::{
+    AlphaObligation, ClaimAddress, DerivationError, DerivationResult, PremiseKind, PremiseRef,
+    PromotionKernelBuilder, ProofConfidence, ProofLedger, RuleCompatibility, RuleDescriptor,
+    RuleId, RuleRegistration, RuleRegistry, RuleVerificationContext, Sha256Digest,
+    SymbolCapabilityClass, ValidatedPriorScope, VerifiedProofLedger,
+};
 use crate::ir::extractor::{
     ExtractionContext, ExtractionManifest, Extractor, run_surface, run_surface_concat,
 };
@@ -31,7 +37,143 @@ use crate::persisted_path::{
     resolve_repository_output,
 };
 
-const EVIDENCE_IR_SCHEMA_VERSION: u32 = 2;
+const EVIDENCE_IR_SCHEMA_VERSION: u32 = 3;
+const EVIDENCE_PROOF_CONTEXT_SCHEMA_VERSION: u32 = 1;
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+struct EvidenceProofContext {
+    schema_version: u32,
+    normalized_markdown: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    prior_memory: Option<CorpusMemory>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    mutations: Vec<EvidenceMutationEvent>,
+    #[cfg(any(test, feature = "test-support"))]
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    test_fixture: bool,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+#[doc(hidden)]
+pub enum EvidenceMutationKind {
+    NlpEnrichment,
+    SignalResolution,
+    ConditionExtraction,
+    ConstraintPromotion,
+    ContractExtraction,
+    RegisterBitRecovery,
+    QualityGauge,
+    ValidationBackannotation,
+    SemanticHintRefresh,
+    #[cfg(any(test, feature = "test-support"))]
+    TestFixture,
+}
+
+impl EvidenceMutationKind {
+    fn allowed_fields(self) -> Vec<&'static str> {
+        match self {
+            Self::NlpEnrichment => vec![
+                "extracted_statements",
+                "signal_constraints",
+                "conditional_rules",
+                "signal_alias_map",
+                "fact_provenance",
+                "signal_semantic_hints",
+                "signal_semantic_conflicts",
+                "extraction_manifest",
+            ],
+            Self::SignalResolution => vec!["actor_signal_relations", "fact_provenance"],
+            Self::ConditionExtraction => vec!["signal_constraints"],
+            Self::ConstraintPromotion => vec![
+                "signal_constraints",
+                "message_field_constraints",
+                "extraction_quality_gauge",
+                "extraction_manifest",
+                "fact_provenance",
+            ],
+            Self::ContractExtraction => {
+                vec!["extracted_contracts", "constrained_extraction_stats"]
+            }
+            Self::RegisterBitRecovery => vec!["register_records"],
+            Self::QualityGauge => vec!["extraction_quality_gauge"],
+            Self::ValidationBackannotation => vec!["validation_reports"],
+            Self::SemanticHintRefresh => vec![
+                "signal_semantic_hints",
+                "signal_semantic_conflicts",
+                "extraction_manifest",
+            ],
+            #[cfg(any(test, feature = "test-support"))]
+            Self::TestFixture => EVIDENCE_RULE_FIELDS
+                .iter()
+                .map(|(field, _)| *field)
+                .collect(),
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+struct EvidenceMutationEvent {
+    mutation_id: String,
+    kind: EvidenceMutationKind,
+    fields: BTreeMap<String, serde_json::Value>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    supporting_statement_ids: Vec<String>,
+}
+
+#[derive(Debug)]
+struct EvidenceClaimInput {
+    address: ClaimAddress,
+    rule_id: RuleId,
+    conclusion: serde_json::Value,
+}
+
+#[derive(Debug)]
+struct EvidenceProofPremises {
+    claim_replays: BTreeMap<ClaimAddress, PremiseRef>,
+    normalized_source: PremiseRef,
+    validated_prior: Option<PremiseRef>,
+    mutations: Vec<(EvidenceMutationKind, PremiseRef)>,
+}
+
+impl EvidenceProofPremises {
+    fn for_claim(
+        &self,
+        address: &ClaimAddress,
+    ) -> DerivationResult<(Vec<PremiseRef>, ProofConfidence)> {
+        let field = address.surface();
+        let relevant_mutations = self
+            .mutations
+            .iter()
+            .filter(|(kind, _)| kind.allowed_fields().contains(&field))
+            .map(|(_, premise)| premise.clone())
+            .collect::<Vec<_>>();
+        let claim_replay = self.claim_replays.get(address).cloned().ok_or_else(|| {
+            DerivationError::new(format!(
+                "EvidenceIR claim '{}:{}' lacks its registered replay",
+                address.surface(),
+                address.stable_record_key()
+            ))
+        })?;
+        let mut premises = vec![claim_replay, self.normalized_source.clone()];
+        if let Some(prior) = &self.validated_prior {
+            premises.push(prior.clone());
+        }
+        premises.extend(relevant_mutations.iter().cloned());
+        let confidence = if relevant_mutations.is_empty() {
+            if self.validated_prior.is_some() {
+                ProofConfidence::ValidatedPrior
+            } else {
+                ProofConfidence::Deterministic
+            }
+        } else {
+            ProofConfidence::GroundedModel
+        };
+        Ok((premises, confidence))
+    }
+}
 
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -265,6 +407,15 @@ pub struct EvidenceIr {
     /// found missing. Additive + serde-default for backward compatibility with older persisted artifacts.
     #[serde(default)]
     pub extraction_manifest: ExtractionManifest,
+    /// Verifier-owned replay policy. It intentionally contains no extracted value: current
+    /// EvidenceIR is reconstructed from verified SourceIR, the exact normalized source, and any
+    /// independently validated prior/model mutation inputs before this artifact receives authority.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    proof_context: Option<EvidenceProofContext>,
+    /// Cumulative SourceIR-prefix plus EvidenceIR proof ledger. Deserialization alone never grants
+    /// authority; canonical load and write recover the local suffix and execute every rule again.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    proof_ledger: Option<ProofLedger>,
 }
 
 /// In-memory evidence derived from an explicitly synthetic SourceIR fixture.
@@ -703,6 +854,216 @@ struct EvidencePriorGuidance {
     prior_scope: PriorScope,
 }
 
+const EVIDENCE_RULE_FIELDS: &[(&str, &str)] = &[
+    ("schema_version", "evidence.envelope"),
+    ("stage", "evidence.envelope"),
+    ("source_ir_path", "evidence.envelope"),
+    ("source_path_origin", "evidence.envelope"),
+    ("prior_memory_path", "evidence.envelope"),
+    ("artifact_layout", "evidence.envelope"),
+    ("document_identity", "evidence.envelope"),
+    ("section_anchors", "evidence.grounding"),
+    ("evidence_spans", "evidence.grounding"),
+    ("visual_evidence", "evidence.grounding"),
+    ("evidence_links", "evidence.grounding"),
+    ("extracted_statements", "evidence.grounding"),
+    ("register_records", "evidence.register_timing"),
+    ("timing_constraints", "evidence.register_timing"),
+    ("signal_constraints", "evidence.normative"),
+    ("conditional_rules", "evidence.normative"),
+    ("extracted_contracts", "evidence.contract"),
+    ("constrained_extraction_stats", "evidence.contract"),
+    (
+        "table_signal_declaration_provenance",
+        "evidence.declaration",
+    ),
+    ("signal_channel_memberships", "evidence.declaration"),
+    ("signal_presence_records", "evidence.declaration"),
+    ("signal_alias_map", "evidence.declaration"),
+    ("signal_polarities", "evidence.signal_semantics"),
+    ("signal_polarity_conflicts", "evidence.signal_semantics"),
+    ("signal_semantic_hints", "evidence.signal_semantics"),
+    ("signal_semantic_conflicts", "evidence.signal_semantics"),
+    ("actor_signal_relations", "evidence.actor_graph"),
+    ("serial_frame_fields", "evidence.protocol_structure"),
+    ("protocol_states", "evidence.protocol_structure"),
+    ("protocol_actors", "evidence.protocol_structure"),
+    ("protocol_operations", "evidence.protocol_structure"),
+    ("interface_edge_timings", "evidence.protocol_structure"),
+    ("message_field_records", "evidence.message_structure"),
+    ("message_field_constraints", "evidence.message_structure"),
+    ("validation_reports", "evidence.quality"),
+    ("extraction_quality_gauge", "evidence.quality"),
+    ("convergence_report", "evidence.quality"),
+    ("fact_provenance", "evidence.quality"),
+    ("extraction_manifest", "evidence.quality"),
+];
+
+fn evidence_derivation_error(error: impl std::fmt::Display) -> AppError {
+    AppError::InvalidStageArtifact(format!("EvidenceIR proof verification failed: {error}"))
+}
+
+fn evidence_rule_registry() -> DerivationResult<RuleRegistry> {
+    let implementation_sha256 = Sha256Digest::of_bytes(include_bytes!("evidence.rs"));
+    let registrations = EVIDENCE_RULE_FIELDS
+        .iter()
+        .map(|(field, family)| {
+            let (capability, alpha) = match *family {
+                "evidence.envelope" | "evidence.quality" => (
+                    SymbolCapabilityClass::ExactIdentityOnly,
+                    AlphaObligation::IdentityGraphInvariant,
+                ),
+                "evidence.signal_semantics" => (
+                    SymbolCapabilityClass::MergeOrConflict,
+                    AlphaObligation::MergeConflictTopologyInvariant,
+                ),
+                _ => (
+                    SymbolCapabilityClass::GrammarIntroduces,
+                    AlphaObligation::IntroducedSymbolsPreserveOrigins,
+                ),
+            };
+            let rule_id =
+                RuleId::try_from(format!("{family}.{field}.v1")).map_err(DerivationError::new)?;
+            let descriptor = RuleDescriptor::new(
+                rule_id,
+                1,
+                "crate::ir::evidence",
+                implementation_sha256.clone(),
+                [
+                    PremiseKind::RegisteredDerivation,
+                    PremiseKind::SourceSpan,
+                    PremiseKind::GroundedModelProposal,
+                    PremiseKind::ValidatedPrior,
+                ],
+                IrStage::EvidenceIr,
+                *field,
+                capability,
+                alpha,
+                RuleCompatibility::CurrentOnly,
+            )?;
+            Ok(RuleRegistration::new(
+                descriptor,
+                verify_evidence_rule_relation,
+            ))
+        })
+        .collect::<DerivationResult<Vec<_>>>()?;
+    RuleRegistry::new(registrations, [])
+}
+
+fn verify_evidence_rule_relation(context: RuleVerificationContext<'_>) -> DerivationResult<()> {
+    let expected_bytes = context
+        .premise_bytes(0)?
+        .ok_or_else(|| DerivationError::new("EvidenceIR rule lacks claim replay bytes"))?;
+    if expected_bytes == context.conclusion_json() {
+        Ok(())
+    } else {
+        Err(DerivationError::new(format!(
+            "EvidenceIR field '{}' is not the current registered replay",
+            context.proof().address().surface()
+        )))
+    }
+}
+
+fn apply_evidence_mutations(
+    artifact: &mut EvidenceIr,
+    mutations: &[EvidenceMutationEvent],
+) -> DerivationResult<()> {
+    let mut seen = BTreeSet::new();
+    for mutation in mutations {
+        if !seen.insert(mutation.mutation_id.as_str()) {
+            return Err(DerivationError::new(format!(
+                "duplicate EvidenceIR mutation id '{}'",
+                mutation.mutation_id
+            )));
+        }
+        let allowed = mutation
+            .kind
+            .allowed_fields()
+            .iter()
+            .copied()
+            .collect::<BTreeSet<_>>();
+        let present = mutation
+            .fields
+            .keys()
+            .map(String::as_str)
+            .collect::<BTreeSet<_>>();
+        if present != allowed {
+            return Err(DerivationError::new(format!(
+                "EvidenceIR {:?} mutation field set is not exact",
+                mutation.kind
+            )));
+        }
+        let statement_ids = artifact
+            .extracted_statements
+            .iter()
+            .map(|statement| statement.statement_id.as_str())
+            .collect::<BTreeSet<_>>();
+        #[cfg(any(test, feature = "test-support"))]
+        let test_fixture = mutation.kind == EvidenceMutationKind::TestFixture;
+        #[cfg(not(any(test, feature = "test-support")))]
+        let test_fixture = false;
+        if !test_fixture
+            && mutation
+                .supporting_statement_ids
+                .iter()
+                .any(|statement_id| !statement_ids.contains(statement_id.as_str()))
+        {
+            return Err(DerivationError::new(format!(
+                "EvidenceIR mutation '{}' cites an absent statement",
+                mutation.mutation_id
+            )));
+        }
+        let mut value = serde_json::to_value(&*artifact).map_err(|error| {
+            DerivationError::new(format!(
+                "cannot serialize EvidenceIR mutation base: {error}"
+            ))
+        })?;
+        let object = value.as_object_mut().ok_or_else(|| {
+            DerivationError::new("serialized EvidenceIR mutation base is not an object")
+        })?;
+        for (field, replacement) in &mutation.fields {
+            object.insert(field.clone(), replacement.clone());
+        }
+        object.remove("proof_context");
+        object.remove("proof_ledger");
+        *artifact = serde_json::from_value(value).map_err(|error| {
+            DerivationError::new(format!(
+                "invalid typed EvidenceIR mutation payload: {error}"
+            ))
+        })?;
+    }
+    Ok(())
+}
+
+fn collect_supporting_statement_ids(value: &serde_json::Value, output: &mut BTreeSet<String>) {
+    match value {
+        serde_json::Value::Array(values) => {
+            for value in values {
+                collect_supporting_statement_ids(value, output);
+            }
+        }
+        serde_json::Value::Object(object) => {
+            for (key, value) in object {
+                if matches!(
+                    key.as_str(),
+                    "supporting_statement_ids" | "source_statement_ids"
+                ) {
+                    if let Some(ids) = value.as_array() {
+                        output.extend(
+                            ids.iter()
+                                .filter_map(serde_json::Value::as_str)
+                                .map(str::to_string),
+                        );
+                    }
+                } else {
+                    collect_supporting_statement_ids(value, output);
+                }
+            }
+        }
+        _ => {}
+    }
+}
+
 /// Schema 1 carried protocol observations produced by vocabulary-bound extractors. Remove those
 /// surfaces from the untyped JSON before deserialization so obsolete field encodings cannot regain
 /// authority or prevent a safe load. All other evidence remains intact and can drive a neutral
@@ -711,10 +1072,6 @@ fn neutralize_legacy_protocol_json(artifact: &mut serde_json::Value) -> Result<(
     let object = artifact.as_object_mut().ok_or_else(|| {
         AppError::InvalidStageArtifact("EvidenceIR root must be a JSON object".to_string())
     })?;
-    object.insert(
-        "schema_version".to_string(),
-        serde_json::Value::from(EVIDENCE_IR_SCHEMA_VERSION),
-    );
     for surface in [
         "serial_frame_fields",
         "protocol_states",
@@ -731,6 +1088,38 @@ fn neutralize_legacy_protocol_json(artifact: &mut serde_json::Value) -> Result<(
 
 impl EvidenceIr {
     pub fn load_from_path(path: &Path) -> Result<Self> {
+        Self::load_with_verified_proof(path).map(|(evidence_ir, _)| evidence_ir)
+    }
+
+    pub(crate) fn load_with_verified_proof(path: &Path) -> Result<(Self, VerifiedProofLedger)> {
+        let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
+        let artifact = serde_json::from_str::<serde_json::Value>(&fs::read_to_string(path)?)?;
+        let version = artifact
+            .get("schema_version")
+            .and_then(serde_json::Value::as_u64)
+            .ok_or_else(|| {
+                AppError::InvalidStageArtifact(
+                    "EvidenceIR is missing an integer schema_version".to_string(),
+                )
+            })?;
+        if version != u64::from(EVIDENCE_IR_SCHEMA_VERSION) {
+            let disposition = if version < u64::from(EVIDENCE_IR_SCHEMA_VERSION) {
+                "is legacy/proofless and inspection-only; rebuild it from verified SourceIR"
+            } else {
+                "is newer than this binary"
+            };
+            return Err(AppError::InvalidStageArtifact(format!(
+                "EvidenceIR schema version {version} {disposition}"
+            )));
+        }
+        let evidence_ir = serde_json::from_value::<Self>(artifact)?;
+        let verified = evidence_ir.verified_canonical_proof()?;
+        Ok((evidence_ir.runtime_clone()?, verified))
+    }
+
+    /// Parse legacy evidence for diagnostics without granting it canonical or downstream
+    /// authority. Schema 1's retired protocol-specific carriers are neutralized before exposure.
+    pub fn load_for_inspection(path: &Path) -> Result<Self> {
         let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
         let mut artifact = serde_json::from_str::<serde_json::Value>(&fs::read_to_string(path)?)?;
         let version = artifact
@@ -741,16 +1130,18 @@ impl EvidenceIr {
                     "EvidenceIR is missing an integer schema_version".to_string(),
                 )
             })?;
-        match version {
-            1 => neutralize_legacy_protocol_json(&mut artifact)?,
-            version if version == u64::from(EVIDENCE_IR_SCHEMA_VERSION) => {}
-            version => {
-                return Err(AppError::InvalidStageArtifact(format!(
-                    "unsupported EvidenceIR schema version {version}; expected {EVIDENCE_IR_SCHEMA_VERSION}"
-                )));
-            }
+        if version > u64::from(EVIDENCE_IR_SCHEMA_VERSION) {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "EvidenceIR schema version {version} is newer than this binary"
+            )));
+        }
+        if version == 1 {
+            neutralize_legacy_protocol_json(&mut artifact)?;
         }
         let evidence_ir = serde_json::from_value::<Self>(artifact)?;
+        if version == u64::from(EVIDENCE_IR_SCHEMA_VERSION) {
+            evidence_ir.verify_canonical_proof()?;
+        }
         evidence_ir.runtime_clone()
     }
 
@@ -766,21 +1157,554 @@ impl EvidenceIr {
         let source_ir_runtime_path =
             resolve_existing(source_ir_path, PersistedPathOrigin::RepositoryOwned)?;
         let source_ir_path = source_ir_runtime_path.clone();
-        let source_ir = SourceIr::load_from_path(&source_ir_runtime_path)?;
+        let (source_ir, source_proof) =
+            SourceIr::load_with_verified_proof(&source_ir_runtime_path)?;
         let prior_guidance = load_evidence_prior_guidance(prior_memory_path)?;
-        Self::build_from_source_ir(
+        let mut evidence_ir = Self::build_unproved_from_source_ir(
             &source_ir,
             source_ir_path,
             artifact_base_root,
-            prior_guidance,
-        )
+            prior_guidance.clone(),
+            None,
+        )?;
+        evidence_ir.refresh_canonical_proof(&source_ir, &source_proof, prior_guidance.as_ref())?;
+        Ok(evidence_ir)
     }
 
-    fn build_from_source_ir(
+    fn public_field_values(&self) -> DerivationResult<BTreeMap<String, serde_json::Value>> {
+        let mut fields = BTreeMap::new();
+        macro_rules! insert_field {
+            ($field:ident) => {
+                fields.insert(
+                    stringify!($field).to_string(),
+                    serde_json::to_value(&self.$field).map_err(|error| {
+                        DerivationError::new(format!(
+                            "cannot serialize EvidenceIR field '{}': {error}",
+                            stringify!($field)
+                        ))
+                    })?,
+                );
+            };
+        }
+        insert_field!(schema_version);
+        insert_field!(stage);
+        insert_field!(source_ir_path);
+        insert_field!(source_path_origin);
+        insert_field!(prior_memory_path);
+        insert_field!(artifact_layout);
+        insert_field!(document_identity);
+        insert_field!(section_anchors);
+        insert_field!(evidence_spans);
+        insert_field!(visual_evidence);
+        insert_field!(evidence_links);
+        insert_field!(extracted_statements);
+        insert_field!(register_records);
+        insert_field!(timing_constraints);
+        insert_field!(signal_constraints);
+        insert_field!(conditional_rules);
+        insert_field!(extracted_contracts);
+        insert_field!(constrained_extraction_stats);
+        insert_field!(table_signal_declaration_provenance);
+        insert_field!(signal_channel_memberships);
+        insert_field!(signal_presence_records);
+        insert_field!(signal_alias_map);
+        insert_field!(signal_polarities);
+        insert_field!(signal_polarity_conflicts);
+        insert_field!(signal_semantic_hints);
+        insert_field!(signal_semantic_conflicts);
+        insert_field!(actor_signal_relations);
+        insert_field!(serial_frame_fields);
+        insert_field!(protocol_states);
+        insert_field!(protocol_actors);
+        insert_field!(protocol_operations);
+        insert_field!(interface_edge_timings);
+        insert_field!(message_field_records);
+        insert_field!(message_field_constraints);
+        insert_field!(validation_reports);
+        insert_field!(extraction_quality_gauge);
+        insert_field!(convergence_report);
+        insert_field!(fact_provenance);
+        insert_field!(extraction_manifest);
+        if fields.len() != EVIDENCE_RULE_FIELDS.len() {
+            return Err(DerivationError::new(
+                "EvidenceIR proof field projection is incomplete",
+            ));
+        }
+        Ok(fields)
+    }
+
+    fn claim_inputs(&self) -> DerivationResult<Vec<EvidenceClaimInput>> {
+        let fields = self.public_field_values()?;
+        let mut claims = Vec::new();
+        for (field, family) in EVIDENCE_RULE_FIELDS {
+            let value = fields.get(*field).cloned().ok_or_else(|| {
+                DerivationError::new(format!("EvidenceIR claim field '{field}' is absent"))
+            })?;
+            let rule_id =
+                RuleId::try_from(format!("{family}.{field}.v1")).map_err(DerivationError::new)?;
+            claims.push(EvidenceClaimInput {
+                address: ClaimAddress::new(IrStage::EvidenceIr, *field, "root", None)?,
+                rule_id: rule_id.clone(),
+                conclusion: value.clone(),
+            });
+            if let Some(records) = value.as_array() {
+                for (index, record) in records.iter().enumerate() {
+                    claims.push(EvidenceClaimInput {
+                        address: ClaimAddress::new(
+                            IrStage::EvidenceIr,
+                            *field,
+                            format!("record-{index:08}"),
+                            Some(format!("[{index}]")),
+                        )?,
+                        rule_id: rule_id.clone(),
+                        conclusion: record.clone(),
+                    });
+                }
+            } else if *field == "signal_alias_map" {
+                let aliases = value.as_object().ok_or_else(|| {
+                    DerivationError::new("EvidenceIR signal_alias_map is not an object")
+                })?;
+                for (index, (key, alias)) in aliases.iter().enumerate() {
+                    claims.push(EvidenceClaimInput {
+                        address: ClaimAddress::new(
+                            IrStage::EvidenceIr,
+                            *field,
+                            format!("entry-{index:08}"),
+                            Some(format!("[{index}]")),
+                        )?,
+                        rule_id: rule_id.clone(),
+                        conclusion: serde_json::json!({"key": key, "value": alias}),
+                    });
+                }
+            }
+        }
+        Ok(claims)
+    }
+
+    fn proof_kernel(
+        &self,
+        context: &EvidenceProofContext,
+        source_proof: &VerifiedProofLedger,
+        prior_guidance: Option<&EvidencePriorGuidance>,
+        replay_bytes: &[u8],
+        claims: &[EvidenceClaimInput],
+    ) -> DerivationResult<(
+        crate::ir::derivation::PromotionKernel,
+        EvidenceProofPremises,
+    )> {
+        if context.schema_version != EVIDENCE_PROOF_CONTEXT_SCHEMA_VERSION {
+            return Err(DerivationError::new(format!(
+                "unsupported EvidenceIR proof-context schema {}",
+                context.schema_version
+            )));
+        }
+        let markdown_bytes = context.normalized_markdown.as_bytes();
+        let prior_bytes = prior_guidance
+            .map(|guidance| Sha256Digest::of_serializable(&guidance.corpus_memory))
+            .transpose()?;
+        let capture_digest = Sha256Digest::of_serializable(&(
+            context,
+            source_proof.ruleset_sha256(),
+            Sha256Digest::of_bytes(markdown_bytes),
+            prior_bytes,
+        ))?;
+        let registry = evidence_rule_registry()?;
+        let mut builder =
+            PromotionKernelBuilder::with_verified_upstream(capture_digest, registry, source_proof)?;
+        let proof_premises = {
+            let mut capture = builder.capture();
+            let normalized_source =
+                capture.source_span("evidence-normalized-source", markdown_bytes)?;
+            let mut inputs = source_proof
+                .claims()
+                .iter()
+                .map(|proof| PremiseRef::UpstreamClaim {
+                    address: proof.address().clone(),
+                    conclusion_sha256: proof.conclusion_sha256().clone(),
+                })
+                .collect::<Vec<_>>();
+            inputs.push(normalized_source.clone());
+            let validated_prior = if let Some(guidance) = prior_guidance {
+                let payload = serde_json::to_vec(&guidance.corpus_memory).map_err(|error| {
+                    DerivationError::new(format!("cannot serialize EvidenceIR prior: {error}"))
+                })?;
+                let validation = serde_json::to_vec(&(
+                    guidance.prior_scope,
+                    guidance.corpus_memory.schema_version,
+                ))
+                .map_err(|error| {
+                    DerivationError::new(format!("cannot serialize prior validation: {error}"))
+                })?;
+                let prior = capture.validated_prior(
+                    "evidence-global-prior",
+                    &payload,
+                    &validation,
+                    ValidatedPriorScope::GlobalIdentityIndependent,
+                    vec![normalized_source.clone()],
+                )?;
+                inputs.push(prior.clone());
+                Some(prior)
+            } else {
+                None
+            };
+            let mut mutation_premises = Vec::new();
+            for mutation in &context.mutations {
+                let payload = serde_json::to_vec(mutation).map_err(|error| {
+                    DerivationError::new(format!(
+                        "cannot serialize grounded EvidenceIR mutation: {error}"
+                    ))
+                })?;
+                let proposal = capture.grounded_model_proposal(
+                    mutation.mutation_id.clone(),
+                    &payload,
+                    vec![normalized_source.clone()],
+                )?;
+                inputs.push(proposal.clone());
+                mutation_premises.push((mutation.kind, proposal));
+            }
+            let registered_replay =
+                capture.registered_derivation("evidence.current-replay", replay_bytes, inputs)?;
+            let mut claim_replays = BTreeMap::new();
+            for claim in claims {
+                let exact_conclusion = serde_json::to_vec(&claim.conclusion).map_err(|error| {
+                    DerivationError::new(format!(
+                        "cannot serialize EvidenceIR claim replay: {error}"
+                    ))
+                })?;
+                let derivation_id = format!(
+                    "evidence.claim.{}.{}",
+                    claim.address.surface(),
+                    claim.address.stable_record_key()
+                );
+                let premise = capture.registered_derivation(
+                    derivation_id,
+                    &exact_conclusion,
+                    vec![registered_replay.clone()],
+                )?;
+                if claim_replays
+                    .insert(claim.address.clone(), premise)
+                    .is_some()
+                {
+                    return Err(DerivationError::new(
+                        "duplicate EvidenceIR claim replay address",
+                    ));
+                }
+            }
+            EvidenceProofPremises {
+                claim_replays,
+                normalized_source,
+                validated_prior,
+                mutations: mutation_premises,
+            }
+        };
+        Ok((builder.seal(), proof_premises))
+    }
+
+    fn refresh_canonical_proof(
+        &mut self,
+        source_ir: &SourceIr,
+        source_proof: &VerifiedProofLedger,
+        prior_guidance: Option<&EvidencePriorGuidance>,
+    ) -> Result<()> {
+        let context = EvidenceProofContext {
+            schema_version: EVIDENCE_PROOF_CONTEXT_SCHEMA_VERSION,
+            normalized_markdown: fs::read_to_string(
+                source_ir
+                    .normalization_plan
+                    .promoted_markdown_path
+                    .as_ref()
+                    .ok_or_else(|| {
+                        AppError::InvalidStageArtifact(
+                            "SourceIR lacks promoted Markdown".to_string(),
+                        )
+                    })?,
+            )?,
+            prior_memory: prior_guidance.map(|guidance| guidance.corpus_memory.clone()),
+            mutations: Vec::new(),
+            #[cfg(any(test, feature = "test-support"))]
+            test_fixture: source_ir.is_test_fixture(),
+        };
+        self.refresh_proof_from_context(context, source_proof, prior_guidance)
+    }
+
+    fn refresh_proof_from_context(
+        &mut self,
+        context: EvidenceProofContext,
+        source_proof: &VerifiedProofLedger,
+        prior_guidance: Option<&EvidencePriorGuidance>,
+    ) -> Result<()> {
+        let mut persisted = self.persisted_clone()?;
+        persisted.proof_context = None;
+        persisted.proof_ledger = None;
+        let replay_bytes = serde_json::to_vec(
+            &persisted
+                .public_field_values()
+                .map_err(evidence_derivation_error)?,
+        )?;
+        let claims = persisted
+            .claim_inputs()
+            .map_err(evidence_derivation_error)?;
+        let (mut kernel, proof_premises) = persisted
+            .proof_kernel(
+                &context,
+                source_proof,
+                prior_guidance,
+                &replay_bytes,
+                &claims,
+            )
+            .map_err(evidence_derivation_error)?;
+        for claim in claims {
+            let (premises, confidence) = proof_premises
+                .for_claim(&claim.address)
+                .map_err(evidence_derivation_error)?;
+            let proposal = kernel.grammar_capability().propose(
+                claim.address,
+                claim.rule_id,
+                premises,
+                Vec::new(),
+                confidence,
+                claim.conclusion,
+            );
+            kernel
+                .promote(proposal)
+                .map_err(evidence_derivation_error)?;
+        }
+        let local = kernel.finish().map_err(evidence_derivation_error)?;
+        let cumulative =
+            VerifiedProofLedger::compose(source_proof, local).map_err(evidence_derivation_error)?;
+        self.proof_context = Some(context);
+        self.proof_ledger = Some(cumulative.into_ledger());
+        Ok(())
+    }
+
+    /// Authorize one closed-family post-build mutation and rebuild the cumulative proof. Fields
+    /// outside the mutation kind's fixed set must remain byte-identical to the independently
+    /// replayed predecessor; the exact typed patch becomes a current-source-grounded proposal.
+    #[doc(hidden)]
+    pub fn authorize_mutation(&mut self, kind: EvidenceMutationKind) -> Result<bool> {
+        let mut context = self.proof_context.clone().ok_or_else(|| {
+            evidence_derivation_error("proofless EvidenceIR cannot authorize a mutation")
+        })?;
+        #[cfg(any(test, feature = "test-support"))]
+        if kind == EvidenceMutationKind::TestFixture {
+            context.test_fixture = true;
+        }
+        let source_runtime_path =
+            resolve_existing(&self.source_ir_path, PersistedPathOrigin::RepositoryOwned)?;
+        let (source_ir, source_proof) = SourceIr::load_with_verified_proof(&source_runtime_path)?;
+        let prior_guidance = match (&self.prior_memory_path, &context.prior_memory) {
+            (None, None) => None,
+            (Some(path), Some(corpus_memory)) => Some(EvidencePriorGuidance {
+                prior_memory_path: resolve_repository_output(path)?,
+                corpus_memory: corpus_memory.clone(),
+                prior_scope: PriorScope::Global,
+            }),
+            _ => {
+                return Err(evidence_derivation_error(
+                    "EvidenceIR prior path and captured validated-prior payload disagree",
+                ));
+            }
+        };
+        let runtime_layout = self.artifact_layout.runtime_layout()?;
+        let artifact_base_root = runtime_layout.artifact_root.parent().ok_or_else(|| {
+            AppError::InvalidStageArtifact(
+                "EvidenceIR artifact root has no repository-owned base".to_string(),
+            )
+        })?;
+        let mut predecessor = Self::build_unproved_from_source_ir(
+            &source_ir,
+            source_runtime_path,
+            artifact_base_root,
+            prior_guidance.clone(),
+            Some(&context.normalized_markdown),
+        )?;
+        apply_evidence_mutations(&mut predecessor, &context.mutations)
+            .map_err(evidence_derivation_error)?;
+        let predecessor_fields = predecessor
+            .public_field_values()
+            .map_err(evidence_derivation_error)?;
+        let current_fields = self
+            .public_field_values()
+            .map_err(evidence_derivation_error)?;
+        let allowed = kind
+            .allowed_fields()
+            .iter()
+            .copied()
+            .collect::<BTreeSet<_>>();
+        for (field, predecessor_value) in &predecessor_fields {
+            if !allowed.contains(field.as_str())
+                && current_fields.get(field) != Some(predecessor_value)
+            {
+                return Err(evidence_derivation_error(format!(
+                    "{:?} mutation changed unauthorized EvidenceIR field '{field}'",
+                    kind
+                )));
+            }
+        }
+        if kind
+            .allowed_fields()
+            .iter()
+            .all(|field| current_fields.get(*field) == predecessor_fields.get(*field))
+        {
+            return Ok(false);
+        }
+        let fields = kind
+            .allowed_fields()
+            .iter()
+            .map(|field| {
+                current_fields
+                    .get(*field)
+                    .cloned()
+                    .map(|value| ((*field).to_string(), value))
+                    .ok_or_else(|| {
+                        evidence_derivation_error(format!(
+                            "EvidenceIR mutation field '{field}' is absent"
+                        ))
+                    })
+            })
+            .collect::<Result<BTreeMap<_, _>>>()?;
+        let mut supporting_statement_ids = BTreeSet::new();
+        for value in fields.values() {
+            collect_supporting_statement_ids(value, &mut supporting_statement_ids);
+        }
+        let kind_name = serde_json::to_value(kind)?
+            .as_str()
+            .expect("EvidenceMutationKind serializes as a string")
+            .to_string();
+        let event = EvidenceMutationEvent {
+            mutation_id: format!(
+                "evidence-mutation-{index:08}-{kind_name}",
+                index = context.mutations.len()
+            ),
+            kind,
+            fields,
+            supporting_statement_ids: supporting_statement_ids.into_iter().collect(),
+        };
+        apply_evidence_mutations(&mut predecessor, std::slice::from_ref(&event))
+            .map_err(evidence_derivation_error)?;
+        if predecessor
+            .public_field_values()
+            .map_err(evidence_derivation_error)?
+            != current_fields
+        {
+            return Err(evidence_derivation_error(
+                "typed EvidenceIR mutation replay does not reproduce the requested artifact",
+            ));
+        }
+        context.mutations.push(event);
+        self.refresh_proof_from_context(context, &source_proof, prior_guidance.as_ref())?;
+        Ok(true)
+    }
+
+    fn verify_canonical_proof(&self) -> Result<()> {
+        self.verified_canonical_proof().map(|_| ())
+    }
+
+    fn verified_canonical_proof(&self) -> Result<VerifiedProofLedger> {
+        if self.schema_version != EVIDENCE_IR_SCHEMA_VERSION {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "EvidenceIR schema {} cannot receive current canonical authority",
+                self.schema_version
+            )));
+        }
+        let context = self.proof_context.as_ref().ok_or_else(|| {
+            AppError::InvalidStageArtifact(
+                "current EvidenceIR is proofless; rebuild it from verified SourceIR".to_string(),
+            )
+        })?;
+        let cumulative = self.proof_ledger.clone().ok_or_else(|| {
+            AppError::InvalidStageArtifact(
+                "current EvidenceIR is missing its cumulative proof ledger".to_string(),
+            )
+        })?;
+        let source_runtime_path =
+            resolve_existing(&self.source_ir_path, PersistedPathOrigin::RepositoryOwned)?;
+        let (source_ir, source_proof) = SourceIr::load_with_verified_proof(&source_runtime_path)?;
+        let prior_guidance = match (&self.prior_memory_path, &context.prior_memory) {
+            (None, None) => None,
+            (Some(path), Some(corpus_memory)) => Some(EvidencePriorGuidance {
+                prior_memory_path: resolve_repository_output(path)?,
+                corpus_memory: corpus_memory.clone(),
+                prior_scope: PriorScope::Global,
+            }),
+            _ => {
+                return Err(evidence_derivation_error(
+                    "EvidenceIR prior path and captured validated-prior payload disagree",
+                ));
+            }
+        };
+        let runtime_layout = self.artifact_layout.runtime_layout()?;
+        let artifact_base_root = runtime_layout.artifact_root.parent().ok_or_else(|| {
+            AppError::InvalidStageArtifact(
+                "EvidenceIR artifact root has no repository-owned base".to_string(),
+            )
+        })?;
+        let mut expected_runtime = Self::build_unproved_from_source_ir(
+            &source_ir,
+            source_runtime_path,
+            artifact_base_root,
+            prior_guidance.clone(),
+            Some(&context.normalized_markdown),
+        )?;
+        apply_evidence_mutations(&mut expected_runtime, &context.mutations)
+            .map_err(evidence_derivation_error)?;
+        let expected = expected_runtime.persisted_clone()?;
+        let replay_fields = expected
+            .public_field_values()
+            .map_err(evidence_derivation_error)?;
+        let replay_bytes = serde_json::to_vec(&replay_fields)?;
+        let actual_fields = self
+            .public_field_values()
+            .map_err(evidence_derivation_error)?;
+        let claims = self.claim_inputs().map_err(evidence_derivation_error)?;
+        let conclusions = claims
+            .iter()
+            .map(|claim| {
+                serde_json::to_vec(&claim.conclusion)
+                    .map(|bytes| (claim.address.clone(), bytes))
+                    .map_err(AppError::from)
+            })
+            .collect::<Result<BTreeMap<_, _>>>()?;
+        let (kernel, _) = self
+            .proof_kernel(
+                context,
+                &source_proof,
+                prior_guidance.as_ref(),
+                &replay_bytes,
+                &claims,
+            )
+            .map_err(evidence_derivation_error)?;
+        let local_ruleset = evidence_rule_registry()
+            .map_err(evidence_derivation_error)?
+            .ruleset_sha256()
+            .clone();
+        let local_ledger = cumulative
+            .local_suffix_after(&source_proof, &local_ruleset)
+            .map_err(evidence_derivation_error)?;
+        let verified_local = kernel
+            .verify_persisted(local_ledger, &conclusions)
+            .map_err(evidence_derivation_error)?;
+        let verified = VerifiedProofLedger::compose(&source_proof, verified_local)
+            .map_err(evidence_derivation_error)?;
+        if verified.ledger() != &cumulative {
+            return Err(evidence_derivation_error(
+                "cumulative EvidenceIR proof differs from verified SourceIR prefix plus local replay",
+            ));
+        }
+        if actual_fields != replay_fields {
+            return Err(evidence_derivation_error(
+                "EvidenceIR public fields differ from current registered replay",
+            ));
+        }
+        Ok(verified)
+    }
+
+    fn build_unproved_from_source_ir(
         source_ir: &SourceIr,
         source_ir_path: PathBuf,
         artifact_base_root: &Path,
         prior_guidance: Option<EvidencePriorGuidance>,
+        normalized_markdown: Option<&str>,
     ) -> Result<Self> {
         if !matches!(
             source_ir.normalization_plan.status,
@@ -803,10 +1727,16 @@ impl EvidenceIr {
                 ))
             })?;
         let source_path_origin = source_ir.promoted_markdown_origin()?;
-        let promoted_markdown_runtime_path =
-            resolve_existing(promoted_markdown_path, source_path_origin)?;
+        let promoted_markdown_runtime_path = if normalized_markdown.is_some() {
+            resolve_reference(promoted_markdown_path, source_path_origin)?
+        } else {
+            resolve_existing(promoted_markdown_path, source_path_origin)?
+        };
         let promoted_markdown_path = promoted_markdown_runtime_path.clone();
-        let parsed_markdown = parse_markdown(&promoted_markdown_runtime_path)?;
+        let parsed_markdown = match normalized_markdown {
+            Some(markdown) => parse_markdown_text(markdown),
+            None => parse_markdown(&promoted_markdown_runtime_path)?,
+        };
 
         let artifact_root = artifact_base_root.join(&source_ir.document_identity.document_key);
         let evidence_ir_path = artifact_root.join("evidence_ir.json");
@@ -1029,15 +1959,9 @@ impl EvidenceIr {
             protocol_operations,
             interface_edge_timings,
             extraction_manifest,
+            proof_context: None,
+            proof_ledger: None,
         };
-        evidence_ir
-            .carry_forward_existing_knowledge()
-            .map_err(|error| {
-                AppError::InvalidStageArtifact(format!(
-                    "EvidenceIR carry-forward failed for {}: {error}",
-                    source_ir.document_identity.document_key
-                ))
-            })?;
         // refresh_signal_semantic_hints records the `signal_semantic_hints` surface into the manifest too.
         evidence_ir
             .refresh_signal_semantic_hints_from_source(source_ir)
@@ -1066,11 +1990,12 @@ impl EvidenceIr {
         // this branch as a canonical SourceIR chain.
         let source_ir_path = source_ir.source.canonical_path.clone();
         let prior_guidance = load_evidence_prior_guidance(prior_memory_path)?;
-        let artifact = Self::build_from_source_ir(
+        let artifact = Self::build_unproved_from_source_ir(
             source_ir,
             source_ir_path,
             artifact_base_root,
             prior_guidance,
+            None,
         )?;
         Ok(NonCanonicalEvidenceOverlay { artifact })
     }
@@ -1162,7 +2087,9 @@ impl EvidenceIr {
     }
 
     pub fn to_pretty_json(&self) -> Result<String> {
-        Ok(serde_json::to_string_pretty(&self.persisted_clone()?)?)
+        let persisted = self.persisted_clone()?;
+        persisted.verify_canonical_proof()?;
+        Ok(serde_json::to_string_pretty(&persisted)?)
     }
 
     pub fn refresh_signal_semantic_hints(&mut self) -> Result<()> {
@@ -1200,6 +2127,19 @@ impl EvidenceIr {
             ))
         })?;
         let persisted = self.persisted_clone()?;
+        if let Err(error) = persisted.verify_canonical_proof() {
+            #[cfg(any(test, feature = "test-support"))]
+            if persisted
+                .proof_context
+                .as_ref()
+                .is_some_and(|context| context.test_fixture)
+            {
+                let mut fixture = self.clone();
+                fixture.authorize_mutation(EvidenceMutationKind::TestFixture)?;
+                return fixture.write_to_disk();
+            }
+            return Err(error);
+        }
         let runtime_layout = persisted.artifact_layout.runtime_layout()?;
         fs::create_dir_all(&runtime_layout.artifact_root)?;
         fs::write(
@@ -1209,52 +2149,25 @@ impl EvidenceIr {
         Ok(())
     }
 
+    /// Persist an explicitly synthetic EvidenceIR fixture under a test-only proof-context variant
+    /// that production decoders reject. This cannot grant production authority or cross the
+    /// noncanonical overlay seam.
+    #[cfg(any(test, feature = "test-support"))]
+    #[doc(hidden)]
+    pub fn write_test_fixture_to_disk(&self) -> Result<()> {
+        if self.persisted_clone()?.verify_canonical_proof().is_ok() {
+            return self.write_to_disk();
+        }
+        let mut fixture = self.clone();
+        fixture.authorize_mutation(EvidenceMutationKind::TestFixture)?;
+        fixture.write_to_disk()
+    }
+
     pub fn dedup_loopback_records(&mut self) -> bool {
         let mut changed = false;
         changed |= dedup_signal_constraints_in_place(&mut self.signal_constraints);
         changed |= dedup_conditional_rules_in_place(&mut self.conditional_rules);
         changed
-    }
-
-    fn carry_forward_existing_knowledge(&mut self) -> Result<()> {
-        let evidence_ir_path = resolve_repository_output(&self.artifact_layout.evidence_ir_path)?;
-        if !evidence_ir_path.exists() {
-            return Ok(());
-        }
-
-        let existing = Self::load_from_path(&evidence_ir_path)?;
-        if existing.source_ir_path != self.source_ir_path
-            || existing.document_identity != self.document_identity
-            || existing.section_anchors.len() != self.section_anchors.len()
-            || existing.extracted_statements.len() != self.extracted_statements.len()
-        {
-            return Ok(());
-        }
-
-        // Idempotency guard: the carry-forward merge exists to PRESERVE LLM enrichments
-        // (`nlp_enrich`/`signal-resolve`, tagged `ExtractorTier::Nlp`) across re-builds. If the
-        // existing artifact carries no such facts, the fresh deterministic build fully
-        // supersedes it — skip the merge so re-running `evidence` after an extractor change does
-        // not ACCUMULATE stale deterministic facts (which bit a V2 re-measurement: 13 → 21 with
-        // duplicate ids). With LLM facts present the merge still runs to keep them.
-        if !existing
-            .fact_provenance
-            .iter()
-            .any(|prov| prov.producer == ExtractorTier::Nlp)
-        {
-            return Ok(());
-        }
-
-        self.signal_alias_map.extend(existing.signal_alias_map);
-        carry_forward_statement_classes(
-            &mut self.extracted_statements,
-            &existing.extracted_statements,
-        );
-        merge_signal_constraints(&mut self.signal_constraints, &existing.signal_constraints);
-        merge_conditional_rules(&mut self.conditional_rules, &existing.conditional_rules);
-        self.dedup_loopback_records();
-
-        Ok(())
     }
 
     fn persisted_clone(&self) -> Result<Self> {
@@ -1491,76 +2404,6 @@ pub struct SignalSemanticConflictRecord {
     pub signal_name: String,
     pub observations: Vec<SignalSemanticConflictObservationRecord>,
     pub automation_confidence: AutomationConfidence,
-}
-
-fn carry_forward_statement_classes(
-    current: &mut [ExtractedStatement],
-    existing: &[ExtractedStatement],
-) {
-    let existing_by_id: HashMap<&str, StatementClass> = existing
-        .iter()
-        .filter_map(|statement| match statement.class {
-            StatementClass::SignalValueConstraint | StatementClass::ConditionalRule => {
-                Some((statement.statement_id.as_str(), statement.class))
-            }
-            _ => None,
-        })
-        .collect();
-    let existing_by_text: HashMap<&str, StatementClass> = existing
-        .iter()
-        .filter_map(|statement| match statement.class {
-            StatementClass::SignalValueConstraint | StatementClass::ConditionalRule => {
-                Some((statement.text.as_str(), statement.class))
-            }
-            _ => None,
-        })
-        .collect();
-
-    for statement in current {
-        if !matches!(statement.class, StatementClass::NormativeStatement) {
-            continue;
-        }
-
-        if let Some(class) = existing_by_id
-            .get(statement.statement_id.as_str())
-            .or_else(|| existing_by_text.get(statement.text.as_str()))
-            .copied()
-        {
-            statement.class = class;
-        }
-    }
-}
-
-fn merge_signal_constraints(
-    current: &mut Vec<SignalConstraintRecord>,
-    existing: &[SignalConstraintRecord],
-) {
-    let mut known_keys = current
-        .iter()
-        .map(signal_constraint_merge_key)
-        .collect::<HashSet<_>>();
-    for record in existing {
-        let key = signal_constraint_merge_key(record);
-        if known_keys.insert(key) {
-            current.push(record.clone());
-        }
-    }
-}
-
-fn merge_conditional_rules(
-    current: &mut Vec<ConditionalRuleRecord>,
-    existing: &[ConditionalRuleRecord],
-) {
-    let mut known_keys = current
-        .iter()
-        .map(conditional_rule_merge_key)
-        .collect::<HashSet<_>>();
-    for record in existing {
-        let key = conditional_rule_merge_key(record);
-        if known_keys.insert(key) {
-            current.push(record.clone());
-        }
-    }
 }
 
 fn dedup_signal_constraints_in_place(records: &mut Vec<SignalConstraintRecord>) -> bool {
@@ -2039,6 +2882,10 @@ fn extract_reference_hits(
 
 fn parse_markdown(path: &Path) -> Result<ParsedMarkdown> {
     let markdown = fs::read_to_string(path)?;
+    Ok(parse_markdown_text(&markdown))
+}
+
+fn parse_markdown_text(markdown: &str) -> ParsedMarkdown {
     let lines: Vec<&str> = markdown.lines().collect();
     let total_lines = lines.len() as u32;
 
@@ -2131,11 +2978,11 @@ fn parse_markdown(path: &Path) -> Result<ParsedMarkdown> {
         &mut current_line_end,
     );
 
-    Ok(ParsedMarkdown {
+    ParsedMarkdown {
         headings,
         blocks,
         total_lines,
-    })
+    }
 }
 
 fn flush_markdown_block(
@@ -15737,10 +16584,11 @@ mod tests {
     };
 
     use super::{
-        EVIDENCE_IR_SCHEMA_VERSION, EvidenceIr, EvidenceLinkKind, EvidenceModality, ExtractorTier,
-        FactKind, ParticipantDriveRecord, ProtocolOperationRecord, SerialFrameField,
-        SignalSemanticHintSourceKind, SignalSemanticTag, StatementClass, VisualObservationKind,
-        actor_signal_relation_fact_key, contains_any, contains_reference_token, diagram_kind_key,
+        EVIDENCE_IR_SCHEMA_VERSION, EVIDENCE_RULE_FIELDS, EvidenceIr, EvidenceLinkKind,
+        EvidenceModality, EvidenceMutationKind, ExtractorTier, FactKind, ParticipantDriveRecord,
+        ProtocolOperationRecord, SerialFrameField, SignalSemanticHintSourceKind, SignalSemanticTag,
+        StatementClass, VisualObservationKind, actor_signal_relation_fact_key, contains_any,
+        contains_reference_token, diagram_kind_key, evidence_rule_registry,
         is_hardware_signal_token, is_image_line, is_signal_name_char, is_standalone_markdown_block,
         is_tie_off_actor_text, looks_like_encoding_literal,
         looks_like_structural_contents_entry_for_semantic_hint, numbered_list_prefix,
@@ -21456,9 +22304,17 @@ mod tests {
                 record["source_path"] = serde_json::Value::String(retired(&relative));
             }
         }
+        json["schema_version"] = serde_json::json!(2);
+        json.as_object_mut()
+            .expect("evidence object")
+            .remove("proof_context");
+        json.as_object_mut()
+            .expect("evidence object")
+            .remove("proof_ledger");
         fs::write(&evidence_ir_path, serde_json::to_string_pretty(&json)?)?;
 
-        let reloaded = EvidenceIr::load_from_path(&evidence_ir.artifact_layout.evidence_ir_path)?;
+        let reloaded =
+            EvidenceIr::load_for_inspection(&evidence_ir.artifact_layout.evidence_ir_path)?;
         assert_eq!(
             reloaded.source_ir_path,
             source_ir.artifact_layout.source_ir_path
@@ -21479,7 +22335,7 @@ mod tests {
                 .iter()
                 .all(|span| span.source_path.is_absolute())
         );
-        assert!(!reloaded.to_pretty_json()?.contains("/retired/specforge"));
+        assert!(!serde_json::to_string(&reloaded)?.contains("/retired/specforge"));
         Ok(())
     }
 
@@ -21530,8 +22386,11 @@ mod tests {
         json["extraction_manifest"] = serde_json::json!({"surfaces": [{"surface": "legacy"}]});
         fs::write(&evidence_path, serde_json::to_string_pretty(&json)?)?;
 
-        let loaded = EvidenceIr::load_from_path(&evidence_path)?;
-        assert_eq!(loaded.schema_version, EVIDENCE_IR_SCHEMA_VERSION);
+        let error = EvidenceIr::load_from_path(&evidence_path)
+            .expect_err("legacy proofless evidence cannot regain canonical authority");
+        assert!(error.to_string().contains("inspection-only"));
+        let loaded = EvidenceIr::load_for_inspection(&evidence_path)?;
+        assert_eq!(loaded.schema_version, 1);
         assert!(loaded.serial_frame_fields.is_empty());
         assert!(loaded.protocol_states.is_empty());
         assert!(loaded.protocol_operations.is_empty());
@@ -21540,8 +22399,8 @@ mod tests {
     }
 
     #[test]
-    fn evidence_ir_schema_two_retains_neutral_protocol_records_and_rejects_future_schema()
-    -> Result<()> {
+    fn evidence_ir_schema_two_is_inspectable_but_not_authoritative_and_future_rejects() -> Result<()>
+    {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("neutral_protocol.md");
         let source_artifact_base = tempdir.path().join("generated/source_ir");
@@ -21579,10 +22438,24 @@ mod tests {
             phase_names: vec!["lilac".to_string(), "violet".to_string()],
             supporting_statement_ids: vec!["statement_0001".to_string()],
         }];
-        evidence_ir.write_to_disk()?;
         let evidence_path = evidence_ir.artifact_layout.evidence_ir_path.clone();
+        let mut legacy = serde_json::to_value(&evidence_ir)?;
+        legacy["schema_version"] = serde_json::json!(2);
+        legacy
+            .as_object_mut()
+            .expect("evidence object")
+            .remove("proof_context");
+        legacy
+            .as_object_mut()
+            .expect("evidence object")
+            .remove("proof_ledger");
+        if let Some(parent) = evidence_path.parent() {
+            fs::create_dir_all(parent)?;
+        }
+        fs::write(&evidence_path, serde_json::to_string_pretty(&legacy)?)?;
 
-        let loaded = EvidenceIr::load_from_path(&evidence_path)?;
+        assert!(EvidenceIr::load_from_path(&evidence_path).is_err());
+        let loaded = EvidenceIr::load_for_inspection(&evidence_path)?;
         assert_eq!(loaded.serial_frame_fields, evidence_ir.serial_frame_fields);
         assert_eq!(loaded.protocol_operations, evidence_ir.protocol_operations);
 
@@ -21591,11 +22464,198 @@ mod tests {
         future["schema_version"] = serde_json::json!(EVIDENCE_IR_SCHEMA_VERSION + 1);
         fs::write(&evidence_path, serde_json::to_string_pretty(&future)?)?;
         let error = EvidenceIr::load_from_path(&evidence_path).expect_err("future schema rejected");
-        assert!(
-            error
-                .to_string()
-                .contains("unsupported EvidenceIR schema version")
+        assert!(error.to_string().contains("newer than this binary"));
+        Ok(())
+    }
+
+    fn build_canonical_proof_fixture(markdown: &str) -> Result<(tempfile::TempDir, EvidenceIr)> {
+        let tempdir = crate::project_data::tempdir()?;
+        let source = tempdir.path().join("proof_fixture.md");
+        let source_artifact_base = tempdir.path().join("generated/source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated/evidence_ir");
+        fs::write(&source, markdown)?;
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        Ok((tempdir, evidence_ir))
+    }
+
+    #[test]
+    fn evidence_proof_covers_every_field_record_and_exact_source_prefix() -> Result<()> {
+        let (_tempdir, evidence_ir) = build_canonical_proof_fixture(
+            "# Interface\nSignal ALPHA is input width 1.\nALPHA must remain asserted.\n",
+        )?;
+        evidence_ir.write_to_disk()?;
+        let (evidence_ir, evidence_proof) =
+            EvidenceIr::load_with_verified_proof(&evidence_ir.artifact_layout.evidence_ir_path)?;
+        let (_, source_proof) = SourceIr::load_with_verified_proof(&evidence_ir.source_ir_path)?;
+
+        let fields = evidence_ir
+            .persisted_clone()?
+            .public_field_values()
+            .map_err(super::evidence_derivation_error)?;
+        let per_record_claims = fields
+            .iter()
+            .map(|(field, value)| {
+                value
+                    .as_array()
+                    .map(Vec::len)
+                    .or_else(|| {
+                        (field == "signal_alias_map")
+                            .then(|| value.as_object().map_or(0, serde_json::Map::len))
+                    })
+                    .unwrap_or(0)
+            })
+            .sum::<usize>();
+        let expected_local = EVIDENCE_RULE_FIELDS.len() + per_record_claims;
+        let source_claims = source_proof.ledger().claims();
+        let cumulative_claims = evidence_proof.ledger().claims();
+        assert_eq!(EVIDENCE_RULE_FIELDS.len(), 39);
+        assert_eq!(
+            EVIDENCE_RULE_FIELDS
+                .iter()
+                .map(|(_, family)| *family)
+                .collect::<std::collections::BTreeSet<_>>()
+                .len(),
+            11
         );
+        assert_eq!(
+            cumulative_claims.len(),
+            source_claims.len() + expected_local
+        );
+        assert_eq!(
+            &cumulative_claims[..source_claims.len()],
+            source_claims,
+            "EvidenceIR must retain the exact verified SourceIR ledger as its prefix"
+        );
+        let local_ruleset = evidence_rule_registry()
+            .map_err(super::evidence_derivation_error)?
+            .ruleset_sha256()
+            .clone();
+        assert_eq!(
+            evidence_proof
+                .ledger()
+                .local_suffix_after(&source_proof, &local_ruleset)
+                .map_err(super::evidence_derivation_error)?
+                .claims()
+                .len(),
+            expected_local
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn current_evidence_without_proof_cannot_load_serialize_or_feed_downstream() -> Result<()> {
+        let (_tempdir, evidence_ir) = build_canonical_proof_fixture(
+            "# Rules\nSignal ALPHA is input width 1.\nALPHA must remain asserted.\n",
+        )?;
+        evidence_ir.write_to_disk()?;
+        let evidence_path = evidence_ir.artifact_layout.evidence_ir_path.clone();
+        let mut proofless =
+            serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&evidence_path)?)?;
+        proofless
+            .as_object_mut()
+            .expect("EvidenceIR object")
+            .remove("proof_context");
+        proofless
+            .as_object_mut()
+            .expect("EvidenceIR object")
+            .remove("proof_ledger");
+        fs::write(&evidence_path, serde_json::to_string_pretty(&proofless)?)?;
+
+        let error = EvidenceIr::load_from_path(&evidence_path)
+            .expect_err("current-schema proofless EvidenceIR must not load canonically");
+        assert!(error.to_string().contains("proofless"));
+        let decoded = serde_json::from_value::<EvidenceIr>(proofless)?;
+        assert!(decoded.to_pretty_json().is_err());
+        assert!(
+            crate::ir::semantic::SemanticIr::build(
+                &evidence_path,
+                &evidence_path
+                    .parent()
+                    .expect("artifact directory")
+                    .join("semantic"),
+            )
+            .is_err()
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn hash_consistent_evidence_field_edit_fails_executable_replay() -> Result<()> {
+        let (_tempdir, evidence_ir) = build_canonical_proof_fixture(
+            "# Rules\nSignal ALPHA is input width 1.\nALPHA must remain asserted.\n",
+        )?;
+        evidence_ir.write_to_disk()?;
+        let evidence_path = evidence_ir.artifact_layout.evidence_ir_path.clone();
+        let mut forged =
+            serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&evidence_path)?)?;
+        forged["document_identity"]["display_name"] =
+            serde_json::Value::String("edited identity".to_string());
+        let forged_conclusion = serde_json::to_vec(&forged["document_identity"])?;
+        let forged_digest = crate::ir::derivation::Sha256Digest::of_bytes(&forged_conclusion);
+        let claims = forged["proof_ledger"]["claims"]
+            .as_array_mut()
+            .expect("proof claims");
+        let root_claim = claims
+            .iter_mut()
+            .find(|claim| {
+                claim["address"]["stage"] == serde_json::json!("evidence_ir")
+                    && claim["address"]["surface"] == serde_json::json!("document_identity")
+                    && claim["address"]["stable_record_key"] == serde_json::json!("root")
+            })
+            .expect("document identity root claim");
+        root_claim["conclusion_sha256"] = serde_json::to_value(forged_digest)?;
+        fs::write(&evidence_path, serde_json::to_string_pretty(&forged)?)?;
+
+        let error = EvidenceIr::load_from_path(&evidence_path)
+            .expect_err("recomputed conclusion digest cannot self-authorize an edited field");
+        assert!(
+            error.to_string().contains("current registered replay")
+                || error.to_string().contains("public fields differ")
+                || error.to_string().contains("registered derivation"),
+            "unexpected verification failure: {error}"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn mutation_authority_is_closed_by_kind_and_requires_existing_support() -> Result<()> {
+        use crate::ir::source::{SignalConstraintKind, SignalConstraintRecord};
+
+        let (_tempdir, mut evidence_ir) = build_canonical_proof_fixture(
+            "# Rules\nSignal ALPHA is input width 1.\nALPHA must remain asserted.\n",
+        )?;
+        evidence_ir
+            .document_identity
+            .display_name
+            .push_str(" edited");
+        let error = evidence_ir
+            .authorize_mutation(EvidenceMutationKind::QualityGauge)
+            .expect_err("quality-gauge authority must not cover document identity");
+        assert!(error.to_string().contains("unauthorized EvidenceIR field"));
+
+        let (_tempdir, mut evidence_ir) = build_canonical_proof_fixture(
+            "# Rules\nSignal ALPHA is input width 1.\nALPHA must remain asserted.\n",
+        )?;
+        evidence_ir.signal_constraints.push(SignalConstraintRecord {
+            constraint_id: "unsupported-proposal".to_string(),
+            subject_signal: "ALPHA".to_string(),
+            constraint_kind: SignalConstraintKind::MustBeStable,
+            target_value: None,
+            condition_text: None,
+            negated: false,
+            source_text: "invented proposal".to_string(),
+            supporting_statement_ids: vec!["absent-statement".to_string()],
+            automation_confidence: AutomationConfidence::Medium,
+        });
+        let error = evidence_ir
+            .authorize_mutation(EvidenceMutationKind::ConditionExtraction)
+            .expect_err("a mutation cannot cite evidence absent from the current artifact");
+        assert!(error.to_string().contains("cites an absent statement"));
         Ok(())
     }
 
@@ -25738,7 +26798,7 @@ mod tests {
         let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
         fs::write(&source, "# Protocol\nSome content.\n")?;
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_test_fixture_to_disk()?;
+        source_ir.write_to_disk()?;
 
         // Build once, inject a stale deterministic constraint, persist (no Nlp provenance).
         let mut first = EvidenceIr::build(
@@ -25756,7 +26816,10 @@ mod tests {
             supporting_statement_ids: vec![],
             automation_confidence: AutomationConfidence::Medium,
         });
-        first.write_to_disk()?;
+        let error = first
+            .write_to_disk()
+            .expect_err("unproved deterministic mutation must not persist");
+        assert!(error.to_string().contains("conclusion digest mismatch"));
 
         // Re-build over the existing artifact: the stale constraint must NOT survive.
         let second = EvidenceIr::build(

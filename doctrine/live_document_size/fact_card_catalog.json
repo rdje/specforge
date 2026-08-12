@@ -95,13 +95,13 @@
     },
     {
       "metrics": {
-        "bytes": 12432,
+        "bytes": 12439,
         "line_bytes": 276,
         "lines": 63
       },
       "path": "docs/knowledge-catalog/titles-0002.md",
       "role": "title_part",
-      "sha256": "ee28d1cffd98d7f3cbd312798fc340e1b7c38a7430e32cbf59098df0f9cbf405"
+      "sha256": "b47e569fbce022542be79594e41c4494173e0c56691b48ca74aba428830cdd4b"
     },
     {
       "metrics": {
@@ -111,7 +111,7 @@
       },
       "path": "docs/knowledge-catalog/titles-0003.md",
       "role": "title_part",
-      "sha256": "aebfd08f8b4dcb0318205340c960d592c6aabc7a8e4e496cc311c705fc24fecb"
+      "sha256": "a672d7fd5b1024a06afff5d932142c3065b9b148490d84bff531549771f321cc"
     },
     {
       "metrics": {

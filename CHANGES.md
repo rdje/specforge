@@ -1,3 +1,22 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii — make EvidenceIR proof-carrying
+
+- Advanced EvidenceIR to schema 3 and registered all 11 EvidenceIR families. Every one of its 39 public fields
+  receives a root claim, every populated record or alias entry receives a stable claim, and the complete verified
+  SourceIR ledger remains an exact ordered prefix.
+- Made EvidenceIR authority executable. Canonical load, serialization, write, and SemanticIR construction rebuild
+  from the verified SourceIR artifact, exact normalized Markdown, an exact validated prior when consulted, and an
+  ordered closed set of typed post-build proposals; edited conclusions or recomputed hashes do not self-authorize.
+- Closed every productive post-build write behind typed mutation authority for NLP enrichment, condition and
+  constraint extraction, contract extraction, signal resolution, register-bit recovery, NLI measurement, and
+  validation backannotation. Removed the hidden carry-forward path that could import unrecorded prior EvidenceIR.
+- Migrated exactly the 24 retained proof-verifiable chains with zero extracted-field change. The other 54 legacy
+  EvidenceIRs remain inspectable but cannot feed SemanticIR: SemanticIR replay is 24 current / 54 unmeasurable.
+  IntentIR and adapters remain 78/78 stage-locally reproducible from persisted SemanticIR, but are not yet
+  end-to-end proof-current. Any stale current proof remains a hard currency failure.
+- Verified all eight doctrines, 1,932 Rust tests plus five compile-fail doctests, 156/156 KG fixtures, warning-deny
+  Clippy/rustdoc, and mdBook. Removed 596 MiB of migration scratch and 6.7 GiB of rebuildable incremental cache
+  from the repository volume with residue absent.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii — make SourceIR proof-carrying
 
 - Advanced SourceIR to schema 3 and registered all five source claim families. Every one of its 19 public

@@ -384,10 +384,11 @@ An operation carries optional source-stated `branch_label` and `operation_name`,
 optional source-stated phase names, and provenance. No fixed response values, phase enum, actor-role mapping,
 protocol identity, or signal spelling is part of the production type.
 
-EvidenceIR schema 2 is the authority for these records. Loading schema 1 preserves all unrelated evidence but
-clears the former vocabulary-bound frame, operation, state, and extraction-manifest authority before typed
-deserialization. Re-ingestion from SourceIR is required to repopulate the neutral surfaces; future schema
-versions fail closed.
+EvidenceIR schema 3 is the canonical authority for these records. SemanticIR construction first verifies the
+complete executable EvidenceIR derivation, including its exact SourceIR proof prefix, before it can read any
+record. EvidenceIR schemas 1 and 2 remain available only through the inspection API: they cannot feed SemanticIR,
+and re-ingestion from retained or newly recaptured SourceIR is required to create current authority. Future
+schema or proof versions fail closed.
 
 The records do not claim more semantics merely because they crossed a stage. In particular, a protocol-state
 observation is not a transition graph, and a serial-frame field is not automatically an executable transaction.

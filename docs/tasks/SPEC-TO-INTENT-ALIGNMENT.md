@@ -340,11 +340,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii — prove SourceIR authority`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii`
-  Status: `pending`
+  Status: `done`
   Goal: `make every EvidenceIR producer and post-build mutator proof-carrying`
   Acceptance: `all 11 EvidenceIR families, deterministic extractors, convergence passes, prior-guided paths, VLM/NLP/LLM proposals, alias reclassification, contract/signal mutation commands, and validation backannotations either extend a current verified ledger through registered rules or refuse canonical persistence; every semantic claim cites exact SourceIR claims or current source/table/visual premises`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `EvidenceIR schema 3 proves all 39 public fields across 11 families, retains the exact verified SourceIR ledger as an ordered prefix, and replays exact normalized Markdown, consulted prior, and closed typed post-build proposals; every populated record/alias claim is covered; eight mutation kinds close all productive enrichment/backannotation commands and hidden carry-forward is removed; current-schema proofless, stale, forged, unauthorized, legacy, and future authority reject; exact migration of all 24 retained inputs changes zero extracted fields and SemanticIR dry replay changes zero non-validation fields; chain currency reports EvidenceIR 24 current / 54 bundle-unmeasurable, SemanticIR 24 current / 54 proof-unmeasurable, and IntentIR/adapters 78/78 stage-local with zero stale; 1,932 Rust tests pass / six ignored / zero failed plus five compile-fail doctests, all 156 KG fixtures pass, all eight doctrines, formatting, warning-deny Clippy/rustdoc, mdBook, and final locality pass; exact 596-MiB migration scratch and 6.7-GiB rebuildable incremental cache are removed with residue absent`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii — prove EvidenceIR authority`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv`
   Status: `pending`
@@ -456,7 +456,7 @@ expressiveness as the bottleneck.
 | 27 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii` | `done` | sealed capability boundary and kernel-only verified authority are installed and adversarially tested |
 | 28 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i` | `done` | 38 families / 168 rules / 113 producer-mutators / 39 seams / four bypasses are checked and the cumulative-ledger contract is fixed |
 | 29 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii` | `done` | all five SourceIR families are executable-proof-carrying; 24 retained chains are reconciled and 54 legacy SourceIRs remain inspection-only |
-| 30 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii` | `pending` | prove all 11 EvidenceIR families and every post-build mutation path |
+| 30 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii` | `done` | all 11 EvidenceIR families and every productive post-build mutation are executable-proof-carrying; 24 retained chains migrate without field delta and 54 legacy inputs remain inspection-only |
 | 31 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv` | `pending` | prove all 11 SemanticIR carry, inference, conflict, and residual families |
 | 32 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v` | `pending` | prove all seven IntentIR carry and synthesis families |
 | 33 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi` | `pending` | proof-gate all four adapter families and reconcile the complete chain |
@@ -751,6 +751,10 @@ expressiveness as the bottleneck.
 | `2026-08-12` | `.6d.ii.e.iv.i` exact rule and canonical-seam census | `perl scripts/check_production_genericity_rules.pl`; path/function resolution against all inventory rows | PASS: 38/38 families expand to 168 unique field-root rules; 113 producer/mutator entrypoints, 39 canonical seams, and four conformance-only bypass obligations resolve; all five stage writers plus raw validation backannotation are named |
 | `2026-08-12` | `.6d.ii.e.iv.i` fail-closed inventory controls | `perl -c scripts/check_production_genericity_rules.pl`; `perl scripts/check_production_genericity_rules.pl --self-test` | PASS: syntax clean and 6/6 clean/missing-family/absent-entrypoint/capability-alpha/wrong-stem/unsafe-bypass cases behave exactly; repository-volume fixture residue is absent |
 | `2026-08-12` | `.6d.ii.e.iv.i` behavior and full repository qualification | source/schema/generated-artifact diff review; `bash scripts/run_ci.sh` | PASS: no production Rust, persisted schema, extraction behavior, or generated canonical artifact changed; all eight doctrines, formatting, warning-deny Clippy, 1,916 Rust tests / six intentional ignores / zero failures, five compile-fail doctests, warning-deny Rustdoc, mdBook test/build, and final locality pass |
+| `2026-08-13` | `.6d.ii.e.iv.iii` exact EvidenceIR authority and mutation closure | schema-3 registry/ledger inspection; focused proof/mutation tests; checked production rule inventory | PASS: all 39 fields in 11 families receive roots, populated records and alias entries receive claims, the verified SourceIR ledger is an exact prefix, and every productive EvidenceIR mutation command extends proof through one of eight closed kinds; current inventory resolves 111 producer/mutator entrypoints, 39 seams, and four bypass obligations |
+| `2026-08-13` | `.6d.ii.e.iv.iii` ADR 0025 proof migration and attribution | 144-path / 131-MiB same-volume backup at SHA-256 `c4334b47…9328`; exact 24-document EvidenceIR and SemanticIR dry-run comparison; persisted schema-3 rebuild; `bash scripts/check_chain_currency.sh --check` | PASS: all 24 retained SourceIR proofs are current; 24 EvidenceIRs migrate with zero extracted-field delta; 24 SemanticIR replays have zero non-validation delta; EvidenceIR and SemanticIR are 24/24 current with 54 explicit legacy/proofless unmeasurable inputs; IntentIR and adapters are 78/78 stage-locally current, not end-to-end proof-current; zero stale artifacts |
+| `2026-08-13` | `.6d.ii.e.iv.iii` focused and workspace qualification | `cargo test -p specforge-core --lib --offline --no-fail-fast`; `cargo test -p specforge --lib --offline --no-fail-fast`; `cargo test --workspace --offline -- --format terse`; tracked `kg-bench`; warning-deny Clippy/rustdoc; mdBook test/build | PASS: core 1,323/5/0 and app 470/0/0; whole workspace 1,932 Rust tests / six intentional ignores / zero failures plus five compile-fail doctests; KG 156/156; formatting, warning-deny Clippy/rustdoc, and mdBook pass |
+| `2026-08-13` | `.6d.ii.e.iv.iii` full repository and locality gate | `bash scripts/run_ci.sh`; exact scratch and requested `.bin`/`.log` census | PASS: all eight doctrines including full chain currency, formatting, warning-deny Clippy, 1,932/6/0 tests plus five compile-fail doctests, warning-deny rustdoc, mdBook test/build, and final project-data locality; removed exact 131-MiB rollback, 465-MiB comparison tree, and 6.7-GiB Cargo incremental cache; no `.bin`/`.log` residue remains in generated/release/debug-deps |
 | `2026-08-12` | scheduled artifact cleanup | `.bin`/`.log` census under generated and Cargo release/debug trees; exact age/purpose inspection before deletion; residue census | PASS: removed one abandoned 23-file / 92-KiB Aug-11 live-document-size test workspace and the fully rebuildable 3,116,900-KiB `target/debug/incremental` cache; no `.bin`/`.log` remains in the requested generated/debug-deps/release census |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
@@ -1313,6 +1317,41 @@ the reviewed replay can name its production revision.
 - [x] **LOCKSTEP** — inventories, checker, ADR, audit, Knowledge Map, roadmap, README, mdBook, live docs, task
   frontier, and resume pointer publish the same exact migration denominator and leave stage behavior honestly open.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii`
+
+- [x] **REPRODUCE / MEASURE** — all 19 SourceIR public fields across five families have field-root proof and
+  every populated collection has record proof; only the 24 retained normalized captures satisfy migration input.
+- [x] **ROOT CAUSE (WHY + WHERE)** — a digest-consistent ledger can still be forged if canonical load checks only
+  hashes; SourceIR classification and grounded refinements require executable relations over exact captured input.
+- [x] **ADDRESSED (verified)** — SourceIR schema 3 re-executes current registered capture, classification,
+  integrity, residual, and evaluation relations at every load/write/downstream seam with implementation digests.
+- [x] **NO REGRESSION** — the 24 backed captures show zero unintended field mutation, complete downstream replay
+  was current at closure, full Rust/KG/warning-deny/book/doctrine gates passed, and exact scratch was removed.
+- [x] **GENERICITY (ADR 0006)** — classifications start from an exact unknown-kind projection and may use typed
+  table/visual/source evidence or grounded model response, never document identity or a synthetic proof wrapper.
+- [x] **LOCKSTEP** — schema, registry, ADR 0038, book, task, live docs, Knowledge Map, and generated retained
+  population publish the same 24-current / 54-inspection-only SourceIR authority boundary.
+
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii`
+
+- [x] **REPRODUCE / MEASURE** — all 39 EvidenceIR public fields across 11 families have roots; populated records
+  and alias entries have claims; the live graph resolves 111 producer/mutator entrypoints and 39 canonical seams.
+- [x] **ROOT CAUSE (WHY + WHERE)** — deterministic construction was followed by unrecorded carry-forward and
+  multiple direct enrichment/backannotation mutations, while a typed model response alone cannot prove semantic
+  truth and a per-record whole-stage replay would make verification quadratic.
+- [x] **ADDRESSED (verified)** — schema 3 retains the exact SourceIR proof prefix and replays exact Markdown,
+  optional validated prior, and ordered closed typed proposals. Eight mutation kinds restrict fields and support;
+  registered per-claim projections depend on one verified global replay and keep ledger verification linear.
+- [x] **NO REGRESSION** — all 24 retained EvidenceIR migrations and SemanticIR dry runs have zero semantic field
+  delta; currency has zero stale artifacts; 1,932 Rust tests plus five compile-fail doctests and all 156 KG
+  fixtures pass with warning-deny Clippy/rustdoc, formatting, and mdBook green.
+- [x] **GENERICITY (ADR 0006)** — the production boundary authenticates information flow and exact current-source
+  replay rather than tokens. A model proposal records bounded evidence but cannot authorize itself; legacy,
+  proofless, stale, malformed, future, unsupported, or unauthorized mutations fail closed.
+- [x] **LOCKSTEP** — code, schemas, rule inventory, ADR 0025/0038, roadmap, mdBook, live docs, Knowledge Map,
+  task frontier, and generated corpus distinguish 24 end-to-Evidence proof-current chains, 54 proof-blocked
+  Evidence-to-Semantic replays, and 78/78 later stage-local replays without claiming end-to-end closure.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -1346,6 +1385,8 @@ the reviewed replay can name its production revision.
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii — separate core from conformance` | compiler-visible one-way package graph, compatible facade, 76-module live inventory, five dependency controls, and unchanged behavior |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii — install trusted derivation kernel` | sealed opaque identity capabilities, closed rule registry, kernel-only verified authority, fail-closed compatibility, and unchanged persisted behavior |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i — freeze rule migration graph` | exact 38-family / 168-rule / 113-entrypoint / 39-seam graph, four fail-closed conformance bypasses, cumulative-ledger contract, and unchanged production behavior |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii — prove SourceIR authority` | SourceIR schema-3 executable relation proofs for five families / 19 fields, exact 24 retained migrations, and fail-closed history |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii — prove EvidenceIR authority` | EvidenceIR schema-3 cumulative proof for 11 families / 39 fields, closed mutation replay, exact 24 retained migrations, and proof-frontier currency |
 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | measured remaining AMD IOMMU and GIC-400 fabrication families, root-cause split, and clean qualification |
 
 ## Changelog
@@ -1417,6 +1458,25 @@ the reviewed replay can name its production revision.
   downstream rebuild restored 24/24 measurable EvidenceIR and 78/78 later-stage exact currency with zero stale.
   The other 54 SourceIRs remain legacy inspection-only. Full Rust/KG/warning-deny qualification passes; `.e.iv.iii`
   is next only after this child commits cleanly.
+- `2026-08-12`: Activated `.6d.ii.e.iv.iii` only after `.e.iv.ii` committed at `bb5047c2`, the post-commit
+  tree was clean, and the commit brief was zero bytes. This child owns all 11 EvidenceIR families, deterministic
+  builder extraction, prior/model proposal admission, convergence and post-build mutation, validation
+  backannotation, cumulative SourceIR proof carry, and every canonical EvidenceIR load/serialize/write/downstream
+  seam. SemanticIR remains the next clean child; no vocabulary-list result can substitute for executable proof.
+- `2026-08-13`: `.e.iv.iii` replaces EvidenceIR hash/provenance trust with executable cumulative derivation.
+  Exact SourceIR proof is preserved as the prefix; 39 field roots and every populated record/alias claim derive
+  from verified SourceIR, captured normalized Markdown, an exact consulted prior, and closed ordered proposals.
+  All productive enrichment/backannotation commands now authorize only their declared field set, and the old
+  hidden carry-forward path is removed. Registry validation plus one global replay keeps claim verification linear.
+- `2026-08-13`: The exact retained-corpus migration advances 24 EvidenceIRs to schema 3 with zero extracted-field
+  delta and zero SemanticIR replay delta. The 54 historical EvidenceIRs remain inspection-only. Currency is exact
+  at EvidenceIR 24 current / 54 bundle-unmeasurable, SemanticIR 24 current / 54 proof-unmeasurable, and IntentIR/
+  adapters 78/78 stage-local with zero stale. The verified 131-MiB rollback and 465-MiB comparison workspaces were
+  removed exactly with residue absent; later stage-local currency is not misrepresented as end-to-end proof.
+- `2026-08-13`: Closed `.6d.ii.e.iv.iii` after all eight doctrines, the full 1,932-pass / six-ignore / zero-fail
+  workspace plus five compile-fail doctests, 156/156 KG fixtures, warning-deny Clippy/rustdoc, mdBook, and final
+  locality passed. The requested artifact sweep removed 6.7 GiB of rebuildable Cargo incremental cache and found
+  no remaining `.bin`/`.log` in generated, release, or debug-deps. `.e.iv.iv` is next only after this commit is clean.
 
 - `2026-08-11`: Created on owner request so the ramp-up trajectory assessment and upstream-first direction do
   not remain chat-only.

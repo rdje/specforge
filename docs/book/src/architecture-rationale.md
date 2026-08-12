@@ -148,16 +148,18 @@ prior selection, identifier-spelling authority, production model prompts, and co
 repaired. Current-document identities are opaque, downstream stages cannot reconstruct their meaning from
 spelling, ISF clock/reset lowering fails closed without a typed system contract, prompts teach only typed
 digital-design structure with current-document symbols, and corpus pages group fixtures only by populated typed
-schema capabilities. Named production commentary, calibrated classification claims, the structural
-proof-carrying gate, and full behavioral qualification remain release-blocking work, not accepted shortcuts.
+schema capabilities. SourceIR and EvidenceIR now require executable cumulative derivations at every canonical
+seam. SemanticIR, IntentIR, adapter proof migration, the structural information-flow gate, and full behavioral
+qualification remain release-blocking work, not accepted shortcuts.
 
-The bounded identity-remediation parent is now jointly qualified over the exact three-commit range
-`89d8dee7..9c38b569`. Current-binary currency is exact at 24/24 measurable EvidenceIR and 78/78 for each
-downstream stage, and all 17 honestly renderable ISFs pass FSMGen strict. Focused alpha-renaming, identity,
-prompt, spelling, fixture-name, and fail-closed proposal controls cover the repaired paths. The observed recall
-reductions are intentional removals of unjustified authority, not regressions to patch with named exceptions.
-This closes identity/spelling/prompt/corpus remediation only; structural enforcement and population-level
-metamorphic qualification remain mandatory before the implementation can claim this invariant as a whole.
+The bounded identity-remediation parent remains jointly qualified over the exact three-commit range
+`89d8dee7..9c38b569`. The later proof migration exposes a stricter current frontier: exactly 24 documents retain
+verifiable source capture and current SourceIR/EvidenceIR proof, while 54 historical chains are inspection-only.
+SemanticIR replay is consequently 24 current / 54 unmeasurable. IntentIR and adapter artifacts remain 78/78
+stage-locally reproducible from persisted SemanticIR, but cannot claim an end-to-end proof chain until their own
+migrations land. Focused alpha-renaming, identity, prompt, spelling, fixture-name, and fail-closed proposal
+controls cover the repaired paths. Structural enforcement and population-level metamorphic
+qualification remain mandatory before the implementation can claim this invariant as a whole.
 
 The remediation is tracked by `SPEC-TO-INTENT-ALIGNMENT.6d.ii`. Its proof is deliberately stronger than
 a forbidden-word list: the production/conformance dependency boundary must prevent named test knowledge

@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > which AXI signals belong to which channel (B1.1 write request / B1.2 write data / B1.3 write response / B1.4 read request / B1.5 read data / B1.6 B1.7 snoop)
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > which AXI transactions gain channel grouping (atomic/prefetch/writezero/writedeferrable/narrow_transfer)
+- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
+  > which IR stages have adopted move safe persisted paths
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > which IntentIR surfaces are lowered to the .isf vs silently dropped
+- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
+  > which LLM or VLM does SpecForge use
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > which Markdown files must the live-document containment registry cover
+- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
+  > which PDF task history ids exist only as tree-relative shorthand
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > which SWD protocol facts are safe to lower today
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
@@ -283,17 +297,3 @@
   > why did running nli-verify on a .prepromote.bak overwrite the real evidence_ir.json
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > why did seed_axi_temporal fail after constraint promotion and how was it fixed
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > why did six Introducing CoreSight interfaces disappear
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > why did the .2a direction deferral get reopened (explicit owner steer 2026-06-17 — Build it, initiator perspective)
-- [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md)
-  > why did the ACE evidence build run out of memory / get SIGKILLed (exit 137)
-- [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
-  > why did the AIA table of contents have 19 timing false positives
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > why did the AMBA AXI+ACE ihi0022_h_c manager.isf fail fsmgen strict with 'rule constraint_48 assignment actions require (port expr)'
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why did the AMBA LPI controller.isf fail fsmgen strict with isf_conflicting_rule_writes on PREQ/PACCEPT
-- [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
-  > why did the AXI/AHB/AXI-Stream wire-gold .isf fail fsmgen --strict on a fresh re-emit (isf_conflicting_rule_writes), and what fixed them

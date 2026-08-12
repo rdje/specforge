@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > is the SemanticIR phases surface the protocol transaction phases (no — it is section/chapter-derived)
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > is the SpecForge extraction robust and can it grow to a vast set of chip-spec PDFs
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > is the USB4 Connection Manager current-binary refresh complete
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > is the USB4 Inter-Domain Service corpus refresh complete
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > is the VLM the right lever for AXI transaction phase membership (no — a deterministic channel-table cue is)
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > is the VLM-tier transaction frontier exhausted (yes — superseded by the deterministic channel cue / honest absence)
+- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
+  > is the WIRE-BASED-100.5a AHB 0.364 baseline real
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > is the canonical SWD normalized bundle path portable
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
@@ -284,17 +298,3 @@
   > what did statement 0114 say in the stale OpenCAPI Ready evidence
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what did the .2i Rule-A per-phase grouping measurement find (clean only on AHB, empty on APB/AXI/SWD)
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > what did the OpenCAPI AFU address note prove about legal boilerplate
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what did the active PDF task containment census find
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > what did the corpus promotion sweep measure (gauge deltas per doc)
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > what did the corpus task evidence containment census find
-- [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
-  > what did the owner decide about PDF-to-IR work versus FSMGen work on 2026-08-11
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what did the register access carrier improve in the current replay
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > what distinguishes a PURE-INFERRED phantom from a PROSE-GROUNDED or SECTION+INFERRED 0/0 actor

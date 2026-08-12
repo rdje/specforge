@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > how many corpus refreshes remain after USB4 Inter-Domain
+- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
+  > how many corpus refreshes remain after the GIC Overview Guide
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > how many corpus refreshes remain after the OpenCAPI Certified note
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > how many corpus refreshes remain after the OpenCAPI Ready note
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > how many corpus task ids and source regions must containment preserve
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > how many current emitted ISFs pass FSMGen after retiring fabricated priorities (44 of 44, zero diagnostics at pin a51dcdad0)
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > how many docs / enums are affected (56/78 docs carry a generic-named enum; 96 generic vs 493 real; but a name-only gate misses 271 real-named-but-junk fragment/dup enums — the real defect is member quality)
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > how many docs are wire-protocol vs register-IP vs platform vs ISA vs PHY vs guide
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
@@ -283,17 +297,3 @@
   > is the PDF-VARIANT-DIGESTION current frontier internally consistent
 - [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
   > is the SWD FSM the same as the JTAG TAP DBGTAPSM (no)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > is the SemanticIR phases surface the protocol transaction phases (no — it is section/chapter-derived)
-- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
-  > is the SpecForge extraction robust and can it grow to a vast set of chip-spec PDFs
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > is the USB4 Connection Manager current-binary refresh complete
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > is the USB4 Inter-Domain Service corpus refresh complete
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > is the VLM the right lever for AXI transaction phase membership (no — a deterministic channel-table cue is)
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > is the VLM-tier transaction frontier exhausted (yes — superseded by the deterministic channel cue / honest absence)
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > is the WIRE-BASED-100.5a AHB 0.364 baseline real

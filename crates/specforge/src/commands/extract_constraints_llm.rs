@@ -21,7 +21,7 @@ use crate::ir::constraint_extract_llm::{
 use crate::ir::entity_typing::{
     EntityType, declared_signal_catalog, resolve_unique_document_identifier,
 };
-use crate::ir::evidence::{EvidenceIr, ExtractorTier};
+use crate::ir::evidence::{EvidenceIr, EvidenceMutationKind, ExtractorTier};
 use crate::ir::extractor::{ExtractorRunEntry, SurfaceManifest};
 use std::collections::BTreeSet;
 use std::path::Path;
@@ -205,6 +205,7 @@ pub fn promote_constraints(
     // The replaced surface invalidates any persisted NLI gauge (its measured ids are gone);
     // dropping it here keeps the artifact honest even when no re-measure follows immediately.
     ir.extraction_quality_gauge = None;
+    ir.authorize_mutation(EvidenceMutationKind::ConstraintPromotion)?;
     ir.write_to_disk()?;
     Ok(ConstraintPromotionReport {
         pattern_before,
@@ -286,6 +287,7 @@ mod tests {
                 abstained: 0,
                 not_entailed_constraint_ids: Vec::new(),
             });
+        evidence_ir.authorize_mutation(EvidenceMutationKind::ConstraintPromotion)?;
         evidence_ir.write_to_disk()?;
         let path = evidence_ir.artifact_layout.evidence_ir_path.clone();
 

@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > how does derive_register_block_name parse a block out of a register-descriptions section heading
+- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
+  > how does extract_discovered_state_value_from_text match a constraint value
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > how does ground_constraint recover a value the model did not echo
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > how does ingest avoid being RAM-guard-aborted on a small/restricted machine
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > how does ingest avoid crashing the host when memory runs out
+- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
+  > how does ingest avoid filling the disk on a very large PDF
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > how does learn-priors harvest extraction-profile priors (multi-member clusters only, schema v6)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
   > how does pattern reuse stay agnostic (ADR 0006) and honest (no fabrication / no overfitting)
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
@@ -283,17 +297,3 @@
   > how many corpus refreshes remain after OpenCAPI Ready Definition
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
   > how many corpus refreshes remain after USB4 Connection Manager
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > how many corpus refreshes remain after USB4 Inter-Domain
-- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
-  > how many corpus refreshes remain after the GIC Overview Guide
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > how many corpus refreshes remain after the OpenCAPI Certified note
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > how many corpus refreshes remain after the OpenCAPI Ready note
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > how many corpus task ids and source regions must containment preserve
-- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
-  > how many current emitted ISFs pass FSMGen after retiring fabricated priorities (44 of 44, zero diagnostics at pin a51dcdad0)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > how many docs / enums are affected (56/78 docs carry a generic-named enum; 96 generic vs 493 real; but a name-only gate misses 271 real-named-but-junk fragment/dup enums — the real defect is member quality)

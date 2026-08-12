@@ -8,12 +8,16 @@
   > Can SpecForge theoretically be specification and PDF neutral?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can a deserialized proof ledger authorize a canonical claim?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Can a model proposal authorize EvidenceIR by itself?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > Can a signal or response spelling select a production extractor?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can a temporary conformance artifact use a canonical stage writer?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can fixture names decide KG capability or prior-candidate routing?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Can legacy EvidenceIR feed SemanticIR?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
   > Can legacy named-family priors steer current extraction?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
@@ -32,6 +36,8 @@
   > EXTRACTION-QUALITY-GAUGE.3f what is the alphabetic-value word-boundary gate
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
   > EXTRACTION-QUALITY-GAUGE.3g what is the dotted-cross-reference spurious-subject gate
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How are EvidenceIR mutations authorized after extraction?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > How are frame fields extracted without hardcoding a protocol?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
@@ -54,10 +60,14 @@
   > How does a canonical IR claim prove where it came from?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > How does alpha-renaming become a per-rule obligation?
+- [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
+  > How does schema 3 prove generic protocol evidence?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How does the corpus knowledge base group fixtures without protocol-family names?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How does the proof ledger continue from SourceIR through ISF lowering?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How is EvidenceIR proof-carrying?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How is SourceIR proof-carrying?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -99,6 +109,8 @@
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Which premise kinds can the trusted promotion kernel accept?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Why can downstream chain currency be unmeasurable rather than stale?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why can legacy SourceIR not feed EvidenceIR?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > Why can neutral extraction lose recall after removing shortcuts?
@@ -106,6 +118,8 @@
   > Why is a forbidden vocabulary list insufficient?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > Why is an AST scan not sufficient by itself?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Why was EvidenceIR carry-forward removed?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why was PDF-AGNOSTIC-EXTRACTION closure superseded?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
@@ -283,17 +297,3 @@
   > did SpecForge adopt the 2026 08 09 FSMGen derived state containment revision
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > did a clean clone prove corpus task continuation after migration
-- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
-  > did a second annotator validate seed_apb.json
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > did bounded ingestion change the Arm Debug SourceIR
-- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
-  > did doubling the corpus (36->78) introduce a new ISF lowering silent-drop gap
-- [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md)
-  > did retiring generic gates and phases cost ISF renderability
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > did the OpenCAPI Ready terms table declare an interface
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > did the USB4 signoff check change canonical SWD
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > did the page sidecar repair change USB4 semantic artifacts

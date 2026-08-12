@@ -56,6 +56,40 @@ and any legacy rebase is unique. The upstream `source_ir_path` is a live pipelin
 artifact must exist before EvidenceIR can be loaded or rebuilt. This preserves historical lineage without making
 missing current-stage inputs look valid.
 
+## Executable EvidenceIR authority
+
+EvidenceIR schema 3 is proof-carrying. It first verifies the complete SourceIR schema-3 ledger and keeps those
+claims as an exact ordered prefix. It then appends a root claim for every one of its 39 public fields across 11
+families, including empty fields, plus a stable claim for every non-empty collection record and alias-map entry.
+
+The proof is executable, not an internal checksum convention. Canonical load, JSON serialization, writing, and
+the EvidenceIR-to-SemanticIR seam independently rebuild the deterministic stage from:
+
+- the verified SourceIR artifact and proof;
+- the exact normalized current-document Markdown captured in the proof context;
+- the exact validated global prior, when one was consulted; and
+- an ordered set of closed, typed post-build proposals for approved enrichment or backannotation paths.
+
+Each conclusion is compared byte-for-byte with its current registered replay. The cumulative ledger must contain
+the exact verified SourceIR prefix and the current EvidenceIR suffix in order. Editing a field and recomputing its
+JSON digest does not help: the current executable replay still disagrees. A stale ruleset, changed prefix,
+unauthorized mutation field, missing support statement, proofless current artifact, or future schema rejects.
+
+Post-build commands do not receive a generic "trust this object" escape hatch. NLP enrichment, condition and
+constraint extraction, contract extraction, signal relation resolution, register-bit recovery, NLI quality
+measurement, and validation backannotation each have a closed mutation kind. They may replace only that kind's
+declared fields, must reproduce the complete typed artifact from the verified predecessor, and must extend the
+ledger before persistence. Rebuilding EvidenceIR no longer imports hidden NLP state from an older artifact; state
+without an explicit replay event cannot silently regain authority.
+
+Schemas 1 and 2 remain available through the inspection API only. They cannot feed SemanticIR. In the local
+corpus, the 24 documents with retained, verified SourceIR captures now have schema-3 EvidenceIR and no extracted
+field changed during migration. The other 54 EvidenceIR files remain historical, proofless, inspection-only
+artifacts until their SourceIR inputs can be recaptured under an owned refresh. The currency gate reports their
+EvidenceIR-to-SemanticIR replay as unmeasurable rather than pretending it is current. Persisted SemanticIR can
+still reproduce IntentIR and adapter outputs stage-locally until those stages receive proof schemas; those local
+replays do not establish an end-to-end verified chain.
+
 ## Typical evidence-level wins
 
 - source/destination table recovery

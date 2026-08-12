@@ -76,6 +76,13 @@ mutation that needs its own owned leaf.
   routine.
 - Until the 58 non-rebuildable documents are backfilled, corpus currency is a *partial* guarantee, stated as such
   by the check's own output rather than implied.
+- A proof-schema migration can deliberately quarantine a persisted upstream artifact before the next stage is
+  migrated. The replay that directly consumes that input is **unmeasurable**, not stale: the current binary is
+  correctly refusing an inspection-only input. A still-unmigrated later stage may remain locally reproducible
+  from its persisted immediate input; that does not establish end-to-end authority. The gate recognizes only the
+  closed legacy/proofless compatibility diagnostic. A malformed, missing, or stale current proof remains a hard
+  failure. This preserves the distinction between historical bytes that still exist, local reproducibility, and
+  canonical authority the current binary can actually verify.
 
 ## Links
 

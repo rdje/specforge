@@ -112,7 +112,10 @@ The second rule exists because retention is what makes a document *checkable*. R
 reads the document's promoted markdown, which lives inside `normalized/`; every later stage reads only
 the persisted JSON one stage upstream. So a document that still has its bundle can be replayed — and
 therefore proven current — from the beginning of the chain, while a document whose bundle was reclaimed
-is honestly reported as *unmeasurable* at that one stage until it is re-ingested.
+is honestly reported as *unmeasurable* at the first proof-gated replay its legacy/proofless authority cannot
+enter. A later stage may still be reproducible from its persisted immediate input before that stage receives a
+proof schema; this is stage-local currency, not end-to-end authority. This is not a stale-artifact waiver: any
+current-schema proof that fails verification remains a hard currency error.
 
 Reclaiming a bundle is no longer part of the routine. It is a deliberate, separately owned decision, and
 it is recorded: `doctrine/chain_currency/retained_bundles.json` names every document key whose bundle

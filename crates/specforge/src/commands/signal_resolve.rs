@@ -23,8 +23,8 @@ use crate::cli::{SignalResolveArgs, VlmProviderArg};
 use crate::error::{AppError, Result};
 use crate::ir::entity_typing::declared_signal_catalog;
 use crate::ir::evidence::{
-    EvidenceIr, ExtractorTier, FactKind, FactProvenanceRecord, StatementClass,
-    actor_signal_relation_fact_key,
+    EvidenceIr, EvidenceMutationKind, ExtractorTier, FactKind, FactProvenanceRecord,
+    StatementClass, actor_signal_relation_fact_key,
 };
 use crate::ir::source::{ActorSignalRelation, AutomationConfidence, RelationKind};
 use crate::llm_text;
@@ -301,6 +301,7 @@ pub fn run(args: SignalResolveArgs) -> Result<()> {
     println!("deduped_against_existing: {deduped}");
 
     ir.actor_signal_relations.extend(resolved);
+    ir.authorize_mutation(EvidenceMutationKind::SignalResolution)?;
     ir.write_to_disk()?;
     println!("wrote: {}", evidence_ir_path.display());
     println!("next: re-run `specforge semantic` to fold these into the actor-relative graph");

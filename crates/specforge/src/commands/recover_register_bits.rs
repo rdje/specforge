@@ -24,7 +24,7 @@ use std::process::Command;
 
 use crate::cli::{RecoverRegisterBitsArgs, VlmProviderArg};
 use crate::error::{AppError, Result};
-use crate::ir::evidence::EvidenceIr;
+use crate::ir::evidence::{EvidenceIr, EvidenceMutationKind};
 use crate::ir::register_bits::{
     RegisterBitRecoveryOutcome, RegisterDiagramFieldProposal, recover_bits_for_register,
 };
@@ -148,6 +148,7 @@ from {candidate_registers} register diagram(s)"
     println!("residuals: {residuals}");
 
     if registers_recovered > 0 && !args.dry_run {
+        evidence_ir.authorize_mutation(EvidenceMutationKind::RegisterBitRecovery)?;
         evidence_ir.write_to_disk()?;
         println!("evidence_ir_written: {}", args.evidence_ir.display());
     } else if args.dry_run {
@@ -543,6 +544,9 @@ mod tests {
             supporting_statement_ids: Vec::new(),
             automation_confidence: AutomationConfidence::Medium,
         });
+        evidence_ir
+            .authorize_mutation(EvidenceMutationKind::RegisterBitRecovery)
+            .unwrap();
         evidence_ir.write_to_disk().unwrap();
         let evidence_ir_path = evidence_ir.artifact_layout.evidence_ir_path.clone();
         (tempdir, evidence_ir_path)

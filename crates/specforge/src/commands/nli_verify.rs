@@ -15,7 +15,9 @@
 
 use crate::cli::{NliVerifyArgs, VlmProviderArg};
 use crate::error::Result;
-use crate::ir::evidence::{EvidenceIr, ExtractionQualityGaugeRecord, tier_count_by_fact_key};
+use crate::ir::evidence::{
+    EvidenceIr, EvidenceMutationKind, ExtractionQualityGaugeRecord, tier_count_by_fact_key,
+};
 use crate::ir::nli_verify::{
     DEFAULT_NLI_MODEL, NliConformalPass, gauge_from_conformal_pass, nli_conformal_pass,
     verify_entailment,
@@ -52,6 +54,7 @@ pub fn measure_and_persist_gauge(
     let persisted = record.entailed + record.not_entailed > 0;
     if persisted {
         ir.extraction_quality_gauge = Some(record.clone());
+        ir.authorize_mutation(EvidenceMutationKind::QualityGauge)?;
         ir.write_to_disk()?;
     }
     Ok(GaugeOutcome {

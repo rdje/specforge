@@ -56,9 +56,12 @@ The proof transition was reconciled explicitly, not left as an implicit schema r
 SourceIR documents still had their declared retained normalized bundles. Migration first verified the
 recorded source and retained page/visual manifests, then reconstructed classifications with the current
 generic rules and created schema-3 proofs. Every one of those 24 chains was rebuilt through EvidenceIR,
-SemanticIR, IntentIR, and the ISF adapter. The chain-currency gate reports 24/24 measurable EvidenceIR
-and 78/78 for every later stage, with zero stale artifacts. The other 54 SourceIR documents remain
-legacy proofless, inspection-only inputs until their reclaimed bundles return through owned re-ingest.
+SemanticIR, IntentIR, and the ISF adapter. EvidenceIR's subsequent proof migration keeps exactly those 24
+retained chains measurable and makes their extracted fields byte-identical under the new schema-3 authority.
+The other 54 SourceIR and EvidenceIR documents remain legacy proofless, inspection-only inputs until their
+reclaimed bundles return through owned re-ingest. SemanticIR replay from those quarantined EvidenceIR inputs is
+unmeasurable rather than current. The persisted SemanticIRs can still reproduce their later IntentIR and adapter
+outputs stage-locally until those stages are proof-migrated; that is not end-to-end current authority.
 
 ## Executable source authority
 

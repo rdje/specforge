@@ -75,6 +75,14 @@ done
 note()      { printf '[chain-currency] %s\n' "$1"; }
 fail_note() { printf '[chain-currency] FAIL: %s\n' "$1" >&2; }
 
+# A stage whose persisted input was deliberately quarantined by a proof-schema migration is not a
+# replay failure: the current binary is refusing to grant legacy bytes canonical authority. Match
+# only the product's closed compatibility diagnostic. A stale/missing current proof, parse error,
+# or any other replay failure remains a doctrine breach.
+replay_is_legacy_proof_blocked() {
+  grep -Eq 'schema version [0-9]+ is legacy/proofless and inspection-only; rebuild it from verified ' "$1"
+}
+
 # ── The comparison core ─────────────────────────────────────────────────────
 # compare_stage_artifact <persisted.json> <replay.json>
 # Exit 0 when both carry the same content identity. On a difference, print the differing top-level
@@ -432,13 +440,23 @@ run_self_test() {
   if [ "$status" -eq 0 ]; then passed=$((passed + 1))
   else fail_note "self-test 10: an absent corpus root did not skip loudly (status $status, output '$output')"; fi
 
-  # 11-16) The retention leg: exact declared-versus-measured agreement over a schema-closed file.
+  # 11-12) Proof-frontier classification is closed: deliberate legacy quarantine is unmeasurable,
+  # while a stale current proof remains a hard failure.
+  printf '%s\n' 'error: EvidenceIR schema version 2 is legacy/proofless and inspection-only; rebuild it from verified SourceIR' > "$work/legacy-proof.err"
+  printf '%s\n' 'error: EvidenceIR proof verification failed: proof ledger ruleset hash is stale' > "$work/stale-proof.err"
+  if replay_is_legacy_proof_blocked "$work/legacy-proof.err"; then passed=$((passed + 1))
+  else fail_note 'self-test 11: a deliberately quarantined legacy proof was not classified as unmeasurable'; fi
+  if replay_is_legacy_proof_blocked "$work/stale-proof.err"; then
+    fail_note 'self-test 12: a stale current proof was incorrectly downgraded to unmeasurable'
+  else passed=$((passed + 1)); fi
+
+  # 13-18) The retention leg: exact declared-versus-measured agreement over a schema-closed file.
   printf '%s\n' alpha beta gamma > "$work/corpus.txt"
   printf '%s\n' alpha beta       > "$work/retained.txt"
   printf '%s' '{"schema_version":1,"contract_id":"chain-currency-retained-bundles","owner_leaf":"T.1","authority":"a","declared_on":"2026-08-10","retained":["alpha","beta"],"reclamations":[{"document_key":"gamma","owning_leaf":"T.2","date":"2026-08-10","reason":"r"}]}' > "$work/retention.json"
 
   if compare_retention "$work/retention.json" "$work/retained.txt" "$work/corpus.txt" >/dev/null; then passed=$((passed + 1))
-  else fail_note 'self-test 11: an exactly-declared retained set was reported as a breach'; fi
+  else fail_note 'self-test 13: an exactly-declared retained set was reported as a breach'; fi
 
   printf '%s\n' alpha > "$work/retained-shrunk.txt"
   output="$(compare_retention "$work/retention.json" "$work/retained-shrunk.txt" "$work/corpus.txt")"; status=$?
@@ -447,7 +465,7 @@ run_self_test() {
     *) status=0 ;;
   esac
   if [ "$status" -ne 0 ]; then passed=$((passed + 1))
-  else fail_note "self-test 12: a reclaimed declared bundle was not caught (got '$output')"; fi
+  else fail_note "self-test 14: a reclaimed declared bundle was not caught (got '$output')"; fi
 
   printf '%s\n' alpha beta gamma > "$work/retained-extra.txt"
   output="$(compare_retention "$work/retention.json" "$work/retained-extra.txt" "$work/corpus.txt")"; status=$?
@@ -456,7 +474,7 @@ run_self_test() {
     *) status=0 ;;
   esac
   if [ "$status" -ne 0 ]; then passed=$((passed + 1))
-  else fail_note "self-test 13: an undeclared retained bundle was not caught (got '$output')"; fi
+  else fail_note "self-test 15: an undeclared retained bundle was not caught (got '$output')"; fi
 
   printf '%s' '{"schema_version":1,"contract_id":"chain-currency-retained-bundles","owner_leaf":"T.1","authority":"a","declared_on":"2026-08-10","retained":["alpha","beta"],"reclamations":[],"note":"free-form"}' > "$work/retention-unknown.json"
   output="$(compare_retention "$work/retention-unknown.json" "$work/retained.txt" "$work/corpus.txt")"; status=$?
@@ -465,7 +483,7 @@ run_self_test() {
     *) status=0 ;;
   esac
   if [ "$status" -ne 0 ]; then passed=$((passed + 1))
-  else fail_note "self-test 14: an unknown declaration field was not caught (got '$output')"; fi
+  else fail_note "self-test 16: an unknown declaration field was not caught (got '$output')"; fi
 
   printf '%s' '{"schema_version":1,"contract_id":"chain-currency-retained-bundles","owner_leaf":"T.1","authority":"a","declared_on":"2026-08-10","retained":["beta","alpha"],"reclamations":[]}' > "$work/retention-unsorted.json"
   output="$(compare_retention "$work/retention-unsorted.json" "$work/retained.txt" "$work/corpus.txt")"; status=$?
@@ -474,7 +492,7 @@ run_self_test() {
     *) status=0 ;;
   esac
   if [ "$status" -ne 0 ]; then passed=$((passed + 1))
-  else fail_note "self-test 15: an unsorted retained list was not caught (got '$output')"; fi
+  else fail_note "self-test 17: an unsorted retained list was not caught (got '$output')"; fi
 
   printf '%s' '{"schema_version":1,"contract_id":"chain-currency-retained-bundles","owner_leaf":"T.1","authority":"a","declared_on":"2026-08-10","retained":["alpha","beta"],"reclamations":[{"document_key":"beta","owning_leaf":"T.2","date":"2026-08-10","reason":"r"}]}' > "$work/retention-contradictory.json"
   output="$(compare_retention "$work/retention-contradictory.json" "$work/retained.txt" "$work/corpus.txt")"; status=$?
@@ -483,14 +501,14 @@ run_self_test() {
     *) status=0 ;;
   esac
   if [ "$status" -ne 0 ]; then passed=$((passed + 1))
-  else fail_note "self-test 16: a key declared both retained and reclaimed was not caught (got '$output')"; fi
+  else fail_note "self-test 18: a key declared both retained and reclaimed was not caught (got '$output')"; fi
 
   rm -rf "$work"
-  if [ "$passed" -ne 16 ]; then
-    fail_note "self-test $passed/16 passed"
+  if [ "$passed" -ne 18 ]; then
+    fail_note "self-test $passed/18 passed"
     return 1
   fi
-  note 'self-test 16/16 passed.'
+  note 'self-test 18/18 passed.'
   return 0
 }
 
@@ -534,6 +552,7 @@ for stage in evidence semantic intent isf-adapter; do
   compared=0
   not_persisted=0
   unmeasurable=0
+  proof_blocked=0
   orphaned=0
   stale=0
   emitted_compared=0
@@ -590,6 +609,10 @@ for stage in evidence semantic intent isf-adapter; do
       isf-adapter) "$BIN" adapt    "$input" --target isf --dry-run >"$raw" 2>"$err" || replay_status=$? ;;
     esac
     if [ "$replay_status" -ne 0 ]; then
+      if replay_is_legacy_proof_blocked "$err"; then
+        proof_blocked=$((proof_blocked + 1))
+        continue
+      fi
       fail_note "$key $stage — the current binary cannot replay the persisted input: $(tr '\n' ' ' < "$err")"
       stale=$((stale + 1))
       fail=1
@@ -629,6 +652,9 @@ for stage in evidence semantic intent isf-adapter; do
   summary="$stage: $compared replayed, $current current, $stale stale, $not_persisted not persisted"
   if [ "$stage" = 'evidence' ]; then
     summary="$summary, $unmeasurable UNMEASURABLE (normalized bundle reclaimed — needs re-ingest)"
+  fi
+  if [ "$proof_blocked" -ne 0 ]; then
+    summary="$summary, $proof_blocked UNMEASURABLE (legacy/proofless upstream is inspection-only)"
   fi
   if [ "$orphaned" -ne 0 ]; then
     summary="$summary, $orphaned orphaned"

@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > does the move portability repair change PathBuf JSON fields
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > does the path portability contract cover FigureRegion raw images
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > does the persisted path gate cover dormant schemas
+- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
+  > does the reviewed I2S fixture claim a live VLM run
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > does the reviewed population publish product support results
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > does the rolling ledger verifier validate predecessor successor chronology
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > does the stage-staleness detector false-fire on register/command docs with 0 relations (no — both empty)
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > does the trapped-row gap-fill mint duplicate signal declarations
 - [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
@@ -284,17 +298,3 @@
   > how does de-fragmentation enable the recover-register-bits gate (b)
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
   > how does derive_isf_actor_name produce a valid HDL identifier ([A-Za-z_]\\w*)
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > how does derive_register_block_name parse a block out of a register-descriptions section heading
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > how does extract_discovered_state_value_from_text match a constraint value
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > how does ground_constraint recover a value the model did not echo
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > how does ingest avoid being RAM-guard-aborted on a small/restricted machine
-- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
-  > how does ingest avoid crashing the host when memory runs out
-- [ingest-disk-preflight](../knowledge/ingest-disk-preflight.md)
-  > how does ingest avoid filling the disk on a very large PDF
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > how does learn-priors harvest extraction-profile priors (multi-member clusters only, schema v6)

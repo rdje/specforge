@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > what did the OpenCAPI AFU address note prove about legal boilerplate
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what did the active PDF task containment census find
+- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
+  > what did the corpus promotion sweep measure (gauge deltas per doc)
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > what did the corpus task evidence containment census find
+- [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
+  > what did the owner decide about PDF-to-IR work versus FSMGen work on 2026-08-11
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what did the register access carrier improve in the current replay
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > what distinguishes a PURE-INFERRED phantom from a PROSE-GROUNDED or SECTION+INFERRED 0/0 actor
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > what distinguishes converging stalled divergent mixed and unmeasurable
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
@@ -284,17 +298,3 @@
   > what is corpus_cluster / document_fingerprint / cluster_documents / DocumentCluster
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > what is declared_signal_complete_gold_precision
-- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
-  > what is dedup_constraints / its canonical key
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > what is definitional_signal_names / the copula + glossary-colon prose-signal grammar
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > what is document_completeness_gauge / document_completeness_gaps / why is a guide not penalized
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > what is document_intent_category / the 6-category purpose recognizer
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > what is document_type_declared / front_matter_doc_type_hint
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > what is extract_composition_frame_fields / is_frame_field_name / stated_frame_field_bit_width / parse_count_word
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > what is extract_quoted_mode_states / quoted_mode_states_in / mode_state_ ids

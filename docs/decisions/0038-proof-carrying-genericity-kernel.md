@@ -153,7 +153,7 @@ ClaimProof {
 
 PremiseRef =
   SourceSpan | TableCell | VisualRegion | UpstreamClaim |
-  GroundedModelProposal | ValidatedPrior | UniversalAxiom
+  RegisteredDerivation | GroundedModelProposal | ValidatedPrior | UniversalAxiom
 ```
 
 The kernel validates, at minimum:
@@ -323,6 +323,29 @@ This child freezes the reviewed high-level producer/mutator graph and compatibil
 the 168 fields proof-carrying. Stage children `.e.iv.ii` through `.e.iv.vi` own that implementation. The later
 AST/information-flow doctrine still derives raw decision-site and helper-call closure rather than trusting this
 reviewed entrypoint list as the final static proof.
+
+### SourceIR and EvidenceIR implementation status (`.e.iv.ii` / `.e.iv.iii`)
+
+SourceIR schema 3 and EvidenceIR schema 3 now implement the first two cumulative stages. A
+`RegisteredDerivation` binds the exact output of a deterministic current-binary replay to its complete typed
+input topology; a per-claim registered projection then lets the executable verifier compare exact conclusion
+bytes without reparsing the whole stage for every record. The kernel validates each shared derivation topology
+once per ledger, so verification is linear in upstream inputs plus local claims rather than their product.
+
+EvidenceIR verifies the complete SourceIR ledger, retains it as an exact ordered prefix, and appends root proofs
+for all 39 public EvidenceIR fields across 11 families plus one proof for every non-empty collection record and
+alias-map entry. Each claim directly cites the exact normalized current source; prior-guided claims cite the
+captured, scope-validated global prior; fields changed by an approved post-build command cite that closed typed,
+source-grounded proposal. Canonical load, serialization, write, and the SemanticIR build seam all re-execute the
+current deterministic builder, replay the ordered mutation events, recover the local suffix, and verify the
+cumulative composition. A hash-consistent edited conclusion, unauthorized field mutation, absent support id,
+stale prefix, current proofless artifact, legacy artifact, or future schema is rejected.
+
+Legacy hidden carry-forward was removed: a fresh deterministic build no longer reads an earlier EvidenceIR and
+silently imports NLP state that lacks a replay event. Productive NLP, condition, constraint, contract, relation,
+register-recovery, NLI-gauge, and validation-backannotation paths now extend the proof through an explicit closed
+mutation kind before persistence. Test-only fixtures use a schema member that is absent from production builds;
+noncanonical conformance overlays remain unserializable as production authority.
 
 ## Consequences
 
