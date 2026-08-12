@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > how is SourceIr loaded from disk by downstream commands
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > how is a CI-tier doctrine registered without slowing down the pre-commit hook
+- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
+  > how is a Reg.Field cross-reference distinguished from a real constraint subject
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > how is a claim's grounding checked beyond a string match
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > how is a completed oversized task tree contained without losing evidence
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
@@ -289,11 +297,3 @@
   > how was AHB HREADY recovered for the temporal antecedent
 - [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
   > how was AXI constraint precision fixed
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > how was the 400 page Docling SIGKILL reproduced
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > how was the CHI field-constraint routing measured without re-ingesting the PDF
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > how was the agent-identity gate proven not to drop real agents (>=8-port proxy, WIRE-BASED-100)
-- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
-  > how was the eval gold checked for idiosyncrasy

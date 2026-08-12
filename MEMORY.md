@@ -17,16 +17,16 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6b.iii` at its closure commit; `.0` through `.6b.ii.b` and
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6c.i` at its closure commit; `.0` through `.6b.iii` and
   `FSMGEN-REFRESH-INTEGRATE-6.1` are committed complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and
   `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: `.6b.iii` resolves default bounded activation from fixed total RAM, a conservative measured
-  75-MB/page estimate, a 40% budget, and a 399-page risk cap; explicit nonnegative overrides stay exact. The
-  24-GiB host resolves threshold 131 and batch size 64. Unknown PDF page count fails closed, and Unix signal
-  termination is distinct from an ordinary nonzero exit without being mislabeled OOM. An override-free 400-page
-  replay has exact path-normalized four-stage fidelity; its 795-file / 184,164-KiB root is absent. Full CI passes
-  all eight doctrines, 1,866 tests / five ignored / zero failed, rustdoc, mdBook, and locality.
-- Next action: commit `.6b.iii`, verify a clean handoff, then activate `.6c` and localize the controller-selected
-  five-record I2S missing-`ns` carrier loss before changing production code.
-- In-flight uncommitted: completed `.6b.iii` code/tests/docs awaiting commit; no scratch or background process.
+- Current state: `.6c.i` adds a closed caption-wide timing-unit fallback plus default-empty direct table
+  provenance. The five reviewed I2S facts carry exact `ns` and `table_0004` through IntentIR. Five retained
+  chains reconcile exactly: 231 timing records gain existing table ids, only those five units change, 15/15
+  carrier-neutralized stages and all adapters equal their backups, and currency is 24/24 plus 78/78/78. Full CI
+  passes all eight doctrines, 1,866 tests / five ignored / zero failed, rustdoc, mdBook, and locality.
+- Next action: commit `.6c.i`, verify a clean handoff, then activate `.6c.ii` and replay all 12 reviewed sources
+  at the clean carrier revision before publishing any new result or controller claim.
+- In-flight uncommitted: completed, fully verified `.6c.i`; exact probe/reconciliation roots and disposable log
+  are absent, full CI is green, and no background process remains.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

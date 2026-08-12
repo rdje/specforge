@@ -72,6 +72,11 @@ Structured register records follow the same provenance principle. SemanticIR clo
 reinterpretation. Register access is never inferred from a field and a table id is never relabeled as a
 statement id.
 
+Timing constraints follow the same lossless boundary. A table-derived `TimingConstraintRecord` keeps its
+explicit row unit or closed-grammar caption fallback and its direct `supporting_table_ids`; SemanticIR neither
+normalizes the source unit spelling nor converts a table id into statement provenance. Timing observations
+recovered from other modalities remain valid with an empty table-support list.
+
 ### Heuristic grouping needs positive authority
 
 Statement-level signal co-mentions normally group signals that are already authoritative. `SemanticIR` first

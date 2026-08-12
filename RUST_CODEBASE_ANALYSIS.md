@@ -4,6 +4,24 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-12 — timing unit/provenance carrier; `SPEC-TO-INTENT-ALIGNMENT.6c.i`)
+
+- `TimingConstraintRecord` now distinguishes direct `supporting_table_ids` from prose
+  `supporting_statement_ids`. The new vector defaults during deserialization and is omitted when empty, so the
+  shared type remains compatible with retained JSON and with diagram-derived timings that have no table source.
+- `timing_caption_unit` recognizes only `all value(s) in <closed timing unit>` and preserves source spelling.
+  `synthesize_timing_constraints` gives an explicit unit cell precedence, then uses this caption fallback, and
+  pins every emitted scalar row to its originating table. No document, vendor, table-id, parameter, or layout
+  branch participates.
+- SemanticIR and IntentIR clone the corrected record unchanged. On retained inputs, exactly five EvidenceIR
+  chains move: 231 timing records gain one existing table id, and only I2S `table_0004`'s five records also gain
+  `ns`. Carrier-neutralized equality holds for all 15 rebuilt canonical stages; adapters are byte-identical.
+- Current-ingest replay can classify additional source tables differently from the retained SourceIR. The ADR
+  0025 reconciliation therefore fixes inputs at retained SourceIR and leaves whole-source current qualification
+  to `.6c.ii`, preserving a clean causal boundary between carrier behavior and ingest-classifier evolution.
+- Full CI passes all eight doctrines including chain currency, formatting, warning-deny Clippy, 1,866 tests / five
+  ignored / zero failed, warning-deny rustdoc, mdBook, and final project-data locality.
+
 ## Session update (2026-08-12 — resource-sized bounded activation; `SPEC-TO-INTENT-ALIGNMENT.6b.iii`)
 
 - Bounded activation and active-batch sizing now share one stable total-RAM observation in

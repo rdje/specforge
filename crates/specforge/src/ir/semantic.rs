@@ -10427,6 +10427,7 @@ fn parse_timing_diagram_observation(
                 unit: None,
                 description: Some(text.to_string()),
                 supporting_statement_ids: vec![evidence_id.to_string()],
+                supporting_table_ids: vec![],
                 automation_confidence: AutomationConfidence::Medium,
             });
         }
@@ -17681,6 +17682,7 @@ mod tests {
                 unit: Some("ticks".to_string()),
                 description: Some("Wait-state latency".to_string()),
                 supporting_statement_ids: vec!["stmt_tick_unit".to_string()],
+                supporting_table_ids: vec![],
                 automation_confidence: AutomationConfidence::Medium,
             },
             "Wait-state latency",
@@ -22693,6 +22695,7 @@ mod tests {
             unit: None,
             description: Some("setup time".to_string()),
             supporting_statement_ids: vec![],
+            supporting_table_ids: vec![],
             automation_confidence: super::AutomationConfidence::High,
         };
         let signals = known_signal_bset(&["CLK"]);
@@ -22723,6 +22726,7 @@ mod tests {
             unit: None,
             description: Some("setup time".to_string()),
             supporting_statement_ids: vec![],
+            supporting_table_ids: vec![],
             automation_confidence: super::AutomationConfidence::High,
         };
         let signals = known_signal_bset(&["CLK"]);

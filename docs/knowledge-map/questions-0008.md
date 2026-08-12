@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > what is the corpus timing-table authority repair measurement (2144 to 608 across 39 documents)
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > what is the current corpus refresh frontier after refresh 48
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > what is the declared-signal eval surface / EvalTask::DeclaredSignal
+- [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
+  > what is the difference between a refreshed EvidenceIR and a retained normalized bundle
 - [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
   > what is the difference between ingest batch activation and adaptive batch size
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
@@ -243,6 +251,8 @@
   > where do DTI message field obligations leak (signal_constraints) and how is it fixed
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
   > where do I log feedback or a suggestion to FSMGen
+- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
+  > where do TimingConstraintRecord table provenance ids live
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > where do in-memory structure layouts (queue entries, table entries, dwords) live in EvidenceIR
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
@@ -287,13 +297,3 @@
   > where does retired roadmap direction go
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
   > where does signal_channel_memberships live (EvidenceIR) and how is it carried (SemanticIR -> IntentIR)
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > where does specforge validate write validation_report.json
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > where does the .isf signal direction/width come from (direction_hint/width_hint, not the actor graph)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > where does the <qualifier> phase vocabulary live (extracted_statements prose, not section_anchors)
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > where does the ISF emitter lower a rule value literal (ir/isf_ir.rs:1493-1495 render_isf_control_expression → ControlExpressionRecord::Literal{literal}=>literal.clone(); copied verbatim, no width reconciliation at the emit site isf_ir.rs:418-432)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > where does the ISF emitter lower register reset_value (ir/isf_ir.rs: IsfStorageVar.reset + classify_register_reset + register_var_width; render emits (var NAME (width W) (reset V)); before .2/.3 IsfStorageVar had only name+width and dropped it)

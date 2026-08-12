@@ -1,3 +1,22 @@
+### SPEC-TO-INTENT-ALIGNMENT.6c.i — preserve timing unit and table provenance
+
+- Added a closed, source-spelling-preserving table-caption grammar for `all value(s) in <timing unit>`. It is a
+  fallback only: an explicit unit cell wins, and captions that merely mention a unit cannot fill every row.
+- Added default-empty `TimingConstraintRecord.supporting_table_ids`, separate from prose statement provenance.
+  Every table-synthesized scalar timing row retains its direct table authority; SemanticIR and IntentIR preserve
+  both the unit and the provenance without reinterpretation, while legacy JSON and non-table timings stay valid.
+- Proved the exact five I2S receiver facts carry `ns` plus `table_0004` across all three canonical stages. The
+  generic carrier adds direct table support to 231 timing records across five retained chains; after removing
+  only that support and the five intended units, all 15 rebuilt stages equal their backups and adapters remain
+  byte-identical.
+- Rebuilt and validated the five affected cascades under ADR 0025. Whole-corpus currency is green at EvidenceIR
+  24/24 and SemanticIR/IntentIR/adapters 78/78; clean whole-population result/controller publication remains the
+  separate `.6c.ii` slice.
+- Verified and removed the exact 89-file / 89,012-KiB reconciliation root and 64-file / 11,532-KiB real-source
+  probe; both roots and the disposable standalone currency log are absent.
+- Full CI passes all eight doctrines including whole-chain currency, formatting, warning-deny Clippy, 1,866
+  Rust tests / five ignored / zero failed, warning-deny rustdoc, mdBook, and final project-data locality.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6b.iii — select bounded ingest from resource risk
 
 - Replaced the flat 512-page bounded-activation default with a deterministic total-RAM policy. It budgets 40%

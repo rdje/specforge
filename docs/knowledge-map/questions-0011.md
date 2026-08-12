@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
+  > why does a new SemanticIR have an empty gates array
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > why does a new SemanticIR have an empty phases array
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > why does a rebuild drop the extraction-quality gauge
+- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
+  > why does a register count NOT veto a wire protocol (wire-vs-structure weight dominance; AXI wire 401 >= struct 229)
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > why does a register doc captioned 'message fields' yield zero message fields
+- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
+  > why does a sentence-period caption label yield nothing
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > why does a symbolic bit cell reject the whole table
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
@@ -285,15 +297,3 @@
   > why is the abbreviation-table I/O-expansion not used to capture signals (MMIO/DMA/IOVA garbage)
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > why is the absolute bit position never derived from offset*8+bit
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > why is the block name not used to qualify the duplicate registers (heading levels flattened)
-- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
-  > why is the bounded active task root written last
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > why is the channel role kept verbatim instead of mapped to address/data/response phases
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > why is the coordination split safe for WIRE-BASED-100 (AHB relation gold)
-- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
-  > why is the default ingest threshold 131 pages on a 24 GiB host
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > why is the extraction-profile prior family not scoped by ProtocolFamily

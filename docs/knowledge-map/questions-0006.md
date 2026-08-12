@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [docling-device-cpu](../knowledge/docling-device-cpu.md)
+  > torch MPS float64 error during ingest
+- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
+  > was DL a signal declaration in the OpenCAPI Ready note
+- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
+  > was OpenCAPI Discovery ingest deterministic and memory safe
+- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
+  > was any USB4 pipeline artifact changed by the source locality probe
 - [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
   > was the (contract ... eventually ...) ISF clause removed
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
@@ -289,11 +297,3 @@
   > what global provenance and stage-conservation gates apply before executable lowering
 - [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
   > what grounded content survives the Cortex-A76 optimization guide refresh
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > what grounded heuristic only interface evidence is preserved
-- [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
-  > what grounded intent remains in the GIC Overview Guide
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > what happened in OpenCAPI Discovery Configuration refresh 46
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > what happened to the AArch64 External Debug Guide agent.isf

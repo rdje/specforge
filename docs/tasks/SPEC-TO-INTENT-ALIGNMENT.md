@@ -187,9 +187,24 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6b.iii — select bounded ingest from resource risk`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6c`
-  Status: `pending`
+  Status: `in_progress`
   Goal: `repair the largest remaining current honesty and provenance family without sacrificing the 19 reviewed true positives`
   Acceptance: `the I2S receiver-timing family preserves its source-grounded ns unit across EvidenceIR, SemanticIR, and IntentIR so the exact five false positives, five false negatives, and five unprovenanced records close; no document-specific production branch is introduced; a complete comparable replay proves the result and re-ranks the remaining current gaps`
+  Verification: `pending`
+  Commit: `pending`
+  Children: `.6c.i`, `.6c.ii`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6c.i`
+  Status: `done`
+  Goal: `preserve explicit table-wide timing units and direct table provenance through the canonical timing carrier`
+  Acceptance: `the shared timing-table producer recognizes only an explicit closed caption-unit grammar, records direct table authority without misusing statement provenance, and the affected retained corpus chains are reconciled under ADR 0025; the five I2S facts are exact through IntentIR and focused/full gates pass`
+  Verification: `closed caption grammar, explicit-row precedence, legacy Serde, scalar/variant authority tests; exact five-fact real I2S three-stage proof; ADR 0025 reconciliation of five retained chains with 231/231 direct table supports, carrier-neutralized 15/15 stage equality, byte-identical adapters, EvidenceIR 24/24 and downstream 78/78 currency; exact scratch cleanup; all eight doctrines, formatting, warning-deny Clippy, 1,866 tests passed / five ignored / zero failed, warning-deny rustdoc, mdBook, and final locality`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6c.i — preserve timing unit and table provenance`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6c.ii`
+  Status: `pending`
+  Goal: `replay the timing-unit/provenance repair across the complete reviewed population and publish the exact comparable result`
+  Acceptance: `all 12 sources and 48 stages replay at the committed .6c.i production revision; exact I2S and collateral provenance deltas are published; all 19 prior true positives survive; controller, public/live documentation, retrieval, and cleanup evidence agree`
   Verification: `pending`
   Commit: `pending`
 
@@ -232,10 +247,11 @@ expressiveness as the bottleneck.
 | 12 | `SPEC-TO-INTENT-ALIGNMENT.6b.ii.a` | `done` | generic carrier, exact retained-corpus reconciliation, and full CI are complete without changing frozen/current result authorities |
 | 13 | `SPEC-TO-INTENT-ALIGNMENT.6b.ii.b` | `done` | 12/12 replay proves exact Arm closure, two provenance-only collateral changes, and no other cell delta |
 | 14 | `SPEC-TO-INTENT-ALIGNMENT.6b.iii` | `done` | resource-sized activation, fail-closed page counting, typed signal termination, exact live 400-page fidelity, cleanup, and full CI complete |
-| 15 | `SPEC-TO-INTENT-ALIGNMENT.6c` | `pending` | repair the controller-selected five-record I2S unit/provenance family without regressing 19 true positives |
-| 16 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
-| 17 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
-| 18 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
+| 15 | `SPEC-TO-INTENT-ALIGNMENT.6c.i` | `done` | generic caption-unit/table-provenance carrier, five-chain reconciliation, cleanup, and full CI complete |
+| 16 | `SPEC-TO-INTENT-ALIGNMENT.6c.ii` | `pending` | clean whole-population replay, exact result publication, and controller re-ranking |
+| 17 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
+| 18 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
+| 19 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
 
 ## Decisions
 
@@ -337,6 +353,10 @@ expressiveness as the bottleneck.
   profile, tables, elements, and sections are byte-identical, while page/visual manifests match after path
   normalization. EvidenceIR, SemanticIR, and IntentIR also match after removing validation backannotations and
   normalizing paths. The exact 795-file / 184,164-KiB replay root was removed and is absent.
+- `2026-08-12`: `.6c.i` keeps carrier implementation and retained-corpus reconciliation separate from result
+  publication. Fixed retained SourceIR inputs identify exactly five moved EvidenceIR chains and prove the shared
+  delta is 231 direct table ids plus five I2S `ns` units; `.6c.ii` alone will re-ingest the reviewed 12-source
+  population at the clean carrier revision and publish the comparable product/controller result.
 
 ## Open Questions
 
@@ -413,6 +433,9 @@ expressiveness as the bottleneck.
 | `2026-08-12` | `.6b.iii` root cause and focused policy/error proof | resource-threshold/override/helper-contract tests; Unix signal/ordinary-exit distinction; two public materialization lifecycle tests; embedded Python compile; warning-deny all-target Clippy | PASS: Rust/Python split default and signal-collapsing exit path localized; 24-GiB/64-GiB/96-GiB thresholds 131/349/399; explicit 512/0 exact; unreadable count fail-closed; signal retains typed status and prior bundle; backend 37/37, lifecycle 2/2 |
 | `2026-08-12` | `.6b.iii` override-free live fidelity and cleanup | real 400-page Arm replay with no threshold override; backend metadata; six SourceIR identity comparisons; validation-neutral three-stage comparisons; exact census/removal | PASS: default selected threshold 131 / batch 64; 400 pages / 210 tables / 176 figures / 6,784 elements / 1,321 sections; all SourceIR and downstream identities exact after only path/validation neutralization; 795 files / 184,164 KiB removed and exact root absent |
 | `2026-08-12` | `.6b.iii` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines including whole-chain currency, formatting, warning-deny Clippy, 1,866 Rust tests passed / five ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final project-data locality |
+| `2026-08-12` | `.6c.i` focused carrier proof | `cargo test -p specforge --lib timing_table_`; retained I2S SourceIR replay and exact three-stage inspection | PASS: closed caption grammar accepts explicit timing declarations and rejects misleading mentions; row units override captions; legacy Serde loads; exact five I2S rows retain `ns` plus `table_0004` through IntentIR |
+| `2026-08-12` | `.6c.i` ADR 0025 corpus reconciliation | pre/post field-level comparison; five cascades rebuilt/validated; `scripts/check_chain_currency.sh`; exact scratch census | PASS: 55/60/37/5/74 timing counts hold; 231/231 records at each stage cite one existing SourceIR table; only five I2S units change; 15/15 carrier-neutralized stages and 5/5 adapters equal; EvidenceIR 24/24 and downstream 78/78 current; 89-file reconciliation root and 64-file probe removed and absent |
+| `2026-08-12` | `.6c.i` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines including whole-chain currency, formatting, warning-deny Clippy, 1,866 Rust tests passed / five ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final project-data locality |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
 
@@ -659,6 +682,36 @@ expressiveness as the bottleneck.
 - [x] **LOCKSTEP** — code, tests, task frontier, roadmap, mdBook, live docs, architecture, and Knowledge Map agree
   on the default threshold/policy, error contract, observed limitation, and next action.
 
+## Planned closing criteria — `SPEC-TO-INTENT-ALIGNMENT.6c`
+
+- **REPRODUCE / MEASURE** — pin the exact five reviewed I2S receiver-timing keys and prove where the `ns`
+  unit exists in source/SourceIR and first disappears across EvidenceIR, SemanticIR, and IntentIR.
+- **ROOT CAUSE (WHY + WHERE)** — identify the shared typed carrier, parser, merge, or promotion seam that
+  discards the source-grounded unit; distinguish extraction loss from evaluator/provenance projection error.
+- **ADDRESSED (verified)** — preserve the grounded unit and provenance through all canonical stages so the
+  five false positives, five false negatives, and five unprovenanced records close exactly.
+- **NO REGRESSION** — retain all 19 current true positives, reject invented/default units, preserve unrelated
+  records and retained corpus currency, and kill controlled unit/provenance/fabrication mutants.
+- **GENERICITY (ADR 0006)** — infer only from typed source structure or universal unit grammar; introduce no
+  document, vendor, protocol, filename, reviewed-key, or page-layout exception.
+- **LOCKSTEP** — comparable whole-population replay, controller, task frontier, roadmap, mdBook, live docs,
+  architecture, Knowledge Map, cleanup proof, and full CI agree on the exact result and next ranked gap.
+
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6c.i`
+
+- [x] **REPRODUCE / MEASURE** — SourceIR `table_0004` retains five rows plus explicit caption unit; EvidenceIR
+  first loses `ns` and direct table authority; SemanticIR/IntentIR clone the loss unchanged.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `synthesize_timing_constraints` reads only a dedicated unit column and
+  initializes statement provenance empty; `TimingConstraintRecord` lacks direct table provenance.
+- [x] **ADDRESSED (verified)** — explicit closed caption-unit grammar and typed table provenance survive all
+  canonical stages, with the exact five I2S facts proven on real retained source bytes.
+- [x] **NO REGRESSION** — legacy Serde, explicit-unit columns, trapped/body rows, scalar/variant authority, corpus
+  currency, and unrelated adapter output remain valid; affected persisted chains are reconciled under ADR 0025.
+- [x] **GENERICITY (ADR 0006)** — caption grammar and timing units are universal; no document, vendor, protocol,
+  table id, reviewed-key, or page-layout exception exists.
+- [x] **LOCKSTEP** — code, focused evidence, task tree, live docs, architecture, mdBook, Knowledge Map, cleanup,
+  and full CI agree; clean whole-population result publication remains exclusively `.6c.ii`.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -677,6 +730,7 @@ expressiveness as the bottleneck.
 | `SPEC-TO-INTENT-ALIGNMENT.6b.ii.a` | `SPEC-TO-INTENT-ALIGNMENT.6b.ii.a — preserve register access and table provenance` | backward-compatible typed carrier, generic producers/merge, exact four-chain ADR 0025 reconciliation, and clean-revision replay boundary |
 | `SPEC-TO-INTENT-ALIGNMENT.6b.ii.b` | `SPEC-TO-INTENT-ALIGNMENT.6b.ii.b — qualify the access-carrier repair` | clean 12-source / 48-stage replay, exact Arm closure and two provenance-only collateral changes, controller v4 `.6c` selection, bounded-ingest risk leaf, and residue-free cleanup |
 | `SPEC-TO-INTENT-ALIGNMENT.6b.iii` | `SPEC-TO-INTENT-ALIGNMENT.6b.iii — select bounded ingest from resource risk` | resource-sized bounded activation, fail-closed page count, typed signal termination, exact live 400-page fidelity, residue-free cleanup, and full CI |
+| `SPEC-TO-INTENT-ALIGNMENT.6c.i` | `SPEC-TO-INTENT-ALIGNMENT.6c.i — preserve timing unit and table provenance` | closed caption grammar, backward-compatible typed provenance, exact five-chain ADR 0025 reconciliation, clean-replay boundary, and full CI |
 
 ## Changelog
 
@@ -706,6 +760,9 @@ expressiveness as the bottleneck.
 - `2026-08-12`: Closed `.6b.iii` with resource-sized bounded activation, fail-closed page counting, typed signal
   reporting, deterministic policy/error/lifecycle tests, an override-free exact 400-page four-stage fidelity
   replay, complete cleanup, and full CI; frontier advances to controller-selected `.6c`.
+- `2026-08-12`: Closed `.6c.i` with a generic closed timing caption-unit grammar, direct table provenance,
+  exact five-chain retained-corpus reconciliation, residue-free cleanup, and all eight doctrines green;
+  frontier advances to `.6c.ii`, clean 12-source replay and exact result/controller publication.
 - `2026-08-11`: Closed `.4a` with the strict portable dataset contract, deterministic exact evaluator, and six
   controlled-fault classes; frontier advances to `.4b`, lock two reviewed documents per category without tuning
   extraction before `.4c` publishes product conclusions.

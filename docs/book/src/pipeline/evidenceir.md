@@ -658,6 +658,22 @@ With this in place, the I2S spec went from **0 to 5** recovered timing parameter
 clock-low times, set-up and hold times, with their stated limits), while the timing tables that already read
 correctly are untouched. *Authoritative tracking:* `docs/tasks/PDF-VARIANT-DIGESTION.md` (`.9.11`).
 
+The row values and a table-wide unit are separate evidence. A table without a unit column may declare one in
+its caption, so EvidenceIR recognizes the complete cue **`all value(s) in <unit>`** only when `<unit>` belongs
+to a closed timing vocabulary (`s`, `ms`, `us`, `ns`, `ps`, `fs`, `cycle(s)`, `clock cycles`, or `UI`). Merely
+mentioning `ns`, or saying that values are "in nominal order", cannot fill every row. An explicit row unit always
+wins over the caption fallback, and source spelling is retained. This closes the I2S receiver table's five
+missing `ns` values without installing a document, vendor, table-id, or parameter-name exception.
+
+Every scalar timing row synthesized from a table also records that table in
+`TimingConstraintRecord.supporting_table_ids`, independently of prose `supporting_statement_ids`. The field is
+default-empty and omitted when absent, so artifacts written before this carrier remain loadable. SemanticIR and
+IntentIR clone both unit and table support unchanged. In the retained replayable corpus, the generic carrier
+adds direct authority to 231 timing records across five documents; after neutralizing only that carrier and the
+five intended I2S units, all 15 rebuilt canonical stage artifacts match their backups and every adapter is
+unchanged. *Authoritative tracking:* `docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md` (`.6c.i`); Knowledge Map
+`[[timing-caption-unit-and-table-provenance]]`.
+
 ### `CORPUS-COVERAGE.2.47a` — scalar timing records require scalar values
 
 Timing *category* and scalar timing *layout* are separate contracts. A genuine timing table may contain several

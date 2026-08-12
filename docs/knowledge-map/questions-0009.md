@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > where does specforge validate write validation_report.json
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > where does the .isf signal direction/width come from (direction_hint/width_hint, not the actor graph)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > where does the <qualifier> phase vocabulary live (extracted_statements prose, not section_anchors)
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > where does the ISF emitter lower a rule value literal (ir/isf_ir.rs:1493-1495 render_isf_control_expression → ControlExpressionRecord::Literal{literal}=>literal.clone(); copied verbatim, no width reconciliation at the emit site isf_ir.rs:418-432)
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > where does the ISF emitter lower register reset_value (ir/isf_ir.rs: IsfStorageVar.reset + classify_register_reset + register_var_width; render emits (var NAME (width W) (reset V)); before .2/.3 IsfStorageVar had only name+width and dropped it)
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
   > where does the NLI gate route a not-entailed contract
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
@@ -158,6 +168,8 @@
   > which boot-volume Rust directories are allowed
 - [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
   > which canonical Markdown collections still rely only on git query
+- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
+  > which caption grammar can supply a unit to every timing row
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > which command produces the document_class metric
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
@@ -286,14 +298,3 @@
   > why are modal verbs must shall should may not flagged as ambiguous
 - [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
   > why are prior candidate fixture names not joined into one long Markdown line
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > why are register-IP (cat 2) and platform-IP (cat 3) reported as one combined register-or-platform category (counts cannot separate them — DOC-INTENT-TAXONOMY.1)
-- [live-document-containment-and-data-locality](../decisions/0007-live-document-containment-and-data-locality.md)
-  > why are rustup and cargo allowed on the boot volume
-- [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
-  > why are sbaddress3 / custom0 / a garbled sizelo register NOT merged
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why are section-caption / value-restart enum residuals NO-GO (.5.iii: section-caption/table-ref has no FP-free gate — leading [A-Z]?digit token collides with real codes D1/D2/L2 e.g. DEBUG:D1_1; restart-of-clean has no fidelity defect — .5.ii proved restart is not junk, all members real, mostly .5.i-dropped; glossary SEE…/front-matter are tiny + name-ish -> honest
-  > residuals)
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > why are some section-heading registers held as a residual instead of emitted

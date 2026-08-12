@@ -1,4 +1,39 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6c.i (`2026-08-12`) — the unit existed before the carrier
+
+I2S `table_0004` was already recognized as timing and its five scalar rows were already exact. The missing value
+was table-wide metadata: SourceIR retained `all values in ns` in the caption, but
+`synthesize_timing_constraints` read only a dedicated unit column. The same producer initialized statement
+support empty even though each record came directly from a structured table, and `TimingConstraintRecord` had
+no separate home for that authority. SemanticIR and IntentIR then correctly cloned the incomplete record.
+
+The repair is structural and closed. `timing_caption_unit` accepts only the complete `all value(s) in <unit>` cue
+and a bounded timing-unit vocabulary. It preserves source spelling, refuses unrelated unit mentions, and is used
+only when the row has no explicit unit. Every table-derived timing row now records its table in
+`supporting_table_ids`, distinct from `supporting_statement_ids`. The field is default-empty and omitted while
+absent, so pre-carrier artifacts and timing observations from other modalities remain compatible.
+
+The fixed-input retained-corpus replay identified exactly five stale EvidenceIR artifacts: OpenCAPI 25G,
+OpenCAPI 32G, I2C, I2S, and USB 3.2. Their 55/60/37/5/74 timing cardinalities do not change. All 231 rows gain
+one existing SourceIR table id; only the five I2S rows also change unit from absent to `ns`. The exact 41-file /
+25,308-KiB pre-change cascades were copied within the repository volume before replacement. After rebuild and
+validation, all 15 EvidenceIR/SemanticIR/IntentIR artifacts equal those backups after neutralizing only the new
+carrier and the five intended units. All five adapter JSON files and the sole emitted `.isf` are byte-identical.
+Whole-chain replay is current at EvidenceIR 24/24 plus SemanticIR/IntentIR/adapters 78/78.
+
+The dirty-tree real-source probe and the retained SourceIR reconciliation answer different questions. The probe
+proved current ingest bytes can carry all five facts through the stages; rebuilding from the retained SourceIR
+kept ADR 0025 isolation sharp and avoided importing unrelated current-ingest classifier changes. Clean committed-
+revision replay of all 12 reviewed sources and publication of the exact quality/controller delta remain owned
+only by `.6c.ii`.
+
+After hash-verifying all 41 rollback files, the complete 89-file / 89,012-KiB reconciliation workspace and the
+64-file / 11,532-KiB real-source probe were removed. Both exact roots and the standalone initial-currency log are
+absent; no background result remains to consume.
+
+Signoff passes all eight doctrines including whole-chain currency, formatting, warning-deny Clippy, 1,866 Rust
+tests with five ignored and zero failures, warning-deny rustdoc, mdBook, and final project-data locality.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6b.iii (`2026-08-12`) — activation is a resource decision
 
 The 400-page failure did not come from page-range conversion or the autonomous RAM guard. Rust already adapted

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
+  > does SpecForge model-check temporal properties
+- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
+  > does SpecForge need to file a topology feature request now (not before .4c.ii measures the current contract and carrier fit)
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > does SpecForge preserve certification workflow source evidence
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
@@ -36,6 +40,8 @@
   > does an actor signal relation alone authorize a SemanticIR interface signal
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > does an empty declared-signal catalog disable the SemanticIR grounding filter
+- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
+  > does an explicit timing row unit override a caption unit
 - [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
   > does canonical SWD EvidenceIR contain interface edge timing
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
@@ -291,9 +297,3 @@
   > how are the three FSM grammars (SWD hyphen, quoted-mode, single-word) distinguished
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > how are two genuinely-different registers sharing a mnemonic (MEM-AP CSW vs JTAG-AP CSW) recovered instead of dropped
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > how are two-column bits | description tables extracted
-- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
-  > how are unknown tables reclassified by the VLM
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > how big does source_ir.json get / how does it scale with page count

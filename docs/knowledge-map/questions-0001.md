@@ -42,6 +42,8 @@
   > are normalized pages page JSON image paths repository relative
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
   > are older register records compatible with access and table provenance fields
+- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
+  > are older timing constraint records compatible with supporting_table_ids
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > are other docs affected by the rule-drive-value gate (no — only ihi0022_h_c carries a prose-valued rule corpus-wide; every other emit is byte-identical)
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
@@ -205,6 +207,8 @@
   > do SWD serial frame fields reach IntentIR
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
   > do SemanticIR and IntentIR preserve register access
+- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
+  > do SemanticIR and IntentIR preserve timing units and table provenance
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > do SourceIR and EvidenceIR keep absolute paths in memory
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
@@ -293,7 +297,3 @@
   > does SpecForge emit register bit-fields to ISF now (YES — DOC-INTENT-TAXONOMY.4a.ii: the storage var carries a (fields (field …)) block; 6,570 fields / 2,531 registers / 24 docs, was 0; 4 wire golds byte-identical; 0 new fsmgen --strict diagnostics)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > does SpecForge lower register reset values into the .isf (YES as of ISF-REGISTER-RESET-EMIT.2/.3 — composed from per-field reset_value and emitted at the true register width; it was dropped at the emit boundary before)
-- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
-  > does SpecForge model-check temporal properties
-- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
-  > does SpecForge need to file a topology feature request now (not before .4c.ii measures the current contract and carrier fit)

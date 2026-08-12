@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > how was the 400 page Docling SIGKILL reproduced
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > how was the CHI field-constraint routing measured without re-ingesting the PDF
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > how was the agent-identity gate proven not to drop real agents (>=8-port proxy, WIRE-BASED-100)
+- [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
+  > how was the eval gold checked for idiosyncrasy
 - [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
   > how was the trailing aux/prep strip proven safe for WIRE-BASED-100 and real agents
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
@@ -290,11 +298,3 @@
   > temporal rule eval false positives root cause
 - [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
   > temporal rule predicate atom vocabulary
-- [docling-device-cpu](../knowledge/docling-device-cpu.md)
-  > torch MPS float64 error during ingest
-- [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
-  > was DL a signal declaration in the OpenCAPI Ready note
-- [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
-  > was OpenCAPI Discovery ingest deterministic and memory safe
-- [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
-  > was any USB4 pipeline artifact changed by the source locality probe

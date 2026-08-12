@@ -18,7 +18,8 @@ use crate::ir::source::{
     ActorSignalRelation, ConditionalRuleRecord, RegisterFieldEnumRecord, RegisterFieldRecord,
     RegisterRecord, RelationKind, SignalConstraintKind, SignalConstraintRecord,
     StructuredTableCellRecord, StructuredTableRecord, TimingConstraintRecord, TimingTableColumns,
-    ValidationReportRecord, WidthHint, timing_table_columns, timing_table_has_structural_authority,
+    ValidationReportRecord, WidthHint, timing_caption_unit, timing_table_columns,
+    timing_table_has_structural_authority,
 };
 use crate::ir::source::{
     AutomationConfidence, DiagramKind, NormalizationStatus, SectionKind, SourceIr, TableKind,
@@ -15111,6 +15112,7 @@ fn synthesize_timing_constraints(
         }
 
         let table_id = table.table_id.clone();
+        let caption_unit = timing_caption_unit(table);
         for (row_idx, row) in effective_rows.iter().enumerate() {
             if !timing_row_has_independent_scalar_cells(row, columns) {
                 continue;
@@ -15142,9 +15144,10 @@ fn synthesize_timing_constraints(
                 min_value,
                 typ_value,
                 max_value,
-                unit: get_cell(unit_col),
+                unit: get_cell(unit_col).or_else(|| caption_unit.clone()),
                 description: get_cell(desc_col),
                 supporting_statement_ids: Vec::new(),
+                supporting_table_ids: vec![table_id.clone()],
                 automation_confidence: AutomationConfidence::Medium,
             });
         }
@@ -16997,11 +17000,40 @@ mod tests {
         assert_eq!(recs[0].min_value.as_deref(), Some("360"));
         assert_eq!(recs[0].typ_value.as_deref(), Some("400"));
         assert_eq!(recs[0].max_value.as_deref(), Some("440"));
+        assert_eq!(recs[0].unit.as_deref(), Some("ns"));
+        assert_eq!(recs[0].supporting_table_ids, ["table_trapped"]);
         assert_eq!(recs[1].parameter_name, "clock HIGH t HC");
         assert_eq!(recs[1].min_value.as_deref(), Some("110"));
+        assert_eq!(recs[1].unit.as_deref(), Some("ns"));
+        assert_eq!(recs[1].supporting_table_ids, ["table_trapped"]);
         assert_eq!(
             recs[1].typ_value, None,
             "empty value cell stays None, not fabricated"
+        );
+
+        let encoded = serde_json::to_vec(&recs)?;
+        let decoded: Vec<crate::ir::source::TimingConstraintRecord> =
+            serde_json::from_slice(&encoded)?;
+        assert_eq!(
+            decoded, recs,
+            "caption unit and table support survive Serde"
+        );
+
+        let legacy = serde_json::json!({
+            "constraint_id": "legacy_timing",
+            "parameter_name": "t LEGACY",
+            "min_value": "1",
+            "typ_value": null,
+            "max_value": null,
+            "unit": "ns",
+            "description": null,
+            "supporting_statement_ids": [],
+            "automation_confidence": "medium"
+        });
+        let legacy: crate::ir::source::TimingConstraintRecord = serde_json::from_value(legacy)?;
+        assert!(
+            legacy.supporting_table_ids.is_empty(),
+            "pre-carrier timing records remain loadable"
         );
         Ok(())
     }
@@ -17088,7 +17120,9 @@ mod tests {
         assert_eq!(recs.len(), 2, "both body rows extracted, nothing added");
         assert_eq!(recs[0].parameter_name, "t BUF");
         assert_eq!(recs[0].min_value.as_deref(), Some("1.3"));
+        assert_eq!(recs[0].supporting_table_ids, ["table_normal"]);
         assert_eq!(recs[1].parameter_name, "t HD");
+        assert_eq!(recs[1].supporting_table_ids, ["table_normal"]);
         Ok(())
     }
 
@@ -17151,7 +17185,7 @@ mod tests {
             table_id: "table_value_empty".to_string(),
             asset_id: "asset_value_empty".to_string(),
             page_id: None,
-            caption_text: Some("Timing limits".to_string()),
+            caption_text: Some("Timing limits (all values in ps)".to_string()),
             source_ref: None,
             table_kind: TableKind::TimingParameter,
             header_rows: vec![vec![
@@ -17235,7 +17269,7 @@ mod tests {
             table_id: "table_independent_equal_values".to_string(),
             asset_id: "asset_independent_equal_values".to_string(),
             page_id: None,
-            caption_text: Some("Timing limits".to_string()),
+            caption_text: Some("Timing limits (all values in ps)".to_string()),
             source_ref: None,
             table_kind: TableKind::TimingParameter,
             header_rows: vec![vec![
@@ -17289,12 +17323,26 @@ mod tests {
         assert_eq!(records[0].min_value.as_deref(), Some("5"));
         assert_eq!(records[0].max_value.as_deref(), Some("5"));
         assert_eq!(
+            records[0].unit.as_deref(),
+            Some("ns"),
+            "an explicit row unit takes precedence over the caption-wide fallback"
+        );
+        assert_eq!(
+            records[0].supporting_table_ids,
+            ["table_independent_equal_values"]
+        );
+        assert_eq!(
             records[0].description.as_deref(),
             Some("Applies in every mode")
         );
         assert_eq!(records[1].min_value, None);
         assert_eq!(records[1].typ_value, None);
         assert_eq!(records[1].max_value.as_deref(), Some("8"));
+        assert_eq!(records[1].unit.as_deref(), Some("ns"));
+        assert_eq!(
+            records[1].supporting_table_ids,
+            ["table_independent_equal_values"]
+        );
         Ok(())
     }
 

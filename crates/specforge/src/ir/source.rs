@@ -250,6 +250,37 @@ fn timing_text_has_word(text: &str, expected: &[&str]) -> bool {
     })
 }
 
+/// Recover a table-wide timing unit only from an explicit caption declaration such as
+/// `all values in ns`. The grammar requires the complete cue and a closed timing-unit token, so a
+/// caption that merely mentions a unit or says values are "in nominal order" cannot manufacture a
+/// unit for every row. The source spelling is preserved.
+pub(crate) fn timing_caption_unit(table: &StructuredTableRecord) -> Option<String> {
+    let words = timing_header_words(table.caption_text.as_deref()?).collect::<Vec<_>>();
+    for (index, window) in words.windows(4).enumerate() {
+        if !window[0].eq_ignore_ascii_case("all")
+            || !matches!(window[1].to_ascii_lowercase().as_str(), "value" | "values")
+            || !window[2].eq_ignore_ascii_case("in")
+        {
+            continue;
+        }
+        let unit = window[3];
+        if ["s", "ms", "us", "ns", "ps", "fs", "cycle", "cycles", "ui"]
+            .iter()
+            .any(|candidate| unit.eq_ignore_ascii_case(candidate))
+        {
+            return Some(unit.to_string());
+        }
+        if unit.eq_ignore_ascii_case("clock")
+            && words
+                .get(index + 4)
+                .is_some_and(|word| word.eq_ignore_ascii_case("cycles"))
+        {
+            return Some(format!("{unit} {}", words[index + 4]));
+        }
+    }
+    None
+}
+
 fn timing_header_cell_is_identity(text: &str, include_name: bool) -> bool {
     let normalized = text.trim();
     normalized.eq_ignore_ascii_case("parameter")
@@ -673,6 +704,10 @@ pub struct TimingConstraintRecord {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
     pub supporting_statement_ids: Vec<String>,
+    /// Direct structured-table authority for this constraint, distinct from prose statement
+    /// support. Additive/defaulted so retained artifacts written before the carrier still load.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub supporting_table_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
 }
 
@@ -1511,7 +1546,7 @@ mod tests {
     use super::{
         AutomationConfidence, NormalizationBackend, SourceIr, SourceKind,
         StructuredTableCellRecord, StructuredTableRecord, TableKind, document_key,
-        normalize_timing_table_kinds, stable_stem, timing_table_columns,
+        normalize_timing_table_kinds, stable_stem, timing_caption_unit, timing_table_columns,
         timing_table_has_structural_authority,
     };
 
@@ -1671,6 +1706,18 @@ mod tests {
         assert_eq!(
             (columns.name, columns.min, columns.typ, columns.max),
             (0, Some(1), Some(2), Some(3))
+        );
+        assert_eq!(timing_caption_unit(&trapped_timing).as_deref(), Some("ns"));
+
+        let mut misleading_caption = trapped_timing.clone();
+        misleading_caption.caption_text = Some("All values in nominal order; ns example".into());
+        assert_eq!(timing_caption_unit(&misleading_caption), None);
+        misleading_caption.caption_text = Some("Timing values can be measured in ns".into());
+        assert_eq!(timing_caption_unit(&misleading_caption), None);
+        misleading_caption.caption_text = Some("All values in clock cycles".into());
+        assert_eq!(
+            timing_caption_unit(&misleading_caption).as_deref(),
+            Some("clock cycles")
         );
 
         let mut variant_timing = timing_test_table(

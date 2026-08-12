@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > how are two-column bits | description tables extracted
+- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
+  > how are unknown tables reclassified by the VLM
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > how big does source_ir.json get / how does it scale with page count
 - [fact-card-catalog](../knowledge/fact-card-catalog.md)
   > how can I browse every SpecForge knowledge fact card by id or title
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
@@ -114,6 +120,8 @@
   > how does SpecForge read a PDF's front-matter / title / ToC to know its doc type
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > how does SpecForge recover a subject the model misspelled
+- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
+  > how does SpecForge recover a timing unit from a table caption
 - [spec-mining-framing](../knowledge/spec-mining-framing.md)
   > how does SpecForge relate to GoldMine Texada Pnueli Ammons
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
@@ -290,11 +298,3 @@
   > how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > how is IngestTerminatedBySignal different from IngestAbortedForMemory
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > how is SourceIr loaded from disk by downstream commands
-- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
-  > how is a CI-tier doctrine registered without slowing down the pre-commit hook
-- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
-  > how is a Reg.Field cross-reference distinguished from a real constraint subject
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > how is a claim's grounding checked beyond a string match

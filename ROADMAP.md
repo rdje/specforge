@@ -80,9 +80,11 @@ The current sequencing is upstream-first: faithful PDF evidence must populate So
 `IntentIR` before adapter expressiveness can be called the blocker. ISF/FSMGen remains the eventual executable
 boundary, but SpecForge does not anticipate a language gap without a source-grounded value.
 [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md) makes that ordering measurable (ADR 0033/0034).
-Its reviewed 12/12 current replay and access/provenance correction ship; the controller selects the I2S unit
-family. A reproduced 400-page failure also drove resource-sized bounded activation, fail-closed page counting,
-typed signal status, and exact four-stage fidelity. The task tree owns detailed metrics, evidence, and ordering.
+Its reviewed 12/12 current replay and access/provenance correction ship. The controller-selected I2S unit family
+now has a generic timing caption-unit/table-provenance carrier and current retained-chain reconciliation; clean
+whole-population qualification is next. A reproduced 400-page failure also drove resource-sized bounded
+activation, fail-closed page counting, typed signal status, and exact four-stage fidelity. The task tree owns
+detailed metrics, evidence, and ordering.
 
 Five active program groups support that north star:
 

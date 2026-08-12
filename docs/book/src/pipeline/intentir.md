@@ -26,6 +26,11 @@ register-level access stays separate from optional field-level access, and struc
 `supporting_table_ids` alongside the independent statement-provenance list. The product stage does not fill an
 absent access mode or replace missing provenance with a guessed source.
 
+`IntentIR.timing_constraints` is lossless in the same way. Units recovered from an explicit table cell or the
+closed caption-wide unit grammar remain source spelling, and direct structured authority remains in
+`supporting_table_ids`. IntentIR does not default a missing unit, reinterpret it, or substitute a table id into
+`supporting_statement_ids`.
+
 Legacy section-derived `SemanticIR.phases` do not become IntentIR behavior or actor responsibilities. The old
 projection turned each synthetic section summary into a behavior assigned to every retained actor and used phase
 overlap to preserve pure-inferred actors. Corpus measurement found 2,238 such behaviors and 48 such actors with

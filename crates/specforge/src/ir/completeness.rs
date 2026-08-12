@@ -1447,6 +1447,7 @@ mod tests {
             unit: None,
             description: None,
             supporting_statement_ids: vec![],
+            supporting_table_ids: vec![],
             automation_confidence: AutomationConfidence::Medium,
         }
     }

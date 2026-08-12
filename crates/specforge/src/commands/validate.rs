@@ -13544,6 +13544,7 @@ mod tests {
             unit: Some("ns".to_string()),
             description: Some("HREADY setup requirement before HCLK.".to_string()),
             supporting_statement_ids: vec!["stmt_timing_hready_setup".to_string()],
+            supporting_table_ids: vec![],
             automation_confidence: AutomationConfidence::Medium,
         });
         evidence_ir.write_to_disk()?;
