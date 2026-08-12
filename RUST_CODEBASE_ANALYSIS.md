@@ -4,6 +4,26 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-12 — resource-sized bounded activation; `SPEC-TO-INTENT-ALIGNMENT.6b.iii`)
+
+- Bounded activation and active-batch sizing now share one stable total-RAM observation in
+  `docling_backend::materialize_pdf`. `resource_sized_batch_threshold` budgets 40% of capacity against the
+  measured 75-MB/page working-set estimate and caps the result at 399; the existing `BatchSizePolicy` still
+  applies its discrete ceiling ladder. The 24-GiB host resolves threshold 131 and batch size 64.
+- `resolve_batch_threshold` preserves explicit nonnegative overrides exactly while absent, empty, negative, or
+  malformed values return to the safety policy. Rust exports both resolved values to the child. The embedded
+  helper no longer owns a divergent 512 default, refuses unknown page count, and records threshold/pages/batched
+  state in both backend and summary metadata.
+- `backend_exit_error` uses Unix `ExitStatusExt::signal` to preserve signal termination as
+  `AppError::IngestTerminatedBySignal`. This is deliberately separate from `IngestAbortedForMemory`, whose
+  measured guard breach can assert memory causality, and from an ordinary `ExternalCommandFailed` exit.
+  Materialization cleanup and last-good-bundle retention are tested through the public `SourceIr` lifecycle.
+- An override-free live 400-page replay selected 131/64. Its six SourceIR identity surfaces and all three
+  downstream canonical stages match the retained authority after only path normalization and validation-report
+  neutralization. The 795-file / 184,164-KiB project-local replay root is removed and absent.
+- Full CI passes all eight doctrines including chain currency, formatting, warning-deny Clippy, 1,866 tests / five
+  ignored / zero failed, warning-deny rustdoc, mdBook, and final project-data locality.
+
 ## Session update (2026-08-12 — access-carrier population qualification; `SPEC-TO-INTENT-ALIGNMENT.6b.ii.b`)
 
 - The replay projection now treats both statement and direct table ids as canonical provenance. This matches the

@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > how is a completed oversized task tree contained without losing evidence
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > how is a duplicate register mnemonic (AUTHSTATUS/CSW/IDR reused per access-port block) handled
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > how is a fabricated mega-register / over-count avoided when recovering reused register mnemonics
 - [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
@@ -73,6 +77,8 @@
   > how is the composition-frame grammar kept free of corpus false positives
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > how is the corpus distributed across the document intent categories
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > how is the default SPECFORGE_INGEST_BATCH_THRESHOLD selected
 - [page-image-disk-bounding](../knowledge/page-image-disk-bounding.md)
   > how is the ingest DISK footprint bounded for very large PDFs
 - [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
@@ -291,9 +297,3 @@
   > how was the agent-identity gate proven not to drop real agents (>=8-port proxy, WIRE-BASED-100)
 - [eval-gold-interannotator-kappa](../knowledge/eval-gold-interannotator-kappa.md)
   > how was the eval gold checked for idiosyncrasy
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > how was the trailing aux/prep strip proven safe for WIRE-BASED-100 and real agents
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > how was the trailing-fragment consolidation proven not to regress real agents (WIRE-BASED-100)
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > how were I2S timing_constraints recovered (clock period / clock HIGH / set-up / hold)

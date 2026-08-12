@@ -124,37 +124,46 @@ Remaining work there is mostly:
 
 not broad new concept invention.
 
-## Bounded-memory ingestion of very large PDFs
+## Bounded-memory ingestion of large PDFs
 
-Chip-spec PDFs get big — hundreds to thousands of pages. SpecForge ingests them with **bounded
-memory** so a large document can never exhaust the host's RAM and crash it. The principle is
-simple and strict: **a bigger file may take longer, but it never lowers quality and never risks
-the host.**
+Chip-spec PDFs get big — hundreds to thousands of pages. SpecForge keeps their Docling working set
+bounded by converting resource-risk documents in **page ranges** rather than all at once. Each range
+is rendered, its structured records and retained images are written, and its heavy data is freed
+before the next range. Peak conversion memory therefore follows the *batch size*, not the document's
+total page count. Speed may flex; captured fidelity may not.
 
-How it works: for documents above a page threshold, the Docling backend converts the PDF in
-**bounded page ranges** rather than all at once. Each range is rendered, its page images and
-structured records are written to disk, and that range's heavy data is freed before the next —
-so peak memory stays proportional to the *batch size*, not the *page count*. Documents at or
-below the threshold use the original single-pass conversion unchanged.
+Batching activation is itself resource-aware. Rust reads the host's fixed total physical RAM once,
+budgets 40% of it against a conservative measured Docling working-set estimate of 75 MB per page,
+and never lets the default single-pass threshold rise above 399 pages. A 24-GiB host resolves a
+131-page threshold. This replaces the unsafe old assumption that every document through 512 pages
+could use one pass: a 400-page source was terminated reproducibly on that path, while bounded
+conversion completed.
 
-Two environment variables tune this (defaults are chosen so every normal document keeps the
-single-pass path):
+Two environment variables expose the policy:
 
-- `SPECFORGE_INGEST_BATCH_THRESHOLD` — page count above which batching activates (default `512`).
-- `SPECFORGE_INGEST_BATCH_PAGES` — the **ceiling** on pages per batch when batching (default `64`).
-  Smaller batches use less peak memory and run slower; adaptive sizing (see *Sizing the batch to the
-  host* below) may lower the actual batch beneath this on a small machine, and you can lower the
-  ceiling yourself on a constrained host.
+- `SPECFORGE_INGEST_BATCH_THRESHOLD` — an explicit nonnegative page count above which batching
+  activates; `0` forces batching. When absent, empty, negative, or malformed, the resource-sized
+  default applies.
+- `SPECFORGE_INGEST_BATCH_PAGES` — the **ceiling** on pages per active batch (default `64`). Smaller
+  batches use less peak memory and run slower; adaptive sizing (below) may lower this ceiling on a
+  small machine.
+
+Rust passes both resolved values to the backend and the normalized metadata records the threshold,
+batch size, and whether batching was used. If the lightweight PDF page counter cannot establish the
+document shape, ingestion refuses unbounded conversion instead of guessing that a single pass is
+safe.
 
 What does *not* change with batching: the document profile, structured tables, content elements,
-sections, and figure/table images are the same complete, full-resolution capture you would get
-from a single pass. The only observable difference is that a running page-header that Docling
-happens to merge across a page boundary in single-pass mode may appear as two separate boilerplate
-elements — never a loss of signals, tables, or intent.
+sections, and figure/table images remain complete and full-resolution. In a live 400-page replay,
+all six SourceIR identity surfaces matched the retained authority after path normalization where
+needed, and EvidenceIR, SemanticIR, and IntentIR matched after removing validation backannotations.
+A running header that Docling merges across a single-pass boundary can still become two benign
+boilerplate elements in a differently sized batch; that is not a loss of signals, tables, or intent.
 
-## Sizing the batch to the host
+## Sizing each active batch to the host
 
-The batch size above has a sensible default (64 pages) tuned for a typical workstation — but the
+Activation decides *whether* to batch; this second policy decides *how many pages* an active batch
+contains. The 64-page default is tuned for a typical workstation — but the
 *right* batch for a 4 GB container is not the right batch for a 32 GB server. A batch that is too
 large for a small machine would push it past the memory safeguard's ceiling and the ingest would be
 aborted every time, no matter how patient you are. So SpecForge **sizes each batch to the machine it
@@ -212,8 +221,8 @@ images out of it, then **does not persist the page raster to disk**. The effect:
   `page_image_path` is simply reported as absent rather than pointing at a file.
 
 As with bounded memory, this is **quality-invariant** — only the on-disk working set shrinks. By
-default page rasters are persisted for normal documents (so small documents stay byte-for-byte
-unchanged) and skipped for large ones, using the same threshold that triggers batching. One
+default page rasters are persisted for documents within the resolved single-pass budget (so small
+documents stay byte-for-byte unchanged) and skipped when batching activates. One
 environment variable overrides the decision explicitly:
 
 - `SPECFORGE_INGEST_SAVE_PAGE_IMAGES` — `1` to always persist per-page rasters (even for large
@@ -259,6 +268,13 @@ How it works, in plain terms:
 - the host is preserved, and so is your data — because the new bundle is built in a staging area and
   only swapped in on success, an abort leaves the **previous good `normalized/` bundle and
   `source_ir.json` completely intact**. You lose only the unfinished run, never prior work.
+
+There are two deliberately different diagnostics. `IngestAbortedForMemory` means SpecForge's own
+sampler observed the configured ceiling and stopped the child. `IngestTerminatedBySignal` means the
+operating system terminated the backend; that can indicate external resource enforcement, but the
+signal alone does not prove OOM. It reports the signal and backend diagnostics, recommends inspecting
+the operating-system resource logs and lowering the threshold or batch size, removes staging, and
+keeps the previous good bundle intact.
 
 The default ceiling is **85% used** — deliberately below the point where a desktop host starts to
 thrash and risks a reboot. Two environment variables tune the safeguard:

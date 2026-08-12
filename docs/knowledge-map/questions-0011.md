@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > why does a symbolic bit cell reject the whole table
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > why does a temporal antecedent use PSELX not PSEL
+- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
+  > why does a timing_parameter table produce 0 timing_constraints when it clearly has rows (I2S table_0004, SMBus table_0012)
+- [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
+  > why does adding a new extractor feel fragile / erratic (god-orchestrator + inline dedup loops)
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > why does adding an extractor change every doc's extraction manifest
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > why does an .isf enum get dropped / held out of the emitted .isf
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
   > why does an .isf rule get dropped when it conflicts with an unconditional rule on the same signal
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
@@ -281,19 +293,7 @@
   > why is the channel role kept verbatim instead of mapped to address/data/response phases
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > why is the coordination split safe for WIRE-BASED-100 (AHB relation gold)
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > why is the default ingest threshold 131 pages on a 24 GiB host
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > why is the extraction-profile prior family not scoped by ProtocolFamily
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > why is the fact-card catalog about to run out of capacity
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > why is the first trajectory snapshot diverging with insufficient history
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > why is the in-repo corpus tree outside the host-library refresh cohort
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > why is the interface consolidation safe for WIRE-BASED-100 (gold docs have no interface actor)
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > why is the nested cross-tab timing table (TRANSMITTER/RECEIVER) left an honest residual
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why is the ordered multi-phase transaction body the hard deferred part (no structural name bridge AXI handshake to named transaction)
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > why is the repaired USB 3.2 ISF adapter blocked

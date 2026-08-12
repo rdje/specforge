@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > how was the trailing aux/prep strip proven safe for WIRE-BASED-100 and real agents
+- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
+  > how was the trailing-fragment consolidation proven not to regress real agents (WIRE-BASED-100)
+- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
+  > how were I2S timing_constraints recovered (clock period / clock HIGH / set-up / hold)
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > how will SpecForge automatically detect convergence or divergence
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
@@ -292,9 +298,3 @@
   > was OpenCAPI Discovery ingest deterministic and memory safe
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
   > was any USB4 pipeline artifact changed by the source locality probe
-- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
-  > was the (contract ... eventually ...) ISF clause removed
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > was the first vertical population historically unseen
-- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
-  > was the fresh SWD 29 of 29 artifact promoted

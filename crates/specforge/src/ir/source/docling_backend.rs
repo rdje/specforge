@@ -46,6 +46,19 @@ const DEFAULT_INGEST_DISK_SIZE_MULTIPLIER: u64 = 4;
 /// `INGEST_RAM_SAMPLE_SECS`.
 const RAM_GUARD_POLL_INTERVAL: Duration = Duration::from_millis(50);
 
+/// Maximum page count allowed through single-pass Docling conversion when no explicit override is
+/// supplied. The previous 512-page assumption was disproved by a reproducible SIGKILL at 400
+/// pages (`SPEC-TO-INTENT-ALIGNMENT.6b.iii`), so default resource sizing may only lower this cap.
+const INGEST_BATCH_THRESHOLD_ENV: &str = "SPECFORGE_INGEST_BATCH_THRESHOLD";
+const DEFAULT_INGEST_MAX_SINGLE_PASS_PAGES: usize = 399;
+/// Conservative working-set estimate derived from the measured ~4.8 GiB peak of a 64-page Docling
+/// batch. It intentionally charges the fixed model cost to every page: false-positive batching is
+/// slower, while false-negative batching can lose the process to external resource enforcement.
+const ESTIMATED_SINGLE_PASS_MB_PER_PAGE: u64 = 75;
+/// At most this share of total physical RAM is budgeted to the single-pass page working set. The
+/// in-flight RAM guard remains the independent transient-pressure backstop.
+const SINGLE_PASS_RAM_BUDGET_PERCENT: u64 = 40;
+
 /// Page-range batch size CEILING (MEMORY-BOUNDED-INGEST.1/.4c). Adaptive sizing (`.4c`) only ever
 /// LOWERS this on a small machine; the Docling helper reads the same env, and `materialize_pdf` sets
 /// the child's value to the resolved effective size. Kept in sync with the Python helper default.
@@ -114,8 +127,8 @@ def detect_pdf_page_count(pdf_path):
     """Cheaply count PDF pages without running the Docling pipeline.
 
     Uses pypdfium2 (a Docling dependency) which only parses the page tree, so it
-    costs almost no memory. Returns None on any failure, which makes the caller
-    fall back to the unchanged single-pass conversion path.
+    costs almost no memory. Returns None on any failure; the caller fails closed
+    rather than guessing that an unmeasured document is safe for single-pass.
     """
     try:
         import pypdfium2 as pdfium
@@ -125,7 +138,7 @@ def detect_pdf_page_count(pdf_path):
             return len(pdf)
         finally:
             pdf.close()
-    except Exception:  # noqa: BLE001 - unknown count => single-pass fallback
+    except Exception:  # noqa: BLE001 - caller emits the fail-closed diagnostic
         return None
 
 
@@ -825,14 +838,21 @@ def main():
     # ── Bounded-memory conversion (MEMORY-BOUNDED-INGEST.1) ─────────────────────
     # Converting a whole large PDF at once holds a full-resolution image for every
     # page in memory simultaneously (peak memory grows with page count), which
-    # OOM-kills the backend on big docs. Above a page threshold we convert in
+    # OOM-kills the backend on big docs. Above the Rust-resolved resource/page
+    # threshold we convert in
     # bounded page ranges and free each batch, so peak memory is O(batch size).
-    # Small docs (the common case, and every current corpus doc <= 500 pages) keep
-    # the exact single-pass `convert(path)` call and are byte-identical.
-    threshold = _env_int("SPECFORGE_INGEST_BATCH_THRESHOLD", 512)
+    # Small docs keep the exact single-pass `convert(path)` call and are
+    # byte-identical. Rust always supplies the resolved threshold in production;
+    # the 399 fallback keeps direct helper execution safe too.
+    threshold = _env_int("SPECFORGE_INGEST_BATCH_THRESHOLD", 399)
     batch_pages = max(1, _env_int("SPECFORGE_INGEST_BATCH_PAGES", 64))
     total_pages = detect_pdf_page_count(input_path)
-    large_doc = total_pages is not None and total_pages > threshold
+    if total_pages is None:
+        raise RuntimeError(
+            "docling: cannot determine PDF page count safely; refusing unbounded "
+            "single-pass conversion"
+        )
+    large_doc = total_pages > threshold
     # Disk-footprint bounding (MEMORY-BOUNDED-INGEST.3): a doc large enough to
     # need batched RAM bounding is exactly the doc whose per-page full-res PNGs
     # would blow up disk (O(pages) -> tens of GB). No consumer reads page images
@@ -941,6 +961,9 @@ def main():
             "images_scale": 2.0,
             "generate_page_images": True,
             "generate_picture_images": True,
+            "batch_threshold_pages": threshold,
+            "batch_pages": batch_pages,
+            "batched": large_doc,
         },
     )
     save_json(
@@ -965,6 +988,9 @@ def main():
                 "page_count": len(page_artifacts),
                 "picture_count": picture_counter,
                 "table_count": table_counter,
+                "batch_threshold_pages": threshold,
+                "batch_pages": batch_pages,
+                "batched": large_doc,
             },
         },
     )
@@ -1371,6 +1397,36 @@ fn parse_adaptive_batch_enabled(raw: Option<&str>) -> bool {
     )
 }
 
+/// Derive the largest default single-pass document from fixed host capacity and measured Docling
+/// working-set cost. The measured 400-page failure remains an unconditional ceiling, so a very
+/// large host may avoid unnecessary smaller-document batching but never reclassify that known-risk
+/// shape as safe. Missing RAM information also fails toward the measured-safe cap.
+fn resource_sized_batch_threshold(total_memory_mb: Option<u64>) -> usize {
+    let Some(total_memory_mb) = total_memory_mb.filter(|value| *value > 0) else {
+        return DEFAULT_INGEST_MAX_SINGLE_PASS_PAGES;
+    };
+    let budget_mb = total_memory_mb.saturating_mul(SINGLE_PASS_RAM_BUDGET_PERCENT) / 100;
+    let estimated_pages = budget_mb / ESTIMATED_SINGLE_PASS_MB_PER_PAGE;
+    usize::try_from(estimated_pages)
+        .unwrap_or(usize::MAX)
+        .clamp(1, DEFAULT_INGEST_MAX_SINGLE_PASS_PAGES)
+}
+
+/// Resolve an operator override or the default resource-sized activation threshold. Explicit
+/// non-negative integers retain the historical override contract (`0` forces batching); absent,
+/// empty, negative, or malformed text falls back to the safety policy instead of disabling it.
+fn resolve_batch_threshold(raw: Option<&str>, total_memory_mb: Option<u64>) -> usize {
+    raw.and_then(|value| value.trim().parse::<usize>().ok())
+        .unwrap_or_else(|| resource_sized_batch_threshold(total_memory_mb))
+}
+
+/// Whether a measured document shape crosses the resolved single-pass budget. Kept pure so the
+/// exact 399/400 boundary and smaller-host behavior cannot drift from tests.
+#[cfg(test)]
+fn should_batch_document(total_pages: usize, threshold_pages: usize) -> bool {
+    total_pages > threshold_pages
+}
+
 /// Parse the batch-pages ceiling, defaulting to 64 and requiring `>= 1` (an absent/garbage/zero
 /// value yields the historical default), so the ceiling is always a usable batch size.
 fn parse_batch_pages_ceiling(raw: Option<&str>) -> usize {
@@ -1502,6 +1558,29 @@ fn render_backend_output_files(stdout_path: &Path, stderr_path: &Path) -> String
         (false, true) => format!("stdout: {stdout}"),
         (true, false) => format!("stderr: {stderr}"),
         (true, true) => "no stdout or stderr captured".to_string(),
+    }
+}
+
+/// Preserve the semantic difference between an ordinary non-zero exit and operating-system signal
+/// termination. The latter often indicates external resource enforcement but is not mislabeled as
+/// OOM without OS evidence; callers receive typed, actionable recovery guidance either way.
+fn backend_exit_error(program: String, status: ExitStatus, diagnostics: String) -> AppError {
+    #[cfg(unix)]
+    {
+        use std::os::unix::process::ExitStatusExt;
+
+        if let Some(signal) = status.signal() {
+            return AppError::IngestTerminatedBySignal {
+                program,
+                signal,
+                diagnostics,
+            };
+        }
+    }
+    AppError::ExternalCommandFailed {
+        program,
+        exit_code: status.code(),
+        stderr: diagnostics,
     }
 }
 
@@ -1711,14 +1790,20 @@ pub fn materialize_pdf(
         .arg("--document-key")
         .arg(document_key);
 
-    // Size the page-range batch to the host (MEMORY-BOUNDED-INGEST.4c). On a small machine the fixed
-    // 64-page batch can be too large to convert under the RAM guard, so adaptive sizing lowers it
-    // deterministically off TOTAL physical RAM and the child uses that value (the Python helper
-    // already reads SPECFORGE_INGEST_BATCH_PAGES, so setting it on the child is the whole wiring). A
-    // >= 16 GB host resolves the unchanged 64 ceiling, so its normalized bundle stays byte-identical.
-    let batch_pages = BatchSizePolicy::from_env().effective_pages(&current_total_memory_mb);
+    // Resolve both activation and batch size from one stable TOTAL-RAM observation. Activation uses
+    // a measured per-page working-set estimate capped below the reproduced 400-page SIGKILL; batch
+    // size keeps the existing discrete RAM ladder. Free-memory jitter never chooses output shape,
+    // and explicit threshold/page overrides remain authoritative. The helper receives both values
+    // explicitly, so its Python fallback cannot silently restore the retired 512-page assumption.
+    let total_memory_mb = current_total_memory_mb();
+    let batch_threshold = resolve_batch_threshold(
+        env::var(INGEST_BATCH_THRESHOLD_ENV).ok().as_deref(),
+        total_memory_mb,
+    );
+    let batch_pages = BatchSizePolicy::from_env().effective_pages(&|| total_memory_mb);
     backend_command
         .command
+        .env(INGEST_BATCH_THRESHOLD_ENV, batch_threshold.to_string())
         .env(INGEST_BATCH_PAGES_ENV, batch_pages.to_string());
 
     let guard = RamGuardConfig::from_env();
@@ -1737,11 +1822,11 @@ pub fn materialize_pdf(
     })?;
     if !status.success() {
         cleanup_path_if_exists(&staged_normalized_root)?;
-        return Err(AppError::ExternalCommandFailed {
-            program: backend_command.display_name,
-            exit_code: status.code(),
-            stderr: render_backend_output_files(&backend_stdout_path, &backend_stderr_path),
-        });
+        return Err(backend_exit_error(
+            backend_command.display_name,
+            status,
+            render_backend_output_files(&backend_stdout_path, &backend_stderr_path),
+        ));
     }
 
     let summary_text = fs::read_to_string(&summary_output_path).map_err(|error| {
@@ -2293,11 +2378,12 @@ mod tests {
     use tempfile::tempdir;
 
     use super::{
-        BatchSizePolicy, DOCLING_PYTHON_ENV, DiskPreflightRequirement,
-        DoclingRuntimeCandidateStatus, DoclingRuntimeSource, INGEST_ADAPTIVE_BATCH_ENV,
-        INGEST_BATCH_PAGES_ENV, INGEST_MIN_FREE_DISK_MB_ENV, INGEST_RAM_ABORT_PERCENT_ENV,
-        INGEST_RAM_SAMPLE_SECS_ENV, RamGuardConfig, adaptive_batch_pages, check_disk_preflight,
-        estimate_required_disk_mb, inspect_docling_runtime,
+        BatchSizePolicy, DEFAULT_INGEST_MAX_SINGLE_PASS_PAGES, DOCLING_HELPER_SCRIPT,
+        DOCLING_PYTHON_ENV, DiskPreflightRequirement, DoclingRuntimeCandidateStatus,
+        DoclingRuntimeSource, INGEST_ADAPTIVE_BATCH_ENV, INGEST_BATCH_PAGES_ENV,
+        INGEST_BATCH_THRESHOLD_ENV, INGEST_MIN_FREE_DISK_MB_ENV, INGEST_RAM_ABORT_PERCENT_ENV,
+        INGEST_RAM_SAMPLE_SECS_ENV, RamGuardConfig, adaptive_batch_pages, backend_exit_error,
+        check_disk_preflight, estimate_required_disk_mb, inspect_docling_runtime,
         inspect_docling_runtime_with_repo_search, nearest_existing_ancestor,
         normalize_backend_metadata_paths, normalize_page_metadata_paths,
         normalize_staged_backend_metadata, normalize_staged_page_metadata_paths,
@@ -2305,8 +2391,9 @@ mod tests {
         parse_disk_preflight_requirement, parse_leading_number, parse_linux_meminfo_total_mb,
         parse_linux_meminfo_used_percent, parse_macos_memory_pressure_used_percent,
         parse_meminfo_kb, parse_ram_abort_percent, parse_ram_sample_secs,
-        parse_sysctl_memsize_bytes, preflight_ingest_disk, run_backend_with_ram_guard,
-        should_abort_for_memory,
+        parse_sysctl_memsize_bytes, preflight_ingest_disk, resolve_batch_threshold,
+        resource_sized_batch_threshold, run_backend_with_ram_guard, should_abort_for_memory,
+        should_batch_document,
     };
     use crate::error::{AppError, Result};
     use crate::ir::source::PageArtifact;
@@ -2844,6 +2931,52 @@ printf '{"ready": false, "python_version": "3.14.0", "error": "ModuleNotFoundErr
     }
 
     #[test]
+    fn resource_sized_batch_threshold_caps_the_reproduced_400_page_risk() {
+        // The 64-page / ~4.8-GiB measurement yields a conservative 75 MB/page estimate and a
+        // 40%-of-total-RAM single-pass budget. Fixed host capacity makes this deterministic.
+        assert_eq!(resource_sized_batch_threshold(Some(24 * 1024)), 131);
+        assert_eq!(resource_sized_batch_threshold(Some(64 * 1024)), 349);
+        // Even a very large or unreadable host cannot raise the default above the empirically
+        // disproved boundary. An explicit operator override remains available.
+        assert_eq!(resource_sized_batch_threshold(Some(96 * 1024)), 399);
+        assert_eq!(resource_sized_batch_threshold(None), 399);
+        assert_eq!(resource_sized_batch_threshold(Some(0)), 399);
+        assert_eq!(DEFAULT_INGEST_MAX_SINGLE_PASS_PAGES, 399);
+        assert!(should_batch_document(400, 399));
+        assert!(!should_batch_document(399, 399));
+        assert!(should_batch_document(400, 131));
+        assert!(!should_batch_document(100, 131));
+    }
+
+    #[test]
+    fn batch_threshold_override_is_exact_and_malformed_values_stay_safe() {
+        assert_eq!(resolve_batch_threshold(Some("512"), Some(24 * 1024)), 512);
+        assert_eq!(resolve_batch_threshold(Some(" 0 "), Some(24 * 1024)), 0);
+        assert_eq!(resolve_batch_threshold(None, Some(24 * 1024)), 131);
+        assert_eq!(resolve_batch_threshold(Some(""), Some(24 * 1024)), 131);
+        assert_eq!(resolve_batch_threshold(Some("-1"), Some(24 * 1024)), 131);
+        assert_eq!(resolve_batch_threshold(Some("garbage"), None), 399);
+    }
+
+    #[test]
+    fn embedded_helper_honors_rust_policy_and_refuses_unknown_page_count() {
+        assert!(
+            DOCLING_HELPER_SCRIPT
+                .contains("threshold = _env_int(\"SPECFORGE_INGEST_BATCH_THRESHOLD\", 399)")
+        );
+        assert!(DOCLING_HELPER_SCRIPT.contains("large_doc = total_pages > threshold"));
+        assert!(
+            DOCLING_HELPER_SCRIPT
+                .contains("cannot determine PDF page count safely; refusing unbounded")
+        );
+        assert!(DOCLING_HELPER_SCRIPT.contains("\"batch_threshold_pages\": threshold"));
+        assert!(
+            !DOCLING_HELPER_SCRIPT
+                .contains("threshold = _env_int(\"SPECFORGE_INGEST_BATCH_THRESHOLD\", 512)")
+        );
+    }
+
+    #[test]
     fn parse_batch_pages_ceiling_defaults_and_floors() {
         assert_eq!(parse_batch_pages_ceiling(None), 64);
         assert_eq!(parse_batch_pages_ceiling(Some("")), 64);
@@ -2928,6 +3061,43 @@ printf '{"ready": false, "python_version": "3.14.0", "error": "ModuleNotFoundErr
             floor_pages: 8,
         };
         assert_eq!(fixed.effective_pages(&|| Some(2u64 * 1024)), 64);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn backend_exit_error_distinguishes_signal_from_ordinary_failure() {
+        use std::os::unix::process::ExitStatusExt;
+
+        let signal_error = backend_exit_error(
+            "docling".to_string(),
+            std::process::ExitStatus::from_raw(9),
+            "stderr: model loaded".to_string(),
+        );
+        match &signal_error {
+            AppError::IngestTerminatedBySignal {
+                signal,
+                diagnostics,
+                ..
+            } => {
+                assert_eq!(*signal, 9);
+                assert_eq!(diagnostics, "stderr: model loaded");
+            }
+            other => panic!("unexpected signal error: {other:?}"),
+        }
+        let rendered = signal_error.to_string();
+        assert!(rendered.contains("does not prove an out-of-memory event"));
+        assert!(rendered.contains(INGEST_BATCH_THRESHOLD_ENV));
+        assert!(rendered.contains(INGEST_BATCH_PAGES_ENV));
+
+        let exit_error = backend_exit_error(
+            "docling".to_string(),
+            std::process::ExitStatus::from_raw(7 << 8),
+            "stderr: invalid input".to_string(),
+        );
+        match exit_error {
+            AppError::ExternalCommandFailed { exit_code, .. } => assert_eq!(exit_code, Some(7)),
+            other => panic!("unexpected ordinary error: {other:?}"),
+        }
     }
 
     #[cfg(unix)]

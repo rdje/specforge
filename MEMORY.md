@@ -17,15 +17,16 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6b.ii.b`; `.0` through `.6b.ii.a` and
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6b.iii` at its closure commit; `.0` through `.6b.ii.b` and
   `FSMGEN-REFRESH-INTEGRATE-6.1` are committed complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and
   `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: clean revision `bb152dfb` has 12/12-source and 48/48-stage replay evidence. IntentIR changes
-  7/22/33→19/10/21 TP/FP/FN, provenance 3/29→17/29, and conservation 21/54→57/78. Arm Debug closes 12/12;
-  AMD IOMMU and GIC-400 gain provenance only. Controller v4 selects `.6c` from ten fabricated / twelve
-  unprovenanced survivors. The successful replay's 3,913-file / 1,090,884-KiB root and runtime map are absent.
-- Next action: commit the fully verified `.6b.ii.b` slice, prove the tree handoff-clean, then activate `.6b.iii`
-  and diagnose the generic bounded-ingestion selection seam from its existing tests and Knowledge Map fact.
-- In-flight uncommitted: completed `.6b.ii.b` replay/result/controller evidence and aligned durable surfaces are
-  ready for their task-scoped commit; no scratch or background replay remains.
+- Current state: `.6b.iii` resolves default bounded activation from fixed total RAM, a conservative measured
+  75-MB/page estimate, a 40% budget, and a 399-page risk cap; explicit nonnegative overrides stay exact. The
+  24-GiB host resolves threshold 131 and batch size 64. Unknown PDF page count fails closed, and Unix signal
+  termination is distinct from an ordinary nonzero exit without being mislabeled OOM. An override-free 400-page
+  replay has exact path-normalized four-stage fidelity; its 795-file / 184,164-KiB root is absent. Full CI passes
+  all eight doctrines, 1,866 tests / five ignored / zero failed, rustdoc, mdBook, and locality.
+- Next action: commit `.6b.iii`, verify a clean handoff, then activate `.6c` and localize the controller-selected
+  five-record I2S missing-`ns` carrier loss before changing production code.
+- In-flight uncommitted: completed `.6b.iii` code/tests/docs awaiting commit; no scratch or background process.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

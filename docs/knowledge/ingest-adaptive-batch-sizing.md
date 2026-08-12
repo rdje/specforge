@@ -10,10 +10,11 @@ answers:
   - "does adaptive batch sizing change the ingest output / break byte-identity"
   - "where is adaptive_batch_pages / BatchSizePolicy in the code"
   - "how does specforge read total physical RAM without a new dependency"
+  - "what is the difference between ingest batch activation and adaptive batch size"
 date: 2026-06-14
 tags: [ingest, docling, memory-bounded, ram, batch, determinism, source-ir]
-evidence: crates/specforge/src/ir/source/docling_backend.rs (BatchSizePolicy / adaptive_batch_pages / current_total_memory_mb / parse_sysctl_memsize_bytes / parse_linux_meminfo_total_mb; materialize_pdf child-env wiring); docs/tasks/MEMORY-BOUNDED-INGEST.md (.4c)
-reverify: grep -n "adaptive_batch_pages\|BatchSizePolicy\|SPECFORGE_INGEST_ADAPTIVE_BATCH\|current_total_memory_mb\|INGEST_BATCH_PAGES_ENV" crates/specforge/src/ir/source/docling_backend.rs
+evidence: crates/specforge/src/ir/source/docling_backend.rs (BatchSizePolicy / adaptive_batch_pages / resource_sized_batch_threshold / current_total_memory_mb / materialize_pdf child-env wiring); docs/tasks/MEMORY-BOUNDED-INGEST.md (.4c); docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.6b.iii)
+reverify: grep -n "adaptive_batch_pages\|BatchSizePolicy\|resource_sized_batch_threshold\|SPECFORGE_INGEST_ADAPTIVE_BATCH\|current_total_memory_mb\|INGEST_BATCH_PAGES_ENV" crates/specforge/src/ir/source/docling_backend.rs
 ---
 
 `MEMORY-BOUNDED-INGEST.4c` sizes each page-range batch (the `.1` batching mechanism) to the **host's
@@ -22,6 +23,12 @@ batches — instead of being killed every time by the `.4a` RAM guard. The fixed
 right for a 24 GB host but too large for, say, a 4 GB container (a 64-page batch + the layout/table
 models would cross the danger ceiling, so the guard aborts the run no matter how patient the
 operator is).
+
+**Activation and size are separate decisions.** Since `SPEC-TO-INTENT-ALIGNMENT.6b.iii` (`2026-08-12`), Rust
+uses the same one-time total-RAM observation to resolve the default activation threshold too: a 40% capacity
+budget at 75 MB/page, capped at 399. That policy decides *whether* a document batches; the discrete ladder below
+decides *how many pages* each active batch contains. On the 24-GiB host they resolve 131 and 64 respectively.
+See [[bounded-ingest-resource-risk-below-page-threshold]].
 
 **Total RAM, NOT free memory — for determinism.** Free memory jitters run-to-run, which would make
 the chosen batch size — and therefore the cross-batch boundary artifacts — non-deterministic,

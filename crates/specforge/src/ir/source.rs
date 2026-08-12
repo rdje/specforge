@@ -1503,7 +1503,7 @@ mod tests {
 
     use tempfile::tempdir;
 
-    use crate::error::Result;
+    use crate::error::{AppError, Result};
     use crate::ir::IrStage;
     use crate::ir::source::AdapterTarget;
     use crate::test_support::env_var_lock;
@@ -1948,7 +1948,8 @@ done
 mkdir -p "$(dirname "$markdown")" "$page_image_root" "$visual_asset_root"
 printf '# normalized\n\n![Image](assets/picture-0001.png)\n' > "$markdown"
 printf '{}' > "$backend_raw_output"
-printf '{"backend":"docling_stub"}\n' > "$metadata_output"
+printf '{"backend":"docling_stub","batch_threshold_pages":"%s","batch_pages":"%s"}\n' \
+  "$SPECFORGE_INGEST_BATCH_THRESHOLD" "$SPECFORGE_INGEST_BATCH_PAGES" > "$metadata_output"
 printf 'stub-page' > "$page_image_root/page-0001.png"
 printf '{"page_number":1,"rendered_image":{"path":"%s"}}\n' "$page_image_root/page-0001.png" > "$page_image_root/page-0001.json"
 printf 'stub-asset' > "$visual_asset_root/picture-0001.png"
@@ -2009,6 +2010,9 @@ EOF
         // the CI host's total RAM (MEMORY-BOUNDED-INGEST.4c); the stub helper ignores it either way.
         let _batch_guard =
             EnvVarGuard::set_path("SPECFORGE_INGEST_ADAPTIVE_BATCH", Path::new("off"));
+        let _batch_threshold =
+            EnvVarGuard::set_path("SPECFORGE_INGEST_BATCH_THRESHOLD", Path::new("123"));
+        let _batch_pages = EnvVarGuard::set_path("SPECFORGE_INGEST_BATCH_PAGES", Path::new("17"));
         let mut source_ir = SourceIr::build(&source, &artifact_base)?;
 
         source_ir.materialize()?;
@@ -2020,6 +2024,15 @@ EOF
         );
         assert_eq!(source_ir.page_artifacts.len(), 1);
         assert_eq!(source_ir.visual_assets.len(), 1);
+        let backend_metadata: serde_json::Value = serde_json::from_slice(&fs::read(
+            source_ir
+                .normalization_plan
+                .metadata_output_path
+                .as_ref()
+                .expect("PDF metadata path"),
+        )?)?;
+        assert_eq!(backend_metadata["batch_threshold_pages"], "123");
+        assert_eq!(backend_metadata["batch_pages"], "17");
         assert_eq!(
             source_ir.visual_assets[0].source_ref.as_deref(),
             Some("#/pictures/0")
@@ -2225,6 +2238,36 @@ EOF
                 .exists()
         );
         assert_eq!(source_ir.automation_confidence, AutomationConfidence::High);
+
+        #[cfg(unix)]
+        {
+            fs::write(
+                &helper,
+                r##"#!/bin/sh
+kill -9 $$
+"##,
+            )?;
+            let mut signal_source_ir = SourceIr::build(&source, &artifact_base)?;
+            let signal_error = signal_source_ir
+                .materialize()
+                .expect_err("signal termination should fail with a typed diagnostic");
+            match &signal_error {
+                AppError::IngestTerminatedBySignal { signal, .. } => assert_eq!(*signal, 9),
+                other => panic!("unexpected signal error: {other:?}"),
+            }
+            assert!(
+                signal_error
+                    .to_string()
+                    .contains("does not prove an out-of-memory event")
+            );
+            assert!(stale_root.join("bus_spec.md").exists());
+            assert!(
+                !artifact_base
+                    .join("bus_spec")
+                    .join("normalized.staging")
+                    .exists()
+            );
+        }
 
         Ok(())
     }

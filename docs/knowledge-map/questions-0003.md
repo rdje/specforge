@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > how can I browse every SpecForge knowledge fact card by id or title
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > how can SpecForge automatically choose the next task without gaming metrics
 - [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
@@ -286,6 +288,8 @@
   > how is FigureRegion raw_image_path serialized
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > how is IngestTerminatedBySignal different from IngestAbortedForMemory
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > how is SourceIr loaded from disk by downstream commands
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
@@ -294,7 +298,3 @@
   > how is a Reg.Field cross-reference distinguished from a real constraint subject
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > how is a claim's grounding checked beyond a string match
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > how is a completed oversized task tree contained without losing evidence
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > how is a duplicate register mnemonic (AUTHSTATUS/CSW/IDR reused per access-port block) handled

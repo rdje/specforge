@@ -16,6 +16,8 @@
   > does Wishbone declare its signals in a table
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > does a PathBuf need portability handling before it has a producer
+- [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
+  > does a SIGKILL prove that Docling ran out of memory
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
   > does a blocked adapter remove a previously emitted isf
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
@@ -295,5 +297,3 @@
   > how are unknown tables reclassified by the VLM
 - [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
   > how big does source_ir.json get / how does it scale with page count
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > how can I browse every SpecForge knowledge fact card by id or title

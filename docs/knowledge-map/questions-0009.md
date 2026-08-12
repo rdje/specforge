@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [nli-intent-gate](../knowledge/nli-intent-gate.md)
+  > where does the NLI gate route a not-entailed contract
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > where does the SpecForge chipdoc source route currently resolve
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > where does the block name come from when the PDF backend flattens heading levels (parent section title via dotted-parent)
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > where does the first reviewed source-to-IntentIR population fail
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > where does the generic enum name TABLE/FIGURE/DATA come from (derive_encoding_enum_name fallback, evidence.rs:4457-4461 — first caption token passing is_hardware_signal_token at evidence.rs:7106, which accepts 'Table'->'TABLE')
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > where does the nli-verify measurement go / is the extraction-quality gauge persisted
 - [host-library-route-remains-on-boot-volume](../knowledge/host-library-route-remains-on-boot-volume.md)
   > where does the specforge chipdoc host library symlink currently resolve
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
@@ -285,15 +297,3 @@
   > residuals)
 - [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
   > why are some section-heading registers held as a residual instead of emitted
-- [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
-  > why are stability obligations residuals
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > why are table-row sources exempt from the pre-bind constraint subject rule
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why are temporal_rules not usable to order a transaction body (they are per-signal stability/value constraints not phase edges)
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > why are the AHB gold negatives for statements 0561 and 0678 there
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why are the IntentIR transactions[] entries not real transactions (handshakes/behavior blobs)
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > why are the corpus-cluster extraction profiles mostly empty / 'none recorded yet'

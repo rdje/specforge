@@ -79,16 +79,10 @@ and [`KG-ISF-TRANSACTIONS`](docs/tasks/KG-ISF-TRANSACTIONS.md) own that bar;
 The current sequencing is upstream-first: faithful PDF evidence must populate SourceIR through canonical
 `IntentIR` before adapter expressiveness can be called the blocker. ISF/FSMGen remains the eventual executable
 boundary, but SpecForge does not anticipate a language gap without a source-grounded value.
-[`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md) makes that ordering measurable (ADR
-0033/0034). Its contracts, production ledger, multimodal path, evaluator, reviewed population, retrospective
-result, controller, and whole-population current replay ship. Twelve of 12 reviewed sources now have hash-pinned
-isolated replays. The access/table-provenance repair is clean-binary qualified: IntentIR moves from 7/22/33 to
-19/10/21 TP/FP/FN, provenance closure from 3/29 to 17/29, and conservation from 21/54 to 57/78. The complete
-12-record Arm Debug family is now correct and provenanced; AMD IOMMU and GIC-400 each gain table provenance
-without disguising their remaining semantic errors. Controller state stays `diverging` on ten fabricated and
-twelve unprovenanced current records and selects `.6c`, the five-record I2S missing-unit family. The replay also
-opened `.6b.iii`: a reproducible 400-page single-pass Docling SIGKILL proves that bounded-ingest policy cannot
-wait for the old above-500-page threshold. The task tree owns all detailed counts and ordering.
+[`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md) makes that ordering measurable (ADR 0033/0034).
+Its reviewed 12/12 current replay and access/provenance correction ship; the controller selects the I2S unit
+family. A reproduced 400-page failure also drove resource-sized bounded activation, fail-closed page counting,
+typed signal status, and exact four-stage fidelity. The task tree owns detailed metrics, evidence, and ordering.
 
 Five active program groups support that north star:
 

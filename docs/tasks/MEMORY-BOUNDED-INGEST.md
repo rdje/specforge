@@ -422,6 +422,13 @@ RAM dimension (`.1`/`.2`) + DISK dimension (`.3`) now both delivered.
   intact docs keep the EXACT single-pass call and stay byte-identical. Batch size
   `SPECFORGE_INGEST_BATCH_PAGES` (default **64**, a multiple of Docling's internal 4). Page count
   is detected cheaply before conversion (pypdfium2 / Docling backend page count — verify).
+- `2026-08-12`: **Current-policy correction (`SPEC-TO-INTENT-ALIGNMENT.6b.iii`)** — the historical 512-page
+  default above was disproved by a twice-reproduced signal termination on a 400-page source. Activation now uses
+  the host's fixed total RAM, the measured 75-MB/page working-set estimate, a 40% budget, and an unconditional
+  399-page cap; the 24-GiB host resolves threshold 131. Explicit nonnegative overrides remain exact. Unknown page
+  count fails closed, while Unix signal termination is typed without claiming OOM. The existing 64-page adaptive
+  size ladder remains unchanged. This annotation corrects current product truth without rewriting the historical
+  `.1` verification record.
 - `2026-06-14`: **Merge** — the `DoclingBackendSummary` manifest (page_artifacts /
   structured_tables / content_elements / document_sections / profile) is the SourceIR-bearing
   product and holds only lightweight records, so it accumulates across batches with continued
@@ -490,6 +497,7 @@ RAM dimension (`.1`/`.2`) + DISK dimension (`.3`) now both delivered.
 | `2026-06-14` | `MEMORY-BOUNDED-INGEST.4b` | full `run_ci.sh` (1604) + kg-bench (156/156) + 8 new pure/`df`-backed unit tests | GREEN — source-size scaling, POSIX `df` parse (macOS+Linux), gate above/below/unreadable, ancestor walk, `from_env`, and a real `df`-backed refuse/disabled pair; fixed `collapsible_if` (let-chain) + a PATH-spawn test race (spawning tests now hold `env_var_lock()`) |
 | `2026-06-14` | `MEMORY-BOUNDED-INGEST.4c` | full `run_ci.sh` (1611) + kg-bench + 7 new pure/DI unit tests + live 24 GB throwaway-CAN A/B/C | GREEN — RAM-band ladder (None/floor/ceiling clamp + small-ceiling cap), macOS `sysctl` + Linux `MemTotal` parsers, `from_env`, injected-reader `effective_pages`; live: adaptive-on (→64) `diff -r` BYTE-IDENTICAL to `off` (fixed 64); ceiling 32 → 3 batches, same 72p/98 assets (lever works, fidelity intact) |
 | `2026-06-15` | `MEMORY-BOUNDED-INGEST.5` | read-only size-vs-pages measurement over 78 persisted `source_ir.json` (no Docling/model) + downstream load-path code read + memory-arch + KM derive-and-diff + `mdbook build` | MEASURED DEFER — size O(pages) ~9.3 KB/page (fit slope 9,312 B/page, n=78; worst 17,755), library max 930 p / 9.9 MB; ingest backstopped by `.4a`/`.3`; corrected binding constraint = downstream `SourceIr::load_from_path` full serde (`ir/source.rs:573`) → `.5a` deferred-until-triggered; docs-only, no Rust change |
+| `2026-08-12` | cross-tree correction `SPEC-TO-INTENT-ALIGNMENT.6b.iii` | pure threshold/override/helper/signal tests + staged-swap lifecycle tests + override-free live 400-page Arm replay + full CI | GREEN — default 24-GiB policy selected 131/64; SourceIR matched across six surfaces after path normalization where needed; downstream stages matched after validation neutralization; exact 795-file / 184,164-KiB root removed and absent; all eight doctrines, 1,866 passed / five ignored / zero failed, rustdoc, mdBook, locality |
 
 ## Commit Log
 
@@ -593,3 +601,7 @@ RAM dimension (`.1`/`.2`) + DISK dimension (`.3`) now both delivered.
   Tree stays `active` as a standing size-immunity tree with a measured-exhausted buildable frontier;
   re-open trigger recorded. KM card `source-ir-size-scaling`; book `pipeline/sourceir.md` size-scaling
   note. Docs-only — memory-arch + KM derive-and-diff + `mdbook build` green; no Rust change.
+- `2026-08-12`: current product correction landed under owning leaf `SPEC-TO-INTENT-ALIGNMENT.6b.iii` after a
+  400-page source disproved the `.1` activation assumption. Default activation is now resource-sized and capped
+  at 399; unreadable page count fails closed; signal termination retains typed status; live default-policy
+  four-stage fidelity passes. Historical `.1`/`.2`/`.4c` measurements remain intact as dated evidence.

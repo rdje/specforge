@@ -25,6 +25,11 @@ pub enum AppError {
         used_percent: f64,
         ceiling_percent: f64,
     },
+    IngestTerminatedBySignal {
+        program: String,
+        signal: i32,
+        diagnostics: String,
+    },
     IngestAbortedForDisk {
         path: String,
         free_mb: u64,
@@ -78,6 +83,21 @@ impl fmt::Display for AppError {
                      Free memory and retry, raise the ceiling with \
                      SPECFORGE_INGEST_RAM_ABORT_PERCENT=<percent>, or disable the guard with \
                      SPECFORGE_INGEST_RAM_ABORT_PERCENT=off."
+                )
+            }
+            Self::IngestTerminatedBySignal {
+                program,
+                signal,
+                diagnostics,
+            } => {
+                write!(
+                    f,
+                    "ingest backend was terminated by operating-system signal {signal} while \
+                     running {program}: {diagnostics}. Signal termination alone does not prove an \
+                     out-of-memory event, but an external resource enforcer may have killed the \
+                     process. The previous normalized bundle is intact. Inspect the operating-system \
+                     resource logs and retry with a lower \
+                     SPECFORGE_INGEST_BATCH_THRESHOLD or SPECFORGE_INGEST_BATCH_PAGES value."
                 )
             }
             Self::IngestAbortedForDisk {

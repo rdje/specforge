@@ -9,11 +9,13 @@ answers:
   - "how does specforge read system memory without a new dependency"
   - "why did ingest stop with 'ingest aborted to protect the host'"
   - "what is AppError::IngestAbortedForMemory"
+  - "how is IngestTerminatedBySignal different from IngestAbortedForMemory"
+  - "does a SIGKILL prove that Docling ran out of memory"
   - "where is the spawn+poll+kill memory guard in materialize_pdf"
 date: 2026-06-14
 tags: [ingest, docling, memory-bounded, ram, safety, source-ir]
-evidence: crates/specforge/src/ir/source/docling_backend.rs (RamGuardConfig / run_backend_with_ram_guard / current_used_memory_percent); crates/specforge/src/error.rs (AppError::IngestAbortedForMemory); docs/tasks/MEMORY-BOUNDED-INGEST.md (.4a)
-reverify: grep -n "run_backend_with_ram_guard\|RamGuardConfig\|SPECFORGE_INGEST_RAM_ABORT_PERCENT\|IngestAbortedForMemory" crates/specforge/src/ir/source/docling_backend.rs crates/specforge/src/error.rs
+evidence: crates/specforge/src/ir/source/docling_backend.rs (RamGuardConfig / run_backend_with_ram_guard / current_used_memory_percent / backend_exit_error); crates/specforge/src/error.rs (AppError::IngestAbortedForMemory / IngestTerminatedBySignal); docs/tasks/MEMORY-BOUNDED-INGEST.md (.4a); docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.6b.iii)
+reverify: grep -n "run_backend_with_ram_guard\|RamGuardConfig\|SPECFORGE_INGEST_RAM_ABORT_PERCENT\|IngestAbortedForMemory\|IngestTerminatedBySignal\|backend_exit_error" crates/specforge/src/ir/source/docling_backend.rs crates/specforge/src/error.rs
 ---
 
 `MEMORY-BOUNDED-INGEST.4a` makes the autonomous RAM guard a **first-class, built-in** ingest
@@ -44,6 +46,13 @@ completes with NO real memory pressure. The staged-swap means an abort discards 
 value `<=0` / `>=100` → disabled; unparseable → default). `SPECFORGE_INGEST_RAM_SAMPLE_SECS`
 (default 2, floor 1). New `AppError::IngestAbortedForMemory { program, used_percent, ceiling_percent }`
 with an actionable Display (host preserved; free memory / raise the ceiling / set it off).
+
+**Signal termination is intentionally different (`2026-08-12`).** If the child exits because Unix reports an
+operating-system signal, `backend_exit_error` returns `AppError::IngestTerminatedBySignal` with that signal and
+the captured diagnostics. A signal— including SIGKILL—can be external resource enforcement, but it does not by
+itself prove OOM. Only this guard's observed threshold breach returns `IngestAbortedForMemory`. Both paths remove
+the incomplete staging tree and preserve the last-good bundle; the signal diagnostic directs the operator to OS
+resource logs and the bounded threshold/batch controls. See [[bounded-ingest-resource-risk-below-page-threshold]].
 
 **Determinism gotcha (fixed here)**: the 3 source.rs stub-helper ingest tests
 (`pdf_source_ir_materialization_*`, `..._failed_materialization_*`) now run through the guard with

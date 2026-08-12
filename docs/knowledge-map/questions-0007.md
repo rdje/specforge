@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > what happened to the CoreSight Base System agent.isf
+- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
+  > what happened to the USB4 Connection Manager device_also.isf
+- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
+  > what happened to the USB4 Inter-Domain channel.isf
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > what happened to the four signal two enum Introducing CoreSight adapter
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
@@ -32,6 +38,8 @@
   > what happens when a timing observation has no explicit tick-addressed samples
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > what happens when document intent category is unresolved
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > what happens when ingest cannot count PDF pages
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > what happens when the NLI provider is down
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
@@ -60,6 +68,8 @@
   > what is AppError::IngestAbortedForDisk
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
   > what is AppError::IngestAbortedForMemory
+- [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
+  > what is AppError::IngestTerminatedBySignal
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > what is CORPUS-COVERAGE.2.33d dense-prose adapter trust repair
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
@@ -287,13 +297,3 @@
   > what is the declared-signal eval surface / EvalTask::DeclaredSignal
 - [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md)
   > what is the difference between a refreshed EvidenceIR and a retained normalized bundle
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > what is the difference between phases and transaction_phases
-- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
-  > what is the difference between validate persistence and stage write_to_disk
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > what is the exact CORPUS-COVERAGE task evidence boundary
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what is the exact active PDF task evidence baseline
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > what is the exact pre-containment FSMGEN_FEEDBACK source identity

@@ -1,3 +1,21 @@
+### SPEC-TO-INTENT-ALIGNMENT.6b.iii — select bounded ingest from resource risk
+
+- Replaced the flat 512-page bounded-activation default with a deterministic total-RAM policy. It budgets 40%
+  of physical RAM at a conservative measured 75 MB/page and caps default single-pass conversion at 399 pages;
+  the 24-GiB development host therefore selects threshold 131 while retaining the adaptive 64-page batch.
+- Preserved explicit nonnegative `SPECFORGE_INGEST_BATCH_THRESHOLD` overrides exactly, including zero to force
+  batching. Missing, empty, negative, or malformed values use the safe default policy. Rust supplies the resolved
+  threshold and batch size to the embedded helper and both values are recorded in backend metadata.
+- Made unreadable PDF page count fail closed instead of silently selecting unbounded conversion. Unix signal
+  termination now returns `IngestTerminatedBySignal`, distinct from a normal nonzero exit and from the active RAM
+  guard's proven `IngestAbortedForMemory`; the diagnostic is actionable without claiming that a signal proves OOM.
+- An override-free live replay of the 400-page Arm Debug source selected threshold 131 / batch 64 and completed
+  all four stages. Six SourceIR surfaces match the retained authority exactly after path normalization where
+  necessary; EvidenceIR, SemanticIR, and IntentIR also match after removing validation backannotations.
+- The exact 795-file / 184,164-KiB replay root was removed and is absent. Full CI passes all eight doctrines,
+  formatting, warning-deny Clippy, 1,866 Rust tests / five ignored / zero failed, warning-deny rustdoc, mdBook,
+  and final project-data locality.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6b.ii.b — qualify the access-carrier repair
 
 - Replayed all 12 unchanged reviewed sources and 48 isolated stages at committed production revision

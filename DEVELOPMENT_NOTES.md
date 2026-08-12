@@ -1,4 +1,37 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6b.iii (`2026-08-12`) — activation is a resource decision
+
+The 400-page failure did not come from page-range conversion or the autonomous RAM guard. Rust already adapted
+the size of an active batch from total RAM, but bounded *activation* remained a separate embedded-Python default:
+512 pages. Worse, failure of the cheap `pypdfium2` page count silently selected the same single-pass path. When
+the backend was killed by the operating system, Rust collapsed the missing exit code into an ordinary external
+command error. The safety mechanisms existed, but the selection and error seams did not compose them.
+
+The repaired default observes total physical RAM once and uses it for both decisions. Activation budgets 40% of
+that fixed capacity against the measured 64-page / roughly 4.8-GiB Docling working set—75 MB per page—and clamps
+the result to 1..399 pages. This is deliberately conservative: unnecessary batching costs time, while an unsafe
+single pass loses the process. The known 400-page risk remains capped even on a larger host; the current 24-GiB
+host resolves 131 pages and the existing adaptive ladder resolves 64 pages per batch. Fixed total RAM, rather
+than momentary free RAM, keeps the choice deterministic. Explicit nonnegative threshold overrides remain exact;
+bad or absent values return to policy rather than disabling it.
+
+The embedded helper now refuses conversion when it cannot count pages, receives both resolved values explicitly,
+and records threshold, batch size, and batched state in its metadata. On Unix, signal termination becomes typed
+`IngestTerminatedBySignal`; its diagnostic says truthfully that a signal may reflect external resource
+enforcement but does not prove OOM. The existing in-process guard remains the only path that can assert measured
+memory breach through `IngestAbortedForMemory`. Both failure paths discard staging and retain the last good bundle.
+
+The live proof used no threshold override. Arm Debug selected 131/64 and reproduced 400 pages, 210 tables, 176
+figures, 6,784 elements, and 1,321 sections. Profile, structured tables, content elements, and sections are
+byte-identical to the retained SourceIR; page artifacts and visual assets are identical after neutralizing their
+root path. EvidenceIR, SemanticIR, and IntentIR are likewise byte-identical after path normalization and removal
+of validation backannotations. The exact 795-file / 184,164-KiB replay root is removed and absent.
+
+Focused policy, helper-contract, process-status, environment-propagation, and staged-swap tests pass. Full CI
+passes all eight doctrines including chain currency, formatting, warning-deny Clippy, 1,866 Rust tests with five
+ignored and zero failures, warning-deny rustdoc, mdBook, and final project-data locality. The leaf is ready for
+its closure commit; `.6c` remains the next semantic work.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6b.ii.b (`2026-08-12`) — the carrier closes exactly the measured family
 
 The clean replay confirms the dirty-tree probe without extrapolation. At production revision `bb152dfb`, all

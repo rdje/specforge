@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
+  > was the (contract ... eventually ...) ISF clause removed
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > was the first vertical population historically unseen
+- [swd-canonical-protocol-artifact-is-current](../knowledge/swd-canonical-protocol-artifact-is-current.md)
+  > was the fresh SWD 29 of 29 artifact promoted
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > was the warning-safe rolling ledger transaction independently audited from a clean clone
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
@@ -291,9 +297,3 @@
   > what happened in OpenCAPI Discovery Configuration refresh 46
 - [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
   > what happened to the AArch64 External Debug Guide agent.isf
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > what happened to the CoreSight Base System agent.isf
-- [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
-  > what happened to the USB4 Connection Manager device_also.isf
-- [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
-  > what happened to the USB4 Inter-Domain channel.isf

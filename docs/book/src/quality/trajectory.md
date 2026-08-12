@@ -240,11 +240,14 @@ false canonical key. No other cell changes. Provenance closure becomes 17/29 and
 remaining bounded family is I2S receiver timing: five otherwise-correct constraints lose their `ns` unit, so
 five false positives, five misses, and five unprovenanced records remain. `.6c` owns that repair.
 
-The replay also exposed an operational caveat. The 400-page Arm source was killed twice on the default Docling
-single-pass path after model loading, although a forced bounded run completed with the same SourceIR profile,
-tables, elements, sections, and path-normalized visuals. The successful population command sets threshold 399,
-affecting only that document. This qualifies the result but does not redefine the product default; `.6b.iii`
-owns a generic resource/shape-based bounded-ingest decision and typed memory-failure reporting.
+The replay also exposed and drove closure of an operational defect. The 400-page Arm source was killed twice on
+the old default Docling single-pass path after model loading. Bounded activation now derives from fixed total RAM,
+a measured 75-MB/page working-set estimate, a 40% budget, and a 399-page maximum. On the 24-GiB host the default
+is threshold 131 / batch 64. An override-free replay completed with exact path-normalized SourceIR and
+validation-neutral EvidenceIR/SemanticIR/IntentIR fidelity. Unknown page count now fails closed; an operating-
+system signal has an actionable typed diagnostic separate from both normal exit failure and the measured RAM
+guard. This operational repair does not change the reviewed semantic result or controller ordering: `.6c`
+remains the next semantic leaf.
 
 ## Current production-path caveat
 

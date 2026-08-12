@@ -143,11 +143,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6a — separate replay truth from the frozen baseline`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6b`
-  Status: `in_progress`
+  Status: `done`
   Goal: `complete current-binary replay coverage, then rank and repair the remaining fabrication and provenance families`
   Acceptance: `all 12 reviewed documents have hash-pinned comparable replay evidence; that inventory, not the retrospective .4c baseline alone, identifies the next bounded production defect; the repair removes false canonical facts or closes genuine provenance without sacrificing a reviewed true positive`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `all 12 current replays qualified; current Arm carrier family repaired and clean-replayed; resource-risk defect surfaced by replay repaired with exact live fidelity; child full gates green`
+  Commit: `completed by .6b.i, .6b.ii.a, .6b.ii.b, and .6b.iii child commits`
   Children: `.6b.i`, `.6b.ii`, `.6b.iii`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6b.i`
@@ -180,11 +180,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6b.ii.b — qualify the access-carrier repair`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6b.iii`
-  Status: `pending`
+  Status: `done`
   Goal: `make bounded ingestion engage from measured resource risk rather than the disproved above-500-page assumption`
   Acceptance: `the 400-page Arm Debug source no longer enters a single-pass path that the host terminates; generic policy uses measured resource/shape authority rather than a document name; single-pass and bounded fidelity, typed memory-abort reporting, corpus currency, and full CI remain green`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `resource/override/helper/signal and public lifecycle tests; override-free live 400-page replay at threshold 131 / batch 64 with exact path-normalized four-stage fidelity; exact 795-file / 184,164-KiB cleanup; all eight doctrines, formatting, warning-deny Clippy, 1,866 tests passed / five ignored / zero failed, warning-deny rustdoc, mdBook, and final locality`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6b.iii — select bounded ingest from resource risk`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6c`
   Status: `pending`
@@ -231,7 +231,7 @@ expressiveness as the bottleneck.
 | 11 | `SPEC-TO-INTENT-ALIGNMENT.6b.i` | `done` | all 12 current-binary replays are hash-pinned; 19 historical TOC fabrications are retired without changing frozen or canonical artifacts |
 | 12 | `SPEC-TO-INTENT-ALIGNMENT.6b.ii.a` | `done` | generic carrier, exact retained-corpus reconciliation, and full CI are complete without changing frozen/current result authorities |
 | 13 | `SPEC-TO-INTENT-ALIGNMENT.6b.ii.b` | `done` | 12/12 replay proves exact Arm closure, two provenance-only collateral changes, and no other cell delta |
-| 14 | `SPEC-TO-INTENT-ALIGNMENT.6b.iii` | `pending` | repair the newly reproduced 400-page single-pass SIGKILL boundary after current replay evidence is safely published |
+| 14 | `SPEC-TO-INTENT-ALIGNMENT.6b.iii` | `done` | resource-sized activation, fail-closed page counting, typed signal termination, exact live 400-page fidelity, cleanup, and full CI complete |
 | 15 | `SPEC-TO-INTENT-ALIGNMENT.6c` | `pending` | repair the controller-selected five-record I2S unit/provenance family without regressing 19 true positives |
 | 16 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
 | 17 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
@@ -325,6 +325,18 @@ expressiveness as the bottleneck.
   Aggregate TP/FP/FN become 19/10/21, provenance 17/29, and conservation 57/78. Controller v4 therefore
   selects `.6c`, the five-record I2S missing-`ns` family, while `.6b.iii` remains the operational ingestion-risk
   frontier. The 3,913-file / 1,090,884-KiB population root and runtime source map are removed and absent.
+- `2026-08-12`: `.6b.iii` localizes the unsafe selection to the split Rust/Python policy seam: Rust adapted only
+  batch size, while embedded Python retained a flat 512-page activation default and treated an unreadable page
+  count as permission for single-pass conversion. The generic repair resolves activation once from total physical
+  RAM using the measured 75-MB/page working-set estimate, a 40% budget, and an unconditional 399-page cap; the
+  24-GiB host therefore selects threshold 131 and batch size 64. Explicit nonnegative threshold overrides remain
+  exact. Unknown page count now refuses unbounded conversion, and Unix signal termination has a distinct typed
+  error that does not mislabel the signal as OOM.
+- `2026-08-12`: a live Arm Debug replay with no threshold override selected 131/64 and completed all four stages.
+  Its 400-page / 210-table / 176-figure / 6,784-element / 1,321-section SourceIR matches the retained authority:
+  profile, tables, elements, and sections are byte-identical, while page/visual manifests match after path
+  normalization. EvidenceIR, SemanticIR, and IntentIR also match after removing validation backannotations and
+  normalizing paths. The exact 795-file / 184,164-KiB replay root was removed and is absent.
 
 ## Open Questions
 
@@ -398,6 +410,9 @@ expressiveness as the bottleneck.
 | `2026-08-12` | `.6b.ii.b` clean population replay | command-recorded threshold 399; 12 source hash checks; 48 stage identities; comparable fixture projection; exact cell diff | PASS: Arm Debug 0/12/12/12→12/0/0/0 TP/FP/FN/unprovenanced; AMD IOMMU and GIC-400 each close one provenance failure with semantics unchanged; no other cell changes; aggregate TP/FP/FN 19/10/21, provenance 17/29, conservation 57/78 |
 | `2026-08-12` | `.6b.ii.b` controller, mutants, and cleanup | strict manifest/result loaders; coverage/hash/cleanup/fabrication/population mutants; snapshot write/check; generic controller byte comparison; exact cleanup census | PASS: controller v4 gates 12/12 currency plus ten fabrications / twelve provenance failures and selects `.6c`; manifest/result/input/report SHA-256 `06fb3dea…2f5` / `9e8cd99b…6b1` / `0fb9e6e4…8cb` / `3d82b0fb…9e2`; 3,913 files / 1,090,884 KiB and runtime map removed and absent |
 | `2026-08-12` | `.6b.ii.b` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines including whole-chain currency, formatting, warning-deny Clippy, 1,862 Rust tests passed / five ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final project-data locality |
+| `2026-08-12` | `.6b.iii` root cause and focused policy/error proof | resource-threshold/override/helper-contract tests; Unix signal/ordinary-exit distinction; two public materialization lifecycle tests; embedded Python compile; warning-deny all-target Clippy | PASS: Rust/Python split default and signal-collapsing exit path localized; 24-GiB/64-GiB/96-GiB thresholds 131/349/399; explicit 512/0 exact; unreadable count fail-closed; signal retains typed status and prior bundle; backend 37/37, lifecycle 2/2 |
+| `2026-08-12` | `.6b.iii` override-free live fidelity and cleanup | real 400-page Arm replay with no threshold override; backend metadata; six SourceIR identity comparisons; validation-neutral three-stage comparisons; exact census/removal | PASS: default selected threshold 131 / batch 64; 400 pages / 210 tables / 176 figures / 6,784 elements / 1,321 sections; all SourceIR and downstream identities exact after only path/validation neutralization; 795 files / 184,164 KiB removed and exact root absent |
+| `2026-08-12` | `.6b.iii` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines including whole-chain currency, formatting, warning-deny Clippy, 1,866 Rust tests passed / five ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final project-data locality |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
 
@@ -629,6 +644,21 @@ expressiveness as the bottleneck.
 - [x] **LOCKSTEP** — result, controller, task frontier, roadmap, mdBook, live docs, architecture, Knowledge Map,
   and resume pointer agree on the exact before→after metrics and next owned activity.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6b.iii`
+
+- [x] **REPRODUCE / MEASURE** — turn the twice-reproduced 400-page default-path signal termination and the
+  successful bounded replay into deterministic policy/error tests, retaining the exact resource evidence.
+- [x] **ROOT CAUSE (WHY + WHERE)** — prove which Rust/Python selection seam sends the 400-page shape to
+  single-pass conversion and which subprocess exit path currently hides likely resource termination.
+- [x] **ADDRESSED (verified)** — make the default generic policy select bounded conversion for the measured-risk
+  shape and return typed actionable diagnostics for memory-guard or signal termination.
+- [x] **NO REGRESSION** — preserve small-document single-pass behavior, explicit environment overrides,
+  adaptive batch sizing, single-pass/bounded structural fidelity, canonical corpus currency, and locality.
+- [x] **GENERICITY (ADR 0006)** — select from document/resource shape and process status only; add no document,
+  vendor, protocol, filename, or reviewed-fixture branch.
+- [x] **LOCKSTEP** — code, tests, task frontier, roadmap, mdBook, live docs, architecture, and Knowledge Map agree
+  on the default threshold/policy, error contract, observed limitation, and next action.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -646,6 +676,7 @@ expressiveness as the bottleneck.
 | `SPEC-TO-INTENT-ALIGNMENT.6b.i` | `SPEC-TO-INTENT-ALIGNMENT.6b.i — qualify the complete reviewed population` | isolated 12-source / 48-stage current replay, exact current result and controller v3, residue-free external-source lifecycle, and current Arm Debug repair selection |
 | `SPEC-TO-INTENT-ALIGNMENT.6b.ii.a` | `SPEC-TO-INTENT-ALIGNMENT.6b.ii.a — preserve register access and table provenance` | backward-compatible typed carrier, generic producers/merge, exact four-chain ADR 0025 reconciliation, and clean-revision replay boundary |
 | `SPEC-TO-INTENT-ALIGNMENT.6b.ii.b` | `SPEC-TO-INTENT-ALIGNMENT.6b.ii.b — qualify the access-carrier repair` | clean 12-source / 48-stage replay, exact Arm closure and two provenance-only collateral changes, controller v4 `.6c` selection, bounded-ingest risk leaf, and residue-free cleanup |
+| `SPEC-TO-INTENT-ALIGNMENT.6b.iii` | `SPEC-TO-INTENT-ALIGNMENT.6b.iii — select bounded ingest from resource risk` | resource-sized bounded activation, fail-closed page count, typed signal termination, exact live 400-page fidelity, residue-free cleanup, and full CI |
 
 ## Changelog
 
@@ -672,6 +703,9 @@ expressiveness as the bottleneck.
   17/29 provenance, 57/78 conservation, strict controller v4 and mutants, complete cleanup, and full CI. The
   semantic controller selects `.6c`; the independently surfaced default single-pass resource failure advances
   the execution frontier first to `.6b.iii` before the next semantic leaf.
+- `2026-08-12`: Closed `.6b.iii` with resource-sized bounded activation, fail-closed page counting, typed signal
+  reporting, deterministic policy/error/lifecycle tests, an override-free exact 400-page four-stage fidelity
+  replay, complete cleanup, and full CI; frontier advances to controller-selected `.6c`.
 - `2026-08-11`: Closed `.4a` with the strict portable dataset contract, deterministic exact evaluator, and six
   controlled-fault classes; frontier advances to `.4b`, lock two reviewed documents per category without tuning
   extraction before `.4c` publishes product conclusions.
