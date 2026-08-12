@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "dataset_id": "source-to-intent-vertical-current-replay-v1",
-  "owner": "SPEC-TO-INTENT-ALIGNMENT.6b.i",
+  "dataset_id": "source-to-intent-vertical-access-carrier-replay-v1",
+  "owner": "SPEC-TO-INTENT-ALIGNMENT.6b.ii.b",
   "selection_boundary_commit": "a3e9757d63ca5499a2393864fb503d6537de0035",
   "selection_claim": "Current-binary replay of the unchanged review-locked population; source bytes and all four replayed stage identities are re-verified without mutating the frozen baseline.",
   "minimum_documents_per_category": 2,
@@ -601,7 +601,7 @@
               "false_negatives": 0,
               "precision": 0.0,
               "recall": null,
-              "unprovenanced_records": 1
+              "unprovenanced_records": 0
             },
             "semantic_ir": {
               "actual_keys": [
@@ -616,7 +616,7 @@
               "false_negatives": 0,
               "precision": 0.0,
               "recall": null,
-              "unprovenanced_records": 1
+              "unprovenanced_records": 0
             },
             "intent_ir": {
               "actual_keys": [
@@ -631,7 +631,7 @@
               "false_negatives": 0,
               "precision": 0.0,
               "recall": null,
-              "unprovenanced_records": 1
+              "unprovenanced_records": 0
             }
           },
           "residual": {
@@ -691,7 +691,6 @@
           "disposition_accounted": false,
           "first_failing_stage": "source_to_evidence_ir",
           "hard_failures": [
-            "canonical_provenance_loss:1",
             "fabricated_canonical_facts:1",
             "required_residual_missing_or_inactionable",
             "source_region_disposition_unaccounted"
@@ -699,7 +698,6 @@
         }
       ],
       "hard_failures": [
-        "48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification__01_packed_page_table_entry:canonical_provenance_loss:1",
         "48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification__01_packed_page_table_entry:fabricated_canonical_facts:1",
         "48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification__01_packed_page_table_entry:required_residual_missing_or_inactionable",
         "48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification__01_packed_page_table_entry:source_region_disposition_unaccounted"
@@ -800,7 +798,7 @@
               "false_negatives": 15,
               "precision": 0.0,
               "recall": 0.0,
-              "unprovenanced_records": 1
+              "unprovenanced_records": 0
             },
             "semantic_ir": {
               "actual_keys": [
@@ -831,7 +829,7 @@
               "false_negatives": 15,
               "precision": 0.0,
               "recall": 0.0,
-              "unprovenanced_records": 1
+              "unprovenanced_records": 0
             },
             "intent_ir": {
               "actual_keys": [
@@ -862,7 +860,7 @@
               "false_negatives": 15,
               "precision": 0.0,
               "recall": 0.0,
-              "unprovenanced_records": 1
+              "unprovenanced_records": 0
             }
           },
           "residual": {
@@ -950,7 +948,6 @@
           "disposition_accounted": false,
           "first_failing_stage": "source_to_evidence_ir",
           "hard_failures": [
-            "canonical_provenance_loss:1",
             "fabricated_canonical_facts:1",
             "reviewed_gold_misses:15",
             "source_region_disposition_unaccounted",
@@ -959,7 +956,6 @@
         }
       ],
       "hard_failures": [
-        "ddi0471_a_2011_06_23_gic_400_technical_reference_manual__01_register_summary:canonical_provenance_loss:1",
         "ddi0471_a_2011_06_23_gic_400_technical_reference_manual__01_register_summary:fabricated_canonical_facts:1",
         "ddi0471_a_2011_06_23_gic_400_technical_reference_manual__01_register_summary:reviewed_gold_misses:15",
         "ddi0471_a_2011_06_23_gic_400_technical_reference_manual__01_register_summary:source_region_disposition_unaccounted",
@@ -1368,7 +1364,7 @@
       },
       "review_scope_complete": true,
       "present_modalities": 1,
-      "accounted_modalities": 0,
+      "accounted_modalities": 1,
       "cells": [
         {
           "cell_id": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification__01_debug_register_summary",
@@ -1419,18 +1415,18 @@
           "canonical": {
             "evidence_ir": {
               "actual_keys": [
-                "BASEPTR0|access=<missing>",
-                "BASEPTR1|access=<missing>",
-                "CTRL/STAT|access=<missing>",
-                "DLCR|access=<missing>",
-                "DLPIDR|access=<missing>",
-                "DPIDR1|access=<missing>",
-                "DPIDR|access=<missing>",
-                "EVENTSTAT|access=<missing>",
-                "RDBUFF|access=<missing>",
-                "SELECT1|access=<missing>",
-                "SELECT|access=<missing>",
-                "TARGETID|access=<missing>"
+                "BASEPTR0|access=RO",
+                "BASEPTR1|access=RO",
+                "CTRL/STAT|access=RW",
+                "DLCR|access=RW",
+                "DLPIDR|access=RO",
+                "DPIDR1|access=RO",
+                "DPIDR|access=RO",
+                "EVENTSTAT|access=RO",
+                "RDBUFF|access=RO",
+                "SELECT1|access=WO b",
+                "SELECT|access=WO b",
+                "TARGETID|access=RO"
               ],
               "expected_keys": [
                 "BASEPTR0|access=RO",
@@ -1446,30 +1442,43 @@
                 "SELECT|access=WO b",
                 "TARGETID|access=RO"
               ],
-              "matched_keys": [],
+              "matched_keys": [
+                "BASEPTR0|access=RO",
+                "BASEPTR1|access=RO",
+                "CTRL/STAT|access=RW",
+                "DLCR|access=RW",
+                "DLPIDR|access=RO",
+                "DPIDR1|access=RO",
+                "DPIDR|access=RO",
+                "EVENTSTAT|access=RO",
+                "RDBUFF|access=RO",
+                "SELECT1|access=WO b",
+                "SELECT|access=WO b",
+                "TARGETID|access=RO"
+              ],
               "actual_total": 12,
               "expected_total": 12,
-              "true_positives": 0,
-              "false_positives": 12,
-              "false_negatives": 12,
-              "precision": 0.0,
-              "recall": 0.0,
-              "unprovenanced_records": 12
+              "true_positives": 12,
+              "false_positives": 0,
+              "false_negatives": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "unprovenanced_records": 0
             },
             "semantic_ir": {
               "actual_keys": [
-                "BASEPTR0|access=<missing>",
-                "BASEPTR1|access=<missing>",
-                "CTRL/STAT|access=<missing>",
-                "DLCR|access=<missing>",
-                "DLPIDR|access=<missing>",
-                "DPIDR1|access=<missing>",
-                "DPIDR|access=<missing>",
-                "EVENTSTAT|access=<missing>",
-                "RDBUFF|access=<missing>",
-                "SELECT1|access=<missing>",
-                "SELECT|access=<missing>",
-                "TARGETID|access=<missing>"
+                "BASEPTR0|access=RO",
+                "BASEPTR1|access=RO",
+                "CTRL/STAT|access=RW",
+                "DLCR|access=RW",
+                "DLPIDR|access=RO",
+                "DPIDR1|access=RO",
+                "DPIDR|access=RO",
+                "EVENTSTAT|access=RO",
+                "RDBUFF|access=RO",
+                "SELECT1|access=WO b",
+                "SELECT|access=WO b",
+                "TARGETID|access=RO"
               ],
               "expected_keys": [
                 "BASEPTR0|access=RO",
@@ -1485,30 +1494,43 @@
                 "SELECT|access=WO b",
                 "TARGETID|access=RO"
               ],
-              "matched_keys": [],
+              "matched_keys": [
+                "BASEPTR0|access=RO",
+                "BASEPTR1|access=RO",
+                "CTRL/STAT|access=RW",
+                "DLCR|access=RW",
+                "DLPIDR|access=RO",
+                "DPIDR1|access=RO",
+                "DPIDR|access=RO",
+                "EVENTSTAT|access=RO",
+                "RDBUFF|access=RO",
+                "SELECT1|access=WO b",
+                "SELECT|access=WO b",
+                "TARGETID|access=RO"
+              ],
               "actual_total": 12,
               "expected_total": 12,
-              "true_positives": 0,
-              "false_positives": 12,
-              "false_negatives": 12,
-              "precision": 0.0,
-              "recall": 0.0,
-              "unprovenanced_records": 12
+              "true_positives": 12,
+              "false_positives": 0,
+              "false_negatives": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "unprovenanced_records": 0
             },
             "intent_ir": {
               "actual_keys": [
-                "BASEPTR0|access=<missing>",
-                "BASEPTR1|access=<missing>",
-                "CTRL/STAT|access=<missing>",
-                "DLCR|access=<missing>",
-                "DLPIDR|access=<missing>",
-                "DPIDR1|access=<missing>",
-                "DPIDR|access=<missing>",
-                "EVENTSTAT|access=<missing>",
-                "RDBUFF|access=<missing>",
-                "SELECT1|access=<missing>",
-                "SELECT|access=<missing>",
-                "TARGETID|access=<missing>"
+                "BASEPTR0|access=RO",
+                "BASEPTR1|access=RO",
+                "CTRL/STAT|access=RW",
+                "DLCR|access=RW",
+                "DLPIDR|access=RO",
+                "DPIDR1|access=RO",
+                "DPIDR|access=RO",
+                "EVENTSTAT|access=RO",
+                "RDBUFF|access=RO",
+                "SELECT1|access=WO b",
+                "SELECT|access=WO b",
+                "TARGETID|access=RO"
               ],
               "expected_keys": [
                 "BASEPTR0|access=RO",
@@ -1524,15 +1546,28 @@
                 "SELECT|access=WO b",
                 "TARGETID|access=RO"
               ],
-              "matched_keys": [],
+              "matched_keys": [
+                "BASEPTR0|access=RO",
+                "BASEPTR1|access=RO",
+                "CTRL/STAT|access=RW",
+                "DLCR|access=RW",
+                "DLPIDR|access=RO",
+                "DPIDR1|access=RO",
+                "DPIDR|access=RO",
+                "EVENTSTAT|access=RO",
+                "RDBUFF|access=RO",
+                "SELECT1|access=WO b",
+                "SELECT|access=WO b",
+                "TARGETID|access=RO"
+              ],
               "actual_total": 12,
               "expected_total": 12,
-              "true_positives": 0,
-              "false_positives": 12,
-              "false_negatives": 12,
-              "precision": 0.0,
-              "recall": 0.0,
-              "unprovenanced_records": 12
+              "true_positives": 12,
+              "false_positives": 0,
+              "false_negatives": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "unprovenanced_records": 0
             }
           },
           "residual": {
@@ -1595,40 +1630,28 @@
             {
               "boundary": "source_to_evidence_ir",
               "expected": 12,
-              "conserved_or_residualized": 0,
-              "unexplained_drops": 12
+              "conserved_or_residualized": 12,
+              "unexplained_drops": 0
             },
             {
               "boundary": "evidence_to_semantic_ir",
-              "expected": 0,
-              "conserved_or_residualized": 0,
+              "expected": 12,
+              "conserved_or_residualized": 12,
               "unexplained_drops": 0
             },
             {
               "boundary": "semantic_to_intent_ir",
-              "expected": 0,
-              "conserved_or_residualized": 0,
+              "expected": 12,
+              "conserved_or_residualized": 12,
               "unexplained_drops": 0
             }
           ],
-          "disposition_accounted": false,
-          "first_failing_stage": "source_to_evidence_ir",
-          "hard_failures": [
-            "canonical_provenance_loss:12",
-            "fabricated_canonical_facts:12",
-            "reviewed_gold_misses:12",
-            "source_region_disposition_unaccounted",
-            "unexplained_stage_drops:12"
-          ]
+          "disposition_accounted": true,
+          "first_failing_stage": null,
+          "hard_failures": []
         }
       ],
-      "hard_failures": [
-        "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification__01_debug_register_summary:canonical_provenance_loss:12",
-        "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification__01_debug_register_summary:fabricated_canonical_facts:12",
-        "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification__01_debug_register_summary:reviewed_gold_misses:12",
-        "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification__01_debug_register_summary:source_region_disposition_unaccounted",
-        "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification__01_debug_register_summary:unexplained_stage_drops:12"
-      ]
+      "hard_failures": []
     },
     {
       "document_key": "opencapi_25gbps_phy_signaling_spec_1_0",
@@ -2697,7 +2720,7 @@
       "category": "register-ip",
       "document_count": 2,
       "cell_count": 2,
-      "hard_failure_count": 9,
+      "hard_failure_count": 7,
       "status": "incomplete"
     },
     {
@@ -2711,7 +2734,7 @@
       "category": "cpu-isa",
       "document_count": 2,
       "cell_count": 2,
-      "hard_failure_count": 8,
+      "hard_failure_count": 3,
       "status": "incomplete"
     },
     {
@@ -2731,31 +2754,31 @@
   ],
   "global": {
     "intent_bearing_source_region_disposition": {
-      "met": 0,
+      "met": 1,
       "total": 14,
-      "ratio": 0.0
+      "ratio": 0.07142857142857142
     },
     "required_modality_accounting": {
-      "met": 0,
+      "met": 1,
       "total": 12,
-      "ratio": 0.0
+      "ratio": 0.08333333333333333
     },
     "canonical_provenance_closure": {
-      "met": 3,
+      "met": 17,
       "total": 29,
-      "ratio": 0.10344827586206896
+      "ratio": 0.5862068965517241
     },
     "stage_conservation_or_residual": {
-      "met": 21,
-      "total": 54,
-      "ratio": 0.3888888888888889
+      "met": 57,
+      "total": 78,
+      "ratio": 0.7307692307692307
     },
     "residual_actionability": {
       "met": 0,
       "total": 24,
       "ratio": 0.0
     },
-    "fabricated_canonical_facts": 22,
-    "unexplained_stage_drops": 33
+    "fabricated_canonical_facts": 10,
+    "unexplained_stage_drops": 21
   }
 }

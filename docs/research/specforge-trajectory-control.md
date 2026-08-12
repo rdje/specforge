@@ -173,17 +173,22 @@ shared knowledge base, consistent with autonomic-computing control principles
    reviewable next-task recommendation (`.5`). `.5a` supplies the strict nine-dimension state/ranking engine;
    `.5b` attaches the frozen retrospective evidence and emits the first owned recommendation, `.6`; `.6a`
    adds an isolated current-binary replay boundary before the recommendation can imply a production repair;
-   `.6b.i` completes the 12-document qualification and ranks only defects that reproduce.
+   `.6b.i` completes the 12-document qualification and ranks only defects that reproduce; `.6b.ii.a/.b`
+   repair and clean-binary-qualify the first selected family.
 
 The first composition originally treated 41 fabricated facts, 45 provenance failures, and 33 unexplained stage
 drops as current exact hard gates. `.6a` found that claim stronger than the evidence: `.4c` pins the artifacts
 reviewed, but does not prove every document was replayed after earlier extraction repairs. Its hash-equal AIA
 replay removed all 19 false/unprovenanced TOC timing records with no true-positive loss. `.6b.i` then replayed all
-12 reviewed documents from the same source bytes. The qualified result confirms that the other families survive:
-7 true positives, 22 false positives, 33 false negatives, provenance closure 3/29, conservation 21/54, and
-residual actionability 0/24. Replay coverage is now 12/12, while exact hard gates fail on 22 fabricated facts and
-26 provenance failures. The report ranks `.6b.ii` current honesty ahead of `.7` source loss, `.8` residual
-actionability, and `.9` capability breadth, with report-only review authority unchanged.
+12 reviewed documents from the same source bytes. `.6b.ii.b` then qualifies the generic register access/table
+provenance carrier on that full population: true positives rise 7→19, false positives fall 22→10, false negatives
+fall 33→21, provenance closure rises 3/29→17/29, and conservation rises 21/54→57/78. The complete 12-record Arm
+Debug family closes; AMD IOMMU and GIC-400 gain provenance without hiding their false keys; no other cell moves.
+Replay coverage remains 12/12, while exact hard gates now fail on ten fabricated facts and twelve provenance
+failures. The report ranks `.6c` current honesty ahead of `.7` source loss, `.8` residual actionability, and `.9`
+capability breadth, with report-only review authority unchanged. Separately, the qualification reproduced a
+400-page default single-pass Docling SIGKILL; `.6b.iii` owns replacing the disproved page-only threshold with a
+generic resource-risk policy.
 
 The controller should initially report and recommend. Only exact hard invariants should fail CI. Statistical
 or heuristic signals graduate to gates after their false-alarm behavior is calibrated on real history.

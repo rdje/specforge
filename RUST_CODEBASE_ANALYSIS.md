@@ -4,6 +4,21 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-12 — access-carrier population qualification; `SPEC-TO-INTENT-ALIGNMENT.6b.ii.b`)
+
+- The replay projection now treats both statement and direct table ids as canonical provenance. This matches the
+  typed `RegisterRecord` carrier and keeps fixture policy data-defined rather than inferring source authority from
+  document identity.
+- `replay_source_to_intent_population.py` preserves child exit status/stdout/stderr and records the three
+  ingestion-control environment variables in each replay command. A replay can therefore explain a resource
+  failure and reproduce its bounded policy instead of collapsing every child failure into an opaque exception.
+- Strict replay/controller composition now authenticates the `.6b.ii.b` 12-source / 48-stage evidence and exact
+  19 TP / 10 FP / 21 FN result. Provenance is 17/29, conservation 57/78, replay currency 12/12, and the generic
+  controller ranks `.6c` without changing its policy engine.
+- A 400-page default single-pass Docling run was killed reproducibly, while the forced bounded path completed
+  with equivalent SourceIR structure. The current page-only threshold is therefore an operational architecture
+  risk; `.6b.iii` owns a resource/shape-based policy and typed memory-failure surface.
+
 ## Session update (2026-08-12 — register access/provenance carrier; `SPEC-TO-INTENT-ALIGNMENT.6b.ii.a`)
 
 - `RegisterRecord` now distinguishes optional register-level `access_type` from each field's access metadata and

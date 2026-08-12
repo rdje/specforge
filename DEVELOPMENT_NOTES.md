@@ -1,4 +1,33 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6b.ii.b (`2026-08-12`) — the carrier closes exactly the measured family
+
+The clean replay confirms the dirty-tree probe without extrapolation. At production revision `bb152dfb`, all
+12 unchanged reviewed sources and all 48 isolated stage artifacts complete. Arm Debug's reviewed summary moves
+from 12 access-less wrong keys plus 12 misses to 12 exact register/access keys. Each retains direct
+`table_0044` support through EvidenceIR, SemanticIR, and IntentIR. No Arm-specific repair or fixture-side
+postprocessing exists.
+
+Two collateral changes are both expected and narrower than semantic correctness: AMD IOMMU and GIC-400 each
+retain the same one false register key but now close direct table provenance. No other cell changes. Aggregate
+IntentIR moves 7/22/33→19/10/21 TP/FP/FN; canonical provenance closes 3/29→17/29; conservation rises
+21/54→57/78 because the 12 newly present Arm facts cross all three boundaries. Source disposition becomes 1/14
+and required-modality accounting 1/12. Residual actionability remains 0/24 and all categories remain incomplete.
+
+The replay itself exposed a separate operational defect. The default Docling path was killed twice after model
+weight load on the 400-page Arm document while the host remained healthy and no child process survived. Forcing
+bounded ingestion completed, and its SourceIR matched the persisted single-pass authority in profile, tables,
+elements, sections, and path-normalized visual content. The successful population command records threshold
+399, affecting only this 400-page member. That is valid qualification evidence, not a global policy repair:
+`.6b.iii` now owns replacing the disproved above-500-page assumption with generic measured resource risk.
+
+After publication, the exact 3,913-file / 1,090,884-KiB replay root and runtime absolute-path map were removed;
+both are absent. Controller v4 remains report-only and `diverging` on ten fabricated plus twelve unprovenanced
+records. It selects `.6c`: the I2S receiver-timing family has five otherwise-correct constraints whose `ns` unit
+is missing, producing five false positives, five false negatives, and five provenance failures.
+
+Signoff passes all eight doctrines including whole-chain currency, formatting, warning-deny Clippy, 1,862 Rust
+tests with five ignored and zero failures, warning-deny rustdoc, mdBook, and final project-data locality.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6b.ii.a (`2026-08-12`) — the loss was the carrier
 
 The Arm Debug table was not an extraction-recognition failure. SourceIR retained all 12 rows and their Access

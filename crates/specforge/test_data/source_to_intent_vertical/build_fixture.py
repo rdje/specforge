@@ -530,7 +530,10 @@ def source_record(source: dict, spec: dict, require_reviewed_region: bool) -> di
 
 
 def source_ids(record: dict) -> list[str]:
-    return record.get("supporting_statement_ids", [])
+    return sorted(
+        set(record.get("supporting_statement_ids", []))
+        | set(record.get("supporting_table_ids", []))
+    )
 
 
 def timing_key(record: dict, full: bool) -> str:
@@ -789,12 +792,12 @@ def build(replay_root: Path | None = None) -> bytes:
     dataset = {
         "schema_version": 1,
         "dataset_id": (
-            "source-to-intent-vertical-current-replay-v1"
+            "source-to-intent-vertical-access-carrier-replay-v1"
             if current_replay
             else "source-to-intent-vertical-reviewed-v1"
         ),
         "owner": (
-            "SPEC-TO-INTENT-ALIGNMENT.6b.i"
+            "SPEC-TO-INTENT-ALIGNMENT.6b.ii.b"
             if current_replay
             else "SPEC-TO-INTENT-ALIGNMENT.4b"
         ),

@@ -27,5 +27,6 @@ Serde-defaulted and omitted while absent, so old artifacts load and unrelated em
 The causal defect was at SourceIR → EvidenceIR: the generic register-map extractor parsed Arm Debug table
 `table_0044`'s Access cells, but the old register carrier had no register-level field and discarded the values;
 later stages faithfully cloned the loss. A bounded implementation probe verifies all 12 exact access strings and
-the table id at EvidenceIR, SemanticIR, and IntentIR. `SPEC-TO-INTENT-ALIGNMENT.6b.ii.b` owns the clean-revision
-whole-population replay and is the authority for any changed product-quality counts.
+the table id at EvidenceIR, SemanticIR, and IntentIR. The clean-revision `.6b.ii.b` population replay confirms all
+12 as exact/provenanced canonical facts and shows only two additional provenance-only changes: AMD IOMMU and
+GIC-400 each retain the same false register key but gain their direct table id. No other reviewed cell changes.

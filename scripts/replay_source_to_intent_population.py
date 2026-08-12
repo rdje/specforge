@@ -26,6 +26,23 @@ DATASET = Path("crates/specforge/test_data/source_to_intent_vertical/reviewed_da
 FIXTURE_BUILDER = Path("crates/specforge/test_data/source_to_intent_vertical/build_fixture.py")
 PRIOR_MEMORY = Path("generated/prior_memory/corpus_memory.json")
 PROJECT_TMP = Path(".project-data/tmp")
+REPLAY_ENVIRONMENT_KEYS = (
+    "DOCLING_DEVICE",
+    "SPECFORGE_INGEST_BATCH_THRESHOLD",
+    "SPECFORGE_INGEST_BATCH_PAGES",
+)
+
+
+class CommandFailure(RuntimeError):
+    """A replay child failed, with its otherwise-hidden diagnostics retained."""
+
+    def __init__(self, command: list[str], error: subprocess.CalledProcessError):
+        self.returncode = error.returncode
+        rendered = shlex.join(command)
+        super().__init__(
+            f"command failed with return code {error.returncode}: {rendered}\n"
+            f"stdout:\n{error.stdout}\nstderr:\n{error.stderr}"
+        )
 
 
 def sha256(path: Path) -> str:
@@ -58,13 +75,16 @@ def read_json(path: Path) -> object:
 
 
 def run_json(command: list[str]) -> dict:
-    completed = subprocess.run(
-        command,
-        cwd=ROOT,
-        check=True,
-        capture_output=True,
-        text=True,
-    )
+    try:
+        completed = subprocess.run(
+            command,
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except subprocess.CalledProcessError as error:
+        raise CommandFailure(command, error) from error
     try:
         value = json.loads(completed.stdout)
     except json.JSONDecodeError as error:
@@ -97,6 +117,13 @@ def load_external_map(path: Path) -> dict[str, Path]:
             raise ValueError(f"duplicate external portable_id: {portable_id}")
         result[portable_id] = Path(source_path).resolve(strict=True)
     return result
+
+
+def replay_environment_prefix() -> list[str]:
+    assignments = [
+        f"{key}={os.environ[key]}" for key in REPLAY_ENVIRONMENT_KEYS if key in os.environ
+    ]
+    return ["env", *assignments] if assignments else []
 
 
 def artifact_identity(path_text: str) -> dict:
@@ -219,7 +246,7 @@ def main() -> int:
             document, external_sources, args.output_root
         )
         replay_root = args.output_root / "replays" / key
-        command = [
+        command = replay_environment_prefix() + [
             "cargo",
             "run",
             "--quiet",
@@ -286,8 +313,8 @@ def main() -> int:
 
     manifest = {
         "schema_version": 1,
-        "replay_id": "spec-to-intent-6bi-current-population",
-        "owner": "SPEC-TO-INTENT-ALIGNMENT.6b.i",
+        "replay_id": "spec-to-intent-6bii-access-carrier-population",
+        "owner": "SPEC-TO-INTENT-ALIGNMENT.6b.ii.b",
         "production_revision": production_revision,
         "reviewed_dataset": {
             "path": DATASET.as_posix(),

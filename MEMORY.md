@@ -17,14 +17,15 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6b.ii.a` at signoff; `.0` through `.6b.i` and
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6b.ii.b`; `.0` through `.6b.ii.a` and
   `FSMGEN-REFRESH-INTEGRATE-6.1` are committed complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and
   `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: all 12 reviewed documents have hash-pinned current-binary replay evidence. Current IntentIR is
-  7 TP / 22 FP / 33 FN with provenance closure 3/29; the largest bounded family is Arm Debug, where 12 correct
-  register names lack reviewed access mode and become 12 FP + 12 FN + 12 provenance failures.
-- Next action: commit the signed-off `.6b.ii.a` carrier and four-chain ADR 0025 reconciliation, then activate
-  `.6b.ii.b` and replay the clean committed production revision over all 12 reviewed sources.
-- In-flight uncommitted: completed, fully verified `.6b.ii.a`; frozen/current replay-result authorities remain
-  unchanged until `.6b.ii.b`.
+- Current state: clean revision `bb152dfb` has 12/12-source and 48/48-stage replay evidence. IntentIR changes
+  7/22/33→19/10/21 TP/FP/FN, provenance 3/29→17/29, and conservation 21/54→57/78. Arm Debug closes 12/12;
+  AMD IOMMU and GIC-400 gain provenance only. Controller v4 selects `.6c` from ten fabricated / twelve
+  unprovenanced survivors. The successful replay's 3,913-file / 1,090,884-KiB root and runtime map are absent.
+- Next action: commit the fully verified `.6b.ii.b` slice, prove the tree handoff-clean, then activate `.6b.iii`
+  and diagnose the generic bounded-ingestion selection seam from its existing tests and Knowledge Map fact.
+- In-flight uncommitted: completed `.6b.ii.b` replay/result/controller evidence and aligned durable surfaces are
+  ready for their task-scoped commit; no scratch or background replay remains.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

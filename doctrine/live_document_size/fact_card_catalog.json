@@ -75,53 +75,53 @@
   "planned_outputs": [
     {
       "metrics": {
-        "bytes": 904,
+        "bytes": 920,
         "line_bytes": 190,
         "lines": 10
       },
       "path": "docs/knowledge/INDEX.md",
       "role": "landing",
-      "sha256": "cdbb9b987843e8214d59b3aa99d22af5a3ef65609070b77f9f3ce50e7e0f09a0"
+      "sha256": "e10d94517f6cf06dfa435518b52f06e707a50a5323addc336ed5776638f9126c"
     },
     {
       "metrics": {
-        "bytes": 12834,
+        "bytes": 12839,
         "line_bytes": 268,
         "lines": 63
       },
       "path": "docs/knowledge-catalog/titles-0001.md",
       "role": "title_part",
-      "sha256": "c260865fa9b84be9d56574a11dd0ff476e7e66565964c7f5da79e0a95a95bc68"
+      "sha256": "8345c6cd4297c8d1481d232b92fa16282ea20703946d71fbb4d7914d1539efe2"
     },
     {
       "metrics": {
-        "bytes": 12331,
+        "bytes": 12354,
         "line_bytes": 276,
         "lines": 63
       },
       "path": "docs/knowledge-catalog/titles-0002.md",
       "role": "title_part",
-      "sha256": "ccb9da3f2c24c7eed878b4f13a12eefaccc913f350a9042d4484baa903607163"
+      "sha256": "5e922762915ba8a7106c5772a4c46072907d854b9936c1e51efce8c7757567af"
     },
     {
       "metrics": {
-        "bytes": 12413,
+        "bytes": 12363,
         "line_bytes": 252,
         "lines": 63
       },
       "path": "docs/knowledge-catalog/titles-0003.md",
       "role": "title_part",
-      "sha256": "40896beb74986681ff7d37a99678ffc19f5be6e7881fdca2d264289b5ea491b1"
+      "sha256": "f60fd4ff0acfebec8b9a9c7fe52daa36f89226c8ae4a47ee886870d55d212bb7"
     },
     {
       "metrics": {
-        "bytes": 9772,
+        "bytes": 10018,
         "line_bytes": 256,
-        "lines": 51
+        "lines": 52
       },
       "path": "docs/knowledge-catalog/titles-0004.md",
       "role": "title_part",
-      "sha256": "8c99df9b08a5574dc7c20a4673d99d82029254b3c7785d7d96e97419daed1db5"
+      "sha256": "9c2a1804cbb4834b5082590aadd2381b04907d97bb77347309f9799d6f43d088"
     }
   ],
   "verifier": "perl scripts/check_fact_card_catalog.pl --check"

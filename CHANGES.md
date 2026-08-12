@@ -1,3 +1,23 @@
+### SPEC-TO-INTENT-ALIGNMENT.6b.ii.b — qualify the access-carrier repair
+
+- Replayed all 12 unchanged reviewed sources and 48 isolated stages at committed production revision
+  `bb152dfb`. The portable manifest records the command-level bounded-ingest override, source/stage/tool hashes,
+  exact result identity, and residue-free cleanup without retaining an absolute host path.
+- Published the comparable current result: IntentIR TP/FP/FN improve 7/22/33→19/10/21, provenance closure
+  3/29→17/29, conservation 21/54→57/78, source disposition 0/14→1/14, and required-modality document accounting
+  0/12→1/12; residual actionability remains 0/24 and all six categories remain honestly incomplete.
+- The complete Arm Debug family moves from 12 false positives + 12 false negatives + 12 unprovenanced records
+  to 12 exact, provenanced facts. AMD IOMMU and GIC-400 each close table provenance only; no other reviewed cell
+  changes. The frozen reviewed dataset/result and canonical `generated/` authority remain unchanged.
+- Controller v4 retains `diverging` on ten fabricated and twelve unprovenanced current facts and recommends
+  `.6c`, the five-record I2S missing-`ns` family. The exact 3,913-file / 1,090,884-KiB replay root and runtime
+  source map were removed and are absent.
+- A repeated default-path SIGKILL on the 400-page Arm source disproves the old above-500-page bounded-ingest
+  assumption. A forced bounded replay completed with equivalent SourceIR shape; `.6b.iii` owns the generic
+  resource-risk policy repair.
+- Full CI passes all eight doctrines including whole-chain currency, formatting, warning-deny Clippy, 1,862
+  Rust tests / five ignored / zero failed, warning-deny rustdoc, mdBook, and final project-data locality.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6b.ii.a — preserve register access and table provenance
 
 - Added optional register-level `RegisterRecord.access_type`, distinct from field access, and populated it from

@@ -82,12 +82,13 @@ boundary, but SpecForge does not anticipate a language gap without a source-grou
 [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md) makes that ordering measurable (ADR
 0033/0034). Its contracts, production ledger, multimodal path, evaluator, reviewed population, retrospective
 result, controller, and whole-population current replay ship. Twelve of 12 reviewed sources now have hash-pinned
-isolated replays. The qualified result retains seven true positives while frozen false facts fall 41→22 and
-provenance failures 45→26 because the already-fixed 19-record AIA TOC family disappears. Controller state stays
-`diverging` on those exact surviving honesty failures, and `.6b.ii` owns the largest current family before later
-loss, residual, or breadth work. Its `.a` slice repairs the proven missing register-level access/table-provenance
-carrier; `.b` owns clean-revision population replay before any quality count changes. The task tree owns all
-detailed counts.
+isolated replays. The access/table-provenance repair is clean-binary qualified: IntentIR moves from 7/22/33 to
+19/10/21 TP/FP/FN, provenance closure from 3/29 to 17/29, and conservation from 21/54 to 57/78. The complete
+12-record Arm Debug family is now correct and provenanced; AMD IOMMU and GIC-400 each gain table provenance
+without disguising their remaining semantic errors. Controller state stays `diverging` on ten fabricated and
+twelve unprovenanced current records and selects `.6c`, the five-record I2S missing-unit family. The replay also
+opened `.6b.iii`: a reproducible 400-page single-pass Docling SIGKILL proves that bounded-ingest policy cannot
+wait for the old above-500-page threshold. The task tree owns all detailed counts and ordering.
 
 Five active program groups support that north star:
 
