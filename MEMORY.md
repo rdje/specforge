@@ -17,17 +17,16 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6c.ii` closing commit; `.0` through `.6c.i` and
-  `FSMGEN-REFRESH-INTEGRATE-6.1` are committed complete, while `.6c.ii`/parent `.6c` are verified complete in the
-  current tree. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and
+- Active unit: `FSMGEN-REFRESH-INTEGRATE-7.1` closing commit; `SPEC-TO-INTENT-ALIGNMENT.6c.ii` and
+  `FSMGEN-REFRESH-INTEGRATE-6.1` are committed complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and
   `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: `.6c.ii` qualifies 12/12 unchanged sources and 48/48 isolated stages at `74a658b3`. I2S changes
-  exactly 0/5/5/5→5/0/0/0 TP/FP/FN/unprovenanced; seven OpenCAPI records gain provenance only; all 19 prior true
-  positives survive. Current TP/FP/FN are 24/5/16, provenance 29/29, conservation 72/88. Controller v5 selects
-  `.6d`, starting with three OpenCAPI analog fabrications. The 3,913-file / 1,090,908-KiB root and map are absent;
-  full CI passes all eight doctrines, 1,866 tests / five ignored / zero failed, rustdoc, mdBook, and locality.
-- Next action: commit `.6c.ii`, verify a clean tree and zero-byte message file, then activate controller-selected
-  `SPEC-TO-INTENT-ALIGNMENT.6d` before diagnosing the three OpenCAPI analog records.
-- In-flight uncommitted: completed and fully verified `.6c.ii` closure awaiting its commit; no scratch residue or
-  background process.
+- Current state: a pruned fetch and independent live remote query prove FSMGen `HEAD`/`main` are already the pinned
+  `a51dcdad0a7e752e638abfe3ab414f7f3911889d`; the range is 0 commits / 0 changed paths, so cycle 7 has no gitlink,
+  contract, product, Knowledge Map, or current-status delta. The clean detached pin passes all seven focused strict
+  canaries, and every declared pin copy agrees. Controller v5 still selects `SPEC-TO-INTENT-ALIGNMENT.6d`, starting
+  with the three OpenCAPI analog fabrications; current TP/FP/FN remain 24/5/16 with provenance 29/29.
+- Next action: commit the verified FSMGen no-op refresh, verify a clean tree and zero-byte message file, then activate
+  controller-selected `SPEC-TO-INTENT-ALIGNMENT.6d` before diagnosing the three OpenCAPI analog records.
+- In-flight uncommitted: completed and focused-verified `FSMGEN-REFRESH-INTEGRATE-7.1` closure awaiting doctrine and
+  mdBook gates plus its commit; no submodule-local change, project-data residue, or background process.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

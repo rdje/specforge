@@ -933,6 +933,20 @@ five explicit `isf_rule_transaction_conflict_*` residuals; all 44 current `.isf`
 FSMGen strict checker with zero diagnostics. The complete 78-document persisted adapter chain also replays
 current. *Authoritative tracking:* `docs/tasks/FSMGEN-REFRESH-INTEGRATE-6.md`.
 
+### `FSMGEN-REFRESH-INTEGRATE-7` — live-remote currentness verification
+
+The next owner-requested refresh was a verified no-op. A pruned fetch and an independent live
+`ls-remote --symref` query both resolved FSMGen's remote `HEAD` and `main` to
+`a51dcdad0a7e752e638abfe3ab414f7f3911889d`, exactly the existing stage-zero gitlink. The exact
+old-to-new range therefore contained zero commits and zero changed paths: refresh cycle 6 had already
+integrated the recent upstream push, and there was no new contract surface to interpret or adopt.
+
+Verification still crossed the executable boundary: all seven focused `.isf` canaries passed the pinned
+FSMGen strict checker, the submodule remained clean and detached at the remote tip, and the derived-state
+authority check proved that the gitlink and both declared feedback pin copies agree. No source, gitlink,
+Knowledge Map fact, or product-status claim changed. *Authoritative tracking:*
+`docs/tasks/FSMGEN-REFRESH-INTEGRATE-7.md`.
+
 ### `FSMGEN-SUBMODULE-BUMP` — pin `effe591d` → `9bfb9a20`
 
 Updated the pinned `subs/fsmgen` submodule to upstream HEAD
