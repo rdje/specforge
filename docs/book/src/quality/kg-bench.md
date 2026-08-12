@@ -564,14 +564,18 @@ The current fixture run can also be projected into the corpus knowledge base:
 cargo run --manifest-path Cargo.toml -- corpus-kb --kg-fixtures-root crates/specforge/test_data/kg_quality
 ```
 
-That projection currently runs all 156 tracked fixtures and writes the aggregate plus eight family
+That projection currently runs all 156 tracked fixtures and writes the aggregate plus seven structural-capability
 pages, the prior-candidate page, and its paired JSON manifest.
 It is a reviewable synthesis page, not a replacement for the executable `kg-bench` gate.
-It includes a fixture-family summary table plus one compact pass/fail/path row per fixture; only failed
+It includes a structural-capability summary table plus one compact pass/fail/path row per fixture; only failed
 fixtures receive expanded failure detail. This preserves exact membership while keeping projection
 growth proportional and line-bounded.
-The same refresh now populates dedicated semantic/truthfulness pattern, typed-prior-memory, table, visual, state-machine, timing, infrastructure/polarity, and AMBA-family corpus-KB pages from the same fixture outcomes.
-It also populates a review-only prior-candidate page plus a JSON readiness manifest with family-level
+The same refresh now populates dedicated semantic/truthfulness pattern, typed-prior-memory, table, visual,
+state-machine, timing, and infrastructure/polarity corpus-KB pages from the same fixture outcomes. Routing is
+derived from populated typed fixture-schema capabilities; fixture names are provenance only, and no vendor- or
+protocol-family page exists.
+It also populates a review-only prior-candidate page plus a schema-2 JSON readiness manifest with capability-level
 schema, fixture, harvest, and consumer gate rows. The Markdown table shows evidence counts and lists
-each positive/guard fixture separately below it; those artifacts can guide future typed-prior work but
+each prior-present/control fixture separately below it. Prior-present means a typed prior patch exists; it is not
+inferred from a fixture name and does not itself mean that the prior is correct. Those artifacts can guide future typed-prior work but
 cannot mutate `CorpusMemory`.

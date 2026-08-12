@@ -23,7 +23,7 @@ Disallowed uses:
 
 Every page should state:
 
-- what evidence family it summarizes
+- what structural evidence capability it summarizes
 - whether any section is auto-refreshed
 - which paths, validation reports, fixtures, or implementation notes ground the claims
 - what a future extractor may use the page for
@@ -58,13 +58,17 @@ The current managed block families are:
 
 Prior-candidate managed rows must remain non-promoting.
 They can name a target `CorpusMemory` schema and required gates, but they must also preserve explicit non-mutation state for canonical IR and corpus memory until a separate validated promotion workflow exists.
-If a prior-candidate block includes a gate matrix, the matrix is a family-level review checklist only.
-It may name visible schema, fixture, harvest, and consumer surfaces, but it must still preserve `review_scope: family_surface_not_individual_prior` and a non-mutation promotion boundary.
+If a prior-candidate block includes a gate matrix, the matrix is a capability-level review checklist only.
+It may name visible schema, fixture, harvest, and consumer surfaces, but it must still preserve
+`review_scope: capability_surface_not_individual_prior` and a non-mutation promotion boundary.
 The sibling `prior_candidates/kg-fixture-candidates.json` manifest is the machine-readable form of that review index.
 It may expose fixture counts, readiness labels, gate identifiers, and fixture names for future tooling, but it must keep `canonical_mutation_allowed: false`, `corpus_memory_mutation_allowed: false`, and `promotion_boundary: review_only_no_corpus_memory_or_canonical_ir_mutation`.
-Readiness labels such as `fixture_paired_review_ready` or `caution_surface_review_ready` mean the fixture surface is reviewable; they do not approve any concrete prior record.
+Readiness labels such as `prior_and_control_surfaces_present` or `caution_surface_review_ready` mean the typed
+fixture surface is reviewable; they do not approve any concrete prior record. Schema 2 names
+`prior_present_fixtures` and `control_fixtures` explicitly. It does not infer “gold,” “negative,” or any other
+semantic class from a fixture name.
 
-Typed prior-memory fixture-family pages are also non-promoting.
+Typed prior-memory capability pages are also non-promoting.
 They can summarize KG fixtures that stage or exercise local `CorpusMemory`, but they are not `generated/prior_memory/corpus_memory.json` and cannot add, edit, approve, or delete machine-usable priors.
 
 ## Promotion Policy

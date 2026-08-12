@@ -19,7 +19,7 @@ use crate::ir::constraint_extract_llm::{
     ground_constraint_typed, propose_constraints_llm,
 };
 use crate::ir::entity_typing::{
-    EntityType, classify_entity, gather_entity_evidence, resolve_unique_document_identifier,
+    EntityType, declared_signal_catalog, resolve_unique_document_identifier,
 };
 use crate::ir::evidence::{EvidenceIr, ExtractorTier};
 use crate::ir::extractor::{ExtractorRunEntry, SurfaceManifest};
@@ -71,6 +71,31 @@ pub fn promote_constraints(
         }
     }
     let pattern_before = ir.signal_constraints.len();
+    let declared_signal_catalog = declared_signal_catalog(&ir);
+    let declared_signals = declared_signal_catalog
+        .iter()
+        .cloned()
+        .collect::<BTreeSet<_>>();
+    let declared_field_catalog = ir
+        .message_field_records
+        .iter()
+        .map(|field| field.name.clone())
+        .fold(Vec::new(), |mut fields, field| {
+            if !fields.contains(&field) {
+                fields.push(field);
+            }
+            fields
+        });
+    let declared_fields = declared_field_catalog
+        .iter()
+        .cloned()
+        .collect::<BTreeSet<_>>();
+    let mut declared_carriers = declared_signal_catalog;
+    for field in declared_field_catalog {
+        if !declared_carriers.contains(&field) {
+            declared_carriers.push(field);
+        }
+    }
 
     let mut new_constraints = Vec::new();
     let mut new_field_constraints = Vec::new();
@@ -80,17 +105,29 @@ pub fn promote_constraints(
         if max_sentences != 0 && i >= max_sentences {
             break;
         }
-        for raw in propose_constraints_llm(sentence, provider, model) {
+        for raw in propose_constraints_llm(sentence, &declared_carriers, provider, model) {
             let signal_id = format!("llm_sigcon_{n:04}");
             let field_id = format!("llm_fieldcon_{field_n:04}");
-            // .1 grounding: type the subject. The extraction prompt already self-filters non-signals;
-            // Rust is the backstop (rejects structural refs; honours declared signals, and grounds
-            // catalog-declared message fields to `Field` — `.FIELD.3`).
+            // .1 grounding: an exact current-document declaration is the only typing authority.
+            // The model cannot turn its own proposal into the declaration that validates it.
             let type_subject = |s: &str| {
-                classify_entity(
-                    &gather_entity_evidence(s, &ir, std::slice::from_ref(sentence)),
-                    |_| EntityType::Signal,
+                if resolve_unique_document_identifier(
+                    s,
+                    declared_signals.iter().map(String::as_str),
                 )
+                .is_some()
+                {
+                    EntityType::Signal
+                } else if resolve_unique_document_identifier(
+                    s,
+                    declared_fields.iter().map(String::as_str),
+                )
+                .is_some()
+                {
+                    EntityType::Field
+                } else {
+                    EntityType::Unknown
+                }
             };
             // `.FIELD.4` — catalog containers declaring a field subject (provenance on the record).
             let field_containers = |name: &str| {

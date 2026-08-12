@@ -46,7 +46,6 @@ The first refreshable page families are:
 - `corpus_kb/state_machines/kg-fixtures.md`
 - `corpus_kb/timing/kg-fixtures.md`
 - `corpus_kb/infra/kg-fixtures.md`
-- `corpus_kb/protocols/amba-kg-fixtures.md`
 - `corpus_kb/prior_candidates/kg-fixture-candidates.md`
 - `corpus_kb/prior_candidates/kg-fixture-candidates.json`
 
@@ -62,7 +61,7 @@ This mode reads only `VALIDATION_SNAPSHOT.md`'s projected-artifact section. It i
 with positional validation-report inputs. Positional reports remain useful for local, unreviewed
 exploration, but they are not tracked currentness authority.
 
-The benchmark and fixture-family pages are refreshed by running the tracked KG fixture suite:
+The benchmark and structural-capability pages are refreshed by running the tracked KG fixture suite:
 
 ```bash
 cargo run --manifest-path Cargo.toml -- corpus-kb \
@@ -87,18 +86,23 @@ For example:
 | `actor_ports_gold` | `pass` | `crates/specforge/test_data/kg_quality/actor_ports_gold/fixture.json` |
 ```
 
-The projection also includes a review-facing fixture-family summary table.
-The same refresh also updates dedicated semantic/truthfulness pattern, typed-prior-memory, table, visual, state-machine, timing, infrastructure/polarity, and AMBA-family pages.
+The projection also includes a review-facing structural-capability summary table. Capability membership is
+derived only from populated typed fixture-schema fields; fixture names and document-owned values are opaque.
+The same refresh also updates dedicated semantic/truthfulness pattern, typed-prior-memory, table, visual,
+state-machine, timing, and infrastructure/polarity pages. There is no vendor- or protocol-family page.
 It also updates a review-only prior-candidate page that names target `CorpusMemory` schema surfaces,
 required gates, and a family-level promotion gate review matrix without writing corpus memory. Its
-summary table carries positive/guard counts; a separate `Fixture Evidence` section lists each fixture
+summary table carries prior-present/control counts; a separate `Fixture Evidence` section lists each fixture
 on its own line, while the paired JSON retains the complete machine-readable sets.
 That matrix is still only a review checklist; it is not an approval record and cannot promote a concrete prior.
-The sibling JSON readiness manifest exposes the same non-promoting candidate surface for review automation, including readiness labels such as `fixture_paired_review_ready` and `caution_surface_review_ready`.
+The schema-2 sibling JSON readiness manifest exposes the same non-promoting candidate surface for review automation,
+including readiness labels such as `prior_and_control_surfaces_present` and
+`caution_surface_review_ready`. “Prior-present” means only that the typed fixture patch contains that prior
+surface; it does not classify a fixture as positive by name or assert that the prior was accepted.
 It is a review surface, not a replacement for the executable `specforge kg-bench` gate.
 Fixture-local validation runs quietly during this projection, so the command output remains a concise corpus-KB refresh summary.
-Fixture-family labels summarize coverage only; they do not mutate canonical IR or typed prior memory.
-The typed prior-memory page is likewise only a fixture-family projection; it is not `generated/prior_memory/corpus_memory.json` and cannot write machine-usable priors.
+Structural capability labels summarize coverage only; they do not mutate canonical IR or typed prior memory.
+The typed prior-memory page is likewise only a capability projection; it is not `generated/prior_memory/corpus_memory.json` and cannot write machine-usable priors.
 
 ## Currentness gate
 
@@ -108,7 +112,7 @@ Use the read-only report when auditing the tracked projection:
 perl scripts/check_corpus_kb_currentness.pl --report
 ```
 
-The checker binds the reviewed validation authority, every Git-indexed KG fixture file, all eleven
+The checker binds the reviewed validation authority, every Git-indexed KG fixture file, all ten
 managed Markdown regions, the paired JSON manifest, and the Rust producer regions. It hashes the human
 prefix and suffix around every managed block separately, so a refresh cannot make itself current by
 overwriting curated synthesis. The check runs unconditionally through the live-document doctrine gate.

@@ -291,10 +291,11 @@ fn propose_register_diagram_fields(
 /// The diagram-reading prompt. Asks ONLY for what the VLM reads reliably — field names, their
 /// order, and per-field widths — never absolute bit positions (those are reconstructed by tiling).
 fn build_register_diagram_prompt() -> String {
-    "This is a register bit-field layout diagram from a chip-specification PDF. Read the named \
+    "This is a register bit-field layout diagram from a digital-hardware specification. Read the named \
 fields from left (most-significant bit) to right (least-significant bit). For EACH field cell, \
 report its field name and its WIDTH in bits (how many bit positions the cell spans). Include \
-reserved/unnamed cells too, naming them \"reserved\". Do NOT report absolute bit positions. Reply \
+reserved/unnamed cells too, naming them \"reserved\". Treat every visible field label as opaque and \
+copy it exactly; never infer from a familiar name. Do NOT report absolute bit positions. Reply \
 with STRICT JSON only, no prose: {\"fields\": [{\"name\": \"<field>\", \"width\": <bits>}, ...]} in \
 most-significant-first order."
         .to_string()
@@ -413,6 +414,14 @@ mod tests {
             "resumereq",
             "haltreq",
         ]
+    }
+
+    #[test]
+    fn register_diagram_prompt_treats_field_names_as_opaque() {
+        let prompt = build_register_diagram_prompt();
+        assert!(prompt.contains("digital-hardware specification"));
+        assert!(prompt.contains("field label as opaque"));
+        assert!(!prompt.contains("chip-specification"));
     }
 
     /// Write a mock VLM helper that echoes a fixed reply regardless of args (the command always

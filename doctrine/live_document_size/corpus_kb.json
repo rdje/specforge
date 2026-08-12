@@ -38,9 +38,9 @@
         "kind": "kg_aggregate",
         "start_marker": "<!-- corpus_kb_kg_fixtures:start -->",
         "end_marker": "<!-- corpus_kb_kg_fixtures:end -->",
-      "managed_sha256": "581903e4886d02d7ccb8740df5335cb78d88ab535d50b2212a3b648eb5b06e73",
-        "managed_lines": 189,
-      "managed_bytes": 24822,
+        "managed_sha256": "27b6b3093375c1630811cd1b8f235cbb65d4db7d3d4ef2fa97ece9261c58e4b9",
+        "managed_lines": 187,
+        "managed_bytes": 24815,
         "human_prefix_sha256": "dbf4e64cf7075d60bce535752aaf4acb24ed6def46f937036738328e5768a460",
         "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
       },
@@ -50,9 +50,9 @@
         "kind": "kg_family",
         "start_marker": "<!-- corpus_kb_kg_fixture_family:start -->",
         "end_marker": "<!-- corpus_kb_kg_fixture_family:end -->",
-      "managed_sha256": "bc9f4bb668b92eb934e79907a1f45eda7405943d64b50338a1e8fc8985a3d019",
-        "managed_lines": 101,
-      "managed_bytes": 19225,
+        "managed_sha256": "ff950a9989e6a3532cebb7cd8c982eb5fbe86e056078d2529d2f16f38985c0e7",
+        "managed_lines": 136,
+        "managed_bytes": 26138,
         "human_prefix_sha256": "69b51fef3a022499db34f09a23794959414e7cd9aee4652c51a2eb8c330f973f",
         "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
       },
@@ -62,9 +62,9 @@
         "kind": "kg_family",
         "start_marker": "<!-- corpus_kb_kg_fixture_family:start -->",
         "end_marker": "<!-- corpus_kb_kg_fixture_family:end -->",
-      "managed_sha256": "0e3487539f3cf2381c8250fcb63b5863173d790ce76ca0cf45934191759eb52b",
-        "managed_lines": 44,
-      "managed_bytes": 6676,
+        "managed_sha256": "adcec6b05d03dd0e8e99316d886352bb52e08b90c8e9b5c0654245c31f9dc9c3",
+        "managed_lines": 43,
+        "managed_bytes": 6113,
         "human_prefix_sha256": "b3b32eeaa3917526e464dca8649a9bdf94c5202edbc255318bd18fafc0f10b9e",
         "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
       },
@@ -74,9 +74,9 @@
         "kind": "kg_family",
         "start_marker": "<!-- corpus_kb_kg_fixture_family:start -->",
         "end_marker": "<!-- corpus_kb_kg_fixture_family:end -->",
-      "managed_sha256": "bd4453e3af5392ae79c2006c6d4b1d902227dc4ddf9fb168eb0eb00aa312d890",
-        "managed_lines": 25,
-      "managed_bytes": 2645,
+        "managed_sha256": "ea6dd71a0d3c5dcf55b4be8ea4fb45fde5eab5e2147b8988404a34ce03d21029",
+        "managed_lines": 78,
+        "managed_bytes": 12426,
         "human_prefix_sha256": "90af26b091603de37ccc7cff961f77bfed600ca7619f179cf813e0fa1136d189",
         "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
       },
@@ -86,9 +86,9 @@
         "kind": "kg_family",
         "start_marker": "<!-- corpus_kb_kg_fixture_family:start -->",
         "end_marker": "<!-- corpus_kb_kg_fixture_family:end -->",
-      "managed_sha256": "7a83a0ce802619373ac2a9e871cf69d1dbec5ac9842c23329066075d53f8a192",
-        "managed_lines": 37,
-      "managed_bytes": 5400,
+        "managed_sha256": "35a7a5c127ec0079d1a4db8590031da74339b3ce41f3598e57db59d4fd345745",
+        "managed_lines": 39,
+        "managed_bytes": 5484,
         "human_prefix_sha256": "fba3243ee7f84099cbbbaf7757813ccfb8217d739d64a96ab09d97a40c3a549e",
         "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
       },
@@ -98,9 +98,9 @@
         "kind": "kg_family",
         "start_marker": "<!-- corpus_kb_kg_fixture_family:start -->",
         "end_marker": "<!-- corpus_kb_kg_fixture_family:end -->",
-        "managed_sha256": "2905e6ac3846998f922bd80b892a74c15792101d1e34f991350d46fec28078e4",
+        "managed_sha256": "743df5dc32911e329e2dd8ee4283045d4888b010efad18074ebdb538605b640d",
         "managed_lines": 18,
-        "managed_bytes": 1260,
+        "managed_bytes": 1304,
         "human_prefix_sha256": "5682cd79d2e284db274e6c2b5653e9d6e8d332d629295d3f44e354576799611f",
         "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
       },
@@ -110,9 +110,9 @@
         "kind": "kg_family",
         "start_marker": "<!-- corpus_kb_kg_fixture_family:start -->",
         "end_marker": "<!-- corpus_kb_kg_fixture_family:end -->",
-      "managed_sha256": "e7095350a94e3739034620c558c145311f7d1b1170d1a097c0ef166689b98ff9",
-        "managed_lines": 86,
-      "managed_bytes": 12724,
+        "managed_sha256": "e7b9ea053baaceb9040b029945dd23c0cee73247bd76033e4d7d03592d71363c",
+        "managed_lines": 92,
+        "managed_bytes": 13438,
         "human_prefix_sha256": "78381e8cbadfa1450e2a4645493913d33d84f8d6c4ebf10c9e676db3fbf71970",
         "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
       },
@@ -122,22 +122,10 @@
         "kind": "kg_family",
         "start_marker": "<!-- corpus_kb_kg_fixture_family:start -->",
         "end_marker": "<!-- corpus_kb_kg_fixture_family:end -->",
-        "managed_sha256": "bafca33810693fa3b19f03e7d550e3d3a74bfaf3060995ef46a900c01c987f9b",
-        "managed_lines": 33,
-        "managed_bytes": 3879,
+        "managed_sha256": "e14f0e509dcd3ddd6605d6b016c3fcea623cce16f219542d56e2b2b3854aa7dc",
+        "managed_lines": 24,
+        "managed_bytes": 2522,
         "human_prefix_sha256": "752c8a4ff951a3b6017875dd9520d26260772a7941a55f36eee6debd98b2592c",
-        "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
-      },
-      {
-        "id": "amba",
-        "path": "corpus_kb/protocols/amba-kg-fixtures.md",
-        "kind": "kg_family",
-        "start_marker": "<!-- corpus_kb_kg_fixture_family:start -->",
-        "end_marker": "<!-- corpus_kb_kg_fixture_family:end -->",
-        "managed_sha256": "a966e27f6e8f980b393a300f4dd9ca4343f1fdbab2990060303b809baab426e2",
-        "managed_lines": 50,
-        "managed_bytes": 6936,
-        "human_prefix_sha256": "4751709cfd26b334888e819f404099862ce38c24870d65eebb14976c6e46078c",
         "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
       },
       {
@@ -146,18 +134,18 @@
         "kind": "prior_candidates",
         "start_marker": "<!-- corpus_kb_prior_candidates:start -->",
         "end_marker": "<!-- corpus_kb_prior_candidates:end -->",
-      "managed_sha256": "006e563d4ec04407273e884101455ebcd0412a7df45b5102ce8105afe73a0ce9",
-        "managed_lines": 115,
-      "managed_bytes": 8419,
+        "managed_sha256": "90790b3bd8a779c4060aa671a3994e2ed9e00b7b999f28d0d97cef346cf5cb52",
+        "managed_lines": 269,
+        "managed_bytes": 16672,
         "human_prefix_sha256": "e5a0bd2a938c2b8d765376e20fc1a165641a644c6da9481915d4aaf53b028218",
         "human_suffix_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
       }
     ],
     "json": {
       "path": "corpus_kb/prior_candidates/kg-fixture-candidates.json",
-      "sha256": "1ae3d9447d948856f77bff0132f97858004ee93cf5c5eddfb51b02e077cad5b8",
-      "lines": 234,
-      "bytes": 11386,
+      "sha256": "ef5207e027ce784788731a212a74b50173859b0f176825b9288bc6752ecac197",
+      "lines": 715,
+      "bytes": 37029,
       "candidate_count": 7,
       "promotion_status": "candidate_not_promoted_review_required"
     }
@@ -197,8 +185,8 @@
         "start_literal": "fn refresh_kg_fixtures_page(",
         "end_before_literal": "fn load_validation_report_projections(",
         "lines": 112,
-        "bytes": 3870,
-        "sha256": "f8653e47cc8ac51776c668041958e9d04f7db9ea6c86b6ef768562376803f57b"
+        "bytes": 3868,
+        "sha256": "b6acd0d92a576be8e05cf3010ae7ce66dc3f725e9fa881d0f8bab40ae51db233"
       },
       {
         "id": "reviewed_parser_renderer",
@@ -214,9 +202,9 @@
         "path": "crates/specforge/src/commands/corpus_kb.rs",
         "start_literal": "fn render_kg_fixtures_block(",
         "end_before_literal": "fn replace_managed_block(",
-        "lines": 519,
-        "bytes": 20919,
-        "sha256": "f5bc303cbcc0b24a882b60a0a20ad0186cf33b325339216d6ff13c52fc883bb4"
+        "lines": 433,
+        "bytes": 17910,
+        "sha256": "9f8782d0b7e1abc7bbf93547b10ab22189d56a36c9e3482b7d86f0cebfa4a6da"
       },
       {
         "id": "managed_block_writer",
@@ -226,6 +214,24 @@
         "lines": 31,
         "bytes": 1073,
         "sha256": "5bd24f93a053e2d28110f47600a2c5a0cddb99ae721c5a13c82f9698b3dc8737"
+      },
+      {
+        "id": "kg_fixture_contract_types",
+        "path": "crates/specforge/src/commands/kg_bench.rs",
+        "start_literal": "pub(crate) struct KgBenchFixtureOutcome {",
+        "end_before_literal": "pub fn run(args: KgBenchArgs) -> Result<()> {",
+        "lines": 68,
+        "bytes": 2568,
+        "sha256": "a4209cd1b69362af3cb83a3b1da9c91ce2ec9e05ea707743f60d37862efe4761"
+      },
+      {
+        "id": "kg_fixture_structure_classifier",
+        "path": "crates/specforge/src/commands/kg_bench.rs",
+        "start_literal": "fn load_fixture_structure_profile(",
+        "end_before_literal": "fn resolve_fixture_paths(",
+        "lines": 211,
+        "bytes": 7749,
+        "sha256": "d0a2aea7b4fde568ee1e5405a1604c7796d09ecd311ed1a6814a62e0504cf18f"
       }
     ],
     "verification_command": "cargo run --manifest-path Cargo.toml -- kg-bench",

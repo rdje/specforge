@@ -3,8 +3,8 @@
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical facts live in front-mattered source files.
 
 - Facts: **232**
-- Unique question keys: **1721**
-- Canonical input SHA-256: `7250a5858fc20af5d6267525c5f5cc351a24034644bb41184b261d95952a286f`
+- Unique question keys: **1724**
+- Canonical input SHA-256: `ce0a58ec6c6fcd496dc64c1286ed98a9fe0cad87ecfe094c3e1b52c884059ef4`
 - Browse by id/title: [`docs/knowledge/INDEX.md`](docs/knowledge/INDEX.md)
 - Search all question shards: `rg -i --glob 'questions-*.md' 'terms' docs/knowledge-map`
 
@@ -21,4 +21,4 @@
 - [Shard 0009](docs/knowledge-map/questions-0009.md) — 148 keys
 - [Shard 0010](docs/knowledge-map/questions-0010.md) — 147 keys
 - [Shard 0011](docs/knowledge-map/questions-0011.md) — 148 keys
-- [Shard 0012](docs/knowledge-map/questions-0012.md) — 102 keys
+- [Shard 0012](docs/knowledge-map/questions-0012.md) — 105 keys

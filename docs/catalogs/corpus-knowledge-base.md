@@ -22,8 +22,6 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [corpus_kb/prior_candidates/kg-fixture-candidates.md](../../corpus_kb/prior_candidates/kg-fixture-candidates.md) | KG Fixture Prior Candidates |
 | [corpus_kb/prior_memory/README.md](../../corpus_kb/prior_memory/README.md) | Typed Prior-Memory Pattern Pages |
 | [corpus_kb/prior_memory/kg-fixtures.md](../../corpus_kb/prior_memory/kg-fixtures.md) | Typed Prior-Memory Fixture Patterns |
-| [corpus_kb/protocols/README.md](../../corpus_kb/protocols/README.md) | Protocol Family Pages |
-| [corpus_kb/protocols/amba-kg-fixtures.md](../../corpus_kb/protocols/amba-kg-fixtures.md) | AMBA Family Fixture Patterns |
 | [corpus_kb/state_machines/README.md](../../corpus_kb/state_machines/README.md) | State-Machine Pattern Pages |
 | [corpus_kb/state_machines/kg-fixtures.md](../../corpus_kb/state_machines/kg-fixtures.md) | State-Machine Fixture Patterns |
 | [corpus_kb/tables/README.md](../../corpus_kb/tables/README.md) | Table Pattern Pages |

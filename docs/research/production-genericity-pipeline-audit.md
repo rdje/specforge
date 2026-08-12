@@ -1,6 +1,6 @@
 # Production-genericity pipeline audit
 
-Status: **discovery complete; SourceIR, EvidenceIR protocol carriers, and prior identity routing remediated; spelling-driven EvidenceIR-through-adapter breach remains**
+Status: **discovery complete; SourceIR, EvidenceIR, prior/identifier authority, prompts, and corpus organization remediated; structural/comment/calibration signoff remains**
 Owner: `SPEC-TO-INTENT-ALIGNMENT.6d.ii`
 Audit date: 2026-08-12
 Audited revision: `b977a51ff24f966dcf6aca74ccf47d592a4fc452` plus the active `.6d.ii.a` replay publication
@@ -133,16 +133,16 @@ prior memory.
 | Stage | Current extraction decisions | Neutrality verdict |
 | --- | --- | --- |
 | Source registration/materialization | Source kind, repository-local artifacts, Docling page/table/visual conversion, closed visual-form/section grammar, typed table-role classification, timing-table structural revalidation | Remediated by `.6d.ii.b`: schema-2 classification is identity-independent and fail-closed; schema-1 semantic labels are neutralized on load. |
-| VLM enrichment | Caption-selected timing/state images; typed JSON prompts; table kind/grid proposals checked against headers | Source routing now inherits the neutral schema-2 classifier, but the production prompt still narrows the domain to “chip protocol.” |
+| VLM enrichment | Caption-selected timing/state images; typed JSON prompts; table kind/grid proposals checked against headers | Prompts now describe generic digital-hardware structure, require visible/current-document grounding, and treat labels as opaque. |
 | Evidence assembly | Markdown blocks, spans, section anchors, references, table declarations, typed provenance | Broadly structural/input-derived. |
-| Evidence deterministic extraction | Registers, fields, signal inventories, relations, constraints, polarity, semantic hints, timing, frames, states, actors, operations | Protocol-structure breach remediated by `.6d.ii.c`: schema 2 uses document-derived generic frame/operation/state/direction records and neutralizes schema-1 authority on load. Other spelling-driven Evidence decisions and named production commentary remain in the `.d`/`.e` denominator. |
+| Evidence deterministic extraction | Registers, fields, signal inventories, relations, constraints, polarity, semantic hints, timing, frames, states, actors, operations | Protocol structure and identifier-spelling authority are remediated by `.6d.ii.c`/`.d.ii`; named production commentary and the proof-carrying rule boundary remain in `.e`. |
 | Prior-guided EvidenceIR | Table/visual/actor/semantic/temporal priors | Remediated by `.6d.ii.d.i`: schema 7 has one global scope; normalized current-document evidence and structural fingerprints select priors, while identity is provenance only. |
-| Text LLM/NLP | Per-sentence JSON extraction, declared-signal grounding, entity typing, dedup, optional promotion | Grounding is useful; one production prompt embeds named signal examples and another frames every input as a protocol specification. |
-| SemanticIR | Declared-signal gate; interfaces, actors, ports, connectivity, infrastructure, temporal rules/contracts; VLM fusion/fidelity; residuals | Mixed. Core grounding/fusion and global prior loading are generic. Signal-name substring inference remains blocking. |
-| IntentIR | Lossless carry-forward; actor/temporal relations; structural named-transaction recognition; residual decisions | Main synthesis is structural, but it publicly carries protocol-specific types/field names and production comments retain corpus identities. |
-| ISF adapter | Typed lowering, syntax validation, conflict rejection, unsupported-record residuals | Lowering logic is mostly neutral. It imports/counts/residualizes protocol-specific schema and contains corpus-specific production commentary. |
-| Validation/evaluation | Stage metrics, negative-knowledge lookup, extraction scores, completeness/category classification | Prior lookup is neutral at schema 7. Signal-spelling decisions remain blocking; evaluation schema exposes named protocol tasks, and category thresholds are corpus-calibrated constants presented as generic. |
-| Corpus/trajectory utilities | Learn priors, structural clustering, KG pages, reviewed replay/controller | Structural clustering is neutral. Named family pages/routing and the reviewed-population snapshot are corpus-specific production code. |
+| Text LLM/NLP | Per-sentence JSON extraction, declared-signal grounding, entity typing, dedup, optional promotion | Remediated by `.6d.ii.d.iii`: typed tasks, declaration-ordered catalogs, undeclared-contract residualization, model-proposal-independent constraint typing, and identifier-redacted entity judgment. |
+| SemanticIR | Declared-signal gate; interfaces, actors, ports, connectivity, infrastructure, temporal rules/contracts; VLM fusion/fidelity; residuals | Identifier-spelling inference is removed. Named production commentary and the proof-carrying inference boundary remain open in `.e`. |
+| IntentIR | Lossless carry-forward; actor/temporal relations; generic transaction synthesis; residual decisions | Name-created behavior is removed and generic carriers are preserved; named production commentary and structural enforcement remain open. |
+| ISF adapter | Typed lowering, syntax validation, conflict rejection, unsupported-record residuals | Lowering consumes typed system/actor/temporal contracts and fails closed; named production commentary remains for `.e`. |
+| Validation/evaluation | Stage metrics, negative-knowledge lookup, extraction scores, completeness/category classification | Prior and signal validation are identity-neutral. Named conformance schema separation and corpus-calibrated classification claims remain open in `.e`. |
+| Corpus/trajectory utilities | Learn priors, structural clustering, KG pages, reviewed replay/controller | Corpus-KB routing derives capabilities/prior surfaces/control status only from populated fixture-schema fields; names are display/provenance. Reviewed snapshot composition remains test-only. |
 
 ## Confirmed production violations
 
@@ -308,29 +308,41 @@ chain gains registers under the positive conjunction. The large recall reduction
 that the old labels encoded weak corpus shortcuts, not a reason to keep them. Generic recovery belongs
 to later EvidenceIR grammar/evidence leaves and cannot restore a result through document identity.
 
-### P0 — named corpus code is compiled as product code
+### Resolved in `.6d.ii.d.iii` — named corpus code was compiled as product code
 
 `commands/corpus_kb.rs` has a named protocol-family label, output page, prompts, and fixture-name
 classifier. At the audited revision, the reviewed trajectory composer was also exported from
 `ir/mod.rs` and exercised through a production example even though it authenticates exact reviewed
 documents and results. This slice removes that second breach: the composer now lives below the
 `#[cfg(test)]` `test_support` module, the public IR registration and production example are gone, and
-its named assertions remain test-only. `commands/corpus_kb.rs` remains open remediation work.
+its named assertions remain test-only. `.d.iii` removes the remaining named routing: `corpus_kb` no longer
+classifies fixture names, emits an AMBA page, or infers positive/negative status from filename fragments.
+`kg_bench` computes a typed structure profile from populated schema fields; corpus pages select only those
+capabilities. The prior-candidate manifest schema 2 distinguishes prior-present and control surfaces without
+claiming that a named “gold” fixture is positive. Exact fixture identities remain legal conformance provenance.
 
 Corpus organization, review gold, and exact trajectory snapshots are conformance/evaluation assets,
-not product extraction. They must compile only under test/conformance targets and cannot be imported
-by the production core.
+not product extraction. The extraction core cannot import them. The remaining `.e` structural boundary must
+also place named conformance/oracle implementation behind an explicit conformance target; `.d.iii` closes the
+semantic routing breach without claiming that later physical module separation is already complete.
 
-### P1 — production model prompts carry unnecessary domain priors
+### Resolved in `.6d.ii.d.iii` — production model prompts carried unnecessary domain priors
 
-`commands/nlp_enrich.rs::build_nlp_prompt` describes the agent as a protocol analyzer and gives
-named real signal examples. `commands/enrich.rs` similarly frames diagrams/tables as protocol PDFs.
-`ir/constraint_extract_llm.rs::extraction_prompt` is otherwise schema-oriented and uses neutral
-placeholders, but its “wire/pin/field” definition currently conflates fields with signals and should
-remain aligned with entity typing.
+`commands/nlp_enrich.rs::build_nlp_prompt` described the agent as a protocol analyzer and gave
+named real signal examples. `commands/enrich.rs` similarly framed diagrams/tables as protocol PDFs,
+and `ir/constraint_extract_llm.rs::extraction_prompt` conflated fields with signals. The complete
+constructor census then found a subtler breach: `entity_prompt` sent the raw identifier to the model and
+explicitly relied on familiar-name world knowledge; contract and LLM-primary constraint prompts also lacked a
+closed current-document declaration catalog.
 
 Prompts are executable extraction policy. They must describe the neutral typed output and use
-synthetic placeholders generated per request, while injecting only document-derived grounding.
+synthetic placeholders generated per request, while injecting only document-derived grounding. `.d.iii` applies
+that rule to relation, NLP constraint, contract, condition, entity, VLM diagram/table/audit, register-diagram,
+constraint-extraction, and NLI prompts. Entity typing substitutes `<OPAQUE_IDENTIFIER>` in both the prompt and
+helper transport. Signal/value-carrier catalogs preserve declaration/provenance order—sorting by spelling was
+rejected because alpha-renaming could reorder a transformer input. Contract proposals that reference an
+undeclared signal become explicit residuals, and LLM-primary constraints type only against independently built
+signal/field catalogs. Alpha controls pin policy equality modulo injected symbols; named real examples are absent.
 
 ### P1 — corpus-calibrated thresholds are presented as universal classification
 
@@ -362,11 +374,11 @@ decision sites.
 | Entrypoint/platform | `lib.rs`, `main.rs`, `cli.rs`, `error.rs`, `persisted_path.rs`, `project_data.rs` | Neutral infrastructure. |
 | Test support | `test_support.rs`; test-only functions in `ir/mod.rs` | Test-only by design; keep outside production dependencies. |
 | Thin stage/utility commands | `adapt`, `clean`, `doctor`, `evidence`, `ingest`, `inspect`, `intent`, `semantic`, `extract_conditions`, `extract_contracts`, `recover_register_bits`, `rescan_plan`, `signal_resolve` | No identity-specific extraction branch found; they inherit the IR behavior they invoke. |
-| Model/quality commands | `audit_extraction`, `enrich`, `extract_constraints_llm`, `grits_consensus`, `nli_verify`, `nlp_enrich`, `project_validation` | Mixed: core transport/scoring is neutral; prompt framing/examples and inherited named schemas need correction. Corpus literals observed in these files are otherwise inside test modules. |
-| Orchestration/evaluation commands | `converge`, `eval_extraction`, `kg_bench`, `validate` | Validation and orchestration no longer infer semantics from identifier spelling; named conformance/corpus organization still requires the `.d.iii`/`.e` dependency boundary. |
-| Corpus commands | `corpus_cluster`, `learn_priors`, `corpus_kb` | Structural clustering and schema-7 learning are neutral; named corpus-KG page/routing behavior remains blocking. |
+| Model/quality commands | `audit_extraction`, `enrich`, `extract_constraints_llm`, `grits_consensus`, `nli_verify`, `nlp_enrich`, `project_validation` | Prompt policy is typed, current-document-grounded, opaque-symbol, and alpha-controlled. Corpus literals observed in these files are test-only or historical commentary owned by `.e`. |
+| Orchestration/evaluation commands | `converge`, `eval_extraction`, `kg_bench`, `validate` | Validation/orchestration do not infer semantics from identifier spelling; KG fixture capability metadata is structural. The `.e` dependency boundary still must isolate conformance code physically. |
+| Corpus commands | `corpus_cluster`, `learn_priors`, `corpus_kb` | Structural clustering, schema-7 learning, and schema-field-derived corpus-KB organization are neutral; fixture identity is display/provenance only. |
 | SourceIR | `ir/source.rs`, `ir/source/docling_backend.rs` | Neutral at schema 2: lifecycle is structural, classifiers use generic form/role grammar with honest unknown, and legacy semantic labels fail closed. |
-| EvidenceIR/extraction | `ir/evidence.rs`, `extractor.rs`, `extraction_filters.rs`, `entity_typing.rs`, `condition_extract.rs`, `constraint_extract_llm.rs`, `nlp_relation_extract.rs`, `normative_vocab.rs`, `register_bits.rs` | Signal identities are opaque and one-way grounded; named prompt/comment surfaces remain for `.d.iii`/`.e`. Framework, grounding primitives, and parsers are reusable. |
+| EvidenceIR/extraction | `ir/evidence.rs`, `extractor.rs`, `extraction_filters.rs`, `entity_typing.rs`, `condition_extract.rs`, `constraint_extract_llm.rs`, `nlp_relation_extract.rs`, `normative_vocab.rs`, `register_bits.rs` | Signal identities and prompt symbols are opaque and one-way grounded; named production commentary remains for `.e`. Framework, grounding primitives, and parsers are reusable. |
 | Prior/reuse | `ir/prior_memory.rs`, `ir/corpus_cluster.rs` | Neutral at schema 7: one global scope, fail-closed legacy quarantine, normalized evidence keys, and structural fingerprints; no document identity selects a lookup. |
 | SemanticIR | `ir/semantic.rs`, `ambiguity.rs`, `contract.rs`, `cve.rs`, `fidelity.rs`, `figure_region.rs`, `fusion.rs`, `nli_verify.rs`, `protocol_graph.rs`, `temporal_ltl.rs`, `waveform.rs` | Typed fusion/verification no longer assigns interface, invariant, handshake, infrastructure, or polarity meaning from identifier spelling; named production commentary and structural enforcement remain open. Figure-region corpus paths are test-only. |
 | IntentIR | `ir/intent.rs` | Structural synthesis no longer creates transactions or actor/temporal behavior from name fragments; named production commentary and the proof-carrying boundary remain open. |

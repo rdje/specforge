@@ -21,17 +21,21 @@ use std::collections::HashSet;
 /// `{"actor","relation","signal"}` (relation = `drives`|`reads`). The known signals are
 /// listed so the model uses the document's own names rather than inventing them.
 pub fn relation_extract_prompt(sentence: &str, known_signals: &[String]) -> String {
-    let mut signals = known_signals.to_vec();
-    signals.sort(); // deterministic prompt
+    let mut signals = Vec::new();
+    for signal in known_signals {
+        if !signals.contains(signal) {
+            signals.push(signal.clone());
+        }
+    }
     format!(
-        "You extract actor-signal relationships from one hardware-specification sentence.\n\
-         An actor (a Manager, Requester, Completer, Subordinate, ...) either DRIVES \
-         (sources/changes) or READS (observes/samples) a signal.\n\
-         Known signals: {}\n\
+        "You extract typed actor-to-signal relationships from one digital-hardware specification sentence.\n\
+         An actor either DRIVES (sources/changes) or READS (observes/samples) a signal. \
+         Treat actor and signal symbols as opaque; never infer their roles from spelling.\n\
+         Declared signal symbols in the current document: {}\n\
          Sentence: \"{}\"\n\
          Return ONLY a JSON array of objects \
          {{\"actor\":\"<name>\",\"relation\":\"drives\"|\"reads\",\"signal\":\"<one known signal>\"}}. \
-         Use only signals from the Known signals list; take actor names from the sentence. \
+         Use only exact symbols from the declared-signal list; take actor phrases from the sentence. \
          If there are none, return [].",
         signals.join(", "),
         sentence.replace('"', "'"),
@@ -120,10 +124,10 @@ pub fn nlp_extract_relations(
     model: &str,
     statement_id: &str,
     sentence: &str,
-    known_signals: &HashSet<String>,
+    known_signals: &[String],
 ) -> Vec<ActorSignalRelation> {
-    let known: Vec<String> = known_signals.iter().cloned().collect();
-    let prompt = relation_extract_prompt(sentence, &known);
+    let prompt = relation_extract_prompt(sentence, known_signals);
+    let known_signal_set = known_signals.iter().cloned().collect::<HashSet<_>>();
     match call_text_provider(
         provider,
         model,
@@ -133,7 +137,7 @@ pub fn nlp_extract_relations(
         &prompt,
         256,
     ) {
-        Ok(resp) => parse_nlp_relations(&resp, statement_id, known_signals),
+        Ok(resp) => parse_nlp_relations(&resp, statement_id, &known_signal_set),
         Err(_) => Vec::new(),
     }
 }
@@ -217,11 +221,15 @@ mod tests {
     #[test]
     fn prompt_lists_known_signals_and_the_sentence() {
         let p = relation_extract_prompt(
-            "The Requester drives PSEL.",
+            "The orchid actor drives PSEL.",
             &["PREADY".into(), "PSEL".into()],
         );
         assert!(p.contains("PREADY") && p.contains("PSEL"));
-        assert!(p.contains("The Requester drives PSEL."));
+        assert!(p.contains("The orchid actor drives PSEL."));
         assert!(p.contains("drives") && p.contains("reads"));
+        assert!(p.contains("Treat actor and signal symbols as opaque"));
+        for named_example in ["Manager", "Requester", "Completer", "Subordinate"] {
+            assert!(!p.contains(named_example));
+        }
     }
 }

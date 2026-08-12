@@ -1,3 +1,18 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii — neutralize prompts and corpus organization
+
+- Rewrote every audited production LLM/VLM/NLI prompt as a typed digital-hardware task with opaque
+  current-document symbols and declaration- or image-grounded inputs. Entity typing now redacts the identifier
+  from model/helper inputs; contract and LLM-primary constraint paths consume independent declaration catalogs,
+  and catalog order follows provenance rather than spelling. Added alpha and no-named-example controls.
+- Replaced fixture-name and protocol-family routing with a typed `KgBenchFixtureStructureProfile` derived only
+  from populated fixture schema fields. Fixture names and values are ignored for capability decisions.
+- Removed the AMBA corpus page, retained exact fixture identities only as conformance provenance, and regenerated
+  ten managed Markdown outputs over all 156 passing fixtures.
+- Advanced the review-only prior-candidate manifest to schema 2, with independent prior-present and control
+  surfaces and no filename-based positive/negative inference. The corpus KB remains non-promoting.
+- Synchronized the audit, mdBook, Knowledge Map fact, live docs, catalog, and currentness authority. Structural
+  production/conformance enforcement and full behavioral qualification remain owned by `.d.iv`–`.f`.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii — make document identifiers opaque
 
 - Removed identifier-case, length, suffix, substring, and conventional-name authority across EvidenceIR,

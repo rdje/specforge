@@ -10,15 +10,15 @@
 //!    are what gets frozen into code (the *procedure*, never the *names* — ADR 0006).
 //! 2. **Evidence (Rust):** [`gather_entity_evidence`] answers those questions from *this* document
 //!    deterministically.
-//! 3. **Judgment (LLM):** given that evidence, decide the type using world knowledge ([`classify_entity`]'s
-//!    injected `propose`).
+//! 3. **Judgment (LLM):** given that evidence with the document-owned identifier redacted, decide
+//!    the type from typed declarations and grammatical context ([`classify_entity`]'s injected `propose`).
 //! 4. **Grounding (Rust):** [`classify_entity`] *overrides* the LLM where the document is
 //!    unambiguous, and *defers* where it is silent. The document grounds everything → the same code
 //!    works on any chip-spec PDF.
 
 use crate::cli::VlmProviderArg;
 use crate::commands::llm_text::{api_url, call_text_provider};
-use crate::ir::evidence::EvidenceIr;
+use crate::ir::evidence::{EvidenceIr, collect_known_signal_names};
 
 /// Resolve a proposed identifier against a current-document catalog. Exact spelling wins;
 /// case-insensitive recovery is accepted only when it identifies one unique opaque name.
@@ -43,6 +43,34 @@ pub(crate) fn resolve_unique_document_identifier<'a>(
     folded.sort_unstable();
     folded.dedup();
     (folded.len() == 1).then(|| folded[0])
+}
+
+/// Current-document signal declarations in source/provenance order. Prompt builders must preserve
+/// this order: sorting by the opaque spelling would let alpha-renaming perturb model policy.
+pub(crate) fn declared_signal_catalog(ir: &EvidenceIr) -> Vec<String> {
+    let mut catalog = Vec::new();
+    for statement in &ir.extracted_statements {
+        let mut names = collect_known_signal_names(std::slice::from_ref(statement))
+            .into_iter()
+            .collect::<Vec<_>>();
+        let folded_statement = statement.text.to_ascii_lowercase();
+        names.sort_by_key(|name| {
+            folded_statement
+                .find(&name.to_ascii_lowercase())
+                .unwrap_or(usize::MAX)
+        });
+        for name in names {
+            if !catalog.contains(&name) {
+                catalog.push(name);
+            }
+        }
+    }
+    for declaration in &ir.table_signal_declaration_provenance {
+        if !catalog.contains(&declaration.signal_name) {
+            catalog.push(declaration.signal_name.clone());
+        }
+    }
+    catalog
 }
 
 /// The entity classes a chip-spec token can be. A constraint/relation may only take a `Signal`
@@ -228,34 +256,82 @@ pub fn is_valid_signal_subject(t: EntityType) -> bool {
 /// Default text model for entity typing (the local model the NLI gate also uses).
 pub const DEFAULT_ENTITY_MODEL: &str = "qwen2.5:14b-instruct";
 
+const OPAQUE_IDENTIFIER_PLACEHOLDER: &str = "<OPAQUE_IDENTIFIER>";
+
+/// Hide one document-owned identifier without damaging unrelated words that merely contain the
+/// same characters. ASCII case variants are also hidden because presentation recovery may have
+/// changed case before this prompt is built.
+fn redact_opaque_identifier(text: &str, identifier: &str) -> String {
+    let identifier = identifier.trim();
+    if identifier.is_empty() {
+        return text.to_string();
+    }
+    let folded_text = text.to_ascii_lowercase();
+    let folded_identifier = identifier.to_ascii_lowercase();
+    let require_word_boundaries = identifier.chars().count() == 1;
+    let mut output = String::with_capacity(text.len());
+    let mut cursor = 0usize;
+
+    while let Some(relative) = folded_text[cursor..].find(&folded_identifier) {
+        let start = cursor + relative;
+        let end = start + folded_identifier.len();
+        let left_is_word = text[..start]
+            .chars()
+            .next_back()
+            .is_some_and(|c| c.is_alphanumeric() || c == '_');
+        let right_is_word = text[end..]
+            .chars()
+            .next()
+            .is_some_and(|c| c.is_alphanumeric() || c == '_');
+        if require_word_boundaries && (left_is_word || right_is_word) {
+            let next = text[start..]
+                .char_indices()
+                .nth(1)
+                .map_or(text.len(), |(offset, _)| start + offset);
+            output.push_str(&text[cursor..next]);
+            cursor = next;
+            continue;
+        }
+        output.push_str(&text[cursor..start]);
+        output.push_str(OPAQUE_IDENTIFIER_PLACEHOLDER);
+        cursor = end;
+    }
+    output.push_str(&text[cursor..]);
+    output
+}
+
 /// The LLM judgment prompt — the token + the Rust-gathered evidence + the closed type set.
 pub fn entity_prompt(ev: &EntityEvidence) -> String {
     let snippets = ev
         .context_snippets
         .iter()
+        .map(|s| redact_opaque_identifier(s, &ev.token))
         .map(|s| format!("  - {}", s.chars().take(180).collect::<String>()))
         .collect::<Vec<_>>()
         .join("\n");
+    let semantic_hint_tags =
+        redact_opaque_identifier(&format!("{:?}", ev.semantic_hint_tags), &ev.token);
     format!(
-        "Classify a token from a chip-design specification as EXACTLY ONE of: signal, field, \
+        "Classify an opaque identifier from a digital-hardware specification as EXACTLY ONE of: signal, field, \
          actor, transaction, feature, state, structural_ref, boilerplate, value.\n\
          signal = a physical wire/pin carrying a value; field = a named portion of a \
-         packet/flit/message payload (not a wire); actor = a component that acts \
-         (manager/requester, completer, node); transaction = a named protocol operation; feature = \
-         a capability; state = a protocol state; structural_ref = a Table/Figure/Section reference; \
-         boilerplate = a legal/front-matter term; value = a literal value.\n\n\
+         packet/flit/message payload (not a wire); actor = a component that acts; transaction = a \
+         named operation; feature = a capability; state = a named behavioral state; structural_ref = \
+         a Table/Figure/Section reference; boilerplate = a legal/front-matter term; value = a literal value.\n\
+         The identifier spelling is intentionally hidden. Use only the typed evidence and grammatical \
+         context below; do not reconstruct or guess the identifier.\n\n\
          Token: {}\n\
          Declared in a signal table: {}\n\
          Declared in a message-field table: {}\n\
-         Document semantic tags: {:?}\n\
+         Document semantic tags: {}\n\
          Used as the actor (subject) of a requirement: {}\n\
          Used as the signal (object) of a requirement: {}\n\
-         Example sentences:\n{}\n\n\
+         Current-document context:\n{}\n\n\
          Answer with ONE word.",
-        ev.token,
+        OPAQUE_IDENTIFIER_PLACEHOLDER,
         ev.declared_in_signal_table,
         ev.declared_in_field_table,
-        ev.semantic_hint_tags,
+        semantic_hint_tags,
         ev.appears_as_actor,
         ev.appears_as_signal,
         snippets,
@@ -274,7 +350,7 @@ pub fn propose_entity_type_llm(
         model,
         api_url(provider),
         "",
-        &ev.token,
+        OPAQUE_IDENTIFIER_PLACEHOLDER,
         &entity_prompt(ev),
         16,
     ) {
@@ -344,15 +420,40 @@ mod tests {
     }
 
     #[test]
-    fn silent_document_defers_to_the_llm() {
-        // TXSACTIVE: a real signal the noisy catalogs missed — no Rust ground fires, the LLM's
-        // world knowledge carries it.
-        let t = classify_entity(&ev("TXSACTIVE"), |_| EntityType::Signal);
+    fn silent_document_defers_to_contextual_llm_judgment() {
+        // The injected decision may use grammatical context, but the production prompt never
+        // exposes this spelling to the provider.
+        let t = classify_entity(&ev("opaque_atom"), |_| EntityType::Signal);
         assert_eq!(t, EntityType::Signal);
-        // And a token the LLM knows is boilerplate stays boilerplate when ungrounded.
-        let t = classify_entity(&ev("LICENSEE"), |_| EntityType::Boilerplate);
+        let t = classify_entity(&ev("other_atom"), |_| EntityType::Boilerplate);
         assert_eq!(t, EntityType::Boilerplate);
         assert!(!is_valid_signal_subject(t));
+    }
+
+    #[test]
+    fn entity_prompt_is_alpha_equivariant_and_hides_identifier_spelling() {
+        let mut first = ev("orchid");
+        first.context_snippets =
+            vec!["The ORCHID output is sampled here; orchid stays high.".into()];
+        first.semantic_hint_tags = vec!["orchid_role".into()];
+        let mut renamed = ev("juniper");
+        renamed.context_snippets =
+            vec!["The JUNIPER output is sampled here; juniper stays high.".into()];
+        renamed.semantic_hint_tags = vec!["juniper_role".into()];
+
+        let first_prompt = entity_prompt(&first);
+        assert_eq!(first_prompt, entity_prompt(&renamed));
+        assert!(!first_prompt.to_ascii_lowercase().contains("orchid"));
+        assert!(first_prompt.contains(OPAQUE_IDENTIFIER_PLACEHOLDER));
+        assert!(first_prompt.contains("Use only the typed evidence and grammatical context"));
+    }
+
+    #[test]
+    fn identifier_redaction_respects_unrelated_word_boundaries() {
+        assert_eq!(
+            redact_opaque_identifier("A is distinct from DATA and a.", "A"),
+            "<OPAQUE_IDENTIFIER> is distinct from DATA and <OPAQUE_IDENTIFIER>."
+        );
     }
 
     #[test]

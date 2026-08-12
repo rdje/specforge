@@ -266,8 +266,9 @@ fn asset_already_has_vlm_note(asset: &VisualAsset, diagram_type: &str) -> bool {
 fn build_vlm_prompt(diagram_type: &str, caption: &str) -> String {
     match diagram_type {
         "timing_diagram" => format!(
-            "This is a timing diagram from a chip protocol specification. \
+            "This is a timing diagram from a digital-hardware specification. \
              Caption: \"{caption}\"\n\n\
+             Treat every visible label as opaque: copy it exactly and never infer meaning from a familiar name.\n\
              Please describe the diagram precisely:\n\
              1. List every signal shown (one per line) with its name.\n\
              2. For each signal, describe its state (HIGH/LOW/X/Z/VALID/UNKNOWN) only at clock positions tied to a visible clock grid/edge or a printed cycle label. The cycle field must be a zero-based integer or a printed T<n> label; never infer time from response-array position or an unclocked visual position.\n\
@@ -277,8 +278,9 @@ fn build_vlm_prompt(diagram_type: &str, caption: &str) -> String {
              \"annotations\": [str]}}"
         ),
         "state_machine" => format!(
-            "This is a state machine diagram from a chip protocol specification. \
+            "This is a state-machine diagram from a digital-hardware specification. \
              Caption: \"{caption}\"\n\n\
+             Treat every visible label as opaque: copy it exactly and never infer meaning from a familiar name.\n\
              Please describe the diagram precisely:\n\
              1. List all states (one per line) with their names and whether they are the initial state.\n\
              2. For each transition arrow, give: source state, target state, guard condition label (if any).\n\
@@ -286,7 +288,9 @@ fn build_vlm_prompt(diagram_type: &str, caption: &str) -> String {
              {{\"states\": [{{\"name\": str, \"is_initial\": bool}}], \
              \"transitions\": [{{\"from\": str, \"to\": str, \"guard\": str}}]}}"
         ),
-        _ => format!("Describe this chip specification diagram. Caption: \"{caption}\""),
+        _ => format!(
+            "Describe this digital-hardware specification diagram using only visible structure and labels. Treat labels as opaque. Caption: \"{caption}\""
+        ),
     }
 }
 
@@ -331,7 +335,7 @@ fn call_vlm_for_asset(
 
 /// PDF-VARIANT-DIGESTION.2b — VLM table-classification prompt (asks for STRICT JSON `{"kind": …}`).
 fn build_table_classify_prompt() -> String {
-    "This is a table image from a chip-specification PDF. Classify its role. Reply with STRICT JSON \
+    "This is a table image from a digital-hardware specification. Classify its structural role from visible headers and layout only. Treat document-owned labels as opaque. Reply with STRICT JSON \
 only, no prose: {\"kind\": <one of \"signal_description\", \"register_field\", \"register_map\", \
 \"encoding\", \"timing_parameter\", \"feature_matrix\", \"table_of_contents\", \"other\">}."
         .to_string()
@@ -367,7 +371,7 @@ fn map_vlm_kind(s: &str) -> Option<TableKind> {
 
 /// PDF-VARIANT-DIGESTION.2b' — VLM table-EXTRACTION prompt: transcribe the table image to a JSON grid.
 fn build_table_extract_prompt() -> String {
-    "This is a table image from a chip-specification PDF. Transcribe it as STRICT JSON only, no prose: \
+    "This is a table image from a digital-hardware specification. Transcribe visible structure and cell text without inferring from familiar names. Reply as STRICT JSON only, no prose: \
 {\"kind\": <one of \"signal_description\",\"register_field\",\"register_map\",\"encoding\",\
 \"timing_parameter\",\"feature_matrix\",\"table_of_contents\",\"other\">, \"columns\": [<column header \
 strings>], \"rows\": [[<cell strings, one per column>], ...]}. Preserve cell text verbatim."
@@ -743,6 +747,23 @@ fn base64_encode(data: &[u8]) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn vlm_prompts_are_identity_neutral_and_visually_grounded() {
+        let first =
+            build_vlm_prompt("timing_diagram", "orchid timing").replace("orchid", "<identity>");
+        let renamed =
+            build_vlm_prompt("timing_diagram", "juniper timing").replace("juniper", "<identity>");
+        assert_eq!(first, renamed);
+        assert!(first.contains("Treat every visible label as opaque"));
+        assert!(!first.contains("protocol specification"));
+
+        for prompt in [build_table_classify_prompt(), build_table_extract_prompt()] {
+            assert!(prompt.contains("digital-hardware specification"));
+            assert!(prompt.contains("opaque") || prompt.contains("without inferring"));
+            assert!(!prompt.contains("chip-specification"));
+        }
+    }
 
     #[test]
     fn vlm_table_kind_parsing_maps_recognized_and_filters_the_rest() {

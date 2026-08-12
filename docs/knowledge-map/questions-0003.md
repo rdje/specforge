@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > how are caption-less page fragments of a split table stitched together
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > how are continuation table fragments (B1.1 Continued from previous page) chained to a channel role
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > how are doctrines enforced in specforge
 - [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
   > how are document keys in the source PDF registry derived from filenames
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
@@ -292,9 +298,3 @@
   > how does specforge reject prose-fragment non-agents like For / Then it / is recommended / ensures
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
   > how does specforge split a coordinated X and Y relation subject into both agents
-- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
-  > how does specforge tell a trapped data row from a genuine multi-row column header without a list or case
-- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
-  > how does the EXTRACTOR-ARCHITECTURE run manifest enable cross-document clustering
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > how does the LLM-primary extractor avoid extracting a when/if/unless clause subject as an obligation

@@ -1,4 +1,26 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii (`2026-08-12`) — executable policy is structural
+
+Prompts are production policy even when their outputs are independently validated. The model-facing surfaces
+now describe typed digital-hardware relations, constraints, diagrams, tables, registers, and entailment while
+treating every document-owned symbol as opaque. Text prompts receive only current-document evidence and closed
+declaration catalogs; visual prompts admit only visible labels and structure. The complete constructor census
+found that entity typing still exposed the raw identifier and invoked model world knowledge. It now replaces that
+identifier in context and helper transport with `<OPAQUE_IDENTIFIER>`, leaving typed evidence and grammar only.
+Contract signals outside the independent catalog become residuals, and the LLM-primary constraint proposal cannot
+validate its own subject. Catalog order follows declaration/provenance order rather than spelling, because sorting
+opaque names would make prompt order change under alpha-renaming. No real vendor/protocol example remains.
+
+The corpus-KB command had a stronger identity leak: fixture-name substrings selected a protocol-family page and
+classified candidate evidence as gold or negative. `KgBenchFixtureStructureProfile` now derives capabilities
+solely from populated typed fixture fields, ignoring every string value. The ten managed Markdown outputs group
+the same 156 tracked conformance fixtures into seven structural capability pages; the named AMBA page is gone.
+Manifest schema 2 separately reports typed-prior presence and typed control surfaces, which may overlap. Exact
+fixture names remain provenance/display data and cannot decide membership or readiness.
+
+This is one bounded repair, not whole-core signoff. `.d.iv` qualifies the combined identity work; `.e` still
+owns the proof-carrying production/conformance module boundary and `.f` owns behavioral metamorphic replay.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii (`2026-08-12`) — neutrality requires positive authority
 
 Deleting a word denylist or uppercase check is not sufficient. During retained-corpus replay, two prose readers

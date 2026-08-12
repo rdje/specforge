@@ -121,8 +121,8 @@ fn select_sample(ids: &[&str], n: usize, seed: u64) -> Vec<usize> {
 /// PDF-VARIANT-DIGESTION.4b.1 — the kind-aware audit prompt. Generic, STRICT-JSON, no chip names.
 fn build_audit_prompt(kind: AuditKind) -> String {
     format!(
-        "This is a table image from a hardware specification PDF. An automated extractor read it as {}. \
-Looking ONLY at the image, is that classification correct? Reply with STRICT JSON only, no prose: \
+        "This is a table image from a digital-hardware specification. An automated extractor read it as {}. \
+Looking ONLY at visible structure, headers, and layout, is that classification correct? Treat document-owned names and values as opaque. Reply with STRICT JSON only, no prose: \
 {{\"consistent\": <true|false>, \"reason\": <short string>}}.",
         kind.description()
     )
@@ -524,6 +524,7 @@ mod tests {
         ] {
             let p = build_audit_prompt(kind);
             assert!(p.contains("STRICT JSON"));
+            assert!(p.contains("names and values as opaque"));
             assert!(p.contains("\"consistent\""));
             // No chip / vendor / protocol names may leak into the runtime prompt (ADR 0006).
             let lower = p.to_ascii_lowercase();

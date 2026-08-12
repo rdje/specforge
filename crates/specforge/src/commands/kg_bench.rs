@@ -540,6 +540,68 @@ pub(crate) struct KgBenchFixtureOutcome {
     pub(crate) name: String,
     pub(crate) fixture_path: PathBuf,
     pub(crate) failures: Vec<String>,
+    pub(crate) capabilities: BTreeSet<KgBenchCapability>,
+    pub(crate) prior_candidate_kinds: BTreeSet<KgBenchPriorCandidateKind>,
+    pub(crate) is_negative_control: bool,
+}
+
+/// Structural capability exercised by a conformance fixture. These facets are derived only from
+/// non-empty typed fixture-schema fields; fixture names and document-owned values are opaque.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub(crate) enum KgBenchCapability {
+    ActorConnectivity,
+    SemanticRoleArbitration,
+    TemporalSemantics,
+    PolaritySemantics,
+    InfrastructureSemantics,
+    MultimodalVisualGrounding,
+    StateMachineSemantics,
+    TypedPriorMemory,
+    NegativeKnowledge,
+    TableExtraction,
+    TruthfulnessControl,
+    ResidualsAndCaveats,
+    Uncategorized,
+}
+
+impl KgBenchCapability {
+    pub(crate) const fn label(self) -> &'static str {
+        match self {
+            Self::ActorConnectivity => "actor connectivity",
+            Self::SemanticRoleArbitration => "semantic role arbitration",
+            Self::TemporalSemantics => "temporal semantics",
+            Self::PolaritySemantics => "polarity semantics",
+            Self::InfrastructureSemantics => "infrastructure semantics",
+            Self::MultimodalVisualGrounding => "multimodal visual grounding",
+            Self::StateMachineSemantics => "state-machine semantics",
+            Self::TypedPriorMemory => "typed prior memory",
+            Self::NegativeKnowledge => "negative knowledge",
+            Self::TableExtraction => "table extraction and hygiene",
+            Self::TruthfulnessControl => "truthfulness negatives and cautions",
+            Self::ResidualsAndCaveats => "residuals and caveats",
+            Self::Uncategorized => "uncategorized",
+        }
+    }
+}
+
+/// Typed prior surface present in a fixture's `prior_memory_patch`. The enum prevents fixture-name
+/// fragments from deciding which review candidate a fixture supports.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub(crate) enum KgBenchPriorCandidateKind {
+    ActorTaxonomy,
+    SemanticModalityReliability,
+    SemanticPhrase,
+    TemporalPhrase,
+    TableShape,
+    VisualMotif,
+    NegativeKnowledge,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+struct KgBenchFixtureStructureProfile {
+    capabilities: BTreeSet<KgBenchCapability>,
+    prior_candidate_kinds: BTreeSet<KgBenchPriorCandidateKind>,
+    is_negative_control: bool,
 }
 
 pub fn run(args: KgBenchArgs) -> Result<()> {
@@ -608,6 +670,7 @@ pub(crate) fn collect_fixture_outcomes(
 
 fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
     let fixture = load_fixture(fixture_path)?;
+    let structure_profile = load_fixture_structure_profile(fixture_path)?;
     let fixture_dir = fixture_path.parent().ok_or_else(|| {
         AppError::InvalidStageArtifact(format!(
             "fixture path {} has no parent directory",
@@ -868,6 +931,9 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
         name: fixture.name,
         fixture_path: fixture_path.to_path_buf(),
         failures,
+        capabilities: structure_profile.capabilities,
+        prior_candidate_kinds: structure_profile.prior_candidate_kinds,
+        is_negative_control: structure_profile.is_negative_control,
     })
 }
 
@@ -2267,6 +2333,217 @@ fn load_fixture(path: &Path) -> Result<KgBenchFixture> {
     Ok(serde_json::from_str(&fs::read_to_string(path)?)?)
 }
 
+fn load_fixture_structure_profile(path: &Path) -> Result<KgBenchFixtureStructureProfile> {
+    let value = serde_json::from_str::<serde_json::Value>(&fs::read_to_string(path)?)?;
+    Ok(fixture_structure_profile(&value))
+}
+
+fn fixture_structure_profile(value: &serde_json::Value) -> KgBenchFixtureStructureProfile {
+    let mut populated_keys = BTreeSet::new();
+    collect_populated_json_keys(value, &mut populated_keys);
+    let has_any = |keys: &[&str]| keys.iter().any(|key| populated_keys.contains(*key));
+
+    let mut capabilities = BTreeSet::new();
+    if has_any(&[
+        "actor_ports_include",
+        "actor_signal_relations_include",
+        "graph_direction_signal_names_include",
+        "graph_direction_signal_names_exclude",
+        "graph_direction_conflicted_signal_names_include",
+        "graph_direction_conflicted_signal_names_exclude",
+        "graph_direction_conflicts_include",
+        "signal_connectivity_conflicts",
+        "signal_connectivity_conflicts_include",
+    ]) {
+        capabilities.insert(KgBenchCapability::ActorConnectivity);
+    }
+    if has_any(&[
+        "resolved_semantic_role_signal_names_include",
+        "resolved_semantic_role_signal_names_exclude",
+        "resolved_semantic_roles_include",
+        "semantic_grounding_strengths_include",
+        "semantic_consensus_signal_names_include",
+        "semantic_consensus_signal_names_exclude",
+        "alias_dependent_semantic_consensus_signal_names_include",
+        "alias_dependent_semantic_consensus_signal_names_exclude",
+        "alias_dependent_semantic_candidate_signal_names_include",
+        "alias_dependent_semantic_candidate_signal_names_exclude",
+        "semantic_candidate_signal_names_include",
+        "semantic_candidate_signal_names_exclude",
+        "multiple_semantic_candidate_signal_names_include",
+        "multiple_semantic_candidate_signal_names_exclude",
+        "semantic_arbitration_signal_names_include",
+        "semantic_arbitration_signal_names_exclude",
+        "decisive_semantic_arbitration_signal_names_include",
+        "decisive_semantic_arbitration_signal_names_exclude",
+        "non_decisive_semantic_arbitration_signal_names_include",
+        "non_decisive_semantic_arbitration_signal_names_exclude",
+        "signal_semantic_conflicts",
+        "signal_semantic_conflicts_include",
+        "interface_signal_conflicts",
+        "interface_signal_conflicts_include",
+    ]) {
+        capabilities.insert(KgBenchCapability::SemanticRoleArbitration);
+    }
+    if populated_keys
+        .iter()
+        .any(|key| key.starts_with("temporal_"))
+    {
+        capabilities.insert(KgBenchCapability::TemporalSemantics);
+    }
+    if has_any(&[
+        "signal_polarities_include",
+        "signal_polarity_conflicts",
+        "signal_polarity_conflicts_include",
+    ]) {
+        capabilities.insert(KgBenchCapability::PolaritySemantics);
+        capabilities.insert(KgBenchCapability::InfrastructureSemantics);
+    }
+    if has_any(&[
+        "infrastructure_signals_include",
+        "infrastructure_topologies_include",
+    ]) {
+        capabilities.insert(KgBenchCapability::InfrastructureSemantics);
+    }
+    if has_any(&["visual_assets", "visual_motif_priors"]) {
+        capabilities.insert(KgBenchCapability::MultimodalVisualGrounding);
+    }
+    if has_any(&[
+        "state_names_include",
+        "state_names_exclude",
+        "initial_state_names_include",
+        "initial_state_names_exclude",
+        "state_transitions_include",
+        "state_transitions_exclude",
+    ]) {
+        capabilities.insert(KgBenchCapability::StateMachineSemantics);
+    }
+    if has_any(&[
+        "actor_taxonomy_priors",
+        "semantic_phrase_priors",
+        "semantic_modality_reliability_priors",
+        "temporal_phrase_priors",
+        "table_shape_priors",
+        "visual_motif_priors",
+        "negative_knowledge_priors",
+        "extraction_profile_priors",
+    ]) {
+        capabilities.insert(KgBenchCapability::TypedPriorMemory);
+    }
+    if has_any(&["negative_knowledge_priors"]) {
+        capabilities.insert(KgBenchCapability::NegativeKnowledge);
+    }
+    if has_any(&[
+        "structured_tables",
+        "table_signal_declaration_provenance_count",
+        "table_signal_declaration_provenance_include",
+        "message_field_count",
+        "message_fields_include",
+        "message_field_names_exclude",
+        "signal_presence_count",
+        "signal_presence_include",
+        "signal_presence_signal_names_exclude",
+        "signal_supporting_table_ids_include",
+        "table_shape_priors",
+    ]) {
+        capabilities.insert(KgBenchCapability::TableExtraction);
+    }
+    if has_any(&[
+        "residual_decision_ids_include",
+        "residual_decision_ids_exclude",
+        "assumption_ids_include",
+        "assumption_ids_exclude",
+    ]) {
+        capabilities.insert(KgBenchCapability::ResidualsAndCaveats);
+    }
+
+    let is_negative_control = populated_keys.iter().any(|key| key.ends_with("_exclude"))
+        || has_any(&[
+            "graph_direction_conflicts_include",
+            "signal_polarity_conflicts",
+            "signal_polarity_conflicts_include",
+            "signal_semantic_conflicts",
+            "signal_semantic_conflicts_include",
+            "signal_connectivity_conflicts",
+            "signal_connectivity_conflicts_include",
+            "interface_signal_conflicts",
+            "interface_signal_conflicts_include",
+            "temporal_conflicts",
+            "temporal_conflicts_include",
+            "negative_knowledge_priors",
+        ]);
+    if is_negative_control {
+        capabilities.insert(KgBenchCapability::TruthfulnessControl);
+    }
+
+    let mut prior_candidate_kinds = BTreeSet::new();
+    for (key, kind) in [
+        (
+            "actor_taxonomy_priors",
+            KgBenchPriorCandidateKind::ActorTaxonomy,
+        ),
+        (
+            "semantic_modality_reliability_priors",
+            KgBenchPriorCandidateKind::SemanticModalityReliability,
+        ),
+        (
+            "semantic_phrase_priors",
+            KgBenchPriorCandidateKind::SemanticPhrase,
+        ),
+        (
+            "temporal_phrase_priors",
+            KgBenchPriorCandidateKind::TemporalPhrase,
+        ),
+        ("table_shape_priors", KgBenchPriorCandidateKind::TableShape),
+        (
+            "visual_motif_priors",
+            KgBenchPriorCandidateKind::VisualMotif,
+        ),
+        (
+            "negative_knowledge_priors",
+            KgBenchPriorCandidateKind::NegativeKnowledge,
+        ),
+    ] {
+        if populated_keys.contains(key) {
+            prior_candidate_kinds.insert(kind);
+        }
+    }
+
+    if capabilities.is_empty() {
+        capabilities.insert(KgBenchCapability::Uncategorized);
+    }
+    KgBenchFixtureStructureProfile {
+        capabilities,
+        prior_candidate_kinds,
+        is_negative_control,
+    }
+}
+
+fn collect_populated_json_keys(value: &serde_json::Value, keys: &mut BTreeSet<String>) -> bool {
+    match value {
+        serde_json::Value::Null => false,
+        serde_json::Value::Bool(_) | serde_json::Value::Number(_) => true,
+        serde_json::Value::String(value) => !value.is_empty(),
+        serde_json::Value::Array(values) => {
+            let mut populated = false;
+            for value in values {
+                populated |= collect_populated_json_keys(value, keys);
+            }
+            populated
+        }
+        serde_json::Value::Object(fields) => {
+            let mut populated = false;
+            for (key, value) in fields {
+                if collect_populated_json_keys(value, keys) {
+                    keys.insert(key.clone());
+                    populated = true;
+                }
+            }
+            populated
+        }
+    }
+}
+
 fn resolve_fixture_paths(fixtures_root: &Path, requested: &[PathBuf]) -> Result<Vec<PathBuf>> {
     let mut paths = if requested.is_empty() {
         discover_fixture_paths(fixtures_root)?
@@ -2652,15 +2929,17 @@ fn canonicalize_existing_path(path: &Path) -> Result<PathBuf> {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::BTreeSet;
     use std::fs;
     use std::path::Path;
 
     use tempfile::tempdir;
 
     use super::{
-        CanonicalStageExpectations, ExpectedValidationFinding, ValidationStageExpectations,
-        discover_fixture_paths, evaluate_canonical_expectations, evaluate_validation_expectations,
-        load_fixture, run,
+        CanonicalStageExpectations, ExpectedValidationFinding, KgBenchCapability,
+        KgBenchPriorCandidateKind, ValidationStageExpectations, discover_fixture_paths,
+        evaluate_canonical_expectations, evaluate_validation_expectations,
+        fixture_structure_profile, load_fixture, run,
     };
     use crate::cli::KgBenchArgs;
     use crate::error::AppError;
@@ -2806,6 +3085,80 @@ mod tests {
             failures.is_empty(),
             "conflicting same-actor graph direction should be reflected in graph-direction expectation surfaces: {failures:?}"
         );
+    }
+
+    #[test]
+    fn fixture_structure_profile_is_identity_and_value_invariant() {
+        let first = serde_json::json!({
+            "name": "named_protocol_fixture",
+            "source": "vendor_document.md",
+            "prior_memory_patch": {
+                "temporal_phrase_priors": [{"prior_id": "named_prior"}]
+            },
+            "source_ir_patch": {
+                "structured_tables": [{"table_id": "named_table"}]
+            },
+            "expectations": {
+                "semantic": {
+                    "temporal_rule_count": 1,
+                    "signal_names_exclude": ["FAMILIAR_SIGNAL"]
+                }
+            }
+        });
+        let renamed = serde_json::json!({
+            "name": "unrelated_identity",
+            "source": "other_input.md",
+            "prior_memory_patch": {
+                "temporal_phrase_priors": [{"prior_id": "opaque_atom"}]
+            },
+            "source_ir_patch": {
+                "structured_tables": [{"table_id": "opaque_table"}]
+            },
+            "expectations": {
+                "semantic": {
+                    "temporal_rule_count": 99,
+                    "signal_names_exclude": ["renamed_atom"]
+                }
+            }
+        });
+
+        let expected = fixture_structure_profile(&first);
+        assert_eq!(expected, fixture_structure_profile(&renamed));
+        assert!(
+            expected
+                .capabilities
+                .contains(&KgBenchCapability::TemporalSemantics)
+        );
+        assert!(
+            expected
+                .capabilities
+                .contains(&KgBenchCapability::TableExtraction)
+        );
+        assert!(
+            expected
+                .capabilities
+                .contains(&KgBenchCapability::TruthfulnessControl)
+        );
+        assert!(
+            expected
+                .prior_candidate_kinds
+                .contains(&KgBenchPriorCandidateKind::TemporalPhrase)
+        );
+    }
+
+    #[test]
+    fn fixture_name_alone_grants_no_structural_capability() {
+        let profile = fixture_structure_profile(&serde_json::json!({
+            "name": "amba_axi_temporal_visual_actor_table_prior_negative",
+            "source": "named_protocol.md",
+            "expectations": {}
+        }));
+        assert_eq!(
+            profile.capabilities,
+            BTreeSet::from([KgBenchCapability::Uncategorized])
+        );
+        assert!(profile.prior_candidate_kinds.is_empty());
+        assert!(!profile.is_negative_control);
     }
 
     #[test]

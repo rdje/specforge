@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > do the emergent clusters actually track real vendor/layout families
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > do the register-classed empty-catalog documents deserve the same bar as protocol-classed ones
+- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
+  > do the register_bits.rs tiling gates validate field order (NO — only width-sum + name-multiset; a row-jumbled flattened table could pass both gates with WRONG bits, so a deterministic-table reader is strictly more dangerous than the VLM front-end)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > do the wire docs (APB/AHB/AXI/SWD) change when register reset is lowered to ISF (no — ZERO composable resets, .isf byte-identical, WIRE-BASED-100 holds trivially)
 - [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
@@ -291,9 +297,3 @@
   > how are bits | name | function tables extracted
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > how are byte location | size | register description tables extracted
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > how are caption-less page fragments of a split table stitched together
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how are continuation table fragments (B1.1 Continued from previous page) chained to a channel role
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > how are doctrines enforced in specforge

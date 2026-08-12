@@ -17,16 +17,15 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii` is complete and awaiting its required commit;
-  `.6d.ii.d.i`, `.6d.ii.c`, `FSMGEN-REFRESH-INTEGRATE-8.1`, `.6d.ii.b`, `.6d.ii.a`, and `.6d.i` are committed
-  complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: document identifiers are opaque from EvidenceIR through ISF lowering, exact one-way declaration
-  grounding and alpha controls are implemented, all 78 persisted chains are reconciled, and 17/17 emitted ISFs
-  pass FSMGen strict. Full CI passes all doctrines, warning-denied Rust checks and docs, 1,890/6/0 Rust tests,
-  mdBook test/build, and the final locality residue check. ADR 0037 and public/live documentation agree. The exact
-  562-file rollback was consumed and removed.
-- Next action: commit `.6d.ii.d.ii`, verify a clean handoff, then activate
-  `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii` to neutralize compiled prompts and corpus organization.
-- In-flight uncommitted: the complete verified `.d.ii` code, generated artifacts, fixture authority, task-tree,
-  ADR, Knowledge Map projection, live docs, and mdBook transaction; no scratch workspace or background job.
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii` is complete awaiting commit; `.6d.ii.d.ii`, `.6d.ii.d.i`, `.6d.ii.c`,
+  `FSMGEN-REFRESH-INTEGRATE-8.1`, `.6d.ii.b`, `.6d.ii.a`, and `.6d.i` are committed complete. Tracking-only:
+  `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
+- Current state: thirteen production prompt families are typed and identity-neutral; entity identifiers are
+  redacted from provider inputs, catalogs are declaration-ordered, and ungrounded provider proposals fail closed.
+  Corpus-KB routing is schema-structural, ten managed pages cover 156/156 fixtures, and named identities are
+  conformance provenance only. Focused/full Rust, Clippy, mdBook, currentness, and all eight doctrines pass.
+- Next action: run the final full `scripts/run_ci.sh`, commit `.6d.ii.d.iii`, verify the clean handoff and cleared
+  message brief, then activate `.6d.ii.d.iv` from that clean revision.
+- In-flight uncommitted: the complete `.6d.ii.d.iii` code/generated/docs transaction; no scratch workspace or
+  background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

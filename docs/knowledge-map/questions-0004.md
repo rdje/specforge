@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
+  > how does specforge tell a trapped data row from a genuine multi-row column header without a list or case
+- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
+  > how does the EXTRACTOR-ARCHITECTURE run manifest enable cross-document clustering
+- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
+  > how does the LLM-primary extractor avoid extracting a when/if/unless clause subject as an obligation
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
   > how does the LLM-primary extractor handle 'It is recommended' / 'It is permitted' / 'would be' frames
 - [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
@@ -291,9 +297,3 @@
   > how many signals does each AXI channel have
 - [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
   > how many source-to-intent evaluation inputs are repository sources versus external read-only sources
-- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
-  > how many synthetic behaviors came from generic gates
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > how many synthetic behaviors came from generic section phases
-- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
-  > how many timing constraints remain in OpenCAPI 32G PHY Signaling after refresh (60)

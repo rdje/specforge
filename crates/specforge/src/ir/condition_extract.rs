@@ -71,10 +71,11 @@ pub const DEFAULT_CONDITION_MODEL: &str = "qwen2.5:14b-instruct";
 /// The LLM judgment prompt — extract the condition clause from the source for this requirement.
 pub fn condition_prompt(ev: &ConditionEvidence) -> String {
     format!(
-        "A requirement was extracted from a chip-specification sentence. State the CONDITION or \
+        "A requirement was extracted from a digital-hardware specification sentence. Copy the CONDITION or \
          TEMPORAL scope under which the requirement applies — the when / until / before / after / \
          while / on-receiving clause taken from the sentence. If the requirement is unconditional \
-         (always holds), answer exactly NONE. Answer with the clause only, no preamble.\n\n\
+         (always holds), answer exactly NONE. Treat document-owned symbols as opaque and copy the \
+         clause without interpreting familiar names. Answer with the clause only, no preamble.\n\n\
          Sentence: {}\n\
          Requirement: {}\n\
          Condition:",
@@ -159,5 +160,24 @@ mod tests {
         let e = ev("PCLK must be stable", "PCLK is the clock.");
         assert_eq!(extract_condition(&e, |_| Some("NONE".to_string())), None);
         assert_eq!(extract_condition(&e, |_| None), None);
+    }
+
+    #[test]
+    fn condition_prompt_is_alpha_equivariant_and_opaque() {
+        let first = condition_prompt(&ev(
+            "orchid must be asserted",
+            "orchid must be asserted after juniper rises",
+        ))
+        .replace("orchid", "<subject>")
+        .replace("juniper", "<condition>");
+        let renamed = condition_prompt(&ev(
+            "copper must be asserted",
+            "copper must be asserted after silver rises",
+        ))
+        .replace("copper", "<subject>")
+        .replace("silver", "<condition>");
+        assert_eq!(first, renamed);
+        assert!(first.contains("document-owned symbols as opaque"));
+        assert!(!first.contains("chip-specification"));
     }
 }

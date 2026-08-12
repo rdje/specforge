@@ -17,25 +17,23 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 - fixtures_passed: `156`
 - fixtures_failed: `0`
 
-### Fixture Family Summary
-Fixtures can appear in more than one family because protocol semantics, modality, and expected behavior are orthogonal.
+### Structural Capability Summary
+Fixtures can exercise more than one capability because typed evidence, modality, and expected behavior are orthogonal. Capabilities come from populated fixture-schema fields, never fixture names.
 
-| family | fixtures | passed | failed |
+| capability | fixtures | passed | failed |
 | --- | ---: | ---: | ---: |
-| VLM state machines | `5` | `5` | `0` |
-| VLM timing diagrams | `9` | `9` | `0` |
-| actor connectivity | `22` | `22` | `0` |
-| infrastructure semantics | `14` | `14` | `0` |
-| multimodal visual grounding | `24` | `24` | `0` |
+| actor connectivity | `54` | `54` | `0` |
+| infrastructure semantics | `11` | `11` | `0` |
+| multimodal visual grounding | `26` | `26` | `0` |
 | negative knowledge | `7` | `7` | `0` |
 | polarity semantics | `8` | `8` | `0` |
-| protocol-family AMBA/APB/AHB/AXI | `37` | `37` | `0` |
 | residuals and caveats | `4` | `4` | `0` |
-| semantic role arbitration | `30` | `30` | `0` |
-| table extraction and hygiene | `12` | `12` | `0` |
-| temporal semantics | `73` | `73` | `0` |
-| truthfulness negatives and cautions | `73` | `73` | `0` |
-| typed prior memory | `31` | `31` | `0` |
+| semantic role arbitration | `64` | `64` | `0` |
+| state-machine semantics | `5` | `5` | `0` |
+| table extraction and hygiene | `65` | `65` | `0` |
+| temporal semantics | `79` | `79` | `0` |
+| truthfulness negatives and cautions | `83` | `83` | `0` |
+| typed prior memory | `30` | `30` | `0` |
 | uncategorized | `2` | `2` | `0` |
 
 ### Fixture Results

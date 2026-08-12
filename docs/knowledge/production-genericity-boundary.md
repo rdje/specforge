@@ -12,11 +12,14 @@ answers:
   - "Why were legacy SourceIR classifications neutralized?"
   - "Were downstream artifacts reconciled after SourceIR schema 2?"
   - "How does EvidenceIR schema 2 remove protocol-specific extraction authority?"
+  - "How are production prompts kept specification neutral?"
+  - "How does the corpus knowledge base group fixtures without protocol-family names?"
+  - "Can fixture names decide KG capability or prior-candidate routing?"
 date: 2026-08-12
 status: current
 tags: [genericity, extraction, architecture, doctrine]
-evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/source/docling_backend.rs; crates/specforge/src/ir/evidence.rs
-reverify: rg -n "SOURCE_IR_SCHEMA_VERSION|neutralize_legacy_source_classifications|EVIDENCE_IR_SCHEMA_VERSION|neutralize_legacy_protocol_json|embedded_source_classifiers_are_structural" crates/specforge/src/ir/source.rs crates/specforge/src/ir/source/docling_backend.rs crates/specforge/src/ir/evidence.rs
+evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/source/docling_backend.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/commands/kg_bench.rs; crates/specforge/src/commands/corpus_kb.rs
+reverify: rg -n "SOURCE_IR_SCHEMA_VERSION|neutralize_legacy_source_classifications|EVIDENCE_IR_SCHEMA_VERSION|neutralize_legacy_protocol_json|embedded_source_classifiers_are_structural|fixture_structure_profile|selected_structural_capabilities|document-owned.*opaque" crates/specforge/src/ir/source.rs crates/specforge/src/ir/source/docling_backend.rs crates/specforge/src/ir/evidence.rs crates/specforge/src/commands/kg_bench.rs crates/specforge/src/commands/corpus_kb.rs crates/specforge/src/commands/enrich.rs crates/specforge/src/commands/nlp_enrich.rs crates/specforge/src/commands/signal_resolve.rs
 ---
 
 A neutral SpecForge is feasible when universal digital-intent semantics are separated from opaque,
@@ -46,3 +49,19 @@ extractors admit only explicit structural grammar and preserve document terms op
 the old vocabulary-bound protocol surfaces before typed deserialization, preventing a retained artifact from
 bypassing the new producer. The carriers remain lossless through SemanticIR, IntentIR, convergence,
 validation, evaluation, and adapter residual accounting.
+
+Production model prompts use the same boundary. They describe typed digital-hardware relations, constraints,
+contracts, conditions, entity types, diagrams, tables, register fields, audits, and entailment. Relation,
+constraint, and contract prompts consume a current-document declaration catalog in declaration/provenance order;
+an undeclared contract signal is forced to an explicit residual. Entity typing is stronger: the identifier is
+redacted from both model context and helper transport, so only typed evidence and grammar remain. Image prompts
+use visible structure while treating labels and values as opaque. No real vendor/protocol signal example or
+all-inputs-are-one-protocol framing remains. Alpha controls require the policy to be identical modulo injected
+symbols; opaque catalogs are never sorted by spelling because renaming could otherwise perturb prompt order.
+
+Corpus-KB organization is structural too. `kg_bench` derives capability and prior-surface metadata only from
+which typed fixture-schema fields are populated; string values, fixture names, source names, vendor names, and
+protocol names cannot grant membership. `corpus_kb` selects seven capability pages from those facets. The old
+AMBA page and fixture-name substring classifier are gone. Manifest schema 2 reports `prior_present_fixtures` and
+`control_fixtures`; those are structural observations, not a claim inferred from “gold” or “negative” spelling.
+Exact fixture names remain visible only as conformance provenance.

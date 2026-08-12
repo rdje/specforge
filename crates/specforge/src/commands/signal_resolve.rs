@@ -22,6 +22,7 @@
 use crate::cli::{SignalResolveArgs, VlmProviderArg};
 use crate::commands::llm_text;
 use crate::error::{AppError, Result};
+use crate::ir::entity_typing::declared_signal_catalog;
 use crate::ir::evidence::{
     EvidenceIr, ExtractorTier, FactKind, FactProvenanceRecord, StatementClass,
     actor_signal_relation_fact_key,
@@ -144,23 +145,24 @@ fn build_relation_prompt(sentence: &str, grounding: &[String]) -> String {
         String::new()
     } else {
         format!(
-            "Known hardware signals in this specification: {}\n\n",
+            "Declared signal symbols in the current document: {}\n\n",
             grounding.join(", ")
         )
     };
     format!(
-        "You are a hardware protocol specification analyzer.\n\
+        "You extract typed actor-to-signal relations from one digital-hardware specification sentence.\n\
+         Treat every document-owned actor and signal symbol as opaque.\n\
          From ONE sentence, extract EVERY actor->signal relation present (a sentence may \
          state more than one).\n\n\
          {grounding_section}\
          Sentence: \"{sentence}\"\n\n\
          Respond with ONLY a JSON array (no other text), one object per relation:\n\
-           [{{\"actor\":\"ACTOR_NAME\",\"signal\":\"SIGNAL_NAME\",\"relation\":\"drives|reads\"}}]\n\
+           [{{\"actor\":\"<exact actor phrase from sentence>\",\"signal\":\"<exact declared signal>\",\"relation\":\"drives|reads\"}}]\n\
          - Include an object for each actor that drives/asserts/outputs a named signal, OR that \
          reads/samples/monitors one.\n\
          - If no actor->signal relation is extractable, return [].\n\n\
          Rules:\n\
-         - signal must be an uppercase hardware signal name (e.g. AWVALID, HTRANS)\n\
+         - signal must exactly match one symbol in the declared-signal list\n\
          - relation must be exactly \"drives\" or \"reads\"\n\
          - never invent a signal or actor not present in the sentence\n\
          - Only output the JSON array, nothing else"
@@ -181,30 +183,8 @@ fn candidate_work(ir: &EvidenceIr, max_statements: usize) -> Vec<(String, String
     work
 }
 
-fn declared_signal_name(statement: &str) -> Option<String> {
-    let mut tokens = statement.split_whitespace();
-    if !tokens.next()?.eq_ignore_ascii_case("signal") {
-        return None;
-    }
-    let name = tokens
-        .next()?
-        .trim_matches(|character: char| !character.is_ascii_alphanumeric() && character != '_');
-    is_signal_identifier(name).then(|| name.to_string())
-}
-
 fn grounding_signals(arg: &Option<String>, ir: &EvidenceIr) -> Vec<String> {
-    let mut declared = ir
-        .extracted_statements
-        .iter()
-        .filter_map(|statement| declared_signal_name(&statement.text))
-        .chain(
-            ir.table_signal_declaration_provenance
-                .iter()
-                .map(|declaration| declaration.signal_name.clone()),
-        )
-        .collect::<Vec<_>>();
-    declared.sort();
-    declared.dedup();
+    let mut declared = declared_signal_catalog(ir);
 
     match arg {
         Some(explicit) => {
@@ -330,6 +310,20 @@ pub fn run(args: SignalResolveArgs) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn relation_prompt_is_alpha_equivariant_and_uses_no_named_example() {
+        let first = build_relation_prompt("orchid drives copper.", &["copper".to_string()])
+            .replace("orchid", "<actor>")
+            .replace("copper", "<signal>");
+        let renamed = build_relation_prompt("juniper drives silver.", &["silver".to_string()])
+            .replace("juniper", "<actor>")
+            .replace("silver", "<signal>");
+        assert_eq!(first, renamed);
+        assert!(!first.contains("protocol specification analyzer"));
+        assert!(!first.contains("AWVALID"));
+        assert!(!first.contains("HTRANS"));
+    }
 
     #[test]
     fn none_and_malformed_are_skipped() {

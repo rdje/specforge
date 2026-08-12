@@ -60,7 +60,7 @@ pub fn gate_action(verdict: NliVerdict) -> NliGateAction {
 /// string-match gate misses and a strong text model handles.
 pub fn entailment_prompt(source: &str, claim: &str) -> String {
     format!(
-        "Source (from a chip-protocol specification): \"{source}\"\n\
+        "Source (from a digital-hardware specification): \"{source}\"\n\
          Claim: \"{claim}\"\n\
          Does the Source logically SUPPORT (entail) the Claim? A claim is NOT \
          entailed if it adds, changes, or contradicts what the Source states — \
@@ -625,6 +625,8 @@ mod tests {
         assert!(p.contains("ENTAILED or NOT_ENTAILED"), "format: {p}");
         // The condition-vs-obligation rule is present (the load-bearing nuance).
         assert!(p.to_uppercase().contains("CONDITION"), "rule: {p}");
+        assert!(p.contains("digital-hardware specification"));
+        assert!(!p.contains("chip-protocol"));
     }
 
     #[test]

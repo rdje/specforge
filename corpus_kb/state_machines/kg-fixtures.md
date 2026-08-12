@@ -14,17 +14,17 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 <!-- This block is refreshed by `specforge corpus-kb`. -->
 
 - source: `kg-bench fixtures`
-- selected_family_labels: `VLM state machines`
+- selected_structural_capabilities: `state-machine semantics`
 - fixtures_total: `5`
 - fixtures_passed: `5`
 - fixtures_failed: `0`
 
-| fixture | status | matched families | path |
+| fixture | status | matched capabilities | path |
 | --- | --- | --- | --- |
-| `vlm_state_machine_duplicate_initial_gold` | `pass` | `VLM state machines` | `crates/specforge/test_data/kg_quality/vlm_state_machine_duplicate_initial_gold/fixture.json` |
-| `vlm_state_machine_label_noise_negative` | `pass` | `VLM state machines` | `crates/specforge/test_data/kg_quality/vlm_state_machine_label_noise_negative/fixture.json` |
-| `vlm_state_machine_missing_initial_negative` | `pass` | `VLM state machines` | `crates/specforge/test_data/kg_quality/vlm_state_machine_missing_initial_negative/fixture.json` |
-| `vlm_state_machine_multiple_initial_negative` | `pass` | `VLM state machines` | `crates/specforge/test_data/kg_quality/vlm_state_machine_multiple_initial_negative/fixture.json` |
-| `vlm_state_machine_undeclared_transition_negative` | `pass` | `VLM state machines` | `crates/specforge/test_data/kg_quality/vlm_state_machine_undeclared_transition_negative/fixture.json` |
+| `vlm_state_machine_duplicate_initial_gold` | `pass` | `state-machine semantics` | `crates/specforge/test_data/kg_quality/vlm_state_machine_duplicate_initial_gold/fixture.json` |
+| `vlm_state_machine_label_noise_negative` | `pass` | `state-machine semantics` | `crates/specforge/test_data/kg_quality/vlm_state_machine_label_noise_negative/fixture.json` |
+| `vlm_state_machine_missing_initial_negative` | `pass` | `state-machine semantics` | `crates/specforge/test_data/kg_quality/vlm_state_machine_missing_initial_negative/fixture.json` |
+| `vlm_state_machine_multiple_initial_negative` | `pass` | `state-machine semantics` | `crates/specforge/test_data/kg_quality/vlm_state_machine_multiple_initial_negative/fixture.json` |
+| `vlm_state_machine_undeclared_transition_negative` | `pass` | `state-machine semantics` | `crates/specforge/test_data/kg_quality/vlm_state_machine_undeclared_transition_negative/fixture.json` |
 
 <!-- corpus_kb_kg_fixture_family:end -->

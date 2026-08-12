@@ -21,21 +21,19 @@ It can inform humans, future LLM sessions, benchmark design, rescan targeting, a
 ## Page Families
 
 - `failures/validation-findings.md`: auto-refreshable validation finding projection plus human synthesis notes.
-- `benchmarks/kg-fixtures.md`: auto-refreshable KG fixture-result and fixture-family summary projection plus human synthesis notes.
-- `patterns/kg-fixtures.md`: auto-refreshable semantic/truthfulness pattern fixture-family projection plus human synthesis notes.
-- `prior_memory/kg-fixtures.md`: auto-refreshable typed prior-memory fixture-family projection plus human synthesis notes.
-- `tables/kg-fixtures.md`: auto-refreshable table extraction fixture-family projection plus human synthesis notes.
-- `visuals/kg-fixtures.md`: auto-refreshable visual/VLM fixture-family projection plus human synthesis notes.
-- `state_machines/kg-fixtures.md`: auto-refreshable VLM state-machine fixture-family projection plus human synthesis notes.
-- `timing/kg-fixtures.md`: auto-refreshable timing motif fixture-family projection plus human synthesis notes.
-- `infra/kg-fixtures.md`: auto-refreshable infrastructure/polarity fixture-family projection plus human synthesis notes.
-- `protocols/amba-kg-fixtures.md`: auto-refreshable AMBA-family fixture projection plus human synthesis notes.
+- `benchmarks/kg-fixtures.md`: auto-refreshable KG fixture-result and structural-capability summary projection plus human synthesis notes.
+- `patterns/kg-fixtures.md`: auto-refreshable semantic/truthfulness structural-capability projection plus human synthesis notes.
+- `prior_memory/kg-fixtures.md`: auto-refreshable typed prior-memory capability projection plus human synthesis notes.
+- `tables/kg-fixtures.md`: auto-refreshable table-extraction capability projection plus human synthesis notes.
+- `visuals/kg-fixtures.md`: auto-refreshable visual-evidence capability projection plus human synthesis notes.
+- `state_machines/kg-fixtures.md`: auto-refreshable state-machine capability projection plus human synthesis notes.
+- `timing/kg-fixtures.md`: auto-refreshable temporal-semantics capability projection plus human synthesis notes.
+- `infra/kg-fixtures.md`: auto-refreshable infrastructure/polarity capability projection plus human synthesis notes.
 - `prior_candidates/kg-fixture-candidates.md`: auto-refreshable review-only prior-candidate projection, readiness summary, family-level gate matrix, and human synthesis notes.
 - `prior_candidates/kg-fixture-candidates.json`: auto-refreshable schema-versioned prior-candidate readiness manifest for review automation; it is not a `CorpusMemory` artifact or approval record.
 
 Future page families can include:
 
-- `protocols/`
 - `prior_memory/`
 - `tables/`
 - `visuals/`
@@ -52,13 +50,10 @@ The validation-finding refresh surface is:
 ```bash
 cargo run --manifest-path Cargo.toml -- corpus-kb \
   --repo-root . \
-  generated/intent_ir/ihi0022_l_2025_08_amba_axi_protocol_specification/validation_report.json \
-  generated/intent_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/validation_report.json \
-  generated/intent_ir/ihi0033_c_2021_09_amba_5_ahb_protocol_specification/validation_report.json \
-  generated/intent_ir/ihi0051_b_2021_04_amba_axi_stream_protocol_specification/validation_report.json
+  generated/intent_ir/<document-key>/validation_report.json
 ```
 
-The KG fixture-result refresh surface also refreshes the dedicated pattern, family, and prior-candidate pages listed above:
+The KG fixture-result refresh surface also refreshes the dedicated structural-capability and prior-candidate pages listed above:
 
 ```bash
 cargo run --manifest-path Cargo.toml -- corpus-kb \

@@ -74,7 +74,7 @@ if ($mode eq 'report') {
         prior_memory_mutation_allowed => JSON::PP::false,
     }) . "\n";
 } else {
-    print "corpus-kb-currentness: reviewed validation, 156/156 KG fixtures, eleven managed Markdown blocks, paired JSON, human regions, and producer seams are current.\n";
+    print "corpus-kb-currentness: reviewed validation, 156/156 KG fixtures, ten managed Markdown blocks, paired JSON, human regions, and producer seams are current.\n";
 }
 
 sub validate_contract {
@@ -239,7 +239,7 @@ sub validate_outputs {
         problem($errors, 'outputs.markdown must be a non-empty array');
         return;
     }
-    problem($errors, 'exactly eleven managed Markdown outputs are required') if @$markdown != 11;
+    problem($errors, 'exactly ten managed Markdown outputs are required') if @$markdown != 10;
     problem($errors, 'managed Markdown output count exceeds control bound')
         if @$markdown > $controls->{max_markdown_outputs};
     my (%ids, %paths);

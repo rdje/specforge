@@ -14,12 +14,12 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 <!-- This block is refreshed by `specforge corpus-kb`. -->
 
 - source: `kg-bench fixtures`
-- selected_family_labels: `temporal semantics`, `VLM timing diagrams`
-- fixtures_total: `73`
-- fixtures_passed: `73`
+- selected_structural_capabilities: `temporal semantics`
+- fixtures_total: `79`
+- fixtures_passed: `79`
 - fixtures_failed: `0`
 
-| fixture | status | matched families | path |
+| fixture | status | matched capabilities | path |
 | --- | --- | --- | --- |
 | `ahb_control_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/ahb_control_stability_gold/fixture.json` |
 | `ahb_exclusive_security_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/ahb_exclusive_security_stability_gold/fixture.json` |
@@ -27,7 +27,10 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `ahb_transfer_lock_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/ahb_transfer_lock_stability_gold/fixture.json` |
 | `ahb_wait_state_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/ahb_wait_state_timing_gold/fixture.json` |
 | `ahb_write_data_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/ahb_write_data_stability_gold/fixture.json` |
+| `alias_dependent_handshake_completion_caveat` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/alias_dependent_handshake_completion_caveat/fixture.json` |
+| `amba_source_column_handshake_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/amba_source_column_handshake_gold/fixture.json` |
 | `apb_address_protection_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/apb_address_protection_stability_gold/fixture.json` |
+| `apb_requester_completer_handshake_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/apb_requester_completer_handshake_gold/fixture.json` |
 | `apb_response_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/apb_response_stability_gold/fixture.json` |
 | `apb_setup_access_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/apb_setup_access_timing_gold/fixture.json` |
 | `apb_write_control_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/apb_write_control_stability_gold/fixture.json` |
@@ -44,6 +47,7 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `axi_read_data_response_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_read_data_response_stability_gold/fixture.json` |
 | `axi_read_data_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_read_data_timing_gold/fixture.json` |
 | `axi_sideband_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_sideband_stability_gold/fixture.json` |
+| `axi_width_only_prose_direction_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_width_only_prose_direction_gold/fixture.json` |
 | `axi_write_address_control_sideband_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_write_address_control_sideband_stability_gold/fixture.json` |
 | `axi_write_address_id_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_write_address_id_stability_gold/fixture.json` |
 | `axi_write_address_sideband_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_write_address_sideband_stability_gold/fixture.json` |
@@ -53,26 +57,30 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `axi_write_response_id_stability_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_write_response_id_stability_gold/fixture.json` |
 | `axi_write_response_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/axi_write_response_timing_gold/fixture.json` |
 | `clock_edge_of_clock_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/clock_edge_of_clock_timing_gold/fixture.json` |
+| `contested_handshake_name_fallback_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/contested_handshake_name_fallback_negative/fixture.json` |
 | `default_clock_explicit_next_edge_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/default_clock_explicit_next_edge_timing_gold/fixture.json` |
 | `default_clock_later_edge_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/default_clock_later_edge_timing_gold/fixture.json` |
 | `default_clock_quantified_edge_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/default_clock_quantified_edge_timing_gold/fixture.json` |
+| `detached_mixed_control_polarity_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/detached_mixed_control_polarity_negative/fixture.json` |
 | `generic_bounded_cycle_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/generic_bounded_cycle_timing_gold/fixture.json` |
 | `generic_clock_edge_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/generic_clock_edge_timing_gold/fixture.json` |
 | `generic_exact_cycle_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/generic_exact_cycle_timing_gold/fixture.json` |
 | `generic_next_cycle_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/generic_next_cycle_timing_gold/fixture.json` |
 | `generic_range_cycle_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/generic_range_cycle_timing_gold/fixture.json` |
 | `later_phrase_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/later_phrase_timing_gold/fixture.json` |
+| `mixed_control_polarity_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/mixed_control_polarity_gold/fixture.json` |
+| `multi_control_polarity_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/multi_control_polarity_gold/fixture.json` |
 | `named_cycle_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/named_cycle_timing_gold/fixture.json` |
 | `named_diagram_edge_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/named_diagram_edge_timing_gold/fixture.json` |
 | `named_next_clock_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/named_next_clock_timing_gold/fixture.json` |
 | `named_quantified_edge_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/named_quantified_edge_timing_gold/fixture.json` |
 | `negative_knowledge_prior_guided_temporal_conflict_caution_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_temporal_conflict_caution_gold/fixture.json` |
 | `next_tick_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/next_tick_timing_gold/fixture.json` |
+| `non_reset_control_polarity_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/non_reset_control_polarity_gold/fixture.json` |
 | `plural_edge_of_clock_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/plural_edge_of_clock_timing_gold/fixture.json` |
 | `shorthand_next_edge_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/shorthand_next_edge_timing_gold/fixture.json` |
 | `signal_leading_clock_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/signal_leading_clock_timing_gold/fixture.json` |
-| `table_shape_prior_guided_timing_table_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/table_shape_prior_guided_timing_table_gold/fixture.json` |
-| `table_shape_prior_guided_timing_table_without_prior_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/table_shape_prior_guided_timing_table_without_prior_negative/fixture.json` |
+| `table_misclassification_field_table_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/table_misclassification_field_table_negative/fixture.json` |
 | `temporal_actor_grounding_surface_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/temporal_actor_grounding_surface_negative/fixture.json` |
 | `temporal_clock_grounding_surface_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/temporal_clock_grounding_surface_negative/fixture.json` |
 | `temporal_conflict_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/temporal_conflict_negative/fixture.json` |
@@ -84,15 +92,13 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `tick_unit_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/tick_unit_timing_gold/fixture.json` |
 | `trailing_shorthand_edge_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/trailing_shorthand_edge_timing_gold/fixture.json` |
 | `unit_first_diagram_position_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/unit_first_diagram_position_timing_gold/fixture.json` |
-| `vlm_timing_active_low_assertion_equivalence_gold` | `pass` | `VLM timing diagrams`, `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_active_low_assertion_equivalence_gold/fixture.json` |
-| `vlm_timing_active_low_deassertion_equivalence_gold` | `pass` | `VLM timing diagrams`, `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_active_low_deassertion_equivalence_gold/fixture.json` |
-| `vlm_timing_cycle_qualified_signal_value_annotation_negative` | `pass` | `VLM timing diagrams`, `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_cycle_qualified_signal_value_annotation_negative/fixture.json` |
-| `vlm_timing_indexed_signal_value_annotation_negative` | `pass` | `VLM timing diagrams`, `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_indexed_signal_value_annotation_negative/fixture.json` |
-| `vlm_timing_motion_annotation_negative` | `pass` | `VLM timing diagrams`, `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_motion_annotation_negative/fixture.json` |
-| `vlm_timing_name_only_semantic_noise_negative` | `pass` | `VLM timing diagrams`, `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_name_only_semantic_noise_negative/fixture.json` |
-| `vlm_timing_semantic_grounding_gold` | `pass` | `VLM timing diagrams`, `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_semantic_grounding_gold/fixture.json` |
-| `vlm_timing_spurious_annotation_negative` | `pass` | `VLM timing diagrams`, `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_spurious_annotation_negative/fixture.json` |
-| `vlm_timing_waveform_motion_negative` | `pass` | `VLM timing diagrams`, `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_waveform_motion_negative/fixture.json` |
+| `vlm_timing_active_low_assertion_equivalence_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_active_low_assertion_equivalence_gold/fixture.json` |
+| `vlm_timing_active_low_deassertion_equivalence_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_active_low_deassertion_equivalence_gold/fixture.json` |
+| `vlm_timing_cycle_qualified_signal_value_annotation_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_cycle_qualified_signal_value_annotation_negative/fixture.json` |
+| `vlm_timing_indexed_signal_value_annotation_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_indexed_signal_value_annotation_negative/fixture.json` |
+| `vlm_timing_motion_annotation_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_motion_annotation_negative/fixture.json` |
+| `vlm_timing_spurious_annotation_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_spurious_annotation_negative/fixture.json` |
+| `vlm_timing_waveform_motion_negative` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/vlm_timing_waveform_motion_negative/fixture.json` |
 | `zero_cycle_timing_gold` | `pass` | `temporal semantics` | `crates/specforge/test_data/kg_quality/zero_cycle_timing_gold/fixture.json` |
 
 <!-- corpus_kb_kg_fixture_family:end -->

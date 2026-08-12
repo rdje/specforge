@@ -144,11 +144,12 @@ even then it would generalize the *how* and still never memorize names.
 
 The rule above is the required architecture, but an August 2026 whole-production audit found that the
 current implementation does not yet satisfy it completely. SourceIR classification, generic protocol evidence,
-prior selection, and identifier-spelling authority have now been repaired: current-document identities are
-opaque, downstream stages cannot reconstruct their meaning from spelling, and ISF clock/reset lowering fails
-closed without a typed system contract. Production prompts, named corpus organization/commentary, calibrated
-classification claims, the structural proof-carrying gate, and full behavioral qualification remain
-release-blocking work, not accepted shortcuts.
+prior selection, identifier-spelling authority, production model prompts, and corpus-KB routing have now been
+repaired. Current-document identities are opaque, downstream stages cannot reconstruct their meaning from
+spelling, ISF clock/reset lowering fails closed without a typed system contract, prompts teach only typed
+digital-design structure with current-document symbols, and corpus pages group fixtures only by populated typed
+schema capabilities. Named production commentary, calibrated classification claims, the structural
+proof-carrying gate, and full behavioral qualification remain release-blocking work, not accepted shortcuts.
 
 The remediation is tracked by `SPEC-TO-INTENT-ALIGNMENT.6d.ii`. Its proof is deliberately stronger than
 a forbidden-word list: the production/conformance dependency boundary must prevent named test knowledge

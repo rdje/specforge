@@ -1,9 +1,10 @@
 use crate::cli::{NlpEnrichArgs, VlmProviderArg};
 use crate::commands::llm_text;
 use crate::error::{AppError, Result};
+use crate::ir::entity_typing::declared_signal_catalog;
 use crate::ir::evidence::{
     EvidenceIr, ExtractorTier, FactKind, FactProvenanceRecord, StatementClass,
-    collect_known_signal_names, signal_constraint_fact_key,
+    signal_constraint_fact_key,
 };
 use crate::ir::source::{
     AutomationConfidence, ConditionalRuleRecord, SignalConstraintKind, SignalConstraintRecord,
@@ -430,15 +431,7 @@ fn count_candidate_statements(evidence_ir: &EvidenceIr) -> usize {
 /// in the EvidenceIR. These come from signal description tables and are authoritative.
 /// Used as grounding context so the LLM can resolve implicit/pronoun references.
 fn auto_extract_declared_signals(evidence_ir: &EvidenceIr) -> Vec<String> {
-    // Use EvidenceIR's canonical plural scanner: markdown normalization can merge multiple
-    // declarations into one statement, and the NLP catalog must not silently lose every identity
-    // after the first sentence.
-    let mut signals: Vec<String> = collect_known_signal_names(&evidence_ir.extracted_statements)
-        .into_iter()
-        .collect();
-    signals.sort();
-    signals.dedup();
-    signals
+    declared_signal_catalog(evidence_ir)
 }
 
 /// Form 2: Extract a prose alias phrase for a signal from a sentence where Level 3
@@ -704,13 +697,13 @@ fn build_nlp_prompt(sentence: &str, grounding_signals: &[String]) -> String {
         String::new()
     } else {
         format!(
-            "Known hardware signals in this specification: {}\n\n",
+            "Declared signal symbols in the current document: {}\n\n",
             grounding_signals.join(", ")
         )
     };
     format!(
-        "You are a hardware protocol specification analyzer.\n\
-         Extract a structured hardware constraint from the following sentence.\n\n\
+        "You extract one typed digital-hardware constraint from the following specification sentence.\n\
+         Treat every document-owned symbol as opaque; spelling never implies a semantic role.\n\n\
          {grounding_section}\
          Sentence: \"{sentence}\"\n\n\
          Respond with exactly one JSON object (no other text):\n\
@@ -726,7 +719,7 @@ fn build_nlp_prompt(sentence: &str, grounding_signals: &[String]) -> String {
          - If no specific hardware constraint is extractable:\n\
            {{\"type\":\"none\"}}\n\n\
          Rules:\n\
-         - subject_signal must be an uppercase hardware signal name (e.g. HTRANS, HREADY)\n\
+         - subject_signal must exactly match one symbol in the declared-signal list; if that list is absent, do not emit a signal_constraint\n\
          - Only output the JSON object, nothing else"
     )
 }
@@ -1553,17 +1546,29 @@ mod tests {
             "grounding signals must appear in the prompt"
         );
         assert!(
-            prompt.contains("Known hardware signals"),
+            prompt.contains("Declared signal symbols in the current document"),
             "grounding section header must appear"
         );
+    }
+
+    #[test]
+    fn nlp_prompt_is_alpha_equivariant_and_assigns_no_role_from_spelling() {
+        let first = build_nlp_prompt("copper shall remain stable.", &["copper".to_string()])
+            .replace("copper", "<signal>");
+        let renamed = build_nlp_prompt("silver shall remain stable.", &["silver".to_string()])
+            .replace("silver", "<signal>");
+        assert_eq!(first, renamed);
+        assert!(first.contains("spelling never implies a semantic role"));
+        assert!(!first.contains("HTRANS"));
+        assert!(!first.contains("HREADY"));
     }
 
     #[test]
     fn build_nlp_prompt_without_grounding_has_no_known_signals_section() {
         let prompt = build_nlp_prompt("HTRANS shall be IDLE.", &[]);
         assert!(
-            !prompt.contains("Known hardware signals"),
-            "empty grounding must not produce a Known hardware signals section"
+            !prompt.contains("Declared signal symbols in the current document"),
+            "empty grounding must not produce a declared-signal section"
         );
     }
 

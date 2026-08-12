@@ -8,6 +8,8 @@
   > Can SpecForge theoretically be specification and PDF neutral?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > Can a signal or response spelling select a production extractor?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Can fixture names decide KG capability or prior-candidate routing?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
   > Can legacy named-family priors steer current extraction?
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
@@ -24,12 +26,16 @@
   > How are frame fields extracted without hardcoding a protocol?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
   > How are old CorpusMemory schemas migrated?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How are production prompts kept specification neutral?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > How does EvidenceIR schema 2 handle old protocol-specific artifacts?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How does EvidenceIR schema 2 remove protocol-specific extraction authority?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How does SourceIR classification remain specification neutral?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How does the corpus knowledge base group fixtures without protocol-family names?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Were downstream artifacts reconciled after SourceIR schema 2?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
@@ -291,9 +297,3 @@
   > do text-reasoning tasks need a vision model
 - [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
   > do the Pattern and Nlp extraction tiers find the same constraints
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > do the emergent clusters actually track real vendor/layout families
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > do the register-classed empty-catalog documents deserve the same bar as protocol-classed ones
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > do the register_bits.rs tiling gates validate field order (NO — only width-sum + name-multiset; a row-jumbled flattened table could pass both gates with WRONG bits, so a deterministic-table reader is strictly more dangerous than the VLM front-end)

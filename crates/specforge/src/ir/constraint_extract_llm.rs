@@ -517,17 +517,29 @@ pub fn dedup_field_constraints(
 /// Default text model.
 pub const DEFAULT_EXTRACT_MODEL: &str = "qwen2.5:14b-instruct";
 
-/// The LLM extraction prompt — structured signal requirements with conditions, JSON only.
-pub fn extraction_prompt(sentence: &str) -> String {
+/// The LLM extraction prompt — structured value-carrier requirements with conditions, JSON only.
+pub fn extraction_prompt(sentence: &str, declared_carriers: &[String]) -> String {
+    let mut stable_catalog = Vec::new();
+    for carrier in declared_carriers {
+        if !stable_catalog.contains(carrier) {
+            stable_catalog.push(carrier.clone());
+        }
+    }
+    let declaration_catalog = if stable_catalog.is_empty() {
+        "none".to_string()
+    } else {
+        stable_catalog.join(", ")
+    };
     format!(
-        "Extract every normative requirement about a SIGNAL from the sentence below, as a JSON array. \
-         A signal is a wire/pin/field that carries a value — NOT a table/figure reference, a feature, \
-         a transaction name, a protocol state, or legal text. For each requirement output an object: \
-         {{\"subject\": <signal name>, \"kind\": one of must_be_asserted|must_be_deasserted|\
+        "Extract every normative requirement about a declared digital value carrier from the sentence below, as a JSON array. \
+         A value carrier is an explicitly named signal/net/pin or register/message field — NOT a table/figure reference, feature, \
+         transaction name, state name, or legal text. Treat its document-owned name as opaque and copy it exactly. For each requirement output an object: \
+         {{\"subject\": <exact carrier name>, \"kind\": one of must_be_asserted|must_be_deasserted|\
          must_be_stable|must_be_high|must_be_low|must_not_change|must_hold_data|must_be_value, \
          \"condition\": <the when/until/before/after clause from the sentence, or null>, \"value\": \
          <only for must_be_value, else null>}}. A validity requirement — “<signal> must be valid” — \
-         is kind must_be_value with value VALID. If the sentence states no signal requirement, output \
+         is kind must_be_value with value VALID. Use only exact symbols from this current-document \
+         declaration catalog: {declaration_catalog}. If the catalog is none or the sentence states no declared-carrier requirement, output \
          []. Output ONLY the JSON array.\n\nSentence: {sentence}\n\nJSON:"
     )
 }
@@ -544,6 +556,7 @@ pub fn parse_constraints_json(resp: &str) -> Vec<RawConstraint> {
 /// Production: the LLM proposes the structured constraints for a sentence.
 pub fn propose_constraints_llm(
     sentence: &str,
+    declared_carriers: &[String],
     provider: VlmProviderArg,
     model: &str,
 ) -> Vec<RawConstraint> {
@@ -553,7 +566,7 @@ pub fn propose_constraints_llm(
         api_url(provider),
         "",
         sentence,
-        &extraction_prompt(sentence),
+        &extraction_prompt(sentence, declared_carriers),
         256,
     ) {
         Ok(resp) => parse_constraints_json(&resp),
@@ -565,6 +578,20 @@ pub fn propose_constraints_llm(
 mod tests {
     use super::*;
     use crate::ir::condition_extract::is_grounded_in_source;
+
+    #[test]
+    fn extraction_prompt_separates_typed_carriers_and_uses_opaque_names() {
+        let first = extraction_prompt("orchid must remain stable.", &["orchid".to_string()])
+            .replace("orchid", "<carrier>");
+        let renamed = extraction_prompt("juniper must remain stable.", &["juniper".to_string()])
+            .replace("juniper", "<carrier>");
+        assert_eq!(first, renamed);
+        assert!(first.contains("register/message field"));
+        assert!(first.contains("document-owned name as opaque"));
+        assert!(!first.contains("AWVALID"));
+        assert!(!first.contains("HTRANS"));
+        assert!(extraction_prompt("anything", &[]).contains("catalog is none"));
+    }
 
     #[test]
     fn parses_a_json_array_with_prose_around_it() {

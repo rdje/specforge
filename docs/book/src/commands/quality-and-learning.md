@@ -633,6 +633,16 @@ echoing the value, Rust recovers the value **from the source sentence itself**
 (the same "must be ⟨value⟩" reading the Pattern extractor uses) — recovered from
 the document or dropped, never guessed.
 
+All current production prompts share the same neutrality boundary. They describe typed digital-hardware
+relations, constraints, contracts, conditions, entity types, diagrams, tables, audits, or register fields;
+document-owned labels are opaque and must be copied from the current sentence, declaration catalog, or visible
+image. Signal/value-carrier catalogs preserve declaration/provenance order rather than sorting by spelling.
+Entity typing never receives the identifier at all: an opaque placeholder replaces it in context and helper
+transport, leaving typed evidence and grammar as the only inputs. Undeclared proposed contract signals become an
+explicit residual, and the LLM-primary constraint path cannot validate its own proposed subject. No prompt teaches
+a real vendor/protocol signal example or frames every input as one protocol family. Alpha-renaming tests require
+prompt policy to stay identical after replacing the current-document symbols.
+
 Measured against the hand-validated AMBA gold (document-level fact recall,
 before → after that convention landed): APB **4/6 → 6/6**, AHB **2/6 → 6/6**, and
 AXI — which has no validity facts in gold, so it serves as the no-regression

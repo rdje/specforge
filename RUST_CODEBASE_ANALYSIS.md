@@ -4,6 +4,23 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-12 — neutral prompts and structural corpus routing; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii`)
+
+- Every audited production model prompt now states a typed digital-hardware task, treats current-document labels
+  as opaque, and restricts grounding to the current sentence/declaration catalog or visible image structure.
+  Entity typing redacts the identifier from model/helper inputs; contract and constraint proposals are checked
+  against independent declaration catalogs. Catalog order follows declaration provenance, not spelling. Real
+  protocol/signal examples and protocol-PDF framing are absent; alpha-renaming controls pin the policy.
+- `KgBenchFixtureStructureProfile` derives capability membership only from populated typed fixture fields and
+  ignores fixture names and all string values. A name-only fixture receives no capability.
+- Corpus-KB routing now emits seven structural capability pages rather than a named protocol-family page. The
+  managed Markdown surface is ten files, the AMBA page is removed, and all 156 tracked fixtures still pass.
+- Prior-candidate manifest schema 2 reports typed-prior presence and typed control structure separately, permits
+  overlap, and uses exact fixture identities only as conformance provenance. No filename fragment assigns status.
+- This closes the prompt/corpus semantic-routing leaf, not complete genericity signoff. `.d.iv`–`.f` still own
+  combined qualification, named production commentary/calibration, the proof-carrying dependency gate, and
+  behavioral invariance.
+
 ## Session update (2026-08-12 — opaque identifiers and one-way grounding; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii`)
 
 - EvidenceIR no longer assigns signal authority from case, length, suffix, familiar name fragments, or a

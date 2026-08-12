@@ -275,11 +275,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii — make document identifiers opaque`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii`
-  Status: `pending`
+  Status: `done`
   Goal: `neutralize production prompts and replace named corpus organization with structural organization`
   Acceptance: `model prompts describe generic typed digital intent with synthetic placeholders and current-document grounding only; production corpus/KG pages and routing use structural labels rather than a named protocol family`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `complete census of 13 production prompt constructors/families; identifier-redacted entity judgment, declaration-ordered prompt catalogs, undeclared-contract residualization, and independent constraint typing controls; fixture structure/value/name invariance controls; 30/30 corpus-KB and 16/16 KG command tests; 156/156 tracked fixtures; ten managed Markdown outputs plus schema-2 JSON currentness; warning-deny Clippy; 1,900 Rust tests passed / six ignored / zero failed; all eight doctrines, mdBook test/build, and final locality pass`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii — neutralize prompts and corpus organization`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv`
   Status: `pending`
@@ -356,7 +356,7 @@ expressiveness as the bottleneck.
 | 20 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c` | `done` | EvidenceIR schema 2 and all 78 persisted downstream chains are generic, reconciled, and current |
 | 21 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i` | `done` | identity-independent schema-7 prior memory, neutral KG controls, fixed-point learning, and exact chain reconciliation are complete |
 | 22 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii` | `done` | opaque identifiers, one-way declaration grounding, alpha-equivariant semantics, and typed-only ISF clock/reset lowering are complete |
-| 23 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii` | `pending` | neutralize prompts and production corpus organization |
+| 23 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii` | `done` | opaque prompt information flow and structural corpus routing are verified |
 | 24 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv` | `pending` | exact chain reconciliation and behavioral qualification close `.d` |
 | 25 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e` | `pending` | structurally gate the complete neutral production graph after remediation |
 | 26 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `pending` | behavioral metamorphic and whole-population qualification closes the genericity parent |
@@ -1078,6 +1078,26 @@ the reviewed replay can name its production revision.
   Map, task frontier, and bounded resume pointer publish the same one-way grounding boundary and remaining
   `.d.iii`–`.f` release blockers.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii`
+
+- [x] **REPRODUCE / MEASURE** — census every production prompt constructor and corpus-KB routing decision;
+  preserve the exact 156-fixture outcome surface while proving which old pages/candidates were selected by names.
+- [x] **ROOT CAUSE (WHY + WHERE)** — prompts carried named examples/protocol framing, entity typing exposed the raw
+  identifier to model world knowledge, spelling-sorted catalogs could change order under alpha-renaming, contract
+  and constraint proposals lacked closed catalogs, and corpus-KB classified fixture-name fragments.
+- [x] **ADDRESSED (verified)** — thirteen prompt families state typed digital-hardware policy; entity names are
+  redacted from model/helper inputs; catalogs preserve declaration order; undeclared contracts residualize;
+  constraint typing is independently catalog-grounded; KG capabilities use populated typed fields only.
+- [x] **NO REGRESSION** — all 156 fixtures pass; ten managed Markdown pages and schema-2 candidate JSON are exact;
+  focused prompt/corpus tests, warning-deny Clippy, 1,900/6/0 full Rust tests, mdBook, all eight doctrines, and
+  project-data locality pass.
+- [x] **GENERICITY (ADR 0006)** — vendor/protocol/document/symbol identity cannot choose prompt instruction,
+  entity type, declaration order, corpus page, candidate presence, or control status; exact fixture names remain
+  conformance provenance only, and a vocabulary census is not treated as proof.
+- [x] **LOCKSTEP** — code, generated corpus KB, currentness authority, audit, mdBook, live/architecture docs,
+  Knowledge Map, task frontier, and bounded resume pointer agree that `.d.iii` is closed while `.d.iv`–`.f`
+  remain release blockers.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -1105,9 +1125,19 @@ the reviewed replay can name its production revision.
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c — make protocol EvidenceIR document-derived` | generic schema-2 protocol evidence, legacy fail-closure, exact 78-chain ADR 0025 reconciliation, and full CI |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i — make prior memory identity-independent` | schema-7 global prior scope, legacy quarantine, neutral KG controls, byte-stable relearning, and exact 78-chain currency |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii — make document identifiers opaque` | opaque identifiers, one-way current-document grounding, alpha-equivariant semantics, typed-only ISF clock/reset lowering, exact 78-chain reconciliation, and full CI |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii — neutralize prompts and corpus organization` | identifier-redacted provider policy, declaration-ordered catalogs, structural KG capabilities, schema-2 candidate projection, and full CI |
 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | measured remaining AMD IOMMU and GIC-400 fabrication families, root-cause split, and clean qualification |
 
 ## Changelog
+
+- `2026-08-12`: Activated `.6d.ii.d.iii` only after `.d.ii` committed at `f88d463d` and the post-commit
+  tree was clean. This leaf owns compiled model prompts and production corpus/KG organization: prompts may teach
+  generic digital-design concepts with synthetic symbols and current-document evidence, while vendor, protocol,
+  ISA, document, and corpus-family identities must not select extraction behavior or production routing.
+- `2026-08-12`: Closed `.6d.ii.d.iii` after the complete prompt census removed named framing, raw entity-name
+  transport, spelling-ordered catalogs, and ungrounded provider promotion; corpus-KB routing now derives only
+  typed structural capabilities and all 156 fixtures reproduce across ten managed pages. Full Rust, doctrine,
+  mdBook, currentness, and locality gates pass. After this commit is clean, `.d.iv` owns combined qualification.
 
 - `2026-08-11`: Created on owner request so the ramp-up trajectory assessment and upstream-first direction do
   not remain chat-only.

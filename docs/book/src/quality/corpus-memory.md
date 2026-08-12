@@ -12,7 +12,10 @@ There is now a second cross-document artifact plane too:
 
 That corpus knowledge base is for reviewable synthesis and failure-pattern notes, not machine-usable priors.
 If a corpus KB observation should become executable extraction behavior, it must still move through a typed prior schema, KG-bench coverage, and validation-gated promotion.
-The corpus KB can include a typed prior-memory fixture-family projection at `corpus_kb/prior_memory/kg-fixtures.md`, but that page is only reviewable benchmark synthesis; it is not the `CorpusMemory` store and cannot write machine-usable priors.
+The corpus KB includes a typed prior-memory capability projection at
+`corpus_kb/prior_memory/kg-fixtures.md`, but that page is only reviewable benchmark synthesis; it is
+not the `CorpusMemory` store and cannot write machine-usable priors. Membership comes from populated typed
+fixture-schema fields, never a fixture or protocol name.
 It can also include a review-only prior-candidate readiness manifest at `corpus_kb/prior_candidates/kg-fixture-candidates.json`; that manifest makes candidate fixture coverage easier to inspect, but it is not an approval artifact and cannot write `generated/prior_memory/corpus_memory.json`.
 
 ## Two separate planes

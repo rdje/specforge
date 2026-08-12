@@ -196,7 +196,7 @@ fn obligation_signals(o: &Obligation, out: &mut BTreeSet<String>) {
     }
 }
 
-fn contract_signals_for_entailment(c: &ActorContract) -> BTreeSet<String> {
+pub(crate) fn actor_contract_signal_names(c: &ActorContract) -> BTreeSet<String> {
     let mut s = BTreeSet::new();
     obligation_signals(&c.obligation, &mut s);
     if let Some(Condition::Eq { signal, .. }) = &c.guard {
@@ -278,7 +278,7 @@ fn span_contains_number(span: &str, want: u64) -> bool {
 /// `apply_entailment_to_contract` reroutes a `Fail` on a `Lowerable`
 /// contract to `Residual{reason="entailment fail: …"}`.
 pub fn entailment_check(source_span: &str, contract: &ActorContract) -> FindingStatus {
-    let signals = contract_signals_for_entailment(contract);
+    let signals = actor_contract_signal_names(contract);
     let bounds = obligation_numeric_bounds(&contract.obligation);
     if signals.is_empty() && bounds.is_empty() {
         return FindingStatus::NotEvaluated;
@@ -315,7 +315,7 @@ pub fn apply_entailment_to_contract(
     let status = entailment_check(source_span, contract);
     if status == FindingStatus::Fail && matches!(contract.lowering, LoweringDisposition::Lowerable)
     {
-        let signals = contract_signals_for_entailment(contract);
+        let signals = actor_contract_signal_names(contract);
         let bounds = obligation_numeric_bounds(&contract.obligation);
         let missing_signals: Vec<&str> = signals
             .iter()

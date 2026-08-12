@@ -22,11 +22,14 @@ use crate::cli::{ExtractContractsArgs, VlmProviderArg};
 use crate::commands::llm_text;
 use crate::error::{AppError, Result};
 use crate::ir::contract::ActorContract;
+use crate::ir::contract::LoweringDisposition;
 use crate::ir::cve::{
-    ConstrainedExtractionStats, actor_contract_json_schema_summary, apply_entailment_to_contract,
-    parse_constrained_contract,
+    ConstrainedExtractionStats, actor_contract_json_schema_summary, actor_contract_signal_names,
+    apply_entailment_to_contract, parse_constrained_contract,
 };
+use crate::ir::entity_typing::declared_signal_catalog;
 use crate::ir::evidence::{EvidenceIr, StatementClass};
+use std::collections::BTreeSet;
 
 /// Minimum word count for a prose statement to be a contract candidate
 /// (mirrors `nlp_enrich`'s candidate floor — very short fragments carry no
@@ -78,7 +81,12 @@ fn is_none_sentinel(cleaned: &str) -> bool {
 /// self-reported provenance is never trusted), and the `contract_id` is
 /// namespaced `cve:<statement_id>` so extracted contracts are distinguishable
 /// from temporal-projected (`contract_*`) and template (`tmpl:*`) ones.
-fn classify_response(raw: &str, statement_id: &str, sentence: &str) -> CandidateOutcome {
+fn classify_response(
+    raw: &str,
+    statement_id: &str,
+    sentence: &str,
+    declared_signals: &BTreeSet<String>,
+) -> CandidateOutcome {
     let cleaned = strip_code_fences(raw);
     if is_none_sentinel(&cleaned) {
         return CandidateOutcome::Skipped;
@@ -88,6 +96,17 @@ fn classify_response(raw: &str, statement_id: &str, sentence: &str) -> Candidate
             c.contract_id = format!("cve:{statement_id}");
             c.provenance.source_text = sentence.to_string();
             c.provenance.supporting_statement_ids = vec![statement_id.to_string()];
+            let missing_signals = actor_contract_signal_names(&c)
+                .into_iter()
+                .filter(|signal| !declared_signals.contains(signal))
+                .collect::<Vec<_>>();
+            if !missing_signals.is_empty() {
+                c.lowering = LoweringDisposition::Residual {
+                    reason: format!(
+                        "current-document declaration missing for contract signals: {missing_signals:?}"
+                    ),
+                };
+            }
             apply_entailment_to_contract(&mut c, sentence);
             CandidateOutcome::Accepted(Box::new(c))
         }
@@ -97,14 +116,21 @@ fn classify_response(raw: &str, statement_id: &str, sentence: &str) -> Candidate
 
 /// Build the constrained-decoding prompt: the provider-facing schema summary
 /// plus a strict "emit JSON or `none`, never invent" instruction.
-fn build_contract_prompt(sentence: &str) -> String {
+fn build_contract_prompt(sentence: &str, declared_signals: &[String]) -> String {
+    let declaration_catalog = if declared_signals.is_empty() {
+        "none".to_string()
+    } else {
+        declared_signals.join(", ")
+    };
     format!(
-        "You extract at most ONE timed hardware contract from a single specification sentence.\n\
+        "You extract at most ONE typed timed contract from a digital-hardware specification sentence.\n\
+         Treat every document-owned symbol as opaque; spelling never implies a role.\n\
+         Declared signal symbols in the current document: {declaration_catalog}\n\
          Rules:\n\
-         - If the sentence does not state a concrete timed obligation on a named signal, reply with exactly: none\n\
+         - If the declaration catalog is none, or the sentence does not state a concrete timed obligation on an exactly declared signal, reply with exactly: none\n\
          - Otherwise reply with ONLY a JSON object conforming to this schema (no prose, no markdown fences):\n\
          {schema}\n\
-         Use signal names exactly as they appear in the sentence. Never invent a signal, value, or cycle bound that is not present in the sentence.\n\
+         Use only exact signal symbols from the declaration catalog and copy values/cycle bounds from the sentence. Never invent any of them.\n\
          Sentence: \"{sentence}\"",
         schema = actor_contract_json_schema_summary(),
     )
@@ -141,6 +167,11 @@ pub fn run(args: ExtractContractsArgs) -> Result<()> {
     println!("document_key: {}", ir.document_identity.document_key);
 
     let work = candidate_work(&ir, args.max_statements);
+    let declared_signal_catalog = declared_signal_catalog(&ir);
+    let declared_signals = declared_signal_catalog
+        .iter()
+        .cloned()
+        .collect::<BTreeSet<_>>();
     println!("candidate_statements: {}", work.len());
 
     if matches!(args.provider, VlmProviderArg::Skip) {
@@ -170,7 +201,7 @@ pub fn run(args: ExtractContractsArgs) -> Result<()> {
     let mut schema_rejects = 0usize;
     let candidates_seen = work.len();
     for (statement_id, sentence) in &work {
-        let prompt = build_contract_prompt(sentence);
+        let prompt = build_contract_prompt(sentence, &declared_signal_catalog);
         let raw = llm_text::call_text_provider(
             args.provider,
             &model,
@@ -180,7 +211,7 @@ pub fn run(args: ExtractContractsArgs) -> Result<()> {
             &prompt,
             512,
         )?;
-        match classify_response(&raw, statement_id, sentence) {
+        match classify_response(&raw, statement_id, sentence, &declared_signals) {
             CandidateOutcome::Skipped => {}
             CandidateOutcome::SchemaReject => schema_rejects += 1,
             CandidateOutcome::Accepted(c) => extracted.push(*c),
@@ -205,7 +236,10 @@ pub fn run(args: ExtractContractsArgs) -> Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ir::contract::LoweringDisposition;
+
+    fn declarations(names: &[&str]) -> BTreeSet<String> {
+        names.iter().map(|name| (*name).to_string()).collect()
+    }
 
     /// A valid `ActorContract` JSON whose signals the sentence mentions →
     /// entailment Pass → Accepted Lowerable.
@@ -216,15 +250,15 @@ mod tests {
     #[test]
     fn none_sentinel_skips() {
         assert!(matches!(
-            classify_response("none", "s1", "anything"),
+            classify_response("none", "s1", "anything", &BTreeSet::new()),
             CandidateOutcome::Skipped
         ));
         assert!(matches!(
-            classify_response("  None  ", "s1", "anything"),
+            classify_response("  None  ", "s1", "anything", &BTreeSet::new()),
             CandidateOutcome::Skipped
         ));
         assert!(matches!(
-            classify_response(r#"{"kind":"none"}"#, "s1", "anything"),
+            classify_response(r#"{"kind":"none"}"#, "s1", "anything", &BTreeSet::new()),
             CandidateOutcome::Skipped
         ));
     }
@@ -232,12 +266,22 @@ mod tests {
     #[test]
     fn malformed_json_fails_closed_to_schema_reject() {
         assert!(matches!(
-            classify_response("this is not json", "s1", "GRANT goes high"),
+            classify_response(
+                "this is not json",
+                "s1",
+                "GRANT goes high",
+                &BTreeSet::new()
+            ),
             CandidateOutcome::SchemaReject
         ));
         // Claims a contract object but is missing required fields → fails closed.
         assert!(matches!(
-            classify_response(r#"{"contract_id":"x"}"#, "s1", "GRANT goes high"),
+            classify_response(
+                r#"{"contract_id":"x"}"#,
+                "s1",
+                "GRANT goes high",
+                &BTreeSet::new()
+            ),
             CandidateOutcome::SchemaReject
         ));
     }
@@ -245,7 +289,12 @@ mod tests {
     #[test]
     fn valid_contract_whose_signals_appear_is_accepted_lowerable() {
         let sentence = "GRANT is driven to 1 on clk";
-        match classify_response(valid_drive_json(), "s7", sentence) {
+        match classify_response(
+            valid_drive_json(),
+            "s7",
+            sentence,
+            &declarations(&["GRANT", "clk"]),
+        ) {
             CandidateOutcome::Accepted(c) => {
                 assert_eq!(c.contract_id, "cve:s7");
                 assert_eq!(c.provenance.source_text, sentence);
@@ -265,7 +314,12 @@ mod tests {
         // Sentence mentions neither GRANT nor clk ⇒ entailment Fail ⇒ the
         // honesty doctrine reroutes the Lowerable contract to Residual.
         let sentence = "the bus arbitrates fairly among requesters";
-        match classify_response(valid_drive_json(), "s8", sentence) {
+        match classify_response(
+            valid_drive_json(),
+            "s8",
+            sentence,
+            &declarations(&["GRANT", "clk"]),
+        ) {
             CandidateOutcome::Accepted(c) => match &c.lowering {
                 LoweringDisposition::Residual { reason } => {
                     assert!(reason.starts_with("entailment fail:"), "{reason}");
@@ -281,5 +335,41 @@ mod tests {
         let fenced = "```json\n{\"k\":1}\n```";
         assert_eq!(strip_code_fences(fenced), "{\"k\":1}");
         assert_eq!(strip_code_fences("  plain  "), "plain");
+    }
+
+    #[test]
+    fn contract_prompt_is_alpha_equivariant_and_declaration_grounded() {
+        let first = build_contract_prompt(
+            "orchid rises on copper",
+            &["orchid".to_string(), "copper".to_string()],
+        )
+        .replace("orchid", "<data>")
+        .replace("copper", "<clock>");
+        let renamed = build_contract_prompt(
+            "juniper rises on silver",
+            &["juniper".to_string(), "silver".to_string()],
+        )
+        .replace("juniper", "<data>")
+        .replace("silver", "<clock>");
+        assert_eq!(first, renamed);
+        assert!(first.contains("spelling never implies a role"));
+        assert!(build_contract_prompt("anything", &[]).contains("declaration catalog is none"));
+    }
+
+    #[test]
+    fn undeclared_contract_signal_is_forced_to_residual() {
+        match classify_response(
+            valid_drive_json(),
+            "s9",
+            "GRANT is driven to 1 on clk",
+            &declarations(&["GRANT"]),
+        ) {
+            CandidateOutcome::Accepted(contract) => assert!(matches!(
+                contract.lowering,
+                LoweringDisposition::Residual { ref reason }
+                    if reason.contains("current-document declaration missing")
+            )),
+            other => panic!("expected an explicit residual, got {other:?}"),
+        }
     }
 }
