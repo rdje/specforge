@@ -1,16 +1,17 @@
-//! Composition of the first reviewed SpecForge trajectory snapshot.
+//! Composition of the qualified reviewed SpecForge trajectory snapshot.
 //!
-//! `SPEC-TO-INTENT-ALIGNMENT.5b` is deliberately separate from the generic controller in
-//! [`super::trajectory`]. This module authenticates the frozen `.4c` vertical report and the
-//! `.2` provider-free production-capability observation, derives the nine-dimensional input,
-//! and evaluates it without changing either source authority.
+//! This remains deliberately separate from the generic controller in [`super::trajectory`]. It
+//! authenticates the `.6b.i` whole-population current replay, the unchanged review-locked gold,
+//! and the `.2` provider-free production-capability observation, then derives and evaluates the
+//! nine-dimensional input without changing any source authority.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::Path;
 
 use serde::{Deserialize, Serialize};
 
+#[cfg(test)]
 use super::source::TableKind;
 use super::source_to_intent_eval::{CategoryStatus, QueryScore, VerticalEvalReport};
 use super::trajectory::{
@@ -32,9 +33,14 @@ pub const CURRENT_TRAJECTORY_REPORT_PATH: &str =
     "crates/specforge/test_data/trajectory/trajectory_report.json";
 pub const CURRENT_REPLAY_EVIDENCE_PATH: &str =
     "crates/specforge/test_data/trajectory/replays/aia_toc_current_binary_replay.json";
+pub const CURRENT_POPULATION_REPLAY_EVIDENCE_PATH: &str =
+    "crates/specforge/test_data/trajectory/replays/reviewed_population_current_binary_replay.json";
+pub const CURRENT_REPLAY_VERTICAL_RESULT_PATH: &str =
+    "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json";
 pub const OBJECTIVE_CONTRACT_PATH: &str = "doctrine/spec_to_intent_category_contract.json";
 pub const TASK_TREE_PATH: &str = "docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md";
 
+#[cfg(test)]
 const VERTICAL_RESULT_SHA256: &str =
     "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb";
 const OBJECTIVE_CONTRACT_SHA256: &str =
@@ -42,11 +48,22 @@ const OBJECTIVE_CONTRACT_SHA256: &str =
 // Updated only when the `.2` ledger-currentness test accepts a reviewed observation change.
 const CAPABILITY_OBSERVATION_SHA256: &str =
     "b37f13d28b90a6e6b0fb4c554d0e9fc861ff5e993d3276743b15d0ad1736994e";
-const REPLAY_EVIDENCE_SHA256: &str =
-    "15e6a021a6e78cd23e9a31702f3a5b34bf45e43b3660fb8c38c2435d069fdd7a";
+const POPULATION_REPLAY_EVIDENCE_SHA256: &str =
+    "8dfd44b831f7d14fe8630fbf3f1bd96da4616e620d626084d3a3a70fbe72bea0";
+const REPLAY_VERTICAL_RESULT_SHA256: &str =
+    "a8ee9dfd2fe7f743e3810bca30805dce58a2394d490ee592f8375ba1d3394ec7";
+const REVIEWED_DATASET_SHA256: &str =
+    "231de7f6aded485c836af8e585334b373194b5af71d03c4ad7a52b7a0e6b34aa";
+const POPULATION_REPLAY_ORCHESTRATOR_SHA256: &str =
+    "4e4c2e3f27b8dd2de2429a4fe7ebf52f3b8f46e685a8ec6bb637e18313b6d74a";
+const REPLAY_PROJECTION_SHA256: &str =
+    "f65362b54bf0044a55d1ec09034934f4992d2008c5de9f83b00676d32dc71c09";
 const REVIEWED_REVISION: &str = "03e89b66cf87fcc1ec0bf342f47a147261a8d739";
+#[cfg(test)]
 const AIA_DOCUMENT_KEY: &str = "1_0_2025_03_12_risc_v_advanced_interrupt_architecture";
+#[cfg(test)]
 const AIA_SOURCE_SHA256: &str = "2d359579dcb84c6d00a1b284db3a7f8ec8c87764d96406a45cbaa9052f04c7c8";
+#[cfg(test)]
 const TIMING_AUTHORITY_REVISION: &str = "46af2eca7a4c59e25a014e532716c92be371e29b";
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
@@ -95,6 +112,7 @@ pub struct CapabilityObservation {
     pub production_capabilities: Vec<CapabilityObservationRecord>,
 }
 
+#[cfg(test)]
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct ReplaySourceIdentity {
@@ -103,6 +121,7 @@ struct ReplaySourceIdentity {
     byte_count: u64,
 }
 
+#[cfg(test)]
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct ReplayStageIdentities {
@@ -112,6 +131,7 @@ struct ReplayStageIdentities {
     intent_ir_sha256: String,
 }
 
+#[cfg(test)]
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct ReplayTableObservation {
@@ -128,6 +148,7 @@ struct ReplayTableObservation {
     intent_unprovenanced_records: usize,
 }
 
+#[cfg(test)]
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct ReplayBaseline {
@@ -140,6 +161,7 @@ struct ReplayBaseline {
     observed_table: ReplayTableObservation,
 }
 
+#[cfg(test)]
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct ReplaySourceCopy {
@@ -149,6 +171,7 @@ struct ReplaySourceCopy {
     verified_equal_to_authority: bool,
 }
 
+#[cfg(test)]
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct CurrentReplay {
@@ -161,6 +184,7 @@ struct CurrentReplay {
     observed_table: ReplayTableObservation,
 }
 
+#[cfg(test)]
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct ReplayComparison {
@@ -173,6 +197,7 @@ struct ReplayComparison {
     interpretation: String,
 }
 
+#[cfg(test)]
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct ReplayCleanup {
@@ -181,6 +206,7 @@ struct ReplayCleanup {
     status: String,
 }
 
+#[cfg(test)]
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct CurrentReplayEvidence {
@@ -191,6 +217,111 @@ struct CurrentReplayEvidence {
     current_replay: CurrentReplay,
     comparison: ReplayComparison,
     cleanup: ReplayCleanup,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+enum PopulationSourceLocation {
+    Repository,
+    ExternalReadOnly,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct PopulationAuthorityIdentity {
+    path: String,
+    sha256: String,
+    document_count: usize,
+    cell_count: usize,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct PopulationFileIdentity {
+    path: String,
+    sha256: String,
+    byte_count: u64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct PopulationToolIdentity {
+    path: String,
+    sha256: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct PopulationReplayTools {
+    orchestrator: PopulationToolIdentity,
+    projection: PopulationToolIdentity,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct PopulationSourceIdentity {
+    location: PopulationSourceLocation,
+    portable_id: String,
+    reviewed_sha256: String,
+    replay_sha256: String,
+    byte_count: u64,
+    repository_path: String,
+    copied_from_external_authority: bool,
+    verified_equal_to_reviewed_authority: bool,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct PopulationReplayStages {
+    source_ir: PopulationFileIdentity,
+    evidence_ir: PopulationFileIdentity,
+    semantic_ir: PopulationFileIdentity,
+    intent_ir: PopulationFileIdentity,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct PopulationDocumentReplay {
+    document_key: String,
+    category: String,
+    source: PopulationSourceIdentity,
+    command: String,
+    stages: PopulationReplayStages,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct PublishedReplayResultIdentity {
+    path: String,
+    published_path: String,
+    sha256: String,
+    byte_count: u64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct PopulationReplayCleanup {
+    external_source_map: String,
+    population_root: String,
+    removed_file_count: usize,
+    removed_kib: u64,
+    status: String,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct PopulationReplayEvidence {
+    schema_version: u32,
+    replay_id: String,
+    owner: String,
+    production_revision: String,
+    reviewed_dataset: PopulationAuthorityIdentity,
+    prior_memory: PopulationFileIdentity,
+    tools: PopulationReplayTools,
+    population: Vec<PopulationDocumentReplay>,
+    current_dataset: PopulationFileIdentity,
+    current_result: PublishedReplayResultIdentity,
+    cleanup: PopulationReplayCleanup,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -286,6 +417,7 @@ pub fn validate_capability_observation(
     }
 }
 
+#[cfg(test)]
 fn load_current_replay_evidence(path: &Path) -> Result<CurrentReplayEvidence> {
     let bytes = read_repository_relative(path, "current-binary replay evidence")?;
     let replay: CurrentReplayEvidence = serde_json::from_slice(&bytes)?;
@@ -298,6 +430,7 @@ fn load_current_replay_evidence(path: &Path) -> Result<CurrentReplayEvidence> {
     Ok(replay)
 }
 
+#[cfg(test)]
 fn validate_current_replay_evidence(
     replay: &CurrentReplayEvidence,
 ) -> std::result::Result<(), Vec<String>> {
@@ -413,6 +546,310 @@ fn validate_current_replay_evidence(
     }
 }
 
+fn load_population_replay_evidence(path: &Path) -> Result<PopulationReplayEvidence> {
+    let bytes = read_repository_relative(path, "population current-binary replay evidence")?;
+    let replay: PopulationReplayEvidence = serde_json::from_slice(&bytes)?;
+    validate_population_replay_evidence(&replay).map_err(|problems| {
+        AppError::InvalidStageArtifact(format!(
+            "invalid population current-binary replay evidence: {}",
+            problems.join("; ")
+        ))
+    })?;
+    Ok(replay)
+}
+
+fn validate_population_replay_evidence(
+    replay: &PopulationReplayEvidence,
+) -> std::result::Result<(), Vec<String>> {
+    let mut problems = Vec::new();
+    if replay.schema_version != 1
+        || replay.replay_id != "spec-to-intent-6bi-current-population"
+        || replay.owner != "SPEC-TO-INTENT-ALIGNMENT.6b.i"
+    {
+        problems
+            .push("population replay identity must name the schema-1 .6b.i authority".to_string());
+    }
+    if !is_git_revision(&replay.production_revision) {
+        problems.push("population replay production revision must be a full Git id".to_string());
+    }
+    if replay.reviewed_dataset.path
+        != "crates/specforge/test_data/source_to_intent_vertical/reviewed_dataset.json"
+        || replay.reviewed_dataset.sha256 != REVIEWED_DATASET_SHA256
+        || replay.reviewed_dataset.document_count != 12
+        || replay.reviewed_dataset.cell_count != 14
+    {
+        problems.push(
+            "population replay must bind the exact 12-document / 14-cell reviewed dataset"
+                .to_string(),
+        );
+    }
+    if replay.prior_memory.path != "generated/prior_memory/corpus_memory.json"
+        || !is_sha256_digest(&replay.prior_memory.sha256)
+        || replay.prior_memory.byte_count == 0
+    {
+        problems.push("population replay prior-memory identity is incomplete".to_string());
+    }
+    for (tool, expected_path, expected_sha) in [
+        (
+            &replay.tools.orchestrator,
+            "scripts/replay_source_to_intent_population.py",
+            POPULATION_REPLAY_ORCHESTRATOR_SHA256,
+        ),
+        (
+            &replay.tools.projection,
+            "crates/specforge/test_data/source_to_intent_vertical/build_fixture.py",
+            REPLAY_PROJECTION_SHA256,
+        ),
+    ] {
+        if tool.path != expected_path || tool.sha256 != expected_sha {
+            problems.push(format!(
+                "population replay tool identity is stale: {}",
+                tool.path
+            ));
+        }
+    }
+
+    let cleanup = &replay.cleanup;
+    if !is_project_tmp_child(&cleanup.external_source_map)
+        || !is_project_tmp_child(&cleanup.population_root)
+        || cleanup.status != "removed_and_residue_absent"
+        || cleanup.removed_file_count != 4_313
+        || cleanup.removed_kib != 1_194_976
+    {
+        problems.push(
+            "population replay cleanup must retain the exact residue-free census".to_string(),
+        );
+    }
+    if let Ok(repository) = crate::project_data::repository_root() {
+        for path in [&cleanup.external_source_map, &cleanup.population_root] {
+            if repository.join(path).exists() {
+                problems.push(format!(
+                    "population replay scratch residue still exists: {path}"
+                ));
+            }
+        }
+    }
+
+    let mut keys = BTreeSet::new();
+    let mut categories = BTreeMap::new();
+    let mut external_sources = 0;
+    for document in &replay.population {
+        if document.document_key.trim().is_empty() || !keys.insert(document.document_key.as_str()) {
+            problems.push(format!(
+                "population replay document key must be non-empty and unique: '{}'",
+                document.document_key
+            ));
+        }
+        *categories
+            .entry(document.category.as_str())
+            .or_insert(0usize) += 1;
+        let source = &document.source;
+        if source.portable_id.trim().is_empty()
+            || source.byte_count == 0
+            || !source.verified_equal_to_reviewed_authority
+            || source.reviewed_sha256 != source.replay_sha256
+            || !is_sha256_digest(&source.reviewed_sha256)
+            || !is_safe_relative_path(&source.repository_path)
+        {
+            problems.push(format!(
+                "population replay source identity is invalid: {}",
+                document.document_key
+            ));
+        }
+        let path_name = Path::new(&source.repository_path)
+            .file_name()
+            .and_then(|name| name.to_str());
+        if path_name != Some(source.portable_id.as_str()) {
+            problems.push(format!(
+                "population replay source basename differs from portable id: {}",
+                document.document_key
+            ));
+        }
+        match source.location {
+            PopulationSourceLocation::Repository => {
+                if source.copied_from_external_authority
+                    || source.repository_path.starts_with(&cleanup.population_root)
+                {
+                    problems.push(format!(
+                        "repository source was misclassified as a scratch copy: {}",
+                        document.document_key
+                    ));
+                }
+            }
+            PopulationSourceLocation::ExternalReadOnly => {
+                external_sources += 1;
+                let expected_prefix = format!("{}/sources/", cleanup.population_root);
+                if !source.copied_from_external_authority
+                    || !source.repository_path.starts_with(&expected_prefix)
+                {
+                    problems.push(format!(
+                        "external source was not a repository-volume scratch copy: {}",
+                        document.document_key
+                    ));
+                }
+            }
+        }
+        let stage_prefix = format!(
+            "{}/replays/{}/",
+            cleanup.population_root, document.document_key
+        );
+        for (stage, artifact) in [
+            ("SourceIR", &document.stages.source_ir),
+            ("EvidenceIR", &document.stages.evidence_ir),
+            ("SemanticIR", &document.stages.semantic_ir),
+            ("IntentIR", &document.stages.intent_ir),
+        ] {
+            if !artifact.path.starts_with(&stage_prefix)
+                || !is_safe_relative_path(&artifact.path)
+                || !is_sha256_digest(&artifact.sha256)
+                || artifact.byte_count == 0
+            {
+                problems.push(format!(
+                    "{} {} artifact identity is invalid",
+                    document.document_key, stage
+                ));
+            }
+        }
+        if document.command.trim().is_empty()
+            || !document
+                .command
+                .contains(&stage_prefix[..stage_prefix.len() - 1])
+        {
+            problems.push(format!(
+                "population replay command does not name its isolated root: {}",
+                document.document_key
+            ));
+        }
+    }
+    let expected_categories = BTreeMap::from([
+        ("cpu-isa", 2usize),
+        ("methodology-guide", 2),
+        ("physical-link", 2),
+        ("platform-system-ip", 2),
+        ("register-ip", 2),
+        ("wire-protocol", 2),
+    ]);
+    if replay.population.len() != 12 || external_sources != 8 || categories != expected_categories {
+        problems.push(format!(
+            "population replay coverage must be 12 documents / 8 external / two per category; got {} / {} / {:?}",
+            replay.population.len(), external_sources, categories
+        ));
+    }
+
+    let dataset_prefix = format!("{}/", cleanup.population_root);
+    if !replay.current_dataset.path.starts_with(&dataset_prefix)
+        || !is_sha256_digest(&replay.current_dataset.sha256)
+        || replay.current_dataset.byte_count != 137_457
+    {
+        problems.push("current replay dataset identity is invalid".to_string());
+    }
+    if !replay.current_result.path.starts_with(&dataset_prefix)
+        || replay.current_result.published_path != CURRENT_REPLAY_VERTICAL_RESULT_PATH
+        || replay.current_result.sha256 != REPLAY_VERTICAL_RESULT_SHA256
+        || replay.current_result.byte_count != 102_053
+    {
+        problems.push("published current replay result identity is invalid".to_string());
+    }
+
+    if problems.is_empty() {
+        Ok(())
+    } else {
+        Err(problems)
+    }
+}
+
+fn is_project_tmp_child(value: &str) -> bool {
+    is_safe_relative_path(value)
+        && value.starts_with(".project-data/tmp/")
+        && value != ".project-data/tmp"
+}
+
+fn validate_replay_vertical_result(
+    result: &VerticalEvalReport,
+) -> std::result::Result<(), Vec<String>> {
+    let mut problems = Vec::new();
+    if result.schema_version != 1
+        || result.dataset_id != "source-to-intent-vertical-current-replay-v1"
+        || result.owner != "SPEC-TO-INTENT-ALIGNMENT.6b.i"
+        || result.selection_boundary_commit != "a3e9757d63ca5499a2393864fb503d6537de0035"
+        || result.minimum_documents_per_category != 2
+    {
+        problems
+            .push("current vertical result identity is not the .6b.i reviewed replay".to_string());
+    }
+    let cells = result
+        .documents
+        .iter()
+        .flat_map(|document| &document.cells)
+        .collect::<Vec<_>>();
+    let canonical = cells
+        .iter()
+        .filter_map(|cell| cell.canonical.as_ref())
+        .collect::<Vec<_>>();
+    let intent_true_positives = canonical
+        .iter()
+        .map(|scores| scores.intent_ir.true_positives)
+        .sum::<usize>();
+    let intent_false_positives = canonical
+        .iter()
+        .map(|scores| scores.intent_ir.false_positives)
+        .sum::<usize>();
+    let intent_false_negatives = canonical
+        .iter()
+        .map(|scores| scores.intent_ir.false_negatives)
+        .sum::<usize>();
+    let exact_source_regions = cells
+        .iter()
+        .filter(|cell| query_is_exact(&cell.source_region))
+        .count();
+    let exact_evidence_captures = cells
+        .iter()
+        .filter(|cell| query_is_exact(&cell.evidence_capture))
+        .count();
+    if result.documents.len() != 12
+        || cells.len() != 14
+        || result.categories.len() != 6
+        || result
+            .categories
+            .iter()
+            .any(|category| category.status != CategoryStatus::Incomplete)
+        || intent_true_positives != 7
+        || intent_false_positives != 22
+        || intent_false_negatives != 33
+        || exact_source_regions != 14
+        || exact_evidence_captures != 13
+    {
+        problems.push(
+            "current vertical result must retain exact 12/14/6 coverage, 7/22/33 intent counts, and 14/13 source/capture counts"
+                .to_string(),
+        );
+    }
+    let global = &result.global;
+    if global.intent_bearing_source_region_disposition.met != 0
+        || global.intent_bearing_source_region_disposition.total != 14
+        || global.required_modality_accounting.met != 0
+        || global.required_modality_accounting.total != 12
+        || global.canonical_provenance_closure.met != 3
+        || global.canonical_provenance_closure.total != 29
+        || global.stage_conservation_or_residual.met != 21
+        || global.stage_conservation_or_residual.total != 54
+        || global.residual_actionability.met != 0
+        || global.residual_actionability.total != 24
+        || global.fabricated_canonical_facts != 22
+        || global.unexplained_stage_drops != 33
+    {
+        problems.push(
+            "current vertical result global counts differ from the qualified replay".to_string(),
+        );
+    }
+    if problems.is_empty() {
+        Ok(())
+    } else {
+        Err(problems)
+    }
+}
+
+#[cfg(test)]
 fn validate_stage_hashes(stages: &ReplayStageIdentities, label: &str, problems: &mut Vec<String>) {
     for (stage, digest) in [
         ("SourceIR", stages.source_ir_sha256.as_str()),
@@ -449,21 +886,28 @@ fn is_safe_relative_path(value: &str) -> bool {
             .any(|component| matches!(component, std::path::Component::ParentDir))
 }
 
-/// Derive the current controller input from the frozen `.4c`, `.2`, and `.6a` authorities.
+/// Derive the current controller input from the qualified `.6b.i` replay and `.2` capability authority.
 pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
     let result_bytes = read_repository_relative(
-        Path::new(CURRENT_VERTICAL_RESULT_PATH),
-        "vertical result snapshot",
+        Path::new(CURRENT_REPLAY_VERTICAL_RESULT_PATH),
+        "current replay vertical result snapshot",
     )?;
     let result: VerticalEvalReport = serde_json::from_slice(&result_bytes)?;
+    validate_replay_vertical_result(&result).map_err(|problems| {
+        AppError::InvalidStageArtifact(format!(
+            "invalid current replay vertical result: {}",
+            problems.join("; ")
+        ))
+    })?;
     let capability = load_capability_observation(Path::new(CURRENT_CAPABILITY_OBSERVATION_PATH))?;
-    let replay = load_current_replay_evidence(Path::new(CURRENT_REPLAY_EVIDENCE_PATH))?;
+    let replay =
+        load_population_replay_evidence(Path::new(CURRENT_POPULATION_REPLAY_EVIDENCE_PATH))?;
     let counts = derive_counts(&result, &capability)?;
 
     let result_evidence = evidence(
-        CURRENT_VERTICAL_RESULT_PATH,
-        VERTICAL_RESULT_SHA256,
-        "frozen .4c reviewed vertical result",
+        CURRENT_REPLAY_VERTICAL_RESULT_PATH,
+        REPLAY_VERTICAL_RESULT_SHA256,
+        "qualified .6b.i current-binary reviewed vertical result",
     );
     let capability_evidence = evidence(
         CURRENT_CAPABILITY_OBSERVATION_PATH,
@@ -476,9 +920,9 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
         "category-aware source-to-IntentIR objective contract",
     );
     let replay_evidence = evidence(
-        CURRENT_REPLAY_EVIDENCE_PATH,
-        REPLAY_EVIDENCE_SHA256,
-        "isolated .6a current-binary replay of the dominant frozen defect",
+        CURRENT_POPULATION_REPLAY_EVIDENCE_PATH,
+        POPULATION_REPLAY_EVIDENCE_SHA256,
+        "isolated .6b.i current-binary replay of all 12 reviewed documents",
     );
 
     let intent_actual = counts.intent_true_positives + counts.intent_false_positives;
@@ -688,22 +1132,22 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
                     1,
                     ImprovementDirection::HigherIsBetter,
                     false,
-                    "review-lock declarations in the frozen result",
+                    "review-lock declarations in the qualified current result",
                     "12 reviewed documents",
                     &result_evidence,
                 ),
                 metric(
                     "current_binary_replay_coverage",
                     "what fraction of the reviewed population has been replayed with the current binary",
-                    replay.comparison.current_binary_replayed_documents,
-                    replay.comparison.reviewed_documents,
+                    replay.population.len(),
+                    replay.reviewed_dataset.document_count,
                     TargetOperator::Equal,
                     1,
                     1,
                     ImprovementDirection::HigherIsBetter,
                     true,
                     "hash-pinned isolated four-stage current-binary replay",
-                    "12 documents in the frozen reviewed population",
+                    "12 documents in the review-locked population",
                     &replay_evidence,
                 ),
                 metric(
@@ -744,27 +1188,25 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
 
     let gaps = vec![
         gap(
-            "current-binary-honesty-qualification",
-            "operational_confidence",
+            "current-canonical-honesty",
+            "provenance_honesty",
             GapPriorityTier::HardInvariant,
             format!(
-                "the frozen baseline has {} fabricated facts and {} provenance failures, but only {} of {} reviewed documents has current-binary replay evidence; that replay removes the largest 19-record family",
+                "all 12 documents are current-binary qualified; {} fabricated canonical facts and {} canonical provenance failures still reproduce",
                 result.global.fabricated_canonical_facts,
                 result.global.canonical_provenance_closure.total
                     - result.global.canonical_provenance_closure.met,
-                replay.comparison.current_binary_replayed_documents,
-                replay.comparison.reviewed_documents,
             ),
-            "current-binary replay covers all 12 reviewed documents before remaining fabrication or provenance repairs are ranked",
-            "artifact_currency_before_semantic_diagnosis",
-            replay.comparison.reviewed_documents
-                - replay.comparison.current_binary_replayed_documents,
+            "zero fabricated canonical facts and complete provenance closure on the qualified current population",
+            "source_to_evidence_ir",
+            result.global.canonical_provenance_closure.total
+                - result.global.canonical_provenance_closure.met,
             CausalConfidence::High,
             ReversibleSliceSize::Medium,
             GapUncertainty::Exact,
-            "establish current product truth, then repair only defects the current binary still reproduces",
-            "cargo run --quiet -p specforge --example source_to_intent_replay -- <repository-relative-source> <.project-data/tmp/output-root> generated/prior_memory/corpus_memory.json <observed-table-id-or->",
-            "SPEC-TO-INTENT-ALIGNMENT.6",
+            "repair the largest current family first without sacrificing any of the seven reviewed true positives",
+            "python3 -B scripts/replay_source_to_intent_population.py --output-root .project-data/tmp/<fresh-root> --external-source-map .project-data/tmp/<runtime-map>.json",
+            "SPEC-TO-INTENT-ALIGNMENT.6b.ii",
             &[result_evidence.clone(), replay_evidence.clone()],
         ),
         gap(
@@ -829,19 +1271,36 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
 
     Ok(TrajectoryControllerInput {
         schema_version: 1,
-        snapshot_id: "specforge-source-to-intent-reviewed-v2".to_string(),
-        owner: "SPEC-TO-INTENT-ALIGNMENT.6a".to_string(),
+        snapshot_id: "specforge-source-to-intent-reviewed-v3".to_string(),
+        owner: "SPEC-TO-INTENT-ALIGNMENT.6b.i".to_string(),
         reviewed_revision: REVIEWED_REVISION.to_string(),
         objective_contract,
         stall_window: 3,
         dimensions,
-        hard_gates: vec![hard_gate(
-            "complete_current_binary_replay",
-            "does every reviewed document have a hash-pinned current-binary replay",
-            replay.comparison.reviewed_documents
-                - replay.comparison.current_binary_replayed_documents,
-            &replay_evidence,
-        )],
+        hard_gates: vec![
+            hard_gate(
+                "complete_current_binary_replay",
+                "does every reviewed document have a hash-pinned current-binary replay",
+                replay
+                    .reviewed_dataset
+                    .document_count
+                    .saturating_sub(replay.population.len()),
+                &replay_evidence,
+            ),
+            hard_gate(
+                "zero_fabricated_canonical_facts",
+                "does the qualified current result contain no fabricated canonical fact",
+                result.global.fabricated_canonical_facts,
+                &result_evidence,
+            ),
+            hard_gate(
+                "complete_canonical_provenance",
+                "does every canonical fact in the qualified current result close provenance",
+                result.global.canonical_provenance_closure.total
+                    - result.global.canonical_provenance_closure.met,
+                &result_evidence,
+            ),
+        ],
         history: Vec::new(),
         gaps,
         authority: ControllerAuthority {
@@ -852,7 +1311,7 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
     })
 }
 
-/// Evaluate the first reviewed snapshot with the generic `.5a` controller.
+/// Evaluate the qualified reviewed snapshot with the generic `.5a` controller.
 pub fn evaluate_current_trajectory() -> Result<TrajectoryReport> {
     let input = build_current_controller_input()?;
     evaluate_trajectory(&input).map_err(|problems| {
@@ -1159,14 +1618,14 @@ mod tests {
         assert!(
             report
                 .state_reasons
-                .contains(&"hard_gate_failed:complete_current_binary_replay:11>0".to_string())
+                .contains(&"hard_gate_failed:zero_fabricated_canonical_facts:22>0".to_string())
         );
         assert_eq!(
             report
                 .recommendation
                 .as_ref()
                 .map(|proposal| proposal.task_id.as_str()),
-            Some("SPEC-TO-INTENT-ALIGNMENT.6")
+            Some("SPEC-TO-INTENT-ALIGNMENT.6b.ii")
         );
         assert_eq!(report.ranked_gaps.len(), 4);
         assert_eq!(report.ranked_gaps[0].tier, GapPriorityTier::HardInvariant);
@@ -1205,10 +1664,11 @@ mod tests {
         };
         for (metric_id, expected) in [
             ("exact_source_region_capture", Fraction::new(14, 14)),
-            ("intent_canonical_precision", Fraction::new(7, 48)),
+            ("exact_required_modality_capture", Fraction::new(13, 14)),
+            ("intent_canonical_precision", Fraction::new(7, 29)),
             ("intent_canonical_recall", Fraction::new(7, 40)),
             ("stage_conservation_or_residual", Fraction::new(21, 54)),
-            ("canonical_provenance_closure", Fraction::new(3, 48)),
+            ("canonical_provenance_closure", Fraction::new(3, 29)),
             ("production_capability_accounting", Fraction::new(17, 17)),
             (
                 "non_omitted_production_participation",
@@ -1219,7 +1679,7 @@ mod tests {
                 "required_modality_document_accounting",
                 Fraction::new(0, 12),
             ),
-            ("current_binary_replay_coverage", Fraction::new(1, 12)),
+            ("current_binary_replay_coverage", Fraction::new(12, 12)),
         ] {
             assert_eq!(measure(metric_id), expected, "metric {metric_id}");
         }
@@ -1298,6 +1758,70 @@ mod tests {
                 .expect_err("a changed reviewed true-positive population must fail")
                 .iter()
                 .any(|problem| problem.contains("19-to-zero"))
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn population_replay_evidence_rejects_coverage_hash_and_cleanup_mutants() -> Result<()> {
+        let replay =
+            load_population_replay_evidence(Path::new(CURRENT_POPULATION_REPLAY_EVIDENCE_PATH))?;
+
+        let mut incomplete = replay.clone();
+        incomplete.population.pop();
+        assert!(
+            validate_population_replay_evidence(&incomplete)
+                .expect_err("incomplete population must fail")
+                .iter()
+                .any(|problem| problem.contains("coverage"))
+        );
+
+        let mut changed_source = replay.clone();
+        changed_source.population[0].source.replay_sha256 = "0".repeat(64);
+        assert!(
+            validate_population_replay_evidence(&changed_source)
+                .expect_err("source hash mismatch must fail")
+                .iter()
+                .any(|problem| problem.contains("source identity"))
+        );
+
+        let mut residue = replay;
+        residue.cleanup.status = "pending_exact_cleanup".to_string();
+        assert!(
+            validate_population_replay_evidence(&residue)
+                .expect_err("incomplete cleanup must fail")
+                .iter()
+                .any(|problem| problem.contains("cleanup"))
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn current_vertical_result_rejects_fabrication_and_population_mutants() -> Result<()> {
+        let bytes = read_repository_relative(
+            Path::new(CURRENT_REPLAY_VERTICAL_RESULT_PATH),
+            "current replay vertical result",
+        )?;
+        let result: VerticalEvalReport = serde_json::from_slice(&bytes)?;
+        validate_replay_vertical_result(&result)
+            .map_err(|problems| AppError::InvalidStageArtifact(problems.join("; ")))?;
+
+        let mut fabricated = result.clone();
+        fabricated.global.fabricated_canonical_facts += 1;
+        assert!(
+            validate_replay_vertical_result(&fabricated)
+                .expect_err("fabrication count mutant must fail")
+                .iter()
+                .any(|problem| problem.contains("global counts"))
+        );
+
+        let mut missing = result;
+        missing.documents.pop();
+        assert!(
+            validate_replay_vertical_result(&missing)
+                .expect_err("missing current document must fail")
+                .iter()
+                .any(|problem| problem.contains("12/14/6"))
         );
         Ok(())
     }

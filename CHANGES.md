@@ -1,3 +1,16 @@
+### SPEC-TO-INTENT-ALIGNMENT.6b.i — qualify the complete reviewed population
+
+- Added a deterministic whole-population replay runner and current-projection mode over the unchanged reviewed
+  fixture. All 12 source identities and 48 stage artifacts are hash-pinned; eight external inputs use an
+  untracked same-volume map and verified repository-local copies.
+- Published the current 14-cell result: true positives remain 7, false positives are 22, false negatives remain
+  33, and provenance closure is 3/29. Frozen false facts/provenance failures improve 41→22 / 45→26 solely from
+  the already-fixed 19-record AIA TOC family; all other defect families reproduce.
+- Controller v3 meets replay currency at 12/12, retains `diverging` on 22 fabrication and 26 provenance hard
+  failures, and recommends `.6b.ii`; the 12-record Arm Debug missing-access family is the largest current family.
+- Deleted the exact 4,313-file / 1,194,976-KiB replay workspace and runtime path map after promoting portable
+  evidence. Canonical generated artifacts, reviewed gold, and the frozen result remain unchanged.
+
 ### FSMGEN-REFRESH-INTEGRATE-6.1 — pin current FSMGen and retire fabricated rule priorities
 
 - Advanced `subs/fsmgen` from `d327129b7` to fast-forward tip `a51dcdad0` after auditing all 1,139

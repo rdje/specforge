@@ -34,6 +34,7 @@ symlink escapes, existing roots, and canonical `generated/` mutation fail closed
 copied/size-hash-verified onto the repository volume first, and all exact scratch roots are removed after stage
 hashes and counts enter the tracked evidence report.
 
-Only AIA has this current replay evidence, so controller v2 gates operational currentness at 1/12 and names 11
-unreplayed documents. The frozen 41/45/33 quality counts remain diagnostic baseline measures, not current hard
-gates. Complete the remaining replays before ranking a production repair from those historical families.
+Controller v2 used this evidence to gate operational currentness at 1/12 and name 11 unreplayed documents. That
+intermediate state is now superseded by `[[qualified-current-source-to-intent-result]]`: the same isolated method
+covers all 12 documents and confirms which non-AIA failures remain. The frozen 41/45/33 counts remain diagnostic
+baseline measures, never current product authority.

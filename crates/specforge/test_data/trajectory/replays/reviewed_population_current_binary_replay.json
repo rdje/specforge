@@ -1,0 +1,491 @@
+{
+  "schema_version": 1,
+  "replay_id": "spec-to-intent-6bi-current-population",
+  "owner": "SPEC-TO-INTENT-ALIGNMENT.6b.i",
+  "production_revision": "6b972d76d349352453662757b14d0b18893c53f1",
+  "reviewed_dataset": {
+    "path": "crates/specforge/test_data/source_to_intent_vertical/reviewed_dataset.json",
+    "sha256": "231de7f6aded485c836af8e585334b373194b5af71d03c4ad7a52b7a0e6b34aa",
+    "document_count": 12,
+    "cell_count": 14
+  },
+  "prior_memory": {
+    "path": "generated/prior_memory/corpus_memory.json",
+    "sha256": "4d66c82f1d0e6783d82a70cfa210fd2b3fad1e8f79df4b67c9f3cf876a386481",
+    "byte_count": 1492828
+  },
+  "tools": {
+    "orchestrator": {
+      "path": "scripts/replay_source_to_intent_population.py",
+      "sha256": "4e4c2e3f27b8dd2de2429a4fe7ebf52f3b8f46e685a8ec6bb637e18313b6d74a"
+    },
+    "projection": {
+      "path": "crates/specforge/test_data/source_to_intent_vertical/build_fixture.py",
+      "sha256": "f65362b54bf0044a55d1ec09034934f4992d2008c5de9f83b00676d32dc71c09"
+    }
+  },
+  "population": [
+    {
+      "document_key": "ihi0024_e_2023_02_amba_5_apb_protocol_specification",
+      "category": "wire-protocol",
+      "source": {
+        "location": "repository",
+        "portable_id": "IHI0024_E_2023-02_AMBA_5_APB_Protocol_Specification.pdf",
+        "reviewed_sha256": "c1e0fbc73d7bc61f1fdb63de75e78607ea989c1bffc8da0476bca3a84e40f204",
+        "replay_sha256": "c1e0fbc73d7bc61f1fdb63de75e78607ea989c1bffc8da0476bca3a84e40f204",
+        "byte_count": 516686,
+        "repository_path": "corpus/arm/amba/core/apb/current/IHI0024_E_2023-02_AMBA_5_APB_Protocol_Specification.pdf",
+        "copied_from_external_authority": false,
+        "verified_equal_to_reviewed_authority": true
+      },
+      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- corpus/arm/amba/core/apb/current/IHI0024_E_2023-02_AMBA_5_APB_Protocol_Specification.pdf .project-data/tmp/spec-to-intent-6bi-population-r2/replays/ihi0024_e_2023_02_amba_5_apb_protocol_specification generated/prior_memory/corpus_memory.json -",
+      "stages": {
+        "source_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/ihi0024_e_2023_02_amba_5_apb_protocol_specification/source_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/source_ir.json",
+          "sha256": "2e810b433fa26fce671a17983fc9dbb8611211e2dd9d64eee8a4b7f408a5242b",
+          "byte_count": 324957
+        },
+        "evidence_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/evidence_ir.json",
+          "sha256": "a79153cc6e7cb6ec1dbdf2bee3ac96fa7261d33ee9ca8ace05d123eb2141a0c4",
+          "byte_count": 596354
+        },
+        "semantic_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/ihi0024_e_2023_02_amba_5_apb_protocol_specification/semantic_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/semantic_ir.json",
+          "sha256": "68cb1a34411fdd3faa0550e29be63afafbdcc93c1dd395afb35879cde764243a",
+          "byte_count": 303812
+        },
+        "intent_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/ihi0024_e_2023_02_amba_5_apb_protocol_specification/intent_ir/ihi0024_e_2023_02_amba_5_apb_protocol_specification/intent_ir.json",
+          "sha256": "e935725816d76e6eb9746f9b45f5099abe0f12064454db154fcf8475ff791f02",
+          "byte_count": 345049
+        }
+      }
+    },
+    {
+      "document_key": "um11732_v3_2022_02_17_i2s_bus_specification",
+      "category": "wire-protocol",
+      "source": {
+        "location": "repository",
+        "portable_id": "UM11732_v3_2022-02-17_I2S_Bus_Specification.pdf",
+        "reviewed_sha256": "905d20f3cd7c38f8118a5fab0aa7f7a65d0fb8608681af6d8b6156842e603f53",
+        "replay_sha256": "905d20f3cd7c38f8118a5fab0aa7f7a65d0fb8608681af6d8b6156842e603f53",
+        "byte_count": 204649,
+        "repository_path": "corpus/nxp/i2s/current/UM11732_v3_2022-02-17_I2S_Bus_Specification.pdf",
+        "copied_from_external_authority": false,
+        "verified_equal_to_reviewed_authority": true
+      },
+      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- corpus/nxp/i2s/current/UM11732_v3_2022-02-17_I2S_Bus_Specification.pdf .project-data/tmp/spec-to-intent-6bi-population-r2/replays/um11732_v3_2022_02_17_i2s_bus_specification generated/prior_memory/corpus_memory.json -",
+      "stages": {
+        "source_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/um11732_v3_2022_02_17_i2s_bus_specification/source_ir/um11732_v3_2022_02_17_i2s_bus_specification/source_ir.json",
+          "sha256": "7def169f0e03303678a1647d3e907ae744020fd3d3b47b6de1097db60e61448a",
+          "byte_count": 122529
+        },
+        "evidence_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/um11732_v3_2022_02_17_i2s_bus_specification/evidence_ir/um11732_v3_2022_02_17_i2s_bus_specification/evidence_ir.json",
+          "sha256": "bf317d2c53b2b25b6e9d1310cefb714a6079d262266df907c2b5ffb19a1e1e57",
+          "byte_count": 165408
+        },
+        "semantic_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/um11732_v3_2022_02_17_i2s_bus_specification/semantic_ir/um11732_v3_2022_02_17_i2s_bus_specification/semantic_ir.json",
+          "sha256": "761509d1ac9de766c31bd889bd89d95cdcea35101748bb7b0fff64c45ebf5cf2",
+          "byte_count": 40768
+        },
+        "intent_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/um11732_v3_2022_02_17_i2s_bus_specification/intent_ir/um11732_v3_2022_02_17_i2s_bus_specification/intent_ir.json",
+          "sha256": "02336068c47786ba4625463f228c1cba1eee0bd9fa5ad6a933c2ae5749cd6e7b",
+          "byte_count": 62595
+        }
+      }
+    },
+    {
+      "document_key": "ddi0471_a_2011_06_23_gic_400_technical_reference_manual",
+      "category": "register-ip",
+      "source": {
+        "location": "external_read_only",
+        "portable_id": "DDI0471_A_2011-06-23_GIC_400_Technical_Reference_Manual.pdf",
+        "reviewed_sha256": "afcac68f733304fb2a236a5667d502783a3965d4609cc97d2115fc5d911fd7ec",
+        "replay_sha256": "afcac68f733304fb2a236a5667d502783a3965d4609cc97d2115fc5d911fd7ec",
+        "byte_count": 557071,
+        "repository_path": ".project-data/tmp/spec-to-intent-6bi-population-r2/sources/DDI0471_A_2011-06-23_GIC_400_Technical_Reference_Manual.pdf",
+        "copied_from_external_authority": true,
+        "verified_equal_to_reviewed_authority": true
+      },
+      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-6bi-population-r2/sources/DDI0471_A_2011-06-23_GIC_400_Technical_Reference_Manual.pdf .project-data/tmp/spec-to-intent-6bi-population-r2/replays/ddi0471_a_2011_06_23_gic_400_technical_reference_manual generated/prior_memory/corpus_memory.json -",
+      "stages": {
+        "source_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/source_ir/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/source_ir.json",
+          "sha256": "3e75b363de8516e471b7f37da01116565dac1e669ef0ef7b97468540e89473b3",
+          "byte_count": 422707
+        },
+        "evidence_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/evidence_ir/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/evidence_ir.json",
+          "sha256": "aff23f6998cc10904ded153f280bba8f8fc0a53bad6b4897dce133ac3e367260",
+          "byte_count": 751704
+        },
+        "semantic_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/semantic_ir/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/semantic_ir.json",
+          "sha256": "95bc9d29584ca7f07c9d2c83e9046ee3753d6ce72d01c2d4ef5b6b7ba0c4dc4d",
+          "byte_count": 120557
+        },
+        "intent_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/intent_ir/ddi0471_a_2011_06_23_gic_400_technical_reference_manual/intent_ir.json",
+          "sha256": "4cf35e404cf64725f4410e1e2b38aeed311831deb7e734fb1ee051b417417f61",
+          "byte_count": 146965
+        }
+      }
+    },
+    {
+      "document_key": "48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification",
+      "category": "register-ip",
+      "source": {
+        "location": "repository",
+        "portable_id": "48882_PUB_3.10_2025-02_AMD_IO_Virtualization_Technology_IOMMU_Specification.pdf",
+        "reviewed_sha256": "cd7559334b3f46a72d56e9f2fac786fcbf5d6a2c41e7770a46fcacc080bc8a12",
+        "replay_sha256": "cd7559334b3f46a72d56e9f2fac786fcbf5d6a2c41e7770a46fcacc080bc8a12",
+        "byte_count": 1986164,
+        "repository_path": "corpus/amd/system-ip/iommu/current/48882_PUB_3.10_2025-02_AMD_IO_Virtualization_Technology_IOMMU_Specification.pdf",
+        "copied_from_external_authority": false,
+        "verified_equal_to_reviewed_authority": true
+      },
+      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- corpus/amd/system-ip/iommu/current/48882_PUB_3.10_2025-02_AMD_IO_Virtualization_Technology_IOMMU_Specification.pdf .project-data/tmp/spec-to-intent-6bi-population-r2/replays/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification generated/prior_memory/corpus_memory.json -",
+      "stages": {
+        "source_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/source_ir/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/source_ir.json",
+          "sha256": "0fa07d7dc5144a6a92de1fe5de7cc54ab4c12651dd46e4a187e81adee81e880d",
+          "byte_count": 3285301
+        },
+        "evidence_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/evidence_ir/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/evidence_ir.json",
+          "sha256": "4fa32f0a684a3c92ee84eeddaf2fd3c2d25457c0f47c1f3c2e517fab430a33e3",
+          "byte_count": 5371667
+        },
+        "semantic_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/semantic_ir/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/semantic_ir.json",
+          "sha256": "85df6e1944dc6b2fc377601ce81893f3292ca77b7c41e19078156c630c0a1fa5",
+          "byte_count": 1342262
+        },
+        "intent_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/intent_ir/48882_pub_3_10_2025_02_amd_io_virtualization_technology_iommu_specification/intent_ir.json",
+          "sha256": "2cbb81f7936f76b9371a8a9047a44d6e60af12e6696dff425a6a24d280cf2646",
+          "byte_count": 2459643
+        }
+      }
+    },
+    {
+      "document_key": "den0068_2018_07_23_coresight_base_system_architecture",
+      "category": "platform-system-ip",
+      "source": {
+        "location": "external_read_only",
+        "portable_id": "DEN0068_2018-07-23_CoreSight_Base_System_Architecture.pdf",
+        "reviewed_sha256": "c4a5f342afbae7ef5229f5f8344dbd63ec6b5473cd319830dd148d9dc732a66d",
+        "replay_sha256": "c4a5f342afbae7ef5229f5f8344dbd63ec6b5473cd319830dd148d9dc732a66d",
+        "byte_count": 165891,
+        "repository_path": ".project-data/tmp/spec-to-intent-6bi-population-r2/sources/DEN0068_2018-07-23_CoreSight_Base_System_Architecture.pdf",
+        "copied_from_external_authority": true,
+        "verified_equal_to_reviewed_authority": true
+      },
+      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-6bi-population-r2/sources/DEN0068_2018-07-23_CoreSight_Base_System_Architecture.pdf .project-data/tmp/spec-to-intent-6bi-population-r2/replays/den0068_2018_07_23_coresight_base_system_architecture generated/prior_memory/corpus_memory.json -",
+      "stages": {
+        "source_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/den0068_2018_07_23_coresight_base_system_architecture/source_ir/den0068_2018_07_23_coresight_base_system_architecture/source_ir.json",
+          "sha256": "3905f9ce51a396bb4b9a794755048275c24d2efb9e292e22feaad70280803f5d",
+          "byte_count": 228157
+        },
+        "evidence_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/den0068_2018_07_23_coresight_base_system_architecture/evidence_ir/den0068_2018_07_23_coresight_base_system_architecture/evidence_ir.json",
+          "sha256": "79bef1f36a8aba555f488006a698129162270ac208f0cc230477f8b511539616",
+          "byte_count": 430809
+        },
+        "semantic_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/den0068_2018_07_23_coresight_base_system_architecture/semantic_ir/den0068_2018_07_23_coresight_base_system_architecture/semantic_ir.json",
+          "sha256": "c8e0828ad030d8cddc2700428b560c9f166efb79bfea3e76d6e96114e222d0ad",
+          "byte_count": 94181
+        },
+        "intent_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/den0068_2018_07_23_coresight_base_system_architecture/intent_ir/den0068_2018_07_23_coresight_base_system_architecture/intent_ir.json",
+          "sha256": "718221bdd29bc5674058381587eb15c17571fb5b06f73fb88782a5d96d5fbdfd",
+          "byte_count": 156192
+        }
+      }
+    },
+    {
+      "document_key": "1_0_1_2026_02_22_risc_v_iommu_architecture_specification",
+      "category": "platform-system-ip",
+      "source": {
+        "location": "external_read_only",
+        "portable_id": "1.0.1_2026-02-22_RISC_V_IOMMU_Architecture_Specification.pdf",
+        "reviewed_sha256": "be2134b407a1a3ce5a9da1779cbdc4b4c641ee50ab32676e0a858e5a04ff2b8e",
+        "replay_sha256": "be2134b407a1a3ce5a9da1779cbdc4b4c641ee50ab32676e0a858e5a04ff2b8e",
+        "byte_count": 1051915,
+        "repository_path": ".project-data/tmp/spec-to-intent-6bi-population-r2/sources/1.0.1_2026-02-22_RISC_V_IOMMU_Architecture_Specification.pdf",
+        "copied_from_external_authority": true,
+        "verified_equal_to_reviewed_authority": true
+      },
+      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-6bi-population-r2/sources/1.0.1_2026-02-22_RISC_V_IOMMU_Architecture_Specification.pdf .project-data/tmp/spec-to-intent-6bi-population-r2/replays/1_0_1_2026_02_22_risc_v_iommu_architecture_specification generated/prior_memory/corpus_memory.json -",
+      "stages": {
+        "source_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/source_ir/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/source_ir.json",
+          "sha256": "7939e417c7536c0597ee1bf505cbefda909dd66be96a679414a2b089f040ff2e",
+          "byte_count": 1012408
+        },
+        "evidence_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/evidence_ir/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/evidence_ir.json",
+          "sha256": "0d0ffb8f28692fca1b88b717615c77fa863b3a78683e1dffaacf8578e72aac5d",
+          "byte_count": 1719380
+        },
+        "semantic_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/semantic_ir/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/semantic_ir.json",
+          "sha256": "9ddfc7ea64ec05364a18959354eb95d766fbd639ca6b078993c56727e6e8066a",
+          "byte_count": 410391
+        },
+        "intent_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/intent_ir/1_0_1_2026_02_22_risc_v_iommu_architecture_specification/intent_ir.json",
+          "sha256": "23e9af1dadf89613ba4ad322286cc7c7a0cd5f96b100ce96a7a3a653ca410f79",
+          "byte_count": 624030
+        }
+      }
+    },
+    {
+      "document_key": "1_0_2025_03_12_risc_v_advanced_interrupt_architecture",
+      "category": "cpu-isa",
+      "source": {
+        "location": "external_read_only",
+        "portable_id": "1.0_2025-03-12_RISC_V_Advanced_Interrupt_Architecture.pdf",
+        "reviewed_sha256": "2d359579dcb84c6d00a1b284db3a7f8ec8c87764d96406a45cbaa9052f04c7c8",
+        "replay_sha256": "2d359579dcb84c6d00a1b284db3a7f8ec8c87764d96406a45cbaa9052f04c7c8",
+        "byte_count": 827669,
+        "repository_path": ".project-data/tmp/spec-to-intent-6bi-population-r2/sources/1.0_2025-03-12_RISC_V_Advanced_Interrupt_Architecture.pdf",
+        "copied_from_external_authority": true,
+        "verified_equal_to_reviewed_authority": true
+      },
+      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-6bi-population-r2/sources/1.0_2025-03-12_RISC_V_Advanced_Interrupt_Architecture.pdf .project-data/tmp/spec-to-intent-6bi-population-r2/replays/1_0_2025_03_12_risc_v_advanced_interrupt_architecture generated/prior_memory/corpus_memory.json -",
+      "stages": {
+        "source_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/source_ir/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/source_ir.json",
+          "sha256": "531097452c637f18853e29704c0790715f8bd80db8ec5ccc3454159990d64672",
+          "byte_count": 724957
+        },
+        "evidence_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/evidence_ir/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/evidence_ir.json",
+          "sha256": "05d8ec634925af63130d0f03e78d827e2e77f3c414208690c1ac61b12fee9532",
+          "byte_count": 1204435
+        },
+        "semantic_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/semantic_ir/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/semantic_ir.json",
+          "sha256": "f27001fa07a783aee1520c6d0afb034981f79e3f4f2e85ead8ec48c82d1b9e61",
+          "byte_count": 359676
+        },
+        "intent_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/intent_ir/1_0_2025_03_12_risc_v_advanced_interrupt_architecture/intent_ir.json",
+          "sha256": "cc3fa7e5963cbfcbc7f67f4bdc5c59b5cc073088895876ca9fbc4eb03889b2c9",
+          "byte_count": 593716
+        }
+      }
+    },
+    {
+      "document_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
+      "category": "cpu-isa",
+      "source": {
+        "location": "repository",
+        "portable_id": "IHI0074_A_2017-03-09_Arm_Debug_Interface_v6_Architecture_Specification.pdf",
+        "reviewed_sha256": "0e370b75bf96d0e2625ba71474bec8ae8718b21d687f8e0424dcfe3740969c01",
+        "replay_sha256": "0e370b75bf96d0e2625ba71474bec8ae8718b21d687f8e0424dcfe3740969c01",
+        "byte_count": 2925300,
+        "repository_path": "corpus/arm/debug/interfaces/adi/current/IHI0074_A_2017-03-09_Arm_Debug_Interface_v6_Architecture_Specification.pdf",
+        "copied_from_external_authority": false,
+        "verified_equal_to_reviewed_authority": true
+      },
+      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- corpus/arm/debug/interfaces/adi/current/IHI0074_A_2017-03-09_Arm_Debug_Interface_v6_Architecture_Specification.pdf .project-data/tmp/spec-to-intent-6bi-population-r2/replays/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification generated/prior_memory/corpus_memory.json -",
+      "stages": {
+        "source_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/source_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/source_ir.json",
+          "sha256": "5cc4ae038dab753b6f9943eecd650fabcb0e56bf3252c52e6e64b3f05eceb89e",
+          "byte_count": 3434799
+        },
+        "evidence_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json",
+          "sha256": "3b16b153e22e94ec84f7e31b8bb951476cb0b5286aa5d512a42b87bf0f7d37d2",
+          "byte_count": 6612320
+        },
+        "semantic_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/semantic_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/semantic_ir.json",
+          "sha256": "752608f58dac1d8773a80851615411be4e42085357b1ad571cd41541bd26d3f9",
+          "byte_count": 1114551
+        },
+        "intent_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/intent_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/intent_ir.json",
+          "sha256": "4ac0dfdf877aa64ab523baafbdd96329a9e60e2041822c47f59f94b9d6f4d135",
+          "byte_count": 1352615
+        }
+      }
+    },
+    {
+      "document_key": "opencapi_25gbps_phy_signaling_spec_1_0",
+      "category": "physical-link",
+      "source": {
+        "location": "external_read_only",
+        "portable_id": "OpenCAPI-25Gbps_PHY_Signaling_Spec_1.0.pdf",
+        "reviewed_sha256": "0e0c8afc1d89189f610dd8340ebb2206270958faa247c6b345c64ee5c8dece12",
+        "replay_sha256": "0e0c8afc1d89189f610dd8340ebb2206270958faa247c6b345c64ee5c8dece12",
+        "byte_count": 748724,
+        "repository_path": ".project-data/tmp/spec-to-intent-6bi-population-r2/sources/OpenCAPI-25Gbps_PHY_Signaling_Spec_1.0.pdf",
+        "copied_from_external_authority": true,
+        "verified_equal_to_reviewed_authority": true
+      },
+      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-6bi-population-r2/sources/OpenCAPI-25Gbps_PHY_Signaling_Spec_1.0.pdf .project-data/tmp/spec-to-intent-6bi-population-r2/replays/opencapi_25gbps_phy_signaling_spec_1_0 generated/prior_memory/corpus_memory.json -",
+      "stages": {
+        "source_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/opencapi_25gbps_phy_signaling_spec_1_0/source_ir/opencapi_25gbps_phy_signaling_spec_1_0/source_ir.json",
+          "sha256": "13f5fe7212cf24e5b52c108ec3e81f7ad7219e9db060fcf33d60d51ec50d0273",
+          "byte_count": 277582
+        },
+        "evidence_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/opencapi_25gbps_phy_signaling_spec_1_0/evidence_ir/opencapi_25gbps_phy_signaling_spec_1_0/evidence_ir.json",
+          "sha256": "f8831a37db6d323050749177cf1d1f74bf683a27793726370b292a1305df4e6a",
+          "byte_count": 409324
+        },
+        "semantic_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/opencapi_25gbps_phy_signaling_spec_1_0/semantic_ir/opencapi_25gbps_phy_signaling_spec_1_0/semantic_ir.json",
+          "sha256": "e7bcbcef9c3a3d7e37d6b3d7ae23b1158e3f5b1dcb6a4012498a1b108558fb36",
+          "byte_count": 63858
+        },
+        "intent_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/opencapi_25gbps_phy_signaling_spec_1_0/intent_ir/opencapi_25gbps_phy_signaling_spec_1_0/intent_ir.json",
+          "sha256": "dc589dcd5648d19f1f2c9c3878075ffad9b57c5ab4de2085f51f8789a9932d4d",
+          "byte_count": 65417
+        }
+      }
+    },
+    {
+      "document_key": "opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020",
+      "category": "physical-link",
+      "source": {
+        "location": "external_read_only",
+        "portable_id": "OpenCAPI-4.0-32G_PHY_Signal_Spec_1.0_16NOV2020.pdf",
+        "reviewed_sha256": "d3eb19fc39dd5d1a3925e381bdc9c2f22683d2485d26a447c7ccdeb0080e38be",
+        "replay_sha256": "d3eb19fc39dd5d1a3925e381bdc9c2f22683d2485d26a447c7ccdeb0080e38be",
+        "byte_count": 855025,
+        "repository_path": ".project-data/tmp/spec-to-intent-6bi-population-r2/sources/OpenCAPI-4.0-32G_PHY_Signal_Spec_1.0_16NOV2020.pdf",
+        "copied_from_external_authority": true,
+        "verified_equal_to_reviewed_authority": true
+      },
+      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-6bi-population-r2/sources/OpenCAPI-4.0-32G_PHY_Signal_Spec_1.0_16NOV2020.pdf .project-data/tmp/spec-to-intent-6bi-population-r2/replays/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020 generated/prior_memory/corpus_memory.json -",
+      "stages": {
+        "source_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/source_ir/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/source_ir.json",
+          "sha256": "e6cb2d8821ca2673716d15b39b86c67b21ffbe2ed1621608b6d39242f89704cc",
+          "byte_count": 412242
+        },
+        "evidence_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/evidence_ir/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/evidence_ir.json",
+          "sha256": "2d1ea657772013afaa96efe531e738aefe87e97ef3c609bab60a153989655833",
+          "byte_count": 679325
+        },
+        "semantic_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/semantic_ir/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/semantic_ir.json",
+          "sha256": "7888e0289e7caa72ec1e88910f38fb2dc20267f1db17a082cf0a3e54bd6fcd1d",
+          "byte_count": 132995
+        },
+        "intent_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/intent_ir/opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020/intent_ir.json",
+          "sha256": "ddf233b984712f0f77aa1f45e7856637bda597ae6aa7617bda99b5eeb6d09cd1",
+          "byte_count": 196990
+        }
+      }
+    },
+    {
+      "document_key": "pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide",
+      "category": "methodology-guide",
+      "source": {
+        "location": "external_read_only",
+        "portable_id": "PJDOC-466751330-7215_10.0_Cortex_A76_Software_Optimization_Guide.pdf",
+        "reviewed_sha256": "8358c5ae0d4b9fbc713b40dfec840d76e9ab3ce57cdf66badbdb41e0e60b3a22",
+        "replay_sha256": "8358c5ae0d4b9fbc713b40dfec840d76e9ab3ce57cdf66badbdb41e0e60b3a22",
+        "byte_count": 637434,
+        "repository_path": ".project-data/tmp/spec-to-intent-6bi-population-r2/sources/PJDOC-466751330-7215_10.0_Cortex_A76_Software_Optimization_Guide.pdf",
+        "copied_from_external_authority": true,
+        "verified_equal_to_reviewed_authority": true
+      },
+      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-6bi-population-r2/sources/PJDOC-466751330-7215_10.0_Cortex_A76_Software_Optimization_Guide.pdf .project-data/tmp/spec-to-intent-6bi-population-r2/replays/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide generated/prior_memory/corpus_memory.json -",
+      "stages": {
+        "source_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/source_ir/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/source_ir.json",
+          "sha256": "ff668bca0b23feb4371ed6c411873bb0654d0f80584432873186bb5b187a4041",
+          "byte_count": 801355
+        },
+        "evidence_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/evidence_ir/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/evidence_ir.json",
+          "sha256": "83dfb9ec410da93fe3b51ea7f26b724ac483114f16c4694a76e13147609694a9",
+          "byte_count": 869131
+        },
+        "semantic_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/semantic_ir/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/semantic_ir.json",
+          "sha256": "904542bee03f500f2b88a19ac8c6b850719c23bfd4960b1af305e490ede33b31",
+          "byte_count": 48508
+        },
+        "intent_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/intent_ir/pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide/intent_ir.json",
+          "sha256": "e0c8485678a5c8158c9a0500091a014ac8d506995527c4319d40f0f1e208f444",
+          "byte_count": 22207
+        }
+      }
+    },
+    {
+      "document_key": "198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide",
+      "category": "methodology-guide",
+      "source": {
+        "location": "external_read_only",
+        "portable_id": "198123_0302_03_2025-04-22_Generic_Interrupt_Controller_Overview_Guide.pdf",
+        "reviewed_sha256": "5358701e080664f2db98fb9d066a0c90a4deb2ba34ca35c81597332534707e97",
+        "replay_sha256": "5358701e080664f2db98fb9d066a0c90a4deb2ba34ca35c81597332534707e97",
+        "byte_count": 1571128,
+        "repository_path": ".project-data/tmp/spec-to-intent-6bi-population-r2/sources/198123_0302_03_2025-04-22_Generic_Interrupt_Controller_Overview_Guide.pdf",
+        "copied_from_external_authority": true,
+        "verified_equal_to_reviewed_authority": true
+      },
+      "command": "cargo run --quiet -p specforge --example source_to_intent_replay -- .project-data/tmp/spec-to-intent-6bi-population-r2/sources/198123_0302_03_2025-04-22_Generic_Interrupt_Controller_Overview_Guide.pdf .project-data/tmp/spec-to-intent-6bi-population-r2/replays/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide generated/prior_memory/corpus_memory.json -",
+      "stages": {
+        "source_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/source_ir/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/source_ir.json",
+          "sha256": "6ccb68e0ddc057792dee3459dc89f479386d75374c312f4b6ec5a9bdb52617eb",
+          "byte_count": 254247
+        },
+        "evidence_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/evidence_ir/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/evidence_ir.json",
+          "sha256": "2fc4aa6fc6433415abb03896f7ac16bd7e99e13eb39a0ea115ca67328cd666db",
+          "byte_count": 472069
+        },
+        "semantic_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/semantic_ir/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/semantic_ir.json",
+          "sha256": "3b0a4928610f700ece7b16f60f9e23eafd28f85e12f057535951cb62a1e0db40",
+          "byte_count": 93995
+        },
+        "intent_ir": {
+          "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/replays/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/intent_ir/198123_0302_03_2025_04_22_generic_interrupt_controller_overview_guide/intent_ir.json",
+          "sha256": "0ff11913de1e0fa74b1c41ca66835025862eb45e51aff68cd04647aa1d315ea6",
+          "byte_count": 139157
+        }
+      }
+    }
+  ],
+  "current_dataset": {
+    "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/current_dataset.json",
+    "sha256": "c04901334830158f33837b807aee837799114eb9db6fc5eb26ae923c358a3e5e",
+    "byte_count": 137457
+  },
+  "current_result": {
+    "path": ".project-data/tmp/spec-to-intent-6bi-population-r2/current_result.json",
+    "published_path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
+    "sha256": "a8ee9dfd2fe7f743e3810bca30805dce58a2394d490ee592f8375ba1d3394ec7",
+    "byte_count": 102053
+  },
+  "cleanup": {
+    "external_source_map": ".project-data/tmp/spec-to-intent-6bi-external-sources.json",
+    "population_root": ".project-data/tmp/spec-to-intent-6bi-population-r2",
+    "removed_file_count": 4313,
+    "removed_kib": 1194976,
+    "status": "removed_and_residue_absent"
+  }
+}

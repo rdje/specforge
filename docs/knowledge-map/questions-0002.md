@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
+  > does SpecForge use LTL CTL or TLA+
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
   > does SpecForge use the full scope of a page's visual information
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -225,6 +227,8 @@
   > how are duplicate signal constraints deduplicated in the LLM-primary extractor
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
   > how are external held-out PDFs identified without absolute host paths
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > how are external reviewed PDFs replayed without persisting host paths
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > how are extraction-profile priors looked up (extraction_profile_priors_for signature-subset match)
 - [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
@@ -293,7 +297,3 @@
   > how can a collection use a membership index outside its own surface
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how complete is a document's extracted intent / what is the per-doc completeness gauge
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > how complete is register-IP / platform-IP / CPU-ISA ISF lowering
-- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
-  > how dense is SpecForge's captured component topology on cat-3 docs vs cat-1 wire docs (cat-3 = 0.355 edges/actor + 24% both-endpoint; cat-1 wire baseline = 4.108 edges/actor + 85% both-endpoint — the SAME signal_connectivity surface is ~12x denser and fully-connected on wire docs, so the surface is capable; the shortfall is capture-recall on platform TRMs)

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "snapshot_id": "specforge-source-to-intent-reviewed-v2",
-  "owner": "SPEC-TO-INTENT-ALIGNMENT.6a",
+  "snapshot_id": "specforge-source-to-intent-reviewed-v3",
+  "owner": "SPEC-TO-INTENT-ALIGNMENT.6b.i",
   "reviewed_revision": "03e89b66cf87fcc1ec0bf342f47a147261a8d739",
   "objective_contract": {
     "path": "doctrine/spec_to_intent_category_contract.json",
@@ -42,9 +42,9 @@
           },
           "evidence": [
             {
-              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
-              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
-              "role": "frozen .4c reviewed vertical result"
+              "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
+              "sha256": "a8ee9dfd2fe7f743e3810bca30805dce58a2394d490ee592f8375ba1d3394ec7",
+              "role": "qualified .6b.i current-binary reviewed vertical result"
             }
           ]
         },
@@ -52,7 +52,7 @@
           "metric_id": "exact_required_modality_capture",
           "question": "are all reviewed required-modality captures found exactly",
           "measure": {
-            "numerator": 14,
+            "numerator": 13,
             "denominator": 14
           },
           "target": {
@@ -76,9 +76,9 @@
           },
           "evidence": [
             {
-              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
-              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
-              "role": "frozen .4c reviewed vertical result"
+              "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
+              "sha256": "a8ee9dfd2fe7f743e3810bca30805dce58a2394d490ee592f8375ba1d3394ec7",
+              "role": "qualified .6b.i current-binary reviewed vertical result"
             }
           ]
         }
@@ -93,7 +93,7 @@
           "question": "what fraction of emitted canonical IntentIR facts is correct",
           "measure": {
             "numerator": 7,
-            "denominator": 48
+            "denominator": 29
           },
           "target": {
             "operator": "equal",
@@ -116,9 +116,9 @@
           },
           "evidence": [
             {
-              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
-              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
-              "role": "frozen .4c reviewed vertical result"
+              "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
+              "sha256": "a8ee9dfd2fe7f743e3810bca30805dce58a2394d490ee592f8375ba1d3394ec7",
+              "role": "qualified .6b.i current-binary reviewed vertical result"
             }
           ]
         }
@@ -156,9 +156,9 @@
           },
           "evidence": [
             {
-              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
-              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
-              "role": "frozen .4c reviewed vertical result"
+              "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
+              "sha256": "a8ee9dfd2fe7f743e3810bca30805dce58a2394d490ee592f8375ba1d3394ec7",
+              "role": "qualified .6b.i current-binary reviewed vertical result"
             }
           ]
         },
@@ -190,9 +190,9 @@
           },
           "evidence": [
             {
-              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
-              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
-              "role": "frozen .4c reviewed vertical result"
+              "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
+              "sha256": "a8ee9dfd2fe7f743e3810bca30805dce58a2394d490ee592f8375ba1d3394ec7",
+              "role": "qualified .6b.i current-binary reviewed vertical result"
             }
           ]
         }
@@ -230,9 +230,9 @@
           },
           "evidence": [
             {
-              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
-              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
-              "role": "frozen .4c reviewed vertical result"
+              "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
+              "sha256": "a8ee9dfd2fe7f743e3810bca30805dce58a2394d490ee592f8375ba1d3394ec7",
+              "role": "qualified .6b.i current-binary reviewed vertical result"
             }
           ]
         }
@@ -247,7 +247,7 @@
           "question": "what fraction of emitted canonical facts closes required provenance",
           "measure": {
             "numerator": 3,
-            "denominator": 48
+            "denominator": 29
           },
           "target": {
             "operator": "equal",
@@ -270,9 +270,9 @@
           },
           "evidence": [
             {
-              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
-              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
-              "role": "frozen .4c reviewed vertical result"
+              "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
+              "sha256": "a8ee9dfd2fe7f743e3810bca30805dce58a2394d490ee592f8375ba1d3394ec7",
+              "role": "qualified .6b.i current-binary reviewed vertical result"
             }
           ]
         },
@@ -280,8 +280,8 @@
           "metric_id": "fabricated_canonical_fact_rate",
           "question": "what fraction of emitted canonical facts is fabricated",
           "measure": {
-            "numerator": 41,
-            "denominator": 48
+            "numerator": 22,
+            "denominator": 29
           },
           "target": {
             "operator": "equal",
@@ -304,9 +304,9 @@
           },
           "evidence": [
             {
-              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
-              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
-              "role": "frozen .4c reviewed vertical result"
+              "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
+              "sha256": "a8ee9dfd2fe7f743e3810bca30805dce58a2394d490ee592f8375ba1d3394ec7",
+              "role": "qualified .6b.i current-binary reviewed vertical result"
             }
           ]
         }
@@ -418,9 +418,9 @@
           },
           "evidence": [
             {
-              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
-              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
-              "role": "frozen .4c reviewed vertical result"
+              "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
+              "sha256": "a8ee9dfd2fe7f743e3810bca30805dce58a2394d490ee592f8375ba1d3394ec7",
+              "role": "qualified .6b.i current-binary reviewed vertical result"
             }
           ]
         }
@@ -451,16 +451,16 @@
           },
           "hard": false,
           "required": true,
-          "oracle": "review-lock declarations in the frozen result",
+          "oracle": "review-lock declarations in the qualified current result",
           "population": "12 reviewed documents",
           "uncertainty": {
             "kind": "exact"
           },
           "evidence": [
             {
-              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
-              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
-              "role": "frozen .4c reviewed vertical result"
+              "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
+              "sha256": "a8ee9dfd2fe7f743e3810bca30805dce58a2394d490ee592f8375ba1d3394ec7",
+              "role": "qualified .6b.i current-binary reviewed vertical result"
             }
           ]
         },
@@ -468,7 +468,7 @@
           "metric_id": "current_binary_replay_coverage",
           "question": "what fraction of the reviewed population has been replayed with the current binary",
           "measure": {
-            "numerator": 1,
+            "numerator": 12,
             "denominator": 12
           },
           "target": {
@@ -486,15 +486,15 @@
           "hard": true,
           "required": true,
           "oracle": "hash-pinned isolated four-stage current-binary replay",
-          "population": "12 documents in the frozen reviewed population",
+          "population": "12 documents in the review-locked population",
           "uncertainty": {
             "kind": "exact"
           },
           "evidence": [
             {
-              "path": "crates/specforge/test_data/trajectory/replays/aia_toc_current_binary_replay.json",
-              "sha256": "15e6a021a6e78cd23e9a31702f3a5b34bf45e43b3660fb8c38c2435d069fdd7a",
-              "role": "isolated .6a current-binary replay of the dominant frozen defect"
+              "path": "crates/specforge/test_data/trajectory/replays/reviewed_population_current_binary_replay.json",
+              "sha256": "8dfd44b831f7d14fe8630fbf3f1bd96da4616e620d626084d3a3a70fbe72bea0",
+              "role": "isolated .6b.i current-binary replay of all 12 reviewed documents"
             }
           ]
         },
@@ -566,9 +566,9 @@
           },
           "evidence": [
             {
-              "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
-              "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
-              "role": "frozen .4c reviewed vertical result"
+              "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
+              "sha256": "a8ee9dfd2fe7f743e3810bca30805dce58a2394d490ee592f8375ba1d3394ec7",
+              "role": "qualified .6b.i current-binary reviewed vertical result"
             }
           ]
         }
@@ -579,13 +579,39 @@
     {
       "gate_id": "complete_current_binary_replay",
       "question": "does every reviewed document have a hash-pinned current-binary replay",
-      "violations": 11,
+      "violations": 0,
       "target_violations": 0,
       "evidence": [
         {
-          "path": "crates/specforge/test_data/trajectory/replays/aia_toc_current_binary_replay.json",
-          "sha256": "15e6a021a6e78cd23e9a31702f3a5b34bf45e43b3660fb8c38c2435d069fdd7a",
-          "role": "isolated .6a current-binary replay of the dominant frozen defect"
+          "path": "crates/specforge/test_data/trajectory/replays/reviewed_population_current_binary_replay.json",
+          "sha256": "8dfd44b831f7d14fe8630fbf3f1bd96da4616e620d626084d3a3a70fbe72bea0",
+          "role": "isolated .6b.i current-binary replay of all 12 reviewed documents"
+        }
+      ]
+    },
+    {
+      "gate_id": "zero_fabricated_canonical_facts",
+      "question": "does the qualified current result contain no fabricated canonical fact",
+      "violations": 22,
+      "target_violations": 0,
+      "evidence": [
+        {
+          "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
+          "sha256": "a8ee9dfd2fe7f743e3810bca30805dce58a2394d490ee592f8375ba1d3394ec7",
+          "role": "qualified .6b.i current-binary reviewed vertical result"
+        }
+      ]
+    },
+    {
+      "gate_id": "complete_canonical_provenance",
+      "question": "does every canonical fact in the qualified current result close provenance",
+      "violations": 26,
+      "target_violations": 0,
+      "evidence": [
+        {
+          "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
+          "sha256": "a8ee9dfd2fe7f743e3810bca30805dce58a2394d490ee592f8375ba1d3394ec7",
+          "role": "qualified .6b.i current-binary reviewed vertical result"
         }
       ]
     }
@@ -593,32 +619,32 @@
   "history": [],
   "gaps": [
     {
-      "gap_id": "current-binary-honesty-qualification",
-      "objective_id": "operational_confidence",
+      "gap_id": "current-canonical-honesty",
+      "objective_id": "provenance_honesty",
       "tier": "hard_invariant",
-      "observed": "the frozen baseline has 41 fabricated facts and 45 provenance failures, but only 1 of 12 reviewed documents has current-binary replay evidence; that replay removes the largest 19-record family",
-      "target": "current-binary replay covers all 12 reviewed documents before remaining fabrication or provenance repairs are ranked",
-      "first_failing_stage": "artifact_currency_before_semantic_diagnosis",
-      "affected_population": 11,
+      "observed": "all 12 documents are current-binary qualified; 22 fabricated canonical facts and 26 canonical provenance failures still reproduce",
+      "target": "zero fabricated canonical facts and complete provenance closure on the qualified current population",
+      "first_failing_stage": "source_to_evidence_ir",
+      "affected_population": 26,
       "causal_confidence": "high",
       "reversible_slice": "medium",
       "uncertainty": "exact",
-      "estimated_impact": "establish current product truth, then repair only defects the current binary still reproduces",
-      "reproduction": "cargo run --quiet -p specforge --example source_to_intent_replay -- <repository-relative-source> <.project-data/tmp/output-root> generated/prior_memory/corpus_memory.json <observed-table-id-or->",
+      "estimated_impact": "repair the largest current family first without sacrificing any of the seven reviewed true positives",
+      "reproduction": "python3 -B scripts/replay_source_to_intent_population.py --output-root .project-data/tmp/<fresh-root> --external-source-map .project-data/tmp/<runtime-map>.json",
       "owner": {
-        "task_id": "SPEC-TO-INTENT-ALIGNMENT.6",
+        "task_id": "SPEC-TO-INTENT-ALIGNMENT.6b.ii",
         "task_tree_path": "docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md"
       },
       "evidence": [
         {
-          "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
-          "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
-          "role": "frozen .4c reviewed vertical result"
+          "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
+          "sha256": "a8ee9dfd2fe7f743e3810bca30805dce58a2394d490ee592f8375ba1d3394ec7",
+          "role": "qualified .6b.i current-binary reviewed vertical result"
         },
         {
-          "path": "crates/specforge/test_data/trajectory/replays/aia_toc_current_binary_replay.json",
-          "sha256": "15e6a021a6e78cd23e9a31702f3a5b34bf45e43b3660fb8c38c2435d069fdd7a",
-          "role": "isolated .6a current-binary replay of the dominant frozen defect"
+          "path": "crates/specforge/test_data/trajectory/replays/reviewed_population_current_binary_replay.json",
+          "sha256": "8dfd44b831f7d14fe8630fbf3f1bd96da4616e620d626084d3a3a70fbe72bea0",
+          "role": "isolated .6b.i current-binary replay of all 12 reviewed documents"
         }
       ]
     },
@@ -641,9 +667,9 @@
       },
       "evidence": [
         {
-          "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
-          "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
-          "role": "frozen .4c reviewed vertical result"
+          "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
+          "sha256": "a8ee9dfd2fe7f743e3810bca30805dce58a2394d490ee592f8375ba1d3394ec7",
+          "role": "qualified .6b.i current-binary reviewed vertical result"
         }
       ]
     },
@@ -666,9 +692,9 @@
       },
       "evidence": [
         {
-          "path": "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json",
-          "sha256": "6b72f1fc2a5616542965f264bd87f23534b5274d19332c8a68bc6b88848547eb",
-          "role": "frozen .4c reviewed vertical result"
+          "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
+          "sha256": "a8ee9dfd2fe7f743e3810bca30805dce58a2394d490ee592f8375ba1d3394ec7",
+          "role": "qualified .6b.i current-binary reviewed vertical result"
         }
       ]
     },

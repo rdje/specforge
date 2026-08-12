@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > how complete is register-IP / platform-IP / CPU-ISA ISF lowering
+- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
+  > how dense is SpecForge's captured component topology on cat-3 docs vs cat-1 wire docs (cat-3 = 0.355 edges/actor + 24% both-endpoint; cat-1 wire baseline = 4.108 edges/actor + 85% both-endpoint — the SAME signal_connectivity surface is ~12x denser and fully-connected on wire docs, so the surface is capable; the shortfall is capture-recall on platform TRMs)
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
   > how did APB temporal reach 100% (WIRE-BASED-100.4)
 - [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
@@ -294,7 +298,3 @@
   > how is a fused contract's automation_confidence computed
 - [document-class-from-structure](../knowledge/document-class-from-structure.md)
   > how is a guide reported so it is not a silent 0-yield extraction miss
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > how is a message field's width kept honest (per-variant widths stay None)
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > how is a promoted constraint surface visible in the extraction manifest

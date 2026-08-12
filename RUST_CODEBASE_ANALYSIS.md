@@ -4,6 +4,20 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-12 — whole-population current replay; `SPEC-TO-INTENT-ALIGNMENT.6b.i`)
+
+- `scripts/replay_source_to_intent_population.py` composes the existing isolated four-stage replay over the
+  review-locked 12-document dataset. Production Rust must be clean; repository inputs remain direct, while every
+  external input must be same-device, copied below a fresh project-local root, and hash-equal before use.
+- The fixture builder now has a separate replay projection mode. It reads only the isolated stage hierarchy,
+  preserves the frozen gold/queries, allows a current capture to be absent instead of asserting construction
+  success, and writes only to a caller-selected descendant of the replay root.
+- `ir::trajectory_snapshot` now authenticates a typed 12-source / 48-stage portable manifest and the current
+  result. Coverage, category balance, source equality, scratch paths, tool/result hashes, cleanup census, and
+  exact 7 TP / 22 FP / 33 FN / 3-of-29 provenance counts fail closed under focused mutants.
+- Controller composition now reads the qualified result: replay currency is 12/12; fabrication/provenance hard
+  gates fail at 22/26; recommendation moves to `.6b.ii`. The generic `.5a` controller remains untouched.
+
 ## Session update (2026-08-12 — FSMGen precedence-authority repair; `FSMGEN-REFRESH-INTEGRATE-6.1`)
 
 - `ir/isf_ir.rs` no longer models or renders `IsfPriority`. The old construction path manufactured the complete

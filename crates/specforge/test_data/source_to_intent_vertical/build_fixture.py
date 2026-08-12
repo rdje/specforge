@@ -471,7 +471,15 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def stage_paths(key: str) -> list[Path]:
+def stage_paths(key: str, replay_root: Path | None = None) -> list[Path]:
+    if replay_root is not None:
+        base = ROOT / replay_root / "replays" / key
+        return [
+            base / "source_ir" / key / "source_ir.json",
+            base / "evidence_ir" / key / "evidence_ir.json",
+            base / "semantic_ir" / key / "semantic_ir.json",
+            base / "intent_ir" / key / "intent_ir.json",
+        ]
     return [
         ROOT / "generated/source_ir" / key / "source_ir.json",
         ROOT / "generated/evidence_ir" / key / "evidence_ir.json",
@@ -485,17 +493,21 @@ def read_json(path: Path) -> dict:
         return json.load(stream)
 
 
-def source_record(source: dict, spec: dict) -> dict:
+def source_record(source: dict, spec: dict, require_reviewed_region: bool) -> dict | None:
     kind, region_id, _ = spec["region"]
     if kind == "prose":
         records = [
             item for item in source["content_elements"] if item["element_id"] == region_id
         ]
-        assert len(records) == 1 and spec["source_assert"] in records[0]["text"]
+        if len(records) != 1 or spec["source_assert"] not in records[0]["text"]:
+            assert not require_reviewed_region, f"{spec['key']} reviewed source region disappeared"
+            return None
         excerpt = records[0]["text"]
     elif kind == "table":
         records = [item for item in source["structured_tables"] if item["table_id"] == region_id]
-        assert len(records) == 1 and spec["source_assert"] in json.dumps(records[0])
+        if len(records) != 1 or spec["source_assert"] not in json.dumps(records[0]):
+            assert not require_reviewed_region, f"{spec['key']} reviewed source region disappeared"
+            return None
         excerpt = {
             "caption": records[0].get("caption_text"),
             "row_count": records[0]["row_count"],
@@ -503,7 +515,9 @@ def source_record(source: dict, spec: dict) -> dict:
         }
     else:
         records = [item for item in source["visual_assets"] if item["asset_id"] == region_id]
-        assert len(records) == 1 and spec["source_assert"] in records[0]["caption_text"]
+        if len(records) != 1 or spec["source_assert"] not in records[0]["caption_text"]:
+            assert not require_reviewed_region, f"{spec['key']} reviewed source region disappeared"
+            return None
         excerpt = records[0]["caption_text"]
     return {
         "region_id": region_id,
@@ -603,7 +617,7 @@ def fact(region_id: str, family: str, key: str, provenance: list[str]) -> dict:
     }
 
 
-def capture_records(evidence: dict, spec: dict) -> list[dict]:
+def capture_records(evidence: dict, spec: dict, require_reviewed_capture: bool) -> list[dict]:
     kind, region_id, evidence_id = spec["region"]
     if kind == "prose":
         found = any(
@@ -613,7 +627,9 @@ def capture_records(evidence: dict, spec: dict) -> list[dict]:
         found = any(item["evidence_id"] == evidence_id for item in evidence["visual_evidence"])
     else:
         found = bool(project_canonical(evidence, spec))
-    assert found, f"{spec['key']} reviewed evidence capture disappeared"
+    if not found:
+        assert not require_reviewed_capture, f"{spec['key']} reviewed evidence capture disappeared"
+        return []
     return [
         {
             "region_id": region_id,
@@ -699,25 +715,39 @@ def build_cell(spec: dict, index: int, cell: dict) -> dict:
     return result
 
 
-def build_document(spec: dict) -> dict:
-    paths = stage_paths(spec["key"])
+def build_document(spec: dict, replay_root: Path | None = None) -> dict:
+    paths = stage_paths(spec["key"], replay_root)
     actual_hashes = [sha256(path) for path in paths]
-    assert actual_hashes == spec["hashes"], f"{spec['key']} stage identity drift"
+    frozen = replay_root is None
+    if frozen:
+        assert actual_hashes == spec["hashes"], f"{spec['key']} stage identity drift"
     stages = [read_json(path) for path in paths]
 
-    if spec["source"]["location"] == "repository":
+    if frozen and spec["source"]["location"] == "repository":
         source_path = ROOT / spec["source"]["relative_path"]
         assert sha256(source_path) == spec["source"]["sha256"]
         assert stages[0]["source"]["canonical_path"] == spec["source"]["relative_path"]
-    else:
+    elif frozen:
         source_path = Path(stages[0]["source"]["canonical_path"])
         assert source_path.name == spec["source"]["portable_id"]
         assert sha256(source_path) == spec["source"]["sha256"]
+    else:
+        persisted_source = Path(stages[0]["source"]["canonical_path"])
+        assert not persisted_source.is_absolute(), f"{spec['key']} replay persisted an absolute source"
+        source_path = (ROOT / persisted_source).resolve()
+        source_path.relative_to(ROOT)
+        assert source_path.name == Path(
+            spec["source"].get("relative_path", spec["source"].get("portable_id"))
+        ).name
+        assert sha256(source_path) == spec["source"]["sha256"]
 
-    region = source_record(stages[0], spec)
-    evidence_captures = capture_records(stages[1], spec)
+    region = source_record(stages[0], spec, frozen)
+    evidence_captures = capture_records(stages[1], spec, frozen)
     snapshots = [
-        {"snapshot_format": "reviewed_bounded_projection_v1", "regions": [region]},
+        {
+            "snapshot_format": "reviewed_bounded_projection_v1",
+            "regions": [] if region is None else [region],
+        },
         {
             "snapshot_format": "reviewed_bounded_projection_v1",
             "captures": evidence_captures,
@@ -754,18 +784,30 @@ def build_document(spec: dict) -> dict:
     }
 
 
-def build() -> bytes:
+def build(replay_root: Path | None = None) -> bytes:
+    current_replay = replay_root is not None
     dataset = {
         "schema_version": 1,
-        "dataset_id": "source-to-intent-vertical-reviewed-v1",
-        "owner": "SPEC-TO-INTENT-ALIGNMENT.4b",
+        "dataset_id": (
+            "source-to-intent-vertical-current-replay-v1"
+            if current_replay
+            else "source-to-intent-vertical-reviewed-v1"
+        ),
+        "owner": (
+            "SPEC-TO-INTENT-ALIGNMENT.6b.i"
+            if current_replay
+            else "SPEC-TO-INTENT-ALIGNMENT.4b"
+        ),
         "selection_boundary_commit": SELECTION_COMMIT,
         "selection_claim": (
-            "Retrospective corpus baseline frozen before gold construction and held out from extractor "
+            "Current-binary replay of the unchanged review-locked population; source bytes and all "
+            "four replayed stage identities are re-verified without mutating the frozen baseline."
+            if current_replay
+            else "Retrospective corpus baseline frozen before gold construction and held out from extractor "
             "changes at or after the selection boundary; it is not claimed historically untouched."
         ),
         "minimum_documents_per_category": 2,
-        "documents": [build_document(spec) for spec in DOCS],
+        "documents": [build_document(spec, replay_root) for spec in DOCS],
     }
     return (json.dumps(dataset, indent=2, ensure_ascii=False) + "\n").encode()
 
@@ -775,7 +817,32 @@ def main() -> int:
     mode = parser.add_mutually_exclusive_group(required=True)
     mode.add_argument("--write", action="store_true")
     mode.add_argument("--check", action="store_true")
+    mode.add_argument("--write-replay", action="store_true")
+    parser.add_argument("--replay-root", type=Path)
+    parser.add_argument("--output", type=Path)
     args = parser.parse_args()
+    if args.write_replay:
+        if args.replay_root is None or args.output is None:
+            parser.error("--write-replay requires --replay-root and --output")
+        if (
+            args.replay_root.is_absolute()
+            or args.output.is_absolute()
+            or ".." in args.replay_root.parts
+            or ".." in args.output.parts
+            or args.replay_root.parts[:2] != (".project-data", "tmp")
+        ):
+            parser.error("replay root and output must be safe repository-relative project scratch paths")
+        replay_absolute = (ROOT / args.replay_root).resolve(strict=True)
+        replay_absolute.relative_to((ROOT / ".project-data/tmp").resolve(strict=True))
+        destination = (ROOT / args.output).resolve()
+        destination.relative_to(replay_absolute)
+        rendered = build(args.replay_root)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(rendered)
+        print(f"wrote {args.output} ({len(rendered)} bytes)")
+        return 0
+    if args.replay_root is not None or args.output is not None:
+        parser.error("--replay-root and --output are valid only with --write-replay")
     rendered = build()
     destination = ROOT / FIXTURE
     if args.write:

@@ -17,15 +17,13 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `FSMGEN-REFRESH-INTEGRATE-6.1` signoff complete, awaiting its commit; `SPEC-TO-INTENT-ALIGNMENT.0` through `.6a` are committed
-  complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: FSMGen is detached cleanly at target pin `a51dcdad0`. The compatibility repair removes
-  adapter-invented Cartesian rule priorities and residualizes uniquely owned named-drive overlaps. Rebuilt
-  adapters are chain-current; 44/44 emitted ISFs pass the new strict binary with zero diagnostics. Aggregate CI
-  passes all eight doctrines, 1,859 Rust tests / five ignored / zero failed, rustdoc, mdBook, and final locality.
-- Next action: commit `.1`, clear the commit message, then resume PNT at `SPEC-TO-INTENT-ALIGNMENT.6b` unless the
-  tracked cat-3 `.4c.ii` reassessment ranks first.
-- In-flight uncommitted: FSMGen gitlink/pin authorities, ISF emitter compatibility repair, two Knowledge Map
-  facts, pending topology reassessment, book/live/task alignment, and regenerated projections; all are verified
-  and staged. All exact corpus scratch roots created by the slice have been deleted and confirmed absent.
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6b.i`; `.0` through `.6a` and `FSMGEN-REFRESH-INTEGRATE-6.1` are
+  committed complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
+- Current state: all 12 reviewed documents have hash-pinned current-binary replay evidence. Current IntentIR is
+  7 TP / 22 FP / 33 FN with provenance closure 3/29; replay currency is 12/12, and controller v3 recommends
+  `.6b.ii` for the surviving 22-fabrication / 26-provenance hard failure (largest family: Arm Debug, 12 records).
+- Next action: commit the fully verified `.6b.i` slice, then activate `.6b.ii` and root-cause the 12-record Arm
+  Debug access-mode loss before changing extraction.
+- In-flight uncommitted: population replay/projector tooling, portable manifest/current result, controller v3
+  composition/tests/artifacts, task and documentation alignment. All exact replay/map roots are removed and absent.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

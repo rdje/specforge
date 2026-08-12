@@ -143,9 +143,24 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6a — separate replay truth from the frozen baseline`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6b`
-  Status: `pending`
+  Status: `in_progress`
   Goal: `complete current-binary replay coverage, then rank and repair the remaining fabrication and provenance families`
   Acceptance: `all 12 reviewed documents have hash-pinned comparable replay evidence; that inventory, not the retrospective .4c baseline alone, identifies the next bounded production defect; the repair removes false canonical facts or closes genuine provenance without sacrificing a reviewed true positive`
+  Verification: `pending`
+  Commit: `pending`
+  Children: `.6b.i`, `.6b.ii`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6b.i`
+  Status: `done`
+  Goal: `replay and evaluate the complete twelve-document reviewed population with the current binary before selecting a repair`
+  Acceptance: `all source bytes are hash-equal to the frozen portable identities; every four-stage replay is isolated below repository-volume scratch; a generic current-result projection evaluates the same reviewed cells and publishes exact per-document/stage outcomes without mutating the frozen dataset or canonical generated artifacts; all scratch copies and outputs are removed after durable evidence is captured`
+  Verification: `all 12 frozen source identities reverified; 4 repository and 8 necessary read-only external sources reside on the SSD volume; 48 current-binary stage artifacts hash-pinned; exact current result TP/FP/FN 7/22/33, source capture 14/14, evidence capture 13/14, provenance closure 3/29, stage conservation 21/54, residual actionability 0/24; frozen-to-current AIA TOC delta removes exactly 19 fabrications/provenance failures; all 4,313 scratch files / 1,194,976 KiB removed with residue absent; full CI passes all eight doctrines, formatting, warning-deny Clippy, 1,861 tests / five ignored / zero failed, warning-deny rustdoc, mdBook, and final locality`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6b.i — qualify the complete reviewed population`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6b.ii`
+  Status: `pending`
+  Goal: `rank the qualified current defect families and repair the highest bounded honesty or provenance defect`
+  Acceptance: `the selected family reproduces in .6b.i current evidence; the repair is generic, reversible, source-grounded, and measured before→after without sacrificing any reviewed true positive; a comparable trajectory snapshot records the result`
   Verification: `pending`
   Commit: `pending`
 
@@ -184,10 +199,11 @@ expressiveness as the bottleneck.
 | 8 | `SPEC-TO-INTENT-ALIGNMENT.5a` | `done` | strict multi-metric state/ranking engine and mutation controls are verified |
 | 9 | `SPEC-TO-INTENT-ALIGNMENT.5b` | `done` | first retrospective snapshot is byte-current and selects the .6 honesty lane |
 | 10 | `SPEC-TO-INTENT-ALIGNMENT.6a` | `done` | dominant frozen TOC defect replayed; 19 fabrications disappear and controller now gates 1/12 replay currency |
-| 11 | `SPEC-TO-INTENT-ALIGNMENT.6b` | `pending` | replay the remaining 11 documents, then repair only current-binary honesty defects |
-| 12 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
-| 13 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
-| 14 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
+| 11 | `SPEC-TO-INTENT-ALIGNMENT.6b.i` | `done` | all 12 current-binary replays are hash-pinned; 19 historical TOC fabrications are retired without changing frozen or canonical artifacts |
+| 12 | `SPEC-TO-INTENT-ALIGNMENT.6b.ii` | `pending` | repair the measured Arm Debug family: 12 correct register names currently lose reviewed access-mode truth |
+| 13 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
+| 14 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
+| 15 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
 
 ## Decisions
 
@@ -242,6 +258,21 @@ expressiveness as the bottleneck.
   `timing_parameter`; the 19 timing records disappear at all three promoted stages and the reviewed true-positive
   population remains zero. The controller therefore treats `.4c` quality counts as retrospective baseline
   measures, gates current-binary coverage at 1/12, and ranks qualification of the remaining 11 documents first.
+- `2026-08-12`: split `.6b` into qualification (`.6b.i`) and repair (`.6b.ii`) so source recovery, replay,
+  projection, and result interpretation complete without production extraction changes. The qualified current
+  inventory, rather than any frozen count, is the sole repair-selection authority.
+- `2026-08-12`: reverify all 12 source byte identities before replay. The four repository sources and eight
+  necessary read-only external sources are all on the SSD filesystem; external inputs are copied into a fresh
+  repository-derived scratch root, verified again, used there, and the exact copies and outputs are deleted
+  only after portable evidence is promoted.
+- `2026-08-12`: the first whole-population attempt stopped after two documents because an eager Python default
+  dereferenced a repository path on an external-source row. Repair the generic manifest branch, delete the exact
+  38 MiB failed root, rerun from a fresh root, and retain no partial evidence as current authority.
+- `2026-08-12`: the authoritative current replay covers 12/12 sources and 48/48 stage artifacts. Current
+  canonical TP/FP/FN are 7/22/33; the 19-count frozen-to-current fabrication and provenance improvement is
+  exactly the AIA TOC family already disproved by `.6a`, while true positives, false negatives, and stage loss
+  do not improve. Therefore `.6b.ii` selects the bounded Arm Debug family: 12 correct register names currently
+  omit reviewed access mode and account for 12 false positives, 12 false negatives, and 12 provenance failures.
 
 ## Open Questions
 
@@ -303,6 +334,12 @@ expressiveness as the bottleneck.
 | `2026-08-12` | `.6a` focused code/public checks | two replay path guards; four composition/currentness/mutant tests; all-target warning-deny Clippy; format; mdBook test/build; trajectory `--check` | PASS: replay rejects unsafe/external paths before output creation; evidence and artifacts are byte-current; public contract builds and tests cleanly |
 | `2026-08-12` | `.6a` mandatory live-ledger containment | exact two-row plan dry run then root-last apply; protocol and live-size checks | PASS: dry run exact/warning-safe; 19 Development Notes records sealed at `17f28fd7…0eea`, 13 status records at `6dcff897…ef84`; both roots warning-safe; prior archive members unchanged |
 | `2026-08-12` | `.6a` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines, formatting, warning-deny Clippy, 1,857 Rust tests passed / five ignored / zero failed, Rust docs, mdBook test/build, and final project-data-locality residue check |
+| `2026-08-12` | `.6b.i` source authority and locality | SHA-256/byte comparison for 12 reviewed sources; external-map exact coverage; APFS device comparison; copy/verify/use/delete manifest | PASS: all reviewed identities match; four repository plus eight necessary read-only external inputs are on the SSD volume; no boot-volume livework reference exists; every external copy is hash-equal before use |
+| `2026-08-12` | `.6b.i` complete isolated replay | generic population orchestrator over fresh `.project-data/tmp/spec-to-intent-6bi-population-r2`; 12 production replay executions; 48 stage hash/byte captures; current-result projection and evaluator | PASS: 12/12 documents and 48/48 stages captured; current dataset/result SHA-256 `c0490133…e5e` / `a8ee9dfd…ec7`; TP/FP/FN 7/22/33; source/evidence capture 14/14 and 13/14; provenance 3/29; conservation 21/54; residual actionability 0/24 |
+| `2026-08-12` | `.6b.i` root cause and repair selection | exact frozen/current document-family comparison | PASS: AIA TOC accounts for the complete 41→22 fabrication and 45→26 provenance-failure improvement; 33 false negatives persist; current Arm Debug access-mode loss is the largest bounded honesty/provenance family at 12 FP + 12 FN + 12 provenance failures and owns `.6b.ii` |
+| `2026-08-12` | `.6b.i` strict replay/controller checks | population-manifest coverage/hash/cleanup mutants; current-result population/fabrication mutants; warning-deny all-target check; six trajectory-snapshot tests; snapshot write/check | PASS: strict loaders reject every mutant; controller v3 gates 12/12 currency plus 22 fabrication and 26 provenance failures; input/report SHA-256 `5216f137…c4f` / `41db802b…942`; frozen dataset/result and canonical `generated/` artifacts remain byte-unchanged |
+| `2026-08-12` | `.6b.i` scratch lifecycle | exact post-promotion removal and residue census for feasibility, failed, and authoritative roots plus external source map | PASS: authoritative 4,313 files / 1,194,976 KiB removed; all four exact scratch/map paths absent; portable manifest records the successful cleanup without retaining machine-specific external paths |
+| `2026-08-12` | `.6b.i` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines including whole-chain currency, formatting, warning-deny Clippy, 1,861 Rust tests passed / five ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final project-data locality |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
 
@@ -468,6 +505,25 @@ expressiveness as the bottleneck.
   live ledgers, architecture analysis, Knowledge Map, and resume pointer distinguish historical baseline truth
   from current product truth and retain repository-relative persisted paths.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6b.i`
+
+- [x] **REPRODUCE / MEASURE** — resolve all eleven unreplayed portable source identities, verify each byte count
+  and SHA-256 before use, replay SourceIR → EvidenceIR → SemanticIR → IntentIR in fresh repository-volume roots,
+  and evaluate the same 13 reviewed cells plus the committed AIA cell with exact per-stage counts and hashes.
+- [x] **ROOT CAUSE (WHY + WHERE)** — compare frozen and current results by document, family, first failing stage,
+  fabrication, provenance, conservation, and residual actionability. Separate already-retired historical defects
+  from failures that reproduce in the current binary; rank no repair from a frozen count alone.
+- [x] **ADDRESSED (verified)** — publish strict portable replay evidence and a deterministic current-result
+  projection that covers all 12 documents without changing the frozen reviewed dataset/result or canonical
+  `generated/` artifacts. Select `.6b.ii` only from the measured current defect inventory.
+- [x] **NO REGRESSION** — kill missing-source, hash/currency, incomplete-population, stage-preservation, frozen-
+  authority-mutation, and cleanup mutants; run focused evaluator/replay/controller checks and risk-proportionate
+  `cargo test` / `run_ci.sh`; prove every exact scratch copy/output root absent after evidence capture.
+- [x] **GENERICITY (ADR 0006)** — orchestration and projection code is data-driven by the reviewed dataset and
+  portable source manifest, with no vendor/protocol/document/signal/layout behavior in production extraction.
+- [x] **LOCKSTEP** — replay report, current result, controller, task frontier, roadmap, mdBook, live docs,
+  architecture analysis, Knowledge Map, and resume pointer publish the same coverage and next measured family.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -482,6 +538,7 @@ expressiveness as the bottleneck.
 | `SPEC-TO-INTENT-ALIGNMENT.5a` | `SPEC-TO-INTENT-ALIGNMENT.5a — build the trajectory control engine` | strict nine-dimension state/ranking contract, five states, statistical refusal, hard-first task ownership, and report-only authority |
 | `SPEC-TO-INTENT-ALIGNMENT.5b` | `SPEC-TO-INTENT-ALIGNMENT.5b — publish the first trajectory snapshot` | live-equal `.4c`/`.2` composition, byte-current baseline, honest history refusal, and owned `.6` recommendation |
 | `SPEC-TO-INTENT-ALIGNMENT.6a` | `SPEC-TO-INTENT-ALIGNMENT.6a — separate replay truth from the frozen baseline` | isolated four-stage replay tool/evidence, dominant 19-record TOC defect retired by current code, 1/12 currentness gate, and residue-free SSD-local scratch lifecycle |
+| `SPEC-TO-INTENT-ALIGNMENT.6b.i` | `SPEC-TO-INTENT-ALIGNMENT.6b.i — qualify the complete reviewed population` | isolated 12-source / 48-stage current replay, exact current result and controller v3, residue-free external-source lifecycle, and current Arm Debug repair selection |
 
 ## Changelog
 
@@ -498,6 +555,9 @@ expressiveness as the bottleneck.
 - `2026-08-11`: Closed `.3` with a typed timing-observation producer, source-grounded and verifier-gated
   contract mining, explicit availability accounting, and reviewed real-PDF vertical proof; frontier advances to
   `.4`, held-out source-to-IntentIR evaluation and stage-loss accounting.
+- `2026-08-12`: Closed `.6b.i` with hash-pinned current-binary replay of all 12 reviewed documents, exact
+  current-result projection, strict controller currency/honesty gates, and complete scratch cleanup; frontier
+  advances to `.6b.ii`, the measured Arm Debug access-mode loss family.
 - `2026-08-11`: Closed `.4a` with the strict portable dataset contract, deterministic exact evaluator, and six
   controlled-fault classes; frontier advances to `.4b`, lock two reviewed documents per category without tuning
   extraction before `.4c` publishes product conclusions.

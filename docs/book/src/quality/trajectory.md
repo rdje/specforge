@@ -130,18 +130,19 @@ For example, the authority and one metric have this shape:
 }
 ```
 
-The example is illustrative; `.5a` contains no product values. `.5b` attaches the frozen `.4c` report and `.2`
-capability evidence in a separate composition module, so controller policy remains untuned. `.6a` adds an
-independent current-binary replay authority without changing the generic engine. The controller can report and
-propose; it cannot edit canonical IR.
+The example is illustrative; `.5a` contains no product values. `.5b` first attached the frozen `.4c` report and
+`.2` capability evidence in a separate composition module, so controller policy remained untuned. `.6a` added
+one independent current-binary replay; `.6b.i` now replaces that operational input with a hash-pinned 12-document
+current result. The generic engine is unchanged. The controller can report and propose; it cannot edit canonical
+IR.
 
-## Evidence-composed baseline and currentness boundary
+## Evidence-composed current snapshot and retrospective boundary
 
 The tracked input and report live under `crates/specforge/test_data/trajectory/`. The composition tool derives
-them from the byte-pinned `.4c` result, a provider-free `.2` capability observation, and tracked current-binary
-replay evidence. A `converge` test compares all 17 observation rows with the live registry, strict replay
-validation rejects identity/currency/preservation mutants, and the generic runner reproduces the report byte
-for byte:
+them from the qualified current result, a provider-free `.2` capability observation, and the portable 12-source /
+48-stage replay manifest. A `converge` test compares all 17 observation rows with the live registry. Strict replay
+validation rejects source-hash, population, artifact-path, result, and cleanup mutants; the generic runner
+reproduces the report byte for byte:
 
 ```console
 cargo run --quiet -p specforge --example trajectory_snapshot -- --check
@@ -151,35 +152,35 @@ cargo run --quiet -p specforge --example trajectory_controller -- \
 ```
 
 The state is `diverging`, while `history_status` is `insufficient_history`. These fields answer different
-questions. Divergence now comes from an exact currentness failure: only 1/12 reviewed documents has a
-current-binary replay, leaving 11 unqualified. Missing history independently prevents the controller from
-claiming that the state is improving, worsening over time, or stalled. The `.4c` quality counts remain useful
-retrospective baseline measures, but they are not presented as whole-population current-product facts.
+questions. Replay currency now meets its hard target at 12/12. Divergence instead comes from exact current
+honesty failures: 22 fabricated canonical facts and 26 canonical provenance failures remain. Missing comparable
+history independently prevents the controller from claiming a trend or stall. The `.4c` counts remain the
+retrospective baseline used for the 41→22 and 45→26 comparisons, not the current product authority.
 
 | Dimension | First exact observation | Status |
 | --- | --- | --- |
-| Source capture | source regions 14/14; required-modality captures 14/14 | meets target |
-| Semantic correctness | canonical IntentIR precision 7/48 | deficit |
+| Source capture | source regions 14/14; required-modality captures 13/14 | capture deficit |
+| Semantic correctness | canonical IntentIR precision 7/29 | deficit |
 | Semantic completeness | recall 7/40; supported categories 0/6 | deficit |
-| Stage conservation | frozen conserved or residualized crossings 21/54 | retrospective deficit |
-| Provenance/honesty | frozen closure 3/48; fabricated-fact rate 41/48 | retrospective deficit |
+| Stage conservation | conserved or residualized crossings 21/54 | deficit |
+| Provenance/honesty | closure 3/29; fabricated-fact rate 22/29 | hard deficit |
 | Production participation | accounted 17/17; integrated or scheduled 12/17 | deficit, fully reported |
 | Generalization/robustness | reviewed category-oracle coverage 6/6 | meets target |
-| Operational confidence | complete review 12/12; current replay 1/12; provider-free execution 5/10 | hard deficit |
+| Operational confidence | complete review 12/12; current replay 12/12; provider-free execution 5/10 | replay target met; execution deficit |
 | Executable readiness | required-modality document accounting 0/12 | deficit |
 
-The current hard gate records 11 documents without current-binary replay. The frozen baseline still records 41
-fabricated canonical facts, 45 provenance-closure violations, and 33 unexplained stage drops, but the controller
-does not assume they all survive. It ranks the existing leaves as follows:
+The current replay hard gate has zero violations. Separate hard gates now record 22 fabricated canonical facts
+and 26 provenance-closure violations; 33 unexplained stage drops also remain. The controller ranks the existing
+leaves as follows:
 
-1. `.6` — complete current-binary honesty qualification, then repair defects that reproduce (`hard_invariant`,
-   11 unreplayed documents);
+1. `.6b.ii` — repair the largest qualified current honesty/provenance family (`hard_invariant`, 26 affected
+   canonical records);
 2. `.7` — recover 33 source-to-evidence canonical losses (`source_evidence_loss`);
 3. `.8` — make 0/24 required residual observations actionable (`persistent_residual`); and
 4. `.9` — measure and resolve five omitted capability islands (`breadth_efficiency`).
 
-The recommendation is `.6`. All four task IDs existed before evaluation, the complete ordering remains in the
-report, and review is still required before implementation.
+The recommendation is `.6b.ii`. All four task IDs existed before evaluation, the complete ordering remains in
+the report, and review is still required before implementation.
 
 ### What the first current replay proved
 
@@ -196,8 +197,46 @@ records. Thus false positives and unprovenanced records both move 19→0 without
 
 The evidence report retains the source, baseline, and replay hashes plus the reproduction command and exact
 cleanup census. The 132 MB replay output, failed empty first root, and copied source were removed after their
-facts were captured. This proves one current repair already exists; it does not extrapolate that result to the
-remaining 11 documents.
+facts were captured. This proved one current repair already existed; `.6b.i` subsequently replayed the complete
+population rather than extrapolating from it.
+
+### Replaying the complete reviewed population
+
+The population runner reads the unchanged reviewed dataset and an untracked runtime map for the eight necessary
+external PDFs. The map contains caller-authorized absolute inputs only while the run is active; it is never
+persisted in tracked evidence. Every external file must share the repository filesystem device, is copied below
+the fresh output root, and is verified against the reviewed SHA-256 before SourceIR runs. For example:
+
+```json
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "portable_id": "example-spec.pdf",
+      "path": "<same-volume-authority>/example-spec.pdf"
+    }
+  ]
+}
+```
+
+```console
+python3 -B scripts/replay_source_to_intent_population.py \
+  --output-root .project-data/tmp/<fresh-population-root> \
+  --external-source-map .project-data/tmp/<untracked-runtime-map>.json
+```
+
+The runner refuses a dirty production-Rust tree, incomplete external-map coverage, source hash drift, off-volume
+authority, an existing output root, and unsafe paths. It writes one isolated four-stage tree per document, then
+uses the review fixture's data-defined projections and the same Rust evaluator to produce the comparable result.
+The tracked manifest contains portable source identities, all 48 stage hashes, tool hashes, current dataset/result
+identities, and cleanup evidence. The 4,313-file / 1,194,976-KiB workspace and runtime map were deleted exactly;
+canonical `generated/`, the reviewed dataset, and the frozen `.4c` result stayed byte-identical.
+
+The qualified result preserves 7 true positives and 33 false negatives. False positives are 22, not the frozen
+41; the difference is exactly the 19 AIA TOC records already removed by `.6a`. The largest remaining family is
+the Arm Debug summary: 12 correct register names reach IntentIR without their reviewed access modes, yielding
+12 wrong canonical keys, 12 misses, and 12 provenance failures. That exact current family is the `.6b.ii`
+repair frontier.
 
 ## Current production-path caveat
 

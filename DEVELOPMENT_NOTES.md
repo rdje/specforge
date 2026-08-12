@@ -1,4 +1,25 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6b.i (`2026-08-12`) — currency is now closed; honesty is measured
+
+The 1/12 controller gate did its job: it prevented a frozen defect inventory from authorizing extractor work.
+Completing the same isolated replay over all 12 documents now removes that uncertainty. The 19 AIA TOC records
+were the only historical family already retired by current code. Every other reviewed false-fact family survives,
+while all seven reviewed true positives and all 33 false negatives remain exactly unchanged.
+
+The population run keeps external authority out of durable state. An untracked runtime map resolves the eight
+portable ids, the runner requires their filesystem device to equal the repository's, and verified copies live only
+below the fresh output root. The manifest retains portable ids, source/stage hashes, root-relative scratch paths,
+tool hashes, and the cleanup census—not absolute host paths. A failed 38-MiB run and the authoritative
+4,313-file / 1,194,976-KiB run were both removed exactly after diagnosis/evidence capture.
+
+The controller can therefore promote honesty back to a current hard gate. Replay currency is 12/12 with zero
+violations; current fabrication is 22 and provenance failure is 26. The largest bounded family is not AIA but Arm
+Debug: 12 correct register names are promoted without access modes, making every key wrong against the reviewed
+summary. `.6b.ii` owns that measured repair; source loss, residual actionability, and breadth stay behind it.
+
+Signoff passes all eight doctrines including whole-chain currency, formatting, warning-deny Clippy, 1,861 Rust
+tests with five ignored and zero failures, warning-deny rustdoc, mdBook, and final project-data locality.
+
 ## FSMGEN-REFRESH-INTEGRATE-6.1 (`2026-08-12`) — precedence is semantic authority, not adapter glue
 
 The new FSMGen pin did not merely tighten syntax. Its named-drive priority gate exposed that SpecForge had been

@@ -81,9 +81,11 @@ The current sequencing is upstream-first: faithful PDF evidence must populate So
 boundary, but SpecForge does not anticipate a language gap without a source-grounded value.
 [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md) makes that ordering measurable (ADR
 0033/0034). Its contracts, production ledger, multimodal path, evaluator, reviewed population, retrospective
-result, controller, and first current replay ship. The replay removes the frozen AIA TOC family's 19 false facts
-without true-positive loss; controller state is still `diverging` on exact 1/12 artifact currency, so `.6`
-replays the other 11 documents before repairing only defects that remain. The task tree owns all detailed counts.
+result, controller, and whole-population current replay ship. Twelve of 12 reviewed sources now have hash-pinned
+isolated replays. The qualified result retains seven true positives while frozen false facts fall 41→22 and
+provenance failures 45→26 because the already-fixed 19-record AIA TOC family disappears. Controller state stays
+`diverging` on those exact surviving honesty failures, and `.6b.ii` owns the largest current family before later
+loss, residual, or breadth work. The task tree owns all detailed counts.
 
 Five active program groups support that north star:
 

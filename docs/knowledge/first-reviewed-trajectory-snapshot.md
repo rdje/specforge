@@ -12,10 +12,10 @@ answers:
   - "how much of the reviewed trajectory population has current binary replay evidence"
   - "are the .4c fabrication counts current product truth"
 date: 2026-08-12
-status: current
+status: superseded
 tags: [spec-to-intent-alignment, trajectory, snapshot, artifact-currency, provenance, fabrication, task-ranking]
-evidence: crates/specforge/test_data/trajectory/controller_input.json; crates/specforge/test_data/trajectory/trajectory_report.json; crates/specforge/test_data/trajectory/replays/aia_toc_current_binary_replay.json; crates/specforge/src/ir/trajectory_snapshot.rs; docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.6a)
-reverify: "cargo run --quiet -p specforge --example trajectory_snapshot -- --check && cargo run --quiet -p specforge --example trajectory_controller -- crates/specforge/test_data/trajectory/controller_input.json | cmp - crates/specforge/test_data/trajectory/trajectory_report.json"
+evidence: git commit 99b92a2137f98f452265b040d59a3a81e974ba1c (controller input/report v2); crates/specforge/test_data/trajectory/replays/aia_toc_current_binary_replay.json; docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.6a)
+reverify: "git show 99b92a2137f98f452265b040d59a3a81e974ba1c:crates/specforge/test_data/trajectory/controller_input.json | rg 'specforge-source-to-intent-reviewed-v2|current_binary_replay_coverage'"
 ---
 
 `SPEC-TO-INTENT-ALIGNMENT.5b` first composed the byte-pinned [[source-to-intent-first-reviewed-result]] with the
@@ -38,3 +38,6 @@ The full owned ranking selects `SPEC-TO-INTENT-ALIGNMENT.6` to finish current-bi
 repairing only defects that reproduce, then `.7` for the frozen 33 source-to-evidence losses, `.8` for 0/24
 actionable residual observations, and `.9` for five omitted capability islands. The controller remains
 report-only and every leaf existed before evaluation emitted it.
+
+This card preserves the first snapshot's exact historical state. The current 12/12-qualified controller and
+surviving product counts are `[[qualified-current-source-to-intent-result]]`.

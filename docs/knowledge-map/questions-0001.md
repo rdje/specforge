@@ -185,6 +185,8 @@
   > did the qwen2.5vl VLM recover a groundable AXI signal-to-phase mapping (no — contradictory, redundant, hallucinated signal semantics)
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > did the symmetric grounding filter change any emitted .isf
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > did whole population replay mutate canonical generated artifacts
 - [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
   > do EvidenceIR statements read SourceIR content elements or the normalized markdown
 - [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
@@ -295,5 +297,3 @@
   > does SpecForge reject a page metadata staging traversal or symlink escape
 - [contested-priors](../knowledge/contested-priors.md)
   > does SpecForge revise or decay priors
-- [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
-  > does SpecForge use LTL CTL or TLA+
