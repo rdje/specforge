@@ -1,4 +1,24 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii (`2026-08-12`) — authority is an unforgeable verification witness
+
+Persisted provenance is not authority. Any public record or deserializable ledger can be copied, edited, or
+forged, so a schema-valid proof envelope cannot be allowed to authorize itself. The new kernel returns a
+non-deserializable `VerifiedProofLedger` only after checking the closed ruleset, exact current-document premise
+catalog, upstream proof order, unique claim address, allowed symbol operations, and canonical conclusion digest
+together. Legacy/stale envelopes request rebuild or residualization; malformed/future envelopes reject.
+
+Opaque input identity follows the same rule. `OpaqueSymbol` retains private spelling for persistence,
+presentation, and target encoding, but ordinary semantics receives only scope plus source ordinal and exact
+identity. It implements neither display/string conversion, spelling order, nor Serde. Four sealed capability
+tokens are unconstructible outside the kernel, and external compile-fail tests prove the forbidden surface stays
+absent. This constrains information flow rather than trying to enumerate every possible protocol word or alias.
+
+This slice deliberately does not wrap old claims in synthetic proofs. The kernel and schema are live, but no
+current artifact gains proof authority until `.e.iv` registers and migrates every producer/carry/residual/lowering
+family. A temporary, documented dead-code allowance covers only those sealed internal entrypoints and must leave
+when the first production registry lands. That sequencing preserves the difference between installing a checker
+and claiming the existing pipeline already passed it.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii (`2026-08-12`) — dependency direction is a type-system boundary
 
 The neutral core cannot be protected by a directory naming convention inside one crate: Rust privacy cannot stop

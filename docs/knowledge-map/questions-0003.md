@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > does validate report message_field_records
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > fresh empirical reconfirmation of the .2i body-emission parking on the current 030f8c273 binary
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > has the corpus task evidence migration landed
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > have the PDF task migration destinations been created
 - [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
@@ -292,9 +298,3 @@
   > how does specforge consolidate a dense-prose agent fragment like host has or host to onto host
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > how does specforge currently capture transactions and why is it thin
-- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
-  > how does specforge declare a signal mentioned only in prose
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > how does specforge drop a zero-evidence phantom actor like controller or agent
-- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
-  > how does specforge extract a CAN-style error-state FSM (error active / error passive / bus off)

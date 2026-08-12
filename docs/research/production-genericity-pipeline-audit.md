@@ -137,9 +137,37 @@ to 76 classified Rust files while retaining the same 38 claim families and 168 f
 and visibility, not canonical extraction behavior or persisted schemas.
 
 The boundary removes conformance feedback as a representable core dependency; it does not prove each core claim.
-`.e.iii`–`.e.vi` still own sealed identity capabilities, the promotion kernel, rule registration,
-AST/information-flow enforcement, and adversarial proof/alpha mutations. `.e.vii` and `.f` still own structural
-and population qualification, so whole-core signoff remains explicitly open.
+At that checkpoint `.e.iii` still owned the sealed capability/kernel substrate described next; `.e.iv`–`.e.vi`
+continue to own rule migration, AST/information-flow enforcement, and adversarial proof/alpha mutations. `.e.vii`
+and `.f` own structural and population qualification, so whole-core signoff remains explicitly open.
+
+## Sealed capability and derivation substrate (`.6d.ii.e.iii`)
+
+The trusted substrate now compiles in `specforge-core::ir::derivation`. `OpaqueSymbol` and
+`OpaqueDocumentIdentity` retain private spelling but expose only spelling-free scope/ordinal identity and exact
+comparison. They implement no `Display`, string conversion, spelling-based ordering, or Serde. Grammar,
+persistence, presentation, and lowering access requires a sealed token that application/conformance code cannot
+construct. Five external compile-fail tests pin those negative API properties; this is a type boundary, not a
+known-word scan.
+
+The schema-1 proof ledger and deterministic SHA-256 ruleset bind each unique stage/surface/record address to its
+rule, typed premises, spelling-free symbol-use modes, confidence class, and exact conclusion digest. The promotion
+kernel validates current-scope source spans, table cells, and visual regions; independently grounded model
+proposals; validated current-document or global-identity-independent priors; registered universal axioms; and
+already-verified upstream claims in ledger order. It rejects an unknown or wrong-surface rule, stale/cross-document
+premise, unsupported premise kind, excess symbol capability, missing symbol origin, duplicate address, stale
+ruleset, and altered conclusion bytes.
+
+Compatibility distinguishes envelope shape from authority. Missing, old, or stale ledgers are inspect-only and
+must rebuild or residualize; future and malformed ledgers reject. Even a schema-valid, ruleset-matching
+deserialized envelope requires full kernel verification. Only the non-deserializable `VerifiedProofLedger` token
+permits canonical use, so persisted bytes cannot forge authority around a claim. Sixteen focused controls plus
+five compile-fail controls exercise the boundary.
+
+This slice changes no current IR schema, producer, or canonical artifact. It therefore does not claim that the
+existing 168 fields are proof-covered: `.e.iv` owns exact migration of all 38 claim families and removal of the
+temporary pre-integration dead-code allowance. The live module denominator is 77; rule completeness, AST/taint
+enforcement, per-rule alpha execution, and population qualification remain `.e.iv`–`.f` blockers.
 
 ## Audit denominator and method
 

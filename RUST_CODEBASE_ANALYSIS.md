@@ -4,6 +4,24 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-12 — sealed derivation kernel; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii`)
+
+- `ir::derivation` adds source-order `OpaqueSymbol`/`OpaqueDocumentIdentity` atoms. Their public surface is
+  spelling-free identity and exact comparison; private spelling is reachable only through sealed grammar,
+  persistence, presentation, or lowering tokens. They deliberately lack `Display`, string conversion, spelling-
+  based `Ord`, and Serde implementations.
+- A closed, deterministically SHA-256-hashed registry describes premise kinds, conclusion stage/surface, symbol
+  capability, compatibility, and a mandatory alpha-obligation class. The schema-1 artifact ledger binds each
+  unique claim address to the rule, typed premises, spelling-free symbol uses, confidence, and conclusion digest.
+- `PromotionKernel` checks current document scope and captured source/table/visual bytes; independently grounded
+  model proposals; validated, scope-declared priors; registered universal axioms; ordered upstream proof topology;
+  allowed symbol operations; address uniqueness; and exact conclusion serialization. Deserialized ledgers remain
+  untrusted until the kernel returns a non-deserializable `VerifiedProofLedger` witness.
+- Compatibility is fail-closed: proofless/old/stale input is inspection plus rebuild-or-residualize only, while
+  malformed or future input rejects. The live denominator is 77 Rust modules / 38 claim families / 168 fields.
+  Current artifacts remain schema/byte-identical; `.e.iv` owns producer migration and removal of the kernel's
+  temporary pre-integration dead-code allowance.
+
 ## Session update (2026-08-12 — compiler-visible core/conformance split; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii`)
 
 - The workspace now has three packages. `specforge-core` compiles the production IR/extraction/lowering closure

@@ -311,11 +311,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii — separate core from conformance`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii`
-  Status: `pending`
+  Status: `done`
   Goal: `install the trusted derivation kernel and opaque identity capability types`
   Acceptance: `promotion accepts only typed current-document evidence, registered grammar output, or provenance-bearing model/prior proposals; document and symbol identities can be preserved, displayed, and exact-compared only through explicit capabilities; unsupported legacy/future derivations fail closed or residualize under a versioned compatibility policy`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `opaque identity and capability API plus 16 focused unit tests and five external compile-fail tests; deterministic SHA-256 ruleset and conclusion digests; exact current-document premise, grounded proposal/prior, upstream topology, symbol-use, and unique-address verification; schema-valid envelopes cannot self-authorize; inventory 77 modules / 38 families / 168 fields; dependency checks and five mutations pass; 1,916 Rust tests pass / six intentional ignores / zero failures; five doctests pass; formatting, warning-deny Clippy/rustdoc, all doctrines including exact chain currency, mdBook, and final locality pass; no persisted schema or generated canonical artifact changes`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii — install trusted derivation kernel`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv`
   Status: `pending`
@@ -410,7 +410,7 @@ expressiveness as the bottleneck.
 | 24 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv` | `done` | combined qualification is exact; `.d` is closed without a named exception |
 | 25 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i` | `done` | ADR 0038, exact inventories, lossless live-ledger rollover, and full CI are complete |
 | 26 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii` | `done` | core/conformance direction is compiler-visible and mutation-tested; public facade is compatible |
-| 27 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii` | `pending` | install the promotion kernel and opaque identity capabilities |
+| 27 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii` | `done` | sealed capability boundary and kernel-only verified authority are installed and adversarially tested |
 | 28 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv` | `pending` | migrate every production grammar/inference family to registered proof terms |
 | 29 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v` | `pending` | make structural violations mechanically unmergeable |
 | 30 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi` | `pending` | prove fail-closure with mutations and per-rule alpha obligations |
@@ -697,6 +697,9 @@ expressiveness as the bottleneck.
 | `2026-08-12` | `.6d.ii.e.ii` package and dependency boundary | three-package Cargo graph; `cargo tree -p specforge-core --edges normal`; workspace compile; compatibility facade; five controlled dependency mutations | PASS: core has no internal SpecForge dependency; conformance points one way to core; application composes both; direct/aliased reverse edges, application cycle, and oracle-module reinsertion reject 5/5; existing public module paths compile |
 | `2026-08-12` | `.6d.ii.e.ii` exact surface and commentary audit | live inventory checker; non-test expanded-core named-term diagnostic; conformance fixture inspection | PASS: 76/76 modules, 38/38 claim families, and 168/168 top-level fields classify once; known corpus names are absent from expanded non-test core and remain legal only in downstream conformance/tests; vocabulary evidence is explicitly supplementary |
 | `2026-08-12` | `.6d.ii.e.ii` behavioral and full repository qualification | `cargo test --workspace -- --format terse`; `cargo clippy --workspace --all-targets -- -D warnings`; `bash scripts/run_ci.sh` | PASS: 1,900 Rust tests / six intentional ignores / zero failures; all eight doctrines including exact chain currency, formatting, warning-deny Clippy/rustdoc, mdBook test/build, and final locality; no persisted schema or canonical artifact changed |
+| `2026-08-12` | `.6d.ii.e.iii` capability and kernel architecture | opaque-type API review; sealed capability construction; deterministic rule registry; live inventory and dependency gates | PASS: opaque document/symbol atoms expose identity but no spelling conversion, ordering, display, or Serde; grammar/persistence/presentation/lowering and capture capabilities cannot be constructed downstream; ruleset and conclusion bytes use SHA-256; inventory is exact at 77/77 modules, 38/38 families, and 168/168 fields; the one-way package graph remains valid |
+| `2026-08-12` | `.6d.ii.e.iii` adversarial derivation controls | 16 focused kernel unit tests; five external compile-fail doctests; compatibility, capture, topology, symbol-use, and tamper controls | PASS: stale/cross-document evidence, empty or indirect grounding, unknown/wrong rules, excessive symbol authority, duplicate addresses, unregistered axioms, conclusion tampering, and invalid upstream order reject; current proof envelopes, legacy, stale, malformed, and future schemas cannot self-authorize canonical truth |
+| `2026-08-12` | `.6d.ii.e.iii` behavioral and full repository qualification | `cargo test --workspace --offline -- --format terse`; `cargo clippy --workspace --all-targets -- -D warnings`; `bash scripts/run_ci.sh` | PASS: 1,916 Rust tests / six intentional ignores / zero failures plus five compile-fail doctests; all eight doctrines including exact chain currency, warning-deny rustdoc, mdBook test/build, and final locality; current producers remain proofless and no persisted schema or canonical artifact changed |
 | `2026-08-12` | scheduled artifact cleanup | `.bin`/`.log` census under generated and Cargo release/debug trees; exact age/purpose inspection before deletion; residue census | PASS: removed one abandoned 23-file / 92-KiB Aug-11 live-document-size test workspace and the fully rebuildable 3,116,900-KiB `target/debug/incremental` cache; no `.bin`/`.log` remains in the requested generated/debug-deps/release census |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
@@ -1219,6 +1222,28 @@ the reviewed replay can name its production revision.
   status, Rust analysis, development rationale, change ledger, Knowledge Map, task frontier, and resume pointer
   publish the shipped boundary and the still-open `.e.iii`–`.f` proof/behavior work.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii`
+
+- [x] **REPRODUCE / MEASURE** — preserve the exact 38-family / 168-field migration denominator while expanding
+  the live compiled inventory from 76 to 77 modules; distinguish syntax-valid proof data from kernel-verified
+  authority, and measure the pre-migration state honestly as zero proof-carrying production claim families.
+- [x] **ROOT CAUSE (WHY + WHERE)** — ordinary strings expose spelling through conversion, display, sorting, and
+  serialization, while an ordinary serializable provenance record can be forged or replayed without validating
+  its current evidence. Neither a forbidden-word list nor a proof-shaped DTO establishes semantic noninterference.
+- [x] **ADDRESSED (verified)** — opaque document/symbol atoms retain private spelling behind sealed, purpose-
+  specific capabilities. The closed rule registry and promotion kernel validate exact current-document typed
+  premises, grounded proposals/priors, registered axioms, upstream proofs, declared symbol uses, and conclusion
+  bytes before issuing the only witness that permits canonical authority.
+- [x] **NO REGRESSION** — the complete 1,916-test workspace passes with six intentional ignores and zero failures;
+  five external compile-fail contracts, warning-deny Clippy/rustdoc, all doctrines, mdBook, and locality pass.
+  No existing producer, persisted schema, or generated canonical artifact changes in this substrate-only slice.
+- [x] **GENERICITY (ADR 0006)** — authority follows typed information flow and current evidence rather than text
+  fragments. Identity atoms have no semantic spelling API; every rule declares a non-optional alpha obligation;
+  schema-valid, legacy, stale, malformed, and future proof envelopes all remain non-authoritative until verified.
+- [x] **LOCKSTEP** — the ADR, pipeline audit, Knowledge Map fact/projection, roadmap, README, mdBook, live docs,
+  inventory, task frontier, and resume pointer publish the shipped substrate and explicitly leave every current
+  production family proofless for `.e.iv` migration rather than claiming genericity signoff early.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -1250,6 +1275,7 @@ the reviewed replay can name its production revision.
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv — qualify identity remediation` | exact three-commit range, combined alpha/identity/prompt/corpus qualification, current-chain proof, lockstep publication, and full CI |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i — freeze proof architecture` | ADR 0038, exact 71-module / 38-family / 168-field migration inventories, drift-rejecting checker, and no production behavior change |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii — separate core from conformance` | compiler-visible one-way package graph, compatible facade, 76-module live inventory, five dependency controls, and unchanged behavior |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii — install trusted derivation kernel` | sealed opaque identity capabilities, closed rule registry, kernel-only verified authority, fail-closed compatibility, and unchanged persisted behavior |
 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | measured remaining AMD IOMMU and GIC-400 fabrication families, root-cause split, and clean qualification |
 
 ## Changelog
@@ -1290,6 +1316,14 @@ the reviewed replay can name its production revision.
   unrepresentable, moved evaluation/replay/trajectory/named fixtures downstream, preserved application API paths,
   neutralized named compiled-core documentation, and passed five dependency controls plus the unchanged 1,900/6/0
   Rust baseline and full repository gate. `.e.iii` is next only after this commit is clean.
+- `2026-08-12`: Activated `.6d.ii.e.iii` only after `.e.ii` committed at `f0cfc7b9` and the post-commit tree was
+  clean. This leaf owns the sealed opaque identity/capability types, versioned proof schema, trusted promotion
+  validator, and fail-closed legacy/future compatibility boundary. Per-rule producer migration remains `.e.iv`.
+- `2026-08-12`: Closed `.6d.ii.e.iii` after installing sealed opaque identity capabilities, a deterministic closed
+  ruleset, typed premise capture, a proof ledger, and kernel-only verified authority. Sixteen unit controls and five
+  external compile-fail contracts reject spelling access, capability forgery, evidence laundering, proof replay,
+  tampering, and compatibility self-authorization; the full 1,916/6/0 baseline and repository gate pass without a
+  persisted schema or generated-artifact change. `.e.iv` next migrates all 38 claim families to registered rules.
 
 - `2026-08-11`: Created on owner request so the ramp-up trajectory assessment and upstream-first direction do
   not remain chat-only.

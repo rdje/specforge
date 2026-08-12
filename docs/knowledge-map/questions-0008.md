@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > what is recover-register-bits / how does the recover-register-bits command work
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > what is recovered_trapped_data_rows and who shares it
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > what is register_field_name_recall / register_field_completeness / register_bit_structure_recall
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > what is scripts/check_doctrines.sh / the doctrine driver
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
@@ -292,9 +298,3 @@
   > what replaced ProtocolFamily in CorpusMemory schema 7
 - [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
   > what replaced the SWD-specific EvidenceIR carrier
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > what research did SpecForge leave out and why
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > what reset_value shapes are composable vs residual (numeric dec/0x/0b/…h compose; UNKNOWN, IMPLEMENTATION DEFINED, 0x-------- partial-unknown, -, X, Impl Spec, Configuration dependent, enum-annotated are honest residuals — ADR-0006, no name list)
-- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
-  > what retained chains changed in SPEC-TO-INTENT-ALIGNMENT.6d.i

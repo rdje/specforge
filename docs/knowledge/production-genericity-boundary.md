@@ -20,11 +20,14 @@ answers:
   - "Is the generic production core physically separated from conformance code?"
   - "Can specforge-core depend on named fixtures or reviewed evaluation?"
   - "Which crate owns replay, completeness classification, and trajectory snapshots?"
+  - "How does SpecForge keep source-owned symbol spelling opaque?"
+  - "Can a deserialized proof ledger authorize a canonical claim?"
+  - "Which premise kinds can the trusted promotion kernel accept?"
 date: 2026-08-12
 status: current
 tags: [genericity, extraction, architecture, doctrine]
-evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; crates/specforge-core/src/lib.rs; crates/specforge-conformance/src/lib.rs; scripts/check_production_genericity_dependencies.pl; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/source/docling_backend.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/commands/kg_bench.rs; crates/specforge/src/commands/corpus_kb.rs
-reverify: perl scripts/check_production_genericity_dependencies.pl && perl scripts/check_production_genericity_inventory.pl
+evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge/src/ir/derivation.rs; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_inventory.pl
+reverify: cargo test -p specforge-core derivation --offline && cargo test -p specforge-core --doc --offline && perl scripts/check_production_genericity_dependencies.pl && perl scripts/check_production_genericity_inventory.pl
 ---
 
 A neutral SpecForge is feasible when universal digital-intent semantics are separated from opaque,
@@ -86,6 +89,16 @@ way to core and owns `eval`, completeness/category characterization, source-to-i
 trajectory control, and the reviewed named snapshot composer. The application depends on both and re-exports the
 existing public API paths. A five-control checker rejects direct or aliased reverse dependencies, a conformance-
 to-application cycle, and oracle-module reinsertion; Cargo compilation independently verifies Rust visibility.
-The live inventory is 76 modules / 38 claim families / 168 fields. This closes dependency separation only: the
-trusted promotion kernel, opaque capabilities, registered rule migration, AST/taint doctrine, and behavioral
-qualification remain open.
+The live inventory was then 76 modules / 38 claim families / 168 fields. That checkpoint closed dependency
+separation only; the following `.e.iii` slice installs the capability/kernel substrate without claiming producer
+migration.
+
+The `.e.iii` substrate makes opacity and proof admission executable. A source-owned symbol is a private spelling
+plus a public scope/ordinal identity; ordinary code cannot display, serialize, string-convert, or spelling-order
+it. Sealed capabilities delimit grammar, persistence, presentation, and lowering access. A closed SHA-256 ruleset
+and schema-1 claim ledger describe typed capture/model/prior/upstream/axiom premises, allowed spelling-free symbol
+uses, and exact conclusion bytes. The kernel is the only proposal-to-proof transition and returns an unforgeable
+in-memory verification witness. A deserialized ledger—even at the current schema and ruleset—still requires the
+current evidence/conclusion check; old/stale input rebuilds or residualizes, while malformed/future input rejects.
+The live inventory is now 77 modules / 38 families / 168 fields. Existing producers remain proofless until the
+exact `.e.iv` migration, so whole-core signoff remains open.

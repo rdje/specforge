@@ -5,6 +5,7 @@ pub mod constraint_extract_llm;
 pub mod contract;
 pub mod corpus_cluster;
 pub mod cve;
+pub mod derivation;
 pub mod entity_typing;
 pub mod evidence;
 pub mod extraction_filters;
@@ -93,7 +94,7 @@ pub(crate) fn run_fsmgen_schedule_json(isf_path: &std::path::Path) -> std::proce
         .expect("run fsmgen")
 }
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[serde(rename_all = "snake_case")]
 pub enum IrStage {
     SourceIr,

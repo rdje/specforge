@@ -6,6 +6,8 @@
   > Can CorpusMemory infer a protocol family from a filename?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can SpecForge theoretically be specification and PDF neutral?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Can a deserialized proof ledger authorize a canonical claim?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > Can a signal or response spelling select a production extractor?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -40,6 +42,8 @@
   > How does EvidenceIR schema 2 remove protocol-specific extraction authority?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How does SourceIR classification remain specification neutral?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How does SpecForge keep source-owned symbol spelling opaque?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > How does a canonical IR claim prove where it came from?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
@@ -80,6 +84,8 @@
   > Where is the whole extraction-pipeline genericity audit?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Which crate owns replay, completeness classification, and trajectory snapshots?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Which premise kinds can the trusted promotion kernel accept?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > Why can neutral extraction lose recall after removing shortcuts?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -291,9 +297,3 @@
   > do EvidenceSnapshot SemanticSnapshot and IntentSnapshot count protocol states
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
   > do RISC-V CSRs map onto the ISF register/storage abstraction (YES — RISC-V Debug captures its 44 CSRs as register_records; FSMGen titles (storage (var … (fields …))) the register-map/CSR construct, 13a-actor-interface.md:419/:468)
-- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
-  > do SMBus / I2S / I2C cluster into a derived serial-bus family
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > do SWD protocol records reach SemanticIR
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > do SWD serial frame fields reach IntentIR

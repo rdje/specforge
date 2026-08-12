@@ -44,6 +44,7 @@ crates/specforge/src/ir/constraint_extract_llm.rs	core_grammar	core_rule	e.iv	re
 crates/specforge/src/ir/contract.rs	core_schema	core	e.iii	proof-covered contract schema
 crates/specforge/src/ir/corpus_cluster.rs	core_learning	core	e.iii	identity-independent structural fingerprints only
 crates/specforge/src/ir/cve.rs	core_verifier	core	e.iii	constrained verifier kernel support
+crates/specforge/src/ir/derivation.rs	core_registry	core	e.iii	sealed opaque identities, proof ledger, and trusted promotion validation
 crates/specforge/src/ir/entity_typing.rs	core_grammar	core_rule	e.iv	registered type proposal and opaque symbol handling
 crates/specforge/src/ir/evidence.rs	core	core	e.iv	migrate every EvidenceIR producer family to registered proof terms
 crates/specforge/src/ir/extraction_filters.rs	core_grammar	core_rule	e.iv	register universal filtering grammar

@@ -90,19 +90,30 @@ selector, and a listed term may be legitimate input evidence. The enforceable pr
 checkable derivation: changing only identity or bound-symbol spelling cannot change semantic admission or
 lowering eligibility.
 
-Current status: the one-way package boundary is shipped. `specforge-core` compiles the generic capture, IR,
-extraction, semantic, intent, and adapter surfaces without a dependency on `specforge-conformance`;
+Current status: the one-way package boundary and sealed derivation substrate are shipped. `specforge-core`
+compiles the generic capture, IR, extraction, semantic, intent, and adapter surfaces without a dependency on
+`specforge-conformance`;
 `specforge-conformance` depends on core and owns evaluation, completeness characterization, replay, trajectory,
 reviewed snapshots, and named fixtures. The `specforge` application composes both and preserves the existing public
 module paths. Dependency mutations prove that a reverse edge, application cycle, or oracle-module reinsertion is
 rejected. The frozen pre-migration denominator remains 71 modules; the live post-split inventory is 76 modules,
-38 claim families, and 168 top-level fields.
+38 claim families, and 168 top-level fields. The added kernel makes the live inventory 77 modules while preserving
+the same claim/field denominator.
 
-This is the first shipped enforcement layer, not end-to-end proof-carrying genericity. The current pipeline still
-has partial extractor manifests, direct constructors, heterogeneous provenance, and unregistered decision sites.
-Opaque capability and proof-kernel migration, rule registration, AST/information-flow gates, per-rule alpha
-obligations, and whole-population behavioral qualification remain release blockers. Until those close, SpecForge
-does not claim production-genericity signoff.
+The kernel's compiler-visible contract is now concrete. Source-order opaque symbol and document atoms expose only
+scope/ordinal identity and exact comparison; they have no display, string-conversion, spelling-order, or Serde
+surface. Sealed grammar, persistence, presentation, and lowering tokens control private spelling access. A closed,
+SHA-256-hashed rule registry declares allowed premise kinds, conclusion stage/surface, symbol capability, and a
+mandatory alpha-obligation category. Promotion checks exact captured source spans, table cells, visual regions,
+grounded model attestations, validated scoped priors, registered universal axioms, ordered upstream claims,
+spelling-free symbol uses, unique claim addresses, and conclusion digests. It returns a non-deserializable
+verification witness; a merely schema-valid persisted ledger still has no canonical authority.
+
+This is still not end-to-end proof-carrying genericity. The current artifact schemas and producers deliberately
+remain unchanged: no historical claim is wrapped in a synthetic proof. `.e.iv` must register and migrate every
+grammar, inference, carry, residual, and lowering family before a current artifact can earn the new authority;
+AST/information-flow gates, per-rule alpha execution, structural qualification, and whole-population behavioral
+qualification follow. Until those close, SpecForge does not claim production-genericity signoff.
 
 ## Target quality
 

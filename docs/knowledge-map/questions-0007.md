@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > what does CORPUS-COVERAGE.1 add
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > what does DEFER mean in the doctrine enforcement report
+- [docling-device-cpu](../knowledge/docling-device-cpu.md)
+  > what does DOCLING_DEVICE do
 - [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
   > what does KG-ISF-TRANSACTIONS.2k add
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
@@ -292,9 +298,3 @@
   > what is one-way grounding from EvidenceIR to ISF
 - [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
   > what is promotion_status not_promoted_review_required and where does the canonical mutation live
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > what is recover-register-bits / how does the recover-register-bits command work
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > what is recovered_trapped_data_rows and who shares it
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > what is register_field_name_recall / register_field_completeness / register_bit_structure_recall

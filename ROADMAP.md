@@ -75,28 +75,29 @@
 
 ## Current strategic priorities
 
-The near-term north star is a complete, faithful `IntentIR` knowledge graph that lowers to strict-valid
-`.isf`: all real agents, relations, constraints, behaviors, transactions, symbols, and storage must be
-represented without fabricated certainty. [`KG-ISF-COMPLETENESS`](docs/tasks/KG-ISF-COMPLETENESS.md)
-and [`KG-ISF-TRANSACTIONS`](docs/tasks/KG-ISF-TRANSACTIONS.md) own that bar;
-[`WIRE-BASED-100`](docs/tasks/WIRE-BASED-100.md) is the hard wire-protocol gate.
+The near-term north star is a complete, faithful `IntentIR` knowledge graph that lowers to strict-valid `.isf`:
+all real agents, relations, constraints, behaviors, transactions, symbols, and storage must be represented without
+fabricated certainty. [`KG-ISF-COMPLETENESS`](docs/tasks/KG-ISF-COMPLETENESS.md) and
+[`KG-ISF-TRANSACTIONS`](docs/tasks/KG-ISF-TRANSACTIONS.md) own that bar; [`WIRE-BASED-100`](docs/tasks/WIRE-BASED-100.md)
+is the hard wire-protocol gate.
 
-The current sequencing is upstream-first: faithful PDF evidence must populate SourceIR through canonical
-`IntentIR` before adapter expressiveness can be called the blocker. ISF/FSMGen remains the eventual executable
-boundary, but SpecForge does not anticipate a language gap without a source-grounded value.
-[`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md) makes that ordering measurable (ADR 0033/0034).
+The current sequencing is upstream-first: faithful PDF evidence must populate SourceIR through canonical `IntentIR`
+before adapter expressiveness can be called the blocker. ISF/FSMGen remains the eventual executable boundary, but
+SpecForge does not anticipate a language gap without a source-grounded value. [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md)
+makes that ordering measurable (ADR 0033/0034).
 Its reviewed 12/12 current replay and access/provenance correction ship. Generic timing unit/provenance and
 physical-applicability carriers now have clean whole-population qualification: current IntentIR is 24/2/16
 TP/FP/FN with complete 29/29 provenance, and physical-link is the first supported reviewed category. The
 metric controller next selects the two remaining unrelated AMD IOMMU and GIC-400 register fabrications under
 `.6e`; however, the owner-mandated whole-production genericity audit made structural neutrality a release blocker.
 SourceIR/EvidenceIR schema and identity/spelling/prompt/corpus remediation are complete, and ADR 0038 freezes the
-proof-carrying migration. The workspace now enforces the first compiler boundary: `specforge-core` cannot depend
-on `specforge-conformance`, while the latter owns evaluation, replay, calibration, and named fixtures. A finite
-forbidden-vocabulary list remains diagnostic, not proof. `.6d.ii.e.iii`–`.e.vii` still must install the trusted
-kernel and opaque capabilities, migrate registered rules, enforce AST/information-flow obligations, and qualify
-the structural result; `.f` then owns population alpha-renaming, identity, paraphrase, and held-out qualification
-before `.6e`. A reproduced 400-page failure also drove resource-sized bounded activation,
+proof-carrying migration. The workspace enforces the core/conformance boundary, and the sealed opaque-identity,
+ruleset, proof-ledger, compatibility, and promotion-kernel substrate is installed. A deserialized proof envelope
+cannot self-authorize; current producers remain proofless until `.6d.ii.e.iv` migrates all claim families. A finite
+forbidden-vocabulary list remains diagnostic, not proof. `.e.iv`–`.e.vii` still must migrate registered rules,
+enforce AST/information-flow obligations, and qualify the structural result; `.f` then owns population alpha-
+renaming, identity, paraphrase, and held-out qualification before `.6e`. A reproduced 400-page failure also drove
+resource-sized bounded activation,
 fail-closed page counting, typed signal status, and exact four-stage fidelity. The task tree owns detailed
 metrics, evidence, and ordering.
 

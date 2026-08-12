@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
+  > do SMBus / I2S / I2C cluster into a derived serial-bus family
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > do SWD protocol records reach SemanticIR
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > do SWD serial frame fields reach IntentIR
 - [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
   > do SemanticIR and IntentIR preserve register access
 - [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
@@ -291,9 +297,3 @@
   > does validate follow the embedded artifact layout
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
   > does validate materialize SourceIR normalized manifests
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > does validate report message_field_records
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > fresh empirical reconfirmation of the .2i body-emission parking on the current 030f8c273 binary
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > has the corpus task evidence migration landed

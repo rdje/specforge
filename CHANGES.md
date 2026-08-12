@@ -1,3 +1,19 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii — install the trusted derivation kernel
+
+- Added the sealed `specforge-core` derivation substrate: source-order opaque symbol/document atoms expose only
+  spelling-free identity, while grammar, persistence, presentation, and lowering spelling access requires an
+  unconstructible capability token. Opaque atoms implement no string conversion, display, spelling order, or
+  Serde contract; five external compile-fail tests pin those absences.
+- Added a deterministic SHA-256 rule registry and schema-1 proof ledger. The promotion kernel checks exact stage/
+  surface authority, current-scope typed source/table/visual evidence, grounded model and validated-prior
+  attestations, upstream topology, universal axioms, allowed symbol uses, unique addresses, and conclusion bytes.
+- Made persisted compatibility fail closed: legacy/stale ledgers rebuild or residualize, future/malformed ledgers
+  reject, and even a schema-valid deserialized envelope cannot self-authorize. Only the kernel-issued
+  `VerifiedProofLedger` witness permits canonical authority.
+- Kept the boundary honest: current producers and persisted artifacts are unchanged until `.e.iv` migrates all
+  38 claim families. The inventory is now 77 modules / 38 families / 168 fields; 16 kernel tests, five compile-
+  fail tests, and the complete 1,916-pass / six-ignore workspace baseline are green.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii — separate core from conformance
 
 - Split the workspace into a generic `specforge-core`, downstream `specforge-conformance`, and the existing

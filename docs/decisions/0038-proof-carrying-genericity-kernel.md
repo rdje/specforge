@@ -269,6 +269,26 @@ alone. It is also deliberately smaller than formal verification of all natural-l
 trusted kernel and rule metadata are mechanically checked; the rule semantics are qualified with metamorphic and
 held-out behavior.
 
+## Implementation status
+
+`.6d.ii.e.ii` makes the core/conformance direction a Cargo boundary. `.6d.ii.e.iii` installs the accepted trusted
+substrate in `crates/specforge/src/ir/derivation.rs`:
+
+- source-order opaque document/symbol atoms expose only spelling-free identity and exact comparison;
+- sealed grammar, persistence, presentation, and lowering tokens own all private spelling access;
+- a deterministic SHA-256 ruleset covers descriptor version, rule ids, implementation modules, premise kinds,
+  conclusion stage/surface, symbol capability, compatibility, alpha obligation, and universal axioms;
+- schema-1 claim proofs cover typed premises, symbol-use modes, confidence, unique address, and conclusion digest;
+- the kernel validates current capture, grounded model/prior attestations, upstream order, registry authority, and
+  exact conclusions before issuing a non-deserializable `VerifiedProofLedger`; and
+- persisted compatibility cannot grant authority from shape alone: legacy/stale rebuild or residualize,
+  future/malformed reject, and a current envelope still requires full kernel verification.
+
+This status is intentionally bounded. Existing artifact schemas and producer families do not yet carry the
+ledger; `.e.iv` owns their exact migration and current-chain reconciliation. The implementation therefore proves
+the kernel/capability contract, not whole-pipeline compliance. The live denominator is 77 modules / 38 claim
+families / 168 fields, with 16 focused unit controls and five external compile-fail controls.
+
 ## Consequences
 
 - Schema and artifact churn will be large. Every changed retained chain is governed by ADR 0025; recall loss is
@@ -279,8 +299,9 @@ held-out behavior.
 - Core/conformance separation may retain one user-facing binary, but it introduces real workspace crates so the
   forbidden dependency is compiler-visible.
 - Provider output and learned priors remain useful as proposals, never self-authenticating truth.
-- `.e.ii`–`.e.vii` implement and qualify this decision. `.f` still owns whole-population metamorphic and held-out
-  signoff. The project must not claim production genericity before both parents close.
+- `.e.ii` and `.e.iii` implement the package and kernel foundations; `.e.iv`–`.e.vii` migrate, enforce, and
+  structurally qualify them. `.f` still owns whole-population metamorphic and held-out signoff. The project must
+  not claim production genericity before both parents close.
 
 ## Research basis
 

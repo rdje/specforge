@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
+  > how does specforge declare a signal mentioned only in prose
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > how does specforge drop a zero-evidence phantom actor like controller or agent
+- [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
+  > how does specforge extract a CAN-style error-state FSM (error active / error passive / bus off)
 - [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
   > how does specforge extract a single-word ALL-CAPS state machine (SWP ACTIVATED / DEACTIVATED / SUSPENDED)
 - [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
@@ -291,9 +297,3 @@
   > how many evidence artifacts have no validation report
 - [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
   > how many fact cards can SpecForge hold
-- [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
-  > how many fact cards can SpecForge hold now
-- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
-  > how many false timing records were removed by the independent-cell geometry boundary (23; 608 to 585)
-- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
-  > how many generated SourceIR records still name the old livework checkout
