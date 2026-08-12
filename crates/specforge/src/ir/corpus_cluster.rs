@@ -3,7 +3,7 @@
 //! The owner's aim (`2026-06-09`): recognize that a new chip-spec PDF "is like ones we've seen" — especially
 //! within a vendor/brand whose documents share organization — so extraction patterns can be reused. The
 //! ADR-0006-safe way to exploit that WITHOUT hardcoding any vendor name is to cluster documents by a
-//! **derived structural fingerprint**, never by a baked-in "ARM"/"NXP" string. The cluster key is the shared
+//! **derived structural fingerprint**, never by a baked-in producer or document-family string. The key is the shared
 //! structure itself.
 //!
 //! The fingerprint is built from the document's OWN [`EvidenceIr`]:

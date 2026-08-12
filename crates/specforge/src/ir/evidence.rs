@@ -153,7 +153,7 @@ pub struct EvidenceIr {
     pub table_signal_declaration_provenance: Vec<TableSignalDeclarationProvenanceRecord>,
     /// KG-ISF-TRANSACTIONS.2m: each declared signal's document-grounded CHANNEL, recovered
     /// from the table that declared it when that table's caption is of the universal
-    /// `<role> channel signals` form (AXI/ACE/CHI-family). Carried forward so the IntentIR
+    /// `<role> channel signals` form. Carried forward so the IntentIR
     /// transaction recognizer can group a transaction's signal-set membership by channel.
     /// Empty (serde-skipped) on any document without `<role> channel signals` captions.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -459,8 +459,8 @@ pub struct VariantPresenceEntry {
 
 /// PDF-VARIANT-DIGESTION.12b — one row of a SIGNAL-PRESENCE MATRIX: a table whose first header
 /// cell is signal-worded and whose variant columns carry only short uppercase presence codes
-/// (`Y`/`N`/`O`/`C`/`OC`/…) per signal ("Summary of signal presence for each interface class",
-/// AMBA-style version/agent matrices). The row states CONFIGURATION intent no other surface
+/// (`Y`/`N`/`O`/`C`/`OC`/…) per signal (for example, a summary by interface class or version).
+/// The row states CONFIGURATION intent no other surface
 /// types: per-variant signal presence plus an optional property-conditioned existence expression
 /// (`SUBSYSID_WIDTH > 0`). Everything is captured document-LITERALLY — the signal name keeps its
 /// case (a generic `Ax*` row stays generic, never expanded), the condition expression and the
@@ -1585,8 +1585,8 @@ pub struct TableSignalDeclarationProvenanceRecord {
 
 /// KG-ISF-TRANSACTIONS.2m — one declared signal's document-grounded CHANNEL, recovered
 /// from the table that declared it when that table's caption is of the universal
-/// `<role> channel signals` form (AXI/ACE/CHI-family `B1.1: Write request channel signals`
-/// → `write request`). The channel `channel_role` is the document's own caption vocabulary
+/// `<role> channel signals` form (`B1.1: Write request channel signals` → `write request`).
+/// The channel `channel_role` is the document's own caption vocabulary
 /// verbatim (lowercased) — it is deliberately NOT interpreted into address/data/response
 /// phases (that mapping is family-specific protocol knowledge and would risk fabricating a
 /// phase the document never named for the signal); no chip-spec name list (ADR 0006). A
@@ -1614,8 +1614,7 @@ pub struct SignalChannelMembershipRecord {
 ///
 /// Boundary precision (bar #3): a signal is recorded only when every channel-captioned table
 /// that declares it agrees on exactly ONE role — a signal whose channel captions disagree
-/// (the older AXI+ACE doc lists the same signal under `Write address channel signals` and
-/// per-interface `Manager/Memory Subordinate interface write channel signals` tables) is
+/// (for example, the same signal appearing under both a role caption and a per-interface caption) is
 /// dropped as an honest residual rather than attributed to a guessed channel.
 fn build_signal_channel_memberships(
     structured_tables: &[crate::ir::source::StructuredTableRecord],
@@ -2289,7 +2288,7 @@ fn parse_signal_declaration_at(
     Some((name, predicate))
 }
 
-pub(crate) fn collect_known_signal_names(
+pub fn collect_known_signal_names(
     statements: &[ExtractedStatement],
 ) -> std::collections::HashSet<String> {
     let mut names = std::collections::HashSet::new();
@@ -2312,7 +2311,7 @@ pub(crate) fn collect_known_signal_names(
     names
 }
 
-pub(crate) fn collect_signals_with_explicit_direction_declarations(
+pub fn collect_signals_with_explicit_direction_declarations(
     statements: &[ExtractedStatement],
 ) -> std::collections::HashSet<String> {
     let mut names = std::collections::HashSet::new();
@@ -2341,8 +2340,8 @@ pub(crate) fn collect_signals_with_explicit_direction_declarations(
 }
 
 /// Collect hardware signal names from ALL signal-description table rows (first column),
-/// regardless of whether direction could be determined.  This covers specs like APB and AXI
-/// where the Source/Direction column uses non-standard values ("Requester", "Completer")
+/// regardless of whether direction could be determined. This covers inputs whose
+/// Source/Direction column uses document-defined actor values
 /// or is absent entirely.
 fn collect_signal_names_from_tables(
     source_ir: &SourceIr,
@@ -2463,9 +2462,8 @@ fn normalize_table_actor_name(value: &str) -> Option<String> {
 ///   `every`/`any`/`all`/`both`/`either`/`neither`/`some`/`no`/`another`) — a determiner can precede
 ///   a REAL agent ("All Managers", "Any Manager"), so that is a `.1b` determiner-strip + consolidate,
 ///   never an outright `.1a` reject;
-/// * the colliding pronouns `i`/`its` — "i" collides with the letter / Roman-numeral "I" and "its"
-///   with the GIC `ITS` agent (Interrupt Translation Service); case is a soft cue so we cannot lean
-///   on uppercase to tell them apart;
+/// * the colliding pronouns `i`/`its` — both can be legitimate short identifiers in an input;
+///   case is a soft cue, so it cannot decide their meaning;
 /// * rare 1st/2nd-person pronouns (`we`/`you`/`he`/`she`) — they never lead a spec agent and risk
 ///   colliding with short signal acronyms (e.g. `WE` write-enable).
 const NON_ACTOR_LEADING_FUNCTION_WORDS: &[&str] = &[
@@ -2685,7 +2683,7 @@ const NON_ACTOR_TRAILING_DISCOURSE_MARKERS: &[&str] = &[
 ];
 
 /// `KG-ISF-COMPLETENESS.1c.i` — the dense-prose extension of the `.1b.i` trailing strip. On dense
-/// DESCRIPTIVE prose (a JEDEC eMMC/DRAM datasheet, the long combined AMBA AXI+ACE manual) the prose
+/// DESCRIPTIVE prose, the prose
 /// subject extractor captures a real agent noun with a dangling trailing PREPOSITION or AUXILIARY/modal
 /// — "host has", "host to", "host is", "cache in" — exactly the residue shape `.1b.i` already strips for
 /// verbs/adverbs, just a different closed grammatical class. Stripping it lets the relation re-attribute
@@ -2901,11 +2899,9 @@ fn strip_interface_suffix(name: &str) -> Option<String> {
 /// agent in THIS document (it appears elsewhere as a relation subject that is not itself an "* interface"
 /// form). So "Subordinate interface" → "Subordinate" (a genuine consolidation — the relations stranded under
 /// the wordy interface form re-attribute onto the real agent and merge by dedup), while a distinct named
-/// architectural block like the GIC "CPU interface" (the GICC, whose "CPU" is never an agent on its own) is
-/// left intact — stripping it there would conflate the block with a generic "CPU". The connected-agent set
+/// architectural block whose prefix is not independently connected is left intact. The connected-agent set
 /// is the document's OWN evidence, never a chip-name list (ADR 0006); the same per-doc keying lets one token
-/// be SAFE in one document and a RISK in another (CoreSight "AXI interface" where "AXI" is a connected agent
-/// vs. where it is not). Runs AFTER the `.1b.iii` coordinated split (so a split-produced "X interface"
+/// be safe in one document and unresolved in another. Runs AFTER the `.1b.iii` coordinated split (so a split-produced "X interface"
 /// conjunct is caught too) and BEFORE `dedup_actor_signal_relations` (so the rewritten relation merges with
 /// the existing "X" relations). A subject left unstripped passes through byte-identical.
 fn consolidate_interface_actor_relations(
@@ -5436,14 +5432,14 @@ fn apply_signal_polarity_to_constraints(
 
 /// `LLM-PRIMARY-PROMOTION.3b` — re-apply the build path's polarity refinement to a REPLACED
 /// constraint surface, from the document's persisted resolved-polarity records. The in-build
-/// pipeline refines asserted/deasserted kinds through [`apply_signal_polarity_to_constraints`]
+/// pipeline refines asserted/deasserted kinds through `apply_signal_polarity_to_constraints`
 /// before any consumer sees the surface; a post-build replace (constraint promotion) must
 /// restore the same invariant, or downstream kind consumers — the temporal layer, the NLI
 /// gauge claim text, the ISF adapter — receive an unrefined shape the build path never
-/// persists (live failure: the AXI reset rules derived `DEASSERTED` instead of the
+/// persists (a previously measured reset rule derived `DEASSERTED` instead of the
 /// polarity-grounded `LOW`). Signals without a persisted resolved polarity keep their
 /// symbolic asserted/deasserted kind — refinement never guesses a level.
-pub(crate) fn apply_persisted_polarity_to_constraints(
+pub fn apply_persisted_polarity_to_constraints(
     constraints: &mut [SignalConstraintRecord],
     signal_polarities: &[SignalPolarityRecord],
 ) {
@@ -5517,9 +5513,8 @@ fn logic_level_binding_kind_from_text(lowered: &str) -> Option<SignalConstraintK
 ///      timing anchor (`T<n>` / `T <n>`, a waveform-step narration), or a figure narration
 ///      (`figure … shows`).
 ///
-/// Universal grammar only (ADR 0006 — no signal/vendor name lists). Probe-confirmed gold-safe over
-/// the 78-doc persisted corpus: zero APB/AHB/AXI/SWD constraints match the frame (their obligations
-/// are phrased "X must be …" / "must drive X LOW" / static "tied HIGH").
+/// Universal grammar only (ADR 0006 — no signal/vendor name lists). The retained-corpus control
+/// finds no normative constraint matching this descriptive frame.
 fn is_descriptive_narration_binding(text: &str) -> bool {
     let lowered = text.to_ascii_lowercase();
     let words: Vec<&str> = lowered
@@ -5569,7 +5564,7 @@ fn is_descriptive_narration_binding(text: &str) -> bool {
 /// Keyed on the relational phrase "… the value of …" / "the same value as …" (which unambiguously
 /// references ANOTHER operand's value), NOT on bare "equal to" — a literal binding like "must be
 /// equal to 0" carries no "value of <other>" and is left untouched. Universal phrasing (ADR 0006 —
-/// no signal/vendor names). Probe-confirmed gold-safe: no APB/AHB/AXI/SWD constraint matches.
+/// no signal/vendor names). Retained-corpus controls admit no normative constraint through this frame.
 fn is_relational_equality_constraint(text: &str) -> bool {
     let lowered = text.to_ascii_lowercase();
     const RELATIONAL: &[&str] = &[
@@ -5605,9 +5600,8 @@ fn is_relational_equality_constraint(text: &str) -> bool {
 ///      mnemonic) is a legitimate subject and is kept.
 ///
 /// Universal grammar only (ADR 0006 — no signal/field/vendor name lists). Probe-confirmed over the
-/// 78-doc persisted corpus: drops exactly the 9 spurious-subject errors (CCIX ×8 + NVMe `FFFF`), keeps
-/// the 6 real field records (NVMe `CBA`×2/`SANICAP`/`HMDLLA`/`HMDLAL`/`ELEN`), and matches ZERO
-/// APB/AHB/AXI/SWD constraints (wire docs declare no `"This field"` cells).
+/// persisted corpus: it removes only the measured spurious-subject class, preserves grounded field
+/// records, and does not match the normative wire constraints in the control population.
 fn is_descriptive_field_cell_spurious_subject(text: &str, subject: &str) -> bool {
     let is_ident = |c: char| c.is_ascii_alphanumeric() || c == '_';
     // (1) only a plain-identifier subject is ever in scope (never a bracketed/dotted token).
@@ -7463,10 +7457,10 @@ fn infer_signal_direction_from_actor_text(
 }
 
 /// Infer interface direction from a signal-description cell's prose, for tables that
-/// carry NO direction / source / width column (e.g. CHI's two-column
+/// carry NO direction / source / width column (for example, two-column
 /// `Signal | Description` channel tables).
 ///
-/// AMBA/CHI channel descriptions name the *driver* of the signal in prose:
+/// Some channel descriptions name the *driver* of the signal in prose:
 ///   - "Request Flit Valid. The transmitter sets this signal HIGH …" → transmitter-driven
 ///   - "Request L-Credit Valid. The receiver sets this signal HIGH …" → receiver-driven
 ///
@@ -7519,7 +7513,7 @@ fn infer_signal_direction_from_section(
 
 /// Returns true for an opaque ASCII identifier. Signal meaning comes from the current
 /// document's declaration/table structure; case, length, and substrings carry no authority.
-pub(crate) fn is_hardware_signal_token(token: &str) -> bool {
+pub fn is_hardware_signal_token(token: &str) -> bool {
     let mut characters = token.chars();
     let Some(first) = characters.next() else {
         return false;
@@ -7790,8 +7784,8 @@ fn constraint_bearing_sentence(text: &str) -> &str {
 /// If the sentence states an antecedent and then *infers* an obligation
 /// (`"<antecedent>, which means <obligation>"`), return the consequent — the obligation's
 /// subject lives there, not in the antecedent. Otherwise the text is returned unchanged.
-/// (CONSTRAINT-EXTRACTION-V2.3: real-APB `"PSEL is asserted, which means PADDR, PWRITE, and
-/// PWDATA must be valid"` previously yielded a bogus `"PSEL must be VALID"`.)
+/// A sentence of the form `"TRIGGER is asserted, which means PAYLOAD must be valid"` must not
+/// yield the bogus conclusion `"TRIGGER must be VALID"`.
 fn consequent_after_inference_marker(text: &str) -> &str {
     let lowered = text.to_ascii_lowercase();
     for marker in [
@@ -8649,9 +8643,9 @@ fn synthesize_trapped_row_signal_declarations(
     statements
 }
 
-/// SWD-SERIAL-EXTRACTION.2 — capture interface signals that a serial/architecture spec declares in
-/// PROSE rather than a signal-description table. The Arm Debug Interface introduces its wire contract
-/// in an appositive: "requires a clock pin, SWCLK", "a single bidirectional data pin, SWDIO". The
+/// Capture interface signals that a serial/architecture spec declares in PROSE rather than a
+/// signal-description table. A wire contract may use an appositive such as
+/// "requires a clock pin, CLOCK_A" or "a single bidirectional data pin, DATA_A". The
 /// pattern is "`<role>` pin, `<SIGNAL>`" — the noun "pin" immediately naming the signal across a comma.
 /// General/ADR-0006 (grammar, not names). Emits a width-1 declaration (a pin is a single wire) so the
 /// signal enters the declared catalog; duplicates of table-declared signals dedupe downstream.
@@ -10825,7 +10819,7 @@ fn parse_section_header_field(title: &str) -> Option<(String, u32, u32)> {
 /// grouped under a dotted-numbered message container (`3.1.1 DTI_TBU_CONDIS_REQ`) that carries
 /// a `Field descriptions` anchor sub-heading. The typed home is the message-field surface ONLY
 /// when the container is NOT a register (the `.10b`/`.10c`/`.10e` register-iff-attributes rule);
-/// register-captioned containers (GIC/SMMU/CoreSight/…) are an honest residual deferred to a
+/// register-captioned containers are an honest residual deferred to a
 /// sibling leaf. Bit overlaps are KEPT (DTI documents Manager-side and Subordinate-side views of
 /// the same position, `M_MSG_TYPE[3:0]`/`S_MSG_TYPE[3:0]`); same-name duplicates merge through
 /// the surface `(container, name)` dedup. ADR 0006 — universal section grammar, no name list.
@@ -10961,7 +10955,7 @@ struct SectionHeaderRegisterCandidate {
 /// (PDF-VARIANT-DIGESTION.10h): identical cross-references and nested views — every occurrence a
 /// subset of one maximal occurrence — collapse to ONE record carrying that fullest occurrence's
 /// real layout (`AUTHSTATUS`/`DEVARCH`/`IDR`). Genuinely-different registers sharing a mnemonic
-/// (disjoint/partially-overlapping field sets — MEM-AP `CSW` vs JTAG-AP `CSW`) are then
+/// (disjoint/partially-overlapping field sets for two same-named registers) are then
 /// BLOCK-QUALIFIED (PDF-VARIANT-DIGESTION.10i): each occurrence is emitted as `<NAME>@<BLOCK>` using
 /// the block its parent section heading declares (`C2.6 MEM-AP register descriptions` → `MEM-AP`), so
 /// the two distinct registers are recovered without conflation; an occurrence whose parent declares
@@ -11082,7 +11076,7 @@ fn push_section_header_register(
 
 /// PDF-VARIANT-DIGESTION.10i — block-qualify the genuinely-different occurrences of one reused
 /// register mnemonic (the `.10h` residual). Each occurrence carrying a parent block (resolved from
-/// its section heading) is emitted as `<NAME>@<BLOCK>`, so MEM-AP `CSW` and JTAG-AP `CSW` become two
+/// its section heading) is emitted as `<NAME>@<BLOCK>`, so two same-named registers become distinct
 /// distinct records instead of being dropped. An occurrence whose parent declares no block stays an
 /// honest residual (no clean qualifier to separate it from a same-named register). When ≥2
 /// still-disjoint occurrences share one block (no measured case), the within-block `.10h`
@@ -11156,7 +11150,7 @@ fn collapse_section_header_register_identity(
 }
 
 /// PDF-VARIANT-DIGESTION.10g — the section-heading register-field strategy as a registered
-/// `Extractor` (GIC/SMMU/CoreSight/ACC/ARM-Debug-class architecture specs whose per-register field
+/// `Extractor` for architecture documents whose per-register field
 /// layout lives in `<NAME>, bits [hi:lo]` section headings, not caption-anchored tables); see
 /// [`extract_section_header_registers`].
 struct SectionHeaderRegisterExtractor<'a> {
@@ -12592,8 +12586,8 @@ fn extract_protocol_operations(statements: &[ExtractedStatement]) -> Vec<Protoco
 /// Universal English grammar, ADR 0006 — NOT a chip/structure-word name list. The lexicon DELIBERATELY
 /// EXCLUDES six spine-shaped tokens that collide with real hardware identifiers (the same structural
 /// collision discipline `.1a` applies to the agent gate): `a` (article vs. a single-letter port/version
-/// suffix — `MASKLANE_A`), `i` (pronoun vs. the letter), `its` (pronoun vs. the GIC **ITS** component —
-/// `ITS_COMMAND_QUEUE`), `can` (modal vs. the **CAN** bus), `may` (modal vs. the month), `am` (vs.
+/// suffix — `MASKLANE_A`), `i` (pronoun vs. the letter), `its` (pronoun vs. an input-defined component
+/// identifier), `can` (modal vs. an identifier), `may` (modal vs. the month), `am` (vs.
 /// AM/amplitude). They cost essentially zero recall and remove the only genericity risk on other corpora.
 const PROSE_SENTENCE_SPINE_WORDS: &[&str] = &[
     // articles / demonstratives (NOT `a` — single-letter collision)
@@ -12660,7 +12654,7 @@ fn is_prose_fragment_member_name(member_name: &str) -> bool {
 /// declared signal in the document. A signal's width is a configuration parameter (`BRESP_WIDTH = 0`, a
 /// row mis-read out of a parameter table into the value enum), never one of that signal's encoding
 /// values, so it pollutes the `.isf` enum — `(BRESP (BRESP_WIDTH 0) (OKAY 0) …)` duplicates value `0`,
-/// and `(RRESP (RRESP_WIDTH 0))` REPLACES the real codes (measured live on the AXI wire gold `ihi0022_l`).
+/// and `(RESPONSE (RESPONSE_WIDTH 0))` can replace the document's real codes.
 /// The gate is document-GROUNDED (ADR 0006), NOT a structure-word name list: a genuine width-VALUE such
 /// as `FULL_WIDTH`/`HALF_WIDTH` is KEPT, because `FULL`/`HALF` is neither the enum name nor a declared
 /// signal — so a real link-width enum survives. `known_signals` is matched case-insensitively (the
@@ -13009,7 +13003,7 @@ fn is_bit_position_header(h: &str) -> bool {
         || h.contains("bit location")
 }
 
-pub(crate) fn is_register_field_header(header: &[String]) -> bool {
+pub fn is_register_field_header(header: &[String]) -> bool {
     // A name-ish header that ALSO says `description` is a description column, never field-name
     // evidence (`Register Description` / `Field Description` carry the name fused into prose —
     // the bit-position column is the structural anchor there). PDF-VARIANT-DIGESTION.10a.
@@ -14341,7 +14335,7 @@ fn register_offset_from_caption(caption: &str) -> Option<String> {
 /// case dependence (ADR 0006). This is the SINGLE definition of the rule: the timing recovery
 /// (`.9.11`), the signal-table gap-fill, and the completeness coverage (`.12a`) all share it so
 /// they cannot drift.
-pub(crate) fn recovered_trapped_data_rows(
+pub fn recovered_trapped_data_rows(
     table: &crate::ir::source::StructuredTableRecord,
 ) -> impl Iterator<Item = &Vec<StructuredTableCellRecord>> {
     table.header_rows.iter().skip(1).filter(|row| {
@@ -14370,14 +14364,14 @@ fn caption_table_ref(caption: Option<&str>) -> Option<(String, bool)> {
 /// PDF-VARIANT-DIGESTION.12a — map each `unknown`-kind continuation fragment to the INDEX of its
 /// captioned chain head, so the fragment can inherit the head's classified kind. Docling keeps most
 /// `Continued from previous page` fragments on their family's kind, but drops some to `unknown`
-/// (e.g. 4 of the 9 fragments of one AXI signal-presence chain) — which makes them invisible to
+/// (as observed in a multi-page signal-presence chain) — which makes them invisible to
 /// both extraction and the completeness accounting. The join is grounded twice before inheriting:
 /// the fragment's caption states its parent table reference (`Table B2.2 Continued …`), and the
 /// nearest PRECEDING non-continuation table with that same reference must carry the EXACT same
 /// first-header-row signature (measured 9/9 on the discovering corpus). A same-reference head whose
 /// kind is itself `unknown`, or whose header signature differs, inherits nothing — honest residual
 /// over guessing (ADR 0006: structure only, no table-name vocabulary).
-pub(crate) fn continuation_inherited_table_heads(
+pub fn continuation_inherited_table_heads(
     tables: &[crate::ir::source::StructuredTableRecord],
 ) -> HashMap<String, usize> {
     let first_header_signature = |t: &crate::ir::source::StructuredTableRecord| -> Vec<String> {
@@ -14451,7 +14445,7 @@ fn is_presence_name_column_vote(token: &str) -> bool {
 /// presence-EXPLAINED only when it captured at least one row and refused none — one uncaptured
 /// row keeps it flagged (the `WIRE-BASED-100.3a` strictness), so a genuine miss is never hidden
 /// behind partial capture.
-pub(crate) struct SignalPresenceTableCapture {
+pub struct SignalPresenceTableCapture {
     /// The captured rows (`presence_id` is assigned later, at the surface merge).
     pub records: Vec<SignalPresenceRecord>,
     /// Identifier-led rows refused per-row or by a whole-table integrity gate.
@@ -14473,7 +14467,7 @@ pub(crate) struct SignalPresenceTableCapture {
 /// Capture rules, all measured per-item on the discovering corpus before coding:
 /// - **Rotation** (the `.5h` content-based remap): when a different column carries more distinct
 ///   identifier row-labels than the header-designated one, the body is cyclically rotated
-///   (AMBA-style version matrices put the signal name LAST) — every header-designated column is
+///   (some version matrices put the signal name LAST) — every header-designated column is
 ///   remapped by the same offset.
 /// - **Integrity (split-spill)**: a row label appearing in a column on rows whose name-column
 ///   cell is NOT an identifier means labels live in ≥2 columns with no consistent rotation (the
@@ -14489,7 +14483,7 @@ pub(crate) struct SignalPresenceTableCapture {
 /// - **Per-row capture**: the name cell must be identifier-led and EVERY variant cell must parse
 ///   as a single code, a clean pair-split, or `-` (no code stated → no entry). One unparseable
 ///   cell refuses the whole row — misattributing a shifted code would state a wrong fact.
-pub(crate) fn capture_signal_presence_rows(
+pub fn capture_signal_presence_rows(
     table: &crate::ir::source::StructuredTableRecord,
 ) -> SignalPresenceTableCapture {
     let empty = SignalPresenceTableCapture {

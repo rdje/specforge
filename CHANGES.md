@@ -1,3 +1,18 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii — separate core from conformance
+
+- Split the workspace into a generic `specforge-core`, downstream `specforge-conformance`, and the existing
+  application/compatibility facade. Core has no internal SpecForge dependency; conformance depends one way on
+  core and owns evaluation, completeness characterization, replay, trajectory, and named reviewed fixtures.
+- Preserved existing public module paths through application re-exports and moved shared provider/transport and
+  repository-local runtime seams below the application layer without changing persisted schemas or extraction
+  behavior.
+- Expanded the exact source inventory from the frozen 71-file denominator to 76 classified modules. A five-case
+  dependency checker rejects direct and aliased reverse edges, an application cycle, and oracle-module reinsertion.
+- Replaced named compiled-core documentation with structural examples. Named corpus material remains legal in
+  conformance/tests; the finite vocabulary census remains diagnostic, never the genericity proof.
+- Kept the release claim bounded: opaque capabilities, the promotion kernel, rule migration, AST/information-flow
+  enforcement, proof mutations, and population qualification remain `.e.iii`–`.f` work.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i — freeze proof architecture
 
 - Accepted ADR 0038: production genericity will be enforced by a one-way core/conformance crate graph, opaque

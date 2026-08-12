@@ -1,5 +1,5 @@
 [workspace]
-members = ["crates/specforge"]
+members = ["crates/specforge", "crates/specforge-core", "crates/specforge-conformance"]
 resolver = "2"
 
 [workspace.package]

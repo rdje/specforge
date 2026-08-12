@@ -23,13 +23,13 @@ use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use crate::cli::{RecoverRegisterBitsArgs, VlmProviderArg};
-use crate::commands::llm_text::VLM_HELPER_ENV;
 use crate::error::{AppError, Result};
 use crate::ir::evidence::EvidenceIr;
 use crate::ir::register_bits::{
     RegisterBitRecoveryOutcome, RegisterDiagramFieldProposal, recover_bits_for_register,
 };
 use crate::ir::source::{DiagramKind, RegisterRecord, SourceIr};
+use crate::llm_text::VLM_HELPER_ENV;
 use crate::persisted_path::{PersistedPathOrigin, resolve_existing};
 
 /// The synthetic prefix `synthesize_register_field_tables` puts on a field-table register's id,
@@ -66,12 +66,12 @@ from {candidate_registers} register diagram(s)"
     }
 
     let provider = args.vlm_provider;
-    let provider_name = crate::commands::llm_text::provider_name(provider);
+    let provider_name = crate::llm_text::provider_name(provider);
     let model = args
         .vlm_model
         .clone()
-        .unwrap_or_else(|| crate::commands::llm_text::default_model(provider));
-    let api_url = crate::commands::llm_text::api_url(provider).to_string();
+        .unwrap_or_else(|| crate::llm_text::default_model(provider));
+    let api_url = crate::llm_text::api_url(provider).to_string();
     println!("vlm_provider: {provider_name}");
     println!("vlm_model: {model}");
 

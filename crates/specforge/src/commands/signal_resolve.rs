@@ -16,11 +16,10 @@
 //! grounding list, when supplied) does not support.
 //!
 //! The OpenAI-compatible text transport (curl + `SPECFORGE_VLM_HELPER` hook +
-//! request/response shape) lives in the shared `crate::commands::llm_text`
+//! request/response shape) lives in the shared `crate::llm_text`
 //! helper; this module keeps only the relation-specific prompt + classifier.
 
 use crate::cli::{SignalResolveArgs, VlmProviderArg};
-use crate::commands::llm_text;
 use crate::error::{AppError, Result};
 use crate::ir::entity_typing::declared_signal_catalog;
 use crate::ir::evidence::{
@@ -28,6 +27,7 @@ use crate::ir::evidence::{
     actor_signal_relation_fact_key,
 };
 use crate::ir::source::{ActorSignalRelation, AutomationConfidence, RelationKind};
+use crate::llm_text;
 
 /// Minimum word count for a prose statement to be a relation candidate.
 const MIN_CANDIDATE_WORDS: usize = 5;

@@ -7,11 +7,11 @@
 //! condition must appear in the source (`.2`). What the model proposes ungrounded is dropped. This
 //! composes the two proven components into a real extractor.
 
-use crate::cli::VlmProviderArg;
-use crate::commands::llm_text::{api_url, call_text_provider};
 use crate::ir::entity_typing::{EntityType, is_valid_signal_subject};
 use crate::ir::evidence::MessageFieldConstraintRecord;
 use crate::ir::source::{AutomationConfidence, SignalConstraintKind, SignalConstraintRecord};
+use crate::llm_text::{api_url, call_text_provider};
+use crate::provider::VlmProviderArg;
 use serde::Deserialize;
 
 /// A constraint as the LLM proposes it (before grounding).
@@ -264,8 +264,8 @@ fn within_one_edit_ignore_case(a: &str, b: &str) -> bool {
 /// model sometimes emits a one-character-off spelling of a signal it otherwise read perfectly
 /// (probed live: `SYCOREQ` for the sentence's coordinated `SYSCOREQ and SYSCOACK must be
 /// deasserted…`, temp 0, reproducible). A misspelled record either dies downstream at the
-/// SemanticIR declared-signal filter (silent recall loss — the measured AXI temporal-gate
-/// failure) or survives as a phantom name. The trigger is *the proposal does not occur in its
+/// SemanticIR declared-signal filter (silent recall loss in a measured temporal-gate case) or
+/// survives as a phantom name. The trigger is *the proposal does not occur in its
 /// own source sentence*: this extractor's subjects are quotes from the sentence, so an absent
 /// subject is suspect per se. Snap it to the document's OWN token iff every one of these holds:
 /// - the candidate literally appears in the source sentence as a signal-shaped identifier
@@ -465,7 +465,7 @@ fn exact_signal_constraint_key(record: &SignalConstraintRecord) -> String {
     format!(
         "{}|{}|{}|{}",
         record.subject_signal.trim(),
-        crate::eval::constraint_kind_str(&record.constraint_kind),
+        record.constraint_kind.as_str(),
         record.negated,
         target.unwrap_or("").trim(),
     )
@@ -504,7 +504,7 @@ pub fn dedup_field_constraints(
             format!(
                 "{}|{}|{}|{}|{}",
                 rec.subject_field.trim(),
-                crate::eval::constraint_kind_str(&rec.constraint_kind),
+                rec.constraint_kind.as_str(),
                 rec.negated,
                 value.unwrap_or("").trim(),
                 condition_key(rec.condition_text.as_deref())

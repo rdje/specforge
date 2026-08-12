@@ -18,7 +18,6 @@ pub mod inspect;
 pub mod intent;
 pub mod kg_bench;
 pub mod learn_priors;
-pub(crate) mod llm_text;
 pub mod nli_verify;
 pub mod nlp_enrich;
 pub mod project_validation;

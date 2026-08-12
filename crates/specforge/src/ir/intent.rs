@@ -870,8 +870,8 @@ pub struct TransactionIntent {
     pub phase_membership: Vec<TransactionPhaseMembership>,
     /// KG-ISF-TRANSACTIONS.2m: the transaction's signal-set membership grouped by the
     /// document-declared CHANNEL (`<role> channel signals` table captions). The
-    /// deterministic, structured-first counterpart of `phase_membership`: on AXI/ACE/CHI
-    /// docs (whose protocol phases ARE channels) it fills the per-phase grouping the
+    /// deterministic, structured-first counterpart of `phase_membership`: on documents whose
+    /// protocol phases are expressed as channels, it fills the per-phase grouping the
     /// `<qualifier> phase` prose leaves empty. Checked METADATA, not lowered to ISF
     /// transaction-body `steps` (same FSMGen rationale as `phase_membership`). Empty unless
     /// the document declares channels and this transaction's members are channel-captioned.
@@ -1318,8 +1318,8 @@ fn recognize_named_transactions(
 ///
 /// Composed body (`.2b`): such a match also means the transaction is named after
 /// an enumerated VALUE of a declared signal — i.e. the document itself defines the
-/// transaction as "drive that signal to that value" (AHB `idle_transfer` ⟺
-/// `HTRANS = IDLE`, the Table 3-1 transfer-type encoding). So the matched
+/// transaction as "drive that signal to that value" (for example,
+/// `idle_transfer` tied to a document-defined `TRANSFER_KIND = IDLE` encoding). So the matched
 /// `(drive signal value)` is composed as the transaction's grounded step-by-step
 /// body, and the transaction RENDERS to `.isf` (the `!steps.is_empty()` ISF emit
 /// filter now passes it). This is universal structural grammar over the document's

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what is scripts/check_doctrines.sh / the doctrine driver
+- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
+  > what is select_initiator_actor / initiator_perspective_directions
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > what is signal_presence_records and what does a SignalPresenceRecord hold
 - [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
   > what is snap_subject_to_sentence_token and when does it fire
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
@@ -292,9 +298,3 @@
   > what reset_value shapes are composable vs residual (numeric dec/0x/0b/…h compose; UNKNOWN, IMPLEMENTATION DEFINED, 0x-------- partial-unknown, -, X, Impl Spec, Configuration dependent, enum-annotated are honest residuals — ADR-0006, no name list)
 - [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
   > what retained chains changed in SPEC-TO-INTENT-ALIGNMENT.6d.i
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > what signals belong to which AXI channel
-- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
-  > what stops a bounded snapshot from accreting chronology
-- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
-  > what stops a later sentence or trailing agent phrase from supplying a passive constraint subject

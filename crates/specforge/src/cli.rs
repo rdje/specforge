@@ -3,6 +3,7 @@ use std::path::PathBuf;
 use clap::{Args, Parser, Subcommand, ValueEnum};
 
 use crate::ir::adapters::AdapterTarget;
+pub use specforge_core::provider::VlmProviderArg;
 
 #[derive(Debug, Parser)]
 #[command(
@@ -504,19 +505,6 @@ pub struct CleanArgs {
     /// Actually delete the discovered artifacts
     #[arg(long)]
     pub execute: bool,
-}
-
-/// VLM provider selection for the `enrich` command.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum)]
-pub enum VlmProviderArg {
-    /// Local Ollama server at http://localhost:11434. Common model: `qwen2.5vl:7b`.
-    Ollama,
-    /// OpenAI cloud API. Requires `OPENAI_API_KEY` environment variable. Uses `gpt-4o`.
-    OpenAi,
-    /// LM Studio local server at http://localhost:1234. Load a vision model in LM Studio.
-    LmStudio,
-    /// Skip VLM enrichment (dry-run / no-op). Useful for testing the classification step.
-    Skip,
 }
 
 #[derive(Debug, Args)]

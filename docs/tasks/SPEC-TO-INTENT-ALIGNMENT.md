@@ -304,11 +304,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i — freeze proof architecture`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii`
-  Status: `pending`
+  Status: `done`
   Goal: `separate generic production core from conformance/oracle and named calibration surfaces`
   Acceptance: `the compiled core has no dependency on named fixtures, reviewed snapshots, corpus identities, or document-specific commentary/examples; generic evaluation primitives remain reusable behind a one-way conformance dependency; calibrated classifiers are either structurally justified and versioned or moved out of promotion authority; dependency mutations fail closed`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `three-package workspace compiles with core <- conformance and application -> both; core Cargo tree has no internal SpecForge dependency; five dependency controls reject direct/aliased reverse edges, a conformance-to-application cycle, and oracle-module reinsertion; live inventory is 76 modules / 38 families / 168 fields; non-test expanded-core named-term diagnostic is empty while named fixtures remain in conformance; public facade paths compile; all 1,900 Rust tests pass with six intentional ignores; formatting, warning-deny Clippy/rustdoc, all doctrines including exact chain currency, mdBook, and final locality pass; no persisted schema or generated canonical artifact changes`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii — separate core from conformance`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii`
   Status: `pending`
@@ -409,7 +409,7 @@ expressiveness as the bottleneck.
 | 23 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii` | `done` | opaque prompt information flow and structural corpus routing are verified |
 | 24 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv` | `done` | combined qualification is exact; `.d` is closed without a named exception |
 | 25 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i` | `done` | ADR 0038, exact inventories, lossless live-ledger rollover, and full CI are complete |
-| 26 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii` | `pending` | make the generic-core → conformance dependency direction structural |
+| 26 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii` | `done` | core/conformance direction is compiler-visible and mutation-tested; public facade is compatible |
 | 27 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii` | `pending` | install the promotion kernel and opaque identity capabilities |
 | 28 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv` | `pending` | migrate every production grammar/inference family to registered proof terms |
 | 29 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v` | `pending` | make structural violations mechanically unmergeable |
@@ -694,6 +694,9 @@ expressiveness as the bottleneck.
 | `2026-08-12` | `.6d.ii.e.i` exact architecture denominator | full 71-file module census; top-level SourceIR/EvidenceIR/SemanticIR/IntentIR/`AdapterArtifact` field derivation; `perl scripts/check_production_genericity_inventory.pl --self-test`; live checker | PASS: 71/71 modules assigned once to current/target plane and one `.e.ii`–`.e.iv` lane; 168/168 fields assigned once across 38 families; clean fixture plus unclassified-module and unclassified-field controls pass 3/3; no residue |
 | `2026-08-12` | `.6d.ii.e.i` mandatory live-ledger containment | exact three-row plan at clean boundary `f7da4ab8`; authenticated dry run; guarded root-last apply; protocol/report/residue census | PASS: development/status/Rust segments seal 15/17/10 whole records at `a72ebc47…1515` / `e97e52c5…5595` / `967477bd…e432`; resulting live roots are 61/51/51 records and 1,366/85/1,017 lines; every warning band and archive chain passes; no transaction workspace remains |
 | `2026-08-12` | `.6d.ii.e.i` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines including exact chain currency, formatting, warning-deny Clippy, 1,900 Rust tests passed / six ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final project-data locality |
+| `2026-08-12` | `.6d.ii.e.ii` package and dependency boundary | three-package Cargo graph; `cargo tree -p specforge-core --edges normal`; workspace compile; compatibility facade; five controlled dependency mutations | PASS: core has no internal SpecForge dependency; conformance points one way to core; application composes both; direct/aliased reverse edges, application cycle, and oracle-module reinsertion reject 5/5; existing public module paths compile |
+| `2026-08-12` | `.6d.ii.e.ii` exact surface and commentary audit | live inventory checker; non-test expanded-core named-term diagnostic; conformance fixture inspection | PASS: 76/76 modules, 38/38 claim families, and 168/168 top-level fields classify once; known corpus names are absent from expanded non-test core and remain legal only in downstream conformance/tests; vocabulary evidence is explicitly supplementary |
+| `2026-08-12` | `.6d.ii.e.ii` behavioral and full repository qualification | `cargo test --workspace -- --format terse`; `cargo clippy --workspace --all-targets -- -D warnings`; `bash scripts/run_ci.sh` | PASS: 1,900 Rust tests / six intentional ignores / zero failures; all eight doctrines including exact chain currency, formatting, warning-deny Clippy/rustdoc, mdBook test/build, and final locality; no persisted schema or canonical artifact changed |
 | `2026-08-12` | scheduled artifact cleanup | `.bin`/`.log` census under generated and Cargo release/debug trees; exact age/purpose inspection before deletion; residue census | PASS: removed one abandoned 23-file / 92-KiB Aug-11 live-document-size test workspace and the fully rebuildable 3,116,900-KiB `target/debug/incremental` cache; no `.bin`/`.log` remains in the requested generated/debug-deps/release census |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
@@ -1196,6 +1199,26 @@ the reviewed replay can name its production revision.
   rationale, change ledger, Knowledge Map projection, and bounded resume pointer publish the same accepted-but-not-
   implemented boundary and next `.e.ii` owner.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii`
+
+- [x] **REPRODUCE / MEASURE** — compile the same production sources through an isolated core package, derive the
+  live post-split 76-module graph, and preserve the frozen 38-family / 168-field claim denominator.
+- [x] **ROOT CAUSE (WHY + WHERE)** — one Rust crate allowed core, application, evaluation, calibrated
+  completeness classification, replay, trajectory, and named snapshot code to import one another; a directory
+  convention and vocabulary scan could not prevent conformance feedback from becoming extraction authority.
+- [x] **ADDRESSED (verified)** — Cargo now enforces `specforge-core <- specforge-conformance`; the application
+  depends on both and preserves legacy public paths. Evaluation, completeness, replay, trajectory, and the named
+  reviewed snapshot compile downstream; shared transport/locality foundations compile below the application.
+- [x] **NO REGRESSION** — the complete 1,900-test baseline passes with the same six intentional ignores; warning-
+  deny Clippy/rustdoc, all doctrines including chain currency, mdBook, and locality pass; no persisted schema or
+  generated canonical artifact changes.
+- [x] **GENERICITY (ADR 0006)** — direct and aliased reverse dependency, application-cycle, and oracle-registry
+  mutations fail. Named fixture identity is confined to conformance/tests; the empty known-name expanded-core
+  diagnostic assists review but is not claimed as proof.
+- [x] **LOCKSTEP** — Cargo manifests, module inventory, ADR reverify route, audit, roadmap, README, mdBook, live
+  status, Rust analysis, development rationale, change ledger, Knowledge Map, task frontier, and resume pointer
+  publish the shipped boundary and the still-open `.e.iii`–`.f` proof/behavior work.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -1226,6 +1249,7 @@ the reviewed replay can name its production revision.
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii — neutralize prompts and corpus organization` | identifier-redacted provider policy, declaration-ordered catalogs, structural KG capabilities, schema-2 candidate projection, and full CI |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv — qualify identity remediation` | exact three-commit range, combined alpha/identity/prompt/corpus qualification, current-chain proof, lockstep publication, and full CI |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i — freeze proof architecture` | ADR 0038, exact 71-module / 38-family / 168-field migration inventories, drift-rejecting checker, and no production behavior change |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii — separate core from conformance` | compiler-visible one-way package graph, compatible facade, 76-module live inventory, five dependency controls, and unchanged behavior |
 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | measured remaining AMD IOMMU and GIC-400 fabrication families, root-cause split, and clean qualification |
 
 ## Changelog
@@ -1258,6 +1282,14 @@ the reviewed replay can name its production revision.
   15/17/10-record engineering/status/Rust segments, restored every live warning band, and preserved all archive
   chains without residue. ADR 0038 plus the 71-module / 38-family / 168-field inventories are now the accepted
   implementation denominator; no production extraction behavior changed. Full CI passes, and `.e.ii` is next.
+- `2026-08-12`: Activated `.6d.ii.e.ii` only after `.e.i` committed at `50a657a5` and the post-commit tree was
+  clean. This leaf owns the compiler-visible one-way core/conformance boundary, relocation of named examples and
+  calibrated/reviewed authority, preservation of generic metric primitives, dependency-failure controls, and
+  exact behavior/currency qualification. It does not yet own the proof kernel or claim-rule migration.
+- `2026-08-12`: Closed `.6d.ii.e.ii` after the three-package workspace made core-to-conformance imports
+  unrepresentable, moved evaluation/replay/trajectory/named fixtures downstream, preserved application API paths,
+  neutralized named compiled-core documentation, and passed five dependency controls plus the unchanged 1,900/6/0
+  Rust baseline and full repository gate. `.e.iii` is next only after this commit is clean.
 
 - `2026-08-11`: Created on owner request so the ramp-up trajectory assessment and upstream-first direction do
   not remain chat-only.

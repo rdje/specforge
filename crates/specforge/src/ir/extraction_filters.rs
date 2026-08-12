@@ -1,5 +1,5 @@
-//! `WIRE-BASED-100.6/.7` — derived grounding filters that drop OVER-GENERATED facts (the APB
-//! precision defects). Universal-language structure only — no hardcoded chip-spec names (ADR 0006):
+//! Derived grounding filters that drop over-generated facts. Universal-language structure only —
+//! no hardcoded chip-spec names (ADR 0006):
 //! function words can't be actors; a normative obligation must be grounded in a normative modal.
 
 /// Universal English function words — a single one of these can never be a relation ACTOR
@@ -11,7 +11,7 @@ const FUNCTION_WORDS: &[&str] = &[
 ];
 
 /// Document meta-words — a phrase naming the spec/protocol/document ITSELF is not an agent
-/// (e.g. "APB protocol" mis-extracted as an actor).
+/// (for example, `"ExampleBus protocol"` mis-extracted as an actor).
 const META_WORDS: &[&str] = &[
     "protocol",
     "specification",

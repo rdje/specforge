@@ -17,11 +17,14 @@ answers:
   - "Can fixture names decide KG capability or prior-candidate routing?"
   - "What exact range qualified the identity and spelling remediation?"
   - "Is SpecForge production-genericity signoff complete after identity remediation?"
+  - "Is the generic production core physically separated from conformance code?"
+  - "Can specforge-core depend on named fixtures or reviewed evaluation?"
+  - "Which crate owns replay, completeness classification, and trajectory snapshots?"
 date: 2026-08-12
 status: current
 tags: [genericity, extraction, architecture, doctrine]
-evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/source/docling_backend.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/commands/kg_bench.rs; crates/specforge/src/commands/corpus_kb.rs
-reverify: rg -n "SOURCE_IR_SCHEMA_VERSION|neutralize_legacy_source_classifications|EVIDENCE_IR_SCHEMA_VERSION|neutralize_legacy_protocol_json|embedded_source_classifiers_are_structural|fixture_structure_profile|selected_structural_capabilities|document-owned.*opaque" crates/specforge/src/ir/source.rs crates/specforge/src/ir/source/docling_backend.rs crates/specforge/src/ir/evidence.rs crates/specforge/src/commands/kg_bench.rs crates/specforge/src/commands/corpus_kb.rs crates/specforge/src/commands/enrich.rs crates/specforge/src/commands/nlp_enrich.rs crates/specforge/src/commands/signal_resolve.rs
+evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; crates/specforge-core/src/lib.rs; crates/specforge-conformance/src/lib.rs; scripts/check_production_genericity_dependencies.pl; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/source/docling_backend.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/commands/kg_bench.rs; crates/specforge/src/commands/corpus_kb.rs
+reverify: perl scripts/check_production_genericity_dependencies.pl && perl scripts/check_production_genericity_inventory.pl
 ---
 
 A neutral SpecForge is feasible when universal digital-intent semantics are separated from opaque,
@@ -76,3 +79,13 @@ invariants, transactions, and renderable adapters fall where name-derived author
 all 17 remaining ISFs pass FSMGen strict. This closes identity/spelling/prompt/corpus remediation only.
 Structural proof enforcement and population-level metamorphic qualification remain release blockers in
 `.6d.ii.e` and `.6d.ii.f`; SpecForge is not yet whole-core genericity signoff-ready.
+
+The `.e.ii` package split now makes the first part of that architecture executable. `specforge-core` owns the
+generic production compilation unit and has no internal package dependency. `specforge-conformance` points one
+way to core and owns `eval`, completeness/category characterization, source-to-intent evaluation/replay,
+trajectory control, and the reviewed named snapshot composer. The application depends on both and re-exports the
+existing public API paths. A five-control checker rejects direct or aliased reverse dependencies, a conformance-
+to-application cycle, and oracle-module reinsertion; Cargo compilation independently verifies Rust visibility.
+The live inventory is 76 modules / 38 claim families / 168 fields. This closes dependency separation only: the
+trusted promotion kernel, opaque capabilities, registered rule migration, AST/taint doctrine, and behavioral
+qualification remain open.

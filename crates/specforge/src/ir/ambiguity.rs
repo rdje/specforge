@@ -1,14 +1,14 @@
 //! Flag vague / under-specified spec prose (`AMBIGUITY-PHRASE-DETECTOR`).
 //!
 //! A **flag-only** detector grounded in the requirements-engineering "weak phrase" literature
-//! (Wilson, Rosenberg & Hyatt — NASA ARM, ICSE 1997; Berry & Kamsties): certain phrases mark
+//! (Wilson, Rosenberg & Hyatt's requirements-quality work; Berry & Kamsties): certain phrases mark
 //! language a tool cannot pin down ("as appropriate", "if necessary", "TBD", …). Surfacing
 //! them keeps SpecForge honest — it says where the spec is vague instead of silently treating
 //! it as precise. This never changes an extracted fact; it only adds a `validate` finding.
 
 use crate::ir::evidence::ExtractedStatement;
 
-/// Vagueness / under-specification markers: NASA ARM "weak phrases" plus the chip-spec idioms
+/// Vagueness / under-specification markers from requirements-quality literature plus domain idioms
 /// ("implementation-defined", "vendor-specific") that mark genuinely under-specified behaviour.
 ///
 /// The RFC 2119 modal verbs (MUST/SHALL/SHOULD/MAY) are deliberately ABSENT — they carry

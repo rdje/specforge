@@ -4,6 +4,22 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-12 — compiler-visible core/conformance split; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii`)
+
+- The workspace now has three packages. `specforge-core` compiles the production IR/extraction/lowering closure
+  with no SpecForge-internal dependency. `specforge-conformance` depends on core and owns evaluation,
+  completeness/category characterization, replay, trajectory, and named reviewed snapshot support. `specforge`
+  composes both as the CLI and compatibility facade.
+- Shared `VlmProviderArg`, text-provider transport, project-data locality, errors, and persisted-path resolution
+  now live below the application boundary. Cross-package consumers use explicit public APIs; the previous
+  `specforge::eval` and `specforge::ir::*` paths remain available through facade re-exports.
+- The live Rust inventory is 76 modules versus ADR 0038's frozen 71-file pre-migration denominator; the claim
+  denominator remains 38 families / 168 top-level fields. Five dependency self-tests reject direct/aliased
+  reverse edges, a conformance-to-application edge, and conformance-module reinsertion into core.
+- Named documentation disappears from the non-test expanded core while exact named material remains downstream in
+  conformance tests. This is supplementary evidence; package direction is the enforcement. Direct constructors,
+  opaque-capability sealing, promotion proofs, rule registration, and AST/taint enforcement remain open.
+
 ## Session update (2026-08-12 — proof-carrying genericity architecture; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i`)
 
 - The compiled-crate denominator is now exact: 71 Rust modules, each assigned once to its current plane, target

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
+  > do SemanticIR and IntentIR preserve register access
+- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
+  > do SemanticIR and IntentIR preserve timing units and table provenance
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > do SourceIR and EvidenceIR keep absolute paths in memory
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
   > do all corpus docs build through the pipeline without failure
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
@@ -291,9 +297,3 @@
   > fresh empirical reconfirmation of the .2i body-emission parking on the current 030f8c273 binary
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > has the corpus task evidence migration landed
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > have the PDF task migration destinations been created
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > how are <NAME>, bit [N] / <NAME>, bits [hi:lo] section-heading field defs parsed
-- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
-  > how are ACK WDATA RDATA DATAIN bit-widths extracted

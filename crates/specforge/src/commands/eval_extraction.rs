@@ -309,7 +309,7 @@ fn format_report(
     let mut out = String::new();
     out.push_str(&format!(
         "=== Extraction eval (provider: {}, model: {}) ===\n",
-        crate::commands::llm_text::provider_name(provider),
+        crate::llm_text::provider_name(provider),
         model
     ));
     for (task, card) in scores {
@@ -338,7 +338,7 @@ pub fn run(args: EvalExtractionArgs) -> Result<()> {
     let model = args
         .model
         .clone()
-        .unwrap_or_else(|| crate::commands::llm_text::default_model(provider));
+        .unwrap_or_else(|| crate::llm_text::default_model(provider));
     let evidence_root = args.evidence_root.clone();
 
     // WIRE-BASED-100.1 — content-anchored scoring: re-resolve each gold item's statement_id to the
@@ -381,7 +381,7 @@ pub fn run(args: EvalExtractionArgs) -> Result<()> {
     println!("evidence_root: {}", evidence_root.display());
     println!(
         "provider: {} | model: {}",
-        crate::commands::llm_text::provider_name(provider),
+        crate::llm_text::provider_name(provider),
         model
     );
     if matches!(provider, VlmProviderArg::Skip) {

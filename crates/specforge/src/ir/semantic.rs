@@ -2379,8 +2379,8 @@ pub struct TransactionAnchorRecord {
     /// (the union of `StatementContext.signals` over `supporting_statement_ids`).
     /// This is the document's OWN scoping of which signals belong to the
     /// transaction (bar #3/#4): a signal is a member iff the transaction's section
-    /// text references it, so shared signals (e.g. AHB `HREADY` in several
-    /// transfers) are correctly attributed to each — universal, no name list
+    /// text references it, so a shared signal referenced by several transfers is correctly
+    /// attributed to each — universal, no name list
     /// (ADR 0006). Sorted + deduped for determinism; empty when the section
     /// references no declared signal (honest absence, not a miss).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -2672,8 +2672,7 @@ pub struct TransactionPhaseRecord {
     /// signal-set membership BY phase (a member belongs to phase P iff P's prose
     /// references it). Universal English grammar over the document's own prose, no name
     /// list (ADR 0006); sorted + deduped; empty when the phase's prose references no
-    /// declared signal (honest absence — e.g. AXI/SWD, where the `<qualifier> phase`
-    /// prose names no declared signal).
+    /// declared signal (honest absence when the `<qualifier> phase` prose names no declared signal).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub signal_set: Vec<String>,
     pub automation_confidence: AutomationConfidence,

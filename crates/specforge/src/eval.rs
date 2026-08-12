@@ -380,16 +380,7 @@ fn declared_signal_key(signal: &str, direction: Option<&str>) -> String {
 /// Stable snake-case string for a [`SignalConstraintKind`] (the per-value payload of
 /// `MustBeValue` is carried separately in the key's value slot).
 pub fn constraint_kind_str(kind: &SignalConstraintKind) -> &'static str {
-    match kind {
-        SignalConstraintKind::MustBeHigh => "must_be_high",
-        SignalConstraintKind::MustBeLow => "must_be_low",
-        SignalConstraintKind::MustBeAsserted => "must_be_asserted",
-        SignalConstraintKind::MustBeDeasserted => "must_be_deasserted",
-        SignalConstraintKind::MustNotChange => "must_not_change",
-        SignalConstraintKind::MustBeStable => "must_be_stable",
-        SignalConstraintKind::MustHoldData => "must_hold_data",
-        SignalConstraintKind::MustBeValue { .. } => "must_be_value",
-    }
+    kind.as_str()
 }
 
 /// Stable snake-case string for a [`RelationKind`].
@@ -1557,6 +1548,13 @@ mod tests {
     use super::*;
     use crate::ir::source::AutomationConfidence;
 
+    fn committed_eval_fixture(name: &str) -> std::path::PathBuf {
+        crate::project_data::repository_root()
+            .expect("current SpecForge repository root")
+            .join("crates/specforge/test_data/llm_eval")
+            .join(name)
+    }
+
     fn constraint_record(
         id: &str,
         subject: &str,
@@ -1994,8 +1992,7 @@ mod tests {
     fn committed_nvme_register_seed_loads_and_validates() {
         // The source-verified NVMe register-field gold (PDF-VARIANT-DIGESTION.4a.3) must parse, validate,
         // and cover CAP + CC + CSTS with their full field counts (15 + 8 + 6 = 29).
-        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("test_data/llm_eval/seed_nvme_registers.json");
+        let path = committed_eval_fixture("seed_nvme_registers.json");
         let items = load_eval_dataset(&path).expect("nvme register seed loads + validates");
         assert_eq!(items.len(), 3, "three registers (CAP, CC, CSTS)");
         assert!(items.iter().all(|i| i.task == EvalTask::RegisterField));
@@ -2162,8 +2159,7 @@ mod tests {
     fn committed_i2c_signal_seed_loads_and_validates() {
         // The source-verified I2C prose-signal gold (PDF-VARIANT-DIGESTION.4a.5) must parse, validate, and
         // enumerate the 6 genuine I2C-bus signals (SDA/SCL + Hs SDAH/SCLH + UFm USDA/USCL).
-        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("test_data/llm_eval/seed_i2c_signals.json");
+        let path = committed_eval_fixture("seed_i2c_signals.json");
         let items = load_eval_dataset(&path).expect("i2c signal seed loads + validates");
         assert!(items.iter().all(|i| i.task == EvalTask::DeclaredSignal));
         let signals: BTreeSet<String> = items
@@ -2189,8 +2185,7 @@ mod tests {
         // The source-verified RISC-V Debug register-field gold (PDF-VARIANT-DIGESTION.4a.2) must parse,
         // validate (every gold fact is a RegisterField for the register_field task), and cover dmstatus +
         // dmcontrol with their full field counts (20 + 14 = 34).
-        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("test_data/llm_eval/seed_riscv_debug_registers.json");
+        let path = committed_eval_fixture("seed_riscv_debug_registers.json");
         let items = load_eval_dataset(&path).expect("riscv register seed loads + validates");
         assert_eq!(items.len(), 2, "two registers (dmstatus, dmcontrol)");
         assert!(items.iter().all(|i| i.task == EvalTask::RegisterField));
@@ -2764,8 +2759,7 @@ mod tests {
     #[test]
     fn committed_seed_dataset_loads_and_validates() {
         // The real seed must parse, validate (gold fact <-> task), and cover both tasks.
-        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("test_data/llm_eval/seed_apb.json");
+        let path = committed_eval_fixture("seed_apb.json");
         let items = load_eval_dataset(&path).expect("seed dataset loads + validates");
         assert!(
             items.len() >= 16,
@@ -2993,8 +2987,7 @@ mod tests {
         // The temporal gold seed must parse, validate (gold fact <-> task), cover the
         // temporal_rule task, and carry negatives. Labels are drafted independently from the
         // APB prose; see `seed_apb_temporal.json` `label_note`s.
-        let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join("test_data/llm_eval/seed_apb_temporal.json");
+        let path = committed_eval_fixture("seed_apb_temporal.json");
         let items = load_eval_dataset(&path).expect("temporal seed loads + validates");
         assert!(
             items.len() >= 6,

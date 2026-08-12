@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
+  > is the dense-prose phantom-actor explosion a relation-subject seam or an actors[] prose-mint seam problem
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > is the descendant-subsection scope over-broad (no — 0 over-broad corpus-wide)
+- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
+  > is the drive/read direction correct for passive vs active prose relations
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > is the empty catalog caused by the table authority gate rejecting real signal tables
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
@@ -292,9 +298,3 @@
   > what does DEFER mean in the doctrine enforcement report
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > what does DOCLING_DEVICE do
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > what does KG-ISF-TRANSACTIONS.2k add
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > what does LIVE DOCUMENT SIZE CONTAINMENT ADOPTION 8 implement
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > what does MessageFieldRecord.bit_range mean and when is it set

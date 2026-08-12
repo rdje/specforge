@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > how does specforge extract a single-word ALL-CAPS state machine (SWP ACTIVATED / DEACTIVATED / SUSPENDED)
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > how does specforge fold an X interface relation subject onto the bare agent X
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > how does specforge group a transaction's signals by phase (.2i: TransactionIntent.phase_membership, built in mint_named_transaction by intersecting anchor.signal_set with each TransactionPhaseRecord.signal_set; metadata, not .isf steps)
 - [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
   > how does specforge handle PSEL vs PSELx (or HSEL vs HSELx)
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
@@ -291,9 +297,3 @@
   > how many false timing records were removed by the independent-cell geometry boundary (23; 608 to 585)
 - [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
   > how many generated SourceIR records still name the old livework checkout
-- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
-  > how many generated artifacts still mention the deleted boot-volume repository
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > how many page objects does a /Type/Page regex report vs pdfinfo
-- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
-  > how many pages elements and normalized files does the OpenCAPI data link ingest produce

@@ -1946,8 +1946,8 @@ fn actor_port_concrete_widths(actor_ports: &[ActorPortRecord]) -> BTreeMap<Strin
 /// DRIVES the request and reads back the response, so structurally it is a **net producer** — its
 /// output (`Drives`) ports strictly exceed its input (`Reads`) ports — with the largest driving
 /// footprint. We therefore restrict to net producers (`out > in`, which by construction excludes a
-/// balanced prose-fragment actor like AHB `address decoder` at out=in and an input-dominant completer
-/// like `Subordinate`/`Completer`) and pick the one maximizing `(out, in)` lexicographically: most
+/// balanced prose-fragment actor at out=in and an input-dominant completer) and pick the one maximizing
+/// `(out, in)` lexicographically: most
 /// driven signals first, then most read signals (a real initiator also reads responses, which breaks
 /// a tie against an output-only register/fragment). Exact `(out, in)` ties resolve to the
 /// lexicographically last actor name because `BTreeMap` iteration is ascending and `max_by_key`
@@ -1955,8 +1955,7 @@ fn actor_port_concrete_widths(actor_ports: &[ActorPortRecord]) -> BTreeMap<Strin
 /// `None` when no actor is a net producer (e.g. a
 /// register/command doc with no wire actors) — the honest residual that keeps the current behavior.
 ///
-/// Measured `2026-06-18` on the four wire docs: AHB → `Manager` (out=6/in=2), APB → `Requester`
-/// (20/12), AXI → `Manager` (116/52), SWD/debug → `debugger` (2/1) — each the correct initiator.
+/// Retained wire-document controls confirm that this structural ranking selects the reviewed initiator.
 pub(crate) fn select_initiator_actor(actor_ports: &[ActorPortRecord]) -> Option<String> {
     let mut by_actor: BTreeMap<String, (u32, u32)> = BTreeMap::new();
     for port in actor_ports {
@@ -2014,8 +2013,8 @@ fn initiator_perspective_directions(
 /// frontend enforces for the top-level module name and for target identifiers. Uses an ALLOWLIST (keep
 /// `[A-Za-z0-9_]`, map every other char to `_`) rather than a denylist of "bad" punctuation: a denylist
 /// can never enumerate every offender, and in fact missed the unicode arrow `→` that a prose-fragment
-/// initiator actor name carries — which malformed the whole emitted `.isf` (KG-ISF-COMPLETENESS.2a.iii,
-/// surfaced by CORPUS-COVERAGE.2 on GIC-600). The allowlist is byte-identical to the prior denylist on
+/// initiator actor name carries — which can malform the whole emitted `.isf`. The allowlist is
+/// byte-identical to the prior denylist on
 /// every ASCII-punctuation input the denylist already covered (so the wire golds — whose names are pure
 /// alphanumeric — are unaffected); it only ever changes a name that was already broken. Universal, no
 /// name list (ADR 0006; [[feedback_avoid_denylists_prefer_structural]]).
@@ -2605,7 +2604,7 @@ fn rule_conflict_residual_packet(
 /// same signal. An unconditional rule (`condition == ""`) drives its target on every cycle, so its firing
 /// set ⊇ every guard; FSMGen's `_condition_terms_prove_disjoint` can never prove an absent condition
 /// disjoint, so its `isf_conflicting_rule_writes` check rejects any other rule driving the same target to a
-/// different value (the AMBA LPI `PREQ`/`PACCEPT` case). The same-guard `dedup_conflicting_rules` keys on
+/// different value. The same-guard `dedup_conflicting_rules` keys on
 /// `(signal, guard)` and so MISSES this cross-guard overlap. This runs AFTER it, so there is at most one
 /// unconditional value per signal (two unconditional rules on one signal share key `(S, "")` and the second
 /// is already gone). For each signal `S` with a kept unconditional driver value `V`, drop every other rule
@@ -2866,8 +2865,8 @@ fn rule_transaction_conflict_residual_packet(
 
 /// KG-ISF-COMPLETENESS.2a.vi: drop a rule whose any drive VALUE is not a renderable ISF value. FSMGen
 /// requires a rule assignment action's RHS to be a value expression (`(port expr)`); a constraint whose
-/// extracted value is free PROSE (the AMBA AXI+ACE loopback `(RLOOP the value that was presented on the
-/// ARLOOP signal)`) would emit a multi-word value FSMGen rejects, breaking the whole `.isf`. The gate
+/// extracted value is free PROSE (for example, a loopback described as `the value presented on the
+/// peer signal`) would emit a multi-word value FSMGen rejects, breaking the whole `.isf`. The gate
 /// reuses `is_safe_isf_scalar_value` (non-empty, whitespace-free) — every legitimate rule drive (a scalar
 /// literal `0`/`1`/`0b01`, a width-cast `7'd125`, an enum symbol `VALID`) passes, so this is byte-identical
 /// on every doc without a prose-valued rule (measured: only `ihi0022_h_c` carries any). The dropped

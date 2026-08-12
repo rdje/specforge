@@ -353,6 +353,28 @@ dependencies = [
  "clap",
  "serde",
  "serde_json",
+ "specforge-conformance",
+ "specforge-core",
+ "tempfile",
+]
+
+[[package]]
+name = "specforge-conformance"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+ "specforge-core",
+ "tempfile",
+]
+
+[[package]]
+name = "specforge-core"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "serde",
+ "serde_json",
  "tempfile",
 ]
 

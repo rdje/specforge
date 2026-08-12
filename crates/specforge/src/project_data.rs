@@ -4,32 +4,32 @@ use std::process::Command;
 
 use crate::error::{AppError, Result};
 
-pub(crate) const TEMP_ROOT: &str = ".project-data/tmp";
-pub(crate) const CACHE_ROOT: &str = ".cache";
+pub const TEMP_ROOT: &str = ".project-data/tmp";
+pub const CACHE_ROOT: &str = ".cache";
 
 #[derive(Debug, Clone)]
-pub(crate) struct ProjectDataRoots {
-    pub(crate) repository: PathBuf,
-    pub(crate) temporary: PathBuf,
-    pub(crate) xdg_cache: PathBuf,
-    pub(crate) huggingface: PathBuf,
-    pub(crate) pip: PathBuf,
-    pub(crate) torch: PathBuf,
-    pub(crate) matplotlib: PathBuf,
+pub struct ProjectDataRoots {
+    pub repository: PathBuf,
+    pub temporary: PathBuf,
+    pub xdg_cache: PathBuf,
+    pub huggingface: PathBuf,
+    pub pip: PathBuf,
+    pub torch: PathBuf,
+    pub matplotlib: PathBuf,
 }
 
-pub(crate) fn prepare() -> Result<ProjectDataRoots> {
+pub fn prepare() -> Result<ProjectDataRoots> {
     prepare_at(&repository_root()?)
 }
 
-pub(crate) fn tempdir() -> Result<tempfile::TempDir> {
+pub fn tempdir() -> Result<tempfile::TempDir> {
     let roots = prepare()?;
     Ok(tempfile::Builder::new()
         .prefix("specforge-")
         .tempdir_in(roots.temporary)?)
 }
 
-pub(crate) fn configure_command(command: &mut Command) -> Result<()> {
+pub fn configure_command(command: &mut Command) -> Result<()> {
     let roots = prepare()?;
     command
         .env("SPECFORGE_REPO_ROOT", &roots.repository)
@@ -45,7 +45,7 @@ pub(crate) fn configure_command(command: &mut Command) -> Result<()> {
     Ok(())
 }
 
-pub(crate) fn repository_root() -> Result<PathBuf> {
+pub fn repository_root() -> Result<PathBuf> {
     if let Some(explicit) = env::var_os("SPECFORGE_REPO_ROOT") {
         return validate_repository_root(Path::new(&explicit));
     }

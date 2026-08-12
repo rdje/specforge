@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > have the PDF task migration destinations been created
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > how are <NAME>, bit [N] / <NAME>, bits [hi:lo] section-heading field defs parsed
+- [swd-serial-frame-surface](../knowledge/swd-serial-frame-surface.md)
+  > how are ACK WDATA RDATA DATAIN bit-widths extracted
 - [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
   > how are CHANGES DEVELOPMENT_NOTES LIVE_ACHIEVEMENT_STATUS and RUST_CODEBASE_ANALYSIS split into records
 - [register-field-table-defragmentation](../knowledge/register-field-table-defragmentation.md)
@@ -292,9 +298,3 @@
   > how does specforge drop a zero-evidence phantom actor like controller or agent
 - [agnostic-quoted-mode-fsm](../knowledge/agnostic-quoted-mode-fsm.md)
   > how does specforge extract a CAN-style error-state FSM (error active / error passive / bus off)
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > how does specforge extract a single-word ALL-CAPS state machine (SWP ACTIVATED / DEACTIVATED / SUSPENDED)
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > how does specforge fold an X interface relation subject onto the bare agent X
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > how does specforge group a transaction's signals by phase (.2i: TransactionIntent.phase_membership, built in mint_named_transaction by intersecting anchor.signal_set with each TransactionPhaseRecord.signal_set; metadata, not .isf steps)

@@ -1596,7 +1596,7 @@ mod tests {
         );
         let repository = crate::project_data::repository_root()?;
         let observation: serde_json::Value = serde_json::from_slice(&fs::read(repository.join(
-            crate::test_support::trajectory_snapshot::CURRENT_CAPABILITY_OBSERVATION_PATH,
+            specforge_conformance::test_support::trajectory_snapshot::CURRENT_CAPABILITY_OBSERVATION_PATH,
         ))?)?;
         assert_eq!(observation["schema_version"], 1);
         assert_eq!(observation["profile"]["vlm_provider"], "skip");

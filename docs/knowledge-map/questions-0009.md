@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [axi-channel-structure](../knowledge/axi-channel-structure.md)
+  > what signals belong to which AXI channel
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > what stops a bounded snapshot from accreting chronology
+- [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
+  > what stops a later sentence or trailing agent phrase from supplying a passive constraint subject
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
   > what structural cue separates a message-field table from a register-field table
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -292,9 +298,3 @@
   > which conditional rules survive when a document declares no signals
 - [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
   > which corpus PDFs are password/permission protected
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > which corpus docs declare fields with a Field-titled column
-- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
-  > which corpus docs still yield nothing (the VLM frontier)
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > which corpus documents are category 4 CPU-ISA (exactly 2: 1_0_risc_v_debug_specification and 1_0_2025_03_12_risc_v_advanced_interrupt_architecture; the RISC-V IOMMU doc is category 2)

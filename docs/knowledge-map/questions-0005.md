@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
+  > how many generated artifacts still mention the deleted boot-volume repository
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > how many page objects does a /Type/Page regex report vs pdfinfo
+- [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
+  > how many pages elements and normalized files does the OpenCAPI data link ingest produce
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > how many register bit-fields fail to lower to .isf (12,638 fields across 32 docs — the largest measurable intent-loss; DOC-INTENT-TAXONOMY.2)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
@@ -291,9 +297,3 @@
   > is the conditional_rules ISF-lowering shortfall a real gap or honest residual (HONEST RESIDUAL — 73% prose/undeclared/placeholder; the rest are bare deontic modals with no concrete obligation; no buildable ISF lever, no FR)
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > is the corpus task migration contract locked
-- [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
-  > is the dense-prose phantom-actor explosion a relation-subject seam or an actors[] prose-mint seam problem
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > is the descendant-subsection scope over-broad (no — 0 over-broad corpus-wide)
-- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
-  > is the drive/read direction correct for passive vs active prose relations

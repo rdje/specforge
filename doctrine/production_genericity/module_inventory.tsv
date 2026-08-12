@@ -1,4 +1,8 @@
 path	current_plane	target_plane	primary_lane	disposition
+crates/specforge-conformance/src/ir.rs	conformance	conformance	e.ii	downstream evaluation and replay registry over core APIs
+crates/specforge-conformance/src/lib.rs	conformance	conformance	e.ii	one-way conformance package root may depend on core
+crates/specforge-conformance/src/test_support.rs	test_support	conformance	e.ii	named reviewed fixtures remain outside the compiled core
+crates/specforge-core/src/lib.rs	core_foundation	core	e.ii	compiler-visible production-core package root forbids conformance dependency
 crates/specforge/src/cli.rs	application	application	e.ii	CLI schema may depend on core and conformance, never the reverse
 crates/specforge/src/commands/adapt.rs	application	application	e.ii	thin orchestration over core adapter
 crates/specforge/src/commands/audit_extraction.rs	conformance	conformance	e.ii	move evaluation policy out of core dependency graph
@@ -31,10 +35,10 @@ crates/specforge/src/commands/semantic.rs	application	application	e.ii	thin Sema
 crates/specforge/src/commands/signal_resolve.rs	application	application	e.iv	provider proposal must resolve through symbol table
 crates/specforge/src/commands/validate.rs	mixed	application+conformance	e.ii	split generic proof validation from calibrated classification/reporting
 crates/specforge/src/error.rs	core_foundation	core	e.ii	shared typed failures
-crates/specforge/src/eval.rs	mixed	core+conformance	e.ii	split generic metric primitives from labeled datasets and named tests
+crates/specforge/src/eval.rs	conformance	conformance	e.ii	generic metric APIs and labeled evaluation compile only downstream of core
 crates/specforge/src/ir/adapters.rs	core	core	e.iii	lower only proof-covered IntentIR with explicit lowering capability
 crates/specforge/src/ir/ambiguity.rs	core_grammar	core_rule	e.iv	register universal ambiguity grammar
-crates/specforge/src/ir/completeness.rs	mixed	core+conformance	e.ii	split structural residual checks from calibrated document classification
+crates/specforge/src/ir/completeness.rs	conformance	conformance	e.ii	structural quality characterization compiles downstream and cannot promote core claims
 crates/specforge/src/ir/condition_extract.rs	core_grammar	core_rule	e.iv	register condition grammar and grounded proposal proof
 crates/specforge/src/ir/constraint_extract_llm.rs	core_grammar	core_rule	e.iv	register typed grounding and provider-proof boundary
 crates/specforge/src/ir/contract.rs	core_schema	core	e.iii	proof-covered contract schema
@@ -68,5 +72,6 @@ crates/specforge/src/lib.rs	application	application	e.ii	application depends on 
 crates/specforge/src/main.rs	application	application	e.ii	binary entrypoint only
 crates/specforge/src/persisted_path.rs	core_foundation	core	e.iii	path identity is provenance/lifecycle only
 crates/specforge/src/project_data.rs	core_foundation	core	e.ii	repository-local runtime boundary
+crates/specforge/src/provider.rs	core_provider	core_provider	e.ii	provider selection is transport capability without semantic authority
 crates/specforge/src/test_support.rs	test_support	conformance	e.ii	move named test-support registry out of production core
 crates/specforge/src/test_support/trajectory_snapshot.rs	test_support	conformance	e.ii	named reviewed snapshot remains conformance-only

@@ -1,6 +1,5 @@
 pub mod adapters;
 pub mod ambiguity;
-pub mod completeness;
 pub mod condition_extract;
 pub mod constraint_extract_llm;
 pub mod contract;
@@ -23,10 +22,7 @@ pub mod protocol_graph;
 pub mod register_bits;
 pub mod semantic;
 pub mod source;
-pub mod source_to_intent_eval;
-pub mod source_to_intent_replay;
 pub mod temporal_ltl;
-pub mod trajectory;
 pub mod waveform;
 
 use serde::{Deserialize, Serialize};

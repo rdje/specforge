@@ -10,8 +10,8 @@
 //! words actually appear in the source (no hallucinated conditions). The captured condition populates
 //! `condition_text`, so `constraint_claim_text` re-includes it and the claim becomes entailed.
 
-use crate::cli::VlmProviderArg;
-use crate::commands::llm_text::{api_url, call_text_provider};
+use crate::llm_text::{api_url, call_text_provider};
+use crate::provider::VlmProviderArg;
 
 /// What a constraint's condition is extracted from.
 #[derive(Debug, Clone, Default)]

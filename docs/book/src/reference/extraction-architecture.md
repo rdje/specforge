@@ -90,11 +90,19 @@ selector, and a listed term may be legitimate input evidence. The enforceable pr
 checkable derivation: changing only identity or bound-symbol spelling cannot change semantic admission or
 lowering eligibility.
 
-Current status: this proof architecture is accepted and the migration denominator is frozen at 71 compiled Rust
-modules, 38 claim families, and 168 top-level IR/adapter fields. It is not yet shipped end to end. The current
-pipeline still has partial extractor manifests and heterogeneous provenance; core/conformance separation,
-proof-kernel migration, rule registration, structural mutation gates, and whole-population behavioral
-qualification remain release blockers. Until those close, SpecForge does not claim production-genericity signoff.
+Current status: the one-way package boundary is shipped. `specforge-core` compiles the generic capture, IR,
+extraction, semantic, intent, and adapter surfaces without a dependency on `specforge-conformance`;
+`specforge-conformance` depends on core and owns evaluation, completeness characterization, replay, trajectory,
+reviewed snapshots, and named fixtures. The `specforge` application composes both and preserves the existing public
+module paths. Dependency mutations prove that a reverse edge, application cycle, or oracle-module reinsertion is
+rejected. The frozen pre-migration denominator remains 71 modules; the live post-split inventory is 76 modules,
+38 claim families, and 168 top-level fields.
+
+This is the first shipped enforcement layer, not end-to-end proof-carrying genericity. The current pipeline still
+has partial extractor manifests, direct constructors, heterogeneous provenance, and unregistered decision sites.
+Opaque capability and proof-kernel migration, rule registration, AST/information-flow gates, per-rule alpha
+obligations, and whole-population behavioral qualification remain release blockers. Until those close, SpecForge
+does not claim production-genericity signoff.
 
 ## Target quality
 

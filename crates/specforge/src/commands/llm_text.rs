@@ -14,14 +14,14 @@
 use std::fs;
 use std::process::Command;
 
-use crate::cli::VlmProviderArg;
 use crate::error::{AppError, Result};
+use crate::provider::VlmProviderArg;
 
 /// Env var overriding the LLM helper with a test script (covers `enrich`,
 /// `nlp-enrich`, `extract-contracts`, `signal-resolve`).
-pub(crate) const VLM_HELPER_ENV: &str = "SPECFORGE_VLM_HELPER";
+pub const VLM_HELPER_ENV: &str = "SPECFORGE_VLM_HELPER";
 
-pub(crate) fn provider_name(provider: VlmProviderArg) -> &'static str {
+pub fn provider_name(provider: VlmProviderArg) -> &'static str {
     match provider {
         VlmProviderArg::Ollama => "ollama",
         VlmProviderArg::OpenAi => "openai",
@@ -30,7 +30,7 @@ pub(crate) fn provider_name(provider: VlmProviderArg) -> &'static str {
     }
 }
 
-pub(crate) fn default_model(provider: VlmProviderArg) -> String {
+pub fn default_model(provider: VlmProviderArg) -> String {
     match provider {
         VlmProviderArg::Ollama | VlmProviderArg::LmStudio => "qwen2.5vl:7b".to_string(),
         VlmProviderArg::OpenAi => "gpt-4o".to_string(),
@@ -38,7 +38,7 @@ pub(crate) fn default_model(provider: VlmProviderArg) -> String {
     }
 }
 
-pub(crate) fn api_url(provider: VlmProviderArg) -> &'static str {
+pub fn api_url(provider: VlmProviderArg) -> &'static str {
     match provider {
         VlmProviderArg::Ollama => "http://localhost:11434/v1/chat/completions",
         VlmProviderArg::OpenAi => "https://api.openai.com/v1/chat/completions",
@@ -107,7 +107,7 @@ fn extract_chat_content(response_json: &str) -> Result<String> {
 /// text. Honors the `SPECFORGE_VLM_HELPER` test override (passed
 /// `--statement-id` / `--sentence`, matching `nlp_enrich`'s hook shape so one
 /// mock covers all the text commands).
-pub(crate) fn call_text_provider(
+pub fn call_text_provider(
     provider: VlmProviderArg,
     model: &str,
     api_url: &str,

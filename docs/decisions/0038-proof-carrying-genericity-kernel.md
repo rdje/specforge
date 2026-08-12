@@ -4,8 +4,8 @@ title: Production genericity is enforced by opaque capabilities and a proof-carr
 date: 2026-08-12
 status: accepted
 scope: genericity, architecture, information-flow, proof-ledger, rule-registry, doctrine-enforcement
-evidence: doctrine/production_genericity/module_inventory.tsv; doctrine/production_genericity/claim_family_inventory.tsv; docs/research/production-genericity-pipeline-audit.md; crates/specforge/src/ir/extractor.rs; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/evidence.rs; crates/specforge/src/ir/semantic.rs; crates/specforge/src/ir/intent.rs; crates/specforge/src/ir/adapters.rs
-reverify: perl scripts/check_production_genericity_inventory.pl
+evidence: doctrine/production_genericity/module_inventory.tsv; doctrine/production_genericity/claim_family_inventory.tsv; docs/research/production-genericity-pipeline-audit.md; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; scripts/check_production_genericity_dependencies.pl
+reverify: perl scripts/check_production_genericity_inventory.pl && perl scripts/check_production_genericity_dependencies.pl
 answers:
   - "What replaces a forbidden vocabulary list as the proof of production genericity?"
   - "What is SpecForge's trusted promotion kernel?"

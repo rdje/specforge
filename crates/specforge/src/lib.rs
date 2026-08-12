@@ -1,10 +1,16 @@
 pub mod cli;
 mod commands;
-pub mod error;
-pub mod eval;
-pub mod ir;
-pub mod persisted_path;
-mod project_data;
+pub use specforge_conformance::eval;
+pub use specforge_core::{error, llm_text, persisted_path, project_data, provider};
+
+/// Compatibility facade over the one-way core and downstream conformance crates.
+pub mod ir {
+    pub use specforge_conformance::ir::{
+        completeness, source_to_intent_eval, source_to_intent_replay, trajectory,
+    };
+    pub use specforge_core::ir::*;
+}
+
 #[cfg(test)]
 pub(crate) mod test_support;
 

@@ -15,8 +15,8 @@
 //! `.3`; recovering channels/phases/transactions from the PDF is the
 //! extraction trees' job (`#3`/`#4`/`#6`), an explicit Non-Goal here.
 //!
-//! NOTE: `ProtocolPhase` is **protocol-stage** granularity (APB
-//! setup/access; address/data/response) and is distinct from the
+//! NOTE: `ProtocolPhase` is **protocol-stage** granularity (for example,
+//! setup/access or address/data/response) and is distinct from the
 //! temporal model's `TickPhase` (clock-edge granularity); a
 //! `ProtocolPhase` may span many clock ticks.
 
@@ -38,8 +38,7 @@ pub enum ChannelRole {
     Mixed,
 }
 
-/// A named protocol channel grouping related boundary signals
-/// (e.g. AXI `AW`/`W`/`B`/`AR`/`R`; APB transfer; TileLink `A`..`E`).
+/// A named protocol channel grouping related boundary signals as defined by the current document.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct Channel {
     pub channel_id: String,

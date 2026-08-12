@@ -196,7 +196,7 @@ fn obligation_signals(o: &Obligation, out: &mut BTreeSet<String>) {
     }
 }
 
-pub(crate) fn actor_contract_signal_names(c: &ActorContract) -> BTreeSet<String> {
+pub fn actor_contract_signal_names(c: &ActorContract) -> BTreeSet<String> {
     let mut s = BTreeSet::new();
     obligation_signals(&c.obligation, &mut s);
     if let Some(Condition::Eq { signal, .. }) = &c.guard {

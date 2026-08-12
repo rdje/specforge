@@ -17,14 +17,19 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i` is complete awaiting commit; `.6d.ii.d.iv`, `.6d.ii.d.iii`, `.6d.ii.d.ii`, `.6d.ii.d.i`, `.6d.ii.c`,
-  `FSMGEN-REFRESH-INTEGRATE-8.1`, `.6d.ii.b`, `.6d.ii.a`, and `.6d.i` are committed complete. Tracking-only:
-  `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: ADR 0038 accepts the proof-carrying genericity design. Exact checked inventories classify all 71
-  compiled Rust modules and all 168 top-level artifact fields across 38 claim families once. This leaf changes no
-  production extraction behavior; `.e.ii`–`.e.vii` own implementation, enforcement, and qualification.
-- Next action: commit `.e.i` through `COMMIT.md`; only after the clean boundary, activate `.e.ii` and make the
-  core-to-conformance dependency direction compiler-visible while moving named/calibrated authority out of core.
-- In-flight uncommitted: verified `.e.i` decision, inventories/checker, exact lossless live-ledger rollover, and
-  task/live/book/audit/retrieval alignment awaiting commit; no production-code, generated-artifact, or background job.
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii` is complete awaiting commit.
+  `.6d.ii.e.i`, `.6d.ii.d.iv`, `.6d.ii.d.iii`, `.6d.ii.d.ii`, `.6d.ii.d.i`,
+  `.6d.ii.c`, `FSMGEN-REFRESH-INTEGRATE-8.1`, `.6d.ii.b`, `.6d.ii.a`, and
+  `.6d.i` are committed complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2`
+  and `TASK-PART-SEAL-REACHABILITY.0`.
+- Current state: the workspace physically separates `specforge-core`,
+  `specforge-conformance`, and the `specforge` application. The live inventory is
+  76 modules / 38 claim families / 168 artifact fields. Five dependency controls
+  and the unchanged 1,900-pass / six-ignore baseline are green.
+- Next action: stage the complete `.e.ii` result, run the doctrine and full CI gates,
+  commit it, clear `git_message_brief.txt`, and verify a clean handoff boundary.
+  Only then activate `.e.iii`, the trusted promotion kernel and opaque capabilities.
+- In-flight uncommitted: the complete `.e.ii` package split, compatibility facade,
+  dependency checker, inventories, tests, and live/book/task alignment await commit.
+  No generated-artifact, scratch-workspace, or background-job state is in flight.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

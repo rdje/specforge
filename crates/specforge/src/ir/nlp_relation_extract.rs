@@ -12,9 +12,9 @@
 //! grammar engine was validated on real data (`REEXTRACTION-REMEASURE`). It is opt-in and
 //! additive — the deterministic extractor remains the default.
 
-use crate::cli::VlmProviderArg;
-use crate::commands::llm_text::{api_url, call_text_provider};
 use crate::ir::source::{ActorSignalRelation, AutomationConfidence, RelationKind};
+use crate::llm_text::{api_url, call_text_provider};
+use crate::provider::VlmProviderArg;
 use std::collections::HashSet;
 
 /// Build the extraction prompt. The model returns a JSON array of

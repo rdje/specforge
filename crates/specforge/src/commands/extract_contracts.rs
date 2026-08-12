@@ -15,11 +15,10 @@
 //! `Lowerable` contract the prose does not license.
 //!
 //! The OpenAI-compatible text transport (curl + `SPECFORGE_VLM_HELPER` hook +
-//! request/response shape) lives in the shared `crate::commands::llm_text`
+//! request/response shape) lives in the shared `crate::llm_text`
 //! helper; this module keeps only the contract-specific prompt + classifier.
 
 use crate::cli::{ExtractContractsArgs, VlmProviderArg};
-use crate::commands::llm_text;
 use crate::error::{AppError, Result};
 use crate::ir::contract::ActorContract;
 use crate::ir::contract::LoweringDisposition;
@@ -29,6 +28,7 @@ use crate::ir::cve::{
 };
 use crate::ir::entity_typing::declared_signal_catalog;
 use crate::ir::evidence::{EvidenceIr, StatementClass};
+use crate::llm_text;
 use std::collections::BTreeSet;
 
 /// Minimum word count for a prose statement to be a contract candidate

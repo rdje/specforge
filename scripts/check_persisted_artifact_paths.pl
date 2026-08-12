@@ -51,7 +51,7 @@ die "persisted-artifact-paths: --execute requires --migrate-legacy-root\n"
 
 if ($mode eq 'self-test') {
     run_self_test();
-    print "persisted-artifact-paths: self-test 12/12 passed.\n";
+    print "persisted-artifact-paths: self-test 15/15 passed.\n";
     exit 0;
 }
 
@@ -124,9 +124,7 @@ sub validate_producer_contract {
     my ($base, $errors) = @_;
     my %required = (
         'crates/specforge/src/persisted_path.rs' => [
-            'pub(crate) fn resolve_existing(',
             'pub(crate) fn normalize_for_storage(',
-            'pub(crate) fn resolve_repository_output(',
         ],
         'crates/specforge/src/ir/source.rs' => [
             'to_string_pretty(&self.persisted_clone()?)',
@@ -195,7 +193,19 @@ sub validate_producer_contract {
             push @$errors, "producer contract '$relative' is missing required seam: $needle"
                 if index($raw, $needle) < 0;
         }
+        if ($relative eq 'crates/specforge/src/persisted_path.rs') {
+            for my $function (qw(resolve_existing resolve_repository_output)) {
+                push @$errors,
+                    "producer contract '$relative' is missing callable seam: $function"
+                    if !has_callable_rust_function($raw, $function);
+            }
+        }
     }
+}
+
+sub has_callable_rust_function {
+    my ($raw, $function) = @_;
+    return $raw =~ /\bpub(?:\s*\(\s*crate\s*\))?\s+fn\s+\Q$function\E\s*\(/;
 }
 
 sub canonical_artifacts {
@@ -650,6 +660,13 @@ JSON
         die "persisted-artifact-paths self-test '$name' failed\n"
             if ($should_pass && @errors) || (!$should_pass && !@errors);
     }
+
+    die "persisted-artifact-paths self-test 'crate-visible seam' failed\n"
+        if !has_callable_rust_function('pub(crate) fn resolve_existing(', 'resolve_existing');
+    die "persisted-artifact-paths self-test 'public seam' failed\n"
+        if !has_callable_rust_function('pub fn resolve_existing (', 'resolve_existing');
+    die "persisted-artifact-paths self-test 'private seam rejection' failed\n"
+        if has_callable_rust_function('fn resolve_existing(', 'resolve_existing');
 
     my $legacy = '/retired/specforge';
     my $raw = '{"source_ir_path":"/retired/specforge/generated/source_ir/doc/source_ir.json",'

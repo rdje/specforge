@@ -14,8 +14,8 @@
 //! transport **and** its `SPECFORGE_VLM_HELPER` hermetic test hook, so no CI test
 //! requires Ollama.
 
-use crate::cli::VlmProviderArg;
-use crate::commands::llm_text::{api_url, call_text_provider};
+use crate::llm_text::{api_url, call_text_provider};
+use crate::provider::VlmProviderArg;
 
 /// Default text model for NLI entailment (a text-only instruct LLM, not the VLM).
 pub const DEFAULT_NLI_MODEL: &str = "qwen2.5:14b-instruct";

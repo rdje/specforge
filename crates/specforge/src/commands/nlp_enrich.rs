@@ -1,5 +1,4 @@
 use crate::cli::{NlpEnrichArgs, VlmProviderArg};
-use crate::commands::llm_text;
 use crate::error::{AppError, Result};
 use crate::ir::entity_typing::declared_signal_catalog;
 use crate::ir::evidence::{
@@ -9,6 +8,7 @@ use crate::ir::evidence::{
 use crate::ir::source::{
     AutomationConfidence, ConditionalRuleRecord, SignalConstraintKind, SignalConstraintRecord,
 };
+use crate::llm_text;
 
 /// Environment variable overriding the LLM helper script (for unit testing).
 /// The shared `llm_text::call_text_provider` honors this same variable, so a

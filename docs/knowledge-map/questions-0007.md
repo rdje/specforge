@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > what does KG-ISF-TRANSACTIONS.2k add
+- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
+  > what does LIVE DOCUMENT SIZE CONTAINMENT ADOPTION 8 implement
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > what does MessageFieldRecord.bit_range mean and when is it set
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
   > what does MessageFieldRecord.byte_offset mean
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
@@ -292,9 +298,3 @@
   > what is recovered_trapped_data_rows and who shares it
 - [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
   > what is register_field_name_recall / register_field_completeness / register_bit_structure_recall
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what is scripts/check_doctrines.sh / the doctrine driver
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > what is select_initiator_actor / initiator_perspective_directions
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > what is signal_presence_records and what does a SignalPresenceRecord hold

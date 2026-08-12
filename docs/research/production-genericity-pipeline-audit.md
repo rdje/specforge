@@ -110,6 +110,37 @@ implemented: `.e.ii`–`.e.vii` still own the physical core/conformance split, t
 rule/claim migration, AST-aware doctrine, adversarial mutations, and exact qualification. `.f` still owns
 whole-population behavioral qualification. A vocabulary scan remains supplementary diagnostics only.
 
+## Compiler-visible core/conformance boundary (`.6d.ii.e.ii`)
+
+The first architecture layer is now implemented as three workspace packages:
+
+```text
+specforge-core  <-  specforge-conformance
+      ^                    ^
+      +------ specforge application/CLI
+```
+
+`specforge-core` compiles capture, generic provider transport, SourceIR/EvidenceIR/SemanticIR/IntentIR,
+validation primitives, and adapter lowering. It does not name or depend on the conformance package.
+`specforge-conformance` depends only one way on core and compiles `eval`, completeness/category
+characterization, source-to-intent evaluation/replay, trajectory control, and reviewed named snapshot
+composition. The application composes both and keeps the former `specforge::eval` and `specforge::ir::*`
+public paths as compatibility re-exports. Named fixture identities remain legal in conformance tests; an
+expanded production-core diagnostic finds no known named corpus term in the non-test compiled output. That
+vocabulary result is review assistance, not the dependency proof.
+
+`scripts/check_production_genericity_dependencies.pl` derives the manifest and module-registry direction and
+has five controlled cases: clean graph, direct reverse edge, aliased reverse edge, conformance-to-application
+cycle, and oracle-module reinsertion. `cargo tree -p specforge-core --edges normal` independently shows no
+internal SpecForge dependency. The exact live inventory grows from the frozen 71-file pre-migration denominator
+to 76 classified Rust files while retaining the same 38 claim families and 168 fields. This changes packaging
+and visibility, not canonical extraction behavior or persisted schemas.
+
+The boundary removes conformance feedback as a representable core dependency; it does not prove each core claim.
+`.e.iii`–`.e.vi` still own sealed identity capabilities, the promotion kernel, rule registration,
+AST/information-flow enforcement, and adversarial proof/alpha mutations. `.e.vii` and `.f` still own structural
+and population qualification, so whole-core signoff remains explicitly open.
+
 ## Audit denominator and method
 
 ### North-star scope: domain-specialized, specification-instance-neutral
@@ -129,7 +160,8 @@ model's familiarity with a named specification—are the authority.
 
 The denominator is the compiled production crate, not a selected word list:
 
-- all 71 Rust source files below `crates/specforge/src/`;
+- the frozen 71 Rust source files below `crates/specforge/src/`, plus the five post-split package/transport
+  modules in the live 76-file inventory;
 - all canonical stages (`SourceIR`, `EvidenceIR`, `SemanticIR`, `IntentIR`, ISF adapter);
 - optional VLM, text-LLM, NLI, prior-memory, rescan, validation, evaluation, and corpus-management
   paths that can alter or characterize production output;
@@ -200,14 +232,14 @@ prior memory.
 | Source registration/materialization | Source kind, repository-local artifacts, Docling page/table/visual conversion, closed visual-form/section grammar, typed table-role classification, timing-table structural revalidation | Remediated by `.6d.ii.b`: schema-2 classification is identity-independent and fail-closed; schema-1 semantic labels are neutralized on load. |
 | VLM enrichment | Caption-selected timing/state images; typed JSON prompts; table kind/grid proposals checked against headers | Prompts now describe generic digital-hardware structure, require visible/current-document grounding, and treat labels as opaque. |
 | Evidence assembly | Markdown blocks, spans, section anchors, references, table declarations, typed provenance | Broadly structural/input-derived. |
-| Evidence deterministic extraction | Registers, fields, signal inventories, relations, constraints, polarity, semantic hints, timing, frames, states, actors, operations | Protocol structure and identifier-spelling authority are remediated by `.6d.ii.c`/`.d.ii`; named production commentary and the proof-carrying rule boundary remain in `.e`. |
+| Evidence deterministic extraction | Registers, fields, signal inventories, relations, constraints, polarity, semantic hints, timing, frames, states, actors, operations | Protocol structure and identifier-spelling authority are remediated; named compiled documentation is neutralized. Proof-carrying rule admission remains open. |
 | Prior-guided EvidenceIR | Table/visual/actor/semantic/temporal priors | Remediated by `.6d.ii.d.i`: schema 7 has one global scope; normalized current-document evidence and structural fingerprints select priors, while identity is provenance only. |
 | Text LLM/NLP | Per-sentence JSON extraction, declared-signal grounding, entity typing, dedup, optional promotion | Remediated by `.6d.ii.d.iii`: typed tasks, declaration-ordered catalogs, undeclared-contract residualization, model-proposal-independent constraint typing, and identifier-redacted entity judgment. |
-| SemanticIR | Declared-signal gate; interfaces, actors, ports, connectivity, infrastructure, temporal rules/contracts; VLM fusion/fidelity; residuals | Identifier-spelling inference is removed. Named production commentary and the proof-carrying inference boundary remain open in `.e`. |
-| IntentIR | Lossless carry-forward; actor/temporal relations; generic transaction synthesis; residual decisions | Name-created behavior is removed and generic carriers are preserved; named production commentary and structural enforcement remain open. |
-| ISF adapter | Typed lowering, syntax validation, conflict rejection, unsupported-record residuals | Lowering consumes typed system/actor/temporal contracts and fails closed; named production commentary remains for `.e`. |
-| Validation/evaluation | Stage metrics, negative-knowledge lookup, extraction scores, completeness/category classification | Prior and signal validation are identity-neutral. Named conformance schema separation and corpus-calibrated classification claims remain open in `.e`. |
-| Corpus/trajectory utilities | Learn priors, structural clustering, KG pages, reviewed replay/controller | Corpus-KB routing derives capabilities/prior surfaces/control status only from populated fixture-schema fields; names are display/provenance. Reviewed snapshot composition remains test-only. |
+| SemanticIR | Declared-signal gate; interfaces, actors, ports, connectivity, infrastructure, temporal rules/contracts; VLM fusion/fidelity; residuals | Identifier-spelling inference and named compiled documentation are removed; proof-carrying inference admission remains open. |
+| IntentIR | Lossless carry-forward; actor/temporal relations; generic transaction synthesis; residual decisions | Name-created behavior is removed and generic carriers are preserved; proof-carrying structural enforcement remains open. |
+| ISF adapter | Typed lowering, syntax validation, conflict rejection, unsupported-record residuals | Lowering consumes typed system/actor/temporal contracts and fails closed; proof-covered lowering remains open. |
+| Validation/evaluation | Stage metrics, negative-knowledge lookup, extraction scores, completeness/category classification | Prior and signal validation are identity-neutral. Evaluation and calibrated classification now compile downstream in `specforge-conformance`, so they cannot feed a core dependency. |
+| Corpus/trajectory utilities | Learn priors, structural clustering, KG pages, reviewed replay/controller | Corpus-KB routing derives capabilities/prior surfaces/control status only from populated fixture-schema fields; names are display/provenance. Replay, trajectory, and reviewed snapshot composition compile downstream of core. |
 
 ## Confirmed production violations
 
@@ -436,21 +468,21 @@ decision sites.
 
 | Source group | Files | Verdict |
 | --- | --- | --- |
-| Entrypoint/platform | `lib.rs`, `main.rs`, `cli.rs`, `error.rs`, `persisted_path.rs`, `project_data.rs` | Neutral infrastructure. |
+| Entrypoint/platform | `specforge-core`, `specforge-conformance`, and application package roots; `main.rs`, `cli.rs`, `error.rs`, `persisted_path.rs`, `project_data.rs`, `provider.rs` | Compiler-visible one-way package graph plus neutral infrastructure. |
 | Test support | `test_support.rs`; test-only functions in `ir/mod.rs` | Test-only by design; keep outside production dependencies. |
 | Thin stage/utility commands | `adapt`, `clean`, `doctor`, `evidence`, `ingest`, `inspect`, `intent`, `semantic`, `extract_conditions`, `extract_contracts`, `recover_register_bits`, `rescan_plan`, `signal_resolve` | No identity-specific extraction branch found; they inherit the IR behavior they invoke. |
 | Model/quality commands | `audit_extraction`, `enrich`, `extract_constraints_llm`, `grits_consensus`, `nli_verify`, `nlp_enrich`, `project_validation` | Prompt policy is typed, current-document-grounded, opaque-symbol, and alpha-controlled. Corpus literals observed in these files are test-only or historical commentary owned by `.e`. |
-| Orchestration/evaluation commands | `converge`, `eval_extraction`, `kg_bench`, `validate` | Validation/orchestration do not infer semantics from identifier spelling; KG fixture capability metadata is structural. The `.e` dependency boundary still must isolate conformance code physically. |
+| Orchestration/evaluation commands | `converge`, `eval_extraction`, `kg_bench`, `validate` | Validation/orchestration do not infer semantics from identifier spelling; KG fixture capability metadata is structural. The application may compose core and conformance, while neither package can depend on it. |
 | Corpus commands | `corpus_cluster`, `learn_priors`, `corpus_kb` | Structural clustering, schema-7 learning, and schema-field-derived corpus-KB organization are neutral; fixture identity is display/provenance only. |
 | SourceIR | `ir/source.rs`, `ir/source/docling_backend.rs` | Neutral at schema 2: lifecycle is structural, classifiers use generic form/role grammar with honest unknown, and legacy semantic labels fail closed. |
-| EvidenceIR/extraction | `ir/evidence.rs`, `extractor.rs`, `extraction_filters.rs`, `entity_typing.rs`, `condition_extract.rs`, `constraint_extract_llm.rs`, `nlp_relation_extract.rs`, `normative_vocab.rs`, `register_bits.rs` | Signal identities and prompt symbols are opaque and one-way grounded; named production commentary remains for `.e`. Framework, grounding primitives, and parsers are reusable. |
+| EvidenceIR/extraction | `ir/evidence.rs`, `extractor.rs`, `extraction_filters.rs`, `entity_typing.rs`, `condition_extract.rs`, `constraint_extract_llm.rs`, `nlp_relation_extract.rs`, `normative_vocab.rs`, `register_bits.rs` | Signal identities and prompt symbols are opaque and one-way grounded; compiled documentation uses only structural examples. Framework, grounding primitives, and parsers are reusable; proof-rule migration remains open. |
 | Prior/reuse | `ir/prior_memory.rs`, `ir/corpus_cluster.rs` | Neutral at schema 7: one global scope, fail-closed legacy quarantine, normalized evidence keys, and structural fingerprints; no document identity selects a lookup. |
-| SemanticIR | `ir/semantic.rs`, `ambiguity.rs`, `contract.rs`, `cve.rs`, `fidelity.rs`, `figure_region.rs`, `fusion.rs`, `nli_verify.rs`, `protocol_graph.rs`, `temporal_ltl.rs`, `waveform.rs` | Typed fusion/verification no longer assigns interface, invariant, handshake, infrastructure, or polarity meaning from identifier spelling; named production commentary and structural enforcement remain open. Figure-region corpus paths are test-only. |
-| IntentIR | `ir/intent.rs` | Structural synthesis no longer creates transactions or actor/temporal behavior from name fragments; named production commentary and the proof-carrying boundary remain open. |
-| Adapter | `ir/adapters.rs`, `ir/isf_ir.rs` | Clock/reset lowering consumes the typed system contract and fails closed when it is absent/incomplete; named production commentary remains for `.e`. |
-| Completeness/evaluation | `ir/completeness.rs`, `eval.rs` | Corpus-calibrated model and named evaluation schema require separation/versioning; corpus examples after test boundaries are allowed. |
-| Replay/trajectory | `ir/source_to_intent_eval.rs`, `source_to_intent_replay.rs`, `trajectory.rs`; `test_support/trajectory_snapshot.rs` | Engines are generic; reviewed snapshot composition is now test/conformance-only. |
-| Module registry | `ir/mod.rs`, `commands/mod.rs` | Currently compiles corpus/evaluation specialization into production; must enforce the new dependency boundary. |
+| SemanticIR | `ir/semantic.rs`, `ambiguity.rs`, `contract.rs`, `cve.rs`, `fidelity.rs`, `figure_region.rs`, `fusion.rs`, `nli_verify.rs`, `protocol_graph.rs`, `temporal_ltl.rs`, `waveform.rs` | Typed fusion/verification no longer assigns interface, invariant, handshake, infrastructure, or polarity meaning from identifier spelling; compiled documentation is neutral. Proof-rule enforcement remains open. Figure-region corpus paths are test-only. |
+| IntentIR | `ir/intent.rs` | Structural synthesis no longer creates transactions or actor/temporal behavior from name fragments; compiled documentation is neutral and the proof-carrying boundary remains open. |
+| Adapter | `ir/adapters.rs`, `ir/isf_ir.rs` | Clock/reset lowering consumes the typed system contract and fails closed when it is absent/incomplete; compiled documentation is neutral and proof-covered lowering remains open. |
+| Completeness/evaluation | `ir/completeness.rs`, `eval.rs` | Public reusable APIs compile only in `specforge-conformance`; corpus calibration and named tests cannot become core dependencies. |
+| Replay/trajectory | `ir/source_to_intent_eval.rs`, `source_to_intent_replay.rs`, `trajectory.rs`; `test_support/trajectory_snapshot.rs` | Public engines and named reviewed snapshot composition compile only downstream in `specforge-conformance`. |
+| Module registry | core `ir/mod.rs`; conformance `ir.rs`; application facade | Core excludes every oracle module; conformance imports core one way; the application preserves compatibility re-exports. Dependency mutations fail closed. |
 
 ## Why a forbidden-vocabulary TSV is not signoff proof
 

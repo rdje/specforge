@@ -69,7 +69,7 @@ sub inspect_inventory {
         }
         my ($path, $current_plane, $target_plane, $lane, undef) = @fields;
         push @problems, "module inventory line $line_number has a non-repository Rust path '$path'"
-            if $path !~ m{^crates/specforge/src/(?:[A-Za-z0-9_./-]+)\.rs$}
+            if $path !~ m{^crates/specforge(?:-core|-conformance)?/src/(?:[A-Za-z0-9_./-]+)\.rs$}
                 || $path =~ m{(?:^|/)\.\.(?:/|$)};
         push @problems, "module inventory line $line_number has invalid primary lane '$lane'"
             if $lane !~ /^e\.(?:ii|iii|iv)$/;
@@ -87,17 +87,20 @@ sub inspect_inventory {
     }
 
     my %actual_modules;
-    my $source_root = File::Spec->catdir($project_root, qw(crates specforge src));
-    find(
-        {
-            no_chdir => 1,
-            wanted   => sub {
-                return if !-f $_ || $_ !~ /\.rs\z/;
-                $actual_modules{relative_path($project_root, $File::Find::name)} = 1;
+    for my $package (qw(specforge specforge-core specforge-conformance)) {
+        my $source_root = File::Spec->catdir($project_root, 'crates', $package, 'src');
+        next if !-d $source_root;
+        find(
+            {
+                no_chdir => 1,
+                wanted   => sub {
+                    return if !-f $_ || $_ !~ /\.rs\z/;
+                    $actual_modules{relative_path($project_root, $File::Find::name)} = 1;
+                },
             },
-        },
-        $source_root,
-    );
+            $source_root,
+        );
+    }
     my ($missing_modules, $stale_modules) =
         exact_set_differences(\%actual_modules, \%declared_modules);
     push @problems, map { "Rust module is unclassified: $_" } @{$missing_modules};

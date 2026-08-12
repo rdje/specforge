@@ -69,7 +69,9 @@ See [Getting Started](docs/book/src/getting-started.md),
 
 ## Architecture at a glance
 
-- `crates/specforge/` contains the Rust CLI, typed IRs, extraction, validation, and adapters.
+- `crates/specforge-core/` is the specification-instance-neutral extraction/IR/adapter boundary;
+  `crates/specforge-conformance/` owns evaluation, replay, calibration, and named fixtures; and
+  `crates/specforge/` is the CLI and compatibility facade over both.
 - `docs/book/` is the maintained user-facing manual.
 - `docs/tasks/` and `docs/decisions/` preserve engineering state and durable rationale.
 - `generated/` holds repository-local, rebuildable outputs and is not tracked.

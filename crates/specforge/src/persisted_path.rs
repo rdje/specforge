@@ -37,7 +37,7 @@ pub enum PersistedPathOrigin {
 /// repository paths may rebase only through a recognized project-data root and
 /// only when exactly one existing target is found. Explicit external inputs
 /// never use that compatibility path.
-pub(crate) fn resolve_existing(path: &Path, origin: PersistedPathOrigin) -> Result<PathBuf> {
+pub fn resolve_existing(path: &Path, origin: PersistedPathOrigin) -> Result<PathBuf> {
     resolve_existing_at(path, origin, &crate::project_data::repository_root()?)
 }
 
@@ -67,7 +67,7 @@ pub(crate) fn normalize_for_storage(path: &Path, origin: PersistedPathOrigin) ->
 
 /// Resolves a repository-owned output path for runtime I/O without requiring
 /// the output leaf to exist yet.
-pub(crate) fn resolve_repository_output(path: &Path) -> Result<PathBuf> {
+pub fn resolve_repository_output(path: &Path) -> Result<PathBuf> {
     resolve_repository_output_at(path, &crate::project_data::repository_root()?)
 }
 

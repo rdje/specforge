@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > which corpus docs declare fields with a Field-titled column
+- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
+  > which corpus docs still yield nothing (the VLM frontier)
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > which corpus documents are category 4 CPU-ISA (exactly 2: 1_0_risc_v_debug_specification and 1_0_2025_03_12_risc_v_advanced_interrupt_architecture; the RISC-V IOMMU doc is category 2)
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
   > which corpus documents are real signal-catalog capture misses
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
@@ -291,9 +297,3 @@
   > why did the host actor disappear from AArch64 External Debug
 - [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
   > why did the moved Python virtual environments still access the old repository
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > why did the promoted surface lose the AXI reset temporal rules (DEASSERTED vs LOW)
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > why did the register-at-offset placement-map hypothesis get overturned
-- [no-collection-may-declare-an-aggregate-below-its-own-legal-maximum](../decisions/0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md)
-  > why did the task_evidence aggregate ceiling become 480000

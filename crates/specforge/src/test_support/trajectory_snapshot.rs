@@ -12,7 +12,9 @@ use std::path::Path;
 use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, Result};
+#[cfg(test)]
 use crate::ir::source::TableKind;
+#[cfg(test)]
 use crate::ir::source_to_intent_eval::VerticalCategory;
 use crate::ir::source_to_intent_eval::{CategoryStatus, QueryScore, VerticalEvalReport};
 use crate::ir::trajectory::{

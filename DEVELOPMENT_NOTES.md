@@ -1,4 +1,23 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii (`2026-08-12`) — dependency direction is a type-system boundary
+
+The neutral core cannot be protected by a directory naming convention inside one crate: Rust privacy cannot stop
+core modules from importing an oracle that shares their crate. The workspace now gives that rule to Cargo. The
+core package compiles the staged IR and lowering surfaces with no SpecForge-internal dependency; conformance owns
+measurement, category characterization, replay, trajectory, and reviewed fixtures and depends only one way on
+core. The application is the sole composition layer and re-exports legacy paths, so user behavior remains stable.
+
+The physical source move is deliberately smaller than the semantic move. Existing large modules are path-linked
+into their owning package while the compiler graph changes immediately; later proof/rule slices can reorganize
+files without mixing that churn with dependency authority. Public visibility grew only where application or
+conformance consumers cross the new crate boundary. A manifest/module checker tests direct and aliased reverse
+edges, an application cycle, and oracle reinsertion; Cargo compilation remains the independent authority.
+
+This makes conformance feedback unrepresentable as a core import, but it does not authenticate core conclusions.
+The next slices must still seal identity observation, require kernel-checked derivations, register each inference,
+and enforce the resulting information-flow topology. That distinction is why the vocabulary diagnostic can be
+empty while whole-core genericity remains honestly open.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i (`2026-08-12`) — freeze the denominator before the migration
 
 The neutrality repair is intentionally not starting as a mass code move. Moving modules first would change the

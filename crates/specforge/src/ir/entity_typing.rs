@@ -16,14 +16,14 @@
 //!    unambiguous, and *defers* where it is silent. The document grounds everything → the same code
 //!    works on any chip-spec PDF.
 
-use crate::cli::VlmProviderArg;
-use crate::commands::llm_text::{api_url, call_text_provider};
 use crate::ir::evidence::{EvidenceIr, collect_known_signal_names};
+use crate::llm_text::{api_url, call_text_provider};
+use crate::provider::VlmProviderArg;
 
 /// Resolve a proposed identifier against a current-document catalog. Exact spelling wins;
 /// case-insensitive recovery is accepted only when it identifies one unique opaque name.
 /// This permits presentation recovery without making case folding part of identifier identity.
-pub(crate) fn resolve_unique_document_identifier<'a>(
+pub fn resolve_unique_document_identifier<'a>(
     proposed: &str,
     identities: impl IntoIterator<Item = &'a str>,
 ) -> Option<&'a str> {
@@ -47,7 +47,7 @@ pub(crate) fn resolve_unique_document_identifier<'a>(
 
 /// Current-document signal declarations in source/provenance order. Prompt builders must preserve
 /// this order: sorting by the opaque spelling would let alpha-renaming perturb model policy.
-pub(crate) fn declared_signal_catalog(ir: &EvidenceIr) -> Vec<String> {
+pub fn declared_signal_catalog(ir: &EvidenceIr) -> Vec<String> {
     let mut catalog = Vec::new();
     for statement in &ir.extracted_statements {
         let mut names = collect_known_signal_names(std::slice::from_ref(statement))
@@ -87,7 +87,7 @@ pub enum EntityType {
     State,
     /// A reference to a Table/Figure/Section (`Table B13.25` → `B13`).
     StructuralRef,
-    /// Legal / front-matter boilerplate (`LICENSEE`, `AMBA` trademark).
+    /// Legal / front-matter boilerplate (licensee names, marks, and notices).
     Boilerplate,
     Value,
     Unknown,

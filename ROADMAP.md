@@ -89,14 +89,14 @@ Its reviewed 12/12 current replay and access/provenance correction ship. Generic
 physical-applicability carriers now have clean whole-population qualification: current IntentIR is 24/2/16
 TP/FP/FN with complete 29/29 provenance, and physical-link is the first supported reviewed category. The
 metric controller next selects the two remaining unrelated AMD IOMMU and GIC-400 register fabrications under
-`.6e`; however, the owner-mandated whole-production genericity audit found release-blocking identity, named-schema,
-signal-spelling, corpus-phrase, prompt, and module-boundary coupling. SourceIR schema 2 now closes the first seam:
-its classifiers use only generic visual/section grammar and typed table roles, legacy labels fail closed, and
-retained recall loss is measured explicitly. EvidenceIR/schema remediation under `.6d.ii.c`, followed by
-`.6d.ii.d`–`.6d.ii.f`, therefore precedes `.6e`. A finite forbidden-vocabulary list is diagnostic,
-not proof. The signoff architecture is one-way production/conformance dependencies, opaque input symbols and
-identity, registered universal grammar interfaces, source-grounded residuals, and alpha-renaming/identity/
-paraphrase/held-out qualification. A reproduced 400-page failure also drove resource-sized bounded activation,
+`.6e`; however, the owner-mandated whole-production genericity audit made structural neutrality a release blocker.
+SourceIR/EvidenceIR schema and identity/spelling/prompt/corpus remediation are complete, and ADR 0038 freezes the
+proof-carrying migration. The workspace now enforces the first compiler boundary: `specforge-core` cannot depend
+on `specforge-conformance`, while the latter owns evaluation, replay, calibration, and named fixtures. A finite
+forbidden-vocabulary list remains diagnostic, not proof. `.6d.ii.e.iii`–`.e.vii` still must install the trusted
+kernel and opaque capabilities, migrate registered rules, enforce AST/information-flow obligations, and qualify
+the structural result; `.f` then owns population alpha-renaming, identity, paraphrase, and held-out qualification
+before `.6e`. A reproduced 400-page failure also drove resource-sized bounded activation,
 fail-closed page counting, typed signal status, and exact four-stage fidelity. The task tree owns detailed
 metrics, evidence, and ordering.
 

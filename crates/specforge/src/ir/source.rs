@@ -360,12 +360,12 @@ fn timing_columns_have_context(table: &StructuredTableRecord, columns: &[Vec<&st
 }
 
 /// Whether structural column headers establish that this is a timing/limits table at all.
-/// This category authority is intentionally broader than [`timing_table_columns`]: a table with
+/// This category authority is intentionally broader than `timing_table_columns`: a table with
 /// several variant-specific MIN/MAX pairs is genuinely timing-bearing but cannot be collapsed into
 /// the current scalar record without losing its variant dimension. It stays classified as timing
 /// and becomes an explicit unexplained-table residual instead of falling through to another table
 /// extractor.
-pub(crate) fn timing_table_has_structural_authority(table: &StructuredTableRecord) -> bool {
+pub fn timing_table_has_structural_authority(table: &StructuredTableRecord) -> bool {
     let Some(columns) = timing_structural_header_columns(table) else {
         return false;
     };
@@ -598,6 +598,22 @@ pub enum SignalConstraintKind {
     MustHoldData,
     /// `SIGNAL must be VALUE` where VALUE is an input-defined state or encoding.
     MustBeValue { value: String },
+}
+
+impl SignalConstraintKind {
+    /// Stable generic label for diagnostics, evaluation, and serialized reports.
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            Self::MustBeHigh => "must_be_high",
+            Self::MustBeLow => "must_be_low",
+            Self::MustBeAsserted => "must_be_asserted",
+            Self::MustBeDeasserted => "must_be_deasserted",
+            Self::MustNotChange => "must_not_change",
+            Self::MustBeStable => "must_be_stable",
+            Self::MustHoldData => "must_hold_data",
+            Self::MustBeValue { .. } => "must_be_value",
+        }
+    }
 }
 
 /// A structured signal constraint extracted from a `SignalValueConstraint` sentence.

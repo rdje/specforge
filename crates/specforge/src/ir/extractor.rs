@@ -41,7 +41,7 @@
 //!      name), semantic hints (by hint key), serial-frame fields (by field name).
 //!    - [`run_surface_concat`] — **plain concatenation** (no dedup), for surfaces whose strategies produce
 //!      records merged by appending, with any post-passes run on the result in the surface helper:
-//!      register records, protocol actors, SWD operations, signal polarity, actor-signal relations.
+//!      register records, protocol actors, serial operations, signal polarity, actor-signal relations.
 //!
 //! A surface may live INSIDE the fixed-point convergence loop (`converge_evidence_extractions`): signal
 //! polarity and actor-signal relations re-run on every pass with the pass's statement set, and each pass

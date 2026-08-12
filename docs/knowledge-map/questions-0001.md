@@ -14,6 +14,8 @@
   > Can legacy named-family priors steer current extraction?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > Can old proofless IR artifacts still steer extraction or lower to ISF?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Can specforge-core depend on named fixtures or reviewed evaluation?
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > Cannot convert a MPS Tensor to float64
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
@@ -49,6 +51,8 @@
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Is SpecForge production-genericity signoff complete after identity remediation?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Is the generic production core physically separated from conformance code?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Were downstream artifacts reconciled after SourceIR schema 2?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
   > What current priors are learned without protocol families?
@@ -74,6 +78,8 @@
   > What replaces a forbidden vocabulary list as the proof of production genericity?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Where is the whole extraction-pipeline genericity audit?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Which crate owns replay, completeness classification, and trajectory snapshots?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > Why can neutral extraction lose recall after removing shortcuts?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -291,9 +297,3 @@
   > do SWD protocol records reach SemanticIR
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > do SWD serial frame fields reach IntentIR
-- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
-  > do SemanticIR and IntentIR preserve register access
-- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
-  > do SemanticIR and IntentIR preserve timing units and table provenance
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > do SourceIR and EvidenceIR keep absolute paths in memory
