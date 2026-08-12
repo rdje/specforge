@@ -12,6 +12,7 @@
 - assumptions
 - system contract
 - infrastructure signal source/distribution status
+- structured registers, including distinct register/field access and direct table provenance
 - exact protocol observations: serial-frame fields, operation branches, protocol states, and interface-edge
   timings
 - carried conflicts
@@ -19,6 +20,11 @@
 
 This is the stage the rest of the project is trying to reach.
 Everything earlier exists to make this artifact strong, inspectable, and reusable.
+
+`IntentIR.register_records` is a lossless clone of the canonical SemanticIR register surface. Optional
+register-level access stays separate from optional field-level access, and structured-table support remains in
+`supporting_table_ids` alongside the independent statement-provenance list. The product stage does not fill an
+absent access mode or replace missing provenance with a guessed source.
 
 Legacy section-derived `SemanticIR.phases` do not become IntentIR behavior or actor responsibilities. The old
 projection turned each synthetic section summary into a behavior assigned to every retained actor and used phase

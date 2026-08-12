@@ -3513,9 +3513,11 @@ mod tests {
         RegisterRecord {
             register_id: "r".to_string(),
             register_name: "R".to_string(),
+            access_type: None,
             offset_address: None,
             size_bits,
             fields,
+            supporting_table_ids: vec![],
             supporting_statement_ids: vec![],
             automation_confidence: AutomationConfidence::Medium,
         }

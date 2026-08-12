@@ -67,6 +67,11 @@ Declared signal records also keep table support when the declaration was synthes
 `InterfaceSignalRecord.supporting_table_ids` records the `SourceIR` table ids that backed the declaration, so `SemanticIR` and the carried `IntentIR` can explain that a canonical signal came from a specific signal-description table rather than from free-floating prose.
 `specforge validate` reports this as `with_table_support`, giving users a compact coverage view while leaving exact signal-to-table correctness to canonical IR inspection and `kg-bench` expectations.
 
+Structured register records follow the same provenance principle. SemanticIR clones register-level
+`access_type`, per-field access, `supporting_table_ids`, and `supporting_statement_ids` from EvidenceIR without
+reinterpretation. Register access is never inferred from a field and a table id is never relabeled as a
+statement id.
+
 ### Heuristic grouping needs positive authority
 
 Statement-level signal co-mentions normally group signals that are already authoritative. `SemanticIR` first

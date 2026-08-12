@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
+  > how can a collection use a membership index outside its own surface
+- [document-class-from-structure](../knowledge/document-class-from-structure.md)
+  > how complete is a document's extracted intent / what is the per-doc completeness gauge
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > how complete is register-IP / platform-IP / CPU-ISA ISF lowering
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
@@ -42,6 +46,8 @@
   > how do I waive or range-scope the task-acceptance check
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > how do byte-granular page fragments chain (offset plus size adjacency)
+- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
+  > how do canonical register records retain source table provenance
 - [message-field-records-surface](../knowledge/message-field-records-surface.md)
   > how do continuation tables (Table B2.2 Continued) merge into one container
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
@@ -160,6 +166,8 @@
   > how does learn-priors harvest extraction-profile priors (multi-member clusters only, schema v6)
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
   > how does pattern reuse stay agnostic (ADR 0006) and honest (no fabrication / no overfitting)
+- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
+  > how does register access differ from register field access
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > how does retain_authoritative_interface_candidate_signals behave with an empty authority set
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
@@ -290,11 +298,3 @@
   > how is a duplicate register mnemonic (AUTHSTATUS/CSW/IDR reused per access-port block) handled
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > how is a fabricated mega-register / over-count avoided when recovering reused register mnemonics
-- [can-composition-frame-fields](../knowledge/can-composition-frame-fields.md)
-  > how is a frame field's width kept honest (why is ARBITRATION FIELD width None not 11)
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > how is a fused Fields(Continued) caption handled
-- [dempster-fusion](../knowledge/dempster-fusion.md)
-  > how is a fused contract's automation_confidence computed
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how is a guide reported so it is not a silent 0-yield extraction miss

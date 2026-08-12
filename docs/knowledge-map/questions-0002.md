@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
+  > does SpecForge reject a page metadata staging traversal or symlink escape
+- [contested-priors](../knowledge/contested-priors.md)
+  > does SpecForge revise or decay priors
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
   > does SpecForge use LTL CTL or TLA+
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
@@ -293,7 +297,3 @@
   > how can I browse every SpecForge knowledge fact card by id or title
 - [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
   > how can SpecForge automatically choose the next task without gaming metrics
-- [canonical-collection-catalogs](../knowledge/canonical-collection-catalogs.md)
-  > how can a collection use a membership index outside its own surface
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how complete is a document's extracted intent / what is the per-doc completeness gauge

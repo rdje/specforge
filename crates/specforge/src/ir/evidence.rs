@@ -10685,9 +10685,15 @@ fn extract_bit_assignment_registers(
         records.push(RegisterRecord {
             register_id: format!("regbit_{}", first.table.table_id),
             register_name: register_name.clone(),
+            access_type: None,
             offset_address: None,
             size_bits: register_size_from_fields(&fields),
             fields,
+            supporting_table_ids: chain
+                .members
+                .iter()
+                .map(|member| tables[*member].table.table_id.clone())
+                .collect(),
             supporting_statement_ids: Vec::new(),
             automation_confidence: AutomationConfidence::Medium,
         });
@@ -11214,9 +11220,11 @@ fn push_section_header_register(
     records.push(RegisterRecord {
         register_id: format!("register_section_{index:04}"),
         register_name,
+        access_type: None,
         offset_address: None,
         size_bits: register_size_from_fields(&field_records),
         fields: field_records,
+        supporting_table_ids: Vec::new(),
         supporting_statement_ids: Vec::new(),
         automation_confidence: AutomationConfidence::Medium,
     });
@@ -13203,7 +13211,7 @@ fn synthesize_register_records(
                     bits_high,
                     bits_low,
                     bit_width: bit_width_from_range(bits_high, bits_low),
-                    access_type: access,
+                    access_type: access.clone(),
                     reset_value: reset,
                     description: desc,
                     enumerated_values,
@@ -13218,9 +13226,11 @@ fn synthesize_register_records(
             records.push(RegisterRecord {
                 register_id: format!("reg_{}_{row_idx:03}", document_key(&table_id)),
                 register_name: name,
+                access_type: if bits_col.is_none() { access } else { None },
                 offset_address: offset,
                 size_bits: None,
                 fields: Vec::new(),
+                supporting_table_ids: vec![table_id.clone()],
                 supporting_statement_ids: Vec::new(),
                 automation_confidence: AutomationConfidence::Medium,
             });
@@ -13564,9 +13574,11 @@ fn synthesize_register_field_tables(
         records.push(RegisterRecord {
             register_id: format!("regfld_{}", table.table_id),
             register_name,
+            access_type: None,
             offset_address,
             size_bits,
             fields,
+            supporting_table_ids: vec![table.table_id.clone()],
             supporting_statement_ids: Vec::new(),
             automation_confidence: AutomationConfidence::Medium,
         });
@@ -13662,10 +13674,15 @@ fn merge_register_fragments<'a>(
         if merged.size_bits.is_none() {
             merged.size_bits = fragment.size_bits;
         }
+        merged
+            .supporting_table_ids
+            .extend(fragment.supporting_table_ids.iter().cloned());
         statement_ids.extend(fragment.supporting_statement_ids.iter().cloned());
     }
     // The full field set can resolve a width the partial fragments could not.
     merged.size_bits = register_size_from_fields(&merged.fields).or(merged.size_bits);
+    merged.supporting_table_ids.sort();
+    merged.supporting_table_ids.dedup();
     merged.supporting_statement_ids = statement_ids.into_iter().collect();
     merged
 }
@@ -13691,9 +13708,11 @@ mod register_fragment_consolidation_4c {
         RegisterRecord {
             register_id: id.to_string(),
             register_name: name.to_string(),
+            access_type: None,
             offset_address: None,
             size_bits: None,
             fields: fields.iter().map(|f| field(f)).collect(),
+            supporting_table_ids: vec![id.trim_start_matches("regfld_").to_string()],
             supporting_statement_ids: vec![format!("stmt_{id}")],
             automation_confidence: AutomationConfidence::Medium,
         }
@@ -13720,6 +13739,7 @@ mod register_fragment_consolidation_4c {
         assert_eq!(recs[0].register_name, "dmcontrol");
         assert_eq!(recs[0].fields.len(), 7);
         // Provenance is unioned, not lost.
+        assert_eq!(recs[0].supporting_table_ids.len(), 3);
         assert_eq!(recs[0].supporting_statement_ids.len(), 3);
     }
 
@@ -16643,6 +16663,99 @@ mod tests {
             .as_deref(),
             Some("CtlMode")
         );
+    }
+
+    #[test]
+    fn register_map_preserves_register_access_and_table_provenance() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("spec.md");
+        let base = tempdir.path().join("generated").join("source_ir");
+        fs::write(&source, "# Register summary\n")?;
+        let mut source_ir = SourceIr::build(&source, &base)?;
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_register_summary".to_string(),
+            asset_id: "asset_register_summary".to_string(),
+            page_id: None,
+            caption_text: Some("Register access summary".to_string()),
+            source_ref: None,
+            table_kind: TableKind::RegisterMap,
+            header_rows: vec![vec![
+                make_table_cell("Register", true),
+                make_table_cell("Access", true),
+                make_table_cell("Address", true),
+            ]],
+            body_rows: vec![
+                vec![
+                    make_table_cell("CONTROL", false),
+                    make_table_cell("RW", false),
+                    make_table_cell("0x04", false),
+                ],
+                vec![
+                    make_table_cell("STATUS", false),
+                    make_table_cell("WO b", false),
+                    make_table_cell("0x08", false),
+                ],
+            ],
+            row_count: 3,
+            col_count: 3,
+        });
+        source_ir.structured_tables.push(StructuredTableRecord {
+            table_id: "table_without_access".to_string(),
+            asset_id: "asset_without_access".to_string(),
+            page_id: None,
+            caption_text: None,
+            source_ref: None,
+            table_kind: TableKind::RegisterMap,
+            header_rows: vec![vec![
+                make_table_cell("Register", true),
+                make_table_cell("Address", true),
+            ]],
+            body_rows: vec![vec![
+                make_table_cell("DATA", false),
+                make_table_cell("0x0C", false),
+            ]],
+            row_count: 2,
+            col_count: 2,
+        });
+
+        let records = super::synthesize_register_records(&source_ir, None);
+        assert_eq!(records.len(), 3);
+        assert_eq!(records[0].register_name, "CONTROL");
+        assert_eq!(records[0].access_type.as_deref(), Some("RW"));
+        assert_eq!(records[0].offset_address.as_deref(), Some("0x04"));
+        assert_eq!(
+            records[0].supporting_table_ids,
+            vec!["table_register_summary"]
+        );
+        assert!(
+            records[0].fields.is_empty(),
+            "register access is not field access"
+        );
+        assert_eq!(records[1].access_type.as_deref(), Some("WO b"));
+        assert_eq!(records[2].access_type, None, "missing access stays absent");
+        assert_eq!(
+            records[2].supporting_table_ids,
+            vec!["table_without_access"]
+        );
+
+        let encoded = serde_json::to_vec(&records)?;
+        let decoded: Vec<crate::ir::source::RegisterRecord> = serde_json::from_slice(&encoded)?;
+        assert_eq!(
+            decoded, records,
+            "access and table provenance survive Serde"
+        );
+
+        let legacy = serde_json::json!({
+            "register_id": "legacy",
+            "register_name": "LEGACY",
+            "fields": [],
+            "supporting_statement_ids": [],
+            "automation_confidence": "medium"
+        });
+        let legacy: crate::ir::source::RegisterRecord = serde_json::from_value(legacy)?;
+        assert_eq!(legacy.access_type, None);
+        assert!(legacy.supporting_table_ids.is_empty());
+        Ok(())
     }
 
     #[test]
@@ -20405,9 +20518,11 @@ mod tests {
         let reg = |fields: Vec<RegisterFieldRecord>| RegisterRecord {
             register_id: "r".to_string(),
             register_name: "R".to_string(),
+            access_type: None,
             offset_address: None,
             size_bits: None,
             fields,
+            supporting_table_ids: vec![],
             supporting_statement_ids: vec![],
             automation_confidence: AutomationConfidence::Medium,
         };

@@ -40,6 +40,8 @@
   > are instruction mnemonics in a software optimization guide declared interface signals (no)
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
   > are normalized pages page JSON image paths repository relative
+- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
+  > are older register records compatible with access and table provenance fields
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > are other docs affected by the rule-drive-value gate (no — only ihi0022_h_c carries a prose-valued rule corpus-wide; every other emit is byte-identical)
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
@@ -199,6 +201,8 @@
   > do SWD protocol records reach SemanticIR
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > do SWD serial frame fields reach IntentIR
+- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
+  > do SemanticIR and IntentIR preserve register access
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > do SourceIR and EvidenceIR keep absolute paths in memory
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
@@ -293,7 +297,3 @@
   > does SpecForge need to file a topology feature request now (not before .4c.ii measures the current contract and carrier fit)
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > does SpecForge preserve certification workflow source evidence
-- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
-  > does SpecForge reject a page metadata staging traversal or symlink escape
-- [contested-priors](../knowledge/contested-priors.md)
-  > does SpecForge revise or decay priors

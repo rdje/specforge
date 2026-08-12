@@ -85,7 +85,9 @@ result, controller, and whole-population current replay ship. Twelve of 12 revie
 isolated replays. The qualified result retains seven true positives while frozen false facts fall 41→22 and
 provenance failures 45→26 because the already-fixed 19-record AIA TOC family disappears. Controller state stays
 `diverging` on those exact surviving honesty failures, and `.6b.ii` owns the largest current family before later
-loss, residual, or breadth work. The task tree owns all detailed counts.
+loss, residual, or breadth work. Its `.a` slice repairs the proven missing register-level access/table-provenance
+carrier; `.b` owns clean-revision population replay before any quality count changes. The task tree owns all
+detailed counts.
 
 Five active program groups support that north star:
 

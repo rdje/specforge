@@ -445,6 +445,25 @@ spec this collapses 60 record fragments into 44 real registers — `dmcontrol`'s
 thirteen fields come back together in one record — while the genuinely ambiguous
 groups stay split and visible.
 
+### Register-level access and table provenance
+
+A row-per-register map carries properties of the register itself, not of an invented bit-field. `RegisterRecord`
+therefore has a register-level `access_type` in addition to each real field's independent
+`RegisterFieldRecord.access_type`. Both are optional free strings: a source value such as `RO`, `RW`, or `WO b`
+is preserved exactly, while a table with no Access column keeps the register value absent. The reader never
+copies register access into a synthetic field merely to fit the older shape.
+
+Table-derived register records also carry `supporting_table_ids`. The row-per-register path records the exact
+source table for every row; bit-layout chains retain every member table; field-table fragments union and
+deduplicate their table ids when they merge. `supporting_statement_ids` remains a separate prose-provenance
+surface. This distinction lets later stages explain whether a register fact came from structured table evidence,
+from prose, or from both without pretending a table id is a statement id.
+
+Both fields are backward-compatible Serde additions: older artifacts load with no register-level access and an
+empty table-support list, and documents whose register tables do not declare access keep their existing JSON
+shape. SemanticIR and IntentIR clone the complete record unchanged. A clean whole-population replay is required
+before these carrier semantics are used to update product-quality counts.
+
 ### `EXTRACTION-GAP-FIX.4a` — recovering bits that live only in the layout diagram
 
 The tiling law above checks a register that *has* bit positions. The mirror-image

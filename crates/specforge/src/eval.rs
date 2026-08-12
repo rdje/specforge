@@ -1666,9 +1666,11 @@ mod tests {
         RegisterRecord {
             register_id: "reg".to_string(),
             register_name: name.to_string(),
+            access_type: None,
             offset_address: None,
             size_bits: None,
             fields,
+            supporting_table_ids: vec![],
             supporting_statement_ids: statements.iter().map(|s| s.to_string()).collect(),
             automation_confidence: AutomationConfidence::Medium,
         }
@@ -1889,21 +1891,25 @@ mod tests {
         let real = RegisterRecord {
             register_id: "r1".to_string(),
             register_name: "dmcontrol".to_string(),
+            access_type: None,
             offset_address: None,
             size_bits: None,
             fields: vec![register_field("dmactive", Some(0), Some(0), Some(1))],
+            supporting_table_ids: vec![],
             supporting_statement_ids: vec![],
             automation_confidence: AutomationConfidence::Medium,
         };
         let synthetic = RegisterRecord {
             register_id: "r2".to_string(),
             register_name: "register_table_0026".to_string(),
+            access_type: None,
             offset_address: None,
             size_bits: None,
             fields: vec![
                 register_field("haltreq", None, None, None),
                 register_field("resumereq", None, None, None),
             ],
+            supporting_table_ids: vec![],
             supporting_statement_ids: vec![],
             automation_confidence: AutomationConfidence::Medium,
         };

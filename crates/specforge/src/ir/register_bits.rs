@@ -276,9 +276,11 @@ mod tests {
         RegisterRecord {
             register_id: format!("regfld_{name}"),
             register_name: name.to_string(),
+            access_type: None,
             offset_address: None,
             size_bits: None,
             fields,
+            supporting_table_ids: Vec::new(),
             supporting_statement_ids: Vec::new(),
             automation_confidence: AutomationConfidence::Medium,
         }

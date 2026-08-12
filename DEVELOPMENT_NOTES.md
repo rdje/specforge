@@ -1,4 +1,35 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6b.ii.a (`2026-08-12`) — the loss was the carrier
+
+The Arm Debug table was not an extraction-recognition failure. SourceIR retained all 12 rows and their Access
+cells, and the register-map reader even parsed the Access column. The loss occurred one line later: the parsed
+value was assigned only when a row became a bit-field, while a normal row-per-register `RegisterRecord` had no
+place to store register-level access. Empty register provenance had the same structural cause: the record carried
+only statement ids even when its authority was a structured table.
+
+The repair makes those meanings explicit. Register access is a new optional free string on `RegisterRecord`,
+separate from field access. Direct table support is a new default-empty id list, separate from statement support.
+Register maps populate both from their typed header/cell/table inputs; bit-layout and field-table producers retain
+their table identities too, and safe fragment merging unions provenance. No document, vendor, protocol, register,
+access token, or layout-specific branch exists.
+
+The clean-revision boundary is deliberate. A dirty-tree Arm probe proved 12/12 access values and `table_0044`
+survive EvidenceIR → SemanticIR → IntentIR, then its exact 1,195-file / 288,160-KiB root was removed. That probe
+does not replace currency evidence: `.6b.ii.a` commits the production tree first, and `.6b.ii.b` will replay all
+12 sources against that exact revision before changing controller quality claims.
+
+ADR 0025 caught the expected persisted-artifact consequence. Four of 24 retained EvidenceIR inputs moved: Arm
+Debug, OpenCAPI Discovery Configuration, USB4 Inter-Domain Service, and USB 3.2. Their exact pre-change cascades
+were backed up before replacement. Register cardinalities hold at 45/1/6/1; after deleting only the new carrier
+fields and validation backannotation, every rebuilt canonical stage equals its backup, and all four adapters are
+byte-identical. Arm gains access on 16 records overall and table support on 29; the reviewed `table_0044` subset
+is exactly the intended 12. The other three documents add table support to 1/1, 6/6, and 1/1 records and no access
+value. Exhaustive replay closes at EvidenceIR 24/24 and all later stages 78/78. The exact 31-file / 32,680-KiB
+rollback root was removed after that proof.
+
+Signoff passes all eight doctrines including whole-chain currency, formatting, warning-deny Clippy, 1,862 Rust
+tests with five ignored and zero failures, warning-deny rustdoc, mdBook, and final project-data locality.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6b.i (`2026-08-12`) — currency is now closed; honesty is measured
 
 The 1/12 controller gate did its job: it prevented a frozen defect inventory from authorizing extractor work.

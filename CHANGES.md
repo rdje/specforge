@@ -1,3 +1,20 @@
+### SPEC-TO-INTENT-ALIGNMENT.6b.ii.a — preserve register access and table provenance
+
+- Added optional register-level `RegisterRecord.access_type`, distinct from field access, and populated it from
+  the generic Access column of row-per-register maps without normalizing away source notation or inventing a
+  value when the column is absent.
+- Added `RegisterRecord.supporting_table_ids` for direct structured provenance. Register maps, field tables, and
+  bit-layout chains retain their source table identities; safe fragment merges union/deduplicate them separately
+  from prose `supporting_statement_ids`.
+- Kept both additions backward compatible and lossless through SemanticIR/IntentIR cloning. A 1,195-file Arm
+  probe showed all 12 reviewed access values plus `table_0044` at every canonical stage, then was removed exactly;
+  `.6b.ii.b` owns clean-revision whole-population replay and metric publication.
+- Reconciled the four retained corpus chains changed by the shared carrier under ADR 0025. Their register counts
+  remain 45/1/6/1, all non-carrier content is unchanged, adapters are byte-identical, and exhaustive currency is
+  green at EvidenceIR 24/24 plus SemanticIR/IntentIR/adapters 78/78; the 31-file rollback root was removed.
+- Full CI passes all eight doctrines, formatting, warning-deny Clippy, 1,862 Rust tests / five ignored / zero
+  failed, warning-deny rustdoc, mdBook, and final project-data locality.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6b.i — qualify the complete reviewed population
 
 - Added a deterministic whole-population replay runner and current-projection mode over the unchanged reviewed

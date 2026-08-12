@@ -598,6 +598,11 @@ pub struct ConditionalRuleRecord {
 pub struct RegisterRecord {
     pub register_id: String,
     pub register_name: String,
+    /// Register-level access policy when the source map declares one (RO, WO, RW, …). This is
+    /// distinct from per-field access in [`RegisterFieldRecord`]; both use a free string so source
+    /// notation and footnote markers remain lossless.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub access_type: Option<String>,
     /// Byte offset from the block base address (hexadecimal string, e.g. "0x04").
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offset_address: Option<String>,
@@ -606,6 +611,9 @@ pub struct RegisterRecord {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub size_bits: Option<u32>,
     pub fields: Vec<RegisterFieldRecord>,
+    /// Structured-table identities that directly support this register or its fields.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub supporting_table_ids: Vec<String>,
     pub supporting_statement_ids: Vec<String>,
     pub automation_confidence: AutomationConfidence,
 }

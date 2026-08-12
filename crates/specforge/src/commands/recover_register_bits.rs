@@ -526,9 +526,11 @@ mod tests {
         evidence_ir.register_records.push(RegisterRecord {
             register_id: "regfld_T1".to_string(),
             register_name: register_name.to_string(),
+            access_type: None,
             offset_address: None,
             size_bits: None,
             fields: field_names.iter().map(|n| named_field(n)).collect(),
+            supporting_table_ids: vec!["T1".to_string()],
             supporting_statement_ids: Vec::new(),
             automation_confidence: AutomationConfidence::Medium,
         });
@@ -580,9 +582,11 @@ mod tests {
         let register = RegisterRecord {
             register_id: "regfld_T1".to_string(),
             register_name: "dmcontrol".to_string(),
+            access_type: None,
             offset_address: None,
             size_bits: None,
             fields: vec![named_field("version")],
+            supporting_table_ids: vec!["T1".to_string()],
             supporting_statement_ids: Vec::new(),
             automation_confidence: AutomationConfidence::Medium,
         };

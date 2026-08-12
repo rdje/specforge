@@ -158,9 +158,24 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6b.i — qualify the complete reviewed population`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6b.ii`
-  Status: `pending`
+  Status: `in_progress`
   Goal: `rank the qualified current defect families and repair the highest bounded honesty or provenance defect`
   Acceptance: `the selected family reproduces in .6b.i current evidence; the repair is generic, reversible, source-grounded, and measured before→after without sacrificing any reviewed true positive; a comparable trajectory snapshot records the result`
+  Verification: `pending`
+  Commit: `pending`
+  Children: `.6b.ii.a`, `.6b.ii.b`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6b.ii.a`
+  Status: `done`
+  Goal: `preserve register-level access and structured-table provenance through the canonical register carrier`
+  Acceptance: `RegisterRecord represents register-level access separately from field access and carries direct table provenance; the row-per-register extractor populates both from generic header structure; SemanticIR and IntentIR preserve the values unchanged; the four retained corpus chains changed by the shared carrier are rebuilt and attributed under ADR 0025; focused and full gates pass without changing frozen or replay-result authorities`
+  Verification: `source/table and carrier audit; backward-compatible Serde and generic extractor/merge tests; exact 12-register Arm probe through all three canonical stages; ADR 0025 reconciliation for the four changed retained chains with non-carrier equality and byte-identical adapters; EvidenceIR currency 24/24 and downstream currency 78/78; all eight doctrines, formatting, warning-deny Clippy, 1,862 tests passed / five ignored / zero failed, warning-deny rustdoc, mdBook, and final locality`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6b.ii.a — preserve register access and table provenance`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6b.ii.b`
+  Status: `pending`
+  Goal: `replay the clean access-carrier repair across the complete reviewed population and publish the exact comparable result`
+  Acceptance: `all 12 sources and 48 stages are replayed at the committed .6b.ii.a production revision; the exact before→after result proves the Arm Debug family disposition and every collateral change; controller, public/live documentation, retrieval, and cleanup evidence agree`
   Verification: `pending`
   Commit: `pending`
 
@@ -200,10 +215,11 @@ expressiveness as the bottleneck.
 | 9 | `SPEC-TO-INTENT-ALIGNMENT.5b` | `done` | first retrospective snapshot is byte-current and selects the .6 honesty lane |
 | 10 | `SPEC-TO-INTENT-ALIGNMENT.6a` | `done` | dominant frozen TOC defect replayed; 19 fabrications disappear and controller now gates 1/12 replay currency |
 | 11 | `SPEC-TO-INTENT-ALIGNMENT.6b.i` | `done` | all 12 current-binary replays are hash-pinned; 19 historical TOC fabrications are retired without changing frozen or canonical artifacts |
-| 12 | `SPEC-TO-INTENT-ALIGNMENT.6b.ii` | `pending` | repair the measured Arm Debug family: 12 correct register names currently lose reviewed access-mode truth |
-| 13 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
-| 14 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
-| 15 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
+| 12 | `SPEC-TO-INTENT-ALIGNMENT.6b.ii.a` | `done` | generic carrier, exact retained-corpus reconciliation, and full CI are complete without changing frozen/current result authorities |
+| 13 | `SPEC-TO-INTENT-ALIGNMENT.6b.ii.b` | `pending` | replay the clean committed repair over all 12 sources and publish the exact before→after result |
+| 14 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
+| 15 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
+| 16 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
 
 ## Decisions
 
@@ -273,6 +289,12 @@ expressiveness as the bottleneck.
   exactly the AIA TOC family already disproved by `.6a`, while true positives, false negatives, and stage loss
   do not improve. Therefore `.6b.ii` selects the bounded Arm Debug family: 12 correct register names currently
   omit reviewed access mode and account for 12 false positives, 12 false negatives, and 12 provenance failures.
+- `2026-08-12`: the `.6b.ii.a` full gate proves the shared register carrier changes four retained EvidenceIR
+  artifacts: Arm Debug, OpenCAPI Discovery Configuration, USB4 Inter-Domain Service, and USB 3.2. The current
+  repair leaf owns their deterministic EvidenceIR → SemanticIR → IntentIR → adapter reconciliation as the
+  required ADR 0025 currency transaction; this is not a new document refresh or task-tree pivot. Exact
+  baseline/change deltas must be captured before replacement, every stage revalidated, and all other retained
+  chains must replay byte-current before signoff.
 
 ## Open Questions
 
@@ -340,6 +362,9 @@ expressiveness as the bottleneck.
 | `2026-08-12` | `.6b.i` strict replay/controller checks | population-manifest coverage/hash/cleanup mutants; current-result population/fabrication mutants; warning-deny all-target check; six trajectory-snapshot tests; snapshot write/check | PASS: strict loaders reject every mutant; controller v3 gates 12/12 currency plus 22 fabrication and 26 provenance failures; input/report SHA-256 `5216f137…c4f` / `41db802b…942`; frozen dataset/result and canonical `generated/` artifacts remain byte-unchanged |
 | `2026-08-12` | `.6b.i` scratch lifecycle | exact post-promotion removal and residue census for feasibility, failed, and authoritative roots plus external source map | PASS: authoritative 4,313 files / 1,194,976 KiB removed; all four exact scratch/map paths absent; portable manifest records the successful cleanup without retaining machine-specific external paths |
 | `2026-08-12` | `.6b.i` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines including whole-chain currency, formatting, warning-deny Clippy, 1,861 Rust tests passed / five ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final project-data locality |
+| `2026-08-12` | `.6b.ii.a` root cause and focused carrier proof | SourceIR `table_0044` audit; `register_map_preserves_register_access_and_table_provenance`; six fragment-consolidation tests; legacy/default Serde checks; bounded Arm replay | PASS: the extractor previously parsed then discarded row-level access because `RegisterRecord` lacked the carrier; all 12 reviewed names now retain exact access plus `table_0044` through EvidenceIR/SemanticIR/IntentIR; absent access remains absent; 1,195-file / 288,160-KiB probe removed |
+| `2026-08-12` | `.6b.ii.a` ADR 0025 corpus reconciliation | exact four-chain backup; carrier-stripped semantic equality; four cascades rebuilt/validated; `scripts/check_chain_currency.sh` | PASS: register counts hold 45/1/6/1; Arm access/table support 16/29, other table support 1/1, 6/6, 1/1 with zero invented access; every non-carrier value equal, adapters byte-identical; EvidenceIR 24/24 and downstream 78/78 current; exact 31-file / 32,680-KiB rollback root removed |
+| `2026-08-12` | `.6b.ii.a` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines including whole-chain currency, formatting, warning-deny Clippy, 1,862 Rust tests passed / five ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final project-data locality |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
 
@@ -524,6 +549,53 @@ expressiveness as the bottleneck.
 - [x] **LOCKSTEP** — replay report, current result, controller, task frontier, roadmap, mdBook, live docs,
   architecture analysis, Knowledge Map, and resume pointer publish the same coverage and next measured family.
 
+## Planned closing criteria — `SPEC-TO-INTENT-ALIGNMENT.6b.ii`
+
+- **REPRODUCE / MEASURE:** localize the 12 Arm Debug false-positive/false-negative/provenance failures to
+  an exact source, EvidenceIR, SemanticIR, and IntentIR carrier transition using the qualified `.6b.i` evidence.
+- **ROOT CAUSE (WHY + WHERE):** prove why correct register names lose reviewed access mode, distinguish
+  extraction absence from projection/key-shape loss, and identify the narrowest generic production seam.
+- **ADDRESSED (verified):** preserve source-grounded access semantics through the canonical register path
+  so the 12 reviewed keys become true positives and the corresponding false positives, false negatives, and
+  provenance failures disappear without hand-coding document, vendor, register, or layout knowledge.
+- **NO REGRESSION:** retain every prior true positive, current AIA honesty, exact population currency, and
+  all frozen authorities; kill access omission/fabrication/provenance mutants and run focused plus full CI gates.
+- **GENERICITY (ADR 0006):** any repair is driven by typed source/evidence structure and applies to the
+  same access-bearing register shape across documents rather than the Arm Debug fixture alone.
+- **LOCKSTEP:** comparable replay/result/controller evidence, task frontier, roadmap, mdBook, live docs,
+  architecture analysis, Knowledge Map, and resume pointer publish the exact before→after result and next owner.
+
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6b.ii.a`
+
+- [x] **REPRODUCE / MEASURE** — prove the reviewed table has all 12 access cells while current EvidenceIR has
+  12 names, no register-level access field, and no direct table provenance.
+- [x] **ROOT CAUSE (WHY + WHERE)** — identify the absent `RegisterRecord` carrier and the register-map branch
+  that parses then discards access, while proving both later canonical stages clone the lossy record unchanged.
+- [x] **ADDRESSED (verified)** — add separate register-level access and supporting-table fields, populate them
+  from generic structured-table evidence, and preserve both through Serde plus SemanticIR/IntentIR cloning.
+- [x] **NO REGRESSION** — cover access/provenance presence, access absence, field-access separation, and
+  fragment provenance union; reconcile the four exact retained corpus chains moved by the shared carrier; run
+  focused schema/extractor tests and full CI without mutating frozen/replay truth.
+- [x] **GENERICITY (ADR 0006)** — use only typed header roles and source cells; add no Arm, JTAG, register-name,
+  access-token, or layout-specific production branch.
+- [x] **LOCKSTEP** — task, live code analysis, mdBook carrier contract, changes, and resume pointer distinguish
+  the shipped carrier repair from the still-pending clean-binary population replay owned by `.6b.ii.b`.
+
+## Planned closing criteria — `SPEC-TO-INTENT-ALIGNMENT.6b.ii.b`
+
+- **REPRODUCE / MEASURE:** replay all 12 unchanged source identities and compare all 48 new stage hashes
+  plus exact current result against the committed `.6b.i` authority.
+- **ROOT CAUSE (WHY + WHERE):** attribute every metric delta to the generic access/table-provenance carrier
+  and surface any unexpected collateral change before closing the parent repair.
+- **ADDRESSED (verified):** publish portable replay/result/controller evidence proving the Arm Debug family
+  disposition and the remaining current honesty/provenance inventory.
+- **NO REGRESSION:** retain seven prior true positives, AIA honesty, source bytes, frozen authorities, and
+  canonical generated artifacts; kill replay/result/controller mutants and remove exact scratch residue.
+- **GENERICITY (ADR 0006):** the replay and projection remain population-driven, and measured improvement
+  follows typed production behavior rather than fixture-specific postprocessing.
+- **LOCKSTEP:** result, controller, task frontier, roadmap, mdBook, live docs, architecture, Knowledge Map,
+  and resume pointer agree on the exact before→after metrics and next owned activity.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -539,6 +611,7 @@ expressiveness as the bottleneck.
 | `SPEC-TO-INTENT-ALIGNMENT.5b` | `SPEC-TO-INTENT-ALIGNMENT.5b — publish the first trajectory snapshot` | live-equal `.4c`/`.2` composition, byte-current baseline, honest history refusal, and owned `.6` recommendation |
 | `SPEC-TO-INTENT-ALIGNMENT.6a` | `SPEC-TO-INTENT-ALIGNMENT.6a — separate replay truth from the frozen baseline` | isolated four-stage replay tool/evidence, dominant 19-record TOC defect retired by current code, 1/12 currentness gate, and residue-free SSD-local scratch lifecycle |
 | `SPEC-TO-INTENT-ALIGNMENT.6b.i` | `SPEC-TO-INTENT-ALIGNMENT.6b.i — qualify the complete reviewed population` | isolated 12-source / 48-stage current replay, exact current result and controller v3, residue-free external-source lifecycle, and current Arm Debug repair selection |
+| `SPEC-TO-INTENT-ALIGNMENT.6b.ii.a` | `SPEC-TO-INTENT-ALIGNMENT.6b.ii.a — preserve register access and table provenance` | backward-compatible typed carrier, generic producers/merge, exact four-chain ADR 0025 reconciliation, and clean-revision replay boundary |
 
 ## Changelog
 
@@ -558,6 +631,9 @@ expressiveness as the bottleneck.
 - `2026-08-12`: Closed `.6b.i` with hash-pinned current-binary replay of all 12 reviewed documents, exact
   current-result projection, strict controller currency/honesty gates, and complete scratch cleanup; frontier
   advances to `.6b.ii`, the measured Arm Debug access-mode loss family.
+- `2026-08-12`: Closed `.6b.ii.a` with the generic register-access/table-provenance carrier, focused and bounded
+  three-stage proof, exact ADR 0025 reconciliation of four retained chains, and all eight doctrines green;
+  frontier advances to `.6b.ii.b`, clean-revision replay and exact metric publication.
 - `2026-08-11`: Closed `.4a` with the strict portable dataset contract, deterministic exact evaluator, and six
   controlled-fault classes; frontier advances to `.4b`, lock two reviewed documents per category without tuning
   extraction before `.4c` publishes product conclusions.

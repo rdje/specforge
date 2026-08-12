@@ -1300,9 +1300,11 @@ mod tests {
         RegisterRecord {
             register_id: format!("reg_{name}"),
             register_name: name.to_string(),
+            access_type: None,
             offset_address: None,
             size_bits: None,
             fields,
+            supporting_table_ids: vec![],
             supporting_statement_ids: vec![],
             automation_confidence: AutomationConfidence::Medium,
         }
@@ -1426,9 +1428,11 @@ mod tests {
         RegisterRecord {
             register_id: id.to_string(),
             register_name: id.to_string(),
+            access_type: None,
             offset_address: None,
             size_bits: None,
             fields: vec![],
+            supporting_table_ids: vec![],
             supporting_statement_ids: vec![],
             automation_confidence: AutomationConfidence::Medium,
         }

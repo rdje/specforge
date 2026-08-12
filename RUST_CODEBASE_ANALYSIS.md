@@ -4,6 +4,21 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-12 — register access/provenance carrier; `SPEC-TO-INTENT-ALIGNMENT.6b.ii.a`)
+
+- `RegisterRecord` now distinguishes optional register-level `access_type` from each field's access metadata and
+  distinguishes `supporting_table_ids` from prose `supporting_statement_ids`. Both additions default on load and
+  disappear from JSON while absent, preserving old artifacts and unrelated output shapes.
+- `synthesize_register_records` already resolved the generic Access header/cells; it now retains the value on
+  row-per-register records and pins the source table. Table-field and stitched bit-layout producers carry their
+  direct table ids, and fragment consolidation unions/deduplicates them.
+- SemanticIR and IntentIR already clone `RegisterRecord`, so the corrected carrier crosses both boundaries
+  without a new interpretation seam. A dirty-tree Arm probe confirmed all 12 exact source access strings and
+  `table_0044` survive at EvidenceIR, SemanticIR, and IntentIR; clean whole-population measurement remains `.b`.
+- ADR 0025 identifies four retained EvidenceIR cascades affected solely by the new carrier. Rebuilding and
+  revalidating them preserves register cardinalities at 45/1/6/1 and every non-carrier value; all four adapter
+  artifacts are byte-identical. Whole-chain replay is current at EvidenceIR 24/24 and every later stage 78/78.
+
 ## Session update (2026-08-12 — whole-population current replay; `SPEC-TO-INTENT-ALIGNMENT.6b.i`)
 
 - `scripts/replay_source_to_intent_population.py` composes the existing isolated four-stage replay over the

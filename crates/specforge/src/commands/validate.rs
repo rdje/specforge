@@ -8355,9 +8355,11 @@ mod tests {
         evidence_ir.register_records = vec![RegisterRecord {
             register_id: "reg_status".to_string(),
             register_name: "STATUS".to_string(),
+            access_type: None,
             offset_address: None,
             size_bits: None,
             fields: vec![mk("A", 3, 0), mk("B", 5, 2)],
+            supporting_table_ids: vec![],
             supporting_statement_ids: vec![],
             automation_confidence: AutomationConfidence::Medium,
         }];
