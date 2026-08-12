@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [dempster-fusion](../knowledge/dempster-fusion.md) | 2026-06-04 | `current` | SpecForge fuses agreeing-source confidence via Dempster corroboration (not min) |
 | [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md) | 2026-08-09 | `current` | Independent false-signal seeds can reinforce through relation-derived directions and reach a syntactically va… |
 | [docling-device-cpu](../knowledge/docling-device-cpu.md) | 2026-06-01 | `current` | Docling ingest must run on CPU on this stack (torch MPS lacks float64) |
 | [docling-metadata-sidecar-paths-are-portable](../knowledge/docling-metadata-sidecar-paths-are-portable.md) | 2026-08-09 | `current` | Docling metadata paths are normalized before the staged bundle is promoted |
@@ -45,6 +46,7 @@
 | [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md) | 2026-06-18 | `current` | The emitted `.isf` interface now lowers grounded actor-relative signal DIRECTION from the protocol's INITIATO… |
 | [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md) | 2026-06-17 | `current` | Which IntentIR surfaces reach the .isf vs are silently dropped (KG-ISF-COMPLETENESS.2 measurement) — the ba… |
 | [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md) | 2026-06-21 | `current` | The emitted `.isf` module name (and every internal `.isf` identifier) is HDL-sanitized by `sanitize_isf_name`… |
+| [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md) | 2026-08-12 | `current` | SpecForge emits no blanket ISF rule-over-transaction priorities; IntentIR has no precedence carrier, so a rul… |
 | [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md) | 2026-06-04 | `current` | temporal_rules are never silently dropped in the IntentIR->.isf lowering (already guaranteed) |
 | [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md) | 2026-06-23 | `current` | The `.isf` emitter drops a rule that conflicts with an UNCONDITIONAL driver on the same signal (an empty-guar… |
 | [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md) | 2026-06-23 | `current` | The `.isf` emitter drops a rule whose drive VALUE is not a renderable ISF value expression (free prose, not a… |
@@ -59,5 +61,3 @@
 | [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md) | 2026-08-09 | `current` | Derived-state field and copy plane is independently closed |
 | [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md) | 2026-06-10 | `current` | Condition-only-subject gate — APB/AHB/AXI constraint task all P=R=F1=1.000 (FPs 3→0) |
 | [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md) | 2026-06-10 | `current` | LLM-primary constraint dedup — provenance-merging, condition-aware (AXI 54→50 live) |
-| [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md) | 2026-06-10 | `current` | LLM-primary must_be_value recall gap CLOSED — 10/16 → 16/16 gold facts (APB/AHB/AXI) |
-| [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md) | 2026-06-10 | `current` | Permissive-only frame gate is SUBJECT-SENTENCE-scoped — block-scoped modals over-kill |

@@ -38,7 +38,7 @@ Each of these was a runtime error that only surfaced when FSMGen rejected the ou
 |-----------|-------------------|
 | Duplicate signals | `BTreeSet<IsfSignal>` — automatic deduplication |
 | Missing reset | `IsfReset` is non-optional — compiler enforces presence |
-| Invalid syntax | Typed structs (`IsfRule`, `IsfPriority`) — no raw strings |
+| Invalid syntax | Typed structs (`IsfRule`, transactions, drives) — no raw strings; priorities require canonical authority |
 | Mismatched parens | Recursive tree walk — parentheses match by construction |
 
 ## Strict syntax is not semantic fidelity
@@ -269,7 +269,6 @@ pub(crate) struct IsfIr {
     drives: Vec<IsfNamedDrive>,
     transactions: Vec<IsfTransaction>,
     rules: Vec<IsfRule>,
-    priorities: Vec<IsfPriority>,
 }
 ```
 
@@ -295,7 +294,10 @@ The adapter walks `IntentIr` and populates the typed tree:
 8. **Transactions** — from `IntentIr` transaction intents plus control-block fallbacks; `TransactionStep` converted to typed `IsfTxnStep`
 9. **Temporal rules** — every `IntentIr.temporal_rules` entry is classified by `classify_temporal_rule` into exactly one disposition (see below)
 10. **Rules** — from conditional rules, signal constraints, temporal invariants with non-empty subject signals, plus the temporal value/guard→drive rules from step 9
-11. **Priorities** — rule-over-transaction priority declarations when both rules and transactions exist
+11. **Rule/transaction conflict honesty** — detect a rule that writes the target of a named drive with one
+    distinct local transaction caller. IntentIR has no precedence carrier, so the rule becomes an explicit
+    `isf_rule_transaction_conflict_<name>` residual and the transaction stays executable. The adapter emits no
+    `(priority …)` merely because both collections are non-empty.
 
 Temporal invariants with empty `subject_signal` (e.g. transition invariants like "idle → busy when GO") are skipped for rule generation — they represent state-transition assertions that cannot be lowered to ISF signal assignments.
 
@@ -378,6 +380,15 @@ minority rule conflicts with *every* same-value unconditional rule, so it
 could never win cleanly). The dropped obligation is visible as a residual,
 never silently lost and never resolved by a fabricated precedence.
 
+A related conflict crosses the rule/transaction boundary. Transactions call named drives, and a rule can
+write the same target. When a named drive has exactly one distinct local caller, FSMGen can associate that
+write with one transaction and requires actor-level priority to resolve the overlap. IntentIR currently carries
+no source-grounded rule/transaction precedence relation, so SpecForge cannot name a winner honestly. The adapter
+keeps the richer transaction and moves every overlapping rule to an
+`isf_rule_transaction_conflict_<name>` residual. A named drive with several local callers stays priority-free:
+there is no unique transaction owner to prioritize, and current FSMGen accepts the no-priority form without
+diagnostics. The adapter never constructs the former Cartesian product of every rule over every transaction.
+
 One more rule shape is rejected before emission: a rule whose drive **value**
 is not a renderable value expression. FSMGen requires the right-hand side of a
 rule's assignment to be a value expression (a literal, a port reference, an
@@ -404,8 +415,7 @@ The emitter performs a recursive tree walk:
 6. Emit `(drive ...)` — one per output
 7. Emit `(transaction <name> ...)` — recursively walk `IsfTxnStep` tree, emitting S-expressions at each level. Nesting (`when`, `switch`, `while`, `until`, `repeat`) produces properly balanced parentheses regardless of depth.
 8. Emit `(rule <name> <condition> (<signal> <value>)...)` — one per rule
-9. Emit `(priority <higher> over <lower>)` — one per priority pair
-10. Close with `)`
+9. Close with `)`
 
 The actor-local symbol surface — `(types …)`, `(enums …)`, `(constants …)` — is emitted near the top
 (before the clock). An **enum is only emitted when every member value is something FSMGen can accept as
@@ -902,6 +912,26 @@ was a downstream-spec interpretation issue, not a FSMGen bug).
 Verified by `fsmgen-issue-bundle` integration tests + the
 serialised parallel-CWD lock (`FSMGEN_TEST_LOCK`).
 *Authoritative tracking:* `docs/tasks/FSMGEN-ISSUE-REPORTING.md`.
+
+### `FSMGEN-REFRESH-INTEGRATE-6` — current pin and honest rule/transaction precedence
+
+The FSMGen gitlink advances from `d327129b7` to `a51dcdad0`. The 1,139-commit fast-forward materially expands
+the upstream IAL2, VIAL, actor-network, containment, and governance surfaces while retaining public ISF spec
+v0.6 and schedule-report schema v1. SpecForge's seven focused real-binary canaries remain green.
+
+The new binary also exposed a real downstream defect. SpecForge had emitted every rule over every transaction as
+a Cartesian set of `(priority …)` declarations even though neither SemanticIR nor IntentIR carries precedence.
+FSMGen now rejects such a priority when the named drive has several transaction callers because no unique owner
+can be proven. Removing the unsupported priorities made 43 of the 44 current emitted artifacts clean; the final
+AHB artifact then honestly exposed a single-caller `HTRANS` rule/transaction overlap that requires a winner the
+source does not state.
+
+The integration therefore removes priority storage and rendering entirely. A generic recursive caller analysis
+keeps source-grounded transactions and residualizes a rule only when it overlaps a named-drive target with one
+distinct local transaction caller. The rebuilt corpus contains zero emitted priority lines; one adapter gains
+five explicit `isf_rule_transaction_conflict_*` residuals; all 44 current `.isf` artifacts pass the pinned
+FSMGen strict checker with zero diagnostics. The complete 78-document persisted adapter chain also replays
+current. *Authoritative tracking:* `docs/tasks/FSMGEN-REFRESH-INTEGRATE-6.md`.
 
 ### `FSMGEN-SUBMODULE-BUMP` — pin `effe591d` → `9bfb9a20`
 

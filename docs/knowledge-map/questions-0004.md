@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
+  > how is a register mnemonic reused across access-port blocks (AUTHSTATUS/CSW/IDR/DEVARCH/CLAIMSET) recovered instead of dropped
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > how is a register name recovered from a section heading (RISC-V dmstatus/dmcontrol)
+- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
+  > how is a register-field mnemonic recovered when the name column is a bit-range (NVMe)
+- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
+  > how is a roadmap rollover capsule verified
+- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
+  > how is a valid post-migration active task continuation verified
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
   > how is an active task evidence migration written atomically
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
@@ -131,6 +141,8 @@
   > how many corpus refreshes remain after the OpenCAPI Ready note
 - [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
   > how many corpus task ids and source regions must containment preserve
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > how many current emitted ISFs pass FSMGen after retiring fabricated priorities (44 of 44, zero diagnostics at pin a51dcdad0)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > how many docs / enums are affected (56/78 docs carry a generic-named enum; 96 generic vs 493 real; but a name-only gate misses 271 real-named-but-junk fragment/dup enums — the real defect is member quality)
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
@@ -285,15 +297,3 @@
   > is AXI/SWD per-signal phase membership recoverable from timing diagrams via a VLM
 - [corpus-reuse-serial-prose-lever-not-cluster-scopable](../knowledge/corpus-reuse-serial-prose-lever-not-cluster-scopable.md)
   > is CORPUS-PATTERN-REUSE.3b.3a a go or no-go
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > is DOC-INTENT-TAXONOMY.4a.ii buildable now (DONE 2026-06-22 — implemented once FSMGen shipped the construct; superseded .4a.i; Gap B packet/flit still deferred)
-- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
-  > is ISF a single-actor or multi-actor format (per-actor — one .isf describes one actor/module; SpecForge's emit collapses to one initiator via select_initiator_actor; lowering cross-component topology would need a multi-actor emit, an architectural change not an emitter tweak)
-- [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
-  > is ISF the current SpecForge bottleneck
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > is KG-ISF-TRANSACTIONS.2i unparked / what is the .2i decision (yes — FSMGen confirmed option a: ship the grounded per-phase membership grouping as IntentIR metadata, .isf byte-identical)
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > is RISC-V Debug register bit-position recovery a deterministic text-table parse or a VLM-image read (VLM-image — 53/56 diagrams are images, the 7 flattened tables are garbled/symbolic; deterministic parse would fabricate)
-- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
-  > is SPECFORGE_INGEST_BATCH_PAGES a fixed size or a ceiling

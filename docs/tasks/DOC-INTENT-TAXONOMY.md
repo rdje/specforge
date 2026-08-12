@@ -3,10 +3,13 @@
 ## Metadata
 
 - Tree ID: `DOC-INTENT-TAXONOMY`
-- Status: `active` (`.0` taxonomy DONE `2026-06-22`; `.1` corpus census DONE `2026-06-22`, read-only; `.2` per-category ISF-completeness gauge DONE `2026-06-22`, read-only; `.3` fast category recognizer COMPLETE `2026-06-22` — `.3a` design / `.3b` implement+validate-reported `d6239217` / `.3c` fixtures+book+KM; `.4a` Gap A — register bit-field lowering: empirical FSMGen-storage verification + verified FSMGen FR DONE `2026-06-22`, docs-only; **`.4a.ii` DONE `2026-06-22` (CODE) — emitted the register bit-field map into the shipped ISF field-structured-storage construct (pin `d327129b7`): 6,570 fields / 2,531 registers / 24 docs now reach `.isf` (was 0), 0 new FSMGen `--strict` diagnostics, 4 wire golds byte-identical**; **`.4d` DONE `2026-06-23` (decision packet, docs-only) — cat-4 CSRs REUSE the existing register/storage abstraction (no new ISF construct, FSMGen titles `(storage …)` the register-map/CSR construct); the cat-4 register gap is EXTRACTION RECALL (RISC-V Debug 179 fields all UNLOCATED, AIA 0 registers captured) → spun out `.4d.i`; instruction/privilege/exception/memory-ordering are honest non-targets**; **`.4c` DONE `2026-06-23` (decision packet, docs-only) — cat-3 topology IS captured (`signal_connectivity` producer→consumer graph + `infrastructure_signals` clock/reset distribution; correcting `.2` "hint-level" to "captured-but-sparse-and-unlowered") but ISF has NO declarative static-topology construct (composition is transaction-level only; the emit is single-initiator-actor) and FSMGen's ATL frontier is behavioral, not a declarative netlist; capture is sparse/noisy → NO FR yet, next = `.4c.i` capture-recall measurement**; **`.4e` DONE `2026-06-23` (triage, docs-only) — the `conditional_rules` ISF-lowering shortfall (`.2` Result 3) is HONEST RESIDUAL, not a gap: 603 rules across 9 docs = 73% prose/undeclared/placeholder + a 27% bucket that is 161/164 bare deontic modals (only 3/603 carry a concrete obligation); no ISF lever, no FR — the only upside is upstream extraction quality. The `.2` measurement phase is now COMPLETE; remaining `.4` work is CODE**; **`.4c.i` DONE `2026-06-23` (measurement, docs-only) — cat-3 topology capture is capture-recall-gated NOT abstraction-gated (0.355 `signal_connectivity` edges/actor vs wire's 4.108; 24% both-endpoint vs 85%; 0/10 infra signals rooted) → no FSMGen FR, honest residual, extraction-recall lever owned outside `.4`**; **`.4d.i` DONE `2026-06-23` (measurement + decision packet, docs-only — the planned CODE was MEASURED non-viable before writing it: RISC-V Debug bit positions live in the layout IMAGE for 53/56 registers; the 7 flattened tables are garbled (`dmstatus` off-by-8 + dropped band) / XLEN-symbolic (`tdata1`); the tiling gates are order-blind → a deterministic-table parse would fabricate/recover ~0; the genuine lever is the existing VLM+tiling `register_bits.rs` path, VLM-accuracy-bound, owned outside `.4`; AIA blocked on re-ingest + prose-bound; honest residual, no code, no FR)**; frontier → the `.4` actionable frontier is now EXHAUSTED except the FSMGen-gated `.4b` Gap B (packet/flit structures); `.4d.i` + `.4c.i` resolved, `.4a.i` superseded)
+- Status: `active` (`.0`–`.3` and `.4a`/`.4c`/`.4c.i`/`.4d`/`.4d.i`/`.4e` complete;
+  `.4a.i` superseded; `.4b` packet/flit lowering remains FSMGen-gated; **`.4c.ii` pending `2026-08-12` to
+  reassess current FSMGen's bounded static actor-network metadata/handoffs against the still-sparse measured
+  cat-3 topology carrier without weakening the capture-recall gate**)
 - Roadmap lane: `R15`/`R16` (north star: COMPLETE IntentIR → FAITHFUL ISF, now made explicit **per document category**)
 - Created: `2026-06-22`
-- Last updated: `2026-06-22`
+- Last updated: `2026-08-12`
 - Owner: repo-local workflow
 - Owner directive (`2026-06-22`, multi-message): every chip-spec PDF is *about* something — there is a small set of
   **intent categories / purposes** (protocol spec, platform/system-IP, CPU ISA, …). SpecForge must (1) understand which
@@ -280,6 +283,15 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   FSMGen only after capture clears this bar, not today. Structural density/quality gauge, no name list (ADR 0006).
   Report `docs/research/cat3-topology-capture-recall-measurement.md`; KM `[[cat3-topology-capture-recall]]`. No
   code/canonical mutation → golds + `kg-bench` orthogonal. See the `.4c.i` Acceptance Checklist below.
+- ID: `DOC-INTENT-TAXONOMY.4c.ii` · Status: `pending` (`2026-08-12`, upstream-contract reassessment) ·
+  Goal: re-evaluate the cat-3 topology lowering decision against FSMGen pin `a51dcdad0`, which now ships
+  bounded static actor-instance/group metadata plus transaction-scoped actor/pin handoffs. Determine whether
+  those constructs can faithfully consume SpecForge's measured `signal_connectivity` / `infrastructure_signals`
+  surface, what actor/type/endpoint/width/transaction bindings are still missing, and whether the previous
+  "no static-topology construct" premise changes the no-FR decision. This is a measurement/decision leaf, not
+  permission to lower sparse topology, fabricate missing bindings, or file a speculative request. Trigger and
+  exact upstream evidence are recorded by `FSMGEN-REFRESH-INTEGRATE-6.1` and
+  `[[cat3-topology-fsmgen-actor-network-reassessment]]`.
 - ID: `DOC-INTENT-TAXONOMY.4d` · Status: `done` (`2026-06-23`, measurement + decision packet, read-only, docs-only — no
   Rust code) · Goal: cat-4 ISA/CSR lowering decision — does CSR-field / instruction / privilege intent map onto existing
   register/storage abstractions or need a new ISF construct? **DONE — resolved from measured evidence over the corpus's 2
@@ -660,6 +672,26 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   tree / `TASK_TREE.md` / `CHANGES.md` / `DEVELOPMENT_NOTES.md` / `LIVE_ACHIEVEMENT_STATUS.md` / `MEMORY.md` all updated in
   this slice.
 
+## Planned Acceptance Contract — `DOC-INTENT-TAXONOMY.4c.ii`
+
+This leaf is pending, not accepted. Convert these planned obligations into the enforced checked/unchecked
+acceptance checklist when the leaf is activated and before any implementation change is made.
+
+- **REPRODUCE / MEASURE** — enumerate the exact static actor-instance/group and actor/pin handoff constructs at
+  FSMGen pin `a51dcdad0`; replay representative legal/illegal probes; compare required fields with the measured
+  SpecForge cat-3 carrier rather than inferring capability from names.
+- **ROOT CAUSE (WHY + WHERE)** — separate three questions: whether FSMGen can describe a bounded actor network,
+  whether SpecForge carries enough typed topology to instantiate it, and whether the current single-actor emitter can
+  preserve it. Attribute every remaining mismatch to its actual carrier, extraction, or emission seam.
+- **ADDRESSED (verified)** — publish a decision packet: faithful lowering plan, verified FSMGen question/request,
+  or continued honest residual. Do not emit topology or file correspondence unless the measured carrier grounds every
+  required actor type, endpoint, width, ownership, and transaction relation.
+- **NO REGRESSION** — measurement/decision first; if later code is justified, give it its own child leaf and run the
+  real FSMGen strict/corpus gates. Historical `.4c.i` capture-recall measurements remain visible and unchanged.
+- **GENERICITY (ADR 0006)** — use typed topology shapes and contract requirements, never chip/vendor/actor-name lists.
+- **LOCKSTEP** — task decision, research packet, successor Knowledge Map card, mdBook category/adapter truth, and
+  feedback channel (only if correspondence is warranted) agree.
+
 ## Acceptance Checklist (enforced) — `DOC-INTENT-TAXONOMY.4d.i`
 
 - [x] **REPRODUCE / MEASURE** — baseline from `.4d`: cat-4 register fields don't lower because they are *unlocated*
@@ -718,8 +750,9 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
 | — | `DOC-INTENT-TAXONOMY.4c` | `done` (`2026-06-23`) | **Cat-3 topology decision packet DONE.** Cat-3's register half already lowers (`.4a.ii`); cat-3 **does** carry a typed topology surface (`signal_connectivity` + `infrastructure_signals`) — but it is **sparse/noisy** and ISF has **no declarative static-topology construct** (composition is transaction-level only; emit is single-initiator-actor; FSMGen's ATL frontier is behavioral, not a netlist). **No FR yet** (premature) → spun out `.4c.i` capture-recall measurement. Docs-only → golds/`kg-bench` orthogonal. |
 | — | `DOC-INTENT-TAXONOMY.4e` | `done` (`2026-06-23`) | **Conditional-rule lowering triage DONE (`.2` Result 3 closed).** 603 `conditional_rules` / 9 docs → 73% honest residual (prose/undeclared/placeholder) + a 27% bucket that is 161/164 bare deontic modals (only 3/603 concrete). Verdict: **honest residual, NOT an ISF gap** — no lever, no FR; the adapter already lowers the 516 clean conditional obligations; the only upside is upstream extraction quality. `.2` measurement phase complete. Docs-only → golds/`kg-bench` orthogonal. |
 | — | `DOC-INTENT-TAXONOMY.4c.i` | `done` (`2026-06-23`) | **Cat-3 topology-capture recall measurement DONE.** Capture is **capture-recall-gated, not abstraction-gated**: 0.355 `signal_connectivity` edges/actor (vs wire's 4.108), 24% both-endpoint (vs wire's 85%), 0/10 infra signals with a resolved clock/reset source — robust to dropping the 4 borderline docs. **Verdict: no FSMGen FR** (an FR on a 12×-too-sparse / three-quarters-broken capture would be unfalsifiable); honest residual; the lever (if pursued) is **upstream extraction-recall owned outside `.4`** (mirrors `.4d.i`/cat-2). Reproducer `scripts/measure_cat3_topology_recall.py`. Docs-only → golds/`kg-bench` orthogonal. |
+| 1 | `DOC-INTENT-TAXONOMY.4c.ii` | `pending` | Reassess current FSMGen's bounded static actor-network metadata/handoffs against the measured sparse/rootless cat-3 topology carrier; no lowering or FR until bindings and fidelity are proven. |
 | — | `DOC-INTENT-TAXONOMY.4d.i` | `done` (`2026-06-23`) | **Cat-4 RISC-V CSR bit-position recovery MEASURED non-viable (no code).** Tested the planned deterministic-table CODE against the source + bit gold first: the bits live in the layout **IMAGE** for 53/56 registers (cleanest gold reg `dmcontrol` image-only, no table); the 7 flattened tables are **garbled** (`dmstatus` off-by-8 + dropped 7-field band) / **XLEN-symbolic** (`tdata1`); the tiling gates are **order-blind** so a row-jumbled table could pass with WRONG bits → a deterministic parse fabricates/recovers ~0. Genuine lever = sharper VLM read for the existing `register_bits.rs` path (VLM-accuracy-bound), owned outside `.4`; AIA blocked on re-ingest + prose-bound. **Honest residual, no FR** (mirrors `.4c.i`). Reproducer `scripts/measure_cat4_csr_bit_recovery.py`. Docs-only → golds/`kg-bench` orthogonal. |
-| 1 | `DOC-INTENT-TAXONOMY.4b` | `pending` (gated) | Gap B — `Evidence→Intent` `message_field_records` carrier (1,220 fields / 11 docs), then lower; **stays gated** — FSMGen explicitly deferred packet/flit layouts. CODE. **The only remaining `.4` leaf; the actionable `.4` frontier is otherwise exhausted.** |
+| 2 | `DOC-INTENT-TAXONOMY.4b` | `pending` (gated) | Gap B — `Evidence→Intent` `message_field_records` carrier (1,220 fields / 11 docs), then lower; **stays gated** — FSMGen explicitly deferred packet/flit layouts. CODE. |
 | 4 | `DOC-INTENT-TAXONOMY.4a.i` | `superseded` | Adapter honest residual `isf_register_fields_not_lowered` — **superseded by `.4a.ii`**, which both EMITS the fields AND records the unlowered remainder as that very residual. No separate slice needed. |
 
 ## Decisions
@@ -789,6 +822,11 @@ one input). Fixtures (`.3c`) must lock: the register-heavy-protocol rescue, the 
   initiator, `KG-ISF-COMPLETENESS.2a.ii`) + a construct FSMGen's behavioral ATL frontier does not subsume — an
   architectural question resolved WITH FSMGen only after capture clears the measured bar. This resolves `.4c`'s deferred
   construct question (`[[cat3-topology-isf-lowering-decision]]`).
+- `2026-08-12` (`.4c.ii` trigger): FSMGen pin `a51dcdad0` invalidates one premise of the historical `.4c`
+  decision by shipping bounded static actor-instance/group metadata and actor/pin handoffs. It does not erase
+  `.4c.i`'s measured 0.355-edge/actor, 24%-both-endpoint, 0-rooted-infra capture limit, nor does it prove the
+  required actor types, endpoint widths, transaction ownership, or multi-actor emission. Reopen only the
+  abstraction-fit question as `.4c.ii`; keep topology residual until that leaf measures a faithful mapping.
 - `2026-06-23` (`.4d.i`): the cat-4 **deterministic CSR bit-position-recovery lever is NOT viable** — the planned CODE
   build was tested against the actual source data + the human-reviewed bit gold BEFORE writing it
   (`[[feedback_scoring_rigor]]`), overturning the pre-investigation's optimistic *"deterministically tractable — the

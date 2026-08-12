@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > how did APB temporal reach 100% (WIRE-BASED-100.4)
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > how did the AHB decoder become connected (Subordinate and decoder read HADDR)
+- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
+  > how do Continued from previous page fragments find their home
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > how do I add a new enforced doctrine / doctrine check
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
   > how do I add fact-card capacity
 - [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
@@ -82,6 +90,8 @@
   > how does SpecForge group a transaction's signals by channel
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > how does SpecForge handle Docling clones of a table cell with col_span greater than one
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > how does SpecForge handle one transaction and one rule writing the same named-drive target
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
   > how does SpecForge measure source-to-IntentIR stage loss
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
@@ -288,13 +298,3 @@
   > how is a message field's width kept honest (per-variant widths stay None)
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
   > how is a promoted constraint surface visible in the extraction manifest
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > how is a register mnemonic reused across access-port blocks (AUTHSTATUS/CSW/IDR/DEVARCH/CLAIMSET) recovered instead of dropped
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > how is a register name recovered from a section heading (RISC-V dmstatus/dmcontrol)
-- [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
-  > how is a register-field mnemonic recovered when the name column is a bit-range (NVMe)
-- [a-bounded-snapshot-needs-a-declared-repeatable-rollover](../decisions/0030-a-bounded-snapshot-needs-a-declared-repeatable-rollover.md)
-  > how is a roadmap rollover capsule verified
-- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
-  > how is a valid post-migration active task continuation verified

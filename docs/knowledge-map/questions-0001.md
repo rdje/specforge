@@ -84,6 +84,8 @@
   > can I build semantic/intent without the normalized/ bundle (yes — only evidence_ir.json is needed)
 - [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
   > can ISF model an explicit state machine / FSM (proven)
+- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
+  > can SpecForge category-3 signal_connectivity lower to current FSMGen actor networks now (not yet proven; actor types, typed endpoints, widths, ownership, transactions, and multi-actor emission remain missing or unmeasured)
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > can SpecForge lower a transaction's signal-set membership into the ISF transaction BODY
 - [stable-obligation-phase-scoped-residual](../knowledge/stable-obligation-phase-scoped-residual.md)
@@ -157,6 +159,8 @@
   > did DOC-INTENT-TAXONOMY.4d.i build a deterministic RISC-V CSR bit-position parser (NO — measured non-viable: bits live in the image, flattened tables garbled/XLEN-symbolic, ~0 correct recovery + fabrication risk; honest residual, no Rust code, no FR)
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > did FSMGen accept the field-structured-storage FR (YES 2026-06-22 — accepted then SHIPPED it via ISF-FIELD-STRUCTURED-STORAGE-FRONTIER.1/.2, pin d327129b7; FSMGEN-REFRESH-INTEGRATE-4 accepted, -5 shipped)
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > did IntentIR or SemanticIR ever contain rule transaction priority authority (no — the ISF emitter fabricated the Cartesian product)
 - [usb4-connection-manager-refresh-is-authority-empty](../knowledge/usb4-connection-manager-refresh-is-authority-empty.md)
   > did SB USB and USB4 survive as USB4 Connection Manager interface signals
 - [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
@@ -283,6 +287,8 @@
   > does SpecForge lower register reset values into the .isf (YES as of ISF-REGISTER-RESET-EMIT.2/.3 — composed from per-field reset_value and emitted at the true register width; it was dropped at the emit boundary before)
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
   > does SpecForge model-check temporal properties
+- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
+  > does SpecForge need to file a topology feature request now (not before .4c.ii measures the current contract and carrier fit)
 - [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
   > does SpecForge preserve certification workflow source evidence
 - [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
@@ -291,9 +297,3 @@
   > does SpecForge revise or decay priors
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
   > does SpecForge use LTL CTL or TLA+
-- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
-  > does SpecForge use the full scope of a page's visual information
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > does Wishbone declare its signals in a table
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > does a PathBuf need portability handling before it has a producer

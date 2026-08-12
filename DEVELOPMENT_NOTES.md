@@ -1,4 +1,31 @@
 # DEVELOPMENT_NOTES
+## FSMGEN-REFRESH-INTEGRATE-6.1 (`2026-08-12`) — precedence is semantic authority, not adapter glue
+
+The new FSMGen pin did not merely tighten syntax. Its named-drive priority gate exposed that SpecForge had been
+asserting execution semantics absent from every canonical stage: whenever any rules and transactions coexisted,
+the emitter generated their complete Cartesian priority product. That could make output pass while silently
+choosing a rule over a transaction the document never ordered.
+
+The first new-tip failure was a multi-caller `AWSNOOP` drive. Baseline accepted it; current FSMGen correctly
+refused to map the asserted priority to one transaction owner. A corpus experiment deleting all 3,816 priority
+lines made 43/44 artifacts clean. The remaining AHB case then revealed the complementary honest conflict:
+`idle_transfer` uniquely owns the `HTRANS` named drive while five rules can write that target, so no-priority is
+also insufficient unless the unsupported rule obligations are surfaced.
+
+The generic boundary now recursively maps named-drive callers. Exactly one distinct caller plus a rule on the
+same target produces an `isf_rule_transaction_conflict_*` residual; the richer transaction remains executable.
+Multiple-caller targets carry no fabricated priority and remain accepted by FSMGen. This mirrors the existing
+rule/rule residual policy: validity never licenses invention, and dropped meaning is always explicit.
+
+Current FSMGen also changes a separate architectural premise: bounded static actor-instance/group metadata and
+transaction-scoped actor/pin handoffs now exist. That is not yet a topology-lowering result because SpecForge's
+cat-3 carrier is still measured sparse, half-connected, and rootless, and lacks proven actor/type/endpoint/width
+bindings. `DOC-INTENT-TAXONOMY.4c.ii` owns the reassessment rather than letting the historical “no construct”
+claim drift or treating a new noun as proof of a faithful mapping.
+
+Signoff passes all eight doctrines, formatting, warning-deny Clippy, 1,859 Rust tests with five ignored and zero
+failures, warning-deny rustdoc, mdBook, and the final producer-residue locality check.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6a (`2026-08-12`) — stage identity is not binary currency
 
 A hash-pinned artifact answers “what did review score?” It does not answer “what would the current binary

@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
+  > does SpecForge use the full scope of a page's visual information
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > does Wishbone declare its signals in a table
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > does a PathBuf need portability handling before it has a producer
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
   > does a blocked adapter remove a previously emitted isf
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
@@ -50,6 +56,8 @@
   > does corpus KB refresh mutate canonical IR or CorpusMemory
 - [contested-priors](../knowledge/contested-priors.md)
   > does corpus prior memory only accrete
+- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
+  > does current FSMGen have any static actor instance or group construct (yes at a51dcdad0 — bounded actor instances/groups plus transaction-scoped actor/pin handoffs)
 - [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
   > does emitting (input) signals break fsmgen --strict (no — 0 new diagnostics; drives are suppressed for inputs)
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
@@ -289,11 +297,3 @@
   > how complete is register-IP / platform-IP / CPU-ISA ISF lowering
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
   > how dense is SpecForge's captured component topology on cat-3 docs vs cat-1 wire docs (cat-3 = 0.355 edges/actor + 24% both-endpoint; cat-1 wire baseline = 4.108 edges/actor + 85% both-endpoint — the SAME signal_connectivity surface is ~12x denser and fully-connected on wire docs, so the surface is capable; the shortfall is capture-recall on platform TRMs)
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > how did APB temporal reach 100% (WIRE-BASED-100.4)
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > how did the AHB decoder become connected (Subordinate and decoder read HADDR)
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > how do Continued from previous page fragments find their home
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > how do I add a new enforced doctrine / doctrine check

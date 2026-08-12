@@ -2,6 +2,20 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > what ISF abstractions does FSMGen need next (field-structured storage / register-with-fields, packet/structure layouts, topology)
+- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
+  > what ISF form does SpecForge use for a bounded-eventually contract
+- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
+  > what ISF idiom describes states and input-driven transitions
+- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
+  > what already lowers for category-3 platform docs (the register half — register maps + bit-fields via .4a.ii e.g. CoreSight SoC-600 ~3,250 fields, infrastructure signals, actor ports; cat-3's register intent is the same road as cat-2 and is not the gap)
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what architecture contains an oversized active task tree
+- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
+  > what architecture contains the active CORPUS-COVERAGE task tree
+- [prose-signal-capture](../knowledge/prose-signal-capture.md)
+  > what are AGENT_CLASS_NOUNS / the parenthetical-strip / sentence-boundary / no-preposition guards
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > what are APB's remaining completeness candidate misses
 - [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
@@ -173,6 +187,8 @@
   > what does converge do after stabilization
 - [isf-unconditional-rule-overlap-conflict](../knowledge/isf-unconditional-rule-overlap-conflict.md)
   > what does drop_unconditional_overlap_conflicts / unconditional_overlap_residual_packet do in ir/isf_ir.rs
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > what does drop_ungrounded_rule_transaction_conflicts do
 - [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
   > what does drop_unrenderable_rule_values / unrenderable_rule_value_residual_packet do in ir/isf_ir.rs
 - [nli-intent-gate](../knowledge/nli-intent-gate.md)
@@ -281,19 +297,3 @@
   > what happens when a roadmap section grows too long
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > what happens when a timing observation has no explicit tick-addressed samples
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > what happens when document intent category is unresolved
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > what happens when the NLI provider is down
-- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
-  > what identifies the canonical inputs to generated Knowledge Map shards
-- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
-  > what inputs define corpus KB managed block currentness
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what is ADR 0019
-- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
-  > what is ADR 0024
-- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
-  > what is ADR 0025
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > what is ADR 0026

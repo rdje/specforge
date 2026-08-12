@@ -5,6 +5,8 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md) | 2026-06-10 | `current` | LLM-primary must_be_value recall gap CLOSED — 10/16 → 16/16 gold facts (APB/AHB/AXI) |
+| [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md) | 2026-06-10 | `current` | Permissive-only frame gate is SUBJECT-SENTENCE-scoped — block-scoped modals over-kill |
 | [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md) | 2026-06-10 | `current` | converge --promote-constraints-llm replaces the Pattern constraint surface post-stability |
 | [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md) | 2026-06-01 | `current` | SpecForge ships a production Ollama+Qwen2.5VL provider (the default LLM/VLM) |
 | [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md) | 2026-06-05 | `current` | Text-reasoning gates (NLI, semantic checks) want a strong TEXT LLM, not a VLM; qwen2.5:14b-instruct is viable… |
@@ -59,5 +61,3 @@
 | [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md) | 2026-08-11 | `superseded` | SemanticIR skipped its grounding filter exactly when a document declared no signals (repaired) |
 | [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md) | 2026-08-11 | `current` | One grounding predicate governs every document; rejected records are demoted, not dropped |
 | [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md) | 2026-08-09 | `current` | Declaration-free heuristic interfaces require a signal-led deontic behavior statement |
-| [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md) | 2026-08-10 | `superseded` | Generic SemanticIR section phases require heading authority |
-| [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md) | 2026-06-11 | `current` | Signal-presence matrices — the literal presence-CONDITION typed surface (.12b) |

@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > is DOC-INTENT-TAXONOMY.4a.ii buildable now (DONE 2026-06-22 — implemented once FSMGen shipped the construct; superseded .4a.i; Gap B packet/flit still deferred)
+- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
+  > is ISF a single-actor or multi-actor format (per-actor — one .isf describes one actor/module; SpecForge's emit collapses to one initiator via select_initiator_actor; lowering cross-component topology would need a multi-actor emit, an architectural change not an emitter tweak)
+- [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
+  > is ISF the current SpecForge bottleneck
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > is KG-ISF-TRANSACTIONS.2i unparked / what is the .2i decision (yes — FSMGen confirmed option a: ship the grounded per-phase membership grouping as IntentIR metadata, .isf byte-identical)
+- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
+  > is RISC-V Debug register bit-position recovery a deterministic text-table parse or a VLM-image read (VLM-image — 53/56 diagrams are images, the 7 flattened tables are garbled/symbolic; deterministic parse would fabricate)
+- [ingest-adaptive-batch-sizing](../knowledge/ingest-adaptive-batch-sizing.md)
+  > is SPECFORGE_INGEST_BATCH_PAGES a fixed size or a ceiling
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
   > is SWD at 100% and on what metric
 - [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
@@ -172,6 +184,8 @@
   > is the jesd235 HBM artifact a truncated ingest
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > is the kg-isf-completeness.3 relation-completeness frontier closed / are any docs still stale
+- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
+  > is the old claim that FSMGen has no declarative static-topology construct still current (no — that premise is superseded and must be reassessed)
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > is the orphan (type TABLE) line a separate emitter bug (yes — isf_ir.rs:403-409 emits all self.types unconditionally, so a Lever-F-residualized enum still leaves an orphan (type ...) line; gate by emitted_enums())
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
@@ -284,17 +298,3 @@
   > what CoreSight Base System evidence still needs VLM or targeted extraction
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what FSMGen question/feature-request did KG-ISF-TRANSACTIONS.2i raise (value-less output participation / unordered-or-partial-order body / phase-group metadata / ordering-as-constraint)
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > what ISF abstractions does FSMGen need next (field-structured storage / register-with-fields, packet/structure layouts, topology)
-- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
-  > what ISF form does SpecForge use for a bounded-eventually contract
-- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
-  > what ISF idiom describes states and input-driven transitions
-- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
-  > what already lowers for category-3 platform docs (the register half — register maps + bit-fields via .4a.ii e.g. CoreSight SoC-600 ~3,250 fields, infrastructure signals, actor ports; cat-3's register intent is the same road as cat-2 and is not the gap)
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what architecture contains an oversized active task tree
-- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
-  > what architecture contains the active CORPUS-COVERAGE task tree
-- [prose-signal-capture](../knowledge/prose-signal-capture.md)
-  > what are AGENT_CLASS_NOUNS / the parenthetical-strip / sentence-boundary / no-preposition guards

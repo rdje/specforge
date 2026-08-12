@@ -1,3 +1,17 @@
+### FSMGEN-REFRESH-INTEGRATE-6.1 — pin current FSMGen and retire fabricated rule priorities
+
+- Advanced `subs/fsmgen` from `d327129b7` to fast-forward tip `a51dcdad0` after auditing all 1,139
+  intervening commits and the current downstream ISF contract.
+- Removed the ISF emitter's unsupported Cartesian `rule × transaction` priority product. IntentIR has no
+  precedence carrier; an overlapping rule on a uniquely owned named drive now becomes an explicit
+  `isf_rule_transaction_conflict_*` residual while the source-grounded transaction remains executable.
+- Rebuilt the 78-document adapter chain. The 44 current emitted ISFs contain zero priority lines and all pass
+  the new FSMGen strict checker with zero diagnostics; the AHB adapter alone gains five honest conflict residuals.
+- Recorded a pending cat-3 topology reassessment because the new pin adds bounded static actor-network metadata
+  and actor/pin handoffs, without treating the still-sparse/rootless SpecForge topology carrier as lowerable.
+- Full CI passes all eight doctrines, formatting, warning-deny Clippy, 1,859 Rust tests / five ignored / zero
+  failed, warning-deny rustdoc, mdBook, and final project-data locality.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6a — current replay truth is separate from the frozen baseline
 
 - Added a generic isolated SourceIR → EvidenceIR → SemanticIR → IntentIR replay tool. It accepts only

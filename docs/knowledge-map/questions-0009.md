@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > where is register bit-field ISF emission implemented (register_storage_fields + normalize_field_access + IsfStorageField + the storage render in crates/specforge/src/ir/isf_ir.rs; residual isf_register_fields_not_lowered)
+- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
+  > where is register-field reset_value extracted and carried (ir/source.rs:432 RegisterFieldRecord.reset_value; ir/evidence.rs:11509/11838 populate it; ir/intent.rs:193 clones register_records to IntentIR)
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > where is split_coordinated_actor_relations and split_coordinated_actor_subject wired
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > where is the I2C signal gold seed
+- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
+  > where is the LTL renderer for temporal rules
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > where is the SpecForge FSMGen feedback or handoff channel
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > where is the SpecForge trajectory controller engine
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > where is the U+F0B7 signal integrity panic in evidence extraction
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > where is the acceptance checklist a code change must satisfy
 - [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
   > where is the authoritative chipdoc source library now
 - [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
@@ -279,21 +297,3 @@
   > why can't specforge evidence rebuild the evidence (normalized missing)
 - [agent-identity-prose-class-measurement](../knowledge/agent-identity-prose-class-measurement.md)
   > why can't specforge just drop single-noun or multiword actors to fix the prose phantom explosion
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > why did .1b.i NOT strip trailing prepositions and what changed in .1c.i
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > why did 64 AArch64 External Debug interfaces disappear
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > why did 88 CoreSight Base System interfaces disappear
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > why did AFU BAR CFG GB ID MEM MMIO and PASID disappear as signals
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > why did APB unexplained_intent_bearing_tables go to zero
-- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
-  > why did AXI atomic_transaction / prefetch / writezero / writedeferrable go from 0 to a real signal set
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > why did AXI unexplained tables go 32 to 31 and ACE 36 to 35 and LTI 6 to 4
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > why did AXI unexplained tables go 39 to 32 and the denominator 94 to 98
-- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
-  > why did Cortex-A76 instruction performance tables produce 151 timing constraints with no min typ max values

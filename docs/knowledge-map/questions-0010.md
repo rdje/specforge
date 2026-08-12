@@ -2,8 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > why did .1b.i NOT strip trailing prepositions and what changed in .1c.i
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > why did 64 AArch64 External Debug interfaces disappear
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > why did 88 CoreSight Base System interfaces disappear
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > why did AFU BAR CFG GB ID MEM MMIO and PASID disappear as signals
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > why did APB unexplained_intent_bearing_tables go to zero
+- [transaction-membership-subsection-scope](../knowledge/transaction-membership-subsection-scope.md)
+  > why did AXI atomic_transaction / prefetch / writezero / writedeferrable go from 0 to a real signal set
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > why did AXI unexplained tables go 32 to 31 and ACE 36 to 35 and LTI 6 to 4
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > why did AXI unexplained tables go 39 to 32 and the denominator 94 to 98
+- [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
+  > why did Cortex-A76 instruction performance tables produce 151 timing constraints with no min typ max values
 - [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
   > why did DL disappear from the OpenCAPI Certified Definition
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > why did FSMGen pin a51dcdad0 reject SpecForge manager.isf with isf_ambiguous_rule_transaction_drive_priority on AWSNOOP
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
   > why did GIC-600's .isf fail fsmgen strict with 'Malformed top-level FSM source ?fsm:redistributor→…'
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
@@ -16,6 +36,8 @@
   > why did OpenCAPI email review become an IntentIR behavior
 - [passive-binding-subject-authority](../knowledge/passive-binding-subject-authority.md)
   > why did OpenCAPI produce constraints on CAPI OCDE and DLX that the document never constrains
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > why did SpecForge remove every generated (priority RULE over TRANSACTION) line
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > why did TL disappear from the OpenCAPI Ready Definition
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
@@ -178,6 +200,8 @@
   > why does DTI (ihi0088) have zero message_field_records
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > why does Docling re-ingest fail on Apple Silicon
+- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
+  > why does FSMGen actor-network support not erase the cat3 topology capture-recall gate
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
   > why does I2S SD remain a signal
 - [timing-table-structural-authority](../knowledge/timing-table-structural-authority.md)
@@ -250,6 +274,8 @@
   > why does an in-body (drive NAME) need a top-level named-drive definition (drive 'X' not defined)
 - [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
   > why does an incidental 'can' in a source block not drop its other constraints
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > why does an isf_rule_transaction_conflict_<name> residual appear in adapter.json
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
   > why does condition_text matter for the NLI claim
 - [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
@@ -272,29 +298,3 @@
   > why does recover-register-bits still recover 0 bits after the plumbing is complete
 - [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
   > why does root KNOWLEDGE_MAP_ARCHITECTURE.md not exist
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > why does setportfeature port over current become the USB 3.2 adapter actor
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > why does shall be 0h still bind the value 0 but shall be non-zero does not bind NO
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > why does slicing idx minus 2 before signal panic
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > why does specforge split on 'and' but not 'or' for a coordinated actor subject
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > why does the .isf emit a generic (type TABLE (bits N)) enum / what is the TABLE mega-enum
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > why does the AArch64 External Debug Guide emit no ISF
-- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
-  > why does the ADI spec produce so few signals and so much garbage
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > why does the AMBA DTI specification declare no signals
-- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
-  > why does the Bosch CAN specification declare no signals
-- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
-  > why does the Claude Read tool refuse some PDFs / report password-protected
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > why does the CoreSight Base System Architecture emit no ISF
-- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
-  > why does the D4.5 CLAIMSET (no block token) stay a residual under .10i
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > why does the DTI / trace-bus .isf fail FSMGen --strict --check (OperandContract: a value literal wider than the declared signal width)

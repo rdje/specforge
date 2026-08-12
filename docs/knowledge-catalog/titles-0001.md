@@ -35,7 +35,8 @@
 | [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md) | 2026-06-15 | `current` | Promote a doc's constraint surface onto canonical WITHOUT re-ingest (the CANONICAL-PROMOTION-SWEEP per-doc pr… |
 | [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md) | 2026-06-15 | `current` | specforge stage commands write outputs to the canonical path from the artifact's recorded artifact_layout, NO… |
 | [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md) | 2026-06-23 | `current` | Cat-3 (platform/system-IP) topology-capture recall (DOC-INTENT-TAXONOMY.4c.i) — the signal_connectivity + i… |
-| [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md) | 2026-06-23 | `current` | Cat-3 (platform/system-IP topology) ISF-lowering decision (DOC-INTENT-TAXONOMY.4c) — topology IS captured (… |
+| [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md) | 2026-08-12 | `current` | FSMGen a51dcdad0 now has bounded static actor-network metadata and actor/pin handoffs, so cat-3 topology need… |
+| [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md) | 2026-06-23 | `superseded` | Cat-3 (platform/system-IP topology) ISF-lowering decision (DOC-INTENT-TAXONOMY.4c) — topology IS captured (… |
 | [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md) | 2026-06-23 | `current` | Cat-4 RISC-V CSR bit-position recovery (DOC-INTENT-TAXONOMY.4d.i) — NOT deterministically recoverable from… |
 | [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md) | 2026-06-23 | `current` | Cat-4 (CPU ISA) ISF-lowering decision (DOC-INTENT-TAXONOMY.4d) — CSR intent REUSES the existing register/st… |
 | [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md) | 2026-08-10 | `current` | CHAIN-CURRENCY replays every persisted corpus artifact against the current binary |
@@ -60,4 +61,3 @@
 | [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md) | 2026-08-09 | `current` | Canonical stages and the migrated generated corpus contain move-safe repository paths |
 | [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md) | 2026-08-11 | `current` | Converge emits a guarded per-run ledger for every production command and every capability island |
 | [definitional-signal-capture](../knowledge/definitional-signal-capture.md) | 2026-06-09 | `current` | Signals named only in prose (no signal table) are captured via a DEFINITIONAL grammar — copula "NAME is a/a… |
-| [dempster-fusion](../knowledge/dempster-fusion.md) | 2026-06-04 | `current` | SpecForge fuses agreeing-source confidence via Dempster corroboration (not min) |

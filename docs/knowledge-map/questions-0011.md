@@ -2,6 +2,32 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
+  > why does setportfeature port over current become the USB 3.2 adapter actor
+- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
+  > why does shall be 0h still bind the value 0 but shall be non-zero does not bind NO
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > why does slicing idx minus 2 before signal panic
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > why does specforge split on 'and' but not 'or' for a coordinated actor subject
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > why does the .isf emit a generic (type TABLE (bits N)) enum / what is the TABLE mega-enum
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > why does the AArch64 External Debug Guide emit no ISF
+- [swd-adi-not-signal-table-spec](../knowledge/swd-adi-not-signal-table-spec.md)
+  > why does the ADI spec produce so few signals and so much garbage
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > why does the AMBA DTI specification declare no signals
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > why does the Bosch CAN specification declare no signals
+- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
+  > why does the Claude Read tool refuse some PDFs / report password-protected
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > why does the CoreSight Base System Architecture emit no ISF
+- [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
+  > why does the D4.5 CLAIMSET (no block token) stay a residual under .10i
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > why does the DTI / trace-bus .isf fail FSMGen --strict --check (OperandContract: a value literal wider than the declared signal width)
 - [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
   > why does the Introducing CoreSight guide emit no ISF
 - [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
@@ -140,6 +166,8 @@
   > why is a gerund after while/when not a condition (action coordination)
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > why is a membership-derived (sample) body NOT faithful even though it is FSMGen-accepted
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > why is a multi-caller named drive kept without actor priority
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
   > why is a pure-hex-literal subject filter unsafe (CBA, BADD)
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
@@ -270,31 +298,3 @@
   > why was CORPUS-COVERAGE 2 33d iii closed without another convergence or adapter filter
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
   > why was FULL-PAGE-INTENT-CAPTURE.2 not built / closed NO-GO
-- [llm-primary-permissive-frame-gate](../knowledge/llm-primary-permissive-frame-gate.md)
-  > why was HPROT[0] / HSEL / HTRANS IDLE extracted as a constraint (and how was it fixed)
-- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
-  > why was NVMe MPS must_be_value 0 removed / where did the bogus MPS subject come from
-- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
-  > why was NVMe SANICAP must_be_value NO removed / where did the bogus NO come from
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > why was PSELx / HRESP ERROR / ACTIVATEACK LOW extracted as a constraint (and how was it fixed)
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > why was a property like RME_Support or MPAM_WIDTH extracted as a signal constraint
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > why was a signal not extracted from a signal table (e.g. AHB HREADY)
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > why was an emitter-only fix for register bit-fields rejected (per-field vars fabricate/lose grouping; set-field/extract fabricate runtime behavior; comments are not intent — feedback_isf_no_hacks)
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > why was corpus task maximum line width corrected from 4747 to 4746
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > why was nearest-heading anchoring rejected for capless table adoption
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > why was nvme_base_specification_2_0a_2021_07_26 missing from the corpus refresh frontier (the old count was decremented rather than re-derived, so an expired denominator adjustment silently removed it for twenty-two slices)
-- [cat4-csr-bit-position-recovery-not-deterministic](../knowledge/cat4-csr-bit-position-recovery-not-deterministic.md)
-  > why was the .4d.i pre-investigation 'deterministically tractable' verdict overturned (gold check: dmstatus flattened table off-by-8 + dropped 7-field band; dmcontrol image-only no table; tdata1 symbolic XLEN-relative positions)
-- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
-  > why was the ISF explicit-FSM feature request withdrawn
-- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
-  > why was the spike's 'manager Reads ARID' direction error not in production
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > why were ACK / NACK / DDC / SDR extracted as I2C signals (and how was it fixed)

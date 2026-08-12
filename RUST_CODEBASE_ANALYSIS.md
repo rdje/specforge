@@ -4,6 +4,21 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-12 — FSMGen precedence-authority repair; `FSMGEN-REFRESH-INTEGRATE-6.1`)
+
+- `ir/isf_ir.rs` no longer models or renders `IsfPriority`. The old construction path manufactured the complete
+  rule × transaction product despite no precedence field in SemanticIR or IntentIR; current FSMGen's named-drive
+  owner checks made that architectural leak fail closed.
+- New `drop_ungrounded_rule_transaction_conflicts` recursively traverses transaction control flow, maps named
+  drives to their body targets, and counts distinct local transaction callers. A rule sharing a uniquely owned
+  target is removed from executable ISF and appended to the existing adapter residual channel; transactions and
+  all multi-caller no-priority shapes remain intact.
+- The seam stays adapter-local and generic: no protocol/document/signal branches, no IR-schema expansion, and no
+  change to extraction or canonical meaning. If source-grounded precedence is ever added, it belongs in canonical
+  IR first; the adapter must not reconstruct it.
+- Rebuilt local corpus evidence gives the integration invariant: 78/78 adapter replays current, 44/44 emitted ISFs
+  accepted with zero diagnostics, zero priority lines, five new residuals in one AHB adapter.
+
 ## Session update (2026-08-12 — isolated current-binary replay; `SPEC-TO-INTENT-ALIGNMENT.6a`)
 
 - New `ir/source_to_intent_replay.rs` is an orchestration harness around existing stage builders, not a new

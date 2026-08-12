@@ -131,8 +131,8 @@
     {
       "id": "stale-response-pin",
       "source_literal": "latest response baseline reviewed by SPECFORGE: **`030f8c273`**",
-      "evidence_path": "docs/tasks/FSMGEN-REFRESH-INTEGRATE-5.md",
-      "evidence_literal": "- Gitlink bumped to `d327129b7`; working tree clean."
+      "evidence_path": "docs/tasks/FSMGEN-REFRESH-INTEGRATE-6.md",
+      "evidence_literal": "- Current gitlink target (abbreviated): `a51dcdad0`."
     }
   ],
   "current_root": {
@@ -163,7 +163,7 @@
     ],
     "required_literals": [
       "SPECFORGE IntentIR → .isf → FSMGEN",
-      "d327129b718ab29fc889db026c19257b0f7fcc49"
+      "a51dcdad0a7e752e638abfe3ab414f7f3911889d"
     ],
     "forbidden_literals": [
       "Instead, `.fsm` is one downstream adapter target, alongside future SystemVerilog, Verilog, and VHDL targets.",

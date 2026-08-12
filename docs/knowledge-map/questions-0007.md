@@ -2,6 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > what happens when document intent category is unresolved
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > what happens when the NLI provider is down
+- [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
+  > what identifies the canonical inputs to generated Knowledge Map shards
+- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
+  > what inputs define corpus KB managed block currentness
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what is ADR 0019
+- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
+  > what is ADR 0024
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > what is ADR 0025
+- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
+  > what is ADR 0026
 - [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
   > what is ADR 0027
 - [fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy](../decisions/0029-fact-plane-capacity-is-one-derived-profile-and-aggregates-must-have-a-remedy.md)
@@ -20,6 +36,8 @@
   > what is CORPUS-COVERAGE.2.33d dense-prose adapter trust repair
 - [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
   > what is DOC-INTENT-TAXONOMY .2 Result 3 verdict (closed by .4e: the rule-lowering shortfall is dominated by conditional_rules that are honest residual; signal_constraints + temporal_rules lower well; not an ISF-completeness gap)
+- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
+  > what is DOC-INTENT-TAXONOMY.4c.ii
 - [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
   > what is EvidenceIr.extraction_quality_gauge and who writes it
 - [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
@@ -279,21 +297,3 @@
   > what is the largest faithful-lowering gap in the IntentIR -> .isf round trip
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > what is the live-document coverage authority
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > what is the message_field_catalog_dump measurement harness
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > what is the message_fields.section_header_field strategy
-- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
-  > what is the model-misspelled-subject / phantom-subject defect class
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > what is the must_be_value + VALID typed convention
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > what is the next big PDF-variant digestion lever after the serial class
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > what is the north-star bar #2 relation-completeness finding (KG-ISF-COMPLETENESS.3)
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > what is the only VLM-unique signal in AXI timing diagrams (phase ORDER, the .2h residual)
-- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
-  > what is the only improvement path for conditional rules (upstream EXTRACTION — extract-constraints-llm / EXTRACTION-QUALITY-GAUGE recovering the concrete obligation from the conditional's source_text for the deontic-modal bucket; then it lowers via the existing (rule) path with no new ISF construct — lower-leverage than register/structure/topology)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the owner directive on transaction recognition / membership / step-by-step / fast / minimum

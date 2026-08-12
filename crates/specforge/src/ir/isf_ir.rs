@@ -5,7 +5,7 @@
 // This IR eliminates string-bashing bugs by design:
 //   - BTreeSet<IsfSignal>        → dedup by construction (no duplicate clock/reset)
 //   - IsfReset (non-optional)    → compiler enforces presence (strict mode requires it)
-//   - Typed IsfRule / IsfPriority → cannot emit invalid S-expression syntax
+//   - Typed IsfRule → cannot emit invalid S-expression syntax
 //   - Recursive tree walk        → parentheses match by construction
 
 use std::collections::{BTreeMap, BTreeSet};
@@ -251,12 +251,6 @@ struct IsfRule {
     drives: Vec<(String, String)>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-struct IsfPriority {
-    higher: String,
-    over: String,
-}
-
 pub(crate) struct IsfIr {
     actor_name: String,
     clock: String,
@@ -270,7 +264,6 @@ pub(crate) struct IsfIr {
     drives: Vec<IsfNamedDrive>,
     transactions: Vec<IsfTransaction>,
     rules: Vec<IsfRule>,
-    priorities: Vec<IsfPriority>,
     /// Temporal rules that have no representable supported ISF construct
     /// (ISF-TEMPORAL-LOWERING.2.3 mapping #4). They are NOT rendered into
     /// `.isf`; they are preserved here so the adapter artifact records the
@@ -535,10 +528,6 @@ impl IsfIr {
                 lines.push(d.clone());
             }
             lines.push("  )".to_string());
-        }
-
-        for p in &self.priorities {
-            lines.push(format!("  (priority {} over {})", p.higher, p.over));
         }
 
         lines.push(")".to_string());
@@ -1338,19 +1327,19 @@ impl IsfIr {
             temporal_residuals.extend(overlap_residuals);
         }
 
-        // --- Priorities ---
-        let mut priorities: Vec<IsfPriority> = Vec::new();
-        let has_rules = !rules.is_empty();
-        let has_transactions = !all_transactions.is_empty();
-        if has_rules && has_transactions {
-            for rule in &rules {
-                for tx in &all_transactions {
-                    priorities.push(IsfPriority {
-                        higher: rule.name.clone(),
-                        over: tx.name.clone(),
-                    });
-                }
-            }
+        // --- Rule/transaction write conflicts (FSMGEN-REFRESH-INTEGRATE-6.1) ---
+        // IntentIR carries rules and transactions, but it carries no precedence relation between
+        // them. The former emitter hid that missing authority by asserting EVERY rule over EVERY
+        // transaction. Current FSMGen correctly fails closed when such a priority targets a named
+        // drive with multiple callers, and requires an actor-level priority when one local caller
+        // and a rule can both write the same target. Never fabricate that winner. Remove only the
+        // rule side of the proven single-caller conflict and preserve it as an explicit residual;
+        // the richer source-grounded transaction remains executable.
+        {
+            let (kept, transaction_residuals) =
+                drop_ungrounded_rule_transaction_conflicts(rules, &all_transactions, &drives);
+            rules = kept;
+            temporal_residuals.extend(transaction_residuals);
         }
 
         IsfIr {
@@ -1366,7 +1355,6 @@ impl IsfIr {
             drives,
             transactions: all_transactions,
             rules,
-            priorities,
             temporal_residuals,
             storage_reset_residuals,
             storage_field_residuals,
@@ -2733,6 +2721,163 @@ fn unconditional_overlap_residual_packet(
     }
 }
 
+/// Retire rule/transaction precedence that the source never states
+/// (`FSMGEN-REFRESH-INTEGRATE-6.1`). A transaction step calls a named drive; when exactly one
+/// distinct local transaction calls that drive, FSMGen can prove that transaction owns the drive
+/// and rejects a rule writing the same target unless the actor declares a priority. IntentIR has no
+/// such priority carrier, so emitting one would invent behavior. Keep the richer transaction and
+/// drop each overlapping rule as an explicit residual. Multiple-caller drives are intentionally
+/// left alone: FSMGen cannot assign them a unique transaction owner, and the current no-priority
+/// contract accepts that shape without diagnostics.
+fn drop_ungrounded_rule_transaction_conflicts(
+    rules: Vec<IsfRule>,
+    transactions: &[IsfTransaction],
+    drives: &[IsfNamedDrive],
+) -> (Vec<IsfRule>, Vec<ResidualDecisionPacket>) {
+    let drive_targets: BTreeMap<String, BTreeSet<String>> = drives
+        .iter()
+        .map(|drive| {
+            (
+                drive.name.clone(),
+                drive
+                    .body
+                    .iter()
+                    .map(|(target, _)| target.clone())
+                    .collect(),
+            )
+        })
+        .collect();
+
+    let mut callers_by_target: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+    for transaction in transactions {
+        let mut called_drives = BTreeSet::new();
+        collect_called_drives(&transaction.on_steps, &mut called_drives);
+        collect_called_drives(&transaction.steps, &mut called_drives);
+        for drive_name in called_drives {
+            let Some(targets) = drive_targets.get(&drive_name) else {
+                continue;
+            };
+            for target in targets {
+                callers_by_target
+                    .entry(target.clone())
+                    .or_default()
+                    .insert(transaction.name.clone());
+            }
+        }
+    }
+
+    let uniquely_owned_targets: BTreeMap<String, String> = callers_by_target
+        .into_iter()
+        .filter_map(|(target, callers)| {
+            if callers.len() == 1 {
+                callers.into_iter().next().map(|caller| (target, caller))
+            } else {
+                None
+            }
+        })
+        .collect();
+
+    let mut kept = Vec::new();
+    let mut residuals = Vec::new();
+    'rule: for rule in rules {
+        for (target, value) in &rule.drives {
+            if let Some(transaction) = uniquely_owned_targets.get(target) {
+                residuals.push(rule_transaction_conflict_residual_packet(
+                    &rule.name,
+                    target,
+                    value,
+                    transaction,
+                ));
+                continue 'rule;
+            }
+        }
+        kept.push(rule);
+    }
+    (kept, residuals)
+}
+
+/// Recursively collect named-drive calls from every control-flow shape inside a transaction.
+fn collect_called_drives(steps: &[IsfTxnStep], out: &mut BTreeSet<String>) {
+    for step in steps {
+        match step {
+            IsfTxnStep::Drive { name, .. } => {
+                out.insert(name.clone());
+            }
+            IsfTxnStep::When { body, .. }
+            | IsfTxnStep::While { body, .. }
+            | IsfTxnStep::Until { body, .. }
+            | IsfTxnStep::Repeat { body, .. } => collect_called_drives(body, out),
+            IsfTxnStep::Switch { branches, .. } => {
+                for (_, body) in branches {
+                    collect_called_drives(body, out);
+                }
+            }
+            IsfTxnStep::Await { .. }
+            | IsfTxnStep::Wait { .. }
+            | IsfTxnStep::Sample { .. }
+            | IsfTxnStep::Do { .. }
+            | IsfTxnStep::Spawn { .. }
+            | IsfTxnStep::Set { .. }
+            | IsfTxnStep::Update { .. }
+            | IsfTxnStep::ShiftLeft { .. }
+            | IsfTxnStep::ShiftRight { .. }
+            | IsfTxnStep::Complete { .. }
+            | IsfTxnStep::AwaitAll { .. }
+            | IsfTxnStep::AwaitAny { .. }
+            | IsfTxnStep::Latency { .. } => {}
+        }
+    }
+}
+
+fn rule_transaction_conflict_residual_packet(
+    rule_name: &str,
+    target: &str,
+    value: &str,
+    transaction: &str,
+) -> ResidualDecisionPacket {
+    ResidualDecisionPacket {
+        packet_id: format!(
+            "isf_rule_transaction_conflict_{}",
+            sanitize_isf_name(rule_name)
+        ),
+        question: format!(
+            "Rule `{rule_name}` and transaction `{transaction}` can both write `{target}`; which one wins?"
+        ),
+        why_unresolved: format!(
+            "Rule `{rule_name}` drives `{target}` to `{value}`, while transaction `{transaction}` is the \
+             single local caller of a named drive that writes the same target. FSMGen requires an explicit \
+             actor-level priority for this overlap, but IntentIR carries no source-grounded precedence \
+             relation. The rule was DROPPED from emitted `.isf` and preserved here instead of fabricating \
+             a winner; the source-grounded transaction remains executable."
+        ),
+        automation_confidence: AutomationConfidence::Low,
+        candidate_interpretations: vec![
+            CandidateInterpretation {
+                interpretation_id: "keep_transaction".to_string(),
+                description: format!(
+                    "Keep transaction `{transaction}` as the executable writer and preserve rule \
+                     `{rule_name}` as a residual (current behavior)."
+                ),
+                downstream_impact: format!(
+                    "The emitted `.isf` keeps `{transaction}` and does not assert `{target}` = `{value}` \
+                     through rule `{rule_name}`."
+                ),
+            },
+            CandidateInterpretation {
+                interpretation_id: "establish_source_priority".to_string(),
+                description: format!(
+                    "Establish from authoritative source evidence whether `{rule_name}` or \
+                     `{transaction}` has precedence, then represent that relation in canonical IR."
+                ),
+                downstream_impact:
+                    "Would permit an actor-level priority only after the canonical model carries the \
+                     evidence-backed winner; no adapter-only guess is allowed."
+                        .to_string(),
+            },
+        ],
+    }
+}
+
 /// KG-ISF-COMPLETENESS.2a.vi: drop a rule whose any drive VALUE is not a renderable ISF value. FSMGen
 /// requires a rule assignment action's RHS to be a value expression (`(port expr)`); a constraint whose
 /// extracted value is free PROSE (the AMBA AXI+ACE loopback `(RLOOP the value that was presented on the
@@ -3077,7 +3222,6 @@ mod tests {
             drives: vec![],
             transactions: vec![],
             rules: vec![],
-            priorities: vec![],
             temporal_residuals: vec![],
             storage_reset_residuals: vec![],
             storage_field_residuals: vec![],
@@ -3220,7 +3364,7 @@ mod tests {
     }
 
     #[test]
-    fn render_emits_storage_drives_rules_and_priorities() {
+    fn render_emits_storage_drives_and_rules_without_fabricated_priorities() {
         let mut isf = minimal_isf();
         isf.storage.push(IsfStorageVar {
             name: "acc".to_string(),
@@ -3242,11 +3386,6 @@ mod tests {
             condition: String::new(),
             drives: vec![],
         });
-        isf.priorities.push(IsfPriority {
-            higher: "r_guarded".to_string(),
-            over: "r_uncond".to_string(),
-        });
-
         let out = isf.render();
         assert!(out.contains("  (storage"));
         assert!(out.contains("    (var acc (width 8))"));
@@ -3254,7 +3393,7 @@ mod tests {
         // Guarded rule keeps its condition; unconditional rule omits it.
         assert!(out.contains("  (rule r_guarded (== en 1)"));
         assert!(out.contains("  (rule r_uncond\n") || out.contains("  (rule r_uncond)"));
-        assert!(out.contains("  (priority r_guarded over r_uncond)"));
+        assert!(!out.contains("(priority "));
         assert_eq!(paren_balance(&out), 0);
     }
 
@@ -3580,6 +3719,106 @@ mod tests {
         let names: Vec<&str> = kept.iter().map(|r| r.name.as_str()).collect();
         assert_eq!(names, vec!["g0", "g1"]);
         assert!(residuals.is_empty());
+    }
+
+    #[test]
+    fn drop_ungrounded_rule_transaction_conflicts_residualizes_unique_caller_overlap() {
+        let drives = vec![IsfNamedDrive {
+            name: "HTRANS".into(),
+            body: vec![("HTRANS".into(), "val".into())],
+        }];
+        let transactions = vec![IsfTransaction {
+            name: "idle_transfer".into(),
+            on_trigger: None,
+            on_steps: vec![],
+            // Exercise recursive discovery rather than only a top-level drive.
+            steps: vec![IsfTxnStep::When {
+                condition: "(== HREADY 1)".into(),
+                body: vec![IsfTxnStep::Drive {
+                    name: "HTRANS".into(),
+                    actuals: vec!["IDLE".into()],
+                }],
+            }],
+            complete: "done".into(),
+            latency_min: None,
+            latency_max: None,
+            contracts: vec![],
+            stages: vec![],
+        }];
+        let rules = vec![
+            IsfRule {
+                name: "rule_3".into(),
+                condition: String::new(),
+                drives: vec![("HTRANS".into(), "1".into())],
+            },
+            IsfRule {
+                name: "unrelated".into(),
+                condition: String::new(),
+                drives: vec![("HRESP".into(), "1".into())],
+            },
+        ];
+
+        let (kept, residuals) =
+            drop_ungrounded_rule_transaction_conflicts(rules, &transactions, &drives);
+        assert_eq!(
+            kept.iter()
+                .map(|rule| rule.name.as_str())
+                .collect::<Vec<_>>(),
+            vec!["unrelated"]
+        );
+        assert_eq!(residuals.len(), 1);
+        assert_eq!(
+            residuals[0].packet_id,
+            "isf_rule_transaction_conflict_rule_3"
+        );
+        assert!(residuals[0].why_unresolved.contains("idle_transfer"));
+        assert!(
+            residuals[0]
+                .why_unresolved
+                .contains("no source-grounded precedence")
+        );
+    }
+
+    #[test]
+    fn drop_ungrounded_rule_transaction_conflicts_keeps_multi_caller_drive_without_priority() {
+        let drives = vec![IsfNamedDrive {
+            name: "AWSNOOP".into(),
+            body: vec![("AWSNOOP".into(), "val".into())],
+        }];
+        let transaction = |name: &str| IsfTransaction {
+            name: name.into(),
+            on_trigger: None,
+            on_steps: vec![],
+            steps: vec![IsfTxnStep::Drive {
+                name: "AWSNOOP".into(),
+                actuals: vec!["CMO".into()],
+            }],
+            complete: "done".into(),
+            latency_min: None,
+            latency_max: None,
+            contracts: vec![],
+            stages: vec![],
+        };
+        let transactions = vec![
+            transaction("cmo_transaction"),
+            transaction("evict_transaction"),
+        ];
+        let rules = vec![IsfRule {
+            name: "rule_143".into(),
+            condition: String::new(),
+            drives: vec![("AWSNOOP".into(), "1".into())],
+        }];
+
+        let (kept, residuals) =
+            drop_ungrounded_rule_transaction_conflicts(rules, &transactions, &drives);
+        assert_eq!(kept.len(), 1);
+        assert!(residuals.is_empty());
+
+        let mut isf = minimal_isf();
+        isf.drives = drives;
+        isf.transactions = transactions;
+        isf.rules = kept;
+        assert!(!isf.render().contains("(priority "));
     }
 
     #[test]

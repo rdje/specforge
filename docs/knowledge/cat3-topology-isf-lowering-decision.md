@@ -12,9 +12,14 @@ answers:
   - "is ISF a single-actor or multi-actor format (per-actor — one .isf describes one actor/module; SpecForge's emit collapses to one initiator via select_initiator_actor; lowering cross-component topology would need a multi-actor emit, an architectural change not an emitter tweak)"
 date: 2026-06-23
 tags: [doc-intent-taxonomy, cat-3, platform-system-ip, topology, connectivity, clock-reset, isf-adapter, honest-residual, verify-fsmgen-before-fr, isf-no-hacks, adr-0006, measured, decision-packet]
+status: superseded
 evidence: generated/intent_ir/100806_0701_17_2025_06_30_coresight_soc_600_technical_reference_manual/intent_ir.json (60 actors / 6 signal_connectivity / 833 registers); generated/intent_ir/100336_0106_00_2019_02_08_gic_600_technical_reference_manual/intent_ir.json (55 actors / 66 signal_connectivity / 2 infrastructure_signals); subs/fsmgen/docs/book/src/13f-composition.md (composition = transaction-level (do child) only); subs/fsmgen/docs/book/src/14-feature-backlog.md (ATL multi-actor = generated-child transaction wiring, not declarative topology); crates/specforge/src/ir/isf_ir.rs (select_initiator_actor — single-initiator-actor emit, KG-ISF-COMPLETENESS.2a.ii); docs/research/cat3-topology-isf-lowering-decision.md
 reverify: "Cat-3 docs: python3 -c to count signal_connectivity + infrastructure_signals + actors over generated/intent_ir/100806_0701_17_2025_06_30_coresight_soc_600_technical_reference_manual (expect 60 actors / 6 connectivity / 833 regs) and 100336_0106_00_2019_02_08_gic_600_technical_reference_manual (55 actors / 66 connectivity / 2 infra). FSMGen: sed -n '1,40p' subs/fsmgen/docs/book/src/13f-composition.md -> composition is (do child) transaction-level; grep -niE 'topolog|connectivity|netlist|interconnect' subs/fsmgen/docs/book/src/13*.md -> no declarative static-topology construct; backlog ATL is generated-child transaction wiring. Decision: topology captured-but-sparse + no ISF construct -> no FR yet; next = .4c.i capture-recall measurement, then FR-or-honest-non-target. Docs-only leaf -> golds/kg-bench orthogonal. Related: [[cat4-isa-csr-lowering-decision]], [[register-bit-field-isf-lowering-gap]], [[document-intent-isf-completeness]]."
 ---
+
+> Superseded in part on `2026-08-12`: FSMGen pin `a51dcdad0` now ships bounded static actor-network
+> metadata and actor/pin handoffs. See [[cat3-topology-fsmgen-actor-network-reassessment]]. The measured
+> sparse/rootless SpecForge capture limit remains current in [[cat3-topology-capture-recall]].
 
 `DOC-INTENT-TAXONOMY.4c` is the cat-3 (platform / system-IP topology & integration) ISF-lowering decision
 packet — a read-only, docs-only leaf resolving whether cat-3's distinctive *topology* intent maps onto an

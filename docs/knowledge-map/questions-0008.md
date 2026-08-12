@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > what is the message_field_catalog_dump measurement harness
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > what is the message_fields.section_header_field strategy
+- [model-misspelled-subject-snap](../knowledge/model-misspelled-subject-snap.md)
+  > what is the model-misspelled-subject / phantom-subject defect class
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > what is the must_be_value + VALID typed convention
+- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
+  > what is the next big PDF-variant digestion lever after the serial class
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > what is the north-star bar #2 relation-completeness finding (KG-ISF-COMPLETENESS.3)
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > what is the only VLM-unique signal in AXI timing diagrams (phase ORDER, the .2h residual)
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > what is the only improvement path for conditional rules (upstream EXTRACTION — extract-constraints-llm / EXTRACTION-QUALITY-GAUGE recovering the concrete obligation from the conditional's source_text for the deontic-modal bucket; then it lowers via the existing (rule) path with no new ISF construct — lower-leverage than register/structure/topology)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the owner directive on transaction recognition / membership / step-by-step / fast / minimum
 - [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
   > what is the parenthetical noun-phrase head rule / EXTRACTION-GAP-FIX.1
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
@@ -279,21 +297,3 @@
   > where is normalized staging removed from Docling metadata
 - [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
   > where is parenthetical single-wire authority enforced
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > where is register bit-field ISF emission implemented (register_storage_fields + normalize_field_access + IsfStorageField + the storage render in crates/specforge/src/ir/isf_ir.rs; residual isf_register_fields_not_lowered)
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > where is register-field reset_value extracted and carried (ir/source.rs:432 RegisterFieldRecord.reset_value; ir/evidence.rs:11509/11838 populate it; ir/intent.rs:193 clones register_records to IntentIR)
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > where is split_coordinated_actor_relations and split_coordinated_actor_subject wired
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > where is the I2C signal gold seed
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > where is the LTL renderer for temporal rules
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > where is the SpecForge FSMGen feedback or handoff channel
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > where is the SpecForge trajectory controller engine
-- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
-  > where is the U+F0B7 signal integrity panic in evidence extraction
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > where is the acceptance checklist a code change must satisfy
