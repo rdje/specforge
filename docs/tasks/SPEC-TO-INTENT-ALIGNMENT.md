@@ -133,7 +133,7 @@ expressiveness as the bottleneck.
   Acceptance: `hash-pinned isolated replay separates the retrospective baseline from current product truth across all 12 reviewed documents; a reversible upstream repair then reduces the exact current fabricated-fact and unprovenanced-record populations without sacrificing a source-grounded true positive; controlled fabrication, provenance, and artifact-currency mutants remain detected; a comparable snapshot records the result`
   Verification: `pending`
   Commit: `pending`
-  Children: `.6a`, `.6b`, `.6c`
+  Children: `.6a`, `.6b`, `.6c`, `.6d`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6a`
   Status: `done`
@@ -187,11 +187,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6b.iii — select bounded ingest from resource risk`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6c`
-  Status: `in_progress`
+  Status: `done`
   Goal: `repair the largest remaining current honesty and provenance family without sacrificing the 19 reviewed true positives`
   Acceptance: `the I2S receiver-timing family preserves its source-grounded ns unit across EvidenceIR, SemanticIR, and IntentIR so the exact five false positives, five false negatives, and five unprovenanced records close; no document-specific production branch is introduced; a complete comparable replay proves the result and re-ranks the remaining current gaps`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `generic timing carrier and five-chain reconciliation in .6c.i; clean 12-source / 48-stage replay in .6c.ii; exact I2S 0/5/5/5→5/0/0/0 TP/FP/FN/unprovenanced; seven OpenCAPI records gain provenance only; aggregate TP/FP/FN 19/10/21→24/5/16, provenance 17/29→29/29, conservation 57/78→72/88; all 19 prior true positives retained; controlled mutants and full CI green`
+  Commit: `completed by .6c.i and .6c.ii child commits`
   Children: `.6c.i`, `.6c.ii`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6c.i`
@@ -202,9 +202,16 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6c.i — preserve timing unit and table provenance`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6c.ii`
-  Status: `pending`
+  Status: `done`
   Goal: `replay the timing-unit/provenance repair across the complete reviewed population and publish the exact comparable result`
   Acceptance: `all 12 sources and 48 stages replay at the committed .6c.i production revision; exact I2S and collateral provenance deltas are published; all 19 prior true positives survive; controller, public/live documentation, retrieval, and cleanup evidence agree`
+  Verification: `12/12 unchanged source hashes and 48/48 isolated stages at 74a658b3; result SHA-256 9bd0a8f6…33d9; I2S 0/5/5/5→5/0/0/0 TP/FP/FN/unprovenanced; seven OpenCAPI records gain provenance only and no other cell changes; controller v5 input/report SHA-256 a622385c…c392 / d6f297aa…7082 meets 29/29 provenance and selects .6d; exact 3,913-file / 1,090,908-KiB root and map absent; all eight doctrines, formatting, warning-deny Clippy, 1,866 tests passed / five ignored / zero failed, rustdoc, mdBook, and final locality`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6c.ii — qualify the timing-carrier repair`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d`
+  Status: `pending`
+  Goal: `remove the largest remaining qualified fabricated-fact family after canonical provenance reaches complete closure`
+  Acceptance: `the three reviewed OpenCAPI analog channel-loss records no longer promote as canonical timing facts unless the source-to-IntentIR contract can justify that type; all 24 current true positives and 29/29 provenance closure survive; the repair is generic, replay-qualified, and followed by controller re-ranking`
   Verification: `pending`
   Commit: `pending`
 
@@ -248,10 +255,11 @@ expressiveness as the bottleneck.
 | 13 | `SPEC-TO-INTENT-ALIGNMENT.6b.ii.b` | `done` | 12/12 replay proves exact Arm closure, two provenance-only collateral changes, and no other cell delta |
 | 14 | `SPEC-TO-INTENT-ALIGNMENT.6b.iii` | `done` | resource-sized activation, fail-closed page counting, typed signal termination, exact live 400-page fidelity, cleanup, and full CI complete |
 | 15 | `SPEC-TO-INTENT-ALIGNMENT.6c.i` | `done` | generic caption-unit/table-provenance carrier, five-chain reconciliation, cleanup, and full CI complete |
-| 16 | `SPEC-TO-INTENT-ALIGNMENT.6c.ii` | `pending` | clean whole-population replay, exact result publication, and controller re-ranking |
-| 17 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
-| 18 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
-| 19 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
+| 16 | `SPEC-TO-INTENT-ALIGNMENT.6c.ii` | `done` | 12-source replay closes I2S and all provenance, publishes exact current result, and selects `.6d` |
+| 17 | `SPEC-TO-INTENT-ALIGNMENT.6d` | `pending` | controller-selected three-record OpenCAPI analog fabrication family after provenance closes |
+| 18 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
+| 19 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
+| 20 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
 
 ## Decisions
 
@@ -357,6 +365,13 @@ expressiveness as the bottleneck.
   publication. Fixed retained SourceIR inputs identify exactly five moved EvidenceIR chains and prove the shared
   delta is 231 direct table ids plus five I2S `ns` units; `.6c.ii` alone will re-ingest the reviewed 12-source
   population at the clean carrier revision and publish the comparable product/controller result.
+- `2026-08-12`: the clean `.6c.ii` replay at revision `74a658b3` covers the same 12 source identities and all 48
+  isolated stages. Fresh root/revision metadata changes every stage digest, so semantic causality comes from the
+  locked 14-cell projection: only I2S changes keys, from 0/5/5/5 to 5/0/0/0 TP/FP/FN/unprovenanced; seven
+  OpenCAPI facts gain provenance only. Aggregate TP/FP/FN become 24/5/16, provenance reaches 29/29, conservation
+  reaches 72/88, and all 19 prior true positives survive. The remaining five fabrications are three OpenCAPI
+  analog records plus one AMD IOMMU and one GIC-400 key, so the hard-first controller selects owned `.6d` before
+  `.7` recall work. The exact 3,913-file / 1,090,908-KiB root and runtime map are removed and absent.
 
 ## Open Questions
 
@@ -436,6 +451,9 @@ expressiveness as the bottleneck.
 | `2026-08-12` | `.6c.i` focused carrier proof | `cargo test -p specforge --lib timing_table_`; retained I2S SourceIR replay and exact three-stage inspection | PASS: closed caption grammar accepts explicit timing declarations and rejects misleading mentions; row units override captions; legacy Serde loads; exact five I2S rows retain `ns` plus `table_0004` through IntentIR |
 | `2026-08-12` | `.6c.i` ADR 0025 corpus reconciliation | pre/post field-level comparison; five cascades rebuilt/validated; `scripts/check_chain_currency.sh`; exact scratch census | PASS: 55/60/37/5/74 timing counts hold; 231/231 records at each stage cite one existing SourceIR table; only five I2S units change; 15/15 carrier-neutralized stages and 5/5 adapters equal; EvidenceIR 24/24 and downstream 78/78 current; 89-file reconciliation root and 64-file probe removed and absent |
 | `2026-08-12` | `.6c.i` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines including whole-chain currency, formatting, warning-deny Clippy, 1,866 Rust tests passed / five ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final project-data locality |
+| `2026-08-12` | `.6c.ii` clean population replay and projection | 12 source hash checks; 48 isolated stage identities at committed revision `74a658b3`; exact prior/current 14-cell diff | PASS: I2S 0/5/5/5→5/0/0/0 TP/FP/FN/unprovenanced; seven OpenCAPI records gain table provenance only; no other cell changes; all 19 prior true positives survive; aggregate TP/FP/FN 24/5/16, provenance 29/29, conservation 72/88 |
+| `2026-08-12` | `.6c.ii` controller, mutants, and cleanup | strict manifest/result loaders; coverage/hash/revision/cleanup/fabrication/population mutants; snapshot write/check; generic controller byte comparison; exact cleanup census | PASS: controller v5 meets 12/12 replay plus 29/29 provenance, fails exactly five fabrications, and selects `.6d`; manifest/result/input/report SHA-256 `e7fc88c0…826a` / `9bd0a8f6…33d9` / `a622385c…c392` / `d6f297aa…7082`; 3,913 files / 1,090,908 KiB and runtime map removed and absent |
+| `2026-08-12` | `.6c.ii` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines including whole-chain currency, formatting, warning-deny Clippy, 1,866 Rust tests passed / five ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final project-data locality |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
 
@@ -682,19 +700,19 @@ expressiveness as the bottleneck.
 - [x] **LOCKSTEP** — code, tests, task frontier, roadmap, mdBook, live docs, architecture, and Knowledge Map agree
   on the default threshold/policy, error contract, observed limitation, and next action.
 
-## Planned closing criteria — `SPEC-TO-INTENT-ALIGNMENT.6c`
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6c`
 
-- **REPRODUCE / MEASURE** — pin the exact five reviewed I2S receiver-timing keys and prove where the `ns`
+- [x] **REPRODUCE / MEASURE** — pin the exact five reviewed I2S receiver-timing keys and prove where the `ns`
   unit exists in source/SourceIR and first disappears across EvidenceIR, SemanticIR, and IntentIR.
-- **ROOT CAUSE (WHY + WHERE)** — identify the shared typed carrier, parser, merge, or promotion seam that
+- [x] **ROOT CAUSE (WHY + WHERE)** — identify the shared typed carrier, parser, merge, or promotion seam that
   discards the source-grounded unit; distinguish extraction loss from evaluator/provenance projection error.
-- **ADDRESSED (verified)** — preserve the grounded unit and provenance through all canonical stages so the
+- [x] **ADDRESSED (verified)** — preserve the grounded unit and provenance through all canonical stages so the
   five false positives, five false negatives, and five unprovenanced records close exactly.
-- **NO REGRESSION** — retain all 19 current true positives, reject invented/default units, preserve unrelated
+- [x] **NO REGRESSION** — retain all 19 current true positives, reject invented/default units, preserve unrelated
   records and retained corpus currency, and kill controlled unit/provenance/fabrication mutants.
-- **GENERICITY (ADR 0006)** — infer only from typed source structure or universal unit grammar; introduce no
+- [x] **GENERICITY (ADR 0006)** — infer only from typed source structure or universal unit grammar; introduce no
   document, vendor, protocol, filename, reviewed-key, or page-layout exception.
-- **LOCKSTEP** — comparable whole-population replay, controller, task frontier, roadmap, mdBook, live docs,
+- [x] **LOCKSTEP** — comparable whole-population replay, controller, task frontier, roadmap, mdBook, live docs,
   architecture, Knowledge Map, cleanup proof, and full CI agree on the exact result and next ranked gap.
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6c.i`
@@ -711,6 +729,36 @@ expressiveness as the bottleneck.
   table id, reviewed-key, or page-layout exception exists.
 - [x] **LOCKSTEP** — code, focused evidence, task tree, live docs, architecture, mdBook, Knowledge Map, cleanup,
   and full CI agree; clean whole-population result publication remains exclusively `.6c.ii`.
+
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6c.ii`
+
+- [x] **REPRODUCE / MEASURE** — replay all 12 unchanged source identities and compare all 48 stage hashes plus
+  the exact current result against the committed `.6b.ii.b` authority at production revision `74a658b3`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — attribute every metric delta to the generic timing unit/table-provenance
+  carrier and separate the reviewed I2S closure from provenance-only collateral or unexpected semantic change.
+- [x] **ADDRESSED (verified)** — publish portable replay/result/controller evidence proving the complete five-
+  record I2S disposition and the next ranked current honesty/provenance family.
+- [x] **NO REGRESSION** — retain all 19 prior true positives, AIA and Arm honesty, source identities, frozen
+  authorities, canonical generated artifacts, and cleanup; kill replay/result/controller mutants and run CI.
+- [x] **GENERICITY (ADR 0006)** — replay and projection remain population-driven, and every measured change
+  follows typed carrier behavior rather than document-specific postprocessing.
+- [x] **LOCKSTEP** — result, controller, task frontier, roadmap, mdBook, live docs, architecture, Knowledge Map,
+  cleanup proof, and resume pointer publish the same exact outcome and next owner.
+
+## Planned closing criteria — `SPEC-TO-INTENT-ALIGNMENT.6d`
+
+- **REPRODUCE / MEASURE** — pin the three OpenCAPI analog channel-loss keys and compare their complete typed
+  source/table shape with the four correct OpenCAPI digital-skew facts and unrelated timing rows.
+- **ROOT CAUSE (WHY + WHERE)** — identify why scalar analog insertion-loss rows enter the canonical timing
+  contract despite empty reviewed gold, and distinguish producer overclassification from oracle/type mismatch.
+- **ADDRESSED (verified)** — remove or correctly retype the three false canonical timing facts while retaining
+  their source authority and without hiding them as unexplained disappearance.
+- **NO REGRESSION** — retain all 24 current true positives, 29/29 provenance, the two other known fabrication
+  families, stage currency, and exact category/cell authority; kill classification and over-suppression mutants.
+- **GENERICITY (ADR 0006)** — decide from universal typed table/quantity semantics, never OpenCAPI, document,
+  filename, table id, reviewed key, or page layout.
+- **LOCKSTEP** — focused carrier evidence, clean whole-population replay, controller re-ranking, task/book/live/
+  retrieval truth, cleanup, and full CI agree before advancing to `.7` or another honesty child.
 
 ## Commit Log
 
@@ -731,6 +779,7 @@ expressiveness as the bottleneck.
 | `SPEC-TO-INTENT-ALIGNMENT.6b.ii.b` | `SPEC-TO-INTENT-ALIGNMENT.6b.ii.b — qualify the access-carrier repair` | clean 12-source / 48-stage replay, exact Arm closure and two provenance-only collateral changes, controller v4 `.6c` selection, bounded-ingest risk leaf, and residue-free cleanup |
 | `SPEC-TO-INTENT-ALIGNMENT.6b.iii` | `SPEC-TO-INTENT-ALIGNMENT.6b.iii — select bounded ingest from resource risk` | resource-sized bounded activation, fail-closed page count, typed signal termination, exact live 400-page fidelity, residue-free cleanup, and full CI |
 | `SPEC-TO-INTENT-ALIGNMENT.6c.i` | `SPEC-TO-INTENT-ALIGNMENT.6c.i — preserve timing unit and table provenance` | closed caption grammar, backward-compatible typed provenance, exact five-chain ADR 0025 reconciliation, clean-replay boundary, and full CI |
+| `SPEC-TO-INTENT-ALIGNMENT.6c.ii` | `SPEC-TO-INTENT-ALIGNMENT.6c.ii — qualify the timing-carrier repair` | clean 12-source / 48-stage replay, exact I2S closure and seven provenance-only collateral records, controller v5 `.6d` selection, and residue-free cleanup |
 
 ## Changelog
 
@@ -763,6 +812,11 @@ expressiveness as the bottleneck.
 - `2026-08-12`: Closed `.6c.i` with a generic closed timing caption-unit grammar, direct table provenance,
   exact five-chain retained-corpus reconciliation, residue-free cleanup, and all eight doctrines green;
   frontier advances to `.6c.ii`, clean 12-source replay and exact result/controller publication.
+- `2026-08-12`: Activated `.6c.ii` only after `.6c.i` committed at `74a658b3` and the post-commit tree was clean;
+  this leaf owns the new isolated population replay, exact comparable result, controller re-ranking, and cleanup.
+- `2026-08-12`: Closed `.6c.ii` and parent `.6c` with 12/12 clean-revision replay, exact 24/5/16 current
+  TP/FP/FN, complete 29/29 provenance, 72/88 conservation, strict controller v5 and mutants, complete cleanup,
+  and full CI. The controller selects `.6d`, the three-record OpenCAPI analog fabrication family.
 - `2026-08-11`: Closed `.4a` with the strict portable dataset contract, deterministic exact evaluator, and six
   controlled-fault classes; frontier advances to `.4b`, lock two reviewed documents per category without tuning
   extraction before `.4c` publishes product conclusions.

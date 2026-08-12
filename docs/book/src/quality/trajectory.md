@@ -133,8 +133,9 @@ For example, the authority and one metric have this shape:
 The example is illustrative; `.5a` contains no product values. `.5b` first attached the frozen `.4c` report and
 `.2` capability evidence in a separate composition module, so controller policy remained untuned. `.6a` added
 one independent current-binary replay; `.6b.i` replaced that operational input with a hash-pinned 12-document
-current result; `.6b.ii.b` now qualifies the register-access/table-provenance repair against the same population.
-The generic engine is unchanged. The controller can report and propose; it cannot edit canonical IR.
+current result; `.6b.ii.b` qualified the register-access/table-provenance repair against the same population;
+and `.6c.ii` now qualifies the timing-unit/table-provenance repair. The generic engine is unchanged. The
+controller can report and propose; it cannot edit canonical IR.
 
 ## Evidence-composed current snapshot and retrospective boundary
 
@@ -152,34 +153,33 @@ cargo run --quiet -p specforge --example trajectory_controller -- \
 ```
 
 The state is `diverging`, while `history_status` is `insufficient_history`. These fields answer different
-questions. Replay currency now meets its hard target at 12/12. Divergence instead comes from exact current
-honesty failures: ten fabricated canonical facts and twelve canonical provenance failures remain. Missing
-comparable history independently prevents the controller from claiming a trend or stall. The `.4c` counts remain
-the retrospective baseline; `.6b.ii.b` is the current product authority.
+questions. Replay currency now meets its hard target at 12/12. Divergence instead comes from five exact current
+fabricated canonical facts; provenance reaches complete 29/29 closure. Missing comparable history independently
+prevents the controller from claiming a trend or stall. The `.4c` counts remain the retrospective baseline;
+`.6c.ii` is the current product authority.
 
 | Dimension | First exact observation | Status |
 | --- | --- | --- |
 | Source capture | source regions 14/14; required-modality captures 13/14 | capture deficit |
-| Semantic correctness | canonical IntentIR precision 19/29 | deficit |
-| Semantic completeness | recall 19/40; supported categories 0/6 | deficit |
-| Stage conservation | conserved or residualized crossings 57/78 | deficit |
-| Provenance/honesty | closure 17/29; fabricated-fact rate 10/29 | hard deficit |
+| Semantic correctness | canonical IntentIR precision 24/29 | deficit |
+| Semantic completeness | recall 24/40; supported categories 0/6 | deficit |
+| Stage conservation | conserved or residualized crossings 72/88 | deficit |
+| Provenance/honesty | closure 29/29; fabricated-fact rate 5/29 | fabrication hard deficit; provenance met |
 | Production participation | accounted 17/17; integrated or scheduled 12/17 | deficit, fully reported |
 | Generalization/robustness | reviewed category-oracle coverage 6/6 | meets target |
 | Operational confidence | complete review 12/12; current replay 12/12; provider-free execution 5/10 | replay target met; execution deficit |
-| Executable readiness | required-modality document accounting 1/12 | deficit |
+| Executable readiness | required-modality document accounting 2/12 | deficit |
 
-The current replay hard gate has zero violations. Separate hard gates now record ten fabricated canonical facts
-and twelve provenance-closure violations; 21 unexplained stage drops also remain. The controller ranks the existing
-leaves as follows:
+The current replay and provenance hard gates have zero violations. The fabrication gate records five fabricated
+canonical facts; 16 unexplained stage drops also remain. The controller ranks the existing leaves as follows:
 
-1. `.6c` — repair the largest remaining qualified honesty/provenance family (`hard_invariant`, 12 affected
-   canonical records; the bounded first slice is five I2S records);
-2. `.7` — recover 21 source-to-evidence canonical losses (`source_evidence_loss`);
+1. `.6d` — repair the remaining qualified fabrication families (`hard_invariant`, five affected canonical
+   records; the bounded first slice is three OpenCAPI analog channel-loss records);
+2. `.7` — recover 16 source-to-evidence canonical losses (`source_evidence_loss`);
 3. `.8` — make 0/24 required residual observations actionable (`persistent_residual`); and
 4. `.9` — measure and resolve five omitted capability islands (`breadth_efficiency`).
 
-The recommendation is `.6c`. All four task IDs exist in the task tree, the complete ordering remains in
+The recommendation is `.6d`. All four task IDs exist in the task tree, the complete ordering remains in
 the report, and review is still required before implementation.
 
 ### What the first current replay proved
@@ -222,7 +222,10 @@ the fresh output root, and is verified against the reviewed SHA-256 before Sourc
 ```console
 python3 -B scripts/replay_source_to_intent_population.py \
   --output-root .project-data/tmp/<fresh-population-root> \
-  --external-source-map .project-data/tmp/<untracked-runtime-map>.json
+  --external-source-map .project-data/tmp/<untracked-runtime-map>.json \
+  --replay-id <portable-replay-id> \
+  --owner <task-leaf-id> \
+  --dataset-id <portable-dataset-id>
 ```
 
 The runner refuses a dirty production-Rust tree, incomplete external-map coverage, source hash drift, off-volume
@@ -231,7 +234,7 @@ uses the review fixture's data-defined projections and the same Rust evaluator t
 The tracked manifest contains portable source identities, all 48 stage hashes, tool hashes, current dataset/result
 identities, and cleanup evidence. For a controlled qualification run, ingestion environment overrides are
 recorded in every document command, making the policy part of the evidence rather than hidden process state. The
-latest 3,913-file / 1,090,884-KiB workspace and runtime map were deleted exactly; canonical `generated/`, the
+latest 3,913-file / 1,090,908-KiB workspace and runtime map were deleted exactly; canonical `generated/`, the
 reviewed dataset, and the frozen `.4c` result stayed byte-identical.
 
 The access-carrier replay moves IntentIR TP/FP/FN from 7/22/33 to 19/10/21. All twelve Arm Debug register/access
@@ -248,6 +251,16 @@ validation-neutral EvidenceIR/SemanticIR/IntentIR fidelity. Unknown page count n
 system signal has an actionable typed diagnostic separate from both normal exit failure and the measured RAM
 guard. This operational repair does not change the reviewed semantic result or controller ordering: `.6c`
 remains the next semantic leaf.
+
+The subsequent timing-carrier replay runs the same 12 unchanged sources and 48 isolated stages at committed
+production revision `74a658b3`. Its only reviewed semantic change is the I2S receiver-timing cell: five
+missing-unit false positives plus five misses become five exact `ns` true positives. Seven already-emitted
+OpenCAPI records—four correct digital-skew facts and three incorrect analog channel-loss facts—gain direct table
+provenance without changing their keys. No other reviewed cell changes. Aggregate TP/FP/FN becomes 24/5/16,
+provenance closes 29/29, conservation becomes 72/88, source disposition becomes 4/14, and required-modality
+document accounting becomes 2/12. All 19 prior true positives survive. The remaining five fabrications are the
+three OpenCAPI analog records plus one AMD IOMMU and one GIC-400 register key; `.6d` owns the controller-selected
+three-record family before `.7` can address recall loss.
 
 ## Current production-path caveat
 

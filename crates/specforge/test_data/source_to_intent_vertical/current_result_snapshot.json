@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "dataset_id": "source-to-intent-vertical-access-carrier-replay-v1",
-  "owner": "SPEC-TO-INTENT-ALIGNMENT.6b.ii.b",
+  "dataset_id": "source-to-intent-vertical-timing-carrier-replay-v1",
+  "owner": "SPEC-TO-INTENT-ALIGNMENT.6c.ii",
   "selection_boundary_commit": "a3e9757d63ca5499a2393864fb503d6537de0035",
   "selection_claim": "Current-binary replay of the unchanged review-locked population; source bytes and all four replayed stage identities are re-verified without mutating the frozen baseline.",
   "minimum_documents_per_category": 2,
@@ -1739,7 +1739,7 @@
               "false_negatives": 0,
               "precision": 1.0,
               "recall": 1.0,
-              "unprovenanced_records": 2
+              "unprovenanced_records": 0
             },
             "semantic_ir": {
               "actual_keys": [
@@ -1761,7 +1761,7 @@
               "false_negatives": 0,
               "precision": 1.0,
               "recall": 1.0,
-              "unprovenanced_records": 2
+              "unprovenanced_records": 0
             },
             "intent_ir": {
               "actual_keys": [
@@ -1783,7 +1783,7 @@
               "false_negatives": 0,
               "precision": 1.0,
               "recall": 1.0,
-              "unprovenanced_records": 2
+              "unprovenanced_records": 0
             }
           },
           "residual": null,
@@ -1807,12 +1807,9 @@
               "unexplained_drops": 0
             }
           ],
-          "disposition_accounted": false,
-          "first_failing_stage": "source_to_evidence_ir",
-          "hard_failures": [
-            "canonical_provenance_loss:2",
-            "source_region_disposition_unaccounted"
-          ]
+          "disposition_accounted": true,
+          "first_failing_stage": null,
+          "hard_failures": []
         },
         {
           "cell_id": "opencapi_25gbps_phy_signaling_spec_1_0__02_analog_channel_loss",
@@ -1875,7 +1872,7 @@
               "false_negatives": 0,
               "precision": 0.0,
               "recall": null,
-              "unprovenanced_records": 2
+              "unprovenanced_records": 0
             },
             "semantic_ir": {
               "actual_keys": [
@@ -1891,7 +1888,7 @@
               "false_negatives": 0,
               "precision": 0.0,
               "recall": null,
-              "unprovenanced_records": 2
+              "unprovenanced_records": 0
             },
             "intent_ir": {
               "actual_keys": [
@@ -1907,7 +1904,7 @@
               "false_negatives": 0,
               "precision": 0.0,
               "recall": null,
-              "unprovenanced_records": 2
+              "unprovenanced_records": 0
             }
           },
           "residual": {
@@ -1969,7 +1966,6 @@
           "disposition_accounted": false,
           "first_failing_stage": "source_to_evidence_ir",
           "hard_failures": [
-            "canonical_provenance_loss:2",
             "fabricated_canonical_facts:2",
             "required_residual_missing_or_inactionable",
             "source_region_disposition_unaccounted"
@@ -1977,9 +1973,6 @@
         }
       ],
       "hard_failures": [
-        "opencapi_25gbps_phy_signaling_spec_1_0__01_digital_lane_skew:canonical_provenance_loss:2",
-        "opencapi_25gbps_phy_signaling_spec_1_0__01_digital_lane_skew:source_region_disposition_unaccounted",
-        "opencapi_25gbps_phy_signaling_spec_1_0__02_analog_channel_loss:canonical_provenance_loss:2",
         "opencapi_25gbps_phy_signaling_spec_1_0__02_analog_channel_loss:fabricated_canonical_facts:2",
         "opencapi_25gbps_phy_signaling_spec_1_0__02_analog_channel_loss:required_residual_missing_or_inactionable",
         "opencapi_25gbps_phy_signaling_spec_1_0__02_analog_channel_loss:source_region_disposition_unaccounted"
@@ -2071,7 +2064,7 @@
               "false_negatives": 0,
               "precision": 1.0,
               "recall": 1.0,
-              "unprovenanced_records": 2
+              "unprovenanced_records": 0
             },
             "semantic_ir": {
               "actual_keys": [
@@ -2093,7 +2086,7 @@
               "false_negatives": 0,
               "precision": 1.0,
               "recall": 1.0,
-              "unprovenanced_records": 2
+              "unprovenanced_records": 0
             },
             "intent_ir": {
               "actual_keys": [
@@ -2115,7 +2108,7 @@
               "false_negatives": 0,
               "precision": 1.0,
               "recall": 1.0,
-              "unprovenanced_records": 2
+              "unprovenanced_records": 0
             }
           },
           "residual": null,
@@ -2139,12 +2132,9 @@
               "unexplained_drops": 0
             }
           ],
-          "disposition_accounted": false,
-          "first_failing_stage": "source_to_evidence_ir",
-          "hard_failures": [
-            "canonical_provenance_loss:2",
-            "source_region_disposition_unaccounted"
-          ]
+          "disposition_accounted": true,
+          "first_failing_stage": null,
+          "hard_failures": []
         },
         {
           "cell_id": "opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020__02_analog_channel_loss",
@@ -2206,7 +2196,7 @@
               "false_negatives": 0,
               "precision": 0.0,
               "recall": null,
-              "unprovenanced_records": 1
+              "unprovenanced_records": 0
             },
             "semantic_ir": {
               "actual_keys": [
@@ -2221,7 +2211,7 @@
               "false_negatives": 0,
               "precision": 0.0,
               "recall": null,
-              "unprovenanced_records": 1
+              "unprovenanced_records": 0
             },
             "intent_ir": {
               "actual_keys": [
@@ -2236,7 +2226,7 @@
               "false_negatives": 0,
               "precision": 0.0,
               "recall": null,
-              "unprovenanced_records": 1
+              "unprovenanced_records": 0
             }
           },
           "residual": {
@@ -2296,7 +2286,6 @@
           "disposition_accounted": false,
           "first_failing_stage": "source_to_evidence_ir",
           "hard_failures": [
-            "canonical_provenance_loss:1",
             "fabricated_canonical_facts:1",
             "required_residual_missing_or_inactionable",
             "source_region_disposition_unaccounted"
@@ -2304,9 +2293,6 @@
         }
       ],
       "hard_failures": [
-        "opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020__01_digital_lane_skew:canonical_provenance_loss:2",
-        "opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020__01_digital_lane_skew:source_region_disposition_unaccounted",
-        "opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020__02_analog_channel_loss:canonical_provenance_loss:1",
         "opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020__02_analog_channel_loss:fabricated_canonical_facts:1",
         "opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020__02_analog_channel_loss:required_residual_missing_or_inactionable",
         "opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020__02_analog_channel_loss:source_region_disposition_unaccounted"
@@ -2501,7 +2487,7 @@
       },
       "review_scope_complete": true,
       "present_modalities": 1,
-      "accounted_modalities": 0,
+      "accounted_modalities": 1,
       "cells": [
         {
           "cell_id": "um11732_v3_2022_02_17_i2s_bus_specification__01_receiver_timing",
@@ -2552,11 +2538,11 @@
           "canonical": {
             "evidence_ir": {
               "actual_keys": [
-                "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=<missing>",
-                "clock LOW t LC|min=110|typ=<missing>|max=<missing>|unit=<missing>",
-                "clock period T|min=360|typ=400|max=440|unit=<missing>",
-                "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=<missing>",
-                "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=<missing>"
+                "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock LOW t LC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock period T|min=360|typ=400|max=440|unit=ns",
+                "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=ns",
+                "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=ns"
               ],
               "expected_keys": [
                 "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=ns",
@@ -2565,23 +2551,29 @@
                 "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=ns",
                 "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=ns"
               ],
-              "matched_keys": [],
+              "matched_keys": [
+                "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock LOW t LC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock period T|min=360|typ=400|max=440|unit=ns",
+                "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=ns",
+                "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=ns"
+              ],
               "actual_total": 5,
               "expected_total": 5,
-              "true_positives": 0,
-              "false_positives": 5,
-              "false_negatives": 5,
-              "precision": 0.0,
-              "recall": 0.0,
-              "unprovenanced_records": 5
+              "true_positives": 5,
+              "false_positives": 0,
+              "false_negatives": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "unprovenanced_records": 0
             },
             "semantic_ir": {
               "actual_keys": [
-                "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=<missing>",
-                "clock LOW t LC|min=110|typ=<missing>|max=<missing>|unit=<missing>",
-                "clock period T|min=360|typ=400|max=440|unit=<missing>",
-                "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=<missing>",
-                "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=<missing>"
+                "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock LOW t LC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock period T|min=360|typ=400|max=440|unit=ns",
+                "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=ns",
+                "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=ns"
               ],
               "expected_keys": [
                 "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=ns",
@@ -2590,23 +2582,29 @@
                 "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=ns",
                 "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=ns"
               ],
-              "matched_keys": [],
+              "matched_keys": [
+                "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock LOW t LC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock period T|min=360|typ=400|max=440|unit=ns",
+                "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=ns",
+                "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=ns"
+              ],
               "actual_total": 5,
               "expected_total": 5,
-              "true_positives": 0,
-              "false_positives": 5,
-              "false_negatives": 5,
-              "precision": 0.0,
-              "recall": 0.0,
-              "unprovenanced_records": 5
+              "true_positives": 5,
+              "false_positives": 0,
+              "false_negatives": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "unprovenanced_records": 0
             },
             "intent_ir": {
               "actual_keys": [
-                "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=<missing>",
-                "clock LOW t LC|min=110|typ=<missing>|max=<missing>|unit=<missing>",
-                "clock period T|min=360|typ=400|max=440|unit=<missing>",
-                "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=<missing>",
-                "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=<missing>"
+                "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock LOW t LC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock period T|min=360|typ=400|max=440|unit=ns",
+                "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=ns",
+                "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=ns"
               ],
               "expected_keys": [
                 "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=ns",
@@ -2615,15 +2613,21 @@
                 "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=ns",
                 "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=ns"
               ],
-              "matched_keys": [],
+              "matched_keys": [
+                "clock HIGH t HC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock LOW t LC|min=110|typ=<missing>|max=<missing>|unit=ns",
+                "clock period T|min=360|typ=400|max=440|unit=ns",
+                "hold time t htr|min=0|typ=<missing>|max=<missing>|unit=ns",
+                "set-up time t sr|min=60|typ=<missing>|max=<missing>|unit=ns"
+              ],
               "actual_total": 5,
               "expected_total": 5,
-              "true_positives": 0,
-              "false_positives": 5,
-              "false_negatives": 5,
-              "precision": 0.0,
-              "recall": 0.0,
-              "unprovenanced_records": 5
+              "true_positives": 5,
+              "false_positives": 0,
+              "false_negatives": 0,
+              "precision": 1.0,
+              "recall": 1.0,
+              "unprovenanced_records": 0
             }
           },
           "residual": {
@@ -2672,40 +2676,28 @@
             {
               "boundary": "source_to_evidence_ir",
               "expected": 5,
-              "conserved_or_residualized": 0,
-              "unexplained_drops": 5
+              "conserved_or_residualized": 5,
+              "unexplained_drops": 0
             },
             {
               "boundary": "evidence_to_semantic_ir",
-              "expected": 0,
-              "conserved_or_residualized": 0,
+              "expected": 5,
+              "conserved_or_residualized": 5,
               "unexplained_drops": 0
             },
             {
               "boundary": "semantic_to_intent_ir",
-              "expected": 0,
-              "conserved_or_residualized": 0,
+              "expected": 5,
+              "conserved_or_residualized": 5,
               "unexplained_drops": 0
             }
           ],
-          "disposition_accounted": false,
-          "first_failing_stage": "source_to_evidence_ir",
-          "hard_failures": [
-            "canonical_provenance_loss:5",
-            "fabricated_canonical_facts:5",
-            "reviewed_gold_misses:5",
-            "source_region_disposition_unaccounted",
-            "unexplained_stage_drops:5"
-          ]
+          "disposition_accounted": true,
+          "first_failing_stage": null,
+          "hard_failures": []
         }
       ],
-      "hard_failures": [
-        "um11732_v3_2022_02_17_i2s_bus_specification__01_receiver_timing:canonical_provenance_loss:5",
-        "um11732_v3_2022_02_17_i2s_bus_specification__01_receiver_timing:fabricated_canonical_facts:5",
-        "um11732_v3_2022_02_17_i2s_bus_specification__01_receiver_timing:reviewed_gold_misses:5",
-        "um11732_v3_2022_02_17_i2s_bus_specification__01_receiver_timing:source_region_disposition_unaccounted",
-        "um11732_v3_2022_02_17_i2s_bus_specification__01_receiver_timing:unexplained_stage_drops:5"
-      ]
+      "hard_failures": []
     }
   ],
   "categories": [
@@ -2713,7 +2705,7 @@
       "category": "wire-protocol",
       "document_count": 2,
       "cell_count": 2,
-      "hard_failure_count": 8,
+      "hard_failure_count": 3,
       "status": "incomplete"
     },
     {
@@ -2741,7 +2733,7 @@
       "category": "physical-link",
       "document_count": 2,
       "cell_count": 4,
-      "hard_failure_count": 12,
+      "hard_failure_count": 6,
       "status": "incomplete"
     },
     {
@@ -2754,31 +2746,31 @@
   ],
   "global": {
     "intent_bearing_source_region_disposition": {
-      "met": 1,
+      "met": 4,
       "total": 14,
-      "ratio": 0.07142857142857142
+      "ratio": 0.2857142857142857
     },
     "required_modality_accounting": {
-      "met": 1,
+      "met": 2,
       "total": 12,
-      "ratio": 0.08333333333333333
+      "ratio": 0.16666666666666666
     },
     "canonical_provenance_closure": {
-      "met": 17,
+      "met": 29,
       "total": 29,
-      "ratio": 0.5862068965517241
+      "ratio": 1.0
     },
     "stage_conservation_or_residual": {
-      "met": 57,
-      "total": 78,
-      "ratio": 0.7307692307692307
+      "met": 72,
+      "total": 88,
+      "ratio": 0.8181818181818182
     },
     "residual_actionability": {
       "met": 0,
       "total": 24,
       "ratio": 0.0
     },
-    "fabricated_canonical_facts": 10,
-    "unexplained_stage_drops": 21
+    "fabricated_canonical_facts": 5,
+    "unexplained_stage_drops": 16
   }
 }

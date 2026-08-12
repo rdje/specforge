@@ -787,17 +787,39 @@ def build_document(spec: dict, replay_root: Path | None = None) -> dict:
     }
 
 
-def build(replay_root: Path | None = None) -> bytes:
+def replay_authority_identifier(value: str | None, label: str) -> str:
+    if (
+        value is None
+        or not value
+        or len(value) > 128
+        or any(
+            not character.isascii()
+            or not (character.isalnum() or character in "._-")
+            for character in value
+        )
+    ):
+        raise ValueError(f"{label} must be a non-empty portable identifier")
+    return value
+
+
+def build(
+    replay_root: Path | None = None,
+    replay_dataset_id: str | None = None,
+    replay_owner: str | None = None,
+) -> bytes:
     current_replay = replay_root is not None
+    if current_replay:
+        replay_dataset_id = replay_authority_identifier(replay_dataset_id, "replay dataset id")
+        replay_owner = replay_authority_identifier(replay_owner, "replay owner")
     dataset = {
         "schema_version": 1,
         "dataset_id": (
-            "source-to-intent-vertical-access-carrier-replay-v1"
+            replay_dataset_id
             if current_replay
             else "source-to-intent-vertical-reviewed-v1"
         ),
         "owner": (
-            "SPEC-TO-INTENT-ALIGNMENT.6b.ii.b"
+            replay_owner
             if current_replay
             else "SPEC-TO-INTENT-ALIGNMENT.4b"
         ),
@@ -823,10 +845,19 @@ def main() -> int:
     mode.add_argument("--write-replay", action="store_true")
     parser.add_argument("--replay-root", type=Path)
     parser.add_argument("--output", type=Path)
+    parser.add_argument("--replay-dataset-id")
+    parser.add_argument("--replay-owner")
     args = parser.parse_args()
     if args.write_replay:
-        if args.replay_root is None or args.output is None:
-            parser.error("--write-replay requires --replay-root and --output")
+        if (
+            args.replay_root is None
+            or args.output is None
+            or args.replay_dataset_id is None
+            or args.replay_owner is None
+        ):
+            parser.error(
+                "--write-replay requires --replay-root, --output, --replay-dataset-id, and --replay-owner"
+            )
         if (
             args.replay_root.is_absolute()
             or args.output.is_absolute()
@@ -839,13 +870,18 @@ def main() -> int:
         replay_absolute.relative_to((ROOT / ".project-data/tmp").resolve(strict=True))
         destination = (ROOT / args.output).resolve()
         destination.relative_to(replay_absolute)
-        rendered = build(args.replay_root)
+        rendered = build(args.replay_root, args.replay_dataset_id, args.replay_owner)
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_bytes(rendered)
         print(f"wrote {args.output} ({len(rendered)} bytes)")
         return 0
-    if args.replay_root is not None or args.output is not None:
-        parser.error("--replay-root and --output are valid only with --write-replay")
+    if (
+        args.replay_root is not None
+        or args.output is not None
+        or args.replay_dataset_id is not None
+        or args.replay_owner is not None
+    ):
+        parser.error("replay-only arguments are valid only with --write-replay")
     rendered = build()
     destination = ROOT / FIXTURE
     if args.write:

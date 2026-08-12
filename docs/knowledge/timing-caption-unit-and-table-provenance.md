@@ -11,7 +11,7 @@ answers:
 date: 2026-08-12
 status: current
 tags: [timing, evidence-ir, semantic-ir, intent-ir, tables, provenance, units]
-evidence: crates/specforge/src/ir/source.rs (timing_caption_unit, TimingConstraintRecord); crates/specforge/src/ir/evidence.rs (synthesize_timing_constraints); docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.6c.i)
+evidence: crates/specforge/src/ir/source.rs (timing_caption_unit, TimingConstraintRecord); crates/specforge/src/ir/evidence.rs (synthesize_timing_constraints); crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json; docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.6c.i, .6c.ii)
 reverify: "cargo test -p specforge --lib timing_table_ && bash scripts/check_chain_currency.sh"
 ---
 
@@ -30,3 +30,8 @@ timing producer read only a dedicated unit column and the carrier had no direct 
 stages faithfully cloned those omissions. The `.6c.i` retained-chain reconciliation proves all five reviewed
 rows carry exact `ns` plus `table_0004` through IntentIR; the same generic provenance carrier accounts for every
 table-derived timing record in the five affected replayable chains without changing their other content.
+
+The clean `.6c.ii` population replay at committed production revision `74a658b3` confirms the reviewed outcome:
+the I2S cell changes from 0/5/5/5 to 5/0/0/0 true-positive/false-positive/false-negative/unprovenanced counts.
+Seven existing OpenCAPI facts gain direct table provenance without semantic-key changes, closing aggregate
+provenance from 17/29 to 29/29. No other reviewed cell changes, and all 19 prior true positives survive.

@@ -1,3 +1,16 @@
+### SPEC-TO-INTENT-ALIGNMENT.6c.ii — qualify the timing carrier
+
+- Replayed all 12 unchanged reviewed source identities and 48 isolated stages at committed production revision
+  `74a658b3`, using only SSD-hosted external authority and repository-local scratch. Replay identifiers are now
+  explicit required inputs instead of stale `.6b.ii.b` constants.
+- Published current IntentIR TP/FP/FN 24/5/16, provenance 29/29, conservation 72/88, source disposition 4/14,
+  and required-modality document accounting 2/12. I2S alone changes semantically from 0/5/5/5 to 5/0/0/0;
+  seven OpenCAPI records gain provenance only; every one of the 19 prior true positives survives.
+- Controller v5 keeps the fabrication hard gate exact at five, meets replay and provenance gates, and selects
+  `.6d`, beginning with the three-record OpenCAPI analog channel-loss fabrication family before `.7` recall work.
+- Promoted the portable replay/result authority, then removed the exact 3,913-file / 1,090,908-KiB replay root
+  and runtime absolute-path map; both are absent and canonical generated artifacts remain untouched.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6c.i — preserve timing unit and table provenance
 
 - Added a closed, source-spelling-preserving table-caption grammar for `all value(s) in <timing unit>`. It is a

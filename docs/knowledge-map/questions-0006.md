@@ -136,7 +136,7 @@
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > what debug/diagnostic tools does specforge have (TOOLBOX.md)
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what defect does SPEC-TO-INTENT-ALIGNMENT.6c repair next
+  > what defect does SPEC-TO-INTENT-ALIGNMENT.6d repair next
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what did FSMGEN answer about transaction phase membership (don't fabricate value or order; keep value-less participation + unordered membership as IntentIR metadata/residual not body steps; checked phase-group metadata is the future ISF shape on its own FSMGen tree; .isf stays source of truth, no .val)
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -145,6 +145,8 @@
   > what did KG-ISF-TRANSACTIONS.2n measure / decide
 - [retrospective-baseline-current-replay-boundary](../knowledge/retrospective-baseline-current-replay-boundary.md)
   > what did SPEC-TO-INTENT-ALIGNMENT.6a prove
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what did SPEC-TO-INTENT-ALIGNMENT.6c improve
 - [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
   > what did refresh 50 change in the OpenCAPI data link chain
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
@@ -295,5 +297,3 @@
   > what gives timing observation samples tick authority
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > what global provenance and stage-conservation gates apply before executable lowering
-- [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md)
-  > what grounded content survives the Cortex-A76 optimization guide refresh

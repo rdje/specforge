@@ -1,4 +1,28 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6c.ii (`2026-08-12`) — provenance closure exposes the next honesty family
+
+The clean replay was intentionally run only after `.6c.i` committed. Its production revision is therefore the
+exact `74a658b3` boundary, not a dirty-tree approximation. All 12 reviewed source hashes match their prior
+authority, including the eight caller-authorized read-only inputs on the repository's SSD volume; the runner
+copies those inputs into repository-local scratch before use and persists no host path.
+
+Every stage artifact has a new identity because the isolated JSON carries the fresh replay root and the current
+production revision. The reviewed projection provides the causal comparison: only five cells change. I2S moves
+from 0/5/5/5 to 5/0/0/0 true-positive/false-positive/false-negative/unprovenanced counts because the five exact
+values now retain `ns` and `table_0004`. Four correct OpenCAPI digital-skew records and three incorrect analog
+channel-loss records gain table provenance only. No other reviewed cell changes, and all 19 prior true positives
+survive.
+
+The new aggregate is 24/5/16 TP/FP/FN, 29/29 provenance, 72/88 conservation, 4/14 source disposition, and 2/12
+required-modality document accounting. The result is important structurally: provenance is no longer mixed into
+the next decision. The controller still fails the zero-fabrication hard gate on five exact records and selects a
+new owned `.6d` leaf. Its largest bounded family is three OpenCAPI analog channel-loss records; AMD IOMMU and
+GIC-400 account for one remaining fabricated register key each. Recall recovery under `.7` stays second.
+
+The replay orchestrator and projection now require caller-provided portable replay, owner, and dataset identities,
+so a later qualification cannot silently publish stale `.6b.ii.b` names. After portable evidence and the result
+were promoted, the exact 3,913-file / 1,090,908-KiB root and runtime source map were removed and proved absent.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6c.i (`2026-08-12`) — the unit existed before the carrier
 
 I2S `table_0004` was already recognized as timing and its five scalar rows were already exact. The missing value

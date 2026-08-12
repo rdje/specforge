@@ -81,8 +81,9 @@ The current sequencing is upstream-first: faithful PDF evidence must populate So
 boundary, but SpecForge does not anticipate a language gap without a source-grounded value.
 [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md) makes that ordering measurable (ADR 0033/0034).
 Its reviewed 12/12 current replay and access/provenance correction ship. The controller-selected I2S unit family
-now has a generic timing caption-unit/table-provenance carrier and current retained-chain reconciliation; clean
-whole-population qualification is next. A reproduced 400-page failure also drove resource-sized bounded
+now has a generic timing caption-unit/table-provenance carrier and clean whole-population qualification: current
+IntentIR is 24/5/16 TP/FP/FN with complete 29/29 provenance. The hard-first controller next selects the
+three-record OpenCAPI analog fabrication family under `.6d`. A reproduced 400-page failure also drove resource-sized bounded
 activation, fail-closed page counting, typed signal status, and exact four-stage fidelity. The task tree owns
 detailed metrics, evidence, and ordering.
 

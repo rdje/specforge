@@ -57,6 +57,20 @@ def pretty_bytes(value: object) -> bytes:
     return (json.dumps(value, indent=2, ensure_ascii=False) + "\n").encode()
 
 
+def authority_identifier(value: str, label: str) -> str:
+    if (
+        not value
+        or len(value) > 128
+        or any(
+            not character.isascii()
+            or not (character.isalnum() or character in "._-")
+            for character in value
+        )
+    ):
+        raise ValueError(f"{label} must be a non-empty portable identifier")
+    return value
+
+
 def safe_repository_path(path: Path, label: str, *, below_project_tmp: bool = False) -> Path:
     if not path.parts or path.is_absolute() or ".." in path.parts:
         raise ValueError(f"{label} must be a safe repository-relative path: {path}")
@@ -195,7 +209,14 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--output-root", type=Path, required=True)
     parser.add_argument("--external-source-map", type=Path, required=True)
+    parser.add_argument("--replay-id", required=True)
+    parser.add_argument("--owner", required=True)
+    parser.add_argument("--dataset-id", required=True)
     args = parser.parse_args()
+
+    replay_id = authority_identifier(args.replay_id, "replay id")
+    owner = authority_identifier(args.owner, "owner")
+    dataset_id = authority_identifier(args.dataset_id, "dataset id")
 
     output_absolute = safe_repository_path(
         args.output_root, "population replay output root", below_project_tmp=True
@@ -290,6 +311,10 @@ def main() -> int:
             args.output_root.as_posix(),
             "--output",
             current_dataset.as_posix(),
+            "--replay-dataset-id",
+            dataset_id,
+            "--replay-owner",
+            owner,
         ],
         cwd=ROOT,
         check=True,
@@ -313,8 +338,8 @@ def main() -> int:
 
     manifest = {
         "schema_version": 1,
-        "replay_id": "spec-to-intent-6bii-access-carrier-population",
-        "owner": "SPEC-TO-INTENT-ALIGNMENT.6b.ii.b",
+        "replay_id": replay_id,
+        "owner": owner,
         "production_revision": production_revision,
         "reviewed_dataset": {
             "path": DATASET.as_posix(),

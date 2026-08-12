@@ -2,6 +2,8 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > why is the absolute bit position never derived from offset*8+bit
 - [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
   > why is the block name not used to qualify the duplicate registers (heading levels flattened)
 - [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
