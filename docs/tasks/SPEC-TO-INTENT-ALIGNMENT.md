@@ -318,9 +318,52 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii — install trusted derivation kernel`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv`
-  Status: `pending`
+  Status: `in_progress`
   Goal: `register production grammar and inference rules and migrate promoted claim families to proof terms`
   Acceptance: `every raw-text interpretation and semantic promotion site is owned by a registered universal rule with typed premises, source span/provenance, declared output kind, and alpha obligation; unregistered production decisions cannot create canonical SourceIR, EvidenceIR, SemanticIR, IntentIR, or ISF authority`
+  Verification: `pending`
+  Commit: `completed by .6d.ii.e.iv.i through .6d.ii.e.iv.vi child commits`
+  Children: `.6d.ii.e.iv.i`, `.6d.ii.e.iv.ii`, `.6d.ii.e.iv.iii`, `.6d.ii.e.iv.iv`, `.6d.ii.e.iv.v`, `.6d.ii.e.iv.vi`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i`
+  Status: `done`
+  Goal: `freeze the exact production rule, producer, mutation, and canonical-insertion denominator`
+  Acceptance: `a machine-checked inventory maps every one of the 38 claim families to all current producer and mutator entrypoints, proof class, registered rule ids, typed premise kinds, symbol capability, alpha obligation, artifact schema owner, migration child, and canonical insertion/write/lower seam; missing modules, entrypoints, families, or duplicate rule ids fail closed; the artifact-level cumulative-ledger and proofless compatibility contract is fixed before a schema changes`
+  Verification: `the exact checked join covers 38/38 claim families, expands to 168 unique field-root rules, resolves 113 current producer/mutator entrypoints and 39 canonical seams, and accounts for four conformance-only bypasses; six controlled mutations reject missing family, absent entrypoint, capability/alpha mismatch, wrong rule stem, and unsafe conformance disposition; cumulative-ledger, empty-field/per-record coverage, proofless compatibility, and noncanonical overlay contracts are durable; no production Rust, artifact schema, generated canonical artifact, or extraction behavior changes; all eight doctrines, formatting, warning-deny Clippy, 1,916 Rust tests passed / six ignored / zero failed, five compile-fail doctests, warning-deny Rustdoc, mdBook test/build, and final locality pass`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i — freeze rule migration graph`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii`
+  Status: `pending`
+  Goal: `make every SourceIR family proof-carrying from exact captured source evidence`
+  Acceptance: `all five SourceIR families are covered by registered capture, classification, integrity, residual, or evaluation rules; classified records cite an exact unclassified capture projection; current-schema proofless SourceIR cannot feed EvidenceIR; legacy source remains inspectable only and future proof/schema versions reject`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii`
+  Status: `pending`
+  Goal: `make every EvidenceIR producer and post-build mutator proof-carrying`
+  Acceptance: `all 11 EvidenceIR families, deterministic extractors, convergence passes, prior-guided paths, VLM/NLP/LLM proposals, alias reclassification, contract/signal mutation commands, and validation backannotations either extend a current verified ledger through registered rules or refuse canonical persistence; every semantic claim cites exact SourceIR claims or current source/table/visual premises`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv`
+  Status: `pending`
+  Goal: `make every SemanticIR carry, merge, conflict, synthesis, verification, and residual family proof-carrying`
+  Acceptance: `all 11 SemanticIR families consume a verified cumulative EvidenceIR ledger; every carried record cites its upstream claim and every synthesis/conflict/residual cites all contributing premises under a registered rule; proofless or stale EvidenceIR cannot produce SemanticIR`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v`
+  Status: `pending`
+  Goal: `make every IntentIR carry and canonical behavioral synthesis family proof-carrying`
+  Acceptance: `all seven IntentIR families consume a verified cumulative SemanticIR ledger; carry, identity summary, behavior, constraint, assumption, transaction, actor relation, temporal invariant, and residual outputs are registered and cite exact upstream claims; proofless or stale SemanticIR cannot produce IntentIR`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi`
+  Status: `pending`
+  Goal: `make ISF lowering proof-gated and qualify the complete 38-family cumulative chain`
+  Acceptance: `all four adapter families consume a verified IntentIR ledger; target encoding and every rendered ISF construct cite registered lowering proofs while unsupported content remains source-linked residual; proofless/stale/future artifacts cannot emit ISF; all 38 families and every canonical write/lower seam are proof-covered and current artifacts are reconciled exactly`
   Verification: `pending`
   Commit: `pending`
 
@@ -411,15 +454,20 @@ expressiveness as the bottleneck.
 | 25 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i` | `done` | ADR 0038, exact inventories, lossless live-ledger rollover, and full CI are complete |
 | 26 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii` | `done` | core/conformance direction is compiler-visible and mutation-tested; public facade is compatible |
 | 27 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii` | `done` | sealed capability boundary and kernel-only verified authority are installed and adversarially tested |
-| 28 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv` | `pending` | migrate every production grammar/inference family to registered proof terms |
-| 29 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v` | `pending` | make structural violations mechanically unmergeable |
-| 30 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi` | `pending` | prove fail-closure with mutations and per-rule alpha obligations |
-| 31 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii` | `pending` | qualify exact migration deltas before behavioral population work |
-| 32 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `pending` | behavioral metamorphic and whole-population qualification closes the genericity parent |
-| 33 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | hard-first controller must remove the two remaining unrelated register fabrications before recall work |
-| 34 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
-| 35 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
-| 36 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
+| 28 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i` | `done` | 38 families / 168 rules / 113 producer-mutators / 39 seams / four bypasses are checked and the cumulative-ledger contract is fixed |
+| 29 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii` | `pending` | prove all five SourceIR families from exact captured input |
+| 30 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii` | `pending` | prove all 11 EvidenceIR families and every post-build mutation path |
+| 31 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv` | `pending` | prove all 11 SemanticIR carry, inference, conflict, and residual families |
+| 32 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v` | `pending` | prove all seven IntentIR carry and synthesis families |
+| 33 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.vi` | `pending` | proof-gate all four adapter families and reconcile the complete chain |
+| 34 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.v` | `pending` | make structural violations mechanically unmergeable |
+| 35 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vi` | `pending` | prove fail-closure with mutations and per-rule alpha obligations |
+| 36 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.vii` | `pending` | qualify exact migration deltas before behavioral population work |
+| 37 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `pending` | behavioral metamorphic and whole-population qualification closes the genericity parent |
+| 38 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | hard-first controller must remove the two remaining unrelated register fabrications before recall work |
+| 39 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
+| 40 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
+| 41 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
 
 ## Decisions
 
@@ -700,6 +748,9 @@ expressiveness as the bottleneck.
 | `2026-08-12` | `.6d.ii.e.iii` capability and kernel architecture | opaque-type API review; sealed capability construction; deterministic rule registry; live inventory and dependency gates | PASS: opaque document/symbol atoms expose identity but no spelling conversion, ordering, display, or Serde; grammar/persistence/presentation/lowering and capture capabilities cannot be constructed downstream; ruleset and conclusion bytes use SHA-256; inventory is exact at 77/77 modules, 38/38 families, and 168/168 fields; the one-way package graph remains valid |
 | `2026-08-12` | `.6d.ii.e.iii` adversarial derivation controls | 16 focused kernel unit tests; five external compile-fail doctests; compatibility, capture, topology, symbol-use, and tamper controls | PASS: stale/cross-document evidence, empty or indirect grounding, unknown/wrong rules, excessive symbol authority, duplicate addresses, unregistered axioms, conclusion tampering, and invalid upstream order reject; current proof envelopes, legacy, stale, malformed, and future schemas cannot self-authorize canonical truth |
 | `2026-08-12` | `.6d.ii.e.iii` behavioral and full repository qualification | `cargo test --workspace --offline -- --format terse`; `cargo clippy --workspace --all-targets -- -D warnings`; `bash scripts/run_ci.sh` | PASS: 1,916 Rust tests / six intentional ignores / zero failures plus five compile-fail doctests; all eight doctrines including exact chain currency, warning-deny rustdoc, mdBook test/build, and final locality; current producers remain proofless and no persisted schema or canonical artifact changed |
+| `2026-08-12` | `.6d.ii.e.iv.i` exact rule and canonical-seam census | `perl scripts/check_production_genericity_rules.pl`; path/function resolution against all inventory rows | PASS: 38/38 families expand to 168 unique field-root rules; 113 producer/mutator entrypoints, 39 canonical seams, and four conformance-only bypass obligations resolve; all five stage writers plus raw validation backannotation are named |
+| `2026-08-12` | `.6d.ii.e.iv.i` fail-closed inventory controls | `perl -c scripts/check_production_genericity_rules.pl`; `perl scripts/check_production_genericity_rules.pl --self-test` | PASS: syntax clean and 6/6 clean/missing-family/absent-entrypoint/capability-alpha/wrong-stem/unsafe-bypass cases behave exactly; repository-volume fixture residue is absent |
+| `2026-08-12` | `.6d.ii.e.iv.i` behavior and full repository qualification | source/schema/generated-artifact diff review; `bash scripts/run_ci.sh` | PASS: no production Rust, persisted schema, extraction behavior, or generated canonical artifact changed; all eight doctrines, formatting, warning-deny Clippy, 1,916 Rust tests / six intentional ignores / zero failures, five compile-fail doctests, warning-deny Rustdoc, mdBook test/build, and final locality pass |
 | `2026-08-12` | scheduled artifact cleanup | `.bin`/`.log` census under generated and Cargo release/debug trees; exact age/purpose inspection before deletion; residue census | PASS: removed one abandoned 23-file / 92-KiB Aug-11 live-document-size test workspace and the fully rebuildable 3,116,900-KiB `target/debug/incremental` cache; no `.bin`/`.log` remains in the requested generated/debug-deps/release census |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
@@ -1244,6 +1295,24 @@ the reviewed replay can name its production revision.
   inventory, task frontier, and resume pointer publish the shipped substrate and explicitly leave every current
   production family proofless for `.e.iv` migration rather than claiming genericity signoff early.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i`
+
+- [x] **REPRODUCE / MEASURE** — join all 38 claim families to 168 deterministic field-root rules and resolve
+  113 current producer/mutator entrypoints, 39 canonical seams, and four conformance-only bypass obligations.
+- [x] **ROOT CAUSE (WHY + WHERE)** — canonical authority is created not only by stage constructors but by prior
+  carry, dedup/reclassification, provider/condition/contract/register/signal mutation, validation backannotation,
+  visual enrichment, and temporary conformance patches that can reuse ordinary writers or downstream builders.
+- [x] **ADDRESSED (verified)** — checked inventories fix premise/capability/alpha/compatibility metadata and one
+  stage owner for every family and bypass. The durable design uses one verified ordered ledger, field-root plus
+  per-record coverage, proof-staling mutation, fail-closed history, and noncanonical conformance overlays.
+- [x] **NO REGRESSION** — no production Rust, artifact schema, extraction behavior, or generated canonical
+  artifact changes. The 1,916/6/0 Rust baseline, five compile-fail doctests, all doctrines, Clippy/Rustdoc,
+  mdBook, and final locality pass.
+- [x] **GENERICITY (ADR 0006)** — the contract constrains typed information flow, registered derivation, and
+  canonical sinks rather than enumerating forbidden words. Temporary storage and fixture identity grant no trust.
+- [x] **LOCKSTEP** — inventories, checker, ADR, audit, Knowledge Map, roadmap, README, mdBook, live docs, task
+  frontier, and resume pointer publish the same exact migration denominator and leave stage behavior honestly open.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -1276,6 +1345,7 @@ the reviewed replay can name its production revision.
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.i — freeze proof architecture` | ADR 0038, exact 71-module / 38-family / 168-field migration inventories, drift-rejecting checker, and no production behavior change |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii — separate core from conformance` | compiler-visible one-way package graph, compatible facade, 76-module live inventory, five dependency controls, and unchanged behavior |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii — install trusted derivation kernel` | sealed opaque identity capabilities, closed rule registry, kernel-only verified authority, fail-closed compatibility, and unchanged persisted behavior |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i — freeze rule migration graph` | exact 38-family / 168-rule / 113-entrypoint / 39-seam graph, four fail-closed conformance bypasses, cumulative-ledger contract, and unchanged production behavior |
 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | measured remaining AMD IOMMU and GIC-400 fabrication families, root-cause split, and clean qualification |
 
 ## Changelog
@@ -1324,6 +1394,14 @@ the reviewed replay can name its production revision.
   external compile-fail contracts reject spelling access, capability forgery, evidence laundering, proof replay,
   tampering, and compatibility self-authorization; the full 1,916/6/0 baseline and repository gate pass without a
   persisted schema or generated-artifact change. `.e.iv` next migrates all 38 claim families to registered rules.
+- `2026-08-12`: Activated `.6d.ii.e.iv` only after `.e.iii` committed at `0ef93078` and the post-commit tree was
+  clean with a zero-byte commit brief. This leaf owns the exact whole-production producer/promotion census, closed
+  universal rule registration, proof attachment, kernel verification before canonical insertion, and honest
+  residualization for every unproved claim across all 38 inventoried families. No named document gets an exception.
+- `2026-08-12`: Closed `.6d.ii.e.iv.i` after the exact checked migration graph covered all 38 families, 168 field
+  rules, 113 current producer/mutator entrypoints, 39 canonical seams, and four conformance-only bypasses. Six
+  controlled mutations and full CI pass. The cumulative-ledger and noncanonical-overlay contracts change no
+  production behavior; `.e.iv.ii` next owns SourceIR proof-bearing implementation after this commit is clean.
 
 - `2026-08-11`: Created on owner request so the ramp-up trajectory assessment and upstream-first direction do
   not remain chat-only.

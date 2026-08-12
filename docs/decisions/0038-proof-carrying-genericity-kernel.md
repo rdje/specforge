@@ -4,8 +4,8 @@ title: Production genericity is enforced by opaque capabilities and a proof-carr
 date: 2026-08-12
 status: accepted
 scope: genericity, architecture, information-flow, proof-ledger, rule-registry, doctrine-enforcement
-evidence: doctrine/production_genericity/module_inventory.tsv; doctrine/production_genericity/claim_family_inventory.tsv; docs/research/production-genericity-pipeline-audit.md; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; scripts/check_production_genericity_dependencies.pl
-reverify: perl scripts/check_production_genericity_inventory.pl && perl scripts/check_production_genericity_dependencies.pl
+evidence: doctrine/production_genericity/module_inventory.tsv; doctrine/production_genericity/claim_family_inventory.tsv; doctrine/production_genericity/rule_family_inventory.tsv; doctrine/production_genericity/conformance_bypass_inventory.tsv; docs/research/production-genericity-pipeline-audit.md; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_rules.pl
+reverify: perl scripts/check_production_genericity_inventory.pl && perl scripts/check_production_genericity_dependencies.pl && perl scripts/check_production_genericity_rules.pl && perl scripts/check_production_genericity_rules.pl --self-test
 answers:
   - "What replaces a forbidden vocabulary list as the proof of production genericity?"
   - "What is SpecForge's trusted promotion kernel?"
@@ -288,6 +288,41 @@ This status is intentionally bounded. Existing artifact schemas and producer fam
 ledger; `.e.iv` owns their exact migration and current-chain reconciliation. The implementation therefore proves
 the kernel/capability contract, not whole-pipeline compliance. The live denominator is 77 modules / 38 claim
 families / 168 fields, with 16 focused unit controls and five external compile-fail controls.
+
+### Exact rule-migration contract (`.6d.ii.e.iv.i`)
+
+The rule migration now has a checked, stage-owned graph before any artifact schema changes. The 38 claim-family
+rows expand deterministically to one root rule for each of the current 168 top-level fields and resolve 113
+current producer/mutator entrypoints plus 39 canonical insertion/write seams. A separate inventory owns four
+conformance/evaluation entrypoints that temporarily patch SourceIR, EvidenceIR, or SemanticIR values. The checker
+joins those declarations to the exact claim-family denominator, resolves every path and function, enforces the
+closed premise/capability/alpha matrix, rejects duplicate rule ids, and requires every stage writer plus raw
+validation backannotation to be named.
+
+The migration uses one cumulative ledger for the complete pipeline:
+
+1. SourceIR begins from exact normalized capture bytes and document scope. A classification proof cites the
+   unclassified captured projection; it cannot cite the record it is classifying.
+2. Each downstream stage verifies the complete upstream artifact and ledger, copies those verified claims as an
+   exact ordered prefix, and appends only current-stage claims. Every upstream premise resolves to that prefix.
+3. Every current top-level field has a root conclusion, including the empty case. Non-empty record collections
+   additionally receive stable per-record addresses. The ledger carrier is verifier metadata, not a recursive
+   semantic claim.
+4. Canonical load, serialization, write, downstream build, and ISF lowering verify current schema, ruleset,
+   artifact digests, complete field coverage, and ledger topology. A post-build mutation makes that verification
+   stale until a registered rule extends the ledger.
+5. Proofless history remains inspectable and may be rebuilt or residualized from retained evidence; it cannot be
+   wrapped in synthetic proofs. Unsupported future proof, ruleset, or artifact schemas reject.
+
+A repository-local temporary file is not a trust boundary. Conformance fixtures must become typed noncanonical
+overlays that cannot call canonical writers, downstream production builders, or lowering. Evaluation-only storage
+rebasing must preserve verified proof bytes and grant no semantic mutation. This prevents named test data from
+acquiring production authority merely because it was written through an ordinary stage type.
+
+This child freezes the reviewed high-level producer/mutator graph and compatibility design; it does not yet make
+the 168 fields proof-carrying. Stage children `.e.iv.ii` through `.e.iv.vi` own that implementation. The later
+AST/information-flow doctrine still derives raw decision-site and helper-call closure rather than trusting this
+reviewed entrypoint list as the final static proof.
 
 ## Consequences
 

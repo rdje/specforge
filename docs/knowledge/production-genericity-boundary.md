@@ -23,11 +23,14 @@ answers:
   - "How does SpecForge keep source-owned symbol spelling opaque?"
   - "Can a deserialized proof ledger authorize a canonical claim?"
   - "Which premise kinds can the trusted promotion kernel accept?"
+  - "How many production rule families, producer or mutator entrypoints, and canonical seams must migrate?"
+  - "Can a temporary conformance artifact use a canonical stage writer?"
+  - "How does the proof ledger continue from SourceIR through ISF lowering?"
 date: 2026-08-12
 status: current
 tags: [genericity, extraction, architecture, doctrine]
-evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge/src/ir/derivation.rs; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_inventory.pl
-reverify: cargo test -p specforge-core derivation --offline && cargo test -p specforge-core --doc --offline && perl scripts/check_production_genericity_dependencies.pl && perl scripts/check_production_genericity_inventory.pl
+evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge/src/ir/derivation.rs; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; doctrine/production_genericity/rule_family_inventory.tsv; doctrine/production_genericity/conformance_bypass_inventory.tsv; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_inventory.pl; scripts/check_production_genericity_rules.pl
+reverify: cargo test -p specforge-core derivation --offline && cargo test -p specforge-core --doc --offline && perl scripts/check_production_genericity_dependencies.pl && perl scripts/check_production_genericity_inventory.pl && perl scripts/check_production_genericity_rules.pl && perl scripts/check_production_genericity_rules.pl --self-test
 ---
 
 A neutral SpecForge is feasible when universal digital-intent semantics are separated from opaque,
@@ -102,3 +105,13 @@ in-memory verification witness. A deserialized ledger—even at the current sche
 current evidence/conclusion check; old/stale input rebuilds or residualizes, while malformed/future input rejects.
 The live inventory is now 77 modules / 38 families / 168 fields. Existing producers remain proofless until the
 exact `.e.iv` migration, so whole-core signoff remains open.
+
+The first `.e.iv` child freezes the exact reviewed migration graph before a stage schema changes. Its 38 rows
+expand to 168 field-root rules and resolve 113 current producer/mutator entrypoints, 39 canonical seams, and four
+conformance-only mutation bypasses. The target is one cumulative ledger: each stage verifies and preserves the
+exact upstream proof prefix, then appends its own field-root and per-record claims. Canonical load, serialization,
+write, downstream build, and ISF lowering all require a current complete ledger; an unregistered mutation makes
+the artifact stale. Proofless history can be inspected, rebuilt, or residualized but cannot gain synthetic proof.
+A temporary conformance path grants no authority: fixture edits must use noncanonical overlays that cannot call a
+canonical writer/build/lowering seam. This census is the high-level migration contract, not the final AST proof;
+the later structural doctrine must still derive helper-level decision closure mechanically.

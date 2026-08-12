@@ -70,7 +70,8 @@ See [Getting Started](docs/book/src/getting-started.md),
 ## Architecture at a glance
 
 - `crates/specforge-core/` is the specification-instance-neutral extraction/IR/adapter boundary and owns the
-  sealed opaque-identity and proof-verification kernel;
+  sealed opaque-identity and proof-verification kernel; its checked 38-family / 168-field producer graph is
+  frozen for staged proof-carrying migration;
   `crates/specforge-conformance/` owns evaluation, replay, calibration, and named fixtures; and
   `crates/specforge/` is the CLI and compatibility facade over both.
 - `docs/book/` is the maintained user-facing manual.

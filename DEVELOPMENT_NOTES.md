@@ -1,4 +1,30 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i (`2026-08-12`) — temporary storage is not a trust boundary
+
+A constructor census alone would leave canonical bypasses. Existing artifacts can be carried forward,
+deduplicated, reclassified, provider-enriched, register-recovered, signal-resolved, or validation-backannotated
+after the principal builder returns. Conformance code can also patch temporary stage structs and then call an
+ordinary production writer or downstream builder. The exact reviewed graph therefore owns producers, mutators,
+and sinks together: 38 families, 168 field-root rules, 113 current producer/mutator entrypoints, 39 canonical
+seams, and four explicit conformance-only bypass obligations.
+
+The proof design is cumulative rather than one disconnected ledger per stage. SourceIR proves normalized capture
+before classification. Each later stage verifies the exact upstream artifact and ledger, retains those claims as
+an ordered prefix, and appends its own conclusions. Every top-level field receives a root proof even when empty;
+non-empty record collections also receive stable per-record proofs. This gives completeness a finite denominator
+without pretending that the ledger metadata must prove itself recursively.
+
+Canonical authority is checked when a stage loads, serializes, writes, feeds a downstream production build, or
+lowers to ISF. Direct public mutation makes the recorded conclusion digests stale until a registered mutator
+extends the ledger. Historical proofless input stays inspectable and can rebuild or residualize, but cannot be
+wrapped in synthetic proof. Conformance fixtures will use noncanonical typed overlays that cannot call canonical
+sinks; an evaluation-only storage rebase must preserve proof bytes and convey no semantic permission.
+
+The TSV graph is a reviewed high-level migration contract, deliberately not the final static proof. The later
+AST/information-flow doctrine must derive raw decision/helper closure, fail on parse or macro uncertainty, and
+prove no unregistered construction path exists. This division makes the stage migrations reviewable without
+weakening the eventual closed-world gate.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii (`2026-08-12`) — authority is an unforgeable verification witness
 
 Persisted provenance is not authority. Any public record or deserializable ledger can be copied, edited, or

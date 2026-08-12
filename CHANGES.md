@@ -1,3 +1,18 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i — freeze the rule migration graph
+
+- Added an exact checked migration inventory for all 38 canonical claim families. They expand to 168 deterministic
+  top-level-field rule ids and resolve 113 current producer/mutator entrypoints plus 39 canonical seams, including
+  each stage writer and validation's separate backannotation writer.
+- Added a separate four-row conformance-bypass inventory for temporary SourceIR, EvidenceIR, SemanticIR, and
+  evaluation-layout mutation paths. Their required replacement is fail closed: noncanonical typed overlays cannot
+  reach production writers/builders/lowering, and persistence rebasing cannot grant semantic authority.
+- Froze one cumulative-ledger contract from exact SourceIR capture through ISF lowering: each stage verifies and
+  preserves the upstream proof prefix, appends field-root and per-record claims, and refuses stale, proofless, or
+  future authority at every canonical load/write/build/lower seam.
+- Kept delivery claims bounded. This inventory/design slice changes no production Rust, artifact schema, extraction
+  result, or generated canonical artifact; `.e.iv.ii`–`.e.iv.vi` own the five stage migrations and `.e.v` owns
+  mechanically derived helper-level information-flow closure.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii — install the trusted derivation kernel
 
 - Added the sealed `specforge-core` derivation substrate: source-order opaque symbol/document atoms expose only

@@ -11,6 +11,8 @@
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > Can a signal or response spelling select a production extractor?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Can a temporary conformance artifact use a canonical stage writer?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can fixture names decide KG capability or prior-candidate routing?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
   > Can legacy named-family priors steer current extraction?
@@ -50,6 +52,10 @@
   > How does alpha-renaming become a per-rule obligation?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How does the corpus knowledge base group fixtures without protocol-family names?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How does the proof ledger continue from SourceIR through ISF lowering?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How many production rule families, producer or mutator entrypoints, and canonical seams must migrate?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > How will SpecForge enforce that identifiers are opaque?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -291,9 +297,3 @@
   > did the symmetric grounding filter change any emitted .isf
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > did whole population replay mutate canonical generated artifacts
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > do EvidenceIR statements read SourceIR content elements or the normalized markdown
-- [swd-protocol-convergence-snapshots-are-exact](../knowledge/swd-protocol-convergence-snapshots-are-exact.md)
-  > do EvidenceSnapshot SemanticSnapshot and IntentSnapshot count protocol states
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > do RISC-V CSRs map onto the ISF register/storage abstraction (YES — RISC-V Debug captures its 44 CSRs as register_records; FSMGen titles (storage (var … (fields …))) the register-map/CSR construct, 13a-actor-interface.md:419/:468)

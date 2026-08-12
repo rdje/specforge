@@ -93,8 +93,9 @@ metric controller next selects the two remaining unrelated AMD IOMMU and GIC-400
 SourceIR/EvidenceIR schema and identity/spelling/prompt/corpus remediation are complete, and ADR 0038 freezes the
 proof-carrying migration. The workspace enforces the core/conformance boundary, and the sealed opaque-identity,
 ruleset, proof-ledger, compatibility, and promotion-kernel substrate is installed. A deserialized proof envelope
-cannot self-authorize; current producers remain proofless until `.6d.ii.e.iv` migrates all claim families. A finite
-forbidden-vocabulary list remains diagnostic, not proof. `.e.iv`–`.e.vii` still must migrate registered rules,
+cannot self-authorize. `.6d.ii.e.iv.i` freezes the checked 38-family / 168-field graph across 113 current producer/mutator entrypoints, 39 canonical seams, four conformance-only bypasses, and the one cumulative-
+ledger compatibility contract; current producers remain proofless until `.e.iv.ii`–`.e.iv.vi` migrate each stage.
+A finite forbidden-vocabulary list remains diagnostic, not proof. `.e.iv.ii`–`.e.vii` still must migrate rules,
 enforce AST/information-flow obligations, and qualify the structural result; `.f` then owns population alpha-
 renaming, identity, paraphrase, and held-out qualification before `.6e`. A reproduced 400-page failure also drove
 resource-sized bounded activation,

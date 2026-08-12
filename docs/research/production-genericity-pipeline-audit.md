@@ -169,6 +169,37 @@ existing 168 fields are proof-covered: `.e.iv` owns exact migration of all 38 cl
 temporary pre-integration dead-code allowance. The live module denominator is 77; rule completeness, AST/taint
 enforcement, per-rule alpha execution, and population qualification remain `.e.iv`–`.f` blockers.
 
+## Exact rule and canonical-seam census (`.6d.ii.e.iv.i`)
+
+The migration census now joins all 38 claim families to 168 deterministic field-root rule ids, 113 current
+producer or post-build mutator entrypoints, and 39 canonical insertion/write seams. The latter include every
+stage writer and `validate`'s separate raw backannotation writer. `rule_family_inventory.tsv` fixes, for every
+family, the current entrypoints, allowed typed premises, symbol capability, mandatory alpha obligation,
+compatibility, target module, schema owner, canonical seams, and one stage migration leaf. The checker resolves
+every declared path/function and rejects missing families, duplicate rules, premise/capability mismatches, stale
+seams, and unsafe compatibility.
+
+This inspection found two important classes that a constructor-only migration would miss. First, EvidenceIR can
+carry an existing artifact's aliases, statement classes, constraints, and conditional rules, then deduplicate or
+reclassify them; provider commands, register recovery, signal resolution, and validation can also mutate an
+already-built stage. These paths must verify the incoming cumulative ledger and extend it through a registered
+rule. Second, conformance/evaluation code currently patches temporary SourceIR, EvidenceIR, and SemanticIR structs
+or rewrites artifact layout before using ordinary persistence/build paths. The four exact entrypoints are tracked
+separately in `conformance_bypass_inventory.tsv`; temporary location is not authority.
+
+The accepted integration is one cumulative proof chain. SourceIR proves exact capture before classification;
+downstream stages verify and retain the exact ordered upstream ledger as a prefix, then append current-stage
+claims. Every top-level field receives a root conclusion even when empty, and populated record collections also
+receive stable per-record conclusions. Canonical load, serialization, write, downstream build, and lowering all
+verify the current artifact/ledger; public mutation invalidates its digests until a registered mutator extends the
+proof chain. Proofless history is inspection/rebuild/residual input only, and future versions fail closed.
+
+Conformance patches will move to noncanonical typed overlays unable to call canonical production sinks; the
+evaluation storage rebase will preserve verified proof bytes without authorizing semantic changes. This slice
+freezes the reviewed high-level migration graph and cumulative-ledger contract only. It changes no artifact schema,
+producer behavior, or canonical output. Stage migrations remain `.e.iv.ii`–`.e.iv.vi`, while `.e.v` must derive
+helper-level AST/information-flow closure rather than treating a reviewed entrypoint inventory as sufficient proof.
+
 ## Audit denominator and method
 
 ### North-star scope: domain-specialized, specification-instance-neutral

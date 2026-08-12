@@ -4,6 +4,26 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-12 — exact rule-migration graph; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i`)
+
+- `rule_family_inventory.tsv` joins all 38 claim families to 168 deterministic field-root rule ids, 113 current
+  producer/mutator entrypoints, and 39 canonical insertion/write seams. Each row fixes allowed premise kinds,
+  symbol capability, alpha obligation, compatibility, target module, schema owner, and one stage migration leaf.
+- The census includes post-build authority paths that a builder-only review misses: EvidenceIR prior carry and
+  dedup/reclassification, provider/condition/contract/register/signal mutation, validation backannotation, and
+  SourceIR visual/table enrichment.
+- `conformance_bypass_inventory.tsv` separately freezes four temporary patch/rebase paths. They must become typed
+  noncanonical overlays unable to call canonical writers, downstream builders, or lowering; a temporary path does
+  not confer trust.
+- The integration contract is one cumulative ledger: downstream stages verify and retain the ordered upstream
+  proof prefix, then append field-root and per-record conclusions. Canonical load/serialize/write/build/lower
+  verifies completeness and digests, so direct mutation becomes stale. Proofless history is inspect/rebuild/
+  residual input only.
+- The portable checker resolves every declared function/path, requires every stage writer plus the raw validation
+  writer, and rejects family drift, duplicate rules, premise/capability/alpha mismatch, unsafe compatibility, and
+  unsafe conformance disposition. Six controlled mutations pass. No Rust behavior or artifact schema changes in
+  this inventory/design child; SourceIR through adapter migration remains `.e.iv.ii`–`.e.iv.vi`.
+
 ## Session update (2026-08-12 — sealed derivation kernel; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii`)
 
 - `ir::derivation` adds source-order `OpaqueSymbol`/`OpaqueDocumentIdentity` atoms. Their public surface is

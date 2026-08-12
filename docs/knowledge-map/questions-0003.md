@@ -2,6 +2,12 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
+  > does validate detect a stale downstream artifact that silently dropped relations
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > does validate follow the embedded artifact layout
+- [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
+  > does validate materialize SourceIR normalized manifests
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > does validate report message_field_records
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
@@ -292,9 +298,3 @@
   > how does retain_authoritative_interface_candidate_signals behave with an empty authority set
 - [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
   > how does specforge capture a signal that is defined in prose not a signal table (SWP S1/S2)
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > how does specforge consolidate a Class-B agent fragment like Subordinate extends onto Subordinate
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > how does specforge consolidate a dense-prose agent fragment like host has or host to onto host
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > how does specforge currently capture transactions and why is it thin

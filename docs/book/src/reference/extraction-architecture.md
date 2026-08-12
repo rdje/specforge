@@ -115,6 +115,19 @@ grammar, inference, carry, residual, and lowering family before a current artifa
 AST/information-flow gates, per-rule alpha execution, structural qualification, and whole-population behavioral
 qualification follow. Until those close, SpecForge does not claim production-genericity signoff.
 
+That migration now has an exact checked contract. The 38 claim families expand to 168 current top-level-field
+rules and cover 113 reviewed producer/mutator entrypoints plus 39 canonical seams. One cumulative ledger starts
+from exact SourceIR capture, is verified and retained as an ordered prefix at every downstream stage, and gains
+field-root proofs (including empty fields) plus stable per-record proofs. Canonical load, serialization, write,
+downstream build, and ISF lowering require a complete current ledger; post-build mutation invalidates authority
+until a registered rule proves the change. Historical proofless artifacts remain inspectable but must rebuild or
+residualize rather than receive synthetic proofs.
+
+Conformance fixtures do not receive an exception. Four current evaluation paths temporarily patch stage values;
+they must become noncanonical typed overlays that cannot call production writers, downstream builders, or
+lowering. A temporary filename or repository-local location is storage, never evidence of trust. The checked
+census freezes this integration denominator; it does not claim the stage migrations are already shipped.
+
 ## Target quality
 
 A high-quality result should expose, when the source supports them:
