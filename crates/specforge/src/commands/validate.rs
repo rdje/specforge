@@ -192,6 +192,7 @@ pub fn run(args: ValidateArgs) -> Result<()> {
     Ok(())
 }
 
+#[cfg(test)]
 pub(crate) fn run_quiet(args: ValidateArgs) -> Result<()> {
     with_suppressed_validation_output(|| run(args))
 }
@@ -226,9 +227,7 @@ fn stable_fingerprint(text: &str) -> String {
 }
 
 fn source_ir_fingerprint(ir: &SourceIr) -> Result<String> {
-    let mut clone = ir.clone();
-    clone.validation_reports.clear();
-    Ok(stable_fingerprint(&clone.to_pretty_json()?))
+    Ok(ir.validation_report()?.artifact_fingerprint)
 }
 
 fn evidence_ir_fingerprint(ir: &EvidenceIr) -> Result<String> {
@@ -247,6 +246,40 @@ fn intent_ir_fingerprint(ir: &IntentIr) -> Result<String> {
     let mut clone = ir.clone();
     clone.validation_reports.clear();
     Ok(stable_fingerprint(&clone.to_pretty_json()?))
+}
+
+/// Evaluate a conformance-only in-memory artifact without granting it persistence authority.
+/// These entry points intentionally return reports instead of back-annotating or writing files.
+pub(crate) fn evaluate_noncanonical_evidence(ir: &EvidenceIr) -> Result<ValidationReportRecord> {
+    with_suppressed_validation_output(|| Ok(validate_evidence_ir(ir, evidence_ir_fingerprint(ir)?)))
+}
+
+pub(crate) fn evaluate_noncanonical_semantic(
+    ir: &SemanticIr,
+    evidence_ir: &EvidenceIr,
+) -> Result<ValidationReportRecord> {
+    let prior_memory = load_prior_memory_for_validation(evidence_ir.prior_memory_path.as_deref());
+    with_suppressed_validation_output(|| {
+        Ok(validate_semantic_ir_with_prior_memory(
+            ir,
+            semantic_ir_fingerprint(ir)?,
+            prior_memory.as_ref(),
+        ))
+    })
+}
+
+pub(crate) fn evaluate_noncanonical_intent(
+    ir: &IntentIr,
+    evidence_ir: &EvidenceIr,
+) -> Result<ValidationReportRecord> {
+    let prior_memory = load_prior_memory_for_validation(evidence_ir.prior_memory_path.as_deref());
+    with_suppressed_validation_output(|| {
+        Ok(validate_intent_ir_with_prior_memory(
+            ir,
+            intent_ir_fingerprint(ir)?,
+            prior_memory.as_ref(),
+        ))
+    })
 }
 
 fn validation_report_path_for(artifact_path: &Path) -> Result<PathBuf> {
@@ -1065,11 +1098,16 @@ fn semantic_negative_knowledge_prior_matches(ir: &SemanticIr) -> Vec<String> {
     else {
         return Vec::new();
     };
-    let prior_scope = PriorScope::Global;
+    semantic_negative_knowledge_prior_matches_with_memory(ir, &corpus_memory)
+}
 
+fn semantic_negative_knowledge_prior_matches_with_memory(
+    ir: &SemanticIr,
+    corpus_memory: &CorpusMemory,
+) -> Vec<String> {
     negative_knowledge_prior_matches_for_carried_surfaces(
-        &corpus_memory,
-        prior_scope,
+        corpus_memory,
+        PriorScope::Global,
         CarriedNegativeKnowledgeSurfaces {
             signal_semantic_conflicts: &ir.signal_semantic_conflicts,
             temporal_conflicts: &ir.temporal_conflicts,
@@ -1093,11 +1131,16 @@ fn intent_negative_knowledge_prior_matches(ir: &IntentIr) -> Vec<String> {
     else {
         return Vec::new();
     };
-    let prior_scope = PriorScope::Global;
+    intent_negative_knowledge_prior_matches_with_memory(ir, &corpus_memory)
+}
 
+fn intent_negative_knowledge_prior_matches_with_memory(
+    ir: &IntentIr,
+    corpus_memory: &CorpusMemory,
+) -> Vec<String> {
     negative_knowledge_prior_matches_for_carried_surfaces(
-        &corpus_memory,
-        prior_scope,
+        corpus_memory,
+        PriorScope::Global,
         CarriedNegativeKnowledgeSurfaces {
             signal_semantic_conflicts: &ir.signal_semantic_conflicts,
             temporal_conflicts: &ir.temporal_conflicts,
@@ -2146,7 +2189,7 @@ fn persist_source_validation(
     artifact_path: &Path,
     report: &ValidationReportRecord,
 ) -> Result<()> {
-    backannotate_report(&mut ir.validation_reports, report);
+    ir.apply_validation_report(report.clone())?;
     write_backannotated_artifact(artifact_path, ir.to_pretty_json()?)?;
     write_validation_report_sidecar(artifact_path, report)
 }
@@ -3867,6 +3910,14 @@ fn visual_motif_corroboration_targets(ir: &EvidenceIr) -> Vec<String> {
 }
 
 fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> ValidationReportRecord {
+    validate_semantic_ir_with_prior_memory(ir, artifact_fingerprint, None)
+}
+
+fn validate_semantic_ir_with_prior_memory(
+    ir: &SemanticIr,
+    artifact_fingerprint: String,
+    prior_memory: Option<&CorpusMemory>,
+) -> ValidationReportRecord {
     println!("command: validate");
     println!("stage: semantic_ir");
     println!("document_key: {}", ir.document_identity.document_key);
@@ -4392,7 +4443,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
         }
     }
 
-    let negative_knowledge_prior_matches = semantic_negative_knowledge_prior_matches(ir);
+    let negative_knowledge_prior_matches = prior_memory.map_or_else(
+        || semantic_negative_knowledge_prior_matches(ir),
+        |memory| semantic_negative_knowledge_prior_matches_with_memory(ir, memory),
+    );
     println!();
     println!("=== Negative Knowledge Priors ===");
     println!(
@@ -5449,6 +5503,14 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
 }
 
 fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> ValidationReportRecord {
+    validate_intent_ir_with_prior_memory(ir, artifact_fingerprint, None)
+}
+
+fn validate_intent_ir_with_prior_memory(
+    ir: &IntentIr,
+    artifact_fingerprint: String,
+    prior_memory: Option<&CorpusMemory>,
+) -> ValidationReportRecord {
     println!("command: validate");
     println!("stage: intent_ir");
     println!("document_key: {}", ir.document_identity.document_key);
@@ -6173,7 +6235,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
         }
     }
 
-    let negative_knowledge_prior_matches = intent_negative_knowledge_prior_matches(ir);
+    let negative_knowledge_prior_matches = prior_memory.map_or_else(
+        || intent_negative_knowledge_prior_matches(ir),
+        |memory| intent_negative_knowledge_prior_matches_with_memory(ir, memory),
+    );
     println!();
     println!("=== Negative Knowledge Priors ===");
     println!(
@@ -7863,7 +7928,7 @@ mod tests {
         fs::write(&source, "# Spec\nSome content.\n")?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let artifact_path = source_ir.artifact_layout.source_ir_path.clone();
         run(ValidateArgs {
@@ -7903,7 +7968,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &generated_root.join("source_ir"))?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &generated_root.join("evidence_ir"),
@@ -8026,7 +8091,7 @@ mod tests {
         fs::write(&source, "# Spec\nSome content.\n")?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -8073,7 +8138,7 @@ mod tests {
             row_count: 1,
             col_count: 2,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -8125,7 +8190,7 @@ mod tests {
         let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
         fs::write(&source, "# Spec\nSome content.\n")?;
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -8265,7 +8330,7 @@ mod tests {
             "# Spec\nSignal HADDR is input width 32.\nHADDR shall remain stable.\n",
         )?;
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -8288,7 +8353,7 @@ mod tests {
         let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
         fs::write(&source, "# Spec\nSome content.\n")?;
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -8323,7 +8388,7 @@ mod tests {
         let evidence_artifact_base = tempdir.path().join("generated").join("evidence_ir");
         fs::write(&source, "# Spec\nSome content.\n")?;
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -8389,7 +8454,7 @@ mod tests {
             row_count: 0,
             col_count: 0,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -8419,7 +8484,7 @@ mod tests {
             "# Spec\nSignal HADDR is input width 32.\nHADDR shall remain stable.\n",
         )?;
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -8454,7 +8519,7 @@ mod tests {
             "# Spec\nSignal HADDR is input width 32.\nHADDR shall remain stable as appropriate.\n",
         )?;
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -8517,7 +8582,7 @@ mod tests {
             row_count: 2,
             col_count: 2,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -8589,7 +8654,7 @@ mod tests {
             row_count: 3,
             col_count: 4,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -8689,7 +8754,7 @@ mod tests {
             row_count: 3,
             col_count: 4,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -8775,7 +8840,7 @@ mod tests {
             row_count: 3,
             col_count: 2,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -8831,7 +8896,7 @@ mod tests {
         fs::write(&source, "# Spec\nNarrative overview, no contract.\n")?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -8883,7 +8948,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -8958,7 +9023,7 @@ mod tests {
             ),
             diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -8997,7 +9062,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -9122,7 +9187,7 @@ mod tests {
             row_count: 1,
             col_count: 2,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -9252,7 +9317,7 @@ mod tests {
             row_count: 1,
             col_count: 2,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build_with_prior_memory(
             &source_ir.artifact_layout.source_ir_path,
@@ -9315,7 +9380,7 @@ mod tests {
             note: None,
             diagram_kind: crate::ir::source::DiagramKind::Unknown,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -9387,7 +9452,7 @@ mod tests {
                 diagram_kind: crate::ir::source::DiagramKind::TimingDiagram,
             },
         ];
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -9467,7 +9532,7 @@ mod tests {
             row_count: 1,
             col_count: 2,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build_with_prior_memory(
             &source_ir.artifact_layout.source_ir_path,
@@ -9560,7 +9625,7 @@ mod tests {
             row_count: 1,
             col_count: 2,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -9662,7 +9727,7 @@ mod tests {
             row_count: 1,
             col_count: 2,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -9704,7 +9769,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -9738,7 +9803,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -9811,7 +9876,7 @@ mod tests {
             row_count: 3,
             col_count: 4,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -9912,7 +9977,7 @@ mod tests {
             row_count: 2,
             col_count: 4,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -10001,7 +10066,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -10103,7 +10168,7 @@ mod tests {
             row_count: 2,
             col_count: 2,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -10188,7 +10253,7 @@ mod tests {
             row_count: 1,
             col_count: 2,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let prior_memory_path = write_semantic_modality_reliability_prior_memory(
             tempdir.path(),
@@ -10321,7 +10386,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -10348,7 +10413,7 @@ mod tests {
         fs::write(&source, "# Protocol projection counts\n")?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -10441,7 +10506,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -10474,7 +10539,7 @@ mod tests {
         fs::write(&source, "# Intent protocol projection counts\n")?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -10561,7 +10626,7 @@ mod tests {
         fs::write(&source, "# Spec\nA minimal document.\n")?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -10815,7 +10880,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -10901,7 +10966,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -10976,7 +11041,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -11056,7 +11121,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -11135,7 +11200,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -11243,7 +11308,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -11446,7 +11511,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -11840,7 +11905,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -11908,7 +11973,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -11978,7 +12043,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -12059,7 +12124,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -12157,7 +12222,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -12235,7 +12300,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -12304,7 +12369,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -12411,7 +12476,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -12504,7 +12569,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -12578,7 +12643,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -12660,7 +12725,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -12732,7 +12797,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -12807,7 +12872,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -12893,7 +12958,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -12991,7 +13056,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -13100,7 +13165,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -13205,7 +13270,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -13288,7 +13353,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -13462,7 +13527,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -13545,7 +13610,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -13641,7 +13706,7 @@ mod tests {
         fs::write(&source, "# Physical channel limit\n")?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -13716,7 +13781,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -13781,7 +13846,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -13848,7 +13913,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -13911,7 +13976,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -13999,7 +14064,7 @@ mod tests {
             row_count: 2,
             col_count: 2,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -14116,7 +14181,7 @@ mod tests {
             row_count: 1,
             col_count: 2,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -14208,7 +14273,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -14301,7 +14366,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -14439,7 +14504,7 @@ mod tests {
             row_count: 1,
             col_count: 2,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -14561,7 +14626,7 @@ mod tests {
             row_count: 2,
             col_count: 2,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -14686,7 +14751,7 @@ mod tests {
             row_count: 2,
             col_count: 2,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -14789,7 +14854,7 @@ mod tests {
             row_count: 1,
             col_count: 2,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -14912,7 +14977,7 @@ mod tests {
             row_count: 2,
             col_count: 4,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -14981,7 +15046,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -15051,7 +15116,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -15135,7 +15200,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -15232,7 +15297,7 @@ mod tests {
             row_count: 1,
             col_count: 2,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -15308,7 +15373,7 @@ mod tests {
             row_count: 1,
             col_count: 2,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -15409,7 +15474,7 @@ mod tests {
             row_count: 1,
             col_count: 2,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build_with_prior_memory(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -15548,7 +15613,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build_with_prior_memory(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -15693,7 +15758,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build_with_prior_memory(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -16010,7 +16075,7 @@ mod tests {
             row_count: 1,
             col_count: 2,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -16087,7 +16152,7 @@ mod tests {
             row_count: 1,
             col_count: 2,
         });
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
@@ -16135,7 +16200,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -16175,7 +16240,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -16216,7 +16281,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -16345,7 +16410,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -16430,7 +16495,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -16513,7 +16578,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -16579,7 +16644,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,

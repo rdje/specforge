@@ -5,6 +5,9 @@ edition.workspace = true
 rust-version.workspace = true
 publish = false
 
+[features]
+source-proof-migration = ["specforge-core/source-proof-migration"]
+
 [dependencies]
 clap.workspace = true
 serde.workspace = true
@@ -12,3 +15,10 @@ serde_json.workspace = true
 tempfile.workspace = true
 specforge-core = { path = "../specforge-core" }
 specforge-conformance = { path = "../specforge-conformance" }
+
+[dev-dependencies]
+specforge-core = { path = "../specforge-core", features = ["test-support"] }
+
+[[example]]
+name = "source_proof_migrate"
+required-features = ["source-proof-migration"]

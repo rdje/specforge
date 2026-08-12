@@ -26,11 +26,15 @@ answers:
   - "How many production rule families, producer or mutator entrypoints, and canonical seams must migrate?"
   - "Can a temporary conformance artifact use a canonical stage writer?"
   - "How does the proof ledger continue from SourceIR through ISF lowering?"
+  - "How is SourceIR proof-carrying?"
+  - "Can recomputing SourceIR JSON hashes self-attest an edited claim?"
+  - "Why can legacy SourceIR not feed EvidenceIR?"
+  - "How are named SourceIR fixtures kept out of canonical production authority?"
 date: 2026-08-12
 status: current
 tags: [genericity, extraction, architecture, doctrine]
-evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge/src/ir/derivation.rs; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; doctrine/production_genericity/rule_family_inventory.tsv; doctrine/production_genericity/conformance_bypass_inventory.tsv; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_inventory.pl; scripts/check_production_genericity_rules.pl
-reverify: cargo test -p specforge-core derivation --offline && cargo test -p specforge-core --doc --offline && perl scripts/check_production_genericity_dependencies.pl && perl scripts/check_production_genericity_inventory.pl && perl scripts/check_production_genericity_rules.pl && perl scripts/check_production_genericity_rules.pl --self-test
+evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge/src/ir/derivation.rs; crates/specforge/src/ir/source.rs; crates/specforge-core/Cargo.toml; crates/specforge-conformance/Cargo.toml; doctrine/production_genericity/rule_family_inventory.tsv; doctrine/production_genericity/conformance_bypass_inventory.tsv; scripts/check_production_genericity_dependencies.pl; scripts/check_production_genericity_inventory.pl; scripts/check_production_genericity_rules.pl
+reverify: cargo test -p specforge-core source_rule --offline && cargo test -p specforge-core derivation --offline && bash scripts/check_chain_currency.sh --check
 ---
 
 A neutral SpecForge is feasible when universal digital-intent semantics are separated from opaque,
@@ -115,3 +119,18 @@ the artifact stale. Proofless history can be inspected, rebuilt, or residualized
 A temporary conformance path grants no authority: fixture edits must use noncanonical overlays that cannot call a
 canonical writer/build/lowering seam. This census is the high-level migration contract, not the final AST proof;
 the later structural doctrine must still derive helper-level decision closure mechanically.
+
+SourceIR schema 3 is the first completed stage migration. Its 19 fields are covered across envelope/integrity,
+capture, classification, residual, and validation/evaluation families. The private proof context contains exact
+neutral capture bytes and exact grounded proposal payloads; each registered descriptor is paired with executable
+Rust verification and an implementation digest. Canonical load and every write/downstream seam re-execute the
+relation against exact premise and conclusion bytes, so recomputing a JSON conclusion hash cannot self-attest an
+edit. Table and visual records carry real typed `TableCell`/`VisualRegion` premises. Classification must replay
+from an `unknown` capture, and a grounded model refinement must cite its exact response plus direct typed target.
+
+Compatibility remains fail-closed. Current proofless, stale, malformed, and future SourceIR cannot feed
+EvidenceIR. Legacy SourceIR can only load through the inspection API, which neutralizes its old semantic labels.
+An audited maintenance feature migrated the exact 24 documents whose source and normalized capture bundles were
+still retained; the other 54 remain inspection-only. Named conformance fixtures now use typed noncanonical
+overlays with no canonical writer, while each production writer independently reloads its upstream canonical
+artifact. This closes SourceIR only; the later stages and AST-aware doctrine remain open work.

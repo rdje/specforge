@@ -4,7 +4,7 @@ use std::path::{Path, PathBuf};
 
 use serde::Deserialize;
 
-use crate::cli::{KgBenchArgs, ValidateArgs};
+use crate::cli::KgBenchArgs;
 use crate::commands::validate;
 use crate::error::{AppError, Result};
 use crate::ir::evidence::{
@@ -12,7 +12,7 @@ use crate::ir::evidence::{
     SignalPolarityObservationRecord, SignalSemanticConflictObservationRecord,
     SignalSemanticConflictRecord, SignalSemanticHintSourceKind, SignalSemanticTag,
 };
-use crate::ir::intent::{IntentAssumption, IntentIr};
+use crate::ir::intent::IntentAssumption;
 use crate::ir::prior_memory::{
     ActorTaxonomyPriorRecord, CorpusMemory, CorpusMemoryUpdatePolicyRecord,
     ExtractionProfilePriorRecord, NegativeKnowledgePriorRecord, PriorSourceArtifactRecord,
@@ -25,7 +25,7 @@ use crate::ir::semantic::{
     InfrastructureSignalSourceStatus, InfrastructureTopologyKind, InterfaceRecord,
     InterfaceSignalConflictKind, InterfaceSignalConflictObservationRecord,
     InterfaceSignalConflictRecord, InterfaceSignalDirection, InterfaceSignalSemanticRole,
-    RegularStateRecord, SemanticGroundingStrength, SemanticIr, SignalConnectivityConflictKind,
+    RegularStateRecord, SemanticGroundingStrength, SignalConnectivityConflictKind,
     SignalConnectivityConflictRecord, StateTransitionRecord, TemporalConflictRecord,
     TemporalPredicateRecord, TemporalRuleRecord, TickPhase,
 };
@@ -707,7 +707,7 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
             .document_sections
             .extend(patch.document_sections.iter().cloned());
     }
-    source_ir.write_to_disk()?;
+    let source_overlay = source::NonCanonicalSourceOverlay::from_fixture(source_ir)?;
     let source_report = if fixture
         .expectations
         .validation
@@ -715,33 +715,32 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
         .and_then(|expectations| expectations.source.as_ref())
         .is_some()
     {
-        validate::run_quiet(ValidateArgs {
-            artifact: source_ir.artifact_layout.source_ir_path.clone(),
-        })?;
-        let reloaded = source::SourceIr::load_from_path(&source_ir.artifact_layout.source_ir_path)?;
-        Some(latest_validation_report(
-            &reloaded.validation_reports,
-            "SourceIR",
-            &source_ir.artifact_layout.source_ir_path,
-        )?)
+        Some(source_overlay.validation_report()?)
     } else {
         None
     };
-    let mut evidence_ir = EvidenceIr::build_with_prior_memory(
-        &source_ir.artifact_layout.source_ir_path,
+    let mut evidence_overlay = EvidenceIr::build_from_noncanonical_overlay(
+        &source_overlay,
         &evidence_ir_root,
         prior_memory_path.as_deref(),
-    )?;
+    )
+    .map_err(|error| {
+        AppError::InvalidStageArtifact(format!(
+            "kg-bench fixture '{}' noncanonical EvidenceIR build failed: {error}",
+            fixture.name
+        ))
+    })?;
     if let Some(patch) = fixture.evidence_ir_patch.as_ref() {
-        evidence_ir.signal_alias_map.extend(
+        evidence_overlay.artifact_mut().signal_alias_map.extend(
             patch
                 .signal_alias_map
                 .iter()
                 .map(|(alias, signal_name)| (alias.clone(), signal_name.clone())),
         );
         if patch.refresh_signal_semantic_hints || !patch.signal_alias_map.is_empty() {
-            evidence_ir.refresh_signal_semantic_hints()?;
+            evidence_overlay.refresh_signal_semantic_hints(&source_overlay)?;
         }
+        let evidence_ir = evidence_overlay.artifact_mut();
         evidence_ir
             .signal_constraints
             .extend(patch.signal_constraints.iter().cloned());
@@ -749,7 +748,7 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
             evidence_ir.extraction_quality_gauge = Some(gauge.clone());
         }
     }
-    evidence_ir.write_to_disk()?;
+    let evidence_ir = evidence_overlay.artifact();
     let evidence_report = if fixture
         .expectations
         .validation
@@ -757,23 +756,20 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
         .and_then(|expectations| expectations.evidence.as_ref())
         .is_some()
     {
-        validate::run_quiet(ValidateArgs {
-            artifact: evidence_ir.artifact_layout.evidence_ir_path.clone(),
-        })?;
-        let reloaded = EvidenceIr::load_from_path(&evidence_ir.artifact_layout.evidence_ir_path)?;
-        Some(latest_validation_report(
-            &reloaded.validation_reports,
-            "EvidenceIR",
-            &evidence_ir.artifact_layout.evidence_ir_path,
-        )?)
+        Some(validate::evaluate_noncanonical_evidence(evidence_ir)?)
     } else {
         None
     };
-    let mut semantic_ir = semantic::SemanticIr::build(
-        &evidence_ir.artifact_layout.evidence_ir_path,
-        &semantic_ir_root,
-    )?;
+    let mut semantic_overlay =
+        semantic::SemanticIr::build_from_noncanonical_overlay(&evidence_overlay, &semantic_ir_root)
+            .map_err(|error| {
+                AppError::InvalidStageArtifact(format!(
+                    "kg-bench fixture '{}' noncanonical SemanticIR build failed: {error}",
+                    fixture.name
+                ))
+            })?;
     if let Some(patch) = fixture.semantic_ir_patch.as_ref() {
+        let semantic_ir = semantic_overlay.artifact_mut();
         if patch.clear_actor_ports {
             semantic_ir.actor_ports.clear();
         }
@@ -795,12 +791,16 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
             }
         }
     }
-    semantic_ir.write_to_disk()?;
-    let intent_ir = intent::IntentIr::build(
-        &semantic_ir.artifact_layout.semantic_ir_path,
-        &intent_ir_root,
-    )?;
-    intent_ir.write_to_disk()?;
+    let semantic_ir = semantic_overlay.artifact();
+    let intent_overlay =
+        intent::IntentIr::build_from_noncanonical_overlay(&semantic_overlay, &intent_ir_root)
+            .map_err(|error| {
+                AppError::InvalidStageArtifact(format!(
+                    "kg-bench fixture '{}' noncanonical IntentIR build failed: {error}",
+                    fixture.name
+                ))
+            })?;
+    let intent_ir = intent_overlay.artifact();
 
     let semantic_report = if fixture
         .expectations
@@ -809,14 +809,9 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
         .and_then(|expectations| expectations.semantic.as_ref())
         .is_some()
     {
-        validate::run_quiet(ValidateArgs {
-            artifact: semantic_ir.artifact_layout.semantic_ir_path.clone(),
-        })?;
-        let reloaded = SemanticIr::load_from_path(&semantic_ir.artifact_layout.semantic_ir_path)?;
-        Some(latest_validation_report(
-            &reloaded.validation_reports,
-            "SemanticIR",
-            &semantic_ir.artifact_layout.semantic_ir_path,
+        Some(validate::evaluate_noncanonical_semantic(
+            semantic_ir,
+            evidence_ir,
         )?)
     } else {
         None
@@ -828,14 +823,9 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
         .and_then(|expectations| expectations.intent.as_ref())
         .is_some()
     {
-        validate::run_quiet(ValidateArgs {
-            artifact: intent_ir.artifact_layout.intent_ir_path.clone(),
-        })?;
-        let reloaded = IntentIr::load_from_path(&intent_ir.artifact_layout.intent_ir_path)?;
-        Some(latest_validation_report(
-            &reloaded.validation_reports,
-            "IntentIR",
-            &intent_ir.artifact_layout.intent_ir_path,
+        Some(validate::evaluate_noncanonical_intent(
+            intent_ir,
+            evidence_ir,
         )?)
     } else {
         None
@@ -852,7 +842,7 @@ fn run_fixture(fixture_path: &Path) -> Result<KgBenchFixtureOutcome> {
         evaluate_validation_expectations("validation.source", expectations, report, &mut failures);
     }
     if let Some(expectations) = fixture.expectations.evidence.as_ref() {
-        evaluate_evidence_expectations("evidence", expectations, &evidence_ir, &mut failures);
+        evaluate_evidence_expectations("evidence", expectations, evidence_ir, &mut failures);
     }
     if let Some(expectations) = fixture.expectations.semantic.as_ref() {
         evaluate_canonical_expectations(
@@ -2593,19 +2583,6 @@ fn normalize_fixture_path(path: &Path, fixtures_root: &Path) -> PathBuf {
     }
 }
 
-fn latest_validation_report(
-    reports: &[ValidationReportRecord],
-    stage_label: &str,
-    artifact_path: &Path,
-) -> Result<ValidationReportRecord> {
-    reports.first().cloned().ok_or_else(|| {
-        AppError::InvalidStageArtifact(format!(
-            "{stage_label} artifact at {} does not carry a persisted validation report",
-            artifact_path.display()
-        ))
-    })
-}
-
 fn interface_signal_names(interfaces: &[InterfaceRecord]) -> BTreeSet<String> {
     interfaces
         .iter()
@@ -2944,10 +2921,12 @@ mod tests {
     use crate::cli::KgBenchArgs;
     use crate::error::AppError;
     use crate::ir::IrStage;
+    use crate::ir::evidence::EvidenceIr;
+    use crate::ir::intent::IntentIr;
     use crate::ir::semantic::{ActorPortRecord, ActorRelativeDirection};
     use crate::ir::source::{
-        AutomationConfidence, ValidationFindingRecord, ValidationFindingSeverity,
-        ValidationReportRecord,
+        AutomationConfidence, NonCanonicalSourceOverlay, SourceIr, ValidationFindingRecord,
+        ValidationFindingSeverity, ValidationReportRecord,
     };
 
     fn actor_port(
@@ -3159,6 +3138,51 @@ mod tests {
         );
         assert!(profile.prior_candidate_kinds.is_empty());
         assert!(!profile.is_negative_control);
+    }
+
+    #[test]
+    fn noncanonical_fixture_pipeline_cannot_persist_any_stage() -> crate::error::Result<()> {
+        let tempdir = tempdir()?;
+        let source_path = tempdir.path().join("fixture.md");
+        fs::write(&source_path, "# Fixture\n\nSignal DATA is input width 8.\n")?;
+        let source_ir = SourceIr::build(&source_path, &tempdir.path().join("source"))?;
+        let source_overlay = NonCanonicalSourceOverlay::from_fixture(source_ir)?;
+
+        let evidence_overlay = EvidenceIr::build_from_noncanonical_overlay(
+            &source_overlay,
+            &tempdir.path().join("evidence"),
+            None,
+        )?;
+        let evidence_error = evidence_overlay
+            .artifact()
+            .write_to_disk()
+            .expect_err("noncanonical evidence must not persist");
+        assert!(
+            evidence_error
+                .to_string()
+                .contains("verified canonical SourceIR")
+        );
+
+        let semantic_overlay = crate::ir::semantic::SemanticIr::build_from_noncanonical_overlay(
+            &evidence_overlay,
+            &tempdir.path().join("semantic"),
+        )?;
+        let semantic_error = semantic_overlay
+            .artifact()
+            .write_to_disk()
+            .expect_err("noncanonical semantics must not persist");
+        assert!(semantic_error.to_string().contains("canonical EvidenceIR"));
+
+        let intent_overlay = IntentIr::build_from_noncanonical_overlay(
+            &semantic_overlay,
+            &tempdir.path().join("intent"),
+        )?;
+        let intent_error = intent_overlay
+            .artifact()
+            .write_to_disk()
+            .expect_err("noncanonical intent must not persist");
+        assert!(intent_error.to_string().contains("canonical SemanticIR"));
+        Ok(())
     }
 
     #[test]

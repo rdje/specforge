@@ -1,17 +1,114 @@
 mod docling_backend;
 use serde::{Deserialize, Serialize};
+use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
 
 use crate::error::{AppError, Result};
 use crate::ir::IrStage;
 use crate::ir::adapters::AdapterTarget;
+use crate::ir::derivation::{
+    AlphaObligation, ClaimAddress, DerivationError, DerivationResult, PremiseKind, PremiseRef,
+    PromotionKernelBuilder, ProofConfidence, ProofLedger, RuleCompatibility, RuleDescriptor,
+    RuleId, RuleRegistration, RuleRegistry, RuleVerificationContext, Sha256Digest,
+    SymbolCapabilityClass,
+};
 use crate::persisted_path::{
     PersistedPathOrigin, infer_existing_origin, normalize_for_storage, resolve_existing,
     resolve_reference, resolve_repository_output,
 };
 
-const SOURCE_IR_SCHEMA_VERSION: u32 = 2;
+const SOURCE_IR_SCHEMA_VERSION: u32 = 3;
+const SOURCE_PROOF_CONTEXT_SCHEMA_VERSION: u32 = 1;
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(deny_unknown_fields)]
+struct SourceProofContext {
+    schema_version: u32,
+    field_premises: BTreeMap<String, serde_json::Value>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    grounded_proposals: Vec<SourceGroundedProposal>,
+    /// Synthetic extractor fixtures are deliberately a different authority class. This field and
+    /// its verifier branch do not exist in production builds, whose deny-unknown-fields decoder
+    /// therefore rejects a fixture artifact.
+    #[cfg(any(test, feature = "test-support"))]
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    test_fixture: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
+enum SourceGroundedProposal {
+    VisualObservation {
+        proposal_id: String,
+        asset_id: String,
+        diagram_kind: DiagramKind,
+        exact_response: String,
+    },
+    TableGridRepair {
+        proposal_id: String,
+        table_id: String,
+        exact_response: String,
+    },
+    TableClassification {
+        proposal_id: String,
+        table_id: String,
+        exact_response: String,
+    },
+}
+
+impl SourceGroundedProposal {
+    fn proposal_id(&self) -> &str {
+        match self {
+            Self::VisualObservation { proposal_id, .. }
+            | Self::TableGridRepair { proposal_id, .. }
+            | Self::TableClassification { proposal_id, .. } => proposal_id,
+        }
+    }
+
+    fn surface(&self) -> &'static str {
+        match self {
+            Self::VisualObservation { .. } => "visual_assets",
+            Self::TableGridRepair { .. } | Self::TableClassification { .. } => "structured_tables",
+        }
+    }
+
+    fn target_index(
+        &self,
+        visual_assets: &[VisualAsset],
+        tables: &[StructuredTableRecord],
+    ) -> DerivationResult<usize> {
+        match self {
+            Self::VisualObservation { asset_id, .. } => visual_assets
+                .iter()
+                .position(|asset| asset.asset_id == *asset_id)
+                .ok_or_else(|| {
+                    DerivationError::new(format!(
+                        "grounded visual proposal targets absent asset '{asset_id}'"
+                    ))
+                }),
+            Self::TableGridRepair { table_id, .. } | Self::TableClassification { table_id, .. } => {
+                tables
+                    .iter()
+                    .position(|table| table.table_id == *table_id)
+                    .ok_or_else(|| {
+                        DerivationError::new(format!(
+                            "grounded table proposal targets absent table '{table_id}'"
+                        ))
+                    })
+            }
+        }
+    }
+}
+
+#[derive(Debug)]
+struct SourceClaimInput {
+    address: ClaimAddress,
+    rule_id: RuleId,
+    premise_key: String,
+    confidence: ProofConfidence,
+    conclusion: serde_json::Value,
+}
 
 pub use docling_backend::{
     DEFAULT_DOCLING_BOOTSTRAP_SCRIPT, DEFAULT_DOCLING_VENV_DIR, DOCLING_PYTHON_ENV,
@@ -450,7 +547,7 @@ fn normalize_timing_table_kinds(tables: &mut [StructuredTableRecord]) {
 
 /// Retained schema-1 artifacts were classified by corpus-calibrated caption/header shortcuts.
 /// Their source geometry and text remain valid, but their semantic labels do not satisfy the
-/// schema-2 genericity contract. Fail closed instead of silently carrying that authority across
+/// current genericity contract. Fail closed instead of silently carrying that authority across
 /// the boundary; re-ingest reconstructs labels with the current document-independent grammar.
 fn neutralize_legacy_source_classifications(source_ir: &mut SourceIr) {
     let previous_schema = source_ir.schema_version;
@@ -461,11 +558,10 @@ fn neutralize_legacy_source_classifications(source_ir: &mut SourceIr) {
         table.table_kind = TableKind::Unknown;
     }
     for section in &mut source_ir.document_sections {
-        section.section_kind = SectionKind::Normative;
+        section.section_kind = SectionKind::Unknown;
     }
-    source_ir.schema_version = SOURCE_IR_SCHEMA_VERSION;
     source_ir.normalization_plan.notes.push(format!(
-        "loaded legacy SourceIR schema {previous_schema}; semantic source classifications were neutralized because only schema {SOURCE_IR_SCHEMA_VERSION} carries the document-independent classifier contract; re-ingest to reconstruct typed classifications"
+        "loaded legacy SourceIR schema {previous_schema} for inspection only; semantic source classifications were neutralized because only schema {SOURCE_IR_SCHEMA_VERSION} plus a verified proof ledger carries canonical authority; re-ingest to reconstruct typed classifications"
     ));
 }
 
@@ -490,6 +586,7 @@ pub enum SectionKind {
     TableOfContents,
     /// Appendix or annex.
     Appendix,
+    /// No registered heading-form classification is available.
     Unknown,
 }
 
@@ -890,10 +987,1127 @@ pub struct SourceIr {
     pub adapter_targets: Vec<AdapterTarget>,
     pub planned_actions: Vec<String>,
     pub automation_confidence: AutomationConfidence,
+    /// Verifier-owned exact unclassified/captured premises. This is metadata, not a semantic
+    /// claim family and therefore is intentionally private.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    proof_context: Option<SourceProofContext>,
+    /// Current ruleset-bound proof chain. Deserialization never grants authority without
+    /// executable rule verification against `proof_context` and the exact public fields.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    proof_ledger: Option<ProofLedger>,
+}
+
+/// Conformance-only SourceIR overlay. It deliberately has no canonical SourceIR writer and cannot
+/// be consumed by [`SourceIr::load_from_path`] or any production downstream builder.
+#[cfg(any(test, feature = "test-support", feature = "conformance-support"))]
+#[derive(Debug, Clone)]
+pub struct NonCanonicalSourceOverlay {
+    source_ir: SourceIr,
+}
+
+#[cfg(any(test, feature = "test-support", feature = "conformance-support"))]
+impl NonCanonicalSourceOverlay {
+    #[doc(hidden)]
+    pub fn from_fixture(mut source_ir: SourceIr) -> Result<Self> {
+        // The fixture may have patched any public field after a valid build. Strip canonical
+        // authority instead of manufacturing a privileged proof for those edits.
+        source_ir.proof_context = None;
+        source_ir.proof_ledger = None;
+        Ok(Self { source_ir })
+    }
+
+    #[doc(hidden)]
+    pub(crate) fn source_ir(&self) -> &SourceIr {
+        &self.source_ir
+    }
+
+    #[doc(hidden)]
+    pub fn validation_report(&self) -> Result<ValidationReportRecord> {
+        let persisted = self.source_ir.persisted_clone()?;
+        source_validation_report_from_fields(
+            &persisted
+                .public_field_values()
+                .map_err(source_derivation_error)?,
+        )
+        .map_err(source_derivation_error)
+    }
+}
+
+const SOURCE_RULE_FIELDS: &[(&str, &str)] = &[
+    ("schema_version", "source.envelope"),
+    ("stage", "source.envelope"),
+    ("source", "source.envelope"),
+    ("artifact_layout", "source.envelope"),
+    ("document_identity", "source.envelope"),
+    ("normalization_plan", "source.envelope"),
+    ("downstream_stages", "source.envelope"),
+    ("adapter_targets", "source.envelope"),
+    ("planned_actions", "source.envelope"),
+    ("automation_confidence", "source.envelope"),
+    ("page_artifacts", "source.capture"),
+    ("content_elements", "source.capture"),
+    ("document_profile", "source.capture"),
+    ("placeholder_bindings", "source.capture"),
+    ("visual_assets", "source.classification"),
+    ("structured_tables", "source.classification"),
+    ("document_sections", "source.classification"),
+    ("residual_decisions", "source.residual"),
+    ("validation_reports", "source.validation"),
+];
+
+fn source_derivation_error(error: impl std::fmt::Display) -> AppError {
+    AppError::InvalidStageArtifact(format!("SourceIR proof verification failed: {error}"))
+}
+
+fn source_rule_registry() -> DerivationResult<RuleRegistry> {
+    let implementation_sha256 = Sha256Digest::of_bytes(include_bytes!("source.rs"));
+    let registrations = SOURCE_RULE_FIELDS
+        .iter()
+        .map(|(field, family)| {
+            let (capability, alpha, premises) = match *family {
+                "source.envelope" => (
+                    SymbolCapabilityClass::ExactIdentityOnly,
+                    AlphaObligation::IdentityGraphInvariant,
+                    vec![PremiseKind::SourceSpan, PremiseKind::UniversalAxiom],
+                ),
+                "source.validation" => (
+                    SymbolCapabilityClass::ExactIdentityOnly,
+                    AlphaObligation::IdentityGraphInvariant,
+                    vec![PremiseKind::UpstreamClaim],
+                ),
+                "source.capture" | "source.classification" => (
+                    SymbolCapabilityClass::GrammarIntroduces,
+                    AlphaObligation::IntroducedSymbolsPreserveOrigins,
+                    [
+                        PremiseKind::SourceSpan,
+                        PremiseKind::TableCell,
+                        PremiseKind::VisualRegion,
+                    ]
+                    .into_iter()
+                    .chain(
+                        (*family == "source.classification")
+                            .then_some(PremiseKind::GroundedModelProposal),
+                    )
+                    .collect(),
+                ),
+                "source.residual" => (
+                    SymbolCapabilityClass::Residual,
+                    AlphaObligation::ResidualTopologyInvariant,
+                    vec![PremiseKind::SourceSpan, PremiseKind::UniversalAxiom],
+                ),
+                _ => unreachable!("closed SourceIR rule family"),
+            };
+            let rule_id =
+                RuleId::try_from(format!("{family}.{field}.v1")).map_err(DerivationError::new)?;
+            let descriptor = RuleDescriptor::new(
+                rule_id,
+                1,
+                "crate::ir::source",
+                implementation_sha256.clone(),
+                premises,
+                IrStage::SourceIr,
+                *field,
+                capability,
+                alpha,
+                RuleCompatibility::CurrentOnly,
+            )?;
+            Ok(RuleRegistration::new(
+                descriptor,
+                verify_source_rule_relation,
+            ))
+        })
+        .collect::<DerivationResult<Vec<_>>>()?;
+    RuleRegistry::new(registrations, [])
+}
+
+fn classifier_label(value: &str) -> String {
+    value
+        .to_ascii_lowercase()
+        .split(|character: char| !character.is_ascii_alphanumeric() && character != '/')
+        .filter(|word| !word.is_empty())
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+fn classifier_has_phrase(value: &str, phrases: &[&str]) -> bool {
+    let normalized = format!(" {} ", classifier_label(value));
+    phrases
+        .iter()
+        .any(|phrase| normalized.contains(&format!(" {} ", classifier_label(phrase))))
+}
+
+fn classified_diagram_kind(asset: &VisualAsset) -> DiagramKind {
+    if asset.asset_kind == VisualAssetKind::TableRegion {
+        return DiagramKind::Unknown;
+    }
+    let caption = asset.caption_text.as_deref().unwrap_or_default();
+    if classifier_has_phrase(
+        caption,
+        &[
+            "timing diagram",
+            "timing waveform",
+            "waveform diagram",
+            "waveform plot",
+        ],
+    ) {
+        DiagramKind::TimingDiagram
+    } else if classifier_has_phrase(
+        caption,
+        &[
+            "state machine",
+            "state diagram",
+            "state-transition diagram",
+            "state transition diagram",
+            "finite-state machine",
+            "finite state machine",
+        ],
+    ) {
+        DiagramKind::StateMachineDiagram
+    } else if classifier_has_phrase(
+        caption,
+        &[
+            "block diagram",
+            "architecture diagram",
+            "system diagram",
+            "component diagram",
+            "topology diagram",
+            "interconnection diagram",
+        ],
+    ) {
+        DiagramKind::BlockDiagram
+    } else if classifier_has_phrase(
+        caption,
+        &[
+            "register bit-field diagram",
+            "register bit field diagram",
+            "register bit-field layout",
+            "register bit field layout",
+        ],
+    ) {
+        DiagramKind::RegisterBitfield
+    } else if classifier_has_phrase(caption, &["truth table"]) {
+        DiagramKind::TruthTable
+    } else if classifier_has_phrase(caption, &["flow chart", "flowchart", "flow diagram"]) {
+        DiagramKind::FlowChart
+    } else {
+        DiagramKind::Unknown
+    }
+}
+
+fn classified_section_kind(title: &str) -> SectionKind {
+    let normalized = classifier_label(title);
+    if classifier_has_phrase(
+        title,
+        &[
+            "licence",
+            "license",
+            "copyright",
+            "proprietary",
+            "trademark",
+            "disclaimer",
+            "change history",
+            "revision history",
+            "release note",
+            "release notes",
+            "release information",
+            "acknowledgement",
+            "acknowledgements",
+            "acknowledgment",
+            "acknowledgments",
+            "preface",
+            "foreword",
+            "feedback",
+            "about this",
+        ],
+    ) {
+        SectionKind::Boilerplate
+    } else if classifier_has_phrase(title, &["table of contents"]) || normalized == "contents" {
+        SectionKind::TableOfContents
+    } else if classifier_has_phrase(
+        title,
+        &[
+            "glossary",
+            "abbreviation",
+            "abbreviations",
+            "acronym",
+            "acronyms",
+            "definition",
+            "definitions",
+        ],
+    ) {
+        SectionKind::Glossary
+    } else if normalized == "appendix"
+        || normalized.starts_with("appendix ")
+        || normalized == "annex"
+        || normalized.starts_with("annex ")
+    {
+        SectionKind::Appendix
+    } else if classifier_has_phrase(
+        title,
+        &[
+            "signal", "signals", "port", "ports", "pin", "pins", "pinout", "i/o",
+        ],
+    ) {
+        SectionKind::SignalDescription
+    } else if classifier_has_phrase(
+        title,
+        &["register", "registers", "memory map", "address map"],
+    ) {
+        SectionKind::RegisterDescription
+    } else if classifier_has_phrase(
+        title,
+        &[
+            "timing",
+            "waveform",
+            "waveforms",
+            "clock",
+            "clocks",
+            "latency",
+            "throughput",
+        ],
+    ) {
+        SectionKind::Timing
+    } else {
+        SectionKind::Normative
+    }
+}
+
+fn header_has_role(headers: &[&str], roles: &[&str]) -> bool {
+    let roles = roles
+        .iter()
+        .map(|role| classifier_label(role))
+        .collect::<BTreeSet<_>>();
+    headers
+        .iter()
+        .any(|header| roles.contains(&classifier_label(header)))
+}
+
+fn table_cell_is_bit_range(value: &str) -> bool {
+    let trimmed = value.trim().trim_start_matches('[').trim_end_matches(']');
+    trimmed.split_once(':').is_some_and(|(high, low)| {
+        !high.trim().is_empty()
+            && !low.trim().is_empty()
+            && high.trim().bytes().all(|byte| byte.is_ascii_digit())
+            && low.trim().bytes().all(|byte| byte.is_ascii_digit())
+    })
+}
+
+fn classified_table_kind(table: &StructuredTableRecord) -> TableKind {
+    if table.header_rows.is_empty() && table.body_rows.is_empty() {
+        return TableKind::Unknown;
+    }
+    let caption = table.caption_text.as_deref().unwrap_or_default();
+    let headers = table
+        .header_rows
+        .iter()
+        .flatten()
+        .map(|cell| cell.text.as_str())
+        .collect::<Vec<_>>();
+    let caption_words = classifier_label(caption)
+        .split_whitespace()
+        .map(str::to_string)
+        .collect::<BTreeSet<_>>();
+    if classifier_has_phrase(caption, &["table"])
+        && ["signal", "signals", "port", "ports", "pin", "pins"]
+            .iter()
+            .any(|word| caption_words.contains(*word))
+    {
+        return TableKind::SignalDescription;
+    }
+    let has_signal_name = header_has_role(
+        &headers,
+        &[
+            "name",
+            "signal",
+            "signal name",
+            "port",
+            "port name",
+            "pin",
+            "pin name",
+        ],
+    );
+    let has_width = header_has_role(&headers, &["width", "bit width", "bits", "size"]);
+    let has_direction = header_has_role(&headers, &["direction", "dir"]);
+    let has_explicit_signal = header_has_role(
+        &headers,
+        &[
+            "signal",
+            "signal name",
+            "port",
+            "port name",
+            "pin",
+            "pin name",
+        ],
+    );
+    if has_signal_name && (has_direction || (has_explicit_signal && has_width)) {
+        return TableKind::SignalDescription;
+    }
+    let has_value = header_has_role(
+        &headers,
+        &[
+            "value",
+            "encoded value",
+            "encoding",
+            "code",
+            "binary",
+            "hex",
+            "bit pattern",
+        ],
+    );
+    let has_meaning = header_has_role(
+        &headers,
+        &["name", "meaning", "description", "definition", "semantics"],
+    );
+    if (has_value && has_meaning) || classifier_has_phrase(caption, &["encoding", "encodings"]) {
+        return TableKind::Encoding;
+    }
+    let has_register_name = header_has_role(
+        &headers,
+        &[
+            "name",
+            "register",
+            "register name",
+            "field",
+            "field name",
+            "symbol",
+        ],
+    );
+    let has_address = header_has_role(
+        &headers,
+        &[
+            "offset",
+            "address",
+            "addr",
+            "base",
+            "base address",
+            "register offset",
+            "byte offset",
+        ],
+    );
+    let has_access_column = header_has_role(
+        &headers,
+        &[
+            "access",
+            "access type",
+            "r/w",
+            "read/write",
+            "read write",
+            "read",
+            "read access",
+            "write",
+            "write access",
+            "permission",
+            "permissions",
+        ],
+    );
+    let structural_cells = headers
+        .iter()
+        .copied()
+        .chain(
+            table
+                .body_rows
+                .iter()
+                .take(16)
+                .flatten()
+                .map(|cell| cell.text.as_str()),
+        )
+        .collect::<Vec<_>>();
+    let access_tokens = [
+        "ro", "rw", "wo", "rc", "rs", "w1c", "w1s", "w0c", "rw1c", "r/w",
+    ];
+    let has_access_value = structural_cells
+        .iter()
+        .any(|cell| access_tokens.contains(&cell.trim().to_ascii_lowercase().as_str()));
+    let is_toc = structural_cells.iter().any(|cell| cell.contains("...."));
+    if !is_toc
+        && has_register_name
+        && (has_access_column || has_access_value)
+        && (has_address
+            || structural_cells
+                .iter()
+                .any(|cell| table_cell_is_bit_range(cell)))
+    {
+        return TableKind::RegisterMap;
+    }
+    if timing_table_has_structural_authority(table) {
+        return TableKind::TimingParameter;
+    }
+    let has_feature = header_has_role(&headers, &["feature", "property", "capability", "option"]);
+    let has_support = header_has_role(
+        &headers,
+        &["support", "requirement", "status", "mandatory optional"],
+    );
+    let support_tokens = [
+        "mandatory",
+        "optional",
+        "prohibited",
+        "required",
+        "supported",
+    ];
+    let has_support_value = table
+        .body_rows
+        .iter()
+        .take(16)
+        .flatten()
+        .any(|cell| support_tokens.contains(&classifier_label(&cell.text).as_str()));
+    if has_feature && (has_support || has_support_value) {
+        TableKind::FeatureMatrix
+    } else {
+        TableKind::Unknown
+    }
+}
+
+fn parse_vlm_kind(value: &str) -> Option<TableKind> {
+    match value.trim() {
+        "signal_description" => Some(TableKind::SignalDescription),
+        "encoding" => Some(TableKind::Encoding),
+        "timing_parameter" => Some(TableKind::TimingParameter),
+        "feature_matrix" => Some(TableKind::FeatureMatrix),
+        "register_map" => Some(TableKind::RegisterMap),
+        _ => None,
+    }
+}
+
+fn parse_vlm_table_kind(response: &str) -> Option<TableKind> {
+    let start = response.find('{')?;
+    let end = response.rfind('}')?;
+    let value: serde_json::Value = serde_json::from_str(&response[start..=end]).ok()?;
+    parse_vlm_kind(value.get("kind")?.as_str()?)
+}
+
+fn parse_vlm_grid(response: &str) -> Option<(String, Vec<String>, Vec<Vec<String>>)> {
+    let start = response.find('{')?;
+    let end = response.rfind('}')?;
+    let value: serde_json::Value = serde_json::from_str(&response[start..=end]).ok()?;
+    let kind = value
+        .get("kind")
+        .and_then(serde_json::Value::as_str)
+        .unwrap_or("other")
+        .to_string();
+    let cell_text = |cell: &serde_json::Value| match cell {
+        serde_json::Value::String(text) => text.trim().to_string(),
+        serde_json::Value::Null => String::new(),
+        other => other.to_string(),
+    };
+    let columns = value
+        .get("columns")?
+        .as_array()?
+        .iter()
+        .map(cell_text)
+        .collect::<Vec<_>>();
+    if columns.len() < 2 {
+        return None;
+    }
+    let rows = value
+        .get("rows")
+        .and_then(serde_json::Value::as_array)
+        .map(|rows| {
+            rows.iter()
+                .filter_map(serde_json::Value::as_array)
+                .map(|row| row.iter().map(cell_text).collect())
+                .collect()
+        })
+        .unwrap_or_default();
+    Some((kind, columns, rows))
+}
+
+fn vlm_kind_structurally_consistent(table: &StructuredTableRecord, kind: TableKind) -> bool {
+    let headers = table
+        .header_rows
+        .first()
+        .or_else(|| table.body_rows.first())
+        .map(|row| {
+            row.iter()
+                .map(|cell| classifier_label(&cell.text))
+                .collect::<Vec<_>>()
+        })
+        .unwrap_or_default();
+    let has_role = |roles: &[&str]| {
+        headers
+            .iter()
+            .any(|header| roles.iter().any(|role| header == &classifier_label(role)))
+    };
+    match kind {
+        TableKind::SignalDescription => {
+            has_role(&["signal", "name", "pin", "port"])
+                && has_role(&["width", "bits", "direction", "source", "destination"])
+                && !(has_role(&["field"]) && has_role(&["access", "reset"]))
+        }
+        TableKind::RegisterMap => {
+            has_role(&["offset", "address", "bits", "field"])
+                && has_role(&["access", "reset", "type", "attribute", "bits"])
+        }
+        TableKind::Encoding => has_role(&["value", "encoding", "code", "binary", "hex"]),
+        TableKind::TimingParameter => timing_table_has_structural_authority(table),
+        TableKind::FeatureMatrix => has_role(&[
+            "feature",
+            "property",
+            "capability",
+            "mandatory",
+            "optional",
+            "support",
+        ]),
+        _ => false,
+    }
+}
+
+fn table_is_degenerate(table: &StructuredTableRecord) -> bool {
+    let maximum_body_cells = table.body_rows.iter().map(Vec::len).max().unwrap_or(0);
+    table.col_count <= 1 || maximum_body_cells <= 1
+}
+
+fn validate_visual_response(kind: DiagramKind, response: &str) -> DerivationResult<()> {
+    let start = response.find('{').ok_or_else(|| {
+        DerivationError::new("visual model response does not contain a JSON object")
+    })?;
+    let end = response.rfind('}').ok_or_else(|| {
+        DerivationError::new("visual model response does not contain a complete JSON object")
+    })?;
+    let value: serde_json::Value = serde_json::from_str(&response[start..=end])
+        .map_err(|error| DerivationError::new(format!("invalid visual model JSON: {error}")))?;
+    let required_arrays: &[&str] = match kind {
+        DiagramKind::TimingDiagram => &["signals", "annotations"],
+        DiagramKind::StateMachineDiagram => &["states", "transitions"],
+        _ => {
+            return Err(DerivationError::new(
+                "only timing/state-machine observations have a registered SourceIR model grammar",
+            ));
+        }
+    };
+    if required_arrays
+        .iter()
+        .all(|field| value.get(*field).is_some_and(serde_json::Value::is_array))
+    {
+        Ok(())
+    } else {
+        Err(DerivationError::new(
+            "visual model response lacks the registered array schema",
+        ))
+    }
+}
+
+fn apply_source_grounded_proposal(
+    proposal: &SourceGroundedProposal,
+    visual_assets: &mut [VisualAsset],
+    tables: &mut [StructuredTableRecord],
+) -> DerivationResult<bool> {
+    match proposal {
+        SourceGroundedProposal::VisualObservation {
+            asset_id,
+            diagram_kind,
+            exact_response,
+            ..
+        } => {
+            let asset = visual_assets
+                .iter_mut()
+                .find(|asset| asset.asset_id == *asset_id)
+                .ok_or_else(|| {
+                    DerivationError::new(format!("visual asset '{asset_id}' is absent"))
+                })?;
+            if asset.diagram_kind != *diagram_kind {
+                return Err(DerivationError::new(
+                    "visual proposal kind does not match the registered caption classification",
+                ));
+            }
+            validate_visual_response(*diagram_kind, exact_response)?;
+            let prefix = match diagram_kind {
+                DiagramKind::TimingDiagram => "vlm_timing_diagram_extraction: ",
+                DiagramKind::StateMachineDiagram => "vlm_state_machine_extraction: ",
+                _ => unreachable!("validated visual proposal kind"),
+            };
+            asset.note = Some(format!("{prefix}{exact_response}"));
+            Ok(true)
+        }
+        SourceGroundedProposal::TableGridRepair {
+            table_id,
+            exact_response,
+            ..
+        } => {
+            let table = tables
+                .iter_mut()
+                .find(|table| table.table_id == *table_id)
+                .ok_or_else(|| {
+                    DerivationError::new(format!("structured table '{table_id}' is absent"))
+                })?;
+            if table.table_kind != TableKind::Unknown || !table_is_degenerate(table) {
+                return Err(DerivationError::new(
+                    "table-grid repair requires an unknown degenerate captured table",
+                ));
+            }
+            let (kind_label, columns, rows) = parse_vlm_grid(exact_response).ok_or_else(|| {
+                DerivationError::new("table-grid response does not satisfy the registered schema")
+            })?;
+            table.header_rows = vec![
+                columns
+                    .iter()
+                    .map(|text| StructuredTableCellRecord {
+                        text: text.clone(),
+                        row_span: 1,
+                        col_span: 1,
+                        is_header: true,
+                    })
+                    .collect(),
+            ];
+            table.body_rows = rows
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .map(|text| StructuredTableCellRecord {
+                            text: text.clone(),
+                            row_span: 1,
+                            col_span: 1,
+                            is_header: false,
+                        })
+                        .collect()
+                })
+                .collect();
+            table.col_count = columns.len() as u32;
+            table.row_count = (rows.len() + 1) as u32;
+            if let Some(kind) = parse_vlm_kind(&kind_label)
+                .filter(|kind| vlm_kind_structurally_consistent(table, *kind))
+            {
+                table.table_kind = kind;
+            }
+            Ok(true)
+        }
+        SourceGroundedProposal::TableClassification {
+            table_id,
+            exact_response,
+            ..
+        } => {
+            let table = tables
+                .iter_mut()
+                .find(|table| table.table_id == *table_id)
+                .ok_or_else(|| {
+                    DerivationError::new(format!("structured table '{table_id}' is absent"))
+                })?;
+            if table.table_kind != TableKind::Unknown {
+                return Err(DerivationError::new(
+                    "table classification may only refine an unknown captured table",
+                ));
+            }
+            let Some(kind) = parse_vlm_table_kind(exact_response) else {
+                return Ok(false);
+            };
+            if !vlm_kind_structurally_consistent(table, kind) {
+                return Ok(false);
+            }
+            table.table_kind = kind;
+            Ok(true)
+        }
+    }
+}
+
+fn classify_source_captures(
+    visual_assets: &mut [VisualAsset],
+    tables: &mut [StructuredTableRecord],
+    sections: &mut [ContentSectionRecord],
+) {
+    for asset in visual_assets {
+        asset.diagram_kind = classified_diagram_kind(asset);
+    }
+    for table in tables {
+        table.table_kind = classified_table_kind(table);
+    }
+    for section in sections {
+        section.section_kind = classified_section_kind(&section.title);
+    }
+}
+
+fn source_validation_fingerprint(
+    fields: &BTreeMap<String, serde_json::Value>,
+) -> DerivationResult<String> {
+    let mut semantic_fields = fields.clone();
+    semantic_fields.remove("validation_reports");
+    Ok(Sha256Digest::of_serializable(&semantic_fields)?
+        .as_str()
+        .to_string())
+}
+
+fn source_validation_report_from_fields(
+    fields: &BTreeMap<String, serde_json::Value>,
+) -> DerivationResult<ValidationReportRecord> {
+    let page_artifacts: Vec<PageArtifact> =
+        serde_json::from_value(fields["page_artifacts"].clone())
+            .map_err(|error| DerivationError::new(format!("invalid validation pages: {error}")))?;
+    let visual_assets: Vec<VisualAsset> = serde_json::from_value(fields["visual_assets"].clone())
+        .map_err(|error| {
+        DerivationError::new(format!("invalid validation visuals: {error}"))
+    })?;
+    let structured_tables: Vec<StructuredTableRecord> =
+        serde_json::from_value(fields["structured_tables"].clone())
+            .map_err(|error| DerivationError::new(format!("invalid validation tables: {error}")))?;
+    let content_elements: Vec<ContentElementRecord> =
+        serde_json::from_value(fields["content_elements"].clone()).map_err(|error| {
+            DerivationError::new(format!("invalid validation content: {error}"))
+        })?;
+    let document_sections: Vec<ContentSectionRecord> =
+        serde_json::from_value(fields["document_sections"].clone()).map_err(|error| {
+            DerivationError::new(format!("invalid validation sections: {error}"))
+        })?;
+    let residual_decisions: Vec<ResidualDecisionPacket> =
+        serde_json::from_value(fields["residual_decisions"].clone()).map_err(|error| {
+            DerivationError::new(format!("invalid validation residuals: {error}"))
+        })?;
+    let document_identity: DocumentIdentity =
+        serde_json::from_value(fields["document_identity"].clone()).map_err(|error| {
+            DerivationError::new(format!("invalid validation identity: {error}"))
+        })?;
+
+    let timing_count = visual_assets
+        .iter()
+        .filter(|asset| asset.diagram_kind == DiagramKind::TimingDiagram)
+        .count();
+    let state_count = visual_assets
+        .iter()
+        .filter(|asset| asset.diagram_kind == DiagramKind::StateMachineDiagram)
+        .count();
+    let block_count = visual_assets
+        .iter()
+        .filter(|asset| asset.diagram_kind == DiagramKind::BlockDiagram)
+        .count();
+    let unknown_count = visual_assets
+        .iter()
+        .filter(|asset| asset.diagram_kind == DiagramKind::Unknown)
+        .count();
+    let classified = timing_count + state_count + block_count;
+    let diagram_coverage = if visual_assets.is_empty() {
+        0.0
+    } else {
+        classified as f64 / visual_assets.len() as f64 * 100.0
+    };
+    let vlm_enriched = visual_assets
+        .iter()
+        .filter(|asset| {
+            asset.note.as_deref().is_some_and(|note| {
+                note.starts_with("vlm_timing_diagram_extraction:")
+                    || note.starts_with("vlm_state_machine_extraction:")
+            })
+        })
+        .count();
+    let figures_ready_for_vlm = timing_count + state_count;
+    let missing_vlm_ids = visual_assets
+        .iter()
+        .filter(|asset| {
+            matches!(
+                asset.diagram_kind,
+                DiagramKind::TimingDiagram | DiagramKind::StateMachineDiagram
+            )
+        })
+        .map(|asset| asset.asset_id.clone())
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect::<Vec<_>>();
+    let mut findings = Vec::new();
+    if figures_ready_for_vlm > 0 && vlm_enriched == 0 {
+        findings.push(ValidationFindingRecord {
+            finding_id: "source_vlm_enrichment_missing".to_string(),
+            severity: ValidationFindingSeverity::Warning,
+            category: "visual_enrichment".to_string(),
+            summary: format!(
+                "{figures_ready_for_vlm} classified timing/state diagrams are still missing VLM enrichment"
+            ),
+            related_ids: missing_vlm_ids.clone(),
+        });
+        if !missing_vlm_ids.is_empty() {
+            findings.push(ValidationFindingRecord {
+                finding_id: "source_vlm_enrichment_missing_surface_rescan_guidance".to_string(),
+                severity: ValidationFindingSeverity::Info,
+                category: "rescan_guidance".to_string(),
+                summary: "SourceIR still carries timing/state diagram asset ids without VLM enrichment; this should trigger targeted local visual enrichment plus bounded replay to see whether those same asset ids gain extracted observations".to_string(),
+                related_ids: missing_vlm_ids,
+            });
+        }
+    }
+    if unknown_count > 0 {
+        findings.push(ValidationFindingRecord {
+            finding_id: "source_unknown_diagrams_remaining".to_string(),
+            severity: ValidationFindingSeverity::Info,
+            category: "diagram_classification".to_string(),
+            summary: format!("{unknown_count} visual assets remain unclassified"),
+            related_ids: visual_assets
+                .iter()
+                .filter(|asset| asset.diagram_kind == DiagramKind::Unknown)
+                .map(|asset| asset.asset_id.clone())
+                .take(6)
+                .collect(),
+        });
+    }
+    if !residual_decisions.is_empty() {
+        findings.push(ValidationFindingRecord {
+            finding_id: "source_residual_decisions_present".to_string(),
+            severity: ValidationFindingSeverity::Warning,
+            category: "residual_decisions".to_string(),
+            summary: format!(
+                "SourceIR still carries {} residual decision packet(s)",
+                residual_decisions.len()
+            ),
+            related_ids: residual_decisions
+                .iter()
+                .map(|packet| packet.packet_id.clone())
+                .collect(),
+        });
+    }
+    let artifact_fingerprint = source_validation_fingerprint(fields)?;
+    let metric = |name: &str, value: String| ValidationMetricRecord {
+        name: name.to_string(),
+        value,
+    };
+    Ok(ValidationReportRecord {
+        report_id: format!("validation_source_ir_{artifact_fingerprint}"),
+        validated_stage: IrStage::SourceIr,
+        artifact_fingerprint,
+        summary: format!(
+            "SourceIR validation for {} with {} finding(s)",
+            document_identity.display_name,
+            findings.len()
+        ),
+        overall_score: None,
+        grade: None,
+        metrics: vec![
+            metric("pages", page_artifacts.len().to_string()),
+            metric("visual_assets", visual_assets.len().to_string()),
+            metric("structured_tables", structured_tables.len().to_string()),
+            metric("content_elements", content_elements.len().to_string()),
+            metric("document_sections", document_sections.len().to_string()),
+            metric("timing_diagrams", timing_count.to_string()),
+            metric("state_machine_diagrams", state_count.to_string()),
+            metric("block_diagrams", block_count.to_string()),
+            metric("unknown_diagrams", unknown_count.to_string()),
+            metric(
+                "diagram_classification_coverage_pct",
+                format!("{diagram_coverage:.0}"),
+            ),
+            metric("figures_ready_for_vlm", figures_ready_for_vlm.to_string()),
+            metric("figures_already_enriched", vlm_enriched.to_string()),
+            metric("residual_decisions", residual_decisions.len().to_string()),
+        ],
+        findings,
+    })
+}
+
+fn verify_source_rule_relation(context: RuleVerificationContext<'_>) -> DerivationResult<()> {
+    if context.proof().address().surface() == "validation_reports" {
+        if context.proof().address().field_path().is_some() {
+            let root = context
+                .premise_bytes(0)?
+                .ok_or_else(|| DerivationError::new("validation record lacks its root proof"))?;
+            let reports: Vec<ValidationReportRecord> =
+                serde_json::from_slice(root).map_err(|error| {
+                    DerivationError::new(format!("invalid validation root: {error}"))
+                })?;
+            let index = context
+                .proof()
+                .address()
+                .field_path()
+                .and_then(|path| path.strip_prefix('['))
+                .and_then(|path| path.strip_suffix(']'))
+                .and_then(|path| path.parse::<usize>().ok())
+                .ok_or_else(|| DerivationError::new("invalid validation record field path"))?;
+            let expected = reports.get(index).ok_or_else(|| {
+                DerivationError::new("validation record index exceeds its proved root")
+            })?;
+            let expected =
+                serde_json::to_vec(&serde_json::to_value(expected).map_err(|error| {
+                    DerivationError::new(format!("cannot serialize validation record: {error}"))
+                })?)
+                .map_err(|error| {
+                    DerivationError::new(format!("cannot encode validation record: {error}"))
+                })?;
+            return if expected == context.conclusion_json() {
+                Ok(())
+            } else {
+                Err(DerivationError::new(
+                    "validation record is not the selected member of its proved root",
+                ))
+            };
+        }
+        if context.conclusion_json() == b"[]" {
+            return Ok(());
+        }
+        let mut fields = BTreeMap::new();
+        for (index, premise) in context.proof().premises().iter().enumerate() {
+            let PremiseRef::UpstreamClaim { address, .. } = premise else {
+                return Err(DerivationError::new(
+                    "validation root accepts only verified SourceIR field roots",
+                ));
+            };
+            if address.stage() != IrStage::SourceIr
+                || address.stable_record_key() != "root"
+                || address.surface() == "validation_reports"
+            {
+                return Err(DerivationError::new(
+                    "validation root premise is not a non-validation SourceIR field root",
+                ));
+            }
+            let bytes = context.premise_bytes(index)?.ok_or_else(|| {
+                DerivationError::new("validation upstream premise bytes are absent")
+            })?;
+            let value = serde_json::from_slice(bytes).map_err(|error| {
+                DerivationError::new(format!("invalid validation upstream value: {error}"))
+            })?;
+            fields.insert(address.surface().to_string(), value);
+        }
+        if fields.len() + 1 != SOURCE_RULE_FIELDS.len() {
+            return Err(DerivationError::new(
+                "validation root does not cover every non-validation SourceIR field root",
+            ));
+        }
+        fields.insert("validation_reports".to_string(), serde_json::json!([]));
+        let expected = vec![source_validation_report_from_fields(&fields)?];
+        let expected = serde_json::to_vec(&serde_json::to_value(expected).map_err(|error| {
+            DerivationError::new(format!(
+                "cannot serialize expected validation report: {error}"
+            ))
+        })?)
+        .map_err(|error| {
+            DerivationError::new(format!("cannot encode expected validation report: {error}"))
+        })?;
+        return if expected == context.conclusion_json() {
+            Ok(())
+        } else {
+            Err(DerivationError::new(
+                "validation report is not the registered deterministic SourceIR evaluation",
+            ))
+        };
+    }
+
+    let premise = context
+        .premise_bytes(0)?
+        .ok_or_else(|| DerivationError::new("SourceIR rule requires exact captured bytes"))?;
+    #[cfg(any(test, feature = "test-support"))]
+    if context.proof().premises().iter().any(|premise| {
+        matches!(
+            premise,
+            PremiseRef::SourceSpan { span_id, .. }
+                if span_id.starts_with("test-fixture-source-field:")
+        )
+    }) && premise == context.conclusion_json()
+    {
+        return Ok(());
+    }
+    let per_record = context.proof().address().field_path().is_some();
+    match context.proof().address().surface() {
+        "visual_assets" | "structured_tables" | "document_sections" => {
+            let mut visuals = Vec::new();
+            let mut tables = Vec::new();
+            let mut sections = Vec::new();
+            match context.proof().address().surface() {
+                "visual_assets" => {
+                    visuals = if per_record {
+                        vec![serde_json::from_slice(premise).map_err(|error| {
+                            DerivationError::new(format!("invalid visual premise: {error}"))
+                        })?]
+                    } else {
+                        serde_json::from_slice(premise).map_err(|error| {
+                            DerivationError::new(format!("invalid visual premise: {error}"))
+                        })?
+                    };
+                }
+                "structured_tables" => {
+                    tables = if per_record {
+                        vec![serde_json::from_slice(premise).map_err(|error| {
+                            DerivationError::new(format!("invalid table premise: {error}"))
+                        })?]
+                    } else {
+                        serde_json::from_slice(premise).map_err(|error| {
+                            DerivationError::new(format!("invalid table premise: {error}"))
+                        })?
+                    };
+                }
+                "document_sections" => {
+                    sections = if per_record {
+                        vec![serde_json::from_slice(premise).map_err(|error| {
+                            DerivationError::new(format!("invalid section premise: {error}"))
+                        })?]
+                    } else {
+                        serde_json::from_slice(premise).map_err(|error| {
+                            DerivationError::new(format!("invalid section premise: {error}"))
+                        })?
+                    };
+                }
+                _ => unreachable!("closed classification surface"),
+            }
+            classify_source_captures(&mut visuals, &mut tables, &mut sections);
+            for index in 1..context.proof().premises().len() {
+                if context.proof().premises()[index].kind() != PremiseKind::GroundedModelProposal {
+                    continue;
+                }
+                let proposal_bytes = context.premise_bytes(index)?.ok_or_else(|| {
+                    DerivationError::new("grounded SourceIR proposal bytes are absent")
+                })?;
+                let proposal: SourceGroundedProposal = serde_json::from_slice(proposal_bytes)
+                    .map_err(|error| {
+                        DerivationError::new(format!("invalid grounded SourceIR proposal: {error}"))
+                    })?;
+                if proposal.surface() != context.proof().address().surface() {
+                    return Err(DerivationError::new(
+                        "grounded SourceIR proposal targets the wrong classification surface",
+                    ));
+                }
+                if !apply_source_grounded_proposal(&proposal, &mut visuals, &mut tables)? {
+                    return Err(DerivationError::new(
+                        "grounded SourceIR proposal did not produce a canonical refinement",
+                    ));
+                }
+            }
+            let replayed_value = match context.proof().address().surface() {
+                "visual_assets" if per_record => serde_json::to_value(&visuals[0]),
+                "visual_assets" => serde_json::to_value(&visuals),
+                "structured_tables" if per_record => serde_json::to_value(&tables[0]),
+                "structured_tables" => serde_json::to_value(&tables),
+                "document_sections" if per_record => serde_json::to_value(&sections[0]),
+                "document_sections" => serde_json::to_value(&sections),
+                _ => unreachable!("closed classification surface"),
+            }
+            .map_err(|error| {
+                DerivationError::new(format!("cannot serialize replayed SourceIR claim: {error}"))
+            })?;
+            let replayed = serde_json::to_vec(&replayed_value).map_err(|error| {
+                DerivationError::new(format!("cannot encode replayed SourceIR claim: {error}"))
+            })?;
+            if replayed == context.conclusion_json() {
+                Ok(())
+            } else {
+                Err(DerivationError::new(format!(
+                    "SourceIR {}:{} classification is not the registered capture/proposal replay",
+                    context.proof().address().surface(),
+                    context.proof().address().stable_record_key()
+                )))
+            }
+        }
+        _ if premise == context.conclusion_json() => Ok(()),
+        other => Err(DerivationError::new(format!(
+            "SourceIR field '{other}' is not an exact capture copy",
+        ))),
+    }
 }
 
 impl SourceIr {
     pub fn load_from_path(path: &Path) -> Result<Self> {
+        let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
+        let source_ir = serde_json::from_str::<Self>(&fs::read_to_string(&path)?)?;
+        if source_ir.schema_version > SOURCE_IR_SCHEMA_VERSION {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "SourceIR schema {} at {} is newer than supported schema {SOURCE_IR_SCHEMA_VERSION}",
+                source_ir.schema_version,
+                path.display()
+            )));
+        }
+        if source_ir.schema_version < SOURCE_IR_SCHEMA_VERSION {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "legacy proofless SourceIR schema {} at {} is inspection-only and must be rebuilt before canonical use",
+                source_ir.schema_version,
+                path.display()
+            )));
+        }
+        source_ir.verify_canonical_proof()?;
+        source_ir.runtime_clone()
+    }
+
+    /// Parse an old SourceIR for diagnostics or an explicit rebuild command without granting it
+    /// canonical authority. Downstream builders must use [`Self::load_from_path`] instead.
+    pub fn load_for_inspection(path: &Path) -> Result<Self> {
         let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
         let mut source_ir = serde_json::from_str::<Self>(&fs::read_to_string(&path)?)?;
         if source_ir.schema_version > SOURCE_IR_SCHEMA_VERSION {
@@ -905,14 +2119,154 @@ impl SourceIr {
         }
         if source_ir.schema_version < SOURCE_IR_SCHEMA_VERSION {
             neutralize_legacy_source_classifications(&mut source_ir);
+        } else {
+            source_ir.verify_canonical_proof()?;
         }
-        let mut source_ir = source_ir.runtime_clone()?;
-        // Old SourceIR remains readable, but no current consumer trusts a timing classification
-        // that lacks structural authority. Structural shape is necessary, not sufficient: an
-        // unknown table still needs an upstream classifier or prior to establish its category.
-        normalize_timing_table_kinds(&mut source_ir.structured_tables);
-        Ok(source_ir)
+        source_ir.runtime_clone()
     }
+
+    /// Rebuild one legacy SourceIR from its retained capture bundle without re-running a PDF
+    /// model. This maintenance capability is absent from normal builds and must be explicitly
+    /// enabled for an audited schema migration.
+    #[cfg(feature = "source-proof-migration")]
+    #[doc(hidden)]
+    pub fn rebuild_legacy_from_retained_capture(path: &Path) -> Result<Self> {
+        let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
+        let raw = fs::read_to_string(&path)?;
+        let legacy = serde_json::from_str::<Self>(&raw)?;
+        if legacy.schema_version >= SOURCE_IR_SCHEMA_VERSION {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "SourceIR at {} is schema {}; retained-capture migration accepts only legacy schemas below {SOURCE_IR_SCHEMA_VERSION}",
+                path.display(),
+                legacy.schema_version
+            )));
+        }
+        if !matches!(legacy.stage, IrStage::SourceIr) {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "artifact at {} is not SourceIR",
+                path.display()
+            )));
+        }
+        legacy.verify_retained_capture_backing(&path)?;
+
+        let mut rebuilt = legacy;
+        neutralize_legacy_source_classifications(&mut rebuilt);
+        classify_source_captures(
+            &mut rebuilt.visual_assets,
+            &mut rebuilt.structured_tables,
+            &mut rebuilt.document_sections,
+        );
+        rebuilt.schema_version = SOURCE_IR_SCHEMA_VERSION;
+        // A legacy report used a legacy fingerprint/evaluator. Current validation is recomputed
+        // only after the rebuilt artifact has passed canonical proof verification.
+        rebuilt.validation_reports.clear();
+        rebuilt.proof_context = None;
+        rebuilt.proof_ledger = None;
+        rebuilt = rebuilt.runtime_clone()?;
+        rebuilt.refresh_canonical_proof()?;
+        Ok(rebuilt)
+    }
+
+    #[cfg(feature = "source-proof-migration")]
+    fn verify_retained_capture_backing(&self, artifact_path: &Path) -> Result<()> {
+        let recorded_artifact = resolve_existing(
+            &self.artifact_layout.source_ir_path,
+            PersistedPathOrigin::RepositoryOwned,
+        )?;
+        if recorded_artifact != artifact_path {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "legacy SourceIR path mismatch: opened {} but artifact records {}",
+                artifact_path.display(),
+                recorded_artifact.display()
+            )));
+        }
+
+        let source_path =
+            resolve_existing(&self.source.canonical_path, self.source_path_origin()?)?;
+        if let Some(recorded_size) = self.source.size_bytes {
+            let actual_size = fs::metadata(&source_path)?.len();
+            if actual_size != recorded_size {
+                return Err(AppError::InvalidStageArtifact(format!(
+                    "legacy SourceIR source-size mismatch at {}: recorded {recorded_size}, found {actual_size}",
+                    source_path.display()
+                )));
+            }
+        }
+
+        if !matches!(self.source.source_kind, SourceKind::Pdf)
+            || !matches!(self.normalization_plan.status, NormalizationStatus::Ready)
+        {
+            return Ok(());
+        }
+
+        let promoted_markdown = self
+            .normalization_plan
+            .promoted_markdown_path
+            .as_deref()
+            .ok_or_else(|| {
+                AppError::InvalidStageArtifact(
+                    "retained PDF capture lacks promoted markdown path".to_string(),
+                )
+            })?;
+        resolve_existing(promoted_markdown, self.promoted_markdown_origin()?)?;
+        let metadata_path = self
+            .normalization_plan
+            .metadata_output_path
+            .as_deref()
+            .ok_or_else(|| {
+                AppError::InvalidStageArtifact(
+                    "retained PDF capture lacks backend metadata path".to_string(),
+                )
+            })?;
+        resolve_existing(metadata_path, PersistedPathOrigin::RepositoryOwned)?;
+
+        let layout = self.artifact_layout.runtime_layout()?;
+        resolve_existing(
+            &layout.backend_raw_output_path,
+            PersistedPathOrigin::RepositoryOwned,
+        )?;
+        let page_manifest_path = resolve_existing(
+            &layout.page_artifact_manifest_path,
+            PersistedPathOrigin::RepositoryOwned,
+        )?;
+        let visual_manifest_path = resolve_existing(
+            &layout.visual_asset_manifest_path,
+            PersistedPathOrigin::RepositoryOwned,
+        )?;
+        let page_manifest: Vec<PageArtifact> =
+            serde_json::from_str(&fs::read_to_string(page_manifest_path)?)?;
+        let visual_manifest: Vec<VisualAsset> =
+            serde_json::from_str(&fs::read_to_string(visual_manifest_path)?)?;
+        if page_manifest != self.page_artifacts {
+            return Err(AppError::InvalidStageArtifact(
+                "legacy SourceIR page capture differs from its retained manifest".to_string(),
+            ));
+        }
+        if visual_manifest != self.visual_assets {
+            return Err(AppError::InvalidStageArtifact(
+                "legacy SourceIR visual capture differs from its retained manifest".to_string(),
+            ));
+        }
+
+        for page in &self.page_artifacts {
+            if let Some(path) = page.page_image_path.as_deref() {
+                resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
+            }
+            if let Some(path) = page.layout_metadata_path.as_deref() {
+                resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
+            }
+        }
+        for visual in &self.visual_assets {
+            if let Some(path) = visual.image_path.as_deref() {
+                resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
+            }
+            if let Some(path) = visual.caption_source_path.as_deref() {
+                resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
+            }
+        }
+        Ok(())
+    }
+
     pub fn build(source: &Path, artifact_base_root: &Path) -> Result<Self> {
         let source_path_origin = if source.is_relative() {
             PersistedPathOrigin::RepositoryOwned
@@ -1032,7 +2386,7 @@ impl SourceIr {
         let automation_confidence = automation_confidence(source_kind, &residual_decisions);
         let planned_actions = planned_actions(source_kind, &residual_decisions);
 
-        Self {
+        let mut source_ir = Self {
             schema_version: SOURCE_IR_SCHEMA_VERSION,
             stage: IrStage::SourceIr,
             source: source_registration,
@@ -1052,12 +2406,18 @@ impl SourceIr {
             adapter_targets: vec![AdapterTarget::Isf],
             planned_actions,
             automation_confidence,
+            proof_context: None,
+            proof_ledger: None,
         }
-        .runtime_clone()
+        .runtime_clone()?;
+        source_ir.refresh_canonical_proof()?;
+        Ok(source_ir)
     }
 
     pub fn to_pretty_json(&self) -> Result<String> {
-        Ok(serde_json::to_string_pretty(&self.persisted_clone()?)?)
+        let persisted = self.persisted_clone()?;
+        persisted.verify_canonical_proof()?;
+        Ok(serde_json::to_string_pretty(&persisted)?)
     }
 
     pub(crate) fn source_path_origin(&self) -> Result<PersistedPathOrigin> {
@@ -1139,12 +2499,14 @@ impl SourceIr {
         }
 
         *self = self.runtime_clone()?;
+        self.refresh_canonical_proof()?;
 
         Ok(())
     }
 
     pub fn write_to_disk(&self) -> Result<()> {
         let persisted = self.persisted_clone()?;
+        persisted.verify_canonical_proof()?;
         let runtime_layout = persisted.artifact_layout.runtime_layout()?;
         fs::create_dir_all(&runtime_layout.artifact_root)?;
         if matches!(persisted.source.source_kind, SourceKind::Pdf)
@@ -1167,6 +2529,677 @@ impl SourceIr {
             &runtime_layout.source_ir_path,
             serde_json::to_string_pretty(&persisted)?,
         )?;
+        Ok(())
+    }
+
+    /// Apply one exact VLM response through the registered visual-observation grammar. The
+    /// response is retained in the proof context and replayed on every canonical reload.
+    pub fn apply_visual_observation(
+        &mut self,
+        asset_id: &str,
+        diagram_kind: DiagramKind,
+        exact_response: String,
+    ) -> Result<()> {
+        self.apply_grounded_source_proposal(SourceGroundedProposal::VisualObservation {
+            proposal_id: self.next_grounded_proposal_id("visual", &exact_response),
+            asset_id: asset_id.to_string(),
+            diagram_kind,
+            exact_response,
+        })?
+        .then_some(())
+        .ok_or_else(|| {
+            AppError::InvalidStageArtifact(
+                "visual observation did not produce a registered refinement".to_string(),
+            )
+        })
+    }
+
+    /// Apply one exact VLM grid transcription through the registered repair grammar.
+    pub fn apply_table_grid_repair(
+        &mut self,
+        table_id: &str,
+        exact_response: String,
+    ) -> Result<bool> {
+        self.apply_grounded_source_proposal(SourceGroundedProposal::TableGridRepair {
+            proposal_id: self.next_grounded_proposal_id("table-grid", &exact_response),
+            table_id: table_id.to_string(),
+            exact_response,
+        })
+    }
+
+    /// Apply one exact VLM kind proposal only when the registered structural gate agrees.
+    pub fn apply_table_classification(
+        &mut self,
+        table_id: &str,
+        exact_response: String,
+    ) -> Result<bool> {
+        self.apply_grounded_source_proposal(SourceGroundedProposal::TableClassification {
+            proposal_id: self.next_grounded_proposal_id("table-kind", &exact_response),
+            table_id: table_id.to_string(),
+            exact_response,
+        })
+    }
+
+    fn next_grounded_proposal_id(&self, kind: &str, response: &str) -> String {
+        let ordinal = self
+            .proof_context
+            .as_ref()
+            .map_or(0, |context| context.grounded_proposals.len());
+        let digest = Sha256Digest::of_bytes(response.as_bytes());
+        format!("source-{kind}-{ordinal:08}-{}", &digest.as_str()[..16])
+    }
+
+    fn apply_grounded_source_proposal(&mut self, proposal: SourceGroundedProposal) -> Result<bool> {
+        self.persisted_clone()?.verify_canonical_proof()?;
+        let mut candidate = self.clone();
+        let applied = apply_source_grounded_proposal(
+            &proposal,
+            &mut candidate.visual_assets,
+            &mut candidate.structured_tables,
+        )
+        .map_err(source_derivation_error)?;
+        if !applied {
+            return Ok(false);
+        }
+        let mut context = candidate.proof_context.clone().ok_or_else(|| {
+            AppError::InvalidStageArtifact(
+                "verified SourceIR lost its proof context during mutation".to_string(),
+            )
+        })?;
+        #[cfg(any(test, feature = "test-support"))]
+        if context.test_fixture {
+            return Err(AppError::InvalidStageArtifact(
+                "synthetic fixture authority cannot enter the production enrichment path"
+                    .to_string(),
+            ));
+        }
+        context.grounded_proposals.push(proposal);
+        let mut persisted = candidate.persisted_clone()?;
+        persisted.proof_context = None;
+        persisted.proof_ledger = None;
+        candidate.refresh_proof_from_context(persisted, context)?;
+        *self = candidate;
+        Ok(true)
+    }
+
+    /// Deterministic current SourceIR evaluation. The report is recomputed by the registered
+    /// validation rule on canonical reload; callers cannot supply alternative metrics/findings.
+    pub fn validation_report(&self) -> Result<ValidationReportRecord> {
+        let persisted = self.persisted_clone()?;
+        persisted.verify_canonical_proof()?;
+        source_validation_report_from_fields(
+            &persisted
+                .public_field_values()
+                .map_err(source_derivation_error)?,
+        )
+        .map_err(source_derivation_error)
+    }
+
+    /// Replace the optional validation backannotation with the exact registered evaluation.
+    pub fn apply_validation_report(&mut self, report: ValidationReportRecord) -> Result<()> {
+        let expected = self.validation_report()?;
+        if report != expected {
+            return Err(AppError::InvalidStageArtifact(
+                "SourceIR validation backannotation differs from the registered evaluation"
+                    .to_string(),
+            ));
+        }
+        let mut candidate = self.clone();
+        candidate.validation_reports = vec![report];
+        let mut context = candidate.proof_context.clone().ok_or_else(|| {
+            AppError::InvalidStageArtifact(
+                "verified SourceIR lost its proof context during validation".to_string(),
+            )
+        })?;
+        #[cfg(any(test, feature = "test-support"))]
+        let test_fixture = context.test_fixture;
+        context.field_premises.retain(|key, _| {
+            key != "validation_reports" && !key.starts_with("validation_reports[")
+        });
+        let validation_value = serde_json::to_value(&candidate.validation_reports)?;
+        context
+            .field_premises
+            .insert("validation_reports".to_string(), validation_value.clone());
+        if let Some(reports) = validation_value.as_array() {
+            for (index, report) in reports.iter().enumerate() {
+                context
+                    .field_premises
+                    .insert(format!("validation_reports[{index}]"), report.clone());
+            }
+        }
+        let mut persisted = candidate.persisted_clone()?;
+        persisted.proof_context = None;
+        persisted.proof_ledger = None;
+        #[cfg(any(test, feature = "test-support"))]
+        if test_fixture {
+            context = persisted
+                .test_fixture_proof_context()
+                .map_err(source_derivation_error)?;
+        }
+        candidate.refresh_proof_from_context(persisted, context)?;
+        *self = candidate;
+        Ok(())
+    }
+
+    /// Explicit test-only fixture seam. Production code cannot use this to bless arbitrary field
+    /// mutation; test modules use it only after assembling synthetic, classifier-valid captures.
+    #[cfg(any(test, feature = "test-support"))]
+    #[doc(hidden)]
+    pub fn write_test_fixture_to_disk(&self) -> Result<()> {
+        // Preserve canonical coverage for ordinary test setup. The synthetic branch exists only
+        // for tests that deliberately patch public fields without going through production
+        // mutation APIs.
+        if self.persisted_clone()?.verify_canonical_proof().is_ok() {
+            return self.write_to_disk();
+        }
+        let mut fixture = self.clone();
+        let mut persisted = fixture.persisted_clone()?;
+        persisted.proof_context = None;
+        persisted.proof_ledger = None;
+        let context = persisted
+            .test_fixture_proof_context()
+            .map_err(source_derivation_error)?;
+        fixture.refresh_proof_from_context(persisted, context)?;
+        fixture.write_to_disk()
+    }
+
+    /// Current proof ledger after successful construction or canonical reload.
+    pub fn proof_ledger(&self) -> Option<&ProofLedger> {
+        self.proof_ledger.as_ref()
+    }
+
+    fn public_field_values(&self) -> DerivationResult<BTreeMap<String, serde_json::Value>> {
+        let serialized = serde_json::to_value(self).map_err(|error| {
+            DerivationError::new(format!("cannot serialize SourceIR fields: {error}"))
+        })?;
+        let object = serialized
+            .as_object()
+            .ok_or_else(|| DerivationError::new("serialized SourceIR must be a JSON object"))?;
+        SOURCE_RULE_FIELDS
+            .iter()
+            .map(|(field, _)| {
+                object
+                    .get(*field)
+                    .cloned()
+                    .or_else(|| (*field == "document_profile").then_some(serde_json::Value::Null))
+                    .map(|value| ((*field).to_string(), value))
+                    .ok_or_else(|| {
+                        DerivationError::new(format!(
+                            "SourceIR public field '{field}' is absent from serialization"
+                        ))
+                    })
+            })
+            .collect()
+    }
+
+    fn expected_proof_context(&self) -> DerivationResult<SourceProofContext> {
+        let mut neutral = self.clone();
+        neutral.proof_context = None;
+        neutral.proof_ledger = None;
+        for asset in &mut neutral.visual_assets {
+            asset.diagram_kind = DiagramKind::Unknown;
+        }
+        for table in &mut neutral.structured_tables {
+            table.table_kind = TableKind::Unknown;
+        }
+        for section in &mut neutral.document_sections {
+            section.section_kind = SectionKind::Unknown;
+        }
+        let mut field_premises = neutral.public_field_values()?;
+        for (field, _) in SOURCE_RULE_FIELDS {
+            if let Some(items) = field_premises
+                .get(*field)
+                .and_then(serde_json::Value::as_array)
+                .cloned()
+            {
+                for (index, item) in items.into_iter().enumerate() {
+                    field_premises.insert(format!("{field}[{index}]"), item);
+                }
+            }
+        }
+        Ok(SourceProofContext {
+            schema_version: SOURCE_PROOF_CONTEXT_SCHEMA_VERSION,
+            field_premises,
+            grounded_proposals: Vec::new(),
+            #[cfg(any(test, feature = "test-support"))]
+            test_fixture: false,
+        })
+    }
+
+    #[cfg(any(test, feature = "test-support"))]
+    fn test_fixture_proof_context(&self) -> DerivationResult<SourceProofContext> {
+        let mut field_premises = self.public_field_values()?;
+        for (field, _) in SOURCE_RULE_FIELDS {
+            if let Some(items) = field_premises
+                .get(*field)
+                .and_then(serde_json::Value::as_array)
+                .cloned()
+            {
+                for (index, item) in items.into_iter().enumerate() {
+                    field_premises.insert(format!("{field}[{index}]"), item);
+                }
+            }
+        }
+        Ok(SourceProofContext {
+            schema_version: SOURCE_PROOF_CONTEXT_SCHEMA_VERSION,
+            field_premises,
+            grounded_proposals: Vec::new(),
+            test_fixture: true,
+        })
+    }
+
+    fn claim_inputs(&self) -> DerivationResult<Vec<SourceClaimInput>> {
+        let fields = self.public_field_values()?;
+        let mut claims = Vec::new();
+        for (field, family) in SOURCE_RULE_FIELDS {
+            let value = fields.get(*field).cloned().ok_or_else(|| {
+                DerivationError::new(format!("SourceIR claim field '{field}' is absent"))
+            })?;
+            let rule_id =
+                RuleId::try_from(format!("{family}.{field}.v1")).map_err(DerivationError::new)?;
+            let confidence = match *family {
+                "source.capture" => ProofConfidence::Captured,
+                "source.residual" => ProofConfidence::Residual,
+                _ => ProofConfidence::Deterministic,
+            };
+            claims.push(SourceClaimInput {
+                address: ClaimAddress::new(IrStage::SourceIr, *field, "root", None)?,
+                rule_id: rule_id.clone(),
+                premise_key: (*field).to_string(),
+                confidence,
+                conclusion: value.clone(),
+            });
+            if let Some(items) = value.as_array() {
+                for (index, item) in items.iter().enumerate() {
+                    claims.push(SourceClaimInput {
+                        address: ClaimAddress::new(
+                            IrStage::SourceIr,
+                            *field,
+                            format!("record-{index:08}"),
+                            Some(format!("[{index}]")),
+                        )?,
+                        rule_id: rule_id.clone(),
+                        premise_key: format!("{field}[{index}]"),
+                        confidence,
+                        conclusion: item.clone(),
+                    });
+                }
+            }
+        }
+        Ok(claims)
+    }
+
+    fn validate_proof_context(&self, context: &SourceProofContext) -> DerivationResult<()> {
+        #[cfg(any(test, feature = "test-support"))]
+        if context.test_fixture {
+            return if context == &self.test_fixture_proof_context()? {
+                Ok(())
+            } else {
+                Err(DerivationError::new(
+                    "test fixture proof context is not an exact field projection",
+                ))
+            };
+        }
+
+        let current = self.public_field_values()?;
+        for (field, _) in SOURCE_RULE_FIELDS {
+            let captured = context.field_premises.get(*field).ok_or_else(|| {
+                DerivationError::new(format!("SourceIR proof context lacks field '{field}'"))
+            })?;
+            if !matches!(
+                *field,
+                "visual_assets" | "structured_tables" | "document_sections"
+            ) && current.get(*field) != Some(captured)
+            {
+                return Err(DerivationError::new(format!(
+                    "SourceIR field '{field}' differs from its exact captured premise"
+                )));
+            }
+            if let Some(items) = captured.as_array() {
+                for (index, item) in items.iter().enumerate() {
+                    if context.field_premises.get(&format!("{field}[{index}]")) != Some(item) {
+                        return Err(DerivationError::new(format!(
+                            "SourceIR per-record premise '{field}[{index}]' differs from its root capture"
+                        )));
+                    }
+                }
+            }
+        }
+
+        let mut visuals: Vec<VisualAsset> = serde_json::from_value(
+            context
+                .field_premises
+                .get("visual_assets")
+                .cloned()
+                .ok_or_else(|| DerivationError::new("visual capture root is absent"))?,
+        )
+        .map_err(|error| DerivationError::new(format!("invalid visual capture root: {error}")))?;
+        let mut tables: Vec<StructuredTableRecord> = serde_json::from_value(
+            context
+                .field_premises
+                .get("structured_tables")
+                .cloned()
+                .ok_or_else(|| DerivationError::new("table capture root is absent"))?,
+        )
+        .map_err(|error| DerivationError::new(format!("invalid table capture root: {error}")))?;
+        let mut sections: Vec<ContentSectionRecord> = serde_json::from_value(
+            context
+                .field_premises
+                .get("document_sections")
+                .cloned()
+                .ok_or_else(|| DerivationError::new("section capture root is absent"))?,
+        )
+        .map_err(|error| DerivationError::new(format!("invalid section capture root: {error}")))?;
+        classify_source_captures(&mut visuals, &mut tables, &mut sections);
+        let mut proposal_ids = BTreeSet::new();
+        for proposal in &context.grounded_proposals {
+            if !proposal_ids.insert(proposal.proposal_id()) {
+                return Err(DerivationError::new(format!(
+                    "duplicate grounded SourceIR proposal id '{}'",
+                    proposal.proposal_id()
+                )));
+            }
+            if !apply_source_grounded_proposal(proposal, &mut visuals, &mut tables)? {
+                return Err(DerivationError::new(format!(
+                    "grounded SourceIR proposal '{}' does not authorize a refinement",
+                    proposal.proposal_id()
+                )));
+            }
+        }
+        if visuals != self.visual_assets {
+            return Err(DerivationError::new(
+                "SourceIR visual assets differ from registered capture/proposal replay",
+            ));
+        }
+        if tables != self.structured_tables {
+            return Err(DerivationError::new(
+                "SourceIR structured tables differ from registered capture/proposal replay",
+            ));
+        }
+        if sections != self.document_sections {
+            return Err(DerivationError::new(
+                "SourceIR document sections differ from registered capture/proposal replay",
+            ));
+        }
+        Ok(())
+    }
+
+    fn proof_kernel(
+        &self,
+        context: &SourceProofContext,
+    ) -> DerivationResult<(
+        crate::ir::derivation::PromotionKernel,
+        BTreeMap<String, Vec<PremiseRef>>,
+    )> {
+        if context.schema_version != SOURCE_PROOF_CONTEXT_SCHEMA_VERSION {
+            return Err(DerivationError::new(format!(
+                "unsupported SourceIR proof-context schema {}",
+                context.schema_version
+            )));
+        }
+        self.validate_proof_context(context)?;
+        let capture_digest = Sha256Digest::of_serializable(context)?;
+        let mut builder = PromotionKernelBuilder::new(capture_digest, source_rule_registry()?)?;
+        let mut premises = BTreeMap::new();
+        {
+            let mut capture = builder.capture();
+            for (key, value) in &context.field_premises {
+                let bytes = serde_json::to_vec(value).map_err(|error| {
+                    DerivationError::new(format!("cannot serialize SourceIR premise: {error}"))
+                })?;
+                #[cfg(any(test, feature = "test-support"))]
+                let prefix = if context.test_fixture {
+                    "test-fixture-source-field:"
+                } else {
+                    "source-field:"
+                };
+                #[cfg(not(any(test, feature = "test-support")))]
+                let prefix = "source-field:";
+                let mut captured = vec![capture.source_span(format!("{prefix}{key}"), &bytes)?];
+                if let Some(index) = key
+                    .strip_prefix("visual_assets[")
+                    .and_then(|index| index.strip_suffix(']'))
+                    .and_then(|index| index.parse::<usize>().ok())
+                {
+                    let asset: VisualAsset =
+                        serde_json::from_value(value.clone()).map_err(|error| {
+                            DerivationError::new(format!(
+                                "invalid visual capture premise '{key}': {error}"
+                            ))
+                        })?;
+                    captured.push(capture.visual_region(
+                        format!("visual-asset:{index}:{}", asset.asset_id),
+                        &bytes,
+                    )?);
+                } else if let Some(index) = key
+                    .strip_prefix("page_artifacts[")
+                    .and_then(|index| index.strip_suffix(']'))
+                    .and_then(|index| index.parse::<usize>().ok())
+                {
+                    let page: PageArtifact =
+                        serde_json::from_value(value.clone()).map_err(|error| {
+                            DerivationError::new(format!(
+                                "invalid page capture premise '{key}': {error}"
+                            ))
+                        })?;
+                    captured.push(capture.visual_region(
+                        format!("page-artifact:{index}:{}", page.page_id),
+                        &bytes,
+                    )?);
+                } else if key.starts_with("structured_tables[") {
+                    let table: StructuredTableRecord = serde_json::from_value(value.clone())
+                        .map_err(|error| {
+                            DerivationError::new(format!(
+                                "invalid table capture premise '{key}': {error}"
+                            ))
+                        })?;
+                    for (row_index, row) in
+                        table.header_rows.iter().chain(&table.body_rows).enumerate()
+                    {
+                        let row_index = u32::try_from(row_index).map_err(|_| {
+                            DerivationError::new(format!(
+                                "table '{}' exceeds the supported row count",
+                                table.table_id
+                            ))
+                        })?;
+                        for (column_index, cell) in row.iter().enumerate() {
+                            let column_index = u32::try_from(column_index).map_err(|_| {
+                                DerivationError::new(format!(
+                                    "table '{}' exceeds the supported column count",
+                                    table.table_id
+                                ))
+                            })?;
+                            let cell_bytes = serde_json::to_vec(cell).map_err(|error| {
+                                DerivationError::new(format!(
+                                    "cannot serialize table-cell premise: {error}"
+                                ))
+                            })?;
+                            captured.push(capture.table_cell(
+                                table.table_id.clone(),
+                                row_index,
+                                column_index,
+                                &cell_bytes,
+                            )?);
+                        }
+                    }
+                }
+                premises.insert(key.clone(), captured);
+            }
+            let base_visuals: Vec<VisualAsset> = serde_json::from_value(
+                context.field_premises["visual_assets"].clone(),
+            )
+            .map_err(|error| {
+                DerivationError::new(format!("invalid visual proposal grounding: {error}"))
+            })?;
+            let base_tables: Vec<StructuredTableRecord> =
+                serde_json::from_value(context.field_premises["structured_tables"].clone())
+                    .map_err(|error| {
+                        DerivationError::new(format!("invalid table proposal grounding: {error}"))
+                    })?;
+            for proposal in &context.grounded_proposals {
+                let target_index = proposal.target_index(&base_visuals, &base_tables)?;
+                let record_key = format!("{}[{target_index}]", proposal.surface());
+                let target_premises = premises.get(&record_key).ok_or_else(|| {
+                    DerivationError::new(format!(
+                        "grounded proposal '{}' lacks target capture",
+                        proposal.proposal_id()
+                    ))
+                })?;
+                let typed_kind = match proposal {
+                    SourceGroundedProposal::VisualObservation { .. } => PremiseKind::VisualRegion,
+                    SourceGroundedProposal::TableGridRepair { .. }
+                    | SourceGroundedProposal::TableClassification { .. } => PremiseKind::TableCell,
+                };
+                let direct_grounding = target_premises
+                    .iter()
+                    .find(|premise| premise.kind() == typed_kind)
+                    .or_else(|| target_premises.first())
+                    .cloned()
+                    .ok_or_else(|| {
+                        DerivationError::new(format!(
+                            "grounded proposal '{}' has an empty target capture",
+                            proposal.proposal_id()
+                        ))
+                    })?;
+                let payload = serde_json::to_vec(proposal).map_err(|error| {
+                    DerivationError::new(format!("cannot serialize grounded proposal: {error}"))
+                })?;
+                let model_premise = capture.grounded_model_proposal(
+                    proposal.proposal_id(),
+                    &payload,
+                    vec![direct_grounding],
+                )?;
+                premises
+                    .get_mut(proposal.surface())
+                    .expect("classification root premise")
+                    .push(model_premise.clone());
+                premises
+                    .get_mut(&record_key)
+                    .expect("classification record premise")
+                    .push(model_premise);
+            }
+        }
+        Ok((builder.seal(), premises))
+    }
+
+    fn refresh_canonical_proof(&mut self) -> Result<()> {
+        let mut persisted = self.persisted_clone()?;
+        persisted.proof_context = None;
+        persisted.proof_ledger = None;
+        let context = persisted
+            .expected_proof_context()
+            .map_err(source_derivation_error)?;
+        self.refresh_proof_from_context(persisted, context)
+    }
+
+    fn refresh_proof_from_context(
+        &mut self,
+        persisted: Self,
+        context: SourceProofContext,
+    ) -> Result<()> {
+        let claims = persisted.claim_inputs().map_err(source_derivation_error)?;
+        let (mut kernel, premises) = persisted
+            .proof_kernel(&context)
+            .map_err(source_derivation_error)?;
+        let mut root_claims: BTreeMap<String, PremiseRef> = BTreeMap::new();
+        for claim in claims {
+            let claim_premises = if claim.address.surface() == "validation_reports" {
+                if claim.address.field_path().is_some() {
+                    vec![
+                        root_claims
+                            .get("validation_reports")
+                            .cloned()
+                            .ok_or_else(|| {
+                                source_derivation_error("validation record precedes its root proof")
+                            })?,
+                    ]
+                } else {
+                    root_claims
+                        .iter()
+                        .filter(|(surface, _)| surface.as_str() != "validation_reports")
+                        .map(|(_, premise)| premise.clone())
+                        .collect()
+                }
+            } else {
+                premises.get(&claim.premise_key).cloned().ok_or_else(|| {
+                    source_derivation_error(format!(
+                        "missing SourceIR proof premise '{}'",
+                        claim.premise_key
+                    ))
+                })?
+            };
+            let proposal = kernel.grammar_capability().propose(
+                claim.address,
+                claim.rule_id,
+                claim_premises.clone(),
+                Vec::new(),
+                if claim_premises
+                    .iter()
+                    .any(|premise| premise.kind() == PremiseKind::GroundedModelProposal)
+                {
+                    ProofConfidence::GroundedModel
+                } else {
+                    claim.confidence
+                },
+                claim.conclusion,
+            );
+            let proved = kernel.promote(proposal).map_err(source_derivation_error)?;
+            if proved.proof().address().field_path().is_none() {
+                root_claims.insert(
+                    proved.proof().address().surface().to_string(),
+                    PremiseRef::UpstreamClaim {
+                        address: proved.proof().address().clone(),
+                        conclusion_sha256: proved.proof().conclusion_sha256().clone(),
+                    },
+                );
+            }
+        }
+        let ledger = kernel
+            .finish()
+            .map_err(source_derivation_error)?
+            .into_ledger();
+        self.proof_context = Some(context);
+        self.proof_ledger = Some(ledger);
+        Ok(())
+    }
+
+    fn verify_canonical_proof(&self) -> Result<()> {
+        if self.schema_version != SOURCE_IR_SCHEMA_VERSION {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "SourceIR schema {} cannot receive current canonical authority",
+                self.schema_version
+            )));
+        }
+        let context = self.proof_context.as_ref().ok_or_else(|| {
+            AppError::InvalidStageArtifact(
+                "current SourceIR is proofless; rebuild it from captured source evidence"
+                    .to_string(),
+            )
+        })?;
+        let ledger = self.proof_ledger.clone().ok_or_else(|| {
+            AppError::InvalidStageArtifact(
+                "current SourceIR is missing its proof ledger; rebuild is required".to_string(),
+            )
+        })?;
+        let claims = self.claim_inputs().map_err(source_derivation_error)?;
+        let conclusions = claims
+            .into_iter()
+            .map(|claim| {
+                serde_json::to_vec(&claim.conclusion)
+                    .map(|bytes| (claim.address, bytes))
+                    .map_err(|error| {
+                        source_derivation_error(format!(
+                            "cannot serialize SourceIR conclusion: {error}"
+                        ))
+                    })
+            })
+            .collect::<Result<BTreeMap<_, _>>>()?;
+        let (kernel, _) = self
+            .proof_kernel(context)
+            .map_err(source_derivation_error)?;
+        kernel
+            .verify_persisted(ledger, &conclusions)
+            .map_err(source_derivation_error)?;
         Ok(())
     }
 
@@ -1626,6 +3659,7 @@ fn normalized_extension(path: &Path) -> Option<String> {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::{BTreeMap, BTreeSet};
     use std::env;
     use std::fs;
     use std::path::Path;
@@ -1639,9 +3673,9 @@ mod tests {
 
     use super::{
         AutomationConfidence, DiagramKind, NormalizationBackend, SectionKind, SourceIr, SourceKind,
-        StructuredTableCellRecord, StructuredTableRecord, TableKind, document_key,
-        normalize_timing_table_kinds, stable_stem, timing_caption_unit, timing_table_columns,
-        timing_table_has_structural_authority,
+        StructuredTableCellRecord, StructuredTableRecord, TableKind, VisualAsset, VisualAssetKind,
+        document_key, normalize_timing_table_kinds, stable_stem, timing_caption_unit,
+        timing_table_columns, timing_table_has_structural_authority,
     };
 
     fn table_cell(text: &str, is_header: bool) -> StructuredTableCellRecord {
@@ -1890,6 +3924,301 @@ mod tests {
     }
 
     #[test]
+    fn source_ir_proof_covers_every_root_and_nonempty_collection_record() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("proof.md");
+        fs::write(&source, "# proof\n")?;
+        let source_ir = SourceIr::build(&source, &tempdir.path().join("artifacts"))?;
+        let expected_records = source_ir
+            .public_field_values()
+            .expect("serialize SourceIR fields")
+            .values()
+            .filter_map(serde_json::Value::as_array)
+            .map(Vec::len)
+            .sum::<usize>();
+        let ledger = source_ir
+            .proof_ledger()
+            .expect("current SourceIR proof ledger");
+        assert_eq!(
+            ledger.claims().len(),
+            super::SOURCE_RULE_FIELDS.len() + expected_records
+        );
+        assert!(ledger.claims().iter().any(|claim| {
+            claim.address().surface() == "planned_actions"
+                && claim.address().field_path() == Some("[0]")
+        }));
+        Ok(())
+    }
+
+    #[test]
+    fn source_rule_registry_covers_all_five_families_with_typed_premises() {
+        use crate::ir::derivation::PremiseKind;
+
+        let registry = super::source_rule_registry().expect("SourceIR rule registry");
+        let by_id = registry
+            .descriptors()
+            .map(|descriptor| {
+                (
+                    descriptor.rule_id().as_str().to_string(),
+                    descriptor.premise_kinds().clone(),
+                )
+            })
+            .collect::<BTreeMap<_, _>>();
+        assert_eq!(by_id.len(), super::SOURCE_RULE_FIELDS.len());
+        assert_eq!(
+            by_id["source.envelope.source.v1"],
+            BTreeSet::from([PremiseKind::SourceSpan, PremiseKind::UniversalAxiom])
+        );
+        assert_eq!(
+            by_id["source.capture.content_elements.v1"],
+            BTreeSet::from([
+                PremiseKind::SourceSpan,
+                PremiseKind::TableCell,
+                PremiseKind::VisualRegion,
+            ])
+        );
+        assert_eq!(
+            by_id["source.classification.structured_tables.v1"],
+            BTreeSet::from([
+                PremiseKind::SourceSpan,
+                PremiseKind::TableCell,
+                PremiseKind::VisualRegion,
+                PremiseKind::GroundedModelProposal,
+            ])
+        );
+        assert_eq!(
+            by_id["source.residual.residual_decisions.v1"],
+            BTreeSet::from([PremiseKind::SourceSpan, PremiseKind::UniversalAxiom])
+        );
+        assert_eq!(
+            by_id["source.validation.validation_reports.v1"],
+            BTreeSet::from([PremiseKind::UpstreamClaim])
+        );
+    }
+
+    #[test]
+    fn source_classification_records_carry_their_typed_capture_premises() -> Result<()> {
+        use crate::ir::derivation::PremiseKind;
+
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("typed-captures.md");
+        fs::write(&source, "# typed captures\n")?;
+        let mut source_ir = SourceIr::build(&source, &tempdir.path().join("artifacts"))?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "asset-typed".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: None,
+            image_path: None,
+            caption_text: Some("Timing diagram".to_string()),
+            caption_source_path: None,
+            source_ref: Some("line-1".to_string()),
+            placeholder_text: None,
+            note: None,
+            diagram_kind: DiagramKind::TimingDiagram,
+        });
+        source_ir.structured_tables.push(timing_test_table(
+            TableKind::TimingParameter,
+            Some("Timing parameters"),
+            vec![vec![table_cell("Symbol", true), table_cell("Max", true)]],
+        ));
+        source_ir.refresh_canonical_proof()?;
+
+        let ledger = source_ir.proof_ledger().expect("current SourceIR proof");
+        let visual = ledger
+            .claims()
+            .iter()
+            .find(|claim| {
+                claim.address().surface() == "visual_assets"
+                    && claim.address().field_path() == Some("[0]")
+            })
+            .expect("visual record proof");
+        assert!(
+            visual
+                .premises()
+                .iter()
+                .any(|premise| premise.kind() == PremiseKind::VisualRegion)
+        );
+        let table = ledger
+            .claims()
+            .iter()
+            .find(|claim| {
+                claim.address().surface() == "structured_tables"
+                    && claim.address().field_path() == Some("[0]")
+            })
+            .expect("table record proof");
+        assert!(
+            table
+                .premises()
+                .iter()
+                .any(|premise| premise.kind() == PremiseKind::TableCell)
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn grounded_visual_observation_replays_on_reload_and_tampering_fails() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("visual.md");
+        let artifact_base = tempdir.path().join("artifacts");
+        fs::write(&source, "# visual\n")?;
+        let mut source_ir = SourceIr::build(&source, &artifact_base)?;
+        source_ir.visual_assets.push(VisualAsset {
+            asset_id: "asset-0".to_string(),
+            asset_kind: VisualAssetKind::Diagram,
+            page_id: None,
+            image_path: None,
+            caption_text: Some("Timing diagram".to_string()),
+            caption_source_path: None,
+            source_ref: Some("line-1".to_string()),
+            placeholder_text: None,
+            note: None,
+            diagram_kind: DiagramKind::TimingDiagram,
+        });
+        source_ir.refresh_canonical_proof()?;
+        source_ir.apply_visual_observation(
+            "asset-0",
+            DiagramKind::TimingDiagram,
+            r#"{"signals":[],"annotations":[]}"#.to_string(),
+        )?;
+        let captured_visuals: Vec<VisualAsset> = serde_json::from_value(
+            source_ir
+                .proof_context
+                .as_ref()
+                .expect("proof context")
+                .field_premises["visual_assets"]
+                .clone(),
+        )?;
+        assert_eq!(captured_visuals[0].diagram_kind, DiagramKind::Unknown);
+        assert_eq!(
+            source_ir.visual_assets[0].diagram_kind,
+            DiagramKind::TimingDiagram
+        );
+        source_ir.write_to_disk()?;
+        let artifact = source_ir.artifact_layout.source_ir_path.clone();
+        let reloaded = SourceIr::load_from_path(&artifact)?;
+        assert!(
+            reloaded.visual_assets[0]
+                .note
+                .as_deref()
+                .is_some_and(|note| note.contains("\"signals\":[]"))
+        );
+
+        let mut json = serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&artifact)?)?;
+        json["visual_assets"][0]["note"] = serde_json::json!(
+            "vlm_timing_diagram_extraction: {\"signals\":[{\"name\":\"forged\"}],\"annotations\":[]}"
+        );
+        fs::write(&artifact, serde_json::to_string_pretty(&json)?)?;
+        let error = SourceIr::load_from_path(&artifact)
+            .expect_err("edited conclusion must stale its registered proof");
+        assert!(error.to_string().contains("proof verification failed"));
+        Ok(())
+    }
+
+    #[test]
+    fn hash_consistent_field_edit_cannot_self_attest_without_satisfying_rule() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("self-attestation.md");
+        let artifact_base = tempdir.path().join("artifacts");
+        fs::write(&source, "# self attestation\n")?;
+        let source_ir = SourceIr::build(&source, &artifact_base)?;
+        source_ir.write_to_disk()?;
+        let artifact = source_ir.artifact_layout.source_ir_path.clone();
+
+        let mut json = serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&artifact)?)?;
+        json["automation_confidence"] = serde_json::json!("low");
+        let forged_digest = super::Sha256Digest::of_bytes(
+            &serde_json::to_vec(&json["automation_confidence"]).expect("encode forged conclusion"),
+        );
+        let root_claim = json["proof_ledger"]["claims"]
+            .as_array_mut()
+            .expect("proof claims")
+            .iter_mut()
+            .find(|claim| {
+                claim["address"]["surface"] == "automation_confidence"
+                    && claim["address"]["field_path"].is_null()
+            })
+            .expect("automation root claim");
+        root_claim["conclusion_sha256"] = serde_json::json!(forged_digest.as_str());
+        fs::write(&artifact, serde_json::to_string_pretty(&json)?)?;
+
+        let error = SourceIr::load_from_path(&artifact)
+            .expect_err("a recomputed conclusion hash cannot replace executable verification");
+        assert!(
+            error
+                .to_string()
+                .contains("differs from its exact captured premise"),
+            "unexpected verification failure: {error}"
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn current_schema_proofless_source_is_rejected_and_deterministic_validation_round_trips()
+    -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("validation.md");
+        let artifact_base = tempdir.path().join("artifacts");
+        fs::write(&source, "# validation\n")?;
+        let mut source_ir = SourceIr::build(&source, &artifact_base)?;
+        let report = source_ir.validation_report()?;
+        source_ir.apply_validation_report(report.clone())?;
+        source_ir.write_to_disk()?;
+        let artifact = source_ir.artifact_layout.source_ir_path.clone();
+        let reloaded = SourceIr::load_from_path(&artifact)?;
+        assert_eq!(reloaded.validation_reports, vec![report]);
+
+        let mut json = serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&artifact)?)?;
+        json.as_object_mut()
+            .expect("SourceIR object")
+            .remove("proof_context");
+        json.as_object_mut()
+            .expect("SourceIR object")
+            .remove("proof_ledger");
+        fs::write(&artifact, serde_json::to_string_pretty(&json)?)?;
+        let error = SourceIr::load_from_path(&artifact)
+            .expect_err("current proofless SourceIR must not feed canonical consumers");
+        assert!(error.to_string().contains("proofless"));
+        Ok(())
+    }
+
+    #[cfg(feature = "source-proof-migration")]
+    #[test]
+    fn retained_capture_migration_rebuilds_legacy_only_after_backing_verification() -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("legacy.md");
+        let artifact_base = tempdir.path().join("artifacts");
+        fs::write(&source, "# legacy\n")?;
+        let source_ir = SourceIr::build(&source, &artifact_base)?;
+        source_ir.write_to_disk()?;
+        let artifact = source_ir.artifact_layout.source_ir_path.clone();
+
+        let mut legacy =
+            serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&artifact)?)?;
+        legacy["schema_version"] = serde_json::json!(1);
+        legacy
+            .as_object_mut()
+            .expect("legacy object")
+            .remove("proof_context");
+        legacy
+            .as_object_mut()
+            .expect("legacy object")
+            .remove("proof_ledger");
+        fs::write(&artifact, serde_json::to_string_pretty(&legacy)?)?;
+
+        let rebuilt = SourceIr::rebuild_legacy_from_retained_capture(&artifact)?;
+        assert_eq!(rebuilt.schema_version, super::SOURCE_IR_SCHEMA_VERSION);
+        rebuilt.write_to_disk()?;
+        SourceIr::load_from_path(&artifact)?;
+
+        legacy["source"]["size_bytes"] = serde_json::json!(999_999);
+        fs::write(&artifact, serde_json::to_string_pretty(&legacy)?)?;
+        let error = SourceIr::rebuild_legacy_from_retained_capture(&artifact)
+            .expect_err("changed source backing must reject migration");
+        assert!(error.to_string().contains("source-size mismatch"));
+        Ok(())
+    }
+
+    #[test]
     fn pdf_source_ir_plans_conversion_outputs() -> Result<()> {
         let tempdir = tempdir()?;
         let source = tempdir.path().join("bus_spec.PDF");
@@ -2028,7 +4357,16 @@ mod tests {
             .remove("path_origin");
         fs::write(&source_ir_path, serde_json::to_string_pretty(&json)?)?;
 
-        let reloaded = SourceIr::load_from_path(&source_ir.artifact_layout.source_ir_path)?;
+        json["schema_version"] = serde_json::json!(2);
+        json.as_object_mut()
+            .expect("SourceIR object")
+            .remove("proof_context");
+        json.as_object_mut()
+            .expect("SourceIR object")
+            .remove("proof_ledger");
+        fs::write(&source_ir_path, serde_json::to_string_pretty(&json)?)?;
+
+        let reloaded = SourceIr::load_for_inspection(&source_ir.artifact_layout.source_ir_path)?;
         assert_eq!(reloaded.source.canonical_path, source.canonicalize()?);
         assert_eq!(
             reloaded.source.path_origin,
@@ -2110,13 +4448,16 @@ mod tests {
         }]);
         fs::write(&source_ir_path, serde_json::to_string_pretty(&json)?)?;
 
-        let reloaded = SourceIr::load_from_path(&source_ir_path)?;
-        assert_eq!(reloaded.schema_version, super::SOURCE_IR_SCHEMA_VERSION);
+        let canonical_error = SourceIr::load_from_path(&source_ir_path)
+            .expect_err("legacy proofless SourceIR must not gain canonical authority");
+        assert!(canonical_error.to_string().contains("inspection-only"));
+        let reloaded = SourceIr::load_for_inspection(&source_ir_path)?;
+        assert_eq!(reloaded.schema_version, 1);
         assert_eq!(reloaded.visual_assets[0].diagram_kind, DiagramKind::Unknown);
         assert_eq!(reloaded.structured_tables[0].table_kind, TableKind::Unknown);
         assert_eq!(
             reloaded.document_sections[0].section_kind,
-            SectionKind::Normative
+            SectionKind::Unknown
         );
         assert!(
             reloaded
@@ -2135,9 +4476,16 @@ mod tests {
         let artifact_base = tempdir.path().join("generated/source_ir");
         fs::write(&source, "# Future schema\n")?;
 
-        let mut source_ir = SourceIr::build(&source, &artifact_base)?;
-        source_ir.schema_version = super::SOURCE_IR_SCHEMA_VERSION + 1;
+        let source_ir = SourceIr::build(&source, &artifact_base)?;
         source_ir.write_to_disk()?;
+        let mut json = serde_json::from_str::<serde_json::Value>(&fs::read_to_string(
+            &source_ir.artifact_layout.source_ir_path,
+        )?)?;
+        json["schema_version"] = serde_json::json!(super::SOURCE_IR_SCHEMA_VERSION + 1);
+        fs::write(
+            &source_ir.artifact_layout.source_ir_path,
+            serde_json::to_string_pretty(&json)?,
+        )?;
 
         let error = SourceIr::load_from_path(&source_ir.artifact_layout.source_ir_path)
             .expect_err("future SourceIR must be rejected");

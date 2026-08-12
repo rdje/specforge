@@ -333,11 +333,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i — freeze rule migration graph`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii`
-  Status: `pending`
+  Status: `done`
   Goal: `make every SourceIR family proof-carrying from exact captured source evidence`
-  Acceptance: `all five SourceIR families are covered by registered capture, classification, integrity, residual, or evaluation rules; classified records cite an exact unclassified capture projection; current-schema proofless SourceIR cannot feed EvidenceIR; legacy source remains inspectable only and future proof/schema versions reject`
-  Verification: `pending`
-  Commit: `pending`
+  Acceptance: `all five SourceIR families are covered by registered capture, classification, integrity, residual, or evaluation rules; every rule binds executable verification logic and an implementation digest so an editor cannot self-attest by recomputing JSON hashes; classified records cite an exact unclassified capture projection; canonical reload re-executes the registered relation against exact premise and conclusion bytes; current-schema proofless SourceIR cannot feed EvidenceIR; legacy source remains inspectable only and future proof/schema versions reject`
+  Verification: `SourceIR schema 3 proves all 19 public fields across five registered families with root and per-record claims; executable verifiers and implementation digests reject hash-consistent forgery, stale/current-proofless/malformed/future authority, edited conclusions, and mismatched grounded proposals; table and visual records carry exact typed capture premises; production mutation and every load/serialize/write/downstream seam reverify; noncanonical overlays cannot persist at any stage; the exact 24 retained bundles passed backing verification, zero-unintended-capture-mutation comparison, complete downstream rebuild, and chain currency at 24/24 measurable EvidenceIR plus 78/78 SemanticIR/IntentIR/adapters with zero stale; 1,930 Rust tests pass / six ignored / zero failed, all 156 KG fixtures pass, formatting and warning-deny Clippy/rustdoc pass, mdBook test/build pass, all eight doctrines pass, and SSD-local rollback/incremental scratch is absent`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii — prove SourceIR authority`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii`
   Status: `pending`
@@ -455,7 +455,7 @@ expressiveness as the bottleneck.
 | 26 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.ii` | `done` | core/conformance direction is compiler-visible and mutation-tested; public facade is compatible |
 | 27 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iii` | `done` | sealed capability boundary and kernel-only verified authority are installed and adversarially tested |
 | 28 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i` | `done` | 38 families / 168 rules / 113 producer-mutators / 39 seams / four bypasses are checked and the cumulative-ledger contract is fixed |
-| 29 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii` | `pending` | prove all five SourceIR families from exact captured input |
+| 29 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii` | `done` | all five SourceIR families are executable-proof-carrying; 24 retained chains are reconciled and 54 legacy SourceIRs remain inspection-only |
 | 30 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iii` | `pending` | prove all 11 EvidenceIR families and every post-build mutation path |
 | 31 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.iv` | `pending` | prove all 11 SemanticIR carry, inference, conflict, and residual families |
 | 32 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.v` | `pending` | prove all seven IntentIR carry and synthesis families |
@@ -1402,6 +1402,21 @@ the reviewed replay can name its production revision.
   rules, 113 current producer/mutator entrypoints, 39 canonical seams, and four conformance-only bypasses. Six
   controlled mutations and full CI pass. The cumulative-ledger and noncanonical-overlay contracts change no
   production behavior; `.e.iv.ii` next owns SourceIR proof-bearing implementation after this commit is clean.
+- `2026-08-12`: Activated `.6d.ii.e.iv.ii` only after `.e.iv.i` committed at `99fad58c` and the post-commit tree
+  was clean with a zero-byte brief. This child owns the five SourceIR families, exact normalized-capture premise
+  catalog, classification-from-unclassified projection, schema/proof compatibility, canonical load/write gating,
+  SourceIR mutation authority, and conformance overlay separation. EvidenceIR remains the next clean child.
+- `2026-08-12`: The first persisted-ledger integration found that digest/rule-id topology alone prevents stale
+  accidental mutation but does not prevent a JSON editor from recomputing both a conclusion digest and its proof.
+  Canonical authority therefore also requires executable registered-rule verification over exact premise and
+  conclusion bytes, with the implementation digest committed into the ruleset hash. `.e.iv.ii` owns this kernel
+  correction before SourceIR can ship; a hash-only or self-attesting ledger is not an acceptable partial result.
+- `2026-08-12`: Closed `.6d.ii.e.iv.ii` after SourceIR schema 3 made all five families executable-proof-carrying,
+  conformance fixture mutation moved behind noncanonical non-persistable overlays, and the exact 24 retained
+  bundles migrated only after backing verification. Capture comparison found zero unintended mutations; complete
+  downstream rebuild restored 24/24 measurable EvidenceIR and 78/78 later-stage exact currency with zero stale.
+  The other 54 SourceIRs remain legacy inspection-only. Full Rust/KG/warning-deny qualification passes; `.e.iv.iii`
+  is next only after this child commits cleanly.
 
 - `2026-08-11`: Created on owner request so the ramp-up trajectory assessment and upstream-first direction do
   not remain chat-only.

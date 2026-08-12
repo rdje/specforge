@@ -2763,7 +2763,13 @@ mod tests {
                 .path()
                 .join("generated/intent_ir/spec/intent_ir.json"),
         };
-        intent_ir.write_to_disk()?;
+        // This path-normalization unit uses a deliberately synthetic upstream stub. Serialize the
+        // fixture explicitly instead of asking the canonical writer to bless a nonexistent chain.
+        fs::create_dir_all(&intent_ir.artifact_layout.artifact_root)?;
+        fs::write(
+            &intent_ir.artifact_layout.intent_ir_path,
+            serde_json::to_string_pretty(&intent_ir)?,
+        )?;
 
         let output = tempdir
             .path()

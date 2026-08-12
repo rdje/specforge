@@ -1003,7 +1003,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -1093,7 +1093,7 @@ mod tests {
 
         fs::write(&source, "# Protocol\nHWRITE shall remain HIGH.\n")?;
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -1393,7 +1393,7 @@ mod tests {
 
         fs::write(&source, "# Protocol\nSome content.\n")?;
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -1469,7 +1469,7 @@ mod tests {
 
         fs::write(&source, "# Protocol\nSome content.\n")?;
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -1590,7 +1590,7 @@ mod tests {
         )?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,
@@ -1654,7 +1654,7 @@ mod tests {
 
         fs::write(&source, "# Protocol\nSome content.\n")?;
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,

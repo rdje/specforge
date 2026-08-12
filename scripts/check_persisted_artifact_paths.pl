@@ -127,7 +127,8 @@ sub validate_producer_contract {
             'pub(crate) fn normalize_for_storage(',
         ],
         'crates/specforge/src/ir/source.rs' => [
-            'to_string_pretty(&self.persisted_clone()?)',
+            'persisted.verify_canonical_proof()?;',
+            'serde_json::to_string_pretty(&persisted)?',
             'source_ir.runtime_clone()',
             'persisted.artifact_layout.normalize_for_storage()?;',
             'resolve_reference(&runtime.source.canonical_path, source_origin)?',

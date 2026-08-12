@@ -596,7 +596,7 @@ mod tests {
         fs::write(&source, markdown)?;
 
         let source_ir = SourceIr::build(&source, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
         let evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,
             &evidence_artifact_base,

@@ -1,4 +1,34 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii (`2026-08-12`) — a hash is not a derivation
+
+SourceIR is the first canonical stage to cross the proof boundary. Its proof context records the exact
+pre-classification field projection, while its ledger records field-root and per-record conclusions. Each rule
+id resolves through the current closed registry to an executable verifier and a digest of that implementation.
+Reload therefore checks the actual premise-to-conclusion relation against exact bytes. An editor who changes a
+field and recomputes its conclusion hash has not supplied the missing derivation and is rejected.
+
+Classification makes the distinction concrete. The captured visual, table, or section kind is neutralized to
+`unknown`; the current structural Rust classifier must reconstruct the persisted conclusion. Table records also
+carry their exact cells as typed premises, visual/page records carry typed regions, and grounded model refinements
+carry the exact response with direct typed grounding. Model output can propose a refinement but cannot validate
+itself or overwrite an unrelated record. Validation is downstream evaluation over already proved claims, not a
+new semantic oracle.
+
+The migration did not bless 78 historical artifacts. Only the 24 SourceIR documents with declared retained
+bundles were eligible. The maintenance-only feature verified their source size, promoted capture products,
+page/visual manifests, and referenced assets before applying current generic classifications and proofs. The
+other 54 stay proofless and inspection-only. All 24 eligible chains were rebuilt through the adapter; exact
+currency is 24/24 measurable EvidenceIR and 78/78 downstream, with zero stale artifacts.
+
+Conformance required a separate authority class. Tests may contain named specifications and may patch synthetic
+records, but those values now live in typed noncanonical overlays. The overlays expose no canonical serializer or
+writer, and production EvidenceIR/SemanticIR/IntentIR writers reload their canonical upstream files. This keeps
+specific examples useful as adversarial evidence without letting them become production extraction policy.
+
+This is stage-one closure, not whole-pipeline proof closure. EvidenceIR, SemanticIR, IntentIR, and ISF rule
+migrations remain `.e.iv.iii`–`.e.iv.vi`; the AST-aware information-flow doctrine in `.e.v` remains the final
+structural answer. The finite forbidden-vocabulary census remains a useful diagnostic only.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i (`2026-08-12`) — temporary storage is not a trust boundary
 
 A constructor census alone would leave canonical bypasses. Existing artifacts can be carried forward,

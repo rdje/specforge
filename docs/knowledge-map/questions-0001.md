@@ -19,6 +19,8 @@
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > Can old proofless IR artifacts still steer extraction or lower to ISF?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Can recomputing SourceIR JSON hashes self-attest an edited claim?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can specforge-core depend on named fixtures or reviewed evaluation?
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > Cannot convert a MPS Tensor to float64
@@ -34,6 +36,8 @@
   > How are frame fields extracted without hardcoding a protocol?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
   > How are grammar rules admitted into production?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How are named SourceIR fixtures kept out of canonical production authority?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
   > How are old CorpusMemory schemas migrated?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -54,6 +58,8 @@
   > How does the corpus knowledge base group fixtures without protocol-family names?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How does the proof ledger continue from SourceIR through ISF lowering?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How is SourceIR proof-carrying?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How many production rule families, producer or mutator entrypoints, and canonical seams must migrate?
 - [proof-carrying-genericity-kernel](../decisions/0038-proof-carrying-genericity-kernel.md)
@@ -92,6 +98,8 @@
   > Which crate owns replay, completeness classification, and trajectory snapshots?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Which premise kinds can the trusted promotion kernel accept?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Why can legacy SourceIR not feed EvidenceIR?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > Why can neutral extraction lose recall after removing shortcuts?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -289,11 +297,3 @@
   > did the USB4 signoff check change canonical SWD
 - [usb4-inter-domain-refresh-is-portable-and-authority-empty](../knowledge/usb4-inter-domain-refresh-is-portable-and-authority-empty.md)
   > did the page sidecar repair change USB4 semantic artifacts
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > did the parenthetical data-head repair change real serial signals
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > did the qwen2.5vl VLM recover a groundable AXI signal-to-phase mapping (no — contradictory, redundant, hallucinated signal semantics)
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > did the symmetric grounding filter change any emitted .isf
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > did whole population replay mutate canonical generated artifacts

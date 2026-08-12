@@ -51,11 +51,6 @@
 //! let _laundered: GroundedProposal<u32> = serde_json::from_str("{}").unwrap();
 //! ```
 
-// `.e.iii` intentionally lands the sealed kernel one slice before `.e.iv` migrates production
-// rule families through it. Unit and compile-fail tests exercise the complete API now; remove this
-// temporary allowance when the first production registry makes the internal entrypoints live.
-#![allow(dead_code)]
-
 use crate::ir::IrStage;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -170,6 +165,9 @@ impl SymbolIdentity {
 #[derive(Clone)]
 pub struct OpaqueSymbol {
     identity: SymbolIdentity,
+    // The spelling becomes live when the later persistence/presentation/lowering stage leaves
+    // `.e.iv.ii`; SourceIR deliberately cannot read it through ordinary semantic code.
+    #[allow(dead_code)]
     spelling: Box<str>,
 }
 
@@ -224,6 +222,8 @@ impl DocumentIdentityAtom {
 #[derive(Clone)]
 pub struct OpaqueDocumentIdentity {
     identity: DocumentIdentityAtom,
+    // Kept sealed until the later presentation/persistence migration consumes this capability.
+    #[allow(dead_code)]
     private_label: Box<str>,
 }
 
@@ -286,6 +286,7 @@ pub struct LoweringCapability<'kernel> {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
+#[allow(dead_code)]
 pub(crate) struct PersistedOpaqueSymbol {
     identity: SymbolIdentity,
     spelling: String,
@@ -293,11 +294,15 @@ pub(crate) struct PersistedOpaqueSymbol {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(deny_unknown_fields)]
+#[allow(dead_code)]
 pub(crate) struct PersistedOpaqueDocumentIdentity {
     identity: DocumentIdentityAtom,
     private_label: String,
 }
 
+// These sealed operations become reachable as the later IR-stage children migrate. Keeping the
+// suppression on the capability implementation (not the module) lets new unrelated dead code fail.
+#[allow(dead_code)]
 impl PersistenceCapability<'_> {
     pub(crate) fn persist_symbol(&self, symbol: &OpaqueSymbol) -> PersistedOpaqueSymbol {
         PersistedOpaqueSymbol {
@@ -334,6 +339,7 @@ impl PersistenceCapability<'_> {
     }
 }
 
+#[allow(dead_code)]
 impl PresentationCapability<'_> {
     pub(crate) fn symbol<'a>(&self, symbol: &'a OpaqueSymbol) -> &'a str {
         &symbol.spelling
@@ -344,6 +350,7 @@ impl PresentationCapability<'_> {
     }
 }
 
+#[allow(dead_code)]
 impl LoweringCapability<'_> {
     pub(crate) fn encode_symbol<T>(
         &self,
@@ -357,8 +364,11 @@ impl LoweringCapability<'_> {
 /// Source-order interner. Duplicate spelling denotes the same current-document atom; the first
 /// occurrence fixes its ordinal. No spelling-based ordering escapes this type.
 struct SymbolInterner {
+    #[allow(dead_code)]
     scope: DocumentScope,
+    #[allow(dead_code)]
     by_spelling: BTreeMap<String, OpaqueSymbol>,
+    #[allow(dead_code)]
     next_ordinal: u32,
 }
 
@@ -371,6 +381,7 @@ impl SymbolInterner {
         }
     }
 
+    #[allow(dead_code)]
     fn intern(&mut self, spelling: &str) -> DerivationResult<OpaqueSymbol> {
         if spelling.is_empty() {
             return Err(DerivationError::new(
@@ -669,6 +680,7 @@ pub struct RuleDescriptor {
     rule_id: RuleId,
     version: u32,
     implementation_module: String,
+    implementation_sha256: Sha256Digest,
     premise_kinds: BTreeSet<PremiseKind>,
     conclusion_stage: IrStage,
     conclusion_surface: String,
@@ -683,6 +695,7 @@ impl RuleDescriptor {
         rule_id: RuleId,
         version: u32,
         implementation_module: impl Into<String>,
+        implementation_sha256: Sha256Digest,
         premise_kinds: impl IntoIterator<Item = PremiseKind>,
         conclusion_stage: IrStage,
         conclusion_surface: impl Into<String>,
@@ -695,6 +708,7 @@ impl RuleDescriptor {
             rule_id,
             version,
             implementation_module: implementation_module.into(),
+            implementation_sha256,
             premise_kinds: premise_kinds.into_iter().collect(),
             conclusion_stage,
             conclusion_surface: conclusion_surface.into(),
@@ -716,6 +730,10 @@ impl RuleDescriptor {
 
     pub fn implementation_module(&self) -> &str {
         &self.implementation_module
+    }
+
+    pub fn implementation_sha256(&self) -> &Sha256Digest {
+        &self.implementation_sha256
     }
 
     pub fn premise_kinds(&self) -> &BTreeSet<PremiseKind> {
@@ -769,6 +787,54 @@ impl RuleDescriptor {
     }
 }
 
+/// Exact inputs supplied to one executable registered-rule verifier.
+///
+/// A persisted rule id and matching hashes are not sufficient authority: an editor could
+/// recompute both. The verifier bound into the current binary must accept the exact conclusion
+/// relation against the captured and already-verified premise bytes.
+pub(crate) struct RuleVerificationContext<'a> {
+    proof: &'a ClaimProof,
+    conclusion_json: &'a [u8],
+    evidence: &'a EvidenceCatalog,
+    verified_upstream: &'a BTreeMap<ClaimAddress, Vec<u8>>,
+}
+
+impl RuleVerificationContext<'_> {
+    pub(crate) fn proof(&self) -> &ClaimProof {
+        self.proof
+    }
+
+    pub(crate) fn conclusion_json(&self) -> &[u8] {
+        self.conclusion_json
+    }
+
+    pub(crate) fn premise_bytes(&self, index: usize) -> DerivationResult<Option<&[u8]>> {
+        let premise =
+            self.proof.premises.get(index).ok_or_else(|| {
+                DerivationError::new("rule verifier premise index is out of bounds")
+            })?;
+        self.evidence.premise_bytes(premise, self.verified_upstream)
+    }
+}
+
+pub(crate) type RuleVerifier = fn(RuleVerificationContext<'_>) -> DerivationResult<()>;
+
+/// A descriptor paired with the executable verifier that gives the rule semantic authority.
+#[derive(Clone)]
+pub(crate) struct RuleRegistration {
+    descriptor: RuleDescriptor,
+    verifier: RuleVerifier,
+}
+
+impl RuleRegistration {
+    pub(crate) fn new(descriptor: RuleDescriptor, verifier: RuleVerifier) -> Self {
+        Self {
+            descriptor,
+            verifier,
+        }
+    }
+}
+
 /// Registered universal literal/grammar axiom. Its name is domain-generic and versioned; registry
 /// membership, not absence from a vocabulary denylist, grants authority.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -780,6 +846,7 @@ pub struct UniversalAxiomDescriptor {
 }
 
 impl UniversalAxiomDescriptor {
+    #[allow(dead_code)]
     pub(crate) fn new(
         axiom_id: impl Into<String>,
         version: u32,
@@ -807,6 +874,7 @@ impl UniversalAxiomDescriptor {
 #[derive(Debug, Clone)]
 pub struct RuleRegistry {
     descriptors: BTreeMap<RuleId, RuleDescriptor>,
+    verifiers: BTreeMap<RuleId, RuleVerifier>,
     axioms: BTreeMap<(String, u32), UniversalAxiomDescriptor>,
     ruleset_sha256: Sha256Digest,
 }
@@ -820,11 +888,13 @@ struct RulesetHashInput<'a> {
 
 impl RuleRegistry {
     pub(crate) fn new(
-        descriptors: impl IntoIterator<Item = RuleDescriptor>,
+        registrations: impl IntoIterator<Item = RuleRegistration>,
         axioms: impl IntoIterator<Item = UniversalAxiomDescriptor>,
     ) -> DerivationResult<Self> {
         let mut by_id = BTreeMap::new();
-        for descriptor in descriptors {
+        let mut verifiers = BTreeMap::new();
+        for registration in registrations {
+            let descriptor = registration.descriptor;
             descriptor.validate()?;
             let id = descriptor.rule_id.clone();
             if by_id.insert(id.clone(), descriptor).is_some() {
@@ -833,6 +903,7 @@ impl RuleRegistry {
                     id.as_str()
                 )));
             }
+            verifiers.insert(id, registration.verifier);
         }
         if by_id.is_empty() {
             return Err(DerivationError::new("rule registry cannot be empty"));
@@ -856,6 +927,7 @@ impl RuleRegistry {
         })?;
         Ok(Self {
             descriptors: by_id,
+            verifiers,
             axioms: by_axiom,
             ruleset_sha256,
         })
@@ -873,6 +945,10 @@ impl RuleRegistry {
         self.descriptors.get(id)
     }
 
+    fn verifier(&self, id: &RuleId) -> Option<RuleVerifier> {
+        self.verifiers.get(id).copied()
+    }
+
     fn contains_axiom(&self, id: &str, version: u32) -> bool {
         self.axioms.contains_key(&(id.to_string(), version))
     }
@@ -881,17 +957,27 @@ impl RuleRegistry {
 #[derive(Debug, Clone)]
 struct GroundingAttestation {
     payload_sha256: Sha256Digest,
+    exact_payload: Vec<u8>,
     validation_sha256: Option<Sha256Digest>,
+    // Validation bytes are consumed by the later validated-prior rule migration.
+    #[allow(dead_code)]
+    exact_validation: Option<Vec<u8>>,
     direct_grounding: Vec<PremiseRef>,
     prior_scope: Option<ValidatedPriorScope>,
 }
 
 #[derive(Debug, Clone)]
+struct CapturedEvidence {
+    digest: Sha256Digest,
+    exact_content: Vec<u8>,
+}
+
+#[derive(Debug, Clone)]
 struct EvidenceCatalog {
     scope: DocumentScope,
-    source_spans: BTreeMap<String, Sha256Digest>,
-    table_cells: BTreeMap<(String, u32, u32), Sha256Digest>,
-    visual_regions: BTreeMap<String, Sha256Digest>,
+    source_spans: BTreeMap<String, CapturedEvidence>,
+    table_cells: BTreeMap<(String, u32, u32), CapturedEvidence>,
+    visual_regions: BTreeMap<String, CapturedEvidence>,
     model_proposals: BTreeMap<String, GroundingAttestation>,
     validated_priors: BTreeMap<String, GroundingAttestation>,
 }
@@ -927,7 +1013,7 @@ impl EvidenceCatalog {
                 content_sha256,
             } => {
                 self.require_current_scope(scope)?;
-                require_catalog_digest(&self.source_spans, span_id, content_sha256, "source span")
+                require_captured_digest(&self.source_spans, span_id, content_sha256, "source span")
             }
             PremiseRef::TableCell {
                 scope,
@@ -937,7 +1023,7 @@ impl EvidenceCatalog {
                 content_sha256,
             } => {
                 self.require_current_scope(scope)?;
-                require_catalog_digest(
+                require_captured_digest(
                     &self.table_cells,
                     &(table_id.clone(), *row, *column),
                     content_sha256,
@@ -950,7 +1036,7 @@ impl EvidenceCatalog {
                 content_sha256,
             } => {
                 self.require_current_scope(scope)?;
-                require_catalog_digest(
+                require_captured_digest(
                     &self.visual_regions,
                     region_id,
                     content_sha256,
@@ -959,6 +1045,47 @@ impl EvidenceCatalog {
             }
             _ => Err(DerivationError::new("premise is not captured evidence")),
         }
+    }
+
+    fn premise_bytes<'a>(
+        &'a self,
+        premise: &PremiseRef,
+        verified_upstream: &'a BTreeMap<ClaimAddress, Vec<u8>>,
+    ) -> DerivationResult<Option<&'a [u8]>> {
+        let bytes = match premise {
+            PremiseRef::SourceSpan { span_id, .. } => self
+                .source_spans
+                .get(span_id)
+                .map(|capture| capture.exact_content.as_slice()),
+            PremiseRef::TableCell {
+                table_id,
+                row,
+                column,
+                ..
+            } => self
+                .table_cells
+                .get(&(table_id.clone(), *row, *column))
+                .map(|capture| capture.exact_content.as_slice()),
+            PremiseRef::VisualRegion { region_id, .. } => self
+                .visual_regions
+                .get(region_id)
+                .map(|capture| capture.exact_content.as_slice()),
+            PremiseRef::UpstreamClaim { address, .. } => {
+                verified_upstream.get(address).map(Vec::as_slice)
+            }
+            PremiseRef::GroundedModelProposal { proposal_id, .. } => self
+                .model_proposals
+                .get(proposal_id)
+                .map(|attestation| attestation.exact_payload.as_slice()),
+            PremiseRef::ValidatedPrior { prior_id, .. } => self
+                .validated_priors
+                .get(prior_id)
+                .map(|attestation| attestation.exact_payload.as_slice()),
+            PremiseRef::UniversalAxiom { .. } => return Ok(None),
+        };
+        bytes
+            .map(Some)
+            .ok_or_else(|| DerivationError::new("rule verifier premise bytes are unavailable"))
     }
 
     fn require_current_scope(&self, scope: &DocumentScope) -> DerivationResult<()> {
@@ -1022,10 +1149,12 @@ impl PromotionKernelBuilder {
 pub(crate) struct CaptureCapability<'kernel> {
     _seal: &'kernel CapabilitySeal,
     evidence: &'kernel mut EvidenceCatalog,
+    #[allow(dead_code)]
     symbols: &'kernel mut SymbolInterner,
 }
 
 impl CaptureCapability<'_> {
+    #[allow(dead_code)]
     pub(crate) fn document_identity(
         &self,
         private_label: impl Into<Box<str>>,
@@ -1038,6 +1167,7 @@ impl CaptureCapability<'_> {
         }
     }
 
+    #[allow(dead_code)]
     pub(crate) fn intern_symbol(&mut self, spelling: &str) -> DerivationResult<OpaqueSymbol> {
         self.symbols.intern(spelling)
     }
@@ -1053,7 +1183,10 @@ impl CaptureCapability<'_> {
         insert_exact(
             &mut self.evidence.source_spans,
             span_id.clone(),
-            digest.clone(),
+            CapturedEvidence {
+                digest: digest.clone(),
+                exact_content: exact_content.to_vec(),
+            },
             "source span",
         )?;
         Ok(PremiseRef::SourceSpan {
@@ -1076,7 +1209,10 @@ impl CaptureCapability<'_> {
         insert_exact(
             &mut self.evidence.table_cells,
             (table_id.clone(), row, column),
-            digest.clone(),
+            CapturedEvidence {
+                digest: digest.clone(),
+                exact_content: exact_content.to_vec(),
+            },
             "table cell",
         )?;
         Ok(PremiseRef::TableCell {
@@ -1099,7 +1235,10 @@ impl CaptureCapability<'_> {
         insert_exact(
             &mut self.evidence.visual_regions,
             region_id.clone(),
-            digest.clone(),
+            CapturedEvidence {
+                digest: digest.clone(),
+                exact_content: exact_content.to_vec(),
+            },
             "visual region",
         )?;
         Ok(PremiseRef::VisualRegion {
@@ -1124,7 +1263,9 @@ impl CaptureCapability<'_> {
             proposal_id.clone(),
             GroundingAttestation {
                 payload_sha256: digest.clone(),
+                exact_payload: exact_payload.to_vec(),
                 validation_sha256: None,
+                exact_validation: None,
                 direct_grounding,
                 prior_scope: None,
             },
@@ -1137,6 +1278,7 @@ impl CaptureCapability<'_> {
         })
     }
 
+    #[allow(dead_code)]
     pub(crate) fn validated_prior(
         &mut self,
         prior_id: impl Into<String>,
@@ -1155,7 +1297,9 @@ impl CaptureCapability<'_> {
             prior_id.clone(),
             GroundingAttestation {
                 payload_sha256: payload_sha256.clone(),
+                exact_payload: exact_payload.to_vec(),
                 validation_sha256: Some(validation_sha256.clone()),
+                exact_validation: Some(exact_validation.to_vec()),
                 direct_grounding,
                 prior_scope: Some(scope_contract),
             },
@@ -1280,6 +1424,7 @@ impl ProofLedger {
 /// Canonical value paired with its checked proof. The value cannot be extracted outside core.
 #[derive(Debug)]
 pub struct Proved<T> {
+    #[allow(dead_code)]
     value: T,
     proof: ClaimProof,
 }
@@ -1289,10 +1434,12 @@ impl<T> Proved<T> {
         &self.proof
     }
 
+    #[allow(dead_code)]
     pub(crate) fn value(&self) -> &T {
         &self.value
     }
 
+    #[allow(dead_code)]
     pub(crate) fn into_value(self) -> T {
         self.value
     }
@@ -1304,7 +1451,7 @@ pub(crate) struct PromotionKernel {
     registry: RuleRegistry,
     evidence: EvidenceCatalog,
     claims: Vec<ClaimProof>,
-    conclusions: BTreeMap<ClaimAddress, Sha256Digest>,
+    conclusions: BTreeMap<ClaimAddress, Vec<u8>>,
 }
 
 impl PromotionKernel {
@@ -1312,14 +1459,17 @@ impl PromotionKernel {
         GrammarCapability { _seal: &self.seal }
     }
 
+    #[allow(dead_code)]
     pub(crate) fn persistence_capability(&self) -> PersistenceCapability<'_> {
         PersistenceCapability { _seal: &self.seal }
     }
 
+    #[allow(dead_code)]
     pub(crate) fn presentation_capability(&self) -> PresentationCapability<'_> {
         PresentationCapability { _seal: &self.seal }
     }
 
+    #[allow(dead_code)]
     pub(crate) fn lowering_capability(&self) -> LoweringCapability<'_> {
         LoweringCapability { _seal: &self.seal }
     }
@@ -1334,7 +1484,10 @@ impl PromotionKernel {
                 proposal.address.surface, proposal.address.stable_record_key
             )));
         }
-        let conclusion_sha256 = Sha256Digest::of_serializable(&proposal.conclusion)?;
+        let conclusion_json = serde_json::to_vec(&proposal.conclusion).map_err(|error| {
+            DerivationError::new(format!("cannot serialize conclusion: {error}"))
+        })?;
+        let conclusion_sha256 = Sha256Digest::of_bytes(&conclusion_json);
         let proof = ClaimProof {
             address: proposal.address,
             conclusion_sha256: conclusion_sha256.clone(),
@@ -1343,9 +1496,15 @@ impl PromotionKernel {
             symbol_uses: proposal.symbol_uses,
             confidence: proposal.confidence,
         };
-        validate_claim(&proof, &self.registry, &self.evidence, &self.conclusions)?;
+        validate_claim(
+            &proof,
+            &conclusion_json,
+            &self.registry,
+            &self.evidence,
+            &self.conclusions,
+        )?;
         self.conclusions
-            .insert(proof.address.clone(), conclusion_sha256);
+            .insert(proof.address.clone(), conclusion_json);
         self.claims.push(proof.clone());
         Ok(Proved {
             value: proposal.conclusion,
@@ -1356,7 +1515,7 @@ impl PromotionKernel {
     pub(crate) fn verify_persisted(
         &self,
         ledger: ProofLedger,
-        conclusions: &BTreeMap<ClaimAddress, Sha256Digest>,
+        conclusions: &BTreeMap<ClaimAddress, Vec<u8>>,
     ) -> DerivationResult<VerifiedProofLedger> {
         verify_ledger(&ledger, &self.registry, &self.evidence, conclusions)?;
         Ok(VerifiedProofLedger { ledger })
@@ -1492,7 +1651,7 @@ fn verify_ledger(
     ledger: &ProofLedger,
     registry: &RuleRegistry,
     evidence: &EvidenceCatalog,
-    conclusions: &BTreeMap<ClaimAddress, Sha256Digest>,
+    conclusions: &BTreeMap<ClaimAddress, Vec<u8>>,
 ) -> DerivationResult<()> {
     if ledger.schema_version != PROOF_LEDGER_SCHEMA_VERSION {
         return Err(DerivationError::new(format!(
@@ -1510,20 +1669,20 @@ fn verify_ledger(
                 "proof ledger has a duplicate claim address",
             ));
         }
-        let actual = conclusions.get(&proof.address).ok_or_else(|| {
+        let conclusion_json = conclusions.get(&proof.address).ok_or_else(|| {
             DerivationError::new(format!(
                 "proof has no canonical conclusion at '{}:{}'",
                 proof.address.surface, proof.address.stable_record_key
             ))
         })?;
-        if actual != &proof.conclusion_sha256 {
+        if Sha256Digest::of_bytes(conclusion_json) != proof.conclusion_sha256 {
             return Err(DerivationError::new(format!(
                 "conclusion digest mismatch at '{}:{}'",
                 proof.address.surface, proof.address.stable_record_key
             )));
         }
-        validate_claim(proof, registry, evidence, &verified)?;
-        verified.insert(proof.address.clone(), proof.conclusion_sha256.clone());
+        validate_claim(proof, conclusion_json, registry, evidence, &verified)?;
+        verified.insert(proof.address.clone(), conclusion_json.clone());
     }
     if verified.len() != conclusions.len() {
         return Err(DerivationError::new(
@@ -1535,9 +1694,10 @@ fn verify_ledger(
 
 fn validate_claim(
     proof: &ClaimProof,
+    conclusion_json: &[u8],
     registry: &RuleRegistry,
     evidence: &EvidenceCatalog,
-    verified_upstream: &BTreeMap<ClaimAddress, Sha256Digest>,
+    verified_upstream: &BTreeMap<ClaimAddress, Vec<u8>>,
 ) -> DerivationResult<()> {
     proof.address.validate()?;
     let descriptor = registry.descriptor(&proof.rule_id).ok_or_else(|| {
@@ -1571,14 +1731,25 @@ fn validate_claim(
     }
     validate_confidence(proof)?;
     validate_symbol_uses(proof, descriptor, evidence)?;
-    Ok(())
+    let verifier = registry.verifier(&proof.rule_id).ok_or_else(|| {
+        DerivationError::new(format!(
+            "registered rule '{}' has no executable verifier",
+            proof.rule_id.as_str()
+        ))
+    })?;
+    verifier(RuleVerificationContext {
+        proof,
+        conclusion_json,
+        evidence,
+        verified_upstream,
+    })
 }
 
 fn validate_premise(
     premise: &PremiseRef,
     registry: &RuleRegistry,
     evidence: &EvidenceCatalog,
-    verified_upstream: &BTreeMap<ClaimAddress, Sha256Digest>,
+    verified_upstream: &BTreeMap<ClaimAddress, Vec<u8>>,
 ) -> DerivationResult<()> {
     match premise {
         PremiseRef::SourceSpan { .. }
@@ -1587,12 +1758,19 @@ fn validate_premise(
         PremiseRef::UpstreamClaim {
             address,
             conclusion_sha256,
-        } => require_catalog_digest(
-            verified_upstream,
-            address,
-            conclusion_sha256,
-            "upstream claim",
-        ),
+        } => {
+            let exact = verified_upstream.get(address).ok_or_else(|| {
+                DerivationError::new(format!("upstream claim {:?} is absent", address))
+            })?;
+            if Sha256Digest::of_bytes(exact) == *conclusion_sha256 {
+                Ok(())
+            } else {
+                Err(DerivationError::new(format!(
+                    "upstream claim {:?} digest is stale",
+                    address
+                )))
+            }
+        }
         PremiseRef::GroundedModelProposal {
             scope,
             proposal_id,
@@ -1798,14 +1976,14 @@ fn require_nonempty_direct_grounding(
     Ok(())
 }
 
-fn require_catalog_digest<K: Ord + fmt::Debug>(
-    catalog: &BTreeMap<K, Sha256Digest>,
+fn require_captured_digest<K: Ord + fmt::Debug>(
+    catalog: &BTreeMap<K, CapturedEvidence>,
     key: &K,
     digest: &Sha256Digest,
     label: &str,
 ) -> DerivationResult<()> {
     match catalog.get(key) {
-        Some(expected) if expected == digest => Ok(()),
+        Some(expected) if &expected.digest == digest => Ok(()),
         Some(_) => Err(DerivationError::new(format!(
             "{label} {key:?} digest is stale"
         ))),
@@ -1816,20 +1994,20 @@ fn require_catalog_digest<K: Ord + fmt::Debug>(
 }
 
 fn insert_exact<K: Ord + Clone + fmt::Debug>(
-    catalog: &mut BTreeMap<K, Sha256Digest>,
+    catalog: &mut BTreeMap<K, CapturedEvidence>,
     key: K,
-    digest: Sha256Digest,
+    captured: CapturedEvidence,
     label: &str,
 ) -> DerivationResult<()> {
     if let Some(existing) = catalog.get(&key) {
-        if existing == &digest {
+        if existing.digest == captured.digest && existing.exact_content == captured.exact_content {
             return Ok(());
         }
         return Err(DerivationError::new(format!(
             "duplicate {label} {key:?} has conflicting content"
         )));
     }
-    catalog.insert(key, digest);
+    catalog.insert(key, captured);
     Ok(())
 }
 
@@ -1878,7 +2056,7 @@ pub struct DerivationError {
 }
 
 impl DerivationError {
-    fn new(message: impl Into<String>) -> Self {
+    pub(crate) fn new(message: impl Into<String>) -> Self {
         Self {
             message: message.into(),
         }
@@ -1905,6 +2083,33 @@ mod tests {
         property: String,
     }
 
+    fn verify_synthetic_relation(context: RuleVerificationContext<'_>) -> DerivationResult<()> {
+        if context.conclusion_json().is_empty() {
+            return Err(DerivationError::new("synthetic conclusion is empty"));
+        }
+        for index in 0..context.proof().premises().len() {
+            let _ = context.premise_bytes(index)?;
+        }
+        Ok(())
+    }
+
+    fn verify_exact_copy(context: RuleVerificationContext<'_>) -> DerivationResult<()> {
+        let premise = context
+            .premise_bytes(0)?
+            .ok_or_else(|| DerivationError::new("exact-copy rule requires captured bytes"))?;
+        if premise == context.conclusion_json() {
+            Ok(())
+        } else {
+            Err(DerivationError::new(
+                "executable exact-copy relation rejected the conclusion",
+            ))
+        }
+    }
+
+    fn registration(descriptor: RuleDescriptor) -> RuleRegistration {
+        RuleRegistration::new(descriptor, verify_synthetic_relation)
+    }
+
     fn rule(
         id: &str,
         premises: impl IntoIterator<Item = PremiseKind>,
@@ -1915,6 +2120,7 @@ mod tests {
             RuleId::try_from(id.to_string()).unwrap(),
             1,
             "crate::ir::derivation::tests",
+            Sha256Digest::of_bytes(b"derivation test verifier v1"),
             premises,
             IrStage::EvidenceIr,
             "synthetic_claims",
@@ -1927,7 +2133,7 @@ mod tests {
 
     fn registry(descriptors: Vec<RuleDescriptor>) -> RuleRegistry {
         RuleRegistry::new(
-            descriptors,
+            descriptors.into_iter().map(registration),
             [
                 UniversalAxiomDescriptor::new(
                     "binary.logic.level",
@@ -2059,6 +2265,92 @@ mod tests {
     }
 
     #[test]
+    fn executable_verifier_rejects_hash_consistent_but_false_conclusion() {
+        let descriptor = rule(
+            "synthetic.exact_copy",
+            [PremiseKind::SourceSpan],
+            SymbolCapabilityClass::SymbolBlind,
+            AlphaObligation::ByteIdenticalNonSymbolOutput,
+        );
+        let registry =
+            RuleRegistry::new([RuleRegistration::new(descriptor, verify_exact_copy)], []).unwrap();
+        let mut builder =
+            PromotionKernelBuilder::new(Sha256Digest::of_bytes(b"capture"), registry).unwrap();
+        let premise = builder
+            .capture()
+            .source_span("exact", &serde_json::to_vec("captured").unwrap())
+            .unwrap();
+        let mut kernel = builder.seal();
+        let proposal = kernel.grammar_capability().propose(
+            address("false"),
+            RuleId::try_from("synthetic.exact_copy".to_string()).unwrap(),
+            vec![premise],
+            Vec::new(),
+            ProofConfidence::Deterministic,
+            "forged",
+        );
+        let error = kernel.promote(proposal).unwrap_err();
+        assert!(error.to_string().contains("exact-copy relation rejected"));
+    }
+
+    #[test]
+    fn implementation_digest_changes_ruleset_and_stales_a_persisted_ledger() {
+        let descriptor = |implementation: &[u8]| {
+            RuleDescriptor::new(
+                RuleId::try_from("synthetic.implementation_bound".to_string()).unwrap(),
+                1,
+                "crate::ir::derivation::tests",
+                Sha256Digest::of_bytes(implementation),
+                [PremiseKind::SourceSpan],
+                IrStage::EvidenceIr,
+                "synthetic_claims",
+                SymbolCapabilityClass::SymbolBlind,
+                AlphaObligation::ByteIdenticalNonSymbolOutput,
+                RuleCompatibility::CurrentOnly,
+            )
+            .unwrap()
+        };
+        let original = RuleRegistry::new(
+            [RuleRegistration::new(
+                descriptor(b"implementation-v1"),
+                verify_exact_copy,
+            )],
+            [],
+        )
+        .unwrap();
+        let changed = RuleRegistry::new(
+            [RuleRegistration::new(
+                descriptor(b"implementation-v2"),
+                verify_exact_copy,
+            )],
+            [],
+        )
+        .unwrap();
+        assert_ne!(original.ruleset_sha256(), changed.ruleset_sha256());
+
+        let mut builder =
+            PromotionKernelBuilder::new(Sha256Digest::of_bytes(b"capture"), original).unwrap();
+        let exact = serde_json::to_vec("captured").unwrap();
+        let premise = builder.capture().source_span("exact", &exact).unwrap();
+        let mut kernel = builder.seal();
+        let proposal = kernel.grammar_capability().propose(
+            address("bound"),
+            RuleId::try_from("synthetic.implementation_bound".to_string()).unwrap(),
+            vec![premise],
+            Vec::new(),
+            ProofConfidence::Deterministic,
+            "captured",
+        );
+        kernel.promote(proposal).unwrap();
+        let ledger = kernel.finish().unwrap().into_ledger();
+        let serialized = serde_json::to_value(ledger).unwrap();
+        assert_eq!(
+            assess_proof_compatibility(Some(&serialized), changed.ruleset_sha256()),
+            ProofCompatibility::StaleRuleset
+        );
+    }
+
+    #[test]
     fn registry_rejects_duplicate_rule_and_incompatible_alpha_contract() {
         let duplicate = rule(
             "synthetic.duplicate",
@@ -2066,13 +2358,18 @@ mod tests {
             SymbolCapabilityClass::SymbolBlind,
             AlphaObligation::ByteIdenticalNonSymbolOutput,
         );
-        let error = RuleRegistry::new(vec![duplicate.clone(), duplicate], []).unwrap_err();
+        let error = RuleRegistry::new(
+            vec![registration(duplicate.clone()), registration(duplicate)],
+            [],
+        )
+        .unwrap_err();
         assert!(error.to_string().contains("duplicate rule id"));
 
         let error = RuleDescriptor::new(
             RuleId::try_from("synthetic.bad_alpha".to_string()).unwrap(),
             1,
             "crate::ir::derivation::tests",
+            Sha256Digest::of_bytes(b"derivation test verifier v1"),
             [PremiseKind::SourceSpan],
             IrStage::EvidenceIr,
             "synthetic_claims",
@@ -2385,7 +2682,7 @@ mod tests {
             SymbolCapabilityClass::SymbolBlind,
             AlphaObligation::ByteIdenticalNonSymbolOutput,
         );
-        let registry = RuleRegistry::new([descriptor], []).unwrap();
+        let registry = RuleRegistry::new([registration(descriptor)], []).unwrap();
         let builder =
             PromotionKernelBuilder::new(Sha256Digest::of_bytes(b"capture"), registry).unwrap();
         let mut kernel = builder.seal();

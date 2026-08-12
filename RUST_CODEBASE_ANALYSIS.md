@@ -4,6 +4,30 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-12 — proof-carrying SourceIR; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii`)
+
+- SourceIR schema 3 owns 19 public fields across five registered families. `SourceProofContext` stores the exact
+  neutral capture projection and exact grounded proposal payloads; `ProofLedger` covers every field root and each
+  populated record under stable addresses.
+- `RuleRegistration` now pairs every descriptor with executable Rust verification. The closed ruleset digest
+  includes each implementation digest; canonical verification checks exact premise/conclusion bytes, allowed
+  premise kinds, current ruleset, implementation, topology, and relation replay rather than trusting JSON hashes.
+- Source records use real typed capture paths: table records include exact cells as `TableCell` premises,
+  visual/page records include exact `VisualRegion` premises, and grounded proposals bind to the typed target.
+  Deterministic section/table/visual classifications replay from `unknown` captures on load.
+- Source mutation entrypoints for VLM observations, grid repair, table classification, and validation refresh and
+  immediately verify the ledger. Source canonical load/write and EvidenceIR construction reject proofless,
+  stale, malformed, and future authority.
+- Conformance-only typed overlays replace four fixture-patching bypasses across SourceIR through IntentIR. They
+  cannot call canonical writers; each production writer reloads the canonical upstream artifact before writing.
+- The maintenance-only retained-capture migration admitted exactly 24 eligible schema-1 SourceIR bundles after
+  backing checks. Capture comparison found zero unintended mutations; all 24 chains rebuilt, and exact currency
+  is 24/24 measurable EvidenceIR plus 78/78 SemanticIR, IntentIR, and adapters with zero stale artifacts. The 54
+  reclaimed-bundle SourceIRs remain inspection-only.
+- Current verification baseline: 1,930 Rust tests pass / six ignored, 156/156 KG fixtures pass, warning-deny
+  Clippy/rustdoc pass, mdBook test/build pass, and all eight doctrines including complete chain currency pass.
+  EvidenceIR and later proof migration remains `.e.iv.iii`–`.e.iv.vi` work.
+
 ## Session update (2026-08-12 — exact rule-migration graph; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i`)
 
 - `rule_family_inventory.tsv` joins all 38 claim families to 168 deterministic field-root rule ids, 113 current

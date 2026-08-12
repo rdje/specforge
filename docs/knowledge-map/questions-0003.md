@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > does the trapped-row gap-fill mint duplicate signal declarations
+- [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
+  > does the upstream-first decision weaken the executable-intent objective
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > does the vertical evaluator make a category support claim yet
+- [transaction-phase-qualifier-requires-positive-authority](../knowledge/transaction-phase-qualifier-requires-positive-authority.md)
+  > does transaction phase precision change phase membership or ISF output
 - [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
   > does validate detect a stale downstream artifact that silently dropped relations
 - [validate-explicit-artifact-path-contained-backannotation](../knowledge/validate-explicit-artifact-path-contained-backannotation.md)
@@ -290,11 +298,3 @@
   > how does ingest avoid filling the disk on a very large PDF
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > how does learn-priors harvest extraction-profile priors (multi-member clusters only, schema v6)
-- [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
-  > how does pattern reuse stay agnostic (ADR 0006) and honest (no fabrication / no overfitting)
-- [register-record-access-and-table-provenance](../knowledge/register-record-access-and-table-provenance.md)
-  > how does register access differ from register field access
-- [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
-  > how does retain_authoritative_interface_candidate_signals behave with an empty authority set
-- [definitional-signal-capture](../knowledge/definitional-signal-capture.md)
-  > how does specforge capture a signal that is defined in prose not a signal table (SWP S1/S2)

@@ -998,7 +998,7 @@ mod tests {
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
         fs::write(&source_path, "# Spec\nSignal READY is input width 1.\n")?;
         let source_ir = SourceIr::build(&source_path, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let artifact_path = source_ir.artifact_layout.source_ir_path.clone();
         let plan_path = tempdir.path().join("rescan_plan.json");
@@ -1074,7 +1074,7 @@ mod tests {
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
         fs::write(&source_path, "# Spec\nSignal VALID is input width 1.\n")?;
         let source_ir = SourceIr::build(&source_path, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let artifact_path = source_ir.artifact_layout.source_ir_path.clone();
         let plan_path = tempdir.path().join("rescan_plan.json");
@@ -1131,7 +1131,7 @@ mod tests {
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
         fs::write(&source_path, "# Spec\nSignal READY is output width 1.\n")?;
         let source_ir = SourceIr::build(&source_path, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let artifact_path = source_ir.artifact_layout.source_ir_path.clone();
         let plan_path = tempdir.path().join("rescan_plan.json");
@@ -1191,7 +1191,7 @@ mod tests {
         let source_artifact_base = tempdir.path().join("generated").join("source_ir");
         fs::write(&source_path, "# Spec\nSignal RESP is output width 1.\n")?;
         let source_ir = SourceIr::build(&source_path, &source_artifact_base)?;
-        source_ir.write_to_disk()?;
+        source_ir.write_test_fixture_to_disk()?;
 
         let artifact_path = source_ir.artifact_layout.source_ir_path.clone();
         let plan_path = tempdir.path().join("rescan_plan.json");

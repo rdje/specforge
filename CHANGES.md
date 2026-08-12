@@ -1,3 +1,22 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii — make SourceIR proof-carrying
+
+- Advanced SourceIR to schema 3 and registered all five source claim families. Every one of its 19 public
+  fields receives a root proof, each populated collection receives record proofs, and table/visual records carry
+  exact typed `TableCell`/`VisualRegion` premises in addition to their byte-exact capture projection.
+- Bound every registered rule to executable Rust verification and an implementation digest. Canonical load,
+  serialization, write, validation backannotation, enrichment mutation, and EvidenceIR construction re-execute
+  premise-to-conclusion relations; current proofless, stale, malformed, and future authority fails closed.
+- Moved conformance mutation to typed noncanonical SourceIR/EvidenceIR/SemanticIR/IntentIR overlays with no
+  canonical writers. Production persistence reloads the canonical upstream artifact, so patched fixture state
+  cannot acquire authority by reaching an ordinary writer or downstream builder.
+- Migrated the exact 24 retained SourceIR bundles only after source and retained-manifest verification, then
+  rebuilt their complete downstream chains. Capture comparison found zero unintended mutations; classification
+  changes were confined to `section_kind`, `table_kind`, and `diagram_kind` under the current generic rules.
+- Verified 1,930 Rust tests passed / six intentionally ignored / zero failed, all 156 KG fixtures passed, warning-
+  deny Clippy and rustdoc passed, mdBook test/build passed, and all eight doctrines passed. Chain currency is
+  24/24 measurable EvidenceIR plus 78/78 SemanticIR, IntentIR, and ISF adapters with zero stale artifacts; the
+  SSD-local rollback and incremental-cache artifacts were removed with residue absent.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i — freeze the rule migration graph
 
 - Added an exact checked migration inventory for all 38 canonical claim families. They expand to 168 deterministic

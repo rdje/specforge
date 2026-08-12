@@ -525,7 +525,7 @@ mod tests {
             note: None,
             diagram_kind: DiagramKind::RegisterBitfield,
         });
-        source_ir.write_to_disk().unwrap();
+        source_ir.write_test_fixture_to_disk().unwrap();
 
         let mut evidence_ir = EvidenceIr::build(
             &source_ir.artifact_layout.source_ir_path,

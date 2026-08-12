@@ -25,7 +25,7 @@ It is the closest thing the system has to a structured "compiled source document
 
 ## Specification-neutral classification contract
 
-SourceIR schema 2 makes the source-type labels fail-closed and independent of document identity.
+SourceIR schema 3 makes the source-type labels fail-closed and independent of document identity.
 The PDF backend may use universal document grammar and typed layout roles, but it cannot use a
 filename, vendor/protocol name, operation name, participant spelling, signal spelling, or a phrase
 copied from one reviewed specification to decide a type.
@@ -46,20 +46,46 @@ caption does not become a timing diagram merely because the operation is often d
 and `Name | Width | Description` does not become a signal table without signal authority. This may
 reduce recall, but it prevents a familiar-looking input from receiving unsupported semantics.
 
-Schema 1 SourceIR files remain readable for their source text, grids, assets, geometry, and
-provenance. Their old diagram/table/section labels are not trusted: loading upgrades the runtime
-view to schema 2 while neutralizing those semantic labels, and re-ingest is required to reconstruct
-typed labels under the new policy. A future schema is rejected rather than guessed.
+Schema 1 and 2 SourceIR files remain readable only through the explicit inspection API. Their source
+text, grids, assets, geometry, and provenance can still be examined, but their old diagram/table/
+section labels are neutralized and they cannot feed canonical EvidenceIR. The ordinary loader accepts
+only schema 3 with a current verified proof ledger. A future schema or proof version is rejected rather
+than guessed.
 
-The schema transition was reconciled explicitly, not left as mixed-version state. Of 24 EvidenceIR
-chains whose retained normalized source made exact replay possible, ten changed; all ten were rebuilt
-through SemanticIR, IntentIR, and the ISF adapter. The measurable corpus is now current at 24/24
-EvidenceIR and 78/78 for each later stage, and both renderable changed outputs pass FSMGen strict.
-The exact delta removes 194 old table-derived timing guesses across four documents plus other weak
-label-driven actor/register facts. These are honest temporary recall losses: later generic evidence
-grammar may recover supported intent, but a filename, protocol name, or familiar symbol may not.
-The other 54 EvidenceIR chains are explicitly unmeasurable until their reclaimed normalized bundles
-return through owned re-ingest.
+The proof transition was reconciled explicitly, not left as an implicit schema rewrite. Exactly 24
+SourceIR documents still had their declared retained normalized bundles. Migration first verified the
+recorded source and retained page/visual manifests, then reconstructed classifications with the current
+generic rules and created schema-3 proofs. Every one of those 24 chains was rebuilt through EvidenceIR,
+SemanticIR, IntentIR, and the ISF adapter. The chain-currency gate reports 24/24 measurable EvidenceIR
+and 78/78 for every later stage, with zero stale artifacts. The other 54 SourceIR documents remain
+legacy proofless, inspection-only inputs until their reclaimed bundles return through owned re-ingest.
+
+## Executable source authority
+
+Every public SourceIR field belongs to one of five registered families: envelope/integrity, capture,
+classification, residual, or validation/evaluation. Each field root has a proof, and every non-empty
+record collection also has a stable record proof. The rule descriptor records its allowed premise
+kinds, output surface, identity capability, alpha-renaming obligation, compatibility policy, and the
+SHA-256 digest of the Rust implementation that verifies it.
+
+The ledger is not trusted merely because its JSON hashes are internally consistent. Canonical load,
+serialization, writing, and the SourceIR-to-EvidenceIR seam reconstruct the current rule registry and
+execute each registered relation against the exact premise and conclusion bytes:
+
+- document capture uses exact source-span bytes;
+- structured table records also carry their exact typed table-cell premises;
+- page and visual records also carry typed visual-region premises;
+- classification starts from an exact projection whose semantic kind is `unknown`, then replays the
+  current document-independent classifier;
+- a VLM table or visual refinement carries the exact model response plus direct table/visual grounding;
+- validation records depend on already verified SourceIR claims rather than becoming a second source of
+  semantic authority.
+
+Editing a canonical field, ledger digest, model response, rule id, ruleset digest, or implementation
+digest therefore makes the artifact stale or invalid; recomputing a JSON hash does not bypass the
+executable relation. A current-schema artifact with no proof is rejected. Named conformance fixtures use
+typed noncanonical overlays that have no canonical serializer or writer, and every production writer
+reloads its upstream artifact through the canonical verifier before persistence.
 
 Whole-pipeline production-genericity signoff still depends on the downstream remediation and
 qualification work described in
@@ -149,7 +175,7 @@ It should preserve the document faithfully and expose enough structure for later
 
 ## Current maturity boundary
 
-The SourceIR schema-2 boundary is now specification-neutral for deterministic classification, but it
+The SourceIR schema-3 boundary is now specification-neutral and proof-carrying for deterministic classification, but it
 is not "done forever" and does not make the rest of the production pipeline neutral by itself.
 
 Remaining source-stage work is mostly:

@@ -5,6 +5,11 @@ edition.workspace = true
 rust-version.workspace = true
 publish = false
 
+[features]
+conformance-support = []
+source-proof-migration = []
+test-support = []
+
 [dependencies]
 clap.workspace = true
 serde.workspace = true

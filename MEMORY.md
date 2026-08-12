@@ -17,16 +17,16 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.i` is complete pending its commit under `.e.iv`.
-  `.6d.ii.e.iii`, `.6d.ii.e.ii`, `.6d.ii.e.i`, `.6d.ii.d.iv`, `.6d.ii.d.iii`, `.6d.ii.d.ii`, `.6d.ii.d.i`,
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e.iv.ii` is closing under `.e.iv`.
+  `.6d.ii.e.iv.i`, `.6d.ii.e.iii`, `.6d.ii.e.ii`, `.6d.ii.e.i`, `.6d.ii.d.iv`, `.6d.ii.d.iii`, `.6d.ii.d.ii`, `.6d.ii.d.i`,
   `.6d.ii.c`, `FSMGEN-REFRESH-INTEGRATE-8.1`, `.6d.ii.b`, `.6d.ii.a`, and
   `.6d.i` are committed complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2`
   and `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: the checked migration graph covers 38 families / 168 field-root rules / 113
-  producer-mutator entrypoints / 39 canonical seams / four conformance bypasses. One cumulative
-  ledger and noncanonical-overlay contracts are fixed; production artifacts remain proofless.
-- Next action: commit `.e.iv.i`, clear the brief, and prove a clean tree; only then activate
-  `.e.iv.ii` to make the five SourceIR families proof-carrying from exact captured input.
-- In-flight uncommitted: `.e.iv.i` inventories/checker, ADR/audit/book/live/retrieval alignment,
-  task closure, and no production Rust, generated canonical artifact, scratch workspace, or job.
+- Current state: `.e.iv.ii` is complete and fully qualified pending only the `COMMIT.md` transaction. SourceIR
+  schema 3 proves all five families with executable registered relations and exact typed premises; 24 retained
+  chains are rebuilt/current, while 54 legacy SourceIRs remain inspection-only. All eight doctrines pass.
+- Next action: complete the `COMMIT.md` workflow for `.e.iv.ii`; from a clean commit activate
+  `.e.iv.iii` and migrate all 11 EvidenceIR families plus post-build mutation paths.
+- In-flight uncommitted: the verified `.e.iv.ii` production/test/docs change set only; rollback and incremental-
+  cache scratch are deleted with residue absent, and no background job remains.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

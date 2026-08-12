@@ -3,10 +3,9 @@ use std::process::Command;
 
 use crate::cli::{EnrichArgs, VlmProviderArg};
 use crate::error::{AppError, Result};
-use crate::ir::source::{
-    DiagramKind, SourceIr, StructuredTableCellRecord, StructuredTableRecord, TableKind,
-    VisualAsset, timing_table_has_structural_authority,
-};
+#[cfg(test)]
+use crate::ir::source::timing_table_has_structural_authority;
+use crate::ir::source::{DiagramKind, SourceIr, StructuredTableRecord, TableKind, VisualAsset};
 
 /// Environment variable overriding the VLM helper script (for unit testing).
 const VLM_HELPER_ENV: &str = "SPECFORGE_VLM_HELPER";
@@ -113,7 +112,9 @@ pub fn run(args: EnrichArgs) -> Result<()> {
             );
             println!("vlm_errors: {}", enriched.errors);
 
-            source_ir.visual_assets = enriched.updated_assets;
+            for (asset_id, diagram_kind, exact_response) in enriched.observations {
+                source_ir.apply_visual_observation(&asset_id, diagram_kind, exact_response)?;
+            }
             // PDF-VARIANT-DIGESTION.2d — count non-data noise tables (TOC / revision / index) that the VLM
             // passes skip, so they don't waste calls and the unknown count is reported honestly.
             let noise_tables = source_ir
@@ -163,7 +164,7 @@ pub fn run(args: EnrichArgs) -> Result<()> {
 }
 
 struct EnrichmentResult {
-    updated_assets: Vec<VisualAsset>,
+    observations: Vec<(String, DiagramKind, String)>,
     calls_made: usize,
     timing_enriched: usize,
     state_machine_enriched: usize,
@@ -177,13 +178,13 @@ fn enrich_visual_assets(
     api_url: &str,
     dry_run: bool,
 ) -> Result<EnrichmentResult> {
-    let mut updated_assets = assets.to_vec();
+    let mut observations = Vec::new();
     let mut calls_made = 0usize;
     let mut timing_enriched = 0usize;
     let mut state_machine_enriched = 0usize;
     let mut errors = 0usize;
 
-    for asset in &mut updated_assets {
+    for asset in assets {
         match asset.diagram_kind {
             DiagramKind::TimingDiagram => {
                 if asset_already_has_vlm_note(asset, "timing_diagram") {
@@ -200,8 +201,11 @@ fn enrich_visual_assets(
                 calls_made += 1;
                 match call_vlm_for_asset(asset, "timing_diagram", model, api_url, provider) {
                     Ok(observation_text) => {
-                        asset.note =
-                            Some(format!("vlm_timing_diagram_extraction: {observation_text}"));
+                        observations.push((
+                            asset.asset_id.clone(),
+                            DiagramKind::TimingDiagram,
+                            observation_text,
+                        ));
                         timing_enriched += 1;
                     }
                     Err(e) => {
@@ -228,8 +232,11 @@ fn enrich_visual_assets(
                 calls_made += 1;
                 match call_vlm_for_asset(asset, "state_machine", model, api_url, provider) {
                     Ok(observation_text) => {
-                        asset.note =
-                            Some(format!("vlm_state_machine_extraction: {observation_text}"));
+                        observations.push((
+                            asset.asset_id.clone(),
+                            DiagramKind::StateMachineDiagram,
+                            observation_text,
+                        ));
                         state_machine_enriched += 1;
                     }
                     Err(e) => {
@@ -246,7 +253,7 @@ fn enrich_visual_assets(
     }
 
     Ok(EnrichmentResult {
-        updated_assets,
+        observations,
         calls_made,
         timing_enriched,
         state_machine_enriched,
@@ -345,6 +352,7 @@ only, no prose: {\"kind\": <one of \"signal_description\", \"register_field\", \
 /// not reclassify on: `register_field` (the deterministic header-grammar path already recovers these from
 /// `unknown`), and `table_of_contents`/`other` (correctly left unextracted). Tolerates ```json fences and
 /// surrounding prose. PDF-VARIANT-DIGESTION.2b.
+#[cfg(test)]
 fn parse_vlm_table_kind(content: &str) -> Option<TableKind> {
     let lower = content.to_ascii_lowercase();
     let key = lower.find("\"kind\"")?;
@@ -358,6 +366,7 @@ fn parse_vlm_table_kind(content: &str) -> Option<TableKind> {
 
 /// Map a VLM `kind` label to a [`TableKind`] to APPLY. `None` for `register_field` (the deterministic
 /// grammar path recovers these from `unknown`) and `table_of_contents`/`other` (left unextracted).
+#[cfg(test)]
 fn map_vlm_kind(s: &str) -> Option<TableKind> {
     match s.trim() {
         "signal_description" => Some(TableKind::SignalDescription),
@@ -380,6 +389,7 @@ strings>], \"rows\": [[<cell strings, one per column>], ...]}. Preserve cell tex
 
 /// Parse a VLM grid transcription `{"kind","columns":[..],"rows":[[..]]}` (tolerating ```json fences /
 /// prose) into `(kind, columns, rows)`. Requires ≥2 columns. PDF-VARIANT-DIGESTION.2b'.
+#[cfg(test)]
 fn parse_vlm_grid(content: &str) -> Option<(String, Vec<String>, Vec<Vec<String>>)> {
     let start = content.find('{')?;
     let end = content.rfind('}')?;
@@ -425,6 +435,7 @@ fn table_is_degenerate(table: &StructuredTableRecord) -> bool {
 /// field tables (`Field|…|Access|Reset`) or operation/example tables (`Op|Address|Value`) as
 /// `signal_description`, which then yields garbage "signals". A reclassification is applied only when the
 /// table header is consistent with the proposed kind. Header GRAMMAR (ADR 0006); no chip names.
+#[cfg(test)]
 fn vlm_kind_structurally_consistent(table: &StructuredTableRecord, kind: TableKind) -> bool {
     let header: Vec<String> = table
         .header_rows
@@ -484,34 +495,29 @@ fn classify_unknown_tables_via_vlm(
     let mut reclassified = 0usize;
     let mut errors = 0usize;
     // Resolve images up front (immutable borrow) before mutating the tables.
-    let plan: Vec<(usize, std::path::PathBuf)> = source_ir
+    let plan: Vec<(String, std::path::PathBuf)> = source_ir
         .structured_tables
         .iter()
         .enumerate()
         .filter(|(_, t)| {
             t.table_kind == TableKind::Unknown && !crate::ir::evidence::table_is_noise(t)
         })
-        .filter_map(|(i, t)| {
+        .filter_map(|(_, t)| {
             image_by_asset
                 .get(t.asset_id.as_str())
-                .map(|p| (i, p.to_path_buf()))
+                .map(|p| (t.table_id.clone(), p.to_path_buf()))
         })
         .collect();
-    for (idx, image_path) in plan {
+    for (table_id, image_path) in plan {
         if dry_run {
             continue;
         }
         match vlm_image_query(&image_path, &prompt, model, api_url, provider) {
-            Ok(content) => {
-                if let Some(kind) = parse_vlm_table_kind(&content) {
-                    // Apply only when the table structure is consistent with the proposed kind —
-                    // rejects the VLM's over-classifications (no-garbage; best-wins with verification).
-                    if vlm_kind_structurally_consistent(&source_ir.structured_tables[idx], kind) {
-                        source_ir.structured_tables[idx].table_kind = kind;
-                        reclassified += 1;
-                    }
-                }
-            }
+            Ok(content) => match source_ir.apply_table_classification(&table_id, content) {
+                Ok(true) => reclassified += 1,
+                Ok(false) => {}
+                Err(_) => errors += 1,
+            },
             Err(_) => errors += 1,
         }
     }
@@ -536,7 +542,7 @@ fn repair_degenerate_tables_via_vlm(
         .filter_map(|a| a.image_path.as_deref().map(|p| (a.asset_id.as_str(), p)))
         .collect();
     let prompt = build_table_extract_prompt();
-    let plan: Vec<(usize, std::path::PathBuf)> = source_ir
+    let plan: Vec<(String, std::path::PathBuf)> = source_ir
         .structured_tables
         .iter()
         .enumerate()
@@ -545,50 +551,24 @@ fn repair_degenerate_tables_via_vlm(
                 && table_is_degenerate(t)
                 && !crate::ir::evidence::table_is_noise(t)
         })
-        .filter_map(|(i, t)| {
+        .filter_map(|(_, t)| {
             image_by_asset
                 .get(t.asset_id.as_str())
-                .map(|p| (i, p.to_path_buf()))
+                .map(|p| (t.table_id.clone(), p.to_path_buf()))
         })
         .collect();
-    let header_cell = |t: &str| StructuredTableCellRecord {
-        text: t.to_string(),
-        row_span: 1,
-        col_span: 1,
-        is_header: true,
-    };
-    let body_cell = |t: &str| StructuredTableCellRecord {
-        text: t.to_string(),
-        row_span: 1,
-        col_span: 1,
-        is_header: false,
-    };
     let mut repaired = 0usize;
     let mut errors = 0usize;
-    for (idx, image_path) in plan {
+    for (table_id, image_path) in plan {
         if dry_run {
             continue;
         }
         match vlm_image_query(&image_path, &prompt, model, api_url, provider) {
-            Ok(content) => {
-                if let Some((kind_str, columns, rows)) = parse_vlm_grid(&content) {
-                    let table = &mut source_ir.structured_tables[idx];
-                    table.header_rows = vec![columns.iter().map(|c| header_cell(c)).collect()];
-                    table.body_rows = rows
-                        .iter()
-                        .map(|r| r.iter().map(|c| body_cell(c)).collect())
-                        .collect();
-                    table.col_count = columns.len() as u32;
-                    table.row_count = (rows.len() + 1) as u32;
-                    // Set kind only when the repaired grid's header is consistent with the VLM's claim.
-                    if let Some(kind) = map_vlm_kind(&kind_str)
-                        .filter(|&k| vlm_kind_structurally_consistent(table, k))
-                    {
-                        table.table_kind = kind;
-                    }
-                    repaired += 1;
-                }
-            }
+            Ok(content) => match source_ir.apply_table_grid_repair(&table_id, content) {
+                Ok(true) => repaired += 1,
+                Ok(false) => {}
+                Err(_) => errors += 1,
+            },
             Err(_) => errors += 1,
         }
     }
