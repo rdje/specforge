@@ -56,7 +56,7 @@ IntentIR ignores them. Source evidence, technical invariant/constraint projectio
 ## How protocol observations cross the product boundary
 
 `IntentIR` carries the four typed protocol-observation collections from `SemanticIR` unchanged:
-`serial_frame_fields`, `swd_operations`, `protocol_states`, and `interface_edge_timings`. The projection preserves
+`serial_frame_fields`, `protocol_operations`, `protocol_states`, and `interface_edge_timings`. The projection preserves
 record order, identifiers, optional values, and supporting-statement provenance. It does not sort, filter,
 reinterpret, or complete the observations. Empty collections are omitted when serialized and default to empty
 when older artifacts are loaded.
@@ -67,6 +67,12 @@ and edge records likewise do not necessarily provide every wire, value, activati
 step requires. The adapter must account for that incompleteness explicitly rather than inventing the missing
 meaning. `specforge validate <intent-ir>` reports one count for each collection so a reviewer can verify the
 three-stage projection before inspecting adapter disposition.
+
+For example, if the source states that `ALPHA[3:0]` belongs to the `lilac` phase and travels “from the
+orchid to the quartz,” the carrier preserves those exact opaque strings and the width `4`. Renaming all three
+source terms changes only those strings—not the record shape, admission decision, or downstream disposition.
+If the source merely mentions a bit range without binding it to a frame/packet or named phase, no frame record
+is manufactured.
 
 `IntentIR` also carries `SemanticIR.actor_contracts` unchanged, including verified figure-provenance contracts
 and their residual dispositions. It does not reinterpret a timing trace, restore a lane rejected by semantic

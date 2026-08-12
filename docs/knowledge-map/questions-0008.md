@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
+  > what is the PDF-VARIANT-DIGESTION whole-corpus coverage / re-triage
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the PHASE_NAME_STOPWORDS gate and why is it stronger than the anchor gate (prose is noisier)
+- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
+  > what is the RAM-safe per-doc protocol for the CANONICAL-PROMOTION-SWEEP
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > what is the RISC-V Debug register-field recall / precision
+- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
+  > what is the SWD line state machine (reset/operating/protocol-error/lockout)
+- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
+  > what is the SpecForge trajectory controller
+- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
+  > what is the VLM table strategy / PDF-VARIANT-DIGESTION.2b
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > what is the `<role> channel signals` caption cue and how is it parsed
+- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
+  > what is the ambiguous_statements metric in validate
+- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
+  > what is the authoritative membership set for corpus SOURCE_PDF_REGISTRY
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > what is the bit-exact adjacency chain rule
 - [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
   > what is the buildable category-4 lever (.4d.i — recover RISC-V CSR field bit positions + a RISC-V-shaped register recogniser for AIA; once located, fields auto-lower via .4a.ii, no emitter change)
 - [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
@@ -199,6 +221,8 @@
   > what real PDF proves the FigureRegion vertical path
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
   > what remains under-extracted in OpenCAPI Discovery Configuration
+- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
+  > what replaced the SWD-specific EvidenceIR carrier
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
   > what research did SpecForge leave out and why
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
@@ -273,27 +297,3 @@
   > where did the AXI AWIDUNQ / WTAGUPDATE duplicate records go
 - [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
   > where did the root architecture catalog go
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > where do CCIX PER error structure fields land in the IR
-- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
-  > where do DBID / TxnID / ReturnNID style names come from in CHI
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > where do DTI message field obligations leak (signal_constraints) and how is it fixed
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > where do I log feedback or a suggestion to FSMGen
-- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
-  > where do TimingConstraintRecord table provenance ids live
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > where do in-memory structure layouts (queue entries, table entries, dwords) live in EvidenceIR
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > where do interface_edge_timings stop in the pipeline
-- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
-  > where do live-document checker test fixtures create temporary files
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > where do message-field / structure / flit / descriptor layouts go in the pipeline (EvidenceIR only — no IntentIR carrier, never lowered)
-- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
-  > where do obligations on message fields (TagOp must be 0) live in EvidenceIR
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > where do packet/flit message fields (TxnID / DBID / Opcode) live in EvidenceIR
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > where do the 9 new ACE wires AWBAR AWDOMAIN AWSNOOP come from and when do they land

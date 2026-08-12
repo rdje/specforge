@@ -25,8 +25,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::error::{AppError, Result};
 use crate::ir::evidence::{
-    InterfaceClockEdge, InterfaceEdgeTimingRecord, ProtocolStateRecord, SerialFrameField,
-    SerialFramePhase, SwdOperation, SwdioDirection,
+    InterfaceClockEdge, InterfaceEdgeTimingRecord, ParticipantDriveRecord, ProtocolOperationRecord,
+    ProtocolStateRecord, SerialFrameField,
 };
 use crate::ir::semantic::{
     ClockEdge, CycleWindowRecord, InterfaceSignalDirection, InterfaceSignalRecord,
@@ -47,13 +47,13 @@ pub enum EvalTask {
     ActorSignalRelation,
     /// The deterministic temporal parser → `TemporalRuleRecord` (mined temporal rules).
     TemporalRule,
-    /// SWD-SERIAL-EXTRACTION.5 — a serial-protocol frame field (`SerialFrameField`).
+    /// A document-stated frame field (`SerialFrameField`).
     SerialFrameField,
-    /// SWD-SERIAL-EXTRACTION.5 — a serial packet operation / response branch (`SwdOperation`).
-    SwdOperation,
-    /// SWD-SERIAL-EXTRACTION.5 — a protocol FSM state (`ProtocolStateRecord`).
+    /// A document-stated operation or response branch (`ProtocolOperationRecord`).
+    ProtocolOperation,
+    /// A document-stated protocol/FSM state (`ProtocolStateRecord`).
     ProtocolState,
-    /// SWD-SERIAL-EXTRACTION.4e — explicit actor/data/clock edge timing.
+    /// Explicit actor/data/clock edge timing.
     InterfaceEdgeTiming,
     /// PDF-VARIANT-DIGESTION.4a.1 — a register bit-field (a `RegisterFieldRecord` within a
     /// `RegisterRecord`); identity is owning register + field name + bit offset/width.
@@ -71,7 +71,7 @@ impl EvalTask {
             EvalTask::ActorSignalRelation => "actor_signal_relation",
             EvalTask::TemporalRule => "temporal_rule",
             EvalTask::SerialFrameField => "serial_frame_field",
-            EvalTask::SwdOperation => "swd_operation",
+            EvalTask::ProtocolOperation => "protocol_operation",
             EvalTask::ProtocolState => "protocol_state",
             EvalTask::InterfaceEdgeTiming => "interface_edge_timing",
             EvalTask::RegisterField => "register_field",
@@ -120,8 +120,7 @@ pub enum GoldFact {
         #[serde(default, skip_serializing_if = "Option::is_none")]
         cycle_window: Option<CycleWindowRecord>,
     },
-    /// A serial-protocol frame field (SWD-SERIAL-EXTRACTION.5): name + bit-width + phase + the SWDIO
-    /// drive direction. Identity is the full tuple so a wrong width/phase/direction scores as a miss.
+    /// A frame field: name + bit-width + source-derived phase and participant relation.
     FrameField {
         name: String,
         #[serde(default)]
@@ -129,25 +128,25 @@ pub enum GoldFact {
         #[serde(default)]
         phase: Option<String>,
         #[serde(default)]
-        swdio_direction: Option<String>,
+        participant_drive: Option<String>,
     },
-    /// A serial packet operation / response branch (SWD-SERIAL-EXTRACTION.5).
-    SwdOperationFact {
-        response: String,
+    /// A document-stated operation or response branch.
+    ProtocolOperationFact {
         #[serde(default)]
-        access: Option<String>,
+        branch_label: Option<String>,
+        #[serde(default)]
+        operation_name: Option<String>,
         phase_count: u32,
-        has_data_phase: bool,
         #[serde(default)]
-        turnaround_before_data: Option<bool>,
+        phase_names: Vec<String>,
     },
-    /// A protocol FSM state (SWD-SERIAL-EXTRACTION.5): machine + state name.
+    /// A protocol/FSM state: optional source-stated machine + state name.
     ProtocolStateFact {
         #[serde(default)]
         machine_name: Option<String>,
         state_name: String,
     },
-    /// A prose-defined interface clocking fact (SWD-SERIAL-EXTRACTION.4e). Identity includes the
+    /// A prose-defined interface clocking fact. Identity includes the
     /// complete semantic tuple so omitting or changing the clock, edge, or either operation fails.
     InterfaceEdgeTimingFact {
         actor_name: String,
@@ -191,7 +190,7 @@ impl GoldFact {
             GoldFact::Relation { .. } => EvalTask::ActorSignalRelation,
             GoldFact::TemporalRule { .. } => EvalTask::TemporalRule,
             GoldFact::FrameField { .. } => EvalTask::SerialFrameField,
-            GoldFact::SwdOperationFact { .. } => EvalTask::SwdOperation,
+            GoldFact::ProtocolOperationFact { .. } => EvalTask::ProtocolOperation,
             GoldFact::ProtocolStateFact { .. } => EvalTask::ProtocolState,
             GoldFact::InterfaceEdgeTimingFact { .. } => EvalTask::InterfaceEdgeTiming,
             GoldFact::RegisterField { .. } => EvalTask::RegisterField,
@@ -229,25 +228,23 @@ impl GoldFact {
                 name,
                 bit_width,
                 phase,
-                swdio_direction,
+                participant_drive,
             } => frame_field_key(
                 name,
                 *bit_width,
                 phase.as_deref(),
-                swdio_direction.as_deref(),
+                participant_drive.as_deref(),
             ),
-            GoldFact::SwdOperationFact {
-                response,
-                access,
+            GoldFact::ProtocolOperationFact {
+                branch_label,
+                operation_name,
                 phase_count,
-                has_data_phase,
-                turnaround_before_data,
-            } => swd_operation_key(
-                response,
-                access.as_deref(),
+                phase_names,
+            } => protocol_operation_key(
+                branch_label.as_deref(),
+                operation_name.as_deref(),
                 *phase_count,
-                *has_data_phase,
-                *turnaround_before_data,
+                phase_names,
             ),
             GoldFact::ProtocolStateFact {
                 machine_name,
@@ -285,39 +282,35 @@ impl GoldFact {
     }
 }
 
-/// Canonical key for a serial-frame field — identity is name + width + phase + SWDIO direction.
+/// Canonical key for a frame field — identity is name + width + phase + participant relation.
 fn frame_field_key(
     name: &str,
     bit_width: Option<u32>,
     phase: Option<&str>,
-    swdio_direction: Option<&str>,
+    participant_drive: Option<&str>,
 ) -> String {
     format!(
         "{}|{}|{}|{}",
         name.trim(),
         bit_width.map(|w| w.to_string()).unwrap_or_default(),
         phase.unwrap_or("").trim().to_ascii_lowercase(),
-        swdio_direction.unwrap_or("").trim().to_ascii_lowercase(),
+        participant_drive.unwrap_or("").trim().to_ascii_lowercase(),
     )
 }
 
-/// Canonical key for a serial packet operation — identity is response + access + phase shape.
-fn swd_operation_key(
-    response: &str,
-    access: Option<&str>,
+/// Canonical key for an operation — identity is its source labels and phase shape.
+fn protocol_operation_key(
+    branch_label: Option<&str>,
+    operation_name: Option<&str>,
     phase_count: u32,
-    has_data_phase: bool,
-    turnaround_before_data: Option<bool>,
+    phase_names: &[String],
 ) -> String {
     format!(
-        "{}|{}|{}|{}|{}",
-        response.trim().to_ascii_uppercase(),
-        access.unwrap_or("").trim().to_ascii_lowercase(),
+        "{}|{}|{}|{}",
+        branch_label.unwrap_or("").trim(),
+        operation_name.unwrap_or("").trim(),
         phase_count,
-        has_data_phase,
-        turnaround_before_data
-            .map(|b| b.to_string())
-            .unwrap_or_default(),
+        phase_names.join(","),
     )
 }
 
@@ -670,21 +663,13 @@ pub fn index_temporal_rule_predictions(records: &[TemporalRuleRecord], into: &mu
     }
 }
 
-/// Stable snake-case string for a serial-frame phase.
-fn serial_phase_str(phase: SerialFramePhase) -> &'static str {
-    match phase {
-        SerialFramePhase::Request => "request",
-        SerialFramePhase::Acknowledge => "acknowledge",
-        SerialFramePhase::Data => "data",
-    }
-}
-
-/// Stable snake-case string for a SWDIO drive direction.
-fn swdio_direction_str(dir: SwdioDirection) -> &'static str {
-    match dir {
-        SwdioDirection::HostDrives => "host_drives",
-        SwdioDirection::TargetDrives => "target_drives",
-    }
+/// Stable participant-relation string for evaluation keys.
+fn participant_drive_str(direction: &ParticipantDriveRecord) -> String {
+    format!(
+        "{}->{}",
+        direction.source_actor,
+        direction.destination_actor.as_deref().unwrap_or("")
+    )
 }
 
 /// Canonical key for a produced [`SerialFrameField`] — matches a gold `FrameField`'s key.
@@ -692,19 +677,22 @@ pub fn serial_frame_field_record_key(record: &SerialFrameField) -> String {
     frame_field_key(
         &record.name,
         record.bit_width,
-        record.phase.map(serial_phase_str),
-        record.swdio_direction.map(swdio_direction_str),
+        record.phase_name.as_deref(),
+        record
+            .participant_drive
+            .as_ref()
+            .map(participant_drive_str)
+            .as_deref(),
     )
 }
 
-/// Canonical key for a produced [`SwdOperation`] — matches a gold `SwdOperationFact`'s key.
-pub fn swd_operation_record_key(record: &SwdOperation) -> String {
-    swd_operation_key(
-        &record.response,
-        record.access.as_deref(),
+/// Canonical key for a produced operation record.
+pub fn protocol_operation_record_key(record: &ProtocolOperationRecord) -> String {
+    protocol_operation_key(
+        record.branch_label.as_deref(),
+        record.operation_name.as_deref(),
         record.phase_count,
-        record.has_data_phase,
-        record.turnaround_before_data,
+        &record.phase_names,
     )
 }
 
@@ -751,7 +739,7 @@ pub fn interface_edge_timing_record_key(record: &InterfaceEdgeTimingRecord) -> S
     )
 }
 
-/// Index produced serial-frame fields by their supporting statements (SWD-SERIAL-EXTRACTION.5).
+/// Index produced frame fields by their supporting statements.
 pub fn index_serial_frame_field_predictions(
     records: &[SerialFrameField],
     into: &mut PredictedKeys,
@@ -766,19 +754,22 @@ pub fn index_serial_frame_field_predictions(
     }
 }
 
-/// Index produced SWD operations by their supporting statements (SWD-SERIAL-EXTRACTION.5).
-pub fn index_swd_operation_predictions(records: &[SwdOperation], into: &mut PredictedKeys) {
+/// Index produced operations by their supporting statements.
+pub fn index_protocol_operation_predictions(
+    records: &[ProtocolOperationRecord],
+    into: &mut PredictedKeys,
+) {
     for record in records {
-        let key = swd_operation_record_key(record);
+        let key = protocol_operation_record_key(record);
         for statement_id in &record.supporting_statement_ids {
-            into.entry((EvalTask::SwdOperation, statement_id.clone()))
+            into.entry((EvalTask::ProtocolOperation, statement_id.clone()))
                 .or_default()
                 .insert(key.clone());
         }
     }
 }
 
-/// Index produced protocol-FSM states by their supporting statements (SWD-SERIAL-EXTRACTION.5).
+/// Index produced protocol/FSM states by their supporting statements.
 pub fn index_protocol_state_predictions(records: &[ProtocolStateRecord], into: &mut PredictedKeys) {
     for record in records {
         let key = protocol_state_record_key(record);

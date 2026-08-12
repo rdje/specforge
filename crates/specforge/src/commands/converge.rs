@@ -7,8 +7,8 @@ use crate::commands::{enrich, nlp_enrich, rescan_plan};
 use crate::error::{AppError, Result};
 use crate::ir::adapters::{AdapterArtifact, AdapterLoweringStatus, AdapterTarget};
 use crate::ir::evidence::{
-    EvidenceIr, InterfaceEdgeTimingRecord, ProtocolStateRecord, SerialFrameField, StatementClass,
-    SwdOperation, VisualObservationKind,
+    EvidenceIr, InterfaceEdgeTimingRecord, ProtocolOperationRecord, ProtocolStateRecord,
+    SerialFrameField, StatementClass, VisualObservationKind,
 };
 use crate::ir::intent::IntentIr;
 use crate::ir::semantic::SemanticIr;
@@ -227,7 +227,7 @@ fn run_convergence_with_roots(
                 + evidence_ir.conditional_rules.len()
                 + evidence_ir.actor_signal_relations.len()
                 + evidence_ir.serial_frame_fields.len()
-                + evidence_ir.swd_operations.len()
+                + evidence_ir.protocol_operations.len()
                 + evidence_ir.protocol_states.len()
                 + evidence_ir.interface_edge_timings.len()
         );
@@ -954,7 +954,7 @@ struct EvidenceSnapshot {
     register_records: usize,
     timing_constraints: usize,
     serial_frame_fields: Vec<SerialFrameField>,
-    swd_operations: Vec<SwdOperation>,
+    protocol_operations: Vec<ProtocolOperationRecord>,
     protocol_states: Vec<ProtocolStateRecord>,
     interface_edge_timings: Vec<InterfaceEdgeTimingRecord>,
     alias_map_size: usize,
@@ -1009,7 +1009,7 @@ impl EvidenceSnapshot {
             register_records: ir.register_records.len(),
             timing_constraints: ir.timing_constraints.len(),
             serial_frame_fields: ir.serial_frame_fields.clone(),
-            swd_operations: ir.swd_operations.clone(),
+            protocol_operations: ir.protocol_operations.clone(),
             protocol_states: ir.protocol_states.clone(),
             interface_edge_timings: ir.interface_edge_timings.clone(),
             alias_map_size: ir.signal_alias_map.len(),
@@ -1031,7 +1031,7 @@ impl EvidenceSnapshot {
             + self.register_records
             + self.timing_constraints
             + self.serial_frame_fields.len()
-            + self.swd_operations.len()
+            + self.protocol_operations.len()
             + self.protocol_states.len()
             + self.interface_edge_timings.len()
             + self.alias_map_size
@@ -1062,7 +1062,7 @@ struct SemanticSnapshot {
     register_records: usize,
     timing_constraints: usize,
     serial_frame_fields: Vec<SerialFrameField>,
-    swd_operations: Vec<SwdOperation>,
+    protocol_operations: Vec<ProtocolOperationRecord>,
     protocol_states: Vec<ProtocolStateRecord>,
     interface_edge_timings: Vec<InterfaceEdgeTimingRecord>,
     signal_constraints: usize,
@@ -1097,7 +1097,7 @@ impl SemanticSnapshot {
             register_records: ir.register_records.len(),
             timing_constraints: ir.timing_constraints.len(),
             serial_frame_fields: ir.serial_frame_fields.clone(),
-            swd_operations: ir.swd_operations.clone(),
+            protocol_operations: ir.protocol_operations.clone(),
             protocol_states: ir.protocol_states.clone(),
             interface_edge_timings: ir.interface_edge_timings.clone(),
             signal_constraints: ir.signal_constraints.len(),
@@ -1127,7 +1127,7 @@ impl SemanticSnapshot {
             + self.register_records
             + self.timing_constraints
             + self.serial_frame_fields.len()
-            + self.swd_operations.len()
+            + self.protocol_operations.len()
             + self.protocol_states.len()
             + self.interface_edge_timings.len()
             + self.signal_constraints
@@ -1153,7 +1153,7 @@ struct IntentSnapshot {
     register_records: usize,
     timing_constraints: usize,
     serial_frame_fields: Vec<SerialFrameField>,
-    swd_operations: Vec<SwdOperation>,
+    protocol_operations: Vec<ProtocolOperationRecord>,
     protocol_states: Vec<ProtocolStateRecord>,
     interface_edge_timings: Vec<InterfaceEdgeTimingRecord>,
     signal_constraints: usize,
@@ -1184,7 +1184,7 @@ impl IntentSnapshot {
             register_records: ir.register_records.len(),
             timing_constraints: ir.timing_constraints.len(),
             serial_frame_fields: ir.serial_frame_fields.clone(),
-            swd_operations: ir.swd_operations.clone(),
+            protocol_operations: ir.protocol_operations.clone(),
             protocol_states: ir.protocol_states.clone(),
             interface_edge_timings: ir.interface_edge_timings.clone(),
             signal_constraints: ir.signal_constraints.len(),
@@ -1210,7 +1210,7 @@ impl IntentSnapshot {
             + self.register_records
             + self.timing_constraints
             + self.serial_frame_fields.len()
-            + self.swd_operations.len()
+            + self.protocol_operations.len()
             + self.protocol_states.len()
             + self.interface_edge_timings.len()
             + self.signal_constraints
@@ -1761,25 +1761,31 @@ mod tests {
     fn protocol_frame_field(field_id: &str) -> SerialFrameField {
         SerialFrameField {
             field_id: field_id.to_string(),
-            name: "REQUEST".to_string(),
+            name: "ALPHA".to_string(),
             bit_width: Some(1),
             bit_range: Some((0, 0)),
-            phase: Some(crate::ir::evidence::SerialFramePhase::Request),
-            swdio_direction: Some(crate::ir::evidence::SwdioDirection::HostDrives),
+            phase_name: Some("opening".to_string()),
+            participant_drive: Some(crate::ir::evidence::ParticipantDriveRecord {
+                source_actor: "initiator".to_string(),
+                destination_actor: Some("recipient".to_string()),
+            }),
             order: Some(0),
             response_values: Vec::new(),
             supporting_statement_ids: vec!["statement_protocol".to_string()],
         }
     }
 
-    fn protocol_operation(operation_id: &str) -> SwdOperation {
-        SwdOperation {
+    fn protocol_operation(operation_id: &str) -> ProtocolOperationRecord {
+        ProtocolOperationRecord {
             operation_id: operation_id.to_string(),
-            response: "OK".to_string(),
-            access: Some("read".to_string()),
+            branch_label: Some("accepted".to_string()),
+            operation_name: Some("transfer".to_string()),
             phase_count: 3,
-            has_data_phase: true,
-            turnaround_before_data: Some(false),
+            phase_names: vec![
+                "opening".to_string(),
+                "body".to_string(),
+                "closing".to_string(),
+            ],
             supporting_statement_ids: vec!["statement_protocol".to_string()],
         }
     }
@@ -1823,13 +1829,16 @@ mod tests {
         let empty_evidence = EvidenceSnapshot::from_ir(&evidence_ir);
 
         let mut second_field = protocol_frame_field("serial_field_0002");
-        second_field.name = "ACK".to_string();
-        second_field.phase = Some(crate::ir::evidence::SerialFramePhase::Acknowledge);
-        second_field.swdio_direction = Some(crate::ir::evidence::SwdioDirection::TargetDrives);
+        second_field.name = "OMEGA".to_string();
+        second_field.phase_name = Some("closing".to_string());
+        second_field.participant_drive = Some(crate::ir::evidence::ParticipantDriveRecord {
+            source_actor: "recipient".to_string(),
+            destination_actor: Some("initiator".to_string()),
+        });
         second_field.order = Some(1);
         evidence_ir.serial_frame_fields =
             vec![protocol_frame_field("serial_field_0001"), second_field];
-        evidence_ir.swd_operations = vec![protocol_operation("swd_operation_0001")];
+        evidence_ir.protocol_operations = vec![protocol_operation("protocol_operation_0001")];
         evidence_ir.protocol_states = vec![protocol_state("protocol_state_0001")];
         evidence_ir.interface_edge_timings =
             vec![protocol_edge_timing("interface_edge_timing_0001")];
@@ -1856,11 +1865,11 @@ mod tests {
             assert_eq!(fields, &evidence_ir.serial_frame_fields);
         }
         for operations in [
-            &evidence_snapshot.swd_operations,
-            &semantic_snapshot.swd_operations,
-            &intent_snapshot.swd_operations,
+            &evidence_snapshot.protocol_operations,
+            &semantic_snapshot.protocol_operations,
+            &intent_snapshot.protocol_operations,
         ] {
-            assert_eq!(operations, &evidence_ir.swd_operations);
+            assert_eq!(operations, &evidence_ir.protocol_operations);
         }
         for states in [
             &evidence_snapshot.protocol_states,
@@ -1879,13 +1888,13 @@ mod tests {
 
         let mut empty_semantic_ir = semantic_ir.clone();
         empty_semantic_ir.serial_frame_fields.clear();
-        empty_semantic_ir.swd_operations.clear();
+        empty_semantic_ir.protocol_operations.clear();
         empty_semantic_ir.protocol_states.clear();
         empty_semantic_ir.interface_edge_timings.clear();
         let empty_semantic = SemanticSnapshot::from_ir(&empty_semantic_ir);
         let mut empty_intent_ir = intent_ir.clone();
         empty_intent_ir.serial_frame_fields.clear();
-        empty_intent_ir.swd_operations.clear();
+        empty_intent_ir.protocol_operations.clear();
         empty_intent_ir.protocol_states.clear();
         empty_intent_ir.interface_edge_timings.clear();
         let empty_intent = IntentSnapshot::from_ir(&empty_intent_ir);
@@ -1913,7 +1922,7 @@ mod tests {
         );
 
         let mut changed_semantic_ir = semantic_ir.clone();
-        changed_semantic_ir.swd_operations[0].response = "WAIT".to_string();
+        changed_semantic_ir.protocol_operations[0].branch_label = Some("deferred".to_string());
         let changed_semantic = SemanticSnapshot::from_ir(&changed_semantic_ir);
         assert_ne!(changed_semantic, semantic_snapshot);
         assert_eq!(
@@ -1978,22 +1987,21 @@ mod tests {
             timing_constraints: 1,
             serial_frame_fields: vec![SerialFrameField {
                 field_id: "serial_field_0001".to_string(),
-                name: "REQUEST".to_string(),
+                name: "ALPHA".to_string(),
                 bit_width: None,
                 bit_range: None,
-                phase: None,
-                swdio_direction: None,
+                phase_name: None,
+                participant_drive: None,
                 order: None,
                 response_values: Vec::new(),
                 supporting_statement_ids: Vec::new(),
             }],
-            swd_operations: vec![SwdOperation {
-                operation_id: "swd_operation_0001".to_string(),
-                response: "OK".to_string(),
-                access: None,
+            protocol_operations: vec![ProtocolOperationRecord {
+                operation_id: "protocol_operation_0001".to_string(),
+                branch_label: Some("accepted".to_string()),
+                operation_name: Some("transfer".to_string()),
                 phase_count: 3,
-                has_data_phase: true,
-                turnaround_before_data: None,
+                phase_names: Vec::new(),
                 supporting_statement_ids: Vec::new(),
             }],
             protocol_states: vec![ProtocolStateRecord {
@@ -2044,7 +2052,7 @@ mod tests {
             register_records: 1,
             timing_constraints: 1,
             serial_frame_fields: vec![protocol_frame_field("semantic_field")],
-            swd_operations: vec![protocol_operation("semantic_operation")],
+            protocol_operations: vec![protocol_operation("semantic_operation")],
             protocol_states: vec![protocol_state("semantic_state")],
             interface_edge_timings: vec![protocol_edge_timing("semantic_edge")],
             signal_constraints: 1,
@@ -2087,7 +2095,7 @@ mod tests {
             register_records: 1,
             timing_constraints: 1,
             serial_frame_fields: vec![protocol_frame_field("intent_field")],
-            swd_operations: vec![protocol_operation("intent_operation")],
+            protocol_operations: vec![protocol_operation("intent_operation")],
             protocol_states: vec![protocol_state("intent_state")],
             interface_edge_timings: vec![protocol_edge_timing("intent_edge")],
             signal_constraints: 1,
@@ -2123,7 +2131,7 @@ mod tests {
             register_records: 0,
             timing_constraints: 0,
             serial_frame_fields: Vec::new(),
-            swd_operations: Vec::new(),
+            protocol_operations: Vec::new(),
             protocol_states: Vec::new(),
             interface_edge_timings: Vec::new(),
             signal_constraints: 0,

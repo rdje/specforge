@@ -104,7 +104,7 @@ prior memory.
 | Source registration/materialization | Source kind, repository-local artifacts, Docling page/table/visual conversion, closed visual-form/section grammar, typed table-role classification, timing-table structural revalidation | Remediated by `.6d.ii.b`: schema-2 classification is identity-independent and fail-closed; schema-1 semantic labels are neutralized on load. |
 | VLM enrichment | Caption-selected timing/state images; typed JSON prompts; table kind/grid proposals checked against headers | Source routing now inherits the neutral schema-2 classifier, but the production prompt still narrows the domain to “chip protocol.” |
 | Evidence assembly | Markdown blocks, spans, section anchors, references, table declarations, typed provenance | Broadly structural/input-derived. |
-| Evidence deterministic extraction | Registers, fields, signal inventories, relations, constraints, polarity, semantic hints, timing, frames, states, actors, operations | Mixed. Several useful grammars are universal, but protocol-specific schema/extractors and exact signal/response spellings execute in production. |
+| Evidence deterministic extraction | Registers, fields, signal inventories, relations, constraints, polarity, semantic hints, timing, frames, states, actors, operations | Protocol-structure breach remediated by `.6d.ii.c`: schema 2 uses document-derived generic frame/operation/state/direction records and neutralizes schema-1 authority on load. Other spelling-driven Evidence decisions and named production commentary remain in the `.d`/`.e` denominator. |
 | Prior-guided EvidenceIR | Table/visual/actor/semantic/temporal priors | Blocking: priors are selected by a named family inferred from document key/display name. Structural extraction profiles already demonstrate the correct direction. |
 | Text LLM/NLP | Per-sentence JSON extraction, declared-signal grounding, entity typing, dedup, optional promotion | Grounding is useful; one production prompt embeds named signal examples and another frames every input as a protocol specification. |
 | SemanticIR | Declared-signal gate; interfaces, actors, ports, connectivity, infrastructure, temporal rules/contracts; VLM fusion/fidelity; residuals | Mixed. Core grounding/fusion is generic. Signal-name substring inference and named-family prior routing are blocking. |
@@ -134,10 +134,10 @@ identity-dependent extraction behavior. Replace it with document-derived structu
 an opaque caller-supplied profile whose provenance is explicit; the core must never infer semantics
 from a filename/title.
 
-### P0 — protocol-specific EvidenceIR schema and extractors
+### Resolved in `.6d.ii.c` — protocol-specific EvidenceIR schema and extractors
 
-`ir/evidence.rs` exposes `SwdOperation`, `SwdioDirection`, and `swd_operations` in the production
-schema. The associated production code:
+At the audited revision, `ir/evidence.rs` exposed `SwdOperation`, `SwdioDirection`, and
+`swd_operations` in the production schema. The associated production code:
 
 - gates serial-frame extraction on phrases and spellings including `serial wire`, `packet request`,
   `swdio`, `swclk`, and `shift-dr`;
@@ -152,10 +152,33 @@ These records are then carried by `SemanticIR`, `IntentIR`, `converge`, validati
 `eval_extraction`, completeness, corpus clustering, and the adapter. The downstream copies are not
 independent extraction errors, but they make the specialization part of the canonical public model.
 
-The replacement must be generic `FrameField`, `OperationBranch`, `ParticipantDrive`, and
-`ProtocolState` semantics whose names, response values, phase counts, and participant roles are
-document-derived. A protocol-specific conformance fixture may assert that those generic records
-represent a particular protocol.
+`.6d.ii.c` installs the replacement. EvidenceIR schema 2 now carries generic frame fields, operation
+records, participant-drive relations, and protocol states. Phase, branch, operation, field, response,
+participant, and state terms are opaque current-document strings. Frame extraction requires explicit
+frame/packet or phase binding; direction requires an explicit source-to-destination clause; operation
+records require an explicit phase cardinality; state grammars require repeated inventory or explicit
+machine/transition structure. Fixed response branches, phase enums, actor-role maps, named extractor
+identities, and protocol-prefixed ids are gone.
+
+Schema-1 protocol surfaces are cleared in untyped JSON before deserialization and the in-memory artifact
+is upgraded to schema 2. This is deliberately fail-closed: unrelated evidence survives, but retained
+vocabulary-bound protocol records cannot bypass the new producer. SemanticIR, IntentIR, convergence,
+validation, evaluation, and the adapter carry the new records losslessly. Protocol-specific conformance
+fixtures remain legal test/input data; they no longer define production policy.
+
+The complete ADR 0025 reconciliation makes the cost explicit. All 78 persisted EvidenceIRs are schema 2:
+24 were re-extracted from retained normalized bundles and 54 were migrated by preserving unrelated evidence
+while clearing obsolete protocol authority. Compared with the exact pre-change backup, all 78 EvidenceIR files
+change, while 24 SemanticIR/IntentIR/adapter chains have content deltas. The old population held 22 fixed-phase
+frame records in four documents, four named operations in one, and 76 state records in 24. The neutral producer
+emits five generic operations in two documents and 40 structurally admitted states in three; no retained source
+satisfies the stricter explicit phase-binding grammar for a frame record. Deterministic currency is 24/24 for
+measurable EvidenceIR and 78/78 for every downstream stage. This is an honest recall frontier, not permission to
+restore a specification name.
+
+This closes only the protocol-structure carrier/extractor breach. The repository is not yet genericity signoff-
+ready: `.6d.ii.d` owns remaining identity/spelling authority, `.e` owns structural production-boundary
+enforcement and named production commentary, and `.f` owns alpha-renaming/identity/paraphrase/held-out behavior.
 
 ### P0 — signal spelling changes semantic authority
 
@@ -268,7 +291,7 @@ decision sites.
 | Orchestration/evaluation commands | `converge`, `eval_extraction`, `kg_bench`, `validate` | Mixed/blocking through named schema, family inference, signal-name inference, or corpus test framework exposed as production. |
 | Corpus commands | `corpus_cluster`, `learn_priors`, `corpus_kb` | Structural clustering is the neutral model; named family prior/KG routing is blocking. |
 | SourceIR | `ir/source.rs`, `ir/source/docling_backend.rs` | Neutral at schema 2: lifecycle is structural, classifiers use generic form/role grammar with honest unknown, and legacy semantic labels fail closed. |
-| EvidenceIR/extraction | `ir/evidence.rs`, `extractor.rs`, `extraction_filters.rs`, `entity_typing.rs`, `condition_extract.rs`, `constraint_extract_llm.rs`, `nlp_relation_extract.rs`, `normative_vocab.rs`, `register_bits.rs` | Mixed/blocking in EvidenceIR schema/extractors and name lists; framework, grounding primitives, and most parsers are reusable. Named production commentary must move. |
+| EvidenceIR/extraction | `ir/evidence.rs`, `extractor.rs`, `extraction_filters.rs`, `entity_typing.rs`, `condition_extract.rs`, `constraint_extract_llm.rs`, `nlp_relation_extract.rs`, `normative_vocab.rs`, `register_bits.rs` | Generic protocol-structure schema/extractors shipped in `.6d.ii.c`; other signal/name-list decisions remain blocking for `.d`, and named production commentary remains for `.e`. Framework, grounding primitives, and most parsers are reusable. |
 | Prior/reuse | `ir/prior_memory.rs`, `ir/corpus_cluster.rs` | Named family prior routing is blocking; structural fingerprint clustering is neutral. |
 | SemanticIR | `ir/semantic.rs`, `ambiguity.rs`, `contract.rs`, `cve.rs`, `fidelity.rs`, `figure_region.rs`, `fusion.rs`, `nli_verify.rs`, `protocol_graph.rs`, `temporal_ltl.rs`, `waveform.rs` | Core typed fusion/verification is neutral; semantic name inference and named public commentary are blocking. Figure-region corpus paths are test-only. |
 | IntentIR | `ir/intent.rs` | Structural synthesis is broadly neutral; protocol-specific carried schema/public names and named production commentary are blocking. |

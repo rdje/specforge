@@ -1,7 +1,7 @@
 # 0016 — SWD protocol projection is lossless; ISF lowering requires complete behavioral bindings
 
 - Date: 2026-08-09
-- Status: accepted
+- Status: superseded by ADR 0035 for the named carrier; lossless projection and honest residuals remain accepted
 - Deciders: SpecForge architecture audit under `SWD-SERIAL-EXTRACTION.7a`
 
 ## Context
@@ -60,6 +60,7 @@ remains available for a fresh ingest after projection implementation.
 
 ## Links
 
+- `docs/decisions/0035-protocol-evidence-is-generic-and-document-derived.md`
 - `docs/tasks/SWD-SERIAL-EXTRACTION.md`
 - `docs/knowledge/swd-protocol-surfaces-reach-intentir.md`
 - `docs/knowledge/swd-canonical-protocol-artifact-is-current.md`

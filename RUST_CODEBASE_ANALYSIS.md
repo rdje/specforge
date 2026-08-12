@@ -4,6 +4,29 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-12 — generic EvidenceIR protocol semantics; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c`)
+
+- `EvidenceIr` is now schema 2. The named operation type, fixed phase enum, scalar named direction, fixed response
+  branches, and protocol-prefixed operation field are replaced by `ProtocolOperationRecord`, opaque
+  `phase_name`/`phase_names`, and `ParticipantDriveRecord { source_actor, destination_actor }`.
+- Frame, operation, and state admission is document-grammatical and fail-closed. Fields need explicit frame/packet
+  plus source phase binding; participant direction needs `from A to B`; operations need an explicit phase count
+  and source label; states need explicit state-machine/named-transition structure and repeated support. Machine
+  titles and unmarked descriptive states are negative controls.
+- The schema-1 loader is the compatibility firewall. It clears only obsolete frame/state/operation/manifest
+  authority in untyped JSON, retains unrelated EvidenceIR, upgrades to schema 2, and rejects future versions.
+  Re-ingestion—not reinterpretation—is the only path that can repopulate generic protocol surfaces.
+- SemanticIR, IntentIR, convergence, validation, evaluation, extraction evaluation, and adapter residual accounting
+  now clone/account for the generic records. Synthetic alpha-renamed tests prove exact cross-stage preservation;
+  named conformance material remains confined to tests and fixture input.
+- ADR 0025 reconciliation migrated all 78 EvidenceIR files, rebuilding 24 from retained normalized bundles and
+  safely neutralizing 54 bundle-less artifacts. Exact backup comparison attributes 24 downstream content deltas:
+  22 old frame records and four named operations retire; five generic operations and 40 structurally admitted
+  states remain. Currency is 24/24 measurable EvidenceIR and 78/78 for SemanticIR, IntentIR, and adapters.
+- This is not whole-core signoff. Identity/spelling authority, named production commentary, the structural
+  doctrine gate, and behavioral invariance remain owned by `.6d.ii.d`–`.f`; recall lost with the shortcut may be
+  recovered only through universal grammar or grounded proposals.
+
 ## Session update (2026-08-12 — neutral SourceIR classifier boundary; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b`)
 
 - `SourceIr::build` now emits schema 2. Diagram, section, and table semantic labels are governed by an

@@ -11,11 +11,12 @@ answers:
   - "What happens when schema-1 SourceIR is loaded?"
   - "Why were legacy SourceIR classifications neutralized?"
   - "Were downstream artifacts reconciled after SourceIR schema 2?"
+  - "How does EvidenceIR schema 2 remove protocol-specific extraction authority?"
 date: 2026-08-12
 status: current
 tags: [genericity, extraction, architecture, doctrine]
-evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/source/docling_backend.rs
-reverify: rg -n "SOURCE_IR_SCHEMA_VERSION|neutralize_legacy_source_classifications|classifier_header_has_role|embedded_source_classifiers_are_structural" crates/specforge/src/ir/source.rs crates/specforge/src/ir/source/docling_backend.rs
+evidence: docs/research/production-genericity-pipeline-audit.md; docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md; crates/specforge/src/ir/source.rs; crates/specforge/src/ir/source/docling_backend.rs; crates/specforge/src/ir/evidence.rs
+reverify: rg -n "SOURCE_IR_SCHEMA_VERSION|neutralize_legacy_source_classifications|EVIDENCE_IR_SCHEMA_VERSION|neutralize_legacy_protocol_json|embedded_source_classifiers_are_structural" crates/specforge/src/ir/source.rs crates/specforge/src/ir/source/docling_backend.rs crates/specforge/src/ir/evidence.rs
 ---
 
 A neutral SpecForge is feasible when universal digital-intent semantics are separated from opaque,
@@ -38,3 +39,10 @@ restored for 24/24 measurable EvidenceIR and all 78 SemanticIR, IntentIR, and ad
 ISFs are FSMGen-strict clean. The reconciliation deliberately accepts 194 removed table-derived timing guesses
 and other weak label-driven facts. Those are inputs to later generic recovery work, never justification for a
 document-specific exception.
+
+EvidenceIR is the second remediated boundary. Schema 2 replaces fixed protocol operations, phase enums, and
+participant-direction roles with input-derived generic records. Frame, operation, state, and direction
+extractors admit only explicit structural grammar and preserve document terms opaquely. Schema-1 loads clear
+the old vocabulary-bound protocol surfaces before typed deserialization, preventing a retained artifact from
+bypassing the new producer. The carriers remain lossless through SemanticIR, IntentIR, convergence,
+validation, evaluation, and adapter residual accounting.

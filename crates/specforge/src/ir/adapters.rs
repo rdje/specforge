@@ -388,7 +388,7 @@ fn protocol_residual_packet(
 fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPacket> {
     let mut residuals = Vec::with_capacity(
         intent_ir.serial_frame_fields.len()
-            + intent_ir.swd_operations.len()
+            + intent_ir.protocol_operations.len()
             + intent_ir.protocol_states.len()
             + intent_ir.interface_edge_timings.len(),
     );
@@ -402,7 +402,7 @@ fn protocol_residual_decisions(intent_ir: &IntentIr) -> Vec<ResidualDecisionPack
             "an enclosing transaction/operation binding, the declared serial data wire, and complete literal, activation, and storage semantics",
         ));
     }
-    for record in &intent_ir.swd_operations {
+    for record in &intent_ir.protocol_operations {
         residuals.push(protocol_residual_packet(
             "operation",
             "protocol operation",
@@ -512,7 +512,7 @@ fn build_isf_adapter_artifact(
     // mapping #4) so a dropped temporal obligation is visible in the
     // artifact rather than silently lost; syntax is never fabricated.
     let mut residual_decisions = intent_ir.residual_decisions.clone();
-    // SWD-SERIAL-EXTRACTION.7d / ADR 0016: every projected protocol record receives an
+    // Every projected protocol record receives an
     // explicit adapter disposition. The current directly lowerable subset is empty because the
     // record types do not carry every executable binding; per-record residuals keep that omission
     // visible without blocking independently licensed ISF.
@@ -566,8 +566,8 @@ mod tests {
     use crate::error::Result;
     use crate::ir::adapters::{AdapterArtifact, AdapterLoweringStatus, AdapterTarget};
     use crate::ir::evidence::{
-        EvidenceIr, InterfaceClockEdge, InterfaceEdgeTimingRecord, ProtocolStateRecord,
-        SerialFrameField, SerialFramePhase, SwdOperation, SwdioDirection,
+        EvidenceIr, InterfaceClockEdge, InterfaceEdgeTimingRecord, ParticipantDriveRecord,
+        ProtocolOperationRecord, ProtocolStateRecord, SerialFrameField,
     };
     use crate::ir::intent::IntentIr;
     use crate::ir::semantic::SemanticIr;
@@ -930,34 +930,39 @@ mod tests {
         intent_ir.serial_frame_fields = vec![
             SerialFrameField {
                 field_id: "serial_field_0002".to_string(),
-                name: "ACK".to_string(),
+                name: "OMEGA".to_string(),
                 bit_width: Some(3),
                 bit_range: Some((2, 0)),
-                phase: Some(SerialFramePhase::Acknowledge),
-                swdio_direction: Some(SwdioDirection::TargetDrives),
+                phase_name: Some("closing".to_string()),
+                participant_drive: Some(ParticipantDriveRecord {
+                    source_actor: "recipient".to_string(),
+                    destination_actor: Some("initiator".to_string()),
+                }),
                 order: Some(1),
-                response_values: vec!["OK".to_string(), "FAULT".to_string()],
-                supporting_statement_ids: vec!["statement_ack".to_string()],
+                response_values: vec!["accepted".to_string(), "rejected".to_string()],
+                supporting_statement_ids: vec!["statement_closing".to_string()],
             },
             SerialFrameField {
                 field_id: "serial_field_0001".to_string(),
-                name: "REQUEST".to_string(),
+                name: "ALPHA".to_string(),
                 bit_width: Some(1),
                 bit_range: Some((0, 0)),
-                phase: Some(SerialFramePhase::Request),
-                swdio_direction: Some(SwdioDirection::HostDrives),
+                phase_name: Some("opening".to_string()),
+                participant_drive: Some(ParticipantDriveRecord {
+                    source_actor: "initiator".to_string(),
+                    destination_actor: Some("recipient".to_string()),
+                }),
                 order: Some(0),
                 response_values: Vec::new(),
-                supporting_statement_ids: vec!["statement_request".to_string()],
+                supporting_statement_ids: vec!["statement_opening".to_string()],
             },
         ];
-        intent_ir.swd_operations = vec![SwdOperation {
-            operation_id: "swd_operation_0001".to_string(),
-            response: "WAIT".to_string(),
-            access: None,
+        intent_ir.protocol_operations = vec![ProtocolOperationRecord {
+            operation_id: "protocol_operation_0001".to_string(),
+            branch_label: Some("deferred".to_string()),
+            operation_name: Some("transfer".to_string()),
             phase_count: 2,
-            has_data_phase: false,
-            turnaround_before_data: None,
+            phase_names: vec!["opening".to_string(), "closing".to_string()],
             supporting_statement_ids: vec!["statement_operation".to_string()],
         }];
         intent_ir.protocol_states = vec![ProtocolStateRecord {
@@ -1005,7 +1010,7 @@ mod tests {
             vec![
                 "isf_protocol_serial_frame_field_serial_field_0002",
                 "isf_protocol_serial_frame_field_serial_field_0001",
-                "isf_protocol_operation_swd_operation_0001",
+                "isf_protocol_operation_protocol_operation_0001",
                 "isf_protocol_state_protocol_state_0001",
                 "isf_protocol_interface_edge_timing_interface_edge_timing_0001",
             ]

@@ -246,11 +246,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b — make SourceIR classification neutral`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c`
-  Status: `pending`
+  Status: `done`
   Goal: `replace protocol-specific EvidenceIR schema and extractors with document-derived generic protocol semantics`
   Acceptance: `production EvidenceIR exposes only generic frame, operation, state, actor, and direction records; exact protocol/signal/response names and named extractor identities live only in tests or input data; downstream stages carry the neutral schema losslessly`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `EvidenceIR schema 2 uses document-derived protocol operations, phase names, and participant-drive actors; schema 1 fails closed on named protocol carriers and future schemas reject; 42 focused extraction tests and 1,876 full tests pass with six ignored and zero failed; all 78 persisted EvidenceIRs are schema 2, chain currency is exact for 24/24 replayable EvidenceIR and 78/78 SemanticIR/IntentIR/adapters, retained source re-extraction accounts exactly for all 24 content deltas, and full CI passes all eight doctrines, formatting, warning-deny Clippy/rustdoc, mdBook, and final locality`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c — make protocol EvidenceIR document-derived`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d`
   Status: `pending`
@@ -323,8 +323,8 @@ expressiveness as the bottleneck.
 | 16 | `SPEC-TO-INTENT-ALIGNMENT.6c.ii` | `done` | 12-source replay closes I2S and all provenance, publishes exact current result, and selects `.6d` |
 | 17 | `SPEC-TO-INTENT-ALIGNMENT.6d.i` | `done` | typed disposition, exact two-chain reconciliation, cleanup, live-doc maintenance, and full CI complete |
 | 18 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.a` | `done` | clean replay, whole-pipeline audit, test-only snapshot boundary, durable signoff design, cleanup, and full CI complete |
-| 19 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b` | `in_progress` | audit and neutralize SourceIR/Docling classification before downstream extractors consume it |
-| 20 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c` | `pending` | replace protocol-specific EvidenceIR/schema behavior after its input boundary is neutral |
+| 19 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b` | `done` | SourceIR schema 2 and exact ten-chain reconciliation are committed and current |
+| 20 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c` | `done` | EvidenceIR schema 2 and all 78 persisted downstream chains are generic, reconciled, and current |
 | 21 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d` | `pending` | remove prior/semantic/prompt/command identity and spelling inference on the neutral schema |
 | 22 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e` | `pending` | structurally gate the complete neutral production graph after remediation |
 | 23 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `pending` | behavioral metamorphic and whole-population qualification closes the genericity parent |
@@ -486,6 +486,9 @@ expressiveness as the bottleneck.
   includes all production Rust plus embedded Python in `ir/source.rs` and `ir/source/docling_backend.rs`; tests
   remain conformance authority. Classification must use typed layout/geometry, generic document grammar, or
   current-document-derived evidence, retain `unknown`, and contain no named protocol/example commentary.
+- `2026-08-12`: activated `.6d.ii.c` only after `.6d.ii.b` and the owner-requested FSMGen refresh committed
+  cleanly at `2127c68a`. This leaf owns the complete production EvidenceIR schema/extractor audit and neutral
+  replacement; no protocol, signal, response, document, or family spelling may survive as production authority.
 
 ## Open Questions
 
@@ -583,6 +586,9 @@ expressiveness as the bottleneck.
 | `2026-08-12` | `.6d.ii.b` ADR 0025 affected-set resolution | first all-tier currency gate; exact same-volume 80-file backup; ten EvidenceIR→SemanticIR→IntentIR→ISF rebuilds; 30 typed-artifact validations | PASS: affected set is exactly `102520_0101_01_2025_09_15_introducing_coresight_debug_and_trace`, `ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification`, both retained `opencapi` PHY chains, `opencapi_discovery_configuration_v201`, `um10204_rev7_0_2021_i2c_bus_specification`, `um11732_v3_2022_02_17_i2s_bus_specification`, `usb4_inter_domain_service_specification_v2_0_2025_11`, `usb_3_2_revision_1_0_2017_09`, and `wbspec_b4_wishbone_b4_specification`; backup 39,847,014 bytes / SHA-256 `d5a59914…e3a5f`; every rebuild and validator exits zero |
 | `2026-08-12` | `.6d.ii.b` exact reconciliation attribution | backup/current structural JSON comparison excluding validation backannotations; real pinned FSMGen strict; `bash scripts/check_chain_currency.sh` | PASS: four visual-role-only chains; 194 weak table timing records removed across four chains; debug chain 21→5 actor relations / 45→33 registers / 195→125 contracts; discovery chain 1→16 registers; USB4 6→0 registers; USB 3.2 gains one message-field and loses one register plus 11 figure-label invariants; both renderable ISFs strict-clean; current at EvidenceIR 24/24 measurable and every downstream stage 78/78 |
 | `2026-08-12` | `.6d.ii.b` full repository gate and cleanup | `cargo fmt --all -- --check`; `bash scripts/run_ci.sh`; exact rollback/comparison root removal and residue census | PASS: all eight doctrines including chain currency, formatting, warning-deny Clippy, 1,873 tests / six ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final locality; exact 80-file backup and temporary delta script removed and absent |
+| `2026-08-12` | `.6d.ii.c` schema/extractor proof | EvidenceIR schema-1/2/future compatibility tests; 42 focused structural extraction tests; production schema/producer/consumer census | PASS: named SWD operation/direction/phase types and extractors are absent; schema 2 stores opaque operation, phase, actor, state, frame, and direction evidence; legacy named protocol carriers fail closed while unrelated legacy evidence survives; no operation or field is admitted without source-stated shape/binding |
+| `2026-08-12` | `.6d.ii.c` ADR 0025 reconciliation and attribution | exact same-volume backup; all 24 retained bundles re-extracted; all 78 EvidenceIRs migrated; 78 SemanticIR/IntentIR/adapter chains rebuilt; exact pre/post structural comparison; `bash scripts/check_chain_currency.sh --check` | PASS: all 78 EvidenceIRs are schema 2; 24/24 replayable EvidenceIR and 78/78 downstream chains are current; 22 named frame records retire to zero because no retained source meets the stricter phase-binding contract, four named operations become five generic operations across two documents, and 76 weak states become 40 structurally supported states across three documents; exact backup/comparison scratch removed and absent |
+| `2026-08-12` | `.6d.ii.c` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines including chain currency, formatting, warning-deny Clippy, 1,876 Rust tests passed / six ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final project-data-locality residue check |
 | `2026-08-12` | scheduled artifact cleanup | `.bin`/`.log` census under generated and Cargo release/debug trees; exact age/purpose inspection before deletion; residue census | PASS: removed one abandoned 23-file / 92-KiB Aug-11 live-document-size test workspace and the fully rebuildable 3,116,900-KiB `target/debug/incremental` cache; no `.bin`/`.log` remains in the requested generated/debug-deps/release census |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
@@ -967,6 +973,25 @@ the reviewed replay can name its production revision.
 - [x] **LOCKSTEP** — audit, SourceIR/mdBook contract, task/roadmap/live docs, architecture analysis, Knowledge
   Map, bounded resume pointer, and next `.6d.ii.c` owner agree at commit.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c`
+
+- [x] **REPRODUCE / MEASURE** — census all 78 persisted chains, re-extract every one of the 24 retained source
+  bundles, and attribute each schema/content/downstream delta against an exact same-volume backup.
+- [x] **ROOT CAUSE (WHY + WHERE)** — localize the breach to named SWD operation, phase, signal-direction, and
+  response inference in the EvidenceIR schema/extractors; named schema made corpus knowledge executable even
+  when the code lived in a nominally general stage.
+- [x] **ADDRESSED (verified)** — schema 2 carries only opaque source-derived operation/branch/phase/actor/state
+  values, refuses incomplete structural claims, neutralizes named schema-1 protocol surfaces, rejects future
+  schemas, and projects the generic records losslessly through SemanticIR and IntentIR into honest ISF residuals.
+- [x] **NO REGRESSION** — chain currency is exact at 24/24 replayable EvidenceIR and 78/78 downstream chains;
+  focused extraction tests, all eight doctrines, warning-deny Clippy/rustdoc, 1,876/6/0 full tests, mdBook, final
+  locality, and exact scratch cleanup pass.
+- [x] **GENERICITY (ADR 0006)** — production extraction stores no protocol, response, signal, participant, phase,
+  or operation dictionary; tests may name concrete protocols as conformance inputs, while reduced recall remains
+  visible instead of being repaired by a corpus exception.
+- [x] **LOCKSTEP** — ADR 0035, code, all persisted artifacts, public schema/book, research audit, task/live docs,
+  category contract, Knowledge Map, bounded resume pointer, and next `.6d.ii.d` owner agree at commit.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -991,6 +1016,7 @@ the reviewed replay can name its production revision.
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii` | `completed by .6d.ii.a through .6d.ii.f child commits` | replay publication plus whole-production genericity remediation and qualification |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.a` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.a — audit production genericity` | clean replay publication, complete pipeline audit, structural signoff design, test-only reviewed snapshot composition, and residue-free cleanup |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b — make SourceIR classification neutral` | SourceIR schema-2 structural classifiers, legacy fail-closure, exact ten-chain ADR 0025 reconciliation, and full CI |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c — make protocol EvidenceIR document-derived` | generic schema-2 protocol evidence, legacy fail-closure, exact 78-chain ADR 0025 reconciliation, and full CI |
 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | measured remaining AMD IOMMU and GIC-400 fabrication families, root-cause split, and clean qualification |
 
 ## Changelog
@@ -1059,6 +1085,10 @@ the reviewed replay can name its production revision.
   passed, and the exact 80-file rollback plus comparison script were removed with residue absent. After this
   commit is clean, frontier advances to `.6d.ii.c`; the measured recall losses remain owned generic recovery
   evidence and cannot justify restoring identity-specific authority.
+- `2026-08-12`: Closed `.6d.ii.c` with generic EvidenceIR schema 2, document-derived protocol structure,
+  fail-closed legacy named carriers, exact reconciliation of all 78 persisted chains, and full CI. The 24 retained
+  replays intentionally retire unsupported frame/state claims rather than preserve named shortcuts. After this
+  commit is clean, frontier advances to `.6d.ii.d`; production-core signoff remains blocked until `.d`–`.f` close.
 - `2026-08-11`: Closed `.4a` with the strict portable dataset contract, deterministic exact evaluator, and six
   controlled-fault classes; frontier advances to `.4b`, lock two reviewed documents per category without tuning
   extraction before `.4c` publishes product conclusions.

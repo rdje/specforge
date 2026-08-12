@@ -5198,7 +5198,7 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
     println!();
     println!("=== Serial / Protocol Surface Projection ===");
     println!("  serial_frame_fields: {}", ir.serial_frame_fields.len());
-    println!("  swd_operations: {}", ir.swd_operations.len());
+    println!("  protocol_operations: {}", ir.protocol_operations.len());
     println!("  protocol_states: {}", ir.protocol_states.len());
     println!(
         "  interface_edge_timings: {}",
@@ -5404,7 +5404,10 @@ fn validate_semantic_ir(ir: &SemanticIr, artifact_fingerprint: String) -> Valida
                 "serial_frame_fields",
                 ir.serial_frame_fields.len().to_string(),
             ),
-            metric("swd_operations", ir.swd_operations.len().to_string()),
+            metric(
+                "protocol_operations",
+                ir.protocol_operations.len().to_string(),
+            ),
             metric("protocol_states", ir.protocol_states.len().to_string()),
             metric(
                 "interface_edge_timings",
@@ -5748,7 +5751,7 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
     println!("  state_transitions: {}", ir.state_transitions.len());
     println!("  register_records: {}", ir.register_records.len());
     println!("  serial_frame_fields: {}", ir.serial_frame_fields.len());
-    println!("  swd_operations: {}", ir.swd_operations.len());
+    println!("  protocol_operations: {}", ir.protocol_operations.len());
     println!("  protocol_states: {}", ir.protocol_states.len());
     println!(
         "  interface_edge_timings: {}",
@@ -7311,7 +7314,10 @@ fn validate_intent_ir(ir: &IntentIr, artifact_fingerprint: String) -> Validation
                 "serial_frame_fields",
                 ir.serial_frame_fields.len().to_string(),
             ),
-            metric("swd_operations", ir.swd_operations.len().to_string()),
+            metric(
+                "protocol_operations",
+                ir.protocol_operations.len().to_string(),
+            ),
             metric("protocol_states", ir.protocol_states.len().to_string()),
             metric(
                 "interface_edge_timings",
@@ -7586,9 +7592,9 @@ mod tests {
     use crate::error::Result;
     use crate::ir::adapters::{AdapterArtifact, AdapterTarget};
     use crate::ir::evidence::{
-        EvidenceIr, InterfaceClockEdge, InterfaceEdgeTimingRecord, ProtocolStateRecord,
-        SerialFrameField, SerialFramePhase, SignalSemanticHintSourceKind, SwdOperation,
-        SwdioDirection,
+        EvidenceIr, InterfaceClockEdge, InterfaceEdgeTimingRecord, ParticipantDriveRecord,
+        ProtocolOperationRecord, ProtocolStateRecord, SerialFrameField,
+        SignalSemanticHintSourceKind,
     };
     use crate::ir::intent::IntentIr;
     use crate::ir::prior_memory::{
@@ -10364,34 +10370,43 @@ mod tests {
         semantic_ir.serial_frame_fields = vec![
             SerialFrameField {
                 field_id: "serial_field_0001".to_string(),
-                name: "REQUEST".to_string(),
+                name: "ALPHA".to_string(),
                 bit_width: Some(1),
                 bit_range: None,
-                phase: Some(SerialFramePhase::Request),
-                swdio_direction: Some(SwdioDirection::HostDrives),
+                phase_name: Some("opening".to_string()),
+                participant_drive: Some(ParticipantDriveRecord {
+                    source_actor: "initiator".to_string(),
+                    destination_actor: Some("recipient".to_string()),
+                }),
                 order: Some(0),
                 response_values: Vec::new(),
-                supporting_statement_ids: vec!["statement_request".to_string()],
+                supporting_statement_ids: vec!["statement_opening".to_string()],
             },
             SerialFrameField {
                 field_id: "serial_field_0002".to_string(),
-                name: "ACK".to_string(),
+                name: "OMEGA".to_string(),
                 bit_width: Some(3),
                 bit_range: Some((2, 0)),
-                phase: Some(SerialFramePhase::Acknowledge),
-                swdio_direction: Some(SwdioDirection::TargetDrives),
+                phase_name: Some("closing".to_string()),
+                participant_drive: Some(ParticipantDriveRecord {
+                    source_actor: "recipient".to_string(),
+                    destination_actor: Some("initiator".to_string()),
+                }),
                 order: Some(1),
-                response_values: vec!["OK".to_string()],
-                supporting_statement_ids: vec!["statement_ack".to_string()],
+                response_values: vec!["accepted".to_string()],
+                supporting_statement_ids: vec!["statement_closing".to_string()],
             },
         ];
-        semantic_ir.swd_operations = vec![SwdOperation {
-            operation_id: "swd_operation_0001".to_string(),
-            response: "OK".to_string(),
-            access: Some("read".to_string()),
+        semantic_ir.protocol_operations = vec![ProtocolOperationRecord {
+            operation_id: "protocol_operation_0001".to_string(),
+            branch_label: Some("accepted".to_string()),
+            operation_name: Some("transfer".to_string()),
             phase_count: 3,
-            has_data_phase: true,
-            turnaround_before_data: Some(false),
+            phase_names: vec![
+                "opening".to_string(),
+                "body".to_string(),
+                "closing".to_string(),
+            ],
             supporting_statement_ids: vec!["statement_operation".to_string()],
         }];
         semantic_ir.protocol_states = vec![ProtocolStateRecord {
@@ -10414,7 +10429,7 @@ mod tests {
 
         let report = validate_semantic_ir(&semantic_ir, "protocol_projection_counts".to_string());
         assert_eq!(metric_value(&report, "serial_frame_fields"), Some("2"));
-        assert_eq!(metric_value(&report, "swd_operations"), Some("1"));
+        assert_eq!(metric_value(&report, "protocol_operations"), Some("1"));
         assert_eq!(metric_value(&report, "protocol_states"), Some("1"));
         assert_eq!(metric_value(&report, "interface_edge_timings"), Some("1"));
 
@@ -10485,22 +10500,24 @@ mod tests {
         )?;
         intent_ir.serial_frame_fields = vec![SerialFrameField {
             field_id: "serial_field_0001".to_string(),
-            name: "REQUEST".to_string(),
+            name: "ALPHA".to_string(),
             bit_width: Some(1),
             bit_range: Some((0, 0)),
-            phase: Some(SerialFramePhase::Request),
-            swdio_direction: Some(SwdioDirection::HostDrives),
+            phase_name: Some("opening".to_string()),
+            participant_drive: Some(ParticipantDriveRecord {
+                source_actor: "initiator".to_string(),
+                destination_actor: Some("recipient".to_string()),
+            }),
             order: Some(0),
             response_values: Vec::new(),
-            supporting_statement_ids: vec!["statement_request".to_string()],
+            supporting_statement_ids: vec!["statement_opening".to_string()],
         }];
-        intent_ir.swd_operations = vec![SwdOperation {
-            operation_id: "swd_operation_0001".to_string(),
-            response: "WAIT".to_string(),
-            access: None,
+        intent_ir.protocol_operations = vec![ProtocolOperationRecord {
+            operation_id: "protocol_operation_0001".to_string(),
+            branch_label: Some("deferred".to_string()),
+            operation_name: Some("transfer".to_string()),
             phase_count: 2,
-            has_data_phase: false,
-            turnaround_before_data: None,
+            phase_names: vec!["opening".to_string(), "closing".to_string()],
             supporting_statement_ids: vec!["statement_operation".to_string()],
         }];
         intent_ir.protocol_states = vec![ProtocolStateRecord {
@@ -10523,7 +10540,7 @@ mod tests {
 
         let report = validate_intent_ir(&intent_ir, "protocol_projection_counts".to_string());
         assert_eq!(metric_value(&report, "serial_frame_fields"), Some("1"));
-        assert_eq!(metric_value(&report, "swd_operations"), Some("1"));
+        assert_eq!(metric_value(&report, "protocol_operations"), Some("1"));
         assert_eq!(metric_value(&report, "protocol_states"), Some("1"));
         assert_eq!(metric_value(&report, "interface_edge_timings"), Some("1"));
 

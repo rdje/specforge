@@ -183,10 +183,10 @@
           "required_when": "the source names transactions, phases, handshakes, states, transitions, or executable control"
         },
         {
-          "family": "serial_protocol_observations",
+          "family": "frame_and_protocol_observations",
           "intent_ir_surfaces": [
             "serial_frame_fields",
-            "swd_operations",
+            "protocol_operations",
             "protocol_states",
             "interface_edge_timings"
           ],

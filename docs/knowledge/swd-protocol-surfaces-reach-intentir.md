@@ -15,11 +15,15 @@ answers:
   - "does every SWD protocol record receive an ISF adapter disposition"
   - "what are the isf_protocol residual packet prefixes"
 date: 2026-08-09
-status: current
+status: superseded
 tags: [swd, evidence-ir, semantic-ir, intent-ir, isf, projection, completeness]
 evidence: docs/tasks/SWD-SERIAL-EXTRACTION.md (.7e.i); docs/decisions/0016-swd-protocol-projection-and-honest-isf-boundary.md; crates/specforge/src/ir/semantic.rs; crates/specforge/src/ir/intent.rs; crates/specforge/src/ir/adapters.rs; crates/specforge/src/commands/converge.rs
-reverify: "rg -n 'serial_frame_fields|swd_operations|protocol_states|interface_edge_timings|protocol_residual_decisions' crates/specforge/src/ir/semantic.rs crates/specforge/src/ir/intent.rs crates/specforge/src/ir/adapters.rs crates/specforge/src/commands/converge.rs && ! rg -n 'serial_frame_fields|swd_operations|protocol_states|interface_edge_timings' crates/specforge/src/ir/isf_ir.rs"
+reverify: "rg -n 'serial_frame_fields|protocol_operations|protocol_states|interface_edge_timings|protocol_residual_decisions' crates/specforge/src/ir/semantic.rs crates/specforge/src/ir/intent.rs crates/specforge/src/ir/adapters.rs crates/specforge/src/commands/converge.rs"
 ---
+
+> Superseded on `2026-08-12`: the lossless projection remains, but the protocol-specific operation and
+> direction schema was retired. See [[evidenceir-generic-protocol-semantics]]. The material below records
+> the historical carrier and adapter decision at the time it shipped.
 
 The typed SWD protocol surfaces — `serial_frame_fields`, `swd_operations`, `protocol_states`, and
 `interface_edge_timings` — originate on `EvidenceIr`, and `eval-extraction` scores those fields directly.

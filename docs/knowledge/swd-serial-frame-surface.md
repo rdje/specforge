@@ -8,10 +8,15 @@ answers:
   - "why don't parallel buses get serial_frame_fields"
   - "how are NAME[hi:lo] bit-ranges parsed into frame fields"
 date: 2026-06-07
+status: superseded
 tags: [swd, adi, serial, serial-frame, extraction, evidence-ir, adr-0006]
 evidence: docs/tasks/SWD-SERIAL-EXTRACTION.md (.3); crates/specforge/src/ir/evidence.rs (extract_serial_frame_fields, parse_bit_range_fields, SerialFrameField)
 reverify: python3 -c "import json; e=json.load(open('generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json')); print([(f['name'],f.get('bit_width')) for f in e.get('serial_frame_fields',[])])"
 ---
+
+> Superseded on `2026-08-12`: production frame extraction no longer gates, labels, or orders records from
+> stored protocol/signal vocabulary. See [[evidenceir-generic-protocol-semantics]]. The material below is
+> retained as historical evidence of the specialization that schema 2 removed.
 
 The SWD transaction is a SEQUENCE protocol (start → 8-bit packet request → turnaround → 3-bit ACK →
 data+parity → park), not a clocked-edge rule — so it gets its OWN typed surface rather than being forced

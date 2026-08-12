@@ -80,7 +80,7 @@ The content families are:
 | Actors and connectivity | `actors`, `actor_signal_relations`, `signal_connectivity` | Producer/consumer or endpoint responsibilities are stated |
 | Normative and temporal behavior | `signal_constraints`, `conditional_rules`, `temporal_rules`, `actor_contracts`, `fidelity_findings` | Values, stability, ordering, latency, sampling, or handshakes are stated |
 | Protocol structure and state | `transactions`, `protocol_graph`, `regular_states`, `state_transitions`, `control_blocks` | Transactions, phases, handshakes, states, or transitions are named |
-| Serial protocol observations | `serial_frame_fields`, `swd_operations`, `protocol_states`, `interface_edge_timings` | Frames, response branches, line states, or edge timing are stated |
+| Frame and protocol observations | `serial_frame_fields`, `protocol_operations`, `protocol_states`, `interface_edge_timings` | Frames, response branches, states, or edge timing are stated |
 | Symbols and secondary storage | `symbol_definitions`, `register_records` | Encodings or register-backed secondary content exists |
 
 Packet, flit, header, and message fields expose a current conservation failure. They exist as

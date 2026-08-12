@@ -27,7 +27,7 @@ changed* lives in git (layer D), not here.
 | [0013](0013-git-indexed-source-pdf-registry-authority.md) | Git-indexed corpus PDFs define source-registry membership | 2026-08-08 | accepted | corpus, PDF, registry, currentness |
 | [0014](0014-corpus-kb-managed-currentness-authority.md) | Tracked inputs and reviewed validation define corpus-KB currentness | 2026-08-08 | accepted | corpus-kb, validation, kg-bench, currentness |
 | [0015](0015-mdbook-owns-public-product-contracts.md) | mdBook owns public product contracts; stable root documents are compatibility pointers | 2026-08-08 | accepted | documentation, mdbook, architecture, current-truth, containment |
-| [0016](0016-swd-protocol-projection-and-honest-isf-boundary.md) | SWD protocol projection is lossless; ISF lowering requires complete behavioral bindings | 2026-08-09 | accepted | swd, projection, intentir, isf, residual-honesty |
+| [0016](0016-swd-protocol-projection-and-honest-isf-boundary.md) | SWD protocol projection is lossless; ISF lowering requires complete behavioral bindings | 2026-08-09 | named carrier superseded by 0035 | swd, projection, intentir, isf, residual-honesty |
 | [0017](0017-partitioned-rolling-ledger-archive-route.md) | Rolling-ledger archives use a bounded landing and per-ledger authority partitions | 2026-08-09 | accepted | documentation, continuity, archive, retrieval |
 | [0018](0018-terminal-task-tree-current-history-boundary.md) | A completed oversized task tree becomes a bounded closed root over an exact source capsule | 2026-08-09 | accepted | documentation, continuity, task-tree, archive, retrieval |
 | [0019](0019-bounded-active-task-root-and-semantic-evidence-parts.md) | An oversized active task uses a bounded current root over semantic evidence parts and exact provenance | 2026-08-09 | accepted | documentation, continuity, task-tree, active-work, archive, retrieval |
@@ -46,6 +46,7 @@ changed* lives in git (layer D), not here.
 | [0032](0032-no-collection-may-declare-an-aggregate-below-its-own-legal-maximum.md) | No collection may declare an aggregate below its own legal maximum, and pressure must name the wall | 2026-08-11 | accepted | documentation, containment, live-document-size, pressure, continuity |
 | [0033](0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md) | PDF-to-IR semantic fidelity precedes speculative ISF expansion | 2026-08-11 | accepted | objective, roadmap, extraction, intentir, isf, fsmgen |
 | [0034](0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md) | Trajectory steering is a reviewable multi-metric control loop, not one blended score | 2026-08-11 | accepted | objective, measurement, evaluation, convergence, automation, task-selection |
+| [0035](0035-protocol-evidence-is-generic-and-document-derived.md) | Protocol evidence is generic, document-derived, and fail-closed across schema migration | 2026-08-12 | accepted | genericity, evidence-ir, schema, extraction, projection, residual-honesty |
 
 ## How to add a record
 1. Copy the shape of an existing record (`Date`, `Status`, `## Context / Decision /

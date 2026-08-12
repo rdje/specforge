@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
+  > should I build an isf lowering-completeness verifier for temporal rules
+- [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
+  > should I fix the PSEL valid when PSEL asserted temporal rule
+- [nlp-coordination-already-handled](../knowledge/nlp-coordination-already-handled.md)
+  > should NLP-SHALLOW-PARSE.2f build coordination distribution
+- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
+  > should NLP-SHALLOW-PARSE.2h add new passive/verb-sense direction code
+- [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
+  > should SpecForge add a whole-page VLM read / full-page capture path
+- [conditional-rule-lowering-triage](../knowledge/conditional-rule-lowering-triage.md)
+  > should SpecForge build a conditional-rule lowering lever or file an FSMGen FR (NO — the adapter already lowers the 516 cleanly-grounded conditional obligations corpus-wide; the shortfall is honest residual; the only upside is upstream extraction quality, not an ISF construct)
+- [pdf-to-ir-fidelity-precedes-speculative-isf-expansion](../decisions/0033-pdf-to-ir-fidelity-precedes-speculative-isf-expansion.md)
+  > should SpecForge expand ISF before filling IntentIR from PDFs
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > should SpecForge file an FSMGen FR for CPU-ISA instructions/privilege/exceptions (NO — software-visible ISA semantics are not synthesizable hardware intent; ISF has no construct + FSMGen lists none; honest non-target; conditional-future only if FSMGen's SV/UVM path scopes ISA-model verification)
+- [cat3-topology-capture-recall](../knowledge/cat3-topology-capture-recall.md)
+  > should SpecForge file an FSMGen FR for a declarative static-topology ISF construct (NO / not yet — DOC-INTENT-TAXONOMY.4c.i: the bottleneck is upstream extraction-recall, not the missing ISF abstraction; an FR on a 12x-too-sparse / three-quarters-half-connected capture would be unfalsifiable — feedback_verify_fsmgen_before_fr)
+- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
+  > should SpecForge file an FSMGen FR for cat-3 topology (NOT YET — premature: capture is sparse/noisy AND ISF may deliberately be a per-actor format with topology owned by the integrator above per-module synthesis; resolve with FSMGen after .4c.i, never a speculative FR — feedback_verify_fsmgen_before_fr)
+- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
+  > should SpecForge use one weighted progress score
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
   > should a corpus refresh clean the normalized bundle when it finishes
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
@@ -275,25 +297,3 @@
   > what does sanitize_isf_name do (allowlist [A-Za-z0-9_] -> everything else becomes _)
 - [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
   > what does scripts/check_chain_currency.sh check
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what does signal_table_covered_by_inventory do
-- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
-  > what does source_literal mean in the active task evidence contract
-- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
-  > what does synthesize_signal_declarations do when the body is rotated
-- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
-  > what does the TASK-ACCEPTANCE check verify / why was my commit blocked
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > what does the active task evidence checker verify
-- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
-  > what does the active task migration roll back after a validation failure
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > what does the bounded current ROADMAP contain
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > what does the corpus frontier refreshed list mean
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > what does the declared_signal_names.is_empty() branch in semantic.rs do
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what does uncaptured_normative_statement_ids do
-- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
-  > what dominates the source_ir.json size (content_elements? page_artifacts?)

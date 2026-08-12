@@ -1,3 +1,22 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.c — make protocol EvidenceIR document-derived
+
+- Replaced the named operation carrier, fixed phase enum, scalar direction, fixed response branches, actor-role
+  mapping, and protocol-gated extractors with schema-2 generic operation, phase, participant-drive, state, and
+  frame semantics. Every stored name is copied from current document evidence.
+- Made admission structural and fail-closed: explicit frame/phase binding, source-to-destination grammar, phase
+  cardinality, named-state form, and repeated support replace protocol/signal/response recognition. Added
+  synthetic negative controls for machine titles, descriptive states, and article-as-operation noise.
+- Added a schema firewall: schema 1 loses only its obsolete protocol/manifest authority before deserialization,
+  unrelated evidence survives, and future versions reject. Re-ingestion is required to repopulate generic facts.
+- Propagated the generic records losslessly through SemanticIR, IntentIR, convergence, validation, evaluation,
+  extraction evaluation, and adapter residual accounting. Named conformance data remains test/input-only.
+- Reconciled the complete 78-document persisted chain under ADR 0025: 24 retained bundles were re-extracted, 54
+  bundle-less EvidenceIRs were safely migrated, and every downstream artifact was rebuilt. Exact comparison
+  retires 22 fixed-phase frame and four named-operation records; the generic producer retains five operations and
+  40 structurally admitted states. Currency is 24/24 measurable EvidenceIR and 78/78 downstream.
+- ADR 0035 supersedes ADR 0016's named carrier while retaining lossless projection and honest residuals. Remaining
+  identity/spelling paths and structural/behavioral genericity gates stay release-blocking in `.6d.ii.d`–`.f`.
+
 ### FSMGEN-REFRESH-INTEGRATE-8.1 — refresh FSMGen to `c0d8b668d`
 
 - Advanced the read-only FSMGen gitlink from `a51dcdad0` to the fetched and independently live-verified

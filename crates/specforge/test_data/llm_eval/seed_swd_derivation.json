@@ -13,7 +13,7 @@
         "name": "A",
         "bit_width": 2,
         "phase": "request",
-        "swdio_direction": "host_drives"
+        "participant_drive": "host->target"
       }
     ],
     "label_status": "agent_verified",
@@ -33,7 +33,7 @@
         "name": "ACK",
         "bit_width": 3,
         "phase": "acknowledge",
-        "swdio_direction": "target_drives"
+        "participant_drive": "target->host"
       }
     ],
     "label_status": "agent_verified",
@@ -72,7 +72,7 @@
         "name": "APnDP",
         "bit_width": 1,
         "phase": "request",
-        "swdio_direction": "host_drives"
+        "participant_drive": "host->target"
       }
     ],
     "label_status": "agent_verified",
@@ -92,7 +92,7 @@
         "name": "RnW",
         "bit_width": 1,
         "phase": "request",
-        "swdio_direction": "host_drives"
+        "participant_drive": "host->target"
       }
     ],
     "label_status": "agent_verified",
@@ -112,7 +112,7 @@
         "name": "WDATA",
         "bit_width": 32,
         "phase": "data",
-        "swdio_direction": "host_drives"
+        "participant_drive": "host->target"
       }
     ],
     "label_status": "agent_verified",
@@ -132,7 +132,7 @@
         "name": "RDATA",
         "bit_width": 32,
         "phase": "data",
-        "swdio_direction": "target_drives"
+        "participant_drive": "target->host"
       }
     ],
     "label_status": "agent_verified",
@@ -152,7 +152,7 @@
         "name": "Start",
         "bit_width": 1,
         "phase": "request",
-        "swdio_direction": "host_drives"
+        "participant_drive": "host->target"
       }
     ],
     "label_status": "agent_verified",
@@ -172,7 +172,7 @@
         "name": "Parity",
         "bit_width": 1,
         "phase": "request",
-        "swdio_direction": "host_drives"
+        "participant_drive": "host->target"
       }
     ],
     "label_status": "agent_verified",
@@ -192,7 +192,7 @@
         "name": "Stop",
         "bit_width": 1,
         "phase": "request",
-        "swdio_direction": "host_drives"
+        "participant_drive": "host->target"
       }
     ],
     "label_status": "agent_verified",
@@ -212,79 +212,79 @@
         "name": "Park",
         "bit_width": 1,
         "phase": "request",
-        "swdio_direction": "host_drives"
+        "participant_drive": "host->target"
       }
     ],
     "label_status": "agent_verified",
     "label_note": "SWD frame field Park verified vs spec B4.2/B3."
   },
   {
-    "task": "swd_operation",
+    "task": "protocol_operation",
     "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
     "statement_id": "statement_1751",
     "input_text": "Therefore, a successful write operation consists of three phases:",
     "grounding": [],
     "gold": [
       {
-        "fact": "swd_operation_fact",
-        "response": "OK",
+        "fact": "protocol_operation_fact",
+        "branch_label": "successful",
+        "operation_name": "write",
         "phase_count": 3,
-        "has_data_phase": true,
-        "access": "write",
-        "turnaround_before_data": true
+        "phase_names": []
       }
     ],
     "label_status": "agent_verified",
     "label_note": "SWD OK operation verified vs spec B4.2."
   },
   {
-    "task": "swd_operation",
+    "task": "protocol_operation",
     "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
     "statement_id": "statement_1761",
     "input_text": "Therefore, a successful read operation consists of three phases:",
     "grounding": [],
     "gold": [
       {
-        "fact": "swd_operation_fact",
-        "response": "OK",
+        "fact": "protocol_operation_fact",
+        "branch_label": "successful",
+        "operation_name": "read",
         "phase_count": 3,
-        "has_data_phase": true,
-        "access": "read",
-        "turnaround_before_data": false
+        "phase_names": []
       }
     ],
     "label_status": "agent_verified",
     "label_note": "SWD OK operation verified vs spec B4.2."
   },
   {
-    "task": "swd_operation",
+    "task": "protocol_operation",
     "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
     "statement_id": "statement_1777",
     "input_text": "If the SW-DP is not able to process the request from the debugger immediately, it must issue a WAIT response. A WAIT response to a read or write packet request ",
     "grounding": [],
     "gold": [
       {
-        "fact": "swd_operation_fact",
-        "response": "WAIT",
+        "fact": "protocol_operation_fact",
+        "branch_label": "WAIT",
+        "operation_name": null,
         "phase_count": 2,
-        "has_data_phase": false
+        "phase_names": []
       }
     ],
     "label_status": "agent_verified",
     "label_note": "SWD WAIT operation verified vs spec B4.2."
   },
   {
-    "task": "swd_operation",
+    "task": "protocol_operation",
     "doc_key": "ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification",
     "statement_id": "statement_1798",
     "input_text": "A FAULT response to a read or write packet request consists of two phases:",
     "grounding": [],
     "gold": [
       {
-        "fact": "swd_operation_fact",
-        "response": "FAULT",
+        "fact": "protocol_operation_fact",
+        "branch_label": "FAULT",
+        "operation_name": null,
         "phase_count": 2,
-        "has_data_phase": false
+        "phase_names": []
       }
     ],
     "label_status": "agent_verified",

@@ -4,12 +4,22 @@
 
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can SpecForge theoretically be specification and PDF neutral?
+- [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
+  > Can a signal or response spelling select a production extractor?
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > Cannot convert a MPS Tensor to float64
+- [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
+  > Does SemanticIR and IntentIR preserve generic protocol records?
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
   > EXTRACTION-QUALITY-GAUGE.3f what is the alphabetic-value word-boundary gate
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
   > EXTRACTION-QUALITY-GAUGE.3g what is the dotted-cross-reference spurious-subject gate
+- [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
+  > How are frame fields extracted without hardcoding a protocol?
+- [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
+  > How does EvidenceIR schema 2 handle old protocol-specific artifacts?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How does EvidenceIR schema 2 remove protocol-specific extraction authority?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How does SourceIR classification remain specification neutral?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -18,8 +28,14 @@
   > What does spec-neutral extraction mean?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > What happens when schema-1 SourceIR is loaded?
+- [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
+  > What replaced SwdOperation and SerialFramePhase?
+- [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
+  > What replaced swd_operations and swdio_direction?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Where is the whole extraction-pipeline genericity audit?
+- [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
+  > Why can neutral extraction lose recall after removing shortcuts?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why is a forbidden vocabulary list insufficient?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -100,6 +116,8 @@
   > are transaction phase names allowlisted by protocol
 - [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
   > are ungrounded SemanticIR records dropped silently or demoted
+- [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
+  > can EvidenceIR represent protocol structure without hardcoding a specification
 - [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
   > can FigureRegion raw_image_path store an absolute path
 - [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
@@ -279,21 +297,3 @@
   > does CPU-ISA (category 4) intent need a new ISF construct or does it map onto the existing register/storage abstraction (CSRs map onto storage/register — no new construct; non-register ISA semantics are honest non-targets)
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
   > does ExtractionContext carry a cross-document cluster profile
-- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
-  > does FSMGen --strict --check use or validate signal direction (input vs output)
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > does FSMGen 030f8c273 accept a value-free (sample S as s) transaction body
-- [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
-  > does FSMGen accept a symbolic (width PARAM) or only a concrete integer width
-- [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
-  > does FSMGen strict success prove that a SpecForge adapter is semantically faithful
-- [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
-  > does FSMGen support a register reset value in storage (yes — (storage (var NAME (width N) [(reset V)])) is shipped per 13k:42 + 13m:48-68; optional, in-width non-negative int, omission = all-0s byte-identical, over-width/non-integer fails closed)
-- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
-  > does FSMGen's multi-actor ATL frontier provide a home for a connectivity netlist (NO — the ATL backlog wires children GENERATED from transaction composition spawn/do; it is behavioral orchestration, not a declarative static IP-interconnect netlist; verified 14-feature-backlog.md)
-- [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
-  > does FigureRegion have a production producer or only synthetic tests
-- [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
-  > does GateRecord remain schema compatible
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > does IntentIR preserve SWD protocol provenance and order

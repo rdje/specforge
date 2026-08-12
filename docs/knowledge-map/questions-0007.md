@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what does signal_table_covered_by_inventory do
+- [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
+  > what does source_literal mean in the active task evidence contract
+- [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
+  > what does synthesize_signal_declarations do when the body is rotated
+- [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
+  > what does the TASK-ACCEPTANCE check verify / why was my commit blocked
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > what does the active task evidence checker verify
+- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
+  > what does the active task migration roll back after a validation failure
+- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
+  > what does the bounded current ROADMAP contain
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > what does the corpus frontier refreshed list mean
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > what does the declared_signal_names.is_empty() branch in semantic.rs do
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what does uncaptured_normative_statement_ids do
+- [source-ir-size-scaling](../knowledge/source-ir-size-scaling.md)
+  > what dominates the source_ir.json size (content_elements? page_artifacts?)
 - [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
   > what enum member values does FSMGen reject (a bare token of only 0/1 digits with length >= 4 — an un-qualified binary literal; verified by value sweep: 1000/1010/1111/10000 fail, 999/1020/69152 and 0/1/111 and 4'b1000/16'd1000 pass)
 - [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
@@ -275,25 +297,3 @@
   > what is the NVMe register-field recall / precision
 - [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
   > what is the OpenCAPI 32G PHY Signaling visual and NLP capture frontier
-- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
-  > what is the PDF-VARIANT-DIGESTION whole-corpus coverage / re-triage
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the PHASE_NAME_STOPWORDS gate and why is it stronger than the anchor gate (prose is noisier)
-- [canonical-promotion-no-reingest-protocol](../knowledge/canonical-promotion-no-reingest-protocol.md)
-  > what is the RAM-safe per-doc protocol for the CANONICAL-PROMOTION-SWEEP
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > what is the RISC-V Debug register-field recall / precision
-- [swd-intent-is-the-fsm-driving-swdio](../knowledge/swd-intent-is-the-fsm-driving-swdio.md)
-  > what is the SWD line state machine (reset/operating/protocol-error/lockout)
-- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
-  > what is the SpecForge trajectory controller
-- [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
-  > what is the VLM table strategy / PDF-VARIANT-DIGESTION.2b
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > what is the `<role> channel signals` caption cue and how is it parsed
-- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
-  > what is the ambiguous_statements metric in validate
-- [source-pdf-registry-authority](../knowledge/source-pdf-registry-authority.md)
-  > what is the authoritative membership set for corpus SOURCE_PDF_REGISTRY
-- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
-  > what is the bit-exact adjacency chain rule

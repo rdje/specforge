@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > how are multi-word field names like Validation Bits or FRU ID recovered
+- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
+  > how are offset-suffixed bit cells like 31:28 +04 extracted
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > how are per-instance indexed signals (PSELx HSELx) referenced in prose handled
+- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
+  > how are per-state actions captured
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > how are project rescan working directories kept portable
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > how are register bit-fields admitted to the ISF (fields …) block (structural fail-closed: located fields only; drop a sanitized-name collision group; non-overlapping survivors else whole-register fail-closed; access normalized to FSMGen's 10-token set else omit; field reset = parent reset slice; enum members that fit the width — ADR-0006, no name list)
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > how are register fields written as section headings extracted
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > how are repository owned and external input path origins labeled
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > how are rotated version matrices remapped for presence capture
+- [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
+  > how are serial/architecture spec interface signals added to the catalog
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > how are signal presence matrices captured into typed records
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
@@ -278,23 +298,3 @@
   > how does the extractor avoid minting a constraint about a cross-referenced register field
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > how does the fused two-label column ACE5-Lite ACE5-LiteACP split
-- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
-  > how does the held-out evaluator detect omission fabrication provenance loss and silent drops
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > how does the measurable corpus population grow
-- [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
-  > how does the no-re-ingest canonical promotion protocol stay in place
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > how does the register reader recover a field name with no name column
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > how does the section-heading field reader tell a message container from a register container
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how does the table-number grammar handle both B1.1 colon and A2-2 dash forms
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > how does the tiling gate keep register-bit recovery honest (no fabrication)
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > how does the trajectory controller classify converging diverging stalled mixed and unmeasurable
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > how does validate classify a document / what is document_class
-- [stage-staleness-validate-detector](../knowledge/stage-staleness-validate-detector.md)
-  > how does validate know an intent_ir is stale relative to its semantic_ir

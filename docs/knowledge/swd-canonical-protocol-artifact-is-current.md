@@ -10,11 +10,15 @@ answers:
   - "did the USB4 signoff check change canonical SWD"
   - "why did the canonical SWD relation count change from 25 to 21"
 date: 2026-08-09
-status: current
+status: superseded
 tags: [swd, canonical-artifact, promotion, interface-edge-timing, intent-ir]
 evidence: docs/tasks/SWD-SERIAL-EXTRACTION.md (.7e.ii); generated/source_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/source_ir.json; generated/evidence_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/evidence_ir.json; generated/intent_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/intent_ir.json
 reverify: "jq '{actors:(.actors|length),relations:(.actor_signal_relations|length),frame:(.serial_frame_fields|length),operations:(.swd_operations|length),states:(.protocol_states|length),edges:(.interface_edge_timings|length)}' generated/intent_ir/ihi0074_a_2017_03_09_arm_debug_interface_v6_architecture_specification/intent_ir.json && target/release/specforge eval-extraction crates/specforge/test_data/llm_eval/seed_swd_derivation.json --provider skip"
 ---
+
+> Superseded on `2026-08-12`: this card describes schema-1 artifact authority. Schema 2 neutralizes those
+> vocabulary-bound surfaces on load and requires neutral re-extraction. See
+> [[evidenceir-generic-protocol-semantics]].
 
 The canonical SWD chain was rebuilt from the tracked 2,925,300-byte ADI PDF by a fresh repository-local CPU
 ingest after protocol projection, adapter accounting, convergence accounting, and path portability landed. Its

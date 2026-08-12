@@ -937,7 +937,7 @@ metrics (`extraction_manifest_surfaces`, `extraction_extractors_fired`), for exa
 - [info:extraction_manifest] extraction run manifest (8 framework surface(s), 5 extractor(s) fired):
   register_records[registers.field_table] signal_polarities[] actor_signal_relations[relations.prose]
   protocol_states[] protocol_actors[actors.prose]
-  signal_semantic_hints[semantic_hints.tables,semantic_hints.prose] serial_frame_fields[] swd_operations[]
+  signal_semantic_hints[semantic_hints.tables,semantic_hints.prose] serial_frame_fields[] protocol_operations[]
 ```
 
 Read that as: on this document, register records came from the field-table strategy (not the register-map
@@ -945,14 +945,13 @@ one), no FSM strategy fired, actors came from prose, the actor–signal relation
 sentences (no signal table carried a `Source`/`Destination` column), signal meaning came from tables and
 prose (not from visual/VLM annotations), and the polarity, serial-frame, and packet-operation surfaces ran
 but found nothing — this is a register document, not a polarity-rich bus protocol or a serial-protocol spec.
-On a serial-debug spec the same line shows
-`serial_frame_fields[serial_frame.bit_range] swd_operations[operations.prose]`, on a CAN-style spec the
-frame comes from the prose composition list: `serial_frame_fields[serial_frame.composition]`, and on an
-AMBA-style bus protocol the polarity and relation surfaces show where those facts came from:
+On a document with explicit phase-bound fields the same line shows
+`serial_frame_fields[serial_frame.bit_range] protocol_operations[operations.prose]`; a prose composition list
+uses `serial_frame_fields[serial_frame.composition]`. Other protocols likewise expose the polarity and relation
+strategies that actually fired:
 `signal_polarities[signal_polarity.prose,signal_polarity.tables]
-actor_signal_relations[relations.prose,relations.tables]` — on the AXI specification, for example, the
-manifest reveals that relations are overwhelmingly table-driven (hundreds from the channel signal tables,
-a couple of dozen from prose), while on a serial-debug spec they are pure prose. "Ran and found
+actor_signal_relations[relations.prose,relations.tables]`. The manifest distinguishes table-driven from
+prose-driven relations without using a protocol identity. "Ran and found
 nothing" is deliberately distinct from "never ran" — both are honest, but they tell you different things.
 
 The polarity and relation surfaces are also the first **convergence-loop** surfaces on the engine: SpecForge

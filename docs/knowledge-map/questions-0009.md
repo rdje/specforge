@@ -2,6 +2,30 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > where do CCIX PER error structure fields land in the IR
+- [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
+  > where do DBID / TxnID / ReturnNID style names come from in CHI
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > where do DTI message field obligations leak (signal_constraints) and how is it fixed
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > where do I log feedback or a suggestion to FSMGen
+- [timing-caption-unit-and-table-provenance](../knowledge/timing-caption-unit-and-table-provenance.md)
+  > where do TimingConstraintRecord table provenance ids live
+- [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
+  > where do in-memory structure layouts (queue entries, table entries, dwords) live in EvidenceIR
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > where do interface_edge_timings stop in the pipeline
+- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
+  > where do live-document checker test fixtures create temporary files
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > where do message-field / structure / flit / descriptor layouts go in the pipeline (EvidenceIR only — no IntentIR carrier, never lowered)
+- [message-field-constraints-surface](../knowledge/message-field-constraints-surface.md)
+  > where do obligations on message fields (TagOp must be 0) live in EvidenceIR
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > where do packet/flit message fields (TxnID / DBID / Opcode) live in EvidenceIR
+- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
+  > where do the 9 new ACE wires AWBAR AWDOMAIN AWSNOOP come from and when do they land
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > where do the APB signal declarations come from (which table)
 - [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
@@ -274,27 +298,3 @@
   > which source modalities are represented in the first vertical population
 - [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
   > which source-to-IntentIR categories are supported incomplete or unmeasurable
-- [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
-  > which stale roadmap statuses were found before migration
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > which strategy is message_fields.byte_location_table
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > which task does the trajectory controller recommend first
-- [repo-local-temp-docling-test-collision](../knowledge/repo-local-temp-docling-test-collision.md)
-  > which task owns deterministic Rust tests under repository-local TMPDIR
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > which task owns fact-card catalog containment
-- [mdbook-doctest-gap](../knowledge/mdbook-doctest-gap.md)
-  > which task owns mdBook fence classification and doctest enforcement
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > which task tree crossed its live-document byte warning
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > which topology contains the active corpus coverage task
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > which tree owns the empty-catalog grounding filter defect
-- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
-  > which units mark a timing record as decibel domain
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > which validate metrics/finding surface channel membership
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > who reads and writes docs tasks CORPUS-COVERAGE md

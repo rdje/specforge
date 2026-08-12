@@ -1867,7 +1867,7 @@ mod tests {
             signal_semantic_conflicts: Vec::new(),
             interfaces: Vec::new(),
             serial_frame_fields: Vec::new(),
-            swd_operations: Vec::new(),
+            protocol_operations: Vec::new(),
             protocol_states: Vec::new(),
             interface_edge_timings: Vec::new(),
             system_contract: None,

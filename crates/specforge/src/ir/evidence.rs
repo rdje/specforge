@@ -31,6 +31,8 @@ use crate::persisted_path::{
     resolve_repository_output,
 };
 
+const EVIDENCE_IR_SCHEMA_VERSION: u32 = 2;
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum StatementClass {
@@ -210,11 +212,9 @@ pub struct EvidenceIr {
     /// built before this field existed.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub fact_provenance: Vec<FactProvenanceRecord>,
-    /// SWD-SERIAL-EXTRACTION.3: typed serial-frame fields recovered from a serial protocol's
-    /// frame description (the SWD packet request / acknowledge / data phases). Each field carries
-    /// its bit-width (from a `NAME[hi:lo]` range or a stated bit count) and, for the ACK field, the
-    /// response values (OK/WAIT/FAULT). Scoped to serial-protocol context so parallel-bus specs are
-    /// untouched. Empty (serde-skipped) for non-serial documents.
+    /// Typed fields recovered from an explicitly described serial frame. Names, phases, participant
+    /// directions, and values are carried from the current document rather than interpreted from a
+    /// stored protocol or signal vocabulary.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub serial_frame_fields: Vec<SerialFrameField>,
     /// EXTRACTION-QUALITY-GAUGE.FIELD.2: typed MESSAGE FIELDS of packet/flit protocols (CHI-class),
@@ -241,24 +241,21 @@ pub struct EvidenceIr {
     /// Empty (serde-skipped) for documents without field-subject obligations.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub message_field_constraints: Vec<MessageFieldConstraintRecord>,
-    /// SWD-SERIAL-EXTRACTION.4: the protocol FSM states (the JTAG TAP / SWD line state machine). The
-    /// FSM is critical to understanding/implementing SWD/JTAG and is what FSMGen ultimately builds.
-    /// Empty (serde-skipped) for documents without a described state machine.
+    /// Named protocol states recovered through document-structure grammars. The records preserve
+    /// stated names/actions without inventing transitions, encodings, or a machine identity.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub protocol_states: Vec<ProtocolStateRecord>,
     /// PDF-VARIANT-DIGESTION.3b: protocol ACTORS/AGENTS a spec defines in prose (controller, target, …).
     /// Empty (serde-skipped) for documents that do not define agents in prose.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub protocol_actors: Vec<ProtocolActorRecord>,
-    /// SWD-SERIAL-EXTRACTION.4b: the SWD packet-protocol operations — the response-branched phase
-    /// sequences (OK → 3-phase request/ack/data; WAIT/FAULT → 2-phase request/ack) + turnaround model.
-    /// Empty (serde-skipped) for non-serial documents.
+    /// Document-stated operation/response branches and phase counts. Branch, operation, and phase
+    /// names remain opaque input-derived strings.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
-    pub swd_operations: Vec<SwdOperation>,
-    /// SWD-SERIAL-EXTRACTION.4e: protocol/interface clocking recovered from prose that explicitly
-    /// binds an actor's sampling and/or drive-state changes on one declared signal to an edge of a
-    /// declared clock signal. The grammar and names are document-derived, so the surface is useful
-    /// beyond SWD and remains empty for documents without this exact timing evidence.
+    pub protocol_operations: Vec<ProtocolOperationRecord>,
+    /// Protocol/interface clocking recovered from prose that explicitly binds an actor's sampling
+    /// and/or drive-state changes on one declared signal to an edge of a declared clock signal. The
+    /// grammar and names are document-derived and the surface remains empty without complete evidence.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub interface_edge_timings: Vec<InterfaceEdgeTimingRecord>,
     /// EXTRACTOR-ARCHITECTURE.8: the per-surface extraction run manifest — which extractors were eligible /
@@ -270,37 +267,29 @@ pub struct EvidenceIr {
     pub extraction_manifest: ExtractionManifest,
 }
 
-/// SWD-SERIAL-EXTRACTION.4b: one SWD packet-protocol operation variant — a response branch of the packet
-/// FSM. OK responses carry a data phase (3 phases: request → acknowledge → data); WAIT/FAULT do not
-/// (2 phases). Derived from "a successful `<read|write>` operation consists of three phases" /
-/// "A `<WAIT|FAULT>` response … consists of two phases" prose (B4.2).
+/// One document-stated operation or response branch with an explicit phase cardinality.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
-pub struct SwdOperation {
-    /// Stable id, e.g. `swd_operation_0001`.
+pub struct ProtocolOperationRecord {
+    /// Stable schema-local identifier.
     pub operation_id: String,
-    /// The acknowledge response that selects this branch: `OK` / `WAIT` / `FAULT`.
-    pub response: String,
-    /// `read` or `write`; `None` when the operation applies to "a read or write" request.
+    /// Qualifier or response value that selects this branch, exactly as stated.
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub access: Option<String>,
-    /// Number of packet phases (2 = request+acknowledge; 3 = request+acknowledge+data).
+    pub branch_label: Option<String>,
+    /// Operation name or operation phrase, exactly as stated.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub operation_name: Option<String>,
+    /// Explicit number of phases.
     pub phase_count: u32,
-    /// Whether a data-transfer phase follows the acknowledge (true for OK; false for WAIT/FAULT
-    /// unless overrun detection is enabled).
-    pub has_data_phase: bool,
-    /// Whether a turnaround period sits between the acknowledge and data phases (true for write —
-    /// host drives WDATA; false for read — target drives both ack and RDATA). `None` for 2-phase.
-    #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub turnaround_before_data: Option<bool>,
+    /// Ordered phase names only when the same source statement states them explicitly.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub phase_names: Vec<String>,
     /// Statements that evidenced this operation.
     #[serde(default)]
     pub supporting_statement_ids: Vec<String>,
 }
 
 /// An explicitly stated clock-edge contract for an interface signal. One record joins the actor,
-/// data signal, clock signal, edge, and the operations the source binds to that edge. Keeping the
-/// two operation flags together preserves SWD B4.3.1's single coupled fact: the target samples
-/// SWDIO and changes whether it drives SWDIO on SWCLK's rising edge.
+/// data signal, clock signal, edge, and operations that the source binds to that edge.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct InterfaceEdgeTimingRecord {
     /// Stable id, e.g. `interface_edge_timing_0001`.
@@ -331,14 +320,12 @@ pub enum InterfaceClockEdge {
     Falling,
 }
 
-/// SWD-SERIAL-EXTRACTION.3: one field of a serial protocol frame (e.g. SWD `ACK[2:0]`, `WDATA[0:31]`,
-/// the `APnDP`/`RnW` request bits). The serial frame is a SEQUENCE protocol, not a clocked-edge rule,
-/// so it is a distinct typed surface from `signal_constraints`/`temporal_rules`.
+/// One source-declared field in a serial frame sequence.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct SerialFrameField {
     /// Stable id, e.g. `serial_field_0003`.
     pub field_id: String,
-    /// The field name as written (`ACK`, `WDATA`, `APnDP`, `RnW`, `A`, `DATAIN`).
+    /// The field name exactly as written.
     pub name: String,
     /// Bit-width in the frame (from `NAME[hi:lo]` ⇒ |hi-lo|+1, or a stated count). `None` if unstated.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -346,19 +333,16 @@ pub struct SerialFrameField {
     /// The literal bit range `[high, low]` when the field was written as `NAME[hi:lo]`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub bit_range: Option<(u32, u32)>,
-    /// The frame phase this field belongs to (request / acknowledge / data), inferred from context.
+    /// The frame phase name exactly as stated by the document.
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub phase: Option<SerialFramePhase>,
-    /// Which actor drives the bidirectional data wire (SWDIO) during this field — derived from the
-    /// spec's "from the `<actor>` to the `<actor>`" / "`<actor>` to `<actor>`, following a read/write
-    /// request" prose (the host samples whatever the target drives). `None` if not stated. (`.4c`)
+    pub phase_name: Option<String>,
+    /// Document-stated source and destination participants for this field.
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub swdio_direction: Option<SwdioDirection>,
-    /// Order of this field within the frame sequence (request bits → acknowledge → data), assigned
-    /// by phase rank then first appearance. `None` if the field has no resolved phase. (`.3b`)
+    pub participant_drive: Option<ParticipantDriveRecord>,
+    /// Order of this field within the frame sequence when source structure establishes one.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub order: Option<u32>,
-    /// Response values for a response field — the ACK field carries OK / WAIT / FAULT. (`.3b`)
+    /// Response values explicitly bound to this field by the source.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub response_values: Vec<String>,
     /// Statements that evidenced this field.
@@ -530,38 +514,20 @@ pub struct ExtractionQualityGaugeRecord {
     pub not_entailed_constraint_ids: Vec<String>,
 }
 
-/// The phase of a serial transaction a frame field belongs to.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "snake_case")]
-pub enum SerialFramePhase {
-    /// The host-to-target packet request (APnDP, RnW, address, parity).
-    Request,
-    /// The target-to-host acknowledge response (ACK: OK/WAIT/FAULT).
-    Acknowledge,
-    /// The data transfer phase (read/write data + parity).
-    Data,
+/// A document-stated participant-to-participant drive direction.
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct ParticipantDriveRecord {
+    pub source_actor: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub destination_actor: Option<String>,
 }
 
-/// Which actor drives the bidirectional serial data wire (SWDIO) during a frame field/phase. The
-/// other actor samples it. SWD-SERIAL-EXTRACTION.4c.
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "snake_case")]
-pub enum SwdioDirection {
-    /// The host (external debugger) drives the wire; the target samples (request + write data).
-    HostDrives,
-    /// The target (DP) drives the wire; the host samples (acknowledge + read data).
-    TargetDrives,
-}
-
-/// SWD-SERIAL-EXTRACTION.4: one state of a protocol FSM. SWD and JTAG are *defined* by a state machine
-/// (the JTAG TAP controller / SWD line protocol) — and the FSM is the heart of SpecForge's purpose
-/// (IntentIR → `.isf` → FSMGen builds the `.fsm`). Each record is a named state with its machine and
-/// per-state action. Transitions (the TMS-driven edges) are `SWD-SERIAL-EXTRACTION.4b`.
+/// One source-declared protocol state. A record does not imply a transition or encoding.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ProtocolStateRecord {
     /// Stable id, e.g. `protocol_state_0003`.
     pub state_id: String,
-    /// The state machine this state belongs to (e.g. `DBGTAPSM`), when named.
+    /// The state machine this state belongs to, when explicitly named.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub machine_name: Option<String>,
     /// The state name as written (e.g. `Shift-DR`, `Run-Test/Idle`, `Test-Logic-Reset`).
@@ -712,10 +678,54 @@ struct EvidencePriorGuidance {
     protocol_family: ProtocolFamily,
 }
 
+/// Schema 1 carried protocol observations produced by vocabulary-bound extractors. Remove those
+/// surfaces from the untyped JSON before deserialization so obsolete field encodings cannot regain
+/// authority or prevent a safe load. All other evidence remains intact and can drive a neutral
+/// downstream rebuild; re-extraction from SourceIR is required to repopulate these surfaces.
+fn neutralize_legacy_protocol_json(artifact: &mut serde_json::Value) -> Result<()> {
+    let object = artifact.as_object_mut().ok_or_else(|| {
+        AppError::InvalidStageArtifact("EvidenceIR root must be a JSON object".to_string())
+    })?;
+    object.insert(
+        "schema_version".to_string(),
+        serde_json::Value::from(EVIDENCE_IR_SCHEMA_VERSION),
+    );
+    for surface in [
+        "serial_frame_fields",
+        "protocol_states",
+        "protocol_operations",
+    ] {
+        object.insert(surface.to_string(), serde_json::Value::Array(Vec::new()));
+    }
+    object.insert(
+        "extraction_manifest".to_string(),
+        serde_json::to_value(ExtractionManifest::default())?,
+    );
+    Ok(())
+}
+
 impl EvidenceIr {
     pub fn load_from_path(path: &Path) -> Result<Self> {
         let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
-        let evidence_ir = serde_json::from_str::<Self>(&fs::read_to_string(path)?)?;
+        let mut artifact = serde_json::from_str::<serde_json::Value>(&fs::read_to_string(path)?)?;
+        let version = artifact
+            .get("schema_version")
+            .and_then(serde_json::Value::as_u64)
+            .ok_or_else(|| {
+                AppError::InvalidStageArtifact(
+                    "EvidenceIR is missing an integer schema_version".to_string(),
+                )
+            })?;
+        match version {
+            1 => neutralize_legacy_protocol_json(&mut artifact)?,
+            version if version == u64::from(EVIDENCE_IR_SCHEMA_VERSION) => {}
+            version => {
+                return Err(AppError::InvalidStageArtifact(format!(
+                    "unsupported EvidenceIR schema version {version}; expected {EVIDENCE_IR_SCHEMA_VERSION}"
+                )));
+            }
+        }
+        let evidence_ir = serde_json::from_value::<Self>(artifact)?;
         evidence_ir.runtime_clone()
     }
 
@@ -881,21 +891,14 @@ impl EvidenceIr {
             &mut extraction_manifest,
         );
 
-        // SWD-SERIAL-EXTRACTION.3 + PDF-VARIANT-DIGESTION.9.3b: recover the serial-frame fields — the SWD
-        // packet/ack/data frame, or a frame described as a prose COMPOSITION LIST (CAN's "composed of seven
-        // different bit fields: SOF, ARBITRATION FIELD, …"). EXTRACTOR-ARCHITECTURE.9a — both strategies now
-        // run through the unified `run_surface` driver; first-wins key-merge on the field name reproduces
-        // the prior "composition defers to bit-range names" policy exactly because each strategy already
-        // emits a name-unique list. No-op for parallel buses.
+        // Recover document-stated frame fields through two structural strategies: explicit phase-bound
+        // bit ranges and explicit prose composition lists. Both read names and ordering from the current
+        // document; neither strategy contains a protocol, vendor, signal, or response vocabulary.
         let serial_frame_fields =
             serial_frame_field_surface(&extracted_statements, &mut extraction_manifest);
 
-        // SWD-SERIAL-EXTRACTION.4/.4d + PDF-VARIANT-DIGESTION.9.3a/.9.7: recover the protocol FSM states.
-        // EXTRACTOR-ARCHITECTURE.3 — the four FSM-state grammars (JTAG/SWD-hyphen, SWD line, quoted-mode,
-        // transition-bound single-word) now run through the unified `Extractor`/`run_surface` driver instead
-        // of four inline dedup loops here. Order = legacy precedence, key = uppercased state name → the
-        // merged inventory is byte-identical. The FSM is the heart of SWD/JTAG and what FSMGen builds; no-op
-        // for non-FSM/non-serial docs.
+        // Recover document-stated protocol/FSM states through complementary structural grammars. The
+        // surface merges by source-derived state name and does not invent a machine identity.
         let protocol_states =
             protocol_state_surface(&extracted_statements, &mut extraction_manifest);
         // PDF-VARIANT-DIGESTION.3b — protocol actors/agents defined in prose.
@@ -911,12 +914,12 @@ impl EvidenceIr {
         extraction_manifest.record(&protocol_actors_run);
         let protocol_actors = protocol_actors_run.records;
 
-        // SWD-SERIAL-EXTRACTION.4b: recover the SWD packet operations (response branching: OK→3-phase,
-        // WAIT/FAULT→2-phase, + turnaround model). EXTRACTOR-ARCHITECTURE.9a — single-strategy surface run
-        // through the concat driver for a uniform manifest entry. No-op for non-serial docs.
-        let swd_operations = swd_operation_surface(&extracted_statements, &mut extraction_manifest);
+        // Recover operations and response branches only when the current document explicitly supplies a
+        // phase cardinality. Labels remain opaque source vocabulary.
+        let protocol_operations =
+            protocol_operation_surface(&extracted_statements, &mut extraction_manifest);
 
-        // SWD-SERIAL-EXTRACTION.4e: recover explicit interface edge timing from timing-class prose.
+        // Recover explicit interface edge timing from timing-class prose.
         // Names come from the document's declared-signal inventory and actor clause; no protocol or
         // signal vocabulary is embedded. The registered surface is empty when the complete grammar
         // (operation + declared data signal + explicit edge + declared clock) is not present.
@@ -942,7 +945,7 @@ impl EvidenceIr {
             .collect();
 
         let mut evidence_ir = Self {
-            schema_version: 1,
+            schema_version: EVIDENCE_IR_SCHEMA_VERSION,
             stage: IrStage::EvidenceIr,
             source_ir_path,
             source_path_origin: Some(source_path_origin),
@@ -982,7 +985,7 @@ impl EvidenceIr {
             message_field_constraints: Vec::new(),
             protocol_states,
             protocol_actors,
-            swd_operations,
+            protocol_operations,
             interface_edge_timings,
             extraction_manifest,
         };
@@ -5709,7 +5712,8 @@ fn is_descriptive_field_cell_spurious_subject(text: &str, subject: &str) -> bool
 }
 
 /// True when `needle` occurs in `haystack` at IDENTIFIER BOUNDARIES (case-insensitive) — i.e. it is
-/// a whole token there, not the tail of a longer word (`CAPI` inside `OpenCAPI`) or the head of one.
+/// a whole token there, not the tail of a longer identifier (`STAT` inside `STATUS_WORD`) or the
+/// head of one.
 /// The shared spelling of "the document really names this token here", used by the spurious-subject
 /// gates below.
 fn contains_whole_identifier(haystack: &str, needle: &str) -> bool {
@@ -5862,11 +5866,11 @@ fn is_value_position_subject(text: &str, subject: &str) -> bool {
 /// the passive normative binding this record attributes to it. English binds a passive obligation
 /// (`"… must/shall [not] be/remain …"`) to a subject that PRECEDES the modal, so a token reachable
 /// only AFTER the lead is an agent, an apposition, a scope, a later mention — anything but the
-/// constrained thing. `"The endpoint shall be held in reset by an out-of-band OpenCAPI Device
-/// Enable (OCDE) signal."` constrains *the endpoint*: `CAPI` (the uppercase tail of `OpenCAPI`) and
-/// `OCDE` sit in the trailing agent phrase. `"Lane reversal … shall be compatible with all
-/// supported lane widths. … OpenCAPI devices (DLX) …"` constrains *lane reversal*: its candidates
-/// live in a later sentence entirely. Both deterministic paths can reach such a token — the pattern
+/// constrained thing. `"The endpoint shall be held in reset by an out-of-band device-enable
+/// signal (ENABLE_A)."` constrains *the endpoint*: the enable identifier sits in the trailing agent
+/// phrase. `"Lane reversal … shall be compatible with all supported lane widths. … Link devices
+/// (PORT_A) …"` constrains *lane reversal*: its candidates live in a later sentence entirely. Both
+/// deterministic paths can reach such a token — the pattern
 /// path through its full-text fallback, the dynamic path through its whole-statement subject scan —
 /// and mint a `must_be_*` about something the document never constrains. Returns `true` for a
 /// `(text, subject)` pair → drop THAT subject (an honest residual; the obligation's real pre-lead
@@ -6034,7 +6038,7 @@ fn extract_dynamic_signal_constraints(
         // ever appears standalone (its own declaration) is kept.
         subject_signals.retain(|s| !is_dotted_cross_reference_subject(&statement.text, s));
         // CORPUS-COVERAGE.2.50a: drop a subject the document never names BEFORE the passive binding
-        // this record attributes to it (`OpenCAPI`/`OCDE` after "shall be held in reset"); the same
+        // this record attributes to it (a device/signal identifier after "shall be held in reset"); the same
         // obligation's real pre-lead subject, and every active `must drive …` binding, are kept.
         subject_signals.retain(|s| !is_post_passive_binding_only_subject(&statement.text, s));
         // EXTRACTION-QUALITY-GAUGE.3h: drop a subject reachable only from a VALUE position
@@ -9065,56 +9069,26 @@ fn definitional_signal_names(text: &str) -> Vec<String> {
     out
 }
 
-/// SWD-SERIAL-EXTRACTION.3 — recover serial-frame fields (`NAME[hi:lo]` ⇒ width |hi-lo|+1) from a
-/// serial protocol's frame description (SWD packet request / acknowledge / data phases). Gated to
-/// serial documents (markers: "serial wire" / "packet request" / "shift-dr" / SWDIO / SWCLK) so
-/// parallel-bus specs — which also use WDATA/RDATA and the phrase "data phase" — produce nothing.
-/// Protocol vocabulary, not chip names (ADR 0006).
+/// Recover frame fields (`NAME[hi:lo]` ⇒ width |hi-lo|+1) only from statements that structurally
+/// bind those fields to an explicitly named phase or to a frame/packet declaration. Phase names,
+/// field names, participants, and ordering all come from the current document.
 fn extract_serial_frame_fields(statements: &[ExtractedStatement]) -> Vec<SerialFrameField> {
-    let is_serial_doc = statements.iter().any(|s| {
+    let has_frame_description = statements.iter().any(|s| {
         let l = s.text.to_ascii_lowercase();
-        l.contains("serial wire")
-            || l.contains("packet request")
-            || l.contains("shift-dr")
-            || l.contains("swdio")
-            || l.contains("swclk")
+        (l.contains("frame") || l.contains("packet"))
+            && (l.contains("field") || l.contains("bit") || l.contains("phase"))
     });
-    if !is_serial_doc {
+    if !has_frame_description {
         return Vec::new();
     }
     let mut out: Vec<SerialFrameField> = Vec::new();
     let mut index_by_name: BTreeMap<String, usize> = BTreeMap::new();
     let mut counter = 0usize;
     for statement in statements {
-        let lower = statement.text.to_ascii_lowercase();
-        // Data phase is checked BEFORE request: a statement that names a data field (WDATA/RDATA/
-        // DATAIN) is about the data phase even when it also mentions "write requests"/RnW — e.g.
-        // "For write requests … the value in DATAIN[31:0] is written" is the DATA phase (`.5` fix).
-        let phase = if lower.contains("acknowledge") || lower.contains("ack[") {
-            Some(SerialFramePhase::Acknowledge)
-        } else if lower.contains("data bits")
-            || lower.contains("data phase")
-            || lower.contains("wdata")
-            || lower.contains("rdata")
-            || lower.contains("datain")
-            || lower.contains("dataout")
-        {
-            Some(SerialFramePhase::Data)
-        } else if lower.contains("packet request")
-            || lower.contains("apndp")
-            || lower.contains("rnw")
-        {
-            Some(SerialFramePhase::Request)
-        } else {
-            None
-        };
-        // Only mine fields from statements that are actually in a frame phase. A serial doc also
-        // cites unrelated bit-fields (register fields, bridged-bus signals like AxCACHE); the phase
-        // gate keeps the SWD FRAME fields and drops that noise.
-        if phase.is_none() {
+        let phase_name = stated_phase_name(&statement.text);
+        if phase_name.is_none() {
             continue;
         }
-        // Bit-range fields: ACK[2:0], WDATA[0:31], A[2:3], …
         for (name, hi, lo) in parse_bit_range_fields(&statement.text) {
             let width = (hi as i64 - lo as i64).unsigned_abs() as u32 + 1;
             upsert_serial_field(
@@ -9124,12 +9098,10 @@ fn extract_serial_frame_fields(statements: &[ExtractedStatement]) -> Vec<SerialF
                 &name,
                 Some(width),
                 Some((hi, lo)),
-                phase,
+                phase_name.clone(),
                 &statement.statement_id,
             );
         }
-        // Named single-bit request fields (`.3b`): "the four bits APnDP, RnW and A[2:3]" — APnDP/RnW
-        // are 1-bit fields the prose explicitly labels "bits" (grammar, not names — ADR 0006).
         for name in parse_named_bit_list(&statement.text) {
             upsert_serial_field(
                 &mut out,
@@ -9138,15 +9110,10 @@ fn extract_serial_frame_fields(statements: &[ExtractedStatement]) -> Vec<SerialF
                 &name,
                 Some(1),
                 None,
-                phase,
+                phase_name.clone(),
                 &statement.statement_id,
             );
         }
-    }
-    // Single-bit CONTROL fields (`.4b`): Start/Stop/Parity/Park complete the packet request frame.
-    // Their definitions ("A single start bit …", "the Park bit …") carry no phase keyword, so they are
-    // mined OUTSIDE the phase gate and assigned the request phase (host-driven control bits).
-    for statement in statements {
         for name in parse_control_bit_fields(&statement.text) {
             upsert_serial_field(
                 &mut out,
@@ -9155,80 +9122,66 @@ fn extract_serial_frame_fields(statements: &[ExtractedStatement]) -> Vec<SerialF
                 &name,
                 Some(1),
                 None,
-                Some(SerialFramePhase::Request),
+                phase_name.clone(),
                 &statement.statement_id,
             );
         }
     }
-    // ACK response values (`.3b`): the ACK field carries OK / WAIT / FAULT, recovered from the
-    // "<value> response to a DPACC/APACC access" grammar. Empty when there is no ACK field or no
-    // such statements (serde-skipped).
-    if let Some(&idx) = index_by_name.get("ACK") {
-        out[idx].response_values = extract_ack_response_values(statements);
+    for (order, field) in out.iter_mut().enumerate() {
+        field.order = Some(order as u32);
     }
-    // Field ordering (`.3b`): the frame sequence is request bits → acknowledge → data. Order by phase
-    // rank, then first appearance (stable: `out` is already in appearance order).
-    let phase_rank = |p: &Option<SerialFramePhase>| match p {
-        Some(SerialFramePhase::Request) => 0,
-        Some(SerialFramePhase::Acknowledge) => 1,
-        Some(SerialFramePhase::Data) => 2,
-        None => 3,
-    };
-    let mut ordered: Vec<usize> = (0..out.len()).collect();
-    ordered.sort_by_key(|&i| (phase_rank(&out[i].phase), i));
-    for (rank, &i) in ordered.iter().enumerate() {
-        out[i].order = Some(rank as u32);
-    }
-    // Per-phase SWDIO direction (`.4c`): who DRIVES the wire per field/phase, derived from the spec's
-    // "from the <A> to the <B>" / "<A> to <B>, following a read/write request" prose. The data phase
-    // is direction-by-field (WDATA host-driven, RDATA target-driven), so resolve field-level first;
-    // request/acknowledge are phase-level.
-    let mut field_dir: BTreeMap<String, SwdioDirection> = BTreeMap::new();
-    let mut request_dir: Option<SwdioDirection> = None;
-    let mut acknowledge_dir: Option<SwdioDirection> = None;
+
     for statement in statements {
-        let Some(actor) = swdio_source_actor(&statement.text) else {
+        let Some(direction) = participant_drive_from_text(&statement.text) else {
             continue;
         };
-        let Some(dir) = swdio_direction_from_actor(&actor) else {
-            continue;
-        };
-        let lower = statement.text.to_ascii_lowercase();
-        // Field-level (data phase): a directional statement naming WDATA / RDATA (token-boundary).
-        for field in out.iter() {
-            if field.name.len() >= 3 && text_has_word(&statement.text, &field.name) {
-                field_dir.entry(field.name.clone()).or_insert(dir);
+        let statement_phase = stated_phase_name(&statement.text);
+        for field in &mut out {
+            let names_field = field.name.len() >= 3 && text_has_word(&statement.text, &field.name);
+            let names_phase = statement_phase.is_some() && field.phase_name == statement_phase;
+            if names_field || names_phase {
+                field.participant_drive.get_or_insert(direction.clone());
             }
         }
-        // Phase-level: the "packet request" / "acknowledge" descriptions.
-        if lower.contains("packet request") {
-            request_dir.get_or_insert(dir);
-        }
-        if lower.contains("acknowledge") {
-            acknowledge_dir.get_or_insert(dir);
-        }
-    }
-    for field in out.iter_mut() {
-        field.swdio_direction = field_dir.get(&field.name).copied().or(match field.phase {
-            Some(SerialFramePhase::Request) => request_dir,
-            Some(SerialFramePhase::Acknowledge) => acknowledge_dir,
-            _ => None,
-        });
     }
     out
 }
 
+/// Return the one- or two-token label immediately before `phase`, preserving the document spelling.
+/// Articles and structural count words are rejected; no known phase names are stored here.
+fn stated_phase_name(text: &str) -> Option<String> {
+    let words: Vec<&str> = text.split_whitespace().collect();
+    for index in 1..words.len() {
+        let marker = words[index].trim_matches(|c: char| !c.is_ascii_alphabetic());
+        if !marker.eq_ignore_ascii_case("phase") && !marker.eq_ignore_ascii_case("phases") {
+            continue;
+        }
+        let label = words[index - 1]
+            .trim_matches(|c: char| !(c.is_ascii_alphanumeric() || c == '-' || c == '/'));
+        if label.is_empty()
+            || parse_count_word(label).is_some()
+            || matches!(
+                label.to_ascii_lowercase().as_str(),
+                "a" | "an" | "the" | "of"
+            )
+        {
+            continue;
+        }
+        return Some(label.to_string());
+    }
+    None
+}
+
 /// PDF-VARIANT-DIGESTION.9.3b — recover a protocol's FRAME STRUCTURE from a prose COMPOSITION LIST ("A DATA
 /// FRAME is composed of seven different bit fields: START OF FRAME, ARBITRATION FIELD, …") plus per-field
-/// widths stated directly in prose ("CONTROL FIELD consists of six bits", "ACK FIELD is two bits long"). The
+/// widths stated directly in prose (`<field> consists of <count> bits`). The
 /// composition list SCOPES which fields are captured, so scattered "N bits" mentions of non-frame items (ERROR
 /// FLAG / OVERLOAD DELIMITER / INTERMISSION) are excluded. A width is recorded ONLY when the field name is the
 /// direct subject of a PLURAL "<num> bits" count, NEVER when "<num> bit" modifies a sub-field ("the 11 bit
 /// IDENTIFIER") — so a width is never fabricated/mis-attributed (the honesty guardrail: a residual `None`
 /// beats a wrong value). Field names are multi-word ALL-CAPS noun phrases; the frame SEQUENCE is preserved as
-/// `order`; `phase` stays `None` (this frame model is a generic field sequence, not SWD's request/ack/data).
-/// General grammar, no chip names (ADR 0006). Self-gating on the composition shape — corpus-probed to fire
-/// only on the CAN-style frame description, zero false positives on the wire-based or other serial specs.
+/// `order`; `phase_name` stays `None` when the source states only a flat sequence.
+/// General grammar, no chip names (ADR 0006). Self-gating on the composition shape.
 fn extract_composition_frame_fields(statements: &[ExtractedStatement]) -> Vec<SerialFrameField> {
     let mut fields: Vec<SerialFrameField> = Vec::new();
     let mut seen: BTreeSet<String> = BTreeSet::new();
@@ -9272,8 +9225,8 @@ fn extract_composition_frame_fields(statements: &[ExtractedStatement]) -> Vec<Se
                 name: name.to_string(),
                 bit_width,
                 bit_range: None,
-                phase: None,
-                swdio_direction: None,
+                phase_name: None,
+                participant_drive: None,
                 order: Some(idx as u32),
                 response_values: Vec::new(),
                 supporting_statement_ids: supporting,
@@ -9283,8 +9236,7 @@ fn extract_composition_frame_fields(statements: &[ExtractedStatement]) -> Vec<Se
     fields
 }
 
-/// EXTRACTOR-ARCHITECTURE.9a — the SWD-style bit-range/named-bit frame strategy as a registered
-/// `Extractor`. Its grammar self-gates on serial-doc markers, so no separate `applies_to` is needed.
+/// The phase-bound bit-range/named-bit frame strategy as a registered extractor.
 struct SerialFrameBitRangeExtractor;
 impl Extractor<SerialFrameField> for SerialFrameBitRangeExtractor {
     fn name(&self) -> &'static str {
@@ -9295,9 +9247,7 @@ impl Extractor<SerialFrameField> for SerialFrameBitRangeExtractor {
     }
 }
 
-/// EXTRACTOR-ARCHITECTURE.9a — the prose composition-list frame strategy (the CAN shape) as a registered
-/// `Extractor`. Disjoint from the bit-range strategy by construction (CAN lacks the SWD markers; SWD lacks
-/// the composition sentence), so the surface's key-merge is a defensive guarantee, not a load-bearing fix.
+/// The prose composition-list frame strategy as a registered extractor.
 struct SerialFrameCompositionExtractor;
 impl Extractor<SerialFrameField> for SerialFrameCompositionExtractor {
     fn name(&self) -> &'static str {
@@ -9317,7 +9267,7 @@ impl Extractor<SerialFrameField> for SerialFrameCompositionExtractor {
 // `is_register_field_header` claims (register-access vocabulary: Access/Reset/Default/Type
 // columns) belongs to the register surface, never here. Tables without a container caption
 // (USB descriptors, restriction/status tables) and field shapes without a field-name column
-// (CCIX `Bit Location|Field Description`, OpenCAPI `Operand mnemonic`) stay honest residuals
+// (`Bit Location|Field Description`, `Operand mnemonic`) stay honest residuals
 // for later strategies.
 // ---------------------------------------------------------------------------------------------
 
@@ -11449,7 +11399,7 @@ fn is_frame_field_name(s: &str) -> bool {
 }
 
 /// Recover a frame field's bit width when prose states it DIRECTLY as a plural "<num> bits" count whose
-/// subject is the field name ("CONTROL FIELD consists of six bits", "ACK FIELD is two bits long"). Rejects
+/// subject is the field name (`<field> consists of <count> bits`). Rejects
 /// "<num> bit <noun>" ("consists of the 11 bit IDENTIFIER", where the count modifies a sub-field) and singular
 /// "a single … bit" forms, so a width is never mis-attributed (honesty guardrail). Returns the width and the
 /// supporting statement id. (PDF-VARIANT-DIGESTION.9.3b)
@@ -11519,8 +11469,8 @@ fn parse_count_word(tok: &str) -> Option<u32> {
     }
 }
 
-/// Upsert a serial-frame field by name: widen the bit-width / fill phase / record the supporting
-/// statement on an existing field, or create a new one. (`SWD-SERIAL-EXTRACTION.3`/`.3b`)
+/// Upsert a serial-frame field by name: widen the bit-width, fill a document-stated phase, and
+/// preserve supporting evidence without interpreting the field name.
 #[allow(clippy::too_many_arguments)]
 fn upsert_serial_field(
     out: &mut Vec<SerialFrameField>,
@@ -11529,7 +11479,7 @@ fn upsert_serial_field(
     name: &str,
     width: Option<u32>,
     bit_range: Option<(u32, u32)>,
-    phase: Option<SerialFramePhase>,
+    phase_name: Option<String>,
     stmt_id: &str,
 ) {
     if let Some(&idx) = index_by_name.get(name) {
@@ -11538,8 +11488,8 @@ fn upsert_serial_field(
             field.bit_width = width;
             field.bit_range = bit_range;
         }
-        if field.phase.is_none() {
-            field.phase = phase;
+        if field.phase_name.is_none() {
+            field.phase_name = phase_name;
         }
         if !field.supporting_statement_ids.iter().any(|s| s == stmt_id) {
             field.supporting_statement_ids.push(stmt_id.to_string());
@@ -11553,51 +11503,61 @@ fn upsert_serial_field(
         name: name.to_string(),
         bit_width: width,
         bit_range,
-        phase,
-        swdio_direction: None,
+        phase_name,
+        participant_drive: None,
         order: None,
         response_values: Vec::new(),
         supporting_statement_ids: vec![stmt_id.to_string()],
     });
 }
 
-/// SWD-SERIAL-EXTRACTION.4c — the actor that SOURCES (drives) the wire in a directional statement:
-/// "from the `<A>` to the `<B>`" → `<A>`; "`<A>` to `<B>`, following a read/write request (FIELD)" →
-/// `<A>`. Returns the lowercase source actor token (host/debugger/target/dp), else `None`.
-fn swdio_source_actor(text: &str) -> Option<String> {
-    let lower = text.to_ascii_lowercase();
-    let clean = |t: &str| {
-        t.trim_matches(|c: char| !c.is_ascii_alphanumeric())
-            .to_ascii_lowercase()
-    };
-    if let Some(p) = lower.find("from the ") {
-        let rest = &lower[p + "from the ".len()..];
-        if rest.contains(" to the ") || rest.contains(" to ") {
-            return rest.split_whitespace().next().map(clean);
+/// Parse an explicit `from [the] A to [the] B` relation. Both participants remain opaque,
+/// document-derived tokens; the extractor never maps them to stored protocol roles.
+fn participant_drive_from_text(text: &str) -> Option<ParticipantDriveRecord> {
+    let words: Vec<&str> = text.split_whitespace().collect();
+    for index in 0..words.len() {
+        if !words[index].eq_ignore_ascii_case("from") {
+            continue;
         }
-    }
-    // "Target to host, following a read request (RDATA)." — the leading token is the source.
-    if lower.contains("following a") && lower.contains("request") && lower.contains(" to ") {
-        return text
-            .trim_start_matches(['-', ' '])
-            .split_whitespace()
-            .next()
-            .map(clean);
+        let mut source_index = index + 1;
+        if words
+            .get(source_index)
+            .is_some_and(|word| word.eq_ignore_ascii_case("the"))
+        {
+            source_index += 1;
+        }
+        let source = words
+            .get(source_index)
+            .and_then(|word| participant_token(word))?;
+        let to_index = words[source_index + 1..]
+            .iter()
+            .position(|word| word.eq_ignore_ascii_case("to"))?
+            + source_index
+            + 1;
+        let mut destination_index = to_index + 1;
+        if words
+            .get(destination_index)
+            .is_some_and(|word| word.eq_ignore_ascii_case("the"))
+        {
+            destination_index += 1;
+        }
+        let destination = words
+            .get(destination_index)
+            .and_then(|word| participant_token(word));
+        return Some(ParticipantDriveRecord {
+            source_actor: source,
+            destination_actor: destination,
+        });
     }
     None
 }
 
-/// Map a source-actor token to who drives SWDIO (the host/debugger, or the target/DP). `.4c`.
-fn swdio_direction_from_actor(actor: &str) -> Option<SwdioDirection> {
-    match actor {
-        "host" | "debugger" => Some(SwdioDirection::HostDrives),
-        "target" | "dp" => Some(SwdioDirection::TargetDrives),
-        _ => None,
-    }
+fn participant_token(raw: &str) -> Option<String> {
+    let token = raw.trim_matches(|c: char| !(c.is_ascii_alphanumeric() || c == '-' || c == '_'));
+    (!token.is_empty()).then(|| token.to_string())
 }
 
-/// True if `word` occurs in `text` not surrounded by alphanumerics (a token-boundary match), so
-/// "WDATA" matches "WDATA[0:31]" but not a substring of a larger identifier. `.4c`.
+/// True if `word` occurs in `text` at identifier boundaries, including before a bit range.
 fn text_has_word(text: &str, word: &str) -> bool {
     let bytes = text.as_bytes();
     let wbytes = word.as_bytes();
@@ -11618,10 +11578,7 @@ fn text_has_word(text: &str, word: &str) -> bool {
     false
 }
 
-/// SWD-SERIAL-EXTRACTION.4b — parse single-bit CONTROL fields defined as "A single `<name>` bit …"
-/// (Start/Stop/Parity) or "the `<Name>` bit …" (Park) → the field name. These complete the SWD packet
-/// request frame and are not bit-ranges or "the N bits …" lists. Grammar (a glossary definition), not
-/// names (ADR 0006); the name is taken from the definition itself.
+/// Parse single-bit fields defined by a local glossary-style `single <name> bit` construction.
 fn parse_control_bit_fields(text: &str) -> Vec<String> {
     let mut out = Vec::new();
     let words: Vec<&str> = text.split_whitespace().collect();
@@ -11710,93 +11667,20 @@ fn parse_named_bit_list(text: &str) -> Vec<String> {
     out
 }
 
-/// Recover the response values of a serial acknowledge field. SWD states them as "<value> response to
-/// a DPACC or APACC access" (e.g. "WAIT response to a DPACC …", "OK or FAULT response to a …"), so the
-/// extraction is gated to DP/AP-access-response statements and reads the 1–2 value tokens immediately
-/// before "response" (handling the "X or Y" / "X/Y" list), excluding the access-type tokens themselves.
-/// Grammar, not a hardcoded value list (ADR 0006).
-fn extract_ack_response_values(statements: &[ExtractedStatement]) -> Vec<String> {
-    let mut values: Vec<String> = Vec::new();
-    let is_value_token = |t: &str| -> bool {
-        (2..=7).contains(&t.len())
-            && t.chars().all(|c| c.is_ascii_uppercase())
-            && !matches!(t, "DPACC" | "APACC" | "DP" | "AP")
-    };
-    let mut push = |t: &str| {
-        if is_value_token(t) && !values.iter().any(|v| v == t) {
-            values.push(t.to_string());
-        }
-    };
-    for statement in statements {
-        let lower = statement.text.to_ascii_lowercase();
-        // Only DP/AP access-response statements describe the ACK responses.
-        if !(lower.contains("dpacc") || lower.contains("apacc")) {
-            continue;
-        }
-        let words: Vec<&str> = statement.text.split_whitespace().collect();
-        for (i, w) in words.iter().enumerate() {
-            if !w.eq_ignore_ascii_case("response") || i == 0 {
-                continue;
-            }
-            // The value(s) directly before "response": "WAIT response", "OK or FAULT response",
-            // "OK/FAULT response". Walk back over value tokens joined by "or" / "/".
-            let mut j = i;
-            while j >= 1 {
-                let raw = words[j - 1];
-                if raw.eq_ignore_ascii_case("or") {
-                    j -= 1;
-                    continue;
-                }
-                for part in raw.split('/') {
-                    let tok = part.trim_matches(|c: char| !c.is_ascii_alphanumeric());
-                    push(tok);
-                }
-                // stop unless the token before is an "or" joiner
-                if j >= 2 && words[j - 2].eq_ignore_ascii_case("or") {
-                    j -= 1;
-                } else {
-                    break;
-                }
-            }
-        }
-    }
-    values.sort();
-    values
-}
-
-/// SWD-SERIAL-EXTRACTION.4 — extract the protocol FSM states (the JTAG TAP / SWD line state machine).
-/// Gated to documents that describe a state machine ("state machine" / DBGTAPSM / "TAP controller"), so
-/// non-FSM specs produce nothing. States are recognized by the "`<StateName>` state" grammar where the
-/// name is a hyphen/slash-joined capitalized token (Shift-DR, Run-Test/Idle, Test-Logic-Reset) — grammar,
-/// not names (ADR 0006). The per-state action is the clause that follows ("In the Shift-DR state, <action>").
+/// Extract hyphenated state names only when the document explicitly declares a state machine. A
+/// machine identity is never inferred, and at least two distinct states are required.
 fn extract_protocol_states(statements: &[ExtractedStatement]) -> Vec<ProtocolStateRecord> {
     let has_state_machine = statements.iter().any(|s| {
         let l = s.text.to_ascii_lowercase();
-        l.contains("state machine") || l.contains("dbgtapsm") || l.contains("tap controller")
+        l.contains("state machine")
     });
     if !has_state_machine {
         return Vec::new();
     }
-    let machine_name = statements
-        .iter()
-        .any(|s| s.text.contains("DBGTAPSM"))
-        .then(|| "DBGTAPSM".to_string());
     let mut out: Vec<ProtocolStateRecord> = Vec::new();
     let mut index_by_name: BTreeMap<String, usize> = BTreeMap::new();
     let mut counter = 0usize;
     for statement in statements {
-        let lower = statement.text.to_ascii_lowercase();
-        // State-machine context: a statement that talks about the TAP / state machine / scan chain.
-        let in_context = lower.contains("dbgtapsm")
-            || lower.contains("tap")
-            || lower.contains("state machine")
-            || lower.contains("scan chain")
-            || lower.contains(" tck")
-            || lower.contains("instruction register")
-            || lower.contains("data register");
-        if !in_context {
-            continue;
-        }
         for (name, action) in find_states_with_actions(&statement.text) {
             if let Some(&idx) = index_by_name.get(&name) {
                 let state = &mut out[idx];
@@ -11817,7 +11701,7 @@ fn extract_protocol_states(statements: &[ExtractedStatement]) -> Vec<ProtocolSta
             index_by_name.insert(name.clone(), out.len());
             out.push(ProtocolStateRecord {
                 state_id: format!("protocol_state_{counter:04}"),
-                machine_name: machine_name.clone(),
+                machine_name: None,
                 state_name: name,
                 action,
                 supporting_statement_ids: vec![statement.statement_id.clone()],
@@ -11847,14 +11731,15 @@ fn extract_protocol_states(statements: &[ExtractedStatement]) -> Vec<ProtocolSta
             merged.push(rec);
         }
     }
-    merged
+    if merged.len() >= 2 {
+        merged
+    } else {
+        Vec::new()
+    }
 }
 
-/// PDF-VARIANT-DIGESTION.9.3a — a NEW, agnostic FSM path for protocols that define their states as
-/// single-quoted operational MODES of a generic actor ("a unit may be in one of three states: 'error
-/// active' / 'error passive' / 'bus off'"; "A node is 'error passive' when …"). The SWD/JTAG path
-/// (`extract_protocol_states` / `find_states_with_actions`) only recognizes `Capitalized-Hyphen state`
-/// names behind a TAP/scan-chain doc-gate, so it yields nothing on this shape.
+/// An agnostic FSM path for protocols that define states as single-quoted operational modes of a
+/// generic actor. It complements the hyphenated-name grammar without a stored protocol identity.
 ///
 /// Grammar (ADR 0006 — universal, no chip/protocol literals): a state is a single-quoted name of 1–3
 /// alphabetic words BOUND to a generic actor-noun (node/unit/station/device) in either the adjective
@@ -12005,17 +11890,14 @@ fn is_quoted_mode_state_name(name: &str) -> bool {
     })
 }
 
-/// PDF-VARIANT-DIGESTION.9.7 — a THIRD agnostic FSM path for protocols that name their states as a single
-/// ALL-CAPS word followed by "state" (SWP's "the DEACTIVATED state", "into ACTIVATED state", "in the
-/// SUSPENDED state"). The SWD/JTAG path (`find_states_with_actions` / `looks_like_state_name`) requires a
-/// hyphen/slash-joined name behind a TAP/scan-chain doc-gate, and `.9.3a`'s quoted-mode path requires single
-/// quotes plus an actor-noun — so neither captures this shape.
+/// An agnostic FSM path for protocols that name states as one uppercase word followed by `state`.
+/// It complements the hyphenated and quoted-mode grammars.
 ///
 /// Grammar (ADR 0006 — universal, no chip/protocol literals): a state is an ALL-CAPS token (≥2 chars, ≥1
 /// letter, hyphens allowed) appearing in `<TRIGGER> [the|a|an] <NAME> state`, where TRIGGER is a
 /// transition/locative word — a state one ENTERS, EXITS, or is IN. That binding is exactly what separates a
-/// STATE ("the interface moves into the SETUP state") from a machine name ("the JTAG TAP state machine":
-/// the word before the candidate is not a transition trigger, and an after-guard drops `<X> state machine`).
+/// A transition trigger distinguishes a state from a machine name; an after-guard drops
+/// `<X> state machine`.
 ///
 /// Two self-gates make the single-word match safe WITHOUT a keyword doc-gate (rejected because SWP never
 /// says "state machine"/"FSM"): each name must recur in ≥2 statements, and a doc must yield ≥2 distinct such
@@ -12192,31 +12074,28 @@ fn is_bare_state_name(tok: &str) -> bool {
 }
 
 // EXTRACTOR-ARCHITECTURE.3 — the FSM-state cluster as a unified surface registry. The four state-grammar
-// readers are now `Extractor<ProtocolStateRecord>` units run by the shared `run_surface` driver instead of
-// four inline dedup-by-name loops at the `build()` call site. Each unit just calls its existing (unchanged)
-// grammar function — a refactor of the WIRING, not the grammars. Registry ORDER is the legacy precedence
-// (jtag → swd_line → quoted → transition) and the surface key is the uppercased state name (the legacy
-// `eq_ignore_ascii_case` cross-dedup), so the merged inventory is byte-identical to the previous call site.
+// readers are `Extractor<ProtocolStateRecord>` units run by the shared `run_surface` driver. Registry
+// order is deterministic and the surface key is the uppercased document-stated state name.
 
-/// JTAG/SWD-hyphen states (`Shift-DR state`) behind the TAP/scan-chain doc-gate — see `extract_protocol_states`.
-struct JtagTapStateExtractor;
-impl Extractor<ProtocolStateRecord> for JtagTapStateExtractor {
+/// Hyphenated state names behind an explicit state-machine declaration.
+struct HyphenatedStateExtractor;
+impl Extractor<ProtocolStateRecord> for HyphenatedStateExtractor {
     fn name(&self) -> &'static str {
-        "fsm.jtag_tap"
+        "fsm.hyphenated_state"
     }
     fn run(&self, cx: &ExtractionContext<'_>) -> Vec<ProtocolStateRecord> {
         extract_protocol_states(cx.statements)
     }
 }
 
-/// SWD LINE states (reset / operating / protocol-error / lockout / dormant) — see `extract_swd_line_states`.
-struct SwdLineStateExtractor;
-impl Extractor<ProtocolStateRecord> for SwdLineStateExtractor {
+/// State names bound to an explicit transition phrase.
+struct TransitionPhraseStateExtractor;
+impl Extractor<ProtocolStateRecord> for TransitionPhraseStateExtractor {
     fn name(&self) -> &'static str {
-        "fsm.swd_line"
+        "fsm.transition_phrase"
     }
     fn run(&self, cx: &ExtractionContext<'_>) -> Vec<ProtocolStateRecord> {
-        extract_swd_line_states(cx.statements)
+        extract_transition_phrase_states(cx.statements)
     }
 }
 
@@ -12244,16 +12123,15 @@ impl Extractor<ProtocolStateRecord> for TransitionBoundStateExtractor {
 }
 
 /// Run the full FSM-state surface registry through the unified driver. Behavior-identical to the legacy
-/// four-inline-loop merge at the `build()` call site: order jtag → swd_line → quoted → transition,
-/// first-wins dedup by uppercased state name. (`EXTRACTOR-ARCHITECTURE.3`)
+/// first-wins merge by uppercased source-derived state name.
 fn protocol_state_surface(
     statements: &[ExtractedStatement],
     manifest: &mut ExtractionManifest,
 ) -> Vec<ProtocolStateRecord> {
     let cx = ExtractionContext { statements };
     let extractors: [&dyn Extractor<ProtocolStateRecord>; 4] = [
-        &JtagTapStateExtractor,
-        &SwdLineStateExtractor,
+        &HyphenatedStateExtractor,
+        &TransitionPhraseStateExtractor,
         &QuotedModeStateExtractor,
         &TransitionBoundStateExtractor,
     ];
@@ -12264,19 +12142,12 @@ fn protocol_state_surface(
     run.records
 }
 
-/// SWD-SERIAL-EXTRACTION.4d — extract the SWD LINE state machine (reset / operating / protocol-error /
-/// lockout / dormant). Unlike the JTAG TAP states, these are lowercase 1–2-word names introduced by a
-/// transition verb: "(enter|enters|into|leave|leaves) [the] `<name>` state". The verb gate keeps real
-/// state transitions and rejects generic "the current/same state" mentions. Gated to serial documents.
-/// Grammar, not names (ADR 0006).
-fn extract_swd_line_states(statements: &[ExtractedStatement]) -> Vec<ProtocolStateRecord> {
-    let is_serial_doc = statements.iter().any(|s| {
-        let l = s.text.to_ascii_lowercase();
-        l.contains("serial wire") || l.contains("packet request") || l.contains("swdio")
-    });
-    if !is_serial_doc {
-        return Vec::new();
-    }
+/// Extract one- or two-word *named* states after an explicit transition verb and before `state`.
+/// The source must mark each name through initial capitalization; unmarked descriptive phrases stay
+/// residual, and `<name> State Machine|Diagram` titles are rejected. Names retain their source spelling.
+/// At least two distinct, repeatedly supported names are required before the set is admitted as a state
+/// inventory. These are document-grammar gates, not a protocol vocabulary.
+fn extract_transition_phrase_states(statements: &[ExtractedStatement]) -> Vec<ProtocolStateRecord> {
     let generic = |w: &str| {
         matches!(
             w,
@@ -12302,22 +12173,9 @@ fn extract_swd_line_states(statements: &[ExtractedStatement]) -> Vec<ProtocolSta
                 | "other"
         )
     };
-    let mut out: Vec<ProtocolStateRecord> = Vec::new();
-    let mut seen: BTreeSet<String> = BTreeSet::new();
-    let mut counter = 0usize;
+    let mut names_in_order: Vec<String> = Vec::new();
+    let mut support_by_name: BTreeMap<String, Vec<String>> = BTreeMap::new();
     for statement in statements {
-        // Per-statement SWD-interface context: the ADI doc also describes the PROCESSOR "Debug state"
-        // (execution mode) — gate to SWD/SW-DP line context so that is not mistaken for a line state.
-        let lower = statement.text.to_ascii_lowercase();
-        if !(lower.contains("swd")
-            || lower.contains("sw-dp")
-            || lower.contains("line")
-            || lower.contains("target")
-            || lower.contains("interface")
-            || lower.contains("protocol"))
-        {
-            continue;
-        }
         let words: Vec<String> = statement
             .text
             .split_whitespace()
@@ -12329,7 +12187,15 @@ fn extract_swd_line_states(statements: &[ExtractedStatement]) -> Vec<ProtocolSta
         for i in 0..words.len() {
             if !matches!(
                 words[i].to_ascii_lowercase().as_str(),
-                "enter" | "enters" | "into" | "leave" | "leaves" | "to"
+                "enter"
+                    | "enters"
+                    | "in"
+                    | "into"
+                    | "leave"
+                    | "leaves"
+                    | "remain"
+                    | "remains"
+                    | "to"
             ) {
                 continue;
             }
@@ -12348,12 +12214,21 @@ fn extract_swd_line_states(statements: &[ExtractedStatement]) -> Vec<ProtocolSta
             }
             let mut name: Vec<String> = Vec::new();
             while k < words.len() && name.len() < 2 {
-                let t = words[k].to_ascii_lowercase();
-                if t == "state" {
+                let source_token = &words[k];
+                let lowered = source_token.to_ascii_lowercase();
+                if lowered == "state" {
                     break;
                 }
-                if t.len() >= 3 && t.chars().all(|c| c.is_ascii_alphabetic()) && !generic(&t) {
-                    name.push(t);
+                let is_named_form = source_token
+                    .chars()
+                    .next()
+                    .is_some_and(|c| c.is_ascii_uppercase());
+                if lowered.len() >= 3
+                    && lowered.chars().all(|c| c.is_ascii_alphabetic())
+                    && is_named_form
+                    && !generic(&lowered)
+                {
+                    name.push(source_token.clone());
                     k += 1;
                 } else {
                     break;
@@ -12366,48 +12241,49 @@ fn extract_swd_line_states(statements: &[ExtractedStatement]) -> Vec<ProtocolSta
             {
                 continue;
             }
-            // Strip a leading QUALIFIER from a 2-word name so adjectives/sequence-words collapse to the
-            // canonical state head: "line reset" → "reset" (dedups the Reset state), "required operating"
-            // → "operating". A genuine 2-word state name ("protocol error") has a non-qualifier head.
-            if name.len() == 2
-                && matches!(
-                    name[0].as_str(),
-                    "line"
-                        | "required"
-                        | "relevant"
-                        | "powerup"
-                        | "sel"
-                        | "normal"
-                        | "valid"
-                        | "default"
-                        | "initial"
-                        | "single"
-                        | "certain"
-                        | "particular"
-                        | "specific"
-                        | "appropriate"
+            if words.get(k + 1).is_some_and(|word| {
+                matches!(
+                    word.to_ascii_lowercase().as_str(),
+                    "machine" | "machines" | "diagram" | "diagrams"
                 )
-            {
-                name.remove(0);
-            }
-            let mut state_name = name.join(" ");
-            if let Some(first) = state_name.get_mut(0..1) {
-                first.make_ascii_uppercase();
-            }
-            if !seen.insert(state_name.clone()) {
+            }) {
                 continue;
             }
-            counter += 1;
-            out.push(ProtocolStateRecord {
-                state_id: format!("swd_line_state_{counter:04}"),
-                machine_name: Some("SWD line state machine".to_string()),
-                state_name,
-                action: None,
-                supporting_statement_ids: vec![statement.statement_id.clone()],
-            });
+            let state_name = name.join(" ");
+            if !names_in_order.contains(&state_name) {
+                names_in_order.push(state_name.clone());
+            }
+            let support = support_by_name.entry(state_name).or_default();
+            if !support.contains(&statement.statement_id) {
+                support.push(statement.statement_id.clone());
+            }
         }
     }
-    out
+    let retained: Vec<String> = names_in_order
+        .into_iter()
+        .filter(|name| {
+            support_by_name
+                .get(name)
+                .is_some_and(|support| support.len() >= 2)
+        })
+        .collect();
+    if retained.len() < 2 {
+        return Vec::new();
+    }
+    retained
+        .into_iter()
+        .enumerate()
+        .map(|(index, state_name)| {
+            let supporting_statement_ids = support_by_name.remove(&state_name).unwrap_or_default();
+            ProtocolStateRecord {
+                state_id: format!("transition_state_{:04}", index + 1),
+                machine_name: None,
+                state_name,
+                action: None,
+                supporting_statement_ids,
+            }
+        })
+        .collect()
 }
 
 /// Find FSM states in text via "`<StateName>` state" → (state_name, optional action clause). The state
@@ -12503,7 +12379,7 @@ fn parse_bit_range_fields(text: &str) -> Vec<(String, u32, u32)> {
     out
 }
 
-/// SWD-SERIAL-EXTRACTION.4e — registered prose reader for explicit interface edge timing.
+/// Registered prose reader for explicit interface edge timing.
 struct InterfaceEdgeTimingExtractor;
 impl Extractor<InterfaceEdgeTimingRecord> for InterfaceEdgeTimingExtractor {
     fn name(&self) -> &'static str {
@@ -12720,110 +12596,90 @@ fn canonical_declared_signal(
     known_signals.contains(&candidate).then_some(candidate)
 }
 
-/// SWD-SERIAL-EXTRACTION.4b — recover the SWD packet-protocol operations (response branching): each
-/// EXTRACTOR-ARCHITECTURE.9a — the SWD packet-operations surface as a registered `Extractor` (currently a
-/// single strategy; the concat driver is identity for one producer, as with the actors surface in `.7`).
-/// Registering it gives serial/debug documents a uniform manifest entry — a behavioral fingerprint token
-/// the CORPUS-PATTERN-REUSE profile plane consumes — and readies the surface for multi-strategy growth.
-struct SwdOperationExtractor;
-impl Extractor<SwdOperation> for SwdOperationExtractor {
+/// Document-stated operation or response branches with explicit phase cardinality.
+struct ProtocolOperationExtractor;
+impl Extractor<ProtocolOperationRecord> for ProtocolOperationExtractor {
     fn name(&self) -> &'static str {
         "operations.prose"
     }
-    fn run(&self, cx: &ExtractionContext<'_>) -> Vec<SwdOperation> {
-        extract_swd_operations(cx.statements)
+    fn run(&self, cx: &ExtractionContext<'_>) -> Vec<ProtocolOperationRecord> {
+        extract_protocol_operations(cx.statements)
     }
 }
 
-/// Run the SWD-operations surface through the concat driver for a uniform manifest entry
-/// (EXTRACTOR-ARCHITECTURE.9a). One producer → concat is identity → output unchanged.
-fn swd_operation_surface(
+/// Run the operation surface through the common manifest-producing driver.
+fn protocol_operation_surface(
     statements: &[ExtractedStatement],
     manifest: &mut ExtractionManifest,
-) -> Vec<SwdOperation> {
+) -> Vec<ProtocolOperationRecord> {
     let run = run_surface_concat(
-        "swd_operations",
+        "protocol_operations",
         &ExtractionContext { statements },
-        &[&SwdOperationExtractor],
+        &[&ProtocolOperationExtractor],
     );
     manifest.record(&run);
     run.records
 }
 
-/// "a successful `<read|write>` operation consists of three phases" / "A `<WAIT|FAULT>` response …
-/// consists of two phases" header becomes a `SwdOperation`. OK → 3-phase (has data); WAIT/FAULT →
-/// 2-phase. The turnaround-before-data flag comes from the write ("turnaround between the acknowledge
-/// phase and the WDATA") vs read ("no turnaround … between the acknowledge phase and the data") prose.
-/// Gated to serial documents. Grammar, not names (ADR 0006).
-fn extract_swd_operations(statements: &[ExtractedStatement]) -> Vec<SwdOperation> {
-    let is_serial_doc = statements.iter().any(|s| {
-        let l = s.text.to_ascii_lowercase();
-        l.contains("serial wire") || l.contains("packet request") || l.contains("swdio")
-    });
-    if !is_serial_doc {
-        return Vec::new();
-    }
-    let mut write_trn: Option<bool> = None;
-    let mut read_trn: Option<bool> = None;
-    for s in statements {
-        let l = s.text.to_ascii_lowercase();
-        if l.contains("turnaround period between the acknowledge phase and the") {
-            write_trn = Some(true);
-        }
-        if l.contains("no turnaround period between the acknowledge phase and the data") {
-            read_trn = Some(false);
-        }
-    }
+/// Extract `operation`/`response` clauses that explicitly state a number of phases. All labels are
+/// copied from adjacent source tokens; no known operation, response, or phase name is recognized.
+fn extract_protocol_operations(statements: &[ExtractedStatement]) -> Vec<ProtocolOperationRecord> {
     let mut out = Vec::new();
     let mut seen: BTreeSet<String> = BTreeSet::new();
     let mut counter = 0usize;
     for s in statements {
-        let l = s.text.to_ascii_lowercase();
-        let phase_count: u32 = if l.contains("consists of three phases") {
-            3
-        } else if l.contains("consists of two phases") {
-            2
-        } else {
+        let words: Vec<&str> = s.text.split_whitespace().collect();
+        let phase_count = words.windows(2).find_map(|pair| {
+            let unit = pair[1].trim_matches(|c: char| !c.is_ascii_alphabetic());
+            (unit.eq_ignore_ascii_case("phase") || unit.eq_ignore_ascii_case("phases"))
+                .then(|| parse_count_word(pair[0]))
+                .flatten()
+        });
+        let Some(phase_count) = phase_count else {
             continue;
         };
-        let response = if l.contains("successful") || l.contains("ok response") {
-            "OK"
-        } else if l.contains("wait response") {
-            "WAIT"
-        } else if l.contains("fault response") {
-            "FAULT"
-        } else {
+        let response_index = words.iter().position(|word| {
+            word.trim_matches(|c: char| !c.is_ascii_alphabetic())
+                .eq_ignore_ascii_case("response")
+        });
+        let operation_index = words.iter().position(|word| {
+            word.trim_matches(|c: char| !c.is_ascii_alphabetic())
+                .eq_ignore_ascii_case("operation")
+        });
+        if response_index.is_none() && operation_index.is_none() {
             continue;
+        }
+        let token_at = |index: usize| {
+            words.get(index).and_then(|word| {
+                let token = word
+                    .trim_matches(|c: char| !(c.is_ascii_alphanumeric() || c == '-' || c == '/'));
+                (!token.is_empty()).then(|| token.to_string())
+            })
         };
-        let has_read = l.contains("read");
-        let has_write = l.contains("write");
-        let access = match (has_read, has_write) {
-            (true, false) => Some("read"),
-            (false, true) => Some("write"),
-            _ => None,
-        };
-        let has_data_phase = phase_count == 3;
-        let turnaround_before_data = if has_data_phase {
-            match access {
-                Some("write") => write_trn,
-                Some("read") => read_trn,
-                _ => None,
-            }
-        } else {
-            None
-        };
-        let key = format!("{response}-{access:?}-{phase_count}");
+        let token_before = |index: usize| index.checked_sub(1).and_then(token_at);
+        let branch_label = response_index.and_then(token_before).or_else(|| {
+            operation_index
+                .and_then(|index| index.checked_sub(2))
+                .and_then(token_at)
+                .filter(|token| !matches!(token.to_ascii_lowercase().as_str(), "a" | "an" | "the"))
+        });
+        let operation_name = operation_index
+            .and_then(token_before)
+            .filter(|token| !matches!(token.to_ascii_lowercase().as_str(), "a" | "an" | "the"));
+        if branch_label.is_none() && operation_name.is_none() {
+            continue;
+        }
+        let key = format!("{branch_label:?}-{operation_name:?}-{phase_count}");
         if !seen.insert(key) {
             continue;
         }
         counter += 1;
-        out.push(SwdOperation {
-            operation_id: format!("swd_operation_{counter:04}"),
-            response: response.to_string(),
-            access: access.map(|a| a.to_string()),
+        out.push(ProtocolOperationRecord {
+            operation_id: format!("protocol_operation_{counter:04}"),
+            branch_label,
+            operation_name,
             phase_count,
-            has_data_phase,
-            turnaround_before_data,
+            phase_names: Vec::new(),
             supporting_statement_ids: vec![s.statement_id.clone()],
         });
     }
@@ -13384,7 +13240,8 @@ fn register_name_from_heading(title: &str) -> Option<String> {
 /// PDF-VARIANT-DIGESTION.2 (Lever A, deterministic strategy) — recover REGISTER-FIELD tables that the
 /// ingest classifier left `unknown`, most often because Docling did not mark the column-title row as a
 /// header so it lands in `body_rows[0]`. These field-definition tables are ubiquitous in TRMs / architecture
-/// / register specs (RISC-V, CoreSight, OpenCAPI). ADDITIVE: emits extra `RegisterRecord`s (one per table,
+/// / register specs across processor, interconnect, and device domains. ADDITIVE: emits extra
+/// `RegisterRecord`s (one per table,
 /// rows → fields); never touches signal/constraint/relation extraction, so the wire-based specs are
 /// unaffected. Skips tables already handled by [`synthesize_register_records`]. Header GRAMMAR only.
 fn synthesize_register_field_tables(
@@ -15906,7 +15763,8 @@ mod tests {
     };
 
     use super::{
-        EvidenceIr, EvidenceLinkKind, EvidenceModality, ExtractorTier, FactKind,
+        EVIDENCE_IR_SCHEMA_VERSION, EvidenceIr, EvidenceLinkKind, EvidenceModality, ExtractorTier,
+        FactKind, ParticipantDriveRecord, ProtocolOperationRecord, SerialFrameField,
         SignalSemanticHintSourceKind, SignalSemanticTag, StatementClass, VisualObservationKind,
         actor_signal_relation_fact_key, contains_any, contains_reference_token, diagram_kind_key,
         is_abstract_transport_actor_term, is_abstract_transport_signal_token,
@@ -21621,6 +21479,122 @@ mod tests {
                 .all(|span| span.source_path.is_absolute())
         );
         assert!(!reloaded.to_pretty_json()?.contains("/retired/specforge"));
+        Ok(())
+    }
+
+    #[test]
+    fn evidence_ir_schema_one_neutralizes_legacy_protocol_authority_before_deserialization()
+    -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("legacy_protocol.md");
+        let source_artifact_base = tempdir.path().join("generated/source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated/evidence_ir");
+        fs::write(
+            &source,
+            "# Structure\nThe packet frame contains named fields.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.write_to_disk()?;
+        let evidence_path = evidence_ir.artifact_layout.evidence_ir_path.clone();
+        let mut json =
+            serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&evidence_path)?)?;
+        json["schema_version"] = serde_json::json!(1);
+        // This deliberately uses an obsolete scalar direction encoding that schema 2 cannot deserialize.
+        // Clearing the surface at the JSON boundary proves migration does not reinterpret old authority.
+        json["serial_frame_fields"] = serde_json::json!([{
+            "field_id": "legacy_field_0001",
+            "name": "LEGACY_NAME",
+            "phase": "legacy_phase",
+            "participant_drive": "legacy_direction",
+            "supporting_statement_ids": ["statement_0001"]
+        }]);
+        json["protocol_states"] = serde_json::json!([{
+            "state_id": "legacy_state_0001",
+            "machine_name": "legacy_machine",
+            "state_name": "legacy_state",
+            "supporting_statement_ids": ["statement_0001"]
+        }]);
+        json["protocol_operations"] = serde_json::json!([{
+            "operation_id": "legacy_operation_0001",
+            "response": "legacy_response",
+            "phase_count": 2,
+            "supporting_statement_ids": ["statement_0001"]
+        }]);
+        json["extraction_manifest"] = serde_json::json!({"surfaces": [{"surface": "legacy"}]});
+        fs::write(&evidence_path, serde_json::to_string_pretty(&json)?)?;
+
+        let loaded = EvidenceIr::load_from_path(&evidence_path)?;
+        assert_eq!(loaded.schema_version, EVIDENCE_IR_SCHEMA_VERSION);
+        assert!(loaded.serial_frame_fields.is_empty());
+        assert!(loaded.protocol_states.is_empty());
+        assert!(loaded.protocol_operations.is_empty());
+        assert!(loaded.extraction_manifest.surfaces.is_empty());
+        Ok(())
+    }
+
+    #[test]
+    fn evidence_ir_schema_two_retains_neutral_protocol_records_and_rejects_future_schema()
+    -> Result<()> {
+        let tempdir = tempdir()?;
+        let source = tempdir.path().join("neutral_protocol.md");
+        let source_artifact_base = tempdir.path().join("generated/source_ir");
+        let evidence_artifact_base = tempdir.path().join("generated/evidence_ir");
+        fs::write(
+            &source,
+            "# Structure\nThe packet frame contains named fields.\n",
+        )?;
+
+        let source_ir = SourceIr::build(&source, &source_artifact_base)?;
+        source_ir.write_to_disk()?;
+        let mut evidence_ir = EvidenceIr::build(
+            &source_ir.artifact_layout.source_ir_path,
+            &evidence_artifact_base,
+        )?;
+        evidence_ir.serial_frame_fields = vec![SerialFrameField {
+            field_id: "serial_field_0001".to_string(),
+            name: "ALPHA".to_string(),
+            bit_width: Some(2),
+            bit_range: Some((1, 0)),
+            phase_name: Some("lilac".to_string()),
+            participant_drive: Some(ParticipantDriveRecord {
+                source_actor: "orchid".to_string(),
+                destination_actor: Some("quartz".to_string()),
+            }),
+            order: Some(0),
+            response_values: Vec::new(),
+            supporting_statement_ids: vec!["statement_0001".to_string()],
+        }];
+        evidence_ir.protocol_operations = vec![ProtocolOperationRecord {
+            operation_id: "protocol_operation_0001".to_string(),
+            branch_label: Some("amber".to_string()),
+            operation_name: Some("transfer".to_string()),
+            phase_count: 2,
+            phase_names: vec!["lilac".to_string(), "violet".to_string()],
+            supporting_statement_ids: vec!["statement_0001".to_string()],
+        }];
+        evidence_ir.write_to_disk()?;
+        let evidence_path = evidence_ir.artifact_layout.evidence_ir_path.clone();
+
+        let loaded = EvidenceIr::load_from_path(&evidence_path)?;
+        assert_eq!(loaded.serial_frame_fields, evidence_ir.serial_frame_fields);
+        assert_eq!(loaded.protocol_operations, evidence_ir.protocol_operations);
+
+        let mut future =
+            serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&evidence_path)?)?;
+        future["schema_version"] = serde_json::json!(EVIDENCE_IR_SCHEMA_VERSION + 1);
+        fs::write(&evidence_path, serde_json::to_string_pretty(&future)?)?;
+        let error = EvidenceIr::load_from_path(&evidence_path).expect_err("future schema rejected");
+        assert!(
+            error
+                .to_string()
+                .contains("unsupported EvidenceIR schema version")
+        );
         Ok(())
     }
 
@@ -27398,19 +27372,18 @@ mod extractor_architecture_9a {
     }
 
     #[test]
-    fn swd_operation_surface_records_manifest_entry_even_when_empty() {
-        // A non-serial document keeps the surface visible in the manifest (eligible, fired nothing) —
-        // honest "ran and found nothing", distinct from "never ran".
+    fn protocol_operation_surface_records_manifest_entry_even_when_empty() {
+        // A document without an explicit operation cardinality keeps the surface visible in the manifest.
         let statements = vec![stmt("p", "PWDATA is driven by the requester.")];
         let mut manifest = ExtractionManifest::default();
-        let operations = swd_operation_surface(&statements, &mut manifest);
+        let operations = protocol_operation_surface(&statements, &mut manifest);
         assert!(operations.is_empty());
 
         let surface = manifest
             .surfaces
             .iter()
-            .find(|s| s.surface == "swd_operations")
-            .expect("swd_operations surface recorded");
+            .find(|s| s.surface == "protocol_operations")
+            .expect("protocol_operations surface recorded");
         assert_eq!(surface.eligible, 1);
         assert_eq!(surface.entries.len(), 1);
         assert_eq!(surface.entries[0].name, "operations.prose");
@@ -27909,33 +27882,24 @@ mod swd_serial_extraction_3 {
     }
 
     #[test]
-    fn extracts_swd_frame_fields_with_widths() {
+    fn extracts_phase_bound_frame_fields_with_widths() {
         let stmts = vec![
             stmt(
                 "d",
-                "The SWD interface uses a single bidirectional data pin, SWDIO.",
+                "The packet frame contains three phases and named fields.",
             ),
-            stmt(
-                "a",
-                "The first three bits of data that are shifted out are ACK[2:0].",
-            ),
-            stmt(
-                "w",
-                "The parity check is made over the 32 data bits WDATA[0:31].",
-            ),
-            stmt(
-                "r",
-                "The parity check is made over the 32 data bits RDATA[0:31].",
-            ),
+            stmt("a", "The lilac phase carries ALPHA[2:0]."),
+            stmt("w", "The amber phase carries BETA[0:31]."),
+            stmt("r", "The violet phase carries GAMMA[0:31]."),
         ];
         let fields = extract_serial_frame_fields(&stmts);
         let by: std::collections::BTreeMap<_, _> = fields
             .iter()
             .map(|f| (f.name.as_str(), f.bit_width))
             .collect();
-        assert_eq!(by.get("ACK"), Some(&Some(3)), "ACK is 3 bits");
-        assert_eq!(by.get("WDATA"), Some(&Some(32)), "WDATA is 32 bits");
-        assert_eq!(by.get("RDATA"), Some(&Some(32)), "RDATA is 32 bits");
+        assert_eq!(by.get("ALPHA"), Some(&Some(3)));
+        assert_eq!(by.get("BETA"), Some(&Some(32)));
+        assert_eq!(by.get("GAMMA"), Some(&Some(32)));
     }
 
     #[test]
@@ -28356,10 +28320,9 @@ mod extractor_architecture_3_fsm_surface {
 
     #[test]
     fn surface_unions_quoted_and_transition_grammars_and_dedups_by_name() {
-        // Quoted-mode grammar contributes `reset` + `active` (a node IS '<mode>'); transition-bound grammar
-        // contributes `RESET` + `HALT` (enters the <NAME> state). `RESET` collapses onto the earlier-in-order
-        // quoted `reset` (uppercased key), so the union is {reset, active, HALT} — proving both grammars feed
-        // ONE surface and the cross-grammar dedup matches the legacy first-wins-by-name behavior.
+        // Transition-phrase grammar contributes `RESET` + `HALT`; quoted-mode grammar contributes
+        // `reset` + `active`. The duplicate collapses by case-insensitive name, proving both grammars
+        // feed one surface and first-wins ordering remains deterministic.
         let stmts = vec![
             stmt("a", "A node is 'reset' when the controller clears it."),
             stmt("b", "A node is 'reset' until reinitialised."),
@@ -28377,11 +28340,11 @@ mod extractor_architecture_3_fsm_surface {
         .into_iter()
         .map(|s| s.state_name)
         .collect();
-        assert!(names.contains(&"reset".to_string()), "got {names:?}");
+        assert!(names.contains(&"RESET".to_string()), "got {names:?}");
         assert!(names.contains(&"active".to_string()), "got {names:?}");
         assert!(names.contains(&"HALT".to_string()), "got {names:?}");
-        // `RESET` (transition) must NOT appear as a second record — it deduped onto quoted `reset`.
-        assert!(!names.contains(&"RESET".to_string()), "got {names:?}");
+        // The later quoted rendering must not become a second record.
+        assert!(!names.contains(&"reset".to_string()), "got {names:?}");
         assert_eq!(
             names.len(),
             3,
@@ -28434,66 +28397,35 @@ mod swd_serial_extraction_3b {
     }
 
     #[test]
-    fn ack_response_values_are_clean() {
-        let stmts = vec![
-            stmt("a", "0b001 WAIT WAIT response to a DPACC or APACC access."),
-            stmt(
-                "b",
-                "0b010 OK or FAULT response to a DPACC or APACC access.",
-            ),
-            stmt("c", "The DP response to a CTI request is separate."),
-        ];
-        let vals = extract_ack_response_values(&stmts);
+    fn phase_names_are_document_derived() {
         assert_eq!(
-            vals,
-            vec!["FAULT".to_string(), "OK".to_string(), "WAIT".to_string()]
+            stated_phase_name("during the lilac phase"),
+            Some("lilac".to_string())
         );
-        assert!(
-            !vals.iter().any(|v| v == "DP" || v == "CTI"),
-            "no noise: {vals:?}"
-        );
+        assert_eq!(stated_phase_name("consists of three phases"), None);
     }
 
     #[test]
-    fn frame_fields_are_ordered_by_phase() {
+    fn frame_fields_preserve_source_order() {
         let stmts = vec![
             stmt(
                 "d",
-                "The SWD interface uses a single bidirectional data pin, SWDIO.",
+                "The packet frame consists of three phases and named fields.",
             ),
-            stmt(
-                "w",
-                "The parity check is made over the 32 data bits WDATA[0:31].",
-            ),
-            stmt(
-                "q",
-                "The four bits APnDP, RnW are part of the packet request.",
-            ),
-            stmt(
-                "a",
-                "The first three bits of data shifted out are ACK[2:0].",
-            ),
+            stmt("q", "The lilac phase carries ALPHA[0:0]."),
+            stmt("a", "The amber phase carries BETA[2:0]."),
+            stmt("w", "The violet phase carries GAMMA[0:31]."),
         ];
         let fields = extract_serial_frame_fields(&stmts);
-        let req = fields
-            .iter()
-            .find(|f| f.name == "APnDP")
-            .and_then(|f| f.order)
-            .unwrap();
-        let ack = fields
-            .iter()
-            .find(|f| f.name == "ACK")
-            .and_then(|f| f.order)
-            .unwrap();
-        let data = fields
-            .iter()
-            .find(|f| f.name == "WDATA")
-            .and_then(|f| f.order)
-            .unwrap();
-        assert!(
-            req < ack && ack < data,
-            "request<ack<data: req={req} ack={ack} data={data}"
+        assert_eq!(
+            fields
+                .iter()
+                .map(|field| field.name.as_str())
+                .collect::<Vec<_>>(),
+            vec!["ALPHA", "BETA", "GAMMA"]
         );
+        assert_eq!(fields[0].phase_name.as_deref(), Some("lilac"));
+        assert_eq!(fields[2].order, Some(2));
     }
 }
 
@@ -28537,32 +28469,25 @@ mod swd_serial_extraction_4 {
     }
 
     #[test]
-    fn extracts_tap_states_with_machine_name() {
+    fn extracts_hyphenated_states_without_inventing_machine_name() {
         let stmts = vec![
-            stmt(
-                "m",
-                "The debug port includes a Debug TAP State Machine (DBGTAPSM).",
-            ),
+            stmt("m", "The unit includes a state machine."),
             stmt(
                 "s",
-                "While the DBGTAPSM is in the Shift-IR state, the IR scan chain advances.",
+                "While the unit is in the Lilac-One state, the counter advances.",
             ),
             stmt(
                 "u",
-                "When the DBGTAPSM goes through the Update-DR state, the value is transferred.",
+                "When the unit enters the Amber-Two state, the value transfers.",
             ),
         ];
         let states = extract_protocol_states(&stmts);
         let names: Vec<&str> = states.iter().map(|s| s.state_name.as_str()).collect();
         assert!(
-            names.contains(&"Shift-IR") && names.contains(&"Update-DR"),
+            names.contains(&"Lilac-One") && names.contains(&"Amber-Two"),
             "got {names:?}"
         );
-        assert!(
-            states
-                .iter()
-                .all(|s| s.machine_name.as_deref() == Some("DBGTAPSM"))
-        );
+        assert!(states.iter().all(|state| state.machine_name.is_none()));
     }
 
     #[test]
@@ -28745,26 +28670,13 @@ mod swd_serial_extraction_4c {
     }
 
     #[test]
-    fn source_actor_and_direction() {
+    fn source_actor_and_direction_are_opaque() {
         assert_eq!(
-            swdio_source_actor("from the host to the target").as_deref(),
-            Some("host")
-        );
-        assert_eq!(
-            swdio_source_actor("from the target to the host").as_deref(),
-            Some("target")
-        );
-        assert_eq!(
-            swdio_source_actor("Target to host, following a read request (RDATA).").as_deref(),
-            Some("target")
-        );
-        assert_eq!(
-            swdio_direction_from_actor("host"),
-            Some(SwdioDirection::HostDrives)
-        );
-        assert_eq!(
-            swdio_direction_from_actor("target"),
-            Some(SwdioDirection::TargetDrives)
+            participant_drive_from_text("from the orchid to the quartz"),
+            Some(ParticipantDriveRecord {
+                source_actor: "orchid".to_string(),
+                destination_actor: Some("quartz".to_string()),
+            })
         );
     }
 
@@ -28775,56 +28687,28 @@ mod swd_serial_extraction_4c {
     }
 
     #[test]
-    fn derives_per_phase_swdio_direction() {
+    fn derives_per_phase_participant_direction() {
         let stmts = vec![
-            stmt(
-                "d",
-                "The SWD interface uses a single bidirectional data pin, SWDIO.",
-            ),
-            stmt(
-                "r",
-                "An eight-bit write packet request, from the host to the target. The four bits APnDP, RnW are part of the packet request.",
-            ),
+            stmt("d", "The packet frame contains fields in two phases."),
             stmt(
                 "a",
-                "A three-bit OK acknowledge response, from the target to the host. The bits shifted out are ACK[2:0].",
+                "The lilac phase carries ALPHA[3:0] from the orchid to the quartz.",
             ),
             stmt(
-                "w",
-                "A 33-bit WDATA[0:31] data transfer phase, from the host to the target.",
-            ),
-            stmt(
-                "rd",
-                "A 33-bit RDATA[0:31] data transfer phase, where data is transferred from the target to the host.",
+                "b",
+                "The amber phase carries BETA[1:0] from the quartz to the orchid.",
             ),
         ];
         let fields = extract_serial_frame_fields(&stmts);
-        let dir = |n: &str| {
+        let source = |name: &str| {
             fields
                 .iter()
-                .find(|f| f.name == n)
-                .and_then(|f| f.swdio_direction)
+                .find(|field| field.name == name)
+                .and_then(|field| field.participant_drive.as_ref())
+                .map(|direction| direction.source_actor.as_str())
         };
-        assert_eq!(
-            dir("APnDP"),
-            Some(SwdioDirection::HostDrives),
-            "request driven by host"
-        );
-        assert_eq!(
-            dir("ACK"),
-            Some(SwdioDirection::TargetDrives),
-            "ack driven by target"
-        );
-        assert_eq!(
-            dir("WDATA"),
-            Some(SwdioDirection::HostDrives),
-            "write data driven by host"
-        );
-        assert_eq!(
-            dir("RDATA"),
-            Some(SwdioDirection::TargetDrives),
-            "read data driven by target"
-        );
+        assert_eq!(source("ALPHA"), Some("orchid"));
+        assert_eq!(source("BETA"), Some("quartz"));
     }
 }
 
@@ -28879,32 +28763,21 @@ mod swd_serial_extraction_4b {
     }
 
     #[test]
-    fn control_bits_join_the_request_frame() {
+    fn control_bits_require_explicit_frame_binding() {
         let stmts = vec![
+            stmt("d", "The packet frame contains named bit fields."),
             stmt(
-                "d",
-                "The SWD interface uses a single bidirectional data pin, SWDIO.",
-            ),
-            stmt(
-                "r",
-                "An eight-bit write packet request, from the host to the target. APnDP, RnW are request bits.",
-            ),
-            stmt("s", "Start: A single start bit, with value 0b1 ."),
-            stmt(
-                "p",
-                "Park: A single bit. The Park bit is not 0b1 in a protocol error.",
+                "s",
+                "The lilac phase has a single Alpha bit from the orchid to the quartz.",
             ),
         ];
         let fields = extract_serial_frame_fields(&stmts);
-        let names: Vec<&str> = fields.iter().map(|f| f.name.as_str()).collect();
-        assert!(
-            names.contains(&"Start") && names.contains(&"Park"),
-            "got {names:?}"
+        let field = fields.iter().find(|field| field.name == "Alpha").unwrap();
+        assert_eq!(field.phase_name.as_deref(), Some("lilac"));
+        assert_eq!(
+            field.participant_drive.as_ref().unwrap().source_actor,
+            "orchid"
         );
-        // they are request-phase, host-driven (the host drives the packet request onto SWDIO)
-        let start = fields.iter().find(|f| f.name == "Start").unwrap();
-        assert_eq!(start.phase, Some(SerialFramePhase::Request));
-        assert_eq!(start.swdio_direction, Some(SwdioDirection::HostDrives));
     }
 }
 
@@ -28925,63 +28798,23 @@ mod swd_serial_extraction_4b_ops {
     }
 
     #[test]
-    fn derives_response_branching_and_turnaround() {
+    fn derives_only_document_stated_operation_shape() {
         let stmts = vec![
-            stmt(
-                "ctx",
-                "The SWD interface uses a single bidirectional data pin, SWDIO. A packet request is sent.",
-            ),
-            stmt(
-                "wtrn",
-                "For a write request, there is a turnaround period between the acknowledge phase and the WDATA data transfer phase.",
-            ),
-            stmt(
-                "rtrn",
-                "For a read request, there is no turnaround period between the acknowledge phase and the data transfer phase.",
-            ),
-            stmt(
-                "w",
-                "Therefore, a successful write operation consists of three phases:",
-            ),
-            stmt(
-                "r",
-                "Therefore, a successful read operation consists of three phases:",
-            ),
-            stmt(
-                "wa",
-                "A WAIT response to a read or write packet request consists of two phases:",
-            ),
-            stmt(
-                "f",
-                "A FAULT response to a read or write packet request consists of two phases:",
-            ),
+            stmt("a", "A lilac transfer operation consists of three phases."),
+            stmt("b", "An amber response consists of two phases."),
         ];
-        let ops = extract_swd_operations(&stmts);
-        let find = |resp: &str, acc: Option<&str>| {
-            ops.iter()
-                .find(|o| o.response == resp && o.access.as_deref() == acc)
-                .cloned()
-        };
-        let wr = find("OK", Some("write")).expect("OK write");
-        assert!(
-            wr.phase_count == 3 && wr.has_data_phase && wr.turnaround_before_data == Some(true)
-        );
-        let rd = find("OK", Some("read")).expect("OK read");
-        assert!(
-            rd.phase_count == 3 && rd.has_data_phase && rd.turnaround_before_data == Some(false)
-        );
-        let wait = find("WAIT", None).expect("WAIT");
-        assert!(wait.phase_count == 2 && !wait.has_data_phase);
-        assert!(find("FAULT", None).is_some());
+        let operations = extract_protocol_operations(&stmts);
+        assert_eq!(operations.len(), 2);
+        assert_eq!(operations[0].operation_name.as_deref(), Some("transfer"));
+        assert_eq!(operations[0].branch_label.as_deref(), Some("lilac"));
+        assert_eq!(operations[0].phase_count, 3);
+        assert_eq!(operations[1].branch_label.as_deref(), Some("amber"));
     }
 
     #[test]
-    fn non_serial_doc_has_no_operations() {
-        let stmts = vec![stmt(
-            "x",
-            "A write operation consists of three phases on the AHB bus.",
-        )];
-        assert!(extract_swd_operations(&stmts).is_empty());
+    fn operation_without_phase_cardinality_is_rejected() {
+        let stmts = vec![stmt("x", "A lilac transfer operation is supported.")];
+        assert!(extract_protocol_operations(&stmts).is_empty());
     }
 }
 
@@ -29002,53 +28835,42 @@ mod swd_serial_extraction_4d {
     }
 
     #[test]
-    fn extracts_line_states_with_verb_and_context() {
+    fn extracts_transition_bound_states_without_a_stored_protocol_gate() {
         let stmts = vec![
             stmt(
-                "ctx",
-                "The SWD interface uses a single bidirectional data pin, SWDIO.",
+                "a",
+                "On the first condition, the unit enters the Lilac state.",
             ),
+            stmt("b", "The unit remains in the Lilac state until released."),
             stmt(
-                "pe",
-                "On detecting a protocol error, the SW-DP target enters the protocol error state.",
+                "c",
+                "On the second condition, the unit enters the Amber state.",
             ),
-            stmt(
-                "lo",
-                "If the target detects more errors, it enters the lockout state.",
-            ),
-            stmt(
-                "rs",
-                "When the SWD interface detects a line reset, it must enter the reset state.",
-            ),
-            stmt("dm", "The host places the target into the dormant state."),
+            stmt("d", "The unit remains in the Amber state until released."),
         ];
-        let states = extract_swd_line_states(&stmts);
+        let states = extract_transition_phrase_states(&stmts);
         let names: Vec<&str> = states.iter().map(|s| s.state_name.as_str()).collect();
-        for want in ["Protocol error", "Lockout", "Reset", "Dormant"] {
-            assert!(names.contains(&want), "missing {want}: got {names:?}");
-        }
-        assert!(
-            states
-                .iter()
-                .all(|s| s.machine_name.as_deref() == Some("SWD line state machine"))
-        );
+        assert_eq!(names, vec!["Lilac", "Amber"]);
+        assert!(states.iter().all(|state| state.machine_name.is_none()));
     }
 
     #[test]
-    fn processor_debug_state_is_not_a_line_state() {
-        // No SWD context → the processor "Debug state" must not become a line state.
+    fn rejects_machine_titles_and_unmarked_descriptions() {
         let stmts = vec![
-            stmt("c", "A packet request is sent over SWDIO."),
-            stmt(
-                "d",
-                "Facilities allow an external system to force the processor to enter Debug state.",
-            ),
+            stmt("a", "Figure 1. Device IN Move Data State Machine."),
+            stmt("b", "Figure 2. Device IN Move Data State Machine."),
+            stmt("c", "The link remains in the active state."),
+            stmt("d", "The port remains in the active state."),
+            stmt("e", "The link enters the default state."),
+            stmt("f", "The port enters the default state."),
         ];
-        let names: Vec<String> = extract_swd_line_states(&stmts)
-            .into_iter()
-            .map(|s| s.state_name)
-            .collect();
-        assert!(!names.iter().any(|n| n == "Debug"), "got {names:?}");
+        assert!(extract_transition_phrase_states(&stmts).is_empty());
+    }
+
+    #[test]
+    fn singleton_state_reference_is_not_an_inventory() {
+        let stmts = vec![stmt("a", "The unit enters the lilac state.")];
+        assert!(extract_transition_phrase_states(&stmts).is_empty());
     }
 }
 
@@ -29070,49 +28892,20 @@ mod swd_serial_extraction_4d_tidy {
     }
 
     #[test]
-    fn operating_captured_dups_and_garbage_rejected() {
+    fn source_names_are_preserved_and_generic_referents_rejected() {
         let stmts = vec![
-            stmt("c", "A packet request is sent over the SWD line interface."),
-            stmt(
-                "op",
-                "The debugger transitions the SWD target to the required operating state.",
-            ),
-            stmt(
-                "lr",
-                "The SWD interface enters line reset state on a line reset.",
-            ),
-            stmt("rs", "The SWD target must enter the reset state."),
-            stmt(
-                "hi",
-                "The pull-up resistor returns the SWD line to the HIGH state.",
-            ),
-            stmt(
-                "mt",
-                "This SWD pull-up can be relied on to maintain the state of the wire.",
-            ),
+            stmt("a", "The unit enters the Pale Lilac state."),
+            stmt("b", "The unit remains in the Pale Lilac state."),
+            stmt("c", "The unit enters the Amber state."),
+            stmt("d", "The unit remains in the Amber state."),
+            stmt("e", "The wire returns to the HIGH state."),
+            stmt("f", "The unit advances to the next state."),
         ];
-        let names: Vec<String> = extract_swd_line_states(&stmts)
+        let names: Vec<String> = extract_transition_phrase_states(&stmts)
             .into_iter()
             .map(|s| s.state_name)
             .collect();
-        assert!(
-            names.contains(&"Operating".to_string()),
-            "operating captured: {names:?}"
-        );
-        assert!(
-            names.contains(&"Reset".to_string()),
-            "reset present: {names:?}"
-        );
-        // line-reset collapses into Reset (no separate "Line reset")
-        assert!(
-            !names.iter().any(|n| n == "Line reset"),
-            "line-reset deduped: {names:?}"
-        );
-        // logic level + verb are not states
-        assert!(
-            !names.iter().any(|n| n == "High" || n == "Maintain the"),
-            "garbage rejected: {names:?}"
-        );
+        assert_eq!(names, vec!["Pale Lilac".to_string(), "Amber".to_string()]);
     }
 }
 

@@ -364,12 +364,12 @@ That is why so many truthfulness-hardening slices land here:
 
 This is the main semantic safety boundary before canonical intent.
 
-## Lossless serial and protocol observations
+## Lossless frame and protocol observations
 
 Four evidence-grounded protocol collections now cross into `SemanticIR` unchanged:
 
 - `serial_frame_fields`
-- `swd_operations`
+- `protocol_operations`
 - `protocol_states`
 - `interface_edge_timings`
 
@@ -377,6 +377,17 @@ This projection is intentionally lossless rather than interpretive. Record order
 every `supporting_statement_ids` entry are cloned exactly from EvidenceIR. The fields are serde-defaulted and
 omitted while empty, so SemanticIR artifacts written before this addition still load and documents without
 these facts keep their existing JSON shape.
+
+The schema is input-neutral. A frame field carries an opaque document-stated `name`, optional bit extent,
+optional source-stated `phase_name`, optional `{source_actor, destination_actor}`, source order, and provenance.
+An operation carries optional source-stated `branch_label` and `operation_name`, an explicit `phase_count`,
+optional source-stated phase names, and provenance. No fixed response values, phase enum, actor-role mapping,
+protocol identity, or signal spelling is part of the production type.
+
+EvidenceIR schema 2 is the authority for these records. Loading schema 1 preserves all unrelated evidence but
+clears the former vocabulary-bound frame, operation, state, and extraction-manifest authority before typed
+deserialization. Re-ingestion from SourceIR is required to repopulate the neutral surfaces; future schema
+versions fail closed.
 
 The records do not claim more semantics merely because they crossed a stage. In particular, a protocol-state
 observation is not a transition graph, and a serial-frame field is not automatically an executable transaction.
@@ -389,7 +400,7 @@ state, encodings, values, ports, activation conditions, or storage targets.
 ```text
 === Serial / Protocol Surface Projection ===
   serial_frame_fields: N
-  swd_operations: N
+  protocol_operations: N
   protocol_states: N
   interface_edge_timings: N
 ```
