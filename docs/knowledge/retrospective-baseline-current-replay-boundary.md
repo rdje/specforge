@@ -12,8 +12,8 @@ answers:
 date: 2026-08-12
 status: current
 tags: [spec-to-intent-alignment, artifact-currency, replay, timing-table, provenance, locality]
-evidence: crates/specforge/test_data/trajectory/replays/aia_toc_current_binary_replay.json; crates/specforge/src/ir/source_to_intent_replay.rs; crates/specforge/src/ir/trajectory_snapshot.rs; docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.6a)
-reverify: "cargo test -p specforge --lib ir::source_to_intent_replay && cargo test -p specforge --lib ir::trajectory_snapshot && cargo run --quiet -p specforge --example trajectory_snapshot -- --check"
+evidence: crates/specforge/test_data/trajectory/replays/aia_toc_current_binary_replay.json; crates/specforge/src/ir/source_to_intent_replay.rs; crates/specforge/src/test_support/trajectory_snapshot.rs; docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md (.6a)
+reverify: "cargo test -p specforge --lib ir::source_to_intent_replay && cargo test -p specforge --lib test_support::trajectory_snapshot"
 ---
 
 The `.4c` reviewed report is a hash-pinned retrospective observation of selected stage artifacts. Selection was

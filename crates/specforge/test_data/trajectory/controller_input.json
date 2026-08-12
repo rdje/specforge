@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "snapshot_id": "specforge-source-to-intent-reviewed-v5",
-  "owner": "SPEC-TO-INTENT-ALIGNMENT.6c.ii",
+  "snapshot_id": "specforge-source-to-intent-reviewed-v6",
+  "owner": "SPEC-TO-INTENT-ALIGNMENT.6d.ii",
   "reviewed_revision": "03e89b66cf87fcc1ec0bf342f47a147261a8d739",
   "objective_contract": {
     "path": "doctrine/spec_to_intent_category_contract.json",
@@ -43,8 +43,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "9bd0a8f6908f6829a59be6b76c5f56cdc01447043c942a8f0324f64e8e7733d9",
-              "role": "qualified .6c.ii current-binary reviewed vertical result"
+              "sha256": "78e275150fb0778c9ba0beb7787dc226ebc7fff43ce1204b1213c02ce9485075",
+              "role": "qualified .6d.ii current-binary reviewed vertical result"
             }
           ]
         },
@@ -77,8 +77,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "9bd0a8f6908f6829a59be6b76c5f56cdc01447043c942a8f0324f64e8e7733d9",
-              "role": "qualified .6c.ii current-binary reviewed vertical result"
+              "sha256": "78e275150fb0778c9ba0beb7787dc226ebc7fff43ce1204b1213c02ce9485075",
+              "role": "qualified .6d.ii current-binary reviewed vertical result"
             }
           ]
         }
@@ -93,7 +93,7 @@
           "question": "what fraction of emitted canonical IntentIR facts is correct",
           "measure": {
             "numerator": 24,
-            "denominator": 29
+            "denominator": 26
           },
           "target": {
             "operator": "equal",
@@ -117,8 +117,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "9bd0a8f6908f6829a59be6b76c5f56cdc01447043c942a8f0324f64e8e7733d9",
-              "role": "qualified .6c.ii current-binary reviewed vertical result"
+              "sha256": "78e275150fb0778c9ba0beb7787dc226ebc7fff43ce1204b1213c02ce9485075",
+              "role": "qualified .6d.ii current-binary reviewed vertical result"
             }
           ]
         }
@@ -157,8 +157,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "9bd0a8f6908f6829a59be6b76c5f56cdc01447043c942a8f0324f64e8e7733d9",
-              "role": "qualified .6c.ii current-binary reviewed vertical result"
+              "sha256": "78e275150fb0778c9ba0beb7787dc226ebc7fff43ce1204b1213c02ce9485075",
+              "role": "qualified .6d.ii current-binary reviewed vertical result"
             }
           ]
         },
@@ -166,7 +166,7 @@
           "metric_id": "supported_reviewed_categories",
           "question": "how many reviewed dominant-purpose categories meet the completeness contract",
           "measure": {
-            "numerator": 0,
+            "numerator": 1,
             "denominator": 6
           },
           "target": {
@@ -191,8 +191,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "9bd0a8f6908f6829a59be6b76c5f56cdc01447043c942a8f0324f64e8e7733d9",
-              "role": "qualified .6c.ii current-binary reviewed vertical result"
+              "sha256": "78e275150fb0778c9ba0beb7787dc226ebc7fff43ce1204b1213c02ce9485075",
+              "role": "qualified .6d.ii current-binary reviewed vertical result"
             }
           ]
         }
@@ -231,8 +231,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "9bd0a8f6908f6829a59be6b76c5f56cdc01447043c942a8f0324f64e8e7733d9",
-              "role": "qualified .6c.ii current-binary reviewed vertical result"
+              "sha256": "78e275150fb0778c9ba0beb7787dc226ebc7fff43ce1204b1213c02ce9485075",
+              "role": "qualified .6d.ii current-binary reviewed vertical result"
             }
           ]
         }
@@ -271,8 +271,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "9bd0a8f6908f6829a59be6b76c5f56cdc01447043c942a8f0324f64e8e7733d9",
-              "role": "qualified .6c.ii current-binary reviewed vertical result"
+              "sha256": "78e275150fb0778c9ba0beb7787dc226ebc7fff43ce1204b1213c02ce9485075",
+              "role": "qualified .6d.ii current-binary reviewed vertical result"
             }
           ]
         },
@@ -280,8 +280,8 @@
           "metric_id": "fabricated_canonical_fact_rate",
           "question": "what fraction of emitted canonical facts is fabricated",
           "measure": {
-            "numerator": 5,
-            "denominator": 29
+            "numerator": 2,
+            "denominator": 26
           },
           "target": {
             "operator": "equal",
@@ -305,8 +305,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "9bd0a8f6908f6829a59be6b76c5f56cdc01447043c942a8f0324f64e8e7733d9",
-              "role": "qualified .6c.ii current-binary reviewed vertical result"
+              "sha256": "78e275150fb0778c9ba0beb7787dc226ebc7fff43ce1204b1213c02ce9485075",
+              "role": "qualified .6d.ii current-binary reviewed vertical result"
             }
           ]
         }
@@ -419,8 +419,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "9bd0a8f6908f6829a59be6b76c5f56cdc01447043c942a8f0324f64e8e7733d9",
-              "role": "qualified .6c.ii current-binary reviewed vertical result"
+              "sha256": "78e275150fb0778c9ba0beb7787dc226ebc7fff43ce1204b1213c02ce9485075",
+              "role": "qualified .6d.ii current-binary reviewed vertical result"
             }
           ]
         }
@@ -459,8 +459,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "9bd0a8f6908f6829a59be6b76c5f56cdc01447043c942a8f0324f64e8e7733d9",
-              "role": "qualified .6c.ii current-binary reviewed vertical result"
+              "sha256": "78e275150fb0778c9ba0beb7787dc226ebc7fff43ce1204b1213c02ce9485075",
+              "role": "qualified .6d.ii current-binary reviewed vertical result"
             }
           ]
         },
@@ -493,8 +493,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/trajectory/replays/reviewed_population_current_binary_replay.json",
-              "sha256": "e7fc88c05dc9c5e267289cad740ce96f65e862ccdf749697d77c1ba1e226826a",
-              "role": "isolated .6c.ii current-binary replay of all 12 reviewed documents"
+              "sha256": "81f1758b5143eb5ea5b78aeb5f2f2a8b189421945e74665df5fea29a2ff2c855",
+              "role": "isolated .6d.ii current-binary replay of all 12 reviewed documents"
             }
           ]
         },
@@ -542,7 +542,7 @@
           "metric_id": "required_modality_document_accounting",
           "question": "how many reviewed documents completely account for required modalities",
           "measure": {
-            "numerator": 2,
+            "numerator": 4,
             "denominator": 12
           },
           "target": {
@@ -567,8 +567,8 @@
           "evidence": [
             {
               "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-              "sha256": "9bd0a8f6908f6829a59be6b76c5f56cdc01447043c942a8f0324f64e8e7733d9",
-              "role": "qualified .6c.ii current-binary reviewed vertical result"
+              "sha256": "78e275150fb0778c9ba0beb7787dc226ebc7fff43ce1204b1213c02ce9485075",
+              "role": "qualified .6d.ii current-binary reviewed vertical result"
             }
           ]
         }
@@ -584,21 +584,21 @@
       "evidence": [
         {
           "path": "crates/specforge/test_data/trajectory/replays/reviewed_population_current_binary_replay.json",
-          "sha256": "e7fc88c05dc9c5e267289cad740ce96f65e862ccdf749697d77c1ba1e226826a",
-          "role": "isolated .6c.ii current-binary replay of all 12 reviewed documents"
+          "sha256": "81f1758b5143eb5ea5b78aeb5f2f2a8b189421945e74665df5fea29a2ff2c855",
+          "role": "isolated .6d.ii current-binary replay of all 12 reviewed documents"
         }
       ]
     },
     {
       "gate_id": "zero_fabricated_canonical_facts",
       "question": "does the qualified current result contain no fabricated canonical fact",
-      "violations": 5,
+      "violations": 2,
       "target_violations": 0,
       "evidence": [
         {
           "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-          "sha256": "9bd0a8f6908f6829a59be6b76c5f56cdc01447043c942a8f0324f64e8e7733d9",
-          "role": "qualified .6c.ii current-binary reviewed vertical result"
+          "sha256": "78e275150fb0778c9ba0beb7787dc226ebc7fff43ce1204b1213c02ce9485075",
+          "role": "qualified .6d.ii current-binary reviewed vertical result"
         }
       ]
     },
@@ -610,8 +610,8 @@
       "evidence": [
         {
           "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-          "sha256": "9bd0a8f6908f6829a59be6b76c5f56cdc01447043c942a8f0324f64e8e7733d9",
-          "role": "qualified .6c.ii current-binary reviewed vertical result"
+          "sha256": "78e275150fb0778c9ba0beb7787dc226ebc7fff43ce1204b1213c02ce9485075",
+          "role": "qualified .6d.ii current-binary reviewed vertical result"
         }
       ]
     }
@@ -622,29 +622,29 @@
       "gap_id": "current-canonical-honesty",
       "objective_id": "provenance_honesty",
       "tier": "hard_invariant",
-      "observed": "all 12 documents are current-binary qualified; 5 fabricated canonical facts and 0 canonical provenance failures still reproduce",
+      "observed": "all 12 documents are current-binary qualified; 2 fabricated canonical facts and 0 canonical provenance failures still reproduce",
       "target": "zero fabricated canonical facts and complete provenance closure on the qualified current population",
       "first_failing_stage": "source_to_evidence_ir",
-      "affected_population": 5,
+      "affected_population": 2,
       "causal_confidence": "high",
       "reversible_slice": "medium",
       "uncertainty": "exact",
-      "estimated_impact": "repair the largest remaining current family without sacrificing any of the 24 reviewed true positives",
+      "estimated_impact": "separate and repair the remaining AMD IOMMU and GIC-400 register fabrications without sacrificing any of the 24 reviewed true positives",
       "reproduction": "python3 -B scripts/replay_source_to_intent_population.py --output-root .project-data/tmp/<fresh-root> --external-source-map .project-data/tmp/<runtime-map>.json --replay-id <portable-id> --owner <task-leaf> --dataset-id <portable-id>",
       "owner": {
-        "task_id": "SPEC-TO-INTENT-ALIGNMENT.6d",
+        "task_id": "SPEC-TO-INTENT-ALIGNMENT.6e",
         "task_tree_path": "docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md"
       },
       "evidence": [
         {
           "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-          "sha256": "9bd0a8f6908f6829a59be6b76c5f56cdc01447043c942a8f0324f64e8e7733d9",
-          "role": "qualified .6c.ii current-binary reviewed vertical result"
+          "sha256": "78e275150fb0778c9ba0beb7787dc226ebc7fff43ce1204b1213c02ce9485075",
+          "role": "qualified .6d.ii current-binary reviewed vertical result"
         },
         {
           "path": "crates/specforge/test_data/trajectory/replays/reviewed_population_current_binary_replay.json",
-          "sha256": "e7fc88c05dc9c5e267289cad740ce96f65e862ccdf749697d77c1ba1e226826a",
-          "role": "isolated .6c.ii current-binary replay of all 12 reviewed documents"
+          "sha256": "81f1758b5143eb5ea5b78aeb5f2f2a8b189421945e74665df5fea29a2ff2c855",
+          "role": "isolated .6d.ii current-binary replay of all 12 reviewed documents"
         }
       ]
     },
@@ -668,8 +668,8 @@
       "evidence": [
         {
           "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-          "sha256": "9bd0a8f6908f6829a59be6b76c5f56cdc01447043c942a8f0324f64e8e7733d9",
-          "role": "qualified .6c.ii current-binary reviewed vertical result"
+          "sha256": "78e275150fb0778c9ba0beb7787dc226ebc7fff43ce1204b1213c02ce9485075",
+          "role": "qualified .6d.ii current-binary reviewed vertical result"
         }
       ]
     },
@@ -677,10 +677,10 @@
       "gap_id": "non-actionable-required-residuals",
       "objective_id": "stage_conservation",
       "tier": "persistent_residual",
-      "observed": "0 of 24 required residual observations are actionable",
+      "observed": "4 of 24 required residual observations are actionable",
       "target": "every required residual is typed, source-linked, and actionable",
       "first_failing_stage": "evidence_to_semantic_ir",
-      "affected_population": 24,
+      "affected_population": 20,
       "causal_confidence": "high",
       "reversible_slice": "medium",
       "uncertainty": "exact",
@@ -693,8 +693,8 @@
       "evidence": [
         {
           "path": "crates/specforge/test_data/source_to_intent_vertical/current_result_snapshot.json",
-          "sha256": "9bd0a8f6908f6829a59be6b76c5f56cdc01447043c942a8f0324f64e8e7733d9",
-          "role": "qualified .6c.ii current-binary reviewed vertical result"
+          "sha256": "78e275150fb0778c9ba0beb7787dc226ebc7fff43ce1204b1213c02ce9485075",
+          "role": "qualified .6d.ii current-binary reviewed vertical result"
         }
       ]
     },

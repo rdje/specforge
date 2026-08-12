@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
+  > should specforge connect producer/consumer/etc. to their signals
+- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
+  > should specforge mint actor-signal relations for nvme / iommu / ccix / register protocols
+- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
+  > should specforge record a residual for every typed rule that does not lower to .isf
+- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
+  > should specforge record an adapter residual for rules whose subject is not a declared signal
+- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
+  > should specforge recover consumer edges from 'X is sent/returned to Y' recipient frames
 - [temporal-eval-residual-fps-are-stale](../knowledge/temporal-eval-residual-fps-are-stale.md)
   > temporal rule eval false positives root cause
 - [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
@@ -140,7 +150,7 @@
 - [doctrine-enforcement-adoption](../knowledge/doctrine-enforcement-adoption.md)
   > what debug/diagnostic tools does specforge have (TOOLBOX.md)
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > what defect does SPEC-TO-INTENT-ALIGNMENT.6d repair next
+  > what defect does SPEC-TO-INTENT-ALIGNMENT.6e repair next
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
   > what did FSMGEN answer about transaction phase membership (don't fabricate value or order; keep value-less participation + unordered membership as IntentIR metadata/residual not body steps; checked phase-group metadata is the future ISF shape on its own FSMGen tree; .isf stays source of truth, no .val)
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
@@ -151,6 +161,8 @@
   > what did SPEC-TO-INTENT-ALIGNMENT.6a prove
 - [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
   > what did SPEC-TO-INTENT-ALIGNMENT.6c improve
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > what did SPEC-TO-INTENT-ALIGNMENT.6d improve
 - [opencapi-data-link-layer-refresh-is-signal-empty](../knowledge/opencapi-data-link-layer-refresh-is-signal-empty.md)
   > what did refresh 50 change in the OpenCAPI data link chain
 - [nli-gate-real-apb-validation](../knowledge/nli-gate-real-apb-validation.md)
@@ -285,15 +297,3 @@
   > what extraction approach does SWD/ADI need
 - [full-page-capture-gap](../knowledge/full-page-capture-gap.md)
   > what falls outside Docling's segmented bounding boxes on a page
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what field holds the constrained signal name (signal_name vs subject_signal)
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > what fraction of a chip-spec PDF's intent reaches the emitted .isf, per purpose category
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what fsmgen pin carries the phase-membership answer (030f8c273, FSMGEN-REFRESH-INTEGRATE-3, ISF-SPECFORGE-PHASE-MEMBERSHIP-RESPONSE.1/.2)
-- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
-  > what fsmgen pin does SpecForge target for temporal properties
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > what gates protect the leading-identifier mnemonic form from bleed
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > what gates the corpus refresh frontier / what is the CORPUS-FRONTIER doctrine

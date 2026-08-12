@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
+  > where does .cache/local-references/chipdoc resolve
+- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
+  > where does .isf record dropped temporal obligations
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > where does EvidenceIR statement text come from
+- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
+  > where does SpecForge canonicalize upstream artifact paths before serialization
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > where does SpecForge store temporary files and caches
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > where does TransactionPhaseRecord.signal_set come from (build_transaction_phases, ir/semantic.rs — phase-naming statements' signals ∩ declared inventory, the .2c technique)
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > where does a register's byte offset come from when only the caption states it
 - [canonical-promotion-output-path-artifact-layout](../knowledge/canonical-promotion-output-path-artifact-layout.md)
@@ -286,15 +298,3 @@
   > why an allowlist instead of a denylist for .isf identifier sanitization (a denylist can't enumerate every bad char — it missed the arrow →)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > why are 169 composable registers not yet emittable (their composed reset needs more bits than the current storage-var width which is max-field-extent not register width — e.g. CoreSight DPIDR V=0x1c013477 at width 11 over-width; var-width reconciliation spun to ISF-REGISTER-RESET-EMIT.3)
-- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
-  > why are 58 corpus documents not currency-measurable
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > why are GIC/SMMU/CoreSight section-heading fields NOT message fields
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > why are SWD recognized phases signal_set empty and transactions ports empty
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > why are USER_GUIDE.md and the root architecture documents only pointers
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > why are behaviors and constraints (22k each) not lowered to .isf — is that a gap
-- [document-class-from-structure](../knowledge/document-class-from-structure.md)
-  > why are conditional_rules excluded from the document-class decision

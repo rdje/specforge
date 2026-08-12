@@ -1,3 +1,26 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.a — publish replay truth and the production-genericity audit
+
+- Replayed all 12 unchanged reviewed source identities and 48 isolated stages at committed production revision
+  `b977a51f`, using eight hash-equal read-only SSD authorities only through a repository-local runtime map.
+- Published the exact two-cell OpenCAPI change: three dB/dB_RMS keys leave canonical timing and become exact,
+  actionable, source-linked residuals at both SemanticIR and IntentIR. The other 12 cells do not change
+  semantically; all 24 prior true positives and 29/29 provenance survive.
+- Current TP/FP/FN are 24/2/16. Residual actionability is 4/24, source disposition is 6/14, required-modality
+  document accounting is 4/12, conservation remains 72/88, and physical-link is the first supported category.
+- Controller v6 keeps the hard ordering honest: replay and provenance gates pass, the fabrication gate retains
+  the unrelated AMD IOMMU and GIC-400 violations, and new owner `.6e` precedes `.7` recall work.
+- Promoted manifest/result/controller hashes `81f1758b…2c855` / `78e27515…5075` / `274311e6…0c04` /
+  `ccb8a112…b5d8`, then removed and proved absent the exact 3,913-file / 1,090,948-KiB replay root and runtime map.
+- Audited all 71 production Rust sources, every canonical/optional extraction path, embedded Docling Python,
+  evaluation/prior paths, prompts, adapters, and module boundaries. The production core is not currently
+  specification-neutral: identity-routed families, protocol-specific schema/extractors, signal-name heuristics,
+  corpus-calibrated phrases, and named production examples remain release-blocking.
+- Rejected a finite forbidden-vocabulary file as signoff proof. ADR 0006 now requires one-way core/conformance
+  dependencies, opaque input identities/symbols, registered grammar access, grounded residuals, AST-aware
+  mutation gates, and alpha-renaming/identity/paraphrase/held-out behavioral invariance.
+- Moved exact reviewed-trajectory composition below `#[cfg(test)]`, removed its production example and public IR
+  registration, and retained the generic trajectory evaluator/controller as the production surface.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.i — preserve physical timing without canonical promotion
 
 - Added a backward-compatible timing-intent disposition. Explicit `dB`/`dBc` quantity units produce a typed,

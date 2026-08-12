@@ -1595,9 +1595,9 @@ mod tests {
             false,
         );
         let repository = crate::project_data::repository_root()?;
-        let observation: serde_json::Value = serde_json::from_slice(&fs::read(
-            repository.join(crate::ir::trajectory_snapshot::CURRENT_CAPABILITY_OBSERVATION_PATH),
-        )?)?;
+        let observation: serde_json::Value = serde_json::from_slice(&fs::read(repository.join(
+            crate::test_support::trajectory_snapshot::CURRENT_CAPABILITY_OBSERVATION_PATH,
+        ))?)?;
         assert_eq!(observation["schema_version"], 1);
         assert_eq!(observation["profile"]["vlm_provider"], "skip");
         assert_eq!(observation["profile"]["nlp_provider"], "skip");

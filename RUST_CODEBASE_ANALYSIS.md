@@ -4,7 +4,7 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
-## Session update (2026-08-12 — timing applicability carrier; `SPEC-TO-INTENT-ALIGNMENT.6d.i`)
+## Session update (2026-08-12 — replay qualification and production-genericity audit; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.a`)
 
 - `TimingConstraintRecord` now carries a backward-compatible, schema-closed `TimingIntentDisposition`.
   Canonical remains the omitted/default form; `NonApplicable` records name a typed quantity domain, reason,
@@ -19,10 +19,28 @@
   115 records non-applicable; all six stages are otherwise disposition-neutral and both adapters are identical.
   Currency returns to 24/24 EvidenceIR and 78/78 for every downstream stage. Three bundle-less CCIX chains retain
   48 legacy matching records until their own refreshes restore EvidenceIR replayability.
-- `.6d.ii` is the clean committed-revision boundary for the 12-source comparable result and controller update;
-  this carrier slice does not publish new population metrics.
-- Full CI passes all eight doctrines including chain currency, formatting, warning-deny Clippy, 1,869 tests /
-  five ignored / zero failed, warning-deny rustdoc, mdBook, and final project-data locality.
+- The `.6d.ii` replay at committed carrier revision `b977a51f` changes exactly the two reviewed OpenCAPI analog
+  cells: three false canonical keys become exact actionable residuals at both downstream stages. TP/FP/FN are
+  24/2/16, provenance remains 29/29, and physical-link becomes the first supported reviewed category.
+- The strict snapshot adapter now authenticates the `.6d.ii` production revision, tool/result hashes, exact
+  cleanup census, sole supported category, target residual keys, and actionable disposition. Controller v6
+  retains two fabrication violations and assigns them to pending `.6e`; it cannot incorrectly recommend closed
+  `.6d` or lower-tier `.7` work.
+- Exact reviewed snapshot composition is no longer an `ir` production module or example. It compiles only through
+  the crate's `#[cfg(test)]` support surface; `source_to_intent_eval`, replay validation, and the trajectory state/
+  ranking engine remain generic production modules.
+- The complete 71-source audit finds the current compiled product is not specification-neutral. Blocking seams
+  include document-identity prior-family selection, a named serial-protocol EvidenceIR schema/extractor, signal-
+  spelling semantic inference, corpus-calibrated embedded PDF classifiers, narrowed prompts, named corpus command
+  behavior, calibrated completeness thresholds, and named comments/public identifiers. Core typed grounding,
+  fusion, fidelity, structural fingerprints, provenance, residuals, and generic evaluator/controller machinery
+  remain reusable.
+- Signoff cannot be a vocabulary grep. The required architecture combines core→conformance dependency isolation,
+  opaque identities/symbols, registered universal grammar access, source-grounded proposals, AST/dependency
+  mutation gates, and alpha-renaming/identity/paraphrase/held-out invariance. `.6d.ii.b`–`.6d.ii.f` own the
+  remediation before metric-ranked `.6e` resumes.
+- Full CI passes all eight doctrines including chain currency, formatting, warning-deny Clippy, 1,870 tests /
+  six ignored / zero failed, warning-deny rustdoc, mdBook, and final project-data locality.
 
 ## Session update (2026-08-12 — timing unit/provenance carrier; `SPEC-TO-INTENT-ALIGNMENT.6c.i`)
 

@@ -6,13 +6,16 @@
 - treat text, layout, figures, captions, tables, and charts as first-class evidence rather than markdown decoration
 - prioritize semantic truthfulness and KG quality ahead of adapter breadth until the canonical four-layer pipeline is top-notch
 - make the workflow resumable and understandable through live project documentation
+- apply the same identity-independent engine to any digital-chip specification: production decisions may use
+  universal digital semantics and document grammar, but never document/vendor/protocol identity, named symbols,
+  or corpus-specific phrases; undecidable input must become an explicit residual rather than a special case
 
 ## Canonical pipeline
 - `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR -> adapters`
 
 ## Cross-cutting implementation doctrine
-- do not try to program a general reader of English; program a compiler for protocol meaning
-- define the protocol-world model first:
+- do not try to program a general reader of English; program a compiler for digital-design intent
+- define the universal digital-intent world model first:
   - actors
   - signals
   - roles
@@ -67,6 +70,8 @@
   - each `SourceIR -> EvidenceIR -> SemanticIR -> IntentIR` pipeline run should remain grounded only in the current document
   - any future cross-document learning layer must learn reusable extraction priors rather than smuggling facts from earlier PDFs into later canonical artifacts
 - roadmap progress should favor meaning-based role inference and protocol semantics over literal spelling heuristics whenever the evidence can support that shift
+- production core decisions must be invariant to filename/title/vendor-like identity and alpha-renaming of every
+  input-defined symbol; protocol-specific conformance knowledge belongs only in tests, fixtures, and research
 
 ## Current strategic priorities
 
@@ -80,12 +85,18 @@ The current sequencing is upstream-first: faithful PDF evidence must populate So
 `IntentIR` before adapter expressiveness can be called the blocker. ISF/FSMGen remains the eventual executable
 boundary, but SpecForge does not anticipate a language gap without a source-grounded value.
 [`SPEC-TO-INTENT-ALIGNMENT`](docs/tasks/SPEC-TO-INTENT-ALIGNMENT.md) makes that ordering measurable (ADR 0033/0034).
-Its reviewed 12/12 current replay and access/provenance correction ship. The controller-selected I2S unit family
-now has a generic timing caption-unit/table-provenance carrier and clean whole-population qualification: current
-IntentIR is 24/5/16 TP/FP/FN with complete 29/29 provenance. The hard-first controller next selects the
-three-record OpenCAPI analog fabrication family under `.6d`. A reproduced 400-page failure also drove resource-sized bounded
-activation, fail-closed page counting, typed signal status, and exact four-stage fidelity. The task tree owns
-detailed metrics, evidence, and ordering.
+Its reviewed 12/12 current replay and access/provenance correction ship. Generic timing unit/provenance and
+physical-applicability carriers now have clean whole-population qualification: current IntentIR is 24/2/16
+TP/FP/FN with complete 29/29 provenance, and physical-link is the first supported reviewed category. The
+metric controller next selects the two remaining unrelated AMD IOMMU and GIC-400 register fabrications under
+`.6e`; however, the owner-mandated whole-production genericity audit found release-blocking identity, named-schema,
+signal-spelling, corpus-phrase, prompt, and module-boundary coupling. Structural remediation and behavioral
+invariance under `.6d.ii.b`–`.6d.ii.f` therefore precede `.6e`. A finite forbidden-vocabulary list is diagnostic,
+not proof. The signoff architecture is one-way production/conformance dependencies, opaque input symbols and
+identity, registered universal grammar interfaces, source-grounded residuals, and alpha-renaming/identity/
+paraphrase/held-out qualification. A reproduced 400-page failure also drove resource-sized bounded activation,
+fail-closed page counting, typed signal status, and exact four-stage fidelity. The task tree owns detailed
+metrics, evidence, and ordering.
 
 Five active program groups support that north star:
 

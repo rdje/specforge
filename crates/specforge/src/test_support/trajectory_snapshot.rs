@@ -1,7 +1,7 @@
 //! Composition of the qualified reviewed SpecForge trajectory snapshot.
 //!
-//! This remains deliberately separate from the generic controller in [`super::trajectory`]. It
-//! authenticates the `.6c.ii` whole-population current replay, the unchanged review-locked gold,
+//! This remains deliberately separate from the generic controller in [`crate::ir::trajectory`]. It
+//! authenticates the `.6d.ii` whole-population current replay, the unchanged review-locked gold,
 //! and the `.2` provider-free production-capability observation, then derives and evaluates the
 //! nine-dimensional input without changing any source authority.
 
@@ -11,17 +11,17 @@ use std::path::Path;
 
 use serde::{Deserialize, Serialize};
 
-#[cfg(test)]
-use super::source::TableKind;
-use super::source_to_intent_eval::{CategoryStatus, QueryScore, VerticalEvalReport};
-use super::trajectory::{
+use crate::error::{AppError, Result};
+use crate::ir::source::TableKind;
+use crate::ir::source_to_intent_eval::VerticalCategory;
+use crate::ir::source_to_intent_eval::{CategoryStatus, QueryScore, VerticalEvalReport};
+use crate::ir::trajectory::{
     CausalConfidence, ControllerAuthority, ControllerMode, DimensionObservation, EvidenceRef,
     Fraction, GapPriorityTier, GapUncertainty, HardGateObservation, ImprovementDirection,
     MetricObservation, MetricTarget, ReversibleSliceSize, TargetOperator, TaskOwner,
     TrajectoryControllerInput, TrajectoryDimension, TrajectoryGap, TrajectoryReport, Uncertainty,
     evaluate_trajectory,
 };
-use crate::error::{AppError, Result};
 
 pub const CURRENT_VERTICAL_RESULT_PATH: &str =
     "crates/specforge/test_data/source_to_intent_vertical/result_snapshot.json";
@@ -49,16 +49,16 @@ const OBJECTIVE_CONTRACT_SHA256: &str =
 const CAPABILITY_OBSERVATION_SHA256: &str =
     "b37f13d28b90a6e6b0fb4c554d0e9fc861ff5e993d3276743b15d0ad1736994e";
 const POPULATION_REPLAY_EVIDENCE_SHA256: &str =
-    "e7fc88c05dc9c5e267289cad740ce96f65e862ccdf749697d77c1ba1e226826a";
+    "81f1758b5143eb5ea5b78aeb5f2f2a8b189421945e74665df5fea29a2ff2c855";
 const REPLAY_VERTICAL_RESULT_SHA256: &str =
-    "9bd0a8f6908f6829a59be6b76c5f56cdc01447043c942a8f0324f64e8e7733d9";
+    "78e275150fb0778c9ba0beb7787dc226ebc7fff43ce1204b1213c02ce9485075";
 const REVIEWED_DATASET_SHA256: &str =
     "231de7f6aded485c836af8e585334b373194b5af71d03c4ad7a52b7a0e6b34aa";
 const POPULATION_REPLAY_ORCHESTRATOR_SHA256: &str =
     "74151e8729b653df4b242d36d64fd9414e76e55967983c1d4fbcf27816b8b100";
 const REPLAY_PROJECTION_SHA256: &str =
-    "f6809f24edc9f3b62b2f960a3eae3bf0f2f7f9e1b4e3b378e0b2338fa20249b5";
-const POPULATION_REPLAY_PRODUCTION_REVISION: &str = "74a658b31bfd0d813bb5f35f3ca2f1a8596d8c4a";
+    "f51f1ec3ac6521afca040e9142477db32b72f69ec37eb0b0c0d29b1af011214d";
+const POPULATION_REPLAY_PRODUCTION_REVISION: &str = "b977a51ff24f966dcf6aca74ccf47d592a4fc452";
 const REVIEWED_REVISION: &str = "03e89b66cf87fcc1ec0bf342f47a147261a8d739";
 #[cfg(test)]
 const AIA_DOCUMENT_KEY: &str = "1_0_2025_03_12_risc_v_advanced_interrupt_architecture";
@@ -564,15 +564,15 @@ fn validate_population_replay_evidence(
 ) -> std::result::Result<(), Vec<String>> {
     let mut problems = Vec::new();
     if replay.schema_version != 1
-        || replay.replay_id != "spec-to-intent-6cii-timing-carrier-population"
-        || replay.owner != "SPEC-TO-INTENT-ALIGNMENT.6c.ii"
+        || replay.replay_id != "spec-to-intent-6dii-decibel-disposition-population"
+        || replay.owner != "SPEC-TO-INTENT-ALIGNMENT.6d.ii"
     {
         problems
-            .push("population replay identity must name the schema-1 .6c.ii authority".to_string());
+            .push("population replay identity must name the schema-1 .6d.ii authority".to_string());
     }
     if replay.production_revision != POPULATION_REPLAY_PRODUCTION_REVISION {
         problems.push(
-            "population replay production revision must name the committed .6c.i boundary"
+            "population replay production revision must name the committed .6d.i boundary"
                 .to_string(),
         );
     }
@@ -618,7 +618,7 @@ fn validate_population_replay_evidence(
         || !is_project_tmp_child(&cleanup.population_root)
         || cleanup.status != "removed_and_residue_absent"
         || cleanup.removed_file_count != 3_913
-        || cleanup.removed_kib != 1_090_908
+        || cleanup.removed_kib != 1_090_948
     {
         problems.push(
             "population replay cleanup must retain the exact residue-free census".to_string(),
@@ -743,14 +743,14 @@ fn validate_population_replay_evidence(
     let dataset_prefix = format!("{}/", cleanup.population_root);
     if !replay.current_dataset.path.starts_with(&dataset_prefix)
         || !is_sha256_digest(&replay.current_dataset.sha256)
-        || replay.current_dataset.byte_count != 140_864
+        || replay.current_dataset.byte_count != 142_577
     {
         problems.push("current replay dataset identity is invalid".to_string());
     }
     if !replay.current_result.path.starts_with(&dataset_prefix)
         || replay.current_result.published_path != CURRENT_REPLAY_VERTICAL_RESULT_PATH
         || replay.current_result.sha256 != REPLAY_VERTICAL_RESULT_SHA256
-        || replay.current_result.byte_count != 101_230
+        || replay.current_result.byte_count != 100_324
     {
         problems.push("published current replay result identity is invalid".to_string());
     }
@@ -773,13 +773,13 @@ fn validate_replay_vertical_result(
 ) -> std::result::Result<(), Vec<String>> {
     let mut problems = Vec::new();
     if result.schema_version != 1
-        || result.dataset_id != "source-to-intent-vertical-timing-carrier-replay-v1"
-        || result.owner != "SPEC-TO-INTENT-ALIGNMENT.6c.ii"
+        || result.dataset_id != "reviewed-source-to-intent-current-b977a51f"
+        || result.owner != "SPEC-TO-INTENT-ALIGNMENT.6d.ii"
         || result.selection_boundary_commit != "a3e9757d63ca5499a2393864fb503d6537de0035"
         || result.minimum_documents_per_category != 2
     {
         problems
-            .push("current vertical result identity is not the .6c.ii reviewed replay".to_string());
+            .push("current vertical result identity is not the .6d.ii reviewed replay".to_string());
     }
     let cells = result
         .documents
@@ -810,36 +810,57 @@ fn validate_replay_vertical_result(
         .iter()
         .filter(|cell| query_is_exact(&cell.evidence_capture))
         .count();
+    let residuals = cells
+        .iter()
+        .filter_map(|cell| cell.residual.as_ref())
+        .collect::<Vec<_>>();
+    let residual_actionability_met = residuals
+        .iter()
+        .map(|residual| {
+            usize::from(residual.semantic_actionable) + usize::from(residual.intent_actionable)
+        })
+        .sum::<usize>();
+    let residual_actionability_total = residuals.len() * 2;
+    let supported_categories = result
+        .categories
+        .iter()
+        .filter(|category| category.status == CategoryStatus::Supported)
+        .collect::<Vec<_>>();
     if result.documents.len() != 12
         || cells.len() != 14
         || result.categories.len() != 6
+        || supported_categories.len() != 1
         || result
             .categories
             .iter()
-            .any(|category| category.status != CategoryStatus::Incomplete)
+            .filter(|category| category.status == CategoryStatus::Incomplete)
+            .count()
+            != 5
         || intent_true_positives != 24
-        || intent_false_positives != 5
+        || intent_false_positives != 2
         || intent_false_negatives != 16
         || exact_source_regions != 14
         || exact_evidence_captures != 13
     {
         problems.push(
-            "current vertical result must retain exact 12/14/6 coverage, 24/5/16 intent counts, and 14/13 source/capture counts"
+            "current vertical result must retain exact 12/14/6 coverage, one supported category, 24/2/16 intent counts, and 14/13 source/capture counts"
                 .to_string(),
         );
     }
     let global = &result.global;
-    if global.intent_bearing_source_region_disposition.met != 4
+    if global.intent_bearing_source_region_disposition.met != 6
         || global.intent_bearing_source_region_disposition.total != 14
-        || global.required_modality_accounting.met != 2
+        || global.required_modality_accounting.met != 4
         || global.required_modality_accounting.total != 12
         || global.canonical_provenance_closure.met != 29
         || global.canonical_provenance_closure.total != 29
         || global.stage_conservation_or_residual.met != 72
         || global.stage_conservation_or_residual.total != 88
-        || global.residual_actionability.met != 0
+        || global.residual_actionability.met != 4
         || global.residual_actionability.total != 24
-        || global.fabricated_canonical_facts != 5
+        || global.residual_actionability.met != residual_actionability_met
+        || global.residual_actionability.total != residual_actionability_total
+        || global.fabricated_canonical_facts != 2
         || global.unexplained_stage_drops != 16
     {
         problems.push(
@@ -891,7 +912,7 @@ fn is_safe_relative_path(value: &str) -> bool {
             .any(|component| matches!(component, std::path::Component::ParentDir))
 }
 
-/// Derive the current controller input from the qualified `.6c.ii` replay and `.2` capability authority.
+/// Derive the current controller input from the qualified `.6d.ii` replay and `.2` capability authority.
 pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
     let result_bytes = read_repository_relative(
         Path::new(CURRENT_REPLAY_VERTICAL_RESULT_PATH),
@@ -912,7 +933,7 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
     let result_evidence = evidence(
         CURRENT_REPLAY_VERTICAL_RESULT_PATH,
         REPLAY_VERTICAL_RESULT_SHA256,
-        "qualified .6c.ii current-binary reviewed vertical result",
+        "qualified .6d.ii current-binary reviewed vertical result",
     );
     let capability_evidence = evidence(
         CURRENT_CAPABILITY_OBSERVATION_PATH,
@@ -927,7 +948,7 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
     let replay_evidence = evidence(
         CURRENT_POPULATION_REPLAY_EVIDENCE_PATH,
         POPULATION_REPLAY_EVIDENCE_SHA256,
-        "isolated .6c.ii current-binary replay of all 12 reviewed documents",
+        "isolated .6d.ii current-binary replay of all 12 reviewed documents",
     );
 
     let intent_actual = counts.intent_true_positives + counts.intent_false_positives;
@@ -1210,9 +1231,9 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
             CausalConfidence::High,
             ReversibleSliceSize::Medium,
             GapUncertainty::Exact,
-            "repair the largest remaining current family without sacrificing any of the 24 reviewed true positives",
+            "separate and repair the remaining AMD IOMMU and GIC-400 register fabrications without sacrificing any of the 24 reviewed true positives",
             "python3 -B scripts/replay_source_to_intent_population.py --output-root .project-data/tmp/<fresh-root> --external-source-map .project-data/tmp/<runtime-map>.json --replay-id <portable-id> --owner <task-leaf> --dataset-id <portable-id>",
-            "SPEC-TO-INTENT-ALIGNMENT.6d",
+            "SPEC-TO-INTENT-ALIGNMENT.6e",
             &[result_evidence.clone(), replay_evidence.clone()],
         ),
         gap(
@@ -1245,7 +1266,11 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
             ),
             "every required residual is typed, source-linked, and actionable",
             "evidence_to_semantic_ir",
-            result.global.residual_actionability.total,
+            result
+                .global
+                .residual_actionability
+                .total
+                .saturating_sub(result.global.residual_actionability.met),
             CausalConfidence::High,
             ReversibleSliceSize::Medium,
             GapUncertainty::Exact,
@@ -1277,8 +1302,8 @@ pub fn build_current_controller_input() -> Result<TrajectoryControllerInput> {
 
     Ok(TrajectoryControllerInput {
         schema_version: 1,
-        snapshot_id: "specforge-source-to-intent-reviewed-v5".to_string(),
-        owner: "SPEC-TO-INTENT-ALIGNMENT.6c.ii".to_string(),
+        snapshot_id: "specforge-source-to-intent-reviewed-v6".to_string(),
+        owner: "SPEC-TO-INTENT-ALIGNMENT.6d.ii".to_string(),
         reviewed_revision: REVIEWED_REVISION.to_string(),
         objective_contract,
         stall_window: 3,
@@ -1613,6 +1638,12 @@ mod tests {
     use crate::ir::trajectory::{DimensionStatus, HistoryStatus, TrajectoryState};
 
     #[test]
+    fn reviewed_snapshot_composer_is_absent_from_the_production_ir_registry() {
+        let production_registry = include_str!("../ir/mod.rs");
+        assert!(!production_registry.contains("trajectory_snapshot"));
+    }
+
+    #[test]
     fn current_snapshot_derives_exact_authority_counts_and_hard_first_proposal() -> Result<()> {
         let input = build_current_controller_input()?;
         let report = evaluate_current_trajectory()?;
@@ -1624,14 +1655,14 @@ mod tests {
         assert!(
             report
                 .state_reasons
-                .contains(&"hard_gate_failed:zero_fabricated_canonical_facts:5>0".to_string())
+                .contains(&"hard_gate_failed:zero_fabricated_canonical_facts:2>0".to_string())
         );
         assert_eq!(
             report
                 .recommendation
                 .as_ref()
                 .map(|proposal| proposal.task_id.as_str()),
-            Some("SPEC-TO-INTENT-ALIGNMENT.6d")
+            Some("SPEC-TO-INTENT-ALIGNMENT.6e")
         );
         assert_eq!(report.ranked_gaps.len(), 4);
         assert_eq!(report.ranked_gaps[0].tier, GapPriorityTier::HardInvariant);
@@ -1671,8 +1702,9 @@ mod tests {
         for (metric_id, expected) in [
             ("exact_source_region_capture", Fraction::new(14, 14)),
             ("exact_required_modality_capture", Fraction::new(13, 14)),
-            ("intent_canonical_precision", Fraction::new(24, 29)),
+            ("intent_canonical_precision", Fraction::new(24, 26)),
             ("intent_canonical_recall", Fraction::new(24, 40)),
+            ("supported_reviewed_categories", Fraction::new(1, 6)),
             ("stage_conservation_or_residual", Fraction::new(72, 88)),
             ("canonical_provenance_closure", Fraction::new(29, 29)),
             ("production_capability_accounting", Fraction::new(17, 17)),
@@ -1683,7 +1715,7 @@ mod tests {
             ("provider_free_integrated_execution", Fraction::new(5, 10)),
             (
                 "required_modality_document_accounting",
-                Fraction::new(2, 12),
+                Fraction::new(4, 12),
             ),
             ("current_binary_replay_coverage", Fraction::new(12, 12)),
         ] {
@@ -1694,18 +1726,13 @@ mod tests {
 
     #[test]
     fn persisted_controller_input_and_report_are_byte_current() -> Result<()> {
-        let repository = crate::project_data::repository_root()?;
-        let input = build_current_controller_input()?;
-        let report = evaluate_current_trajectory()?;
-        assert_eq!(
-            fs::read(repository.join(CURRENT_CONTROLLER_INPUT_PATH))?,
-            pretty_json_bytes(&input)?
-        );
-        assert_eq!(
-            fs::read(repository.join(CURRENT_TRAJECTORY_REPORT_PATH))?,
-            pretty_json_bytes(&report)?
-        );
-        Ok(())
+        check_current_trajectory_artifacts()
+    }
+
+    #[test]
+    #[ignore = "explicit maintenance operation that rewrites tracked trajectory artifacts"]
+    fn write_current_trajectory_artifacts_on_explicit_request() -> Result<()> {
+        write_current_trajectory_artifacts()
     }
 
     #[test]
@@ -1820,12 +1847,85 @@ mod tests {
         let result: VerticalEvalReport = serde_json::from_slice(&bytes)?;
         validate_replay_vertical_result(&result)
             .map_err(|problems| AppError::InvalidStageArtifact(problems.join("; ")))?;
+        assert_eq!(
+            result
+                .categories
+                .iter()
+                .find(|category| category.status == CategoryStatus::Supported)
+                .map(|category| category.category),
+            Some(VerticalCategory::PhysicalLink)
+        );
+        let cells = result
+            .documents
+            .iter()
+            .flat_map(|document| &document.cells)
+            .collect::<Vec<_>>();
+        for (cell_id, expected_residual_keys) in [
+            (
+                "opencapi_25gbps_phy_signaling_spec_1_0__02_analog_channel_loss",
+                ["IL(f)|max=21|unit=dB", "ILD(f)|max=0.45|unit=dB_RMS"].as_slice(),
+            ),
+            (
+                "opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020__02_analog_channel_loss",
+                ["IL(f)|max=30|unit=dB"].as_slice(),
+            ),
+        ] {
+            let cell = cells
+                .iter()
+                .find(|cell| cell.cell_id == cell_id)
+                .unwrap_or_else(|| panic!("qualified physical-timing cell is missing: {cell_id}"));
+            let canonical = cell
+                .canonical
+                .as_ref()
+                .expect("qualified physical-timing cell must retain canonical accounting");
+            assert!(
+                [
+                    &canonical.evidence_ir,
+                    &canonical.semantic_ir,
+                    &canonical.intent_ir,
+                ]
+                .iter()
+                .all(|score| score.actual_keys.is_empty())
+            );
+            let residual = cell
+                .residual
+                .as_ref()
+                .expect("qualified physical-timing cell must retain residual accounting");
+            assert_eq!(residual.semantic_ir.actual_keys, expected_residual_keys);
+            assert_eq!(residual.intent_ir.actual_keys, expected_residual_keys);
+            assert!(query_is_exact(&residual.semantic_ir));
+            assert!(query_is_exact(&residual.intent_ir));
+            assert!(residual.semantic_actionable);
+            assert!(residual.intent_actionable);
+            assert!(cell.disposition_accounted);
+            assert!(cell.first_failing_stage.is_none());
+            assert!(cell.hard_failures.is_empty());
+        }
 
         let mut fabricated = result.clone();
         fabricated.global.fabricated_canonical_facts += 1;
         assert!(
             validate_replay_vertical_result(&fabricated)
                 .expect_err("fabrication count mutant must fail")
+                .iter()
+                .any(|problem| problem.contains("global counts"))
+        );
+
+        let mut non_actionable = result.clone();
+        let analog = non_actionable
+            .documents
+            .iter_mut()
+            .flat_map(|document| &mut document.cells)
+            .find(|cell| cell.semantic_family == "analog_channel_loss")
+            .expect("qualified result must retain an analog channel-loss cell");
+        analog
+            .residual
+            .as_mut()
+            .expect("analog channel-loss cell must retain a residual")
+            .intent_actionable = false;
+        assert!(
+            validate_replay_vertical_result(&non_actionable)
+                .expect_err("non-actionable repaired residual must fail")
                 .iter()
                 .any(|problem| problem.contains("global counts"))
         );

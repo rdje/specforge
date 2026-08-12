@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
+  > how are temporal rules expressed as LTL or MTL
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > how are test laboratory procedures distinguished from hardware test requirements
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > how are the .4c result and .2 capability ledger composed
+- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
+  > how are the roadmap section bounds derived
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > how are the three FSM grammars (SWD hyphen, quoted-mode, single-word) distinguished
 - [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md)
   > how are two genuinely-different registers sharing a mnemonic (MEM-AP CSW vs JTAG-AP CSW) recovered instead of dropped
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
@@ -288,13 +298,3 @@
   > how erroneous are the canonical Pattern constraint surfaces on the persisted corpus
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > how flexible is the register model / what register-table shapes are handled
-- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
-  > how good is prose signal capture / .3a quality
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > how is AXI organized / what are the AXI channels
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how is AXI per-signal channel membership recovered without a VLM
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > how is AXI per-signal phase membership recoverable without a VLM
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > how is FigureRegion raw_image_path serialized

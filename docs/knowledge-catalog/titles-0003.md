@@ -38,6 +38,7 @@
 | [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md) | 2026-06-07 | `current` | 12/82 corpus PDFs are permission-encrypted (open w/ empty password); docling+pypdf read all 82; the Read tool… |
 | [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md) | 2026-08-09 | `current` | Persisted paths separate repository ownership from authorized external inputs |
 | [prior-phrase-utf8-byte-as-char](../knowledge/prior-phrase-utf8-byte-as-char.md) | 2026-06-14 | `current` | prior-phrase normalization UTF-8 byte-as-char mangling — exponential OOM found & FIXED (PDF-VARIANT-DIGESTI… |
+| [production-genericity-boundary](../knowledge/production-genericity-boundary.md) | 2026-08-12 | `current` | Production genericity is structural and behaviorally invariant |
 | [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md) | 2026-08-08 | `current` | Project-owned temp, cache, dependency, and subprocess data resolves from the current repository |
 | [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md) | 2026-06-07 | `current` | Interface signals declared in prose ("a clock pin, SWCLK") are captured via the pin-appositive pattern |
 | [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md) | 2026-06-08 | `current` | Prose-signal capture on I2C — measured 0.600 precision then FIXED to 1.000 via the noun-phrase head rule |
@@ -60,4 +61,3 @@
 | [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md) | 2026-06-07 | `current` | Misaligned signal tables (name column rotated to last) are extracted by content-based column detection |
 | [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md) | 2026-06-17 | `current` | DTI-class message fields live in SECTION HEADINGS (`<NAME>, bits [hi:lo]`), not tables — read them into mes… |
 | [section-header-register-block-qualification](../knowledge/section-header-register-block-qualification.md) | 2026-06-24 | `current` | A genuinely-different register reused under one mnemonic (MEM-AP CSW vs JTAG-AP CSW) is recovered by BLOCK-QU… |
-| [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md) | 2026-06-17 | `current` | GIC/SMMU/CoreSight/ACC/ARM-Debug register fields live in SECTION HEADINGS (`<NAME>, bits [hi:lo]`), not table… |

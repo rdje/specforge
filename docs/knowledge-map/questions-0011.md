@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
+  > why does SWP yield 0 from extract_protocol_states and extract_quoted_mode_states but 4 from the transition-bound path
+- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
+  > why does SourceIR carry CLK_I but EvidenceIR carries CLK\\_I
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > why does SpecForge keep normalized bundles instead of reclaiming them
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > why does SpecForge retain normalized bundles instead of reclaiming them after a refresh
+- [evidence-signal-declaration-utf8-boundary-panic](../knowledge/evidence-signal-declaration-utf8-boundary-panic.md)
+  > why does USB 3.2 EvidenceIR panic on start byte index is not a char boundary
+- [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
+  > why does USB 3.2 declare no signals
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > why does USB 3.2 emit AT ENHANCED NO and USB as ISF signals
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
@@ -286,15 +298,3 @@
   > why is statement_0223 still a normative statement
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
   > why is the .isf direction default (output) FSMGen-neutral / not a faithful-lowering gap
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > why is the .isf module named after the initiator (manager / requester / debugger) instead of actors.first()
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > why is the AHB eval baseline wrong or stale
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > why is the Docling table capture of a register diagram unreliable
-- [swd-protocol-fsm-surface](../knowledge/swd-protocol-fsm-surface.md)
-  > why is the FSM important for SWD/JTAG
-- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
-  > why is the NLI framing better than free-form labeling
-- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
-  > why is the PSEL antecedent dropped in a temporal rule

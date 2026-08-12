@@ -17,16 +17,14 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.i`; `.6c.ii`, `FSMGEN-REFRESH-INTEGRATE-6.1`, and the verified no-op
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii`; child `.6d.ii.a`, `.6d.i`, `.6c.ii`, `FSMGEN-REFRESH-INTEGRATE-6.1`, and the verified no-op
   `FSMGEN-REFRESH-INTEGRATE-7.1` are committed complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and
   `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: `.6d.i` is verified complete and ready to commit. A closed first-unit-token `dB`/`dBc` grammar
-  retains physical scalar observations with actionable non-applicable disposition while excluding them from
-  executable temporal derivation. ADR 0025 reconciles exactly two measurable OpenCAPI chains: 115 timings hold,
-  26 gain disposition, 6/6 stages otherwise equal, adapters equal, and currency is 24/24 plus 78/78 downstream.
-  Three bundle-less CCIX chains retain 48 legacy matches as an explicit refresh-owned replayability boundary.
-- Next action: commit `.6d.i`, verify a clean handoff, then activate `.6d.ii` for the clean 12-source replay and
-  exact result/controller publication at the committed carrier revision.
-- In-flight uncommitted: the completed `.6d.i` code, generated projections, docs, task evidence, and required
-  catalog/ledger maintenance await their single commit; both task scratch roots are absent and no job is running.
+- Current state: `.6d.ii.a` publishes the clean 12-source / 48-stage replay and complete production-pipeline audit.
+  Current metrics are 24/2/16 TP/FP/FN with 29/29 provenance; the production core remains non-neutral until the
+  audited identity, named-schema, signal-spelling, corpus-phrase/prompt, and boundary violations are remediated.
+  The exact reviewed snapshot composer is test-only; generic evaluator/controller modules remain production.
+- Next action: activate `.6d.ii.b` from a clean handoff and replace SourceIR/Docling corpus-calibrated
+  classification with typed structural/document-derived evidence plus an honest unknown path.
+- In-flight uncommitted: none; `.6d.ii.a` is the durable boundary and no job is running.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

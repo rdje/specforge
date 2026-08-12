@@ -140,6 +140,29 @@ criterion. A more ambitious future option — letting a language model
 read the spec end-to-end — is captured but deliberately parked until the current approach is proven;
 even then it would generalize the *how* and still never memorize names.
 
+### Current implementation status: the invariant is not yet met
+
+The rule above is the required architecture, but an August 2026 whole-production audit found that the
+current implementation does not yet satisfy it. Production paths still include document-name family
+routing, protocol-specific public types and extractors, signal-spelling heuristics, corpus-calibrated
+PDF phrases, and named examples in executable prompts and production comments. Those are release-blocking
+breaches, not accepted shortcuts.
+
+The remediation is tracked by `SPEC-TO-INTENT-ALIGNMENT.6d.ii`. Its proof is deliberately stronger than
+a forbidden-word list: the production/conformance dependency boundary must prevent named test knowledge
+from entering the core, raw text decisions must go through registered universal grammars, and
+alpha-renaming plus filename/title perturbation must preserve the typed result modulo the renaming. A token
+census remains useful for diagnostics, but cannot prove neutrality because an unseen alias, hash, threshold,
+or neutral-looking corpus phrase could still encode the same coupling.
+
+This finding does not invalidate the project. A specification-neutral extractor may retain universal
+digital concepts—signals, fields, registers, states, events, obligations, timing, provenance, conflicts, and
+uncertainty—while deriving every document-owned symbol and relation from the current input. The honest ceiling
+is not perfect recovery from corrupt, missing, contradictory, or ambiguous source material; it is one
+identity-independent engine that promotes only source-justified intent and emits explicit residuals for what
+it cannot decide. The complete audit is
+[`docs/research/production-genericity-pipeline-audit.md`](../../research/production-genericity-pipeline-audit.md).
+
 ### The honest limit of pattern-matching — and what comes after
 
 It is worth naming the ceiling of the current approach plainly, because it is real. `specforge`

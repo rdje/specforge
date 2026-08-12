@@ -2,12 +2,22 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Can SpecForge theoretically be specification and PDF neutral?
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > Cannot convert a MPS Tensor to float64
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
   > EXTRACTION-QUALITY-GAUGE.3f what is the alphabetic-value word-boundary gate
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
   > EXTRACTION-QUALITY-GAUGE.3g what is the dotted-cross-reference spurious-subject gate
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > What does spec-neutral extraction mean?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Where is the whole extraction-pipeline genericity audit?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Why is a forbidden vocabulary list insufficient?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Why was PDF-AGNOSTIC-EXTRACTION closure superseded?
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > are APB tables 0016 0017 0018 a real catalog miss
 - [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
@@ -287,13 +297,3 @@
   > does SemanticIR preserve SWD protocol provenance and order
 - [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
   > does SpecForge capture component topology / connectivity for platform docs (YES — a typed signal_connectivity producer->consumer graph + infrastructure_signals clock/reset distribution; correcting the .2 'hint-level' to 'captured-but-sparse-and-unlowered')
-- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
-  > does SpecForge classify Markdown inside the FSMGen submodule
-- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
-  > does SpecForge cycle-schedule the FSM (no — FSMGen does)
-- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
-  > does SpecForge delete non-applicable physical timing records
-- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
-  > does SpecForge detect implementation-defined or TBD or and/or
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > does SpecForge emit register bit-fields to ISF now (YES — DOC-INTENT-TAXONOMY.4a.ii: the storage var carries a (fields (field …)) block; 6,570 fields / 2,531 registers / 24 docs, was 0; 4 wire golds byte-identical; 0 new fsmgen --strict diagnostics)

@@ -1,4 +1,55 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.a (`2026-08-12`) — replay truth exposes the production-genericity breach
+
+The clean replay starts only after `.6d.i` commits, so all 12 sources and 48 stages bind production revision
+`b977a51f`. Four source authorities are repository-relative; eight read-only authorities are hash-equal, reside
+on the repository's SSD filesystem, and enter only through an untracked runtime map. Durable evidence retains
+portable ids, digests, byte counts, and repository-relative scratch paths—never a host path.
+
+Fresh root/revision metadata changes stage identities, but the complete 14-cell reviewed projection localizes
+semantic causality exactly. Only the two OpenCAPI analog cells change. `IL(f)|21 dB`,
+`ILD(f)|0.45 dB_RMS`, and `IL(f)|30 dB` disappear from all three canonical projections and reappear unchanged
+as source-linked residual keys at SemanticIR and IntentIR. Each residual carries non-empty reason, boundary, and
+replay data, so both reviewed cells are actionable and accounted. The four UI digital-skew facts, every other
+reviewed cell, all 24 prior true positives, and 29/29 canonical provenance remain exact.
+
+TP/FP/FN become 24/2/16. The evaluator counts residual actionability per required cell/stage observation, hence
+the two repaired cells contribute four met observations (4/24), not three key-level observations. Source
+disposition becomes 6/14 and required-modality document accounting 4/12; conservation remains 72/88 and the 16
+unexplained canonical drops are unchanged. Physical-link is now `supported`; the other five categories remain
+`incomplete` for their own measured defects.
+
+Controller v6 therefore cannot jump to `.7`. Its replay and provenance hard gates are clear, but the zero-
+fabrication gate retains two unrelated violations: one AMD IOMMU packed-layout key and one GIC-400 summary-
+caption key. The hard-first owner is new pending `.6e`, followed by `.7`'s 16 source losses, `.8`'s 20 remaining
+inactionable residual observations, and `.9`'s five omitted capability islands. The promoted manifest, result,
+input, and report hashes are `81f1758b…2c855`, `78e27515…5075`, `274311e6…0c04`, and `ccb8a112…b5d8`.
+After promotion, the exact 3,913-file / 1,090,948-KiB replay root and runtime source map were removed and proved
+absent.
+
+The owner review of the exact OpenCAPI assertions triggered a complete production-pipeline audit rather than a
+local vocabulary cleanup. The denominator is all 71 Rust sources, including embedded Docling Python, optional
+VLM/text/NLI paths, prior learning/use, validation/evaluation, corpus commands, trajectory composition, and both
+adapters. The audit confirms that the generic stage architecture is reusable, but the compiled production
+surface is not neutral: document identity selects named prior families; EvidenceIR exposes and produces a named
+serial protocol schema; signal spellings infer semantic roles; PDF classifiers contain corpus-calibrated
+phrases; prompts narrow the input domain; and production comments/public names normalize specific examples.
+
+A finite token denylist cannot close that class of failure: it misses unseen aliases, hashes, thresholds,
+translated fragments, schema coupling, and neutral-looking copied phrases. Signoff therefore requires a one-way
+production-core/conformance boundary, opaque input identities and symbols, audited grammar APIs for raw text,
+source-grounded promotion/residuals, AST/dependency mutation tests, and behavioral invariance under symbol
+renaming, identity perturbation, paraphrase, and held-out documents. The reviewed snapshot composer is the first
+boundary correction: it now exists only in `#[cfg(test)]` support, while the generic evaluator/controller stays
+in production.
+
+The audit does not imply that neutral extraction is theoretically impossible. Universal digital-intent types
+and document grammar are legitimate priors; document identity, named signals, and corpus phrases are not.
+Perfect recovery from absent, contradictory, or unreadable source is impossible, so the signoff contract is one
+identity-independent engine that promotes justified intent and makes every unsupported or undecidable item an
+explicit residual. Remediation may reduce benchmark recall temporarily; keeping a named shortcut is not an
+acceptable way to preserve it.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6c.ii (`2026-08-12`) — provenance closure exposes the next honesty family
 
 The clean replay was intentionally run only after `.6c.i` committed. Its production revision is therefore the

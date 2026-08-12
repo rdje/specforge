@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what field holds the constrained signal name (signal_name vs subject_signal)
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > what fraction of a chip-spec PDF's intent reaches the emitted .isf, per purpose category
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what fsmgen pin carries the phase-membership answer (030f8c273, FSMGEN-REFRESH-INTEGRATE-3, ISF-SPECFORGE-PHASE-MEMBERSHIP-RESPONSE.1/.2)
+- [fsmgen-temporal-isf-form](../knowledge/fsmgen-temporal-isf-form.md)
+  > what fsmgen pin does SpecForge target for temporal properties
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > what gates protect the leading-identifier mnemonic form from bleed
+- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
+  > what gates the corpus refresh frontier / what is the CORPUS-FRONTIER doctrine
 - [timing-observation-to-verified-figure-contract](../knowledge/timing-observation-to-verified-figure-contract.md)
   > what gives timing observation samples tick authority
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
@@ -285,15 +297,3 @@
   > what is the built-in RAM guard / autonomous memory safeguard during ingest
 - [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
   > what is the canonical declared signal inventory key on SemanticIR
-- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
-  > what is the canonical knowledge-map architecture path
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > what is the complete parenthetical data-head declaration census
-- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
-  > what is the completeness gauge over-counting on APB
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > what is the condition-read-as-obligation error class and its gate
-- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
-  > what is the constraint-subject-must-be-declared filter
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > what is the corpus coverage build-out (CORPUS-COVERAGE.0)

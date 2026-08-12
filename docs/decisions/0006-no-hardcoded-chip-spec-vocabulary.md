@@ -5,6 +5,10 @@
 - Deciders: project owner (signoff criterion), repo-local workflow
 - Amendment (`2026-06-05`, **owner-confirmed**): logic levels are universal binary-logic "how", not a
   spec name — see the *"Logic levels are how, not a name"* boundary below.
+- Amendment (`2026-08-12`, **owner-confirmed**): the invariant applies to the complete compiled
+  production surface, including schemas, prompts, prior routing, comments/doc comments, examples,
+  validation, and corpus/trajectory utilities. A finite forbidden-vocabulary list is diagnostic,
+  not proof. See `docs/research/production-genericity-pipeline-audit.md`.
 
 ## Context
 
@@ -38,6 +42,11 @@ All such vocabulary **must be derived from the document under analysis** — its
 port declarations, and stated values — never from a list baked into the code. When the safe choice
 and the convenient choice diverge, **prefer the choice that preserves PDF-independence.**
 
+The same rule prohibits semantic routing by document key, filename, title, vendor/family identity,
+signal-name substring, a corpus-derived phrase, or a public IR type specialized to one protocol.
+Production code may not depend on named conformance/oracle modules. Named examples belong in tests,
+fixtures, and research evidence only.
+
 ### Boundary (what is NOT domain vocabulary)
 
 The **English normative/structural language the specs are written in** — `must`, `shall`, `when`,
@@ -65,7 +74,24 @@ not the universal binary-logic concept itself.)*
 - Signal-candidate validation moves from **denylists of one protocol's words** to **positive
   validation against the document's declared signals** (the `declared_signal_names` registry
   already exists and is partially used).
-- A **CI guard** should fail the build if known spec-specific tokens reappear in production sources,
-  so the invariant cannot silently regress.
+- A **CI guard** must fail the build on structural genericity breaches. The authority is the compiled
+  production module/dependency boundary, opaque input-symbol and identity types, registered grammar
+  interfaces, AST-aware rejection of ad-hoc raw-literal decisions, and behavioral metamorphic tests
+  (symbol/document renaming, identity perturbation, paraphrase, and negative controls). A generated
+  known-token census is retained only as supplementary diagnostics because no finite list can cover
+  future identities, aliases, fragments, or non-textual coupling.
 - Tracked by tree `PDF-AGNOSTIC-EXTRACTION`. Test/eval **fixtures** may use real names (they are
   data, not logic) — the invariant is about production code paths.
+
+## Feasibility and honest ceiling
+
+A neutral system is feasible; a prior-free system is not the goal. SpecForge may encode universal
+digital-intent concepts and document-structure/normative grammar, then carry opaque names and values
+from the current input and accept provenance-bearing model/learned proposals that are grounded back
+to it. It may not remember which named specification taught the method.
+
+No system can guarantee perfect recovery of all intent from every possible PDF: source information
+can be absent, externally referenced, contradictory, unreadable, implementation-defined, or
+ambiguous. The signoff north star is therefore: apply the same identity-independent pipeline to any
+digital-chip specification, promote every intent fact the source justifies, and emit explicit
+residuals for undecidable or unsupported content without fabrication or a named special case.

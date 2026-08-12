@@ -48,6 +48,7 @@ canonical prose; this catalog stores only path and first-H1 navigation metadata.
 | [docs/research/literature-grounding.md](../../docs/research/literature-grounding.md) | Literature Grounding — verified references, corrections, and adopted techniques |
 | [docs/research/live-document-derived-state-adoption-delta.md](../../docs/research/live-document-derived-state-adoption-delta.md) | Derived-state containment adoption delta — `LIVE-DOCUMENT-SIZE-CONTAINMENT-ADOPTION.8a` |
 | [docs/research/miss-detectors-catalog.md](../../docs/research/miss-detectors-catalog.md) | Miss-Detector Catalog — completeness invariants & the miss taxonomy |
+| [docs/research/production-genericity-pipeline-audit.md](../../docs/research/production-genericity-pipeline-audit.md) | Production-genericity pipeline audit |
 | [docs/research/recall-estimation-and-report.md](../../docs/research/recall-estimation-and-report.md) | Recall Estimation & the Typed CompletenessReport — design (research `.5`) |
 | [docs/research/region-accounting-design.md](../../docs/research/region-accounting-design.md) | Region Accounting & Backward Traceability — instrument design |
 | [docs/research/register-bit-field-isf-lowering-design.md](../../docs/research/register-bit-field-isf-lowering-design.md) | Register bit-field ISF lowering — design + FSMGen-storage verification (DOC-INTENT-TAXONOMY.4a) |

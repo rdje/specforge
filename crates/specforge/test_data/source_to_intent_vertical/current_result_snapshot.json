@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "dataset_id": "source-to-intent-vertical-timing-carrier-replay-v1",
-  "owner": "SPEC-TO-INTENT-ALIGNMENT.6c.ii",
+  "dataset_id": "reviewed-source-to-intent-current-b977a51f",
+  "owner": "SPEC-TO-INTENT-ALIGNMENT.6d.ii",
   "selection_boundary_commit": "a3e9757d63ca5499a2393864fb503d6537de0035",
   "selection_claim": "Current-binary replay of the unchanged review-locked population; source bytes and all four replayed stage identities are re-verified without mutating the frozen baseline.",
   "minimum_documents_per_category": 2,
@@ -1670,7 +1670,7 @@
       },
       "review_scope_complete": true,
       "present_modalities": 1,
-      "accounted_modalities": 0,
+      "accounted_modalities": 1,
       "cells": [
         {
           "cell_id": "opencapi_25gbps_phy_signaling_spec_1_0__01_digital_lane_skew",
@@ -1859,89 +1859,92 @@
           },
           "canonical": {
             "evidence_ir": {
-              "actual_keys": [
-                "IL(f)|max=21|unit=dB",
-                "ILD(f)|max=0.45|unit=dB_RMS"
-              ],
+              "actual_keys": [],
               "expected_keys": [],
               "matched_keys": [],
-              "actual_total": 2,
+              "actual_total": 0,
               "expected_total": 0,
               "true_positives": 0,
-              "false_positives": 2,
+              "false_positives": 0,
               "false_negatives": 0,
-              "precision": 0.0,
+              "precision": null,
               "recall": null,
               "unprovenanced_records": 0
             },
             "semantic_ir": {
-              "actual_keys": [
-                "IL(f)|max=21|unit=dB",
-                "ILD(f)|max=0.45|unit=dB_RMS"
-              ],
+              "actual_keys": [],
               "expected_keys": [],
               "matched_keys": [],
-              "actual_total": 2,
+              "actual_total": 0,
               "expected_total": 0,
               "true_positives": 0,
-              "false_positives": 2,
+              "false_positives": 0,
               "false_negatives": 0,
-              "precision": 0.0,
+              "precision": null,
               "recall": null,
               "unprovenanced_records": 0
             },
             "intent_ir": {
-              "actual_keys": [
-                "IL(f)|max=21|unit=dB",
-                "ILD(f)|max=0.45|unit=dB_RMS"
-              ],
+              "actual_keys": [],
               "expected_keys": [],
               "matched_keys": [],
-              "actual_total": 2,
+              "actual_total": 0,
               "expected_total": 0,
               "true_positives": 0,
-              "false_positives": 2,
+              "false_positives": 0,
               "false_negatives": 0,
-              "precision": 0.0,
+              "precision": null,
               "recall": null,
               "unprovenanced_records": 0
             }
           },
           "residual": {
             "semantic_ir": {
-              "actual_keys": [],
+              "actual_keys": [
+                "IL(f)|max=21|unit=dB",
+                "ILD(f)|max=0.45|unit=dB_RMS"
+              ],
               "expected_keys": [
                 "IL(f)|max=21|unit=dB",
                 "ILD(f)|max=0.45|unit=dB_RMS"
               ],
-              "matched_keys": [],
-              "actual_total": 0,
+              "matched_keys": [
+                "IL(f)|max=21|unit=dB",
+                "ILD(f)|max=0.45|unit=dB_RMS"
+              ],
+              "actual_total": 2,
               "expected_total": 2,
-              "true_positives": 0,
+              "true_positives": 2,
               "false_positives": 0,
-              "false_negatives": 2,
-              "precision": null,
-              "recall": 0.0,
+              "false_negatives": 0,
+              "precision": 1.0,
+              "recall": 1.0,
               "unprovenanced_records": 0
             },
             "intent_ir": {
-              "actual_keys": [],
+              "actual_keys": [
+                "IL(f)|max=21|unit=dB",
+                "ILD(f)|max=0.45|unit=dB_RMS"
+              ],
               "expected_keys": [
                 "IL(f)|max=21|unit=dB",
                 "ILD(f)|max=0.45|unit=dB_RMS"
               ],
-              "matched_keys": [],
-              "actual_total": 0,
+              "matched_keys": [
+                "IL(f)|max=21|unit=dB",
+                "ILD(f)|max=0.45|unit=dB_RMS"
+              ],
+              "actual_total": 2,
               "expected_total": 2,
-              "true_positives": 0,
+              "true_positives": 2,
               "false_positives": 0,
-              "false_negatives": 2,
-              "precision": null,
-              "recall": 0.0,
+              "false_negatives": 0,
+              "precision": 1.0,
+              "recall": 1.0,
               "unprovenanced_records": 0
             },
-            "semantic_actionable": false,
-            "intent_actionable": false
+            "semantic_actionable": true,
+            "intent_actionable": true
           },
           "boundaries": [
             {
@@ -1963,20 +1966,12 @@
               "unexplained_drops": 0
             }
           ],
-          "disposition_accounted": false,
-          "first_failing_stage": "source_to_evidence_ir",
-          "hard_failures": [
-            "fabricated_canonical_facts:2",
-            "required_residual_missing_or_inactionable",
-            "source_region_disposition_unaccounted"
-          ]
+          "disposition_accounted": true,
+          "first_failing_stage": null,
+          "hard_failures": []
         }
       ],
-      "hard_failures": [
-        "opencapi_25gbps_phy_signaling_spec_1_0__02_analog_channel_loss:fabricated_canonical_facts:2",
-        "opencapi_25gbps_phy_signaling_spec_1_0__02_analog_channel_loss:required_residual_missing_or_inactionable",
-        "opencapi_25gbps_phy_signaling_spec_1_0__02_analog_channel_loss:source_region_disposition_unaccounted"
-      ]
+      "hard_failures": []
     },
     {
       "document_key": "opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020",
@@ -1995,7 +1990,7 @@
       },
       "review_scope_complete": true,
       "present_modalities": 1,
-      "accounted_modalities": 0,
+      "accounted_modalities": 1,
       "cells": [
         {
           "cell_id": "opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020__01_digital_lane_skew",
@@ -2184,84 +2179,86 @@
           },
           "canonical": {
             "evidence_ir": {
-              "actual_keys": [
-                "IL(f)|max=30|unit=dB"
-              ],
+              "actual_keys": [],
               "expected_keys": [],
               "matched_keys": [],
-              "actual_total": 1,
+              "actual_total": 0,
               "expected_total": 0,
               "true_positives": 0,
-              "false_positives": 1,
+              "false_positives": 0,
               "false_negatives": 0,
-              "precision": 0.0,
+              "precision": null,
               "recall": null,
               "unprovenanced_records": 0
             },
             "semantic_ir": {
-              "actual_keys": [
-                "IL(f)|max=30|unit=dB"
-              ],
+              "actual_keys": [],
               "expected_keys": [],
               "matched_keys": [],
-              "actual_total": 1,
+              "actual_total": 0,
               "expected_total": 0,
               "true_positives": 0,
-              "false_positives": 1,
+              "false_positives": 0,
               "false_negatives": 0,
-              "precision": 0.0,
+              "precision": null,
               "recall": null,
               "unprovenanced_records": 0
             },
             "intent_ir": {
-              "actual_keys": [
-                "IL(f)|max=30|unit=dB"
-              ],
+              "actual_keys": [],
               "expected_keys": [],
               "matched_keys": [],
-              "actual_total": 1,
+              "actual_total": 0,
               "expected_total": 0,
               "true_positives": 0,
-              "false_positives": 1,
+              "false_positives": 0,
               "false_negatives": 0,
-              "precision": 0.0,
+              "precision": null,
               "recall": null,
               "unprovenanced_records": 0
             }
           },
           "residual": {
             "semantic_ir": {
-              "actual_keys": [],
+              "actual_keys": [
+                "IL(f)|max=30|unit=dB"
+              ],
               "expected_keys": [
                 "IL(f)|max=30|unit=dB"
               ],
-              "matched_keys": [],
-              "actual_total": 0,
+              "matched_keys": [
+                "IL(f)|max=30|unit=dB"
+              ],
+              "actual_total": 1,
               "expected_total": 1,
-              "true_positives": 0,
+              "true_positives": 1,
               "false_positives": 0,
-              "false_negatives": 1,
-              "precision": null,
-              "recall": 0.0,
+              "false_negatives": 0,
+              "precision": 1.0,
+              "recall": 1.0,
               "unprovenanced_records": 0
             },
             "intent_ir": {
-              "actual_keys": [],
+              "actual_keys": [
+                "IL(f)|max=30|unit=dB"
+              ],
               "expected_keys": [
                 "IL(f)|max=30|unit=dB"
               ],
-              "matched_keys": [],
-              "actual_total": 0,
+              "matched_keys": [
+                "IL(f)|max=30|unit=dB"
+              ],
+              "actual_total": 1,
               "expected_total": 1,
-              "true_positives": 0,
+              "true_positives": 1,
               "false_positives": 0,
-              "false_negatives": 1,
-              "precision": null,
-              "recall": 0.0,
+              "false_negatives": 0,
+              "precision": 1.0,
+              "recall": 1.0,
               "unprovenanced_records": 0
             },
-            "semantic_actionable": false,
-            "intent_actionable": false
+            "semantic_actionable": true,
+            "intent_actionable": true
           },
           "boundaries": [
             {
@@ -2283,20 +2280,12 @@
               "unexplained_drops": 0
             }
           ],
-          "disposition_accounted": false,
-          "first_failing_stage": "source_to_evidence_ir",
-          "hard_failures": [
-            "fabricated_canonical_facts:1",
-            "required_residual_missing_or_inactionable",
-            "source_region_disposition_unaccounted"
-          ]
+          "disposition_accounted": true,
+          "first_failing_stage": null,
+          "hard_failures": []
         }
       ],
-      "hard_failures": [
-        "opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020__02_analog_channel_loss:fabricated_canonical_facts:1",
-        "opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020__02_analog_channel_loss:required_residual_missing_or_inactionable",
-        "opencapi_4_0_32g_phy_signal_spec_1_0_16nov2020__02_analog_channel_loss:source_region_disposition_unaccounted"
-      ]
+      "hard_failures": []
     },
     {
       "document_key": "pjdoc_466751330_7215_10_0_cortex_a76_software_optimization_guide",
@@ -2733,8 +2722,8 @@
       "category": "physical-link",
       "document_count": 2,
       "cell_count": 4,
-      "hard_failure_count": 6,
-      "status": "incomplete"
+      "hard_failure_count": 0,
+      "status": "supported"
     },
     {
       "category": "methodology-guide",
@@ -2746,14 +2735,14 @@
   ],
   "global": {
     "intent_bearing_source_region_disposition": {
-      "met": 4,
+      "met": 6,
       "total": 14,
-      "ratio": 0.2857142857142857
+      "ratio": 0.42857142857142855
     },
     "required_modality_accounting": {
-      "met": 2,
+      "met": 4,
       "total": 12,
-      "ratio": 0.16666666666666666
+      "ratio": 0.3333333333333333
     },
     "canonical_provenance_closure": {
       "met": 29,
@@ -2766,11 +2755,11 @@
       "ratio": 0.8181818181818182
     },
     "residual_actionability": {
-      "met": 0,
+      "met": 4,
       "total": 24,
-      "ratio": 0.0
+      "ratio": 0.16666666666666666
     },
-    "fabricated_canonical_facts": 5,
+    "fabricated_canonical_facts": 2,
     "unexplained_stage_drops": 16
   }
 }

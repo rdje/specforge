@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
+  > how to get a fresh eval-extraction baseline for a spec
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > how to re-measure the message-field corpus yield
+- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
+  > how to re-score SWD derivation
+- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
+  > how to read a chip-spec PDF when the Read tool refuses it
+- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
+  > how to recover register field bit positions that live in the layout graphic, not the table
 - [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md)
   > how was AHB HREADY recovered for the temporal antecedent
 - [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
@@ -288,13 +298,3 @@
   > should corpus refresh progress be counted from normalized directories
 - [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
   > should persisted chain currency be a gated doctrine or an advisory report
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > should specforge connect producer/consumer/etc. to their signals
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > should specforge mint actor-signal relations for nvme / iommu / ccix / register protocols
-- [isf-lowering-fidelity-gauge](../knowledge/isf-lowering-fidelity-gauge.md)
-  > should specforge record a residual for every typed rule that does not lower to .isf
-- [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
-  > should specforge record an adapter residual for rules whose subject is not a declared signal
-- [actor-signal-direction-passive-active-handled](../knowledge/actor-signal-direction-passive-active-handled.md)
-  > should specforge recover consumer edges from 'X is sent/returned to Y' recipient frames

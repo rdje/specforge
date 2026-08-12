@@ -2,6 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [knowledge-map-architecture-location](../knowledge/knowledge-map-architecture-location.md)
+  > what is the canonical knowledge-map architecture path
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > what is the complete parenthetical data-head declaration census
+- [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
+  > what is the completeness gauge over-counting on APB
+- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
+  > what is the condition-read-as-obligation error class and its gate
+- [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
+  > what is the constraint-subject-must-be-declared filter
+- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
+  > what is the corpus coverage build-out (CORPUS-COVERAGE.0)
 - [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
   > what is the corpus distribution of purpose categories (21 wire / 8 guide high; 28 register-or-platform / 16 unresolved / 5 physical-link low; 0 high-confidence false positives)
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
@@ -285,15 +297,3 @@
   > where do transaction phases live (SemanticIr.transaction_phases) and do they reach the .isf (no — SemanticIR-only, recognition only)
 - [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
   > where do zero-port actors come from in the IntentIR actor surface
-- [source-library-authority-is-ssd-local](../knowledge/source-library-authority-is-ssd-local.md)
-  > where does .cache/local-references/chipdoc resolve
-- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
-  > where does .isf record dropped temporal obligations
-- [evidence-statement-markdown-escape-truncates-identifiers](../knowledge/evidence-statement-markdown-escape-truncates-identifiers.md)
-  > where does EvidenceIR statement text come from
-- [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md)
-  > where does SpecForge canonicalize upstream artifact paths before serialization
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > where does SpecForge store temporary files and caches
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > where does TransactionPhaseRecord.signal_set come from (build_transaction_phases, ir/semantic.rs — phase-naming statements' signals ∩ declared inventory, the .2c technique)

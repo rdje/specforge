@@ -1,5 +1,7 @@
 use std::sync::{Mutex, MutexGuard, OnceLock};
 
+pub(crate) mod trajectory_snapshot;
+
 /// Serializes tests that mutate process-global environment variables.
 pub(crate) fn env_var_lock() -> MutexGuard<'static, ()> {
     static LOCK: OnceLock<Mutex<()>> = OnceLock::new();

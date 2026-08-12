@@ -224,9 +224,59 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.i — preserve physical timing without canonical promotion`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii`
+  Status: `in_progress`
+  Goal: `replay the decibel-domain disposition repair across the complete reviewed population, publish the exact comparable result, and make production genericity a repository-wide release gate`
+  Acceptance: `all 12 sources and 48 stages replay at the committed .6d.i production revision; the exact reviewed disposition and every collateral change are published; all 24 prior true positives and 29/29 provenance survive; every production Rust surface is specification, PDF-identity, vendor, protocol, signal, and corpus-vocabulary neutral; a registered fail-closed doctrine distinguishes cfg(test) code and test support from production and rejects a controlled production leak; controller, public/live documentation, retrieval, and cleanup evidence agree`
+  Verification: `pending`
+  Commit: `completed by .6d.ii.a through .6d.ii.f child commits`
+  Children: `.6d.ii.a`, `.6d.ii.b`, `.6d.ii.c`, `.6d.ii.d`, `.6d.ii.e`, `.6d.ii.f`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.a`
+  Status: `done`
+  Goal: `publish the clean population replay, audit the complete current extraction pipeline, and remove reviewed-corpus snapshot composition from the production module graph`
+  Acceptance: `the exact 12-source / 48-stage replay is durable; every production stage, source group, optional model path, prior/evaluation path, and adapter boundary has a neutrality verdict with decision sites named for each blocking family; the disproven historical genericity claim is corrected; corpus-specific replay assertions and composition are test-only; the audit defines the positive structural proof required instead of treating a finite vocabulary list as proof`
+  Verification: `exact replay/result/controller/currentness tests 7 passed / one explicit writer ignored; capability-registry currentness passed; mdBook test/build and Knowledge Map passed; all seven commit-tier doctrines passed; full run_ci passed all eight doctrines, formatting, warning-deny Clippy, 1,870 tests passed / six ignored / zero failed, warning-deny rustdoc, mdBook, and final project-data locality; audit scratch and replay workspace/runtime map absent`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.a — audit production genericity`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b`
   Status: `pending`
-  Goal: `replay the decibel-domain disposition repair across the complete reviewed population and publish the exact comparable result`
-  Acceptance: `all 12 sources and 48 stages replay at the committed .6d.i production revision; the exact OpenCAPI disposition and every collateral change are published; all 24 prior true positives and 29/29 provenance survive; controller, public/live documentation, retrieval, and cleanup evidence agree`
+  Goal: `make SourceIR PDF normalization and visual/table classification structurally generic`
+  Acceptance: `production ingest contains no corpus-calibrated operation, protocol-role, packet-field, document, vendor, or signal spellings; classifications depend on typed page/table/diagram structure or document-derived evidence and retain an honest unknown path`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c`
+  Status: `pending`
+  Goal: `replace protocol-specific EvidenceIR schema and extractors with document-derived generic protocol semantics`
+  Acceptance: `production EvidenceIR exposes only generic frame, operation, state, actor, and direction records; exact protocol/signal/response names and named extractor identities live only in tests or input data; downstream stages carry the neutral schema losslessly`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d`
+  Status: `pending`
+  Goal: `remove identity- and spelling-driven prior, semantic, prompt, validation, and corpus-command decisions`
+  Acceptance: `document key/display name and named family enums cannot steer extraction; signal spelling cannot infer handshake, clock, reset, or interface authority; prompts use neutral synthetic placeholders; production corpus organization is structural and data-derived`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e`
+  Status: `pending`
+  Goal: `install a fail-closed production-genericity architecture and doctrine gate`
+  Acceptance: `the production module graph is separated from conformance/oracle code; raw document text and identity cannot be inspected by extraction decision sites outside registered universal grammar interfaces; an AST-aware gate rejects forbidden dependency and raw-literal decision mutations; a finite vocabulary census is supplementary diagnostics only`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f`
+  Status: `pending`
+  Goal: `qualify genericity behaviorally and replay the reviewed population after remediation`
+  Acceptance: `alpha-renaming, structure-preserving paraphrase, adversarial identity, negative-control, and held-out-document tests prove decisions are not coupled to names; the complete reviewed replay and full gates publish all intended deltas without truthfulness/provenance regression; public/live/book/retrieval truth is synchronized`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6e`
+  Status: `pending`
+  Goal: `remove the remaining qualified fabricated register facts after the OpenCAPI physical-timing family closes`
+  Acceptance: `the AMD IOMMU packed-layout key and GIC-400 summary-caption key are reproduced and separated by root cause before implementation; each bounded repair removes only source-unjustified canonical facts, retains all 24 current true positives and 29/29 provenance, emits an actionable residual where the reviewed contract requires one, and receives clean whole-population qualification plus controller re-ranking`
   Verification: `pending`
   Commit: `pending`
 
@@ -272,10 +322,16 @@ expressiveness as the bottleneck.
 | 15 | `SPEC-TO-INTENT-ALIGNMENT.6c.i` | `done` | generic caption-unit/table-provenance carrier, five-chain reconciliation, cleanup, and full CI complete |
 | 16 | `SPEC-TO-INTENT-ALIGNMENT.6c.ii` | `done` | 12-source replay closes I2S and all provenance, publishes exact current result, and selects `.6d` |
 | 17 | `SPEC-TO-INTENT-ALIGNMENT.6d.i` | `done` | typed disposition, exact two-chain reconciliation, cleanup, live-doc maintenance, and full CI complete |
-| 18 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii` | `pending` | clean 12-source replay must publish the exact repair and controller re-ranking |
-| 19 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
-| 20 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
-| 21 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
+| 18 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.a` | `done` | clean replay, whole-pipeline audit, test-only snapshot boundary, durable signoff design, cleanup, and full CI complete |
+| 19 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b` | `pending` | neutralize SourceIR ingest/classification before downstream extractors consume it |
+| 20 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c` | `pending` | replace protocol-specific EvidenceIR/schema behavior after its input boundary is neutral |
+| 21 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d` | `pending` | remove prior/semantic/prompt/command identity and spelling inference on the neutral schema |
+| 22 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e` | `pending` | structurally gate the complete neutral production graph after remediation |
+| 23 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `pending` | behavioral metamorphic and whole-population qualification closes the genericity parent |
+| 24 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | hard-first controller must remove the two remaining unrelated register fabrications before recall work |
+| 25 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
+| 26 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
+| 27 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
 
 ## Decisions
 
@@ -406,6 +462,26 @@ expressiveness as the bottleneck.
   before publishing metrics or controller state. The currency oracle names exactly two measurable EvidenceIR
   chains. Three older CCIX chains have 48 matching retained records but no normalized bundles, so their EvidenceIR
   is explicitly refresh-owned and unmeasurable rather than silently claimed current.
+- `2026-08-12`: activated `.6d.ii` only after `.6d.i` committed at `b977a51f` and the post-commit tree was clean.
+  This leaf owns a fresh 12-source / 48-stage replay at that production revision, exact result comparison,
+  controller re-ranking, portable authority promotion, and residue-free cleanup.
+- `2026-08-12`: `.6d.ii` replay measurement changes exactly the two OpenCAPI analog cells: all three false
+  canonical keys become exact actionable SemanticIR/IntentIR residuals while the other 12 cells remain
+  semantically equal. TP/FP/FN are 24/2/16, provenance stays 29/29, physical-link becomes supported, and the
+  remaining hard failures are the unrelated AMD IOMMU and GIC-400 register fabrications. Hard-first ordering
+  therefore opens `.6e`; `.7` cannot precede it while the zero-fabrication gate still has two violations.
+- `2026-08-12`: owner review of corpus-specific assertions triggers a complete production audit rather than a
+  token-list patch. All 71 Rust sources, embedded Docling Python, canonical and optional model/prior/evaluation
+  paths, adapters, prompts, comments, examples, and module boundaries are in scope. The audit disproves the old
+  whole-repository neutrality claim and finds release-blocking identity-routed families, named protocol schema/
+  extractors, signal-spelling inference, corpus-calibrated phrases/thresholds, and core/conformance coupling.
+  A finite forbidden-vocabulary file is diagnostic only. Parent `.6d.ii` is split into `.a`–`.f`: publish/audit
+  and test-boundary correction, SourceIR, EvidenceIR/schema, downstream identity/spelling removal, structural
+  doctrine enforcement, and behavioral/whole-population qualification.
+- `2026-08-12`: the theoretical boundary is explicit. A neutral extractor may own universal digital semantics
+  and document grammar while carrying current-input names opaquely; it cannot promise facts absent or ambiguous
+  in the source. Signoff means one identity-independent engine promotes only supported intent and emits explicit
+  residuals otherwise. The breach requires removing shortcuts, not abandoning the project.
 
 ## Open Questions
 
@@ -494,6 +570,10 @@ expressiveness as the bottleneck.
 | `2026-08-12` | `.6d.i` projection and cleanup | physical-timing projector over both rebuilt IntentIRs; exact scratch census/removal | PASS: 4/4 digital facts stay canonical; 3/3 analog facts become actionable source-linked residual projections; exact 231-file / 59,296-KiB focused root and 241-file / 57,712-KiB reconciliation root removed and absent |
 | `2026-08-12` | `.6d.i` required live-doc maintenance | fact-title derive/write/check; Rust-analysis rollover dry-run/apply/report | PASS: 215-card bounded title catalog current; exact ten-record / 147-line / 12,935-byte segment `75ee4242…404d` sealed; resulting 54-record / 1,072-line root `7c460d92…6cef` warning-safe and the current carrier record remains live |
 | `2026-08-12` | `.6d.i` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines including whole-chain currency, formatting, warning-deny Clippy, 1,869 Rust tests passed / five ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final project-data locality |
+| `2026-08-12` | `.6d.ii.a` replay and boundary | `cargo test --quiet -p specforge --lib test_support::trajectory_snapshot`; live capability-registry currentness test | PASS: seven snapshot/currentness/mutation tests, one explicit tracked-writer test ignored; capability observation equals the live production registry; reviewed composer absent from `ir/mod.rs` |
+| `2026-08-12` | `.6d.ii.a` full pipeline audit | all 71 `crates/specforge/src/` sources; canonical stages, optional VLM/text/NLI/prior/eval paths, embedded Docling Python, adapters, examples, comments/prompts, and module registry | PASS discovery / BLOCK production signoff: every source group is classified; identity routing, named schema/extractors, signal-spelling inference, corpus phrases/thresholds, and named production surfaces are durably owned by `.6d.ii.b`–`.f` |
+| `2026-08-12` | `.6d.ii.a` documentation/projections | mdBook test/build; Knowledge Map; fact-card and research catalogs; live-document aggregate/currentness; commit-tier doctrines | PASS: 216 fact cards and 256 collection members route through bounded generated indexes; all seven commit-tier doctrines green |
+| `2026-08-12` | `.6d.ii.a` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines, formatting, warning-deny Clippy, 1,870 tests / six ignored / zero failed, warning-deny rustdoc, mdBook, and final project-data locality |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
 
@@ -823,6 +903,41 @@ the reviewed replay can name its production revision.
 - [x] **LOCKSTEP** — code, rebuilt corpus, task/live status, architecture analysis, mdBook, Knowledge Map, bounded
   resume pointer, aggregate authority, and the `.6d.ii` clean-replay frontier must agree at commit.
 
+## Parent closure criteria — `SPEC-TO-INTENT-ALIGNMENT.6d.ii`
+
+- **REPRODUCE / MEASURE** — replay all 12 unchanged source identities and 48 isolated stages at committed
+  revision `b977a51f`; compare every reviewed cell and aggregate with the committed `.6c.ii` authority.
+- **ROOT CAUSE (WHY + WHERE)** — prove that only the unit-derived applicability carrier changes the two
+  OpenCAPI analog cells, separating the three repaired keys from every retained true positive and unrelated
+  fabrication, loss, provenance, or capability defect.
+- **ADDRESSED (verified)** — publish the portable replay/result/controller authorities with exact residual,
+  category, aggregate, hard-gate, and next-owner outcomes; strict loaders and mutations must reject drift.
+- **NO REGRESSION** — retain 24 true positives, 29/29 provenance, 12/12 replay currency, all unaffected cell
+  semantics, frozen review authority, canonical generated artifacts, complete cleanup, and full CI.
+- **GENERICITY (ADR 0006)** — the measured change follows the closed unit disposition and data-driven
+  evaluator; no document/vendor/table/review-key branch or controller exception is introduced. Audit every
+  production Rust source, remove all historical named-spec/vendor/protocol/signal vocabulary, and register a
+  fail-closed whole-production-surface doctrine whose specificity authority and mutation fixtures remain test-only.
+- **LOCKSTEP** — result, controller, task/roadmap/book/live/retrieval truth, cleanup evidence, and resume
+  pointer agree that OpenCAPI closes while the two remaining register fabrications move to owned `.6e`.
+
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.a`
+
+- [x] **REPRODUCE / MEASURE** — publish the exact 12-source / 48-stage `b977a51f` replay and compare every cell,
+  aggregate, artifact identity, and cleanup fact with `.6c.ii`.
+- [x] **ROOT CAUSE (WHY + WHERE)** — audit every production source and extraction/optional/adapter boundary;
+  distinguish universal structure/input-derived behavior from identity, named schema, signal spelling, corpus
+  phrase, prompt, threshold, comment, or core→conformance coupling; focused `cargo test` localizes the boundary.
+- [x] **ADDRESSED (verified)** — move exact reviewed snapshot composition/assertions below `#[cfg(test)]`, remove
+  its production example/IR registration, and durably assign every remaining audit family to `.6d.ii.b`–`.f`.
+- [x] **NO REGRESSION** — preserve generic evaluator/controller behavior, exact replay/result/controller bytes,
+  all 24 true positives, 29/29 provenance, frozen authorities, canonical generated artifacts, and zero scratch
+  residue; focused `cargo test` is green and `scripts/run_ci.sh` is the closing oracle.
+- [x] **GENERICITY (ADR 0006)** — record that a finite vocabulary list is diagnostic only and define structural
+  module/type/grammar enforcement plus alpha-renaming, identity, paraphrase, negative-control, and held-out proof.
+- [x] **LOCKSTEP** — audit, ADR, historical correction, task tree, roadmap, live docs, architecture analysis,
+  mdBook, Knowledge Map, replay authorities, and bounded resume pointer publish the same breach and next owner.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -844,7 +959,9 @@ the reviewed replay can name its production revision.
 | `SPEC-TO-INTENT-ALIGNMENT.6c.i` | `SPEC-TO-INTENT-ALIGNMENT.6c.i — preserve timing unit and table provenance` | closed caption grammar, backward-compatible typed provenance, exact five-chain ADR 0025 reconciliation, clean-replay boundary, and full CI |
 | `SPEC-TO-INTENT-ALIGNMENT.6c.ii` | `SPEC-TO-INTENT-ALIGNMENT.6c.ii — qualify the timing-carrier repair` | clean 12-source / 48-stage replay, exact I2S closure and seven provenance-only collateral records, controller v5 `.6d` selection, and residue-free cleanup |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.i` | `SPEC-TO-INTENT-ALIGNMENT.6d.i — preserve physical timing without canonical promotion` | typed decibel-domain disposition, exact two-chain reconciliation, catalog/ledger maintenance, clean-replay boundary, and full CI |
-| `SPEC-TO-INTENT-ALIGNMENT.6d.ii` | `pending` | clean 12-source replay, exact comparable result, controller re-ranking, and residue-free cleanup |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii` | `completed by .6d.ii.a through .6d.ii.f child commits` | replay publication plus whole-production genericity remediation and qualification |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.a` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.a — audit production genericity` | clean replay publication, complete pipeline audit, structural signoff design, test-only reviewed snapshot composition, and residue-free cleanup |
+| `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | measured remaining AMD IOMMU and GIC-400 fabrication families, root-cause split, and clean qualification |
 
 ## Changelog
 
@@ -885,6 +1002,16 @@ the reviewed replay can name its production revision.
 - `2026-08-12`: Closed `.6d.i` with the schema-closed decibel-domain disposition, exact two-chain ADR 0025
   reconciliation, actionable projection, residue-free cleanup, required catalog/ledger maintenance, and all
   eight doctrines plus 1,869 tests green. Frontier advances to `.6d.ii`, clean-revision population qualification.
+- `2026-08-12`: Activated `.6d.ii` after the clean `b977a51f` handoff; no replay or result authority was touched
+  before this task-tree transition.
+- `2026-08-12`: Split `.6d.ii` into `.a`–`.f` after the owner rejected corpus-specific production knowledge and
+  finite-token enforcement. `.a` owns the completed replay publication, full-pipeline audit, historical
+  correction, feasible neutral-system boundary, and first production/conformance module separation; `.b` is the
+  next frontier only after `.a` commits cleanly.
+- `2026-08-12`: Closed `.6d.ii.a` with the exact 24/2/16 replay authority, complete 71-source audit, corrected
+  historical claim, structural-plus-behavioral signoff design, `#[cfg(test)]` reviewed snapshot composition,
+  deterministic catalog/aggregate maintenance, residue-free cleanup, and full CI. Parent `.6d.ii` remains open;
+  after this commit is clean, frontier advances to `.6d.ii.b` SourceIR/Docling neutralization.
 - `2026-08-11`: Closed `.4a` with the strict portable dataset contract, deterministic exact evaluator, and six
   controlled-fault classes; frontier advances to `.4b`, lock two reviewed documents per category without tuning
   extraction before `.4c` publishes product conclusions.

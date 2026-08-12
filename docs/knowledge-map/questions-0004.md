@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [prose-signal-capture-i2c-precision](../knowledge/prose-signal-capture-i2c-precision.md)
+  > how good is prose signal capture / .3a quality
+- [axi-channel-structure](../knowledge/axi-channel-structure.md)
+  > how is AXI organized / what are the AXI channels
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > how is AXI per-signal channel membership recovered without a VLM
+- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
+  > how is AXI per-signal phase membership recoverable without a VLM
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > how is FigureRegion raw_image_path serialized
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > how is Gap A (register bit-fields) related to Gap B (message-field structures) — same missing ISF abstraction (named-field packed layout); Gap B also lacks an Evidence->Intent carrier (no message_field key in intent.rs)
 - [ingest-ram-guard](../knowledge/ingest-ram-guard.md)
@@ -287,13 +297,3 @@
   > how to exploit that same-vendor / same-brand PDFs share organization without hardcoding vendor names
 - [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
   > how to express the JTAG TAP / SWD FSM in .isf
-- [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
-  > how to get a fresh eval-extraction baseline for a spec
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > how to re-measure the message-field corpus yield
-- [swd-derivation-scored-100](../knowledge/swd-derivation-scored-100.md)
-  > how to re-score SWD derivation
-- [pdf-encryption-and-read-access](../knowledge/pdf-encryption-and-read-access.md)
-  > how to read a chip-spec PDF when the Read tool refuses it
-- [register-diagram-bit-recovery-via-tiling](../knowledge/register-diagram-bit-recovery-via-tiling.md)
-  > how to recover register field bit positions that live in the layout graphic, not the table

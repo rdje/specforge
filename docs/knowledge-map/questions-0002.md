@@ -2,6 +2,16 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
+  > does SpecForge classify Markdown inside the FSMGen submodule
+- [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
+  > does SpecForge cycle-schedule the FSM (no — FSMGen does)
+- [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md)
+  > does SpecForge delete non-applicable physical timing records
+- [ambiguity-weak-phrase-detector](../knowledge/ambiguity-weak-phrase-detector.md)
+  > does SpecForge detect implementation-defined or TBD or and/or
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > does SpecForge emit register bit-fields to ISF now (YES — DOC-INTENT-TAXONOMY.4a.ii: the storage var carries a (fields (field …)) block; 6,570 fields / 2,531 registers / 24 docs, was 0; 4 wire golds byte-identical; 0 new fsmgen --strict diagnostics)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > does SpecForge lower register reset values into the .isf (YES as of ISF-REGISTER-RESET-EMIT.2/.3 — composed from per-field reset_value and emitted at the true register width; it was dropped at the emit boundary before)
 - [temporal-logic-choice](../knowledge/temporal-logic-choice.md)
@@ -287,13 +297,3 @@
   > how are spacing-artifact field names and the unit word Bits handled
 - [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
   > how are stale generated isf symlinks handled
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > how are temporal rules expressed as LTL or MTL
-- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
-  > how are test laboratory procedures distinguished from hardware test requirements
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > how are the .4c result and .2 capability ledger composed
-- [a-bounded-snapshot-bounds-its-sections-not-just-its-file](../decisions/0031-a-bounded-snapshot-bounds-its-sections-not-just-its-file.md)
-  > how are the roadmap section bounds derived
-- [transition-bound-state-fsm](../knowledge/transition-bound-state-fsm.md)
-  > how are the three FSM grammars (SWD hyphen, quoted-mode, single-word) distinguished

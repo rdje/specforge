@@ -14,6 +14,16 @@
   so hardcoding is non-agnostic *and* brittle. Principle recorded in
   `docs/decisions/0006-no-hardcoded-chip-spec-vocabulary.md`.
 
+> **2026-08-12 supersession audit:** `SPEC-TO-INTENT-ALIGNMENT.6d.ii.a` established that this
+> closure proved only a seeded `signal_stop_words` list and a grep sweep that excluded comments,
+> tests, and fixtures. It did not audit the complete compiled production graph. Named-family prior
+> routing, protocol-specific EvidenceIR types/extractors, signal-spelling inference, corpus-tuned PDF
+> classifiers, named production prompts/commands, and reviewed-oracle composition remained. The
+> historical work below remains accurate for the narrow sites it changed, but its repository-wide
+> “zero offenders” conclusion is superseded by
+> `docs/research/production-genericity-pipeline-audit.md`; remediation is owned by
+> `SPEC-TO-INTENT-ALIGNMENT.6d.ii.a`–`.f`.
+
 ## Confirmed violations (production)
 
 - `evidence.rs:5774` — `collect_subject_signal_tokens` denylist: `NONSEQ`/`SEQ`/`OKAY`/`SINGLE`/
@@ -40,7 +50,9 @@
   from the document's own definitions where needed.
 - **Keep only document-independent logic:** English normative grammar (`must`/`shall`/`when`/`if`),
   token shapes, positional grammar. No domain names.
-- **Guard:** a CI test that fails if known spec tokens reappear in production sources.
+- **Historical guard:** a CI test that fails if its known seed tokens reappear in one production
+  list. The 2026-08-12 audit established that this is a useful regression probe, not a complete
+  genericity proof.
 
 ## Slices
 
@@ -58,7 +70,9 @@
 
 ## Acceptance Criteria
 
-- Production code contains no chip-spec-specific domain vocabulary; the CI guard enforces it.
+- Historical acceptance claim (superseded 2026-08-12): production code contains no chip-spec-specific
+  domain vocabulary and the CI guard enforces it. Whole-production acceptance now lives in
+  `SPEC-TO-INTENT-ALIGNMENT.6d.ii`.
 - Extraction precision is preserved (verified by the extraction test suite + a re-extraction
   spot-check), with vocabulary derived from each document.
 
