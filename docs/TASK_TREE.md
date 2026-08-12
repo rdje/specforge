@@ -79,6 +79,7 @@ The author template is linked separately and is never classified as active work.
 | `FSMGEN-REFRESH-INTEGRATE-5` | `done` | refresh the FSMGen pin to the SHIPPED declarative storage fields + un-gate DOC-INTENT-TAXONOMY.4a.ii | [open](tasks/FSMGEN-REFRESH-INTEGRATE-5.md) |
 | `FSMGEN-REFRESH-INTEGRATE-6` | `done` | refresh the FSMGen pin and integrate the current upstream contract | [open](tasks/FSMGEN-REFRESH-INTEGRATE-6.md) |
 | `FSMGEN-REFRESH-INTEGRATE-7` | `done` | refresh the FSMGen pin and integrate the latest upstream contract | [open](tasks/FSMGEN-REFRESH-INTEGRATE-7.md) |
+| `FSMGEN-REFRESH-INTEGRATE-8` | `done` | refresh the FSMGen pin and audit the new upstream delta | [open](tasks/FSMGEN-REFRESH-INTEGRATE-8.md) |
 | `FSMGEN-REFRESH-INTEGRATE` | `done` | refresh the FSMGen submodule + assess adoptable ISF features | [open](tasks/FSMGEN-REFRESH-INTEGRATE.md) |
 | `FSMGEN-SUBMODULE-BUMP` | `done` | pin to upstream that fixed both reported findings | [open](tasks/FSMGEN-SUBMODULE-BUMP.md) |
 | `FULL-PAGE-INTENT-CAPTURE` | `done` | use the full scope of a page's visual information | [open](tasks/FULL-PAGE-INTENT-CAPTURE.md) |

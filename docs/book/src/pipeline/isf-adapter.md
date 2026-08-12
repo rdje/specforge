@@ -947,6 +947,18 @@ authority check proved that the gitlink and both declared feedback pin copies ag
 Knowledge Map fact, or product-status claim changed. *Authoritative tracking:*
 `docs/tasks/FSMGEN-REFRESH-INTEGRATE-7.md`.
 
+### `FSMGEN-REFRESH-INTEGRATE-8` — pin-only compatibility refresh
+
+The FSMGen gitlink advances from `a51dcdad0` to `c0d8b668d`. The exact four-commit fast-forward changes hosted
+mdBook workflow installation plus FSMGen's own AHB regression-corpus expectations and terminal-failure
+inventory. It does not change the public ISF specifications, downstream-integration contract, parser, IR,
+lowering, or SpecForge feedback-response surfaces.
+
+SpecForge therefore needs no compatibility code or emitted-ISF change. All seven focused real-binary strict
+canaries pass at the new detached, clean upstream tip. The parent gitlink and its two declared current-pin
+copies advance together; historical pins remain attached to their original evidence. *Authoritative tracking:*
+`docs/tasks/FSMGEN-REFRESH-INTEGRATE-8.md`.
+
 ### `FSMGEN-SUBMODULE-BUMP` — pin `effe591d` → `9bfb9a20`
 
 Updated the pinned `subs/fsmgen` submodule to upstream HEAD

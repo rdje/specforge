@@ -18,7 +18,7 @@ SPECFORGE's single adapter target is now `.isf`.
 `SPECFORGE IntentIR → .isf → FSMGEN`
 
 The pinned FSMGen gitlink at this boundary is
-`a51dcdad0a7e752e638abfe3ab414f7f3911889d`. Historical `.fsm` planning and earlier response pins are
+`c0d8b668db2527108d1c23c20d184400c51efea6`. Historical `.fsm` planning and earlier response pins are
 preserved only in the exact source capsule; they do not describe the current integration contract.
 
 ## Open correspondence

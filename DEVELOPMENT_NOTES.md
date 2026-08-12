@@ -1,4 +1,17 @@
 # DEVELOPMENT_NOTES
+## FSMGEN-REFRESH-INTEGRATE-8.1 (`2026-08-12`) — pin-only upstream compatibility
+
+The exact FSMGen fast-forward is four commits, from `a51dcdad0a7e752e638abfe3ab414f7f3911889d` to
+`c0d8b668db2527108d1c23c20d184400c51efea6`. The changed-path audit covers 15 files: hosted mdBook workflow
+repair, two AHB regression-corpus count restorations, terminal-failure inventory closure, and the upstream
+memory/task/knowledge projections that record those changes.
+
+No path in FSMGen's public ISF specification, downstream integration specification, parser, IR, lowering,
+SpecForge response, or release-contract surfaces changes. This makes the correct downstream integration a pin
+refresh, not a speculative compatibility edit. The seven SpecForge real-binary strict canaries pass at the new
+detached, clean pin. Current pin copies move with the gitlink; historical hashes remain evidence of their own
+review boundaries.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.b (`2026-08-12`) — SourceIR fails closed before semantics
 
 The first genericity remediation seam is SourceIR because every downstream extractor consumes its visual,

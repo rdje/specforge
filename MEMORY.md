@@ -17,16 +17,15 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b`; `.6d.ii.a`, `.6d.i`, `.6c.ii`, `FSMGEN-REFRESH-INTEGRATE-6.1`, and the verified no-op
-  `FSMGEN-REFRESH-INTEGRATE-7.1` are committed complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and
+- Active unit: closing `FSMGEN-REFRESH-INTEGRATE-8.1`; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b`, `.6d.ii.a`, `.6d.i`,
+  `.6c.ii`, `FSMGEN-REFRESH-INTEGRATE-6.1`, and the verified no-op `FSMGEN-REFRESH-INTEGRATE-7.1` are committed
+  complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and
   `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: `.6d.ii.a` is committed at `6b155380`. `.6d.ii.b` is verified complete: SourceIR schema 2 uses generic
-  visual/section grammar and conjunctive table roles, neutralizes all schema-1 semantic labels on load, rejects
-  future schemas, and keeps ambiguous forms unknown. Focused SourceIR tests are 55/55 and the full library run is
-  1,873 passed / six ignored. ADR 0025 reconciliation rebuilt the exact ten affected cascades; currency is
-  24/24 measurable EvidenceIR and 78/78 at every later stage, both renderable ISFs are FSMGen-strict clean, and
-  full CI passes 1,873 tests / six ignored / zero failed plus all documentation/locality gates.
-- Next action: commit `.6d.ii.b`, verify the handoff is clean, then activate `.6d.ii.c` EvidenceIR neutralization.
-- In-flight uncommitted: the complete verified `.6d.ii.b` code/docs plus exact ten-chain generated reconciliation;
-  no background job or temporary rollback/comparison workspace remains.
+- Current state: refresh cycle 8 independently live-verified FSMGen `origin/main` at `c0d8b668d`, audited the
+  exact four-commit/15-path delta as downstream-contract-neutral, advanced the detached clean gitlink, passed all
+  seven strict canaries, performed its induced exact `CHANGES.md` rollover, and passed full CI.
+- Next action: commit the closed `.8.1` leaf through `COMMIT.md`, verify a clean handoff, then activate and resume
+  `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c`.
+- In-flight uncommitted: the fully verified, staged refresh commit only; no submodule-local source change and no
+  background job.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.
