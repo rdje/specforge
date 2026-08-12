@@ -310,7 +310,9 @@ evaluator foundation is `.4a`; `.4b` locks the balanced reviewed population; `.4
 incomplete result and upstream blocker diagnosis; `.5a` supplies the generic controller; and `.5b` composes the
 first retrospective-baseline snapshot; `.6a` supplies the first current-binary replay and hard artifact-currency
 gate. The current metric controller recommends `.6e`, but remains report-only and reviewable; the stronger
-owner-mandated production-genericity invariant keeps `.6d.ii` as the active program frontier.
+owner-mandated production-genericity invariant keeps `.6d.ii.e` as the active program frontier. Its preceding
+identity/spelling/prompt/corpus remediation parent `.6d.ii.d` is qualified and closed; `.e` installs the
+structural proof boundary and `.f` performs whole-population behavioral qualification.
 
 The current frontier is the production-genericity remediation under `.6d.ii`; its whole-pipeline audit is
 [`docs/research/production-genericity-pipeline-audit.md`](../../../research/production-genericity-pipeline-audit.md).

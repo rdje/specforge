@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [axi-channel-structure](../knowledge/axi-channel-structure.md)
+  > how many signals does each AXI channel have
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > how many source-to-intent evaluation inputs are repository sources versus external read-only sources
 - [legacy-generic-gates-are-audit-only](../knowledge/legacy-generic-gates-are-audit-only.md)
   > how many synthetic behaviors came from generic gates
 - [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
@@ -294,7 +298,3 @@
   > is the jesd235 HBM artifact a truncated ingest
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
   > is the kg-isf-completeness.3 relation-completeness frontier closed / are any docs still stale
-- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
-  > is the old claim that FSMGen has no declarative static-topology construct still current (no — that premise is superseded and must be reassessed)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > is the orphan (type TABLE) line a separate emitter bug (yes — isf_ir.rs:403-409 emits all self.types unconditionally, so a Lever-F-residualized enum still leaves an orphan (type ...) line; gate by emitted_enums())

@@ -1,3 +1,15 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv — qualify identity remediation
+
+- Qualified the exact three-commit `89d8dee7..9c38b569` identity-remediation range: 129 changed files,
+  including 24 compiled-crate Rust source files and 40 conformance-fixture controls.
+- Composed the behavioral proof across prior scope, opaque identifiers, prompt policy, and structural corpus
+  routing. Focused alpha/identity/prompt/spelling/fixture-name/fail-closed filters all pass.
+- Confirmed current-binary currency at 24/24 measurable EvidenceIR and 78/78 for every downstream stage; all 17
+  honestly renderable ISFs remain FSMGen-strict clean. The exact recall reductions from removing name-derived
+  authority remain published rather than being restored through exceptions.
+- Closed bounded parent `.d`. Whole-core genericity is still release-blocked by `.e` (proof-carrying module,
+  grammar, information-flow, and AST/dependency enforcement) and `.f` (population-level metamorphic replay).
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii — neutralize prompts and corpus organization
 
 - Rewrote every audited production LLM/VLM/NLI prompt as a typed digital-hardware task with opaque

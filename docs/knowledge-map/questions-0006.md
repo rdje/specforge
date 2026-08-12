@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [cat3-topology-fsmgen-actor-network-reassessment](../knowledge/cat3-topology-fsmgen-actor-network-reassessment.md)
+  > is the old claim that FSMGen has no declarative static-topology construct still current (no — that premise is superseded and must be reassessed)
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > is the orphan (type TABLE) line a separate emitter bug (yes — isf_ir.rs:403-409 emits all self.types unconditionally, so a Lever-F-residualized enum still leaves an orphan (type ...) line; gate by emitted_enums())
 - [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
   > is the register-bit-field ISF gap (Gap A) a SpecForge bug or a missing ISF abstraction (a missing ISF abstraction — fields reach IntentIR fully; ISF has no field-structured storage)
 - [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
@@ -293,7 +297,3 @@
   > what does SpecForge defer from conformal prediction NLI Dempster Snorkel NoRBERT
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
   > what does SpecForge take from Docling OpenIE LayoutLM Chao Chow LLVM MLIR GoldMine Texada Pnueli
-- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
-  > what does SpecForge take from a grounded author
-- [spec-mining-framing](../knowledge/spec-mining-framing.md)
-  > what does SpecForge take from the spec-mining literature and what does it leave out

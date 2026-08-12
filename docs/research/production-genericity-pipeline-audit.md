@@ -1,9 +1,10 @@
 # Production-genericity pipeline audit
 
-Status: **discovery complete; SourceIR, EvidenceIR, prior/identifier authority, prompts, and corpus organization remediated; structural/comment/calibration signoff remains**
+Status: **discovery complete; SourceIR, EvidenceIR, prior/identifier authority, prompts, and corpus organization remediated and jointly qualified; structural/comment/calibration signoff remains**
 Owner: `SPEC-TO-INTENT-ALIGNMENT.6d.ii`
 Audit date: 2026-08-12
-Audited revision: `b977a51ff24f966dcf6aca74ccf47d592a4fc452` plus the active `.6d.ii.a` replay publication
+Discovery revision: `b977a51ff24f966dcf6aca74ccf47d592a4fc452` plus the `.6d.ii.a` replay publication
+Qualified identity-remediation revision: `9c38b5699619dfccaa30a99d10c69d1fa5bf58cc`
 
 ## Question and non-negotiable boundary
 
@@ -48,6 +49,43 @@ gates, and residual decisions are evidence that this architecture is implementab
 The correct remediation may temporarily reduce recall: remove specialized shortcuts first, then
 recover recall through universal grammars and grounded models. Benchmark retention cannot override
 the production boundary.
+
+## Combined identity-remediation qualification (`.6d.ii.d.iv`)
+
+The qualification boundary is the exact three-commit range after generic EvidenceIR landed:
+`89d8dee7..9c38b569` (`.d.i` through `.d.iii`). Git measures 129 changed files, 5,922 insertions,
+and 4,357 deletions. The crate-source part is 24 Rust files (+3,522/-3,328), including production edits
+and their embedded `cfg(test)` controls; the principal
+qualification/data surfaces are 40 conformance-fixture files (+75/-75), 17 corpus-KB files
+(+1,000/-347), and ten mdBook files (+145/-77). Those counts describe the complete range rather than
+an estimated word-list census.
+
+The resulting current state is exact:
+
+- prior memory is schema 7 with one global identity-independent scope; the validation-gated 13-input
+  fixed point is byte-stable at `a416cc8b…6239633`, exposes one contested prior, and removes 37 stale
+  prior-created timing constraints while retaining their source statements;
+- identifier remediation changes 18 EvidenceIR, 73 SemanticIR, 74 IntentIR, and 74 adapter artifacts;
+  evidence constraints move 397→344, invariants 31,767→28,876, transactions 281→239, and
+  signal-neutral conditional rules 2,156→2,489. Renderability moves 44→17 because the adapter no
+  longer invents clock/reset semantics; all 17 emitted ISFs pass pinned FSMGen strict;
+- prompt remediation covers all 13 production constructor families. Corpus-KB routing has ten managed
+  Markdown outputs plus schema-2 JSON, and all 156 typed fixtures reproduce. This child intentionally
+  changes provider instructions and conformance projections, not persisted canonical IR;
+- retained-chain currency is 24/24 for measurable EvidenceIR and 78/78 for each SemanticIR, IntentIR,
+  and adapter stage under the current binary.
+
+The focused cross-path qualification is deliberately behavioral, not lexical: the `alpha`, `identity`,
+`prompt`, `spelling`, `fixture_name`, empty-declaration, and undeclared-contract filters pass 13, 19,
+14, 14, 2, 1, and 1 tests respectively. They cover renamed prompt policy, source classification,
+prior-scope quarantine, exact/ambiguous identifier resolution, signal/interface/handshake/clock/reset
+non-inference, typed ISF lowering, structural corpus membership, and fail-closed provider proposals.
+The complete Rust and repository gates then cover all non-filtered paths and persisted currentness.
+
+This closes the bounded identity/spelling/prompt/corpus remediation parent `.d`; it does **not** claim
+whole-core production-genericity signoff. Named production commentary and calibrated evaluation claims,
+the proof-carrying core/conformance and registered-grammar architecture, AST/dependency/taint mutations,
+and whole-population alpha/identity/paraphrase/held-out behavior remain release blockers in `.e` and `.f`.
 
 ## Audit denominator and method
 

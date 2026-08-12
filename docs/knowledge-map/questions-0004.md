@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
+  > how does specforge reject prose-fragment non-agents like For / Then it / is recommended / ensures
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > how does specforge split a coordinated X and Y relation subject into both agents
 - [timing-table-trapped-row-recovery](../knowledge/timing-table-trapped-row-recovery.md)
   > how does specforge tell a trapped data row from a genuine multi-row column header without a list or case
 - [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md)
@@ -293,7 +297,3 @@
   > how many reviewed source regions and modalities were found
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
   > how many sentence-start signal descriptor phrases pollute the retained corpus
-- [axi-channel-structure](../knowledge/axi-channel-structure.md)
-  > how many signals does each AXI channel have
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > how many source-to-intent evaluation inputs are repository sources versus external read-only sources

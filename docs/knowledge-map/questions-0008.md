@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > what is the DOC-INTENT-TAXONOMY.1 corpus census
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > what is the DOC-INTENT-TAXONOMY.2 per-category ISF-completeness gauge
 - [dempster-fusion](../knowledge/dempster-fusion.md)
   > what is the Dempster combiner in fusion
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
@@ -293,7 +297,3 @@
   > what was the must_be_value recall gap and how was it closed
 - [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
   > when does a caption ground a register name
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > when does data (ACRONYM) declare a one-bit signal
-- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
-  > when does evidence_extraction_quality_majority_not_entailed or _gauge_stale fire

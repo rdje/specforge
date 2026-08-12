@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
+  > why do GIC/SMMU/CoreSight architecture-spec registers gain fields from section headings
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > why do I2C SDA USDA and SDAH remain signals
 - [prose-signal-capture](../knowledge/prose-signal-capture.md)
   > why do I2C/CCIX/USB4 have 0 table signals and how are they recovered
 - [behavior-temporal-lowering-broader-corpus](../knowledge/behavior-temporal-lowering-broader-corpus.md)
@@ -294,7 +298,3 @@
   > why is MEMORY-BOUNDED-INGEST.5 summary streaming deferred
 - [register-field-table-extraction](../knowledge/register-field-table-extraction.md)
   > why is NVMe register field_name a bit-range and how is the mnemonic found in the description
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > why is Reset value not a semantic phase
-- [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
-  > why is SWD per-signal phase membership degenerate / empty

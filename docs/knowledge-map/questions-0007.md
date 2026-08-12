@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
+  > what does SpecForge take from a grounded author
+- [spec-mining-framing](../knowledge/spec-mining-framing.md)
+  > what does SpecForge take from the spec-mining literature and what does it leave out
 - [document-intent-category-census](../knowledge/document-intent-category-census.md)
   > what does a fast category recognizer need beyond surface counts (wire-relation shape, front-matter/self-declared type, topology cue)
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
@@ -293,7 +297,3 @@
   > what is the 4th portable architecture (doctrine enforcement)
 - [axi-channel-structure](../knowledge/axi-channel-structure.md)
   > what is the AXI signal naming convention (channel prefix)
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > what is the DOC-INTENT-TAXONOMY.1 corpus census
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > what is the DOC-INTENT-TAXONOMY.2 per-category ISF-completeness gauge

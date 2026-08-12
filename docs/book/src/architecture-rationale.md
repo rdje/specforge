@@ -151,6 +151,14 @@ digital-design structure with current-document symbols, and corpus pages group f
 schema capabilities. Named production commentary, calibrated classification claims, the structural
 proof-carrying gate, and full behavioral qualification remain release-blocking work, not accepted shortcuts.
 
+The bounded identity-remediation parent is now jointly qualified over the exact three-commit range
+`89d8dee7..9c38b569`. Current-binary currency is exact at 24/24 measurable EvidenceIR and 78/78 for each
+downstream stage, and all 17 honestly renderable ISFs pass FSMGen strict. Focused alpha-renaming, identity,
+prompt, spelling, fixture-name, and fail-closed proposal controls cover the repaired paths. The observed recall
+reductions are intentional removals of unjustified authority, not regressions to patch with named exceptions.
+This closes identity/spelling/prompt/corpus remediation only; structural enforcement and population-level
+metamorphic qualification remain mandatory before the implementation can claim this invariant as a whole.
+
 The remediation is tracked by `SPEC-TO-INTENT-ALIGNMENT.6d.ii`. Its proof is deliberately stronger than
 a forbidden-word list: the production/conformance dependency boundary must prevent named test knowledge
 from entering the core, raw text decisions must go through registered universal grammars, and

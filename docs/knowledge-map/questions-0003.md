@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
+  > how are bits | name | function tables extracted
+- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
+  > how are byte location | size | register description tables extracted
 - [bit-position-structure-field-extraction](../knowledge/bit-position-structure-field-extraction.md)
   > how are caption-less page fragments of a split table stitched together
 - [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
@@ -294,7 +298,3 @@
   > how does specforge recover CAN's frame fields (SOF/Arbitration/Control/Data/CRC/ACK/EOF)
 - [axi-constraint-subject-must-be-declared](../knowledge/axi-constraint-subject-must-be-declared.md)
   > how does specforge reject non-signal constraint subjects (LICENSEE, AXI, RME, MPAM)
-- [agent-identity-structural-gate](../knowledge/agent-identity-structural-gate.md)
-  > how does specforge reject prose-fragment non-agents like For / Then it / is recommended / ensures
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > how does specforge split a coordinated X and Y relation subject into both agents

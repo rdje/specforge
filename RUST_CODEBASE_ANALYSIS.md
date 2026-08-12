@@ -4,6 +4,20 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-12 — combined identity-remediation qualification; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv`)
+
+- The exact `89d8dee7..9c38b569` range modifies 24 compiled-crate Rust source files (+3,522/-3,328), with no hidden
+  production-code edit in the qualification leaf. Prior, identifier, provider, and corpus-routing policies are
+  jointly qualified rather than inferred from the supplementary vocabulary census.
+- Focused filters pass 13 alpha, 19 identity, 14 prompt, 14 spelling, two fixture-name, and two fail-closed
+  provider tests. They exercise SourceIR classification, prior quarantine, declaration grounding, semantic
+  non-inference, typed adapter lowering, prompt policy, and structural fixture membership.
+- Persisted currentness remains exact at 24/24 measurable EvidenceIR and 78/78 SemanticIR/IntentIR/adapters;
+  all 17 renderable ISFs remain FSMGen-strict clean. Parent `.d` can close without a compensating name-based path.
+- This is not whole-core genericity signoff. Named production commentary/calibration, proof-carrying module and
+  registered-grammar boundaries, AST/dependency/taint mutation gates, and complete metamorphic qualification
+  remain open in `.e`/`.f`.
+
 ## Session update (2026-08-12 — neutral prompts and structural corpus routing; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii`)
 
 - Every audited production model prompt now states a typed digital-hardware task, treats current-document labels

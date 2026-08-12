@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
+  > do text-reasoning tasks need a vision model
+- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
+  > do the Pattern and Nlp extraction tiers find the same constraints
 - [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
   > do the emergent clusters actually track real vendor/layout families
 - [empty-signal-catalog-is-mostly-honest-absence](../knowledge/empty-signal-catalog-is-mostly-honest-absence.md)
@@ -293,7 +297,3 @@
   > how are TRM register bit assignments tables without access/reset columns handled
 - [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
   > how are bit location | register description | attributes tables extracted
-- [bit-assignment-register-table-extraction](../knowledge/bit-assignment-register-table-extraction.md)
-  > how are bits | name | function tables extracted
-- [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
-  > how are byte location | size | register description tables extracted

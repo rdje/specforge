@@ -37,11 +37,15 @@
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > How does the corpus knowledge base group fixtures without protocol-family names?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Is SpecForge production-genericity signoff complete after identity remediation?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Were downstream artifacts reconciled after SourceIR schema 2?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
   > What current priors are learned without protocol families?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > What does spec-neutral extraction mean?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > What exact range qualified the identity and spelling remediation?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > What happens when schema-1 SourceIR is loaded?
 - [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
@@ -293,7 +297,3 @@
   > do signal presence records mint signals or declarations
 - [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
   > do specforge extractors override applies_to / are any self-disabled opt-in
-- [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
-  > do text-reasoning tasks need a vision model
-- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
-  > do the Pattern and Nlp extraction tiers find the same constraints

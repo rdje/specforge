@@ -15,6 +15,8 @@ answers:
   - "How are production prompts kept specification neutral?"
   - "How does the corpus knowledge base group fixtures without protocol-family names?"
   - "Can fixture names decide KG capability or prior-candidate routing?"
+  - "What exact range qualified the identity and spelling remediation?"
+  - "Is SpecForge production-genericity signoff complete after identity remediation?"
 date: 2026-08-12
 status: current
 tags: [genericity, extraction, architecture, doctrine]
@@ -65,3 +67,12 @@ protocol names cannot grant membership. `corpus_kb` selects seven capability pag
 AMBA page and fixture-name substring classifier are gone. Manifest schema 2 reports `prior_present_fixtures` and
 `control_fixtures`; those are structural observations, not a claim inferred from “gold” or “negative” spelling.
 Exact fixture names remain visible only as conformance provenance.
+
+The combined `.6d.ii.d` qualification compares `89d8dee7..9c38b569`: three commits, 129 changed
+files, and 24 compiled-crate Rust source files. Focused alpha, identity, prompt, spelling, fixture-name, and
+fail-closed proposal controls pass; current-binary chain currency is 24/24 measurable EvidenceIR and
+78/78 at every downstream stage. The expected honesty cost is preserved rather than hidden: constraints,
+invariants, transactions, and renderable adapters fall where name-derived authority was removed, while
+all 17 remaining ISFs pass FSMGen strict. This closes identity/spelling/prompt/corpus remediation only.
+Structural proof enforcement and population-level metamorphic qualification remain release blockers in
+`.6d.ii.e` and `.6d.ii.f`; SpecForge is not yet whole-core genericity signoff-ready.

@@ -253,10 +253,10 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c — make protocol EvidenceIR document-derived`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d`
-  Status: `in_progress`
+  Status: `done`
   Goal: `remove identity- and spelling-driven prior, semantic, prompt, validation, and corpus-command decisions`
   Acceptance: `document key/display name and named family enums cannot steer extraction; signal spelling cannot infer handshake, clock, reset, or interface authority; prompts use neutral synthetic placeholders; production corpus organization is structural and data-derived`
-  Verification: `pending`
+  Verification: `three bounded child repairs plus .d.iv combined qualification; exact 89d8dee7..9c38b569 range census; 13/19/14/14/2/1/1 focused alpha/identity/prompt/spelling/fixture-name/empty-catalog/undeclared-contract controls; current-binary chain currency 24/24 measurable EvidenceIR plus 78/78 downstream; all 17 renderable ISFs FSMGen-strict clean; full CI; .e/.f remain explicit release blockers`
   Commit: `completed by .6d.ii.d.i through .6d.ii.d.iv child commits`
   Children: `.6d.ii.d.i`, `.6d.ii.d.ii`, `.6d.ii.d.iii`, `.6d.ii.d.iv`
 
@@ -282,11 +282,11 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii — neutralize prompts and corpus organization`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv`
-  Status: `pending`
+  Status: `done`
   Goal: `qualify the complete identity-and-spelling remediation and publish exact current deltas`
   Acceptance: `all retained chains are current; identity and alpha-renaming controls cover the repaired paths; public/live/book/retrieval truth records intended recall changes and remaining .e/.f boundaries; full CI passes`
-  Verification: `pending`
-  Commit: `pending`
+  Verification: `exact pre-.d range 89d8dee7..9c38b569 is three commits / 129 files / +5,922/-4,357, including 24 compiled-crate Rust source files; focused filters pass 13 alpha, 19 identity, 14 prompt, 14 spelling, two fixture-name, one empty-declaration, and one undeclared-contract test; current-binary doctrines prove 24/24 measurable EvidenceIR and 78/78 SemanticIR/IntentIR/adapters; all 17 current renderable ISFs retain prior FSMGen-strict qualification; exact recall and corpus/prompt deltas published; full CI green`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv — qualify identity remediation`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e`
   Status: `pending`
@@ -357,7 +357,7 @@ expressiveness as the bottleneck.
 | 21 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i` | `done` | identity-independent schema-7 prior memory, neutral KG controls, fixed-point learning, and exact chain reconciliation are complete |
 | 22 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii` | `done` | opaque identifiers, one-way declaration grounding, alpha-equivariant semantics, and typed-only ISF clock/reset lowering are complete |
 | 23 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii` | `done` | opaque prompt information flow and structural corpus routing are verified |
-| 24 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv` | `pending` | exact chain reconciliation and behavioral qualification close `.d` |
+| 24 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv` | `done` | combined qualification is exact; `.d` is closed without a named exception |
 | 25 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e` | `pending` | structurally gate the complete neutral production graph after remediation |
 | 26 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `pending` | behavioral metamorphic and whole-population qualification closes the genericity parent |
 | 27 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | hard-first controller must remove the two remaining unrelated register fabrications before recall work |
@@ -633,6 +633,8 @@ expressiveness as the bottleneck.
 | `2026-08-12` | `.6d.ii.d.ii` production census and structural proof | EvidenceIR through optional NLP, SemanticIR, IntentIR, validation, completeness, and ISF adapter decision sites; case/length/suffix/collision/empty-catalog and alpha-renaming controls | PASS: no audited path assigns signal/interface/handshake/clock/reset/polarity/direction/transaction authority from identifier spelling; exact current-document declarations or typed evidence govern promotion, and unresolved semantics remain explicit |
 | `2026-08-12` | `.6d.ii.d.ii` ADR 0025 reconciliation and attribution | exact same-volume 562-file / 437-MiB rollback; 24 EvidenceIR plus all 78 downstream rebuilds; typed validation; structural JSON comparison; `scripts/check_chain_currency.sh`; pinned FSMGen strict | PASS: 18/73/74/74 Evidence/Semantic/Intent/adapter artifacts change; constraints 397→344, invariants 31,767→28,876, transactions 281→239, signal-neutral conditionals 2,156→2,489, renderability 44→17; all 17 emitted targets strict-clean; currency 24/24 plus 78/78; rollback removed and absent |
 | `2026-08-12` | `.6d.ii.d.ii` full repository gate | `bash scripts/run_ci.sh` | PASS: all doctrines including exact chain currency, formatting, warning-deny Clippy, 1,890 Rust tests passed / six ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final project-data locality |
+| `2026-08-12` | `.6d.ii.d.iv` exact combined range and focused behavior | `git diff 89d8dee7..9c38b569`; `cargo test -p specforge --lib` filters `alpha`, `identity`, `prompt`, `spelling`, `fixture_name`, `empty_declaration_catalog`, and `undeclared_contract_signal` | PASS: exact three commits / 129 files / +5,922/-4,357, including 24 compiled-crate Rust source and 40 conformance-fixture files; filters pass 13/19/14/14/2/1/1 with zero failures and cover prior scope, opaque identity, prompts, corpus routing, and provider fail-closure |
+| `2026-08-12` | `.6d.ii.d.iv` current state and full repository gate | `bash scripts/run_ci.sh`; generated chain-currency doctrine; prior `.d.ii` pinned-FSMGen strict population | PASS: current at 24/24 measurable EvidenceIR and 78/78 SemanticIR/IntentIR/adapters; 17/17 renderable ISFs retain strict qualification; all eight doctrines, formatting, warning-deny Clippy, 1,900 Rust tests passed / six ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final locality |
 | `2026-08-12` | scheduled artifact cleanup | `.bin`/`.log` census under generated and Cargo release/debug trees; exact age/purpose inspection before deletion; residue census | PASS: removed one abandoned 23-file / 92-KiB Aug-11 live-document-size test workspace and the fully rebuildable 3,116,900-KiB `target/debug/incremental` cache; no `.bin`/`.log` remains in the requested generated/debug-deps/release census |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
@@ -1098,6 +1100,23 @@ the reviewed replay can name its production revision.
   Knowledge Map, task frontier, and bounded resume pointer agree that `.d.iii` is closed while `.d.iv`–`.f`
   remain release blockers.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv`
+
+- [x] **REPRODUCE / MEASURE** — compare the exact post-generic-EvidenceIR boundary `89d8dee7` with the clean
+  `.d.iii` revision `9c38b569`, partition the complete changed-file range, and retain every child artifact delta.
+- [x] **ROOT CAUSE (WHY + WHERE)** — identity authority crossed four independent seams: prior selection,
+  identifier-derived semantics/lowering, model-facing policy, and corpus organization. A finite vocabulary
+  search or one local unit test cannot prove their composition.
+- [x] **ADDRESSED (verified)** — schema-7 global priors, opaque one-way-grounded symbols, typed/grounded neutral
+  prompts, and schema-structural corpus capabilities compose without a fallback identity or spelling branch.
+- [x] **NO REGRESSION** — chain currency is exact at 24/24 measurable EvidenceIR and 78/78 downstream; all 17
+  honestly renderable ISFs retain FSMGen-strict qualification; the complete Rust, doctrine, rustdoc, mdBook,
+  and locality gates pass.
+- [x] **GENERICITY (ADR 0006)** — focused alpha, identity, prompt, spelling, fixture-name, and fail-closed
+  proposal filters pass. Exact recall reductions remain visible and are not repaired with a document exception.
+- [x] **LOCKSTEP** — the pipeline audit, Knowledge Map fact/projection, mdBook, live docs, task status, and resume
+  pointer publish the exact combined range and state that `.e`/`.f`, not `.d`, still block whole-core signoff.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -1126,6 +1145,7 @@ the reviewed replay can name its production revision.
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i — make prior memory identity-independent` | schema-7 global prior scope, legacy quarantine, neutral KG controls, byte-stable relearning, and exact 78-chain currency |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii — make document identifiers opaque` | opaque identifiers, one-way current-document grounding, alpha-equivariant semantics, typed-only ISF clock/reset lowering, exact 78-chain reconciliation, and full CI |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii — neutralize prompts and corpus organization` | identifier-redacted provider policy, declaration-ordered catalogs, structural KG capabilities, schema-2 candidate projection, and full CI |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv — qualify identity remediation` | exact three-commit range, combined alpha/identity/prompt/corpus qualification, current-chain proof, lockstep publication, and full CI |
 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | measured remaining AMD IOMMU and GIC-400 fabrication families, root-cause split, and clean qualification |
 
 ## Changelog
@@ -1138,6 +1158,13 @@ the reviewed replay can name its production revision.
   transport, spelling-ordered catalogs, and ungrounded provider promotion; corpus-KB routing now derives only
   typed structural capabilities and all 156 fixtures reproduce across ten managed pages. Full Rust, doctrine,
   mdBook, currentness, and locality gates pass. After this commit is clean, `.d.iv` owns combined qualification.
+- `2026-08-12`: Activated `.6d.ii.d.iv` only after `.d.iii` committed at `9c38b569` and the post-commit tree was
+  clean. This leaf owns combined current-binary chain currency, cross-path alpha/identity qualification, exact
+  prompt/corpus deltas, and lockstep publication before parent `.d` may close.
+- `2026-08-12`: Closed `.6d.ii.d.iv` and parent `.d` after exact `89d8dee7..9c38b569` range measurement,
+  cross-path behavioral controls, current-binary chain currency, and full repository qualification. The closure
+  preserves every measured honesty delta and makes no whole-core claim: `.e` owns structural proof enforcement,
+  named production commentary/calibration disposition, and mutation gates; `.f` owns population metamorphics.
 
 - `2026-08-11`: Created on owner request so the ramp-up trajectory assessment and upstream-first direction do
   not remain chat-only.

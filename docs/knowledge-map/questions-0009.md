@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
+  > when does data (ACRONYM) declare a one-bit signal
+- [extraction-quality-gauge-standing](../knowledge/extraction-quality-gauge-standing.md)
+  > when does evidence_extraction_quality_majority_not_entailed or _gauge_stale fire
 - [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
   > when does presence capture refuse a row vs the whole table
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
@@ -294,7 +298,3 @@
   > which doctrines are registered (MEMORY-ARCH, KNOWLEDGE-MAP, TASK-ACCEPTANCE)
 - [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
   > which document categories are mature vs partial vs thin for ISF synthesis (cat1 mature, cat2/3 partial, cat4 thin, cat5/6 non-target)
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > which documents are in the first source-to-IntentIR vertical evaluation population
-- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
-  > which exact current state copies are not yet independently verified in SpecForge

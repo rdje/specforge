@@ -1,4 +1,19 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv (`2026-08-12`) — qualification is compositional
+
+The three identity-remediation children change different authority boundaries, so their closure cannot be inferred
+from a token census or from any one unit test. The bounded qualification composes four properties: document identity
+cannot select prior memory; symbol spelling cannot select semantics or lowering; provider policy can use current-
+document symbols only as opaque grounded data; and corpus organization derives only typed structural facets.
+Current-binary chain currency proves those policies describe the persisted product, while focused alpha, identity,
+prompt, spelling, name-only, and fail-closed proposal controls exercise the cross-path invariants.
+
+The expected recall loss is evidence, not failure: 37 stale prior-created timings, 53 evidence constraints, 2,891
+invariants, 42 transactions, and 27 formerly renderable adapters depended on authority the source did not justify.
+None is restored through a named exception; source statements and explicit residuals preserve the recovery frontier.
+This closes `.d`, not the complete neutrality program. `.e` must make the rule structurally unrepresentable to violate,
+and `.f` must qualify the complete population under renaming, identity perturbation, paraphrase, and held-out inputs.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii (`2026-08-12`) — executable policy is structural
 
 Prompts are production policy even when their outputs are independently validated. The model-facing surfaces

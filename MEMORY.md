@@ -17,15 +17,15 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii` is complete awaiting commit; `.6d.ii.d.ii`, `.6d.ii.d.i`, `.6d.ii.c`,
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv` is complete awaiting commit; `.6d.ii.d.iii`, `.6d.ii.d.ii`, `.6d.ii.d.i`, `.6d.ii.c`,
   `FSMGEN-REFRESH-INTEGRATE-8.1`, `.6d.ii.b`, `.6d.ii.a`, and `.6d.i` are committed complete. Tracking-only:
   `STATUS-LEDGER-ROLLOVER.2` and `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: thirteen production prompt families are typed and identity-neutral; entity identifiers are
-  redacted from provider inputs, catalogs are declaration-ordered, and ungrounded provider proposals fail closed.
-  Corpus-KB routing is schema-structural, ten managed pages cover 156/156 fixtures, and named identities are
-  conformance provenance only. Focused/full Rust, Clippy, mdBook, currentness, and all eight doctrines pass.
-- Next action: run the final full `scripts/run_ci.sh`, commit `.6d.ii.d.iii`, verify the clean handoff and cleared
-  message brief, then activate `.6d.ii.d.iv` from that clean revision.
-- In-flight uncommitted: the complete `.6d.ii.d.iii` code/generated/docs transaction; no scratch workspace or
-  background job.
+- Current state: the exact `89d8dee7..9c38b569` range and all child deltas are published; focused alpha,
+  identity, prompt, spelling, fixture-name, and provider fail-closed controls pass; current-binary currency is
+  24/24 measurable EvidenceIR and 78/78 downstream. Full CI passes all eight doctrines, 1,900/6/0 Rust tests,
+  mdBook, and final locality. Parent `.d` is closed without a named exception; `.e`/`.f` still block signoff.
+- Next action: commit `.6d.ii.d.iv`, verify the clean handoff and cleared message brief, then activate
+  `.6d.ii.e` from that clean revision.
+- In-flight uncommitted: the `.d.iv` qualification and lockstep documentation transaction; no production-code,
+  generated-IR, scratch-workspace, or background-job state.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

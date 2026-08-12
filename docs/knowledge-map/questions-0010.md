@@ -2,6 +2,10 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > which documents are in the first source-to-IntentIR vertical evaluation population
+- [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md)
+  > which exact current state copies are not yet independently verified in SpecForge
 - [default-converge-production-boundary](../knowledge/default-converge-production-boundary.md)
   > which extraction commands does converge run directly
 - [dense-prose-false-signal-loop-reaches-isf](../knowledge/dense-prose-false-signal-loop-reaches-isf.md)
@@ -293,7 +297,3 @@
   > why do Docling source tests fail when TMPDIR is inside the repository
 - [eval-scores-persisted-evidence](../knowledge/eval-scores-persisted-evidence.md)
   > why do FPs appear in eval that the current code does not produce
-- [section-header-register-field-extraction](../knowledge/section-header-register-field-extraction.md)
-  > why do GIC/SMMU/CoreSight architecture-spec registers gain fields from section headings
-- [parenthetical-data-head-requires-wire-qualifier](../knowledge/parenthetical-data-head-requires-wire-qualifier.md)
-  > why do I2C SDA USDA and SDAH remain signals
