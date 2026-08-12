@@ -17,14 +17,16 @@
   `KNOWLEDGE_MAP.md`, then its linked question shards.
 
 ## Current state (OVERWRITE this block each update — do not append)
-- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii`; child `.6d.ii.a`, `.6d.i`, `.6c.ii`, `FSMGEN-REFRESH-INTEGRATE-6.1`, and the verified no-op
+- Active unit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b`; `.6d.ii.a`, `.6d.i`, `.6c.ii`, `FSMGEN-REFRESH-INTEGRATE-6.1`, and the verified no-op
   `FSMGEN-REFRESH-INTEGRATE-7.1` are committed complete. Tracking-only: `STATUS-LEDGER-ROLLOVER.2` and
   `TASK-PART-SEAL-REACHABILITY.0`.
-- Current state: `.6d.ii.a` publishes the clean 12-source / 48-stage replay and complete production-pipeline audit.
-  Current metrics are 24/2/16 TP/FP/FN with 29/29 provenance; the production core remains non-neutral until the
-  audited identity, named-schema, signal-spelling, corpus-phrase/prompt, and boundary violations are remediated.
-  The exact reviewed snapshot composer is test-only; generic evaluator/controller modules remain production.
-- Next action: activate `.6d.ii.b` from a clean handoff and replace SourceIR/Docling corpus-calibrated
-  classification with typed structural/document-derived evidence plus an honest unknown path.
-- In-flight uncommitted: none; `.6d.ii.a` is the durable boundary and no job is running.
+- Current state: `.6d.ii.a` is committed at `6b155380`. `.6d.ii.b` is verified complete: SourceIR schema 2 uses generic
+  visual/section grammar and conjunctive table roles, neutralizes all schema-1 semantic labels on load, rejects
+  future schemas, and keeps ambiguous forms unknown. Focused SourceIR tests are 55/55 and the full library run is
+  1,873 passed / six ignored. ADR 0025 reconciliation rebuilt the exact ten affected cascades; currency is
+  24/24 measurable EvidenceIR and 78/78 at every later stage, both renderable ISFs are FSMGen-strict clean, and
+  full CI passes 1,873 tests / six ignored / zero failed plus all documentation/locality gates.
+- Next action: commit `.6d.ii.b`, verify the handoff is clean, then activate `.6d.ii.c` EvidenceIR neutralization.
+- In-flight uncommitted: the complete verified `.6d.ii.b` code/docs plus exact ten-chain generated reconciliation;
+  no background job or temporary rollback/comparison workspace remains.
 - Blockers: none. The user-owned `.claude/settings.json` is untouched.

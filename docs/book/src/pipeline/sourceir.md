@@ -23,6 +23,48 @@ In practical terms, `SourceIR` is where the pipeline decides:
 
 It is the closest thing the system has to a structured "compiled source document".
 
+## Specification-neutral classification contract
+
+SourceIR schema 2 makes the source-type labels fail-closed and independent of document identity.
+The PDF backend may use universal document grammar and typed layout roles, but it cannot use a
+filename, vendor/protocol name, operation name, participant spelling, signal spelling, or a phrase
+copied from one reviewed specification to decide a type.
+
+The current deterministic authority is deliberately narrow:
+
+- a diagram kind is assigned only when its caption explicitly names a generic visual form such as a
+  timing waveform, state diagram, block diagram, register bit-field layout, truth table, or flow chart;
+- a signal table needs a signal identity role plus direction, or an explicit signal/port/pin role plus
+  width;
+- an encoding table needs both a value role and a meaning role, or an explicit encoding caption;
+- a register map needs a name role, access semantics, and address or bit-range structure;
+- scalar timing and feature tables need their complete generic role conjunctions;
+- section kinds use whole generic heading phrases, never arbitrary substrings.
+
+Anything weaker remains `unknown` (or `normative` for an untyped section). For example, an operation
+caption does not become a timing diagram merely because the operation is often drawn as a waveform,
+and `Name | Width | Description` does not become a signal table without signal authority. This may
+reduce recall, but it prevents a familiar-looking input from receiving unsupported semantics.
+
+Schema 1 SourceIR files remain readable for their source text, grids, assets, geometry, and
+provenance. Their old diagram/table/section labels are not trusted: loading upgrades the runtime
+view to schema 2 while neutralizing those semantic labels, and re-ingest is required to reconstruct
+typed labels under the new policy. A future schema is rejected rather than guessed.
+
+The schema transition was reconciled explicitly, not left as mixed-version state. Of 24 EvidenceIR
+chains whose retained normalized source made exact replay possible, ten changed; all ten were rebuilt
+through SemanticIR, IntentIR, and the ISF adapter. The measurable corpus is now current at 24/24
+EvidenceIR and 78/78 for each later stage, and both renderable changed outputs pass FSMGen strict.
+The exact delta removes 194 old table-derived timing guesses across four documents plus other weak
+label-driven actor/register facts. These are honest temporary recall losses: later generic evidence
+grammar may recover supported intent, but a filename, protocol name, or familiar symbol may not.
+The other 54 EvidenceIR chains are explicitly unmeasurable until their reclaimed normalized bundles
+return through owned re-ingest.
+
+Whole-pipeline production-genericity signoff still depends on the downstream remediation and
+qualification work described in
+[Extraction Architecture](../reference/extraction-architecture.md).
+
 ## Path identity and repository moves
 
 `SourceIR` distinguishes the source's ownership from its runtime location. Repository-owned source paths,
@@ -56,16 +98,13 @@ not undo that work. Report normalized retention separately: it is the *measurabi
 can be rebuilt again without another Docling ingest — and a refresh now keeps its bundle so that census grows by
 one each time (see [Generated Artifacts](../reference/generated-artifacts.md#normalized-bundles-are-retained)).
 
-The current measured example (`2026-08-10`) is 50 completed current-binary refreshes with six real chip-spec
-documents left in the refresh queue. The local artifact tree separately contains 78 SourceIR files, 22 retained
+The current measured example (`2026-08-12`) is 52 completed current-binary refreshes with five real chip-spec
+documents left in the refresh queue. The local artifact tree separately contains 78 SourceIR files, 24 retained
 normalized bundles, 78 EvidenceIR files, and 78 SemanticIR→IntentIR→adapter chains. The newest bundle belongs to
-the 57-page OpenCAPI Data Link Layer v2.0 specification: all project-owned path values are final, present, and
-repository-relative. The explicitly authorized source PDF remains absolute and labeled `external_input`; source
-and repository are on the same SSD. Two guarded CPU ingests reproduce 64 visuals, 53 tables, 111 sections, and
-527 source elements while keeping 83–84% of system memory free. That bundle is 183 files / 51,754,156 bytes —
-five manifest files, 64 visual crops, and one image plus one sidecar for each of the 57 pages — and its presence
-is measurability status, not what makes the refresh complete; complete verified downstream artifacts remain the
-durable progress measure.
+the latest completed refresh: all project-owned path values are final, present, and repository-relative. An
+explicitly authorized external source PDF remains absolute and labeled `external_input`; source and repository
+are on the same SSD. Bundle presence is measurability status, not what makes a refresh complete; complete,
+verified downstream artifacts remain the durable progress measure.
 
 ## Why this stage matters
 
@@ -110,17 +149,16 @@ It should preserve the document faithfully and expose enough structure for later
 
 ## Current maturity boundary
 
-`SourceIR` is relatively mature in architecture, but not "done forever".
+The SourceIR schema-2 boundary is now specification-neutral for deterministic classification, but it
+is not "done forever" and does not make the rest of the production pipeline neutral by itself.
 
-It is strong enough to be the foundation.
-It is not yet assumed universal for every ugly real-world PDF.
-
-Remaining work there is mostly:
+Remaining source-stage work is mostly:
 
 - robustness hardening
 - benchmarking on messy PDFs
 - fallback behavior
 - failure detection
+- universal geometry/model-backed recovery of labels that deterministic grammar leaves unknown
 
 not broad new concept invention.
 

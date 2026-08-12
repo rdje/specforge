@@ -2,6 +2,14 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
+  > does PhaseRecord remain schema compatible
+- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
+  > does SemanticIR keep copyright and license text
+- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
+  > does SemanticIR preserve SWD protocol provenance and order
+- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
+  > does SpecForge capture component topology / connectivity for platform docs (YES — a typed signal_connectivity producer->consumer graph + infrastructure_signals clock/reset distribution; correcting the .2 'hint-level' to 'captured-but-sparse-and-unlowered')
 - [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md)
   > does SpecForge classify Markdown inside the FSMGen submodule
 - [isf-fsm-via-switch-select](../knowledge/isf-fsm-via-switch-select.md)
@@ -289,11 +297,3 @@
   > how are rotated version matrices remapped for presence capture
 - [prose-pin-appositive-signal-capture](../knowledge/prose-pin-appositive-signal-capture.md)
   > how are serial/architecture spec interface signals added to the catalog
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > how are signal presence matrices captured into typed records
-- [header-trapped-signal-table-recovery](../knowledge/header-trapped-signal-table-recovery.md)
-  > how are signal presence matrices with signals trapped in header rows handled
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > how are spacing-artifact field names and the unit word Bits handled
-- [adapter-write-reconciles-stale-isf](../knowledge/adapter-write-reconciles-stale-isf.md)
-  > how are stale generated isf symlinks handled

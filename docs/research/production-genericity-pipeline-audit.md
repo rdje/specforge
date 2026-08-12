@@ -1,7 +1,7 @@
 # Production-genericity pipeline audit
 
-Status: **discovery complete; open breach remains in the production surface**
-Owner: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.a`
+Status: **discovery complete; SourceIR remediated; downstream production breach remains**
+Owner: `SPEC-TO-INTENT-ALIGNMENT.6d.ii`
 Audit date: 2026-08-12
 Audited revision: `b977a51ff24f966dcf6aca74ccf47d592a4fc452` plus the active `.6d.ii.a` replay publication
 
@@ -101,8 +101,8 @@ prior memory.
 
 | Stage | Current extraction decisions | Neutrality verdict |
 | --- | --- | --- |
-| Source registration/materialization | Source kind, repository-local artifacts, Docling page/table/visual conversion, timing-table structural revalidation | Core lifecycle is structural. Embedded visual/table classifiers are mixed and include corpus-tuned phrases. |
-| VLM enrichment | Caption-selected timing/state images; typed JSON prompts; table kind/grid proposals checked against headers | Mostly generic, but prompts narrow the domain to “chip protocol” and caption selection inherits the tuned SourceIR classifier. |
+| Source registration/materialization | Source kind, repository-local artifacts, Docling page/table/visual conversion, closed visual-form/section grammar, typed table-role classification, timing-table structural revalidation | Remediated by `.6d.ii.b`: schema-2 classification is identity-independent and fail-closed; schema-1 semantic labels are neutralized on load. |
+| VLM enrichment | Caption-selected timing/state images; typed JSON prompts; table kind/grid proposals checked against headers | Source routing now inherits the neutral schema-2 classifier, but the production prompt still narrows the domain to “chip protocol.” |
 | Evidence assembly | Markdown blocks, spans, section anchors, references, table declarations, typed provenance | Broadly structural/input-derived. |
 | Evidence deterministic extraction | Registers, fields, signal inventories, relations, constraints, polarity, semantic hints, timing, frames, states, actors, operations | Mixed. Several useful grammars are universal, but protocol-specific schema/extractors and exact signal/response spellings execute in production. |
 | Prior-guided EvidenceIR | Table/visual/actor/semantic/temporal priors | Blocking: priors are selected by a named family inferred from document key/display name. Structural extraction profiles already demonstrate the correct direction. |
@@ -172,18 +172,43 @@ come from table columns, prose, diagrams, explicit declarations, or a model prop
 to that evidence. Alpha-renaming must preserve the same graph and obligations modulo renamed
 symbols.
 
-### P0 — PDF classification contains corpus-calibrated phrases
+### Resolved in `.6d.ii.b` — SourceIR PDF classification contained corpus-calibrated phrases
 
-The embedded Python in `ir/source/docling_backend.rs` classifies visuals and tables before
-EvidenceIR. Its executable lists include operation/burst phrases and interface-role phrases derived
-from particular protocol families. Its register-table exclusion contains a packet-layout vocabulary
-derived from one storage protocol. Those branches decide which images reach the VLM and whether a
-table becomes a register map, so they materially affect extraction.
+At the audited revision, embedded Python in `ir/source/docling_backend.rs` classified visuals and
+tables before EvidenceIR using operation/burst phrases, interface-role phrases, field-reference
+spellings, and packet-layout exclusions derived from particular protocol families. Those branches
+decided which images reached the VLM and whether a table became a register map.
 
-Replace phrase collections with structural features (geometry, repeated clock lanes, transition
-edges, header/value shape, range/access topology) plus an honest unknown result. Generic English
-document-type grammar may be centralized and typed, but corpus idioms cannot be embedded in this
-backend.
+`.6d.ii.b` removes that authority. Diagram classification now accepts only an explicitly named
+generic visual form; operation, participant, and symbol text remains `unknown`. Table
+classification uses normalized whole header roles and required structural conjunctions: signal
+identity plus direction (or explicit signal identity plus width), value plus meaning, register name
+plus access plus address/range, scalar timing roles plus context, or feature plus support. Ambiguous
+`Name | Width | Description`, bare hex/address layouts, substring collisions, and unsupported
+forms remain `unknown`. Section classification uses whole generic heading phrases, so a fragment
+such as `port` cannot acquire authority merely by occurring inside another word.
+
+The carrier is versioned as SourceIR schema 2. Loading schema 1 preserves source text, grids,
+geometry, provenance, and assets but neutralizes diagram/table/section semantic labels to
+`unknown`/`normative`; re-ingest is required to reconstruct schema-2 labels. Future schemas are
+rejected. This prevents retained corpus-tuned labels from bypassing the repaired ingest boundary.
+
+A read-only replay of the new classifier across all 78 retained SourceIR documents measured the
+intentional impact before legacy fail-closure: 2,293 diagram labels, 2,123 section labels, and 3,484
+table labels would change on re-ingest. The dominant removals were 1,918 old register-bitfield and
+317 old timing-diagram guesses, 1,954 old encoding guesses, 218 feature guesses, and 136 timing-table
+guesses becoming unknown; 754 previously unknown tables gain structurally complete register-map
+authority. That diagnostic did not mutate an artifact.
+
+The required ADR 0025 currency run subsequently found exactly ten affected replayable EvidenceIR
+cascades. All ten were backed up on the repository volume, rebuilt through the ISF adapter, compared,
+and validated. Exact currency is now 24/24 measurable EvidenceIR and 78/78 SemanticIR, IntentIR, and
+adapter chains; the two renderable outputs pass pinned FSMGen strict with zero diagnostics. The delta
+removes 194 weak table-derived timing records across four documents, weak actor/register authority in
+one debug-document chain, and other isolated label-driven facts; a structurally complete field-layout
+chain gains registers under the positive conjunction. The large recall reduction is accepted evidence
+that the old labels encoded weak corpus shortcuts, not a reason to keep them. Generic recovery belongs
+to later EvidenceIR grammar/evidence leaves and cannot restore a result through document identity.
 
 ### P0 — named corpus code is compiled as product code
 
@@ -242,7 +267,7 @@ decision sites.
 | Model/quality commands | `audit_extraction`, `enrich`, `extract_constraints_llm`, `grits_consensus`, `nli_verify`, `nlp_enrich`, `project_validation` | Mixed: core transport/scoring is neutral; prompt framing/examples and inherited named schemas need correction. Corpus literals observed in these files are otherwise inside test modules. |
 | Orchestration/evaluation commands | `converge`, `eval_extraction`, `kg_bench`, `validate` | Mixed/blocking through named schema, family inference, signal-name inference, or corpus test framework exposed as production. |
 | Corpus commands | `corpus_cluster`, `learn_priors`, `corpus_kb` | Structural clustering is the neutral model; named family prior/KG routing is blocking. |
-| SourceIR | `ir/source.rs`, `ir/source/docling_backend.rs` | Source/path lifecycle and structural timing authority are neutral; embedded classifiers are mixed/blocking. |
+| SourceIR | `ir/source.rs`, `ir/source/docling_backend.rs` | Neutral at schema 2: lifecycle is structural, classifiers use generic form/role grammar with honest unknown, and legacy semantic labels fail closed. |
 | EvidenceIR/extraction | `ir/evidence.rs`, `extractor.rs`, `extraction_filters.rs`, `entity_typing.rs`, `condition_extract.rs`, `constraint_extract_llm.rs`, `nlp_relation_extract.rs`, `normative_vocab.rs`, `register_bits.rs` | Mixed/blocking in EvidenceIR schema/extractors and name lists; framework, grounding primitives, and most parsers are reusable. Named production commentary must move. |
 | Prior/reuse | `ir/prior_memory.rs`, `ir/corpus_cluster.rs` | Named family prior routing is blocking; structural fingerprint clustering is neutral. |
 | SemanticIR | `ir/semantic.rs`, `ambiguity.rs`, `contract.rs`, `cve.rs`, `fidelity.rs`, `figure_region.rs`, `fusion.rs`, `nli_verify.rs`, `protocol_graph.rs`, `temporal_ltl.rs`, `waveform.rs` | Core typed fusion/verification is neutral; semantic name inference and named public commentary are blocking. Figure-region corpus paths are test-only. |

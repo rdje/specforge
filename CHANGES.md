@@ -1,3 +1,27 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.b — make SourceIR classification specification-neutral
+
+- Replaced embedded Docling operation, participant, protocol-role, field-reference, and packet-layout cues with
+  whole-label generic document grammar and conjunctive table roles. Unsupported visual, section, and table
+  shapes now remain honestly unknown instead of acquiring semantics from familiar vocabulary.
+- Added identity-invariance and negative-control probes for operation captions, renamed symbols, participant
+  names, substring collisions, ambiguous table layouts, hex-address tables, and column-reordered register maps.
+- Versioned the contract as SourceIR schema 2. Loading schema 1 preserves source capture/provenance but
+  neutralizes its diagram/table/section labels; future schemas fail closed and re-ingest reconstructs current
+  labels. This prevents retained corpus-tuned labels from bypassing the repaired ingest path.
+- A read-only classifier replay across all 78 retained SourceIRs measured 2,293 diagram, 2,123 section, and
+  3,484 table label changes on re-ingest without rewriting an artifact. The subsequent ADR 0025 currency gate
+  identified exactly ten replayable EvidenceIR cascades whose old labels affected current output; all ten were
+  backed up, rebuilt through ISF, compared, validated, and attributed before commit.
+- Reconciliation removes 194 table-derived timing guesses across four documents, retires weak debug/register
+  and actor guesses, and admits structurally complete field-layout register maps where the new conjunction is
+  satisfied. Both renderable ISFs pass the pinned FSMGen in strict mode. Exact currency is restored at 24/24
+  replayable EvidenceIR chains and 78/78 SemanticIR, IntentIR, and adapter chains.
+- Removed named specification/protocol/signal examples from the SourceIR production surface. Universal syntax
+  and typed digital/document concepts remain allowed; specific conformance examples stay in tests.
+- Full CI passes all eight doctrines including exact chain currency, formatting, warning-deny Clippy, 1,873
+  tests with six ignored and zero failed, warning-deny rustdoc, mdBook, and final project-data locality. The exact
+  80-file reconciliation backup and temporary comparison script were removed and proved absent.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.a — publish replay truth and the production-genericity audit
 
 - Replayed all 12 unchanged reviewed source identities and 48 isolated stages at committed production revision

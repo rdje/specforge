@@ -90,8 +90,10 @@ physical-applicability carriers now have clean whole-population qualification: c
 TP/FP/FN with complete 29/29 provenance, and physical-link is the first supported reviewed category. The
 metric controller next selects the two remaining unrelated AMD IOMMU and GIC-400 register fabrications under
 `.6e`; however, the owner-mandated whole-production genericity audit found release-blocking identity, named-schema,
-signal-spelling, corpus-phrase, prompt, and module-boundary coupling. Structural remediation and behavioral
-invariance under `.6d.ii.b`–`.6d.ii.f` therefore precede `.6e`. A finite forbidden-vocabulary list is diagnostic,
+signal-spelling, corpus-phrase, prompt, and module-boundary coupling. SourceIR schema 2 now closes the first seam:
+its classifiers use only generic visual/section grammar and typed table roles, legacy labels fail closed, and
+retained recall loss is measured explicitly. EvidenceIR/schema remediation under `.6d.ii.c`, followed by
+`.6d.ii.d`–`.6d.ii.f`, therefore precedes `.6e`. A finite forbidden-vocabulary list is diagnostic,
 not proof. The signoff architecture is one-way production/conformance dependencies, opaque input symbols and
 identity, registered universal grammar interfaces, source-grounded residuals, and alpha-renaming/identity/
 paraphrase/held-out qualification. A reproduced 400-page failure also drove resource-sized bounded activation,

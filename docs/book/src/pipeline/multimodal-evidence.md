@@ -22,7 +22,11 @@ The visual path begins in `SourceIR`.
 - note
 - diagram kind
 
-The `diagram_kind` classification is intentionally lightweight at ingest time.
+The schema-2 `diagram_kind` classification is intentionally lightweight and fail-closed at ingest
+time. It recognizes only a caption that explicitly names a generic visual form; operation,
+participant, filename, protocol, and signal spellings do not grant a kind. A caption that only says
+what an image depicts therefore remains `unknown` until structural image analysis or a grounded
+model observation supplies evidence.
 It can identify categories such as:
 
 - timing diagram

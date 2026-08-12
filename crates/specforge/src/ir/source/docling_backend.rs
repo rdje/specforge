@@ -73,8 +73,8 @@ const INGEST_ADAPTIVE_BATCH_ENV: &str = "SPECFORGE_INGEST_ADAPTIVE_BATCH";
 /// Floor below which adaptive sizing never shrinks the batch (clamped to `<=` the ceiling).
 const DEFAULT_INGEST_MIN_BATCH_PAGES: usize = 8;
 /// Total-RAM bands (MB) for adaptive batch sizing: at/above the full band the ceiling is used; the
-/// mid/low bands cap the batch at progressively smaller sizes so a 64-page-batch peak (~4.8 GB, the
-/// `.2` CHI datum) stays near ~30 % of RAM; below the low band the floor is used.
+/// mid/low bands cap the batch at progressively smaller sizes so the measured 64-page peak
+/// (~4.8 GB) stays near ~30 % of RAM; below the low band the floor is used.
 const ADAPTIVE_BATCH_FULL_CEILING_MIN_MB: u64 = 16 * 1024;
 const ADAPTIVE_BATCH_MID_MIN_MB: u64 = 8 * 1024;
 const ADAPTIVE_BATCH_LOW_MIN_MB: u64 = 4 * 1024;
@@ -217,116 +217,101 @@ def docling_label_to_kind(label):
     return "body_text"
 
 
+def classifier_label(value):
+    """Normalize a human label without consulting document identity or symbols."""
+    return " ".join(re.findall(r"[a-z0-9]+(?:/[a-z0-9]+)?", (value or "").lower()))
+
+
+def classifier_has_phrase(value, phrases):
+    """Match whole generic phrases; never let a symbol substring create authority."""
+    normalized = f" {classifier_label(value)} "
+    return any(f" {classifier_label(phrase)} " in normalized for phrase in phrases)
+
+
+def classifier_header_has_role(headers, roles):
+    """Return whether a header has one of the closed structural roles."""
+    normalized_roles = {classifier_label(role) for role in roles}
+    return any(classifier_label(header) in normalized_roles for header in headers)
+
+
 def classify_diagram_kind(caption_text, asset_kind):
-    """Classify a visual asset's diagram type from its caption and asset kind.
+    """Classify only an explicitly named visual form from its caption.
 
     Returns one of: timing_diagram, state_machine_diagram, block_diagram,
     register_bitfield, truth_table, flow_chart, unknown.
+
+    Operation, participant, and symbol vocabulary is deliberately irrelevant. A
+    caption that names only what a visual does stays unknown until a structural
+    or model-backed consumer inspects the visual itself.
     """
-    lowered = (caption_text or "").lower()
-    # Always unknown for table regions (they are handled structurally).
     if asset_kind == "table_region":
         return "unknown"
-    # Timing diagram — pass 1: explicit timing/waveform vocabulary.
-    if any(kw in lowered for kw in [
-        "timing diagram", "timing waveform", "waveform diagram", "waveform",
-        "timing", "handshake timing", "clock timing", "signal timing",
-        "transfer timing", "cycle timing", "setup and hold",
-        "high and low",
-        # AMBA-style transfer/burst diagrams (the figure shows a clocked waveform).
-        "read transfer", "write transfer",
-        "wait state", "waited transfer",
-        "wrapping burst", "incrementing burst",
-        "undefined length burst",
-        "locked transfer",
-        "error response",
-        "transfer type example",
-        "four-beat", "eight-beat", "sixteen-beat",
+    # Closed, document-independent visual-form grammar.
+    if classifier_has_phrase(caption_text, [
+        "timing diagram", "timing waveform", "waveform diagram", "waveform plot",
     ]):
         return "timing_diagram"
-    # Timing diagram — pass 2: figures whose captions use protocol execution vocabulary.
-    # Bus protocol specs name clocked waveform figures after the operation they depict
-    # ("write transaction", "VALID before READY handshake", "exit from reset", …).
-    # Any figure—identified by "figure" in the caption—that mentions a transfer,
-    # transaction, handshake, or burst operation is treated as a timing waveform.
-    # This is intentionally inclusive: the VLM handles borderline cases gracefully;
-    # it is worse to discard a real timing diagram than to forward a data-layout one.
-    if "figure" in lowered and any(kw in lowered for kw in [
-        "transfer",        # write/read/failed/example transfer diagrams
-        "transaction",     # AXI uses “transaction” where AHB/APB use “transfer”
-        "handshake",       # VALID/READY handshake waveforms
-        "burst",           # burst transfer/transaction waveforms
-        "exit from reset", # reset de-assertion waveform
-        "sequence diagram", # sequential/credit-control visualisations
-    ]):
-        return "timing_diagram"
-    # State machine / state transition diagram.
-    if any(kw in lowered for kw in [
-        "state machine", "state diagram", "state transition", "transfer state",
-        "fsm", "finite state", "states and transitions",
+    if classifier_has_phrase(caption_text, [
+        "state machine", "state diagram", "state-transition diagram",
+        "state transition diagram", "finite-state machine", "finite state machine",
     ]):
         return "state_machine_diagram"
-    # Block / architecture / system diagram.
-    if any(kw in lowered for kw in [
+    if classifier_has_phrase(caption_text, [
         "block diagram", "architecture diagram", "system diagram",
-        "interconnect", "system block", "component diagram",
-        "bus matrix", "top-level", "high-level",
-        # AMBA interface/interconnect figures.
-        "manager interface", "subordinate interface",
-        "multiplexor interconnection", "select signal",
+        "component diagram", "topology diagram", "interconnection diagram",
     ]):
         return "block_diagram"
-    # Register bit-field layout.
-    if any(kw in lowered for kw in [
-        "register", "bit field", "bitfield", "register map", "register layout",
+    if classifier_has_phrase(caption_text, [
+        "register bit-field diagram", "register bit field diagram",
+        "register bit-field layout", "register bit field layout",
     ]):
         return "register_bitfield"
-    # Truth table.
-    if any(kw in lowered for kw in [
-        "truth table", "encoding table", "lookup table",
-    ]):
+    if classifier_has_phrase(caption_text, ["truth table"]):
         return "truth_table"
-    # Flow chart.
-    if any(kw in lowered for kw in [
-        "flow chart", "flowchart", "flow diagram", "decision flow",
+    if classifier_has_phrase(caption_text, [
+        "flow chart", "flowchart", "flow diagram",
     ]):
         return "flow_chart"
     return "unknown"
 
 
 def classify_section(title):
-    """Heuristic section kind classification based on the heading title."""
-    lowered = title.lower()
+    """Classify an explicit generic section form from the heading title."""
+    normalized = classifier_label(title)
     # Boilerplate / legal / admin
-    if any(kw in lowered for kw in [
+    if classifier_has_phrase(title, [
         "licence", "license", "copyright", "proprietary", "trademark",
-        "disclaimer", "change history", "revision history", "release note",
-        "release information", "acknowledgement", "preface", "foreword",
+        "disclaimer", "change history", "revision history", "release note", "release notes",
+        "release information", "acknowledgement", "acknowledgements",
+        "acknowledgment", "acknowledgments", "preface", "foreword",
         "feedback", "about this",
     ]):
         return "boilerplate"
     # Table of contents
-    if any(kw in lowered for kw in ["table of contents", "contents"]):
+    if classifier_has_phrase(title, ["table of contents"]) or normalized == "contents":
         return "table_of_contents"
     # Glossary / definitions
-    if any(kw in lowered for kw in ["glossary", "abbreviation", "acronym", "definition"]):
+    if classifier_has_phrase(title, [
+        "glossary", "abbreviation", "abbreviations", "acronym", "acronyms",
+        "definition", "definitions",
+    ]):
         return "glossary"
     # Appendix
-    if lowered.startswith("appendix") or lowered.startswith("annex"):
+    if normalized == "appendix" or normalized.startswith("appendix ") or normalized == "annex" or normalized.startswith("annex "):
         return "appendix"
-    # Signal / port description tables
-    if any(kw in lowered for kw in [
-        "signal", "port", "pin", "interface", "i/o",
+    # Signal / port declarations
+    if classifier_has_phrase(title, [
+        "signal", "signals", "port", "ports", "pin", "pins", "pinout", "i/o",
     ]):
         return "signal_description"
     # Register / memory maps
-    if any(kw in lowered for kw in [
-        "register", "memory map", "address map", "configuration", "csr",
+    if classifier_has_phrase(title, [
+        "register", "registers", "memory map", "address map",
     ]):
         return "register_description"
     # Timing sections
-    if any(kw in lowered for kw in [
-        "timing", "waveform", "clock", "latency", "throughput",
+    if classifier_has_phrase(title, [
+        "timing", "waveform", "waveforms", "clock", "clocks", "latency", "throughput",
     ]):
         return "timing"
     return "normative"
@@ -338,135 +323,95 @@ def classify_table_kind(header_rows, body_rows=None, caption_text=None):
     Returns one of: signal_description, encoding, register_map,
     timing_parameter, feature_matrix, unknown.
 
-    Classification order:
-    1. Caption-based positive: tables whose caption contains "signal" / "signals"
-       are interface signal description tables — caption authorship intent is the
-       most reliable single signal.
-    2. Caption-based exclusion: payload/message-field tables share the
-       Name|Width|Description header layout but are not interface signal tables.
-    3. Header-based: existing vocabulary checks on column headers.
-    4. Content-based encoding detection: when headers lack explicit encoding
-       vocabulary, scan the first column of body rows for binary/hex literals
-       or bit-field references (SIGNAL[N], SIGNAL[N:M]) — these are the patterns
-       that identify value-encoding tables regardless of how their headers are named.
+    Classification authority is structural or an explicit generic table-kind label:
+    1. Captions can explicitly declare a signal/port/pin table.
+    2. Header roles can prove a signal table only with direction authority.
+    3. Generic value/meaning header roles identify encodings.
+    4. Register maps require access semantics plus address or bit-range structure.
+
+    Ambiguous Name|Width|Description and address-bearing layouts remain unknown.
     """
     body = body_rows or []
     if not header_rows and not body:
         return "unknown"
     cap_lower = (caption_text or "").lower()
-    # Flatten all header cell texts to lowercase for pattern matching.
-    all_headers = [cell["text"].lower() for row in header_rows for cell in row]
-    header_set = set(all_headers)
-    first_header = all_headers[0] if all_headers else ""
+    # Flatten header cells once; role checks use whole normalized labels rather
+    # than substrings, so a document symbol cannot accidentally name a type.
+    all_headers = [cell["text"] for row in header_rows for cell in row]
 
-    # ── 1. Caption-based positive: signal / interface table ──────────────────────
-    # Chip-design PDFs consistently include "signal" or "signals" in the caption
-    # of interface signal tables ("Table 2-1 APB signal descriptions",
-    # "Table 2-2 Manager signals", …).  This is more reliable than header vocab.
-    cap_words = set(re.split(r'[\s\-_:/]+', cap_lower))
-    caption_names_signals = "table" in cap_lower and bool(
+    # ── 1. Caption-based positive: explicit generic table kind ───────────────
+    cap_words = set(classifier_label(cap_lower).split())
+    caption_names_signals = classifier_has_phrase(cap_lower, ["table"]) and bool(
         cap_words & {"signal", "signals", "port", "ports", "pin", "pins"}
     )
-    # Still exclude payload tables even if they happen to mention "signal".
-    caption_is_payload = any(kw in cap_lower for kw in [
-        "message field", "message fields",
-        "payload field", "payload fields",
-        "packet field", "packet fields",
-        "command field", "command fields",
-        "frame field", "frame fields",
-    ])
-    if caption_names_signals and not caption_is_payload:
+    if caption_names_signals:
         return "signal_description"
 
-    # ── 2+3. Header-based signal description (with payload exclusion) ────────
-    has_name_col = any(kw in first_header for kw in ["name", "signal", "port", "pin"])
-    has_width_col = any(any(kw in h for kw in ["width", "bits", "size"]) for h in all_headers)
-    has_dir_col = any(any(kw in h for kw in ["direction", "source", "destination"]) for h in all_headers)
-    if not caption_is_payload and has_name_col and (has_width_col or has_dir_col):
+    # ── 2. Header-based signal description ─────────────────────────────────
+    has_signal_name_col = classifier_header_has_role(all_headers, [
+        "name", "signal", "signal name", "port", "port name", "pin", "pin name",
+    ])
+    has_width_col = classifier_header_has_role(all_headers, [
+        "width", "bit width", "bits", "size",
+    ])
+    has_dir_col = classifier_header_has_role(all_headers, ["direction", "dir"])
+    has_explicit_signal_col = classifier_header_has_role(all_headers, [
+        "signal", "signal name", "port", "port name", "pin", "pin name",
+    ])
+    if has_signal_name_col and (has_dir_col or (has_explicit_signal_col and has_width_col)):
         return "signal_description"
 
     # ── Header-based encoding (explicit vocabulary) ───────────────────────
-    has_value_col = any(any(kw in h for kw in ["value", "encoding", "code", "binary", "hex"]) for h in all_headers)
-    has_meaning_col = any(any(kw in h for kw in ["name", "meaning", "description", "transfer type", "type"]) for h in all_headers)
+    has_value_col = classifier_header_has_role(all_headers, [
+        "value", "encoded value", "encoding", "code", "binary", "hex", "bit pattern",
+    ])
+    has_meaning_col = classifier_header_has_role(all_headers, [
+        "name", "meaning", "description", "definition", "semantics",
+    ])
     if has_value_col and has_meaning_col:
         return "encoding"
 
-    # ── 4. Content-based encoding detection (body scan) ───────────────────
-    # Encoding/value tables for individual signal fields often have no explicit
-    # "value" or "encoding" column header.  Instead, look at what the first column
-    # of body rows actually contains:
-    #   • Binary / hex literals  — 0b00, 2'b01, 0x1A  → value encoding table
-    #   • Bit-field references   — PPROT[0], HTRANS[1:0]  → bit-field description
-    # If at least 2 rows match, treat as encoding.
-    if len(body) >= 2:
-        first_col = [row[0]["text"].strip() for row in body[:12] if row]
-        binary_re = re.compile(r"0b[01]+|[0-9]+'b[01]+|0x[0-9a-fA-F]+")
-        bitfield_re = re.compile(r"\w+\[\d+(?::\d+)?\]")
-        encoding_hits = sum(
-            1 for v in first_col
-            if binary_re.search(v) or bitfield_re.search(v)
-        )
-        if encoding_hits >= 2:
-            return "encoding"
-
-    # ── Encoding cross-reference (caption "encoding(s)" or "X in <field>[x]") ──
-    # Field-encoding cross-reference tables (e.g. CHI "Table B8.10: Security field
-    # encodings for each DVMType") map bit POSITIONS to per-channel fields.  Their
-    # first column holds bare positions ("2:0", "3", "4", …) — not SIGNAL[N] refs
-    # or literals — so the content scan above misses them; meanwhile a header like
-    # "X in REQ.Addr[x] DAT.Data[x]" carries the "addr" substring and a body
-    # bit-range, so they would otherwise be mis-read as register maps and emit
-    # phantom bit-range-named registers.  Intercept them as encoding here, before
-    # the register gate:  the caption ("… encodings …") catches captioned tables,
-    # the "X in" cross-reference idiom catches caption-less continuation pages.
-    caption_is_encoding = "encoding" in cap_lower and not caption_is_payload
-    header_is_xref = any(re.search(r"\bx in\b", h) for h in all_headers)
-    if caption_is_encoding or header_is_xref:
+    # ── Encoding caption authority ──────────────────────────────────────────
+    if classifier_has_phrase(cap_lower, ["encoding", "encodings"]):
         return "encoding"
 
-    # ── Register map (header signal GATED by body-structure) ──────────────
-    # A bare address/offset header is NOT sufficient: address-assignment tables,
-    # data-frame layouts, tables of contents, feature matrices, and value-encoding
-    # tables all carry an "address"/"offset"/"r/w" header without being registers
-    # (e.g. I2C "Target address | R/W bit", eMMC RPMB "… Address | Block Count",
-    # eMMC TOC "… [177] …", APB "Physical address space").  Require genuine
-    # register-field STRUCTURE in the headers or body: a bit RANGE in colon form
-    # (7:0, [31:16]) — a single "[177]" page reference is deliberately excluded —
-    # or a standalone access-type token (RO/RW/WO/RC/W1C/…) as a whole cell.
-    has_addr_col = any(any(kw in h for kw in ["offset", "address", "addr", "base"]) for h in all_headers)
-    has_access_col = any(any(kw in h for kw in ["access", "r/w", "rw", "read", "write"]) for h in all_headers)
-    bitrange_re = re.compile(r"\[?\d+\s*:\s*\d+\]?")
+    # ── Register map: access semantics plus address/bit structure ───────────
+    # Address alone is ambiguous with many other layouts. A register map therefore
+    # needs a name role, an access role/value, and either an address role or a bit
+    # range. A lone page reference is deliberately not a range.
+    has_register_name_col = classifier_header_has_role(all_headers, [
+        "name", "register", "register name", "field", "field name", "symbol",
+    ])
+    has_addr_col = classifier_header_has_role(all_headers, [
+        "offset", "address", "addr", "base", "base address", "register offset", "byte offset",
+    ])
+    has_access_col = classifier_header_has_role(all_headers, [
+        "access", "access type", "r/w", "read/write", "read write", "read", "read access",
+        "write", "write access", "permission", "permissions",
+    ])
+    bitrange_re = re.compile(r"(?:\[\s*\d+\s*:\s*\d+\s*\]|\d+\s*:\s*\d+)")
     access_tokens = {"ro", "rw", "wo", "rc", "rs", "w1c", "w1s", "w0c", "rw1c", "r/w"}
     struct_cells = list(all_headers)
     for row in body[:16]:
         struct_cells += [c.get("text", "").strip() for c in row]
-    has_register_structure = (
-        any(bitrange_re.search(c) for c in struct_cells)
-        or any(c.strip().lower() in access_tokens for c in struct_cells)
-    )
-    # Some NON-register tables carry genuine bit-ranges or address columns and so
-    # pass the structure gate above — but are not register maps.  Exclude the two
-    # classes seen in the corpus: tables of contents (dotted-leader cells, e.g.
-    # "BOOT_BUS_CONDITIONS [177]....184") and data-frame / packet layouts
-    # (frame-specific column vocabulary, e.g. eMMC RPMB "Stuff Bytes | Nonce |
-    # Write Counter | Block Count" with body fields "[511:316]").
+    has_bit_range = any(bitrange_re.fullmatch(c.strip()) for c in struct_cells)
+    has_access_value = any(c.strip().lower() in access_tokens for c in struct_cells)
+    has_access_semantics = has_access_col or has_access_value
     is_toc = any("...." in c for c in struct_cells)
-    frame_vocab = ["stuff bytes", "nonce", "block count", "(mac)", "write counter"]
-    frame_cols = sum(1 for kw in frame_vocab if any(kw in h for h in all_headers))
-    is_non_register_layout = is_toc or frame_cols >= 2
     if (
-        not is_non_register_layout
-        and (has_addr_col or (has_access_col and has_name_col))
-        and has_register_structure
+        not is_toc
+        and has_register_name_col
+        and has_access_semantics
+        and (has_addr_col or has_bit_range)
     ):
         return "register_map"
 
     # Timing parameter candidate: only genuine leading column-header rows contribute
     # vocabulary. Docling can mark a data row's label cell as a row header, so flattening
-    # every `header_rows` entry lets instruction/data text fabricate timing authority
-    # (`instruction` contains `ns`, for example). Keep `_` inside identifier tokens too:
-    # `OPTIMAL_TRIM_UNIT_SIZE` is not a standalone `unit`. Rust revalidates this candidate
-    # with the shared structural category authority before SourceIR is persisted. A separate
+    # every `header_rows` entry lets instruction/data text fabricate timing authority through
+    # substring matches. Keep `_` inside identifier tokens so a unit fragment inside an identifier
+    # is not a standalone unit. Rust revalidates this candidate with the shared structural category
+    # authority before SourceIR is persisted. A separate
     # Rust scalar-layout gate decides whether MIN/TYP/MAX can be emitted without losing a
     # variant dimension.
     column_header_rows = []
@@ -503,9 +448,19 @@ def classify_table_kind(header_rows, body_rows=None, caption_text=None):
         return "timing_parameter"
 
     # Feature matrix: mandatory/optional/prohibited support levels.
-    has_feature_col = any(any(kw in h for kw in ["feature", "property", "capability", "option"]) for h in all_headers)
-    has_support_col = any(any(kw in h for kw in ["mandatory", "optional", "prohibited", "required", "supported"]) for h in all_headers)
-    if has_feature_col or has_support_col:
+    has_feature_col = classifier_header_has_role(all_headers, [
+        "feature", "property", "capability", "option",
+    ])
+    has_support_col = classifier_header_has_role(all_headers, [
+        "support", "requirement", "status", "mandatory optional",
+    ])
+    support_tokens = {"mandatory", "optional", "prohibited", "required", "supported"}
+    has_support_value = any(
+        classifier_label(cell.get("text", "")) in support_tokens
+        for row in body[:16]
+        for cell in row
+    )
+    if has_feature_col and (has_support_col or has_support_value):
         return "feature_matrix"
 
     return "unknown"
@@ -1439,7 +1394,7 @@ fn parse_batch_pages_ceiling(raw: Option<&str>) -> usize {
 /// per-machine constant (unlike free memory, which jitters run-to-run and would make cross-batch
 /// boundary artifacts non-deterministic — see the `evidence-build-nondeterminism` KM card), so the
 /// SAME machine always resolves the SAME batch and re-ingest stays reproducible. Discrete bands keep
-/// a 64-page-batch peak (~4.8 GB, the `.2` CHI datum) near ~30 % of RAM. `total_mb == None`
+/// the measured 64-page peak (~4.8 GB) near ~30 % of RAM. `total_mb == None`
 /// (unreadable) -> ceiling, so a host whose RAM cannot be read behaves exactly as today.
 fn adaptive_batch_pages(total_mb: Option<u64>, ceiling: usize, floor: usize) -> usize {
     let ceiling = ceiling.max(1);
@@ -2974,6 +2929,109 @@ printf '{"ready": false, "python_version": "3.14.0", "error": "ModuleNotFoundErr
             !DOCLING_HELPER_SCRIPT
                 .contains("threshold = _env_int(\"SPECFORGE_INGEST_BATCH_THRESHOLD\", 512)")
         );
+    }
+
+    fn run_embedded_classification_probe() -> Result<serde_json::Value> {
+        let classifier_source = DOCLING_HELPER_SCRIPT
+            .split("\ndef main():")
+            .next()
+            .ok_or_else(|| {
+                AppError::InvalidBackendOutput(
+                    "embedded Docling helper has no classifier prefix".to_string(),
+                )
+            })?;
+        let mut probe = classifier_source.to_string();
+        probe.push_str(
+            r#"
+def _cell(text, is_header=True):
+    return {"text": text, "is_header": is_header}
+
+def _headers(*values):
+    return [[_cell(value) for value in values]]
+
+register_headers = _headers("Name", "Offset", "Access")
+register_body = [[_cell("ITEM_ALPHA", False), _cell("0x04", False), _cell("RW", False)]]
+payload = {
+    "explicit_timing": classify_diagram_kind("Timing waveform", "diagram"),
+    "operation_only": classify_diagram_kind("Figure: write transaction", "diagram"),
+    "renamed_operation": classify_diagram_kind("Figure: perform ZETA_OP", "diagram"),
+    "participant_only": classify_diagram_kind("Manager interface", "diagram"),
+    "explicit_block": classify_diagram_kind("Component diagram", "diagram"),
+    "support_section": classify_section("Support overview"),
+    "port_section": classify_section("Port descriptions"),
+    "ambiguous_name_width": classify_table_kind(
+        _headers("Name", "Width", "Description"), [], "Table 4"
+    ),
+    "opcode_is_not_encoding": classify_table_kind(
+        _headers("Opcode", "Type"), [], "Instruction forms"
+    ),
+    "hex_addresses_are_not_encoding": classify_table_kind(
+        _headers("Address", "Description"),
+        [[_cell("0x10", False), _cell("First", False)],
+         [_cell("0x20", False), _cell("Second", False)]],
+        "Address listing",
+    ),
+    "caption_declared_signal": classify_table_kind(
+        _headers("Name", "Width", "Description"), [], "Table 4 Signal descriptions"
+    ),
+    "structural_register_a": classify_table_kind(
+        register_headers, register_body, "Vendor A table"
+    ),
+    "structural_register_b": classify_table_kind(
+        _headers("Access", "Name", "Offset"),
+        [[_cell("RW", False), _cell("ITEM_BETA", False), _cell("0x08", False)]],
+        "Unrelated title"
+    ),
+    "addressed_bit_layout_without_access": classify_table_kind(
+        _headers("Address", "Chunk Count"),
+        [[_cell("[511:316]", False), _cell("4", False)]],
+        "Data layout",
+    ),
+}
+print(json.dumps(payload, sort_keys=True))
+"#,
+        );
+
+        let tempdir = crate::project_data::tempdir()?;
+        let probe_path = tempdir.path().join("source-classifier-probe.py");
+        fs::write(&probe_path, probe)?;
+        let mut command = Command::new("python3");
+        crate::project_data::configure_command(&mut command)?;
+        let output = command.arg(&probe_path).output()?;
+        if !output.status.success() {
+            return Err(AppError::InvalidBackendOutput(format!(
+                "embedded SourceIR classifier probe failed: {}",
+                String::from_utf8_lossy(&output.stderr).trim()
+            )));
+        }
+        Ok(serde_json::from_slice(&output.stdout)?)
+    }
+
+    #[test]
+    fn embedded_source_classifiers_are_structural_and_identity_invariant() -> Result<()> {
+        // Several backend tests intentionally mutate process environment/current-directory
+        // state under this shared lock. Repository-local probe placement and child setup must
+        // observe one stable process context when the test binary runs in parallel.
+        let _env_lock = env_var_lock();
+        let observed = run_embedded_classification_probe()?;
+        assert_eq!(observed["explicit_timing"], "timing_diagram");
+        assert_eq!(observed["operation_only"], "unknown");
+        assert_eq!(observed["renamed_operation"], "unknown");
+        assert_eq!(observed["participant_only"], "unknown");
+        assert_eq!(observed["explicit_block"], "block_diagram");
+        assert_eq!(observed["support_section"], "normative");
+        assert_eq!(observed["port_section"], "signal_description");
+        assert_eq!(observed["ambiguous_name_width"], "unknown");
+        assert_eq!(observed["opcode_is_not_encoding"], "unknown");
+        assert_eq!(observed["hex_addresses_are_not_encoding"], "unknown");
+        assert_eq!(observed["caption_declared_signal"], "signal_description");
+        assert_eq!(observed["structural_register_a"], "register_map");
+        assert_eq!(
+            observed["structural_register_a"],
+            observed["structural_register_b"]
+        );
+        assert_eq!(observed["addressed_bit_layout_without_access"], "unknown");
+        Ok(())
     }
 
     #[test]

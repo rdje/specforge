@@ -11,6 +11,8 @@ use crate::persisted_path::{
     resolve_reference, resolve_repository_output,
 };
 
+const SOURCE_IR_SCHEMA_VERSION: u32 = 2;
+
 pub use docling_backend::{
     DEFAULT_DOCLING_BOOTSTRAP_SCRIPT, DEFAULT_DOCLING_VENV_DIR, DOCLING_PYTHON_ENV,
     DoclingRuntimeCandidate, DoclingRuntimeCandidateStatus, DoclingRuntimeDiagnosis,
@@ -147,7 +149,7 @@ pub struct StructuredTableRecord {
     pub page_id: Option<String>,
     pub caption_text: Option<String>,
     pub source_ref: Option<String>,
-    /// Purpose of this table as inferred from its header cells at ingest time.
+    /// Purpose of this table as proven by generic structural roles at ingest time.
     #[serde(default)]
     pub table_kind: TableKind,
     /// Rows where at least one cell is marked as a header by Docling.
@@ -198,14 +200,15 @@ pub struct ContentElementRecord {
     pub reading_order: u32,
 }
 
-/// Classification of a structured table's purpose, inferred from its header cells at ingest time.
-/// Downstream stages (EvidenceIR, SemanticIR) use this to apply table-type-specific extraction.
+/// Classification of a structured table's purpose, proven from generic structural roles at ingest
+/// time. Downstream stages (EvidenceIR, SemanticIR) use this to apply table-type-specific
+/// extraction.
 #[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum TableKind {
-    /// Signal name + direction/width columns (AHB manager/subordinate signal tables).
+    /// Signal name plus direction or width columns.
     SignalDescription,
-    /// Value/encoding columns + name/description column (HTRANS, HBURST, HRESP encodings).
+    /// Value or encoding columns plus a name or description column.
     Encoding,
     /// Offset/address + name + access type + reset value columns.
     RegisterMap,
@@ -445,7 +448,28 @@ fn normalize_timing_table_kinds(tables: &mut [StructuredTableRecord]) {
     }
 }
 
-/// Section kind as heuristically classified from the heading title at ingest time.
+/// Retained schema-1 artifacts were classified by corpus-calibrated caption/header shortcuts.
+/// Their source geometry and text remain valid, but their semantic labels do not satisfy the
+/// schema-2 genericity contract. Fail closed instead of silently carrying that authority across
+/// the boundary; re-ingest reconstructs labels with the current document-independent grammar.
+fn neutralize_legacy_source_classifications(source_ir: &mut SourceIr) {
+    let previous_schema = source_ir.schema_version;
+    for asset in &mut source_ir.visual_assets {
+        asset.diagram_kind = DiagramKind::Unknown;
+    }
+    for table in &mut source_ir.structured_tables {
+        table.table_kind = TableKind::Unknown;
+    }
+    for section in &mut source_ir.document_sections {
+        section.section_kind = SectionKind::Normative;
+    }
+    source_ir.schema_version = SOURCE_IR_SCHEMA_VERSION;
+    source_ir.normalization_plan.notes.push(format!(
+        "loaded legacy SourceIR schema {previous_schema}; semantic source classifications were neutralized because only schema {SOURCE_IR_SCHEMA_VERSION} carries the document-independent classifier contract; re-ingest to reconstruct typed classifications"
+    ));
+}
+
+/// Section kind classified from an explicit, document-independent heading grammar at ingest time.
 /// Downstream stages can use this to avoid re-discovering section roles.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -479,7 +503,7 @@ pub struct ContentSectionRecord {
     pub page_id: Option<String>,
     pub source_ref: Option<String>,
     pub reading_order: u32,
-    /// Heuristic section kind inferred from the heading title.
+    /// Section kind proven by the document-independent heading grammar.
     pub section_kind: SectionKind,
 }
 
@@ -489,18 +513,18 @@ pub struct ContentSectionRecord {
 /// - **Numeric**: a fixed compile-time constant (always positive, typically a power of 2
 ///   or an even multiple: 1, 2, 3, 4, 8, 16, 32, 64, 128, 256, …)
 /// - **Parametric**: a user-configurable RTL parameter that the integrator sets at
-///   instantiation time (e.g. `ADDR_WIDTH = 32`, `DATA_WIDTH = 64`).
+///   instantiation time.
 ///   A parametric width is NOT unknown — it is a fully specified design intent whose
 ///   concrete value is supplied by whoever instantiates the IP.
 ///
-/// **Serialization**: `WidthHint::Numeric(32)` → JSON `32`; `WidthHint::Parametric("ADDR_WIDTH")`
-/// → JSON `"ADDR_WIDTH"`.  This is backward-compatible with the legacy `width_hint: u32` field.
+/// **Serialization**: a numeric variant becomes a JSON number; a parametric variant becomes the
+/// source-defined JSON string. This is backward-compatible with the legacy `width_hint: u32` field.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(untagged)]
 pub enum WidthHint {
-    /// A fixed numeric bit width (e.g. 1, 2, 32, 64).
+    /// A fixed numeric bit width.
     Numeric(u32),
-    /// A user-configurable RTL parameter expression (e.g. "ADDR_WIDTH", "DATA_WIDTH/8").
+    /// A user-configurable RTL parameter expression derived from the input.
     /// The actual value is bound at instantiation time by the integrator.
     Parametric(String),
 }
@@ -539,15 +563,14 @@ pub enum RelationKind {
 ///
 /// Direction is derived: if `(A, Drives, S)`, then `S` is `output_of(A)` and
 /// `input_of(others)`.
-/// Actor identity is behavioral: names like “Manager”, “Requester”, “master”, “slave”
-/// are all accepted as-is — the graph normalises them through co-occurrence,
-/// not through a hardcoded vocabulary.
+/// Actor identity is behavioral: every input-defined participant name is accepted as-is and the
+/// graph normalizes it through current-document evidence, not a hardcoded vocabulary.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ActorSignalRelation {
     pub relation_id: String,
-    /// Actor name as it appears in the spec (e.g. "Manager", "slave", "Requester").
+    /// Actor name as it appears in the current input.
     pub actor_name: String,
-    /// Uppercase signal name (e.g. "PREADY", "HTRANS", "AWADDR").
+    /// Signal name as it appears in the current input.
     pub signal_name: String,
     /// Whether the actor drives or reads the signal.
     pub relation: RelationKind,
@@ -573,15 +596,14 @@ pub enum SignalConstraintKind {
     MustBeStable,
     /// `SIGNAL must hold data` / be held.
     MustHoldData,
-    /// `SIGNAL must be VALUE` where VALUE is a specific protocol state (IDLE, NONSEQ, OKAY, etc.).
+    /// `SIGNAL must be VALUE` where VALUE is an input-defined state or encoding.
     MustBeValue { value: String },
 }
 
 /// A structured signal constraint extracted from a `SignalValueConstraint` sentence.
 /// This is the Level 2 NLP output — not just a classified sentence but a typed record.
 ///
-/// Example: `"HAUSER must not change between cycles when HREADY is LOW"` →
-/// `{ subject: "HAUSER", kind: MustNotChange, condition: "when HREADY is LOW", negated: false }`
+/// A source-derived signal, action, and optional condition become one typed record.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct SignalConstraintRecord {
     pub constraint_id: String,
@@ -589,10 +611,10 @@ pub struct SignalConstraintRecord {
     pub subject_signal: String,
     /// What the signal must do or be.
     pub constraint_kind: SignalConstraintKind,
-    /// The specific target value/state, if applicable (e.g. "IDLE", "NONSEQ").
+    /// The input-defined target value or state, if applicable.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub target_value: Option<String>,
-    /// The condition clause, if present (e.g. "when HREADY is LOW").
+    /// The condition clause, if present.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub condition_text: Option<String>,
     /// Whether the constraint was negated (`must not`, `shall not`).
@@ -606,17 +628,16 @@ pub struct SignalConstraintRecord {
 /// A structured conditional rule extracted from a `ConditionalRule` sentence.
 /// Captures `when ANTECEDENT, SIGNAL shall/must ACTION`.
 ///
-/// Example: `"When HREADY is LOW, the Manager must not change HTRANS"` →
-/// `{ antecedent: "HREADY is LOW", consequent_signal: "HTRANS", consequent_action: "must not change" }`
+/// The antecedent, consequent subject, and action are carried from the current input.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct ConditionalRuleRecord {
     pub rule_id: String,
-    /// The condition that triggers the rule ("when HREADY is LOW").
+    /// The condition that triggers the rule.
     pub antecedent_text: String,
     /// The signal that is the subject of the consequent, if identifiable.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub consequent_signal: Option<String>,
-    /// The action the consequent describes ("must not change", "shall be IDLE", etc.).
+    /// The action the consequent describes.
     pub consequent_action: String,
     /// The original sentence this record was extracted from.
     pub source_text: String,
@@ -624,21 +645,21 @@ pub struct ConditionalRuleRecord {
     pub automation_confidence: AutomationConfidence,
 }
 
-/// One register extracted from a register map table in the chip spec.
+/// One register extracted from a register map table in the current input.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct RegisterRecord {
     pub register_id: String,
     pub register_name: String,
-    /// Register-level access policy when the source map declares one (RO, WO, RW, …). This is
-    /// distinct from per-field access in [`RegisterFieldRecord`]; both use a free string so source
-    /// notation and footnote markers remain lossless.
+    /// Register-level access policy when the source map declares one. This is distinct from
+    /// per-field access in [`RegisterFieldRecord`]; both use a free string so source notation and
+    /// footnote markers remain lossless.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub access_type: Option<String>,
-    /// Byte offset from the block base address (hexadecimal string, e.g. "0x04").
+    /// Byte offset from the block base address, retaining the input notation.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub offset_address: Option<String>,
     /// Register width in bits when known (from a width column/caption, or the maximum field bit
-    /// extent). Flexible-register-model field (PDF-VARIANT-DIGESTION.2c).
+    /// extent).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub size_bits: Option<u32>,
     pub fields: Vec<RegisterFieldRecord>,
@@ -659,21 +680,21 @@ pub struct RegisterFieldRecord {
     /// Least-significant bit position — i.e. the field's OFFSET from the register's bit 0 (LSb).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bits_low: Option<u32>,
-    /// Field WIDTH in bits. A field is normally `(offset = bits_low, width)`; for a `[high:low]` range
-    /// this is `high - low + 1`, and a single-bit field has width 1. Flexible-register-model field
-    /// (PDF-VARIANT-DIGESTION.2c) so offset+width forms are representable, not only bit ranges.
+    /// Field width in bits. A field is normally `(offset = bits_low, width)`; for a `[high:low]`
+    /// range this is `high - low + 1`, and a single-bit field has width 1. Offset-plus-width forms
+    /// therefore remain representable rather than only bit ranges.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub bit_width: Option<u32>,
-    /// Access type: RO, WO, RW, RC, RS, W1C, WARL, RAZ/WI, … — kept as a FREE string so any vendor's
-    /// notation is representable (flexible-register-model; PDF-VARIANT-DIGESTION.2c).
+    /// Access type retained as a free source-defined string so unfamiliar notation remains
+    /// representable without a built-in vocabulary.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub access_type: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reset_value: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub description: Option<String>,
-    /// Enumerated value encodings of this field (value → meaning), e.g. `0b00 → Idle`. Empty when the
-    /// field has no enumeration. Flexible-register-model field (PDF-VARIANT-DIGESTION.2c).
+    /// Enumerated value encodings of this field (value → meaning). Empty when the field has no
+    /// enumeration.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub enumerated_values: Vec<RegisterFieldEnumRecord>,
 }
@@ -858,7 +879,17 @@ pub struct SourceIr {
 impl SourceIr {
     pub fn load_from_path(path: &Path) -> Result<Self> {
         let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
-        let source_ir = serde_json::from_str::<Self>(&fs::read_to_string(path)?)?;
+        let mut source_ir = serde_json::from_str::<Self>(&fs::read_to_string(&path)?)?;
+        if source_ir.schema_version > SOURCE_IR_SCHEMA_VERSION {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "SourceIR schema {} at {} is newer than supported schema {SOURCE_IR_SCHEMA_VERSION}",
+                source_ir.schema_version,
+                path.display()
+            )));
+        }
+        if source_ir.schema_version < SOURCE_IR_SCHEMA_VERSION {
+            neutralize_legacy_source_classifications(&mut source_ir);
+        }
         let mut source_ir = source_ir.runtime_clone()?;
         // Old SourceIR remains readable, but no current consumer trusts a timing classification
         // that lacks structural authority. Structural shape is necessary, not sufficient: an
@@ -986,7 +1017,7 @@ impl SourceIr {
         let planned_actions = planned_actions(source_kind, &residual_decisions);
 
         Self {
-            schema_version: 1,
+            schema_version: SOURCE_IR_SCHEMA_VERSION,
             stage: IrStage::SourceIr,
             source: source_registration,
             artifact_layout,
@@ -1367,12 +1398,12 @@ pub enum VisualAssetKind {
 }
 
 /// Semantic classification of a visual asset's diagram type.
-/// Set from caption text heuristics at ingest time (zero VLM deps).
+/// Set only when the caption explicitly names a generic visual form (zero VLM deps).
 /// Used to route VLM enrichment calls at the `specforge enrich` step.
 #[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
 pub enum DiagramKind {
-    /// Waveform on horizontal time axis — the most normative content in chip specs.
+    /// Waveform on a horizontal time axis.
     TimingDiagram,
     /// Boxes and arrows with guard labels (state/transition diagrams).
     StateMachineDiagram,
@@ -1400,7 +1431,7 @@ pub struct VisualAsset {
     pub source_ref: Option<String>,
     pub placeholder_text: Option<String>,
     pub note: Option<String>,
-    /// Semantic diagram kind inferred from caption text at ingest time.
+    /// Semantic diagram kind proven by an explicit generic caption form at ingest time.
     /// Set to `Unknown` when classification cannot be determined from caption alone.
     #[serde(default)]
     pub diagram_kind: DiagramKind,
@@ -1591,7 +1622,7 @@ mod tests {
     use crate::test_support::env_var_lock;
 
     use super::{
-        AutomationConfidence, NormalizationBackend, SourceIr, SourceKind,
+        AutomationConfidence, DiagramKind, NormalizationBackend, SectionKind, SourceIr, SourceKind,
         StructuredTableCellRecord, StructuredTableRecord, TableKind, document_key,
         normalize_timing_table_kinds, stable_stem, timing_caption_unit, timing_table_columns,
         timing_table_has_structural_authority,
@@ -2012,6 +2043,89 @@ mod tests {
                     .as_ref()
             )
         );
+        Ok(())
+    }
+
+    #[test]
+    fn source_ir_load_neutralizes_legacy_classifier_authority() -> Result<()> {
+        let tempdir = crate::project_data::tempdir()?;
+        let source = tempdir.path().join("legacy-classifier.md");
+        let artifact_base = tempdir.path().join("generated/source_ir");
+        fs::write(&source, "# Legacy classifier\n")?;
+
+        let source_ir = SourceIr::build(&source, &artifact_base)?;
+        source_ir.write_to_disk()?;
+        let source_ir_path = artifact_base.join("legacy_classifier/source_ir.json");
+        let mut json =
+            serde_json::from_str::<serde_json::Value>(&fs::read_to_string(&source_ir_path)?)?;
+        json["schema_version"] = serde_json::json!(1);
+        json["visual_assets"] = serde_json::json!([{
+            "asset_id": "picture_0001",
+            "asset_kind": "figure",
+            "page_id": null,
+            "image_path": null,
+            "caption_text": "Operation transaction",
+            "caption_source_path": null,
+            "source_ref": null,
+            "placeholder_text": null,
+            "note": null,
+            "diagram_kind": "timing_diagram"
+        }]);
+        json["structured_tables"] = serde_json::json!([{
+            "table_id": "table_0001",
+            "asset_id": "table_0001",
+            "page_id": null,
+            "caption_text": "Operation fields",
+            "source_ref": null,
+            "table_kind": "encoding",
+            "header_rows": [],
+            "body_rows": [],
+            "row_count": 0,
+            "col_count": 0
+        }]);
+        json["document_sections"] = serde_json::json!([{
+            "section_id": "section_0001",
+            "title": "Participant interface",
+            "heading_level": 1,
+            "page_id": null,
+            "source_ref": null,
+            "reading_order": 1,
+            "section_kind": "signal_description"
+        }]);
+        fs::write(&source_ir_path, serde_json::to_string_pretty(&json)?)?;
+
+        let reloaded = SourceIr::load_from_path(&source_ir_path)?;
+        assert_eq!(reloaded.schema_version, super::SOURCE_IR_SCHEMA_VERSION);
+        assert_eq!(reloaded.visual_assets[0].diagram_kind, DiagramKind::Unknown);
+        assert_eq!(reloaded.structured_tables[0].table_kind, TableKind::Unknown);
+        assert_eq!(
+            reloaded.document_sections[0].section_kind,
+            SectionKind::Normative
+        );
+        assert!(
+            reloaded
+                .normalization_plan
+                .notes
+                .iter()
+                .any(|note| note.contains("semantic source classifications were neutralized"))
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn source_ir_load_rejects_a_future_schema() -> Result<()> {
+        let tempdir = crate::project_data::tempdir()?;
+        let source = tempdir.path().join("future-schema.md");
+        let artifact_base = tempdir.path().join("generated/source_ir");
+        fs::write(&source, "# Future schema\n")?;
+
+        let mut source_ir = SourceIr::build(&source, &artifact_base)?;
+        source_ir.schema_version = super::SOURCE_IR_SCHEMA_VERSION + 1;
+        source_ir.write_to_disk()?;
+
+        let error = SourceIr::load_from_path(&source_ir.artifact_layout.source_ir_path)
+            .expect_err("future SourceIR must be rejected");
+        assert!(error.to_string().contains("newer than supported schema"));
         Ok(())
     }
 

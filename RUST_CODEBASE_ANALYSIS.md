@@ -4,6 +4,31 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-12 — neutral SourceIR classifier boundary; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b`)
+
+- `SourceIr::build` now emits schema 2. Diagram, section, and table semantic labels are governed by an
+  identity-independent grammar in the embedded Docling helper: whole normalized labels and typed structural
+  role conjunctions replace operation, participant, protocol-role, symbol, and packet-layout cues.
+- Visual captions that merely name an operation remain `DiagramKind::Unknown`. Table classification requires
+  positive structural authority; ambiguous name/width layouts, raw literal/address lists, substring collisions,
+  and incomplete register shapes remain `TableKind::Unknown`.
+- `SourceIr::load_from_path` is the compatibility firewall. Schema 1 keeps source text, tables, assets, paths,
+  and provenance but loses all historical diagram/table/section authority before any current consumer sees it.
+  Schemas newer than 2 fail closed. The compatibility path is tested independently of the writer.
+- The embedded-helper behavioral probe executes the exact shipped Python under repository-local project-data
+  roots. It proves identity/symbol renaming invariance, column-order invariance, explicit generic-form positives,
+  and representative negative controls; parallel process-state mutation is serialized with the existing test
+  lock.
+- A read-only 78-document classifier replay measured 2,293 diagram, 2,123 section, and 3,484 table changes on
+  re-ingest without artifact mutation. The first exact currency run then identified ten of 24 replayable
+  EvidenceIR cascades affected by schema-1 fail-closure. ADR 0025 reconciliation rebuilt and validated all ten:
+  currency is 24/24 measurable EvidenceIR and 78/78 SemanticIR, IntentIR, and adapters; both renderable ISFs pass
+  pinned FSMGen strict with zero diagnostics.
+- Exact attribution exposes the intended cost instead of masking it: four documents lose 194 weak table-derived
+  timing records; one debug chain loses weak actor/register/table authority; structurally complete field-layout
+  maps can newly qualify. Those losses are a bounded generic EvidenceIR-recovery frontier, not permission to
+  restore identity cues. `.6d.ii.c` and later schema/boundary work remain mandatory before signoff.
+
 ## Session update (2026-08-12 — replay qualification and production-genericity audit; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.a`)
 
 - `TimingConstraintRecord` now carries a backward-compatible, schema-closed `TimingIntentDisposition`.

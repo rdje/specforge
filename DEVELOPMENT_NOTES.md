@@ -1,4 +1,60 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.b (`2026-08-12`) — SourceIR fails closed before semantics
+
+The first genericity remediation seam is SourceIR because every downstream extractor consumes its visual,
+table, and section labels. The old embedded Python mixed useful document grammar with reviewed-corpus cues:
+operation/burst captions could become timing diagrams, participant/interface phrases could name diagram and
+section kinds, binary/field-reference contents could become encodings without a declared mapping role, and a
+named packet-layout denylist attempted to patch register overclassification. Substring matching also let a
+generic fragment inside an unrelated word create authority.
+
+The replacement is deliberately narrower. Caption classification recognizes only explicitly named generic
+visual forms. Section grammar matches whole normalized phrases. Table classification requires typed role
+conjunctions: signal identity plus direction (or explicit signal identity plus width), value plus meaning,
+register identity plus access plus address/range, scalar timing roles plus context, or feature plus support.
+Operation, participant, filename, vendor/protocol, and arbitrary symbol spelling never participate. Ambiguous
+forms remain `unknown`; no negative vocabulary is needed to enumerate what a table is not.
+
+Changing only the writer would have left a bypass: 78 retained schema-1 SourceIR files already contain the old
+semantic labels. SourceIR schema 2 therefore treats those files as lossless source capture but not current type
+authority. Load neutralizes every legacy diagram/table/section label to `unknown`/`normative`, records why, and
+requires re-ingest to regain typed labels; a future schema is rejected.
+
+A read-only application of the new writer policy to all 78 retained SourceIRs measured the tradeoff before the
+blanket legacy downgrade: 2,293 diagram labels, 2,123 section labels, and 3,484 table labels would change. The
+largest removals are 1,918 register-bitfield and 317 timing-diagram guesses, 1,954 encoding guesses, 218 feature
+guesses, and 136 timing guesses. Conversely, 754 unknown tables acquire complete structural register-map
+authority because column order no longer controls recognition. This is a large, intentional recall reset—not
+evidence against feasibility. The source structure was always present; universal or grounded recovery can be
+rebuilt without preserving corpus-specific shortcuts.
+
+The first all-tier currency gate then made the compatibility effect concrete: ten of 24 EvidenceIR chains with
+retained normalized inputs differed, while all 78 later stages were still current against their old inputs.
+ADR 0025 therefore required same-leaf reconciliation. A repository-volume backup captured the exact 80 old
+files (39,847,014 bytes; aggregate SHA-256 `d5a59914b9c6b56f266f5959b1d396024decf3ce9919bd37ff547474da1e3a5f`),
+then each affected chain was rebuilt as EvidenceIR → SemanticIR → IntentIR → ISF adapter and all 30 typed IR
+artifacts were validated. The two renderable ISFs pass the pinned FSMGen strict checker with zero diagnostics.
+
+The attributed changes are deliberately not hidden behind aggregate currency. Four chains change only visual
+roles. Four documents lose 194 old table-derived timing records (55 + 60 + 5 + 74) because their tables do not
+satisfy the new timing-role conjunction. The debug-architecture chain loses weak table-derived actor/register
+authority (21→5 actor relations, 45→33 registers, 195→125 contracts) while adding four grounded section-register
+records. One discovery/configuration chain replaces one weak register guess with 16 structurally complete
+field-layout registers; one USB chain loses six weak register guesses; another gains one message-field record
+while losing one weak register guess and eleven figure-label-derived invariants. These are exact temporary
+recall/precision consequences, not a claim that the missing intent is absent. `.6d.ii.c` and `.6d.ii.d` own
+generic EvidenceIR recovery and identity-routing removal; restoring any result through a document-specific cue
+would violate the north star.
+
+After rebuild, exact replay currency is 24/24 measurable EvidenceIR and 78/78 SemanticIR, IntentIR, and ISF
+adapter chains. The 54 EvidenceIR chains whose normalized bundles were reclaimed remain explicitly
+unmeasurable until their owned re-ingest; no stale measurable artifact remains.
+
+Signoff is complete for this seam: all eight doctrines, formatting, warning-deny Clippy, 1,873 tests with six
+ignored and zero failures, warning-deny rustdoc, mdBook test/build, and final project-data locality pass. The
+exact rollback root and temporary comparison script are removed and absent. This closes SourceIR only; it does
+not weaken or pre-approve the protocol-specific EvidenceIR surfaces owned by `.6d.ii.c`.
+
 ## SPEC-TO-INTENT-ALIGNMENT.6d.ii.a (`2026-08-12`) — replay truth exposes the production-genericity breach
 
 The clean replay starts only after `.6d.i` commits, so all 12 sources and 48 stages bind production revision

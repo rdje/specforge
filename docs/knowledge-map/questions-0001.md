@@ -11,13 +11,21 @@
 - [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
   > EXTRACTION-QUALITY-GAUGE.3g what is the dotted-cross-reference spurious-subject gate
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > How does SourceIR classification remain specification neutral?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Were downstream artifacts reconciled after SourceIR schema 2?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > What does spec-neutral extraction mean?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > What happens when schema-1 SourceIR is loaded?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Where is the whole extraction-pipeline genericity audit?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why is a forbidden vocabulary list insufficient?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why was PDF-AGNOSTIC-EXTRACTION closure superseded?
+- [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
+  > Why were legacy SourceIR classifications neutralized?
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > are APB tables 0016 0017 0018 a real catalog miss
 - [gic-overview-guide-refresh-is-authority-empty](../knowledge/gic-overview-guide-refresh-is-authority-empty.md)
@@ -289,11 +297,3 @@
   > does GateRecord remain schema compatible
 - [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
   > does IntentIR preserve SWD protocol provenance and order
-- [legacy-generic-section-phases-are-audit-only](../knowledge/legacy-generic-section-phases-are-audit-only.md)
-  > does PhaseRecord remain schema compatible
-- [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
-  > does SemanticIR keep copyright and license text
-- [swd-protocol-surfaces-reach-intentir](../knowledge/swd-protocol-surfaces-reach-intentir.md)
-  > does SemanticIR preserve SWD protocol provenance and order
-- [cat3-topology-isf-lowering-decision](../knowledge/cat3-topology-isf-lowering-decision.md)
-  > does SpecForge capture component topology / connectivity for platform docs (YES — a typed signal_connectivity producer->consumer graph + infrastructure_signals clock/reset distribution; correcting the .2 'hint-level' to 'captured-but-sparse-and-unlowered')
