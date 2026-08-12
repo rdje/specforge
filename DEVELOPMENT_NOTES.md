@@ -1,4 +1,35 @@
 # DEVELOPMENT_NOTES
+## SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i (`2026-08-12`) — prior identity is provenance, never policy
+
+The prior path violated the neutral-core boundary at its selector. `ProtocolFamily::infer` inspected a document
+key and display name, then scoped seven EvidenceIR/SemanticIR prior families. This was stronger than an unfortunate
+identifier: renaming an identical input could change the lookup set.
+
+Schema 7 removes that selector. `PriorScope` has only `Global`; loaders receive only the persisted prior path,
+learning groups normalized evidence and typed/structural keys globally, and document identity remains provenance.
+The current deserializer rejects any other scope. Legacy schemas are not harmlessly compatible: their family
+partition is semantic authority, so schemas 1–6 clear the seven scoped prior arrays before typed load. The
+identity-independent structural-profile array may survive. This prevents a migration from converting old
+family-conditioned knowledge into apparently neutral global truth.
+
+The compatibility work exposed a separate feedback-integrity defect. The old schema-6 store declared 14 accepted
+IntentIR sources, one already deleted. Its 13 remaining current sources had no embedded persisted validation, so
+the store could not be rebuilt under its own `requires_validated_intent_ir` policy. The correct disposition was
+not to preserve the 1.49-MiB authority. The current sources were validated, the store relearned, every affected
+chain replayed, and the changed learning inputs validated again.
+
+The loop converged in two iterations: the first neutral replay removed one masked residual, changing the learned
+negative set from 12 to 11; the next learn and a third confirmation were byte-identical at SHA-256
+`a416cc8b7b6bd84947e4b6780d5253b13c2985c57ca4e8f1c02d6daf56239633`. The final store contains 29 actor, 83
+semantic, four modality, 443 temporal, zero table, 1,251 visual, 11 negative, and two profile priors. A global
+`manager` role contradiction is surfaced as contested rather than hidden by family partitions.
+
+ADR 0025 replay is exact at 24/24 measurable EvidenceIR and 78/78 downstream. Compared with the original
+family-scoped state, the neutral validated store increases globally applicable prior metadata only where current
+normalized evidence matches. One source chain loses 37 timing constraints that existed solely through the stale
+table prior; its 37 statements remain available for later grounded recovery. This leaf does not claim whole-core
+neutrality: signal spelling and prompt/corpus paths remain owned by the next children.
+
 ## FSMGEN-REFRESH-INTEGRATE-8.1 (`2026-08-12`) — pin-only upstream compatibility
 
 The exact FSMGen fast-forward is four commits, from `a51dcdad0a7e752e638abfe3ab414f7f3911889d` to

@@ -7,7 +7,7 @@
         "prior_id": "table_shape_prior_0001",
         "normalized_header_signature": "name | direction | width",
         "table_kind": "signal_description",
-        "protocol_family": "unknown",
+        "prior_scope": "global",
         "support_count": 2,
         "supporting_document_keys": ["seed_doc_1", "seed_doc_2"],
         "strongest_automation_confidence": "high"

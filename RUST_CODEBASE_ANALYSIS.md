@@ -4,6 +4,23 @@
 - record the current architecture, risks, subsystem boundaries, and recommended implementation direction
 - remain useful even while only the early IR stages are implemented
 
+## Session update (2026-08-12 — identity-independent prior memory; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i`)
+
+- CorpusMemory schema 7 replaces `ProtocolFamily` with one `PriorScope::Global`. EvidenceIR and SemanticIR prior
+  loaders no longer receive document identity; learning, validation, and KG fixtures use the same neutral scope.
+- Current non-global scope strings reject. The schema-1–6 compatibility loader removes seven identity-scoped
+  semantic prior arrays before typed deserialization, preserving only identity-independent extraction profiles;
+  future schemas fail closed. Old family data cannot silently become global authority.
+- The prior store is now refreshed as a validation-gated fixed point. The old 14-source schema-6 store referenced
+  one deleted artifact and could not reproduce from its 13 current unvalidated sources. Validating, relearning,
+  replaying, and revalidating converged after one feedback delta; two subsequent stores are byte-identical at
+  `a416cc8b…6239633`.
+- The stable store has 29 actor, 83 semantic, four modality, 443 temporal, zero table, 1,251 visual, 11 negative,
+  and two structural-profile priors. `contested_priors()` exposes one global actor-role contradiction.
+- Whole-chain currency is exact at 24/24 measurable EvidenceIR and 78/78 later stages. The migration removes 37
+  stale prior-created timing constraints while keeping the source statements; no identity exception restores
+  them. Signal-spelling authority and named prompts/corpus organization remain open under `.d.ii`/`.d.iii`.
+
 ## Session update (2026-08-12 — generic EvidenceIR protocol semantics; `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c`)
 
 - `EvidenceIr` is now schema 2. The named operation type, fixed phase enum, scalar named direction, fixed response

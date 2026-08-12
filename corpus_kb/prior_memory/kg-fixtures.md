@@ -29,11 +29,11 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `negative_knowledge_prior_guided_residual_caution_gold` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_residual_caution_gold/fixture.json` |
 | `negative_knowledge_prior_guided_semantic_conflict_caution_gold` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_semantic_conflict_caution_gold/fixture.json` |
 | `negative_knowledge_prior_guided_temporal_conflict_caution_gold` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_guided_temporal_conflict_caution_gold/fixture.json` |
-| `negative_knowledge_prior_protocol_family_mismatch_negative` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_protocol_family_mismatch_negative/fixture.json` |
-| `semantic_modality_reliability_amba_generic_fallback_gold` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/semantic_modality_reliability_amba_generic_fallback_gold/fixture.json` |
+| `negative_knowledge_prior_pattern_mismatch_negative` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/negative_knowledge_prior_pattern_mismatch_negative/fixture.json` |
+| `semantic_modality_reliability_global_prior_gold` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/semantic_modality_reliability_global_prior_gold/fixture.json` |
 | `semantic_modality_reliability_prior_guided_conflict_gold` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/semantic_modality_reliability_prior_guided_conflict_gold/fixture.json` |
 | `semantic_modality_reliability_prior_guided_conflict_without_prior_negative` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/semantic_modality_reliability_prior_guided_conflict_without_prior_negative/fixture.json` |
-| `semantic_modality_reliability_protocol_family_mismatch_negative` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/semantic_modality_reliability_protocol_family_mismatch_negative/fixture.json` |
+| `semantic_modality_reliability_role_mismatch_negative` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/semantic_modality_reliability_role_mismatch_negative/fixture.json` |
 | `semantic_modality_reliability_source_kind_mismatch_negative` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/semantic_modality_reliability_source_kind_mismatch_negative/fixture.json` |
 | `semantic_modality_reliability_weak_prior_negative` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/semantic_modality_reliability_weak_prior_negative/fixture.json` |
 | `semantic_prior_guided_phrase_gold` | `pass` | `typed prior memory` | `crates/specforge/test_data/kg_quality/semantic_prior_guided_phrase_gold/fixture.json` |

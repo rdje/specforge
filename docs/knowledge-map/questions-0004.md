@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
+  > how does the active task migration preserve non-ASCII legacy bytes
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > how does the ambiguity gate keep channel membership boundary-precise (bar #3)
+- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
+  > how does the controller prove a proposed task is task-tree owned
+- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
+  > how does the corpus KB aggregate fixture page stay bounded as fixtures grow
+- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
+  > how does the corpus task preserve all evidence after containment
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > how does the emitter decide a rule drive value is renderable (is_safe_isf_scalar_value — non-empty, whitespace-free; a prose value like 'the value that was presented on the ARLOOP signal' fails)
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > how does the extract-constraints-llm prompt express a validity requirement
+- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
+  > how does the extractor avoid minting a constraint about a cross-referenced register field
+- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
+  > how does the fused two-label column ACE5-Lite ACE5-LiteACP split
 - [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
   > how does the held-out evaluator detect omission fabrication provenance loss and silent drops
 - [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
@@ -111,6 +129,8 @@
 - [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
   > how is the .5.ii member-quality gate designed / what did the .5.ii calibration find (measured 2026-06-24 read-only over 78 docs/561 enums/12509 members: the gate is PER-MEMBER not per-enum — a whole-enum drop destroys AXI BRESP's real codes OKAY/EXOKAY/SLVERR/DECERR which are FUSED with prose fragments in one conflated enum; value-restart is NOT a junk signal — AHB HPROT
   > restarts but every member is a clean identifier. The load-bearing signal is per-member NAME shape: an English sentence-SPINE token marks a prose fragment. Land a per-member sentence-spine fragment drop at synthesize_encoding_declarations_for_enum)
+- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
+  > how is the CorpusMemory feedback loop made reproducible
 - [extractor-path-architecture](../knowledge/extractor-path-architecture.md)
   > how is the EvidenceIR extractor path / extraction layer structured and wired
 - [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
@@ -277,23 +297,3 @@
   > how many unknown-kind tables does the corpus carry
 - [transaction-phase-membership-vlm-vs-channel](../knowledge/transaction-phase-membership-vlm-vs-channel.md)
   > how much RAM did the qwen2.5vl:7b VLM use on a timing-diagram crop (13 GB; host hit 87% used, across the 85% kill threshold)
-- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
-  > how much disk do normalized bundles cost across the corpus
-- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
-  > how much disk do the retained normalized bundles cost
-- [fact-card-catalog](../knowledge/fact-card-catalog.md)
-  > how much fact-card catalog index headroom remains
-- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
-  > how much headroom remains in the corpus coverage task file
-- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
-  > how much intent does SpecForge extract across the whole corpus
-- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
-  > how much memory did the guarded AArch64 External Debug ingest use
-- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
-  > how much memory did the guarded CoreSight Base System ingest use
-- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
-  > how much memory did the guarded Introducing CoreSight ingest use
-- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
-  > how much memory did the guarded OpenCAPI AFU address note ingest use
-- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
-  > how much memory did the guarded OpenCAPI Certified Definition ingest use

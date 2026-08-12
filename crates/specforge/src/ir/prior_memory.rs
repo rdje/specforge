@@ -1,9 +1,10 @@
 use std::collections::{BTreeMap, BTreeSet};
-use std::path::PathBuf;
+use std::fs;
+use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
 
-use crate::error::Result;
+use crate::error::{AppError, Result};
 use crate::ir::evidence::{
     SignalPolarityConflictRecord, SignalSemanticConflictRecord, SignalSemanticHintSourceKind,
 };
@@ -15,46 +16,43 @@ use crate::ir::source::{
     AutomationConfidence, DiagramKind, ResidualDecisionPacket, StructuredTableRecord, TableKind,
     VisualAssetKind,
 };
-use crate::persisted_path::{PersistedPathOrigin, normalize_for_storage};
+use crate::persisted_path::{PersistedPathOrigin, normalize_for_storage, resolve_existing};
 
-#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, PartialOrd, Ord)]
-#[serde(rename_all = "snake_case")]
-pub enum ProtocolFamily {
-    AmbaApb,
-    AmbaAhb,
-    AmbaAxi,
-    AmbaGeneric,
-    Unknown,
+pub const CORPUS_MEMORY_SCHEMA_VERSION: u32 = 7;
+
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord)]
+pub enum PriorScope {
+    #[default]
+    Global,
 }
 
-impl ProtocolFamily {
-    pub fn as_str(self) -> &'static str {
-        match self {
-            Self::AmbaApb => "amba_apb",
-            Self::AmbaAhb => "amba_ahb",
-            Self::AmbaAxi => "amba_axi",
-            Self::AmbaGeneric => "amba_generic",
-            Self::Unknown => "unknown",
+impl Serialize for PriorScope {
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str(self.as_str())
+    }
+}
+
+impl<'de> Deserialize<'de> for PriorScope {
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let scope = String::deserialize(deserializer)?;
+        match scope.as_str() {
+            "global" => Ok(Self::Global),
+            _ => Err(serde::de::Error::custom(format!(
+                "unsupported prior scope '{scope}'; expected 'global'"
+            ))),
         }
     }
+}
 
-    pub fn infer(document_key: &str, display_name: &str) -> Self {
-        let normalized = format!(
-            "{} {}",
-            document_key.to_ascii_lowercase(),
-            display_name.to_ascii_lowercase()
-        );
-        if normalized.contains("axi") {
-            Self::AmbaAxi
-        } else if normalized.contains("ahb") {
-            Self::AmbaAhb
-        } else if normalized.contains("apb") {
-            Self::AmbaApb
-        } else if normalized.contains("amba") {
-            Self::AmbaGeneric
-        } else {
-            Self::Unknown
-        }
+impl PriorScope {
+    pub fn as_str(self) -> &'static str {
+        "global"
     }
 }
 
@@ -83,6 +81,35 @@ pub struct CorpusMemory {
 }
 
 impl CorpusMemory {
+    /// Load current or legacy prior memory without allowing a historical named-family value to
+    /// select extraction behavior. Identity-scoped prior families from schemas 1 through 6 are
+    /// quarantined instead of being promoted into the neutral global scope; future schemas fail
+    /// closed.
+    pub fn load_from_path(path: &Path) -> Result<Self> {
+        let path = resolve_existing(path, PersistedPathOrigin::RepositoryOwned)?;
+        let mut value = serde_json::from_str::<serde_json::Value>(&fs::read_to_string(path)?)?;
+        let schema_version = value
+            .get("schema_version")
+            .and_then(serde_json::Value::as_u64)
+            .and_then(|version| u32::try_from(version).ok())
+            .ok_or_else(|| {
+                AppError::InvalidStageArtifact(
+                    "CorpusMemory schema_version must be a u32".to_string(),
+                )
+            })?;
+        if schema_version == 0 || schema_version > CORPUS_MEMORY_SCHEMA_VERSION {
+            return Err(AppError::InvalidStageArtifact(format!(
+                "unsupported CorpusMemory schema version {}; expected 1..={CORPUS_MEMORY_SCHEMA_VERSION}",
+                schema_version
+            )));
+        }
+
+        if schema_version < CORPUS_MEMORY_SCHEMA_VERSION {
+            quarantine_identity_scoped_legacy_priors(&mut value)?;
+        }
+        Ok(serde_json::from_value(value)?)
+    }
+
     pub fn to_pretty_json(&self) -> Result<String> {
         Ok(serde_json::to_string_pretty(&self.persisted_clone()?)?)
     }
@@ -98,15 +125,15 @@ impl CorpusMemory {
 
     pub fn semantic_phrase_priors_for(
         &self,
-        protocol_family: Option<ProtocolFamily>,
+        prior_scope: Option<PriorScope>,
         source_kind: Option<SignalSemanticHintSourceKind>,
         role: Option<InterfaceSignalSemanticRole>,
     ) -> Vec<&SemanticPhrasePriorRecord> {
         self.semantic_phrase_priors
             .iter()
             .filter(|prior| {
-                protocol_family
-                    .map(|expected| prior.protocol_family == expected)
+                prior_scope
+                    .map(|expected| prior.prior_scope == expected)
                     .unwrap_or(true)
                     && source_kind
                         .map(|expected| prior.source_kind == expected)
@@ -118,14 +145,14 @@ impl CorpusMemory {
 
     pub fn actor_taxonomy_priors_for(
         &self,
-        protocol_family: Option<ProtocolFamily>,
+        prior_scope: Option<PriorScope>,
         role: Option<ActorTaxonomyRole>,
     ) -> Vec<&ActorTaxonomyPriorRecord> {
         self.actor_taxonomy_priors
             .iter()
             .filter(|prior| {
-                protocol_family
-                    .map(|expected| prior.protocol_family == expected)
+                prior_scope
+                    .map(|expected| prior.prior_scope == expected)
                     .unwrap_or(true)
                     && role
                         .map(|expected| prior.taxonomy_role == expected)
@@ -136,7 +163,7 @@ impl CorpusMemory {
 
     pub fn actor_taxonomy_role_for_term(
         &self,
-        protocol_family: Option<ProtocolFamily>,
+        prior_scope: Option<PriorScope>,
         actor_term: &str,
     ) -> Option<ActorTaxonomyRole> {
         let normalized_term = normalize_actor_term(actor_term);
@@ -144,14 +171,14 @@ impl CorpusMemory {
             return None;
         }
 
-        self.resolve_actor_taxonomy_role(protocol_family, |prior| {
+        self.resolve_actor_taxonomy_role(prior_scope, |prior| {
             prior.normalized_actor_term == normalized_term
         })
     }
 
     pub fn actor_taxonomy_role_in_text(
         &self,
-        protocol_family: Option<ProtocolFamily>,
+        prior_scope: Option<PriorScope>,
         text: &str,
     ) -> Option<ActorTaxonomyRole> {
         let normalized_text = normalize_actor_term(text);
@@ -159,18 +186,18 @@ impl CorpusMemory {
             return None;
         }
 
-        if let Some(role) = self.actor_taxonomy_role_for_term(protocol_family, &normalized_text) {
+        if let Some(role) = self.actor_taxonomy_role_for_term(prior_scope, &normalized_text) {
             return Some(role);
         }
 
-        self.resolve_actor_taxonomy_role(protocol_family, |prior| {
+        self.resolve_actor_taxonomy_role(prior_scope, |prior| {
             normalized_text_contains_term(&normalized_text, &prior.normalized_actor_term)
         })
     }
 
     pub fn semantic_phrase_role_in_text(
         &self,
-        protocol_family: Option<ProtocolFamily>,
+        prior_scope: Option<PriorScope>,
         source_kind: SignalSemanticHintSourceKind,
         text: &str,
         signal_names: &std::collections::BTreeSet<String>,
@@ -181,7 +208,7 @@ impl CorpusMemory {
             return None;
         }
 
-        self.resolve_semantic_phrase_role(protocol_family, source_kind, |prior| {
+        self.resolve_semantic_phrase_role(prior_scope, source_kind, |prior| {
             prior.normalized_phrase == normalized_phrase
                 || normalized_text_contains_term(&normalized_phrase, &prior.normalized_phrase)
         })
@@ -189,15 +216,15 @@ impl CorpusMemory {
 
     pub fn temporal_phrase_priors_for(
         &self,
-        protocol_family: Option<ProtocolFamily>,
+        prior_scope: Option<PriorScope>,
         requires_cycle_window: bool,
         actor_grounded: Option<bool>,
     ) -> Vec<&TemporalPhrasePriorRecord> {
         self.temporal_phrase_priors
             .iter()
             .filter(|prior| {
-                protocol_family
-                    .map(|expected| prior.protocol_family == expected)
+                prior_scope
+                    .map(|expected| prior.prior_scope == expected)
                     .unwrap_or(true)
                     && (!requires_cycle_window || prior.cycle_window.is_some())
                     && actor_grounded
@@ -209,7 +236,7 @@ impl CorpusMemory {
 
     pub fn temporal_cycle_window_in_text(
         &self,
-        protocol_family: Option<ProtocolFamily>,
+        prior_scope: Option<PriorScope>,
         text: &str,
         signal_names: &std::collections::BTreeSet<String>,
         actor_names: &std::collections::BTreeSet<String>,
@@ -221,11 +248,11 @@ impl CorpusMemory {
             return None;
         }
 
-        for scope in protocol_family_exact_or_amba_generic_search_scopes(protocol_family) {
+        for scope in prior_scope_search_scopes(prior_scope) {
             let cycle_windows = self
                 .temporal_phrase_priors
                 .iter()
-                .filter(|prior| prior.protocol_family == scope)
+                .filter(|prior| prior.prior_scope == scope)
                 .filter(|prior| prior.cycle_window.is_some())
                 .filter(|prior| {
                     actor_grounded
@@ -262,15 +289,15 @@ impl CorpusMemory {
 
     pub fn semantic_modality_reliability_bonus(
         &self,
-        protocol_family: Option<ProtocolFamily>,
+        prior_scope: Option<PriorScope>,
         role: InterfaceSignalSemanticRole,
         source_kind: SignalSemanticHintSourceKind,
     ) -> u32 {
-        for scope in protocol_family_exact_or_amba_generic_search_scopes(protocol_family) {
+        for scope in prior_scope_search_scopes(prior_scope) {
             let bonus = self
                 .semantic_modality_reliability_priors
                 .iter()
-                .filter(|prior| prior.protocol_family == scope)
+                .filter(|prior| prior.prior_scope == scope)
                 .filter(|prior| prior.role == role)
                 .filter(|prior| prior.source_kind == source_kind)
                 .map(semantic_modality_reliability_prior_bonus)
@@ -285,14 +312,14 @@ impl CorpusMemory {
 
     pub fn table_shape_priors_for(
         &self,
-        protocol_family: Option<ProtocolFamily>,
+        prior_scope: Option<PriorScope>,
         table_kind: Option<TableKind>,
     ) -> Vec<&TableShapePriorRecord> {
         self.table_shape_priors
             .iter()
             .filter(|prior| {
-                protocol_family
-                    .map(|expected| prior.protocol_family == expected)
+                prior_scope
+                    .map(|expected| prior.prior_scope == expected)
                     .unwrap_or(true)
                     && table_kind
                         .map(|expected| prior.table_kind == expected)
@@ -303,14 +330,14 @@ impl CorpusMemory {
 
     pub fn visual_motif_priors_for(
         &self,
-        protocol_family: Option<ProtocolFamily>,
+        prior_scope: Option<PriorScope>,
         diagram_kind: Option<DiagramKind>,
     ) -> Vec<&VisualMotifPriorRecord> {
         self.visual_motif_priors
             .iter()
             .filter(|prior| {
-                protocol_family
-                    .map(|expected| prior.protocol_family == expected)
+                prior_scope
+                    .map(|expected| prior.prior_scope == expected)
                     .unwrap_or(true)
                     && diagram_kind
                         .map(|expected| prior.diagram_kind == expected)
@@ -321,14 +348,14 @@ impl CorpusMemory {
 
     pub fn negative_knowledge_priors_for(
         &self,
-        protocol_family: Option<ProtocolFamily>,
+        prior_scope: Option<PriorScope>,
         knowledge_kind: Option<NegativeKnowledgeKind>,
     ) -> Vec<&NegativeKnowledgePriorRecord> {
         self.negative_knowledge_priors
             .iter()
             .filter(|prior| {
-                protocol_family
-                    .map(|expected| prior.protocol_family == expected)
+                prior_scope
+                    .map(|expected| prior.prior_scope == expected)
                     .unwrap_or(true)
                     && knowledge_kind
                         .map(|expected| prior.knowledge_kind == expected)
@@ -339,7 +366,7 @@ impl CorpusMemory {
 
     pub fn negative_knowledge_pattern_is_known(
         &self,
-        protocol_family: Option<ProtocolFamily>,
+        prior_scope: Option<PriorScope>,
         knowledge_kind: NegativeKnowledgeKind,
         normalized_pattern: &str,
     ) -> bool {
@@ -347,9 +374,9 @@ impl CorpusMemory {
             return false;
         }
 
-        for scope in protocol_family_exact_or_amba_generic_search_scopes(protocol_family) {
+        for scope in prior_scope_search_scopes(prior_scope) {
             if self.negative_knowledge_priors.iter().any(|prior| {
-                prior.protocol_family == scope
+                prior.prior_scope == scope
                     && prior.knowledge_kind == knowledge_kind
                     && prior.normalized_pattern == normalized_pattern
             }) {
@@ -362,7 +389,7 @@ impl CorpusMemory {
 
     pub fn diagram_kind_for_visual_caption(
         &self,
-        protocol_family: Option<ProtocolFamily>,
+        prior_scope: Option<PriorScope>,
         caption_text: &str,
         signal_names: &BTreeSet<String>,
         actor_names: &BTreeSet<String>,
@@ -372,11 +399,11 @@ impl CorpusMemory {
             return None;
         }
 
-        for scope in protocol_family_exact_or_amba_generic_search_scopes(protocol_family) {
+        for scope in prior_scope_search_scopes(prior_scope) {
             let mut diagram_kinds = self
                 .visual_motif_priors
                 .iter()
-                .filter(|prior| prior.protocol_family == scope)
+                .filter(|prior| prior.prior_scope == scope)
                 .filter(|prior| {
                     prior.normalized_caption_phrase.as_deref() == Some(&normalized_caption)
                 })
@@ -398,16 +425,16 @@ impl CorpusMemory {
 
     pub fn table_kind_for_structured_table(
         &self,
-        protocol_family: Option<ProtocolFamily>,
+        prior_scope: Option<PriorScope>,
         table: &StructuredTableRecord,
     ) -> Option<TableKind> {
         let normalized_header_signature = normalize_table_header_signature(table)?;
 
-        for scope in protocol_family_exact_or_amba_generic_search_scopes(protocol_family) {
+        for scope in prior_scope_search_scopes(prior_scope) {
             let mut table_kinds = self
                 .table_shape_priors
                 .iter()
-                .filter(|prior| prior.protocol_family == scope)
+                .filter(|prior| prior.prior_scope == scope)
                 .filter(|prior| prior.normalized_header_signature == normalized_header_signature)
                 .map(|prior| prior.table_kind)
                 .collect::<Vec<_>>();
@@ -428,7 +455,7 @@ impl CorpusMemory {
     /// profiles whose cluster signature the given document fingerprint fully exhibits
     /// (signature ⊆ fingerprint). The signature is the ADR-0006-safe derived structural
     /// key (see [`crate::ir::corpus_cluster`]) — never a vendor or protocol name — so
-    /// this family is deliberately NOT scoped by [`ProtocolFamily`]. Profiles with an
+    /// this family is deliberately NOT scoped by [`PriorScope`]. Profiles with an
     /// empty signature would match every document and are skipped as meaningless.
     /// Consumption stays bounded by the activate-only contract (`.3b.3`): a matched
     /// profile may only activate an opt-in extractor, never suppress a default-on one.
@@ -450,17 +477,17 @@ impl CorpusMemory {
 
     fn resolve_actor_taxonomy_role<F>(
         &self,
-        protocol_family: Option<ProtocolFamily>,
+        prior_scope: Option<PriorScope>,
         predicate: F,
     ) -> Option<ActorTaxonomyRole>
     where
         F: Fn(&ActorTaxonomyPriorRecord) -> bool,
     {
-        for scope in protocol_family_exact_or_amba_generic_search_scopes(protocol_family) {
+        for scope in prior_scope_search_scopes(prior_scope) {
             let roles = self
                 .actor_taxonomy_priors
                 .iter()
-                .filter(|prior| prior.protocol_family == scope)
+                .filter(|prior| prior.prior_scope == scope)
                 .filter(|prior| is_meaningful_actor_term(&prior.normalized_actor_term))
                 .filter(|prior| predicate(prior))
                 .map(|prior| prior.taxonomy_role)
@@ -478,18 +505,18 @@ impl CorpusMemory {
 
     fn resolve_semantic_phrase_role<F>(
         &self,
-        protocol_family: Option<ProtocolFamily>,
+        prior_scope: Option<PriorScope>,
         source_kind: SignalSemanticHintSourceKind,
         predicate: F,
     ) -> Option<InterfaceSignalSemanticRole>
     where
         F: Fn(&SemanticPhrasePriorRecord) -> bool,
     {
-        for scope in protocol_family_exact_or_amba_generic_search_scopes(protocol_family) {
+        for scope in prior_scope_search_scopes(prior_scope) {
             let mut roles = self
                 .semantic_phrase_priors
                 .iter()
-                .filter(|prior| prior.protocol_family == scope)
+                .filter(|prior| prior.prior_scope == scope)
                 .filter(|prior| prior.source_kind == source_kind)
                 .filter(|prior| is_meaningful_prior_phrase(&prior.normalized_phrase))
                 .filter(|prior| predicate(prior))
@@ -507,6 +534,45 @@ impl CorpusMemory {
 
         None
     }
+}
+
+fn quarantine_identity_scoped_legacy_priors(value: &mut serde_json::Value) -> Result<()> {
+    let object = value.as_object_mut().ok_or_else(|| {
+        AppError::InvalidStageArtifact("CorpusMemory root must be a JSON object".to_string())
+    })?;
+    object.insert(
+        "schema_version".to_string(),
+        serde_json::Value::from(CORPUS_MEMORY_SCHEMA_VERSION),
+    );
+
+    for family in [
+        "actor_taxonomy_priors",
+        "semantic_phrase_priors",
+        "semantic_modality_reliability_priors",
+        "temporal_phrase_priors",
+        "table_shape_priors",
+        "visual_motif_priors",
+        "negative_knowledge_priors",
+    ] {
+        object.insert(family.to_string(), serde_json::Value::Array(Vec::new()));
+    }
+
+    if let Some(source_artifacts) = object
+        .get_mut("source_artifacts")
+        .and_then(serde_json::Value::as_array_mut)
+    {
+        for source in source_artifacts {
+            let Some(source) = source.as_object_mut() else {
+                continue;
+            };
+            source.remove("protocol_family");
+            source.insert(
+                "prior_scope".to_string(),
+                serde_json::Value::String(PriorScope::Global.as_str().to_string()),
+            );
+        }
+    }
+    Ok(())
 }
 
 pub fn signal_semantic_conflict_negative_knowledge_pattern(
@@ -768,21 +834,8 @@ pub fn is_meaningful_prior_phrase(text: &str) -> bool {
         && meaningful_terms >= 2
 }
 
-fn protocol_family_exact_or_amba_generic_search_scopes(
-    protocol_family: Option<ProtocolFamily>,
-) -> Vec<ProtocolFamily> {
-    let mut scopes = Vec::new();
-    if let Some(protocol_family) =
-        protocol_family.filter(|family| *family != ProtocolFamily::Unknown)
-    {
-        scopes.push(protocol_family);
-        if protocol_family != ProtocolFamily::AmbaGeneric {
-            scopes.push(ProtocolFamily::AmbaGeneric);
-        }
-    } else {
-        scopes.push(ProtocolFamily::Unknown);
-    }
-    scopes
+fn prior_scope_search_scopes(prior_scope: Option<PriorScope>) -> Vec<PriorScope> {
+    vec![prior_scope.unwrap_or_default()]
 }
 
 fn collapse_whitespace(value: &str) -> String {
@@ -948,7 +1001,8 @@ pub struct PriorSourceArtifactRecord {
     pub artifact_path: PathBuf,
     pub document_key: String,
     pub display_name: String,
-    pub protocol_family: ProtocolFamily,
+    #[serde(default, alias = "protocol_family")]
+    pub prior_scope: PriorScope,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub overall_score: Option<u32>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -1002,7 +1056,7 @@ pub struct ContestedPriorValue {
     pub supporting_document_keys: Vec<String>,
 }
 
-/// A prior key that two or more documents map, within one protocol family, to
+/// A prior key that two or more documents map, within one neutral scope, to
 /// DIFFERENT values — a cross-document contradiction the accrete-only harvest
 /// never revises (the Parisi revision-on-contradiction gap; `PRIOR-DECAY`).
 ///
@@ -1012,14 +1066,14 @@ pub struct ContestedPriorValue {
 #[derive(Debug, Clone, Serialize, PartialEq, Eq)]
 pub struct ContestedPrior {
     pub family: ContestedPriorFamily,
-    pub protocol_family: ProtocolFamily,
+    pub prior_scope: PriorScope,
     pub key: String,
     pub competing_values: Vec<ContestedPriorValue>,
     pub strongest_value: String,
 }
 
 impl CorpusMemory {
-    /// Detect **contested priors**: keys carried, within one protocol family, by
+    /// Detect **contested priors**: keys carried, within one neutral scope, by
     /// two or more distinct values across the harvested corpus.
     ///
     /// Read-only — does not mutate stored priors, the harvest, or consultation.
@@ -1035,7 +1089,7 @@ impl CorpusMemory {
             ContestedPriorFamily::ActorTaxonomy,
             self.actor_taxonomy_priors.iter().map(|p| {
                 (
-                    p.protocol_family,
+                    p.prior_scope,
                     p.normalized_actor_term.clone(),
                     format!("{:?}", p.taxonomy_role),
                     p.support_count,
@@ -1047,7 +1101,7 @@ impl CorpusMemory {
             ContestedPriorFamily::SemanticPhrase,
             self.semantic_phrase_priors.iter().map(|p| {
                 (
-                    p.protocol_family,
+                    p.prior_scope,
                     p.normalized_phrase.clone(),
                     format!("{:?}", p.role),
                     p.support_count,
@@ -1059,7 +1113,7 @@ impl CorpusMemory {
             ContestedPriorFamily::TableShape,
             self.table_shape_priors.iter().map(|p| {
                 (
-                    p.protocol_family,
+                    p.prior_scope,
                     p.normalized_header_signature.clone(),
                     format!("{:?}", p.table_kind),
                     p.support_count,
@@ -1071,8 +1125,8 @@ impl CorpusMemory {
     }
 }
 
-/// Group prior rows `(protocol_family, key, value, support, docs)` by
-/// `(protocol_family, key)` and emit a `ContestedPrior` for any scope carrying
+/// Group prior rows `(prior_scope, key, value, support, docs)` by
+/// `(prior_scope, key)` and emit a `ContestedPrior` for any scope carrying
 /// two or more distinct values. Deterministic (BTree ordering; competing values
 /// sorted by support desc, ties broken by value asc).
 /// Per-scope aggregation: each distinct value -> (total support, backing documents).
@@ -1080,12 +1134,12 @@ type ContestValueAggregates = BTreeMap<String, (usize, BTreeSet<String>)>;
 
 fn contested_in_family<I>(family: ContestedPriorFamily, rows: I) -> Vec<ContestedPrior>
 where
-    I: Iterator<Item = (ProtocolFamily, String, String, usize, Vec<String>)>,
+    I: Iterator<Item = (PriorScope, String, String, usize, Vec<String>)>,
 {
-    let mut scopes: BTreeMap<(ProtocolFamily, String), ContestValueAggregates> = BTreeMap::new();
-    for (protocol_family, key, value, support, docs) in rows {
+    let mut scopes: BTreeMap<(PriorScope, String), ContestValueAggregates> = BTreeMap::new();
+    for (prior_scope, key, value, support, docs) in rows {
         let value_agg = scopes
-            .entry((protocol_family, key))
+            .entry((prior_scope, key))
             .or_default()
             .entry(value)
             .or_insert((0, BTreeSet::new()));
@@ -1094,7 +1148,7 @@ where
     }
 
     let mut out = Vec::new();
-    for ((protocol_family, key), values) in scopes {
+    for ((prior_scope, key), values) in scopes {
         if values.len() < 2 {
             continue; // a single value for the key is settled, not contested
         }
@@ -1114,7 +1168,7 @@ where
         let strongest_value = competing_values[0].value.clone();
         out.push(ContestedPrior {
             family,
-            protocol_family,
+            prior_scope,
             key,
             competing_values,
             strongest_value,
@@ -1128,7 +1182,8 @@ pub struct ActorTaxonomyPriorRecord {
     pub prior_id: String,
     pub normalized_actor_term: String,
     pub taxonomy_role: ActorTaxonomyRole,
-    pub protocol_family: ProtocolFamily,
+    #[serde(default, alias = "protocol_family")]
+    pub prior_scope: PriorScope,
     pub support_count: usize,
     #[serde(default)]
     pub supporting_document_keys: Vec<String>,
@@ -1141,7 +1196,8 @@ pub struct SemanticPhrasePriorRecord {
     pub prior_id: String,
     pub normalized_phrase: String,
     pub role: InterfaceSignalSemanticRole,
-    pub protocol_family: ProtocolFamily,
+    #[serde(default, alias = "protocol_family")]
+    pub prior_scope: PriorScope,
     pub source_kind: SignalSemanticHintSourceKind,
     pub support_count: usize,
     #[serde(default)]
@@ -1154,7 +1210,8 @@ pub struct SemanticPhrasePriorRecord {
 pub struct SemanticModalityReliabilityPriorRecord {
     pub prior_id: String,
     pub role: InterfaceSignalSemanticRole,
-    pub protocol_family: ProtocolFamily,
+    #[serde(default, alias = "protocol_family")]
+    pub prior_scope: PriorScope,
     pub source_kind: SignalSemanticHintSourceKind,
     pub support_count: usize,
     #[serde(default)]
@@ -1167,7 +1224,8 @@ pub struct SemanticModalityReliabilityPriorRecord {
 pub struct TemporalPhrasePriorRecord {
     pub prior_id: String,
     pub normalized_phrase: String,
-    pub protocol_family: ProtocolFamily,
+    #[serde(default, alias = "protocol_family")]
+    pub prior_scope: PriorScope,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cycle_window: Option<CycleWindowRecord>,
     pub actor_grounded: bool,
@@ -1183,7 +1241,8 @@ pub struct TableShapePriorRecord {
     pub prior_id: String,
     pub normalized_header_signature: String,
     pub table_kind: TableKind,
-    pub protocol_family: ProtocolFamily,
+    #[serde(default, alias = "protocol_family")]
+    pub prior_scope: PriorScope,
     pub support_count: usize,
     #[serde(default)]
     pub supporting_document_keys: Vec<String>,
@@ -1197,7 +1256,8 @@ pub struct VisualMotifPriorRecord {
     pub normalized_caption_phrase: Option<String>,
     pub diagram_kind: DiagramKind,
     pub asset_kind: VisualAssetKind,
-    pub protocol_family: ProtocolFamily,
+    #[serde(default, alias = "protocol_family")]
+    pub prior_scope: PriorScope,
     pub support_count: usize,
     #[serde(default)]
     pub supporting_document_keys: Vec<String>,
@@ -1233,7 +1293,8 @@ pub struct NegativeKnowledgePriorRecord {
     pub prior_id: String,
     pub knowledge_kind: NegativeKnowledgeKind,
     pub normalized_pattern: String,
-    pub protocol_family: ProtocolFamily,
+    #[serde(default, alias = "protocol_family")]
+    pub prior_scope: PriorScope,
     pub support_count: usize,
     #[serde(default)]
     pub supporting_document_keys: Vec<String>,
@@ -1257,7 +1318,7 @@ pub struct ExtractionProfileExtractorSupportRecord {
 /// multi-member cluster contributes one profile recording "what tends to work for
 /// documents shaped like this". Keyed by the cluster's shared structural signature —
 /// ADR-0006-safe derived feature tokens, never a vendor name — and therefore not scoped
-/// by [`ProtocolFamily`] (the signature itself is the scope). Advisory-only: the consume
+/// by [`PriorScope`] (the signature itself is the scope). Advisory-only: the consume
 /// side (`.3b.3`) may only ACTIVATE an opt-in extractor on a matching document, never
 /// deactivate a default-on one, so a profile adjusts where extraction looks, never what
 /// it concludes.
@@ -1284,6 +1345,73 @@ mod tests {
     use crate::ir::source::StructuredTableCellRecord;
 
     #[test]
+    fn current_prior_scope_rejects_identity_labels() {
+        for label in ["legacy_family_a", "vendor_protocol_b", "unseen_scope"] {
+            let encoded = serde_json::to_string(label).expect("scope label JSON");
+            assert!(serde_json::from_str::<PriorScope>(&encoded).is_err());
+        }
+        assert_eq!(
+            serde_json::to_string(&PriorScope::Global).expect("scope stores"),
+            "\"global\""
+        );
+    }
+
+    #[test]
+    fn legacy_identity_scoped_priors_are_quarantined_instead_of_globalized() -> Result<()> {
+        let tempdir = crate::project_data::tempdir()?;
+        let path = tempdir.path().join("legacy-corpus-memory.json");
+        let mut value = serde_json::to_value(make_test_corpus())?;
+        value["schema_version"] = serde_json::Value::from(6);
+        let prior = value["actor_taxonomy_priors"][0]
+            .as_object_mut()
+            .expect("actor prior object");
+        prior.remove("prior_scope");
+        prior.insert(
+            "protocol_family".to_string(),
+            serde_json::Value::String("named_family".to_string()),
+        );
+        fs::write(&path, serde_json::to_vec_pretty(&value)?)?;
+
+        let loaded = CorpusMemory::load_from_path(&path)?;
+        assert_eq!(loaded.schema_version, CORPUS_MEMORY_SCHEMA_VERSION);
+        assert!(loaded.actor_taxonomy_priors.is_empty());
+        assert!(loaded.semantic_phrase_priors.is_empty());
+        assert!(loaded.semantic_modality_reliability_priors.is_empty());
+        assert!(loaded.temporal_phrase_priors.is_empty());
+        assert!(loaded.table_shape_priors.is_empty());
+        assert!(loaded.visual_motif_priors.is_empty());
+        assert!(loaded.negative_knowledge_priors.is_empty());
+        assert_eq!(
+            loaded.actor_taxonomy_role_for_term(Some(PriorScope::Global), "dma"),
+            None
+        );
+        Ok(())
+    }
+
+    #[test]
+    fn current_corpus_memory_rejects_identity_scoped_prior_data() -> Result<()> {
+        let tempdir = crate::project_data::tempdir()?;
+        let path = tempdir.path().join("identity-scoped-current-memory.json");
+        let mut value = serde_json::to_value(make_test_corpus())?;
+        value["actor_taxonomy_priors"][0]["prior_scope"] =
+            serde_json::Value::String("named_family".to_string());
+        fs::write(&path, serde_json::to_vec_pretty(&value)?)?;
+        assert!(CorpusMemory::load_from_path(&path).is_err());
+        Ok(())
+    }
+
+    #[test]
+    fn corpus_memory_loader_rejects_future_schema() -> Result<()> {
+        let tempdir = crate::project_data::tempdir()?;
+        let path = tempdir.path().join("future-corpus-memory.json");
+        let mut value = serde_json::to_value(make_test_corpus())?;
+        value["schema_version"] = serde_json::Value::from(CORPUS_MEMORY_SCHEMA_VERSION + 1);
+        fs::write(&path, serde_json::to_vec_pretty(&value)?)?;
+        assert!(CorpusMemory::load_from_path(&path).is_err());
+        Ok(())
+    }
+
+    #[test]
     fn corpus_memory_serializes_source_artifacts_relative_to_the_repository() -> Result<()> {
         let tempdir = crate::project_data::tempdir()?;
         let artifact_path = tempdir
@@ -1297,7 +1425,7 @@ mod tests {
             artifact_path,
             document_key: "spec".to_string(),
             display_name: "Spec".to_string(),
-            protocol_family: ProtocolFamily::Unknown,
+            prior_scope: PriorScope::Global,
             overall_score: Some(100),
             grade: Some("EXCELLENT".to_string()),
             accepted_for_learning: true,
@@ -1708,7 +1836,7 @@ mod tests {
         SemanticModalityReliabilityPriorRecord {
             prior_id: "test".into(),
             role: InterfaceSignalSemanticRole::HandshakeValidLike,
-            protocol_family: ProtocolFamily::Unknown,
+            prior_scope: PriorScope::Global,
             source_kind: SignalSemanticHintSourceKind::ProseStatement,
             support_count,
             supporting_document_keys: vec![],
@@ -1759,7 +1887,7 @@ mod tests {
 
     fn make_test_corpus() -> CorpusMemory {
         CorpusMemory {
-            schema_version: 1,
+            schema_version: CORPUS_MEMORY_SCHEMA_VERSION,
             update_policy: CorpusMemoryUpdatePolicyRecord {
                 advisory_only: false,
                 requires_validated_intent_ir: false,
@@ -1772,7 +1900,7 @@ mod tests {
                 prior_id: "at1".into(),
                 normalized_actor_term: "dma".into(),
                 taxonomy_role: ActorTaxonomyRole::RequesterLike,
-                protocol_family: ProtocolFamily::AmbaAxi,
+                prior_scope: PriorScope::Global,
                 support_count: 5,
                 supporting_document_keys: vec![],
                 strongest_automation_confidence: AutomationConfidence::High,
@@ -1782,7 +1910,7 @@ mod tests {
                 prior_id: "sp1".into(),
                 normalized_phrase: "valid signal".into(),
                 role: InterfaceSignalSemanticRole::HandshakeValidLike,
-                protocol_family: ProtocolFamily::AmbaAxi,
+                prior_scope: PriorScope::Global,
                 source_kind: SignalSemanticHintSourceKind::ProseStatement,
                 support_count: 5,
                 supporting_document_keys: vec![],
@@ -1793,7 +1921,7 @@ mod tests {
             temporal_phrase_priors: vec![TemporalPhrasePriorRecord {
                 prior_id: "tp1".into(),
                 normalized_phrase: "after reset".into(),
-                protocol_family: ProtocolFamily::AmbaAxi,
+                prior_scope: PriorScope::Global,
                 cycle_window: Some(CycleWindowRecord {
                     min_cycles: Some(2),
                     max_cycles: Some(2),
@@ -1808,7 +1936,7 @@ mod tests {
                 prior_id: "ts1".into(),
                 normalized_header_signature: "signal | description".into(),
                 table_kind: TableKind::SignalDescription,
-                protocol_family: ProtocolFamily::AmbaAxi,
+                prior_scope: PriorScope::Global,
                 support_count: 5,
                 supporting_document_keys: vec![],
                 strongest_automation_confidence: AutomationConfidence::High,
@@ -1818,7 +1946,7 @@ mod tests {
                 normalized_caption_phrase: Some("state machine".into()),
                 diagram_kind: DiagramKind::StateMachineDiagram,
                 asset_kind: VisualAssetKind::Diagram,
-                protocol_family: ProtocolFamily::AmbaAxi,
+                prior_scope: PriorScope::Global,
                 support_count: 5,
                 supporting_document_keys: vec![],
                 strongest_automation_confidence: AutomationConfidence::High,
@@ -1827,7 +1955,7 @@ mod tests {
                 prior_id: "nk1".into(),
                 knowledge_kind: NegativeKnowledgeKind::SignalSemanticConflict,
                 normalized_pattern: "VALID conflict".into(),
-                protocol_family: ProtocolFamily::AmbaAxi,
+                prior_scope: PriorScope::Global,
                 support_count: 3,
                 supporting_document_keys: vec![],
                 strongest_automation_confidence: AutomationConfidence::High,
@@ -1919,12 +2047,12 @@ mod tests {
     #[test]
     fn contested_priors_flags_conflicting_actor_taxonomy_value() {
         let mut corpus = make_test_corpus();
-        // A second document maps the same term ("dma", AmbaAxi) to a DIFFERENT role.
+        // A second document maps the same term to a different role.
         corpus.actor_taxonomy_priors.push(ActorTaxonomyPriorRecord {
             prior_id: "at2".into(),
             normalized_actor_term: "dma".into(),
             taxonomy_role: ActorTaxonomyRole::CompleterLike,
-            protocol_family: ProtocolFamily::AmbaAxi,
+            prior_scope: PriorScope::Global,
             support_count: 2,
             supporting_document_keys: vec!["docB".into()],
             strongest_automation_confidence: AutomationConfidence::Medium,
@@ -1946,24 +2074,21 @@ mod tests {
     }
 
     #[test]
-    fn contested_priors_not_flagged_across_protocol_families() {
+    fn contested_priors_flags_conflicts_in_the_global_scope() {
         let mut corpus = make_test_corpus();
-        // Same term + a different role, but in a DIFFERENT protocol family — a
-        // legitimately family-specific mapping, not a cross-document contradiction.
+        // Both records occupy the one neutral scope, so cross-document disagreement must fail
+        // closed as contested.
         corpus.actor_taxonomy_priors.push(ActorTaxonomyPriorRecord {
             prior_id: "at2".into(),
             normalized_actor_term: "dma".into(),
             taxonomy_role: ActorTaxonomyRole::CompleterLike,
-            protocol_family: ProtocolFamily::AmbaApb,
+            prior_scope: PriorScope::Global,
             support_count: 2,
             supporting_document_keys: vec![],
             strongest_automation_confidence: AutomationConfidence::Medium,
             strongest_grounding_strength: SemanticGroundingStrength::MultiSource,
         });
-        assert!(
-            corpus.contested_priors().is_empty(),
-            "different protocol families are different scopes, not a contradiction"
-        );
+        assert_eq!(corpus.contested_priors().len(), 1);
     }
 
     #[test]
@@ -1977,7 +2102,7 @@ mod tests {
                 prior_id: "sp2".into(),
                 normalized_phrase: "valid signal".into(),
                 role: InterfaceSignalSemanticRole::HandshakeReadyLike,
-                protocol_family: ProtocolFamily::AmbaAxi,
+                prior_scope: PriorScope::Global,
                 source_kind: SignalSemanticHintSourceKind::ProseStatement,
                 support_count: 7,
                 supporting_document_keys: vec!["docB".into()],
@@ -2001,7 +2126,7 @@ mod tests {
         // Catches vec![] at line 88 — must return matching records.
         let corpus = make_test_corpus();
         let results = corpus.semantic_phrase_priors_for(
-            Some(ProtocolFamily::AmbaAxi),
+            Some(PriorScope::Global),
             Some(SignalSemanticHintSourceKind::ProseStatement),
             Some(InterfaceSignalSemanticRole::HandshakeValidLike),
         );
@@ -2009,12 +2134,11 @@ mod tests {
     }
 
     #[test]
-    fn semantic_phrase_priors_for_non_matching_protocol() {
-        // Catches ==→!= at line 92 — wrong protocol must exclude record.
+    fn semantic_phrase_priors_for_non_matching_source_kind() {
         let corpus = make_test_corpus();
         let results = corpus.semantic_phrase_priors_for(
-            Some(ProtocolFamily::AmbaApb),
-            Some(SignalSemanticHintSourceKind::ProseStatement),
+            Some(PriorScope::Global),
+            Some(SignalSemanticHintSourceKind::VisualCaption),
             Some(InterfaceSignalSemanticRole::HandshakeValidLike),
         );
         assert!(results.is_empty());
@@ -2035,7 +2159,7 @@ mod tests {
         // Catches vec![] at line 107.
         let corpus = make_test_corpus();
         let results = corpus.actor_taxonomy_priors_for(
-            Some(ProtocolFamily::AmbaAxi),
+            Some(PriorScope::Global),
             Some(ActorTaxonomyRole::RequesterLike),
         );
         assert_eq!(results.len(), 1);
@@ -2046,7 +2170,7 @@ mod tests {
         // Catches ==→!= at line 114 — wrong role must exclude record.
         let corpus = make_test_corpus();
         let results = corpus.actor_taxonomy_priors_for(
-            Some(ProtocolFamily::AmbaAxi),
+            Some(PriorScope::Global),
             Some(ActorTaxonomyRole::CompleterLike),
         );
         assert!(results.is_empty());
@@ -2067,7 +2191,7 @@ mod tests {
         // Catches vec![] at line 179.
         let corpus = make_test_corpus();
         let results =
-            corpus.temporal_phrase_priors_for(Some(ProtocolFamily::AmbaAxi), false, Some(true));
+            corpus.temporal_phrase_priors_for(Some(PriorScope::Global), false, Some(true));
         assert_eq!(results.len(), 1);
     }
 
@@ -2075,7 +2199,7 @@ mod tests {
     fn temporal_phrase_priors_for_requires_cycle_window_matching() {
         // requires_cycle_window=true with record that has a cycle window.
         let corpus = make_test_corpus();
-        let results = corpus.temporal_phrase_priors_for(Some(ProtocolFamily::AmbaAxi), true, None);
+        let results = corpus.temporal_phrase_priors_for(Some(PriorScope::Global), true, None);
         assert_eq!(results.len(), 1);
     }
 
@@ -2088,7 +2212,7 @@ mod tests {
             temporal_phrase_priors: vec![TemporalPhrasePriorRecord {
                 prior_id: "tp_no_win".into(),
                 normalized_phrase: "after reset".into(),
-                protocol_family: ProtocolFamily::AmbaAxi,
+                prior_scope: PriorScope::Global,
                 cycle_window: None,
                 actor_grounded: true,
                 handshake_completion: false,
@@ -2098,7 +2222,7 @@ mod tests {
             }],
             ..make_test_corpus()
         };
-        let results = corpus.temporal_phrase_priors_for(Some(ProtocolFamily::AmbaAxi), true, None);
+        let results = corpus.temporal_phrase_priors_for(Some(PriorScope::Global), true, None);
         assert!(results.is_empty());
     }
 
@@ -2107,7 +2231,7 @@ mod tests {
         // Catches ==→!= at line 187 — actor_grounded mismatch must exclude.
         let corpus = make_test_corpus();
         let results =
-            corpus.temporal_phrase_priors_for(Some(ProtocolFamily::AmbaAxi), false, Some(false));
+            corpus.temporal_phrase_priors_for(Some(PriorScope::Global), false, Some(false));
         assert!(results.is_empty());
     }
 
@@ -2117,10 +2241,8 @@ mod tests {
     fn table_shape_priors_for_matching_filter() {
         // Catches vec![] at line 274.
         let corpus = make_test_corpus();
-        let results = corpus.table_shape_priors_for(
-            Some(ProtocolFamily::AmbaAxi),
-            Some(TableKind::SignalDescription),
-        );
+        let results = corpus
+            .table_shape_priors_for(Some(PriorScope::Global), Some(TableKind::SignalDescription));
         assert_eq!(results.len(), 1);
     }
 
@@ -2128,8 +2250,8 @@ mod tests {
     fn table_shape_priors_for_non_matching_kind() {
         // Catches ==→!= at line 281 — wrong table kind must exclude.
         let corpus = make_test_corpus();
-        let results = corpus
-            .table_shape_priors_for(Some(ProtocolFamily::AmbaAxi), Some(TableKind::RegisterMap));
+        let results =
+            corpus.table_shape_priors_for(Some(PriorScope::Global), Some(TableKind::RegisterMap));
         assert!(results.is_empty());
     }
 
@@ -2140,7 +2262,7 @@ mod tests {
         // Catches vec![] at line 292.
         let corpus = make_test_corpus();
         let results = corpus.visual_motif_priors_for(
-            Some(ProtocolFamily::AmbaAxi),
+            Some(PriorScope::Global),
             Some(DiagramKind::StateMachineDiagram),
         );
         assert_eq!(results.len(), 1);
@@ -2150,10 +2272,8 @@ mod tests {
     fn visual_motif_priors_for_non_matching_kind() {
         // Catches ==→!= at line 299 — wrong diagram kind must exclude.
         let corpus = make_test_corpus();
-        let results = corpus.visual_motif_priors_for(
-            Some(ProtocolFamily::AmbaAxi),
-            Some(DiagramKind::TimingDiagram),
-        );
+        let results = corpus
+            .visual_motif_priors_for(Some(PriorScope::Global), Some(DiagramKind::TimingDiagram));
         assert!(results.is_empty());
     }
 
@@ -2164,7 +2284,7 @@ mod tests {
         // Catches vec![] at line 310.
         let corpus = make_test_corpus();
         let results = corpus.negative_knowledge_priors_for(
-            Some(ProtocolFamily::AmbaAxi),
+            Some(PriorScope::Global),
             Some(NegativeKnowledgeKind::SignalSemanticConflict),
         );
         assert_eq!(results.len(), 1);
@@ -2175,7 +2295,7 @@ mod tests {
         // Catches ==→!= at line 317 — wrong knowledge kind must exclude.
         let corpus = make_test_corpus();
         let results = corpus.negative_knowledge_priors_for(
-            Some(ProtocolFamily::AmbaAxi),
+            Some(PriorScope::Global),
             Some(NegativeKnowledgeKind::ResidualDecision),
         );
         assert!(results.is_empty());
@@ -2190,7 +2310,7 @@ mod tests {
         // Catches replace Option with None at line 125 and delete ! at line 126
         // — meaningful term matching a prior must return the role.
         let corpus = make_test_corpus();
-        let result = corpus.actor_taxonomy_role_for_term(Some(ProtocolFamily::AmbaAxi), "dma");
+        let result = corpus.actor_taxonomy_role_for_term(Some(PriorScope::Global), "dma");
         assert_eq!(result, Some(ActorTaxonomyRole::RequesterLike));
     }
 
@@ -2198,7 +2318,7 @@ mod tests {
     fn actor_taxonomy_role_for_term_returns_none_for_stop_word() {
         // Catches delete ! at line 126 — stop-word terms must return None early.
         let corpus = make_test_corpus();
-        let result = corpus.actor_taxonomy_role_for_term(Some(ProtocolFamily::AmbaAxi), "clock");
+        let result = corpus.actor_taxonomy_role_for_term(Some(PriorScope::Global), "clock");
         assert_eq!(result, None);
     }
 
@@ -2211,7 +2331,7 @@ mod tests {
         let signal_names: BTreeSet<String> = BTreeSet::new();
         let actor_names: BTreeSet<String> = BTreeSet::new();
         let result = corpus.temporal_cycle_window_in_text(
-            Some(ProtocolFamily::AmbaAxi),
+            Some(PriorScope::Global),
             "after reset",
             &signal_names,
             &actor_names,
@@ -2229,7 +2349,7 @@ mod tests {
         let actor_names: BTreeSet<String> = BTreeSet::new();
         // Record has actor_grounded=true; filter with Some(false) → excluded.
         let result = corpus.temporal_cycle_window_in_text(
-            Some(ProtocolFamily::AmbaAxi),
+            Some(PriorScope::Global),
             "after reset",
             &signal_names,
             &actor_names,
@@ -2247,7 +2367,7 @@ mod tests {
         let actor_names: BTreeSet<String> = BTreeSet::new();
         // Record has handshake_completion=false; filter with Some(true) → excluded.
         let result = corpus.temporal_cycle_window_in_text(
-            Some(ProtocolFamily::AmbaAxi),
+            Some(PriorScope::Global),
             "after reset",
             &signal_names,
             &actor_names,
@@ -2267,7 +2387,7 @@ mod tests {
             .push(TemporalPhrasePriorRecord {
                 prior_id: "tp2".into(),
                 normalized_phrase: "after reset".into(),
-                protocol_family: ProtocolFamily::AmbaAxi,
+                prior_scope: PriorScope::Global,
                 cycle_window: Some(CycleWindowRecord {
                     min_cycles: Some(4),
                     max_cycles: Some(4),
@@ -2281,7 +2401,7 @@ mod tests {
         let signal_names: BTreeSet<String> = BTreeSet::new();
         let actor_names: BTreeSet<String> = BTreeSet::new();
         let result = corpus.temporal_cycle_window_in_text(
-            Some(ProtocolFamily::AmbaAxi),
+            Some(PriorScope::Global),
             "after reset",
             &signal_names,
             &actor_names,
@@ -2292,19 +2412,15 @@ mod tests {
     }
 
     #[test]
-    fn temporal_cycle_window_in_text_ambiguous_first_scope_falls_through() {
-        // Catches >→< and >→== at line 238 — when first scope (AmbaAxi) has
-        // ambiguity (>1 windows), original returns None immediately. Mutants
-        // fail the check and fall through to AmbaGeneric scope which has a
-        // single unambiguous match — returning Some is wrong.
+    fn temporal_cycle_window_in_text_rejects_global_ambiguity() {
+        // Distinct windows for the same normalized phrase are globally ambiguous. A third record
+        // agreeing with either value must not turn the conflict into a decision.
         let corpus = CorpusMemory {
             temporal_phrase_priors: vec![
-                // AmbaAxi — two records with same phrase but different
-                // cycle windows → ambiguity.
                 TemporalPhrasePriorRecord {
-                    prior_id: "tp_axi_1".into(),
+                    prior_id: "tp_first".into(),
                     normalized_phrase: "after reset".into(),
-                    protocol_family: ProtocolFamily::AmbaAxi,
+                    prior_scope: PriorScope::Global,
                     cycle_window: Some(CycleWindowRecord {
                         min_cycles: Some(2),
                         max_cycles: Some(2),
@@ -2316,9 +2432,9 @@ mod tests {
                     strongest_automation_confidence: AutomationConfidence::High,
                 },
                 TemporalPhrasePriorRecord {
-                    prior_id: "tp_axi_2".into(),
+                    prior_id: "tp_second".into(),
                     normalized_phrase: "after reset".into(),
-                    protocol_family: ProtocolFamily::AmbaAxi,
+                    prior_scope: PriorScope::Global,
                     cycle_window: Some(CycleWindowRecord {
                         min_cycles: Some(4),
                         max_cycles: Some(4),
@@ -2329,12 +2445,10 @@ mod tests {
                     supporting_document_keys: vec![],
                     strongest_automation_confidence: AutomationConfidence::High,
                 },
-                // AmbaGeneric — single unambiguous match. Must NOT be
-                // returned when first scope is ambiguous.
                 TemporalPhrasePriorRecord {
-                    prior_id: "tp_gen".into(),
+                    prior_id: "tp_supporting_first".into(),
                     normalized_phrase: "after reset".into(),
-                    protocol_family: ProtocolFamily::AmbaGeneric,
+                    prior_scope: PriorScope::Global,
                     cycle_window: Some(CycleWindowRecord {
                         min_cycles: Some(1),
                         max_cycles: Some(1),
@@ -2351,7 +2465,7 @@ mod tests {
         let signal_names: BTreeSet<String> = BTreeSet::new();
         let actor_names: BTreeSet<String> = BTreeSet::new();
         let result = corpus.temporal_cycle_window_in_text(
-            Some(ProtocolFamily::AmbaAxi),
+            Some(PriorScope::Global),
             "after reset",
             &signal_names,
             &actor_names,
@@ -2364,15 +2478,13 @@ mod tests {
     // semantic_modality_reliability_bonus
 
     #[test]
-    fn semantic_modality_reliability_bonus_skips_zero_in_first_scope() {
-        // Catches >→>= at line 261 — zero-bonus in first scope must not
-        // short-circuit search of subsequent scopes.
+    fn semantic_modality_reliability_bonus_selects_nonzero_global_support() {
         let corpus = CorpusMemory {
             semantic_modality_reliability_priors: vec![
                 SemanticModalityReliabilityPriorRecord {
-                    prior_id: "rel_axi".into(),
+                    prior_id: "rel_single_source".into(),
                     role: InterfaceSignalSemanticRole::HandshakeValidLike,
-                    protocol_family: ProtocolFamily::AmbaAxi,
+                    prior_scope: PriorScope::Global,
                     source_kind: SignalSemanticHintSourceKind::ProseStatement,
                     support_count: 5,
                     supporting_document_keys: vec![],
@@ -2380,9 +2492,9 @@ mod tests {
                     strongest_grounding_strength: SemanticGroundingStrength::SingleSource,
                 },
                 SemanticModalityReliabilityPriorRecord {
-                    prior_id: "rel_gen".into(),
+                    prior_id: "rel_multi_source".into(),
                     role: InterfaceSignalSemanticRole::HandshakeValidLike,
-                    protocol_family: ProtocolFamily::AmbaGeneric,
+                    prior_scope: PriorScope::Global,
                     source_kind: SignalSemanticHintSourceKind::ProseStatement,
                     support_count: 5,
                     supporting_document_keys: vec![],
@@ -2393,12 +2505,11 @@ mod tests {
             ..make_test_corpus()
         };
         let result = corpus.semantic_modality_reliability_bonus(
-            Some(ProtocolFamily::AmbaAxi),
+            Some(PriorScope::Global),
             InterfaceSignalSemanticRole::HandshakeValidLike,
             SignalSemanticHintSourceKind::ProseStatement,
         );
-        // SingleSource gives 0, MultiSource gives non-zero. Correct code (> 0)
-        // skips Axi and returns Generic bonus. Mutant (>= 0) returns 0.
+        // Single-source support contributes zero while multi-source support contributes a bonus.
         assert!(result > 0);
     }
 
@@ -2406,37 +2517,35 @@ mod tests {
 
     #[test]
     fn diagram_kind_for_visual_caption_ambiguous_returns_none() {
-        // Exercising >→== and >→>= at line 374. Multi-scope: first scope
-        // (AmbaAxi) ambiguous, second scope (AmbaGeneric) unambiguous.
-        // Original and >= retain None; == and < fall through.
+        // Two distinct diagram kinds for one normalized caption remain unresolved.
         let corpus = CorpusMemory {
             visual_motif_priors: vec![
                 VisualMotifPriorRecord {
-                    prior_id: "vm_axi_1".into(),
+                    prior_id: "vm_first".into(),
                     normalized_caption_phrase: Some("state machine".into()),
                     diagram_kind: DiagramKind::StateMachineDiagram,
                     asset_kind: VisualAssetKind::Diagram,
-                    protocol_family: ProtocolFamily::AmbaAxi,
+                    prior_scope: PriorScope::Global,
                     support_count: 5,
                     supporting_document_keys: vec![],
                     strongest_automation_confidence: AutomationConfidence::High,
                 },
                 VisualMotifPriorRecord {
-                    prior_id: "vm_axi_2".into(),
+                    prior_id: "vm_second".into(),
                     normalized_caption_phrase: Some("state machine".into()),
                     diagram_kind: DiagramKind::TimingDiagram,
                     asset_kind: VisualAssetKind::Diagram,
-                    protocol_family: ProtocolFamily::AmbaAxi,
+                    prior_scope: PriorScope::Global,
                     support_count: 5,
                     supporting_document_keys: vec![],
                     strongest_automation_confidence: AutomationConfidence::High,
                 },
                 VisualMotifPriorRecord {
-                    prior_id: "vm_gen".into(),
+                    prior_id: "vm_supporting_first".into(),
                     normalized_caption_phrase: Some("state machine".into()),
                     diagram_kind: DiagramKind::StateMachineDiagram,
                     asset_kind: VisualAssetKind::Diagram,
-                    protocol_family: ProtocolFamily::AmbaGeneric,
+                    prior_scope: PriorScope::Global,
                     support_count: 5,
                     supporting_document_keys: vec![],
                     strongest_automation_confidence: AutomationConfidence::High,
@@ -2447,7 +2556,7 @@ mod tests {
         let signal_names: BTreeSet<String> = BTreeSet::new();
         let actor_names: BTreeSet<String> = BTreeSet::new();
         let result = corpus.diagram_kind_for_visual_caption(
-            Some(ProtocolFamily::AmbaAxi),
+            Some(PriorScope::Global),
             "state machine",
             &signal_names,
             &actor_names,
@@ -2459,33 +2568,33 @@ mod tests {
 
     #[test]
     fn table_kind_for_structured_table_ambiguous_returns_none() {
-        // Multi-scope: first scope (AmbaAxi) ambiguous, second scope
-        // (AmbaGeneric) unambiguous. Catches >→< and >→== at line 402.
+        // Distinct table kinds for one structural header signature remain unresolved, even when a
+        // third prior agrees with one of them.
         let corpus = CorpusMemory {
             table_shape_priors: vec![
                 TableShapePriorRecord {
-                    prior_id: "ts_axi_1".into(),
+                    prior_id: "ts_first".into(),
                     normalized_header_signature: "signal | description".into(),
                     table_kind: TableKind::SignalDescription,
-                    protocol_family: ProtocolFamily::AmbaAxi,
+                    prior_scope: PriorScope::Global,
                     support_count: 5,
                     supporting_document_keys: vec![],
                     strongest_automation_confidence: AutomationConfidence::High,
                 },
                 TableShapePriorRecord {
-                    prior_id: "ts_axi_2".into(),
+                    prior_id: "ts_second".into(),
                     normalized_header_signature: "signal | description".into(),
                     table_kind: TableKind::RegisterMap,
-                    protocol_family: ProtocolFamily::AmbaAxi,
+                    prior_scope: PriorScope::Global,
                     support_count: 5,
                     supporting_document_keys: vec![],
                     strongest_automation_confidence: AutomationConfidence::High,
                 },
                 TableShapePriorRecord {
-                    prior_id: "ts_gen".into(),
+                    prior_id: "ts_supporting_first".into(),
                     normalized_header_signature: "signal | description".into(),
                     table_kind: TableKind::SignalDescription,
-                    protocol_family: ProtocolFamily::AmbaGeneric,
+                    prior_scope: PriorScope::Global,
                     support_count: 5,
                     supporting_document_keys: vec![],
                     strongest_automation_confidence: AutomationConfidence::High,
@@ -2518,7 +2627,7 @@ mod tests {
             row_count: 1,
             col_count: 2,
         };
-        let result = corpus.table_kind_for_structured_table(Some(ProtocolFamily::AmbaAxi), &table);
+        let result = corpus.table_kind_for_structured_table(Some(PriorScope::Global), &table);
         assert!(result.is_none());
     }
 
@@ -2526,35 +2635,35 @@ mod tests {
 
     #[test]
     fn resolve_actor_taxonomy_role_ambiguous_returns_none() {
-        // Multi-scope: first scope (AmbaAxi) ambiguous, second scope
-        // (AmbaGeneric) unambiguous. Catches >→< and >→== at line 430.
+        // Distinct roles for one normalized actor term remain unresolved, even when a third prior
+        // agrees with one of them.
         let corpus = CorpusMemory {
             actor_taxonomy_priors: vec![
                 ActorTaxonomyPriorRecord {
-                    prior_id: "at_axi_1".into(),
+                    prior_id: "at_first".into(),
                     normalized_actor_term: "dma".into(),
                     taxonomy_role: ActorTaxonomyRole::RequesterLike,
-                    protocol_family: ProtocolFamily::AmbaAxi,
+                    prior_scope: PriorScope::Global,
                     support_count: 5,
                     supporting_document_keys: vec![],
                     strongest_automation_confidence: AutomationConfidence::High,
                     strongest_grounding_strength: SemanticGroundingStrength::MultiSource,
                 },
                 ActorTaxonomyPriorRecord {
-                    prior_id: "at_axi_2".into(),
+                    prior_id: "at_second".into(),
                     normalized_actor_term: "dma".into(),
                     taxonomy_role: ActorTaxonomyRole::CompleterLike,
-                    protocol_family: ProtocolFamily::AmbaAxi,
+                    prior_scope: PriorScope::Global,
                     support_count: 5,
                     supporting_document_keys: vec![],
                     strongest_automation_confidence: AutomationConfidence::High,
                     strongest_grounding_strength: SemanticGroundingStrength::MultiSource,
                 },
                 ActorTaxonomyPriorRecord {
-                    prior_id: "at_gen".into(),
+                    prior_id: "at_supporting_first".into(),
                     normalized_actor_term: "dma".into(),
                     taxonomy_role: ActorTaxonomyRole::RequesterLike,
-                    protocol_family: ProtocolFamily::AmbaGeneric,
+                    prior_scope: PriorScope::Global,
                     support_count: 5,
                     supporting_document_keys: vec![],
                     strongest_automation_confidence: AutomationConfidence::High,
@@ -2563,7 +2672,7 @@ mod tests {
             ],
             ..make_test_corpus()
         };
-        let result = corpus.actor_taxonomy_role_for_term(Some(ProtocolFamily::AmbaAxi), "dma");
+        let result = corpus.actor_taxonomy_role_for_term(Some(PriorScope::Global), "dma");
         assert!(result.is_none());
     }
 
@@ -2571,15 +2680,15 @@ mod tests {
 
     #[test]
     fn resolve_semantic_phrase_role_ambiguous_returns_none() {
-        // Multi-scope: first scope (AmbaAxi) ambiguous, second scope
-        // (AmbaGeneric) unambiguous. Catches >→< and >→== at line 462.
+        // Distinct roles for one normalized phrase remain unresolved, even when a third prior
+        // agrees with one of them.
         let corpus = CorpusMemory {
             semantic_phrase_priors: vec![
                 SemanticPhrasePriorRecord {
-                    prior_id: "sp_axi_1".into(),
+                    prior_id: "sp_first".into(),
                     normalized_phrase: "valid signal".into(),
                     role: InterfaceSignalSemanticRole::HandshakeValidLike,
-                    protocol_family: ProtocolFamily::AmbaAxi,
+                    prior_scope: PriorScope::Global,
                     source_kind: SignalSemanticHintSourceKind::ProseStatement,
                     support_count: 5,
                     supporting_document_keys: vec![],
@@ -2587,10 +2696,10 @@ mod tests {
                     strongest_grounding_strength: SemanticGroundingStrength::MultiSource,
                 },
                 SemanticPhrasePriorRecord {
-                    prior_id: "sp_axi_2".into(),
+                    prior_id: "sp_second".into(),
                     normalized_phrase: "valid signal".into(),
                     role: InterfaceSignalSemanticRole::HandshakeReadyLike,
-                    protocol_family: ProtocolFamily::AmbaAxi,
+                    prior_scope: PriorScope::Global,
                     source_kind: SignalSemanticHintSourceKind::ProseStatement,
                     support_count: 5,
                     supporting_document_keys: vec![],
@@ -2598,10 +2707,10 @@ mod tests {
                     strongest_grounding_strength: SemanticGroundingStrength::MultiSource,
                 },
                 SemanticPhrasePriorRecord {
-                    prior_id: "sp_gen".into(),
+                    prior_id: "sp_supporting_first".into(),
                     normalized_phrase: "valid signal".into(),
                     role: InterfaceSignalSemanticRole::HandshakeValidLike,
-                    protocol_family: ProtocolFamily::AmbaGeneric,
+                    prior_scope: PriorScope::Global,
                     source_kind: SignalSemanticHintSourceKind::ProseStatement,
                     support_count: 5,
                     supporting_document_keys: vec![],
@@ -2614,7 +2723,7 @@ mod tests {
         let signal_names: BTreeSet<String> = BTreeSet::new();
         let actor_names: BTreeSet<String> = BTreeSet::new();
         let result = corpus.semantic_phrase_role_in_text(
-            Some(ProtocolFamily::AmbaAxi),
+            Some(PriorScope::Global),
             SignalSemanticHintSourceKind::ProseStatement,
             "valid signal",
             &signal_names,

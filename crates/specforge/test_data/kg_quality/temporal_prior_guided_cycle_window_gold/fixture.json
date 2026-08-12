@@ -6,7 +6,7 @@
       {
         "prior_id": "temporal_phrase_prior_0001",
         "normalized_phrase": "<signal> must be asserted one beat later",
-        "protocol_family": "amba_apb",
+        "prior_scope": "global",
         "cycle_window": {
           "min_cycles": 1,
           "max_cycles": 1

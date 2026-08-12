@@ -2,6 +2,30 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > when should the activate-only ExtractionProfile consume contract be built
+- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
+  > where are Docling models stored for SpecForge
+- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
+  > where are Docling page sidecar paths normalized
+- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
+  > where are administrative workflows filtered
+- [contested-priors](../knowledge/contested-priors.md)
+  > where are cross-document prior contradictions surfaced
+- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
+  > where are register bit-fields dropped on the way to .isf (isf_ir.rs:852, IsfStorageVar { name, width, reset } — field metadata discarded)
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > where are section-derived semantic phases built
+- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
+  > where are the persisted trajectory controller input and report
+- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
+  > where did SpecForge suggest LTL/MTL support in ISF
+- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
+  > where did my signal constraint go between EvidenceIR and SemanticIR
+- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
+  > where did the AXI AWIDUNQ / WTAGUPDATE duplicate records go
+- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
+  > where did the root architecture catalog go
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > where do CCIX PER error structure fields land in the IR
 - [packet-field-table-declaration](../knowledge/packet-field-table-declaration.md)
@@ -274,27 +298,3 @@
   > which local model should SpecForge use for NLI or entailment verification
 - [local-llm-for-text-reasoning](../knowledge/local-llm-for-text-reasoning.md)
   > which local models are pulled and what are they for
-- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
-  > which metrics govern specification-to-executable-intent progress
-- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
-  > which persisted evidence docs carry message_field_records
-- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
-  > which persisted paths must exist and which may be historical references
-- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
-  > which project rescan string fields are treated as filesystem paths
-- [document-intent-category-census](../knowledge/document-intent-category-census.md)
-  > which protocols look like register IPs structurally (CCIX, AXI, CHI, DTI, CHI-C2C — the register-heavy-protocol trap)
-- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
-  > which register-table family stays residual (byte location size tables)
-- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
-  > which retained documents had spanned informational timing rows (SWP HBM2 eMMC OpenCAPI)
-- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
-  > which root rolling ledger is currently above its rollover signal
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)
-- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
-  > which source modalities and IntentIR surfaces are required per chip-spec category
-- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
-  > which source modalities are represented in the first vertical population
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > which source-to-IntentIR categories are supported incomplete or unmeasurable

@@ -2,6 +2,30 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [trajectory-steering-is-a-reviewable-multimetric-control-loop](../decisions/0034-trajectory-steering-is-a-reviewable-multimetric-control-loop.md)
+  > which metrics govern specification-to-executable-intent progress
+- [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
+  > which persisted evidence docs carry message_field_records
+- [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
+  > which persisted paths must exist and which may be historical references
+- [dormant-serialized-paths-require-portability](../knowledge/dormant-serialized-paths-require-portability.md)
+  > which project rescan string fields are treated as filesystem paths
+- [document-intent-category-census](../knowledge/document-intent-category-census.md)
+  > which protocols look like register IPs structurally (CCIX, AXI, CHI, DTI, CHI-C2C — the register-heavy-protocol trap)
+- [bit-location-register-field-vocabulary](../knowledge/bit-location-register-field-vocabulary.md)
+  > which register-table family stays residual (byte location size tables)
+- [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
+  > which retained documents had spanned informational timing rows (SWP HBM2 eMMC OpenCAPI)
+- [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md)
+  > which root rolling ledger is currently above its rollover signal
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > which signal grounds the ordered multi-phase transaction body (the document's own <qualifier> phase structure)
+- [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
+  > which source modalities and IntentIR surfaces are required per chip-spec category
+- [source-to-intent-reviewed-population](../knowledge/source-to-intent-reviewed-population.md)
+  > which source modalities are represented in the first vertical population
+- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
+  > which source-to-IntentIR categories are supported incomplete or unmeasurable
 - [roadmap-current-history-boundary](../knowledge/roadmap-current-history-boundary.md)
   > which stale roadmap statuses were found before migration
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
@@ -273,27 +297,3 @@
   > why do many conditional_rules not lower to an ISF (rule) (they name no signal obligation, an undeclared signal, a placeholder action, or only a bare modal shall/must with no concrete value/level — lowering would fabricate the obligation)
 - [spec-to-intent-category-contract](../knowledge/spec-to-intent-category-contract.md)
   > why do message fields prevent a wire or register category completeness claim
-- [document-intent-category-recognizer](../knowledge/document-intent-category-recognizer.md)
-  > why do message/flit fields count as wire intent only when there is no register map (CHI/DTI reg=0 vs NVMe/AMD/CCIX reg>0)
-- [section-header-register-identity-collapse](../knowledge/section-header-register-identity-collapse.md)
-  > why do nested register views (AUTHSTATUS) collapse but disjoint ones (MEM-AP CSW vs JTAG-AP CSW) stay a residual
-- [relation-completeness-staleness-vs-absence](../knowledge/relation-completeness-staleness-vs-absence.md)
-  > why do nvme / tilelink / wbspec / i2c / ccix / vt-d / iommu have zero actor_signal_relations
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > why do only 36 of 79 ingested docs reach IntentIR / .isf
-- [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
-  > why do plain English words like Address or Vector become field names under the bracket frame
-- [agent-surface-defect-taxonomy](../knowledge/agent-surface-defect-taxonomy.md)
-  > why do producer/consumer/receiver/transmitter actors carry 0 ports and 0 relations
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > why do register bit-fields not appear in the emitted .isf (registers lower as opaque width-only storage vars)
-- [corpus-coverage-buildout](../knowledge/corpus-coverage-buildout.md)
-  > why do some docs reach intent but not isf (honest block: no behavioral content to lower)
-- [corpus-register-table-shape-gap](../knowledge/corpus-register-table-shape-gap.md)
-  > why do the CCIX specs extract almost no register fields
-- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
-  > why do two constraints with different conditions not merge
-- [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
-  > why does .1b.i NOT strip a trailing conjunction (and/or) or X interface
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > why does .2i not emit a universal address/data/response phase order (ordering is an honest residual per .2h)

@@ -15,7 +15,7 @@ reverify: grep -n "fn contested_priors" crates/specforge/src/ir/prior_memory.rs
 
 `CorpusMemory` priors **accrete only** — support grows, contradictions are never noticed.
 `CorpusMemory::contested_priors()` (read-only) closes that gap by detecting **cross-document
-contradictions**: keys that two or more documents map, *within one protocol family*, to
+contradictions**: keys that two or more documents map in the one neutral global scope to
 **different** values (e.g. a term → `RequesterLike` vs `CompleterLike`; a phrase →
 `HandshakeValidLike` vs `HandshakeReadyLike`). Covers the **ActorTaxonomy / SemanticPhrase /
 TableShape** families; for each contested key it reports the competing values + their support +

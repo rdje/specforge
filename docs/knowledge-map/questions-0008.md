@@ -2,6 +2,28 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
+  > what is the KG-ISF-COMPLETENESS.1b.ii named-interface consolidation
+- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
+  > what is the KG-ISF-COMPLETENESS.1b.iii coordinated-subject split
+- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
+  > what is the KG-ISF-COMPLETENESS.1b.iv pure-inferred phantom drop
+- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
+  > what is the KG-ISF-COMPLETENESS.1c.i trailing preposition/auxiliary strip
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > what is the KG-ISF-TRANSACTIONS census / transaction-capture baseline
+- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
+  > what is the LLM-primary extractor's measured precision on APB / AHB / AXI gold
+- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
+  > what is the LLM-primary extractor's measured recall on APB / AHB / AXI gold
+- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
+  > what is the LTL form of a temporal_rule
+- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
+  > what is the NLI entailment verifier
+- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
+  > what is the NVMe register-field recall / precision
+- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
+  > what is the OpenCAPI 32G PHY Signaling visual and NLP capture frontier
 - [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
   > what is the PDF-VARIANT-DIGESTION whole-corpus coverage / re-triage
 - [transaction-capture-census](../knowledge/transaction-capture-census.md)
@@ -221,6 +243,8 @@
   > what real PDF proves the FigureRegion vertical path
 - [opencapi-discovery-configuration-refresh](../knowledge/opencapi-discovery-configuration-refresh.md)
   > what remains under-extracted in OpenCAPI Discovery Configuration
+- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
+  > what replaced ProtocolFamily in CorpusMemory schema 7
 - [protocol-evidence-is-generic-and-document-derived](../decisions/0035-protocol-evidence-is-generic-and-document-derived.md)
   > what replaced the SWD-specific EvidenceIR carrier
 - [adopt-defer-ledger](../knowledge/adopt-defer-ledger.md)
@@ -273,27 +297,3 @@
   > when should a live-document capacity bound be raised
 - [message-field-validate-integration](../knowledge/message-field-validate-integration.md)
   > when should message fields join the document class census
-- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
-  > when should the activate-only ExtractionProfile consume contract be built
-- [project-data-locality-enforcement](../knowledge/project-data-locality-enforcement.md)
-  > where are Docling models stored for SpecForge
-- [docling-page-sidecar-paths-are-portable](../knowledge/docling-page-sidecar-paths-are-portable.md)
-  > where are Docling page sidecar paths normalized
-- [administrative-workflow-is-not-semantic-authority](../knowledge/administrative-workflow-is-not-semantic-authority.md)
-  > where are administrative workflows filtered
-- [contested-priors](../knowledge/contested-priors.md)
-  > where are cross-document prior contradictions surfaced
-- [register-bit-field-isf-lowering-gap](../knowledge/register-bit-field-isf-lowering-gap.md)
-  > where are register bit-fields dropped on the way to .isf (isf_ir.rs:852, IsfStorageVar { name, width, reset } — field metadata discarded)
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > where are section-derived semantic phases built
-- [first-reviewed-trajectory-snapshot](../knowledge/first-reviewed-trajectory-snapshot.md)
-  > where are the persisted trajectory controller input and report
-- [fsmgen-feedback-channel](../knowledge/fsmgen-feedback-channel.md)
-  > where did SpecForge suggest LTL/MTL support in ISF
-- [semantic-grounding-filter-is-catalog-independent](../knowledge/semantic-grounding-filter-is-catalog-independent.md)
-  > where did my signal constraint go between EvidenceIR and SemanticIR
-- [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
-  > where did the AXI AWIDUNQ / WTAGUPDATE duplicate records go
-- [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md)
-  > where did the root architecture catalog go

@@ -42,12 +42,12 @@ That keeps temporal-rule, handshake, conflict, and temporal-conflict counts visi
 Fixtures can assert canonical signal inventories directly.
 `signal_names_include` checks that required interface signals survive, while `signal_names_exclude` checks that tempting non-signals stay out.
 That second field is especially useful for protocol-PDF scope tests: uppercase engineering words such as `PDF`, `RTL`, `VIP`, `PLL`, `DFT`, or `SoC` may be important document context, but they are not automatically interface signals.
-The table-shape prior family-mismatch fixture uses the same exclusion surface for table rows: an AXI-local unknown table with `XREQ` and `XACK` rows must stay inert when the only matching `Name | Direction | Width` prior is APB-scoped, so unrelated table-shape memory cannot mint canonical signals or graph directions.
-That mismatch guard also checks `EvidenceIR` directly now: the unrelated APB prior must leave table-signal declaration provenance at zero before canonical inventory is even built.
+The table-shape prior header-mismatch fixture uses the same exclusion surface for table rows: an unknown table with `XREQ` and `XACK` rows must stay inert when the learned header signature differs, so unrelated table-shape memory cannot mint canonical signals or graph directions.
+That mismatch guard also checks `EvidenceIR` directly: the nonmatching structural prior must leave table-signal declaration provenance at zero before canonical inventory is even built.
 The no-prior table-shape signal-table fixture locks the before side even more directly: without learned shape memory, a local `Name | Direction | Width` table stays out of table-signal provenance and canonical `XREQ`/`XACK` inventory.
 The prior-guided table-shape signal-table fixture locks the after side: learned shape memory can classify the same table, but recovered `XREQ`/`XACK` declarations must retain exact `table_0001` provenance and canonical table support.
 The actor-taxonomy no-prior section-heading fixture applies the same per-signal graph discipline to local vocabulary: `Issuer` and `Acceptor` section titles can preserve `XADDR`, `XCMD`, and `XRESP` inventory, but without learned actor memory those signals must stay graph-direction empty.
-The actor-taxonomy protocol-family mismatch fixture extends that fail-closed check: an APB-scoped `issuer` prior must not give AXI-local `XADDR` graph-backed direction.
+The actor-taxonomy term-mismatch fixture extends that fail-closed check: a prior for an unrelated normalized actor term must not give local `XADDR` graph-backed direction.
 The actor-taxonomy prior-guided section-heading fixture locks the positive side: learned `Issuer` and `Acceptor` vocabulary must produce graph-backed direction coverage for `XADDR`, `XCMD`, and `XRESP`.
 
 The `signal_table_inventory_authority_negative` fixture locks the positive side of that same boundary.
@@ -275,12 +275,12 @@ Alias-grounded prose stays zero there too, keeping alias recovery out of the dir
 Visual-caption hints stay zero as well, keeping the direct phrase-prior proof prose-only.
 VLM timing-annotation hints stay zero too, keeping timing-note evidence out of the direct phrase-prior proof.
 Timing-diagram extractions stay zero too, keeping the direct phrase-prior proof free of timing extraction support.
-The protocol-family mismatch semantic phrase fixture complements that positive case by requiring the local `XREQ` output declaration to survive exactly while an unrelated APB phrase prior stays silent.
-That family-mismatch guard now also asserts table-sourced semantic hints stay zero while the APB prior remains silent.
-Alias-grounded prose stays zero there too, keeping alias recovery out of the family-mismatch guard.
-Visual-caption hints stay zero as well, keeping the family-mismatch guard non-visual.
-VLM timing-annotation hints stay zero too, keeping timing-note evidence out of the family-mismatch guard.
-Timing-diagram extractions stay zero too, keeping the family-mismatch guard free of timing extraction support.
+The normalized-phrase mismatch fixture complements that positive case by requiring the local `XREQ` output declaration to survive exactly while a nonmatching global phrase prior stays silent.
+That guard also asserts table-sourced semantic hints stay zero while the prior remains silent.
+Alias-grounded prose stays zero there too, keeping alias recovery out of the mismatch guard.
+Visual-caption hints stay zero as well, keeping the mismatch guard non-visual.
+VLM timing-annotation hints stay zero too, keeping timing-note evidence out of the mismatch guard.
+Timing-diagram extractions stay zero too, keeping the mismatch guard free of timing extraction support.
 The source-kind mismatch companion applies the same signal-shape discipline to `XSTAGE`: a visual-caption-only phrase prior stays silent for prose evidence while the local output declaration remains canonical.
 That source-kind guard now also asserts table-sourced semantic hints stay zero while the visual-caption-only prior remains silent for prose evidence.
 Alias-grounded prose stays zero there too, keeping alias recovery out of the source-kind guard.
@@ -357,10 +357,10 @@ Ordinary prose hints are zero too, proving learned motif classification does not
 Alias-grounded prose hints are zero too, proving learned motif classification cannot create phrase-alias roles.
 VLM timing-annotation hints are zero as well, keeping timing-note evidence from masquerading as semantic roles.
 That visual-motif gold now also checks the evidence-stage corroboration finding payload, so prior-classified `visual_0001` remains targeted for VLM/multimodal follow-up instead of being silently promoted.
-The visual-motif family-mismatch negative keeps table-sourced semantic hints at zero too, so an APB-scoped motif prior cannot add table-derived roles to AXI-local evidence.
+The visual-motif caption-mismatch negative keeps table-sourced semantic hints at zero too, so a nonmatching caption prior cannot add table-derived roles to local evidence.
 Ordinary prose hints stay zero there as well, preventing unrelated motif memory from creating text-derived roles.
-Alias-grounded prose hints stay zero there too, keeping phrase-alias recovery from bypassing protocol-family scoping.
-VLM timing-annotation hints stay zero there as well, so timing-note evidence cannot bypass protocol-family scoping.
+Alias-grounded prose hints stay zero there too, keeping phrase-alias recovery from bypassing the caption mismatch.
+VLM timing-annotation hints stay zero there as well, so timing-note evidence cannot bypass the caption mismatch.
 
 Fixtures can assert canonical semantic grounding strength directly as well.
 `semantic_grounding_strengths_include` checks the signal name and expected single-source, multi-source, or cross-modality grounding strength on the canonical interface signal record.
@@ -410,17 +410,17 @@ The temporal prior-guided fixture also asserts exact canonical rule shape: a lea
 The no-prior mirror fixture asserts the same local rule shape without the recovered window, so the benchmark distinguishes prior-enabled improvement from ordinary local temporal evidence.
 The prior-guided fixture also excludes cycle-window and clock-grounding replay findings after the recovered rule is fully bounded and locally clocked.
 The no-prior mirror fixture keeps clock-grounding replay absent while cycle-window replay remains present, so the missing prior cannot be misreported as a missing clock.
-The protocol-family mismatch temporal fixture applies the same rule-shape and replay-lane discipline to an AXI-local `XREADY` sentence with an unrelated APB prior: the local clocked asserted-value rule remains canonical, the APB prior cannot add the cycle window, and only cycle-window replay guidance remains.
-The visual-motif protocol-family mismatch fixture locks the neighboring multimodal boundary: the local table-derived `XREQ` signal keeps its output direction and table support, but an unrelated APB visual motif creates no semantic candidate or consensus.
-The semantic-modality protocol-family mismatch fixture locks semantic arbitration itself: the local table valid-like and prose ready-like observations stay an explicit conflict, and an unrelated APB modality-reliability prior cannot make that conflict decisive.
+The temporal phrase-mismatch fixture applies the same rule-shape and replay-lane discipline: the local clocked `XREADY` asserted-value rule remains canonical, a nonmatching global phrase prior cannot add the cycle window, and only cycle-window replay guidance remains.
+The visual-motif caption-mismatch fixture locks the neighboring multimodal boundary: the local table-derived `XREQ` signal keeps its output direction and table support, but a nonmatching caption prior creates no semantic candidate or consensus.
+The semantic-modality role-mismatch fixture locks semantic arbitration itself: the local table valid-like and prose ready-like observations stay an explicit conflict, and a prior for a different role/source-kind pairing cannot make that conflict decisive.
 That semantic-modality mismatch fixture also locks two aggregate evidence semantic hints, matching the local table and prose observations before arbitration.
 It now locks one table-sourced semantic hint too, keeping the structured-table side explicit.
 It locks one prose-sourced semantic hint as well, keeping the text side explicit.
-Alias-grounded prose is explicitly zero there, so alias recovery cannot satisfy the family-scoped mismatch case.
+Alias-grounded prose is explicitly zero there, so alias recovery cannot satisfy the role mismatch case.
 Visual-caption hints are zero there too, preserving the fixture as a table/prose conflict.
-VLM timing-annotation hints are also zero, keeping timing-note extraction from silently satisfying the family-scoped mismatch case.
+VLM timing-annotation hints are also zero, keeping timing-note extraction from silently satisfying the role mismatch case.
 Timing-diagram extractions stay at zero as well, so the guard remains a non-visual table/prose conflict.
-That mismatch fixture now also checks the non-decisive arbitration and rescan-guidance finding payloads directly, so a scoped-out APB prior cannot erase actionable AXI-local `XCTRL` and `semantic_conflict_0001` follow-up debt.
+That mismatch fixture also checks the non-decisive arbitration and rescan-guidance payloads directly, so a nonmatching prior cannot erase actionable local `XCTRL` and `semantic_conflict_0001` follow-up debt.
 The source-kind mismatch companion applies the same exact conflict-shape check when the prior is learned for visual captions but the current evidence is table plus prose.
 That source-kind guard now checks the same non-decisive arbitration and rescan-guidance payloads directly, proving a visual-caption-only prior cannot clear table/prose `XCTRL` follow-up debt.
 It also locks two aggregate evidence semantic hints, so the source-kind guard stays tied to the local table/prose observations rather than prior memory.
@@ -474,8 +474,8 @@ The positive semantic-conflict caution fixture now checks the conflict shape dir
 It also excludes table semantic hints, keeping that caution-guided conflict visual-only.
 Ordinary prose hints are excluded too, so text-only evidence cannot satisfy the caution case.
 Alias-grounded prose hints are excluded as well, keeping alias recovery out of the caution-guided conflict.
-The negative-knowledge protocol-family mismatch fixture locks the other side of that contract: an unrelated APB caution prior stays silent while the local AXI `XCTRL` semantic conflict remains exact, including its visual-caption valid-like and VLM-annotation ready-like observations.
-That mismatch fixture also locks one visual-caption semantic hint, so protocol-family scoping cannot make the local AXI caption evidence disappear.
+The negative-knowledge pattern-mismatch fixture locks the other side of that contract: a nonmatching global caution pattern stays silent while the local `XCTRL` semantic conflict remains exact, including its visual-caption valid-like and VLM-annotation ready-like observations.
+That mismatch fixture also locks one visual-caption semantic hint, so prior lookup cannot make the local caption evidence disappear.
 It locks one VLM timing-annotation semantic hint too, preserving the other side of the local conflict while the APB caution prior remains scoped out.
 The same fixture excludes table semantic hints, keeping that local conflict visual-only.
 It excludes ordinary prose hints as well, so the mismatch case cannot be satisfied by text evidence.

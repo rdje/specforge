@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-rule-transaction-priority-authority](../knowledge/isf-rule-transaction-priority-authority.md)
+  > what does drop_ungrounded_rule_transaction_conflicts do
+- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
+  > what does drop_unrenderable_rule_values / unrenderable_rule_value_residual_packet do in ir/isf_ir.rs
+- [nli-intent-gate](../knowledge/nli-intent-gate.md)
+  > what does intent --nli-verify do
+- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
+  > what does is_dotted_cross_reference_subject do in evidence.rs
+- [isf-enum-value-literal-emit-gate](../knowledge/isf-enum-value-literal-emit-gate.md)
+  > what does isf_enum_value_is_emittable_literal / isf_enum_is_emittable do in ir/isf_ir.rs
+- [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
+  > what does lead_binds_value do in evidence.rs
+- [fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound](../decisions/0027-fact-plane-capacity-requires-reshaping-the-projection-not-raising-a-bound.md)
+  > what does mandatory rollover pressure mean for the fact-card landing
+- [indexed-signal-family-canonicalization](../knowledge/indexed-signal-family-canonicalization.md)
+  > what does resolve_indexed_signal_family do
+- [isf-module-name-hdl-sanitization](../knowledge/isf-module-name-hdl-sanitization.md)
+  > what does sanitize_isf_name do (allowlist [A-Za-z0-9_] -> everything else becomes _)
+- [chain-currency-doctrine](../knowledge/chain-currency-doctrine.md)
+  > what does scripts/check_chain_currency.sh check
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
   > what does signal_table_covered_by_inventory do
 - [active-task-legacy-route-aliases](../knowledge/active-task-legacy-route-aliases.md)
@@ -96,6 +116,8 @@
   > what happens when document intent category is unresolved
 - [bounded-ingest-resource-risk-below-page-threshold](../knowledge/bounded-ingest-resource-risk-below-page-threshold.md)
   > what happens when ingest cannot count PDF pages
+- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
+  > what happens when old identity-scoped prior memory is loaded
 - [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
   > what happens when the NLI provider is down
 - [knowledge-map-shard-contract](../knowledge/knowledge-map-shard-contract.md)
@@ -275,25 +297,3 @@
   > what is the KG-ISF-COMPLETENESS.1a agent-identity / actor precision gate
 - [agent-trailing-fragment-consolidation](../knowledge/agent-trailing-fragment-consolidation.md)
   > what is the KG-ISF-COMPLETENESS.1b.i trailing-fragment consolidation
-- [agent-interface-block-consolidation](../knowledge/agent-interface-block-consolidation.md)
-  > what is the KG-ISF-COMPLETENESS.1b.ii named-interface consolidation
-- [agent-coordinated-subject-split](../knowledge/agent-coordinated-subject-split.md)
-  > what is the KG-ISF-COMPLETENESS.1b.iii coordinated-subject split
-- [agent-pure-inferred-phantom-drop](../knowledge/agent-pure-inferred-phantom-drop.md)
-  > what is the KG-ISF-COMPLETENESS.1b.iv pure-inferred phantom drop
-- [agent-trailing-function-word-consolidation](../knowledge/agent-trailing-function-word-consolidation.md)
-  > what is the KG-ISF-COMPLETENESS.1c.i trailing preposition/auxiliary strip
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > what is the KG-ISF-TRANSACTIONS census / transaction-capture baseline
-- [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md)
-  > what is the LLM-primary extractor's measured precision on APB / AHB / AXI gold
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > what is the LLM-primary extractor's measured recall on APB / AHB / AXI gold
-- [temporal-rule-ltl-rendering](../knowledge/temporal-rule-ltl-rendering.md)
-  > what is the LTL form of a temporal_rule
-- [nli-entailment-verifier](../knowledge/nli-entailment-verifier.md)
-  > what is the NLI entailment verifier
-- [register-field-eval-measure-and-surface](../knowledge/register-field-eval-measure-and-surface.md)
-  > what is the NVMe register-field recall / precision
-- [opencapi-32g-phy-timing-without-interface-topology](../knowledge/opencapi-32g-phy-timing-without-interface-topology.md)
-  > what is the OpenCAPI 32G PHY Signaling visual and NLP capture frontier

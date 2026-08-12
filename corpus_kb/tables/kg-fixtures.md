@@ -32,6 +32,6 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `table_shape_prior_guided_signal_table_without_prior_negative` | `pass` | `table extraction and hygiene` | `crates/specforge/test_data/kg_quality/table_shape_prior_guided_signal_table_without_prior_negative/fixture.json` |
 | `table_shape_prior_guided_timing_table_gold` | `pass` | `table extraction and hygiene` | `crates/specforge/test_data/kg_quality/table_shape_prior_guided_timing_table_gold/fixture.json` |
 | `table_shape_prior_guided_timing_table_without_prior_negative` | `pass` | `table extraction and hygiene` | `crates/specforge/test_data/kg_quality/table_shape_prior_guided_timing_table_without_prior_negative/fixture.json` |
-| `table_shape_prior_protocol_family_mismatch_negative` | `pass` | `table extraction and hygiene` | `crates/specforge/test_data/kg_quality/table_shape_prior_protocol_family_mismatch_negative/fixture.json` |
+| `table_shape_prior_header_mismatch_negative` | `pass` | `table extraction and hygiene` | `crates/specforge/test_data/kg_quality/table_shape_prior_header_mismatch_negative/fixture.json` |
 
 <!-- corpus_kb_kg_fixture_family:end -->

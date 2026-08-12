@@ -6,7 +6,7 @@
       {
         "prior_id": "semantic_modality_reliability_prior_weak",
         "role": "handshake_valid_like",
-        "protocol_family": "unknown",
+        "prior_scope": "global",
         "source_kind": "signal_description_table",
         "support_count": 2,
         "supporting_document_keys": ["seed_1", "seed_2"],

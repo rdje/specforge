@@ -14,7 +14,7 @@ use crate::ir::evidence::{
     parse_visual_observation_json,
 };
 use crate::ir::prior_memory::{
-    CorpusMemory, ProtocolFamily, is_meaningful_actor_term, normalize_actor_term,
+    CorpusMemory, PriorScope, is_meaningful_actor_term, normalize_actor_term,
 };
 use crate::ir::source::{
     ActorSignalRelation, AutomationConfidence, CandidateInterpretation, RelationKind,
@@ -214,11 +214,8 @@ impl SemanticIr {
             display_name: evidence_ir.document_identity.display_name.clone(),
         };
 
-        let prior_guidance = load_semantic_prior_guidance(
-            evidence_ir.prior_memory_path.as_deref(),
-            &document_identity.document_key,
-            &document_identity.display_name,
-        )?;
+        let prior_guidance =
+            load_semantic_prior_guidance(evidence_ir.prior_memory_path.as_deref())?;
         let context = SemanticContext::from_evidence_ir(&evidence_ir);
         let system_contract = build_system_contract(&context);
         let (interfaces, interface_signal_conflicts) = build_interfaces(
@@ -1506,7 +1503,7 @@ struct SemanticContext {
 #[derive(Debug, Clone)]
 struct SemanticPriorGuidance {
     corpus_memory: CorpusMemory,
-    protocol_family: ProtocolFamily,
+    prior_scope: PriorScope,
 }
 
 impl SemanticContext {
@@ -8503,7 +8500,7 @@ fn semantic_prior_reliability_adjustment(
             prior_guidance
                 .corpus_memory
                 .semantic_modality_reliability_bonus(
-                    Some(prior_guidance.protocol_family),
+                    Some(prior_guidance.prior_scope),
                     role,
                     source_kind,
                 )
@@ -9113,7 +9110,7 @@ fn extract_cycle_window_from_timing_constraint(
         .or_else(|| {
             prior_guidance.and_then(|guidance| {
                 guidance.corpus_memory.temporal_cycle_window_in_text(
-                    Some(guidance.protocol_family),
+                    Some(guidance.prior_scope),
                     description,
                     known_signals,
                     actor_names,
@@ -10098,7 +10095,7 @@ fn resolve_cycle_window_from_text(
     extract_cycle_window_from_text_with_known_signals(text, signal_names).or_else(|| {
         prior_guidance.and_then(|guidance| {
             guidance.corpus_memory.temporal_cycle_window_in_text(
-                Some(guidance.protocol_family),
+                Some(guidance.prior_scope),
                 text,
                 signal_names,
                 actor_names,
@@ -10123,8 +10120,6 @@ fn collect_known_actor_names(
 
 fn load_semantic_prior_guidance(
     prior_memory_path: Option<&Path>,
-    document_key: &str,
-    display_name: &str,
 ) -> Result<Option<SemanticPriorGuidance>> {
     let Some(prior_memory_path) = prior_memory_path else {
         return Ok(None);
@@ -10135,11 +10130,10 @@ fn load_semantic_prior_guidance(
             Err(AppError::MissingPath(_)) => return Ok(None),
             Err(error) => return Err(error),
         };
-    let corpus_memory =
-        serde_json::from_str::<CorpusMemory>(&fs::read_to_string(&prior_memory_path)?)?;
+    let corpus_memory = CorpusMemory::load_from_path(&prior_memory_path)?;
     Ok(Some(SemanticPriorGuidance {
         corpus_memory,
-        protocol_family: ProtocolFamily::infer(document_key, display_name),
+        prior_scope: PriorScope::Global,
     }))
 }
 
@@ -11612,7 +11606,7 @@ mod tests {
     };
     use crate::ir::intent::IntentIr;
     use crate::ir::prior_memory::{
-        CorpusMemory, CorpusMemoryUpdatePolicyRecord, PriorSourceArtifactRecord, ProtocolFamily,
+        CorpusMemory, CorpusMemoryUpdatePolicyRecord, PriorScope, PriorSourceArtifactRecord,
         SemanticModalityReliabilityPriorRecord, TemporalPhrasePriorRecord,
     };
     use crate::ir::source::{
@@ -11651,7 +11645,7 @@ mod tests {
     fn write_temporal_phrase_prior_memory(
         root: &std::path::Path,
         normalized_phrase: &str,
-        protocol_family: ProtocolFamily,
+        prior_scope: PriorScope,
         cycle_window: CycleWindowRecord,
     ) -> Result<std::path::PathBuf> {
         let prior_memory_path = root
@@ -11663,7 +11657,7 @@ mod tests {
         }
 
         let corpus_memory = CorpusMemory {
-            schema_version: 6,
+            schema_version: crate::ir::prior_memory::CORPUS_MEMORY_SCHEMA_VERSION,
             update_policy: CorpusMemoryUpdatePolicyRecord {
                 advisory_only: true,
                 requires_validated_intent_ir: true,
@@ -11675,7 +11669,7 @@ mod tests {
                 artifact_path: root.join("seed_intent_ir.json"),
                 document_key: "seed_doc".to_string(),
                 display_name: "Seed Doc".to_string(),
-                protocol_family,
+                prior_scope,
                 overall_score: Some(100),
                 grade: Some("EXCELLENT".to_string()),
                 accepted_for_learning: true,
@@ -11687,7 +11681,7 @@ mod tests {
             temporal_phrase_priors: vec![TemporalPhrasePriorRecord {
                 prior_id: "temporal_phrase_prior_0001".to_string(),
                 normalized_phrase: normalized_phrase.to_string(),
-                protocol_family,
+                prior_scope,
                 cycle_window: Some(cycle_window),
                 actor_grounded: false,
                 handshake_completion: false,
@@ -11709,7 +11703,7 @@ mod tests {
 
     fn write_semantic_modality_reliability_prior_memory(
         root: &std::path::Path,
-        protocol_family: ProtocolFamily,
+        prior_scope: PriorScope,
         role: InterfaceSignalSemanticRole,
         source_kind: SignalSemanticHintSourceKind,
         support_count: usize,
@@ -11724,7 +11718,7 @@ mod tests {
         }
 
         let corpus_memory = CorpusMemory {
-            schema_version: 6,
+            schema_version: crate::ir::prior_memory::CORPUS_MEMORY_SCHEMA_VERSION,
             update_policy: CorpusMemoryUpdatePolicyRecord {
                 advisory_only: true,
                 requires_validated_intent_ir: true,
@@ -11736,7 +11730,7 @@ mod tests {
                 artifact_path: root.join("seed_intent_ir.json"),
                 document_key: "seed_doc".to_string(),
                 display_name: "Seed Doc".to_string(),
-                protocol_family,
+                prior_scope,
                 overall_score: Some(100),
                 grade: Some("EXCELLENT".to_string()),
                 accepted_for_learning: true,
@@ -11747,7 +11741,7 @@ mod tests {
             semantic_modality_reliability_priors: vec![SemanticModalityReliabilityPriorRecord {
                 prior_id: "semantic_modality_reliability_prior_0001".to_string(),
                 role,
-                protocol_family,
+                prior_scope,
                 source_kind,
                 support_count,
                 supporting_document_keys: vec!["seed_doc".to_string()],
@@ -14274,7 +14268,7 @@ mod tests {
 
         let prior_memory_path = write_semantic_modality_reliability_prior_memory(
             tempdir.path(),
-            ProtocolFamily::Unknown,
+            PriorScope::Global,
             InterfaceSignalSemanticRole::HandshakeValidLike,
             SignalSemanticHintSourceKind::SignalDescriptionTable,
             3,
@@ -17796,7 +17790,7 @@ mod tests {
         let prior_memory_path = write_temporal_phrase_prior_memory(
             tempdir.path(),
             "<signal> must be asserted one beat later",
-            ProtocolFamily::AmbaApb,
+            PriorScope::Global,
             CycleWindowRecord {
                 min_cycles: Some(1),
                 max_cycles: Some(1),

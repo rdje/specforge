@@ -14,7 +14,7 @@ use crate::ir::intent::IntentIr;
 use crate::ir::prior_memory::{
     ActorTaxonomyPriorRecord, ActorTaxonomyRole, CorpusMemory, CorpusMemoryUpdatePolicyRecord,
     ExtractionProfileExtractorSupportRecord, ExtractionProfilePriorRecord, NegativeKnowledgeKind,
-    NegativeKnowledgePriorRecord, PriorSourceArtifactRecord, ProtocolFamily,
+    NegativeKnowledgePriorRecord, PriorScope, PriorSourceArtifactRecord,
     SemanticModalityReliabilityPriorRecord, SemanticPhrasePriorRecord, TableShapePriorRecord,
     TemporalPhrasePriorRecord, VisualMotifPriorRecord,
     interface_signal_conflict_negative_knowledge_pattern, is_meaningful_actor_term,
@@ -38,7 +38,7 @@ use crate::persisted_path::{PersistedPathOrigin, resolve_existing, resolve_repos
 struct ActorTaxonomyPriorKey {
     normalized_actor_term: String,
     taxonomy_role: String,
-    protocol_family: String,
+    prior_scope: PriorScope,
 }
 
 #[derive(Debug, Clone)]
@@ -52,7 +52,7 @@ struct ActorTaxonomyPriorAccumulator {
 struct SemanticPriorKey {
     normalized_phrase: String,
     role: String,
-    protocol_family: String,
+    prior_scope: PriorScope,
     source_kind: String,
 }
 
@@ -66,7 +66,7 @@ struct SemanticPriorAccumulator {
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 struct SemanticModalityReliabilityPriorKey {
     role: String,
-    protocol_family: String,
+    prior_scope: PriorScope,
     source_kind: String,
 }
 
@@ -80,7 +80,7 @@ struct SemanticModalityReliabilityPriorAccumulator {
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 struct TemporalPriorKey {
     normalized_phrase: String,
-    protocol_family: String,
+    prior_scope: PriorScope,
     min_cycles: Option<u32>,
     max_cycles: Option<u32>,
     actor_grounded: bool,
@@ -97,7 +97,7 @@ struct TemporalPriorAccumulator {
 struct TableShapePriorKey {
     normalized_header_signature: String,
     table_kind: String,
-    protocol_family: String,
+    prior_scope: PriorScope,
 }
 
 #[derive(Debug, Clone)]
@@ -111,7 +111,7 @@ struct VisualMotifPriorKey {
     normalized_caption_phrase: Option<String>,
     diagram_kind: String,
     asset_kind: String,
-    protocol_family: String,
+    prior_scope: PriorScope,
 }
 
 #[derive(Debug, Clone)]
@@ -124,7 +124,7 @@ struct VisualMotifPriorAccumulator {
 struct NegativeKnowledgePriorKey {
     knowledge_kind: String,
     normalized_pattern: String,
-    protocol_family: String,
+    prior_scope: PriorScope,
 }
 
 #[derive(Debug, Clone)]
@@ -161,17 +161,14 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
             )));
         }
 
-        let protocol_family = ProtocolFamily::infer(
-            &intent_ir.document_identity.document_key,
-            &intent_ir.document_identity.display_name,
-        );
+        let prior_scope = PriorScope::Global;
         let learning_gate = assess_intent_for_learning(&intent_ir.validation_reports);
 
         source_artifacts.push(PriorSourceArtifactRecord {
             artifact_path: artifact_path.clone(),
             document_key: intent_ir.document_identity.document_key.clone(),
             display_name: intent_ir.document_identity.display_name.clone(),
-            protocol_family,
+            prior_scope,
             overall_score: learning_gate.report.and_then(|report| report.overall_score),
             grade: learning_gate.report.and_then(|report| report.grade.clone()),
             accepted_for_learning: learning_gate.accepted,
@@ -182,21 +179,17 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
             continue;
         }
 
-        harvest_actor_taxonomy_priors(&intent_ir, protocol_family, &mut actor_taxonomy_priors);
-        harvest_semantic_priors(&intent_ir, protocol_family, &mut semantic_priors);
+        harvest_actor_taxonomy_priors(&intent_ir, prior_scope, &mut actor_taxonomy_priors);
+        harvest_semantic_priors(&intent_ir, prior_scope, &mut semantic_priors);
         harvest_semantic_modality_reliability_priors(
             &intent_ir,
-            protocol_family,
+            prior_scope,
             &mut semantic_modality_reliability_priors,
         );
-        harvest_temporal_priors(&intent_ir, protocol_family, &mut temporal_priors);
-        harvest_table_shape_priors(&intent_ir, protocol_family, &mut table_shape_priors);
-        harvest_visual_motif_priors(&intent_ir, protocol_family, &mut visual_motif_priors);
-        harvest_negative_knowledge_priors(
-            &intent_ir,
-            protocol_family,
-            &mut negative_knowledge_priors,
-        );
+        harvest_temporal_priors(&intent_ir, prior_scope, &mut temporal_priors);
+        harvest_table_shape_priors(&intent_ir, prior_scope, &mut table_shape_priors);
+        harvest_visual_motif_priors(&intent_ir, prior_scope, &mut visual_motif_priors);
+        harvest_negative_knowledge_priors(&intent_ir, prior_scope, &mut negative_knowledge_priors);
         // CORPUS-PATTERN-REUSE.3b.2: the extraction-profile harvest clusters the accepted
         // documents' derived fingerprints, which live on the persisted EvidenceIR. A document
         // whose evidence artifact cannot be reloaded simply contributes no fingerprint —
@@ -210,7 +203,7 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
     }
 
     let corpus_memory = CorpusMemory {
-        schema_version: 6,
+        schema_version: crate::ir::prior_memory::CORPUS_MEMORY_SCHEMA_VERSION,
         update_policy: CorpusMemoryUpdatePolicyRecord {
             advisory_only: true,
             requires_validated_intent_ir: true,
@@ -290,7 +283,7 @@ pub fn run(args: LearnPriorsArgs) -> Result<()> {
         println!(
             "  contested {} [{:?}] '{}': {competing} (strongest: {})",
             contested.family.as_str(),
-            contested.protocol_family,
+            contested.prior_scope,
             contested.key,
             contested.strongest_value,
         );
@@ -374,7 +367,7 @@ fn assess_intent_for_learning(
 
 fn harvest_actor_taxonomy_priors(
     intent_ir: &IntentIr,
-    protocol_family: ProtocolFamily,
+    prior_scope: PriorScope,
     actor_taxonomy_priors: &mut BTreeMap<ActorTaxonomyPriorKey, ActorTaxonomyPriorAccumulator>,
 ) {
     let signal_records_by_name = intent_ir
@@ -431,7 +424,7 @@ fn harvest_actor_taxonomy_priors(
         let key = ActorTaxonomyPriorKey {
             normalized_actor_term,
             taxonomy_role: taxonomy_role.as_str().to_string(),
-            protocol_family: protocol_family.as_str().to_string(),
+            prior_scope,
         };
         let entry =
             actor_taxonomy_priors
@@ -459,7 +452,7 @@ fn harvest_actor_taxonomy_priors(
 
 fn harvest_semantic_priors(
     intent_ir: &IntentIr,
-    protocol_family: ProtocolFamily,
+    prior_scope: PriorScope,
     semantic_priors: &mut BTreeMap<SemanticPriorKey, SemanticPriorAccumulator>,
 ) {
     let signal_names = collect_signal_names(intent_ir);
@@ -512,7 +505,7 @@ fn harvest_semantic_priors(
             let key = SemanticPriorKey {
                 normalized_phrase,
                 role: consensus.role.as_str().to_string(),
-                protocol_family: protocol_family.as_str().to_string(),
+                prior_scope,
                 source_kind: observation.source_kind.as_str().to_string(),
             };
             let entry = semantic_priors
@@ -541,7 +534,7 @@ fn harvest_semantic_priors(
 
 fn harvest_semantic_modality_reliability_priors(
     intent_ir: &IntentIr,
-    protocol_family: ProtocolFamily,
+    prior_scope: PriorScope,
     semantic_modality_reliability_priors: &mut BTreeMap<
         SemanticModalityReliabilityPriorKey,
         SemanticModalityReliabilityPriorAccumulator,
@@ -590,7 +583,7 @@ fn harvest_semantic_modality_reliability_priors(
         {
             let key = SemanticModalityReliabilityPriorKey {
                 role: consensus.role.as_str().to_string(),
-                protocol_family: protocol_family.as_str().to_string(),
+                prior_scope,
                 source_kind: source_kind.as_str().to_string(),
             };
             let entry = semantic_modality_reliability_priors
@@ -619,7 +612,7 @@ fn harvest_semantic_modality_reliability_priors(
 
 fn harvest_temporal_priors(
     intent_ir: &IntentIr,
-    protocol_family: ProtocolFamily,
+    prior_scope: PriorScope,
     temporal_priors: &mut BTreeMap<TemporalPriorKey, TemporalPriorAccumulator>,
 ) {
     let signal_names = collect_signal_names(intent_ir);
@@ -656,7 +649,7 @@ fn harvest_temporal_priors(
 
         let key = TemporalPriorKey {
             normalized_phrase,
-            protocol_family: protocol_family.as_str().to_string(),
+            prior_scope,
             min_cycles: rule
                 .cycle_window
                 .as_ref()
@@ -699,7 +692,7 @@ fn harvest_temporal_priors(
             false,
             constraint.automation_confidence,
             &intent_ir.document_identity.document_key,
-            protocol_family,
+            prior_scope,
             &signal_names,
             &actor_names,
             temporal_priors,
@@ -721,7 +714,7 @@ fn harvest_temporal_priors(
             false,
             rule.automation_confidence,
             &intent_ir.document_identity.document_key,
-            protocol_family,
+            prior_scope,
             &signal_names,
             &actor_names,
             temporal_priors,
@@ -731,7 +724,7 @@ fn harvest_temporal_priors(
 
 fn harvest_table_shape_priors(
     intent_ir: &IntentIr,
-    protocol_family: ProtocolFamily,
+    prior_scope: PriorScope,
     table_shape_priors: &mut BTreeMap<TableShapePriorKey, TableShapePriorAccumulator>,
 ) {
     let Some(source_ir) = load_source_ir_for_learning(intent_ir) else {
@@ -740,7 +733,7 @@ fn harvest_table_shape_priors(
     harvest_table_shape_priors_from_source_ir(
         &source_ir,
         &intent_ir.document_identity.document_key,
-        protocol_family,
+        prior_scope,
         table_shape_priors,
     );
 }
@@ -769,7 +762,7 @@ fn load_source_ir_for_learning(intent_ir: &IntentIr) -> Option<SourceIr> {
 fn harvest_table_shape_priors_from_source_ir(
     source_ir: &SourceIr,
     document_key: &str,
-    protocol_family: ProtocolFamily,
+    prior_scope: PriorScope,
     table_shape_priors: &mut BTreeMap<TableShapePriorKey, TableShapePriorAccumulator>,
 ) {
     for table in &source_ir.structured_tables {
@@ -783,7 +776,7 @@ fn harvest_table_shape_priors_from_source_ir(
         let key = TableShapePriorKey {
             normalized_header_signature,
             table_kind: table_kind_key(table.table_kind).to_string(),
-            protocol_family: protocol_family.as_str().to_string(),
+            prior_scope,
         };
         let entry = table_shape_priors
             .entry(key)
@@ -805,7 +798,7 @@ fn harvest_table_shape_priors_from_source_ir(
 
 fn harvest_visual_motif_priors(
     intent_ir: &IntentIr,
-    protocol_family: ProtocolFamily,
+    prior_scope: PriorScope,
     visual_motif_priors: &mut BTreeMap<VisualMotifPriorKey, VisualMotifPriorAccumulator>,
 ) {
     let Some(source_ir) = load_source_ir_for_learning(intent_ir) else {
@@ -816,7 +809,7 @@ fn harvest_visual_motif_priors(
     harvest_visual_motif_priors_from_source_ir(
         &source_ir,
         &intent_ir.document_identity.document_key,
-        protocol_family,
+        prior_scope,
         &signal_names,
         &actor_names,
         visual_motif_priors,
@@ -826,7 +819,7 @@ fn harvest_visual_motif_priors(
 fn harvest_visual_motif_priors_from_source_ir(
     source_ir: &SourceIr,
     document_key: &str,
-    protocol_family: ProtocolFamily,
+    prior_scope: PriorScope,
     signal_names: &BTreeSet<String>,
     actor_names: &BTreeSet<String>,
     visual_motif_priors: &mut BTreeMap<VisualMotifPriorKey, VisualMotifPriorAccumulator>,
@@ -856,7 +849,7 @@ fn harvest_visual_motif_priors_from_source_ir(
             normalized_caption_phrase,
             diagram_kind: diagram_kind_key(visual_asset.diagram_kind).to_string(),
             asset_kind: visual_asset_kind_key(visual_asset.asset_kind).to_string(),
-            protocol_family: protocol_family.as_str().to_string(),
+            prior_scope,
         };
         let entry = visual_motif_priors
             .entry(key)
@@ -877,7 +870,7 @@ fn harvest_visual_motif_priors_from_source_ir(
 
 fn harvest_negative_knowledge_priors(
     intent_ir: &IntentIr,
-    protocol_family: ProtocolFamily,
+    prior_scope: PriorScope,
     negative_knowledge_priors: &mut BTreeMap<
         NegativeKnowledgePriorKey,
         NegativeKnowledgePriorAccumulator,
@@ -894,7 +887,7 @@ fn harvest_negative_knowledge_priors(
             normalized_pattern,
             conflict.automation_confidence,
             &intent_ir.document_identity.document_key,
-            protocol_family,
+            prior_scope,
             negative_knowledge_priors,
         );
     }
@@ -909,7 +902,7 @@ fn harvest_negative_knowledge_priors(
             normalized_pattern,
             conflict.automation_confidence,
             &intent_ir.document_identity.document_key,
-            protocol_family,
+            prior_scope,
             negative_knowledge_priors,
         );
     }
@@ -925,7 +918,7 @@ fn harvest_negative_knowledge_priors(
             normalized_pattern,
             conflict.automation_confidence,
             &intent_ir.document_identity.document_key,
-            protocol_family,
+            prior_scope,
             negative_knowledge_priors,
         );
     }
@@ -941,7 +934,7 @@ fn harvest_negative_knowledge_priors(
             normalized_pattern,
             conflict.automation_confidence,
             &intent_ir.document_identity.document_key,
-            protocol_family,
+            prior_scope,
             negative_knowledge_priors,
         );
     }
@@ -957,7 +950,7 @@ fn harvest_negative_knowledge_priors(
             normalized_pattern,
             conflict.automation_confidence,
             &intent_ir.document_identity.document_key,
-            protocol_family,
+            prior_scope,
             negative_knowledge_priors,
         );
     }
@@ -972,7 +965,7 @@ fn harvest_negative_knowledge_priors(
             normalized_pattern,
             residual.automation_confidence,
             &intent_ir.document_identity.document_key,
-            protocol_family,
+            prior_scope,
             negative_knowledge_priors,
         );
     }
@@ -983,7 +976,7 @@ fn harvest_negative_knowledge_pattern(
     normalized_pattern: String,
     automation_confidence: AutomationConfidence,
     document_key: &str,
-    protocol_family: ProtocolFamily,
+    prior_scope: PriorScope,
     negative_knowledge_priors: &mut BTreeMap<
         NegativeKnowledgePriorKey,
         NegativeKnowledgePriorAccumulator,
@@ -996,7 +989,7 @@ fn harvest_negative_knowledge_pattern(
     let key = NegativeKnowledgePriorKey {
         knowledge_kind: knowledge_kind.as_str().to_string(),
         normalized_pattern,
-        protocol_family: protocol_family.as_str().to_string(),
+        prior_scope,
     };
     let entry =
         negative_knowledge_priors
@@ -1025,7 +1018,7 @@ fn materialize_semantic_priors(
             prior_id: format!("semantic_phrase_prior_{:04}", index + 1),
             normalized_phrase: key.normalized_phrase,
             role: parse_semantic_role(&key.role),
-            protocol_family: parse_protocol_family(&key.protocol_family),
+            prior_scope: key.prior_scope,
             source_kind: parse_semantic_source_kind(&key.source_kind),
             support_count: accumulator.supporting_document_keys.len(),
             supporting_document_keys: accumulator.supporting_document_keys.into_iter().collect(),
@@ -1045,7 +1038,7 @@ fn materialize_actor_taxonomy_priors(
             prior_id: format!("actor_taxonomy_prior_{:04}", index + 1),
             normalized_actor_term: key.normalized_actor_term,
             taxonomy_role: parse_actor_taxonomy_role(&key.taxonomy_role),
-            protocol_family: parse_protocol_family(&key.protocol_family),
+            prior_scope: key.prior_scope,
             support_count: accumulator.supporting_document_keys.len(),
             supporting_document_keys: accumulator.supporting_document_keys.into_iter().collect(),
             strongest_automation_confidence: accumulator.strongest_automation_confidence,
@@ -1063,7 +1056,7 @@ fn materialize_temporal_priors(
         .map(|(index, (key, accumulator))| TemporalPhrasePriorRecord {
             prior_id: format!("temporal_phrase_prior_{:04}", index + 1),
             normalized_phrase: key.normalized_phrase,
-            protocol_family: parse_protocol_family(&key.protocol_family),
+            prior_scope: key.prior_scope,
             cycle_window: if key.min_cycles.is_none() && key.max_cycles.is_none() {
                 None
             } else {
@@ -1091,7 +1084,7 @@ fn materialize_table_shape_priors(
             prior_id: format!("table_shape_prior_{:04}", index + 1),
             normalized_header_signature: key.normalized_header_signature,
             table_kind: parse_table_kind(&key.table_kind),
-            protocol_family: parse_protocol_family(&key.protocol_family),
+            prior_scope: key.prior_scope,
             support_count: accumulator.supporting_document_keys.len(),
             supporting_document_keys: accumulator.supporting_document_keys.into_iter().collect(),
             strongest_automation_confidence: accumulator.strongest_automation_confidence,
@@ -1112,7 +1105,7 @@ fn materialize_semantic_modality_reliability_priors(
             |(index, (key, accumulator))| SemanticModalityReliabilityPriorRecord {
                 prior_id: format!("semantic_modality_reliability_prior_{:04}", index + 1),
                 role: parse_semantic_role(&key.role),
-                protocol_family: parse_protocol_family(&key.protocol_family),
+                prior_scope: key.prior_scope,
                 source_kind: parse_semantic_source_kind(&key.source_kind),
                 support_count: accumulator.supporting_document_keys.len(),
                 supporting_document_keys: accumulator
@@ -1137,7 +1130,7 @@ fn materialize_visual_motif_priors(
             normalized_caption_phrase: key.normalized_caption_phrase,
             diagram_kind: parse_diagram_kind(&key.diagram_kind),
             asset_kind: parse_visual_asset_kind(&key.asset_kind),
-            protocol_family: parse_protocol_family(&key.protocol_family),
+            prior_scope: key.prior_scope,
             support_count: accumulator.supporting_document_keys.len(),
             supporting_document_keys: accumulator.supporting_document_keys.into_iter().collect(),
             strongest_automation_confidence: accumulator.strongest_automation_confidence,
@@ -1158,7 +1151,7 @@ fn materialize_negative_knowledge_priors(
             prior_id: format!("negative_knowledge_prior_{:04}", index + 1),
             knowledge_kind: parse_negative_knowledge_kind(&key.knowledge_kind),
             normalized_pattern: key.normalized_pattern,
-            protocol_family: parse_protocol_family(&key.protocol_family),
+            prior_scope: key.prior_scope,
             support_count: accumulator.supporting_document_keys.len(),
             supporting_document_keys: accumulator.supporting_document_keys.into_iter().collect(),
             strongest_automation_confidence: accumulator.strongest_automation_confidence,
@@ -1291,7 +1284,7 @@ fn harvest_temporal_language_phrase(
     handshake_completion: bool,
     automation_confidence: AutomationConfidence,
     document_key: &str,
-    protocol_family: ProtocolFamily,
+    prior_scope: PriorScope,
     signal_names: &BTreeSet<String>,
     actor_names: &BTreeSet<String>,
     temporal_priors: &mut BTreeMap<TemporalPriorKey, TemporalPriorAccumulator>,
@@ -1303,7 +1296,7 @@ fn harvest_temporal_language_phrase(
 
     let key = TemporalPriorKey {
         normalized_phrase,
-        protocol_family: protocol_family.as_str().to_string(),
+        prior_scope,
         min_cycles: cycle_window.as_ref().and_then(|window| window.min_cycles),
         max_cycles: cycle_window.as_ref().and_then(|window| window.max_cycles),
         actor_grounded,
@@ -1335,16 +1328,6 @@ fn has_temporal_conflict_support(
             .iter()
             .any(|statement_id| supporting_statement_ids.contains(statement_id))
     })
-}
-
-fn parse_protocol_family(value: &str) -> ProtocolFamily {
-    match value {
-        "amba_apb" => ProtocolFamily::AmbaApb,
-        "amba_ahb" => ProtocolFamily::AmbaAhb,
-        "amba_axi" => ProtocolFamily::AmbaAxi,
-        "amba_generic" => ProtocolFamily::AmbaGeneric,
-        _ => ProtocolFamily::Unknown,
-    }
 }
 
 fn parse_actor_taxonomy_role(value: &str) -> ActorTaxonomyRole {
@@ -2008,13 +1991,13 @@ mod tests {
         let mut semantic_priors = BTreeMap::new();
         let mut semantic_modality_reliability_priors = BTreeMap::new();
         let mut temporal_priors = BTreeMap::new();
-        harvest_semantic_priors(&intent_ir, ProtocolFamily::AmbaAxi, &mut semantic_priors);
+        harvest_semantic_priors(&intent_ir, PriorScope::Global, &mut semantic_priors);
         harvest_semantic_modality_reliability_priors(
             &intent_ir,
-            ProtocolFamily::AmbaAxi,
+            PriorScope::Global,
             &mut semantic_modality_reliability_priors,
         );
-        harvest_temporal_priors(&intent_ir, ProtocolFamily::AmbaAxi, &mut temporal_priors);
+        harvest_temporal_priors(&intent_ir, PriorScope::Global, &mut temporal_priors);
 
         let semantic_records = materialize_semantic_priors(semantic_priors);
         let semantic_modality_reliability_records =
@@ -2026,7 +2009,7 @@ mod tests {
             semantic_records[0].normalized_phrase,
             "<signal> can accept the transfer"
         );
-        assert_eq!(semantic_records[0].protocol_family, ProtocolFamily::AmbaAxi);
+        assert_eq!(semantic_records[0].prior_scope, PriorScope::Global);
         assert_eq!(semantic_records[0].support_count, 1);
         assert!(!semantic_records[0].supporting_document_keys.is_empty());
         assert_eq!(
@@ -2225,11 +2208,7 @@ mod tests {
         ];
 
         let mut actor_taxonomy_priors = BTreeMap::new();
-        harvest_actor_taxonomy_priors(
-            &intent_ir,
-            ProtocolFamily::AmbaApb,
-            &mut actor_taxonomy_priors,
-        );
+        harvest_actor_taxonomy_priors(&intent_ir, PriorScope::Global, &mut actor_taxonomy_priors);
 
         let records = materialize_actor_taxonomy_priors(actor_taxonomy_priors);
         assert_eq!(records.len(), 2);
@@ -2264,11 +2243,7 @@ mod tests {
         }];
 
         let mut actor_taxonomy_priors = BTreeMap::new();
-        harvest_actor_taxonomy_priors(
-            &intent_ir,
-            ProtocolFamily::Unknown,
-            &mut actor_taxonomy_priors,
-        );
+        harvest_actor_taxonomy_priors(&intent_ir, PriorScope::Global, &mut actor_taxonomy_priors);
 
         let records = materialize_actor_taxonomy_priors(actor_taxonomy_priors);
         assert_eq!(records.len(), 1);
@@ -2357,11 +2332,7 @@ mod tests {
         }];
 
         let mut actor_taxonomy_priors = BTreeMap::new();
-        harvest_actor_taxonomy_priors(
-            &intent_ir,
-            ProtocolFamily::AmbaAxi,
-            &mut actor_taxonomy_priors,
-        );
+        harvest_actor_taxonomy_priors(&intent_ir, PriorScope::Global, &mut actor_taxonomy_priors);
 
         let records = materialize_actor_taxonomy_priors(actor_taxonomy_priors);
         assert!(
@@ -2414,7 +2385,7 @@ mod tests {
         harvest_table_shape_priors_from_source_ir(
             &source_ir,
             "fixture_doc",
-            ProtocolFamily::Unknown,
+            PriorScope::Global,
             &mut table_shape_priors,
         );
 
@@ -2493,7 +2464,7 @@ mod tests {
         harvest_visual_motif_priors_from_source_ir(
             &source_ir,
             &intent_ir.document_identity.document_key,
-            ProtocolFamily::Unknown,
+            PriorScope::Global,
             &signal_names,
             &actor_names,
             &mut visual_motif_priors,
@@ -2502,7 +2473,7 @@ mod tests {
         let mut negative_knowledge_priors = BTreeMap::new();
         harvest_negative_knowledge_priors(
             &intent_ir,
-            ProtocolFamily::Unknown,
+            PriorScope::Global,
             &mut negative_knowledge_priors,
         );
 
@@ -2613,11 +2584,7 @@ mod tests {
         }];
 
         let mut semantic_priors = BTreeMap::new();
-        harvest_semantic_priors(
-            &accepted_intent,
-            ProtocolFamily::Unknown,
-            &mut semantic_priors,
-        );
+        harvest_semantic_priors(&accepted_intent, PriorScope::Global, &mut semantic_priors);
         assert!(semantic_priors.is_empty());
     }
 
@@ -2916,11 +2883,7 @@ mod tests {
         }];
 
         let mut actor_taxonomy_priors = BTreeMap::new();
-        harvest_actor_taxonomy_priors(
-            &intent_ir,
-            ProtocolFamily::AmbaApb,
-            &mut actor_taxonomy_priors,
-        );
+        harvest_actor_taxonomy_priors(&intent_ir, PriorScope::Global, &mut actor_taxonomy_priors);
 
         let records = materialize_actor_taxonomy_priors(actor_taxonomy_priors);
         assert_eq!(records.len(), 1);
@@ -3047,11 +3010,7 @@ mod tests {
         }];
 
         let mut actor_taxonomy_priors = BTreeMap::new();
-        harvest_actor_taxonomy_priors(
-            &intent_ir,
-            ProtocolFamily::Unknown,
-            &mut actor_taxonomy_priors,
-        );
+        harvest_actor_taxonomy_priors(&intent_ir, PriorScope::Global, &mut actor_taxonomy_priors);
         assert!(actor_taxonomy_priors.is_empty());
     }
 }

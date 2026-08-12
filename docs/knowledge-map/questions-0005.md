@@ -2,6 +2,26 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
+  > how much disk do normalized bundles cost across the corpus
+- [normalized-bundle-retention-is-declared](../knowledge/normalized-bundle-retention-is-declared.md)
+  > how much disk do the retained normalized bundles cost
+- [fact-card-catalog](../knowledge/fact-card-catalog.md)
+  > how much fact-card catalog index headroom remains
+- [corpus-task-evidence-containment-design](../knowledge/corpus-task-evidence-containment-design.md)
+  > how much headroom remains in the corpus coverage task file
+- [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md)
+  > how much intent does SpecForge extract across the whole corpus
+- [aarch64-external-debug-guide-refresh-is-authority-empty](../knowledge/aarch64-external-debug-guide-refresh-is-authority-empty.md)
+  > how much memory did the guarded AArch64 External Debug ingest use
+- [coresight-base-system-refresh-is-authority-empty](../knowledge/coresight-base-system-refresh-is-authority-empty.md)
+  > how much memory did the guarded CoreSight Base System ingest use
+- [introducing-coresight-guide-refresh-is-authority-empty](../knowledge/introducing-coresight-guide-refresh-is-authority-empty.md)
+  > how much memory did the guarded Introducing CoreSight ingest use
+- [opencapi-afu-address-note-refresh](../knowledge/opencapi-afu-address-note-refresh.md)
+  > how much memory did the guarded OpenCAPI AFU address note ingest use
+- [opencapi-certified-definition-refresh](../knowledge/opencapi-certified-definition-refresh.md)
+  > how much memory did the guarded OpenCAPI Certified Definition ingest use
 - [opencapi-ready-definition-refresh](../knowledge/opencapi-ready-definition-refresh.md)
   > how much memory did the guarded OpenCAPI Ready Definition ingest use
 - [opencapi-ready-note-refresh-rejects-dl-signal](../knowledge/opencapi-ready-note-refresh-rejects-dl-signal.md)
@@ -278,23 +298,3 @@
   > is there a PSL or SVA export of temporal rules
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
   > is there a buildable transaction ordered multi-phase body lever beyond .2b
-- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
-  > is there a first opt-in extractor for the CORPUS-PATTERN-REUSE activate-only consume side
-- [isf-temporal-lowering-no-silent-drop](../knowledge/isf-temporal-lowering-no-silent-drop.md)
-  > is there a lowering-completeness check for temporal rules
-- [conformal-tier-agreement-degenerate](../knowledge/conformal-tier-agreement-degenerate.md)
-  > is tier-agreement a good confidence axis for conformal calibration
-- [source-to-intent-first-reviewed-result](../knowledge/source-to-intent-first-reviewed-result.md)
-  > is upstream extraction or ISF expressiveness the next measured blocker
-- [fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards](../decisions/0026-fact-plane-capacity-is-derived-and-the-landing-stops-scaling-with-cards.md)
-  > may fact cards be deleted or merged to free catalog capacity
-- [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md)
-  > must a corpus refresh update the frontier declaration
-- [llm-primary-promotion-stage](../knowledge/llm-primary-promotion-stage.md)
-  > must a post-build signal_constraints replace re-apply build-path invariants
-- [persisted-chain-currency-is-measured-not-assumed](../decisions/0025-persisted-chain-currency-is-measured-not-assumed.md)
-  > must a repair leaf rebuild every affected document or only the ones it measures
-- [isf-initiator-perspective-direction](../knowledge/isf-initiator-perspective-direction.md)
-  > per-wire-doc direction flip results (APB input 2->12, AXI 4->52, SWD 0->1, AHB residual)
-- [llm-vlm-provider-default](../knowledge/llm-vlm-provider-default.md)
-  > qwen2.5vl vs qwen3-vl which model

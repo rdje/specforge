@@ -1,15 +1,15 @@
 {
-  "name": "negative_knowledge_prior_protocol_family_mismatch_negative",
+  "name": "negative_knowledge_prior_pattern_mismatch_negative",
   "source": "axi_source.md",
   "prior_memory_patch": {
     "negative_knowledge_priors": [
       {
-        "prior_id": "negative_knowledge_prior_apb_semantic_conflict",
+        "prior_id": "negative_knowledge_prior_unrelated_semantic_conflict",
         "knowledge_kind": "signal_semantic_conflict",
-        "normalized_pattern": "signal_semantic_conflict:visual_caption:handshake_valid_like|vlm_timing_diagram_annotation:handshake_ready_like",
-        "protocol_family": "amba_apb",
+        "normalized_pattern": "signal_semantic_conflict:prose_statement:handshake_valid_like|signal_description_table:handshake_ready_like",
+        "prior_scope": "global",
         "support_count": 3,
-        "supporting_document_keys": ["seed_apb_1", "seed_apb_2", "seed_apb_3"],
+        "supporting_document_keys": ["seed_doc_1", "seed_doc_2", "seed_doc_3"],
         "strongest_automation_confidence": "medium"
       }
     ]

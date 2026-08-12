@@ -30,6 +30,22 @@ Learning plane:
 The document plane stays grounded in the current PDF.
 The learning plane stores reusable extraction knowledge learned from earlier validated artifacts.
 
+## Identity-independent scope
+
+`CorpusMemory` schema 7 has one scope: `global`. The production loader and consumers never infer a vendor or
+protocol family from the document key, filename, title, or display name. Those values remain provenance only.
+A prior can match a new document only through normalized evidence from that document—such as a phrase, typed
+source kind, structural header/caption signature, or structural fingerprint.
+
+This is enforced at migration too. A schema-7 scope other than `global` is invalid. Schemas 1 through 6 used
+identity-scoped prior families; the loader quarantines those seven semantic prior arrays rather than silently
+relabeling their contents as global truth. Identity-independent structural extraction profiles may survive the
+upgrade. Unknown future schemas fail closed.
+
+That compatibility rule intentionally favors honest recall loss over cross-document contamination. Legacy
+memory can be repopulated only by validating current IntentIR artifacts and running `learn-priors` again under
+the neutral schema.
+
 ## What the system learns
 
 Today the prior store can contain families such as:
@@ -139,8 +155,8 @@ the same term in a *completer*-like role, the accrete-only store
 quietly keeps both — and trusts each as if it were already settled.
 
 `PRIOR-DECAY` makes that disagreement visible. A read-only check,
-`CorpusMemory::contested_priors()`, groups priors by key *within one
-protocol family* and flags any key that two or more documents map to
+`CorpusMemory::contested_priors()`, groups priors by key in the one neutral
+global scope and flags any key that two or more documents map to
 **different** values. For each contested key it lists the competing
 values (with how much support each has and which documents back it) and
 names the *strongest-supported* value as a hint — but it never picks a
@@ -160,3 +176,16 @@ contradicting evidence" idea — Parisi et al., 2019 — applied here as
 detection; actually *down-weighting* a contested prior during
 consultation, and time-based staleness, are deliberate later steps.)
 *Authoritative tracking:* `docs/tasks/PRIOR-DECAY.md`.
+
+## Reproducible feedback fixed point
+
+The prior store is derived state, not hand-maintained authority. Its declared learning inputs must carry current
+persisted validation. After relearning, every changed document chain is replayed and affected learning inputs are
+validated again; learning repeats until the store is byte-stable. Non-convergence is a release blocker.
+
+The schema-7 migration exercised this rule. The old store named 14 accepted sources, one deleted, and was not
+reproducible under the current validation policy. Thirteen current inputs were validated, relearned, and replayed.
+One residual changed on the first pass, so negative-knowledge priors changed from 12 to 11. The next learn and a
+third confirmation were byte-identical. The final fixed point contains 29 actor, 83 semantic, four modality, 443
+temporal, zero table, 1,251 visual, 11 negative-knowledge, and two structural-profile priors. All measurable
+persisted stages reproduce exactly under the resulting store.

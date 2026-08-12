@@ -10,8 +10,8 @@ use crate::ir::extractor::{
     ExtractionContext, ExtractionManifest, Extractor, run_surface, run_surface_concat,
 };
 use crate::ir::prior_memory::{
-    ActorTaxonomyRole, CorpusMemory, ProtocolFamily, is_meaningful_actor_term,
-    normalize_actor_term, normalized_text_contains_term,
+    ActorTaxonomyRole, CorpusMemory, PriorScope, is_meaningful_actor_term, normalize_actor_term,
+    normalized_text_contains_term,
 };
 use crate::ir::semantic::InterfaceSignalSemanticRole;
 use crate::ir::source::{
@@ -675,7 +675,7 @@ pub fn tier_count_by_fact_key(
 struct EvidencePriorGuidance {
     prior_memory_path: PathBuf,
     corpus_memory: CorpusMemory,
-    protocol_family: ProtocolFamily,
+    prior_scope: PriorScope,
 }
 
 /// Schema 1 carried protocol observations produced by vocabulary-bound extractors. Remove those
@@ -742,7 +742,7 @@ impl EvidenceIr {
             resolve_existing(source_ir_path, PersistedPathOrigin::RepositoryOwned)?;
         let source_ir_path = source_ir_runtime_path.clone();
         let source_ir = SourceIr::load_from_path(&source_ir_runtime_path)?;
-        let prior_guidance = load_evidence_prior_guidance(prior_memory_path, &source_ir)?;
+        let prior_guidance = load_evidence_prior_guidance(prior_memory_path)?;
 
         if !matches!(
             source_ir.normalization_plan.status,
@@ -1088,8 +1088,7 @@ impl EvidenceIr {
 
     pub fn refresh_signal_semantic_hints(&mut self) -> Result<()> {
         let source_ir = SourceIr::load_from_path(&self.source_ir_path)?;
-        let prior_guidance =
-            load_evidence_prior_guidance(self.prior_memory_path.as_deref(), &source_ir)?;
+        let prior_guidance = load_evidence_prior_guidance(self.prior_memory_path.as_deref())?;
         // EXTRACTOR-ARCHITECTURE.8 — record the semantic-hints surface manifest into the per-document
         // fingerprint. Disjoint self-field borrows: the inputs are `&self.<field>` (shared) and the manifest
         // is `&mut self.extraction_manifest` (a distinct field) — allowed. `record` is idempotent per surface
@@ -1866,7 +1865,7 @@ fn prior_guided_visual_diagram_kind(
     prior_guidance
         .corpus_memory
         .diagram_kind_for_visual_caption(
-            Some(prior_guidance.protocol_family),
+            Some(prior_guidance.prior_scope),
             caption_text,
             signal_names,
             actor_names,
@@ -2381,7 +2380,6 @@ fn collect_signal_names_from_tables(
 
 fn load_evidence_prior_guidance(
     prior_memory_path: Option<&Path>,
-    source_ir: &SourceIr,
 ) -> Result<Option<EvidencePriorGuidance>> {
     let Some(prior_memory_path) = prior_memory_path else {
         return Ok(None);
@@ -2393,14 +2391,10 @@ fn load_evidence_prior_guidance(
             Err(error) => return Err(error),
         };
 
-    let corpus_memory =
-        serde_json::from_str::<CorpusMemory>(&fs::read_to_string(&prior_memory_path)?)?;
+    let corpus_memory = CorpusMemory::load_from_path(&prior_memory_path)?;
     Ok(Some(EvidencePriorGuidance {
         prior_memory_path: prior_memory_path.clone(),
-        protocol_family: ProtocolFamily::infer(
-            &source_ir.document_identity.document_key,
-            &source_ir.document_identity.display_name,
-        ),
+        prior_scope: PriorScope::Global,
         corpus_memory,
     }))
 }
@@ -2967,7 +2961,7 @@ fn effective_table_kind(
             .and_then(|prior_guidance| {
                 prior_guidance
                     .corpus_memory
-                    .table_kind_for_structured_table(Some(prior_guidance.protocol_family), table)
+                    .table_kind_for_structured_table(Some(prior_guidance.prior_scope), table)
             })
             .unwrap_or(TableKind::Unknown)
     };
@@ -7277,7 +7271,7 @@ fn infer_signal_semantic_tags_from_description(
 
     if let Some(role) = prior_guidance.and_then(|prior_guidance| {
         prior_guidance.corpus_memory.semantic_phrase_role_in_text(
-            Some(prior_guidance.protocol_family),
+            Some(prior_guidance.prior_scope),
             source_kind,
             source_text_for_prior_matching,
             signal_names,
@@ -7477,7 +7471,7 @@ fn actor_taxonomy_role_in_text(
         prior_guidance.and_then(|prior_guidance| {
             prior_guidance
                 .corpus_memory
-                .actor_taxonomy_role_in_text(Some(prior_guidance.protocol_family), text)
+                .actor_taxonomy_role_in_text(Some(prior_guidance.prior_scope), text)
         })
     })
 }
@@ -15753,8 +15747,7 @@ mod tests {
     use crate::error::Result;
     use crate::ir::prior_memory::{
         ActorTaxonomyPriorRecord, ActorTaxonomyRole, CorpusMemory, CorpusMemoryUpdatePolicyRecord,
-        PriorSourceArtifactRecord, ProtocolFamily, SemanticPhrasePriorRecord,
-        VisualMotifPriorRecord,
+        PriorScope, PriorSourceArtifactRecord, SemanticPhrasePriorRecord, VisualMotifPriorRecord,
     };
     use crate::ir::semantic::{InterfaceSignalSemanticRole, SemanticGroundingStrength};
     use crate::ir::source::{
@@ -21212,7 +21205,7 @@ mod tests {
                     prior_id: "actor_taxonomy_prior_0001".to_string(),
                     normalized_actor_term: "producer".to_string(),
                     taxonomy_role: ActorTaxonomyRole::RequesterLike,
-                    protocol_family: ProtocolFamily::AmbaGeneric,
+                    prior_scope: PriorScope::Global,
                     support_count: 3,
                     supporting_document_keys: vec!["fixture".to_string()],
                     strongest_automation_confidence: AutomationConfidence::High,
@@ -21222,7 +21215,7 @@ mod tests {
                     prior_id: "actor_taxonomy_prior_0002".to_string(),
                     normalized_actor_term: "consumer".to_string(),
                     taxonomy_role: ActorTaxonomyRole::CompleterLike,
-                    protocol_family: ProtocolFamily::AmbaGeneric,
+                    prior_scope: PriorScope::Global,
                     support_count: 3,
                     supporting_document_keys: vec!["fixture".to_string()],
                     strongest_automation_confidence: AutomationConfidence::High,
@@ -21238,7 +21231,7 @@ mod tests {
                 prior_id: "semantic_phrase_prior_0001".to_string(),
                 normalized_phrase: "<signal> can receive the transfer".to_string(),
                 role: InterfaceSignalSemanticRole::HandshakeReadyLike,
-                protocol_family: ProtocolFamily::AmbaGeneric,
+                prior_scope: PriorScope::Global,
                 source_kind: SignalSemanticHintSourceKind::ProseStatement,
                 support_count: 2,
                 supporting_document_keys: vec!["fixture".to_string()],
@@ -21255,7 +21248,7 @@ mod tests {
                 normalized_caption_phrase: Some("<signal> cycle trace".to_string()),
                 diagram_kind: DiagramKind::TimingDiagram,
                 asset_kind: VisualAssetKind::Diagram,
-                protocol_family: ProtocolFamily::AmbaGeneric,
+                prior_scope: PriorScope::Global,
                 support_count: 2,
                 supporting_document_keys: vec!["fixture".to_string()],
                 strongest_automation_confidence: AutomationConfidence::High,
@@ -21276,7 +21269,7 @@ mod tests {
         }
 
         let mut corpus_memory = CorpusMemory {
-            schema_version: 6,
+            schema_version: crate::ir::prior_memory::CORPUS_MEMORY_SCHEMA_VERSION,
             update_policy: CorpusMemoryUpdatePolicyRecord {
                 advisory_only: true,
                 requires_validated_intent_ir: true,
@@ -21288,7 +21281,7 @@ mod tests {
                 artifact_path: root.join("fixture_intent_ir.json"),
                 document_key: "fixture".to_string(),
                 display_name: "Fixture".to_string(),
-                protocol_family: ProtocolFamily::AmbaGeneric,
+                prior_scope: PriorScope::Global,
                 overall_score: Some(100),
                 grade: Some("EXCELLENT".to_string()),
                 accepted_for_learning: true,

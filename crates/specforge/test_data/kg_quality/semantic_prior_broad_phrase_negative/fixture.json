@@ -7,7 +7,7 @@
         "prior_id": "semantic_phrase_prior_broad_transfer",
         "normalized_phrase": "transfer",
         "role": "handshake_valid_like",
-        "protocol_family": "amba_generic",
+        "prior_scope": "global",
         "source_kind": "prose_statement",
         "support_count": 5,
         "supporting_document_keys": ["seed_amba_broad_1", "seed_amba_broad_2", "seed_amba_broad_3"],

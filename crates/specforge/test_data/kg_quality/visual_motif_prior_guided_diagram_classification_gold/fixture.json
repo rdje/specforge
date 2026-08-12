@@ -8,7 +8,7 @@
         "normalized_caption_phrase": "<signal> cycle trace",
         "diagram_kind": "timing_diagram",
         "asset_kind": "diagram",
-        "protocol_family": "unknown",
+        "prior_scope": "global",
         "support_count": 2,
         "supporting_document_keys": ["seed_doc_1", "seed_doc_2"],
         "strongest_automation_confidence": "high"

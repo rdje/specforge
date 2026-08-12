@@ -1,3 +1,21 @@
+### SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i — make prior memory identity-independent
+
+- Replaced `ProtocolFamily` and filename/display-name inference with schema-7 `PriorScope::Global`. EvidenceIR,
+  SemanticIR, validation, KG fixtures, and `learn-priors` cannot select learned behavior from document identity.
+- Added a fail-closed compatibility firewall: current non-global scopes reject; schemas 1–6 quarantine their
+  seven identity-scoped semantic prior families rather than laundering them into global authority. Structural
+  extraction-profile priors remain eligible because their key is identity-independent.
+- Root-caused the schema-6 store as stale and non-reproducible: 14 accepted inputs included one deleted artifact,
+  while all 13 current inputs lacked the persisted validation required by policy. Validated the current inputs,
+  relearned, replayed affected chains, and reached a byte-identical fixed point on the third learn.
+- The final neutral store has 29 actor, 83 semantic, four modality, 443 temporal, zero table, 1,251 visual, 11
+  negative-knowledge, and two structural-profile priors. One actor-term contradiction is explicitly contested.
+- Reconciled every persisted chain: 24/24 measurable EvidenceIR and 78/78 SemanticIR, IntentIR, and adapters are
+  exact. The migration removes 37 stale prior-authored timing constraints from one chain and preserves their
+  source statements; global validated priors affect only matching normalized/structural evidence.
+- ADR 0036 and the mdBook define identity-independent learning and fixed-point refresh. Signal spelling, prompts,
+  corpus organization, and structural/behavioral signoff remain release blockers in `.6d.ii.d.ii`–`.f`.
+
 ### SPEC-TO-INTENT-ALIGNMENT.6d.ii.c — make protocol EvidenceIR document-derived
 
 - Replaced the named operation carrier, fixed phase enum, scalar direction, fixed response branches, actor-role

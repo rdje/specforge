@@ -1,6 +1,6 @@
 # Production-genericity pipeline audit
 
-Status: **discovery complete; SourceIR remediated; downstream production breach remains**
+Status: **discovery complete; SourceIR, EvidenceIR protocol carriers, and prior identity routing remediated; downstream production breach remains**
 Owner: `SPEC-TO-INTENT-ALIGNMENT.6d.ii`
 Audit date: 2026-08-12
 Audited revision: `b977a51ff24f966dcf6aca74ccf47d592a4fc452` plus the active `.6d.ii.a` replay publication
@@ -105,17 +105,17 @@ prior memory.
 | VLM enrichment | Caption-selected timing/state images; typed JSON prompts; table kind/grid proposals checked against headers | Source routing now inherits the neutral schema-2 classifier, but the production prompt still narrows the domain to “chip protocol.” |
 | Evidence assembly | Markdown blocks, spans, section anchors, references, table declarations, typed provenance | Broadly structural/input-derived. |
 | Evidence deterministic extraction | Registers, fields, signal inventories, relations, constraints, polarity, semantic hints, timing, frames, states, actors, operations | Protocol-structure breach remediated by `.6d.ii.c`: schema 2 uses document-derived generic frame/operation/state/direction records and neutralizes schema-1 authority on load. Other spelling-driven Evidence decisions and named production commentary remain in the `.d`/`.e` denominator. |
-| Prior-guided EvidenceIR | Table/visual/actor/semantic/temporal priors | Blocking: priors are selected by a named family inferred from document key/display name. Structural extraction profiles already demonstrate the correct direction. |
+| Prior-guided EvidenceIR | Table/visual/actor/semantic/temporal priors | Remediated by `.6d.ii.d.i`: schema 7 has one global scope; normalized current-document evidence and structural fingerprints select priors, while identity is provenance only. |
 | Text LLM/NLP | Per-sentence JSON extraction, declared-signal grounding, entity typing, dedup, optional promotion | Grounding is useful; one production prompt embeds named signal examples and another frames every input as a protocol specification. |
-| SemanticIR | Declared-signal gate; interfaces, actors, ports, connectivity, infrastructure, temporal rules/contracts; VLM fusion/fidelity; residuals | Mixed. Core grounding/fusion is generic. Signal-name substring inference and named-family prior routing are blocking. |
+| SemanticIR | Declared-signal gate; interfaces, actors, ports, connectivity, infrastructure, temporal rules/contracts; VLM fusion/fidelity; residuals | Mixed. Core grounding/fusion and global prior loading are generic. Signal-name substring inference remains blocking. |
 | IntentIR | Lossless carry-forward; actor/temporal relations; structural named-transaction recognition; residual decisions | Main synthesis is structural, but it publicly carries protocol-specific types/field names and production comments retain corpus identities. |
 | ISF adapter | Typed lowering, syntax validation, conflict rejection, unsupported-record residuals | Lowering logic is mostly neutral. It imports/counts/residualizes protocol-specific schema and contains corpus-specific production commentary. |
-| Validation/evaluation | Stage metrics, negative-knowledge lookup, extraction scores, completeness/category classification | Blocking where validation repeats named-family and signal-spelling decisions; evaluation schema exposes named protocol tasks. Category thresholds are corpus-calibrated constants presented as generic. |
+| Validation/evaluation | Stage metrics, negative-knowledge lookup, extraction scores, completeness/category classification | Prior lookup is neutral at schema 7. Signal-spelling decisions remain blocking; evaluation schema exposes named protocol tasks, and category thresholds are corpus-calibrated constants presented as generic. |
 | Corpus/trajectory utilities | Learn priors, structural clustering, KG pages, reviewed replay/controller | Structural clustering is neutral. Named family pages/routing and the reviewed-population snapshot are corpus-specific production code. |
 
 ## Confirmed production violations
 
-### P0 — document identity selects protocol-family semantics
+### Resolved in `.6d.ii.d.i` — document identity selected protocol-family semantics
 
 `ir/prior_memory.rs` defines `ProtocolFamily::{AmbaApb, AmbaAhb, AmbaAxi, AmbaGeneric,
 Unknown}`. `ProtocolFamily::infer` searches `document_key` and `display_name` for family fragments.
@@ -133,6 +133,20 @@ Renaming an identical PDF can therefore change the prior search scope. This is d
 identity-dependent extraction behavior. Replace it with document-derived structural fingerprints or
 an opaque caller-supplied profile whose provenance is explicit; the core must never infer semantics
 from a filename/title.
+
+`.6d.ii.d.i` removes that path. CorpusMemory schema 7 has only `PriorScope::Global`; EvidenceIR and
+SemanticIR loaders no longer receive a document key or display name, and learning groups priors by normalized
+current-document evidence and typed/structural keys. A current scope other than `global` rejects. Schemas 1–6
+quarantine their seven identity-scoped semantic prior families before typed load rather than relabelling them as
+global truth; identity-independent structural profiles may survive.
+
+The migration also exposed stale feedback authority. The old schema-6 store declared 14 accepted inputs,
+including one deleted artifact, and could not be reproduced from the 13 current inputs because they lacked the
+persisted validation required by policy. After validating those inputs, schema-7 learning converged in two
+iterations; the third learn was byte-identical. The final store contains 29 actor, 83 semantic, four modality,
+443 temporal, zero table, 1,251 visual, 11 negative, and two structural-profile priors. One global actor-term
+contradiction is surfaced as contested. Whole-chain replay is exact at 24/24 measurable EvidenceIR and 78/78 at
+every downstream stage. ADR 0036 records the fail-closed compatibility and fixed-point rule.
 
 ### Resolved in `.6d.ii.c` — protocol-specific EvidenceIR schema and extractors
 
@@ -288,11 +302,11 @@ decision sites.
 | Test support | `test_support.rs`; test-only functions in `ir/mod.rs` | Test-only by design; keep outside production dependencies. |
 | Thin stage/utility commands | `adapt`, `clean`, `doctor`, `evidence`, `ingest`, `inspect`, `intent`, `semantic`, `extract_conditions`, `extract_contracts`, `recover_register_bits`, `rescan_plan`, `signal_resolve` | No identity-specific extraction branch found; they inherit the IR behavior they invoke. |
 | Model/quality commands | `audit_extraction`, `enrich`, `extract_constraints_llm`, `grits_consensus`, `nli_verify`, `nlp_enrich`, `project_validation` | Mixed: core transport/scoring is neutral; prompt framing/examples and inherited named schemas need correction. Corpus literals observed in these files are otherwise inside test modules. |
-| Orchestration/evaluation commands | `converge`, `eval_extraction`, `kg_bench`, `validate` | Mixed/blocking through named schema, family inference, signal-name inference, or corpus test framework exposed as production. |
-| Corpus commands | `corpus_cluster`, `learn_priors`, `corpus_kb` | Structural clustering is the neutral model; named family prior/KG routing is blocking. |
+| Orchestration/evaluation commands | `converge`, `eval_extraction`, `kg_bench`, `validate` | Mixed: prior family inference is removed and KG prior fixtures use global structural/content mismatches; signal-name inference and corpus test framework exposure remain blocking. |
+| Corpus commands | `corpus_cluster`, `learn_priors`, `corpus_kb` | Structural clustering and schema-7 learning are neutral; named corpus-KG page/routing behavior remains blocking. |
 | SourceIR | `ir/source.rs`, `ir/source/docling_backend.rs` | Neutral at schema 2: lifecycle is structural, classifiers use generic form/role grammar with honest unknown, and legacy semantic labels fail closed. |
 | EvidenceIR/extraction | `ir/evidence.rs`, `extractor.rs`, `extraction_filters.rs`, `entity_typing.rs`, `condition_extract.rs`, `constraint_extract_llm.rs`, `nlp_relation_extract.rs`, `normative_vocab.rs`, `register_bits.rs` | Generic protocol-structure schema/extractors shipped in `.6d.ii.c`; other signal/name-list decisions remain blocking for `.d`, and named production commentary remains for `.e`. Framework, grounding primitives, and most parsers are reusable. |
-| Prior/reuse | `ir/prior_memory.rs`, `ir/corpus_cluster.rs` | Named family prior routing is blocking; structural fingerprint clustering is neutral. |
+| Prior/reuse | `ir/prior_memory.rs`, `ir/corpus_cluster.rs` | Neutral at schema 7: one global scope, fail-closed legacy quarantine, normalized evidence keys, and structural fingerprints; no document identity selects a lookup. |
 | SemanticIR | `ir/semantic.rs`, `ambiguity.rs`, `contract.rs`, `cve.rs`, `fidelity.rs`, `figure_region.rs`, `fusion.rs`, `nli_verify.rs`, `protocol_graph.rs`, `temporal_ltl.rs`, `waveform.rs` | Core typed fusion/verification is neutral; semantic name inference and named public commentary are blocking. Figure-region corpus paths are test-only. |
 | IntentIR | `ir/intent.rs` | Structural synthesis is broadly neutral; protocol-specific carried schema/public names and named production commentary are blocking. |
 | Adapter | `ir/adapters.rs`, `ir/isf_ir.rs` | Typed lowering is broadly neutral; carried named schema and named production commentary remain. |

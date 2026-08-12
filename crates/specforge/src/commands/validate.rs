@@ -13,7 +13,7 @@ use crate::ir::evidence::{
 };
 use crate::ir::intent::{IntentIr, count_nested_steps};
 use crate::ir::prior_memory::{
-    CorpusMemory, NegativeKnowledgeKind, ProtocolFamily,
+    CorpusMemory, NegativeKnowledgeKind, PriorScope,
     interface_signal_conflict_negative_knowledge_pattern,
     residual_decision_negative_knowledge_pattern,
     signal_connectivity_conflict_negative_knowledge_pattern,
@@ -923,7 +923,7 @@ fn load_prior_memory_for_validation(prior_memory_path: Option<&Path>) -> Option<
     let prior_memory_path =
         resolve_existing(prior_memory_path, PersistedPathOrigin::RepositoryOwned).ok()?;
 
-    serde_json::from_str::<CorpusMemory>(&fs::read_to_string(prior_memory_path).ok()?).ok()
+    CorpusMemory::load_from_path(&prior_memory_path).ok()
 }
 
 fn evidence_negative_knowledge_prior_matches(ir: &EvidenceIr) -> Vec<String> {
@@ -931,10 +931,7 @@ fn evidence_negative_knowledge_prior_matches(ir: &EvidenceIr) -> Vec<String> {
     else {
         return Vec::new();
     };
-    let protocol_family = ProtocolFamily::infer(
-        &ir.document_identity.document_key,
-        &ir.document_identity.display_name,
-    );
+    let prior_scope = PriorScope::Global;
 
     ir.signal_semantic_conflicts
         .iter()
@@ -942,7 +939,7 @@ fn evidence_negative_knowledge_prior_matches(ir: &EvidenceIr) -> Vec<String> {
             let pattern = signal_semantic_conflict_negative_knowledge_pattern(conflict)?;
             corpus_memory
                 .negative_knowledge_pattern_is_known(
-                    Some(protocol_family),
+                    Some(prior_scope),
                     NegativeKnowledgeKind::SignalSemanticConflict,
                     &pattern,
                 )
@@ -952,7 +949,7 @@ fn evidence_negative_knowledge_prior_matches(ir: &EvidenceIr) -> Vec<String> {
             let pattern = signal_polarity_conflict_negative_knowledge_pattern(conflict)?;
             corpus_memory
                 .negative_knowledge_pattern_is_known(
-                    Some(protocol_family),
+                    Some(prior_scope),
                     NegativeKnowledgeKind::SignalPolarityConflict,
                     &pattern,
                 )
@@ -964,7 +961,7 @@ fn evidence_negative_knowledge_prior_matches(ir: &EvidenceIr) -> Vec<String> {
 fn push_negative_knowledge_match(
     matches: &mut Vec<String>,
     corpus_memory: &CorpusMemory,
-    protocol_family: ProtocolFamily,
+    prior_scope: PriorScope,
     knowledge_kind: NegativeKnowledgeKind,
     normalized_pattern: Option<String>,
     related_id: &str,
@@ -973,7 +970,7 @@ fn push_negative_knowledge_match(
         return;
     };
     if corpus_memory.negative_knowledge_pattern_is_known(
-        Some(protocol_family),
+        Some(prior_scope),
         knowledge_kind,
         &normalized_pattern,
     ) {
@@ -992,7 +989,7 @@ struct CarriedNegativeKnowledgeSurfaces<'a> {
 
 fn negative_knowledge_prior_matches_for_carried_surfaces(
     corpus_memory: &CorpusMemory,
-    protocol_family: ProtocolFamily,
+    prior_scope: PriorScope,
     surfaces: CarriedNegativeKnowledgeSurfaces<'_>,
 ) -> Vec<String> {
     let mut matches = Vec::new();
@@ -1000,7 +997,7 @@ fn negative_knowledge_prior_matches_for_carried_surfaces(
         push_negative_knowledge_match(
             &mut matches,
             corpus_memory,
-            protocol_family,
+            prior_scope,
             NegativeKnowledgeKind::SignalSemanticConflict,
             signal_semantic_conflict_negative_knowledge_pattern(conflict),
             &conflict.conflict_id,
@@ -1010,7 +1007,7 @@ fn negative_knowledge_prior_matches_for_carried_surfaces(
         push_negative_knowledge_match(
             &mut matches,
             corpus_memory,
-            protocol_family,
+            prior_scope,
             NegativeKnowledgeKind::TemporalValueConflict,
             temporal_value_conflict_negative_knowledge_pattern(conflict),
             &conflict.conflict_id,
@@ -1020,7 +1017,7 @@ fn negative_knowledge_prior_matches_for_carried_surfaces(
         push_negative_knowledge_match(
             &mut matches,
             corpus_memory,
-            protocol_family,
+            prior_scope,
             NegativeKnowledgeKind::SignalPolarityConflict,
             signal_polarity_conflict_negative_knowledge_pattern(conflict),
             &conflict.conflict_id,
@@ -1030,7 +1027,7 @@ fn negative_knowledge_prior_matches_for_carried_surfaces(
         push_negative_knowledge_match(
             &mut matches,
             corpus_memory,
-            protocol_family,
+            prior_scope,
             NegativeKnowledgeKind::InterfaceSignalConflict,
             interface_signal_conflict_negative_knowledge_pattern(conflict),
             &conflict.conflict_id,
@@ -1040,7 +1037,7 @@ fn negative_knowledge_prior_matches_for_carried_surfaces(
         push_negative_knowledge_match(
             &mut matches,
             corpus_memory,
-            protocol_family,
+            prior_scope,
             NegativeKnowledgeKind::SignalConnectivityConflict,
             signal_connectivity_conflict_negative_knowledge_pattern(conflict),
             &conflict.conflict_id,
@@ -1050,7 +1047,7 @@ fn negative_knowledge_prior_matches_for_carried_surfaces(
         push_negative_knowledge_match(
             &mut matches,
             corpus_memory,
-            protocol_family,
+            prior_scope,
             NegativeKnowledgeKind::ResidualDecision,
             residual_decision_negative_knowledge_pattern(residual),
             &residual.packet_id,
@@ -1068,14 +1065,11 @@ fn semantic_negative_knowledge_prior_matches(ir: &SemanticIr) -> Vec<String> {
     else {
         return Vec::new();
     };
-    let protocol_family = ProtocolFamily::infer(
-        &ir.document_identity.document_key,
-        &ir.document_identity.display_name,
-    );
+    let prior_scope = PriorScope::Global;
 
     negative_knowledge_prior_matches_for_carried_surfaces(
         &corpus_memory,
-        protocol_family,
+        prior_scope,
         CarriedNegativeKnowledgeSurfaces {
             signal_semantic_conflicts: &ir.signal_semantic_conflicts,
             temporal_conflicts: &ir.temporal_conflicts,
@@ -1099,14 +1093,11 @@ fn intent_negative_knowledge_prior_matches(ir: &IntentIr) -> Vec<String> {
     else {
         return Vec::new();
     };
-    let protocol_family = ProtocolFamily::infer(
-        &ir.document_identity.document_key,
-        &ir.document_identity.display_name,
-    );
+    let prior_scope = PriorScope::Global;
 
     negative_knowledge_prior_matches_for_carried_surfaces(
         &corpus_memory,
-        protocol_family,
+        prior_scope,
         CarriedNegativeKnowledgeSurfaces {
             signal_semantic_conflicts: &ir.signal_semantic_conflicts,
             temporal_conflicts: &ir.temporal_conflicts,
@@ -7778,7 +7769,7 @@ mod tests {
         artifact_path: PathBuf,
     ) -> CorpusMemory {
         CorpusMemory {
-            schema_version: 6,
+            schema_version: crate::ir::prior_memory::CORPUS_MEMORY_SCHEMA_VERSION,
             update_policy: CorpusMemoryUpdatePolicyRecord {
                 advisory_only: true,
                 requires_validated_intent_ir: true,
@@ -7790,7 +7781,7 @@ mod tests {
                 artifact_path,
                 document_key: "seed_doc".to_string(),
                 display_name: "seed_doc".to_string(),
-                protocol_family: ProtocolFamily::Unknown,
+                prior_scope: PriorScope::Global,
                 overall_score: Some(90),
                 grade: Some("EXCELLENT".to_string()),
                 accepted_for_learning: true,
@@ -7822,7 +7813,7 @@ mod tests {
         }
 
         let corpus_memory = CorpusMemory {
-            schema_version: 6,
+            schema_version: crate::ir::prior_memory::CORPUS_MEMORY_SCHEMA_VERSION,
             update_policy: CorpusMemoryUpdatePolicyRecord {
                 advisory_only: true,
                 requires_validated_intent_ir: true,
@@ -7834,7 +7825,7 @@ mod tests {
                 artifact_path: root.join("seed_intent_ir.json"),
                 document_key: "seed_doc".to_string(),
                 display_name: "Seed Doc".to_string(),
-                protocol_family: ProtocolFamily::Unknown,
+                prior_scope: PriorScope::Global,
                 overall_score: Some(100),
                 grade: Some("EXCELLENT".to_string()),
                 accepted_for_learning: true,
@@ -7845,7 +7836,7 @@ mod tests {
             semantic_modality_reliability_priors: vec![SemanticModalityReliabilityPriorRecord {
                 prior_id: "semantic_modality_reliability_prior_0001".to_string(),
                 role,
-                protocol_family: ProtocolFamily::Unknown,
+                prior_scope: PriorScope::Global,
                 source_kind,
                 support_count: 3,
                 supporting_document_keys: vec!["seed_doc".to_string()],
@@ -9216,7 +9207,7 @@ mod tests {
         )?;
 
         let corpus_memory = CorpusMemory {
-            schema_version: 6,
+            schema_version: crate::ir::prior_memory::CORPUS_MEMORY_SCHEMA_VERSION,
             update_policy: CorpusMemoryUpdatePolicyRecord {
                 advisory_only: true,
                 requires_validated_intent_ir: true,
@@ -9228,7 +9219,7 @@ mod tests {
                 artifact_path: tempdir.path().join("seed_intent_ir.json"),
                 document_key: "seed_doc".to_string(),
                 display_name: "seed_doc".to_string(),
-                protocol_family: ProtocolFamily::Unknown,
+                prior_scope: PriorScope::Global,
                 overall_score: Some(90),
                 grade: Some("EXCELLENT".to_string()),
                 accepted_for_learning: true,
@@ -9244,7 +9235,7 @@ mod tests {
                 prior_id: "negative_knowledge_prior_0001".to_string(),
                 knowledge_kind: NegativeKnowledgeKind::SignalSemanticConflict,
                 normalized_pattern: "signal_semantic_conflict:prose_statement:handshake_ready_like|signal_description_table:handshake_valid_like".to_string(),
-                protocol_family: ProtocolFamily::Unknown,
+                prior_scope: PriorScope::Global,
                 support_count: 2,
                 supporting_document_keys: vec!["seed_doc".to_string()],
                 strongest_automation_confidence: AutomationConfidence::Medium,
@@ -9462,7 +9453,7 @@ mod tests {
                 normalized_pattern:
                     "signal_polarity_conflict:prose_statement:active_high|signal_description_table:active_low"
                         .to_string(),
-                protocol_family: ProtocolFamily::Unknown,
+                prior_scope: PriorScope::Global,
                 support_count: 2,
                 supporting_document_keys: vec!["seed_doc".to_string()],
                 strongest_automation_confidence: AutomationConfidence::Medium,
@@ -15363,7 +15354,7 @@ mod tests {
                 normalized_pattern:
                     "signal_polarity_conflict:prose_statement:active_high|signal_description_table:active_low"
                         .to_string(),
-                protocol_family: ProtocolFamily::Unknown,
+                prior_scope: PriorScope::Global,
                 support_count: 2,
                 supporting_document_keys: vec!["seed_doc".to_string()],
                 strongest_automation_confidence: AutomationConfidence::Medium,
@@ -15520,7 +15511,7 @@ mod tests {
                 knowledge_kind: NegativeKnowledgeKind::TemporalValueConflict,
                 normalized_pattern: "temporal_value_conflict:phase=post_tick;values=high|low"
                     .to_string(),
-                protocol_family: ProtocolFamily::Unknown,
+                prior_scope: PriorScope::Global,
                 support_count: 2,
                 supporting_document_keys: vec!["seed_doc".to_string()],
                 strongest_automation_confidence: AutomationConfidence::Medium,
@@ -15665,7 +15656,7 @@ mod tests {
                 knowledge_kind: NegativeKnowledgeKind::ResidualDecision,
                 normalized_pattern: "residual_decision:semantic_actor_boundary_inference"
                     .to_string(),
-                protocol_family: ProtocolFamily::Unknown,
+                prior_scope: PriorScope::Global,
                 support_count: 2,
                 supporting_document_keys: vec!["seed_doc".to_string()],
                 strongest_automation_confidence: AutomationConfidence::Medium,

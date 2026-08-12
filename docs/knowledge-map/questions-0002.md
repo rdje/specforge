@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
+  > do the wire-gold .isf carry over-width value literals (only AXI ihi0022_l has one — AWCMO; and AXI already fails strict on the orthogonal (port expr) error; APB/AHB/SWD have none; WIRE-BASED-100 measures extraction F1 not .isf bytes so it is orthogonal)
+- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
+  > do transactions lower to .isf (only those with composed steps; signal-set/channel/phase membership is recognised-but-unlowered)
+- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
+  > do unfiltered SemanticIR conditional rules reach an emitted .isf
+- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
+  > does (sample S) work for an interface OUTPUT signal too (yes — FSMGen does not gate sample on direction)
+- [transaction-capture-census](../knowledge/transaction-capture-census.md)
+  > does .2i per-phase grouping change the emitted .isf (no — phase_membership is IntentIR metadata, the emitter lowers steps not it; byte-identical on all 4 wire docs)
+- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
+  > does .2m change the emitted .isf or the WIRE-BASED-100 surfaces (no — provably orthogonal)
+- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
+  > does .5.i change anything besides enums (yes, beneficially — dropped Enum statements leave discovered_values, so off-gold junk value-constraints derived from junk-enum members also disappear, e.g. AXI ACTIVATEACK A -> grounded ACTIVATEACK 1; distinct constraint facts identical, WIRE-BASED-100 unaffected)
+- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
+  > does CPU-ISA (category 4) intent need a new ISF construct or does it map onto the existing register/storage abstraction (CSRs map onto storage/register — no new construct; non-register ISA semantics are honest non-targets)
+- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
+  > does ExtractionContext carry a cross-document cluster profile
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
   > does FSMGen --strict --check use or validate signal direction (input vs output)
 - [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
@@ -279,21 +297,3 @@
   > how are document keys in the source PDF registry derived from filenames
 - [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md)
   > how are duplicate signal constraints deduplicated in the LLM-primary extractor
-- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
-  > how are external held-out PDFs identified without absolute host paths
-- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
-  > how are external reviewed PDFs replayed without persisting host paths
-- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
-  > how are extraction-profile priors looked up (extraction_profile_priors_for signature-subset match)
-- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
-  > how are generic SemanticIR phases different from transaction_phases
-- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
-  > how are human corpus KB notes preserved during refresh
-- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
-  > how are incomplete gold and product failure distinguished
-- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
-  > how are live-document ceiling increases and immutable debt baselines tested
-- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
-  > how are message fields written as section headings extracted
-- [message-field-records-surface](../knowledge/message-field-records-surface.md)
-  > how are message-field tables distinguished from register-field tables

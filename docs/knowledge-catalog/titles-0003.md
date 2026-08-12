@@ -5,6 +5,7 @@
 
 | Fact | Established | Status | Title |
 | --- | --- | --- | --- |
+| [live-document-coverage-authority](../knowledge/live-document-coverage-authority.md) | 2026-08-08 | `current` | Parent Git index defines SpecForge live-Markdown coverage |
 | [live-document-derived-state-contract-gap](../knowledge/live-document-derived-state-contract-gap.md) | 2026-08-09 | `current` | Derived-state field and copy plane is independently closed |
 | [llm-primary-condition-subject-gate](../knowledge/llm-primary-condition-subject-gate.md) | 2026-06-10 | `current` | Condition-only-subject gate — APB/AHB/AXI constraint task all P=R=F1=1.000 (FPs 3→0) |
 | [llm-primary-constraint-dedup](../knowledge/llm-primary-constraint-dedup.md) | 2026-06-10 | `current` | LLM-primary constraint dedup — provenance-merging, condition-aware (AXI 54→50 live) |
@@ -60,4 +61,3 @@
 | [rolling-ledger-record-grammars](../knowledge/rolling-ledger-record-grammars.md) | 2026-08-08 | `current` | The four root rolling ledgers use three explicit whole-record grammars |
 | [root-reference-mdbook-authority](../knowledge/root-reference-mdbook-authority.md) | 2026-08-08 | `current` | Root user and architecture documents are bounded pointers to mdBook product contracts |
 | [rotated-signal-table-extraction](../knowledge/rotated-signal-table-extraction.md) | 2026-06-07 | `current` | Misaligned signal tables (name column rotated to last) are extracted by content-based column detection |
-| [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md) | 2026-06-17 | `current` | DTI-class message fields live in SECTION HEADINGS (`<NAME>, bits [hi:lo]`), not tables — read them into mes… |

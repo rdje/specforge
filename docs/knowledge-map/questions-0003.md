@@ -2,6 +2,24 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > how are external held-out PDFs identified without absolute host paths
+- [qualified-current-source-to-intent-result](../knowledge/qualified-current-source-to-intent-result.md)
+  > how are external reviewed PDFs replayed without persisting host paths
+- [corpus-cluster-fingerprint](../knowledge/corpus-cluster-fingerprint.md)
+  > how are extraction-profile priors looked up (extraction_profile_priors_for signature-subset match)
+- [semantic-section-phases-require-heading-authority](../knowledge/semantic-section-phases-require-heading-authority.md)
+  > how are generic SemanticIR phases different from transaction_phases
+- [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md)
+  > how are human corpus KB notes preserved during refresh
+- [source-to-intent-vertical-evaluator](../knowledge/source-to-intent-vertical-evaluator.md)
+  > how are incomplete gold and product failure distinguished
+- [live-document-containment-fixture-gate](../knowledge/live-document-containment-fixture-gate.md)
+  > how are live-document ceiling increases and immutable debt baselines tested
+- [section-header-message-field-extraction](../knowledge/section-header-message-field-extraction.md)
+  > how are message fields written as section headings extracted
+- [message-field-records-surface](../knowledge/message-field-records-surface.md)
+  > how are message-field tables distinguished from register-field tables
 - [byte-location-structure-field-extraction](../knowledge/byte-location-structure-field-extraction.md)
   > how are multi-word field names like Validation Bits or FRU ID recovered
 - [offset-suffixed-dword-relative-bit-cells](../knowledge/offset-suffixed-dword-relative-bit-cells.md)
@@ -280,21 +298,3 @@
   > how does the SemanticIR Phase-2 role-term scan (build_actors ACTOR_TERMS) mint Class-C actors
 - [vlm-table-strategy](../knowledge/vlm-table-strategy.md)
   > how does the VLM understand tables / can a VLM read PDF tables
-- [active-task-migration-transaction](../knowledge/active-task-migration-transaction.md)
-  > how does the active task migration preserve non-ASCII legacy bytes
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > how does the ambiguity gate keep channel membership boundary-precise (bar #3)
-- [trajectory-controller-engine](../knowledge/trajectory-controller-engine.md)
-  > how does the controller prove a proposed task is task-tree owned
-- [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md)
-  > how does the corpus KB aggregate fixture page stay bounded as fixtures grow
-- [corpus-task-bounded-active-root-and-evidence-parts](../decisions/0024-corpus-task-bounded-active-root-and-evidence-parts.md)
-  > how does the corpus task preserve all evidence after containment
-- [isf-unrenderable-rule-value-residual](../knowledge/isf-unrenderable-rule-value-residual.md)
-  > how does the emitter decide a rule drive value is renderable (is_safe_isf_scalar_value — non-empty, whitespace-free; a prose value like 'the value that was presented on the ARLOOP signal' fails)
-- [llm-primary-must-be-value-recall](../knowledge/llm-primary-must-be-value-recall.md)
-  > how does the extract-constraints-llm prompt express a validity requirement
-- [dotted-cross-reference-subject-gate](../knowledge/dotted-cross-reference-subject-gate.md)
-  > how does the extractor avoid minting a constraint about a cross-referenced register field
-- [signal-presence-matrix-capture](../knowledge/signal-presence-matrix-capture.md)
-  > how does the fused two-label column ACE5-Lite ACE5-LiteACP split

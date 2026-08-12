@@ -2,12 +2,18 @@
 
 > **AUTO-GENERATED — DO NOT EDIT.** Canonical questions live in fact front matter.
 
+- [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
+  > Can CorpusMemory infer a protocol family from a filename?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Can SpecForge theoretically be specification and PDF neutral?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > Can a signal or response spelling select a production extractor?
+- [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
+  > Can legacy named-family priors steer current extraction?
 - [docling-device-cpu](../knowledge/docling-device-cpu.md)
   > Cannot convert a MPS Tensor to float64
+- [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
+  > Did identity-independent prior learning converge?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > Does SemanticIR and IntentIR preserve generic protocol records?
 - [value-binder-alphabetic-whole-word](../knowledge/value-binder-alphabetic-whole-word.md)
@@ -16,6 +22,8 @@
   > EXTRACTION-QUALITY-GAUGE.3g what is the dotted-cross-reference spurious-subject gate
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > How are frame fields extracted without hardcoding a protocol?
+- [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
+  > How are old CorpusMemory schemas migrated?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > How does EvidenceIR schema 2 handle old protocol-specific artifacts?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
@@ -24,10 +32,14 @@
   > How does SourceIR classification remain specification neutral?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Were downstream artifacts reconciled after SourceIR schema 2?
+- [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
+  > What current priors are learned without protocol families?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > What does spec-neutral extraction mean?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > What happens when schema-1 SourceIR is loaded?
+- [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
+  > What is PriorScope in CorpusMemory schema 7?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
   > What replaced SwdOperation and SerialFramePhase?
 - [evidenceir-generic-protocol-semantics](../knowledge/evidenceir-generic-protocol-semantics.md)
@@ -40,6 +52,8 @@
   > Why is a forbidden vocabulary list insufficient?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why was PDF-AGNOSTIC-EXTRACTION closure superseded?
+- [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md)
+  > Why was the old prior-memory store rejected?
 - [production-genericity-boundary](../knowledge/production-genericity-boundary.md)
   > Why were legacy SourceIR classifications neutralized?
 - [apb-signal-catalog-fully-extracted](../knowledge/apb-signal-catalog-fully-extracted.md)
@@ -161,10 +175,14 @@
   > can certification administration become a SemanticIR phase or gate
 - [timing-scalar-rows-require-independent-cell-geometry](../knowledge/timing-scalar-rows-require-independent-cell-geometry.md)
   > can identical values in separate timing cells remain valid
+- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
+  > can learned priors remain useful without knowing a specification family
 - [legal-administrative-prose-is-not-semantic-authority](../knowledge/legal-administrative-prose-is-not-semantic-authority.md)
   > can legal boilerplate become a SemanticIR gate
 - [semantic-interface-authority-empty-fallback](../knowledge/semantic-interface-authority-empty-fallback.md)
   > can low confidence statement tokens create an interface without a formal signal declaration
+- [prior-memory-is-identity-independent](../decisions/0036-prior-memory-is-identity-independent.md)
+  > can prior memory select extraction by filename or protocol family
 - [persisted-path-origin-and-rebase-contract](../knowledge/persisted-path-origin-and-rebase-contract.md)
   > can provenance load after source normalized cleanup removes its leaf
 - [fsmgen-ignores-signal-direction](../knowledge/fsmgen-ignores-signal-direction.md)
@@ -279,21 +297,3 @@
   > do the register_bits.rs tiling gates validate field order (NO — only width-sum + name-multiset; a row-jumbled flattened table could pass both gates with WRONG bits, so a deterministic-table reader is strictly more dangerous than the VLM front-end)
 - [register-reset-isf-emit](../knowledge/register-reset-isf-emit.md)
   > do the wire docs (APB/AHB/AXI/SWD) change when register reset is lowered to ISF (no — ZERO composable resets, .isf byte-identical, WIRE-BASED-100 holds trivially)
-- [isf-value-width-operand-contract](../knowledge/isf-value-width-operand-contract.md)
-  > do the wire-gold .isf carry over-width value literals (only AXI ihi0022_l has one — AWCMO; and AXI already fails strict on the orthogonal (port expr) error; APB/AHB/SWD have none; WIRE-BASED-100 measures extraction F1 not .isf bytes so it is orthogonal)
-- [document-intent-isf-completeness](../knowledge/document-intent-isf-completeness.md)
-  > do transactions lower to .isf (only those with composed steps; signal-set/channel/phase membership is recognised-but-unlowered)
-- [semantic-empty-catalog-disables-grounding-filter](../knowledge/semantic-empty-catalog-disables-grounding-filter.md)
-  > do unfiltered SemanticIR conditional rules reach an emitted .isf
-- [transaction-body-emission-faithfully-complete](../knowledge/transaction-body-emission-faithfully-complete.md)
-  > does (sample S) work for an interface OUTPUT signal too (yes — FSMGen does not gate sample on direction)
-- [transaction-capture-census](../knowledge/transaction-capture-census.md)
-  > does .2i per-phase grouping change the emitted .isf (no — phase_membership is IntentIR metadata, the emitter lowers steps not it; byte-identical on all 4 wire docs)
-- [transaction-channel-membership](../knowledge/transaction-channel-membership.md)
-  > does .2m change the emitted .isf or the WIRE-BASED-100 surfaces (no — provably orthogonal)
-- [generic-enum-conflation](../knowledge/generic-enum-conflation.md)
-  > does .5.i change anything besides enums (yes, beneficially — dropped Enum statements leave discovered_values, so off-gold junk value-constraints derived from junk-enum members also disappear, e.g. AXI ACTIVATEACK A -> grounded ACTIVATEACK 1; distinct constraint facts identical, WIRE-BASED-100 unaffected)
-- [cat4-isa-csr-lowering-decision](../knowledge/cat4-isa-csr-lowering-decision.md)
-  > does CPU-ISA (category 4) intent need a new ISF construct or does it map onto the existing register/storage abstraction (CSRs map onto storage/register — no new construct; non-register ISA semantics are honest non-targets)
-- [corpus-reuse-activate-only-no-current-consumer](../knowledge/corpus-reuse-activate-only-no-current-consumer.md)
-  > does ExtractionContext carry a cross-document cluster profile

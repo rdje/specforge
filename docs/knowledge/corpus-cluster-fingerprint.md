@@ -75,8 +75,8 @@ opt-in extractor + a measured recall uplift. `.4` = an offline LLM/VLM cluster p
 Vec<ExtractionProfilePriorRecord>` — per record: `cluster_signature` (sorted derived feature tokens; the
 lookup key), `fired_extractors` (the persisted twin `ExtractionProfileExtractorSupportRecord` of the union
 with per-member support), `support_count` (always ≥ 2; **singleton clusters are never harvested** — a cluster
-of one has no cross-document pattern), `supporting_document_keys`. Deliberately **NOT `ProtocolFamily`-scoped**:
-the ADR-0006-safe structural signature IS the scope (vendor/layout families cross protocol-name lines).
+of one has no cross-document pattern), `supporting_document_keys`. This family is keyed directly by the
+ADR-0006-safe structural signature rather than the general `PriorScope` (layout families cross identity lines).
 Harvested in `learn-priors` from the accepted artifacts' EvidenceIR fingerprints (`load_evidence_ir_for_learning`)
 via pure `materialize_extraction_profile_priors`, clustered at the shared
 `corpus_cluster::DEFAULT_FINGERPRINT_SIMILARITY_THRESHOLD = 0.6` — the same const that backs the

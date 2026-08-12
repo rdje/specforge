@@ -7,7 +7,7 @@
         "prior_id": "negative_knowledge_prior_0001",
         "knowledge_kind": "signal_connectivity_conflict",
         "normalized_pattern": "signal_connectivity_conflict:multiple_producers",
-        "protocol_family": "unknown",
+        "prior_scope": "global",
         "support_count": 2,
         "supporting_document_keys": ["seed_doc_1", "seed_doc_2"],
         "strongest_automation_confidence": "medium"

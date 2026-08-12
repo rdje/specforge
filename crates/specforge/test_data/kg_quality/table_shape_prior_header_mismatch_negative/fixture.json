@@ -1,15 +1,15 @@
 {
-  "name": "table_shape_prior_protocol_family_mismatch_negative",
+  "name": "table_shape_prior_header_mismatch_negative",
   "source": "axi_source.md",
   "prior_memory_patch": {
     "table_shape_priors": [
       {
-        "prior_id": "table_shape_prior_apb_signal_table",
-        "normalized_header_signature": "name | direction | width",
+        "prior_id": "table_shape_prior_unrelated_header",
+        "normalized_header_signature": "symbol | direction | width",
         "table_kind": "signal_description",
-        "protocol_family": "amba_apb",
+        "prior_scope": "global",
         "support_count": 3,
-        "supporting_document_keys": ["seed_apb_1", "seed_apb_2", "seed_apb_3"],
+        "supporting_document_keys": ["seed_doc_1", "seed_doc_2", "seed_doc_3"],
         "strongest_automation_confidence": "high"
       }
     ]

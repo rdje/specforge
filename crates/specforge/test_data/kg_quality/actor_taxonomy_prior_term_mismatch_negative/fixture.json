@@ -1,15 +1,15 @@
 {
-  "name": "actor_taxonomy_prior_protocol_family_mismatch_negative",
+  "name": "actor_taxonomy_prior_term_mismatch_negative",
   "source": "axi_actor_taxonomy_mismatch.md",
   "prior_memory_patch": {
     "actor_taxonomy_priors": [
       {
-        "prior_id": "actor_taxonomy_prior_apb_issuer",
-        "normalized_actor_term": "issuer",
+        "prior_id": "actor_taxonomy_prior_unrelated_term",
+        "normalized_actor_term": "unrelated actor",
         "taxonomy_role": "requester_like",
-        "protocol_family": "amba_apb",
+        "prior_scope": "global",
         "support_count": 3,
-        "supporting_document_keys": ["apb_actor_taxonomy_seed_1", "apb_actor_taxonomy_seed_2"],
+        "supporting_document_keys": ["seed_actor_1", "seed_actor_2"],
         "strongest_automation_confidence": "high",
         "strongest_grounding_strength": "single_source"
       }

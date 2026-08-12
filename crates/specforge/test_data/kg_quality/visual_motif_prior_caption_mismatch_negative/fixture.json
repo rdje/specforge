@@ -1,16 +1,16 @@
 {
-  "name": "visual_motif_prior_protocol_family_mismatch_negative",
+  "name": "visual_motif_prior_caption_mismatch_negative",
   "source": "axi_source.md",
   "prior_memory_patch": {
     "visual_motif_priors": [
       {
-        "prior_id": "visual_motif_prior_apb_cycle_trace",
-        "normalized_caption_phrase": "<signal> cycle trace",
+        "prior_id": "visual_motif_prior_unrelated_caption",
+        "normalized_caption_phrase": "<signal> unrelated cycle trace",
         "diagram_kind": "timing_diagram",
         "asset_kind": "diagram",
-        "protocol_family": "amba_apb",
+        "prior_scope": "global",
         "support_count": 3,
-        "supporting_document_keys": ["seed_apb_1", "seed_apb_2", "seed_apb_3"],
+        "supporting_document_keys": ["seed_doc_1", "seed_doc_2", "seed_doc_3"],
         "strongest_automation_confidence": "high"
       }
     ]

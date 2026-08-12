@@ -1,12 +1,12 @@
 {
-  "name": "temporal_prior_protocol_family_mismatch_negative",
+  "name": "temporal_prior_phrase_mismatch_negative",
   "source": "axi_temporal_prior_mismatch.md",
   "prior_memory_patch": {
     "temporal_phrase_priors": [
       {
-        "prior_id": "temporal_phrase_prior_apb_one_beat_later",
-        "normalized_phrase": "<signal> must be asserted one beat later",
-        "protocol_family": "amba_apb",
+        "prior_id": "temporal_phrase_prior_unrelated_phrase",
+        "normalized_phrase": "<signal> must be asserted two beats later",
+        "prior_scope": "global",
         "cycle_window": {
           "min_cycles": 1,
           "max_cycles": 1
@@ -14,7 +14,7 @@
         "actor_grounded": false,
         "handshake_completion": false,
         "support_count": 3,
-        "supporting_document_keys": ["seed_apb_1", "seed_apb_2", "seed_apb_3"],
+        "supporting_document_keys": ["seed_doc_1", "seed_doc_2", "seed_doc_3"],
         "strongest_automation_confidence": "high"
       }
     ]

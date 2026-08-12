@@ -253,9 +253,38 @@ expressiveness as the bottleneck.
   Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c — make protocol EvidenceIR document-derived`
 
 - ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d`
-  Status: `pending`
+  Status: `in_progress`
   Goal: `remove identity- and spelling-driven prior, semantic, prompt, validation, and corpus-command decisions`
   Acceptance: `document key/display name and named family enums cannot steer extraction; signal spelling cannot infer handshake, clock, reset, or interface authority; prompts use neutral synthetic placeholders; production corpus organization is structural and data-derived`
+  Verification: `pending`
+  Commit: `completed by .6d.ii.d.i through .6d.ii.d.iv child commits`
+  Children: `.6d.ii.d.i`, `.6d.ii.d.ii`, `.6d.ii.d.iii`, `.6d.ii.d.iv`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i`
+  Status: `done`
+  Goal: `remove document-identity and named-family authority from prior memory`
+  Acceptance: `prior production types and lookup paths contain no vendor/protocol family enum; learning groups only identity-independent normalized evidence or structural fingerprints; old named-family memory cannot steer current extraction; exact affected chains are reconciled under ADR 0025`
+  Verification: `schema-7 scope/legacy/future tests 97/97; learn-priors tests 16/16; KG unit tests 14/14 and tracked fixtures 156/156; the 13-input store relearns byte-identically at a416cc8b…6239633 with one explicit contest; ADR 0025 currency is exact at EvidenceIR 24/24 measurable and 78/78 SemanticIR, IntentIR, and adapters; 58 changed IR artifacts and two adapters validate, two renderable ISFs pass pinned FSMGen strict, scratch is absent, and full run_ci passes all eight doctrines, warning-deny 1,880/6/0 Rust tests, rustdoc, mdBook, and final locality`
+  Commit: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i — make prior memory identity-independent`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii`
+  Status: `pending`
+  Goal: `remove identifier-spelling authority from EvidenceIR, SemanticIR, and validation`
+  Acceptance: `renaming a signal without changing its declarations/evidence cannot change interface admission, handshake role, clock/reset role, or validation outcome; unresolved semantics stay explicit`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii`
+  Status: `pending`
+  Goal: `neutralize production prompts and replace named corpus organization with structural organization`
+  Acceptance: `model prompts describe generic typed digital intent with synthetic placeholders and current-document grounding only; production corpus/KG pages and routing use structural labels rather than a named protocol family`
+  Verification: `pending`
+  Commit: `pending`
+
+- ID: `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv`
+  Status: `pending`
+  Goal: `qualify the complete identity-and-spelling remediation and publish exact current deltas`
+  Acceptance: `all retained chains are current; identity and alpha-renaming controls cover the repaired paths; public/live/book/retrieval truth records intended recall changes and remaining .e/.f boundaries; full CI passes`
   Verification: `pending`
   Commit: `pending`
 
@@ -325,13 +354,16 @@ expressiveness as the bottleneck.
 | 18 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.a` | `done` | clean replay, whole-pipeline audit, test-only snapshot boundary, durable signoff design, cleanup, and full CI complete |
 | 19 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b` | `done` | SourceIR schema 2 and exact ten-chain reconciliation are committed and current |
 | 20 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c` | `done` | EvidenceIR schema 2 and all 78 persisted downstream chains are generic, reconciled, and current |
-| 21 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d` | `pending` | remove prior/semantic/prompt/command identity and spelling inference on the neutral schema |
-| 22 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e` | `pending` | structurally gate the complete neutral production graph after remediation |
-| 23 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `pending` | behavioral metamorphic and whole-population qualification closes the genericity parent |
-| 24 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | hard-first controller must remove the two remaining unrelated register fabrications before recall work |
-| 25 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
-| 26 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
-| 27 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
+| 21 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i` | `done` | identity-independent schema-7 prior memory, neutral KG controls, fixed-point learning, and exact chain reconciliation are complete |
+| 22 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.ii` | `pending` | remove signal-spelling authority from evidence, semantics, and validation |
+| 23 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iii` | `pending` | neutralize prompts and production corpus organization |
+| 24 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.iv` | `pending` | exact chain reconciliation and behavioral qualification close `.d` |
+| 25 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.e` | `pending` | structurally gate the complete neutral production graph after remediation |
+| 26 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.f` | `pending` | behavioral metamorphic and whole-population qualification closes the genericity parent |
+| 27 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | hard-first controller must remove the two remaining unrelated register fabrications before recall work |
+| 28 | `SPEC-TO-INTENT-ALIGNMENT.7` | `pending` | recover source-to-evidence losses after the honesty floor is restored |
+| 29 | `SPEC-TO-INTENT-ALIGNMENT.8` | `pending` | make required residuals actionable after canonical loss is bounded |
+| 30 | `SPEC-TO-INTENT-ALIGNMENT.9` | `pending` | integrate measured capability breadth only after higher-ranked semantic gaps |
 
 ## Decisions
 
@@ -489,6 +521,10 @@ expressiveness as the bottleneck.
 - `2026-08-12`: activated `.6d.ii.c` only after `.6d.ii.b` and the owner-requested FSMGen refresh committed
   cleanly at `2127c68a`. This leaf owns the complete production EvidenceIR schema/extractor audit and neutral
   replacement; no protocol, signal, response, document, or family spelling may survive as production authority.
+- `2026-08-12`: ADR 0036 rejects identity-preserving prior migration. Schema 7 has only a typed global scope;
+  schemas 1–6 quarantine seven family-scoped semantic arrays, while structural extraction profiles may survive
+  because their applicability key is a derived document fingerprint rather than a name. Neutral learning must
+  validate its declared inputs and converge byte-for-byte after every affected-chain replay.
 
 ## Open Questions
 
@@ -589,6 +625,11 @@ expressiveness as the bottleneck.
 | `2026-08-12` | `.6d.ii.c` schema/extractor proof | EvidenceIR schema-1/2/future compatibility tests; 42 focused structural extraction tests; production schema/producer/consumer census | PASS: named SWD operation/direction/phase types and extractors are absent; schema 2 stores opaque operation, phase, actor, state, frame, and direction evidence; legacy named protocol carriers fail closed while unrelated legacy evidence survives; no operation or field is admitted without source-stated shape/binding |
 | `2026-08-12` | `.6d.ii.c` ADR 0025 reconciliation and attribution | exact same-volume backup; all 24 retained bundles re-extracted; all 78 EvidenceIRs migrated; 78 SemanticIR/IntentIR/adapter chains rebuilt; exact pre/post structural comparison; `bash scripts/check_chain_currency.sh --check` | PASS: all 78 EvidenceIRs are schema 2; 24/24 replayable EvidenceIR and 78/78 downstream chains are current; 22 named frame records retire to zero because no retained source meets the stricter phase-binding contract, four named operations become five generic operations across two documents, and 76 weak states become 40 structurally supported states across three documents; exact backup/comparison scratch removed and absent |
 | `2026-08-12` | `.6d.ii.c` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines including chain currency, formatting, warning-deny Clippy, 1,876 Rust tests passed / six ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final project-data-locality residue check |
+| `2026-08-12` | `.6d.ii.d.i` stale-authority root cause | exact schema-6 store census; declared-source existence and persisted-validation audit; same-volume original/final artifact comparison | PASS: old 1,492,828-byte store declared 14 accepted sources including one deleted artifact; all 13 current sources lacked the validation backannotation required by policy, so seven named-family prior arrays were quarantined rather than relabelled |
+| `2026-08-12` | `.6d.ii.d.i` neutral schema and fixture proof | 97 prior-memory tests; 16 learn-priors tests; 14 KG unit tests; tracked `kg-bench`; schema-6 named-family, schema-7 non-global, and future-schema controls | PASS: `ProtocolFamily` and identity inference are absent; only typed `PriorScope::Global` can be materialized; old scoped data cannot steer; 156/156 KG fixtures pass using term/phrase/header/caption/role/pattern mismatch controls rather than family routing |
+| `2026-08-12` | `.6d.ii.d.i` fixed-point and ADR 0025 reconciliation | validate 13 learning inputs; learn/replay/revalidate loop; fourth independent learn byte comparison; 58 changed typed-IR validations plus two adapters; pinned FSMGen strict; `bash scripts/check_chain_currency.sh --check` | PASS: 13/13 accepted; 29/83/4/443/0/1,251/11 semantic prior records plus two structural profiles and one explicit contest; byte-stable SHA-256 `a416cc8b…6239633`; EvidenceIR 24/24 measurable and every downstream stage 78/78; two renderable ISFs strict-clean |
+| `2026-08-12` | `.6d.ii.d.i` focused quality and cleanup | formatting; warning-deny all-target Clippy; complete Rust suite; warning-deny rustdoc; mdBook test/build; exact scratch removal/residue census | PASS: 1,880 Rust tests passed / six ignored / zero failed; docs build and test; the exact repository-local rollback/fixed-point root is absent |
+| `2026-08-12` | `.6d.ii.d.i` full repository gate | `bash scripts/run_ci.sh` | PASS: all eight doctrines including exact chain currency, formatting, warning-deny Clippy, 1,880 Rust tests passed / six ignored / zero failed, warning-deny rustdoc, mdBook test/build, and final project-data locality |
 | `2026-08-12` | scheduled artifact cleanup | `.bin`/`.log` census under generated and Cargo release/debug trees; exact age/purpose inspection before deletion; residue census | PASS: removed one abandoned 23-file / 92-KiB Aug-11 live-document-size test workspace and the fully rebuildable 3,116,900-KiB `target/debug/incremental` cache; no `.bin`/`.log` remains in the requested generated/debug-deps/release census |
 
 ## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.2`
@@ -992,6 +1033,27 @@ the reviewed replay can name its production revision.
 - [x] **LOCKSTEP** — ADR 0035, code, all persisted artifacts, public schema/book, research audit, task/live docs,
   category contract, Knowledge Map, bounded resume pointer, and next `.6d.ii.d` owner agree at commit.
 
+## Acceptance Checklist (enforced) — `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i`
+
+- [x] **REPRODUCE / MEASURE** — preserve the original schema-6 store and every affected stage in an exact
+  same-volume rollback root; census its declared inputs, policy eligibility, prior families, affected artifacts,
+  and adapter deltas before accepting a migration.
+- [x] **ROOT CAUSE (WHY + WHERE)** — `ProtocolFamily::infer` read document key/display name, learning partitioned
+  seven prior families by that inferred identity, and EvidenceIR/SemanticIR used the partition as executable
+  lookup authority; the retained store was independently stale and non-reproducible under its validation policy.
+- [x] **ADDRESSED (verified)** — schema 7 admits only typed global scope, learning/lookup never receives document
+  identity, schemas 1–6 quarantine scoped semantic arrays, future/non-global schemas reject, and contested global
+  values stay explicit; four learns after replay converge byte-identically.
+- [x] **NO REGRESSION** — 156/156 tracked KG fixtures, byte-identical fixed-point output, 24/24 measurable
+  EvidenceIR and 78/78 downstream chain currency, 58 changed-IR plus two-adapter validations, pinned FSMGen
+  strict, warning-deny Clippy/rustdoc, 1,880/6/0 Rust tests, mdBook, and exact cleanup pass.
+- [x] **GENERICITY (ADR 0006)** — filenames, titles, vendor/protocol names, and family labels are provenance only;
+  prior applicability depends on normalized current-document evidence or a derived structural fingerprint, while
+  named test documents remain permitted solely as conformance inputs.
+- [x] **LOCKSTEP** — ADR 0036, schema/loaders, learning/validation/KG fixtures, all affected generated chains,
+  mdBook, pipeline audit, live/architecture docs, Knowledge Map, task frontier, and bounded resume pointer state
+  the same identity-independent boundary and the remaining `.d.ii`–`.f` blockers.
+
 ## Commit Log
 
 | Leaf | Commit subject or reference | Notes |
@@ -1017,6 +1079,7 @@ the reviewed replay can name its production revision.
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.a` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.a — audit production genericity` | clean replay publication, complete pipeline audit, structural signoff design, test-only reviewed snapshot composition, and residue-free cleanup |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.b — make SourceIR classification neutral` | SourceIR schema-2 structural classifiers, legacy fail-closure, exact ten-chain ADR 0025 reconciliation, and full CI |
 | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.c — make protocol EvidenceIR document-derived` | generic schema-2 protocol evidence, legacy fail-closure, exact 78-chain ADR 0025 reconciliation, and full CI |
+| `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i` | `SPEC-TO-INTENT-ALIGNMENT.6d.ii.d.i — make prior memory identity-independent` | schema-7 global prior scope, legacy quarantine, neutral KG controls, byte-stable relearning, and exact 78-chain currency |
 | `SPEC-TO-INTENT-ALIGNMENT.6e` | `pending` | measured remaining AMD IOMMU and GIC-400 fabrication families, root-cause split, and clean qualification |
 
 ## Changelog
@@ -1089,6 +1152,13 @@ the reviewed replay can name its production revision.
   fail-closed legacy named carriers, exact reconciliation of all 78 persisted chains, and full CI. The 24 retained
   replays intentionally retire unsupported frame/state claims rather than preserve named shortcuts. After this
   commit is clean, frontier advances to `.6d.ii.d`; production-core signoff remains blocked until `.d`–`.f` close.
+- `2026-08-12`: Activated `.6d.ii.d` only after `.6d.ii.c` committed at `89d8dee7` and the tree was verified
+  clean. This leaf owns every remaining identity- or spelling-driven decision in priors, SemanticIR, prompts,
+  validation, and corpus commands; exact names remain permissible only as input-derived data or test fixtures.
+- `2026-08-12`: `.6d.ii.d.i` replaces named-family prior routing with schema-7 global scope, quarantines legacy
+  identity-scoped semantic authority, migrates KG fixtures to neutral mismatch controls, validates and relearns
+  13 current inputs to a byte-stable fixed point, and restores exact 24/24 plus 78/78 chain currency. ADR 0036
+  owns the migration boundary; `.d.ii` is next only after this leaf commits cleanly.
 - `2026-08-11`: Closed `.4a` with the strict portable dataset contract, deterministic exact evaluator, and six
   controlled-fault classes; frontier advances to `.4b`, lock two reviewed documents per category without tuning
   extraction before `.4c` publishes product conclusions.

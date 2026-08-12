@@ -7,7 +7,7 @@
         "prior_id": "negative_knowledge_prior_0001",
         "knowledge_kind": "interface_signal_conflict",
         "normalized_pattern": "interface_signal_conflict:direction_mismatch",
-        "protocol_family": "unknown",
+        "prior_scope": "global",
         "support_count": 2,
         "supporting_document_keys": ["seed_doc_1", "seed_doc_2"],
         "strongest_automation_confidence": "medium"
@@ -16,7 +16,7 @@
         "prior_id": "negative_knowledge_prior_0002",
         "knowledge_kind": "interface_signal_conflict",
         "normalized_pattern": "interface_signal_conflict:width_mismatch",
-        "protocol_family": "unknown",
+        "prior_scope": "global",
         "support_count": 2,
         "supporting_document_keys": ["seed_doc_1", "seed_doc_2"],
         "strongest_automation_confidence": "medium"

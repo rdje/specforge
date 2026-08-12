@@ -2611,7 +2611,7 @@ fn write_fixture_prior_memory(generated_root: &Path, patch: &PriorMemoryPatch) -
     }
 
     let corpus_memory = CorpusMemory {
-        schema_version: 6,
+        schema_version: crate::ir::prior_memory::CORPUS_MEMORY_SCHEMA_VERSION,
         update_policy: CorpusMemoryUpdatePolicyRecord {
             advisory_only: true,
             requires_validated_intent_ir: true,
@@ -2623,7 +2623,7 @@ fn write_fixture_prior_memory(generated_root: &Path, patch: &PriorMemoryPatch) -
             artifact_path: generated_root.join("fixture_seed_intent_ir.json"),
             document_key: "fixture_seed".to_string(),
             display_name: "fixture_seed".to_string(),
-            protocol_family: crate::ir::prior_memory::ProtocolFamily::Unknown,
+            prior_scope: crate::ir::prior_memory::PriorScope::Global,
             overall_score: Some(100),
             grade: Some("EXCELLENT".to_string()),
             accepted_for_learning: true,

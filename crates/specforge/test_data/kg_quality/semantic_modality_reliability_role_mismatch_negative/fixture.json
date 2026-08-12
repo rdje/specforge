@@ -1,15 +1,15 @@
 {
-  "name": "semantic_modality_reliability_amba_generic_fallback_gold",
+  "name": "semantic_modality_reliability_role_mismatch_negative",
   "source": "axi_protocol.md",
   "prior_memory_patch": {
     "semantic_modality_reliability_priors": [
       {
-        "prior_id": "semantic_modality_reliability_prior_amba_generic",
-        "role": "handshake_valid_like",
-        "protocol_family": "amba_generic",
+        "prior_id": "semantic_modality_reliability_prior_role_mismatch",
+        "role": "handshake_ready_like",
+        "prior_scope": "global",
         "source_kind": "signal_description_table",
         "support_count": 3,
-        "supporting_document_keys": ["seed_amba_1", "seed_amba_2", "seed_amba_3"],
+        "supporting_document_keys": ["seed_doc_1", "seed_doc_2", "seed_doc_3"],
         "strongest_automation_confidence": "high",
         "strongest_grounding_strength": "cross_modality"
       }
@@ -18,8 +18,8 @@
   "source_ir_patch": {
     "structured_tables": [
       {
-        "table_id": "table_semantic_amba_generic_fallback",
-        "asset_id": "asset_semantic_amba_generic_fallback",
+        "table_id": "table_semantic_protocol_family_conflict",
+        "asset_id": "asset_semantic_protocol_family_conflict",
         "page_id": null,
         "caption_text": "Control signal descriptions",
         "source_ref": null,
@@ -67,22 +67,10 @@
       "semantic_candidate_signal_names_include": ["XCTRL"],
       "multiple_semantic_candidate_signal_names_include": ["XCTRL"],
       "semantic_arbitration_signal_names_include": ["XCTRL"],
-      "decisive_semantic_arbitration_signal_names_include": ["XCTRL"],
-      "non_decisive_semantic_arbitration_signal_names_exclude": ["XCTRL"],
-      "resolved_semantic_role_signal_names_include": ["XCTRL"],
-      "resolved_semantic_roles_include": [
-        {
-          "signal_name": "XCTRL",
-          "role": "handshake_valid_like"
-        }
-      ],
-      "semantic_grounding_strengths_include": [
-        {
-          "signal_name": "XCTRL",
-          "strength": "single_source"
-        }
-      ],
-      "semantic_consensus_signal_names_include": ["XCTRL"],
+      "decisive_semantic_arbitration_signal_names_exclude": ["XCTRL"],
+      "non_decisive_semantic_arbitration_signal_names_include": ["XCTRL"],
+      "resolved_semantic_role_signal_names_exclude": ["XCTRL"],
+      "semantic_consensus_signal_names_exclude": ["XCTRL"],
       "signal_semantic_conflicts": 1,
       "signal_semantic_conflicts_include": [
         {
@@ -105,22 +93,10 @@
       "semantic_candidate_signal_names_include": ["XCTRL"],
       "multiple_semantic_candidate_signal_names_include": ["XCTRL"],
       "semantic_arbitration_signal_names_include": ["XCTRL"],
-      "decisive_semantic_arbitration_signal_names_include": ["XCTRL"],
-      "non_decisive_semantic_arbitration_signal_names_exclude": ["XCTRL"],
-      "resolved_semantic_role_signal_names_include": ["XCTRL"],
-      "resolved_semantic_roles_include": [
-        {
-          "signal_name": "XCTRL",
-          "role": "handshake_valid_like"
-        }
-      ],
-      "semantic_grounding_strengths_include": [
-        {
-          "signal_name": "XCTRL",
-          "strength": "single_source"
-        }
-      ],
-      "semantic_consensus_signal_names_include": ["XCTRL"],
+      "decisive_semantic_arbitration_signal_names_exclude": ["XCTRL"],
+      "non_decisive_semantic_arbitration_signal_names_include": ["XCTRL"],
+      "resolved_semantic_role_signal_names_exclude": ["XCTRL"],
+      "semantic_consensus_signal_names_exclude": ["XCTRL"],
       "signal_semantic_conflicts": 1,
       "signal_semantic_conflicts_include": [
         {
@@ -153,83 +129,91 @@
       "semantic": {
         "finding_ids_include": [
           "semantic_signal_semantic_conflicts_present",
-          "semantic_prior_guided_semantic_arbitration_present",
-          "semantic_prior_guided_semantic_consensus_present",
-          "semantic_prior_guided_semantic_consensus_surface_rescan_guidance"
+          "semantic_non_decisive_semantic_arbitration_present",
+          "semantic_role_arbitration_surface_rescan_guidance",
+          "semantic_signal_semantic_conflict_surface_rescan_guidance"
         ],
         "findings_include": [
           {
-            "finding_id": "semantic_prior_guided_semantic_arbitration_present",
+            "finding_id": "semantic_non_decisive_semantic_arbitration_present",
             "severity": "info",
             "category": "semantic_role_arbitration",
-            "summary_contains": "use learned modality-reliability priors",
+            "summary_contains": "still have competing semantic role candidates",
             "related_ids_include": ["XCTRL"]
           },
           {
-            "finding_id": "semantic_prior_guided_semantic_consensus_present",
-            "severity": "info",
-            "category": "semantic_role_consensus",
-            "summary_contains": "consensus that was strengthened by learned modality-reliability priors",
-            "related_ids_include": ["XCTRL"]
-          },
-          {
-            "finding_id": "semantic_prior_guided_semantic_consensus_surface_rescan_guidance",
+            "finding_id": "semantic_role_arbitration_surface_rescan_guidance",
             "severity": "info",
             "category": "rescan_guidance",
-            "summary_contains": "prior-guided semantic-role signal id(s)",
+            "summary_contains": "should trigger targeted NLP rescans plus downstream rebuild",
             "related_ids_include": ["XCTRL"]
+          },
+          {
+            "finding_id": "semantic_signal_semantic_conflict_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "still carries unresolved semantic-role conflict ids",
+            "related_ids_include": ["semantic_conflict_0001"]
           }
+        ],
+        "finding_ids_exclude": [
+          "semantic_prior_guided_semantic_arbitration_present",
+          "semantic_prior_guided_semantic_consensus_present"
         ],
         "metric_values": {
           "signal_semantic_conflicts": "1",
           "with_multiple_semantic_candidates": "1",
-          "with_decisive_semantic_arbitration": "1",
-          "with_non_decisive_semantic_arbitration": "0",
-          "with_prior_guided_semantic_arbitration": "1",
-          "with_resolved_semantic_role": "1",
-          "with_semantic_consensus": "1",
-          "with_prior_guided_semantic_consensus": "1"
+          "with_decisive_semantic_arbitration": "0",
+          "with_non_decisive_semantic_arbitration": "1",
+          "with_prior_guided_semantic_arbitration": "0",
+          "with_resolved_semantic_role": "0",
+          "with_semantic_consensus": "0",
+          "with_prior_guided_semantic_consensus": "0"
         }
       },
       "intent": {
         "finding_ids_include": [
           "intent_signal_semantic_conflicts_present",
-          "intent_prior_guided_semantic_arbitration_present",
-          "intent_prior_guided_semantic_consensus_present",
-          "intent_prior_guided_semantic_consensus_surface_rescan_guidance"
+          "intent_non_decisive_semantic_arbitration_present",
+          "intent_role_arbitration_surface_rescan_guidance",
+          "intent_signal_semantic_conflict_surface_rescan_guidance"
         ],
         "findings_include": [
           {
-            "finding_id": "intent_prior_guided_semantic_arbitration_present",
+            "finding_id": "intent_non_decisive_semantic_arbitration_present",
             "severity": "info",
             "category": "semantic_role_arbitration",
-            "summary_contains": "use learned modality-reliability priors",
+            "summary_contains": "still have competing semantic role candidates",
             "related_ids_include": ["XCTRL"]
           },
           {
-            "finding_id": "intent_prior_guided_semantic_consensus_present",
-            "severity": "info",
-            "category": "semantic_role_consensus",
-            "summary_contains": "consensus that was strengthened by learned modality-reliability priors",
-            "related_ids_include": ["XCTRL"]
-          },
-          {
-            "finding_id": "intent_prior_guided_semantic_consensus_surface_rescan_guidance",
+            "finding_id": "intent_role_arbitration_surface_rescan_guidance",
             "severity": "info",
             "category": "rescan_guidance",
-            "summary_contains": "prior-guided semantic-role signal id(s)",
+            "summary_contains": "should trigger targeted NLP rescans plus downstream rebuild",
             "related_ids_include": ["XCTRL"]
+          },
+          {
+            "finding_id": "intent_signal_semantic_conflict_surface_rescan_guidance",
+            "severity": "info",
+            "category": "rescan_guidance",
+            "summary_contains": "still carries unresolved semantic-role conflict ids",
+            "related_ids_include": ["semantic_conflict_0001"]
           }
+        ],
+        "finding_ids_exclude": [
+          "intent_prior_guided_semantic_arbitration_present",
+          "intent_prior_guided_semantic_consensus_present"
         ],
         "metric_values": {
           "signal_semantic_conflicts": "1",
           "with_multiple_semantic_candidates": "1",
-          "with_decisive_semantic_arbitration": "1",
-          "with_non_decisive_semantic_arbitration": "0",
-          "with_prior_guided_semantic_arbitration": "1",
-          "with_resolved_semantic_role": "1",
-          "with_semantic_consensus": "1",
-          "with_prior_guided_semantic_consensus": "1"
+          "with_decisive_semantic_arbitration": "0",
+          "with_non_decisive_semantic_arbitration": "1",
+          "with_prior_guided_semantic_arbitration": "0",
+          "with_resolved_semantic_role": "0",
+          "with_semantic_consensus": "0",
+          "with_prior_guided_semantic_consensus": "0"
         }
       }
     }

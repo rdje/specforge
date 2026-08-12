@@ -7,7 +7,7 @@
         "prior_id": "semantic_phrase_prior_0001",
         "normalized_phrase": "<signal> can sink the transfer",
         "role": "handshake_ready_like",
-        "protocol_family": "amba_generic",
+        "prior_scope": "global",
         "source_kind": "visual_caption",
         "support_count": 2,
         "supporting_document_keys": ["seed_amba_visual_1", "seed_amba_visual_2"],

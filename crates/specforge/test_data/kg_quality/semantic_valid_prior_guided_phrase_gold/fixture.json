@@ -7,7 +7,7 @@
         "prior_id": "semantic_phrase_prior_0001",
         "normalized_phrase": "<signal> can publish the beat",
         "role": "handshake_valid_like",
-        "protocol_family": "amba_generic",
+        "prior_scope": "global",
         "source_kind": "prose_statement",
         "support_count": 2,
         "supporting_document_keys": ["seed_amba_valid_1", "seed_amba_valid_2"],

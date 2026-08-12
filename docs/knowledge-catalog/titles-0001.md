@@ -50,6 +50,7 @@
 | [corpus-coverage-sweep](../knowledge/corpus-coverage-sweep.md) | 2026-06-08 | `current` | Whole-corpus coverage sweep (2026-06-08) — Lever A+B uplift measured across the 82-PDF library |
 | [corpus-kb-bounded-projection-shape](../knowledge/corpus-kb-bounded-projection-shape.md) | 2026-08-08 | `current` | Corpus-KB fixture projections grow by bounded rows and evidence bullets |
 | [corpus-kb-managed-currentness](../knowledge/corpus-kb-managed-currentness.md) | 2026-08-08 | `current` | Tracked fixtures and the reviewed snapshot define corpus-KB managed currentness |
+| [corpus-memory-schema-7-neutral-scope](../knowledge/corpus-memory-schema-7-neutral-scope.md) | 2026-08-12 | `current` | CorpusMemory schema 7 cannot route extraction by document identity |
 | [corpus-pattern-reuse](../knowledge/corpus-pattern-reuse.md) | 2026-06-09 | `current` | Cross-PDF pattern reuse via a DERIVED vendor/layout fingerprint — extend CorpusMemory, advisory + honest |
 | [corpus-refresh-completion-vs-normalized-retention](../knowledge/corpus-refresh-completion-vs-normalized-retention.md) | 2026-08-09 | `current` | Corpus current-binary refresh completion is independent of normalized-cache retention |
 | [corpus-refresh-frontier-derivation](../knowledge/corpus-refresh-frontier-derivation.md) | 2026-08-11 | `current` | The corpus refresh frontier derives the cohort and gates an exact root-neutral lifecycle partition |
@@ -60,4 +61,3 @@
 | [corpus-wide-interface-authority-rebuild](../knowledge/corpus-wide-interface-authority-rebuild.md) | 2026-08-10 | `current` | The corpus-wide rebuild collapsed 14 documents' false interfaces, taking emitted ISFs from 57 to 44 |
 | [cortex-a76-optimization-guide-refresh-is-authority-empty](../knowledge/cortex-a76-optimization-guide-refresh-is-authority-empty.md) | 2026-08-10 | `current` | The Cortex-A76 optimization guide is constraint evidence, not a 537-output instruction interface |
 | [cross-stage-artifact-paths-are-absolute](../knowledge/cross-stage-artifact-paths-are-absolute.md) | 2026-08-09 | `current` | Canonical stages and the migrated generated corpus contain move-safe repository paths |
-| [decibel-domain-timing-intent-disposition](../knowledge/decibel-domain-timing-intent-disposition.md) | 2026-08-12 | `current` | Decibel-domain timing rows remain source evidence but are non-applicable to executable digital intent |

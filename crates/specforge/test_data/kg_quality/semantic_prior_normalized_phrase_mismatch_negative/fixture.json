@@ -1,16 +1,16 @@
 {
-  "name": "semantic_prior_protocol_family_mismatch_negative",
+  "name": "semantic_prior_normalized_phrase_mismatch_negative",
   "source": "axi_semantic_prior_mismatch.md",
   "prior_memory_patch": {
     "semantic_phrase_priors": [
       {
-        "prior_id": "semantic_phrase_prior_apb_publish_beat",
-        "normalized_phrase": "<signal> can publish the beat",
+        "prior_id": "semantic_phrase_prior_unrelated_phrase",
+        "normalized_phrase": "<signal> can defer the beat",
         "role": "handshake_valid_like",
-        "protocol_family": "amba_apb",
+        "prior_scope": "global",
         "source_kind": "prose_statement",
         "support_count": 3,
-        "supporting_document_keys": ["seed_apb_1", "seed_apb_2", "seed_apb_3"],
+        "supporting_document_keys": ["seed_doc_1", "seed_doc_2", "seed_doc_3"],
         "strongest_automation_confidence": "high",
         "strongest_grounding_strength": "single_source"
       }

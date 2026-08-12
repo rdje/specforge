@@ -25,9 +25,9 @@ Keep provenance explicit, and do not treat this page as an approval artifact.
 | `cross_modality_semantic_grounding_gold` | `pass` | `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/cross_modality_semantic_grounding_gold/fixture.json` |
 | `evidence_missing_vlm_observations_surface_negative` | `pass` | `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/evidence_missing_vlm_observations_surface_negative/fixture.json` |
 | `source_vlm_enrichment_surface_negative` | `pass` | `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/source_vlm_enrichment_surface_negative/fixture.json` |
+| `visual_motif_prior_caption_mismatch_negative` | `pass` | `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/visual_motif_prior_caption_mismatch_negative/fixture.json` |
 | `visual_motif_prior_guided_diagram_classification_gold` | `pass` | `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/visual_motif_prior_guided_diagram_classification_gold/fixture.json` |
 | `visual_motif_prior_guided_diagram_classification_without_prior_negative` | `pass` | `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/visual_motif_prior_guided_diagram_classification_without_prior_negative/fixture.json` |
-| `visual_motif_prior_protocol_family_mismatch_negative` | `pass` | `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/visual_motif_prior_protocol_family_mismatch_negative/fixture.json` |
 | `visual_semantic_prior_guided_caption_gold` | `pass` | `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/visual_semantic_prior_guided_caption_gold/fixture.json` |
 | `visual_semantic_prior_guided_caption_without_prior_negative` | `pass` | `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/visual_semantic_prior_guided_caption_without_prior_negative/fixture.json` |
 | `visual_sources_semantic_conflict_negative` | `pass` | `multimodal visual grounding` | `crates/specforge/test_data/kg_quality/visual_sources_semantic_conflict_negative/fixture.json` |

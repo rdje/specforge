@@ -37,7 +37,7 @@ Each evidence fixture is listed on its own line so growth remains reviewable and
   - `actor_taxonomy_prior_guided_section_direction_gold`
 - guard_gates:
   - `actor_taxonomy_prior_guided_section_direction_without_prior_negative`
-  - `actor_taxonomy_prior_protocol_family_mismatch_negative`
+  - `actor_taxonomy_prior_term_mismatch_negative`
 
 #### `negative_knowledge_prior`
 - positive_gates:
@@ -54,7 +54,7 @@ Each evidence fixture is listed on its own line so growth remains reviewable and
   - `negative_knowledge_prior_guided_residual_caution_gold`
   - `negative_knowledge_prior_guided_semantic_conflict_caution_gold`
   - `negative_knowledge_prior_guided_temporal_conflict_caution_gold`
-  - `negative_knowledge_prior_protocol_family_mismatch_negative`
+  - `negative_knowledge_prior_pattern_mismatch_negative`
 
 #### `semantic_modality_reliability_prior`
 - positive_gates:
@@ -70,8 +70,8 @@ Each evidence fixture is listed on its own line so growth remains reviewable and
   - `semantic_prior_broad_phrase_negative`
   - `semantic_prior_conflicting_roles_negative`
   - `semantic_prior_guided_phrase_without_prior_negative`
+  - `semantic_prior_normalized_phrase_mismatch_negative`
   - `semantic_prior_phrase_mismatch_negative`
-  - `semantic_prior_protocol_family_mismatch_negative`
   - `semantic_prior_source_kind_mismatch_negative`
   - `visual_semantic_prior_guided_caption_without_prior_negative`
 
@@ -82,21 +82,21 @@ Each evidence fixture is listed on its own line so growth remains reviewable and
 - guard_gates:
   - `table_shape_prior_guided_signal_table_without_prior_negative`
   - `table_shape_prior_guided_timing_table_without_prior_negative`
-  - `table_shape_prior_protocol_family_mismatch_negative`
+  - `table_shape_prior_header_mismatch_negative`
 
 #### `temporal_phrase_prior`
 - positive_gates:
   - `temporal_prior_guided_cycle_window_gold`
 - guard_gates:
   - `temporal_prior_guided_cycle_window_without_prior_negative`
-  - `temporal_prior_protocol_family_mismatch_negative`
+  - `temporal_prior_phrase_mismatch_negative`
 
 #### `visual_motif_prior`
 - positive_gates:
   - `visual_motif_prior_guided_diagram_classification_gold`
 - guard_gates:
+  - `visual_motif_prior_caption_mismatch_negative`
   - `visual_motif_prior_guided_diagram_classification_without_prior_negative`
-  - `visual_motif_prior_protocol_family_mismatch_negative`
 
 ### Readiness Summary
 Readiness is fixture-surface readiness only. It is not promotion approval and does not allow `CorpusMemory` or canonical IR mutation.
